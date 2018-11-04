@@ -33,10 +33,13 @@
 #include "retroshare/rsinit.h"
 #include "plugins/pluginmanager.h"
 #include "util/rsdebug.h"
-//const int p3facemsgzone = 11453;
+
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#endif // ifdef RS_JSONAPI
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3peermgr.h"
 #include "pqi/p3netmgr.h"
@@ -83,6 +86,7 @@ void RsServer::startServiceThread(RsTickingThread *t, const std::string &threadN
 
 void RsServer::rsGlobalShutDown()
 {
+	coreReady = false;
 	// TODO: cache should also clean up old files
 
 	ConfigFinalSave(); // save configuration before exit
@@ -90,6 +94,10 @@ void RsServer::rsGlobalShutDown()
 	mPluginsManager->stopPlugins(pqih);
 
 	mNetMgr->shutdown(); /* Handles UPnP */
+
+#ifdef RS_JSONAPI
+	if(jsonApiServer) jsonApiServer->shutdown();
+#endif
 
 	rsAutoProxyMonitor::instance()->stopAllRSShutdown();
 
@@ -116,4 +124,6 @@ void RsServer::rsGlobalShutDown()
 // #endif
 
 	AuthGPG::exit();
+
+	mShutdownCallback(0);
 }

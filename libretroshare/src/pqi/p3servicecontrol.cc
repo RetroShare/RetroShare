@@ -987,9 +987,9 @@ void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t
 
 
 
-void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+void p3ServiceControl::getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1004,9 +1004,9 @@ void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPe
 }
 
 
-bool p3ServiceControl::isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId)
+bool p3ServiceControl::isPeerConnected(uint32_t serviceId, const RsPeerId &peerId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1369,13 +1369,18 @@ RsServiceInfo::RsServiceInfo(
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
  :mServiceName(service_name),
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mServiceType(RsServiceInfoUIn16ToFullServiceId(service_type)),
   mVersionMajor(version_major),
   mVersionMinor(version_minor),
   mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
-	return;
+  return;
+}
+
+unsigned int RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(uint16_t serviceType)
+{
+  return (((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) serviceType) << 8);
 }
 
 

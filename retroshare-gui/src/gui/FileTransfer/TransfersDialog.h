@@ -55,7 +55,8 @@ public:
 						 /* Fixed numbers for load and save the last page */
 			 				SearchTab              = 0,  /** Network page. */
 							LocalSharedFilesTab    = 1,  /** Network new graph. */
-							RemoteSharedFilesTab   = 2   /** Old group chat page. */
+							RemoteSharedFilesTab   = 2,  /** Old group chat page. */
+							DownloadTab            = 3
 		 };
 
 
@@ -91,6 +92,7 @@ private slots:
     void downloadListCustomPopupMenu( QPoint point );
     void downloadListHeaderCustomPopupMenu( QPoint point );
     void uploadsListCustomPopupMenu( QPoint point );
+	void uploadsListHeaderCustomPopupMenu (QPoint point );
 
     void cancel();
     void forceCheck();
@@ -107,9 +109,6 @@ private slots:
     void collapseAllDL();
     void expandAllUL();
     void collapseAllUL();
-
-//    void rootdecorated();
-//    void rootisnotdecorated();
 
     void pauseFileTransfer();
     void resumeFileTransfer();
@@ -159,6 +158,13 @@ private slots:
     void setShowDLIDColumn(bool show);
     void setShowDLLastDLColumn(bool show);
     void setShowDLPath(bool show);
+
+	void setShowULPeerColumn(bool show);
+	void setShowULSizeColumn(bool show);
+	void setShowULTransferredColumn(bool show);
+	void setShowULSpeedColumn(bool show);
+	void setShowULProgressColumn(bool show);
+	void setShowULHashColumn(bool show);
 
     void filterChanged(const QString &text);
 
@@ -219,7 +225,7 @@ private:
     QAction *collViewAct;
     QAction *collOpenAct;
 
-    /** Defines the actions for the header context menu */
+	/** Defines the actions for the header context menu in download */
     QAction* showDLSizeAct;
     QAction* showDLCompleteAct;
     QAction* showDLDLSpeedAct;
@@ -236,6 +242,14 @@ private:
     /** Defines the actions for the upload context menu */
     QAction* ulOpenFolderAct;
     QAction* ulCopyLinkAct;
+
+	/** Defines the actions for the header context menu in upload*/
+	QAction* showULPeerAct;
+	QAction* showULSizeAct;
+	QAction* showULTransferredAct;
+	QAction* showULSpeedAct;
+	QAction* showULProgressAct;
+	QAction* showULHashAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);

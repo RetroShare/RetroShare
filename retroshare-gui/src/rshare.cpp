@@ -42,7 +42,7 @@
 #include <iostream>
 #include <stdlib.h>
 
-#include <gui/common/html.h>
+#include <gui/common/rshtml.h>
 #include <gui/common/vmessagebox.h>
 #include <gui/gxs/GxsIdDetails.h>
 #include <gui/settings/rsharesettings.h>
@@ -357,15 +357,7 @@ void Rshare::slotConnectionEstablished()
 	}
 }
 
-QString Rshare::retroshareVersion(bool withRevision)
-{
-	QString version = QString("%1.%2.%3%4").arg(RS_MAJOR_VERSION).arg(RS_MINOR_VERSION).arg(RS_BUILD_NUMBER).arg(RS_BUILD_NUMBER_ADD);
-	if (withRevision) {
-		version += QString(" %1 %2").arg(tr("Revision")).arg(RS_REVISION_NUMBER,8,16,QChar('0'));
-	}
-
-	return version;
-}
+QString Rshare::retroshareVersion(bool) { return RS_HUMAN_READABLE_VERSION; }
 
 /** Enters the main event loop and waits until exit() is called. The signal
  * running() will be emitted when the event loop has started. */
@@ -749,7 +741,7 @@ void Rshare::loadStyleSheet(const QString &sheetName)
                 /* external stylesheet */
                 file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()), name, sheetName));
                 if (!file.exists()) {
-                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::DataDirectory().c_str()), name, sheetName));
+                    file.setFileName(QString("%1/qss/%2%3.qss").arg(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()), name, sheetName));
                 }
             }
             if (file.open(QFile::ReadOnly)) {
@@ -788,7 +780,7 @@ void Rshare::getAvailableStyleSheets(QMap<QString, QString> &styleSheets)
 			styleSheets.insert(name, name);
 		}
 	}
-	fileInfoList = QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
+	fileInfoList = QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()) + "/qss/").entryInfoList(QStringList("*.qss"));
 	foreach (fileInfo, fileInfoList) {
 		if (fileInfo.isFile()) {
 			QString name = fileInfo.baseName();

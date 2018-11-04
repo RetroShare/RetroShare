@@ -41,7 +41,7 @@ class PopupDistantChatDialog: public PopupChatDialog
 		virtual void init(const ChatId& chat_id, const QString &title);
 		virtual void closeEvent(QCloseEvent *e) ;
 	
-        virtual QString getPeerName(const ChatId &id) const ;
+        virtual QString getPeerName(const ChatId &id, QString& additional_info) const ;
         virtual QString getOwnName() const;
 
 	protected slots:

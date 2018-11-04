@@ -17,20 +17,37 @@
  */
 
 #include <QCoreApplication>
-#include <QDebug>
-#include <QDir>
-#include <QTimer>
 #include <csignal>
 
 #ifdef __ANDROID__
 #	include "util/androiddebug.h"
 #endif
 
-#include "api/ApiServer.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
+#ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QDir>
+#	include <QTimer>
+#	include <QDebug>
 
-using namespace resource_api;
+#	include "api/ApiServer.h"
+#	include "api/ApiServerLocal.h"
+#	include "api/RsControlModule.h"
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+#	include <QObject>
+
+#	include "retroshare/rsinit.h"
+#	include "retroshare/rsiface.h"
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
+
+#ifdef RS_JSONAPI
+#	include "jsonapi/jsonapi.h"
+#	include "util/rsnet.h"
+#	include "util/rsurl.h"
+
+#	include <cstdint>
+#	include <QCommandLineParser>
+#	include <QString>
+#	include <iostream>
+#endif // def RS_JSONAPI
 
 int main(int argc, char *argv[])
 {
@@ -40,11 +57,14 @@ int main(int argc, char *argv[])
 
 	QCoreApplication app(argc, argv);
 
-	signal(SIGINT, &QCoreApplication::exit);
-	signal(SIGTERM, &QCoreApplication::exit);
+	signal(SIGINT,   QCoreApplication::exit);
+	signal(SIGTERM,  QCoreApplication::exit);
 #ifdef SIGBREAK
-	signal(SIGBREAK, &QCoreApplication::exit);
-#endif // def SIGBREAK
+	signal(SIGBREAK, QCoreApplication::exit);
+#endif // ifdef SIGBREAK
+
+#ifdef LIBRESAPI_LOCAL_SERVER
+	using namespace resource_api;
 
 	ApiServer api;
 	RsControlModule ctrl_mod(argc, argv, api.getStateTokenServer(), &api, true);
@@ -52,7 +72,6 @@ int main(int argc, char *argv[])
 	            "control",
 	            dynamic_cast<resource_api::ResourceRouter*>(&ctrl_mod),
 	            &resource_api::RsControlModule::handleRequest);
-
 
 	QString sockPath = QDir::homePath() + "/.retroshare";
 	sockPath.append("/libresapi.sock");
@@ -64,9 +83,20 @@ int main(int argc, char *argv[])
 	QTimer shouldExitTimer;
 	shouldExitTimer.setTimerType(Qt::VeryCoarseTimer);
 	shouldExitTimer.setInterval(1000);
-	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&](){
-		if(ctrl_mod.processShouldExit()) app.quit(); } );
+	QObject::connect( &shouldExitTimer, &QTimer::timeout, [&]()
+	{ if(ctrl_mod.processShouldExit()) QCoreApplication::exit(0); } );
 	shouldExitTimer.start();
+#else // ifdef LIBRESAPI_LOCAL_SERVER
+	RsInit::InitRsConfig();
+	RsInit::InitRetroShare(argc, argv, true);
+	RsControl::earlyInitNotificationSystem();
+	rsControl->setShutdownCallback(QCoreApplication::exit);
+	QObject::connect(
+	            &app, &QCoreApplication::aboutToQuit,
+	            [](){
+		if(RsControl::instance()->isReady())
+			RsControl::instance()->rsGlobalShutDown(); } );
+#endif // ifdef LIBRESAPI_LOCAL_SERVER
 
 	return app.exec();
 }

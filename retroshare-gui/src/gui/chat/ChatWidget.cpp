@@ -71,8 +71,15 @@
  * #define CHAT_DEBUG 1
  *****/
 
-ChatWidget::ChatWidget(QWidget *parent) :
-    QWidget(parent), sendingBlocked(false), ui(new Ui::ChatWidget)
+ChatWidget::ChatWidget(QWidget *parent)
+  : QWidget(parent)
+  , completionPosition(0), newMessages(false), typing(false), peerStatus(0)
+  , sendingBlocked(false), useCMark(false)
+  , lastStatusSendTime(0)
+  , firstShow(true), inChatCharFormatChanged(false), firstSearch(true)
+  , lastUpdateCursorPos(0), lastUpdateCursorEnd(0)
+  , completer(NULL), notify(NULL)
+  , ui(new Ui::ChatWidget)
 {
 	ui->setupUi(this);
 
@@ -83,16 +90,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	int butt_size(iconSize.height() + fmm);
 	QSize buttonSize = QSize(butt_size, butt_size);
 
-	newMessages = false;
-	typing = false;
-	peerStatus = 0;
-	firstShow = true;
-	firstSearch = true;
-	inChatCharFormatChanged = false;
-	completer = NULL;
 	lastMsgDate = QDate::currentDate();
-
-	lastStatusSendTime = 0 ;
 
 	//Resize Tool buttons
 	ui->emoteiconButton->setFixedSize(buttonSize);
@@ -143,7 +141,6 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	connect(ui->actionSearchWithoutLimit, SIGNAL(triggered()), this, SLOT(toogle_SeachWithoutLimit()));
 	connect(ui->searchButton, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuSearchButton(QPoint)));
 
-	notify=NULL;
 	ui->notifyButton->setVisible(false);
 
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
@@ -193,6 +190,9 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	fontmenu->addAction(ui->actionResetFont);
 	fontmenu->addAction(ui->actionNoEmbed);
 	fontmenu->addAction(ui->actionSendAsPlainText);
+	#ifdef USE_CMARK
+	fontmenu->addAction(ui->actionSend_as_CommonMark);
+	#endif
 
 	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionClearChatHistory);
@@ -205,6 +205,12 @@ ChatWidget::ChatWidget(QWidget *parent) :
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
 	connect(ui->actionSendAsPlainText, SIGNAL(toggled(bool)), ui->chatTextEdit, SLOT(setOnlyPlainText(bool)) );
+
+#ifdef USE_CMARK
+	connect(ui->actionSend_as_CommonMark, SIGNAL(toggled(bool)), this, SLOT(setUseCMark(bool)) );
+	connect(ui->chatTextEdit, SIGNAL(textChanged()), this, SLOT(updateCMPreview()) );
+#endif
+	ui->cmPreview->setVisible(false);
 
 	ui->textBrowser->resetImagesStatus(Settings->getChatLoadEmbeddedImages());
 	ui->textBrowser->installEventFilter(this);
@@ -785,7 +791,7 @@ void ChatWidget::completeNickname(bool reverse)
 		std::list<QString> participants;
         RsIdentityDetails details ;
 
-        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         if(rsIdentity->getIdDetails(it->first,details))
             participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
@@ -852,7 +858,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
     // Get participants list
     QStringList participants;
 
-    for (std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(it->first,details) ;
@@ -979,6 +985,13 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		if (!message.contains("NoEmbed=\"true\""))
 			formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
 	}
+
+#ifdef USE_CMARK
+	//Use CommonMark
+	if (message.contains("CMark=\"true\"")) {
+		formatTextFlag |= RSHTML_FORMATTEXT_USE_CMARK;
+	}
+#endif
 
 	// Always fix colors
 	formatTextFlag |= RSHTML_FORMATTEXT_FIX_COLORS;
@@ -1228,7 +1241,9 @@ void ChatWidget::sendChat()
 		text = chatWidget->toPlainText();
 		text.replace(QChar(-4),"");//Char used when image on text.
 	} else {
-		RsHtml::optimizeHtml(chatWidget, text, (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0));
+		RsHtml::optimizeHtml(chatWidget, text,
+		                     (ui->actionNoEmbed->isChecked() ? RSHTML_FORMATTEXT_NO_EMBED : 0)
+		                     + (ui->actionSend_as_CommonMark->isChecked() ? RSHTML_FORMATTEXT_USE_CMARK : 0) );
 	}
 	std::string msg = text.toUtf8().constData();
 
@@ -1686,22 +1701,34 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
     {
 	    // the peers status has changed
 
+		QString tooltip_info ;
 	    QString peerName ;
+
 	    if(chatId.isDistantChatId())
 	    {
 		    DistantChatPeerInfo dcpinfo ;
 		    RsIdentityDetails details  ;
 
 		    if(rsMsgs->getDistantChatStatus(chatId.toDistantChatId(),dcpinfo))
+			{
 			    if(rsIdentity->getIdDetails(dcpinfo.to_id,details))
 				    peerName = QString::fromUtf8( details.mNickname.c_str() ) ;
 			    else
 				    peerName = QString::fromStdString(dcpinfo.to_id.toStdString()) ;
+
+				tooltip_info = QString("Identity Id: ")+QString::fromStdString(dcpinfo.to_id.toStdString());
+			}
 		    else
+			{
 			    peerName = QString::fromStdString(chatId.toDistantChatId().toStdString()) ;
+				tooltip_info = QString("Identity Id: unknown (bug?)");
+			}
 	    }
 	    else
+		{
 		    peerName = QString::fromUtf8(rsPeers->getPeerName(chatId.toPeerId()).c_str());
+			tooltip_info = QString("Peer Id: ") + QString::fromStdString(chatId.toPeerId().toStdString());
+		}
 
 	    // is scrollbar at the end?
 	    QScrollBar *scrollbar = ui->textBrowser->verticalScrollBar();
@@ -1734,6 +1761,7 @@ void ChatWidget::updateStatus(const QString &peer_id, int status)
 	    }
 
 	    ui->titleLabel->setText(peerName);
+	    ui->titleLabel->setToolTip(tooltip_info);
 	    ui->statusLabel->setText(QString("(%1)").arg(StatusDefs::name(status)));
 
 	    peerStatus = status;
@@ -1820,6 +1848,22 @@ bool ChatWidget::setStyle()
 	}
 
 	return false;
+}
+
+void ChatWidget::setUseCMark(const bool bUseCMark)
+{
+	useCMark = bUseCMark;
+	ui->cmPreview->setVisible(useCMark);
+	updateCMPreview();
+}
+
+void ChatWidget::updateCMPreview()
+{
+	if (!useCMark) return;
+
+	QString message = ui->chatTextEdit->toHtml();
+	QString formattedMessage = RsHtml().formatText(ui->cmPreview->document(), message, RSHTML_FORMATTEXT_USE_CMARK);
+	ui->cmPreview->setHtml(formattedMessage);
 }
 
 void ChatWidget::quote()

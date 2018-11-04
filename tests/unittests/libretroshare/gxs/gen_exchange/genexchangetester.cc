@@ -42,7 +42,7 @@ void GenExchangeTest::pollForToken(uint32_t token, const RsTokReqOptions &opts, 
     Sleep((int) (timeDelta * 1000));
 #endif
 
-        if((RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == mTokenService->requestStatus(token)))
+        if((RsTokenService::COMPLETE == mTokenService->requestStatus(token)))
         {
             switch(opts.mReqType)
             {
@@ -81,7 +81,7 @@ void GenExchangeTest::pollForToken(uint32_t token, const RsTokReqOptions &opts, 
             }
             break;
         }
-        else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == mTokenService->requestStatus(token))
+        else if(RsTokenService::FAILED == mTokenService->requestStatus(token))
         {
         	mTokenService->cancelRequest(token);
         	break;
@@ -108,12 +108,12 @@ bool GenExchangeTest::pollForMsgAcknowledgement(uint32_t token,
     Sleep((int) (timeDelta * 1000));
 #endif
 
-		if((RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == mTokenService->requestStatus(token)))
+		if((RsTokenService::COMPLETE == mTokenService->requestStatus(token)))
 		{
 			mTestService->acknowledgeTokenMsg(token, msgId);
 			return true;
 		}
-		else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == mTokenService->requestStatus(token))
+		else if(RsTokenService::FAILED == mTokenService->requestStatus(token))
 		{
 			mTokenService->cancelRequest(token);
 			return false;
@@ -146,12 +146,12 @@ bool GenExchangeTest::pollForGrpAcknowledgement(uint32_t token,
     Sleep((int) (timeDelta * 1000));
 #endif
 
-		if((RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == mTokenService->requestStatus(token)))
+		if((RsTokenService::COMPLETE == mTokenService->requestStatus(token)))
 		{
 			mTestService->acknowledgeTokenGrp(token, grpId);
 			return true;
 		}
-		else if(RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == mTokenService->requestStatus(token))
+		else if(RsTokenService::FAILED == mTokenService->requestStatus(token))
 		{
 			mTokenService->cancelRequest(token);
 			return false;

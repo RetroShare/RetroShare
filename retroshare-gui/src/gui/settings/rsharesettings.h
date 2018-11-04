@@ -187,9 +187,7 @@ public:
 	/** Sets whether the bandwidth graph is always on top. */
 	void setBWGraphAlwaysOnTop(bool alwaysOnTop);
 
-#ifdef RETROTOR
 	void setHiddenServiceKey() ;
-#endif
 
 	uint getNewsFeedFlags();
 	void setNewsFeedFlags(uint flags);
@@ -342,6 +340,20 @@ public:
 
     bool getPageAlreadyDisplayed(const QString& page_code) ;
     void setPageAlreadyDisplayed(const QString& page_code,bool b) ;
+
+#ifdef RS_JSONAPI
+	bool getJsonApiEnabled();
+	void setJsonApiEnabled(bool enabled);
+
+	uint16_t getJsonApiPort();
+	void setJsonApiPort(uint16_t port);
+
+	QString getJsonApiListenAddress();
+	void setJsonApiListenAddress(const QString& listenAddress);
+
+	QStringList getJsonApiAuthTokens();
+	void setJsonApiAuthTokens(const QStringList& authTokens);
+#endif // ifdef RS_JSONAPI
 
 protected:
 	/** Default constructor. */

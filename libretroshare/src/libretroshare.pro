@@ -19,10 +19,6 @@
 
 TEMPLATE = lib
 CONFIG += staticlib
-!include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
-
-TEMPLATE = lib
-CONFIG += staticlib
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
@@ -228,16 +224,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-    linux-* {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.sh
-    }
-    win32-* {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.bat
-    }
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ####################
@@ -515,7 +503,6 @@ HEADERS +=	util/folderiterator.h \
 			util/rsstring.h \
 			util/rsstd.h \
 			util/rsthreads.h \
-			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
 			util/rsmemcache.h \
@@ -539,10 +526,9 @@ SOURCES +=	ft/ftchunkmap.cc \
             ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			crypto/rsaes.cc \
-			crypto/hashstream.cc\
-			  crypto/hashstream.cc \
-			  crypto/rscrypto.cpp
+           crypto/hashstream.cc\
+           crypto/rsaes.cc \
+           crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -666,7 +652,6 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsprint.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
-			util/rsversioninfo.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
@@ -776,10 +761,12 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 # new serialization code
 HEADERS += serialiser/rsserializable.h \
            serialiser/rsserializer.h \
-           serialiser/rstypeserializer.h
+           serialiser/rstypeserializer.h \
+           util/rsjson.h
 
 SOURCES += serialiser/rsserializer.cc \
-           serialiser/rstypeserializer.cc 
+           serialiser/rstypeserializer.cc \
+           util/rsjson.cc
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
@@ -867,8 +854,79 @@ rs_gxs_trans {
     SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
+rs_jsonapi {
+    JSONAPI_GENERATOR_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/)
+    JSONAPI_GENERATOR_OUT=$$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/)
+    isEmpty(JSONAPI_GENERATOR_EXE) {
+        win32 {
+            CONFIG(release, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/release/jsonapi-generator.exe)
+            }
+        CONFIG(debug, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/debug/jsonapi-generator.exe)
+            }
+        } else {
+            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator)
+        }
+    }
 
+    DOXIGEN_INPUT_DIRECTORY=$$clean_path($${PWD})
+    DOXIGEN_CONFIG_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf)
+    DOXIGEN_CONFIG_OUT=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen-final.conf)
+    WRAPPERS_INCL_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl)
+    WRAPPERS_REG_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl)
 
+    no_rs_cross_compiling {
+        restbed.target = $$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a)
+        restbed.commands = \
+            cd $${RS_SRC_PATH};\
+            git submodule update --init --recommend-shallow supportlibs/restbed;\
+            cd $${RESTBED_SRC_PATH};\
+            git submodule update --init --recommend-shallow dependency/asio;\
+            git submodule update --init --recommend-shallow dependency/catch;\
+            git submodule update --init --recommend-shallow dependency/kashmir;\
+            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
+            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
+            make; make install
+        QMAKE_EXTRA_TARGETS += restbed
+        libretroshare.depends += restbed
+        PRE_TARGETDEPS *= $${restbed.target}
+    }
+
+    PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
+    INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
+    GENERATED_HEADERS += $${WRAPPERS_INCL_FILE}
+
+    jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
+    jsonwrappersincl.commands = \
+        mkdir -p $${JSONAPI_GENERATOR_OUT} && \
+        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
+        echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT} && \
+        echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT} && \
+        doxygen $${DOXIGEN_CONFIG_OUT} && \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    QMAKE_EXTRA_TARGETS += jsonwrappersincl
+    libretroshare.depends += jsonwrappersincl
+    PRE_TARGETDEPS *= $${WRAPPERS_INCL_FILE}
+
+    jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
+    jsonwrappersreg.depends = jsonwrappersincl
+    QMAKE_EXTRA_TARGETS += jsonwrappersreg
+    libretroshare.depends += jsonwrappersreg
+    PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}
+
+    # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
+    QMAKE_EXTRA_TARGETS += libretroshare
+
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h
+    SOURCES += jsonapi/jsonapi.cpp
+}
+
+rs_deep_search {
+    HEADERS += deep_search/deep_search.h
+}
 
 ###########################################################################################################
 # OLD CONFIG OPTIONS.
@@ -907,12 +965,9 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
-## ifaddrs is missing on Android to add them don't use the one from
-## https://github.com/morristech/android-ifaddrs
-## because it crash, use QNetworkInterface from Qt instead
-    CONFIG *= qt
-    QT *= network
-
+## TODO: This probably disable largefile support and maybe is not necessary with
+## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
+## compatibility header
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"

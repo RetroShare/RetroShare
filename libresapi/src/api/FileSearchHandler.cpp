@@ -50,7 +50,7 @@ FileSearchHandler::~FileSearchHandler()
     mStateTokenServer->discardToken(mSearchesStateToken);
 }
 
-void FileSearchHandler::notifyTurtleSearchResult(uint32_t search_id, const std::list<TurtleFileInfo>& files)
+void FileSearchHandler::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id, const std::list<TurtleFileInfo>& files)
 {
 	RS_STACK_MUTEX(mMtx); // ********** LOCKED **********
     std::map<uint32_t, Search>::iterator mit = mSearches.find(search_id);

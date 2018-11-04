@@ -3,7 +3,7 @@
 #include <pqi/authgpg.h>
 #include "rsloginhandler.h"
 #include "util/rsdir.h"
-#include "rsaccounts.h"
+#include "retroshare/rsinit.h"
 
 //#define DEBUG_RSLOGINHANDLER 1
 
@@ -31,7 +31,7 @@ bool RsLoginHandler::checkAndStoreSSLPasswdIntoGPGFile(
 	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
 	            getSSLPasswdFileName(ssl_id).c_str(), "r");
 
-	if(sslPassphraseFile != NULL)	// already have it.
+	if(sslPassphraseFile)	// already have it.
 	{
 		fclose(sslPassphraseFile);
 		return true ;
@@ -52,7 +52,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 	FILE *sslPassphraseFile = RsDirUtil::rs_fopen(
 	            getSSLPasswdFileName(ssl_id).c_str(), "r");
 
-	if (sslPassphraseFile == NULL)
+	if (!sslPassphraseFile)
 	{
 		std::cerr << "No password provided, and no sslPassphraseFile : "
 		          << getSSLPasswdFileName(ssl_id).c_str() << std::endl;
@@ -91,7 +91,7 @@ bool RsLoginHandler::getSSLPasswdFromGPGFile(const RsPeerId& ssl_id,std::string&
 
 std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
+	return RsAccounts::AccountKeysDirectory() + "/" + "ssl_passphrase.pgp";
 }
 
 #ifdef RS_AUTOLOGIN
@@ -117,8 +117,9 @@ const SecretSchema *libsecret_get_schema(void)
 	    "org.Retroshare.Password", SECRET_SCHEMA_NONE,
 	    {
 	        {  "RetroShare SSL Id", SECRET_SCHEMA_ATTRIBUTE_STRING },
-	        {  "NULL", (SecretSchemaAttributeType)0 },
-	    }
+	        {  "NULL", static_cast<SecretSchemaAttributeType>(0) },
+	    },
+	    0,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr
 	};
 	return &the_schema;
 }
@@ -240,18 +241,18 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	std::cerr << "Using attribute: " << ssl_id << std::endl;
 #endif
 
-	GError *error = NULL;
-	gchar *password = secret_password_lookup_sync (libsecret_get_schema(), NULL, &error,
+	GError *error = nullptr;
+	gchar *password = secret_password_lookup_sync (libsecret_get_schema(), nullptr, &error,
 	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
 	                                               NULL);
 
-	if (error != NULL) {
+	if (error) {
 		g_error_free (error);
 #ifdef DEBUG_RSLOGINHANDLER
 		std::cerr << "Could not get passwd using libsecret: error" << std::endl;
 #endif
 		return false;
-	} else if (password == NULL) {
+	} else if (!password) {
 		/* password will be null, if no matching password found */
 #ifdef DEBUG_RSLOGINHANDLER
 		std::cerr << "Could not get passwd using libsecret: not found" << std::endl;
@@ -267,7 +268,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #ifdef DEBUG_RSLOGINHANDLER
 	std::cerr << "Could not get passwd from gnome keyring: unknown" << std::endl;
 #endif
-	return false;
+	//return false; //Never used returned before
 #else
 	/******************** OSX KeyChain stuff *****************************/
 #ifdef __APPLE__
@@ -440,7 +441,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #endif
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	return false;
+	//return false; //never used
 }
 
 
@@ -465,15 +466,15 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 #elif defined(HAS_LIBSECRET)
 	// do synchronous store
 
-	GError *error = NULL;
+	GError *error = nullptr;
 	secret_password_store_sync (libsecret_get_schema(), SECRET_COLLECTION_DEFAULT,
-	                            (gchar*)("RetroShare password for SSL Id " + ssl_id.toStdString()).c_str(),
-	                            (gchar*)ssl_passwd.c_str(),
-	                            NULL, &error,
+	                            static_cast<const gchar*>(("RetroShare password for SSL Id " + ssl_id.toStdString()).c_str()),
+	                            static_cast<const gchar*>(ssl_passwd.c_str()),
+	                            nullptr, &error,
 	                            "RetroShare SSL Id", ssl_id.toStdString().c_str(),
 	                            NULL);
 
-	if (error != NULL) {
+	if (error) {
 		g_error_free (error);
 		std::cerr << "Could not store passwd using libsecret" << std::endl;
 		return false;
@@ -624,10 +625,10 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	free(pbDataInput);
 	free(pbDataEnt);
 	LocalFree(DataOut.pbData);
+	return false;
 #endif
 	/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
 
-	return false;
 #endif
 }
 
@@ -647,12 +648,12 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 #elif defined(HAS_LIBSECRET)
 	// do synchronous clear
 
-	GError *error = NULL;
-	gboolean removed = secret_password_clear_sync (libsecret_get_schema(), NULL, &error,
+	GError *error = nullptr;
+	gboolean removed = secret_password_clear_sync (libsecret_get_schema(), nullptr, &error,
 	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
 	                                               NULL);
 
-	if (error != NULL) {
+	if (error) {
 		g_error_free (error);
 		std::cerr << "Could not clearpasswd for SSLID " << ssl_id << " using libsecret: error" << std::endl;
 		return false ;
@@ -755,7 +756,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 
 std::string RsLoginHandler::getAutologinFileName(const RsPeerId& /*ssl_id*/)
 {
-	return rsAccounts->PathAccountKeysDirectory() + "/" + "help.dta" ;
+	return RsAccounts::AccountKeysDirectory() + "/" + "help.dta" ;
 }
 
 #endif // RS_AUTOLOGIN

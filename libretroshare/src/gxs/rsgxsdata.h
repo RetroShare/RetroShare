@@ -24,9 +24,9 @@
 
 #include <string>
 
-#include <retroshare/rstypes.h>
+#include "retroshare/rstypes.h"
 #include "serialiser/rstlvkeys.h"
-
+#include "util/rstime.h"
 #include "rsitems/rsgxsitems.h"
 
 struct RsGroupMetaData;
@@ -110,8 +110,8 @@ public:
 
     RsTlvKeySignatureSet signSet;
     std::string mMsgName;
-    time_t      mPublishTs;
-    uint32_t    mMsgFlags; // Whats this for?
+    rstime_t      mPublishTs;
+    uint32_t    mMsgFlags; // used by some services (e.g. by forums to store message moderation flags)
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
@@ -119,7 +119,7 @@ public:
     std::string mServiceString;
     uint32_t    mMsgStatus;
     uint32_t    mMsgSize;
-    time_t      mChildTs;
+    rstime_t      mChildTs;
     uint32_t recvTS;
     RsFileHash mHash;
     bool validated;

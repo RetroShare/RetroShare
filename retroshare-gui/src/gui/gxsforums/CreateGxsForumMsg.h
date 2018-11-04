@@ -36,7 +36,7 @@ class CreateGxsForumMsg : public QDialog, public TokenResponse
 	Q_OBJECT
 
 public:
-        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId &moId, const RsGxsId &posterId = RsGxsId());
+        CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId &moId, const RsGxsId &posterId = RsGxsId(),bool isModerating=false);
 	~CreateGxsForumMsg();
 
 	void newMsg(); /* cleanup */
@@ -75,6 +75,7 @@ private:
 	bool mOrigMsgLoaded;
 	bool mForumMetaLoaded;
 	bool mForumCircleLoaded ;
+    bool mIsModerating;			// means that the msg has a orig author Id that is not the Id of the author
 
 	RsGxsForumMsg mParentMsg;
 	RsGxsForumMsg mOrigMsg;

@@ -182,11 +182,13 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/) const
+QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/, QString& additional_info) const
 {
     DistantChatPeerInfo tinfo;
 
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+	additional_info = QString("Identity ID: ") + QString::fromStdString(tinfo.to_id.toStdString());
 
     RsIdentityDetails details  ;
     if(rsIdentity->getIdDetails(tinfo.to_id,details))

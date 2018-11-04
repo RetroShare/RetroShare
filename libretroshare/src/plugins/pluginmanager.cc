@@ -34,7 +34,7 @@
 
 #include <rsserver/p3face.h>
 #include <util/rsdir.h>
-#include <util/rsversioninfo.h>
+#include <retroshare/rsversion.h>
 #include <util/folderiterator.h>
 #include <ft/ftserver.h>
 #include <retroshare/rsplugin.h>
@@ -351,7 +351,6 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name,bool first_time)
 
 	std::cerr << "    -> plugin revision number: " << pinfo.svn_revision << std::endl;
 	std::cerr << "       plugin API number     : " << std::hex << pinfo.API_version << std::dec << std::endl;
-	std::cerr << "       retroshare svn  number: " << RsUtil::retroshareRevision() << std::endl;
 
 	// Check that the plugin provides a svn revision number and a API number
 	//
@@ -422,7 +421,7 @@ RsServiceControl *RsPluginManager::getServiceControl() const
 	assert(_service_control);
 	return _service_control ;
 }
-void RsPluginManager::slowTickPlugins(time_t seconds)
+void RsPluginManager::slowTickPlugins(rstime_t seconds)
 {
 	for(uint32_t i=0;i<_plugins.size();++i)
 		if(_plugins[i].plugin != NULL && _plugins[i].plugin->rs_cache_service() != NULL && (seconds % _plugins[i].plugin->rs_cache_service()->tickDelay() ))

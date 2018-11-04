@@ -224,7 +224,7 @@ class RsGRouterMatrixTrackItem: public RsGRouterItem
 		//
 		RsGxsMessageId message_id ;
 		RsPeerId provider_id ;
-		time_t time_stamp ;
+		rstime_t time_stamp ;
 };
 class RsGRouterMatrixFriendListItem: public RsGRouterItem
 {

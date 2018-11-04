@@ -51,7 +51,8 @@ p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
                           RsNetworkExchangeService *nes, RsGixs* gixs ) :
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
                    RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
-    RsGxsForums(this), mGenToken(0), mGenActive(false), mGenCount(0)
+    RsGxsForums(static_cast<RsGxsIface&>(*this)), mGenToken(0),
+    mGenActive(false), mGenCount(0)
 {
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
@@ -109,7 +110,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsForumsConfigSerializer : public RsServiceSerializer
@@ -151,7 +152,7 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
@@ -486,12 +487,12 @@ void p3GxsForums::dummy_tick()
 		std::cerr << std::endl;
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
-		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status != RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3GxsForums::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			if (status == RsTokenService::FAILED)
 			{
 				std::cerr << "p3GxsForums::dummy_tick() generateDummyMsgs() FAILED";
 				std::cerr << std::endl;

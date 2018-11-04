@@ -101,7 +101,7 @@ class p3Notify: public RsNotify
 		void notifyChatLobbyTimeShift         (int                /* time_shift*/) ;
 		void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) ;
 		void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) ;
-		void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) ;
+		void notifyTurtleSearchResult         (const RsPeerId &pid, uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) ;
 #warning MISSING CODE HERE
 //		void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) ;
 		void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) ;

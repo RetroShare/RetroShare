@@ -20,7 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "rsitems/rsgxsreputationitems.h"
 

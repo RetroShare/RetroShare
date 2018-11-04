@@ -118,8 +118,10 @@ void PopupChatDialog::showDialog(uint chatflags)
 //
 void PopupChatDialog::chatStatusChanged(const ChatId &chat_id, const QString& statusString)
 {
+	QString additional_info ;
+
     if (mChatId.isSameEndpoint(chat_id)) {
-        ui.chatWidget->updateStatusString(getPeerName(chat_id) + " %1", statusString);
+        ui.chatWidget->updateStatusString(getPeerName(chat_id,additional_info) + " %1", statusString);
 	}
 }
 
@@ -129,8 +131,9 @@ void PopupChatDialog::addChatMsg(const ChatMessage &msg)
 	if (cw) {
         QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
         QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
+		QString additional_info ;
         QString message = QString::fromUtf8(msg.msg.c_str());
-        QString name = msg.incoming? getPeerName(msg.chat_id): getOwnName();
+        QString name = msg.incoming? getPeerName(msg.chat_id,additional_info): getOwnName();
 
         cw->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
 	}

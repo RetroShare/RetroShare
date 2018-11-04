@@ -100,15 +100,20 @@ void RsTurtleGenericSearchRequestItem::serial_process(RsGenericSerializer::Seria
 }
 RsTurtleSearchRequestItem *RsTurtleGenericSearchRequestItem::clone() const
 {
-    RsTurtleGenericSearchRequestItem *sr = new RsTurtleGenericSearchRequestItem ;
-
-    memcpy(sr,this,sizeof(RsTurtleGenericSearchRequestItem)) ;
-
-    sr->search_data = (unsigned char*)rs_malloc(search_data_len) ;
-    memcpy(sr->search_data,search_data,search_data_len) ;
-
-    return sr ;
+    return new RsTurtleGenericSearchRequestItem(*this) ;
 }
+
+RsTurtleGenericSearchRequestItem::RsTurtleGenericSearchRequestItem(const RsTurtleGenericSearchRequestItem& it)
+		: RsTurtleSearchRequestItem(it)
+{
+	search_data_len = it.search_data_len ;
+    search_data = (unsigned char*)rs_malloc(it.search_data_len) ;
+	service_id = it.service_id ;
+	request_type = it.request_type ;
+
+    memcpy(search_data,it.search_data,it.search_data_len) ;
+}
+
 template<> uint32_t RsTypeSerializer::serial_size(const RsRegularExpression::LinearizedExpression& r)
 {
     uint32_t s = 0 ;
@@ -193,13 +198,20 @@ RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(RsRegularExpression::Linearized
 void RsTurtleFTSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
-    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+
+	// This depth was previously a member of SearchResult parent class that was set to be always 0. It's removed, but we have to stay backward compatible.
+	uint16_t depth_retrocompat_unused_placeholder = 0 ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth_retrocompat_unused_placeholder,"depth") ;
+
     RsTypeSerializer::serial_process          (j,ctx,result    ,"result") ;
 }
 void RsTurtleGenericSearchResultItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,request_id,"request_id") ;
-    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth     ,"depth") ;
+
+	// This depth was previously a member of SearchResult parent class that was set to be always 0. It's removed, but we have to stay backward compatible.
+	uint16_t depth_retrocompat_unused_placeholder = 0 ;
+    RsTypeSerializer::serial_process<uint16_t>(j,ctx,depth_retrocompat_unused_placeholder,"depth") ;
 
     RsTypeSerializer::TlvMemBlock_proxy prox(result_data,result_data_len) ;
     RsTypeSerializer::serial_process(j,ctx,prox,"search_data") ;
@@ -212,58 +224,8 @@ RsTurtleSearchResultItem *RsTurtleGenericSearchResultItem::duplicate() const
     memcpy(sr->result_data,result_data,result_data_len) ;
     sr->result_data_len = result_data_len ;
     sr->request_id = request_id ;
-    sr->depth = depth ;
     return sr ;
 }
-
-template<> uint32_t RsTypeSerializer::serial_size(const TurtleFileInfo& i)
-{
-    uint32_t s = 0 ;
-
-    s += 8 ; // size
-    s += i.hash.SIZE_IN_BYTES ;
-    s += GetTlvStringSize(i.name) ;
-
-    return s;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,TurtleFileInfo& i)
-{
-    uint32_t saved_offset = offset ;
-    bool ok = true ;
-
-	ok &= getRawUInt64(data, size, &offset, &i.size); 					 // file size
-	ok &= i.hash.deserialise(data, size, offset);                        // file hash
-	ok &= GetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const TurtleFileInfo& i)
-{
-	uint32_t saved_offset = offset ;
-    bool ok = true ;
-
-	ok &= setRawUInt64(data, size, &offset, i.size); 					 // file size
-	ok &= i.hash.serialise(data, size, offset);					         // file hash
-	ok &= SetTlvString(data, size, &offset, TLV_TYPE_STR_NAME, i.name);  // file name
-
-	if(!ok)
-		offset = saved_offset ;
-
-	return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const TurtleFileInfo& i)
-{
-    std::cerr << "  [FileInfo  ] " << n << " size=" << i.size << " hash=" << i.hash << ", name=" << i.name << std::endl;
-}
-
-RS_TYPE_SERIALIZER_TO_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
-RS_TYPE_SERIALIZER_FROM_JSON_NOT_IMPLEMENTED_DEF(TurtleFileInfo)
 
 void RsTurtleOpenTunnelItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {

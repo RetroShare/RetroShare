@@ -34,6 +34,7 @@ std::string BinToHex(const char *arr, const uint32_t len);
 // proxy function. When max_len>0 and len>max_len, only the first "max_len" bytes are writen to the string and "..." is happened.
 
 std::string BinToHex(const unsigned char *arr, const uint32_t len, uint32_t max_len=0);
+bool HexToBin(const std::string& input,unsigned char *data, const uint32_t len);
 std::string NumberToString(uint64_t n, bool hex=false);
 std::string HashId(const std::string &id, bool reverse = false);
 std::vector<uint8_t> BinToSha256(const std::vector<uint8_t> &in);

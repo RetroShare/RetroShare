@@ -47,8 +47,8 @@ public:
     {
     public:
         FileEntry() : file_size(0), file_modtime(0) {}
-        FileEntry(const std::string& name,uint64_t size,time_t modtime) : file_name(name),file_size(size),file_modtime(modtime) {}
-        FileEntry(const std::string& name,uint64_t size,time_t modtime,const RsFileHash& hash) : file_name(name),file_size(size),file_modtime(modtime),file_hash(hash) {}
+        FileEntry(const std::string& name,uint64_t size,rstime_t modtime) : file_name(name),file_size(size),file_modtime(modtime) {}
+        FileEntry(const std::string& name,uint64_t size,rstime_t modtime,const RsFileHash& hash) : file_name(name),file_size(size),file_modtime(modtime),file_hash(hash) {}
 
         virtual uint32_t type() const { return FileStorageNode::TYPE_FILE ; }
         virtual ~FileEntry() {}
@@ -56,7 +56,7 @@ public:
         // local stuff
         std::string file_name ;
         uint64_t    file_size ;
-        time_t      file_modtime;
+        rstime_t      file_modtime;
         RsFileHash  file_hash ;
     };
 
@@ -76,9 +76,9 @@ public:
         std::vector<DirectoryStorage::EntryIndex> subdirs ;
         std::vector<DirectoryStorage::EntryIndex> subfiles ;
 
-        time_t dir_modtime;
-        time_t dir_most_recent_time;// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
-        time_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
+        rstime_t dir_modtime;
+        rstime_t dir_most_recent_time;// recursive most recent modification time, including files and subdirs in the entire hierarchy below.
+        rstime_t dir_update_time;		// last time the information was updated for that directory. Includes subdirs indexes and subfile info.
     };
 
     // class stuff
@@ -95,18 +95,18 @@ public:
     bool checkIndex(DirectoryStorage::EntryIndex indx,uint8_t type) const;
     bool updateSubFilesList(const DirectoryStorage::EntryIndex& indx,const std::map<std::string,DirectoryStorage::FileTS>& subfiles,std::map<std::string,DirectoryStorage::FileTS>& new_files);
     bool updateHash(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash);
-    bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time);
-    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, time_t most_recent_time, time_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<FileEntry> &subfiles_array);
+    bool updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const rstime_t modf_time);
+    bool updateDirEntry(const DirectoryStorage::EntryIndex& indx, const std::string& dir_name, rstime_t most_recent_time, rstime_t dir_modtime, const std::vector<RsFileHash> &subdirs_hash, const std::vector<FileEntry> &subfiles_array);
 
     // TS get/set functions. Take one of the class members as argument.
 
-    bool getTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* ) const;
-    bool setTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* ) ;
+    bool getTS(const DirectoryStorage::EntryIndex& index,rstime_t& TS,rstime_t DirEntry::* ) const;
+    bool setTS(const DirectoryStorage::EntryIndex& index,rstime_t& TS,rstime_t DirEntry::* ) ;
 
     // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
     // Also keeps the high level statistics up to date.
 
-    time_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index, bool &unfinished_files_present);
+    rstime_t recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index, bool &unfinished_files_present);
 
     // hash stuff
 

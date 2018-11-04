@@ -359,7 +359,7 @@ void p3ZeroConf::checkServiceFDs()
 	{
 		locked_checkFD(mResolveRef);
 
-		time_t age = time(NULL) - mResolveStatusTS;
+		rstime_t age = time(NULL) - mResolveStatusTS;
 		if (age > ZC_MAX_RESOLVE_TIME)
 		{
 			std::cerr << "p3ZeroConf::checkServiceFDs() Killing very old Resolve request";
@@ -374,7 +374,7 @@ void p3ZeroConf::checkServiceFDs()
 	{
 		locked_checkFD(mQueryRef);
 
-		time_t age = time(NULL) - mQueryStatusTS;
+		rstime_t age = time(NULL) - mQueryStatusTS;
 		if (age > ZC_MAX_QUERY_TIME)
 		{
 			std::cerr << "p3ZeroConf::checkServiceFDs() Killing very old Query request";
@@ -494,7 +494,7 @@ int p3ZeroConf::checkLocationResults()
 	std::cerr << "sslid = " << lr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now);
 	return 1;
 }
@@ -555,7 +555,7 @@ int p3ZeroConf::checkQueryResults()
 	std::cerr << "sslid = " << qr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	uint32_t flags = RS_CB_FLAG_MODE_TCP;
 	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
 	struct sockaddr_storage dummyProxyAddr, dummySrcAddr;
@@ -1370,7 +1370,7 @@ class RsZCBrowseDetails
 	RsZCBrowseDetails();
 
 	uint32_t mBrowseState;
-	time_t   mBrowseUpdate;
+	rstime_t   mBrowseUpdate;
 
 	uint32_t mBrowseInterfaceIndex;
 	std::string mBrowserServiceName;
@@ -1398,7 +1398,7 @@ class RsZCPeerDetails
 	/* Browse Info */
 
 	uint32_t mBrowseState;
-	time_t   mBrowseUpdate;
+	rstime_t   mBrowseUpdate;
 
 	uint32_t mBrowseInterfaceIndex;
 	std::string mBrowserServiceName;

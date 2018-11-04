@@ -149,7 +149,7 @@ static QStringList getBaseDirList()
     // Search chat styles in config dir and data dir (is application dir for portable)
     QStringList baseDirs;
     baseDirs.append(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str()));
-    baseDirs.append(QString::fromUtf8(RsAccounts::DataDirectory().c_str()));
+    baseDirs.append(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str()));
 
     return baseDirs;
 }

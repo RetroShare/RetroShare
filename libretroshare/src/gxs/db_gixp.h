@@ -73,7 +73,7 @@ class gixp::profile
 	gxip::keyref mKeyId;
 
 	std::string mName;
-	time_t      mTimestamp;   /* superseded by newer timestamps */
+	rstime_t      mTimestamp;   /* superseded by newer timestamps */
 	uint32_t    mProfileType; /* ANONYMOUS (no name, self-signed), PSEUDONYM (self-signed), GPG (name=gpgid, gpgsigned), REVOCATION?? */ 
 	gpp::permissions mPermissions;
 

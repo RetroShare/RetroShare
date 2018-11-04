@@ -42,11 +42,11 @@ bool GxsResponseTask::doWork(Request &req, Response &resp)
         for(std::vector<uint32_t>::iterator vit = mWaitingTokens.begin(); vit != mWaitingTokens.end(); ++vit)
         {
             uint8_t status = mTokenService->requestStatus(*vit);
-            if(status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+            if(status != RsTokenService::COMPLETE)
             {
                 ready = false;
             }
-            if(status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+            if(status == RsTokenService::FAILED)
             {
                 std::cerr   << "GxsResponseTask::doWork() Error: token failed. aborting." << std::endl;
                 resp.setFail("GxsResponseTask::doWork() Error: token failed.");

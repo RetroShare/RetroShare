@@ -31,6 +31,7 @@
 #include "RsAutoUpdatePage.h"
 #include "ui_GxsTransportStatistics.h"
 #include "gui/gxs/RsGxsUpdateBroadcastPage.h"
+#include "util/rstime.h"
 
 class GxsTransportStatisticsWidget ;
 class UIStateHelper;
@@ -55,7 +56,7 @@ public:
 	bool subscribed ;
 	int  popularity ;
 
-	time_t last_publish_TS;
+	rstime_t last_publish_TS;
 
     std::map<RsGxsMessageId,RsMsgMetaData> messages_metas ;
 };

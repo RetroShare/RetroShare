@@ -23,7 +23,7 @@
 #define RS_UTIL_MEM_CACHE
 
 #include <map>
-#include <time.h>
+#include "util/rstime.h"
 #include <iostream>
 #include <inttypes.h>
 #include <string>
@@ -73,7 +73,7 @@ public:
     	uint32_t size() const { return mDataMap.size() ; }
 private:
 
-	bool update_lrumap(const Key &key, time_t old_ts, time_t new_ts);
+	bool update_lrumap(const Key &key, rstime_t old_ts, rstime_t new_ts);
 	bool discard_LRU(int count_to_clear);
 
 	// internal class.
@@ -81,16 +81,16 @@ private:
 	{
 	public:
 		cache_data() { return; }
-		cache_data(Key in_key, Value in_data, time_t in_ts)
+		cache_data(Key in_key, Value in_data, rstime_t in_ts)
 		        :key(in_key), data(in_data), ts(in_ts) { return; }
 		Key key;
 		Value data;
-		time_t ts;
+		rstime_t ts;
 	};
 
 
 	std::map<Key, cache_data > mDataMap;
-	std::multimap<time_t, Key> mLruMap;
+	std::multimap<rstime_t, Key> mLruMap;
 	uint32_t mDataCount;
 	uint32_t mMaxSize;
 	std::string mName;
@@ -170,8 +170,8 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::fetch(const Key &k
 	data = it->second.data;
 
 	/* update ts on data */
-        time_t old_ts = it->second.ts;
-        time_t new_ts = time(NULL);
+        rstime_t old_ts = it->second.ts;
+        rstime_t new_ts = time(NULL);
         it->second.ts = new_ts;
 
         update_lrumap(key, old_ts, new_ts);
@@ -209,8 +209,8 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::erase(const Key &k
 
 
 	/* get timestamps */
-        time_t old_ts = it->second.ts;
-        time_t new_ts = 0;
+        rstime_t old_ts = it->second.ts;
+        rstime_t new_ts = 0;
 
 	// remove from lru.
 	mDataMap.erase(it);
@@ -241,7 +241,7 @@ template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &k
 #endif // DEBUG_RSMEMCACHE
 
 		// insert operation.
-		time_t new_ts = 0;
+		rstime_t new_ts = 0;
 		Value data;
 		mDataMap[key] = cache_data(key, data, new_ts);
         	mDataCount++;
@@ -259,8 +259,8 @@ template<class Key, class Value> Value &RsMemCache<Key, Value>::ref(const Key &k
 #endif // DEBUG_RSMEMCACHE
 
 		/* update ts on data */
-        	time_t old_ts = it->second.ts;
-        	time_t new_ts = time(NULL);
+        	rstime_t old_ts = it->second.ts;
+        	rstime_t new_ts = time(NULL);
         	it->second.ts = new_ts;
 
         	update_lrumap(key, old_ts, new_ts);
@@ -279,8 +279,8 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &k
 #endif // DEBUG_RSMEMCACHE
 
 	/* update lrumap entry */
-        time_t old_ts = 0;
-        time_t new_ts = time(NULL);
+        rstime_t old_ts = 0;
+        rstime_t new_ts = time(NULL);
 
 	// For consistency
 	typename std::map<Key, cache_data>::const_iterator it;
@@ -309,7 +309,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::store(const Key &k
 }
 
 
-template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(const Key &key, time_t old_ts, time_t new_ts)
+template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(const Key &key, rstime_t old_ts, rstime_t new_ts)
 {
 	if (old_ts == 0)
 	{
@@ -324,9 +324,9 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::update_lrumap(cons
 	}
 
 	/* find old entry */
-	typename std::multimap<time_t, Key>::iterator mit;
-	typename std::multimap<time_t, Key>::iterator sit = mLruMap.lower_bound(old_ts);
-	typename std::multimap<time_t, Key>::iterator eit = mLruMap.upper_bound(old_ts);
+	typename std::multimap<rstime_t, Key>::iterator mit;
+	typename std::multimap<rstime_t, Key>::iterator sit = mLruMap.lower_bound(old_ts);
+	typename std::multimap<rstime_t, Key>::iterator eit = mLruMap.upper_bound(old_ts);
 
         for(mit = sit; mit != eit; ++mit)
 	{
@@ -405,7 +405,7 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 {
 	while(count_to_clear > 0)
 	{
-		typename std::multimap<time_t, Key>::iterator mit = mLruMap.begin();
+		typename std::multimap<rstime_t, Key>::iterator mit = mLruMap.begin();
 		if (mit != mLruMap.end())
 		{
 			Key key = mit->second;
@@ -451,8 +451,8 @@ template<class Key, class Value> bool RsMemCache<Key, Value>::discard_LRU(int co
 // These aren't templated functions.
 template<class Key, class Value> void RsMemCache<Key, Value>::printStats(std::ostream &out)
 {
-	typename std::multimap<time_t, Key>::iterator mit = mLruMap.begin();
-	time_t age = 0;
+	typename std::multimap<rstime_t, Key>::iterator mit = mLruMap.begin();
+	rstime_t age = 0;
 	if (mit != mLruMap.end())
 	{
 		age = time(NULL) - mit->first;

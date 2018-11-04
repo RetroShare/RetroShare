@@ -128,7 +128,7 @@ static bool StrContains( const std::string & str1, const std::string & str2,
 }
 
 
-std::string StringExpression::toStdString(const std::string& varstr) const
+std::string StringExpression::toStdStringWithParam(const std::string& varstr) const
 {
 	std::string strlist ;
 	for (auto iter = terms.begin(); iter != terms.end(); ++iter )

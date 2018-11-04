@@ -26,8 +26,10 @@
 #include "retroshare/rstypes.h"
 #include "serialiser/rsbaseserial.h"
 #include "util/rsnet.h"
+#include "util/rstime.h"
 
 #include <iostream>
+#include <cstdint>
 
 /* UInt8 get/set */
 
@@ -244,9 +246,10 @@ bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string
 	}
 
 	/* check there is space for string */
-    	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
+	if(len > size || size-len < *offset) // better than if(size < *offset + len) because it avoids integer overflow
 	{
-                std::cerr << "getRawString() not enough size" << std::endl;
+		std::cerr << "getRawString() not enough size" << std::endl;
+		print_stacktrace();
 		return false;
 	}
 	uint8_t *buf = &(((uint8_t *) data)[*offset]);
@@ -286,15 +289,23 @@ bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string
 	return true;
 }
 
-bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,time_t& t)
+bool getRawTimeT(const void *data,uint32_t size,uint32_t *offset,rstime_t& t)
 {
-	uint64_t T ;
-	bool res = getRawUInt64(data,size,offset,&T) ;
-	t = T ;
+	uint64_t T;
+	bool res = getRawUInt64(data,size,offset,&T);
+	t = T;
 
-	return res ;
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
+	return res;
 }
-bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& t)
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& t)
 {
+	if(t < 0) // [[unlikely]]
+		std::cerr << __PRETTY_FUNCTION__ << " got a negative time: " << t
+		          << " this seems fishy, report to the developers!" << std::endl;
+
 	return setRawUInt64(data,size,offset,t) ;
 }

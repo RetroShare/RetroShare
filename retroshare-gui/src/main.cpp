@@ -52,10 +52,12 @@
 #	include "gui/settings/WebuiPage.h"
 #endif
 
-#ifdef RETROTOR
-#	include "TorControl/TorManager.h"
-#	include "TorControl/TorControlWindow.h"
-#endif
+#ifdef RS_JSONAPI
+#	include "gui/settings/JsonApiPage.h"
+#endif // RS_JSONAPI
+
+#include "TorControl/TorManager.h"
+#include "TorControl/TorControlWindow.h"
 
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
@@ -350,51 +352,58 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	SoundManager::create();
 
-#ifdef RETROTOR
-	// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
+    bool is_hidden_node = false;
+    bool is_auto_tor = false ;
+    bool is_first_time = false ;
 
-	QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
+    RsAccounts::getCurrentAccountOptions(is_hidden_node,is_auto_tor,is_first_time);
 
-	Tor::TorManager *torManager = Tor::TorManager::instance();
-	torManager->setDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
-	torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
-
-	RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
-
-	torManager->setupHiddenService();
-
-	if(! torManager->start() || torManager->hasError())
+    if(is_auto_tor)
 	{
-		QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
-		return 1 ;
-	}
+		// Now that we know the Tor service running, and we know the SSL id, we can make sure it provides a viable hidden service
 
-	{
-		TorControlDialog tcd(torManager) ;
-		QString error_msg ;
-		tcd.show();
+		QString tor_hidden_service_dir = QString::fromStdString(RsAccounts::AccountDirectory()) + QString("/hidden_service/") ;
 
-		while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->setTorDataDirectory(Rshare::dataDirectory() + QString("/tor/"));
+		torManager->setHiddenServiceDirectory(tor_hidden_service_dir);	// re-set it, because now it's changed to the specific location that is run
+
+		RsDirUtil::checkCreateDirectory(std::string(tor_hidden_service_dir.toUtf8())) ;
+
+		torManager->setupHiddenService();
+
+		if(! torManager->start() || torManager->hasError())
 		{
-			QCoreApplication::processEvents();
-			rstime::rs_usleep(0.2*1000*1000) ;
-
-			if(!error_msg.isNull())
-			{
-				QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
-				return 1;
-			}
-		}
-
-		tcd.hide();
-
-		if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
-		{
-			QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+			QMessageBox::critical(NULL,QObject::tr("Cannot start Tor Manager!"),QObject::tr("Tor cannot be started on your system: \n\n")+torManager->errorMessage()) ;
 			return 1 ;
 		}
+
+		{
+			TorControlDialog tcd(torManager) ;
+			QString error_msg ;
+			tcd.show();
+
+			while(tcd.checkForTor(error_msg) != TorControlDialog::TOR_STATUS_OK || tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)	// runs until some status is reached: either tor works, or it fails.
+			{
+				QCoreApplication::processEvents();
+				rstime::rs_usleep(0.2*1000*1000) ;
+
+				if(!error_msg.isNull())
+				{
+					QMessageBox::critical(NULL,QObject::tr("Cannot start Tor"),QObject::tr("Sorry but Tor cannot be started on your system!\n\nThe error reported is:\"")+error_msg+"\"") ;
+					return 1;
+				}
+			}
+
+			tcd.hide();
+
+			if(tcd.checkForHiddenService() != TorControlDialog::HIDDEN_SERVICE_STATUS_OK)
+			{
+				QMessageBox::critical(NULL,QObject::tr("Cannot start a hidden tor service!"),QObject::tr("It was not possible to start a hidden service.")) ;
+				return 1 ;
+			}
+		}
 	}
-#endif
 
 	QSplashScreen splashScreen(QPixmap(":/images/logo/logo_splash.png")/* , Qt::WindowStaysOnTopHint*/);
 
@@ -410,33 +419,35 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 		return 1;
 	}
 
-#ifdef RETROTOR
-	// Tor works with viable hidden service. Let's use it!
+    if(is_auto_tor)
+	{
+		// Tor works with viable hidden service. Let's use it!
 
-	QString service_id ;
-	QString onion_address ;
-	uint16_t service_port ;
-	uint16_t service_target_port ;
-	uint16_t proxy_server_port ;
-	QHostAddress service_target_address ;
-	QHostAddress proxy_server_address ;
+		QString service_id ;
+		QString onion_address ;
+		uint16_t service_port ;
+		uint16_t service_target_port ;
+		uint16_t proxy_server_port ;
+		QHostAddress service_target_address ;
+		QHostAddress proxy_server_address ;
 
-	torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
-	torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
+		Tor::TorManager *torManager = Tor::TorManager::instance();
+		torManager->getHiddenServiceInfo(service_id,onion_address,service_port,service_target_address,service_target_port);
+		torManager->getProxyServerInfo(proxy_server_address,proxy_server_port) ;
 
-	std::cerr << "Got hidden service info: " << std::endl;
-	std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
-	std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
-	std::cerr << "  service port   : " << service_port << std::endl;
-	std::cerr << "  target port    : " << service_target_port << std::endl;
-	std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
+		std::cerr << "Got hidden service info: " << std::endl;
+		std::cerr << "  onion address  : " << onion_address.toStdString() << std::endl;
+		std::cerr << "  service_id     : " << service_id.toStdString() << std::endl;
+		std::cerr << "  service port   : " << service_port << std::endl;
+		std::cerr << "  target port    : " << service_target_port << std::endl;
+		std::cerr << "  target address : " << service_target_address.toString().toStdString() << std::endl;
 
-	std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
+		std::cerr << "Setting proxy server to " << service_target_address.toString().toStdString() << ":" << service_target_port << std::endl;
 
-	rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
-	rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
-	rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
-#endif
+		rsPeers->setLocalAddress(rsPeers->getOwnId(), service_target_address.toString().toStdString(), service_target_port);
+		rsPeers->setHiddenNode(rsPeers->getOwnId(), onion_address.toStdString(), service_port);
+		rsPeers->setProxyServer(RS_HIDDEN_TYPE_TOR, proxy_server_address.toString().toStdString(),proxy_server_port) ;
+	}
 
 	Rshare::initPlugins();
 
@@ -530,6 +541,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
     WebuiPage::checkStartWebui();
 #endif // ENABLE_WEBUI
 
+#ifdef RS_JSONAPI
+	JsonApiPage::checkStartJsonApi();
+#endif // RS_JSONAPI
+
 	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
 	// passphrase here makes it request for a passphrase when creating the default chat identity.
 
@@ -538,6 +553,10 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;
+
+#ifdef RS_JSONAPI
+	JsonApiPage::checkShutdownJsonApi();
+#endif // RS_JSONAPI
 
 #ifdef ENABLE_WEBUI
 	WebuiPage::checkShutdownWebui();

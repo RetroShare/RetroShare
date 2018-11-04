@@ -27,7 +27,7 @@
 #include <sstream>
 #include <iomanip>
 
-#define TLV_DEBUG 1
+// #define TLV_DEBUG 1
 
 /*!********************************** RsTlvFileBinaryData **********************************/
 

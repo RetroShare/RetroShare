@@ -22,8 +22,7 @@
 #include "rstlvkeyvalue.h"
 #include "rstlvbase.h"
 
-#define TLV_DEBUG 1
-
+// #define TLV_DEBUG 1
 
 void RsTlvKeyValue::TlvClear()
 {

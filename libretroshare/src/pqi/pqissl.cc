@@ -66,7 +66,7 @@ const int PQISSL_UDP_FLAG = 0x02;
 //#define PQISSL_LOG_DEBUG2 	1
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
-static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
+static const rstime_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
 
 static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
@@ -304,25 +304,15 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	if(active)
 	{
 		params.connexion_state = 1 ;
-		params.cipher_name = std::string( SSL_get_cipher(ssl_connection));
-
-		int alg ;
-		int al2 = SSL_get_cipher_bits(ssl_connection,&alg);
-
-		params.cipher_bits_1 = alg ;
-		params.cipher_bits_2 = al2 ;
 
 		char *desc = SSL_CIPHER_description(SSL_get_current_cipher(ssl_connection), NULL, 0);
-		params.cipher_version = std::string(desc).find("TLSv1.2") != std::string::npos ? std::string("TLSv1.2") : std::string("TLSv1");
+		params.cipher_name = std::string(desc);
 		OPENSSL_free(desc);
 	}
 	else
 	{
 		params.connexion_state = 0 ;
 		params.cipher_name.clear() ;
-		params.cipher_bits_1 = 0 ;
-		params.cipher_bits_2 = 0 ;
-		params.cipher_version.clear() ;
 	}
 }
 
@@ -949,8 +939,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
-
+#endif
 			// Then send unreachable message.
 			net_internal_close(sockfd);
 			sockfd=-1;
@@ -961,7 +952,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if (err == ECONNREFUSED)
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
+#endif
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);

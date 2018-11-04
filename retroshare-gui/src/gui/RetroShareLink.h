@@ -43,12 +43,12 @@
 
 #include <stdint.h>
 
-#define RSLINK_PROCESS_NOTIFY_SUCCESS     1 // notify on success
-#define RSLINK_PROCESS_NOTIFY_ERROR       2 // notify on error
-#define RSLINK_PROCESS_NOTIFY_ASK         4 // ask for add the links
-#define RSLINK_PROCESS_NOTIFY_BAD_CHARS   8 // / or \\ characters in a filename
+#define RSLINK_PROCESS_NOTIFY_SUCCESS     0x01u // notify on success
+#define RSLINK_PROCESS_NOTIFY_ERROR       0x02u // notify on error
+#define RSLINK_PROCESS_NOTIFY_ASK         0x04u // ask for add the links
+#define RSLINK_PROCESS_NOTIFY_BAD_CHARS   0x08u // / or \\ characters in a filename
 
-#define RSLINK_PROCESS_NOTIFY_ALL        15
+#define RSLINK_PROCESS_NOTIFY_ALL         0x0Fu
 
 #define RSLINK_SCHEME          "retroshare"
 

@@ -107,16 +107,16 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
-	p3IdService *identities, PgpAuxUtils *pgpUtils)
-	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
-	mIdentities(identities), 
-	mPgpUtils(pgpUtils),
-	mCircleMtx("p3GxsCircles"),
-        mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
-
+p3GxsCircles::p3GxsCircles(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        p3IdService *identities, PgpAuxUtils *pgpUtils) :
+    RsGxsCircleExchange(
+        gds, nes, new RsGxsCircleSerialiser(), RS_SERVICE_GXS_TYPE_GXSCIRCLE,
+        identities, circleAuthenPolicy() ),
+    RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
+    mCircleMtx("p3GxsCircles"),
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
@@ -179,7 +179,7 @@ void	p3GxsCircles::service_tick()
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
     
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
     	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
 	{
 		checkCircleCache();
@@ -1280,7 +1280,7 @@ bool p3GxsCircles::checkCircleCache()
 
 bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
 	{ 
@@ -1653,8 +1653,8 @@ void p3GxsCircles::checkDummyIdData()
 
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
-        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+        if ( (RsTokenService::FAILED == status) ||
+                         (RsTokenService::COMPLETE == status) )
 	{
 		std::vector<RsGxsIdGroup> ids;
 		if (!rsIdentity->getGroupData(mDummyIdToken, ids))

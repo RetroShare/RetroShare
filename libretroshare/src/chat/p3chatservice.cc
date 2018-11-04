@@ -521,12 +521,12 @@ class MsgCounter
 	public:
 		MsgCounter() {}
 
-		void clean(time_t max_time)
+		void clean(rstime_t max_time)
 		{
 			while(!recv_times.empty() && recv_times.front() < max_time)
 				recv_times.pop_front() ;
 		}
-		std::list<time_t> recv_times ;
+		std::list<rstime_t> recv_times ;
 };
 
 void p3ChatService::handleIncomingItem(RsItem *item)

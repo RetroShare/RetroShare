@@ -268,7 +268,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
-    ui.filterComboBox->setCurrentIndex(3);
+    ui.filterComboBox->setCurrentIndex(2);
+
+    if(rsIdentity->nbRegularContacts() > 0)
+    	ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));
@@ -1171,6 +1174,17 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
 
     if(!msgInfo.rspeerid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rspeerid_srcId);
     if(!msgInfo.rsgxsid_srcId.isNull()) msgComposer->addRecipient(MessageComposer::TO, msgInfo.rsgxsid_srcId);
+
+    // make sure the current ID is among the ones the msg was actually sent to.
+    for(auto it(msgInfo.rsgxsid_msgto.begin());it!=msgInfo.rsgxsid_msgto.end();++it)
+        if(rsIdentity->isOwnId(*it))
+        {
+            msgComposer->ui.respond_to_CB->setDefaultId(*it) ;
+            break ;
+        }
+    // Note: another solution is to do
+    //		msgComposer->ui.respond_to_CB->setIdConstraintSet(msgInfo.rsgxsid_msgto);	// always choose one of the destinations to originate the response!
+    // but that prevent any use of IDs tht are not in the destination set to be chosen to author the msg.
 
     if (all)
     {

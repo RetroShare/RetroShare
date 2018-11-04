@@ -31,6 +31,7 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include <gui/RetroShareLink.h>
+#include <gui/connect/ConfCertDialog.h>
 #include <gui/profile/ProfileManager.h>
 #include <gui/statistics/StatisticsWindow.h>
 
@@ -47,6 +48,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 //  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+  connect(ui._includeAllIPs_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
   connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
 
@@ -96,8 +98,15 @@ CryptoPage::~CryptoPage()
 void
 CryptoPage::load()
 {
-    /* Loads ouer default Puplickey */
-    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
+	ui.certplainTextEdit->setPlainText(
+	            QString::fromUtf8(
+	                rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ).c_str()
+                    ) );
+
+    RsPeerDetails detail;
+    rsPeers->getPeerDetails(rsPeers->getOwnId(),detail);
+
+    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
 }
 void
 CryptoPage::copyRSLink()

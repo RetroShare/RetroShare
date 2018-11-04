@@ -30,10 +30,18 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 
 CONFIG *= gxsdistsync
 
+# disabled by the time we fix compilation
+CONFIG *= no_cmark
+
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
 CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
+
+# To disable cmark append the following 
+# assignation to qmake command line "CONFIG+=no_cmark"
+CONFIG *= cmark
+no_cmark:CONFIG -= cmark
 
 # To enable RetroShare plugins append the following
 # assignation to qmake command line "CONFIG+=retroshare_plugins"
@@ -55,6 +63,16 @@ retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
 # qmake command line "CONFIG+=retroshare_qml_app"
 CONFIG *= no_retroshare_qml_app
 retroshare_qml_app:CONFIG -= no_retroshare_qml_app
+
+# To enable RetroShare service append the following assignation to
+# qmake command line "CONFIG+=retroshare_service"
+CONFIG *= no_retroshare_service
+retroshare_service:CONFIG -= no_retroshare_service
+
+# To disable libresapi append the following assignation to qmake command line
+#"CONFIG+=no_libresapi"
+CONFIG *= libresapi
+no_libresapi:CONFIG -= libresapi
 
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
@@ -82,15 +100,6 @@ no_sqlcipher:CONFIG -= sqlcipher
 # line "CONFIG+=rs_autologin"
 CONFIG *= no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
-
-# To build RetroShare Tor only version with automatic hidden node setup append
-#  the following assignation to qmake command line "CONFIG+=retrotor"
-CONFIG *= no_retrotor
-retrotor {
-    CONFIG -= no_retrotor
-    CONFIG *= rs_onlyhiddennode
-    DEFINES *= RETROTOR
-}
 
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
@@ -135,6 +144,38 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 
+# To enable JSON API append the following assignation to qmake command line
+# "CONFIG+=rs_jsonapi"
+CONFIG *= no_rs_jsonapi
+rs_jsonapi:CONFIG -= no_rs_jsonapi
+
+# To disable deep search append the following assignation to qmake command line
+CONFIG *= no_rs_deep_search
+rs_deep_search:CONFIG -= no_rs_deep_search
+
+# Specify host precompiled jsonapi-generator path, appending the following
+# assignation to qmake command line
+# 'JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator'. Required for JSON API
+# cross-compiling
+#JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MAJOR_VERSION=0'
+#RS_MAJOR_VERSION=0
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MINOR_VERSION=6'
+#RS_MINOR_VERSION=6
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_MINI_VERSION=4'
+#RS_MINI_VERSION=4
+
+# Specify RetroShare major version appending the following assignation to qmake
+# command line 'RS_EXTRA_VERSION=""'
+#RS_EXTRA_VERSION=git
+
+
 ###########################################################################################################################################################
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
@@ -177,7 +218,7 @@ rs_v07_changes {
 }
 
 ################################################################################
-## RetroShare qmake functions goes here as all the rest may use them ###########
+## RetroShare qmake functions goes here as all the rest may use them. ##########
 ################################################################################
 
 ## Qt versions older the 5 are not supported anymore, check if the user is
@@ -250,7 +291,6 @@ defineReplace(linkDynamicLibs) {
     return($$retDlib)
 }
 
-
 ################################################################################
 ## Statements and variables that depends on build options (CONFIG) goes here ###
 ################################################################################
@@ -274,6 +314,61 @@ defineReplace(linkDynamicLibs) {
 ## RS_THREAD_LIB String viariable containing the name of the multi threading
 ##   library to use (pthread, "") it usually depend on platform.
 
+isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
+isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
+equals(QMAKE_HOST_SPEC, $$QMAKE_TARGET_SPEC) {
+    CONFIG *= no_rs_cross_compiling
+    CONFIG -= rs_cross_compiling
+} else {
+    CONFIG *= rs_cross_compiling
+    CONFIG -= no_rs_cross_compiling
+    message(Cross-compiling detected QMAKE_HOST_SPEC: $$QMAKE_HOST_SPEC \
+QMAKE_TARGET_SPEC: $$QMAKE_TARGET_SPEC)
+}
+
+defined(RS_MAJOR_VERSION,var):\
+defined(RS_MINOR_VERSION,var):\
+defined(RS_MINI_VERSION,var):\
+defined(RS_EXTRA_VERSION,var) {
+    message("RetroShare version\
+$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
+defined in command line")
+    DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
+    DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
+    DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
+    DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+} else {
+    RS_GIT_DESCRIBE = $$system(git describe)
+    contains(RS_GIT_DESCRIBE, ^v\d+\.\d+\.\d+.*) {
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE, v)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, .)
+
+        RS_MAJOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
+        RS_MINOR_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 1)
+
+        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 2)
+        RS_GIT_DESCRIBE_SPLIT = $$split(RS_GIT_DESCRIBE_SPLIT, -)
+
+        RS_MINI_VERSION = $$member(RS_GIT_DESCRIBE_SPLIT, 0)
+
+        RS_GIT_DESCRIBE_SPLIT = $$member(RS_GIT_DESCRIBE_SPLIT, 1, -1)
+
+        RS_EXTRA_VERSION = $$join(RS_GIT_DESCRIBE_SPLIT,-,-)
+
+        message("RetroShare version\
+$${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
+determined via git")
+
+        DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
+        DEFINES += RS_MINOR_VERSION=$${RS_MINOR_VERSION}
+        DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
+        DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
+    } else {
+        warning("Determining RetroShare version via git failed plese specify it\
+trough qmake command line arguments!")
+    }
+}
+
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
@@ -294,7 +389,12 @@ no_sqlcipher {
 
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
-    warning("You have enabled RetroShare auto-login, this is discouraged. The usage of auto-login on some linux distributions may allow someone having access to your session to steal the SSL keys of your node location and therefore compromise your security")
+    RS_AUTOLOGIN_WARNING_MSG = \
+        You have enabled RetroShare auto-login, this is discouraged. The usage \
+        of auto-login on some linux distributions may allow someone having \
+        access to your session to steal the SSL keys of your node location and \
+        therefore compromise your security
+    warning("$${RS_AUTOLOGIN_WARNING_MSG}")
 }
 
 rs_onlyhiddennode {
@@ -332,6 +432,24 @@ rs_async_chat {
 
 rs_chatserver {
     DEFINES *= RS_CHATSERVER
+}
+
+rs_jsonapi {
+    rs_cross_compiling:!exists($$JSONAPI_GENERATOR_EXE):error("Inconsistent \
+build configuration, cross-compiling JSON API requires JSONAPI_GENERATOR_EXE \
+to contain the path to an host executable jsonapi-generator")
+
+    DEFINES *= RS_JSONAPI
+}
+
+rs_deep_search {
+    DEFINES *= RS_DEEP_SEARCH
+
+	linux {
+	 exists("/usr/include/xapian-1.3") {
+	 	INCLUDEPATH += /usr/include/xapian-1.3
+	 }
+	}
 }
 
 debug {
@@ -444,7 +562,7 @@ win32-g++ {
 
     RS_UPNP_LIB = miniupnpc
 
-    DEFINES *= NOGDI WIN32 WIN32_LEAN_AND_MEAN WINDOWS_SYS _USE_32BIT_TIME_T
+    DEFINES *= NOGDI WIN32 WIN32_LEAN_AND_MEAN WINDOWS_SYS
 
     # This defines the platform to be WinXP or later and is needed for
     #  getaddrinfo (_WIN32_WINNT_WINXP)

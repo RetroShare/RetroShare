@@ -21,7 +21,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <time.h>
+#include "util/rstime.h"
 #include <string.h>
 #include <stdint.h>
 #include <string>
@@ -65,7 +65,7 @@ class ToasterNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
-class RsIdentity;
+struct RsIdentity;
 class RsNxsNetMgr;
 class RsGxsIdExchange;
 class RsGcxs;
@@ -205,7 +205,7 @@ class RsPlugin
 		//
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
-		uint32_t getSvnRevision() const { return RS_REVISION_NUMBER ; } 	// This is read from libretroshare/retroshare/rsversion.h
+		uint32_t getSvnRevision() const { return 0; } 	// This is read from libretroshare/retroshare/rsversion.h
 
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
@@ -236,7 +236,7 @@ class RsPluginHandler
 		virtual void allowAllPlugins(bool b) = 0 ;
 		virtual bool getAllowAllPlugins() const = 0 ;
 
-		virtual void slowTickPlugins(time_t sec) = 0 ;
+		virtual void slowTickPlugins(rstime_t sec) = 0 ;
 
 		virtual const std::string& getLocalCacheDir() const =0;
         virtual const std::string& getRemoteCacheDir() const =0;

@@ -30,7 +30,7 @@
 #include "gxs/rsnxs.h"
 #include "rsgxsnettunnel.h"
 
-#define DEBUG_RSGXSNETTUNNEL 1
+//#define DEBUG_RSGXSNETTUNNEL 1
 
 #define GXS_NET_TUNNEL_NOT_IMPLEMENTED() { std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl; }
 #define GXS_NET_TUNNEL_DEBUG()             std::cerr << time(NULL) << " : GXS_NET_TUNNEL: " << __FUNCTION__ << " : "
@@ -45,9 +45,9 @@ RsGxsNetTunnelService::RsGxsNetTunnelService(): mGxsNetTunnelMtx("GxsNetTunnel")
 {
 	mRandomBias.clear();
 
-	mLastKeepAlive = time(NULL) + (lrand48()%20);	// adds some variance in order to avoid doing all this tasks at once across services
-	mLastAutoWash = time(NULL) + (lrand48()%20);
-	mLastDump = time(NULL) + (lrand48()%20);
+	mLastKeepAlive = time(NULL) + (RSRandom::random_u32()%20);	// adds some variance in order to avoid doing all this tasks at once across services
+	mLastAutoWash = time(NULL) + (RSRandom::random_u32()%20);
+	mLastDump = time(NULL) + (RSRandom::random_u32()%20);
 }
 
 //===========================================================================================================================================//
@@ -61,8 +61,9 @@ const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_KEEP_ALIVE                  = 0x02 
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_RANDOM_BIAS                 = 0x03 ;
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_SUBSTRING     = 0x04 ;
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_REQUEST = 0x05 ;
-const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x06 ;
+// const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x06; // DEPRECATED
 const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_DATA    = 0x07 ;
+const uint8_t  RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY = 0x08;
 
 class RsGxsNetTunnelItem: public RsItem
 {
@@ -216,22 +217,6 @@ public:
 	}
 };
 
-template<>
-void RsTypeSerializer::serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx, RsGxsGroupSummary& gs, const std::string& member_name )
-{
-    RsTypeSerializer::serial_process          (j,ctx,gs.group_id          ,member_name+"-group_id") ;                                        // RsGxsGroupId group_id ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME    ,gs.group_name,member_name+"-group_name") ;               // std::string  group_name ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_COMMENT ,gs.group_description,member_name+"-group_description") ; // std::string  group_description ;
-    RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_VALUE   ,gs.search_context,member_name+"-group_name") ;           // std::string  search_context ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.author_id         ,member_name+"-author_id") ;                              // RsGxsId      author_id ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.publish_ts        ,member_name+"-publish_ts") ;                             // time_t       publish_ts ;
-    RsTypeSerializer::serial_process          (j,ctx,gs.number_of_messages,member_name+"-number_of_messages") ;                     // uint32_t     number_of_messages ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,gs.last_message_ts   ,member_name+"-last_message_ts") ;                        // time_t       last_message_ts ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.sign_flags        ,member_name+"-sign_flags") ;                  		    // uint32_t     sign_flags ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,gs.popularity        ,member_name+"-popularity") ;                  		    // uint32_t     popularity ;
-}
-
-
 //===========================================================================================================================================//
 //                                                     Interface with rest of the software                                                   //
 //===========================================================================================================================================//
@@ -339,8 +324,6 @@ bool RsGxsNetTunnelService::sendTunnelData(uint16_t /* service_id */,unsigned ch
 		GXS_NET_TUNNEL_ERROR() << "virtual peer " << virtual_peer << " is not active. Data is dropped." << std::endl;
 		return false ;
 	}
-
-	it->second.last_contact = time(NULL) ;
 
     // 2 - encrypt and send the item.
 
@@ -593,7 +576,13 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 
 	if(it == mTurtle2GxsPeer.end())
 	{
-		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for vpid " << turtle_virtual_peer_id << " but this vpid is unknown!" << std::endl;
+		GXS_NET_TUNNEL_ERROR() << "item received by GxsNetTunnel for vpid " << turtle_virtual_peer_id << " but this vpid is unknown! Removing this vpid from group " << group_id << std::endl;
+
+		// this situation is inconsistent: the first item that should go through the tunnel is a virtual peer info, so if we don't have one, it means that
+		// this virtual peer is dead. We should therefore remove it from the list of vpids for this group.
+
+		mGroups[group_id].virtual_peers.erase(turtle_virtual_peer_id) ;
+
 		free(data);
 		return;
 	}
@@ -608,8 +597,6 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		free(data);
 		return;
 	}
-	it2->second.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;					// status of the peer
-	it2->second.last_contact = time(NULL);					// last time some data was sent/recvd
 
 	if(service_id != it2->second.service_id && service_id != RS_SERVICE_GXS_TYPE_GXSID)
 	{
@@ -617,6 +604,10 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		free(data);
 		return ;
 	}
+	it2->second.vpid_status = RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE ;					// status of the peer
+	it2->second.last_contact = time(NULL);					// last time some data was sent/recvd from this peer
+
+	mGroups[group_id].last_contact = time(NULL);			// last time some data as received for this group
 
 #ifdef DEBUG_RSGXSNETTUNNEL
 	GXS_NET_TUNNEL_DEBUG() << "item contains generic data for VPID " << gxs_vpid << ". service_id = " << std::hex << service_id << std::dec << ". Storing in incoming list" <<  std::endl;
@@ -747,7 +738,7 @@ void RsGxsNetTunnelService::data_tick()
 		mPendingTurtleItems.pop_front();
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	// cleanup
 
@@ -1102,7 +1093,7 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
 
 		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-			std::cerr << "   group " << (*it).group_id << ": " << (*it).group_name << ", " << (*it).number_of_messages << " messages, last is " << time(NULL)-(*it).last_message_ts << " secs ago." << std::endl;
+			std::cerr << "   group " << (*it).mGroupId << ": " << (*it).mGroupName << ", " << (*it).mNumberOfMessages << " messages, last is " << time(NULL)-(*it).mLastMessageTs << " secs ago." << std::endl;
 
 		auto it = mSearchableServices.find(result_gs->service) ;
 

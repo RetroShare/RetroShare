@@ -288,8 +288,14 @@ void FriendSelectionWidget::secured_fillList()
 	}
 
     std::set<RsGxsId> gxsIdsSelected;
+
 	if (mShowTypes & SHOW_GXS)
+    {
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            gxsIdsSelected = mPreSelectedGxsIds;
+    }
 		
     std::set<RsGxsId> gxsIdsSelected2;
 	if (mShowTypes & SHOW_CONTACTS)
@@ -683,6 +689,12 @@ void FriendSelectionWidget::requestGXSIdList()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
+// This call is inlined so that there's no linking conflict with MinGW on Windows
+template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
+{
+    mPreSelectedGxsIds = ids ;
+    requestGXSIdList();
+}
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)
 {

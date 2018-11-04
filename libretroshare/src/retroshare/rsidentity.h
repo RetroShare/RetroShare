@@ -134,7 +134,7 @@ struct RsGxsIdGroup : RsSerializable
 
     // Avatar
     RsGxsImage mImage ;
-    time_t mLastUsageTS ;
+    rstime_t mLastUsageTS ;
 
     // Not Serialised - for GUI's benefit.
     bool mPgpKnown;
@@ -168,8 +168,8 @@ struct RsRecognTagDetails
 	    valid_from(0), valid_to(0), tag_class(0), tag_type(0), is_valid(false),
 	    is_pending(false) {}
 	
-	time_t valid_from;
-	time_t valid_to;
+	rstime_t valid_from;
+	rstime_t valid_to;
 	uint16_t tag_class;
 	uint16_t tag_type;
 	
@@ -315,9 +315,9 @@ struct RsIdentityDetails : RsSerializable
 
 	RsGxsImage mAvatar;
 
-	time_t mLastUsageTS;
+	rstime_t mLastUsageTS;
 
-	std::map<RsIdentityUsage,time_t> mUseCases;
+	std::map<RsIdentityUsage,rstime_t> mUseCases;
 
 	/// @see RsSerializable
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
@@ -339,7 +339,7 @@ struct RsIdentityDetails : RsSerializable
 
 struct RsIdentity : RsGxsIfaceHelper
 {
-    explicit RsIdentity(RsGxsIface *gxs): RsGxsIfaceHelper(gxs) {}
+	explicit RsIdentity(RsGxsIface& gxs): RsGxsIfaceHelper(gxs) {}
     virtual ~RsIdentity() {}
 
     /********************************************************************************************/
@@ -356,7 +356,7 @@ struct RsIdentity : RsGxsIfaceHelper
     virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
 
     // Fills up list of all own ids. Returns false if ids are not yet loaded.
-    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds) = 0;
+    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds,bool only_signed_ids = false) = 0;
     virtual bool  isOwnId(const RsGxsId& id) = 0;
 
     //
@@ -377,6 +377,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
     virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
     virtual bool isARegularContact(const RsGxsId& id) = 0 ;
+	virtual uint32_t nbRegularContacts() =0;
 
 	virtual bool serialiseIdentityToMemory( const RsGxsId& id,
 	                                        std::string& radix_string ) = 0;
@@ -389,7 +390,7 @@ struct RsIdentity : RsGxsIfaceHelper
      * \param id
      * \return
      */
-    virtual time_t getLastUsageTS(const RsGxsId &id) =0;
+    virtual rstime_t getLastUsageTS(const RsGxsId &id) =0;
 
     // Specific RsIdentity Functions....
     /* Specific Service Data */

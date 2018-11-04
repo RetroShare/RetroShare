@@ -36,6 +36,7 @@
     #include <dirent.h>
 #endif
 
+#include "util/rstime.h"
 
 namespace librs { namespace util {
 
@@ -52,7 +53,7 @@ public:
          };
 
     // info about current parent directory
-    time_t dir_modtime() const ;
+    rstime_t dir_modtime() const ;
 
     // info about directory content
 
@@ -66,7 +67,7 @@ public:
     const std::string& file_fullpath() ;
     uint64_t file_size() ;
     uint8_t file_type() ;
-    time_t   file_modtime() ;
+    rstime_t   file_modtime() ;
 
 private:
     bool is_open;
@@ -82,8 +83,8 @@ private:
 #endif
     bool updateFileInfo(bool &should_skip) ;
 
-    time_t mFileModTime ;
-    time_t mFolderModTime ;
+    rstime_t mFileModTime ;
+    rstime_t mFolderModTime ;
     uint64_t mFileSize ;
     uint8_t mType ;
     std::string mFileName ;

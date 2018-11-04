@@ -25,6 +25,7 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqihash.h"
+#include "util/rstime.h"
 
 #include <stdio.h>
 
@@ -69,7 +70,6 @@ virtual bool    bandwidthLimited() { return false; }
 virtual RsFileHash gethash();
 virtual uint64_t bytecount();
 
-protected:
 	virtual uint64_t getFileSize();
 
 private:
@@ -228,7 +228,7 @@ virtual RsFileHash gethash();
 	bool 	 dummyConnected;
         bool     toConnect;
 	uint32_t connectDelta;
-	time_t   connectTS;
+	rstime_t   connectTS;
 };
 
 

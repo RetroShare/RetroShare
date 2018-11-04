@@ -98,17 +98,16 @@ public:
 	                   RS_SERVICE_TYPE_GXS_TRANS, &identities,
 	                   AuthenPolicy()),
 	    GxsTokenQueue(this),
-        RsGxsTrans(this),
-        mIdService(identities),
+	    RsGxsTrans(static_cast<RsGxsIface&>(*this)),
+	    // always check 30 secs after start)
+	    mLastMsgCleanup(time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30),
+	    mIdService(identities),
 	    mServClientsMutex("p3GxsTrans client services map mutex"),
 	    mOutgoingMutex("p3GxsTrans outgoing queue map mutex"),
 	    mIngoingMutex("p3GxsTrans ingoing queue map mutex"),
+	    mCleanupThread(nullptr),
 	    mPerUserStatsMutex("p3GxsTrans user stats mutex"),
-	    mDataMutex("p3GxsTrans data mutex")
-    {
-        mLastMsgCleanup = time(NULL) - MAX_DELAY_BETWEEN_CLEANUPS + 30;	// always check 30 secs after start
-        mCleanupThread = NULL ;
-    }
+	    mDataMutex("p3GxsTrans data mutex") {}
 
 	virtual ~p3GxsTrans();
 
@@ -176,7 +175,7 @@ private:
 	 */
 	static const uint32_t MAX_DELAY_BETWEEN_CLEANUPS ; // every 20 mins. Could be less.
 
-    time_t mLastMsgCleanup ;
+    rstime_t mLastMsgCleanup ;
 
 	/// Define how the backend should handle authentication based on signatures
 	static uint32_t AuthenPolicy();
@@ -273,8 +272,8 @@ private:
 
 	/** @return true if has passed more then interval seconds between timeStamp
 	 * and ref. @param ref by default now is taked as reference. */
-	bool static inline olderThen(time_t timeStamp, int32_t interval,
-	                             time_t ref = time(NULL))
+	bool static inline olderThen(rstime_t timeStamp, int32_t interval,
+	                             rstime_t ref = time(NULL))
 	{ return (timeStamp + interval) < ref; }
 
 

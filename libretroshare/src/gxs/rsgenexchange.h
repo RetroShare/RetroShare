@@ -23,7 +23,7 @@
 #define RSGENEXCHANGE_H
 
 #include <queue>
-#include <ctime>
+#include "util/rstime.h"
 
 #include "rsgxs.h"
 #include "rsgds.h"
@@ -39,7 +39,7 @@ template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
 public:
-	GxsPendingItem(GxsItem item, Identity id,time_t ts) :
+	GxsPendingItem(GxsItem item, Identity id,rstime_t ts) :
 		mItem(item), mId(id), mFirstTryTS(ts)
 	{}
 
@@ -50,7 +50,7 @@ public:
 
 	GxsItem mItem;
 	Identity mId;
-	time_t mFirstTryTS;
+	rstime_t mFirstTryTS;
 };
 
 class GxsGrpPendingSign
@@ -61,7 +61,7 @@ public:
 		mItem(item), mHaveKeys(false), mIsUpdate(false)
 	{}
 
-	time_t mLastAttemptTS, mStartTS;
+	rstime_t mLastAttemptTS, mStartTS;
 	uint32_t mToken;
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
@@ -242,6 +242,21 @@ public:
      */
     bool getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMap& msgMeta);
 
+    /*!
+     * Retrieves the meta data of a newly created group. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the group
+     * \param meta   meta data for this group
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedGroupMeta(const uint32_t& token,RsGroupMetaData& meta);
+
+    /*!
+     * Retrieves the meta data of a newly created post. The meta is kept in cache for the current session.
+     * \param token  token that was used to create the post
+     * \param meta   meta data for this post
+     * \return   false if the group is not yet created.
+     */
+    bool getPublishedMsgMeta(const uint32_t& token,RsMsgMetaData& meta);
 
     /*!
      * Gxs services should call this for automatic handling of
@@ -479,7 +494,8 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(
+	        uint32_t token, RsTokenService::GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
@@ -668,7 +684,7 @@ public:
      * when needed. Typical use case is forums and circles.
      * @param gid GroupId the TS is which is requested
      */
-    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) ;
 
     /*!
      * \brief getDefaultStoragePeriod. All times in seconds.
@@ -882,6 +898,9 @@ private:
     std::vector<GxsGrpPendingSign> mGrpsToPublish;
     typedef std::vector<GxsGrpPendingSign> NxsGrpSignPendVect;
 
+    std::map<uint32_t,RsGxsGrpMetaData> mPublishedGrps ;		// keeps track of which group was created using which token
+    std::map<uint32_t,RsGxsMsgMetaData> mPublishedMsgs ;		// keeps track of which message was created using which token
+
     std::map<uint32_t, RsGxsMsgItem*> mMsgsToPublish;
 
     std::map<uint32_t, RsGxsGrpMsgIdPair > mMsgNotify;
@@ -904,12 +923,12 @@ private:
     NxsMsgPendingVect mMsgPendingValidate;
 
     bool mCleaning;
-    time_t mLastClean;
+    rstime_t mLastClean;
     RsGxsMessageCleanUp* mMsgCleanUp;
 
 
     bool mChecking, mCheckStarted;
-    time_t mLastCheck;
+    rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
 
 protected:

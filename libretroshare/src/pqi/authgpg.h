@@ -38,7 +38,7 @@
 
 #define MAX_GPG_SIGNATURE_SIZE  4096
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 /*!
  * gpgcert is the identifier for a person.
@@ -82,8 +82,8 @@ public:
 class AuthGPGService
 {
 public:
-    AuthGPGService() {};
-    ~AuthGPGService() {};
+	AuthGPGService() {}
+	~AuthGPGService() {}
 
     virtual AuthGPGOperation *getGPGOperation() = 0;
     virtual void setGPGOperation(AuthGPGOperation *operation) = 0;
@@ -91,12 +91,11 @@ public:
 
 class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 {
-	public:
-
-		static void init(	const std::string& path_to_pubring, 
-								const std::string& path_to_secring,
-								const std::string& path_to_trustdb,
-								const std::string& pgp_lock_file);
+public:
+	static void init(const std::string& path_to_pubring,
+	        const std::string& path_to_secring,
+	        const std::string& path_to_trustdb,
+	        const std::string& pgp_lock_file);
 
 		static void exit();
 		static AuthGPG *getAuthGPG() { return _instance ; }
@@ -159,6 +158,9 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		virtual bool   importProfile(const std::string& filename,RsPgpId& gpg_id,std::string& import_error) ;
         virtual bool   importProfileFromString(const std::string& data,RsPgpId& gpg_id,std::string& import_error) ;
 		virtual bool   exportProfile(const std::string& filename,const RsPgpId& gpg_id) ;
+		virtual bool exportIdentityToString(
+		        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+		        std::string& errorMsg );
 
         virtual bool   removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code) ;
 
@@ -286,7 +288,7 @@ class AuthGPG: public p3Config, public RsTickingThread, public PGPHandler
 		RsMutex gpgMtxData;
 		/* Below is protected via the mutex */
 
-		time_t mStoreKeyTime;
+		rstime_t mStoreKeyTime;
 
 		RsPgpId mOwnGpgId;
 		bool gpgKeySelected;

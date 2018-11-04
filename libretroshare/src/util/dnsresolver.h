@@ -50,7 +50,7 @@ class DNSResolver
 		struct AddrInfo
 		{
 			uint32_t state ; 				// state: Looked-up, not found, have
-			time_t last_lookup_time ;	// last lookup time
+			rstime_t last_lookup_time ;	// last lookup time
 			struct sockaddr_storage addr ;
 		};
 		friend void *solveDNSEntries(void *p) ;

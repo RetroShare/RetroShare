@@ -26,8 +26,8 @@
 RsPhoto *rsPhoto = NULL;
 
 
-const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK = 0x000f;
-const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST = 0x0001;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK          = 0x000f;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST    = 0x0001;
 const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT = 0x0002;
 
 

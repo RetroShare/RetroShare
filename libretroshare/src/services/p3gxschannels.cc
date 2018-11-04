@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -34,17 +35,22 @@
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
 
-#include <stdio.h>
+#include <cstdio>
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif //  RS_DEEP_SEARCH
+
+
 /****
  * #define GXSCHANNEL_DEBUG 1
  ****/
 
-RsGxsChannels *rsGxsChannels = NULL;
+/*extern*/ RsGxsChannels *rsGxsChannels = nullptr;
 
 
 #define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
@@ -64,8 +70,13 @@ RsGxsChannels *rsGxsChannels = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsChannels::p3GxsChannels(RsGeneralDataService *gds, RsNetworkExchangeService *nes, RsGixs* gixs)
-    : RsGenExchange(gds, nes, new RsGxsChannelSerialiser(), RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy()), RsGxsChannels(this), GxsTokenQueue(this)
+p3GxsChannels::p3GxsChannels(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        RsGixs* gixs ) :
+    RsGenExchange( gds, nes, new RsGxsChannelSerialiser(),
+                   RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
+    RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    mSearchCallbacksMapMutex("GXS channels search")
 {
 	// For Dummy Msgs.
 	mGenActive = false;
@@ -134,7 +145,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsChannelsConfigSerializer : public RsServiceSerializer
@@ -176,7 +187,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
@@ -335,7 +346,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsChannels::service_tick()
 {
 
-static  time_t last_dummy_tick = 0;
+static  rstime_t last_dummy_tick = 0;
 
 	if (time(NULL) > last_dummy_tick + 5)
 	{
@@ -347,8 +358,6 @@ static  time_t last_dummy_tick = 0;
 	GxsTokenQueue::checkRequests();
 
 	mCommentService->comment_tick();
-
-	return;
 }
 
 bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)
@@ -392,10 +401,11 @@ bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannel
 	return ok;
 }
 
-bool p3GxsChannels::groupShareKeys(const RsGxsGroupId &groupId, std::set<RsPeerId>& peers)
+bool p3GxsChannels::groupShareKeys(
+        const RsGxsGroupId &groupId, const std::set<RsPeerId>& peers )
 {
-    RsGenExchange::shareGroupPublishKey(groupId,peers) ;
-    return true ;
+	RsGenExchange::shareGroupPublishKey(groupId,peers);
+	return true;
 }
 
 
@@ -909,9 +919,9 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 #endif
 
 		/* check the date is not too old */
-		time_t age = time(NULL) - msg.mMeta.mPublishTs;
+		rstime_t age = time(NULL) - msg.mMeta.mPublishTs;
 
-		if (age < (time_t) CHANNEL_DOWNLOAD_PERIOD )
+		if (age < (rstime_t) CHANNEL_DOWNLOAD_PERIOD )
     {
         /* start download */
         // NOTE WE DON'T HANDLE PRIVATE CHANNELS HERE.
@@ -991,6 +1001,88 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 			break;
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+/// Blocking API implementation begin
+////////////////////////////////////////////////////////////////////////////////
+
+bool p3GxsChannels::getChannelsSummaries(
+        std::list<RsGroupMetaData>& channels )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, channels);
+}
+
+bool p3GxsChannels::getChannelsInfo(
+        const std::list<RsGxsGroupId>& chanIds,
+        std::vector<RsGxsChannelGroup>& channelsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, chanIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, channelsInfo);
+}
+
+bool p3GxsChannels::getChannelsContent(
+        const std::list<RsGxsGroupId>& chanIds,
+        std::vector<RsGxsChannelPost>& posts,
+        std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+	if( !requestMsgInfo(token, opts, chanIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getPostData(token, posts, comments);
+}
+
+bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
+{
+	uint32_t token;
+	if( !createGroup(token, channel)
+	        || waitToken(token) != RsTokenService::COMPLETE )
+		return false;
+
+	if(RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
+	{
+#ifdef RS_DEEP_SEARCH
+		DeepSearch::indexChannelGroup(channel);
+#endif //  RS_DEEP_SEARCH
+
+		return true;
+	}
+
+	return false;
+}
+
+bool p3GxsChannels::createPost(RsGxsChannelPost& post)
+{
+	uint32_t token;
+	if( !createPost(token, post)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	if(RsGenExchange::getPublishedMsgMeta(token,post.mMeta))
+	{
+#ifdef RS_DEEP_SEARCH
+		DeepSearch::indexChannelPost(post);
+#endif //  RS_DEEP_SEARCH
+
+		return true;
+	}
+
+	return false;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// Blocking API implementation end
+////////////////////////////////////////////////////////////////////////////////
 
 
 /********************************************************************************************/
@@ -1234,25 +1326,18 @@ bool p3GxsChannels::createPost(uint32_t &token, RsGxsChannelPost &msg)
 /********************************************************************************************/
 /********************************************************************************************/
 
-bool p3GxsChannels::ExtraFileHash(const std::string &path, std::string filename)
+bool p3GxsChannels::ExtraFileHash(const std::string& path)
 {
-	/* extract filename */
-	filename = RsDirUtil::getTopDir(path);
-
-
 	TransferRequestFlags flags = RS_FILE_REQ_ANONYMOUS_ROUTING;
-	if(!rsFiles->ExtraFileHash(path, GXSCHANNEL_STOREPERIOD, flags))
-		return false;
-
-	return true;
+	return rsFiles->ExtraFileHash(path, GXSCHANNEL_STOREPERIOD, flags);
 }
 
 
 bool p3GxsChannels::ExtraFileRemove(const RsFileHash &hash)
 {
-	TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
+	//TransferRequestFlags tflags = RS_FILE_REQ_ANONYMOUS_ROUTING | RS_FILE_REQ_EXTRA;
 	RsFileHash fh = RsFileHash(hash);
-	return rsFiles->ExtraFileRemove(fh, tflags);
+	return rsFiles->ExtraFileRemove(fh);
 }
 
 
@@ -1312,14 +1397,14 @@ void p3GxsChannels::dummy_tick()
 #endif
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
-		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status != RsTokenService::COMPLETE)
 		{
 #ifdef GXSCHANNELS_DEBUG
 			std::cerr << "p3GxsChannels::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 #endif
 
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			if (status == RsTokenService::FAILED)
 			{
 #ifdef GXSCHANNELS_DEBUG
 				std::cerr << "p3GxsChannels::dummy_tick() generateDummyMsgs() FAILED";
@@ -1518,6 +1603,8 @@ void p3GxsChannels::dummy_tick()
 		}
 
 	}
+
+	cleanTimedOutSearches();
 }
 
 
@@ -1703,21 +1790,18 @@ bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<Rs
 
 bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
 {
-    RsGxsGroupSummary gs ;
+	RsGxsGroupSummary gs;
 
     if(netService()->retrieveDistantGroupSummary(group_id,gs))
     {
         // This is a placeholder information by the time we receive the full group meta data.
-
-		distant_group.mDescription           = gs.group_description;
-
-		distant_group.mMeta.mGroupId         = gs.group_id ;
-		distant_group.mMeta.mGroupName       = gs.group_name;
+		distant_group.mMeta.mGroupId         = gs.mGroupId ;
+		distant_group.mMeta.mGroupName       = gs.mGroupName;
 		distant_group.mMeta.mGroupFlags      = GXS_SERV::FLAG_PRIVACY_PUBLIC ;
-		distant_group.mMeta.mSignFlags       = gs.sign_flags;
+		distant_group.mMeta.mSignFlags       = gs.mSignFlags;
 
-		distant_group.mMeta.mPublishTs       = gs.publish_ts;
-    	distant_group.mMeta.mAuthorId        = gs.author_id;
+		distant_group.mMeta.mPublishTs       = gs.mPublishTs;
+		distant_group.mMeta.mAuthorId        = gs.mAuthorId;
 
     	distant_group.mMeta.mCircleType      = GXS_CIRCLE_TYPE_PUBLIC ;// guessed, otherwise the group would not be search-able.
 
@@ -1726,9 +1810,9 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
 
     	distant_group.mMeta.mSubscribeFlags  = GXS_SERV::GROUP_SUBSCRIBE_NOT_SUBSCRIBED ;
 
-		distant_group.mMeta.mPop             = gs.popularity; 			// Popularity = number of friend subscribers
-    	distant_group.mMeta.mVisibleMsgCount = gs.number_of_messages; 	// Max messages reported by friends
-    	distant_group.mMeta.mLastPost        = gs.last_message_ts; 		// Timestamp for last message. Not used yet.
+		distant_group.mMeta.mPop             = gs.mPopularity; 			// Popularity = number of friend subscribers
+		distant_group.mMeta.mVisibleMsgCount = gs.mNumberOfMessages; 	// Max messages reported by friends
+		distant_group.mMeta.mLastPost        = gs.mLastMessageTs; 		// Timestamp for last message. Not used yet.
 
 		return true ;
     }
@@ -1736,4 +1820,60 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
         return false ;
 }
 
+bool p3GxsChannels::turtleSearchRequest(
+        const std::string& matchString,
+        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
+        rstime_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
 
+	TurtleRequestId sId = turtleSearchRequest(matchString);
+
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	mSearchCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                    std::chrono::seconds(maxWait) ) );
+
+	return true;
+}
+
+void p3GxsChannels::receiveDistantSearchResults(
+        TurtleRequestId id, const RsGxsGroupId& grpId )
+{
+	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")"
+	          << std::endl;
+
+	RsGenExchange::receiveDistantSearchResults(id, grpId);
+	RsGxsGroupSummary gs;
+	gs.mGroupId = grpId;
+	netService()->retrieveDistantGroupSummary(grpId, gs);
+
+	{
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(id);
+		if(cbpt != mSearchCallbacksMap.end())
+			cbpt->second.first(gs);
+	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+}
+
+void p3GxsChannels::cleanTimedOutSearches()
+{
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	auto now = std::chrono::system_clock::now();
+	for( auto cbpt = mSearchCallbacksMap.begin();
+	     cbpt != mSearchCallbacksMap.end(); )
+		if(cbpt->second.second <= now)
+		{
+			clearDistantSearchResults(cbpt->first);
+			cbpt = mSearchCallbacksMap.erase(cbpt);
+		}
+		else ++cbpt;
+}

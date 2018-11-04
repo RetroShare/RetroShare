@@ -20,6 +20,8 @@
 #include <string>
 #include <map>
 
+#include "serialiser/rsserializable.h"
+
 /**
  * Very simplistic and minimal URL helper class for RetroShare, after looking
  * for a small and self-contained C/C++ URL parsing and manipulation library,
@@ -31,7 +33,7 @@
  * Anyway this should support most common URLs of the form
  * scheme://host[:port][/path][?query][#fragment]
  */
-struct RsUrl
+struct RsUrl : RsSerializable
 {
 	RsUrl();
 	RsUrl(const std::string& urlStr);
@@ -77,6 +79,10 @@ struct RsUrl
 	{ return toString() == rhs.toString(); }
 	inline bool operator!=(const RsUrl& rhs) const
 	{ return toString() != rhs.toString(); }
+
+	/// @see RsSerializable
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx);
 
 	static const std::string schemeSeparator;
 	static const std::string ipv6WrapOpen;

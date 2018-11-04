@@ -44,6 +44,8 @@ public:
 	 * deprecated and should be removed as soon as possible as it is cause of
 	 * many confusions, instead use const RsTokReqOptions::mReqType &opts to
 	 * specify the kind of data you are interested in.
+	 * Most of the methods use const uint32_t &token as param type change it to
+	 * uint32_t
 	 */
 
     /*!
@@ -117,7 +119,7 @@ public:
 
 
     /* Poll */
-    uint32_t requestStatus(const uint32_t token);
+	GxsRequestStatus requestStatus(const uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);
@@ -300,7 +302,7 @@ private:
      * @param status the status to set
      * @return
      */
-    bool locked_updateRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool locked_updateRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * Use to query the status and other values of a given token
@@ -311,7 +313,8 @@ private:
      * @param ts time stamp
      * @return false if token does not exist, true otherwise
      */
-    bool checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts);
+	bool checkRequestStatus( uint32_t token, GxsRequestStatus &status,
+	                         uint32_t &reqtype, uint32_t &anstype, rstime_t &ts);
 
             // special ones for testing (not in final design)
     /*!
@@ -341,14 +344,14 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
      * @param token
      * @return false if token could not found, true if token disposed of
      */
-    bool disposeOfPublicToken(const uint32_t &token);
+	bool disposeOfPublicToken(uint32_t token);
 
 private:
 
@@ -488,7 +491,7 @@ private:
     RsMutex mDataMutex; /* protecting below */
 
     uint32_t mNextToken;
-    std::map<uint32_t, uint32_t> mPublicToken;
+	std::map<uint32_t, GxsRequestStatus> mPublicToken;
     std::map<uint32_t, GxsRequest*> mRequests;
 
 

@@ -44,7 +44,7 @@
 
 //#define DEBUG_AUTHGPG 1
 
-//const time_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
+//const rstime_t STORE_KEY_TIMEOUT = 1 * 60 * 60; //store key is call around every hour
 
 AuthGPG *AuthGPG::_instance = NULL ;
 
@@ -95,7 +95,11 @@ std::string pgp_pwd_callback(void * /*hook*/, const char *uid_title, const char 
 	return password ;
 }
 
-void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& path_to_secret_keyring,const std::string& path_to_trustdb,const std::string& pgp_lock_file)
+void AuthGPG::init(
+        const std::string& path_to_public_keyring,
+        const std::string& path_to_secret_keyring,
+        const std::string& path_to_trustdb,
+        const std::string& pgp_lock_file)
 {
 	if(_instance != NULL)
 	{
@@ -103,8 +107,11 @@ void AuthGPG::init(const std::string& path_to_public_keyring,const std::string& 
 		std::cerr << "AuthGPG::init() called twice!" << std::endl ;
 	}
 
-	PGPHandler::setPassphraseCallback(pgp_pwd_callback) ;
-	_instance = new AuthGPG(path_to_public_keyring,path_to_secret_keyring,path_to_trustdb,pgp_lock_file) ;
+//	if(cb) PGPHandler::setPassphraseCallback(cb);else
+	PGPHandler::setPassphraseCallback(pgp_pwd_callback);
+	_instance = new AuthGPG( path_to_public_keyring,
+	                         path_to_secret_keyring,
+	                         path_to_trustdb, pgp_lock_file );
 }
 
 void AuthGPG::exit()
@@ -320,6 +327,14 @@ bool AuthGPG::exportProfile(const std::string& fname,const RsPgpId& exported_id)
 	return PGPHandler::exportGPGKeyPair(fname,exported_id) ;
 }
 
+bool AuthGPG::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+        std::string& errorMsg )
+{
+	return PGPHandler::exportGPGKeyPairToString(
+	            data, pgpId, includeSignatures, errorMsg);
+}
+
 bool AuthGPG::importProfile(const std::string& fname,RsPgpId& imported_id,std::string& import_error)
 {
 	return PGPHandler::importGPGKeyPair(fname,imported_id,import_error) ;
@@ -329,7 +344,6 @@ bool AuthGPG::importProfileFromString(const std::string &data, RsPgpId &gpg_id, 
 {
     return PGPHandler::importGPGKeyPairFromString(data, gpg_id, import_error);
 }
-
 
 bool   AuthGPG::active()
 {

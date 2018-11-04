@@ -39,6 +39,8 @@
 #include <map>
 #include <list>
 #include <iostream>
+#include <functional>
+#include <chrono>
 
 #include "ft/ftdata.h"
 #include "turtle/turtleclientservice.h"
@@ -96,7 +98,7 @@ public:
     uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-	//virtual void receiveSearchResult(RsTurtleSearchResultItem *item);// TODO
+	virtual void receiveSearchResult(RsTurtleFTSearchResultItem *item);
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 
@@ -143,6 +145,12 @@ public:
 	virtual void setFilePermDirectDL(uint32_t perm) ;
 	virtual uint32_t filePermDirectDL() ;
 
+	/// @see RsFiles
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        rstime_t maxWait = 300 );
+
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
@@ -172,7 +180,7 @@ public:
          * Extra List Access
          ***/
     virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
-    virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
+    virtual bool ExtraFileRemove(const RsFileHash& hash);
     virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
     virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
     virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);
@@ -181,8 +189,13 @@ public:
     /***
          * Directory Listing / Search Interface
          ***/
-    virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
     virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
+
+	/// @see RsFiles::RequestDirDetails
+	virtual bool requestDirDetails(
+	        DirDetails &details, std::uintptr_t handle = 0,
+	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL );
+
     virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;
     virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
@@ -191,6 +204,11 @@ public:
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 	virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) ;
+
+    virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
+    virtual int unbanFile(const RsFileHash& real_file_hash);
+    virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+	virtual bool isHashBanned(const RsFileHash& hash);
 
     /***
          * Utility Functions
@@ -205,8 +223,8 @@ public:
          * Directory Handling
          ***/
     virtual void requestDirUpdate(void *ref) ;			// triggers the update of the given reference. Used when browsing.
-    virtual bool setDownloadDirectory(std::string path);
-    virtual bool setPartialsDirectory(std::string path);
+	virtual bool setDownloadDirectory(const std::string& path);
+	virtual bool setPartialsDirectory(const std::string& path);
     virtual std::string getDownloadDirectory();
     virtual std::string getPartialsDirectory();
 
@@ -236,6 +254,8 @@ public:
 
 	virtual bool ignoreDuplicates() ;
 	virtual void setIgnoreDuplicates(bool ignore) ;
+
+    static bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
@@ -282,7 +302,6 @@ protected:
     // fnds out what is the real hash of encrypted hash hash
     bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
-    bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
 private:
@@ -312,7 +331,19 @@ private:
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
-    std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
+    std::map<RsPeerId,std::map<RsFileHash,rstime_t> > mUploadLimitMap ;
+
+	/** Store search callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const std::list<TurtleFileInfo>& results)>,
+	        std::chrono::system_clock::time_point >
+	 > mSearchCallbacksMap;
+	RsMutex mSearchCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap
+	void cleanTimedOutSearches();
 };
 
 

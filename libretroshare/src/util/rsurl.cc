@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-//#include "util/rsurl.h"
+
 #include "rsurl.h"
+#include "serialiser/rstypeserializer.h"
 
 #include <cstdio>
 #include <algorithm>
@@ -245,13 +246,21 @@ RsUrl& RsUrl::setFragment(const std::string& fragment)
 
 		if(str[i] == '%' && i < boundary)
 		{
-			decoded << static_cast<char>(stoi(str.substr(++i, 2), 0, 16));
+			decoded << static_cast<char>(std::stoi(str.substr(++i, 2), 0, 16));
 			++i;
 		}
 		else decoded << str[i];
 	}
 
 	return decoded.str();
+}
+
+void RsUrl::serial_process( RsGenericSerializer::SerializeJob j,
+                            RsGenericSerializer::SerializeContext& ctx )
+{
+	std::string urlString = toString();
+	RS_SERIAL_PROCESS(urlString);
+	fromString(urlString);
 }
 
 /*static*/ const std::string RsUrl::schemeSeparator("://");

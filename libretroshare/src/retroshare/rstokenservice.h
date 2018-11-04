@@ -103,8 +103,8 @@ struct RsTokReqOptions
 	uint32_t mSubscribeFilter, mSubscribeMask; // Only for Groups.
 
 	// Time range... again applied after Options.
-	time_t   mBefore;
-	time_t   mAfter;
+	rstime_t   mBefore;
+	rstime_t   mAfter;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
@@ -119,19 +119,19 @@ class RsTokenService
 
 public:
 
-	// TODO CLEANUP: This should be an enum
-        static const uint8_t GXS_REQUEST_V2_STATUS_FAILED;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PENDING;
-        static const uint8_t GXS_REQUEST_V2_STATUS_PARTIAL;
-        static const uint8_t GXS_REQUEST_V2_STATUS_FINISHED_INCOMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_COMPLETE;
-        static const uint8_t GXS_REQUEST_V2_STATUS_DONE;			 // ONCE ALL DATA RETRIEVED.
-        static const uint8_t GXS_REQUEST_V2_STATUS_CANCELLED;
+	enum GxsRequestStatus : uint8_t
+	{
+		FAILED,
+		PENDING,
+		PARTIAL,
+		COMPLETE,
+		DONE,      /// Once all data has been retrived
+		CANCELLED
+	};
 
-public:
 
-    RsTokenService()  { return; }
-    virtual ~RsTokenService() { return; }
+	RsTokenService() {}
+	virtual ~RsTokenService() {}
 
     /* Data Requests */
 
@@ -195,7 +195,7 @@ public:
      * @param token value of token to check status for
      * @return the current status of request
      */
-    virtual uint32_t requestStatus(const uint32_t token) = 0;
+	virtual GxsRequestStatus requestStatus(const uint32_t token) = 0;
 
     /*!
      * This request statistics on amount of data held
@@ -216,19 +216,14 @@ public:
 	 */
     virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
 
-
-        /* Cancel Request */
-
-    /*!
-     * If this function returns false, it may be that the request has completed
-     * already. Useful for very expensive request. This is a blocking operation
-     * @param token the token of the request to cancel
-     * @return false if unusuccessful in cancelling request, true if successful
-     */
-    virtual bool cancelRequest(const uint32_t &token) = 0;
-
-
-
+	/*!
+	 * @brief Cancel Request
+	 * If this function returns false, it may be that the request has completed
+	 * already. Useful for very expensive request.
+	 * @param token the token of the request to cancel
+	 * @return false if unusuccessful in cancelling request, true if successful
+	 */
+	virtual bool cancelRequest(const uint32_t &token) = 0;
 };
 
 #endif // RSTOKENSERVICE_H

@@ -27,6 +27,7 @@
 #include "hash_cache.h"
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
+#include "retroshare/rsinit.h"
 
 //#define HASHSTORAGE_DEBUG 1
 
@@ -231,7 +232,7 @@ void HashStorage::data_tick()
         job.client->hash_callback(job.client_param, job.full_path, hash, size);
 }
 
-bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
+bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_t mod_time,RsFileHash& known_hash,HashStorageClient *c,uint32_t client_param)
 {
     // check if the hash is up to date w.r.t. cache.
 
@@ -242,7 +243,7 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,time_t 
 
 	std::string real_path = RsDirUtil::removeSymLinks(full_path) ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     std::map<std::string,HashStorageInfo>::iterator it = mFiles.find(real_path) ;
 
     // On windows we compare the time up to +/- 3600 seconds. This avoids re-hashing files in case of daylight saving change.
@@ -317,8 +318,8 @@ void HashStorage::clean()
 {
     RS_STACK_MUTEX(mHashMtx) ;
 
-    time_t now = time(NULL) ;
-    time_t duration = mMaxStorageDurationDays * 24 * 3600 ; // seconds
+    rstime_t now = time(NULL) ;
+    rstime_t duration = mMaxStorageDurationDays * 24 * 3600 ; // seconds
 
 #ifdef HASHSTORAGE_DEBUG
     std::cerr << "Cleaning hash cache." << std::endl ;
@@ -478,7 +479,7 @@ bool HashStorage::try_load_import_old_hash_cache()
 {
     // compute file name
 
-    std::string base_dir = rsAccounts->PathAccountDirectory();
+    std::string base_dir = RsAccounts::AccountDirectory();
     std::string old_cache_filename = base_dir + "/" + "file_cache.bin" ;
 
     // check for unencrypted

@@ -26,7 +26,7 @@
 
 #include <list>
 
-#define TLV_DEBUG_LIST 1
+// #define TLV_DEBUG_LIST 1
 
 template<class TLV_CLASS,uint32_t TLV_TYPE> class t_RsTlvList: public RsTlvItem
 {

@@ -35,12 +35,6 @@ Q_DECLARE_METATYPE(FileProgressInfo)
 
 DLListDelegate::DLListDelegate(QObject *parent) : QAbstractItemDelegate(parent)
 {
-	;
-}
-
-DLListDelegate::~DLListDelegate(void)
-{
-	;
 }
 
 void DLListDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const

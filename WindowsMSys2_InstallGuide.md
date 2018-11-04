@@ -1,88 +1,73 @@
 ## Compilation on Windows
 
-### Qt Installation
+The preferred build method on Windows is by using MSYS2 which is a collection
+of packages providing unix-like tools to build native Windows software.
 
-Install Qt via: [Qt Download](http://www.qt.io/download/)  
+Requirements: about 12 GB of free space
 
-Use default options.  
-Add to the PATH environment variable
-
-       ;C:\Qt\5.5\mingw492_32\bin;C:\Qt\Tools\mingw492_32\bin;C:\Qt\Tools\mingw492_32\opt\bin  
-
-Depends on wich version of Qt you use.  
-Change build-all-mingw32make.bat with these values too if you don't use MSys2.  
+The resulting binary is a 32-bit build of Retroshare which will also work
+fine on a 64-bit system.
 
 ### MSYS2 INSTALLATION
 
-Choose your MSYS2 installer here: [MSYS2](http://msys2.github.io/)
+Download MSYS2 from [MSYS2](http://www.msys2.org/). Get the i686 version
+if you run a 32-bit Windows or the x86_64 if you run a 64-bit Windows.
 
-Follow install procedure.  
-Don't forget to sync & Update pacman.  
+Run the installer and install MSYS2.
 
-       pacman --needed -Sy bash pacman pacman-mirrors msys2-runtime  
+At the end of the installation, it'll automatically open an MSYS shell terminal.
+You can also find it on the start menu as MSYS2 MSYS. This is the shell you'll 
+use to install packages with pacman and do maintenance but NOT to build
+RetroShare.
 
-Restart console  
+First, update your MSYS2 environment to the latest version by typing:
 
-       pacman -Su  
+	pacman -Syu
 
-Install all default programms  
+Close the terminal window.
 
-       pacman -S base-devel git mercurial cvs wget p7zip gcc perl ruby python2  
+Run MSYS2 MSYS again and finish updating with:
 
-Choose only w64-i686 if you want only compilation in 32b architecture.  
+	pacman -Su
 
-       pacman -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain  
+Install the default programs needed to build:
 
-### Install other binutils:   
-       pacman -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc  
-       pacman -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3  
-       pacman -S mingw-w64-i686-speex mingw-w64-x86_64-speex  
-       pacman -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp
-       pacman -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv
-       pacman -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg  
-       pacman -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd  
-       pacman -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt  
+	pacman -S base-devel git wget p7zip gcc perl ruby python2 doxygen cmake
 
-Add MSYS2 to PATH environment variable depends your windows  
+Install the 32-bit toolchain:
 
-       ;C:\msys64\mingw32\bin
-       ;C:\msys32\mingw32\bin
+	pacman -S mingw-w64-i686-toolchain
 
+Install all needed dependencies:
 
-### Git Installation
+	pacman -S mingw-w64-i686-miniupnpc
+	pacman -S mingw-w64-i686-libmicrohttpd
+	pacman -S mingw-w64-i686-libxslt
+	pacman -S mingw-w64-i686-xapian-core
+	pacman -S mingw-w64-i686-sqlcipher
+	pacman -S mingw-w64-i686-qt5
 
-Install Git Gui or other client: [Git Scm](https://git-scm.com/download/win)
+We're done installing MSYS2, close the shell terminal.
 
-Create a new directory named:  
+### BUILDING RETROSHARE
 
-       C:\Development\GIT  
+Now run the MSYS2 MinGW 32-bit shell terminal (it's in the start menu).
+We will use it to checkout Retroshare and build it:
 
-Right-click on it and choose: *Git Bash Here*  
+	git clone https://github.com/RetroShare/RetroShare.git
 
-Paste this text on git console:  
-git clone https://github.com/RetroShare/RetroShare.git  
+Go to the RetroShare directory and configure to your liking, for example:
+	
+	cd RetroShare
+	qmake -r -Wall -spec win32-g++ "CONFIG+=debug" "CONFIG+=rs_autologin"
 
+Now we're ready to build Retroshare. Use the '-j' option with the number of
+cores you have for a faster build, for instance if you have 4 cores:
 
-### Last Settings
+	mingw32-make -j4
 
+Make sure your current Retroshare is not running. Then just run:
 
-In QtCreator Option Git add its path: *C:\Program Files\Git\bin* 
-and select "Pull" with "Rebase"  
+	retroshare-gui/src/debug/retroshare.exe
 
-
-Open an MSys2 32|64 shell  
-Move to build_scripts:  
-
-       cd /c/Development/GIT/RetroShare/msys2_build_libs/  
-
-### Compile missing library
-       make
-
-You can now compile RS into Qt Creator  
-
-For using, and debugging Plugins, you can use [Symlinker](http://amd989.github.io/Symlinker/) to link 
-the files in  
-
-       \build-RetroShare-Desktop_Qt_X_Y_Z_MinGW_32bit-Debug\plugins\PluginName\debug\*.dll  
-to  
-*%appdata%\RetroShare\extensions6*
+You'll get debug output in the terminal and a running Retroshare instance.

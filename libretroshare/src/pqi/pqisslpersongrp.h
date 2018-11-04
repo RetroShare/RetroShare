@@ -25,7 +25,7 @@
 #include "pqi/pqipersongrp.h"
 
 class p3PeerMgr;
-class RsPeerCryptoParams;
+struct RsPeerCryptoParams;
 class pqissl ;
 
 class pqisslpersongrp: public pqipersongrp

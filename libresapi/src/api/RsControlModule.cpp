@@ -432,9 +432,8 @@ void RsControlModule::handleLogin(Request &req, Response &resp)
 
 void RsControlModule::handleShutdown(Request &, Response &resp)
 {
-	RS_STACK_MUTEX(mExitFlagMtx); // ********** LOCKED **********
-    mProcessShouldExit = true;
-    resp.setOk();
+	requestShutdown();
+	resp.setOk();
 }
 
 void RsControlModule::handleImportPgp(Request &req, Response &resp)
@@ -450,7 +449,7 @@ void RsControlModule::handleImportPgp(Request &req, Response &resp)
 
     RsPgpId pgp_id;
     std::string error_string;
-    if(RsAccounts::ImportIdentityFromString(key_string, pgp_id, error_string))
+    if(RsAccounts::importIdentityFromString(key_string, pgp_id, error_string))
     {
         resp.mDataStream << makeKeyValueReference("pgp_id", pgp_id);
         resp.setOk();
@@ -467,6 +466,8 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
     req.mStream << makeKeyValueReference("hidden_adress", hidden_address)
                 << makeKeyValueReference("hidden_port", hidden_port_str);
     uint16_t hidden_port = 0;
+    bool auto_tor = false ;		// to be set by API, so disabled until then.
+
     if(hidden_address.empty() != hidden_port_str.empty())
     {
         resp.setFail("you must both specify string hidden_adress and string hidden_port to create a hidden node.");
@@ -485,7 +486,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
             resp.setFail("hidden_port out of range. It must fit into uint16!");
             return;
         }
-        hidden_port = p;
+        hidden_port = static_cast<uint16_t>(p);
     }
 
     RsPgpId pgp_id;
@@ -526,7 +527,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		RsInit::SetHiddenLocation(hidden_address, hidden_port, false);
 	}
 
-    std::string ssl_password = RSRandom::random_alphaNumericString(RsInit::getSslPwdLen()) ;
+    std::string ssl_password = RSRandom::random_alphaNumericString(static_cast<uint32_t>(RsInit::getSslPwdLen())) ;
 
     /* GenerateSSLCertificate - selects the PGP Account */
     //RsInit::SelectGPGAccount(PGPId);
@@ -539,7 +540,7 @@ void RsControlModule::handleCreateLocation(Request &req, Response &resp)
 		mPassword = pgp_password;
 		mFixedPassword = pgp_password;
 	}
-    bool ssl_ok = RsAccounts::GenerateSSLCertificate(pgp_id, "", ssl_name, "", hidden_port!=0, ssl_password, ssl_id, err_string);
+    bool ssl_ok = RsAccounts::createNewAccount(pgp_id, "", ssl_name, "", hidden_port!=0, auto_tor!=0, ssl_password, ssl_id, err_string);
 
     // clear fixed password to restore normal password operation
 //    {
@@ -578,6 +579,12 @@ bool RsControlModule::askForDeferredSelfSignature(const void *data, const uint32
 		signature_result = SELF_SIGNATURE_RESULT_FAILED;
 		return false;
 	}
+}
+
+void RsControlModule::requestShutdown()
+{
+	RS_STACK_MUTEX(mExitFlagMtx);
+	mProcessShouldExit = true;
 }
 
 void RsControlModule::setRunState(RunState s, std::string errstr)

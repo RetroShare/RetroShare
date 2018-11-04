@@ -57,7 +57,7 @@ class PGPCertificateInfo
 		uint32_t _flags ;
 		uint32_t _type ;
 
-		mutable time_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
+		mutable rstime_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
 
 		PGPFingerprintType _fpr;           /* fingerprint */
 	//	RsPgpId          _key_id ;
@@ -99,6 +99,9 @@ class PGPHandler
 		bool importGPGKeyPair(const std::string& filename,RsPgpId& imported_id,std::string& import_error) ;
 		bool importGPGKeyPairFromString(const std::string& data,RsPgpId& imported_id,std::string& import_error) ;
 		bool exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_id) const ;
+		bool exportGPGKeyPairToString(
+		        std::string& data, const RsPgpId& exportedKeyId,
+		        bool includeSignatures, std::string& errorMsg ) const;
 
 		bool availableGPGCertificatesWithPrivateKeys(std::list<RsPgpId>& ids);
 		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) ;
@@ -217,9 +220,9 @@ class PGPHandler
 		bool _pubring_changed ;
 		mutable bool _trustdb_changed ;
 
-		time_t _pubring_last_update_time ;
-		time_t _secring_last_update_time ;
-		time_t _trustdb_last_update_time ;
+		rstime_t _pubring_last_update_time ;
+		rstime_t _secring_last_update_time ;
+		rstime_t _trustdb_last_update_time ;
 
 		// Helper functions.
 		//

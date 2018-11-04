@@ -34,6 +34,7 @@
 #include "rsitems/rsdiscovery2items.h"
 #include "services/p3service.h"
 #include "pqi/authgpg.h"
+#include "gxs/rsgixs.h"
 
 class p3ServiceControl;
 
@@ -75,7 +76,7 @@ class p3discovery2: public RsDisc, public p3Service, public pqiServiceMonitor, p
 {
 	public:
 
-	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc);
+	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc,RsGixs *gixs);
 virtual ~p3discovery2();
 
 virtual RsServiceInfo getServiceInfo();
@@ -87,11 +88,10 @@ virtual RsServiceInfo getServiceInfo();
 	int	tick();
 	
 	/* external interface */
-virtual bool    getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
-virtual bool    getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
-virtual bool    getPeerVersion(const RsPeerId &id, std::string &version);
-virtual bool    getWaitingDiscCount(unsigned int *sendCount, unsigned int *recvCount);
-
+	bool getDiscFriends(const RsPeerId &id, std::list<RsPeerId> &friends);
+	bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
+	bool getPeerVersion(const RsPeerId &id, std::string &version);
+	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
         /************* from AuthGPService ****************/
 virtual AuthGPGOperation *getGPGOperation();
 virtual void setGPGOperation(AuthGPGOperation *operation);
@@ -122,6 +122,7 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	void recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPgpListItem *item);
 	void sendPGPCertificate(const PGPID &aboutId, const SSLID &toId);
 	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);
+	void recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids);
 
 	bool setPeerVersion(const SSLID &peerId, const std::string &version);
 
@@ -131,6 +132,7 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	p3LinkMgr *mLinkMgr;
 	p3NetMgr  *mNetMgr;
 	p3ServiceControl *mServiceCtrl;
+    RsGixs *mGixs ;
 
 	/* data */
 	RsMutex mDiscMtx;
@@ -138,7 +140,7 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	void updatePeers_locked(const SSLID &aboutId);
 	void sendContactInfo_locked(const PGPID &aboutId, const SSLID &toId);
 
-	time_t mLastPgpUpdate;
+	rstime_t mLastPgpUpdate;
 
 	std::map<PGPID, DiscPgpInfo> mFriendList;
 	std::map<SSLID, DiscPeerInfo> mLocationMap;

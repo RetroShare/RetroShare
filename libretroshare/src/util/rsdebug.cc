@@ -26,7 +26,7 @@
 
 #include <map>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
 const int RS_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */
@@ -142,12 +142,13 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 	if(info->lvl == RsLog::None)
 		return;
 
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-
 	bool process = info->lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
-	if(process)
+	if(!process)
+		return;
+
 	{
-		time_t t = time(NULL);
+		RS_STACK_MUTEX(logMtx);
+		time_t t = time(NULL); // Don't use rstime_t here or ctime break on windows
 
 		if (debugMode == RS_DEBUG_LOGCRASH)
 		{
@@ -179,6 +180,9 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 		fprintf(ofd, "(%s Z: %s, lvl: %u): %s \n",
 				timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
+
+		fprintf(stdout, "(%s Z: %s, lvl: %u): %s \n",
+		        timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		lineCount++;
 	}
 }

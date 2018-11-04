@@ -30,7 +30,7 @@
 #include <list>
 
 class pqiperson;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;
@@ -38,7 +38,7 @@ static const int CONNECT_UNREACHABLE  = 3;
 static const int CONNECT_FIREWALLED   = 4;
 static const int CONNECT_FAILED       = 5;
 
-static const time_t HEARTBEAT_REPEAT_TIME = 5;
+static const rstime_t HEARTBEAT_REPEAT_TIME = 5;
 
 #include "pqi/pqiqosstreamer.h"
 #include "pqi/pqithreadstreamer.h"
@@ -167,7 +167,7 @@ private:
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
 	//int waittimes;
-	time_t lastHeartbeatReceived; // use to track connection failure
+	rstime_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };
 

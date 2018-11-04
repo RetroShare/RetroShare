@@ -77,7 +77,7 @@ struct RsItem : RsMemoryManagement::SmallObject, RsSerializable
 	inline uint8_t priority_level() const { return _priority_level ;}
 	inline void setPriorityLevel(uint8_t l) { _priority_level = l ;}
 
-	/**
+	/*
 	 * TODO: This default implementation should be removed and childs structs
 	 * implement ::serial_process(...) as soon as all the codebase is ported to
 	 * the new serialization system

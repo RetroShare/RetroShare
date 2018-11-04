@@ -91,7 +91,7 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 	}
 
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	for(int i = 0; i < NUM_RECOGN_SIGN_KEYS; i++)
 	{
@@ -104,7 +104,7 @@ bool	RsRecogn::loadSigningKeys(std::map<RsGxsId, RsGxsRecognSignerItem *> &signM
 		if (!item)
 		{
 #ifdef DEBUG_RECOGN
-			std::cerr << "RsRecogn::loadSigningKeys() failed to deserialise SignerItem";
+			std::cerr << "RsRecogn::loadSigningKeys() failed to deserialise SignerItem from string \"" << RecognSigningKeys[i] << "\"";
 			std::cerr << std::endl;
 #endif // DEBUG_RECOGN
 			continue;

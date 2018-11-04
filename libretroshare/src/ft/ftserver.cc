@@ -39,12 +39,12 @@
 
 #include "retroshare/rstypes.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsinit.h"
 
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
 
 #include "rsserver/p3face.h"
-#include "rsserver/rsaccounts.h"
 #include "turtle/p3turtle.h"
 
 #include "util/rsdebug.h"
@@ -52,7 +52,7 @@
 #include "util/rsprint.h"
 
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 
 /***
  * #define SERVER_DEBUG       1
@@ -62,8 +62,8 @@
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
-static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
-static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
+static const rstime_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
+static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
@@ -71,7 +71,8 @@ ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
       mPeerMgr(pm), mServiceCtrl(sc),
       mFileDatabase(NULL),
       mFtController(NULL), mFtExtra(NULL),
-      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
+      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer"),
+      mSearchCallbacksMapMutex("ftServer callbacks map")
 {
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
@@ -148,8 +149,9 @@ void ftServer::SetupFtServer()
 	mFtController = new ftController(mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
 
-	std::string emergencySaveDir = rsAccounts->PathAccountDirectory();
-	std::string emergencyPartialsDir = rsAccounts->PathAccountDirectory();
+	std::string emergencySaveDir = RsAccounts::AccountDirectory();
+	std::string emergencyPartialsDir = RsAccounts::AccountDirectory();
+
 	if (emergencySaveDir != "")
 	{
 		emergencySaveDir += "/";
@@ -172,8 +174,11 @@ void ftServer::SetupFtServer()
 void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
 {
 	mFileDatabase = fdb ;
+
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL);	// due to a bug in addSearchModule, modules can only be added one by one. Using | between flags wont work.
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_REMOTE);
+
+    mFileDatabase->setExtraList(mFtExtra);
 }
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
@@ -424,7 +429,7 @@ void ftServer::requestDirUpdate(void *ref)
 }
 
 /* Directory Handling */
-bool ftServer::setDownloadDirectory(std::string path)
+bool ftServer::setDownloadDirectory(const std::string& path)
 {
 	return mFtController->setDownloadDirectory(path);
 }
@@ -434,7 +439,7 @@ std::string ftServer::getDownloadDirectory()
 	return mFtController->getDownloadDirectory();
 }
 
-bool ftServer::setPartialsDirectory(std::string path)
+bool ftServer::setPartialsDirectory(const std::string& path)
 {
 	return mFtController->setPartialsDirectory(path);
 }
@@ -672,9 +677,10 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
 
-bool ftServer::ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 {
-	return mFtExtra->removeExtraFile(hash, flags);
+	mFileDatabase->removeExtraFile(hash);
+    return true;
 }
 
 bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
@@ -696,22 +702,23 @@ bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t
 /******************** Directory Listing ************************/
 /***************************************************************/
 
-int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)
-{
-	return mFileDatabase->RequestDirDetails(uid, path, details);
-}
-
 bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags)
 {
 	return mFileDatabase->findChildPointer(ref,row,result,flags) ;
 }
+
+bool ftServer::requestDirDetails(
+        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+{ return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
+
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
 	return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
-uint32_t ftServer::getType(void *ref, FileSearchFlags /* flags */)
+
+uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
-	return mFileDatabase->getType(ref) ;
+	return mFileDatabase->getType(ref,flags) ;
 }
 /***************************************************************/
 /******************** Search Interface *************************/
@@ -1619,8 +1626,8 @@ int	ftServer::tick()
 	if(handleIncoming())
 		moreToTick = true;
 
-	static time_t last_law_priority_tasks_handling_time = 0 ;
-	time_t now = time(NULL) ;
+	static rstime_t last_law_priority_tasks_handling_time = 0 ;
+	rstime_t now = time(NULL) ;
 
 	if(last_law_priority_tasks_handling_time + FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD < now)
 	{
@@ -1629,6 +1636,7 @@ int	ftServer::tick()
 		mFtDataplex->deleteUnusedServers() ;
 		mFtDataplex->handlePendingCrcRequests() ;
 		mFtDataplex->dispatchReceivedChunkCheckSum() ;
+		cleanTimedOutSearches();
 	}
 
 	return moreToTick;
@@ -1659,10 +1667,10 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
 
     // Find the latest records for this pid.
 
-    std::map<RsFileHash,time_t>& tmap(mUploadLimitMap[pid]) ;
-    std::map<RsFileHash,time_t>::iterator it ;
+    std::map<RsFileHash,rstime_t>& tmap(mUploadLimitMap[pid]) ;
+    std::map<RsFileHash,rstime_t>::iterator it ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     // If the limit has been decresed, we arbitrarily drop some ongoing slots.
 
@@ -1687,7 +1695,7 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
     for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
         if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
 		{
-			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+			std::map<RsFileHash,rstime_t>::iterator tmp(it) ;
             ++tmp;
  			tmap.erase(it) ;
             it = tmp;
@@ -1819,15 +1827,90 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
+void ftServer::receiveSearchResult(RsTurtleFTSearchResultItem *item)
+{
+	bool hasCallback = false;
+
+	{
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(item->request_id);
+		if(cbpt != mSearchCallbacksMap.end())
+		{
+			hasCallback = true;
+			cbpt->second.first(item->result);
+		}
+	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+
+	if(!hasCallback)
+		RsServer::notify()->notifyTurtleSearchResult(item->PeerId(),item->request_id, item->result );
+}
+
 /***************************** CONFIG ****************************/
 
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 {
 	/* add all the subbits to config mgr */
-	cfgmgr->addConfiguration("ft_database.cfg", mFileDatabase);
-	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
+	cfgmgr->addConfiguration("ft_database.cfg" , mFileDatabase);
+	cfgmgr->addConfiguration("ft_extra.cfg"    , mFtExtra     );
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
 
 	return true;
 }
+
+bool ftServer::turtleSearchRequest(
+        const std::string& matchString,
+        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+        rstime_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
+
+	TurtleRequestId sId = turtleSearch(matchString);
+
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	mSearchCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                    std::chrono::seconds(maxWait) ) );
+
+	return true;
+}
+
+void ftServer::cleanTimedOutSearches()
+{
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	auto now = std::chrono::system_clock::now();
+	for( auto cbpt = mSearchCallbacksMap.begin();
+	     cbpt != mSearchCallbacksMap.end(); )
+		if(cbpt->second.second <= now)
+			cbpt = mSearchCallbacksMap.erase(cbpt);
+		else ++cbpt;
+}
+
+// Offensive content file filtering
+
+int ftServer::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
+{
+    return mFileDatabase->banFile(real_file_hash,filename,file_size) ;
+}
+int ftServer::unbanFile(const RsFileHash& real_file_hash)
+{
+    return mFileDatabase->unbanFile(real_file_hash) ;
+}
+bool ftServer::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
+{
+    return mFileDatabase->getPrimaryBannedFilesList(banned_files) ;
+}
+
+bool ftServer::isHashBanned(const RsFileHash& hash)
+{
+    return mFileDatabase->isFileBanned(hash);
+}
+
 

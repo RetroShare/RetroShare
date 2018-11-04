@@ -20,7 +20,7 @@
 
 TEMPLATE = app
 QT     += network xml 
-CONFIG += qt gui uic qrc resources idle
+CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
@@ -33,15 +33,20 @@ libresapihttpserver {
     HEADERS *= gui/settings/WebuiPage.h
     SOURCES *= gui/settings/WebuiPage.cpp
     FORMS *= gui/settings/WebuiPage.ui
+} else {
+    !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 }
 
-!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
-
-retrotor {
-	FORMS   += TorControl/TorControlWindow.ui
-	SOURCES += TorControl/TorControlWindow.cpp
-	HEADERS += TorControl/TorControlWindow.h
+rs_jsonapi {
+    HEADERS *= gui/settings/JsonApiPage.h
+    SOURCES *= gui/settings/JsonApiPage.cc
+    FORMS *= gui/settings/JsonApiPage.ui
 }
+
+
+FORMS   += TorControl/TorControlWindow.ui
+SOURCES += TorControl/TorControlWindow.cpp
+HEADERS += TorControl/TorControlWindow.h
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -125,17 +130,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-	linux-* {
-		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.sh
-	}
-    win32-* {
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.bat
-	}
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -303,27 +299,27 @@ wikipoos {
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
-retrotor {
+# Tor controller
+
 HEADERS += 	TorControl/AddOnionCommand.h \
-				TorControl/AuthenticateCommand.h \
-				TorControl/GetConfCommand.h \
-				TorControl/HiddenService.h \
-				TorControl/ProtocolInfoCommand.h \
-				TorControl/SetConfCommand.h \
-				TorControl/TorControlCommand.h \
-				TorControl/TorControl.h \
-				TorControl/TorControlSocket.h \
-				TorControl/TorManager.h \
-				TorControl/TorProcess.h \
-				TorControl/TorProcess_p.h \
-				TorControl/TorSocket.h \
-				TorControl/Useful.h            \
-				TorControl/CryptoKey.h         \
-				TorControl/PendingOperation.h  \
-				TorControl/SecureRNG.h         \
-				TorControl/Settings.h          \
-				TorControl/StrUtil.h        \
-				TorControl/TorProcess_p.h        
+           	TorControl/AuthenticateCommand.h \
+           	TorControl/CryptoKey.h \
+           	TorControl/GetConfCommand.h \
+           	TorControl/HiddenService.h \
+           	TorControl/PendingOperation.h  \
+           	TorControl/ProtocolInfoCommand.h \
+           	TorControl/SecureRNG.h \
+           	TorControl/SetConfCommand.h \
+           	TorControl/Settings.h \
+           	TorControl/StrUtil.h \
+           	TorControl/TorControl.h \
+           	TorControl/TorControlCommand.h \
+           	TorControl/TorControlSocket.h \
+           	TorControl/TorManager.h \
+           	TorControl/TorProcess.h \
+           	TorControl/TorProcess_p.h \
+           	TorControl/TorSocket.h \
+           	TorControl/Useful.h
 
 SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/AuthenticateCommand.cpp \
@@ -342,7 +338,6 @@ SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/SecureRNG.cpp         \
 				TorControl/Settings.cpp          \
 				TorControl/StrUtil.cpp        
-}
 
 # Input
 HEADERS +=  rshare.h \
@@ -385,6 +380,7 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/DLListDelegate.h \
             gui/FileTransfer/ULListDelegate.h \
             gui/FileTransfer/TransfersDialog.h \
+            gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
             gui/statistics/dhtgraph.h \
@@ -496,7 +492,7 @@ HEADERS +=  rshare.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionDialog.h \
             gui/common/rwindow.h \
-            gui/common/html.h \
+            gui/common/rshtml.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
@@ -564,7 +560,7 @@ HEADERS +=  rshare.h \
             gui/elastic/graphwidget.h \
             gui/elastic/edge.h \
             gui/elastic/arrow.h \
-            gui/elastic/node.h \
+            gui/elastic/elnode.h \
             gui/NewsFeed.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
@@ -617,6 +613,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/FileTransfer/SearchDialog.ui \
             gui/FileTransfer/SharedFilesDialog.ui \
+            gui/FileTransfer/BannedFilesDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
@@ -763,6 +760,7 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/xprogressbar.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
+            gui/FileTransfer/BannedFilesDialog.cpp \
             gui/MainPage.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
@@ -814,7 +812,7 @@ SOURCES +=  main.cpp \
             gui/common/RsCollectionDialog.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
-            gui/common/html.cpp \
+            gui/common/rshtml.cpp \
             gui/common/AvatarDefs.cpp \
             gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
@@ -915,7 +913,7 @@ SOURCES +=  main.cpp \
             gui/elastic/graphwidget.cpp \
             gui/elastic/edge.cpp \
             gui/elastic/arrow.cpp \
-            gui/elastic/node.cpp \
+            gui/elastic/elnode.cpp \
             gui/NewsFeed.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
@@ -1386,4 +1384,45 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+cmark {
+  DEFINES *= USE_CMARK
+
+  HEADERS += \
+    ../../supportlibs/cmark/src/buffer.h								 \
+    ../../supportlibs/cmark/src/chunk.h									 \
+    ../../supportlibs/cmark/src/cmark.h									 \
+    ../../supportlibs/cmark/src/cmark_ctype.h						 \
+    ../../supportlibs/cmark/src/houdini.h								 \
+    ../../supportlibs/cmark/src/inlines.h								 \
+    ../../supportlibs/cmark/src/iterator.h							 \
+    ../../supportlibs/cmark/src/node.h									 \
+    ../../supportlibs/cmark/src/parser.h								 \
+    ../../supportlibs/cmark/src/references.h						 \
+    ../../supportlibs/cmark/src/render.h								 \
+    ../../supportlibs/cmark/src/scanners.h							 \
+    ../../supportlibs/cmark/src/utf8.h									 \
+
+  SOURCES += \
+    ../../supportlibs/cmark/src/blocks.c									 \
+    ../../supportlibs/cmark/src/buffer.c									 \
+    ../../supportlibs/cmark/src/cmark.c										 \
+    ../../supportlibs/cmark/src/cmark_ctype.c							 \
+    ../../supportlibs/cmark/src/commonmark.c							 \
+    ../../supportlibs/cmark/src/houdini_href_e.c					 \
+    ../../supportlibs/cmark/src/houdini_html_e.c					 \
+    ../../supportlibs/cmark/src/houdini_html_u.c					 \
+    ../../supportlibs/cmark/src/html.c										 \
+    ../../supportlibs/cmark/src/inlines.c									 \
+    ../../supportlibs/cmark/src/iterator.c								 \
+    ../../supportlibs/cmark/src/latex.c										 \
+    ../../supportlibs/cmark/src/man.c											 \
+    ../../supportlibs/cmark/src/node.c										 \
+    ../../supportlibs/cmark/src/references.c							 \
+    ../../supportlibs/cmark/src/render.c									 \
+    ../../supportlibs/cmark/src/scanners.c								 \
+    ../../supportlibs/cmark/src/utf8.c										 \
+    ../../supportlibs/cmark/src/xml.c											 \
+
 }

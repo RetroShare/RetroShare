@@ -74,23 +74,21 @@ public:
 };
 
 /*!
- * This is used to query network statistics for a given group. This is useful to e.g. show group
- * popularity, or number of visible messages for unsubscribed group.
+ * This is used to query network statistics for a given group. This is useful
+ * to e.g. show group popularity, or number of visible messages for unsubscribed
+ * group.
  */
-
-class RsGroupNetworkStats
+struct RsGroupNetworkStats
 {
-public:
-    RsGroupNetworkStats()
-    {
-        mMaxVisibleCount = 0 ;
-    }
+	RsGroupNetworkStats() :
+	    mSuppliers(0), mMaxVisibleCount(0), mGrpAutoSync(false),
+	    mAllowMsgSync(false), mLastGroupModificationTS(0) {}
 
-    uint32_t mSuppliers ;
-    uint32_t mMaxVisibleCount ;
-    bool     mGrpAutoSync ;
-    bool     mAllowMsgSync;
-	time_t   mLastGroupModificationTS ;
+	uint32_t mSuppliers;
+	uint32_t mMaxVisibleCount;
+	bool     mGrpAutoSync;
+	bool     mAllowMsgSync;
+	rstime_t   mLastGroupModificationTS;
 };
 
 typedef std::map<RsGxsGroupId,      std::vector<RsNxsMsg*> > NxsMsgDataResult;

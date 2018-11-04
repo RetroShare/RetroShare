@@ -23,6 +23,7 @@ resource_api::ApiServerLocal* WebuiPage::apiServerLocal = 0;
 #endif
 resource_api::RsControlModule* WebuiPage::controlModule = 0;
 
+
 WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
     ui.setupUi(this);
@@ -106,6 +107,7 @@ QString WebuiPage::helpText() const
 #ifdef LIBRESAPI_LOCAL_SERVER
 	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
 #endif
+
     return ok;
 }
 
