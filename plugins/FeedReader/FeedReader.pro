@@ -16,9 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
-TEMPLATE = subdirs
-
-SUBDIRS += \
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
 CONFIG += qt uic qrc resources
