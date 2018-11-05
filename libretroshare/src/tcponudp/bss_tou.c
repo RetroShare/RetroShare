@@ -102,44 +102,41 @@ static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
 
 #endif
 
+static BIO_METHOD methods_tou_sockp =
+{
+    BIO_TYPE_TOU_SOCKET,
+    "tou_socket",
+    tou_socket_write,
+    tou_socket_read,
+    tou_socket_puts,
+    NULL, /* tou_gets, */
+    tou_socket_ctrl,
+    tou_socket_new,
+    tou_socket_free,
+    NULL,
+};
+
 #else
 
-typedef struct bio_method_st {
-    int type;
-    const char *name;
-    int (*bwrite) (BIO *, const char *, int);
-    int (*bread) (BIO *, char *, int);
-    int (*bputs) (BIO *, const char *);
-    int (*bgets) (BIO *, char *, int);
-    long (*ctrl) (BIO *, int, long, void *);
-    int (*create) (BIO *);
-    int (*destroy) (BIO *);
-    long (*callback_ctrl) (BIO *, int, bio_info_cb *);
-} BIO_METHOD;
+static BIO_METHOD methods_tou_sockp =
+        BIO_meth_new(BIO_TYPE_TOU_SOCKET, "tou_socket");
+
+BIO_meth_set_write(&methods_tou_sockp, tou_socket_write);
+BIO_meth_set_read(&methods_tou_sockp, tou_socket_read);
+BIO_meth_set_puts(&methods_tou_sockp, tou_socket_puts);
+BIO_meth_set_ctrl(&methods_tou_sockp, tou_socket_ctrl);
+BIO_meth_set_create(&methods_tou_sockp,tou_socket_new);
+BIO_meth_set_destroy(&methods_tou_sockp,tou_socket_free);
 
 #endif
 
-static BIO_METHOD methods_tou_sockp=
-	{
-	BIO_TYPE_TOU_SOCKET,
-	"tou_socket",
-	tou_socket_write,
-	tou_socket_read,
-	tou_socket_puts,
-	NULL, /* tou_gets, */
-	tou_socket_ctrl,
-	tou_socket_new,
-	tou_socket_free,
-	NULL,
-	};
-
 BIO_METHOD *BIO_s_tou_socket(void)
-	{
+{
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "BIO_s_tou_socket(void)\n");
 #endif
 	return(&methods_tou_sockp);
-	}
+}
 
 BIO *BIO_new_tou_socket(int fd, int close_flag)
 	{
