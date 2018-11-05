@@ -103,11 +103,6 @@ int 	tou_connect(int sockfd, const struct sockaddr *serv_addr,
 					socklen_t addrlen, uint32_t conn_period);
 int 	tou_accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);		
 
-/// for relay connections
-int tou_connect_via_relay( int sockfd, const sockaddr_in& own_addr,
-                           const sockaddr_in& proxy_addr,
-                           const sockaddr_in& dest_addr );
-
 /* non-standard bonuses */
 int	tou_connected(int sockfd);
 int 	tou_listenfor(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
