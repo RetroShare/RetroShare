@@ -28,7 +28,7 @@
 
 #include <QTimer>
 
-#define IMG_HELP                ":/icons/help_128.png"
+#define IMG_HELP ":/home/img/Traymenu/lifesaver.png"        //d
 
 class GetStartedDialog : public MainPage
 {

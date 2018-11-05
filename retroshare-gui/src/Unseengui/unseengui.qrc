@@ -137,5 +137,15 @@
         <file>home/img/face_icon/youtube-play-button_xu_128.png</file>
         <file>chat/img/chat_32.png</file>
         <file>chat/img/groundchat.png</file>
+        <file>chat/img/groundchat_private.png</file>
+        <file>chat/img/typing.png</file>
+        <file>chat/img/personal_add_64.png</file>
+        <file>chat/img/personal_remove_64.png</file>
+        <file>home/img/Traymenu/earth-globe.png</file>
+        <file>home/img/Traymenu/friends.png</file>
+        <file>home/img/Traymenu/graph.png</file>
+        <file>home/img/Traymenu/lifesaver.png</file>
+        <file>home/img/Traymenu/molecule.png</file>
+        <file>home/img/Traymenu/power-button-off.png</file>
     </qresource>
 </RCC>

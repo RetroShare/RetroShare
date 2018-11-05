@@ -135,9 +135,9 @@
 #define IMAGE_TWOONLINE         ":/chat/img/network-diagram_2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
+#define IMAGE_BWGRAPH           ":/home/img/Traymenu/graph.png"         //d
+#define IMAGE_MESSENGER         ":/home/img/Traymenu/friends.png"       //d
+#define IMAGE_CLOSE             ":/home/img/Traymenu/power-button-off.png"      //d
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
@@ -151,7 +151,7 @@
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
-#define IMAGE_DHT               ":/images/dht16.png"
+#define IMAGE_DHT               ":/home/img/Traymenu/molecule.png"      //d
 
 
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
@@ -630,7 +630,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef ENABLE_WEBUI
-    trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
+    trayMenu->addAction(QIcon(":/home/img/Traymenu/earth-globe.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));

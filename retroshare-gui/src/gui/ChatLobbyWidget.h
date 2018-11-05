@@ -13,7 +13,7 @@
 #include <QAbstractButton>
 #include <QTreeWidget>
 
-#define IMAGE_CHATLOBBY			    ":/home/img/face_icon/un_chat_icon_x_128.png"
+#define IMAGE_CHATLOBBY			    ":/home/img/face_icon/un_chat_icon_xu_128.png"
 
 #define CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC  1
 #define CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE 2

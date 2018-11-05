@@ -105,7 +105,7 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-    return QIcon(":/home/img/face_icon/un_chat_icon_x_128.png");
+    return QIcon(":/home/img/face_icon/un_chat_icon_128.png");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
