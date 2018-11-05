@@ -111,6 +111,11 @@ rs_onlyhiddennode:CONFIG -= no_rs_onlyhiddennode
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
+# To disable GXS distrubuting all available posts independed of the "sync" settings append the following
+# assignation to qmake command line "CONFIG+=no_rs_gxs_sendAll"
+CONFIG *= rs_gxs_sendAll
+no_rs_gxs_sendAll:CONFIG -= rs_gxs_sendAll
+
 # To enable RS Deprecated Warnings append the following assignation to qmake
 # command line "CONFIG+=rs_deprecatedwarning"
 CONFIG *= no_rs_deprecatedwarning
@@ -372,6 +377,7 @@ trough qmake command line arguments!")
 gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
+rs_gxs_sendAll:DEFINES *= RS_GXS_SEND_ALL
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
 libresapihttpserver:DEFINES *= ENABLE_WEBUI
