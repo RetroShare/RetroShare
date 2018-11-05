@@ -65,7 +65,7 @@
 #define TYPE_ONE2ONE      2   //meiyousixin - add for one2one
 
 #define IMAGE_CREATE          ""
-#define IMAGE_PUBLIC          ":/images/chat_x24.png"
+#define IMAGE_PUBLIC          ":/chat/img/groundchat.png"       //d:
 #define IMAGE_PRIVATE         ":/images/chat_red24.png"
 #define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"

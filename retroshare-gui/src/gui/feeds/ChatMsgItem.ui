@@ -322,8 +322,8 @@
             <string>Start Chat</string>
            </property>
            <property name="icon">
-            <iconset resource="../../Unseengui/unseengui.qrc">
-             <normaloff>:/chat/img/chat_32.png</normaloff>:/chat/img/chat_32.png</iconset>
+            <iconset>
+             <normaloff>../../Unseengui/chat/img/chat_32.png</normaloff>../../Unseengui/chat/img/chat_32.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -419,7 +419,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../Unseengui/unseengui.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
