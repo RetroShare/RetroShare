@@ -20,12 +20,12 @@
  *******************************************************************************/
 #pragma once
 
-#include <stdio.h>
+#include <cstdio>
 #include <csignal>
+#include <cstdlib>
 
 #if defined(__linux__) && defined(__GLIBC__)
 
-#include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
 
