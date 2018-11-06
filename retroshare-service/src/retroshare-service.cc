@@ -16,6 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "util/stacktrace.h"
+
+CrashStackTrace gCrashStackTrace;
+
 #include <QCoreApplication>
 #include <csignal>
 #include <QObject>

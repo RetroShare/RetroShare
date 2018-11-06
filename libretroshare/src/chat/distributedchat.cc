@@ -1292,15 +1292,15 @@ void DistributedChatService::handleRecvLobbyInvite_Deprecated(RsChatLobbyInviteI
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Received deprecated invite to lobby from " << item->PeerId() << " to lobby " << std::hex << item->lobby_id << std::dec << ", named " << item->lobby_name << item->lobby_topic << std::endl;
 #endif
-	RsChatLobbyInviteItem* newItem = new RsChatLobbyInviteItem();
+	RsChatLobbyInviteItem newItem ;
 
-	newItem->lobby_id = item->lobby_id ;
-	newItem->lobby_name = item->lobby_name ;
-	newItem->lobby_topic = item->lobby_topic ;
-	newItem->lobby_flags = item->lobby_flags ;
-	newItem->PeerId( item->PeerId() );
+	newItem.lobby_id = item->lobby_id ;
+	newItem.lobby_name = item->lobby_name ;
+	newItem.lobby_topic = item->lobby_topic ;
+	newItem.lobby_flags = item->lobby_flags ;
+	newItem.PeerId( item->PeerId() );
 
-	handleRecvLobbyInvite(newItem);
+	handleRecvLobbyInvite(&newItem);	// The item is not deleted inside this function.
 }
 
 void DistributedChatService::handleRecvLobbyInvite(RsChatLobbyInviteItem *item) 

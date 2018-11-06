@@ -19,6 +19,10 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "util/stacktrace.h"
+
+CrashStackTrace gCrashStackTrace;
+
 #include <QObject>
 #include <QMessageBox>
 #include <QSplashScreen>
