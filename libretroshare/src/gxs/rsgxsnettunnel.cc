@@ -541,6 +541,7 @@ void RsGxsNetTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *i
 		if(!pid_item)		// this handles the case of a KeepAlive packet.
 		{
 			delete decrypted_item ;
+			free(data);
 			return ;
 		}
 
