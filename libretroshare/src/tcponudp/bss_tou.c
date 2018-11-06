@@ -267,17 +267,16 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 		break;
 	case BIO_C_SET_FD:
 		tou_socket_free(b);
-		ret = BIO_meth_get_ctrl(BIO_s_fd())(b,cmd,num,ptr);
-
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_C_GET_FD:
-		ret = BIO_meth_get_ctrl(BIO_s_fd())(b,cmd,num,ptr);
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_GET_CLOSE:
-		ret = BIO_meth_get_ctrl(BIO_s_fd())(b,cmd,num,ptr);
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_SET_CLOSE:
-		ret = BIO_meth_get_ctrl(BIO_s_fd())(b,cmd,num,ptr);
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_PENDING:
 		ret = tou_maxread(BIO_get_fd(b,NULL));
