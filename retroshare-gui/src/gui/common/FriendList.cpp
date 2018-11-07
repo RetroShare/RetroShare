@@ -124,8 +124,7 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
-    ui->peerTreeWidget->setStyleSheet("background-color: rgb(47, 60, 76); color:white; "
-                                      "selection-background-color: rgb(32, 41, 53); selection-color: rgb(255, 255, 255);");     //d: set color of list
+
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
 
@@ -136,6 +135,9 @@ FriendList::FriendList(QWidget *parent) :
     connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+
+    ui->peerTreeWidget->setStyleSheet("background: rgb(47, 60, 76); color:white; "
+                                      "selection-background-color: rgb(32, 41, 53); selection-color: rgb(255, 255, 255);");     //d: set color of list
 
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();

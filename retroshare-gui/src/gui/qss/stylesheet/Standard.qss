@@ -23,21 +23,21 @@ GenCertDialog QLabel#genprofileinfo_label, QLabel#header_label, QLabel#entropy_l
 {
         border: 1px solid #DCDC41;
         border-radius: 6px;
-        background: #FFFFD7;
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+        background: #2ba4dc;
+        background-color: #2ba4dc;
 }
 
 GenCertDialog QLabel#label_hiddenaddr {
         border: 1px solid #50FF5B;
         border-radius: 6px;
-	background: #CCFFCC;
+        background: #2ba4dc;
         background-color: #2ba4dc;
 }
 GenCertDialog QLabel#no_node_label, GenCertDialog QLabel#no_gpg_key_label {
         border: 1px solid #FFC550;
         border-radius: 6px;
-	background: #FFEECC;
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFEECC, stop:1 #FFE3AB);
+        background: #2ba4dc;
+        background-color: #2ba4dc;
 	padding: 4px;
 	font-size: 14px;
 }
@@ -47,7 +47,7 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 }
 
 GenCertDialog > QFrame#frame {
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+        background-color: #2ba4dc;
         border: 1px solid #CCCCCC;
 }
 
@@ -64,7 +64,7 @@ ConnectFriendWizard {
 /* FriendsDialog */
 
 FriendsDialog QFrame#headFrame {
-        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
+        background-color: #2ba4dc;
         border: 1px;
         border-radius: 4px;
 }
@@ -152,11 +152,9 @@ ChatLobbyWidget QLabel#lobbyinfo_label
 ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 { 
 
-        background-color: #2ba4dc,
-	stop:0 #FEFEFE, stop:1 #E8E8E8);
+        background-color: #2ba4dc;
 	border-radius: 6px;
 	border: 1px solid #CCCCCC;
-
 	padding: 14 6px;
 	font-size: 12px;
 	font-weight: bold;
