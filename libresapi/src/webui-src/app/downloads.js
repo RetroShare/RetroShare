@@ -23,7 +23,7 @@ function progressBar(file){
 	m("div[style="
 	    + 'background-color:lime;'
 	    + 'height:100%;'
-	    + 'width:' + (file.transfered  /  file.size * 100)+'%'
+	    + 'width:' + (file.transferred  /  file.size * 100)+'%'
 	    + ']'
 	,"")
 	]);
