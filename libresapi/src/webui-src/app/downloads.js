@@ -68,7 +68,7 @@ module.exports = {
                 ]),
             	paths.map(function (file){
             	    var ctrlBtn = m("div","");
-                    var progress = file.transfered  /  file.size * 100;
+                    var progress = file.transferred  /  file.size * 100;
             	    return m("tr",[
             	        m("td",[
             	            m("a.filelink",
