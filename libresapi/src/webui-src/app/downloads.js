@@ -33,7 +33,7 @@ function cntrlBtn(file, act) {
     return(
         m("div.btn",{
             onclick: function(){
-                rs.request("transfers/control_download",{action: act, id: file.id});
+                rs.request("transfers/control_download",{action: act, hash: file.hash});
             }
         },
         act)
