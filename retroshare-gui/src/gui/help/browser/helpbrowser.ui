@@ -271,7 +271,7 @@
        </property>
        <widget class="QWidget" name="tabTOC">
         <property name="windowTitle">
-         <string>RetroShare Help</string>
+         <string>UnseenP2P Help</string>
         </property>
         <property name="windowIcon">
          <iconset resource="../../images.qrc">
