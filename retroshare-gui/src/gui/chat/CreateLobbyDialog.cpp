@@ -120,7 +120,7 @@ void CreateLobbyDialog::createLobby()
     ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
     
     //	if (shareList.empty()) {
-    //		QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+    //		QMessageBox::warning(this, "UnseenP2P", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
     //		return;
     //	}
 

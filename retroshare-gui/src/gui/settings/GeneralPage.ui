@@ -23,7 +23,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="chkRunRetroshareAtSystemStartup">
         <property name="text">
-         <string>Start P2PUnseen when my system starts</string>
+         <string>Start UnseenP2P when my system starts</string>
         </property>
        </widget>
       </item>
@@ -92,7 +92,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="checkQuit">
         <property name="text">
-         <string>Do not show the Quit P2PUnseen MessageBox</string>
+         <string>Do not show the Quit UnseenP2P MessageBox</string>
         </property>
        </widget>
       </item>
@@ -124,7 +124,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Register P2PUnseen:// as URL protocol</string>
+           <string>Register UnseenP2P:// as URL protocol</string>
           </property>
          </widget>
         </item>
@@ -168,10 +168,10 @@
          </font>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install P2PUnseen with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Install UnseenP2P with a package installer to get&lt;/p&gt;&lt;p&gt;/usr/share/applications/retroshare.desktop&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="text">
-         <string>!!!The P2PUnseen's desktop file is missing or wrong!!!</string>
+         <string>!!!The UnseenP2P's desktop file is missing or wrong!!!</string>
         </property>
        </widget>
       </item>

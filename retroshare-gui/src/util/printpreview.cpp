@@ -197,7 +197,7 @@ void PreviewView::mouseReleaseEvent(QMouseEvent *e)
 PrintPreview::PrintPreview(const QTextDocument *document, QWidget *parent)
     : QMainWindow(parent), printer(QPrinter::HighResolution)
 {
-    setWindowTitle(tr("P2PUnseen Message - Print Preview"));
+    setWindowTitle(tr("UnseenP2P Message - Print Preview"));
 
     printer.setFullPage(true);
     doc = document->clone();

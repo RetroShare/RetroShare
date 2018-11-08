@@ -780,7 +780,7 @@ void p3MsgService::loadWelcomeMsg()
 	msg -> recvTime = time(NULL);
 	msg -> msgFlags = RS_MSG_FLAGS_NEW;
 
-    msg -> subject = "Welcome to P2PUnseen"; //D
+    msg -> subject = "Welcome to UnseenP2P"; //D
 
 	msg -> message  = "Send and receive messages with your friends...\n";
 	msg -> message += "These can hold recommendations from your local shared files.\n\n";

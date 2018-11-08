@@ -409,7 +409,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
                 contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
             else if(!own_identities.empty())
                 contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-            contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyItemLink()));
+            contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy UnseenP2P Link"), this, SLOT(copyItemLink()));
         }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------

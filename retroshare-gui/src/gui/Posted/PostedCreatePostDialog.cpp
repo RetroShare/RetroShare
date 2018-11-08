@@ -69,7 +69,7 @@ void PostedCreatePostDialog::createPost()
 		std::cerr << "PostedCreatePostDialog::createPost() ERROR GETTING AuthorId!, Post Failed";
 		std::cerr << std::endl;
 
-        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please create or choose a Signing Id first"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("UnseenP2P"),tr("Please create or choose a Signing Id first"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return;
 	}//switch (ui->idChooser->getChosenId(authorId))
@@ -83,7 +83,7 @@ void PostedCreatePostDialog::createPost()
 	
 	if(ui->titleEdit->text().isEmpty()) {
 		/* error message */
-        QMessageBox::warning(this, "P2PUnseen", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty title!!
 	}//if(ui->titleEdit->text().isEmpty())
 

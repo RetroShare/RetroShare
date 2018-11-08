@@ -263,7 +263,7 @@ p, li { white-space: pre-wrap; }
          <item>
           <widget class="QToolButton" name="make_friend_button">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click this if you want your node to accept connecting to P2PUnseen nodes authenticated by this PGP key. This is done automatically when exchanging your P2PUnseen certificate with someone. In order to make friends, it is better to exchange certificates than accept connections from a given key, since the certificate also contain useful connection information (IP, DNS, SSL ids, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Click this if you want your node to accept connecting to UnseenP2P nodes authenticated by this PGP key. This is done automatically when exchanging your UnseenP2P certificate with someone. In order to make friends, it is better to exchange certificates than accept connections from a given key, since the certificate also contain useful connection information (IP, DNS, SSL ids, etc).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Accept connections</string>
@@ -307,7 +307,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLabel" name="label_4">
          <property name="text">
-          <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;P2PUnseen certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
+          <string>Below is the node's profile key in PGP ASCII format. It identifies all nodes of the same profile. A &quot;UnseenP2P certificate&quot; that you can exchange in order to make friends, is in the the &quot;details&quot; of each separate node.</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -355,7 +355,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QCheckBox" name="_direct_transfer_CB">
          <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;P2PUnseen periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;UnseenP2P periodically checks your friend lists for browsable files matching your transfers, to establish a direct transfer. In this case, your friend knows you're downloading the file.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;To prevent this behavior for this friend only, uncheck this box. You can still perform a direct transfer if you explicitly ask for it, by e.g. downloading from your friend's file list. This setting is applied to all locations of the same node.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Use as direct source, when available</string>

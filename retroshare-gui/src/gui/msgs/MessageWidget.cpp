@@ -602,7 +602,7 @@ void MessageWidget::fill(const std::string &msgId)
 	}
 
 	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
-        ui.fromText->setText("P2PUnseen");
+        ui.fromText->setText("UnseenP2P");
 		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());

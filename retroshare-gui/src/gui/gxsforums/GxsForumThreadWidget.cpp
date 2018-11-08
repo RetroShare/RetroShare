@@ -645,7 +645,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	contextMnu.addAction(replyAct);
   contextMnu.addAction(newthreadAct);
-    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyMessageLink()));
+    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy UnseenP2P Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
@@ -2027,7 +2027,7 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 void GxsForumThreadWidget::showInPeopleTab()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant act on the author to a non-existant Message"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant act on the author to a non-existant Message"));
 		return;
 	}
 
@@ -2222,7 +2222,7 @@ void GxsForumThreadWidget::togglePinUpPost()
 void GxsForumThreadWidget::createthread()
 {
 	if (groupId().isNull ()) {
-        QMessageBox::information(this, tr("P2PUnseen"), tr("No Forum Selected!"));
+        QMessageBox::information(this, tr("UnseenP2P"), tr("No Forum Selected!"));
 		return;
 	}
 
@@ -2254,7 +2254,7 @@ void GxsForumThreadWidget::flagperson()
 	// no need to use the token system for that, since we just need to find out the author's name, which is in the item.
 
 	if (groupId().isNull() || mThreadId.isNull()) {
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to a non-existant Message"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
@@ -2282,7 +2282,7 @@ void GxsForumThreadWidget::flagperson()
 void GxsForumThreadWidget::reply_with_private_message()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to a non-existant Message"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
@@ -2293,7 +2293,7 @@ void GxsForumThreadWidget::reply_with_private_message()
 void GxsForumThreadWidget::editforummessage()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to a non-existant Message"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
@@ -2304,7 +2304,7 @@ void GxsForumThreadWidget::editforummessage()
 void GxsForumThreadWidget::replytoforummessage()
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to a non-existant Message"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
@@ -2337,7 +2337,7 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 	}
 	else
 	{
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to an Anonymous Author"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to an Anonymous Author"));
 	}
 }
 
@@ -2394,7 +2394,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 	}
 	else
 	{
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to an Anonymous Author"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to an Anonymous Author"));
 	}
 }
 void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
@@ -2423,7 +2423,7 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 	}
 	else
 	{
-        QMessageBox::information(this, tr("P2PUnseen"),tr("You cant reply to an Anonymous Author"));
+        QMessageBox::information(this, tr("UnseenP2P"),tr("You cant reply to an Anonymous Author"));
 	}
 }
 

@@ -141,7 +141,7 @@ void SecurityItem::updateItemStatic()
             if(rsPeers->getGPGDetails(mGpgId, details))
                 title = tr("Missing/Damaged SSL certificate for key")+" " + QString::fromStdString(mGpgId.toStdString()) ;
 			else
-                title = tr("Missing/Damaged certificate. Not a real P2PUnseen user.");
+                title = tr("Missing/Damaged certificate. Not a real UnseenP2P user.");
 			requestLabel->hide();
 			}
 			break;
@@ -338,7 +338,7 @@ void SecurityItem::removeFriend()
 	std::cerr << std::endl;
 #endif
 
-    if ((QMessageBox::question(this, "P2PUnseen", tr("Do you want to remove this Friend?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
+    if ((QMessageBox::question(this, "UnseenP2P", tr("Do you want to remove this Friend?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
 	{
 		rsPeers->removeFriend(mGpgId);
 	}

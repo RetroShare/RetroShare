@@ -40,9 +40,9 @@ DHTStatus::DHTStatus(QWidget *parent)
     hbox->setSpacing(6);
        
     statusDHT = new QLabel("<strong>" + tr("DHT") + ":</strong>", this );
-     statusDHT->setToolTip(tr("<p>P2PUnseen uses Bittorrent's DHT as a proxy for connexions. It does not \"store\" your IP in the DHT. \
+     statusDHT->setToolTip(tr("<p>UnseenP2P uses Bittorrent's DHT as a proxy for connexions. It does not \"store\" your IP in the DHT. \
 				                        Instead the DHT is used by your friends to reach you while processing standard DHT requests. \
-                                                The status bullet will turn green as soon as P2PUnseen gets a DHT response from one of your friends.</p>")) ;
+                                                The status bullet will turn green as soon as UnseenP2P gets a DHT response from one of your friends.</p>")) ;
     hbox->addWidget(statusDHT);
     
     dhtstatusLabel = new QLabel( this );
@@ -103,14 +103,14 @@ void DHTStatus::getDHTStatus()
 			if (config.netDhtRsNetSize < MIN_RS_NET_SIZE)
 			{
                 dhtstatusLabel->setPixmap(QPixmap(":/app/images/statusicons/away.png").scaledToHeight(S,Qt::SmoothTransformation));      //d: uptdate icon
-                dhtstatusLabel->setToolTip( text + tr("DHT Searching for P2PUnseen Peers"));
+                dhtstatusLabel->setToolTip( text + tr("DHT Searching for UnseenP2P Peers"));
 
 				spaceLabel->setVisible(true);
 				dhtnetworkLabel->setVisible(true);
 				dhtnetworksizeLabel->setVisible(true);
 
 				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
-                dhtnetworksizeLabel->setToolTip( text + tr("P2PUnseen users in DHT (Total DHT users)") );
+                dhtnetworksizeLabel->setToolTip( text + tr("UnseenP2P users in DHT (Total DHT users)") );
 			}
 			else
 			{
@@ -122,7 +122,7 @@ void DHTStatus::getDHTStatus()
 				dhtnetworksizeLabel->setVisible(true);
 
 				dhtnetworksizeLabel->setText(QString("%1 (%2)").arg(misc::userFriendlyUnit(config.netDhtRsNetSize, 1)).arg(misc::userFriendlyUnit(config.netDhtNetSize, 1)));
-                dhtnetworksizeLabel->setToolTip( text + tr("P2PUnseen users in DHT (Total DHT users)") );
+                dhtnetworksizeLabel->setToolTip( text + tr("UnseenP2P users in DHT (Total DHT users)") );
 			}
 		}
 		else

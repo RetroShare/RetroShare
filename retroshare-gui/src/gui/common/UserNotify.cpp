@@ -182,7 +182,7 @@ void UserNotify::update()
 #ifdef WINDOWS_SYS
 	if (mTrayIcon) {
 		if (count) {
-            mTrayIcon->setToolTip("P2PUnseen\n" + getTrayMessage(count > 1).arg(count));
+            mTrayIcon->setToolTip("UnseenP2P\n" + getTrayMessage(count > 1).arg(count));
 			mTrayIcon->show();
 		} else {
 			mTrayIcon->hide();

@@ -41,7 +41,7 @@ QuickStartWizard::QuickStartWizard(QWidget *parent) :
     ui.setupUi(this);
 
     ui.headerFrame->setHeaderImage(QPixmap(":/images/rs_wizard.png"));
-    ui.headerFrame->setHeaderText("P2PUnseen");
+    ui.headerFrame->setHeaderText("UnseenP2P");
 
 	  ui.pagesWizard->setCurrentIndex(0);
 	  

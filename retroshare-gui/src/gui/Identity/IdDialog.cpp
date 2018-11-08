@@ -385,9 +385,9 @@ IdDialog::IdDialog(QWidget *parent) :
 			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
 			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
 			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
-                receive feedback using the P2PUnseen built-in email system, post comments \
+                receive feedback using the UnseenP2P built-in email system, post comments \
 				after channel posts, chat using secured tunnels, etc.</p> \
-            <p>Identities can optionally be <b>signed</b> by your P2PUnseen node's certificate.   \
+            <p>Identities can optionally be <b>signed</b> by your UnseenP2P node's certificate.   \
 			Signed identities are easier to trust but are easily linked to your node's IP address.</p>  \
 			<p><b>Anonymous identities</b> allow you to anonymously interact with other users. They cannot be   \
 			spoofed, but noone can prove who really owns a given identity.</p> \
@@ -1887,21 +1887,21 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     if(isOwnId)
         if (isLinkedToOwnPgpId)
-            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node")) ;
+            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your UnseenP2P node")) ;
         else
             if (data.mMeta.mGroupFlags & (GXS_SERV::FLAG_PRIVACY_PRIVATE | RSGXSID_GROUPFLAG_REALID))
-                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node but not yet validated")) ;
+                ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your UnseenP2P node but not yet validated")) ;
             else
                 ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
     else if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Linked to a friend P2PUnseen node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a friend UnseenP2P node")) ;
             else
-                ui->lineEdit_Type->setText(tr("Linked to a known P2PUnseen node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a known UnseenP2P node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Linked to unknown P2PUnseen node")) ;
+            ui->lineEdit_Type->setText(tr("Linked to unknown UnseenP2P node")) ;
     }
     else
     {
@@ -2644,7 +2644,7 @@ void IdDialog::sendMsg()
 
 QString IdDialog::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on P2PUnseen.<br>");
+    return tr("Hi,<br>I want to be friends with you on UnseenP2P.<br>");
 }
 
 void IdDialog::sendInvite()

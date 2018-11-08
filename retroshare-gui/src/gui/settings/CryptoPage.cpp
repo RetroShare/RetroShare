@@ -112,8 +112,8 @@ CryptoPage::copyRSLink()
 		urls.push_back(link) ;
 		RSLinkClipboard::copyLinks(urls) ;
 		QMessageBox::information(this,
-                "P2PUnseen",
-                tr("A P2PUnseen link with your Public Key is copied to Clipboard, paste and send it to your"
+                "UnseenP2P",
+                tr("A UnseenP2P link with your Public Key is copied to Clipboard, paste and send it to your"
 					" friend via email or some other way"));
 	}
 	else
@@ -125,7 +125,7 @@ void
 CryptoPage::copyPublicKey()
 {
     QMessageBox::information(this,
-                             tr("P2PUnseen"),
+                             tr("UnseenP2P"),
                              tr("Your Public Key is copied to Clipboard, paste and send it to your"
                                 " friend via email or some other way"));
     QClipboard *clipboard = QApplication::clipboard();
@@ -149,7 +149,7 @@ bool CryptoPage::fileSave()
 bool CryptoPage::fileSaveAs()
 {
     QString fn;
-    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save as..."), tr("P2PUnseen Certificate (*.rsc );;All Files (*)"), fn)) {
+    if (misc::getSaveFileName(this, RshareSettings::LASTDIR_CERT, tr("Save as..."), tr("UnseenP2P Certificate (*.rsc );;All Files (*)"), fn)) {
         fileName = fn;
         return fileSave();
     }

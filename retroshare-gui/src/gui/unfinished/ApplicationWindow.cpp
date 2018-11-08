@@ -73,7 +73,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
     /* Invoke the Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 
-    setWindowTitle(tr("P2PUnseen"));
+    setWindowTitle(tr("UnseenP2P"));
 
     //Settings->loadWidgetInformation(this);
 

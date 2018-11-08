@@ -148,7 +148,7 @@ AddFileAssociationDialog::loadSystemDefaultCommand()
         }
     }
 
-    QMessageBox::warning(this, tr("P2PUnseen"),
+    QMessageBox::warning(this, tr("UnseenP2P"),
                                tr("Sorry, can't determine system "
                                   "default command for this file\n"),
                                      QMessageBox::Ok);

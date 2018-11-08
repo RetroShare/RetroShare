@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>About P2PUnseen</string>
+   <string>About UnseenP2P</string>
   </property>
   <property name="modal">
    <bool>true</bool>

@@ -370,7 +370,7 @@
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="toolTip">
-               <string>Copy P2PUnseen Link</string>
+               <string>Copy UnseenP2P Link</string>
               </property>
               <property name="icon">
                <iconset resource="../images.qrc">
