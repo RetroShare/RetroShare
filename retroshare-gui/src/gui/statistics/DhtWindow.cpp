@@ -288,7 +288,7 @@ void DhtWindow::updateNetPeers()
 	rsDht->getNetPeerList(peerIds);
 
 	/* collate peer stats */
-	int nPeers = peerIds.size();
+	size_t nPeers = peerIds.size();
 
 	// from DHT peers
 	int nOnlinePeers = 0;
@@ -339,7 +339,7 @@ void DhtWindow::updateNetPeers()
 	for(it = peerIds.begin(); it != peerIds.end(); ++it)
 	{
 		/* find the entry */
-		QTreeWidgetItem *peer_item = NULL;
+		QTreeWidgetItem *peer_item = nullptr;
 #if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = ui.peerTreeWidget->topLevelItemCount();
@@ -438,7 +438,7 @@ void DhtWindow::updateNetPeers()
 			case RSDHT_PEERCONN_CONNECTED:
 			{
 				cpsstr = tr("Connected");
-				break;
+
 				switch(status.mPeerConnectMode)
 				{
 					default:
