@@ -91,9 +91,9 @@ Licensing issues:
       pegmarkdown                     |    All right reserved  |  |     Daniel Jalkut - Code currently unused    | will be deleted when creating debian package
       plugins/feedreader              |    GPLv2               | A|     Thunder                                  |
       plugins/VOIP                    |                        |  |                                              |
-             AudioInputConfig.h+      |    All right reserved  |  |     Thorvald Natvig                          | Code can be modified/re-used. Mumble's code. Asked permission to re-license on 04/11/2018.
-             AudioStats.h+            |    All right reserved  |  |     Thorvald Natvig                          | 
-             AudioWizard.h+           |    All right reserved  |  |     Thorvald Natvig                          | 
+             AudioInputConfig.h+      |    All right reserved  | A|     Thorvald Natvig                          | Permission to re-license on 04/11/2018
+             AudioStats.h+            |    All right reserved  | A|     Thorvald Natvig                          | 
+             AudioWizard.h+           |    All right reserved  | A|     Thorvald Natvig                          | 
              SpeexProcessor.h         |                        |  |     Peter Zotov                              |
       retroshare-android-notify-*     |    GPLv3               |  |     G10H4ck                                  |
       retroshare-android-service      |    GPLv3               |  |     G10H4ck                                  | 
