@@ -432,6 +432,10 @@ rs_gxs_trans {
     }
 }
 
+bitdht {
+    DEFINES *= RS_USE_BITDHT
+}
+
 rs_async_chat {
     DEFINES *= RS_ASYNC_CHAT
 }
