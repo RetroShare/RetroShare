@@ -22,7 +22,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <inttypes.h>
+#include <cstdint>
 #include <string>
 #include <list>
 #include <functional>
