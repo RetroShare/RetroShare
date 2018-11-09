@@ -3891,7 +3891,7 @@ bool p3IdService::recogn_handlerequest(uint32_t token)
 bool p3IdService::recogn_process()
 {
 	/* each time this is called - process one Id from mGroupsToProcess */
-	RsGxsIdGroupItem *item;
+	RsGxsIdGroupItem *item = nullptr;
 	bool isDone = false;
 	{
 		RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -3911,7 +3911,7 @@ bool p3IdService::recogn_process()
 		}
 	}
 
-	if (isDone)
+	if (isDone || !item)
 	{
 #ifdef DEBUG_RECOGN
 		std::cerr << "p3IdService::recogn_process() List Empty... Done";
