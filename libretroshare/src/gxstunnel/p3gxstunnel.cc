@@ -1628,6 +1628,10 @@ bool p3GxsTunnelService::getTunnelsInfo(std::vector<RsGxsTunnelService::GxsTunne
         ti.tunnel_status = it->second.status ;
         ti.total_size_sent = it->second.total_sent ;
         ti.total_size_received = it->second.total_received ;
+        ti.is_client_side = (it->second.direction == RsTurtleGenericTunnelItem::DIRECTION_CLIENT);
+        ti.pending_data_packets = 0 ;
+        ti.total_data_packets_sent = 0 ;
+        ti.total_data_packets_received = 0 ;
         
         infos.push_back(ti) ;
     }
