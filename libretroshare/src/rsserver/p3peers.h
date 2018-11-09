@@ -66,7 +66,11 @@ public:
 
 	virtual bool isOnline(const RsPeerId &id);
 	virtual bool isFriend(const RsPeerId &id);
+	virtual bool isPgpFriend(const RsPgpId& pgpId);
+
+	RS_DEPRECATED_FOR(isPgpFriend)
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend);
+
 	virtual std::string getGPGName(const RsPgpId &gpg_id);
 	virtual std::string getPeerName(const RsPeerId& ssl_or_gpg_id);
 	virtual bool getPeerDetails(const RsPeerId& ssl_or_gpg_id, RsPeerDetails &d);
