@@ -213,8 +213,9 @@ private:
 
 	RsGeneralDataService* const mDs;
 	RsGenExchange *mGenExchangeClient;
-	//RsSerialType& mSerializer;
-
+#ifdef RS_DEEP_SEARCH
+	RsSerialType& mSerializer;
+#endif
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;

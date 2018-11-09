@@ -111,8 +111,6 @@ void ftExtraList::hashAFile()
 #endif
 
 	/* hash it! */
-	//std::string name, hash;
-	//uint64_t size;
 	if (RsDirUtil::hashFile(details.info.path, details.info.fname,  details.info.hash, details.info.size))
 	{
 		RS_STACK_MUTEX(extMutex);
@@ -466,7 +464,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 
 		/* open file */
 		FILE *fd = RsDirUtil::rs_fopen(fi->file.path.c_str(), "rb");
-		if (fd == nullptr)
+		if (!fd)
 		{
 			delete (*it);
 			continue;

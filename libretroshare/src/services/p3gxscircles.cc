@@ -963,10 +963,12 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 	int32_t age = 0;
 	if (RsTickEvent::prev_event_ago(CIRCLE_EVENT_CACHELOAD, age))
 	{
-		if( (age < MIN_CIRCLE_LOAD_GAP) && (age > 0))
+		if( (age < MIN_CIRCLE_LOAD_GAP) && (age >= 0))
 		{
 			RsTickEvent::schedule_in(CIRCLE_EVENT_CACHELOAD,  MIN_CIRCLE_LOAD_GAP - static_cast<uint32_t>(age));
 			return true;
+		} else if (age < 0) {
+			std::cerr << __PRETTY_FUNCTION__ << "(EE) Age<=0, this should not happens. Tell it to Devs." << std::endl;
 		}
 	}
 

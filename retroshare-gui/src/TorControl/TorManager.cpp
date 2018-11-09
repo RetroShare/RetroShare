@@ -152,7 +152,7 @@ void TorManager::setHiddenServiceDirectory(const QString &path)
 
 bool TorManager::setupHiddenService()
 {
-	if(d->hiddenService != nullptr)
+	if(d->hiddenService)
 	{
 		std::cerr << "TorManager: setupHiddenService() called twice! Not doing anything this time." << std::endl;
 		return true ;

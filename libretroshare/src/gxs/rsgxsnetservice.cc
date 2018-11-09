@@ -3809,7 +3809,6 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
     GXSNETDEBUG_P_(peerId) << "RsGxsNetService::decryptTransaction()" << std::endl;
 #endif
 
-	//std::list<RsNxsItem*> decrypted_items ;
     std::vector<RsTlvPrivateRSAKey> private_keys ;
 
     // get all private keys. Normally we should look into the circle name and only supply the keys that we have
@@ -3818,7 +3817,7 @@ bool RsGxsNetService::processTransactionForDecryption(NxsTransaction *tr)
     {
         RsNxsEncryptedDataItem *encrypted_item = dynamic_cast<RsNxsEncryptedDataItem*>(*it) ;
 
-        if(encrypted_item == nullptr)
+        if(!encrypted_item)
         {
 #ifdef NXS_NET_DEBUG_7
             GXSNETDEBUG_P_(peerId) << "  skipping unencrypted item..." << std::endl;

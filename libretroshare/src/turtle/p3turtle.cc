@@ -88,7 +88,7 @@ static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_DEFAULT= 100 ;		/// default 
 
 static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.6f,0.5,0.4f } ;
 
-static const float TUNNEL_REQUEST_PACKET_SIZE_APPROX           = 50.0f ;
+static const float TUNNEL_REQUEST_PACKET_SIZE_APPROX    = 50.0f ;
 static const int MAX_TR_FORWARD_PER_SEC                 = 20 ;
 static const int MAX_TR_FORWARD_PER_SEC_UPPER_LIMIT     = 30 ;
 static const int MAX_TR_FORWARD_PER_SEC_LOWER_LIMIT     = 10 ;
@@ -388,7 +388,7 @@ void p3turtle::manageTunnels()
 
 			static const float grow_speed = 1.0f ;	// speed at which the time increases.
 
-			float tunnel_keeping_factor = (std::max(1.0f,static_cast<float>(total_speed)/(50.0f*1024)) - 1.0f)*grow_speed + 1.0f ;
+			float tunnel_keeping_factor = (std::max(1.0f,static_cast<float>(total_speed)/(TUNNEL_REQUEST_PACKET_SIZE_APPROX*1024)) - 1.0f)*grow_speed + 1.0f ;
 
 #ifdef P3TURTLE_DEBUG
 			std::cerr << "Total speed = " << total_speed << ", tunel factor = " << tunnel_keeping_factor << " new time = " << rstime_t(REGULAR_TUNNEL_DIGGING_TIME*tunnel_keeping_factor) << std::endl;
@@ -2205,7 +2205,7 @@ static std::string printNumber(uint64_t num,bool hex=false)
 	if(hex)
 	{
 		char tmp[100] ;
-		uint64_t one = 1;
+		constexpr uint64_t one = 1;
 
 		if(num < ((one)<<32))
 			sprintf(tmp,"%08x", uint32_t(num)) ;

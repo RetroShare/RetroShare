@@ -1114,7 +1114,7 @@ void TransfersDialog::activatePage(TransfersDialog::Page page)
 													break ;
 		case TransfersDialog::RemoteSharedFilesTab: ui.tabWidget->setCurrentWidget(remoteSharedFiles) ;
 													break ;
-		case TransfersDialog::DownloadTab: assert(false);
+		case TransfersDialog::DownloadTab: ui.tabWidget->setCurrentWidget(ui.tab) ;
 	}
 }
 
