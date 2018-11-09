@@ -146,7 +146,7 @@ bool decryptAuthenticateData(const unsigned char *encrypted_data,uint32_t encryp
 
 #ifdef CRYPTO_DEBUG
 	RSCRYPTO_DEBUG() << "ftServer::decrypting ft item." << std::endl;
-	RSCRYPTO_DEBUG() << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_data_len) << "(...)" << std::endl;
+	RSCRYPTO_DEBUG() << "  item data       : " << RsUtil::BinToHex(edata,std::min(50u,encrypted_data_len)) << "(...)" << std::endl;
 	RSCRYPTO_DEBUG() << "  hash            : " << hash << std::endl;
 	RSCRYPTO_DEBUG() << "  encryption key  : " << RsUtil::BinToHex(encryption_key,32) << std::endl;
 	RSCRYPTO_DEBUG() << "  random nonce    : " << RsUtil::BinToHex(initialization_vector,ENCRYPTED_MEMORY_INITIALIZATION_VECTOR_SIZE) << std::endl;
