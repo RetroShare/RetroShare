@@ -971,11 +971,11 @@ int p3ZeroConf::locked_checkResolvedPeer(const zcResolveResult &rr)
 		/* install a new location -> flag it as this */
 		zcLocationDetails loc;
 		loc.mSslId = rr.sslId;
+		loc.mFoundTs = time(nullptr);
 		loc.mStatus = ZC_STATUS_FOUND | ZC_STATUS_NEW_LOCATION;
-		loc.mPort = rr.port;
-		loc.mFullName = rr.fullname;
 		loc.mHostTarget = rr.hosttarget;
-		loc.mFoundTs = time(NULL);
+		loc.mFullName = rr.fullname;
+		loc.mPort = rr.port;
 
 		it->second.mLocations[rr.sslId] = loc;
 
@@ -1211,7 +1211,6 @@ int p3ZeroConf::locked_completeQueryResult(zcQueryResult &qr)
 	sockaddr_storage_setport(qr.addr, lit->second.mPort);
 	lit->second.mAddress = qr.addr;
 	lit->second.mStatus |= ZC_STATUS_IPADDRESS;
-	lit->second.mAddrTs = time(NULL);
 
 	/* if we have connected? */
 	if (lit->second.mStatus & ZC_STATUS_CONNECTED)

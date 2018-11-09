@@ -117,7 +117,6 @@ class zcLocationDetails
 	uint16_t mPort;
 
 	struct sockaddr_storage mAddress;
-	rstime_t mAddrTs;
 };
 
 
