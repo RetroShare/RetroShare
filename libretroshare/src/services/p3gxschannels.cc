@@ -858,7 +858,7 @@ void p3GxsChannels::request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> 
 }
 
 
-void p3GxsChannels::load_SpecificUnprocessedPosts(uint32_t token)
+void p3GxsChannels::load_unprocessedPosts(uint32_t token)
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::load_SpecificUnprocessedPosts" << std::endl;
@@ -880,32 +880,6 @@ void p3GxsChannels::load_SpecificUnprocessedPosts(uint32_t token)
 	}
 }
 
-	
-void p3GxsChannels::load_GroupUnprocessedPosts(const uint32_t &token)
-{
-#ifdef GXSCHANNELS_DEBUG
-	std::cerr << "p3GxsChannels::load_GroupUnprocessedPosts";
-	std::cerr << std::endl;
-#endif
-
-	std::vector<RsGxsChannelPost> posts;
-	if (!getPostData(token, posts))
-	{
-#ifdef GXSCHANNELS_DEBUG
-		std::cerr << "p3GxsChannels::load_GroupUnprocessedPosts ERROR";
-		std::cerr << std::endl;
-#endif
-		return;
-	}
-
-
-	std::vector<RsGxsChannelPost>::iterator it;
-	for(it = posts.begin(); it != posts.end(); ++it)
-	{
-		handleUnprocessedPost(*it);
-	}
-}
-
 void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 {
 #ifdef GXSCHANNELS_DEBUG
@@ -915,8 +889,8 @@ void p3GxsChannels::handleUnprocessedPost(const RsGxsChannelPost &msg)
 
 	if (!IS_MSG_UNPROCESSED(msg.mMeta.mMsgStatus))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " ERROR Msg already Processed!"
-		          << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " ERROR Msg already Processed! "
+		          << "mMsgId: " << msg.mMeta.mMsgId << std::endl;
 		return;
 	}
 
@@ -999,19 +973,18 @@ void p3GxsChannels::handleResponse(uint32_t token, uint32_t req_type)
 			load_SubscribedGroups(token);
 			break;
 
-		case GXSCHANNELS_UNPROCESSED_SPECIFIC:
-			load_SpecificUnprocessedPosts(token);
-			break;
+	case GXSCHANNELS_UNPROCESSED_SPECIFIC:
+		load_unprocessedPosts(token);
+		break;
 
-		case GXSCHANNELS_UNPROCESSED_GENERIC:
-			load_SpecificUnprocessedPosts(token);
-			break;
+	case GXSCHANNELS_UNPROCESSED_GENERIC:
+		load_unprocessedPosts(token);
+		break;
 
-		default:
-			/* error */
-			std::cerr << "p3GxsService::handleResponse() Unknown Request Type: " << req_type;
-			std::cerr << std::endl;
-			break;
+	default:
+		std::cerr << __PRETTY_FUNCTION__ << "ERROR Unknown Request Type: "
+		          << req_type << std::endl;
+		break;
 	}
 }
 

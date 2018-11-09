@@ -220,10 +220,8 @@ static uint32_t channelsAuthenPolicy();
 	void load_SubscribedGroups(const uint32_t &token);
 
 	void request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids);
-	void load_SpecificUnprocessedPosts(uint32_t token);
-
 	void request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist);
-	void load_GroupUnprocessedPosts(const uint32_t &token);
+	void load_unprocessedPosts(uint32_t token);
 
 	void handleUnprocessedPost(const RsGxsChannelPost &msg);
 
