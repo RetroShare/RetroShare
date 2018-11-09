@@ -333,8 +333,10 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 		PeerAction ca;
 		ca.mType = PEERNET_ACTION_TYPE_CONNECT;
 		ca.mMode = BITDHT_CONNECT_MODE_DIRECT;
+		ca.mPoint = 0;
 		ca.mDestId = *id;
 		ca.mAnswer = BITDHT_CONNECT_ERROR_NONE;
+		ca.mDelayOrBandwidth = 0;
 
 		mActions.push_back(ca);
 	}
