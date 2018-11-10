@@ -2667,7 +2667,7 @@ int	setupBinaryCheck(std::string fname)
 /* uses seq number to track position -> ensure no rollover */
 int	checkData(uint8 *data, int size, int idx)
 {
-	if (bc_fd == 0)
+	if (!bc_fd)
 	{
 		return -1;
 	}
