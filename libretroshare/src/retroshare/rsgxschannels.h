@@ -1,4 +1,3 @@
-#pragma once
 /*******************************************************************************
  * libretroshare/src/retroshare: rsgxschannels.h                               *
  *                                                                             *
@@ -21,6 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -62,9 +62,6 @@ struct RsGxsChannelGroup : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream& out, const RsGxsChannelGroup& group);
-
-
 struct RsGxsChannelPost : RsSerializable
 {
 	RsGxsChannelPost() : mCount(0), mSize(0) {}
@@ -94,8 +91,6 @@ struct RsGxsChannelPost : RsSerializable
 		RS_SERIAL_PROCESS(mThumbnail);
 	}
 };
-
-std::ostream &operator<<(std::ostream& out, const RsGxsChannelPost& post);
 
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
