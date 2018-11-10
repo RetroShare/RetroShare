@@ -403,6 +403,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiperson.h \
 			pqi/pqipersongrp.h \
 			pqi/pqiservice.h \
+			pqi/pqiservicemonitor.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
@@ -427,12 +428,12 @@ HEADERS +=	rsserver/p3face.h \
 			rsserver/p3serverconfig.h
 
 HEADERS +=  grouter/groutercache.h \
-				grouter/rsgrouter.h \
+				retroshare/rsgrouter.h \
 				grouter/grouteritems.h \
 				grouter/p3grouter.h \
 				grouter/rsgroutermatrix.h \
 				grouter/groutertypes.h \
-				grouter/rsgrouterclient.h 
+				grouter/grouterclientservice.h
 
 HEADERS +=	rsitems/rsitem.h \
 			rsitems/itempriorities.h \
@@ -707,44 +708,46 @@ DEFINES *= SQLITE_HAS_CODEC
 DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 HEADERS += rsitems/rsnxsitems.h \
+	rsitems/rsgxsitems.h \
+	retroshare/rstokenservice.h \
+	retroshare/rsgxsservice.h \
+	retroshare/rsgxsflags.h \
+	retroshare/rsgxsifacetypes.h \
+	retroshare/rsgxsiface.h \
+	retroshare/rsgxscommon.h \
+	retroshare/rsgxsifacehelper.h \
+	util/retrodb.h \
+	util/rsdbbind.h \
+	util/contentvalue.h \
+	gxs/rsgxsutil.h \
+	gxs/gxssecurity.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
 	gxs/rsgxsnettunnel.h \
-	retroshare/rsgxsflags.h \
-	retroshare/rsgxsifacetypes.h \
 	gxs/rsgenexchange.h \
+	gxs/rsnxs.h \
 	gxs/rsnxsobserver.h \
 	gxs/rsgxsdata.h \
-	retroshare/rstokenservice.h \
 	gxs/rsgxsdataaccess.h \
-	retroshare/rsgxsservice.h \
-	rsitems/rsgxsitems.h \
-	util/retrodb.h \
-	util/rsdbbind.h \
-	gxs/rsgxsutil.h \
-	util/contentvalue.h \
-	gxs/gxssecurity.h \
-	gxs/rsgxsifacehelper.h \
 	gxs/gxstokenqueue.h \
 	gxs/rsgxsnetutils.h \
-	gxs/rsgxsiface.h \
 	gxs/rsgxsrequesttypes.h
 
 
 SOURCES += rsitems/rsnxsitems.cc \
+	rsitems/rsgxsitems.cc \
+	util/retrodb.cc \
+	util/contentvalue.cc \
+	util/rsdbbind.cc \
+	gxs/gxssecurity.cc \
+	gxs/rsgxsdataaccess.cc \
 	gxs/rsdataservice.cc \
 	gxs/rsgenexchange.cc \
 	gxs/rsgxsnetservice.cc \
 	gxs/rsgxsnettunnel.cc \
 	gxs/rsgxsdata.cc \
-	rsitems/rsgxsitems.cc \
-	gxs/rsgxsdataaccess.cc \
-	util/retrodb.cc \
-	util/contentvalue.cc \
-	util/rsdbbind.cc \
-	gxs/gxssecurity.cc \
 	gxs/gxstokenqueue.cc \
 	gxs/rsgxsnetutils.cc \
 	gxs/rsgxsutil.cc \
