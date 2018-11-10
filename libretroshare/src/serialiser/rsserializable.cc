@@ -1,9 +1,7 @@
 /*******************************************************************************
- * libretroshare/src/serialiser: rsserializable.h                              *
- *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,38 +17,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#pragma once
 
-#include "serialiser/rsserializer.h"
+#include "serialiser/rsserializable.h"
 
-#include <iosfwd>
+#include <iostream>
 
-
-/** @brief Minimal ancestor for all serializable structs in RetroShare.
- * If you want your struct to be easly serializable you should inherit from this
- * struct.
- */
-struct RsSerializable
+std::ostream& operator<<(std::ostream& out, const RsSerializable& serializable)
 {
-	/** Process struct members to serialize in this method taking advantage of
-	 * the helper macro @see RS_SERIAL_PROCESS(I)
-	 */
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,
-	                            RsGenericSerializer::SerializeContext& ctx) = 0;
-};
-
-/** @def RS_SERIAL_PROCESS(I)
- * Use this macro to process the members of `YourSerializable` for serial
- * processing inside `YourSerializable::serial_process(j, ctx)`
- *
- * Pay special attention for member of enum type which must be declared
- * specifying the underlying type otherwise the serialization format may differ
- * in an uncompatible way depending on the compiler/platform.
- *
- * Inspired by http://stackoverflow.com/a/39345864
- */
-#define RS_SERIAL_PROCESS(I) do { \
-	RsTypeSerializer::serial_process(j, ctx, I, #I ); \
-	} while(0)
-
-std::ostream &operator<<(std::ostream& out, const RsSerializable& serializable);
+	RsGenericSerializer::SerializeContext ctx;
+	const_cast<RsSerializable&>(serializable) // safe with TO_JSON
+	        .serial_process(RsGenericSerializer::TO_JSON, ctx);
+	return out << ctx.mJson;
+}
