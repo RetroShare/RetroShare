@@ -26,15 +26,18 @@
  *
  ******************************************************************/
 
+#include "util/rsdeprecate.h"
+
 #include <iosfwd>
 #include <string>
 #include <inttypes.h>
 
-//! A base class for all tlv items 
-/*! This class is provided to allow the serialisation and deserialization of compund 
-tlv items 
-*/
-class RsTlvItem
+/*! A base class for all tlv items
+ * This class is provided to allow the serialisation and deserialization of
+ * compund tlv items
+ * @deprecated TLV serialization system is deprecated!
+ */
+class RS_DEPRECATED_FOR(RsSerializable) RsTlvItem
 {
 	public:
 	 RsTlvItem() { return; }
@@ -51,8 +54,7 @@ std::ostream &printEnd(std::ostream &out, std::string clsName, uint16_t indent) 
 
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
 
-
-class RsTlvUnit: public RsTlvItem
+class RS_DEPRECATED_FOR(RsSerializable) RsTlvUnit: public RsTlvItem
 {
 	public:
 	 RsTlvUnit(uint16_t tlv_type);
