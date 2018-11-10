@@ -210,7 +210,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     isIdle = false;
     onlineCount = 0;
 
-    notifyMenu = NULL;
+    //notifyMenu = NULL;
 
     /* Calculate only once */
     RsPeerDetails pd;
@@ -610,7 +610,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
  * notification area. */
 void MainWindow::createTrayIcon()
 {
- #ifdef WINDOWS_SYS
+ //#ifdef WINDOWS_SYS
     /** Tray icon Menu **/
     QMenu *trayMenu = new QMenu(this);
     if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
@@ -622,13 +622,13 @@ void MainWindow::createTrayIcon()
     QMenu *statusMenu = trayMenu->addMenu(tr("Status"));
     initializeStatusObject(statusMenu, true);
 
-    /* Create notify menu */
-    notifyMenu = trayMenu->addMenu(tr("Notify"));
-    notifyMenu->menuAction()->setVisible(false);
+    /* Create notify menu */ //meiyousixin - no need more!
+    //notifyMenu = trayMenu->addMenu(tr("Notify"));
+    //notifyMenu->menuAction()->setVisible(false);
 
     trayMenu->addSeparator();
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
-    trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+    //trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Email"), this, SLOT(showMess()));
 #ifdef ENABLE_WEBUI
     trayMenu->addAction(QIcon(":/home/img/Traymenu/earth-globe.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
@@ -640,24 +640,24 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
-    trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
+    //trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
     trayMenu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     /** End of Icon Menu **/
-#endif
+//#endif
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
-#ifdef WINDOWS_SYS
+//#ifdef WINDOWS_SYS
     trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
-#endif
+//#endif
     trayIcon->show();
 
 }
@@ -673,12 +673,13 @@ void MainWindow::showBandwidthGraph()
 void MainWindow::createNotifyIcons()
 {
     /* create notify icons */
-    QList<UserNotify*>::iterator it;
-    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
-        UserNotify *userNotify = *it;
-        userNotify->createIcons(notifyMenu);
-        userNotify->updateIcon();
-    }
+    //meiyousixin - no need any more
+//    QList<UserNotify*>::iterator it;
+//    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
+//        UserNotify *userNotify = *it;
+//        userNotify->createIcons(notifyMenu);
+//        userNotify->updateIcon();
+//    }
   updateTrayCombine();
 }
 
@@ -755,29 +756,31 @@ void MainWindow::updateTrayCombine()
 
     bool visible = false;
 
-    if (notifyMenu) {
-        QList<QAction*> actions = notifyMenu->actions();
-        int count = 0;
-        QList<QAction*>::iterator actionIt;
-        for (actionIt = actions.begin(); actionIt != actions.end(); ++actionIt) {
-            if ((*actionIt)->isVisible()) {
-                visible = true;
+    //meiyousixin - no need any more
+//    if (notifyMenu)
+//    {
+//        QList<QAction*> actions = notifyMenu->actions();
+//        int count = 0;
+//        QList<QAction*>::iterator actionIt;
+//        for (actionIt = actions.begin(); actionIt != actions.end(); ++actionIt) {
+//            if ((*actionIt)->isVisible()) {
+//                visible = true;
 
-                count += (*actionIt)->data().toInt();
-// ToolTip is too long to show all services
-//                if (notifyToolTip.isEmpty() == false) {
-//                    notifyToolTip += "\r";
-//                }
-//                notifyToolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
-            }
-            if (visible) {
-                notifyToolTip = ((count == 1) ? tr("%1 new message") : tr("%1 new messages")).arg(count);
-            }
+//                count += (*actionIt)->data().toInt();
+//// ToolTip is too long to show all services
+////                if (notifyToolTip.isEmpty() == false) {
+////                    notifyToolTip += "\r";
+////                }
+////                notifyToolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
+//            }
+//            if (visible) {
+//                notifyToolTip = ((count == 1) ? tr("%1 new message") : tr("%1 new messages")).arg(count);
+//            }
 
-        }
-    }
-    if (notifyMenu)
-        notifyMenu->menuAction()->setVisible(visible);
+//        }
+//    }
+//    if (notifyMenu)
+//        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();
@@ -848,35 +851,35 @@ void MainWindow::updateFriends()
 
     if (peerstatus)
         peerstatus->getPeerStatus(friendCount, onlineCount);
-#ifdef WINDOWS_SYS
-    QString trayIconResource;
+//#ifdef WINDOWS_SYS
+//    QString trayIconResource;
 
-    if (onlineCount == 0) {
-        trayIconResource = IMAGE_NOONLINE;
-    } else if (onlineCount < 2) {
-        trayIconResource = IMAGE_ONEONLINE;
-    } else if (onlineCount < 3) {
-        trayIconResource = IMAGE_TWOONLINE;
-    } else {
-        trayIconResource = IMAGE_RETROSHARE;
-    }
+//    if (onlineCount == 0) {
+//        trayIconResource = IMAGE_NOONLINE;
+//    } else if (onlineCount < 2) {
+//        trayIconResource = IMAGE_ONEONLINE;
+//    } else if (onlineCount < 3) {
+//        trayIconResource = IMAGE_TWOONLINE;
+//    } else {
+//        trayIconResource = IMAGE_RETROSHARE;
+//    }
 
-    QIcon icon;
-    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
-        QPixmap trayImage(trayIconResource);
-        QPixmap overlayImage(IMAGE_OVERLAY);
+//    QIcon icon;
+//    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
+//        QPixmap trayImage(trayIconResource);
+//        QPixmap overlayImage(IMAGE_OVERLAY);
 
-        QPainter painter(&trayImage);
-        painter.drawPixmap(0, 0, overlayImage);
+//        QPainter painter(&trayImage);
+//        painter.drawPixmap(0, 0, overlayImage);
 
-        icon.addPixmap(trayImage);
-    } else {
-        icon = QIcon(trayIconResource);
-    }
+//        icon.addPixmap(trayImage);
+//    } else {
+//        icon = QIcon(trayIconResource);
+//    }
 
-    if (trayIcon) trayIcon->setIcon(icon);
-    if (sysTrayStatus) sysTrayStatus->setIcon(icon);
-    #endif
+//    if (trayIcon) trayIcon->setIcon(icon);
+//    if (sysTrayStatus) sysTrayStatus->setIcon(icon);
+//    #endif
 }
 
 void MainWindow::postModDirectories(bool /*update_local*/)

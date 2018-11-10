@@ -75,7 +75,8 @@
 #define IMAGE_MESSAGE	      ":/chat/img/chat_32.png"                  //d
 #define IMAGE_AUTOSUBSCRIBE   ":/images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
-#define IMAGE_UNSEEN          ":/app/images/unseen32.png"               //d
+#define IMAGE_UNSEEN          ":/app/images/unseen32.png"
+#define IMAGE_UNREAD_ICON      ":/home/img/face_icon/un_chat_icon_v_128.png"
 
 
 #define GUI_DIR_NAME                  "gui"
@@ -100,7 +101,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
     QObject::connect( NotifyQt::getInstance(), SIGNAL(newChatMessageReceive(const ChatId&, uint)), this, SLOT(updateRecentTime(const ChatId&, uint)));
 
 
-    //QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
+    QObject::connect( ui.lobbyTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(lobbyTreeWidgetCustomPopupMenu(QPoint)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
 	QObject::connect( ui.lobbyTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(updateCurrentLobby()));
 
@@ -195,15 +196,15 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnWidth(COLUMN_TOPIC, 50*fact);
 
 	/** Setup the actions for the header context menu */
-//	showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
-//	showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show")+" "+showUserCountAct->text()+" "+tr("column"));
-//	connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
-//	showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
-//	showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show")+" "+showTopicAct->text()+" "+tr("column"));
-//	connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
-//	showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
-//	showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show")+" "+showSubscribeAct->text()+" "+tr("column"));
-//	connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
+    showUserCountAct= new QAction(headerItem->text(COLUMN_USER_COUNT),this);
+    showUserCountAct->setCheckable(true); showUserCountAct->setToolTip(tr("Show")+" "+showUserCountAct->text()+" "+tr("column"));
+    connect(showUserCountAct,SIGNAL(triggered(bool)),this,SLOT(setShowUserCountColumn(bool))) ;
+    showTopicAct= new QAction(headerItem->text(COLUMN_TOPIC),this);
+    showTopicAct->setCheckable(true); showTopicAct->setToolTip(tr("Show")+" "+showTopicAct->text()+" "+tr("column"));
+    connect(showTopicAct,SIGNAL(triggered(bool)),this,SLOT(setShowTopicColumn(bool))) ;
+    showSubscribeAct= new QAction(headerItem->text(COLUMN_SUBSCRIBED),this);
+    showSubscribeAct->setCheckable(true); showSubscribeAct->setToolTip(tr("Show")+" "+showSubscribeAct->text()+" "+tr("column"));
+    connect(showSubscribeAct,SIGNAL(triggered(bool)),this,SLOT(setShowSubscribeColumn(bool))) ;
 
 	// Set initial size of the splitter
 	ui.splitter->setStretchFactor(0, 0);
@@ -414,16 +415,16 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 
         contextMnu.addSeparator();//-------------------------------------------------------------------
 
-//        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
-//        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
-//        showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
+        showUserCountAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_USER_COUNT));
+        showTopicAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_TOPIC));
+        showSubscribeAct->setChecked(!ui.lobbyTreeWidget->isColumnHidden(COLUMN_SUBSCRIBED));
 
-//        QMenu *menu = contextMnu.addMenu(tr("Columns"));
-//        menu->addAction(showUserCountAct);
-//        menu->addAction(showTopicAct);
-//        menu->addAction(showSubscribeAct);
+        QMenu *menu = contextMnu.addMenu(tr("Columns"));
+        menu->addAction(showUserCountAct);
+        menu->addAction(showTopicAct);
+        menu->addAction(showSubscribeAct);
 
-//        contextMnu.exec(QCursor::pos());
+        contextMnu.exec(QCursor::pos());
 }
 
 void ChatLobbyWidget::lobbyChanged()
@@ -783,19 +784,19 @@ void ChatLobbyWidget::updateDisplay()
 
 		QIcon icon;
         
-                ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
+        ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
 
-                if (item == NULL)
-                {
-                    item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-                    icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-                    itemParent->addChild(item);
-                } else {
-                    if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
-                        // Replace icon
-                        icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-                    }
-                }
+        if (item == NULL)
+        {
+            item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
+            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+            itemParent->addChild(item);
+        } else {
+            if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
+                // Replace icon
+                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+            }
+        }
 		if (!icon.isNull()) {
 			item->setIcon(COLUMN_NAME, icon);
 		}
@@ -1714,9 +1715,9 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay, bool un
     painter.drawPixmap(overlayX, overlayY, overlaySize, overlaySize, overlay);
     if (unread)
     {
-        QIcon unreadIcon = QIcon(IMAGE_MESSAGE);
+        QIcon unreadIcon = QIcon(IMAGE_UNREAD_ICON);
         int overlayUnreadY = avatarHeight - 2.5*overlaySize;
-        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(12, 12)));
+        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(20, 20)));
         painter.drawPixmap(overlayX, overlayUnreadY, overlaySize, overlaySize, unreadOverlay);
     }
 
