@@ -1,5 +1,5 @@
 /*******************************************************************************
- * libretroshare/src/retroshare: rsturtle.h                                    *
+ * libretroshare/src/rsserver: rstypes.h                                       *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *

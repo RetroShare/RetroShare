@@ -101,6 +101,7 @@ HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/tcpstream.h \
 		tcponudp/tou.h \
 		tcponudp/udprelay.h \
+		tcponudp/rsudpstack.h \
 		pqi/pqissludp.h \
 
 SOURCES +=	tcponudp/udppeer.cc \
@@ -493,6 +494,7 @@ HEADERS +=	util/folderiterator.h \
 			util/rsmemory.h \
 			util/smallobject.h \
 			util/rsdir.h \
+			util/argstream.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
 			util/extaddrfinder.h \
