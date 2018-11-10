@@ -1033,7 +1033,7 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 	uint32_t token;
 	if(!createGroup(token, channel))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group."
 		          << std::endl;
 		return false;
 	}
