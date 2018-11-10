@@ -74,6 +74,9 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 //virtual bool groupRestoreKeys(const std::string &groupId);
 //virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
 
+	virtual bool createForum(RsGxsForumGroup& forum);
+	virtual bool createMessage(RsGxsForumMsg& message);
+
 virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
 
