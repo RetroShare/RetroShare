@@ -42,7 +42,7 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001 ;
 class RsGxsForums;
 extern RsGxsForums *rsGxsForums;
 
-class RsGxsForumGroup
+class RsGxsForumGroup_deprecated
 {
 	public:
 	RsGroupMetaData mMeta;
@@ -52,6 +52,18 @@ class RsGxsForumGroup
 
     RsTlvGxsIdSet mAdminList;
     RsTlvGxsMsgIdSet mPinnedPosts;
+};
+
+class RsGxsForumGroup
+{
+	public:
+	RsGroupMetaData mMeta;
+	std::string mDescription;
+
+    // What's below is optional, and handled by the serialiser
+
+    std::set<RsGxsId> mAdminList;
+    std::set<RsGxsMessageId> mPinnedPosts;
 };
 
 class RsGxsForumMsg

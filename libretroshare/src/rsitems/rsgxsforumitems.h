@@ -31,10 +31,27 @@
 
 #include "retroshare/rsgxsforums.h"
 
-const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM   = 0x02;
-const uint8_t RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM_deprecated   = 0x02;
+const uint8_t RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM            = 0x03;
+const uint8_t RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM              = 0x04;
 
-class RsGxsForumGroupItem : public RsGxsGrpItem
+// This class was created on 11/2018 in order to get rid of the old group system that uses Tlv Sets for ids, that is not json-friendly.
+
+class RsGxsForumGroupItem_deprecated : public RsGxsGrpItem
+{
+
+public:
+
+	RsGxsForumGroupItem_deprecated():  RsGxsGrpItem(RS_SERVICE_GXS_TYPE_FORUMS, RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM_deprecated) {}
+	virtual ~RsGxsForumGroupItem_deprecated() {}
+
+	void clear();
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+	RsGxsForumGroup_deprecated mGroup;
+};
+
+class RsGxsForumGroupItem: public RsGxsGrpItem
 {
 
 public:

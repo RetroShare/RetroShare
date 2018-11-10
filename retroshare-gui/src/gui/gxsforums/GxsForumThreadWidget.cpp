@@ -517,7 +517,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
-	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
+	bool is_pinned = mForumGroup.mPinnedPosts.find(mThreadId) != mForumGroup.mPinnedPosts.end();
 	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_MESSAGE), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
@@ -615,7 +615,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		QTreeWidgetItem *item = *selectedItems.begin();
 		GxsIdRSTreeWidgetItem *gxsIdItem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item);
 
-		bool is_pinned = mForumGroup.mPinnedPosts.ids.find( RsGxsMessageId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString()) ) != mForumGroup.mPinnedPosts.ids.end();
+		bool is_pinned = mForumGroup.mPinnedPosts.find( RsGxsMessageId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString()) ) != mForumGroup.mPinnedPosts.end();
 
         if(!is_pinned)
 		{
@@ -631,7 +631,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 				rsIdentity->getOwnIds(own_ids) ;
 
 				for(auto it(own_ids.begin());it!=own_ids.end();++it)
-					if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+					if(mForumGroup.mAdminList.find(*it) != mForumGroup.mAdminList.end())
 					{
 						contextMnu.addAction(editAct);
 						break ;
@@ -840,7 +840,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 		calculateIconsAndFonts(item->child(index), myReadChilddren, myUnreadChilddren);
 	}
 
-    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msgId) != mForumGroup.mPinnedPosts.ids.end();
+    bool is_pinned = mForumGroup.mPinnedPosts.find(msgId) != mForumGroup.mPinnedPosts.end();
 
 	// set font
 	for (int i = 0; i < COLUMN_THREAD_COUNT; ++i) {
@@ -1066,11 +1066,11 @@ static QString getDurationString(uint32_t days)
     tw->ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags));
     tw->mStateHelper->setWidgetEnabled(tw->ui->newthreadButton, (IS_GROUP_SUBSCRIBED(tw->mSubscribeFlags)));
 
-    if(!group.mAdminList.ids.empty())
+    if(!group.mAdminList.empty())
     {
         QString admin_list_str ;
 
-        for(auto it(group.mAdminList.ids.begin());it!=group.mAdminList.ids.end();++it)
+        for(auto it(group.mAdminList.begin());it!=group.mAdminList.end();++it)
         {
             RsIdentityDetails det ;
 
@@ -1263,7 +1263,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
-    bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.ids.end();
+    bool is_pinned = mForumGroup.mPinnedPosts.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.end();
 
     uint32_t idflags =0;
 	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
@@ -2206,10 +2206,10 @@ void GxsForumThreadWidget::togglePinUpPost()
 
     std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
 
-    if(mForumGroup.mPinnedPosts.ids.find(mThreadId) == mForumGroup.mPinnedPosts.ids.end())
-		mForumGroup.mPinnedPosts.ids.insert(mThreadId) ;
+    if(mForumGroup.mPinnedPosts.find(mThreadId) == mForumGroup.mPinnedPosts.end())
+		mForumGroup.mPinnedPosts.insert(mThreadId) ;
     else
-		mForumGroup.mPinnedPosts.ids.erase(mThreadId) ;
+		mForumGroup.mPinnedPosts.erase(mThreadId) ;
 
 	uint32_t token;
 	rsGxsForums->updateGroup(token,mForumGroup);
@@ -2370,7 +2370,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 	rsIdentity->getOwnIds(own_ids) ;
 
 	for(auto it(own_ids.begin());it!=own_ids.end();++it)
-		if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+		if(mForumGroup.mAdminList.find(*it) != mForumGroup.mAdminList.end())
         {
             moderator_id = *it;
             break;

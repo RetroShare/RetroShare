@@ -190,11 +190,11 @@ void GxsForumsFillThread::run()
 //#ifdef DEBUG_FORUMS
     std::cerr << "Retrieved group data: " << std::endl;
     std::cerr << "  Group ID: " << forum_group.mMeta.mGroupId << std::endl;
-    std::cerr << "  Admin lst: " << forum_group.mAdminList.ids.size() << " elements." << std::endl;
-    for(auto it(forum_group.mAdminList.ids.begin());it!=forum_group.mAdminList.ids.end();++it)
+    std::cerr << "  Admin lst: " << forum_group.mAdminList.size() << " elements." << std::endl;
+    for(auto it(forum_group.mAdminList.begin());it!=forum_group.mAdminList.end();++it)
         std::cerr << "    " << *it << std::endl;
-    std::cerr << "  Pinned Post: " << forum_group.mPinnedPosts.ids.size() << " messages." << std::endl;
-    for(auto it(forum_group.mPinnedPosts.ids.begin());it!=forum_group.mPinnedPosts.ids.end();++it)
+    std::cerr << "  Pinned Post: " << forum_group.mPinnedPosts.size() << " messages." << std::endl;
+    for(auto it(forum_group.mPinnedPosts.begin());it!=forum_group.mPinnedPosts.end();++it)
         std::cerr << "    " << *it << std::endl;
 //#endif
 
@@ -278,7 +278,7 @@ void GxsForumsFillThread::run()
 				if( !IS_FORUM_MSG_MODERATION(msgIt->second.mMeta.mMsgFlags) )			// if authors are different the moderation flag needs to be set on the editing msg
 					continue ;
 
-				if( forum_group.mAdminList.ids.find(msgIt->second.mMeta.mAuthorId)==forum_group.mAdminList.ids.end())	// if author is not a moderator, continue
+				if( forum_group.mAdminList.find(msgIt->second.mMeta.mAuthorId)==forum_group.mAdminList.end())	// if author is not a moderator, continue
 					continue ;
 			}
 
