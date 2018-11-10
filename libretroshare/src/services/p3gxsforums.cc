@@ -280,18 +280,36 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 		for(; vit != grpData.end(); ++vit)
 		{
 			RsGxsForumGroupItem* item = dynamic_cast<RsGxsForumGroupItem*>(*vit);
+
 			if (item)
 			{
 				RsGxsForumGroup grp = item->mGroup;
 				grp.mMeta = item->meta;
 				delete item;
 				groups.push_back(grp);
+                continue;
 			}
-			else
+
+ 			RsGxsForumGroupItem_deprecated* item2 = dynamic_cast<RsGxsForumGroupItem_deprecated*>(*vit);
+
+			if (item2)
 			{
-				std::cerr << "Not a GxsForumGrpItem, deleting!" << std::endl;
-				delete *vit;
+                std::cerr << "(II) converting a GxsForumGroupItem for group " << item2->meta.mGroupId << " into new format. When the group is updated (e.g. change forum name or admin list, this warning should disappear" << std::endl;
+
+				RsGxsForumGroup grp ;
+
+                grp.mDescription = item2->mGroup.mDescription;
+				grp.mAdminList   = item2->mGroup.mAdminList.ids;
+				grp.mPinnedPosts = item2->mGroup.mPinnedPosts.ids;
+				grp.mMeta        = item2->meta;
+
+				delete item2;
+				groups.push_back(grp);
+                continue;
 			}
+
+			std::cerr << "Not a GxsForumGrpItem, deleting!" << std::endl;
+			delete *vit;
 		}
 	}
 	return ok;

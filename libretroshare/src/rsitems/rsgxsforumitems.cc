@@ -35,14 +35,26 @@ RsItem *RsGxsForumSerialiser::create_item(uint16_t service_id,uint8_t item_subty
     switch(item_subtype)
     {
     case RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM: return new RsGxsForumGroupItem();
+    case RS_PKT_SUBTYPE_GXSFORUM_GROUP_ITEM_deprecated: return new RsGxsForumGroupItem_deprecated();
     case RS_PKT_SUBTYPE_GXSFORUM_MESSAGE_ITEM: return new RsGxsForumMsgItem();
     default:
         return NULL ;
     }
 }
-void RsGxsForumGroupItem::clear()
+void RsGxsForumGroupItem::clear() { mGroup.mDescription.clear(); }
+void RsGxsForumGroupItem_deprecated::clear() { mGroup.mDescription.clear(); }
+
+void RsGxsForumGroupItem_deprecated::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	mGroup.mDescription.clear();
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,mGroup.mDescription,"mGroup.Description");
+
+    // This is for backward compatibility: normally all members are serialized, but in the previous version, these members are missing.
+
+    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mAdminList  ,"admin_list"  ) ;
+    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mPinnedPosts,"pinned_posts") ;
 }
 
 void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -54,8 +66,8 @@ void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
     if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
         return ;
 
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mAdminList  ,"admin_list"  ) ;
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mPinnedPosts,"pinned_posts") ;
+    RsTypeSerializer::serial_process(j,ctx,mGroup.mAdminList  ,"admin_list"  ) ;
+    RsTypeSerializer::serial_process(j,ctx,mGroup.mPinnedPosts,"pinned_posts") ;
 }
 
 void RsGxsForumMsgItem::clear()

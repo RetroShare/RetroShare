@@ -105,7 +105,7 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
 	grp.mDescription = getDescription().toUtf8().constData();
-	getSelectedModerators(grp.mAdminList.ids);
+	getSelectedModerators(grp.mAdminList);
 
 	rsGxsForums->createGroup(token, grp);
 	return true;
@@ -120,7 +120,7 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &ed
 	grp.mMeta = editedMeta;
 	grp.mDescription = getDescription().toUtf8().constData();
 
-	getSelectedModerators(grp.mAdminList.ids);
+	getSelectedModerators(grp.mAdminList);
 
 	std::cerr << "GxsForumGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -160,7 +160,7 @@ bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGro
 
     // Local information. Description should be handled here.
 
-    setSelectedModerators(groups[0].mAdminList.ids);
+    setSelectedModerators(groups[0].mAdminList);
 
     mGroupData = groups[0]; // keeps the private information
 
