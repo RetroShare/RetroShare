@@ -80,7 +80,7 @@ Licensing issues:
       libretroshare                   |    GPLv2,GPLv3         |  |     csoler,drbob,Mr-alice,Chris,Thunder      | Some files unversionned.
          plugins/dlfcn_win32.cc       |       GPLv2.1          | L|     Ramiro Polla                             |
          pqi/authgpg.h                |       GPLv2            | L|     Raghu Dev R.                             | .cc is authed by drbob
-         upnp/UPnPBase.h              |       GPLv2            |  |     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted
+         upnp/UPnPBase.h              |       GPLv2            | L|     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted. Re-licensed with permission
          util/pugiconfig.h            |       MIT              |  |     Arseny Kapoulkyne                        | [unused file!]
          util/rsstring.h              |       GPLv2            | L|     Thomas Kister                            |
          util/rswin.h                 |       GPLv2            | L|     Thomas Kister                            |
