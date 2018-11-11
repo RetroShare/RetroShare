@@ -124,6 +124,9 @@ if ! test "${nodl}" = "yes"; then
 	# remove unised qml code, only needed on Android
 	rm -rf ${workdir}/src/retroshare-qml-app/
 	rm -rf ${workdir}/src/librssimulator/
+	rm -rf ${workdir}/src/libretroshare/tests/
+	rm -rf ${workdir}/src/libretroshare/unfinished/
+	rm -rf ${workdir}/src/libretroshare/unused/
 	rm -rf ${workdir}/src/retroshare-android-notify-service/
 	rm -rf ${workdir}/src/retroshare-android-service/
 	rm -rf ${workdir}/src/libretroshare/src/unused/
