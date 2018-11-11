@@ -23,6 +23,7 @@
 #include <cstdio>
 #include <csignal>
 #include <cstdlib>
+#include <stdio.h>
 
 #if defined(__linux__) && defined(__GLIBC__)
 

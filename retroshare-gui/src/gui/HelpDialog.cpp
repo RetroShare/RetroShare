@@ -24,6 +24,7 @@
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
+#include "rshare.h"
 
 #ifdef ENABLE_WEBUI
 #include <microhttpd.h>
@@ -84,13 +85,7 @@ HelpDialog::HelpDialog(QWidget *parent) :
 		ui->thanks->setText(in.readAll());
 	}
 
-	QFile versionFile(QLatin1String(":/help/version.html"));
-	if (versionFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-		QTextStream in(&versionFile);
-		QString version = in.readAll();
-
-		ui->version->setText(version);
-	}
+	ui->version->setText(Rshare::retroshareVersion(true));
 
 	/* Add version numbers of libretroshare */
 	std::list<RsLibraryInfo> libraries;
