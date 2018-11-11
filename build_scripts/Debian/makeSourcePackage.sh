@@ -165,12 +165,15 @@ else
 
 	cp -r debian/* ${workdir}/debian/
 	rm -rf ${workdir}/src/retroshare-qml-app/
+	rm -rf ${workdir}/src/librssimulator/
+	rm -rf ${workdir}/src/libretroshare/tests/
+	rm -rf ${workdir}/src/libretroshare/unfinished/
+	rm -rf ${workdir}/src/libretroshare/unused/
 	rm -rf ${workdir}/src/retroshare-android-notify-service/
 	rm -rf ${workdir}/src/retroshare-android-service/
-	rm -rf ${workdir}/src/librssimulator/
-	rm -rf ${workdir}/src/unittests/
 	rm -rf ${workdir}/src/libretroshare/src/unused/
 	rm -rf ${workdir}/src/pegmarkdown/
+	rm -rf ${workdir}/src/unittests/
 	rm -rf ${workdir}/src/build_scripts/
 	rm -f ${workdir}/debian/*~
 	rm -f ${workdir}/debian/.*.sw?
