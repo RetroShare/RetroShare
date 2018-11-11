@@ -65,67 +65,73 @@ Uploading-to-mentors bug:
 Licensing issues:
    Various licenses involved:
 
-      R: re-licence to GPLv3
+      L: re-licence to LGPLv3
+      A: re-licence to AGPLv3
       D: delete
+      d: delete in debian package to avoid licensing problems
 
-         Code part                    |    Licenses            |A|     Authors                                  | Comment
-      --------------------------------+------------------------+-+----------------------------------------------+-------------------------------------------------
-      libbitdht                       |    GPLv3               | |     drbob, csoler, Retroshare team           | 
-         bitdht/bencode.h             |       Public domain    | |         Mike Frysinger <vapier@gmail.com>    |
-         bitdht/bdrandom.h            |    GPLv2               |R|     csoler                                   |
-      --------------------------------+------------------------+-+----------------------------------------------+-------------------------------------------------
-      libresapi                       |    GPLv3               | |     G10H4ck, [], electron128                 | Most files are unlicenced
-      libretroshare                   |    GPLv2,GPLv3         | |     csoler,drbob,Mr-alice,Chris,Thunder      | Some files unversionned.
-         plugins/dlfcn_win32.cc       |       GPLv2.1          |R|     Ramiro Polla                             |
-         pqi/authgpg.h                |       GPLv2            |R|     Raghu Dev R.                             | .cc is authed by drbob
-         upnp/UPnPBase.h              |       GPLv2            | |     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted
-         util/pugiconfig.h            |       MIT              | |     Arseny Kapoulkyne                        | [unused file!]
-         util/rsstring.h              |       GPLv2            |R|     Thomas Kister                            |
-         util/rswin.h                 |       GPLv2            |R|     Thomas Kister                            |
-         util/rsversioninfo.h         |       [none]           | |     Alexandrut                               |
-         util/stacktrace.h            |       GPLv2            |R|     Timo Bingmann, G10H4ck                   |
-      librssimulator                  |    [None]              | |     No authors                               |
-      openpgpsdk                      |    Apache              | |     Rachell Wilmer, Ben Laurie               |
-      pegmarkdown                     |    All right reserved  | |     Daniel Jalkut - Code currently unused    |
-      plugins/feedreader              |    GPLv2               | |     Thunder                                  |
-      plugins/VOIP                    |                        | |                                              |
-             AudioInputConfig.h+      |    All right reserved  | |     Thorvald Natvig                          | Code can be modified/re-used. Mumble's code.
-             SpeezProcessor.h         |                        | |     Peter Zotov                              |
-      retroshare-android-notify-*     |    GPLv3               | |     G10H4ck                                  |
-      retroshare-android-service      |    GPLv3               | |     G10H4ck                                  | 
-      retroshare-gui/src              |                        | |     Thunder, csoler, drbob, crypton          |
-          control/*                   |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | [Unused code]
-          common/ElideLabel.h         |    BSD                 | |     Qt Toolkit                               | 
-          common/FlowLayout.h         |    BSD                 | |     Qt Toolkit                               | Is that really Qt code?? Qt examples can be used.
-          common/html.h               |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          common/rwindow.h            |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          common/vmessagebox.h        |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          common/PictureFlow          |    unclear             | |     Ariya Hidayat (@kde.org)                 | [Unused code]
-          elastic/*                   |    LGPL                | |     Trolltech                                |
-          FileTransfer/FTIWidget      |    GPLv2               | |     defnax, lsn752                           |
-          FileTransfer/xprogressb     |    GPLv2               | |     Xesc                                     |
-          help/browser.h              |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          images/retroshare_win.rc.h  |    GPLv2               | |     crypton                                  | [Unused code]
-          msgs/textformat.h           |    GPLv3               | |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
-          settings/rsettings.h        |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          statistics/BandwidthGraphW.h|    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          statistics/dhtgraph.h       |    GPLv2               | |     Matt Edman, defnax, Justin Hiple         | 
-          toaster/MessageToaster.h    |    GPLv3               | |     Xesc                                     |
-          toaster/DownloadToaster.h   |    GPLv3               | |     Xesc                                     |
-          About{Widget,Dialog}.h      |    GPLv2               | |     Unipro, Russia                           | Very small file.
-          linetypes.h                 |    GPLv2               | |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
-          mainpagestack.h             |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-          land/langagesupport.h       |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-          util/log.h                  |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-          idle/idle.h                 |    GPLv2               | |     Justin Karneges                          | May be re-implemented
-          TorControl/*                |*   Public domaine      | |     John Brooks                              | Code from Ricochet.im
-          util/HandleRichText.h       |    GPLv2               | |     Thomas Kister                            |
-          util/misc.h                 |    GPLv2               | |     defnax, Christophe Dumez                 |
-          util/printpreview.h         |    GPLv2               | |     Trolltech example                        |
-          util/retrosharewin32.h      |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-          util/stringutil.h           |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-          rshare.h                    |    GPLv2               | |     Matt Edman, crypton, Justin Hiple        | 
-      retroshare-nogui/*              |    GPLv2               | |     drbob                                    |
+         Code part                              |    Licenses            | A|     Authors                                  | Comment
+      ------------------------------------------+------------------------+--+----------------------------------------------+-------------------------------------------------
+      libbitdht                                 |    GPLv3               |  |     drbob, csoler, Retroshare team           | 
+         bitdht/bencode.h                       |       Public domain    |  |         Mike Frysinger <vapier@gmail.com>    |
+         bitdht/bdrandom.h                      |    GPLv2               | L|     csoler                                   |
+      ------------------------------------------+------------------------+--+----------------------------------------------+-------------------------------------------------
+      libresapi                                 |    GPLv3               |  |     G10H4ck, [], electron128                 | Most files are unlicenced
+         src/api/json.h                         |    MIT                 |  |     Jeff Weinstein (jeff.weinstein at gmail) | 
+         src/api/webui-src/app/mithril.min.js   |    MIT                 |  |     Leo Horie                                | 
+      libretroshare                             |    GPLv2,GPLv3         |  |     csoler,drbob,Mr-alice,Chris,Thunder      | Some files unversionned.
+         plugins/dlfcn_win32.cc                 |       GPLv2.1          | L|     Ramiro Polla                             |
+         pqi/authgpg.h                          |       GPLv2            | L|     Raghu Dev R.                             | .cc is authed by drbob
+         upnp/UPnPBase.h                        |       GPLv2            | L|     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted. Re-licensed with permission 10/11/2018
+         util/pugiconfig.h                      |       MIT              |  |     Arseny Kapoulkyne                        | [unused file!]
+         util/rsstring.h                        |       GPLv2            | L|     Thomas Kister                            |
+         util/rswin.h                           |       GPLv2            | L|     Thomas Kister                            |
+         util/rsversioninfo.h                   |       [none]           |  |     Alexandrut                               |
+         util/stacktrace.h                      |       GPLv2            | R|     Timo Bingmann, G10H4ck                   |
+      librssimulator                            |    [None]              |dA|     No authors                               |
+      openpgpsdk                                |    Apache              |  |     Rachell Wilmer, Ben Laurie               |
+      pegmarkdown                               |    All right reserved  |  |     Daniel Jalkut - Code currently unused    | will be deleted when creating debian package
+      plugins/feedreader                        |    GPLv2               | A|     Thunder                                  |
+      plugins/VOIP                              |                        |  |                                              |
+             AudioInputConfig.h+                |    All right reserved  | A|     Thorvald Natvig                          | Permission to re-license on 04/11/2018
+             AudioStats.h+                      |    All right reserved  | A|     Thorvald Natvig                          | 
+             AudioWizard.h+                     |    All right reserved  | A|     Thorvald Natvig                          | 
+             SpeexProcessor.h                   |                        |  |     Peter Zotov                              |
+      retroshare-android-notify-*               |    GPLv3               |  |     G10H4ck                                  |
+      retroshare-android-service                |    GPLv3               |  |     G10H4ck                                  | 
+      retroshare-gui/src                        |                        |  |     Thunder, csoler, drbob, crypton          |
+          control/*                             |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | [Unused code]
+          common/ElideLabel.h                   |    BSD                 |  |     Qt Toolkit                               | 
+          common/FlowLayout.h                   |    BSD                 |  |     Qt Toolkit                               | Is that really Qt code?? Qt examples can be used.
+          common/html.h                         |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/rwindow.h                      |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/vmessagebox.h                  |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/PictureFlow                    |    unclear             |  |     Ariya Hidayat (@kde.org)                 | [Unused code]
+          elastic/*                             |    LGPL                |  |     Trolltech                                |
+          FileTransfer/FTIWidget                |    GPLv2               |  |     defnax, lsn752                           |
+          FileTransfer/xprogressb               |    GPLv2               |  |     Xesc                                     |
+          help/browser.h                        |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          images/retroshare_win.rc.h            |    GPLv2               |  |     crypton                                  | [Unused code]
+          msgs/textformat.h                     |    GPLv3               |  |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          settings/rsettings.h                  |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/BandwidthGraphW.h          |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/dhtgraph.h                 |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          toaster/MessageToaster.h              |    GPLv3               |  |     Xesc                                     |
+          toaster/DownloadToaster.h             |    GPLv3               |  |     Xesc                                     |
+          About{Widget,Dialog}.h                |    GPLv2               |  |     Unipro, Russia                           | Very small file.
+          linetypes.h                           |    GPLv2               |  |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          mainpagestack.h                       |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          land/langagesupport.h                 |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          util/log.h                            |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          idle/idle.h                           |    GPLv2               |  |     Justin Karneges                          | May be re-implemented
+          TorControl/*                          |*   Public domaine      |  |     John Brooks                              | Code from Ricochet.im
+          util/HandleRichText.h                 |    GPLv2               |  |     Thomas Kister                            |
+          util/misc.h                           |    GPLv2               |  |     defnax, Christophe Dumez                 |
+          util/printpreview.h                   |    GPLv2               |  |     Trolltech example                        |
+          util/retrosharewin32.h                |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          util/stringutil.h                     |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          rshare.h                              |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+      retroshare-nogui/*                        |    GPLv2               |  |     drbob                                    |
 
 
    Plan: move to GPLv3 with OpenSSL exception
