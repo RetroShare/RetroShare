@@ -93,7 +93,7 @@ no_sqlcipher:CONFIG -= sqlcipher
 # line "CONFIG+=rs_autologin"
 
 #CONFIG *=no_rs_autologin
-CONFIG+=rs_autologin
+CONFIG*=rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation
