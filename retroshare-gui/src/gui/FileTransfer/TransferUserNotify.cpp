@@ -41,12 +41,12 @@ bool TransferUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon TransferUserNotify::getIcon()
 {
-    return QIcon(":/home/img/face_icon/file _128.png");
+    return QIcon(":/home/img/face_icon/file_128.png");
 }
 
 QIcon TransferUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/home/img/face_icon/envelope_v_128.png") : QIcon(":/home/img/face_icon/file _128.png");
+    return hasNew ? QIcon(":/home/img/face_icon/file_v_128.png") : QIcon(":/home/img/face_icon/file_128.png");
 }
 
 unsigned int TransferUserNotify::getNewCount()

@@ -32,7 +32,7 @@
 #include <QItemSelectionModel>
 #include <QSortFilterProxyModel>
 
-#define IMAGE_TRANSFERS      	":/icons/ktorrent_128.png"
+#define IMAGE_TRANSFERS      	":/home/img/face_icon/file_128.png"
 
 class QShortcut;
 class DLListDelegate;
