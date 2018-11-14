@@ -1827,7 +1827,7 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
-void ftServer::receiveSearchResult(RsTurtleFTSearchResultItem *item)
+void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 {
 	bool hasCallback = false;
 
