@@ -189,11 +189,17 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(RsGxsChannelGroup& channel);
 
+	/// Implementation of @see RsGxsChannels::createComment
+	virtual bool createComment(RsGxsComment& comment);
+
 	/// Implementation of @see RsGxsChannels::editChannel
 	virtual bool editChannel(RsGxsChannelGroup& channel);
 
 	/// Implementation of @see RsGxsChannels::createPost
 	virtual bool createPost(RsGxsChannelPost& post);
+
+	/// Implementation of @see RsGxsChannels::createVote
+	virtual bool createVote(RsGxsVote& vote);
 
 	/// Implementation of @see RsGxsChannels::subscribeToChannel
 	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
