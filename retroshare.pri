@@ -111,8 +111,9 @@ rs_onlyhiddennode:CONFIG -= no_rs_onlyhiddennode
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
-# To disable GXS distrubuting all available posts independed of the "sync" settings append the following
-# assignation to qmake command line "CONFIG+=no_rs_gxs_send_all"
+# To disable GXS distrubuting all available posts independed of the "sync"
+# settings append the following assignation to qmake command line
+# "CONFIG+=no_rs_gxs_send_all"
 CONFIG *= rs_gxs_send_all
 no_rs_gxs_send_all:CONFIG -= rs_gxs_send_all
 
