@@ -654,7 +654,7 @@ void MainWindow::createTrayIcon()
 //#ifdef WINDOWS_SYS
     trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
-    trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    trayIcon->setIcon(QIcon(IMAGE_RETROSHARE)); //d
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
 //#endif

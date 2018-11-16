@@ -51,8 +51,8 @@
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
-#define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
-#define IMAGE_PEERS         	":/icons/png/keyring.png"
+#define IMAGE_NETWORK2          ":/home/img/connection.png"                //d
+#define IMAGE_PEERS         	":/home/img/key.png"                       //d
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 //#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 

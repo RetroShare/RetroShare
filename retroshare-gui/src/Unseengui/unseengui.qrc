@@ -147,5 +147,8 @@
         <file>home/img/Traymenu/molecule.png</file>
         <file>home/img/Traymenu/power-button-off.png</file>
         <file>home/img/face_icon/file_128.png</file>
+        <file>home/img/Traymenu/unseenP2P.png</file>
+        <file>home/img/connection.png</file>
+        <file>home/img/key.png</file>
     </qresource>
 </RCC>

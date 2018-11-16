@@ -70,7 +70,7 @@ FriendsDialog QFrame#headFrame {
 }
 
 FriendsDialog QFrame#headFrame > QLabel#nicknameLabel {
-	color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
 }
 
 FriendsDialog QTextEdit#msgText, FriendsDialog QTextEdit#lineEdit {
@@ -163,8 +163,9 @@ ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 
 ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox 
 {
-  padding: 4 12px;
+        padding: 4 12px;
         background: #2ba4dc;
+        color: white;
 }
 
 ChatLobbyWidget QLabel#lobbyInfoLabel {
@@ -247,7 +248,7 @@ PluginItem > QFrame#frame {
 
 /*NetworkView > QGraphWidget#graphicsView
 {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);
+        background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 lightgray, stop:1 darkgray);
 }
 */
 
@@ -299,7 +300,7 @@ GetStartedDialog QTextEdit {
 }
 
 GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
-	color: rgb(255, 255, 255);
+        color: rgb(255, 255, 255);
 }
 */
 

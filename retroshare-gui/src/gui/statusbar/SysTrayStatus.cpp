@@ -28,7 +28,7 @@
 #define IMAGE_NOONLINE          ":/chat/img/network-diagram_0.png"              //d:replace icon
 #define IMAGE_ONEONLINE         ":/chat/img/network-diagram_1.png"              //d:replace icon
 #define IMAGE_TWOONLINE         ":/chat/img/network-diagram_2.png"              //d:replace icon
-
+#define IMAGE_UNSEEN            ":/home/img/Traymenu/unseenP2P.png"             //d: add icon
 SysTrayStatus::SysTrayStatus(QWidget *parent) :
   QWidget(parent)
 {
@@ -37,7 +37,7 @@ SysTrayStatus::SysTrayStatus(QWidget *parent) :
 	hbox->setSpacing(0);
 
 	imageButton = new QPushButton(this);
-	imageButton->setIcon(QIcon(IMAGE_NOONLINE));
+    imageButton->setIcon(QIcon(IMAGE_UNSEEN));          //d
 	imageButton->setFlat(true);
 	imageButton->setCheckable(false);
 	imageButton->setFocusPolicy(Qt::ClickFocus);
