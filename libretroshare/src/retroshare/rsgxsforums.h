@@ -111,34 +111,66 @@ public:
 	 */
 	virtual bool createMessage(RsGxsForumMsg& message) = 0;
 
+	/**
+	 * @brief Edit forum details.
+	 * @jsonapi{development}
+	 * @param[in] forum Forum data (name, description...) with modifications
+	 * @return false on error, true otherwise
+	 */
+	virtual bool editForum(RsGxsForumGroup& forum) = 0;
+
+	/**
+	 * @brief Get forums summaries list. Blocking API.
+	 * @jsonapi{development}
+	 * @param[out] forums list where to store the forums summaries
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums) = 0;
+
+	/**
+	 * @brief Get forums information (description, thumbnail...).
+	 * Blocking API.
+	 * @jsonapi{development}
+	 * @param[in] forumIds ids of the forums of which to get the informations
+	 * @param[out] forumsInfo storage for the forums informations
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getForumsInfo(
+	        const std::list<RsGxsGroupId>& forumIds,
+	        std::vector<RsGxsForumGroup>& forumsInfo ) = 0;
+
+	/**
+	 * @brief Get content of specified forums. Blocking API
+	 * @jsonapi{development}
+	 * @param[in] forumIds id of the channels of which the content is requested
+	 * @param[out] messages storage for the forum messages
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getForumsContent(
+	        const std::list<RsGxsGroupId>& forumIds,
+	        std::vector<RsGxsForumMsg>& messages ) = 0;
+
+	/**
+	 * @brief Toggle message read status. Blocking API.
+	 * @jsonapi{development}
+	 * @param[in] messageId post identifier
+	 * @param[in] read true to mark as read, false to mark as unread
+	 * @return false on error, true otherwise
+	 */
+	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read) = 0;
 
 	/* Specific Service Data */
+	RS_DEPRECATED_FOR("getForumsSummaries, getForumsInfo")
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
+	RS_DEPRECATED_FOR(getForumsContent)
 	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
-	//Not currently used
-	//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
-
-	//////////////////////////////////////////////////////////////////////////////
+	RS_DEPRECATED_FOR(markRead)
 	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
-
-	//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-	//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
-
-	//virtual bool groupRestoreKeys(const std::string &groupId);
-	//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
-
 	RS_DEPRECATED_FOR(createForum)
 	virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
-
 	RS_DEPRECATED_FOR(createMessage)
 	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
-
-	/*!
- * To update forum group with new information
- * @param token the token used to check completion status of update
- * @param group group to be updated, groupId element must be set or will be rejected
- * @return false groupId not set, true if set and accepted (still check token for completion)
- */
+	RS_DEPRECATED_FOR(editForum)
 	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
 };
 
