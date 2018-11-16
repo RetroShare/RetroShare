@@ -108,12 +108,28 @@ public:
 	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
 
 	/**
+	 * @brief Add a comment on a post or on another comment
+	 * @jsonapi{development}
+	 * @param[inout] comment
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createComment(RsGxsComment& comment) = 0;
+
+	/**
 	 * @brief Create channel post. Blocking API.
 	 * @jsonapi{development}
 	 * @param[inout] post
 	 * @return false on error, true otherwise
 	 */
 	virtual bool createPost(RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief createVote
+	 * @jsonapi{development}
+	 * @param[inout] vote
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createVote(RsGxsVote& vote) = 0;
 
 	/**
 	 * @brief Edit channel details.

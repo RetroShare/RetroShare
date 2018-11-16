@@ -1059,6 +1059,60 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 	return true;
 }
 
+bool p3GxsChannels::createComment(RsGxsComment& comment)
+{
+	uint32_t token;
+	if(!createComment(token, comment))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating comment."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, comment.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
+		          << " comment data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsChannels::createVote(RsGxsVote& vote)
+{
+	uint32_t token;
+	if(!createVote(token, vote))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating vote."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, vote.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
+		          << " vote data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool p3GxsChannels::editChannel(RsGxsChannelGroup& channel)
 {
 	uint32_t token;
