@@ -1,7 +1,7 @@
 /*******************************************************************************
  * unittests/libretroshare/serialiser/rsturtleitems_test.cc                    *
  *                                                                             *
- * Copyright 2007-2008 by Cyril Soler   <retroshare.team@gmail.com>            *
+ * Copyright 2007-2008 by Cyril Soler   <retroshare.project@gmail.com>         *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *

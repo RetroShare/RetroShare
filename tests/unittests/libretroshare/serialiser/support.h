@@ -1,8 +1,8 @@
 /*******************************************************************************
  * unittests/libretroshare/serialiser/support.h                                *
  *                                                                             *
- * Copyright 2007-2008 by Christopher Evi-Parker <retroshare.team@gmail.com>   *
- * Copyright 2007-2008 by Cyril Soler            <retroshare.team@gmail.com>   *
+ * Copyright 2007-2008 by Christopher Evi-Parker <retroshare.project@gmail.com>*
+ * Copyright 2007-2008 by Cyril Soler            <retroshare.project@gmail.com>*
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
