@@ -36,6 +36,7 @@
 #include "retroshare/rsnotify.h"
 
 #include <cstdio>
+#include <chrono>
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
@@ -50,7 +51,7 @@
  * #define GXSCHANNEL_DEBUG 1
  ****/
 
-/*extern*/ RsGxsChannels *rsGxsChannels = nullptr;
+/*extern*/ RsGxsChannels* rsGxsChannels = nullptr;
 
 
 #define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
@@ -1965,6 +1966,31 @@ bool p3GxsChannels::turtleChannelRequest(
 	                std::chrono::system_clock::now() +
 	                std::chrono::seconds(maxWait) ) );
 	}
+
+	return true;
+}
+
+/// @see RsGxsChannels::localSearchRequest
+bool p3GxsChannels::localSearchRequest(
+            const std::string& matchString,
+            const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+            rstime_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::seconds(maxWait);
+	RsThread::async([=]()
+	{
+		std::list<RsGxsGroupSummary> results;
+		RsGenExchange::localSearch(matchString, results);
+		if(std::chrono::steady_clock::now() < timeout)
+			for(const RsGxsGroupSummary& result : results) multiCallback(result);
+	});
 
 	return true;
 }

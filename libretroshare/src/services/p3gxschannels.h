@@ -118,6 +118,11 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
 	        rstime_t maxWait = 300 );
 
+	/// @see RsGxsChannels::localSearchRequest
+	virtual bool localSearchRequest(const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        rstime_t maxWait = 30 ) override;
+
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
 	 * @see RsGxsNetService::receiveTurtleSearchResults

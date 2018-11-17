@@ -313,6 +313,15 @@ public:
     void turtleGroupRequest(const RsGxsGroupId& group_id);
     void turtleSearchRequest(const std::string& match_string);
 
+	/**
+	 * @brief Search local groups. Blocking API.
+	 * @param matchString string to look for in the search
+	 * @param results storage for results
+	 * @return false on error, true otherwise
+	 */
+	bool localSearch( const std::string& matchString,
+	                  std::list<RsGxsGroupSummary>& results );
+
 protected:
 
 	bool messagePublicationTest(const RsGxsMsgMetaData&) ;

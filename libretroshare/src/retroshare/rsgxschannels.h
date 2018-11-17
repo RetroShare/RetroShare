@@ -287,6 +287,19 @@ public:
 	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
 	        rstime_t maxWait = 300 ) = 0;
 
+	/**
+	 * @brief Search local channels
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called for each result
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool localSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        rstime_t maxWait = 30 ) = 0;
+
 
 	/* Following functions are deprecated as they expose internal functioning
 	 * semantic, instead of a safe to use API */
