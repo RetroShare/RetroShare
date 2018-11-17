@@ -1231,6 +1231,7 @@ gxsforums {
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumsFillThread.h \
+		gui/gxsforums/GxsForumModel.h \
 		gui/gxsforums/GxsForumUserNotify.h \
 		gui/feeds/GxsForumGroupItem.h \
 		gui/feeds/GxsForumMsgItem.h
@@ -1244,6 +1245,7 @@ gxsforums {
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
+		gui/gxsforums/GxsForumModel.cpp \
 		gui/gxsforums/GxsForumsFillThread.cpp \
 		gui/gxsforums/GxsForumUserNotify.cpp \
 		gui/feeds/GxsForumGroupItem.cpp \
