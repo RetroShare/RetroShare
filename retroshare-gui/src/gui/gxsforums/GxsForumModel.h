@@ -14,6 +14,7 @@ struct ForumPostEntry
 
     std::vector<ForumModelIndex> children;
     ForumModelIndex parent;
+    int prow ;									// parent row
 };
 
 // This class is the item model used by Qt to display the information

@@ -14,15 +14,34 @@
 
 Q_DECLARE_METATYPE(RsMsgMetaData);
 
-std::ostream& operator<<(std::ostream& o, const QModelIndex& i)
-{
-	return o << i.row() << "," << i.column() << "," << i.internalPointer() ;
-}
+std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     mPosts.resize(1);	// adds a sentinel item
+
+    // adds some fake posts to debug
+
+    int N=5 ;
+    mPosts.resize(N+1);
+
+    for(int i=1;i<=N;++i)
+	{
+		mPosts[0].children.push_back(ForumModelIndex(i));
+		mPosts[i].parent = ForumModelIndex(0);
+		mPosts[i].prow = i-1;
+
+		RsMsgMetaData meta;
+		meta.mMsgName = "message " + (QString::number(i).toStdString()) ;
+		mPosts[i].meta_versions.push_back(meta);
+	}
+
+    // add one child to last post
+    mPosts.resize(N+2);
+    mPosts[N].children.push_back(ForumModelIndex(N+1));
+    mPosts[N+1].parent = ForumModelIndex(N);
+    mPosts[N+1].prow = 0;
 }
 
 int RsGxsForumModel::rowCount(const QModelIndex& parent) const
@@ -58,14 +77,6 @@ bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
 {
 	void *ref = (parent.isValid())?parent.internalPointer():NULL ;
 	uint32_t entry = 0;
-
-	if(!ref)
-	{
-#ifdef DEBUG_FORUMMODEL
-		std::cerr << "hasChildren-1(" << parent << ") : " << true << std::endl;
-#endif
-		return true ;
-	}
 
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 	{
@@ -115,28 +126,12 @@ QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & pare
 		return QModelIndex();
 
 	void *parent_ref = (parent.isValid())?parent.internalPointer():NULL ;
-	uint32_t entry = 0;
+	uint32_t parent_entry = 0;
 	int source_id=0 ;
 
-	if(!parent_ref)	// top level. The entry is that of a transfer
-	{
-		void *ref = NULL ;
+    // We dont need to handle parent==NULL because the conversion will return entry=0 which is what we need.
 
-		if(row >= (int)mPosts.size() || !convertTabEntryToRefPointer(row,ref))
-		{
-#ifdef DEBUG_FORUMMODEL
-			std::cerr << "index-1(" << row << "," << column << " parent=" << parent << ") : " << "NULL" << std::endl;
-#endif
-			return QModelIndex() ;
-		}
-
-#ifdef DEBUG_FORUMMODEL
-		std::cerr << "index-2(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
-#endif
-		return createIndex(row,column,ref) ;
-	}
-
-	if(!convertRefPointerToTabEntry(parent_ref,entry) || entry >= mPosts.size())
+	if(!convertRefPointerToTabEntry(parent_ref,parent_entry) || parent_entry >= mPosts.size())
 	{
 #ifdef DEBUG_FORUMMODEL
 		std::cerr << "index-5(" << row << "," << column << " parent=" << parent << ") : " << "NULL"<< std::endl ;
@@ -146,7 +141,7 @@ QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & pare
 
 	void *ref = NULL ;
 
-    if(row >= mPosts[entry].children.size() || !convertTabEntryToRefPointer(mPosts[entry].children[row],ref))
+    if(row >= mPosts[parent_entry].children.size() || !convertTabEntryToRefPointer(mPosts[parent_entry].children[row],ref))
 	{
 #ifdef DEBUG_FORUMMODEL
 		std::cerr << "index-4(" << row << "," << column << " parent=" << parent << ") : " << "NULL" << std::endl;
@@ -163,21 +158,32 @@ QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & pare
 QModelIndex RsGxsForumModel::parent(const QModelIndex& child) const
 {
 	void *child_ref = (child.isValid())?child.internalPointer():NULL ;
-	uint32_t entry = 0;
-	int source_id=0 ;
 
 	if(!child_ref)
 		return QModelIndex() ;
 
-	if(!convertRefPointerToTabEntry(child_ref,entry) || entry >= mPosts.size())
+    ForumModelIndex child_entry ;
+
+	if(!convertRefPointerToTabEntry(child_ref,child_entry) || child_entry >= mPosts.size())
 		return QModelIndex() ;
 
 	void *parent_ref =NULL;
+	ForumModelIndex parent_entry = mPosts[child_entry].parent;
+	QModelIndex indx;
 
-	if(!convertTabEntryToRefPointer(mPosts[entry].parent,parent_ref))
-		return QModelIndex() ;
+    if(parent_entry == 0)		// top level index
+        indx = QModelIndex() ;
+    else
+    {
+		if(!convertTabEntryToRefPointer(parent_entry,parent_ref))
+			return QModelIndex() ;
 
-	return createIndex(entry,child.column(),parent_ref) ; // I'm not sure about the .column() here !
+		indx = createIndex(mPosts[parent_entry].prow,child.column(),parent_ref) ;
+    }
+#ifdef DEBUG_FORUMMODEL
+	std::cerr << "parent-1(" << child << ") : " << indx << std::endl;
+#endif
+	return indx;
 }
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -239,7 +245,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
 	const RsMsgMetaData& meta(mPosts[entry].meta_versions[0]) ;
 
-#ifdef DEBUG_DOWNLOADLIST
+#ifdef DEBUG_FORUMMODEL
 	std::cerr << " [ok]" << std::endl;
 #endif
 

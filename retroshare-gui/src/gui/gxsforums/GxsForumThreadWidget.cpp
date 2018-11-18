@@ -27,6 +27,7 @@
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumsFillThread.h"
+#include "GxsForumModel.h"
 #include "GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
@@ -179,8 +180,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mStateHelper->addWidget(mTokenTypeInsertThreads, ui->nextUnreadButton);
 	mStateHelper->addWidget(mTokenTypeInsertThreads, ui->previousButton);
 	mStateHelper->addWidget(mTokenTypeInsertThreads, ui->nextButton);
-
+#ifdef SUSPENDED_CODE
 	mStateHelper->addClear(mTokenTypeInsertThreads, ui->threadTreeWidget);
+#endif
 
 	mStateHelper->addWidget(mTokenTypeMessageData, ui->newmessageButton);
 //	mStateHelper->addWidget(mTokenTypeMessageData, ui->postText);
@@ -200,6 +202,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
+    ui->threadTreeWidget->setModel(new RsGxsForumModel(this));
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
@@ -247,12 +250,14 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->resizeSection (COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (COLUMN_THREAD_AUTHOR, 150*f);
 
+#ifdef SUSPENDED_CODE
 	/* Set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
 	headerItem->setText(COLUMN_THREAD_READ, "") ;
 	headerItem->setText(COLUMN_THREAD_DISTRIBUTION, "");
 	headerItem->setData(COLUMN_THREAD_READ,Qt::UserRole, tr("Read status")) ;			// this is used to display drop menus.
 	headerItem->setData(COLUMN_THREAD_DISTRIBUTION,Qt::UserRole, tr("Distribution"));
+#endif
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), COLUMN_THREAD_TITLE, tr("Search Title"));
@@ -294,9 +299,11 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
 	                                        available posts from your subscribed friends, and make the \
 	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
-	                                        ui->threadTreeWidget->enableColumnCustomize(true);
+#ifdef SUSPENDED_CODE
+	ui->threadTreeWidget->enableColumnCustomize(true);
 
 	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
+#endif
 }
 
 void GxsForumThreadWidget::blank()
@@ -312,7 +319,9 @@ void GxsForumThreadWidget::blank()
 	ui->by_label->hide();
 	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
 	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+#ifdef SUSPENDED_CODE
     ui->threadTreeWidget->clear();
+#endif
 	ui->forumName->setText("");
 
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
@@ -509,7 +518,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	if (mFillThread) {
 		return;
 	}
-
+#ifdef TODO
 	QMenu contextMnu(this);
 	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
 
@@ -690,6 +699,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	contextMnu.exec(QCursor::pos());
+#endif
 }
 
 void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
@@ -713,6 +723,7 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 
 bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 {
+#ifdef TODO
 	if (obj == ui->threadTreeWidget) {
 		if (event->type() == QEvent::KeyPress) {
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -726,6 +737,8 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 	}
 	// pass the event on to the parent class
 	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
+#endif
+    return true;
 }
 
 void GxsForumThreadWidget::togglethreadview()
@@ -762,6 +775,7 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread()
 {
+#ifdef TODO
 	/* just grab the ids of the current item */
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
@@ -779,6 +793,7 @@ void GxsForumThreadWidget::changedThread()
 	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
+#endif
 }
 
 void GxsForumThreadWidget::clickedThread(QTreeWidgetItem *item, int column)
@@ -883,6 +898,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 
 void GxsForumThreadWidget::calculateUnreadCount()
 {
+#ifdef TODO
 	unsigned int unreadCount = 0;
 	unsigned int newCount = 0;
 
@@ -913,10 +929,12 @@ void GxsForumThreadWidget::calculateUnreadCount()
 	if (changed) {
 		emit groupChanged(this);
 	}
+#endif
 }
 
 void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL*/)
 {
+#ifdef TODO
 	bool dummy1 = false;
 	bool dummy2 = false;
 
@@ -933,6 +951,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL
 		dummy2 = false;
 		calculateIconsAndFonts(ui->threadTreeWidget->topLevelItem(index), dummy1, dummy2);
 	}
+#endif
 }
 
 static void cleanupItems (QList<QTreeWidgetItem *> &items)
@@ -1086,6 +1105,7 @@ static QString getDurationString(uint32_t days)
 
 void GxsForumThreadWidget::fillThreadFinished()
 {
+#ifdef TODO
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreadFinished" << std::endl;
 #endif
@@ -1203,6 +1223,7 @@ void GxsForumThreadWidget::fillThreadFinished()
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreadFinished done" << std::endl;
+#endif
 #endif
 }
 
@@ -1526,6 +1547,7 @@ static void copyItem(QTreeWidgetItem *item, const QTreeWidgetItem *newItem)
 
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
+#ifdef TODO
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreads()" << std::endl;
 #endif
@@ -1597,6 +1619,7 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreads() done" << std::endl;
 #endif
+#endif
 }
 
 void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
@@ -1665,6 +1688,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 
 void GxsForumThreadWidget::insertMessage()
 {
+#ifdef TODO
 	if (groupId().isNull())
 	{
 		mStateHelper->setActive(mTokenTypeMessageData, false);
@@ -1764,10 +1788,12 @@ void GxsForumThreadWidget::insertMessage()
 	/* request Post */
 	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
 	requestMessageData(msgId);
+#endif
 }
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
+#ifdef TODO
 	/* As some time has elapsed since request - check that this is still the current msg.
 	 * otherwise, another request will fill the data
      */
@@ -1842,10 +1868,12 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		ui->postText->setHtml(extraTxt);
 	}
 	// ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+#endif
 }
 
 void GxsForumThreadWidget::previousMessage()
 {
+#ifdef TODO
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 	if (item == NULL) {
 		return;
@@ -1859,10 +1887,12 @@ void GxsForumThreadWidget::previousMessage()
 			ui->threadTreeWidget->setCurrentItem(previousItem);
 		}
 	}
+#endif
 }
 
 void GxsForumThreadWidget::nextMessage()
 {
+#ifdef TODO
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 	if (item == NULL) {
 		return;
@@ -1877,6 +1907,7 @@ void GxsForumThreadWidget::nextMessage()
 			ui->threadTreeWidget->setCurrentItem(nextItem);
 		}
 	}
+#endif
 }
 
 void GxsForumThreadWidget::downloadAllFiles()
@@ -1895,6 +1926,7 @@ void GxsForumThreadWidget::downloadAllFiles()
 
 void GxsForumThreadWidget::nextUnreadMessage()
 {
+#ifdef TODO
 	QTreeWidgetItem *currentItem = ui->threadTreeWidget->currentItem();
 
 	while (true) {
@@ -1923,12 +1955,14 @@ void GxsForumThreadWidget::nextUnreadMessage()
 		/* start from top */
 		currentItem = NULL;
 	}
+#endif
 }
 
 /* get selected messages
    the messages tree is single selected, but who knows ... */
 int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QList<QTreeWidgetItem*> *rowsRead, QList<QTreeWidgetItem*> *rowsUnread)
 {
+#ifdef TODO
 	if (rowsRead) rowsRead->clear();
 	if (rowsUnread) rowsUnread->clear();
 
@@ -1946,6 +1980,8 @@ int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QLi
 	}
 
 	return selectedItems.size();
+#endif
+    return 0;
 }
 
 void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read)
@@ -2035,6 +2071,7 @@ void GxsForumThreadWidget::showInPeopleTab()
 
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
+#ifdef TODO
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
@@ -2081,6 +2118,7 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 	}
 
 	setMsgReadStatus(rows, read);
+#endif
 }
 
 void GxsForumThreadWidget::markMsgAsRead()
@@ -2110,6 +2148,7 @@ void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
+#ifdef TODO
 	if (mStateHelper->isLoading(mTokenTypeInsertThreads)) {
 		mNavigatePendingMsgId = msgId;
 
@@ -2131,6 +2170,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 			return true;
 		}
 	}
+#endif
 
 	return false;
 }
@@ -2149,7 +2189,7 @@ void GxsForumThreadWidget::copyMessageLink()
 	if (groupId().isNull() || mThreadId.isNull()) {
 		return;
 	}
-
+#ifdef TODO
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
 	QString thread_title = (item != NULL)?item->text(COLUMN_THREAD_TITLE):QString() ;
@@ -2161,6 +2201,7 @@ void GxsForumThreadWidget::copyMessageLink()
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
 	}
+#endif
 }
 
 void GxsForumThreadWidget::subscribeGroup(bool subscribe)
@@ -2188,6 +2229,7 @@ void GxsForumThreadWidget::createmessage()
 
 void GxsForumThreadWidget::togglePinUpPost()
 {
+#ifdef TODO
 	if (groupId().isNull() || mThreadId.isNull())
 		return;
 
@@ -2215,6 +2257,7 @@ void GxsForumThreadWidget::togglePinUpPost()
 
     ui->threadTreeWidget->takeTopLevelItem(ui->threadTreeWidget->indexOfTopLevelItem(item));	// forces the re-creation of all posts widgets. A bit extreme. We should rather only delete item above
     updateDisplay(true) ;
+#endif
 }
 
 void GxsForumThreadWidget::createthread()
@@ -2434,6 +2477,7 @@ void GxsForumThreadWidget::saveImage()
 
 void GxsForumThreadWidget::changedViewBox()
 {
+#ifdef TODO
 	if (mInProcessSettings) {
 		return;
 	}
@@ -2444,6 +2488,7 @@ void GxsForumThreadWidget::changedViewBox()
 	ui->threadTreeWidget->clear();
 
 	insertThreads();
+#endif
 }
 
 void GxsForumThreadWidget::filterColumnChanged(int column)
@@ -2465,12 +2510,14 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
+#ifdef TODO
 	int filterColumn = ui->filterLineEdit->currentFilter();
 
 	int count = ui->threadTreeWidget->topLevelItemCount();
 	for (int index = 0; index < count; ++index) {
 		filterItem(ui->threadTreeWidget->topLevelItem(index), text, filterColumn);
 	}
+#endif
 }
 
 bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)

@@ -215,7 +215,7 @@
         </layout>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="threadTreeWidget">
+        <widget class="QTreeView" name="threadTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -225,42 +225,6 @@
          <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <column>
-          <property name="text">
-           <string>Title</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/message-state-header.png</normaloff>:/images/message-state-header.png</iconset>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Date</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="toolTip">
-           <string>Distribution</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../icons.qrc">
-            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Author</string>
-          </property>
-         </column>
         </widget>
        </item>
        <item>
@@ -557,11 +521,6 @@
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>
