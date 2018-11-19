@@ -33,7 +33,7 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 		mPosts[i].prow = i-1;
 
 		RsMsgMetaData meta;
-		meta.mMsgName = "message " + (QString::number(i).toStdString()) ;
+		meta.mMsgName = std::string("message ") + QString::number(i).toStdString() ;
 		mPosts[i].meta_versions.push_back(meta);
 	}
 
@@ -44,7 +44,7 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     mPosts[N+1].prow = 0;
 
     RsMsgMetaData meta;
-    meta.mMsgName = "message " + (QString::number(N+1).toStdString()) ;
+    meta.mMsgName = std::string("message ") + QString::number(N+1).toStdString() ;
     mPosts[N+1].meta_versions.push_back(meta);
 }
 
