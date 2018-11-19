@@ -1,4 +1,4 @@
-#ifdef SUSPENDED_CODE
+#ifndef SUSPENDED_CODE
 #include "retroshare/rsgxsifacetypes.h"
 #else
 #include <string>
