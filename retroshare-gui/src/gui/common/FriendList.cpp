@@ -32,8 +32,6 @@
 #include "retroshare/rspeers.h"
 
 #include "GroupDefs.h"
-#include "gui/chat/ChatDialog.h"
-//#include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/connect/ConfCertDialog.h"
@@ -65,8 +63,6 @@
 #define IMAGE_EXPORTFRIEND       ":/images/user/friend_suggestion16.png"
 #define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO         ":/images/info16.png"
-#define IMAGE_CHAT               ":/images/chat_24.png"
-#define IMAGE_MSG                ":/images/mail_new.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
@@ -120,7 +116,7 @@ FriendList::FriendList(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
 
@@ -339,16 +335,12 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                  break;
          }
 
-//         QMenu *lobbyMenu = NULL;
-
          switch (type)
 		 {
          case TYPE_GROUP:
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
 
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
-                 contextMenu->addSeparator();
                  contextMenu->addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
                  QAction *action = contextMenu->addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
@@ -357,11 +349,6 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              break;
          case TYPE_GPG:
         {
-             contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-             contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
-
-             contextMenu->addSeparator();
-
              contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
              contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
@@ -437,11 +424,6 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
          case TYPE_SSL:
              {
-                 contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-                 contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
-
-                 contextMenu->addSeparator();
-
                  contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
 
                  if (type == TYPE_GPG || type == TYPE_SSL) {
@@ -1315,33 +1297,6 @@ void FriendList::expandItem(QTreeWidgetItem *item)
 	}
 }
 
-void FriendList::chatfriendproxy()
-{
-   chatfriend(getCurrentPeer());
-}
-
-/**
- * Start a chat with a friend
- *
- * @param pPeer the gpg or ssl QTreeWidgetItem to chat with
- */
-void FriendList::chatfriend(QTreeWidgetItem *item)
-{
-    if (item == NULL) {
-        return;
-    }
-
-    switch (item->type()) {
-    case TYPE_GROUP:
-        break;
-    case TYPE_GPG:
-        ChatDialog::chatFriend(RsPgpId(getRsId(item)));
-        break;
-    case TYPE_SSL:
-        ChatDialog::chatFriend(ChatId(RsPeerId(getRsId(item))));
-        break;
-    }
-}
 
 void FriendList::addFriend()
 {
@@ -1354,25 +1309,6 @@ void FriendList::addFriend()
     }
 
     connwiz.exec ();
-}
-
-void FriendList::msgfriend()
-{
-    QTreeWidgetItem *item = getCurrentPeer();
-
-    if (!item)
-        return;
-
-    switch (item->type()) {
-    case TYPE_GROUP:
-        break;
-    case TYPE_GPG:
-        MessageComposer::msgFriend(RsPgpId(getRsId(item)));
-        break;
-    case TYPE_SSL:
-        MessageComposer::msgFriend(RsPeerId(getRsId(item)));
-        break;
-    }
 }
 
 void FriendList::recommendfriend()
@@ -1598,36 +1534,6 @@ void FriendList::configurefriend()
     else
         std::cerr << "FriendList::configurefriend: id is not an SSL nor a PGP id." << std::endl;
 }
-
-// void FriendList::showLobby()
-// {
-//     std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-// 
-//     if (lobby_id.empty())
-//         return;
-// 
-//     std::string vpeer_id;
-// 
-//     if (rsMsgs->getVirtualPeerId(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id))
-//         ChatDialog::chatFriend(vpeer_id);
-// }
-// 
-// void FriendList::unsubscribeToLobby()
-// {
-//     std::string lobby_id = qobject_cast<QAction*>(sender())->data().toString().toStdString();
-// 
-//     if (lobby_id.empty())
-//         return;
-// 
-//     std::string vpeer_id ;
-//     rsMsgs->getVirtualPeerId (ChatLobbyId(QString::fromStdString(lobby_id).toULongLong()), vpeer_id);
-// 
-//     if (QMessageBox::Ok == QMessageBox::question(this,tr("Unsubscribe to lobby"),tr("You are about to unsubscribe a chat lobby<br>You can only re-enter if your friends invite you again."),QMessageBox::Ok | QMessageBox::Cancel))
-//         rsMsgs->unsubscribeChatLobby(ChatLobbyId(QString::fromStdString(lobby_id).toULongLong())) ;
-// 
-//     // we should also close existing windows.
-//     ChatDialog::closeChat(vpeer_id);
-// }
 
 void FriendList::getSslIdsFromItem(QTreeWidgetItem *item, std::list<RsPeerId> &sslIds)
 {

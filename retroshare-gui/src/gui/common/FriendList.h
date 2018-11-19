@@ -148,13 +148,10 @@ private slots:
 
     void connectfriend();
     void configurefriend();
-    void chatfriend(QTreeWidgetItem *item);
-    void chatfriendproxy();
     //void copyLink();
     void copyFullCertificate();
 //    void exportfriend();
     void addFriend();
-    void msgfriend();
     void recommendfriend();
     void removefriend();
 #ifdef UNFINISHED_FD
@@ -171,11 +168,6 @@ private slots:
 
     void exportFriendlistClicked();
     void importFriendlistClicked();
-
-//	 void inviteToLobby();
-//	 void createchatlobby();
-//	 void unsubscribeToLobby();
-//	 void showLobby();
 };
 
 #endif // FRIENDLIST_H
