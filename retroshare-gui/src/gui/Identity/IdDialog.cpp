@@ -229,6 +229,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 
+	connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked,
+	         this, &IdDialog::chatIdentityItem );
+
 
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
 
@@ -2339,8 +2342,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	QMenu *contextMenu = new QMenu(this);
 
 
-	std::list<RsGxsId> own_identities ;
-	rsIdentity->getOwnIds(own_identities) ;
+	std::list<RsGxsId> own_identities;
+	rsIdentity->getOwnIds(own_identities);
 
 	// make some stats about what's selected. If the same value is used for all selected items, it can be switched.
 
@@ -2545,26 +2548,65 @@ void IdDialog::copyRetroshareLink()
 
 void IdDialog::chatIdentity()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	QTreeWidgetItem* item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid item!" << std::endl;
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+	chatIdentityItem(item);
+}
 
-	QAction *action = qobject_cast<QAction *>(QObject::sender());
-	if (!action)
-		return ;
+void IdDialog::chatIdentityItem(QTreeWidgetItem* item)
+{
+	if(!item)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid item." << std::endl;
+		return;
+	}
 
-	RsGxsId from_gxs_id(action->data().toString().toStdString());
-	uint32_t error_code ;
-    DistantChatPeerId did ;
+	std::string&& toIdString(item->text(RSID_COL_KEYID).toStdString());
+	RsGxsId toGxsId(toIdString);
+	if(toGxsId.isNull())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid destination id: "
+		          << toIdString << std::endl;
+		return;
+	}
 
-	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), from_gxs_id, did, error_code))
-		QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
+	RsGxsId fromGxsId;
+	QAction* action = qobject_cast<QAction*>(QObject::sender());
+	if(!action)
+	{
+		std::list<RsGxsId> ownIdentities;
+		rsIdentity->getOwnIds(ownIdentities);
+		if(ownIdentities.empty())
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " Error. Own identities list "
+			          << " is empty!" << std::endl;
+			return;
+		}
+		else fromGxsId = ownIdentities.front();
+	}
+	else fromGxsId = RsGxsId(action->data().toString().toStdString());
+
+	if(fromGxsId.isNull())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Could not determine sender"
+		          << " identity to open chat toward: " << toIdString << std::endl;
+		return;
+	}
+
+	uint32_t error_code;
+	DistantChatPeerId did;
+
+	if(!rsMsgs->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
+		QMessageBox::information(
+		            nullptr, tr("Distant chat cannot work"),
+		            QString("%1 %2: %3")
+		                .arg(tr("Distant chat refused with this person."))
+		                .arg(tr("Error code")).arg(error_code) ) ;
 }
 
 void IdDialog::sendMsg()
