@@ -42,32 +42,25 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     mPosts[N].children.push_back(ForumModelIndex(N+1));
     mPosts[N+1].parent = ForumModelIndex(N);
     mPosts[N+1].prow = 0;
+
+    RsMsgMetaData meta;
+    meta.mMsgName = "message " + (QString::number(N+1).toStdString()) ;
+    mPosts[N+1].meta_versions.push_back(meta);
 }
 
 int RsGxsForumModel::rowCount(const QModelIndex& parent) const
 {
-	void *ref = (parent.isValid())?parent.internalPointer():NULL ;
+    if(parent.column() > 0)
+        return 0;
 
     if(mPosts.empty())	// security. Should never happen.
         return 0;
 
-	uint32_t entry = 0 ;
-	int source_id ;
-
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
-	{
-#ifdef DEBUG_FORUMMODEL
-		std::cerr << "rowCount-2(" << parent << ") : " <<  0 << std::endl;
-#endif
-		return 0 ;
-	}
-
-#ifdef DEBUG_FORUMMODEL
-	std::cerr << "rowCount-3(" << parent << ") : " <<  mPosts[entry].children.size() << std::endl;
-#endif
-	return mPosts[entry].children.size();
+    if(!parent.isValid())
+       return getChildrenCount(NULL);
+    else
+       return getChildrenCount(parent.internalPointer());
 }
-
 int RsGxsForumModel::columnCount(const QModelIndex &parent) const
 {
 	return COLUMN_COUNT ;
@@ -75,7 +68,10 @@ int RsGxsForumModel::columnCount(const QModelIndex &parent) const
 
 bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
 {
-	void *ref = (parent.isValid())?parent.internalPointer():NULL ;
+    if(!parent.isValid())
+        return true;
+
+    void *ref = parent.internalPointer();
 	uint32_t entry = 0;
 
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
@@ -86,8 +82,8 @@ bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
 		return false ;
 	}
 
-#ifdef DEBUG_DOWNLOADLIST
-	std::cerr << "hasChildren-3(" << parent << ") : " << !mDownloads[entry].peers.empty() << std::endl;
+#ifdef DEBUG_FORUMMODEL
+    std::cerr << "hasChildren-3(" << parent << ") : " << !mPosts[entry].children.empty() << std::endl;
 #endif
 	return !mPosts[entry].children.empty();
 }
@@ -112,7 +108,7 @@ bool RsGxsForumModel::convertRefPointerToTabEntry(void *ref,uint32_t& entry)
 
     if(val > (intptr_t)(~(uint32_t(0))))	// make sure the pointer is an int that fits in 32bits
     {
-        std::cerr << "(EE) trying to make a ForumModelIndex out of a number that is larger than 2^32 !" << std::endl;
+        std::cerr << "(EE) trying to make a ForumModelIndex out of a number that is larger than 2^32-1 !" << std::endl;
         return false ;
     }
 	entry = uint32_t(val);
@@ -122,69 +118,116 @@ bool RsGxsForumModel::convertRefPointerToTabEntry(void *ref,uint32_t& entry)
 
 QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & parent) const
 {
-	if(row < 0 || column < 0 || column >= COLUMN_COUNT)
+//    if(!hasIndex(row,column,parent))
+    if(row < 0 || column < 0 || column >= COLUMN_COUNT)
 		return QModelIndex();
 
-	void *parent_ref = (parent.isValid())?parent.internalPointer():NULL ;
-	uint32_t parent_entry = 0;
-	int source_id=0 ;
-
-    // We dont need to handle parent==NULL because the conversion will return entry=0 which is what we need.
-
-	if(!convertRefPointerToTabEntry(parent_ref,parent_entry) || parent_entry >= mPosts.size())
-	{
-#ifdef DEBUG_FORUMMODEL
-		std::cerr << "index-5(" << row << "," << column << " parent=" << parent << ") : " << "NULL"<< std::endl ;
-#endif
-		return QModelIndex() ;
-	}
-
-	void *ref = NULL ;
-
-    if(row >= mPosts[parent_entry].children.size() || !convertTabEntryToRefPointer(mPosts[parent_entry].children[row],ref))
-	{
-#ifdef DEBUG_FORUMMODEL
-		std::cerr << "index-4(" << row << "," << column << " parent=" << parent << ") : " << "NULL" << std::endl;
-#endif
-		return QModelIndex() ;
-	}
-
+    void *ref = getChildRef(parent.internalPointer(),row);
 #ifdef DEBUG_FORUMMODEL
 	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
 #endif
 	return createIndex(row,column,ref) ;
 }
 
-QModelIndex RsGxsForumModel::parent(const QModelIndex& child) const
+QModelIndex RsGxsForumModel::parent(const QModelIndex& index) const
 {
-	void *child_ref = (child.isValid())?child.internalPointer():NULL ;
+    if(!index.isValid())
+        return QModelIndex();
 
-	if(!child_ref)
-		return QModelIndex() ;
+    void *child_ref = index.internalPointer();
+    int row=0;
 
-    ForumModelIndex child_entry ;
+    void *parent_ref = getParentRef(child_ref,row) ;
 
-	if(!convertRefPointerToTabEntry(child_ref,child_entry) || child_entry >= mPosts.size())
-		return QModelIndex() ;
+    if(parent_ref == NULL)		// root
+        return QModelIndex() ;
 
-	void *parent_ref =NULL;
-	ForumModelIndex parent_entry = mPosts[child_entry].parent;
-	QModelIndex indx;
+    return createIndex(row,0,parent_ref);
+}
+
+Qt::ItemFlags RsGxsForumModel::flags(const QModelIndex& index) const
+{
+    if (!index.isValid())
+        return 0;
+
+    return QAbstractItemModel::flags(index);
+}
+
+void *RsGxsForumModel::getChildRef(void *ref,int row) const
+{
+    ForumModelIndex entry ;
+
+    if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+        return NULL ;
+
+    void *new_ref;
+    if(row >= mPosts[entry].children.size())
+        return NULL;
+
+    convertTabEntryToRefPointer(mPosts[entry].children[row],new_ref);
+
+    return new_ref;
+}
+
+void *RsGxsForumModel::getParentRef(void *ref,int& row) const
+{
+    ForumModelIndex ref_entry;
+
+    if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mPosts.size())
+        return NULL ;
+
+    ForumModelIndex parent_entry = mPosts[ref_entry].parent;
 
     if(parent_entry == 0)		// top level index
-        indx = QModelIndex() ;
+    {
+        row = 0;
+        return NULL ;
+    }
     else
     {
-		if(!convertTabEntryToRefPointer(parent_entry,parent_ref))
-			return QModelIndex() ;
+        void *parent_ref;
+        convertTabEntryToRefPointer(parent_entry,parent_ref);
+        row = mPosts[parent_entry].prow;
 
-		indx = createIndex(mPosts[parent_entry].prow,child.column(),parent_ref) ;
+        return parent_ref;
     }
-#ifdef DEBUG_FORUMMODEL
-	std::cerr << "parent-1(" << child << ") : " << indx << std::endl;
-#endif
-	return indx;
 }
+
+int RsGxsForumModel::getChildrenCount(void *ref) const
+{
+    uint32_t entry = 0 ;
+
+    if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+        return 0 ;
+
+    return mPosts[entry].children.size();
+}
+
+
+
+//bool RsGxsForumModel::hasIndex(int row,int column,const QModelIndex& parent) const
+//{
+//    if(row < 0 || column < 0 || column >= COLUMN_COUNT)
+//        return false;
+//
+//    if(!parent.isValid())
+//        return false;
+//
+//    ForumModelIndex entry;
+//
+//    convertRefPointerToTabEntry(parent.internalPointer(),entry);
+//
+//    if(entry >= mPosts.size())
+//        return false;
+//
+//    if(row >= mPosts[entry].children.size())
+//        return false;
+//
+//    if(mPosts[entry].children[row] >= mPosts.size())
+//        return false;
+//
+//    return true;
+//}
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -203,10 +246,12 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, i
 
 QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 {
+#ifdef DEBUG_FORUMMODEL
+    std::cerr << "calling data(" << index << ") role=" << role << std::endl;
+#endif
+
 	if(!index.isValid())
 		return QVariant();
-
-	int coln = index.column() ;
 
 	switch(role)
 	{
@@ -216,8 +261,8 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::WhatsThisRole:
 	case Qt::EditRole:
 	case Qt::ToolTipRole:
-	case Qt::StatusTipRole:
-		return QVariant();
+    case Qt::StatusTipRole: 	return QVariant();
+    default: break;
 	}
 
 	void *ref = (index.isValid())?index.internalPointer():NULL ;
@@ -266,10 +311,10 @@ QVariant RsGxsForumModel::sizeHintRole(int col) const
 	switch(col)
 	{
 	default:
-	case COLUMN_TITLE:        return QVariant( factor * 170 );
-	case COLUMN_READ_STATUS:  return QVariant( factor * 10  );
-	case COLUMN_DATE:         return QVariant( factor * 75  );
-	case COLUMN_AUTHOR:       return QVariant( factor * 75  );
+	case COLUMN_TITLE:        return QVariant( QSize(factor * 170, factor*14 ));
+	case COLUMN_READ_STATUS:  return QVariant( QSize(factor * 10 , factor*14 ));
+	case COLUMN_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
+	case COLUMN_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
 	}
 }
 
