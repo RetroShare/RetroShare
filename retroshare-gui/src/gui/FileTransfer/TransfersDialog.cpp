@@ -352,19 +352,19 @@ public:
 		switch(col)
 		{
 		default:
-		case COLUMN_NAME:         return QVariant( factor * 170 );
-		case COLUMN_SIZE:         return QVariant( factor * 70  );
-		case COLUMN_COMPLETED:    return QVariant( factor * 75  );
-		case COLUMN_DLSPEED:      return QVariant( factor * 75  );
-		case COLUMN_PROGRESS:     return QVariant( factor * 170 );
-		case COLUMN_SOURCES:      return QVariant( factor * 90  );
-		case COLUMN_STATUS:       return QVariant( factor * 100 );
-		case COLUMN_PRIORITY:     return QVariant( factor * 100 );
-		case COLUMN_REMAINING:    return QVariant( factor * 100 );
-		case COLUMN_DOWNLOADTIME: return QVariant( factor * 100 );
-		case COLUMN_ID:           return QVariant( factor * 100 );
-		case COLUMN_LASTDL:       return QVariant( factor * 100 );
-		case COLUMN_PATH:         return QVariant( factor * 100 );
+		case COLUMN_NAME:         return QVariant( QSize(factor * 170, factor*14.0f ));
+		case COLUMN_SIZE:         return QVariant( QSize(factor * 70 , factor*14.0f ));
+		case COLUMN_COMPLETED:    return QVariant( QSize(factor * 75 , factor*14.0f ));
+		case COLUMN_DLSPEED:      return QVariant( QSize(factor * 75 , factor*14.0f ));
+		case COLUMN_PROGRESS:     return QVariant( QSize(factor * 170, factor*14.0f ));
+		case COLUMN_SOURCES:      return QVariant( QSize(factor * 90 , factor*14.0f ));
+		case COLUMN_STATUS:       return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_PRIORITY:     return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_REMAINING:    return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_DOWNLOADTIME: return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_ID:           return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_LASTDL:       return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_PATH:         return QVariant( QSize(factor * 100, factor*14.0f ));
 		}
 	}
 
