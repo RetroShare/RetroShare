@@ -482,7 +482,6 @@ HEADERS +=  rshare.h \
             gui/toaster/OnlineToaster.h \
             gui/toaster/DownloadToaster.h \
             gui/toaster/ChatToaster.h \
-            gui/toaster/GroupChatToaster.h \
             gui/toaster/ChatLobbyToaster.h \
             gui/toaster/FriendRequestToaster.h \
             gui/common/RsButtonOnText.h \
@@ -904,7 +903,6 @@ SOURCES +=  main.cpp \
             gui/toaster/DownloadToaster.cpp \
             gui/toaster/OnlineToaster.cpp \
             gui/toaster/ChatToaster.cpp \
-            gui/toaster/GroupChatToaster.cpp \
             gui/toaster/ChatLobbyToaster.cpp \
             gui/toaster/FriendRequestToaster.cpp \
             gui/advsearch/advancedsearchdialog.cpp \

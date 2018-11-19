@@ -28,7 +28,6 @@
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rshistory.h>
-
 #include "chat/ChatUserNotify.h"
 #include "connect/ConnectFriendWizard.h"
 #include "groups/CreateGroup.h"
@@ -69,19 +68,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    if (instance == NULL) {
-        instance = this;
-    }
-    QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
-    // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
-    msg = QString("<font color='blue'><i>" + msg + "</i></font>");
-    ui.chatWidget->setWelcomeMessage(msg);
-    ui.chatWidget->init(ChatId::makeBroadcastId(), tr("Broadcast"));
-
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)),
-            this, SLOT(chatMessageReceived(ChatMessage)));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)),
-            this, SLOT(chatStatusReceived(ChatId,QString)));
+	if (!instance) instance = this;
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));
@@ -94,39 +81,11 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
-    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    //newsFeed = new NewsFeed();
-    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
-
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
     ui.tabWidget->hideCloseButton(2);
     ui.tabWidget->hideCloseButton(3);
     ui.tabWidget->hideCloseButton(4);
-
-    /* get the current text and text color of the tab bar */
-    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
-
-    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
-
-//    menu = new QMenu();
-//    menu->addAction(ui.actionAdd_Friend);
-//    menu->addAction(ui.actionAdd_Group);
-//    menu->addAction(ui.actionCreate_new_Chat_lobby);
-//
-//    menu->addSeparator();
-//    menu->addAction(ui.actionSet_your_Avatar);
-//    menu->addAction(ui.actionSet_your_Personal_Message);
-//
-//    ui.menutoolButton->setMenu(menu);
-
-    /*QToolButton *addFriendButton = new QToolButton(this);
-    addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
-    addFriendButton->setToolTip(tr("Add friend node"));
-    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    ui.friendList->addToolButton(addFriendButton);*/
 
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);
@@ -216,13 +175,11 @@ void FriendsDialog::processSettings(bool bLoad)
 
         // state of splitter
         ui.splitter->restoreState(Settings->value("Splitter").toByteArray());
-        //remove ui.splitter_2->restoreState(Settings->value("GroupChatSplitter").toByteArray());
     } else {
         // save settings
 
         // state of splitter
         Settings->setValue("Splitter", ui.splitter->saveState());
-        //remove Settings->setValue("GroupChatSplitter", ui.splitter_2->saveState());
     }
 
     ui.friendList->processSettings(bLoad);
@@ -233,35 +190,6 @@ void FriendsDialog::processSettings(bool bLoad)
 void FriendsDialog::showEvent(QShowEvent *event)
 {
     RsAutoUpdatePage::showEvent(event);
-}
-
-void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
-{
-    if(msg.chat_id.isBroadcast())
-    {
-        QDateTime sendTime = QDateTime::fromTime_t(msg.sendTime);
-        QDateTime recvTime = QDateTime::fromTime_t(msg.recvTime);
-        QString message = QString::fromUtf8(msg.msg.c_str());
-        QString name = QString::fromUtf8(rsPeers->getPeerName(msg.broadcast_peer_id).c_str());
-
-        ui.chatWidget->addChatMsg(msg.incoming, name, sendTime, recvTime, message, ChatWidget::MSGTYPE_NORMAL);
-
-        if(ui.chatWidget->isActive())
-        {
-            // clear the chat notify when control returns to the Qt event loop
-            // we have to do this later, because we don't know if we or the notify receives the chat message first
-            QMetaObject::invokeMethod(this, "clearChatNotify", Qt::QueuedConnection);
-        }
-    }
-}
-
-void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &status_string)
-{
-    if(chat_id.isBroadcast())
-    {
-        QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
-        ui.chatWidget->updateStatusString(name + " %1", status_string);
-    }
 }
 
 void FriendsDialog::updateDisplay()
@@ -309,39 +237,9 @@ void FriendsDialog::loadmypersonalstatus()
 	}
 }
 
-void FriendsDialog::clearChatNotify()
-{
-    ChatUserNotify::clearWaitingChat(ChatId::makeBroadcastId());
-}
-
 void FriendsDialog::statusmessage()
 {
     StatusMessage statusmsgdialog (this);
     statusmsgdialog.exec();
 }
 
-/*static*/ bool FriendsDialog::isGroupChatActive()
-{
-	FriendsDialog *friendsDialog = dynamic_cast<FriendsDialog*>(MainWindow::getPage(MainWindow::Friends));
-	if (!friendsDialog) {
-		return false;
-	}
-
-    if (friendsDialog->ui.tabWidget->currentWidget() == friendsDialog->ui.groupChatTab) {
-        return true;
-    }
-
-    return false;
-}
-
-/*static*/ void FriendsDialog::groupChatActivate()
-{
-	FriendsDialog *friendsDialog = dynamic_cast<FriendsDialog*>(MainWindow::getPage(MainWindow::Friends));
-	if (!friendsDialog) {
-		return;
-	}
-
-	MainWindow::showWindow(MainWindow::Friends);
-	friendsDialog->ui.tabWidget->setCurrentWidget(friendsDialog->ui.groupChatTab);
-    friendsDialog->ui.chatWidget->focusDialog();
-}

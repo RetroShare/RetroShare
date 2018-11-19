@@ -227,35 +227,12 @@
        </size>
       </property>
       <property name="tabsClosable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
-      <widget class="QWidget" name="groupChatTab">
-       <attribute name="icon">
-        <iconset resource="icons.qrc">
-         <normaloff>:/icons/png/chat-lobbies.png</normaloff>:/icons/png/chat-lobbies.png</iconset>
-       </attribute>
-       <attribute name="title">
-        <string>Broadcast</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <widget class="ChatWidget" name="chatWidget" native="true"/>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </widget>
    </item>
   </layout>
-  <action name="actionClear_Chat_History">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
-   </property>
-   <property name="text">
-    <string>Clear Chat History</string>
-   </property>
-  </action>
   <action name="actionAdd_Friend">
    <property name="icon">
     <iconset resource="images.qrc">
@@ -297,14 +274,6 @@
     <string>Browse History</string>
    </property>
   </action>
-  <action name="actionSave_History">
-   <property name="text">
-    <string>Save Chat History</string>
-   </property>
-   <property name="toolTip">
-    <string>Save Chat History</string>
-   </property>
-  </action>
   <action name="actionAdd_Group">
    <property name="icon">
     <iconset resource="images.qrc">
@@ -315,30 +284,6 @@
    </property>
    <property name="toolTip">
     <string>Add a new Group</string>
-   </property>
-  </action>
-  <action name="actionDelete_Chat_History">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/edit-clear-history.png</normaloff>:/images/edit-clear-history.png</iconset>
-   </property>
-   <property name="text">
-    <string>Delete Chat History</string>
-   </property>
-   <property name="toolTip">
-    <string>Deletes all stored and displayed chat history</string>
-   </property>
-  </action>
-  <action name="actionCreate_new_Chat_lobby">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/user/agt_forum24.png</normaloff>:/images/user/agt_forum24.png</iconset>
-   </property>
-   <property name="text">
-    <string>Create new Chat lobby</string>
-   </property>
-   <property name="toolTip">
-    <string>Create new Chat lobby</string>
    </property>
   </action>
   <action name="actionChooseFont">
@@ -380,12 +325,6 @@
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ChatWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">gui/chat/ChatWidget.h</header>
-   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>

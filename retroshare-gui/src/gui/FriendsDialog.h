@@ -64,9 +64,6 @@ public:
 
     virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
 
-    static bool isGroupChatActive();
-    static void groupChatActivate();
-
 	 void activatePage(FriendsDialog::Page page) ;
 
 	 NetworkDialog *networkDialog ;
@@ -81,9 +78,6 @@ protected:
     void showEvent (QShowEvent *event);
 
 private slots:
-    void chatMessageReceived(const ChatMessage& msg);
-    void chatStatusReceived(const ChatId& chat_id, const QString& status_string);
-
     void addFriend();
 
     void statusmessage();
@@ -91,13 +85,6 @@ private slots:
     void getAvatar();
 
     void loadmypersonalstatus();
-
-    void clearChatNotify();
-
-    //void newsFeedChanged(int count);
-
-signals:
-    void notifyGroupChat(const QString&,const QString&) ;
 
 private:
     void processSettings(bool bLoad);

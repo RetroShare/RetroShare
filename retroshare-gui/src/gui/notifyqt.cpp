@@ -39,7 +39,6 @@
 #include "toaster/MessageToaster.h"
 #include "toaster/DownloadToaster.h"
 #include "toaster/ChatToaster.h"
-#include "toaster/GroupChatToaster.h"
 #include "toaster/ChatLobbyToaster.h"
 #include "toaster/FriendRequestToaster.h"
 #include "toaster/ToasterItem.h"
@@ -893,21 +892,7 @@ void NotifyQt::UpdateGUI()
                         toaster = new ToasterItem(new ChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
 					break;
-				case RS_POPUP_GROUPCHAT:
-					if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
-					{
-						MainWindow *mainWindow = MainWindow::getInstance();
-						if (mainWindow && mainWindow->isActiveWindow() && !mainWindow->isMinimized()) {
-							if (MainWindow::getActivatePage() == MainWindow::Friends) {
-								if (FriendsDialog::isGroupChatActive()) {
-									// do not show when active
-									break;
-								}
-							}
-						}
-						toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
-					}
-					break;
+			case RS_POPUP_GROUPCHAT: break;
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
 					{
@@ -1040,9 +1025,7 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
 			case RS_POPUP_CHAT:
                 toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
-			case RS_POPUP_GROUPCHAT:
-				toaster = new ToasterItem(new GroupChatToaster(id, message));
-				break;
+		    case RS_POPUP_GROUPCHAT: break;
 			case RS_POPUP_CHATLOBBY:
 				{
 					std::list<RsGxsId> gxsid;

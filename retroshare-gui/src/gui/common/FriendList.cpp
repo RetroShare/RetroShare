@@ -116,7 +116,7 @@ FriendList::FriendList(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)));
+	connect(ui->peerTreeWidget, &RSTreeWidget::itemClicked, this, &FriendList::expandItem);
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
 
