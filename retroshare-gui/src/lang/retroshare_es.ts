@@ -2152,7 +2152,7 @@ Haga doble clic en una sala de chat para entrar y conversar.</translation>
     <message>
         <location line="+5"/>
         <source>Choose font</source>
-        <translation>Elejir la fuente</translation>
+        <translation>Elegir la fuente</translation>
     </message>
     <message>
         <location line="+5"/>
