@@ -39,7 +39,7 @@ typedef rapidjson::Document RsJson;
  * @param[in] jDoc JSON document to print
  * @return same output stream passed as out parameter
  */
-std::ostream &operator<<(std::ostream &out, const RsJson &jDoc);
+std::ostream& operator<<(std::ostream &out, const RsJson &jDoc);
 
 /**
  * Stream manipulator to print RsJson in compact format

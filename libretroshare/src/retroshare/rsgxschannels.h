@@ -1,4 +1,3 @@
-#pragma once
 /*******************************************************************************
  * libretroshare/src/retroshare: rsgxschannels.h                               *
  *                                                                             *
@@ -21,6 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#pragma once
 
 #include <cstdint>
 #include <string>
@@ -62,9 +62,6 @@ struct RsGxsChannelGroup : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream& out, const RsGxsChannelGroup& group);
-
-
 struct RsGxsChannelPost : RsSerializable
 {
 	RsGxsChannelPost() : mCount(0), mSize(0) {}
@@ -95,8 +92,6 @@ struct RsGxsChannelPost : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream& out, const RsGxsChannelPost& post);
-
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
@@ -113,12 +108,28 @@ public:
 	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
 
 	/**
+	 * @brief Add a comment on a post or on another comment
+	 * @jsonapi{development}
+	 * @param[inout] comment
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createComment(RsGxsComment& comment) = 0;
+
+	/**
 	 * @brief Create channel post. Blocking API.
 	 * @jsonapi{development}
 	 * @param[inout] post
 	 * @return false on error, true otherwise
 	 */
 	virtual bool createPost(RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief createVote
+	 * @jsonapi{development}
+	 * @param[inout] vote
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createVote(RsGxsVote& vote) = 0;
 
 	/**
 	 * @brief Edit channel details.
@@ -275,6 +286,19 @@ public:
 	        const RsGxsGroupId& channelId,
 	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
 	        rstime_t maxWait = 300 ) = 0;
+
+	/**
+	 * @brief Search local channels
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called for each result
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool localSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        rstime_t maxWait = 30 ) = 0;
 
 
 	/* Following functions are deprecated as they expose internal functioning

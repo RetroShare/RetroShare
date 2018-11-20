@@ -36,6 +36,7 @@
 #include "retroshare/rsnotify.h"
 
 #include <cstdio>
+#include <chrono>
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
@@ -50,7 +51,7 @@
  * #define GXSCHANNEL_DEBUG 1
  ****/
 
-/*extern*/ RsGxsChannels *rsGxsChannels = nullptr;
+/*extern*/ RsGxsChannels* rsGxsChannels = nullptr;
 
 
 #define GXSCHANNEL_STOREPERIOD	(3600 * 24 * 30)
@@ -1033,7 +1034,7 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 	uint32_t token;
 	if(!createGroup(token, channel))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group."
 		          << std::endl;
 		return false;
 	}
@@ -1055,6 +1056,60 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 #ifdef RS_DEEP_SEARCH
 	DeepSearch::indexChannelGroup(channel);
 #endif //  RS_DEEP_SEARCH
+
+	return true;
+}
+
+bool p3GxsChannels::createComment(RsGxsComment& comment)
+{
+	uint32_t token;
+	if(!createComment(token, comment))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating comment."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, comment.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
+		          << " comment data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsChannels::createVote(RsGxsVote& vote)
+{
+	uint32_t token;
+	if(!createVote(token, vote))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating vote."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, vote.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
+		          << " vote data." << std::endl;
+		return false;
+	}
 
 	return true;
 }
@@ -1911,6 +1966,31 @@ bool p3GxsChannels::turtleChannelRequest(
 	                std::chrono::system_clock::now() +
 	                std::chrono::seconds(maxWait) ) );
 	}
+
+	return true;
+}
+
+/// @see RsGxsChannels::localSearchRequest
+bool p3GxsChannels::localSearchRequest(
+            const std::string& matchString,
+            const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+            rstime_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::seconds(maxWait);
+	RsThread::async([=]()
+	{
+		std::list<RsGxsGroupSummary> results;
+		RsGenExchange::localSearch(matchString, results);
+		if(std::chrono::steady_clock::now() < timeout)
+			for(const RsGxsGroupSummary& result : results) multiCallback(result);
+	});
 
 	return true;
 }
