@@ -69,9 +69,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    if (instance == NULL) {
-        instance = this;
-    }
+	if (!instance) instance = this;
+
+#ifdef RS_DIRECT_CHAT
     QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
@@ -82,6 +82,10 @@ FriendsDialog::FriendsDialog(QWidget *parent)
             this, SLOT(chatMessageReceived(ChatMessage)));
     connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)),
             this, SLOT(chatStatusReceived(ChatId,QString)));
+#else // def RS_DIRECT_CHAT
+	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
+#endif // def RS_DIRECT_CHAT
+
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));

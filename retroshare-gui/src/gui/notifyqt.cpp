@@ -894,6 +894,7 @@ void NotifyQt::UpdateGUI()
 					}
 					break;
 				case RS_POPUP_GROUPCHAT:
+#ifdef RS_DIRECT_CHAT
 					if ((popupflags & RS_POPUP_GROUPCHAT) && !_disableAllToaster)
 					{
 						MainWindow *mainWindow = MainWindow::getInstance();
@@ -907,6 +908,7 @@ void NotifyQt::UpdateGUI()
 						}
 						toaster = new ToasterItem(new GroupChatToaster(RsPeerId(id), QString::fromUtf8(msg.c_str())));
 					}
+#endif // RS_DIRECT_CHAT
 					break;
 				case RS_POPUP_CHATLOBBY:
 					if ((popupflags & RS_POPUP_CHATLOBBY) && !_disableAllToaster)
@@ -1041,7 +1043,9 @@ void NotifyQt::testToasters(uint notifyFlags, /*RshareSettings::enumToasterPosit
                 toaster = new ToasterItem(new ChatToaster(id, message));
 				break;
 			case RS_POPUP_GROUPCHAT:
+#ifdef RS_DIRECT_CHAT
 				toaster = new ToasterItem(new GroupChatToaster(id, message));
+#endif // RS_DIRECT_CHAT
 				break;
 			case RS_POPUP_CHATLOBBY:
 				{
