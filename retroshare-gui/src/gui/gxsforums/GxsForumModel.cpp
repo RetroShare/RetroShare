@@ -260,7 +260,6 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::TextColorRole:
 	case Qt::WhatsThisRole:
 	case Qt::EditRole:
-	case Qt::ToolTipRole:
     case Qt::StatusTipRole: 	return QVariant();
     default: break;
 	}
@@ -299,10 +298,62 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole:    return displayRole   (meta,index.column()) ;
 	case Qt::DecorationRole: return decorationRole(meta,index.column()) ;
 	case Qt::UserRole:       return userRole      (meta,index.column()) ;
+	case Qt::ToolTipRole:	 return toolTipRole   (meta,index.column())
+
+	case ThreadPinnedRole:   return pinnedRole(index.column()) ;
+	case MissingRole:        return missingRole(index.column()) ;
+	case StatusRole:         return statusRole(index.column()) ;
 	default:
 		return QVariant();
 	}
 }
+
+QVariant RsGxsForumModel::statusRole(int column,const ForumModelPostEntry& fmpe)
+{
+ 	if(column != COLUMN_THREAD_DATA)
+        return QVariant();
+
+    return QVariant(fmpe.mMsgStatus);
+}
+
+QVariant RsGxsForumModel::missingRole(int column,const ForumModelPostEntry& fmpe)
+{
+    if(column != COLUMN_THREAD_DATA)
+        return QVariant();
+
+    if(fmpe.mPostFlags & FLAG_POST_IS_MISSING)
+        return QVariant(true);
+    else
+        return QVariant(false);
+}
+
+QVariant RsGxsForumModel::toolTipRole(int column,const ForumModelPostEntry& fmpe)
+{
+    if(column != COLUMN_THREAD_DISTRIBUTION)
+        return QVariant();
+
+    switch(fmpe.mReputationWaningLevel)
+    {
+    case 3: return QVariant(tr("Information for this identity is currently missing.")) ;
+    case 2: return QVariant(tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.")) ;
+    case 1: return QVariant(tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.")) ;
+    case 0: return QVariant(tr("Message will be forwarded to your friends.") ;
+            default:
+            return QVariant("[ERROR: missing reputation level information - contact the developers]");
+    }
+}
+
+QVariant RsGxsForumModel::pinnedRole(int column,const ForumModelPostEntry& fmpe)
+{
+    if(column != COLUMN_THREAD_DATE)
+        return QVariant();
+
+    if(fmpe.mFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+        return QVariant(true);
+    else
+        return QVariant(false);
+}
+
 
 QVariant RsGxsForumModel::sizeHintRole(int col) const
 {
@@ -318,15 +369,50 @@ QVariant RsGxsForumModel::sizeHintRole(int col) const
 	}
 }
 
+QVariant RsGxsForumModel::authorRole(int column,const ForumModelPostEntry& fmpe)
+{
+    if(column == COLUMN_THREAD_DATA)
+        return QVariant(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
+
+    return QVariant();
+}
+
+QVariant RsGxsForumModel::sortRole(int column,const ForumModelPostEntry& fmpe)
+{
+    if(column == COLUMN_THREAD_DATA)
+        return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
+
+}
+
 QVariant RsGxsForumModel::displayRole(const RsMsgMetaData& meta,int col) const
 {
 	switch(col)
 	{
-		case COLUMN_TITLE:        return QVariant(QString::fromUtf8(meta.mMsgName.c_str()));
-		case COLUMN_READ_STATUS:  return QVariant(meta.mMsgStatus);
-		case COLUMN_DATE:         return QVariant(qulonglong(meta.mPublishTs));
-		case COLUMN_AUTHOR:       return QVariant(QString::fromStdString(meta.mAuthorId.toStdString()));
+		case COLUMN_TITLE:      if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_REDACTED)
+									return QVariant(tr("[ ... Redacted message ... ]"));
+								else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+									return QVariant(tr("[PINNED] ") + QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
+								else
+									return QVariant(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 
+		case COLUMN_READ_STATUS:return QVariant(meta.mMsgStatus);
+    	case COLUMN_DATE:       {
+    							    QDateTime qtime;
+									qtime.setTime_t(msg.mMeta.mPublishTs);
+
+									return QVariant(DateTime::formatDateTime(qtime));
+    							}
+
+		case COLUMN_AUTHOR:       return QVariant(QString::fromStdString(meta.mAuthorId.toStdString()));
+	    case COLUMN_THREAD_MSGID: return QVariant(QString::fromStdString(meta.mMsgId.toStdString()));
+#ifdef TODO
+	if (filterColumn == COLUMN_THREAD_CONTENT) {
+		// need content for filter
+		QTextDocument doc;
+		doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()));
+		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
+	}
+#endif
 		default:
 			return QVariant("[ TODO ]");
 		}
@@ -381,7 +467,10 @@ QVariant RsGxsForumModel::userRole(const RsMsgMetaData &meta, int col) const
 
 QVariant RsGxsForumModel::decorationRole(const RsMsgMetaData& meta,int col) const
 {
-	return QVariant();
+    if(col == COLUMN_THREAD_DISTRIBUTION)
+        return QVariant(fmpe.mReputationWarningLevel);
+    else
+		return QVariant();
 }
 
 void RsGxsForumModel::update_posts()

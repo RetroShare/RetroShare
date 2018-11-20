@@ -24,12 +24,25 @@ struct RsMsgMetaData
 
 typedef uint32_t ForumModelIndex;
 
-struct ForumPostEntry
+struct ForumModelPostEntry
 {
+    typedef enum {					// flags for display of posts
+        FLAG_POST_IS_PINNED   = 0x0001,
+        FLAG_POST_IS_MISSING  = 0x0002,
+        FLAG_POST_IS_REDACTED = 0x0004,
+    };
+
+    std::string        mTitle ;
+    RsGxsId            mAuthorId ;
+    RsGxsMessageId     mMsgId;
+    uint32_t           mPublishTs;
+    uint32_t           mPostFlags;
+    int                mReputationWarningLevel;
+
     std::vector<RsMsgMetaData> meta_versions;	// maybe we don't need all this. Could be too large.
 
-    std::vector<ForumModelIndex> children;
-    ForumModelIndex parent;
+    std::vector<ForumModelIndex> mChildren;
+    ForumModelIndex mParent;
     int prow ;									// parent row
 };
 
@@ -43,7 +56,11 @@ public:
 	explicit RsGxsForumModel(QObject *parent = NULL);
 	~RsGxsForumModel(){}
 
-	enum Roles{ SortRole = Qt::UserRole+1 };
+	enum Roles{ SortRole         = Qt::UserRole+1,
+              	ThreadPinnedRole = Qt::UserRole+2,
+              	MissingRole      = Qt::UserRole+3,
+              	StatusRole       = Qt::UserRole+4,
+              };
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -72,5 +89,5 @@ private:
     static bool convertTabEntryToRefPointer(uint32_t entry,void *& ref);
 	static bool convertRefPointerToTabEntry(void *ref,uint32_t& entry);
 
-    std::vector<ForumPostEntry> mPosts ; // store the list of posts updated from rsForums.
+    std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
 };
