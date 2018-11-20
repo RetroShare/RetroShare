@@ -31,8 +31,10 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
-#include <algorithm>
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
+
+#include <algorithm>
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
@@ -621,13 +623,13 @@ bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
 {
-	if (groupId().isNull()) {
-		return;
-	}
+	RsGxsGroupId grpId(groupId());
+	if (grpId.isNull()) return;
 
-	uint32_t token;
-	rsGxsChannels->subscribeToGroup(token, groupId(), subscribe);
-//	mChannelQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
+	RsThread::async([=]()
+	{
+		rsGxsChannels->subscribeToChannel(grpId, subscribe);
+	} );
 }
 
 void GxsChannelPostsWidget::setAutoDownload(bool autoDl)
@@ -643,12 +645,35 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 		return;
 	}
 
-    bool autoDownload ;
-        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+	bool autoDownload;
+	if(!rsGxsChannels->getChannelAutoDownload(grpId, autoDownload))
 	{
-		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " failed to get autodownload value "
+		          << "for channel: " << grpId.toStdString() << std::endl;
+		return;
 	}
+
+	RsThread::async([this, grpId, autoDownload]()
+	{
+		if(!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to set autodownload "
+			          << "for channel: " << grpId.toStdString() << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [=]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
+			          << "thread but was scheduled by async thread" << std::endl;
+		}, this );
+	});
 }
 
 bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)

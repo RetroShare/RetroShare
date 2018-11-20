@@ -137,16 +137,19 @@ public:
     typedef std::map<RsNxsMsg*, RsGxsMsgMetaData*> MsgStoreMap;
 
     RsGeneralDataService(){}
-    virtual ~RsGeneralDataService(){return;}
+	virtual ~RsGeneralDataService(){}
 
     /*!
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
      * @param cache whether to store results of this retrieval in memory for faster later retrieval
+	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
-     */
-    virtual int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta=false) = 0;
+	 */
+	virtual int retrieveNxsMsgs(
+	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
+	        bool withMeta = false ) = 0;
 
     /*!
      * Retrieves all groups stored

@@ -54,7 +54,7 @@ public:
 protected:
 
 	/// This must be overloaded to complete the functionality.
-	virtual void handleResponse(uint32_t token, uint32_t req_type);
+	virtual void handleResponse(uint32_t token, uint32_t req_type) = 0;
 
 private:
 	RsGenExchange *mGenExchange;

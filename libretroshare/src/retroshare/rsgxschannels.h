@@ -22,7 +22,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <inttypes.h>
+#include <cstdint>
 #include <string>
 #include <list>
 #include <functional>
@@ -32,6 +32,7 @@
 #include "retroshare/rsgxscommon.h"
 #include "serialiser/rsserializable.h"
 #include "retroshare/rsturtle.h"
+#include "util/rsdeprecate.h"
 
 class RsGxsChannels;
 
@@ -100,9 +101,69 @@ std::ostream &operator<<(std::ostream& out, const RsGxsChannelPost& post);
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 public:
-
 	explicit RsGxsChannels(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsChannels() {}
+
+	/**
+	 * @brief Create channel. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] channel Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
+
+	/**
+	 * @brief Create channel post. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] post
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createPost(RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief Edit channel details.
+	 * @jsonapi{development}
+	 * @param[in] channel Channel data (name, description...) with modifications
+	 * @return false on error, true otherwise
+	 */
+	virtual bool editChannel(RsGxsChannelGroup& channel) = 0;
+
+	/**
+	 * @brief Share extra file
+	 * Can be used to share extra file attached to a channel post
+	 * @jsonapi{development}
+	 * @param[in] path file path
+	 * @return false on error, true otherwise
+	 */
+	virtual bool ExtraFileHash(const std::string& path) = 0;
+
+	/**
+	 * @brief Remove extra file from shared files
+	 * @jsonapi{development}
+	 * @param[in] hash hash of the file to remove
+	 * @return false on error, true otherwise
+	 */
+	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
+
+	/**
+	 * @brief Get auto-download option value for given channel
+	 * @jsonapi{development}
+	 * @param[in] channelId channel id
+	 * @param[out] enabled storage for the auto-download option value
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getChannelAutoDownload(
+	        const RsGxsGroupId& channelId, bool& enabled ) = 0;
+
+	/**
+	 * @brief Get download directory for the given channel
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel
+	 * @param[out] directory reference to string where to store the path
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
+	                                          std::string& directory ) = 0;
 
 	/**
 	 * @brief Get channels summaries list. Blocking API.
@@ -138,63 +199,37 @@ public:
 	        std::vector<RsGxsComment>& comments ) = 0;
 
 	/**
-	 * @brief Create channel. Blocking API.
+	 * @brief Toggle post read status. Blocking API.
 	 * @jsonapi{development}
-	 * @param[inout] channel Channel data (name, description...)
+	 * @param[in] postId post identifier
+	 * @param[in] read true to mark as read, false to mark as unread
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
+	virtual bool markRead(const RsGxsGrpMsgIdPair& postId, bool read) = 0;
 
 	/**
-	 * @brief Create channel post. Blocking API.
+	 * @brief Enable or disable auto-download for given channel. Blocking API
 	 * @jsonapi{development}
-	 * @param[inout] post
-	 * @return false on error, true otherwise
-	 */
-	virtual bool createPost(RsGxsChannelPost& post) = 0;
-
-
-	/* Specific Service Data
-	 * TODO: change the orrible const uint32_t &token to uint32_t token
-	 * TODO: create a new typedef for token so code is easier to read
-	 */
-
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
-	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
-	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
-
-	/**
-	 * @brief toggle message read status
-	 * @jsonapi{development}
-	 * @param[out] token GXS token queue token
-	 * @param[in] msgId
-	 * @param[in] read
-	 */
-	virtual void setMessageReadStatus(
-	        uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
-
-	/**
-	 * @brief Enable or disable auto-download for given channel
-	 * @jsonapi{development}
-	 * @param[in] groupId channel id
+	 * @param[in] channelId channel id
 	 * @param[in] enable true to enable, false to disable
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool setChannelAutoDownload(
-	        const RsGxsGroupId &groupId, bool enable) = 0;
+	        const RsGxsGroupId& channelId, bool enable ) = 0;
 
 	/**
-	 * @brief Get auto-download option value for given channel
+	 * @brief Share channel publishing key
+	 * This can be used to authorize other peers to post on the channel
 	 * @jsonapi{development}
-	 * @param[in] groupId channel id
-	 * @param[in] enabled storage for the auto-download option value
-	 * @return false if something failed, true otherwhise
+	 * @param[in] channelId id of the channel
+	 * @param[in] peers peers to share the key with
+	 * @return false on error, true otherwise
 	 */
-	virtual bool getChannelAutoDownload(
-	        const RsGxsGroupId &groupId, bool& enabled) = 0;
+	virtual bool shareChannelKeys(
+	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers ) = 0;
 
 	/**
-	 * @brief Set download directory for the given channel
+	 * @brief Set download directory for the given channel. Blocking API.
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel
 	 * @param[in] directory path
@@ -204,90 +239,14 @@ public:
 	        const RsGxsGroupId& channelId, const std::string& directory) = 0;
 
 	/**
-	 * @brief Get download directory for the given channel
+	 * @brief Subscrbe to a channel. Blocking API
 	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel
-	 * @param[out] directory reference to string where to store the path
+	 * @param[in] channelId Channel id
+	 * @param[in] subscribe true to subscribe, false to unsubscribe
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
-	                                          std::string& directory ) = 0;
-
-	/**
-	 * @brief Share channel publishing key
-	 * This can be used to authorize other peers to post on the channel
-	 * @jsonapi{development}
-	 * @param[in] groupId Channel id
-	 * @param[in] peers peers to which share the key
-	 * @return false on error, true otherwise
-	 */
-	virtual bool groupShareKeys(
-	        const RsGxsGroupId& groupId, const std::set<RsPeerId>& peers ) = 0;
-
-	/**
-	 * @brief Request subscription to a group.
-	 * The action is performed asyncronously, so it could fail in a subsequent
-	 * phase even after returning true.
-	 * @jsonapi{development}
-	 * @param[out] token Storage for RsTokenService token to track request
-	 * status.
-	 * @param[in] groupId Channel id
-	 * @param[in] subscribe
-	 * @return false on error, true otherwise
-	 */
-	virtual bool subscribeToGroup( uint32_t& token, const RsGxsGroupId &groupId,
-	                               bool subscribe ) = 0;
-
-	/**
-	 * @brief Request channel creation.
-	 * The action is performed asyncronously, so it could fail in a subsequent
-	 * phase even after returning true.
-	 * @param[out] token Storage for RsTokenService token to track request
-	 * status.
-	 * @param[in] group Channel data (name, description...)
-	 * @return false on error, true otherwise
-	 */
-	virtual bool createGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
-
-	/**
-	 * @brief Request post creation.
-	 * The action is performed asyncronously, so it could fail in a subsequent
-	 * phase even after returning true.
-	 * @param[out] token Storage for RsTokenService token to track request
-	 * status.
-	 * @param[in] post
-	 * @return false on error, true otherwise
-	 */
-	virtual bool createPost(uint32_t& token, RsGxsChannelPost& post) = 0;
-
-	/**
-	 * @brief Request channel change.
-	 * The action is performed asyncronously, so it could fail in a subsequent
-	 * phase even after returning true.
-	 * @jsonapi{development}
-	 * @param[out] token Storage for RsTokenService token to track request
-	 * status.
-	 * @param[in] group Channel data (name, description...) with modifications
-	 * @return false on error, true otherwise
-	 */
-	virtual bool updateGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
-
-	/**
-	 * @brief Share extra file
-	 * Can be used to share extra file attached to a channel post
-	 * @jsonapi{development}
-	 * @param[in] path file path
-	 * @return false on error, true otherwise
-	 */
-	virtual bool ExtraFileHash(const std::string& path) = 0;
-
-	/**
-	 * @brief Remove extra file from shared files
-	 * @jsonapi{development}
-	 * @param[in] hash hash of the file to remove
-	 * @return false on error, true otherwise
-	 */
-	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
+	virtual bool subscribeToChannel( const RsGxsGroupId &channelId,
+	                                 bool subscribe ) = 0;
 
 	/**
 	 * @brief Request remote channels search
@@ -303,15 +262,123 @@ public:
 	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
 	        rstime_t maxWait = 300 ) = 0;
 
+	/**
+	 * @brief Request remote channel
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel to request to distants peers
+	 * @param multiCallback function that will be called each time a result is
+	 *	received
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool turtleChannelRequest(
+	        const RsGxsGroupId& channelId,
+	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
+	        rstime_t maxWait = 300 ) = 0;
+
+
+	/* Following functions are deprecated as they expose internal functioning
+	 * semantic, instead of a safe to use API */
+
+	RS_DEPRECATED_FOR(getChannelsInfo)
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
+
+	RS_DEPRECATED_FOR(getChannelsContent)
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
+
+	RS_DEPRECATED_FOR(getChannelsContent)
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
+
+	/**
+	 * @brief toggle message read status
+	 * @deprecated
+	 * @param[out] token GXS token queue token
+	 * @param[in] msgId
+	 * @param[in] read
+	 */
+	RS_DEPRECATED_FOR(markRead)
+	virtual void setMessageReadStatus(
+	        uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
+
+	/**
+	 * @brief Share channel publishing key
+	 * This can be used to authorize other peers to post on the channel
+	 * @deprecated
+	 * @param[in] groupId Channel id
+	 * @param[in] peers peers to which share the key
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(shareChannelKeys)
+	virtual bool groupShareKeys(
+	        const RsGxsGroupId& groupId, const std::set<RsPeerId>& peers ) = 0;
+
+	/**
+	 * @brief Request subscription to a group.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @deprecated
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] groupId Channel id
+	 * @param[in] subscribe
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(subscribeToChannel)
+	virtual bool subscribeToGroup( uint32_t& token, const RsGxsGroupId &groupId,
+	                               bool subscribe ) = 0;
+
+	/**
+	 * @brief Request channel creation.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @deprecated
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] group Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(createChannel)
+	virtual bool createGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
+
+	/**
+	 * @brief Request post creation.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @deprecated
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] post
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool createPost(uint32_t& token, RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief Request channel change.
+	 * The action is performed asyncronously, so it could fail in a subsequent
+	 * phase even after returning true.
+	 * @deprecated
+	 * @param[out] token Storage for RsTokenService token to track request
+	 * status.
+	 * @param[in] group Channel data (name, description...) with modifications
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(editChannel)
+	virtual bool updateGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
+
 	//////////////////////////////////////////////////////////////////////////////
     ///                     Distant synchronisation methods                    ///
     //////////////////////////////////////////////////////////////////////////////
     ///
+	RS_DEPRECATED_FOR(turtleChannelRequest)
 	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
+	RS_DEPRECATED
 	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
+	RS_DEPRECATED_FOR(turtleSearchRequest)
 	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
+	RS_DEPRECATED
 	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
+	RS_DEPRECATED_FOR(turtleChannelRequest)
 	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
-
 	//////////////////////////////////////////////////////////////////////////////
 };

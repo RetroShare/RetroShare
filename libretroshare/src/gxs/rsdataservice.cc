@@ -1198,16 +1198,16 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
     }
 }
 
-int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
+int RsDataService::retrieveNxsMsgs(
+        const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */,
+        bool withMeta )
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
-    GxsMsgReq::const_iterator mit = reqIds.begin();
-
-    for(; mit != reqIds.end(); ++mit)
+	for(auto mit = reqIds.begin(); mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
@@ -1216,9 +1216,9 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
         const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsNxsMsg*> msgSet;
 
-        if(msgIdV.empty()){
-
-            RsStackMutex stack(mDbMutex);
+		if(msgIdV.empty())
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
@@ -1228,15 +1228,16 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             }
 
             delete c;
-        }else{
+		}
+		else
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             // request each grp
-            std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
-
-            for(; sit!=msgIdV.end();++sit){
+			for( std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+			     sit!=msgIdV.end();++sit )
+			{
                 const RsGxsMessageId& msgId = *sit;
-
-                RsStackMutex stack(mDbMutex);
 
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
