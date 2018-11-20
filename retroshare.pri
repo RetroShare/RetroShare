@@ -136,6 +136,11 @@ CONFIG *= rs_gxs_trans
 CONFIG *= no_rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
 
+# To enable direct chat which has been deprecated since RetroShare 0.6.5 append
+# the following assignation to qmake command line "CONFIG+=direct_chat"
+CONFIG *= no_direct_chat
+direct_chat:CONFIG -= no_direct_chat
+
 # To disable bitdht append the following assignation to qmake command line
 # "CONFIG+=no_bitdht"
 CONFIG *= bitdht
@@ -434,6 +439,11 @@ rs_gxs_trans {
 
 bitdht {
     DEFINES *= RS_USE_BITDHT
+}
+
+direct_chat {
+    warning("You have enabled RetroShare direct chat which is deprecated!")
+    DEFINES *= RS_DIRECT_CHAT
 }
 
 rs_async_chat {
