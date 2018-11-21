@@ -1428,19 +1428,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 }
 
 
-QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId &msgId)
-{
-    GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(mThreadCompareRole,GxsIdDetails::ICON_TYPE_AVATAR);
-    
-	item->setText(COLUMN_THREAD_TITLE, tr("[ ... Missing Message ... ]"));
-	item->setData(COLUMN_THREAD_MSGID,Qt::DisplayRole, QString::fromStdString(msgId.toStdString()));
-	item->setData(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING, true);
-        
-	item->setId(RsGxsId(), COLUMN_THREAD_AUTHOR, false); // fixed up columnId()
-
-	return item;
-}
-
 void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS

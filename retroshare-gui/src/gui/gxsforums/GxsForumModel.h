@@ -1,5 +1,4 @@
 #ifndef SUSPENDED_CODE
-#include "retroshare/rsgxsifacetypes.h"
 #else
 #include <string>
 #include <iostream>
@@ -14,6 +13,8 @@ struct RsMsgMetaData
 
 #endif
 
+#include "retroshare/rsgxsforums.h"
+#include "retroshare/rsgxsifacetypes.h"
 #include <QModelIndex>
 
 // This class holds the actual hierarchy of posts, represented by identifiers
@@ -38,8 +39,7 @@ struct ForumModelPostEntry
     uint32_t           mPublishTs;
     uint32_t           mPostFlags;
     int                mReputationWarningLevel;
-
-    std::vector<RsMsgMetaData> meta_versions;	// maybe we don't need all this. Could be too large.
+    int                mStatus;
 
     std::vector<ForumModelIndex> mChildren;
     ForumModelIndex mParent;
@@ -62,6 +62,9 @@ public:
               	StatusRole       = Qt::UserRole+4,
               };
 
+    // This method will asynchroneously update the data
+	void setForum(const RsGxsGroupId& forumGroup);
+
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
@@ -73,12 +76,16 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    QVariant sizeHintRole(int col) const;
-	QVariant displayRole(const RsMsgMetaData& meta, int col) const;
-	QVariant userRole(const RsMsgMetaData& meta, int col) const;
-	QVariant decorationRole(const RsMsgMetaData &meta, int col) const;
-
-	void update_posts();
+    QVariant sizeHintRole  (int col) const;
+	QVariant displayRole   (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant userRole      (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
+	QVariant toolTipRole   (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant missingRole   (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 
 private:
     void *getParentRef(void *ref,int& row) const;
@@ -88,6 +95,16 @@ private:
 
     static bool convertTabEntryToRefPointer(uint32_t entry,void *& ref);
 	static bool convertRefPointerToTabEntry(void *ref,uint32_t& entry);
+
+	void update_posts(const RsGxsGroupId &group_id);
+	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
+
+	static void computeMessagesHierarchy(const RsGxsForumGroup& forum_group,const std::vector<RsGxsForumMsg>& msgs_array,std::vector<ForumModelPostEntry>& posts);
+	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
+	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
+	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsGxsForumMsg& msg, bool useChildTS, uint32_t filterColumn, ForumModelPostEntry& fentry);
+
+    void setPosts(const std::vector<ForumModelPostEntry>& posts);
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
 };
