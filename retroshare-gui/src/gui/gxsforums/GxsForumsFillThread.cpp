@@ -554,4 +554,3 @@ void GxsForumsFillThread::run()
         deleteLater();
 }
 
-

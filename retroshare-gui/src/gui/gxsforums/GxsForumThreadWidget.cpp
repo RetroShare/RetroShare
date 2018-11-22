@@ -2942,3 +2942,8 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 
 	GxsMessageFrameWidget::loadRequest(queue, req);
 }
+
+QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId& mid)
+{
+return NULL;
+}

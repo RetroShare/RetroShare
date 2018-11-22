@@ -3,6 +3,7 @@
 #include <QModelIndex>
 
 #include "util/qtthreadsutils.h"
+#include "util/DateTime.h"
 #include "GxsForumModel.h"
 #include "retroshare/rsgxsforums.h"
 
@@ -29,6 +30,10 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     mPosts.resize(1);	// adds a sentinel item
+
+    mFilterColumn=0;
+    mUseChildTS=false;
+    mFlatView=false;
 
 //    // adds some fake posts to debug
 //
@@ -303,7 +308,6 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	{
 	case Qt::DisplayRole:    return displayRole   (fmpe,index.column()) ;
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
-	case Qt::UserRole:       return userRole      (fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
@@ -377,7 +381,7 @@ QVariant RsGxsForumModel::sizeHintRole(int col) const
 QVariant RsGxsForumModel::authorRole(const ForumModelPostEntry& fmpe,int column) const
 {
     if(column == COLUMN_THREAD_DATA)
-        return QVariant(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()));
+        return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
 
     return QVariant();
 }
@@ -387,6 +391,7 @@ QVariant RsGxsForumModel::sortRole(const ForumModelPostEntry& fmpe,int column) c
     if(column == COLUMN_THREAD_DATA)
         return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
 
+    return QVariant();
 }
 
 QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) const
@@ -405,7 +410,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
     							    QDateTime qtime;
 									qtime.setTime_t(fmpe.mPublishTs);
 
-									return QVariant(QDateTime::formatDateTime(qtime));
+									return QVariant(DateTime::formatDateTime(qtime));
     							}
 
 		case COLUMN_THREAD_AUTHOR:       return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
@@ -434,15 +439,22 @@ QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col
 		return QVariant();
 }
 
-void RsGxsForumModel::setForum(const RsGxsGroupId& forumGroup)
+void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
 {
-    if(mForumGroupId == forumGroup)
+    if(mForumGroup.mMeta.mGroupId == forum_group_id)
         return ;
 
-    mPosts.clear();
-    mForumGroupId = forumGroup;
+    // we do not set mForumGroupId yet. We'll do it when the forum data is updated.
 
-    update_posts();
+    update_posts(forum_group_id);
+}
+
+void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts)
+{
+    mForumGroup = group;
+    mPosts = posts;
+
+	emit layoutChanged();
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
@@ -472,12 +484,13 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
         // 2 - sort the messages into a proper hierarchy
 
         std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
+        RsGxsForumGroup group = groups[0];
 
-        computeMessagesHierarchy(groups[0],messages,*vect);
+        computeMessagesHierarchy(group,messages,*vect);
 
         // 3 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [vect,this]()
+        RsQThreadUtils::postToObject( [group,vect,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -485,7 +498,7 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(*vect) ;
+            setPosts(group,*vect) ;
             delete vect;
 
 
@@ -577,7 +590,9 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 
 static bool decreasing_time_comp(const QPair<time_t,RsGxsMessageId>& e1,const QPair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
-void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_group,const std::vector<RsGxsForumMsg>& msgs_array,std::vector<ForumModelPostEntry>& posts)
+void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_group,
+                                               const std::vector<RsGxsForumMsg>& msgs_array,
+                                               std::vector<ForumModelPostEntry>& posts)
 {
     std::cerr << "updating messages data with " << msgs_array.size() << " messages" << std::endl;
 
@@ -757,7 +772,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #endif
 
             ForumModelPostEntry entry;
-			convertMsgToThreadWidget(msg, mUseChildTS, mFilterColumn,NULL,entry);
+			convertMsgToPostEntry(forum_group,msg, mUseChildTS, mFilterColumn,entry);
 
             ForumModelIndex entry_index = addEntry(posts,entry,0);
 
@@ -803,7 +818,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 	{
 		// add dummy parent item
         ForumModelPostEntry e ;
-        generateMissingItem(RsGxsMessageId,e);
+        generateMissingItem(*it,e);
 
         ForumModelIndex e_index = addEntry(posts,e,0);	// no parent -> parent is level 0
 		//mItems.append( e_index );

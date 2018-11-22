@@ -27,7 +27,7 @@ typedef uint32_t ForumModelIndex;
 
 struct ForumModelPostEntry
 {
-    typedef enum {					// flags for display of posts
+    enum {					// flags for display of posts
         FLAG_POST_IS_PINNED   = 0x0001,
         FLAG_POST_IS_MISSING  = 0x0002,
         FLAG_POST_IS_REDACTED = 0x0004,
@@ -78,7 +78,6 @@ public:
 
     QVariant sizeHintRole  (int col) const;
 	QVariant displayRole   (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant userRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
 	QVariant toolTipRole   (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
@@ -88,6 +87,12 @@ public:
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 
 private:
+    RsGxsForumGroup mForumGroup;
+
+    bool mUseChildTS;
+    bool mFlatView;
+    int  mFilterColumn;
+
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
     //bool hasIndex(int row,int column,const QModelIndex& parent)const;
@@ -99,12 +104,12 @@ private:
 	void update_posts(const RsGxsGroupId &group_id);
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
 
-	static void computeMessagesHierarchy(const RsGxsForumGroup& forum_group,const std::vector<RsGxsForumMsg>& msgs_array,std::vector<ForumModelPostEntry>& posts);
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
 	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsGxsForumMsg& msg, bool useChildTS, uint32_t filterColumn, ForumModelPostEntry& fentry);
 
-    void setPosts(const std::vector<ForumModelPostEntry>& posts);
+	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group,const std::vector<RsGxsForumMsg>& msgs_array,std::vector<ForumModelPostEntry>& posts);
+    void setPosts(const RsGxsForumGroup &group, const std::vector<ForumModelPostEntry>& posts); // this method *must* be called from UI thread.
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
 };
