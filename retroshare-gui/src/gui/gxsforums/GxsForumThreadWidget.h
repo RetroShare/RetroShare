@@ -151,6 +151,7 @@ private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 
 	void insertMessage();
+	void insertGroupData();
 
 	//void insertThreads();
 	//void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
@@ -169,18 +170,19 @@ private:
 
 	void processSettings(bool bLoad);
 
-	void requestGroupData();
-	void loadGroupData(const uint32_t &token);
-    void insertGroupData();
+	void updateGroupData();
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
-	void requestMessageData(const RsGxsGrpMsgIdPair &msgId);
+	void updateMessageData(const RsGxsMessageId& msgId);
+
 	void requestMsgData_ReplyWithPrivateMessage(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_EditForumMessage(const RsGxsGrpMsgIdPair &msgId);
 
+#ifdef TO_REMOVE
 	void loadMessageData(const uint32_t &token);
+#endif
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 	void loadMsgData_ReplyForumMessage(const uint32_t &token);
 	void loadMsgData_EditForumMessage(const uint32_t &token);

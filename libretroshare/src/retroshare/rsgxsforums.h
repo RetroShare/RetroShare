@@ -151,6 +151,19 @@ public:
 	        std::vector<RsGxsForumMsg>& messages ) = 0;
 
 	/**
+	 * @brief Get specific list of messages from a single forums. Blocking API
+	 * @jsonapi{development}
+	 * @param[in] forumId id of the forum of which the content is requested
+	 * @param[in] msgs_to_request list of message ids to request
+	 * @param[out] msgs storage for the forum messages
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getForumsContent(
+            const RsGxsGroupId& forumId,
+            std::set<RsGxsMessageId>& msgs_to_request,
+            std::vector<RsGxsForumMsg>& msgs) =0;
+
+	/**
 	 * @brief Toggle message read status. Blocking API.
 	 * @jsonapi{development}
 	 * @param[in] messageId post identifier

@@ -223,32 +223,6 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
     return mPosts[entry].mChildren.size();
 }
 
-
-
-//bool RsGxsForumModel::hasIndex(int row,int column,const QModelIndex& parent) const
-//{
-//    if(row < 0 || column < 0 || column >= COLUMN_COUNT)
-//        return false;
-//
-//    if(!parent.isValid())
-//        return false;
-//
-//    ForumModelIndex entry;
-//
-//    convertRefPointerToTabEntry(parent.internalPointer(),entry);
-//
-//    if(entry >= mPosts.size())
-//        return false;
-//
-//    if(row >= mPosts[entry].children.size())
-//        return false;
-//
-//    if(mPosts[entry].children[row] >= mPosts.size())
-//        return false;
-//
-//    return true;
-//}
-
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
 	if(role != Qt::DisplayRole)

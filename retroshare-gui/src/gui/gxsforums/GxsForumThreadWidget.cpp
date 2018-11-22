@@ -24,6 +24,7 @@
 #include <QScrollBar>
 #include <QPainter>
 
+#include "util/qtthreadsutils.h"
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumsFillThread.h"
@@ -475,7 +476,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 {
 	if (complete) {
 		/* Fill complete */
-		requestGroupData();
+		updateGroupData();
 		//insertThreads();
 		insertMessage();
 
@@ -511,7 +512,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	}
 
 	if (updateGroup) {
-		requestGroupData();
+		updateGroupData();
 	}
 }
 
@@ -777,25 +778,25 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread()
 {
-#ifdef TODO
 	/* just grab the ids of the current item */
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	QModelIndexList selected_indexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
 
-	if (!item || !item->isSelected()) {
+    if(selected_indexes.size() != 1)
+    {
 		mThreadId.clear();
         mOrigThreadId.clear();
-	} else {
+        return;
+    }
 
-		mThreadId = mOrigThreadId = RsGxsMessageId(item->data(COLUMN_THREAD_MSGID, Qt::DisplayRole).toString().toStdString());
-	}
+    QModelIndex index = *selected_indexes.begin();
 
-	if (mFillThread) {
-		return;
-	}
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
+	mThreadId = mOrigThreadId = RsGxsMessageId(index.sibling(index.row(),COLUMN_THREAD_MSGID).data(Qt::DisplayRole).toString().toStdString());
+
+    std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
+
+	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
-#endif
 }
 
 void GxsForumThreadWidget::clickedThread(QTreeWidgetItem *item, int column)
@@ -1679,7 +1680,6 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 
 void GxsForumThreadWidget::insertMessage()
 {
-#ifdef TODO
 	if (groupId().isNull())
 	{
 		mStateHelper->setActive(mTokenTypeMessageData, false);
@@ -1689,7 +1689,6 @@ void GxsForumThreadWidget::insertMessage()
         ui->time_label->show();
 
 		ui->postText->clear();
-        //ui->threadTitle->clear();
 		return;
 	}
 
@@ -1701,14 +1700,15 @@ void GxsForumThreadWidget::insertMessage()
         ui->versions_CB->hide();
         ui->time_label->show();
 
-        //ui->threadTitle->setText(tr("Forum Description"));
 		ui->postText->setText(mForumDescription);
 		return;
 	}
 
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 
+#ifdef TODO
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+
 	if (item) {
 		QTreeWidgetItem *parentItem = item->parent();
 		int index = parentItem ? parentItem->indexOfChild(item) : ui->threadTreeWidget->indexOfTopLevelItem(item);
@@ -1723,6 +1723,7 @@ void GxsForumThreadWidget::insertMessage()
         ui->time_label->show();
 		return;
 	}
+#endif
 
 	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags) && mThreadId.isNull() == false));
 
@@ -1738,7 +1739,7 @@ void GxsForumThreadWidget::insertMessage()
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
     std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << mPostVersions.size() << std::endl;
-
+#ifdef TODO
     QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
 
 	ui->versions_CB->blockSignals(true) ;
@@ -1773,13 +1774,13 @@ void GxsForumThreadWidget::insertMessage()
     	ui->versions_CB->hide();
         ui->time_label->show();
     }
+#endif
 
 	ui->versions_CB->blockSignals(false) ;
 
 	/* request Post */
-	RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
-	requestMessageData(msgId);
-#endif
+	//RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
+	updateMessageData(mThreadId);
 }
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
@@ -2542,6 +2543,111 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
+void GxsForumThreadWidget::updateGroupData()
+{
+	mSubscribeFlags = 0;
+	mSignFlags = 0;
+	mForumDescription.clear();
+
+	emit groupChanged(this);
+
+	RsThread::async([this]()
+	{
+        // 1 - get message data from p3GxsForums
+
+        std::list<RsGxsGroupId> forumIds;
+		std::vector<RsGxsForumGroup> groups;
+
+        forumIds.push_back(groupId());
+
+		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			return;
+        }
+
+        if(groups.size() != 1)
+        {
+			mStateHelper->setActive(mTokenTypeGroupData, false);
+			mStateHelper->clear(mTokenTypeGroupData);
+			return;
+        }
+
+        // 2 - sort the messages into a proper hierarchy
+
+        RsGxsForumGroup group = groups[0];
+
+        // 3 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			mForumGroup = group;
+			insertGroupData();
+
+			ui->threadTreeWidget->setColumnHidden(COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
+
+		}, this );
+
+    });
+}
+
+void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
+{
+	RsThread::async([msgId,this]()
+	{
+        // 1 - get message data from p3GxsForums
+
+        std::set<RsGxsMessageId> msgs_to_request ;
+        std::vector<RsGxsForumMsg> msgs;
+
+        msgs_to_request.insert(msgId);
+
+		if(!rsGxsForums->getForumsContent(groupId(),msgs_to_request,msgs))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			return;
+        }
+
+        if(msgs.size() != 1)
+        {
+			mStateHelper->setActive(mTokenTypeGroupData, false);
+			mStateHelper->clear(mTokenTypeGroupData);
+			return;
+        }
+
+        // 2 - sort the messages into a proper hierarchy
+
+        RsGxsForumMsg msg = msgs[0];
+
+        // 3 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [msg,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			insertMessageData(msg);
+
+			ui->threadTreeWidget->setColumnHidden(COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
+
+		}, this );
+
+    });
+
+}
+
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::requestGroupData()
 {
 	mSubscribeFlags = 0;
@@ -2549,19 +2655,17 @@ void GxsForumThreadWidget::requestGroupData()
 	mForumDescription.clear();
 
 	mTokenQueue->cancelActiveRequestTokens(mTokenTypeGroupData);
+	emit groupChanged(this);
 
 	if (groupId().isNull()) {
 		mStateHelper->setActive(mTokenTypeGroupData, false);
 		mStateHelper->setLoading(mTokenTypeGroupData, false);
 		mStateHelper->clear(mTokenTypeGroupData);
 
-		emit groupChanged(this);
-
 		return;
 	}
 
 	mStateHelper->setLoading(mTokenTypeGroupData, true);
-	emit groupChanged(this);
 
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
@@ -2666,6 +2770,7 @@ void GxsForumThreadWidget::loadMessageData(const uint32_t &token)
 		mStateHelper->clear(mTokenTypeMessageData);
     }
 }
+#endif
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -2897,6 +3002,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 
 	if (queue == mTokenQueue)
 	{
+#ifdef TO_REMOVE
 		/* now switch on req */
 		if (req.mUserType == mTokenTypeGroupData) {
 			loadGroupData(req.mToken);
@@ -2907,6 +3013,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMessageData(req.mToken);
 			return;
 		}
+#endif
 
 		if (req.mUserType == mTokenTypeReplyMessage) {
 			loadMsgData_ReplyMessage(req.mToken);

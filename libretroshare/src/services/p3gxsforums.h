@@ -77,6 +77,9 @@ public:
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumMsg>& messages );
 
+	/// @see RsGxsForums::getForumsContent
+	virtual bool getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,std::vector<RsGxsForumMsg>& msgs) ;
+
 	/// @see RsGxsForums::markRead
 	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read);
 

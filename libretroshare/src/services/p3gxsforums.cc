@@ -456,6 +456,20 @@ bool p3GxsForums::getForumsInfo(
 	return getGroupData(token, forumsInfo);
 }
 
+bool p3GxsForums::getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,std::vector<RsGxsForumMsg>& msgs)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	GxsMsgReq msgIds;
+	msgIds[forumId] = msgs_to_request;
+
+	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getMsgData(token, msgs) ;
+}
+
 bool p3GxsForums::getForumsContent(
         const std::list<RsGxsGroupId>& forumIds,
         std::vector<RsGxsForumMsg>& messages )
