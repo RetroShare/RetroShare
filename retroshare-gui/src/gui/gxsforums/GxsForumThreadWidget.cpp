@@ -219,7 +219,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->newmessageButton->setText(tr("Reply"));
 	ui->newthreadButton->setText(tr("New thread"));
 	
-	connect(ui->threadTreeWidget, SIGNAL(itemSelectionChanged()), this, SLOT(changedThread()));
+	connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(changedThread(QModelIndex)));
 	connect(ui->threadTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(clickedThread(QTreeWidgetItem*,int)));
 	connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
@@ -776,21 +776,16 @@ void GxsForumThreadWidget::changedVersion()
     insertMessage();
 }
 
-void GxsForumThreadWidget::changedThread()
+void GxsForumThreadWidget::changedThread(QModelIndex index)
 {
-	/* just grab the ids of the current item */
-	QModelIndexList selected_indexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
-
-    if(selected_indexes.size() != 1)
+    if(!index.isValid())
     {
 		mThreadId.clear();
         mOrigThreadId.clear();
         return;
     }
 
-    QModelIndex index = *selected_indexes.begin();
-
-	mThreadId = mOrigThreadId = RsGxsMessageId(index.sibling(index.row(),COLUMN_THREAD_MSGID).data(Qt::DisplayRole).toString().toStdString());
+	mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),COLUMN_THREAD_MSGID),Qt::DisplayRole).toString().toStdString());
 
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 
@@ -1785,7 +1780,6 @@ void GxsForumThreadWidget::insertMessage()
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
-#ifdef TODO
 	/* As some time has elapsed since request - check that this is still the current msg.
 	 * otherwise, another request will fill the data
      */
@@ -1811,11 +1805,13 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	//mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),COLUMN_THREAD_MSGID),Qt::DisplayRole).toString().toStdString());
+	//QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-	uint32_t status = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
+	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
+#ifdef TODO
 	QList<QTreeWidgetItem*> row;
 	row.append(item);
 
@@ -1833,6 +1829,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 			setMsgReadStatus(row, true);
 		}
 	}
+#endif
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 	ui->by_label->setId(msg.mMeta.mAuthorId);
@@ -1860,7 +1857,6 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		ui->postText->setHtml(extraTxt);
 	}
 	// ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
-#endif
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -2603,6 +2599,8 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 	RsThread::async([msgId,this]()
 	{
         // 1 - get message data from p3GxsForums
+
+        std::cerr << "Retrieving post data for post " << msgId << std::endl;
 
         std::set<RsGxsMessageId> msgs_to_request ;
         std::vector<RsGxsForumMsg> msgs;

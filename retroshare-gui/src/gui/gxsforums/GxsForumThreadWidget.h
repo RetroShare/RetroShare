@@ -96,7 +96,7 @@ private slots:
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
 
-	void changedThread();
+	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QTreeWidgetItem *item, int column);
 

@@ -83,7 +83,7 @@ int RsGxsForumModel::rowCount(const QModelIndex& parent) const
 }
 int RsGxsForumModel::columnCount(const QModelIndex &parent) const
 {
-	return COLUMN_THREAD_COUNT ;
+	return COLUMN_THREAD_NB_COLUMNS ;
 }
 
 bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
@@ -139,7 +139,7 @@ bool RsGxsForumModel::convertRefPointerToTabEntry(void *ref,uint32_t& entry)
 QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & parent) const
 {
 //    if(!hasIndex(row,column,parent))
-    if(row < 0 || column < 0 || column >= COLUMN_THREAD_COUNT)
+    if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
 		return QModelIndex();
 
     void *ref = getChildRef(parent.internalPointer(),row);
@@ -918,7 +918,7 @@ void RsGxsForumModel::debug_dump()
     {
 		const ForumModelPostEntry& e(mPosts[i]);
 
-		std::cerr << "    " << i << " : " << e.mAuthorId.toStdString() << " " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString();
+		std::cerr << "    " << i << " : " << e.mMsgId << " (from " << e.mAuthorId.toStdString() << ") " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString();
 
     	for(uint32_t i=0;i<e.mChildren.size();++i)
             std::cerr << " " << e.mChildren[i] ;
