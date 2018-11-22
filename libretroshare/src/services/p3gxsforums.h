@@ -80,6 +80,10 @@ public:
 	/// @see RsGxsForums::markRead
 	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read);
 
+	/// @see RsGxsForums::subscribeToForum
+	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
+	                               bool subscribe );
+
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
 	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
 	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);

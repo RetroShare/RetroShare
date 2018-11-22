@@ -159,6 +159,16 @@ public:
 	 */
 	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read) = 0;
 
+	/**
+	 * @brief Subscrbe to a forum. Blocking API
+	 * @jsonapi{development}
+	 * @param[in] forumId Forum id
+	 * @param[in] subscribe true to subscribe, false to unsubscribe
+	 * @return false on error, true otherwise
+	 */
+	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
+	                               bool subscribe ) = 0;
+
 	/* Specific Service Data */
 	RS_DEPRECATED_FOR("getForumsSummaries, getForumsInfo")
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;

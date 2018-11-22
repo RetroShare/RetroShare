@@ -256,7 +256,7 @@ public:
 	 * @param[in] subscribe true to subscribe, false to unsubscribe
 	 * @return false on error, true otherwise
 	 */
-	virtual bool subscribeToChannel( const RsGxsGroupId &channelId,
+	virtual bool subscribeToChannel( const RsGxsGroupId& channelId,
 	                                 bool subscribe ) = 0;
 
 	/**
