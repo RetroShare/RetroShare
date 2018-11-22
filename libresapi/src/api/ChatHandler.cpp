@@ -132,8 +132,8 @@ public:
     SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
         GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
     {
-        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
-        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+		const auto& map = mParticipantsInfo.participants;
+		for(auto mit = map.begin(); mit != map.end(); ++mit)
         {
             requestGxsId(mit->first);
         }
@@ -144,8 +144,8 @@ protected:
     virtual void gxsDoWork(Request &/*req*/, Response &resp)
     {
         resp.mDataStream.getStreamToMember();
-        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
-        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+		const auto& map = mParticipantsInfo.participants;
+		for(auto mit = map.begin(); mit != map.end(); ++mit)
         {
             StreamBase& stream = resp.mDataStream.getStreamToMember();
             double last_active = mit->second;

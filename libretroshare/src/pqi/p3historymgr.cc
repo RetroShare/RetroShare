@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include <time.h>
+#include "util/rstime.h"
 
 #include "p3historymgr.h"
 #include "rsitems/rshistoryitems.h"
@@ -68,7 +68,7 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(mLastCleanTime + MSG_HISTORY_CLEANING_PERIOD < now)
 	{
@@ -192,7 +192,7 @@ void p3HistoryMgr::cleanOldMessages()
 #ifdef HISTMGR_DEBUG
 	std::cerr << "****** cleaning old messages." << std::endl;
 #endif
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	bool changed = false ;
 
 	for(std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.begin(); mit != mMessages.end();) 

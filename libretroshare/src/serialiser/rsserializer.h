@@ -85,7 +85,7 @@
 //
 //              private:
 //                 uint32_t                    count ;				// example of an int type. All int sizes are supported
-//                 std::map<uint32_t,time_t>   update_times ;		// example of a std::map. All std containers are supported.
+//                 std::map<uint32_t,rstime_t>   update_times ;		// example of a std::map. All std containers are supported.
 //                 RsTlvSecurityKey            key ;				// example of a TlvItem class.
 //                 BIGNUM                     *dh_key;				// example of a class that needs its own serializer (see below)
 //			};

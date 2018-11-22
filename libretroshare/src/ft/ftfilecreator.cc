@@ -27,7 +27,7 @@
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/stat.h>
 #include <util/rsdiscspace.h>
 #include <util/rsdir.h>
@@ -63,7 +63,7 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFil
 	std::cerr << std::endl;
 #endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	_creation_time = now ;
 
 	struct stat64 buf;
@@ -143,12 +143,12 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
 		return false ;
 }
 
-time_t ftFileCreator::creationTimeStamp() 
+rstime_t ftFileCreator::creationTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _creation_time ;
 }
-time_t ftFileCreator::lastRecvTimeStamp() 
+rstime_t ftFileCreator::lastRecvTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _last_recv_time_t ;
@@ -520,7 +520,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	locked_printChunkMap();
 #endif
 	source_chunk_map_needed = false ;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	// 0 - is there a faulting chunk that would need to be asked again ?
 	

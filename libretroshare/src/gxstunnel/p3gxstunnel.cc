@@ -101,8 +101,8 @@ int p3GxsTunnelService::tick()
 {
     
 #ifdef DEBUG_GXS_TUNNEL    
-    time_t now = time(NULL);
-	static time_t last_dump = 0;
+    rstime_t now = time(NULL);
+	static rstime_t last_dump = 0;
     
     if(now > last_dump + INTERVAL_BETWEEN_DEBUG_DUMP )
     {
@@ -171,7 +171,7 @@ void p3GxsTunnelService::flush()
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-	    time_t now = time(NULL) ;
+	    rstime_t now = time(NULL) ;
 
 	    for(std::map<uint64_t, GxsTunnelData>::iterator it = pendingGxsTunnelDataItems.begin();it != pendingGxsTunnelDataItems.end();++it)
 		    if(now > RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND + it->second.last_sending_attempt)
@@ -194,7 +194,7 @@ void p3GxsTunnelService::flush()
 
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it(_gxs_tunnel_contacts.begin());it!=_gxs_tunnel_contacts.end();)
     {
@@ -256,13 +256,13 @@ void p3GxsTunnelService::flush()
         
         // clean old received data prints.
         
-        for(std::map<uint64_t,time_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
+        for(std::map<uint64_t,rstime_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
             if(now > it2->second + RS_GXS_TUNNEL_DATA_PRINT_STORAGE_DELAY)
             {
 #ifdef DEBUG_GXS_TUNNEL
                 std::cerr << "(II) erasing old data print for message #" << it2->first << " in tunnel " << it->first << std::endl;
 #endif
-                std::map<uint64_t,time_t>::iterator tmp(it2) ;
+                std::map<uint64_t,rstime_t>::iterator tmp(it2) ;
                 ++tmp ;
                 it->second.received_data_prints.erase(it2) ;
                 it2 = tmp ;
@@ -1445,7 +1445,7 @@ void p3GxsTunnelService::startClientGxsTunnelConnection(const RsGxsId& to_gxs_id
 
     GxsTunnelPeerInfo info ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     info.last_contact = now ;
     info.last_keep_alive_sent = now ;
@@ -1639,7 +1639,7 @@ void p3GxsTunnelService::debug_dump()
 {
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
     
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     
     std::cerr << "p3GxsTunnelService::debug_dump()" << std::endl;
     std::cerr << "  Registered client services: " << std::endl;

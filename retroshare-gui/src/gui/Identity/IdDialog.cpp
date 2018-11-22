@@ -57,6 +57,7 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "util/misc.h"
 #include "util/QtVersion.h"
+#include "util/rstime.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
@@ -1991,11 +1992,11 @@ void IdDialog::insertIdDetails(uint32_t token)
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
 
     QString usage_txt ;
-    std::map<time_t,RsIdentityUsage> rmap ;
-    for(std::map<RsIdentityUsage,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
-        rmap.insert(std::make_pair(it->second,it->first)) ;
+	std::map<rstime_t,RsIdentityUsage> rmap;
+	for(auto it(det.mUseCases.begin()); it!=det.mUseCases.end(); ++it)
+		rmap.insert(std::make_pair(it->second,it->first));
 
-    for(std::map<time_t,RsIdentityUsage>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+	for(auto it(rmap.begin()); it!=rmap.end(); ++it)
         usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + createUsageString(it->second) + "<br/>" ;
 
     if(usage_txt.isNull())

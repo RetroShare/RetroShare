@@ -149,13 +149,13 @@ struct RsConfigDataRates : RsSerializable
 	float mRateMaxIn;
 	float mAllocIn;
 
-	time_t mAllocTs;
+	rstime_t mAllocTs;
 
 	float mRateOut;
 	float mRateMaxOut;
 	float mAllowedOut;
 
-	time_t mAllowedTs;
+	rstime_t mAllowedTs;
 
 	int	mQueueIn;
 	int	mQueueOut;
@@ -181,7 +181,7 @@ struct RsConfigDataRates : RsSerializable
 
 struct RSTrafficClue : RsSerializable
 {
-    time_t     TS ;
+    rstime_t     TS ;
     uint32_t   size ;
     uint8_t    priority ;
     uint16_t   service_id ;

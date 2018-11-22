@@ -57,7 +57,7 @@ class PGPCertificateInfo
 		uint32_t _flags ;
 		uint32_t _type ;
 
-		mutable time_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
+		mutable rstime_t _time_stamp ;		// last time the key was used (received, used for signature verification, etc)
 
 		PGPFingerprintType _fpr;           /* fingerprint */
 	//	RsPgpId          _key_id ;
@@ -217,9 +217,9 @@ class PGPHandler
 		bool _pubring_changed ;
 		mutable bool _trustdb_changed ;
 
-		time_t _pubring_last_update_time ;
-		time_t _secring_last_update_time ;
-		time_t _trustdb_last_update_time ;
+		rstime_t _pubring_last_update_time ;
+		rstime_t _secring_last_update_time ;
+		rstime_t _trustdb_last_update_time ;
 
 		// Helper functions.
 		//

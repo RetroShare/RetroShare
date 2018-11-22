@@ -1,9 +1,14 @@
 :: Usage:
-:: call get-rs-version.bat Define Variable
+:: call get-rs-version.bat Executable Variable
+::
+:: Variable.Major
+:: Variable.Minor
+:: Variable.Mini
+:: Variable.Extra
 
 setlocal
 
-set Define=%~1
+set Executable=%~1
 set Variable=%~2
 if "%Variable%"=="" (
 	echo.
@@ -11,23 +16,23 @@ if "%Variable%"=="" (
 	exit /B 1
 )
 
-set Result=
-set VersionFile="%~dp0..\..\..\libretroshare\src\retroshare\rsversion.h"
-
-if not exist "%VersionFile%" (
+if not exist "%Executable%" (
 	echo.
-	echo Version file doesn't exist.
-	echo %VersionFile%
+	echo File %Executable% doesn't exist.
 	exit /B1
 )
 
-for /F "usebackq tokens=1,2,3" %%A in (%VersionFile%) do (
-	if "%%A"=="#define" (
-		if "%%B"=="%Define%" (
-			set Result=%%~C
-		)
-	)
+set VersionMajor=
+set VersionMinor=
+set VersionMini=
+set VersionExtra=
+
+for /F "tokens=1,2,3,* delims=.-" %%A in ('%EnvToolsPath%\sigcheck.exe -nobanner -n %Executable%') do (
+	set VersionMajor=%%A
+	set VersionMinor=%%B
+	set VersionMini=%%C
+	set VersionExtra=%%D
 )
 
-endlocal & set %Variable%=%Result%
+endlocal & set %Variable%.Major=%VersionMajor%& set %Variable%.Minor=%VersionMinor%& set %Variable%.Mini=%VersionMini%& set %Variable%.Extra=%VersionExtra%&
 exit /B 0

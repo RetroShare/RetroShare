@@ -105,8 +105,8 @@ virtual int getDsdvEntry(const std::string &hash, RsDsdvTableEntry &entry);
 
 		std::map<std::string, RsDsdvTableEntry> mTable;
 
-		time_t mSentTablesTime;
-		time_t mSentIncrementTime;
+		rstime_t mSentTablesTime;
+		rstime_t mSentIncrementTime;
 	
 		bool mSignificantChanges;
 

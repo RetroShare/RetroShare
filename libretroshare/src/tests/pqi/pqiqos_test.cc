@@ -133,10 +133,10 @@ int main()
 	{
 		pqiQoS qos(nb_levels,alpha) ;
 
-		static const time_t duration = 60 ;
+		static const rstime_t duration = 60 ;
 		static const int average_packet_load = 10000 ;
-		time_t start = time(NULL) ;
-		time_t now ;
+		rstime_t start = time(NULL) ;
+		rstime_t now ;
 
 		while( (now = time(NULL)) < duration+start )
 		{
@@ -175,7 +175,7 @@ int main()
 			}
 
 			// print some info
-			static time_t last = 0 ;
+			static rstime_t last = 0 ;
 			if(now > last)
 			{
 				qos.print() ;

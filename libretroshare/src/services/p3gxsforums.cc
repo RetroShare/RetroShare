@@ -110,7 +110,7 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsForumsConfigSerializer : public RsServiceSerializer
@@ -152,7 +152,7 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 

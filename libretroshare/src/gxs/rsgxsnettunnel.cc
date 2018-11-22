@@ -732,7 +732,7 @@ void RsGxsNetTunnelService::data_tick()
 		mPendingTurtleItems.pop_front();
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	// cleanup
 

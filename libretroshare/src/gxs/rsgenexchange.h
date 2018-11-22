@@ -23,7 +23,7 @@
 #define RSGENEXCHANGE_H
 
 #include <queue>
-#include <ctime>
+#include "util/rstime.h"
 
 #include "rsgxs.h"
 #include "rsgds.h"
@@ -39,7 +39,7 @@ template<class GxsItem, typename Identity = std::string>
 class GxsPendingItem
 {
 public:
-	GxsPendingItem(GxsItem item, Identity id,time_t ts) :
+	GxsPendingItem(GxsItem item, Identity id,rstime_t ts) :
 		mItem(item), mId(id), mFirstTryTS(ts)
 	{}
 
@@ -50,7 +50,7 @@ public:
 
 	GxsItem mItem;
 	Identity mId;
-	time_t mFirstTryTS;
+	rstime_t mFirstTryTS;
 };
 
 class GxsGrpPendingSign
@@ -61,7 +61,7 @@ public:
 		mItem(item), mHaveKeys(false), mIsUpdate(false)
 	{}
 
-	time_t mLastAttemptTS, mStartTS;
+	rstime_t mLastAttemptTS, mStartTS;
 	uint32_t mToken;
 	RsGxsGrpItem* mItem;
 	bool mHaveKeys; // mKeys->first == true if key present
@@ -669,7 +669,7 @@ public:
      * when needed. Typical use case is forums and circles.
      * @param gid GroupId the TS is which is requested
      */
-    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) ;
+    bool getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) ;
 
     /*!
      * \brief getDefaultStoragePeriod. All times in seconds.
@@ -905,12 +905,12 @@ private:
     NxsMsgPendingVect mMsgPendingValidate;
 
     bool mCleaning;
-    time_t mLastClean;
+    rstime_t mLastClean;
     RsGxsMessageCleanUp* mMsgCleanUp;
 
 
     bool mChecking, mCheckStarted;
-    time_t mLastCheck;
+    rstime_t mLastCheck;
     RsGxsIntegrityCheck* mIntegrityCheck;
 
 protected:

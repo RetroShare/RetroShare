@@ -55,7 +55,7 @@ std::list<uint32_t> testResetState[NUM_CONN_MAX];
 std::list<uint32_t> testResetTimes[NUM_CONN_MAX];
 
 uint32_t testConnectAction[NUM_CONN_MAX] = { 0 };
-time_t   testConnectPeriod[NUM_CONN_MAX] = { 0 };
+rstime_t   testConnectPeriod[NUM_CONN_MAX] = { 0 };
 
 uint32_t defTestConnectAction = TST_ACTION_FAILED;
 
@@ -129,7 +129,7 @@ testConnect::~testConnect()
 int     testConnect::connect(struct sockaddr_in raddr)
 {
 	int cidx = findWhichConnect(this);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	testConnectState[cidx] |= TST_STATE_CONNECT;
 	testConnectTimes[cidx].push_back(now);
@@ -162,7 +162,7 @@ int     testConnect::stoplistening()
 int     testConnect::reset()
 {
 	int cidx = findWhichConnect(this);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	// reset everything except listening.
 	testResetState[cidx].push_back(testConnectState[cidx]);
@@ -235,8 +235,8 @@ int    testConnect::tick()
 
 	if (testConnectState[cidx] & TST_STATE_CONNECT)
 	{
-		time_t now = time(NULL);
-		time_t cTime = testConnectTimes[cidx].back();
+		rstime_t now = time(NULL);
+		rstime_t cTime = testConnectTimes[cidx].back();
 		if (now - cTime > testConnectPeriod[cidx])
 		{
 

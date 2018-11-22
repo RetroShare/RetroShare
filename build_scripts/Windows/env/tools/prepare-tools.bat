@@ -19,6 +19,11 @@ set UnixToolsInstall=UnxUpdates.zip
 set NSISUrl=http://prdownloads.sourceforge.net/nsis/nsis-3.0-setup.exe?download
 set NSISInstall=nsis-3.0-setup.exe
 set NSISInstallPath=%EnvToolsPath%\NSIS
+set MinGitInstall=MinGit-2.19.1-32-bit.zip
+set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.19.1.windows.1/%MinGitInstall%
+set MinGitInstallPath=%EnvToolsPath%\MinGit
+set SigcheckInstall=Sigcheck.zip
+set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
 
 if not exist "%EnvToolsPath%\wget.exe" (
 	echo Download Wget installation
@@ -143,7 +148,7 @@ if not exist "%EnvToolsPath%\sed.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 )
 
-if not exist "%EnvToolsPath%\NSIS\nsis.exe" (
+if not exist "%NSISInstallPath%\nsis.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 	mkdir "%EnvTempPath%"
 
@@ -158,6 +163,26 @@ if not exist "%EnvToolsPath%\NSIS\nsis.exe" (
 	xcopy /s "%EnvTempPath%" "%NSISInstallPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
+)
+
+if not exist "%MinGitInstallPath%\cmd\git.exe" (
+	%cecho% info "Download MinGit installation"
+
+	if not exist "%EnvDownloadPath%\%MinGitInstall%" call "%ToolsPath%\download-file.bat" "%MinGitUrl%" "%EnvDownloadPath%\%MinGitInstall%"
+	if not exist "%EnvDownloadPath%\%MinGitInstall%" %cecho% error "Cannot download MinGit installation" & goto error
+
+	%cecho% info "Unpack MinGit"
+	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%"
+)
+
+if not exist "%EnvToolsPath%\sigcheck.exe" (
+	%cecho% info "Download Sigcheck installation"
+
+	if not exist "%EnvDownloadPath%\%SigcheckInstall%" call "%ToolsPath%\download-file.bat" "%SigcheckUrl%" "%EnvDownloadPath%\%SigcheckInstall%"
+	if not exist "%EnvDownloadPath%\%SigcheckInstall%" %cecho% error "Cannot download Sigcheck installation" & goto error
+
+	%cecho% info "Unpack Sigcheck"
+	"%EnvSevenZipExe%" x -o"%EnvToolsPath%" "%EnvDownloadPath%\%SigcheckInstall%" sigcheck.exe
 )
 
 :exit

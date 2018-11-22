@@ -66,6 +66,7 @@ private slots:
   void copyLink();
   void copyLinkhtml();
   void sendLinkTo();
+  void removeExtraFile();
 
   void collCreate();
   void collModif();
@@ -122,6 +123,7 @@ protected:
   QAction* sendlinkAct;
   QAction* sendchatlinkAct;
   QAction* copylinkhtmlAct;
+  QAction* removeExtraFileAct;
 
   QAction *collCreateAct;
   QAction *collModifAct;
