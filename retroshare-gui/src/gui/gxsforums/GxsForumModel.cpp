@@ -256,10 +256,13 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, i
 
 	switch(section)
 	{
-	default:
 	case COLUMN_THREAD_TITLE:        return tr("Title");
 	case COLUMN_THREAD_DATE:         return tr("Date");
 	case COLUMN_THREAD_AUTHOR:       return tr("Author");
+	case COLUMN_THREAD_DISTRIBUTION: return QString("[icon missing]") ;
+	case COLUMN_THREAD_READ:         return QString("[icon missing]") ;
+	default:
+        return QString("[unused]");
 	}
 }
 
