@@ -7,7 +7,7 @@
 #include "GxsForumModel.h"
 #include "retroshare/rsgxsforums.h"
 
-#define DEBUG_FORUMMODEL
+//#define DEBUG_FORUMMODEL
 
 #define COLUMN_THREAD_TITLE        0
 #define COLUMN_THREAD_READ         1
@@ -29,7 +29,8 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mPosts.resize(1);	// adds a sentinel item
+    initEmptyHierarchy(mPosts);
+
 
     mFilterColumn=0;
     mUseChildTS=false;
@@ -58,6 +59,13 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 //
 //    RsMsgMetaData meta;
 //    meta.mMsgName = std::string("message ") + QString::number(N+1).toStdString() ;
+}
+
+void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
+{
+    posts.resize(1);	// adds a sentinel item
+    posts[0].mTitle = "Root sentinel post" ;
+    posts[0].mParent = 0;
 }
 
 int RsGxsForumModel::rowCount(const QModelIndex& parent) const
@@ -454,6 +462,16 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     mForumGroup = group;
     mPosts = posts;
 
+    // now update prow for all posts
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+            mPosts[mPosts[i].mChildren[j]].prow = j;
+
+    mPosts[0].prow = 0;
+
+    debug_dump();
+
 	emit layoutChanged();
 }
 
@@ -515,6 +533,10 @@ ForumModelIndex RsGxsForumModel::addEntry(std::vector<ForumModelPostEntry>& post
     posts[N].mParent = parent;
     posts[parent].mChildren.push_back(N);
 
+    std::cerr << "Added new entry " << N << " children of " << parent << std::endl;
+
+    if(N == parent)
+        std::cerr << "(EE) trying to add a post as its own parent!" << std::endl;
     return ForumModelIndex(N);
 }
 
@@ -530,8 +552,11 @@ void RsGxsForumModel::generateMissingItem(const RsGxsMessageId &msgId,ForumModel
 
 void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsGxsForumMsg& msg, bool useChildTS, uint32_t filterColumn,ForumModelPostEntry& fentry)
 {
+    fentry.mTitle     = msg.mMeta.mMsgName;
+    fentry.mAuthorId  = msg.mMeta.mAuthorId;
     fentry.mMsgId     = msg.mMeta.mMsgId;
     fentry.mPublishTs = msg.mMeta.mPublishTs;
+    fentry.mPostFlags = 0;
     fentry.mStatus    = msg.mMeta.mMsgStatus;
 
     if(mForumGroup.mPinnedPosts.ids.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.ids.end())
@@ -623,7 +648,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 //	int steps = count / PROGRESSBAR_MAX;
 	int step = 0;
 
-    posts.clear();
+    initEmptyHierarchy(posts);
     QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;
 
     // ThreadList contains the list of parent threads. The algorithm below iterates through all messages
@@ -894,6 +919,40 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #endif
 }
 
+static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
+{
+    const ForumModelPostEntry& e(entries[index]);
+
+    std::cerr << std::string(depth*2,' ') << e.mAuthorId.toStdString() << " " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString()
+              << " " << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+
+    for(uint32_t i=0;i<e.mChildren.size();++i)
+        recursPrintModel(entries,e.mChildren[i],depth+1);
+}
+
+void RsGxsForumModel::debug_dump()
+{
+    std::cerr << "Model data dump:" << std::endl;
+    std::cerr << "  Entries: " << mPosts.size() << std::endl;
+
+    // non recursive print
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+    {
+		const ForumModelPostEntry& e(mPosts[i]);
+
+		std::cerr << "    " << i << " : " << e.mAuthorId.toStdString() << " " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString();
+
+    	for(uint32_t i=0;i<e.mChildren.size();++i)
+            std::cerr << " " << e.mChildren[i] ;
+
+        std::cerr << " (" << e.mParent << ")";
+		std::cerr << " " << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+    }
+
+    // recursive print
+    recursPrintModel(mPosts,ForumModelIndex(0),0);
+}
 
 
 

@@ -27,6 +27,8 @@ typedef uint32_t ForumModelIndex;
 
 struct ForumModelPostEntry
 {
+    ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mStatus(0),prow(0) {}
+
     enum {					// flags for display of posts
         FLAG_POST_IS_PINNED   = 0x0001,
         FLAG_POST_IS_MISSING  = 0x0002,
@@ -86,6 +88,11 @@ public:
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 
+    /*!
+     * \brief debug_dump
+     * 			Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
+     */
+    void debug_dump();
 private:
     RsGxsForumGroup mForumGroup;
 
@@ -110,6 +117,7 @@ private:
 
 	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group,const std::vector<RsGxsForumMsg>& msgs_array,std::vector<ForumModelPostEntry>& posts);
     void setPosts(const RsGxsForumGroup &group, const std::vector<ForumModelPostEntry>& posts); // this method *must* be called from UI thread.
+	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
 };
