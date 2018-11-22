@@ -32,6 +32,7 @@ class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
 class RsGxsForumGroup;
+class RsGxsForumModel;
 
 namespace Ui {
 class GxsForumThreadWidget;
@@ -149,11 +150,11 @@ private slots:
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 
-	void insertThreads();
 	void insertMessage();
 
-	void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
-	void fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
+	//void insertThreads();
+	//void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
+	//void fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
 
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
@@ -224,6 +225,8 @@ private:
 	QList<RsGxsMessageId> mIgnoredMsgId;
 
     QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;	// holds older versions of posts
+
+    RsGxsForumModel *mThreadModel;
 
     Ui::GxsForumThreadWidget *ui;
 };

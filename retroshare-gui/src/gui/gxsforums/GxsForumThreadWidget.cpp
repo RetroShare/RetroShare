@@ -202,7 +202,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	mThreadCompareRole->setRole(COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
-    ui->threadTreeWidget->setModel(new RsGxsForumModel(this));
+    mThreadModel = new RsGxsForumModel(this);
+    ui->threadTreeWidget->setModel(mThreadModel);
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
@@ -395,7 +396,8 @@ void GxsForumThreadWidget::groupIdChanged()
 
 	emit groupChanged(this);
 
-	fillComplete();
+    mThreadModel->setForum(groupId());
+	//fillComplete();
 }
 
 QString GxsForumThreadWidget::groupName(bool withUnreadCount)
@@ -474,7 +476,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		requestGroupData();
-		insertThreads();
+		//insertThreads();
 		insertMessage();
 
 		mIgnoredMsgId.clear();
@@ -492,7 +494,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
     if (grpIds.find(groupId())!=grpIds.end()){
 		updateGroup = true;
 		/* Update threads */
-		insertThreads();
+		//insertThreads();
 	} else {
 		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
@@ -504,7 +506,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 
 		if (msgIds.find(groupId()) != msgIds.end()) {
 			/* Update threads */
-			insertThreads();
+			//insertThreads();
 		}
 	}
 
@@ -1427,7 +1429,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	return item;
 }
 
-
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS
@@ -1502,9 +1504,9 @@ void GxsForumThreadWidget::insertThreads()
 	ui->threadTreeWidget->setRootIsDecorated(!mFillThread->mFlatView);
 
 	// connect thread
-	connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
-	connect(mFillThread, SIGNAL(status(QString)), this, SLOT(fillThreadStatus(QString)));
-	connect(mFillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
+	// connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
+	// connect(mFillThread, SIGNAL(status(QString)), this, SLOT(fillThreadStatus(QString)));
+	// connect(mFillThread, SIGNAL(progress(int,int)), this, SLOT(fillThreadProgress(int,int)));
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "ForumsDialog::insertThreads() Start fill thread" << std::endl;
@@ -1535,7 +1537,6 @@ static void copyItem(QTreeWidgetItem *item, const QTreeWidgetItem *newItem)
 
 void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
-#ifdef TODO
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreads()" << std::endl;
 #endif
@@ -1607,9 +1608,10 @@ void GxsForumThreadWidget::fillThreads(QList<QTreeWidgetItem *> &threadList, boo
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreads() done" << std::endl;
 #endif
-#endif
 }
+#endif
 
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand)
 {
 	int index = 0;
@@ -1673,6 +1675,7 @@ void GxsForumThreadWidget::fillChildren(QTreeWidgetItem *parentItem, QTreeWidget
 		}
 	}
 }
+#endif
 
 void GxsForumThreadWidget::insertMessage()
 {
@@ -2487,7 +2490,7 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 	if (column == COLUMN_THREAD_CONTENT) {
 		// need content ... refill
-		insertThreads();
+		//insertThreads();
 	} else {
 		filterItems(ui->filterLineEdit->text());
 	}
