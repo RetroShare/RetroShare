@@ -1572,7 +1572,11 @@ void ChatLobbyWidget::readChatLobbyInvites()
         }
 
         if(rsMsgs->acceptLobbyInvite((*it).lobby_id,chosen_id))
+        {
             ChatDialog::chatFriend(ChatId((*it).lobby_id),true);
+            rsMsgs->setLobbyAutoSubscribe((*it).lobby_id, true);
+            rsMsgs->joinVisibleChatLobby((*it).lobby_id, chosen_id);
+        }
         else
             std::cerr << "Can't join chat room with id 0x" << std::hex << (*it).lobby_id << std::dec << std::endl;
 
