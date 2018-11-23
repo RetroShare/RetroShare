@@ -897,7 +897,7 @@ QIcon GxsIdDetails::getLoadingIcon(const RsGxsId &/*id*/)
 	return QIcon(IMAGE_LOADING);
 }
 
-bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment)
+bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment,uint32_t icon_types)
 {
 	RsIdentityDetails details;
 
@@ -921,7 +921,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 	comment += getComment(details);
 
 	if (doIcons)
-		getIcons(details, icons);
+		getIcons(details, icons,icon_types);
 
 //	Cyril: I disabled these three which I believe to have been put for testing purposes.
 //

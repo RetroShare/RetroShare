@@ -149,6 +149,49 @@ public:
 	}
 };
 
+class AuthorItemDelegate: public QStyledItemDelegate
+{
+public:
+    AuthorItemDelegate() {}
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
+	{
+		if(!index.isValid())
+        {
+            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+            return ;
+        }
+
+		QStyleOptionViewItemV4 opt = option;
+		initStyleOption(&opt, index);
+
+		// disable default icon
+		opt.icon = QIcon();
+		// draw default item
+		QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+		const QRect r = option.rect;
+
+        RsGxsId id(index.data(Qt::DisplayRole).toString().toStdString());
+        QString str;
+        QList<QIcon> icons;
+        QString comment;
+
+		QIcon icon ;
+
+		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+			icon = GxsIdDetails::getLoadingIcon(id);
+		else
+			icon = *icons.begin();
+
+		QPixmap pix = icon.pixmap(r.size());
+
+		// draw pixmap at center of item
+		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+};
+
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
 	ui(new Ui::GxsForumThreadWidget)
@@ -206,6 +249,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mThreadModel = new RsGxsForumModel(this);
     ui->threadTreeWidget->setModel(mThreadModel);
     ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
+    ui->threadTreeWidget->setItemDelegateForColumn(COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));

@@ -76,7 +76,7 @@ public:
 	static void cleanup();
 
 	/* Information */
-	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment);
+	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment, uint32_t icon_types=ICON_TYPE_ALL);
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
