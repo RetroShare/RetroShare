@@ -141,43 +141,44 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_SUBSCRIBED, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(header, COLUMN_RECENT_TIME, QHeaderView::Interactive);
 
+    /*meiyousixin - reduce 4 lobby into one group chats */
     ui.lobbyTreeWidget->setIconSize(QSize(32,32));
     privateSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-    privateSubLobbyItem->setText(COLUMN_NAME, tr("Private Subscribed chat rooms"));
+    privateSubLobbyItem->setText(COLUMN_NAME, tr("Group chats"));
 	privateSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "1");
 	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
 	privateSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
 	ui.lobbyTreeWidget->insertTopLevelItem(0, privateSubLobbyItem);
 
-	publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms"));
-	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
-	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
-	publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
-	ui.lobbyTreeWidget->insertTopLevelItem(1, publicSubLobbyItem);
+//	publicSubLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
+//	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms"));
+//	publicSubLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "2");
+//	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+//	publicSubLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
+//	ui.lobbyTreeWidget->insertTopLevelItem(1, publicSubLobbyItem);
 
-	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	privateLobbyItem->setText(COLUMN_NAME, tr("Private chat rooms"));
-	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
-	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
-	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
-	ui.lobbyTreeWidget->insertTopLevelItem(2, privateLobbyItem);
+//	privateLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
+//	privateLobbyItem->setText(COLUMN_NAME, tr("Private chat rooms"));
+//	privateLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "3");
+//	//	privateLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PRIVATE));
+//	privateLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE);
+//	ui.lobbyTreeWidget->insertTopLevelItem(2, privateLobbyItem);
 
-	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms"));
-	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
-	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
-	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
-	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
+//	publicLobbyItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
+//	publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms"));
+//	publicLobbyItem->setData(COLUMN_NAME, ROLE_SORT, "4");
+//	//	publicLobbyItem->setIcon(COLUMN_NAME, QIcon(IMAGE_PUBLIC));
+//	publicLobbyItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC);
+//	ui.lobbyTreeWidget->insertTopLevelItem(3, publicLobbyItem);
 
 	//meiyousixin - NEED TO SEPARATE THIS CONTACT TREE WITH GROUPCHAT - using another channel for signal and update
 	//21 Sep 2018 - meiyousixin - add 'contact' tree for one2one chat
 	chatContactItem = new RSTreeWidgetItem(compareRole, TYPE_FOLDER);
-	chatContactItem->setText(COLUMN_NAME, tr("Contact chat"));
+    chatContactItem->setText(COLUMN_NAME, tr("Contact chats"));
 	chatContactItem->setData(COLUMN_NAME, ROLE_SORT, "0");
 	chatContactItem->setData(COLUMN_DATA, ROLE_PRIVACYLEVEL, CHAT_LOBBY_ONE2ONE_LEVEL);
 	chatContactItem->setHidden(false);    //expand this tree as default
-	ui.lobbyTreeWidget->insertTopLevelItem(4, chatContactItem);
+    ui.lobbyTreeWidget->insertTopLevelItem(1, chatContactItem);
 
 
 	ui.lobbyTreeWidget->expandAll();
@@ -215,7 +216,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.splitter->setSizes(sizes);
 
 	lobbyChanged();
-	showBlankPage(0) ;
+    showBlankPage(0) ;
 
 	/* add filter actions */
 	ui.filterLineEdit->addFilter(QIcon(), tr("Name"), COLUMN_NAME, tr("Search Name"));
@@ -315,12 +316,18 @@ void ChatLobbyWidget::updateNotifyFromP2P(ChatId id, unsigned int count)
         rsHistory->updateMessageAsRead(hmsg);
         //And need to update for all items on the left, return to their avatars
         std::set<ChatId>::iterator i;
-        for (i = recentUnreadListOfChatId.begin(); i != recentUnreadListOfChatId.end(); ++i)
+
+        if (recentUnreadListOfChatId.size() > 0)
         {
-            recentUnreadListOfChatId.erase(*i);
-            QTreeWidgetItem *item = getTreeWidgetItemForChatId(*i);
-            if (item)
-                UpdateStatusForContact(item,(*i).toPeerId());
+            if (recentUnreadListOfChatId.count(id) != 0) recentUnreadListOfChatId.erase(id);
+            //recentUnreadListOfChatId
+//            for (i = recentUnreadListOfChatId.begin(); i != recentUnreadListOfChatId.end(); ++i)
+//            {
+//                recentUnreadListOfChatId.erase(*i);
+//                QTreeWidgetItem *item = getTreeWidgetItemForChatId(*i);
+//                if (item)
+//                    UpdateStatusForContact(item,(*i).toPeerId());
+//            }
         }
     }
 }
@@ -577,239 +584,227 @@ void ChatLobbyWidget::setCurrentOne2OneChatPage(PopupChatDialog *d)
 
 void ChatLobbyWidget::updateDisplay()
 {
-#ifdef CHAT_LOBBY_GUI_DEBUG
-	std::cerr << "updating chat room display!" << std::endl;
-#endif
-	std::vector<VisibleChatLobbyRecord> visibleLobbies;
-	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
+    /* Meiyousixin - Need to get all local group chats (include both community and private group) to show in group chats tree */
 
-	std::list<ChatLobbyId> lobbies;
-	rsMsgs->getChatLobbyList(lobbies);
+    //std::map<ChatLobbyId, ChatLobbyInfo> groupChatsList;
+    rsMsgs->getGroupChatInfoList(_groupchat_infos);
 
 #ifdef CHAT_LOBBY_GUI_DEBUG
-	std::cerr << "got " << visibleLobbies.size() << " visible lobbies" << std::endl;
+    std::cerr << "Show all group chats !" << std::endl;
+    for(std::map<ChatLobbyId,ChatLobbyInfo>::const_iterator it(_groupchat_infos.begin());it!=_groupchat_infos.end();++it)
+    {
+        std::cerr << "Group Chat: " << it->second.lobby_name << std::endl;
+    }
 #endif
 
-	// now, do a nice display of lobbies
+
+    for(std::map<ChatLobbyId,ChatLobbyInfo>::const_iterator it(_groupchat_infos.begin());it!=_groupchat_infos.end();++it)
+    {
+        QIcon icon;
+        QTreeWidgetItem *item = NULL;
+        //check before add
+        int childCnt = privateSubLobbyItem->childCount();
+        for (int childIndex = 0; childIndex < childCnt; ++childIndex)
+        {
+            QTreeWidgetItem *itemLoop = privateSubLobbyItem->child(childIndex);
+            if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == it->second.lobby_id)
+            {
+                item = itemLoop;
+                break;
+            }
+        }
+
+        icon = (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+        if (item == NULL)
+        {
+            item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
+            privateSubLobbyItem->addChild(item);
+            if (!icon.isNull())
+            {
+                item->setIcon(COLUMN_NAME, true ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
+            }
+            updateItem(ui.lobbyTreeWidget, item, it->second.lobby_id, it->second.lobby_name,it->second.lobby_topic, it->second.participating_friends.size(), true, true,it->second.lobby_flags);
+            joinGroupChatInBackground(it->second);
+            //ChatDialog::chatFriend(ChatId(it->second.lobby_id),false) ;
+        }
+    }
+
+//	std::vector<VisibleChatLobbyRecord> visibleLobbies;
+//	rsMsgs->getListOfNearbyChatLobbies(visibleLobbies);
+
+//	std::list<ChatLobbyId> lobbies;
+//	rsMsgs->getChatLobbyList(lobbies);
+
 	
-	RsPeerId vpid;
-	std::list<ChatLobbyId>::const_iterator lobbyIt;
-
-	// remove not existing public lobbies
-
-	for(int p=0;p<4;++p)
-	{
-		QTreeWidgetItem *lobby_item =NULL;
-		switch (p) 
-		{
-			case 0: lobby_item = privateSubLobbyItem; break;
-			case 1: lobby_item = publicSubLobbyItem; break;
-			case 2: lobby_item = privateLobbyItem; break;
-			default:
-			case 3: lobby_item = publicLobbyItem; break;
-		}
-		//QTreeWidgetItem *lobby_item = (p==0)?publicLobbyItem:privateLobbyItem ;
-
-		int childCnt = lobby_item->childCount();
-		int childIndex = 0;
-
-		while (childIndex < childCnt) {
-			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
-			if (itemLoop->type() == TYPE_LOBBY) 
-			{
-				// check for visible lobby
-				//
-				uint32_t i;
-	
-				for (i = 0; i < visibleLobbies.size(); ++i) 
-					if (itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == visibleLobbies[i].lobby_id) 
-						break;
-
-				if (i >= visibleLobbies.size()) 
-				{
-					// Check for participating lobby with public level
-					//
-					for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
-					if(itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == *lobbyIt)
-							break;
-
-					if (lobbyIt == lobbies.end()) 
-					{
-						delete(lobby_item->takeChild(lobby_item->indexOfChild(itemLoop)));
-						childCnt = lobby_item->childCount();
-						continue;
-					}
-				}
-			}
-			++childIndex;
-		}
-	}
+//	RsPeerId vpid;
+//	std::list<ChatLobbyId>::const_iterator lobbyIt;
 
 	// Now add visible lobbies
 	//
-	for (uint32_t i = 0; i < visibleLobbies.size(); ++i) 
-	{
-		const VisibleChatLobbyRecord &lobby = visibleLobbies[i];
+//	for (uint32_t i = 0; i < visibleLobbies.size(); ++i)
+//	{
+//		const VisibleChatLobbyRecord &lobby = visibleLobbies[i];
 
-#ifdef CHAT_LOBBY_GUI_DEBUG
-		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers. Lobby flags: " << lobby.lobby_flags << std::endl;
-#endif
+//#ifdef CHAT_LOBBY_GUI_DEBUG
+//        std::cerr << "adding " << lobby.lobby_name << ", topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " public " << lobby.total_number_of_peers << " peers. Lobby flags: " << lobby.lobby_flags << std::endl;
+//#endif
 
 
-		bool subscribed = std::find(lobbies.begin(), lobbies.end(), lobby.lobby_id) != lobbies.end();
+//		bool subscribed = std::find(lobbies.begin(), lobbies.end(), lobby.lobby_id) != lobbies.end();
 
-		QTreeWidgetItem *item = NULL;
-		QTreeWidgetItem *lobby_item =NULL;
-		QTreeWidgetItem *lobby_other_item =NULL;
+//		QTreeWidgetItem *item = NULL;
+//		QTreeWidgetItem *lobby_item =NULL;
+//		QTreeWidgetItem *lobby_other_item =NULL;
 
-		if (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)
-		{
-		    if (subscribed)
-		    {
-			lobby_item = publicSubLobbyItem;
-			lobby_other_item = publicLobbyItem;
-		    }
-		    else
-		    {
-			lobby_item = publicLobbyItem;
-			lobby_other_item = publicSubLobbyItem;
-		    }
-		}
-		else
-		{
-		    if (subscribed)
-		    {
-			lobby_item = privateSubLobbyItem;
-			lobby_other_item = privateLobbyItem;
-		    }
-		    else
-		    {
-			lobby_item = privateLobbyItem;
-			lobby_other_item = privateSubLobbyItem;
-		    }
-		}
-		//QTreeWidgetItem *lobby_item = (lobby.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)?publicLobbyItem:privateLobbyItem ;
+//		if (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)
+//		{
+//		    if (subscribed)
+//		    {
+//			lobby_item = publicSubLobbyItem;
+//			lobby_other_item = publicLobbyItem;
+//		    }
+//		    else
+//		    {
+//			lobby_item = publicLobbyItem;
+//			lobby_other_item = publicSubLobbyItem;
+//		    }
+//		}
+//		else
+//		{
+//		    if (subscribed)
+//		    {
+//			lobby_item = privateSubLobbyItem;
+//			lobby_other_item = privateLobbyItem;
+//		    }
+//		    else
+//		    {
+//			lobby_item = privateLobbyItem;
+//			lobby_other_item = privateSubLobbyItem;
+//		    }
+//		}
+//		//QTreeWidgetItem *lobby_item = (lobby.lobby_privacy_level == RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC)?publicLobbyItem:privateLobbyItem ;
 
-		// Search existing item
-		//
-		int childCnt = lobby_other_item->childCount();
-		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
-		{
-			QTreeWidgetItem *itemLoop = lobby_other_item->child(childIndex);
-			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
-				delete(lobby_other_item->takeChild(lobby_other_item->indexOfChild(itemLoop)));
-				childCnt = lobby_other_item->childCount();
-				break;
-			}
-		}
-		childCnt = lobby_item->childCount();
-		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
-		{
-			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
-			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
-				item = itemLoop;
-				break;
-			}
-		}
+//		// Search existing item
+//		//
+//		int childCnt = lobby_other_item->childCount();
+//		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
+//		{
+//			QTreeWidgetItem *itemLoop = lobby_other_item->child(childIndex);
+//			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
+//				delete(lobby_other_item->takeChild(lobby_other_item->indexOfChild(itemLoop)));
+//				childCnt = lobby_other_item->childCount();
+//				break;
+//			}
+//		}
+//		childCnt = lobby_item->childCount();
+//		for (int childIndex = 0; childIndex < childCnt; ++childIndex)
+//		{
+//			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
+//			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
+//				item = itemLoop;
+//				break;
+//			}
+//		}
 
-                ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
+//                ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
     
-		QIcon icon;
-		if (item == NULL) 
-		{
-			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-			icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-			lobby_item->addChild(item);
+//		QIcon icon;
+//		if (item == NULL)
+//		{
+//			item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
+//			icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+//			lobby_item->addChild(item);
             
-		} 
-		else
-		{
-			if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool() != subscribed) {
-				// Replace icon
-			icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-			}
-		}
-		if (!icon.isNull()) {
-			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
-		}
+//		}
+//		else
+//		{
+//			if (item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool() != subscribed) {
+//				// Replace icon
+//			icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+//			}
+//		}
+//		if (!icon.isNull()) {
+//			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
+//		}
 
-		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+//		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-		if (autoSubscribe && subscribed)
-		{
-			if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
-			{
-				if (item == ui.lobbyTreeWidget->currentItem())
-				{
-				    ChatDialog::chatFriend(ChatId(lobby.lobby_id)) ;
-				}else{
-				    ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
-				}
-			}
-		}
+//		if (autoSubscribe && subscribed)
+//		{
+//			if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
+//			{
+//				if (item == ui.lobbyTreeWidget->currentItem())
+//				{
+//				    ChatDialog::chatFriend(ChatId(lobby.lobby_id)) ;
+//				}else{
+//				    ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
+//				}
+//			}
+//		}
 
-		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe,lobby_flags);
-	}
+//		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe,lobby_flags);
+//	}
 
 	//	time_t now = time(NULL) ;
 
 	// Now add participating lobbies.
 	//
-	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt) 
-	{
-		ChatLobbyInfo lobby ;
-		rsMsgs->getChatLobbyInfo(*lobbyIt,lobby) ;
+//	for (lobbyIt = lobbies.begin(); lobbyIt != lobbies.end(); ++lobbyIt)
+//	{
+//		ChatLobbyInfo lobby ;
+//		rsMsgs->getChatLobbyInfo(*lobbyIt,lobby) ;
 
-#ifdef CHAT_LOBBY_GUI_DEBUG
-		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.participating_friends.size() << " peers." << std::endl;
-#endif
+//#ifdef CHAT_LOBBY_GUI_DEBUG
+//		std::cerr << "adding " << lobby.lobby_name << "topic " << lobby.lobby_topic << " #" << std::hex << lobby.lobby_id << std::dec << " private " << lobby.participating_friends.size() << " peers." << std::endl;
+//#endif
 
-		QTreeWidgetItem *itemParent;
-		if (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)
-		    itemParent = publicSubLobbyItem;
-		else
-		    itemParent = privateSubLobbyItem;
+//		QTreeWidgetItem *itemParent;
+//		if (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC)
+//		    itemParent = publicSubLobbyItem;
+//		else
+//		    itemParent = privateSubLobbyItem;
 
-		QTreeWidgetItem *item = NULL;
+//		QTreeWidgetItem *item = NULL;
 
-		// search existing item
-		int childCount = itemParent->childCount();
-		for (int childIndex = 0; childIndex < childCount; ++childIndex) {
-			QTreeWidgetItem *itemLoop = itemParent->child(childIndex);
-			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
-				item = itemLoop;
-				break;
-			}
-		}
+//		// search existing item
+//		int childCount = itemParent->childCount();
+//		for (int childIndex = 0; childIndex < childCount; ++childIndex) {
+//			QTreeWidgetItem *itemLoop = itemParent->child(childIndex);
+//			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == lobby.lobby_id) {
+//				item = itemLoop;
+//				break;
+//			}
+//		}
 
-		QIcon icon;
+//		QIcon icon;
         
-        ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
+//        ChatLobbyFlags lobby_flags = lobby.lobby_flags ;
 
-        if (item == NULL)
-        {
-            item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
-            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-            itemParent->addChild(item);
-        } else {
-            if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
-                // Replace icon
-                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-            }
-        }
-		if (!icon.isNull()) {
-			item->setIcon(COLUMN_NAME, icon);
-		}
+//        if (item == NULL)
+//        {
+//            item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
+//            icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+//            itemParent->addChild(item);
+//        } else {
+//            if (!item->data(COLUMN_DATA, ROLE_SUBSCRIBED).toBool()) {
+//                // Replace icon
+//                icon = (lobby.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+//            }
+//        }
+//		if (!icon.isNull()) {
+//			item->setIcon(COLUMN_NAME, icon);
+//		}
 
-		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
+//		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe,lobby_flags);
-	}
+//		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe,lobby_flags);
+//	}
 
-	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
-	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));
-	privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
-	publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms")+ " (" + QString::number(publicLobbyItem->childCount())+QString(")"));
+//	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
+//	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));
+    //privateSubLobbyItem->setHidden(privateSubLobbyItem->childCount()==0);
+    privateSubLobbyItem->setHidden(false);
+    //publicLobbyItem->setText(COLUMN_NAME, tr("Public chat rooms")+ " (" + QString::number(publicLobbyItem->childCount())+QString(")"));
 }
 
 void ChatLobbyWidget::createChatLobby()
@@ -834,7 +829,10 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 	ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
 
 	if(_lobby_infos.find(id) == _lobby_infos.end())
-		showBlankPage(id) ;
+    {
+        ChatDialog::chatFriend(ChatId(id),true) ;
+        //showBlankPage(id) ;
+    }
 	else
 		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
 }
@@ -1077,6 +1075,40 @@ void ChatLobbyWidget::subscribeChatLobbyAtItem(QTreeWidgetItem *item)
         ChatDialog::chatFriend(ChatId(id),true) ;
 }
 
+void ChatLobbyWidget::joinGroupChatInBackground(ChatLobbyInfo lobbyInfo)
+{
+    ChatLobbyFlags flags = lobbyInfo.lobby_flags;
+    RsGxsId gxs_id ;
+
+    std::list<RsGxsId> own_ids;
+    // not using rsMsgs->getDefaultIdentityForChatLobby(), to check if we have an identity
+    // to work around the case when the identity was deleted and is invalid
+    // (the chatservice does not know if a default identity was deleted)
+    // only rsIdentity knows the truth at the moment!
+    if(!rsIdentity->getOwnIds(own_ids))
+    {
+
+        rsMsgs->getDefaultIdentityForChatLobby(gxs_id);
+        if(rsMsgs->joinVisibleChatLobby(lobbyInfo.lobby_id,gxs_id))
+        {
+#ifdef CHAT_LOBBY_GUI_DEBUG
+            std::cerr << " Joining groupchat: " << lobbyInfo.lobby_name << ", topic " << lobbyInfo.lobby_topic << " #" << std::hex << lobbyInfo.lobby_id << std::dec << " public. Lobby flags: " << lobbyInfo.lobby_flags << std::endl;
+#endif
+
+        }
+        RsIdentityDetails idd ;
+        if(!rsIdentity->getIdDetails(gxs_id,idd))
+            return ;
+
+        if( (flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED) && !(idd.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED))
+        {
+            QMessageBox::warning(NULL,tr("Default identity is anonymous"),tr("You cannot join this chat room with your default identity, since it is anonymous and the chat room forbids it.")) ;
+            return ;
+        }
+    }
+
+}
+
 void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
 {
     if (item == NULL || item->type() != TYPE_LOBBY) {
@@ -1102,7 +1134,7 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
     std::list<RsGxsId> my_ids ;
     rsIdentity->getOwnIds(my_ids) ;
 
-                trimAnonIds(my_ids) ;
+    trimAnonIds(my_ids) ;
                 
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
@@ -1345,19 +1377,20 @@ void ChatLobbyWidget::updateCurrentLobby()
 	else
 	{
 		//if this is a lobby chat
-		if (item->parent() && item->parent()->text(COLUMN_NAME) != tr("Contact chat"))
+        if (item->parent() && item->parent()->text(COLUMN_NAME) == tr("Group chats"))
 		{
-			    showLobby(item);
-			    ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
-			    if(_lobby_infos.find(id) != _lobby_infos.end()) {
-			    int iPrivacyLevel= item->parent()->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt();
-			    QIcon icon = (iPrivacyLevel==CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
-			    _lobby_infos[id].default_icon = icon ;
-			    item->setIcon(COLUMN_NAME, icon) ;
-		    }
+            showLobby(item);
+//            ChatLobbyId id = item->data(COLUMN_DATA, ROLE_ID).toULongLong();
+//            if(_lobby_infos.find(id) != _lobby_infos.end())
+//            {
+//			    int iPrivacyLevel= item->parent()->data(COLUMN_DATA, ROLE_PRIVACYLEVEL).toInt();
+//			    QIcon icon = (iPrivacyLevel==CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
+//			    _lobby_infos[id].default_icon = icon ;
+//			    item->setIcon(COLUMN_NAME, icon) ;
+//		    }
 		}
 		// if this is a contact chat
-        else if (item->parent() && item->parent()->text(COLUMN_NAME) == tr("Contact chat"))
+        else if (item->parent() && item->parent()->text(COLUMN_NAME) == tr("Contact chats"))
 		  {
 		      showContactChat(item);
               QPixmap avatar;
@@ -1382,7 +1415,7 @@ void ChatLobbyWidget::updateCurrentLobby()
 	}
 
 	//keep for lobby chat
-	if (item->parent() && item->parent()->text(COLUMN_NAME) != tr("Contact chat"))
+    if (item->parent() && item->parent()->text(COLUMN_NAME) != tr("Contact chats"))
 	{
 	      if (ui.filterLineEdit->text().isEmpty() == false) {
 		      filterItems(ui.filterLineEdit->text());

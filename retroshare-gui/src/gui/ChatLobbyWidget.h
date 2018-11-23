@@ -9,6 +9,8 @@
 #include "retroshare/rsstatus.h"
 
 #include <retroshare/rsmsgs.h>
+#include "chat/distributedchat.h"
+
 
 #include <QAbstractButton>
 #include <QTreeWidget>
@@ -120,7 +122,7 @@ private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
 	void subscribeChatLobby(ChatLobbyId id) ;
 	void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
-
+    void joinGroupChatInBackground(ChatLobbyInfo lobbyInfo);
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
 	RSTreeWidgetItemCompareRole *compareRole;
@@ -163,5 +165,7 @@ private:
     std::set<ChatId> recentUnreadListOfChatId;
     QPixmap currentStatusIcon(RsPeerId peerId, QFont& gpgFontOut);
     QIcon lastIconForPeerId(RsPeerId peerId, bool unread);
+
+    std::map<ChatLobbyId,ChatLobbyInfo> _groupchat_infos;
 };
 

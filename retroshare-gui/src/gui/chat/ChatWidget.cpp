@@ -343,14 +343,15 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 	if (chatType() == CHATTYPE_LOBBY) {
 		hist_chat_type = RS_HISTORY_TYPE_LOBBY;
-		messageCount = Settings->getLobbyChatHistoryCount();
-
+        //messageCount = Settings->getLobbyChatHistoryCount();
+        messageCount = RS_HISTORY_LOBBY_COUNT;
 		ui->statusLabel->hide();
 
 		updateTitle();
     } else if (chatType() == CHATTYPE_PRIVATE){
 		hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
-		messageCount = Settings->getPrivateChatHistoryCount();
+        //messageCount = Settings->getPrivateChatHistoryCount();
+        messageCount = RS_HISTORY_ONE2ONE_COUNT;
 
 		// initialize first status
 		StatusInfo peerStatusInfo;

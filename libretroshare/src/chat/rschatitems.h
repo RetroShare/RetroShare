@@ -35,6 +35,8 @@
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvfileitem.h"
 
+#include "retroshare/rsmsgs.h"
+
 /* chat Flags */
 const uint32_t RS_CHAT_FLAG_PRIVATE                    = 0x0001;
 const uint32_t RS_CHAT_FLAG_REQUESTS_AVATAR            = 0x0002;
@@ -75,6 +77,7 @@ const uint8_t RS_PKT_SUBTYPE_DISTANT_CHAT_DH_PUBLIC_KEY   = 0x16 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_MSG     	  = 0x17 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_SIGNED_EVENT      = 0x18 ;
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_LIST              = 0x19 ;
+const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INFO              = 0x1D ; //meiyousixin - for lobbyInfo saving
 
 RS_DEPRECATED_FOR(RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE) \
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED = 0x1A ;	// to be removed (deprecated since May 2017)
@@ -311,6 +314,22 @@ public:
 
 	uint64_t lobby_Id;
 	uint32_t flags ;
+
+};
+
+class RsChatLobbyInfoItem: public RsChatItem
+{
+public:
+    RsChatLobbyInfoItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_LOBBY_INFO) { lobby_Id = 0; }
+
+    virtual ~RsChatLobbyInfoItem() {}
+
+    virtual void clear() { lobby_Id = 0; }
+
+        void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    uint64_t lobby_Id;
+    ChatLobbyInfo lobbyInfo;
 };
 
 // This class contains activity info for the sending peer: active, idle, typing, etc.
