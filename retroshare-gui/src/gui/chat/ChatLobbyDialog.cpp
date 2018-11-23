@@ -533,10 +533,14 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         editor.setHtml(message);
         QString notifyMsg = name + ": " + editor.toPlainText();
 
-        if(notifyMsg.length() > 30)
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
-        else
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
+        if(msg.incoming)
+        {
+            if(notifyMsg.length() > 30)
+                MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+            else
+                MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
+        }
+
     }
 
 	// also update peer list.

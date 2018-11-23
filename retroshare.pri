@@ -92,6 +92,7 @@ no_sqlcipher:CONFIG -= sqlcipher
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
 
+
 #CONFIG *=no_rs_autologin
 CONFIG*=rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin

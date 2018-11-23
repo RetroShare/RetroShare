@@ -40,6 +40,9 @@ static const uint32_t RS_HISTORY_TYPE_PUBLIC  = 0 ;
 static const uint32_t RS_HISTORY_TYPE_PRIVATE = 1 ;
 static const uint32_t RS_HISTORY_TYPE_LOBBY   = 2 ;
 
+static const uint32_t RS_HISTORY_LOBBY_COUNT   = 1000 ;
+static const uint32_t RS_HISTORY_ONE2ONE_COUNT   = 1000 ;
+
 class HistoryMsg
 {
 public:

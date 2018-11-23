@@ -586,6 +586,16 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	 */
 	virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord> &public_lobbies) = 0 ;
 
+
+    /**
+
+     * @brief getGroupChatInfoList get info about all group chats
+     * @jsonapi{development}
+     * @param[out] public_lobbies list of all visible lobbies
+     */
+    virtual void getGroupChatInfoList(std::map<ChatLobbyId,ChatLobbyInfo>& _groupchats) = 0 ;
+
+
 	/**
 	 * @brief invitePeerToLobby invite a peer to join a lobby
 	 * @jsonapi{development}
