@@ -2461,7 +2461,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			hbox->setSpacing(6);
 
 			QLabel *iconLabel = new QLabel(widget);
-			QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+            QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 			iconLabel->setPixmap(pix);
 			iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 			hbox->addWidget(iconLabel);
