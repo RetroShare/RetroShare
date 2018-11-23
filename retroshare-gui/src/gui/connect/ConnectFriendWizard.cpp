@@ -143,11 +143,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 		ui->trustEdit->hide();
 	}
 	
-	unsigned int onlineCount = 0, friendCount = 0;
-    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
-	if(friendCount<30)
-		ui->makefriend_infolabel->hide();
-
 	//Add warning to direct source checkbox depends general setting.
 	switch (rsFiles->filePermDirectDL())
 	{
