@@ -5,6 +5,7 @@
 #include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
 #include "GxsForumModel.h"
+#include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
 
 //#define DEBUG_FORUMMODEL
@@ -14,11 +15,9 @@
 #define COLUMN_THREAD_DATE         2
 #define COLUMN_THREAD_DISTRIBUTION 3
 #define COLUMN_THREAD_AUTHOR       4
-#define COLUMN_THREAD_SIGNED       5
-#define COLUMN_THREAD_CONTENT      6
-#define COLUMN_THREAD_COUNT        7
-#define COLUMN_THREAD_MSGID        8
-#define COLUMN_THREAD_NB_COLUMNS   9
+#define COLUMN_THREAD_CONTENT      5
+#define COLUMN_THREAD_MSGID        6
+#define COLUMN_THREAD_NB_COLUMNS   7
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
@@ -252,6 +251,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	switch(role)
 	{
 	case Qt::SizeHintRole:       return sizeHintRole(index.column()) ;
+	case Qt::FontRole:
 	case Qt::TextAlignmentRole:
 	case Qt::TextColorRole:
 	case Qt::WhatsThisRole:
@@ -285,6 +285,14 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
 	const ForumModelPostEntry& fmpe(mPosts[entry]);
 
+    if(role == Qt::FontRole)
+    {
+        QFont font ;
+
+		font.setBold(IS_MSG_UNREAD(fmpe.mMsgStatus));
+
+        return QVariant(font);
+    }
 #ifdef DEBUG_FORUMMODEL
 	std::cerr << " [ok]" << std::endl;
 #endif
@@ -294,6 +302,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole:    return displayRole   (fmpe,index.column()) ;
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
+	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
@@ -308,7 +317,7 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
  	if(column != COLUMN_THREAD_DATA)
         return QVariant();
 
-    return QVariant(fmpe.mStatus);
+    return QVariant(fmpe.mMsgStatus);
 }
 
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
@@ -390,7 +399,7 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 								else
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
-		//case COLUMN_THREAD_READ_STATUS:return QVariant(fmpe.mMsgStatus);
+		case COLUMN_THREAD_READ:return QVariant();
     	case COLUMN_THREAD_DATE:       {
     							    QDateTime qtime;
 									qtime.setTime_t(fmpe.mPublishTs);
@@ -398,8 +407,9 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 									return QVariant(DateTime::formatDateTime(qtime));
     							}
 
-		case COLUMN_THREAD_AUTHOR:       return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
-	    case COLUMN_THREAD_MSGID: return QVariant(QString::fromStdString(fmpe.mMsgId.toStdString()));
+		case COLUMN_THREAD_DISTRIBUTION:
+		case COLUMN_THREAD_AUTHOR: return QVariant();
+		case COLUMN_THREAD_MSGID: return QVariant();
 #ifdef TODO
 	if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
@@ -414,6 +424,17 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 
 
 	return QVariant("[ERROR]");
+}
+
+QVariant RsGxsForumModel::userRole(const ForumModelPostEntry& fmpe,int col) const
+{
+	switch(col)
+    {
+     	case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
+     	case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.mMsgId.toStdString()));
+    default:
+        return QVariant();
+    }
 }
 
 QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col) const
@@ -534,7 +555,7 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
     fentry.mMsgId     = msg.mMeta.mMsgId;
     fentry.mPublishTs = msg.mMeta.mPublishTs;
     fentry.mPostFlags = 0;
-    fentry.mStatus    = msg.mMeta.mMsgStatus;
+    fentry.mMsgStatus = msg.mMeta.mMsgStatus;
 
     if(mForumGroup.mPinnedPosts.ids.find(msg.mMeta.mMsgId) != mForumGroup.mPinnedPosts.ids.end())
 		fentry.mPostFlags |= ForumModelPostEntry::FLAG_POST_IS_PINNED;

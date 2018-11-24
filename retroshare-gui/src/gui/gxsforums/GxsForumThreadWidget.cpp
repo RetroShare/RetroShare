@@ -80,16 +80,16 @@
 #define VIEW_FLAT       2
 
 /* Thread constants */
+
+// We need consts for that!! Defined in multiple places.
 #define COLUMN_THREAD_TITLE        0
 #define COLUMN_THREAD_READ         1
 #define COLUMN_THREAD_DATE         2
 #define COLUMN_THREAD_DISTRIBUTION 3
 #define COLUMN_THREAD_AUTHOR       4
-#define COLUMN_THREAD_SIGNED       5
-#define COLUMN_THREAD_CONTENT      6
-#define COLUMN_THREAD_COUNT        7
-#define COLUMN_THREAD_MSGID        8
-#define COLUMN_THREAD_NB_COLUMNS   9
+#define COLUMN_THREAD_CONTENT      5
+#define COLUMN_THREAD_MSGID        6
+#define COLUMN_THREAD_NB_COLUMNS   7
 
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
@@ -154,7 +154,36 @@ class AuthorItemDelegate: public QStyledItemDelegate
 public:
     AuthorItemDelegate() {}
 
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+		QStyleOptionViewItemV4 opt = option;
+		initStyleOption(&opt, index);
+
+		// disable default icon
+		opt.icon = QIcon();
+		const QRect r = option.rect;
+
+        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+        QString str;
+        QList<QIcon> icons;
+        QString comment;
+
+        QFontMetricsF fm(option.font);
+        float f = fm.height();
+
+		QIcon icon ;
+
+		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+			icon = GxsIdDetails::getLoadingIcon(id);
+		else
+			icon = *icons.begin();
+
+		QPixmap pix = icon.pixmap(r.size());
+
+        return QSize(pix.width() + fm.width(str),fm.height());
+    }
+
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
 	{
 		if(!index.isValid())
         {
@@ -172,10 +201,13 @@ public:
 
 		const QRect r = option.rect;
 
-        RsGxsId id(index.data(Qt::DisplayRole).toString().toStdString());
+        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
         QString str;
         QList<QIcon> icons;
         QString comment;
+
+        QFontMetricsF fm(painter->font());
+        float f = fm.height();
 
 		QIcon icon ;
 
@@ -189,6 +221,7 @@ public:
 		// draw pixmap at center of item
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
+		painter->drawText(r.topLeft() + p + QPoint(pix.width()+f/2.0,f*0.8), str);
 	}
 };
 
@@ -565,10 +598,18 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	if (mFillThread) {
 		return;
 	}
-#ifdef TODO
 	QMenu contextMnu(this);
-	QList<QTreeWidgetItem*> selectedItems = ui->threadTreeWidget->selectedItems();
+	QModelIndexList selectedIndexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
 
+    if(selectedIndexes.size() != 1)
+        return;
+
+    QModelIndex index = *selectedIndexes.begin();
+
+	RsGxsMessageId mid(mThreadModel->data(index.sibling(index.row(),COLUMN_THREAD_MSGID),Qt::UserRole).toString().toStdString());
+
+    std::cerr << "Clicked on msg " << mid << std::endl;
+#ifdef TODO
 	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
@@ -829,7 +870,7 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
         return;
     }
 
-	mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),COLUMN_THREAD_MSGID),Qt::DisplayRole).toString().toStdString());
+	mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),COLUMN_THREAD_MSGID),Qt::UserRole).toString().toStdString());
 
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 
@@ -867,7 +908,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 	bool isNew = IS_MSG_NEW(status);
 	bool unread = IS_MSG_UNREAD(status);
 	bool missing = item->data(COLUMN_THREAD_DATA, ROLE_THREAD_MISSING).toBool();
-    RsGxsMessageId msgId(item->data(COLUMN_THREAD_MSGID,Qt::DisplayRole).toString().toStdString());
+    RsGxsMessageId msgId(item->data(COLUMN_THREAD_MSGID,Qt::UserRole).toString().toStdString());
 
 	// set icon
 	if (missing) {
@@ -899,7 +940,7 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
     bool is_pinned = mForumGroup.mPinnedPosts.ids.find(msgId) != mForumGroup.mPinnedPosts.ids.end();
 
 	// set font
-	for (int i = 0; i < COLUMN_THREAD_COUNT; ++i) {
+	for (int i = 0; i < COLUMN_THREAD_NB_COLUMNS; ++i) {
 		QFont qf = item->font(i);
 
 		if (!IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -1452,7 +1493,7 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
 	}
 
-	item->setData(COLUMN_THREAD_MSGID,Qt::DisplayRole, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
+	item->setData(COLUMN_THREAD_MSGID,Qt::UserRole, QString::fromStdString(msg.mMeta.mMsgId.toStdString()));
 //#TODO
 #if 0
 	if (IS_GROUP_SUBSCRIBED(subscribeFlags) && !(msginfo.mMsgFlags & RS_DISTRIB_MISSING_MSG)) {

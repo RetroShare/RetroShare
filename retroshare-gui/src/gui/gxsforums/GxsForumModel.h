@@ -27,7 +27,7 @@ typedef uint32_t ForumModelIndex;
 
 struct ForumModelPostEntry
 {
-    ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mStatus(0),prow(0) {}
+    ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
 
     enum {					// flags for display of posts
         FLAG_POST_IS_PINNED   = 0x0001,
@@ -41,7 +41,7 @@ struct ForumModelPostEntry
     uint32_t           mPublishTs;
     uint32_t           mPostFlags;
     int                mReputationWarningLevel;
-    int                mStatus;
+    int                mMsgStatus;
 
     std::vector<ForumModelIndex> mChildren;
     ForumModelIndex mParent;
@@ -82,11 +82,13 @@ public:
 	QVariant displayRole   (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
 	QVariant toolTipRole   (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant userRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant missingRole   (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
 
     /*!
      * \brief debug_dump
