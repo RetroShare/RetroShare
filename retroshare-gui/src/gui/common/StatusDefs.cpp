@@ -94,7 +94,7 @@ const char *StatusDefs::imageStatus(unsigned int status)
 	case RS_STATUS_ONLINE:
         return ":/app/images/statusicons/online.png";       //d:
 	case RS_STATUS_INACTIVE:
-        return ":/app/images/statusicons/newmsgnotif.png";  //d:
+        return ":/app/images/statusicons/away.png";         //d:
 	}
 
 	std::cerr << "StatusDefs::imageUser: Unknown status requested " << status;

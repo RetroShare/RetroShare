@@ -65,15 +65,15 @@
 #define TYPE_ONE2ONE      2   //meiyousixin - add for one2one
 
 #define IMAGE_CREATE          ""
-#define IMAGE_PUBLIC          ":/images/chat_x24.png"
-#define IMAGE_PRIVATE         ":/images/chat_red24.png"
+#define IMAGE_PUBLIC          ":/chat/img/groundchat.png"               //d
+#define IMAGE_PRIVATE         ":/chat/img/groundchat_private.png"       //d
 #define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
-#define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
-#define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING		  ":images/typing.png"
-#define IMAGE_MESSAGE	      ":images/chat.png" 
-#define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
+#define IMAGE_PEER_ENTERING   ":/chat/img/personal_add_64.png"          //d
+#define IMAGE_PEER_LEAVING    ":/chat/img/personal_remove_64.png"       //d
+#define IMAGE_TYPING		  ":/chat/img/typing.png"                   //d
+#define IMAGE_MESSAGE	      ":/chat/img/chat_32.png"                  //d
+#define IMAGE_AUTOSUBSCRIBE   ":/images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
 #define IMAGE_UNREAD_ICON      ":/home/img/face_icon/un_chat_icon_v_128.png"
@@ -417,7 +417,7 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
                 contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
             else if(!own_identities.empty())
                 contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
-            contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyItemLink()));
+            contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy UnseenP2P Link"), this, SLOT(copyItemLink()));
         }
 
         contextMnu.addSeparator();//-------------------------------------------------------------------

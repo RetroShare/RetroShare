@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>P2PUnseen Share Manager</string>
+   <string>UnseenP2P Share Manager</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../Unseengui/unseengui.qrc">

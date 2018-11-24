@@ -63,8 +63,8 @@ QString GxsChannelDialog::getHelpString() const
     your friends. This promotes good channels in the network.</p>\
     <p>Only the channel's creator can post on that channel. Other peers                       \
     in the network can only read from it, unless the channel is private. You can however share \
-     the posting rights or the reading rights with friend P2PUnseen nodes.</p>\
-     <p>Channels can be made anonymous, or attached to a P2PUnseen identity so that readers can contact you if needed.\
+     the posting rights or the reading rights with friend UnseenP2P nodes.</p>\
+     <p>Channels can be made anonymous, or attached to a UnseenP2P identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
     <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
                 ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
@@ -126,7 +126,7 @@ QString GxsChannelDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-        return ":/home/img/face_icon/youtube-play-button_x_128.png";      //d: update icon
+        return ":/home/img/face_icon/youtube-play-button_xu_128.png";      //d: update icon
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

@@ -39,7 +39,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
-    //ui->headerFrame->setHeaderImage(QPixmap(":/home/img/face_icon/un_chat_icon_x_128.png"));
+    //ui->headerFrame->setHeaderImage(QPixmap(":/home/img/face_icon/un_chat_icon_xu_128.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;
@@ -120,7 +120,7 @@ void CreateLobbyDialog::createLobby()
     ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
     
     //	if (shareList.empty()) {
-    //		QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+    //		QMessageBox::warning(this, "UnseenP2P", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
     //		return;
     //	}
 

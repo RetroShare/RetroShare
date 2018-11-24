@@ -53,7 +53,7 @@ OpModeStatus::OpModeStatus(QWidget *parent)
 
 	setCurrentIndex(Settings->valueFromGroup("StatusBar", "OpMode", QVariant(0)).toInt());
 	setOpMode();
-    setToolTip(tr("Use this DropList to quickly change P2PUnseen's behaviour\n No Anon D/L: switches off file forwarding\n Gaming Mode: 25% standard traffic and TODO: reduced popups\n Low Traffic: 10% standard traffic and TODO: pauses all file-transfers"));
+    setToolTip(tr("Use this DropList to quickly change UnseenP2P's behaviour\n No Anon D/L: switches off file forwarding\n Gaming Mode: 25% standard traffic and TODO: reduced popups\n Low Traffic: 10% standard traffic and TODO: pauses all file-transfers"));
 
 	setFocusPolicy(Qt::ClickFocus);
 }

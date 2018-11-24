@@ -883,7 +883,7 @@ QString RetroShareLink::title() const
 			if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
 				return QObject::tr("This cert is malformed. Error code:")+" "+QString::number(error_code) ;
 			else
-                return QObject::tr("Click to add this P2PUnseen cert to your PGP keyring\nand open the Make Friend Wizard.\n")
+                return QObject::tr("Click to add this UnseenP2P cert to your PGP keyring\nand open the Make Friend Wizard.\n")
 				    + QString("PGP Id =")+" " + QString::fromStdString(details.gpg_id.toStdString()) + QString("\nSSLId =")+" "+QString::fromStdString(details.id.toStdString());
 		}
 
@@ -1082,7 +1082,7 @@ QString RetroShareLink::niceName() const
 		if(!rsPeers->loadDetailsFromStringCert(_radix.toStdString(),details,error_code))
 			return QObject::tr("This cert is malformed. Error code:")+" "+QString::number(error_code) ;
 		else
-            return QObject::tr("P2PUnseen Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
+            return QObject::tr("UnseenP2P Certificate (%1, @%2)").arg(QString::fromUtf8(details.name.c_str()), QString::fromUtf8(details.location.c_str()));	// should add SSL id there
 	}
 
 	if(type() == TYPE_PUBLIC_MSG) {
@@ -1614,7 +1614,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 					qinfo.setFile(QString::fromUtf8(path.c_str()));
 					if (qinfo.exists() && qinfo.isFile() && !dontOpenNextFile) {
 						QString question = "<html><body>";
-                        question += QObject::tr("Warning: P2PUnseen is about to ask your system to open this file. ");
+                        question += QObject::tr("Warning: UnseenP2P is about to ask your system to open this file. ");
 						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
 						question += "<br><br>" + cleanname + "</body></html>";
 
@@ -1782,7 +1782,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 	QString result;
 
 	if (flag & (RSLINK_PROCESS_NOTIFY_SUCCESS | RSLINK_PROCESS_NOTIFY_ERROR)) {
-        result += (links.count() == 1 ? QObject::tr("%1 of %2 P2PUnseen link processed.") : QObject::tr("%1 of %2 P2PUnseen links processed.")).arg(countProcessed).arg(links.count()) + "<br><br>";
+        result += (links.count() == 1 ? QObject::tr("%1 of %2 UnseenP2P link processed.") : QObject::tr("%1 of %2 UnseenP2P links processed.")).arg(countProcessed).arg(links.count()) + "<br><br>";
 	}
 
 	// file

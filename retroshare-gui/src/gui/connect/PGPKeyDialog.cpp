@@ -75,7 +75,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 //	 }
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
-    ui.headerFrame->setHeaderText(tr("P2PUnseen profile"));
+    ui.headerFrame->setHeaderText(tr("UnseenP2P profile"));
 
     //ui._chat_CB->hide() ;
 
@@ -129,7 +129,7 @@ void PGPKeyDialog::load()
     if(!rsPeers->getGPGDetails(pgpId, detail))
     {
         QMessageBox::information(this,
-                                 tr("P2PUnseen"),
+                                 tr("UnseenP2P"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -285,7 +285,7 @@ void PGPKeyDialog::loadKeyPage()
     if (!rsPeers->getGPGDetails(pgpId,detail))
     {
         QMessageBox::information(this,
-                                 tr("P2PUnseen"),
+                                 tr("UnseenP2P"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -304,13 +304,13 @@ void PGPKeyDialog::loadKeyPage()
     ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
     QString helptext ;
-    helptext += tr("<p>This PGP key (ID=")+detail.gpg_id.toStdString().c_str()+")" + " authenticates one or more P2PUnseen nodes.</p> ";
+    helptext += tr("<p>This PGP key (ID=")+detail.gpg_id.toStdString().c_str()+")" + " authenticates one or more UnseenP2P nodes.</p> ";
 
     helptext += "<p>" ;
     if(detail.accept_connection)
-        helptext += tr("You have chosen to accept connections from P2PUnseen nodes signed by this key.") ;
+        helptext += tr("You have chosen to accept connections from UnseenP2P nodes signed by this key.") ;
     else
-        helptext += tr("You are currently not allowing connections from P2PUnseen nodes signed by this key.") ;
+        helptext += tr("You are currently not allowing connections from UnseenP2P nodes signed by this key.") ;
 
     helptext += "</p>" ;
 
@@ -325,7 +325,7 @@ void PGPKeyDialog::applyDialog()
     {
         if (!rsPeers->getGPGDetails(pgpId, detail)) {
             QMessageBox::information(this,
-                                     tr("P2PUnseen"),
+                                     tr("UnseenP2P"),
                                      tr("Error : cannot get peer details."));
             close();
             return;

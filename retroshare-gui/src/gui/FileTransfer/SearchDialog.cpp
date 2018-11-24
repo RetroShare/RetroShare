@@ -333,8 +333,8 @@ void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 	contextMnu.addAction(QIcon(IMAGE_BANFILE), tr("Mark as bad"), this, SLOT(ban())) ;
 	contextMnu.addSeparator();//--------------------------------------
 
-    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy P2PUnseen Link"), this, SLOT(copyResultLink())) ;
-    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send P2PUnseen Link"), this, SLOT(sendLinkTo())) ;
+    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy UnseenP2P Link"), this, SLOT(copyResultLink())) ;
+    contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send UnseenP2P Link"), this, SLOT(sendLinkTo())) ;
 	contextMnu.addSeparator();//--------------------------------------
 
 	QMenu collectionMenu(tr("Collection"), this);
@@ -677,7 +677,7 @@ void SearchDialog::searchSummaryWidgetCustomPopupMenu( QPoint /*point*/ )
     contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove"), this, SLOT(searchRemove()));
     contextMnu.addAction(QIcon(IMAGE_REMOVE), tr("Remove All"), this, SLOT(searchRemoveAll()));
     contextMnu.addSeparator();
-    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy P2PUnseen Link"), this, SLOT(copySearchLink()));
+    action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy UnseenP2P Link"), this, SLOT(copySearchLink()));
     if (!ci || ci->data(SS_DATA_COL, ROLE_KEYWORDS).toString().isEmpty()) {
         action->setDisabled(true);
     }
@@ -1489,7 +1489,7 @@ void SearchDialog::copyResultLink()
 
 		 if (!item->childCount()) 
 		 {
-             std::cerr << "SearchDialog::copyResultLink() Calling set P2PUnseen link";
+             std::cerr << "SearchDialog::copyResultLink() Calling set UnseenP2P link";
 			 std::cerr << std::endl;
 
 			 QString fhash = item->text(SR_HASH_COL);
@@ -1516,7 +1516,7 @@ void SearchDialog::sendLinkTo( )
         return;
     }
 
-    nMsgDialog->setTitleText(tr("New P2PUnseen Link(s)"));
+    nMsgDialog->setTitleText(tr("New UnseenP2P Link(s)"));
     nMsgDialog->setMsgText(RSLinkClipboard::toHtml(), true) ;
 
     nMsgDialog->show();

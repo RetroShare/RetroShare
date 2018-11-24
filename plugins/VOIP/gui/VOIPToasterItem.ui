@@ -98,7 +98,7 @@
         <item>
          <widget class="QLabel" name="toasterLabel">
           <property name="text">
-           <string notr="true">P2PUnseen</string>
+           <string notr="true">UnseenP2P</string>
           </property>
          </widget>
         </item>

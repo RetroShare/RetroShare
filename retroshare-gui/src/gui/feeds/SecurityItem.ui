@@ -195,7 +195,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>wants to be friend with you on P2PUnseen</string>
+              <string>wants to be friend with you on UnseenP2P</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

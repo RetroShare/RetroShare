@@ -129,7 +129,7 @@ void ConfCertDialog::load()
     if(!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
-                                 tr("P2PUnseen"),
+                                 tr("UnseenP2P"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -251,7 +251,7 @@ void ConfCertDialog::loadInvitePage()
     if (!rsPeers->getPeerDetails(peerId, detail))
     {
         QMessageBox::information(this,
-                                 tr("P2PUnseen"),
+                                 tr("UnseenP2P"),
                                  tr("Error : cannot get peer details."));
         close();
         return;
@@ -320,7 +320,7 @@ void ConfCertDialog::applyDialog()
     {
 	    if (!rsPeers->getGPGDetails(pgpId, detail)) {
 		    QMessageBox::information(this,
-                                     tr("P2PUnseen"),
+                                     tr("UnseenP2P"),
 		                             tr("Error : cannot get peer details."));
 		    close();
 		    return;

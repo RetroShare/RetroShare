@@ -51,8 +51,8 @@
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
-#define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
-#define IMAGE_PEERS         	":/icons/png/keyring.png"
+#define IMAGE_NETWORK2          ":/home/img/connection.png"                //d
+#define IMAGE_PEERS         	":/home/img/key.png"                       //d
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
 //#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
@@ -72,7 +72,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     if (instance == NULL) {
         instance = this;
     }
-    QString msg = tr("P2PUnseen broadcast chat: messages are sent to all connected friends.");
+    QString msg = tr("UnseenP2P broadcast chat: messages are sent to all connected friends.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
     ui.chatWidget->setWelcomeMessage(msg);
@@ -130,7 +130,7 @@ QList<int> sizes;
 
  QString hlp_str = tr(
   " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Network</h1>                                   \
-    <p>The Network tab shows your friend P2PUnseen nodes: the neighbor P2PUnseen nodes that are connected to you. \
+    <p>The Network tab shows your friend UnseenP2P nodes: the neighbor UnseenP2P nodes that are connected to you. \
     </p>                                                   \
     <p>You can group nodes together to allow a finer level of information access, for instance to only allow      \
     some nodes to see some of your files.</p> \

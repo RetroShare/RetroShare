@@ -238,7 +238,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 		std::cerr << "PostedListWidget::createPost() ERROR GETTING AuthorId!, Vote Failed";
 		std::cerr << std::endl;
 
-        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please create or choose a Signing Id before Voting"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("UnseenP2P"),tr("Please create or choose a Signing Id before Voting"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return;
 	}//switch (ui.idChooser->getChosenId(authorId))

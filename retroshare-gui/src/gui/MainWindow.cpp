@@ -135,9 +135,9 @@
 #define IMAGE_TWOONLINE         ":/chat/img/network-diagram_2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
+#define IMAGE_BWGRAPH           ":/home/img/Traymenu/graph.png"         //d
+#define IMAGE_MESSENGER         ":/home/img/Traymenu/friends.png"       //d
+#define IMAGE_CLOSE             ":/home/img/Traymenu/power-button-off.png"      //d
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
@@ -151,7 +151,7 @@
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
-#define IMAGE_DHT               ":/images/dht16.png"
+#define IMAGE_DHT               ":/home/img/Traymenu/molecule.png"      //d
 
 
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
@@ -224,7 +224,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
-    /* add url handler for P2PUnseen links */
+    /* add url handler for UnseenP2P links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
     QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
@@ -603,7 +603,7 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 												return ;
 	}
 	QMessageBox::critical(NULL,tr("Low disk space warning"),
-                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n P2PUnseen will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
+                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n UnseenP2P will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
@@ -630,7 +630,7 @@ void MainWindow::createTrayIcon()
     //trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Email"), this, SLOT(showMess()));
 #ifdef ENABLE_WEBUI
-    trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
+    trayMenu->addAction(QIcon(":/home/img/Traymenu/earth-globe.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
@@ -654,7 +654,7 @@ void MainWindow::createTrayIcon()
 //#ifdef WINDOWS_SYS
     trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
-    trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    trayIcon->setIcon(QIcon(IMAGE_RETROSHARE)); //d
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
 //#endif
@@ -1564,14 +1564,14 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     RetroShareLink link(url);
 
     if (link.valid() == false) {
-        // QUrl can't handle the old P2PUnseen link format properly
+        // QUrl can't handle the old UnseenP2P link format properly
         if (url.host().isEmpty()) {
-            QMessageBox mb("P2PUnseen", tr("It seems to be an old P2PUnseen link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+            QMessageBox mb("UnseenP2P", tr("It seems to be an old UnseenP2P link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
             mb.exec();
             return;
         }
 
-        QMessageBox mb("P2PUnseen", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+        QMessageBox mb("UnseenP2P", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
         mb.exec();
         return;
     }

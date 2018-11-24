@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>P2PUnseen node details</string>
+   <string>UnseenP2P node details</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../../Unseengui/unseengui.qrc">
@@ -149,7 +149,7 @@
                <item row="6" column="0">
                 <widget class="QLabel" name="label_version">
                  <property name="text">
-                  <string>P2PUnseen version :</string>
+                  <string>UnseenP2P version :</string>
                  </property>
                 </widget>
                </item>
@@ -374,7 +374,7 @@
         </widget>
         <widget class="QWidget" name="tab_4">
          <attribute name="title">
-          <string>P2PUnseen Certificate</string>
+          <string>UnseenP2P Certificate</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>

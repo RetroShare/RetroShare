@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>P2PUnseen Messenger</string>
+   <string>UnseenP2P Messenger</string>
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">

@@ -67,7 +67,7 @@
         <enum>Qt::NoFocus</enum>
        </property>
        <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your &lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt;&quot;&gt;P2PUnseen&lt;/span&gt; Key&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Share your &lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:12pt;&quot;&gt;UnseenP2P&lt;/span&gt; Key&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="icon">
         <iconset resource="../Unseengui/unseengui.qrc">
@@ -118,7 +118,7 @@
         <string notr="true"/>
        </property>
        <property name="text">
-        <string>The text below is your own P2PUnseen certificate. Send it to your friends</string>
+        <string>The text below is your own UnseenP2P certificate. Send it to your friends</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -310,7 +310,7 @@ private and secure decentralized communication platform.
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Do you need help with P2PUnseen?</string>
+         <string>Do you need help with UnseenP2P?</string>
         </property>
        </widget>
       </item>

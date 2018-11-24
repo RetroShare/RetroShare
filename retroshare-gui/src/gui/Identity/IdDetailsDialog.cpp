@@ -235,7 +235,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
     {
 		if (data.mPgpKnown)
-            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your P2PUnseen node")) ;
+            ui->lineEdit_Type->setText(tr("Identity owned by you, linked to your UnseenP2P node")) ;
 		else
 			ui->lineEdit_Type->setText(tr("Anonymous identity, owned by you")) ;
     }
@@ -243,11 +243,11 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	{
 		if(data.mPgpKnown)
 			if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Owned by a friend P2PUnseen node")) ;
+                ui->lineEdit_Type->setText(tr("Owned by a friend UnseenP2P node")) ;
 			else
-                ui->lineEdit_Type->setText(tr("Owned by 2-hops P2PUnseen node")) ;
+                ui->lineEdit_Type->setText(tr("Owned by 2-hops UnseenP2P node")) ;
 		else
-            ui->lineEdit_Type->setText(tr("Owned by unknown P2PUnseen node")) ;
+            ui->lineEdit_Type->setText(tr("Owned by unknown UnseenP2P node")) ;
 	}
 	else
 		ui->lineEdit_Type->setText(tr("Anonymous identity")) ;
@@ -457,7 +457,7 @@ void IdDetailsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &r
 
 QString IdDetailsDialog::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on P2PUnseen.<br>");
+    return tr("Hi,<br>I want to be friends with you on UnseenP2P.<br>");
 }
 
 void IdDetailsDialog::sendInvite()

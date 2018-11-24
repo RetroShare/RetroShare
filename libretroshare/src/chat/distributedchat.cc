@@ -2060,8 +2060,8 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
             std::cerr <<" Group members, RsPeerId: " << *it2 << std::endl;
 
         }
-        const std::map<RsGxsId, time_t>& map = clinfo->lobbyInfo.gxs_ids; // mParticipantsInfo.participants;
-        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        const std::map<RsGxsId, rstime_t>& map = clinfo->lobbyInfo.gxs_ids; // mParticipantsInfo.participants;
+        for(std::map<RsGxsId, rstime_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
         {
             std::cerr <<" Group members, RsGxsId: " << mit->first.toStdString() << std::endl;
         }

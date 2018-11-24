@@ -62,7 +62,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_x_128.png</pixmap>
+         <pixmap resource="../Unseengui/unseengui.qrc">:/home/img/face_icon/group-profile-users_xu_128.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -105,7 +105,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -248,7 +248,7 @@
       <widget class="QWidget" name="groupChatTab">
        <attribute name="icon">
         <iconset resource="../Unseengui/unseengui.qrc">
-         <normaloff>:/home/img/face_icon/un_chat_icon_x_128.png</normaloff>:/home/img/face_icon/un_chat_icon_x_128.png</iconset>
+         <normaloff>:/home/img/face_icon/un_chat_icon_xu_128.png</normaloff>:/home/img/face_icon/un_chat_icon_xu_128.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Broadcast</string>
@@ -370,12 +370,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -384,6 +378,12 @@
    <class>StyledElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>ChatTabWidget</class>
@@ -405,7 +405,6 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
   <include location="../Unseengui/unseengui.qrc"/>
   <include location="images.qrc"/>
  </resources>
