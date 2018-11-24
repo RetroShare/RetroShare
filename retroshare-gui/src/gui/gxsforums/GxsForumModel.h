@@ -69,7 +69,8 @@ public:
 		COLUMN_THREAD_AUTHOR       =0x04,
 		COLUMN_THREAD_CONTENT      =0x05,
 		COLUMN_THREAD_MSGID        =0x06,
-		COLUMN_THREAD_NB_COLUMNS   =0x07,
+		COLUMN_THREAD_DATA         =0x07,
+		COLUMN_THREAD_NB_COLUMNS   =0x08,
 	};
 
 	enum Roles{ SortRole         = Qt::UserRole+1,
@@ -115,7 +116,7 @@ public:
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant textColorRole(const ForumModelPostEntry& fmpe, int col) const;
+	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
 
     /*!
      * \brief debug_dump

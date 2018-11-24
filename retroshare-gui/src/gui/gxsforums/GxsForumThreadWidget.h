@@ -99,7 +99,7 @@ private slots:
 
 	void changedThread(QModelIndex index);
 	void changedVersion();
-	void clickedThread (QTreeWidgetItem *item, int column);
+	void clickedThread (QModelIndex index);
 
 	void reply_with_private_message();
 	void replytoforummessage();

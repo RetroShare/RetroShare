@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QFontMetrics>
 #include <QModelIndex>
+#include <QIcon>
 
 #include "util/qtthreadsutils.h"
 #include "util/DateTime.h"
@@ -9,8 +10,6 @@
 #include "retroshare/rsgxsforums.h"
 
 //#define DEBUG_FORUMMODEL
-
-#define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
 Q_DECLARE_METATYPE(RsMsgMetaData);
 
@@ -25,30 +24,6 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     mFilterColumn=0;
     mUseChildTS=false;
     mFlatView=false;
-
-//    // adds some fake posts to debug
-//
-//    int N=5 ;
-//    mPosts.resize(N+1);
-//
-//    for(int i=1;i<=N;++i)
-//	{
-//		mPosts[0].mChildren.push_back(ForumModelIndex(i));
-//		mPosts[i].mParent = ForumModelIndex(0);
-//		mPosts[i].prow = i-1;
-//
-//		RsMsgMetaData meta;
-//		meta.mMsgName = std::string("message ") + QString::number(i).toStdString() ;
-//	}
-//
-//    // add one child to last post
-//    mPosts.resize(N+2);
-//    mPosts[N].mChildren.push_back(ForumModelIndex(N+1));
-//    mPosts[N+1].mParent = ForumModelIndex(N);
-//    mPosts[N+1].prow = 0;
-//
-//    RsMsgMetaData meta;
-//    meta.mMsgName = std::string("message ") + QString::number(N+1).toStdString() ;
 }
 
 void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
@@ -232,19 +207,27 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-	if(role != Qt::DisplayRole)
-		return QVariant();
+	if(role == Qt::DisplayRole)
+		switch(section)
+		{
+		case COLUMN_THREAD_TITLE:        return tr("Title");
+		case COLUMN_THREAD_DATE:         return tr("Date");
+		case COLUMN_THREAD_AUTHOR:       return tr("Author");
+		case COLUMN_THREAD_DISTRIBUTION: return tr("Distribution");
+		default:
+			return QVariant();
+		}
 
-	switch(section)
-	{
-	case COLUMN_THREAD_TITLE:        return tr("Title");
-	case COLUMN_THREAD_DATE:         return tr("Date");
-	case COLUMN_THREAD_AUTHOR:       return tr("Author");
-	case COLUMN_THREAD_DISTRIBUTION: return QString("[icon missing]") ;
-	case COLUMN_THREAD_READ:         return QString("[icon missing]") ;
-	default:
-        return QString("[unused]");
-	}
+	if(role == Qt::DecorationRole)
+		switch(section)
+		{
+		case COLUMN_THREAD_DISTRIBUTION: return QIcon(":/icons/flag_green.png");
+		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
+		default:
+			return QVariant();
+		}
+
+	return QVariant();
 }
 
 QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
@@ -453,6 +436,8 @@ QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col
 {
     if(col == COLUMN_THREAD_DISTRIBUTION)
         return QVariant(fmpe.mReputationWarningLevel);
+    else if(col == COLUMN_THREAD_READ)
+        return QVariant(fmpe.mMsgStatus);
     else
 		return QVariant();
 }
@@ -486,6 +471,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 
 	emit layoutChanged();
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
@@ -946,6 +932,8 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
     bool has_unread_below,has_read_below;
     recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatus(0,has_unread_below,has_read_below);
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)
