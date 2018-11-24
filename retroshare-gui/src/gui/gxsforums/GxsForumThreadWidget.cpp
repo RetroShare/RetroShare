@@ -219,7 +219,7 @@ public:
 
 		QPixmap pix = icon.pixmap(r.size());
 
-        return QSize(pix.width() + fm.width(str),1.2*fm.height());
+        return QSize(pix.width() + fm.width(str),std::max(1.1*pix.height(),1.4*fm.height()));
     }
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
