@@ -29,10 +29,12 @@ struct ForumModelPostEntry
 {
     ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
 
-    enum {					// flags for display of posts
-        FLAG_POST_IS_PINNED   = 0x0001,
-        FLAG_POST_IS_MISSING  = 0x0002,
-        FLAG_POST_IS_REDACTED = 0x0004,
+    enum {					// flags for display of posts. To be used in mPostFlags
+        FLAG_POST_IS_PINNED           = 0x0001,
+        FLAG_POST_IS_MISSING          = 0x0002,
+        FLAG_POST_IS_REDACTED         = 0x0004,
+        FLAG_POST_HAS_UNREAD_CHILDREN = 0x0008,
+        FLAG_POST_HAS_READ_CHILDREN   = 0x0010,
     };
 
     std::string        mTitle ;
@@ -58,6 +60,17 @@ public:
 	explicit RsGxsForumModel(QObject *parent = NULL);
 	~RsGxsForumModel(){}
 
+	enum Columns {
+		COLUMN_THREAD_TITLE        =0x00,
+		COLUMN_THREAD_READ         =0x01,
+		COLUMN_THREAD_DATE         =0x02,
+		COLUMN_THREAD_DISTRIBUTION =0x03,
+		COLUMN_THREAD_AUTHOR       =0x04,
+		COLUMN_THREAD_CONTENT      =0x05,
+		COLUMN_THREAD_MSGID        =0x06,
+		COLUMN_THREAD_NB_COLUMNS   =0x07,
+	};
+
 	enum Roles{ SortRole         = Qt::UserRole+1,
               	ThreadPinnedRole = Qt::UserRole+2,
               	MissingRole      = Qt::UserRole+3,
@@ -70,6 +83,8 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
     bool hasChildren(const QModelIndex &parent = QModelIndex()) const override;
+
+    bool getPostData(const QModelIndex& i,ForumModelPostEntry& fmpe) const ;
 
     QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const override;
     QModelIndex parent(const QModelIndex& child) const override;
@@ -112,6 +127,7 @@ private:
 
 	void update_posts(const RsGxsGroupId &group_id);
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
+	void recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);

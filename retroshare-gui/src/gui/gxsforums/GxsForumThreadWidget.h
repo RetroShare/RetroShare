@@ -33,6 +33,7 @@ class RsGxsForumMsg;
 class GxsForumsFillThread;
 class RsGxsForumGroup;
 class RsGxsForumModel;
+class ForumModelPostEntry;
 
 namespace Ui {
 class GxsForumThreadWidget;
@@ -149,6 +150,7 @@ private slots:
 
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
+	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;
 
 	void insertMessage();
 	void insertGroupData();

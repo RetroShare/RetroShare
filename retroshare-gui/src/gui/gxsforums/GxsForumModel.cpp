@@ -10,15 +10,6 @@
 
 //#define DEBUG_FORUMMODEL
 
-#define COLUMN_THREAD_TITLE        0
-#define COLUMN_THREAD_READ         1
-#define COLUMN_THREAD_DATE         2
-#define COLUMN_THREAD_DISTRIBUTION 3
-#define COLUMN_THREAD_AUTHOR       4
-#define COLUMN_THREAD_CONTENT      5
-#define COLUMN_THREAD_MSGID        6
-#define COLUMN_THREAD_NB_COLUMNS   7
-
 #define COLUMN_THREAD_DATA     0 // column for storing the userdata like parentid
 
 Q_DECLARE_METATYPE(RsMsgMetaData);
@@ -83,6 +74,23 @@ int RsGxsForumModel::rowCount(const QModelIndex& parent) const
 int RsGxsForumModel::columnCount(const QModelIndex &parent) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
+}
+
+bool RsGxsForumModel::getPostData(const QModelIndex& i,ForumModelPostEntry& fmpe) const
+{
+	if(!i.isValid())
+        return true;
+
+    void *ref = i.internalPointer();
+	uint32_t entry = 0;
+
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+		return false ;
+
+    fmpe = mPosts[entry];
+
+	return true;
+
 }
 
 bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
@@ -915,6 +923,39 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 
 	std::cerr << "GxsForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
 #endif
+
+    bool has_unread_below,has_read_below ;
+
+    recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
+}
+
+void RsGxsForumModel::recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
+{
+    has_unread_below = IS_MSG_UNREAD(mPosts[i].mMsgStatus);
+    has_read_below = !IS_MSG_UNREAD(mPosts[i].mMsgStatus);
+
+    for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+    {
+        bool ub,rb;
+
+        recursUpdateReadStatus(mPosts[i].mChildren[j],ub,rb);
+
+        has_unread_below = has_unread_below || ub ;
+        has_read_below = has_read_below || rb ;
+
+        if(ub && rb)		// optimization
+            break;
+    }
+
+    if(has_unread_below)
+		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN;
+    else
+		mPosts[i].mPostFlags &= ~ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN;
+
+    if(has_read_below)
+		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
+    else
+		mPosts[i].mPostFlags &= ~ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
 }
 
 static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
