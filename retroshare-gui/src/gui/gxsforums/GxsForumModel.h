@@ -16,6 +16,7 @@ struct RsMsgMetaData
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include <QModelIndex>
+#include <QColor>
 
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
@@ -77,8 +78,18 @@ public:
               	StatusRole       = Qt::UserRole+4,
               };
 
+	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
+
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);
+
+	void setTextColorRead          (QColor color) { mTextColorRead           = color;}
+	void setTextColorUnread        (QColor color) { mTextColorUnread         = color;}
+	void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color;}
+	void setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color;}
+	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
+
+	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -104,6 +115,7 @@ public:
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant textColorRole(const ForumModelPostEntry& fmpe, int col) const;
 
     /*!
      * \brief debug_dump
@@ -128,6 +140,7 @@ private:
 	void update_posts(const RsGxsGroupId &group_id);
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
 	void recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
+	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
@@ -138,4 +151,10 @@ private:
 	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 
     std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
+
+    QColor mTextColorRead          ;
+    QColor mTextColorUnread        ;
+    QColor mTextColorUnreadChildren;
+    QColor mTextColorNotSubscribed ;
+    QColor mTextColorMissing       ;
 };

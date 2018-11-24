@@ -258,13 +258,8 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
 	switch(role)
 	{
-	case Qt::SizeHintRole:       return sizeHintRole(index.column()) ;
-	case Qt::FontRole:
-	case Qt::TextAlignmentRole:
-	case Qt::TextColorRole:
-	case Qt::WhatsThisRole:
-	case Qt::EditRole:
-    case Qt::StatusTipRole: 	return QVariant();
+	case Qt::SizeHintRole: return sizeHintRole(index.column()) ;
+    case Qt::StatusTipRole:return QVariant();
     default: break;
 	}
 
@@ -297,7 +292,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     {
         QFont font ;
 
-		font.setBold(IS_MSG_UNREAD(fmpe.mMsgStatus));
+		font.setBold(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
 
         return QVariant(font);
     }
@@ -311,6 +306,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
+	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
 
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
@@ -318,6 +314,14 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	default:
 		return QVariant();
 	}
+}
+
+QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int column) const
+{
+    if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN) && !IS_MSG_UNREAD(fmpe.mMsgStatus))
+        return QVariant(mTextColorUnreadChildren);
+
+	return QVariant();
 }
 
 QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column) const
@@ -475,6 +479,9 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
             mPosts[mPosts[i].mChildren[j]].prow = j;
 
     mPosts[0].prow = 0;
+
+    bool has_unread_below,has_read_below ;
+    recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
 
     debug_dump();
 
@@ -923,16 +930,45 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 
 	std::cerr << "GxsForumsFillThread::run() stopped: " << (wasStopped() ? "yes" : "no") << std::endl;
 #endif
+}
 
-    bool has_unread_below,has_read_below ;
+void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,bool with_children)
+{
+	if(!i.isValid())
+		return ;
 
-    recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
+	void *ref = i.internalPointer();
+	uint32_t entry = 0;
+
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+		return ;
+
+    bool has_unread_below,has_read_below;
+    recursSetMsgReadStatus(entry,read_status,with_children) ;
+	recursUpdateReadStatus(0,has_unread_below,has_read_below);
+}
+
+void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)
+{
+    if(read_status)
+		mPosts[i].mMsgStatus = 0;
+    else
+		mPosts[i].mMsgStatus = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+
+    uint32_t token;
+	rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read);
+
+    if(!with_children)
+        return;
+
+    for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+        recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children);
 }
 
 void RsGxsForumModel::recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
 {
-    has_unread_below = IS_MSG_UNREAD(mPosts[i].mMsgStatus);
-    has_read_below = !IS_MSG_UNREAD(mPosts[i].mMsgStatus);
+    has_unread_below =  IS_MSG_UNREAD(mPosts[i].mMsgStatus);
+    has_read_below   = !IS_MSG_UNREAD(mPosts[i].mMsgStatus);
 
     for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
     {
@@ -941,19 +977,19 @@ void RsGxsForumModel::recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_
         recursUpdateReadStatus(mPosts[i].mChildren[j],ub,rb);
 
         has_unread_below = has_unread_below || ub ;
-        has_read_below = has_read_below || rb ;
+        has_read_below   = has_read_below   || rb ;
 
         if(ub && rb)		// optimization
             break;
     }
 
     if(has_unread_below)
-		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN;
+		mPosts[i].mPostFlags |=  ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN;
     else
 		mPosts[i].mPostFlags &= ~ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN;
 
     if(has_read_below)
-		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
+		mPosts[i].mPostFlags |=  ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
     else
 		mPosts[i].mPostFlags &= ~ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
 }
@@ -962,8 +998,10 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
 {
     const ForumModelPostEntry& e(entries[index]);
 
-    std::cerr << std::string(depth*2,' ') << e.mAuthorId.toStdString() << " " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString()
-              << " " << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+    std::cerr << std::string(depth*2,' ') << e.mAuthorId.toStdString() << " "
+              << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
+              << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " "
+              << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
 
     for(uint32_t i=0;i<e.mChildren.size();++i)
         recursPrintModel(entries,e.mChildren[i],depth+1);
@@ -980,7 +1018,9 @@ void RsGxsForumModel::debug_dump()
     {
 		const ForumModelPostEntry& e(mPosts[i]);
 
-		std::cerr << "    " << i << " : " << e.mMsgId << " (from " << e.mAuthorId.toStdString() << ") " << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString();
+		std::cerr << "    " << i << " : " << e.mMsgId << " (from " << e.mAuthorId.toStdString() << ") "
+                  << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
+                  << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " ";
 
     	for(uint32_t i=0;i<e.mChildren.size();++i)
             std::cerr << " " << e.mChildren[i] ;

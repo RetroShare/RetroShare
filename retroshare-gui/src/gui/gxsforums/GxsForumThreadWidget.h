@@ -59,11 +59,11 @@ public:
 	QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
 	QColor textColorMissing() const { return mTextColorMissing; }
 
-	void setTextColorRead(QColor color) { mTextColorRead = color; }
-	void setTextColorUnread(QColor color) { mTextColorUnread = color; }
-	void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; }
-	void setTextColorNotSubscribed(QColor color) { mTextColorNotSubscribed = color; }
-	void setTextColorMissing(QColor color) { mTextColorMissing = color; }
+	void setTextColorRead          (QColor color) ;
+	void setTextColorUnread        (QColor color) ;
+	void setTextColorUnreadChildren(QColor color) ;
+	void setTextColorNotSubscribed (QColor color) ;
+	void setTextColorMissing       (QColor color) ;
 
 	/* GxsMessageFrameWidget */
 	virtual void groupIdChanged();
@@ -151,6 +151,7 @@ private slots:
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;
+	QModelIndex getCurrentIndex() const;
 
 	void insertMessage();
 	void insertGroupData();

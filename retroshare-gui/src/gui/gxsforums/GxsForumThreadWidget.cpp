@@ -170,7 +170,7 @@ public:
 
 		QPixmap pix = icon.pixmap(r.size());
 
-        return QSize(pix.width() + fm.width(str),fm.height());
+        return QSize(pix.width() + fm.width(str),1.2*fm.height());
     }
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
@@ -215,6 +215,12 @@ public:
 	}
 };
 
+void GxsForumThreadWidget::setTextColorRead          (QColor color) { mTextColorRead           = color; mThreadModel->setTextColorRead          (color);}
+void GxsForumThreadWidget::setTextColorUnread        (QColor color) { mTextColorUnread         = color; mThreadModel->setTextColorUnread        (color);}
+void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; mThreadModel->setTextColorUnreadChildren(color);}
+void GxsForumThreadWidget::setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color; mThreadModel->setTextColorNotSubscribed (color);}
+void GxsForumThreadWidget::setTextColorMissing       (QColor color) { mTextColorMissing        = color; mThreadModel->setTextColorMissing       (color);}
+
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
 	ui(new Ui::GxsForumThreadWidget)
@@ -234,6 +240,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setUpdateWhenInvisible(true);
 
+#ifdef TODO
 	/* Setup UI helper */
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->newthreadButton);
@@ -257,6 +264,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->postText);
     //mStateHelper->addLoadPlaceholder(mTokenTypeMessageData, ui->threadTitle);
+#endif
 
 	mSubscribeFlags = 0;
     mSignFlags = 0;
@@ -583,14 +591,21 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	}
 }
 
-bool GxsForumThreadWidget::getCurrentPost(ForumModelPostEntry& fmpe) const
+QModelIndex GxsForumThreadWidget::GxsForumThreadWidget::getCurrentIndex() const
 {
 	QModelIndexList selectedIndexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
 
     if(selectedIndexes.size() != RsGxsForumModel::COLUMN_THREAD_NB_COLUMNS)	// check that a single row is selected
-        return false;
+        return QModelIndex();
 
-    QModelIndex index = *selectedIndexes.begin();
+    return *selectedIndexes.begin();
+}
+bool GxsForumThreadWidget::getCurrentPost(ForumModelPostEntry& fmpe) const
+{
+    QModelIndex index = getCurrentIndex() ;
+
+    if(!index.isValid())
+        return false ;
 
     return mThreadModel->getPostData(index,fmpe);
 }
@@ -1882,25 +1897,22 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
 	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-#ifdef TODO
-	QList<QTreeWidgetItem*> row;
-	row.append(item);
+    QModelIndex index = getCurrentIndex();
 
 	if (IS_MSG_NEW(status)) {
 		if (setToReadOnActive) {
 			/* set to read */
-			setMsgReadStatus(row, true);
+			mThreadModel->setMsgReadStatus(index,true,false);
 		} else {
 			/* set to unread by user */
-			setMsgReadStatus(row, false);
+			mThreadModel->setMsgReadStatus(index,false,false);
 		}
 	} else {
 		if (setToReadOnActive && IS_MSG_UNREAD(status)) {
 			/* set to read */
-			setMsgReadStatus(row, true);
+			mThreadModel->setMsgReadStatus(index, true,false);
 		}
 	}
-#endif
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 	ui->by_label->setId(msg.mMeta.mAuthorId);
@@ -2045,6 +2057,7 @@ int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QLi
 
 void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read)
 {
+
 #ifdef TODO
 	QList<QTreeWidgetItem*>::iterator row;
 	std::list<QTreeWidgetItem*> changedItems;
@@ -2132,11 +2145,25 @@ void GxsForumThreadWidget::showInPeopleTab()
 
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
-#ifdef TODO
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
 		return;
 	}
 
+    if(forum)
+		mThreadModel->setMsgReadStatus(mThreadModel->root(),read,children);
+    else
+	{
+		QModelIndexList selectedIndexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
+
+		if(selectedIndexes.size() != RsGxsForumModel::COLUMN_THREAD_NB_COLUMNS)	// check that a single row is selected
+			return ;
+
+		QModelIndex index = *selectedIndexes.begin();
+
+		mThreadModel->setMsgReadStatus(index,read,children);
+	}
+
+#ifdef TODO
 	/* get selected messages */
 	QList<QTreeWidgetItem*> rows;
 	if (forum) {
