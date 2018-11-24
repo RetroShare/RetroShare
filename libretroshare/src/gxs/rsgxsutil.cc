@@ -21,7 +21,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <time.h>
+#include "util/rstime.h"
 
 #include "rsgxsutil.h"
 #include "retroshare/rsgxsflags.h"
@@ -57,7 +57,7 @@ bool RsGxsMessageCleanUp::clean()
 {
 	uint32_t i = 1;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #ifdef DEBUG_GXSUTIL
 	uint16_t service_type = mGenExchangeClient->serviceType() ;

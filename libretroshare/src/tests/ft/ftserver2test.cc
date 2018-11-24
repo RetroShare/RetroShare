@@ -368,10 +368,10 @@ void *do_server_test_thread(void *data)
 	/************************* TEST 1 **********************
 	 * Check that the extra List has been processed.
 	 */
-	time_t start = time(NULL);
+	rstime_t start = time(NULL);
 
 	FileInfo info, info2;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
         std::list<std::string>::iterator eit;
 	for(eit = mFt->extraList.begin(); eit != mFt->extraList.end(); eit++)
 	{

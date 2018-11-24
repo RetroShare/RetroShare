@@ -68,8 +68,8 @@ public:
 
     std::set<TurtleVirtualPeerId> virtual_peers ;
 
-    time_t first_tunnel_ok_TS ;	// timestamp when 1st tunnel was received.
-    time_t last_tunnel_ok_TS ;	// timestamp when last tunnel was received.
+    rstime_t first_tunnel_ok_TS ;	// timestamp when 1st tunnel was received.
+    rstime_t last_tunnel_ok_TS ;	// timestamp when last tunnel was received.
 };
 class GRouterDataInfo
 {
@@ -87,7 +87,7 @@ public:
     RsGRouterAbstractMsgItem *addDataChunk(RsGRouterTransactionChunkItem *chunk_item) ;
     RsGRouterTransactionChunkItem *incoming_data_buffer ;
 
-    time_t last_activity_TS ;
+    rstime_t last_activity_TS ;
 };
 
 class p3GRouter: public RsGRouter, public RsTurtleClientService, public p3Service, public p3Config
@@ -346,10 +346,10 @@ private:
     bool _changed ;
     bool _debug_enabled ;
 
-    time_t _last_autowash_time ;
-    time_t _last_matrix_update_time ;
-    time_t _last_debug_output_time ;
-    time_t _last_config_changed ;
+    rstime_t _last_autowash_time ;
+    rstime_t _last_matrix_update_time ;
+    rstime_t _last_debug_output_time ;
+    rstime_t _last_config_changed ;
 
     uint64_t _random_salt ;
 };

@@ -797,7 +797,7 @@ void ChatWidget::completeNickname(bool reverse)
 		std::list<QString> participants;
         RsIdentityDetails details ;
 
-        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         if(rsIdentity->getIdDetails(it->first,details))
             participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
@@ -864,7 +864,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
     // Get participants list
     QStringList participants;
 
-    for (std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(it->first,details) ;

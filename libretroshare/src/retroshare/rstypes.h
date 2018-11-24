@@ -33,6 +33,7 @@
 #include <retroshare/rsflags.h>
 #include <serialiser/rsserializable.h>
 #include <serialiser/rstypeserializer.h>
+#include "util/rstime.h"
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
@@ -160,6 +161,7 @@ struct PeerBandwidthLimits : RsSerializable
 #define DIR_TYPE_PERSON  	0x02
 #define DIR_TYPE_DIR  		0x04
 #define DIR_TYPE_FILE 		0x08
+#define DIR_TYPE_EXTRA_FILE 0x10
 
 /* flags for Directry request -
  * two types;
@@ -224,7 +226,7 @@ struct FileInfo : RsSerializable
 	std::vector<TransferInfo> peers;
 
 	DwlSpeed priority;
-	time_t lastTS;
+	rstime_t lastTS;
 
 	std::list<RsNodeGroupId> parent_groups;
 

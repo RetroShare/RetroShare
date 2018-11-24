@@ -61,7 +61,7 @@
  * 	- auto-clean reputations for default values
  *
  * std::map<RsGxsId, Reputation> mReputations.
- * std::multimap<time_t, RsGxsId> mUpdated.
+ * std::multimap<rstime_t, RsGxsId> mUpdated.
  *
  * std::map<RsPeerId, ReputationConfig> mConfig;
  *
@@ -187,7 +187,7 @@ int	p3GxsReputation::tick()
 	processIncoming();
 	sendPackets();
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	if(mLastCleanUp + CLEANUP_PERIOD < now)
 	{
@@ -217,7 +217,7 @@ int	p3GxsReputation::tick()
 	}
 
 #ifdef DEBUG_REPUTATION
-	static time_t last_debug_print = time(NULL) ;
+	static rstime_t last_debug_print = time(NULL) ;
 
 	if(now > 10+last_debug_print)
 	{
@@ -369,7 +369,7 @@ void p3GxsReputation::cleanup()
 #ifdef DEBUG_REPUTATION
 	std::cerr << "p3GxsReputation::cleanup() " << std::endl;
 #endif
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     // We should keep opinions about identities that do not exist anymore, but only rely on the usage TS. That will in particular avoid asking p3idservice about deleted
     // identities, which would cause an excess of hits to the database. We do it in two steps to avoid a deadlock when calling rsIdentity from here.
@@ -546,12 +546,12 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 #endif
 
 	RsPeerId peerId = request->PeerId();
-	time_t last_update = request->mLastUpdate;
-	time_t now = time(NULL);
+	rstime_t last_update = request->mLastUpdate;
+	rstime_t now = time(NULL);
 
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-	std::multimap<time_t, RsGxsId>::iterator tit;
+	std::multimap<rstime_t, RsGxsId>::iterator tit;
 	tit = mUpdated.upper_bound(last_update); // could skip some - (fixed below).
 
 	int count = 0;
@@ -741,7 +741,7 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 }
 
 
-bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
+bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,rstime_t latest_update)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -810,7 +810,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     if(gxsid.isNull())
         return false ;
         
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -1047,7 +1047,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 			return false;
 		}
 
-		std::multimap<time_t, RsGxsId>::iterator uit, euit;
+		std::multimap<rstime_t, RsGxsId>::iterator uit, euit;
 		uit = mUpdated.lower_bound(reputation.mOwnOpinionTs);
 		euit = mUpdated.upper_bound(reputation.mOwnOpinionTs);
 		for(; uit != euit; ++uit)
@@ -1060,7 +1060,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 		}
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	reputation.mOwnOpinion = opinion;
 	reputation.mOwnOpinionTs = now;
 	reputation.updateReputation();
@@ -1384,8 +1384,8 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 int	p3GxsReputation::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t requestTime, storeTime;
+	rstime_t now = time(NULL);
+	rstime_t requestTime, storeTime;
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 		requestTime = mRequestTime;
@@ -1445,7 +1445,7 @@ void p3GxsReputation::sendReputationRequests()
 int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 {
 #ifdef DEBUG_REPUTATION
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 	std::cerr << "  p3GxsReputation::sendReputationRequest(" << peerid << ") " ;
 #endif
 
@@ -1573,7 +1573,7 @@ std::map<RsGxsId,Reputation> rep_copy;
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     rep_copy = mReputations ;
 }
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsId,Reputation>::const_iterator it(rep_copy.begin());it!=rep_copy.end();++it)
     {

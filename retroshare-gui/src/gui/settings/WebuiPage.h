@@ -27,7 +27,7 @@ public:
   /** Loads the settings for this page */
   virtual void load();
 
-  virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/webinterface.svg") ; }
+  virtual QPixmap iconPixmap() const { return QPixmap(":/home/img/Setting/world_x.svg") ; }
   virtual QString pageName() const { return tr("Webinterface") ; }
   virtual QString helpText() const;
 

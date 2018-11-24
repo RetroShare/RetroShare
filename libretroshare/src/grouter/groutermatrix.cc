@@ -36,7 +36,7 @@ GRouterMatrix::GRouterMatrix()
 
 bool GRouterMatrix::addTrackingInfo(const RsGxsMessageId& mid,const RsPeerId& source_friend)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     RoutingTrackEntry rte ;
 
@@ -57,7 +57,7 @@ bool GRouterMatrix::cleanUp()
 #ifdef ROUTING_MATRIX_DEBUG
     std::cerr << "GRouterMatrix::cleanup()" << std::endl;
 #endif
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsMessageId,RoutingTrackEntry>::iterator it(_tracking_clues.begin());it!=_tracking_clues.end();)
 	    if(it->second.time_stamp + RS_GROUTER_MAX_KEEP_TRACKING_CLUES < now)
@@ -84,7 +84,7 @@ bool GRouterMatrix::addRoutingClue(const GRouterKeyId& key_id,const RsPeerId& so
 
 	// 2 - get the Key map, and add the routing clue.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	RoutingMatrixHitEntry rc ;
 	rc.weight = weight ;
@@ -179,7 +179,7 @@ void GRouterMatrix::debugDump() const
 	std::cerr << "    Proba needs up: " << _proba_need_updating << std::endl;
 	std::cerr << "    Known keys:     " << _time_combined_hits.size() << std::endl;
 	std::cerr << "    Routing events: " << std::endl;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
 	{
@@ -209,7 +209,7 @@ bool GRouterMatrix::computeRoutingProbabilities(const GRouterKeyId& key_id, cons
 {
 	// Routing probabilities are computed according to routing clues
 	//
-	// For a given key, each friend has a known set of routing clues (time_t, weight)
+	// For a given key, each friend has a known set of routing clues (rstime_t, weight)
 	//	We combine these to compute a static weight for each friend/key pair. 
 	//	This is performed in updateRoutingProbabilities()
 	//
@@ -271,7 +271,7 @@ bool GRouterMatrix::updateRoutingProbabilities()
 	if(!_proba_need_updating)
 		return false ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<GRouterKeyId, std::list<RoutingMatrixHitEntry> >::const_iterator it(_routing_clues.begin());it!=_routing_clues.end();++it)
 	{

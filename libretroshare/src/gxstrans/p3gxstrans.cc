@@ -481,7 +481,7 @@ void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 	bool changed = false ;
 
     if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)

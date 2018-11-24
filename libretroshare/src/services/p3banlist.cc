@@ -226,7 +226,7 @@ void p3BanList::autoFigureOutBanRanges()
     for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanSet.begin());it!=mBanSet.end();++it)
         ++range_map[makeBitsRange(it->first,1)].n ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<sockaddr_storage, services::ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
     {
@@ -571,7 +571,7 @@ int p3BanList::tick()
     processIncoming();
     sendPackets();
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastDhtInfoRequest + RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT < now)
     {
@@ -584,7 +584,7 @@ int p3BanList::tick()
     }
 
 #ifdef DEBUG_BANLIST
-    static time_t last_print = 0 ;
+    static rstime_t last_print = 0 ;
 
     if(now > 10+last_print)
     {
@@ -686,7 +686,7 @@ bool p3BanList::recvBanItem(RsBanListItem *item)
 {
 	bool updated = false;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     std::list<RsTlvBanListEntry>::const_iterator it;
 
 	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
@@ -925,7 +925,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
 
 bool p3BanList::addBanEntry( const RsPeerId &peerId,
                              const sockaddr_storage &dAddr,
-                             int level, uint32_t reason, time_t time_stamp )
+                             int level, uint32_t reason, rstime_t time_stamp )
 {
 	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 	if(!sockaddr_storage_ipv6_to_ipv4(addr))
@@ -939,7 +939,7 @@ bool p3BanList::addBanEntry( const RsPeerId &peerId,
 
 	RS_STACK_MUTEX(mBanMtx);
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	bool updated = false;
 
 #ifdef DEBUG_BANLIST
@@ -1045,7 +1045,7 @@ int p3BanList::condenseBanSources_locked()
      //RS_STACK_MUTEX(mBanMtx) ;
         mBanSet.clear();
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 	RsPeerId ownId = mServiceCtrl->getOwnId();
 
 #ifdef DEBUG_BANLIST
@@ -1161,8 +1161,8 @@ int p3BanList::condenseBanSources_locked()
 
 int	p3BanList::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t pt;
+	rstime_t now = time(NULL);
+	rstime_t pt;
 	{
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 		pt = mSentListTime;
@@ -1221,7 +1221,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
     RsBanListItem *item = new RsBanListItem();
     item->PeerId(peerid);
 
-    //time_t now = time(NULL);
+    //rstime_t now = time(NULL);
 
     {
         RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
@@ -1247,7 +1247,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 
 int p3BanList::printBanSet_locked(std::ostream &out)
 {
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     out << "p3BanList::printBanSet_locked()";
     out << "  Only printing active filters (due to user options).";
@@ -1290,7 +1290,7 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 
 int p3BanList::printBanSources_locked(std::ostream &out)
 {
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)

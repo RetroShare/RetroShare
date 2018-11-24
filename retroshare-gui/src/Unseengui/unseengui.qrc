@@ -123,5 +123,7 @@
         <file>chat/img/identitybusy.png</file>
         <file>chat/img/identityidle.png</file>
         <file>chat/img/identityoffline.png</file>
+        <file>home/img/Setting/world.svg</file>
+        <file>home/img/Setting/world_x.svg</file>
     </qresource>
 </RCC>

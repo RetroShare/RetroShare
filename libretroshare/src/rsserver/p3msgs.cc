@@ -26,7 +26,7 @@
 //const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retroshare/rstypes.h"
 #include "rsserver/p3msgs.h"

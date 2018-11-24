@@ -39,7 +39,7 @@ struct RsGxsNetTunnelVirtualPeerInfo
 	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
 
 	uint8_t vpid_status ;					// status of the peer
-	time_t  last_contact ;					// last time some data was sent/recvd
+	rstime_t  last_contact ;					// last time some data was sent/recvd
 	uint8_t side ;	                        // client/server
 	uint8_t encryption_master_key[32];
 
@@ -68,7 +68,7 @@ struct RsGxsNetTunnelGroupInfo
 
 	GroupPolicy    group_policy ;
 	GroupStatus    group_status ;
-	time_t         last_contact ;
+	rstime_t         last_contact ;
 	RsFileHash     hash ;
 	uint16_t       service_id ;
 

@@ -61,7 +61,7 @@
 #include "rsitems/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <time.h>
+#include "util/rstime.h"
 
 /******
  * #define CONTROL_DEBUG 1
@@ -226,7 +226,7 @@ void ftController::data_tick()
 			doPending = (mFtActive) && (!mFtPendingDone);
 		}
 
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
 			IndicateConfigChanged() ;
@@ -421,11 +421,11 @@ void ftController::checkDownloadQueue()
 
 	// Check for inactive transfers, and queued transfers with online sources.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() ;++it)
 		if(	it->second->mState != ftFileControl::QUEUED  && (it->second->mState == ftFileControl::PAUSED
-                    || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
+                    || now > it->second->mTransfer->lastActvTimeStamp() + (rstime_t)MAX_TIME_INACTIVE_REQUEUED))
         {
 			inactive_transfers.push_back(it->second) ;
         }

@@ -76,15 +76,15 @@ public:
   	double desiredRate;
   	double actualRate;
 
-  	time_t lastTS; /* last Request */
-	time_t recvTS; /* last Recv */
+  	rstime_t lastTS; /* last Request */
+	rstime_t recvTS; /* last Recv */
 	uint32_t lastTransfers; /* data recvd in last second */
 	uint32_t nResets; /* count to disable non-existant files */
 
 	/* rrt rate control */
 	uint32_t rtt;       /* last rtt */
 	bool     rttActive; /* have we initialised an rtt measurement */
-	time_t	 rttStart;  /* ts of request */
+	rstime_t	 rttStart;  /* ts of request */
 	uint64_t rttOffset; /* end of request */
 	float    mRateIncrease; /* current rate */
 };
@@ -156,7 +156,7 @@ public:
   void setDownloadPriority(DwlSpeed p) { mPriority =p ; }
 
   // read/reset the last time the transfer module was active (either wrote data, or was solicitaded by clients)
-  time_t lastActvTimeStamp() ;
+  rstime_t lastActvTimeStamp() ;
   void resetActvTimeStamp() ;
 
 private:
@@ -185,7 +185,7 @@ private:
   double desiredRate;
   double actualRate;
 
-  time_t _last_activity_time_stamp ;
+  rstime_t _last_activity_time_stamp ;
 
   ftFileStatus mFileStatus; //used for pause/resume file transfer
 

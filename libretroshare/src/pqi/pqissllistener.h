@@ -49,7 +49,7 @@ public:
 	RsPeerId mPeerId;
 
 	sockaddr_storage mAddr;
-	time_t mAcceptTS;
+	rstime_t mAcceptTS;
 };
 
 

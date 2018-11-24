@@ -31,6 +31,8 @@
 #include <netdb.h>
 #endif
 
+#include <cstring>
+
 /* enforce LITTLE_ENDIAN on Windows */
 #ifdef WINDOWS_SYS
 	#define BYTE_ORDER  1234
@@ -76,55 +78,25 @@ void sockaddr_clear(struct sockaddr_in *addr)
 
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 {
-    addrinfo *info = NULL;
-    int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
+	addrinfo hint; memset(&hint, 0, sizeof(hint));
+	hint.ai_family = AF_INET;
+	addrinfo* info = nullptr;
+	int res = getaddrinfo(hostname.c_str(), nullptr, &hint, &info);
 
-    bool ok = true;
-    if(res > 0 || info == NULL || info->ai_addr == NULL)
-    {
-	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
-	returned_addr.s_addr = 0 ;
-        ok = false;
-    }
-    else
-        returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
-    
-    if(info)
-        freeaddrinfo(info) ;
-    
-#ifdef DEPRECATED_TO_REMOVE
-#if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
-	hostent *result = gethostbyname(hostname.c_str()) ;
-#else
-    RsTemporaryMemory mem(8192) ;
+	bool ok = true;
+	if(res > 0 || !info || !info->ai_addr)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "(EE) getaddrinfo returned error "
+		          << res << " on string \"" << hostname << "\"" << std::endl;
+		returned_addr.s_addr = 0;
+		ok = false;
+	}
+	else
+		returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr;
 
-    if(!mem)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory!" << std::endl;
-	    return false; // Do something.
-    }
+	if(info) freeaddrinfo(info);
 
-    int error = 0;
-    struct hostent pHost;
-    struct hostent *result;
-
-    if(gethostbyname_r(hostname.c_str(), &pHost, (char*)(unsigned char*)mem, mem.size(), &result, &error) != 0)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": cannot call gethostname_r. Internal error reported. Check buffer size." << std::endl;
-	    return false ;
-    }
-#endif
-    if(!result)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname returned null result." << std::endl;
-	    return false ;
-    }
-    // Use contents of result.
-
-    returned_addr.s_addr = *(unsigned long*) (result->h_addr);
-#endif
-    
-    return ok;
+	return ok;
 }
 
 bool    isValidNet(const struct in_addr *addr)

@@ -179,7 +179,7 @@ void	p3GxsCircles::service_tick()
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
     
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
     	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
 	{
 		checkCircleCache();
@@ -1280,7 +1280,7 @@ bool p3GxsCircles::checkCircleCache()
 
 bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
 	{ 

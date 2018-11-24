@@ -27,7 +27,7 @@
 #include <iomanip>
 #include <stdio.h>
 #include <openssl/sha.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3dhtmgr.h"
 #include "pqi/p3peermgr.h"
@@ -322,7 +322,7 @@ bool p3DhtMgr::notifyPeer(const RsPeerId& id)
 	}
 
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	if (now - it->second.notifyTS < 2 * DHT_NOTIFY_PERIOD)
 	{
@@ -578,7 +578,7 @@ void p3DhtMgr::run()
 int p3DhtMgr::checkOwnDHTKeys()
 {
 	int repubPeriod = 10000;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* in order of importance:
 	 * (1) Check for Own Key publish.
@@ -777,12 +777,12 @@ int p3DhtMgr::checkPeerDHTKeys()
 
 	/* iterate through and find min time and suitable candidate */
 	std::map<RsPeerId, dhtPeerEntry>::iterator it,pit;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	uint32_t period = 0;
 	uint32_t repeatPeriod = 6000;
 
 	pit = peers.end();
-	time_t pTS = now;
+	rstime_t pTS = now;
 	
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
@@ -792,7 +792,7 @@ int p3DhtMgr::checkPeerDHTKeys()
 			continue;
 		}
 
-		time_t delta = now - it->second.lastTS;
+		rstime_t delta = now - it->second.lastTS;
 		if (it->second.state < DHT_PEER_FOUND)
 		{
 			period = DHT_SEARCH_PERIOD;
@@ -866,7 +866,7 @@ int p3DhtMgr::checkNotifyDHT()
 
 	/* iterate through and find min time and suitable candidate */
 	std::map<RsPeerId, dhtPeerEntry>::iterator it;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	int repeatPeriod = DHT_DEFAULT_PERIOD; 
 
 	/* find the first with a notify flag */
@@ -1084,7 +1084,7 @@ bool p3DhtMgr::getDhtBootstrapList()
 #endif
 	dhtMtx.lock(); /* LOCK MUTEX */
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mLastBootstrapListTS < DHT_MIN_BOOTSTRAP_REQ_PERIOD)
 	{
 #ifdef DHT_DEBUG
@@ -1623,7 +1623,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
 #endif
 	std::map<RsPeerId, dhtPeerEntry>::iterator it;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* if notify - we must match on the second hash */
 	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash2 != idhash); it++) ;
@@ -1679,7 +1679,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 	bool doCb = false;
 	bool doStun = false;
 	uint32_t stunFlags = 0;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	dhtPeerEntry ent;
 

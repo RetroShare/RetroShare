@@ -20,7 +20,7 @@
  *                                                                             *
  ******************************************************************************/
 #include <set>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rspeers.h"
 #include "util/rsdir.h"
@@ -71,7 +71,7 @@ DirectoryStorage::DirIterator ::operator bool() const { return **this != Directo
 RsFileHash  DirectoryStorage::FileIterator::hash()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_hash):RsFileHash(); }
 uint64_t    DirectoryStorage::FileIterator::size()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_size):0; }
 std::string DirectoryStorage::FileIterator::name()     const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_name):std::string(); }
-time_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
+rstime_t      DirectoryStorage::FileIterator::modtime()  const { const InternalFileHierarchyStorage::FileEntry *f = mStorage->getFileEntry(**this) ; return f?(f->file_modtime):0; }
 
 std::string DirectoryStorage::DirIterator::name()      const { const InternalFileHierarchyStorage::DirEntry *d = mStorage->getDirEntry(**this) ; return d?(d->dir_name):std::string(); }
 
@@ -119,13 +119,13 @@ uint32_t DirectoryStorage::getEntryType(const EntryIndex& indx)
     }
 }
 
-bool DirectoryStorage::getDirectoryUpdateTime   (EntryIndex index,time_t& update_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
-bool DirectoryStorage::getDirectoryRecursModTime(EntryIndex index,time_t& rec_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
-bool DirectoryStorage::getDirectoryLocalModTime (EntryIndex index,time_t& loc_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
+bool DirectoryStorage::getDirectoryUpdateTime   (EntryIndex index,rstime_t& update_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::getDirectoryRecursModTime(EntryIndex index,rstime_t& rec_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::getDirectoryLocalModTime (EntryIndex index,rstime_t& loc_md_TS) const { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->getTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
-bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,time_t  update_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
-bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,time_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
-bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,time_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
+bool DirectoryStorage::setDirectoryUpdateTime   (EntryIndex index,rstime_t  update_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,update_TS,&InternalFileHierarchyStorage::DirEntry::dir_update_time     ); }
+bool DirectoryStorage::setDirectoryRecursModTime(EntryIndex index,rstime_t  rec_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,rec_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_most_recent_time); }
+bool DirectoryStorage::setDirectoryLocalModTime (EntryIndex index,rstime_t  loc_md_TS) { RS_STACK_MUTEX(mDirStorageMtx) ; return mFileHierarchy->setTS(index,loc_md_TS,&InternalFileHierarchyStorage::DirEntry::dir_modtime         ); }
 
 bool DirectoryStorage::updateSubDirectoryList(const EntryIndex& indx, const std::set<std::string> &subdirs, const RsFileHash& hash_salt)
 {
@@ -281,7 +281,7 @@ bool DirectoryStorage::getIndexFromDirHash(const RsFileHash& hash,EntryIndex& in
 
 void DirectoryStorage::checkSave()
 {
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     if(mChanged && mLastSavedTime + MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE < now)
 	{
@@ -489,7 +489,7 @@ void LocalDirectoryStorage::updateTimeStamps()
 
         bool unfinished_files_below ;
 
-        time_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
+        rstime_t last_modf_time = mFileHierarchy->recursUpdateLastModfTime(EntryIndex(0),unfinished_files_below) ;
         mTSChanged = false ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE

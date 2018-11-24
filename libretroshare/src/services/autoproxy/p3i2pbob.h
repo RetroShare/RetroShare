@@ -25,7 +25,7 @@
 #include <map>
 #include <queue>
 #include <sys/types.h>
-#include <time.h>
+#include "util/rstime.h"
 #ifndef WINDOWS_SYS
 	#include <sys/socket.h>
 #endif
@@ -255,7 +255,7 @@ private:
 	p3PeerMgr *mPeerMgr;
 	bool mConfigLoaded;
 	int mSocket;
-	time_t mLastProxyCheck;
+	rstime_t mLastProxyCheck;
 	sockaddr_storage mI2PProxyAddr;
 	std::map<bobState, bobStateInfo> mCommands;
 	std::string mErrorMsg;

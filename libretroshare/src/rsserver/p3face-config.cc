@@ -36,7 +36,7 @@
 //const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3peermgr.h"
 #include "pqi/p3netmgr.h"

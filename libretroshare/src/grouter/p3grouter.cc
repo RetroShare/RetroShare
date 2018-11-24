@@ -218,7 +218,7 @@ p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
 
 int p3GRouter::tick()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // Sort incoming service data
     //
@@ -555,7 +555,7 @@ void GRouterTunnelInfo::addVirtualPeer(const TurtleVirtualPeerId& vpid)
 
     virtual_peers.insert(vpid) ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
     last_tunnel_ok_TS = now ;
@@ -760,7 +760,7 @@ void p3GRouter::handleTunnels()
     }
 #endif
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     std::vector<std::pair<int,GRouterRoutingInfo*> > priority_list ;
 
     for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();++it)
@@ -893,7 +893,7 @@ void p3GRouter::routePendingObjects()
     // Which tunnels are available is handled by handleTunnels()
     //
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     RS_STACK_MUTEX(grMtx) ;
 #ifdef GROUTER_DEBUG
@@ -1220,7 +1220,7 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 
 void p3GRouter::locked_collectAvailableTunnels(const TurtleFileHash& hash,uint32_t total_duplication,std::map<RsPeerId,uint32_t>& tunnel_peers_and_duplication_factors)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // Now go through available virtual peers. Select the ones that are interesting, and set them as potential destinations.
 
@@ -1304,7 +1304,7 @@ bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTr
 void p3GRouter::autoWash()
 {
     bool items_deleted = false ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     std::map<GRouterMsgPropagationId,std::pair<GRouterClientService *,RsGxsId> > failed_msgs ;
 
@@ -2158,7 +2158,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     //
     GRouterRoutingInfo info ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     info.data_item = data_item ;
     info.receipt_item = NULL ;
@@ -2368,7 +2368,7 @@ void p3GRouter::debugDump()
 {
         RS_STACK_MUTEX(grMtx) ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	grouter_debug() << "Full dump of Global Router state: " << std::endl; 
 	grouter_debug() << "  Owned keys : " << std::endl;

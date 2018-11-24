@@ -578,7 +578,7 @@ void ChatLobbyDialog::updateParticipantsList()
                 delete ui.participantsList->takeTopLevelItem(index);
             }
 
-        for (std::map<RsGxsId,time_t>::const_iterator it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
+		for (auto it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
         {
             QString participant = QString::fromUtf8( (it2->first).toStdString().c_str() );
 

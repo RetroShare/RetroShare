@@ -25,7 +25,7 @@
  */
 
 #include <stdexcept>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rsmailtransportitems.h"
 #include "serialiser/rstlvbase.h"

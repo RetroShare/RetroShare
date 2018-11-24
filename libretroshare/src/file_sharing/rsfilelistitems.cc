@@ -54,7 +54,7 @@ template<> void RsTypeSerializer::serial_process(RsGenericSerializer::SerializeJ
 {
 	RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_NAME,entry.filename      ,"entry.file_name") ;
 	RsTypeSerializer::serial_process<uint64_t>(j,ctx,                  entry.size          ,"entry.size") ;
-	RsTypeSerializer::serial_process<time_t>  (j,ctx,                  entry.ban_time_stamp,"entry.ban_time_stamp") ;
+	RsTypeSerializer::serial_process<rstime_t>  (j,ctx,                  entry.ban_time_stamp,"entry.ban_time_stamp") ;
 }
 RsItem *RsFileListsSerialiser::create_item(uint16_t service,uint8_t type) const
 {

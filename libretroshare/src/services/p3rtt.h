@@ -105,7 +105,7 @@ virtual bool recvItem(RsItem *item); // Overloaded from p3FastService.
 		RttPeerInfo *locked_GetPeerInfo(const RsPeerId& id);
 
 		std::map<RsPeerId, RttPeerInfo> mPeerInfo;
-		time_t mSentPingTime;
+		rstime_t mSentPingTime;
 		uint32_t mCounter;
 
 		p3ServiceControl *mServiceCtrl;

@@ -24,11 +24,11 @@
 #include "pqi/p3servicecontrol.h"
 #include "pgp/pgpauxutils.h"
 
- const time_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
+ const rstime_t AuthorPending::EXPIRY_PERIOD_OFFSET = 30; // 30 seconds
  const int AuthorPending::MSG_PEND = 1;
  const int AuthorPending::GRP_PEND = 2;
 
-AuthorPending::AuthorPending(RsGixsReputation* rep, time_t timeStamp) : mRep(rep), mTimeStamp(timeStamp) {}
+AuthorPending::AuthorPending(RsGixsReputation* rep, rstime_t timeStamp) : mRep(rep), mTimeStamp(timeStamp) {}
 
 AuthorPending::~AuthorPending() {}
 
@@ -197,7 +197,7 @@ void RsNxsNetMgrImpl::getOnlineList(const uint32_t serviceId, std::set<RsPeerId>
     mServiceCtrl->getPeersConnected(serviceId, ssl_peers);
 }
 
-const time_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
+const rstime_t GrpCircleVetting::EXPIRY_PERIOD_OFFSET = 5; // 10 seconds
 const int GrpCircleVetting::GRP_ID_PEND = 1;
 const int GrpCircleVetting::GRP_ITEM_PEND = 2;
 const int GrpCircleVetting::MSG_ID_SEND_PEND = 3;

@@ -31,15 +31,13 @@ set NSIS_PARAM=%NSIS_PARAM% /DOUTDIR="%RsPackPath%"
 set NSIS_PARAM=%NSIS_PARAM% /DINSTALLERADD="%RsArchiveAdd%"
 set NSIS_PARAM=%NSIS_PARAM% /DEXTERNAL_LIB_DIR="%BuildLibsPath%\libs"
 
-:: Scan version from source
-set RsRevision=
-set RsBuildAdd=
-call "%ToolsPath%\get-rs-version.bat" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& exit /B 1
-call "%ToolsPath%\get-rs-version.bat" RS_BUILD_NUMBER_ADD RsBuildAdd
-if errorlevel 1 exit /B 1
+:: Get compiled version
+call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+if errorlevel 1 %cecho% error "Version not found."& exit /B 1
 
-set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsRevision% /DBUILDADD=%RsBuildAdd%
+if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& exit /B 1
+
+set NSIS_PARAM=%NSIS_PARAM% /DREVISION=%RsVersion.Extra%
 
 set QtMainVersion=%QtVersion:~0,1%
 

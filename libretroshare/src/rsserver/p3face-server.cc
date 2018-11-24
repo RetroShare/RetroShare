@@ -34,7 +34,7 @@
 
 #include "pqi/authssl.h"
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3peermgr.h"
 #include "pqi/p3linkmgr.h"
@@ -51,7 +51,7 @@ int rsserverzone = 101;
 
 #define WARN_BIG_CYCLE_TIME	(0.2)
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/timeb.h>
 #endif
 
@@ -247,7 +247,7 @@ void 	RsServer::data_tick()
 
             /* Tick slow services */
             if(rsPlugins)
-                rsPlugins->slowTickPlugins((time_t)ts);
+                rsPlugins->slowTickPlugins((rstime_t)ts);
 
             // slow update tick as well.
             // update();

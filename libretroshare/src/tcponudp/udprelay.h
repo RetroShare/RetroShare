@@ -51,10 +51,10 @@ class UdpRelayProxy
 	UdpRelayAddrSet mAddrs;
 	double mBandwidth;
 	uint32_t mDataSize;
-	time_t mLastBandwidthTS;
-	time_t mLastTS;
+	rstime_t mLastBandwidthTS;
+	rstime_t mLastTS;
 
-	time_t mStartTS;
+	rstime_t mStartTS;
 	double mBandwidthLimit;
 
 	int mRelayClass;

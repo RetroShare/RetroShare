@@ -521,7 +521,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	StreamBase& usagesStream = resp.mDataStream.getStreamToMember("usages");
 	usagesStream.getStreamToMember();
 
-	for(std::map<RsIdentityUsage,time_t>::const_iterator it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
+	for(auto it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
 	{
 		usagesStream.getStreamToMember()
 		        << makeKeyValue("usage_time", (uint32_t)data.mLastUsageTS)
