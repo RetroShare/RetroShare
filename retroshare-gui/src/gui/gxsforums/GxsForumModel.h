@@ -80,6 +80,8 @@ public:
               };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
+	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
+    QModelIndex getNextIndex(const QModelIndex& i,bool unread_only) const;
 
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);

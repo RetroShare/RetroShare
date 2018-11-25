@@ -1022,6 +1022,42 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
         recursPrintModel(entries,e.mChildren[i],depth+1);
 }
 
+QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
+{
+    // brutal search. This is not so nice, so dont call that in a loop!
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+        if(mPosts[i].mMsgId == mid)
+        {
+            void *ref ;
+            convertTabEntryToRefPointer(i,ref);
+
+            return createIndex(mPosts[i].prow,0,ref);
+        }
+
+    return QModelIndex();
+}
+
+QModelIndex RsGxsForumModel::getNextIndex(const QModelIndex& i,bool unread_only) const
+{
+#ifdef TODO
+    ForumModelIndex fmi ;
+    convertRefPointerToTabEntry(i.internalPointer(),fmi);
+
+    // Algorithm is simple: visit children recursively. When none available, go to parent. We need of course a stack of parents to the current index.
+
+    std::list<ForumModelIndex> parent_stack ;
+
+    for(ForumModelIndex tmp(fmi);tmp!=0;tmp=mPosts[tmp].mParent)
+        parent_stack.push_front(tmp);
+
+	// now get to next unread item
+
+    if(!mPosts[fmi].mChildren.empty())
+#endif
+		return QModelIndex();
+}
+
 void RsGxsForumModel::debug_dump()
 {
     std::cerr << "Model data dump:" << std::endl;

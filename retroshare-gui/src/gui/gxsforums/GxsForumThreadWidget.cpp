@@ -100,6 +100,12 @@ class DistributionItemDelegate: public QStyledItemDelegate
 public:
     DistributionItemDelegate() {}
 
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
+    {
+		const QRect r = option.rect;
+        return QSize(r.height(),r.height());
+    }
+
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 	{
 		if(!index.isValid())
@@ -518,7 +524,9 @@ void GxsForumThreadWidget::processSettings(bool load)
 
 void GxsForumThreadWidget::groupIdChanged()
 {
+#ifdef TO_REMOVE
 	ui->forumName->setText(groupId().isNull () ? "" : tr("Loading"));
+#endif
 	mNewCount = 0;
 	mUnreadCount = 0;
 
@@ -2029,43 +2037,17 @@ void GxsForumThreadWidget::downloadAllFiles()
 
 void GxsForumThreadWidget::nextUnreadMessage()
 {
-#ifdef TODO
-	QTreeWidgetItem *currentItem = ui->threadTreeWidget->currentItem();
+    QModelIndex index = mThreadModel->getNextIndex(getCurrentIndex(),true);
 
-	while (true) {
-		QTreeWidgetItemIterator itemIterator = currentItem ? QTreeWidgetItemIterator(currentItem, QTreeWidgetItemIterator::NotHidden) : QTreeWidgetItemIterator(ui->threadTreeWidget, QTreeWidgetItemIterator::NotHidden);
-
-		QTreeWidgetItem *item;
-		while ((item = *itemIterator) != NULL) {
-			++itemIterator;
-
-			if (item == currentItem) {
-				continue;
-			}
-
-			uint32_t status = item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-			if (IS_MSG_UNREAD(status)) {
-				ui->threadTreeWidget->setCurrentItem(item);
-				ui->threadTreeWidget->scrollToItem(item, QAbstractItemView::EnsureVisible);
-				return;
-			}
-		}
-
-		if (currentItem == NULL) {
-			break;
-		}
-
-		/* start from top */
-		currentItem = NULL;
-	}
-#endif
+	ui->threadTreeWidget->setCurrentIndex(index);
+	ui->threadTreeWidget->setFocus();
 }
 
+#ifdef TO_REMOVE
 /* get selected messages
    the messages tree is single selected, but who knows ... */
 int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QList<QTreeWidgetItem*> *rowsRead, QList<QTreeWidgetItem*> *rowsUnread)
 {
-#ifdef TODO
 	if (rowsRead) rowsRead->clear();
 	if (rowsUnread) rowsUnread->clear();
 
@@ -2083,14 +2065,11 @@ int GxsForumThreadWidget::getSelectedMsgCount(QList<QTreeWidgetItem*> *rows, QLi
 	}
 
 	return selectedItems.size();
-#endif
     return 0;
 }
 
 void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read)
 {
-
-#ifdef TODO
 	QList<QTreeWidgetItem*>::iterator row;
 	std::list<QTreeWidgetItem*> changedItems;
 
@@ -2161,8 +2140,8 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 		}
 		calculateUnreadCount();
 	}
-#endif
 }
+#endif
 
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
@@ -2257,31 +2236,14 @@ void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
-#ifdef TODO
-	if (mStateHelper->isLoading(mTokenTypeInsertThreads)) {
-		mNavigatePendingMsgId = msgId;
+    QModelIndex index = mThreadModel->getIndexOfMessage(msgId);
 
-		/* No information if message is available */
-		return true;
-	}
+    if(!index.isValid())
+		return false;
 
-	QString msgIdString = QString::fromStdString(msgId.toStdString());
-
-	/* Search exisiting item */
-	QTreeWidgetItemIterator itemIterator(ui->threadTreeWidget);
-	QTreeWidgetItem *item = NULL;
-	while ((item = *itemIterator) != NULL) {
-		++itemIterator;
-
-		if (item->data(RsGxsForumModel::COLUMN_THREAD_MSGID,Qt::DisplayRole).toString() == msgIdString) {
-			ui->threadTreeWidget->setCurrentItem(item);
-			ui->threadTreeWidget->setFocus();
-			return true;
-		}
-	}
-#endif
-
-	return false;
+	ui->threadTreeWidget->setCurrentIndex(index);
+	ui->threadTreeWidget->setFocus();
+	return true;
 }
 
 bool GxsForumThreadWidget::isLoading()
@@ -2298,10 +2260,11 @@ void GxsForumThreadWidget::copyMessageLink()
 	if (groupId().isNull() || mThreadId.isNull()) {
 		return;
 	}
-#ifdef TODO
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
 
-	QString thread_title = (item != NULL)?item->text(RsGxsForumModel::COLUMN_THREAD_TITLE):QString() ;
+    ForumModelPostEntry fmpe ;
+    getCurrentPost(fmpe);
+
+	QString thread_title = QString::fromUtf8(fmpe.mTitle.c_str());
 
 	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, groupId(), mThreadId, thread_title);
 
@@ -2310,7 +2273,6 @@ void GxsForumThreadWidget::copyMessageLink()
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
 	}
-#endif
 }
 
 void GxsForumThreadWidget::subscribeGroup(bool subscribe)
