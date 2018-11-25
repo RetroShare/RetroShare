@@ -367,7 +367,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE, QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
 
     float f = QFontMetricsF(font()).height()/14.0f ;
@@ -451,9 +451,11 @@ void GxsForumThreadWidget::blank()
 #endif
 	ui->forumName->setText("");
 
+#ifdef SUSPENDED_CODE
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
 	mStateHelper->setWidgetEnabled(ui->previousButton, false);
 	mStateHelper->setWidgetEnabled(ui->nextButton, false);
+#endif
 	ui->versions_CB->hide();
 }
 
@@ -520,10 +522,8 @@ void GxsForumThreadWidget::groupIdChanged()
 	mNewCount = 0;
 	mUnreadCount = 0;
 
-	emit groupChanged(this);
-
     mThreadModel->setForum(groupId());
-	//fillComplete();
+    updateDisplay(true);
 }
 
 QString GxsForumThreadWidget::groupName(bool withUnreadCount)
@@ -1077,7 +1077,7 @@ void GxsForumThreadWidget::insertGroupData()
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::insertGroupData" << std::endl;
 #endif
-    GxsIdDetails::process(mForumGroup.mMeta.mAuthorId, &loadAuthorIdCallback, this);
+    //GxsIdDetails::process(mForumGroup.mMeta.mAuthorId, &loadAuthorIdCallback, this);
 	calculateIconsAndFonts();
 }
 
@@ -1788,9 +1788,10 @@ void GxsForumThreadWidget::insertMessage()
 {
 	if (groupId().isNull())
 	{
+#ifdef SUSPENDED_CODE
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
-
+#endif
         ui->versions_CB->hide();
         ui->time_label->show();
 
@@ -1800,8 +1801,10 @@ void GxsForumThreadWidget::insertMessage()
 
 	if (mThreadId.isNull())
 	{
+#ifdef SUSPENDED_CODE
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
+#endif
 
         ui->versions_CB->hide();
         ui->time_label->show();
@@ -1810,7 +1813,9 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
+#ifdef SUSPENDED_CODE
 	mStateHelper->setActive(mTokenTypeMessageData, true);
+#endif
 
 #ifdef TODO
 	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
@@ -2717,7 +2722,7 @@ void GxsForumThreadWidget::updateGroupData()
 			 */
 
 			mForumGroup = group;
-			insertGroupData();
+			//insertGroupData();
             mSubscribeFlags = group.mMeta.mSubscribeFlags;
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));

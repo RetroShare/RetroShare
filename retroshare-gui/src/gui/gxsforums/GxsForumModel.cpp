@@ -459,6 +459,8 @@ void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
 
 void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts)
 {
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+
     mForumGroup = group;
     mPosts = posts;
 
@@ -476,7 +478,6 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 
 	emit layoutChanged();
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
