@@ -2469,7 +2469,10 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
         }
 
         if(msgs.size() != 1)
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " more than 1 or no msgs selected in forum " << groupId() << std::endl;
 			return;
+        }
 
         // 2 - sort the messages into a proper hierarchy
 

@@ -4,7 +4,9 @@
 #include <QIcon>
 
 #include "util/qtthreadsutils.h"
+#include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "GxsForumModel.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
@@ -333,18 +335,36 @@ QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column
 
 QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column) const
 {
-    if(column != COLUMN_THREAD_DISTRIBUTION)
-        return QVariant();
+    if(column == COLUMN_THREAD_DISTRIBUTION)
+		switch(fmpe.mReputationWarningLevel)
+		{
+		case 3: return QVariant(tr("Information for this identity is currently missing.")) ;
+		case 2: return QVariant(tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.")) ;
+		case 1: return QVariant(tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.")) ;
+		case 0: return QVariant(tr("Message will be forwarded to your friends.")) ;
+		default:
+			return QVariant("[ERROR: missing reputation level information - contact the developers]");
+		}
 
-    switch(fmpe.mReputationWarningLevel)
-    {
-    case 3: return QVariant(tr("Information for this identity is currently missing.")) ;
-    case 2: return QVariant(tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.")) ;
-    case 1: return QVariant(tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.")) ;
-    case 0: return QVariant(tr("Message will be forwarded to your friends.")) ;
-            default:
-            return QVariant("[ERROR: missing reputation level information - contact the developers]");
-    }
+    if(column == COLUMN_THREAD_AUTHOR)
+	{
+		QString str,comment ;
+		QList<QIcon> icons;
+
+		if(!GxsIdDetails::MakeIdDesc(fmpe.mAuthorId, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+			return QVariant();
+
+		int S = QFontMetricsF(QApplication::font()).height();
+		QImage pix( (*icons.begin()).pixmap(QSize(4*S,4*S)).toImage());
+
+		QString embeddedImage;
+		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S))
+			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";
+
+		return comment;
+	}
+
+    return QVariant();
 }
 
 QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int column) const
@@ -474,8 +494,9 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 
     bool has_unread_below,has_read_below ;
     recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
-
+#ifdef DEBUG_FORUMMODEL
     debug_dump();
+#endif
 
 	emit layoutChanged();
 }
