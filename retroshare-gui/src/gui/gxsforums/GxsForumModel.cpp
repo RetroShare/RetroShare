@@ -950,7 +950,7 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 		mPosts[i].mMsgStatus = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 
     uint32_t token;
-	rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read);
+	rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
 
     if(!with_children)
         return;
