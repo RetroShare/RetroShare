@@ -683,17 +683,17 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
     QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
     flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
-    flagaspositiveAct->setData(mTokenTypePositiveAuthor) ;
+    flagaspositiveAct->setData(RsReputations::OPINION_POSITIVE) ;
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
     flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
-    flagasneutralAct->setData(mTokenTypeNeutralAuthor) ;
+    flagasneutralAct->setData(RsReputations::OPINION_NEUTRAL) ;
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
     flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
-    flagasnegativeAct->setData(mTokenTypeNegativeAuthor) ;
+    flagasnegativeAct->setData(RsReputations::OPINION_NEGATIVE) ;
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
@@ -898,6 +898,7 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
+	mThreadModel->setMsgReadStatus(index, true,false);
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
@@ -905,8 +906,14 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
     if(!index.isValid())
 		return;
 
-	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags))
-		return;
+    RsGxsMessageId tmp(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
+
+    if( tmp.isNull())
+        return;
+
+    mThreadId = tmp;
+
+    std::cerr << "Clicked on message ID " << mThreadId << std::endl;
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
     {
@@ -1880,6 +1887,8 @@ void GxsForumThreadWidget::insertMessage()
 	/* request Post */
 	//RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
 	updateMessageData(mThreadId);
+
+    markMsgAsRead();
 }
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
@@ -2150,17 +2159,6 @@ void GxsForumThreadWidget::setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool 
 #endif
 }
 
-void GxsForumThreadWidget::showInPeopleTab()
-{
-	if (groupId().isNull() || mThreadId.isNull()) {
-		QMessageBox::information(this, tr("RetroShare"),tr("You cant act on the author to a non-existant Message"));
-		return;
-	}
-
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_ShowAuthorInPeople(postId) ;
-}
-
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
@@ -2405,8 +2403,17 @@ void GxsForumThreadWidget::flagperson()
 		return;
 	}
 
-	uint32_t token_type = qobject_cast<QAction*>(sender())->data().toUInt();
+	RsReputations::Opinion opinion = static_cast<RsReputations::Opinion>(qobject_cast<QAction*>(sender())->data().toUInt());
+    ForumModelPostEntry fmpe ;
 
+    getCurrentPost(fmpe);
+	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
+
+    std::cerr << "Setting own opinion for author " << fmpe.mAuthorId << " to " << opinion << std::endl;
+
+	rsReputations->setOwnOpinion(fmpe.mAuthorId,opinion) ;
+
+#ifdef TO_REMOVE
 	// Get Message ... then complete replyMessageData().
 	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
 
@@ -2424,40 +2431,60 @@ void GxsForumThreadWidget::flagperson()
 
 	uint32_t token;
 	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, token_type);
+#endif
 }
 
-void GxsForumThreadWidget::reply_with_private_message()
+void GxsForumThreadWidget::replytoforummessage()        { async_msg_action( &GxsForumThreadWidget::replyForumMessageData ); }
+void GxsForumThreadWidget::editforummessage()           { async_msg_action( &GxsForumThreadWidget::editForumMessageData  ); }
+void GxsForumThreadWidget::reply_with_private_message() { async_msg_action( &GxsForumThreadWidget::replyMessageData      ); }
+void GxsForumThreadWidget::showInPeopleTab()            { async_msg_action( &GxsForumThreadWidget::showAuthorInPeople    ); }
+
+void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 {
 	if (groupId().isNull() || mThreadId.isNull()) {
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
 		return;
 	}
 
-	// Get Message ... then complete replyMessageData().
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_ReplyWithPrivateMessage(postId);
-}
-void GxsForumThreadWidget::editforummessage()
-{
-	if (groupId().isNull() || mThreadId.isNull()) {
-		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
-		return;
-	}
+	RsThread::async([this,action]()
+	{
+        // 1 - get message data from p3GxsForums
 
-	// Get Message ... then complete replyMessageData().
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_EditForumMessage(postId);
-}
-void GxsForumThreadWidget::replytoforummessage()
-{
-	if (groupId().isNull() || mThreadId.isNull()) {
-		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to a non-existant Message"));
-		return;
-	}
+        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 
-	// Get Message ... then complete replyMessageData().
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_ReplyForumMessage(postId);
+        std::set<RsGxsMessageId> msgs_to_request ;
+        std::vector<RsGxsForumMsg> msgs;
+
+        msgs_to_request.insert(mThreadId);
+
+		if(!rsGxsForums->getForumsContent(groupId(),msgs_to_request,msgs))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			return;
+        }
+
+        if(msgs.size() != 1)
+			return;
+
+        // 2 - sort the messages into a proper hierarchy
+
+        RsGxsForumMsg msg = msgs[0];
+
+        // 3 - update the model in the UI thread.
+
+        RsQThreadUtils::postToObject( [msg,action,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			(this->*action)(msg);
+
+		}, this );
+
+    });
 }
 
 void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
@@ -2486,18 +2513,6 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 	{
 		QMessageBox::information(this, tr("RetroShare"),tr("You cant reply to an Anonymous Author"));
 	}
-}
-
-void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
-{
-	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
-	{
-		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
-		std::cerr << std::endl;
-		return;
-	}
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-	requestMsgData_ShowAuthorInPeople(postId);
 }
 
 void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
@@ -2887,7 +2902,6 @@ void GxsForumThreadWidget::loadMessageData(const uint32_t &token)
 		mStateHelper->clear(mTokenTypeMessageData);
     }
 }
-#endif
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -3038,43 +3052,27 @@ void GxsForumThreadWidget::loadMsgData_ReplyForumMessage(const uint32_t &token)
 		std::cerr << std::endl;
 	}
 }
-
-void GxsForumThreadWidget::loadMsgData_ShowAuthorInPeople(const uint32_t &token)
-{
-#ifdef DEBUG_FORUMS
-	std::cerr << "GxsForumThreadWidget::loadMsgData_ReplyMessage()";
-	std::cerr << std::endl;
 #endif
 
-	std::vector<RsGxsForumMsg> msgs;
-	if (rsGxsForums->getMsgData(token, msgs))
+void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
+{
+	if(msg.mMeta.mAuthorId.isNull())
 	{
-		if (msgs.size() != 1)
-		{
-			std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Wrong number of answers";
-			std::cerr << std::endl;
-			return;
-		}
-
-		if(msgs[0].mMeta.mAuthorId.isNull())
-		{
-			std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
-			std::cerr << std::endl;
-		}
-
-		/* window will destroy itself! */
-		IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
-
-		if (!idDialog)
-			return ;
-
-		MainWindow::showWindow(MainWindow::People);
-		idDialog->navigate(RsGxsId(msgs[0].mMeta.mAuthorId));
-	}
-	else
 		std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+		std::cerr << std::endl;
+	}
+
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
 }
 
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::loadMsgData_SetAuthorOpinion(const uint32_t &token,RsReputations::Opinion opinion)
 {
 #ifdef DEBUG_FORUMS
@@ -3107,6 +3105,7 @@ void GxsForumThreadWidget::loadMsgData_SetAuthorOpinion(const uint32_t &token,Rs
     
     std::cerr << __PRETTY_FUNCTION__ << ": need to implement the update of GxsTreeWidgetItems icons too." << std::endl;
 }
+#endif
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
@@ -3130,7 +3129,6 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMessageData(req.mToken);
 			return;
 		}
-#endif
 
 		if (req.mUserType == mTokenTypeReplyMessage) {
 			loadMsgData_ReplyMessage(req.mToken);
@@ -3141,7 +3139,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMsgData_ReplyForumMessage(req.mToken);
 			return;
 		}
-        
+
 		if (req.mUserType == mTokenTypeEditForumMessage) {
 			loadMsgData_EditForumMessage(req.mToken);
 			return;
@@ -3150,7 +3148,6 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMsgData_ShowAuthorInPeople(req.mToken);
 			return;
 		}
-
 		if (req.mUserType == mTokenTypePositiveAuthor) {
 			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_POSITIVE);
 			return;
@@ -3165,6 +3162,7 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_NEUTRAL);
 			return;
 		}
+#endif
 	}
 
 	GxsMessageFrameWidget::loadRequest(queue, req);

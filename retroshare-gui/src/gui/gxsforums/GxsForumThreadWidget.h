@@ -33,6 +33,7 @@ class RsGxsForumMsg;
 class GxsForumsFillThread;
 class RsGxsForumGroup;
 class RsGxsForumModel;
+class RsGxsForumMsg;
 class ForumModelPostEntry;
 
 namespace Ui {
@@ -42,6 +43,8 @@ class GxsForumThreadWidget;
 class GxsForumThreadWidget : public GxsMessageFrameWidget
 {
 	Q_OBJECT
+
+	typedef void (GxsForumThreadWidget::*MsgMethod)(const RsGxsForumMsg&) ;
 
 	Q_PROPERTY(QColor textColorRead READ textColorRead WRITE setTextColorRead)
 	Q_PROPERTY(QColor textColorUnread READ textColorUnread WRITE setTextColorUnread)
@@ -109,6 +112,9 @@ private slots:
 	void editForumMessageData(const RsGxsForumMsg &msg);
 	void replyForumMessageData(const RsGxsForumMsg &msg);
 	void showAuthorInPeople(const RsGxsForumMsg& msg);
+
+    // This method is used to perform an asynchroneous action on the message data. Any of the methods above can be used as parameter.
+	void async_msg_action(const MsgMethod& method);
 
 	void saveImage();
 
@@ -178,19 +184,19 @@ private:
 
 	void updateMessageData(const RsGxsMessageId& msgId);
 
+#ifdef TO_REMOVE
 	void requestMsgData_ReplyWithPrivateMessage(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
 	void requestMsgData_EditForumMessage(const RsGxsGrpMsgIdPair &msgId);
 
-#ifdef TO_REMOVE
 	void loadMessageData(const uint32_t &token);
-#endif
 	void loadMsgData_ReplyMessage(const uint32_t &token);
 	void loadMsgData_ReplyForumMessage(const uint32_t &token);
 	void loadMsgData_EditForumMessage(const uint32_t &token);
 	void loadMsgData_ShowAuthorInPeople(const uint32_t &token);
 	void loadMsgData_SetAuthorOpinion(const uint32_t &token, RsReputations::Opinion opinion);
+#endif
 
 private:
 	RsGxsGroupId mLastForumID;
