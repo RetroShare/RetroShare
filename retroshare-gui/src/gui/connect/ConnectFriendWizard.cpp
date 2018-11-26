@@ -291,7 +291,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 
 		if(peerDetails.id == rsPeers->getOwnId())
 		{
-			setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
+			setField("errorMessage", tr("This is your own certificate! You already trust on yourself, right?") ) ;
 			error = false;
 			setStartId(Page_ErrorMessage);
 		}
@@ -305,7 +305,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 			if (friendRequest){
 				ui->cp_Label->show();
 				ui->requestinfolabel->show();
-				setTitleText(ui->ConclusionPage, tr("Friend request"));
+				setTitleText(ui->ConclusionPage, tr("Trusted node request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			}
 		}
@@ -332,7 +332,7 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
     if (friendRequest){
     ui->cp_Label->show();
     ui->requestinfolabel->show();
-    setTitleText(ui->ConclusionPage,tr("Friend request"));
+    setTitleText(ui->ConclusionPage,tr("Trusted node request"));
     ui->ConclusionPage->setSubTitle(tr("Details about the request"));
     }
 }
@@ -400,7 +400,7 @@ void ConnectFriendWizard::initializePage(int id)
 		break;
 	case Page_Foff:
 		ui->userSelectionCB->addItem(tr("Any peer I've not signed"));
-		ui->userSelectionCB->addItem(tr("Friends of my friends who already trust me"));
+		ui->userSelectionCB->addItem(tr("Trusted nodes of my trusted nodes who already trust me"));
 		ui->userSelectionCB->addItem(tr("Signed peers showing as denied"));
 
 		ui->selectedPeersTW->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("")));
@@ -492,7 +492,7 @@ void ConnectFriendWizard::initializePage(int id)
 			if(already_in_keyring)
 				ui->addKeyToKeyring_CB->setToolTip(tr("This key is already in your keyring")) ;
 			else
-				ui->addKeyToKeyring_CB->setToolTip(tr("Check this to add the key to your keyring\nThis might be useful for sending\ndistant messages to this peer\neven if you don't make friends.")) ;
+				ui->addKeyToKeyring_CB->setToolTip(tr("Check this to add the key to your keyring\nThis might be useful for sending\ndistant messages to this peer\neven if you don't connect to trusted nodes.")) ;
 
 			if(tmp_det.accept_connection) {
 				ui->acceptNoSignGPGCheckBox->setChecked(true);
@@ -543,7 +543,7 @@ void ConnectFriendWizard::initializePage(int id)
 				}
 			}
 
-			ui->cp_Label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->cp_Label->setText(tr("You have a trusted node request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
 			ui->emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
@@ -591,7 +591,7 @@ void ConnectFriendWizard::initializePage(int id)
 		break;
 	case Page_FriendRequest:
 		{
-			std::cerr << "Friend request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
+			std::cerr << "Trusted node request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
 
 			ui->fr_avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 			setPixmap(QWizard::LogoPixmap, QPixmap(":/images/user/user_request48.png"));
@@ -641,13 +641,13 @@ void ConnectFriendWizard::initializePage(int id)
 
 			ui->fr_nodeEdit->setText(loc);
 			
-			ui->fr_InfoTopLabel->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
+			ui->fr_InfoTopLabel->setText(tr("You have a trusted node request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 
 			fillGroups(this, ui->fr_groupComboBox, groupId);
 		}
 		break;
 	case Page_FriendRecommendations:
-		ui->frec_recommendList->setHeaderText(tr("Recommend friends"));
+		ui->frec_recommendList->setHeaderText(tr("Recommend trusted nodes"));
 		ui->frec_recommendList->setModus(FriendSelectionWidget::MODUS_CHECK);
 		ui->frec_recommendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
 		ui->frec_recommendList->start();
@@ -809,7 +809,7 @@ bool ConnectFriendWizard::validateCurrentPage()
             ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 			if (recommendIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
+				QMessageBox::warning(this, "RetroShare", tr("Please select at least one trusted node for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
@@ -817,7 +817,7 @@ bool ConnectFriendWizard::validateCurrentPage()
             ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 			if (toIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
+				QMessageBox::warning(this, "RetroShare", tr("Please select at least one trusted node as recipient."), QMessageBox::Ok, QMessageBox::Ok);
 				return false;
 			}
 
@@ -1102,14 +1102,14 @@ void ConnectFriendWizard::cleanFriendCert()
 
 void ConnectFriendWizard::showHelpUserCert()
 {
-	QMessageBox::information(this, tr("Connect Friend Help"), tr("You can copy this text and send it to your friend via email or some other way"));
+	QMessageBox::information(this, tr("Connect Trusted Node Help"), tr("You can copy this text and send it to your trusted node via email or some other way"));
 }
 
 void ConnectFriendWizard::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your trusted node via email or some other way"));
 }
 
 void ConnectFriendWizard::pasteCert()
@@ -1305,13 +1305,13 @@ void ConnectFriendWizard::updatePeersList(int index)
 void ConnectFriendWizard::signAllSelectedUsers()
 {
 #ifdef FRIEND_WIZARD_DEBUG
-	std::cerr << "making lots of friends !!" << std::endl;
+	std::cerr << "making lots of trusted nodes !!" << std::endl;
 #endif
 
 	for (std::map<QCheckBox*, RsPeerId>::const_iterator it(_id_boxes.begin()); it != _id_boxes.end(); ++it) {
 		if (it->first->isChecked()) {
 #ifdef FRIEND_WIZARD_DEBUG
-			std::cerr << "Making friend with " << it->second << std::endl ;
+			std::cerr << "Connecting trusted node with " << it->second << std::endl ;
 #endif
 			//rsPeers->AuthCertificate(it->second, "");
 			rsPeers->addFriend(it->second, _gpg_id_boxes[it->first]);
