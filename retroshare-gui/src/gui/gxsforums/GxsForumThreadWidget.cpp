@@ -1825,24 +1825,24 @@ void GxsForumThreadWidget::insertMessage()
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 #endif
 
-#ifdef TODO
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+	QModelIndex index = getCurrentIndex();
 
-	if (item) {
-		QTreeWidgetItem *parentItem = item->parent();
-		int index = parentItem ? parentItem->indexOfChild(item) : ui->threadTreeWidget->indexOfTopLevelItem(item);
-		int count = parentItem ? parentItem->childCount() : ui->threadTreeWidget->topLevelItemCount();
-		mStateHelper->setWidgetEnabled(ui->previousButton, (index > 0));
-		mStateHelper->setWidgetEnabled(ui->nextButton, (index < count - 1));
+	if (index.isValid())
+    {
+		QModelIndex parentIndex = index.parent();
+		int curr_index = index.row();
+		int count = mThreadModel->rowCount(parentIndex);
+
+		ui->previousButton->setEnabled(curr_index > 0);
+		ui->nextButton->setEnabled(curr_index < count - 1);
 	} else {
 		// there is something wrong
-		mStateHelper->setWidgetEnabled(ui->previousButton, false);
-		mStateHelper->setWidgetEnabled(ui->nextButton, false);
+		ui->previousButton->setEnabled(false);
+		ui->nextButton->setEnabled(false);
         ui->versions_CB->hide();
         ui->time_label->show();
 		return;
 	}
-#endif
 
 	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags) && mThreadId.isNull() == false));
 
@@ -1984,41 +1984,53 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 
 void GxsForumThreadWidget::previousMessage()
 {
-#ifdef TODO
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
-	if (item == NULL) {
-		return;
-	}
+	QModelIndex current_index = getCurrentIndex();
 
-	QTreeWidgetItem *parentItem = item->parent();
-	int index = parentItem ? parentItem->indexOfChild(item) : ui->threadTreeWidget->indexOfTopLevelItem(item);
-	if (index > 0) {
-		QTreeWidgetItem *previousItem = parentItem ? parentItem->child(index - 1) : ui->threadTreeWidget->topLevelItem(index - 1);
-		if (previousItem) {
-			ui->threadTreeWidget->setCurrentItem(previousItem);
+	if (!current_index.isValid())
+		return;
+
+	QModelIndex parentIndex = current_index.parent();
+
+	int index = current_index.row();
+	int count = mThreadModel->rowCount(parentIndex) ;
+
+	if (index > 0)
+    {
+		QModelIndex prevItem = mThreadModel->index(index - 1,0,parentIndex) ;
+
+		if (prevItem.isValid()) {
+			ui->threadTreeWidget->setCurrentIndex(prevItem);
+			ui->threadTreeWidget->setFocus();
 		}
 	}
-#endif
+	ui->previousButton->setEnabled(index-1 > 0);
+	ui->nextButton->setEnabled(true);
+
 }
 
 void GxsForumThreadWidget::nextMessage()
 {
-#ifdef TODO
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
-	if (item == NULL) {
-		return;
-	}
+    QModelIndex current_index = getCurrentIndex();
 
-	QTreeWidgetItem *parentItem = item->parent();
-	int index = parentItem ? parentItem->indexOfChild(item) : ui->threadTreeWidget->indexOfTopLevelItem(item);
-	int count = parentItem ? parentItem->childCount() : ui->threadTreeWidget->topLevelItemCount();
-	if (index < count - 1) {
-		QTreeWidgetItem *nextItem = parentItem ? parentItem->child(index + 1) : ui->threadTreeWidget->topLevelItem(index + 1);
-		if (nextItem) {
-			ui->threadTreeWidget->setCurrentItem(nextItem);
+	if (!current_index.isValid())
+		return;
+
+	QModelIndex parentIndex = current_index.parent();
+
+	int index = current_index.row();
+	int count = mThreadModel->rowCount(parentIndex) ;
+
+	if (index < count - 1)
+    {
+		QModelIndex nextItem = mThreadModel->index(index + 1,0,parentIndex) ;
+
+		if (nextItem.isValid()) {
+			ui->threadTreeWidget->setCurrentIndex(nextItem);
+			ui->threadTreeWidget->setFocus();
 		}
 	}
-#endif
+	ui->previousButton->setEnabled(true);
+	ui->nextButton->setEnabled(index+1 < count - 1);
 }
 
 void GxsForumThreadWidget::downloadAllFiles()

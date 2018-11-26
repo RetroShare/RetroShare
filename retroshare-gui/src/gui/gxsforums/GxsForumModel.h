@@ -99,6 +99,7 @@ public:
         ForumModelIndex current_parent;
         const RsGxsForumModel& model;
     };
+	void test_iterator() const;
 
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);

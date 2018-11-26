@@ -494,7 +494,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 
     bool has_unread_below,has_read_below ;
     recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
-#ifdef DEBUG_FORUMMODEL
+#ifndef DEBUG_FORUMMODEL
     debug_dump();
 #endif
 
@@ -1009,19 +1009,6 @@ void RsGxsForumModel::recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_
 		mPosts[i].mPostFlags &= ~ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN;
 }
 
-static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
-{
-    const ForumModelPostEntry& e(entries[index]);
-
-    std::cerr << std::string(depth*2,' ') << e.mAuthorId.toStdString() << " "
-              << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
-              << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " "
-              << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
-
-    for(uint32_t i=0;i<e.mChildren.size();++i)
-        recursPrintModel(entries,e.mChildren[i],depth+1);
-}
-
 QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 {
     // brutal search. This is not so nice, so dont call that in a loop!
@@ -1038,8 +1025,21 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
     return QModelIndex();
 }
 
+void RsGxsForumModel::test_iterator() const
+{
+    const_iterator it(*this);
+
+    while(it)
+    {
+        std::cerr << "Current node: " << *it << std::endl;
+		++it;
+    }
+}
+
 QModelIndex RsGxsForumModel::getNextIndex(const QModelIndex& i,bool unread_only) const
 {
+    test_iterator();
+
     ForumModelIndex fmi ;
     convertRefPointerToTabEntry(i.internalPointer(),fmi);
 
@@ -1129,6 +1129,20 @@ RsGxsForumModel::const_iterator::operator bool() const
 {
     return kid >= 0;
 }
+
+static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
+{
+    const ForumModelPostEntry& e(entries[index]);
+
+    std::cerr << std::string(depth*2,' ') << index << " : " << e.mAuthorId.toStdString() << " "
+              << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
+              << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " "
+              << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+
+    for(uint32_t i=0;i<e.mChildren.size();++i)
+        recursPrintModel(entries,e.mChildren[i],depth+1);
+}
+
 
 void RsGxsForumModel::debug_dump()
 {
