@@ -1040,22 +1040,94 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 
 QModelIndex RsGxsForumModel::getNextIndex(const QModelIndex& i,bool unread_only) const
 {
-#ifdef TODO
     ForumModelIndex fmi ;
     convertRefPointerToTabEntry(i.internalPointer(),fmi);
 
     // Algorithm is simple: visit children recursively. When none available, go to parent. We need of course a stack of parents to the current index.
 
-    std::list<ForumModelIndex> parent_stack ;
+    const_iterator it(*this,fmi);
 
-    for(ForumModelIndex tmp(fmi);tmp!=0;tmp=mPosts[tmp].mParent)
-        parent_stack.push_front(tmp);
+    do {++it;} while(bool(it) && (!unread_only || IS_MSG_UNREAD(mPosts[*it].mMsgStatus)));
 
-	// now get to next unread item
+    if(!it)
+        return QModelIndex();
 
-    if(!mPosts[fmi].mChildren.empty())
-#endif
-		return QModelIndex();
+    void *ref ;
+    convertTabEntryToRefPointer(*it,ref);
+
+    return createIndex(mPosts[*it].prow,0,ref);
+}
+
+
+RsGxsForumModel::const_iterator::const_iterator(const RsGxsForumModel &Model, ForumModelIndex i)
+	: model(Model)
+{
+    if(i >= model.mPosts.size())
+    {
+        std::cerr << "(EE) constructed a RsGxsForumModel::const_iterator from invalid index " << i << std::endl;
+        kid = -1;
+        return;
+    }
+    // create a stack or parents
+    parent_stack.clear();
+
+    if(i==0)
+    {
+        current_parent = 0;
+        kid =0;
+        return;
+    }
+    current_parent = model.mPosts[i].mParent;
+    ForumModelIndex j(i);
+    kid = model.mPosts[i].prow;
+
+    while(j != 0)
+    {
+        parent_stack.push_front(model.mPosts[j].prow);
+		j = model.mPosts[i].mParent;
+    }
+}
+
+ForumModelIndex RsGxsForumModel::const_iterator::operator*() const
+{
+    if(current_parent >= model.mPosts.size() || kid < 0 || kid >= (int)model.mPosts[current_parent].mChildren.size())
+    {
+        std::cerr << "(EE) operator* on an invalid RsGxsForumModel::const_iterator"<< std::endl;
+        return 0;
+    }
+
+    return model.mPosts[current_parent].mChildren[kid];
+}
+
+void RsGxsForumModel::const_iterator::operator++()
+{
+    kid++;
+    while(kid >= (int)model.mPosts[current_parent].mChildren.size())
+    {
+        current_parent = model.mPosts[current_parent].mParent;
+        kid = parent_stack.back()+1;
+
+        parent_stack.pop_back();
+
+    }
+
+	if(current_parent == 0 && kid >= (int)model.mPosts[current_parent].mChildren.size())
+	{
+		kid = -1;
+		return;
+	}
+
+    while(!model.mPosts[model.mPosts[current_parent].mChildren[kid]].mChildren.empty())
+    {
+        parent_stack.push_back(kid);
+        current_parent = model.mPosts[current_parent].mChildren[kid];
+        kid = 0;
+    }
+}
+
+RsGxsForumModel::const_iterator::operator bool() const
+{
+    return kid >= 0;
 }
 
 void RsGxsForumModel::debug_dump()

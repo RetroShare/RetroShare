@@ -83,6 +83,23 @@ public:
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
     QModelIndex getNextIndex(const QModelIndex& i,bool unread_only) const;
 
+    class const_iterator
+    {
+    public:
+        const_iterator(const RsGxsForumModel& Model,ForumModelIndex = 0) ;
+
+        ForumModelIndex operator*() const ;
+        void operator++();
+
+        inline operator bool() const ;
+
+    private:
+        std::list<ForumModelIndex> parent_stack;
+        int kid;
+        ForumModelIndex current_parent;
+        const RsGxsForumModel& model;
+    };
+
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);
 
@@ -160,4 +177,6 @@ private:
     QColor mTextColorUnreadChildren;
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
+
+    friend class const_iterator;
 };
