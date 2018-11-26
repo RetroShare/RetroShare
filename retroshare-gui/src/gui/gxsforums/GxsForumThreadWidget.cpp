@@ -2001,6 +2001,7 @@ void GxsForumThreadWidget::previousMessage()
 		if (prevItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(prevItem);
 			ui->threadTreeWidget->setFocus();
+			changedThread(prevItem);
 		}
 	}
 	ui->previousButton->setEnabled(index-1 > 0);
@@ -2027,6 +2028,7 @@ void GxsForumThreadWidget::nextMessage()
 		if (nextItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(nextItem);
 			ui->threadTreeWidget->setFocus();
+			changedThread(nextItem);
 		}
 	}
 	ui->previousButton->setEnabled(true);
@@ -2049,10 +2051,20 @@ void GxsForumThreadWidget::downloadAllFiles()
 
 void GxsForumThreadWidget::nextUnreadMessage()
 {
-    QModelIndex index = mThreadModel->getNextIndex(getCurrentIndex(),true);
+	QModelIndex index = getCurrentIndex();
+
+    do
+	{
+		if(index.data(RsGxsForumModel::UnreadChildrenRole).toBool())
+			ui->threadTreeWidget->expand(index);
+
+		index = ui->threadTreeWidget->indexBelow(index);
+	}
+    while(index.isValid() && !IS_MSG_UNREAD(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::StatusRole).toUInt()));
 
 	ui->threadTreeWidget->setCurrentIndex(index);
 	ui->threadTreeWidget->setFocus();
+	changedThread(index);
 }
 
 #ifdef TO_REMOVE
@@ -2255,6 +2267,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 
 	ui->threadTreeWidget->setCurrentIndex(index);
 	ui->threadTreeWidget->setFocus();
+    changedThread(index);
 	return true;
 }
 

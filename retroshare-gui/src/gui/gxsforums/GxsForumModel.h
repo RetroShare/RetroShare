@@ -73,10 +73,11 @@ public:
 		COLUMN_THREAD_NB_COLUMNS   =0x08,
 	};
 
-	enum Roles{ SortRole         = Qt::UserRole+1,
-              	ThreadPinnedRole = Qt::UserRole+2,
-              	MissingRole      = Qt::UserRole+3,
-              	StatusRole       = Qt::UserRole+4,
+	enum Roles{ SortRole           = Qt::UserRole+1,
+              	ThreadPinnedRole   = Qt::UserRole+2,
+              	MissingRole        = Qt::UserRole+3,
+              	StatusRole         = Qt::UserRole+4,
+              	UnreadChildrenRole = Qt::UserRole+5,
               };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}

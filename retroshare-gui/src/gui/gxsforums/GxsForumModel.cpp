@@ -281,6 +281,10 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
         return QVariant(font);
     }
+
+    if(role == UnreadChildrenRole)
+        return bool(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
+
 #ifdef DEBUG_FORUMMODEL
 	std::cerr << " [ok]" << std::endl;
 #endif
