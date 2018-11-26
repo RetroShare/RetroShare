@@ -973,7 +973,7 @@ QString nickname ;
 
 	if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 	{
-        comment += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
+        comment += QString("<br/>%1: ").arg(QApplication::translate("GxsIdDetails", "Node"));
 
 		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 		{
@@ -985,8 +985,8 @@ QString nickname ;
 		else
 			comment += QApplication::translate("GxsIdDetails", "unknown Key");
 	}
-	else
-        comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
+	//else
+     //   comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Node:"), QApplication::translate("GxsIdDetails", "anonymous"));
 	
 	if(details.mReputation.mFriendsPositiveVotes || details.mReputation.mFriendsNegativeVotes)
 	{

@@ -82,6 +82,8 @@ public:
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
+
+#ifdef TO_REMOVE
     QModelIndex getNextIndex(const QModelIndex& i,bool unread_only) const;
 
     class const_iterator
@@ -101,6 +103,7 @@ public:
         const RsGxsForumModel& model;
     };
 	void test_iterator() const;
+#endif
 
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);

@@ -350,7 +350,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->newmessageButton->setText(tr("Reply"));
 	ui->newthreadButton->setText(tr("New thread"));
 	
-	connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(changedThread(QModelIndex)));
+	//connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(changedThread(QModelIndex)));
 	connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(clickedThread(QModelIndex)));
 	connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
@@ -409,6 +409,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ, QHeaderView::Fixed);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_CONTENT);
+	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
+	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);
 
 	ui->progressBar->hide();
 	ui->progressText->hide();
@@ -929,6 +931,8 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
         mThreadModel->getPostData(index,fmpe);
 		mThreadModel->setMsgReadStatus(index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
 	}
+    else
+        changedThread(index);
 }
 
 void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren)

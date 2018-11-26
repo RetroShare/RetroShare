@@ -1029,6 +1029,7 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
     return QModelIndex();
 }
 
+#ifdef TO_REMVOVE
 void RsGxsForumModel::test_iterator() const
 {
     const_iterator it(*this);
@@ -1133,6 +1134,7 @@ RsGxsForumModel::const_iterator::operator bool() const
 {
     return kid >= 0;
 }
+#endif
 
 static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
 {
