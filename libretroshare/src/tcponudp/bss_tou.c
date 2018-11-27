@@ -434,4 +434,3 @@ int BIO_tou_socket_non_fatal_error(int err)
 #endif
 	return(0);
 	}
-#endif
