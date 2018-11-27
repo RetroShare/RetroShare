@@ -367,17 +367,18 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	//mThreadCompareRole = new RSTreeWidgetItemCompareRole;
 	//mThreadCompareRole->setRole(RsGxsForumModel::COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
 
-	ui->threadTreeWidget->setSortingEnabled(true);
-
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
     mThreadProxyModel->setSourceModel(mThreadModel);
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
+	ui->threadTreeWidget->setSortingEnabled(true);
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
+
+    connect(ui->threadTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)),this,SLOT(sortColumn(int,Qt::SortOrder)));
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
@@ -486,6 +487,11 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 #endif
 }
 
+void GxsForumThreadWidget::sortColumn(int col,Qt::SortOrder o)
+{
+    ui->threadTreeWidget->sortByColumn(col,o);
+}
+
 void GxsForumThreadWidget::blank()
 {
 	ui->progressBar->hide();
@@ -514,18 +520,19 @@ void GxsForumThreadWidget::blank()
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
 {
+#ifdef TO_REMOVE
 	if (mFillThread) {
 		mFillThread->stop();
 		delete(mFillThread);
 		mFillThread = NULL;
 	}
+	delete(mThreadCompareRole);
+#endif
 
 	// save settings
 	processSettings(false);
 
 	delete ui;
-
-	delete(mThreadCompareRole);
 }
 
 void GxsForumThreadWidget::processSettings(bool load)
@@ -609,7 +616,7 @@ void GxsForumThreadWidget::changeEvent(QEvent *e)
 	RsGxsUpdateBroadcastWidget::changeEvent(e);
 	switch (e->type()) {
 	case QEvent::StyleChange:
-		calculateIconsAndFonts();
+		//calculateIconsAndFonts();
 		break;
 	default:
 		// remove compiler warnings
@@ -929,9 +936,11 @@ void GxsForumThreadWidget::changedVersion()
 {
 	mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
 
+#ifdef TO_REMOVE
 	if (mFillThread) {
 		return;
 	}
+#endif
 	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
     insertMessage();
 }
@@ -985,9 +994,9 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
         changedThread(index);
 }
 
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren)
 {
-#ifdef TODO
 	uint32_t status = item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
 	bool isNew = IS_MSG_NEW(status);
@@ -1062,12 +1071,10 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item, bool &h
 
 	hasReadChilddren = hasReadChilddren || myReadChilddren || !unread;
 	hasUnreadChilddren = hasUnreadChilddren || myUnreadChilddren || unread;
-#endif
 }
 
 void GxsForumThreadWidget::calculateUnreadCount()
 {
-#ifdef TODO
 	unsigned int unreadCount = 0;
 	unsigned int newCount = 0;
 
@@ -1098,12 +1105,10 @@ void GxsForumThreadWidget::calculateUnreadCount()
 	if (changed) {
 		emit groupChanged(this);
 	}
-#endif
 }
 
 void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL*/)
 {
-#ifdef TODO
 	bool dummy1 = false;
 	bool dummy2 = false;
 
@@ -1120,8 +1125,8 @@ void GxsForumThreadWidget::calculateIconsAndFonts(QTreeWidgetItem *item /*= NULL
 		dummy2 = false;
 		calculateIconsAndFonts(ui->threadTreeWidget->topLevelItem(index), dummy1, dummy2);
 	}
-#endif
 }
+#endif
 
 static void cleanupItems (QList<QTreeWidgetItem *> &items)
 {
@@ -1134,6 +1139,7 @@ static void cleanupItems (QList<QTreeWidgetItem *> &items)
 	items.clear();
 }
 
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::insertGroupData()
 {
 #ifdef DEBUG_FORUMS
@@ -1142,6 +1148,7 @@ void GxsForumThreadWidget::insertGroupData()
     //GxsIdDetails::process(mForumGroup.mMeta.mAuthorId, &loadAuthorIdCallback, this);
 	calculateIconsAndFonts();
 }
+#endif
 
 static QString getDurationString(uint32_t days)
 {
@@ -1159,6 +1166,7 @@ static QString getDurationString(uint32_t days)
     }
 }
 
+#ifdef TO_REMOVE
 /*static*/ void GxsForumThreadWidget::loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &)
 {
     GxsForumThreadWidget *tw = dynamic_cast<GxsForumThreadWidget*>(object);
@@ -1274,7 +1282,6 @@ static QString getDurationString(uint32_t days)
 
 void GxsForumThreadWidget::fillThreadFinished()
 {
-#ifdef TODO
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreadFinished" << std::endl;
 #endif
@@ -1392,7 +1399,6 @@ void GxsForumThreadWidget::fillThreadFinished()
 
 #ifdef DEBUG_FORUMS
 	std::cerr << "GxsForumThreadWidget::fillThreadFinished done" << std::endl;
-#endif
 #endif
 }
 
@@ -1598,7 +1604,6 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
 	return item;
 }
 
-#ifdef TO_REMOVE
 void GxsForumThreadWidget::insertThreads()
 {
 #ifdef DEBUG_FORUMS
@@ -1913,7 +1918,7 @@ void GxsForumThreadWidget::insertMessage()
 
     std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mOrigThreadId);
 
-    std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << post_versions.size() << std::endl;
+    std::cerr << "Looking into existing versions  for post " << mOrigThreadId << ", thread history: " << post_versions.size() << std::endl;
 	ui->versions_CB->blockSignals(true) ;
 
     while(ui->versions_CB->count() > 0)
@@ -1950,7 +1955,6 @@ void GxsForumThreadWidget::insertMessage()
 	ui->versions_CB->blockSignals(false) ;
 
 	/* request Post */
-	//RsGxsGrpMsgIdPair msgId = std::make_pair(groupId(), mThreadId);
 	updateMessageData(mThreadId);
 
     markMsgAsRead();
@@ -1971,9 +1975,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		std::cerr << "\t or CurrThdId: " << mThreadId << " != msg.MsgId: " << msg.mMeta.mMsgId;
 		std::cerr << std::endl;
 		std::cerr << std::endl;
-
+#ifdef TO_REMOVE
 		mStateHelper->setActive(mTokenTypeMessageData, false);
 		mStateHelper->clear(mTokenTypeMessageData);
+#endif
 
 		return;
 	}
@@ -1981,10 +1986,12 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     uint32_t overall_reputation = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId) ;
     bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     
+#ifdef TO_REMOVE
 	mStateHelper->setActive(mTokenTypeMessageData, true);
 
 	//mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID),Qt::DisplayRole).toString().toStdString());
 	//QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+#endif
 
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
 	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
@@ -2360,7 +2367,6 @@ void GxsForumThreadWidget::subscribeGroup(bool subscribe)
 
 	uint32_t token;
 	rsGxsForums->subscribeToGroup(token, groupId(), subscribe);
-//	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsForumThreadWidget::createmessage()
@@ -2377,21 +2383,20 @@ void GxsForumThreadWidget::createmessage()
 
 void GxsForumThreadWidget::togglePinUpPost()
 {
-#ifdef TODO
-	if (groupId().isNull() || mThreadId.isNull())
+	if (groupId().isNull() || mOrigThreadId.isNull())
 		return;
 
-	QTreeWidgetItem *item = ui->threadTreeWidget->currentItem();
+    QModelIndex index = getCurrentIndex();
 
     // normally this method is only called on top level items. We still check it just in case...
 
-    if(item->parent() != NULL)
+    if(mThreadProxyModel->mapToSource(index).parent() != mThreadModel->root())
     {
         std::cerr << "(EE) togglePinUpPost() called on non top level post. This is inconsistent." << std::endl;
         return ;
 	}
 
-	QString thread_title = (item != NULL)?item->text(RsGxsForumModel::COLUMN_THREAD_TITLE):QString() ;
+	QString thread_title = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_TITLE).data(Qt::DisplayRole).toString();
 
     std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
 
@@ -2403,9 +2408,8 @@ void GxsForumThreadWidget::togglePinUpPost()
 	uint32_t token;
 	rsGxsForums->updateGroup(token,mForumGroup);
 
-    ui->threadTreeWidget->takeTopLevelItem(ui->threadTreeWidget->indexOfTopLevelItem(item));	// forces the re-creation of all posts widgets. A bit extreme. We should rather only delete item above
+    groupIdChanged();		// reloads all posts. We could also update the model directly, but the cost is so small now ;-)
     updateDisplay(true) ;
-#endif
 }
 
 void GxsForumThreadWidget::createthread()
@@ -2736,6 +2740,7 @@ void GxsForumThreadWidget::updateGroupData()
 	mForumDescription.clear();
     ui->threadTreeWidget->selectionModel()->clear();
     ui->threadTreeWidget->selectionModel()->reset();
+    mThreadProxyModel->clear();
 
 	emit groupChanged(this);
 
@@ -3164,7 +3169,6 @@ void GxsForumThreadWidget::loadMsgData_SetAuthorOpinion(const uint32_t &token,Rs
     
     std::cerr << __PRETTY_FUNCTION__ << ": need to implement the update of GxsTreeWidgetItems icons too." << std::endl;
 }
-#endif
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
@@ -3177,7 +3181,6 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 
 	if (queue == mTokenQueue)
 	{
-#ifdef TO_REMOVE
 		/* now switch on req */
 		if (req.mUserType == mTokenTypeGroupData) {
 			loadGroupData(req.mToken);
@@ -3221,7 +3224,6 @@ void GxsForumThreadWidget::loadRequest(const TokenQueue *queue, const TokenReque
 			loadMsgData_SetAuthorOpinion(req.mToken,RsReputations::OPINION_NEUTRAL);
 			return;
 		}
-#endif
 	}
 
 	GxsMessageFrameWidget::loadRequest(queue, req);
@@ -3231,3 +3233,4 @@ QTreeWidgetItem *GxsForumThreadWidget::generateMissingItem(const RsGxsMessageId&
 {
 return NULL;
 }
+#endif

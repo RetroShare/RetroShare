@@ -33,6 +33,7 @@
 
 //#define DEBUG_FORUMS
 
+#ifdef TO_REMOVE
 #define PROGRESSBAR_MAX 100
 
 GxsForumsFillThread::GxsForumsFillThread(GxsForumThreadWidget *parent)
@@ -553,4 +554,5 @@ void GxsForumsFillThread::run()
     if(wasStopped())
         deleteLater();
 }
+#endif
 

@@ -31,6 +31,7 @@ class RsGxsForumMsg;
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 
+#ifdef TO_REMOVE
 class GxsForumsFillThread : public QThread
 {
 	Q_OBJECT
@@ -69,4 +70,5 @@ private:
 	volatile bool mStopped;
 };
 
+#endif // GXSFORUMSFILLTHREAD_H
 #endif // GXSFORUMSFILLTHREAD_H

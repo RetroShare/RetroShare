@@ -79,11 +79,10 @@ public:
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
-	QTreeWidgetItem *convertMsgToThreadWidget(const RsGxsForumMsg &msg, bool useChildTS, uint32_t filterColumn, QTreeWidgetItem *parent);
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
 
 	// Callback for all Loads.
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	//virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
     virtual void blank();
 
 protected:
@@ -100,6 +99,7 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
+	void sortColumn(int col,Qt::SortOrder o);
 
 	void changedThread(QModelIndex index);
 	void changedVersion();
@@ -151,10 +151,11 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
-
+#ifdef TO_REMOVE
 	void fillThreadFinished();
 	void fillThreadProgress(int current, int count);
 	void fillThreadStatus(QString text);
+#endif
 
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
@@ -171,8 +172,8 @@ private:
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
 	void markMsgAsReadUnread(bool read, bool children, bool forum);
-	void calculateIconsAndFonts(QTreeWidgetItem *item = NULL);
-	void calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren);
+	//void calculateIconsAndFonts(QTreeWidgetItem *item = NULL);
+	//void calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren);
 	void calculateUnreadCount();
 
 	void togglethreadview_internal();

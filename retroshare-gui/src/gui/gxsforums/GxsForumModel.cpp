@@ -491,8 +491,8 @@ QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col
 
 void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
 {
-    if(mForumGroup.mMeta.mGroupId == forum_group_id)
-        return ;
+    //if(mForumGroup.mMeta.mGroupId == forum_group_id)
+    //    return ;
 
     // we do not set mForumGroupId yet. We'll do it when the forum data is updated.
 
