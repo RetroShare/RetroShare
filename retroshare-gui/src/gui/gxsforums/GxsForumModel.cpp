@@ -503,6 +503,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 #endif
 
 	emit layoutChanged();
+	emit forumLoaded();
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)

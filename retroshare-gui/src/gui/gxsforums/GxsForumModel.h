@@ -55,7 +55,7 @@ struct ForumModelPostEntry
 
 class RsGxsForumModel : public QAbstractItemModel
 {
-	//    Q_OBJECT
+	Q_OBJECT
 
 public:
 	explicit RsGxsForumModel(QObject *parent = NULL);
@@ -147,6 +147,10 @@ public:
      * 			Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
      */
     void debug_dump();
+
+signals:
+    void forumLoaded();	// emitted after the posts have been set. Can be used to updated the UI.
+
 private:
     RsGxsForumGroup mForumGroup;
 

@@ -347,6 +347,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(replytoforummessage()));
 	connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
+    connect(mThreadModel,SIGNAL(forumLoaded()),this,SLOT(updateGroupName()));
+
 	ui->newmessageButton->setText(tr("Reply"));
 	ui->newthreadButton->setText(tr("New thread"));
 	
@@ -529,9 +531,8 @@ void GxsForumThreadWidget::processSettings(bool load)
 
 void GxsForumThreadWidget::groupIdChanged()
 {
-#ifdef TO_REMOVE
-	ui->forumName->setText(groupId().isNull () ? "" : tr("Loading"));
-#endif
+	ui->forumName->setText(groupId().isNull () ? "" : tr("Loading..."));
+
 	mNewCount = 0;
 	mUnreadCount = 0;
 
@@ -860,7 +861,7 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 	// pass the event on to the parent class
 	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
 #endif
-    return true;
+	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
 }
 
 void GxsForumThreadWidget::togglethreadview()
@@ -2674,6 +2675,10 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
+void GxsForumThreadWidget::updateGroupName()
+{
+	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
+}
 void GxsForumThreadWidget::updateGroupData()
 {
 	mSubscribeFlags = 0;
