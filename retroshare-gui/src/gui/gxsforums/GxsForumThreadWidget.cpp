@@ -484,7 +484,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->enableColumnCustomize(true);
 
 #endif
-	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
 }
 
 void GxsForumThreadWidget::blank()
@@ -1883,9 +1882,9 @@ void GxsForumThreadWidget::insertMessage()
 
 	if (index.isValid())
     {
-		QModelIndex parentIndex = mThreadProxyModel->mapToSource(index).parent();
+		QModelIndex parentIndex = index.parent();
 		int curr_index = index.row();
-		int count = mThreadModel->rowCount(parentIndex);
+		int count = mThreadProxyModel->rowCount(parentIndex);
 
 		ui->previousButton->setEnabled(curr_index > 0);
 		ui->nextButton->setEnabled(curr_index < count - 1);
@@ -1911,32 +1910,31 @@ void GxsForumThreadWidget::insertMessage()
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
-    std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << mPostVersions.size() << std::endl;
-#ifdef TODO
-    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::const_iterator it = mPostVersions.find(mOrigThreadId) ;
+    std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mThreadId);
 
+    std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << post_versions.size() << std::endl;
 	ui->versions_CB->blockSignals(true) ;
 
     while(ui->versions_CB->count() > 0)
 		ui->versions_CB->removeItem(0);
 
-    if(it != mPostVersions.end())
+    if(!post_versions.empty())
     {
-		std::cerr << (*it).size() << " versions found " << std::endl;
+		std::cerr << post_versions.size() << " versions found " << std::endl;
 
 		ui->versions_CB->setVisible(true) ;
         ui->time_label->hide();
 
         int current_index = 0 ;
 
-        for(int i=0;i<(*it).size();++i)
+        for(int i=0;i<post_versions.size();++i)
         {
-            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( (*it)[i].first));
-            ui->versions_CB->setItemData(i,QString::fromStdString((*it)[i].second.toStdString()));
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
+            ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
 
-            std::cerr << "  added new post version " << (*it)[i].first << " " << (*it)[i].second << std::endl;
+            std::cerr << "  added new post version " << post_versions[i].first << " " << post_versions[i].second << std::endl;
 
-            if(mThreadId == (*it)[i].second)
+            if(mThreadId == post_versions[i].second)
                 current_index = i ;
         }
 
@@ -1947,7 +1945,6 @@ void GxsForumThreadWidget::insertMessage()
     	ui->versions_CB->hide();
         ui->time_label->show();
     }
-#endif
 
 	ui->versions_CB->blockSignals(false) ;
 
@@ -2238,7 +2235,7 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 
 		QModelIndex index = *selectedIndexes.begin();
 
-		mThreadModel->setMsgReadStatus(index,read,children);
+		mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),read,children);
 	}
 
 #ifdef TODO
@@ -2723,13 +2720,21 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 
 void GxsForumThreadWidget::updateGroupName()
 {
+	ui->threadTreeWidget->selectionModel()->clear();
+	ui->threadTreeWidget->selectionModel()->reset();
+    mThreadId.clear();
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
+	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
+    ui->threadTreeWidget->update();
 }
 void GxsForumThreadWidget::updateGroupData()
 {
 	mSubscribeFlags = 0;
 	mSignFlags = 0;
+    mThreadId.clear();
 	mForumDescription.clear();
+    ui->threadTreeWidget->selectionModel()->clear();
+    ui->threadTreeWidget->selectionModel()->reset();
 
 	emit groupChanged(this);
 

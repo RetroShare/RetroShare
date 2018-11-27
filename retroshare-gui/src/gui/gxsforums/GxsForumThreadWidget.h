@@ -237,8 +237,6 @@ private:
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 
-    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;	// holds older versions of posts
-
     RsGxsForumModel *mThreadModel;
     QSortFilterProxyModel *mThreadProxyModel;
 

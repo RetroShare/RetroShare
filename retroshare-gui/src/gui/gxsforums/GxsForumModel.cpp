@@ -48,9 +48,20 @@ int RsGxsForumModel::rowCount(const QModelIndex& parent) const
     else
        return getChildrenCount(parent.internalPointer());
 }
+
 int RsGxsForumModel::columnCount(const QModelIndex &parent) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
+}
+
+std::vector<std::pair<time_t,RsGxsMessageId> > RsGxsForumModel::getPostVersions(const RsGxsMessageId& mid) const
+{
+    auto it = mPostVersions.find(mid);
+
+    if(it != mPostVersions.end())
+        return it->second;
+    else
+        return std::vector<std::pair<time_t,RsGxsMessageId> >();
 }
 
 bool RsGxsForumModel::getPostData(const QModelIndex& i,ForumModelPostEntry& fmpe) const
@@ -488,12 +499,13 @@ void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
     update_posts(forum_group_id);
 }
 
-void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts)
+void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions)
 {
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 
     mForumGroup = group;
     mPosts = posts;
+    mPostVersions = post_versions;
 
     // now update prow for all posts
 
@@ -539,14 +551,15 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 
         // 2 - sort the messages into a proper hierarchy
 
+        auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
         std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
         RsGxsForumGroup group = groups[0];
 
-        computeMessagesHierarchy(group,messages,*vect);
+        computeMessagesHierarchy(group,messages,*vect,*post_versions);
 
         // 3 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [group,vect,this]()
+        RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -554,8 +567,10 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*vect) ;
+            setPosts(group,*vect,*post_versions) ;
+
             delete vect;
+            delete post_versions;
 
 
 		}, this );
@@ -651,11 +666,13 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 #endif
 }
 
-static bool decreasing_time_comp(const QPair<time_t,RsGxsMessageId>& e1,const QPair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
+static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 
 void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_group,
                                                const std::vector<RsGxsForumMsg>& msgs_array,
-                                               std::vector<ForumModelPostEntry>& posts)
+                                               std::vector<ForumModelPostEntry>& posts,
+                                               std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& mPostVersions
+                                               )
 {
     std::cerr << "updating messages data with " << msgs_array.size() << " messages" << std::endl;
 
@@ -687,7 +704,6 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 	int step = 0;
 
     initEmptyHierarchy(posts);
-    QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;
 
     // ThreadList contains the list of parent threads. The algorithm below iterates through all messages
     // and tries to establish parenthood relationships between them, given that we only know the
@@ -740,31 +756,31 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 			// always add the post a self version
 
 			if(mPostVersions[msgIt->second.mMeta.mOrigMsgId].empty())
-				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
+				mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(std::make_pair(msgIt2->second.mMeta.mPublishTs,msgIt2->second.mMeta.mMsgId)) ;
 
-			mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(QPair<time_t,RsGxsMessageId>(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
+			mPostVersions[msgIt->second.mMeta.mOrigMsgId].push_back(std::make_pair(msgIt->second.mMeta.mPublishTs,msgIt->second.mMeta.mMsgId)) ;
 		}
     }
 
     // The following code assembles all new versions of a given post into the same array, indexed by the oldest version of the post.
 
-    for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
-		QVector<QPair<time_t,RsGxsMessageId> >& v(*it) ;
+		auto& v(it->second) ;
 
         for(int32_t i=0;i<v.size();++i)
         {
-            if(v[i].second != it.key())
+            if(v[i].second != it->first)
 			{
 				RsGxsMessageId sub_msg_id = v[i].second ;
 
-				QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it2 = mPostVersions.find(sub_msg_id);
+				auto it2 = mPostVersions.find(sub_msg_id);
 
 				if(it2 != mPostVersions.end())
 				{
-					for(int32_t j=0;j<(*it2).size();++j)
-						if((*it2)[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
-							v.append((*it2)[j]) ;
+					for(int32_t j=0;j<it2->second.size();++j)
+						if(it2->second[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
+							v.push_back(it2->second[j]) ;
 
 					mPostVersions.erase(it2) ;	// it2 is never equal to it
 				}
@@ -779,37 +795,37 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #ifdef DEBUG_FORUMS
 	std::cerr << "Final post versions: " << std::endl;
 #endif
-	QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mTmp;
+	std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mTmp;
     std::map<RsGxsMessageId,RsGxsMessageId> most_recent_versions ;
 
-    for(QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > >::iterator it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
     {
 #ifdef DEBUG_FORUMS
         std::cerr << "Original post: " << it.key() << std::endl;
 #endif
         // Finally, sort the posts from newer to older
 
-        qSort((*it).begin(),(*it).end(),decreasing_time_comp) ;
+        std::sort(it->second.begin(),it->second.end(),decreasing_time_comp) ;
 
 #ifdef DEBUG_FORUMS
 		std::cerr << "   most recent version " << (*it)[0].first << "  " << (*it)[0].second << std::endl;
 #endif
-        for(int32_t i=1;i<(*it).size();++i)
+        for(int32_t i=1;i<it->second.size();++i)
         {
-			msgs.erase((*it)[i].second) ;
+			msgs.erase(it->second[i].second) ;
 
 #ifdef DEBUG_FORUMS
             std::cerr << "   older version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
 #endif
         }
 
-        mTmp[(*it)[0].second] = *it ;	// index the versions map by the ID of the most recent post.
+        mTmp[it->second[0].second] = it->second ;	// index the versions map by the ID of the most recent post.
 
 		// Now make sure that message parents are consistent. Indeed, an old post may have the old version of a post as parent. So we need to change that parent
 		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
 
-        for(int i=1;i<(*it).size();++i)
-            most_recent_versions[(*it)[i].second] = (*it)[0].second ;
+        for(int i=1;i<it->second.size();++i)
+            most_recent_versions[it->second[i].second] = it->second[0].second ;
     }
     mPostVersions = mTmp ;
 
