@@ -41,8 +41,8 @@ DHTStatus::DHTStatus(QWidget *parent)
        
     statusDHT = new QLabel("<strong>" + tr("DHT") + ":</strong>", this );
 	 statusDHT->setToolTip(tr("<p>Retroshare uses Bittorrent's DHT as a proxy for connexions. It does not \"store\" your IP in the DHT. \
-				                        Instead the DHT is used by your friends to reach you while processing standard DHT requests. \
-												The status bullet will turn green as soon as Retroshare gets a DHT response from one of your friends.</p>")) ;
+				                        Instead the DHT is used by your trusted nodes to reach you while processing standard DHT requests. \
+												The status bullet will turn green as soon as Retroshare gets a DHT response from one of your trusted nodes.</p>")) ;
     hbox->addWidget(statusDHT);
     
     dhtstatusLabel = new QLabel( this );
