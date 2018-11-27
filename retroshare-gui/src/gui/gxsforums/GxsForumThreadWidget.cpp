@@ -264,7 +264,7 @@ public:
 		QPixmap pix = icon.pixmap(r.size());
 
 		// draw pixmap at center of item
-		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
+		const QPoint p = QPoint(pix.width()/2.0, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
 		painter->drawText(r.topLeft() + p + QPoint(pix.width()+f/2.0,f*0.8), str);
 	}
@@ -371,13 +371,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	itemDelegate->setOnlyPlainText(true);
 	ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
-	/* Set header resize modes and initial section sizes */
-	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
-
     float f = QFontMetricsF(font()).height()/14.0f ;
 
+	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
@@ -405,9 +401,16 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	// load settings
 	processSettings(true);
 
+	/* Set header resize modes and initial section sizes */
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_AUTHOR,       QHeaderView::Interactive);
+    ui->threadTreeWidget->header()->setCascadingSectionResizes(true);
+
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ, QHeaderView::Fixed);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_CONTENT);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);

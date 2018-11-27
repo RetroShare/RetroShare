@@ -225,6 +225,9 @@
          <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
         </widget>
        </item>
        <item>
