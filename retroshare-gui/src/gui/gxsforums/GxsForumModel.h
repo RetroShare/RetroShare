@@ -141,6 +141,7 @@ public:
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant backgroundRole(const ForumModelPostEntry& fmpe, int col) const;
 
     /*!
      * \brief debug_dump

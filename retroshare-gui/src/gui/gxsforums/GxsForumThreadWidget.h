@@ -27,6 +27,7 @@
 #include <retroshare/rsgxsforums.h>
 #include "gui/gxs/GxsIdDetails.h"
 
+class QSortFilterProxyModel;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
@@ -239,6 +240,7 @@ private:
     QMap<RsGxsMessageId,QVector<QPair<time_t,RsGxsMessageId> > > mPostVersions ;	// holds older versions of posts
 
     RsGxsForumModel *mThreadModel;
+    QSortFilterProxyModel *mThreadProxyModel;
 
     Ui::GxsForumThreadWidget *ui;
 };

@@ -270,6 +270,41 @@ public:
 	}
 };
 
+class ForumPostSortFilterProxyModel: public QSortFilterProxyModel
+{
+public:
+    ForumPostSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) {}
+
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+    {
+		bool  left_is_not_pinned  = ! left.data(ROLE_THREAD_PINNED).toBool();
+		bool right_is_not_pinned  = !right.data(ROLE_THREAD_PINNED).toBool();
+#ifdef DEBUG_PINNED_POST_SORTING
+        std::cerr << "Comparing item date \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
+                     << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
+                  << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << right_is_not_pinned << ") ";
+#endif
+
+        if(left_is_not_pinned ^ right_is_not_pinned)
+        {
+#ifdef DEBUG_PINNED_POST_SORTING
+            std::cerr << "Local: " << ((m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned) << std::endl;
+#endif
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
+		}
+
+#ifdef DEBUG_PINNED_POST_SORTING
+		std::cerr << "Remote: " << GxsIdRSTreeWidgetItem::operator<(other) << std::endl;
+#endif
+		return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
+    }
+
+private:
+    const QHeaderView *m_header ;
+};
+
+
 void GxsForumThreadWidget::setTextColorRead          (QColor color) { mTextColorRead           = color; mThreadModel->setTextColorRead          (color);}
 void GxsForumThreadWidget::setTextColorUnread        (QColor color) { mTextColorUnread         = color; mThreadModel->setTextColorUnread        (color);}
 void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; mThreadModel->setTextColorUnreadChildren(color);}
@@ -329,11 +364,17 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mInMsgAsReadUnread = false;
 
-	mThreadCompareRole = new RSTreeWidgetItemCompareRole;
-	mThreadCompareRole->setRole(RsGxsForumModel::COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
+	//mThreadCompareRole = new RSTreeWidgetItemCompareRole;
+	//mThreadCompareRole->setRole(RsGxsForumModel::COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
+
+	ui->threadTreeWidget->setSortingEnabled(true);
 
     mThreadModel = new RsGxsForumModel(this);
-    ui->threadTreeWidget->setModel(mThreadModel);
+    mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
+    mThreadProxyModel->setSourceModel(mThreadModel);
+    ui->threadTreeWidget->setModel(mThreadProxyModel);
+
+
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
@@ -442,8 +483,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 #ifdef SUSPENDED_CODE
 	ui->threadTreeWidget->enableColumnCustomize(true);
 
-	ui->threadTreeWidget->sortItems(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
 #endif
+	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
 }
 
 void GxsForumThreadWidget::blank()
@@ -671,7 +712,7 @@ bool GxsForumThreadWidget::getCurrentPost(ForumModelPostEntry& fmpe) const
     if(!index.isValid())
         return false ;
 
-    return mThreadModel->getPostData(index,fmpe);
+    return mThreadModel->getPostData(mThreadProxyModel->mapToSource(index),fmpe);
 }
 
 void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
@@ -905,14 +946,16 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
         return;
     }
 
-	mThreadId = mOrigThreadId = RsGxsMessageId(mThreadModel->data(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID),Qt::UserRole).toString().toStdString());
+	mThreadId = mOrigThreadId = RsGxsMessageId(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
 
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 
 	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
-	mThreadModel->setMsgReadStatus(index, true,false);
+
+    QModelIndex src_index = mThreadProxyModel->mapToSource(index);
+	mThreadModel->setMsgReadStatus(src_index, true,false);
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
@@ -932,8 +975,11 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
     {
         ForumModelPostEntry fmpe;
-        mThreadModel->getPostData(index,fmpe);
-		mThreadModel->setMsgReadStatus(index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
+
+		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
+
+        mThreadModel->getPostData(src_index,fmpe);
+		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
 	}
     else
         changedThread(index);
@@ -1837,7 +1883,7 @@ void GxsForumThreadWidget::insertMessage()
 
 	if (index.isValid())
     {
-		QModelIndex parentIndex = index.parent();
+		QModelIndex parentIndex = mThreadProxyModel->mapToSource(index).parent();
 		int curr_index = index.row();
 		int count = mThreadModel->rowCount(parentIndex);
 
@@ -1950,15 +1996,15 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	if (IS_MSG_NEW(status)) {
 		if (setToReadOnActive) {
 			/* set to read */
-			mThreadModel->setMsgReadStatus(index,true,false);
+			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),true,false);
 		} else {
 			/* set to unread by user */
-			mThreadModel->setMsgReadStatus(index,false,false);
+			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),false,false);
 		}
 	} else {
 		if (setToReadOnActive && IS_MSG_UNREAD(status)) {
 			/* set to read */
-			mThreadModel->setMsgReadStatus(index, true,false);
+			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index), true,false);
 		}
 	}
 
@@ -2004,7 +2050,7 @@ void GxsForumThreadWidget::previousMessage()
 
 	if (index > 0)
     {
-		QModelIndex prevItem = mThreadModel->index(index - 1,0,parentIndex) ;
+		QModelIndex prevItem = mThreadProxyModel->index(index - 1,0,parentIndex) ;
 
 		if (prevItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(prevItem);
@@ -2027,11 +2073,11 @@ void GxsForumThreadWidget::nextMessage()
 	QModelIndex parentIndex = current_index.parent();
 
 	int index = current_index.row();
-	int count = mThreadModel->rowCount(parentIndex) ;
+	int count = mThreadProxyModel->rowCount(parentIndex);
 
 	if (index < count - 1)
     {
-		QModelIndex nextItem = mThreadModel->index(index + 1,0,parentIndex) ;
+		QModelIndex nextItem = mThreadProxyModel->index(index + 1,0,parentIndex) ;
 
 		if (nextItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(nextItem);

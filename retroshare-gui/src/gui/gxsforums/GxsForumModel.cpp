@@ -276,9 +276,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     if(role == Qt::FontRole)
     {
         QFont font ;
-
-		font.setBold(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
-
+		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)));
         return QVariant(font);
     }
 
@@ -296,6 +294,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
+	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
@@ -310,7 +309,7 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int colu
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
 
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus))
+    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
         return QVariant(mTextColorUnread);
     else
         return QVariant(mTextColorRead);
@@ -382,6 +381,13 @@ QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int column)
         return QVariant(false);
 }
 
+QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int column) const
+{
+    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+        return QVariant(QBrush(QColor(255,200,180)));
+
+    return QVariant();
+}
 
 QVariant RsGxsForumModel::sizeHintRole(int col) const
 {
@@ -393,6 +399,7 @@ QVariant RsGxsForumModel::sizeHintRole(int col) const
 	case COLUMN_THREAD_TITLE:        return QVariant( QSize(factor * 170, factor*14 ));
 	case COLUMN_THREAD_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
 	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
+	case COLUMN_THREAD_DISTRIBUTION: return QVariant( QSize(factor * 15 , factor*14 ));
 	}
 }
 
