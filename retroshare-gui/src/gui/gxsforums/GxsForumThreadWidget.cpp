@@ -968,6 +968,7 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
         return;
 
     mThreadId = tmp;
+    mOrigThreadId = tmp;
 
     std::cerr << "Clicked on message ID " << mThreadId << std::endl;
 
@@ -1910,7 +1911,7 @@ void GxsForumThreadWidget::insertMessage()
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
-    std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mThreadId);
+    std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mOrigThreadId);
 
     std::cerr << "Looking into existing versions  for post " << mThreadId << ", thread history: " << post_versions.size() << std::endl;
 	ui->versions_CB->blockSignals(true) ;
