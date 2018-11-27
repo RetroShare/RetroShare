@@ -124,14 +124,10 @@ void GxsForumsFillThread::run()
 		}
 
 		if (requestStatus == RsTokenService::FAILED)
-<<<<<<< HEAD
         {
             deleteLater();
 			return;
         }
-=======
-			return;
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 	}
 
     // also get the forum meta data.
@@ -160,14 +156,10 @@ void GxsForumsFillThread::run()
 		}
 
 		if (requestStatus == RsTokenService::FAILED)
-<<<<<<< HEAD
         {
             deleteLater();
 			return;
         }
-=======
-			return;
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 	}
 
 	if (wasStopped())
@@ -179,10 +171,7 @@ void GxsForumsFillThread::run()
 		/* cancel request */
 		service->cancelRequest(msg_token);
 		service->cancelRequest(grp_token);
-<<<<<<< HEAD
         deleteLater();
-=======
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 		return;
 	}
 
@@ -191,14 +180,10 @@ void GxsForumsFillThread::run()
     std::vector<RsGxsForumGroup> forum_groups;
 
 	if (!rsGxsForums->getGroupData(grp_token, forum_groups) || forum_groups.size() != 1)
-<<<<<<< HEAD
     {
         deleteLater();
         return;
     }
-=======
-        return;
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 
     RsGxsForumGroup forum_group = *forum_groups.begin();
 
@@ -221,14 +206,10 @@ void GxsForumsFillThread::run()
 		std::vector<RsGxsForumMsg> msgs_array;
 
 		if (!rsGxsForums->getMsgData(msg_token, msgs_array))
-<<<<<<< HEAD
         {
             deleteLater();
 			return;
         }
-=======
-			return;
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 
 		// now put everything into a map in order to make search log(n)
 

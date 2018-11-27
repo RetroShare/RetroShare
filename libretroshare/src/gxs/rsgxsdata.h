@@ -110,11 +110,7 @@ public:
 
     RsTlvKeySignatureSet signSet;
     std::string mMsgName;
-<<<<<<< HEAD
     rstime_t      mPublishTs;
-=======
-    time_t      mPublishTs;
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
     uint32_t    mMsgFlags; // used by some services (e.g. by forums to store message moderation flags)
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.

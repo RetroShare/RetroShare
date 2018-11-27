@@ -31,7 +31,6 @@
 // Generated at compile time
 #include "jsonapi-includes.inl"
 
-<<<<<<< HEAD
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
@@ -65,8 +64,6 @@
 	session->close(RET_CODE, ans, headers)
 
 
-=======
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 static bool checkRsServicePtrReady(
         void* serviceInstance, const std::string& serviceName,
         RsGenericSerializer::SerializeContext& ctx,
@@ -82,27 +79,13 @@ static bool checkRsServicePtrReady(
 	RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
 	RS_SERIAL_PROCESS(jsonApiError);
 
-<<<<<<< HEAD
 	RsJson& jAns(ctx.mJson);
 	DEFAULT_API_CALL_JSON_RETURN(rb::CONFLICT);
 	return false;
 }
 
 
-=======
-	std::stringstream ss;
-	ss << ctx.mJson;
-	std::string&& ans(ss.str());
-	const std::multimap<std::string, std::string> headers
-	{
-		{ "Content-Type", "text/json" },
-		{ "Content-Length", std::to_string(ans.length()) }
-	};
-	session->close(rb::CONFLICT, ans, headers);
-	return false;
-}
 
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 JsonApiServer::JsonApiServer(
         uint16_t port, const std::string& bindAddress,
         const std::function<void(int)> shutdownCallback ) :
@@ -110,7 +93,6 @@ JsonApiServer::JsonApiServer(
 {
 	registerHandler("/jsonApiServer/shutdown",
 	                [this](const std::shared_ptr<rb::Session> session)
-<<<<<<< HEAD
 	{
 		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
 		session->fetch( reqSize, [this](
@@ -149,11 +131,6 @@ JsonApiServer::JsonApiServer(
 
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 		} );
-=======
-	{
-		session->close(rb::OK);
-		shutdown();
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 	});
 
 	registerHandler("/rsFiles/getFileData",

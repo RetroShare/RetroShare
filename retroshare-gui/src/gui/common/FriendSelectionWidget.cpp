@@ -689,11 +689,7 @@ void FriendSelectionWidget::requestGXSIdList()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
-<<<<<<< HEAD
 template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
-=======
-template<> void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
->>>>>>> b13826387... Merge pull request #1323 from csoler/v0.6-ForumAdmin
 {
     mPreSelectedGxsIds = ids ;
     requestGXSIdList();
