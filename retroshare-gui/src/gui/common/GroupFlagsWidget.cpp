@@ -97,8 +97,8 @@ void GroupFlagsWidget::update_button_state(bool b,int button_id)
   QString tip_on, tip_off;
   switch (button_id) {
     case INDEX_BROWSABLE:
-      tip_on = tr("Directory content is visible to friend nodes (see list at right)");
-      tip_off = tr("Directory content is NOT visible to friend nodes");
+      tip_on = tr("Directory content is visible to trusted nodes (see list at right)");
+      tip_off = tr("Directory content is NOT visible to trusted nodes");
       break;
     case INDEX_ANON_SEARCH:
       tip_on = tr("Directory can be searched anonymously");
@@ -137,12 +137,12 @@ QString GroupFlagsWidget::groupInfoString(FileStorageFlags flags, const QList<QS
     if(flags & DIR_FLAGS_BROWSABLE)
     {
         if(groupNames.empty())
-            res += tr("All friend nodes can see this directory") + "\n" ;
+            res += tr("All trusted nodes can see this directory") + "\n" ;
         else
-            res += tr("Only visible to friend nodes in groups: %1").arg(groups_string) + "\n" ;
+            res += tr("Only visible to trusted nodes in groups: %1").arg(groups_string) + "\n" ;
     }
     else
-        res += tr("Not visible to friend nodes") + "\n" ;
+        res += tr("Not visible to trusted nodes") + "\n" ;
 
     if((flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) && !(flags & DIR_FLAGS_ANONYMOUS_SEARCH))
         res += tr("Files can be downloaded (but not searched) anonymously") ;

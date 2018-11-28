@@ -265,7 +265,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     
     /* Add filter types */
     ui.filterComboBox->addItem(tr("All addresses (mixed)"));
-    ui.filterComboBox->addItem(tr("Friend Nodes"));
+    ui.filterComboBox->addItem(tr("Trusted Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
     ui.filterComboBox->setCurrentIndex(2);

@@ -280,9 +280,9 @@ void GenCertDialog::setupState()
 
     switch(ui.nodeType_CB->currentIndex())
     {
-    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can also connect to hidden nodes if running Tor on your machine. Best choice for sharing with trusted friends.</b>"));
+    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can also connect to hidden nodes if running Tor on your machine. Best choice for sharing with trusted nodes.</b>"));
         break;
-    case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust friend nodes with your own IP.</b>"));
+    case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust nodes with your own IP.</b>"));
         break;
     case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only. Allows to use other proxy solutions such as I2P.</b>"));
         break;

@@ -297,7 +297,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 			break ;
 		case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
 			break ;
-		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your trusted nodes");
 			break ;
 		default:
 			std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;

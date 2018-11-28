@@ -245,8 +245,8 @@ void ShareManager::load()
 
         connect(widget,SIGNAL(flagsChanged(FileStorageFlags)),this,SLOT(updateFlags())) ;
 
-        listWidget->item(row,COLUMN_GROUPS)->setToolTip(tr("Double click to select which groups of friends can see the files")) ;
-		listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the name that friends will see.")) ;
+        listWidget->item(row,COLUMN_GROUPS)->setToolTip(tr("Double click to select which groups of trusted nodes can see the files")) ;
+		listWidget->item(row,COLUMN_VIRTUALNAME)->setToolTip(tr("Double click to change the name that trusted nodes will see.")) ;
 
         listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
@@ -309,7 +309,7 @@ void ShareManager::updateFlags()
 QString ShareManager::getGroupString(const std::list<RsNodeGroupId>& groups)
 {
     if(groups.empty())
-        return tr("[All friend nodes]") ;
+        return tr("[All trusted nodes]") ;
 
     int n = 0;
     QString group_string ;

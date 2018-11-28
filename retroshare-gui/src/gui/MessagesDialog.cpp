@@ -297,12 +297,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
  " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Messages</h1>                         \
- <p>Retroshare has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
+ <p>Retroshare has its own internal email system. You can send/receive emails to/from connected trusted nodes.</p> \
  <p>It is also possible to send messages to other people's Identities using the global routing system. These messages \
     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>\
     <p>Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\
- <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
- or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback \
+ <p>Generally, you may use messages to recommend files to your trusted nodes by pasting file links, \
+ or recommend trusted nodes to other trusted nodes, in order to strenghten your network, or send feedback \
  to a channel's owner.</p>                   \
  ").arg(QString::number(2*S)).arg(QString::number(S)) ;
 

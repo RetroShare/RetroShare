@@ -287,7 +287,7 @@ QString RetroshareDirModel::getGroupsString(FileStorageFlags flags,const std::li
         return QString();
 
     if(group_ids.empty())
-        return tr("[All friend nodes]") ;
+        return tr("[All trusted nodes]") ;
 
     QString groups_str = tr("Only ");
 	RsGroupInfo group_info ;
@@ -868,9 +868,9 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			case COLUMN_NAME:
 				if (RemoteMode)
                     if(mUpdating)
-						return tr("Friends Directories [updating...]");
+						return tr("Trusted Nodes Directories [updating...]");
 					else
-						return tr("Friends Directories");
+						return tr("Trusted Nodes Directories");
 				else
 					if(mUpdating)
 						return tr("My Directories [updating...]");
@@ -884,7 +884,7 @@ QVariant TreeStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				return tr("Age");
 			case COLUMN_FRIEND_ACCESS:
 				if (RemoteMode)
-					return tr("Friend");
+					return tr("Trusted Node");
 				else
 					return tr("Access");
 			case COLUMN_WN_VISU_DIR:
@@ -922,7 +922,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 			case COLUMN_NAME:
 				if (RemoteMode)
 				{
-					return tr("Friends Directories");
+					return tr("Trusted Nodes Directories");
 				}
 				return tr("My Directories");
 			case COLUMN_FILENB:
@@ -933,7 +933,7 @@ QVariant FlatStyle_RDM::headerData(int section, Qt::Orientation orientation, int
 				return tr("Age");
 			case COLUMN_FRIEND_ACCESS:
 				if(RemoteMode)
-					return tr("Friend");
+					return tr("Trusted Node");
 				else
 					return tr("Share Flags");
 			case COLUMN_WN_VISU_DIR:

@@ -921,7 +921,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
 	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
-	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
+	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Trusted nodes files")) ;
 
 	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
 
@@ -1079,13 +1079,13 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     int S = QFontMetricsF(font()).height();
   QString help_str = tr(
     " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
-    <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
+    <p>Retroshare brings two ways of transferring files: direct transfers from your trusted nodes, and                                     \
     distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
     (you can be a source while downloading)</p>                                     \
     <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
-    These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files \
-    in their Friends Files tab</p>\
-    <p>The search tab reports files from your friends' file lists, and distant files that can be reached \
+    These files will be listed in the My Files tab. You can decide for each trusted node group whether they can or not see these files \
+    in their Trusted Nodes Files tab</p>\
+    <p>The search tab reports files from your trusted nodes' file lists, and distant files that can be reached \
     anonymously using the multi-hop tunnelling system.</p> \
     ").arg(QString::number(2*S)).arg(QString::number(S)) ;
 

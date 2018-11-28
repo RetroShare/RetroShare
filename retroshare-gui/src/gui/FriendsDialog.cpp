@@ -72,7 +72,7 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     if (instance == NULL) {
         instance = this;
     }
-    QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
+    QString msg = tr("Retroshare broadcast chat: messages are sent to all connected trusted nodes.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
     ui.chatWidget->setWelcomeMessage(msg);
@@ -166,7 +166,7 @@ QList<int> sizes;
     <ul>                                                                                                          \
       <li>Broadcast sends messages to all connected nodes at once</li>                             \
       <li>Local network graph shows the network around you, based on discovery information</li>                 \
-      <li>Keyring contains node keys you collected, mostly forwarded to you by your friend nodes</li>                              \
+      <li>Keyring contains node keys you collected, mostly forwarded to you by your trusted nodes</li>                              \
     </ul> </p>                                                                                                      \
   ") ;
 

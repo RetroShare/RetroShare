@@ -1852,11 +1852,11 @@ void IdDialog::insertIdDetails(uint32_t token)
     {
         if (data.mPgpKnown)
             if (rsPeers->isGPGAccepted(data.mPgpId))
-                ui->lineEdit_Type->setText(tr("Linked to a friend Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a Retroshare trusted node")) ;
             else
-                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare node")) ;
+                ui->lineEdit_Type->setText(tr("Linked to a known Retroshare trusted node")) ;
         else
-            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare node")) ;
+            ui->lineEdit_Type->setText(tr("Linked to unknown Retroshare trusted node")) ;
     }
     else
     {
@@ -1913,7 +1913,7 @@ void IdDialog::insertIdDetails(uint32_t token)
     if(info.mFriendsNegativeVotes > 0) frep_string += QString::number(info.mFriendsNegativeVotes) + tr(" negative ") ;
 
     if(info.mFriendsPositiveVotes==0 && info.mFriendsNegativeVotes==0)
-        frep_string = tr("No votes from friends") ;
+        frep_string = tr("No votes from trusted nodes") ;
 
     ui->neighborNodesOpinion_TF->setText(frep_string) ;
     
@@ -1924,8 +1924,8 @@ void IdDialog::insertIdDetails(uint32_t token)
     {
     	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
     	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your trusted nodes)")) ; break ;
+    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your trusted nodes)")) ; break ;
     default:
     	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
     }
@@ -2597,7 +2597,7 @@ void IdDialog::sendMsg()
 
 QString IdDialog::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on RetroShare.<br>");
+    return tr("Hi,<br>I want to connect close to you on RetroShare.<br>");
 }
 
 void IdDialog::sendInvite()

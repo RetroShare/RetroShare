@@ -293,8 +293,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
 
 	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
-	                                        available posts from your subscribed friends, and make the \
-	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
+	                                        available posts from your subscribed trusted nodes, and make the \
+	                                        forum visible to all other trusted nodes.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 	                                        ui->threadTreeWidget->enableColumnCustomize(true);
 
 	ui->threadTreeWidget->sortItems(COLUMN_THREAD_DATE, Qt::DescendingOrder);
@@ -528,17 +528,17 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(reply_with_private_message()));
 
     QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
-    flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
+    flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify trusted nodes.")) ;
     flagaspositiveAct->setData(mTokenTypePositiveAuthor) ;
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
-    flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
+    flagasneutralAct->setToolTip(tr("Doing this, you trust your (trusted) nodes to decide to forward this message or not.")) ;
     flagasneutralAct->setData(mTokenTypeNeutralAuthor) ;
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
-    flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
+    flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify trusted nodes.")) ;
     flagasnegativeAct->setData(mTokenTypeNegativeAuthor) ;
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
@@ -1040,7 +1040,7 @@ static QString getDurationString(uint32_t days)
 	    break ;
     case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
     {
-        distrib_string = tr("Only friends nodes in group ") ;
+        distrib_string = tr("Only trusted nodes in group ") ;
 
         RsGroupInfo ginfo ;
         rsPeers->getGroupInfo(RsNodeGroupId(group.mMeta.mInternalCircle),ginfo) ;
@@ -1294,17 +1294,17 @@ QTreeWidgetItem *GxsForumThreadWidget::convertMsgToThreadWidget(const RsGxsForum
     else if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
         rep_warning_level = 2 ;
-    	rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.") ;
+    	rep_tooltip_str = tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your trusted nodes.") ;
     }
     else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(mForumGroup.mMeta.mSignFlags,idflags))
     {
         rep_warning_level = 1 ;
-    	rep_tooltip_str = tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.") ;
+    	rep_tooltip_str = tr("You have not set an opinion for this person,\n and your trusted nodes do not vote positively: Spam regulation \nprevents the message to be forwarded to your trusted nodes.") ;
     }
     else
     {
         rep_warning_level = 0 ;
-    	rep_tooltip_str = tr("Message will be forwarded to your friends.") ;
+    	rep_tooltip_str = tr("Message will be forwarded to your trusted nodes.") ;
     }
 
     item->setData(COLUMN_THREAD_DISTRIBUTION,Qt::ToolTipRole,rep_tooltip_str) ;
