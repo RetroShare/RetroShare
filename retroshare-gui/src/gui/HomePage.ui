@@ -39,7 +39,7 @@
         </font>
        </property>
        <property name="text">
-        <string>The text below is your own Retroshare certificate. Send it to your friends</string>
+        <string>The text below is your own Retroshare certificate. Send it to your trusted nodes</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -188,14 +188,14 @@ private and secure decentralized communication platform.
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Did you receive a certificate from a friend?</string>
+         <string>Did you receive a certificate from a trusted node?</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="addButton">
         <property name="text">
-         <string>Add friends certificate</string>
+         <string>Add trusted nodes certificates</string>
         </property>
         <property name="icon">
          <iconset resource="icons.qrc">

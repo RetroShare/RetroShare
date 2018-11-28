@@ -259,7 +259,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Friend nodes:</string>
+             <string>Trusted nodes:</string>
             </property>
            </widget>
           </item>
@@ -463,7 +463,7 @@
          <item>
           <widget class="QCheckBox" name="_includeAllIPs_CB">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP history is the list of IP you used accross time. Including this might help your friends reach you. This is optional for privacy reasons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;IP history is the list of IP you used accross time. Including this might help your trusted nodes reach you. This is optional for privacy reasons.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>Include IP history</string>

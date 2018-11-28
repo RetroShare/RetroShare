@@ -187,7 +187,7 @@
                <item row="4" column="1">
                 <widget class="QLineEdit" name="crypto_info">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the encryption method used by &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. The connection to friend nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This is the encryption method used by &lt;span style=&quot; font-weight:600;&quot;&gt;OpenSSL&lt;/span&gt;. The connection to trusted nodes&lt;/p&gt;&lt;p&gt;is always heavily encrypted and if DHE is present the connection further uses&lt;/p&gt;&lt;p&gt;&amp;quot;perfect forward secrecy&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="readOnly">
                   <bool>true</bool>

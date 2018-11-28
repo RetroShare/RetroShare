@@ -42,7 +42,7 @@
       <item>
        <widget class="StyledLabel" name="lobbyInfoLabel">
         <property name="text">
-         <string>A chat room is a decentralized and anonymous chat group. All participants receive all messages. Once the room is created you can invite other friend nodes with invite button on top right.</string>
+         <string>A chat room is a decentralized and anonymous chat group. All participants receive all messages. Once the room is created you can invite other trusted nodes with invite button on top right.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
@@ -106,7 +106,7 @@
               <widget class="QComboBox" name="security_CB">
                <item>
                 <property name="text">
-                 <string>Public (Visible by friends)</string>
+                 <string>Public (Visible by trusted nodes)</string>
                 </property>
                </item>
                <item>
@@ -165,7 +165,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="friendListLabel">
             <property name="text">
-             <string>Select the Friends with which you want to group chat.</string>
+             <string>Select the Trusted Nodes with which you want to group chat.</string>
             </property>
            </widget>
           </item>

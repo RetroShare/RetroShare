@@ -110,7 +110,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide Offline Friends</string>
+    <string>Hide Offline Trusted Nodes</string>
    </property>
   </action>
   <action name="actionShowState">
@@ -137,18 +137,18 @@
   </action>
   <action name="actionExportFriendlist">
    <property name="text">
-    <string>export friendlist</string>
+    <string>export trusted nodes list</string>
    </property>
    <property name="toolTip">
-    <string>export your friendlist including groups</string>
+    <string>export your trusted nodes list including groups</string>
    </property>
   </action>
   <action name="actionImportFriendlist">
    <property name="text">
-    <string>import friendlist</string>
+    <string>import trusted node list</string>
    </property>
    <property name="toolTip">
-    <string>import your friendlist including groups</string>
+    <string>import your trusted node list including groups</string>
    </property>
   </action>
  </widget>
