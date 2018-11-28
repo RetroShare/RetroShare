@@ -74,7 +74,7 @@ public:
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
 	virtual bool navigate(const RsGxsMessageId& msgId);
-	virtual bool isLoading();
+	//virtual bool isLoading();
 
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
@@ -217,6 +217,7 @@ private:
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
 
+#ifdef TO_REMOVE
 	uint32_t mTokenTypeGroupData;
 	uint32_t mTokenTypeInsertThreads;
 	uint32_t mTokenTypeMessageData;
@@ -227,6 +228,7 @@ private:
 	uint32_t mTokenTypeNegativeAuthor;
 	uint32_t mTokenTypePositiveAuthor;
 	uint32_t mTokenTypeNeutralAuthor;
+#endif
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;

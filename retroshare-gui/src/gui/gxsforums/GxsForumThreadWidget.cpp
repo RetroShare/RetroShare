@@ -317,6 +317,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
 	ui->setupUi(this);
 
+#ifdef TO_REMOVE
 	mTokenTypeGroupData          = nextTokenType();
 	mTokenTypeInsertThreads      = nextTokenType();
 	mTokenTypeMessageData        = nextTokenType();
@@ -327,10 +328,11 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mTokenTypeNeutralAuthor      = nextTokenType();
     mTokenTypePositiveAuthor     = nextTokenType();
 	mTokenTypeEditForumMessage   = nextTokenType();
+#endif
 
 	setUpdateWhenInvisible(true);
 
-#ifdef TODO
+#ifdef TO_REMOVE
 	/* Setup UI helper */
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->newthreadButton);
@@ -373,6 +375,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
 	ui->threadTreeWidget->setSortingEnabled(true);
+	ui->threadTreeWidget->setDynamicSortFilter(true);
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
@@ -600,9 +603,11 @@ QString GxsForumThreadWidget::groupName(bool withUnreadCount)
 
 QIcon GxsForumThreadWidget::groupIcon()
 {
+#ifdef TO_REMOVE
 	if (mStateHelper->isLoading(mTokenTypeGroupData) || mFillThread) {
 		return QIcon(":/images/kalarm.png");
 	}
+#endif
 
 	if (mNewCount) {
 		return QIcon(":/images/message-state-new.png");
@@ -2330,6 +2335,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 	return true;
 }
 
+#ifdef TO_REMOVE
 bool GxsForumThreadWidget::isLoading()
 {
 	if (mStateHelper->isLoading(mTokenTypeGroupData) || mFillThread) {
@@ -2338,6 +2344,7 @@ bool GxsForumThreadWidget::isLoading()
 
 	return GxsMessageFrameWidget::isLoading();
 }
+#endif
 
 void GxsForumThreadWidget::copyMessageLink()
 {
@@ -2761,8 +2768,11 @@ void GxsForumThreadWidget::updateGroupData()
 
         if(groups.size() != 1)
         {
+			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
+#ifdef TO_REMOVE
 			mStateHelper->setActive(mTokenTypeGroupData, false);
 			mStateHelper->clear(mTokenTypeGroupData);
+#endif
 			return;
         }
 
@@ -2813,8 +2823,11 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
         if(msgs.size() != 1)
         {
+			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one msg info for msgId " << msgId << std::endl;
+#ifdef TO_REMOVE
 			mStateHelper->setActive(mTokenTypeGroupData, false);
 			mStateHelper->clear(mTokenTypeGroupData);
+#endif
 			return;
         }
 
