@@ -1165,10 +1165,13 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
 {
     const ForumModelPostEntry& e(entries[index]);
 
+	QDateTime qtime;
+	qtime.setTime_t(e.mPublishTs);
+
     std::cerr << std::string(depth*2,' ') << index << " : " << e.mAuthorId.toStdString() << " "
               << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
               << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " "
-              << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+              << qtime.toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
 
     for(uint32_t i=0;i<e.mChildren.size();++i)
         recursPrintModel(entries,e.mChildren[i],depth+1);
@@ -1193,8 +1196,11 @@ void RsGxsForumModel::debug_dump()
     	for(uint32_t i=0;i<e.mChildren.size();++i)
             std::cerr << " " << e.mChildren[i] ;
 
+		QDateTime qtime;
+		qtime.setTime_t(e.mPublishTs);
+
         std::cerr << " (" << e.mParent << ")";
-		std::cerr << " " << QDateTime::fromSecsSinceEpoch(e.mPublishTs).toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
+		std::cerr << " " << qtime.toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
     }
 
     // recursive print
