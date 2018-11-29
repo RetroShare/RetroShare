@@ -85,6 +85,7 @@ static bool checkRsServicePtrReady(
 }
 
 
+
 JsonApiServer::JsonApiServer(
         uint16_t port, const std::string& bindAddress,
         const std::function<void(int)> shutdownCallback ) :
@@ -141,6 +142,9 @@ JsonApiServer::JsonApiServer(
 		                const rb::Bytes& body )
 		{
 			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			if(!checkRsServicePtrReady(rsFiles, "rsFiles", cAns, session))
+				return;
 
 			if(!checkRsServicePtrReady(rsFiles, "rsFiles", cAns, session))
 				return;

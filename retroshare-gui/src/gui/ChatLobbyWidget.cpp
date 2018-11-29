@@ -1755,8 +1755,8 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay, bool un
         QIcon unreadIcon = QIcon(IMAGE_UNREAD_ICON);
         int overlayUnreadY = avatarHeight - 2.5*overlaySize;
         int overlayUnreadX = avatarHeight - overlaySize;
-        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(25, 25)));
-        painter.drawPixmap(overlayUnreadX, overlayUnreadY, overlaySize, overlaySize*1.5, unreadOverlay);
+        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(25, 15)));
+        painter.drawPixmap(overlayUnreadX, overlayUnreadY, overlaySize, overlaySize*1.5, unreadOverlay);    //d: increase size unreadIcon
     }
 
     QIcon icon;

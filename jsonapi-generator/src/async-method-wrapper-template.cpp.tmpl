@@ -37,6 +37,10 @@ registerHandler("$%apiPath%$",
 		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
 			return;
 
+		if( !checkRsServicePtrReady(
+		            $%instanceName%$, "$%instanceName%$", cAns, session ) )
+			return;
+
 $%paramsDeclaration%$
 
 $%inputParamsDeserialization%$

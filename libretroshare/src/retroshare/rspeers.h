@@ -437,7 +437,7 @@ public:
 	 * @jsonapi{development}
 	 * @param[in] sslId id of the peer
 	 * @param[out] det storage for the details of the peer
-	 * @return false if error occurred, true otherwise
+* @return false if error occurred, true otherwise
 	 */
 	virtual bool getPeerDetails(const RsPeerId& sslId, RsPeerDetails& det) = 0;
 
