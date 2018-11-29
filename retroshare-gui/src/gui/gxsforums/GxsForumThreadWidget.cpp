@@ -375,7 +375,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
 	ui->threadTreeWidget->setSortingEnabled(true);
-	ui->threadTreeWidget->setDynamicSortFilter(true);
+	//ui->threadTreeWidget->setDynamicSortFilter(true);// is that useful??
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
