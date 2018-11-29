@@ -66,7 +66,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->keyShareList->start();
     ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peer_list, false);
 
-	if (privacyLevel) {
+    if (privacyLevel) {
         ui->security_CB->setCurrentIndex((privacyLevel == CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
 	}
 

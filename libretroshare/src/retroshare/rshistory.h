@@ -86,7 +86,7 @@ public:
 	// 0 = no limit, >0 count of saved messages
 	virtual uint32_t getSaveCount(uint32_t chat_type) = 0;
 	virtual void     setSaveCount(uint32_t chat_type, uint32_t count) = 0;
-    virtual void updateMessageAsRead(HistoryMsg) = 0;
+    virtual void updateMessageAsRead(const ChatId &cId) = 0;
 
 };
 

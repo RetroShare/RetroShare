@@ -91,7 +91,8 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 		}
 		if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
 			msgPeerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
-			peerName = rsPeers->getPeerName(msgPeerId);
+            //peerName = rsPeers->getPeerName(msgPeerId);
+            peerName =rsPeers->getGPGName(rsPeers->getGPGId(msgPeerId));
 			enabled = true;
 		}
 		if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
@@ -164,9 +165,12 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 	}
 }
 
-void p3HistoryMgr::updateMessageAsRead(const HistoryMsg& hmsg)
+void p3HistoryMgr::updateMessageAsRead(const ChatId &cId)
 {
-    std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(hmsg.chatPeerId);
+    RsPeerId chatPeerId; // id of chat endpoint
+    if(!chatIdToVirtualPeerId(cId, chatPeerId))
+        return;
+    std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(chatPeerId);
     if (mit != mMessages.end()) {
         std::map<uint32_t, RsHistoryMsgItem*>::reverse_iterator lit;
         int foundCount = 0, loadCount = 2;
