@@ -383,7 +383,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
 	QString hlp_str = tr(
-			" <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Identities</h1>    \
+			" <h1><img width=\"32\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;Identities</h1>    \
 			<p>In this tab you can create/edit <b>pseudo-anonymous identities</b>, and <b>circles</b>.</p>                \
 			<p><b>Identities</b> are used to securely identify your data: sign messages in chat lobbies, forum and channel posts,\
                 receive feedback using the UnseenP2P built-in email system, post comments \

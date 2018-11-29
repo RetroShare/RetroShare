@@ -183,7 +183,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 
     int S = QFontMetricsF(font()).height();
     QString help_str = tr("\
-                          <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Chat Rooms</h1>                              \
+                          <h1><img width=\"%1\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;Chat Rooms</h1>                              \
             <p>Chat rooms work pretty much like IRC.                                      \
             They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
             <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you           \

@@ -129,7 +129,7 @@ QList<int> sizes;
     }
 
  QString hlp_str = tr(
-  " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Network</h1>                                   \
+  " <h1><img width=\"32\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;Network</h1>                                   \
     <p>The Network tab shows your friend UnseenP2P nodes: the neighbor UnseenP2P nodes that are connected to you. \
     </p>                                                   \
     <p>You can group nodes together to allow a finer level of information access, for instance to only allow      \

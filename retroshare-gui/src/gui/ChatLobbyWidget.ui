@@ -98,8 +98,8 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+         <iconset resource="../Unseengui/unseengui.qrc">
+          <normaloff>:/home/img/question-64.png</normaloff>:/home/img/question-64.png</iconset>
         </property>
         <property name="checkable">
          <bool>true</bool>
@@ -265,7 +265,7 @@
               <string notr="true"/>
              </property>
              <property name="text">
-              <string notr="true">Unseen P2P is a decentralized, private and secure commmunication and sharing platform. RetroShare provides filesharing, chat, messages, forums and channels.</string>
+              <string notr="true">Unseen P2P is a decentralized, private and secure commmunication and sharing platform. UnseenP2P provides filesharing, chat, messages, forums and channels.</string>
              </property>
              <property name="wordWrap">
               <bool>true</bool>

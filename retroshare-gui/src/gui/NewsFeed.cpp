@@ -103,7 +103,7 @@ NewsFeed::NewsFeed(QWidget *parent) :
     ui->feedOptionsButton->hide();	// (csoler) Hidden until we repare the system to display a specific settings page.
 
 QString hlp_str = tr(
- " <h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
+ " <h1><img width=\"32\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;News Feed</h1>                                                          \
    <p>The Log Feed displays the last events on your network, sorted by the time you received them.                \
    This gives you a summary of the activity of your friends.                                                       \
    You can configure which events to show by pressing on <b>Options</b>. </p>                                      \
