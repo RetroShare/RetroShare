@@ -40,9 +40,9 @@ uint32_t p3History::getMaxStorageDuration()
     return mHistoryMgr->getMaxStorageDuration() ;
 }
 
-void p3History::updateMessageAsRead(HistoryMsg msg)
+void p3History::updateMessageAsRead(const ChatId &cId)
 {
-    return mHistoryMgr->updateMessageAsRead(msg);
+    return mHistoryMgr->updateMessageAsRead(cId);
 }
 bool p3History::getMessages(const ChatId &chatPeerId, std::list<HistoryMsg> &msgs, const uint32_t loadCount)
 {
