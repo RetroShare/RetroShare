@@ -86,7 +86,7 @@ HomePage::HomePage(QWidget *parent) :
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
- " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Welcome to UnseenP2P!</h1>\
+ " <h1><img width=\"%1\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;Welcome to UnseenP2P!</h1>\
    <p>You need to <b>make friends</b>! After you create a network of friends or join an existing network,\
 	  you'll be able to exchange files, chat, talk in forums, etc. </p>\
 	<div align=center>\

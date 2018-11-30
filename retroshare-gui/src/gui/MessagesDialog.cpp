@@ -296,7 +296,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
- " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Messages</h1>                         \
+ " <h1><img width=\"%1\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;Messages</h1>                         \
  <p>UnseenP2P has its own internal email system. You can send/receive emails to/from connected friend nodes.</p> \
  <p>It is also possible to send messages to other people's Identities using the global routing system. These messages \
     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>\

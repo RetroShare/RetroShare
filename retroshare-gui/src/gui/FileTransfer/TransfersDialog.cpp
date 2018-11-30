@@ -1055,7 +1055,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     int S = QFontMetricsF(font()).height();
   QString help_str = tr(
-    " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
+    " <h1><img width=\"%1\" src=\":/home/img/question-64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
     <p>UnseenP2P brings two ways of transferring files: direct transfers from your friends, and                                     \
     distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
     (you can be a source while downloading)</p>                                     \
