@@ -123,9 +123,9 @@
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
-#define IMAGE_INVITED              ":/app/images/statusicons/offline.png"
+#define IMAGE_INVITED              ":/app/images/statusicons/online.png"
 #define IMAGE_MEMBER               ":/app/images/statusicons/online.png"
-#define IMAGE_UNKNOWN              "/*:/app/images/statusicons/bad.png*/"
+#define IMAGE_UNKNOWN              ":/app/images/statusicons/bad.png"
 #define IMAGE_ADMIN                ":/app/images/statusicons/admin.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 #define IMAGE_UNSEEN                 ":/app/images/unseen32.png"
