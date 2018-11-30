@@ -372,6 +372,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
     mThreadProxyModel->setSourceModel(mThreadModel);
+    mThreadProxyModel->setSortRole(RsGxsForumModel::SortRole);
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
 	ui->threadTreeWidget->setSortingEnabled(true);
@@ -381,6 +382,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
 
+    ui->threadTreeWidget->header()->setSortIndicatorShown(true);
     connect(ui->threadTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)),this,SLOT(sortColumn(int,Qt::SortOrder)));
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));

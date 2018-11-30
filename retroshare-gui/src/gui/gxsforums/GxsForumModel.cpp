@@ -310,6 +310,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
 	case StatusRole:         return statusRole    (fmpe,index.column()) ;
+	case SortRole:           return sortRole      (fmpe,index.column()) ;
 	default:
 		return QVariant();
 	}
@@ -424,10 +425,22 @@ QVariant RsGxsForumModel::authorRole(const ForumModelPostEntry& fmpe,int column)
 
 QVariant RsGxsForumModel::sortRole(const ForumModelPostEntry& fmpe,int column) const
 {
-    if(column == COLUMN_THREAD_DATA)
-        return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
+    switch(column)
+    {
+	case COLUMN_THREAD_DATE:         return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
+	case COLUMN_THREAD_READ:         return QVariant((bool)IS_MSG_UNREAD(fmpe.mMsgStatus));
+    case COLUMN_THREAD_DISTRIBUTION: return decorationRole(fmpe,column);
+    case COLUMN_THREAD_AUTHOR:
+    {
+        QString str,comment ;
+        QList<QIcon> icons;
+		GxsIdDetails::MakeIdDesc(fmpe.mAuthorId, false, str, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
 
-    return QVariant();
+        return QVariant(str);
+    }
+    default:
+        return displayRole(fmpe,column);
+    }
 }
 
 QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) const
