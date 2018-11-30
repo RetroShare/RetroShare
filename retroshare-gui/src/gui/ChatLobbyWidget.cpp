@@ -65,14 +65,15 @@
 #define TYPE_ONE2ONE      2   //meiyousixin - add for one2one
 
 #define IMAGE_CREATE          ""
-#define IMAGE_PUBLIC          ":/chat/img/groundchat.png"               //d
-#define IMAGE_PRIVATE         ":/chat/img/groundchat_private.png"       //d
+#define IMAGE_PUBLIC          ":/chat/img/groundchat.png"               //d: Update unseen icon
+#define IMAGE_PRIVATE         ":/chat/img/groundchat_private.png"       //d: Update unseen icon
 #define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
-#define IMAGE_PEER_ENTERING   ":/chat/img/personal_add_64.png"          //d
-#define IMAGE_PEER_LEAVING    ":/chat/img/personal_remove_64.png"       //d
-#define IMAGE_TYPING		  ":/chat/img/typing.png"                   //d
-#define IMAGE_MESSAGE	      ":/chat/img/chat_32.png"                  //d
+#define IMAGE_PEER_ENTERING   ":/chat/img/personal_add_64.png"          //d: Update unseen icon
+#define IMAGE_PEER_LEAVING    ":/chat/img/personal_remove_64.png"       //d: Update unseen icon
+#define IMAGE_TYPING		  ":/chat/img/typing.png"                   //d: Update unseen icon
+#define IMAGE_MESSAGE	      ":/chat/img/chat_32.png"                  //d: Update unseen icon
+#define IMAGE_MESSAGE_PRIVATE ":/chat/img/chat_g_32.png"                //d: Notification icon for private group
 #define IMAGE_AUTOSUBSCRIBE   ":/images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
@@ -1183,7 +1184,7 @@ void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateT
         if (recentUnreadListOfChatId.count(chatId) == 0) recentUnreadListOfChatId.insert(chatId);
         //_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
         ChatLobbyFlags flags(current_item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
-        QIcon icon = (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_MESSAGE) : QIcon(IMAGE_MESSAGE);
+        QIcon icon = (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_MESSAGE) : QIcon(IMAGE_MESSAGE_PRIVATE);
         item->setIcon(COLUMN_NAME,icon) ;
     }
 
@@ -1560,7 +1561,7 @@ void ChatLobbyWidget::updateGroupChatItem(QTreeWidget *treeWidget, QTreeWidgetIt
     {
         ChatId chatId(id);
         if (recentUnreadListOfChatId.count(chatId) == 0) recentUnreadListOfChatId.insert(chatId);
-        QIcon icon = (lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_MESSAGE) : QIcon(IMAGE_MESSAGE);
+        QIcon icon = (lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_MESSAGE) : QIcon(IMAGE_MESSAGE_PRIVATE);
         item->setIcon(COLUMN_NAME, icon) ;
     }
 
