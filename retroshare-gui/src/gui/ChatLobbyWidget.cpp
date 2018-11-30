@@ -527,12 +527,11 @@ void ChatLobbyWidget::updateDisplay()
                 break;
             }
         }
-
-        icon = (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
         if (item == NULL)
         {
             item = new RSTreeWidgetItem(compareRole, TYPE_LOBBY);
 
+            icon = (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
             std::cerr << " Add group chat item to the common item if there is no item, group name: " << it->second.lobby_name << std::endl;
             if (!icon.isNull())
             {
@@ -968,21 +967,20 @@ QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItemForChatId(ChatId id)
 }
 QTreeWidgetItem *ChatLobbyWidget::getTreeWidgetItem(ChatLobbyId id)
 {
-    for(int p=0;p<4;++p)
-	{
-        QTreeWidgetItem *lobby_item = commonItem;
-		int childCnt = lobby_item->childCount();
-		int childIndex = 0;
 
-		while (childIndex < childCnt) {
-			QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
+    QTreeWidgetItem *lobby_item = commonItem;
+    int childCnt = lobby_item->childCount();
+    int childIndex = 0;
 
-			if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id) 
-				return itemLoop ;
+    while (childIndex < childCnt) {
+        QTreeWidgetItem *itemLoop = lobby_item->child(childIndex);
 
-			++childIndex ;
-		}
-	}
+        if (itemLoop->type() == TYPE_LOBBY && itemLoop->data(COLUMN_DATA, ROLE_ID).toULongLong() == id)
+            return itemLoop ;
+
+        ++childIndex ;
+    }
+
 	return NULL ;
 }
 void ChatLobbyWidget::updateTypingStatus(ChatLobbyId id)
@@ -1109,7 +1107,8 @@ void ChatLobbyWidget::updateCurrentLobby()
                 QIcon icon = (it->second.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC) : QIcon(IMAGE_PRIVATE);
                 if (!icon.isNull())
                 {
-                    item->setIcon(COLUMN_NAME, true ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
+                    _lobby_infos[id].default_icon = icon ;
+                    item->setIcon(COLUMN_NAME, _lobby_infos[id].default_icon);
                 }
             }
             ChatId chatId(id);
@@ -1178,10 +1177,11 @@ void ChatLobbyWidget::updateMessageChanged(bool incoming, ChatLobbyId id, QDateT
 	if(item == NULL)
 		return ;
 
-    if (incoming)
+    if (incoming && item)
     {
         //ChatId chatId(id);
         if (recentUnreadListOfChatId.count(chatId) == 0) recentUnreadListOfChatId.insert(chatId);
+
         //_lobby_infos[id].default_icon = QIcon(IMAGE_MESSAGE) ;
         ChatLobbyFlags flags(current_item->data(COLUMN_DATA, ROLE_FLAGS).toUInt());
         QIcon icon = (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_MESSAGE) : QIcon(IMAGE_MESSAGE_PRIVATE);
