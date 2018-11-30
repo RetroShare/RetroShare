@@ -152,5 +152,6 @@
         <file>home/img/key.png</file>
         <file>home/img/minus-symbol.png</file>
         <file>home/img/plus-black-symbol.png</file>
+        <file>home/img/face_icon/un_chat_icon_d_128.png</file>
     </qresource>
 </RCC>

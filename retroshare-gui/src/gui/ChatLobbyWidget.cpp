@@ -37,7 +37,7 @@
 #include <QTextBrowser>
 #include <QTimer>
 #include <QTreeWidget>
-
+#include <QPainter>
 #include <algorithm>
 #include <time.h>
 
@@ -76,7 +76,7 @@
 #define IMAGE_AUTOSUBSCRIBE   ":/images/accepted16.png"
 #define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
-#define IMAGE_UNREAD_ICON      ":/home/img/face_icon/un_chat_icon_v_128.png"
+#define IMAGE_UNREAD_ICON      ":/home/img/face_icon/un_chat_icon_d_128.png"
 
 
 #define GUI_DIR_NAME                  "gui"
@@ -1487,8 +1487,9 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay, bool un
     {
         QIcon unreadIcon = QIcon(IMAGE_UNREAD_ICON);
         int overlayUnreadY = avatarHeight - 2.5*overlaySize;
-        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(20, 20)));
-        painter.drawPixmap(overlayX, overlayUnreadY, overlaySize, overlaySize, unreadOverlay);
+        int overlayUnreadX = avatarHeight - overlaySize;
+        QPixmap unreadOverlay = unreadIcon.pixmap(unreadIcon.actualSize(QSize(25, 15)));
+        painter.drawPixmap(overlayUnreadX, overlayUnreadY, overlaySize, overlaySize*1.5, unreadOverlay);    //d: increase size unreadIcon
     }
 
     QIcon icon;
