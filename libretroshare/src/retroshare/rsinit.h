@@ -284,6 +284,7 @@ struct RsLoginHelper
 	 * @return true if already logged in, false otherwise
 	 */
 	bool isLoggedIn();
+
 };
 
 #endif
