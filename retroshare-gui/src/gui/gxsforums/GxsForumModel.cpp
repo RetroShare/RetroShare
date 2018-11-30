@@ -287,7 +287,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
     if(role == Qt::FontRole)
     {
         QFont font ;
-		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)));
+		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)) || IS_MSG_UNREAD(fmpe.mMsgStatus));
         return QVariant(font);
     }
 

@@ -383,7 +383,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
 
     ui->threadTreeWidget->header()->setSortIndicatorShown(true);
-    connect(ui->threadTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)),this,SLOT(sortColumn(int,Qt::SortOrder)));
 
 	connect(ui->versions_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(changedVersion()));
 	connect(ui->threadTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(threadListCustomPopupMenu(QPoint)));
@@ -490,11 +489,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->enableColumnCustomize(true);
 
 #endif
-}
-
-void GxsForumThreadWidget::sortColumn(int col,Qt::SortOrder o)
-{
-    ui->threadTreeWidget->sortByColumn(col,o);
 }
 
 void GxsForumThreadWidget::blank()

@@ -74,15 +74,12 @@ public:
 	virtual QString groupName(bool withUnreadCount);
 	virtual QIcon groupIcon();
 	virtual bool navigate(const RsGxsMessageId& msgId);
-	//virtual bool isLoading();
 
 	unsigned int newCount() { return mNewCount; }
 	unsigned int unreadCount() { return mUnreadCount; }
 
 	QTreeWidgetItem *generateMissingItem(const RsGxsMessageId &msgId);
 
-	// Callback for all Loads.
-	//virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
     virtual void blank();
 
 protected:
@@ -99,7 +96,6 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
-	void sortColumn(int col,Qt::SortOrder o);
 
 	void changedThread(QModelIndex index);
 	void changedVersion();
@@ -120,11 +116,6 @@ private slots:
 
 	void saveImage();
 
-
-	//void print();
-	//void printpreview();
-
-	//void removemessage();
 	void markMsgAsRead();
 	void markMsgAsReadChildren();
 	void markMsgAsUnread();
@@ -165,15 +156,9 @@ private:
 	void insertMessage();
 	void insertGroupData();
 
-	//void insertThreads();
-	//void fillThreads(QList<QTreeWidgetItem *> &threadList, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
-	//void fillChildren(QTreeWidgetItem *parentItem, QTreeWidgetItem *newParentItem, bool expandNewMessages, QList<QTreeWidgetItem*> &itemToExpand);
-
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
 	void markMsgAsReadUnread(bool read, bool children, bool forum);
-	//void calculateIconsAndFonts(QTreeWidgetItem *item = NULL);
-	//void calculateIconsAndFonts(QTreeWidgetItem *item, bool &hasReadChilddren, bool &hasUnreadChilddren);
 	void calculateUnreadCount();
 
 	void togglethreadview_internal();
