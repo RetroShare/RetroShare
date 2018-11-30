@@ -39,7 +39,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui = new Ui::CreateLobbyDialog() ;
 	ui->setupUi(this);
 
-    //ui->headerFrame->setHeaderImage(QPixmap(":/home/img/face_icon/un_chat_icon_x_128.png"));
+    //ui->headerFrame->setHeaderImage(QPixmap(":/home/img/face_icon/un_chat_icon_xu_128.png"));
 	ui->headerFrame->setHeaderText(tr("Create Chat Room"));
 
     RsGxsId default_identity ;
@@ -66,7 +66,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->keyShareList->start();
     ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peer_list, false);
 
-	if (privacyLevel) {
+    if (privacyLevel) {
         ui->security_CB->setCurrentIndex((privacyLevel == CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
 	}
 
@@ -120,12 +120,19 @@ void CreateLobbyDialog::createLobby()
     ui->keyShareList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(shareList, false);
     
     //	if (shareList.empty()) {
-    //		QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
+    //		QMessageBox::warning(this, "UnseenP2P", tr("Please select at least one friend"), QMessageBox::Ok, QMessageBox::Ok);
     //		return;
     //	}
 
     // create chat lobby !!
     std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
+
+    if (lobby_name.empty())
+    {
+        QMessageBox::warning(this, "P2PUnseen", tr("Please enter group name, P2PUnseen App does not accept empty group name"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
     std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
 
     // set nick name !
@@ -153,6 +160,8 @@ void CreateLobbyDialog::createLobby()
 
     // open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;
+    rsMsgs->setLobbyAutoSubscribe(ChatId(id).toLobbyId(), true );
+    rsMsgs->joinVisibleChatLobby(ChatId(id).toLobbyId(), gxs_id);
 
     close();
 }

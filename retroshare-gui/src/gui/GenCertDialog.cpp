@@ -374,7 +374,7 @@ void GenCertDialog::setupState()
 
 void GenCertDialog::exportIdentity()
 {
-    QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("P2PUnseen profile files (*.asc)")) ;
+    QString fname = QFileDialog::getSaveFileName(this,tr("Export profile"), "",tr("UnseenP2P profile files (*.asc)")) ;
 
 	if(fname.isNull()) return ;
 	if(fname.right(4).toUpper() != ".ASC") fname += ".asc";

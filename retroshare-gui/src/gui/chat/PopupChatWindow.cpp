@@ -296,7 +296,7 @@ void PopupChatWindow::calculateTitle(ChatDialog *dialog)
 		}
 		setWindowTitle(title);
 	} else {
-        setWindowTitle("P2PUnseen");
+        setWindowTitle("UnseenP2P");
 	}
 }
 

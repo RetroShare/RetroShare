@@ -52,7 +52,7 @@ QString GxsForumsDialog::getHelpString() const
 {
 	QString hlp_str = tr(
 			"<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Forums</h1>               \
-            <p>P2PUnseen Forums look like internet forums, but they work in a decentralized way</p>    \
+            <p>UnseenP2P Forums look like internet forums, but they work in a decentralized way</p>    \
 			<p>You see forums your friends are subscribed to, and you forward subscribed forums to      \
 			your friends. This automatically promotes interesting forums in the network.</p>            \
             <p>Forum messages are kept for %1 days and sync-ed over the last %2 days, unless you configure it otherwise.</p>\
@@ -115,7 +115,7 @@ QString GxsForumsDialog::icon(IconType type)
 {
 	switch (type) {
 	case ICON_NAME:
-        return ":/home/img/face_icon/bull-horn-announcer_x_128.png";        //d: change icon
+        return ":/home/img/face_icon/bull-horn-announcer_xu_128.png";        //d: change icon
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:

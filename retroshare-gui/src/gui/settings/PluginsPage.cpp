@@ -60,7 +60,7 @@ settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 			 switch(status)
 			 {
-                 case PLUGIN_STATUS_REJECTED_HASH: status_string = tr("Plugin disabled. Click the enable button and restart P2PUnseen") ;
+                 case PLUGIN_STATUS_REJECTED_HASH: status_string = tr("Plugin disabled. Click the enable button and restart UnseenP2P") ;
                                                    short_status_string = tr("[disabled]");
 															  break ;
 
@@ -164,10 +164,10 @@ QString settings::PluginsPage::helpText() const
    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Plugins</h1>     \
               <p>Plugins are loaded from the directories listed in the bottom list.</p>         \
               <p>For security reasons, accepted plugins load automatically until                \
-              the main P2PUnseen executable or the plugin library changes. In                  \
+              the main UnseenP2P executable or the plugin library changes. In                  \
               such a case, the user needs to confirm them again.                                \
               After the program is started, you can enable a plugin manually by clicking on the \
-              \"Enable\" button and then restart P2PUnseen.</p>                                \
+              \"Enable\" button and then restart UnseenP2P.</p>                                \
               <p>If you want to develop your own plugins, contact the developpers team          \
               they will be happy to help you out!</p>") ;
 }

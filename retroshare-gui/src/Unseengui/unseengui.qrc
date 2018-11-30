@@ -55,7 +55,6 @@
         <file>home/img/face_icon/group-profile-users_x_128.png</file>
         <file>home/img/mountain_1500.jpg</file>
         <file>home/img/mountain_1500.png</file>
-        <file>home/img/face_icon/file _128.png</file>
         <file>home/img/Setting/bull-horn-announcer.svg</file>
         <file>home/img/Setting/comment-black-oval-bubble-shape.svg</file>
         <file>home/img/Setting/envelope.svg</file>
@@ -125,5 +124,34 @@
         <file>chat/img/identityoffline.png</file>
         <file>home/img/Setting/world.svg</file>
         <file>home/img/Setting/world_x.svg</file>
+        <file>home/img/face_icon/bull-horn-announcer_xu_128.png</file>
+        <file>home/img/face_icon/file_xu_128.png</file>
+        <file>home/img/face_icon/group-profile-users_xu_128.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_16.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_24.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_32.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_64.png</file>
+        <file>home/img/face_icon/un_chat_icon_xu_128.png</file>
+        <file>home/img/face_icon/user-shape_xu_128.png</file>
+        <file>home/img/face_icon/youtube-play-button_xu_128.png</file>
+        <file>chat/img/chat_32.png</file>
+        <file>chat/img/groundchat.png</file>
+        <file>chat/img/groundchat_private.png</file>
+        <file>chat/img/typing.png</file>
+        <file>chat/img/personal_add_64.png</file>
+        <file>chat/img/personal_remove_64.png</file>
+        <file>home/img/Traymenu/earth-globe.png</file>
+        <file>home/img/Traymenu/friends.png</file>
+        <file>home/img/Traymenu/graph.png</file>
+        <file>home/img/Traymenu/lifesaver.png</file>
+        <file>home/img/Traymenu/molecule.png</file>
+        <file>home/img/Traymenu/power-button-off.png</file>
+        <file>home/img/face_icon/file_128.png</file>
+        <file>home/img/Traymenu/unseenP2P.png</file>
+        <file>home/img/connection.png</file>
+        <file>home/img/key.png</file>
+        <file>home/img/minus-symbol.png</file>
+        <file>home/img/plus-black-symbol.png</file>
+        <file>home/img/face_icon/un_chat_icon_d_128.png</file>
     </qresource>
 </RCC>

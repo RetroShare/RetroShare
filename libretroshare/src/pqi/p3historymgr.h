@@ -46,7 +46,7 @@ public:
 	/******** p3HistoryMgr *********/
 
     void addMessage(const ChatMessage &cm);
-    void updateMessageAsRead(const HistoryMsg &cm);
+    void updateMessageAsRead(const ChatId &cId);
 
 	/********* RsHistory ***********/
 

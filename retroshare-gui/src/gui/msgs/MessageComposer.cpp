@@ -600,7 +600,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
         return;
     }
 
-    QString title = QString("%1 %2").arg(link.name(), tr("wants to be friends with you on P2PUnseen"));
+    QString title = QString("%1 %2").arg(link.name(), tr("wants to be friends with you on UnseenP2P"));
 
     /* search for an exisiting message in the inbox */
     std::list<MsgInfoSummary> msgList;
@@ -623,7 +623,7 @@ void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId
     }
 
     /* create a message */
-    QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on P2PUnseen.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The P2PUnseen Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), link.name(), link.toHtml());
+    QString msgText = tr("Hi %1,<br><br>%2 wants to be friends with you on UnseenP2P.<br><br>Respond now:<br>%3<br><br>Thanks,<br>The UnseenP2P Team").arg(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGOwnId()).c_str()), link.name(), link.toHtml());
     rsMail->SystemMessage(title.toUtf8().constData(), msgText.toUtf8().constData(), RS_MSG_USER_REQUEST);
 }
 
@@ -701,7 +701,7 @@ void MessageComposer::contextMenuFileList(QPoint)
 {
     QMenu contextMnu(this);
 
-    QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste P2PUnseen Link"), this, SLOT(pasteRecommended()));
+    QAction *action = contextMnu.addAction(QIcon(":/images/pasterslink.png"), tr("Paste UnseenP2P Link"), this, SLOT(pasteRecommended()));
     action->setDisabled(RSLinkClipboard::empty(RetroShareLink::TYPE_FILE));
 
     contextMnu.exec(QCursor::pos());
@@ -1308,7 +1308,7 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
 
     /* check for existing title */
     if (bDraftbox == false && mi.title.empty()) {
-        if (QMessageBox::warning(this, tr("P2PUnseen"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
+        if (QMessageBox::warning(this, tr("UnseenP2P"), tr("Do you want to send the message without a subject ?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No) == QMessageBox::No) {
             ui.titleEdit->setFocus();
             return false; // Don't send with an empty subject
         }
@@ -1444,13 +1444,13 @@ bool MessageComposer::sendMessage_internal(bool bDraftbox)
         if (mi.rspeerid_msgto.empty() && mi.rspeerid_msgcc.empty() && mi.rspeerid_msgbcc.empty()
                         && mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty())
         {
-            QMessageBox::warning(this, tr("P2PUnseen"), tr("Please insert at least one recipient."), QMessageBox::Ok);
+            QMessageBox::warning(this, tr("UnseenP2P"), tr("Please insert at least one recipient."), QMessageBox::Ok);
             return false; // Don't send with no recipient
         }
 
      if(mi.rsgxsid_srcId.isNull() && !(mi.rsgxsid_msgto.empty() && mi.rsgxsid_msgcc.empty() && mi.rsgxsid_msgbcc.empty()))
      {
-            QMessageBox::warning(this, tr("P2PUnseen"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
+            QMessageBox::warning(this, tr("UnseenP2P"), tr("Please create an identity to sign distant messages, or remove the distant peers from the destination list."), QMessageBox::Ok);
             return false; // Don't send if cannot sign.
      }
         if (rsMail->MessageSend(mi) == false) {
@@ -2775,7 +2775,7 @@ void MessageComposer::on_closeInfoFrameButton_clicked()
 
 QString MessageComposer::inviteMessage()
 {
-    return tr("Hi,<br>I want to be friends with you on P2PUnseen.<br>");
+    return tr("Hi,<br>I want to be friends with you on UnseenP2P.<br>");
 }
 
 void MessageComposer::sendInvite(const RsGxsId &to, bool autoSend)

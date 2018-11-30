@@ -42,7 +42,7 @@ TorStatus::TorStatus(QWidget *parent)
     hbox->setSpacing(6);
        
     statusTor = new QLabel("<strong>" + tr("Tor") + ":</strong>", this );
-    statusTor->setToolTip(tr("<p>This version of P2PUnseen uses Tor to connect to your friends.</p>")) ;
+    statusTor->setToolTip(tr("<p>This version of UnseenP2P uses Tor to connect to your friends.</p>")) ;
     hbox->addWidget(statusTor);
     
     torstatusLabel = new QLabel( this );

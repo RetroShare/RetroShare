@@ -251,7 +251,7 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 	QAction *spoilerAction =  contextMenu->addAction(tr("Spoiler"), this, SLOT(spoiler()));
 	spoilerAction->setToolTip(tr("Select text to hide, then push this button"));
 	contextMenu->addSeparator();
-    QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste P2PUnseen Link"), this, SLOT(pasteLink()));
+    QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste UnseenP2P Link"), this, SLOT(pasteLink()));
 	contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
 	if (RSLinkClipboard::empty()) {

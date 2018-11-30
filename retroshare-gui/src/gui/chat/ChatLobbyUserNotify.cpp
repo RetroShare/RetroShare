@@ -105,7 +105,7 @@ void ChatLobbyUserNotify::setTextCaseSensitive(bool value)
 
 QIcon ChatLobbyUserNotify::getIcon()
 {
-    return QIcon(":/home/img/face_icon/un_chat_icon_x_128.png");
+    return QIcon(":/home/img/face_icon/un_chat_icon_128.png");
 }
 
 QIcon ChatLobbyUserNotify::getMainIcon(bool hasNew)
@@ -474,7 +474,7 @@ void ChatLobbyUserNotify::chatP2PCleared(ChatId chatId, QString anchor, bool onl
 {
     bool changed = anchor.isEmpty();
     unsigned int count=0;
-    //if (chatId==NULL) return;
+    if (chatId.isPeerId()==NULL) return;
     p2pchat_map::iterator itCL=_listP2PMsg.find(chatId);
     if (itCL!=_listP2PMsg.end()) {
         if (!anchor.isEmpty()) {

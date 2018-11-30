@@ -53,7 +53,7 @@ void FriendRecommendDialog::accept()
 	ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
 
 	if (recommendIds.empty()) {
-        QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
 		return ;
 	}
 
@@ -61,7 +61,7 @@ void FriendRecommendDialog::accept()
 	ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
 
 	if (toIds.empty()) {
-        QMessageBox::warning(this, "P2PUnseen", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
 		return ;
 	}
 

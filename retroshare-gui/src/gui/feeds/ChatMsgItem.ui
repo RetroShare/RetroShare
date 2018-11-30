@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>201</height>
+    <width>638</width>
+    <height>234</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_1">
@@ -322,8 +322,8 @@
             <string>Start Chat</string>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/chat.png</normaloff>:/images/chat.png</iconset>
+            <iconset>
+             <normaloff>../../Unseengui/chat/img/chat_32.png</normaloff>../../Unseengui/chat/img/chat_32.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -407,15 +407,15 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

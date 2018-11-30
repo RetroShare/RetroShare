@@ -154,6 +154,7 @@ class p3Msgs: public RsMsgs
     virtual void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
     virtual bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
       virtual ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type) ;
+      virtual   void getGroupChatInfoList(std::map<ChatLobbyId,ChatLobbyInfo>& _groupchats); //meiyousixin - add for new function
 
 	virtual bool initiateDistantChatConnexion(
 		          const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,

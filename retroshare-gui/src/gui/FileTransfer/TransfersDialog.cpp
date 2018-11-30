@@ -959,9 +959,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     connect( clearCompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Link" ), this );
+    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy UnseenP2P Link" ), this );
     connect( copyLinkAct , SIGNAL( triggered() ), this, SLOT( dlCopyLink() ) );
-    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste P2PUnseen Link" ), this );
+    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste UnseenP2P Link" ), this );
     connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
 	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
@@ -1047,7 +1047,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /** Setup the actions for the upload context menu */
     ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(ulOpenFolderAct, SIGNAL(triggered()), this, SLOT(ulOpenFolder()));
-    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy P2PUnseen Link" ), this );
+    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy UnseenP2P Link" ), this );
     connect( ulCopyLinkAct , SIGNAL( triggered() ), this, SLOT( ulCopyLink() ) );
 
     // load settings
@@ -1056,7 +1056,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     int S = QFontMetricsF(font()).height();
   QString help_str = tr(
     " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
-    <p>P2PUnseen brings two ways of transferring files: direct transfers from your friends, and                                     \
+    <p>UnseenP2P brings two ways of transferring files: direct transfers from your friends, and                                     \
     distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
     (you can be a source while downloading)</p>                                     \
     <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
@@ -2039,7 +2039,7 @@ void TransfersDialog::cancel()
 			queryWrn2.clear();
 			queryWrn2.append(tr("Are you sure that you want to cancel and delete these files?"));
 
-            if ((QMessageBox::question(this, tr("P2PUnseen"),queryWrn2,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::No) {
+            if ((QMessageBox::question(this, tr("UnseenP2P"),queryWrn2,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::No) {
 				break;
 			}
 		}

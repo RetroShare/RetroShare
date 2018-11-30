@@ -35,7 +35,7 @@ PluginItem::PluginItem(const QString& pluginVersion, int id, const QString& plug
 	_pluginIcon->setText(QString()) ;
 	msgLabel->setText(pluginDescription) ;
 	subjectLabel->setText(pluginTitle + "  "+ pluginVersion) ;
-    infoLabel->setText(pluginTitle + " " + tr("will be enabled after your restart P2PUnseen.")) ;
+    infoLabel->setText(pluginTitle + " " + tr("will be enabled after your restart UnseenP2P.")) ;
 	infoLabel->hide();
 
 	QObject::connect(_configure_PB,SIGNAL(clicked()),this,SLOT(configurePlugin())) ;

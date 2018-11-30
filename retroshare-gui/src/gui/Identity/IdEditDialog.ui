@@ -127,7 +127,7 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="text">
-         <string>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the P2PUnseen distant mail system.</string>
+         <string>You can have one or more identities. They are used when you write in chat lobbies, forums and channel comments. They act as the destination for distant chat and the UnseenP2P distant mail system.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

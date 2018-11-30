@@ -81,7 +81,7 @@ StreamBase& operator <<(StreamBase& left, KeyValueReference<T_ID> ref)
         if(id.isNull())
         {
             left.setError();
-            left.addErrorMsg("operator for P2PUnseen id keyValue: id is null\n");
+            left.addErrorMsg("operator for UnseenP2P id keyValue: id is null\n");
         }
         ref.value = id;
     }
@@ -104,7 +104,7 @@ StreamBase& operator <<(StreamBase& left, ValueReference<T_ID> ref)
         if(id.isNull())
         {
             left.setError();
-            left.addErrorMsg("operator for P2PUnseen id Value: id is null\n");
+            left.addErrorMsg("operator for UnseenP2P id Value: id is null\n");
         }
         ref.value = id;
     }

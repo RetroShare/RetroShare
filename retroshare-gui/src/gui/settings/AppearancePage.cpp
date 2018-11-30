@@ -73,7 +73,7 @@ AppearancePage::AppearancePage(QWidget * parent, Qt::WindowFlags flags)
 		ui.cmboLanguage->addItem(QIcon(":/images/flags/" + code + ".png"), LanguageSupport::languageName(code), code);
 	}
 	foreach (QString style, QStyleFactory::keys()) {
-		ui.cmboStyle->addItem(style, style.toLower());
+        ui.cmboStyle->addItem(style, style.toLower());
 	}
 
 	// add empty entry representing "no style sheet"

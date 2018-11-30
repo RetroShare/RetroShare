@@ -29,7 +29,7 @@
 #include "rshare.h"
 
 #define IMAGE_TYPING         ":/images/typing.png"
-#define IMAGE_CHAT           ":/images/chat.png"
+#define IMAGE_CHAT           ":/chat/img/chat_32.png"       //d
 
 ChatTabWidget::ChatTabWidget(QWidget *parent) :
 	RSTabWidget(parent),

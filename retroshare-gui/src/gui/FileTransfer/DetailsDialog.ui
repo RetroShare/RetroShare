@@ -175,13 +175,13 @@
      </widget>
      <widget class="QWidget" name="tabLinks">
       <attribute name="title">
-       <string>P2PUnseen link(s)</string>
+       <string>UnseenP2P link(s)</string>
       </attribute>
       <layout class="QGridLayout">
        <item row="0" column="0" colspan="2">
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>P2PUnseen link</string>
+          <string>UnseenP2P link</string>
          </property>
          <layout class="QGridLayout">
           <item row="1" column="0">

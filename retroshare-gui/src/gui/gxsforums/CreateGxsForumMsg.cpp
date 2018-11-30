@@ -347,7 +347,7 @@ void  CreateGxsForumMsg::createMsg()
 
 	if(name.isEmpty() | desc.isEmpty()) {
 		/* error message */
-        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("UnseenP2P"),tr("Please set a Forum Subject and Forum Message"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return; //Don't add  a empty Subject!!
 	}//if(name.isEmpty())
@@ -401,14 +401,14 @@ void  CreateGxsForumMsg::createMsg()
 		default:
 			std::cerr << "CreateGxsForumMsg::createMsg() ERROR GETTING AuthorId!";
 			std::cerr << std::endl;
-            QMessageBox::warning(this, tr("P2PUnseen"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
+            QMessageBox::warning(this, tr("UnseenP2P"),tr("Congrats, you found a bug!")+" "+QString(__FILE__)+":"+QString(__LINE__), QMessageBox::Ok, QMessageBox::Ok);
 
 			return;
 		}//switch (ui.idChooser->getChosenId(authorId))
 	} else {
 		//std::cerr << "CreateGxsForumMsg::createMsg() No Signature (for now :)";
 		//std::cerr << std::endl;
-        QMessageBox::warning(this, tr("P2PUnseen"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, tr("UnseenP2P"),tr("Please choose Signing Id, it is required"), QMessageBox::Ok, QMessageBox::Ok);
 		return;
 	}//if (ui.signBox->isChecked())
 

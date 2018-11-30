@@ -568,7 +568,7 @@ void GxsGroupDialog::editGroup()
 	if(!prepareGroupMetaData(newMeta))
 	{
 		/* error message */
-        QMessageBox::warning(this, "P2PUnseen", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
@@ -641,7 +641,7 @@ void GxsGroupDialog::createGroup()
 	if(name.isEmpty())
 	{
 		/* error message */
-        QMessageBox::warning(this, "P2PUnseen", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Please add a Name"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
@@ -650,7 +650,7 @@ void GxsGroupDialog::createGroup()
 	if (!prepareGroupMetaData(meta))
 	{
 		/* error message */
-        QMessageBox::warning(this, "P2PUnseen", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add with invalid circle.
 	}
 

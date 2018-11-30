@@ -70,7 +70,7 @@ var me = {
                     });
                 }
             } else {
-                me.toConfirm.push({ text: "Error: no P2PUnseen-file link"})
+                me.toConfirm.push({ text: "Error: no UnseenP2P-file link"})
             }
             me.index++;
         }
@@ -183,7 +183,7 @@ function cancelBtn(){
 function step1(){
     m.initControl = "txtInput";
     return [
-        m("h3","step 1 / 5: paste P2PUnseen-links:"),
+        m("h3","step 1 / 5: paste UnseenP2P-links:"),
         m("textarea[id=txtInput]", {
             style: {
                 height:"100%",

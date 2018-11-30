@@ -135,9 +135,9 @@
 #define IMAGE_TWOONLINE         ":/chat/img/network-diagram_2.png"              //d:replace icon
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
-#define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
+#define IMAGE_BWGRAPH           ":/home/img/Traymenu/graph.png"         //d
+#define IMAGE_MESSENGER         ":/home/img/Traymenu/friends.png"       //d
+#define IMAGE_CLOSE             ":/home/img/Traymenu/power-button-off.png"      //d
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
@@ -151,7 +151,7 @@
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
-#define IMAGE_DHT               ":/images/dht16.png"
+#define IMAGE_DHT               ":/home/img/Traymenu/molecule.png"      //d
 
 
 #define IMAGE_UNSEEN          ":/app/images/unseen32.png"
@@ -210,7 +210,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     isIdle = false;
     onlineCount = 0;
 
-    notifyMenu = NULL;
+    //notifyMenu = NULL;
 
     /* Calculate only once */
     RsPeerDetails pd;
@@ -224,7 +224,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
-    /* add url handler for P2PUnseen links */
+    /* add url handler for UnseenP2P links */
     QDesktopServices::setUrlHandler(RSLINK_SCHEME, this, "retroshareLinkActivated");
     QDesktopServices::setUrlHandler("http", this, "externalLinkActivated");
     QDesktopServices::setUrlHandler("https", this, "externalLinkActivated");
@@ -603,14 +603,14 @@ void MainWindow::displayDiskSpaceWarning(int loc,int size_limit_mb)
 												return ;
 	}
 	QMessageBox::critical(NULL,tr("Low disk space warning"),
-                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n P2PUnseen will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
+                tr("The disk space in your")+" "+locString +" "+tr("directory is running low (current limit is")+" "+QString::number(size_limit_mb)+tr("MB). \n\n UnseenP2P will now safely suspend any disk access to this directory. \n\n Please make some free space and click Ok.")) ;
 }
 
 /** Creates a tray icon with a context menu and adds it to the system
  * notification area. */
 void MainWindow::createTrayIcon()
 {
- #ifdef WINDOWS_SYS
+ //#ifdef WINDOWS_SYS
     /** Tray icon Menu **/
     QMenu *trayMenu = new QMenu(this);
     if (sysTrayStatus) sysTrayStatus->trayMenu = trayMenu;
@@ -622,15 +622,15 @@ void MainWindow::createTrayIcon()
     QMenu *statusMenu = trayMenu->addMenu(tr("Status"));
     initializeStatusObject(statusMenu, true);
 
-    /* Create notify menu */
-    notifyMenu = trayMenu->addMenu(tr("Notify"));
-    notifyMenu->menuAction()->setVisible(false);
+    /* Create notify menu */ //meiyousixin - no need more!
+    //notifyMenu = trayMenu->addMenu(tr("Notify"));
+    //notifyMenu->menuAction()->setVisible(false);
 
     trayMenu->addSeparator();
-    trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
-    trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+    //trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+    trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Email"), this, SLOT(showMess()));
 #ifdef ENABLE_WEBUI
-    trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
+    trayMenu->addAction(QIcon(":/home/img/Traymenu/earth-globe.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
@@ -640,24 +640,24 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_UNFINISHED), tr("Applications"), this, SLOT(showApplWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_PREFERENCES), tr("Options"), this, SLOT(showSettings()));
-    trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
+    //trayMenu->addAction(QIcon(IMG_HELP), tr("Help"), this, SLOT(showHelpDialog()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_MINIMIZE), tr("Minimize"), this, SLOT(showMinimized()));
     trayMenu->addAction(QIcon(IMAGE_MAXIMIZE), tr("Maximize"), this, SLOT(showMaximized()));
     trayMenu->addSeparator();
     trayMenu->addAction(QIcon(IMAGE_CLOSE), tr("&Quit"), this, SLOT(doQuit()));
     /** End of Icon Menu **/
-#endif
+//#endif
 
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
-#ifdef WINDOWS_SYS
+//#ifdef WINDOWS_SYS
     trayIcon->setToolTip(tr("Unseen.is")); //D
     trayIcon->setContextMenu(trayMenu);
-    trayIcon->setIcon(QIcon(IMAGE_NOONLINE));
+    trayIcon->setIcon(QIcon(IMAGE_RETROSHARE)); //d
 
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(toggleVisibility(QSystemTrayIcon::ActivationReason)));
-#endif
+//#endif
     trayIcon->show();
 
 }
@@ -673,12 +673,13 @@ void MainWindow::showBandwidthGraph()
 void MainWindow::createNotifyIcons()
 {
     /* create notify icons */
-    QList<UserNotify*>::iterator it;
-    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
-        UserNotify *userNotify = *it;
-        userNotify->createIcons(notifyMenu);
-        userNotify->updateIcon();
-    }
+    //meiyousixin - no need any more
+//    QList<UserNotify*>::iterator it;
+//    for (it = userNotifyList.begin(); it != userNotifyList.end(); ++it) {
+//        UserNotify *userNotify = *it;
+//        userNotify->createIcons(notifyMenu);
+//        userNotify->updateIcon();
+//    }
   updateTrayCombine();
 }
 
@@ -755,29 +756,31 @@ void MainWindow::updateTrayCombine()
 
     bool visible = false;
 
-    if (notifyMenu) {
-        QList<QAction*> actions = notifyMenu->actions();
-        int count = 0;
-        QList<QAction*>::iterator actionIt;
-        for (actionIt = actions.begin(); actionIt != actions.end(); ++actionIt) {
-            if ((*actionIt)->isVisible()) {
-                visible = true;
+    //meiyousixin - no need any more
+//    if (notifyMenu)
+//    {
+//        QList<QAction*> actions = notifyMenu->actions();
+//        int count = 0;
+//        QList<QAction*>::iterator actionIt;
+//        for (actionIt = actions.begin(); actionIt != actions.end(); ++actionIt) {
+//            if ((*actionIt)->isVisible()) {
+//                visible = true;
 
-                count += (*actionIt)->data().toInt();
-// ToolTip is too long to show all services
-//                if (notifyToolTip.isEmpty() == false) {
-//                    notifyToolTip += "\r";
-//                }
-//                notifyToolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
-            }
-            if (visible) {
-                notifyToolTip = ((count == 1) ? tr("%1 new message") : tr("%1 new messages")).arg(count);
-            }
+//                count += (*actionIt)->data().toInt();
+//// ToolTip is too long to show all services
+////                if (notifyToolTip.isEmpty() == false) {
+////                    notifyToolTip += "\r";
+////                }
+////                notifyToolTip += (*actionIt)->data().toString() + ":" + (*actionIt)->text();
+//            }
+//            if (visible) {
+//                notifyToolTip = ((count == 1) ? tr("%1 new message") : tr("%1 new messages")).arg(count);
+//            }
 
-        }
-    }
-    if (notifyMenu)
-        notifyMenu->menuAction()->setVisible(visible);
+//        }
+//    }
+//    if (notifyMenu)
+//        notifyMenu->menuAction()->setVisible(visible);
 
     // update tray icon
     updateFriends();
@@ -848,35 +851,35 @@ void MainWindow::updateFriends()
 
     if (peerstatus)
         peerstatus->getPeerStatus(friendCount, onlineCount);
-#ifdef WINDOWS_SYS
-    QString trayIconResource;
+//#ifdef WINDOWS_SYS
+//    QString trayIconResource;
 
-    if (onlineCount == 0) {
-        trayIconResource = IMAGE_NOONLINE;
-    } else if (onlineCount < 2) {
-        trayIconResource = IMAGE_ONEONLINE;
-    } else if (onlineCount < 3) {
-        trayIconResource = IMAGE_TWOONLINE;
-    } else {
-        trayIconResource = IMAGE_RETROSHARE;
-    }
+//    if (onlineCount == 0) {
+//        trayIconResource = IMAGE_NOONLINE;
+//    } else if (onlineCount < 2) {
+//        trayIconResource = IMAGE_ONEONLINE;
+//    } else if (onlineCount < 3) {
+//        trayIconResource = IMAGE_TWOONLINE;
+//    } else {
+//        trayIconResource = IMAGE_RETROSHARE;
+//    }
 
-    QIcon icon;
-    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
-        QPixmap trayImage(trayIconResource);
-        QPixmap overlayImage(IMAGE_OVERLAY);
+//    QIcon icon;
+//    if (notifyMenu && notifyMenu->menuAction()->isVisible()) {
+//        QPixmap trayImage(trayIconResource);
+//        QPixmap overlayImage(IMAGE_OVERLAY);
 
-        QPainter painter(&trayImage);
-        painter.drawPixmap(0, 0, overlayImage);
+//        QPainter painter(&trayImage);
+//        painter.drawPixmap(0, 0, overlayImage);
 
-        icon.addPixmap(trayImage);
-    } else {
-        icon = QIcon(trayIconResource);
-    }
+//        icon.addPixmap(trayImage);
+//    } else {
+//        icon = QIcon(trayIconResource);
+//    }
 
-    if (trayIcon) trayIcon->setIcon(icon);
-    if (sysTrayStatus) sysTrayStatus->setIcon(icon);
-    #endif
+//    if (trayIcon) trayIcon->setIcon(icon);
+//    if (sysTrayStatus) sysTrayStatus->setIcon(icon);
+//    #endif
 }
 
 void MainWindow::postModDirectories(bool /*update_local*/)
@@ -1561,14 +1564,14 @@ void MainWindow::retroshareLinkActivated(const QUrl &url)
     RetroShareLink link(url);
 
     if (link.valid() == false) {
-        // QUrl can't handle the old P2PUnseen link format properly
+        // QUrl can't handle the old UnseenP2P link format properly
         if (url.host().isEmpty()) {
-            QMessageBox mb("P2PUnseen", tr("It seems to be an old P2PUnseen link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+            QMessageBox mb("UnseenP2P", tr("It seems to be an old UnseenP2P link. Please use copy instead."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
             mb.exec();
             return;
         }
 
-        QMessageBox mb("P2PUnseen", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
+        QMessageBox mb("UnseenP2P", tr("The file link is malformed."), QMessageBox::Critical, QMessageBox::Ok, 0, 0);
         mb.exec();
         return;
     }
