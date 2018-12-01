@@ -100,12 +100,6 @@ class DistributionItemDelegate: public QStyledItemDelegate
 public:
     DistributionItemDelegate() {}
 
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
-    {
-		const QRect r = option.rect;
-        return QSize(r.height(),r.height());
-    }
-
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 	{
 		if(!index.isValid())
@@ -130,11 +124,11 @@ public:
 
         switch(warning_level)
         {
+        default:
+        case 3:
         case 0: icon = QIcon(IMAGE_VOID); break;
         case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
         case 2: icon = QIcon(IMAGE_WARNING_RED); break;
-        default:
-        case 3: icon = QIcon(IMAGE_WARNING_UNKNOWN); break;
         }
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -225,7 +219,7 @@ public:
 
 		QPixmap pix = icon.pixmap(r.size());
 
-        return QSize(pix.width() + fm.width(str),std::max(1.1*pix.height(),1.4*fm.height()));
+        return QSize(1.2*(pix.width() + fm.width(str)),std::max(1.1*pix.height(),1.4*fm.height()));
     }
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
@@ -261,12 +255,17 @@ public:
 		else
 			icon = *icons.begin();
 
-		QPixmap pix = icon.pixmap(r.size());
+        if(index.data(RsGxsForumModel::MissingRole).toBool())
+			painter->drawText(r.topLeft() + QPoint(f/2.0,f*1.0), tr("[None]"));
+        else
+		{
+			QPixmap pix = icon.pixmap(r.size());
+			const QPoint p = QPoint(pix.width()/2.0, (r.height() - pix.height())/2);
 
-		// draw pixmap at center of item
-		const QPoint p = QPoint(pix.width()/2.0, (r.height() - pix.height())/2);
-		painter->drawPixmap(r.topLeft() + p, pix);
-		painter->drawText(r.topLeft() + p + QPoint(pix.width()+f/2.0,f*0.8), str);
+			// draw pixmap at center of item
+			painter->drawPixmap(r.topLeft() + p, pix);
+			painter->drawText(r.topLeft() + p + QPoint(pix.width()+f/2.0,f*1.0), str);
+		}
 	}
 };
 
@@ -375,6 +374,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
     mThreadProxyModel->setSortRole(RsGxsForumModel::SortRole);
     ui->threadTreeWidget->setModel(mThreadProxyModel);
 
+	mThreadProxyModel->setFilterRole(RsGxsForumModel::FilterRole);
+	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
+
 	ui->threadTreeWidget->setSortingEnabled(true);
 	//ui->threadTreeWidget->setDynamicSortFilter(true);// is that useful??
 
@@ -419,14 +421,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	itemDelegate->setOnlyPlainText(true);
 	ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
-    float f = QFontMetricsF(font()).height()/14.0f ;
-
-	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
-
 #ifdef SUSPENDED_CODE
 	/* Set text of column "Read" to empty - without this the column has a number as header text */
 	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
@@ -449,16 +443,25 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	// load settings
 	processSettings(true);
 
+    float f = QFontMetricsF(font()).height()/14.0f ;
+
 	/* Set header resize modes and initial section sizes */
+
+	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
+	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
+	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
+	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
+	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
+	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
+
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
-	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::ResizeToContents);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_AUTHOR,       QHeaderView::Interactive);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
+	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::Fixed);
     ui->threadTreeWidget->header()->setCascadingSectionResizes(true);
 
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_CONTENT);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);
@@ -2685,14 +2688,24 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-#ifdef TODO
+	//FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+	std::list<std::string> keywords ;
+
+	for(auto it(lst.begin());it!=lst.end();++it)
+		keywords.push_back((*it).toStdString());
+
 	int filterColumn = ui->filterLineEdit->currentFilter();
 
-	int count = ui->threadTreeWidget->topLevelItemCount();
-	for (int index = 0; index < count; ++index) {
-		filterItem(ui->threadTreeWidget->topLevelItem(index), text, filterColumn);
-	}
-#endif
+	mThreadModel->setFilter(filterColumn,keywords) ;
+
+	//if(found > 0)
+	//	expandAll();
+
+	//if(found == 0)
+	//	ui.filterLineEdit->setToolTip(tr("No result.")) ;
+	//else
+	//	ui.filterLineEdit->setToolTip(tr("Found %1 results.").arg(found)) ;
 }
 
 bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)

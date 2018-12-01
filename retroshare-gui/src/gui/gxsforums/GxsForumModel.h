@@ -78,10 +78,13 @@ public:
               	MissingRole        = Qt::UserRole+3,
               	StatusRole         = Qt::UserRole+4,
               	UnreadChildrenRole = Qt::UserRole+5,
+              	FilterRole         = Qt::UserRole+6,
               };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
+
+    static const QString FilterString ;
 
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
@@ -117,6 +120,7 @@ public:
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
+    void setFilter(int column,const std::list<std::string>& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -142,6 +146,7 @@ public:
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
+	QVariant filterRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant backgroundRole(const ForumModelPostEntry& fmpe, int col) const;
 
@@ -160,6 +165,7 @@ private:
     bool mUseChildTS;
     bool mFlatView;
     int  mFilterColumn;
+    std::list<std::string> mFilterStrings;
 
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;

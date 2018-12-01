@@ -10,12 +10,15 @@
 #include "GxsForumModel.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
+#include "retroshare/rsexpr.h"
 
 //#define DEBUG_FORUMMODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData);
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
+
+const QString RsGxsForumModel::FilterString("filtered");
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
     : QAbstractItemModel(parent)
@@ -307,6 +310,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
 	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 
+	case FilterRole:         return filterRole    (fmpe,index.column()) ;
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
 	case StatusRole:         return statusRole    (fmpe,index.column()) ;
@@ -337,10 +341,41 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
     return QVariant(fmpe.mMsgStatus);
 }
 
+QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int column) const
+{
+    if(mFilterColumn < 0)
+        return QVariant(QString());
+
+    switch(mFilterColumn)
+    {
+    case COLUMN_THREAD_TITLE:
+    {
+		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
+			if(fmpe.mTitle.end() != std::search( fmpe.mTitle.begin(), fmpe.mTitle.end(), (*iter).begin(), (*iter).end(), RsRegularExpression::CompareCharIC() ))
+				return QVariant(FilterString);
+
+        return QVariant(QString());
+    }
+
+     default:
+        return QVariant(FilterString);
+    }
+}
+
+void RsGxsForumModel::setFilter(int column,const std::list<std::string>& strings)
+{
+    mFilterColumn = column;
+    mFilterStrings = strings;
+
+    emit layoutAboutToBeChanged();
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    emit layoutChanged();
+}
+
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
 {
-    if(column != COLUMN_THREAD_DATA)
-        return QVariant();
+//    if(column != COLUMN_THREAD_DATA)
+//        return QVariant();
 
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
         return QVariant(true);
@@ -455,7 +490,10 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
 
 		case COLUMN_THREAD_READ:return QVariant();
-    	case COLUMN_THREAD_DATE:       {
+    	case COLUMN_THREAD_DATE:{
+        							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
+                                        return QVariant(QString());
+
     							    QDateTime qtime;
 									qtime.setTime_t(fmpe.mPublishTs);
 
