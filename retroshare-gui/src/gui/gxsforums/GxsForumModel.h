@@ -31,11 +31,13 @@ struct ForumModelPostEntry
     ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
 
     enum {					// flags for display of posts. To be used in mPostFlags
-        FLAG_POST_IS_PINNED           = 0x0001,
-        FLAG_POST_IS_MISSING          = 0x0002,
-        FLAG_POST_IS_REDACTED         = 0x0004,
-        FLAG_POST_HAS_UNREAD_CHILDREN = 0x0008,
-        FLAG_POST_HAS_READ_CHILDREN   = 0x0010,
+        FLAG_POST_IS_PINNED              = 0x0001,
+        FLAG_POST_IS_MISSING             = 0x0002,
+        FLAG_POST_IS_REDACTED            = 0x0004,
+        FLAG_POST_HAS_UNREAD_CHILDREN    = 0x0008,
+        FLAG_POST_HAS_READ_CHILDREN      = 0x0010,
+        FLAG_POST_PASSES_FILTER          = 0x0020,
+        FLAG_POST_CHILDREN_PASSES_FILTER = 0x0040,
     };
 
     std::string        mTitle ;
@@ -120,7 +122,7 @@ public:
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
-    void setFilter(int column,const std::list<std::string>& strings) ;
+    void setFilter(int column, const QStringList &strings, uint32_t &count) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -164,8 +166,7 @@ private:
 
     bool mUseChildTS;
     bool mFlatView;
-    int  mFilterColumn;
-    std::list<std::string> mFilterStrings;
+    bool mFilteringEnabled;
 
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
@@ -179,10 +180,11 @@ private:
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
 	void recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
 	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children);
+	uint32_t recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
-	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsGxsForumMsg& msg, bool useChildTS, uint32_t filterColumn, ForumModelPostEntry& fentry);
+	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsGxsForumMsg& msg, bool useChildTS, ForumModelPostEntry& fentry);
 
 	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group, const std::vector<RsGxsForumMsg>& msgs_array, std::vector<ForumModelPostEntry>& posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions);

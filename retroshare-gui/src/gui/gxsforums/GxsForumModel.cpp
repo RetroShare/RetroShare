@@ -25,10 +25,9 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 {
     initEmptyHierarchy(mPosts);
 
-
-    mFilterColumn=0;
     mUseChildTS=false;
     mFlatView=false;
+    mFilteringEnabled=false;
 }
 
 void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
@@ -343,38 +342,84 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
 
 QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int column) const
 {
-    if(mFilterColumn < 0)
-        return QVariant(QString());
-
-    switch(mFilterColumn)
-    {
-    case COLUMN_THREAD_TITLE:
-    {
-		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
-			if(fmpe.mTitle.end() != std::search( fmpe.mTitle.begin(), fmpe.mTitle.end(), (*iter).begin(), (*iter).end(), RsRegularExpression::CompareCharIC() ))
-				return QVariant(FilterString);
-
-        return QVariant(QString());
-    }
-
-     default:
+    if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
         return QVariant(FilterString);
-    }
+
+	return QVariant(QString());
 }
 
-void RsGxsForumModel::setFilter(int column,const std::list<std::string>& strings)
+uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
 {
-    mFilterColumn = column;
-    mFilterStrings = strings;
+    QString s ;
+	uint32_t count = 0;
 
-    emit layoutAboutToBeChanged();
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-    emit layoutChanged();
+	switch(column)
+	{
+	default:
+	case COLUMN_THREAD_DATE:
+	case COLUMN_THREAD_TITLE: 	s = displayRole(mPosts[i],column).toString();
+		break;
+	case COLUMN_THREAD_AUTHOR:
+	{
+		QString comment ;
+		QList<QIcon> icons;
+
+		GxsIdDetails::MakeIdDesc(mPosts[i].mAuthorId, false,s, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
+	}
+		break;
+	}
+
+	if(!strings.empty())
+	{
+		mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
+
+		for(auto iter(strings.begin()); iter != strings.end(); ++iter)
+			if(s.contains(*iter,Qt::CaseInsensitive))
+			{
+				mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
+
+				count++;
+				break;
+			}
+	}
+	else
+	{
+		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER |ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
+		count++;
+	}
+
+	for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+	{
+		uint32_t tmp = recursUpdateFilterStatus(mPosts[i].mChildren[j],column,strings);
+		count += tmp;
+
+		if(tmp > 0)
+			mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
+	}
+
+	return count;
+}
+
+
+void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
+{
+	emit layoutAboutToBeChanged();
+
+    if(!strings.empty())
+    {
+		count = recursUpdateFilterStatus(ForumModelIndex(0),column,strings);
+        mFilteringEnabled = true;
+    }
+    else
+        mFilteringEnabled = false;
+
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
 }
 
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
 {
-//    if(column != COLUMN_THREAD_DATA)
+	//    if(column != COLUMN_THREAD_DATA)
 //        return QVariant();
 
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
@@ -432,6 +477,9 @@ QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int col
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
         return QVariant(QBrush(QColor(255,200,180)));
+
+    if(mFilteringEnabled && (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER))
+        return QVariant(QBrush(QColor(255,240,210)));
 
     return QVariant();
 }
@@ -568,6 +616,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 
     bool has_unread_below,has_read_below ;
     recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
+    recursUpdateFilterStatus(0,0,QStringList());
 #ifndef DEBUG_FORUMMODEL
     debug_dump();
 #endif
@@ -655,7 +704,7 @@ void RsGxsForumModel::generateMissingItem(const RsGxsMessageId &msgId,ForumModel
     entry.mReputationWarningLevel = 3;
 }
 
-void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsGxsForumMsg& msg, bool useChildTS, uint32_t filterColumn,ForumModelPostEntry& fentry)
+void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsGxsForumMsg& msg, bool useChildTS, ForumModelPostEntry& fentry)
 {
     fentry.mTitle     = msg.mMeta.mMsgName;
     fentry.mAuthorId  = msg.mMeta.mAuthorId;
@@ -903,7 +952,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #endif
 
             ForumModelPostEntry entry;
-			convertMsgToPostEntry(forum_group,msg, mUseChildTS, mFilterColumn,entry);
+			convertMsgToPostEntry(forum_group,msg, mUseChildTS, entry);
 
             ForumModelIndex entry_index = addEntry(posts,entry,0);
 
@@ -995,7 +1044,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 
 
             ForumModelPostEntry e ;
-			convertMsgToPostEntry(forum_group,msg,mUseChildTS,mFilterColumn,e) ;
+			convertMsgToPostEntry(forum_group,msg,mUseChildTS,e) ;
             ForumModelIndex e_index = addEntry(posts,e, threadPair.second);
 
 			//calculateExpand(msg, item);

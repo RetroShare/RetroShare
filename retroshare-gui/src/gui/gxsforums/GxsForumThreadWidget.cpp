@@ -25,6 +25,7 @@
 #include <QPainter>
 
 #include "util/qtthreadsutils.h"
+#include "util/misc.h"
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumsFillThread.h"
@@ -359,7 +360,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mSubscribeFlags = 0;
     mSignFlags = 0;
-	mInProcessSettings = false;
 	mUnreadCount = 0;
 	mNewCount = 0;
 
@@ -434,7 +434,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
-	ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
+	//ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
 	// see processSettings
 	//ui->filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
 
@@ -539,8 +539,6 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
 
 void GxsForumThreadWidget::processSettings(bool load)
 {
-	mInProcessSettings = true;
-
 	QHeaderView *header = ui->threadTreeWidget->header();
 
 	Settings->beginGroup(QString("ForumThreadWidget"));
@@ -575,7 +573,6 @@ void GxsForumThreadWidget::processSettings(bool load)
 	}
 
 	Settings->endGroup();
-	mInProcessSettings = false;
 }
 
 void GxsForumThreadWidget::groupIdChanged()
@@ -2671,16 +2668,13 @@ void GxsForumThreadWidget::changedViewBox()
 
 void GxsForumThreadWidget::filterColumnChanged(int column)
 {
-	if (mInProcessSettings) {
-		return;
-	}
-
+#ifdef TO_REMOVE
 	if (column == RsGxsForumModel::COLUMN_THREAD_CONTENT) {
 		// need content ... refill
 		//insertThreads();
 	} else {
-		filterItems(ui->filterLineEdit->text());
-	}
+#endif
+	filterItems(ui->filterLineEdit->text());
 
 	// save index
 	Settings->setValueToGroup("ForumThreadWidget", "filterColumn", column);
@@ -2688,24 +2682,22 @@ void GxsForumThreadWidget::filterColumnChanged(int column)
 
 void GxsForumThreadWidget::filterItems(const QString& text)
 {
-	//FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
 	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
-	std::list<std::string> keywords ;
-
-	for(auto it(lst.begin());it!=lst.end();++it)
-		keywords.push_back((*it).toStdString());
 
 	int filterColumn = ui->filterLineEdit->currentFilter();
 
-	mThreadModel->setFilter(filterColumn,keywords) ;
+    uint32_t count;
+	mThreadModel->setFilter(filterColumn,lst,count) ;
 
-	//if(found > 0)
-	//	expandAll();
+    if(!lst.empty())
+		ui->threadTreeWidget->expandAll();
+    else
+		ui->threadTreeWidget->collapseAll();
 
-	//if(found == 0)
-	//	ui.filterLineEdit->setToolTip(tr("No result.")) ;
-	//else
-	//	ui.filterLineEdit->setToolTip(tr("Found %1 results.").arg(found)) ;
+	if(count > 0)
+		ui->filterLineEdit->setToolTip(tr("No result.")) ;
+	else
+		ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
 }
 
 bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
