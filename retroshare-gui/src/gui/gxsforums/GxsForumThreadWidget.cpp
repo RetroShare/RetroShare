@@ -365,9 +365,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mInMsgAsReadUnread = false;
 
-	//mThreadCompareRole = new RSTreeWidgetItemCompareRole;
-	//mThreadCompareRole->setRole(RsGxsForumModel::COLUMN_THREAD_DATE, ROLE_THREAD_SORT);
-
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
     mThreadProxyModel->setSourceModel(mThreadModel);
@@ -400,7 +397,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->newmessageButton->setText(tr("Reply"));
 	ui->newthreadButton->setText(tr("New thread"));
 	
-	//connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(changedThread(QModelIndex)));
 	connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(clickedThread(QModelIndex)));
 	connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
@@ -2652,18 +2648,19 @@ void GxsForumThreadWidget::saveImage()
 
 void GxsForumThreadWidget::changedViewBox()
 {
-#ifdef TODO
-	if (mInProcessSettings) {
-		return;
-	}
-
 	// save index
 	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
 
-	ui->threadTreeWidget->clear();
+    switch(ui->viewBox->currentIndex())
+    {
+    default:
+    case VIEW_THREADED:
+    case VIEW_LAST_POST:  mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
+        				  break;
 
-	insertThreads();
-#endif
+	case VIEW_FLAT:		  mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
+        				  break;
+    }
 }
 
 void GxsForumThreadWidget::filterColumnChanged(int column)

@@ -26,15 +26,32 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     initEmptyHierarchy(mPosts);
 
     mUseChildTS=false;
-    mFlatView=false;
     mFilteringEnabled=false;
+}
+
+void RsGxsForumModel::setTreeMode(TreeMode mode)
+{
+    if(mode == mTreeMode)
+        return;
+
+ 	emit layoutAboutToBeChanged();
+
+	mTreeMode = mode;
+
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
 }
 
 void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
 {
+ 	emit layoutAboutToBeChanged();
+
     posts.resize(1);	// adds a sentinel item
     posts[0].mTitle = "Root sentinel post" ;
     posts[0].mParent = 0;
+
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
 }
 
 int RsGxsForumModel::rowCount(const QModelIndex& parent) const
@@ -87,6 +104,9 @@ bool RsGxsForumModel::hasChildren(const QModelIndex &parent) const
 {
     if(!parent.isValid())
         return true;
+
+    if(mTreeMode == TREE_MODE_FLAT)
+        return false;
 
     void *ref = parent.internalPointer();
 	uint32_t entry = 0;
@@ -151,6 +171,9 @@ QModelIndex RsGxsForumModel::parent(const QModelIndex& index) const
     if(!index.isValid())
         return QModelIndex();
 
+    if(mTreeMode == TREE_MODE_FLAT)
+        return QModelIndex();
+
     void *child_ref = index.internalPointer();
     int row=0;
 
@@ -178,6 +201,16 @@ void *RsGxsForumModel::getChildRef(void *ref,int row) const
         return NULL ;
 
     void *new_ref;
+
+    if(mTreeMode == TREE_MODE_FLAT)
+        if(entry == 0)
+        {
+			convertTabEntryToRefPointer(row+1,new_ref);
+    		return new_ref;
+        }
+		else
+            return NULL ;
+
     if(row >= mPosts[entry].mChildren.size())
         return NULL;
 
@@ -189,6 +222,9 @@ void *RsGxsForumModel::getChildRef(void *ref,int row) const
 void *RsGxsForumModel::getParentRef(void *ref,int& row) const
 {
     ForumModelIndex ref_entry;
+
+    if(mTreeMode == TREE_MODE_FLAT)
+        return NULL;
 
     if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mPosts.size())
         return NULL ;
@@ -217,7 +253,13 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
     if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
         return 0 ;
 
-    return mPosts[entry].mChildren.size();
+    if(mTreeMode == TREE_MODE_FLAT)
+        if(entry == 0)
+			return ((int)mPosts.size())-1;
+		else
+            return 0;
+    else
+		return mPosts[entry].mChildren.size();
 }
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -941,7 +983,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 	for ( std::map<RsGxsMessageId,RsGxsForumMsg>::iterator msgIt = msgs.begin(); msgIt != msgs.end();++msgIt)
     {
 
-        if(mFlatView || msgIt->second.mMeta.mParentId.isNull())
+        if(msgIt->second.mMeta.mParentId.isNull())
 		{
 
 			/* add all threads */
@@ -956,7 +998,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 
             ForumModelIndex entry_index = addEntry(posts,entry,0);
 
-			if (!mFlatView)
+			//if (!mFlatView)
 				threadStack.push_back(std::make_pair(msg.mMeta.mMsgId,entry_index)) ;
 
 			//calculateExpand(msg, item);

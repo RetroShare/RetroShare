@@ -83,6 +83,10 @@ public:
               	FilterRole         = Qt::UserRole+6,
               };
 
+    enum TreeMode{ TREE_MODE_FLAT  = 0x00,
+                   TREE_MODE_TREE  = 0x01,
+    };
+
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
 
@@ -114,6 +118,7 @@ public:
 
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);
+    void setTreeMode(TreeMode mode) ;
 
 	void setTextColorRead          (QColor color) { mTextColorRead           = color;}
 	void setTextColorUnread        (QColor color) { mTextColorUnread         = color;}
@@ -165,8 +170,8 @@ private:
     RsGxsForumGroup mForumGroup;
 
     bool mUseChildTS;
-    bool mFlatView;
     bool mFilteringEnabled;
+    TreeMode mTreeMode;
 
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
