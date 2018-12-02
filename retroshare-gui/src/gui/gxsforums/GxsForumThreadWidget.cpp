@@ -2648,6 +2648,10 @@ void GxsForumThreadWidget::saveImage()
 
 void GxsForumThreadWidget::changedViewBox()
 {
+	ui->threadTreeWidget->selectionModel()->clear();
+	ui->threadTreeWidget->selectionModel()->reset();
+    mThreadId.clear();
+
 	// save index
 	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
 
