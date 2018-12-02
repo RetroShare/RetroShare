@@ -2655,16 +2655,15 @@ void GxsForumThreadWidget::changedViewBox()
 	// save index
 	Settings->setValueToGroup("ForumThreadWidget", "viewBox", ui->viewBox->currentIndex());
 
-    switch(ui->viewBox->currentIndex())
-    {
-    default:
-    case VIEW_THREADED:
-    case VIEW_LAST_POST:  mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
-        				  break;
+    if(ui->viewBox->currentIndex() == VIEW_FLAT)
+        mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
+    else
+        mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_TREE);
 
-	case VIEW_FLAT:		  mThreadModel->setTreeMode(RsGxsForumModel::TREE_MODE_FLAT);
-        				  break;
-    }
+    if(ui->viewBox->currentIndex() == VIEW_LAST_POST)
+        mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_CHILDREN_PUBLISH_TS);
+    else
+        mThreadModel->setSortMode(RsGxsForumModel::SORT_MODE_PUBLISH_TS);
 }
 
 void GxsForumThreadWidget::filterColumnChanged(int column)

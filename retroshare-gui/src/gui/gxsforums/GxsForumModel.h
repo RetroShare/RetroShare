@@ -28,7 +28,7 @@ typedef uint32_t ForumModelIndex;
 
 struct ForumModelPostEntry
 {
-    ForumModelPostEntry() : mPublishTs(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
+    ForumModelPostEntry() : mPublishTs(0),mMostRecentTsInThread(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
 
     enum {					// flags for display of posts. To be used in mPostFlags
         FLAG_POST_IS_PINNED              = 0x0001,
@@ -44,6 +44,7 @@ struct ForumModelPostEntry
     RsGxsId            mAuthorId ;
     RsGxsMessageId     mMsgId;
     uint32_t           mPublishTs;
+    uint32_t           mMostRecentTsInThread;
     uint32_t           mPostFlags;
     int                mReputationWarningLevel;
     int                mMsgStatus;
@@ -87,6 +88,10 @@ public:
                    TREE_MODE_TREE  = 0x01,
     };
 
+    enum SortMode{ SORT_MODE_PUBLISH_TS           = 0x00,
+                   SORT_MODE_CHILDREN_PUBLISH_TS  = 0x01,
+    };
+
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 	QModelIndex getIndexOfMessage(const RsGxsMessageId& mid) const;
 
@@ -119,6 +124,7 @@ public:
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);
     void setTreeMode(TreeMode mode) ;
+    void setSortMode(SortMode mode) ;
 
 	void setTextColorRead          (QColor color) { mTextColorRead           = color;}
 	void setTextColorUnread        (QColor color) { mTextColorUnread         = color;}
@@ -172,6 +178,7 @@ private:
     bool mUseChildTS;
     bool mFilteringEnabled;
     TreeMode mTreeMode;
+    SortMode mSortMode;
 
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
@@ -183,9 +190,9 @@ private:
 
 	void update_posts(const RsGxsGroupId &group_id);
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);
-	void recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
-	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children);
+	void recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below);
 	uint32_t recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
+	void recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);

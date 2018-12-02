@@ -42,6 +42,16 @@ void RsGxsForumModel::setTreeMode(TreeMode mode)
 	emit layoutChanged();
 }
 
+void RsGxsForumModel::setSortMode(SortMode mode)
+{
+ 	emit layoutAboutToBeChanged();
+
+    mSortMode = mode;
+
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
+}
+
 void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
 {
  	emit layoutAboutToBeChanged();
@@ -552,7 +562,11 @@ QVariant RsGxsForumModel::sortRole(const ForumModelPostEntry& fmpe,int column) c
 {
     switch(column)
     {
-	case COLUMN_THREAD_DATE:         return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
+	case COLUMN_THREAD_DATE:         if(mSortMode == SORT_MODE_PUBLISH_TS)
+            							return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
+        							 else
+            							return QVariant(QString::number(fmpe.mMostRecentTsInThread)); // we should probably have leading zeroes here
+
 	case COLUMN_THREAD_READ:         return QVariant((bool)IS_MSG_UNREAD(fmpe.mMsgStatus));
     case COLUMN_THREAD_DISTRIBUTION: return decorationRole(fmpe,column);
     case COLUMN_THREAD_AUTHOR:
@@ -657,8 +671,10 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     mPosts[0].prow = 0;
 
     bool has_unread_below,has_read_below ;
-    recursUpdateReadStatus(0,has_unread_below,has_read_below) ;
+
+    recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
     recursUpdateFilterStatus(0,0,QStringList());
+
 #ifndef DEBUG_FORUMMODEL
     debug_dump();
 #endif
@@ -1129,7 +1145,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 
     bool has_unread_below,has_read_below;
     recursSetMsgReadStatus(entry,read_status,with_children) ;
-	recursUpdateReadStatus(0,has_unread_below,has_read_below);
+	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
@@ -1151,19 +1167,24 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
         recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children);
 }
 
-void RsGxsForumModel::recursUpdateReadStatus(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
+void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)
 {
     has_unread_below =  IS_MSG_UNREAD(mPosts[i].mMsgStatus);
     has_read_below   = !IS_MSG_UNREAD(mPosts[i].mMsgStatus);
+
+    mPosts[i].mMostRecentTsInThread = mPosts[i].mPublishTs;
 
     for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
     {
         bool ub,rb;
 
-        recursUpdateReadStatus(mPosts[i].mChildren[j],ub,rb);
+        recursUpdateReadStatusAndTimes(mPosts[i].mChildren[j],ub,rb);
 
         has_unread_below = has_unread_below || ub ;
         has_read_below   = has_read_below   || rb ;
+
+		if(mPosts[i].mMostRecentTsInThread < mPosts[mPosts[i].mChildren[j]].mMostRecentTsInThread)
+			mPosts[i].mMostRecentTsInThread = mPosts[mPosts[i].mChildren[j]].mMostRecentTsInThread;
 
         if(ub && rb)		// optimization
             break;
