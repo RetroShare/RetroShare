@@ -185,7 +185,6 @@ bool RsGxsForumModel::convertRefPointerToTabEntry(void *ref,uint32_t& entry)
 
 QModelIndex RsGxsForumModel::index(int row, int column, const QModelIndex & parent) const
 {
-//    if(!hasIndex(row,column,parent))
     if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
 		return QModelIndex();
 
@@ -491,9 +490,6 @@ void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& 
 
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
 {
-	//    if(column != COLUMN_THREAD_DATA)
-//        return QVariant();
-
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
         return QVariant(true);
     else
@@ -764,9 +760,9 @@ ForumModelIndex RsGxsForumModel::addEntry(std::vector<ForumModelPostEntry>& post
 
     posts[N].mParent = parent;
     posts[parent].mChildren.push_back(N);
-
+#ifdef DEBUG_FORUMMODEL
     std::cerr << "Added new entry " << N << " children of " << parent << std::endl;
-
+#endif
     if(N == parent)
         std::cerr << "(EE) trying to add a post as its own parent!" << std::endl;
     return ForumModelIndex(N);
@@ -814,35 +810,6 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
         fentry.mReputationWarningLevel = 1 ;
     else
         fentry.mReputationWarningLevel = 0 ;
-
-#ifdef TODO
-    // This is an attempt to put pinned posts on the top. We should rather use a QSortFilterProxyModel here.
-	QString itemSort = QString::number(msg.mMeta.mPublishTs);//Don't need to format it as for sort.
-
-	if (useChildTS)
-	{
-		for(QTreeWidgetItem *grandParent = parent; grandParent!=NULL; grandParent = grandParent->parent())
-		{
-			//Update Parent Child TimeStamp
-			QString oldTSSort = grandParent->data(COLUMN_THREAD_DATE, ROLE_THREAD_SORT).toString();
-
-			QString oldCTSSort = oldTSSort.split("|").at(0);
-			QString oldPTSSort = oldTSSort.contains("|") ? oldTSSort.split(" | ").at(1) : oldCTSSort;
-#ifdef SHOW_COMBINED_DATES
-			QString oldTSText = grandParent->text(COLUMN_THREAD_DATE);
-			QString oldCTSText = oldTSText.split("|").at(0);
-			QString oldPTSText = oldTSText.contains("|") ? oldTSText.split(" | ").at(1) : oldCTSText;//If first time parent get only its mPublishTs
- #endif
-			if (oldCTSSort.toDouble() < itemSort.toDouble())
-			{
-#ifdef SHOW_COMBINED_DATES
-				grandParent->setText(COLUMN_THREAD_DATE, DateTime::formatDateTime(qtime) + " | " + oldPTSText);
-#endif
-				grandParent->setData(COLUMN_THREAD_DATE, ROLE_THREAD_SORT, itemSort + " | " + oldPTSSort);
-			}
-		}
-	}
-#endif
 }
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
@@ -855,7 +822,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 {
     std::cerr << "updating messages data with " << msgs_array.size() << " messages" << std::endl;
 
-//#ifdef DEBUG_FORUMS
+#ifdef DEBUG_FORUMS
     std::cerr << "Retrieved group data: " << std::endl;
     std::cerr << "  Group ID: " << forum_group.mMeta.mGroupId << std::endl;
     std::cerr << "  Admin lst: " << forum_group.mAdminList.ids.size() << " elements." << std::endl;
@@ -864,7 +831,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
     std::cerr << "  Pinned Post: " << forum_group.mPinnedPosts.ids.size() << " messages." << std::endl;
     for(auto it(forum_group.mPinnedPosts.ids.begin());it!=forum_group.mPinnedPosts.ids.end();++it)
         std::cerr << "    " << *it << std::endl;
-//#endif
+#endif
 
 	/* get messages */
 	std::map<RsGxsMessageId,RsGxsForumMsg> msgs;
