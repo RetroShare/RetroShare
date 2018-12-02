@@ -478,7 +478,7 @@ bool p3GxsForums::getForumsContent(
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 	if( !requestMsgInfo(token, opts, forumIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 	return getMsgData(token, messages);
 }
 
