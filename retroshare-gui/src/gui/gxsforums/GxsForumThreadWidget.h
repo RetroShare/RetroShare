@@ -142,12 +142,6 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
-#ifdef TO_REMOVE
-	void fillThreadFinished();
-	void fillThreadProgress(int current, int count);
-	void fillThreadStatus(QString text);
-#endif
-
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;
@@ -172,20 +166,6 @@ private:
 
 	void updateMessageData(const RsGxsMessageId& msgId);
 
-#ifdef TO_REMOVE
-	void requestMsgData_ReplyWithPrivateMessage(const RsGxsGrpMsgIdPair &msgId);
-	void requestMsgData_ShowAuthorInPeople(const RsGxsGrpMsgIdPair &msgId);
-	void requestMsgData_ReplyForumMessage(const RsGxsGrpMsgIdPair &msgId);
-	void requestMsgData_EditForumMessage(const RsGxsGrpMsgIdPair &msgId);
-
-	void loadMessageData(const uint32_t &token);
-	void loadMsgData_ReplyMessage(const uint32_t &token);
-	void loadMsgData_ReplyForumMessage(const uint32_t &token);
-	void loadMsgData_EditForumMessage(const uint32_t &token);
-	void loadMsgData_ShowAuthorInPeople(const uint32_t &token);
-	void loadMsgData_SetAuthorOpinion(const uint32_t &token, RsReputations::Opinion opinion);
-#endif
-
 private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
@@ -201,19 +181,6 @@ private:
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
-
-#ifdef TO_REMOVE
-	uint32_t mTokenTypeGroupData;
-	uint32_t mTokenTypeInsertThreads;
-	uint32_t mTokenTypeMessageData;
-	uint32_t mTokenTypeReplyMessage;
-	uint32_t mTokenTypeReplyForumMessage;
-	uint32_t mTokenTypeEditForumMessage;
-	uint32_t mTokenTypeShowAuthorInPeople;
-	uint32_t mTokenTypeNegativeAuthor;
-	uint32_t mTokenTypePositiveAuthor;
-	uint32_t mTokenTypeNeutralAuthor;
-#endif
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
