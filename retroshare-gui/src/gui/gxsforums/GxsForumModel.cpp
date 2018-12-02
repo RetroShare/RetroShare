@@ -532,9 +532,6 @@ QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column
 
 QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int column) const
 {
-    if(column != COLUMN_THREAD_DATE)
-        return QVariant();
-
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
         return QVariant(true);
     else

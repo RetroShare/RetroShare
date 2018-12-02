@@ -276,8 +276,8 @@ public:
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
-		bool  left_is_not_pinned  = ! left.data(ROLE_THREAD_PINNED).toBool();
-		bool right_is_not_pinned  = !right.data(ROLE_THREAD_PINNED).toBool();
+		bool  left_is_not_pinned  = ! left.data(RsGxsForumModel::ThreadPinnedRole).toBool();
+		bool right_is_not_pinned  = !right.data(RsGxsForumModel::ThreadPinnedRole).toBool();
 #ifdef DEBUG_PINNED_POST_SORTING
         std::cerr << "Comparing item date \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
                   << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
