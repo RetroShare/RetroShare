@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxsforums/GxsForumModel.cpp                          *
+ *                                                                             *
+ * Copyright 2018 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QApplication>
 #include <QFontMetrics>
 #include <QModelIndex>
@@ -675,7 +695,7 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
     recursUpdateFilterStatus(0,0,QStringList());
 
-#ifndef DEBUG_FORUMMODEL
+#ifdef DEBUG_FORUMMODEL
     debug_dump();
 #endif
 
@@ -1217,113 +1237,6 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
     return QModelIndex();
 }
 
-#ifdef TO_REMVOVE
-void RsGxsForumModel::test_iterator() const
-{
-    const_iterator it(*this);
-
-    while(it)
-    {
-        std::cerr << "Current node: " << *it << std::endl;
-		++it;
-    }
-}
-
-QModelIndex RsGxsForumModel::getNextIndex(const QModelIndex& i,bool unread_only) const
-{
-    test_iterator();
-
-    ForumModelIndex fmi ;
-    convertRefPointerToTabEntry(i.internalPointer(),fmi);
-
-    // Algorithm is simple: visit children recursively. When none available, go to parent. We need of course a stack of parents to the current index.
-
-    const_iterator it(*this,fmi);
-
-    do {++it;} while(bool(it) && (!unread_only || IS_MSG_UNREAD(mPosts[*it].mMsgStatus)));
-
-    if(!it)
-        return QModelIndex();
-
-    void *ref ;
-    convertTabEntryToRefPointer(*it,ref);
-
-    return createIndex(mPosts[*it].prow,0,ref);
-}
-
-
-RsGxsForumModel::const_iterator::const_iterator(const RsGxsForumModel &Model, ForumModelIndex i)
-	: model(Model)
-{
-    if(i >= model.mPosts.size())
-    {
-        std::cerr << "(EE) constructed a RsGxsForumModel::const_iterator from invalid index " << i << std::endl;
-        kid = -1;
-        return;
-    }
-    // create a stack or parents
-    parent_stack.clear();
-
-    if(i==0)
-    {
-        current_parent = 0;
-        kid =0;
-        return;
-    }
-    current_parent = model.mPosts[i].mParent;
-    ForumModelIndex j(i);
-    kid = model.mPosts[i].prow;
-
-    while(j != 0)
-    {
-        parent_stack.push_front(model.mPosts[j].prow);
-		j = model.mPosts[i].mParent;
-    }
-}
-
-ForumModelIndex RsGxsForumModel::const_iterator::operator*() const
-{
-    if(current_parent >= model.mPosts.size() || kid < 0 || kid >= (int)model.mPosts[current_parent].mChildren.size())
-    {
-        std::cerr << "(EE) operator* on an invalid RsGxsForumModel::const_iterator"<< std::endl;
-        return 0;
-    }
-
-    return model.mPosts[current_parent].mChildren[kid];
-}
-
-void RsGxsForumModel::const_iterator::operator++()
-{
-    kid++;
-    while(kid >= (int)model.mPosts[current_parent].mChildren.size())
-    {
-        current_parent = model.mPosts[current_parent].mParent;
-        kid = parent_stack.back()+1;
-
-        parent_stack.pop_back();
-
-    }
-
-	if(current_parent == 0 && kid >= (int)model.mPosts[current_parent].mChildren.size())
-	{
-		kid = -1;
-		return;
-	}
-
-    while(!model.mPosts[model.mPosts[current_parent].mChildren[kid]].mChildren.empty())
-    {
-        parent_stack.push_back(kid);
-        current_parent = model.mPosts[current_parent].mChildren[kid];
-        kid = 0;
-    }
-}
-
-RsGxsForumModel::const_iterator::operator bool() const
-{
-    return kid >= 0;
-}
-#endif
-
 static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
 {
     const ForumModelPostEntry& e(entries[index]);
@@ -1340,7 +1253,7 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
         recursPrintModel(entries,e.mChildren[i],depth+1);
 }
 
-
+#ifdef DEBUG_FORUMMODEL
 void RsGxsForumModel::debug_dump()
 {
     std::cerr << "Model data dump:" << std::endl;
@@ -1369,6 +1282,6 @@ void RsGxsForumModel::debug_dump()
     // recursive print
     recursPrintModel(mPosts,ForumModelIndex(0),0);
 }
-
+#endif
 
 

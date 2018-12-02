@@ -28,7 +28,6 @@
 #include "util/misc.h"
 #include "GxsForumThreadWidget.h"
 #include "ui_GxsForumThreadWidget.h"
-#include "GxsForumsFillThread.h"
 #include "GxsForumModel.h"
 #include "GxsForumsDialog.h"
 #include "gui/RetroShareLink.h"

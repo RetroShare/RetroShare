@@ -1,18 +1,3 @@
-#ifndef SUSPENDED_CODE
-#else
-#include <string>
-#include <iostream>
-
-struct RsMsgMetaData
-{
-	std::string mMsgName ;
-	time_t mPublishTs;
-	uint32_t mMsgStatus;
-	QString mAuthorId;
-};
-
-#endif
-
 #include "retroshare/rsgxsforums.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include <QModelIndex>
@@ -98,28 +83,6 @@ public:
     static const QString FilterString ;
 
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
-
-#ifdef TO_REMOVE
-    QModelIndex getNextIndex(const QModelIndex& i,bool unread_only) const;
-
-    class const_iterator
-    {
-    public:
-        const_iterator(const RsGxsForumModel& Model,ForumModelIndex = 0) ;
-
-        ForumModelIndex operator*() const ;
-        void operator++();
-
-        inline operator bool() const ;
-
-    private:
-        std::list<ForumModelIndex> parent_stack;
-        int kid;
-        ForumModelIndex current_parent;
-        const RsGxsForumModel& model;
-    };
-	void test_iterator() const;
-#endif
 
     // This method will asynchroneously update the data
 	void setForum(const RsGxsGroupId& forumGroup);
