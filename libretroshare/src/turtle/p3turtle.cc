@@ -1224,7 +1224,14 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
         RsTurtleGenericSearchResultItem *gnsr = dynamic_cast<RsTurtleGenericSearchResultItem*>(it->first) ;
 
         if(gnsr)
-            (*it).second->receiveSearchResult(gnsr->request_id,gnsr->result_data,gnsr->result_data_len) ;
+        {
+            ftServer *client = dynamic_cast<ftServer*>((*it).second) ;
+
+            if(client)
+                client->serverReceiveSearchResult(ftsr);
+            else
+                (*it).second->receiveSearchResult(gnsr->request_id,gnsr->result_data,gnsr->result_data_len) ;
+        }
     }
 }
 

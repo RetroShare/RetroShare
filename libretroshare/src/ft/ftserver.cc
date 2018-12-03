@@ -1357,7 +1357,7 @@ bool ftServer::decryptItem(const RsTurtleGenericDataItem *encrypted_item,const R
 	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(data,&data_size)) ;
 	free(data);
 
-	return (decrypted_item);
+	return (decrypted_item != nullptr);
 
 #else
 	uint8_t encryption_key[32] ;
@@ -1729,7 +1729,7 @@ int ftServer::handleIncoming()
 
 	RsItem *item = nullptr ;
 
-	while( (item = recvItem()) )
+	while( (item = recvItem()) != nullptr )
 	{
 		nhandled++ ;
 
