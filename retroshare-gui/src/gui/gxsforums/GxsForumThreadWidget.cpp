@@ -343,6 +343,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->newthreadButton->setText(tr("New thread"));
 	
 	connect(ui->threadTreeWidget, SIGNAL(clicked(QModelIndex)), this, SLOT(clickedThread(QModelIndex)));
+	connect(ui->threadTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(changedSelection(const QModelIndex&,const QModelIndex&)));
 	connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
@@ -497,6 +498,11 @@ void GxsForumThreadWidget::processSettings(bool load)
 	Settings->endGroup();
 }
 
+void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex&)
+{
+	changedThread(current);
+}
+
 void GxsForumThreadWidget::groupIdChanged()
 {
 	ui->forumName->setText(groupId().isNull () ? "" : tr("Loading..."));
@@ -628,12 +634,12 @@ QModelIndex GxsForumThreadWidget::GxsForumThreadWidget::getCurrentIndex() const
 }
 bool GxsForumThreadWidget::getCurrentPost(ForumModelPostEntry& fmpe) const
 {
-    QModelIndex index = getCurrentIndex() ;
+    QModelIndex indx = getCurrentIndex() ;
 
-    if(!index.isValid())
+    if(!indx.isValid())
         return false ;
 
-    return mThreadModel->getPostData(mThreadProxyModel->mapToSource(index),fmpe);
+    return mThreadModel->getPostData(mThreadProxyModel->mapToSource(indx),fmpe);
 }
 
 void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)

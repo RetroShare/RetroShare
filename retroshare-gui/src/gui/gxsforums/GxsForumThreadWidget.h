@@ -32,6 +32,7 @@ class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 class RsGxsForumMsg;
 class GxsForumsFillThread;
+class QItemSelection;
 class RsGxsForumGroup;
 class RsGxsForumModel;
 class RsGxsForumMsg;
@@ -97,6 +98,7 @@ private slots:
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
 
+	void changedSelection(const QModelIndex &, const QModelIndex &);
 	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QModelIndex index);
