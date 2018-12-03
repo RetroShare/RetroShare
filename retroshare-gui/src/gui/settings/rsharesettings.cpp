@@ -489,7 +489,8 @@ void RshareSettings::setMessageFlags(uint flags)
 
 bool RshareSettings::getDisplayTrayChatLobby()
 {
-	return value("DisplayTrayChatLobby").toBool();
+    return true;
+    return value("DisplayTrayChatLobby").toBool();
 }
 
 bool RshareSettings::getDisplayTrayGroupChat()
