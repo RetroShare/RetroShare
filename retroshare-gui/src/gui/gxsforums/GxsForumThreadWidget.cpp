@@ -278,24 +278,10 @@ public:
     {
 		bool  left_is_not_pinned  = ! left.data(RsGxsForumModel::ThreadPinnedRole).toBool();
 		bool right_is_not_pinned  = !right.data(RsGxsForumModel::ThreadPinnedRole).toBool();
-#ifdef DEBUG_PINNED_POST_SORTING
-        std::cerr << "Comparing item date \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
-                  << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << left_is_not_pinned << ") to \""
-                     << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,Qt::DisplayRole).toString().toStdString() << "\" ("
-                  << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toUInt() << ", \"" << other.data(RsGxsForumModel::COLUMN_THREAD_DATE,ROLE_THREAD_SORT).toString().toStdString() << "\" --> " << right_is_not_pinned << ") ";
-#endif
 
         if(left_is_not_pinned ^ right_is_not_pinned)
-        {
-#ifdef DEBUG_PINNED_POST_SORTING
-            std::cerr << "Local: " << ((m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned) << std::endl;
-#endif
             return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?right_is_not_pinned:left_is_not_pinned ;	// always put pinned posts on top
-		}
 
-#ifdef DEBUG_PINNED_POST_SORTING
-		std::cerr << "Remote: " << GxsIdRSTreeWidgetItem::operator<(other) << std::endl;
-#endif
 		return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
     }
 
@@ -335,7 +321,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
 
 	ui->threadTreeWidget->setSortingEnabled(true);
-	//ui->threadTreeWidget->setDynamicSortFilter(true);// is that useful??
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
@@ -377,22 +362,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	itemDelegate->setOnlyPlainText(true);
 	ui->threadTreeWidget->setItemDelegate(itemDelegate);
 
-#ifdef SUSPENDED_CODE
-	/* Set text of column "Read" to empty - without this the column has a number as header text */
-	QTreeWidgetItem *headerItem = ui->threadTreeWidget->headerItem();
-	headerItem->setText(COLUMN_THREAD_READ, "") ;
-	headerItem->setText(COLUMN_THREAD_DISTRIBUTION, "");
-	headerItem->setData(COLUMN_THREAD_READ,Qt::UserRole, tr("Read status")) ;			// this is used to display drop menus.
-	headerItem->setData(COLUMN_THREAD_DISTRIBUTION,Qt::UserRole, tr("Distribution"));
-#endif
-
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), RsGxsForumModel::COLUMN_THREAD_TITLE, tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
-	//ui->filterLineEdit->addFilter(QIcon(), tr("Content"), RsGxsForumModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
-	// see processSettings
-	//ui->filterLineEdit->setCurrentFilter(COLUMN_THREAD_TITLE);
 
 	mLastViewType = -1;
 
@@ -415,7 +388,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_AUTHOR,       QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_READ,         QHeaderView::Fixed);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, QHeaderView::Fixed);
-    ui->threadTreeWidget->header()->setCascadingSectionResizes(true);
+
+    ttheader->setCascadingSectionResizes(true);
 
 	/* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_CONTENT);
@@ -446,7 +420,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	                                        forum visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the forum list at left.</p>"));
 #ifdef SUSPENDED_CODE
 	ui->threadTreeWidget->enableColumnCustomize(true);
-
 #endif
 }
 
@@ -467,6 +440,8 @@ void GxsForumThreadWidget::blank()
     ui->threadTreeWidget->clear();
 #endif
 	ui->forumName->setText("");
+
+    mThreadModel->clear();
 
 #ifdef SUSPENDED_CODE
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
@@ -605,7 +580,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		updateGroupData();
-		//insertThreads();
+		mThreadModel->setForum(groupId());
 		insertMessage();
 
 		mIgnoredMsgId.clear();
@@ -623,7 +598,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
     if (grpIds.find(groupId())!=grpIds.end()){
 		updateGroup = true;
 		/* Update threads */
-		//insertThreads();
+		mThreadModel->setForum(groupId());
 	} else {
 		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
@@ -633,10 +608,8 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 			removeMessages(msgIds, mIgnoredMsgId);
 		}
 
-		if (msgIds.find(groupId()) != msgIds.end()) {
-			/* Update threads */
-			//insertThreads();
-		}
+		if (msgIds.find(groupId()) != msgIds.end())
+			mThreadModel->setForum(groupId()); /* Update threads */
 	}
 
 	if (updateGroup) {
@@ -1646,6 +1619,9 @@ void GxsForumThreadWidget::updateGroupName()
 }
 void GxsForumThreadWidget::updateGroupData()
 {
+    if(groupId().isNull())
+        return;
+
 	mSubscribeFlags = 0;
 	mSignFlags = 0;
     mThreadId.clear();
@@ -1692,7 +1668,6 @@ void GxsForumThreadWidget::updateGroupData()
 			 */
 
 			mForumGroup = group;
-			//insertGroupData();
             mSubscribeFlags = group.mMeta.mSubscribeFlags;
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));

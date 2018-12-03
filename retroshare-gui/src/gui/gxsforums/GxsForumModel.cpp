@@ -667,6 +667,18 @@ void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
     update_posts(forum_group_id);
 }
 
+void RsGxsForumModel::clear()
+{
+    emit layoutAboutToBeChanged();
+
+    mPosts.clear();
+    mPostVersions.clear();
+
+	emit layoutChanged();
+	emit forumLoaded();
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+}
+
 void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions)
 {
     emit layoutAboutToBeChanged();
@@ -699,6 +711,9 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 {
+    if(group_id.isNull())
+        return;
+
 	RsThread::async([this, group_id]()
 	{
         // 1 - get message data from p3GxsForums
