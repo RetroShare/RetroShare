@@ -1058,7 +1058,14 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 
 		ui.stackedWidget->removeWidget(it->second.dialog) ;
 		_lobby_infos.erase(it) ;
-	}
+    }
+
+    //remove item from conversations list
+    QTreeWidgetItem *rItem = getTreeWidgetItem(id);
+    if (rItem)
+    {
+        commonItem->removeChild(rItem);
+    }
 
 	// Unsubscribe the chat lobby
     ChatDialog::closeChat(ChatId(id));
@@ -1083,8 +1090,6 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 void ChatLobbyWidget::updateCurrentLobby()
 {
 	QList<QTreeWidgetItem *> items = ui.lobbyTreeWidget->selectedItems() ;
-	QTreeWidgetItem *item = items.front();
-
 	if(items.empty())
 	{
 		// need to check more about contact item selection
@@ -1093,6 +1098,7 @@ void ChatLobbyWidget::updateCurrentLobby()
 	else
 	{
         //if this is a group chat
+        QTreeWidgetItem *item = items.front();
         if (item->type() == TYPE_LOBBY)
 		{
             showLobby(item);
