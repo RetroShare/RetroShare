@@ -20,7 +20,7 @@ before_install:
 
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; brew search sqlcipher fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; brew search sqlcipher; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian; fi
 
   - wget https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
