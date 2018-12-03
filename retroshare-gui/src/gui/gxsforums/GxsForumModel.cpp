@@ -664,6 +664,9 @@ void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
 
     // we do not set mForumGroupId yet. We'll do it when the forum data is updated.
 
+    if(forum_group_id.isNull())
+        return;
+
     update_posts(forum_group_id);
 }
 
@@ -1136,6 +1139,8 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!i.isValid())
 		return ;
 
+ 	emit layoutAboutToBeChanged();
+
 	void *ref = i.internalPointer();
 	uint32_t entry = 0;
 
@@ -1146,6 +1151,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
     recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
+ 	emit layoutChanged();
     emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
