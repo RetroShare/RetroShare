@@ -38,7 +38,7 @@ CONFIG += warn_off
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
-CONFIG *= no_retroshare_nogui
+CONFIG *= retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
 # To disable cmark append the following 
