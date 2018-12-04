@@ -47,6 +47,7 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 
     mUseChildTS=false;
     mFilteringEnabled=false;
+    mTreeMode = TREE_MODE_TREE;
 }
 
 void RsGxsForumModel::preMods()
@@ -489,7 +490,10 @@ void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& 
         mFilteringEnabled = true;
     }
     else
+    {
+		count=0;
         mFilteringEnabled = false;
+    }
 
 	postMods();
 }
