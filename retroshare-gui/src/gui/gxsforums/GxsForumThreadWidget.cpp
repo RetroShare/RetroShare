@@ -305,6 +305,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	setUpdateWhenInvisible(true);
 
 	mSubscribeFlags = 0;
+    mUpdating = false;
     mSignFlags = 0;
 	mUnreadCount = 0;
 	mNewCount = 0;
@@ -583,8 +584,12 @@ static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &ms
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
+    if(mUpdating)
+        return;
+
 	if (complete) {
 		/* Fill complete */
+        mUpdating=true;
 		updateGroupData();
 		mThreadModel->setForum(groupId());
 		insertMessage();
@@ -604,6 +609,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
     if (grpIds.find(groupId())!=grpIds.end()){
 		updateGroup = true;
 		/* Update threads */
+        mUpdating=true;
 		mThreadModel->setForum(groupId());
 	} else {
 		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
@@ -615,7 +621,10 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 		}
 
 		if (msgIds.find(groupId()) != msgIds.end())
+        {
+			mUpdating=true;
 			mThreadModel->setForum(groupId()); /* Update threads */
+        }
 	}
 
 	if (updateGroup) {
@@ -855,6 +864,9 @@ void GxsForumThreadWidget::togglethreadview_internal()
 
 void GxsForumThreadWidget::changedVersion()
 {
+    if(mUpdating)
+        return;
+
 	mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
 
 	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
@@ -863,6 +875,9 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread(QModelIndex index)
 {
+    if(mUpdating)
+        return;
+
     if(!index.isValid())
     {
 		mThreadId.clear();
@@ -884,6 +899,9 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
 {
+    if(mUpdating)
+        return;
+
     if(!index.isValid())
 		return;
 
@@ -1622,6 +1640,8 @@ void GxsForumThreadWidget::updateGroupName()
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
     ui->threadTreeWidget->update();
+
+    mUpdating = false;
 }
 void GxsForumThreadWidget::updateGroupData()
 {

@@ -176,6 +176,7 @@ private:
 	QString mForumDescription;
 	int mSubscribeFlags;
 	int mSignFlags;
+    bool mUpdating;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
 	int mLastViewType;

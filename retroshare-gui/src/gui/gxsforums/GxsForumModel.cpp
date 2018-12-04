@@ -49,39 +49,46 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
     mFilteringEnabled=false;
 }
 
+void RsGxsForumModel::preMods()
+{
+ 	emit layoutAboutToBeChanged();
+	beginResetModel();
+}
+void RsGxsForumModel::postMods()
+{
+	endResetModel();
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit layoutChanged();
+}
+
 void RsGxsForumModel::setTreeMode(TreeMode mode)
 {
     if(mode == mTreeMode)
         return;
 
- 	emit layoutAboutToBeChanged();
-
+    preMods();
 	mTreeMode = mode;
-
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	emit layoutChanged();
+    postMods();
 }
 
 void RsGxsForumModel::setSortMode(SortMode mode)
 {
- 	emit layoutAboutToBeChanged();
+    preMods();
 
     mSortMode = mode;
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	emit layoutChanged();
+    postMods();
 }
 
 void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
 {
- 	emit layoutAboutToBeChanged();
+    preMods();
 
     posts.resize(1);	// adds a sentinel item
     posts[0].mTitle = "Root sentinel post" ;
     posts[0].mParent = 0;
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	emit layoutChanged();
+    postMods();
 }
 
 int RsGxsForumModel::rowCount(const QModelIndex& parent) const
@@ -474,7 +481,7 @@ uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,
 
 void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
 {
-	emit layoutAboutToBeChanged();
+    preMods();
 
     if(!strings.empty())
     {
@@ -484,8 +491,7 @@ void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& 
     else
         mFilteringEnabled = false;
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	emit layoutChanged();
+	postMods();
 }
 
 QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
@@ -672,19 +678,18 @@ void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
 
 void RsGxsForumModel::clear()
 {
-    emit layoutAboutToBeChanged();
+    preMods();
 
     mPosts.clear();
     mPostVersions.clear();
 
-	emit layoutChanged();
+	postMods();
 	emit forumLoaded();
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions)
 {
-    emit layoutAboutToBeChanged();
+    preMods();
 
     mForumGroup = group;
     mPosts = posts;
@@ -707,9 +712,8 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 #endif
 
-	emit layoutChanged();
+	postMods();
 	emit forumLoaded();
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
@@ -1139,7 +1143,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!i.isValid())
 		return ;
 
- 	emit layoutAboutToBeChanged();
+    preMods();
 
 	void *ref = i.internalPointer();
 	uint32_t entry = 0;
@@ -1151,8 +1155,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
     recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
- 	emit layoutChanged();
-    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    postMods();
 }
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)

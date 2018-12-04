@@ -165,6 +165,9 @@ private:
     TreeMode mTreeMode;
     SortMode mSortMode;
 
+	void preMods() ;
+	void postMods() ;
+
     void *getParentRef(void *ref,int& row) const;
     void *getChildRef(void *ref,int row) const;
     //bool hasIndex(int row,int column,const QModelIndex& parent)const;
