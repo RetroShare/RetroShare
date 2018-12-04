@@ -135,8 +135,8 @@ before_package:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-#  - qmake -Wall -spec win32-g++ "CONFIG=debug"
-  - qmake -Wall -spec win32-g++ "CONFIG=release"
+  - qmake -Wall -spec win32-g++ "CONFIG=debug"
+#  - qmake -Wall -spec win32-g++ "CONFIG=release"
   - mingw32-make -j3
 
 # scripts to run after build
@@ -196,11 +196,13 @@ after_build:
   - windeployqt %RS_DEPLOY%\retroshare.exe
 
   - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
-  - copy C:\OpenSSL-Win32\bin\libeay32.dll %RS_DEPLOY%\
+#- copy C:\OpenSSL-Win32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\OpenSSL-v111-Win32\bin\libcrypto-1_1.dll %RS_DEPLOY%\
+  - copy C:\OpenSSL-v111-Win32\bin\libssl-1_1.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
-  - copy C:\OpenSSL-Win32\bin\ssleay32.dll %RS_DEPLOY%\
+#  - copy C:\OpenSSL-Win32\bin\ssleay32.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\
@@ -222,16 +224,16 @@ after_build:
   - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
 
 ## Needed for libresapi http
-#  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
-#  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
 
   - find C:\projects\RetroShare >> filelist.txt
 
@@ -244,7 +246,7 @@ after_build:
 
 artifacts:
   - path: $(RS_DEPLOY)
-  - path: '**\*.zip'
+  - path: '**\*.exe'
   - path: filelist.txt
 #
 #  # pushing a single file
