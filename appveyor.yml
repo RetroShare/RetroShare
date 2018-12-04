@@ -142,7 +142,7 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir %RS_DEPLOY%
-  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
+    #  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
   - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
@@ -222,16 +222,16 @@ after_build:
   - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
 
 ## Needed for libresapi http
-  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
+#  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
 
   - find C:\projects\RetroShare >> filelist.txt
 
@@ -244,7 +244,7 @@ after_build:
 
 artifacts:
   - path: $(RS_DEPLOY)
-  - path: '**\*.exe'
+  - path: '**\*.zip'
   - path: filelist.txt
 #
 #  # pushing a single file
