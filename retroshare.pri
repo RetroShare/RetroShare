@@ -38,7 +38,7 @@ CONFIG += warn_off
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
-CONFIG *= retroshare_nogui
+CONFIG *= no_retroshare_nogui
 no_retroshare_nogui:CONFIG -= retroshare_nogui
 
 # To disable cmark append the following 
@@ -92,8 +92,8 @@ no_sqlcipher:CONFIG -= sqlcipher
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
 #CONFIG *=no_rs_autologin
-CONFIG*=no_rs_autologin
-no_rs_autologin:CONFIG -= rs_autologin
+CONFIG *=no_rs_autologin
+rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation
 # to qmake command line "CONFIG+=rs_onlyhiddennode"
@@ -145,7 +145,7 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To disable deep search append the following assignation to qmake command line
-CONFIG *= rs_deep_search
+CONFIG *= no_rs_deep_search
 no_rs_deep_search:CONFIG -= rs_deep_search
 
 # Specify RetroShare major version appending the following assignation to qmake
