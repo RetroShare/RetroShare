@@ -338,7 +338,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	connect(ui->newmessageButton, SIGNAL(clicked()), this, SLOT(replytoforummessage()));
 	connect(ui->newthreadButton, SIGNAL(clicked()), this, SLOT(createthread()));
 
-    connect(mThreadModel,SIGNAL(forumLoaded()),this,SLOT(updateGroupName()));
+    connect(mThreadModel,SIGNAL(forumLoaded()),this,SLOT(postForumLoading()));
 
 	ui->newmessageButton->setText(tr("Reply"));
 	ui->newthreadButton->setText(tr("New thread"));
@@ -589,6 +589,8 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 
 	if (complete) {
 		/* Fill complete */
+
+
         mUpdating=true;
 		updateGroupData();
 		mThreadModel->setForum(groupId());
@@ -1601,6 +1603,7 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 		ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
 }
 
+#ifdef TO_REMOVE
 bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
 {
 	bool visible = true;
@@ -1627,16 +1630,28 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 
 	return (visible || visibleChildCount);
 }
+#endif
 
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
-void GxsForumThreadWidget::updateGroupName()
+void GxsForumThreadWidget::postForumLoading()
 {
-	ui->threadTreeWidget->selectionModel()->clear();
-	ui->threadTreeWidget->selectionModel()->reset();
-    mThreadId.clear();
+    QModelIndex indx = mThreadModel->getIndexOfMessage(mThreadId);
+
+    if(indx.isValid())
+    {
+        QModelIndex index = mThreadProxyModel->mapFromSource(indx);
+		ui->threadTreeWidget->selectionModel()->select(index,QItemSelectionModel::ClearAndSelect);
+    }
+	else
+    {
+		ui->threadTreeWidget->selectionModel()->clear();
+		ui->threadTreeWidget->selectionModel()->reset();
+		mThreadId.clear();
+    }
+
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
     ui->threadTreeWidget->update();
@@ -1650,7 +1665,7 @@ void GxsForumThreadWidget::updateGroupData()
 
 	mSubscribeFlags = 0;
 	mSignFlags = 0;
-    mThreadId.clear();
+    //mThreadId.clear();
 	mForumDescription.clear();
     ui->threadTreeWidget->selectionModel()->clear();
     ui->threadTreeWidget->selectionModel()->reset();

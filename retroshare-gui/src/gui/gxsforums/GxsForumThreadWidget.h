@@ -102,7 +102,7 @@ private slots:
 	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QModelIndex index);
-    void updateGroupName();
+    void postForumLoading();
 
 	void reply_with_private_message();
 	void replytoforummessage();

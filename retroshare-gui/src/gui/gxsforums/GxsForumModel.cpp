@@ -56,9 +56,7 @@ void RsGxsForumModel::preMods()
 }
 void RsGxsForumModel::postMods()
 {
-	//emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount(QModelIndex())-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	//emit layoutChanged();
 }
 
 void RsGxsForumModel::setTreeMode(TreeMode mode)
