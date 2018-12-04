@@ -53,13 +53,12 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 void RsGxsForumModel::preMods()
 {
  	emit layoutAboutToBeChanged();
-	beginResetModel();
 }
 void RsGxsForumModel::postMods()
 {
-	endResetModel();
+	//emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount(QModelIndex())-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-	emit layoutChanged();
+	//emit layoutChanged();
 }
 
 void RsGxsForumModel::setTreeMode(TreeMode mode)
@@ -695,6 +694,9 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 {
     preMods();
 
+    beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    endRemoveRows();
+
     mForumGroup = group;
     mPosts = posts;
     mPostVersions = post_versions;
@@ -716,6 +718,8 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 #endif
 
+    beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    endInsertRows();
 	postMods();
 	emit forumLoaded();
 }
