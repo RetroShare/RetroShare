@@ -152,6 +152,10 @@ private:
 	void insertMessage();
 	void insertGroupData();
 
+	void recursRestoreExpandedItems(const QModelIndex& index, const QList<RsGxsMessageId>& expanded_items);
+	void recursSaveExpandedItems(const QModelIndex& index, QList<RsGxsMessageId>& expanded_items) const;
+	void saveExpandedItems(QList<RsGxsMessageId>& expanded_items) const;
+
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
 	void markMsgAsReadUnread(bool read, bool children, bool forum);
@@ -159,7 +163,7 @@ private:
 
 	void togglethreadview_internal();
 
-	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
+	//bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
 	void processSettings(bool bLoad);
 
@@ -197,6 +201,7 @@ private:
 
     RsGxsForumModel *mThreadModel;
     QSortFilterProxyModel *mThreadProxyModel;
+    QList<RsGxsMessageId> mSavedExpandedMessages;
 
     Ui::GxsForumThreadWidget *ui;
 };

@@ -582,16 +582,47 @@ static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &ms
 	}
 }
 
+void GxsForumThreadWidget::saveExpandedItems(QList<RsGxsMessageId>& expanded_items) const
+{
+    expanded_items.clear();
+
+    for(int row = 0; row < mThreadProxyModel->rowCount(); ++row)
+    {
+        std::string path = mThreadProxyModel->index(row,0).data(Qt::DisplayRole).toString().toStdString();
+
+        recursSaveExpandedItems(mThreadProxyModel->index(row,0),expanded_items);
+    }
+}
+
+void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QList<RsGxsMessageId>& expanded_items) const
+{
+	if(ui->threadTreeWidget->isExpanded(index))
+	{
+		for(int row=0;row<mThreadProxyModel->rowCount(index);++row)
+			recursSaveExpandedItems(index.child(row,0),expanded_items) ;
+
+		RsGxsMessageId message_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
+		expanded_items.push_back(message_id);
+	}
+}
+
+void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, const QList<RsGxsMessageId>& expanded_items)
+{
+ 	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
+        ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
+}
+
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
-    if(mUpdating)
-        return;
+	if(mUpdating)
+		return;
 
 	if (complete) {
 		/* Fill complete */
 
+		saveExpandedItems(mSavedExpandedMessages);
 
-        mUpdating=true;
+		mUpdating=true;
 		updateGroupData();
 		mThreadModel->setForum(groupId());
 		insertMessage();
@@ -600,37 +631,44 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 
 		return;
 	}
+	else
+	{
 
-	bool updateGroup = false;
-	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
+		bool updateGroup = false;
+		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
-    if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
-		updateGroup = true;
+		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
+			updateGroup = true;
 
-	const std::set<RsGxsGroupId> &grpIds = getGrpIds();
-    if (grpIds.find(groupId())!=grpIds.end()){
-		updateGroup = true;
-		/* Update threads */
-        mUpdating=true;
-		mThreadModel->setForum(groupId());
-	} else {
-		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-		getAllMsgIds(msgIds);
+		const std::set<RsGxsGroupId> &grpIds = getGrpIds();
 
-		if (!mIgnoredMsgId.empty()) {
-			/* Filter ignored messages */
-			removeMessages(msgIds, mIgnoredMsgId);
+		if (grpIds.find(groupId())!=grpIds.end()){
+			updateGroup = true;
+			/* Update threads */
+			mUpdating=true;
+			mThreadModel->setForum(groupId());
+		}
+		else
+		{
+			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
+			getAllMsgIds(msgIds);
+
+			if (!mIgnoredMsgId.empty())  /* Filter ignored messages */
+				removeMessages(msgIds, mIgnoredMsgId);
+
+			if (msgIds.find(groupId()) != msgIds.end())
+			{
+				mUpdating=true;
+
+				saveExpandedItems(mSavedExpandedMessages);
+
+				mThreadModel->setForum(groupId()); /* Update threads */
+			}
 		}
 
-		if (msgIds.find(groupId()) != msgIds.end())
-        {
-			mUpdating=true;
-			mThreadModel->setForum(groupId()); /* Update threads */
-        }
-	}
+		if (updateGroup)
+			updateGroupData();
 
-	if (updateGroup) {
-		updateGroupData();
 	}
 }
 
@@ -1531,10 +1569,6 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 	{
 	CreateGxsForumMsg *cfm = new CreateGxsForumMsg(groupId(), mThreadId,RsGxsMessageId());
 
-//	QTextDocument doc ;
-//	doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()) );
-//	std::string cited_text(doc.toPlainText().toStdString()) ;
-
 	RsHtml::makeQuotedText(ui->postText);
 
 	cfm->insertPastedText(RsHtml::makeQuotedText(ui->postText)) ;
@@ -1651,10 +1685,13 @@ void GxsForumThreadWidget::postForumLoading()
 		ui->threadTreeWidget->selectionModel()->reset();
 		mThreadId.clear();
     }
+    // we also need to restore expanded threads
 
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
     ui->threadTreeWidget->update();
+
+    recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
 
     mUpdating = false;
 }
@@ -1665,7 +1702,6 @@ void GxsForumThreadWidget::updateGroupData()
 
 	mSubscribeFlags = 0;
 	mSignFlags = 0;
-    //mThreadId.clear();
 	mForumDescription.clear();
     ui->threadTreeWidget->selectionModel()->clear();
     ui->threadTreeWidget->selectionModel()->reset();
