@@ -1679,7 +1679,7 @@ void GxsForumThreadWidget::postForumLoading()
     if(!mThreadId.isNull() && indx.isValid())
     {
         QModelIndex index = mThreadProxyModel->mapFromSource(indx);
-		ui->threadTreeWidget->selectionModel()->select(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
 		std::cerr << "  re-selecting index of message " << mThreadId << " to " << indx.row() << "," << indx.column() << " " << (void*)indx.internalPointer() << std::endl;
     }
