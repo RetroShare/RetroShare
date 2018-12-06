@@ -105,7 +105,7 @@ public:
 	std::vector<std::pair<time_t,RsGxsMessageId> > getPostVersions(const RsGxsMessageId& mid) const;
 
     // This method will asynchroneously update the data
-	void setForum(const RsGxsGroupId& forumGroup);
+	void updateForum(const RsGxsGroupId& forumGroup);
     void setTreeMode(TreeMode mode) ;
     void setSortMode(SortMode mode) ;
 
@@ -117,6 +117,7 @@ public:
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
     void setFilter(int column, const QStringList &strings, uint32_t &count) ;
+	void setAuthorOpinion(const QModelIndex& indx,RsReputations::Opinion op);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -175,6 +176,7 @@ private:
 
     static bool convertTabEntryToRefPointer(uint32_t entry,void *& ref);
 	static bool convertRefPointerToTabEntry(void *ref,uint32_t& entry);
+	static void computeReputationLevel(uint32_t forum_sign_flags, ForumModelPostEntry& entry);
 
 	void update_posts(const RsGxsGroupId &group_id);
 	void setForumMessageSummary(const std::vector<RsGxsForumMsg>& messages);

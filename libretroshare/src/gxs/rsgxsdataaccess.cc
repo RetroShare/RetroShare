@@ -1714,10 +1714,11 @@ void RsGxsDataAccess::filterMsgList(
 
 		MsgMetaFilter::const_iterator cit = msgMetas.find(groupId);
 		if(cit == msgMetas.end()) continue;
-
+#ifdef DATA_DEBUG
 		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " before filtering"
 		          << std::endl;
+#endif
 
 		for( std::set<RsGxsMessageId>::iterator msgIdIt = msgsIdSet.begin();
 		     msgIdIt != msgsIdSet.end(); )
@@ -1738,9 +1739,11 @@ void RsGxsDataAccess::filterMsgList(
 			else msgIdIt = msgsIdSet.erase(msgIdIt);
 		}
 
+#ifdef DATA_DEBUG
 		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " after filtering"
 		          << std::endl;
+#endif
 	}
 }
 

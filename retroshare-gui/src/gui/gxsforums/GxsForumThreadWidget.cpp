@@ -304,9 +304,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setUpdateWhenInvisible(true);
 
-	mSubscribeFlags = 0;
     mUpdating = false;
-    mSignFlags = 0;
 	mUnreadCount = 0;
 	mNewCount = 0;
 
@@ -405,7 +403,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setGroupId(forumId);
 
-	ui->threadTreeWidget->installEventFilter(this) ;
+	//ui->threadTreeWidget->installEventFilter(this) ;
 
 	ui->postText->clear() ;
 	ui->by_label->setId(RsGxsId()) ;
@@ -511,7 +509,7 @@ void GxsForumThreadWidget::groupIdChanged()
 	mNewCount = 0;
 	mUnreadCount = 0;
 
-    mThreadModel->setForum(groupId());
+    //mThreadModel->updateForum(groupId());
     updateDisplay(true);
 }
 
@@ -535,6 +533,7 @@ QIcon GxsForumThreadWidget::groupIcon()
 	return QIcon();
 }
 
+#ifdef TO_REMOVE
 void GxsForumThreadWidget::changeEvent(QEvent *e)
 {
 	RsGxsUpdateBroadcastWidget::changeEvent(e);
@@ -581,6 +580,7 @@ static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &ms
 		}
 	}
 }
+#endif
 
 void GxsForumThreadWidget::saveExpandedItems(QList<RsGxsMessageId>& expanded_items) const
 {
@@ -614,61 +614,73 @@ void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, 
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
+    std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
+
 	if(mUpdating)
+    {
+        std::cerr << "  Already updating. Return!"<< std::endl;
 		return;
+    }
 
-	if (complete) {
-		/* Fill complete */
+	if(groupId().isNull())
+    {
+        std::cerr << "  group_id=0. Return!"<< std::endl;
+		return;
+    }
 
+	if(mForumGroup.mMeta.mGroupId.isNull() && !groupId().isNull())
+    {
+        std::cerr << "  inconsistent group data. Reloading!"<< std::endl;
+		complete = true;
+    }
+
+	if(!complete)
+	{
+        std::cerr << "  checking changed group data and msgs"<< std::endl;
+
+		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
+
+		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
+        {
+			std::cerr << "    grpMeta change. reloading!" << std::endl;
+			complete = true;
+        }
+
+		const std::set<RsGxsGroupId> &grpIds = getGrpIds();
+
+		if (grpIds.find(groupId())!=grpIds.end())
+        {
+			std::cerr << "    grp data change. reloading!" << std::endl;
+			complete = true;
+        }
+		else
+		{
+			// retrieve the list of modified msg ids
+			// if current group is listed in the map, reload the whole hierarchy
+
+			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
+			getAllMsgIds(msgIds);
+
+			//			if (!mIgnoredMsgId.empty())  /* Filter ignored messages */
+			//			removeMessages(msgIds, mIgnoredMsgId);
+
+			if (msgIds.find(groupId()) != msgIds.end())
+            {
+				std::cerr << "    msg data change. reloading!" << std::endl;
+				complete=true;
+            }
+		}
+	}
+
+	if(complete) 	// need to update the group data, reload the messages etc.
+	{
 		saveExpandedItems(mSavedExpandedMessages);
 
 		mUpdating=true;
 		updateGroupData();
-		mThreadModel->setForum(groupId());
-		insertMessage();
-
-		mIgnoredMsgId.clear();
+		mThreadModel->updateForum(groupId());
 
 		return;
-	}
-	else
-	{
-
-		bool updateGroup = false;
-		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-
-		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
-			updateGroup = true;
-
-		const std::set<RsGxsGroupId> &grpIds = getGrpIds();
-
-		if (grpIds.find(groupId())!=grpIds.end()){
-			updateGroup = true;
-			/* Update threads */
-			mUpdating=true;
-			mThreadModel->setForum(groupId());
-		}
-		else
-		{
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-			getAllMsgIds(msgIds);
-
-			if (!mIgnoredMsgId.empty())  /* Filter ignored messages */
-				removeMessages(msgIds, mIgnoredMsgId);
-
-			if (msgIds.find(groupId()) != msgIds.end())
-			{
-				mUpdating=true;
-
-				saveExpandedItems(mSavedExpandedMessages);
-
-				mThreadModel->setForum(groupId()); /* Update threads */
-			}
-		}
-
-		if (updateGroup)
-			updateGroupData();
-
 	}
 }
 
@@ -728,7 +740,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
-	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mSubscribeFlags));
+	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
 	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
 
 	QAction* expandAll = new QAction(tr("Expand all"), &contextMnu);
@@ -752,7 +764,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
-	if (IS_GROUP_SUBSCRIBED(mSubscribeFlags))
+	if (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
     {
 		markMsgAsReadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
 		markMsgAsUnreadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN);
@@ -796,7 +808,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			}
 		}
 
-		if(IS_GROUP_ADMIN(mSubscribeFlags) && (current_post.mParent == 0))
+		if(IS_GROUP_ADMIN(mForumGroup.mMeta.mSubscribeFlags) && (current_post.mParent == 0))
 			contextMnu.addAction(pinUpPostAct);
 	}
 
@@ -861,9 +873,9 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 	delete(contextMnu);
 }
 
+#ifdef TODO
 bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 {
-#ifdef TODO
 	if (obj == ui->threadTreeWidget) {
 		if (event->type() == QEvent::KeyPress) {
 			QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
@@ -877,9 +889,9 @@ bool GxsForumThreadWidget::eventFilter(QObject *obj, QEvent *event)
 	}
 	// pass the event on to the parent class
 	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
-#endif
 	return RsGxsUpdateBroadcastWidget::eventFilter(obj, event);
 }
+#endif
 
 void GxsForumThreadWidget::togglethreadview()
 {
@@ -945,18 +957,11 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
     if(!index.isValid())
 		return;
 
-    RsGxsMessageId tmp(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
-
-    if( tmp.isNull())
-        return;
-
-    mThreadId = tmp;
-    mOrigThreadId = tmp;
-
     std::cerr << "Clicked on message ID " << mThreadId << std::endl;
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
     {
+        std::cerr << "  changing read status" << std::endl;
         ForumModelPostEntry fmpe;
 
 		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
@@ -965,7 +970,7 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
 		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
 	}
     else
-        changedThread(index);
+        std::cerr << "  doing nothing" << std::endl;
 }
 
 static void cleanupItems (QList<QTreeWidgetItem *> &items)
@@ -1011,7 +1016,7 @@ void GxsForumThreadWidget::insertMessage()
         ui->versions_CB->hide();
         ui->time_label->show();
 
-		ui->postText->setText(mForumDescription);
+		ui->postText->setText(QString::fromUtf8(mForumGroup.mDescription.c_str()));
 		return;
 	}
 
@@ -1034,7 +1039,7 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
-	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mSubscribeFlags) && mThreadId.isNull() == false));
+	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags) && mThreadId.isNull() == false));
 
 	/* blank text, incase we get nothing */
 	ui->postText->clear();
@@ -1139,6 +1144,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->lineLeft->show();
 	ui->by_text_label->show();
 	ui->by_label->show();
+	ui->threadTreeWidget->setFocus();
 
 	if(redacted)
 	{
@@ -1248,7 +1254,7 @@ void GxsForumThreadWidget::nextUnreadMessage()
 
 void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
 {
-	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
 
@@ -1337,7 +1343,7 @@ void GxsForumThreadWidget::subscribeGroup(bool subscribe)
 
 void GxsForumThreadWidget::createmessage()
 {
-	if (groupId().isNull () || !IS_GROUP_SUBSCRIBED(mSubscribeFlags)) {
+	if (groupId().isNull () || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
 
@@ -1418,14 +1424,8 @@ void GxsForumThreadWidget::flagperson()
 	}
 
 	RsReputations::Opinion opinion = static_cast<RsReputations::Opinion>(qobject_cast<QAction*>(sender())->data().toUInt());
-    ForumModelPostEntry fmpe ;
 
-    getCurrentPost(fmpe);
-	RsGxsGrpMsgIdPair postId = std::make_pair(groupId(), mThreadId);
-
-    std::cerr << "Setting own opinion for author " << fmpe.mAuthorId << " to " << opinion << std::endl;
-
-	rsReputations->setOwnOpinion(fmpe.mAuthorId,opinion) ;
+    mThreadModel->setAuthorOpinion(mThreadProxyModel->mapToSource(getCurrentIndex()),opinion);
 }
 
 void GxsForumThreadWidget::replytoforummessage()        { async_msg_action( &GxsForumThreadWidget::replyForumMessageData ); }
@@ -1672,15 +1672,21 @@ bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text
 
 void GxsForumThreadWidget::postForumLoading()
 {
+    std::cerr << "Post forum loading..." << std::endl;
+
     QModelIndex indx = mThreadModel->getIndexOfMessage(mThreadId);
 
-    if(indx.isValid())
+    if(!mThreadId.isNull() && indx.isValid())
     {
         QModelIndex index = mThreadProxyModel->mapFromSource(indx);
-		ui->threadTreeWidget->selectionModel()->select(index,QItemSelectionModel::ClearAndSelect);
+		ui->threadTreeWidget->selectionModel()->select(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+
+		std::cerr << "  re-selecting index of message " << mThreadId << " to " << indx.row() << "," << indx.column() << " " << (void*)indx.internalPointer() << std::endl;
     }
 	else
     {
+		std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
+
 		ui->threadTreeWidget->selectionModel()->clear();
 		ui->threadTreeWidget->selectionModel()->reset();
 		mThreadId.clear();
@@ -1692,7 +1698,6 @@ void GxsForumThreadWidget::postForumLoading()
     ui->threadTreeWidget->update();
 
     recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
-
     mUpdating = false;
 }
 void GxsForumThreadWidget::updateGroupData()
@@ -1700,14 +1705,9 @@ void GxsForumThreadWidget::updateGroupData()
     if(groupId().isNull())
         return;
 
-	mSubscribeFlags = 0;
-	mSignFlags = 0;
-	mForumDescription.clear();
-    ui->threadTreeWidget->selectionModel()->clear();
-    ui->threadTreeWidget->selectionModel()->reset();
-    mThreadProxyModel->clear();
-
-	emit groupChanged(this);
+    // ui->threadTreeWidget->selectionModel()->clear();
+    // ui->threadTreeWidget->selectionModel()->reset();
+    // mThreadProxyModel->clear();
 
 	RsThread::async([this]()
 	{
@@ -1732,7 +1732,7 @@ void GxsForumThreadWidget::updateGroupData()
 
         // 2 - sort the messages into a proper hierarchy
 
-        RsGxsForumGroup group = groups[0];
+        RsGxsForumGroup *group = new RsGxsForumGroup(groups[0]);	// we use a pointer in order to avoid group deletion while we're in the thread.
 
         // 3 - update the model in the UI thread.
 
@@ -1744,12 +1744,11 @@ void GxsForumThreadWidget::updateGroupData()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			mForumGroup = group;
-            mSubscribeFlags = group.mMeta.mSubscribeFlags;
+			mForumGroup = *group;
+            delete group;
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
-
+			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 		}, this );
 
     });
@@ -1782,7 +1781,7 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
         // 2 - sort the messages into a proper hierarchy
 
-        RsGxsForumMsg msg = msgs[0];
+        RsGxsForumMsg *msg = new RsGxsForumMsg(msgs[0]);
 
         // 3 - update the model in the UI thread.
 
@@ -1794,10 +1793,11 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertMessageData(msg);
+			insertMessageData(*msg);
 
+            delete msg;
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mSubscribeFlags)) ;
+			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 
 		}, this );
 

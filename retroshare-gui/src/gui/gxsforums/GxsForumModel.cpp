@@ -664,13 +664,8 @@ QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col
 		return QVariant();
 }
 
-void RsGxsForumModel::setForum(const RsGxsGroupId& forum_group_id)
+void RsGxsForumModel::updateForum(const RsGxsGroupId& forum_group_id)
 {
-    //if(mForumGroup.mMeta.mGroupId == forum_group_id)
-    //    return ;
-
-    // we do not set mForumGroupId yet. We'll do it when the forum data is updated.
-
     if(forum_group_id.isNull())
         return;
 
@@ -818,12 +813,19 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 	// Early check for a message that should be hidden because its author
 	// is flagged with a bad reputation
 
+    computeReputationLevel(mForumGroup.mMeta.mSignFlags,fentry);
+}
+
+void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumModelPostEntry& fentry)
+{
     uint32_t idflags =0;
-	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId,&idflags) ;
+	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(fentry.mAuthorId,&idflags) ;
 	bool redacted = false;
 
     if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-        fentry.mPostFlags |= ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+        fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+    else
+        fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
 
     // We use a specific item model for forums in order to handle the post pinning.
 
@@ -831,7 +833,7 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
         fentry.mReputationWarningLevel = 3 ;
     else if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
         fentry.mReputationWarningLevel = 2 ;
-    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(mForumGroup.mMeta.mSignFlags,idflags))
+    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
         fentry.mReputationWarningLevel = 1 ;
     else
         fentry.mReputationWarningLevel = 0 ;
@@ -1278,4 +1280,30 @@ void RsGxsForumModel::debug_dump()
 }
 #endif
 
+void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx,RsReputations::Opinion op)
+{
+	if(!indx.isValid())
+		return ;
 
+	void *ref = indx.internalPointer();
+	uint32_t entry = 0;
+
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+		return ;
+
+    std::cerr << "Setting own opinion for author " << mPosts[entry].mAuthorId << " to " << op << std::endl;
+    RsGxsId author_id = mPosts[entry].mAuthorId;
+
+	rsReputations->setOwnOpinion(author_id,op) ;
+
+    // update opinions and distribution flags. No need to re-load all posts.
+
+    for(uint32_t i=0;i<mPosts.size();++i)
+    	if(mPosts[i].mAuthorId == author_id)
+        {
+			computeReputationLevel(mForumGroup.mMeta.mSignFlags,mPosts[i]);
+
+			// notify the widgets that the data has changed.
+			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+        }
+}

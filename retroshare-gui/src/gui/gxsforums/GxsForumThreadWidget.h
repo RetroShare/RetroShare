@@ -84,8 +84,8 @@ public:
     virtual void blank();
 
 protected:
-	bool eventFilter(QObject *obj, QEvent *ev);
-	void changeEvent(QEvent *e);
+	//bool eventFilter(QObject *obj, QEvent *ev);
+	//void changeEvent(QEvent *e);
 
 	/* RsGxsUpdateBroadcastWidget */
 	virtual void updateDisplay(bool complete);
@@ -177,9 +177,6 @@ private:
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;
     RsGxsForumGroup mForumGroup;
-	QString mForumDescription;
-	int mSubscribeFlags;
-	int mSignFlags;
     bool mUpdating;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;

@@ -37,7 +37,7 @@
 #define IMAGE_PGPKNOWN    ":/images/contact.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
-#define IMAGE_BANNED      ":/icons/yellow_biohazard64.png"
+#define IMAGE_BANNED      ":/icons/biohazard_red.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
 #define IMAGE_DEV_CONTRIBUTOR    ":/images/tags/vote_down.png"
