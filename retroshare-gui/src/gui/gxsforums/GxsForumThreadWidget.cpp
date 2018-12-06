@@ -937,7 +937,12 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
         return;
     }
 
-	mThreadId = mOrigThreadId = RsGxsMessageId(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
+    RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
+
+    if(new_id == mThreadId)
+        return;
+
+	mThreadId = mOrigThreadId = new_id;
 
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 
@@ -1164,7 +1169,6 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()),flags);
 		ui->postText->setHtml(extraTxt);
 	}
-	// ui->threadTitle->setText(QString::fromUtf8(msg.mMeta.mMsgName.c_str()));
 }
 
 void GxsForumThreadWidget::previousMessage()
