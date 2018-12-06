@@ -1396,25 +1396,25 @@ bool 	ftController::FileControl(const RsFileHash& hash, uint32_t flags)
 	return true;
 }
 
-bool 	ftController::FileClearCompleted()
+bool ftController::FileClearCompleted()
 {
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
 	{
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+		RS_STACK_MUTEX(ctrlMutex);
 
-        for(std::map<RsFileHash, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
-			delete it->second ;
+		for(auto it(mCompleted.begin()); it != mCompleted.end(); ++it)
+			delete it->second;
 
 		mCompleted.clear();
 
 		IndicateConfigChanged();
-	}  /******* UNLOCKED ********/
+	}
 
 	RsServer::notify()->notifyDownloadCompleteCount(0);
 
-	return false;
+	return true;
 }
 
 	/* get Details of File Transfers */
