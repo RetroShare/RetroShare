@@ -56,7 +56,7 @@
 #include <iostream>
 #include <algorithm>
 
-//#define DEBUG_FORUMS
+#define DEBUG_FORUMS
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
@@ -614,35 +614,46 @@ void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, 
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
+#ifdef DEBUG_FORUMS
     std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
-
+#endif
 	if(mUpdating)
     {
+#ifdef DEBUG_FORUMS
         std::cerr << "  Already updating. Return!"<< std::endl;
+#endif
 		return;
     }
 
 	if(groupId().isNull())
     {
+#ifdef DEBUG_FORUMS
         std::cerr << "  group_id=0. Return!"<< std::endl;
+#endif
 		return;
     }
 
 	if(mForumGroup.mMeta.mGroupId.isNull() && !groupId().isNull())
     {
+#ifdef DEBUG_FORUMS
         std::cerr << "  inconsistent group data. Reloading!"<< std::endl;
+#endif
 		complete = true;
     }
 
 	if(!complete)
 	{
+#ifdef DEBUG_FORUMS
         std::cerr << "  checking changed group data and msgs"<< std::endl;
+#endif
 
 		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
 		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
         {
+#ifdef DEBUG_FORUMS
 			std::cerr << "    grpMeta change. reloading!" << std::endl;
+#endif
 			complete = true;
         }
 
@@ -650,7 +661,9 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 
 		if (grpIds.find(groupId())!=grpIds.end())
         {
+#ifdef DEBUG_FORUMS
 			std::cerr << "    grp data change. reloading!" << std::endl;
+#endif
 			complete = true;
         }
 		else
@@ -666,7 +679,9 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 
 			if (msgIds.find(groupId()) != msgIds.end())
             {
+#ifdef DEBUG_FORUMS
 				std::cerr << "    msg data change. reloading!" << std::endl;
+#endif
 				complete=true;
             }
 		}
@@ -709,8 +724,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
     ForumModelPostEntry current_post ;
     bool has_current_post = getCurrentPost(current_post);
-
+#ifdef DEBUG_FORUMS
     std::cerr << "Clicked on msg " << current_post.mMsgId << std::endl;
+#endif
 	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
@@ -827,8 +843,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
     if(has_current_post)
 	{
+#ifdef DEBUG_FORUMS
 		std::cerr << "Author is: " << current_post.mAuthorId << std::endl;
-
+#endif
 		contextMnu.addSeparator();
 
 		RsReputations::Opinion op ;
@@ -944,13 +961,17 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 
 	mThreadId = mOrigThreadId = new_id;
 
+#ifdef DEBUG_FORUMS
     std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
-
+#endif
 	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
 
     QModelIndex src_index = mThreadProxyModel->mapToSource(index);
+#ifdef DEBUG_FORUMS
+    std::cerr << "Setting message read status to true" << std::endl;
+#endif
 	mThreadModel->setMsgReadStatus(src_index, true,false);
 }
 
@@ -962,20 +983,26 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
     if(!index.isValid())
 		return;
 
+#ifdef DEBUG_FORUMS
     std::cerr << "Clicked on message ID " << mThreadId << std::endl;
+#endif
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
     {
-        std::cerr << "  changing read status" << std::endl;
         ForumModelPostEntry fmpe;
 
 		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
 
         mThreadModel->getPostData(src_index,fmpe);
+#ifdef DEBUG_FORUMS
+		std::cerr << "Setting message read status to false" << std::endl;
+#endif
 		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
 	}
+#ifdef DEBUG_FORUMS
     else
         std::cerr << "  doing nothing" << std::endl;
+#endif
 }
 
 static void cleanupItems (QList<QTreeWidgetItem *> &items)
@@ -1059,7 +1086,9 @@ void GxsForumThreadWidget::insertMessage()
 
     std::vector<std::pair<time_t,RsGxsMessageId> > post_versions = mThreadModel->getPostVersions(mOrigThreadId);
 
+#ifdef DEBUG_FORUMS
     std::cerr << "Looking into existing versions  for post " << mOrigThreadId << ", thread history: " << post_versions.size() << std::endl;
+#endif
 	ui->versions_CB->blockSignals(true) ;
 
     while(ui->versions_CB->count() > 0)
@@ -1067,7 +1096,9 @@ void GxsForumThreadWidget::insertMessage()
 
     if(!post_versions.empty())
     {
+#ifdef DEBUG_FORUMS
 		std::cerr << post_versions.size() << " versions found " << std::endl;
+#endif
 
 		ui->versions_CB->setVisible(true) ;
         ui->time_label->hide();
@@ -1079,7 +1110,9 @@ void GxsForumThreadWidget::insertMessage()
             ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
             ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
 
+#ifdef DEBUG_FORUMS
             std::cerr << "  added new post version " << post_versions[i].first << " " << post_versions[i].second << std::endl;
+#endif
 
             if(mThreadId == post_versions[i].second)
                 current_index = i ;
@@ -1098,7 +1131,7 @@ void GxsForumThreadWidget::insertMessage()
 	/* request Post */
 	updateMessageData(mThreadId);
 
-    markMsgAsRead();
+//    markMsgAsRead();
 }
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
@@ -1127,7 +1160,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
     QModelIndex index = getCurrentIndex();
-
+#ifdef TO_REMOVE
 	if (IS_MSG_NEW(status)) {
 		if (setToReadOnActive) {
 			/* set to read */
@@ -1142,6 +1175,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index), true,false);
 		}
 	}
+#endif
 
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 	ui->by_label->setId(msg.mMeta.mAuthorId);
@@ -1252,6 +1286,7 @@ void GxsForumThreadWidget::nextUnreadMessage()
     while(index.isValid() && !IS_MSG_UNREAD(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::StatusRole).toUInt()));
 
 	ui->threadTreeWidget->setCurrentIndex(index);
+	ui->threadTreeWidget->scrollTo(index);
 	ui->threadTreeWidget->setFocus();
 	changedThread(index);
 }
@@ -1310,6 +1345,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 		return false;
 
 	ui->threadTreeWidget->setCurrentIndex(index);
+	ui->threadTreeWidget->scrollTo(index);
 	ui->threadTreeWidget->setFocus();
     changedThread(index);
 	return true;
@@ -1374,7 +1410,9 @@ void GxsForumThreadWidget::togglePinUpPost()
 
 	QString thread_title = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_TITLE).data(Qt::DisplayRole).toString();
 
+#ifdef DEBUG_FORUMS
     std::cerr << "Toggling Pin-up state of post " << mThreadId.toStdString() << ": \"" << thread_title.toStdString() << "\"" << std::endl;
+#endif
 
     if(mForumGroup.mPinnedPosts.ids.find(mThreadId) == mForumGroup.mPinnedPosts.ids.end())
 		mForumGroup.mPinnedPosts.ids.insert(mThreadId) ;
@@ -1448,7 +1486,9 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 	{
         // 1 - get message data from p3GxsForums
 
+#ifdef DEBUG_FORUMS
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
 
         std::set<RsGxsMessageId> msgs_to_request ;
         std::vector<RsGxsForumMsg> msgs;
@@ -1641,56 +1681,31 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 		ui->filterLineEdit->setToolTip(tr("Found %1 results.").arg(count)) ;
 }
 
-#ifdef TO_REMOVE
-bool GxsForumThreadWidget::filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn)
-{
-	bool visible = true;
-
-	if (text.isEmpty() == false) {
-		if (item->text(filterColumn).contains(text, Qt::CaseInsensitive) == false) {
-			visible = false;
-		}
-	}
-
-	int visibleChildCount = 0;
-	int count = item->childCount();
-	for (int nIndex = 0; nIndex < count; ++nIndex) {
-		if (filterItem(item->child(nIndex), text, filterColumn)) {
-			++visibleChildCount;
-		}
-	}
-
-	if (visible || visibleChildCount) {
-		item->setHidden(false);
-	} else {
-		item->setHidden(true);
-	}
-
-	return (visible || visibleChildCount);
-}
-#endif
-
 /*********************** **** **** **** ***********************/
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
 void GxsForumThreadWidget::postForumLoading()
 {
+#ifdef DEBUG_FORUMS
     std::cerr << "Post forum loading..." << std::endl;
-
+#endif
     QModelIndex indx = mThreadModel->getIndexOfMessage(mThreadId);
 
     if(!mThreadId.isNull() && indx.isValid())
     {
         QModelIndex index = mThreadProxyModel->mapFromSource(indx);
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-
+		ui->threadTreeWidget->scrollTo(index);
+#ifdef DEBUG_FORUMS
 		std::cerr << "  re-selecting index of message " << mThreadId << " to " << indx.row() << "," << indx.column() << " " << (void*)indx.internalPointer() << std::endl;
+#endif
     }
 	else
     {
+#ifdef DEBUG_FORUMS
 		std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
-
+#endif
 		ui->threadTreeWidget->selectionModel()->clear();
 		ui->threadTreeWidget->selectionModel()->reset();
 		mThreadId.clear();
