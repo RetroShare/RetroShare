@@ -1201,9 +1201,6 @@ void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has
 
 		if(mPosts[i].mMostRecentTsInThread < mPosts[mPosts[i].mChildren[j]].mMostRecentTsInThread)
 			mPosts[i].mMostRecentTsInThread = mPosts[mPosts[i].mChildren[j]].mMostRecentTsInThread;
-
-        if(ub && rb)		// optimization
-            break;
     }
 
     if(has_unread_below)

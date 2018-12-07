@@ -56,7 +56,7 @@
 #include <iostream>
 #include <algorithm>
 
-#define DEBUG_FORUMS
+//#define DEBUG_FORUMS
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
