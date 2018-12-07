@@ -22,6 +22,8 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
 
   - wget https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
   - tar -xf v1.1.0.tar.gz
@@ -52,7 +54,12 @@ script:
   - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then /Applications/Xcode.app/Contents/Developer/usr/bin/make -j2; fi
 
 
-#after_success:
+after_success:
+  - if [ $TRAVIS_OS_NAME == osx ] ; then cd build/macOS/clang/x86_64/release/; rm -rf moc; rm -rf obj; rm -rf qrc ; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  macdeployqt retroshare.app -qmldir=../../../../../src -dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  mv retroshare.dmg Retroshare-0.6.5.dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  appdmg json-path Retroshare-0.6.5.dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  7z a Retroshare-0.6.5_macos.zip Retroshare-0.6.5.dmg; fi
 #  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
 
 #branches:
