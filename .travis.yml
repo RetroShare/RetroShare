@@ -55,7 +55,7 @@ script:
 
 
 after_success:
-  - if [ $TRAVIS_OS_NAME == osx ] ; cd ./retroshare-gui/src/; rm -rf moc; rm -rf obj; rm -rf qrc ; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  cd retroshare-gui/src/; rm -rf moc; rm -rf obj; rm -rf qrc ; fi
   - if [ $TRAVIS_OS_NAME == osx ] ; then  macdeployqt retroshare.app -qmldir=../src/  -dmg; fi
   - if [ $TRAVIS_OS_NAME == osx ] ; then  mv retroshare.dmg Retroshare-0.6.5.dmg; ls Retroshare-0.6.5.dmg; fi
   - if [ $TRAVIS_OS_NAME == osx ] ; then  appdmg json-path Retroshare-0.6.5.dmg; fi
