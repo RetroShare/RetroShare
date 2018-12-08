@@ -1034,8 +1034,14 @@ static QString getDurationString(uint32_t days)
 
 void GxsForumThreadWidget::insertMessage()
 {
+#ifdef DEBUG_FORUMS
+    std::cerr << "Inserting message, threadId=" << mThreadId <<std::endl;
+#endif
 	if (groupId().isNull())
 	{
+#ifdef DEBUG_FORUMS
+		std::cerr << "  groupId()=NULL !! That's a bug." << std::endl;
+#endif
         ui->versions_CB->hide();
         ui->time_label->show();
 
@@ -1045,6 +1051,9 @@ void GxsForumThreadWidget::insertMessage()
 
 	if (mThreadId.isNull())
 	{
+#ifdef DEBUG_FORUMS
+		std::cerr << "  mThreadId=NULL !! That's a bug." << std::endl;
+#endif
         ui->versions_CB->hide();
         ui->time_label->show();
 
@@ -1052,7 +1061,9 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
-	QModelIndex index = getCurrentIndex();
+    // We use this instead of getCurrentIndex() because right here the currentIndex() is not set yet.
+
+	QModelIndex index = mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mOrigThreadId));
 
 	if (index.isValid())
     {
@@ -1063,6 +1074,9 @@ void GxsForumThreadWidget::insertMessage()
 		ui->previousButton->setEnabled(curr_index > 0);
 		ui->nextButton->setEnabled(curr_index < count - 1);
 	} else {
+#ifdef DEBUG_FORUMS
+		std::cerr << "  current index invalid! That's a bug." << std::endl;
+#endif
 		// there is something wrong
 		ui->previousButton->setEnabled(false);
 		ui->nextButton->setEnabled(false);
@@ -1159,8 +1173,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
 	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-    QModelIndex index = getCurrentIndex();
 #ifdef TO_REMOVE
+    QModelIndex index = getCurrentIndex();
 	if (IS_MSG_NEW(status)) {
 		if (setToReadOnActive) {
 			/* set to read */
