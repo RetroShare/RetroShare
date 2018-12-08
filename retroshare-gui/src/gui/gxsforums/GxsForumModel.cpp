@@ -178,7 +178,7 @@ bool RsGxsForumModel::convertRefPointerToTabEntry(void *ref,uint32_t& entry)
 {
     intptr_t val = (intptr_t)ref;
 
-    if(val > (intptr_t)(~(uint32_t(0))))	// make sure the pointer is an int that fits in 32bits
+    if(val > (1<<30))	// make sure the pointer is an int that fits in 32bits and not too big which would look suspicious
     {
         std::cerr << "(EE) trying to make a ForumModelIndex out of a number that is larger than 2^32-1 !" << std::endl;
         return false ;
