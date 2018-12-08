@@ -70,14 +70,14 @@ after_success:
 deploy:
   - provider: releases
     api_key:
-secure: "oRlzxM/9+5zb8wygxcK0F18ulcvl4H/kuTVuKSJNiN4uKzTwdyuabcKw+Kqqgu2WekWObzU0/kbywerNgA9/+NJShyxKfJjuQIh4383Ae2HR7/vKdmi2pnhpT4IUXL5r8JHYoxKYxrU+4cC1NKVlLxLR430tPiCsodlTe1Xw7FKHbRpnGLtCfBzB384ScH8zQ9EAMEnWuSnMXKGBRUY8kyBOSlWV6X59fjYkuecI9/R0TF6zjqmuFeuIEzSQ42PXqdLFTuiT0K0CtroLkOdwUZF/g5W90bPmlNuOdpMU3vCwgDOhnWs6PqHA4hzxPJ4kpCyR1pFntALYgComXrnIYVAfjq3Oie543CV2rRom3G5BhzDJbusL4L5PDPgQpW598lkD28QWArnz2iCywRwSsHjxUjz3UYpn23Rb19snnldWgfe9L4XluX+87eQAD5PNDjFIa918QIS3qkLwgw7UreiXB5pF38ILX8mgnmURhsgSGVzUL0WBxx8bwr1RW1LWZItzJf+PEvbhJ+R21Kr4QnVjfD82jTxjRrrC4elSDgvoe3Mk+4m81Za58Z3WK8VPixQwgq2PJ17TV0B2Xr14aIWnA94TPMDyCAnEuXO0IrE7IYwXw44Rawu6CYUF67TRM8IBpb4kNmI9EjjancIk7lNJ71Qi7fIZ9YhgBZrZJ4A="
-    file:
-      - retroshare-gui/src/Retroshare-0.6.5_macos.zip
-    overwrite: true
-    skip_cleanup: true
-    on:
-      tags: true
-      condition: $TRAVIS_OS_NAME = osx
+	secure: "oRlzxM/9+5zb8wygxcK0F18ulcvl4H/kuTVuKSJNiN4uKzTwdyuabcKw+Kqqgu2WekWObzU0/kbywerNgA9/+NJShyxKfJjuQIh4383Ae2HR7/vKdmi2pnhpT4IUXL5r8JHYoxKYxrU+4cC1NKVlLxLR430tPiCsodlTe1Xw7FKHbRpnGLtCfBzB384ScH8zQ9EAMEnWuSnMXKGBRUY8kyBOSlWV6X59fjYkuecI9/R0TF6zjqmuFeuIEzSQ42PXqdLFTuiT0K0CtroLkOdwUZF/g5W90bPmlNuOdpMU3vCwgDOhnWs6PqHA4hzxPJ4kpCyR1pFntALYgComXrnIYVAfjq3Oie543CV2rRom3G5BhzDJbusL4L5PDPgQpW598lkD28QWArnz2iCywRwSsHjxUjz3UYpn23Rb19snnldWgfe9L4XluX+87eQAD5PNDjFIa918QIS3qkLwgw7UreiXB5pF38ILX8mgnmURhsgSGVzUL0WBxx8bwr1RW1LWZItzJf+PEvbhJ+R21Kr4QnVjfD82jTxjRrrC4elSDgvoe3Mk+4m81Za58Z3WK8VPixQwgq2PJ17TV0B2Xr14aIWnA94TPMDyCAnEuXO0IrE7IYwXw44Rawu6CYUF67TRM8IBpb4kNmI9EjjancIk7lNJ71Qi7fIZ9YhgBZrZJ4A="
+    	file:
+      		- retroshare-gui/src/Retroshare-0.6.5_macos.zip
+    		overwrite: true
+    		skip_cleanup: true
+    	on:
+      		tags: true
+      		condition: $TRAVIS_OS_NAME = osx
 
 notifications:
   email: false
