@@ -66,7 +66,7 @@
 #define IMAGE_DOWNLOAD         ":/images/start.png"
 #define IMAGE_DOWNLOADALL      ":/images/startall.png"
 #define IMAGE_COPYLINK         ":/images/copyrslink.png"
-#define IMAGE_BIOHAZARD        ":/icons/yellow_biohazard64.png"
+#define IMAGE_BIOHAZARD        ":/icons/biohazard_red.png"
 #define IMAGE_WARNING_YELLOW   ":/icons/warning_yellow_128.png"
 #define IMAGE_WARNING_RED      ":/icons/warning_red_128.png"
 #define IMAGE_WARNING_UNKNOWN  ":/icons/bullet_grey_128.png"
@@ -255,16 +255,24 @@ public:
 		else
 			icon = *icons.begin();
 
+		unsigned int warning_level = qvariant_cast<unsigned int>(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION).data(Qt::DecorationRole));
+
+        if(warning_level == 2)
+        {
+			str = tr("[Banned]");
+            icon = QIcon(IMAGE_BIOHAZARD);
+        }
+
         if(index.data(RsGxsForumModel::MissingRole).toBool())
 			painter->drawText(r.topLeft() + QPoint(f/2.0,f*1.0), tr("[None]"));
         else
 		{
 			QPixmap pix = icon.pixmap(r.size());
-			const QPoint p = QPoint(pix.width()/2.0, (r.height() - pix.height())/2);
+			const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
 
 			// draw pixmap at center of item
 			painter->drawPixmap(r.topLeft() + p, pix);
-			painter->drawText(r.topLeft() + p + QPoint(pix.width()+f/2.0,f*1.0), str);
+			painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
 		}
 	}
 };
@@ -287,9 +295,6 @@ public:
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
     {
-        //std::cerr << "FilterAcceptsRow(): source_row=" << source_row << " parent=" << (void*)source_parent.internalPointer() << " role=\"" <<
-        //            sourceModel()->index(source_row,0,source_parent).data(RsGxsForumModel::FilterRole).toString().toStdString() << std::endl;
-
         return sourceModel()->index(source_row,0,source_parent).data(RsGxsForumModel::FilterRole).toString() == RsGxsForumModel::FilterString ;
     }
 
