@@ -81,18 +81,17 @@ after_success:
 
 deploy:
   - provider: releases
-    api_key:
-      secure: $TOKEN
+    api_key: $TOKEN
     file:
       - retroshare-gui/src/Retroshare-0.6.5_macos.zip
     overwrite: true
     skip_cleanup: true
     on:
+      all_branches: true
       tags: false
       condition: $TRAVIS_OS_NAME = osx
   - provider: releases
-    api_key:
-      secure: $TOKEN
+    api_key: $TOKEN
     file:
       - build/linux/gcc/x86_64/release/YourApp_${TRAVIS_TAG}_linux_x86_64_portable.zip
       - installer/linux/YourApp_${TRAVIS_TAG}_linux_x86_64_installer
