@@ -324,7 +324,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	setUpdateWhenInvisible(true);
 
-    mUpdating = false;
+    //mUpdating = false;
 	mUnreadCount = 0;
 	mNewCount = 0;
 
@@ -639,6 +639,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #ifdef DEBUG_FORUMS
     std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
 #endif
+#ifdef TO_REMOVE
 	if(mUpdating)
     {
 #ifdef DEBUG_FORUMS
@@ -646,6 +647,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #endif
 		return;
     }
+#endif
 
 	if(groupId().isNull())
     {
@@ -713,7 +715,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	{
 		saveExpandedItems(mSavedExpandedMessages);
 
-		mUpdating=true;
+		//mUpdating=true;
 		updateGroupData();
 		mThreadModel->updateForum(groupId());
 
@@ -955,8 +957,8 @@ void GxsForumThreadWidget::togglethreadview_internal()
 
 void GxsForumThreadWidget::changedVersion()
 {
-    if(mUpdating)
-        return;
+    //if(mUpdating)
+    //    return;
 
 	mThreadId = RsGxsMessageId(ui->versions_CB->itemData(ui->versions_CB->currentIndex()).toString().toStdString()) ;
 
@@ -966,8 +968,8 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread(QModelIndex index)
 {
-    if(mUpdating)
-        return;
+    //if(mUpdating)
+    //    return;
 
     if(!index.isValid())
     {
@@ -1003,13 +1005,13 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
     std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
 #endif
 
-    if(mUpdating)
-    {
-#ifdef DEBUG_FORUMS
-		std::cerr << "  early return because mUpdating=true" << std::endl;
-#endif
-        return;
-    }
+//    if(mUpdating)
+//    {
+//#ifdef DEBUG_FORUMS
+//		std::cerr << "  early return because mUpdating=true" << std::endl;
+//#endif
+//        return;
+//    }
 
     if(!index.isValid())
     {
@@ -1772,7 +1774,7 @@ void GxsForumThreadWidget::postForumLoading()
     ui->threadTreeWidget->update();
 
     recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
-    mUpdating = false;
+    //mUpdating = false;
 }
 void GxsForumThreadWidget::updateGroupData()
 {

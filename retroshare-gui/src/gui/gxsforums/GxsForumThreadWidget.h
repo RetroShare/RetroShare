@@ -177,7 +177,7 @@ private:
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;
     RsGxsForumGroup mForumGroup;
-    bool mUpdating;
+    //bool mUpdating;
 	bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
