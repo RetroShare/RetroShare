@@ -365,7 +365,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	connect(ui->threadTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(changedSelection(const QModelIndex&,const QModelIndex&)));
 	connect(ui->viewBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changedViewBox()));
 
-	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
+	//connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(togglethreadview()));
+    ui->expandButton->hide();
+
 	connect(ui->previousButton, SIGNAL(clicked()), this, SLOT(previousMessage()));
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(nextMessage()));
 	connect(ui->nextUnreadButton, SIGNAL(clicked()), this, SLOT(nextUnreadMessage()));
@@ -940,15 +942,15 @@ void GxsForumThreadWidget::togglethreadview()
 
 void GxsForumThreadWidget::togglethreadview_internal()
 {
-	if (ui->expandButton->isChecked()) {
+//	if (ui->expandButton->isChecked()) {
 		ui->postText->setVisible(true);
 		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
-	} else  {
-		ui->postText->setVisible(false);
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
-		ui->expandButton->setToolTip(tr("Expand"));
-	}
+//	} else  {
+//		ui->postText->setVisible(false);
+//		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+//		ui->expandButton->setToolTip(tr("Expand"));
+//	}
 }
 
 void GxsForumThreadWidget::changedVersion()

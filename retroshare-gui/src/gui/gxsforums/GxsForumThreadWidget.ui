@@ -239,7 +239,7 @@
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
-         <item row="0" column="5">
+         <item row="0" column="6">
           <widget class="QToolButton" name="downloadButton">
            <property name="maximumSize">
             <size>
@@ -294,7 +294,7 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="15">
+         <item row="0" column="16">
           <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
@@ -320,21 +320,14 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="6">
-          <widget class="Line" name="lineLeft">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="9">
+         <item row="0" column="10">
           <widget class="Line" name="lineRight">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
-         <item row="0" column="12">
+         <item row="0" column="13">
           <spacer name="postHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -426,31 +419,38 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <widget class="GxsIdLabel" name="by_label">
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="10">
-          <widget class="QLabel" name="by_text_label">
-           <property name="text">
-            <string>By </string>
+         <item row="0" column="7">
+          <widget class="Line" name="lineLeft">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
-         <item row="0" column="8">
+         <item row="0" column="9">
           <widget class="QComboBox" name="versions_CB"/>
          </item>
-         <item row="0" column="7">
+         <item row="0" column="8">
           <widget class="QLabel" name="time_label">
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="13">
+         <item row="0" column="11">
+          <widget class="QLabel" name="by_text_label">
+           <property name="text">
+            <string>By </string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="5">
           <widget class="QToolButton" name="nextUnreadButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
@@ -465,8 +465,8 @@
             <string notr="true"/>
            </property>
            <property name="icon">
-            <iconset resource="../WikiPoos/Wiki_images.qrc">
-             <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
            </property>
           </widget>
          </item>
@@ -550,7 +550,6 @@
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
-  <include location="../WikiPoos/Wiki_images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>
