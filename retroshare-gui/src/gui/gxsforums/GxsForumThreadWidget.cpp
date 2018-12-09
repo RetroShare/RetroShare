@@ -285,6 +285,14 @@ public:
 		return left.data(RsGxsForumModel::SortRole) < right.data(RsGxsForumModel::SortRole) ;
     }
 
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
+    {
+        //std::cerr << "FilterAcceptsRow(): source_row=" << source_row << " parent=" << (void*)source_parent.internalPointer() << " role=\"" <<
+        //            sourceModel()->index(source_row,0,source_parent).data(RsGxsForumModel::FilterRole).toString().toStdString() << std::endl;
+
+        return sourceModel()->index(source_row,0,source_parent).data(RsGxsForumModel::FilterRole).toString() == RsGxsForumModel::FilterString ;
+    }
+
 private:
     const QHeaderView *m_header ;
 };
@@ -1683,6 +1691,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
     uint32_t count;
 	mThreadModel->setFilter(filterColumn,lst,count) ;
+
+    // We do this in order to trigger a new filtering action in the proxy model.
+	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
 
     if(!lst.empty())
 		ui->threadTreeWidget->expandAll();
