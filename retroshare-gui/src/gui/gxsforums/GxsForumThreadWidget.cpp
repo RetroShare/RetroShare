@@ -1323,6 +1323,9 @@ void GxsForumThreadWidget::nextUnreadMessage()
 {
 	QModelIndex index = getCurrentIndex();
 
+    if(!index.isValid())
+        index = mThreadProxyModel->index(0,0);
+
     do
 	{
 		if(index.data(RsGxsForumModel::UnreadChildrenRole).toBool())
