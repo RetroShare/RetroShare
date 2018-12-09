@@ -253,25 +253,15 @@
            <property name="toolTip">
             <string>Download all files</string>
            </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/global_switch_on_128.png</normaloff>:/icons/global_switch_on_128.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="13">
-          <widget class="QPushButton" name="nextUnreadButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Next unread</string>
            </property>
           </widget>
          </item>
@@ -290,14 +280,14 @@
             <string>Reply Message</string>
            </property>
            <property name="text">
-            <string>Reply</string>
+            <string notr="true"/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
+             <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
+            <enum>Qt::ToolButtonIconOnly</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -460,6 +450,26 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="13">
+          <widget class="QToolButton" name="nextUnreadButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Next unread message</string>
+           </property>
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="../WikiPoos/Wiki_images.qrc">
+             <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
@@ -540,6 +550,7 @@
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
+  <include location="../WikiPoos/Wiki_images.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

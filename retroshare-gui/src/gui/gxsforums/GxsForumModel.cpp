@@ -1216,10 +1216,19 @@ void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has
 
 QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 {
-    // brutal search. This is not so nice, so dont call that in a loop!
+    // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
+
+    RsGxsMessageId postId = mid;
+
+    // First look into msg versions, in case the msg is a version of an existing message
+
+    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    	for(uint32_t i=0;i<it->second.size();++i)
+            if(it->second[i].second == mid)
+                postId = it->first;
 
     for(uint32_t i=0;i<mPosts.size();++i)
-        if(mPosts[i].mMsgId == mid)
+        if(mPosts[i].mMsgId == postId)
         {
             void *ref ;
             convertTabEntryToRefPointer(i,ref);
