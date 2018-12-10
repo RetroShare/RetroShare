@@ -171,6 +171,7 @@ private:
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
 	void updateMessageData(const RsGxsMessageId& msgId);
+	void updateForumDescription();
 
 private:
 	RsGxsGroupId mLastForumID;

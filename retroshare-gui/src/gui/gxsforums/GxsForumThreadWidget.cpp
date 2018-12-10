@@ -463,7 +463,7 @@ void GxsForumThreadWidget::blank()
 #endif
 	ui->forumName->setText("");
 
-    mThreadModel->clear();
+    //mThreadModel->clear();
 
 #ifdef SUSPENDED_CODE
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
@@ -530,6 +530,7 @@ void GxsForumThreadWidget::groupIdChanged()
 
 	mNewCount = 0;
 	mUnreadCount = 0;
+    mThreadId.clear();
 
     //mThreadModel->updateForum(groupId());
     updateDisplay(true);
@@ -1065,6 +1066,103 @@ static QString getDurationString(uint32_t days)
     default:
         return QString::number(days)+" " + QObject::tr("days") ;
     }
+}
+
+void GxsForumThreadWidget::updateForumDescription()
+{
+    if (!mThreadId.isNull())
+        return;
+
+    RsIdentityDetails details;
+
+    rsIdentity->getIdDetails(mForumGroup.mMeta.mAuthorId,details);
+
+    QString author = GxsIdDetails::getName(details);
+
+    const RsGxsForumGroup& group = mForumGroup;
+
+    ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+
+    QString anti_spam_features1 ;
+    QString forum_description;
+
+    if(IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags)) anti_spam_features1 = tr("Anonymous/unknown posts forwarded if reputation is positive");
+    else if(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)) anti_spam_features1 = tr("Anonymous posts forwarded if reputation is positive");
+
+    forum_description = QString("<b>%1: \t</b>%2<br/>").arg(tr("Forum name"), QString::fromUtf8( group.mMeta.mGroupName.c_str()));
+    forum_description += QString("<b>%1: </b>%2<br/>").arg(tr("Description"), group.mDescription.empty()? tr("[None]<br/>") :(QString::fromUtf8(group.mDescription.c_str())+"<br/>"));
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Subscribers")).arg(group.mMeta.mPop);
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Posts (at neighbor nodes)")).arg(group.mMeta.mVisibleMsgCount);
+
+	if(group.mMeta.mLastPost==0)
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(tr("Never"));
+    else
+        forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Last post")).arg(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Synchronization")).arg(getDurationString( rsGxsForums->getSyncPeriod(group.mMeta.mGroupId)/86400 )) ;
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Storage")).arg(getDurationString( rsGxsForums->getStoragePeriod(group.mMeta.mGroupId)/86400));
+
+    QString distrib_string = tr("[unknown]");
+    switch(group.mMeta.mCircleType)
+    {
+    case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+	    break ;
+    case GXS_CIRCLE_TYPE_EXTERNAL:
+    {
+	    RsGxsCircleDetails det ;
+
+        	// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+
+	    if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det))
+		    distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+	    else
+		    distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+    }
+	    break ;
+    case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    {
+        distrib_string = tr("Only friends nodes in group ") ;
+
+        RsGroupInfo ginfo ;
+        rsPeers->getGroupInfo(RsNodeGroupId(group.mMeta.mInternalCircle),ginfo) ;
+
+        QString desc;
+        GroupChooser::makeNodeGroupDesc(ginfo, desc);
+        distrib_string += desc ;
+    }
+        break ;
+
+    case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("Your eyes only");	// this is not yet supported. If you see this, it is a bug!
+	    break ;
+    default:
+	    std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+    }
+
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Contact"), author);
+
+       if(!anti_spam_features1.isNull())
+    		forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);
+
+    ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
+    mStateHelper->setWidgetEnabled(ui->newthreadButton, (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)));
+
+    if(!group.mAdminList.ids.empty())
+    {
+        QString admin_list_str ;
+
+        for(auto it(group.mAdminList.ids.begin());it!=group.mAdminList.ids.end();++it)
+        {
+            RsIdentityDetails det ;
+
+            rsIdentity->getIdDetails(*it,det);
+            admin_list_str += (admin_list_str.isNull()?"":", ") + QString::fromUtf8(det.mNickname.c_str()) ;
+        }
+
+		forum_description += QString("<b>%1: </b>%2").arg(tr("Moderators"), admin_list_str);
+    }
+
+	ui->postText->setText(forum_description);
 }
 
 void GxsForumThreadWidget::insertMessage()
@@ -1766,6 +1864,7 @@ void GxsForumThreadWidget::postForumLoading()
 		ui->threadTreeWidget->selectionModel()->clear();
 		ui->threadTreeWidget->selectionModel()->reset();
 		mThreadId.clear();
+        //blank();
     }
     // we also need to restore expanded threads
 
@@ -1825,6 +1924,9 @@ void GxsForumThreadWidget::updateGroupData()
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+
+            updateForumDescription();
+
 		}, this );
 
     });
