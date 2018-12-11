@@ -118,7 +118,7 @@ platform: x86
 #  - Any CPU
 
 # build Configuration, i.e. Debug, Release, etc.
-configuration: Debug
+configuration: Release
 
 # to add several configurations to build matrix:
 #configuration:
@@ -135,8 +135,8 @@ before_package:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - qmake -Wall -spec win32-g++ "CONFIG=debug"
-  #- qmake -Wall -spec win32-g++ "CONFIG=release"
+  #- qmake -Wall -spec win32-g++ "CONFIG=debug"
+  - qmake -Wall -spec win32-g++ "CONFIG=release"
   - mingw32-make -j3
 
 # scripts to run after build
@@ -193,7 +193,6 @@ after_build:
   - mkdir %RS_DEPLOY%\audio\
   - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll %RS_DEPLOY%\audio\
 
-  - windeployqt %RS_DEPLOY%\retroshare.exe
 
   - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
   - copy C:\OpenSSL-Win32\bin\libeay32.dll %RS_DEPLOY%\
@@ -235,6 +234,12 @@ after_build:
   - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
 
+  - copy C:\windows\system32\msvcp140.dll %RS_DEPLOY%\
+  - copy C:\windows\system32\vccorlib140.dll %RS_DEPLOY%\
+  - copy C:\windows\system32\vcruntime140.dll %RS_DEPLOY%\
+  - copy C:\windows\system32\concrt140.dll  %RS_DEPLOY%\
+
+  - windeployqt %RS_DEPLOY%\retroshare.exe
   - find C:\projects\RetroShare >> filelist.txt
 
 # to disable automatic builds
