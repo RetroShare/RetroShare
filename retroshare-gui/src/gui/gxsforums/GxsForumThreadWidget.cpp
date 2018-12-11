@@ -83,6 +83,7 @@
 
 // We need consts for that!! Defined in multiple places.
 
+#ifdef TO_REMOVE
 #define ROLE_THREAD_MSGID           Qt::UserRole
 #define ROLE_THREAD_STATUS          Qt::UserRole + 1
 #define ROLE_THREAD_MISSING         Qt::UserRole + 2
@@ -94,6 +95,7 @@
 #define ROLE_THREAD_PINNED          Qt::UserRole + 7
 
 #define ROLE_THREAD_COUNT           4
+#endif
 
 #ifdef DEBUG_FORUMS
 static std::ostream& operator<<(std::ostream& o,const QModelIndex& q)
@@ -174,7 +176,7 @@ public:
 		unsigned int read_status = qvariant_cast<uint32_t>(index.data(Qt::DecorationRole));
 
 		bool unread = IS_MSG_UNREAD(read_status);
-		bool missing = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(ROLE_THREAD_MISSING).toBool();
+		bool missing = index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::MissingRole).toBool();
 
 		// set icon
 		if (missing)

@@ -389,7 +389,7 @@ bool p3GxsForums::createForum(RsGxsForumGroup& forum)
 		return false;
 	}
 
-	if(waitToken(token) != RsTokenService::COMPLETE)
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
 		          << std::endl;
@@ -416,7 +416,7 @@ bool p3GxsForums::editForum(RsGxsForumGroup& forum)
 		return false;
 	}
 
-	if(waitToken(token) != RsTokenService::COMPLETE)
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
 		          << std::endl;
@@ -440,7 +440,7 @@ bool p3GxsForums::getForumsSummaries(
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	if( !requestGroupInfo(token, opts)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 	return getGroupSummary(token, forums);
 }
 
@@ -452,7 +452,7 @@ bool p3GxsForums::getForumsInfo(
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	if( !requestGroupInfo(token, opts, forumIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 	return getGroupData(token, forumsInfo);
 }
 
@@ -465,7 +465,7 @@ bool p3GxsForums::getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsM
 	GxsMsgReq msgIds;
 	msgIds[forumId] = msgs_to_request;
 
-	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 
 	return getMsgData(token, msgs) ;
 }
@@ -486,7 +486,7 @@ bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
 {
 	uint32_t token;
 	setMessageReadStatus(token, msgId, read);
-	if(waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 	return true;
 }
 
@@ -522,7 +522,7 @@ bool p3GxsForums::createMessage(RsGxsForumMsg& message)
 {
 	uint32_t token;
 	if( !createMsg(token, message)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 
 	if(RsGenExchange::getPublishedMsgMeta(token, message.mMeta)) return true;
 
