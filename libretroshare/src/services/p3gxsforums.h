@@ -77,6 +77,9 @@ public:
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumMsg>& messages );
 
+	/// @see RsGxsForums::getForumMsgMetaData
+	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
+
 	/// @see RsGxsForums::getForumsContent
 	virtual bool getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,std::vector<RsGxsForumMsg>& msgs) ;
 
@@ -85,6 +88,7 @@ public:
 
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
 	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+	virtual bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas);
 	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
 	virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
 	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);

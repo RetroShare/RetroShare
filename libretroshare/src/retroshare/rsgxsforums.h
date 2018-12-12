@@ -139,16 +139,27 @@ public:
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumGroup>& forumsInfo ) = 0;
 
+
 	/**
 	 * @brief Get content of specified forums. Blocking API
 	 * @jsonapi{development}
-	 * @param[in] forumIds id of the channels of which the content is requested
+	 * @param[in] forumIds id of the forum of which the content is requested
 	 * @param[out] messages storage for the forum messages
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getForumsContent(
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumMsg>& messages ) = 0;
+
+	/**
+	 * @brief Get message metadatas for some messages of a specific forum. Blocking API
+	 * @jsonapi{development}
+	 * @param[in] forumIds id of the forum of which the content is requested
+	 * @param[out] msg_metas storage for the forum messages meta data
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getForumMsgMetaData( const RsGxsGroupId& forumId,
+                                      std::vector<RsMsgMetaData>& msg_metas) =0;
 
 	/**
 	 * @brief Get specific list of messages from a single forums. Blocking API

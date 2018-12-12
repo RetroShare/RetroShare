@@ -186,9 +186,9 @@ private:
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
 	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
-	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsGxsForumMsg& msg, bool useChildTS, ForumModelPostEntry& fentry);
+	static void convertMsgToPostEntry(const RsGxsForumGroup &mForumGroup, const RsMsgMetaData &msg, bool useChildTS, ForumModelPostEntry& fentry);
 
-	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group, const std::vector<RsGxsForumMsg>& msgs_array, std::vector<ForumModelPostEntry>& posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
+	void computeMessagesHierarchy(const RsGxsForumGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ForumModelPostEntry>& posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions);
 	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 

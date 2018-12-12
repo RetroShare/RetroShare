@@ -297,6 +297,11 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 	return ok;
 }
 
+bool p3GxsForums::getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas)
+{
+	return RsGenExchange::getMsgMeta(token, msg_metas);
+}
+
 /* Okay - chris is not going to be happy with this...
  * but I can't be bothered with crazy data structures
  * at the moment - fix it up later
@@ -433,8 +438,7 @@ bool p3GxsForums::editForum(RsGxsForumGroup& forum)
 	return true;
 }
 
-bool p3GxsForums::getForumsSummaries(
-        std::list<RsGroupMetaData>& forums )
+bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
@@ -480,6 +484,26 @@ bool p3GxsForums::getForumsContent(
 	if( !requestMsgInfo(token, opts, forumIds)
 	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
 	return getMsgData(token, messages);
+}
+
+
+bool p3GxsForums::getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+    GxsMsgMetaMap meta_map;
+    std::list<RsGxsGroupId> forumIds;
+    forumIds.push_back(forumId);
+
+	if( !requestMsgInfo(token, opts, forumIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+	bool res = getMsgMetaData(token, meta_map);
+
+    msg_metas = meta_map[forumId];
+
+    return res;
 }
 
 bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
