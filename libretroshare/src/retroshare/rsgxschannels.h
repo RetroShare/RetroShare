@@ -197,17 +197,28 @@ public:
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) = 0;
 
 	/**
-	 * @brief Get content of specified channels. Blocking API
+	 * @brief Get channel contents
 	 * @jsonapi{development}
-	 * @param[in] chanIds id of the channels of which the content is requested
-	 * @param[out] posts storage for the posts
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[in] contentsIds ids of requested contents
+	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getChannelsContent(
-	        const std::list<RsGxsGroupId>& chanIds,
-	        std::vector<RsGxsChannelPost>& posts,
-	        std::vector<RsGxsComment>& comments ) = 0;
+	virtual bool getChannelContent( const RsGxsGroupId& channelId,
+	                       const std::set<RsGxsMessageId>& contentsIds,
+	                       std::vector<RsGxsChannelPost>& posts,
+	                       std::vector<RsGxsComment>& comments ) = 0;
+
+	/**
+	 * @brief Get channel content summaries
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[out] summaries storage for summaries
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getContentSummaries( const RsGxsGroupId& channelId,
+	                                  std::vector<RsMsgMetaData>& summaries ) = 0;
 
 	/**
 	 * @brief Toggle post read status. Blocking API.
