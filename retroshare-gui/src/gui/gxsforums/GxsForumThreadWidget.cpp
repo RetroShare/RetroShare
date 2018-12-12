@@ -1953,10 +1953,17 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 			return;
         }
 
-        if(msgs.size() != 1)
+        if(msgs.empty())
         {
-			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one msg info for msgId " << msgId << std::endl;
-			return;
+			std::cerr << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
+            return;
+        }
+        if(msgs.size() > 1)
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one msg info for msgId " << msgId << ". This could be a bug. Only showing the first msg in the list." << std::endl;
+            std::cerr << "Messages are:" << std::endl;
+            for(auto it(msgs.begin());it!=msgs.end();++it)
+                std::cerr << (*it).mMeta << std::endl;
         }
 
         // 2 - sort the messages into a proper hierarchy
@@ -1978,11 +1985,8 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
             delete msg;
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
-
 		}, this );
-
     });
-
 }
 
 void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
