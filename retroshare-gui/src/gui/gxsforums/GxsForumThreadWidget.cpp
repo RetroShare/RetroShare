@@ -1494,7 +1494,10 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
     QModelIndex source_index = mThreadModel->getIndexOfMessage(msgId);
 
     if(!source_index.isValid())
-		return false;
+    {
+        mNavigatePendingMsgId = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
+		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
+    }
 
     QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
 
@@ -1847,6 +1850,12 @@ void GxsForumThreadWidget::postForumLoading()
 #ifdef DEBUG_FORUMS
     std::cerr << "Post forum loading..." << std::endl;
 #endif
+    if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
+    {
+        mThreadId = mNavigatePendingMsgId;
+        mNavigatePendingMsgId.clear();
+    }
+
     QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
 
     if(!mThreadId.isNull() && source_index.isValid())
