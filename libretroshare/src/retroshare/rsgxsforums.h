@@ -54,6 +54,8 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
 
 struct RsGxsForumGroup : RsSerializable
 {
+    virtual ~RsGxsForumGroup() {}
+
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 
@@ -76,6 +78,8 @@ struct RsGxsForumGroup : RsSerializable
 
 struct RsGxsForumMsg : RsSerializable
 {
+    virtual ~RsGxsForumMsg() {}
+
 	RsMsgMetaData mMeta;
 	std::string mMsg; 
 
