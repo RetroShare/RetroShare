@@ -532,9 +532,7 @@ void GxsForumThreadWidget::groupIdChanged()
 
 	mNewCount = 0;
 	mUnreadCount = 0;
-    mThreadId.clear();
 
-    //mThreadModel->updateForum(groupId());
     updateDisplay(true);
 }
 
@@ -718,7 +716,9 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 	{
 		saveExpandedItems(mSavedExpandedMessages);
 
-		//mUpdating=true;
+        if(groupId() != mThreadModel->currentGroupId())
+            mThreadId.clear();
+
 		updateGroupData();
 		mThreadModel->updateForum(groupId());
 
@@ -975,11 +975,7 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
     //    return;
 
     if(!index.isValid())
-    {
-		mThreadId.clear();
-        mOrigThreadId.clear();
         return;
-    }
 
     RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
 
@@ -1427,19 +1423,24 @@ void GxsForumThreadWidget::nextUnreadMessage()
 
     if(!index.isValid())
         index = mThreadProxyModel->index(0,0);
+    else
+    {
+		if(index.data(RsGxsForumModel::UnreadChildrenRole).toBool())
+			ui->threadTreeWidget->expand(index);
 
-    do
+		index = ui->threadTreeWidget->indexBelow(index);
+    }
+
+    while(index.isValid() && !IS_MSG_UNREAD(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::StatusRole).toUInt()))
 	{
 		if(index.data(RsGxsForumModel::UnreadChildrenRole).toBool())
 			ui->threadTreeWidget->expand(index);
 
 		index = ui->threadTreeWidget->indexBelow(index);
 	}
-    while(index.isValid() && !IS_MSG_UNREAD(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DATA).data(RsGxsForumModel::StatusRole).toUInt()));
 
 	ui->threadTreeWidget->setCurrentIndex(index);
-	ui->threadTreeWidget->scrollTo(index,QAbstractItemView::PositionAtCenter);
-	//ui->threadTreeWidget->setFocus();
+	ui->threadTreeWidget->scrollTo(index);
 	changedThread(index);
 }
 
@@ -1502,7 +1503,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
     QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
 
 	ui->threadTreeWidget->setCurrentIndex(indx);
-	ui->threadTreeWidget->scrollTo(indx,QAbstractItemView::PositionAtCenter);
+	ui->threadTreeWidget->scrollTo(indx);
 	ui->threadTreeWidget->setFocus();
     changedThread(indx);
 	return true;
@@ -1862,7 +1863,7 @@ void GxsForumThreadWidget::postForumLoading()
     {
         QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-		ui->threadTreeWidget->scrollTo(index,QAbstractItemView::PositionAtCenter);
+		ui->threadTreeWidget->scrollTo(index);
 #ifdef DEBUG_FORUMS
 		std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
 #endif

@@ -106,6 +106,8 @@ public:
 
     // This method will asynchroneously update the data
 	void updateForum(const RsGxsGroupId& forumGroup);
+    const RsGxsGroupId& currentGroupId() const;
+
     void setTreeMode(TreeMode mode) ;
     void setSortMode(SortMode mode) ;
 

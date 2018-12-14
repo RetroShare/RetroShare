@@ -664,6 +664,11 @@ QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col
 		return QVariant();
 }
 
+const RsGxsGroupId& RsGxsForumModel::currentGroupId() const
+{
+	return mForumGroup.mMeta.mGroupId;
+}
+
 void RsGxsForumModel::updateForum(const RsGxsGroupId& forum_group_id)
 {
     if(forum_group_id.isNull())
