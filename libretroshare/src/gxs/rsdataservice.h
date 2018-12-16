@@ -47,10 +47,14 @@ public:
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
-     * @param cache whether to store results of this retrieval in memory for faster later retrieval
+	 * @param cache IGNORED whether to store results of this retrieval in memory
+	 *	for faster later retrieval
+	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
-     */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta = false);
+	 */
+	int retrieveNxsMsgs(
+	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
+	        bool withMeta = false );
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty

@@ -28,13 +28,15 @@
 
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvitem.h"
-
+#include "util/rsdeprecate.h"
 #include <retroshare/rstypes.h>
 #include <retroshare/rsgxsifacetypes.h>
 
 #include <list>
 
-template<class ID_CLASS,uint32_t TLV_TYPE> class t_RsTlvIdSet: public RsTlvItem
+/// @deprecated use plain std::set<> instead
+template<class ID_CLASS,uint32_t TLV_TYPE> class RS_DEPRECATED_FOR(std::set<>) t_RsTlvIdSet
+    : public RsTlvItem
 {
 	public:
 		t_RsTlvIdSet() {}
@@ -122,7 +124,7 @@ typedef t_RsTlvIdSet<RsGxsMessageId,TLV_TYPE_GXSMSGIDSET>       RsTlvGxsMsgIdSet
 typedef t_RsTlvIdSet<RsGxsCircleId, TLV_TYPE_GXSCIRCLEIDSET>    RsTlvGxsCircleIdSet ;
 typedef t_RsTlvIdSet<RsNodeGroupId, TLV_TYPE_NODEGROUPIDSET>    RsTlvNodeGroupIdSet ;
 
-class RsTlvServiceIdSet: public RsTlvItem
+class RS_DEPRECATED RsTlvServiceIdSet: public RsTlvItem
 {
 	public:
 	 RsTlvServiceIdSet() { return; }

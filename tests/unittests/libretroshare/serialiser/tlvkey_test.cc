@@ -1,7 +1,7 @@
 /*******************************************************************************
  * unittests/libretroshare/serialiser/tlvkey_test.cc                           *
  *                                                                             *
- * Copyright 2007-2008 by Robert Fernie <retroshare.team@gmail.com>            *
+ * Copyright 2007-2008 by Robert Fernie <retroshare.project@gmail.com>         *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *

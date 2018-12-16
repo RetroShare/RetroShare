@@ -39,14 +39,16 @@ RsGxsDataAccess::~RsGxsDataAccess()
     for(std::map<uint32_t, GxsRequest*>::const_iterator it(mRequests.begin());it!=mRequests.end();++it)
 		delete it->second ;
 }
-bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-		const std::list<RsGxsGroupId> &groupIds)
+bool RsGxsDataAccess::requestGroupInfo(
+        uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
+        const std::list<RsGxsGroupId> &groupIds )
 {
-    if(groupIds.empty())
-    {
-    	std::cerr << "(WW) Group Id list is empty" << std::endl;
-        return false;
-    }
+	if(groupIds.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!"
+		          << std::endl;
+		return false;
+	}
 
     GxsRequest* req = NULL;
     uint32_t reqType = opts.mReqType;
@@ -76,19 +78,19 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
             req = gir;
     }
 
-    if(req == NULL)
-    {
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
-                              << reqType << std::endl;
-            return false;
-    }else
-    {
-            generateToken(token);
+	if(!req)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " request type not recognised, "
+		          << "reqType: " << reqType << std::endl;
+		return false;
+	}
+
+	generateToken(token);
 
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+	std::cerr << "RsGxsDataAccess::requestGroupInfo() gets token: " << token
+	          << std::endl;
 #endif
-    }
 
     setReq(req, token, ansType, opts);
     storeRequest(req);
@@ -130,11 +132,8 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
 
 void RsGxsDataAccess::generateToken(uint32_t &token)
 {
-	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
-
+	RS_STACK_MUTEX(mDataMutex);
 	token = mNextToken++;
-
-	return;
 }
 
 
@@ -301,15 +300,12 @@ void RsGxsDataAccess::setReq(GxsRequest* req, uint32_t token, uint32_t ansType, 
 	req->Options = opts;
 	return;
 }
-void    RsGxsDataAccess::storeRequest(GxsRequest* req)
+void RsGxsDataAccess::storeRequest(GxsRequest* req)
 {
-	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
-
-	    req->status = PENDING;
-        req->reqTime = time(NULL);
+	RS_STACK_MUTEX(mDataMutex);
+	req->status = PENDING;
+	req->reqTime = time(NULL);
 	mRequests[req->token] = req;
-
-	return;
 }
 
 RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)
@@ -1040,29 +1036,42 @@ bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 {
 	GxsMsgReq msgIdOut;
 
+	const RsTokReqOptions& opts(req->Options);
+
 	// filter based on options
-	getMsgList(req->mMsgIds, req->Options, msgIdOut);
+	getMsgList(req->mMsgIds, opts, msgIdOut);
+
+	// If the list is empty because of filtering do not retrieve from DB
+	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
+		return true;
 
 	mDataStore->retrieveNxsMsgs(msgIdOut, req->mMsgData, true, true);
-
 	return true;
 }
 
 
 bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 {
-        GxsMsgReq msgIdOut;
+	GxsMsgReq msgIdOut;
 
-        // filter based on options
-        getMsgList(req->mMsgIds, req->Options, msgIdOut);
+	const RsTokReqOptions& opts(req->Options);
 
-        mDataStore->retrieveGxsMsgMetaData(msgIdOut, req->mMsgMetaData);
+	// filter based on options
+	getMsgList(req->mMsgIds, opts, msgIdOut);
+
+	// If the list is empty because of filtering do not retrieve from DB
+	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
+		return true;
+
+	mDataStore->retrieveGxsMsgMetaData(msgIdOut, req->mMsgMetaData);
 
 	return true;
 }
 
 
-bool RsGxsDataAccess::getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut)
+bool RsGxsDataAccess::getMsgList(
+        const GxsMsgReq& msgIds, const RsTokReqOptions& opts,
+        GxsMsgReq& msgIdsOut )
 {
     GxsMsgMetaResult result;
 
@@ -1693,41 +1702,48 @@ void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
 	return;
 }
 
-void RsGxsDataAccess::filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts,
-		const MsgMetaFilter& msgMetas) const
+void RsGxsDataAccess::filterMsgList(
+        GxsMsgIdResult& resultsMap, const RsTokReqOptions& opts,
+        const MsgMetaFilter& msgMetas ) const
 {
-
-	GxsMsgIdResult::iterator mit = msgIds.begin();
-	for(;mit != msgIds.end(); ++mit)
+	for( GxsMsgIdResult::iterator grpIt = resultsMap.begin();
+	     grpIt != resultsMap.end(); ++grpIt )
 	{
+		const RsGxsGroupId& groupId(grpIt->first);
+		std::set<RsGxsMessageId>& msgsIdSet(grpIt->second);
 
-		MsgMetaFilter::const_iterator cit = msgMetas.find(mit->first);
+		MsgMetaFilter::const_iterator cit = msgMetas.find(groupId);
+		if(cit == msgMetas.end()) continue;
+#ifdef DATA_DEBUG
+		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+		          << " for group: " << groupId << " before filtering"
+		          << std::endl;
+#endif
 
-		if(cit == msgMetas.end())
-			continue;
-
-		std::set<RsGxsMessageId>& msgs = mit->second;
-		std::set<RsGxsMessageId>::iterator vit = msgs.begin();
-		const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& meta = cit->second;
-		std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator cit2;
-
-		for(; vit != msgs.end();)
+		for( std::set<RsGxsMessageId>::iterator msgIdIt = msgsIdSet.begin();
+		     msgIdIt != msgsIdSet.end(); )
 		{
+			const RsGxsMessageId& msgId(*msgIdIt);
+			const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& msgsMetaMap =
+			        cit->second;
 
 			bool keep = false;
-			if( (cit2 = meta.find(*vit)) != meta.end() )
+			std::map<RsGxsMessageId, RsGxsMsgMetaData*>::const_iterator msgsMetaMapIt;
+
+			if( (msgsMetaMapIt = msgsMetaMap.find(msgId)) != msgsMetaMap.end() )
 			{
-				keep = checkMsgFilter(opts, cit2->second);
+				keep = checkMsgFilter(opts, msgsMetaMapIt->second);
 			}
 
-			if(keep)
-			{
-				++vit;
-			}else
-			{
-				vit = msgs.erase(vit);
-			}
+			if(keep) ++msgIdIt;
+			else msgIdIt = msgsIdSet.erase(msgIdIt);
 		}
+
+#ifdef DATA_DEBUG
+		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+		          << " for group: " << groupId << " after filtering"
+		          << std::endl;
+#endif
 	}
 }
 
@@ -1905,62 +1921,87 @@ bool RsGxsDataAccess::checkGrpFilter(const RsTokReqOptions &opts, const RsGxsGrp
 
     return subscribeMatch;
 }
-bool RsGxsDataAccess::checkMsgFilter(const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta) const
+bool RsGxsDataAccess::checkMsgFilter(
+        const RsTokReqOptions& opts, const RsGxsMsgMetaData* meta ) const
 {
-	bool statusMatch = false;
-        if (opts.mStatusMask)
+	if (opts.mStatusMask)
 	{
 		// Exact Flags match required.
- 		if ((opts.mStatusMask & opts.mStatusFilter) == (opts.mStatusMask & meta->mMsgStatus))
+		if ( (opts.mStatusMask & opts.mStatusFilter) ==
+		     (opts.mStatusMask & meta->mMsgStatus) )
 		{
-			std::cerr << "checkMsgFilter() Accepting Msg as StatusMatches: ";
-			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
-			std::cerr << " MsgStatus: " << meta->mMsgStatus << " MsgId: " << meta->mMsgId;
-			std::cerr << std::endl;
-
-			statusMatch = true;
+#ifdef DATA_DEBUG
+			std::cerr << __PRETTY_FUNCTION__
+			          << " Continue checking Msg as StatusMatches: "
+			          << " Mask: " << opts.mStatusMask
+			          << " StatusFilter: " << opts.mStatusFilter
+			          << " MsgStatus: " << meta->mMsgStatus
+			          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
 		}
 		else
 		{
-			std::cerr << "checkMsgFilter() Dropping Msg due to !StatusMatch ";
-			std::cerr << " Mask: " << opts.mStatusMask << " StatusFilter: " << opts.mStatusFilter;
-			std::cerr << " MsgStatus: " << meta->mMsgStatus << " MsgId: " << meta->mMsgId;
-			std::cerr << std::endl;
+#ifdef DATA_DEBUG
+			std::cerr << __PRETTY_FUNCTION__
+			          << " Dropping Msg due to !StatusMatch "
+			          << " Mask: " << opts.mStatusMask
+			          << " StatusFilter: " << opts.mStatusFilter
+			          << " MsgStatus: " << meta->mMsgStatus
+			          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
+
+			return false;
 		}
 	}
 	else
 	{
-		// no status comparision,
-		statusMatch = true;
+#ifdef DATA_DEBUG
+		std::cerr << __PRETTY_FUNCTION__
+		          << " Status check not requested"
+		          << " mStatusMask: " << opts.mStatusMask
+		          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
 	}
 
-        bool flagMatch = false;
+	if(opts.mMsgFlagMask)
+	{
+		// Exact Flags match required.
+		if ( (opts.mMsgFlagMask & opts.mMsgFlagFilter) ==
+		     (opts.mMsgFlagMask & meta->mMsgFlags) )
+		{
+#ifdef DATA_DEBUG
+			std::cerr << __PRETTY_FUNCTION__
+			          << " Accepting Msg as FlagMatches: "
+			          << " Mask: " << opts.mMsgFlagMask
+			          << " FlagFilter: " << opts.mMsgFlagFilter
+			          << " MsgFlag: " << meta->mMsgFlags
+			          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
+		}
+		else
+		{
+#ifdef DATA_DEBUG
+			std::cerr << __PRETTY_FUNCTION__
+			          << " Dropping Msg due to !FlagMatch "
+			          << " Mask: " << opts.mMsgFlagMask
+			          << " FlagFilter: " << opts.mMsgFlagFilter
+			          << " MsgFlag: " << meta->mMsgFlags
+			          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
 
-        if(opts.mMsgFlagMask)
-        {
-            // Exact Flags match required.
-            if ((opts.mMsgFlagMask & opts.mMsgFlagFilter) == (opts.mMsgFlagMask & meta->mMsgFlags))
-            {
-                    std::cerr << "checkMsgFilter() Accepting Msg as FlagMatches: ";
-                    std::cerr << " Mask: " << opts.mMsgFlagMask << " FlagFilter: " << opts.mMsgFlagFilter;
-                    std::cerr << " MsgFlag: " << meta->mMsgFlags << " MsgId: " << meta->mMsgId;
-                    std::cerr << std::endl;
+			return false;
+		}
+	}
+	else
+	{
+#ifdef DATA_DEBUG
+		std::cerr << __PRETTY_FUNCTION__
+		          << " Flags check not requested"
+		          << " mMsgFlagMask: " << opts.mMsgFlagMask
+		          << " MsgId: " << meta->mMsgId << std::endl;
+#endif
+	}
 
-                    flagMatch = true;
-            }
-            else
-            {
-                    std::cerr << "checkMsgFilter() Dropping Msg due to !FlagMatch ";
-                    std::cerr << " Mask: " << opts.mMsgFlagMask << " FlagFilter: " << opts.mMsgFlagFilter;
-                    std::cerr << " MsgFlag: " << meta->mMsgFlags << " MsgId: " << meta->mMsgId;
-                    std::cerr << std::endl;
-
-                    flagMatch = false;
-            }
-        }else{
-            flagMatch = true;
-        }
-
-        return statusMatch && flagMatch;
+	return true;
 }
 

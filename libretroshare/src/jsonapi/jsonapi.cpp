@@ -49,7 +49,7 @@ JsonApiServer::corsHeaders =
 {
     { "Access-Control-Allow-Origin", "*" },
     { "Access-Control-Allow-Methods", "GET, POST, OPTIONS"},
-    { "Access-Control-Allow-Headers", "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
+    { "Access-Control-Allow-Headers", "Authorization,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
     { "Access-Control-Expose-Headers", "Content-Length,Content-Range" }
 };
 
@@ -58,7 +58,7 @@ JsonApiServer::corsOptionsHeaders =
 {
     { "Access-Control-Allow-Origin", "*" },
     { "Access-Control-Allow-Methods", "GET, POST, OPTIONS"},
-    { "Access-Control-Allow-Headers", "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
+    { "Access-Control-Allow-Headers", "Authorization,DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range" },
     { "Access-Control-Max-Age", "1728000" }, // 20 days
     { "Content-Type", "text/plain; charset=utf-8" },
     { "Content-Length", "0" }
@@ -322,6 +322,12 @@ void JsonApiServer::registerHandler(
 		                const std::shared_ptr<rb::Session> session,
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
+			if(session->get_request()->get_method() == "OPTIONS")
+			{
+				callback(session);
+				return;
+			}
+
 			if(!rsLoginHelper->isLoggedIn())
 			{
 				session->close(rb::CONFLICT);
