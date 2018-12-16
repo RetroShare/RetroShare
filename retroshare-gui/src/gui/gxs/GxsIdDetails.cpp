@@ -37,7 +37,7 @@
 #define IMAGE_PGPKNOWN    ":/images/contact.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
-#define IMAGE_BANNED      ":/icons/yellow_biohazard64.png"
+#define IMAGE_BANNED      ":/icons/biohazard_red.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
 #define IMAGE_DEV_CONTRIBUTOR    ":/images/tags/vote_down.png"
@@ -897,7 +897,7 @@ QIcon GxsIdDetails::getLoadingIcon(const RsGxsId &/*id*/)
 	return QIcon(IMAGE_LOADING);
 }
 
-bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment)
+bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment,uint32_t icon_types)
 {
 	RsIdentityDetails details;
 
@@ -921,7 +921,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 	comment += getComment(details);
 
 	if (doIcons)
-		getIcons(details, icons);
+		getIcons(details, icons,icon_types);
 
 //	Cyril: I disabled these three which I believe to have been put for testing purposes.
 //
@@ -973,7 +973,7 @@ QString nickname ;
 
 	if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 	{
-        comment += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
+        comment += QString("<br/>%1: ").arg(QApplication::translate("GxsIdDetails", "Node"));
 
 		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 		{
@@ -985,8 +985,8 @@ QString nickname ;
 		else
 			comment += QApplication::translate("GxsIdDetails", "unknown Key");
 	}
-	else
-        comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
+	//else
+     //   comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Node:"), QApplication::translate("GxsIdDetails", "anonymous"));
 	
 	if(details.mReputation.mFriendsPositiveVotes || details.mReputation.mFriendsNegativeVotes)
 	{

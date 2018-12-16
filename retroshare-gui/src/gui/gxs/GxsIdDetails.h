@@ -63,6 +63,7 @@ class GxsIdDetails : public QObject
 	Q_OBJECT
 
 public:
+    static const int ICON_TYPE_NONE       = 0x0000 ;
     static const int ICON_TYPE_AVATAR     = 0x0001 ;
     static const int ICON_TYPE_PGP        = 0x0002 ;
     static const int ICON_TYPE_RECOGN     = 0x0004 ;
@@ -76,7 +77,7 @@ public:
 	static void cleanup();
 
 	/* Information */
-	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment);
+	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment, uint32_t icon_types=ICON_TYPE_ALL);
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
