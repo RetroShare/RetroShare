@@ -1653,7 +1653,7 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 
         msgs_to_request.insert(mThreadId);
 
-		if(!rsGxsForums->getForumsContent(groupId(),msgs_to_request,msgs))
+		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
 			return;
@@ -1675,9 +1675,7 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+			 * after a blocking call to RetroShare API complete */
 
 			(this->*action)(msg);
 
@@ -1927,9 +1925,7 @@ void GxsForumThreadWidget::updateGroupData()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+			 * after a blocking call to RetroShare API complete */
 
 			mForumGroup = *group;
             delete group;
@@ -1957,7 +1953,7 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
         msgs_to_request.insert(msgId);
 
-		if(!rsGxsForums->getForumsContent(groupId(),msgs_to_request,msgs))
+		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
 			return;
@@ -1986,9 +1982,7 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
+			 * after a blocking call to RetroShare API complete */
 
 			insertMessageData(*msg);
 
