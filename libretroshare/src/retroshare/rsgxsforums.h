@@ -158,7 +158,7 @@ public:
 	/**
 	 * @brief Get message metadatas for some messages of a specific forum. Blocking API
 	 * @jsonapi{development}
-	 * @param[in] forumIds id of the forum of which the content is requested
+	 * @param[in] forumId id of the forum of which the content is requested
 	 * @param[out] msg_metas storage for the forum messages meta data
 	 * @return false if something failed, true otherwhise
 	 */
