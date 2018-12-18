@@ -7,9 +7,9 @@ branch="master"
 #bubba3="Y"      # comment out to compile for bubba3
 ######################################################
 
-RS_MAJOR_VERSION=`fgrep RS_MAJOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
-RS_MINOR_VERSION=`fgrep RS_MINOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
-RS_BUILD_NUMBER=`fgrep RS_BUILD_NUMBER ../../libretroshare/src/retroshare/rsversion.h | grep -v BUILD_NUMBER_ADD | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
+RS_MAJOR_VERSION=0
+RS_MINOR_VERSION=6
+RS_BUILD_NUMBER=4
 
 #  echo "RS_MAJOR_VERSION="${RS_MAJOR_VERSION}
 #  echo "RS_MINOR_VERSION="${RS_MINOR_VERSION}
