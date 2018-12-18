@@ -165,20 +165,20 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 # cross-compiling
 #JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MAJOR_VERSION=0'
+# Specify RetroShare major version (must be a number) appending the following
+# assignation to qmake command line 'RS_MAJOR_VERSION=0'
 #RS_MAJOR_VERSION=0
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MINOR_VERSION=6'
+# Specify RetroShare minor version (must be a number) appending the following
+# assignation to qmake command line 'RS_MINOR_VERSION=6'
 #RS_MINOR_VERSION=6
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MINI_VERSION=4'
+# Specify RetroShare mini version (must be a number) appending the following
+# assignation to qmake command line 'RS_MINI_VERSION=4'
 #RS_MINI_VERSION=4
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_EXTRA_VERSION=""'
+# Specify RetroShare extra version (must be a string) appending the following
+# assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
 
 
