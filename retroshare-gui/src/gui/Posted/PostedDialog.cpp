@@ -105,13 +105,13 @@ QString PostedDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/images/folder16.png";
+		return ":/icons/png/feedreader.png";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/images/folder_red.png";
+		return ":/icons/png/feed-subscribed.png";
 	case ICON_POPULAR_GROUP:
-		return ":/images/folder_green.png";
+		return ":/icons/png/feed-popular.png";
 	case ICON_OTHER_GROUP:
-		return ":/images/folder_yellow.png";
+		return ":/icons/png/feed-other.png";
 	case ICON_DEFAULT:
 		return "";
 	}
