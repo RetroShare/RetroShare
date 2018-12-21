@@ -28,6 +28,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets
 }
 
+target.files = lib/libFeedReader.so
+
 SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReader.cc \
 			services/p3FeedReaderThread.cc \
