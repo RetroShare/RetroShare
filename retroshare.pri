@@ -491,7 +491,7 @@ linux-* {
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
     isEmpty(RS_LIB_DIR)    : RS_LIB_DIR     = "$${PREFIX}/lib"
     isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
-    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${RS_LIB_DIR}/retroshare/extensions6"
+    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${PREFIX}/lib/retroshare/extensions6"
 
     QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 
