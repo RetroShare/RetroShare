@@ -31,10 +31,7 @@ linux-* {
 # Cyril: Someone can explain to me why I need to put that again here??? Normally this variable should be set by
 # the include of retroshare.pri, but for some reason it is not!
 	isEmpty(RS_PLUGIN_DIR): RS_PLUGIN_DIR = "$${PREFIX}/lib/retroshare/extensions6"
-}
-
-unix {
-	target.path = "$${PLUGIN_DIR}"
+	target.path = "$${RS_PLUGIN_DIR}"
 	INSTALLS += target
 }
 
