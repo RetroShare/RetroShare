@@ -163,8 +163,8 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 		smGLayout->addWidget(smTab);
 	}
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.4;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.4;
+	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.6;
+	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.6;
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
@@ -182,8 +182,10 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
 			//
 			QFontMetricsF fm(parent->font()) ;
-			smTab->setIconSize(QSize(32*fm.height()/14.0,32*fm.height()/14.0));
+			smTab->setIconSize(QSize(28*fm.height()/14.0,28*fm.height()/14.0));
 			smTab->setMinimumWidth(400);
+			smTab->setTabPosition(QTabWidget::South);
+			smTab->setStyleSheet("QTabBar::tab { height: 44px; width: 44px; }");
 
 			if (groupName.right(4).toLower() == ".png")
 				smTab->addTab( tabGrpWidget, QIcon(groupName), "");
@@ -215,7 +217,7 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
 			button->setIcon(QPixmap(group.value(key)));
 			button->setToolTip(key);
-			button->setStyleSheet("QPushButton:hover {border: 3px solid white; border-radius: 2px;}");
+			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
 			button->setFlat(true);
 			tabGLayout->addWidget(button,col,lin);
 			++lin;

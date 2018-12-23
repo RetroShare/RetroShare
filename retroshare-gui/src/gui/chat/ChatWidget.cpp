@@ -1582,7 +1582,7 @@ void ChatWidget::addExtraPicture()
 {
 	// select a picture file
 	QString file;
-	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", file)) {
 		QString encodedImage;
 		uint32_t maxMessageSize = this->maxMessageSize();
 		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, maxMessageSize - 200)) {		//-200 for the html stuff
