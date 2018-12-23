@@ -120,9 +120,15 @@ FriendList::FriendList(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
     connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
+
+#ifdef RS_DIRECT_CHAT
+	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
+#else
+	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
+	         this, SLOT(expandItem(QTreeWidgetItem *)) );
+#endif
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
@@ -346,9 +352,10 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
          case TYPE_GROUP:
              {
                  bool standard = c->data(COLUMN_DATA, ROLE_STANDARD).toBool();
-
+#ifdef RS_DIRECT_CHAT
                  contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to whole group"), this, SLOT(msgfriend()));
                  contextMenu->addSeparator();
+#endif // RS_DIRECT_CHAT
                  contextMenu->addAction(QIcon(IMAGE_EDIT), tr("Edit Group"), this, SLOT(editGroup()));
 
                  QAction *action = contextMenu->addAction(QIcon(IMAGE_REMOVE), tr("Remove Group"), this, SLOT(removeGroup()));
@@ -357,10 +364,11 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              break;
          case TYPE_GPG:
         {
+#ifdef RS_DIRECT_CHAT
              contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
              contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
-
              contextMenu->addSeparator();
+#endif // RS_DIRECT_CHAT
 
              contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
              contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
@@ -437,10 +445,11 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
          case TYPE_SSL:
              {
+#ifdef RS_DIRECT_CHAT
                  contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
                  contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgfriend()));
-
                  contextMenu->addSeparator();
+#endif // RS_DIRECT_CHAT
 
                  contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriend()));
 

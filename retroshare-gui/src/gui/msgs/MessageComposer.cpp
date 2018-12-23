@@ -217,9 +217,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(//FriendSelectionWidget::SHOW_GROUP	// removed this because it's too confusing.
-                                            FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS);
+	ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -263,11 +261,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
-    ui.filterComboBox->addItem(tr("All addresses (mixed)"));
-    ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
-    ui.filterComboBox->setCurrentIndex(2);
+	ui.filterComboBox->setCurrentIndex(0);
 
     if(rsIdentity->nbRegularContacts() > 0)
     	ui.filterComboBox->setCurrentIndex(3);
@@ -2591,25 +2587,14 @@ void MessageComposer::filterComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:  ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-				  
-		case 1: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL) ;
-				  break ;
-
-		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-
-					  
-		case 3: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS) ;
-				  break ;		  
-				  				  
-		default: ;
+	default:
+	case 0:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
 	}
-
 }
 
 void MessageComposer::friendSelectionChanged()
