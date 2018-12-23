@@ -1220,7 +1220,7 @@ void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)
             }
 			//RsServer::notify()->notifyTurtleSearchResult(ftsr->request_id,ftsr->result) ;
 
-            client->receiveSearchResult(ftsr);
+            client->ftReceiveSearchResult(ftsr);
             continue ;
         }
 

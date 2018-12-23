@@ -98,7 +98,7 @@ public:
     uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-	virtual void receiveSearchResult(RsTurtleFTSearchResultItem *item);
+	virtual void ftReceiveSearchResult(RsTurtleFTSearchResultItem *item);	// We dont use TurtleClientService::receiveSearchResult() because of backward compatibility.
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 

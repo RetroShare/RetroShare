@@ -5290,7 +5290,8 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << " passing the grp data to observer." << std::endl;
 #endif
-    mObserver->receiveNewGroups(new_grps);
+	mObserver->receiveNewGroups(new_grps);
+	mObserver->receiveDistantSearchResults(req, grpId);
 }
 
 bool RsGxsNetService::search( const std::string& substring,

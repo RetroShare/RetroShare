@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/TransfersDialog.cpp                     *
+ *                                                                             *
+ * Copyright (c) 2007 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDateTime>
 #include <QDir>
@@ -353,19 +352,19 @@ public:
 		switch(col)
 		{
 		default:
-		case COLUMN_NAME:         return QVariant( factor * 170 );
-		case COLUMN_SIZE:         return QVariant( factor * 70  );
-		case COLUMN_COMPLETED:    return QVariant( factor * 75  );
-		case COLUMN_DLSPEED:      return QVariant( factor * 75  );
-		case COLUMN_PROGRESS:     return QVariant( factor * 170 );
-		case COLUMN_SOURCES:      return QVariant( factor * 90  );
-		case COLUMN_STATUS:       return QVariant( factor * 100 );
-		case COLUMN_PRIORITY:     return QVariant( factor * 100 );
-		case COLUMN_REMAINING:    return QVariant( factor * 100 );
-		case COLUMN_DOWNLOADTIME: return QVariant( factor * 100 );
-		case COLUMN_ID:           return QVariant( factor * 100 );
-		case COLUMN_LASTDL:       return QVariant( factor * 100 );
-		case COLUMN_PATH:         return QVariant( factor * 100 );
+		case COLUMN_NAME:         return QVariant( QSize(factor * 170, factor*14.0f ));
+		case COLUMN_SIZE:         return QVariant( QSize(factor * 70 , factor*14.0f ));
+		case COLUMN_COMPLETED:    return QVariant( QSize(factor * 75 , factor*14.0f ));
+		case COLUMN_DLSPEED:      return QVariant( QSize(factor * 75 , factor*14.0f ));
+		case COLUMN_PROGRESS:     return QVariant( QSize(factor * 170, factor*14.0f ));
+		case COLUMN_SOURCES:      return QVariant( QSize(factor * 90 , factor*14.0f ));
+		case COLUMN_STATUS:       return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_PRIORITY:     return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_REMAINING:    return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_DOWNLOADTIME: return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_ID:           return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_LASTDL:       return QVariant( QSize(factor * 100, factor*14.0f ));
+		case COLUMN_PATH:         return QVariant( QSize(factor * 100, factor*14.0f ));
 		}
 	}
 

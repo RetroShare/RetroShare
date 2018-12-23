@@ -297,6 +297,11 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 	return ok;
 }
 
+bool p3GxsForums::getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas)
+{
+	return RsGenExchange::getMsgMeta(token, msg_metas);
+}
+
 /* Okay - chris is not going to be happy with this...
  * but I can't be bothered with crazy data structures
  * at the moment - fix it up later
@@ -379,6 +384,137 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 
 /********************************************************************************************/
 
+bool p3GxsForums::createForum(RsGxsForumGroup& forum)
+{
+	uint32_t token;
+	if(!createGroup(token, forum))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, forum.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsForums::editForum(RsGxsForumGroup& forum)
+{
+	uint32_t token;
+	if(!updateGroup(token, forum))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, forum.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, forums);
+}
+
+bool p3GxsForums::getForumsInfo(
+        const std::list<RsGxsGroupId>& forumIds,
+        std::vector<RsGxsForumGroup>& forumsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, forumIds)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, forumsInfo);
+}
+
+bool p3GxsForums::getForumContent(
+        const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,
+        std::vector<RsGxsForumMsg>& msgs )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	GxsMsgReq msgIds;
+	msgIds[forumId] = msgs_to_request;
+
+	if( !requestMsgInfo(token, opts, msgIds) ||
+	        waitToken(token,std::chrono::seconds(5)) != RsTokenService::COMPLETE )
+		return false;
+
+	return getMsgData(token, msgs);
+}
+
+
+bool p3GxsForums::getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+    GxsMsgMetaMap meta_map;
+    std::list<RsGxsGroupId> forumIds;
+    forumIds.push_back(forumId);
+
+	if( !requestMsgInfo(token, opts, forumIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+	bool res = getMsgMetaData(token, meta_map);
+
+    msg_metas = meta_map[forumId];
+
+    return res;
+}
+
+bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+	uint32_t token;
+	setMessageReadStatus(token, msgId, read);
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return true;
+}
+
+bool p3GxsForums::subscribeToForum(
+        const RsGxsGroupId& groupId, bool subscribe )
+{
+	uint32_t token;
+	if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return true;
+}
+
 bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::createGroup()" << std::endl;
@@ -405,6 +541,17 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
 
         RsGenExchange::updateGroup(token, grpItem);
 	return true;
+}
+
+bool p3GxsForums::createMessage(RsGxsForumMsg& message)
+{
+	uint32_t token;
+	if( !createMsg(token, message)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+	if(RsGenExchange::getPublishedMsgMeta(token, message.mMeta)) return true;
+
+	return false;
 }
 
 bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)

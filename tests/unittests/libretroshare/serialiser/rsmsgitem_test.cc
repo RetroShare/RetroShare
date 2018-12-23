@@ -1,7 +1,7 @@
 /*******************************************************************************
  * unittests/libretroshare/serialiser/msgitem_test.cc                          *
  *                                                                             *
- * Copyright 2010 by Christopher Evi-Parker <retroshare.team@gmail.com>        *
+ * Copyright 2010 by Christopher Evi-Parker <retroshare.project@gmail.com>     *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *

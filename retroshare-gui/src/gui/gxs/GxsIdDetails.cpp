@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsIdDetails.cpp                                 *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie     <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QApplication>
 #include <QThread>
@@ -40,7 +37,7 @@
 #define IMAGE_PGPKNOWN    ":/images/contact.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
-#define IMAGE_BANNED      ":/icons/yellow_biohazard64.png"
+#define IMAGE_BANNED      ":/icons/biohazard_red.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
 #define IMAGE_DEV_CONTRIBUTOR    ":/images/tags/vote_down.png"
@@ -900,7 +897,7 @@ QIcon GxsIdDetails::getLoadingIcon(const RsGxsId &/*id*/)
 	return QIcon(IMAGE_LOADING);
 }
 
-bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment)
+bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QList<QIcon> &icons, QString& comment,uint32_t icon_types)
 {
 	RsIdentityDetails details;
 
@@ -924,7 +921,7 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 	comment += getComment(details);
 
 	if (doIcons)
-		getIcons(details, icons);
+		getIcons(details, icons,icon_types);
 
 //	Cyril: I disabled these three which I believe to have been put for testing purposes.
 //
@@ -976,7 +973,7 @@ QString nickname ;
 
 	if (details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED)
 	{
-        comment += QString("<br/>%1:%2 ").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "Signed&nbsp;by"));
+        comment += QString("<br/>%1: ").arg(QApplication::translate("GxsIdDetails", "Node"));
 
 		if (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN)
 		{
@@ -988,8 +985,8 @@ QString nickname ;
 		else
 			comment += QApplication::translate("GxsIdDetails", "unknown Key");
 	}
-	else
-        comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Authentication"), QApplication::translate("GxsIdDetails", "anonymous"));
+	//else
+     //   comment += QString("<br/>%1:&nbsp;%2").arg(QApplication::translate("GxsIdDetails", "Node:"), QApplication::translate("GxsIdDetails", "anonymous"));
 	
 	if(details.mReputation.mFriendsPositiveVotes || details.mReputation.mFriendsNegativeVotes)
 	{

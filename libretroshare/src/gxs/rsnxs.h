@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011-2011 by Robert Fernie <retroshare.team@gmail.com>            *
+ * Copyright 2011-2011 by Robert Fernie <retroshare.project@gmail.com>         *
  * Copyright 2011-2011 by Christopher Evi-Parker                               *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *

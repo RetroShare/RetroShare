@@ -215,7 +215,7 @@
         </layout>
        </item>
        <item>
-        <widget class="RSTreeWidget" name="threadTreeWidget">
+        <widget class="QTreeView" name="threadTreeWidget">
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
@@ -225,42 +225,9 @@
          <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <column>
-          <property name="text">
-           <string>Title</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/message-state-header.png</normaloff>:/images/message-state-header.png</iconset>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Date</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string/>
-          </property>
-          <property name="toolTip">
-           <string>Distribution</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../icons.qrc">
-            <normaloff>:/icons/flag-green.png</normaloff>:/icons/flag-green.png</iconset>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>Author</string>
-          </property>
-         </column>
+         <attribute name="headerCascadingSectionResizes">
+          <bool>true</bool>
+         </attribute>
         </widget>
        </item>
        <item>
@@ -272,7 +239,7 @@
        </item>
        <item>
         <layout class="QGridLayout" name="postLayout">
-         <item row="0" column="5">
+         <item row="0" column="6">
           <widget class="QToolButton" name="downloadButton">
            <property name="maximumSize">
             <size>
@@ -286,25 +253,15 @@
            <property name="toolTip">
             <string>Download all files</string>
            </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/global_switch_on_128.png</normaloff>:/icons/global_switch_on_128.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="13">
-          <widget class="QPushButton" name="nextUnreadButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Next unread</string>
            </property>
           </widget>
          </item>
@@ -323,21 +280,21 @@
             <string>Reply Message</string>
            </property>
            <property name="text">
-            <string>Reply</string>
+            <string notr="true"/>
            </property>
            <property name="icon">
             <iconset resource="../images.qrc">
-             <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
+             <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
+            <enum>Qt::ToolButtonIconOnly</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="0" column="15">
+         <item row="0" column="16">
           <widget class="QPushButton" name="expandButton">
            <property name="maximumSize">
             <size>
@@ -363,21 +320,14 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="6">
-          <widget class="Line" name="lineLeft">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="9">
+         <item row="0" column="10">
           <widget class="Line" name="lineRight">
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
           </widget>
          </item>
-         <item row="0" column="12">
+         <item row="0" column="13">
           <spacer name="postHSpacer">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -469,27 +419,54 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="11">
+         <item row="0" column="12">
           <widget class="GxsIdLabel" name="by_label">
            <property name="text">
             <string notr="true"/>
            </property>
           </widget>
          </item>
-         <item row="0" column="10">
+         <item row="0" column="7">
+          <widget class="Line" name="lineLeft">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="9">
+          <widget class="QComboBox" name="versions_CB"/>
+         </item>
+         <item row="0" column="8">
+          <widget class="QLabel" name="time_label">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="11">
           <widget class="QLabel" name="by_text_label">
            <property name="text">
             <string>By </string>
            </property>
           </widget>
          </item>
-         <item row="0" column="8">
-          <widget class="QComboBox" name="versions_CB"/>
-         </item>
-         <item row="0" column="7">
-          <widget class="QLabel" name="time_label">
+         <item row="0" column="5">
+          <widget class="QToolButton" name="nextUnreadButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Next unread message</string>
+           </property>
            <property name="text">
             <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset resource="../images.qrc">
+             <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
            </property>
           </widget>
          </item>
@@ -557,11 +534,6 @@
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>
    <header>gui/common/RSTextBrowser.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>

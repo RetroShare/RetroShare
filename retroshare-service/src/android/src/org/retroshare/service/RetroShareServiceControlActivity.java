@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2016-2018  Gioacchino Mazzurco <gio@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -20,9 +20,9 @@ package org.retroshare.service;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
-import org.retroshare.service.R;
 
 
 public class RetroShareServiceControlActivity extends Activity
@@ -30,35 +30,79 @@ public class RetroShareServiceControlActivity extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-        setContentView(R.layout.retroshare_service_control_layout);
+		setContentView(R.layout.retroshare_service_control_layout);
 
-        final Button button = (Button) findViewById(R.id.startStopButton);
-        button.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                if (RetroShareServiceAndroid.isRunning(RetroShareServiceControlActivity.this))
-                {
-                    RetroShareServiceAndroid.stop(RetroShareServiceControlActivity.this);
-                    button.setText("Start");
-                }
-                else
-                {
-                    RetroShareServiceAndroid.start(RetroShareServiceControlActivity.this);
-                    button.setText("Stop");
-                }
-            }
-        });
+		final Button button = (Button) findViewById(R.id.startStopButton);
+		button.setOnClickListener(new View.OnClickListener()
+		{
+			public void onClick(View v)
+			{
+				if (RetroShareServiceAndroid.isRunning(RetroShareServiceControlActivity.this))
+				{
+					serviceStarting = false;
+					serviceStopping = true;
+					button.setText("Stopping...");
+					RetroShareServiceAndroid.stop(RetroShareServiceControlActivity.this);
+				}
+				else
+				{
+					button.setText("Starting...");
+					RetroShareServiceAndroid.start(RetroShareServiceControlActivity.this);
+					serviceStarting = true;
+					serviceStopping = false;
+				}
+				mStatusUpdateHandler.postDelayed(mUpdateStatusTask, 500);
+			}
+		});
 
 		super.onCreate(savedInstanceState);
 	}
 
-    @Override
-    public void onResume()
-    {
-        super.onResume();
+	@Override
+	public void onResume()
+	{
+		super.onResume();
 
-        final Button button = (Button) findViewById(R.id.startStopButton);
-        button.setText(RetroShareServiceAndroid.isRunning(this) ? "Stop" : "Start");
-    }
+		final Button button = (Button) findViewById(R.id.startStopButton);
+		button.setText(RetroShareServiceAndroid.isRunning(this) ? "Stop" : "Start");
+
+		mStatusUpdateHandler.removeCallbacks(mUpdateStatusTask);
+		mStatusUpdateHandler.postDelayed(mUpdateStatusTask, 500);
+	}
+
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		mStatusUpdateHandler.removeCallbacks(mUpdateStatusTask);
+	}
+
+	public void updateServiceStatus()
+	{
+		final Button button = (Button) findViewById(R.id.startStopButton);
+
+		if(serviceStarting && RetroShareServiceAndroid.isRunning(this))
+		{
+			mStatusUpdateHandler.removeCallbacks(mUpdateStatusTask);
+			serviceStarting = false;
+			serviceStopping = false;
+			button.setText("Stop");
+		}
+		else if (serviceStopping && !RetroShareServiceAndroid.isRunning(this))
+		{
+			mStatusUpdateHandler.removeCallbacks(mUpdateStatusTask);
+			serviceStarting = false;
+			serviceStopping = false;
+			button.setText("Start");
+		}
+		else if(serviceStarting || serviceStopping)
+			mStatusUpdateHandler.postDelayed(mUpdateStatusTask, 500);
+	}
+
+	private Runnable mUpdateStatusTask = new Runnable()
+	{ public void run() { updateServiceStatus(); } };
+
+	private boolean serviceStarting = false;
+	private boolean serviceStopping = false;
+	private Handler mStatusUpdateHandler = new Handler();
 }

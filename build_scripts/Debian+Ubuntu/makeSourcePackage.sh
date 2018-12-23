@@ -7,9 +7,9 @@ branch="master"
 #bubba3="Y"      # comment out to compile for bubba3
 ######################################################
 
-RS_MAJOR_VERSION=`fgrep RS_MAJOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
-RS_MINOR_VERSION=`fgrep RS_MINOR_VERSION ../../libretroshare/src/retroshare/rsversion.h | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
-RS_BUILD_NUMBER=`fgrep RS_BUILD_NUMBER ../../libretroshare/src/retroshare/rsversion.h | grep -v BUILD_NUMBER_ADD | cut -d\\  -f3- | sed -e s\/\ \/\/g | cut -c1`
+RS_MAJOR_VERSION=0
+RS_MINOR_VERSION=6
+RS_BUILD_NUMBER=4
 
 #  echo "RS_MAJOR_VERSION="${RS_MAJOR_VERSION}
 #  echo "RS_MINOR_VERSION="${RS_MINOR_VERSION}
@@ -84,9 +84,12 @@ echo Attempting to get revision number...
 ccount=`git rev-list --count --all`
 ccount=`expr $ccount + 8613 - 8267`
 
+gitrev=`git describe | cut -d- -f2-3`
+
 echo "  Workdir            :"${workdir}
 echo "  Version            :"${version_number}
 echo "  Using revision     :"${rev}
+echo "  Git Revision       :"${gitrev}
 echo "  Commit count       :"${ccount}
 echo "  Hash               :"${hhsh}
 echo "  Date               :"${date}
@@ -144,7 +147,7 @@ cd ${workdir}
 echo Setting version numbers...
 
 # setup version numbers
-sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
+#sed -e "s%RS_REVISION_NUMBER.*%RS_REVISION_NUMBER   0x${hhsh}%"  src/libretroshare/src/retroshare/rsversion.in > src/libretroshare/src/retroshare/rsversion.h
 
 # Various cleaning
 echo Cleaning...
@@ -157,6 +160,8 @@ for i in ${dist}; do
     if ! test "${i}" = "debian"; then
       echo copying changelog for ${i}
       sed -e s/XXXXXX/"${rev}"/g -e s/YYYYYY/"${i}"/g -e s/ZZZZZZ/"${version_number}"/g ../changelog > debian/changelog
+      sed -e s/XXXXXX/"-${gitrev}"/g debian/rules > debian_rules_tmp
+		cp debian_rules_tmp debian/rules
 
       if test ${useretrotor} = "true"; then
          cp ../rules.retrotor debian/rules

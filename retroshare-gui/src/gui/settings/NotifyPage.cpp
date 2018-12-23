@@ -322,7 +322,9 @@ void NotifyPage::load()
 	whileBlocking(ui.popup_NewMsg)->setChecked(notifyflags & RS_POPUP_MSG);
 	whileBlocking(ui.popup_DownloadFinished)->setChecked(notifyflags & RS_POPUP_DOWNLOAD);
 	whileBlocking(ui.popup_PrivateChat)->setChecked(notifyflags & RS_POPUP_CHAT);
+#ifdef RS_DIRECT_CHAT
 	whileBlocking(ui.popup_GroupChat)->setChecked(notifyflags & RS_POPUP_GROUPCHAT);
+#endif // def RS_DIRECT_CHAT
 	whileBlocking(ui.popup_ChatLobby)->setChecked(notifyflags & RS_POPUP_CHATLOBBY);
 	whileBlocking(ui.popup_ConnectAttempt)->setChecked(notifyflags & RS_POPUP_CONNECT_ATTEMPT);
 

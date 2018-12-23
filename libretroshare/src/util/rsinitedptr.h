@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2010-2010 by Retroshare Team <retroshare.team@gmail.com>          *
+ * Copyright 2010-2010 by Retroshare Team <retroshare.project@gmail.com>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *

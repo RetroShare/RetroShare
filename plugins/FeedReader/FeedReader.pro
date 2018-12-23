@@ -19,11 +19,16 @@
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
 CONFIG += qt uic qrc resources
+TARGET = FeedReader
+TARGET_PRL = FeedReader
+DESTDIR = lib
 
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
 	QT += widgets
 }
+
+target.files = lib/libFeedReader.so
 
 SOURCES =	FeedReaderPlugin.cpp \
 			services/p3FeedReader.cc \

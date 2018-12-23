@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/MessageComposer.cpp                             *
+ *                                                                             *
+ * Copyright (C) 2007 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 #include <QCloseEvent>
@@ -218,9 +217,7 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     /* initialize friends list */
     ui.friendSelectionWidget->setHeaderText(tr("Send To:"));
     ui.friendSelectionWidget->setModus(FriendSelectionWidget::MODUS_MULTI);
-    ui.friendSelectionWidget->setShowType(//FriendSelectionWidget::SHOW_GROUP	// removed this because it's too confusing.
-                                            FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS);
+	ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
     ui.friendSelectionWidget->start();
 
     QActionGroup *grp = new QActionGroup(this);
@@ -264,11 +261,9 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.respond_to_CB->setFlags(IDCHOOSER_ID_REQUIRED) ;
     
     /* Add filter types */
-    ui.filterComboBox->addItem(tr("All addresses (mixed)"));
-    ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
-    ui.filterComboBox->setCurrentIndex(2);
+	ui.filterComboBox->setCurrentIndex(0);
 
     if(rsIdentity->nbRegularContacts() > 0)
     	ui.filterComboBox->setCurrentIndex(3);
@@ -2592,25 +2587,14 @@ void MessageComposer::filterComboBoxChanged(int i)
 {
 	switch(i)
 	{
-		case 0:  ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL
-                                          | FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-				  
-		case 1: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GROUP
-                                          | FriendSelectionWidget::SHOW_SSL) ;
-				  break ;
-
-		case 2: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS) ;
-				  break ;
-
-					  
-		case 3: ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS) ;
-				  break ;		  
-				  				  
-		default: ;
+	default:
+	case 0:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.friendSelectionWidget->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
 	}
-
 }
 
 void MessageComposer::friendSelectionChanged()

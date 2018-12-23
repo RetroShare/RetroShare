@@ -111,8 +111,9 @@ rs_onlyhiddennode:CONFIG -= no_rs_onlyhiddennode
 CONFIG *= rs_gxs
 no_rs_gxs:CONFIG -= rs_gxs
 
-# To disable GXS distrubuting all available posts independed of the "sync" settings append the following
-# assignation to qmake command line "CONFIG+=no_rs_gxs_send_all"
+# To disable GXS distrubuting all available posts independed of the "sync"
+# settings append the following assignation to qmake command line
+# "CONFIG+=no_rs_gxs_send_all"
 CONFIG *= rs_gxs_send_all
 no_rs_gxs_send_all:CONFIG -= rs_gxs_send_all
 
@@ -135,6 +136,11 @@ CONFIG *= rs_gxs_trans
 # command line "CONFIG+=rs_async_chat"
 CONFIG *= no_rs_async_chat
 rs_async_chat:CONFIG -= no_rs_async_chat
+
+# To enable direct chat which has been deprecated since RetroShare 0.6.5 append
+# the following assignation to qmake command line "CONFIG+=direct_chat"
+CONFIG *= no_direct_chat
+direct_chat:CONFIG -= no_direct_chat
 
 # To disable bitdht append the following assignation to qmake command line
 # "CONFIG+=no_bitdht"
@@ -164,20 +170,20 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 # cross-compiling
 #JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MAJOR_VERSION=0'
+# Specify RetroShare major version (must be a number) appending the following
+# assignation to qmake command line 'RS_MAJOR_VERSION=0'
 #RS_MAJOR_VERSION=0
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MINOR_VERSION=6'
+# Specify RetroShare minor version (must be a number) appending the following
+# assignation to qmake command line 'RS_MINOR_VERSION=6'
 #RS_MINOR_VERSION=6
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_MINI_VERSION=4'
+# Specify RetroShare mini version (must be a number) appending the following
+# assignation to qmake command line 'RS_MINI_VERSION=4'
 #RS_MINI_VERSION=4
 
-# Specify RetroShare major version appending the following assignation to qmake
-# command line 'RS_EXTRA_VERSION=""'
+# Specify RetroShare extra version (must be a string) appending the following
+# assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
 
 
@@ -436,6 +442,11 @@ bitdht {
     DEFINES *= RS_USE_BITDHT
 }
 
+direct_chat {
+    warning("You have enabled RetroShare direct chat which is deprecated!")
+    DEFINES *= RS_DIRECT_CHAT
+}
+
 rs_async_chat {
     DEFINES *= RS_ASYNC_CHAT
 }
@@ -490,7 +501,7 @@ linux-* {
     isEmpty(RS_INCLUDE_DIR): RS_INCLUDE_DIR = "$${PREFIX}/include"
     isEmpty(RS_LIB_DIR)    : RS_LIB_DIR     = "$${PREFIX}/lib"
     isEmpty(RS_DATA_DIR)   : RS_DATA_DIR    = "$${PREFIX}/share/retroshare"
-    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${RS_LIB_DIR}/retroshare/extensions6"
+    isEmpty(RS_PLUGIN_DIR) : RS_PLUGIN_DIR  = "$${PREFIX}/lib/retroshare/extensions6"
 
     QMAKE_LIBDIR *= "$$RS_LIB_DIR"
 

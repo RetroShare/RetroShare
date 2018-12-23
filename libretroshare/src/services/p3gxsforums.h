@@ -38,55 +38,65 @@
 class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
 {
-	public:
+public:
+	p3GxsForums(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 
-	p3GxsForums(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
+	virtual RsServiceInfo getServiceInfo();
+	virtual void service_tick();
 
-virtual RsServiceInfo getServiceInfo();
-
-virtual void service_tick();
-
-	protected:
-
-
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
-
-        // Overloaded from RsTickEvent.
-virtual void handle_event(uint32_t event_type, const std::string &elabel);
+protected:
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);
+	/// Overloaded from RsTickEvent.
+	virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 	virtual RsSerialiser* setupSerialiser();                            // @see p3Config::setupSerialiser()
 	virtual bool saveList(bool &cleanup, std::list<RsItem *>&saveList); // @see p3Config::saveList(bool &cleanup, std::list<RsItem *>&)
 	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
-	public:
+public:
+	/// @see RsGxsForums::createForum
+	virtual bool createForum(RsGxsForumGroup& forum);
 
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
-virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
-//Not currently used
-//virtual bool getRelatedMessages(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+	/// @see RsGxsForums::createMessage
+	virtual bool createMessage(RsGxsForumMsg& message);
 
-        //////////////////////////////////////////////////////////////////////////////
-virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+	/// @see RsGxsForums::editForum
+	virtual bool editForum(RsGxsForumGroup& forum);
 
-//virtual bool setMessageStatus(const std::string &msgId, const uint32_t status, const uint32_t statusMask);
-//virtual bool setGroupSubscribeFlags(const std::string &groupId, uint32_t subscribeFlags, uint32_t subscribeMask);
+	/// @see RsGxsForums::getForumsSummaries
+	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums);
 
-//virtual bool groupRestoreKeys(const std::string &groupId);
-//virtual bool groupShareKeys(const std::string &groupId, std::list<std::string>& peers);
+	/// @see RsGxsForums::getForumsInfo
+	virtual bool getForumsInfo(
+	        const std::list<RsGxsGroupId>& forumIds,
+	        std::vector<RsGxsForumGroup>& forumsInfo );
 
-virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
-virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
+	/// @see RsGxsForums::getForumMsgMetaData
+	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
 
-/*!
- * To update forum group with new information
- * @param token the token used to check completion status of update
- * @param group group to be updated, groupId element must be set or will be rejected
- * @return false groupId not set, true if set and accepted (still check token for completion)
- */
-virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group);
+	/// @see RsGxsForums::getForumContent
+	virtual bool getForumContent(
+	        const RsGxsGroupId& forumId,
+	        std::set<RsGxsMessageId>& msgs_to_request,
+	        std::vector<RsGxsForumMsg>& msgs );
 
+	/// @see RsGxsForums::markRead
+	virtual bool markRead(const RsGxsGrpMsgIdPair& messageId, bool read);
 
-	private:
+	/// @see RsGxsForums::subscribeToForum
+	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
+	                               bool subscribe );
+
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
+	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
+	virtual bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas);
+	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read);
+	virtual bool createGroup(uint32_t &token, RsGxsForumGroup &group);
+	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg);
+	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group);
+
+private:
 
 static uint32_t forumsAuthenPolicy();
 

@@ -83,7 +83,7 @@ public:
 
 virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts);
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 
@@ -111,6 +111,17 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	virtual bool turtleSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
 	        rstime_t maxWait = 300 );
+
+	/// @see RsGxsChannels::turtleChannelRequest
+	virtual bool turtleChannelRequest(
+	        const RsGxsGroupId& channelId,
+	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
+	        rstime_t maxWait = 300 );
+
+	/// @see RsGxsChannels::localSearchRequest
+	virtual bool localSearchRequest(const std::string& matchString,
+	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        rstime_t maxWait = 30 ) override;
 
 	/**
 	 * Receive results from turtle search @see RsGenExchange @see RsNxsObserver
@@ -175,16 +186,39 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        std::vector<RsGxsChannelGroup>& channelsInfo );
 
 	/// Implementation of @see RsGxsChannels::getChannelContent
-	virtual bool getChannelsContent(
-	        const std::list<RsGxsGroupId>& chanIds,
-	        std::vector<RsGxsChannelPost>& posts,
-	        std::vector<RsGxsComment>& comments );
+	virtual bool getChannelContent( const RsGxsGroupId& channelId,
+	                       const std::set<RsGxsMessageId>& contentsIds,
+	                       std::vector<RsGxsChannelPost>& posts,
+	                       std::vector<RsGxsComment>& comments );
+
+	/// Implementation of @see RsGxsChannels::getContentSummaries
+	virtual bool getContentSummaries( const RsGxsGroupId& channelId,
+	                                  std::vector<RsMsgMetaData>& summaries );
 
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(RsGxsChannelGroup& channel);
 
+	/// Implementation of @see RsGxsChannels::createComment
+	virtual bool createComment(RsGxsComment& comment);
+
+	/// Implementation of @see RsGxsChannels::editChannel
+	virtual bool editChannel(RsGxsChannelGroup& channel);
+
 	/// Implementation of @see RsGxsChannels::createPost
 	virtual bool createPost(RsGxsChannelPost& post);
+
+	/// Implementation of @see RsGxsChannels::createVote
+	virtual bool createVote(RsGxsVote& vote);
+
+	/// Implementation of @see RsGxsChannels::subscribeToChannel
+	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
+	                                 bool subscribe );
+
+	/// Implementation of @see RsGxsChannels::setPostRead
+	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read);
+
+	virtual bool shareChannelKeys(
+	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers );
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
@@ -201,10 +235,8 @@ static uint32_t channelsAuthenPolicy();
 	void load_SubscribedGroups(const uint32_t &token);
 
 	void request_SpecificUnprocessedPosts(std::list<std::pair<RsGxsGroupId, RsGxsMessageId> > &ids);
-	void load_SpecificUnprocessedPosts(const uint32_t &token);
-
 	void request_GroupUnprocessedPosts(const std::list<RsGxsGroupId> &grouplist);
-	void load_GroupUnprocessedPosts(const uint32_t &token);
+	void load_unprocessedPosts(uint32_t token);
 
 	void handleUnprocessedPost(const RsGxsChannelPost &msg);
 
@@ -213,11 +245,6 @@ static uint32_t channelsAuthenPolicy();
 	void clearUnsubscribedGroup(const RsGxsGroupId &id);
 	bool setAutoDownload(const RsGxsGroupId &groupId, bool enabled);
 	bool autoDownloadEnabled(const RsGxsGroupId &groupId, bool &enabled);
-
-
-
-	std::map<RsGxsGroupId, RsGroupMetaData> mSubscribedGroups;
-
 
 // DUMMY DATA,
 virtual bool generateDummyData();
@@ -246,14 +273,21 @@ bool generateGroup(uint32_t &token, std::string groupName);
 		RsGxsMessageId mMsgId;
 	};
 
+	std::map<RsGxsGroupId, RsGroupMetaData> mSubscribedGroups;
+	RsMutex mSubscribedGroupsMutex;
+
+	/** G10h4ck: Is this stuff really used? And for what? BEGIN */
 	uint32_t mGenToken;
 	bool mGenActive;
 	int mGenCount;
 	std::vector<ChannelDummyRef> mGenRefs;
 	RsGxsMessageId mGenThreadId;
+	/** G10h4ck: Is this stuff really used? And for what? END */
 
-	p3GxsCommentService *mCommentService;
-    std::map<RsGxsGroupId,rstime_t> mKnownChannels;
+	p3GxsCommentService* mCommentService;
+
+	std::map<RsGxsGroupId,rstime_t> mKnownChannels;
+	RsMutex mKnownChannelsMutex;
 
 	/** Store search callbacks with timeout*/
 	std::map<
@@ -264,8 +298,17 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	 > mSearchCallbacksMap;
 	RsMutex mSearchCallbacksMapMutex;
 
-	/// Cleanup mSearchCallbacksMap
-	void cleanTimedOutSearches();
+	/** Store distant channels requests callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const RsGxsChannelGroup&)>,
+	        std::chrono::system_clock::time_point >
+	 > mDistantChannelsCallbacksMap;
+	RsMutex mDistantChannelsCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap and mDistantChannelsCallbacksMap
+	void cleanTimedOutCallbacks();
 };
 
 #endif 

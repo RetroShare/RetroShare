@@ -1934,6 +1934,9 @@ RsInit::LoadCertificateStatus RsLoginHelper::attemptLogin(
 	return RsInit::ERR_UNKOWN;
 }
 
+/*static*/ bool RsLoginHelper::collectEntropy(uint32_t bytes)
+{ return RsInit::collectEntropy(bytes); }
+
 void RsLoginHelper::getLocations(std::vector<RsLoginHelper::Location>& store)
 {
 	std::list<RsPeerId> locIds;

@@ -288,6 +288,14 @@ struct RsLoginHelper
 	RsInit::LoadCertificateStatus attemptLogin(
 	        const RsPeerId& account, const std::string& password );
 
+	/**
+	 * @brief Feed extra entropy to the crypto libraries
+	 * @jsonapi{development,unauthenticated}
+	 * @param[in] bytes number to feed to the entropy pool
+	 * @return false if error occurred, true otherwise
+	 */
+	static bool collectEntropy(uint32_t bytes);
+
 	struct Location : RsSerializable
 	{
 		RsPeerId mLocationId;

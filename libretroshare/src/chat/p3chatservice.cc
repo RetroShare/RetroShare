@@ -848,9 +848,18 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
             RsServer::notify()->AddPopupMessage(popupChatFlag, ci->PeerId().toStdString(), name, message); /* notify private chat message */
         else
         {
-            /* notify public chat message */
-            RsServer::notify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId().toStdString(), "", message);
-            RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId().toStdString(), message, "");
+#ifdef RS_DIRECT_CHAT
+			/* notify public chat message */
+			RsServer::notify()->AddPopupMessage(
+			            RS_POPUP_GROUPCHAT,
+			            ci->PeerId().toStdString(), "", message );
+			RsServer::notify()->AddFeedItem(
+			            RS_FEED_ITEM_CHAT_NEW,
+			            ci->PeerId().toStdString(), message, "" );
+#else // def RS_DIRECT_CHAT
+			/* Ignore deprecated direct node broadcast chat messages */
+			return false;
+#endif
         }
     }
 

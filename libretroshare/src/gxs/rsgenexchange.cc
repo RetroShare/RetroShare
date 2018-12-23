@@ -1925,7 +1925,7 @@ void RsGenExchange::setGroupStatusFlags(uint32_t& token, const RsGxsGroupId& grp
 
 void RsGenExchange::setGroupServiceString(uint32_t& token, const RsGxsGroupId& grpId, const std::string& servString)
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx);
     token = mDataAccess->generatePublicToken();
 
     GrpLocMetaData g;
@@ -3428,4 +3428,10 @@ void RsGenExchange::turtleGroupRequest(const RsGxsGroupId& group_id)
 void RsGenExchange::turtleSearchRequest(const std::string& match_string)
 {
     mNetService->turtleSearchRequest(match_string) ;
+}
+
+bool RsGenExchange::localSearch( const std::string& matchString,
+                  std::list<RsGxsGroupSummary>& results )
+{
+	return mNetService->search(matchString, results);
 }

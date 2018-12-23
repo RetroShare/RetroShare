@@ -769,7 +769,8 @@ HEADERS += serialiser/rsserializable.h \
            serialiser/rstypeserializer.h \
            util/rsjson.h
 
-SOURCES += serialiser/rsserializer.cc \
+SOURCES += serialiser/rsserializable.cc \
+           serialiser/rsserializer.cc \
            serialiser/rstypeserializer.cc \
            util/rsjson.cc
 

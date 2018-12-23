@@ -318,7 +318,7 @@ public:
 	/**
 	 * @brief Get free disk space limit
 	 * @jsonapi{development}
-	 * @return current current minimum free space on disk in MB
+	 * @return current minimum free space on disk in MB
 	 */
 	virtual uint32_t freeDiskSpaceLimit() const = 0;
 
@@ -329,8 +329,15 @@ public:
 	 */
 	virtual void setFreeDiskSpaceLimit(uint32_t minimumFreeMB) = 0;
 
-		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
-		virtual bool FileClearCompleted() = 0;
+	virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
+
+	/**
+	 * @brief Clear completed downloaded files list
+	 * @jsonapi{development}
+	 * @return false on error, true otherwise
+	 */
+	virtual bool FileClearCompleted() = 0;
+
 		virtual void setDefaultEncryptionPolicy(uint32_t policy)=0;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
 		virtual uint32_t defaultEncryptionPolicy()=0;
 		virtual void setMaxUploadSlotsPerFriend(uint32_t n)=0;
@@ -390,7 +397,7 @@ public:
 	 * @return true if file found, false otherwise
 	 */
 	virtual bool FileDetails(
-	        const RsFileHash &hash, FileSearchFlags hintflags, FileInfo& info ) = 0;
+	        const RsFileHash& hash, FileSearchFlags hintflags, FileInfo& info ) = 0;
 
         virtual bool isEncryptedSource(const RsPeerId& virtual_peer_id) =0;
 

@@ -28,8 +28,14 @@ exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
 } else {
   QT += multimedia
 }
+
 CONFIG += qt uic qrc resources
 MOBILITY = multimedia
+TARGET = VOIP
+TARGET_PRL = VOIP
+DESTDIR = lib
+
+target.files = lib/libVOIP.so
 
 DEPENDPATH += $$PWD/../../retroshare-gui/src/temp/ui
 INCLUDEPATH += $$PWD/../../retroshare-gui/src/temp/ui
