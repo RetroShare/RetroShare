@@ -40,9 +40,6 @@ public:
 	virtual QString pageName() const { return tr("Channels") ; }
 	virtual QString helpText() const { return ""; }
 
-private slots:
-	void updateEmotes();
-  
 protected slots:
 	void updateLoadThread() ;
 

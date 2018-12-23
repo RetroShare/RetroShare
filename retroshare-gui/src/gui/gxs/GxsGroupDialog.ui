@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>658</height>
+    <width>1237</width>
+    <height>1189</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="gridLayout_8">
@@ -655,9 +655,6 @@
              <widget class="GxsIdLabel" name="authorLabel">
               <property name="text">
                <string>GxsIdLabel</string>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
               </property>
              </widget>
             </item>
