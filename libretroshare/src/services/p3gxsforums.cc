@@ -460,7 +460,9 @@ bool p3GxsForums::getForumsInfo(
 	return getGroupData(token, forumsInfo);
 }
 
-bool p3GxsForums::getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,std::vector<RsGxsForumMsg>& msgs)
+bool p3GxsForums::getForumContent(
+        const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,
+        std::vector<RsGxsForumMsg>& msgs )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
@@ -469,21 +471,11 @@ bool p3GxsForums::getForumsContent( const RsGxsGroupId& forumId, std::set<RsGxsM
 	GxsMsgReq msgIds;
 	msgIds[forumId] = msgs_to_request;
 
-	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	if( !requestMsgInfo(token, opts, msgIds) ||
+	        waitToken(token,std::chrono::seconds(5)) != RsTokenService::COMPLETE )
+		return false;
 
-	return getMsgData(token, msgs) ;
-}
-
-bool p3GxsForums::getForumsContent(
-        const std::list<RsGxsGroupId>& forumIds,
-        std::vector<RsGxsForumMsg>& messages )
-{
-	uint32_t token;
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	if( !requestMsgInfo(token, opts, forumIds)
-	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
-	return getMsgData(token, messages);
+	return getMsgData(token, msgs);
 }
 
 

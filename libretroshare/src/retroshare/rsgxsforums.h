@@ -143,40 +143,28 @@ public:
 	        const std::list<RsGxsGroupId>& forumIds,
 	        std::vector<RsGxsForumGroup>& forumsInfo ) = 0;
 
-
 	/**
-	 * @brief Get content of specified forums. Blocking API
+	 * @brief Get message metadatas for a specific forum. Blocking API
 	 * @jsonapi{development}
-	 * @param[in] forumIds id of the forum of which the content is requested
-	 * @param[out] messages storage for the forum messages
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool getForumsContent(
-	        const std::list<RsGxsGroupId>& forumIds,
-	        std::vector<RsGxsForumMsg>& messages ) = 0;
-
-	/**
-	 * @brief Get message metadatas for some messages of a specific forum. Blocking API
-	 * @jsonapi{development}
-	 * @param[in] forumIds id of the forum of which the content is requested
-	 * @param[out] msg_metas storage for the forum messages meta data
+	 * @param[in] forumId id of the forum of which the content is requested
+	 * @param[out] msgMetas storage for the forum messages meta data
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getForumMsgMetaData( const RsGxsGroupId& forumId,
-                                      std::vector<RsMsgMetaData>& msg_metas) =0;
+	                                  std::vector<RsMsgMetaData>& msgMetas) = 0;
 
 	/**
 	 * @brief Get specific list of messages from a single forums. Blocking API
 	 * @jsonapi{development}
 	 * @param[in] forumId id of the forum of which the content is requested
-	 * @param[in] msgs_to_request list of message ids to request
+	 * @param[in] msgsIds list of message ids to request
 	 * @param[out] msgs storage for the forum messages
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getForumsContent(
-            const RsGxsGroupId& forumId,
-            std::set<RsGxsMessageId>& msgs_to_request,
-            std::vector<RsGxsForumMsg>& msgs) =0;
+	virtual bool getForumContent(
+	        const RsGxsGroupId& forumId,
+	        std::set<RsGxsMessageId>& msgsIds,
+	        std::vector<RsGxsForumMsg>& msgs) = 0;
 
 	/**
 	 * @brief Toggle message read status. Blocking API.
@@ -200,7 +188,7 @@ public:
 	/* Specific Service Data */
 	RS_DEPRECATED_FOR("getForumsSummaries, getForumsInfo")
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
-	RS_DEPRECATED_FOR(getForumsContent)
+	RS_DEPRECATED_FOR(getForumContent)
 	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs) = 0;
 	RS_DEPRECATED_FOR(markRead)
 	virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
