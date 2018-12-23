@@ -32,6 +32,9 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
+#include "gui/RetroShareLink.h"
+#include "util/HandleRichText.h"
+
 #include <algorithm>
 #include "util/DateTime.h"
 
@@ -257,6 +260,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
     bool autoDownload ;
             rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
+	
+	RetroShareLink link;
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
 		ui->feedToolButton->setEnabled(true);
@@ -273,9 +278,24 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
             ui->infoLastPost->setText(tr("Never"));
         else
             ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-        ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+		
+			QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
+
+			unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
+
+			// embed smileys ?
+			if (Settings->valueFromGroup(QString("ChannelPostsWidget"), QString::fromUtf8("Emoteicons_ChannelDecription"), true).toBool()) {
+				formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
+			}
+
+			formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
+
+			ui->infoDescription->setText(formatDescription);
         
         	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
+			
+			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+			ui->infoAdministrator->setText(link.toHtml());
         
         	QString distrib_string ( "[unknown]" );
             
@@ -302,6 +322,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		default:
 			std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
 		}
+		
  
 		ui->infoDistribution->setText(distrib_string);
 

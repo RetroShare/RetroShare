@@ -52,4 +52,15 @@ void ChannelPage::load()
 {
 	whileBlocking(ui.loadThreadCheckBox)->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
+	
+	Settings->beginGroup(QString("ChannelPostsWidget"));
+    whileBlocking(ui.emoteicon_checkBox)->setChecked(Settings->value("Emoteicons_ChannelDecription", true).toBool());
+    Settings->endGroup();
+}
+
+void ChannelPage::updateEmotes()
+{
+    Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->setValue("Emoteicons_ChannelDecription", ui.emoteicon_checkBox->isChecked());
+    Settings->endGroup();
 }
