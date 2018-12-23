@@ -460,7 +460,6 @@ HEADERS +=  rshare.h \
             gui/settings/PeoplePage.h \
             gui/settings/AboutPage.h \
             gui/settings/ServerPage.h \
-            gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
             gui/settings/CryptoPage.h \
             gui/settings/MessagePage.h \
@@ -646,7 +645,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/ServerPage.ui \
-            gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
             gui/settings/PeoplePage.ui \
             gui/settings/CryptoPage.ui \
@@ -870,7 +868,6 @@ SOURCES +=  main.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/AboutPage.cpp \
             gui/settings/ServerPage.cpp \
-            gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/PeoplePage.cpp \
