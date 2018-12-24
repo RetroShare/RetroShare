@@ -927,7 +927,7 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 				if( !IS_FORUM_MSG_MODERATION(msgIt->second.mMsgFlags) )			// if authors are different the moderation flag needs to be set on the editing msg
 					continue ;
 
-				if( forum_group.mAdminList.ids.find(msgIt->second.mAuthorId)==forum_group.mAdminList.ids.end())	// if author is not a moderator, continue
+				if( !forum_group.canEditPosts(msgIt->second.mAuthorId))			// if author is not a moderator, continue
 					continue ;
 			}
 

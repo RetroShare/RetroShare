@@ -74,6 +74,10 @@ struct RsGxsForumGroup : RsSerializable
 		RS_SERIAL_PROCESS(mAdminList);
 		RS_SERIAL_PROCESS(mPinnedPosts);
 	}
+
+    // utility functions
+
+    bool canEditPosts(const RsGxsId& id) const { return mAdminList.ids.find(id) != mAdminList.ids.end() || id == mMeta.mAuthorId; }
 };
 
 struct RsGxsForumMsg : RsSerializable
