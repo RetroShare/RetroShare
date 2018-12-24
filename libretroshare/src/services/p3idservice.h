@@ -279,8 +279,11 @@ public:
 	virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment, 
 	                                 uint16_t tag_class, uint16_t tag_type, std::string &tag);
 
-	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) ;
-	virtual bool isARegularContact(const RsGxsId& id) ;
+	virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) override;
+	virtual bool isARegularContact(const RsGxsId& id) override;
+	virtual void setAutoAddFriendIdsAsContact(bool b) override;
+	virtual bool autoAddFriendIdsAsContact() override;
+
 	virtual uint32_t nbRegularContacts() ;
 	virtual rstime_t getLastUsageTS(const RsGxsId &id) ;
 
@@ -597,6 +600,7 @@ private:
 	rstime_t mLastConfigUpdate ;
 
 	bool mOwnIdsLoaded ;
+	bool mAutoAddFriendsIdentitiesAsContacts;
     uint32_t mMaxKeepKeysBanned ;
 };
 
