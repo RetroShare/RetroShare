@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1237</width>
-    <height>1189</height>
+    <height>1206</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
       <enum>QFrame::Raised</enum>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="createmode">
       <layout class="QGridLayout" name="gridLayout_8">
@@ -169,10 +169,10 @@
               <item>
                <widget class="QLabel" name="label_2">
                 <property name="toolTip">
-                 <string>Will be used to send feedback</string>
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The identity here can be used to send feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="text">
-                 <string>Contact:</string>
+                 <string>Owner:</string>
                 </property>
                </widget>
               </item>
@@ -399,7 +399,7 @@
           <item>
            <widget class="QRadioButton" name="publish_required">
             <property name="text">
-             <string>Required</string>
+             <string>Re&amp;quired</string>
             </property>
            </widget>
           </item>
@@ -855,8 +855,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
