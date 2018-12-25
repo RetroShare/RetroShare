@@ -48,6 +48,7 @@ protected slots:
 
     void updateRememberDeletedNodes();
     void updateDeleteBannedNodesThreshold() ;
+	void updateAutoAddFriendIdsAsContact()  ;
 
 private:
 	Ui::PeoplePage ui;

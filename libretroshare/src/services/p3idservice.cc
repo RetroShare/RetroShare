@@ -166,6 +166,7 @@ p3IdService::p3IdService(
     mLastKeyCleaningTime = time(NULL) - int(MAX_DELAY_BEFORE_CLEANING * 0.9) ;
     mLastConfigUpdate = 0 ;
     mOwnIdsLoaded = false ;
+	mAutoAddFriendsIdentitiesAsContacts = true; // default
     mMaxKeepKeysBanned = MAX_KEEP_KEYS_BANNED_DEFAULT;
 
 	// Kick off Cache Testing, + Others.
@@ -238,6 +239,7 @@ bool p3IdService::isARegularContact(const RsGxsId& id)
 
 bool p3IdService::setAsRegularContact(const RsGxsId& id,bool b)
 {
+    RsStackMutex stack(mIdMtx);
     std::set<RsGxsId>::iterator it = mContacts.find(id) ;
     
     if(b && (it == mContacts.end()))
@@ -343,6 +345,8 @@ bool p3IdService::loadList(std::list<RsItem*>& items)
 					    std::cerr << "Setting mMaxKeepKeysBanned threshold to " << val << std::endl ;
 				    }
 			    };
+                if(kit->key == "AUTO_SET_FRIEND_IDENTITIES_AS_CONTACT")
+					mAutoAddFriendsIdentitiesAsContacts = (kit->value == "YES") ;
             }
 
         delete *it ;
@@ -368,6 +372,20 @@ uint32_t p3IdService::deleteBannedNodesThreshold()
     return mMaxKeepKeysBanned/86400;
 }
 
+void p3IdService::setAutoAddFriendIdsAsContact(bool b)
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+    if(b != mAutoAddFriendsIdentitiesAsContacts)
+    {
+        IndicateConfigChanged();
+        mAutoAddFriendsIdentitiesAsContacts=b;
+    }
+}
+bool p3IdService::autoAddFriendIdsAsContact()
+{
+    RS_STACK_MUTEX(mIdMtx) ;
+    return mAutoAddFriendsIdentitiesAsContacts;
+}
 
 bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 {
@@ -391,6 +409,10 @@ bool p3IdService::saveList(bool& cleanup,std::list<RsItem*>& items)
 
 	kv.key = "REMOVE_BANNED_IDENTITIES_DELAY" ;
 	rs_sprintf(kv.value, "%d", mMaxKeepKeysBanned);
+	vitem->tlvkvs.pairs.push_back(kv) ;
+
+	kv.key = "AUTO_SET_FRIEND_IDENTITIES_AS_CONTACT" ;
+	kv.value = mAutoAddFriendsIdentitiesAsContacts?"YES":"NO";
 	vitem->tlvkvs.pairs.push_back(kv) ;
 
     items.push_back(vitem) ;
@@ -650,13 +672,23 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
         if (mKeyCache.fetch(id, data))
         {
+            bool is_a_contact = (mContacts.find(id) != mContacts.end());
+
+            details = data.details;
+
+            if(mAutoAddFriendsIdentitiesAsContacts && (!is_a_contact) && (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
+            {
+				mContacts.insert(id) ;
+				slowIndicateConfigChanged() ;
+
+                is_a_contact = true;
+            }
+
             // This step is needed, because p3GxsReputation does not know all identities, and might not have any data for
             // the ones in the contact list. So we change them on demand.
 
-            if(mContacts.find(id) != mContacts.end() && rsReputations->nodeAutoPositiveOpinionForContacts())
-                rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
-
-            details = data.details;
+            if(is_a_contact && rsReputations->nodeAutoPositiveOpinionForContacts())
+					rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
 
 			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
 
