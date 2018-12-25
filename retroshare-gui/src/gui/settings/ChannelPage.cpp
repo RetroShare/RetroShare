@@ -35,6 +35,8 @@ ChannelPage::ChannelPage(QWidget * parent, Qt::WindowFlags flags)
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Channel) ;
 
     connect(ui.loadThreadCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateLoadThread())) ;
+	connect(ui.emoteicon_checkBox,SIGNAL(toggled(bool)),this,SLOT(updateEmotes())) ;
+
 }
 
 void ChannelPage::updateLoadThread()
@@ -52,4 +54,15 @@ void ChannelPage::load()
 {
 	whileBlocking(ui.loadThreadCheckBox)->setChecked(Settings->getChannelLoadThread());
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Channel);
+	
+	Settings->beginGroup(QString("ChannelPostsWidget"));
+    whileBlocking(ui.emoteicon_checkBox)->setChecked(Settings->value("Emoteicons_ChannelDecription", true).toBool());
+    Settings->endGroup();
+}
+
+void ChannelPage::updateEmotes()
+{
+    Settings->beginGroup(QString("ChannelPostsWidget"));
+    Settings->setValue("Emoteicons_ChannelDecription", ui.emoteicon_checkBox->isChecked());
+    Settings->endGroup();
 }

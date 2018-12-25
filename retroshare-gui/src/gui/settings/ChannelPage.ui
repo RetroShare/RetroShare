@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>423</width>
-    <height>340</height>
+    <height>334</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
@@ -33,6 +33,13 @@
        <widget class="QCheckBox" name="loadThreadCheckBox">
         <property name="text">
          <string>Load posts in background (Thread)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="emoteicon_checkBox">
+        <property name="text">
+         <string>Load Emoticons</string>
         </property>
        </widget>
       </item>
