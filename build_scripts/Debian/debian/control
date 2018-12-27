@@ -6,20 +6,20 @@ Build-Depends: debhelper (>= 10),  libglib2.0-dev, libupnp-dev, libssl-dev, libx
 Standards-Version: 4.1.4
 Homepage: http://retroshare.sourceforge.net
 
-Package: retroshare-voip-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
-Description: VOIP plugin for the Retroshare communication platform
- This package provides a plugin for RetroShare, a secured Friend-to-Friend
- communication plateform. The plugin adds voice-over-IP functionality to the
- private chat window. Both friends chatting together need the plugin installed
- to be able to talk together.
-
-Package: retroshare-feedreader-plugin
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
-Description: FeedReader plugin for the Retroshare communication platform
- Plugin for Retroshare, adding a RSS feed reader tab to retroshare.
+# Package: retroshare-voip-plugin
+# Architecture: any
+# Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
+# Description: VOIP plugin for the Retroshare communication platform
+#  This package provides a plugin for RetroShare, a secured Friend-to-Friend
+#  communication plateform. The plugin adds voice-over-IP functionality to the
+#  private chat window. Both friends chatting together need the plugin installed
+#  to be able to talk together.
+# 
+# Package: retroshare-feedreader-plugin
+# Architecture: any
+# Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
+# Description: FeedReader plugin for the Retroshare communication platform
+#  Plugin for Retroshare, adding a RSS feed reader tab to retroshare.
 
 Package: retroshare-nogui
 Architecture: any

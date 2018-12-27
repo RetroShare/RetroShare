@@ -1,4 +1,4 @@
-retroshare (0.6.4-1) UNRELEASED; urgency=medium
+retroshare (0.6.5-1) UNRELEASED; urgency=medium
 
   * Initial release for Debian. (Closes: #659069)
 
