@@ -772,8 +772,11 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 
         // NEW code, set validity time between null and null
         // (does not leak the key creation date to the outside anymore. for more privacy)
-        ASN1_TIME_set(X509_get_notBefore(x509), 0);
-        ASN1_TIME_set(X509_get_notAfter(x509), 0);
+//        ASN1_TIME_set(X509_get_notBefore(x509), 0);
+//        ASN1_TIME_set(X509_get_notAfter(x509), 0);
+
+        X509_gmtime_adj(X509_get_notBefore(x509), 0);
+        X509_gmtime_adj(X509_get_notAfter(x509), 315360000L);
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
         {
