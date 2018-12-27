@@ -22,7 +22,7 @@ echo This script is going to build the debian source package for RetroShare, fro
 
 if test -d "${workdir}" ;  then
     echo Removing the ${workdir} directory...
-    rm -i -rf ${workdir}
+    rm -rf ${workdir}
 fi
 
 # Parse options
@@ -71,29 +71,31 @@ done
 removeIrrelevantFiles() {
 	echo Removing irrelevant files in directory ${workdir}...
 	# remove unised qml code, only needed on Android
-	rm -i -rf ${workdir}/src/retroshare-qml-app/
-	rm -i -rf ${workdir}/src/librssimulator/
-	rm -i -rf ${workdir}/src/libretroshare/src/tests/
-	rm -i -rf ${workdir}/src/libretroshare/src/unfinished/
-	rm -i -rf ${workdir}/src/libretroshare/unused/
-	rm -i -rf ${workdir}/src/retroshare-android-notify-service/
-	rm -i -rf ${workdir}/src/retroshare-android-service/
-	rm -i -rf ${workdir}/src/libretroshare/src/unused/
-	rm -i -rf ${workdir}/src/supportlibs/
-	rm -i -rf ${workdir}/src/retroshare-service/
-	rm -i -rf ${workdir}/src/plugins/
-	rm -i -rf ${workdir}/src/unittests/
-	rm -i -rf ${workdir}/src/tests/
-	rm -i -rf ${workdir}/src/build_scripts/
-	rm -i -rf ${workdir}/src/libbitdht/src/tests/
-	rm -i -rf ${workdir}/src/libbitdht/src/example/
-	rm -i -f ${workdir}/debian/*~
-	rm -i -f ${workdir}/debian/.*.sw?
-	rm -i -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble_Compact/private/images.sh
-	rm -i -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/src/images.sh
-	rm -i -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/public/images.sh
-	rm -i -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/"history"/images.sh
-	rm -i -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/private/images.sh
+	rm -rf ${workdir}/src/retroshare-qml-app/
+	rm -rf ${workdir}/src/librssimulator/
+	rm -rf ${workdir}/src/libretroshare/src/tests/
+	rm -rf ${workdir}/src/libretroshare/src/unfinished/
+	rm -rf ${workdir}/src/libretroshare/unused/
+	rm -rf ${workdir}/src/retroshare-android-notify-service/
+	rm -rf ${workdir}/src/retroshare-android-service/
+	rm -rf ${workdir}/src/libretroshare/src/unused/
+	rm -rf ${workdir}/src/supportlibs/
+	rm -rf ${workdir}/src/retroshare-service/
+	rm -rf ${workdir}/src/plugins/
+	rm -rf ${workdir}/src/unittests/
+	rm -rf ${workdir}/src/tests/
+	rm -rf ${workdir}/src/build_scripts/
+	rm -rf ${workdir}/src/libbitdht/src/tests/
+	rm -rf ${workdir}/src/libbitdht/src/example/
+	rm -rf ${workdir}/src/retroshare-gui/src/gui/WikiPoos/
+	rm -rf ${workdir}/src/retroshare-gui/src/Unused/
+	rm -f ${workdir}/debian/*~
+	rm -f ${workdir}/debian/.*.sw?
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble_Compact/private/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/src/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/public/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/"history"/images.sh
+	rm -f ${workdir}/src/retroshare-gui/src/gui/qss/chat/Bubble/private/images.sh
 }
 
 echo Attempting to get revision number...
@@ -163,7 +165,7 @@ if ! test "${nodl}" = "yes"; then
 	# Various cleaning
 	echo Cleaning...
 
-	\rm -i -rf src/.git
+	\rm -rf src/.git
 
 	if test "${makeorig}" = "yes" ; then
 		echo making orig archive
