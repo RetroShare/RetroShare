@@ -129,7 +129,7 @@ void CreateLobbyDialog::createLobby()
 
     if (lobby_name.empty())
     {
-        QMessageBox::warning(this, "P2PUnseen", tr("Please enter group name, P2PUnseen App does not accept empty group name"), QMessageBox::Ok, QMessageBox::Ok);
+        QMessageBox::warning(this, "UnseenP2P", tr("Please enter group name, UnseenP2P does not accept empty group name"), QMessageBox::Ok, QMessageBox::Ok);
         return;
     }
 
