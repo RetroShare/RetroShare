@@ -73,8 +73,8 @@ removeIrrelevantFiles() {
 	# remove unised qml code, only needed on Android
 	rm -i -rf ${workdir}/src/retroshare-qml-app/
 	rm -i -rf ${workdir}/src/librssimulator/
-	rm -i -rf ${workdir}/src/libretroshare/tests/
-	rm -i -rf ${workdir}/src/libretroshare/unfinished/
+	rm -i -rf ${workdir}/src/libretroshare/src/tests/
+	rm -i -rf ${workdir}/src/libretroshare/src/unfinished/
 	rm -i -rf ${workdir}/src/libretroshare/unused/
 	rm -i -rf ${workdir}/src/retroshare-android-notify-service/
 	rm -i -rf ${workdir}/src/retroshare-android-service/
