@@ -410,7 +410,7 @@ HEADERS +=  rshare.h \
             util/dllexport.h \
             util/global.h \
             util/rsqtutildll.h \
-            util/Interface.h \
+#            util/Interface.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
@@ -770,7 +770,7 @@ SOURCES +=  main.cpp \
             util/DateTime.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
-            util/NonCopyable.cpp \
+#            util/NonCopyable.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
