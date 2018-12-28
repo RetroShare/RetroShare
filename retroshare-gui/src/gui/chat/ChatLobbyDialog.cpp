@@ -67,7 +67,7 @@ const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
         : ChatDialog(parent, flags), lobbyId(lid),
           bullet_red_128(":/app/images/statusicons/dnd.png"), bullet_grey_128(":/app/images/statusicons/bad.png"),
-          bullet_green_128(":/app/images/statusicons/online.png"), bullet_yellow_128(":/app/images/statusicons/offline.png")
+          bullet_green_128(":/app/images/statusicons/online.png"), bullet_yellow_128(":/app/images/statusicons/away.png")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -369,7 +369,7 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
     {
         title = QString::fromUtf8(linfo.lobby_name.c_str());
 
-        QString msg = tr("Welcome to chat room %1").arg(RsHtml::plainText(linfo.lobby_name));
+        QString msg = tr("Welcome to group chat %1").arg(RsHtml::plainText(linfo.lobby_name));
         _lobby_name = QString::fromUtf8(linfo.lobby_name.c_str()) ;
         if (!linfo.lobby_topic.empty()) {
             msg += "\n" + tr("Topic: %1").arg(RsHtml::plainText(linfo.lobby_topic));
@@ -533,10 +533,14 @@ void ChatLobbyDialog::addChatMsg(const ChatMessage& msg)
         editor.setHtml(message);
         QString notifyMsg = name + ": " + editor.toPlainText();
 
-        if(notifyMsg.length() > 30)
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
-        else
-            MainWindow::displayLobbySystrayMsg(tr("Room chat") + ": " + _lobby_name, notifyMsg);
+        if(msg.incoming)
+        {
+            if(notifyMsg.length() > 30)
+                MainWindow::displayLobbySystrayMsg(tr("Group chat") + ": " + _lobby_name, notifyMsg.left(30) + QString("..."));
+            else
+                MainWindow::displayLobbySystrayMsg(tr("Group chat") + ": " + _lobby_name, notifyMsg);
+        }
+
     }
 
 	// also update peer list.
@@ -574,7 +578,7 @@ void ChatLobbyDialog::updateParticipantsList()
                 delete ui.participantsList->takeTopLevelItem(index);
             }
 
-        for (std::map<RsGxsId,time_t>::const_iterator it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
+		for (auto it2(linfo.gxs_ids.begin()); it2 != linfo.gxs_ids.end(); ++it2)
         {
             QString participant = QString::fromUtf8( (it2->first).toStdString().c_str() );
 

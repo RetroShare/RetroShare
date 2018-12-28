@@ -153,7 +153,7 @@ class MessageInfo_v2
 		//
 		std::string subject;
 		std::string msg;
-		time_t time_stamp ;
+		rstime_t time_stamp ;
 
 		//std::list<MessageHeader> headers ;
 
@@ -214,7 +214,7 @@ class MsgInfoSummary
 
 	std::string title;
 	int count; /* file count     */
-	time_t ts;
+	rstime_t ts;
 
 };
 
@@ -383,7 +383,7 @@ public:
 	std::set<RsPeerId> participating_friends ;	// list of direct friend who participate.
 
 	uint32_t total_number_of_peers ;			// total number of particpating peers. Might not be
-	time_t last_report_time ; 					// last time the lobby was reported.
+	rstime_t last_report_time ; 					// last time the lobby was reported.
 	ChatLobbyFlags lobby_flags ;				// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
 
 	// RsSerializable interface
@@ -411,8 +411,8 @@ public:
 	RsGxsId gxs_id ;							// ID to sign messages
 
 	ChatLobbyFlags lobby_flags ;				// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
-	std::map<RsGxsId, time_t> gxs_ids ;			// list of non direct friend who participate. Used to display only.
-	time_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
+	std::map<RsGxsId, rstime_t> gxs_ids ;			// list of non direct friend who participate. Used to display only.
+	rstime_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
 
 	// RsSerializable interface
 public:
@@ -585,6 +585,16 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	 * @param[out] public_lobbies list of all visible lobbies
 	 */
 	virtual void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord> &public_lobbies) = 0 ;
+
+
+    /**
+
+     * @brief getGroupChatInfoList get info about all group chats
+     * @jsonapi{development}
+     * @param[out] public_lobbies list of all visible lobbies
+     */
+    virtual void getGroupChatInfoList(std::map<ChatLobbyId,ChatLobbyInfo>& _groupchats) = 0 ;
+
 
 	/**
 	 * @brief invitePeerToLobby invite a peer to join a lobby

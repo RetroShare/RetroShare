@@ -66,7 +66,7 @@ CreateLobbyDialog::CreateLobbyDialog(const std::set<RsPeerId>& peer_list, int pr
 	ui->keyShareList->start();
     ui->keyShareList->setSelectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(peer_list, false);
 
-	if (privacyLevel) {
+    if (privacyLevel) {
         ui->security_CB->setCurrentIndex((privacyLevel == CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC) ? 0 : 1);
 	}
 
@@ -126,6 +126,13 @@ void CreateLobbyDialog::createLobby()
 
     // create chat lobby !!
     std::string lobby_name = ui->lobbyName_LE->text().toUtf8().constData() ;
+
+    if (lobby_name.empty())
+    {
+        QMessageBox::warning(this, "UnseenP2P", tr("Please enter group name, UnseenP2P does not accept empty group name"), QMessageBox::Ok, QMessageBox::Ok);
+        return;
+    }
+
     std::string lobby_topic = ui->lobbyTopic_LE->text().toUtf8().constData() ;
 
     // set nick name !
@@ -153,6 +160,8 @@ void CreateLobbyDialog::createLobby()
 
     // open chat window !!
     ChatDialog::chatFriend(ChatId(id)) ;
+    rsMsgs->setLobbyAutoSubscribe(ChatId(id).toLobbyId(), true );
+    rsMsgs->joinVisibleChatLobby(ChatId(id).toLobbyId(), gxs_id);
 
     close();
 }

@@ -658,7 +658,7 @@ int	pqissllistenbase::finaliseAccepts()
 	// for each of the incoming sockets.... call continue.
 	std::list<AcceptedSSL>::iterator it;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	for(it = accepted_ssl.begin(); it != accepted_ssl.end();)
 	{
   	        pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 

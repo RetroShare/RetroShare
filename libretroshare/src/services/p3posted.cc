@@ -104,7 +104,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 
 	GxsMsgDataMap msgData;
 	bool ok = RsGenExchange::getMsgData(token, msgData);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	if(ok)
 	{
@@ -175,7 +175,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 {
 	GxsMsgRelatedDataMap msgData;
 	bool ok = RsGenExchange::getMsgRelatedData(token, msgData);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 			
 	if(ok)
 	{
@@ -224,7 +224,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
  *
  */
 
-bool RsPostedPost::calculateScores(time_t ref_time)
+bool RsPostedPost::calculateScores(rstime_t ref_time)
 {
 	/* so we want to calculate all the scores for this Post. */
 
@@ -236,7 +236,7 @@ bool RsPostedPost::calculateScores(time_t ref_time)
 	mComments = stats.comments;
 	mHaveVoted = (mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK);
 
-	time_t age_secs = ref_time - mMeta.mPublishTs;
+	rstime_t age_secs = ref_time - mMeta.mPublishTs;
 #define POSTED_AGESHIFT (2.0)
 #define POSTED_AGEFACTOR (3600.0)
 

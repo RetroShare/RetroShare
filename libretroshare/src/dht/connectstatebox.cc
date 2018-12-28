@@ -80,7 +80,7 @@
 PeerConnectStateBox::PeerConnectStateBox()
 {
 	//mPeerId = id;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	mState = CSB_START;
 	mNetState = CSB_NETSTATE_UNKNOWN;
 	mStateTS = now;
@@ -241,7 +241,7 @@ void PeerConnectStateBox::stateMsg(std::ostream &out, std::string msg, uint32_t 
 std::string PeerConnectStateBox::connectState() const
 {
 	std::string str = StateAsString(mState);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	std::string out;
 	rs_sprintf(out, "%s(%lu/%lu) for %ld secs", str.c_str(), mNoAttempts, mNoFailedAttempts, now - mStateTS);
 	if ( (mState == CSB_CONNECTED) || (mState == CSB_DIRECT_ATTEMPT) ||
@@ -358,7 +358,7 @@ uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint3
 uint32_t PeerConnectStateBox::connectCb_direct()
 {
 	uint32_t retval = 0;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	switch(mState)
 	{
@@ -497,7 +497,7 @@ uint32_t PeerConnectStateBox::connectCb_unreachable()
 		proxyPortMode = CSB_ACTION_DHT_PORT;
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	switch(mState)
 	{
@@ -782,7 +782,7 @@ uint32_t PeerConnectStateBox::updateCb(uint32_t update)
 	 */
 
 	/* DO Connect / Disconnect Updates ... very specific! */
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	switch(update)
 	{
 		case CSB_UPDATE_CONNECTED:
@@ -1035,7 +1035,7 @@ bool PeerConnectStateBox::storeProxyPortChoice(uint32_t flags, bool useProxyPort
 bool PeerConnectStateBox::getProxyPortChoice()
 {
 #ifdef 	DEBUG_CONNECTBOX
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	std::cerr << "PeerConnectStateBox::getProxyPortChoice() Using ConnectLogic Info from: ";
 	std::cerr << now-mProxyPortTS << " ago. Flags: " << mProxyPortFlags;

@@ -125,7 +125,7 @@ class RsGxsCircleMembershipStatus
 public:
     RsGxsCircleMembershipStatus() : last_subscription_TS(0), subscription_flags(0) {}
     
-    time_t   last_subscription_TS ;
+    rstime_t   last_subscription_TS ;
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
 };
 
@@ -153,13 +153,13 @@ class RsGxsCircleCache
 	uint32_t      mGroupStatus;
 	uint32_t      mGroupSubscribeFlags;
 
-	time_t mUpdateTime;
+	rstime_t mUpdateTime;
 #ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
 	std::set<RsGxsCircleId> mProcessedCircles;
 #endif
 	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus;
-    	time_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
+    	rstime_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
     
 	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
 	std::set<RsPgpId> mAllowedNodes;
@@ -286,7 +286,7 @@ virtual RsServiceInfo getServiceInfo();
 	void checkDummyIdData();
 	void generateDummyCircle();
 
-    time_t mLastCacheMembershipUpdateTS ;
+    rstime_t mLastCacheMembershipUpdateTS ;
 
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;

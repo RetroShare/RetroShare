@@ -73,8 +73,8 @@
 #define IMAGE_GROUP16            ":/images/user/group16.png"
 #define IMAGE_EDIT               ":/images/edit_16.png"
 #define IMAGE_REMOVE             ":/images/delete.png"
-#define IMAGE_EXPAND             ":/images/edit_add24.png"
-#define IMAGE_COLLAPSE           ":/images/edit_remove24.png"
+#define IMAGE_EXPAND             ":/home/img/plus-black-symbol.png"
+#define IMAGE_COLLAPSE           ":/home/img/minus-symbol.png"
 /* Images for Status icons */
 #define IMAGE_AVAILABLE          ":/images/user/identityavaiblecyan24.png"
 #define IMAGE_PASTELINK          ":/images/pasterslink.png"
@@ -303,7 +303,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
     hbox->setSpacing(6);
 
     QLabel *iconLabel = new QLabel(widget);
-    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    QPixmap pix = QPixmap("/:/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);    //hide icon
     iconLabel->setPixmap(pix);
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
@@ -358,15 +358,15 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
              break;
          case TYPE_GPG:
         {
-             contextMenu->addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-             contextMenu->addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgfriend()));
+             contextMenu->addAction(tr("Chat"), this, SLOT(chatfriendproxy()));              //hide icon: QIcon(IMAGE_CHAT)
+             contextMenu->addAction(tr("Send message"), this, SLOT(msgfriend()));             //hide icon QIcon(IMAGE_MSG)
 
              contextMenu->addSeparator();
 
-             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configurefriend()));
-             contextMenu->addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
+             contextMenu->addAction(tr("Profile details"), this, SLOT(configurefriend()));     //hide icon QIcon(IMAGE_FRIENDINFO)
+             contextMenu->addAction(tr("Deny connections"), this, SLOT(removefriend()));       //hide icon QIcon(IMAGE_DENYFRIEND)
 
-             contextMenu->addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configurefriendbySSLid()));
+             contextMenu->addAction(tr("Node details"), this, SLOT(configurefriendbySSLid()));     //hide icon QIcon(IMAGE_FRIENDINFO)
 
              if(mShowGroups)
              {
@@ -408,7 +408,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
                      }
                  }
 
-                 QMenu *groupsMenu = contextMenu->addMenu(QIcon(IMAGE_GROUP16), tr("Groups"));
+                 QMenu *groupsMenu = contextMenu->addMenu(tr("Groups"));      //hide icon QIcon(IMAGE_GROUP16)
                  groupsMenu->addAction(QIcon(IMAGE_EXPAND), tr("Create new group"), this, SLOT(createNewGroup()));
 
                  if (addToGroupMenu || moveToGroupMenu || foundGroup) {
@@ -466,7 +466,7 @@ void FriendList::peerTreeWidgetCustomPopupMenu()
 
     contextMenu->addSeparator();
 
-    QAction *action = contextMenu->addAction(QIcon(IMAGE_PASTELINK), tr("Paste certificate link"), this, SLOT(pastePerson()));
+    QAction *action = contextMenu->addAction(tr("Paste certificate link"), this, SLOT(pastePerson()));        // hide icon QIcon(IMAGE_PASTELINK)
     if (RSLinkClipboard::empty(RetroShareLink::TYPE_CERTIFICATE))
         action->setDisabled(true);
 

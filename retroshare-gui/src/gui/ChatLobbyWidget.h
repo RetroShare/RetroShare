@@ -9,6 +9,8 @@
 #include "retroshare/rsstatus.h"
 
 #include <retroshare/rsmsgs.h>
+#include "chat/distributedchat.h"
+
 
 #include <QAbstractButton>
 #include <QTreeWidget>
@@ -69,6 +71,7 @@ public:
 	void addOne2OneChatPage(PopupChatDialog *d);
 	void setCurrentOne2OneChatPage(PopupChatDialog *d);
     void updateContactItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &nickname, const ChatId& chatId, const std::string &rsId, uint current_time, bool unread);
+    void updateGroupChatItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, const std::string &name, const ChatLobbyId& chatId,  uint current_time, bool unread, ChatLobbyFlags lobby_flags);
 	void fromGpgIdToChatId(const RsPgpId &gpgId,  ChatId &chatId);
     bool showContactAnchor(RsPeerId id, QString anchor);
 
@@ -120,7 +123,7 @@ private:
 	void autoSubscribeLobby(QTreeWidgetItem *item);
 	void subscribeChatLobby(ChatLobbyId id) ;
 	void subscribeChatLobbyAtItem(QTreeWidgetItem *item) ;
-
+    void joinGroupChatInBackground(ChatLobbyInfo lobbyInfo);
 	bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
 	RSTreeWidgetItemCompareRole *compareRole;
@@ -129,6 +132,7 @@ private:
 	QTreeWidgetItem *privateSubLobbyItem;
 	QTreeWidgetItem *publicSubLobbyItem;
 	QTreeWidgetItem *chatContactItem; //21 Sep 2018 - meiyousixin - add this 'contact' tree for one2one chat
+    QTreeWidgetItem *commonItem; //27 Nov 2018 - meiyousixin  - using for all conversations
 	QTreeWidgetItem *getTreeWidgetItem(ChatLobbyId);
 	QTreeWidgetItem *getTreeWidgetItemForChatId(ChatId);
 
@@ -163,5 +167,7 @@ private:
     std::set<ChatId> recentUnreadListOfChatId;
     QPixmap currentStatusIcon(RsPeerId peerId, QFont& gpgFontOut);
     QIcon lastIconForPeerId(RsPeerId peerId, bool unread);
+
+    std::map<ChatLobbyId,ChatLobbyInfo> _groupchat_infos;
 };
 

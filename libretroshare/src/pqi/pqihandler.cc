@@ -22,7 +22,7 @@
 #include "pqi/pqihandler.h"
 
 #include <stdlib.h>               // for NULL
-#include <time.h>                 // for time, time_t
+#include "util/rstime.h"                 // for time, rstime_t
 #include <algorithm>              // for sort
 #include <iostream>               // for dec
 #include <string>                 // for string, char_traits, operator+, bas...
@@ -121,7 +121,7 @@ int	pqihandler::tick()
 #endif
 	}
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(now > mLastRateCapUpdate + 5)
 	{

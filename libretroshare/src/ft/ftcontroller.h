@@ -83,7 +83,7 @@ class ftFileControl
         RsFileHash	   mHash;
 		uint64_t	   mSize;
 		TransferRequestFlags mFlags;
-		time_t		mCreateTime;
+		rstime_t		mCreateTime;
 		uint32_t		mQueuePriority ;
 		uint32_t		mQueuePosition ;
 };
@@ -226,8 +226,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		bool    setPeerState(ftTransferModule *tm, const RsPeerId& id,
 				uint32_t maxrate, bool online);
 
-		time_t last_save_time ;
-		time_t last_clean_time ;
+		rstime_t last_save_time ;
+		rstime_t last_clean_time ;
 		/* pointers to other components */
 
 		ftSearch *mSearch;

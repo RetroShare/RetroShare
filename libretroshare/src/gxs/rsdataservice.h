@@ -345,7 +345,7 @@ private:
 	void locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta);
 
     std::map<RsGxsGroupId,RsGxsGrpMetaData*> mGrpMetaDataCache ;
-	std::list<std::pair<time_t,RsGxsGrpMetaData*> > mOldCachedItems ;
+	std::list<std::pair<rstime_t,RsGxsGrpMetaData*> > mOldCachedItems ;
 
     bool mGrpMetaDataCache_ContainsAllDatabase ;
 };

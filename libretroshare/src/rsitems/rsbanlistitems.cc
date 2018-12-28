@@ -46,7 +46,7 @@ void RsBanListConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,banListType,"type") ;
     RsTypeSerializer::serial_process          (j,ctx,banListPeerId,"peerId") ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,update_time,"update_time") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,update_time,"update_time") ;
     RsTypeSerializer::serial_process          (j,ctx,banned_peers,"banned_peers") ;
 }
 RsItem *RsBanListSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const

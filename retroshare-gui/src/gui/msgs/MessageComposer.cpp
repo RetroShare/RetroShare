@@ -268,7 +268,10 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     ui.filterComboBox->addItem(tr("Friend Nodes"));
     ui.filterComboBox->addItem(tr("All people"));
     ui.filterComboBox->addItem(tr("My contacts"));
-    ui.filterComboBox->setCurrentIndex(3);
+    ui.filterComboBox->setCurrentIndex(2);
+
+    if(rsIdentity->nbRegularContacts() > 0)
+    	ui.filterComboBox->setCurrentIndex(3);
 
     connect(ui.comboStyle, SIGNAL(activated(int)),this, SLOT(changeFormatType(int)));
     connect(ui.comboFont,  SIGNAL(activated(const QString &)), this, SLOT(textFamily(const QString &)));

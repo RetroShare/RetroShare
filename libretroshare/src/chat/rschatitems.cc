@@ -21,7 +21,7 @@
  *******************************************************************************/
 
 #include <stdexcept>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 
@@ -52,6 +52,7 @@ RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) c
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: return new RsChatLobbyListRequestItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST: return new RsChatLobbyListItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG: return new RsChatLobbyConfigItem();
+    case RS_PKT_SUBTYPE_CHAT_LOBBY_INFO: return new RsChatLobbyInfoItem();
 	case RS_PKT_SUBTYPE_OUTGOING_MAP: return new PrivateOugoingMapItem();
 	default:
 		std::cerr << "Unknown packet type in chat!" << std::endl;
@@ -178,6 +179,12 @@ void RsChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,R
     RsTypeSerializer::serial_process(j,ctx,flags,"flags") ;
 }
 
+
+void RsChatLobbyInfoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint64_t>(j,ctx,lobby_Id,"lobby_Id") ;
+    RsTypeSerializer::serial_process(j,ctx,lobbyInfo,"lobbyInfo") ;
+}
 /* set data from RsChatMsgItem to RsPrivateChatMsgConfigItem */
 void RsPrivateChatMsgConfigItem::set(RsChatMsgItem *ci, const RsPeerId& /*peerId*/, uint32_t confFlags)
 {

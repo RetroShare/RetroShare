@@ -58,7 +58,7 @@ static const int sleepFactorSlow      = 20; // 1s
 
 static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Default, "p3I2pBob"};
 
-static const time_t selfCheckPeroid = 30;
+static const rstime_t selfCheckPeroid = 30;
 
 void doSleep(useconds_t timeToSleepMS) {
 	rstime::rs_usleep((useconds_t) (timeToSleepMS * 1000));

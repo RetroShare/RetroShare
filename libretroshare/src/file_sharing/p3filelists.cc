@@ -38,6 +38,7 @@
 
 //#define DEBUG_P3FILELISTS 1
 //#define DEBUG_CONTENT_FILTERING 1
+//#define DEBUG_FILE_HIERARCHY 1
 
 static const uint32_t P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED     = 0x0000 ;
 static const uint32_t P3FILELISTS_UPDATE_FLAG_REMOTE_MAP_CHANGED  = 0x0001 ;
@@ -71,6 +72,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
 
     mUpdateFlags = P3FILELISTS_UPDATE_FLAG_NOTHING_CHANGED ;
     mLastRemoteDirSweepTS = 0 ;
+    mLastExtraFilesCacheUpdate = 0;
     mLastCleanupTime = 0 ;
     mLastDataRecvTS = 0 ;
     mTrustFriendNodesForBannedFiles = TRUST_FRIEND_NODES_FOR_BANNED_FILES_DEFAULT;
@@ -169,7 +171,7 @@ int p3FileDatabase::tick()
     tickRecv() ;
     tickSend() ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // cleanup
     // 	- remove/delete shared file lists for people who are not friend anymore
@@ -181,7 +183,7 @@ int p3FileDatabase::tick()
         mLastCleanupTime = now ;
     }
 
-    static time_t last_print_time = 0;
+    static rstime_t last_print_time = 0;
 
     if(last_print_time + 20 < now)
     {
@@ -602,15 +604,15 @@ void p3FileDatabase::cleanup()
             for(std::list<RsPeerId>::const_iterator it(friend_lst.begin());it!=friend_lst.end();++it)
                 friend_set.insert(*it) ;
         }
-        time_t now = time(NULL);
+        rstime_t now = time(NULL);
 
         for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(mRemoteDirectories[i] != NULL)
             {
-                time_t recurs_mod_time ;
+                rstime_t recurs_mod_time ;
                 mRemoteDirectories[i]->getDirectoryRecursModTime(0,recurs_mod_time) ;
 
-                time_t last_contact = 0 ;
+                rstime_t last_contact = 0 ;
                 RsPeerDetails pd ;
                 if(rsPeers->getPeerDetails(mRemoteDirectories[i]->peerId(),pd))
                     last_contact = pd.lastConnect ;
@@ -892,6 +894,8 @@ void p3FileDatabase::requestDirUpdate(void *ref)
     }
 }
 
+// Finds the pointer to the sub-element #row under element ref.
+
 bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
                                        FileSearchFlags flags ) const
 {
@@ -899,10 +903,10 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
     {
         if(flags & RS_FILE_HINTS_LOCAL)
         {
-            if(row != 0)
+            if(row != 0 && row != 1)
                 return false ;
 
-            convertEntryIndexToPointer<sizeof(void*)>(0,0,result);
+            convertEntryIndexToPointer<sizeof(void*)>(0,row,result);
 
             return true ;
         }
@@ -921,12 +925,18 @@ bool p3FileDatabase::findChildPointer( void *ref, int row, void *& result,
     convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     // check consistency
-    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
+    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 1 && (flags & RS_FILE_HINTS_LOCAL)))
     {
         P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
         return false ;
     }
-    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+
+    if(fi==1 && (flags & RS_FILE_HINTS_LOCAL)) // extra list
+    {
+		convertEntryIndexToPointer<sizeof(void*)>(row+1,1,result);
+        return true;
+    }
+    DirectoryStorage *storage = (flags & RS_FILE_HINTS_LOCAL)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
@@ -958,6 +968,78 @@ int p3FileDatabase::getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& s
     }
 }
 
+void p3FileDatabase::removeExtraFile(const RsFileHash& hash)
+{
+    {
+    RS_STACK_MUTEX(mFLSMtx) ;
+
+    mExtraFiles->removeExtraFile(hash);
+    mLastExtraFilesCacheUpdate = 0 ; // forced cache reload
+    }
+
+    RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+}
+
+void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const
+{
+    // update the cache of extra files if last requested too long ago
+
+    rstime_t now = time(NULL);
+
+    if(mLastExtraFilesCacheUpdate + DELAY_BETWEEN_EXTRA_FILES_CACHE_UPDATES <= now)
+    {
+        mExtraFiles->getExtraFileList(mExtraFilesCache);
+        mLastExtraFilesCacheUpdate = now;
+    }
+
+    //
+
+	if(e == 0)	// "virtual extra files directory" => create a dir with as many child as they are extra files
+	{
+		d.parent = NULL ;
+
+		d.prow = 0;//fi-1 ;
+		d.type = DIR_TYPE_PERSON;
+		d.hash.clear() ;
+		d.count   = mExtraFilesCache.size();
+		d.max_mtime = time(NULL);
+		d.mtime     = time(NULL);
+		d.name = "[Extra List]";
+		d.path    = "/";
+		d.ref     = ref ;
+
+        for(uint32_t i=0;i<mExtraFilesCache.size();++i)
+		{
+			DirStub stub;
+			stub.type = DIR_TYPE_FILE;
+			stub.name = mExtraFilesCache[i].fname;
+			convertEntryIndexToPointer<sizeof(void*)>(i+1,1,stub.ref);	// local shared files from extra list
+
+			d.children.push_back(stub);
+		}
+	}
+	else	// extra file. Just query the corresponding data from ftExtra
+	{
+		d.prow = 1;//fi-1 ;
+		d.type = DIR_TYPE_EXTRA_FILE;
+
+        FileInfo& f(mExtraFilesCache[(int)e-1]) ;
+
+		d.hash      = f.hash;
+		d.count     = f.size;
+		d.max_mtime = 0;			// this is irrelevant
+		d.mtime     = 0;			// this is irrelevant
+		d.name      = f.path;		// so that the UI shows the complete path, since the parent directory is not really a directory.
+		d.path      = f.path;
+		d.ref       = ref ;
+
+		convertEntryIndexToPointer<sizeof(void*)>(0,1,d.parent) ;
+	}
+
+    d.flags = DIR_FLAGS_ANONYMOUS_DOWNLOAD ;
+	d.id = RsPeerId();
+}
+
 // This function converts a pointer into directory details, to be used by the AbstractItemModel for browsing the files.
 int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags flags) const
 {
@@ -983,10 +1065,8 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     {
         d.ref = NULL ;
         d.type = DIR_TYPE_ROOT;
-        d.count = 1;
         d.parent = NULL;
         d.prow = -1;
-        d.ref = NULL;
         d.name = "root";
         d.hash.clear() ;
         d.path = "";
@@ -997,13 +1077,28 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
         if(flags & RS_FILE_HINTS_LOCAL)
         {
             void *p;
-            convertEntryIndexToPointer<sizeof(void*)>(0,0,p);
 
+            {
+			convertEntryIndexToPointer<sizeof(void*)>(0,0,p);	// root of own directories
             DirStub stub;
             stub.type = DIR_TYPE_PERSON;
             stub.name = mServCtrl->getOwnId().toStdString();
             stub.ref  = p;
             d.children.push_back(stub);
+			}
+
+            if(mExtraFiles->size() > 0)
+            {
+            convertEntryIndexToPointer<sizeof(void*)>(0,1,p);	// local shared files from extra list
+            DirStub stub;
+            stub.type = DIR_TYPE_PERSON;						// not totally exact, but used as a trick.
+            stub.name = "[Extra List]";
+            stub.ref  = p;
+
+            d.children.push_back(stub);
+            }
+
+
         }
         else for(uint32_t i=0;i<mRemoteDirectories.size();++i)
             if(mRemoteDirectories[i] != NULL)
@@ -1022,6 +1117,7 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
 
 #ifdef DEBUG_FILE_HIERARCHY
         P3FILELISTS_DEBUG() << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+		P3FILELISTS_DEBUG() << d << std::endl;
 #endif
 
         return true ;
@@ -1033,12 +1129,25 @@ int p3FileDatabase::RequestDirDetails(void *ref, DirDetails& d, FileSearchFlags 
     convertPointerToEntryIndex<sizeof(void*)>(ref,e,fi);
 
     // check consistency
-    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 0 && (flags & RS_FILE_HINTS_LOCAL)))
+    if( (fi == 0 && !(flags & RS_FILE_HINTS_LOCAL)) ||  (fi > 1 && (flags & RS_FILE_HINTS_LOCAL)))
     {
         P3FILELISTS_ERROR() << "(EE) remote request on local index or local request on remote index. This should not happen." << std::endl;
         return false ;
     }
-    DirectoryStorage *storage = (fi==0)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
+
+    if((flags & RS_FILE_HINTS_LOCAL) && fi == 1) // extra list
+    {
+        getExtraFilesDirDetails(ref,e,d);
+
+#ifdef DEBUG_FILE_HIERARCHY
+		P3FILELISTS_DEBUG() << "ExtractData: ref=" << ref << ", flags=" << flags << " : returning this: " << std::endl;
+		P3FILELISTS_DEBUG() << d << std::endl;
+#endif
+        return true;
+    }
+
+
+    DirectoryStorage *storage = (flags & RS_FILE_HINTS_LOCAL)? ((DirectoryStorage*)mLocalSharedDirs) : ((DirectoryStorage*)mRemoteDirectories[fi-1]);
 
     // Case where the index is the top of a single person. Can be us, or a friend.
 
@@ -1093,7 +1202,7 @@ int p3FileDatabase::RequestDirDetails(const RsPeerId &/*uid*/, const std::string
 //    NOT_IMPLEMENTED();
 //    return 0;
 //}
-uint32_t p3FileDatabase::getType(void *ref) const
+uint32_t p3FileDatabase::getType(void *ref,FileSearchFlags flags) const
 {
     RS_STACK_MUTEX(mFLSMtx) ;
 
@@ -1108,12 +1217,25 @@ uint32_t p3FileDatabase::getType(void *ref) const
     if(e == 0)
         return DIR_TYPE_PERSON ;
 
-    if(fi == 0 && mLocalSharedDirs != NULL)
-        return mLocalSharedDirs->getEntryType(e) ;
-    else if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
-        return mRemoteDirectories[fi-1]->getEntryType(e) ;
-    else
+    if(flags & RS_FILE_HINTS_LOCAL)
+    {
+		if(fi == 0 && mLocalSharedDirs != NULL)
+			return mLocalSharedDirs->getEntryType(e) ;
+
+        if(fi == 1)
+            return DIR_TYPE_EXTRA_FILE;
+
+        P3FILELISTS_ERROR() << " Cannot determine type of entry " << ref  << std::endl;
         return DIR_TYPE_ROOT ;// some failure case. Should not happen
+    }
+    else
+    {
+		if(fi-1 < mRemoteDirectories.size() && mRemoteDirectories[fi-1]!=NULL)
+			return mRemoteDirectories[fi-1]->getEntryType(e) ;
+
+        P3FILELISTS_ERROR() << " Cannot determine type of entry " << ref  << std::endl;
+        return DIR_TYPE_ROOT ;// some failure case. Should not happen
+    }
 }
 
 void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
@@ -1513,7 +1635,7 @@ void p3FileDatabase::handleDirSyncRequest(RsFileListsSyncRequestItem *item)
         }
         else
         {
-            time_t local_recurs_max_time ;
+            rstime_t local_recurs_max_time ;
             mLocalSharedDirs->getDirectoryRecursModTime(entry_index,local_recurs_max_time) ;
 
             if(item->last_known_recurs_modf_TS != local_recurs_max_time)	// normally, should be "<", but since we provided the TS it should be equal, so != is more robust.
@@ -1678,7 +1800,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
         sitem = item ;
     }
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     // check the hash. If anything goes wrong (in the chunking for instance) the hash will not match
 
@@ -1785,7 +1907,7 @@ void p3FileDatabase::handleDirSyncResponse(RsFileListsSyncResponseItem*& sitem)
 
 void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *rds,DirectoryStorage::EntryIndex e,int depth)
 {
-   time_t now = time(NULL) ;
+   rstime_t now = time(NULL) ;
 
    //std::string indent(2*depth,' ') ;
 
@@ -1798,7 +1920,7 @@ void p3FileDatabase::locked_recursSweepRemoteDirectory(RemoteDirectoryStorage *r
    P3FILELISTS_DEBUG() << "currently at entry index " << e << std::endl;
 #endif
 
-   time_t local_update_TS;
+   rstime_t local_update_TS;
 
    if(!rds->getDirectoryUpdateTime(e,local_update_TS))
    {
@@ -1845,9 +1967,9 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
 bool p3FileDatabase::locked_generateAndSendSyncRequest(RemoteDirectoryStorage *rds,const DirectoryStorage::EntryIndex& e)
 {
     RsFileHash entry_hash ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
-    time_t max_known_recurs_modf_time ;
+    rstime_t max_known_recurs_modf_time ;
 
     if(!rds->getDirectoryRecursModTime(e,max_known_recurs_modf_time))
     {
@@ -2004,7 +2126,7 @@ void p3FileDatabase::checkSendBannedFilesInfo()
     P3FILELISTS_DEBUG() << "  Checking banned files information: " << std::endl;
 #endif
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
     std::list<RsPeerId> online_friends ;
 	rsPeers->getOnlineList(online_friends);
 

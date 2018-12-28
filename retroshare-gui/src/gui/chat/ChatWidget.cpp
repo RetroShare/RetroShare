@@ -343,14 +343,15 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 	if (chatType() == CHATTYPE_LOBBY) {
 		hist_chat_type = RS_HISTORY_TYPE_LOBBY;
-		messageCount = Settings->getLobbyChatHistoryCount();
-
+        //messageCount = Settings->getLobbyChatHistoryCount();
+        messageCount = RS_HISTORY_LOBBY_COUNT;
 		ui->statusLabel->hide();
 
 		updateTitle();
     } else if (chatType() == CHATTYPE_PRIVATE){
 		hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
-		messageCount = Settings->getPrivateChatHistoryCount();
+        //messageCount = Settings->getPrivateChatHistoryCount();
+        messageCount = RS_HISTORY_ONE2ONE_COUNT;
 
 		// initialize first status
 		StatusInfo peerStatusInfo;
@@ -796,7 +797,7 @@ void ChatWidget::completeNickname(bool reverse)
 		std::list<QString> participants;
         RsIdentityDetails details ;
 
-        for (	std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         if(rsIdentity->getIdDetails(it->first,details))
             participants.push_front(QString::fromUtf8(details.mNickname.c_str()));
@@ -863,7 +864,7 @@ QAbstractItemModel *ChatWidget::modelFromPeers()
     // Get participants list
     QStringList participants;
 
-    for (std::map<RsGxsId,time_t>::const_iterator it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
+	for (auto it = lobby.gxs_ids.begin(); it != lobby.gxs_ids.end(); ++it)
     {
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(it->first,details) ;

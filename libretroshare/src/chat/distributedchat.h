@@ -78,7 +78,8 @@ class DistributedChatService
 		void getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& public_lobbies) ;
         bool joinVisibleChatLobby(const ChatLobbyId& id, const RsGxsId &gxs_id) ;
 
-	protected:
+        void getGroupChatInfoList(std::map<ChatLobbyId, ChatLobbyInfo> &_groupchats);
+protected:
 		bool handleRecvItem(RsChatItem *) ;
 
 		virtual void sendChatItem(RsChatItem *) =0 ;
@@ -135,11 +136,11 @@ class DistributedChatService
 		class ChatLobbyEntry: public ChatLobbyInfo
 		{
 			public:
-				std::map<ChatLobbyMsgId,time_t> msg_cache ;
+				std::map<ChatLobbyMsgId,rstime_t> msg_cache ;
 				RsPeerId virtual_peer_id ;
 				int connexion_challenge_count ;
-				time_t last_connexion_challenge_time ;
-				time_t last_keep_alive_packet_time ;
+				rstime_t last_connexion_challenge_time ;
+				rstime_t last_keep_alive_packet_time ;
 				std::set<RsPeerId> previously_known_peers ;
 		};
 
@@ -152,8 +153,8 @@ class DistributedChatService
 																				// 		RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE
 
 		float _time_shift_average ;
-		time_t last_lobby_challenge_time ; 					// prevents bruteforce attack
-		time_t last_visible_lobby_info_request_time ;	// allows to ask for updates
+		rstime_t last_lobby_challenge_time ; 					// prevents bruteforce attack
+		rstime_t last_visible_lobby_info_request_time ;	// allows to ask for updates
 		bool _should_reset_lobby_counts ;
 		RsGxsId _default_identity;
 		std::map<ChatLobbyId,RsGxsId> _lobby_default_identity;

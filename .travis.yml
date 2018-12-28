@@ -59,7 +59,7 @@ addons:
 
 before_script:
   - if [ $TRAVIS_OS_NAME == linux ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.13 INCLUDEPATH+=/usr/local/opt/openssl/include/ QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.13 INCLUDEPATH+=/usr/local/opt/openssl/include/ INCLUDEPATH+=/usr/local/Cellar/sqlcipher/4.0.1/include INCLUDEPATH+=/usr/local/Cellar/libmicrohttpd/0.9.62/include QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/ QMAKE_LIBDIR+=/usr/local/Cellar/libmicrohttpd/0.9.62/lib QMAKE_LIBDIR+=/usr/local/Cellar/sqlcipher/4.0.1/lib; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j2; fi
@@ -72,6 +72,7 @@ after_success:
   - if [ $TRAVIS_OS_NAME == osx ] ; then  mv retroshare.dmg Retroshare-0.6.5.dmg; ls Retroshare-0.6.5.dmg; fi
   - if [ $TRAVIS_OS_NAME == osx ] ; then  appdmg json-path Retroshare-0.6.5.dmg; fi
   - if [ $TRAVIS_OS_NAME == osx ] ; then  7z a Retroshare-0.6.5_macos.zip Retroshare-0.6.5.dmg; cd ../..; fi
+
 #  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
 
 #branches:

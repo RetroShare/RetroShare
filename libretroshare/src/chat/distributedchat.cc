@@ -37,19 +37,19 @@
 #include "gxs/rsgixs.h"
 #include "services/p3idservice.h"
 
-//#define DEBUG_CHAT_LOBBIES 1
+#define DEBUG_CHAT_LOBBIES 1
 
 static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
-static const time_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
+static const rstime_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
 static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connection at most every 15 seconds
 static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
 
-static const time_t 	MAX_KEEP_MSG_RECORD 		    = 1200 ; // keep msg record for 1200 secs max.
-static const time_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
-static const time_t  	MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
-static const time_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
-static const time_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
-static const time_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
+static const rstime_t 	MAX_KEEP_MSG_RECORD 		    = 1200 ; // keep msg record for 1200 secs max.
+static const rstime_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
+static const rstime_t  	MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
+static const rstime_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
+static const rstime_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask for lobby list more than once every 30 secs.
+static const rstime_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
 static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
 //static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
@@ -71,10 +71,10 @@ DistributedChatService::DistributedChatService(uint32_t serv_type,p3ServiceContr
 
 void DistributedChatService::flush()
 {
-	static time_t last_clean_time_lobby = 0 ;
-	static time_t last_req_chat_lobby_list = 0 ;
+	static rstime_t last_clean_time_lobby = 0 ;
+	static rstime_t last_req_chat_lobby_list = 0 ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(last_clean_time_lobby + LOBBY_CACHE_CLEANING_PERIOD < now)
 	{
@@ -117,19 +117,19 @@ bool DistributedChatService::handleRecvChatLobbyMsgItem(RsChatMsgItem *ci)
     if(cli == NULL)
         return true ;	// the item is handled correctly if it's not a lobby item ;-)
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
-    if(now+100 > (time_t) cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
+    if(now+100 > (rstime_t) cli->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep plus 100 seconds ! It's too old, and is going to make an echo!
     {
-        std::cerr << "Received severely outdated lobby event item (" << now - (time_t)cli->sendTime << " in the past)! Dropping it!" << std::endl;
+        std::cerr << "Received severely outdated lobby event item (" << now - (rstime_t)cli->sendTime << " in the past)! Dropping it!" << std::endl;
         std::cerr << "Message item is:" << std::endl;
         cli->print(std::cerr) ;
         std::cerr << std::endl;
         return false ;
     }
-    if(now+600 < (time_t) cli->sendTime)	// the message is from the future. Drop it. more than 10 minutes
+    if(now+600 < (rstime_t) cli->sendTime)	// the message is from the future. Drop it. more than 10 minutes
     {
-        std::cerr << "Received event item from the future (" << (time_t)cli->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
+        std::cerr << "Received event item from the future (" << (rstime_t)cli->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
         std::cerr << "Message item is:" << std::endl;
         cli->print(std::cerr) ;
         std::cerr << std::endl;
@@ -292,7 +292,7 @@ bool DistributedChatService::getVirtualPeerId(const ChatLobbyId& id,ChatLobbyVir
 void DistributedChatService::locked_printDebugInfo() const
 {
 	std::cerr << "Recorded lobbies: " << std::endl;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for( std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin()) ;it!=_chat_lobbys.end();++it)
 	{
@@ -307,7 +307,7 @@ void DistributedChatService::locked_printDebugInfo() const
 		std::cerr << "   Last activity\t: " << now - it->second.last_activity << " seconds ago." << std::endl;
 		std::cerr << "   Cached messages\t: " << it->second.msg_cache.size() << std::endl;
 
-		for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
+		for(std::map<ChatLobbyMsgId,rstime_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
 			std::cerr << "       " << std::hex << it2->first << std::dec << "  time=" << now - it2->second << " secs ago" << std::endl;
 
 		std::cerr << "   Participating friends: " << std::endl;
@@ -317,7 +317,7 @@ void DistributedChatService::locked_printDebugInfo() const
 
 		std::cerr << "   Participating nick names: " << std::endl;
 
-		for(std::map<RsGxsId,time_t>::const_iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();++it2)
+		for(std::map<RsGxsId,rstime_t>::const_iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();++it2)
 			std::cerr << "       " << it2->first << ": " << now - it2->second << " secs ago" << std::endl;
 
 	}
@@ -339,7 +339,7 @@ void DistributedChatService::locked_printDebugInfo() const
 
 bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id,uint32_t lobby_count)
 {
-	static std::map<std::string, std::list<time_t> > message_counts ;
+	static std::map<std::string, std::list<rstime_t> > message_counts ;
 
 	std::ostringstream os ;
 	os << obj->lobby_id ;
@@ -375,14 +375,14 @@ bool DistributedChatService::locked_bouncingObjectCheck(RsChatLobbyBouncingObjec
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "lobby_count=" << lobby_count << std::endl;
 	std::cerr << "Got msg for peer " << pid << std::dec << ". Limit is " << max_cnt << ". List is " ;
-	for(std::list<time_t>::const_iterator it(message_counts[pid].begin());it!=message_counts[pid].end();++it)
+	for(std::list<rstime_t>::const_iterator it(message_counts[pid].begin());it!=message_counts[pid].end();++it)
 		std::cerr << *it << " " ;
 	std::cerr << std::endl;
 #endif
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
-	std::list<time_t>& lst = message_counts[pid] ;
+	std::list<rstime_t>& lst = message_counts[pid] ;
 	
 	// Clean old messages time stamps from the list.
 	//
@@ -501,7 +501,7 @@ void DistributedChatService::handleRecvChatLobbyList(RsChatLobbyListItem *item)
      std::cerr << "Received chat lobby list from friend " << item->PeerId() << ", " << item->lobbies.size() << " elements." << std::endl;
 #endif
 	{
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
@@ -677,7 +677,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "Received ChatLobbyEvent item of type " << (int)(item->event_type) << ", and string=" << item->string1 << std::endl;
 #endif
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     if(rsReputations->overallReputationLevel(item->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
     {
@@ -713,17 +713,17 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
     }
     addTimeShiftStatistics((int)now - (int)item->sendTime) ;
 
-	if(now+100 > (time_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
+	if(now+100 > (rstime_t) item->sendTime + MAX_KEEP_MSG_RECORD)	// the message is older than the max cache keep minus 100 seconds ! It's too old, and is going to make an echo!
 	{
-		std::cerr << "Received severely outdated lobby event item (" << now - (time_t)item->sendTime << " in the past)! Dropping it!" << std::endl;
+		std::cerr << "Received severely outdated lobby event item (" << now - (rstime_t)item->sendTime << " in the past)! Dropping it!" << std::endl;
 		std::cerr << "Message item is:" << std::endl;
 		item->print(std::cerr) ;
 		std::cerr << std::endl;
 		return ;
 	}
-	if(now+600 < (time_t) item->sendTime)	// the message is from the future more than 10 minutes
+	if(now+600 < (rstime_t) item->sendTime)	// the message is from the future more than 10 minutes
 	{
-		std::cerr << "Received event item from the future (" << (time_t)item->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
+		std::cerr << "Received event item from the future (" << (rstime_t)item->sendTime - now << " seconds in the future)! Dropping it!" << std::endl;
 		std::cerr << "Message item is:" << std::endl;
 		item->print(std::cerr) ;
 		std::cerr << std::endl;
@@ -751,7 +751,7 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 
         if(it != _chat_lobbys.end())
         {
-            std::map<RsGxsId,time_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
+            std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.find(item->signature.keyId)) ;
 
             if(it2 != it->second.gxs_ids.end())
             {
@@ -815,7 +815,7 @@ void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatL
 			visible_lobbies.push_back(it->second) ;
 	}
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(now > MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ + last_visible_lobby_info_request_time)
 	{
@@ -843,7 +843,7 @@ void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatL
 //
 bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,const RsPeerId& peer_id)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 #ifdef DEBUG_CHAT_LOBBIES
 	locked_printDebugInfo() ; // debug
@@ -874,7 +874,7 @@ bool DistributedChatService::bounceLobbyObject(RsChatLobbyBouncingObject *item,c
 
 	// Checks wether the msg is already recorded or not
 
-	std::map<ChatLobbyMsgId,time_t>::iterator it2(lobby.msg_cache.find(item->msg_id)) ;
+	std::map<ChatLobbyMsgId,rstime_t>::iterator it2(lobby.msg_cache.find(item->msg_id)) ;
 
 	if(it2 != lobby.msg_cache.end()) // found!
 	{
@@ -1028,14 +1028,14 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
     std::cerr << "  signature done." << std::endl;
 
     // check signature
-        if(!mGixs->validateData(memory,item.signed_serial_size(),item.signature,true,error_status))
-        {
-            std::cerr << "(EE) Cannot check message item. " << std::endl;
-            return false ;
-        }
+//        if(!mGixs->validateData(memory,item.signed_serial_size(),item.signature,true,error_status))
+//        {
+//            std::cerr << "(EE) Cannot check message item. " << std::endl;
+//            return false ;
+//        }
     std::cerr << "  signature checks!" << std::endl;
     std::cerr << "  Item dump:" << std::endl;
-    item.print(std::cerr,2) ;
+ //   item.print(std::cerr,2) ;
 #endif
 
     return true ;
@@ -1098,7 +1098,7 @@ void DistributedChatService::handleConnectionChallenge(RsChatLobbyConnectChallen
 	std::cerr << "    Peer Id        =   " << item->PeerId() << std::endl;
 #endif
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	ChatLobbyId lobby_id ;
 	const RsPeerId& ownId = rsPeers->getOwnId();
 
@@ -1107,7 +1107,7 @@ void DistributedChatService::handleConnectionChallenge(RsChatLobbyConnectChallen
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end() && !found;++it)
-			for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
+			for(std::map<ChatLobbyMsgId,rstime_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end() && !found;++it2)
 				if(it2->second + CONNECTION_CHALLENGE_MAX_MSG_AGE + 5 > now)  // any msg not older than 5 seconds plus max challenge count is fine.
 				{
 					uint64_t code = makeConnexionChallengeCode(ownId,it->first,it2->first) ;
@@ -1157,10 +1157,10 @@ void DistributedChatService::sendConnectionChallenge(ChatLobbyId lobby_id)
 		return ;
 	}
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	ChatLobbyMsgId msg_id = 0 ;
 
-	for(std::map<ChatLobbyMsgId,time_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
+	for(std::map<ChatLobbyMsgId,rstime_t>::const_iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();++it2)
 		if(it2->second + CONNECTION_CHALLENGE_MAX_MSG_AGE > now)  // any msg not older than 20 seconds is fine.
 		{
 			msg_id = it2->first ;
@@ -1224,6 +1224,16 @@ void DistributedChatService::getChatLobbyList(std::list<ChatLobbyId>& clids)
 
     for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
         clids.push_back(it->first) ;
+}
+
+void DistributedChatService::getGroupChatInfoList(std::map<ChatLobbyId,ChatLobbyInfo>& _groupchats)
+{
+    _groupchats.clear();
+    RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+    for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+    {
+        _groupchats[it->first] = it->second;
+    }
 }
 bool DistributedChatService::getChatLobbyInfo(const ChatLobbyId& id,ChatLobbyInfo& info)
 {
@@ -1432,7 +1442,7 @@ bool DistributedChatService::acceptLobbyInvite(const ChatLobbyId& lobby_id,const
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new Lobby entry." << std::endl;
 #endif
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
 		entry.participating_friends.insert(it->second.peer_id) ;
@@ -1556,7 +1566,7 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  Creating new lobby entry." << std::endl;
 #endif
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 
         ChatLobbyEntry entry ;
 
@@ -1605,7 +1615,7 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 #ifdef DEBUG_CHAT_LOBBIES
 		std::cerr << "  New (unique) ID: " << std::hex << lobby_id << std::dec << std::endl;
 #endif
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 
 		ChatLobbyEntry entry ;
         entry.lobby_flags = lobby_flags ;
@@ -1825,6 +1835,11 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
 {
+
+#ifdef DEBUG_CHAT_LOBBIES
+    std::cerr << "set autoSubscribe for lobby_id: " << lobby_id << std::endl;
+#endif
+
 	if(autoSubscribe){
 		_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
 		RsGxsId gxsId;
@@ -1860,20 +1875,20 @@ void DistributedChatService::cleanLobbyCaches()
 	{
 		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 
 		// 1 - clean cache of all lobbies and participating nicknames.
 		//
 		for(std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.begin();it!=_chat_lobbys.end();++it)
 		{
-			for(std::map<ChatLobbyMsgId,time_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
+			for(std::map<ChatLobbyMsgId,rstime_t>::iterator it2(it->second.msg_cache.begin());it2!=it->second.msg_cache.end();)
 				if(it2->second + MAX_KEEP_MSG_RECORD < now)
 				{
 #ifdef DEBUG_CHAT_LOBBIES
 					std::cerr << "  removing old msg 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
 #endif
 
-					std::map<ChatLobbyMsgId,time_t>::iterator tmp(it2) ;
+					std::map<ChatLobbyMsgId,rstime_t>::iterator tmp(it2) ;
 					++tmp ;
 					it->second.msg_cache.erase(it2) ;
 					it2 = tmp ;
@@ -1883,14 +1898,14 @@ void DistributedChatService::cleanLobbyCaches()
 
 			bool changed = false ;
 
-            for(std::map<RsGxsId,time_t>::iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();)
+            for(std::map<RsGxsId,rstime_t>::iterator it2(it->second.gxs_ids.begin());it2!=it->second.gxs_ids.end();)
 				if(it2->second + MAX_KEEP_INACTIVE_NICKNAME < now)
 				{
 #ifdef DEBUG_CHAT_LOBBIES
 					std::cerr << "  removing inactive nickname 0x" << std::hex << it2->first << ", time=" << std::dec << now - it2->second << " secs ago" << std::endl;
 #endif
 
-                    std::map<RsGxsId,time_t>::iterator tmp(it2) ;
+                    std::map<RsGxsId,rstime_t>::iterator tmp(it2) ;
 					++tmp ;
                     it->second.gxs_ids.erase(it2) ;
 					it2 = tmp ;
@@ -1961,6 +1976,9 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 		RsChatLobbyConfigItem *clci = new RsChatLobbyConfigItem ;
 		clci->lobby_Id=it->first;
 		clci->flags=it->second.toUInt32();
+#ifdef DEBUG_CHAT_LOBBIES
+        std::cerr << "Save to database groupchatId " << clci->lobby_Id<< " and the flags: " << clci->flags << std::endl ;
+#endif
 
 		list.push_back(clci) ;
 	}
@@ -1973,6 +1991,11 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 		kv.value = _default_identity.toStdString();
 		vitem->tlvkvs.pairs.push_back(kv);
 		list.push_back(vitem);
+
+#ifdef DEBUG_CHAT_LOBBIES
+        std::cerr << "Save to database default identity for DEFAULT_IDENTITY " << kv.value  << std::endl ;
+#endif
+
 	}
 
 	/* Save Default Nick Name by Lobby*/
@@ -1994,6 +2017,18 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 		list.push_back(vitem);
 	}
 
+    /* for chat lobbys */
+    for(std::map<ChatLobbyId,ChatLobbyEntry>::const_iterator it=_chat_lobbys.begin(); it!=_chat_lobbys.end(); ++it)
+    {
+        RsChatLobbyInfoItem *clci = new RsChatLobbyInfoItem ;
+        clci->lobby_Id=it->first;
+        clci->lobbyInfo=it->second;
+#ifdef DEBUG_CHAT_LOBBIES
+        std::cerr << "Save to database groupchatId (lobby_id) " << clci->lobby_Id<< " and lobby name: " << clci->lobbyInfo.lobby_name << std::endl ;
+#endif
+
+        list.push_back(clci) ;
+    }
 }
 
 bool DistributedChatService::processLoadListItem(const RsItem *item)
@@ -2001,13 +2036,46 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 	const RsConfigKeyValueSet *vitem = NULL;
 	const std::string strldID = "LOBBY_DEFAULT_IDENTITY:";
 
+    /* meiyousixin - for lobbyInfo */
+    const RsChatLobbyInfoItem *clinfo = NULL ;
+    if(NULL != (clinfo = dynamic_cast<const RsChatLobbyInfoItem*>(item)))
+    {
+        //_known_lobbies_flags[clinfo->lobby_Id] = ChatLobbyFlags(clci->flags) ;
+        std::cerr <<" From Local: RsChatLobbyInfoItem Lobby Id loaded from database: " << clinfo->lobby_Id  << ", with the name " << clinfo->lobbyInfo.lobby_name << std::endl;
+
+        ChatLobbyEntry entry ;
+        entry.participating_friends = clinfo->lobbyInfo.participating_friends;
+        entry.lobby_flags = clinfo->lobbyInfo.lobby_flags ;
+        entry.gxs_id = clinfo->lobbyInfo.gxs_id;
+        entry.lobby_id = clinfo->lobbyInfo.lobby_id ;
+        entry.lobby_name = clinfo->lobbyInfo.lobby_name ;
+        entry.lobby_topic = clinfo->lobbyInfo.lobby_topic ;
+        entry.virtual_peer_id = makeVirtualPeerId(clinfo->lobbyInfo.lobby_id) ;
+        entry.connexion_challenge_count = 0 ;
+
+        _chat_lobbys[clinfo->lobby_Id] =  entry;
+        //for(std::set<RsPeerId>::const_iterator kit=clinfo->lobbyInfo.participating_friends.begin(); kit!= clinfo->lobbyInfo.participating_friends.end())
+        for(std::set<RsPeerId>::const_iterator it2(clinfo->lobbyInfo.participating_friends.begin());it2!=clinfo->lobbyInfo.participating_friends.end();++it2)
+        {
+            std::cerr <<" Group members, RsPeerId: " << *it2 << std::endl;
+
+        }
+        const std::map<RsGxsId, rstime_t>& map = clinfo->lobbyInfo.gxs_ids; // mParticipantsInfo.participants;
+        for(std::map<RsGxsId, rstime_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+        {
+            std::cerr <<" Group members, RsGxsId: " << mit->first.toStdString() << std::endl;
+        }
+
+
+    }
+
 	if(NULL != (vitem = dynamic_cast<const RsConfigKeyValueSet*>(item)))
 		for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit)
 		{
 			if( kit->key == "DEFAULT_IDENTITY" )
 			{
 #ifdef DEBUG_CHAT_LOBBIES
-				std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << std::endl ;
+                std::cerr << "Loaded config default nick name for distributed chat: " << kit->value << " with key is " << kit->key << std::endl ;
 #endif
 				if (!kit->value.empty())
 				{
@@ -2049,6 +2117,7 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 	if(NULL != (clci = dynamic_cast<const RsChatLobbyConfigItem*>(item)))
 	{
 		_known_lobbies_flags[clci->lobby_Id] = ChatLobbyFlags(clci->flags) ;
+        //std::cerr <<" Lobby Id loaded from database: " << clci->lobby_Id  << std::endl;
 		return true ;
 	}
 

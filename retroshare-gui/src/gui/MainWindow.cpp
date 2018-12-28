@@ -1194,7 +1194,7 @@ void MainWindow::doQuit()
 	{
 	  QString queryWrn;
 	  queryWrn.clear();
-      queryWrn.append(tr("Do you really want to exit Unseen.is ?"));    //D
+      queryWrn.append(tr("Do you really want to exit UnseenP2P ?"));    //D
 
 		if ((QMessageBox::question(this, tr("Really quit ?"),queryWrn,QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))== QMessageBox::Yes)
 		{

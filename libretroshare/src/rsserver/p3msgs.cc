@@ -26,7 +26,7 @@
 //const int p3facemsgzone = 11453;
 
 #include <sys/time.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retroshare/rstypes.h"
 #include "rsserver/p3msgs.h"
@@ -488,6 +488,11 @@ void p3Msgs::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& pub
 ChatLobbyId p3Msgs::createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic,const std::set<RsPeerId>& invited_friends,ChatLobbyFlags privacy_type)
 {
     return mChatSrv->createChatLobby(lobby_name,lobby_identity,lobby_topic,invited_friends,privacy_type) ;
+}
+
+void p3Msgs::getGroupChatInfoList(std::map<ChatLobbyId, ChatLobbyInfo> &_groupchats)
+{
+    return mChatSrv->getGroupChatInfoList(_groupchats);
 }
 
 void p3Msgs::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)

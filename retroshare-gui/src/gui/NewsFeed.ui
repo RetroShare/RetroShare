@@ -110,7 +110,7 @@
         </property>
         <property name="icon">
          <iconset resource="icons.qrc">
-          <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
+          <normaloff>:/home/img/question-64.png</normaloff>:/home/img/question-64.png</iconset>
         </property>
         <property name="iconSize">
          <size>

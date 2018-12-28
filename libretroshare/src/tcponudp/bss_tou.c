@@ -99,6 +99,8 @@ static int  BIO_get_init(BIO *a) { return a->init; }
 static int  BIO_get_shutdown(BIO *a) { return a->shutdown; }
 static void BIO_set_init(BIO *a,int i) { a->init=i; }
 static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
+long (*BIO_meth_get_ctrl(const BIO_METHOD* biom)) (BIO*, int, long, void*)
+{ return biom->ctrl; }
 
 #endif
 
@@ -119,27 +121,49 @@ typedef struct bio_method_st {
 
 #endif
 
-static BIO_METHOD methods_tou_sockp=
-	{
-	BIO_TYPE_TOU_SOCKET,
-	"tou_socket",
-	tou_socket_write,
-	tou_socket_read,
-	tou_socket_puts,
-	NULL, /* tou_gets, */
-	tou_socket_ctrl,
-	tou_socket_new,
-	tou_socket_free,
-	NULL,
-	};
+static BIO_METHOD methods_tou_sockp =
+{
+    BIO_TYPE_TOU_SOCKET,
+    "tou_socket",
+    tou_socket_write,
+    tou_socket_read,
+    tou_socket_puts,
+    NULL, /* tou_gets, */
+    tou_socket_ctrl,
+    tou_socket_new,
+    tou_socket_free,
+    NULL,
+};
 
-BIO_METHOD *BIO_s_tou_socket(void)
-	{
+BIO_METHOD* BIO_s_tou_socket(void)
+{
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "BIO_s_tou_socket(void)\n");
 #endif
 	return(&methods_tou_sockp);
+}
+
+#else
+
+BIO_METHOD* BIO_s_tou_socket(void)
+{
+	static BIO_METHOD* methods_tou_sockp_ptr = NULL;
+	if(!methods_tou_sockp_ptr)
+	{
+		 methods_tou_sockp_ptr = BIO_meth_new(BIO_TYPE_TOU_SOCKET, "tou_socket");
+
+		BIO_meth_set_write(   methods_tou_sockp_ptr, tou_socket_write );
+		BIO_meth_set_read(    methods_tou_sockp_ptr, tou_socket_read  );
+		BIO_meth_set_puts(    methods_tou_sockp_ptr, tou_socket_puts  );
+		BIO_meth_set_ctrl(    methods_tou_sockp_ptr, tou_socket_ctrl  );
+		BIO_meth_set_create(  methods_tou_sockp_ptr, tou_socket_new   );
+		BIO_meth_set_destroy( methods_tou_sockp_ptr, tou_socket_free  );
 	}
+
+	return methods_tou_sockp_ptr;
+}
+
+#endif
 
 BIO *BIO_new_tou_socket(int fd, int close_flag)
 	{
@@ -260,17 +284,16 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 		break;
 	case BIO_C_SET_FD:
 		tou_socket_free(b);
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
-
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_C_GET_FD:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_GET_CLOSE:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_SET_CLOSE:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_PENDING:
 		ret = tou_maxread(BIO_get_fd(b,NULL));
@@ -411,4 +434,3 @@ int BIO_tou_socket_non_fatal_error(int err)
 #endif
 	return(0);
 	}
-#endif

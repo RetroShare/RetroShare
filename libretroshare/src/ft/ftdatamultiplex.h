@@ -74,15 +74,15 @@ class ftRequest
 	void *mData;
 };
 
-typedef std::map<RsPeerId,time_t> ChunkCheckSumSourceList ;
+typedef std::map<RsPeerId,rstime_t> ChunkCheckSumSourceList ;
 
 class Sha1CacheEntry
 {
 	public:
 		Sha1Map _map ; 												// Map of available sha1 sums for every chunk.
-		time_t last_activity ;										// This is used for removing unused entries.
+		rstime_t last_activity ;										// This is used for removing unused entries.
 		std::vector<uint32_t> _received ;						// received chunk ids. To bedispatched.
-		std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> > _to_ask ;		// Chunks to ask to sources.
+		std::map<uint32_t,std::pair<rstime_t,ChunkCheckSumSourceList> > _to_ask ;		// Chunks to ask to sources.
 };
 	
 class ftDataMultiplex: public ftDataRecv, public RsQueueThread

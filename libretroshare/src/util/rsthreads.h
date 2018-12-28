@@ -27,7 +27,9 @@
 #include <iostream>
 #include <unistd.h>
 #include <semaphore.h>
+
 #include <util/rsmemory.h>
+#include "util/rstime.h"
 
 /* RsIface Thread Wrappers */
 
@@ -309,7 +311,7 @@ private:
     uint32_t mMinSleep; /* ms */
     uint32_t mMaxSleep; /* ms */
     uint32_t mLastSleep; /* ms */
-    time_t   mLastWork;  /* secs */
+    rstime_t   mLastWork;  /* secs */
     float    mRelaxFactor;
 };
 

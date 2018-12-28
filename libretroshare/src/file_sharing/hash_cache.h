@@ -26,6 +26,7 @@
 #include <map>
 #include "util/rsthreads.h"
 #include "retroshare/rsfiles.h"
+#include "util/rstime.h"
 
 /*!
  * \brief The HashStorageClient class
@@ -65,7 +66,7 @@ public:
      *
      * \return true if the supplied hash info is up to date.
      */
-    bool requestHash(const  std::string& full_path, uint64_t size, time_t mod_time, RsFileHash& known_hash, HashStorageClient *c, uint32_t client_param) ;
+    bool requestHash(const  std::string& full_path, uint64_t size, rstime_t mod_time, RsFileHash& known_hash, HashStorageClient *c, uint32_t client_param) ;
 
     struct HashStorageInfo
     {
@@ -120,7 +121,7 @@ private:
         uint64_t size ;
         HashStorageClient *client;
         uint32_t client_param ;
-        time_t ts;
+        rstime_t ts;
     };
 
     // current work
@@ -136,7 +137,7 @@ private:
     uint64_t mTotalSizeToHash ;
     uint64_t mTotalHashedSize ;
     uint64_t mTotalFilesToHash ;
-    time_t mLastSaveTime ;
+    rstime_t mLastSaveTime ;
 
 	// The following is used to estimate hashing speed.
 

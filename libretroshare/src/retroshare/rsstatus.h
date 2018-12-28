@@ -57,7 +57,7 @@ class StatusInfo
 	public:
 	RsPeerId id;
 	uint32_t status;
-	time_t time_stamp; /// for owner time set, and for their peers time sent
+	rstime_t time_stamp; /// for owner time set, and for their peers time sent
 };
 
 

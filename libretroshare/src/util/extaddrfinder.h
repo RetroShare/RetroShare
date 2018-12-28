@@ -45,7 +45,7 @@ class ExtAddrFinder
 		friend void* doExtAddrSearch(void *p) ;
 
 		RsMutex mAddrMtx ;
-		time_t   mFoundTS;
+		rstime_t   mFoundTS;
 		struct sockaddr_storage mAddr;
 		bool mFound ;
 		bool mSearching ;

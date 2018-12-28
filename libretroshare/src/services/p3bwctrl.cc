@@ -79,7 +79,7 @@ int	p3BandwidthControl::tick()
 
 #define CHECK_PERIOD 5
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 		if (now - mLastCheck > CHECK_PERIOD)
 		{
 			doCheck = true;
@@ -121,13 +121,13 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 
 	mTotalRates = total;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	std::list<RsPeerId> oldIds; // unused for now!
 
 	for(bit = mBwMap.begin(); bit != mBwMap.end(); ++bit)
 	{
 		/* check alloc rate */
-		//time_t age = now - bit->second.mLastSend;
+		//rstime_t age = now - bit->second.mLastSend;
 
 		/* find a matching entry */
 		it = rateMap.find(bit->first);
@@ -191,7 +191,7 @@ bool p3BandwidthControl::checkAvailableBandwidth()
 bool p3BandwidthControl::processIncoming()
 {
 	RsItem *item = NULL;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	while(NULL != (item = recvItem()))
 	{
@@ -291,7 +291,7 @@ int p3BandwidthControl::printRateInfo_locked(std::ostream &out)
 	out << "p3BandwidthControl::printRateInfo_locked()";
 	out << std::endl;
 	
-	//time_t now = time(NULL);
+	//rstime_t now = time(NULL);
 	out << "Totals: ";
 	out << " In: " << mTotalRates.mRateIn;
 	out << " MaxIn: " << mTotalRates.mMaxRateIn;

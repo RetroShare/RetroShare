@@ -28,7 +28,7 @@
 #include <sys/time.h>
 
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/timeb.h>
 #endif
 

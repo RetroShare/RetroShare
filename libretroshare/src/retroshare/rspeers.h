@@ -30,6 +30,7 @@
 #include "retroshare/rsids.h"
 #include "util/rsurl.h"
 #include "util/rsdeprecate.h"
+#include "util/rstime.h"
 
 class RsPeers;
 
@@ -272,7 +273,7 @@ struct RsPeerDetails : RsSerializable
 
 	/* have we been denied */
 	bool wasDeniedConnection;
-	time_t deniedTS;
+	rstime_t deniedTS;
 
 	/* linkType */
 	uint32_t linkType;
@@ -436,7 +437,7 @@ public:
 	 * @jsonapi{development}
 	 * @param[in] sslId id of the peer
 	 * @param[out] det storage for the details of the peer
-	 * @return false if error occurred, true otherwise
+* @return false if error occurred, true otherwise
 	 */
 	virtual bool getPeerDetails(const RsPeerId& sslId, RsPeerDetails& det) = 0;
 

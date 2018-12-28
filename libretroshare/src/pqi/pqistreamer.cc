@@ -24,7 +24,7 @@
 #include <sys/time.h>             // for gettimeofday
 #include <stdlib.h>               // for free, realloc, exit
 #include <string.h>               // for memcpy, memset, memcmp
-#include <time.h>                 // for NULL, time, time_t
+#include "util/rstime.h"                 // for NULL, time, rstime_t
 #include <algorithm>              // for min
 #include <iostream>               // for operator<<, ostream, basic_ostream
 #include <string>                 // for string, allocator, operator<<, oper...
@@ -429,7 +429,7 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
 
 void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::list<RSTrafficClue>& lst)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(now > mStatisticsTimeStamp)	// new chunk => get rid of oldest, replace old list by current list, clear current list.
     {
@@ -453,7 +453,7 @@ void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::
     lst.push_back(tc) ;
 }
 
-time_t	pqistreamer::getLastIncomingTS()
+rstime_t	pqistreamer::getLastIncomingTS()
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
@@ -553,7 +553,7 @@ int	pqistreamer::handleoutgoing_locked()
 
         	// Checks for inserting a packet slicing probe. We do that to send the other peer the information that packet slicing can be used.
         	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
         
             if(now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
         	{

@@ -19,7 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include <time.h>
+#include "util/rstime.h"
 
 #include "services/p3heartbeat.h"
 #include "rsitems/rsheartbeatitems.h"

@@ -29,7 +29,7 @@
  */
 
 #include <map>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "util/rsthreads.h"
 
@@ -43,7 +43,7 @@ void	tick_events();
 void    schedule_now(uint32_t event_type);
 void    schedule_now(uint32_t event_type, const std::string &elabel);
 
-void    schedule_event(uint32_t event_type, time_t when, const std::string &elabel);
+void    schedule_event(uint32_t event_type, rstime_t when, const std::string &elabel);
 
 void    schedule_in(uint32_t event_type, uint32_t in_secs);
 void    schedule_in(uint32_t event_type, uint32_t in_secs, const std::string &elabel);
@@ -74,8 +74,8 @@ void 	note_event_locked(uint32_t event_type);
 
 	RsMutex mEventMtx;
 	std::map<uint32_t, int32_t>    mEventCount;
-	std::map<uint32_t, time_t>      mPreviousEvent;
-	std::multimap<time_t, EventData> mEvents;
+	std::map<uint32_t, rstime_t>      mPreviousEvent;
+	std::multimap<rstime_t, EventData> mEvents;
 };
 
 #endif // RS_UTIL_TICK_EVENT

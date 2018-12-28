@@ -157,8 +157,8 @@ private:
             total_received = 0 ;
         }
 
-        time_t last_contact ; 		// used to keep track of working connexion
-	time_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
+        rstime_t last_contact ; 		// used to keep track of working connexion
+	rstime_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
 
         unsigned char aes_key[GXS_TUNNEL_AES_KEY_SIZE] ;
 
@@ -169,7 +169,7 @@ private:
         RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
         TurtleFileHash hash ;		// hash that is last used. This is necessary for handling tunnel establishment
         std::set<uint32_t> client_services ;// services that used this tunnel
-        std::map<uint64_t,time_t> received_data_prints ; // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
+        std::map<uint64_t,rstime_t> received_data_prints ; // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
         uint32_t total_sent ;
         uint32_t total_received ;
     };
@@ -191,7 +191,7 @@ private:
     struct GxsTunnelData
     {
         RsGxsTunnelDataItem *data_item ;
-        time_t    last_sending_attempt ;
+        rstime_t    last_sending_attempt ;
     };
     
     // This maps contains the current peers to talk to with distant chat.

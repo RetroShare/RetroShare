@@ -36,10 +36,10 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
-const time_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
-const time_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */
+const rstime_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
+const rstime_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */
 
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
@@ -51,7 +51,7 @@ void *solveDNSEntries(void *p)
 	while(more_to_go)
 	{
 		// get an address request
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		more_to_go = false ;
 
 		std::string next_call = "" ;
@@ -152,7 +152,7 @@ bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct s
 		RsStackMutex mut(_rdnsMtx) ;
 
 		std::map<std::string, AddrInfo>::iterator it(_addr_map->find(server_name)) ;
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		AddrInfo *addr_info ;
 
 		if(it != _addr_map->end())
