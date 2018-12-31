@@ -48,7 +48,7 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
-set RS_QMAKE_CONFIG="CONFIG+=%RsBuildConfig%"
+set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=%RsBuildConfig%"
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_autologin"
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=retroshare_plugins"
 
@@ -63,7 +63,7 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [make]
 
-%EnvMSYS2Cmd% "make -j 4"
+%EnvMSYS2Cmd% "make -j %NUMBER_OF_PROCESSORS%"
 
 :error
 popd
