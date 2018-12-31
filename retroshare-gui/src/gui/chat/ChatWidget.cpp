@@ -22,7 +22,6 @@
 #include <QApplication>
 #include <QBuffer>
 #include <QColorDialog>
-#include <QFontDialog>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMessageBox>
@@ -1487,11 +1486,8 @@ void ChatWidget::chooseFont()
 {
 	bool ok;
 	//Use NULL as parent as with this QFontDialog don't take care of title nether options.
-#ifdef NATIVEDIALOGS
-	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font.")                                 );
-#else
-	QFont font = QFontDialog::getFont(&ok, currentFont, NULL, tr("Choose your font."),QFontDialog::DontUseNativeDialog);
-#endif
+	QFont font = misc::getFont(&ok, currentFont, nullptr, tr("Choose your font."));
+
 	if (ok) {
 		currentFont = font;
 		setFont();
