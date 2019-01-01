@@ -676,7 +676,7 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
             details = data.details;
 
-            if(mAutoAddFriendsIdentitiesAsContacts && (!is_a_contact) && (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN))
+            if(mAutoAddFriendsIdentitiesAsContacts && (!is_a_contact) && (details.mFlags & RS_IDENTITY_FLAGS_PGP_KNOWN) && rsPeers->isPgpFriend(details.mPgpId))
             {
 				mContacts.insert(id) ;
 				slowIndicateConfigChanged() ;
