@@ -1489,16 +1489,18 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
+    ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
+                                  "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
+
     ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                    "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
 //    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"        //d:hide quit button
 //                                     "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
-    ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
-                                  "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
+
+    ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
-	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 	for(int i = 0; i < ui->listWidget->count(); ++i) {
 		if (ui->listWidget->item(i)->data(Qt::UserRole).toString() == "") {
 			ui->listWidget->item(i)->setHidden(Settings->getPageButtonLoc());
@@ -1509,16 +1511,18 @@ void MainWindow::settingsChanged()
             ui->listWidget->item(i)->setSizeHint(QSize(64,42));    //d: change size listWidget
 		}
 	}
-    int toolSize = Settings->getToolButtonSize();
+    //  int itemSize = Settings->getListItemIconSize();
+     // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+     ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
+     ui->listWidget->setSpacing(8); //d: set item space
+
+     int toolSize = Settings->getToolButtonSize();
+
     ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
     ui->toolBarPage->setIconSize(QSize(128,toolSize));      //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 //	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());                              //d:hide quit button
 //  ui->toolBarAction->setIconSize(QSize(128,toolSize));        //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));       //d:hide quit button
 
-   //  int itemSize = Settings->getListItemIconSize();
-    // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
-    ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
-    ui->listWidget->setSpacing(8); //d: set item space
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)

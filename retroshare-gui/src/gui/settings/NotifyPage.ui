@@ -14,7 +14,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabFeed">
       <attribute name="title">
@@ -53,6 +53,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="notify_Circles">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Circles</string>
               </property>
@@ -74,6 +77,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="notify_Posted">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="text">
                <string>Links</string>
               </property>
@@ -81,6 +87,9 @@
             </item>
             <item>
              <widget class="QCheckBox" name="notify_Blogs">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="text">
                <string>Blogs</string>
               </property>
