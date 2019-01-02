@@ -153,7 +153,7 @@ void ConfCertDialog::load()
 		 // Dont Show a timestamp in RS calculate the day
 		 ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
-		 /* set retroshare version */
+         /* set UnseenP2P version */
 		 std::string version;
 		 rsDisc->getPeerVersion(detail.id, version);
 		 ui.version->setText(QString::fromStdString(version));
