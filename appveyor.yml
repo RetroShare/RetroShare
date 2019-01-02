@@ -240,6 +240,9 @@ after_build:
 
   - windeployqt %RS_DEPLOY%\retroshare.exe
   - find C:\projects\RetroShare >> filelist.txt
+  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\moc\
+  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\obj\
+  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\qrc\
   - mkdir "installer\windows\x86_64\packages\com.retroshare.retroshare\data\"
   - robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E /NFL /ND /NJH /NJS
   - cd installer\windows\x86_64\
