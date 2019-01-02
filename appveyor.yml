@@ -241,7 +241,7 @@ after_build:
   - windeployqt %RS_DEPLOY%\retroshare.exe
   - find C:\projects\RetroShare >> filelist.txt
   - mkdir "installer\windows\x86_64\packages\com.retroshare.retroshare\data\"
-  - robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E
+  - robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E /NFL /ND /NJH /NJS
   - cd installer\windows\x86_64\
   - binarycreator.exe --offline-only packages Retroshare_0.6.5_windows_x86_64_installer.exe
   - copy Retroshare_0.6.5_windows_x86_64_installer.exe cd C:\projects\RetroShare\%RS_DEPLOY%\
