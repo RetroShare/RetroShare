@@ -60,7 +60,7 @@ ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent
 	ui->setupUi(this);
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui->headerFrame->setHeaderImage(QPixmap(":/home/img/User/information-button_64.png"));
 	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
