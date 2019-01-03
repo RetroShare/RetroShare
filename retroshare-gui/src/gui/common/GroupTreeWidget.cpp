@@ -143,7 +143,7 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
 
-	ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6));
+	ui->treeWidget->setIconSize(QSize(S*1.8,S*1.8));	
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -405,7 +405,7 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 
 	int S = QFontMetricsF(font).height();
 
-	item->setSizeHint(COLUMN_NAME, QSize(S*1.1, S*1.1));
+	item->setSizeHint(COLUMN_NAME, QSize(S*1.9, S*1.9));
 	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
 	nameLabel->setTextColor(textColorCategory());
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
