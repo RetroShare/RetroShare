@@ -237,18 +237,19 @@ after_build:
   - copy C:\windows\system32\vccorlib140.dll %RS_DEPLOY%\
   - copy C:\windows\system32\vcruntime140.dll %RS_DEPLOY%\
   - copy C:\windows\system32\concrt140.dll  %RS_DEPLOY%\
+  - copy C:\projects\RetroShare\libbitdht\src\bitdht\bdboot.txt
 
   - windeployqt %RS_DEPLOY%\retroshare.exe
   - find C:\projects\RetroShare >> filelist.txt
-  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\moc\
-  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\obj\
-  - rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\qrc\
-  - mkdir "installer\windows\x86_64\packages\com.retroshare.retroshare\data\"
-  - robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E /NFL /NJH /NJS
-  - cd installer\windows\x86_64\
-  - binarycreator.exe --offline-only packages Retroshare_0.6.5_windows_x86_64_installer.exe
-  - copy Retroshare_0.6.5_windows_x86_64_installer.exe cd C:\projects\RetroShare\%RS_DEPLOY%\
-  - cd C:\projects\RetroShare\
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\moc\
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\obj\
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\qrc\
+  #- mkdir "installer\windows\x86_64\packages\com.retroshare.retroshare\data\"
+  #- robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E /NFL /NJH /NJS
+  #- cd installer\windows\x86_64\
+  #- binarycreator.exe --offline-only packages Retroshare_0.6.5_windows_x86_64_installer.exe
+  #- copy Retroshare_0.6.5_windows_x86_64_installer.exe cd C:\projects\RetroShare\%RS_DEPLOY%\
+  #- cd C:\projects\RetroShare\
 
 # to disable automatic builds
 #build: off
