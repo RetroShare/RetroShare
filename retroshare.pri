@@ -80,7 +80,7 @@ libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= libresapihttpserver
+CONFIG *= no_libresapihttpserver
 no_libresapihttpserver:CONFIG -= libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
@@ -91,10 +91,8 @@ no_sqlcipher:CONFIG -= sqlcipher
 # To enable autologin (this is higly discouraged as it may compromise your node
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
-
-
 #CONFIG *=no_rs_autologin
-CONFIG*=rs_autologin
+CONFIG *=no_rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation
@@ -147,8 +145,7 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To disable deep search append the following assignation to qmake command line
-CONFIG+=no_rs_deep_search
-CONFIG *= rs_deep_search
+CONFIG *= no_rs_deep_search
 no_rs_deep_search:CONFIG -= rs_deep_search
 
 # Specify RetroShare major version appending the following assignation to qmake
@@ -161,7 +158,7 @@ no_rs_deep_search:CONFIG -= rs_deep_search
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_MINI_VERSION=4'
-#RS_MINI_VERSION=4
+#RS_MINI_VERSION=5
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_EXTRA_VERSION=""'
@@ -598,10 +595,10 @@ macx-* {
         BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
         INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/include"
-        INC_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/include"
+        INC_DIR += "/usr/local/Cellar/sqlcipher/4.0.0/include"
         LIB_DIR += "/usr/local/opt/openssl/lib/"
         LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.59/lib"
-        LIB_DIR += "/usr/local/Cellar/sqlcipher/3.4.2/lib"
+        LIB_DIR += "/usr/local/Cellar/sqlcipher/4.0.0/lib"
         LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
         CONFIG += c++11
         INCLUDEPATH += "/usr/local/include"
