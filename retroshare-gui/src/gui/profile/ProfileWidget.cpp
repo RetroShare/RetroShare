@@ -50,7 +50,7 @@ ProfileWidget::ProfileWidget(QWidget *parent, Qt::WindowFlags flags)
 
 void ProfileWidget::showEvent ( QShowEvent * /*event*/ )
 {
-    /* set retroshare version */
+    /* set UnseenP2P version */
     ui.version->setText(Rshare::retroshareVersion(true));
 
     RsPeerDetails detail;

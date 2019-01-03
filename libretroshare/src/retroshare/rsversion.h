@@ -24,7 +24,7 @@
 
 /**
  * @def RS_MINI_VERSION
- * First number of RetroShare versioning scheme
+ * First number of UnseenP2P versioning scheme
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_MAJOR_VERSION
@@ -33,7 +33,7 @@
 
 /**
  * @def RS_MINI_VERSION
- * Second number of RetroShare versioning scheme
+ * Second number of UnseenP2P versioning scheme
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_MINOR_VERSION
@@ -42,7 +42,7 @@
 
 /**
  * @def RS_MINI_VERSION
- * Third number of RetroShare versioning scheme
+ * Third number of UnseenP2P versioning scheme
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_MINI_VERSION
@@ -73,7 +73,7 @@
 #define __RS_PRIVATE_STRINGIFY(X) __RS_PRIVATE_STRINGIFY2(X)
 
 /**
- * Human readable string describing RetroShare version
+ * Human readable string describing UnseenP2P version
  */
 constexpr auto RS_HUMAN_READABLE_VERSION =
         __RS_PRIVATE_STRINGIFY(RS_MAJOR_VERSION) "." \

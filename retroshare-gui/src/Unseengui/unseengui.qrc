@@ -155,5 +155,6 @@
         <file>home/img/face_icon/un_chat_icon_d_128.png</file>
         <file>home/img/question-64.png</file>
         <file>chat/img/chat_g_32.png</file>
+        <file>home/img/User/information-button_64.png</file>
     </qresource>
 </RCC>

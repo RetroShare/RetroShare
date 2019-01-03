@@ -84,7 +84,7 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 	Settings->loadWidgetInformation(this);
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(QPixmap(":/home/img/User/information-button_64.png"));
     //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;
@@ -153,7 +153,7 @@ void ConfCertDialog::load()
 		 // Dont Show a timestamp in RS calculate the day
 		 ui.lastcontact->setText(DateTime::formatLongDateTime(detail.lastConnect));
 
-		 /* set retroshare version */
+         /* set UnseenP2P version */
 		 std::string version;
 		 rsDisc->getPeerVersion(detail.id, version);
 		 ui.version->setText(QString::fromStdString(version));
