@@ -33,6 +33,8 @@
 #include "common/RSElidedItemDelegate.h"
 #include "gxs/GxsIdTreeWidgetItem.h"
 #include "gxs/GxsIdDetails.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/MainWindow.h"
 #include "msgs/MessageComposer.h"
 #include "msgs/MessageInterface.h"
 #include "msgs/MessageUserNotify.h"
@@ -55,7 +57,8 @@
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
-#define IMAGE_DECRYPTMESSAGE  ":/images/decrypt-mail.png"
+#define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
+#define IMAGE_AUTHOR_INFO      ":/images/info16.png"
 
 #define COLUMN_STAR          0
 #define COLUMN_ATTACHEMENTS  1
@@ -555,6 +558,7 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     QMenu contextMnu( this );
 
     QAction *action = contextMnu.addAction(QIcon(":/images/view_split_top_bottom.png"), tr("Open in a new window"), this, SLOT(openAsWindow()));
+
     if (nCount != 1) {
         action->setDisabled(true);
     }
@@ -583,6 +587,7 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     }
 
     action = contextMnu.addAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), this, SLOT(markAsUnread()));
+
     if (itemsRead.isEmpty()) {
         action->setDisabled(true);
     }
@@ -628,9 +633,47 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     contextMnu.addAction(ui.actionPrint);
     contextMnu.addSeparator();
 
+    RsIdentityDetails details;
+
+    // test if identity is known. If not, no need to call the people tab. Also some mails come from nodes and we wont show that node in the people tab either.
+    // The problem here is that the field rsgxsid_srcId is always populated with either the GxsId or the node of the source, which is inconsistent.
+
+    if(nCount==1 && rsIdentity->getIdDetails(msgInfo.rsgxsid_srcId,details))
+	{
+        std::cerr << "Src ID = " << msgInfo.rsgxsid_srcId << std::endl;
+
+		contextMnu.addAction(QIcon(IMAGE_AUTHOR_INFO),tr("Show author in People"),this,SLOT(showAuthorInPeopleTab()));
+		contextMnu.addSeparator();
+	}
+
     contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("New Message"), this, SLOT(newmessage()));
 
     contextMnu.exec(QCursor::pos());
+}
+
+void MessagesDialog::showAuthorInPeopleTab()
+{
+	std::string cid;
+    std::string mid;
+
+    if(!getCurrentMsg(cid, mid))
+        return ;
+
+    MessageInfo msgInfo;
+    if (!rsMail->getMessage(mid, msgInfo))
+        return;
+
+	if(msgInfo.rsgxsid_srcId.isNull())
+        return ;
+
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
+
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(msgInfo.rsgxsid_srcId)) ;
 }
 
 void MessagesDialog::folderlistWidgetCustomPopupMenu(QPoint /*point*/)
