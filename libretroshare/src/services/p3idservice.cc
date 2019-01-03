@@ -688,7 +688,11 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             // the ones in the contact list. So we change them on demand.
 
             if(is_a_contact && rsReputations->nodeAutoPositiveOpinionForContacts())
+			{
+				RsReputations::Opinion op ;
+				if(rsReputations->getOwnOpinion(id,op) && op == RsReputations::OPINION_NEUTRAL)
 					rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
+			}
 
 			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
 
