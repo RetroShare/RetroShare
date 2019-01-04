@@ -351,7 +351,7 @@ wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
-libresapihttpserver:DEFINES -= ENABLE_WEBUI
+#libresapihttpserver:DEFINES *= ENABLE_WEBUI
 RS_THREAD_LIB=pthread
 RS_UPNP_LIB = upnp ixml threadutil
 
