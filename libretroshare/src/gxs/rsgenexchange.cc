@@ -3431,7 +3431,7 @@ void RsGenExchange::turtleSearchRequest(const std::string& match_string)
 }
 
 bool RsGenExchange::localSearch( const std::string& matchString,
-                  std::list<RsGxsGroupSummary>& results )
+                  std::list<RsGxsSearchResult>& results )
 {
 	return mNetService->search(matchString, results);
 }

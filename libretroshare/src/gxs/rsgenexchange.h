@@ -320,7 +320,7 @@ public:
 	 * @return false on error, true otherwise
 	 */
 	bool localSearch( const std::string& matchString,
-	                  std::list<RsGxsGroupSummary>& results );
+	                  std::list<RsGxsSearchResult>& results );
 
 protected:
 

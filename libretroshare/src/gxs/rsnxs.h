@@ -104,13 +104,16 @@ public:
      */
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
 
-    /*!
-     * \brief receiveTurtleSearchResults
-     * 			Called by turtle (through RsGxsNetTunnel) when new results are received
-     * \param req			Turtle search request ID associated with this result
-     * \param group_infos	Group summary information for the groups returned by the search
-     */
-    virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos)=0;
+	/*!
+	 * \brief Called by turtle (through RsGxsNetTunnel) when new results are
+	 *	received
+	 * \param req Turtle search request ID associated with this result
+	 * \param group_infos Group summary information for the groups returned by
+	 *	the search
+	 */
+	virtual void receiveTurtleSearchResults(
+	        TurtleRequestId req,
+	        const std::list<RsGxsSearchResult>& group_infos ) = 0;
 
     /*!
      * \brief receiveTurtleSearchResults
@@ -118,7 +121,9 @@ public:
      * \param req			        Turtle search request ID associated with this result
      * \param encrypted_group_data  Group data
      */
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)=0;
+	virtual void receiveTurtleSearchResults(
+	        TurtleRequestId req, const uint8_t* encrypted_group_data,
+	        uint32_t encrypted_group_data_len ) = 0;
 
     /*!
      * \brief retrieveTurtleSearchResults
@@ -128,7 +133,7 @@ public:
      * \return
      * 			false when the request is unknown.
      */
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos)=0;
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsSearchResult> &group_infos)=0;
     /*!
      * \brief getDistantSearchResults
      * \param id
@@ -136,10 +141,15 @@ public:
      * \return
      */
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
-    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&)=0;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsSearchResult&)=0;
 
-    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
-	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;
+	virtual bool search( const std::string& substring,
+	                     std::list<RsGxsSearchResult>& group_infos) =0;
+
+	virtual bool search(
+	        const Sha1CheckSum& hashed_group_id,
+	        uint8_t*& encrypted_group_data,
+	        uint32_t& encrypted_group_data_len) = 0;
 
     /*!
      * Initiates a search through the network

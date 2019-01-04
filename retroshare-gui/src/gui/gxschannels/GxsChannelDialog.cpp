@@ -363,10 +363,10 @@ TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
     return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
 }
 
-bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
-{
-    return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
-}
+bool GxsChannelDialog::getDistantSearchResults(
+        TurtleRequestId id,
+        std::map<RsGxsGroupId,RsGxsSearchResult>& group_infos )
+{ return rsGxsChannels->retrieveDistantSearchResults(id, group_infos); }
 
 void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
 {

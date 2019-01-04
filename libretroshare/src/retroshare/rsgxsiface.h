@@ -23,6 +23,11 @@
 #ifndef RSGXSIFACE_H_
 #define RSGXSIFACE_H_
 
+#include <string>
+#include <cstdint>
+
+#include "util/rstime.h"
+
 #include "retroshare/rsreputations.h"
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
@@ -31,34 +36,42 @@
 #include "serialiser/rsserializable.h"
 
 /*!
- * This structure is used to transport group summary information when a GXS
+ * This structure is used to transport GXS search summary information when a GXS
  * service is searched. It contains the group information as well as a context
  * string to tell where the information was found. It is more compact than a
  * GroupMeta object, so as to make search responses as light as possible.
  */
-struct RsGxsGroupSummary : RsSerializable
+struct RsGxsSearchResult : RsSerializable
 {
-	RsGxsGroupSummary() :
+	RsGxsSearchResult() :
 	    mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0),
 	    mSignFlags(0),mPopularity(0) {}
+	virtual ~RsGxsSearchResult() {}
 
+	std::string  mResultTitle;
 	RsGxsGroupId mGroupId;
-	std::string  mGroupName;
+	RsGxsMessageId mMessageId;
 	RsGxsId      mAuthorId;
-	rstime_t       mPublishTs;
+	rstime_t     mPublishTs;
 	uint32_t     mNumberOfMessages;
-	rstime_t       mLastMessageTs;
+	rstime_t     mLastMessageTs;
 	uint32_t     mSignFlags;
 	uint32_t     mPopularity;
 
-	std::string  mSearchContext;
+	/// a snippet around the search match
+	std::string mSearchContext;
+
+	/** URL of the result can be used also to encode extra service specific data
+	 * without breaking search retro-compatibility */
+	std::string mResultUrl;
 
 	/// @see RsSerializable::serial_process
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
 	{
+		RS_SERIAL_PROCESS(mResultTitle);
 		RS_SERIAL_PROCESS(mGroupId);
-		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mMessageId);
 		RS_SERIAL_PROCESS(mAuthorId);
 		RS_SERIAL_PROCESS(mPublishTs);
 		RS_SERIAL_PROCESS(mNumberOfMessages);
@@ -66,6 +79,7 @@ struct RsGxsGroupSummary : RsSerializable
 		RS_SERIAL_PROCESS(mSignFlags);
 		RS_SERIAL_PROCESS(mPopularity);
 		RS_SERIAL_PROCESS(mSearchContext);
+		RS_SERIAL_PROCESS(mResultUrl);
 	}
 };
 
@@ -75,8 +89,8 @@ struct RsGxsGroupSummary : RsSerializable
  */
 struct RsGxsChanges
 {
-    RsGxsChanges(): mService(0){}
-    RsTokenService *mService;
+	RsGxsChanges(): mService(nullptr) {}
+	RsTokenService* mService;
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgs;
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;
     std::list<RsGxsGroupId> mGrps;

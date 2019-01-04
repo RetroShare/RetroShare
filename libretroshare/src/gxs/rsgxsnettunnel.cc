@@ -153,8 +153,8 @@ public:
     explicit RsGxsNetTunnelTurtleSearchGroupSummaryItem(): RsGxsNetTunnelItem(RS_PKT_SUBTYPE_GXS_NET_TUNNEL_TURTLE_SEARCH_GROUP_SUMMARY) {}
     virtual ~RsGxsNetTunnelTurtleSearchGroupSummaryItem() {}
 
-    uint16_t service ;
-    std::list<RsGxsGroupSummary> group_infos;
+	uint16_t service ;
+	std::list<RsGxsSearchResult> group_infos;
 
 	virtual void clear() { group_infos.clear() ; }
 
@@ -1016,7 +1016,7 @@ bool RsGxsNetTunnelService::receiveSearchRequest(unsigned char *search_request_d
 
         max_allowed_hits = RS_GXS_NET_TUNNEL_MAX_ALLOWED_HITS_GROUP_SEARCH ;
 
-        std::list<RsGxsGroupSummary> results ;
+		std::list<RsGxsSearchResult> results;
 
 		RS_STACK_MUTEX(mGxsNetTunnelMtx);
 
@@ -1086,12 +1086,17 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 
     RsGxsNetTunnelTurtleSearchGroupSummaryItem *result_gs = dynamic_cast<RsGxsNetTunnelTurtleSearchGroupSummaryItem *>(item) ;
 
-    if(result_gs != NULL)
+	if(result_gs)
 	{
 		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
 
-		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
-			std::cerr << "   group " << (*it).mGroupId << ": " << (*it).mGroupName << ", " << (*it).mNumberOfMessages << " messages, last is " << time(NULL)-(*it).mLastMessageTs << " secs ago." << std::endl;
+		for( auto it(result_gs->group_infos.begin());
+		     it!=result_gs->group_infos.end(); ++it )
+			std::cerr << "   group " << (*it).mGroupId << ": "
+			          << (*it).mResultTitle << ", " << (*it).mNumberOfMessages
+			          << " messages, last is "
+			          << time(nullptr)-(*it).mLastMessageTs << " secs ago."
+			          << std::endl;
 
 		auto it = mSearchableServices.find(result_gs->service) ;
 

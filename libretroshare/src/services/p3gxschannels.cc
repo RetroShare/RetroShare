@@ -1904,20 +1904,19 @@ bool p3GxsChannels::clearDistantSearchResults(TurtleRequestId req)
 {
     return netService()->clearDistantSearchResults(req);
 }
-bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& results)
-{
-    return netService()->retrieveDistantSearchResults(req,results);
-}
+bool p3GxsChannels::retrieveDistantSearchResults(
+        TurtleRequestId req,std::map<RsGxsGroupId,RsGxsSearchResult>& results )
+{ return netService()->retrieveDistantSearchResults(req,results); }
 
 bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
 {
-	RsGxsGroupSummary gs;
+	RsGxsSearchResult gs;
 
     if(netService()->retrieveDistantGroupSummary(group_id,gs))
     {
         // This is a placeholder information by the time we receive the full group meta data.
 		distant_group.mMeta.mGroupId         = gs.mGroupId ;
-		distant_group.mMeta.mGroupName       = gs.mGroupName;
+		distant_group.mMeta.mGroupName       = gs.mResultTitle;
 		distant_group.mMeta.mGroupFlags      = GXS_SERV::FLAG_PRIVACY_PUBLIC ;
 		distant_group.mMeta.mSignFlags       = gs.mSignFlags;
 
@@ -1943,7 +1942,7 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
 
 bool p3GxsChannels::turtleSearchRequest(
         const std::string& matchString,
-        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
+        const std::function<void (const RsGxsSearchResult&)>& multiCallback,
         rstime_t maxWait )
 {
 	if(matchString.empty())
@@ -1999,7 +1998,7 @@ bool p3GxsChannels::turtleChannelRequest(
 /// @see RsGxsChannels::localSearchRequest
 bool p3GxsChannels::localSearchRequest(
             const std::string& matchString,
-            const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+            const std::function<void (const RsGxsSearchResult& result)>& multiCallback,
             rstime_t maxWait )
 {
 	if(matchString.empty())
@@ -2012,10 +2011,10 @@ bool p3GxsChannels::localSearchRequest(
 	auto timeout = std::chrono::steady_clock::now() + std::chrono::seconds(maxWait);
 	RsThread::async([=]()
 	{
-		std::list<RsGxsGroupSummary> results;
+		std::list<RsGxsSearchResult> results;
 		RsGenExchange::localSearch(matchString, results);
 		if(std::chrono::steady_clock::now() < timeout)
-			for(const RsGxsGroupSummary& result : results) multiCallback(result);
+			for(const RsGxsSearchResult& result : results) multiCallback(result);
 	});
 
 	return true;
@@ -2029,7 +2028,7 @@ void p3GxsChannels::receiveDistantSearchResults(
 
 	{
 		RsGenExchange::receiveDistantSearchResults(id, grpId);
-		RsGxsGroupSummary gs;
+		RsGxsSearchResult gs;
 		gs.mGroupId = grpId;
 		netService()->retrieveDistantGroupSummary(grpId, gs);
 

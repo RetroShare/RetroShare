@@ -134,14 +134,24 @@ public:
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
 
-    virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) ;
-	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len);
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
-	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len);
+	bool search( const std::string& substring,
+	             std::list<RsGxsSearchResult>& group_infos) override;
 
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos);
+	bool search( const Sha1CheckSum& hashed_group_id,
+	             uint8_t*& encrypted_group_data,
+	             uint32_t& encrypted_group_data_len ) override;
+
+	void receiveTurtleSearchResults(
+	        TurtleRequestId req,
+	        const std::list<RsGxsSearchResult>& group_infos ) override;
+
+	void receiveTurtleSearchResults(
+	        TurtleRequestId req, const uint8_t* encrypted_group_data,
+	        uint32_t encrypted_group_data_len ) override;
+
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsSearchResult> &group_infos);
 	virtual bool clearDistantSearchResults(const TurtleRequestId& id);
-    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&);
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsSearchResult&);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -592,6 +602,7 @@ public:
     typedef std::map<RsGxsGroupId, RsGxsServerMsgUpdate>  ServerMsgMap;
     typedef std::map<RsPeerId,     RsGxsGrpUpdate>        ClientGrpMap;
     typedef std::map<RsGxsGroupId, RsGxsGrpConfig>        GrpConfigMap;
+
 private:
 
     ClientMsgMap mClientMsgUpdateMap;
@@ -609,8 +620,9 @@ private:
     std::set<RsGxsGroupId> mNewStatsToNotify ;
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
 
-    // Distant search result map
-    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSummary> > mDistantSearchResults ;
+	/// Distant search result map
+	std::map< TurtleRequestId, std::map<RsGxsGroupId,RsGxsSearchResult> >
+	    mDistantSearchResults;
 
     void debugDump();
 

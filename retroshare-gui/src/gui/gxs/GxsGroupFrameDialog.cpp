@@ -262,7 +262,7 @@ void GxsGroupFrameDialog::updateSearchResults()
     {
 		std::cerr << "updating search ID " << std::hex << *it << std::dec << std::endl;
 
-        std::map<RsGxsGroupId,RsGxsGroupSummary> group_infos;
+        std::map<RsGxsGroupId,RsGxsSearchResult> group_infos;
 
         getDistantSearchResults(*it,group_infos) ;
 
@@ -283,11 +283,11 @@ void GxsGroupFrameDialog::updateSearchResults()
 			{
 				std::cerr << "  adding new group " << it3->first << " "
 				          << it3->second.mGroupId << " \""
-				          << it3->second.mGroupName << "\"" << std::endl;
+				          << it3->second.mResultTitle << "\"" << std::endl;
 
 				GroupItemInfo i;
 				i.id             = QString(it3->second.mGroupId.toStdString().c_str());
-				i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
+				i.name           = QString::fromUtf8(it3->second.mResultTitle.c_str());
 				i.popularity     = 0; // could be set to the number of hits
 				i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
 				i.subscribeFlags = 0; // irrelevant here

@@ -66,8 +66,10 @@ protected:
 	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
     virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id);
-    virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
-    virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) ;
+	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
+	bool retrieveDistantSearchResults(
+	        TurtleRequestId req, std::map<RsGxsGroupId,
+	        RsGxsSearchResult>& results) override;
     virtual bool clearDistantSearchResults(TurtleRequestId req);
     virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
 
@@ -109,18 +111,18 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 
 	/// @see RsGxsChannels::turtleSearchRequest
 	virtual bool turtleSearchRequest(const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        const std::function<void (const RsGxsSearchResult&)>& multiCallback,
+	        rstime_t maxWait = 300 ) override;
 
 	/// @see RsGxsChannels::turtleChannelRequest
-	virtual bool turtleChannelRequest(
+	bool turtleChannelRequest(
 	        const RsGxsGroupId& channelId,
 	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        rstime_t maxWait = 300 ) override;
 
 	/// @see RsGxsChannels::localSearchRequest
-	virtual bool localSearchRequest(const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	bool localSearchRequest(const std::string& matchString,
+	        const std::function<void (const RsGxsSearchResult& result)>& multiCallback,
 	        rstime_t maxWait = 30 ) override;
 
 	/**
@@ -293,7 +295,7 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	std::map<
 	    TurtleRequestId,
 	    std::pair<
-	        std::function<void (const RsGxsGroupSummary&)>,
+	        std::function<void (const RsGxsSearchResult&)>,
 	        std::chrono::system_clock::time_point >
 	 > mSearchCallbacksMap;
 	RsMutex mSearchCallbacksMapMutex;

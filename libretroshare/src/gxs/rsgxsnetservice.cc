@@ -5153,9 +5153,11 @@ static bool termSearch(const std::string& src, const std::string& substring)
 }
 #endif // ndef RS_DEEP_SEARCH
 
-bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::retrieveDistantSearchResults(
+        TurtleRequestId req,
+        std::map<RsGxsGroupId,RsGxsSearchResult>& group_infos )
 {
-    RS_STACK_MUTEX(mNxsMutex) ;
+	RS_STACK_MUTEX(mNxsMutex);
 
     auto it = mDistantSearchResults.find(req) ;
 
@@ -5165,7 +5167,7 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
     group_infos = it->second;
     return true ;
 }
-bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsSearchResult& gs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
     for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
@@ -5188,7 +5190,7 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
 }
 
 void RsGxsNetService::receiveTurtleSearchResults(
-        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+        TurtleRequestId req, const std::list<RsGxsSearchResult>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5196,15 +5198,15 @@ void RsGxsNetService::receiveTurtleSearchResults(
 		RS_STACK_MUTEX(mNxsMutex);
 
 		RsGxsGrpMetaTemporaryMap grpMeta;
-		std::map<RsGxsGroupId,RsGxsGroupSummary>&
+		std::map<RsGxsGroupId,RsGxsSearchResult>&
 		        search_results_map(mDistantSearchResults[req]);
 
-		for(const RsGxsGroupSummary& gps : group_infos)
+		for(const RsGxsSearchResult& gps : group_infos)
 			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
 				grpMeta[gps.mGroupId] = nullptr;
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
-		for (const RsGxsGroupSummary& gps : group_infos)
+		for (const RsGxsSearchResult& gps : group_infos)
 		{
 #ifndef RS_DEEP_SEARCH
 			/* Only keep groups that are not locally known, and groups that are
@@ -5222,7 +5224,7 @@ void RsGxsNetService::receiveTurtleSearchResults(
 			if(it2 != search_results_map.end())
 			{
 				// update existing data
-				RsGxsGroupSummary& eGpS(it2->second);
+				RsGxsSearchResult& eGpS(it2->second);
 				eGpS.mPopularity++;
 				eGpS.mNumberOfMessages = std::max(
 				            eGpS.mNumberOfMessages,
@@ -5241,7 +5243,9 @@ void RsGxsNetService::receiveTurtleSearchResults(
 		mObserver->receiveDistantSearchResults(req, grpId);
 }
 
-void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)
+void RsGxsNetService::receiveTurtleSearchResults(
+        TurtleRequestId req, const uint8_t* encrypted_group_data,
+        uint32_t encrypted_group_data_len )
 {
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << " received encrypted group data for turtle search request " << std::hex << req << std::dec << ": " << RsUtil::BinToHex(encrypted_group_data,encrypted_group_data_len,50) << std::endl;
@@ -5295,7 +5299,7 @@ void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsig
 }
 
 bool RsGxsNetService::search( const std::string& substring,
-                              std::list<RsGxsGroupSummary>& group_infos )
+                              std::list<RsGxsSearchResult>& group_infos )
 {
 	group_infos.clear();
 
@@ -5314,20 +5318,23 @@ bool RsGxsNetService::search( const std::string& substring,
 			RsGxsGroupId grpId(rit->second);
 			if( !grpId.isNull() && getGroupNetworkStats(grpId, stats) )
 			{
-				RsGxsGroupSummary s;
+				RsGxsSearchResult s;
 
 				s.mGroupId = grpId;
 
 				if((rit = uQ.find("name")) != uQ.end())
-					s.mGroupName = rit->second;
+					s.mResultTitle = rit->second;
 				if((rit = uQ.find("signFlags")) != uQ.end())
-					s.mSignFlags = std::stoul(rit->second);
+					s.mSignFlags = static_cast<uint32_t>(std::stoul(rit->second));
 				if((rit = uQ.find("publishTs")) != uQ.end())
 					s.mPublishTs = static_cast<rstime_t>(std::stoll(rit->second));
 				if((rit = uQ.find("authorId")) != uQ.end())
 					s.mAuthorId  = RsGxsId(rit->second);
+				if((rit = uQ.find("msgid")) != uQ.end())
+					s.mMessageId = RsGxsMessageId(rit->second);
 
 				s.mSearchContext = dsr.mSnippet;
+				s.mResultUrl = dsr.mUrl;
 
 				s.mNumberOfMessages = stats.mMaxVisibleCount;
 				s.mLastMessageTs    = stats.mLastGroupModificationTS;
@@ -5371,7 +5378,9 @@ bool RsGxsNetService::search( const std::string& substring,
     return !group_infos.empty();
 }
 
-bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)
+bool RsGxsNetService::search(
+        const Sha1CheckSum& hashed_group_id, uint8_t*& encrypted_group_data,
+        uint32_t& encrypted_group_data_len )
 {
     // First look into the grp hash cache
 

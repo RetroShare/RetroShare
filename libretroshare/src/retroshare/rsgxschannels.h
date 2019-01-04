@@ -281,7 +281,7 @@ public:
 	 */
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        const std::function<void (const RsGxsSearchResult& result)>& multiCallback,
 	        rstime_t maxWait = 300 ) = 0;
 
 	/**
@@ -308,7 +308,7 @@ public:
 	 */
 	virtual bool localSearchRequest(
 	        const std::string& matchString,
-	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
+	        const std::function<void (const RsGxsSearchResult& result)>& multiCallback,
 	        rstime_t maxWait = 30 ) = 0;
 
 
@@ -410,7 +410,9 @@ public:
 	RS_DEPRECATED
 	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
 	RS_DEPRECATED_FOR(turtleSearchRequest)
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
+	virtual bool retrieveDistantSearchResults(
+	        TurtleRequestId req,
+	        std::map<RsGxsGroupId, RsGxsSearchResult> &results) = 0;
 	RS_DEPRECATED
 	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
 	RS_DEPRECATED_FOR(turtleChannelRequest)
