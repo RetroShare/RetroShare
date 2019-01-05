@@ -5344,7 +5344,7 @@ bool RsGxsNetService::search( const std::string& substring,
 			}
 		}
 	}
-#else // RS_DEEP_SEARCH
+#else // def RS_DEEP_SEARCH
 	RsGxsGrpMetaTemporaryMap grpMetaMap;
 	{
 		RS_STACK_MUTEX(mNxsMutex) ;
@@ -5357,10 +5357,9 @@ bool RsGxsNetService::search( const std::string& substring,
 		{
 			getGroupNetworkStats(it->first,stats);
 
-			RsGxsGroupSummary s;
+			RsGxsSearchResult s;
 			s.mGroupId           = it->first;
-			s.mGroupName         = it->second->mGroupName;
-			s.mSearchContext     = it->second->mGroupName;
+			s.mResultTitle       = it->second->mGroupName;
 			s.mSignFlags         = it->second->mSignFlags;
 			s.mPublishTs         = it->second->mPublishTs;
 			s.mAuthorId          = it->second->mAuthorId;
@@ -5370,7 +5369,7 @@ bool RsGxsNetService::search( const std::string& substring,
 
 			group_infos.push_back(s);
 		}
-#endif // RS_DEEP_SEARCH
+#endif // def RS_DEEP_SEARCH
 
 #ifdef NXS_NET_DEBUG_8
 	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
