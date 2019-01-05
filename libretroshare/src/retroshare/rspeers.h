@@ -566,7 +566,16 @@ public:
 	 */
 	virtual bool setNetworkMode(const RsPeerId &sslId, uint32_t netMode) = 0;
 
-	virtual bool setVisState(const RsPeerId &ssl_id, uint16_t vs_disc, uint16_t vs_dht)	= 0;
+	/**
+	 * @brief set DHT and discovery modes
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the peer, own id is accepted too
+	 * @param[in] vsDisc one of RS_VS_DISC_*
+	 * @param[in] vsDht one of RS_VS_DHT_*
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool setVisState( const RsPeerId& sslId,
+	                          uint16_t vsDisc, uint16_t vsDht ) = 0;
 
 	virtual bool getProxyServer(const uint32_t type, std::string &addr, uint16_t &port,uint32_t& status_flags) = 0;
 	virtual bool setProxyServer(const uint32_t type, const std::string &addr, const uint16_t port) = 0;

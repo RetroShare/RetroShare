@@ -843,7 +843,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 				rsIdentity->getOwnIds(own_ids) ;
 
 				for(auto it(own_ids.begin());it!=own_ids.end();++it)
-					if(mForumGroup.mAdminList.ids.find(*it) != mForumGroup.mAdminList.ids.end())
+					if(mForumGroup.canEditPosts(*it))
 					{
 						contextMnu.addAction(editAct);
 						break ;
@@ -1137,7 +1137,7 @@ void GxsForumThreadWidget::updateForumDescription()
     }
 
     forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Distribution"), distrib_string);
-    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Contact"), author);
+    forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Owner"), author);
 
        if(!anti_spam_features1.isNull())
     		forum_description += QString("<b>%1: \t</b>%2<br/>").arg(tr("Anti-spam")).arg(anti_spam_features1);

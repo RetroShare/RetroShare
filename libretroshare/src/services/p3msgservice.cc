@@ -852,7 +852,7 @@ bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 
 	std::map<uint32_t, RsMsgSrcId*>::const_iterator it = mSrcIds.find(msgId) ;
 	if(it != mSrcIds.end())
-		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;
+		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;	// (cyril) this is a hack. Not good. I'm not removing it because it may have consequences, but I dont like this.
 
 	return true;
 }

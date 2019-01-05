@@ -1,18 +1,18 @@
 ################################################################################
-# retroshare-gui.pro                                                           #
+# uselibresapi.pri                                                             #
 # Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Lesser General Public License as               #
+# it under the terms of the GNU Affero General Public License as               #
 # published by the Free Software Foundation, either version 3 of the           #
 # License, or (at your option) any later version.                              #
 #                                                                              #
 # This program is distributed in the hope that it will be useful,              #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of               #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
-# GNU Lesser General Public License for more details.                          #
+# GNU Affero General Public License for more details.                          #
 #                                                                              #
-# You should have received a copy of the GNU Lesser General Public License     #
+# You should have received a copy of the GNU Affero General Public License     #
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
@@ -410,7 +410,7 @@ HEADERS +=  rshare.h \
             util/dllexport.h \
             util/global.h \
             util/rsqtutildll.h \
-            util/Interface.h \
+#            util/Interface.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
@@ -460,7 +460,6 @@ HEADERS +=  rshare.h \
             gui/settings/PeoplePage.h \
             gui/settings/AboutPage.h \
             gui/settings/ServerPage.h \
-            gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
             gui/settings/CryptoPage.h \
             gui/settings/MessagePage.h \
@@ -646,7 +645,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/ServerPage.ui \
-            gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
             gui/settings/PeoplePage.ui \
             gui/settings/CryptoPage.ui \
@@ -772,7 +770,7 @@ SOURCES +=  main.cpp \
             util/DateTime.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
-            util/NonCopyable.cpp \
+#            util/NonCopyable.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
@@ -870,7 +868,6 @@ SOURCES +=  main.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/AboutPage.cpp \
             gui/settings/ServerPage.cpp \
-            gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/PeoplePage.cpp \
