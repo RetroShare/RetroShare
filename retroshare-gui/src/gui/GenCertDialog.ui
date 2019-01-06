@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>978</width>
-    <height>826</height>
+    <width>633</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,44 +70,6 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLabel" name="nodeType_LB">
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>Node type:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="nodeType_CB">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <item>
-           <property name="text">
-            <string>Standard node</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hidden node (over Tor)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Hidden node (Tor/I2P - Manually configured)</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item>
          <spacer name="toolBarHSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
@@ -168,6 +130,13 @@
          </property>
          <item row="1" column="0">
           <layout class="QGridLayout" name="profilGLayout">
+           <item row="7" column="3">
+            <widget class="QLabel" name="password_check_LB">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
            <item row="14" column="2">
             <widget class="QComboBox" name="keylength_comboBox">
              <property name="sizePolicy">
@@ -184,7 +153,7 @@
              </property>
             </widget>
            </item>
-           <item row="18" column="1">
+           <item row="19" column="1">
             <widget class="QLabel" name="randomness_label_">
              <property name="maximumSize">
               <size>
@@ -206,10 +175,19 @@
              </property>
             </widget>
            </item>
-           <item row="7" column="3">
-            <widget class="QLabel" name="password_check_LB">
-             <property name="text">
-              <string/>
+           <item row="19" column="2">
+            <widget class="QProgressBar" name="entropy_bar">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please move your mouse around in order to collect as much randomness as possible. A minimum of 20% is needed to create your node keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
+             <property name="value">
+              <number>24</number>
              </property>
             </widget>
            </item>
@@ -241,23 +219,7 @@
              </property>
             </widget>
            </item>
-           <item row="18" column="2">
-            <widget class="QProgressBar" name="entropy_bar">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Please move your mouse around in order to collect as much randomness as possible. A minimum of 20% is needed to create your node keys.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="value">
-              <number>24</number>
-             </property>
-            </widget>
-           </item>
-           <item row="18" column="3">
+           <item row="19" column="3">
             <widget class="QLabel" name="randomness_check_LB">
              <property name="text">
               <string/>
@@ -413,7 +375,29 @@
              </property>
             </widget>
            </item>
-           <item row="17" column="2">
+           <item row="4" column="1">
+            <widget class="QLabel" name="name_label">
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="icons.qrc">:/icons/svg/person.svg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="18" column="2">
             <layout class="QHBoxLayout" name="hiddenInfoHLayout">
              <property name="spacing">
               <number>6</number>
@@ -484,6 +468,13 @@
              </item>
             </layout>
            </item>
+           <item row="20" column="3">
+            <widget class="QLabel" name="generate_label">
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
            <item row="9" column="2">
             <widget class="QLineEdit" name="nickname_input">
              <property name="sizePolicy">
@@ -497,7 +488,7 @@
              </property>
             </widget>
            </item>
-           <item row="19" column="2">
+           <item row="20" column="2">
             <widget class="QPushButton" name="genButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -530,35 +521,6 @@
              </property>
             </widget>
            </item>
-           <item row="19" column="3">
-            <widget class="QLabel" name="generate_label">
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1">
-            <widget class="QLabel" name="name_label">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="icons.qrc">:/icons/svg/person.svg</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
            <item row="9" column="1">
             <widget class="QLabel" name="nickname_label">
              <property name="maximumSize">
@@ -575,6 +537,31 @@
              </property>
              <property name="pixmap">
               <pixmap resource="icons.qrc">:/icons/svg/chat-lobbies.svg</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLabel" name="password2_label">
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>This password is for PGP</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="icons.qrc">:/icons/svg/password.svg</pixmap>
              </property>
              <property name="scaledContents">
               <bool>true</bool>
@@ -628,31 +615,6 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="1">
-            <widget class="QLabel" name="password2_label">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>This password is for PGP</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="icons.qrc">:/icons/svg/password.svg</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
            <item row="7" column="1">
             <widget class="QLabel" name="password_label">
              <property name="maximumSize">
@@ -678,7 +640,7 @@
              </property>
             </widget>
            </item>
-           <item row="17" column="1">
+           <item row="18" column="1">
             <widget class="QLabel" name="hiddenaddr_label">
              <property name="maximumSize">
               <size>
@@ -697,6 +659,53 @@
              </property>
              <property name="alignment">
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="15" column="2">
+            <widget class="QComboBox" name="nodeType_CB">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <item>
+              <property name="text">
+               <string>Standard node</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hidden node (over Tor)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Hidden node (Tor/I2P - Manually configured)</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="15" column="1">
+            <widget class="QLabel" name="nodetype_label">
+             <property name="maximumSize">
+              <size>
+               <width>24</width>
+               <height>26</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Node type</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap resource="icons.qrc">:/icons/png/settings.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
              </property>
             </widget>
            </item>

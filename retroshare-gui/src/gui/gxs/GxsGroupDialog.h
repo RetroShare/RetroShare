@@ -163,6 +163,7 @@ private:
 protected slots:
 	void submitGroup();
 	void addGroupLogo();
+	void filterComboBoxChanged(int);
 
 protected:
 	virtual void showEvent(QShowEvent*);

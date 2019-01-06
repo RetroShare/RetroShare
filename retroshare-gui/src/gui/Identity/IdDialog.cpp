@@ -165,7 +165,8 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	ui->treeWidget_membership->clear();
     
-    	mExternalOtherCircleItem = NULL ;
+    	mMyCircleItem = NULL ;
+		mExternalOtherCircleItem = NULL ;
     	mExternalBelongingCircleItem = NULL ;
 
 	/* Setup UI helper */
@@ -505,6 +506,12 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
+	if(!mMyCircleItem )
+	{
+		mMyCircleItem = new QTreeWidgetItem();
+		mMyCircleItem->setText(0, tr("My Circles"));
+		ui->treeWidget_membership->addTopLevelItem(mMyCircleItem);
+	}
 	if(!mExternalOtherCircleItem)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
@@ -599,7 +606,14 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
-			if(am_I_in_circle)
+			if(am_I_admin)
+			{
+#ifdef ID_DEBUG
+				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
+#endif
+				mMyCircleItem->addChild(item);
+			}
+			else if(am_I_in_circle)
 			{
 #ifdef ID_DEBUG
 				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
