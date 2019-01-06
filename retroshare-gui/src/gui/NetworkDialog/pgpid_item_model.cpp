@@ -48,7 +48,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
                 return QString(tr("Name of the profile"));
                 break;
             case COLUMN_I_AUTH_PEER:
-                return QString(tr("This column indicates trust level and whether you signed the profile PGP key"));
+                return QString(tr("This column indicates the trust level you indicated and whether you signed the profile PGP key"));
                 break;
             case COLUMN_PEER_AUTH_ME:
                 return QString(tr("Did that peer sign your own profile PGP key"));
@@ -234,7 +234,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             }
             else
             {
-                return tr(" - ");
+                return tr("Denied");
             }
         }
             break;
