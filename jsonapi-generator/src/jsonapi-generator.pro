@@ -1,5 +1,7 @@
 TARGET = jsonapi-generator
 
+CONFIG += qt
+
 QT *= core xml
 QT -= gui
 
