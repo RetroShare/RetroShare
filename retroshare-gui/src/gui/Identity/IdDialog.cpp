@@ -133,8 +133,8 @@ class TreeWidgetItem : public QTreeWidgetItem
 
 	return v1 < v2;
     }
-    else
-        return data(column,Qt::DisplayRole).toString() < other.data(column,Qt::DisplayRole).toString();
+    else // case insensitive sorting
+        return data(column,Qt::DisplayRole).toString().toUpper() < other.data(column,Qt::DisplayRole).toString().toUpper();
   }
 };
 
