@@ -188,11 +188,12 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 
 	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
 
-	if(!current_id.isNull())
+	if(current_id != "")
 		for(int indx=0;indx<chooser->count();++indx)
 			if(chooser->itemData(indx).toString() == current_id)
 			{
 				chooser->setCurrentIndex(indx);
+				std::cerr << "GxsIdChooser-003" << (void*)chooser << " setting current index to " << indx << std::endl;
 				break;
 			}
 
@@ -340,6 +341,7 @@ void GxsIdChooser::setDefaultItem()
 
 	if (def >= 0) {
 		setCurrentIndex(def);
+        std::cerr << "GxsIdChooser-002" << (void*)this << " setting current index to " << def << std::endl;
 	}
 }
 
@@ -351,6 +353,7 @@ bool GxsIdChooser::setChosenId(const RsGxsId &gxsId)
 	int index = findData(id);
 	if (index >= 0) {
 		setCurrentIndex(index);
+        std::cerr << "GxsIdChooser-001" << (void*)this << " setting current index to " << index << std::endl;
 		return true;
 	}
 	return false;
