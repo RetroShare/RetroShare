@@ -60,12 +60,6 @@ public:
   void setBackgroundColorHasSignedMe(QColor color) { PGPIdItemModel->setBackgroundColorHasSignedMe(color); mBackgroundColorHasSignedMe = color; }
   void setBackgroundColorDenied(QColor color) { PGPIdItemModel->setBackgroundColorDenied(color); mBackgroundColorDenied = color; }
 
-private:
-//  void  insertConnect();
-//  std::string loadneighbour();
-  /* void loadneighbour(); */
-  //void updateNewDiscoveryInfo() ;
-
 protected:
   void changeEvent(QEvent *e);
 
@@ -74,48 +68,21 @@ private slots:
   void removeUnusedKeys() ;
   void makeFriend() ;
   void denyFriend() ;
-//  void deleteCert() ;
   void peerdetails();
   void copyLink();
-//  void sendDistantMessage();
+
   /** Create the context popup menu and it's submenus */
   void connectTreeWidgetCostumPopupMenu( QPoint point );
-  //void unvalidGPGKeyWidgetCostumPopupMenu( QPoint point );
 
   /** Called when user clicks "Load Cert" to choose location of a Cert file */
-//  void loadcert();
 
-//  void authneighbour();
-//  void addneighbour();
-
-  void on_actionAddFriend_activated();
-  //void on_actionCopyKey_activated();
-  void on_actionExportKey_activated();
-
-  void on_actionCreate_New_Profile_activated();
+  //void on_actionAddFriend_activated();
+  //void on_actionExportKey_activated();
+  //void on_actionCreate_New_Profile_activated();
     
-  //void updateNetworkStatus();
-  
-//  void loadtabsettings();
-  
-//  void on_actionTabsright_activated();
-//  void on_actionTabsnorth_activated();
-//  void on_actionTabssouth_activated();
-//  void on_actionTabswest_activated();
-//
-//  void on_actionTabsRounded_activated();
-//  void on_actionTabsTriangular_activated();
-  
   void filterColumnChanged(int);
-//  void filterItems(const QString &text);
-
-
 
 private:
-
-//  class NetworkView *networkview;
-  
-//  bool filterItem(QTreeWidgetItem *item, const QString &text, int filterColumn);
 
   /* Color definitions (for standard see qss.default) */
   QColor mBackgroundColorSelf;
