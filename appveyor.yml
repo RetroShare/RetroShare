@@ -142,8 +142,8 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir %RS_DEPLOY%
-  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
-  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\unseenp2p-nogui.exe
+  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\unseenp2p.exe
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
   - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
@@ -239,7 +239,7 @@ after_build:
   - copy C:\windows\system32\concrt140.dll  %RS_DEPLOY%\
   - copy C:\projects\RetroShare\libbitdht\src\bitdht\bdboot.txt
 
-  - windeployqt %RS_DEPLOY%\retroshare.exe
+  - windeployqt %RS_DEPLOY%\unseenp2p.exe
   - find C:\projects\RetroShare >> filelist.txt
   #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\moc\
   #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\obj\
