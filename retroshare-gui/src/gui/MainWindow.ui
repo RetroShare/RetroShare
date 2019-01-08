@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>571</width>
-    <height>460</height>
+    <width>1000</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,8 +41,20 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>100</width>
+         <width>0</width>
          <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>128</width>
+         <height>16777215</height>
+        </size>
+       </property>
+       <property name="baseSize">
+        <size>
+         <width>128</width>
+         <height>1000</height>
         </size>
        </property>
        <property name="styleSheet">
@@ -93,6 +105,9 @@
        <property name="uniformItemSizes">
         <bool>true</bool>
        </property>
+       <property name="selectionRectVisible">
+        <bool>false</bool>
+       </property>
        <property name="currentRow">
         <number>-1</number>
        </property>
@@ -106,8 +121,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>100</width>
-         <height>100</height>
+         <width>830</width>
+         <height>0</height>
         </size>
        </property>
        <property name="styleSheet">

@@ -221,7 +221,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
+    setWindowTitle(tr("UnseenP2P %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for UnseenP2P links */
@@ -652,7 +652,7 @@ void MainWindow::createTrayIcon()
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
 //#ifdef WINDOWS_SYS
-    trayIcon->setToolTip(tr("Unseen.is")); //D
+    trayIcon->setToolTip(tr("UnseenP2P")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_RETROSHARE)); //d
 
@@ -788,7 +788,7 @@ void MainWindow::updateTrayCombine()
 
 void MainWindow::toggleStatusToolTip(bool toggle){
     if(!toggle)return;
-    QString tray = "Unseen.is\n";   //D
+    QString tray = "UnseenP2P\n";   //D
     tray += "\n" + nameAndLocation;
     trayIcon->setToolTip(tray);
 }
@@ -823,7 +823,7 @@ void MainWindow::updateStatus()
 
     if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
 
-    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
+    QString tray = "UnseenP2P\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
 
     if (onlineCount == 1) {
         tray += tr("%1 friend connected").arg(onlineCount);
@@ -1489,6 +1489,7 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
+    ui->listWidget->setFixedWidth(128);      //d: set width for listWidget
     ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                   "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
 
@@ -1511,10 +1512,12 @@ void MainWindow::settingsChanged()
             ui->listWidget->item(i)->setSizeHint(QSize(64,42));    //d: change size listWidget
 		}
 	}
-    //  int itemSize = Settings->getListItemIconSize();
+     // int itemSize = Settings->getListItemIconSize();
      // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
      ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
      ui->listWidget->setSpacing(8); //d: set item space
+
+
 
      int toolSize = Settings->getToolButtonSize();
 

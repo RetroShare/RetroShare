@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Unseen.is</string>
+   <string>UnseenP2P</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../Unseengui/unseengui.qrc">
