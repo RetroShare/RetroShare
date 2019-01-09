@@ -67,7 +67,7 @@ environment:
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
     MINGW_PREFIX: C:\msys64\mingw32
-    RS_DEPLOY: RetroShare_deploy
+    RS_DEPLOY: Unseen_portal
 
 
 # build cache to preserve files/folders between builds
@@ -260,7 +260,7 @@ after_build:
 
 artifacts:
   - path: $(RS_DEPLOY)
-  - path: '*.exe'
+  - path: 'unseenp2p.exe'
   - path: filelist.txt
 
 #
