@@ -297,7 +297,7 @@ void GenCertDialog::setupState()
 
 	//ui.no_node_label->setVisible(false);
 
-    setWindowTitle(generate_new?tr("Create new profile and new Unseen node"):tr("Create new Unseen node"));
+    setWindowTitle(generate_new?tr("Create new profile and new UnseenP2P node"):tr("Create new UnseenP2P node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
