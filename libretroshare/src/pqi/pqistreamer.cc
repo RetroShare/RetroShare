@@ -839,10 +839,10 @@ continue_packet:
 
 			    std::string msg;
 			    msg =   "               **** WARNING ****     \n";
-			    msg +=  "Retroshare has caught a BAD Packet Read";
+                msg +=  "UnseenP2P has caught a BAD Packet Read";
 			    msg +=  "\n";
 			    msg +=  "This is normally caused by connecting to an";
-			    msg +=  " OLD version of Retroshare";
+                msg +=  " OLD version of UnseenP2P";
 			    msg +=  "\n";
 			    rs_sprintf_append(msg, "(M:%d B:%d E:%d)\n", maxlen, blen, extralen);
 			    msg +=  "\n";
@@ -855,7 +855,7 @@ continue_packet:
 			    msg +=  "\n";
 			    msg +=  "If you are sure the error was not caused by an old version";
 			    msg +=  "\n";
-			    msg +=  "Please report the problem to Retroshare's developers";
+                msg +=  "Please report the problem to UnseenP2P's developers";
 			    msg +=  "\n";
 
 			    notify->AddLogMessage(0, RS_SYS_WARNING, title, msg);
@@ -907,7 +907,7 @@ continue_packet:
 
 					    std::string msgout;
 					    msgout =   "               **** WARNING ****     \n";
-					    msgout +=  "Retroshare has experienced an unexpected Read ERROR";
+                        msgout +=  "UnseenP2P has experienced an unexpected Read ERROR";
 					    msgout +=  "\n";
 					    rs_sprintf_append(msgout, "(M:%d B:%d E:%d R:%d)\n", maxlen, blen, extralen, tmplen);
 					    msgout +=  "\n";
