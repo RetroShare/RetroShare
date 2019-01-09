@@ -746,5 +746,6 @@
         <file>fonts/OpenSansEmoji.ttf</file>
         <file>Options.qml</file>
         <file>AppSettings.qml</file>
+        <file>icons/icon.png</file>
     </qresource>
 </RCC>
