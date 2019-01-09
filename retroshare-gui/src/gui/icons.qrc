@@ -82,7 +82,7 @@
         <file>icons/png/exit.png</file>
         <file>icons/png/feedreader-notify.png</file>
         <file>icons/png/feedreader.png</file>
-		<file>icons/png/feed-other.png</file>
+        <file>icons/png/feed-other.png</file>
         <file>icons/png/feed-popular.png</file>
         <file>icons/png/feed-subscribed.png</file>
         <file>icons/png/filesharing-notify.png</file>
@@ -90,8 +90,6 @@
         <file>icons/png/font.png</file>
         <file>icons/png/forums-notify.png</file>
         <file>icons/png/forums.png</file>
-		<file>icons/png/forums-newpost.png</file>
-        <file>icons/png/forums-nopost.png</file>
         <file>icons/png/fullscreen_arrows.png</file>
         <file>icons/png/highlight.png</file>
         <file>icons/png/home.png</file>
@@ -252,5 +250,12 @@
         <file>icons/png/channel-other.png</file>
         <file>icons/png/channel-popular.png</file>
         <file>icons/png/channel-subscribed.png</file>
+        <file>icons/png/circles-black.png</file>
+        <file>icons/png/circles-gray.png</file>
+        <file>icons/png/circles-notify.png</file>
+        <file>icons/png/circles-red.png</file>
+        <file>icons/png/circles-green.png</file>
+        <file>icons/png/forums-default.png</file>
+        <file>icons/png/forums-signed.png</file>
     </qresource>
 </RCC>

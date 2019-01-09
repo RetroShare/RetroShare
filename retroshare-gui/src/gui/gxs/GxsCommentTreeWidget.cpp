@@ -43,6 +43,8 @@
 #define PCITEM_COLUMN_OWNVOTE		6
 #define PCITEM_COLUMN_MSGID		7
 #define PCITEM_COLUMN_PARENTID		8
+#define PCITEM_COLUMN_AUTHORID		9
+
 
 #define GXSCOMMENTS_LOADTHREAD		1
 
@@ -170,6 +172,9 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 	{
 		mCurrentCommentMsgId = RsGxsMessageId(current->text(PCITEM_COLUMN_MSGID).toStdString());
 		mCurrentCommentText = current->text(PCITEM_COLUMN_COMMENT);
+		mCurrentCommentAuthor = current->text(PCITEM_COLUMN_AUTHOR);
+		mCurrentCommentAuthorId = RsGxsId(current->text(PCITEM_COLUMN_AUTHORID).toStdString());
+
 	}
 }
 
@@ -307,6 +312,8 @@ void GxsCommentTreeWidget::replyToComment()
 	msgId.first = mGroupId;
 	msgId.second = mCurrentCommentMsgId;
 	GxsCreateCommentDialog pcc(mTokenQueue, mCommentService, msgId, mLatestMsgId, this);
+
+	pcc.loadComment(mCurrentCommentText, mCurrentCommentAuthor, mCurrentCommentAuthorId);
 	pcc.exec();
 }
 
@@ -520,7 +527,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 		std::cerr << "GxsCommentTreeWidget::service_loadThread() Got Comment: " << comment.mMeta.mMsgId;
 		std::cerr << std::endl;
 
-		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_ALL) ;
+		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
 		QString text;
 
 		{
@@ -557,6 +564,9 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 
 		text = QString::fromUtf8(comment.mMeta.mParentId.toStdString().c_str());
 		item->setText(PCITEM_COLUMN_PARENTID, text);
+		
+		text = QString::fromUtf8(comment.mMeta.mAuthorId.toStdString().c_str());
+		item->setText(PCITEM_COLUMN_AUTHORID, text);
 
 
 		addItem(comment.mMeta.mMsgId, comment.mMeta.mParentId, item);
@@ -580,6 +590,8 @@ QTreeWidgetItem *GxsCommentTreeWidget::service_createMissingItem(const RsGxsMess
 	item->setText(PCITEM_COLUMN_AUTHOR, text);
 
 	item->setText(PCITEM_COLUMN_MSGID, text);
+	
+	item->setText(PCITEM_COLUMN_AUTHORID, text);
 
 
 		text = QString::fromUtf8(parent.toStdString().c_str());

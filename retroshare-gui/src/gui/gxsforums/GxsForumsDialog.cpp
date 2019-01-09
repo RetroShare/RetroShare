@@ -126,7 +126,7 @@ QString GxsForumsDialog::icon(IconType type)
 	case ICON_OTHER_GROUP:
 		return ":/icons/png/feed-other.png";
 	case ICON_DEFAULT:
-		return ":/images/konversation.png";
+		return ":/icons/png/forums-default.png";
 	}
 
 	return "";
@@ -191,6 +191,6 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo,
 	//if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
 	//	groupItemInfo.icon = QIcon(":images/konv_message2.png");
 	if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
-		groupItemInfo.icon = QIcon(":images/konv_message3.png");
+		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
 
 }
