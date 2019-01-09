@@ -324,10 +324,6 @@ void GenCertDialog::setupState()
 	ui.keylength_label->setVisible(adv_state);
 	ui.keylength_comboBox->setVisible(adv_state);
 
-	ui.nodeType_CB->setVisible(adv_state);
-	ui.nodeTypeExplanation_TE->setVisible(adv_state);
-	ui.nodetype_label->setVisible(adv_state);
-
 	ui.entropy_bar->setVisible(true);
 	ui.genButton->setVisible(true);
 
