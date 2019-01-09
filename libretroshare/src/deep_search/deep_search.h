@@ -127,7 +127,7 @@ struct DeepSearch
 		termgenerator.index_text(chan.mDescription);
 
 		RsUrl chanUrl; chanUrl
-		        .setScheme("retroshare").setPath("/channel")
+                .setScheme("UnseenP2P").setPath("/channel")
 		        .setQueryKV("id", chan.mMeta.mGroupId.toStdString());
 		const std::string idTerm("Q" + chanUrl.toString());
 
@@ -157,7 +157,7 @@ struct DeepSearch
 	{
 		// "Q" prefix is a Xapian convention for unique id term.
 		RsUrl chanUrl; chanUrl
-		        .setScheme("retroshare").setPath("/channel")
+                .setScheme("UnseenP2P").setPath("/channel")
 		        .setQueryKV("id", grpId.toStdString());
 		std::string idTerm("Q" + chanUrl.toString());
 
@@ -207,7 +207,7 @@ struct DeepSearch
 		// database only once no matter how many times we run the
 		// indexer.
 		RsUrl postUrl; postUrl
-		        .setScheme("retroshare").setPath("/channel")
+                .setScheme("UnseenP2P").setPath("/channel")
 		        .setQueryKV("id", post.mMeta.mGroupId.toStdString())
 		        .setQueryKV("msgid", post.mMeta.mMsgId.toStdString());
 		std::string idTerm("Q" + postUrl.toString());
@@ -233,7 +233,7 @@ struct DeepSearch
 	        RsGxsGroupId grpId, RsGxsMessageId msgId )
 	{
 		RsUrl postUrl; postUrl
-		        .setScheme("retroshare").setPath("/channel")
+                .setScheme("UnseenP2P").setPath("/channel")
 		        .setQueryKV("id", grpId.toStdString())
 		        .setQueryKV("msgid", msgId.toStdString());
 		// "Q" prefix is a Xapian convention for unique id term.
