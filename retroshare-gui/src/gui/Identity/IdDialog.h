@@ -149,6 +149,7 @@ private:
 	QTreeWidgetItem *ownItem;
 	QTreeWidgetItem *mExternalBelongingCircleItem;
 	QTreeWidgetItem *mExternalOtherCircleItem;
+	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;

@@ -24,6 +24,7 @@
 #include "util/DateTime.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/RetroShareLink.h"
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
@@ -34,6 +35,7 @@
 #include <gui/settings/rsharesettings.h>
 
 #include <iostream>
+
 
 // Control of Publish Signatures.
 // 
@@ -99,6 +101,8 @@ void GxsGroupDialog::init()
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
 	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
+	connect(ui.filtercomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
+
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -119,8 +123,14 @@ void GxsGroupDialog::init()
 	if (!ui.addAdmins_cb->isChecked())
 	{
 		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
 		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
+	
+	/* Add filter types */
+    ui.filtercomboBox->addItem(tr("All People"));
+    ui.filtercomboBox->addItem(tr("My Contacts"));
+	ui.filtercomboBox->setCurrentIndex(0);
 
 	/* initialize key share list */
 	ui.shareKeyList->setHeaderText(tr("Contacts:"));
@@ -132,6 +142,7 @@ void GxsGroupDialog::init()
 	ui.adminsList->setModus(FriendSelectionWidget::MODUS_CHECK);
 	ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
 	ui.adminsList->start();
+	
 
 	/* Setup Reasonable Defaults */
 
@@ -442,6 +453,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     setupReadonly();
     clearForm();
     setGroupSignFlags(mGrpMeta.mSignFlags) ;
+	
+	RetroShareLink link;
 
     /* setup name */
     ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
@@ -455,6 +468,10 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
+
+	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
+	ui.authorLabel->setText(link.toHtml());
+	
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
 
@@ -869,6 +886,7 @@ void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 
 	QString moderatorsListString ;
     RsIdentityDetails det;
+	RetroShareLink link;
 
     for(auto it(ids.begin());it!=ids.end();++it)
     {
@@ -877,9 +895,15 @@ void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
         if(!moderatorsListString.isNull())
             moderatorsListString += ", " ;
 
-        moderatorsListString += det.mNickname.empty()?("[Unknown]"):QString::fromStdString(det.mNickname) ;
-    }
+        if(det.mNickname.empty())
+			moderatorsListString += "[Unknown]";
+		
+		link = RetroShareLink::createMessage(det.mId, "");
+		if (link.valid())
+				moderatorsListString += link.toHtml() + "   ";
 
+    }
+	//ui.moderatorsLabel->setId(det.mId);
 	ui.moderatorsLabel->setText(moderatorsListString);
 }
 
@@ -898,10 +922,12 @@ void GxsGroupDialog::setAdminsList()
     {
 		//this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
 		ui.adminsList->show();
+		ui.filtercomboBox->show();
 	}
     else
     {  // hide share widget
 		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
 		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
 }
@@ -920,6 +946,21 @@ void GxsGroupDialog::setShareList()
 //		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 //	}
 }
+
+void GxsGroupDialog::filterComboBoxChanged(int i)
+{
+	switch(i)
+	{
+	default:
+	case 0:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
+	}
+}
+
 
 /***********************************************************************************
   Loading Group.
