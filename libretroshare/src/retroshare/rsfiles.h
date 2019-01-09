@@ -329,6 +329,12 @@ public:
 	 */
 	virtual void setFreeDiskSpaceLimit(uint32_t minimumFreeMB) = 0;
 
+	/**
+	 * @brief Controls file transfer
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] flags action to perform. Pict into { RS_FILE_CTRL_PAUSE, RS_FILE_CTRL_START, RS_FILE_CTRL_FORCE_CHECK } }
+	 */
 	virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 
 	/**

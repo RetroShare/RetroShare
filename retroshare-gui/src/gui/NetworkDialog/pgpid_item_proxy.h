@@ -33,6 +33,12 @@ class pgpid_item_proxy :
 public:
     pgpid_item_proxy(QObject *parent = nullptr);
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
+
+	bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
+    {
+        return left.data(Qt::DisplayRole).toString().toUpper() < right.data(Qt::DisplayRole).toString().toUpper();
+    }
+
 public slots:
     void use_only_trusted_keys(bool val);
 
