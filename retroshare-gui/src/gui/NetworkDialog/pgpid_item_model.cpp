@@ -144,7 +144,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     if (!rsPeers->getGPGDetails(*it, detail))
         return QVariant();
     //shit code end
-    if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering
+    if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering and sorting
     {
         switch(index.column())
         {
