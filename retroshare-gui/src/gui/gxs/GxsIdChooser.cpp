@@ -128,10 +128,6 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
 	if (!chooser)
 		return;
 
-	int current_index = chooser->currentIndex();
-
-	QString current_id = (current_index >= 0)? chooser->itemData(current_index).toString() : "" ;
-
     // this prevents the objects that depend on what's in the combo-box to activate and
     // perform any change.Only user-changes should cause this.
     chooser->blockSignals(true) ;
@@ -187,15 +183,29 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
     chooser->model()->sort(0);
 
 	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
-
-	if(current_id != "")
+#ifdef IDCHOOSER_DEBUG
+    std::cerr << "GxsIdChooser: default ID = " << chooser->defaultId() << std::endl;
+#endif
+	if(!chooser->defaultId().isNull())
+	{
 		for(int indx=0;indx<chooser->count();++indx)
-			if(chooser->itemData(indx).toString() == current_id)
+			if(RsGxsId(chooser->itemData(indx).toString().toStdString()) == chooser->defaultId())
 			{
 				chooser->setCurrentIndex(indx);
-				std::cerr << "GxsIdChooser-003" << (void*)chooser << " setting current index to " << indx << std::endl;
+#ifdef IDCHOOSER_DEBUG
+				std::cerr << "GxsIdChooser-003 " << (void*)chooser << " setting current index to " << indx << " because it has ID=" << chooser->defaultId() << std::endl;
+#endif
 				break;
 			}
+	}
+	else
+    {
+		RsGxsId id;
+        GxsIdChooser::ChosenId_Ret cid = chooser->getChosenId(id) ;
+
+        if(cid == GxsIdChooser::UnKnowId || cid == GxsIdChooser::KnowId)
+            chooser->setDefaultId(id) ;
+    }
 
     chooser->blockSignals(false) ;
 }
@@ -395,6 +405,11 @@ void GxsIdChooser::myCurrentIndexChanged(int index)
 	} else {
 		setToolTip("");
 	}
+	QVariant var = itemData(index);
+	RsGxsId gxsId(var.toString().toStdString());
+
+    if(!gxsId.isNull())
+        mDefaultId = gxsId;
 }
 
 void GxsIdChooser::indexActivated(int index)

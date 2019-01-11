@@ -50,15 +50,17 @@ public:
 
 	enum ChosenId_Ret {None, KnowId, UnKnowId, NoId} ;
 	void loadIds(uint32_t chooserFlags, const RsGxsId &defId);
+
 	void setDefaultId(const RsGxsId &defId);
+    const RsGxsId defaultId() const { return mDefaultId ; }
 
 	bool setChosenId(const RsGxsId &gxsId);
 	ChosenId_Ret getChosenId(RsGxsId &gxsId);
 
 	void setEntryEnabled(int index, bool enabled);
     
-    	void setIdConstraintSet(const std::set<RsGxsId>& s) ;
-        bool isInConstraintSet(const RsGxsId& id) const ;
+	void setIdConstraintSet(const std::set<RsGxsId>& s) ;
+	bool isInConstraintSet(const RsGxsId& id) const ;
         
 	uint32_t countEnabledEntries() const ;
 signals:
