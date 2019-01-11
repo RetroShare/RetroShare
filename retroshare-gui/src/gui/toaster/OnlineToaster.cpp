@@ -34,7 +34,8 @@ OnlineToaster::OnlineToaster(const RsPeerId &peerId) : QWidget(NULL)
 	connect(ui.closeButton, SIGNAL(clicked()), SLOT(hide()));
 
 	/* set informations */
-	ui.textLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+    //ui.textLabel->setText(QString::fromUtf8(rsPeers->getPeerName(peerId).c_str()));
+    ui.textLabel->setText(QString::fromUtf8(rsPeers->getGPGName(rsPeers->getGPGId(peerId)).c_str()));
     ui.avatarWidget->setId(ChatId(peerId));
     ui.avatarWidget->setFrameType(AvatarWidget::STATUS_FRAME);
 }
