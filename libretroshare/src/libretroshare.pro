@@ -20,7 +20,7 @@
 TEMPLATE = lib
 CONFIG += staticlib
 CONFIG -= qt
-TARGET = unseenp2p
+TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
