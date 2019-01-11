@@ -19,7 +19,6 @@
  *******************************************************************************/
 
 #include <QColorDialog>
-#include <QFontDialog>
 #include <QMenu>
 #include <QMessageBox>
 #include <time.h>
@@ -415,7 +414,8 @@ ChatPage::load()
 void ChatPage::on_pushButtonChangeChatFont_clicked()
 {
 	bool ok;
-	QFont font = QFontDialog::getFont(&ok, fontTempChat, this, tr("Choose your default font for Chat."),QFontDialog::DontUseNativeDialog);
+	QFont font = misc::getFont(&ok, fontTempChat, this, tr("Choose your default font for Chat."));
+
 	if (ok) {
 		fontTempChat = font;
 		// using fontTempChat.rawname() does not always work!

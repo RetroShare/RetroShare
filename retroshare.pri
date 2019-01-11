@@ -186,6 +186,9 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 # assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
 
+# To enable native dialogs append the following assignation to qmake command line
+# "CONFIG+=rs_use_native_dialogs"
+rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 ###########################################################################################################################################################
 #

@@ -6,6 +6,7 @@ set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamTor=0
+set RS_QMAKE_CONFIG=
 
 :parameter_loop
 if "%~1" NEQ "" (
@@ -24,6 +25,8 @@ if "%~1" NEQ "" (
 			set ParamPlugins=1
 		) else if "%%~a"=="tor" (
 			set ParamTor=1
+		) else if "%%~a"=="CONFIG+" (
+			set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% %1
 		) else (
 			echo.
 			echo Unknown parameter %1
