@@ -142,7 +142,7 @@ void AboutWidget::updateTitle()
 {
     if (tWidget == NULL)
     {
-        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), Rshare::retroshareVersion(true)));
+        setWindowTitle(QString("%1 %2").arg(tr("About UnseenP2P"), Rshare::retroshareVersion(true)));
     }
     else
     {

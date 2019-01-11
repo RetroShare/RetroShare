@@ -292,7 +292,7 @@ defineReplace(linkDynamicLibs) {
 ## QMAKE_LIBDIR, INCLUDEPATH Lists variables where qmake will look for includes
 ##   and libraries. Add values using *= operator.
 ## RS_BIN_DIR, RS_LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR String
-##   variables of directories where RetroShare components will be installed, on
+##   variables of directories where UnseenP2P components will be installed, on
 ##   most platforms they are automatically calculated from PREFIX or in other
 ##   ways.
 ## RS_SQL_LIB String viariable containing the name of the SQL library to use
@@ -307,7 +307,7 @@ defined(RS_MAJOR_VERSION,var):\
 defined(RS_MINOR_VERSION,var):\
 defined(RS_MINI_VERSION,var):\
 defined(RS_EXTRA_VERSION,var) {
-    message("RetroShare version\
+    message("UnseenP2P version\
 $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
 defined in command line")
     DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
@@ -341,7 +341,7 @@ determined via git")
         DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
         DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
     } else {
-        warning("Determining RetroShare version via git failed plese specify it\
+        warning("Determining UnseenP2P version via git failed plese specify it\
 trough qmake command line arguments!")
     }
 }
@@ -367,7 +367,7 @@ no_sqlcipher {
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     RS_AUTOLOGIN_WARNING_MSG = \
-        You have enabled RetroShare auto-login, this is discouraged. The usage \
+        You have enabled UnseenP2P auto-login, this is discouraged. The usage \
         of auto-login on some linux distributions may allow someone having \
         access to your session to steal the SSL keys of your node location and \
         therefore compromise your security

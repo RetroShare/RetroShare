@@ -171,7 +171,7 @@ Item
 				imgUrl: "/icons/info.svg"
 				onClicked:
 				{
-					tooltipSpace.show(qsTr("Share your RetroShare link! <br>"+
+                    tooltipSpace.show(qsTr("Share your UnseenP2P link! <br>"+
 										   "Send it to a friend and start talk!"))
 
 				}
@@ -232,7 +232,7 @@ Item
 				imgUrl: "/icons/info.svg"
 				onClicked:
 				{
-					tooltipSpace.show(qsTr("This will copy your RetroShare plain certificate.<br>"+
+                    tooltipSpace.show(qsTr("This will copy your UnseenP2P plain certificate.<br>"+
 										   "Add it manually to your friend client."))
 
 				}

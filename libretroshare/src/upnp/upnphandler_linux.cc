@@ -194,10 +194,10 @@ bool upnphandler::start_upnp()
 
 	//first of all, build the mappings
 	std::vector<CUPnPPortMapping> upnpPortMapping1;
-	CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "TCP", true, "tcp retroshare redirection");
+    CUPnPPortMapping cUPnPPortMapping1 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "TCP", true, "tcp UnseenP2P redirection");
 	upnpPortMapping1.push_back(cUPnPPortMapping1);
 	std::vector<CUPnPPortMapping> upnpPortMapping2;
-	CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp retroshare redirection");
+    CUPnPPortMapping cUPnPPortMapping2 = CUPnPPortMapping(eport_curr, ntohs(localAddr.sin_port), "UDP", true, "udp UnseenP2P redirection");
 	upnpPortMapping2.push_back(cUPnPPortMapping2);
 
 	//attempt to remove formal port redirection rules

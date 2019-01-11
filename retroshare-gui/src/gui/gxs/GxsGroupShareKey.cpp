@@ -79,7 +79,7 @@ void GroupShareKey::setTyp()
             
         ui->headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
         ui->headerFrame->setHeaderText(tr("Share channel publish permissions"));
-        ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your channel, or send the publish permissions to another Retroshare instance of yours. Select the friends which you want to be allowed to publish in this channel. Note: it is currently not possible to revoke channel publish permissions."));
+        ui->sharekeyinfo_label->setText(tr("You can allow your friends to publish in your channel, or send the publish permissions to another UnseenP2P instance of yours. Select the friends which you want to be allowed to publish in this channel. Note: it is currently not possible to revoke channel publish permissions."));
     }
     else if(mGrpType == FORUM_KEY_SHARE)
     {

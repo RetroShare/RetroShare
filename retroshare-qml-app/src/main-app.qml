@@ -29,7 +29,7 @@ ApplicationWindow
 {
 	id: mainWindow
 	visible: true
-	title: "RetroShare"
+    title: "UnseenP2P"
 	width: 400
 	height: 400
 
@@ -66,7 +66,7 @@ ApplicationWindow
 		property alias titleText: toolBarText.text
 		property alias loaderSource: imageLoader.sourceComponent
 		property alias gxsSource: imageLoader.gxsSource
-		property string defaultLabel: "RetroShare"
+        property string defaultLabel: "UnseenP2P"
 
 		property var iconsSize: (coreReady)? height - 10 : 0
 

@@ -1230,7 +1230,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
             if (firstTime)
             {
-                QMessageBox::information(this, tr("RetroShare System tray"), tr("Application will continue running. Quit using context menu in the system tray"));
+                QMessageBox::information(this, tr("UnseenP2P System tray"), tr("Application will continue running. Quit using context menu in the system tray"));
                 firstTime = false;
             }
 *****/
@@ -1540,7 +1540,7 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 		QCheckBox *dontAsk_CB = new QCheckBox(tr("Don't ask me again"));
 		QCheckBox *neverAsk_CB = new QCheckBox(tr("Never ask me again"));
 		dontAsk_CB->setToolTip(tr("This will be saved only for this session."));
-		neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean RetroShare.conf to revert."));
+        neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean UnseenP2P.conf to revert."));
 		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
 		if (layout)
 		{

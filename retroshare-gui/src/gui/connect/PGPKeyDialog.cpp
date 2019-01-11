@@ -138,7 +138,7 @@ void PGPKeyDialog::load()
     if(!rsPeers->isKeySupported(pgpId))
     {
         ui.make_friend_button->setEnabled(false) ;
-        ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
+        ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by UnseenP2P\n(Only RSA keys are supported at the moment)")) ;
     }
     else
     {

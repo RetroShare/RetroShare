@@ -9,11 +9,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleGetInfoString</key>
-	<string>RetroShare is a Free and Open Source cross-platform, Friend-2-Friends ans secure decentralised communication platform.</string>
+        <string>UnseenP2P is a Free and Open Source cross-platform, Friend-2-Friends ans secure decentralised communication platform.</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-	<string>retroshare</string>
+        <string>UnseenP2P</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.retroshare</string>
 	<key>NSHighResolutionCapable</key>
@@ -22,7 +22,7 @@
 	<array>
 		<dict>
 			<key>CFBundleTypeName</key>
-			<string>RetroShare Collection</string>
+                        <string>UnseenP2P Collection</string>
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>rscollection</string>
@@ -37,10 +37,10 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>RetroShare URL</string>
+                        <string>UnseenP2P URL</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>retroshare</string>
+                                <string>UnseenP2P</string>
 			</array>
 		</dict>
 	</array>

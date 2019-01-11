@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 	while (!QFileInfo::exists(sockPath))
 	{
-		qDebug() << "RetroShareAndroidNotifyService waiting for core to"
+        qDebug() << "UnseenP2PAndroidNotifyService waiting for core to"
 		         << "listen on:" << sockPath;
 
 		QThread::sleep(2);

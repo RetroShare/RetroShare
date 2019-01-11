@@ -351,7 +351,7 @@ bool RsCollection::checkFile(const QString& fileName, bool showError)
 			for(uint i=0;i<bad_strings.size();++i)
 			if(std::string(current,bad_strings[i].length()) == bad_strings[i])
 			{
-					showErrorBox(file.fileName(), QApplication::translate("RsCollectionFile", "This file contains the string \"%1\" and is therefore an invalid collection file. \n\nIf you believe it is correct, remove the corresponding line from the file and re-open it with Retroshare.").arg(bad_strings[i].c_str()));
+                    showErrorBox(file.fileName(), QApplication::translate("RsCollectionFile", "This file contains the string \"%1\" and is therefore an invalid collection file. \n\nIf you believe it is correct, remove the corresponding line from the file and re-open it with UnseenP2P.").arg(bad_strings[i].c_str()));
 					file.close();
 				return false ;
 				//std::cerr << "Bad string detected" << std::endl;

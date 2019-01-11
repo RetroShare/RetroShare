@@ -57,7 +57,7 @@ PluginsPage::PluginsPage(QWidget *parent )
   //=== create some gui elements =====
     pluginPageLayout = new QVBoxLayout(this);
     
-//    this->setTitle("RetroShare plugins");
+//    this->setTitle("UnseenP2P plugins");
 
     pluginTabs = new QTabWidget(this) ;
     pluginPageLayout->addWidget(pluginTabs);
