@@ -45,6 +45,7 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(TokenQueue *tokQ, RsGxsCommentSer
 void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId)
 {
 
+	setWindowTitle(tr("Reply to Comment") );
 	ui->titleLabel->setId(msgAuthorId);
 	ui->commentLabel->setText(msgText);
 
@@ -56,6 +57,7 @@ void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &
 	
 	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
 	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Reply");
+	ui->signedLabel->setText("Reply as");
 }
 
 void GxsCreateCommentDialog::createComment()
