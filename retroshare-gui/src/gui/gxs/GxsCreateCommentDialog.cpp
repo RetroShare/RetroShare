@@ -20,9 +20,9 @@
 
 #include "GxsCreateCommentDialog.h"
 #include "ui_GxsCreateCommentDialog.h"
-
 #include "util/HandleRichText.h"
 
+#include <QPushButton>
 #include <QMessageBox>
 #include <iostream>
 
@@ -35,8 +35,29 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(TokenQueue *tokQ, RsGxsCommentSer
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
+
 	/* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	
+}
+
+void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId)
+{
+
+	setWindowTitle(tr("Reply to Comment") );
+	ui->titleLabel->setId(msgAuthorId);
+	ui->commentLabel->setText(msgText);
+
+	ui->avatarLabel->setGxsId(msgAuthorId);
+	ui->avatarLabel->setFrameType(AvatarWidget::NO_FRAME);
+
+	ui->replaytolabel->setId(msgAuthorId);
+	ui->replaytolabel->setText( tr("Replying to") + " @" + msgAuthor);
+	
+	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Reply");
+	ui->signedLabel->setText("Reply as");
 }
 
 void GxsCreateCommentDialog::createComment()

@@ -71,6 +71,7 @@
 #define IMAGE_WARNING_RED      ":/icons/warning_red_128.png"
 #define IMAGE_WARNING_UNKNOWN  ":/icons/bullet_grey_128.png"
 #define IMAGE_VOID             ":/icons/void_128.png"
+#define IMAGE_PINPOST          ":/images/pin32.png"
 #define IMAGE_POSITIVE_OPINION ":/icons/png/thumbs-up.png"
 #define IMAGE_NEUTRAL_OPINION  ":/icons/png/thumbs-neutral.png"
 #define IMAGE_NEGATIVE_OPINION ":/icons/png/thumbs-down.png"
@@ -758,7 +759,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
 	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
-	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_MESSAGE), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
 	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);

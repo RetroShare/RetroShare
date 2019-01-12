@@ -111,6 +111,11 @@ GxsCreateCommentDialog QLabel#replaytolabel {
 	color: gray;
 }
 
+GxsCreateCommentDialog QFrame#frame {
+	background: white;
+}
+
+
 
 /* Forums */
 
@@ -805,4 +810,15 @@ StartDialog QFrame#loginframe{
 GenCertDialog QFrame#profileframe{
   border-image: url(:/images/logo/background.png) 0 0 0 0 stretch stretch;
   border-width: 0px;
+}
+
+PostedListWidget QComboBox#comboBox {
+	font: bold;
+	font-size: 15px;
+	color: #0099cc;
+}
+
+PostedListWidget QToolButton#submitPostButton {
+	font: bold;
+	font-size: 15px;
 }

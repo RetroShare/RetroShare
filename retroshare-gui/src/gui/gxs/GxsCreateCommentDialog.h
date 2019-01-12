@@ -22,6 +22,8 @@
 #define _MRK_GXS_CREATE_COMMENT_DIALOG_H
 
 #include <QDialog>
+#include <retroshare/rsidentity.h>
+
 #include "retroshare/rsgxscommon.h"
 #include "util/TokenQueue.h"
 
@@ -38,9 +40,11 @@ public:
 	const RsGxsGrpMsgIdPair& parentId, const RsGxsMessageId& threadId, QWidget *parent = 0);
 	~GxsCreateCommentDialog();
 
+	void loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId);	
+	
 private slots:
 	void createComment();
-
+	
 private:
 	Ui::GxsCreateCommentDialog *ui;
 	TokenQueue *mTokenQueue;

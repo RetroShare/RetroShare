@@ -89,6 +89,9 @@ protected:
     RsGxsMessageId mLatestMsgId;
     RsGxsMessageId mCurrentCommentMsgId;
     QString mCurrentCommentText;
+	QString mCurrentCommentAuthor;
+	RsGxsId mCurrentCommentAuthorId;
+
     RsGxsId mVoterId;
 
     std::map<RsGxsMessageId, QTreeWidgetItem *> mLoadingMap;
