@@ -335,6 +335,26 @@ void GxsGroupFrameDialog::removeAllSearches()
     mSearchGroupsItems.clear();
     mKnownGroups.clear();
 }
+
+// Same function than the one in rsgxsnetservice.cc, so that all times are automatically consistent
+
+static uint32_t checkDelay(uint32_t time_in_secs)
+{
+    if(time_in_secs <    1 * 86400)
+        return 0        ;
+    if(time_in_secs <=  10 * 86400)
+        return 5 * 86400;
+    if(time_in_secs <=  20 * 86400)
+        return 15 * 86400;
+    if(time_in_secs <=  60 * 86400)
+        return 30 * 86400;
+    if(time_in_secs <= 120 * 86400)
+        return 90 * 86400;
+    if(time_in_secs <= 250 * 86400)
+        return 180 * 86400;
+
+   return 365 * 86400;
+}
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
 	// First separately handle the case of search top level items
@@ -402,8 +422,8 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	action = contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Details"), this, SLOT(editGroupDetails()));
 	action->setEnabled (!mGroupId.isNull() && isAdmin);
 
-	uint32_t current_store_time = mInterface->getStoragePeriod(mGroupId)/86400 ;
-	uint32_t current_sync_time  = mInterface->getSyncPeriod(mGroupId)/86400 ;
+	uint32_t current_store_time = checkDelay(mInterface->getStoragePeriod(mGroupId))/86400 ;
+	uint32_t current_sync_time  = checkDelay(mInterface->getSyncPeriod(mGroupId))/86400 ;
 
 	std::cerr << "Got sync=" << current_sync_time << ". store=" << current_store_time << std::endl;
 	QAction *actnn = NULL;
@@ -414,7 +434,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_sync_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_sync_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_sync_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_sync_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_sync_time ==365) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setSyncPostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_sync_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 
 	ctxMenu2 = contextMnu.addMenu(tr("Store posts for at most...")) ;
@@ -423,7 +443,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	actnn = ctxMenu2->addAction(tr(" 1 month"    ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 30)) ; if(current_store_time == 30) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" 3 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant( 90)) ; if(current_store_time == 90) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" 6 months"   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(180)) ; if(current_store_time ==180) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
-	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(372)) ; if(current_store_time ==372) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
+	actnn = ctxMenu2->addAction(tr(" 1 year  "   ),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(365)) ; if(current_store_time ==365) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 
 	if (shareKeyType()) {
