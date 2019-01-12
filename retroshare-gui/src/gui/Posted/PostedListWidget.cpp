@@ -67,6 +67,10 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 	connect(ui->submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
+	
+	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the links will gather \
+	                                        available posts from your subscribed friends, and make the \
+	                                        links visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the links list at left.</p>"));
 
 	/* load settings */
 	processSettings(true);
@@ -288,6 +292,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 {
 	mStateHelper->setWidgetEnabled(ui->submitPostButton, IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) ;
 }
 
 /*********************** **** **** **** ***********************/

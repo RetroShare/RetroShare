@@ -64,7 +64,7 @@ void SubscribeToolButton::updateUi()
 #else
 		setPopupMode(QToolButton::InstantPopup);
 #endif
-		setIcon(QIcon(":/images/accepted16.png"));
+		//setIcon(QIcon(":/images/accepted16.png"));
 		setText(tr("Subscribed"));
 
         	if(mMenu != NULL)	// that's because setMenu does not give away memory ownership
@@ -86,7 +86,7 @@ void SubscribeToolButton::updateUi()
 	} else {
 		setPopupMode(QToolButton::DelayedPopup);
 		setMenu(NULL);
-		setIcon(QIcon(":/images/RSS_004_32.png"));
+		//setIcon(QIcon(":/images/RSS_004_32.png"));
 		setText(tr("Subscribe"));
 
 #ifndef USE_MENUBUTTONPOPUP

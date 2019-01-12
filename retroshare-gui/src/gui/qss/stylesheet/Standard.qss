@@ -119,18 +119,9 @@ GxsCreateCommentDialog QFrame#frame {
 
 /* Forums */
 
-ForumsDialog QLabel#forumName, ForumsDialog QLabel#threadTitle
+GxsForumThreadWidget QLabel#forumName
 {
-	border: 2px solid #CCCCCC;
-	border-radius:6px;
-	background: white;
-}
-
-ForumsDialog2 QLabel#forumName, ForumsDialog2 QLabel#threadTitle
-{
-	border: 2px solid #CCCCCC;
-	border-radius:6px;
-	background: white;
+  font: bold;
 }
 
 CreateForumMsg > QToolBar#toolBar, CreateForumV2Msg > QToolBar#toolBar {
@@ -822,3 +813,30 @@ PostedListWidget QToolButton#submitPostButton {
 	font: bold;
 	font-size: 15px;
 }
+
+PostedListWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+}
+
+PostedListWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+GxsForumThreadWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 14px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+}
+
+GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+

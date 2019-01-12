@@ -46,7 +46,7 @@
        <number>6</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="rightMargin">
        <number>6</number>
@@ -57,7 +57,7 @@
       <item>
        <widget class="SubscribeToolButton" name="subscribeToolButton">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -65,14 +65,18 @@
         <property name="font">
          <font>
           <weight>50</weight>
+          <italic>false</italic>
           <bold>false</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
         </property>
         <property name="text">
          <string notr="true">Subscribe</string>
         </property>
         <property name="autoRaise">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -116,9 +120,7 @@
       <item>
        <widget class="QComboBox" name="comboBox">
         <property name="styleSheet">
-         <string notr="true">font: bold;
-font-size: 15px;
-color: #0099cc;</string>
+         <string notr="true"/>
         </property>
         <property name="iconSize">
          <size>
