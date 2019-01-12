@@ -71,7 +71,7 @@ private slots:
 
 	void submitVote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
-	void getRankings();
+	void getRankings(int);
 
 	void subscribeGroup(bool subscribe);
 

@@ -108,20 +108,22 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
         }
         expandedGroups.clear();
 
-    ui.messagelineEdit->setMinimumWidth(20);
+    ui.messagelineEdit->setMinimumWidth(24);
 
     /* Initialize friend list */
     QToolButton *button = new QToolButton(this);
-    button->setIcon(QIcon(":/images/user/add_user24.png"));
+    button->setIcon(QIcon(":/icons/png/invite.png"));
     button->setToolTip(tr("Add a Friend"));
     connect(button, SIGNAL(clicked()), this, SLOT(addFriend()));
     ui.friendList->addToolButton(button);
+	button->setIconSize(QSize(27, 27));
 
     button = new QToolButton(this);
-    button->setIcon(QIcon(":/images/friendsfolder24.png"));
+    button->setIcon(QIcon(":/icons/png/filesharing.png"));
     button->setToolTip(tr("Share files for your friends"));
     connect(button, SIGNAL(clicked()), this, SLOT(openShareManager()));
-    ui.friendList->addToolButton(button);
+    ui.friendList->addToolButton(button);	
+	button->setIconSize(QSize(27, 27));
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
@@ -221,6 +223,7 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
         // my status has changed
 
         ui.statusButton->setText(m_nickName + " (" + StatusDefs::name(status) + ")");
+		ui.statusButton->setIcon(QIcon(StatusDefs::imageIM(status)));
 
         return;
     }

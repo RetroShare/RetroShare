@@ -14,7 +14,16 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
@@ -53,6 +62,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
         <property name="text">
          <string notr="true">Subscribe</string>
         </property>
@@ -64,11 +79,17 @@
       <item>
        <widget class="QToolButton" name="submitPostButton">
         <property name="text">
-         <string>Submit a new Post</string>
+         <string>Create Post</string>
         </property>
         <property name="icon">
          <iconset resource="Posted_images.qrc">
           <normaloff>:/images/posted_24.png</normaloff>:/images/posted_24.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -76,6 +97,62 @@
         <property name="autoRaise">
          <bool>true</bool>
         </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>SORT</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="comboBox">
+        <property name="styleSheet">
+         <string notr="true">font: bold;
+font-size: 15px;
+color: #0099cc;</string>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>27</width>
+          <height>27</height>
+         </size>
+        </property>
+        <item>
+         <property name="text">
+          <string>Hot</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/png/flame.png</normaloff>:/icons/png/flame.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>New</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/png/new.png</normaloff>:/icons/png/new.png</iconset>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Top</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../icons.qrc">
+           <normaloff>:/icons/png/top.png</normaloff>:/icons/png/top.png</iconset>
+         </property>
+        </item>
        </widget>
       </item>
       <item>
@@ -90,116 +167,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="hotSortButton">
-        <property name="toolTip">
-         <string>Hot</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="Posted_images.qrc">
-          <normaloff>:/images/hot_24.png</normaloff>:/images/hot_24.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="newSortButton">
-        <property name="toolTip">
-         <string>New</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="Posted_images.qrc">
-          <normaloff>:/images/new_24.png</normaloff>:/images/new_24.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="topSortButton">
-        <property name="toolTip">
-         <string>Top</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="checkable">
-         <bool>true</bool>
-        </property>
-        <property name="checked">
-         <bool>false</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QComboBox" name="periodComboBox">
-        <item>
-         <property name="text">
-          <string>Today</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Yesterday</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>This Week</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>This Month</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>This Year</string>
-         </property>
-        </item>
-       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="prevButton">
@@ -237,19 +204,6 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="GxsIdChooser" name="idChooser"/>
       </item>
      </layout>
@@ -279,7 +233,16 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
       </layout>
@@ -302,6 +265,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
