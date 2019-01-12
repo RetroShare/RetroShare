@@ -105,7 +105,6 @@ private slots:
 	
     void setShowUserCountColumn(bool show);
     void setShowTopicColumn(bool show);
-    void setShowSubscribeColumn(bool show);
 
 	void updateNotify(ChatLobbyId id, unsigned int count) ;
 	void idChooserCurrentIndexChanged(int index);
@@ -136,7 +135,6 @@ private:
     /** Defines the actions for the header context menu */
     QAction* showUserCountAct;
 	QAction* showTopicAct;
-	QAction* showSubscribeAct;
 	int getNumColVisible();
 
 	ChatLobbyUserNotify* myChatLobbyUserNotify;
