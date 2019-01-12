@@ -277,7 +277,7 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	contextMnu->addAction(showInPeopleAct);
 
 	distantChatAct->setEnabled(false);
-	sendMessageAct->setEnabled(true);
+	sendMessageAct->setEnabled(false);
 	muteAct->setEnabled(false);
 	muteAct->setCheckable(true);
 	muteAct->setChecked(false);
@@ -299,6 +299,7 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	if(!gxsid.isNull() && !rsIdentity->isOwnId(gxsid))
 	{
 		distantChatAct->setEnabled(true);
+		sendMessageAct->setEnabled(true);
 		votePositiveAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
 		voteNeutralAct->setEnabled((rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
 		voteNegativeAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);

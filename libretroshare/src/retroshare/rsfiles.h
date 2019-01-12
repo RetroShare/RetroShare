@@ -334,6 +334,7 @@ public:
 	 * @jsonapi{development}
 	 * @param[in] hash file identifier
 	 * @param[in] flags action to perform. Pict into { RS_FILE_CTRL_PAUSE, RS_FILE_CTRL_START, RS_FILE_CTRL_FORCE_CHECK } }
+	 * @return false if error occured such as unknown hash.
 	 */
 	virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
 

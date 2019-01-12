@@ -228,14 +228,10 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             break;
         case COLUMN_CHECK:
         {
-            if (detail.accept_connection)
-            {
+            if (detail.accept_connection || rsPeers->getGPGOwnId() == detail.gpg_id)
                 return tr("Accepted");
-            }
-            else
-            {
+			else
                 return tr("Denied");
-            }
         }
             break;
 
