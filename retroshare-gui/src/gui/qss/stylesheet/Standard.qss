@@ -668,14 +668,6 @@ IdDialog QFrame#inviteFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-GxsChannelPostsWidget QFrame#infoFrame
-{ 
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
-}
-
 IdEditDialog QLabel#info_label
 {
 	border: 1px solid #DCDC41;
@@ -840,3 +832,42 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
+GxsChannelPostsWidget QFrame#infoFrame
+{ 
+	border: 1px solid #DCDC41;
+	border-radius: 6px;
+	background: #FFFFD7;
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 14px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+	background: #03b1f3;
+	border-radius: 4px;
+	border: 1px solid gray;
+}
+
+/* only for MenuButtonPopup */
+GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+    padding-right: 0px; 
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+    image: none;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+    image: none;
+}

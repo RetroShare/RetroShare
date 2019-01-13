@@ -14,6 +14,9 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>3</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -82,6 +85,12 @@
       </item>
       <item>
        <widget class="QToolButton" name="submitPostButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>Create Post</string>
         </property>
@@ -124,8 +133,8 @@
         </property>
         <property name="iconSize">
          <size>
-          <width>27</width>
-          <height>27</height>
+          <width>24</width>
+          <height>24</height>
          </size>
         </property>
         <item>

@@ -121,15 +121,14 @@
         <property name="text">
          <string notr="true">Subscribe</string>
         </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/RSS_004_32.png</normaloff>:/images/RSS_004_32.png</iconset>
-        </property>
         <property name="iconSize">
          <size>
           <width>16</width>
           <height>16</height>
          </size>
+        </property>
+        <property name="popupMode">
+         <enum>QToolButton::MenuButtonPopup</enum>
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
