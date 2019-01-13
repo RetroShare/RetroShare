@@ -859,6 +859,13 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
 	border: 1px solid gray;
 }
 
+GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+	background: gray;
+	border-radius: 4px;
+	border: 1px solid gray;
+	color: lightgray;
+}
+
 /* only for MenuButtonPopup */
 GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
     padding-right: 0px; 
