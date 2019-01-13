@@ -1074,8 +1074,8 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 	loadGroupSummaryToken(token, groupInfo, userdata);
 
 	mCachedGroupMetas.clear();
-    for(auto it(groupInfo.begin());it!=groupInfo.end();++it)
-        mCachedGroupMetas[(*it).mGroupId] = *it;
+	for(auto it(groupInfo.begin());it!=groupInfo.end();++it)
+		mCachedGroupMetas[(*it).mGroupId] = *it;
 
 	insertGroupsData(mCachedGroupMetas, userdata);
     updateSearchResults();
