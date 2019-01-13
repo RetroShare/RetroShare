@@ -621,6 +621,8 @@ void GxsChannelPostsWidget::blank()
 {
 	mStateHelper->setWidgetEnabled(ui->postButton, false);
 	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+	
+	ui->subscribersLabel->setText("") ;
 
 	clearPosts();
 
