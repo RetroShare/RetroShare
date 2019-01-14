@@ -996,7 +996,10 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 #ifdef DEBUG_FORUMS
     std::cerr << "Setting message read status to true" << std::endl;
 #endif
-	mThreadModel->setMsgReadStatus(src_index, true,false);
+	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
+
+    if(setToReadOnActive)
+		mThreadModel->setMsgReadStatus(src_index, true,false);
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
@@ -1302,10 +1305,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
     uint32_t overall_reputation = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId) ;
     bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
     
+#ifdef TO_REMOVE
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
 	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
 
-#ifdef TO_REMOVE
     QModelIndex index = getCurrentIndex();
 	if (IS_MSG_NEW(status)) {
 		if (setToReadOnActive) {
