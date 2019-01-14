@@ -138,7 +138,7 @@ void ConfCertDialog::load()
       //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
       ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
       
-      nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(QString::fromUtf8(detail.location.c_str()));
+      nameAndLocation = QString("%1").arg(QString::fromUtf8(detail.name.c_str()));
 
       ui.headerFrame->setHeaderText(nameAndLocation);
 

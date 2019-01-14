@@ -125,7 +125,7 @@ QList<int> sizes;
     // add self nick and Avatar to Friends.
     RsPeerDetails pd ;
     if (rsPeers->getPeerDetails(rsPeers->getOwnId(),pd)) {
-        ui.nicknameLabel->setText(QString::fromUtf8(pd.name.c_str()) + " (" + QString::fromUtf8(pd.location.c_str())+")");
+        ui.nicknameLabel->setText(QString::fromUtf8(pd.name.c_str()));      //d: delete my computer
     }
 
  QString hlp_str = tr(
