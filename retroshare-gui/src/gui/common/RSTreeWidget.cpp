@@ -244,50 +244,50 @@ void RSTreeWidget::addContextMenuMenu(QMenu *menu)
 
 QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 {
-	if (!contextMenu){
-		contextMenu = new QMenu(this);
-		contextMenu->addSeparator();
-	}
+    if (!contextMenu){
+        contextMenu = new QMenu(this);
+        contextMenu->addSeparator();
+    }
 
-	if(!mContextMenuActions.isEmpty() || mEnableColumnCustomize ||!mContextMenuActions.isEmpty() || !mContextMenuMenus.isEmpty()) {
-		QWidget *widget = new QWidget(contextMenu);
-		widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+    if(!mContextMenuActions.isEmpty() || mEnableColumnCustomize ||!mContextMenuActions.isEmpty() || !mContextMenuMenus.isEmpty()) {
+        QWidget *widget = new QWidget(contextMenu);
+        widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
 
-		// create menu header
-		QHBoxLayout *hbox = new QHBoxLayout(widget);
-		hbox->setMargin(0);
-		hbox->setSpacing(6);
+        // create menu header
+        QHBoxLayout *hbox = new QHBoxLayout(widget);
+        hbox->setMargin(0);
+        hbox->setSpacing(6);
 
-		QLabel *iconLabel = new QLabel(widget);
+        QLabel *iconLabel = new QLabel(widget);
         QPixmap pix = QPixmap("/:/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);          //hide icon
-		iconLabel->setPixmap(pix);
-		iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
-		hbox->addWidget(iconLabel);
+        iconLabel->setPixmap(pix);
+        iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
+        hbox->addWidget(iconLabel);
 
-		QLabel *textLabel = new QLabel("<strong>" + tr("Tree View Options") + "</strong>", widget);
-		hbox->addWidget(textLabel);
+        QLabel *textLabel = new QLabel("<strong>" + tr("Tree View Options") + "</strong>", widget);
+        hbox->addWidget(textLabel);
 
-		QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-		hbox->addItem(spacerItem);
+        QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        hbox->addItem(spacerItem);
 
-		widget->setLayout(hbox);
+        widget->setLayout(hbox);
 
-		QWidgetAction *widgetAction = new QWidgetAction(this);
-		widgetAction->setDefaultWidget(widget);
-		contextMenu->addAction(widgetAction);
-	}
+        QWidgetAction *widgetAction = new QWidgetAction(this);
+        widgetAction->setDefaultWidget(widget);
+        contextMenu->addAction(widgetAction);
+    }
 
-	if (mEnableColumnCustomize) {
-		QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
+    if (mEnableColumnCustomize) {
+        QMenu *headerMenu = contextMenu->addMenu(QIcon(),tr("Show column..."));
 
-		QTreeWidgetItem *item = headerItem();
-		int columnCount = item->columnCount();
-		for (int column = 0; column < columnCount; ++column)
+        QTreeWidgetItem *item = headerItem();
+        int columnCount = item->columnCount();
+        for (int column = 0; column < columnCount; ++column)
         {
-			QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
-			if (it != mColumnCustomizable.end() && *it == false) {
-				continue;
-			}
+            QMap<int, bool>::const_iterator it = mColumnCustomizable.find(column);
+            if (it != mColumnCustomizable.end() && *it == false) {
+                continue;
+            }
             QString txt = item->text(column) ;
             if(txt == "")
                 txt = item->data(column,Qt::UserRole).toString() ;
@@ -295,51 +295,51 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
             if(txt=="")
                 txt = tr("[no title]") ;
 
-			QAction *action = headerMenu->addAction(QIcon(), txt, this, SLOT(columnVisible()));
-			action->setCheckable(true);
-			action->setData(column);
-			action->setChecked(!isColumnHidden(column));
-		}
-	}
+            QAction *action = headerMenu->addAction(QIcon(), txt, this, SLOT(columnVisible()));
+            action->setCheckable(true);
+            action->setData(column);
+            action->setChecked(!isColumnHidden(column));
+        }
+    }
 
-	if (!mContextMenuActions.isEmpty()) {
-		bool addSeparator = false;
-		if (!contextMenu->isEmpty()) {
-			// Check for visible action
-			foreach (QAction *action, mContextMenuActions) {
-				if (action->isVisible()) {
-					addSeparator = true;
-					break;
-				}
-			}
-		}
+    if (!mContextMenuActions.isEmpty()) {
+        bool addSeparator = false;
+        if (!contextMenu->isEmpty()) {
+            // Check for visible action
+            foreach (QAction *action, mContextMenuActions) {
+                if (action->isVisible()) {
+                    addSeparator = true;
+                    break;
+                }
+            }
+        }
 
-		if (addSeparator) {
-			contextMenu->addSeparator();
-		}
+        if (addSeparator) {
+            contextMenu->addSeparator();
+        }
 
-		contextMenu->addActions(mContextMenuActions);
-	}
+        contextMenu->addActions(mContextMenuActions);
+    }
 
-	if (!mContextMenuMenus.isEmpty()) {
-		foreach(QMenu *menu, mContextMenuMenus) {
-			contextMenu->addSeparator();
-			contextMenu->addMenu(menu);
-		}
-	}
+    if (!mContextMenuMenus.isEmpty()) {
+        foreach(QMenu *menu, mContextMenuMenus) {
+            contextMenu->addSeparator();
+            contextMenu->addMenu(menu);
+        }
+    }
 
-	return contextMenu;
+    return contextMenu;
 }
 
 void RSTreeWidget::headerContextMenuRequested(const QPoint &pos)
 {
-	QMenu *contextMenu = createStandardContextMenu(NULL);
-	if (contextMenu->isEmpty()) {
-		return;
-	}
+    QMenu *contextMenu = createStandardContextMenu(NULL);
+    if (contextMenu->isEmpty()) {
+        return;
+    }
 
-	contextMenu->exec(mapToGlobal(pos));
-	delete contextMenu;
+    contextMenu->exec(mapToGlobal(pos));
+    delete contextMenu;
 }
 
 void RSTreeWidget::columnVisible()
