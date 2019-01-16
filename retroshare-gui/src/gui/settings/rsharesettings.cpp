@@ -111,11 +111,11 @@ void RshareSettings::initSettings()
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
-	if (styles.contains("windowsvista", Qt::CaseInsensitive))
-		setDefault(SETTING_STYLE, "windowsvista");
-	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
-		setDefault(SETTING_STYLE, "windowsxp");
-	else
+    if (styles.contains("windowsvista", Qt::CaseInsensitive))
+        setDefault(SETTING_STYLE, "Fusion");        //d: Fusion is default style
+    else if (styles.contains("windowsxp", Qt::CaseInsensitive))
+        setDefault(SETTING_STYLE, "Fusion");        //d: Fusion is default style
+    else
 #endif
 	{
 		if (styles.contains("cleanlooks", Qt::CaseInsensitive))
@@ -660,7 +660,7 @@ void RshareSettings::setChatScreenFont(const QString &font)
 void RshareSettings::getPublicChatStyle(QString &stylePath, QString &styleVariant)
 {
 	stylePath = valueFromGroup("Chat", "StylePublic", ":/qss/chat/compact/public").toString();
-	// Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    // Correct changed standard path for older UnseenP2P versions before 31.01.2012 (can be removed later)
 	if (stylePath == ":/qss/chat/public") {
 		stylePath = ":/qss/chat/standard/public";
 	}
@@ -676,7 +676,7 @@ void RshareSettings::setPublicChatStyle(const QString &stylePath, const QString 
 void RshareSettings::getPrivateChatStyle(QString &stylePath, QString &styleVariant)
 {
 	stylePath = valueFromGroup("Chat", "StylePrivate", ":/qss/chat/standard/private").toString();
-	// Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    // Correct changed standard path for older UnseenP2P versions before 31.01.2012 (can be removed later)
 	if (stylePath == ":/qss/chat/private") {
 		stylePath = ":/qss/chat/standard/private";
 	}
@@ -692,7 +692,7 @@ void RshareSettings::setPrivateChatStyle(const QString &stylePath, const QString
 void RshareSettings::getHistoryChatStyle(QString &stylePath, QString &styleVariant)
 {
 	stylePath = valueFromGroup("Chat", "StyleHistory", ":/qss/chat/standard/history").toString();
-	// Correct changed standard path for older RetroShare versions before 31.01.2012 (can be removed later)
+    // Correct changed standard path for older UnseenP2P versions before 31.01.2012 (can be removed later)
 	if (stylePath == ":/qss/chat/history") {
 		stylePath = ":/qss/chat/standard/history";
 	}

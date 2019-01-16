@@ -74,7 +74,7 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpid->setText(QString::fromStdString(detail.gpg_id.toStdString()));
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
-        /* set retroshare version */
+        /* set UnseenP2P version */
         ui.version->setText(Rshare::retroshareVersion(true));
 
         std::list<RsPgpId> ids;

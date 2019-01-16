@@ -36,7 +36,7 @@ android-* {
         android/build.gradle \
         android/gradle/wrapper/gradle-wrapper.properties \
         android/gradlew.bat \
-        icons/retroshare.png
+        icons/icon.png
 
 } else {
 

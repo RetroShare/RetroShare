@@ -166,8 +166,8 @@ void AppearancePage::updateCmboToolButtonSize()
 	switch (ui.cmboTollButtonsSize->currentIndex())
 	{
 		case 0:
-			Settings->setToolButtonSize(8);
-			Settings->setListItemIconSize(8);
+            Settings->setToolButtonSize(8);
+            Settings->setListItemIconSize(8);
 		break;
 		case 1:
 			Settings->setToolButtonSize(16);

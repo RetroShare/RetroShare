@@ -21,12 +21,12 @@
  ****************************************************************
 -->
 
-<Contents name="RetroShare Help" html="index.html">
+<Contents name="UnseenP2P Help" html="index.html">
   <Topic id="invite" name="Invite Friends" html="invitefriends.html"/>
-  <Topic id="addfriends" name="Add Friends to RetroShare" html="addfriends.html"/>
+  <Topic id="addfriends" name="Add Friends to UnseenP2P" html="addfriends.html"/>
   <Topic id="connectfriends" name="Connect to Friends" html="connectfriends.html"/>
   <Topic id="advanced" name="Advanced: Open Firewall Port" html="advanced.html"/>
-  <Topic id="config" name="Configuring RetroShare" html="config.html">
+  <Topic id="config" name="Configuring UnseenP2P" html="config.html">
     <Topic id="general" name="General Settings" html="config.html" section="general"/>
     <Topic id="server" name="Server Settings" html="config.html" section="server"/>
     <Topic id="directories" name="Directories Settings" html="config.html" section="directories"/>

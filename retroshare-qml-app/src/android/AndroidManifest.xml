@@ -1,18 +1,7 @@
 <?xml version="1.0"?>
-<manifest package="org.retroshare.android.qml_app"
-          xmlns:android="http://schemas.android.com/apk/res/android"
-          android:versionName="0.6.4" android:versionCode="1"
-          android:installLocation="auto">
-    <application android:name="org.qtproject.qt5.android.bindings.QtApplication"
-                 android:hardwareAccelerated="true"
-                 android:label="RetroShare"
-                 android:icon="@drawable/retroshare_128x128">
-        <activity android:name=".RetroShareQmlActivity"
-                  android:label="RetroShare"
-                  android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation"
-                  android:screenOrientation="unspecified"
-                  android:windowSoftInputMode="adjustResize"
-                  android:launchMode="singleTask">
+<manifest package="org.retroshare.android.qml_app" xmlns:android="http://schemas.android.com/apk/res/android" android:versionName="0.6.4" android:versionCode="1" android:installLocation="auto">
+    <application android:name="org.qtproject.qt5.android.bindings.QtApplication" android:hardwareAccelerated="true" android:label="UnseenP2P" android:icon="@drawable/retroshare_128x128">
+        <activity android:name=".RetroShareQmlActivity" android:label="ContactDetails.qml" android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation" android:screenOrientation="unspecified" android:windowSoftInputMode="adjustResize" android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -23,13 +12,12 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="retroshare" />
-                <data android:scheme="rtsh" />
+                <data android:scheme="retroshare"/>
+                <data android:scheme="rtsh"/>
             </intent-filter>
 
             <!-- Qt Application to launch -->
-            <meta-data android:name="android.app.lib_name"
-                       android:value="retroshare-qml-app"/>
+            <meta-data android:name="android.app.lib_name" android:value="retroshare-qml-app"/>
             <!-- Application arguments -->
             <!-- meta-data android:name="android.app.arguments" android:value="arg1 arg2 arg3"/ -->
             <!-- Application arguments -->
@@ -79,8 +67,7 @@
                 * none - useful for apps that don't use any of the above Qt
                   modules
                 -->
-            <meta-data android:name="android.app.extract_android_style"
-                       android:value="minimal"/>
+            <meta-data android:name="android.app.extract_android_style" android:value="minimal"/>
             <!-- extract android style -->
         </activity>
 
@@ -97,8 +84,7 @@
         </receiver>
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-        <service android:name=".RetroShareAndroidService" android:process=":rs"
-                 android:label="RetroShare Service" android:exported="true">
+        <service android:name=".RetroShareAndroidService" android:process=":rs" android:label="RetroShare Service" android:exported="true">
             <!-- android:exported="true" Added to be able to run the service from adb shell -->
             <!-- android:process=":rs" is needed to force the service to run on a separate process than the Activity -->
 
@@ -113,8 +99,7 @@
             -->
 
             <!-- Qt Application to launch -->
-            <meta-data android:name="android.app.lib_name"
-                       android:value="retroshare-android-service"/>
+            <meta-data android:name="android.app.lib_name" android:value="retroshare-android-service"/>
             <!-- Application to launch -->
 
             <!-- Ministro -->
@@ -145,10 +130,7 @@
         </service>
 
         <!-- For adding service(s) please check: https://wiki.qt.io/AndroidServices -->
-        <service android:name=".RetroShareAndroidNotifyService"
-                 android:label="RetroShare Notify Service"
-                 android:process=":nf"
-                 android:exported="true">
+        <service android:name=".RetroShareAndroidNotifyService" android:label="RetroShare Notify Service" android:process=":nf" android:exported="true">
             <!-- android:exported="true" Added to be able to run the service from adb shell -->
             <!-- android:process=":nf" is needed to force the service to run on a separate process than the Activity -->
 
@@ -194,7 +176,7 @@
         </service>
     </application>
 
-    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="18"/>
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="17"/>
     <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
 
     <!-- The following comment will be replaced upon deployment with default permissions based on the dependencies of the application.

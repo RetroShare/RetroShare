@@ -77,7 +77,7 @@ StartDialog::StartDialog(QWidget *parent)
 			RsPgpId gpgid ;
 			std::string name, email, node;
 			RsAccounts::GetAccountDetails(*it, gpgid, name, email, node);
-			QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid.toStdString()).right(8) + ") - " + QString::fromUtf8(node.c_str());
+            QString accountName = QString::fromUtf8(name.c_str()) + " (" + QString::fromStdString(gpgid.toStdString()).right(8) + ") ";
 			ui.loadName->addItem(accountName, userData);
 
 			if (preferedId == *it)

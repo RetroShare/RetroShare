@@ -39,7 +39,7 @@
 class AndroidStdIOCatcher
 {
 public:
-	AndroidStdIOCatcher(const std::string& dTag = "RetroShare",
+    AndroidStdIOCatcher(const std::string& dTag = "UnseenP2P",
 	                    android_LogPriority stdout_pri = ANDROID_LOG_INFO,
 	                    android_LogPriority stderr_pri = ANDROID_LOG_ERROR) :
 	    tag(dTag), cout_pri(stdout_pri), cerr_pri(stderr_pri), should_stop(false)
@@ -81,7 +81,7 @@ private:
 
 	static void *thread_func(void* instance)
 	{
-		__android_log_write(ANDROID_LOG_INFO, "RetroShare", "Android debugging start");
+        __android_log_write(ANDROID_LOG_INFO, "UnseenP2P", "Android debugging start");
 
 		AndroidStdIOCatcher &i = *static_cast<AndroidStdIOCatcher*>(instance);
 
@@ -113,7 +113,7 @@ private:
 			usleep(10000);
 		}
 
-		__android_log_write(ANDROID_LOG_INFO, "RetroShare", "Android debugging stop");
+        __android_log_write(ANDROID_LOG_INFO, "UnseenP2P", "Android debugging stop");
 
 		return NULL;
 	}

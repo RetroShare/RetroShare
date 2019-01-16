@@ -623,7 +623,7 @@ void ChatHandler::getPlainText(const std::string& in, std::string &out, std::vec
             // we don't want for example javascript:alert(0)
             std::string http = "http://";
             std::string https = "https://";
-            std::string retroshare = "retroshare://";
+            std::string retroshare = "unseenp2p://";
             if(    out.substr(current_link.first, http.size()) == http
                    || out.substr(current_link.first, https.size()) == https
                    || out.substr(current_link.first, retroshare.size()) == retroshare)

@@ -142,7 +142,7 @@ void AboutWidget::updateTitle()
 {
     if (tWidget == NULL)
     {
-        setWindowTitle(QString("%1 %2").arg(tr("About RetroShare"), Rshare::retroshareVersion(true)));
+        setWindowTitle(QString("%1 %2").arg(tr("About UnseenP2P"), Rshare::retroshareVersion(true)));
     }
     else
     {
@@ -224,11 +224,11 @@ void AWidget::initImages()
 
     //p.drawPixmap(QRect(10, 10, width()-10, 60), image);
 
-    /* Draw RetroShare version */
+    /* Draw UnseenP2P version */
 #ifdef RS_ONLYHIDDENNODE
-    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1 : %2 (With embedded Tor)").arg(tr("UnseenP2P version"), Rshare::retroshareVersion(true)));
 #else
-    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("Retroshare version"), Rshare::retroshareVersion(true)));
+    p.drawText(QPointF(10, 50), QString("%1 : %2").arg(tr("UnseenP2P version"), Rshare::retroshareVersion(true)));
 #endif
 
     /* Draw Qt's version number */
@@ -939,7 +939,7 @@ static QString addLibraries(const std::string &name, const std::list<RsLibraryIn
 void AboutWidget::on_copy_button_clicked()
 {
     QString verInfo;
-    QString rsVerString = "RetroShare Version: ";
+    QString rsVerString = "UnseenP2P Version: ";
     rsVerString+=Rshare::retroshareVersion(true);
     verInfo+=rsVerString;
 #ifdef RS_ONLYHIDDENNODE

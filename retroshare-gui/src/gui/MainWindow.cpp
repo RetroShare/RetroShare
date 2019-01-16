@@ -221,7 +221,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
             hiddenmode = true;
     }
 
-    setWindowTitle(tr("Unseen.is %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
+    setWindowTitle(tr("UnseenP2P %1 a secure decentralized communication platform").arg(Rshare::retroshareVersion(true)) + " - " + nameAndLocation); //Duy
     connect(rApp, SIGNAL(newArgsReceived(QStringList)), this, SLOT(receiveNewArgs(QStringList)));
 
     /* add url handler for UnseenP2P links */
@@ -652,7 +652,7 @@ void MainWindow::createTrayIcon()
     // Create the tray icon
     trayIcon = new QSystemTrayIcon(this);
 //#ifdef WINDOWS_SYS
-    trayIcon->setToolTip(tr("Unseen.is")); //D
+    trayIcon->setToolTip(tr("UnseenP2P")); //D
     trayIcon->setContextMenu(trayMenu);
     trayIcon->setIcon(QIcon(IMAGE_RETROSHARE)); //d
 
@@ -788,7 +788,7 @@ void MainWindow::updateTrayCombine()
 
 void MainWindow::toggleStatusToolTip(bool toggle){
     if(!toggle)return;
-    QString tray = "Unseen.is\n";   //D
+    QString tray = "UnseenP2P\n";   //D
     tray += "\n" + nameAndLocation;
     trayIcon->setToolTip(tray);
 }
@@ -823,7 +823,7 @@ void MainWindow::updateStatus()
 
     if(!Settings->valueFromGroup("StatusBar", "DisableSysTrayToolTip", QVariant(false)).toBool()) {
 
-    QString tray = "Unseen.is\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
+    QString tray = "UnseenP2P\n" + tr("Down: %1 (kB/s)").arg(downKb, 0, 'f', 2) + " | " + tr("Up: %1 (kB/s)").arg(upKb, 0, 'f', 2) + "\n"; //D
 
     if (onlineCount == 1) {
         tray += tr("%1 friend connected").arg(onlineCount);
@@ -1230,7 +1230,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
 
             if (firstTime)
             {
-                QMessageBox::information(this, tr("RetroShare System tray"), tr("Application will continue running. Quit using context menu in the system tray"));
+                QMessageBox::information(this, tr("UnseenP2P System tray"), tr("Application will continue running. Quit using context menu in the system tray"));
                 firstTime = false;
             }
 *****/
@@ -1489,16 +1489,19 @@ void MainWindow::statusChangedComboBox(int index)
 /*new setting*/
 void MainWindow::settingsChanged()
 {
+    ui->listWidget->setFixedWidth(128);      //d: set width for listWidget
+    ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
+                                  "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
+
     ui->toolBarPage->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
                                    "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
 //    ui->toolBarAction->setStyleSheet("QToolBar {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"        //d:hide quit button
 //                                     "QToolButton {background-color: rgb(20, 141, 196); color: rgb(255, 255, 255)}"); // d: Set color of toolbar
-    ui->listWidget->setStyleSheet("QListWidget {background: rgb(43, 164, 220); color: rgb(255, 255, 255)}"
-                                  "QListWidget::item {background: rgb(20, 141, 196); color: rgb(255, 255, 255)}");  // d: Set color of list item
+
+    ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 
     ui->toolBarPage->setVisible(Settings->getPageButtonLoc());
 	ui->toolBarAction->setVisible(Settings->getActionButtonLoc());
-	ui->listWidget->setVisible(!Settings->getPageButtonLoc() || !Settings->getActionButtonLoc());
 	for(int i = 0; i < ui->listWidget->count(); ++i) {
 		if (ui->listWidget->item(i)->data(Qt::UserRole).toString() == "") {
 			ui->listWidget->item(i)->setHidden(Settings->getPageButtonLoc());
@@ -1509,16 +1512,20 @@ void MainWindow::settingsChanged()
             ui->listWidget->item(i)->setSizeHint(QSize(64,42));    //d: change size listWidget
 		}
 	}
-    int toolSize = Settings->getToolButtonSize();
+     // int itemSize = Settings->getListItemIconSize();
+     // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
+     ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
+     ui->listWidget->setSpacing(8); //d: set item space
+
+
+
+     int toolSize = Settings->getToolButtonSize();
+
     ui->toolBarPage->setToolButtonStyle(Settings->getToolButtonStyle());
     ui->toolBarPage->setIconSize(QSize(128,toolSize));      //ui->toolBarPage->setIconSize(QSize(toolSize,toolSize));
 //	ui->toolBarAction->setToolButtonStyle(Settings->getToolButtonStyle());                              //d:hide quit button
 //  ui->toolBarAction->setIconSize(QSize(128,toolSize));        //ui->toolBarAction->setIconSize(QSize(toolSize,toolSize));       //d:hide quit button
 
-   //  int itemSize = Settings->getListItemIconSize();
-    // ui->listWidget->setIconSize(QSize(itemSize,itemSize));
-    ui->listWidget->setIconSize(QSize(16,16)); //d: change size widget
-    ui->listWidget->setSpacing(8); //d: set item space
 }
 
 void MainWindow::externalLinkActivated(const QUrl &url)
@@ -1533,7 +1540,7 @@ void MainWindow::externalLinkActivated(const QUrl &url)
 		QCheckBox *dontAsk_CB = new QCheckBox(tr("Don't ask me again"));
 		QCheckBox *neverAsk_CB = new QCheckBox(tr("Never ask me again"));
 		dontAsk_CB->setToolTip(tr("This will be saved only for this session."));
-		neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean RetroShare.conf to revert."));
+        neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean UnseenP2P.conf to revert."));
 		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
 		if (layout)
 		{

@@ -102,7 +102,7 @@ std::string RsLoginHandler::getSSLPasswdFileName(const RsPeerId& /*ssl_id*/)
 GnomeKeyringPasswordSchema my_schema = {
     GNOME_KEYRING_ITEM_ENCRYPTION_KEY_PASSWORD,
     {
-        { "RetroShare SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
+        { "UnseenP2P SSL Id", GNOME_KEYRING_ATTRIBUTE_TYPE_STRING },
         { NULL, (GnomeKeyringAttributeType)0 }
     },
     NULL,
@@ -116,7 +116,7 @@ const SecretSchema *libsecret_get_schema(void)
 	static const SecretSchema the_schema = {
 	    "org.Retroshare.Password", SECRET_SCHEMA_NONE,
 	    {
-	        {  "RetroShare SSL Id", SECRET_SCHEMA_ATTRIBUTE_STRING },
+            {  "UnseenP2P SSL Id", SECRET_SCHEMA_ATTRIBUTE_STRING },
 	        {  "NULL", (SecretSchemaAttributeType)0 },
 	    }
 	};
@@ -220,7 +220,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 #ifdef DEBUG_RSLOGINHANDLER
 	std::cerr << "Using attribute: " << ssl_id << std::endl;
 #endif
-	if( gnome_keyring_find_password_sync(&my_schema, &passwd,"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
+    if( gnome_keyring_find_password_sync(&my_schema, &passwd,"UnseenP2P SSL Id",ssl_id.toStdString().c_str(),NULL) == GNOME_KEYRING_RESULT_OK )
 	{
 		std::cout << "Got SSL passwd ********************" /*<< passwd*/ << " from gnome keyring" << std::endl;
 		ssl_passwd = std::string(passwd);
@@ -242,7 +242,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 
 	GError *error = NULL;
 	gchar *password = secret_password_lookup_sync (libsecret_get_schema(), NULL, &error,
-	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+                                                   "UnseenP2P SSL Id", ssl_id.toStdString().c_str(),
 	                                               NULL);
 
 	if (error != NULL) {
@@ -285,7 +285,7 @@ bool RsLoginHandler::tryAutoLogin(const RsPeerId& ssl_id,std::string& ssl_passwd
 	OSStatus status = SecKeychainFindGenericPassword (
 			NULL,           // default keychain
 			10,             // length of service name
-			"Retroshare",   // service name
+            "UnseenP2P",   // service name
 			uidLength,             // length of account name
 			userId,   // account name
 			&passwordLength,  // length of password
@@ -452,7 +452,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 #ifndef __HAIKU__
 #ifndef WINDOWS_SYS /* UNIX */
 #if defined(HAS_GNOME_KEYRING) || defined(__FreeBSD__) || defined(__OpenBSD__)
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("RetroShare password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"RetroShare SSL Id",ssl_id.toStdString().c_str(),NULL))
+    if(GNOME_KEYRING_RESULT_OK == gnome_keyring_store_password_sync(&my_schema, NULL, (gchar*)("UnseenP2P password for SSL Id "+ssl_id.toStdString()).c_str(),(gchar*)ssl_passwd.c_str(),"UnseenP2P SSL Id",ssl_id.toStdString().c_str(),NULL))
 	{
 		std::cout << "Stored passwd " << "************************" << " into gnome keyring" << std::endl;
 		return true ;
@@ -467,10 +467,10 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 
 	GError *error = NULL;
 	secret_password_store_sync (libsecret_get_schema(), SECRET_COLLECTION_DEFAULT,
-	                            (gchar*)("RetroShare password for SSL Id " + ssl_id.toStdString()).c_str(),
+                                (gchar*)("UnseenP2P password for SSL Id " + ssl_id.toStdString()).c_str(),
 	                            (gchar*)ssl_passwd.c_str(),
 	                            NULL, &error,
-	                            "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+                                "UnseenP2P SSL Id", ssl_id.toStdString().c_str(),
 	                            NULL);
 
 	if (error != NULL) {
@@ -496,7 +496,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 	OSStatus status = SecKeychainAddGenericPassword (
 			NULL,            // default keychain
 			10,              // length of service name
-			"Retroshare",    // service name
+            "UnseenP2P",    // service name
 			uidLength,              // length of account name
 			userid,    // account name
 			passwordLength,  // length of password
@@ -634,7 +634,7 @@ bool RsLoginHandler::enableAutoLogin(const RsPeerId& ssl_id,const std::string& s
 bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 {
 #ifdef HAS_GNOME_KEYRING
-	if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"RetroShare SSL Id", ssl_id.toStdString().c_str(),NULL))
+    if(GNOME_KEYRING_RESULT_OK == gnome_keyring_delete_password_sync(&my_schema,"UnseenP2P SSL Id", ssl_id.toStdString().c_str(),NULL))
 	{
 		std::cout << "Successfully Cleared gnome keyring passwd for SSLID " << ssl_id << std::endl;
 		return true ;
@@ -649,7 +649,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 
 	GError *error = NULL;
 	gboolean removed = secret_password_clear_sync (libsecret_get_schema(), NULL, &error,
-	                                               "RetroShare SSL Id", ssl_id.toStdString().c_str(),
+                                                   "UnseenP2P SSL Id", ssl_id.toStdString().c_str(),
 	                                               NULL);
 
 	if (error != NULL) {
@@ -679,7 +679,7 @@ bool RsLoginHandler::clearAutoLogin(const RsPeerId& ssl_id)
 	OSStatus status = SecKeychainFindGenericPassword (
 			NULL,           // default keychain
 			10,             // length of service name
-			"Retroshare",   // service name
+            "UnseenP2P",   // service name
 			uidLength,             // length of account name
 			userId,   // account name
 			&passwordLength,  // length of password

@@ -971,12 +971,12 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 	}
 #endif
 
-	if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
+    if(!RsDirUtil::copyFile(source_public_keyring,pgp_dir + "/retroshare_public_keyring.gpg"))
 	{
 		std::cerr << "Cannot copy pub keyring " << source_public_keyring << " to destination file " << pgp_dir + "/retroshare_public_keyring.gpg. If you believe your keyring is in a different place, please make the copy yourself." << std::endl;
 		return false ;
 	}
-	if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
+    if(!RsDirUtil::copyFile(source_secret_keyring,pgp_dir + "/retroshare_secret_keyring.gpg"))
 	{
 		std::cerr << "Cannot copy sec keyring " << source_secret_keyring << " to destination file " << pgp_dir + "/retroshare_secret_keyring.gpg. your keyring is in a different place, please make the copy yourself." << std::endl;
 		return false ;
@@ -1155,7 +1155,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	mAccounts[newAccount.mSslId] = newAccount;
 	mPreferredId = newAccount.mSslId;
 
-	std::cerr << "RetroShare has Successfully generated a Certficate/Key" << std::endl;
+    std::cerr << "UnseenP2P has Successfully generated a Certficate/Key" << std::endl;
 	std::cerr << "\tCert Located: " << cert_name << std::endl;
 	std::cerr << "\tLocated: " << key_name << std::endl;
 
@@ -1283,9 +1283,9 @@ bool RsAccounts::init(const std::string& opt_base_dir,int& error_code)
 	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
 		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
 
-	AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
-	                pgp_dir + "/retroshare_secret_keyring.gpg",
-	                pgp_dir + "/retroshare_trustdb.gpg",
+    AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
+                    pgp_dir + "/retroshare_secret_keyring.gpg",
+                    pgp_dir + "/retroshare_trustdb.gpg",
 	                pgp_dir + "/lock");
 
 	// load Accounts.

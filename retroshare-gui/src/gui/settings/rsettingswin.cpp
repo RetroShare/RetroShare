@@ -208,7 +208,7 @@ for(int i = 0; i < ui.listWidget->count(); ++i) {
                }
        }
 
-    int w = ITEM_SPACING*32;
+    int w = ITEM_SPACING*24;
 	w += ui.listWidget->iconSize().width();
     w += fontMetrics.width(item->text());
 	if (w > ui.listWidget->maximumWidth())

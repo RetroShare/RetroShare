@@ -195,12 +195,12 @@ after_build:
 
 
   - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
-  - copy C:\OpenSSL-v111-Win32\bin\libcrypto-1_1.dll %RS_DEPLOY%\
-  - copy C:\OpenSSL-v111-Win32\bin\libssl-1_1.dll %RS_DEPLOY%\
+  - copy C:\OpenSSL-Win32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libcrypto-1_1.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libssl-1_1.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
-  #- copy C:\OpenSSL-Win32\bin\ssleay32.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\

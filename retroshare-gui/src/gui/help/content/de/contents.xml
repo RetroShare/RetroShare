@@ -10,7 +10,7 @@
 **  the terms described in the LICENSE file.
 -->
 
-<Contents name="RetroShare Hilfe" html="index.html">
+<Contents name="UnseenP2P Hilfe" html="index.html">
   <Topic id="commands" name="Kommandozeilen-Optionen" html="commandline.html"/>
   <Topic id="trust" name="Vertrauen Einstellungen" html="peerdetails.html"/>
   <Topic id="links" name="N&#252;tzliche Links" html="links.html"/>

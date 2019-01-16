@@ -78,6 +78,7 @@
 #include <openssl/bio.h>
 #include <string.h> /* for strlen() */
 
+#define DEBUG_TOU_BIO 1
 
 static int tou_socket_write(BIO *h, const char *buf, int num);
 static int tou_socket_read(BIO *h, char *buf, int size);

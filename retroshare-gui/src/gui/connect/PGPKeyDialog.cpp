@@ -74,7 +74,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 //		 ui._useOldFormat_CB->setEnabled(false) ;
 //	 }
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(QPixmap(":/home/img/User/information-button_64.png"));
     ui.headerFrame->setHeaderText(tr("UnseenP2P profile"));
 
     //ui._chat_CB->hide() ;
@@ -138,7 +138,7 @@ void PGPKeyDialog::load()
     if(!rsPeers->isKeySupported(pgpId))
     {
         ui.make_friend_button->setEnabled(false) ;
-        ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by RetroShare\n(Only RSA keys are supported at the moment)")) ;
+        ui.make_friend_button->setToolTip(tr("The supplied key algorithm is not supported by UnseenP2P\n(Only RSA keys are supported at the moment)")) ;
     }
     else
     {

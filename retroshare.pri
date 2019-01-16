@@ -80,7 +80,7 @@ libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= no_libresapihttpserver
+CONFIG += no_libresapihttpserver
 no_libresapihttpserver:CONFIG -= libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
@@ -92,7 +92,7 @@ no_sqlcipher:CONFIG -= sqlcipher
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
 #CONFIG *=no_rs_autologin
-CONFIG *=no_rs_autologin
+CONFIG *=rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation
@@ -292,7 +292,7 @@ defineReplace(linkDynamicLibs) {
 ## QMAKE_LIBDIR, INCLUDEPATH Lists variables where qmake will look for includes
 ##   and libraries. Add values using *= operator.
 ## RS_BIN_DIR, RS_LIB_DIR, RS_INCLUDE_DIR, RS_DATA_DIR, RS_PLUGIN_DIR String
-##   variables of directories where RetroShare components will be installed, on
+##   variables of directories where UnseenP2P components will be installed, on
 ##   most platforms they are automatically calculated from PREFIX or in other
 ##   ways.
 ## RS_SQL_LIB String viariable containing the name of the SQL library to use
@@ -307,7 +307,7 @@ defined(RS_MAJOR_VERSION,var):\
 defined(RS_MINOR_VERSION,var):\
 defined(RS_MINI_VERSION,var):\
 defined(RS_EXTRA_VERSION,var) {
-    message("RetroShare version\
+    message("UnseenP2P version\
 $${RS_MAJOR_VERSION}.$${RS_MINOR_VERSION}.$${RS_MINI_VERSION}$${RS_EXTRA_VERSION}\
 defined in command line")
     DEFINES += RS_MAJOR_VERSION=$${RS_MAJOR_VERSION}
@@ -341,7 +341,7 @@ determined via git")
         DEFINES += RS_MINI_VERSION=$${RS_MINI_VERSION}
         DEFINES += RS_EXTRA_VERSION=\\\"$${RS_EXTRA_VERSION}\\\"
     } else {
-        warning("Determining RetroShare version via git failed plese specify it\
+        warning("Determining UnseenP2P version via git failed plese specify it\
 trough qmake command line arguments!")
     }
 }
@@ -351,7 +351,7 @@ wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
-libresapihttpserver:DEFINES *= ENABLE_WEBUI
+#libresapihttpserver:DEFINES *= ENABLE_WEBUI
 RS_THREAD_LIB=pthread
 RS_UPNP_LIB = upnp ixml threadutil
 
@@ -367,7 +367,7 @@ no_sqlcipher {
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
     RS_AUTOLOGIN_WARNING_MSG = \
-        You have enabled RetroShare auto-login, this is discouraged. The usage \
+        You have enabled UnseenP2P auto-login, this is discouraged. The usage \
         of auto-login on some linux distributions may allow someone having \
         access to your session to steal the SSL keys of your node location and \
         therefore compromise your security

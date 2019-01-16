@@ -672,7 +672,7 @@ int ApiServerMHD::accessHandlerCallback(MHD_Connection *connection,
     sendMessage(connection, MHD_HTTP_NOT_FOUND,
                 "This address is invalid. Try one of the adresses below:<br/>"
                 "<ul>"
-                "<li>/ <br/>Retroshare webinterface</li>"
+                "<li>/ <br/>UnseenP2P webinterface</li>"
                 "<li>"+std::string(API_ENTRY_PATH)+" <br/>JSON over http api</li>"
                 "<li>"+std::string(FILESTREAMER_ENTRY_PATH)+" <br/>file streamer</li>"
                 "<li>"+std::string(STATIC_FILES_ENTRY_PATH)+" <br/>static files</li>"

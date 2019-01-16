@@ -916,7 +916,7 @@ void p3NetMgrIMPL::netExtCheck()
 
 					std::string msg;
 					msg +=  "               **** WARNING ****     \n";
-					msg +=  "Retroshare has detected that you are behind";
+                    msg +=  "UnseenP2P has detected that you are behind";
 					msg +=  " a restrictive Firewall\n";
 					msg +=  "\n";
 					msg +=  "You will have limited connectivity to other firewalled peers\n";

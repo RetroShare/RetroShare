@@ -161,7 +161,7 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 				if (0 < locked_setDebugFile(crashfile.c_str()))
 				{
 					fprintf(ofd, "Debug CrashLog:");
-					fprintf(ofd, " retroShare uptime %ld secs\n", 
+                    fprintf(ofd, " UnseenP2P uptime %ld secs\n",
 						t-debugTS);
 
 					debugMode = RS_DEBUG_LOGCRASH;

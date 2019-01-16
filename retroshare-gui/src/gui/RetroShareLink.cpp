@@ -1980,7 +1980,7 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,Retro
 	std::cerr << "Parsing text:" << text.toStdString() << std::endl ;
 #endif
 
-	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
+    QRegExp rx(QString("unseenp2p://(%1)[^\r\n]+").arg(HOST_REGEXP));
 
 	int pos = 0;
 

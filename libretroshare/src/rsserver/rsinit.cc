@@ -407,11 +407,11 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 
 		if (0 == sigaction(SIGPIPE, &sigact, NULL))
 		{
-			std::cerr << "RetroShare:: Successfully installed the SIGPIPE Block" << std::endl;
+            std::cerr << "UnseenP2P:: Successfully installed the SIGPIPE Block" << std::endl;
 		}
 		else
 		{
-			std::cerr << "RetroShare:: Failed to install the SIGPIPE Block" << std::endl;
+            std::cerr << "UnseenP2P:: Failed to install the SIGPIPE Block" << std::endl;
 		}
 #endif
 		/******************************** WINDOWS/UNIX SPECIFIC PART ******************/
@@ -602,13 +602,13 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 	
 	if (RsAccounts::AccountPathCertFile() == "")
 	{
-	  std::cerr << "RetroShare needs a certificate" << std::endl;
+      std::cerr << "UnseenP2P needs a certificate" << std::endl;
 	  return 0;
 	}
 
 	if (RsAccounts::AccountPathKeyFile() == "")
 	{
-	  std::cerr << "RetroShare needs a key" << std::endl;
+      std::cerr << "UnseenP2P needs a key" << std::endl;
 	  return 0;
 	}
 
@@ -640,7 +640,7 @@ int RsInit::LoadCertificates(bool autoLoginNT)
 #ifdef RS_AUTOLOGIN
 	if(autoLoginNT)
 	{
-		std::cerr << "RetroShare will AutoLogin next time" << std::endl;
+        std::cerr << "UnseenP2P will AutoLogin next time" << std::endl;
 
 		RsLoginHandler::enableAutoLogin(preferredId,rsInitConfig->passwd);
 		rsInitConfig->autoLogin = true ;
@@ -875,7 +875,7 @@ int RsServer::StartupRetroShare()
 	RsPeerId ownId = AuthSSL::getAuthSSL()->OwnId();
 
     std::cerr << "========================================================================" << std::endl;
-    std::cerr << "==                 RsInit:: starting up Retroshare core               ==" << std::endl;
+    std::cerr << "==                 RsInit:: starting up UnseenP2P core               ==" << std::endl;
     std::cerr << "==                                                                    ==" << std::endl;
     std::cerr << "== Account/SSL ID        : " << ownId << "           ==" << std::endl;
     std::cerr << "== Node type             : " << (RsAccounts::isHiddenNode()?"Hidden":"Normal") << "                                     ==" << std::endl;
@@ -920,7 +920,7 @@ int RsServer::StartupRetroShare()
 	/* check account directory */
 	if (!RsAccounts::checkCreateAccountDirectory())
 	{
-		std::cerr << "RsServer::StartupRetroShare() - Fatal Error....." << std::endl;
+        std::cerr << "RsServer::StartupUnseenP2P() - Fatal Error....." << std::endl;
 		std::cerr << "checkAccount failed!" << std::endl;
 		std::cerr << std::endl;
 		return 0;
@@ -1739,10 +1739,10 @@ int RsServer::StartupRetroShare()
 
 	if (rsInitConfig->hiddenNodeSet)
 	{
-		std::cout << "RsServer::StartupRetroShare setting up hidden locations" << std::endl;
+        std::cout << "RsServer::StartupUnseenP2P setting up hidden locations" << std::endl;
 
 		if (rsInitConfig->hiddenNodeI2PBOB) {
-			std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
+            std::cout << "RsServer::StartupRetroShare setting up BOB" << std::endl;
 
 			// we need a local port!
 			mNetMgr->checkNetAddress();
@@ -1767,14 +1767,14 @@ int RsServer::StartupRetroShare()
 				bs.enableBob = true;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
 			} else {
-				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
+                std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
 				/// TODO add notify for failed bob setup
 			}
 		} else {
 			mPeerMgr->setupHiddenNode(rsInitConfig->hiddenNodeAddress, rsInitConfig->hiddenNodePort);
 		}
 
-		std::cout << "RsServer::StartupRetroShare hidden location set up" << std::endl;
+        std::cout << "RsServer::StartupRetroShare hidden location set up" << std::endl;
 	}
 	else if (isHiddenNode)
 	{
@@ -1930,7 +1930,7 @@ int RsServer::StartupRetroShare()
 	start("rs main") ;
 
     std::cerr << "========================================================================" << std::endl;
-    std::cerr << "==                 RsInit:: Retroshare core started                   ==" << std::endl;
+    std::cerr << "==                 RsInit:: UnseenP2P core started                   ==" << std::endl;
     std::cerr << "========================================================================" << std::endl;
 
 	coreReady = true;

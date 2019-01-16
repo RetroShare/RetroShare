@@ -309,7 +309,7 @@ void *SmallObject::operator new(size_t size)
 		return _allocator.allocate(size) ;
 	else
         {
-            std::cerr << "(EE) allocating " << size << " bytes of memory that cannot be deleted. This is a bug, except if it happens when closing Retroshare" << std::endl;
+            std::cerr << "(EE) allocating " << size << " bytes of memory that cannot be deleted. This is a bug, except if it happens when closing UnseenP2P" << std::endl;
 	    return malloc(size) ;	
         }
         

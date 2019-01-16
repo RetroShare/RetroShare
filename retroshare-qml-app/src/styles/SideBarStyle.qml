@@ -28,7 +28,7 @@ QtObject {
 		property var color: "white"
 		property var textColor: "grey"
 		property var margins: 8
-		property string text: "Retroshare Android alpha"
+        property string text: "UnseenP2P Android alpha"
 	}
 
 }

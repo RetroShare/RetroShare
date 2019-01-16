@@ -37,7 +37,7 @@ Item
 	property bool has_avatar: false
 	property bool default_image: false
 	property int avatarAttemptCnt: 0
-	property string noGxsImage: "/icons/retroshare.png"
+    property string noGxsImage: "/icons/icon.png"
 
 	function getDetails()
 	{

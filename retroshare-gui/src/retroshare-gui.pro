@@ -91,7 +91,7 @@ unix {
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-	pixmap_files.files = ../../data/retroshare.xpm
+        pixmap_files.files = ../../data/UnseenP2P.xpm
 	INSTALLS += pixmap_files
 
 }
@@ -201,7 +201,7 @@ macx {
 	#CONFIG += ppc x86
 	#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4
 	QMAKE_INFO_PLIST = Info.plist
-        mac_icon.files = $$files($$PWD/unseen128.png)
+        mac_icon.files = $$files($$PWD/rsMacIcon.icns)
 	mac_icon.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_icon
 	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
@@ -1406,3 +1406,8 @@ cmark {
     ../../supportlibs/cmark/src/xml.c											 \
 
 }
+
+DISTFILES += \
+    rsMacIcon.icns \
+    ../../data/UnseenP2P.xpm \
+    ../../data/retroshare.desktop
