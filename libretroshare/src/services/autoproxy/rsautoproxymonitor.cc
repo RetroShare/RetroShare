@@ -115,7 +115,7 @@ void rsAutoProxyMonitor::stopAllRSShutdown()
 	// wait for shutdown of all services
 	uint32_t t = 0, timeout = 15;
 	do {		
-        rstime::rs_usleep(1000);
+        	rstime::rs_usleep(1000*1000);
 		RS_STACK_MUTEX(mLock);
 		std::cout << "(II) waiting for auto proxy service(s) to shut down " << t << "/" << timeout << " (remaining: " << mProxies.size() << ")" << std::endl;
 		if (mProxies.empty())

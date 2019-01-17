@@ -9,19 +9,33 @@ matrix:
       dist: trusty
       sudo: required
       compiler: gcc
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - gcc-6
+            - g++-6
     - os: osx
       osx_image: xcode9.3
       compiler: clang
       sudo: false
 
+cache:
+  - ccache
+
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
+#  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get  --no-install-suggests --no-install-recommends --force-yes install p7zip-full; fi
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y build-essential libssl-dev libsqlcipher-dev libbz2-dev libmicrohttpd-dev libsqlite3-dev libupnp-dev pkg-config qt5-default libxss-dev qtmultimedia5-dev libqt5x11extras5-dev libqt5designer5 libxapian-dev qttools5-dev libgnome-keyring-dev; fi
 
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install ccach; export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
 
   - wget https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz
   - tar -xf v1.1.0.tar.gz
@@ -51,13 +65,43 @@ script:
   - if [ $TRAVIS_OS_NAME == linux ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j2; fi
   - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then /Applications/Xcode.app/Contents/Developer/usr/bin/make -j2; fi
 
-#after_success:
+
+after_success:
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  cd retroshare-gui/src/; rm -rf moc; rm -rf obj; rm -rf qrc ; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  mv retroshare.app unseenp2p.app; macdeployqt unseenp2p.app -qmldir=../src/  -dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  mv unseenp2p.dmg UnseenP2P-0.6.5.dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  appdmg json-path UnseenP2P-0.6.5.dmg; fi
+  - if [ $TRAVIS_OS_NAME == osx ] ; then  7z a UnseenP2P-0.6.5_macos.zip UnseenP2P-0.6.5.dmg; cd ../..; fi
+
 #  - if [ $TRAVIS_BRANCH == $TRAVIS_TAG ]; then rake deploy; fi
 
 #branches:
 #  only:
 #    - master
 #    - travis
+
+deploy:
+  - provider: releases
+    api_key: $TOKEN
+    file:
+      - retroshare-gui/src/UnseenP2P-0.6.5_macos.zip
+    overwrite: true
+    skip_cleanup: true
+    on:
+      all_branches: true
+      tags: false
+      condition: $TRAVIS_OS_NAME = osx
+  - provider: releases
+    api_key: $TOKEN
+    file:
+      - build/linux/gcc/x86_64/release/YourApp_${TRAVIS_TAG}_linux_x86_64_portable.zip
+      - installer/linux/YourApp_${TRAVIS_TAG}_linux_x86_64_installer
+    overwrite: true
+    skip_cleanup: true
+    on:
+      tags: false
+      condition: $TRAVIS_OS_NAME = linux
+
 
 notifications:
   email: false

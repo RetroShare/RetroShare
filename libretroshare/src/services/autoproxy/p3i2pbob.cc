@@ -996,10 +996,10 @@ void p3I2pBob::finalizeSettings_locked()
 	RSRandom::random_bytes(tmp.data(), len);
 	const std::string location = Radix32::encode(tmp.data(), len);
 	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using suffix " + location);
-	mTunnelName = "RetroShare-" + location;
+    mTunnelName = "RetroShare-" + location;
 
-	const std::string setnick    = "setnick RetroShare-" + location;
-	const std::string getnick    = "getnick RetroShare-" + location;
+    const std::string setnick    = "setnick RetroShare-" + location;
+    const std::string getnick    = "getnick RetroShare-" + location;
 	const std::string newkeys    = "newkeys";
 	const std::string getkeys    = "getkeys";
 	const std::string setkeys    = "setkeys " + mSetting.keys;

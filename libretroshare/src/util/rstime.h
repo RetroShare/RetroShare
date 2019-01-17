@@ -29,6 +29,7 @@
 #endif
 #include <ctime> // Added for comfort of users of this util header
 
+
 /**
  * Safer alternative to time_t.
  * As time_t have not same lenght accross platforms, even though representation

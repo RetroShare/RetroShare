@@ -67,7 +67,7 @@ environment:
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
     MINGW_PREFIX: C:\msys64\mingw32
-    RS_DEPLOY: RetroShare_deploy
+    RS_DEPLOY: Unseen_portal
 
 
 # build cache to preserve files/folders between builds
@@ -142,8 +142,8 @@ build_script:
 # scripts to run after build
 after_build:
   - mkdir %RS_DEPLOY%
-  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
-  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\unseenp2p-nogui.exe
+  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\unseenp2p.exe
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
   - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
@@ -201,7 +201,6 @@ after_build:
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
-  - copy C:\OpenSSL-Win32\bin\ssleay32.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\
@@ -238,9 +237,19 @@ after_build:
   - copy C:\windows\system32\vccorlib140.dll %RS_DEPLOY%\
   - copy C:\windows\system32\vcruntime140.dll %RS_DEPLOY%\
   - copy C:\windows\system32\concrt140.dll  %RS_DEPLOY%\
+  - copy C:\projects\RetroShare\libbitdht\src\bitdht\bdboot.txt
 
-  - windeployqt %RS_DEPLOY%\retroshare.exe
+  - windeployqt %RS_DEPLOY%\unseenp2p.exe
   - find C:\projects\RetroShare >> filelist.txt
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\moc\
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\obj\
+  #- rd /s /q C:\projects\RetroShare\retroshare-gui\src\temp\qrc\
+  #- mkdir "installer\windows\x86_64\packages\com.retroshare.retroshare\data\"
+  #- robocopy retroshare-gui\src "installer\windows\x86_64\packages\com.retroshare.retroshare\data" /E /NFL /NJH /NJS
+  #- cd installer\windows\x86_64\
+  #- binarycreator.exe --offline-only packages Retroshare_0.6.5_windows_x86_64_installer.exe
+  #- copy Retroshare_0.6.5_windows_x86_64_installer.exe cd C:\projects\RetroShare\%RS_DEPLOY%\
+  #- cd C:\projects\RetroShare\
 
 # to disable automatic builds
 #build: off
@@ -251,7 +260,9 @@ after_build:
 
 artifacts:
   - path: $(RS_DEPLOY)
+  - path: 'unseenp2p.exe'
   - path: filelist.txt
+
 #
 #  # pushing a single file
 #  - path: test.zip

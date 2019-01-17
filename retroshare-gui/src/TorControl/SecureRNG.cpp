@@ -38,6 +38,7 @@
 
 #ifdef Q_OS_WIN
 #include <wtypes.h>
+#include <wtypes.h>
 #include <wincrypt.h>
 #endif
 

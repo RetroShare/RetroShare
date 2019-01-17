@@ -91,8 +91,8 @@ no_sqlcipher:CONFIG -= sqlcipher
 # To enable autologin (this is higly discouraged as it may compromise your node
 # security in multiple ways) append the following assignation to qmake command
 # line "CONFIG+=rs_autologin"
-#CONFIG *=no_rs_autologin
-CONFIG *=rs_autologin
+CONFIG *=no_rs_autologin
+#CONFIG *=rs_autologin
 rs_autologin:CONFIG -= no_rs_autologin
 
 # To have only hidden node generation append the following assignation

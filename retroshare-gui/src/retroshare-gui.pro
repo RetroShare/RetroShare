@@ -1,3 +1,4 @@
+
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
@@ -1409,3 +1410,7 @@ cmark {
 
 DISTFILES += \
     ../../data/UnseenP2P.xpm
+DISTFILES += \
+    rsMacIcon.icns \
+    ../../data/retroshare.xpm \
+    ../../data/retroshare.desktop
