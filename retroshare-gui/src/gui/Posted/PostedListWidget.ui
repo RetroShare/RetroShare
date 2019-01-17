@@ -30,16 +30,6 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_3">
-     <property name="leftMargin">
-      <number>6</number>
-     </property>
-     <property name="rightMargin">
-      <number>6</number>
-     </property>
-    </layout>
-   </item>
-   <item>
     <widget class="QFrame" name="headerFrame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -119,21 +109,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="label">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>SORT</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QComboBox" name="comboBox">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol'; font-size:14px; color:#24292e; background-color:#ffffff;&quot;&gt;Select sorting&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -270,14 +249,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
-  </customwidget>
-  <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

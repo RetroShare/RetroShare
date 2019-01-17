@@ -108,7 +108,6 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
         }
         expandedGroups.clear();
 
-    ui.messagelineEdit->setMinimumWidth(24);
 
     /* Initialize friend list */
     QToolButton *button = new QToolButton(this);
