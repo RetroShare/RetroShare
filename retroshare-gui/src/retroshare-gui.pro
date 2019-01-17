@@ -91,7 +91,7 @@ unix {
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-        pixmap_files.files = ../../data/UnseenP2P.xpm
+        pixmap_files.files = ../../data/retroshare.xpm
 	INSTALLS += pixmap_files
 
 }
@@ -1409,5 +1409,5 @@ cmark {
 
 DISTFILES += \
     rsMacIcon.icns \
-    ../../data/UnseenP2P.xpm \
+    ../../data/retroshare.xpm \
     ../../data/retroshare.desktop
