@@ -80,10 +80,10 @@ unix {
 	INSTALLS += style_files
 
 	icon_files.path = "$${PREFIX}/share/icons/hicolor"
-	icon_files.files =  ../../data/24x24
-	icon_files.files += ../../data/48x48
-	icon_files.files += ../../data/64x64
-	icon_files.files += ../../data/128x128
+        icon_files.files =  ../../data/24x24/apps/retroshare.png
+        icon_files.files += ../../data/48x48/apps/retroshare.png
+        icon_files.files += ../../data/64x64/apps/retroshare.png
+        icon_files.files += ../../data/128x128/apps/retroshare.png
 	INSTALLS += icon_files
 
 	desktop_files.path = "$${PREFIX}/share/applications"
@@ -91,7 +91,7 @@ unix {
 	INSTALLS += desktop_files
 
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
-	pixmap_files.files = ../../data/retroshare.xpm
+        pixmap_files.files = ../../data/UnseenP2P.xpm
 	INSTALLS += pixmap_files
 
 }
@@ -1406,3 +1406,6 @@ cmark {
     ../../supportlibs/cmark/src/xml.c											 \
 
 }
+
+DISTFILES += \
+    ../../data/UnseenP2P.xpm
