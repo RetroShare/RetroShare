@@ -13,7 +13,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-        <string>UnseenP2P</string>
+        <string>retroshare</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.retroshare</string>
 	<key>NSHighResolutionCapable</key>
