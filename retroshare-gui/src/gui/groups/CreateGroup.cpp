@@ -40,8 +40,6 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mIsStandard = false;
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/add_group256.png"));
-
 	mGroupId = groupId;
 
 	if (!mGroupId.isNull())
@@ -68,8 +66,6 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 			}
 
 			setWindowTitle(tr("Edit Group"));
-			ui.headerFrame->setHeaderImage(QPixmap(":/images/user/edit_group64.png"));
-			ui.headerFrame->setHeaderText(tr("Edit Group"));
 
 			ui.groupName->setDisabled(mIsStandard);
 
@@ -79,7 +75,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 			mGroupId.clear();
 		}
 	} else {
-		ui.headerFrame->setHeaderText(tr("Create a Group"));
+        setWindowTitle(tr("Create a Group"));
 	}
 
 	std::list<RsGroupInfo> groupInfoList;
