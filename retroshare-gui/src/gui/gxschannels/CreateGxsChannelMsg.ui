@@ -96,7 +96,7 @@
           </item>
           <item row="1" column="0">
            <layout class="QGridLayout" name="channelAttachGLayout">
-            <item row="0" column="0" colspan="4">
+            <item row="0" column="0" colspan="2">
              <widget class="QLabel" name="channelAttachLabel">
               <property name="text">
                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
@@ -118,15 +118,9 @@ p, li { white-space: pre-wrap; }
                <iconset resource="../images.qrc">
                 <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
               </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
              </widget>
             </item>
-            <item row="1" column="2">
+            <item row="1" column="1">
              <widget class="QPushButton" name="addThumbnailButton">
               <property name="text">
                <string>Add Channel Thumbnail</string>
@@ -134,29 +128,6 @@ p, li { white-space: pre-wrap; }
               <property name="icon">
                <iconset resource="../images.qrc">
                 <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QPushButton" name="imageButton">
-              <property name="text">
-               <string>Attach Picture</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
-              </property>
-              <property name="iconSize">
-               <size>
-                <width>24</width>
-                <height>24</height>
-               </size>
               </property>
              </widget>
             </item>
@@ -331,8 +302,8 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>63</width>
-               <height>24</height>
+               <width>767</width>
+               <height>42</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -420,15 +391,15 @@ p, li { white-space: pre-wrap; }
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>HeaderFrame</class>
    <extends>QFrame</extends>
    <header>gui/common/HeaderFrame.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources>

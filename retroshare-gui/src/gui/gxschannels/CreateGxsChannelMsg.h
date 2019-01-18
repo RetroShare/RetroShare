@@ -70,7 +70,6 @@ private slots:
 
 	void addThumbnail();
 	void allowAutoMediaThumbNail(bool);
-	void addImage();
 
 private:
 	void loadChannelInfo(const uint32_t &token);

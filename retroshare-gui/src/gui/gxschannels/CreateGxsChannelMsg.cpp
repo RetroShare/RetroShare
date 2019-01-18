@@ -24,11 +24,9 @@
 #include <QMenu>
 #include <QDir>
 #include <QMimeData>
-#include <QTextDocumentFragment>
 
 #include "CreateGxsChannelMsg.h"
 #include "gui/feeds/SubFileItem.h"
-#include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/misc.h"
@@ -68,8 +66,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelMsg()));
 
 	connect(addFileButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));
-    connect(imageButton, SIGNAL(clicked()), this, SLOT(addImage()));	
+	connect(addfilepushButton, SIGNAL(clicked() ), this , SLOT(addExtraFile()));	
 	connect(addThumbnailButton, SIGNAL(clicked() ), this , SLOT(addThumbnail()));
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
@@ -824,17 +821,3 @@ void CreateGxsChannelMsg::loadRequest(const TokenQueue *queue, const TokenReques
 		}
 	}
 }
-
-void CreateGxsChannelMsg::addImage()
-{
-	QString file;
-	if (misc::getOpenFileName(this, RshareSettings::LASTDIR_IMAGES, tr("Choose Image"), tr("Image Files supported (*.png *.jpeg *.jpg *.gif *.webp)"), file)) {
-		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480)) {
-			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
-			msgEdit->append("\n\n\n\n\n");
-			msgEdit->textCursor().insertFragment(fragment);
-		}
-    }
-}
-
