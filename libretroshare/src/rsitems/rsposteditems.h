@@ -25,6 +25,7 @@
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsgxscommentitems.h"
 #include "rsitems/rsgxsitems.h"
+#include "serialiser/rstlvimage.h"
 
 #include "retroshare/rsposted.h"
 
@@ -38,9 +39,16 @@ public:
 	virtual ~RsGxsPostedGroupItem() {}
 
 	void clear();
+	
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
-	RsPostedGroup mGroup;
+	
+	// use conversion functions to transform:
+	bool fromPostedGroup(RsPostedGroup &group, bool moveImage);
+	bool toPostedGroup(RsPostedGroup &group, bool moveImage);
+	
+	std::string mDescription;
+	RsTlvImage mImage;
 };
 
 class RsGxsPostedPostItem : public RsGxsMsgItem

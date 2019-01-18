@@ -22,6 +22,8 @@
 #include "rsitems/rsposteditems.h"
 #include "serialiser/rstypeserializer.h"
 
+
+
 void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LINK,mPost.mLink,"mPost.mLink") ;
@@ -30,7 +32,8 @@ void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 
 void RsGxsPostedGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR ,mGroup.mDescription,"mGroup.mDescription") ;
+    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR ,mDescription,"mDescription") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
 }
 
 RsItem *RsGxsPostedSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
@@ -54,5 +57,42 @@ void RsGxsPostedPostItem::clear()
 }
 void RsGxsPostedGroupItem::clear()
 {
-	mGroup.mDescription.clear();
+	mDescription.clear();
+	mImage.TlvClear();
+}
+
+bool RsGxsPostedGroupItem::fromPostedGroup(RsPostedGroup &group, bool moveImage)
+{
+	clear();
+	meta = group.mMeta;
+	mDescription = group.mDescription;
+
+	if (moveImage)
+	{
+		mImage.binData.bin_data = group.mImage.mData;
+		mImage.binData.bin_len = group.mImage.mSize;
+		group.mImage.shallowClear();
+	}
+	else
+	{
+		mImage.binData.setBinData(group.mImage.mData, group.mImage.mSize);
+	}
+	return true;
+}
+
+bool RsGxsPostedGroupItem::toPostedGroup(RsPostedGroup &group, bool moveImage)
+{
+	group.mMeta = meta;
+	group.mDescription = mDescription;
+	if (moveImage)
+	{
+		group.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+		// mImage doesn't have a ShallowClear at the moment!
+		mImage.binData.TlvShallowClear();
+	}
+	else
+	{
+		group.mImage.copy((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+	}
+	return true;
 }

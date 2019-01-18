@@ -25,23 +25,37 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <functional>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
+#include "serialiser/rsserializable.h"
 
 /* The Main Interface Class - for information about your Posted */
 class RsPosted;
 extern RsPosted *rsPosted;
 
 class RsPostedPost;
-class RsPostedGroup
+
+// These should be in rsgxscommon.h
+struct  RsPostedGroup  : RsSerializable
 {
 	public:
 	RsPostedGroup() { return; }
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+	RsGxsImage mImage;
+	
+	/// @see RsSerializable
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mDescription);
+		RS_SERIAL_PROCESS(mImage);
+	}
 };
 
 
