@@ -89,11 +89,6 @@ GxsChannelPostsWidget QLabel#nameLabel
 	qproperty-fontSizeFactor: 250;
 }
 
-CreateLobbyDialog QLabel#lobbyInfoLabel
-{
-	qproperty-fontSizeFactor: 150;
-}
-
 HeaderFrame QLabel#headerLabel
 {
 	qproperty-fontSizeFactor: 225;
@@ -109,22 +104,12 @@ ConnectFrientWizard QLabel#requestinfolabel
 	qproperty-fontSizeFactor: 125;
 }
 
-ShareManager QLabel#labelInstructions
-{
-	qproperty-fontSizeFactor: 125;
-}
-
 CryptoPage QLabel#publicLabel, CryptoPage QLabel#otherLabel
 {
 	qproperty-fontSizeFactor: 125;
 }
 
 ProfileWidget QLabel#publicLabel, ProfileWidget QLabel#otherLabel, ProfileWidget QLabel#myLabel
-{
-	qproperty-fontSizeFactor: 125;
-}
-
-PostedCreatePostDialog QLabel#info_label
 {
 	qproperty-fontSizeFactor: 125;
 }
