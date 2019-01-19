@@ -86,9 +86,6 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
-	ui.headerFrame->setHeaderText(text);
-
 	ui.generateSpinBox->setEnabled(false);
 
 	Settings->loadWidgetInformation(this);
