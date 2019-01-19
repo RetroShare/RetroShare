@@ -37,6 +37,7 @@
 #include "gui/common/GroupDefs.h"
 #include "gui/notifyqt.h"
 #include "util/QtVersion.h"
+#include "util/misc.h"
 
 /* Images for context menu icons */
 #define IMAGE_CANCEL               ":/images/delete.png"
@@ -55,9 +56,6 @@ ShareManager::ShareManager()
 {
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
-
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/fileshare64.png"));
-    ui.headerFrame->setHeaderText(tr("Share Manager"));
 
     isLoading = false;
 
@@ -123,7 +121,7 @@ void ShareManager::doubleClickedCell(int row,int column)
 {
     if(column == COLUMN_PATH)
     {
-        QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Choose directory"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+		QString dirname = misc::getExistingDirectory(nullptr,tr("Choose directory"),QString());
 
         if(!dirname.isNull())
         {
@@ -357,7 +355,7 @@ void ShareManager::showEvent(QShowEvent *event)
 
 void ShareManager::addShare()
 {
-    QString fname = QFileDialog::getExistingDirectory(NULL,tr("Choose a directory to share"),QString(),QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly);
+	QString fname = misc::getExistingDirectory(nullptr,tr("Choose a directory to share"),QString());
 
     if(fname.isNull())
         return;

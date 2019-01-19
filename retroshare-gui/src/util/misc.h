@@ -171,8 +171,17 @@ class misc : public QObject
 
     static bool getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
                                 , const QString &caption , const QString &filter
-                                , QString &file, QString *selectedFilter = NULL
+								, QString &file, QString *selectedFilter = NULL
                                 , QFileDialog::Options options = 0);
+
+	static QFont getFont(bool *ok
+						 , const QFont &initial
+						 , QWidget *parent = nullptr
+						 , const QString &title = QString());
+
+	static QString getExistingDirectory(QWidget *parent = nullptr
+										, const QString &caption = QString()
+										, const QString &dir = QString());
 };
 
 //  Trick to get a portable sleep() function

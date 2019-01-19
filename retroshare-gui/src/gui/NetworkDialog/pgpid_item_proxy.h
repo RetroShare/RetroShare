@@ -22,6 +22,7 @@
 #define PGPID_ITEM_PROXY_H
 
 #include "util/cxx11retrocompat.h"
+#include "pgpid_item_model.h"
 
 #include <QSortFilterProxyModel>
 
@@ -36,7 +37,10 @@ public:
 
 	bool lessThan(const QModelIndex &left, const QModelIndex &right) const override
     {
-        return left.data(Qt::DisplayRole).toString().toUpper() < right.data(Qt::DisplayRole).toString().toUpper();
+        if(left.column() == COLUMN_LAST_USED)
+			return left.data(Qt::EditRole).toUInt() < right.data(Qt::EditRole).toUInt();
+		else
+			return left.data(Qt::DisplayRole).toString().toUpper() < right.data(Qt::DisplayRole).toString().toUpper();
     }
 
 public slots:

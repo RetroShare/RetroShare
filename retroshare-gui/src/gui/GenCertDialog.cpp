@@ -132,9 +132,6 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 	
-	//ui.headerFrame->setHeaderImage(QPixmap(":/icons/svg/profile.svg"));
-	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
-
 	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
 	connect(ui.adv_checkbox, SIGNAL(toggled(bool)), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
@@ -290,7 +287,6 @@ void GenCertDialog::setupState()
 	//ui.no_node_label->setVisible(false);
 
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
-	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;

@@ -753,6 +753,16 @@ struct RsTypeSerializer
 
 			rapidjson::Value& v = jDoc[mName];
 
+			if(!v.IsObject())
+			{
+				std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
+				          << "\" has wrong type in JSON, object expected, got:"
+				          << std::endl << jDoc << std::endl << std::endl;
+				print_stacktrace();
+				ctx.mOk = false;
+				break;
+			}
+
 			RsGenericSerializer::SerializeContext lCtx(nullptr, 0, ctx.mFlags);
 			lCtx.mJson.SetObject() = v; // Beware of move semantic!!
 

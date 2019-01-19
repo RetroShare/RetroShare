@@ -25,6 +25,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <time.h>
+#include <QFontDialog>
 
 #include "misc.h"
 
@@ -315,7 +316,11 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -338,7 +343,11 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (files.isEmpty())
         return false;
@@ -364,7 +373,11 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type) + "/" + file;
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter,                                    options);
+#else
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -372,5 +385,23 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
     lastDir = QFileInfo(file).absoluteDir().absolutePath();
     Settings->setLastDir(type, lastDir);
 
-    return true;
+	return true;
+}
+
+QFont misc::getFont(bool *ok, const QFont &initial, QWidget *parent, const QString &title)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFontDialog::getFont(ok, initial, parent, title);
+#else
+		return QFontDialog::getFont(ok, initial, parent, title, QFontDialog::DontUseNativeDialog);
+#endif
+}
+
+QString misc::getExistingDirectory(QWidget *parent, const QString &caption, const QString &dir)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#else
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#endif
 }

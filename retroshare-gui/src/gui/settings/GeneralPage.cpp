@@ -79,6 +79,8 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 	ui.autoLogin->setToolTip(tr("Your RetroShare build has auto-login disabled."));
 #endif // RS_AUTOLOGIN
 
+    ui.checkCloseToTray->setChecked(false) ; // default should be false because some systems to not support this.
+
     /* Connect signals */
     connect(ui.useLocalServer,                              SIGNAL(toggled(bool)),     this,SLOT(updateUseLocalServer())) ;
     connect(ui.idleSpinBox,                                 SIGNAL(valueChanged(int)), this,SLOT(updateMaxTimeBeforeIdle())) ;
