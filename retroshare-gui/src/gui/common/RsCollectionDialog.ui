@@ -40,6 +40,16 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -488,6 +498,8 @@
     </widget>
    </item>
   </layout>
+  <zorder>frame</zorder>
+  <zorder>headerFrame</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -496,10 +508,16 @@
    <header location="global">gui/common/HashBox.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../../../plugins/FeedReader/gui/FeedReader_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../../../../plugins/FeedReader/gui/FeedReader_images.qrc"/>
  </resources>
  <connections/>
 </ui>
