@@ -121,7 +121,7 @@ void bdThread::join() /* waits for the the mTid thread to stop */
 
     mMutex.lock();
     {
-#if defined(_WIN32) || defined(__MINGW32__)
+#if defined(_WIN32) || defined(__MINGW32__) || defined(__APPLE__)
 	/* Its a struct in Windows compile and the member .p ist checked in the pthreads library */
 #else
 	if(mTid > 0)
