@@ -11,9 +11,19 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Retroshare profile</string>
+   <string>Dialog</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+    </widget>
+   </item>
    <item>
     <widget class="QTabWidget" name="stabWidget">
      <property name="currentIndex">
@@ -452,8 +462,17 @@ p, li { white-space: pre-wrap; }
     </widget>
    </item>
   </layout>
+  <zorder>stabWidget</zorder>
+  <zorder>headerFrame</zorder>
+  <zorder>buttonBox</zorder>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>RSTextBrowser</class>
    <extends>QTextBrowser</extends>

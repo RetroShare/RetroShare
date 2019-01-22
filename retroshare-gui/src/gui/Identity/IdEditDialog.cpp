@@ -46,6 +46,9 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 
 	ui->setupUi(this);
 
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+	ui->headerFrame->setHeaderText(tr("Create New Identity"));
+
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
 
@@ -199,6 +202,8 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
 {
 	setWindowTitle(tr("Edit identity"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
+	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
 	mIsNew = false;
 	mGroupId.clear();

@@ -53,8 +53,12 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	Settings->loadWidgetInformation(this);
 	mChannelQueue = new TokenQueue(rsGxsChannels->getTokenService(), this);
 
+	headerFrame->setHeaderImage(QPixmap(":/images/channels.png"));
+
     if(!existing_post.isNull())
-        setWindowTitle(tr("Edit Channel Post"));
+		headerFrame->setHeaderText(tr("Edit Channel Post"));
+	else
+		headerFrame->setHeaderText(tr("New Channel Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
