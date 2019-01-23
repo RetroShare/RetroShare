@@ -18,7 +18,7 @@
 
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 TEMPLATE = subdirs
-
+VERSION = 0.6.5.0
 SUBDIRS += openpgpsdk
 openpgpsdk.file = openpgpsdk/src/openpgpsdk.pro
 
