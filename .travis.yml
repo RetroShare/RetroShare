@@ -48,7 +48,7 @@ after_success:
 
 branches:
   only:
-  - v0.6-MacOS-Travis-Deploy
+  - v0.6-MacOS-Travis-Deploy2
 
 deploy:
   provider: releases
@@ -58,5 +58,5 @@ deploy:
   skip_cleanup: true
   on:
     repo: csoler/RetroShare
-    branch: v0.6-MacOS-Travis-Deploy
+    branch: v0.6-MacOS-Travis-Deploy2
 
