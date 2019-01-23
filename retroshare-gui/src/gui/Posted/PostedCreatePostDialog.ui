@@ -30,6 +30,16 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
+    <widget class="HeaderFrame" name="headerFrame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QFrame" name="mainFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -228,6 +238,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>HeaderFrame</class>
+   <extends>QFrame</extends>
+   <header>gui/common/HeaderFrame.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>MimeTextEdit</class>
    <extends>QTextEdit</extends>

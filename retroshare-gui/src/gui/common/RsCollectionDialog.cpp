@@ -140,15 +140,20 @@ RsCollectionDialog::RsCollectionDialog(const QString& collectionFileName
 	setWindowFlags(windowFlags() & ~Qt::WindowMinimizeButtonHint);
 
 	setWindowTitle(QString("%1 - %2").arg(windowTitle()).arg(QFileInfo(_fileName).completeBaseName()));
+	
+	
+	ui.headerFrame->setHeaderImage(QPixmap(":/images/library64.png"));
 
 	if(creation)
 	{
+		ui.headerFrame->setHeaderText(tr("Collection Editor"));
 		ui.downloadFolder_LE->hide();
 		ui.downloadFolder_LB->hide();
 		ui.destinationDir_TB->hide();
 	}
 	else
 	{
+		ui.headerFrame->setHeaderText(tr("Download files"));
 		ui.downloadFolder_LE->show();
 		ui.downloadFolder_LB->show();
 		ui.label_filename->hide();
