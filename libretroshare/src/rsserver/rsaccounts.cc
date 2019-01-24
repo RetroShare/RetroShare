@@ -341,7 +341,7 @@ bool RsAccountsDetail::defaultBaseDirectory()
 	}
 
 	basedir = h;
-	basedir += "/.retroshare";
+    basedir += "/.unseen";
 
 #else
 	if (RsInit::isPortable())
@@ -360,7 +360,7 @@ bool RsAccountsDetail::defaultBaseDirectory()
 			std::cerr << "defaultBaseDirectory() Error: ";
 			std::cerr << " getEnv Error --Win95/98?";
 			std::cerr << std::endl;
-			basedir="C:\\Retro";
+            basedir="C:\\unseen";
 		}
 		else
 		{
@@ -373,7 +373,7 @@ bool RsAccountsDetail::defaultBaseDirectory()
 			std::cerr << "Cannot Create BaseConfig Dir : " << basedir << std::endl;
 			return false ;
 		}
-		basedir += "\\RetroShare";
+        basedir += "\\unseen";
 	}
 #endif
 /******************************** WINDOWS/UNIX SPECIFIC PART ******************/
