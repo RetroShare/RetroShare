@@ -1,7 +1,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-TARGET = retroshare-nogui
+TARGET = unseenp2p-nogui
 CONFIG -= qt xml gui
 
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}

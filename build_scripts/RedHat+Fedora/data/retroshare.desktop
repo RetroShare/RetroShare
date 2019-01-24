@@ -1,8 +1,8 @@
 [Desktop Entry]
 Version=1.0
-Name=RetroShare
+Name=UnseenP2P
 Comment=Securely share files with your friends
-Exec=/usr/bin/retroshare %U
+Exec=/usr/bin/unseenp2p %U
 Icon=/usr/share/pixmaps/retroshare.xpm
 Terminal=false
 Type=Application
