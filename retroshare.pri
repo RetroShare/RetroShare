@@ -646,10 +646,10 @@ macx-* {
 	# LIB_DIR += "/opt/local/lib"
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
-	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62/include"
+	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/include"
 	INC_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/include"
 	LIB_DIR += "/usr/local/opt/openssl/lib/"
-	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62/lib"
+	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib"
 	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/lib"
 	LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
 	CONFIG += c++11
