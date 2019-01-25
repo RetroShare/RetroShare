@@ -80,5 +80,5 @@ deploy:
   skip_cleanup: true
   on:
     repo: retroshare/RetroShare
-    branch: v0.6-MacOS-Deploy
+    branch: v0.6-OSX-Deploy
 
