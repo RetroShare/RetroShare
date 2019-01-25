@@ -278,6 +278,9 @@ struct DirStub : RsSerializable
 		RS_SERIAL_PROCESS(type);
 		RS_SERIAL_PROCESS(name);
 
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
+#endif // defined(__GNUC__) && !defined(__clang__)
 		// (Cyril) We have to do this because on some systems (MacOS) uintptr_t is unsigned long which is not well defined. It is always
         // preferable to force type serialization to the correct size rather than letting the compiler choose for us.
         // /!\ This structure cannot be sent over the network. The serialization would be inconsistent.
@@ -295,6 +298,9 @@ struct DirStub : RsSerializable
 		else
 			std::cerr << __PRETTY_FUNCTION__ << ": cannot serialize raw pointer of size " << sizeof(ref) << std::endl;
 
+#if defined(__GNUC__) && !defined(__clang__)
+#	pragma GCC diagnostic pop
+#endif // defined(__GNUC__) && !defined(__clang__)
 	}
 };
 
