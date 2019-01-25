@@ -322,13 +322,32 @@ struct DirDetails : RsSerializable
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif // defined(__GNUC__) && !defined(__clang__)
-		std::uintptr_t& handle(reinterpret_cast<std::uintptr_t&>(ref));
-		RS_SERIAL_PROCESS(handle);
-		std::uintptr_t& parentHandle(reinterpret_cast<std::uintptr_t&>(parent));
-		RS_SERIAL_PROCESS(parentHandle);
+
+        // (Cyril) We have to do this because on some systems (MacOS) uintptr_t is unsigned long which is not well defined. It is always
+        // preferable to force type serialization to the correct size rather than letting the compiler choose for us.
+        // /!\ This structure cannot be sent over the network. The serialization would be inconsistent.
+
+		if(sizeof(ref) == 4)
+		{
+			std::uint32_t& handle(reinterpret_cast<std::uint32_t&>(ref));
+			RS_SERIAL_PROCESS(handle);
+			std::uint32_t& parentHandle(reinterpret_cast<std::uint32_t&>(parent));
+			RS_SERIAL_PROCESS(parentHandle);
+		}
+		else if(sizeof(ref) == 8)
+		{
+			std::uint64_t& handle(reinterpret_cast<std::uint64_t&>(ref));
+			RS_SERIAL_PROCESS(handle);
+			std::uint64_t& parentHandle(reinterpret_cast<std::uint64_t&>(parent));
+			RS_SERIAL_PROCESS(parentHandle);
+		}
+		else
+			std::cerr << __PRETTY_FUNCTION__ << ": cannot serialize raw pointer of size " << sizeof(ref) << std::endl;
+
 #if defined(__GNUC__) && !defined(__clang__)
 #	pragma GCC diagnostic pop
 #endif // defined(__GNUC__) && !defined(__clang__)
+
 		RS_SERIAL_PROCESS(prow);
 		RS_SERIAL_PROCESS(type);
 		RS_SERIAL_PROCESS(id);
