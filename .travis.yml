@@ -35,7 +35,7 @@ env:
   global:
    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
    #   via the "travis encrypt" command using the project repo's public key
-   - secure: "GvA+CSM1ksvsmnkFkyWmQYcvFIJqd/fJVFGUcv/wBlrAqAWka1YRph8ox7L3+tJyISrf0MW7v+W7Rm7FOOMleeP+n4aWtFBr41R22RzlgMt6coRqho7qrNud6JkPk/Iuw2dtyMyfrTb+H+alPHs+SUnQxQ/i9Px8W7V94LTG6cim5zksNFkD7RPI94dFT/84teOEet+2NqHHuAZsf7Xfs7rk3triWPkcr7x9fzgGw/QvvKOmJwrprjmi1iKX/+cnu8adGwrmR7Q5bEvFkyChOVfiXymQQVOL4nD17PfT3fOA6u/w1pWD9jw0EsDpXP5dL8HZ6EDUoMKsUtTe2vlH40Ls+E8CA011y1VuXgRVzOzYk/TPecrW4aAmPPJJKiWnvg+URTf+A9YyphUVxwaaYXWcHWYO+zFF9N4YrOsgQAdQ+M6dg19nSPn/53VhoD4PFxS65ajBEgZi6WTwyk/AChmRXklqNHD0GOSKYW3M15BoAGh7tCrUkIhhEGmaoUsmJzA5od9H5+QxkSSS4suZFu9j8KJIthfukyF+Y1n3zDsqBS4XVYMIMno4+Jd65Qy4MQC7yPanHcpV6FOyfs7s3aXE4yUa+66iIRAr9LJDu41iLpMKUxADrAbhZwxm9vzBbQxqpJHwH6Rv9C+T5zqNuldmaRBtei05sOtD3AlJWaE="
+   - secure: "auwuhxelaMriNaXzT8I03xrh1s+STicNyNToOWFCAYKxkWWQ4WeaCO6kRDmQrejhizMUILGU+s4FrWTEhDsviftGAF86EgzxxbSBfsHHAP4t2C0pcXX8/WxEoh1IrUs7iGCIpl7O2cvWqGidc20ROeptSEd1uQgkHnn14D9A2YmXf8g52PzqivKkb6HKfkVTPdmNJkMBT5eDtEw6DIk+DvnvRo6b6uanvVAKS9CBwXOdA3rLzaD9bz0LrdL9X1CNoTkGROyez0Lsc4zTr70id2Xfp1MMmJAV6hgQy+iwE37wRyrxJf3dkh5SUAAMUC9Xnvh/iBKNQKdQGhj2WGcV7GZV9k6u9DA1w2H0kcrwt9KHUXdhEQ67yr6Boa9ZFwdDb5VIOtC6iHAoDZXharHhiuxi0K/bCtwNAajrMjBCm9mWhEKvtoxUUYxAJajhJkkO3ERaOU3zHE+06esDzGozd2YOEH8a74HhYy4xvhR05Yj00hAWLS2kIaUITiqmBf6Yuh5XwH7KCDcapxF59ROWqyicdwtbfWpvN8IvFuGKyxYuEfoT8WxZ4lZpo4Q9CrTB7gedJYJxYNfZE/okWoFBb4cpPI94PHo3DZPR7lVyQ60RNyeR0nOeqf8NW8cBT1G4jw3u1LEyAdyvup+54aALw0DCVyoDojSXB8s+AlQG2JE="
 
 addons:
   coverity_scan:
@@ -62,23 +62,23 @@ after_success:
 #   only:
 #   - v0.6-MacOS-Travis-Deploy2
 
-# notifications:
-#   email: false
-#   irc:
-#   channels:
-#    - "chat.freenode.net#retroshare"
-#   template:
-#    - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
-#    - "Message: %{commit_message}"
-#    - "Commit details: %{compare_url}"
-# 
-# deploy:
-#   provider: releases
-#   api_key:
-#     secure: GvA+CSM1ksvsmnkFkyWmQYcvFIJqd/fJVFGUcv/wBlrAqAWka1YRph8ox7L3+tJyISrf0MW7v+W7Rm7FOOMleeP+n4aWtFBr41R22RzlgMt6coRqho7qrNud6JkPk/Iuw2dtyMyfrTb+H+alPHs+SUnQxQ/i9Px8W7V94LTG6cim5zksNFkD7RPI94dFT/84teOEet+2NqHHuAZsf7Xfs7rk3triWPkcr7x9fzgGw/QvvKOmJwrprjmi1iKX/+cnu8adGwrmR7Q5bEvFkyChOVfiXymQQVOL4nD17PfT3fOA6u/w1pWD9jw0EsDpXP5dL8HZ6EDUoMKsUtTe2vlH40Ls+E8CA011y1VuXgRVzOzYk/TPecrW4aAmPPJJKiWnvg+URTf+A9YyphUVxwaaYXWcHWYO+zFF9N4YrOsgQAdQ+M6dg19nSPn/53VhoD4PFxS65ajBEgZi6WTwyk/AChmRXklqNHD0GOSKYW3M15BoAGh7tCrUkIhhEGmaoUsmJzA5od9H5+QxkSSS4suZFu9j8KJIthfukyF+Y1n3zDsqBS4XVYMIMno4+Jd65Qy4MQC7yPanHcpV6FOyfs7s3aXE4yUa+66iIRAr9LJDu41iLpMKUxADrAbhZwxm9vzBbQxqpJHwH6Rv9C+T5zqNuldmaRBtei05sOtD3AlJWaE=
-#   file: retroshare-gui/src/retroshare.dmg
-#   skip_cleanup: true
-#   on:
-#     repo: csoler/RetroShare
-#     branch: v0.6-MacOS-Deploy
+notifications:
+  email: false
+  irc:
+  channels:
+   - "chat.freenode.net#retroshare"
+  template:
+   - "%{repository}/%{branch} (%{commit} - %{author}): %{build_url}: %{message}"
+   - "Message: %{commit_message}"
+   - "Commit details: %{compare_url}"
+
+deploy:
+  provider: releases
+  api_key:
+    secure: auwuhxelaMriNaXzT8I03xrh1s+STicNyNToOWFCAYKxkWWQ4WeaCO6kRDmQrejhizMUILGU+s4FrWTEhDsviftGAF86EgzxxbSBfsHHAP4t2C0pcXX8/WxEoh1IrUs7iGCIpl7O2cvWqGidc20ROeptSEd1uQgkHnn14D9A2YmXf8g52PzqivKkb6HKfkVTPdmNJkMBT5eDtEw6DIk+DvnvRo6b6uanvVAKS9CBwXOdA3rLzaD9bz0LrdL9X1CNoTkGROyez0Lsc4zTr70id2Xfp1MMmJAV6hgQy+iwE37wRyrxJf3dkh5SUAAMUC9Xnvh/iBKNQKdQGhj2WGcV7GZV9k6u9DA1w2H0kcrwt9KHUXdhEQ67yr6Boa9ZFwdDb5VIOtC6iHAoDZXharHhiuxi0K/bCtwNAajrMjBCm9mWhEKvtoxUUYxAJajhJkkO3ERaOU3zHE+06esDzGozd2YOEH8a74HhYy4xvhR05Yj00hAWLS2kIaUITiqmBf6Yuh5XwH7KCDcapxF59ROWqyicdwtbfWpvN8IvFuGKyxYuEfoT8WxZ4lZpo4Q9CrTB7gedJYJxYNfZE/okWoFBb4cpPI94PHo3DZPR7lVyQ60RNyeR0nOeqf8NW8cBT1G4jw3u1LEyAdyvup+54aALw0DCVyoDojSXB8s+AlQG2JE=
+  file: retroshare-gui/src/retroshare.dmg
+  skip_cleanup: true
+  on:
+    repo: retroshare/RetroShare
+    branch: v0.6-MacOS-Deploy
 
