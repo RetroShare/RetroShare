@@ -56,7 +56,7 @@
 #include <iostream>
 #include <algorithm>
 
-#define DEBUG_FORUMS
+//#define DEBUG_FORUMS
 
 /* Images for context menu icons */
 #define IMAGE_MESSAGE          ":/images/mail_new.png"
@@ -1008,14 +1008,6 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
     std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
 #endif
 
-//    if(mUpdating)
-//    {
-//#ifdef DEBUG_FORUMS
-//		std::cerr << "  early return because mUpdating=true" << std::endl;
-//#endif
-//        return;
-//    }
-
     if(!index.isValid())
     {
 #ifdef DEBUG_FORUMS
@@ -1500,7 +1492,7 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 
     if(!source_index.isValid())
     {
-        std::cerr << "Cannot navigate to msg " << msgId << " in forum " << mForumGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+        std::cerr << "(EE) Cannot navigate to msg " << msgId << " in forum " << mForumGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
 
         mNavigatePendingMsgId = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
 		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
@@ -1694,7 +1686,7 @@ void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
 	{
-		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << "(EE) GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
 		std::cerr << std::endl;
 		return;
 	}
@@ -1722,7 +1714,7 @@ void GxsForumThreadWidget::editForumMessageData(const RsGxsForumMsg& msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
 	{
-		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << "(EE) GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
 		std::cerr << std::endl;
 		return;
 	}
@@ -1766,7 +1758,7 @@ void GxsForumThreadWidget::replyForumMessageData(const RsGxsForumMsg &msg)
 {
 	if ((msg.mMeta.mGroupId != groupId()) || (msg.mMeta.mMsgId != mThreadId))
 	{
-		std::cerr << "GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
+		std::cerr << "(EE) GxsForumThreadWidget::replyMessageData() ERROR Message Ids have changed!";
 		std::cerr << std::endl;
 		return;
 	}
@@ -1857,7 +1849,9 @@ void GxsForumThreadWidget::postForumLoading()
 #endif
     if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
     {
+#ifdef DEBUG_FORUMS
         std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
+#endif
 
         QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
         QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
@@ -1963,7 +1957,9 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 	{
         // 1 - get message data from p3GxsForums
 
+#ifdef DEBUG_FORUMS
         std::cerr << "Retrieving post data for post " << msgId << std::endl;
+#endif
 
         std::set<RsGxsMessageId> msgs_to_request ;
         std::vector<RsGxsForumMsg> msgs;
@@ -2014,7 +2010,7 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 {
 	if(msg.mMeta.mAuthorId.isNull())
 	{
-		std::cerr << "GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
+		std::cerr << "(EE) GxsForumThreadWidget::loadMsgData_showAuthorInPeople() ERROR Missing Message Data...";
 		std::cerr << std::endl;
 	}
 
