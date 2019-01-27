@@ -131,7 +131,7 @@ struct RsTypeSerializer
 
 	/// Generic types
 	template<typename T>
-	typename std::enable_if<std::is_same<RsTlvItem,T>::value || !(std::is_base_of<RsSerializable,T>::value || std::is_enum<T>::value || std::is_base_of<RsTlvItem,T>::value)>::type
+	typename std::enable_if<std::is_same<RsTlvItem,T>::value || !(std::is_base_of<RsSerializable,T>::value || std::is_enum<T>::value || std::is_base_of<RsTlvItem,T>::value  )>::type
 	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
 	                                RsGenericSerializer::SerializeContext& ctx,
 	                                T& member, const std::string& member_name )
