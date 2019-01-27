@@ -703,6 +703,7 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 				details.mLastUsageTS = it->second.TS ;
 				details.mUseCases = it->second.usage_map ;
             }
+            details.mPublishTS = data.mPublishTs;
 
             // one utf8 symbol can be at most 4 bytes long - would be better to measure real unicode length !!!
             if(details.mNickname.length() > RSID_MAXIMUM_NICKNAME_SIZE*4)

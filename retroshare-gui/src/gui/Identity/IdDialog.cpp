@@ -22,6 +22,7 @@
 
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QDateTime>
 #include <QMenu>
 #include <QWidgetAction>
 #include <QStyledItemDelegate>
@@ -175,6 +176,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -190,6 +192,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_negative);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -200,6 +203,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -1768,6 +1772,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
+    ui->lineEdit_PublishTS->setText(QDateTime::fromSecsSinceEpoch(data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
     ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
