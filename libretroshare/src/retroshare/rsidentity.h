@@ -315,6 +315,7 @@ struct RsIdentityDetails : RsSerializable
 
 	RsGxsImage mAvatar;
 
+	rstime_t mPublishTS;
 	rstime_t mLastUsageTS;
 
 	std::map<RsIdentityUsage,rstime_t> mUseCases;
@@ -329,6 +330,7 @@ struct RsIdentityDetails : RsSerializable
 		RS_SERIAL_PROCESS(mPgpId);
 		//RS_SERIAL_PROCESS(mReputation);
 		//RS_SERIAL_PROCESS(mAvatar);
+		RS_SERIAL_PROCESS(mPublishTS);
 		RS_SERIAL_PROCESS(mLastUsageTS);
 		RS_SERIAL_PROCESS(mUseCases);
 	}

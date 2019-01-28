@@ -1500,6 +1500,8 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 
     if(!source_index.isValid())
     {
+        std::cerr << "Cannot navigate to msg " << msgId << " in forum " << mForumGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+
         mNavigatePendingMsgId = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
 		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
     }
@@ -1855,32 +1857,43 @@ void GxsForumThreadWidget::postForumLoading()
 #endif
     if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
     {
-        mThreadId = mNavigatePendingMsgId;
-        mNavigatePendingMsgId.clear();
-    }
+        std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
 
-    QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
-
-    if(!mThreadId.isNull() && source_index.isValid())
-    {
+        QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
         QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 		ui->threadTreeWidget->scrollTo(index);
-#ifdef DEBUG_FORUMS
-		std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
-#endif
+
+        changedThread(index);
+        mNavigatePendingMsgId.clear();
     }
-	else
-    {
+    else
+	{
+
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
+
+		if(!mThreadId.isNull() && source_index.isValid())
+		{
+			QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+			ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+			ui->threadTreeWidget->scrollTo(index);
 #ifdef DEBUG_FORUMS
-		std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
+			std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
 #endif
-		ui->threadTreeWidget->selectionModel()->clear();
-		ui->threadTreeWidget->selectionModel()->reset();
-		mThreadId.clear();
-        //blank();
-    }
-    // we also need to restore expanded threads
+		}
+		else
+		{
+#ifdef DEBUG_FORUMS
+			std::cerr << "  previously message " << mThreadId << " not visible anymore -> de-selecting" << std::endl;
+#endif
+			ui->threadTreeWidget->selectionModel()->clear();
+			ui->threadTreeWidget->selectionModel()->reset();
+			mThreadId.clear();
+			//blank();
+		}
+		// we also need to restore expanded threads
+	}
 
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
