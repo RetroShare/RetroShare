@@ -472,6 +472,15 @@ QString TorManagerPrivate::torExecutablePath() const
         return path + filename;
 #endif
 
+#ifdef __APPLE__
+    // on MacOS, try traditional brew installation path
+
+    path = QStringLiteral("/usr/local/opt/tor/bin") ;
+
+    if (QFile::exists(path + filename))
+        return path + filename;
+#endif
+
     // Try $PATH
     return filename.mid(1);
 }
