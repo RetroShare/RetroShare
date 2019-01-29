@@ -13,9 +13,9 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
-        <string>retroshare</string>
+        <string>unseenp2p</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.retroshare</string>
+        <string>com.unseenp2p</string>
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>CFBundleDocumentTypes</key>
@@ -40,7 +40,7 @@
                         <string>UnseenP2P URL</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-                                <string>UnseenP2P</string>
+                                <string>unseenp2p</string>
 			</array>
 		</dict>
 	</array>
