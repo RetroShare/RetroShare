@@ -753,8 +753,9 @@ bool p3GxsTrans::handleEncryptedMail(const RsGxsTransMailItem* mail)
 	// Hint match none of our own ids
 	if(decryptIds.empty())
 	{
-		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match"
-		          << std::endl;
+#ifdef DEBUG_GXSTRANS
+		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match" << std::endl;
+#endif
 		return true;
 	}
 
