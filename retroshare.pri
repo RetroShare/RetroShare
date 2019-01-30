@@ -150,19 +150,19 @@ no_rs_deep_search:CONFIG -= rs_deep_search
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_MAJOR_VERSION=0'
-#RS_MAJOR_VERSION=0
+RS_MAJOR_VERSION=0
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_MINOR_VERSION=6'
-#RS_MINOR_VERSION=6
+RS_MINOR_VERSION=6
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_MINI_VERSION=4'
-#RS_MINI_VERSION=5
+RS_MINI_VERSION=5
 
 # Specify RetroShare major version appending the following assignation to qmake
 # command line 'RS_EXTRA_VERSION=""'
-#RS_EXTRA_VERSION=git
+RS_EXTRA_VERSION=""
 
 
 ###########################################################################################################################################################
