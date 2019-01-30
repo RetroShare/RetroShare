@@ -24,6 +24,8 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "util/misc.h"
+
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
@@ -83,6 +85,7 @@ void PostedItem::setup()
 	ui->fromLabel->clear();
 	ui->siteLabel->clear();
 	ui->newCommentLabel->hide();
+	ui->frame_picture->hide();
 	ui->commLabel->hide();
 
 	/* general ones */
@@ -94,6 +97,7 @@ void PostedItem::setup()
 	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
@@ -206,7 +210,7 @@ void PostedItem::loadComment(const uint32_t &token)
 	if (comNb == 1) {
 		sComButText = sComButText.append("(1)");
 	} else if (comNb > 1) {
-		sComButText = tr("Comments").append("(%1)").arg(comNb);
+		sComButText = tr("Comments").append(" (%1)").arg(comNb);
 	}
 	ui->commentButton->setText(sComButText);
 }
@@ -219,11 +223,29 @@ void PostedItem::fill()
 	}
 
 	mInFill = true;
+	
+	if(mPost.mImage.mData != NULL)
+	{
+		QPixmap pixmap;
+		pixmap.loadFromData(mPost.mImage.mData, mPost.mImage.mSize, "PNG");
+		// Wiping data - as its been passed to thumbnail.
+		
+		QPixmap sqpixmap = pixmap.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		ui->pictureLabel->setPixmap(sqpixmap);			
+				
+		ui->thumbnailLabel->setPixmap(pixmap);
+	}else
+	{
+		ui->expandButton->setDisabled(true);
+	}
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
 	QString timestamp = qtime.toString("hh:mm dd-MMM-yyyy");
-	ui->dateLabel->setText(timestamp);
+	QString timestamp2 = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+	ui->dateLabel->setText(timestamp2);
+	ui->dateLabel->setToolTip(timestamp);
+
 	ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 
 	// Use QUrl to check/parse our URL
@@ -256,9 +278,14 @@ void PostedItem::fill()
 
 		QString siteurl = url.scheme() + "://" + url.host();
 		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+		
+		ui->titleLabel->setText(urlstr);
+	}else
+	{
+		ui->titleLabel->setText(messageName());
+
 	}
 
-	ui->titleLabel->setText(urlstr);
 	ui->siteLabel->setText(sitestr);
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
@@ -450,4 +477,28 @@ void PostedItem::readAndClearItem()
 
 	readToggled(false);
 	removeItem();
+}
+
+void PostedItem::toggle()
+{
+	expand(ui->frame_picture->isHidden());
+}
+
+void PostedItem::doExpand(bool open)
+{
+	if (open)
+	{
+		ui->frame_picture->show();
+		ui->expandButton->setIcon(QIcon(QString(":/images/decrease.png")));
+		ui->expandButton->setToolTip(tr("Hide"));
+	}
+	else
+	{
+		ui->frame_picture->hide();
+		ui->expandButton->setIcon(QIcon(QString(":/images/expand.png")));
+		ui->expandButton->setToolTip(tr("Expand"));
+	}
+
+	emit sizeChanged(this);
+
 }

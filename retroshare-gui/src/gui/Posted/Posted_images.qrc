@@ -11,5 +11,11 @@
 		<file>images/hot_24.png</file>
 		<file>images/new_24.png</file>
 		<file>images/posted_32_new.png</file>
+		<file>images/expand.png</file>
+		<file>images/decrease.png</file>
+		<file>images/down-arrow.png</file>
+		<file>images/up-arrow.png</file>
+		<file>images/comments.png</file>
+		<file>images/thumb-default.png</file>
 	</qresource>
 </RCC>

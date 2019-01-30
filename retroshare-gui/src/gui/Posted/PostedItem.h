@@ -50,7 +50,7 @@ public:
 
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool /*open*/) {}
+	virtual void doExpand(bool open);
 
 private slots:
 	void loadComments();
@@ -58,6 +58,7 @@ private slots:
 	void makeDownVote();
 	void readToggled(bool checked);
 	void readAndClearItem();
+	void toggle();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);

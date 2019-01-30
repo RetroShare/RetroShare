@@ -22,15 +22,18 @@
 #include "rsitems/rsposteditems.h"
 #include "serialiser/rstypeserializer.h"
 
+
+
 void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LINK,mPost.mLink,"mPost.mLink") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG ,mPost.mNotes,"mPost.mNotes") ;
+	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
 }
 
 void RsGxsPostedGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR ,mGroup.mDescription,"mGroup.mDescription") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR ,mGroup.mDescription,"mGroup.mDescription") ;
 }
 
 RsItem *RsGxsPostedSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
@@ -47,12 +50,54 @@ RsItem *RsGxsPostedSerialiser::create_item(uint16_t service_id,uint8_t item_subt
     }
 }
 
+bool RsGxsPostedPostItem::fromPostedPost(RsPostedPost &post, bool moveImage)
+{
+	clear();
+	
+	mPost = post;
+	meta = post.mMeta;
+
+	if (moveImage)
+	{
+		mImage.binData.bin_data = post.mImage.mData;
+		mImage.binData.bin_len = post.mImage.mSize;
+		post.mImage.shallowClear();
+	}
+	else
+	{
+		mImage.binData.setBinData(post.mImage.mData, post.mImage.mSize);
+	}
+
+	return true;
+}
+
+bool RsGxsPostedPostItem::toPostedPost(RsPostedPost &post, bool moveImage)
+{
+	post = mPost;
+	post.mMeta = meta;
+
+	if (moveImage)
+	{
+		post.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+		// mImage doesn't have a ShallowClear at the moment!
+		mImage.binData.TlvShallowClear();
+	}
+	else
+	{
+		post.mImage.copy((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
+	}
+
+	return true;
+}
+
 void RsGxsPostedPostItem::clear()
 {
 	mPost.mLink.clear();
 	mPost.mNotes.clear();
+	mImage.TlvClear();
 }
 void RsGxsPostedGroupItem::clear()
 {
 	mGroup.mDescription.clear();
 }
+
