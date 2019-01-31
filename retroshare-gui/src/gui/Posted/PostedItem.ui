@@ -500,6 +500,20 @@
            </widget>
           </item>
           <item>
+           <widget class="QPushButton" name="shareButton">
+            <property name="text">
+             <string>Share</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/share.png</normaloff>:/images/share.png</iconset>
+            </property>
+            <property name="flat">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>

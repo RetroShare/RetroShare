@@ -17,5 +17,6 @@
 		<file>images/up-arrow.png</file>
 		<file>images/comments.png</file>
 		<file>images/thumb-default.png</file>
+		<file>images/share.png</file>
 	</qresource>
 </RCC>

@@ -905,9 +905,9 @@ PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#site
 	color: #787c7e;
 }
 
-PostedItem QToolButton#commentButton{
+PostedItem QToolButton#commentButton, QPushButton#shareButton{
 	font-size: 12px;
 	color: #878a8c;
-		font-weight: bold;
+	font-weight: bold;
 
 }

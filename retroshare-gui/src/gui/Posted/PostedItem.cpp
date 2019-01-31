@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QMenu>
 #include <QStyle>
 
 #include "rshare.h"
@@ -48,6 +49,9 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGr
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
+	
+	mMessageId = post.mMeta.mMsgId;
+
 
 	setGroup(group, false);
 	setPost(post);
@@ -100,6 +104,13 @@ void PostedItem::setup()
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
+	
+	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
+	connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
+		
+	QMenu *menu = new QMenu();
+	menu->addAction(CopyLinkAction);
+	ui->shareButton->setMenu(menu);
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
@@ -501,4 +512,19 @@ void PostedItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
+}
+
+void PostedItem::copyMessageLink()
+{
+	if (groupId().isNull() || mMessageId.isNull()) {
+		return;
+	}
+
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), mMessageId, messageName());
+
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
 }

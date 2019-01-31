@@ -30,6 +30,7 @@ namespace Ui {
 class PostedItem;
 }
 
+class FeedHolder;
 class RsPostedPost;
 
 class PostedItem : public GxsFeedItem
@@ -59,6 +60,7 @@ private slots:
 	void readToggled(bool checked);
 	void readAndClearItem();
 	void toggle();
+	void copyMessageLink();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
@@ -84,6 +86,7 @@ private:
 
 	RsPostedGroup mGroup;
 	RsPostedPost mPost;
+	RsGxsMessageId mMessageId;
 
 	/** Qt Designer generated object */
 	Ui::PostedItem *ui;
