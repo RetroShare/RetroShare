@@ -447,6 +447,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \
+            gui/msgs/MessageModel.h \
             gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
@@ -802,6 +803,7 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
+            gui/msgs/MessageModel.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
             gui/common/RsButtonOnText.cpp \
