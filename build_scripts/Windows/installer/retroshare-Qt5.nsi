@@ -102,9 +102,9 @@ Var StyleSheetDir
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\retroshare.exe"
-!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
-!define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
-!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
+;!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
+;!define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
+;!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
 ;!define MUI_LANGDLL_REGISTRY_ROOT HKLM
@@ -211,7 +211,7 @@ Section $(Section_Main) Section_Main
   File "${EXTERNAL_LIB_DIR}\bin\ssleay32.dll"
 
   ; Other files
-  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
+;  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
   File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
 
   ; Image formats

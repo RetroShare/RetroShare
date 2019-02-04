@@ -98,6 +98,7 @@ mkdir "%RsDeployPath%\qss"
 mkdir "%RsDeployPath%\stylesheets"
 mkdir "%RsDeployPath%\sounds"
 mkdir "%RsDeployPath%\translations"
+mkdir "%RsDeployPath%\license"
 
 copy nul "%RsDeployPath%\portable" %Quite%
 
@@ -148,6 +149,9 @@ rmdir /S /Q "%RsDeployPath%\stylesheets\__MACOSX__Bubble" %Quite%
 echo copy sounds
 xcopy /S "%SourcePath%\retroshare-gui\src\sounds" "%RsDeployPath%\sounds" %Quite%
 
+echo copy license
+xcopy /S "%SourcePath%\retroshare-gui\src\license" "%RsDeployPath%\license" %Quite%
+
 echo copy translation
 copy "%SourcePath%\retroshare-gui\src\translations\qt_tr.qm" "%RsDeployPath%\translations" %Quite%
 copy "%QtPath%\..\translations\qt_*.qm" "%RsDeployPath%\translations" %Quite%
@@ -162,8 +166,8 @@ if "%QtMainVersion%"=="5" (
 echo copy bdboot.txt
 copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 
-echo copy changelog.txt
-copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
+rem echo copy changelog.txt
+rem copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
 
 if exist "%SourcePath%\libresapi\src\webui" (
 	echo copy webui
