@@ -514,6 +514,26 @@
            </widget>
           </item>
           <item>
+           <widget class="QToolButton" name="notesButton">
+            <property name="text">
+             <string>Notes</string>
+            </property>
+            <property name="icon">
+             <iconset resource="Posted_images.qrc">
+              <normaloff>:/images/notes.png</normaloff>:/images/notes.png</iconset>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="toolButtonStyle">
+             <enum>Qt::ToolButtonTextBesideIcon</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -630,23 +650,23 @@
    <item row="2" column="0">
     <widget class="QFrame" name="frame_notes">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Box</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="topMargin">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="rightMargin">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="bottomMargin">
-       <number>1</number>
+       <number>3</number>
       </property>
       <property name="spacing">
        <number>1</number>

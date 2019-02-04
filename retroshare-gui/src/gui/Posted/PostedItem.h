@@ -61,6 +61,7 @@ private slots:
 	void readAndClearItem();
 	void toggle();
 	void copyMessageLink();
+	void toggleNotes();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);

@@ -91,6 +91,7 @@ void PostedItem::setup()
 	ui->newCommentLabel->hide();
 	ui->frame_picture->hide();
 	ui->commLabel->hide();
+	ui->frame_notes->hide();
 
 	/* general ones */
 	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
@@ -102,6 +103,7 @@ void PostedItem::setup()
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
 	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
+	connect(ui->notesButton, SIGNAL(clicked()), this, SLOT( toggleNotes()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 	
@@ -310,7 +312,7 @@ void PostedItem::fill()
 	// FIX THIS UP LATER.
 	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
 	if(ui->notes->text().isEmpty())
-		ui->frame_notes->hide();
+		ui->notesButton->hide();
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
@@ -527,4 +529,17 @@ void PostedItem::copyMessageLink()
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
 	}
+}
+
+void PostedItem::toggleNotes()
+{
+	if (ui->notesButton->isChecked())
+	{
+		ui->frame_notes->show();
+	}
+	else
+	{		
+		ui->frame_notes->hide();
+	}
+
 }

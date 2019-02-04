@@ -18,5 +18,6 @@
 		<file>images/comments.png</file>
 		<file>images/thumb-default.png</file>
 		<file>images/share.png</file>
+		<file>images/notes.png</file>
 	</qresource>
 </RCC>
