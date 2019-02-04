@@ -165,6 +165,11 @@ rs_jsonapi:CONFIG -= no_rs_jsonapi
 CONFIG *= no_rs_deep_search
 rs_deep_search:CONFIG -= no_rs_deep_search
 
+# To enable native dialogs append the following assignation to qmake command
+#line "CONFIG+=rs_use_native_dialogs"
+CONFIG *= no_rs_use_native_dialogs
+rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
+
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
 # 'JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator'. Required for JSON API
@@ -186,10 +191,6 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 # Specify RetroShare extra version (must be a string) appending the following
 # assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
-
-# To enable native dialogs append the following assignation to qmake command line
-# "CONFIG+=rs_use_native_dialogs"
-rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 ###########################################################################################################################################################
 #
@@ -476,6 +477,8 @@ rs_deep_search {
 	 }
 	}
 }
+
+rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
