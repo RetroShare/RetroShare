@@ -71,6 +71,15 @@ public:
 	explicit RsMessageModel(QObject *parent = NULL);
 	~RsMessageModel(){}
 
+    enum BoxName {
+        BOX_NONE   = 0x00,
+        BOX_INBOX  = 0x01,
+        BOX_OUTBOX = 0x02,
+        BOX_DRAFTS = 0x03,
+        BOX_SENT   = 0x04,
+        BOX_TRASH  = 0x05
+    };
+
 	enum Columns {
 		COLUMN_THREAD_STAR         =0x00,
 		COLUMN_THREAD_ATTACHMENT   =0x01,
@@ -96,6 +105,7 @@ public:
 
     // This method will asynchroneously update the data
 
+    void setCurrentBox(BoxName bn) {}
 	void updateMessages();
     const RsMessageId& currentMessageId() const;
 

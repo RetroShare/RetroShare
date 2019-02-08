@@ -108,7 +108,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	msgWidget->isWindow = window;
 	msgWidget->fill(msgId);
 
-	if (parent) {
+    if (parent) {
 		parent->addWidget(msgWidget);
 	}
 

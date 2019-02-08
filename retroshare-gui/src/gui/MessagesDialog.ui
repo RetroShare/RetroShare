@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>775</width>
+    <width>842</width>
     <height>485</height>
    </rect>
   </property>
@@ -726,7 +726,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="RSTreeWidget" name="messageTreeWidget">
+          <widget class="QTreeView" name="messageTreeWidget">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -745,11 +745,6 @@
            <property name="expandsOnDoubleClick">
             <bool>false</bool>
            </property>
-           <column>
-            <property name="text">
-             <string notr="true">1</string>
-            </property>
-           </column>
           </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QGridLayout" name="msgLayout"/>
@@ -842,11 +837,6 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>

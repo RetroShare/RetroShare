@@ -30,6 +30,8 @@
 
 class RSTreeWidgetItemCompareRole;
 class MessageWidget;
+class QTreeWidgetItem;
+class RsMessageModel;
 
 class MessagesDialog : public MainPage
 {
@@ -59,9 +61,10 @@ public:
 protected:
   bool eventFilter(QObject *obj, QEvent *ev);
   void changeEvent(QEvent *e);
+  int getSelectedMessages(QList<QString>& mid);
 
 public slots:
-  void insertMessages();
+  //void insertMessages();
   void messagesTagsChanged();
   
 private slots:
@@ -153,6 +156,8 @@ private:
 
   RSTreeWidgetItemCompareRole *mMessageCompareRole;
   MessageWidget *msgWidget;
+  RsMessageModel *mMessageModel;
+  QSortFilterProxyModel *mMessageProxyModel;
 
   /* Color definitions (for standard see qss.default) */
   QColor mTextColorInbox;
