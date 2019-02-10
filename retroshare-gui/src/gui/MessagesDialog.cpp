@@ -195,6 +195,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
+    mMessageModel->updateMessages();
+
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 	mMessageProxyModel->setFilterRegExp(QRegExp(QString(RsMessageModel::FilterString))) ;
 

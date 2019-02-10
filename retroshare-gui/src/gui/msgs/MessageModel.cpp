@@ -36,6 +36,8 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags & RS_MSG_UNREAD_BY_USER)
 
+#define IMAGE_STAR_ON          ":/images/star-on-16.png"
+
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 const QString RsMessageModel::FilterString("filtered");
@@ -161,7 +163,9 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 		switch(section)
 		{
 		case COLUMN_THREAD_DATE:         return tr("Date");
-		case COLUMN_THREAD_AUTHOR:       return tr("Author");
+		case COLUMN_THREAD_AUTHOR:       return tr("From");
+		case COLUMN_THREAD_SUBJECT:      return tr("Subject");
+		case COLUMN_THREAD_TAGS:         return tr("Tags");
 		default:
 			return QVariant();
 		}
@@ -169,6 +173,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
+		case COLUMN_THREAD_STAR:         return QIcon(IMAGE_STAR_ON);
 		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
 		default:
 			return QVariant();
@@ -179,7 +184,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 
 QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 {
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
     std::cerr << "calling data(" << index << ") role=" << role << std::endl;
 #endif
 
@@ -196,13 +201,13 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	quintptr ref = (index.isValid())?index.internalId():0 ;
 	uint32_t entry = 0;
 
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
 	std::cerr << "data(" << index << ")" ;
 #endif
 
 	if(!ref)
 	{
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
 		std::cerr << " [empty]" << std::endl;
 #endif
 		return QVariant() ;
@@ -210,7 +215,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 
 	if(!convertInternalIdToMsgIndex(ref,entry) || entry >= mMessages.size())
 	{
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
 #endif
 		return QVariant() ;
@@ -225,7 +230,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
         return QVariant(font);
     }
 
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
 	std::cerr << " [ok]" << std::endl;
 #endif
 
@@ -439,7 +444,7 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 
     // now update prow for all posts
 
-#ifdef DEBUG_FORUMMODEL
+#ifdef DEBUG_MESSAGE_MODEL
     debug_dump();
 #endif
 

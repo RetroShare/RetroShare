@@ -164,7 +164,6 @@ private:
 	static bool convertInternalIdToMsgIndex(quintptr ref,uint32_t& index);
 	static void computeReputationLevel(uint32_t forum_sign_flags, ForumModelPostEntry& entry);
 
-	void update_posts(const RsGxsGroupId &group_id);
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
 	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
