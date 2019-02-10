@@ -298,12 +298,6 @@ void PostedItem::fill()
 		ui->titleLabel->setText(messageName());
 
 	}
-	
-	if(urlarray == NULL)
-	{
-		ui->siteLabel->hide();
-		ui->siteBoldLabel->hide();
-	}
 
 	ui->siteLabel->setText(sitestr);
 
