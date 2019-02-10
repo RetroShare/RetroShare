@@ -781,6 +781,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton {
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
+	max-height: 27px;
 }
 
 GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
@@ -869,6 +870,7 @@ PostedListWidget QToolButton#subscribeToolButton {
 	color: white;
 	background: #0099cc;
 	border-radius: 4px;
+	max-height: 27px;
 }
 
 PostedListWidget QToolButton#subscribeToolButton:hover {
