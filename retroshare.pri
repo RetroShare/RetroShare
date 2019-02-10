@@ -192,6 +192,16 @@ rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 # assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
 
+# Specify threading library to use appending the following assignation to qmake
+# commandline 'RS_THREAD_LIB=pthread' the name of the multi threading library to
+# use (pthread, "") usually depends on platform.
+isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
+
+# Specify UPnP library to use appending the following assignation to qmake
+# command line 'RS_UPNP_LIB=miniupnpc' the name of the UPNP library to use
+# (miniupnpc, "upnp ixml threadutil") usually depends on platform.
+isEmpty(RS_UPNP_LIB):RS_UPNP_LIB = upnp ixml threadutil
+
 ###########################################################################################################################################################
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_001:
@@ -325,10 +335,6 @@ defineReplace(linkDynamicLibs) {
 ## RS_SQL_LIB String viariable containing the name of the SQL library to use
 ##   ("sqlcipher sqlite3", sqlite3) it is usually precalculated depending on
 ##   CONFIG.
-## RS_UPNP_LIB String viariable containing the name of the UPNP library to use
-##   (miniupnpc, "upnp ixml threadutil") it usually depend on platform.
-## RS_THREAD_LIB String viariable containing the name of the multi threading
-##   library to use (pthread, "") it usually depend on platform.
 
 isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
 isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
@@ -392,8 +398,6 @@ rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
 libresapihttpserver:DEFINES *= ENABLE_WEBUI
-RS_THREAD_LIB=pthread
-RS_UPNP_LIB = upnp ixml threadutil
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
