@@ -193,12 +193,6 @@ linux-* {
 		}
 	}
 
-	#CONFIG += version_detail_bash_script
-
-	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
-    CONFIG += upnp_libupnp
-
 	# Check if the systems libupnp has been Debian-patched
 	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
@@ -207,8 +201,9 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	PKGCONFIG *= libssl libupnp
-	PKGCONFIG *= libcrypto zlib
+    PKGCONFIG *= libssl
+    equals(RS_UPNP_LIB, "upnp ixml threadutil"):PKGCONFIG *= libupnp
+    PKGCONFIG *= libcrypto zlib
     no_sqlcipher:PKGCONFIG *= sqlite3
     LIBS *= -ldl
 
@@ -239,8 +234,6 @@ win32-x-g++ {
 	QMAKE_LIB = i586-mingw32msvc-ar
 	QMAKE_AR = i586-mingw32msvc-ar
 	DEFINES *= STATICLIB WIN32
-
-	CONFIG += upnp_miniupnpc
 
         SSL_DIR=../../../../openssl
 	UPNPC_DIR = ../../../../miniupnpc-1.3
@@ -309,10 +302,6 @@ freebsd-* {
 	INCLUDEPATH *= /usr/local/include/glib-2.0
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-
-	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
-    CONFIG += upnp_libupnp
 }
 
 ################################# OpenBSD ##########################################
@@ -322,8 +311,6 @@ openbsd-* {
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-
-	CONFIG += upnp_libupnp
 }
 
 ################################# Haiku ##########################################
@@ -335,7 +322,6 @@ haiku-* {
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 	DEFINES *= NO_SQLCIPHER
 	CONFIG += release
-	CONFIG += upnp_libupnp
 	DESTDIR = lib
 }
 
@@ -661,12 +647,6 @@ SOURCES +=	util/folderiterator.cc \
             util/rstime.cc \
             util/rsurl.cc
 
-## Added for retrocompatibility remove ASAP
-isEmpty(RS_UPNP_LIB) {
-    upnp_miniupnpc:RS_UPNP_LIB=miniupnpc
-    upnp_libupnp:RS_UPNP_LIB="upnp ixml threadutil"
-}
-
 equals(RS_UPNP_LIB, miniupnpc) {
 	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
 	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
@@ -675,8 +655,6 @@ equals(RS_UPNP_LIB, miniupnpc) {
 	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
 	DEFINES *= RS_USE_LIBUPNP
 }
-
-
 
 zeroconf {
 
