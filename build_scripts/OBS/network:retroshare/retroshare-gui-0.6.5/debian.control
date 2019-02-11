@@ -1,0 +1,17 @@
+Source: retroshare
+Section: devel
+Priority: standard
+Maintainer: Cyril Soler <csoler@users.sourceforge.net>
+Standards-Version: 3.9.3
+Homepage: https://retroshare.cc
+
+Package: retroshare
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Secure communication with friends
+ RetroShare is a Free and Open Source, private and secure decentralized 
+ communication platform. It lets you to securely chat and share files with your 
+ friends and family, using a web-of-trust to authenticate peers and OpenSSL to 
+ encrypt all communication. RetroShare provides filesharing, chat, messages, 
+ forums and channels.
+ 

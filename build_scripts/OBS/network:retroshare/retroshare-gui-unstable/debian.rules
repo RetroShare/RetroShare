@@ -3,13 +3,22 @@
 configure: configure-stamp
 configure-stamp:
 	dh_testdir
+	cat /etc/os-release
 	qmake --version
-	qmake CONFIG-=debug CONFIG+=release PREFIX=/usr LIB_DIR=/usr/lib \
+	echo '. /etc/os-release'             >  /tmp/configJsonApi.sh
+	echo '[ "$$VERSION_ID" != "8" ] &&'  >> /tmp/configJsonApi.sh
+	echo '  echo "CONFIG+=rs_jsonapi"'   >> /tmp/configJsonApi.sh
+	echo 'true'                          >> /tmp/configJsonApi.sh
+	chmod +x /tmp/configJsonApi.sh
+	qmake \
+	$$(build_scripts/OBS/get_source_version.sh) RS_MINI_VERSION=9999 \
+	CONFIG-=debug CONFIG+=release PREFIX=/usr LIB_DIR=/usr/lib \
 	CONFIG+=no_retroshare_plugins CONFIG+=no_retroshare_nogui \
-	CONFIG+=no_retroshare_gui CONFIG+=no_tests CONFIG+=no_libresapi \
+	CONFIG+=retroshare_gui CONFIG+=no_tests CONFIG+=no_libresapi \
 	CONFIG+=no_libresapihttpserver CONFIG+=no_libresapilocalserver \
-	CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=rs_deep_search \
-	CONFIG+=c++11 RetroShare.pro
+	CONFIG+=no_retroshare_service CONFIG+=rs_deep_search CONFIG+=c++11 \
+	$$(/tmp/configJsonApi.sh) \
+	RetroShare.pro
 	touch $@
 
 build: build-stamp

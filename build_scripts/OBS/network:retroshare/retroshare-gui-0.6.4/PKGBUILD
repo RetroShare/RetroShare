@@ -1,0 +1,39 @@
+# Maintainer: Gioacchino Mazzurco <gio@eigenlab.org>
+# Contributor: AsamK
+# Contributor: sehraf
+# Contributor: stqn
+# Contributor: JHeaton <jheaton at archlinux dot us>
+# Contributor: Tristero <tristero at online dot de>
+# Contributor: funkyou
+
+pkgname=retroshare
+pkgver=0.6.4
+pkgrel=0
+pkgdesc="Serverless encrypted instant messenger with filesharing, chatgroups, e-mail."
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url="https://retroshare.net/"
+license=('AGPL' 'GPL' 'LGPL')
+depends=('gtk-update-icon-cache' 'desktop-file-utils' 'qt5-x11extras' 'qt5-multimedia' 'libupnp' 'libgnome-keyring' 'libxss' 'libmicrohttpd' 'sqlcipher' 'curl' 'libxslt')
+makedepends=('qt5-tools')
+provides=('retroshare')
+conflicts=('retroshare-git')
+
+source=(RetroShare-${pkgver}.tar.gz)
+
+md5sums=('392c36bb3171fa26b8702e0a984d5bd6')
+
+prepare() {
+	cd "${srcdir}/RetroShare-${pkgver}"
+	sed -i '/VOIP \\/d' plugins/plugins.pro
+}
+
+build() {
+	cd "${srcdir}/RetroShare-${pkgver}"
+	qmake-qt5 PREFIX=/usr DATA_DIR=/usr/share/retroshare "CONFIG-=debug" "CONFIG*=release" "CONFIG+=no_retroshare_plugins"
+	make
+}
+
+package() {
+	cd "${srcdir}/RetroShare-${pkgver}"
+	make INSTALL_ROOT="${pkgdir}" install
+}

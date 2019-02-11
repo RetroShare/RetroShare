@@ -1,35 +1,31 @@
-Name:          retroshare-service-git
+Name:          retroshare-service-unstable
 Version:       0.6.9999
 Release:       0
-License:       GNU AFFERO GENERAL PUBLIC LICENSE version 3
-Summary:       Secure chat and file sharing
+License:       AGPL-3.0-or-later
+Summary:       Secure distributed chat, mail, forums, file sharing etc
 Group:         Productivity/Networking/Other
-Url:           http://retroshare.net
-#Source0:       https://github.com/RetroShare/RetroShare/archive/v%{version}.tar.gz#/RetroShare-%{version}.tar.gz
-Source0:       RetroShare-git.tar.gz
+Url:           https://retroshare.cc
+Source0:       RetroShare.tar.gz
 #Patch0:       various.patch
 BuildRoot:     %{_tmppath}/%{name}
 Conflicts:     retroshare-service
-Requires:      libupnp openssl sqlcipher
 BuildRequires: cmake doxygen git libupnp-devel openssl-devel sqlcipher-devel
 
 %if %{defined centos_version}
 BuildRequires: qt5-qtbase-devel qt5-qttools-devel qt5-qttools-static
-Requires:      qt5-qtbase
+BuildRequires: devtoolset-7-toolchain devtoolset-7-libstdc++-devel
 %endif
 
 %if 0%{?fedora_version}
 BuildRequires: gcc-c++
 BuildRequires: fdupes xapian-core-devel
 BuildRequires: qt5-qtbase-devel qt5-qttools-devel qt5-qttools-static
-Requires:      qt5-qtbase xapian-core
 %endif
 
 %if %{defined mageia}
 BuildRequires: gcc-c++
 BuildRequires: libzlib-devel libbzip2-devel
 BuildRequires: libqt5core-devel libqt5xml-devel libxapian-devel
-Requires:      libqt5core libqt5xml5 libxapian
 %endif
 
 %if 0%{?suse_version}
@@ -37,7 +33,6 @@ BuildRequires: gcc7 gcc7-c++
 BuildRequires: fdupes libbz2-devel 
 BuildRequires: libqt5-qtbase-devel libqt5-qttools-devel
 BuildRequires: libxapian-devel update-desktop-files
-Requires:      libbz2 libxapian
 %endif
 
 %if 0%{?fedora_version} >= 27
@@ -54,11 +49,11 @@ This package provides RetroShare system service that can be
 controlled only via JSON API.
 
 Authors:
-see http://retroshare.net/
+see https://retroshare.cc/
 --------
 
 %prep
-%setup -n RetroShare-git
+%setup -n RetroShare
 #%patch0 -p0
 
 %build
@@ -76,6 +71,7 @@ QMAKE="qmake-qt5"
 %if %{defined centos_version}
 # Xapian is not availabe on Centos 7
 BUILD_DEEPSEARCH="CONFIG+=no_rs_deep_search"
+source /opt/rh/devtoolset-7/enable
 %endif
 
 %if %{defined mageia}
@@ -89,7 +85,10 @@ BUILD_CXX="QMAKE_CXX=g++-7"
 
 $QMAKE $BUILD_CC $BUILD_CXX QMAKE_STRIP=echo PREFIX="%{_prefix}" \
 	BIN_DIR="%{_bindir}" \
-	LIB_DIR="%{_libdir}" DATA_DIR="%{_datadir}/retroshare" CONFIG-=debug \
+	LIB_DIR="%{_libdir}" DATA_DIR="%{_datadir}/retroshare" \
+    RS_MAJOR_VERSION=0 RS_MINOR_VERSION=6 RS_MINI_VERSION=9999 \
+    RS_EXTRA_VERSION="-retroshare-service-OBS-RPM" \
+    CONFIG-=debug \
     CONFIG+=ipv6 CONFIG+=no_retroshare_android_service \
     CONFIG+=no_retroshare_android_notify_service \
     CONFIG+=no_retroshare_plugins CONFIG+=no_retroshare_nogui \

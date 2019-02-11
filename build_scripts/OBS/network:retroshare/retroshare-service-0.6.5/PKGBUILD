@@ -1,4 +1,4 @@
-# Maintainer: Gioacchino Mazzurco <gio@eigenlab.org>
+# Maintainer: Gioacchino Mazzurco <gio@altermundi.net>
 # Contributor: AsamK
 # Contributor: sehraf
 # Contributor: stqn
@@ -6,28 +6,28 @@
 # Contributor: Tristero <tristero at online dot de>
 # Contributor: funkyou
 
-pkgname=retroshare-service-git
-pkgver=git
+pkgname=retroshare-service
+pkgver=stable
 pkgrel=0
 pkgdesc="Serverless encrypted instant messenger with filesharing, chatgroups, e-mail. System service version."
 arch=('i686' 'x86_64' 'armv6h' 'armv7h')
-url="https://retroshare.net/"
+url="https://retroshare.cc/"
 license=('AGPL' 'GPL' 'LGPL')
 depends=('bzip2' 'libupnp' 'libzip' 'openssl' 'rapidjson' 'sqlcipher' 'xapian-core')
 makedepends=('cmake' 'doxygen' 'git' 'pkgconf' 'qt5-tools')
 provides=('retroshare-service')
 conflicts=('retroshare-service')
 
-source=(RetroShare-${pkgver}.tar.gz)
+source=(RetroShare.tar.gz)
 
-md5sums=('3c66108223b427d617b962aff0755378')
+md5sums=('45a438fb9a862542cc651c6f5ff28fac')
 
 prepare() {
-	cd "${srcdir}/RetroShare-${pkgver}"
+	cd "${srcdir}/RetroShare"
 }
 
 build() {
-	cd "${srcdir}/RetroShare-${pkgver}"
+	cd "${srcdir}/RetroShare"
 	qmake-qt5 PREFIX=/usr DATA_DIR=/usr/share/retroshare CONFIG-=debug \
     	CONFIG+=ipv6 CONFIG+=no_retroshare_android_service \
         CONFIG+=no_retroshare_android_notify_service \
@@ -35,11 +35,13 @@ build() {
         CONFIG+=no_retroshare_gui CONFIG+=no_tests CONFIG+=no_libresapi \
         CONFIG+=no_libresapihttpserver CONFIG+=no_libresapilocalserver \
 		CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=rs_deep_search \
-        CONFIG+=release
+        CONFIG+=release \
+        RS_MAJOR_VERSION=0 RS_MINOR_VERSION=6 RS_MINI_VERSION=5 \
+        RS_EXTRA_VERSION="-retroshare-service-OBS-Arch"
 	make -j$(nproc) || make -j$(nproc) || make
 }
 
 package() {
-	cd "${srcdir}/RetroShare-${pkgver}"
+	cd "${srcdir}/RetroShare"
 	make INSTALL_ROOT="${pkgdir}" install
 }

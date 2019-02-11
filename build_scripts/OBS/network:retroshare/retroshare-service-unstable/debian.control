@@ -1,11 +1,11 @@
-Source: retroshare-service-git
+Source: retroshare-service-unstable
 Section: devel
 Priority: standard
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
 Standards-Version: 3.9.3
-Homepage: http://retroshare.net
+Homepage: https://retroshare.cc
 
-Package: retroshare-service-git
+Package: retroshare-service-unstable
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Secure communication with friends
