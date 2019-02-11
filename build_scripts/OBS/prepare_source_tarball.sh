@@ -15,7 +15,7 @@ function define_default_value()
 }
 
 define_default_value GIT_DIR "${HOME}/Development/rs-develop/.git"
-define_default_value WORK_DIR "/tmp/"
+define_default_value WORK_DIR "$(mktemp --directory)/"
 
 ORIG_DIR="$(pwd)"
 
@@ -39,4 +39,5 @@ cat RetroShare/Source_Version
 md5sum RetroShare.tar.gz
 wc -c RetroShare.tar.gz
 mv RetroShare.tar.gz "${ORIG_DIR}/RetroShare.tar.gz"
+rm -rf "${WORK_DIR}" 
 
