@@ -211,6 +211,9 @@ macx {
         mac_dht.files= $$files($$PWD/../../libbitdht/src/bitdht/*.txt)
         mac_dht.path = Contents/Resources
         QMAKE_BUNDLE_DATA +=mac_dht
+        mac_sounds.files= $$files($$PWD/sounds/*.wav)
+        mac_sounds.path = Contents/Resources
+        QMAKE_BUNDLE_DATA +=mac_sounds
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
