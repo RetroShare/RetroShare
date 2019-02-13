@@ -28,6 +28,7 @@
 #include <cstdint>
 #endif
 #include <ctime> // Added for comfort of users of this util header
+#include "util/rsdeprecate.h"
 
 /**
  * Safer alternative to time_t.
@@ -47,7 +48,7 @@ namespace rstime {
 	/*!
 	 * \brief This is a cross-system definition of usleep, which accepts any 32 bits number of micro-seconds.
 	 */
-
+    RS_DEPRECATED_FOR("std::this_thread::sleep_for")
 	int rs_usleep(uint32_t micro_seconds);
 
 	/* Use this class to measure and display time duration of a given environment:
