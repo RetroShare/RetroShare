@@ -215,9 +215,8 @@ struct SerialisedIdentityStruct
     rstime_t mLastUsageTS;
 };
 
-// Not sure exactly what should be inherited here?
-// Chris - please correct as necessary.
-
+// We cache all identities, and provide alternative (instantaneous)
+// functions to extract info, rather than the horrible Token system.
 class p3IdService: public RsGxsIdExchange, public RsIdentity,  public GxsTokenQueue, public RsTickEvent, public p3Config
 {
 public:
@@ -239,6 +238,13 @@ public:
 
 	/* Data Specific Interface */
 
+	/// @see RsIdentity
+	bool getIdentitiesInfo(const std::set<RsGxsId>& ids,
+	        std::vector<RsGxsIdGroup>& idsInfo ) override;
+
+	/// @see RsIdentity
+	bool getIdentitiesSummaries(std::list<RsGroupMetaData>& ids) override;
+
 	// These are exposed via RsIdentity.
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups);
 	virtual bool getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups);
@@ -248,7 +254,7 @@ public:
 	// These are local - and not exposed via RsIdentity.
 	virtual bool createGroup(uint32_t& token, RsGxsIdGroup &group);
 	virtual bool updateGroup(uint32_t& token, RsGxsIdGroup &group);
-	virtual bool deleteGroup(uint32_t& token, RsGxsIdGroup &group);
+	virtual bool deleteGroup(uint32_t& token, RsGxsGroupId& group);
 	//virtual bool createMsg(uint32_t& token, RsGxsIdOpinion &opinion);
 
 	/**************** RsIdentity External Interface.
@@ -263,12 +269,28 @@ public:
 	//virtual bool  getNickname(const RsGxsId &id, std::string &nickname);
 	virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details);
 
-	// 
+	RS_DEPRECATED_FOR(RsReputations)
 	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id, 
 	                           bool absOpinion, int score);
+
+	/// @see RsIdentity
+	virtual bool createIdentity(
+	        RsGxsId& id,
+	        const std::string& name, const RsGxsImage& avatar = RsGxsImage(),
+	        bool pseudonimous = true, const std::string& pgpPassword = "" ) override;
+
 	virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params);
 
+	/// @see RsIdentity
+	bool updateIdentity(RsGxsIdGroup& identityData) override;
+
+	RS_DEPRECATED
 	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group);
+
+	/// @see RsIdentity
+	bool deleteIdentity(RsGxsId& id) override;
+
+	RS_DEPRECATED
 	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group);
 
     virtual void setDeleteBannedNodesThreshold(uint32_t days) ;
@@ -288,6 +310,12 @@ public:
 	virtual rstime_t getLastUsageTS(const RsGxsId &id) ;
 
 	/**************** RsGixs Implementation ***************/
+
+	/// @see RsIdentity
+	bool getOwnSignedIds(std::vector<RsGxsId> ids) override;
+
+	/// @see RsIdentity
+	bool getOwnPseudonimousIds(std::vector<RsGxsId> ids) override;
 
 	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
 
@@ -349,6 +377,15 @@ public:
 	                         const std::list<RsPeerId> &peers,
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
+
+
+	/// @see RsIdentity
+	bool identityToBase64( const RsGxsId& id,
+	                       std::string& base64String ) override;
+
+	/// @see RsIdentity
+	bool identityFromBase64( const std::string& base64String,
+	                         RsGxsId& id ) override;
 
 	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
 	                                       std::string& radix_string);
@@ -599,7 +636,9 @@ private:
 	rstime_t mLastKeyCleaningTime ;
 	rstime_t mLastConfigUpdate ;
 
-	bool mOwnIdsLoaded ;
+	bool mOwnIdsLoaded;
+	bool ownIdsAreLoaded() { RS_STACK_MUTEX(mIdMtx); return mOwnIdsLoaded; }
+
 	bool mAutoAddFriendsIdentitiesAsContacts;
     uint32_t mMaxKeepKeysBanned ;
 };

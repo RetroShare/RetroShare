@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,12 +20,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_IDENTITY_GUI_INTERFACE_H
-#define RETROSHARE_IDENTITY_GUI_INTERFACE_H
+#pragma once
 
-#include <inttypes.h>
+#include <cstdint>
 #include <string>
 #include <list>
+#include <vector>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
@@ -37,9 +37,13 @@
 #include "serialiser/rstypeserializer.h"
 #include "util/rsdeprecate.h"
 
-/* The Main Interface Class - for information about your Peers */
 struct RsIdentity;
-extern RsIdentity *rsIdentity;
+
+/**
+ * Pointer to global instance of RsIdentity service implementation
+ * @jsonapi{development}
+ */
+extern RsIdentity* rsIdentity;
 
 
 // GroupFlags: Only one so far:
@@ -106,7 +110,7 @@ struct RsGxsIdGroup : RsSerializable
 {
 	RsGxsIdGroup() :
 	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
-	~RsGxsIdGroup() {}
+	virtual ~RsGxsIdGroup() {}
 
 	RsGroupMetaData mMeta;
 
@@ -144,18 +148,18 @@ struct RsGxsIdGroup : RsSerializable
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx );
+	                     RsGenericSerializer::SerializeContext& ctx ) override;
 };
 
 std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
 
 // DATA TYPE FOR EXTERNAL INTERFACE.
 
-class RsRecognTag
+struct RsRecognTag
 {
-	public:
-	RsRecognTag(uint16_t tc, uint16_t tt, bool v)
-	:tag_class(tc), tag_type(tt), valid(v) { return; }
+	RsRecognTag(uint16_t tc, uint16_t tt, bool v) :
+	    tag_class(tc), tag_type(tt), valid(v) {}
+
 	uint16_t tag_class;
 	uint16_t tag_type;
 	bool valid;
@@ -268,11 +272,11 @@ struct RsIdentityUsage : RsSerializable
 	std::string mComment;
 
 	bool operator<(const RsIdentityUsage& u) const { return mHash < u.mHash; }
-	RsFileHash mHash ;
+	RsFileHash mHash;
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx )
+	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mServiceId);
 		RS_SERIAL_PROCESS(mUsageCode);
@@ -329,7 +333,7 @@ struct RsIdentityDetails : RsSerializable
 		RS_SERIAL_PROCESS(mFlags);
 		RS_SERIAL_PROCESS(mPgpId);
 		//RS_SERIAL_PROCESS(mReputation);
-		//RS_SERIAL_PROCESS(mAvatar);
+		RS_SERIAL_PROCESS(mAvatar);
 		RS_SERIAL_PROCESS(mPublishTS);
 		RS_SERIAL_PROCESS(mLastUsageTS);
 		RS_SERIAL_PROCESS(mUseCases);
@@ -338,73 +342,214 @@ struct RsIdentityDetails : RsSerializable
 
 
 
-
+/** The Main Interface Class for GXS people identities */
 struct RsIdentity : RsGxsIfaceHelper
 {
-	explicit RsIdentity(RsGxsIface& gxs): RsGxsIfaceHelper(gxs) {}
-    virtual ~RsIdentity() {}
+	explicit RsIdentity(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
+	virtual ~RsIdentity() {}
 
-    /********************************************************************************************/
-    /********************************************************************************************/
+	/**
+	 * @brief Create a new identity
+	 * @jsonapi{development}
+	 * @param[out] id storage for the created identity Id
+	 * @param[in] name Name of the identity
+	 * @param[in] avatar Image associated to the identity
+	 * @param[in] pseudonimous true for unsigned identity, false otherwise
+	 * @param[in] pgpPassword password to unlock PGP to sign identity,
+	 *	not implemented yet
+	 * @return false on error, true otherwise
+	 */
+	virtual bool createIdentity(
+	        RsGxsId& id,
+	        const std::string& name, const RsGxsImage& avatar = RsGxsImage(),
+	        bool pseudonimous = true, const std::string& pgpPassword = "" ) = 0;
 
-    // For Other Services....
-    // It should be impossible for them to get a message which we don't have the identity.
-    // Its a major error if we don't have the identity.
+	/**
+	 * @brief Locally delete given identity
+	 * @jsonapi{development}
+	 * @param[in] id Id of the identity
+	 * @return false on error, true otherwise
+	 */
+	virtual bool deleteIdentity(RsGxsId& id) = 0;
 
-    // We cache all identities, and provide alternative (instantaneous)
-    // functions to extract info, rather than the standard Token system.
+	/**
+	 * @brief Update identity data (name, avatar...)
+	 * @jsonapi{development}
+	 * @param[in] identityData updated identiy data
+	 * @return false on error, true otherwise
+	 */
+	virtual bool updateIdentity(RsGxsIdGroup& identityData) = 0;
 
-    //virtual bool  getNickname(const RsGxsId &id, std::string &nickname) = 0;
-    virtual bool  getIdDetails(const RsGxsId &id, RsIdentityDetails &details) = 0;
+	/**
+	 * @brief Get identity details, from the cache
+	 * @param[in] id Id of the identity
+	 * @param[out] details Storage for the identity details
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getIdDetails(const RsGxsId& id, RsIdentityDetails& details) = 0;
 
-    // Fills up list of all own ids. Returns false if ids are not yet loaded.
-    virtual bool  getOwnIds(std::list<RsGxsId> &ownIds,bool only_signed_ids = false) = 0;
-    virtual bool  isOwnId(const RsGxsId& id) = 0;
+	/**
+	 * @brief Get last seen usage time of given identity
+	 * @jsonapi{development}
+	 * @param[in] id Id of the identity
+	 * @return timestamp of last seen usage
+	 */
+	virtual rstime_t getLastUsageTS(const RsGxsId& id) = 0;
 
-    //
-    virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
-                               bool absOpinion, int score) = 0;
-    virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
+	/**
+	 * @brief Get own signed ids
+	 * @jsonapi{development}
+	 * @param[out] ids storage for the ids
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getOwnSignedIds(std::vector<RsGxsId> ids) = 0;
 
-    virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
-    virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+	/**
+	 * @brief Get own pseudonimous (unsigned) ids
+	 * @jsonapi{development}
+	 * @param[out] ids storage for the ids
+	 * @return false on error, true otherwise
+	 */
+	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId> ids) = 0;
 
-    virtual void setDeleteBannedNodesThreshold(uint32_t days) =0;
-    virtual uint32_t deleteBannedNodesThreshold() =0;
+	/**
+	 * @brief Check if an id is own
+	 * @jsonapi{development}
+	 * @param[in] id Id to check
+	 * @return true if the id is own, false otherwise
+	 */
+	virtual bool isOwnId(const RsGxsId& id) = 0;
 
-    virtual bool parseRecognTag(const RsGxsId &id, const std::string &nickname,
-                                const std::string &tag, RsRecognTagDetails &details) = 0;
-    virtual bool getRecognTagRequest(const RsGxsId &id, const std::string &comment,
-                                     uint16_t tag_class, uint16_t tag_type, std::string &tag) = 0;
+	/**
+	 * @brief Get base64 representation of an identity
+	 * @jsonapi{development}
+	 * @param[in] id Id of the identity
+	 * @param[out] base64String storage for the identity base64
+	 * @return false on error, true otherwise
+	 */
+	virtual bool identityToBase64( const RsGxsId& id,
+	                               std::string& base64String ) = 0;
 
-    virtual bool setAsRegularContact(const RsGxsId& id,bool is_a_contact) = 0 ;
-    virtual bool isARegularContact(const RsGxsId& id) = 0 ;
+	/**
+	 * @brief Import identity from base64 representation
+	 * @jsonapi{development}
+	 * @param[in] base64String base64 representation of the identity to import
+	 * @param[out] id storage for the identity id
+	 * @return false on error, true otherwise
+	 */
+	virtual bool identityFromBase64( const std::string& base64String,
+	                                 RsGxsId& id ) = 0;
+
+	/**
+	 * @brief Get identities summaries list.
+	 * @jsonapi{development}
+	 * @param[out] ids list where to store the identities
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getIdentitiesSummaries(std::list<RsGroupMetaData>& ids) = 0;
+
+	/**
+	 * @brief Get identities information (name, avatar...).
+	 * Blocking API.
+	 * @jsonapi{development}
+	 * @param[in] ids ids of the channels of which to get the informations
+	 * @param[out] idsInfo storage for the identities informations
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getIdentitiesInfo(
+	        const std::set<RsGxsId>& ids,
+	        std::vector<RsGxsIdGroup>& idsInfo ) = 0;
+
+	/**
+	 * @brief Check if an identity is contact
+	 * @jsonapi{development}
+	 * @param[in] id Id of the identity
+	 * @return true if it is a conctact, false otherwise
+	 */
+	virtual bool isARegularContact(const RsGxsId& id) = 0;
+
+	/**
+	 * @brief Set/unset identity as contact
+	 * @param[in] id Id of the identity
+	 * @param[in] isContact true to set, false to unset
+	 * @return false on error, true otherwise
+	 */
+	virtual bool setAsRegularContact(const RsGxsId& id, bool isContact) = 0;
+
+	/**
+	 * @brief Toggle automatic flagging signed by friends identity as contact
+	 * @jsonapi{development}
+	 * @param[in] enabled true to enable, false to disable
+	 */
+	virtual void setAutoAddFriendIdsAsContact(bool enabled) = 0;
+
+	/**
+	 * @brief Check if automatic signed by friend identity contact flagging is
+	 * enabled
+	 * @jsonapi{development}
+	 * @return true if enabled, false otherwise
+	 */
+	virtual bool autoAddFriendIdsAsContact() = 0;
+
+	/**
+	 * @brief Get number of days after which delete a banned identities
+	 * @jsonapi{development}
+	 * @return number of days
+	 */
+	virtual uint32_t deleteBannedNodesThreshold() = 0;
+
+	/**
+	 * @brief Set number of days after which delete a banned identities
+	 * @jsonapi{development}
+	 * @param[in] days number of days
+	 */
+	virtual void setDeleteBannedNodesThreshold(uint32_t days) = 0;
+
+
+	RS_DEPRECATED
+	virtual bool getGroupSerializedData(
+	        const uint32_t& token,
+	        std::map<RsGxsId,std::string>& serialized_groups ) = 0;
+
+	RS_DEPRECATED
+	virtual bool parseRecognTag(
+	        const RsGxsId &id, const std::string& nickname,
+	        const std::string& tag, RsRecognTagDetails& details) = 0;
+
+	RS_DEPRECATED
+	virtual bool getRecognTagRequest(
+	        const RsGxsId& id, const std::string& comment, uint16_t tag_class,
+	        uint16_t tag_type, std::string& tag) = 0;
+
+	RS_DEPRECATED
 	virtual uint32_t nbRegularContacts() =0;
-	virtual void setAutoAddFriendIdsAsContact(bool b) =0;
-	virtual bool autoAddFriendIdsAsContact() =0;
 
+	RS_DEPRECATED_FOR(identityToBase64)
 	virtual bool serialiseIdentityToMemory( const RsGxsId& id,
 	                                        std::string& radix_string ) = 0;
+	RS_DEPRECATED_FOR(identityFromBase64)
 	virtual bool deserialiseIdentityFromMemory( const std::string& radix_string,
 	                                            RsGxsId* id = nullptr ) = 0;
 
-    /*!
-     * \brief overallReputationLevel
-     * 			Returns the overall reputation level of the supplied identity. See rsreputations.h
-     * \param id
-     * \return
-     */
-    virtual rstime_t getLastUsageTS(const RsGxsId &id) =0;
+	/// Fills up list of all own ids. Returns false if ids are not yet loaded.
+	RS_DEPRECATED_FOR("getOwnSignedIds getOwnPseudonimousIds")
+	virtual bool getOwnIds( std::list<RsGxsId> &ownIds,
+	                        bool only_signed_ids = false ) = 0;
 
-    // Specific RsIdentity Functions....
-    /* Specific Service Data */
-    /* We expose these initially for testing / GUI purposes.
-         */
+	RS_DEPRECATED
+	virtual bool createIdentity(uint32_t& token, RsIdentityParameters &params) = 0;
 
-    virtual bool    getGroupData(const uint32_t &token, std::vector<RsGxsIdGroup> &groups) = 0;
-	virtual bool 	getGroupSerializedData(const uint32_t &token, std::map<RsGxsId,std::string>& serialized_groups)=0;
-    //virtual bool 	getMsgData(const uint32_t &token, std::vector<RsGxsIdOpinion> &opinions) = 0;
+	RS_DEPRECATED_FOR(RsReputations)
+	virtual bool submitOpinion(uint32_t& token, const RsGxsId &id,
+	                           bool absOpinion, int score) = 0;
 
+	RS_DEPRECATED
+	virtual bool updateIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+
+	RS_DEPRECATED
+	virtual bool deleteIdentity(uint32_t& token, RsGxsIdGroup &group) = 0;
+
+	RS_DEPRECATED_FOR("getIdentitiesSummaries getIdentitiesInfo")
+	virtual bool getGroupData( const uint32_t& token,
+	                           std::vector<RsGxsIdGroup>& groups) = 0;
 };
-
-#endif // RETROSHARE_IDENTITY_GUI_INTERFACE_H
