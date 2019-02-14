@@ -17,6 +17,10 @@ build:
     - sqlcipher-devel
     - update-desktop-files
 
+ingredients:
+  packages:
+    - tor
+
 script:
   - cd $BUILD_SOURCE_DIR
   - tar -xf RetroShare.tar.gz
