@@ -40,7 +40,7 @@
 #define COLUMN_COUNT         6
 #define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
-class DirDetails;
+struct DirDetails;
 
 class DirDetailsVector : public DirDetails
 {
