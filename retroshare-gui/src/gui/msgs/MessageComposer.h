@@ -37,7 +37,7 @@ class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
 struct RsGxsChannelGroup;
-class RsGxsForumGroup;
+struct RsGxsForumGroup;
 
 class MessageComposer : public QMainWindow 
 {
