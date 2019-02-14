@@ -710,7 +710,7 @@ public:
 	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
     uint16_t serviceType() const { return mServType ; }
-    uint32_t serviceFullType() const { return ((uint32_t)mServType << 8) + (((uint32_t) RS_PKT_VERSION_SERVICE) << 24); }
+    uint32_t serviceFullType() const { return RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(mServType); }
 
     virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags);
 protected:
