@@ -89,12 +89,12 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 	                                 std::vector<RsGxsComment> &msgs )
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
-virtual bool createComment(uint32_t &token, RsGxsComment &msg)
+	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg)
 	{
 		return mCommentService->createGxsComment(token, msg);
 	}
 
-virtual bool createVote(uint32_t &token, RsGxsVote &msg)
+	virtual bool createNewVote(uint32_t &token, RsGxsVote &msg)
 	{
 		return mCommentService->createGxsVote(token, msg);
 	}

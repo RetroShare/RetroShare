@@ -262,7 +262,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
 
 	uint32_t token;
-	rsPosted->createVote(token, vote);
+	rsPosted->createNewVote(token, vote);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, mTokenTypeVote);
 }
 
