@@ -30,7 +30,7 @@
 #include "gui/msgs/MessageInterface.h"
 
 class QAction;
-class RsIdentityDetails;
+struct RsIdentityDetails;
 class QComboBox;
 class QFontComboBox;
 class QTextEdit;
