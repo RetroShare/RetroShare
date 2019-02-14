@@ -28,7 +28,7 @@
 #include <retroshare/rstypes.h>
 
 struct FileChunksInfo ;
-class FileInfo ;
+struct FileInfo ;
 
 class FileTransferInfoWidget : public RsAutoUpdatePage
 {
