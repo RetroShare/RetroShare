@@ -26,7 +26,7 @@
 #include <retroshare/rsgxsifacetypes.h>
 
 class RsGxsIfaceHelper;
-class RsGxsChanges;
+struct RsGxsChanges;
 
 typedef uint32_t TurtleRequestId ;
 
