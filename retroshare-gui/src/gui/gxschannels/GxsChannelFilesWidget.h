@@ -25,7 +25,7 @@
 
 #include "retroshare/rsgxsifacetypes.h"
 
-class RsGxsChannelPost;
+struct RsGxsChannelPost;
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class GxsFeedItem;
