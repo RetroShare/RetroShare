@@ -85,6 +85,8 @@ public:
 
 	// Download the content.
 	void downloadFiles() const ;
+	// Auto Download all the content.
+	void autoDownloadFiles() const ;
 
 	qulonglong size();
 
@@ -102,6 +104,8 @@ private:
 	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
 	static bool checkFile(const QString &fileName, bool showError);
+	// Auto Download recursively.
+	void autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const ;
 
 	QDomDocument _xml_doc ;
 	QString _fileName ;

@@ -54,6 +54,7 @@ class TransferPage: public ConfigPage
 
 		void editDirectories() ;
 		void setIncomingDirectory();
+		void updateAutoDLColl();
 		void setPartialsDirectory();
 		void toggleAutoCheckDirectories(bool);
 
