@@ -36,7 +36,7 @@ class QFontComboBox;
 class QTextEdit;
 class QTextCharFormat;
 class RSTreeWidgetItemCompareRole;
-class RsGxsChannelGroup;
+struct RsGxsChannelGroup;
 class RsGxsForumGroup;
 
 class MessageComposer : public QMainWindow 
