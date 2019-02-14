@@ -35,7 +35,7 @@ class QItemSelection;
 struct RsGxsForumGroup;
 class RsGxsForumModel;
 struct RsGxsForumMsg;
-class ForumModelPostEntry;
+struct ForumModelPostEntry;
 
 namespace Ui {
 class GxsForumThreadWidget;
