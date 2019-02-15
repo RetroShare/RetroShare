@@ -1256,31 +1256,38 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	uint32_t max_size  = 0 ;
 	uint32_t identity_flags = 0 ;
 
-	RsReputations::ReputationLevel rep_lev = rsReputations->overallReputationLevel(msgMeta->mAuthorId,&identity_flags);
+	RsReputationLevel rep_lev =
+	        rsReputations->overallReputationLevel(
+	            msgMeta->mAuthorId, &identity_flags );
 
 	switch(rep_lev)
 	{
-	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_NEUTRAL:   			max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_REMOTELY_POSITIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_LOCALLY_POSITIVE:    max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
-														break ;
-    default:
-	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count = 0 ;
-														max_size = 0 ;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
 		break ;
+	case RsReputationLevel::NEUTRAL:
+		max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
+		break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_NEGATIVE: // fallthrough
+	default:
+		max_count = 0;
+		max_size = 0;
+		break;
 	}
 
-	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED ;
+	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED;
 
-	if(rep_lev <= RsReputations::REPUTATION_NEUTRAL && !pgp_linked)
+	if(rep_lev <= RsReputationLevel::NEUTRAL && !pgp_linked)
 	{
 		max_count /= 10 ;
 		max_size  /= 10 ;
@@ -1288,7 +1295,7 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 
 	RS_STACK_MUTEX(mPerUserStatsMutex);
 
-	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]) ;
+	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]);
 
 #ifdef DEBUG_GXSTRANS
 	std::cerr << "GxsTrans::acceptMessage(): size=" << msg_size << ", grp=" << msgMeta->mGroupId << ", gxs_id=" << msgMeta->mAuthorId << ", pgp_linked=" << pgp_linked << ", current (size,cnt)=("

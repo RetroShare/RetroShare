@@ -315,7 +315,7 @@ struct RsIdentityDetails : RsSerializable
 	 * reputation system is not finished yet, I leave this in place. We should
 	 * decide what to do with it.
 	 */
-	RsReputations::ReputationInfo mReputation;
+	RsReputationInfo mReputation;
 
 	RsGxsImage mAvatar;
 

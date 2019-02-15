@@ -713,9 +713,10 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
 
             if(is_a_contact && rsReputations->nodeAutoPositiveOpinionForContacts())
 			{
-				RsReputations::Opinion op ;
-				if(rsReputations->getOwnOpinion(id,op) && op == RsReputations::OPINION_NEUTRAL)
-					rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
+				RsOpinion op;
+				if( rsReputations->getOwnOpinion(id,op) &&
+				        op == RsOpinion::NEUTRAL )
+					rsReputations->setOwnOpinion(id, RsOpinion::POSITIVE);
 			}
 
 			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
@@ -1167,10 +1168,10 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         std::cerr << "p3IdService::requesting key " << id <<std::endl;
 #endif
 
-        RsReputations::ReputationInfo info ;
+		RsReputationInfo info;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
 
-        if(info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
         {
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
 
