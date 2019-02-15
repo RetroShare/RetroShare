@@ -21,6 +21,10 @@ build:
     - sqlcipher-devel
     - update-desktop-files
 
+ingredients:
+  packages:
+    - tor
+
 script:
   - cd $BUILD_SOURCE_DIR
   - tar -xf RetroShare.tar.gz
@@ -34,4 +38,4 @@ script:
   - make -j$(nproc) || make -j$(nproc) || make
   - make INSTALL_ROOT=$BUILD_APPDIR install
   - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
-  - linuxdeployqt $BUILD_APPDIR/usr/share/applications/*.desktop -bundle-non-qt-libs -verbose=3 -no-strip
+  - linuxdeployqt $BUILD_APPDIR/usr/share/applications/*.desktop -bundle-non-qt-libs -verbose=3 -no-strip -extra-plugins=iconengines/libqsvgicon.so
