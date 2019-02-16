@@ -220,7 +220,7 @@ bool sortRsPeerIdByNameLocation(const RsPeerId &a, const RsPeerId &b)
 	return stringA.toLower() < stringB.toLower();
 }
 
-/** Overloads default QWidget::paintEvent. Draws the actual 
+/** Overloads default QWidget::paintEvent. Draws the actual
  * bandwidth graph. */
 void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 {
@@ -230,14 +230,14 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   /* Set current graph dimensions */
   _rec = this->frameRect();
-  
+
   /* Start the painter */
   _painter->begin(this);
-  
+
   /* We want antialiased lines and text */
   _painter->setRenderHint(QPainter::Antialiasing);
   _painter->setRenderHint(QPainter::TextAntialiasing);
-  
+
   /* Fill in the background */
   _painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
@@ -289,7 +289,8 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       rsPeers->getPeerDetails(*it,details) ;
 
       QString name = QString::fromUtf8(details.name.c_str()) + " (" + QString::fromUtf8(details.location.c_str()) + ")";
-      if(name.length() > 20)
+      // TODO does not work correctly with hieroglyphs
+      if(name.length() > 20 + 3)
           name = name.left(20)+"..." ;
 
       peer_name_size = std::max(peer_name_size, fm.width(name)) ;
