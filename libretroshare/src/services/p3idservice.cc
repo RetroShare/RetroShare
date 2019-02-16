@@ -212,9 +212,12 @@ bool p3IdService::getIdentitiesInfo(
         const std::set<RsGxsId>& ids, std::vector<RsGxsIdGroup>& idsInfo )
 {
 	uint32_t token;
+
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	std::list<RsGxsGroupId> idsList(ids.begin(), ids.end());
+
+	std::list<RsGxsGroupId> idsList;
+	for (auto&& id : ids) idsList.push_back(RsGxsGroupId(id));
 
 	if( !requestGroupInfo(token, opts, idsList)
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
