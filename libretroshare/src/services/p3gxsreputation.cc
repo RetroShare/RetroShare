@@ -236,7 +236,7 @@ int	p3GxsReputation::tick()
 	return 0;
 }
 
-void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
+void p3GxsReputation::setAutoPositiveOpinionForContacts(bool b)
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -249,13 +249,13 @@ void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
         IndicateConfigChanged() ;
     }
 }
-bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
+bool p3GxsReputation::autoPositiveOpinionForContacts()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     return mAutoSetPositiveOptionToContacts ;
 }
 
-void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
+void p3GxsReputation::setRememberBannedIdThreshold(uint32_t days)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -265,7 +265,7 @@ void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
         IndicateConfigChanged();
     }
 }
-uint32_t p3GxsReputation::rememberDeletedNodesThreshold()
+uint32_t p3GxsReputation::rememberBannedIdThreshold()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -831,7 +831,7 @@ bool p3GxsReputation::getReputationInfo(
     if(it == mReputations.end())
     {
 		info.mOwnOpinion = RsOpinion::NEUTRAL ;
-        info.mFriendAverageScore = REPUTATION_THRESHOLD_DEFAULT ;
+        info.mFriendAverageScore = RS_REPUTATION_THRESHOLD_DEFAULT ;
         info.mFriendsNegativeVotes = 0 ;
         info.mFriendsPositiveVotes = 0 ;
 
@@ -979,9 +979,13 @@ void p3GxsReputation::banNode(const RsPgpId& id,bool b)
         }
     }
 }
+
+RsReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id)
+{ return overallReputationLevel(id, nullptr); }
+
 bool p3GxsReputation::isNodeBanned(const RsPgpId& id)
 {
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
     return mBannedPgpIds.find(id) != mBannedPgpIds.end();
 }

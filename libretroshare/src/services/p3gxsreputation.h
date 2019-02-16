@@ -93,11 +93,6 @@ public:
 
 
 //!The p3GxsReputation service.
- /**
-  *
-  * 
-  */
-
 class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
@@ -114,14 +109,17 @@ public:
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
+
+	RsReputationLevel overallReputationLevel(const RsGxsId& id) override;
+
 	virtual RsReputationLevel overallReputationLevel(
-	        const RsGxsId& id, uint32_t* identity_flags = nullptr );
+	        const RsGxsId& id, uint32_t* identity_flags );
 
-    virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
-    virtual bool nodeAutoPositiveOpinionForContacts() ;
+	virtual void setAutoPositiveOpinionForContacts(bool b) ;
+	virtual bool autoPositiveOpinionForContacts() ;
 
-    virtual void setRememberDeletedNodesThreshold(uint32_t days) ;
-    virtual uint32_t rememberDeletedNodesThreshold() ;
+	virtual void setRememberBannedIdThreshold(uint32_t days) ;
+	virtual uint32_t rememberBannedIdThreshold() ;
 
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
