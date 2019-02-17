@@ -299,7 +299,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   QPen pen ;
   pen.setWidth(2) ;
-  pen.setBrush(Qt::black) ;
+  pen.setBrush(FOREGROUND_COLOR) ;
 
   _painter->setPen(pen) ;
   int i=0;
@@ -350,7 +350,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       pen.setWidth(2) ;
 
       if(_current_service_id == it->second.mServiceType)
-          pen.setBrush(Qt::black) ;
+          pen.setBrush(FOREGROUND_COLOR) ;
       else
           pen.setBrush(Qt::gray) ;
 
@@ -364,7 +364,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
       _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
       _painter->setPen(pen) ;
 
       _painter->drawText(QPointF(X,Y),name);
@@ -497,7 +497,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       QPen pen ;
       pen.setWidth(2) ;
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
 
       _painter->setPen(pen) ;
 
