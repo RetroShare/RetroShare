@@ -21,7 +21,7 @@
 #ifndef _GROUPDEFS_H
 #define _GROUPDEFS_H
 
-class RsGroupInfo;
+struct RsGroupInfo;
 
 class GroupDefs
 {

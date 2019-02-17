@@ -24,7 +24,7 @@
 #include <QColor>
 #include <QFont>
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 class StatusDefs
 {

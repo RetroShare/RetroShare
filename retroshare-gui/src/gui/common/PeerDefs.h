@@ -24,7 +24,7 @@
 #include <QString>
 #include <retroshare/rsidentity.h>
 
-class RsPeerDetails;
+struct RsPeerDetails;
 
 class PeerDefs
 {

@@ -24,7 +24,7 @@
 #include "gui/gxs/RsGxsUpdateBroadcastWidget.h"
 #include "util/TokenQueue.h"
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class UIStateHelper;
 
 class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse

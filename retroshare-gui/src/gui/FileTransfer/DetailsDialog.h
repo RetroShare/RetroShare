@@ -25,7 +25,7 @@
 #include "ui_DetailsDialog.h"
 #include <retroshare/rstypes.h>
 
-class FileChunksInfo ;
+struct FileChunksInfo ;
 
 class DetailsDialog : public QDialog
 {

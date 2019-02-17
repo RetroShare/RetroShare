@@ -87,8 +87,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts
 	    /* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
 //virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-//virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
-//virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
+//virtual bool createNewComment(uint32_t &token, RsGxsComment &comment) = 0;
+//virtual bool createNewVote(uint32_t &token, RsGxsVote &vote) = 0;
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;

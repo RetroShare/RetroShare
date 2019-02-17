@@ -434,6 +434,8 @@ no_rs_deprecatedwarning {
 
 no_rs_cppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
+    QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
+
     DEFINES *= RS_NO_WARN_CPP
     message("QMAKE: You have disabled C preprocessor warnings.")
 }

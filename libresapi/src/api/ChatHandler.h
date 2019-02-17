@@ -29,7 +29,7 @@
 #include "util/rstime.h"
 
 class RsPeers;
-class RsIdentity;
+struct RsIdentity;
 
 namespace resource_api
 {
