@@ -501,7 +501,16 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       _painter->setPen(pen) ;
 
-      QRect info_pos( position.x() + 50*S/14.0, position.y() - 10*S/14.0, text_size_x + 10*S/14.0, line_height * 5 + 5*S/14.0) ;
+      int popup_x = position.x() + (50 * S / 14.0);
+      int popup_y = position.y() - (10 * S / 14.0);
+      int popup_width = text_size_x + (10 * S / 14.0);
+      int popup_height = (line_height * 5) + (5 * S / 14.0);
+      if (popup_x + popup_width > _max_width)
+        popup_x = position.x() - popup_width;
+      if (popup_y + popup_height > _max_height)
+        popup_y -= popup_height;
+
+      QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
 
       _painter->fillRect(info_pos,brush) ;
       _painter->drawRect(info_pos) ;
