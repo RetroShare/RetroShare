@@ -21,8 +21,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef GXSUTIL_H_
-#define GXSUTIL_H_
+#pragma once
 
 #include <vector>
 #include "rsitems/rsnxsitems.h"
@@ -214,8 +213,9 @@ private:
 
 	RsGeneralDataService* const mDs;
 	RsGenExchange *mGenExchangeClient;
+#ifdef RS_DEEP_SEARCH
 	RsSerialType& mSerializer;
-
+#endif
 	bool mDone;
 	RsMutex mIntegrityMutex;
 	std::list<RsGxsGroupId> mDeletedGrps;
@@ -262,5 +262,3 @@ public:
 	GxsMsgReq mMsgs ;
 	uint32_t mToken;
 };
-
-#endif /* GXSUTIL_H_ */
