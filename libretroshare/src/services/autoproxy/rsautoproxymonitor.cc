@@ -258,6 +258,7 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 	if (cleanUp) {
 		if (t->data) {
 			std::cerr << "(WW) rsAutoProxyMonitor::taskFinish will try to delete void pointer!" << std::endl;
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 			delete t->data;
 #pragma GCC diagnostic pop
@@ -290,6 +291,7 @@ void rsAutoProxyMonitor::taskFinished(taskTicket *&ticket)
 	// clean up
 	if (ticket->data) {
 		std::cerr << "rsAutoProxyMonitor::taskFinished data set. Will try to delete void pointer" << std::endl;
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
 		delete ticket->data;
 #pragma GCC diagnostic pop
