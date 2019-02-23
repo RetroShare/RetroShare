@@ -1035,17 +1035,6 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
 #endif
 }
 
-static void cleanupItems (QList<QTreeWidgetItem *> &items)
-{
-	QList<QTreeWidgetItem *>::iterator item;
-	for (item = items.begin (); item != items.end (); ++item) {
-		if (*item) {
-			delete (*item);
-		}
-	}
-	items.clear();
-}
-
 static QString getDurationString(uint32_t days)
 {
     switch(days)

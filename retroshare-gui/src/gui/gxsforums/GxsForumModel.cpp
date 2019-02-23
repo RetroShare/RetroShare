@@ -103,7 +103,7 @@ int RsGxsForumModel::rowCount(const QModelIndex& parent) const
        return getChildrenCount(parent.internalPointer());
 }
 
-int RsGxsForumModel::columnCount(const QModelIndex &parent) const
+int RsGxsForumModel::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
@@ -229,6 +229,9 @@ Qt::ItemFlags RsGxsForumModel::flags(const QModelIndex& index) const
 
 void *RsGxsForumModel::getChildRef(void *ref,int row) const
 {
+	if (row < 0)
+		return nullptr;
+
     ForumModelIndex entry ;
 
     if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
@@ -236,16 +239,20 @@ void *RsGxsForumModel::getChildRef(void *ref,int row) const
 
     void *new_ref;
 
-    if(mTreeMode == TREE_MODE_FLAT)
-        if(entry == 0)
-        {
+	if(mTreeMode == TREE_MODE_FLAT)
+	{
+		if(entry == 0)
+		{
 			convertTabEntryToRefPointer(row+1,new_ref);
-    		return new_ref;
-        }
+			return new_ref;
+		}
 		else
-            return NULL ;
+		{
+			return NULL ;
+		}
+	}
 
-    if(row >= mPosts[entry].mChildren.size())
+    if(static_cast<size_t>(row) >= mPosts[entry].mChildren.size())
         return NULL;
 
     convertTabEntryToRefPointer(mPosts[entry].mChildren[row],new_ref);
@@ -296,7 +303,7 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
 		return mPosts[entry].mChildren.size();
 }
 
-QVariant RsGxsForumModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
 {
 	if(role == Qt::DisplayRole)
 		switch(section)
@@ -395,7 +402,7 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
@@ -416,7 +423,7 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
     return QVariant(fmpe.mMsgStatus);
 }
 
-QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
         return QVariant(FilterString);
@@ -495,7 +502,7 @@ void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& 
 	postMods();
 }
 
-QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
         return QVariant(true);
@@ -537,7 +544,7 @@ QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column
     return QVariant();
 }
 
-QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
         return QVariant(true);
@@ -545,7 +552,7 @@ QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int column)
         return QVariant(false);
 }
 
-QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
         return QVariant(QBrush(QColor(255,200,180)));
@@ -803,7 +810,7 @@ void RsGxsForumModel::generateMissingItem(const RsGxsMessageId &msgId,ForumModel
     entry.mReputationWarningLevel = 3;
 }
 
-void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsMsgMetaData& msg, bool useChildTS, ForumModelPostEntry& fentry)
+void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,const RsMsgMetaData& msg, bool /*useChildTS*/, ForumModelPostEntry& fentry)
 {
     fentry.mTitle     = msg.mMsgName;
     fentry.mAuthorId  = msg.mAuthorId;
@@ -877,10 +884,12 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 		msgs[msgs_metas_array[i].mMsgId] = msgs_metas_array[i] ;
 	}
 
-	int count = msgs.size();
-	int pos = 0;
+#ifdef DEBUG_FORUMS
+	size_t count = msgs.size();
+#endif
+//	int pos = 0;
 //	int steps = count / PROGRESSBAR_MAX;
-	int step = 0;
+//	int step = 0;
 
     initEmptyHierarchy(posts);
 
@@ -947,8 +956,8 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
     {
 		auto& v(it->second) ;
 
-        for(int32_t i=0;i<v.size();++i)
-        {
+		for(size_t i=0;i<v.size();++i)
+		{
             if(v[i].second != it->first)
 			{
 				RsGxsMessageId sub_msg_id = v[i].second ;
@@ -957,14 +966,14 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 
 				if(it2 != mPostVersions.end())
 				{
-					for(int32_t j=0;j<it2->second.size();++j)
+					for(size_t j=0;j<it2->second.size();++j)
 						if(it2->second[j].second != sub_msg_id)	// dont copy it, since it is already present at slot i
 							v.push_back(it2->second[j]) ;
 
 					mPostVersions.erase(it2) ;	// it2 is never equal to it
 				}
 			}
-        }
+		}
     }
 
 
@@ -989,23 +998,23 @@ void RsGxsForumModel::computeMessagesHierarchy(const RsGxsForumGroup& forum_grou
 #ifdef DEBUG_FORUMS
 		std::cerr << "   most recent version " << (*it)[0].first << "  " << (*it)[0].second << std::endl;
 #endif
-        for(int32_t i=1;i<it->second.size();++i)
-        {
+		for(size_t i=1;i<it->second.size();++i)
+		{
 			msgs.erase(it->second[i].second) ;
 
 #ifdef DEBUG_FORUMS
-            std::cerr << "   older version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
+			std::cerr << "   older version " << (*it)[i].first << "  " << (*it)[i].second << std::endl;
 #endif
-        }
+		}
 
         mTmp[it->second[0].second] = it->second ;	// index the versions map by the ID of the most recent post.
 
 		// Now make sure that message parents are consistent. Indeed, an old post may have the old version of a post as parent. So we need to change that parent
 		// to the newest version. So we create a map of which is the most recent version of each message, so that parent messages can be searched in it.
 
-        for(int i=1;i<it->second.size();++i)
-            most_recent_versions[it->second[i].second] = it->second[0].second ;
-    }
+	for(size_t i=1;i<it->second.size();++i)
+		most_recent_versions[it->second[i].second] = it->second[0].second ;
+	}
     mPostVersions = mTmp ;
 
     // The next step is to find the top level thread messages. These are defined as the messages without
