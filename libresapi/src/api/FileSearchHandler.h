@@ -45,7 +45,7 @@ private:
 
     StateTokenServer* mStateTokenServer;
     RsNotify* mNotify;
-    RsTurtle* mTurtle;
+	//RsTurtle* mTurtle;
 	RsFiles* mRsFiles;
 
     class Search{
