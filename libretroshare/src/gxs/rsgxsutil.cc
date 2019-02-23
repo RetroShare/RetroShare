@@ -146,9 +146,13 @@ bool RsGxsMessageCleanUp::clean()
 }
 
 RsGxsIntegrityCheck::RsGxsIntegrityCheck(
-        RsGeneralDataService* const dataService, RsGenExchange* genex,
-        RsSerialType& serializer, RsGixs* gixs ) :
-    mDs(dataService), mGenExchangeClient(genex),
+    RsGeneralDataService* const dataService, RsGenExchange* genex,
+    RsSerialType&
+#ifdef RS_DEEP_SEARCH
+                  serializer
+#endif
+                            , RsGixs* gixs )
+  : mDs(dataService), mGenExchangeClient(genex),
 #ifdef RS_DEEP_SEARCH
     mSerializer(serializer),
 #endif
