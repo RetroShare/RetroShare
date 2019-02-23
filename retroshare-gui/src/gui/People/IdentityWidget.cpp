@@ -110,13 +110,11 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 			ui->labelKeyId->setText(_keyId);
 			ui->labelKeyId->setVisible(false);
 
-    /// (TODO) Get real ident icon
-		QImage image;
-		
-		if(_group_info.mImage.mSize > 0 && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG"))
-			image = image;
-		else
-			 image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
+			/// (TODO) Get real ident icon
+			QImage image;
+
+			if(!( (_group_info.mImage.mSize > 0) && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG") ))
+				image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
 			
 			if (_avatar != image) {
 				_avatar = image;
