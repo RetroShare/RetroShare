@@ -1264,6 +1264,7 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
     return QModelIndex();
 }
 
+#ifdef DEBUG_FORUMMODEL
 static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
 {
     const ForumModelPostEntry& e(entries[index]);
@@ -1280,7 +1281,6 @@ static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,For
         recursPrintModel(entries,e.mChildren[i],depth+1);
 }
 
-#ifdef DEBUG_FORUMMODEL
 void RsGxsForumModel::debug_dump()
 {
     std::cerr << "Model data dump:" << std::endl;
