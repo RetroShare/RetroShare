@@ -652,14 +652,16 @@ void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 
     preMods();
     rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
-    postMods();
+
+    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
 }
 
 void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
 {
     preMods();
     rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
-    postMods();
+
+    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
 }
 
 QModelIndex RsMessageModel::getIndexOfMessage(const std::string& mid) const

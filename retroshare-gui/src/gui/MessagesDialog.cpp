@@ -541,40 +541,31 @@ int MessagesDialog::getSelectedMessages(QList<QString>& mid)
     return mid.size();
 }
 
-int MessagesDialog::getSelectedMsgCount (QList<QTreeWidgetItem*> *items, QList<QTreeWidgetItem*> *itemsRead, QList<QTreeWidgetItem*> *itemsUnread, QList<QTreeWidgetItem*> *itemsStar)
+int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar)
 {
-#ifdef TODO
+	QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
+
     if (items) items->clear();
     if (itemsRead) itemsRead->clear();
     if (itemsUnread) itemsUnread->clear();
     if (itemsStar) itemsStar->clear();
 
-    //To check if the selection has more than one row.
-    QList<QString> selectedMessages;
-    getSelectedMessages(selectedMessages);
-
-    foreach (const QString&, selectedMessages)
+    foreach(const QModelIndex& m, qmil)
     {
-        if (items || itemsRead || itemsUnread || itemsStar) {
-            if (items) items->append(item);
+		if (items)
+			items->append(m);
 
-            if (item->data(COLUMN_DATA, ROLE_UNREAD).toBool()) {
-                if (itemsUnread) itemsUnread->append(item);
-            } else {
-                if (itemsRead) itemsRead->append(item);
-            }
+		if (m.data(RsMessageModel::UnreadRole).toBool())
+			if (itemsUnread)
+                itemsUnread->append(m);
+            else if(itemsRead)
+                itemsRead->append(m);
 
-            if (itemsStar) {
-                if (item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt() & RS_MSG_STAR) {
-                    itemsStar->append(item);
-                }
-            }
-        }
+		if (itemsStar && m.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR)
+			itemsStar->append(m);
     }
 
-    return selectedItems.size();
-#endif
-    return 0;
+    return qmil.size();
 }
 
 bool MessagesDialog::isMessageRead(const QModelIndex& index)
@@ -608,9 +599,10 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     if(!rsMail->getMessage(mid, msgInfo))
         return ;
 
-    QList<QTreeWidgetItem*> itemsRead;
-    QList<QTreeWidgetItem*> itemsUnread;
-    QList<QTreeWidgetItem*> itemsStar;
+    QList<QModelIndex> itemsRead;
+    QList<QModelIndex> itemsUnread;
+    QList<QModelIndex> itemsStar;
+
     int nCount = getSelectedMsgCount (NULL, &itemsRead, &itemsUnread, &itemsStar);
 
     /** Defines the actions for the context menu */
@@ -1438,47 +1430,51 @@ void MessagesDialog::updateCurrentMessage()
 {
 }
 
-void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bool read)
-{
-    LockUpdate Lock (this, false);
-
-    foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
-
-        if (rsMail->MessageRead(mid, !read)) {
-            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt();
-            msgFlag &= ~RS_MSG_NEW;
-
-            if (read) {
-                msgFlag &= ~RS_MSG_UNREAD_BY_USER;
-            } else {
-                msgFlag |= RS_MSG_UNREAD_BY_USER;
-            }
-
-            item->setData(COLUMN_DATA, RsMessageModel::MsgFlagsRole, msgFlag);
-
-            InitIconAndFont(item);
-        }
-    }
-
-    // LockUpdate
-}
+// void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bool read)
+// {
+//     LockUpdate Lock (this, false);
+//
+//     foreach (QTreeWidgetItem *item, items) {
+//         std::string mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
+//
+//         if (rsMail->MessageRead(mid, !read)) {
+//             int msgFlag = item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt();
+//             msgFlag &= ~RS_MSG_NEW;
+//
+//             if (read) {
+//                 msgFlag &= ~RS_MSG_UNREAD_BY_USER;
+//             } else {
+//                 msgFlag |= RS_MSG_UNREAD_BY_USER;
+//             }
+//
+//             item->setData(COLUMN_DATA, RsMessageModel::MsgFlagsRole, msgFlag);
+//
+//             InitIconAndFont(item);
+//         }
+//     }
+//
+//     // LockUpdate
+// }
 
 void MessagesDialog::markAsRead()
 {
-    QList<QTreeWidgetItem*> itemsUnread;
+    QList<QModelIndex> itemsUnread;
     getSelectedMsgCount (NULL, NULL, &itemsUnread, NULL);
 
-    setMsgAsReadUnread (itemsUnread, true);
+    foreach(const QModelIndex& index,itemsUnread)
+        mMessageModel->setMsgReadStatus(index,true);
+
     updateMessageSummaryList();
 }
 
 void MessagesDialog::markAsUnread()
 {
-    QList<QTreeWidgetItem*> itemsRead;
+    QList<QModelIndex> itemsRead;
     getSelectedMsgCount (NULL, &itemsRead, NULL, NULL);
 
-    setMsgAsReadUnread (itemsRead, false);
+    foreach(const QModelIndex& index,itemsRead)
+        mMessageModel->setMsgReadStatus(index,false);
+
     updateMessageSummaryList();
 }
 
