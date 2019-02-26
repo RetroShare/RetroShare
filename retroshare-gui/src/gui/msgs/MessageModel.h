@@ -33,34 +33,6 @@
 
 typedef uint32_t ForumModelIndex;
 
-struct ForumModelPostEntry
-{
-    ForumModelPostEntry() : mPublishTs(0),mMostRecentTsInThread(0),mPostFlags(0),mReputationWarningLevel(0),mMsgStatus(0),prow(0) {}
-
-    enum {					// flags for display of posts. To be used in mPostFlags
-        FLAG_POST_IS_PINNED              = 0x0001,
-        FLAG_POST_IS_MISSING             = 0x0002,
-        FLAG_POST_IS_REDACTED            = 0x0004,
-        FLAG_POST_HAS_UNREAD_CHILDREN    = 0x0008,
-        FLAG_POST_HAS_READ_CHILDREN      = 0x0010,
-        FLAG_POST_PASSES_FILTER          = 0x0020,
-        FLAG_POST_CHILDREN_PASSES_FILTER = 0x0040,
-    };
-
-    std::string        mTitle ;
-    RsGxsId            mAuthorId ;
-    RsGxsMessageId     mMsgId;
-    uint32_t           mPublishTs;
-    uint32_t           mMostRecentTsInThread;
-    uint32_t           mPostFlags;
-    int                mReputationWarningLevel;
-    int                mMsgStatus;
-
-    std::vector<ForumModelIndex> mChildren;
-    ForumModelIndex mParent;
-    int prow ;									// parent row
-};
-
 // This class is the item model used by Qt to display the information
 
 class RsMessageModel : public QAbstractItemModel
@@ -70,6 +42,14 @@ class RsMessageModel : public QAbstractItemModel
 public:
 	explicit RsMessageModel(QObject *parent = NULL);
 	~RsMessageModel(){}
+
+	enum Role {
+		ROLE_SORT     = Qt::UserRole,
+		ROLE_MSGID    = Qt::UserRole + 1,
+		ROLE_SRCID    = Qt::UserRole + 2,
+		ROLE_UNREAD   = Qt::UserRole + 3,
+		ROLE_MSGFLAGS = Qt::UserRole + 4
+	};
 
     enum BoxName {
         BOX_NONE   = 0x00,
@@ -102,10 +82,11 @@ public:
 	QModelIndex getIndexOfMessage(const std::string &mid) const;
 
     static const QString FilterString ;
+    static void getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs);
 
     // This method will asynchroneously update the data
 
-    void setCurrentBox(BoxName bn) {}
+    void setCurrentBox(BoxName bn) ;
 	void updateMessages();
     const RsMessageId& currentMessageId() const;
 
@@ -162,12 +143,8 @@ private:
 
     static bool convertMsgIndexToInternalId(uint32_t entry,quintptr& ref);
 	static bool convertInternalIdToMsgIndex(quintptr ref,uint32_t& index);
-	static void computeReputationLevel(uint32_t forum_sign_flags, ForumModelPostEntry& entry);
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
-
-	static void generateMissingItem(const RsGxsMessageId &msgId,ForumModelPostEntry& entry);
-	static ForumModelIndex addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent);
 
 	void setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs);
 
@@ -177,5 +154,6 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
 
+    BoxName mCurrentBox ;
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
 };

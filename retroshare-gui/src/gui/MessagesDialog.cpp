@@ -66,19 +66,13 @@
 #define COLUMN_SUBJECT       2
 #define COLUMN_UNREAD        3
 #define COLUMN_FROM          4
-#define COLUMN_SIGNATURE     5
-#define COLUMN_DATE          6
-#define COLUMN_CONTENT       7
-#define COLUMN_TAGS          8
-#define COLUMN_COUNT         9
+//#define COLUMN_SIGNATURE     5
+#define COLUMN_DATE          5
+#define COLUMN_CONTENT       6
+#define COLUMN_TAGS          7
+#define COLUMN_COUNT         8
 
 #define COLUMN_DATA          0 // column for storing the userdata like msgid and srcid
-
-#define ROLE_SORT     Qt::UserRole
-#define ROLE_MSGID    Qt::UserRole + 1
-#define ROLE_SRCID    Qt::UserRole + 2
-#define ROLE_UNREAD   Qt::UserRole + 3
-#define ROLE_MSGFLAGS Qt::UserRole + 4
 
 #define ROLE_QUICKVIEW_TYPE Qt::UserRole
 #define ROLE_QUICKVIEW_ID   Qt::UserRole + 1
@@ -195,7 +189,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
-    mMessageModel->updateMessages();
+	changeBox(RsMessageModel::BOX_INBOX);
 
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 	mMessageProxyModel->setFilterRegExp(QRegExp(QString(RsMessageModel::FilterString))) ;
@@ -235,13 +229,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 #endif
 
     mMessageCompareRole = new RSTreeWidgetItemCompareRole;
-    mMessageCompareRole->setRole(COLUMN_SUBJECT, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_UNREAD, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_FROM, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_DATE, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_TAGS, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_STAR, ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_SUBJECT, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_UNREAD, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_FROM, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_DATE, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_TAGS, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_STAR, RsMessageModel::ROLE_SORT);
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
@@ -256,12 +250,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     Shortcut = new QShortcut(QKeySequence (Qt::SHIFT | Qt::Key_Delete), ui.messageTreeWidget, 0, 0, Qt::WidgetShortcut);
     connect(Shortcut, SIGNAL(activated()), this, SLOT( removemessage ()));
 
+    QFontMetricsF fm(font());
+
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
-    msgwheader->resizeSection (COLUMN_ATTACHEMENTS, 24);
+    msgwheader->resizeSection (COLUMN_ATTACHEMENTS, fm.width('0'));
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
     msgwheader->resizeSection (COLUMN_FROM,         140);
-    msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
+    //msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
     msgwheader->resizeSection (COLUMN_DATE,         140);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
@@ -306,9 +302,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_DATE, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
+    //QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
     msgwheader->resizeSection (COLUMN_UNREAD, 24);
-    msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
+    //msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
     msgwheader->resizeSection (COLUMN_STAR, 24);
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
@@ -543,7 +539,7 @@ int MessagesDialog::getSelectedMessages(QList<QString>& mid)
     QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
 
     foreach(const QModelIndex& m, qmil)
-		mid.push_back(m.sibling(m.row(),COLUMN_DATA).data(ROLE_MSGID).toString()) ;
+		mid.push_back(m.sibling(m.row(),COLUMN_DATA).data(RsMessageModel::ROLE_MSGID).toString()) ;
 
     return mid.size();
 }
@@ -590,7 +586,7 @@ bool MessagesDialog::isMessageRead(QTreeWidgetItem *item)
         return true;
     }
 
-    return !item->data(COLUMN_DATA, ROLE_UNREAD).toBool();
+    return !item->data(COLUMN_DATA, RsMessageModel::ROLE_UNREAD).toBool();
 }
 
 bool MessagesDialog::hasMessageStar(QTreeWidgetItem *item)
@@ -599,7 +595,7 @@ bool MessagesDialog::hasMessageStar(QTreeWidgetItem *item)
         return false;
     }
 
-    return item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
+    return item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
 }
 
 void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
@@ -609,7 +605,10 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 
     MessageInfo msgInfo;
     if (!getCurrentMsg(cid, mid))
+    {
+        std::cerr << "No current message!" << std::endl;
         return ;
+    }
 
     if(!rsMail->getMessage(mid, msgInfo))
         return ;
@@ -895,68 +894,6 @@ void MessagesDialog::messagesTagsChanged()
 
 static void InitIconAndFont(QTreeWidgetItem *item)
 {
-    int msgFlags = item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt();
-
-    // show the real "New" state
-    if (msgFlags & RS_MSG_NEW) {
-        item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-state-new.png"));
-    } else {
-        if (msgFlags & RS_MSG_USER_REQUEST) {
-            item->setIcon(COLUMN_SUBJECT, QIcon(":/images/user/user_request16.png"));
-        } else if (msgFlags & RS_MSG_FRIEND_RECOMMENDATION) {
-            item->setIcon(COLUMN_SUBJECT, QIcon(":/images/user/friend_suggestion16.png"));
-        } else if (msgFlags & RS_MSG_PUBLISH_KEY) {
-            item->setIcon(COLUMN_SUBJECT, QIcon(":/images/share-icon-16.png"));
-        } else if (msgFlags & RS_MSG_UNREAD_BY_USER) {
-            if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-replied.png"));
-            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-forwarded.png"));
-            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-replied-forw.png"));
-            } else {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail.png"));
-            }
-        } else {
-            if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-replied-read.png"));
-            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-forwarded-read.png"));
-            } else if ((msgFlags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-replied-forw-read.png"));
-            } else {
-                item->setIcon(COLUMN_SUBJECT, QIcon(":/images/message-mail-read.png"));
-            }
-        }
-    }
-
-    if (msgFlags & RS_MSG_STAR) {
-        item->setIcon(COLUMN_STAR, QIcon(IMAGE_STAR_ON));
-        item->setData(COLUMN_STAR, ROLE_SORT, 1);
-    } else {
-        item->setIcon(COLUMN_STAR, QIcon(IMAGE_STAR_OFF));
-        item->setData(COLUMN_STAR, ROLE_SORT, 0);
-    }
-
-    bool isNew = msgFlags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
-
-    // set icon
-    if (isNew) {
-        item->setIcon(COLUMN_UNREAD, QIcon(":/images/message-state-unread.png"));
-        item->setData(COLUMN_UNREAD, ROLE_SORT, 1);
-    } else {
-        item->setIcon(COLUMN_UNREAD, QIcon(":/images/message-state-read.png"));
-        item->setData(COLUMN_UNREAD, ROLE_SORT, 0);
-    }
-
-    // set font
-    for (int i = 0; i < COLUMN_COUNT; ++i) {
-        QFont qf = item->font(i);
-        qf.setBold(isNew);
-        item->setFont(i, qf);
-    }
-
-    item->setData(COLUMN_DATA, ROLE_UNREAD, isNew);
 }
 
 #ifdef TO_REMOVE
@@ -1519,10 +1456,10 @@ void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bo
     LockUpdate Lock (this, false);
 
     foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
+        std::string mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
 
         if (rsMail->MessageRead(mid, !read)) {
-            int msgFlag = item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt();
+            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_NEW;
 
             if (read) {
@@ -1531,7 +1468,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bo
                 msgFlag |= RS_MSG_UNREAD_BY_USER;
             }
 
-            item->setData(COLUMN_DATA, ROLE_MSGFLAGS, msgFlag);
+            item->setData(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS, msgFlag);
 
             InitIconAndFont(item);
         }
@@ -1571,10 +1508,10 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
     LockUpdate Lock (this, false);
 
     foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
+        std::string mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
 
         if (rsMail->MessageStar(mid, star)) {
-            int msgFlag = item->data(COLUMN_DATA, ROLE_MSGFLAGS).toInt();
+            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt();
             msgFlag &= ~RS_MSG_STAR;
 
             if (star) {
@@ -1583,7 +1520,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
                 msgFlag &= ~RS_MSG_STAR;
             }
 
-            item->setData(COLUMN_DATA, ROLE_MSGFLAGS, msgFlag);
+            item->setData(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS, msgFlag);
 
             InitIconAndFont(item);
 
@@ -1606,7 +1543,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
         updateInterface();
         return;
     }
-    mid = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
+    mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
     if (nCount == 1) {
@@ -1682,8 +1619,8 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
     if(!indx.isValid())
         return false ;
 
-    cid = indx.sibling(indx.row(),COLUMN_DATA).data(ROLE_SRCID).toString().toStdString();
-    mid = indx.sibling(indx.row(),COLUMN_DATA).data(ROLE_MSGID).toString().toStdString();
+    cid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::ROLE_SRCID).toString().toStdString();
+    mid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::ROLE_MSGID).toString().toStdString();
 
     return true;
 }
@@ -1720,12 +1657,11 @@ void MessagesDialog::undeletemessage()
 {
     LockUpdate Lock (this, true);
 
-    QList<QTreeWidgetItem*> items;
-    getSelectedMsgCount (&items, NULL, NULL, NULL);
-    foreach (QTreeWidgetItem *item, items) {
-        QString mid = item->data(COLUMN_DATA, ROLE_MSGID).toString();
-        rsMail->MessageToTrash(mid.toStdString(), false);
-    }
+    QList<QString> msgids;
+    getSelectedMessages(msgids);
+
+    foreach (const QString& s, msgids)
+        rsMail->MessageToTrash(s.toStdString(), false);
 
     // LockUpdate -> insertMessages();
 }
@@ -1990,14 +1926,11 @@ void MessagesDialog::tagAboutToShow()
 	// activate actions from the first selected row
 	MsgTagInfo tagInfo;
 
-    QList<QTreeWidgetItem*> items;
-    getSelectedMsgCount (&items, NULL, NULL, NULL);
+    QList<QString> msgids;
+    getSelectedMessages(msgids);
 
-    if (items.size()) {
-        std::string msgId = items.front()->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
-
-		rsMail->getMessageTag(msgId, tagInfo);
-	}
+    if(!msgids.empty())
+		rsMail->getMessageTag(msgids.front().toStdString(), tagInfo);
 
 	menu->activateActions(tagInfo.tagIds);
 }
@@ -2006,12 +1939,12 @@ void MessagesDialog::tagRemoveAll()
 {
 	LockUpdate Lock (this, false);
 
-    QList<QTreeWidgetItem*> items;
-    getSelectedMsgCount (&items, NULL, NULL, NULL);
-    foreach (QTreeWidgetItem *item, items) {
-        std::string msgId = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
+    QList<QString> msgids;
+    getSelectedMessages(msgids);
 
-		rsMail->setMessageTag(msgId, 0, false);
+    foreach(const QString& s, msgids)
+    {
+		rsMail->setMessageTag(s.toStdString(), 0, false);
 		Lock.setUpdate(true);
 	}
 
@@ -2026,32 +1959,23 @@ void MessagesDialog::tagSet(int tagId, bool set)
 
 	LockUpdate Lock (this, false);
 
-    QList<QTreeWidgetItem*> items;
-    getSelectedMsgCount (&items, NULL, NULL, NULL);
-    foreach (QTreeWidgetItem *item, items) {
-        std::string msgId = item->data(COLUMN_DATA, ROLE_MSGID).toString().toStdString();
+    QList<QString> msgids;
+    getSelectedMessages(msgids);
 
-		if (rsMail->setMessageTag(msgId, tagId, set)) {
+    foreach (const QString& s, msgids)
+		if (rsMail->setMessageTag(s.toStdString(), tagId, set))
 			Lock.setUpdate(true);
-		}
-	}
-
-	// LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::emptyTrash()
 {
     LockUpdate Lock (this, true);
 
-    std::list<MsgInfoSummary> msgList;
-    rsMail->getMessageSummaries(msgList);
+    std::list<Rs::Msgs::MsgInfoSummary> msgs ;
+    mMessageModel->getMessageSummaries(RsMessageModel::BOX_TRASH,msgs);
 
-    std::list<MsgInfoSummary>::const_iterator it;
-    for (it = msgList.begin(); it != msgList.end(); ++it) {
-        if (it->msgflags & RS_MSG_TRASH) {
-            rsMail->MessageDelete(it->msgId);
-        }
-    }
+    for(auto it(msgs.begin());it!=msgs.end();++it)
+		rsMail->MessageDelete(it->msgId);
 
     // LockUpdate -> insertMessages();
 }
@@ -2142,13 +2066,16 @@ void MessagesDialog::updateInterface()
 
 	int tab = ui.tabWidget->currentIndex();
 
-	if (tab == 0) {
-		count = getSelectedMsgCount(NULL, NULL, NULL, NULL);
-	} else {
+	if (tab == 0)
+    {
+        QList<QString> msgs;
+		count = getSelectedMessages(msgs);
+	}
+    else
+    {
 		MessageWidget *msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
-		if (msg && msg->msgId().empty() == false) {
+		if (msg && msg->msgId().empty() == false)
 			count = 1;
-		}
 	}
 
 	ui.replymessageButton->setEnabled(count == 1);

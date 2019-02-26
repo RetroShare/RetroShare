@@ -26,17 +26,20 @@
 #include <QModelIndex>
 #include <QIcon>
 
+#include "gui/common/TagDefs.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "MessageModel.h"
 #include "retroshare/rsexpr.h"
+#include "retroshare/rsmsgs.h"
 
 //#define DEBUG_MESSAGE_MODEL
 
-#define IS_MESSAGE_UNREAD(flags) (flags & RS_MSG_UNREAD_BY_USER)
+#define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
+#define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
@@ -46,6 +49,7 @@ RsMessageModel::RsMessageModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     mFilteringEnabled=false;
+    mCurrentBox = BOX_NONE;
 }
 
 void RsMessageModel::preMods()
@@ -174,11 +178,25 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 		switch(section)
 		{
 		case COLUMN_THREAD_STAR:         return QIcon(IMAGE_STAR_ON);
-		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
+		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-header.png");
+		case COLUMN_THREAD_ATTACHMENT:   return QIcon(":/images/attachment.png");
 		default:
 			return QVariant();
 		}
 
+	if(role == Qt::ToolTipRole)
+        switch(section)
+        {
+        case COLUMN_THREAD_ATTACHMENT: return tr("Click to sort by attachments");
+        case COLUMN_THREAD_SUBJECT:    return tr("Click to sort by subject");
+        case COLUMN_THREAD_READ:       return tr("Click to sort by read");
+        case COLUMN_THREAD_AUTHOR:     return tr("Click to sort by from");
+        case COLUMN_THREAD_DATE:       return tr("Click to sort by date");
+        case COLUMN_THREAD_TAGS:       return tr("Click to sort by tags");
+        case COLUMN_THREAD_STAR:       return tr("Click to sort by star");
+		default:
+			return QVariant();
+        }
 	return QVariant();
 }
 
@@ -226,7 +244,8 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
     if(role == Qt::FontRole)
     {
         QFont font ;
-//		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)) || IS_MSG_UNREAD(fmpe.mMsgStatus));
+		font.setBold(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER));
+
         return QVariant(font);
     }
 
@@ -356,6 +375,14 @@ QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
     return QVariant();
 }
 
+// QVariant RsMessageModel::unreadRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+// {
+//     if(column == COLUMN_THREAD_UNREAD)
+//     return QVariant();
+//     lconst Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+//
+// }
+
 QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
     switch(column)
@@ -371,6 +398,8 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
         return QVariant(str);
     }
+	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
+
     default:
         return displayRole(fmpe,column);
     }
@@ -380,21 +409,48 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 {
 	switch(col)
 	{
-		case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
+	case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
+	case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
-		case COLUMN_THREAD_READ:return QVariant();
-    	case COLUMN_THREAD_DATE:{
-    							    QDateTime qtime;
-									qtime.setTime_t(fmpe.ts);
+	case COLUMN_THREAD_READ:return QVariant();
+	case COLUMN_THREAD_DATE:{
+		QDateTime qtime;
+		qtime.setTime_t(fmpe.ts);
 
-									return QVariant(DateTime::formatDateTime(qtime));
-    							}
+		return QVariant(DateTime::formatDateTime(qtime));
+	}
 
-		case COLUMN_THREAD_AUTHOR: return QVariant();
+	case COLUMN_THREAD_TAGS:{
+        // Tags
+        Rs::Msgs::MsgTagInfo tagInfo;
+        rsMsgs->getMessageTag(fmpe.msgId, tagInfo);
 
-		default:
-			return QVariant("[ TODO ]");
-		}
+        Rs::Msgs::MsgTagType Tags;
+        rsMsgs->getMessageTagTypes(Tags);
+
+        QString text;
+
+        // build tag names
+        std::map<uint32_t, std::pair<std::string, uint32_t> >::iterator Tag;
+        for (auto tagit = tagInfo.tagIds.begin(); tagit != tagInfo.tagIds.end(); ++tagit)
+        {
+            if (!text.isNull())
+                text += ",";
+
+            auto Tag = Tags.types.find(*tagit);
+
+            if (Tag != Tags.types.end())
+                text += TagDefs::name(Tag->first, Tag->second.first);
+            else
+                std::cerr << "(WW) unknown tag " << (int)Tag->first << " in message " << fmpe.msgId << std::endl;
+        }
+        return text;
+	}
+	case COLUMN_THREAD_AUTHOR: return QVariant();
+
+	default:
+		return QVariant("[ TODO ]");
+	}
 
 
 	return QVariant("[ERROR]");
@@ -413,10 +469,43 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
 
 QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
+	if(col == COLUMN_THREAD_READ)
+		if(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
+			return QIcon(":/images/message-state-unread.png");
+		else
+			return QIcon(":/images/message-state-read.png");
+
+    if(col == COLUMN_THREAD_SUBJECT)
+    {
+        if(fmpe.msgflags & RS_MSG_NEW         )  return QIcon(":/images/message-state-new.png");
+        if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return QIcon(":/images/user/user_request16.png");
+        if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return QIcon(":/images/user/friend_suggestion16.png");
+        if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return QIcon(":/images/share-icon-16.png");
+
+        if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)
+        {
+            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied.png");
+            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded.png");
+            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw.png");
+
+            return QIcon(":/images/message-mail.png");
+        }
+		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied-read.png");
+		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded-read.png");
+		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw-read.png");
+
+		return QIcon(":/images/message-mail-read.png");
+    }
+
+    if(col == COLUMN_THREAD_STAR)
+        return QIcon((fmpe.msgflags & RS_MSG_STAR) ? (IMAGE_STAR_ON ): (IMAGE_STAR_OFF));
+
+    bool isNew = fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
+
     if(col == COLUMN_THREAD_READ)
-        return QVariant(IS_MESSAGE_UNREAD(fmpe.msgflags));
-    else
-		return QVariant();
+        return QIcon(isNew ? ":/images/message-state-unread.png": ":/images/message-state-read.png");
+
+	return QVariant();
 }
 
 void RsMessageModel::clear()
@@ -455,11 +544,48 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
 	emit messagesLoaded();
 }
 
+void RsMessageModel::setCurrentBox(BoxName bn)
+{
+    if(mCurrentBox != bn)
+    {
+		mCurrentBox = bn;
+        updateMessages();
+    }
+}
+
+void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs)
+{
+    rsMsgs->getMessageSummaries(msgs);
+
+    // filter out messages that are not in the right box.
+
+    for(auto it(msgs.begin());it!=msgs.end();)
+    {
+        bool ok = false;
+
+        switch(box)
+        {
+		case BOX_INBOX  : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX  ; break ;
+        case BOX_SENT   : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX; break ;
+        case BOX_OUTBOX : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX ; break ;
+        case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  ; break ;
+        case BOX_TRASH  : ok = (it->msgflags & RS_MSG_TRASH) ; break ;
+        default:
+                        continue;
+		}
+
+        if(ok)
+            ++it;
+		else
+           it = msgs.erase(it) ;
+    }
+}
+
 void RsMessageModel::updateMessages()
 {
-    std::list<Rs::Msgs::MsgInfoSummary> msgs ;
+    std::list<Rs::Msgs::MsgInfoSummary> msgs;
 
-    rsMsgs->getMessageSummaries(msgs);
+    getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 }
 
