@@ -129,11 +129,10 @@ private:
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
-  void setMsgStar(const QList<QTreeWidgetItem *> &items, bool mark);
 
   int getSelectedMsgCount (QList<QTreeWidgetItem *> *items, QList<QTreeWidgetItem *> *itemsRead, QList<QTreeWidgetItem *> *itemsUnread, QList<QTreeWidgetItem *> *itemsStar);
-  bool isMessageRead(QTreeWidgetItem *item);
-  bool hasMessageStar(QTreeWidgetItem *item);
+  bool isMessageRead(const QModelIndex &index);
+  bool hasMessageStar(const QModelIndex &index);
 
   void processSettings(bool load);
 

@@ -58,7 +58,7 @@ void RsMessageModel::preMods()
 }
 void RsMessageModel::postMods()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mMessages.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 // void RsGxsForumModel::setSortMode(SortMode mode)
@@ -651,15 +651,14 @@ void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 		return ;
 
     preMods();
+    rsMsgs->MessageRead(i.data(MsgIdRole).toString().toStdString(),!read_status);
+    postMods();
+}
 
-	quintptr ref = i.internalId();
-	uint32_t index = 0;
-
-	if(!convertInternalIdToMsgIndex(ref,index) || index >= mMessages.size())
-		return ;
-
-    rsMsgs->MessageRead(mMessages[index].msgId,!read_status);
-
+void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
+{
+    preMods();
+    rsMsgs->MessageStar(i.data(MsgIdRole).toString().toStdString(),star);
     postMods();
 }
 
@@ -684,4 +683,5 @@ void RsMessageModel::debug_dump() const
     for(auto it(mMessages.begin());it!=mMessages.end();++it)
 		std::cerr << "Id: " << it->msgId << ": from " << it->srcId << ": flags=" << it->msgflags << ": title=\"" << it->title << "\"" << std::endl;
 }
+
 

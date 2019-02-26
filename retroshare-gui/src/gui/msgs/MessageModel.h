@@ -85,7 +85,6 @@ public:
 	void updateMessages();
     const RsMessageId& currentMessageId() const;
 
-	void setMsgReadStatus(const QModelIndex& i, bool read_status);
     void setFilter(int column, const QStringList& strings, uint32_t &count) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -121,6 +120,10 @@ public:
      * 			Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
      */
     void debug_dump() const;
+
+    // control over message flags and so on. This is handled by the model because it will allow it to update accordingly
+	void setMsgReadStatus(const QModelIndex& i, bool read_status);
+    void setMsgStar(const QModelIndex& index,bool star) ;
 
 signals:
     void messagesLoaded();	// emitted after the messages have been set. Can be used to updated the UI.

@@ -577,22 +577,20 @@ int MessagesDialog::getSelectedMsgCount (QList<QTreeWidgetItem*> *items, QList<Q
     return 0;
 }
 
-bool MessagesDialog::isMessageRead(QTreeWidgetItem *item)
+bool MessagesDialog::isMessageRead(const QModelIndex& index)
 {
-    if (!item) {
+    if (!index.isValid())
         return true;
-    }
 
-    return !item->data(COLUMN_DATA, RsMessageModel::UnreadRole).toBool();
+    return !index.data(RsMessageModel::UnreadRole).toBool();
 }
 
-bool MessagesDialog::hasMessageStar(QTreeWidgetItem *item)
+bool MessagesDialog::hasMessageStar(const QModelIndex& index)
 {
-    if (!item) {
+    if (!index.isValid())
         return false;
-    }
 
-    return item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
+    return index.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
 }
 
 void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
@@ -1378,25 +1376,21 @@ void MessagesDialog::clicked(const QModelIndex& index)
     if(!index.isValid())
         return;
 
-//    switch (index.column())
-//    {
-//    case COLUMN_UNREAD:
-//        {
-//            QList<QModelIndex> items;
-//            items.append(item);
-//            setMsgAsReadUnread(items, !isMessageRead(item));
-//            insertMsgTxtAndFiles(item, false);
-//            updateMessageSummaryList();
-//            return;
-//        }
-//    case COLUMN_STAR:
-//        {
-//            QList<QTreeWidgetItem*> items;
-//            items.append(item);
-//            setMsgStar(items, !hasMessageStar(item));
-//            return;
-//        }
-//    }
+    switch (index.column())
+    {
+    case COLUMN_UNREAD:
+        {
+            mMessageModel->setMsgReadStatus(index, !isMessageRead(index));
+            insertMsgTxtAndFiles(index);
+            updateMessageSummaryList();
+            return;
+        }
+    case COLUMN_STAR:
+        {
+            mMessageModel->setMsgStar(index, !hasMessageStar(index));
+            return;
+        }
+    }
 #ifdef TODO
     timer->stop();
     timerIndex = ui.messageTreeWidget->indexOfTopLevelItem(item);
@@ -1490,39 +1484,13 @@ void MessagesDialog::markAsUnread()
 
 void MessagesDialog::markWithStar(bool checked)
 {
-    QList<QTreeWidgetItem*> items;
-    getSelectedMsgCount (&items, NULL, NULL, NULL);
+    QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    setMsgStar(items, checked);
+    foreach(const QModelIndex& index,lst)
+		mMessageModel->setMsgStar(index, checked);
 }
 
-void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
-{
-    LockUpdate Lock (this, false);
 
-    foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
-
-        if (rsMail->MessageStar(mid, star)) {
-            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt();
-            msgFlag &= ~RS_MSG_STAR;
-
-            if (star) {
-                msgFlag |= RS_MSG_STAR;
-            } else {
-                msgFlag &= ~RS_MSG_STAR;
-            }
-
-            item->setData(COLUMN_DATA, RsMessageModel::MsgFlagsRole, msgFlag);
-
-            InitIconAndFont(item);
-
-            Lock.setUpdate(true);
-        }
-    }
-
-    // LockUpdate
-}
 
 void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
 {
