@@ -151,7 +151,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(insertMessages()));
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-    connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(messageTreeWidgetCustomPopupMenu(QPoint)));
+    connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.messageTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)) , this, SLOT(clicked(QTreeWidgetItem*,int)));
     connect(ui.messageTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)) , this, SLOT(doubleClicked(QTreeWidgetItem*,int)));
@@ -229,13 +229,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 #endif
 
     mMessageCompareRole = new RSTreeWidgetItemCompareRole;
-    mMessageCompareRole->setRole(COLUMN_SUBJECT, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_UNREAD, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_FROM, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_DATE, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_TAGS, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, RsMessageModel::ROLE_SORT);
-    mMessageCompareRole->setRole(COLUMN_STAR, RsMessageModel::ROLE_SORT);
+    mMessageCompareRole->setRole(COLUMN_SUBJECT, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_UNREAD, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_FROM, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_DATE, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_TAGS, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_STAR, RsMessageModel::SortRole);
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
@@ -254,7 +254,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
-    msgwheader->resizeSection (COLUMN_ATTACHEMENTS, fm.width('0'));
+    msgwheader->resizeSection (COLUMN_ATTACHEMENTS, fm.width('0')*1.2f);
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
     msgwheader->resizeSection (COLUMN_FROM,         140);
     //msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
@@ -539,7 +539,7 @@ int MessagesDialog::getSelectedMessages(QList<QString>& mid)
     QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
 
     foreach(const QModelIndex& m, qmil)
-		mid.push_back(m.sibling(m.row(),COLUMN_DATA).data(RsMessageModel::ROLE_MSGID).toString()) ;
+		mid.push_back(m.sibling(m.row(),COLUMN_DATA).data(RsMessageModel::MsgIdRole).toString()) ;
 
     return mid.size();
 }
@@ -586,7 +586,7 @@ bool MessagesDialog::isMessageRead(QTreeWidgetItem *item)
         return true;
     }
 
-    return !item->data(COLUMN_DATA, RsMessageModel::ROLE_UNREAD).toBool();
+    return !item->data(COLUMN_DATA, RsMessageModel::UnreadRole).toBool();
 }
 
 bool MessagesDialog::hasMessageStar(QTreeWidgetItem *item)
@@ -595,7 +595,7 @@ bool MessagesDialog::hasMessageStar(QTreeWidgetItem *item)
         return false;
     }
 
-    return item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt() & RS_MSG_STAR;
+    return item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
 }
 
 void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
@@ -1456,10 +1456,10 @@ void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bo
     LockUpdate Lock (this, false);
 
     foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
+        std::string mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
 
         if (rsMail->MessageRead(mid, !read)) {
-            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt();
+            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt();
             msgFlag &= ~RS_MSG_NEW;
 
             if (read) {
@@ -1468,7 +1468,7 @@ void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bo
                 msgFlag |= RS_MSG_UNREAD_BY_USER;
             }
 
-            item->setData(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS, msgFlag);
+            item->setData(COLUMN_DATA, RsMessageModel::MsgFlagsRole, msgFlag);
 
             InitIconAndFont(item);
         }
@@ -1508,10 +1508,10 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
     LockUpdate Lock (this, false);
 
     foreach (QTreeWidgetItem *item, items) {
-        std::string mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
+        std::string mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
 
         if (rsMail->MessageStar(mid, star)) {
-            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS).toInt();
+            int msgFlag = item->data(COLUMN_DATA, RsMessageModel::MsgFlagsRole).toInt();
             msgFlag &= ~RS_MSG_STAR;
 
             if (star) {
@@ -1520,7 +1520,7 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
                 msgFlag &= ~RS_MSG_STAR;
             }
 
-            item->setData(COLUMN_DATA, RsMessageModel::ROLE_MSGFLAGS, msgFlag);
+            item->setData(COLUMN_DATA, RsMessageModel::MsgFlagsRole, msgFlag);
 
             InitIconAndFont(item);
 
@@ -1543,7 +1543,7 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
         updateInterface();
         return;
     }
-    mid = item->data(COLUMN_DATA, RsMessageModel::ROLE_MSGID).toString().toStdString();
+    mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
 
     int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
     if (nCount == 1) {
@@ -1619,8 +1619,8 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
     if(!indx.isValid())
         return false ;
 
-    cid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::ROLE_SRCID).toString().toStdString();
-    mid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::ROLE_MSGID).toString().toStdString();
+    cid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::SrcIdRole).toString().toStdString();
+    mid = indx.sibling(indx.row(),COLUMN_DATA).data(RsMessageModel::MsgIdRole).toString().toStdString();
 
     return true;
 }

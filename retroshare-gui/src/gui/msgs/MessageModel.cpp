@@ -265,6 +265,10 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	case FilterRole:         return filterRole    (fmpe,index.column()) ;
 	case StatusRole:         return statusRole    (fmpe,index.column()) ;
 	case SortRole:           return sortRole      (fmpe,index.column()) ;
+	case MsgFlagsRole:       return fmpe.msgflags ;
+	case UnreadRole: 		 return fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
+	case MsgIdRole:          return QString::fromStdString(fmpe.msgId) ;
+	case SrcIdRole:          return QString::fromStdString(fmpe.srcId.toStdString()) ;
 	default:
 		return QVariant();
 	}

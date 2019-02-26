@@ -43,14 +43,6 @@ public:
 	explicit RsMessageModel(QObject *parent = NULL);
 	~RsMessageModel(){}
 
-	enum Role {
-		ROLE_SORT     = Qt::UserRole,
-		ROLE_MSGID    = Qt::UserRole + 1,
-		ROLE_SRCID    = Qt::UserRole + 2,
-		ROLE_UNREAD   = Qt::UserRole + 3,
-		ROLE_MSGFLAGS = Qt::UserRole + 4
-	};
-
     enum BoxName {
         BOX_NONE   = 0x00,
         BOX_INBOX  = 0x01,
@@ -76,6 +68,9 @@ public:
               	StatusRole         = Qt::UserRole+2,
               	UnreadRole         = Qt::UserRole+3,
               	FilterRole         = Qt::UserRole+4,
+              	MsgIdRole          = Qt::UserRole+5,
+              	MsgFlagsRole       = Qt::UserRole+6,
+              	SrcIdRole          = Qt::UserRole+7,
               };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
