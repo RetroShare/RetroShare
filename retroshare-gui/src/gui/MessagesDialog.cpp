@@ -153,8 +153,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
     connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
     connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
-    connect(ui.messageTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem*,int)) , this, SLOT(clicked(QTreeWidgetItem*,int)));
-    connect(ui.messageTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)) , this, SLOT(doubleClicked(QTreeWidgetItem*,int)));
+    connect(ui.messageTreeWidget, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
+    connect(ui.messageTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
     connect(ui.messageTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*)));
     connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(currentChanged(const QModelIndex&)));
     connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
@@ -180,8 +180,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connectActions();
 
     listMode = LIST_NOTHING;
-
-    mCurrMsgId  = "";
 
     mMessageModel = new RsMessageModel(this);
     mMessageProxyModel = new MessageSortFilterProxyModel(ui.messageTreeWidget->header(),this);
@@ -229,13 +227,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 #endif
 
     mMessageCompareRole = new RSTreeWidgetItemCompareRole;
-    mMessageCompareRole->setRole(COLUMN_SUBJECT, RsMessageModel::SortRole);
-    mMessageCompareRole->setRole(COLUMN_UNREAD, RsMessageModel::SortRole);
-    mMessageCompareRole->setRole(COLUMN_FROM, RsMessageModel::SortRole);
-    mMessageCompareRole->setRole(COLUMN_DATE, RsMessageModel::SortRole);
-    mMessageCompareRole->setRole(COLUMN_TAGS, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_SUBJECT,      RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_UNREAD,       RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_FROM,         RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_DATE,         RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_TAGS,         RsMessageModel::SortRole);
     mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, RsMessageModel::SortRole);
-    mMessageCompareRole->setRole(COLUMN_STAR, RsMessageModel::SortRole);
+    mMessageCompareRole->setRole(COLUMN_STAR,         RsMessageModel::SortRole);
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
@@ -257,7 +255,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (COLUMN_ATTACHEMENTS, fm.width('0')*1.2f);
     msgwheader->resizeSection (COLUMN_SUBJECT,      250);
     msgwheader->resizeSection (COLUMN_FROM,         140);
-    //msgwheader->resizeSection (COLUMN_SIGNATURE,    24);
     msgwheader->resizeSection (COLUMN_DATE,         140);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
@@ -1376,44 +1373,44 @@ void MessagesDialog::currentItemChanged(QTreeWidgetItem *item)
 }
 
 // click in messageTreeWidget
-void MessagesDialog::clicked(QTreeWidgetItem *item, int column)
+void MessagesDialog::clicked(const QModelIndex& index)
 {
-    if (!item) {
+    if(!index.isValid())
         return;
-    }
 
-    switch (column) {
-    case COLUMN_UNREAD:
-        {
-            QList<QTreeWidgetItem*> items;
-            items.append(item);
-            setMsgAsReadUnread(items, !isMessageRead(item));
-            insertMsgTxtAndFiles(item, false);
-            updateMessageSummaryList();
-            return;
-        }
-    case COLUMN_STAR:
-        {
-            QList<QTreeWidgetItem*> items;
-            items.append(item);
-            setMsgStar(items, !hasMessageStar(item));
-            return;
-        }
-    }
+//    switch (index.column())
+//    {
+//    case COLUMN_UNREAD:
+//        {
+//            QList<QModelIndex> items;
+//            items.append(item);
+//            setMsgAsReadUnread(items, !isMessageRead(item));
+//            insertMsgTxtAndFiles(item, false);
+//            updateMessageSummaryList();
+//            return;
+//        }
+//    case COLUMN_STAR:
+//        {
+//            QList<QTreeWidgetItem*> items;
+//            items.append(item);
+//            setMsgStar(items, !hasMessageStar(item));
+//            return;
+//        }
+//    }
 #ifdef TODO
     timer->stop();
     timerIndex = ui.messageTreeWidget->indexOfTopLevelItem(item);
 #endif
 
     // show current message directly
-    updateCurrentMessage();
+	insertMsgTxtAndFiles(index);
 }
 
 // double click in messageTreeWidget
-void MessagesDialog::doubleClicked(QTreeWidgetItem *item, int column)
+void MessagesDialog::doubleClicked(const QModelIndex& index)
 {
     /* activate row */
-    clicked (item, column);
+    clicked(index);
 
     std::string cid;
     std::string mid;
@@ -1445,10 +1442,6 @@ void MessagesDialog::doubleClicked(QTreeWidgetItem *item, int column)
 // show current message directly
 void MessagesDialog::updateCurrentMessage()
 {
-#ifdef TODO
-    timer->stop();
-    insertMsgTxtAndFiles(ui.messageTreeWidget->topLevelItem(timerIndex));
-#endif
 }
 
 void MessagesDialog::setMsgAsReadUnread(const QList<QTreeWidgetItem*> &items, bool read)
@@ -1531,39 +1524,34 @@ void MessagesDialog::setMsgStar(const QList<QTreeWidgetItem*> &items, bool star)
     // LockUpdate
 }
 
-void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead)
+void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
 {
     /* get its Ids */
     std::string cid;
     std::string mid;
 
-    if (item == NULL) {
-        mCurrMsgId.clear();
-        msgWidget->fill(mCurrMsgId);
-        updateInterface();
-        return;
-    }
-    mid = item->data(COLUMN_DATA, RsMessageModel::MsgIdRole).toString().toStdString();
+    if(!index.isValid())
+	{
+		mCurrMsgId.clear();
+		msgWidget->fill(mCurrMsgId);
+		updateInterface();
+		return;
+	}
+    mid = index.data(RsMessageModel::MsgIdRole).toString().toStdString();
 
-    int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
-    if (nCount == 1) {
-        ui.actionSaveAs->setEnabled(true);
-        ui.actionPrintPreview->setEnabled(true);
-        ui.actionPrint->setEnabled(true);
-    } else {
-        ui.actionSaveAs->setDisabled(true);
-        ui.actionPrintPreview->setDisabled(true);
-        ui.actionPrint->setDisabled(true);
-    }
-
-    if (mCurrMsgId == mid) {
-        // message doesn't changed
-        return;
-    }
+//    int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
+//
+//    if (nCount == 1) {
+//        ui.actionSaveAs->setEnabled(true);
+//        ui.actionPrintPreview->setEnabled(true);
+//        ui.actionPrint->setEnabled(true);
+//    } else {
+//        ui.actionSaveAs->setDisabled(true);
+//        ui.actionPrintPreview->setDisabled(true);
+//        ui.actionPrint->setDisabled(true);
+//    }
 
     /* Save the Data.... for later */
-
-    mCurrMsgId = mid;
 
     MessageInfo msgInfo;
     if (!rsMail -> getMessage(mid, msgInfo)) {
@@ -1571,30 +1559,30 @@ void MessagesDialog::insertMsgTxtAndFiles(QTreeWidgetItem *item, bool bSetToRead
         return;
     }
 
-    QList<QTreeWidgetItem*> items;
-    items.append(item);
-
-    bool bSetToReadOnActive = Settings->getMsgSetToReadOnActivate();
-
-    if (msgInfo.msgflags & RS_MSG_NEW) {
-        // set always to read or unread
-        if (bSetToReadOnActive == false || bSetToRead == false) {
-            // set locally to unread
-            setMsgAsReadUnread(items, false);
-        } else {
-            setMsgAsReadUnread(items, true);
-        }
-        updateMessageSummaryList();
-    } else {
-        if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToRead && bSetToReadOnActive) {
-            // set to read
-            setMsgAsReadUnread(items, true);
-            updateMessageSummaryList();
-        }
-    }
+//    QList<QTreeWidgetItem*> items;
+//    items.append(item);
+//
+//    bool bSetToReadOnActive = Settings->getMsgSetToReadOnActivate();
+//
+//    if (msgInfo.msgflags & RS_MSG_NEW) {
+//        // set always to read or unread
+//        if (bSetToReadOnActive == false || bSetToRead == false) {
+//            // set locally to unread
+//            setMsgAsReadUnread(items, false);
+//        } else {
+//            setMsgAsReadUnread(items, true);
+//        }
+//        updateMessageSummaryList();
+//    } else {
+//        if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToRead && bSetToReadOnActive) {
+//            // set to read
+//            setMsgAsReadUnread(items, true);
+//            updateMessageSummaryList();
+//        }
+//    }
 
     updateInterface();
-    msgWidget->fill(mCurrMsgId);
+    msgWidget->fill(mid);
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)

@@ -77,8 +77,8 @@ private slots:
   void changeQuickView(int newrow);
   void updateCurrentMessage();
   void currentItemChanged(QTreeWidgetItem *item);
-  void clicked(QTreeWidgetItem *item, int column);
-  void doubleClicked(QTreeWidgetItem *item, int column);
+  void clicked(const QModelIndex&);
+  void doubleClicked(const QModelIndex&);
 
   void newmessage();
   void openAsWindow();
@@ -125,7 +125,7 @@ private:
   void connectActions();
 
   void updateMessageSummaryList();
-  void insertMsgTxtAndFiles(QTreeWidgetItem *item = NULL, bool bSetToRead = true);
+  void insertMsgTxtAndFiles(const QModelIndex& index = QModelIndex());
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
