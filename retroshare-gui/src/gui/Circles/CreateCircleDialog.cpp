@@ -53,8 +53,6 @@ CreateCircleDialog::CreateCircleDialog()
 	/* Setup Queue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-			
-	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/circles.png"));
 
 	// connect up the buttons.
 	connect(ui.addButton, SIGNAL(clicked()), this, SLOT(addMember()));
@@ -119,11 +117,6 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
 
 	mClearList = clearList;
 	
-    if(readonly)
-	ui.headerFrame->setHeaderText(tr("Circle Details"));
-        else
-	ui.headerFrame->setHeaderText(tr("Edit Circle"));
-
     ui.radioButton_Public->setEnabled(!readonly) ;
     ui.radioButton_Self->setEnabled(!readonly) ;
     ui.radioButton_Restricted->setEnabled(!readonly) ;
@@ -131,11 +124,13 @@ void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool
     
     if(readonly)
     {
+        setWindowTitle(tr("Circle Details"));
 	    ui.circleAdminLabel->setVisible(true) ;
 	    ui.idChooser->setVisible(false) ;
     }
     else
     {
+        setWindowTitle(tr("Edit Circle"));
 	    ui.circleAdminLabel->setVisible(false) ;
 	    ui.circleAdminLabel->hide();
 	    ui.idChooser->setVisible(true) ;
@@ -165,16 +160,15 @@ void CreateCircleDialog::editNewId(bool isExternal)
     	mReadOnly = false ;
 
 	/* setup personal or external circle */
+    setWindowTitle(tr("Create New Circle"));
 	if (isExternal)
 	{
-		setupForExternalCircle();
-		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
+		setupForExternalCircle();		
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Create"));
 	}
 	else
 	{
 		setupForPersonalCircle();
-		ui.headerFrame->setHeaderText(tr("Create New Circle"));	
 	}
 
 	/* enable stuff that might be locked */

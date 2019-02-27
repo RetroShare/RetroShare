@@ -17,12 +17,18 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <property name="margin">
+   <property name="leftMargin">
     <number>0</number>
    </property>
-   <item>
-    <widget class="HeaderFrame" name="headerFrame"/>
-   </item>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame_2">
      <property name="frameShape">
@@ -78,7 +84,16 @@
         </property>
         <widget class="QWidget" name="dockWidgetContents">
          <layout class="QGridLayout" name="_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <property name="spacing">
@@ -170,12 +185,6 @@ Select the Friends with which you want to Share your Channel.</string>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>

@@ -117,7 +117,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -262,7 +262,7 @@
      </widget>
      <widget class="QTabWidget" name="rightTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
@@ -283,8 +283,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>1372</width>
-             <height>1000</height>
+             <width>1003</width>
+             <height>1090</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -940,53 +940,6 @@ p, li { white-space: pre-wrap; }
        </attribute>
        <layout class="QVBoxLayout" name="circleTabVLayout">
         <item>
-         <widget class="QFrame" name="headerFrameCircle">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Raised</enum>
-          </property>
-          <layout class="QGridLayout" name="headerFrameCircleGLayout">
-           <property name="horizontalSpacing">
-            <number>12</number>
-           </property>
-           <item row="0" column="0" rowspan="2">
-            <widget class="QLabel" name="avlabel_Circles">
-             <property name="minimumSize">
-              <size>
-               <width>64</width>
-               <height>64</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>64</width>
-               <height>64</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1" rowspan="2" colspan="2">
-            <widget class="StyledElidedLabel" name="headerTextLabel_Circles">
-             <property name="text">
-              <string>Circles</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
          <widget class="QTreeWidget" name="treeWidget_membership">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
@@ -1060,7 +1013,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
-   <header>gui/common/LineEditClear.h</header>
+   <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>RSTreeWidget</class>
@@ -1087,8 +1040,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

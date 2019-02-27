@@ -237,10 +237,6 @@ IdDialog::IdDialog(QWidget *parent) :
 	         this, &IdDialog::chatIdentityItem );
 
 
-	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
-
-	ui->headerTextLabel_Circles->setText(tr("Circles"));
-
 	/* Initialize splitter */
 	ui->mainSplitter->setStretchFactor(0, 0);
 	ui->mainSplitter->setStretchFactor(1, 1);

@@ -30,16 +30,6 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="HeaderFrame" name="headerFrame">
-     <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
     <widget class="QFrame" name="mainFrame">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -239,17 +229,6 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
@@ -258,6 +237,11 @@
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>MimeTextEdit</class>
+   <extends>QTextEdit</extends>
+   <header location="global">gui/common/MimeTextEdit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

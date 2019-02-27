@@ -34,9 +34,6 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="HeaderFrame" name="headerFrame"/>
-   </item>
-   <item>
     <widget class="QFrame" name="frame">
      <layout class="QVBoxLayout" name="frameVLayout">
       <item>
@@ -231,26 +228,20 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
+  </customwidget>
+  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
   </customwidget>
   <customwidget>
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GxsIdChooser</class>
-   <extends>QComboBox</extends>
-   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

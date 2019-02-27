@@ -167,8 +167,7 @@ QIcon GxsGroupDialog::serviceWindowIcon()
 
 void GxsGroupDialog::showEvent(QShowEvent*)
 {
-	ui.headerFrame->setHeaderImage(serviceImage());
-	setWindowIcon(serviceWindowIcon());
+    setWindowIcon(serviceWindowIcon());
 
 	initUi();
 }
@@ -179,7 +178,6 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 	{
 	case UITYPE_SERVICE_HEADER:
 		setWindowTitle(text);
-		ui.headerFrame->setHeaderText(text);
 		break;
 	case UITYPE_KEY_SHARE_CHECKBOX:
 		ui.pubKeyShare_cb->setText(text);
@@ -481,9 +479,6 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     }
         break;
     case MODE_SHOW:{
-        ui.headerFrame->setHeaderText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
-        if (!mPicture.isNull())
-            ui.headerFrame->setHeaderImage(mPicture);
     }
         break;
     case MODE_EDIT:{

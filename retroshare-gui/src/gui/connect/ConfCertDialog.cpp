@@ -83,8 +83,6 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     /* Invoke Qt Designer generated QObject setup routine */
     ui.setupUi(this);
 	Settings->loadWidgetInformation(this);
-    ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
-    //ui.headerFrame->setHeaderText(tr("Friend node details"));
 
     //ui._chat_CB->hide() ;
 
@@ -138,10 +136,9 @@ void ConfCertDialog::load()
       //ui.pgpfingerprint->setText(QString::fromUtf8(detail.name.c_str()));
       ui.peerid->setText(QString::fromStdString(detail.id.toStdString()));
       
-      nameAndLocation = QString("%1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(QString::fromUtf8(detail.location.c_str()));
+      nameAndLocation = tr("Node details of ") + QString("%1 (%2)").arg(QString::fromUtf8(detail.name.c_str())).arg(QString::fromUtf8(detail.location.c_str()));
 
-      ui.headerFrame->setHeaderText(nameAndLocation);
-
+      setWindowTitle(nameAndLocation);
 
 	RetroShareLink link = RetroShareLink::createPerson(detail.gpg_id);
 	ui.pgpfingerprint->setText(link.toHtml());
