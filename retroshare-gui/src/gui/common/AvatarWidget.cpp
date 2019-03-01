@@ -22,13 +22,16 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
+#include <QBuffer>
+#include <QMenu>
+#include <QMouseEvent>
 
 #include "gui/notifyqt.h"
 #include "gui/common/AvatarDefs.h"
-#include "gui/common/AvatarDialog.h"
 
 #include "AvatarWidget.h"
 #include "ui_AvatarWidget.h"
+#include "util/misc.h"
 
 #include <algorithm>
 
@@ -44,9 +47,12 @@ AvatarWidget::AvatarWidget(QWidget *parent) : QLabel(parent), ui(new Ui::AvatarW
 
 	setFrameType(NO_FRAME);
 
+    setContextMenuPolicy(Qt::CustomContextMenu);
+
 	/* connect signals */
 	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewAvatar(const QString&)), this, SLOT(updateAvatar(const QString&)));
 	connect(NotifyQt::getInstance(), SIGNAL(ownAvatarChanged()), this, SLOT(updateOwnAvatar()));
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 }
 
 AvatarWidget::~AvatarWidget()
@@ -80,24 +86,53 @@ QString AvatarWidget::frameState()
 	return "NOTHING";
 }
 
-void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
+void AvatarWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-	if (!mFlag.isOwnId) {
-		return;
-	}
+    if (!mFlag.isOwnId) {
+        return;
+    }
 
-	AvatarDialog dialog(this);
+    if (event->button() == Qt::LeftButton)
+    {
+        selectAvatar();
+        return;
+    }
+}
 
-	QPixmap avatar;
-	AvatarDefs::getOwnAvatar(avatar, "");
+void AvatarWidget::showContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu(this);
 
-	dialog.setAvatar(avatar);
-	if (dialog.exec() == QDialog::Accepted) {
-		QByteArray newAvatar;
-		dialog.getAvatar(newAvatar);
+    QAction actionRemove(tr("Remove avatar"), this);
+    connect(&actionRemove, SIGNAL(triggered()), this, SLOT(removeAvatar()));
+    contextMenu.addAction(&actionRemove);
 
-		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
-	}
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+void AvatarWidget::selectAvatar()
+{
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
+
+    if (img.isNull())
+    {
+        return;
+    }
+
+    QByteArray newAvatar;
+    QBuffer buffer(&newAvatar);
+    buffer.open(QIODevice::WriteOnly);
+    img.save(&buffer, "PNG");
+
+    rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;
+}
+
+void AvatarWidget::removeAvatar()
+{
+    QByteArray newAvatar;
+    newAvatar.clear(); /* XXX: is clear() needed? */
+
+    rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;
 }
 
 void AvatarWidget::setFrameType(FrameType type)

@@ -54,17 +54,20 @@ public:
     void setDefaultAvatar(const QString &avatar_file_name);
 
 protected:
-	void mouseReleaseEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 private slots:
     void updateStatus(const QString& peerId, int status);
 	void updateAvatar(const QString& peerId);
     void updateOwnAvatar();
+    void removeAvatar();
+    void showContextMenu(const QPoint &pos);
 
 private:
     void refreshAvatarImage() ;
     void refreshStatus();
     void updateStatus(int status);
+    void selectAvatar();
 
 	QString defaultAvatar;
 	Ui::AvatarWidget *ui;
