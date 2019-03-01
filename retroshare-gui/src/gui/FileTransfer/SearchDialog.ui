@@ -16,7 +16,7 @@
     <verstretch>1</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QVBoxLayout" name="SearchDialogVLayout">
    <item>
     <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
@@ -31,7 +31,7 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="titleBarFrameHLayout">
       <property name="leftMargin">
        <number>2</number>
       </property>
@@ -45,7 +45,7 @@
        <number>2</number>
       </property>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="titleSearchHLayout">
         <property name="spacing">
          <number>0</number>
         </property>
@@ -63,7 +63,7 @@
             <height>22</height>
            </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout">
+          <layout class="QGridLayout" name="searchLineFrameGLayout">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -240,7 +240,7 @@
       </column>
      </widget>
      <widget class="QWidget" name="layoutWidget">
-      <layout class="QVBoxLayout" name="verticalLayout">
+      <layout class="QVBoxLayout" name="searchResultVLayout">
        <item>
         <widget class="SearchTreeWidget" name="searchResultWidget">
          <property name="sizePolicy">
@@ -294,9 +294,9 @@
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <layout class="QHBoxLayout" name="SearchResultToolHLayout">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="filter_L">
            <property name="text">
             <string>Filter:</string>
            </property>
@@ -310,7 +310,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="_max_results_L">
            <property name="text">
             <string>Max results:</string>
            </property>
@@ -332,6 +332,16 @@
            </property>
            <property name="value">
             <number>1000</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="ignore_PB">
+           <property name="text">
+            <string>Ignore</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

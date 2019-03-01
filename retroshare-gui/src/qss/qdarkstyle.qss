@@ -34,7 +34,7 @@ QProgressBar::chunk:horizontal {
     width: 15px;
 }
 
-QFrame#titleBarFrame, QFrame#toolBarFrame
+QFrame#titleBarFrame, QFrame#toolBarFrame, SDIgnoreListFrame
 {
      background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                                        stop:0 #616161, stop: 0.5 #505050,
@@ -583,7 +583,7 @@ QComboBox::down-arrow:focus
     image: url(qdarkstyle/down_arrow.png);
 }
 
-QPushButton:pressed
+QPushButton:pressed, QPushButton:checked
 {
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1,
     stop: 0 #302F2F, stop: 1 #484846);

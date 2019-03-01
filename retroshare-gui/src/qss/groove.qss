@@ -12,6 +12,11 @@ QFrame#titleBarFrame, QFrame#toolBarFrame {
     border: 1px solid #4b8598;
 }
 
+SDIgnoreListFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
+}
+
 HeaderFrame {
 
 }
