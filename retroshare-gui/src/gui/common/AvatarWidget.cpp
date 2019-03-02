@@ -101,13 +101,16 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void AvatarWidget::showContextMenu(const QPoint &pos)
 {
-    QMenu contextMenu(this);
+    if (mFlag.isOwnId)
+    {
+        QMenu contextMenu(this);
 
-    QAction actionRemove(tr("Remove avatar"), this);
-    connect(&actionRemove, SIGNAL(triggered()), this, SLOT(removeAvatar()));
-    contextMenu.addAction(&actionRemove);
+        QAction actionRemove(tr("Remove avatar"), this);
+        connect(&actionRemove, SIGNAL(triggered()), this, SLOT(removeAvatar()));
+        contextMenu.addAction(&actionRemove);
 
-    contextMenu.exec(mapToGlobal(pos));
+        contextMenu.exec(mapToGlobal(pos));
+    }
 }
 
 void AvatarWidget::selectAvatar()
@@ -130,7 +133,6 @@ void AvatarWidget::selectAvatar()
 void AvatarWidget::removeAvatar()
 {
     QByteArray newAvatar;
-    newAvatar.clear(); /* XXX: is clear() needed? */
 
     rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;
 }
