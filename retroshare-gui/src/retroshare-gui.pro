@@ -371,7 +371,6 @@ HEADERS +=  rshare.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
-            gui/common/AvatarDialog.h \
             gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/SharedFilesDialog.h \
             gui/FileTransfer/xprogressbar.h \
@@ -608,7 +607,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/AboutWidget.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
-            gui/common/AvatarDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/FileTransfer/SearchDialog.ui \
@@ -813,7 +811,6 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \
             gui/common/rshtml.cpp \
             gui/common/AvatarDefs.cpp \
-            gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
             gui/common/GroupChooser.cpp \

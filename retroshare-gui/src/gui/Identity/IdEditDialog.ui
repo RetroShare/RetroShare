@@ -327,7 +327,14 @@
           <item>
            <widget class="QPushButton" name="avatarButton">
             <property name="text">
-             <string>Set Avatar</string>
+             <string>Change Avatar</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="removeAvatarButton">
+            <property name="text">
+             <string>Remove Avatar</string>
             </property>
            </widget>
           </item>

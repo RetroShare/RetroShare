@@ -55,6 +55,7 @@ private slots:
 	void submit();
 
 	void changeAvatar();
+    void removeAvatar();
 
 	void addRecognTag();
 	void checkNewTag();

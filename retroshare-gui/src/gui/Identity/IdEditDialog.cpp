@@ -24,7 +24,6 @@
 #include "IdEditDialog.h"
 #include "ui_IdEditDialog.h"
 #include "gui/common/UIStateHelper.h"
-#include "gui/common/AvatarDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/TokenQueue.h"
 #include "util/misc.h"
@@ -81,6 +80,7 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	connect(ui->toolButton_Tag4, SIGNAL(clicked(bool)), this, SLOT(rmTag4()));
 	connect(ui->toolButton_Tag5, SIGNAL(clicked(bool)), this, SLOT(rmTag5()));
 	connect(ui->avatarButton, SIGNAL(clicked(bool)), this, SLOT(changeAvatar()));
+    connect(ui->removeAvatarButton, SIGNAL(clicked(bool)), this, SLOT(removeAvatar()));
 
 	/* Initialize ui */
 	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
@@ -99,15 +99,17 @@ IdEditDialog::~IdEditDialog()
 
 void IdEditDialog::changeAvatar()
 {
-	AvatarDialog dialog(this);
+    QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), 128, 128);
 
-	dialog.setAvatar(mAvatar);
-	if (dialog.exec() == QDialog::Accepted) {
-		QPixmap newAvatar;
-		dialog.getAvatar(newAvatar);
+    if (!img.isNull())
+    {
+        setAvatar(img);
+    }
+}
 
-		setAvatar(newAvatar);
-	}
+void IdEditDialog::removeAvatar()
+{
+    setAvatar(QPixmap());
 }
 
 void IdEditDialog::setupNewId(bool pseudo,bool enable_anon)
@@ -190,9 +192,11 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 
 	if (!mAvatar.isNull()) {
 		ui->avatarLabel->setPixmap(mAvatar);
+        ui->removeAvatarButton->setEnabled(true);
 	} else {
 		// we need to use the default pixmap here, generated from the ID
 		ui->avatarLabel->setPixmap(QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))));
+        ui->removeAvatarButton->setEnabled(false);
 	}
 }
 
