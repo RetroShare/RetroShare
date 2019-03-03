@@ -60,7 +60,6 @@ public:
 
 protected:
   bool eventFilter(QObject *obj, QEvent *ev);
-  void changeEvent(QEvent *e);
   int getSelectedMessages(QList<QString>& mid);
 
 public slots:
@@ -76,7 +75,6 @@ private slots:
   void changeBox(int newrow);
   void changeQuickView(int newrow);
   void updateCurrentMessage();
-  void currentItemChanged(QTreeWidgetItem *item);
   void clicked(const QModelIndex&);
   void doubleClicked(const QModelIndex&);
 

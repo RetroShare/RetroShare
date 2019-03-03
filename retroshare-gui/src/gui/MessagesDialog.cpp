@@ -321,15 +321,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // fill quick view
     fillQuickView();
 
-    // create timer for navigation
-    timer = new RsProtectedTimer(this);
-#ifdef TODO
-    timer->setInterval(300);
-    timer->setSingleShot(true);
-    connect(timer, SIGNAL(timeout()), this, SLOT(updateCurrentMessage()));
-#endif
-
-    ui.messageTreeWidget->installEventFilter(this);
+    //ui.messageTreeWidget->installEventFilter(this);
 
     // remove close button of the the first tab
     ui.tabWidget->hideCloseButton(0);
@@ -351,10 +343,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 MessagesDialog::~MessagesDialog()
 {
-    // stop and delete timer
-    timer->stop();
-    delete(timer);
-
     // save settings
     processSettings(false);
 }
@@ -418,36 +406,35 @@ void MessagesDialog::processSettings(bool load)
 
 bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
 {
-#ifdef TODO
-    if (obj == ui.messageTreeWidget) {
-        if (event->type() == QEvent::KeyPress) {
-            QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
-            if (keyEvent && keyEvent->key() == Qt::Key_Space) {
-                // Space pressed
-                clicked(ui.messageTreeWidget->currentItem(), COLUMN_UNREAD);
-                return true; // eat event
-            }
-        }
-    }
-#endif
+    if (obj == ui.messageTreeWidget && event->type() == QEvent::KeyPress)
+	{
+		QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+		if (keyEvent && keyEvent->key() == Qt::Key_Space)
+        {
+			// Space pressed
+			clicked(ui.messageTreeWidget->currentIndex());
+			return true; // eat event
+		}
+	}
+
     // pass the event on to the parent class
     return MainPage::eventFilter(obj, event);
 }
 
-void MessagesDialog::changeEvent(QEvent *e)
-{
-#ifdef TODO
-    QWidget::changeEvent(e);
-    switch (e->type()) {
-    case QEvent::StyleChange:
-        insertMessages();
-        break;
-    default:
-        // remove compiler warnings
-        break;
-    }
-#endif
-}
+// void MessagesDialog::changeEvent(QEvent *e)
+// {
+//     QWidget::changeEvent(e);
+//
+//     switch (e->type()) {
+//     case QEvent::StyleChange:
+//         insertMessages();
+//         break;
+//     default:
+//         // remove compiler warnings
+//         break;
+//     }
+// }
 
 void MessagesDialog::fillQuickView()
 {
@@ -1345,23 +1332,6 @@ void MessagesDialog::insertMessages()
 }
 #endif
 
-// current row in messageTreeWidget has changed
-void MessagesDialog::currentItemChanged(QTreeWidgetItem *item)
-{
-#ifdef TODO
-    timer->stop();
-
-    if (item) {
-        timerIndex = ui.messageTreeWidget->indexOfTopLevelItem(item);
-        timer->start();
-    } else {
-        timerIndex = -1;
-    }
-
-    updateInterface();
-#endif
-}
-
 // click in messageTreeWidget
 void MessagesDialog::clicked(const QModelIndex& index)
 {
@@ -1383,10 +1353,6 @@ void MessagesDialog::clicked(const QModelIndex& index)
             return;
         }
     }
-#ifdef TODO
-    timer->stop();
-    timerIndex = ui.messageTreeWidget->indexOfTopLevelItem(item);
-#endif
 
     // show current message directly
 	insertMsgTxtAndFiles(index);
