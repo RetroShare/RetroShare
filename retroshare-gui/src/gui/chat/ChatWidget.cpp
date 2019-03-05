@@ -85,8 +85,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	int iconHeight = QFontMetricsF(font()).height();
 	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
 	iconHeight *= fmm;
-	QSize iconSize = QSize(iconHeight, iconHeight);
-	int butt_size(iconSize.height() + fmm);
+	QSize iconSize = QSize(QSize(iconHeight*1.3,iconHeight*1.3));
+	int butt_size(iconSize.height() /*+ fmm*/);
 	QSize buttonSize = QSize(butt_size, butt_size);
 
 	lastMsgDate = QDate::currentDate();
@@ -109,7 +109,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->searchAfter->setFixedHeight(iconHeight);
 	ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
-	ui->sendButton->setFixedHeight(iconHeight);
+	ui->sendButton->setFixedSize(buttonSize);
 	ui->sendButton->setIconSize(iconSize);
 
 	//Initialize search
