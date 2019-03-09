@@ -862,17 +862,31 @@ rs_jsonapi {
 
     no_rs_cross_compiling {
         restbed.target = $$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a)
-        restbed.commands = \
-            cd $${RS_SRC_PATH};\
-            git submodule update --init --recommend-shallow supportlibs/restbed;\
-            cd $${RESTBED_SRC_PATH};\
-            git submodule update --init --recommend-shallow dependency/asio;\
-            git submodule update --init --recommend-shallow dependency/catch;\
-            git submodule update --init --recommend-shallow dependency/kashmir;\
-            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
-                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
-            make; make install
+        win32-g++ {
+            restbed.commands = \
+                cd $${RS_SRC_PATH} && \
+                git submodule update --init --recommend-shallow supportlibs/restbed && \
+                cd $${RESTBED_SRC_PATH} && \
+                git submodule update --init --recommend-shallow dependency/asio && \
+                git submodule update --init --recommend-shallow dependency/catch && \
+                git submodule update --init --recommend-shallow dependency/kashmir && \
+                mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
+                cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -G \"MSYS Makefiles\" -DBUILD_SSL=OFF \
+                    -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
+                make && make install
+        } else {
+            restbed.commands = \
+                cd $${RS_SRC_PATH};\
+                git submodule update --init --recommend-shallow supportlibs/restbed;\
+                cd $${RESTBED_SRC_PATH};\
+                git submodule update --init --recommend-shallow dependency/asio;\
+                git submodule update --init --recommend-shallow dependency/catch;\
+                git submodule update --init --recommend-shallow dependency/kashmir;\
+                mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
+                cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
+                    -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
+                make; make install
+        }
         QMAKE_EXTRA_TARGETS += restbed
         libretroshare.depends += restbed
         PRE_TARGETDEPS *= $${restbed.target}
