@@ -892,28 +892,23 @@ rs_jsonapi {
         PRE_TARGETDEPS *= $${restbed.target}
     }
 
-    PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
     INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
-    GENERATED_HEADERS += $${WRAPPERS_INCL_FILE}
+    apiheaders = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
 
-    jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
-    jsonwrappersincl.commands = \
+    genjsonapi.name = Generating jsonapi headers.
+    genjsonapi.input = apiheaders
+    genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_INCL_FILE}
+    genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_INCL_FILE}
+    genjsonapi.CONFIG += target_predeps combine no_link
+    genjsonapi.variable_out = HEADERS
+    genjsonapi.commands = \
         mkdir -p $${JSONAPI_GENERATOR_OUT} && \
         cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
         echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
         echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
         doxygen $${DOXIGEN_CONFIG_OUT} && \
         $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
-    QMAKE_EXTRA_TARGETS += jsonwrappersincl
-    libretroshare.depends += jsonwrappersincl
-    PRE_TARGETDEPS *= $${WRAPPERS_INCL_FILE}
-
-    jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
-    jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
-    jsonwrappersreg.depends = jsonwrappersincl
-    QMAKE_EXTRA_TARGETS += jsonwrappersreg
-    libretroshare.depends += jsonwrappersreg
-    PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}
+    QMAKE_EXTRA_COMPILERS += genjsonapi
 
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
