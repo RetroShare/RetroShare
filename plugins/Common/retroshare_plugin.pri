@@ -16,9 +16,6 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
-TEMPLATE = subdirs
-
-SUBDIRS += \
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -28,9 +25,6 @@ DEPENDPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
 INCLUDEPATH += $$PWD/../../libretroshare/src/ $$PWD/../../retroshare-gui/src/
 
 linux-* {
-# Cyril: Someone can explain to me why I need to put that again here??? Normally this variable should be set by
-# the include of retroshare.pri, but for some reason it is not!
-	isEmpty(RS_PLUGIN_DIR): RS_PLUGIN_DIR = "$${PREFIX}/lib/retroshare/extensions6"
 	target.path = "$${RS_PLUGIN_DIR}"
 	INSTALLS += target
 }
