@@ -105,19 +105,6 @@ private slots:
   void tabCloseRequested(int tab);
 
 private:
-  class LockUpdate
-  {
-  public:
-      LockUpdate (MessagesDialog *pDialog, bool bUpdate);
-      ~LockUpdate ();
-
-      void setUpdate(bool bUpdate);
-
-  private:
-      MessagesDialog *m_pDialog;
-      bool m_bUpdate;
-  };
-
   void updateInterface();
 
   void connectActions();

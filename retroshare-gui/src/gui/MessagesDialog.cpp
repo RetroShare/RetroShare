@@ -92,33 +92,6 @@
 #define ROW_TRASHBOX      4
 
 
-MessagesDialog::LockUpdate::LockUpdate (MessagesDialog *pDialog, bool bUpdate)
-{
-#ifdef TODO
-    m_pDialog = pDialog;
-    m_bUpdate = bUpdate;
-
-    ++m_pDialog->lockUpdate;
-#endif
-}
-
-MessagesDialog::LockUpdate::~LockUpdate ()
-{
-#ifdef TODO
-    if(--m_pDialog->lockUpdate < 0)
-        m_pDialog->lockUpdate = 0;
-
-    if (m_bUpdate && m_pDialog->lockUpdate == 0) {
-        m_pDialog->insertMessages();
-    }
-#endif
-}
-
-void MessagesDialog::LockUpdate::setUpdate(bool bUpdate)
-{
-    m_bUpdate = bUpdate;
-}
-
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
@@ -148,24 +121,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inProcessSettings = false;
     inChange = false;
     lockUpdate = 0;
-
-    connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(insertMessages()));
-    connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-    connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
-    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
-    connect(ui.messageTreeWidget, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
-    connect(ui.messageTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
-    connect(ui.messageTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*)));
-    connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(currentChanged(const QModelIndex&)));
-    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
-    connect(ui.quickViewWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
-    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-    connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
-    connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
-
-    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
 
     ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
     ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -339,6 +294,26 @@ MessagesDialog::MessagesDialog(QWidget *parent)
  ").arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 	 registerHelpButton(ui.helpButton,help_str,"MessagesDialog") ;
+
+    connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
+    connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
+    connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
+    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
+    connect(ui.messageTreeWidget, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
+    connect(ui.messageTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
+    connect(ui.messageTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*)));
+    connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(currentChanged(const QModelIndex&)));
+    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
+    connect(ui.quickViewWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
+    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+    connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
+    connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
+
+    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+
+
 }
 
 MessagesDialog::~MessagesDialog()
@@ -830,40 +805,34 @@ void MessagesDialog::changeBox(int box_row)
 
 void MessagesDialog::changeQuickView(int newrow)
 {
-#warning Missing code here!
-#ifdef TODO
     Q_UNUSED(newrow);
-
-    if (inChange) {
-        // already in change method
-        return;
-    }
-
-    inChange = true;
-
-    ui.messageTreeWidget->clear();
 
     ui.listWidget->setCurrentItem(NULL);
     listMode = LIST_QUICKVIEW;
 
-    insertMessages();
-    insertMsgTxtAndFiles(ui.messageTreeWidget->currentItem());
+    RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
 
-    inChange = false;
-#endif
+    if(newrow >= 0)   // -1 means that nothing is selected
+		switch(newrow)
+		{
+		case   0x00:      f = RsMessageModel::QUICK_VIEW_STARRED   ; break;
+		case   0x01:      f = RsMessageModel::QUICK_VIEW_SYSTEM   ; break;
+		case   0x02:      f = RsMessageModel::QUICK_VIEW_IMPORTANT; break;
+		case   0x03:      f = RsMessageModel::QUICK_VIEW_WORK     ; break;
+		case   0x04:      f = RsMessageModel::QUICK_VIEW_PERSONAL ; break;
+		case   0x05:      f = RsMessageModel::QUICK_VIEW_TODO     ; break;
+		case   0x06:      f = RsMessageModel::QUICK_VIEW_LATER    ; break;
+		default:
+			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x06);
+		}
+    mMessageModel->setQuickViewFilter(f);
+    insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
 void MessagesDialog::messagesTagsChanged()
 {
-#ifdef TODO
-    if (lockUpdate) {
-        return;
-    }
-
     fillQuickView();
-    insertMessages();
-#endif
-#warning Missing code here!
+    mMessageModel->updateMessages();
 }
 
 static void InitIconAndFont(QTreeWidgetItem *item)
@@ -1545,8 +1514,6 @@ bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
 
 void MessagesDialog::removemessage()
 {
-    LockUpdate Lock (this, true);
-
     QList<QString> selectedMessages ;
 	getSelectedMessages(selectedMessages);
 
@@ -1567,21 +1534,15 @@ void MessagesDialog::removemessage()
             rsMail->MessageToTrash(m.toStdString(), true);
         }
     }
-
-    // LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::undeletemessage()
 {
-    LockUpdate Lock (this, true);
-
     QList<QString> msgids;
     getSelectedMessages(msgids);
 
     foreach (const QString& s, msgids)
         rsMail->MessageToTrash(s.toStdString(), false);
-
-    // LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
@@ -1638,21 +1599,19 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int systemCount = 0;
 
     /* calculating the new messages */
-//    rsMail->getMessageCount (&inboxCount, &newInboxCount, &newOutboxCount, &newDraftCount, &newSentboxCount);
 
     std::list<MsgInfoSummary> msgList;
-    std::list<MsgInfoSummary>::const_iterator it;
-
     rsMail->getMessageSummaries(msgList);
 
     QMap<int, int> tagCount;
 
     /* calculating the new messages */
-    for (it = msgList.begin(); it != msgList.end(); ++it) {
+    for (auto it = msgList.begin(); it != msgList.end(); ++it)
+    {
         /* calcluate tag count */
-        MsgTagInfo tagInfo;
-        rsMail->getMessageTag(it->msgId, tagInfo);
-        for (std::list<uint32_t>::iterator tagId = tagInfo.tagIds.begin(); tagId != tagInfo.tagIds.end(); ++tagId) {
+
+        for (auto tagId = (*it).msgtags.begin(); tagId != (*it).msgtags.end(); ++tagId)
+        {
             int nCount = tagCount [*tagId];
             ++nCount;
             tagCount [*tagId] = nCount;
@@ -1836,6 +1795,7 @@ void MessagesDialog::updateMessageSummaryList()
 
 void MessagesDialog::tagAboutToShow()
 {
+#ifdef TODO
 	TagsMenu *menu = dynamic_cast<TagsMenu*>(ui.tagButton->menu());
 	if (menu == NULL) {
 		return;
@@ -1851,22 +1811,16 @@ void MessagesDialog::tagAboutToShow()
 		rsMail->getMessageTag(msgids.front().toStdString(), tagInfo);
 
 	menu->activateActions(tagInfo.tagIds);
+#endif
 }
 
 void MessagesDialog::tagRemoveAll()
 {
-	LockUpdate Lock (this, false);
-
     QList<QString> msgids;
     getSelectedMessages(msgids);
 
     foreach(const QString& s, msgids)
-    {
 		rsMail->setMessageTag(s.toStdString(), 0, false);
-		Lock.setUpdate(true);
-	}
-
-	// LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::tagSet(int tagId, bool set)
@@ -1875,27 +1829,20 @@ void MessagesDialog::tagSet(int tagId, bool set)
 		return;
 	}
 
-	LockUpdate Lock (this, false);
-
     QList<QString> msgids;
     getSelectedMessages(msgids);
 
     foreach (const QString& s, msgids)
-		if (rsMail->setMessageTag(s.toStdString(), tagId, set))
-			Lock.setUpdate(true);
+		rsMail->setMessageTag(s.toStdString(), tagId, set);
 }
 
 void MessagesDialog::emptyTrash()
 {
-    LockUpdate Lock (this, true);
-
     std::list<Rs::Msgs::MsgInfoSummary> msgs ;
     mMessageModel->getMessageSummaries(RsMessageModel::BOX_TRASH,msgs);
 
     for(auto it(msgs.begin());it!=msgs.end();++it)
 		rsMail->MessageDelete(it->msgId);
-
-    // LockUpdate -> insertMessages();
 }
 
 void MessagesDialog::tabChanged(int /*tab*/)

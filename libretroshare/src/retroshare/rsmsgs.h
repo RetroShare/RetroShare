@@ -241,6 +241,7 @@ struct MsgInfoSummary : RsSerializable
 	RsPeerId srcId;
 
 	uint32_t msgflags;
+    std::list<uint32_t> msgtags;	// that leaves 25 bits for user-defined tags.
 
 	std::string title;
 	int count; /* file count     */
@@ -253,6 +254,7 @@ struct MsgInfoSummary : RsSerializable
 		RS_SERIAL_PROCESS(srcId);
 
 		RS_SERIAL_PROCESS(msgflags);
+		RS_SERIAL_PROCESS(msgtags);
 
 		RS_SERIAL_PROCESS(title);
 		RS_SERIAL_PROCESS(count);

@@ -53,16 +53,28 @@ public:
     };
 
 	enum Columns {
-		COLUMN_THREAD_STAR         =0x00,
-		COLUMN_THREAD_ATTACHMENT   =0x01,
-		COLUMN_THREAD_SUBJECT      =0x02,
-		COLUMN_THREAD_READ         =0x03,
-		COLUMN_THREAD_AUTHOR       =0x04,
-		COLUMN_THREAD_DATE         =0x05,
-		COLUMN_THREAD_TAGS         =0x06,
-		COLUMN_THREAD_MSGID        =0x07,
-		COLUMN_THREAD_NB_COLUMNS   =0x08,
+		COLUMN_THREAD_STAR         = 0x00,
+		COLUMN_THREAD_ATTACHMENT   = 0x01,
+		COLUMN_THREAD_SUBJECT      = 0x02,
+		COLUMN_THREAD_READ         = 0x03,
+		COLUMN_THREAD_AUTHOR       = 0x04,
+		COLUMN_THREAD_DATE         = 0x05,
+		COLUMN_THREAD_TAGS         = 0x06,
+		COLUMN_THREAD_MSGID        = 0x07,
+		COLUMN_THREAD_NB_COLUMNS   = 0x08,
 	};
+
+    enum QuickViewFilter {
+        QUICK_VIEW_ALL             = 0x00,
+        QUICK_VIEW_IMPORTANT       = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmsgs.h
+        QUICK_VIEW_WORK            = 0x02,
+        QUICK_VIEW_PERSONAL        = 0x03,
+        QUICK_VIEW_TODO            = 0x04,
+        QUICK_VIEW_LATER           = 0x05,
+        QUICK_VIEW_STARRED         = 0x06,
+        QUICK_VIEW_SYSTEM          = 0x07,
+        QUICK_VIEW_USER            = 100
+    };
 
 	enum Roles{ SortRole           = Qt::UserRole+1,
               	StatusRole         = Qt::UserRole+2,
@@ -77,15 +89,16 @@ public:
 	QModelIndex getIndexOfMessage(const std::string &mid) const;
 
     static const QString FilterString ;
-    static void getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs);
+    static void getMessageSummaries(BoxName box, std::list<Rs::Msgs::MsgInfoSummary>& msgs);
 
     // This method will asynchroneously update the data
 
     void setCurrentBox(BoxName bn) ;
-	void updateMessages();
+    void setQuickViewFilter(QuickViewFilter fn) ;
+
     const RsMessageId& currentMessageId() const;
 
-    void setFilter(int column, const QStringList& strings, uint32_t &count) ;
+    void setFilter(int column, const QStringList& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -125,11 +138,14 @@ public:
 	void setMsgReadStatus(const QModelIndex& i, bool read_status);
     void setMsgStar(const QModelIndex& index,bool star) ;
 
+public slots:
+	void updateMessages();
+
 signals:
     void messagesLoaded();	// emitted after the messages have been set. Can be used to updated the UI.
 
 private:
-    bool mFilteringEnabled;
+	bool passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const;
 
 	void preMods() ;
 	void postMods() ;
@@ -153,5 +169,10 @@ private:
     QColor mTextColorMissing       ;
 
     BoxName mCurrentBox ;
+    QuickViewFilter mQuickViewFilter ;
+    QStringList mFilterStrings;
+    int mFilterColumn;
+    bool mFilteringEnabled;
+
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
 };

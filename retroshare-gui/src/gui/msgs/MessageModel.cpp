@@ -50,6 +50,7 @@ RsMessageModel::RsMessageModel(QObject *parent)
 {
     mFilteringEnabled=false;
     mCurrentBox = BOX_NONE;
+    mQuickViewFilter = QUICK_VIEW_ALL;
 }
 
 void RsMessageModel::preMods()
@@ -295,9 +296,29 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
     return QVariant();//fmpe.mMsgStatus);
 }
 
+bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+{
+    QString s = displayRole(fmpe,mFilterColumn).toString();
+    bool passes_strings = true ;
+
+    if(!mFilterStrings.empty())
+		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
+			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
+	else
+		passes_strings = true;
+
+    bool passes_quick_view =
+            (mQuickViewFilter==QUICK_VIEW_ALL)
+            || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
+            || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
+            || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
+
+    return passes_quick_view && passes_strings;
+}
+
 QVariant RsMessageModel::filterRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-    if(!mFilteringEnabled)
+    if(passesFilter(fmpe,column))
         return QVariant(FilterString);
 
 	return QVariant(QString());
@@ -312,20 +333,12 @@ uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex i,int column,const Q
 }
 
 
-void RsMessageModel::setFilter(int column,const QStringList& strings,uint32_t& count)
+void RsMessageModel::setFilter(int column,const QStringList& strings)
 {
     preMods();
 
-    if(!strings.empty())
-    {
-		count = updateFilterStatus(ForumModelIndex(0),column,strings);
-        mFilteringEnabled = true;
-    }
-    else
-    {
-		count=0;
-        mFilteringEnabled = false;
-    }
+    mFilterColumn = column;
+	mFilterStrings = strings;
 
 	postMods();
 }
@@ -557,6 +570,16 @@ void RsMessageModel::setCurrentBox(BoxName bn)
     }
 }
 
+void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
+{
+    if(fn != mQuickViewFilter)
+    {
+		preMods();
+        mQuickViewFilter = fn ;
+		postMods();
+    }
+}
+
 void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfoSummary>& msgs)
 {
     rsMsgs->getMessageSummaries(msgs);
@@ -575,6 +598,7 @@ void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfo
         case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  ; break ;
         case BOX_TRASH  : ok = (it->msgflags & RS_MSG_TRASH) ; break ;
         default:
+            			++it;
                         continue;
 		}
 
