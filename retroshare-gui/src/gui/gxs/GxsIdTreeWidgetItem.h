@@ -22,8 +22,10 @@
 #define _GXS_ID_TREEWIDGETITEM_H
 
 #include <QPainter>
+#include <QTimer>
 #include <QApplication>
 #include <retroshare/rsidentity.h>
+#include <retroshare/rspeers.h>
 
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -75,8 +77,14 @@ private:
 
 class GxsIdTreeItemDelegate: public QStyledItemDelegate
 {
+    Q_OBJECT
+
 public:
-    GxsIdTreeItemDelegate() {}
+    GxsIdTreeItemDelegate()
+    {
+        mLoading = false;
+        mReloadPeriod = 0;
+    }
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
@@ -98,7 +106,10 @@ public:
 		QIcon icon ;
 
 		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+        {
 			icon = GxsIdDetails::getLoadingIcon(id);
+            launchAsyncLoading();
+        }
 		else
 			icon = *icons.begin();
 
@@ -135,8 +146,28 @@ public:
 
 		QIcon icon ;
 
-		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			icon = GxsIdDetails::getLoadingIcon(id);
+        if(id.isNull())
+        {
+			str = tr("[Retroshare]");
+			icon = QIcon();
+        }
+        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+        {
+			str = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
+        }
+        else if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+        {
+			if(mReloadPeriod > 3)
+            {
+				str = tr("[Unknown]");
+                icon = QIcon();
+            }
+            else
+            {
+				icon = GxsIdDetails::getLoadingIcon(id);
+				launchAsyncLoading();
+            }
+        }
 		else
 			icon = *icons.begin();
 
@@ -147,6 +178,25 @@ public:
 		painter->drawPixmap(r.topLeft() + p, pix);
 		painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
 	}
+
+    void launchAsyncLoading() const
+    {
+        if(mLoading)
+            return;
+
+        mLoading = true;
+        ++mReloadPeriod;
+        std::cerr << "Re-loading" << std::endl;
+
+        QTimer::singleShot(1000,this,SLOT(reload()));
+    }
+
+private slots:
+    void reload() { mLoading=false; emit commitData(NULL) ;  }
+
+private:
+    mutable bool mLoading;
+    mutable int mReloadPeriod;
 };
 
 
