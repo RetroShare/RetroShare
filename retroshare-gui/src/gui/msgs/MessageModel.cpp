@@ -51,6 +51,7 @@ RsMessageModel::RsMessageModel(QObject *parent)
     mFilteringEnabled=false;
     mCurrentBox = BOX_NONE;
     mQuickViewFilter = QUICK_VIEW_ALL;
+    mFilterType = FILTER_TYPE_NONE;
 }
 
 void RsMessageModel::preMods()
@@ -277,13 +278,13 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 
 QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-//    if( (fmpe.msgflags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
-//        return QVariant(mTextColorMissing);
-//
-//    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
-//        return QVariant(mTextColorUnread);
-//    else
-//        return QVariant(mTextColorRead);
+	Rs::Msgs::MsgTagType tags;
+	rsMsgs->getMessageTagTypes(tags);
+
+    for(auto it(fmpe.msgtags.begin());it!=fmpe.msgtags.end();++it)
+        for(auto it2(tags.types.begin());it2!=tags.types.end();++it2)
+            if(it2->first == *it)
+                return QColor(it2->second.second);
 
 	return QVariant();
 }
@@ -298,14 +299,42 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
 
 bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-    QString s = displayRole(fmpe,mFilterColumn).toString();
+    QString s ;
     bool passes_strings = true ;
 
     if(!mFilterStrings.empty())
+	{
+		switch(mFilterType)
+		{
+		case FILTER_TYPE_SUBJECT: 	s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
+			break;
+
+		case FILTER_TYPE_FROM:
+		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
+			break;
+		case FILTER_TYPE_CONTENT:   {
+			Rs::Msgs::MessageInfo minfo;
+			rsMsgs->getMessage(fmpe.msgId,minfo);
+			s = QTextDocument(QString::fromUtf8(minfo.msg.c_str())).toPlainText();
+		}
+			break;
+		case FILTER_TYPE_TAGS:		s = displayRole(fmpe,COLUMN_THREAD_TAGS).toString();
+			break;
+
+		case FILTER_TYPE_ATTACHMENTS:
+		{
+			Rs::Msgs::MessageInfo minfo;
+			rsMsgs->getMessage(fmpe.msgId,minfo);
+
+			for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
+				s += QString::fromUtf8((*it).fname.c_str())+" ";
+		}
+		};
+	}
+
+    if(!s.isNull())
 		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
 			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
-	else
-		passes_strings = true;
 
     bool passes_quick_view =
             (mQuickViewFilter==QUICK_VIEW_ALL)
@@ -333,11 +362,11 @@ uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex i,int column,const Q
 }
 
 
-void RsMessageModel::setFilter(int column,const QStringList& strings)
+void RsMessageModel::setFilter(FilterType filter_type, const QStringList& strings)
 {
     preMods();
 
-    mFilterColumn = column;
+    mFilterType = filter_type;
 	mFilterStrings = strings;
 
 	postMods();
@@ -616,56 +645,6 @@ void RsMessageModel::updateMessages()
     getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
 }
-
-//	RsThread::async([this, group_id]()
-//	{
-//        // 1 - get message data from p3GxsForums
-//
-//        std::list<RsGxsGroupId> forumIds;
-//		std::vector<RsMsgMetaData> msg_metas;
-//		std::vector<RsGxsForumGroup> groups;
-//
-//        forumIds.push_back(group_id);
-//
-//		if(!rsGxsForums->getForumsInfo(forumIds,groups))
-//		{
-//			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
-//			return;
-//        }
-//
-//		if(!rsGxsForums->getForumMsgMetaData(group_id,msg_metas))
-//		{
-//			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << group_id << std::endl;
-//			return;
-//		}
-//
-//        // 2 - sort the messages into a proper hierarchy
-//
-//        auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
-//        std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
-//        RsGxsForumGroup group = groups[0];
-//
-//        computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
-//
-//        // 3 - update the model in the UI thread.
-//
-//        RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
-//		{
-//			/* Here it goes any code you want to be executed on the Qt Gui
-//			 * thread, for example to update the data model with new information
-//			 * after a blocking call to RetroShare API complete, note that
-//			 * Qt::QueuedConnection is important!
-//			 */
-//
-//            setPosts(group,*vect,*post_versions) ;
-//
-//            delete vect;
-//            delete post_versions;
-//
-//
-//		}, this );
-//
-//    });
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 

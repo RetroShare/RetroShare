@@ -823,7 +823,7 @@ void MessagesDialog::changeQuickView(int newrow)
 		case   0x05:      f = RsMessageModel::QUICK_VIEW_TODO     ; break;
 		case   0x06:      f = RsMessageModel::QUICK_VIEW_LATER    ; break;
 		default:
-			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x06);
+			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x07);
 		}
     mMessageModel->setQuickViewFilter(f);
     insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
@@ -1438,18 +1438,6 @@ void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
 	}
     mid = index.data(RsMessageModel::MsgIdRole).toString().toStdString();
 
-//    int nCount = getSelectedMsgCount (NULL, NULL, NULL, NULL);
-//
-//    if (nCount == 1) {
-//        ui.actionSaveAs->setEnabled(true);
-//        ui.actionPrintPreview->setEnabled(true);
-//        ui.actionPrint->setEnabled(true);
-//    } else {
-//        ui.actionSaveAs->setDisabled(true);
-//        ui.actionPrintPreview->setDisabled(true);
-//        ui.actionPrint->setDisabled(true);
-//    }
-
     /* Save the Data.... for later */
 
     MessageInfo msgInfo;
@@ -1458,27 +1446,17 @@ void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
         return;
     }
 
-//    QList<QTreeWidgetItem*> items;
-//    items.append(item);
-//
-//    bool bSetToReadOnActive = Settings->getMsgSetToReadOnActivate();
-//
-//    if (msgInfo.msgflags & RS_MSG_NEW) {
-//        // set always to read or unread
-//        if (bSetToReadOnActive == false || bSetToRead == false) {
-//            // set locally to unread
-//            setMsgAsReadUnread(items, false);
-//        } else {
-//            setMsgAsReadUnread(items, true);
-//        }
-//        updateMessageSummaryList();
-//    } else {
-//        if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToRead && bSetToReadOnActive) {
-//            // set to read
-//            setMsgAsReadUnread(items, true);
-//            updateMessageSummaryList();
-//        }
-//    }
+	bool bSetToReadOnActive = Settings->getMsgSetToReadOnActivate();
+
+	if (msgInfo.msgflags & RS_MSG_NEW) // set always to read or unread
+	{
+		if (!bSetToReadOnActive)  // set locally to unread
+			mMessageModel->setMsgReadStatus(index, false);
+		else
+			mMessageModel->setMsgReadStatus(index, true);
+	}
+	else if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToReadOnActive)  // set to read
+		mMessageModel->setMsgReadStatus(index, true);
 
     updateInterface();
     msgWidget->fill(mid);
@@ -1565,7 +1543,21 @@ void MessagesDialog::buttonStyle()
 void MessagesDialog::filterChanged(const QString& text)
 {
     QStringList items = text.split(' ',QString::SkipEmptyParts);
-    mMessageModel->setFilter(ui.filterLineEdit->currentFilter(),items);
+
+    RsMessageModel::FilterType f = RsMessageModel::FILTER_TYPE_NONE;
+
+    switch(ui.filterLineEdit->currentFilter())
+    {
+    case COLUMN_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
+    case COLUMN_FROM:         f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case COLUMN_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
+    case COLUMN_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
+    case COLUMN_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;
+    case COLUMN_ATTACHEMENTS: f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
+    default:break;
+    }
+
+    mMessageModel->setFilter(f,items);
 }
 
 void MessagesDialog::filterColumnChanged(int column)
@@ -1573,8 +1565,21 @@ void MessagesDialog::filterColumnChanged(int column)
     if (inProcessSettings)
         return;
 
+    RsMessageModel::FilterType f = RsMessageModel::FILTER_TYPE_NONE;
+
+	switch(column)
+    {
+    case COLUMN_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
+    case COLUMN_FROM:         f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case COLUMN_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
+    case COLUMN_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
+    case COLUMN_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;
+    case COLUMN_ATTACHEMENTS: f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
+    default:break;
+    }
+
     QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
-    mMessageModel->setFilter(column,items);
+    mMessageModel->setFilter(f,items);
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);

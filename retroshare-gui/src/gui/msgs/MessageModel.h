@@ -76,6 +76,16 @@ public:
         QUICK_VIEW_USER            = 100
     };
 
+    enum FilterType {
+        FILTER_TYPE_NONE             = 0x00,
+        FILTER_TYPE_SUBJECT          = 0x01,	// These numbers have been carefuly chosen to match the ones in rsmsgs.h
+        FILTER_TYPE_FROM             = 0x02,
+        FILTER_TYPE_DATE             = 0x03,
+        FILTER_TYPE_CONTENT          = 0x04,
+        FILTER_TYPE_TAGS             = 0x05,
+        FILTER_TYPE_ATTACHMENTS      = 0x06,
+    };
+
 	enum Roles{ SortRole           = Qt::UserRole+1,
               	StatusRole         = Qt::UserRole+2,
               	UnreadRole         = Qt::UserRole+3,
@@ -95,9 +105,9 @@ public:
 
     void setCurrentBox(BoxName bn) ;
     void setQuickViewFilter(QuickViewFilter fn) ;
-    void setFilter(int column, const QStringList& strings) ;
 
     const RsMessageId& currentMessageId() const;
+    void setFilter(FilterType filter_type, const QStringList& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -170,7 +180,7 @@ private:
     BoxName mCurrentBox ;
     QuickViewFilter mQuickViewFilter ;
     QStringList mFilterStrings;
-    int mFilterColumn;
+    FilterType  mFilterType;
     bool mFilteringEnabled;
 
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
