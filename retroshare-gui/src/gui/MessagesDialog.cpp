@@ -142,7 +142,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
-	changeBox(RsMessageModel::BOX_INBOX);
+	changeBox(0);	// set to inbox
 
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 	//mMessageProxyModel->setFilterRegExp(QRegExp(QString(RsMessageModel::FilterString))) ;
@@ -782,13 +782,8 @@ void MessagesDialog::changeBox(int box_row)
 
     inChange = true;
 
-//    ui.messageTreeWidget->clear();
-
     ui.quickViewWidget->setCurrentItem(NULL);
     listMode = LIST_BOX;
-
-//    insertMessages();
-//    insertMsgTxtAndFiles(ui.messageTreeWidget->currentItem());
 
     switch(box_row)
     {

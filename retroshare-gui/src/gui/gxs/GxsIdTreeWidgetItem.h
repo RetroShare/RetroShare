@@ -146,11 +146,6 @@ public:
 
 		QIcon icon ;
 
-        if(id.isNull())
-        {
-			str = tr("[Retroshare]");
-			icon = QIcon();
-        }
         if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
         {
 			str = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
@@ -186,7 +181,6 @@ public:
 
         mLoading = true;
         ++mReloadPeriod;
-        std::cerr << "Re-loading" << std::endl;
 
         QTimer::singleShot(1000,this,SLOT(reload()));
     }

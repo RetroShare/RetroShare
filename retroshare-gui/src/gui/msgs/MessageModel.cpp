@@ -48,10 +48,10 @@ const QString RsMessageModel::FilterString("filtered");
 RsMessageModel::RsMessageModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mFilteringEnabled=false;
     mCurrentBox = BOX_NONE;
     mQuickViewFilter = QUICK_VIEW_ALL;
     mFilterType = FILTER_TYPE_NONE;
+    mFilterStrings.clear();
 }
 
 void RsMessageModel::preMods()
@@ -62,15 +62,6 @@ void RsMessageModel::postMods()
 {
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mMessages.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
-
-// void RsGxsForumModel::setSortMode(SortMode mode)
-// {
-//     preMods();
-//
-//     mSortMode = mode;
-//
-//     postMods();
-// }
 
 int RsMessageModel::rowCount(const QModelIndex& parent) const
 {

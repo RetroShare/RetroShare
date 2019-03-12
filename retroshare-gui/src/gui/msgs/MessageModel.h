@@ -181,7 +181,6 @@ private:
     QuickViewFilter mQuickViewFilter ;
     QStringList mFilterStrings;
     FilterType  mFilterType;
-    bool mFilteringEnabled;
 
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
 };
