@@ -145,7 +145,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	changeBox(RsMessageModel::BOX_INBOX);
 
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
-	mMessageProxyModel->setFilterRegExp(QRegExp(QString(RsMessageModel::FilterString))) ;
+	//mMessageProxyModel->setFilterRegExp(QRegExp(QString(RsMessageModel::FilterString))) ;
 
 	ui.messageTreeWidget->setSortingEnabled(true);
 
@@ -1564,24 +1564,17 @@ void MessagesDialog::buttonStyle()
 
 void MessagesDialog::filterChanged(const QString& text)
 {
-#ifdef TODO
-    ui.messageTreeWidget->filterItems(ui.filterLineEdit->currentFilter(), text);
-#endif
+    QStringList items = text.split(' ',QString::SkipEmptyParts);
+    mMessageModel->setFilter(ui.filterLineEdit->currentFilter(),items);
 }
 
 void MessagesDialog::filterColumnChanged(int column)
 {
-    if (inProcessSettings) {
+    if (inProcessSettings)
         return;
-    }
 
-    if (column == COLUMN_CONTENT) {
-        // need content ... refill
-        //insertMessages();
-    }
-#ifdef TODO
-    ui.messageTreeWidget->filterItems(column, ui.filterLineEdit->text());
-#endif
+    QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
+    mMessageModel->setFilter(column,items);
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);

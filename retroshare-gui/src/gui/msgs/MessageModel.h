@@ -95,10 +95,9 @@ public:
 
     void setCurrentBox(BoxName bn) ;
     void setQuickViewFilter(QuickViewFilter fn) ;
+    void setFilter(int column, const QStringList& strings) ;
 
     const RsMessageId& currentMessageId() const;
-
-    void setFilter(int column, const QStringList& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
