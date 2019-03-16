@@ -861,9 +861,14 @@ rs_jsonapi {
     WRAPPERS_REG_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl)
 
     no_rs_cross_compiling {
-        restbed.target = $$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a)
+        DUMMYRESTBEDINPUT = FORCE
+        genrestbedlib.name = Generating libresbed.
+        genrestbedlib.input = DUMMYRESTBEDINPUT
+        genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
+        genrestbedlib.CONFIG += target_predeps combine
+        genrestbedlib.variable_out = PRE_TARGETDEPS
         win32-g++ {
-            restbed.commands = \
+            genrestbedlib.commands = \
                 cd $${RS_SRC_PATH} && \
                 git submodule update --init --recommend-shallow supportlibs/restbed && \
                 cd $${RESTBED_SRC_PATH} && \
@@ -873,9 +878,9 @@ rs_jsonapi {
                 mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
                 cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -G \"MSYS Makefiles\" -DBUILD_SSL=OFF \
                     -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
-                make && make install
+                make
         } else {
-            restbed.commands = \
+            genrestbedlib.commands = \
                 cd $${RS_SRC_PATH};\
                 git submodule update --init --recommend-shallow supportlibs/restbed;\
                 cd $${RESTBED_SRC_PATH};\
@@ -885,21 +890,28 @@ rs_jsonapi {
                 mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
                 cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
                     -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
-                make; make install
+                make
         }
-        QMAKE_EXTRA_TARGETS += restbed
-        libretroshare.depends += restbed
-        PRE_TARGETDEPS *= $${restbed.target}
+        QMAKE_EXTRA_COMPILERS += genrestbedlib
+
+        RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
+        genrestbedheader.name = Generating restbed header.
+        genrestbedheader.input = genrestbedlib.output
+        genrestbedheader.output = $${RESTBED_HEADER_FILE}
+        genrestbedheader.CONFIG += target_predeps combine no_link
+        genrestbedheader.variable_out = HEADERS
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
     INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
     DEPENDPATH *= $${JSONAPI_GENERATOR_OUT}
-    apiheaders = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
+    APIHEADERS = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
     #Make sure that the jsonapigenerator executable are ready
-    apiheaders += $${JSONAPI_GENERATOR_EXE}
+    APIHEADERS += $${JSONAPI_GENERATOR_EXE}
 
     genjsonapi.name = Generating jsonapi headers.
-    genjsonapi.input = apiheaders
+    genjsonapi.input = APIHEADERS
     genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.CONFIG += target_predeps combine no_link
