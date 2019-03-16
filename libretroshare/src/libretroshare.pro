@@ -893,12 +893,15 @@ rs_jsonapi {
     }
 
     INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
+    DEPENDPATH *= $${JSONAPI_GENERATOR_OUT}
     apiheaders = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
+    #Make sure that the jsonapigenerator executable are ready
+    apiheaders += $${JSONAPI_GENERATOR_EXE}
 
     genjsonapi.name = Generating jsonapi headers.
     genjsonapi.input = apiheaders
-    genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_INCL_FILE}
-    genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_INCL_FILE}
+    genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
+    genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
     genjsonapi.CONFIG += target_predeps combine no_link
     genjsonapi.variable_out = HEADERS
     genjsonapi.commands = \
