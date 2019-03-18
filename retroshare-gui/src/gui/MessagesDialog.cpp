@@ -152,9 +152,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	ui.messageTreeWidget->setSortingEnabled(true);
 
-    //ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
-    //ui.messageTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
 
 #ifdef TO_REMOVE
     // Set the QStandardItemModel
@@ -211,15 +209,18 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
     msgwheader->resizeSection (COLUMN_ATTACHEMENTS, fm.width('0')*1.2f);
-    msgwheader->resizeSection (COLUMN_SUBJECT,      250);
-    msgwheader->resizeSection (COLUMN_FROM,         140);
-    msgwheader->resizeSection (COLUMN_DATE,         140);
+    msgwheader->resizeSection (COLUMN_SUBJECT,      fm.width("You have a message")*3.0);
+    msgwheader->resizeSection (COLUMN_FROM,         fm.width("[Retroshare]")*1.5);
+    msgwheader->resizeSection (COLUMN_DATE,         fm.width("01/01/1970")*1.5);
+    msgwheader->resizeSection (COLUMN_STAR,         fm.width('0')*1.5);
+    msgwheader->resizeSection (COLUMN_UNREAD,       fm.width('0')*1.5);
 
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
-    msgwheader->resizeSection (COLUMN_STAR, 24);
-
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
-    msgwheader->resizeSection (COLUMN_UNREAD, 24);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_SUBJECT,      QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_FROM,         QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_DATE,         QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR,         QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD,       QHeaderView::Fixed);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -240,11 +241,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     
 
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"), COLUMN_SUBJECT, tr("Search Subject"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("From"), COLUMN_FROM, tr("Search From"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Date"), COLUMN_DATE, tr("Search Date"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Content"), COLUMN_CONTENT, tr("Search Content"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"), COLUMN_TAGS, tr("Search Tags"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     COLUMN_SUBJECT, tr("Search Subject"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("From"),        COLUMN_FROM, tr("Search From"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"),        COLUMN_DATE, tr("Search Date"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"),     COLUMN_CONTENT, tr("Search Content"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"),        COLUMN_TAGS, tr("Search Tags"));
     ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), COLUMN_ATTACHEMENTS, tr("Search Attachments"));
 
     //setting default filter by column as subject
@@ -254,14 +255,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     processSettings(true);
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_ATTACHEMENTS, QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_DATE, QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_UNREAD, QHeaderView::Fixed);
-    //QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_SIGNATURE, QHeaderView::Fixed);
-    msgwheader->resizeSection (COLUMN_UNREAD, 24);
-    //msgwheader->resizeSection (COLUMN_SIGNATURE, 24);
-    msgwheader->resizeSection (COLUMN_STAR, 24);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, COLUMN_STAR, QHeaderView::Fixed);
     msgwheader->setStretchLastSection(false);
 
     // fill folder list
@@ -300,23 +293,23 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
-    connect(ui.messageTreeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
-    connect(ui.listWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
-    connect(ui.messageTreeWidget, SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
-    connect(ui.messageTreeWidget, SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
-    connect(ui.messageTreeWidget, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(currentItemChanged(QTreeWidgetItem*)));
-    connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(QModelIndex,QModelIndex)), this, SLOT(currentChanged(const QModelIndex&)));
-    connect(ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
-    connect(ui.quickViewWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
-    connect(ui.tabWidget, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-    connect(ui.tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
-    connect(ui.newmessageButton, SIGNAL(clicked()), this, SLOT(newmessage()));
+
+    connect(ui.listWidget,           SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
+    connect(ui.listWidget,           SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
+    connect(ui.quickViewWidget,      SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
+    connect(ui.tabWidget,            SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+    connect(ui.tabWidget,            SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
+    connect(ui.newmessageButton,     SIGNAL(clicked()), this, SLOT(newmessage()));
 
     connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionTextUnderIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionIconOnly,       SIGNAL(triggered()), this, SLOT(buttonStyle()));
+    connect(ui.actionTextUnderIcon,  SIGNAL(triggered()), this, SLOT(buttonStyle()));
 
+    connect(ui.messageTreeWidget,    SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
+    connect(ui.messageTreeWidget,    SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
+    connect(ui.messageTreeWidget,    SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
 
+    connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(currentChanged(const QModelIndex&,const QModelIndex&)));
 }
 
 MessagesDialog::~MessagesDialog()
@@ -1298,6 +1291,16 @@ void MessagesDialog::insertMessages()
     updateMessageSummaryList();
 }
 #endif
+
+// click in messageTreeWidget
+void MessagesDialog::currentChanged(const QModelIndex& new_index,const QModelIndex& old_index)
+{
+    if(!new_index.isValid())
+        return;
+
+    // show current message directly
+	insertMsgTxtAndFiles(new_index);
+}
 
 // click in messageTreeWidget
 void MessagesDialog::clicked(const QModelIndex& index)

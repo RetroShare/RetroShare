@@ -77,6 +77,7 @@ private slots:
   void updateCurrentMessage();
   void clicked(const QModelIndex&);
   void doubleClicked(const QModelIndex&);
+  void currentChanged(const QModelIndex& new_index, const QModelIndex &old_index);
 
   void newmessage();
   void openAsWindow();
