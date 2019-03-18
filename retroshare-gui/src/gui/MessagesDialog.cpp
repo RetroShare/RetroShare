@@ -140,6 +140,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel = new MessageSortFilterProxyModel(ui.messageTreeWidget->header(),this);
     mMessageProxyModel->setSourceModel(mMessageModel);
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
+    mMessageProxyModel->setDynamicSortFilter(false);
+    mMessageProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
 	changeBox(0);	// set to inbox
@@ -179,7 +182,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     headerItem->setToolTip(COLUMN_DATE,         tr("Click to sort by date"));
     headerItem->setToolTip(COLUMN_TAGS,         tr("Click to sort by tags"));
     headerItem->setToolTip(COLUMN_STAR,         tr("Click to sort by star"));
-#endif
 
     mMessageCompareRole = new RSTreeWidgetItemCompareRole;
     mMessageCompareRole->setRole(COLUMN_SUBJECT,      RsMessageModel::SortRole);
@@ -189,6 +191,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageCompareRole->setRole(COLUMN_TAGS,         RsMessageModel::SortRole);
     mMessageCompareRole->setRole(COLUMN_ATTACHEMENTS, RsMessageModel::SortRole);
     mMessageCompareRole->setRole(COLUMN_STAR,         RsMessageModel::SortRole);
+#endif
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));

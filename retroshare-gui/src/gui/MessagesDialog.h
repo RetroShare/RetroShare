@@ -138,7 +138,8 @@ private:
   QTimer *timer;
   int timerIndex;
 
-  RSTreeWidgetItemCompareRole *mMessageCompareRole;
+  //RSTreeWidgetItemCompareRole *mMessageCompareRole;
+
   MessageWidget *msgWidget;
   RsMessageModel *mMessageModel;
   QSortFilterProxyModel *mMessageProxyModel;

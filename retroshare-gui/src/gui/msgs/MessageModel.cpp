@@ -427,14 +427,14 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 	case COLUMN_THREAD_DATE:         return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
 
 	case COLUMN_THREAD_READ:         return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
-    case COLUMN_THREAD_AUTHOR:
-    {
-        QString str,comment ;
-        QList<QIcon> icons;
-		GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId), false, str, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
-
-        return QVariant(str);
-    }
+//    case COLUMN_THREAD_AUTHOR:
+//    {
+//        QString str,comment ;
+//        QList<QIcon> icons;
+//		GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId), false, str, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
+//
+//        return QVariant(str);
+//    }
 	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 
     default:
