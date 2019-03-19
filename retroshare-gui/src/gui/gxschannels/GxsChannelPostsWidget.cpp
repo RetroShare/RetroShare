@@ -256,6 +256,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, true);
+
 
     bool autoDownload ;
             rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
@@ -619,6 +621,8 @@ void GxsChannelPostsWidget::blank()
 {
 	mStateHelper->setWidgetEnabled(ui->postButton, false);
 	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+	
+	ui->subscribersLabel->setText("") ;
 
 	clearPosts();
 

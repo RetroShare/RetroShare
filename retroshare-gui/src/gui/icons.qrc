@@ -257,5 +257,8 @@
         <file>icons/png/circles-green.png</file>
         <file>icons/png/forums-default.png</file>
         <file>icons/png/forums-signed.png</file>
+        <file>icons/png/flame.png</file>
+        <file>icons/png/new.png</file>
+        <file>icons/png/top.png</file>
     </qresource>
 </RCC>
