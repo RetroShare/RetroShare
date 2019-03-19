@@ -62,6 +62,7 @@ public:
 		COLUMN_THREAD_TAGS         = 0x06,
 		COLUMN_THREAD_MSGID        = 0x07,
 		COLUMN_THREAD_NB_COLUMNS   = 0x08,
+		COLUMN_THREAD_CONTENT      = 0x08,
 	};
 
     enum QuickViewFilter {

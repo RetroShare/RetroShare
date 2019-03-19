@@ -32,6 +32,7 @@ class RSTreeWidgetItemCompareRole;
 class MessageWidget;
 class QTreeWidgetItem;
 class RsMessageModel;
+class MessageSortFilterProxyModel ;
 
 class MessagesDialog : public MainPage
 {
@@ -71,6 +72,7 @@ private slots:
   void messageTreeWidgetCustomPopupMenu(QPoint point);
   void folderlistWidgetCustomPopupMenu(QPoint);
   void showAuthorInPeopleTab();
+  void sortColumn(int col,Qt::SortOrder so);
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
@@ -143,7 +145,7 @@ private:
 
   MessageWidget *msgWidget;
   RsMessageModel *mMessageModel;
-  QSortFilterProxyModel *mMessageProxyModel;
+  MessageSortFilterProxyModel *mMessageProxyModel;
 
   /* Color definitions (for standard see qss.default) */
   QColor mTextColorInbox;

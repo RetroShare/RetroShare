@@ -406,35 +406,17 @@ QVariant RsMessageModel::sizeHintRole(int col) const
 
 QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-//    if(column == COLUMN_THREAD_DATA)
-//        return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
-
     return QVariant();
 }
-
-// QVariant RsMessageModel::unreadRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
-// {
-//     if(column == COLUMN_THREAD_UNREAD)
-//     return QVariant();
-//     lconst Rs::Msgs::MsgInfoSummary& fmpe,int column) const
-//
-// }
 
 QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
     switch(column)
     {
-	case COLUMN_THREAD_DATE:         return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
+	case COLUMN_THREAD_DATE:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
 
-	case COLUMN_THREAD_READ:         return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
-//    case COLUMN_THREAD_AUTHOR:
-//    {
-//        QString str,comment ;
-//        QList<QIcon> icons;
-//		GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId), false, str, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
-//
-//        return QVariant(str);
-//    }
+	case COLUMN_THREAD_READ:  return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
+
 	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 
     default:
@@ -449,6 +431,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 	case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
 	case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
+    case COLUMN_THREAD_STAR:
 	case COLUMN_THREAD_READ:return QVariant();
 	case COLUMN_THREAD_DATE:{
 		QDateTime qtime;
