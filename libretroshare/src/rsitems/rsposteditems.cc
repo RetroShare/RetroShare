@@ -28,6 +28,17 @@ void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LINK,mPost.mLink,"mPost.mLink") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG ,mPost.mNotes,"mPost.mNotes") ;
+
+	// Do not serialize mImage member if it is empty (keeps compatibility of new posts without image toward older RS)
+	// and do not expect to deserialize mImage member if the data block has been consummed entirely (keeps compatibility
+	// of new RS with older posts.
+
+    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+
+	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mImage.empty())
+		return ;
+
 	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
 }
 
