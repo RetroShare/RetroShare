@@ -123,6 +123,7 @@ bool p3Posted::getPostData(const uint32_t &token, std::vector<RsPostedPost> &msg
 				{
 					RsPostedPost msg = postItem->mPost;
 					msg.mMeta = postItem->meta;
+					postItem->toPostedPost(msg, true);
 					msg.calculateScores(now);
 
 					msgs.push_back(msg);
@@ -291,8 +292,10 @@ bool p3Posted::createPost(uint32_t &token, RsPostedPost &msg)
 	std::cerr << std::endl;
 
 	RsGxsPostedPostItem* msgItem = new RsGxsPostedPostItem();
-	msgItem->mPost = msg;
-	msgItem->meta = msg.mMeta;
+	//msgItem->mPost = msg;
+	//msgItem->meta = msg.mMeta;
+	msgItem->fromPostedPost(msg, true);
+		
 	
 	RsGenExchange::publishMsg(token, msgItem);
 	return true;
