@@ -36,7 +36,7 @@ PeerStatus::PeerStatus(QWidget *parent)
 	 iconLabel->setPixmap(QPixmap(":/icons/avatar_grey_128.png").scaledToHeight(S,Qt::SmoothTransformation));
     hbox->addWidget(iconLabel);
     
-    statusPeers = new QLabel( tr("Trusted nodes: 0/0"), this );
+    statusPeers = new QLabel( tr("Friends: 0/0"), this );
     hbox->addWidget(statusPeers);
 
     _compactMode = false;
@@ -50,10 +50,10 @@ void PeerStatus::getPeerStatus(unsigned int nFriendCount, unsigned int nOnlineCo
 	/* set users/friends/network */
 
 	if (statusPeers){
-		statusPeers->setToolTip(tr("Online Trusted nodes/Total trusted nodes") );
+		statusPeers->setToolTip(tr("Online Friends/Total Friends") );
 		QString text;
 		if (_compactMode) text = QString("%1/%2").arg(nOnlineCount).arg(nFriendCount);
-		else text = QString("<strong>%1:</strong> %2/%3 ").arg(tr("Trusted nodes")).arg(nOnlineCount).arg(nFriendCount);
+		else text = QString("<strong>%1:</strong> %2/%3 ").arg(tr("Friends")).arg(nOnlineCount).arg(nFriendCount);
 		statusPeers -> setText(text);
 	}
 	int S = QFontMetricsF(iconLabel->font()).height();
