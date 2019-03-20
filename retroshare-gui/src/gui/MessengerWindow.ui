@@ -19,7 +19,16 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
      <number>0</number>
     </property>
     <property name="spacing">
@@ -34,7 +43,16 @@
        </size>
       </property>
       <layout class="QGridLayout" name="gridLayout_5">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
         <number>6</number>
        </property>
        <item row="0" column="0">
@@ -70,11 +88,17 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="iconSize">
+            <size>
+             <width>27</width>
+             <height>27</height>
+            </size>
+           </property>
            <property name="popupMode">
             <enum>QToolButton::InstantPopup</enum>
            </property>
            <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextOnly</enum>
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -118,7 +142,16 @@
     <item row="1" column="0">
      <widget class="QFrame" name="friendListFrame">
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>3</number>
+       </property>
+       <property name="topMargin">
+        <number>3</number>
+       </property>
+       <property name="rightMargin">
+        <number>3</number>
+       </property>
+       <property name="bottomMargin">
         <number>3</number>
        </property>
        <item row="1" column="0">
@@ -142,7 +175,7 @@
      <x>0</x>
      <y>0</y>
      <width>258</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
