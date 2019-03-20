@@ -1558,7 +1558,7 @@ void GxsForumThreadWidget::togglePinUpPost()
 
     // normally this method is only called on top level items. We still check it just in case...
 
-    if(mThreadProxyModel->mapToSource(index).parent() != mThreadModel->root())
+    if(mThreadProxyModel->mapToSource(index).parent().isValid())
     {
         std::cerr << "(EE) togglePinUpPost() called on non top level post. This is inconsistent." << std::endl;
         return ;
