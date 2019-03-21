@@ -101,7 +101,7 @@ public:
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 
 	//static QImage makeDefaultIcon(const RsGxsId& id);
-    static QImage makeDefaultIcon(const RsGxsId& id);
+    static const QImage& makeDefaultIcon(const RsGxsId& id);
 
 	/* Processing */
 	static void enableProcess(bool enable);
@@ -155,6 +155,11 @@ protected:
 	/* Pending data */
 	QMap<QObject*,CallbackData> mPendingData;
 	QMap<QObject*,CallbackData>::iterator mPendingDataIterator;
+
+    static uint32_t mImagesAllocated;
+    static std::map<RsGxsId,std::pair<time_t,QImage> > mDefaultIconCache;
+    static time_t mLastIconCacheCleaning;
+
     int mCheckTimerId;
 	int mProcessDisableCount;
 

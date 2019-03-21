@@ -64,6 +64,12 @@
 //const int kRecognTagType_Dev_Patcher     	= 4;
 //const int kRecognTagType_Dev_Developer	 	= 5;
 
+uint32_t GxsIdDetails::mImagesAllocated = 0;
+time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
+std::map<RsGxsId,std::pair<time_t,QImage> > GxsIdDetails::mDefaultIconCache ;
+
+#define ICON_CACHE_STORAGE_TIME 		  600
+#define DELAY_BETWEEN_ICON_CACHE_CLEANING 300
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -450,9 +456,50 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+const QImage& GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
-    return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
+    // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
+    // on a regular time basis so as to get rid of unused images.
+
+    time_t now = time(NULL);
+
+    // cleanup the cache every 10 mins
+
+    if(mLastIconCacheCleaning + DELAY_BETWEEN_ICON_CACHE_CLEANING < now)
+    {
+        std::cerr << "(II) Cleaning the icons cache." << std::endl;
+        int nb_deleted = 0;
+
+        for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
+            if(it->second.first + ICON_CACHE_STORAGE_TIME < now)
+            {
+				it = mDefaultIconCache.erase(it);
+                ++nb_deleted;
+            }
+			else
+				++it;
+
+        mLastIconCacheCleaning = now;
+        std::cerr << "(II) Removed " << nb_deleted << " unused icons. Cache contains " << mDefaultIconCache.size() << " icons"<< std::endl;
+    }
+
+    // now look for the icon
+
+    auto it = mDefaultIconCache.find(id);
+
+    if(it != mDefaultIconCache.end())
+    {
+        it->second.first = now;
+        return it->second.second;
+    }
+
+    QImage image = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+
+    mDefaultIconCache[id] = std::make_pair(now,image);
+    it = mDefaultIconCache.find(id);
+
+    return it->second.second;
 }
 
 /**
