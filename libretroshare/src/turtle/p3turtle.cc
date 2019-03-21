@@ -1387,7 +1387,9 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 
 		if(it == _incoming_file_hashes.end())
 		{
+#ifdef P3TURTLE_DEBUG
 			std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << hash << " for client side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
+#endif
 			return false;
 		}
 
@@ -1399,7 +1401,9 @@ bool p3turtle::getTunnelServiceInfo(TurtleTunnelId tunnel_id,RsPeerId& vpid,RsFi
 
         if(it == _outgoing_tunnel_client_services.end())
 		{
+#ifdef P3TURTLE_DEBUG
             std::cerr << "p3turtle::handleRecvGenericTunnelItem(): hash " << tunnel.hash << " for server side tunnel endpoint " << std::hex << tunnel_id << std::dec << " has been removed (probably a late response)! Dropping the item. " << std::endl;
+#endif
 			return false;
 		}
 
@@ -1899,8 +1903,10 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 						new_vpid = _local_tunnels[item->tunnel_id].vpid ; // save it for off-mutex usage.
 					}
 				}
+#ifdef P3TURTLE_DEBUG
 			if(!found)
 				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << reinterpret_cast<void*>(item->tunnel_id) << std::endl ;
+#endif
 		}
 		else
 		{											// Nope, forward it back.

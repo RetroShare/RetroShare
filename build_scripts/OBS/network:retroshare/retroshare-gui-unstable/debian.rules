@@ -1,0 +1,68 @@
+#!/usr/bin/make -f
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	cat /etc/os-release
+	qmake --version
+	echo '. /etc/os-release'             >  /tmp/configJsonApi.sh
+	echo '[ "$$VERSION_ID" != "8" ] &&'  >> /tmp/configJsonApi.sh
+	echo '  echo "CONFIG+=rs_jsonapi"'   >> /tmp/configJsonApi.sh
+	echo 'true'                          >> /tmp/configJsonApi.sh
+	chmod +x /tmp/configJsonApi.sh
+	qmake \
+	$$(build_scripts/OBS/get_source_version.sh) RS_MINI_VERSION=9999 \
+	CONFIG-=debug CONFIG+=release PREFIX=/usr LIB_DIR=/usr/lib \
+	CONFIG+=no_retroshare_plugins CONFIG+=no_retroshare_nogui \
+	CONFIG+=retroshare_gui CONFIG+=no_tests CONFIG+=no_libresapi \
+	CONFIG+=no_libresapihttpserver CONFIG+=no_libresapilocalserver \
+	CONFIG+=no_retroshare_service CONFIG+=rs_deep_search CONFIG+=c++11 \
+	$$(/tmp/configJsonApi.sh) \
+	RetroShare.pro
+	touch $@
+
+build: build-stamp
+build-stamp: configure-stamp
+	dh_testdir
+	$(MAKE) -j$(shell nproc) || $(MAKE) -j$(shell nproc) || $(MAKE)
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f configure-stamp build-stamp
+	# Add here commands to clean up after the build process.
+	[ ! -f Makefile ] || $(MAKE) distclean
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	#dh_installdirs
+	$(MAKE) INSTALL_ROOT=$(CURDIR)/debian/tmp install
+
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
+
+# Build architecture-dependent files here.
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_install --list-missing
+	#dh_installdocs
+	#dh_installexamples
+	#dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure

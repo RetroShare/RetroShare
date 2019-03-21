@@ -41,9 +41,13 @@ public:
 	 */
 	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
 	~PostedCreatePostDialog();
+	
+	QPixmap picture;
 
 private slots:
 	void createPost();
+	void addPicture();
+
 
 private:
 	QString mLink;

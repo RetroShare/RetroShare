@@ -54,39 +54,32 @@ class HashThread ;
 class peerInfo
 {
 public:
-	explicit peerInfo(const RsPeerId& peerId_in):peerId(peerId_in),state(PQIPEER_NOT_ONLINE),desiredRate(0),actualRate(0),
-		lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
-	peerInfo(const RsPeerId& peerId_in,uint32_t state_in,uint32_t maxRate_in):
-		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
-		lastTS(0),
-		recvTS(0), lastTransfers(0), nResets(0), 
-		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
-		mRateIncrease(1)
-	{
-		return;
-	}
+	explicit peerInfo(const RsPeerId& peerId_in);
+
+//	peerInfo(const RsPeerId& peerId_in,uint32_t state_in,uint32_t maxRate_in):
+//		peerId(peerId_in),state(state_in),desiredRate(maxRate_in),actualRate(0),
+//		lastTS(0),
+//		recvTS(0), lastTransfers(0), nResets(0),
+//		rtt(0), rttActive(false), rttStart(0), rttOffset(0),
+//		mRateIncrease(1)
+//	{
+//		return;
+//	}
   	RsPeerId peerId;
   	uint32_t state;
-  	double desiredRate;
-  	double actualRate;
+  	double desiredRate;        /* speed at which the data should be requested */
+  	double actualRate;	       /* actual speed at which the data is received  */
 
-  	rstime_t lastTS; /* last Request */
-	rstime_t recvTS; /* last Recv */
-	uint32_t lastTransfers; /* data recvd in last second */
-	uint32_t nResets; /* count to disable non-existant files */
+  	rstime_t lastTS;           /* last Request */
+	rstime_t recvTS;           /* last Recv */
+	uint32_t lastTransfers;    /* data recvd in last second */
+	uint32_t nResets;          /* count to disable non-existant files */
 
-	/* rrt rate control */
-	uint32_t rtt;       /* last rtt */
-	bool     rttActive; /* have we initialised an rtt measurement */
-	rstime_t	 rttStart;  /* ts of request */
-	uint64_t rttOffset; /* end of request */
-	float    mRateIncrease; /* current rate */
+	uint32_t rtt;              /* last rtt */
+	bool     rttActive;        /* have we initialised an rtt measurement */
+	rstime_t	 rttStart;     /* ts of request */
+	uint64_t rttOffset;        /* end of request */
+	float    mRateIncrease;    /* current rate increase factor */
 };
 
 class ftFileStatus

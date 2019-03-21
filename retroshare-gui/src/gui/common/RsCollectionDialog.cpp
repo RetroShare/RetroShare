@@ -639,7 +639,7 @@ void RsCollectionDialog::updateSizes()
 	uint64_t total_size = 0 ;
 	uint32_t total_count = 0 ;
 
-	for(uint32_t i=0;i<ui._fileEntriesTW->topLevelItemCount();++i)
+	for(int i=0;i<ui._fileEntriesTW->topLevelItemCount();++i)
 	{
 		total_size  += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_SIZE ,ROLE_SELSIZE ).toULongLong();
 		total_count += ui._fileEntriesTW->topLevelItem(i)->data(COLUMN_FILEC,ROLE_SELFILEC).toULongLong();

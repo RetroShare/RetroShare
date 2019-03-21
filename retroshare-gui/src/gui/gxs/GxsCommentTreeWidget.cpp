@@ -271,7 +271,7 @@ void GxsCommentTreeWidget::vote(const RsGxsGroupId &groupId, const RsGxsMessageI
         std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
 
 	uint32_t token;
-        mCommentService->createVote(token, vote);
+        mCommentService->createNewVote(token, vote);
         mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, COMMENT_VOTE_ACK);
 }
 

@@ -37,6 +37,8 @@ struct RsSerializable
 	 */
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,
 	                            RsGenericSerializer::SerializeContext& ctx) = 0;
+
+	virtual ~RsSerializable() = default;
 };
 
 /** @def RS_SERIAL_PROCESS(I)

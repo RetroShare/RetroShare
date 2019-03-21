@@ -41,7 +41,7 @@ class GroupTreeWidget;
 class GroupItemInfo;
 class GxsMessageFrameWidget;
 class UIStateHelper;
-class RsGxsCommentService;
+struct RsGxsCommentService;
 class GxsCommentDialog;
 
 class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse

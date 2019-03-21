@@ -25,7 +25,7 @@
 #include "gui/common/UserNotify.h"
 #include "util/TokenQueue.h"
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 class GxsUserNotify : public UserNotify, public TokenResponse

@@ -1,0 +1,32 @@
+app: retroshare-gui-0.6.4
+
+build:
+  packages:
+    - linuxdeployqt
+    - desktop-file-utils
+    - glib2-devel
+    - sqlcipher-devel
+    - libmicrohttpd-devel
+    - libqt5-qtbase-devel
+    - libqt5-qtx11extras-devel
+    - libqt5-qtmultimedia-devel
+    - libqt5-qttools-devel
+    - openssl-devel
+    - libXScrnSaver-devel
+    - update-desktop-files
+    - libbz2-devel
+    - libupnp-devel
+
+script:
+  - cd $BUILD_SOURCE_DIR
+  - tar -xf RetroShare-0.6.4.tar.gz
+  - cd RetroShare-0.6.4
+  - sed -i 's/retroshare.xpm/retroshare/' data/retroshare.desktop
+  - sed -i 's|/usr/bin/retroshare|retroshare|' data/retroshare.desktop
+  - qmake-qt5 PREFIX=/usr CONFIG-=debug CONFIG+=release CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plugins
+  - make
+  - make INSTALL_ROOT=$BUILD_APPDIR install
+  - unset QTDIR; unset QT_PLUGIN_PATH ; unset LD_LIBRARY_PATH
+  - linuxdeployqt $BUILD_APPDIR/usr/share/applications/*.desktop -no-strip -bundle-non-qt-libs -verbose=3
+
+# Adding -no-strip to linuxdeployqt may fix "no version information available" bug on raspbian see https://github.com/probonopd/linuxdeployqt/issues/313

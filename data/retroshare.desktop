@@ -2,10 +2,10 @@
 Encoding=UTF-8
 Version=1.0
 Name=RetroShare
-Comment=Securely share files with your friends
+Comment=Securely communicate with your friends
 Exec=/usr/bin/retroshare %U
 Icon=/usr/share/pixmaps/retroshare.xpm
 Terminal=false
 Type=Application
-Categories=Application;Network;
+Categories=Application;Network;P2P;Feed;Chat;InstantMessaging
 MimeType=x-scheme-handler/retroshare;

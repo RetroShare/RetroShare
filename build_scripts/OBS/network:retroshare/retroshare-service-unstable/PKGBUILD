@@ -1,0 +1,47 @@
+# Maintainer: Gioacchino Mazzurco <gio@altermundi.net>
+# Contributor: AsamK
+# Contributor: sehraf
+# Contributor: stqn
+# Contributor: JHeaton <jheaton at archlinux dot us>
+# Contributor: Tristero <tristero at online dot de>
+# Contributor: funkyou
+
+pkgname=retroshare-service-unstable
+pkgver=stable
+pkgrel=0
+pkgdesc="Serverless encrypted instant messenger with filesharing, chatgroups, e-mail. System service version."
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
+url="https://retroshare.cc/"
+license=('AGPL' 'GPL' 'LGPL')
+depends=('bzip2' 'libupnp' 'libzip' 'openssl' 'rapidjson' 'sqlcipher' 'xapian-core')
+makedepends=('cmake' 'doxygen' 'git' 'pkgconf' 'qt5-tools')
+provides=('retroshare-service')
+conflicts=('retroshare-service')
+
+source=(RetroShare.tar.gz)
+
+md5sums=('ce46d636891e28acdac95091941582d3')
+
+prepare() {
+	cd "${srcdir}/RetroShare"
+}
+
+build() {
+	cd "${srcdir}/RetroShare"
+	qmake-qt5 PREFIX=/usr DATA_DIR=/usr/share/retroshare \
+    	$(build_scripts/OBS/get_source_version.sh) RS_MINI_VERSION=9999 \
+    	CONFIG-=debug \
+    	CONFIG+=ipv6 CONFIG+=no_retroshare_android_service \
+        CONFIG+=no_retroshare_android_notify_service \
+        CONFIG+=no_retroshare_plugins CONFIG+=no_retroshare_nogui \
+        CONFIG+=no_retroshare_gui CONFIG+=no_tests CONFIG+=no_libresapi \
+        CONFIG+=no_libresapihttpserver CONFIG+=no_libresapilocalserver \
+		CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=rs_deep_search \
+        CONFIG+=release
+	make -j$(nproc) || make -j$(nproc) || make
+}
+
+package() {
+	cd "${srcdir}/RetroShare"
+	make INSTALL_ROOT="${pkgdir}" install
+}

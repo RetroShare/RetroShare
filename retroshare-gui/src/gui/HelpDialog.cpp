@@ -69,19 +69,19 @@ HelpDialog::HelpDialog(QWidget *parent) :
 	QFile licenseFile(QLatin1String(":/help/licence.html"));
 	if (licenseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&licenseFile);
-		ui->license->setText(in.readAll());
+		ui->license->setHtml(in.readAll());
 	}
 
 	QFile authorsFile(QLatin1String(":/help/authors.html"));
 	if (authorsFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&authorsFile);
-		ui->authors->setText(in.readAll());
+		ui->authors->setHtml(in.readAll());
 	}
 
 	QFile thanksFile(QLatin1String(":/help/thanks.html"));
 	if (thanksFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
 		QTextStream in(&thanksFile);
-		ui->thanks->setText(in.readAll());
+		ui->thanks->setHtml(in.readAll());
 	}
 
 	ui->version->setText(Rshare::retroshareVersion(true));
