@@ -173,12 +173,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.1);
 
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Interactive);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -196,7 +196,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
     ui.listSplitter->setStretchFactor(1, 1);
-    
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT, tr("Search Subject"));
@@ -280,10 +279,7 @@ void MessagesDialog::preModelUpdate()
     // save current selection
 
     mTmpSavedSelectedIds.clear();
-    QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
-
-    foreach(const QModelIndex& m, qmil)
-		mTmpSavedSelectedIds.push_back(m.sibling(m.row(),RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString()) ;
+    getSelectedMessages(mTmpSavedSelectedIds);
 
     std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
 }
@@ -298,7 +294,6 @@ void MessagesDialog::postModelUpdate()
     foreach(const QString& s,mTmpSavedSelectedIds)
     {
         QModelIndex i = mMessageProxyModel->mapFromSource(mMessageModel->getIndexOfMessage(s.toStdString()));
-
         sel.select(i.sibling(i.row(),0),i.sibling(i.row(),RsMessageModel::COLUMN_THREAD_NB_COLUMNS-1));
     }
 

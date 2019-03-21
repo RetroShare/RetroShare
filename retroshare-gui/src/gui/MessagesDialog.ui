@@ -454,7 +454,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -745,6 +745,9 @@
            <property name="expandsOnDoubleClick">
             <bool>false</bool>
            </property>
+           <attribute name="headerCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
           </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QGridLayout" name="msgLayout"/>
@@ -850,8 +853,8 @@
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>
