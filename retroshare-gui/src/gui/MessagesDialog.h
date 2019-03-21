@@ -59,6 +59,10 @@ public:
 
   void setTextColorInbox(QColor color) { mTextColorInbox = color; }
 
+signals:
+  void messagesAboutToLoad();
+  void messagesLoaded();
+
 protected:
   bool eventFilter(QObject *obj, QEvent *ev);
   int getSelectedMessages(QList<QString>& mid);
@@ -66,7 +70,9 @@ protected:
 public slots:
   //void insertMessages();
   void messagesTagsChanged();
-  
+  void preModelUpdate();
+  void postModelUpdate();
+
 private slots:
   /** Create the context popup menu and it's submenus */
   void messageTreeWidgetCustomPopupMenu(QPoint point);
@@ -152,6 +158,8 @@ private:
 
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
+
+  QList<QString> mTmpSavedSelectedIds;
 };
 
 #endif

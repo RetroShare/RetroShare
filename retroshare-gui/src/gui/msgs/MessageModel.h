@@ -153,6 +153,7 @@ public slots:
 
 signals:
     void messagesLoaded();	// emitted after the messages have been set. Can be used to updated the UI.
+    void messagesAboutToLoad();
 
 private:
 	bool passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const;
@@ -184,4 +185,5 @@ private:
     FilterType  mFilterType;
 
     std::vector<Rs::Msgs::MsgInfoSummary> mMessages;
+    std::map<std::string,uint32_t> mMessagesMap;
 };

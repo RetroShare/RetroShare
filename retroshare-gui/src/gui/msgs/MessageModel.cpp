@@ -547,9 +547,13 @@ void RsMessageModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs
     endRemoveRows();
 
     mMessages.clear();
+    mMessagesMap.clear();
 
     for(auto it(msgs.begin());it!=msgs.end();++it)
+    {
+        mMessagesMap[(*it).msgId] = mMessages.size();
     	mMessages.push_back(*it);
+    }
 
     // now update prow for all posts
 
@@ -614,10 +618,14 @@ void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfo
 
 void RsMessageModel::updateMessages()
 {
+    emit messagesAboutToLoad();
+
     std::list<Rs::Msgs::MsgInfoSummary> msgs;
 
     getMessageSummaries(mCurrentBox,msgs);
 	setMessages(msgs);
+
+    emit messagesLoaded();
 }
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
@@ -645,16 +653,15 @@ QModelIndex RsMessageModel::getIndexOfMessage(const std::string& mid) const
 {
     // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
 
-    for(uint32_t i=0;i<mMessages.size();++i)
-        if(mMessages[i].msgId == mid)
-        {
-            quintptr ref ;
-            convertMsgIndexToInternalId(i,ref);
+    auto it = mMessagesMap.find(mid);
 
-            return createIndex(i,0,ref);
-        }
+    if(it == mMessagesMap.end() || it->second >= mMessages.size())
+        return QModelIndex();
 
-    return QModelIndex();
+	quintptr ref ;
+	convertMsgIndexToInternalId(it->second,ref);
+
+	return createIndex(it->second,0,ref);
 }
 
 void RsMessageModel::debug_dump() const
@@ -662,5 +669,3 @@ void RsMessageModel::debug_dump() const
     for(auto it(mMessages.begin());it!=mMessages.end();++it)
 		std::cerr << "Id: " << it->msgId << ": from " << it->srcId << ": flags=" << it->msgflags << ": title=\"" << it->title << "\"" << std::endl;
 }
-
-

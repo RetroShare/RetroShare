@@ -144,9 +144,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 
-	ui.messageTreeWidget->setSortingEnabled(true);
+	ui.messageTreeWidget->setSortingEnabled(false);
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
+    ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
@@ -251,6 +252,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 
+    connect(mMessageModel,SIGNAL(messagesAboutToLoad()),this,SLOT(preModelUpdate()));
+    connect(mMessageModel,SIGNAL(messagesLoaded()),this,SLOT(postModelUpdate()));
+
     connect(ui.listWidget,           SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(folderlistWidgetCustomPopupMenu(QPoint)));
     connect(ui.listWidget,           SIGNAL(currentRowChanged(int)), this, SLOT(changeBox(int)));
     connect(ui.quickViewWidget,      SIGNAL(currentRowChanged(int)), this, SLOT(changeQuickView(int)));
@@ -271,10 +275,42 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.messageTreeWidget->selectionModel(), SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(currentChanged(const QModelIndex&,const QModelIndex&)));
 }
 
+void MessagesDialog::preModelUpdate()
+{
+    // save current selection
+
+    mTmpSavedSelectedIds.clear();
+    QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
+
+    foreach(const QModelIndex& m, qmil)
+		mTmpSavedSelectedIds.push_back(m.sibling(m.row(),RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString()) ;
+
+    std::cerr << "Pre-change: saving selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+}
+
+void MessagesDialog::postModelUpdate()
+{
+    // restore selection
+
+    std::cerr << "Post-change: restoring selection for " << mTmpSavedSelectedIds.size() << " indexes" << std::endl;
+    QItemSelection sel;
+
+    foreach(const QString& s,mTmpSavedSelectedIds)
+    {
+        QModelIndex i = mMessageProxyModel->mapFromSource(mMessageModel->getIndexOfMessage(s.toStdString()));
+
+        sel.select(i.sibling(i.row(),0),i.sibling(i.row(),RsMessageModel::COLUMN_THREAD_NB_COLUMNS-1));
+    }
+
+    ui.messageTreeWidget->selectionModel()->select(sel,QItemSelectionModel::SelectCurrent);
+}
+
 void MessagesDialog::sortColumn(int col,Qt::SortOrder so)
 {
     mMessageProxyModel->setSortingEnabled(true);
+	ui.messageTreeWidget->setSortingEnabled(true);
     mMessageProxyModel->sort(col,so);
+	ui.messageTreeWidget->setSortingEnabled(false);
     mMessageProxyModel->setSortingEnabled(false);
 }
 
