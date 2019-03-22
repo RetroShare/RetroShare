@@ -889,8 +889,12 @@ PostedItem QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
-PostedItem QFrame#mainFrame{
+PostedItem QFrame#mainFrame [new=false]{
 	background: white;
+}
+
+PostedItem > QFrame#mainFrame[new=true] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);
 }
 
 PostedItem QFrame#frame_picture{
