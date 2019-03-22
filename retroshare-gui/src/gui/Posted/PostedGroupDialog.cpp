@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#include <QBuffer>
 
 #include "PostedGroupDialog.h"
 
@@ -25,7 +26,7 @@
 
 const uint32_t PostedCreateEnabledFlags = ( 
 			  GXS_GROUP_FLAGS_NAME        |
-			  // GXS_GROUP_FLAGS_ICON        |
+			   GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -90,14 +91,31 @@ QPixmap PostedGroupDialog::serviceImage()
 	return QPixmap(":/icons/png/posted.png");
 }
 
+void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMetaData &meta)
+{
+	group.mMeta = meta;
+	group.mDescription = getDescription().toUtf8().constData();
+
+	QPixmap pixmap = getLogo();
+
+	if (!pixmap.isNull()) {
+		QByteArray ba;
+		QBuffer buffer(&ba);
+
+		buffer.open(QIODevice::WriteOnly);
+		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
+
+		group.mGroupImage.copy((uint8_t *) ba.data(), ba.size());
+	} else {
+		group.mGroupImage.clear();
+	}
+}
+
 bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
 {
 	// Specific Function.
 	RsPostedGroup grp;
-	grp.mMeta = meta;
-	grp.mDescription = getDescription().toStdString();
-	std::cerr << "PostedGroupDialog::service_CreateGroup() storing to Queue";
-	std::cerr << std::endl;
+	preparePostedGroup(grp, meta);
 
 	rsPosted->createGroup(token, grp);
 
@@ -107,8 +125,7 @@ bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaDa
 bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
 {
 	RsPostedGroup grp;
-	grp.mMeta = editedMeta;
-	grp.mDescription = getDescription().toUtf8().constData();
+	preparePostedGroup(grp, editedMeta);
 
 	std::cerr << "PostedGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
@@ -140,8 +157,18 @@ bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroup
 	std::cerr << "PostedGroupDialog::service_loadGroup() Unfinished Loading";
 	std::cerr << std::endl;
 
-	groupMetaData = groups[0].mMeta;
-	description = QString::fromUtf8(groups[0].mDescription.c_str());
+	const RsPostedGroup &group = groups[0];
+	groupMetaData = group.mMeta;
+	description = QString::fromUtf8(group.mDescription.c_str());
+	
+	if (group.mGroupImage.mData) {
+		QPixmap pixmap;
+		if (pixmap.loadFromData(group.mGroupImage.mData, group.mGroupImage.mSize, "PNG")) {
+			setLogo(pixmap);
+		}
+	} else {
+			setLogo(QPixmap(":/icons/png/posted.png"));
+	}
 
 	return true;
 }

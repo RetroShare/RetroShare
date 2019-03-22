@@ -35,6 +35,7 @@ public:
 	PostedGroupInfoData() : RsUserdata() {}
 
 public:
+	QMap<RsGxsGroupId, QIcon> mIcon;
 	QMap<RsGxsGroupId, QString> mDescription;
 };
 
@@ -102,15 +103,15 @@ QString PostedDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/icons/png/feedreader.png";
-	case ICON_SUBSCRIBED_GROUP:
-		return ":/icons/png/feed-subscribed.png";
-	case ICON_POPULAR_GROUP:
-		return ":/icons/png/feed-popular.png";
-	case ICON_OTHER_GROUP:
-		return ":/icons/png/feed-other.png";
-	case ICON_DEFAULT:
 		return "";
+	case ICON_SUBSCRIBED_GROUP:
+		return "";
+	case ICON_POPULAR_GROUP:
+		return "";
+	case ICON_OTHER_GROUP:
+		return "";
+	case ICON_DEFAULT:
+		return ":/icons/png/posted.png";
 	}
 
 	return "";
@@ -159,6 +160,12 @@ void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGrou
 	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
 		RsPostedGroup &group = *groupIt;
 		groupInfo.push_back(group.mMeta);
+		
+		if (group.mGroupImage.mData != NULL) {
+			QPixmap image;
+			image.loadFromData(group.mGroupImage.mData, group.mGroupImage.mSize, "PNG");
+			postedData->mIcon[group.mMeta.mGroupId] = image;
+		}
 
 		if (!group.mDescription.empty()) {
 			postedData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
@@ -180,5 +187,10 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, Gr
 	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = postedData->mDescription.find(groupInfo.mGroupId);
 	if (descriptionIt != postedData->mDescription.end()) {
 		groupItemInfo.description = descriptionIt.value();
+	}
+	
+	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = postedData->mIcon.find(groupInfo.mGroupId);
+	if (iconIt != postedData->mIcon.end()) {
+		groupItemInfo.icon = iconIt.value();
 	}
 }
