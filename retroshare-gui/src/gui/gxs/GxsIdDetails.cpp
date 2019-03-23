@@ -472,7 +472,7 @@ const QImage& GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
         int nb_deleted = 0;
 
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
-            if(it->second.first + ICON_CACHE_STORAGE_TIME < now)
+            if(it->second.first + ICON_CACHE_STORAGE_TIME < now && it->second.second.isDetached())
             {
 				it = mDefaultIconCache.erase(it);
                 ++nb_deleted;
