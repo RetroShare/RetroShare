@@ -64,15 +64,17 @@ struct BannedNodeInfo
 class Reputation
 {
 public:
-	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
-                                                                                            
-	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
+	Reputation() :
+	    mOwnOpinion(static_cast<int32_t>(RsOpinion::NEUTRAL)), mOwnOpinionTs(0),
+	    mFriendAverage(1.0f),
+	    /* G10h4ck: TODO shouln't this be initialized with
+		 * RsReputation::NEUTRAL or UNKOWN? */
+	    mReputationScore(static_cast<float>(RsOpinion::NEUTRAL)),
+	    mIdentityFlags(0) {}
 
 	void updateReputation();
 
-	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
+	std::map<RsPeerId, RsOpinion> mOpinions;
 	int32_t mOwnOpinion;
 	rstime_t  mOwnOpinionTs;
 
@@ -91,11 +93,6 @@ public:
 
 
 //!The p3GxsReputation service.
- /**
-  *
-  * 
-  */
-
 class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
@@ -103,20 +100,26 @@ public:
     virtual RsServiceInfo getServiceInfo();
 
     /***** Interface for RsReputations *****/
-    virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-    virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) ;
-    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) ;
+	virtual bool setOwnOpinion(const RsGxsId& key_id, RsOpinion op);
+	virtual bool getOwnOpinion(const RsGxsId& key_id, RsOpinion& op) ;
+	virtual bool getReputationInfo(
+	        const RsGxsId& id, const RsPgpId& ownerNode, RsReputationInfo& info,
+	        bool stamp = true );
     virtual bool isIdentityBanned(const RsGxsId& id) ;
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
-    virtual ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL);
 
-    virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
-    virtual bool nodeAutoPositiveOpinionForContacts() ;
+	RsReputationLevel overallReputationLevel(const RsGxsId& id) override;
 
-    virtual void setRememberDeletedNodesThreshold(uint32_t days) ;
-    virtual uint32_t rememberDeletedNodesThreshold() ;
+	virtual RsReputationLevel overallReputationLevel(
+	        const RsGxsId& id, uint32_t* identity_flags );
+
+	virtual void setAutoPositiveOpinionForContacts(bool b) ;
+	virtual bool autoPositiveOpinionForContacts() ;
+
+	virtual void setRememberBannedIdThreshold(uint32_t days) ;
+	virtual uint32_t rememberBannedIdThreshold() ;
 
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
@@ -149,7 +152,8 @@ private:
     void updateBannedNodesProxy();
 
     // internal update of data. Takes care of cleaning empty boxes.
-    void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
+	void locked_updateOpinion(
+	        const RsPeerId& from, const RsGxsId& about, RsOpinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
 #ifdef TO_REMOVE
 	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);

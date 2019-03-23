@@ -100,7 +100,7 @@ class RsGxsReputationSetItem: public RsReputationItem
 public:
     RsGxsReputationSetItem()  :RsReputationItem(RS_PKT_SUBTYPE_GXS_REPUTATION_SET_ITEM)
     {
-        mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
+		mOwnOpinion = static_cast<uint32_t>(RsOpinion::NEUTRAL);
         mOwnOpinionTS = 0;
         mIdentityFlags = 0;
         mLastUsedTS = 0;

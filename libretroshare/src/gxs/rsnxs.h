@@ -253,13 +253,14 @@ public:
      * \param identity_flags	Flags of the identity
      * \return
      */
-    static RsReputations::ReputationLevel minReputationForRequestingMessages(uint32_t /* group_sign_flags */, uint32_t /* identity_flags */)
+	static RsReputationLevel minReputationForRequestingMessages(
+	        uint32_t /* group_sign_flags */, uint32_t /* identity_flags */ )
 	{
 		// We always request messages, except if the author identity is locally banned.
-
-		return RsReputations::REPUTATION_REMOTELY_NEGATIVE;
+		return RsReputationLevel::REMOTELY_NEGATIVE;
 	}
-    static RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags, uint32_t identity_flags)
+	static RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags, uint32_t identity_flags )
 	{
 		// If anti-spam is enabled, do not send messages from authors with bad reputation. The policy is to only forward messages if the reputation of the author is at least
 		// equal to the minimal reputation in the table below (R=remotely, L=locally, P=positive, N=negative, O=neutral) :
@@ -277,20 +278,20 @@ public:
 		//
 
 		if(identity_flags & RS_IDENTITY_FLAGS_PGP_KNOWN)
-			return RsReputations::REPUTATION_NEUTRAL;
+			return RsReputationLevel::NEUTRAL;
 		else if(identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED)
 		{
 			if(group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN)
-				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+				return RsReputationLevel::REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_NEUTRAL;
+				return RsReputationLevel::NEUTRAL;
 		}
 		else
 		{
 			if( (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN) || (group_sign_flags & GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_GPG))
-				return RsReputations::REPUTATION_REMOTELY_POSITIVE;
+				return RsReputationLevel::REMOTELY_POSITIVE;
 			else
-				return RsReputations::REPUTATION_NEUTRAL;
+				return RsReputationLevel::NEUTRAL;
 		}
 	}
 };

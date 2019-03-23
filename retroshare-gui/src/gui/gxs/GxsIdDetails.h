@@ -49,7 +49,8 @@ typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIden
 class ReputationItemDelegate: public QStyledItemDelegate
 {
 public:
-    ReputationItemDelegate(RsReputations::ReputationLevel max_level_to_display) : mMaxLevelToDisplay(max_level_to_display) {}
+	ReputationItemDelegate(RsReputationLevel max_level_to_display) :
+	    mMaxLevelToDisplay(static_cast<uint32_t>(max_level_to_display)) {}
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
@@ -96,7 +97,8 @@ public:
 	static QString getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details);
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
-	static QIcon getReputationIcon(RsReputations::ReputationLevel icon_index, uint32_t min_reputation);
+	static QIcon getReputationIcon(
+	        RsReputationLevel icon_index, uint32_t min_reputation );
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 

@@ -770,17 +770,17 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
     QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
     flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
-    flagaspositiveAct->setData(RsReputations::OPINION_POSITIVE) ;
+	flagaspositiveAct->setData(static_cast<uint32_t>(RsOpinion::POSITIVE));
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
     flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
-    flagasneutralAct->setData(RsReputations::OPINION_NEUTRAL) ;
+	flagasneutralAct->setData(static_cast<uint32_t>(RsOpinion::NEUTRAL));
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
     flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
-    flagasnegativeAct->setData(RsReputations::OPINION_NEGATIVE) ;
+	flagasnegativeAct->setData(static_cast<uint32_t>(RsOpinion::NEGATIVE));
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
     QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
@@ -876,19 +876,19 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 #endif
 		contextMnu.addSeparator();
 
-		RsReputations::Opinion op ;
+		RsOpinion op;
 
 		if(!rsIdentity->isOwnId(current_post.mAuthorId) && rsReputations->getOwnOpinion(current_post.mAuthorId,op))
 		{
 			QMenu *submenu1 = contextMnu.addMenu(tr("Author's reputation")) ;
 
-			if(op != RsReputations::OPINION_POSITIVE)
+			if(op != RsOpinion::POSITIVE)
 				submenu1->addAction(flagaspositiveAct);
 
-			if(op != RsReputations::OPINION_NEUTRAL)
+			if(op != RsOpinion::NEUTRAL)
 				submenu1->addAction(flagasneutralAct);
 
-			if(op != RsReputations::OPINION_NEGATIVE)
+			if(op != RsOpinion::NEGATIVE)
 				submenu1->addAction(flagasnegativeAct);
 		}
 
@@ -1294,8 +1294,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		return;
 	}
 
-    uint32_t overall_reputation = rsReputations->overallReputationLevel(msg.mMeta.mAuthorId) ;
-    bool redacted = (overall_reputation == RsReputations::REPUTATION_LOCALLY_NEGATIVE) ;
+	RsReputationLevel overall_reputation =
+	        rsReputations->overallReputationLevel(msg.mMeta.mAuthorId);
+	bool redacted =
+	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
     
 #ifdef TO_REMOVE
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
@@ -1621,9 +1623,12 @@ void GxsForumThreadWidget::flagperson()
 		return;
 	}
 
-	RsReputations::Opinion opinion = static_cast<RsReputations::Opinion>(qobject_cast<QAction*>(sender())->data().toUInt());
+	RsOpinion opinion =
+	        static_cast<RsOpinion>(
+	            qobject_cast<QAction*>(sender())->data().toUInt() );
 
-    mThreadModel->setAuthorOpinion(mThreadProxyModel->mapToSource(getCurrentIndex()),opinion);
+	mThreadModel->setAuthorOpinion(
+	            mThreadProxyModel->mapToSource(getCurrentIndex()), opinion );
 }
 
 void GxsForumThreadWidget::replytoforummessage()        { async_msg_action( &GxsForumThreadWidget::replyForumMessageData ); }

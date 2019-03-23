@@ -754,6 +754,7 @@ SOURCES += serialiser/rsserializable.cc \
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
+    retroshare/rsreputations.h \
 	gxs/rsgixs.h \
 	services/p3idservice.h \
 	rsitems/rsgxsiditems.h \

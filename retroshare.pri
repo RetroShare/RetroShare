@@ -241,6 +241,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 
 ################################################################################

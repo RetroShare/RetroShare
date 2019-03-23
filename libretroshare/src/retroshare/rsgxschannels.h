@@ -42,7 +42,7 @@ class RsGxsChannels;
  */
 extern RsGxsChannels* rsGxsChannels;
 
-// These should be in rsgxscommon.h
+
 struct RsGxsChannelGroup : RsSerializable
 {
 	RsGroupMetaData mMeta;

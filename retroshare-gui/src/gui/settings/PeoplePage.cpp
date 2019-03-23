@@ -38,12 +38,12 @@ PeoplePage::PeoplePage(QWidget * parent, Qt::WindowFlags flags)
     connect(ui.autoAddFriendIdsAsContact_CB,SIGNAL(toggled(bool)),this,SLOT(updateAutoAddFriendIdsAsContact()));
 }
 
-void PeoplePage::updateAutoPositiveOpinion() {  rsReputations->setNodeAutoPositiveOpinionForContacts(ui.autoPositiveOpinion_CB->isChecked()) ; }
+void PeoplePage::updateAutoPositiveOpinion() {  rsReputations->setAutoPositiveOpinionForContacts(ui.autoPositiveOpinion_CB->isChecked()) ; }
 
 void PeoplePage::updateThresholdForRemotelyPositiveReputation() {  rsReputations->setThresholdForRemotelyPositiveReputation(ui.thresholdForPositive_SB->value()); }
 void PeoplePage::updateThresholdForRemotelyNegativeReputation() {  rsReputations->setThresholdForRemotelyNegativeReputation(ui.thresholdForNegative_SB->value()); }
 
-void PeoplePage::updateRememberDeletedNodes()       {    rsReputations->setRememberDeletedNodesThreshold(ui.preventReloadingBannedIdentitiesFor_SB->value()); }
+void PeoplePage::updateRememberDeletedNodes()       {    rsReputations->setRememberBannedIdThreshold(ui.preventReloadingBannedIdentitiesFor_SB->value()); }
 void PeoplePage::updateDeleteBannedNodesThreshold() {    rsIdentity->setDeleteBannedNodesThreshold(ui.deleteBannedIdentitiesAfter_SB->value());}
 void PeoplePage::updateAutoAddFriendIdsAsContact()  {    rsIdentity->setAutoAddFriendIdsAsContact(ui.autoAddFriendIdsAsContact_CB->isChecked()) ; }
 
@@ -54,7 +54,7 @@ PeoplePage::~PeoplePage()
 /** Loads the settings for this page */
 void PeoplePage::load()
 {
-    bool auto_positive_contacts = rsReputations->nodeAutoPositiveOpinionForContacts() ;
+    bool auto_positive_contacts = rsReputations->autoPositiveOpinionForContacts() ;
     uint32_t threshold_for_positive = rsReputations->thresholdForRemotelyPositiveReputation();
     uint32_t threshold_for_negative = rsReputations->thresholdForRemotelyNegativeReputation();
     bool auto_add_friend_ids_as_contact = rsIdentity->autoAddFriendIdsAsContact();
@@ -64,5 +64,5 @@ void PeoplePage::load()
     whileBlocking(ui.thresholdForPositive_SB               )->setValue(threshold_for_positive);
     whileBlocking(ui.thresholdForNegative_SB               )->setValue(threshold_for_negative);
     whileBlocking(ui.deleteBannedIdentitiesAfter_SB        )->setValue(rsIdentity->deleteBannedNodesThreshold());
-    whileBlocking(ui.preventReloadingBannedIdentitiesFor_SB)->setValue(rsReputations->rememberDeletedNodesThreshold());
+    whileBlocking(ui.preventReloadingBannedIdentitiesFor_SB)->setValue(rsReputations->rememberBannedIdThreshold());
 }
