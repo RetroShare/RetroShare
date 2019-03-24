@@ -48,7 +48,7 @@ addons:
 
 before_script:
   - if [ $TRAVIS_OS_NAME == linux ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.13 CONFIG+=no_retroshare_plugins INCLUDEPATH+=/usr/local/opt/openssl/include/ INCLUDEPATH+=/usr/local/Cellar/sqlcipher/4.0.1/include INCLUDEPATH+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/include QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/ QMAKE_LIBDIR+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib QMAKE_LIBDIR+=/usr/local/Cellar/sqlcipher/4.0.1/lib; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.14 CONFIG+=no_retroshare_plugins INCLUDEPATH+=/usr/local/opt/openssl/include/ INCLUDEPATH+=/usr/local/Cellar/sqlcipher/4.0.1/include INCLUDEPATH+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/include QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/ QMAKE_LIBDIR+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib QMAKE_LIBDIR+=/usr/local/Cellar/sqlcipher/4.0.1/lib; fi
 
 script:
   - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j4; fi
