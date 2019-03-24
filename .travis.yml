@@ -22,7 +22,6 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install ccach; export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew doctor; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
