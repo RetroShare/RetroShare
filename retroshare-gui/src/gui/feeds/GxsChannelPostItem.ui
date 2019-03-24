@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1052</width>
-    <height>338</height>
+    <width>1140</width>
+    <height>342</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gxsChannelPostItem_GLayout">
@@ -360,12 +360,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
@@ -385,12 +379,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
               </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
@@ -412,12 +400,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
@@ -438,12 +420,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
-              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
@@ -463,12 +439,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>24</width>
-                <height>16777215</height>
-               </size>
               </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
