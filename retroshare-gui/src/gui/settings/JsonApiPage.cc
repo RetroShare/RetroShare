@@ -54,7 +54,7 @@ bool JsonApiPage::updateParams(QString &errmsg)
 		changed = true;
 	}
 
-	uint16_t port = ui.portSpinBox->value();
+	uint16_t port = static_cast<uint16_t>(ui.portSpinBox->value());
 	if(port != Settings->getJsonApiPort())
 	{
 		Settings->setJsonApiPort(port);

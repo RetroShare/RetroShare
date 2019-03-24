@@ -370,11 +370,11 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it2 = _gxs_tunnel_contacts.find(tunnel_id) ; 
             
             if(it2 != _gxs_tunnel_contacts.end())
-	    {
-		    it2->second.client_services.insert(item->service_id) ;
-		    peer_from = it2->second.to_gxs_id ;
-		    is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_CLIENT);
-	    }
+			{
+				it2->second.client_services.insert(item->service_id) ;
+				peer_from = it2->second.to_gxs_id ;
+				is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_SERVER);
+			}
             
             // Check if the item has already been received. This is necessary because we actually re-send items until an ACK is received. If the ACK gets lost (connection interrupted) the
             // item may be received twice. This is conservative and ensure that no item is lost nor received twice.

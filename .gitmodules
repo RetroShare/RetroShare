@@ -4,3 +4,6 @@
 [submodule "cmark"]
 	path = supportlibs/cmark
 	url = https://github.com/commonmark/cmark.git
+[submodule "build_scripts/OBS"]
+	path = build_scripts/OBS
+	url = https://github.com/RetroShare/OBS.git

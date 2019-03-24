@@ -18,6 +18,33 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "TransfersDialog.h"
+
+#include "gui/notifyqt.h"
+#include "gui/RetroShareLink.h"
+#include "gui/common/FilesDefs.h"
+#include "gui/common/RsCollection.h"
+#include "gui/common/RSTreeView.h"
+#include "gui/common/RsUrlHandler.h"
+#include "gui/FileTransfer/DetailsDialog.h"
+#include "gui/FileTransfer/DLListDelegate.h"
+#include "gui/FileTransfer/FileTransferInfoWidget.h"
+#include "gui/FileTransfer/SearchDialog.h"
+#include "gui/FileTransfer/SharedFilesDialog.h"
+#include "gui/FileTransfer/TransferUserNotify.h"
+#include "gui/FileTransfer/ULListDelegate.h"
+#include "gui/FileTransfer/xprogressbar.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+#include "util/QtVersion.h"
+#include "util/RsFile.h"
+
+#include "retroshare/rsdisc.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsplugin.h"
+#include "retroshare/rsturtle.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QFileDialog>
@@ -29,37 +56,9 @@
 #include <QShortcut>
 #include <QStandardItemModel>
 
-#include <gui/common/FilesDefs.h>
-#include <gui/common/RsCollection.h>
-#include <gui/common/RsUrlHandler.h>
-#include <gui/common/RSTreeView.h>
-
 #include <algorithm>
 #include <limits>
 #include <math.h>
-
-#include "TransfersDialog.h"
-#include <gui/RetroShareLink.h>
-#include "DetailsDialog.h"
-#include "DLListDelegate.h"
-#include "ULListDelegate.h"
-#include "FileTransferInfoWidget.h"
-#include <gui/FileTransfer/SearchDialog.h>
-#include <gui/FileTransfer/SharedFilesDialog.h>
-#include "xprogressbar.h"
-#include <gui/settings/rsharesettings.h>
-#include "util/misc.h"
-#include <gui/common/RsCollection.h>
-#include "TransferUserNotify.h"
-#include "util/QtVersion.h"
-#include "util/RsFile.h"
-
-#include <retroshare/rsfiles.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsdisc.h>
-#include <retroshare/rsplugin.h>
-
-#include <retroshare/rsturtle.h>
 
 /* Images for context menu icons */
 #define IMAGE_INFO                 ":/images/fileinfo.png"
@@ -142,7 +141,7 @@ public:
 #endif
 		return mDownloads[entry].peers.size();
 	}
-	int columnCount(const QModelIndex &parent = QModelIndex()) const
+	int columnCount(const QModelIndex &/*parent*/ = QModelIndex()) const
 	{
 		return COLUMN_COUNT ;
 	}
@@ -250,7 +249,7 @@ public:
 		return createIndex(entry,child.column(),parent_ref) ;
 	}
 
-	QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const
+	QVariant headerData(int section, Qt::Orientation /*orientation*/, int role = Qt::DisplayRole) const
 	{
 		if(role != Qt::DisplayRole)
 			return QVariant();
@@ -279,7 +278,7 @@ public:
 		if(!index.isValid())
 			return QVariant();
 
-		int coln = index.column() ;
+		//int coln = index.column() ;
 
 		switch(role)
 		{
@@ -1007,6 +1006,7 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
 	collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
 	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
+	connect(NotifyQt::getInstance(), SIGNAL(downloadComplete(QString)), this, SLOT(collAutoOpen(QString)));
 
 	/** Setup the actions for the download header context menu */
     showDLSizeAct= new QAction(tr("Size"),this);
@@ -2820,6 +2820,35 @@ void TransfersDialog::collOpen()
 	RsCollection collection;
 	if (collection.load(this)) {
 		collection.downloadFiles();
+	}
+}
+
+void TransfersDialog::collAutoOpen(const QString &fileHash)
+{
+	if (Settings->valueFromGroup("Transfer","AutoDLColl").toBool())
+	{
+		RsFileHash hash = RsFileHash(fileHash.toStdString());
+		FileInfo info;
+		if (rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info)) {
+
+			/* make path for downloaded files */
+			if (info.downloadStatus == FT_STATE_COMPLETE) {
+				std::string path;
+				path = info.path + "/" + info.fname;
+
+				/* open file with a suitable application */
+				QFileInfo qinfo;
+				qinfo.setFile(QString::fromUtf8(path.c_str()));
+				if (qinfo.exists()) {
+					if (qinfo.absoluteFilePath().endsWith(RsCollection::ExtensionString)) {
+						RsCollection collection;
+						if (collection.load(qinfo.absoluteFilePath(), false)) {
+							collection.autoDownloadFiles();
+						}
+					}
+				}
+			}
+		}
 	}
 }
 

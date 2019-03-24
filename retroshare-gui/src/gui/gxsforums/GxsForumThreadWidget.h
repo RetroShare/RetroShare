@@ -30,13 +30,12 @@
 class QSortFilterProxyModel;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
-class RsGxsForumMsg;
 class GxsForumsFillThread;
 class QItemSelection;
-class RsGxsForumGroup;
+struct RsGxsForumGroup;
 class RsGxsForumModel;
-class RsGxsForumMsg;
-class ForumModelPostEntry;
+struct RsGxsForumMsg;
+struct ForumModelPostEntry;
 
 namespace Ui {
 class GxsForumThreadWidget;

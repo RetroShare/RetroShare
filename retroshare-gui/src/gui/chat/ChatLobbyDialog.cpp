@@ -300,9 +300,17 @@ void ChatLobbyDialog::initParticipantsContextMenu(QMenu *contextMnu, QList<RsGxs
 	{
 		distantChatAct->setEnabled(true);
 		sendMessageAct->setEnabled(true);
-		votePositiveAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_POSITIVE);
-		voteNeutralAct->setEnabled((rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_POSITIVE) || (rsReputations->overallReputationLevel(gxsid) == RsReputations::REPUTATION_LOCALLY_NEGATIVE) );
-		voteNegativeAct->setEnabled(rsReputations->overallReputationLevel(gxsid) != RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+		votePositiveAct->setEnabled(
+		            rsReputations->overallReputationLevel(gxsid) !=
+		        RsReputationLevel::LOCALLY_POSITIVE );
+		voteNeutralAct->setEnabled(
+		            ( rsReputations->overallReputationLevel(gxsid) ==
+		              RsReputationLevel::LOCALLY_POSITIVE ) ||
+		            ( rsReputations->overallReputationLevel(gxsid) ==
+		              RsReputationLevel::LOCALLY_NEGATIVE ) );
+		voteNegativeAct->setEnabled(
+		            rsReputations->overallReputationLevel(gxsid) !=
+		        RsReputationLevel::LOCALLY_NEGATIVE );
 		muteAct->setEnabled(true);
 		muteAct->setChecked(isParticipantMuted(gxsid));
 	}
@@ -319,16 +327,15 @@ void ChatLobbyDialog::voteParticipant()
 
 	QList<RsGxsId> idList = act->data().value<QList<RsGxsId>>();
 
-	RsReputations::Opinion op = RsReputations::OPINION_NEUTRAL ;
-	if (act == votePositiveAct)
-		op = RsReputations::OPINION_POSITIVE;
-	if (act == voteNegativeAct)
-		op = RsReputations::OPINION_NEGATIVE;
+	RsOpinion op = RsOpinion::NEUTRAL;
+	if (act == votePositiveAct)	op = RsOpinion::POSITIVE;
+	if (act == voteNegativeAct)	op = RsOpinion::NEGATIVE;
 
 	for (QList<RsGxsId>::iterator item = idList.begin(); item != idList.end(); ++item)
 	{
 		rsReputations->setOwnOpinion(*item, op);
-		std::cerr << "Giving opinion to GXS id " << *item << " to " << op << std::endl;
+		std::cerr << "Giving opinion to GXS id " << *item << " to "
+		          << static_cast<uint32_t>(op) << std::endl;
 	}
 
 	updateParticipantsList();

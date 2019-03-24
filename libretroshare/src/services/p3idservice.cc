@@ -21,6 +21,7 @@
  *                                                                             *
  *******************************************************************************/
 #include <unistd.h>
+#include <algorithm>
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
@@ -205,6 +206,32 @@ void p3IdService::setNes(RsNetworkExchangeService *nes)
 {
     RsStackMutex stack(mIdMtx);
     mNes = nes;
+}
+
+bool p3IdService::getIdentitiesInfo(
+        const std::set<RsGxsId>& ids, std::vector<RsGxsIdGroup>& idsInfo )
+{
+	uint32_t token;
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	std::list<RsGxsGroupId> idsList;
+	for (auto&& id : ids) idsList.push_back(RsGxsGroupId(id));
+
+	if( !requestGroupInfo(token, opts, idsList)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, idsInfo);
+}
+
+bool p3IdService::getIdentitiesSummaries(std::list<RsGroupMetaData>& ids)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, ids);
 }
 
 uint32_t p3IdService::idAuthenPolicy()
@@ -687,11 +714,12 @@ bool p3IdService::getIdDetails(const RsGxsId &id, RsIdentityDetails &details)
             // This step is needed, because p3GxsReputation does not know all identities, and might not have any data for
             // the ones in the contact list. So we change them on demand.
 
-            if(is_a_contact && rsReputations->nodeAutoPositiveOpinionForContacts())
+            if(is_a_contact && rsReputations->autoPositiveOpinionForContacts())
 			{
-				RsReputations::Opinion op ;
-				if(rsReputations->getOwnOpinion(id,op) && op == RsReputations::OPINION_NEUTRAL)
-					rsReputations->setOwnOpinion(id,RsReputations::OPINION_POSITIVE) ;
+				RsOpinion op;
+				if( rsReputations->getOwnOpinion(id,op) &&
+				        op == RsOpinion::NEUTRAL )
+					rsReputations->setOwnOpinion(id, RsOpinion::POSITIVE);
 			}
 
 			std::map<RsGxsId,keyTSInfo>::const_iterator it = mKeysTS.find(id) ;
@@ -727,6 +755,46 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 
     return std::find(mOwnIds.begin(),mOwnIds.end(),id) != mOwnIds.end() ;
 }
+
+
+bool p3IdService::getOwnSignedIds(std::vector<RsGxsId> ids)
+{
+	ids.clear();
+
+	std::chrono::seconds maxWait(5);
+	auto timeout = std::chrono::steady_clock::now() + maxWait;
+	while( !ownIdsAreLoaded() && std::chrono::steady_clock::now() < timeout )
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
+	if(ownIdsAreLoaded())
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		ids.reserve(mOwnSignedIds.size());
+		ids.insert(ids.end(), mOwnSignedIds.begin(), mOwnSignedIds.end());
+		return true;
+	}
+
+	return false;
+}
+
+bool p3IdService::getOwnPseudonimousIds(std::vector<RsGxsId> ids)
+{
+	ids.clear();
+	std::vector<RsGxsId> signedV;
+
+	// this implicitely ensure ids are already loaded ;)
+	if(!getOwnSignedIds(signedV)) return false;
+	std::set<RsGxsId> signedS(signedV.begin(), signedV.end());
+
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		std::copy_if(mOwnIds.begin(), mOwnIds.end(), ids.end(),
+		             [&](const RsGxsId& id) {return !signedS.count(id);});
+	}
+
+	return true;
+}
+
 bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
 {
     RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
@@ -741,6 +809,11 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
 
     return true ;
 }
+
+
+bool p3IdService::identityToBase64( const RsGxsId& id,
+                       std::string& base64String )
+{ return serialiseIdentityToMemory(id, base64String); }
 
 bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,
                                              std::string& radix_string )
@@ -803,6 +876,10 @@ void p3IdService::handle_get_serialized_grp(uint32_t token)
     mSerialisedIdentities[RsGxsId(id)] = s ;
 }
 
+bool p3IdService::identityFromBase64(
+        const std::string& base64String, RsGxsId& id )
+{ return deserialiseIdentityFromMemory(base64String, &id); }
+
 bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
                                                 RsGxsId* id /* = nullptr */)
 {
@@ -823,6 +900,47 @@ bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
 		return false;
 	}
 
+	return true;
+}
+
+bool p3IdService::createIdentity(
+        RsGxsId& id,
+        const std::string& name, const RsGxsImage& avatar,
+        bool pseudonimous, const std::string& pgpPassword)
+{
+	if(!pgpPassword.empty())
+		std::cerr<< __PRETTY_FUNCTION__ << " Warning! PGP Password handling "
+		         << "not implemented yet!" << std::endl;
+
+	RsIdentityParameters params;
+	params.isPgpLinked = !pseudonimous;
+	params.nickname = name;
+	params.mImage = avatar;
+
+	uint32_t token;
+	if(!createIdentity(token, params))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	RsGroupMetaData meta;
+	if(!RsGenExchange::getPublishedGroupMeta(token, meta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	id = RsGxsId(meta.mGroupId);
 	return true;
 }
 
@@ -863,6 +981,26 @@ bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
     return true;
 }
 
+bool p3IdService::updateIdentity(RsGxsIdGroup& identityData)
+{
+	uint32_t token;
+	if(!updateGroup(token, identityData))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
 {
 #ifdef DEBUG_IDS
@@ -876,6 +1014,27 @@ bool p3IdService::updateIdentity(uint32_t& token, RsGxsIdGroup &group)
     return false;
 }
 
+bool p3IdService::deleteIdentity(RsGxsId& id)
+{
+	uint32_t token;
+	RsGxsGroupId grouId = RsGxsGroupId(id);
+	if(!deleteGroup(token, grouId))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed deleting group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
 bool p3IdService::deleteIdentity(uint32_t& token, RsGxsIdGroup &group)
 {
 #ifdef DEBUG_IDS
@@ -883,7 +1042,7 @@ bool p3IdService::deleteIdentity(uint32_t& token, RsGxsIdGroup &group)
     std::cerr << std::endl;
 #endif
 
-    deleteGroup(token, group);
+	deleteGroup(token, group.mMeta.mGroupId);
 
     return false;
 }
@@ -1012,10 +1171,10 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
         std::cerr << "p3IdService::requesting key " << id <<std::endl;
 #endif
 
-        RsReputations::ReputationInfo info ;
+		RsReputationInfo info;
         rsReputations->getReputationInfo(id,RsPgpId(),info) ;
 
-        if(info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
         {
             std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
 
@@ -1796,16 +1955,16 @@ bool p3IdService::updateGroup(uint32_t& token, RsGxsIdGroup &group)
     return true;
 }
 
-bool 	p3IdService::deleteGroup(uint32_t& token, RsGxsIdGroup &group)
+bool p3IdService::deleteGroup(uint32_t& token, RsGxsGroupId& groupId)
 {
-    RsGxsId id(group.mMeta.mGroupId);
+	RsGxsId id(groupId);
 
 #ifdef DEBUG_IDS
     std::cerr << "p3IdService::deleteGroup() Deleting RsGxsId: " << id;
     std::cerr << std::endl;
 #endif
 
-    RsGenExchange::deleteGroup(token,group.mMeta.mGroupId);
+	RsGenExchange::deleteGroup(token, groupId);
 
     // if its in the cache - clear it.
     {

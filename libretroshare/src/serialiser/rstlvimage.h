@@ -33,18 +33,19 @@
 
 class RsTlvImage: public RsTlvItem
 {
-	public:
-	 RsTlvImage(); 
-	 RsTlvImage(const RsTlvImage& );
-	 virtual ~RsTlvImage() { return; }
-virtual uint32_t TlvSize() const;
-virtual void	 TlvClear();
-virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
-virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
+public:
+	RsTlvImage();
+	RsTlvImage(const RsTlvImage& );
+	virtual ~RsTlvImage() { return; }
+	virtual uint32_t TlvSize() const;
+	virtual void	 TlvClear();
+	virtual bool     SetTlv(void *data, uint32_t size, uint32_t *offset) const;
+	virtual bool     GetTlv(void *data, uint32_t size, uint32_t *offset);
 
-virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
+	bool empty() const { return binData.bin_len == 0 ; }
+	virtual std::ostream &print(std::ostream &out, uint16_t indent) const;
 
-	uint32_t        image_type;   // Mandatory: 
+	uint32_t        image_type;   // Mandatory:
 	RsTlvBinaryData binData;      // Mandatory: serialised file info
 };
 

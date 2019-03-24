@@ -86,6 +86,46 @@ void RsCollection::downloadFiles() const
 	RsCollectionDialog(_fileName, colFileInfos, false).exec() ;
 }
 
+void RsCollection::autoDownloadFiles() const
+{
+	QDomElement docElem = _xml_doc.documentElement();
+
+	std::vector<ColFileInfo> colFileInfos;
+
+	recursCollectColFileInfos(docElem,colFileInfos,QString(),false);
+
+	QString dlDir = QString::fromUtf8(rsFiles->getDownloadDirectory().c_str());
+
+	foreach(ColFileInfo colFileInfo, colFileInfos)
+	{
+		autoDownloadFiles(colFileInfo, dlDir);
+	}
+}
+
+void RsCollection::autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const
+{
+	if (!colFileInfo.filename_has_wrong_characters)
+	{
+		QString cleanPath = dlDir + colFileInfo.path ;
+		std::cout << "making directory " << cleanPath.toStdString() << std::endl;
+
+		if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
+			std::cerr << "Unable to make path: " + cleanPath.toStdString() << std::endl;
+
+		if (colFileInfo.type==DIR_TYPE_FILE)
+			rsFiles->FileRequest(colFileInfo.name.toUtf8().constData(),
+			                     RsFileHash(colFileInfo.hash.toStdString()),
+			                     colFileInfo.size,
+			                     cleanPath.toUtf8().constData(),
+			                     RS_FILE_REQ_ANONYMOUS_ROUTING,
+			                     std::list<RsPeerId>());
+	}
+	foreach(ColFileInfo colFileInfoChild, colFileInfo.children)
+	{
+		autoDownloadFiles(colFileInfoChild, dlDir);
+	}
+}
+
 static QString purifyFileName(const QString& input,bool& bad)
 {
 	static const QString bad_chars = "/\\\"*:?<>|" ;

@@ -1089,7 +1089,7 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 bool p3GxsChannels::createComment(RsGxsComment& comment)
 {
 	uint32_t token;
-	if(!createComment(token, comment))
+	if(!createNewComment(token, comment))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating comment."
 		          << std::endl;
@@ -1116,7 +1116,7 @@ bool p3GxsChannels::createComment(RsGxsComment& comment)
 bool p3GxsChannels::createVote(RsGxsVote& vote)
 {
 	uint32_t token;
-	if(!createVote(token, vote))
+	if(!createNewVote(token, vote))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating vote."
 		          << std::endl;
@@ -1795,7 +1795,7 @@ bool p3GxsChannels::generateComment(uint32_t &token, const RsGxsGroupId &grpId, 
 	} 
 #endif
 
-	createComment(token, msg);
+	createNewComment(token, msg);
 
 	return true;
 }
@@ -1846,7 +1846,7 @@ bool p3GxsChannels::generateVote(uint32_t &token, const RsGxsGroupId &grpId, con
 		vote.mVoteType = GXS_VOTE_DOWN;
 	}
 
-	createVote(token, vote);
+	createNewVote(token, vote);
 
 	return true;
 }

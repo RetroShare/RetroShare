@@ -119,7 +119,7 @@ public:
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
     void setFilter(int column, const QStringList &strings, uint32_t &count) ;
-	void setAuthorOpinion(const QModelIndex& indx,RsReputations::Opinion op);
+	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

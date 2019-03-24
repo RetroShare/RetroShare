@@ -6,14 +6,17 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1217</width>
-    <height>721</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="GxsForumThreadWidgetVLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -33,6 +36,9 @@
      </property>
      <widget class="QWidget" name="topWidget">
       <layout class="QVBoxLayout" name="topVLayout">
+       <property name="spacing">
+        <number>4</number>
+       </property>
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="minimumSize">
@@ -49,7 +55,7 @@
          </property>
          <layout class="QHBoxLayout" name="toolBarFrameHLayout">
           <property name="leftMargin">
-           <number>2</number>
+           <number>4</number>
           </property>
           <property name="topMargin">
            <number>2</number>
@@ -94,7 +100,7 @@
             <property name="iconSize">
              <size>
               <width>24</width>
-              <height>16</height>
+              <height>24</height>
              </size>
             </property>
             <property name="toolButtonStyle">
@@ -476,6 +482,9 @@
      </widget>
      <widget class="QWidget" name="bottomWidget">
       <layout class="QVBoxLayout" name="bottomVLayout">
+       <property name="spacing">
+        <number>6</number>
+       </property>
        <item>
         <widget class="RSImageBlockWidget" name="imageBlockWidget" native="true">
          <property name="sizePolicy">
@@ -516,6 +525,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>SubscribeToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/common/SubscribeToolButton.h</header>
+  </customwidget>
+  <customwidget>
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
@@ -524,11 +538,6 @@
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SubscribeToolButton</class>
-   <extends>QToolButton</extends>
-   <header>gui/common/SubscribeToolButton.h</header>
   </customwidget>
   <customwidget>
    <class>RSTextBrowser</class>

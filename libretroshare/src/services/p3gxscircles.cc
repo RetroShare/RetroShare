@@ -153,7 +153,118 @@ RsServiceInfo p3GxsCircles::getServiceInfo()
                 GXS_CIRCLES_MIN_MINOR_VERSION);
 }
 
+bool p3GxsCircles::createCircle(RsGxsCircleGroup& cData)
+{
+	uint32_t token;
+	createGroup(token, cData);
 
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting created"
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsCircles::editCircle(RsGxsCircleGroup& cData)
+{
+	uint32_t token;
+	updateGroup(token, cData);
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated"
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsCircles::getCirclesSummaries(std::list<RsGroupMetaData>& circles)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, circles);
+}
+
+bool p3GxsCircles::getCirclesInfo( const std::list<RsGxsGroupId>& circlesIds,
+                                   std::vector<RsGxsCircleGroup>& circlesInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, circlesIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, circlesInfo);
+}
+
+bool p3GxsCircles::getCircleRequests( const RsGxsGroupId& circleId,
+                                      std::vector<RsGxsCircleMsg>& requests )
+{
+	uint32_t token;
+	std::list<RsGxsGroupId> grpIds { circleId };
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	if( !requestMsgInfo(token, opts, grpIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getMsgData(token, requests);
+}
+
+bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
+                                      const RsGxsCircleId& circleId )
+{
+	const std::list<RsGxsGroupId> circlesIds{ RsGxsGroupId(circleId) };
+	std::vector<RsGxsCircleGroup> circlesInfo;
+
+	if(!getCirclesInfo(circlesIds, circlesInfo))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting group data."
+		          << std::endl;
+		return false;
+	}
+
+	if(circlesInfo.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Circle: "
+		          << circleId.toStdString() << " not found!" << std::endl;
+		return false;
+	}
+
+	RsGxsCircleGroup& circleGrp = circlesInfo[0];
+
+	if(!(circleGrp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Attempt to edit non-own "
+		          << "circle: " << circleId.toStdString() << std::endl;
+		return false;
+	}
+
+	circleGrp.mInvitedMembers.insert(identities.begin(), identities.end());
+
+	return editCircle(circleGrp);
+}
 
 uint32_t p3GxsCircles::circleAuthenPolicy()
 {
@@ -319,32 +430,6 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 
     return false;
 }
-
-
-bool p3GxsCircles:: getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds)
-{
-#ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::getCircleIdList()";
-	std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-
-	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-	if (circleIds.empty())
-	{
-		circleIds = mCirclePersonalIdList;
-	}
-	else
-	{
-		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); ++it)
-		{
-			circleIds.push_back(*it);
-		}
-	}
-
-	return true;
-}
-
 
 bool p3GxsCircles:: getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds)
 {

@@ -28,7 +28,7 @@
 // should update regularly. They also should update only when visible, to save CPU time.
 //
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
 #define IDCHOOSER_ID_REQUIRED   0x0001

@@ -31,7 +31,7 @@
 // widget.
 //
 
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 typedef uint32_t TurtleRequestId;
 

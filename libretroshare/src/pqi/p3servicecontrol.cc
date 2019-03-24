@@ -459,10 +459,7 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 #endif
 
 	// must allow ServiceInfo through, or we have nothing!
-#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8))
-
-	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
-	if (serviceId == FULLID_SERVICEINFO)
+	if (serviceId == RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(RS_SERVICE_TYPE_SERVICEINFO))
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Allowed SERVICEINFO";

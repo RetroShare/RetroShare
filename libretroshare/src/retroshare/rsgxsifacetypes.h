@@ -90,7 +90,9 @@ struct RsGroupMetaData : RsSerializable
     rstime_t      mLastPost; 		// Timestamp for last message. Not used yet.
 
     uint32_t    mGroupStatus;
-    std::string mServiceString; // Service Specific Free-Form extra storage.
+
+	/// Service Specific Free-Form local (non-synced) extra storage.
+	std::string mServiceString;
     RsPeerId mOriginator;
     RsGxsCircleId mInternalCircle;
 

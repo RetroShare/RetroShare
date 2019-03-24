@@ -155,6 +155,7 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 rs_macos10.13:CONFIG -= rs_macos10.11
+rs_macos10.14:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
@@ -164,6 +165,11 @@ rs_jsonapi:CONFIG -= no_rs_jsonapi
 # To disable deep search append the following assignation to qmake command line
 CONFIG *= no_rs_deep_search
 rs_deep_search:CONFIG -= no_rs_deep_search
+
+# To enable native dialogs append the following assignation to qmake command
+#line "CONFIG+=rs_use_native_dialogs"
+CONFIG *= no_rs_use_native_dialogs
+rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -187,9 +193,15 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 # assignation to qmake command line 'RS_EXTRA_VERSION=""'
 #RS_EXTRA_VERSION=git
 
-# To enable native dialogs append the following assignation to qmake command line
-# "CONFIG+=rs_use_native_dialogs"
-rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
+# Specify threading library to use appending the following assignation to qmake
+# commandline 'RS_THREAD_LIB=pthread' the name of the multi threading library to
+# use (pthread, "") usually depends on platform.
+isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
+
+# Specify UPnP library to use appending the following assignation to qmake
+# command line 'RS_UPNP_LIB=miniupnpc' the name of the UPNP library to use
+# (miniupnpc, "upnp ixml threadutil") usually depends on platform.
+isEmpty(RS_UPNP_LIB):RS_UPNP_LIB = upnp ixml threadutil
 
 ###########################################################################################################################################################
 #
@@ -230,6 +242,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 
 ################################################################################
@@ -324,10 +337,6 @@ defineReplace(linkDynamicLibs) {
 ## RS_SQL_LIB String viariable containing the name of the SQL library to use
 ##   ("sqlcipher sqlite3", sqlite3) it is usually precalculated depending on
 ##   CONFIG.
-## RS_UPNP_LIB String viariable containing the name of the UPNP library to use
-##   (miniupnpc, "upnp ixml threadutil") it usually depend on platform.
-## RS_THREAD_LIB String viariable containing the name of the multi threading
-##   library to use (pthread, "") it usually depend on platform.
 
 isEmpty(QMAKE_HOST_SPEC):QMAKE_HOST_SPEC=$$[QMAKE_SPEC]
 isEmpty(QMAKE_TARGET_SPEC):QMAKE_TARGET_SPEC=$$[QMAKE_XSPEC]
@@ -391,8 +400,6 @@ rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
 libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
 libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
 libresapihttpserver:DEFINES *= ENABLE_WEBUI
-RS_THREAD_LIB=pthread
-RS_UPNP_LIB = upnp ixml threadutil
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
@@ -429,6 +436,8 @@ no_rs_deprecatedwarning {
 
 no_rs_cppwarning {
     QMAKE_CXXFLAGS += -Wno-cpp
+    QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
+
     DEFINES *= RS_NO_WARN_CPP
     message("QMAKE: You have disabled C preprocessor warnings.")
 }
@@ -476,6 +485,8 @@ rs_deep_search {
 	 }
 	}
 }
+
+rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
@@ -635,6 +646,14 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
+	rs_macos10.14 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.14 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.14
+		QMAKE_MAC_SDK = macosx10.14
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
 
 
 	message(***retroshare.pri:MacOSX)
@@ -647,10 +666,10 @@ macx-* {
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
 	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/include"
-	INC_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/include"
+	INC_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/include"
 	LIB_DIR += "/usr/local/opt/openssl/lib/"
 	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib"
-	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/lib"
+	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/lib"
 	LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
 	CONFIG += c++11
 	INCLUDEPATH += "/usr/local/include"

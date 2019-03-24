@@ -179,9 +179,30 @@ virtual RsServiceInfo getServiceInfo();
 
 	/*********** External Interface ***************/
 
+	/// @see RsGxsCircles
+	bool createCircle(RsGxsCircleGroup& cData) override;
+
+	/// @see RsGxsCircles
+	bool editCircle(RsGxsCircleGroup& cData) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesSummaries(std::list<RsGroupMetaData>& circles) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesInfo(
+	        const std::list<RsGxsGroupId>& circlesIds,
+	        std::vector<RsGxsCircleGroup>& circlesInfo ) override;
+
+	/// @see RsGxsCircles
+	bool getCircleRequests( const RsGxsGroupId& circleId,
+	                        std::vector<RsGxsCircleMsg>& requests ) override;
+
+	/// @see RsGxsCircles
+	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
+	                        const RsGxsCircleId& circleId ) override;
+
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
 	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds);
-	virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds);
 
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
@@ -257,6 +278,8 @@ virtual RsServiceInfo getServiceInfo();
     // put a circle id into the external or personal circle id list
     // this function locks the mutex
     // if the id is already in the list, it will not be added again
+	// G10h4ck: this is terrible, an std::set instead of a list should be used
+	//	to guarantee uniqueness
     void addCircleIdToList(const RsGxsCircleId& circleId, uint32_t circleType);
 
 	RsMutex mCircleMtx; /* Locked Below Here */

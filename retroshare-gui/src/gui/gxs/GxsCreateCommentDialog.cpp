@@ -105,7 +105,7 @@ void GxsCreateCommentDialog::createComment()
 	}//switch (ui->idChooser->getChosenId(authorId))
 
 	uint32_t token;
-	mCommentService->createComment(token, comment);
+	mCommentService->createNewComment(token, comment);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
 	close();
 }

@@ -24,7 +24,7 @@
 #include <retroshare/rsgxsifacetypes.h>
 
 class QShowEvent;
-class RsGxsIfaceHelper;
+struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcast;
 
 typedef uint32_t TurtleRequestId ;

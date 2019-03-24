@@ -49,8 +49,8 @@ std::string generateRandomServiceId();
 //TODO : encryption and upload / download rate implementation
 
 
-//	p3FastService(uint16_t type) 
-//	:pqiService((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) type) << 8)), 
+//	p3FastService(uint16_t type)
+//	  :pqiService((RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(type)),
 
 
 class p3FastService: public pqiService

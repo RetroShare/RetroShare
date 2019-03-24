@@ -18,13 +18,16 @@
  *                                                                             *
  *******************************************************************************/
 
+ #include <QBuffer>
 #include <QMessageBox>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
+#include "util/misc.h"
 #include "util/TokenQueue.h"
 
 #include "gui/settings/rsharesettings.h"
+#include <QBuffer>
 
 #include <iostream>
 
@@ -37,6 +40,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	Settings->loadWidgetInformation(this);
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
+	connect(ui->pushButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
 	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
@@ -78,6 +82,18 @@ void PostedCreatePostDialog::createPost()
 	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
 	post.mMeta.mAuthorId = authorId;
 	
+	QByteArray ba;
+	QBuffer buffer(&ba);
+	
+	if(!picture.isNull())
+	{
+		// send posted image
+
+		buffer.open(QIODevice::WriteOnly);
+		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
+		post.mImage.copy((uint8_t *) ba.data(), ba.size());
+	}
+	
 	if(ui->titleEdit->text().isEmpty()) {
 		/* error message */
 		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
@@ -89,4 +105,17 @@ void PostedCreatePostDialog::createPost()
 //	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
+}
+
+void PostedCreatePostDialog::addPicture()
+{
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 800, 600);
+
+	if (img.isNull())
+		return;
+
+	picture = img;
+
+	// to show the selected
+	ui->imageLabel->setPixmap(picture);
 }

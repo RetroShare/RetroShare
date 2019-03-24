@@ -25,10 +25,12 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <functional>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
+#include "serialiser/rsserializable.h"
 
 /* The Main Interface Class - for information about your Posted */
 class RsPosted;
@@ -42,6 +44,7 @@ class RsPostedGroup
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+
 };
 
 
@@ -52,7 +55,7 @@ class RsPostedGroup
 #define RSPOSTED_PERIOD_YEAR		1
 #define RSPOSTED_PERIOD_MONTH		2
 #define RSPOSTED_PERIOD_WEEK		3
-#define RSPOSTED_PERIOD_DAY		4
+#define RSPOSTED_PERIOD_DAY			4
 #define RSPOSTED_PERIOD_HOUR		5
 
 #define RSPOSTED_VIEWMODE_LATEST	1
@@ -87,8 +90,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts
 	    /* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
 //virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-//virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
-//virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
+//virtual bool createNewComment(uint32_t &token, RsGxsComment &comment) = 0;
+//virtual bool createNewVote(uint32_t &token, RsGxsVote &vote) = 0;
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
@@ -100,7 +103,6 @@ virtual bool updateGroup(uint32_t &token, RsPostedGroup &group) = 0;
 
     virtual bool groupShareKeys(const RsGxsGroupId& group,const std::set<RsPeerId>& peers) = 0 ;
 };
-
 
 
 class RsPostedPost
@@ -137,6 +139,24 @@ class RsPostedPost
 	double  mHotScore;
 	double  mTopScore;
 	double  mNewScore;
+	
+	RsGxsImage mImage;
+
+	/// @see RsSerializable
+	/*virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mLink);
+		RS_SERIAL_PROCESS(mHaveVoted);
+		RS_SERIAL_PROCESS(mUpVotes);
+		RS_SERIAL_PROCESS(mDownVotes);
+		RS_SERIAL_PROCESS(mComments);
+		RS_SERIAL_PROCESS(mHotScore);
+		RS_SERIAL_PROCESS(mTopScore);
+		RS_SERIAL_PROCESS(mNewScore);
+	}*/
 };
 
 

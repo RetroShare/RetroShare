@@ -123,7 +123,21 @@ void UserNotify::createIcons(QMenu *notifyMenu)
 			if (mTrayIcon == NULL) {
 				/* Create the tray icon for messages */
 				mTrayIcon = new QSystemTrayIcon(this);
+#ifdef Q_OS_WIN
+#if QT_VERSION >= QT_VERSION_CHECK (5, 10, 0)
+				// Set tray icon visible to hide it again with ::hide.
+				// ::hide or ::setVisible(false) does nothing when QSystemTrayIcon is hidden.
+				mTrayIcon->show();
+#endif
+#endif
 				mTrayIcon->setIcon(getIcon());
+#ifdef Q_OS_WIN
+#if QT_VERSION >= QT_VERSION_CHECK (5, 10, 0)
+				// Hide tray icon as workaround for Qt 5.10.0 (Windows only?)
+				// QSystemTrayIcon is initially not visible but the icon gets visible after the call to ::setIcon.
+				mTrayIcon->hide();
+#endif
+#endif
 				connect(mTrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayIconClicked(QSystemTrayIcon::ActivationReason)));
 			}
 		}
