@@ -65,6 +65,11 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	int S = QFontMetricsF(font()).height() ;
+
+	ui->submitPostButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->comboBox->setIconSize(QSize(S*1.5,S*1.5));
 
 	connect(ui->submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
 	

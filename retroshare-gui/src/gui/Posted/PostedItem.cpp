@@ -109,7 +109,18 @@ void PostedItem::setup()
 	
 	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
 	connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
-		
+	
+	
+	int S = QFontMetricsF(font()).height() ;
+	
+	ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->voteDownButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->expandButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->notesButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->readButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->shareButton->setIconSize(QSize(S*1.5,S*1.5));
+	
 	QMenu *menu = new QMenu();
 	menu->addAction(CopyLinkAction);
 	ui->shareButton->setMenu(menu);
@@ -290,7 +301,7 @@ void PostedItem::fill()
 		urlstr += QString(" </span></a>");
 
 		QString siteurl = url.scheme() + "://" + url.host();
-		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 		
 		ui->titleLabel->setText(urlstr);
 	}else
