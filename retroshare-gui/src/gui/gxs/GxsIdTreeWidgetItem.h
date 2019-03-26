@@ -138,33 +138,23 @@ public:
 
         RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
         QString str;
-        QList<QIcon> icons;
         QString comment;
 
         QFontMetricsF fm(painter->font());
         float f = fm.height();
 
 		QIcon icon ;
-
-        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
-        {
-			str = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
-        }
-        else if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-        {
+        if(! computeNameIconAndComment(id,str,icon,comment))
 			if(mReloadPeriod > 3)
-            {
+			{
 				str = tr("[Unknown]");
-                icon = QIcon();
-            }
-            else
-            {
+				icon = QIcon();
+			}
+			else
+			{
 				icon = GxsIdDetails::getLoadingIcon(id);
 				launchAsyncLoading();
-            }
-        }
-		else
-			icon = *icons.begin();
+			}
 
 		QPixmap pix = icon.pixmap(r.size());
 		const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
@@ -183,6 +173,33 @@ public:
         ++mReloadPeriod;
 
         QTimer::singleShot(1000,this,SLOT(reload()));
+    }
+
+    static bool computeName(const RsGxsId& id,QString& name)
+    {
+        QList<QIcon> icons;
+        QString comment;
+
+        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
+        else if(!GxsIdDetails::MakeIdDesc(id, false, name, icons, comment,GxsIdDetails::ICON_TYPE_NONE))
+            return false;
+
+        return true;
+    }
+
+    static bool computeNameIconAndComment(const RsGxsId& id,QString& name,QIcon& icon,QString& comment)
+    {
+        QList<QIcon> icons;
+
+        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
+        else if(!GxsIdDetails::MakeIdDesc(id, true, name, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+            return false;
+		else
+			icon = *icons.begin();
+
+        return true;
     }
 
 private slots:

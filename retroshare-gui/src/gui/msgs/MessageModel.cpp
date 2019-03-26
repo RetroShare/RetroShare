@@ -30,6 +30,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "MessageModel.h"
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
@@ -300,7 +301,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 		case FILTER_TYPE_SUBJECT: 	s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
 			break;
 
-		case FILTER_TYPE_FROM:
+		case FILTER_TYPE_FROM:      s = sortRole(fmpe.COLUMN_THREAD_AUTHOR).toString();
+            break;
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
 		case FILTER_TYPE_CONTENT:   {
@@ -419,6 +421,12 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 
+    case COLUMN_THREAD_AUTHOR:{
+        						QString name;
+
+        						if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+                                    return name;
+    }
     default:
         return displayRole(fmpe,column);
     }

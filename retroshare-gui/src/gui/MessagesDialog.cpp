@@ -121,9 +121,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
     ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
 
-    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
-    connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
-
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
 
@@ -145,14 +142,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
-    ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
-    ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
 
     RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
     itemDelegate->setSpacing(QSize(0, 2));
     ui.messageTreeWidget->setItemDelegate(itemDelegate);
-
-    //ui.messageTreeWidget->sortByColumn(COLUMN_DATA, Qt::DescendingOrder);
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -208,6 +201,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // Post "load settings" actions (which makes sure they are not affected by settings) //
     ///////////////////////////////////////////////////////////////////////////////////////
 
+    ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
+    ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
+
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
@@ -258,6 +254,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), mMessageModel, SLOT(updateMessages()));
     connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
+
+    connect(ui.filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
+    connect(ui.filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
     connect(mMessageModel,SIGNAL(messagesAboutToLoad()),this,SLOT(preModelUpdate()));
     connect(mMessageModel,SIGNAL(messagesLoaded()),this,SLOT(postModelUpdate()));
