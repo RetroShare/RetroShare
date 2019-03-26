@@ -134,12 +134,12 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     mMessageProxyModel->setDynamicSortFilter(false);
     mMessageProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
 
     ui.messageTreeWidget->setModel(mMessageProxyModel);
 
 	changeBox(0);	// set to inbox
-
-	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
 
@@ -1042,6 +1042,8 @@ void MessagesDialog::buttonStyle()
     setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
 }
 
+
+
 void MessagesDialog::filterChanged(const QString& text)
 {
     QStringList items = text.split(' ',QString::SkipEmptyParts);
@@ -1051,15 +1053,18 @@ void MessagesDialog::filterChanged(const QString& text)
     switch(ui.filterLineEdit->currentFilter())
     {
     case RsMessageModel::COLUMN_THREAD_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
-    case RsMessageModel::COLUMN_THREAD_AUTHOR:         f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case RsMessageModel::COLUMN_THREAD_AUTHOR:       f = RsMessageModel::FILTER_TYPE_FROM ; break;
     case RsMessageModel::COLUMN_THREAD_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
     case RsMessageModel::COLUMN_THREAD_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
     case RsMessageModel::COLUMN_THREAD_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;
-    case RsMessageModel::COLUMN_THREAD_ATTACHMENT: f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
+    case RsMessageModel::COLUMN_THREAD_ATTACHMENT:   f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
     default:break;
     }
 
     mMessageModel->setFilter(f,items);
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
+
+    QCoreApplication::processEvents();
 }
 
 void MessagesDialog::filterColumnChanged(int column)
@@ -1072,19 +1077,22 @@ void MessagesDialog::filterColumnChanged(int column)
 	switch(column)
     {
     case RsMessageModel::COLUMN_THREAD_SUBJECT:      f = RsMessageModel::FILTER_TYPE_SUBJECT ; break;
-    case RsMessageModel::COLUMN_THREAD_AUTHOR:         f = RsMessageModel::FILTER_TYPE_FROM ; break;
+    case RsMessageModel::COLUMN_THREAD_AUTHOR:       f = RsMessageModel::FILTER_TYPE_FROM ; break;
     case RsMessageModel::COLUMN_THREAD_DATE:         f = RsMessageModel::FILTER_TYPE_DATE ; break;
     case RsMessageModel::COLUMN_THREAD_CONTENT:      f = RsMessageModel::FILTER_TYPE_CONTENT ; break;
     case RsMessageModel::COLUMN_THREAD_TAGS:         f = RsMessageModel::FILTER_TYPE_TAGS ; break;
-    case RsMessageModel::COLUMN_THREAD_ATTACHMENT: f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
+    case RsMessageModel::COLUMN_THREAD_ATTACHMENT:   f = RsMessageModel::FILTER_TYPE_ATTACHMENTS ; break;
     default:break;
     }
 
     QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
     mMessageModel->setFilter(f,items);
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);
+
+    QCoreApplication::processEvents();
 }
 
 void MessagesDialog::updateMessageSummaryList()

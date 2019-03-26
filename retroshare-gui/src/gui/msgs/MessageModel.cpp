@@ -301,7 +301,9 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 		case FILTER_TYPE_SUBJECT: 	s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
 			break;
 
-		case FILTER_TYPE_FROM:      s = sortRole(fmpe.COLUMN_THREAD_AUTHOR).toString();
+		case FILTER_TYPE_FROM:      s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
+            						if(s.isNull())
+                                        passes_strings = false;
             break;
 		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
 			break;
@@ -335,6 +337,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
             || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
 
+    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
+
     return passes_quick_view && passes_strings;
 }
 
@@ -357,6 +361,11 @@ uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex i,int column,const Q
 
 void RsMessageModel::setFilter(FilterType filter_type, const QStringList& strings)
 {
+    std::cerr << "Setting filter to filter_type=" << int(filter_type) << " and strings to " ;
+    foreach(const QString& str,strings)
+        std::cerr << "\"" << str.toStdString() << "\" " ;
+    std::cerr << std::endl;
+
     preMods();
 
     mFilterType = filter_type;
