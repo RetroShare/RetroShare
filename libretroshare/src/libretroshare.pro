@@ -862,36 +862,24 @@ rs_jsonapi {
 
     no_rs_cross_compiling {
         DUMMYRESTBEDINPUT = FORCE
+        CMAKE_GENERATOR_OVERRIDE=""
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
         genrestbedlib.name = Generating libresbed.
         genrestbedlib.input = DUMMYRESTBEDINPUT
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
-        win32-g++ {
-            genrestbedlib.commands = \
-                cd $${RS_SRC_PATH} && \
-                git submodule update --init --recommend-shallow supportlibs/restbed && \
-                cd $${RESTBED_SRC_PATH} && \
-                git submodule update --init --recommend-shallow dependency/asio && \
-                git submodule update --init --recommend-shallow dependency/catch && \
-                git submodule update --init --recommend-shallow dependency/kashmir && \
-                mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
-                cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -G \"MSYS Makefiles\" -DBUILD_SSL=OFF \
-                    -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
-                make
-        } else {
-            genrestbedlib.commands = \
-                cd $${RS_SRC_PATH};\
-                git submodule update --init --recommend-shallow supportlibs/restbed;\
-                cd $${RESTBED_SRC_PATH};\
-                git submodule update --init --recommend-shallow dependency/asio;\
-                git submodule update --init --recommend-shallow dependency/catch;\
-                git submodule update --init --recommend-shallow dependency/kashmir;\
-                mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
-                cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
-                    -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
-                make
-        }
+        genrestbedlib.commands = \
+            cd $${RS_SRC_PATH} && \
+            git submodule update --init --recommend-shallow supportlibs/restbed && \
+            cd $${RESTBED_SRC_PATH} && \
+            git submodule update --init --recommend-shallow dependency/asio && \
+            git submodule update --init --recommend-shallow dependency/catch && \
+            git submodule update --init --recommend-shallow dependency/kashmir && \
+            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
+            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
+            make
         QMAKE_EXTRA_COMPILERS += genrestbedlib
 
         RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
