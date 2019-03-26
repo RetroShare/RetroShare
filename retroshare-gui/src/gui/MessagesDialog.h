@@ -85,7 +85,7 @@ private slots:
   void updateCurrentMessage();
   void clicked(const QModelIndex&);
   void doubleClicked(const QModelIndex&);
-  void currentChanged(const QModelIndex& new_index, const QModelIndex &old_index);
+  void currentChanged(const QModelIndex& new_proxy_index, const QModelIndex &old_proxy_index);
 
   void newmessage();
   void openAsWindow();
@@ -119,13 +119,13 @@ private:
   void connectActions();
 
   void updateMessageSummaryList();
-  void insertMsgTxtAndFiles(const QModelIndex& index = QModelIndex());
+  void insertMsgTxtAndFiles(const QModelIndex& proxy_index = QModelIndex());
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
 
   int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar);
-  bool isMessageRead(const QModelIndex &index);
+  bool isMessageRead(const QModelIndex &real_index);
   bool hasMessageStar(const QModelIndex &index);
 
   void processSettings(bool load);

@@ -144,7 +144,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 
-	ui.messageTreeWidget->setSortingEnabled(false);
     ui.messageTreeWidget->setItemDelegateForColumn(RsMessageModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_CONTENT,true);
     ui.messageTreeWidget->setColumnHidden(RsMessageModel::COLUMN_THREAD_MSGID,true);
@@ -166,19 +165,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.1);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.5);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
 
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Interactive);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -192,18 +185,18 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     viewmenu->addAction(ui.actionTextBesideIcon);
     viewmenu->addAction(ui.actionIconOnly);
     ui.viewtoolButton->setMenu(viewmenu);
-    
+
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
     ui.listSplitter->setStretchFactor(1, 1);
 
     /* add filter actions */
-    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT, tr("Search Subject"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("From"),        RsMessageModel::COLUMN_THREAD_AUTHOR, tr("Search From"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Date"),        RsMessageModel::COLUMN_THREAD_DATE, tr("Search Date"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Content"),     RsMessageModel::COLUMN_THREAD_CONTENT, tr("Search Content"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"),        RsMessageModel::COLUMN_THREAD_TAGS, tr("Search Tags"));
-    ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), RsMessageModel::COLUMN_THREAD_ATTACHMENT, tr("Search Attachments"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT,   tr("Search Subject"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("From"),        RsMessageModel::COLUMN_THREAD_AUTHOR,    tr("Search From"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Date"),        RsMessageModel::COLUMN_THREAD_DATE,      tr("Search Date"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Content"),     RsMessageModel::COLUMN_THREAD_CONTENT,   tr("Search Content"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Tags"),        RsMessageModel::COLUMN_THREAD_TAGS,      tr("Search Tags"));
+    ui.filterLineEdit->addFilter(QIcon(), tr("Attachments"), RsMessageModel::COLUMN_THREAD_ATTACHMENT,tr("Search Attachments"));
 
     //setting default filter by column as subject
     ui.filterLineEdit->setCurrentFilter(RsMessageModel::COLUMN_THREAD_SUBJECT);
@@ -211,8 +204,23 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    // Post "load settings" actions (which makes sure they are not affected by settings) //
+    ///////////////////////////////////////////////////////////////////////////////////////
+
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
+
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Fixed);
+
+	ui.messageTreeWidget->setSortingEnabled(true);
+
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
     msgwheader->setStretchLastSection(false);
+
 
     // fill folder list
     updateMessageSummaryList();
@@ -303,9 +311,9 @@ void MessagesDialog::postModelUpdate()
 void MessagesDialog::sortColumn(int col,Qt::SortOrder so)
 {
     mMessageProxyModel->setSortingEnabled(true);
-	ui.messageTreeWidget->setSortingEnabled(true);
+	//ui.messageTreeWidget->setSortingEnabled(true);
     mMessageProxyModel->sort(col,so);
-	ui.messageTreeWidget->setSortingEnabled(false);
+	//ui.messageTreeWidget->setSortingEnabled(false);
     mMessageProxyModel->setSortingEnabled(false);
 }
 
@@ -512,20 +520,20 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
     return qmil.size();
 }
 
-bool MessagesDialog::isMessageRead(const QModelIndex& index)
+bool MessagesDialog::isMessageRead(const QModelIndex& real_index)
 {
-    if (!index.isValid())
+    if (!real_index.isValid())
         return true;
 
-    return !index.data(RsMessageModel::UnreadRole).toBool();
+    return !real_index.data(RsMessageModel::UnreadRole).toBool();
 }
 
-bool MessagesDialog::hasMessageStar(const QModelIndex& index)
+bool MessagesDialog::hasMessageStar(const QModelIndex& real_index)
 {
-    if (!index.isValid())
+    if (!real_index.isValid())
         return false;
 
-    return index.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
+    return real_index.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
 }
 
 void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
@@ -817,46 +825,48 @@ static void InitIconAndFont(QTreeWidgetItem *item)
 }
 
 // click in messageTreeWidget
-void MessagesDialog::currentChanged(const QModelIndex& new_index,const QModelIndex& old_index)
+void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& old_proxy_index)
 {
-    if(!new_index.isValid())
+    if(!new_proxy_index.isValid())
         return;
 
     // show current message directly
-	insertMsgTxtAndFiles(new_index);
+	insertMsgTxtAndFiles(new_proxy_index);
 }
 
 // click in messageTreeWidget
-void MessagesDialog::clicked(const QModelIndex& index)
+void MessagesDialog::clicked(const QModelIndex& proxy_index)
 {
-    if(!index.isValid())
+    if(!proxy_index.isValid())
         return;
 
-    switch (index.column())
+    QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
+
+    switch (proxy_index.column())
     {
     case RsMessageModel::COLUMN_THREAD_READ:
         {
-            mMessageModel->setMsgReadStatus(index, !isMessageRead(index));
-            insertMsgTxtAndFiles(index);
+            mMessageModel->setMsgReadStatus(real_index, !isMessageRead(proxy_index));
+            insertMsgTxtAndFiles(proxy_index);
             updateMessageSummaryList();
             return;
         }
     case RsMessageModel::COLUMN_THREAD_STAR:
         {
-            mMessageModel->setMsgStar(index, !hasMessageStar(index));
+            mMessageModel->setMsgStar(real_index, !hasMessageStar(proxy_index));
             return;
         }
     }
 
     // show current message directly
-	insertMsgTxtAndFiles(index);
+	insertMsgTxtAndFiles(proxy_index);
 }
 
 // double click in messageTreeWidget
-void MessagesDialog::doubleClicked(const QModelIndex& index)
+void MessagesDialog::doubleClicked(const QModelIndex& proxy_index)
 {
     /* activate row */
-    clicked(index);
+    clicked(proxy_index);
 
     std::string cid;
     std::string mid;
@@ -922,20 +932,22 @@ void MessagesDialog::markWithStar(bool checked)
 
 
 
-void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
+void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)
 {
     /* get its Ids */
     std::string cid;
     std::string mid;
 
-    if(!index.isValid())
+    QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
+
+    if(!real_index.isValid())
 	{
 		mCurrMsgId.clear();
 		msgWidget->fill(mCurrMsgId);
 		updateInterface();
 		return;
 	}
-    mid = index.data(RsMessageModel::MsgIdRole).toString().toStdString();
+    mid = real_index.data(RsMessageModel::MsgIdRole).toString().toStdString();
 
     /* Save the Data.... for later */
 
@@ -950,12 +962,12 @@ void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& index)
 	if (msgInfo.msgflags & RS_MSG_NEW) // set always to read or unread
 	{
 		if (!bSetToReadOnActive)  // set locally to unread
-			mMessageModel->setMsgReadStatus(index, false);
+			mMessageModel->setMsgReadStatus(real_index, false);
 		else
-			mMessageModel->setMsgReadStatus(index, true);
+			mMessageModel->setMsgReadStatus(real_index, true);
 	}
 	else if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToReadOnActive)  // set to read
-		mMessageModel->setMsgReadStatus(index, true);
+		mMessageModel->setMsgReadStatus(real_index, true);
 
     updateInterface();
 	updateMessageSummaryList();
@@ -1138,12 +1150,12 @@ void MessagesDialog::updateMessageSummaryList()
                 break;
         }
     }
-    
+
 
     int listrow = ui.listWidget->currentRow();
     QString textTotal;
 
-    switch (listrow) 
+    switch (listrow)
     {
         case ROW_INBOX:
             textTotal = tr("Total:") + " "  + QString::number(inboxCount);
