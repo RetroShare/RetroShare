@@ -337,7 +337,10 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
             || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
 
-    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
+    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString()
+              << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
+    foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
+    std::cerr          << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
 
     return passes_quick_view && passes_strings;
 }
@@ -598,6 +601,8 @@ void RsMessageModel::setQuickViewFilter(QuickViewFilter fn)
 {
     if(fn != mQuickViewFilter)
     {
+        std::cerr << "Changing new quickview filter to " << fn << std::endl;
+
 		preMods();
         mQuickViewFilter = fn ;
 		postMods();

@@ -810,6 +810,8 @@ void MessagesDialog::changeQuickView(int newrow)
 			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x07);
 		}
     mMessageModel->setQuickViewFilter(f);
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
+
     insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
@@ -1062,7 +1064,7 @@ void MessagesDialog::filterChanged(const QString& text)
     }
 
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 
     QCoreApplication::processEvents();
 }
@@ -1087,7 +1089,7 @@ void MessagesDialog::filterColumnChanged(int column)
 
     QStringList items = ui.filterLineEdit->text().split(' ',QString::SkipEmptyParts);
     mMessageModel->setFilter(f,items);
-	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
+	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 
     // save index
     Settings->setValueToGroup("MessageDialog", "filterColumn", column);
