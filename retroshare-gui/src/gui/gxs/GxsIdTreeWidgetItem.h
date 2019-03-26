@@ -144,7 +144,13 @@ public:
         float f = fm.height();
 
 		QIcon icon ;
-        if(! computeNameIconAndComment(id,str,icon,comment))
+
+        if(id.isNull())
+        {
+            str = tr("[Notification]");
+            icon = QIcon(":/icons/logo_128.png");
+        }
+        else if(! computeNameIconAndComment(id,str,icon,comment))
 			if(mReloadPeriod > 3)
 			{
 				str = tr("[Unknown]");
@@ -193,7 +199,10 @@ public:
         QList<QIcon> icons;
 
         if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+        {
 			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
+            icon = QIcon(":/icons/avatar_128.png");
+        }
         else if(!GxsIdDetails::MakeIdDesc(id, true, name, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
             return false;
 		else

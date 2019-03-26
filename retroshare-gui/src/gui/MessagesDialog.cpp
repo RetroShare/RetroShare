@@ -215,7 +215,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	ui.messageTreeWidget->setSortingEnabled(true);
 
     /* Set header sizes for the fixed columns and resize modes, must be set after processSettings */
-    msgwheader->setStretchLastSection(false);
+    msgwheader->setStretchLastSection(true);
 
 
     // fill folder list

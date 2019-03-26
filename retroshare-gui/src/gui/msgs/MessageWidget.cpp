@@ -600,8 +600,8 @@ void MessageWidget::fill(const std::string &msgId)
 		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
 	}
 
-	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
-		ui.fromText->setText("RetroShare");
+	if (((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) || msgInfo.rspeerid_srcId.isNull()) {
+		ui.fromText->setText("[Notification]");
 		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());
