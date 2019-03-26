@@ -13,8 +13,8 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="GxsCommentDialogVLayout">
-   <item>
+  <layout class="QGridLayout" name="GxsCommentDialogGLayout">
+   <item row="0" column="0">
     <widget class="QFrame" name="postFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -24,9 +24,12 @@
      </property>
      <layout class="QVBoxLayout" name="postFrameVLayout">
       <property name="leftMargin">
-       <number>9</number>
+       <number>1</number>
       </property>
       <property name="topMargin">
+       <number>1</number>
+      </property>
+      <property name="rightMargin">
        <number>1</number>
       </property>
       <property name="bottomMargin">
@@ -35,48 +38,49 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <layout class="QHBoxLayout" name="toolBarHLayout">
      <item>
-      <widget class="QPushButton" name="hotSortButton">
-       <property name="text">
-        <string>Hot</string>
+      <widget class="QComboBox" name="sortBox">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol'; font-size:14px; color:#24292e; background-color:#ffffff;&quot;&gt;sort by&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
-       <property name="checkable">
-        <bool>true</bool>
+       <property name="styleSheet">
+        <string notr="true"/>
        </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
+       <property name="iconSize">
+        <size>
+         <width>24</width>
+         <height>24</height>
+        </size>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="newSortButton">
-       <property name="text">
-        <string>New</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="topSortButton">
-       <property name="text">
-        <string>Top</string>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-       <property name="checked">
-        <bool>false</bool>
-       </property>
-       <property name="autoExclusive">
-        <bool>true</bool>
-       </property>
+       <item>
+        <property name="text">
+         <string>Hot</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/flame.png</normaloff>:/icons/png/flame.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>New</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/new.png</normaloff>:/icons/png/new.png</iconset>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Top</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/top.png</normaloff>:/icons/png/top.png</iconset>
+        </property>
+       </item>
       </widget>
      </item>
      <item>
@@ -111,8 +115,11 @@
      </item>
     </layout>
    </item>
-   <item>
+   <item row="2" column="0">
     <widget class="GxsCommentTreeWidget" name="treeWidget">
+     <property name="sortingEnabled">
+      <bool>true</bool>
+     </property>
      <column>
       <property name="text">
        <string>Comment</string>
@@ -164,6 +171,8 @@
    <header>gui/gxs/GxsCommentTreeWidget.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

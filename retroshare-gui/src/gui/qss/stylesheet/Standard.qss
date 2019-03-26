@@ -915,3 +915,9 @@ PostedItem QToolButton#commentButton, QPushButton#shareButton, QToolButton#notes
 	color: #878a8c;
 	font-weight: bold;
 }
+
+GxsCommentDialog QComboBox#sortBox {
+	font: bold;
+	font-size: 12px;
+	color: #0099cc;
+}

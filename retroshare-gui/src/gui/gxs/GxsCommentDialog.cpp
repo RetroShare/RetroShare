@@ -49,6 +49,15 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	connect(ui->refreshButton, SIGNAL(clicked()), this, SLOT(refresh()));
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
+	
+	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
+	
+	// default sort method "HOT".
+	ui->treeWidget->sortByColumn(4, Qt::DescendingOrder);
+	
+	int S = QFontMetricsF(font()).height() ;
+	
+	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
 }
 
 GxsCommentDialog::~GxsCommentDialog()
@@ -140,4 +149,23 @@ void GxsCommentDialog::setCommentHeader(QWidget *header)
 
 	ui->notesBrowser->setPlainText(QString::fromStdString(mCurrentPost.mNotes));
 #endif
+}
+
+void GxsCommentDialog::sortComments(int i)
+{
+
+	switch(i)
+	{
+	default:
+	case 0:
+		ui->treeWidget->sortByColumn(4, Qt::DescendingOrder); 
+		break;
+	case 1:
+		ui->treeWidget->sortByColumn(2, Qt::DescendingOrder); 
+		break;
+	case 2:
+		ui->treeWidget->sortByColumn(3, Qt::DescendingOrder); 
+		break;
+	}
+
 }

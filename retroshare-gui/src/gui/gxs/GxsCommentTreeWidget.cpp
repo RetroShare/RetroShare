@@ -31,6 +31,7 @@
 #include "gui/gxs/GxsCommentTreeWidget.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
+#include "gui/common/RSTreeWidgetItem.h"
 
 #include <iostream>
 
@@ -45,6 +46,7 @@
 #define PCITEM_COLUMN_PARENTID		8
 #define PCITEM_COLUMN_AUTHORID		9
 
+#define ROLE_SORT           Qt::UserRole + 1
 
 #define GXSCOMMENTS_LOADTHREAD		1
 
@@ -139,6 +141,9 @@ GxsCommentTreeWidget::GxsCommentTreeWidget(QWidget *parent)
 	setWordWrap(true);
 
     setItemDelegateForColumn(PCITEM_COLUMN_COMMENT,new MultiLinesCommentDelegate(QFontMetricsF(font()))) ;
+	
+	commentsRole = new RSTreeWidgetItemCompareRole;
+    commentsRole->setRole(PCITEM_COLUMN_DATE, ROLE_SORT);
 
 //	QFont font = QFont("ARIAL", 10);
 //	font.setBold(true);
@@ -537,6 +542,8 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 			text = qtime.toString("yyyy-MM-dd hh:mm:ss") ;
 			item->setText(PCITEM_COLUMN_DATE, text) ;
 			item->setToolTip(PCITEM_COLUMN_DATE, text) ;
+			item->setData(PCITEM_COLUMN_DATE, ROLE_SORT, comment.mMeta.mPublishTs);
+
 		}
 
 		text = QString::fromUtf8(comment.mComment.c_str());
