@@ -862,45 +862,57 @@ rs_jsonapi {
     WRAPPERS_REG_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl)
 
     no_rs_cross_compiling {
-        restbed.target = $$clean_path($${RESTBED_BUILD_PATH}/library/librestbed.a)
-        restbed.commands = \
-            cd $${RS_SRC_PATH};\
-            git submodule update --init --recommend-shallow supportlibs/restbed;\
-            cd $${RESTBED_SRC_PATH};\
-            git submodule update --init --recommend-shallow dependency/asio;\
-            git submodule update --init --recommend-shallow dependency/catch;\
-            git submodule update --init --recommend-shallow dependency/kashmir;\
-            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH};\
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX -DBUILD_SSL=OFF \
-                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH});\
-            make; make install
-        QMAKE_EXTRA_TARGETS += restbed
-        libretroshare.depends += restbed
-        PRE_TARGETDEPS *= $${restbed.target}
+        DUMMYRESTBEDINPUT = FORCE
+        CMAKE_GENERATOR_OVERRIDE=""
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        genrestbedlib.name = Generating libresbed.
+        genrestbedlib.input = DUMMYRESTBEDINPUT
+        genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
+        genrestbedlib.CONFIG += target_predeps combine
+        genrestbedlib.variable_out = PRE_TARGETDEPS
+        genrestbedlib.commands = \
+            cd $${RS_SRC_PATH} && \
+            git submodule update --init --recommend-shallow supportlibs/restbed && \
+            cd $${RESTBED_SRC_PATH} && \
+            git submodule update --init --recommend-shallow dependency/asio && \
+            git submodule update --init --recommend-shallow dependency/catch && \
+            git submodule update --init --recommend-shallow dependency/kashmir && \
+            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
+            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
+            make
+        QMAKE_EXTRA_COMPILERS += genrestbedlib
+
+        RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
+        genrestbedheader.name = Generating restbed header.
+        genrestbedheader.input = genrestbedlib.output
+        genrestbedheader.output = $${RESTBED_HEADER_FILE}
+        genrestbedheader.CONFIG += target_predeps combine no_link
+        genrestbedheader.variable_out = HEADERS
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
-    PRE_TARGETDEPS *= $${JSONAPI_GENERATOR_EXE}
     INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
-    GENERATED_HEADERS += $${WRAPPERS_INCL_FILE}
+    DEPENDPATH *= $${JSONAPI_GENERATOR_OUT}
+    APIHEADERS = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
+    #Make sure that the jsonapigenerator executable are ready
+    APIHEADERS += $${JSONAPI_GENERATOR_EXE}
 
-    jsonwrappersincl.target = $${WRAPPERS_INCL_FILE}
-    jsonwrappersincl.commands = \
+    genjsonapi.name = Generating jsonapi headers.
+    genjsonapi.input = APIHEADERS
+    genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
+    genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
+    genjsonapi.CONFIG += target_predeps combine no_link
+    genjsonapi.variable_out = HEADERS
+    genjsonapi.commands = \
         mkdir -p $${JSONAPI_GENERATOR_OUT} && \
         cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
-        echo OUTPUT_DIRECTORY=$$shell_path($${JSONAPI_GENERATOR_OUT}) >> $${DOXIGEN_CONFIG_OUT} && \
-        echo INPUT=$$shell_path($${DOXIGEN_INPUT_DIRECTORY}) >> $${DOXIGEN_CONFIG_OUT} && \
+        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
+        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
         doxygen $${DOXIGEN_CONFIG_OUT} && \
         $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
-    QMAKE_EXTRA_TARGETS += jsonwrappersincl
-    libretroshare.depends += jsonwrappersincl
-    PRE_TARGETDEPS *= $${WRAPPERS_INCL_FILE}
-
-    jsonwrappersreg.target = $${WRAPPERS_REG_FILE}
-    jsonwrappersreg.commands = touch $${WRAPPERS_REG_FILE}
-    jsonwrappersreg.depends = jsonwrappersincl
-    QMAKE_EXTRA_TARGETS += jsonwrappersreg
-    libretroshare.depends += jsonwrappersreg
-    PRE_TARGETDEPS *= $${WRAPPERS_REG_FILE}
+    QMAKE_EXTRA_COMPILERS += genjsonapi
 
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
