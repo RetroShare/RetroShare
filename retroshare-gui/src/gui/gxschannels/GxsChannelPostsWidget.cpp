@@ -244,8 +244,6 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 	ui->logoLabel->setPixmap(chanImage);
 
-	ui->subscribersLabel->setText(QString::number(group.mMeta.mPop)) ;
-
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, true);
@@ -271,6 +269,9 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		ui->fileToolButton->setEnabled(true);
 		ui->infoWidget->hide();
 		setViewMode(viewMode());
+		
+		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
+
 
 		ui->infoPosts->clear();
 		ui->infoDescription->clear();
@@ -332,6 +333,9 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 		ui->feedToolButton->setEnabled(false);
 		ui->fileToolButton->setEnabled(false);
+		
+		ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+
 	}
 }
 
@@ -622,8 +626,6 @@ void GxsChannelPostsWidget::blank()
 	mStateHelper->setWidgetEnabled(ui->postButton, false);
 	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
 	
-	ui->subscribersLabel->setText("") ;
-
 	clearPosts();
 
     groupNameChanged(QString());

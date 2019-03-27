@@ -139,28 +139,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QLabel" name="subscribersLabel">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Subscribers</string>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
        <widget class="QToolButton" name="postButton">
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
