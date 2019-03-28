@@ -158,13 +158,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
-
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
-    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
 
     ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
     ui.replyallmessageButton->setToolTip(tr("Reply to All"));
@@ -207,6 +200,14 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
+
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
+
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_DATE,       QHeaderView::Interactive);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
@@ -396,20 +397,6 @@ bool MessagesDialog::eventFilter(QObject *obj, QEvent *event)
     // pass the event on to the parent class
     return MainPage::eventFilter(obj, event);
 }
-
-// void MessagesDialog::changeEvent(QEvent *e)
-// {
-//     QWidget::changeEvent(e);
-//
-//     switch (e->type()) {
-//     case QEvent::StyleChange:
-//         insertMessages();
-//         break;
-//     default:
-//         // remove compiler warnings
-//         break;
-//     }
-// }
 
 void MessagesDialog::fillQuickView()
 {
