@@ -542,7 +542,7 @@ void GxsCommentTreeWidget::service_loadThread(const uint32_t &token)
 			text = qtime.toString("yyyy-MM-dd hh:mm:ss") ;
 			item->setText(PCITEM_COLUMN_DATE, text) ;
 			item->setToolTip(PCITEM_COLUMN_DATE, text) ;
-			item->setData(PCITEM_COLUMN_DATE, ROLE_SORT, comment.mMeta.mPublishTs);
+			item->setData(PCITEM_COLUMN_DATE, ROLE_SORT, QVariant(qlonglong(comment.mMeta.mPublishTs)));
 
 		}
 
