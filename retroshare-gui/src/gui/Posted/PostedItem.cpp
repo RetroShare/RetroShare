@@ -246,27 +246,25 @@ void PostedItem::fill()
 		return;
 	}
 
+	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+
 	mInFill = true;
-	int desired_height = ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height();
+	int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
+	int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
 		pixmap.loadFromData(mPost.mImage.mData, mPost.mImage.mSize, "PNG");
 		// Wiping data - as its been passed to thumbnail.
 		
-		QPixmap sqpixmap = pixmap.scaled(10*desired_height,1.5*desired_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		ui->thumbnailLabel->setMaximumSize(sqpixmap.size());
+		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 		ui->thumbnailLabel->setPixmap(sqpixmap);
 		ui->pictureLabel->setPixmap(pixmap);
-std::cerr << "new size=" << desired_height << " " << sqpixmap.width() << " " << sqpixmap.height() << std::endl;
 	}
 	else
 	{
-		QPixmap sqpixmap = QPixmap(":/images/thumb-default.png").scaled(10*desired_height,1.5*desired_height, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-		ui->thumbnailLabel->setMaximumSize(sqpixmap.size());
-		ui->thumbnailLabel->setPixmap(sqpixmap);
-
+		ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
 		ui->expandButton->setDisabled(true);
 	}
 
