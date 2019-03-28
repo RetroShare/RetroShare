@@ -23,9 +23,12 @@
 #include "gui/common/FlowLayout.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/msgs/MessageComposer.h"
+#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdDetailsDialog.h"
+#include "gui/Identity/IdDialog.h"
+#include "gui/MainWindow.h"
 
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
@@ -63,6 +66,8 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 
 	
 	tabWidget->removeTab(1);
+	//hide circle flow widget not functional yet
+	pictureFlowWidgetExternal->hide();
 
 	//need erase QtCreator Layout first(for Win)
 	delete idExternal->layout();
@@ -423,6 +428,8 @@ void PeopleDialog::iw_AddButtonClickedExt()
 	    qobject_cast<IdentityWidget *>(QObject::sender());
 	if (dest) {
 		QMenu contextMnu( this );
+		
+		QMenu *mnu = contextMnu.addMenu(QIcon(":/icons/png/circles.png"),tr("Invite to Circle")) ;
 
 		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
 		for( itCurs =_ext_circles_widgets.begin();
@@ -432,7 +439,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			QIcon icon = QIcon(curs->getImage());
 			QString name = curs->getName();
 
-			QAction *action = contextMnu.addAction(icon, name, this, SLOT(addToCircleExt()));
+			QAction *action = mnu->addAction(icon, name, this, SLOT(addToCircleExt()));
 			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
 			                + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 		}//for( itCurs =_ext_circles_widgets.begin();
@@ -468,8 +475,16 @@ void PeopleDialog::iw_AddButtonClickedExt()
 				}
 			}
 			
-			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message to this person"), this, SLOT(sendMessage()));
+			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMessage()));
 			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+			
+			QAction *actionsendinvite = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send invite"), this, SLOT(sendInvite()));
+			actionsendinvite->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
+			
+			contextMnu.addSeparator();
+			
+			QAction *actionaddcontact = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+			actionaddcontact->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
 			contextMnu.addSeparator();
 			
@@ -607,6 +622,36 @@ void PeopleDialog::sendMessage()
 
 }
 
+void PeopleDialog::sendInvite()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+
+   	RsGxsId gxs_id = RsGxsId(data.toStdString());;
+    
+    MessageComposer::sendInvite(gxs_id,false);
+
+	}
+    
+
+}
+
+void PeopleDialog::addtoContacts()
+{
+	QAction *action =
+	    qobject_cast<QAction *>(QObject::sender());
+	if (action) {
+		QString data = action->data().toString();
+		
+	RsGxsId gxs_id = RsGxsId(data.toStdString());;
+
+	rsIdentity->setAsRegularContact(RsGxsId(gxs_id),true);
+    }
+
+}
+
 void PeopleDialog::personDetails()
 {
 	QAction *action =
@@ -620,10 +665,14 @@ void PeopleDialog::personDetails()
         return;
     }
 
-    IdDetailsDialog *dialog = new IdDetailsDialog(RsGxsGroupId(gxs_id));
-    dialog->show();
+	/* window will destroy itself! */
+	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
 
-    /* Dialog will destroy itself */
+	if (!idDialog)
+		return ;
+
+	MainWindow::showWindow(MainWindow::People);
+	idDialog->navigate(RsGxsId(gxs_id));
 
     }
 
