@@ -50,8 +50,8 @@ typedef Sha1CheckSum  RsFileHash ;
 typedef Sha1CheckSum  RsMessageId ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
-const uint32_t FT_STATE_OKAY				= 0x0001 ;
-const uint32_t FT_STATE_WAITING 			= 0x0002 ;
+const uint32_t FT_STATE_OKAY			= 0x0001 ;
+const uint32_t FT_STATE_WAITING 		= 0x0002 ;
 const uint32_t FT_STATE_DOWNLOADING		= 0x0003 ;
 const uint32_t FT_STATE_COMPLETE 		= 0x0004 ;
 const uint32_t FT_STATE_QUEUED   		= 0x0005 ;
