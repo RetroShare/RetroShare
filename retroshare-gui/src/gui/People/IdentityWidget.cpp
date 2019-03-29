@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsreputations.h"
 #include "gui/People/IdentityWidget.h"
 #include "ui_IdentityWidget.h"
 
@@ -85,7 +86,7 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		_group_info = gxs_group_info;
 		_haveGXSId = true;
 
-		RsReputations::ReputationInfo info ;
+		RsReputationInfo info ;
 		rsReputations->getReputationInfo(RsGxsId(_group_info.mMeta.mGroupId),_group_info.mPgpId,info) ;
 		
 		m_myName = QString::fromUtf8(_group_info.mMeta.mGroupName.c_str());
