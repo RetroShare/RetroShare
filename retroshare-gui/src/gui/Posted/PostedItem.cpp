@@ -246,20 +246,25 @@ void PostedItem::fill()
 		return;
 	}
 
+	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+
 	mInFill = true;
-	
+	int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
+	int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
 		pixmap.loadFromData(mPost.mImage.mData, mPost.mImage.mSize, "PNG");
 		// Wiping data - as its been passed to thumbnail.
 		
-		QPixmap sqpixmap = pixmap.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		ui->pictureLabel->setPixmap(sqpixmap);			
-				
-		ui->thumbnailLabel->setPixmap(pixmap);
-	}else
+		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+		ui->thumbnailLabel->setPixmap(sqpixmap);
+		ui->pictureLabel->setPixmap(pixmap);
+	}
+	else
 	{
+		//ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
 		ui->expandButton->setDisabled(true);
 	}
 
