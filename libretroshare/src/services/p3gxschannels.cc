@@ -31,6 +31,7 @@
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
 
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
@@ -1053,6 +1054,116 @@ bool p3GxsChannels::getChannelContent( const RsGxsGroupId& channelId,
 	        waitToken(token) != RsTokenService::COMPLETE ) return false;
 
 	return getPostData(token, posts, comments);
+}
+
+bool p3GxsChannels::createChannel(const std::string& name,
+                               const std::string& description,
+                               const RsGxsImage& image,
+                               const RsGxsId& author_id,
+                               uint32_t circle_type,
+                               RsGxsCircleId& circle_id,
+                               RsGxsGroupId& channel_group_id,
+                               std::string& error_message)
+{
+    // do some checks
+
+    if(        circle_type != GXS_CIRCLE_TYPE_PUBLIC
+            && circle_type != GXS_CIRCLE_TYPE_EXTERNAL
+	        && circle_type != GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY
+	        && circle_type != GXS_CIRCLE_TYPE_LOCAL
+	        && circle_type != GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    )
+    {
+ 		error_message = std::string("circle_type has a non allowed value") ;
+        return false ;
+    }
+
+    switch(circle_type)
+    {
+    	case GXS_CIRCLE_TYPE_EXTERNAL:
+    	    if(circle_id.isNull())
+			{
+				error_message = std::string("circle_type is GXS_CIRCLE_TYPE_EXTERNAL but circle_id is null");
+				return false ;
+			}
+		break;
+
+    	case GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY:
+    	{
+    	    RsGroupInfo ginfo;
+
+    	    if(!rsPeers->getGroupInfo(RsNodeGroupId(circle_id),ginfo))
+    	    {
+				error_message = std::string("circle_type is GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY but circle_id is not set or does not correspond to a actual group of friends");
+				return false;
+			}
+		}
+		break;
+
+    	default:
+    	    if(!circle_id.isNull())
+    	    {
+				error_message = std::string("circle_type requires a null circle id, but a non null circle id (" + circle_id.toStdString() + ") was supplied");
+				return false;
+    	    }
+    }
+
+    // Create a consistent channel group meta from the information supplied
+
+    RsGxsChannelGroup channel ;
+
+    channel.mMeta.mGroupName = name ;
+    channel.mMeta.mAuthorId = author_id ;
+    channel.mMeta.mCircleType = circle_type ;
+
+    channel.mMeta.mSignFlags =    GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ
+            					| GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+
+    channel.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
+	channel.mMeta.mCircleId.clear();
+	channel.mMeta.mInternalCircle.clear();
+
+    if(circle_type == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
+        channel.mMeta.mInternalCircle = circle_id;
+    else if(circle_type == GXS_CIRCLE_TYPE_EXTERNAL)
+        channel.mMeta.mCircleId = circle_id;
+
+    // Create the channel
+
+    channel.mDescription = description ;
+    channel.mImage = image ;
+
+	uint32_t token;
+	if(!createGroup(token, channel))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+    // wait for the group creation to complete.
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+    channel_group_id = channel.mMeta.mGroupId;
+
+#ifdef RS_DEEP_SEARCH
+	DeepSearch::indexChannelGroup(channel);
+#endif //  RS_DEEP_SEARCH
+
+	return true;
 }
 
 bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)

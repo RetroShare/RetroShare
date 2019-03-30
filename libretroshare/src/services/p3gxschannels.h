@@ -197,6 +197,16 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(RsGxsChannelGroup& channel);
 
+	/// Implementation of @see RsGxsChannels::createChannel
+	virtual bool createChannel(const std::string& name,
+                               const std::string& description,
+                               const RsGxsImage& image,
+                               const RsGxsId& author_id,
+                               uint32_t circle_type,
+                               RsGxsCircleId& circle_id,
+                               RsGxsGroupId& channel_group_id,
+                               std::string& error_message);
+
 	/// Implementation of @see RsGxsChannels::createComment
 	virtual bool createComment(RsGxsComment& comment);
 

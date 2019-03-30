@@ -108,6 +108,28 @@ public:
 	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
 
 	/**
+	 * @brief Create channel. Blocking API.
+	 * @jsonapi{development}
+	 * @param[in]  name              Name of the channel
+	 * @param[in]  description       Description of the channel
+	 * @param[in]  image             Thumbnail that is shown to advertise the channel. Possibly empty.
+	 * @param[in]  author_id         GxsId of the contact author. For an anonymous channel, leave this to RsGxsId()="00000....0000"
+	 * @param[in]  circle_type       Type of visibility restriction, among { GXS_CIRCLE_TYPE_PUBLIC, GXS_CIRCLE_TYPE_EXTERNAL, GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GXS_CIRCLE_TYPE_YOUR_EYES_ONLY }
+	 * @param[in]  circle_id         Id of the circle (should be an external circle or GXS_CIRCLE_TYPE_EXTERNAL, a local friend group for GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GxsCircleId()="000....000" otherwise
+	 * @param[out] channel_group_id  Group id of the created channel, if command succeeds.
+	 * @param[out] error_message     Error messsage supplied when the channel creation fails.
+	 * @return                       False on error, true otherwise.
+	 */
+	virtual bool createChannel(const std::string& name,
+                               const std::string& description,
+                               const RsGxsImage& image,
+                               const RsGxsId& author_id,
+                               uint32_t circle_type,
+                               RsGxsCircleId& circle_id,
+                               RsGxsGroupId& channel_group_id,
+                               std::string& error_message)=0;
+
+	/**
 	 * @brief Add a comment on a post or on another comment
 	 * @jsonapi{development}
 	 * @param[inout] comment
