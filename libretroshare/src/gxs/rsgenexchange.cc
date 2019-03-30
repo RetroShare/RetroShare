@@ -912,7 +912,8 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 				// now check reputation of the message author. The reputation will need to be at least as high as this value for the msg to validate.
                 // At validation step, we accept all messages, except the ones signed by locally rejected identities.
 
-				if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+				if( details.mReputation.mOverallReputationLevel ==
+				        RsReputationLevel::LOCALLY_NEGATIVE )
 				{
 #ifdef GEN_EXCH_DEBUG	
 					std::cerr << "RsGenExchange::validateMsg(): message from " << metaData.mAuthorId << ", rejected because reputation level (" << details.mReputation.mOverallReputationLevel <<") indicate that you banned this ID." << std::endl;
@@ -1848,7 +1849,8 @@ uint32_t RsGenExchange::getDefaultSyncPeriod()
     }
 }
 
-RsReputations::ReputationLevel RsGenExchange::minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_sign_flags)
+RsReputationLevel RsGenExchange::minReputationForForwardingMessages(
+        uint32_t group_sign_flags, uint32_t identity_sign_flags )
 {
 	return RsNetworkExchangeService::minReputationForForwardingMessages(group_sign_flags,identity_sign_flags);
 }

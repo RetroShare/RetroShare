@@ -55,9 +55,10 @@ rs_jsonapi {
         RESTBED_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/restbed)
         RESTBED_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/restbed)
         INCLUDEPATH *= $$clean_path($${RESTBED_BUILD_PATH}/include/)
-        QMAKE_LIBDIR *= $$clean_path($${RESTBED_BUILD_PATH}/library/)
+        DEPENDPATH *= $$clean_path($${RESTBED_BUILD_PATH}/include/)
+        QMAKE_LIBDIR *= $$clean_path($${RESTBED_BUILD_PATH}/)
         # Using sLibs would fail as librestbed.a is generated at compile-time
-        LIBS *= -L$$clean_path($${RESTBED_BUILD_PATH}/library/) -lrestbed
+        LIBS *= -L$$clean_path($${RESTBED_BUILD_PATH}/) -lrestbed
     } else:sLibs *= restbed
 
     win32-g++:dLibs *= wsock32

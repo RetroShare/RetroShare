@@ -371,6 +371,7 @@ HEADERS +=  rshare.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
+            gui/common/AvatarDialog.h \
             gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/SharedFilesDialog.h \
             gui/FileTransfer/xprogressbar.h \
@@ -446,6 +447,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \
+            gui/msgs/MessageModel.h \
             gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
@@ -607,6 +609,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/AboutWidget.ui \
             gui/QuickStartWizard.ui \
             gui/NetworkDialog.ui \
+            gui/common/AvatarDialog.ui \
             gui/FileTransfer/TransfersDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/FileTransfer/SearchDialog.ui \
@@ -800,6 +803,7 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
+            gui/msgs/MessageModel.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
             gui/common/RsButtonOnText.cpp \
@@ -811,6 +815,7 @@ SOURCES +=  main.cpp \
             gui/common/rwindow.cpp \
             gui/common/rshtml.cpp \
             gui/common/AvatarDefs.cpp \
+            gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
             gui/common/GroupSelectionBox.cpp \
             gui/common/GroupChooser.cpp \

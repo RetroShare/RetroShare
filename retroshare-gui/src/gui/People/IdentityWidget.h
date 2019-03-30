@@ -82,6 +82,8 @@ private:
 	QString _idtype;
 	QString _nickname;
 	QString _gxsId;
+	QString _postiveVotes;
+	QString _negativeVotes;
 
 	Ui::IdentityWidget *ui;
 };

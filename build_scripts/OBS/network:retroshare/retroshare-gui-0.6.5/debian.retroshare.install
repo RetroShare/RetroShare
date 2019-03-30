@@ -1,5 +1,0 @@
-debian/tmp/usr/bin/retroshare
-debian/tmp/usr/share/applications/retroshare.desktop
-debian/tmp/usr/share/icons/hicolor/*
-debian/tmp/usr/share/pixmaps/retroshare.xpm
-debian/tmp/usr/share/retroshare/*

@@ -504,7 +504,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 
 	resp.mDataStream << makeKeyValue("bannned_node", rsReputations->isNodeBanned(data.mPgpId));
 
-	RsReputations::ReputationInfo info;
+	RsReputationInfo info;
 	rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId), data.mPgpId, info);
 	resp.mDataStream << makeKeyValue("friends_positive_votes", info.mFriendsPositiveVotes);
 	resp.mDataStream << makeKeyValue("friends_negative_votes", info.mFriendsNegativeVotes);
@@ -637,18 +637,12 @@ void IdentityHandler::handleSetOpinion(Request& req, Response& resp)
 	int own_opinion;
 	req.mStream << makeKeyValueReference("own_opinion", own_opinion);
 
-	RsReputations::Opinion opinion;
+	RsOpinion opinion;
 	switch(own_opinion)
 	{
-	    case 0:
-		    opinion = RsReputations::OPINION_NEGATIVE;
-		    break;
-	    case 1: opinion =
-		    RsReputations::OPINION_NEUTRAL;
-		    break;
-	    case 2:
-		    opinion = RsReputations::OPINION_POSITIVE;
-		    break;
+	case 0: opinion = RsOpinion::NEGATIVE; break;
+	case 1: opinion = RsOpinion::NEUTRAL; break;
+	case 2: opinion = RsOpinion::POSITIVE; break;
 	default:
 		resp.setFail();
 		return;

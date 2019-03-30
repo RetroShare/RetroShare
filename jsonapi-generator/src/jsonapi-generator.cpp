@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 				QString refid(member.attributes().namedItem("refid").nodeValue());
 				QString methodName(member.firstChildElement("name").toElement().text());
 				bool requiresAuth = true;
-				QString defFilePath(doxPrefix + refid.split('_')[0] + ".xml");
+				QString defFilePath(doxPrefix + refid.left(refid.lastIndexOf('_')) + ".xml");
 
 				qDebug() << "Looking for" << typeName << methodName << "into"
 				         << typeFilePath;

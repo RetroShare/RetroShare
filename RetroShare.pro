@@ -31,7 +31,7 @@ rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
 
 SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
-libretroshare.depends = openpgpsdk libbitdht
+libretroshare.depends += openpgpsdk libbitdht
 
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
@@ -39,7 +39,7 @@ libretroshare.file = libretroshare/src/libretroshare.pro
 libresapi {
     SUBDIRS += libresapi
     libresapi.file = libresapi/src/libresapi.pro
-    libresapi.depends = libretroshare
+    libresapi.depends += libretroshare
 }
 
 retroshare_gui {

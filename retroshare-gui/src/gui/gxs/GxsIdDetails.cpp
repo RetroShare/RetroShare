@@ -64,6 +64,12 @@
 //const int kRecognTagType_Dev_Patcher     	= 4;
 //const int kRecognTagType_Dev_Developer	 	= 5;
 
+uint32_t GxsIdDetails::mImagesAllocated = 0;
+time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
+std::map<RsGxsId,std::pair<time_t,QImage> > GxsIdDetails::mDefaultIconCache ;
+
+#define ICON_CACHE_STORAGE_TIME 		  600
+#define DELAY_BETWEEN_ICON_CACHE_CLEANING 300
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -84,7 +90,8 @@ void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
 	if(icon_index > mMaxLevelToDisplay)
 		return ;
 
-	QIcon icon = GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel(icon_index),0xff);
+	QIcon icon = GxsIdDetails::getReputationIcon(
+	            RsReputationLevel(icon_index), 0xff );
 
 	QPixmap pix = icon.pixmap(r.size());
 
@@ -450,9 +457,50 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-QImage GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+const QImage& GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
-    return  drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
+    // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
+    // on a regular time basis so as to get rid of unused images.
+
+    time_t now = time(NULL);
+
+    // cleanup the cache every 10 mins
+
+    if(mLastIconCacheCleaning + DELAY_BETWEEN_ICON_CACHE_CLEANING < now)
+    {
+        std::cerr << "(II) Cleaning the icons cache." << std::endl;
+        int nb_deleted = 0;
+
+        for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
+            if(it->second.first + ICON_CACHE_STORAGE_TIME < now && it->second.second.isDetached())
+            {
+				it = mDefaultIconCache.erase(it);
+                ++nb_deleted;
+            }
+			else
+				++it;
+
+        mLastIconCacheCleaning = now;
+        std::cerr << "(II) Removed " << nb_deleted << " unused icons. Cache contains " << mDefaultIconCache.size() << " icons"<< std::endl;
+    }
+
+    // now look for the icon
+
+    auto it = mDefaultIconCache.find(id);
+
+    if(it != mDefaultIconCache.end())
+    {
+        it->second.first = now;
+        return it->second.second;
+    }
+
+    QImage image = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+
+    mDefaultIconCache[id] = std::make_pair(now,image);
+    it = mDefaultIconCache.find(id);
+
+    return it->second.second;
 }
 
 /**
@@ -937,8 +985,9 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-	    return tr("[Banned]") ;
+	if( details.mReputation.mOverallReputationLevel ==
+	         RsReputationLevel::LOCALLY_NEGATIVE )
+		return tr("[Banned]");
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
@@ -956,7 +1005,8 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-	bool banned = (details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE);
+    bool banned = ( details.mReputation.mOverallReputationLevel ==
+	                RsReputationLevel::LOCALLY_NEGATIVE );
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
@@ -997,19 +1047,27 @@ QString nickname ;
 	return comment;
 }
 
-QIcon GxsIdDetails::getReputationIcon(RsReputations::ReputationLevel icon_index,uint32_t min_reputation)
+QIcon GxsIdDetails::getReputationIcon(
+        RsReputationLevel icon_index, uint32_t min_reputation )
 {
-	if( icon_index >= min_reputation )                  return QIcon(REPUTATION_VOID) ;
+	if( static_cast<uint32_t>(icon_index) >= min_reputation )
+		return QIcon(REPUTATION_VOID);
 
 	switch(icon_index)
 	{
-		case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON)  ; break ;
-		case RsReputations::REPUTATION_LOCALLY_POSITIVE:  return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON)  ; break ;
-		case RsReputations::REPUTATION_REMOTELY_POSITIVE: return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON) ; break ;
-		case RsReputations::REPUTATION_REMOTELY_NEGATIVE: return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON) ; break ;
-		case RsReputations::REPUTATION_NEUTRAL:           return QIcon(REPUTATION_NEUTRAL_ICON)           ; break ;
-		default:
-			std::cerr << "Asked for unidentified icon index " << icon_index << std::endl;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		return QIcon(REPUTATION_LOCALLY_NEGATIVE_ICON);
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		return QIcon(REPUTATION_LOCALLY_POSITIVE_ICON);
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		return QIcon(REPUTATION_REMOTELY_POSITIVE_ICON);
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		return QIcon(REPUTATION_REMOTELY_NEGATIVE_ICON);
+	case RsReputationLevel::NEUTRAL:
+		return QIcon(REPUTATION_NEUTRAL_ICON);
+	default:
+		std::cerr << "Asked for unidentified icon index "
+		          << static_cast<uint32_t>(icon_index) << std::endl;
 		return QIcon(); // dont draw anything
 	}
 }
@@ -1018,7 +1076,8 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
-    if(details.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+	if( details.mReputation.mOverallReputationLevel ==
+	         RsReputationLevel::LOCALLY_NEGATIVE )
     {
         icons.clear() ;
         icons.push_back(QIcon(IMAGE_BANNED)) ;

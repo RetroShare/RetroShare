@@ -824,19 +824,20 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumModelPostEntry& fentry)
 {
     uint32_t idflags =0;
-	RsReputations::ReputationLevel reputation_level = rsReputations->overallReputationLevel(fentry.mAuthorId,&idflags) ;
+	RsReputationLevel reputation_level =
+	        rsReputations->overallReputationLevel(fentry.mAuthorId, &idflags);
 	bool redacted = false;
 
-    if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+	if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
         fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
     else
         fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
 
     // We use a specific item model for forums in order to handle the post pinning.
 
-    if(reputation_level == RsReputations::REPUTATION_UNKNOWN)
+	if(reputation_level == RsReputationLevel::UNKNOWN)
         fentry.mReputationWarningLevel = 3 ;
-    else if(reputation_level == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+	else if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
         fentry.mReputationWarningLevel = 2 ;
     else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
         fentry.mReputationWarningLevel = 1 ;
@@ -1301,7 +1302,7 @@ void RsGxsForumModel::debug_dump()
 }
 #endif
 
-void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx,RsReputations::Opinion op)
+void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx, RsOpinion op)
 {
 	if(!indx.isValid())
 		return ;
@@ -1312,7 +1313,8 @@ void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx,RsReputations::Op
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 		return ;
 
-    std::cerr << "Setting own opinion for author " << mPosts[entry].mAuthorId << " to " << op << std::endl;
+	std::cerr << "Setting own opinion for author " << mPosts[entry].mAuthorId
+	          << " to " << static_cast<uint32_t>(op) << std::endl;
     RsGxsId author_id = mPosts[entry].mAuthorId;
 
 	rsReputations->setOwnOpinion(author_id,op) ;

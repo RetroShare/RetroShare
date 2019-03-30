@@ -149,30 +149,34 @@ void GxsIdRSTreeWidgetItem::setAvatar(const RsGxsImage &avatar)
 
 QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 {
-    if (column == idColumn()) 
-    {
-	    if (role == Qt::ToolTipRole)
-	    {
-		    QString t = RSTreeWidgetItem::data(column, role).toString();
-		    QImage pix;
+	if (column == idColumn())
+	{
+		if (role == Qt::ToolTipRole)
+		{
+			QString t = RSTreeWidgetItem::data(column, role).toString();
+			QImage pix;
 
-		    if(mId.isNull())
-			    return RSTreeWidgetItem::data(column, role);
-		    else if(rsReputations->overallReputationLevel(mId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
-			    pix = QImage(BANNED_IMAGE) ;
-		    else if (mAvatar.mSize == 0 || !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG")) 
-			    pix = GxsIdDetails::makeDefaultIcon(mId);
+			if(mId.isNull()) return RSTreeWidgetItem::data(column, role);
+			else if( rsReputations->overallReputationLevel(mId) ==
+			         RsReputationLevel::LOCALLY_NEGATIVE )
+				pix = QImage(BANNED_IMAGE);
+			else if ( mAvatar.mSize == 0 ||
+			          !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG") )
+				pix = GxsIdDetails::makeDefaultIcon(mId);
 
-		    int S = QFontMetricsF(font(column)).height();
+			int S = QFontMetricsF(font(column)).height();
 
-		    QString embeddedImage;
-		    if (RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S)) {
-			    t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
-		    }
+			QString embeddedImage;
+			if ( RsHtml::makeEmbeddedImage(
+			         pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio,
+			                    Qt::SmoothTransformation ),
+			         embeddedImage, 8*S * 8*S ) )
+				t = "<table><tr><td>" + embeddedImage + "</td><td>" + t
+				        + "</td></table>";
 
-		    return t;
-	    }
-    }
+			return t;
+		}
+	}
 
-    return RSTreeWidgetItem::data(column, role);
+	return RSTreeWidgetItem::data(column, role);
 }

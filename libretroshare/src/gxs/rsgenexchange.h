@@ -712,7 +712,8 @@ public:
     uint16_t serviceType() const { return mServType ; }
     uint32_t serviceFullType() const { return RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(mServType); }
 
-    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags);
+	virtual RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags, uint32_t identity_flags );
 protected:
 
     /** Notifications **/

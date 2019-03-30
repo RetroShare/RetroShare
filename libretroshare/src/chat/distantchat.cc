@@ -135,13 +135,13 @@ void DistantChatService::handleRecvChatStatusItem(RsChatStatusItem *cs)
         std::cerr << "DistantChatService::handleRecvChatStatusItem(): received keep alive packet for inactive chat! peerId=" << cs->PeerId() << std::endl;
 }
 
-bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id,bool is_client_side)
+bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTunnelId& tunnel_id,bool am_I_client_side)
 {
-    bool res = true ;
-    
-    if(is_client_side)	// always accept distant chat when we're the client side.
+    if(am_I_client_side)	// always accept distant chat when we're the client side.
         return true ;
     
+    bool res = true ;
+
     if(mDistantChatPermissions & RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS)
         res = (rsIdentity!=NULL) && rsIdentity->isARegularContact(gxs_id) ;
     

@@ -77,11 +77,11 @@ public:
     bool    MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
     bool    MessageToTrash(const std::string &mid, bool bTrash);
 
+    bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
     bool 	getMessageTagTypes(Rs::Msgs::MsgTagType& tags);
     bool  	setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color);
     bool    removeMessageTagType(uint32_t tagId);
 
-    bool 	getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
     /* set == false && tagId == 0 --> remove all */
     bool 	setMessageTag(const std::string &msgId, uint32_t tagId, bool set);
 
@@ -142,6 +142,7 @@ public:
 
 private:
 	void sendDistantMsgItem(RsMsgItem *msgitem);
+    bool locked_getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info);
 
 	/** This contains the ongoing tunnel handling contacts.
 	 * The map is indexed by the hash */
