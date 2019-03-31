@@ -1166,6 +1166,7 @@ bool p3GxsChannels::createChannel(const std::string& name,
 	return true;
 }
 
+#ifdef REMOVED
 bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 {
 	uint32_t token;
@@ -1196,58 +1197,91 @@ bool p3GxsChannels::createChannel(RsGxsChannelGroup& channel)
 
 	return true;
 }
+#endif
 
-bool p3GxsChannels::createComment(RsGxsComment& comment)
+bool p3GxsChannels::createVote( const RsGxsGroupId&         groupId,
+                                const RsGxsMessageId &      threadId,
+    							const RsGxsMessageId&       commentMessageId,
+                                const RsGxsId&              authorId,
+                                uint32_t                    voteType,
+                                RsGxsMessageId&       		voteMessageId,
+                                std::string&                error_message)
 {
-	uint32_t token;
-	if(!createNewComment(token, comment))
+	// Do some checks
+
+	std::vector<RsGxsChannelGroup> channelsInfo;
+
+	if(!getChannelsInfo(std::list<RsGxsGroupId>({groupId}),channelsInfo)) // does the channel actually exist?
+    {
+        error_message = std::string("Channel with Id " + groupId.toStdString() + " does not exist.");
+        return false;
+    }
+
+	if(commentMessageId.isNull()) // has a correct comment msg id been supplied?
+    {
+		error_message = std::string("You cannot vote on null comment " + commentMessageId.toStdString() + " of channel with Id " + groupId.toStdString() + ": please supply a non null comment Id!");
+		return false;
+    }
+
+	std::set<RsGxsMessageId> s({commentMessageId});
+	std::vector<RsGxsChannelPost> posts;
+	std::vector<RsGxsComment> comments;
+
+	if(!getChannelContent( groupId,s,posts,comments )) // does the comment to vote actually exist?
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating comment."
-		          << std::endl;
+		error_message = std::string("You cannot vote on comment " + commentMessageId.toStdString() + " of channel with Id " + groupId.toStdString() + ": this comment does not locally exist!");
 		return false;
 	}
 
-	if(waitToken(token) != RsTokenService::COMPLETE)
+    if(posts.front().mMeta.mParentId.isNull()) // is the ID a comment ID or a post ID? It should be comment => should have a parent ID
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
-		          << std::endl;
+		error_message = std::string("You cannot vote on channel message " + commentMessageId.toStdString() + " of channel with Id " + groupId.toStdString() + ": this ID refers to a post, not a comment!");
 		return false;
 	}
 
-	if(!RsGenExchange::getPublishedMsgMeta(token, comment.mMeta))
-	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
-		          << " comment data." << std::endl;
+    if(voteType != GXS_VOTE_NONE && voteType != GXS_VOTE_UP && voteType != GXS_VOTE_DOWN) // is voteType consistent?
+    {
+		error_message = std::string("Your vote to channel with Id " + groupId.toStdString() + " has wrong vote type. Only GXS_VOTE_NONE, GXS_VOTE_UP, GXS_VOTE_DOWN accepted.");
 		return false;
-	}
+    }
 
-	return true;
-}
+    if(!rsIdentity->isOwnId(authorId)) // is the voter ID actually ours?
+    {
+		error_message = std::string("You cannot vote to channel with Id " + groupId.toStdString() + " with identity " + authorId.toStdString() + " because it is not yours.");
+		return false;
+    }
 
-bool p3GxsChannels::createVote(RsGxsVote& vote)
-{
+    // Create the vote
+
+	RsGxsVote vote;
+
+	vote.mMeta.mGroupId = groupId;
+	vote.mMeta.mThreadId = threadId;
+    vote.mMeta.mParentId = commentMessageId;
+	vote.mMeta.mAuthorId = authorId;
+
+    vote.mVoteType = voteType;
+
 	uint32_t token;
 	if(!createNewVote(token, vote))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating vote."
-		          << std::endl;
+		error_message = std::string("Error! Failed creating vote.");
 		return false;
 	}
 
 	if(waitToken(token) != RsTokenService::COMPLETE)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
-		          << std::endl;
+		error_message = std::string("Error! GXS operation failed.");
 		return false;
 	}
 
 	if(!RsGenExchange::getPublishedMsgMeta(token, vote.mMeta))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting generated "
-		          << " vote data." << std::endl;
+		error_message = std::string("Error! Failure getting generated vote data.");
 		return false;
 	}
 
+	voteMessageId = vote.mMeta.mMsgId;
 	return true;
 }
 
@@ -1282,11 +1316,60 @@ bool p3GxsChannels::editChannel(RsGxsChannelGroup& channel)
 	return true;
 }
 
-bool p3GxsChannels::createPost(RsGxsChannelPost& post)
+bool p3GxsChannels::createPost(const RsGxsGroupId& groupId,
+    							const RsGxsMessageId &origMsgId,
+								const std::string& msgName,
+								const std::string& msg,
+								const std::list<RsGxsFile>& files,
+								const RsGxsImage& thumbnail,
+                                RsGxsMessageId &message_id,
+                                std::string& error_message)
 {
+	// Do some checks
+
+	std::vector<RsGxsChannelGroup> channelsInfo;
+
+	if(!getChannelsInfo(std::list<RsGxsGroupId>({groupId}),channelsInfo))
+    {
+        error_message = std::string("Channel with Id " + groupId.toStdString() + " does not exist.");
+        return false;
+    }
+
+    const RsGxsChannelGroup& cg(*channelsInfo.begin());
+
+    if(!(cg.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH))
+    {
+        error_message = std::string("You cannot post to channel with Id " + groupId.toStdString() + ": missing publish rights!");
+        return false;
+    }
+
+	if(!origMsgId.isNull())
+	{
+        std::set<RsGxsMessageId> s({origMsgId});
+		std::vector<RsGxsChannelPost> posts;
+		std::vector<RsGxsComment> comments;
+
+		if(!getChannelContent( groupId,s,posts,comments ))
+        {
+			error_message = std::string("You cannot edit post " + origMsgId.toStdString() + " of channel with Id " + groupId.toStdString() + ": this post does not locally exist!");
+			return false;
+        }
+	}
+
+	// Create the post
+	RsGxsChannelPost post;
+
+	post.mMeta.mGroupId = groupId;
+	post.mMeta.mOrigMsgId = origMsgId;
+    post.mMeta.mMsgName = msgName;
+
+    post.mMsg = msg;
+    post.mFiles = files;
+    post.mThumbnail = thumbnail;
+
 	uint32_t token;
-	if( !createPost(token, post)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !createPost(token, post) || waitToken(token) != RsTokenService::COMPLETE )
+    	return false;
 
 	if(RsGenExchange::getPublishedMsgMeta(token,post.mMeta))
 	{
@@ -1294,10 +1377,75 @@ bool p3GxsChannels::createPost(RsGxsChannelPost& post)
 		DeepSearch::indexChannelPost(post);
 #endif //  RS_DEEP_SEARCH
 
+        message_id = post.mMeta.mMsgId;
 		return true;
 	}
 
+    error_message = std::string("cannot publish message. Check that you have publish rights on this channel?");
 	return false;
+}
+
+bool p3GxsChannels::createComment(const RsGxsGroupId&   groupId,
+                                  const RsGxsMessageId& parentMsgId,
+                                  const std::string&    comment,
+                                  RsGxsMessageId&       commentMessageId,
+                                  std::string&          error_message)
+{
+ 	// Do some checks
+
+	std::vector<RsGxsChannelGroup> channelsInfo;
+
+	if(!getChannelsInfo(std::list<RsGxsGroupId>({groupId}),channelsInfo))
+    {
+        error_message = std::string("Channel with Id " + groupId.toStdString() + " does not exist.");
+        return false;
+    }
+
+	if(parentMsgId.isNull())
+    {
+		error_message = std::string("You cannot comment post " + parentMsgId.toStdString() + " of channel with Id " + groupId.toStdString() + ": please supply a non null post Id!");
+		return false;
+    }
+
+	std::set<RsGxsMessageId> s({parentMsgId});
+	std::vector<RsGxsChannelPost> posts;
+	std::vector<RsGxsComment> comments;
+
+	if(!getChannelContent( groupId,s,posts,comments ))
+	{
+		error_message = std::string("You cannot comment post " + parentMsgId.toStdString() + " of channel with Id " + groupId.toStdString() + ": this post does not locally exist!");
+		return false;
+	}
+
+    // Now create the comment
+
+	RsGxsComment cmt;
+
+    cmt.mComment = comment;
+    cmt.mMeta.mGroupId = groupId;
+    cmt.mMeta.mParentId = parentMsgId;
+
+	uint32_t token;
+	if(!createNewComment(token, cmt))
+	{
+        error_message = std::string("Error! Failed creating comment.");
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		error_message = std::string("Error! GXS operation failed.");
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, cmt.mMeta))
+	{
+		error_message = std::string("Error! Failure getting generated comment data.");
+		return false;
+	}
+
+    commentMessageId = cmt.mMeta.mMsgId;
+	return true;
 }
 
 bool p3GxsChannels::subscribeToChannel(

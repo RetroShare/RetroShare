@@ -99,6 +99,7 @@ public:
 	explicit RsGxsChannels(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsChannels() {}
 
+#ifdef REMOVED
 	/**
 	 * @brief Create channel. Blocking API.
 	 * @jsonapi{development}
@@ -106,6 +107,7 @@ public:
 	 * @return false on error, true otherwise
 	 */
 	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
+#endif
 
 	/**
 	 * @brief Create channel. Blocking API.
@@ -115,43 +117,76 @@ public:
 	 * @param[in]  image             Thumbnail that is shown to advertise the channel. Possibly empty.
 	 * @param[in]  author_id         GxsId of the contact author. For an anonymous channel, leave this to RsGxsId()="00000....0000"
 	 * @param[in]  circle_type       Type of visibility restriction, among { GXS_CIRCLE_TYPE_PUBLIC, GXS_CIRCLE_TYPE_EXTERNAL, GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GXS_CIRCLE_TYPE_YOUR_EYES_ONLY }
-	 * @param[in]  circle_id         Id of the circle (should be an external circle or GXS_CIRCLE_TYPE_EXTERNAL, a local friend group for GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GxsCircleId()="000....000" otherwise
+	 * @param[in]  circle_id         Id of the circle (should be an external circle for GXS_CIRCLE_TYPE_EXTERNAL, a local friend group for GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GxsCircleId()="000....000" otherwise
 	 * @param[out] channel_group_id  Group id of the created channel, if command succeeds.
 	 * @param[out] error_message     Error messsage supplied when the channel creation fails.
 	 * @return                       False on error, true otherwise.
 	 */
 	virtual bool createChannel(const std::string& name,
                                const std::string& description,
-                               const RsGxsImage& image,
-                               const RsGxsId& author_id,
-                               uint32_t circle_type,
-                               RsGxsCircleId& circle_id,
-                               RsGxsGroupId& channel_group_id,
-                               std::string& error_message)=0;
+                               const RsGxsImage&  image,
+                               const RsGxsId&     author_id,
+                               uint32_t           circle_type,
+                               RsGxsCircleId&     circle_id,
+                               RsGxsGroupId&      channel_group_id,
+                               std::string&       error_message     )=0;
 
 	/**
 	 * @brief Add a comment on a post or on another comment
 	 * @jsonapi{development}
-	 * @param[inout] comment
+	 * @param[in]  groupId           Id of the channel in which the comment is to be posted
+	 * @param[in]  parentMsgId       Id of the parent of the comment that is either a channel post Id or the Id of another comment.
+	 * @param[in]  comment           UTF-8 string containing the comment
+	 * @param[out] commentMessageId  Id of the comment that was created
+	 * @param[out] error_string      Error message supplied when the comment creation fails.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createComment(RsGxsComment& comment) = 0;
+	virtual bool createComment(const RsGxsGroupId&   groupId,
+	                           const RsGxsMessageId& parentMsgId,
+	                           const std::string&    comment,
+	                           RsGxsMessageId&       commentMessageId,
+                               std::string&          error_message     )=0;
 
 	/**
 	 * @brief Create channel post. Blocking API.
 	 * @jsonapi{development}
-	 * @param[inout] post
+	 * @param[in] groupId        Id of the channel where to put the post (publish rights needed!)
+	 * @param[in] origMsgId      Id of the post you are replacing. If left blank (RsGxsMssageId()="0000.....0000", a new post will be created
+	 * @param[in] msgName        Title of the post
+	 * @param[in] msg            Text content of the post
+	 * @param[in] files          List of attached files. These are supposed to be shared otherwise (use ExtraFileHash() below)
+	 * @param[in] thumbnail      Image displayed in the list of posts. Can be left blank.
+	 * @param[out] messsageId    Id of the message that was created
+	 * @param[out] error_message Error text if anything bad happens
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createPost(RsGxsChannelPost& post) = 0;
-
+	virtual bool createPost(const RsGxsGroupId&         groupId,
+    						const RsGxsMessageId&       origMsgId,
+							const std::string&          msgName,
+							const std::string&          msg,
+							const std::list<RsGxsFile>& files,
+							const RsGxsImage&           thumbnail,
+							RsGxsMessageId&             messageId,
+                            std::string&                error_message) = 0;
 	/**
 	 * @brief createVote
 	 * @jsonapi{development}
-	 * @param[inout] vote
+	 * @param[in]  groupId             Id of the channel where to put the post (publish rights needed!)
+	 * @param[in]  threadId            Id of the channel post in which a comment is voted
+	 * @param[in]  commentMesssageId   Id of the comment that is voted
+	 * @param[in]  authorId            Id of the author. Needs to be your identity.
+	 * @param[in]  voteType            Type of vote (GXS_VOTE_NONE=0x00, GXS_VOTE_DOWN=0x01, GXS_VOTE_UP=0x02)
+	 * @param[out] voteMessageId       Id of the vote message produced
+	 * @param[out] error_message       Error text if anything bad happens
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createVote(RsGxsVote& vote) = 0;
+	virtual bool createVote( const RsGxsGroupId&         groupId,
+                             const RsGxsMessageId&       threadId,
+                             const RsGxsMessageId&       commentMessageId,
+                             const RsGxsId&              authorId,
+                             uint32_t                    voteType,
+                             RsGxsMessageId&             voteMessageId,
+                             std::string&                error_message)=0;
 
 	/**
 	 * @brief Edit channel details.

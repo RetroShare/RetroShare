@@ -194,8 +194,10 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	virtual bool getContentSummaries( const RsGxsGroupId& channelId,
 	                                  std::vector<RsMsgMetaData>& summaries );
 
+#ifdef REMOVED
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(RsGxsChannelGroup& channel);
+#endif
 
 	/// Implementation of @see RsGxsChannels::createChannel
 	virtual bool createChannel(const std::string& name,
@@ -207,17 +209,48 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
                                RsGxsGroupId& channel_group_id,
                                std::string& error_message);
 
+#ifdef REMOVED
 	/// Implementation of @see RsGxsChannels::createComment
 	virtual bool createComment(RsGxsComment& comment);
+#endif
+
+	/// Implementation of @see RsGxsChannels::createComment
+	virtual bool createComment(const RsGxsGroupId&   groupId,
+	                           const RsGxsMessageId& parentMsgId,
+                               const std::string&    comment,
+	                           RsGxsMessageId&       commentMessageId,
+                               std::string&          error_message);
 
 	/// Implementation of @see RsGxsChannels::editChannel
 	virtual bool editChannel(RsGxsChannelGroup& channel);
 
+#ifdef REMOVED
 	/// Implementation of @see RsGxsChannels::createPost
 	virtual bool createPost(RsGxsChannelPost& post);
+#endif
+	/// Implementation of @see RsGxsChannels::createPost
+	virtual bool createPost(const RsGxsGroupId& groupId,
+    						const RsGxsMessageId& origMsgId,
+	                        const std::string& msgName,
+							const std::string& msg,
+							const std::list<RsGxsFile>& files,
+							const RsGxsImage& thumbnail,
+                            RsGxsMessageId &message_id,
+                            std::string& error_message) ;
 
+#ifdef REMOVED
 	/// Implementation of @see RsGxsChannels::createVote
 	virtual bool createVote(RsGxsVote& vote);
+#endif
+
+	/// Implementation of @see RsGxsChannels::createVote
+	virtual bool createVote(const RsGxsGroupId&         groupId,
+                             const RsGxsMessageId&       threadId,
+                             const RsGxsMessageId&       commentMessageId,
+                             const RsGxsId&              authorId,
+                             uint32_t                    voteType,
+                             RsGxsMessageId&             voteMessageId,
+                             std::string&                error_message);
 
 	/// Implementation of @see RsGxsChannels::subscribeToChannel
 	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
