@@ -72,6 +72,8 @@ void TurtleRouterDialog::processSettings(bool bLoad)
 }
 
 bool sr_Compare( TurtleSearchRequestDisplayInfo m1,  TurtleSearchRequestDisplayInfo m2)  { return m1.age < m2.age; }
+bool tun_Compare( std::vector<std::string> m1, std::vector<std::string> m2)
+  { return ( strtoul(m1[6].c_str(), NULL, 0) > strtoul(m2[6].c_str(), NULL, 0) ); }
 
 void TurtleRouterDialog::updateDisplay()
 {
@@ -83,7 +85,8 @@ void TurtleRouterDialog::updateDisplay()
 	rsTurtle->getInfo(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 	
 	std::sort(search_reqs_info.begin(),search_reqs_info.end(),sr_Compare) ;
-	
+	std::sort(tunnels_info.begin(),tunnels_info.end(),tun_Compare) ;
+
 	updateTunnelRequests(hashes_info,tunnels_info,search_reqs_info,tunnel_reqs_info) ;
 
 }
@@ -145,8 +148,20 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 		while(num >= 800.0f && k<4)
 			num /= 1024.0f,++k;
 		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
+		
+		float num2 = strtol(tunnels_info[i][6].c_str(), NULL, 0);
+		char tmp2[100] ;
+		std::string units2[4] = { "B","KB","MB","GB" } ;
+		int k2=0 ;
+		while(num2 >= 800.0f && k2<4)
+			num2 /= 1024.0f,++k2;
+		sprintf(tmp2,"%3.2f %s",num2,units2[k2].c_str()) ;
 
-		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str()) + "\t" + tr("Speed") + ":  " + QString::fromStdString(tmp) + "\t " + tr("last transfer") + ": " + QString::fromStdString(tunnels_info[i][4])+ "\t" + QString::fromUtf8(tunnels_info[i][2].c_str()) + " -> " + QString::fromUtf8(tunnels_info[i][1].c_str());
+		QString str = tr("Tunnel id") + ": " + QString::fromUtf8(tunnels_info[i][0].c_str())
+		+ "\t Traffic: " + QString("%1").arg(QString::fromStdString(tmp2),-10)
+		+ "\t" + tr("Speed") + ":  " + QString("%1").arg(QString::fromStdString(tmp),-10)
+		+ "\t " + tr("last transfer") + ": " + QString("%1").arg(QString::fromStdString(tunnels_info[i][4]),-11)
+		+ "\t" + QString::fromUtf8(tunnels_info[i][2].c_str()) + " -> " + QString::fromUtf8(tunnels_info[i][1].c_str());
 		stl.clear() ;
 		stl.push_back(str) ;
 		QTreeWidgetItem *item = new QTreeWidgetItem(stl);

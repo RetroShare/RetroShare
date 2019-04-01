@@ -1132,6 +1132,7 @@ void p3turtle::routeGenericTunnelItem(RsTurtleGenericTunnelItem *item)
 			tunnel.time_stamp = time(NULL) ;
 
 		tunnel.transfered_bytes += RsTurtleSerialiser().size(item);
+		tunnel.total_bytes += RsTurtleSerialiser().size(item);
 
 		if(item->PeerId() == tunnel.local_dst)
 			item->setTravelingDirection(RsTurtleGenericTunnelItem::DIRECTION_CLIENT) ;
@@ -1309,6 +1310,7 @@ void p3turtle::sendTurtleData(const RsPeerId& virtual_peer_id,RsTurtleGenericTun
 		tunnel.time_stamp = time(NULL) ;
 
 	tunnel.transfered_bytes += ss ;
+	tunnel.total_bytes += ss ;
 
 	if(tunnel.local_src == _own_id)
 	{
@@ -1523,6 +1525,7 @@ void p3turtle::handleTunnelRequest(RsTurtleOpenTunnelItem *item)
 			tt.local_dst = _own_id ;	// this means us
 			tt.time_stamp = time(NULL) ;
 			tt.transfered_bytes = 0 ;
+			tt.total_bytes = 0 ;
 			tt.speed_Bps = 0.0f ;
 
 			_local_tunnels[t_id] = tt ;
@@ -1696,6 +1699,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 			tunnel.hash.clear() ;
 			tunnel.time_stamp = time(NULL) ;
 			tunnel.transfered_bytes = 0 ;
+			tunnel.total_bytes = 0 ;
 			tunnel.speed_Bps = 0.0f ;
 
 #ifdef P3TURTLE_DEBUG
@@ -2127,6 +2131,7 @@ void p3turtle::getInfo(	std::vector<std::vector<std::string> >& hashes_info,
         tunnel.push_back(it->second.hash.toStdString()) ;
 		tunnel.push_back(printNumber(now-it->second.time_stamp) + " secs ago") ;
 		tunnel.push_back(printFloatNumber(it->second.speed_Bps,false)) ; //
+		tunnel.push_back(printNumber(it->second.total_bytes)) ;
 	}
 
 	search_reqs_info.clear();
