@@ -261,14 +261,6 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_
     {
         it->second.time_stamp = now ;
 
-#ifdef WINDOWS_SYS
-        if(it->second.time_stamp != (uint64_t)mod_time)
-        {
-            std::cerr << "(WW) detected a 1 hour shift in file modification time. This normally happens to many files at once, when daylight saving time shifts (file=\"" << full_path << "\")." << std::endl;
-            it->second.time_stamp = (uint64_t)mod_time;
-        }
-#endif
-
         known_hash = it->second.hash;
 #ifdef HASHSTORAGE_DEBUG
         std::cerr << "Found in cache." << std::endl ;
