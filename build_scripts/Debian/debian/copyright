@@ -1,0 +1,147 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: retroshare
+Upstream-Contact: retroshare.team@gmail.com
+Source: https://github.com/retroshare/retroshare
+
+Files: openpgpsdk/*
+Copyright: 2005-2008 Ben Laurie, Rachel Willmer, Retroshare Team <retroshare.team@gmail.com>
+License: Apache-2.0
+
+Files: libretroshare/*
+Copyright: 2007-2018, Retroshare Team <retroshare.team@gmail.com>
+License: LGPL-3+
+
+Files: src/retroshare-gui/src/TorControl/
+Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
+License: BSD-New
+
+Files: src/libresapi/src/api/json.h                \
+		 libresapi/src/webui-src/app/mithril.min.js  \
+		 src/rapidjson-1.1.0/*                       \
+		 retroshare-gui/src/gui/common/PictureFlow.* \
+		 src/retroshare-gui/src/qss/qdarkstyle.qss
+Copyright: 2013 Jeff Weinstein <jeff.weinstein@gmail.com>
+License: MIT
+
+Files: *
+Copyright: 2007-2018, Retroshare Team <retroshare.team@gmail.com>
+License: AGPL-3+
+
+#######
+# TODO
+#######
+# src/libretroshare/src/tcponudp/bss_tou.c
+# src/retroshare-gui/src/help/content/*
+#######
+
+
+License: Apache-2.0
+  Contributors: . The Contributors have asserted
+  their moral rights under the UK Copyright Design and Patents Act 1988 to
+  be recorded as the authors of this copyright work.
+  .
+  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+  use this file except in compliance with the License. 
+  .
+  You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+  .
+  Unless required by applicable law or agreed to in writing, software 
+  distributed under the License is distributed on an "AS IS" BASIS, 
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+  .
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+License: LGPL-3+
+  This program is free software: you can redistribute it and/or modify        
+  it under the terms of the GNU Lesser General Public License as              
+  published by the Free Software Foundation, either version 3 of the          
+  License, or (at your option) any later version.                             
+  .
+  This program is distributed in the hope that it will be useful,             
+  but WITHOUT ANY WARRANTY; without even the implied warranty of              
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                
+  GNU Lesser General Public License for more details.                         
+  .
+  You should have received a copy of the GNU Lesser General Public License    
+  along with this program. If not, see <https://www.gnu.org/licenses/>.       
+  .
+  In addition, as a special exception, the copyright holders give permission to
+  link this program with the OpenSSL library (or with modified versions of
+  OpenSSL that use the same license as OpenSSL), and distribute linked
+  combinations including the two.
+
+License: AGPL-3+
+  This program is free software: you can redistribute it and/or modify         
+  it under the terms of the GNU Affero General Public License as               
+  published by the Free Software Foundation, either version 3 of the           
+  License, or (at your option) any later version.                              
+  .
+  This program is distributed in the hope that it will be useful,              
+  but WITHOUT ANY WARRANTY; without even the implied warranty of               
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                
+  GNU Lesser General Public License for more details.                          
+  .
+  You should have received a copy of the GNU Lesser General Public License     
+  along with this program. If not, see <https://www.gnu.org/licenses/>.       
+  .
+  As a special exception, the copyright holders give permission to link the
+  code of portions of this program with the OpenSSL library under certain
+  conditions as described in each individual source file and distribute
+  linked combinations including the program with the OpenSSL library. You
+  must comply with the GNU Affero General Public License in all respects for
+  all of the code used other than as permitted herein. If you modify file(s)
+  with this exception, you may extend this exception to your version of the
+  file(s), but you are not obligated to do so. If you do not wish to do so,
+  delete this exception statement from your version. If you delete this
+  exception statement from all source files in the program, then also delete
+  it in the license file.
+
+License: MIT
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  .
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  .
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+
+License: BSD-New
+  You may use this file under the terms of the BSD license as follows:
+  .
+  "Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are
+  met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in
+      the documentation and/or other materials provided with the
+      distribution.
+    * Neither the name of Digia Plc and its Subsidiary(-ies) nor the names
+      of its contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+  .
+  .
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
+	

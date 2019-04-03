@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/ForumHandler.cpp                                              *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "ForumHandler.h"
 
 #include <retroshare/rsgxsforums.h>
@@ -38,8 +59,8 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
             mRsGxsForums->getTokenService()->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
             time_t start = time(NULL);
-            while((mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-                  &&(mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+            while((mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+                  &&(mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
                   &&((time(NULL) < (start+10)))
                   )
             {
@@ -50,7 +71,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
         #endif
             }
 
-            if(mRsGxsForums->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+            if(mRsGxsForums->getTokenService()->requestStatus(token) == RsTokenService::COMPLETE)
             {
                 std::vector<RsGxsForumMsg> grps;
                 ok &= mRsGxsForums->getMsgData(token, grps);
@@ -86,8 +107,8 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
         mRsGxsForums->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
 
         time_t start = time(NULL);
-        while((mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-              &&(mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+        while((mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+              &&(mRsGxsForums->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
               &&((time(NULL) < (start+10)))
               )
         {
@@ -97,7 +118,7 @@ void ForumHandler::handleWildcard(Request &req, Response &resp)
             usleep(500*1000) ;
     #endif
         }
-        if(mRsGxsForums->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+        if(mRsGxsForums->getTokenService()->requestStatus(token) == RsTokenService::COMPLETE)
         {
             std::vector<RsGxsForumGroup> grps;
             ok &= mRsGxsForums->getGroupData(token, grps);

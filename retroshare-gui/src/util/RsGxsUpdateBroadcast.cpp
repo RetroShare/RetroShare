@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * util/RsGxsUpdateBroadcast.cpp                                               *
+ *                                                                             *
+ * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QMap>
 
 #include "RsGxsUpdateBroadcast.h"
@@ -50,15 +70,16 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
     
      {
         std::cerr << "Received changes for service " << (void*)changes.mService << ",  expecting service " << (void*)mIfaceImpl->getTokenService() << std::endl;
-        std::cerr << "    changes content: " << std::endl;
-        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrps.begin());it!=changes.mGrps.end();++it) std::cerr << "    grp id: " << *it << std::endl;
-        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrpsMeta.begin());it!=changes.mGrpsMeta.end();++it) std::cerr << "    grp meta: " << *it << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrps.begin());it!=changes.mGrps.end();++it)
+            std::cerr << "[GRP CHANGE]    grp id: " << *it << std::endl;
+        for(std::list<RsGxsGroupId>::const_iterator it(changes.mGrpsMeta.begin());it!=changes.mGrpsMeta.end();++it)
+            std::cerr << "[GRP CHANGE]    grp meta: " << *it << std::endl;
         for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgs.begin());it!=changes.mMsgs.end();++it) 
             for(uint32_t i=0;i<it->second.size();++i)
-                std::cerr << "    grp id: " << it->first << ". Msg ID " << it->second[i] << std::endl;
+                std::cerr << "[MSG CHANGE]    grp id: " << it->first << ". Msg ID " << it->second[i] << std::endl;
         for(std::map<RsGxsGroupId,std::vector<RsGxsMessageId> >::const_iterator it(changes.mMsgsMeta.begin());it!=changes.mMsgsMeta.end();++it) 
             for(uint32_t i=0;i<it->second.size();++i)
-                std::cerr << "    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
+                std::cerr << "[MSG CHANGE]    grp id: " << it->first << ". Msg Meta " << it->second[i] << std::endl;
     }
 #endif
     if(changes.mService != mIfaceImpl->getTokenService())
@@ -77,6 +98,9 @@ void RsGxsUpdateBroadcast::onChangesReceived(const RsGxsChanges& changes)
     {
         emit grpsChanged(changes.mGrps, changes.mGrpsMeta);
     }
+
+    if(!changes.mDistantSearchReqs.empty())
+        emit distantSearchResultsChanged(changes.mDistantSearchReqs) ;
 
     emit changed();
 }

@@ -1,12 +1,35 @@
+/*******************************************************************************
+ * libresapi/api/ChatHandler.h                                                 *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2015 by electron128         <electron128@yahoo.com>               *
+ * Copyright 2017 by Gioacchino Mazzurco <gio@eigenlab.org>                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include "ResourceRouter.h"
 #include "StateTokenServer.h"
 #include <retroshare/rsnotify.h>
 #include <retroshare/rsmsgs.h>
+#include "util/rstime.h"
 
 class RsPeers;
-class RsIdentity;
+struct RsIdentity;
 
 namespace resource_api
 {
@@ -95,7 +118,7 @@ public:
     class LobbyParticipantsInfo{
     public:
         StateToken state_token;
-        std::map<RsGxsId, time_t> participants;
+		std::map<RsGxsId, rstime_t> participants;
     };
 
     class ChatInfo{

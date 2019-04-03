@@ -12,7 +12,7 @@
 #---------------------------------#
 
 # version format
-version: RetroShare 0.6.0.{build}-{branch}
+version: RetroShare-git-{branch}-{build}
 
 # you can use {branch} name in version format too
 # version: 1.0.{build}-{branch}
@@ -52,29 +52,28 @@ on_finish:
   #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 # clone directory
-clone_folder: c:\projects\RetroShare
+clone_folder: C:\projects\RetroShare
 
 # fetch repository as zip archive
 #shallow_clone: true                 # default is "false"
 
 # set clone depth
-clone_depth: 1                       # clone entire repository history if not defined
+clone_depth: 2000                    # clone entire repository history if not defined
 
 environment:
   global:
-    #Qt: https://www.appveyor.com/docs/installed-software#qt
-    QTDIR: C:\Qt\5.4\mingw491_32
+## Qt: https://www.appveyor.com/docs/installed-software#qt
+#    QTDIR: C:\Qt\5.10.1\mingw53_32
     MSYS2_ARCH: i686
     TARGET: i686_32-pc-msys
+    MINGW_PREFIX: C:\msys64\mingw32
+    RS_DEPLOY: RetroShare_deploy
 
 
 # build cache to preserve files/folders between builds
-cache:
-  - c:\projects\libs
-#  - packages -> **\packages.config  # preserve "packages" directory in the root of build folder but will reset it if packages.config is modified
-#  - projectA\libs
-#  - node_modules                    # local npm modules
-#  - %APPDATA%\npm-cache             # npm cache
+#cache:
+# Disabled because it's bigger then supported by appveyor free plan
+#  - C:\msys64\var\cache\pacman\pkg
 
 # scripts that run after cloning repository
 #install:
@@ -86,26 +85,16 @@ cache:
 #  - cmd: echo This is batch again
 #  - cmd: set MY_VAR=12345
 install:
+  - git submodule update --init
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
+  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core
+  #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
+
   # Configuring Qt
-  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
-  # Install all default programms
-  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy base-devel git mercurial cvs wget p7zip gcc perl ruby python2" #Already installed
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -Sy openssl-devel"
-  # Install toolchain
-  #- C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-toolchain mingw-w64-x86_64-toolchain" #Already installed
-  # Install other binutils
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-curl mingw-w64-x86_64-curl"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-miniupnpc mingw-w64-x86_64-miniupnpc"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-sqlite3 mingw-w64-x86_64-sqlite3"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speex mingw-w64-x86_64-speex"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-speexdsp mingw-w64-x86_64-speexdsp"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-opencv mingw-w64-x86_64-opencv"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-ffmpeg mingw-w64-x86_64-ffmpeg"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libmicrohttpd mingw-w64-x86_64-libmicrohttpd"
-  - C:\msys64\usr\bin\bash -lc "pacman --noconfirm -S mingw-w64-i686-libxslt mingw-w64-x86_64-libxslt"
+#  - set PATH=%QTDIR%\bin;C:\Qt\Tools\mingw491_32\bin;%PATH%
 
   # Hack for new MSys2
   - copy C:\msys64\mingw32\i686-w64-mingw32\bin\ar.exe C:\msys64\mingw32\bin\i686-w64-mingw32-ar.exe
@@ -114,10 +103,6 @@ install:
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ar.exe
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
-  # Build missing Libs
-  #- C:\msys64\mingw32.exe -lc "cd /c/projects/RetroShare/msys2_build_libs/ && make"
-  # Clone RetroShare
-  #- git clone -q --branch={branch} https://github.com/RetroShare/RetroShare.git C:\projects\RetroShare
 
 
 #---------------------------------#
@@ -142,18 +127,112 @@ configuration: Release
 
 # scripts to run before build
 before_build:
+  - cd C:\projects\RetroShare
+#  - find C:\ > filelist.txt
 
 # scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
 before_package:
 
-# scripts to run after build
-after_build:
-
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cd C:\projects\RetroShare
-  - qmake CONFIG+=no_sqlcipher
-  - make
+  - qmake -Wall -spec win32-g++ "CONFIG=debug"
+  - mingw32-make -j3
+
+# scripts to run after build
+after_build:
+  - mkdir %RS_DEPLOY%
+  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
+  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
+
+## In Debug build winedeplyqt forget the non debug Qt libs
+  - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Core.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Xml.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Gui.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\Qt5Network.dll %RS_DEPLOY%\
+
+  - mkdir %RS_DEPLOY%\playlistformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\playlistformats\qtmultimedia_m3u.dll %RS_DEPLOY%\playlistformats
+
+  - mkdir %RS_DEPLOY%\printsupport\
+  - copy C:\msys64\mingw32\share\qt5\plugins\printsupport\windowsprintersupport.dll %RS_DEPLOY%\printsupport\
+
+  - mkdir %RS_DEPLOY%\iconengines\
+  - copy C:\msys64\mingw32\share\qt5\plugins\iconengines\qsvgicon.dll %RS_DEPLOY%\iconengines\
+
+  - mkdir %RS_DEPLOY%\bearer\
+  - copy C:\msys64\mingw32\share\qt5\plugins\bearer\qgenericbearer.dll %RS_DEPLOY%\bearer\
+
+  - mkdir %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\qtmedia_audioengine.dll %RS_DEPLOY%\mediaservice\
+  - copy C:\msys64\mingw32\share\qt5\plugins\mediaservice\dsengine.dll %RS_DEPLOY%\mediaservice\
+
+  - mkdir %RS_DEPLOY%\styles\
+  - copy C:\msys64\mingw32\share\qt5\plugins\styles\qwindowsvistastyle.dll %RS_DEPLOY%\styles\
+
+  - mkdir %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwebp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjpeg.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtiff.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qtga.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qjp2.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qico.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qwbmp.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qicns.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qgif.dll %RS_DEPLOY%\imageformats\
+  - copy C:\msys64\mingw32\share\qt5\plugins\imageformats\qsvg.dll %RS_DEPLOY%\imageformats\
+
+  - mkdir %RS_DEPLOY%\platforms\
+  - copy C:\msys64\mingw32\share\qt5\plugins\platforms\qwindows.dll %RS_DEPLOY%\platforms\
+
+  - mkdir %RS_DEPLOY%\audio\
+  - copy C:\msys64\mingw32\share\qt5\plugins\audio\qtaudio_windows.dll %RS_DEPLOY%\audio\
+
+  - windeployqt %RS_DEPLOY%\retroshare.exe
+
+  - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\ssleay32.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwinpthread*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libicu*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libpcre*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libharfbuzz*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libpng*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libfreetype*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libglib*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgraphite2.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libintl*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libiconv*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libjasper*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libjpeg*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libtiff*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwebp*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libwebpdemux*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
+
+## Needed for libresapi http
+  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
+
+  - find C:\projects\RetroShare >> filelist.txt
 
 # to disable automatic builds
 #build: off
@@ -162,7 +241,10 @@ build_script:
 #      artifacts configuration    #
 #---------------------------------#
 
-#artifacts:
+artifacts:
+  - path: $(RS_DEPLOY)
+  - path: '**\*.exe'
+  - path: filelist.txt
 #
 #  # pushing a single file
 #  - path: test.zip

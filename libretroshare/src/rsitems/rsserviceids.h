@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsserviceids.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_SERVICE_IDS_H
 #define RS_SERVICE_IDS_H
-
-/*
- * libretroshare/src/serialiser: rsserviceids.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <inttypes.h>
 
@@ -83,6 +79,7 @@ const uint16_t RS_SERVICE_GXS_TYPE_GXSCIRCLE   = 0x0218;
 const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  = 0x0219;
 const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
 const uint16_t RS_SERVICE_TYPE_GXS_TRANS       = 0x0230;
+const uint16_t RS_SERVICE_TYPE_JSONAPI         = 0x0240;
 
 const uint16_t RS_SERVICE_GXS_TYPE_FORUMS_CONFIG   = 0x0315;
 const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG = 0x0317;

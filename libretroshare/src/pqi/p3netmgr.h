@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/pqi: p3netmgr.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3netmgr.h                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_NET_MANAGER_HEADER
 #define MRK_PQI_NET_MANAGER_HEADER
 
@@ -305,7 +301,21 @@ void    netUnreachableCheck();
 void 	updateNetStateBox_temporal();
 void 	updateNetStateBox_startup();
 void 	updateNetStateBox_reset();
-void    updateNatSetting();
+    void updateNatSetting();
+
+	/** Conservatively guess new external port, previous approach (aka always
+	 * reset it to local port) break setups where external manually
+	 * forwarded port is different then local port. A common case is having
+	 * SSLH listening on port 80 on the router with public IP forwanding
+	 * plain HTTP connections to a web server and --anyprot connections to
+	 * retroshare to make censor/BOFH/bad firewall life a little more
+	 * difficult */
+	uint16_t guessNewExtPort()
+	{
+		uint16_t newExtPort = sockaddr_storage_port(mExtAddr);
+		if(!newExtPort) newExtPort = sockaddr_storage_port(mLocalAddr);
+		return newExtPort;
+	}
 
 private:
 	// These should have there own Mutex Protection,
@@ -338,7 +348,7 @@ void 	netStatusReset_locked();
 	uint16_t mVsDisc;
 	uint16_t mVsDht;
 
-	time_t   mNetInitTS;
+	rstime_t   mNetInitTS;
 	uint32_t mNetStatus;
 
 	bool     mStatusChanged;
@@ -353,7 +363,7 @@ void 	netStatusReset_locked();
 	// Improved NetStatusBox, which uses the Stunners!
 	pqiNetStateBox mNetStateBox;
 
-	time_t mLastSlowTickTime;
+	rstime_t mLastSlowTickTime;
 	uint32_t mOldNatType;
 	uint32_t mOldNatHole;
 

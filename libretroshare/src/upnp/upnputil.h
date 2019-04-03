@@ -1,15 +1,31 @@
+/*******************************************************************************
+ * libretroshare/src/upnp: upnputil.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ * From MiniUPnPc, re-licensed with permission                                 *
+ *                                                                             *
+ * Copyright (c) 2005-2016, Thomas BERNARD                                     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 //this file uses miniupnp
 
 #ifndef MINIUPNP_UTIL_H_
 #define MINIUPNP_UTIL_H_
 
-/* $Id: upnpc.c,v 1.50 2007/04/26 19:00:10 nanard Exp $ */
-/* Project : miniupnp
- * Author : Thomas Bernard
- * Copyright (c) 2005 Thomas Bernard
- * This software is subject to the conditions detailed in the
- * LICENCE file provided in this distribution.
- * */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

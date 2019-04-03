@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2009 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/RemoteDirModel.h                                                        *
+ *                                                                             *
+ * Copyright (c) 2006 Retroshare Team  <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef REMOTE_DIR_MODEL
 #define REMOTE_DIR_MODEL
@@ -39,8 +38,9 @@
 #define COLUMN_FRIEND_ACCESS 4
 #define COLUMN_WN_VISU_DIR   5
 #define COLUMN_COUNT         6
+#define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
-class DirDetails;
+struct DirDetails;
 
 class DirDetailsVector : public DirDetails
 {
@@ -60,7 +60,7 @@ class RetroshareDirModel : public QAbstractItemModel
 	Q_OBJECT
 
 	public:
-		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2 };
+		enum Roles{ FileNameRole = Qt::UserRole+1, SortRole = Qt::UserRole+2, FilterRole = Qt::UserRole+3 };
 
 		RetroshareDirModel(bool mode, QObject *parent = 0);
 		virtual ~RetroshareDirModel() {}
@@ -94,7 +94,8 @@ class RetroshareDirModel : public QAbstractItemModel
 
 		virtual QMenu* getContextMenu(QMenu* contextMenu) {return contextMenu;}
 
-	public:
+		void filterItems(const std::list<std::string>& keywords, uint32_t& found) ;
+
 		//Overloaded from QAbstractItemModel
 		virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 		virtual QStringList mimeTypes () const;
@@ -118,6 +119,7 @@ class RetroshareDirModel : public QAbstractItemModel
 		virtual QVariant sortRole(const QModelIndex&,const DirDetails&,int) const =0;
 
 		QVariant decorationRole(const DirDetails&,int) const ;
+		QVariant filterRole(const DirDetails& details,int coln) const;
 
 		uint32_t ageIndicator;
 
@@ -172,6 +174,8 @@ class RetroshareDirModel : public QAbstractItemModel
         mutable time_t mLastReq;
 
         bool mUpdating ;
+
+		std::set<void*> mFilteredPointers ;
 };
 
 // This class shows the classical hierarchical directory view of shared files

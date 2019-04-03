@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/common/SubscribeToolButton.cpp                                          *
+ *                                                                             *
+ * Copyright (c) 2018, RetroShare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QMenu>
 
 #include "SubscribeToolButton.h"
@@ -44,7 +64,7 @@ void SubscribeToolButton::updateUi()
 #else
 		setPopupMode(QToolButton::InstantPopup);
 #endif
-		setIcon(QIcon(":/images/accepted16.png"));
+		//setIcon(QIcon(":/images/accepted16.png"));
 		setText(tr("Subscribed"));
 
         	if(mMenu != NULL)	// that's because setMenu does not give away memory ownership
@@ -66,7 +86,7 @@ void SubscribeToolButton::updateUi()
 	} else {
 		setPopupMode(QToolButton::DelayedPopup);
 		setMenu(NULL);
-		setIcon(QIcon(":/images/RSS_004_32.png"));
+		//setIcon(QIcon(":/images/RSS_004_32.png"));
 		setText(tr("Subscribe"));
 
 #ifndef USE_MENUBUTTONPOPUP

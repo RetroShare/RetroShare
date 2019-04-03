@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services: p3circles.h
- *
- * Identity interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscircles.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef P3_CIRCLES_SERVICE_HEADER
 #define P3_CIRCLES_SERVICE_HEADER
 
@@ -129,7 +125,7 @@ class RsGxsCircleMembershipStatus
 public:
     RsGxsCircleMembershipStatus() : last_subscription_TS(0), subscription_flags(0) {}
     
-    time_t   last_subscription_TS ;
+    rstime_t   last_subscription_TS ;
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
 };
 
@@ -157,13 +153,13 @@ class RsGxsCircleCache
 	uint32_t      mGroupStatus;
 	uint32_t      mGroupSubscribeFlags;
 
-	time_t mUpdateTime;
+	rstime_t mUpdateTime;
 #ifdef SUBSCIRCLES
 	std::set<RsGxsCircleId> mUnprocessedCircles;
 	std::set<RsGxsCircleId> mProcessedCircles;
 #endif
 	std::map<RsGxsId,RsGxsCircleMembershipStatus> mMembershipStatus;
-    	time_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
+    	rstime_t mLastUpdatedMembershipTS ;	// last time the subscribe messages have been requested. Should be reset when new messages arrive.
     
 	std::set<RsGxsId> mAllowedGxsIds;	// IDs that are allowed in the circle and have requested membership. This is the official members list.
 	std::set<RsPgpId> mAllowedNodes;
@@ -183,9 +179,30 @@ virtual RsServiceInfo getServiceInfo();
 
 	/*********** External Interface ***************/
 
+	/// @see RsGxsCircles
+	bool createCircle(RsGxsCircleGroup& cData) override;
+
+	/// @see RsGxsCircles
+	bool editCircle(RsGxsCircleGroup& cData) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesSummaries(std::list<RsGroupMetaData>& circles) override;
+
+	/// @see RsGxsCircles
+	bool getCirclesInfo(
+	        const std::list<RsGxsGroupId>& circlesIds,
+	        std::vector<RsGxsCircleGroup>& circlesInfo ) override;
+
+	/// @see RsGxsCircles
+	bool getCircleRequests( const RsGxsGroupId& circleId,
+	                        std::vector<RsGxsCircleMsg>& requests ) override;
+
+	/// @see RsGxsCircles
+	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
+	                        const RsGxsCircleId& circleId ) override;
+
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
 	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds);
-	virtual bool getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds);
 
 	virtual bool isLoaded(const RsGxsCircleId &circleId);
 	virtual bool loadCircle(const RsGxsCircleId &circleId);
@@ -261,6 +278,8 @@ virtual RsServiceInfo getServiceInfo();
     // put a circle id into the external or personal circle id list
     // this function locks the mutex
     // if the id is already in the list, it will not be added again
+	// G10h4ck: this is terrible, an std::set instead of a list should be used
+	//	to guarantee uniqueness
     void addCircleIdToList(const RsGxsCircleId& circleId, uint32_t circleType);
 
 	RsMutex mCircleMtx; /* Locked Below Here */
@@ -290,7 +309,7 @@ virtual RsServiceInfo getServiceInfo();
 	void checkDummyIdData();
 	void generateDummyCircle();
 
-    time_t mLastCacheMembershipUpdateTS ;
+    rstime_t mLastCacheMembershipUpdateTS ;
 
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;

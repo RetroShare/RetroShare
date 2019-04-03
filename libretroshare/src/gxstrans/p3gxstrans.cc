@@ -1,21 +1,24 @@
-/*
- * GXS Mailing Service
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
+/*******************************************************************************
+ * libretroshare/src/gxstrans: p3gxstrans.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/rsdir.h"
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
@@ -30,7 +33,8 @@ const uint32_t p3GxsTrans::MAX_DELAY_BETWEEN_CLEANUPS = 900; // every 15 mins. C
 
 p3GxsTrans::~p3GxsTrans()
 {
-	p3Config::saveConfiguration();
+    // (cyril) this cannot be called here! There's chances the thread that saves configs will be dead already!
+	//p3Config::saveConfiguration();
 
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
@@ -455,7 +459,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 
         if(stored_msgs.end() != it2)
         {
-            msgsToDel[it2->second.first].push_back(it2->second.second);
+            msgsToDel[it2->second.first].insert(it2->second.second);
 
 #ifdef DEBUG_GXSTRANS
             std::cerr << "  scheduling msg " << std::hex << it2->second.first << "," << it2->second.second << " for deletion." << std::endl;
@@ -478,7 +482,7 @@ void p3GxsTrans::service_tick()
 {
 	GxsTokenQueue::checkRequests();
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 	bool changed = false ;
 
     if(mLastMsgCleanup + MAX_DELAY_BETWEEN_CLEANUPS < now)
@@ -749,8 +753,9 @@ bool p3GxsTrans::handleEncryptedMail(const RsGxsTransMailItem* mail)
 	// Hint match none of our own ids
 	if(decryptIds.empty())
 	{
-		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match"
-		          << std::endl;
+#ifdef DEBUG_GXSTRANS
+		std::cout << "p3GxsTrans::handleEcryptedMail(...) hint doesn't match" << std::endl;
+#endif
 		return true;
 	}
 
@@ -839,7 +844,7 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
 #endif
 
 	std::vector<RsNxsMsg*> rcct; rcct.push_back(receipt);
-	RsGenExchange::notifyNewMessages(rcct);
+	RsGenExchange::receiveNewMessages(rcct);
 
 	GxsTransClient* recipientService = NULL;
 	{
@@ -1251,31 +1256,38 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 	uint32_t max_size  = 0 ;
 	uint32_t identity_flags = 0 ;
 
-	RsReputations::ReputationLevel rep_lev = rsReputations->overallReputationLevel(msgMeta->mAuthorId,&identity_flags);
+	RsReputationLevel rep_lev =
+	        rsReputations->overallReputationLevel(
+	            msgMeta->mAuthorId, &identity_flags );
 
 	switch(rep_lev)
 	{
-	case RsReputations::REPUTATION_REMOTELY_NEGATIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_NEUTRAL:   			max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_REMOTELY_POSITIVE:   max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
-														break ;
-	case RsReputations::REPUTATION_LOCALLY_POSITIVE:    max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
-														max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
-														break ;
-    default:
-	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:    max_count = 0 ;
-														max_size = 0 ;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_NEGATIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_NEGATIVE_DEFAULT;
 		break ;
+	case RsReputationLevel::NEUTRAL:
+		max_count = GXSTRANS_MAX_COUNT_NEUTRAL_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_NEUTRAL_DEFAULT;
+		break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_REMOTELY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_REMOTELY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		max_count = GXSTRANS_MAX_COUNT_LOCALLY_POSITIVE_DEFAULT;
+		max_size  = GXSTRANS_MAX_SIZE_LOCALLY_POSITIVE_DEFAULT;
+		break;
+	case RsReputationLevel::LOCALLY_NEGATIVE: // fallthrough
+	default:
+		max_count = 0;
+		max_size = 0;
+		break;
 	}
 
-	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED ;
+	bool pgp_linked = identity_flags & RS_IDENTITY_FLAGS_PGP_LINKED;
 
-	if(rep_lev <= RsReputations::REPUTATION_NEUTRAL && !pgp_linked)
+	if(rep_lev <= RsReputationLevel::NEUTRAL && !pgp_linked)
 	{
 		max_count /= 10 ;
 		max_size  /= 10 ;
@@ -1283,7 +1295,7 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 
 	RS_STACK_MUTEX(mPerUserStatsMutex);
 
-	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]) ;
+	MsgSizeCount& s(per_user_statistics[msgMeta->mAuthorId]);
 
 #ifdef DEBUG_GXSTRANS
 	std::cerr << "GxsTrans::acceptMessage(): size=" << msg_size << ", grp=" << msgMeta->mGroupId << ", gxs_id=" << msgMeta->mAuthorId << ", pgp_linked=" << pgp_linked << ", current (size,cnt)=("

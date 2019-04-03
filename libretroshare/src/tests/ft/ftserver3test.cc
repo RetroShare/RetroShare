@@ -381,7 +381,7 @@ INITTEST();
 void *do_server_test_thread(void *data)
 {
 	TestData *mFt = (TestData *) data;
-	time_t startTS = time(NULL);
+	rstime_t startTS = time(NULL);
 
 	std::cerr << "do_server_test_thread() running";
 	std::cerr << std::endl;

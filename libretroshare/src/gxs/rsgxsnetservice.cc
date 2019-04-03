@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/gxs: rsgxnetservice.cc
- *
- * Access to rs network and synchronisation service implementation
- *
- * Copyright 2012-2012 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsnetservice.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 //
 // RsNxsItem
@@ -166,8 +163,6 @@
 //                                                                       |                                       |
 //                          (Only send if rand() < sendingProb())        +---comes from mClientMsgUpdateMap -----+
 //
-//
-//
 // Suggestions
 // ===========
 //    * handleRecvSyncGroup should use mit->second.mLastPost to limit the sending of already known data
@@ -194,6 +189,53 @@
 //       Problem: without msg, we cannot know the grpId!!
 //
 //    * mClientMsgUpdateMap[peerid][grpId] is only updated when new msgs are received. Up to date groups will keep asking for lists!
+//
+// Distant sync
+// ============
+//
+// Distant sync uses tunnels to sync subscribed GXS groups that are not supplied by friends. Peers can subscribe to a GXS group using a RS link
+// which GXS uses to request updates through tunnels.
+//   * The whole exchange should be kept private and anonymous between the two distant peers, so we use the same trick than for FT: encrypt the data using the group ID.
+//   * The same node shouldn't be known as a common server for different GXS groups
+//
+//   GXS net service:
+//   	* talks to virtual peers, treated like normal peers
+//   	* virtual peers only depend on the server ID, not on tunnel ID, and be kept constant accross time so that ClientGroupUpdateMap is kept consistent
+//      * does not use tunnels if friends can already supply the data (??) This causes issues with "islands".
+//
+//   Tunnels:
+//	    * a specific service named GxsSyncTunnelService handles the creation/management of sync tunnels:
+//	    * tunnel data need to be encrypted.
+//
+//              bool manageTunnels(const RsGxsGroupId&) ;													// start managing tunnels for this group
+//              bool releaseTunnels(const RsGxsGroupId&) ;													// stop managing tunnels for this group
+//              bool sendData(const unsigned char *data,uint32_t size,const RsPeerId& virtual_peer) ;		// send data to this virtual peer
+//              bool getVirtualPeers(const RsGxsGroupId&, std::list<RsPeerId>& peers) ; 					// returns the virtual peers for this group
+//
+//   Proposed protocol:
+//      * request tunnels based on H(GroupId)
+//      * encrypt tunnel data using chacha20+HMAC-SHA256 using AEAD( GroupId, 96bits IV, tunnel ID ) (similar to what FT does)
+//      * when tunnel is established, exchange virtual peer names: vpid = H( GroupID | Random bias )
+//      * when vpid is known, notify the client (GXS net service) which can use the virtual peer to sync
+//
+//      * only use a single tunnel per virtual peer ID
+//
+//              Client  ------------------ TR(H(GroupId)) -------------->  Server
+//
+//              Client  <-------------------- T OK ----------------------  Server
+//
+//           [Encrypted traffic using H(GroupId, 96bits IV, tunnel ID)]
+//
+//              Client  <--------- VPID = H( Random IV | GroupId ) ------  Server
+//                 |                                                         |
+//                 +--------------> Mark the virtual peer active <-----------+
+//
+//   Unsolved problems:
+//      * if we want to preserve anonymity, we cannot prevent GXS from duplicating the data from virtual/real peers that actually are the same peers.
+//      * ultimately we should only use tunnels to sync GXS. The mix between tunnels and real peers is not a problem but will cause unnecessary traffic.
+//
+//   Notes:
+//      * given that GXS only talks to peers once every 2 mins, it's likely that keep-alive packets will be needed
 
 
 #include <unistd.h>
@@ -209,10 +251,15 @@
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rspeers.h"
 #include "pgp/pgpauxutils.h"
+#include "crypto/rscrypto.h"
 #include "util/rsdir.h"
 #include "util/rstime.h"
 #include "util/rsmemory.h"
 #include "util/stacktrace.h"
+
+#ifdef RS_DEEP_SEARCH
+#	include "deep_search/deep_search.h"
+#endif
 
 /***
  * Use the following defines to debug:
@@ -224,6 +271,7 @@
  	NXS_NET_DEBUG_5		summary of transactions (useful to just know what comes in/out)
     NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
+ 	NXS_NET_DEBUG_8		gxs distant sync
 
  ***/
 //#define NXS_NET_DEBUG_0 	1
@@ -234,6 +282,7 @@
 //#define NXS_NET_DEBUG_5 	1
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
+//#define NXS_NET_DEBUG_8 	1
 
 //#define NXS_FRAG
 
@@ -256,6 +305,7 @@ static const uint32_t REJECTED_MESSAGE_RETRY_DELAY            =      24*3600; //
 static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; // update unsubscribed group statistics every 3 mins
 static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
+static const uint32_t MIN_DELAY_BETWEEN_GROUP_SEARCH          =           40; // dont search same group more than every 40 secs.
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
@@ -267,16 +317,17 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 // Debug system to allow to print only for some IDs (group, Peer, etc)
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
- || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7)
+ || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7) \
+ || defined(NXS_NET_DEBUG_8)
 
 static const RsPeerId     peer_to_print     = RsPeerId(std::string(""))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("")) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = RS_SERVICE_TYPE_GXS_TRANS ;                       	// use this to allow to this service id only, or 0 for all services
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_CHANNELS ;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
 
-static std::string nice_time_stamp(time_t now,time_t TS)
+static std::string nice_time_stamp(rstime_t now,rstime_t TS)
 {
     if(TS == 0)
         return "Never" ;
@@ -287,7 +338,6 @@ static std::string nice_time_stamp(time_t now,time_t TS)
         return s.str() ;
     }
 }
-
 
 static std::ostream& gxsnetdebug(const RsPeerId& peer_id,const RsGxsGroupId& grp_id,uint32_t service_type)
 {
@@ -314,7 +364,8 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                  RsNxsNetMgr *netMgr, RsNxsObserver *nxsObs,
                                  const RsServiceInfo serviceInfo,
                                  RsGixsReputation* reputations, RsGcxs* circles, RsGixs *gixs,
-                                 PgpAuxUtils *pgpUtils, bool grpAutoSync, bool msgAutoSync, uint32_t default_store_period, uint32_t default_sync_period)
+                                 PgpAuxUtils *pgpUtils, RsGxsNetTunnelService *mGxsNT,
+                                 bool grpAutoSync, bool msgAutoSync, bool distSync, uint32_t default_store_period, uint32_t default_sync_period)
                                  : p3ThreadedService(), p3Config(), mTransactionN(0),
                                    mObserver(nxsObs), mDataStore(gds),
                                    mServType(servType), mTransactionTimeOut(TRANSAC_TIMEOUT),
@@ -322,14 +373,16 @@ RsGxsNetService::RsGxsNetService(uint16_t servType, RsGeneralDataService *gds,
                                    mSyncTs(0), mLastKeyPublishTs(0),
                                    mLastCleanRejectedMessages(0), mSYNC_PERIOD(SYNC_PERIOD),
                                    mCircles(circles), mGixs(gixs),
-                                   mReputations(reputations), mPgpUtils(pgpUtils),
-                                   mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),
+                                   mReputations(reputations), mPgpUtils(pgpUtils), mGxsNetTunnel(mGxsNT),
+                                   mGrpAutoSync(grpAutoSync), mAllowMsgSync(msgAutoSync),mAllowDistSync(distSync),
                                    mServiceInfo(serviceInfo), mDefaultMsgStorePeriod(default_store_period),
                                    mDefaultMsgSyncPeriod(default_sync_period)
 {
 	addSerialType(new RsNxsSerialiser(mServType));
 	mOwnId = mNetMgr->getOwnId();
     mUpdateCounter = 0;
+
+	mLastCacheReloadTS = 0;
 
 	// check the consistency
 
@@ -379,8 +432,7 @@ int RsGxsNetService::tick()
 {
 	// always check for new items arriving
 	// from peers
-    if(receivedItems())
-        recvNxsItemQueue();
+	recvNxsItemQueue();
 
     bool should_notify = false;
 
@@ -396,13 +448,14 @@ int RsGxsNetService::tick()
     if(should_notify)
         processObserverNotifications() ;
 
-    time_t now = time(NULL);
-    time_t elapsed = mSYNC_PERIOD + mSyncTs;
+    rstime_t now = time(NULL);
+    rstime_t elapsed = mSYNC_PERIOD + mSyncTs;
 
     if((elapsed) < now)
     {
         syncWithPeers();
         syncGrpStatistics();
+		checkDistantSyncState();
 
     	mSyncTs = now;
     }
@@ -450,8 +503,8 @@ void RsGxsNetService::processObserverNotifications()
 	    mNewPublishKeysToNotify.clear() ;
     }
 
-    if(!grps_copy.empty()) mObserver->notifyNewGroups  (grps_copy);
-    if(!msgs_copy.empty()) mObserver->notifyNewMessages(msgs_copy);
+    if(!grps_copy.empty()) mObserver->receiveNewGroups  (grps_copy);
+    if(!msgs_copy.empty()) mObserver->receiveNewMessages(msgs_copy);
 
     for(std::set<RsGxsGroupId>::const_iterator it(keys_copy.begin());it!=keys_copy.end();++it)
 		mObserver->notifyReceivePublishKey(*it);
@@ -472,20 +525,20 @@ void RsGxsNetService::rejectMessage(const RsGxsMessageId& msg_id)
 void RsGxsNetService::cleanRejectedMessages()
 {
     RS_STACK_MUTEX(mNxsMutex) ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG___ << "Cleaning rejected messages." << std::endl;
 #endif
 
-    for(std::map<RsGxsMessageId,time_t>::iterator it(mRejectedMessages.begin());it!=mRejectedMessages.end();)
+    for(std::map<RsGxsMessageId,rstime_t>::iterator it(mRejectedMessages.begin());it!=mRejectedMessages.end();)
         if(it->second + REJECTED_MESSAGE_RETRY_DELAY < now)
 	{
 #ifdef NXS_NET_DEBUG_0
 		GXSNETDEBUG___ << "  message id " << it->first << " should be re-tried. removing from list..." << std::endl;
 #endif
 
-		std::map<RsGxsMessageId,time_t>::iterator tmp = it ;
+		std::map<RsGxsMessageId,rstime_t>::iterator tmp = it ;
 		++tmp ;
 		mRejectedMessages.erase(it) ;
 		it=tmp ;
@@ -520,6 +573,18 @@ void RsGxsNetService::syncWithPeers()
 
     std::set<RsPeerId> peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, peers);
+
+	if(mAllowDistSync && mGxsNetTunnel != NULL)
+	{
+		// Grab all online virtual peers of distant tunnels for the current service.
+
+		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+		mGxsNetTunnel->getVirtualPeers(vpids);
+
+		for(auto it(vpids.begin());it!=vpids.end();++it)
+			peers.insert(RsPeerId(*it)) ;
+	}
+
     if (peers.empty()) {
         // nothing to do
         return;
@@ -549,7 +614,7 @@ void RsGxsNetService::syncWithPeers()
 #ifdef NXS_NET_DEBUG_5
 	GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
 #endif
-        sendItem(grp);
+        generic_sendItem(grp);
     }
 
     if(!mAllowMsgSync)
@@ -665,7 +730,7 @@ void RsGxsNetService::syncWithPeers()
 #ifdef NXS_NET_DEBUG_7
 	    GXSNETDEBUG_PG(*sit,grpId) << "    Service " << std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself - in clear " << std::endl;
 #endif
-	    sendItem(msg);
+		generic_sendItem(msg);
 
 #ifdef NXS_NET_DEBUG_5
 		GXSNETDEBUG_PG(*sit,grpId) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global message TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) for group " << grpId << " to himself" << std::endl;
@@ -674,6 +739,91 @@ void RsGxsNetService::syncWithPeers()
     }
 
 #endif
+}
+
+void RsGxsNetService::generic_sendItem(RsNxsItem *si)
+{
+	// check if the item is to be sent to a distant peer or not
+
+	RsGxsGroupId tmp_grpId;
+
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer( static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()),tmp_grpId))
+	{
+		RsNxsSerialiser ser(mServType);
+
+		uint32_t size = ser.size(si);
+		unsigned char *mem = (unsigned char *)rs_malloc(size) ;
+
+		if(!mem)
+			return ;
+
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG_P_(si->PeerId()) << "Sending RsGxsNetTunnelService Item:" << (void*)si << " of type: " << std::hex << si->PacketId() << std::dec
+		                               << " transaction " << si->transactionNumber << " to virtual peer " << si->PeerId() << std::endl ;
+#endif
+		ser.serialise(si,mem,&size) ;
+
+		mGxsNetTunnel->sendTunnelData(mServType,mem,size,static_cast<RsGxsNetTunnelVirtualPeerId>(si->PeerId()));
+	}
+	else
+		sendItem(si) ;
+}
+
+void RsGxsNetService::checkDistantSyncState()
+{
+	if(!mAllowDistSync || mGxsNetTunnel==NULL || !mGrpAutoSync)
+		return ;
+
+	RsGxsGrpMetaTemporaryMap grpMeta;
+    mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+    // Go through group statistics and groups without information are re-requested to random peers selected
+    // among the ones who provided the group info.
+
+#ifdef NXS_NET_DEBUG_8
+    GXSNETDEBUG___<< "Checking distant sync for all groups." << std::endl;
+#endif
+	// get the list of online peers
+
+    std::set<RsPeerId> online_peers;
+    mNetMgr->getOnlineList(mServiceInfo.mServiceType , online_peers);
+
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
+		if(it->second->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)	// we only consider subscribed groups here.
+	    {
+#warning (cyril) We might need to also remove peers for recently unsubscribed groups
+			const RsGxsGroupId& grpId(it->first);
+		    const RsGxsGrpConfig& rec = locked_getGrpConfig(grpId) ;
+
+#ifdef NXS_NET_DEBUG_6
+		    GXSNETDEBUG__G(it->first) << "    group " << grpId;
+#endif
+			bool at_least_one_friend_is_supplier = false ;
+
+			for(auto it2(rec.suppliers.ids.begin());it2!=rec.suppliers.ids.end() && !at_least_one_friend_is_supplier;++it2)
+				if(online_peers.find(*it2) != online_peers.end())	                // check that the peer is online
+					at_least_one_friend_is_supplier = true ;
+
+			// That strategy is likely to create islands of friends connected to each other. There's no real way
+			// to decide what to do here, except maybe checking the last message TS remotely vs. locally.
+
+			if(at_least_one_friend_is_supplier)
+			{
+				mGxsNetTunnel->releaseDistantPeers(mServType,grpId);
+#ifdef NXS_NET_DEBUG_8
+				GXSNETDEBUG___<< "  Group " << grpId << ": suppliers among friends. Releasing peers." << std::endl;
+#endif
+			}
+			else
+			{
+				mGxsNetTunnel->requestDistantPeers(mServType,grpId);
+#ifdef NXS_NET_DEBUG_8
+				GXSNETDEBUG___<< "  Group " << grpId << ": no suppliers among friends. Requesting peers." << std::endl;
+#endif
+			}
+		}
 }
 
 void RsGxsNetService::syncGrpStatistics()
@@ -690,10 +840,21 @@ void RsGxsNetService::syncGrpStatistics()
     std::set<RsPeerId> online_peers;
     mNetMgr->getOnlineList(mServiceInfo.mServiceType, online_peers);
 
+	if(mAllowDistSync && mGxsNetTunnel != NULL)
+	{
+		// Grab all online virtual peers of distant tunnels for the current service.
+
+		std::list<RsGxsNetTunnelVirtualPeerId> vpids ;
+		mGxsNetTunnel->getVirtualPeers(vpids);
+
+		for(auto it(vpids.begin());it!=vpids.end();++it)
+			online_peers.insert(RsPeerId(*it)) ;
+	}
+
     // Go through group statistics and groups without information are re-requested to random peers selected
     // among the ones who provided the group info.
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(auto it(grpMeta.begin());it!=grpMeta.end();++it)
     {
@@ -704,44 +865,44 @@ void RsGxsNetService::syncGrpStatistics()
 #endif
 
 	    if(rec.statistics_update_TS + GROUP_STATS_UPDATE_DELAY < now && rec.suppliers.ids.size() > 0)
-	    {
+		{
 #ifdef NXS_NET_DEBUG_6
-		    GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
+			GXSNETDEBUG__G(it->first) << " needs update. Randomly asking to some friends" << std::endl;
 #endif
-            // randomly select GROUP_STATS_UPDATE_NB_PEERS friends among the suppliers of this group
+			// randomly select GROUP_STATS_UPDATE_NB_PEERS friends among the suppliers of this group
 
-		    uint32_t n = RSRandom::random_u32() % rec.suppliers.ids.size() ;
+			uint32_t n = RSRandom::random_u32() % rec.suppliers.ids.size() ;
 
-		    std::set<RsPeerId>::const_iterator rit = rec.suppliers.ids.begin();
-		    for(uint32_t i=0;i<n;++i)
-			    ++rit ;
+			std::set<RsPeerId>::const_iterator rit = rec.suppliers.ids.begin();
+			for(uint32_t i=0;i<n;++i)
+				++rit ;
 
-		    for(uint32_t i=0;i<std::min(rec.suppliers.ids.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
-                    {
-                // we started at a random position in the set, wrap around if the end is reached
-                if(rit == rec.suppliers.ids.end())
-                    rit = rec.suppliers.ids.begin() ;
-
-			RsPeerId peer_id = *rit ;
-			++rit ;
-
-                	if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
+			for(uint32_t i=0;i<std::min(rec.suppliers.ids.size(),(size_t)GROUP_STATS_UPDATE_NB_PEERS);++i)
 			{
+				// we started at a random position in the set, wrap around if the end is reached
+				if(rit == rec.suppliers.ids.end())
+					rit = rec.suppliers.ids.begin() ;
+
+				RsPeerId peer_id = *rit ;
+				++rit ;
+
+				if(online_peers.find(peer_id) != online_peers.end())	// check that the peer is online
+				{
 #ifdef NXS_NET_DEBUG_6
-				GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
+					GXSNETDEBUG_PG(peer_id,it->first) << "  asking friend " << peer_id << " for an update of stats for group " << it->first << std::endl;
 #endif
 
-				RsNxsSyncGrpStatsItem *grs = new RsNxsSyncGrpStatsItem(mServType) ;
+					RsNxsSyncGrpStatsItem *grs = new RsNxsSyncGrpStatsItem(mServType) ;
 
-				grs->request_type = RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_REQUEST ;
+					grs->request_type = RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_REQUEST ;
 
-				grs->grpId = it->first ;
-				grs->PeerId(peer_id) ;
+					grs->grpId = it->first ;
+					grs->PeerId(peer_id) ;
 
-				sendItem(grs) ;
+					generic_sendItem(grs) ;
+				}
 			}
-                    }
-	    }
+		}
 #ifdef NXS_NET_DEBUG_6
 	    else
 		    GXSNETDEBUG__G(it->first) << " up to date." << std::endl;
@@ -784,7 +945,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    // now count available messages
 
 	    GxsMsgReq reqIds;
-	    reqIds[grs->grpId] = std::vector<RsGxsMessageId>();
+	    reqIds[grs->grpId] = std::set<RsGxsMessageId>();
 	    GxsMsgMetaResult result;
 
 #ifdef NXS_NET_DEBUG_6
@@ -819,7 +980,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  sending back statistics item with " << vec.size() << " elements." << std::endl;
 #endif
 
-	    sendItem(grs_resp) ;
+	    generic_sendItem(grs_resp) ;
     }
     else if(grs->request_type == RsNxsSyncGrpStatsItem::GROUP_INFO_TYPE_RESPONSE)
 	{
@@ -1391,11 +1552,11 @@ public:
 
     void operator() (RsItem* item)
     {
-        RsGxsMsgUpdateItem* mui;
-        RsGxsGrpUpdateItem* gui;
-        RsGxsServerGrpUpdateItem* gsui;
-        RsGxsServerMsgUpdateItem* msui;
-        RsGxsGrpConfigItem* mgci;
+        RsGxsMsgUpdateItem        *mui;
+        RsGxsGrpUpdateItem        *gui;
+        RsGxsServerGrpUpdateItem  *gsui;
+        RsGxsServerMsgUpdateItem  *msui;
+        RsGxsGrpConfigItem        *mgci;
 
         if((mui = dynamic_cast<RsGxsMsgUpdateItem*>(item)) != NULL)
             check_store(mui->peerID,mClientMsgMap,*mui);
@@ -1421,7 +1582,6 @@ private:
     RsGxsNetService::GrpConfigMap& mGrpConfigMap;
 
     RsGxsServerGrpUpdate& mServerGrpUpdate;
-
 };
 
 bool RsGxsNetService::loadList(std::list<RsItem *> &load)
@@ -1431,10 +1591,9 @@ bool RsGxsNetService::loadList(std::list<RsItem *> &load)
     // The delete is done in StoreHere, if necessary
 
     std::for_each(load.begin(), load.end(), StoreHere(mClientGrpUpdateMap, mClientMsgUpdateMap, mServerMsgUpdateMap, mServerGrpConfigMap, mGrpServerUpdate));
+	rstime_t now = time(NULL);
 
     // We reset group statistics here. This is the best place since we know at this point which are all unsubscribed groups.
-
-    time_t now = time(NULL);
 
     for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it)
 	{
@@ -1489,6 +1648,7 @@ struct get_second : public std::unary_function<typename UpdateMap::value_type, R
     typename UpdateMap::key_type ItemClass::*ID_member ;
 };
 
+
 bool RsGxsNetService::saveList(bool& cleanup, std::list<RsItem*>& save)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
@@ -1520,11 +1680,44 @@ RsSerialiser *RsGxsNetService::setupSerialiser()
     return rss;
 }
 
+RsItem *RsGxsNetService::generic_recvItem()
+{
+	{
+		RsItem *item ;
+
+		if(NULL != (item=recvItem()))
+			return item ;
+	}
+
+	unsigned char *data = NULL ;
+	uint32_t size = 0 ;
+	RsGxsNetTunnelVirtualPeerId virtual_peer_id ;
+
+	while(mAllowDistSync && mGxsNetTunnel!=NULL && mGxsNetTunnel->receiveTunnelData(mServType,data,size,virtual_peer_id))
+	{
+		RsNxsItem *item = dynamic_cast<RsNxsItem*>(RsNxsSerialiser(mServType).deserialise(data,&size)) ;
+		item->PeerId(virtual_peer_id) ;
+
+		free(data) ;
+
+		if(!item)
+			continue ;
+
+#ifdef NXS_NET_DEBUG_8
+        GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetTunnelService Item:" << (void*)item << " of type: " << std::hex << item->PacketId() << std::dec
+		                               << " transaction " << item->transactionNumber << " from virtual peer " << item->PeerId() << std::endl ;
+#endif
+		return item ;
+	}
+
+	return NULL ;
+}
+
 void RsGxsNetService::recvNxsItemQueue()
 {
     RsItem *item ;
 
-    while(NULL != (item=recvItem()))
+    while(NULL != (item=generic_recvItem()))
     {
 #ifdef NXS_NET_DEBUG_1
         GXSNETDEBUG_P_(item->PeerId()) << "Received RsGxsNetService Item:" << (void*)item << " type=" << std::hex << item->PacketId() << std::dec << std::endl ;
@@ -1825,11 +2018,11 @@ void RsGxsNetService::debugDump()
 {
 #ifdef NXS_NET_DEBUG_0
 	RS_STACK_MUTEX(mNxsMutex) ;
-    //time_t now = time(NULL) ;
+    //rstime_t now = time(NULL) ;
 
     GXSNETDEBUG___<< "RsGxsNetService::debugDump():" << std::endl;
 
-    RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData> grpMetas;
+    RsGxsGrpMetaTemporaryMap grpMetas;
 
     if(!group_id_to_print.isNull())
         grpMetas[group_id_to_print] = NULL ;
@@ -1842,7 +2035,7 @@ void RsGxsNetService::debugDump()
 
     for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
     {
-        RsGxsMetaDataTemporaryMap<RsGxsGrpMetaData>::const_iterator it2 = grpMetas.find(it->first) ;
+        RsGxsGrpMetaTemporaryMap::const_iterator it2 = grpMetas.find(it->first) ;
         RsGxsGrpMetaData *grpMeta = (it2 != grpMetas.end())? it2->second : NULL;
         std::string subscribe_string = (grpMeta==NULL)?"Unknown" :  ((grpMeta->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)?" Subscribed":" NOT Subscribed") ;
 
@@ -1967,8 +2160,8 @@ void RsGxsNetService::updateServerSyncTS()
                 	// ask to the GxsNetService of circles what the server TS is for that circle. If more recent, we update the serverTS of the
                 	// local group
 
-                        time_t circle_group_server_ts ;
-                        time_t circle_msg_server_ts ;
+                        rstime_t circle_group_server_ts ;
+                        rstime_t circle_msg_server_ts ;
 
                         // This call needs to be off-mutex, because of self-restricted circles.
                         // Normally we should update as a function of MsgServerUpdateTS and the mRecvTS of the circle, not the global grpServerTS.
@@ -2125,7 +2318,7 @@ void RsGxsNetService::processTransactions()
                     lit_end = tr->mItems.end();
 
                     for(; lit != lit_end; ++lit){
-                        sendItem(*lit);
+                        generic_sendItem(*lit);
                     }
 
                     tr->mItems.clear(); // clear so they don't get deleted in trans cleaning
@@ -2234,7 +2427,7 @@ void RsGxsNetService::processTransactions()
                     trans->transactFlag = RsNxsTransacItem::FLAG_END_SUCCESS;
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
-                    sendItem(trans);
+                    generic_sendItem(trans);
 
                     // move to completed transactions
 
@@ -2277,7 +2470,7 @@ void RsGxsNetService::processTransactions()
                                     (tr->mTransaction->transactFlag & RsNxsTransacItem::FLAG_TYPE_MASK);
                     trans->transactionNumber = transN;
                     trans->PeerId(tr->mTransaction->PeerId());
-                    sendItem(trans);
+                    generic_sendItem(trans);
                     tr->mFlag = NxsTransaction::FLAG_STATE_RECEIVING;
 
                 }
@@ -2460,7 +2653,7 @@ void RsGxsNetService::locked_processCompletedIncomingTrans(NxsTransaction* tr)
             GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "  type = msgs." << std::endl;
 #endif
             RsGxsGroupId grpId;
-            //time_t now = time(NULL) ;
+            //rstime_t now = time(NULL) ;
 
             while(tr->mItems.size() > 0)
             {
@@ -2654,7 +2847,7 @@ void RsGxsNetService::locked_pushMsgTransactionFromList(std::list<RsNxsItem*>& r
     newTrans->mTransaction->PeerId(mOwnId);
 
     if (locked_addTransaction(newTrans))
-    	sendItem(transac);
+    	generic_sendItem(transac);
     else
     {
         delete newTrans;
@@ -2757,7 +2950,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
 #endif
 
     GxsMsgReq reqIds;
-    reqIds[grpId] = std::vector<RsGxsMessageId>();
+    reqIds[grpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult result;
     mDataStore->retrieveGxsMsgMetaData(reqIds, result);
     std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
@@ -2841,7 +3034,8 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
             //  - if author is locally banned, do not download.
             //  - if author is not locally banned, download, whatever friends' opinion might be.
 
-        	if(mReputations->overallReputationLevel(syncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+			if( mReputations->overallReputationLevel(syncItem->authorId) ==
+			        RsReputationLevel::LOCALLY_NEGATIVE )
             {
 #ifdef NXS_NET_DEBUG_1
                 GXSNETDEBUG_PG(item->PeerId(),grpId) << ", Identity " << syncItem->authorId << " is banned. Not requesting message!" << std::endl;
@@ -2913,7 +3107,7 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     }
 }
 
-void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,time_t tm,uint32_t n_messages)
+void RsGxsNetService::locked_stampPeerGroupUpdateTime(const RsPeerId& pid,const RsGxsGroupId& grpId,rstime_t tm,uint32_t n_messages)
 {
     RsGxsMsgUpdate& up(mClientMsgUpdateMap[pid]);
 
@@ -2950,7 +3144,7 @@ void RsGxsNetService::locked_pushGrpTransactionFromList( std::list<RsNxsItem*>& 
 	newTrans->mTransaction->PeerId(mOwnId);
 
     if (locked_addTransaction(newTrans))
-	    sendItem(transac);
+	    generic_sendItem(transac);
     else
     {
 	    delete newTrans;
@@ -3046,7 +3240,9 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         // FIXTESTS global variable rsReputations not available in unittests!
 
 #warning csoler 2016-12-23: Update the code below to correctly send/recv dependign on reputation
-		if(!grpSyncItem->authorId.isNull() && mReputations->overallReputationLevel(grpSyncItem->authorId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		if( !grpSyncItem->authorId.isNull() &&
+		        mReputations->overallReputationLevel(grpSyncItem->authorId) ==
+		        RsReputationLevel::LOCALLY_NEGATIVE )
 		{
 #ifdef NXS_NET_DEBUG_0
 			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
@@ -3084,7 +3280,7 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 {
 
 #ifdef NXS_NET_DEBUG_1
-	GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genSendGrpsTransaction() Generating Grp data send fron TransN: " << tr->mTransaction->transactionNumber << std::endl;
+	GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "locked_genSendGrpsTransaction() Generating Grp data send from TransN: " << tr->mTransaction->transactionNumber << std::endl;
 #endif
 
 	// go groups requested in transaction tr
@@ -3097,7 +3293,12 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	{
 		RsNxsSyncGrpItem* item = dynamic_cast<RsNxsSyncGrpItem*>(*lit);
 		if (item)
+		{
+#ifdef NXS_NET_DEBUG_1
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),item->grpId) << "locked_genSendGrpsTransaction() retrieving data for group \"" << item->grpId << "\"" << std::endl;
+#endif
 			grps[item->grpId] = NULL;
+		}
 		else
 		{
 #ifdef NXS_NET_DEBUG_1
@@ -3109,7 +3310,12 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	if(!grps.empty())
 		mDataStore->retrieveNxsGrps(grps, false, false);
 	else
+	{
+#ifdef NXS_NET_DEBUG_1
+		GXSNETDEBUG_P_(tr->mTransaction->PeerId()) << "RsGxsNetService::locked_genSendGrpsTransaction(): no group to request! This is unexpected" << std::endl;
+#endif
 		return;
+	}
 
 	NxsTransaction* newTr = new NxsTransaction();
 	newTr->mFlag = NxsTransaction::FLAG_STATE_WAITING_CONFIRM;
@@ -3126,6 +3332,9 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 		mit->second->transactionNumber = transN;
 		newTr->mItems.push_back(mit->second);
         	mit->second = NULL ; // avoids deletion
+#ifdef NXS_NET_DEBUG_1
+		GXSNETDEBUG_PG(tr->mTransaction->PeerId(),mit->first) << "RsGxsNetService::locked_genSendGrpsTransaction(): adding grp data of group \"" << mit->first << "\" to transaction" << std::endl;
+#endif
 	}
 
 	if(newTr->mItems.empty()){
@@ -3154,8 +3363,8 @@ void RsGxsNetService::locked_genSendGrpsTransaction(NxsTransaction* tr)
 	ntr->PeerId(tr->mTransaction->PeerId());
 
 	if(locked_addTransaction(newTr))
-		sendItem(ntr);
-        else
+		generic_sendItem(ntr);
+	else
         {
             delete ntr ;
             delete newTr;
@@ -3296,7 +3505,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
 	    RsNxsSyncMsgItem* item = dynamic_cast<RsNxsSyncMsgItem*>(*lit);
 	    if (item)
 	    {
-		    msgIds[item->grpId].push_back(item->msgId);
+		    msgIds[item->grpId].insert(item->msgId);
 
 		    if(grpId.isNull())
 			    grpId = item->grpId;
@@ -3449,7 +3658,7 @@ void RsGxsNetService::locked_genSendMsgsTransaction(NxsTransaction* tr)
     ntr->PeerId(tr->mTransaction->PeerId());
 
     if(locked_addTransaction(newTr))
-	    sendItem(ntr);
+		generic_sendItem(ntr);
     else
     {
 	    delete ntr ;
@@ -3768,7 +3977,7 @@ void RsGxsNetService::locked_pushGrpRespFromList(std::list<RsNxsItem*>& respList
                                     << peer << " with " << respList.size() << " groups " << std::endl;
 #endif
 	if(locked_addTransaction(tr))
-	    sendItem(trItem);
+	    generic_sendItem(trItem);
     else
     {
         delete tr ;
@@ -3910,6 +4119,18 @@ bool RsGxsNetService::canSendGrpId(const RsPeerId& sslId, const RsGxsGrpMetaData
 #ifdef NXS_NET_DEBUG_4
 	GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendGrpId()"<< std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#warning (cyril) make sure that this is not a problem for cross-service sending of items
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
+
 	// first do the simple checks
 	uint8_t circleType = grpMeta.mCircleType;
 
@@ -3963,6 +4184,17 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::checkCanRecvMsgFromPeer()";
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  peer Id = " << sslId << ", grpId=" << grpMeta.mGroupId <<std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
+
     // first do the simple checks
     uint8_t circleType = grpMeta.mCircleType;
     should_encrypt_id.clear() ;
@@ -4127,7 +4359,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     }
 
     GxsMsgReq req;
-    req[item->grpId] = std::vector<RsGxsMessageId>();
+    req[item->grpId] = std::set<RsGxsMessageId>();
 
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);
@@ -4151,9 +4383,11 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
+#ifndef RS_GXS_SEND_ALL
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
+#endif
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
@@ -4184,8 +4418,11 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 				}
 			}
 			// Check publish TS
-
+#ifndef RS_GXS_SEND_ALL
 			if(item->createdSinceTS > (*vit)->mPublishTs || ((max_send_delay > 0) && (*vit)->mPublishTs + max_send_delay < now))
+#else
+			if(item->createdSinceTS > (*vit)->mPublishTs)
+#endif
 			{
 #ifdef NXS_NET_DEBUG_0
 				GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  not sending item ID " << (*vit)->mMsgId << ", because it is too old (publishTS = " << (time(NULL)-(*vit)->mPublishTs)/86400 << " days ago" << std::endl;
@@ -4293,7 +4530,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 #endif
 	// signal peer to prepare for transaction
 	if(locked_addTransaction(tr))
-		sendItem(trItem);
+		generic_sendItem(trItem);
 	else
 	{
 		delete tr ;
@@ -4306,6 +4543,16 @@ bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, co
 #ifdef NXS_NET_DEBUG_4
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;
 #endif
+	// check if that peer is a virtual peer id, in which case we only send/recv data to/from it items for the group it's requested for
+
+	RsGxsGroupId peer_grp ;
+	if(mAllowDistSync && mGxsNetTunnel != NULL && mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(sslId),peer_grp) && peer_grp != grpMeta.mGroupId)
+	{
+#ifdef NXS_NET_DEBUG_4
+        GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "  Distant peer designed for group " << peer_grp << ": cannot request sync for different group." << std::endl;
+#endif
+		return false ;
+	}
 
     // first do the simple checks
     uint8_t circleType = grpMeta.mCircleType;
@@ -4546,7 +4793,7 @@ void RsGxsNetService::processExplicitGroupRequests()
 		for(; git != groupIdList.end(); ++git)
 		{
 #ifdef NXS_NET_DEBUG_0
-            GXSNETDEBUG_PG(peerId,*git) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
+            GXSNETDEBUG_P_(peerId) << "   group request for grp ID " << *git << " to peer " << peerId << std::endl;
 #endif
             RsNxsSyncGrpItem* item = new RsNxsSyncGrpItem(mServType);
 			item->grpId = *git;
@@ -4680,7 +4927,7 @@ void RsGxsNetService::sharePublishKeysPending()
             publishKeyItem->private_key = publishKey ;
             publishKeyItem->PeerId(*it);
 
-            sendItem(publishKeyItem);
+            generic_sendItem(publishKeyItem);
 #ifdef NXS_NET_DEBUG_3
             GXSNETDEBUG_PG(*it,grpMeta->mGroupId) << "  sent key item to " << *it << std::endl;
 #endif
@@ -4785,7 +5032,7 @@ void RsGxsNetService::handleRecvPublishKeys(RsNxsGroupPublishKeyItem *item)
 	}
 }
 
-bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,time_t& group_server_update_TS, time_t& msg_server_update_TS)
+bool RsGxsNetService::getGroupServerUpdateTS(const RsGxsGroupId& gid,rstime_t& group_server_update_TS, rstime_t& msg_server_update_TS)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -4841,6 +5088,18 @@ bool RsGxsNetService::removeGroups(const std::list<RsGxsGroupId>& groups)
     return true ;
 }
 
+bool RsGxsNetService::isDistantPeer(const RsPeerId& pid)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+	if(!mAllowDistSync || mGxsNetTunnel == NULL)
+		return false ;
+
+	RsGxsGroupId group_id ;
+
+	return mGxsNetTunnel->isDistantPeer(RsGxsNetTunnelVirtualPeerId(pid),group_id);
+}
+
 bool RsGxsNetService::stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
@@ -4856,3 +5115,341 @@ bool RsGxsNetService::locked_stampMsgServerUpdateTS(const RsGxsGroupId& gid)
 
     return true;
 }
+
+TurtleRequestId RsGxsNetService::turtleGroupRequest(const RsGxsGroupId& group_id)
+{
+	RS_STACK_MUTEX(mNxsMutex) ;
+
+    rstime_t now = time(NULL);
+    auto it = mSearchedGroups.find(group_id) ;
+
+    if(mSearchedGroups.end() != it && (it->second.ts + MIN_DELAY_BETWEEN_GROUP_SEARCH > now))
+    {
+        std::cerr << "(WW) Last turtle request was " << now - it->second.ts << " secs ago. Not searching again." << std::endl;
+        return it->second.request_id;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG__G(group_id) << "  requesting group id " << group_id << " using turtle" << std::endl;
+#endif
+	TurtleRequestId req = mGxsNetTunnel->turtleGroupRequest(group_id,this) ;
+
+    GroupRequestRecord& rec(mSearchedGroups[group_id]) ;
+
+	rec.request_id = req;
+	rec.ts         = now;
+
+    mSearchRequests[req] = group_id;
+
+    return req;
+}
+TurtleRequestId RsGxsNetService::turtleSearchRequest(const std::string& match_string)
+{
+    return mGxsNetTunnel->turtleSearchRequest(match_string,this) ;
+}
+
+#ifndef RS_DEEP_SEARCH
+static bool termSearch(const std::string& src, const std::string& substring)
+{
+		/* always ignore case */
+	return src.end() != std::search( src.begin(), src.end(), substring.begin(), substring.end(), RsRegularExpression::CompareCharIC() );
+}
+#endif // ndef RS_DEEP_SEARCH
+
+bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+
+    auto it = mDistantSearchResults.find(req) ;
+
+    if(it == mDistantSearchResults.end())
+        return false ;
+
+    group_infos = it->second;
+    return true ;
+}
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+{
+	RS_STACK_MUTEX(mNxsMutex) ;
+    for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
+    {
+        auto it2 = it->second.find(group_id) ;
+
+        if(it2 != it->second.end())
+        {
+            gs = it2->second;
+            return true ;
+        }
+    }
+    return false ;
+}
+bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
+{
+    RS_STACK_MUTEX(mNxsMutex) ;
+    mDistantSearchResults.erase(id);
+    return true ;
+}
+
+void RsGxsNetService::receiveTurtleSearchResults(
+        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+{
+	std::set<RsGxsGroupId> groupsToNotifyResults;
+
+	{
+		RS_STACK_MUTEX(mNxsMutex);
+
+		RsGxsGrpMetaTemporaryMap grpMeta;
+		std::map<RsGxsGroupId,RsGxsGroupSummary>&
+		        search_results_map(mDistantSearchResults[req]);
+
+		for(const RsGxsGroupSummary& gps : group_infos)
+			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
+				grpMeta[gps.mGroupId] = nullptr;
+		mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+		for (const RsGxsGroupSummary& gps : group_infos)
+		{
+#ifndef RS_DEEP_SEARCH
+			/* Only keep groups that are not locally known, and groups that are
+			 * not already in the mDistantSearchResults structure. */
+			if(grpMeta[gps.mGroupId]) continue;
+#else // ndef RS_DEEP_SEARCH
+			/* When deep search is enabled search results may bring more info
+			 * then we already have also about post that are indexed by xapian,
+			 * so we don't apply this filter in this case. */
+#endif
+			const RsGxsGroupId& grpId(gps.mGroupId);
+
+			groupsToNotifyResults.insert(grpId);
+			auto it2 = search_results_map.find(grpId);
+			if(it2 != search_results_map.end())
+			{
+				// update existing data
+				RsGxsGroupSummary& eGpS(it2->second);
+				eGpS.mPopularity++;
+				eGpS.mNumberOfMessages = std::max(
+				            eGpS.mNumberOfMessages,
+				            gps.mNumberOfMessages );
+			}
+			else
+			{
+				search_results_map[grpId] = gps;
+				// number of results so far
+				search_results_map[grpId].mPopularity = 1;
+			}
+		}
+	} // end RS_STACK_MUTEX(mNxsMutex);
+
+	for(const RsGxsGroupId& grpId : groupsToNotifyResults)
+		mObserver->receiveDistantSearchResults(req, grpId);
+}
+
+void RsGxsNetService::receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len)
+{
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " received encrypted group data for turtle search request " << std::hex << req << std::dec << ": " << RsUtil::BinToHex(encrypted_group_data,encrypted_group_data_len,50) << std::endl;
+#endif
+    auto it = mSearchRequests.find(req);
+
+    if(mSearchRequests.end() == it)
+    {
+        std::cerr << "(EE) received search results for unknown request " << std::hex << req << std::dec ;
+        return;
+    }
+    RsGxsGroupId grpId = it->second;
+
+    uint8_t encryption_master_key[32];
+    Sha256CheckSum s = RsDirUtil::sha256sum(grpId.toByteArray(),grpId.SIZE_IN_BYTES);
+    memcpy(encryption_master_key,s.toByteArray(),32);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " attempting data decryption with master key " << RsUtil::BinToHex(encryption_master_key,32) << std::endl;
+#endif
+    unsigned char *clear_group_data = NULL;
+    uint32_t clear_group_data_len ;
+
+    if(!librs::crypto::decryptAuthenticateData(encrypted_group_data,encrypted_group_data_len,encryption_master_key,clear_group_data,clear_group_data_len))
+    {
+        std::cerr << "(EE) Could not decrypt data. Something went wrong. Wrong key??" << std::endl;
+        return ;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " successfuly decrypted data : " << RsUtil::BinToHex(clear_group_data,clear_group_data_len,50) << std::endl;
+#endif
+    RsItem *item = RsNxsSerialiser(mServType).deserialise(clear_group_data,&clear_group_data_len) ;
+	free(clear_group_data);
+    clear_group_data = NULL ;
+
+    RsNxsGrp *nxs_grp = dynamic_cast<RsNxsGrp*>(item) ;
+
+    if(nxs_grp == NULL)
+    {
+        std::cerr << "(EE) decrypted item is not a RsNxsGrp. Weird!" << std::endl;
+        return ;
+    }
+    std::vector<RsNxsGrp*> new_grps(1,nxs_grp);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " passing the grp data to observer." << std::endl;
+#endif
+	mObserver->receiveNewGroups(new_grps);
+	mObserver->receiveDistantSearchResults(req, grpId);
+}
+
+bool RsGxsNetService::search( const std::string& substring,
+                              std::list<RsGxsGroupSummary>& group_infos )
+{
+	group_infos.clear();
+
+#ifdef RS_DEEP_SEARCH
+	std::vector<DeepSearch::SearchResult> results;
+	DeepSearch::search(substring, results);
+
+	for(auto dsr : results)
+	{
+		RsUrl rUrl(dsr.mUrl);
+		const auto& uQ(rUrl.query());
+		auto rit = uQ.find("id");
+		if(rit != rUrl.query().end())
+		{
+			RsGroupNetworkStats stats;
+			RsGxsGroupId grpId(rit->second);
+			if( !grpId.isNull() && getGroupNetworkStats(grpId, stats) )
+			{
+				RsGxsGroupSummary s;
+
+				s.mGroupId = grpId;
+
+				if((rit = uQ.find("name")) != uQ.end())
+					s.mGroupName = rit->second;
+				if((rit = uQ.find("signFlags")) != uQ.end())
+					s.mSignFlags = std::stoul(rit->second);
+				if((rit = uQ.find("publishTs")) != uQ.end())
+					s.mPublishTs = static_cast<rstime_t>(std::stoll(rit->second));
+				if((rit = uQ.find("authorId")) != uQ.end())
+					s.mAuthorId  = RsGxsId(rit->second);
+
+				s.mSearchContext = dsr.mSnippet;
+
+				s.mNumberOfMessages = stats.mMaxVisibleCount;
+				s.mLastMessageTs    = stats.mLastGroupModificationTS;
+				s.mPopularity       = stats.mSuppliers;
+
+				group_infos.push_back(s);
+			}
+		}
+	}
+#else // RS_DEEP_SEARCH
+	RsGxsGrpMetaTemporaryMap grpMetaMap;
+	{
+		RS_STACK_MUTEX(mNxsMutex) ;
+		mDataStore->retrieveGxsGrpMetaData(grpMetaMap);
+	}
+
+	RsGroupNetworkStats stats;
+	for(auto it(grpMetaMap.begin());it!=grpMetaMap.end();++it)
+		if(termSearch(it->second->mGroupName,substring))
+		{
+			getGroupNetworkStats(it->first,stats);
+
+			RsGxsGroupSummary s;
+			s.mGroupId           = it->first;
+			s.mGroupName         = it->second->mGroupName;
+			s.mSearchContext     = it->second->mGroupName;
+			s.mSignFlags         = it->second->mSignFlags;
+			s.mPublishTs         = it->second->mPublishTs;
+			s.mAuthorId          = it->second->mAuthorId;
+			s.mNumberOfMessages  = stats.mMaxVisibleCount;
+			s.mLastMessageTs     = stats.mLastGroupModificationTS;
+			s.mPopularity        = it->second->mPop;
+
+			group_infos.push_back(s);
+		}
+#endif // RS_DEEP_SEARCH
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << "  performing local substring search in response to distant request. Found " << group_infos.size() << " responses." << std::endl;
+#endif
+    return !group_infos.empty();
+}
+
+bool RsGxsNetService::search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)
+{
+    // First look into the grp hash cache
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " Received group data request for hash " << hashed_group_id << std::endl;
+#endif
+    auto it = mGroupHashCache.find(hashed_group_id) ;
+    RsNxsGrp *grp_data = NULL ;
+
+    if(mGroupHashCache.end() != it)
+    {
+        grp_data = it->second;
+    }
+    else
+	{
+		// Now check if the last request was too close in time, in which case, we dont retrieve data.
+
+		if(mLastCacheReloadTS + 60 > time(NULL))
+		{
+			std::cerr << "(WW) Not found in cache, and last cache reload less than 60 secs ago. Returning false. " << std::endl;
+			return false ;
+		}
+
+#ifdef NXS_NET_DEBUG_8
+		GXSNETDEBUG___ << " reloading group cache information" << std::endl;
+#endif
+		RsNxsGrpDataTemporaryMap grpDataMap;
+		{
+			RS_STACK_MUTEX(mNxsMutex) ;
+			mDataStore->retrieveNxsGrps(grpDataMap, true, true);
+            mLastCacheReloadTS = time(NULL);
+		}
+
+        for(auto it(grpDataMap.begin());it!=grpDataMap.end();++it)
+            if(it->second->metaData->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED )	// only cache subscribed groups
+            {
+                RsNxsGrp *grp = it->second ;
+                delete grp->metaData ; 		// clean private keys
+                grp->metaData = NULL ;
+
+                Sha1CheckSum hash(RsDirUtil::sha1sum(it->first.toByteArray(),it->first.SIZE_IN_BYTES));
+
+				mGroupHashCache[hash] = grp ;
+                it->second = NULL ; // prevents deletion
+
+                if(hash == hashed_group_id)
+                    grp_data = grp ;
+            }
+	}
+
+    if(!grp_data)
+    {
+#ifdef NXS_NET_DEBUG_8
+		GXSNETDEBUG___ << " no group found for hash " << hashed_group_id << ": returning false." << std::endl;
+#endif
+        return false ;
+    }
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " found corresponding group data group id in cache group_id=" << grp_data->grpId << std::endl;
+#endif
+    // Finally, serialize and encrypt the grp data
+
+    uint32_t size = RsNxsSerialiser(mServType).size(grp_data);
+	RsTemporaryMemory mem(size) ;
+
+    RsNxsSerialiser(mServType).serialise(grp_data,mem,&size) ;
+
+    uint8_t encryption_master_key[32];
+    Sha256CheckSum s = RsDirUtil::sha256sum(grp_data->grpId.toByteArray(),grp_data->grpId.SIZE_IN_BYTES);
+    memcpy(encryption_master_key,s.toByteArray(),32);
+
+#ifdef NXS_NET_DEBUG_8
+	GXSNETDEBUG___ << " sending data encrypted with master key " << RsUtil::BinToHex(encryption_master_key,32) << std::endl;
+#endif
+    return librs::crypto::encryptAuthenticateData(mem,size,encryption_master_key,encrypted_group_data,encrypted_group_data_len);
+}
+

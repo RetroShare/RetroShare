@@ -25,7 +25,7 @@
 
 #include <iostream>
 
-FileIndex *createBasicFileIndex(time_t age);
+FileIndex *createBasicFileIndex(rstime_t age);
 
 int test1(FileIndex *fi);
 int test2(FileIndex *fi);
@@ -44,7 +44,7 @@ int main()
 int test1(FileIndex *fi)
 {
 	/* in this test we are going to get the old directories - and update them */
-	time_t stamp = 200;
+	rstime_t stamp = 200;
 
 	DirEntry *olddir = NULL;
 	FileEntry fe;
@@ -92,7 +92,7 @@ int test1(FileIndex *fi)
 int test2(FileIndex *fi)
 {
 	/* in this test we are going to simulate that 2 directories have disappeared */
-	time_t stamp = 200;
+	rstime_t stamp = 200;
 
 	DirEntry *olddir = NULL;
 	FileEntry fe;
@@ -154,7 +154,7 @@ int test2(FileIndex *fi)
 
 
 
-FileIndex *createBasicFileIndex(time_t age)
+FileIndex *createBasicFileIndex(rstime_t age)
 {
 	FileIndex *fi = new FileIndex("A SILLY ID");
 

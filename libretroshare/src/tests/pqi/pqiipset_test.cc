@@ -94,7 +94,7 @@ bool test_addr_list()
 	const uint32_t expectedListSize = 4;
 	CHECK(list.mAddrs.size() == expectedListSize);
 
-	time_t min_time = time(NULL) - expectedListSize + 100;
+	rstime_t min_time = time(NULL) - expectedListSize + 100;
 
 	/* expect the most recent ones to appear */
 	std::list<pqiIpAddress>::iterator it;

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/ft: ftfileprovider.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
 #endif // WINDOWS_SYS
@@ -8,7 +29,7 @@
 #include "util/rsdir.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 /********
 * #define DEBUG_FT_FILE_PROVIDER 1
@@ -20,7 +41,7 @@
 	#include <iomanip>
 #endif
 
-static const time_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
+static const rstime_t UPLOAD_CHUNK_MAPS_TIME = 20 ;	// time to ask for a new chunkmap from uploaders in seconds.
 
 ftFileProvider::ftFileProvider(const std::string& path, uint64_t size, const RsFileHash& hash)
 	: mSize(size), hash(hash), file_name(path), fd(NULL), ftcMutex("ftFileProvider")
@@ -101,7 +122,7 @@ bool    ftFileProvider::FileDetails(FileInfo &info)
 	return true;
 }
 
-bool ftFileProvider::purgeOldPeers(time_t now,uint32_t max_duration)
+bool ftFileProvider::purgeOldPeers(rstime_t now,uint32_t max_duration)
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 
@@ -211,7 +232,7 @@ bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32
 
 		// This creates the peer info, and updates it.
 		//
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		uploading_peers[peer_id].updateStatus(offset,data_size,now) ;
 
 #ifdef DEBUG_TRANSFERS
@@ -233,7 +254,7 @@ bool ftFileProvider::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32
 	return 1;
 }
 
-void ftFileProvider::PeerUploadInfo::updateStatus(uint64_t offset,uint32_t data_size,time_t now)
+void ftFileProvider::PeerUploadInfo::updateStatus(uint64_t offset,uint32_t data_size,rstime_t now)
 {
 	lastTS = now ;
 	long int diff = (long int)now - (long int)lastTS_t ;	// in bytes/s. Average over multiple samples
@@ -272,7 +293,7 @@ void ftFileProvider::getClientMap(const RsPeerId& peer_id,CompressedChunkMap& cm
 
 	PeerUploadInfo& pui(uploading_peers[peer_id]) ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(now - pui.client_chunk_map_stamp > UPLOAD_CHUNK_MAPS_TIME)
 	{

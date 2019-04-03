@@ -48,7 +48,7 @@ void handleQuery(CacheStrapper *csp, RsPeerId pid,
 int main(int argc, char **argv)
 {
 
-	time_t period = 11;
+	rstime_t period = 11;
 	RsPeerId  pid1("0x0101");
 	RsPeerId  pid2("0x0102");
 	RsPeerId  pid3("0x0103");

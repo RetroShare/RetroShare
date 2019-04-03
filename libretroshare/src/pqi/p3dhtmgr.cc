@@ -1,33 +1,30 @@
-/*
- * libretroshare/src/pqi: p3dhtmgr.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/pqi: p3dhtmgr.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <unistd.h>
 #include <iomanip>
 #include <stdio.h>
 #include <openssl/sha.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "pqi/p3dhtmgr.h"
 #include "pqi/p3peermgr.h"
@@ -322,7 +319,7 @@ bool p3DhtMgr::notifyPeer(const RsPeerId& id)
 	}
 
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	if (now - it->second.notifyTS < 2 * DHT_NOTIFY_PERIOD)
 	{
@@ -578,7 +575,7 @@ void p3DhtMgr::run()
 int p3DhtMgr::checkOwnDHTKeys()
 {
 	int repubPeriod = 10000;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* in order of importance:
 	 * (1) Check for Own Key publish.
@@ -777,12 +774,12 @@ int p3DhtMgr::checkPeerDHTKeys()
 
 	/* iterate through and find min time and suitable candidate */
 	std::map<RsPeerId, dhtPeerEntry>::iterator it,pit;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	uint32_t period = 0;
 	uint32_t repeatPeriod = 6000;
 
 	pit = peers.end();
-	time_t pTS = now;
+	rstime_t pTS = now;
 	
 	for(it = peers.begin(); it != peers.end(); it++)
 	{
@@ -792,7 +789,7 @@ int p3DhtMgr::checkPeerDHTKeys()
 			continue;
 		}
 
-		time_t delta = now - it->second.lastTS;
+		rstime_t delta = now - it->second.lastTS;
 		if (it->second.state < DHT_PEER_FOUND)
 		{
 			period = DHT_SEARCH_PERIOD;
@@ -866,7 +863,7 @@ int p3DhtMgr::checkNotifyDHT()
 
 	/* iterate through and find min time and suitable candidate */
 	std::map<RsPeerId, dhtPeerEntry>::iterator it;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	int repeatPeriod = DHT_DEFAULT_PERIOD; 
 
 	/* find the first with a notify flag */
@@ -1084,7 +1081,7 @@ bool p3DhtMgr::getDhtBootstrapList()
 #endif
 	dhtMtx.lock(); /* LOCK MUTEX */
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mLastBootstrapListTS < DHT_MIN_BOOTSTRAP_REQ_PERIOD)
 	{
 #ifdef DHT_DEBUG
@@ -1623,7 +1620,7 @@ bool p3DhtMgr::dhtResultNotify(std::string idhash)
 	std::cerr << RsUtil::BinToHex(idhash) << std::endl;
 #endif
 	std::map<RsPeerId, dhtPeerEntry>::iterator it;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* if notify - we must match on the second hash */
 	for(it = peers.begin(); (it != peers.end()) && ((it->second).hash2 != idhash); it++) ;
@@ -1679,7 +1676,7 @@ bool p3DhtMgr::dhtResultSearch(std::string idhash,
 	bool doCb = false;
 	bool doStun = false;
 	uint32_t stunFlags = 0;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	dhtPeerEntry ent;
 

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/ft: ftfilecreator.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifdef WINDOWS_SYS
 #include "util/rsstring.h"
 #include "util/rswin.h"
@@ -6,7 +27,7 @@
 #include "ftfilecreator.h"
 #include <errno.h>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <sys/stat.h>
 #include <util/rsdiscspace.h>
 #include <util/rsdir.h>
@@ -42,7 +63,7 @@ ftFileCreator::ftFileCreator(const std::string& path, uint64_t size, const RsFil
 	std::cerr << std::endl;
 #endif
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	_creation_time = now ;
 
 	struct stat64 buf;
@@ -122,12 +143,12 @@ bool ftFileCreator::getFileData(const RsPeerId& peer_id,uint64_t offset, uint32_
 		return false ;
 }
 
-time_t ftFileCreator::creationTimeStamp() 
+rstime_t ftFileCreator::creationTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _creation_time ;
 }
-time_t ftFileCreator::lastRecvTimeStamp() 
+rstime_t ftFileCreator::lastRecvTimeStamp() 
 {
 	RsStackMutex stack(ftcMutex); /********** STACK LOCKED MTX ******/
 	return _last_recv_time_t ;
@@ -499,7 +520,7 @@ bool ftFileCreator::getMissingChunk(const RsPeerId& peer_id,uint32_t size_hint,u
 	locked_printChunkMap();
 #endif
 	source_chunk_map_needed = false ;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	// 0 - is there a faulting chunk that would need to be asked again ?
 	

@@ -1,30 +1,28 @@
-/*
- * Retroshare Identity.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdDialog.cpp                                *
+ *                                                                             *
+ * Copyright (C) 2012 by Robert Fernie       <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <unistd.h>
 
 #include <QCheckBox>
 #include <QMessageBox>
+#include <QDateTime>
 #include <QMenu>
 #include <QWidgetAction>
 #include <QStyledItemDelegate>
@@ -44,6 +42,7 @@
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "util/misc.h"
 #include "util/QtVersion.h"
+#include "util/rstime.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
@@ -135,8 +134,8 @@ class TreeWidgetItem : public QTreeWidgetItem
 
 	return v1 < v2;
     }
-    else
-        return data(column,Qt::DisplayRole).toString() < other.data(column,Qt::DisplayRole).toString();
+    else // case insensitive sorting
+        return data(column,Qt::DisplayRole).toString().toUpper() < other.data(column,Qt::DisplayRole).toString().toUpper();
   }
 };
 
@@ -177,6 +176,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addClear(IDDIALOG_IDLIST, ui->idTreeWidget);
 
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -192,6 +192,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addWidget(IDDIALOG_IDDETAILS, ui->label_negative);
 
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -202,6 +203,7 @@ IdDialog::IdDialog(QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDIALOG_IDDETAILS, ui->usageStatistics_TB);
 
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Nickname);
+	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_PublishTS);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_Type);
 	mStateHelper->addClear(IDDIALOG_IDDETAILS, ui->lineEdit_GpgId);
@@ -230,6 +232,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	connect(ui->ownOpinion_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(modifyReputation()));
 	
 	connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+
+	connect( ui->idTreeWidget, &RSTreeWidget::itemDoubleClicked,
+	         this, &IdDialog::chatIdentityItem );
 
 
 	ui->avlabel_Circles->setPixmap(QPixmap(":/icons/png/circles.png"));
@@ -339,7 +344,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
 	
-    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
+	ui->idTreeWidget->setItemDelegateForColumn(
+	            RSID_COL_VOTES,
+	            new ReputationItemDelegate(RsReputationLevel(0xff)));
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
@@ -1439,8 +1446,9 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	RsIdentityDetails idd ;
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
-	bool isBanned = idd.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE;
-	uint32_t item_flags = 0 ;
+	bool isBanned = idd.mReputation.mOverallReputationLevel ==
+	        RsReputationLevel::LOCALLY_NEGATIVE;
+	uint32_t item_flags = 0;
 
 	/* do filtering */
 	bool ok = false;
@@ -1509,8 +1517,12 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
-    item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
-    item->setData(RSID_COL_VOTES,SortRole, idd.mReputation.mOverallReputationLevel);
+	item->setData(
+	            RSID_COL_VOTES,Qt::DecorationRole,
+	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
+	item->setData(
+	            RSID_COL_VOTES,SortRole,
+	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
 
     if(isOwnId)
     {
@@ -1767,6 +1779,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
+    ui->lineEdit_PublishTS->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
     ui->lineEdit_Nickname->setText(QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
 	ui->lineEdit_KeyId->setText(QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	//ui->lineEdit_GpgHash->setText(QString::fromStdString(data.mPgpIdHash.toStdString()));
@@ -1904,7 +1917,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 #endif
 
-    RsReputations::ReputationInfo info ;
+	RsReputationInfo info;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
     QString frep_string ;
@@ -1919,23 +1932,32 @@ void IdDialog::insertIdDetails(uint32_t token)
     ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
     ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
-    switch(info.mOverallReputationLevel)
-    {
-    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
-    default:
-    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
-    }
-    
-    switch(info.mOwnOpinion)
+	switch(info.mOverallReputationLevel)
 	{
-        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
-        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
-        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
-        default:
-            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+	case RsOpinion::NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break;
+	case RsOpinion::NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break;
+	case RsOpinion::POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
 	}
 
     // now fill in usage cases
@@ -1944,11 +1966,11 @@ void IdDialog::insertIdDetails(uint32_t token)
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),det) ;
 
     QString usage_txt ;
-    std::map<time_t,RsIdentityUsage> rmap ;
-    for(std::map<RsIdentityUsage,time_t>::const_iterator it(det.mUseCases.begin());it!=det.mUseCases.end();++it)
-        rmap.insert(std::make_pair(it->second,it->first)) ;
+	std::map<rstime_t,RsIdentityUsage> rmap;
+	for(auto it(det.mUseCases.begin()); it!=det.mUseCases.end(); ++it)
+		rmap.insert(std::make_pair(it->second,it->first));
 
-    for(std::map<time_t,RsIdentityUsage>::const_iterator it(rmap.begin());it!=rmap.end();++it)
+	for(auto it(rmap.begin()); it!=rmap.end(); ++it)
         usage_txt += QString("<b>")+ getHumanReadableDuration(now - data.mLastUsageTS) + "</b> \t: " + createUsageString(it->second) + "<br/>" ;
 
     if(usage_txt.isNull())
@@ -1994,7 +2016,8 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
-		RetroShareLink l = RetroShareLink::createChatRoom(ChatId(ChatLobbyId(u.mAdditionalId)),QString::number(u.mAdditionalId));
+		ChatId id = ChatId(ChatLobbyId(u.mAdditionalId));
+		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromStdString(id.toStdString()));
 		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
     case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation
@@ -2053,19 +2076,19 @@ void IdDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
-    
-    	RsReputations::Opinion op ;
 
-    	switch(ui->ownOpinion_CB->currentIndex())
-        {
-        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
-        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
-        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
-        default:
-            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-            
-        }
-    	rsReputations->setOwnOpinion(id,op) ;
+	RsOpinion op;
+
+	switch(ui->ownOpinion_CB->currentIndex())
+	{
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		break;
+	}
+	rsReputations->setOwnOpinion(id,op);
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
@@ -2124,19 +2147,19 @@ void IdDialog::updateDisplay(bool complete)
 	if (complete) {
 		/* Fill complete */
 		requestIdList();
-		requestIdDetails();
+		//requestIdDetails();
 		requestRepList();
 
 		return;
 	}
 	requestCircleGroupMeta();
 
-	std::list<RsGxsGroupId> grpIds;
+	std::set<RsGxsGroupId> grpIds;
 	getAllGrpIds(grpIds);
 	if (!getGrpIds().empty()) {
 		requestIdList();
 
-		if (!mId.isNull() && std::find(grpIds.begin(), grpIds.end(), mId) != grpIds.end()) {
+        if (!mId.isNull() && grpIds.find(mId)!=grpIds.end()) {
 			requestIdDetails();
 			requestRepList();
 		}
@@ -2340,8 +2363,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 	QMenu *contextMenu = new QMenu(this);
 
 
-	std::list<RsGxsId> own_identities ;
-	rsIdentity->getOwnIds(own_identities) ;
+	std::list<RsGxsId> own_identities;
+	rsIdentity->getOwnIds(own_identities);
 
 	// make some stats about what's selected. If the same value is used for all selected items, it can be switched.
 
@@ -2379,17 +2402,12 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 		switch(det.mReputation.mOwnOpinion)
 		{
-		case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
-			break ;
-
-		case RsReputations::OPINION_POSITIVE: ++n_positive_reputations ;
-			break ;
-
-		case RsReputations::OPINION_NEUTRAL: ++n_neutral_reputations ;
-			break ;
+		case RsOpinion::NEGATIVE: ++n_negative_reputations; break;
+		case RsOpinion::POSITIVE: ++n_positive_reputations; break;
+		case RsOpinion::NEUTRAL:  ++n_neutral_reputations;  break;
 		}
 
-		++n_selected_items ;
+		++n_selected_items;
 
 		if(rsIdentity->isARegularContact(keyId))
 			++n_is_a_contact ;
@@ -2546,26 +2564,65 @@ void IdDialog::copyRetroshareLink()
 
 void IdDialog::chatIdentity()
 {
-	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+	QTreeWidgetItem* item = ui->idTreeWidget->currentItem();
 	if (!item)
 	{
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid item!" << std::endl;
 		return;
 	}
 
-	std::string keyId = item->text(RSID_COL_KEYID).toStdString();
+	chatIdentityItem(item);
+}
 
-	QAction *action = qobject_cast<QAction *>(QObject::sender());
-	if (!action)
-		return ;
+void IdDialog::chatIdentityItem(QTreeWidgetItem* item)
+{
+	if(!item)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid item." << std::endl;
+		return;
+	}
 
-	RsGxsId from_gxs_id(action->data().toString().toStdString());
-	uint32_t error_code ;
-    DistantChatPeerId did ;
+	std::string&& toIdString(item->text(RSID_COL_KEYID).toStdString());
+	RsGxsId toGxsId(toIdString);
+	if(toGxsId.isNull())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Invalid destination id: "
+		          << toIdString << std::endl;
+		return;
+	}
 
-	if(!rsMsgs->initiateDistantChatConnexion(RsGxsId(keyId), from_gxs_id, did, error_code))
-		QMessageBox::information(NULL, tr("Distant chat cannot work"), QString("%1 %2: %3").arg(tr("Distant chat refused with this person.")).arg(tr("Error code")).arg(error_code)) ;
+	RsGxsId fromGxsId;
+	QAction* action = qobject_cast<QAction*>(QObject::sender());
+	if(!action)
+	{
+		std::list<RsGxsId> ownIdentities;
+		rsIdentity->getOwnIds(ownIdentities);
+		if(ownIdentities.empty())
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " Error. Own identities list "
+			          << " is empty!" << std::endl;
+			return;
+		}
+		else fromGxsId = ownIdentities.front();
+	}
+	else fromGxsId = RsGxsId(action->data().toString().toStdString());
+
+	if(fromGxsId.isNull())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error. Could not determine sender"
+		          << " identity to open chat toward: " << toIdString << std::endl;
+		return;
+	}
+
+	uint32_t error_code;
+	DistantChatPeerId did;
+
+	if(!rsMsgs->initiateDistantChatConnexion(toGxsId, fromGxsId, did, error_code))
+		QMessageBox::information(
+		            nullptr, tr("Distant chat cannot work"),
+		            QString("%1 %2: %3")
+		                .arg(tr("Distant chat refused with this person."))
+		                .arg(tr("Error code")).arg(error_code) ) ;
 }
 
 void IdDialog::sendMsg()
@@ -2628,7 +2685,7 @@ void IdDialog::negativePerson()
         
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEGATIVE) ;
+	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEGATIVE);
     }
 
 	requestIdDetails();
@@ -2644,7 +2701,7 @@ void IdDialog::neutralPerson()
 
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEUTRAL) ;
+	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEUTRAL);
     }
 
 	requestIdDetails();
@@ -2657,9 +2714,9 @@ void IdDialog::positivePerson()
     {
         QTreeWidgetItem *item = *it ;
 
-	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+		std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_POSITIVE) ;
+		rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::POSITIVE);
     }
 
 	requestIdDetails();

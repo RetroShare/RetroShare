@@ -1,31 +1,33 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006-2009, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.h                     *
+ *                                                                             *
+ * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _SHAREDFILESDIALOG_H
 #define _SHAREDFILESDIALOG_H
 
-#include <set>
+#include "ui_SharedFilesDialog.h"
+
 #include "RsAutoUpdatePage.h"
 #include "gui/RetroShareLink.h"
-#include "ui_SharedFilesDialog.h"
+#include "util/RsProtectedTimer.h"
+
+#include <set>
 
 class RetroshareDirModel;
 class QSortFilterProxyModel;
@@ -63,6 +65,7 @@ private slots:
   void copyLink();
   void copyLinkhtml();
   void sendLinkTo();
+  void removeExtraFile();
 
   void collCreate();
   void collModif();
@@ -73,7 +76,8 @@ private slots:
 	
   void indicatorChanged(int index);
 
-  void filterRegExpChanged();
+  void onFilterTextEdited();
+  //void filterRegExpChanged();
   void clearFilter();
   void startFilter();
 
@@ -93,6 +97,8 @@ protected:
   void recursSaveExpandedItems(const QModelIndex& index, const std::string &path, std::set<std::string> &exp,std::set<std::string>& vis, std::set<std::string>& sel);
   void saveExpandedPathsAndSelection(std::set<std::string>& paths,std::set<std::string>& visible_indexes, std::set<std::string>& selected_indexes) ;
   void restoreExpandedPathsAndSelection(const std::set<std::string>& paths,const std::set<std::string>& visible_indexes, const std::set<std::string>& selected_indexes) ;
+  void recursExpandAll(const QModelIndex& index);
+  void expandAll();
 
 protected:
   //now context menu are created again every time theu are called ( in some
@@ -109,8 +115,6 @@ protected:
   bool tree_FilterItem(const QModelIndex &index, const QString &text, int level);
   bool flat_FilterItem(const QModelIndex &index, const QString &text, int level);
 
-  void restoreInvisibleItems();
-
   QModelIndexList getSelected();
 
   /** Defines the actions for the context menu for QTreeWidget */
@@ -118,6 +122,7 @@ protected:
   QAction* sendlinkAct;
   QAction* sendchatlinkAct;
   QAction* copylinkhtmlAct;
+  QAction* removeExtraFileAct;
 
   QAction *collCreateAct;
   QAction *collModifAct;
@@ -137,8 +142,7 @@ protected:
 
   QString lastFilterString;
   QString mLastFilterText ;
-
-  QList<QModelIndex> mHiddenIndexes;
+  RsProtectedTimer* mFilterTimer;
 };
 
 class LocalSharedFilesDialog : public SharedFilesDialog

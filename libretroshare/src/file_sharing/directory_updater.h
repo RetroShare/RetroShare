@@ -1,28 +1,24 @@
-/*
- * RetroShare C++ Directory parsing code.
- *
- *      file_sharing/directory_updater.h
- *
- * Copyright 2016 by Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/file_sharing: directory_updater.h                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 
 // This class crawls the given directry hierarchy and updates it. It does so by calling the
 // shared file list source. This source may be of two types:
@@ -31,6 +27,7 @@
 //
 #include "file_sharing/hash_cache.h"
 #include "file_sharing/directory_storage.h"
+#include "util/rstime.h"
 
 class LocalDirectoryUpdater: public HashStorageClient, public RsTickingThread
 {
@@ -70,8 +67,8 @@ protected:
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     virtual bool hash_confirm(uint32_t client_param) ;
 
-    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories, uint32_t current_depth);
-    bool sweepSharedDirectories();
+    void recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx, std::set<std::string>& existing_directories, uint32_t current_depth,bool& files_not_ready);
+    bool sweepSharedDirectories(bool &some_files_not_ready);
 
 private:
 	bool filterFile(const std::string& fname) const ;	// reponds true if the file passes the ignore lists test.
@@ -81,8 +78,8 @@ private:
 
     RsFileHash mHashSalt ;
 
-    time_t mLastSweepTime;
-    time_t mLastTSUpdateTime;
+    rstime_t mLastSweepTime;
+    rstime_t mLastTSUpdateTime;
 
     uint32_t mDelayBetweenDirectoryUpdates;
     bool mIsEnabled ;

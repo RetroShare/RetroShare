@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/retroshare: rsphoto.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsphotoitems.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 Christopher Evi-Parker,Robert Fernie<retroshare@lunamutt.com>*
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iostream>
 
 #include "rsitems/rsphotoitems.h"
@@ -61,24 +57,23 @@ void RsGxsPhotoAlbumItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
      RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION, album.mWhere,         "mWhere");
      RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PIC_TYPE, album.mThumbnail.type,"mThumbnail.type");
 
-     RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, album.mThumbnail.data,album.mThumbnail.size);
-
-     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,b,"thumbnail binary data") ;
+	 RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, album.mThumbnail.data, album.mThumbnail.size);
+	 RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "thumbnail binary data") ;
 }
 void RsGxsPhotoPhotoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_CAPTION, photo.mCaption);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_DESCR, photo.mDescription);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_MSG, photo.mOther);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_DATE, photo.mWhen);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_LOCATION, photo.mWhere);
-    RsTypeSerializer::serial_process(j,ctx, TLV_TYPE_STR_PIC_TYPE, photo.mThumbnail.type);
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CAPTION,  photo.mCaption,        "mCaption");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory,       "mCategory");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DESCR,    photo.mDescription,    "mDescription");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags,       "mHashTags");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_MSG,      photo.mOther,          "mOther");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer,   "mPhotographer");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DATE,     photo.mWhen,           "mWhen");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_LOCATION, photo.mWhere,          "mWhere");
+	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_TYPE, photo.mThumbnail.type, "mThumbnail.type");
 
-    RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO,photo.mThumbnail.data, photo.mThumbnail.size);
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx, b, "mThumbnail") ;
+	RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, photo.mThumbnail.data, photo.mThumbnail.size);
+	RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "mThumbnail") ;
 }
 void RsGxsPhotoCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {

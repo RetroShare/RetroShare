@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftdatamultiplex.h
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftdatamultiplex.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /* 
  * ftDataMultiplexModule.
@@ -37,7 +34,7 @@
 #include "util/rsdir.h"
 #include "util/rsmemory.h"
 #include <retroshare/rsturtle.h>
-#include <time.h>
+#include "util/rstime.h"
 
 /* For Thread Behaviour */
 const uint32_t DMULTIPLEX_MIN	= 10; /* 10 msec sleep */
@@ -455,7 +452,7 @@ bool ftDataMultiplex::recvSingleChunkCRC(const RsPeerId& peerId, const RsFileHas
 	// remove this chunk from the request list as well.
 	
 	Sha1CacheEntry& sha1cache(_cached_sha1maps[hash]) ;
-	std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> >::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
+	std::map<uint32_t,std::pair<rstime_t,ChunkCheckSumSourceList> >::iterator it2(sha1cache._to_ask.find(chunk_number)) ;
 
 	if(it2 != sha1cache._to_ask.end())
 		sha1cache._to_ask.erase(it2) ;
@@ -946,7 +943,7 @@ bool ftDataMultiplex::sendSingleChunkCRCRequests(const RsFileHash& hash, const s
 
 	for(uint32_t i=0;i<to_ask.size();++i)
 	{
-		std::pair<time_t,ChunkCheckSumSourceList>& list(ce._to_ask[to_ask[i]]) ;
+		std::pair<rstime_t,ChunkCheckSumSourceList>& list(ce._to_ask[to_ask[i]]) ;
 		list.first = 0 ; // set last request time to 0
 	}
 	return true ;
@@ -956,7 +953,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 {
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	uint32_t n=0 ;
 
 	// Go through the list of currently handled hashes. For each of them,
@@ -969,7 +966,7 @@ void ftDataMultiplex::handlePendingCrcRequests()
 	//
 
     for(std::map<RsFileHash,Sha1CacheEntry>::iterator it(_cached_sha1maps.begin());it!=_cached_sha1maps.end();++it)
-		for(std::map<uint32_t,std::pair<time_t,ChunkCheckSumSourceList> >::iterator it2(it->second._to_ask.begin());it2!=it->second._to_ask.end();++it2)
+		for(std::map<uint32_t,std::pair<rstime_t,ChunkCheckSumSourceList> >::iterator it2(it->second._to_ask.begin());it2!=it->second._to_ask.end();++it2)
 			if(it2->second.first + MAX_CHECKING_CHUNK_WAIT_DELAY < now)	// is the last request old enough?
 			{
 #ifdef MPLEX_DEBUG
@@ -989,14 +986,14 @@ void ftDataMultiplex::handlePendingCrcRequests()
 				//
 
 				RsPeerId best_source ;
-				time_t oldest_timestamp = now ;
+				rstime_t oldest_timestamp = now ;
 
 				for(uint32_t i=0;i<sources.size();++i)
 				{
 #ifdef MPLEX_DEBUG
 					std::cerr << "ftDataMultiplex::handlePendingCrcRequests():    Examining source " << sources[i] << std::endl;
 #endif
-					std::map<RsPeerId,time_t>::const_iterator it3(it2->second.second.find(sources[i])) ;
+					std::map<RsPeerId,rstime_t>::const_iterator it3(it2->second.second.find(sources[i])) ;
 
 					if(it3 == it2->second.second.end()) // source not found. So this one is surely the oldest one to have been requested.
 					{
@@ -1047,7 +1044,7 @@ void ftDataMultiplex::deleteUnusedServers()
 	RsStackMutex stack(dataMtx); /******* LOCK MUTEX ******/
 
 	//scan the uploads list in ftdatamultiplex and delete the items which time out
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
     for(std::map<RsFileHash, ftFileProvider *>::iterator sit(mServers.begin());sit != mServers.end();)
 		if(sit->second->purgeOldPeers(now,10))

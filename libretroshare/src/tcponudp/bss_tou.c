@@ -1,65 +1,25 @@
-/*
- * bss_tou.c Based on bss_*.c from OpenSSL Library....
- * Therefore - released under their licence.
- * Copyright 2004-2006 by Robert Fernie. (retroshare@lunamutt.com)
- */
-
-/* Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
- * All rights reserved.
- *
- * This package is an SSL implementation written
- * by Eric Young (eay@cryptsoft.com).
- * The implementation was written so as to conform with Netscapes SSL.
- * 
- * This library is free for commercial and non-commercial use as long as
- * the following conditions are aheared to.  The following conditions
- * apply to all code found in this distribution, be it the RC4, RSA,
- * lhash, DES, etc., code; not just the SSL code.  The SSL documentation
- * included with this distribution is covered by the same copyright terms
- * except that the holder is Tim Hudson (tjh@cryptsoft.com).
- * 
- * Copyright remains Eric Young's, and as such any Copyright notices in
- * the code are not to be removed.
- * If this package is used in a product, Eric Young should be given attribution
- * as the author of the parts of the library used.
- * This can be in the form of a textual message at program startup or
- * in documentation (online or textual) provided with the package.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *    "This product includes cryptographic software written by
- *     Eric Young (eay@cryptsoft.com)"
- *    The word 'cryptographic' can be left out if the rouines from the library
- *    being used are not cryptographic related :-).
- * 4. If you include any Windows specific code (or a derivative thereof) from 
- *    the apps directory (application code) you must include an acknowledgement:
- *    "This product includes software written by Tim Hudson (tjh@cryptsoft.com)"
- * 
- * THIS SOFTWARE IS PROVIDED BY ERIC YOUNG ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * 
- * The licence and distribution terms for any publically available version or
- * derivative of this code cannot be changed.  i.e. this code cannot simply be
- * copied and put under another distribution licence
- * [including the GNU Public Licence.]
- */
+/*******************************************************************************
+ * libretroshare/src/tcponudp: bss_tou.c                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 1995-1998 Eric Young (eay@cryptsoft.com)                          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef OPENSSL_NO_SOCK
 
@@ -91,49 +51,62 @@ static int clear_tou_socket_error(int s);
 #include "tou.h"
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-//static void BIO_set_shutdown(BIO *a,int s) { a->shutdown=s; }
+
+static int  BIO_get_init(BIO *a) { return a->init; }
+
+#if (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000) || (!defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L)
 
 static int  BIO_get_shutdown(BIO *a) { return a->shutdown; }
-static int  BIO_get_init(BIO *a) { return a->init; }
 static void BIO_set_init(BIO *a,int i) { a->init=i; }
 static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
-#else
-typedef struct bio_method_st {
-    int type;
-    const char *name;
-    int (*bwrite) (BIO *, const char *, int);
-    int (*bread) (BIO *, char *, int);
-    int (*bputs) (BIO *, const char *);
-    int (*bgets) (BIO *, char *, int);
-    long (*ctrl) (BIO *, int, long, void *);
-    int (*create) (BIO *);
-    int (*destroy) (BIO *);
-    long (*callback_ctrl) (BIO *, int, bio_info_cb *);
-} BIO_METHOD;
+long (*BIO_meth_get_ctrl(const BIO_METHOD* biom)) (BIO*, int, long, void*)
+{ return biom->ctrl; }
 
 #endif
 
-static BIO_METHOD methods_tou_sockp=
-	{
-	BIO_TYPE_TOU_SOCKET,
-	"tou_socket",
-	tou_socket_write,
-	tou_socket_read,
-	tou_socket_puts,
-	NULL, /* tou_gets, */
-	tou_socket_ctrl,
-	tou_socket_new,
-	tou_socket_free,
-	NULL,
-	};
+static BIO_METHOD methods_tou_sockp =
+{
+    BIO_TYPE_TOU_SOCKET,
+    "tou_socket",
+    tou_socket_write,
+    tou_socket_read,
+    tou_socket_puts,
+    NULL, /* tou_gets, */
+    tou_socket_ctrl,
+    tou_socket_new,
+    tou_socket_free,
+    NULL,
+};
 
-BIO_METHOD *BIO_s_tou_socket(void)
-	{
+BIO_METHOD* BIO_s_tou_socket(void)
+{
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "BIO_s_tou_socket(void)\n");
 #endif
 	return(&methods_tou_sockp);
+}
+
+#else
+
+BIO_METHOD* BIO_s_tou_socket(void)
+{
+	static BIO_METHOD* methods_tou_sockp_ptr = NULL;
+	if(!methods_tou_sockp_ptr)
+	{
+		 methods_tou_sockp_ptr = BIO_meth_new(BIO_TYPE_TOU_SOCKET, "tou_socket");
+
+		BIO_meth_set_write(   methods_tou_sockp_ptr, tou_socket_write );
+		BIO_meth_set_read(    methods_tou_sockp_ptr, tou_socket_read  );
+		BIO_meth_set_puts(    methods_tou_sockp_ptr, tou_socket_puts  );
+		BIO_meth_set_ctrl(    methods_tou_sockp_ptr, tou_socket_ctrl  );
+		BIO_meth_set_create(  methods_tou_sockp_ptr, tou_socket_new   );
+		BIO_meth_set_destroy( methods_tou_sockp_ptr, tou_socket_free  );
 	}
+
+	return methods_tou_sockp_ptr;
+}
+
+#endif
 
 BIO *BIO_new_tou_socket(int fd, int close_flag)
 	{
@@ -254,17 +227,16 @@ static long tou_socket_ctrl(BIO *b, int cmd, long num, void *ptr)
 		break;
 	case BIO_C_SET_FD:
 		tou_socket_free(b);
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
-
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_C_GET_FD:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_GET_CLOSE:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_SET_CLOSE:
-		ret = BIO_s_fd()->ctrl(b,cmd,num,ptr) ;
+		ret = BIO_meth_get_ctrl((BIO_METHOD*)BIO_s_fd())(b,cmd,num,ptr);
 		break;
 	case BIO_CTRL_PENDING:
 		ret = tou_maxread(BIO_get_fd(b,NULL));

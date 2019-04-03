@@ -1,6 +1,3 @@
-:: Usage:
-:: call git-log.bat standard|retrotor [no-ask]
-
 @echo off
 
 setlocal
@@ -13,7 +10,9 @@ call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
-call "%~dp0env.bat" %1
+
+call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
 :: Check git executable

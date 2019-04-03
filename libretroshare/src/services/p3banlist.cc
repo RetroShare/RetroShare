@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3banlist.cc
- *
- * Ban List Service  for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3banlist.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/p3servicecontrol.h"
 #include "pqi/p3netmgr.h"
 #include "pqi/p3cfgmgr.h"
@@ -55,7 +51,7 @@
 #define RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT 		240	// every 4 mins.
 
 /************ IMPLEMENTATION NOTES *********************************
- * 
+ *
  * Get Bad Peers passed to us (from DHT mainly).
  * we distribute and track the network list of bad peers.
  *
@@ -113,12 +109,16 @@ void p3BanList::setAutoRangeLimit(int n)
     IndicateConfigChanged();
 }
 
+namespace services {
+
 class ZeroedInt
 {
     public:
         ZeroedInt() { n = 0 ; }
     uint32_t n ;
 };
+
+}
 
 BanListPeer::BanListPeer()
 {
@@ -220,14 +220,14 @@ void p3BanList::autoFigureOutBanRanges()
     std::cerr << "Automatically figuring out IP ranges from banned IPs." << std::endl;
 #endif
 
-    std::map<sockaddr_storage,ZeroedInt> range_map ;
+    std::map<sockaddr_storage, services::ZeroedInt> range_map ;
 
     for(std::map<sockaddr_storage,BanListPeer>::iterator it(mBanSet.begin());it!=mBanSet.end();++it)
         ++range_map[makeBitsRange(it->first,1)].n ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
-    for(std::map<sockaddr_storage,ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
+    for(std::map<sockaddr_storage, services::ZeroedInt>::const_iterator it=range_map.begin();it!=range_map.end();++it)
     {
 #ifdef DEBUG_BANLIST
         std::cerr << "Ban range: " << sockaddr_storage_iptostring(it->first) << " : " << it->second.n << std::endl;
@@ -306,16 +306,14 @@ bool p3BanList::acceptedBanRanges_locked(const BanListPeer& blp)
     }
     return false ;
 }
-bool p3BanList::isAddressAccepted(const sockaddr_storage &addr, uint32_t checking_flags,uint32_t *check_result)
+bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checking_flags,uint32_t *check_result)
 {
-    if(check_result != NULL)
-        *check_result = RSBANLIST_CHECK_RESULT_NOCHECK ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 
-    if(sockaddr_storage_isLoopbackNet(addr))
-        return true ;
-
-    if(!mIPFilteringEnabled)
-        return true ;
+	if(!mIPFilteringEnabled) return true;
+	if(check_result != NULL) *check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
+	if(!sockaddr_storage_ipv6_to_ipv4(addr)) return true;
+	if(sockaddr_storage_isLoopbackNet(addr)) return true;
 
 #ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
@@ -453,9 +451,20 @@ void p3BanList::getBannedIps(std::list<BanListPeer> &lst)
             lst.push_back(it->second) ;
 }
 
-bool p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type)
+bool p3BanList::removeIpRange( const struct sockaddr_storage& dAddr,
+                               int masked_bytes, uint32_t list_type )
 {
-    RS_STACK_MUTEX(mBanMtx) ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
+
+	RS_STACK_MUTEX(mBanMtx);
 
     bool changed = false;
     std::map<sockaddr_storage,BanListPeer>::iterator it ;
@@ -485,9 +494,20 @@ bool p3BanList::removeIpRange(const struct sockaddr_storage& addr,int masked_byt
     return changed;
 }
 
-bool p3BanList::addIpRange(const sockaddr_storage &addr, int masked_bytes,uint32_t list_type,const std::string& comment)
+bool p3BanList::addIpRange( const sockaddr_storage &dAddr, int masked_bytes,
+                            uint32_t list_type, const std::string& comment )
 {
-    RS_STACK_MUTEX(mBanMtx) ;
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
+
+	RS_STACK_MUTEX(mBanMtx);
 
     if(getBitRange(addr) > uint32_t(masked_bytes))
     {
@@ -541,7 +561,7 @@ int p3BanList::tick()
     processIncoming();
     sendPackets();
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(mLastDhtInfoRequest + RSBANLIST_DELAY_BETWEEN_TALK_TO_DHT < now)
     {
@@ -554,7 +574,7 @@ int p3BanList::tick()
     }
 
 #ifdef DEBUG_BANLIST
-    static time_t last_print = 0 ;
+    static rstime_t last_print = 0 ;
 
     if(now > 10+last_print)
     {
@@ -626,7 +646,7 @@ bool p3BanList::processIncoming()
 				break;
 			case RS_PKT_SUBTYPE_BANLIST_ITEM:
 			{
-				// Order is important!.	
+				// Order is important!.
 				updated = (recvBanItem((RsBanListItem *) item) || updated);
 			}
 				break;
@@ -649,39 +669,50 @@ bool p3BanList::processIncoming()
 	}
 
 	return true ;
-} 
-	
+}
+
 
 bool p3BanList::recvBanItem(RsBanListItem *item)
 {
 	bool updated = false;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     std::list<RsTlvBanListEntry>::const_iterator it;
 
 	for(it = item->peerList.mList.begin(); it != item->peerList.mList.end(); ++it)
 	{
-		// Order is important!.	
+		// Order is important!.
         updated = (addBanEntry(item->PeerId(), it->addr.addr, it->level,  it->reason, now - it->age) || updated);
 	}
 	return updated;
 }
 
 /* overloaded from pqiNetAssistSharePeer */
-void p3BanList::updatePeer(const RsPeerId& /*id*/, const struct sockaddr_storage &addr, int /*type*/, int /*reason*/, int time_stamp)
+void p3BanList::updatePeer( const RsPeerId& /*id*/,
+                            const sockaddr_storage &dAddr,
+                            int /*type*/, int /*reason*/, int time_stamp )
 {
-    RsPeerId ownId = mServiceCtrl->getOwnId();
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return;
+	}
 
-    int int_reason = RSBANLIST_REASON_DHT;
+	RsPeerId ownId = mServiceCtrl->getOwnId();
 
-    addBanEntry(ownId, addr, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
+	int int_reason = RSBANLIST_REASON_DHT;
 
-    /* process */
-    {
-        RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+	addBanEntry(ownId, addr, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
 
-        condenseBanSources_locked();
-    }
+	/* process */
+	{
+		RS_STACK_MUTEX(mBanMtx);
+		condenseBanSources_locked();
+	}
 }
 
 RsSerialiser *p3BanList::setupSerialiser()
@@ -704,9 +735,9 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     {
         RsBanListConfigItem *item = new RsBanListConfigItem ;
 
-        item->type         = RSBANLIST_TYPE_PEERLIST ;
-        item->peerId       = it->second.mPeerId ;
-        item->update_time  = it->second.mLastUpdate ;
+        item->banListType   = RSBANLIST_TYPE_PEERLIST ;
+        item->banListPeerId = it->second.mPeerId ;
+        item->update_time   = it->second.mLastUpdate ;
         item->banned_peers.TlvClear() ;
 
         for(std::map<sockaddr_storage,BanListPeer>::const_iterator it2 = it->second.mBanPeers.begin();it2!=it->second.mBanPeers.end();++it2)
@@ -723,8 +754,8 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
     // Add  whitelist
     RsBanListConfigItem *item = new RsBanListConfigItem ;
 
-    item->type         = RSBANLIST_TYPE_WHITELIST ;
-    item->peerId.clear() ;
+    item->banListType = RSBANLIST_TYPE_WHITELIST ;
+    item->banListPeerId.clear() ;
     item->update_time  = 0 ;
     item->banned_peers.TlvClear() ;
 
@@ -742,8 +773,8 @@ bool p3BanList::saveList(bool &cleanup, std::list<RsItem*>& itemlist)
 
     item = new RsBanListConfigItem ;
 
-    item->type         = RSBANLIST_TYPE_BLACKLIST ;
-    item->peerId.clear();
+    item->banListType = RSBANLIST_TYPE_BLACKLIST ;
+    item->banListPeerId.clear();
     item->update_time  = 0 ;
     item->banned_peers.TlvClear() ;
 
@@ -819,11 +850,11 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
 
         if(citem != NULL)
         {
-            if(citem->type == RSBANLIST_TYPE_PEERLIST)
+            if(citem->banListType == RSBANLIST_TYPE_PEERLIST)
             {
-                BanList& bl(mBanSources[citem->peerId]) ;
+                BanList& bl(mBanSources[citem->banListPeerId]) ;
 
-                bl.mPeerId = citem->peerId ;
+                bl.mPeerId = citem->banListPeerId ;
                 bl.mLastUpdate = citem->update_time ;
 
                 bl.mBanPeers.clear() ;
@@ -839,7 +870,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                         std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
                 }
             }
-            else if(citem->type == RSBANLIST_TYPE_BLACKLIST)
+            else if(citem->banListType == RSBANLIST_TYPE_BLACKLIST)
             {
                 mBanRanges.clear() ;
 
@@ -854,7 +885,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                         std::cerr << "(WW) removed wrong address " << sockaddr_storage_iptostring(blp.addr) << std::endl;
                 }
             }
-            else if(citem->type == RSBANLIST_TYPE_WHITELIST)
+            else if(citem->banListType == RSBANLIST_TYPE_WHITELIST)
             {
                 mWhiteListedRanges.clear() ;
 
@@ -872,7 +903,7 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
                 }
             }
             else
-                std::cerr << "(EE) BanList item unknown type " << citem->type << ". This is a bug." << std::endl;
+                std::cerr << "(EE) BanList item unknown type " << citem->banListType << ". This is a bug." << std::endl;
         }
 
         delete *it ;
@@ -882,12 +913,23 @@ bool p3BanList::loadList(std::list<RsItem*>& load)
     return true ;
 }
 
-bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storage &addr,
-                            int level, uint32_t reason, time_t time_stamp)
+bool p3BanList::addBanEntry( const RsPeerId &peerId,
+                             const sockaddr_storage &dAddr,
+                             int level, uint32_t reason, rstime_t time_stamp )
 {
-	RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
+	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
+	if(!sockaddr_storage_ipv6_to_ipv4(addr))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Cannot handle "
+		          << sockaddr_storage_tostring(dAddr)
+		          << " IPv6 not implemented yet!"
+		          << std::endl;
+		return false;
+	}
 
-	time_t now = time(NULL);
+	RS_STACK_MUTEX(mBanMtx);
+
+	rstime_t now = time(NULL);
 	bool updated = false;
 
 #ifdef DEBUG_BANLIST
@@ -919,7 +961,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
 		it = mBanSources.find(peerId);
 		updated = true;
 	}
-	
+
 	// index is FAMILY + IP - the rest should be Zeros..
 	struct sockaddr_storage bannedaddr;
 	sockaddr_storage_clear(bannedaddr);
@@ -938,7 +980,7 @@ bool p3BanList::addBanEntry(const RsPeerId &peerId, const struct sockaddr_storag
         blp.level = level;
         blp.mTs = time_stamp ;
         blp.masked_bytes = 0 ;
-		
+
 		it->second.mBanPeers[bannedaddr] = blp;
 		it->second.mLastUpdate = now;
 		updated = true;
@@ -992,9 +1034,9 @@ int p3BanList::condenseBanSources_locked()
 {
         mBanSet.clear();
 
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 	RsPeerId ownId = mServiceCtrl->getOwnId();
-	
+
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked()";
 	std::cerr << std::endl;
@@ -1020,7 +1062,7 @@ int p3BanList::condenseBanSources_locked()
 		std::cerr << " Condensing Info from peer: " << it->first;
 		std::cerr << std::endl;
 #endif
-		
+
 		std::map<struct sockaddr_storage, BanListPeer>::const_iterator lit;
         for(lit = it->second.mBanPeers.begin(); lit != it->second.mBanPeers.end(); ++lit)
     {
@@ -1093,7 +1135,7 @@ int p3BanList::condenseBanSources_locked()
     }
 	}
 
-	
+
 #ifdef DEBUG_BANLIST
 	std::cerr << "p3BanList::condenseBanSources_locked() Printing New Set:";
 	std::cerr << std::endl;
@@ -1108,8 +1150,8 @@ int p3BanList::condenseBanSources_locked()
 
 int	p3BanList::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t pt;
+	rstime_t now = time(NULL);
+	rstime_t pt;
 	{
 		RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
 		pt = mSentListTime;
@@ -1168,7 +1210,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
     RsBanListItem *item = new RsBanListItem();
     item->PeerId(peerid);
 
-    //time_t now = time(NULL);
+    //rstime_t now = time(NULL);
 
     {
         RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
@@ -1194,7 +1236,7 @@ int p3BanList::sendBanSet(const RsPeerId& peerid)
 
 int p3BanList::printBanSet_locked(std::ostream &out)
 {
-    time_t now = time(NULL);
+    rstime_t now = time(NULL);
 
     out << "p3BanList::printBanSet_locked()";
     out << "  Only printing active filters (due to user options).";
@@ -1237,8 +1279,8 @@ int p3BanList::printBanSet_locked(std::ostream &out)
 
 int p3BanList::printBanSources_locked(std::ostream &out)
 {
-	time_t now = time(NULL);
-	
+	rstime_t now = time(NULL);
+
 	std::map<RsPeerId, BanList>::const_iterator it;
 	for(it = mBanSources.begin(); it != mBanSources.end(); ++it)
 	{

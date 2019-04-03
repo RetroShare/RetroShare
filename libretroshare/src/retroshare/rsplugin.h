@@ -1,31 +1,27 @@
-/*
- * "$Id: rsiface.h,v 1.9 2007-04-21 19:08:51 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2011-2011 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsplugin.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Cyril Soler <csoler@users.sourceforge.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
-#include <time.h>
+#include "util/rstime.h"
 #include <string.h>
 #include <stdint.h>
 #include <string>
@@ -69,7 +65,7 @@ class ToasterNotify;
 class ChatWidget;
 class ChatWidgetHolder;
 // for gxs based plugins
-class RsIdentity;
+struct RsIdentity;
 class RsNxsNetMgr;
 class RsGxsIdExchange;
 class RsGcxs;
@@ -209,7 +205,7 @@ class RsPlugin
 		//
 		//  All these items appear in the config->plugins tab, as a description of the plugin.
 		//
-		uint32_t getSvnRevision() const { return RS_REVISION_NUMBER ; } 	// This is read from libretroshare/retroshare/rsversion.h
+		uint32_t getSvnRevision() const { return 0; } 	// This is read from libretroshare/retroshare/rsversion.h
 
 		virtual std::string getShortPluginDescription() const = 0 ;
 		virtual std::string getPluginName() const = 0 ;
@@ -240,7 +236,7 @@ class RsPluginHandler
 		virtual void allowAllPlugins(bool b) = 0 ;
 		virtual bool getAllowAllPlugins() const = 0 ;
 
-		virtual void slowTickPlugins(time_t sec) = 0 ;
+		virtual void slowTickPlugins(rstime_t sec) = 0 ;
 
 		virtual const std::string& getLocalCacheDir() const =0;
         virtual const std::string& getRemoteCacheDir() const =0;

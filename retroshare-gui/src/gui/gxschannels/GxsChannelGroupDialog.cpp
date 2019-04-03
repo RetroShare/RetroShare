@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2013 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxschannels/GxsChannelGroupDialog.cpp                *
+ *                                                                             *
+ * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QBuffer>
 
@@ -34,7 +33,7 @@ const uint32_t ChannelCreateEnabledFlags = (
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN   |
-			GXS_GROUP_FLAGS_SHAREKEYS     |
+			// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it, so no need to show the disabled button. The user can do it in a second step from the channel menu.
 			// GXS_GROUP_FLAGS_PERSONALSIGN  |
 			GXS_GROUP_FLAGS_COMMENTS      |
 			0);
@@ -75,19 +74,19 @@ void GxsChannelGroupDialog::initUi()
 	{
 	case MODE_CREATE:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Channel"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
+		setUiText(UITYPE_BUTTONBOX_OK,   tr("Create"));
 		break;
 	case MODE_SHOW:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Channel"));
 		break;
 	case MODE_EDIT:
 		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Channel"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Channel"));
+		setUiText(UITYPE_BUTTONBOX_OK,   tr("Update Channel"));
 		break;
 	}
 	
 	setUiText(UITYPE_KEY_SHARE_CHECKBOX, tr("Add Channel Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Channel Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK,      tr("Select Channel Admins"));
 }
 
 QPixmap GxsChannelGroupDialog::serviceImage()

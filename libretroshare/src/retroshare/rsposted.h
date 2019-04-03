@@ -1,38 +1,36 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsposted.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
 #define RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/retroshare: rsposted.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <inttypes.h>
 #include <string>
 #include <list>
+#include <functional>
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
+#include "serialiser/rsserializable.h"
 
 /* The Main Interface Class - for information about your Posted */
 class RsPosted;
@@ -46,6 +44,7 @@ class RsPostedGroup
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+
 };
 
 
@@ -56,7 +55,7 @@ class RsPostedGroup
 #define RSPOSTED_PERIOD_YEAR		1
 #define RSPOSTED_PERIOD_MONTH		2
 #define RSPOSTED_PERIOD_WEEK		3
-#define RSPOSTED_PERIOD_DAY		4
+#define RSPOSTED_PERIOD_DAY			4
 #define RSPOSTED_PERIOD_HOUR		5
 
 #define RSPOSTED_VIEWMODE_LATEST	1
@@ -78,7 +77,7 @@ class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 	//static const uint32_t FLAG_MSGTYPE_POST;
 	//static const uint32_t FLAG_MSGTYPE_MASK;
 
-	explicit RsPosted(RsGxsIface* gxs) : RsGxsIfaceHelper(gxs) {}
+	explicit RsPosted(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsPosted() {}
 
 	    /* Specific Service Data */
@@ -91,8 +90,8 @@ virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts
 	    /* From RsGxsCommentService */
 //virtual bool getCommentData(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
 //virtual bool getRelatedComments(const uint32_t &token, std::vector<RsGxsComment> &comments) = 0;
-//virtual bool createComment(uint32_t &token, RsGxsComment &comment) = 0;
-//virtual bool createVote(uint32_t &token, RsGxsVote &vote) = 0;
+//virtual bool createNewComment(uint32_t &token, RsGxsComment &comment) = 0;
+//virtual bool createNewVote(uint32_t &token, RsGxsVote &vote) = 0;
 
         //////////////////////////////////////////////////////////////////////////////
 virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgId, bool read) = 0;
@@ -104,7 +103,6 @@ virtual bool updateGroup(uint32_t &token, RsPostedGroup &group) = 0;
 
     virtual bool groupShareKeys(const RsGxsGroupId& group,const std::set<RsPeerId>& peers) = 0 ;
 };
-
 
 
 class RsPostedPost
@@ -123,7 +121,7 @@ class RsPostedPost
         mNewScore = 0;
 	}
 
-	bool calculateScores(time_t ref_time);
+	bool calculateScores(rstime_t ref_time);
 
 	RsMsgMetaData mMeta;
 	std::string mLink;
@@ -141,6 +139,24 @@ class RsPostedPost
 	double  mHotScore;
 	double  mTopScore;
 	double  mNewScore;
+	
+	RsGxsImage mImage;
+
+	/// @see RsSerializable
+	/*virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mLink);
+		RS_SERIAL_PROCESS(mHaveVoted);
+		RS_SERIAL_PROCESS(mUpVotes);
+		RS_SERIAL_PROCESS(mDownVotes);
+		RS_SERIAL_PROCESS(mComments);
+		RS_SERIAL_PROCESS(mHotScore);
+		RS_SERIAL_PROCESS(mTopScore);
+		RS_SERIAL_PROCESS(mNewScore);
+	}*/
 };
 
 

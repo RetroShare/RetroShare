@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/MessagePage.cpp                                                *
+ *                                                                             *
+ * Copyright (C) 2006 Crypton <retroshare.project@gmail.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "rshare.h"
 #include "rsharesettings.h"
@@ -59,7 +58,7 @@ MessagePage::MessagePage(QWidget * parent, Qt::WindowFlags flags)
 
 MessagePage::~MessagePage()
 {
-    delete(m_pTags);
+     delete(m_pTags);
 }
 
 void MessagePage::distantMsgsComboBoxChanged(int i)
@@ -83,7 +82,7 @@ void MessagePage::distantMsgsComboBoxChanged(int i)
 
 void MessagePage::updateMsgToReadOnActivate() { Settings->setMsgSetToReadOnActivate(ui.setMsgToReadOnActivate->isChecked()); }
 void MessagePage::updateLoadEmbededImages()   { Settings->setMsgLoadEmbeddedImages(ui.loadEmbeddedImages->isChecked()); }
-void MessagePage::updateMsgOpen()             { Settings->setMsgOpen((RshareSettings::enumMsgOpen) ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt());}
+void MessagePage::updateMsgOpen()             { Settings->setMsgOpen( static_cast<RshareSettings::enumMsgOpen>(ui.openComboBox->itemData(ui.openComboBox->currentIndex()).toInt()) ); }
 void MessagePage::updateDistantMsgs()         { Settings->setValue("DistantMessages", ui.comboBox->currentIndex()); }
 
 void MessagePage::updateMsgTags()
@@ -169,11 +168,11 @@ void MessagePage::addTag()
 void MessagePage::editTag()
 {
     QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
-    if (pItemWidget == NULL) {
+    if (!pItemWidget) {
         return;
     }
 
-    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
     if (nId == 0) {
         return;
     }
@@ -200,11 +199,11 @@ void MessagePage::editTag()
 void MessagePage::deleteTag()
 {
     QListWidgetItem *pItemWidget = ui.tags_listWidget->currentItem();
-    if (pItemWidget == NULL) {
+    if (!pItemWidget) {
         return;
     }
 
-    uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+    uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
     if (nId == 0) {
         return;
     }
@@ -258,7 +257,7 @@ void MessagePage::currentRowChangedTag(int row)
     if (pItemWidget) {
         bEditEnable = true;
 
-        uint32_t nId = pItemWidget->data(Qt::UserRole).toInt();
+        uint32_t nId = pItemWidget->data(Qt::UserRole).toUInt();
 
         if (nId >= RS_MSGTAGTYPE_USER) {
             bDeleteEnable = true;

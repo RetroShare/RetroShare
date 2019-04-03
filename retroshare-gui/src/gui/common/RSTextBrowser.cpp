@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/common/RSTextBrowser.cpp                                                *
+ *                                                                             *
+ * Copyright (C) 2018 RetroShare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <iostream>
 
 #include <QDesktopServices>
@@ -107,7 +127,7 @@ QVariant RSTextBrowser::loadResource(int type, const QUrl &name)
 		if(fi.exists() && fi.isFile()) {
 			QString cpath = fi.canonicalFilePath();
 			if (cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::ConfigDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive)
-					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::DataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
+					|| cpath.startsWith(QDir(QString::fromUtf8(RsAccounts::systemDataDirectory().c_str())).canonicalPath(),Qt::CaseInsensitive))
 				return QTextBrowser::loadResource(type, name);
 		}}
 
@@ -242,4 +262,31 @@ bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
 		return imageStr.indexOf("base64,") != -1;
 	}
 	return false;
+}
+
+/**
+ * @brief RSTextBrowser::anchorForPosition Replace anchorAt that doesn't works as expected.
+ * @param pos Where to get anchor from text
+ * @return anchor If text at pos is inside anchor, else empty string.
+ */
+QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
+{
+	QTextCursor cursor = cursorForPosition(pos);
+	cursor.select(QTextCursor::WordUnderCursor);
+	QString anchor = "";
+	if (!cursor.selectedText().isEmpty()){
+		QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
+		rx.setMinimal(true);
+		QString sel = cursor.selection().toHtml();
+		QStringList anchors;
+		int pos=0;
+		while ((pos = rx.indexIn(sel,pos)) != -1) {
+			anchors << rx.cap(1);
+			pos += rx.matchedLength();
+		}
+		if (!anchors.isEmpty()){
+			anchor = anchors.at(0);
+		}
+	}
+	return anchor;
 }

@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/services: p3grouter.cc
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/grouter: p3grouter.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -221,7 +218,7 @@ p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
 
 int p3GRouter::tick()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // Sort incoming service data
     //
@@ -482,7 +479,7 @@ void p3GRouter::handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem *t
 #endif
 }
 
-void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
+void p3GRouter::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const RsFileHash &/*hash*/, const RsPeerId &virtual_peer_id, RsTurtleGenericTunnelItem::Direction /*direction*/)
 {
 #ifdef GROUTER_DEBUG
     std::cerr << "p3GRouter::receiveTurtleData() " << std::endl;
@@ -496,7 +493,7 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFile
     //  - possibly packs multi-item blocks back together
     // 	- converts it into a grouter generic item (by deserialising it)
 
-    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    const RsTurtleGenericDataItem *item = dynamic_cast<const RsTurtleGenericDataItem*>(gitem) ;
 
     if(item == NULL)
     {
@@ -510,7 +507,8 @@ void p3GRouter::receiveTurtleData(RsTurtleGenericTunnelItem *gitem, const RsFile
 
     // Items come out of the pipe in order. We need to recover all chunks before we de-serialise the content and have it handled by handleIncoming()
 
-    RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&item->data_size) ;
+    uint32_t size = item->data_size ;
+    RsItem *itm = RsGRouterSerialiser().deserialise(item->data_bytes,&size);
 
 if(itm == NULL)
 {
@@ -540,7 +538,7 @@ if(itm == NULL)
 
 void GRouterTunnelInfo::removeVirtualPeer(const TurtleVirtualPeerId& vpid)
 {
-    std::set<TurtleVirtualPeerId,RsGRouterTransactionChunkItem*>::iterator it = virtual_peers.find(vpid) ;
+    std::set<TurtleVirtualPeerId>::iterator it = virtual_peers.find(vpid) ;
 
     if(it == virtual_peers.end())
     {
@@ -557,7 +555,7 @@ void GRouterTunnelInfo::addVirtualPeer(const TurtleVirtualPeerId& vpid)
 
     virtual_peers.insert(vpid) ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(first_tunnel_ok_TS == 0) first_tunnel_ok_TS = now ;
     last_tunnel_ok_TS = now ;
@@ -762,7 +760,7 @@ void p3GRouter::handleTunnels()
     }
 #endif
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     std::vector<std::pair<int,GRouterRoutingInfo*> > priority_list ;
 
     for(std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.begin();it!=_pending_messages.end();++it)
@@ -895,7 +893,7 @@ void p3GRouter::routePendingObjects()
     // Which tunnels are available is handled by handleTunnels()
     //
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     RS_STACK_MUTEX(grMtx) ;
 #ifdef GROUTER_DEBUG
@@ -1222,7 +1220,7 @@ void p3GRouter::locked_collectAvailableFriends(const GRouterKeyId& gxs_id,const 
 
 void p3GRouter::locked_collectAvailableTunnels(const TurtleFileHash& hash,uint32_t total_duplication,std::map<RsPeerId,uint32_t>& tunnel_peers_and_duplication_factors)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     // Now go through available virtual peers. Select the ones that are interesting, and set them as potential destinations.
 
@@ -1306,7 +1304,7 @@ bool p3GRouter::locked_sendTransactionData(const RsPeerId& pid,const RsGRouterTr
 void p3GRouter::autoWash()
 {
     bool items_deleted = false ;
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     std::map<GRouterMsgPropagationId,std::pair<GRouterClientService *,RsGxsId> > failed_msgs ;
 
@@ -1736,6 +1734,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem *data_item)
 
         receipt_item = new RsGRouterSignedReceiptItem;
         receipt_item->data_hash = item_hash ;
+        receipt_item->service_id = data_item->service_id ;
         receipt_item->routing_id = data_item->routing_id ;
         receipt_item->destination_key = data_item->signature.keyId ;
         receipt_item->flags = 0 ;
@@ -2015,7 +2014,8 @@ bool p3GRouter::verifySignedDataItem(RsGRouterAbstractMsgItem *item,const RsIden
 {
     try
     {
-        if(rsReputations->overallReputationLevel(item->signature.keyId) == RsReputations::REPUTATION_LOCALLY_NEGATIVE)
+		if( rsReputations->overallReputationLevel(item->signature.keyId) ==
+		        RsReputationLevel::LOCALLY_NEGATIVE )
         {
             std::cerr << "(WW) received global router message from banned identity " << item->signature.keyId << ". Rejecting the message." << std::endl;
             return false ;
@@ -2160,7 +2160,7 @@ bool p3GRouter::sendData(const RsGxsId& destination,const GRouterServiceId& clie
     //
     GRouterRoutingInfo info ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     info.data_item = data_item ;
     info.receipt_item = NULL ;
@@ -2370,7 +2370,7 @@ void p3GRouter::debugDump()
 {
         RS_STACK_MUTEX(grMtx) ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	grouter_debug() << "Full dump of Global Router state: " << std::endl; 
 	grouter_debug() << "  Owned keys : " << std::endl;

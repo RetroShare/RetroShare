@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
-    <height>426</height>
+    <width>633</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,10 +50,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="profileframeVLayout">
-      <property name="leftMargin">
-       <number>9</number>
-      </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="RSLabel">
         <property name="text">
@@ -71,7 +68,45 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="toolBarHLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="nodeType_LB">
+          <property name="font">
+           <font>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Node type:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="nodeType_CB">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Standard node</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hidden node (over Tor)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Hidden node (Tor/I2P - Manually configured)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item>
          <spacer name="toolBarHSpacer">
           <property name="orientation">
@@ -86,13 +121,9 @@
          </spacer>
         </item>
         <item>
-         <widget class="QPushButton" name="optionsButton">
+         <widget class="QCheckBox" name="adv_checkbox">
           <property name="text">
-           <string>Options</string>
-          </property>
-          <property name="icon">
-           <iconset resource="icons.qrc">
-            <normaloff>:/icons/svg/options.svg</normaloff>:/icons/svg/options.svg</iconset>
+           <string>advanced options</string>
           </property>
           <property name="iconSize">
            <size>
@@ -100,15 +131,22 @@
             <height>24</height>
            </size>
           </property>
-          <property name="default">
-           <bool>false</bool>
-          </property>
-          <property name="flat">
-           <bool>true</bool>
-          </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QLabel" name="nodeTypeExplanation_TE">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QGroupBox" name="profile_groupBox">
@@ -233,26 +271,6 @@
              </property>
             </widget>
            </item>
-           <item row="15" column="2">
-            <widget class="QComboBox" name="nodeType_CB">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <item>
-              <property name="text">
-               <string>Standard node</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>TOR/I2P Hidden node</string>
-              </property>
-             </item>
-            </widget>
-           </item>
            <item row="5" column="2">
             <widget class="QLineEdit" name="node_input">
              <property name="sizePolicy">
@@ -354,6 +372,13 @@
                </property>
                <property name="text">
                 <string>Import profile</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="reuse_existing_node_CB">
+               <property name="text">
+                <string>Use existing profile...</string>
                </property>
               </widget>
              </item>
@@ -675,28 +700,6 @@
              </property>
             </widget>
            </item>
-           <item row="15" column="1">
-            <widget class="QLabel" name="label_nodeType">
-             <property name="maximumSize">
-              <size>
-               <width>24</width>
-               <height>24</height>
-              </size>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="pixmap">
-              <pixmap resource="icons.qrc">:/icons/svg/netgraph.svg</pixmap>
-             </property>
-             <property name="scaledContents">
-              <bool>true</bool>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
           </layout>
          </item>
          <item row="0" column="0">
@@ -729,22 +732,6 @@
     </widget>
    </item>
   </layout>
-  <action name="adv_checkbox">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Advanced options</string>
-   </property>
-  </action>
-  <action name="reuse_existing_node_CB">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Use existing profile</string>
-   </property>
-  </action>
  </widget>
  <tabstops>
   <tabstop>name_input</tabstop>

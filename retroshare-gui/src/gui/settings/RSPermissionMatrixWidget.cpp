@@ -1,23 +1,22 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (C) 2014 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/RSPermissionMatrixWidget.cpp                                   *
+ *                                                                             *
+ * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef WINDOWS_SYS
 #include <sys/times.h>
@@ -221,7 +220,7 @@ bool sortRsPeerIdByNameLocation(const RsPeerId &a, const RsPeerId &b)
 	return stringA.toLower() < stringB.toLower();
 }
 
-/** Overloads default QWidget::paintEvent. Draws the actual 
+/** Overloads default QWidget::paintEvent. Draws the actual
  * bandwidth graph. */
 void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 {
@@ -231,14 +230,14 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   /* Set current graph dimensions */
   _rec = this->frameRect();
-  
+
   /* Start the painter */
   _painter->begin(this);
-  
+
   /* We want antialiased lines and text */
   _painter->setRenderHint(QPainter::Antialiasing);
   _painter->setRenderHint(QPainter::TextAntialiasing);
-  
+
   /* Fill in the background */
   _painter->fillRect(_rec, QBrush(BACK_COLOR));
   _painter->drawRect(_rec);
@@ -290,7 +289,8 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       rsPeers->getPeerDetails(*it,details) ;
 
       QString name = QString::fromUtf8(details.name.c_str()) + " (" + QString::fromUtf8(details.location.c_str()) + ")";
-      if(name.length() > 20)
+      // TODO does not work correctly with hieroglyphs
+      if(name.length() > 20 + 3)
           name = name.left(20)+"..." ;
 
       peer_name_size = std::max(peer_name_size, fm.width(name)) ;
@@ -299,7 +299,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
   QPen pen ;
   pen.setWidth(2) ;
-  pen.setBrush(Qt::black) ;
+  pen.setBrush(FOREGROUND_COLOR) ;
 
   _painter->setPen(pen) ;
   int i=0;
@@ -350,7 +350,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       pen.setWidth(2) ;
 
       if(_current_service_id == it->second.mServiceType)
-          pen.setBrush(Qt::black) ;
+          pen.setBrush(FOREGROUND_COLOR) ;
       else
           pen.setBrush(Qt::gray) ;
 
@@ -364,7 +364,7 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
       _painter->drawLine(QPointF(X,Y+3),QPointF(X+text_width,Y+3)) ;
       _painter->drawLine(QPointF(X+text_width/2, Y+3), QPointF(X+text_width/2,S*fMATRIX_START_Y+peer_ids.size()*S*fROW_SIZE - S*fROW_SIZE+5)) ;
 
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
       _painter->setPen(pen) ;
 
       _painter->drawText(QPointF(X,Y),name);
@@ -497,11 +497,20 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 
       QPen pen ;
       pen.setWidth(2) ;
-      pen.setBrush(Qt::black) ;
+      pen.setBrush(FOREGROUND_COLOR) ;
 
       _painter->setPen(pen) ;
 
-      QRect info_pos( position.x() + 50*S/14.0, position.y() - 10*S/14.0, text_size_x + 10*S/14.0, line_height * 5 + 5*S/14.0) ;
+      int popup_x = position.x() + (50 * S / 14.0);
+      int popup_y = position.y() - (10 * S / 14.0);
+      int popup_width = text_size_x + (10 * S / 14.0);
+      int popup_height = (line_height * 5) + (5 * S / 14.0);
+      if (popup_x + popup_width > _max_width)
+        popup_x = position.x() - popup_width;
+      if (popup_y + popup_height > _max_height)
+        popup_y -= popup_height;
+
+      QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
 
       _painter->fillRect(info_pos,brush) ;
       _painter->drawRect(info_pos) ;

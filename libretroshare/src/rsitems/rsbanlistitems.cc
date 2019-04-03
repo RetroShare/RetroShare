@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: rsbanlist.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsbanlistitems.cc                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "serialiser/rsbaseserial.h"
 #include "rsitems/rsbanlistitems.h"
 
@@ -48,9 +44,9 @@ void RsBanListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneric
 
 void RsBanListConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,type,"type") ;
-    RsTypeSerializer::serial_process          (j,ctx,peerId,"peerId") ;
-    RsTypeSerializer::serial_process<time_t>  (j,ctx,update_time,"update_time") ;
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,banListType,"type") ;
+    RsTypeSerializer::serial_process          (j,ctx,banListPeerId,"peerId") ;
+    RsTypeSerializer::serial_process<rstime_t>  (j,ctx,update_time,"update_time") ;
     RsTypeSerializer::serial_process          (j,ctx,banned_peers,"banned_peers") ;
 }
 RsItem *RsBanListSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) const

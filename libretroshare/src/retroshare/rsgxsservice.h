@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxsservice.h                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2015  Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSSERVICE_H
 #define RSGXSSERVICE_H
 
@@ -6,6 +27,7 @@
 #include "retroshare/rstokenservice.h"
 
 struct RsMsgMetaData ;
+typedef uint32_t TurtleRequestId;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
@@ -18,7 +40,7 @@ typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMe
 struct RsGxsNotify
 {
 	enum NotifyType
-	{ TYPE_PUBLISH, TYPE_RECEIVE, TYPE_PROCESSED, TYPE_PUBLISHKEY };
+	{ TYPE_PUBLISHED, TYPE_RECEIVED_NEW, TYPE_PROCESSED, TYPE_RECEIVED_PUBLISHKEY, TYPE_RECEIVED_DISTANT_SEARCH_RESULTS };
 
 	virtual ~RsGxsNotify() {}
 	virtual NotifyType getType() = 0;
@@ -39,6 +61,17 @@ private:
     bool mMetaChange;
 };
 
+class RsGxsDistantSearchResultChange: public RsGxsNotify
+{
+public:
+    RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& group_id) : mRequestId(id),mGroupId(group_id){}
+
+    NotifyType getType() { return TYPE_RECEIVED_DISTANT_SEARCH_RESULTS ; }
+
+    TurtleRequestId mRequestId ;
+ 	RsGxsGroupId mGroupId;
+};
+
 /*!
  * Relevant to message changes
  */
@@ -46,7 +79,7 @@ class RsGxsMsgChange : public RsGxsNotify
 {
 public:
 	RsGxsMsgChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgChangeMap;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgChangeMap;
 	NotifyType getType(){ return NOTIFY_TYPE;}
     bool metaChange() { return mMetaChange; }
 private:

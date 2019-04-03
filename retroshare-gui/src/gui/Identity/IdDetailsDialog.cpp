@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2015 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/Identity/IdDetailsDialog.cpp                         *
+ *                                                                             *
+ * Copyright (C) 2014 - 2010 RetroShare Team <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "IdDetailsDialog.h"
 #include "ui_IdDetailsDialog.h"
@@ -286,7 +285,7 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 
 #endif
 
-    RsReputations::ReputationInfo info ;
+	RsReputationInfo info;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
     
 #warning (csoler) Do we need to do this? This code is apparently not used.
@@ -303,23 +302,34 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
     ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
-    switch(info.mOverallReputationLevel)
-    {
-    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
-    default:
-    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
-    }
-    
-    switch(info.mOwnOpinion)
+	switch(info.mOverallReputationLevel)
 	{
-        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
-        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
-        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
-        default:
-            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		ui->overallOpinion_TF->setText(
+		            tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		ui->overallOpinion_TF->setText(
+		            tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		ui->overallOpinion_TF->setText(tr("Neutral")); break;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+	case RsOpinion::NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break;
+	case RsOpinion::NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break;
+	case RsOpinion::POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
 	}
 }
 
@@ -331,19 +341,19 @@ void IdDetailsDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
-    
-    	RsReputations::Opinion op ;
 
-    	switch(ui->ownOpinion_CB->currentIndex())
-        {
-        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
-        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
-        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
-        default:
-            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-            
-        }
-    	rsReputations->setOwnOpinion(id,op) ;
+	RsOpinion op;
+
+	switch(ui->ownOpinion_CB->currentIndex())
+	{
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		break;
+	}
+	rsReputations->setOwnOpinion(id,op);
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;

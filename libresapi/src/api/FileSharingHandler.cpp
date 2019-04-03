@@ -1,21 +1,24 @@
-/*
- * libresapi
- *
- * Copyright (C) 2017, Konrad Dębiec <konradd@tutanota.com>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * libresapi/api/FileSharingHandler.cpp                                        *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2017, Konrad Dębiec <konradd@tutanota.com>                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "FileSharingHandler.h"
 
 namespace resource_api
@@ -36,6 +39,16 @@ FileSharingHandler::FileSharingHandler(StateTokenServer *sts, RsFiles *files,
 
 	addResourceHandler("get_dir_parent", this, &FileSharingHandler::handleGetDirectoryParent);
 	addResourceHandler("get_dir_childs", this, &FileSharingHandler::handleGetDirectoryChilds);
+
+	addResourceHandler( "get_download_directory", this,
+	                    &FileSharingHandler::handleGetDownloadDirectory );
+	addResourceHandler( "set_download_directory", this,
+	                    &FileSharingHandler::handleSetDownloadDirectory );
+
+	addResourceHandler( "get_partials_directory", this,
+	                    &FileSharingHandler::handleGetPartialsDirectory );
+	addResourceHandler( "set_partials_directory", this,
+	                    &FileSharingHandler::handleSetPartialsDirectory );
 
 	addResourceHandler("is_dl_dir_shared", this, &FileSharingHandler::handleIsDownloadDirShared);
 	addResourceHandler("share_dl_dir", this, &FileSharingHandler::handleShareDownloadDirectory);
@@ -511,6 +524,50 @@ void FileSharingHandler::handleDownload(Request& req, Response& resp)
 	}
 
 	resp.setFail("Couldn't download file");
+}
+
+void FileSharingHandler::handleGetDownloadDirectory( Request& /*req*/,
+                                                     Response& resp )
+{
+	std::string dlDir = mRsFiles->getDownloadDirectory();
+	resp.mDataStream << makeKeyValueReference("download_directory", dlDir);
+	resp.setOk();
+}
+
+void FileSharingHandler::handleSetDownloadDirectory( Request& req,
+                                                     Response& resp )
+{
+	std::string dlDir;
+	req.mStream << makeKeyValueReference("download_directory", dlDir);
+
+	if(dlDir.empty()) resp.setFail("missing download_directory");
+	else
+	{
+		mRsFiles->setDownloadDirectory(dlDir);
+		resp.setOk();
+	}
+}
+
+void FileSharingHandler::handleGetPartialsDirectory( Request& /*req*/,
+                                                     Response& resp )
+{
+	std::string partialsDir = mRsFiles->getPartialsDirectory();
+	resp.mDataStream << makeKeyValueReference("partials_directory", partialsDir);
+	resp.setOk();
+}
+
+void FileSharingHandler::handleSetPartialsDirectory( Request& req,
+                                                     Response& resp )
+{
+	std::string partialsDir;
+	req.mStream << makeKeyValueReference("partials_directory", partialsDir);
+
+	if(partialsDir.empty()) resp.setFail("missing partials_directory");
+	else
+	{
+		mRsFiles->setPartialsDirectory(partialsDir);
+		resp.setOk();
+	}
 }
 
 } // namespace resource_api

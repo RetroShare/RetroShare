@@ -1,24 +1,22 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2012, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/FriendSelectionWidget.cpp                                        *
+ *                                                                             *
+ * Copyright (C) 2012, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDialogButtonBox>
 #include <QMenu>
@@ -288,8 +286,14 @@ void FriendSelectionWidget::secured_fillList()
 	}
 
     std::set<RsGxsId> gxsIdsSelected;
+
 	if (mShowTypes & SHOW_GXS)
+    {
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            gxsIdsSelected = mPreSelectedGxsIds;
+    }
 		
     std::set<RsGxsId> gxsIdsSelected2;
 	if (mShowTypes & SHOW_CONTACTS)
@@ -683,6 +687,12 @@ void FriendSelectionWidget::requestGXSIdList()
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
 }
 
+// This call is inlined so that there's no linking conflict with MinGW on Windows
+template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
+{
+    mPreSelectedGxsIds = ids ;
+    requestGXSIdList();
+}
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)
 {

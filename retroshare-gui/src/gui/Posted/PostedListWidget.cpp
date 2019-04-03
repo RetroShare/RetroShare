@@ -1,25 +1,22 @@
-/*
- * Retroshare Posted List
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/Posted/PostedListWidget.cpp                          *
+ *                                                                             *
+ * Copyright (C) 2013 by Robert Fernie       <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 
@@ -44,23 +41,19 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	ui->setupUi(this);
 
 	/* Setup UI helper */
-	mStateHelper->addWidget(mTokenTypeAllPosts, ui->hotSortButton);
-	mStateHelper->addWidget(mTokenTypeAllPosts, ui->newSortButton);
-	mStateHelper->addWidget(mTokenTypeAllPosts, ui->topSortButton);
+	mStateHelper->addWidget(mTokenTypeAllPosts, ui->comboBox);
 
-	mStateHelper->addWidget(mTokenTypePosts, ui->hotSortButton);
-	mStateHelper->addWidget(mTokenTypePosts, ui->newSortButton);
-	mStateHelper->addWidget(mTokenTypePosts, ui->topSortButton);
+	mStateHelper->addWidget(mTokenTypePosts, ui->comboBox);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
-	connect(ui->hotSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
-	connect(ui->newSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
-	connect(ui->topSortButton, SIGNAL(clicked()), this, SLOT(getRankings()));
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
 	connect(ui->prevButton, SIGNAL(clicked()), this, SLOT(showPrev()));
 	connect(ui->subscribeToolButton, SIGNAL(subscribe(bool)), this, SLOT(subscribeGroup(bool)));
+	
+	connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(getRankings(int)));
+
 
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
@@ -70,12 +63,14 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 
 	mTokenTypeVote = nextTokenType();
 
-	ui->hotSortButton->setChecked(true);
-
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 
 	connect(ui->submitPostButton, SIGNAL(clicked()), this, SLOT(newPost()));
+	
+	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the links will gather \
+	                                        available posts from your subscribed friends, and make the \
+	                                        links visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the links list at left.</p>"));
 
 	/* load settings */
 	processSettings(true);
@@ -186,7 +181,7 @@ void PostedListWidget::updateShowText()
 	ui->showLabel->setText(showText);
 }
 
-void PostedListWidget::getRankings()
+void PostedListWidget::getRankings(int i)
 {
 	if (groupId().isNull())
 		return;
@@ -195,23 +190,19 @@ void PostedListWidget::getRankings()
 	std::cerr << std::endl;
 
 	int oldSortMethod = mSortMethod;
-
-	QObject* button = sender();
-	if(button == ui->hotSortButton)
+	
+	switch(i)
 	{
+	default:
+	case 0:
 		mSortMethod = RsPosted::HotRankType;
-	}
-	else if(button == ui->topSortButton)
-	{
-		mSortMethod = RsPosted::TopRankType;
-	}
-	else if(button == ui->newSortButton)
-	{
+		break;
+	case 1:
 		mSortMethod = RsPosted::NewRankType;
-	}
-	else
-	{
-		return;
+		break;
+	case 2:
+		mSortMethod = RsPosted::TopRankType;
+		break;
 	}
 
 	if (oldSortMethod != mSortMethod)
@@ -265,7 +256,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
 
 	uint32_t token;
-	rsPosted->createVote(token, vote);
+	rsPosted->createNewVote(token, vote);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, mTokenTypeVote);
 }
 
@@ -301,6 +292,7 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 {
 	mStateHelper->setWidgetEnabled(ui->submitPostButton, IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) ;
 }
 
 /*********************** **** **** **** ***********************/
@@ -454,6 +446,10 @@ void PostedListWidget::applyRanking()
 	ui->scrollAreaWidgetContents->update();
 }
 
+void PostedListWidget::blank()
+{
+    clearPosts();
+}
 void PostedListWidget::clearPosts()
 {
 	/* clear all messages */

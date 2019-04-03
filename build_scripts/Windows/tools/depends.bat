@@ -1,15 +1,15 @@
 :: Usage:
 :: call depends.bat [list^|missing] file
 
-setlocal
-
 if "%2"=="" (
 	echo Usage: %~nx0 [list^|missing] File
-	goto :exit
+	exit /B 1
 )
 
-if not exist "%EnvDependsExe%" echo depends.exe not found in %EnvToolsPath%.& goto exit
-if not exist "%EnvCutExe%" echo cut.exe not found in %EnvToolsPath%.& goto exit
+setlocal
+
+if not exist "%EnvDependsExe%" echo depends.exe not found in %EnvToolsPath%.& exit /B 1
+if not exist "%EnvCutExe%" echo cut.exe not found in %EnvToolsPath%.& exit /B 1
 
 start /wait "" "%EnvDependsExe%" /c /oc:"%~dp0depends.tmp" %2
 if "%1"=="missing" (
@@ -33,5 +33,5 @@ if "%1"=="list" (
 if exist "%~dp0depends.tmp" del /Q "%~dp0depends.tmp"
 if exist "%~dp0depends1.tmp" del /Q "%~dp0depends1.tmp"
 
-:exit
 endlocal
+exit /B 0

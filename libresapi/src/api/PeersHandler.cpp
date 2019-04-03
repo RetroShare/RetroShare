@@ -1,22 +1,25 @@
-/*
- * libresapi
- *
- * Copyright (C) 2015  electron128 <electron128@yahoo.com>
- * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * libresapi/api/PeersHandler.cpp                                              *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>                     *
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "PeersHandler.h"
 
@@ -419,7 +422,9 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 		{
 			if(str == "self" && !req.mPath.empty() && req.mPath.top() == "certificate")
 			{
-				resp.mDataStream << makeKeyValue("cert_string", mRsPeers->GetRetroshareInvite(false));
+				resp.mDataStream << makeKeyValue(
+				                        "cert_string",
+				                        mRsPeers->GetRetroshareInvite());
 				resp.setOk();
 				return;
 			}
@@ -727,6 +732,11 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 						                           peerDetails.localPort );
 					if (!peerDetails.dyndns.empty())
 						mRsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
+					for(auto&& ipr : peerDetails.ipAddressList)
+						mRsPeers->addPeerLocator(
+						            peerDetails.id,
+						            RsUrl(ipr.substr(0, ipr.find(' '))) );
+
 				}
 			}
 			while(false);
@@ -1187,14 +1197,7 @@ void PeersHandler::handleGetNodeOptions(Request& req, Response& resp)
 	std::string encryption;
 	RsPeerCryptoParams cdet;
 	if(RsControl::instance()->getPeerCryptoDetails(detail.id, cdet) && cdet.connexion_state != 0)
-	{
-		encryption = cdet.cipher_version;
-		encryption += ": ";
-		encryption += cdet.cipher_name;
-
-		if(cdet.cipher_version != "TLSv1.2")
-			encryption += cdet.cipher_bits_1;
-	}
+		encryption = cdet.cipher_name;
 	else
 		encryption = "Not connected";
 
