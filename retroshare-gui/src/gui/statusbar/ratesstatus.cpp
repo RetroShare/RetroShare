@@ -24,6 +24,7 @@
 
 #include "ratesstatus.h"
 #include <retroshare/rsiface.h>
+#include "util/misc.h"
 
 #include <iomanip>
 
@@ -48,13 +49,13 @@ RatesStatus::RatesStatus(QWidget *parent)
     setLayout(hbox);
 }
 
-void RatesStatus::getRatesStatus(float downKb, float upKb)
+void RatesStatus::getRatesStatus(float downKb, uint64_t down, float upKb, uint64_t upl)
 {
     /* set users/friends/network */
 
-    QString normalText = QString("<strong>%1:</strong> %2 (kB/s) | <strong>%3:</strong> %4 (kB/s) ")
-                                .arg(tr("Down")).arg(downKb, 0, 'f', 2)
-                                .arg(tr("Up")).arg(upKb, 0, 'f', 2);
+    QString normalText = QString("<strong>%1:</strong> %2 kB/s (%3) | <strong>%4:</strong> %5 kB/s (%6)")
+                                .arg(tr("Down")).arg(downKb, 0, 'f', 2).arg(misc::friendlyUnit(down))
+                                .arg(tr("Up")).arg(upKb, 0, 'f', 2).arg(misc::friendlyUnit(upl));
     QString compactText = QString("%1|%2").arg(downKb, 0, 'f', 2).arg(upKb, 0, 'f', 2);
 
     if (statusRates) {

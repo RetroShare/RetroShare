@@ -647,6 +647,13 @@ float pqiperson::getRate(bool in)
 	return activepqi -> getRate(in);
 }
 
+uint64_t pqiperson::getTraffic(bool in)
+{
+	if ((!active) || (activepqi == NULL))
+		return 0;
+	return activepqi -> getTraffic(in);
+}
+
 void pqiperson::setMaxRate(bool in, float val)
 {
 	RS_STACK_MUTEX(mPersonMtx);

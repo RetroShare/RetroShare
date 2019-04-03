@@ -221,6 +221,7 @@ float pqistreamer::getRate(bool b)
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
     	return RateInterface::getRate(b) ;
 }
+
 void pqistreamer::setMaxRate(bool b,float f)
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
@@ -1231,7 +1232,7 @@ void    pqistreamer::outSentBytes_locked(uint32_t outb)
 	mTotalSent += outb;
 	mCurrSent += outb;
 	mAvgSentCount += outb;
-
+	PQInterface::traf_out += outb;
 	return;
 }
 
@@ -1248,7 +1249,7 @@ void    pqistreamer::inReadBytes_locked(uint32_t inb)
 	mTotalRead += inb;
 	mCurrRead += inb;
 	mAvgReadCount += inb;
-
+	PQInterface::traf_in += inb;
 	return;
 }
 

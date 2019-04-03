@@ -91,6 +91,10 @@ class pqihandler: public P3Interface, public pqiPublisher
 		int     ExtractRates(std::map<RsPeerId, RsBwRates> &ratemap, RsBwRates &totals);
 		int 	ExtractTrafficInfo(std::list<RSTrafficClue> &out_lst, std::list<RSTrafficClue> &in_lst);
 
+		uint64_t traffInSum;
+		uint64_t traffOutSum;
+		void GetTraffic(uint64_t &in, uint64_t &out);
+
 protected:
 		/* check to be overloaded by those that can
 		 * generates warnings otherwise
