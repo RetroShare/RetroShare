@@ -23,7 +23,10 @@
 
 #include <stdlib.h>
 #include <iostream>
+#include <memory>
 #include <util/stacktrace.h>
+
+#define RS_DEFAULT_STORAGE_PARAM(Type) *std::unique_ptr<Type>(new Type)
 
 void *rs_malloc(size_t size) ;
 

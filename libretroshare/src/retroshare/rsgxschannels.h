@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -33,6 +33,8 @@
 #include "serialiser/rsserializable.h"
 #include "retroshare/rsturtle.h"
 #include "util/rsdeprecate.h"
+#include "retroshare/rsgxscircles.h"
+#include "util/rsmemory.h"
 
 class RsGxsChannels;
 
@@ -99,94 +101,101 @@ public:
 	explicit RsGxsChannels(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsGxsChannels() {}
 
-#ifdef REMOVED
 	/**
 	 * @brief Create channel. Blocking API.
 	 * @jsonapi{development}
-	 * @param[inout] channel Channel data (name, description...)
-	 * @return false on error, true otherwise
+	 * @param[in] name Name of the channel
+	 * @param[in] description Description of the channel
+	 * @param[in] thumbnail Optional image to show as channel thumbnail.
+	 * @param[in] authorId Optional id of the author. Leave empty for an
+	 *	anonymous channel.
+	 * @param[in] circleType Optional visibility rule, default public.
+	 * @param[in] circleId If the channel is not public specify the id of the
+	 *	circle who can see the channel. Depending on the value you pass for
+	 *	circleType this should be be an external circle if EXTERNAL is passed, a
+	 *	local friend group id if NODES_GROUP is passed, empty otherwise.
+	 * @param[out] channelId Optional storage for the id of the created channel,
+	 *	meaningful only if creations succeeds.
+	 * @param[out] errorMessage Optional storage for error messsage, meaningful
+	 *	only if creation fail.
+	 * @return False on error, true otherwise.
 	 */
-	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
-#endif
-
-	/**
-	 * @brief Create channel. Blocking API.
-	 * @jsonapi{development}
-	 * @param[in]  name              Name of the channel
-	 * @param[in]  description       Description of the channel
-	 * @param[in]  image             Thumbnail that is shown to advertise the channel. Possibly empty.
-	 * @param[in]  author_id         GxsId of the contact author. For an anonymous channel, leave this to RsGxsId()="00000....0000"
-	 * @param[in]  circle_type       Type of visibility restriction, among { GXS_CIRCLE_TYPE_PUBLIC, GXS_CIRCLE_TYPE_EXTERNAL, GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GXS_CIRCLE_TYPE_YOUR_EYES_ONLY }
-	 * @param[in]  circle_id         Id of the circle (should be an external circle for GXS_CIRCLE_TYPE_EXTERNAL, a local friend group for GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY, GxsCircleId()="000....000" otherwise
-	 * @param[out] channel_group_id  Group id of the created channel, if command succeeds.
-	 * @param[out] error_message     Error messsage supplied when the channel creation fails.
-	 * @return                       False on error, true otherwise.
-	 */
-	virtual bool createChannel(const std::string& name,
-                               const std::string& description,
-                               const RsGxsImage&  image,
-                               const RsGxsId&     author_id,
-                               uint32_t           circle_type,
-                               RsGxsCircleId&     circle_id,
-                               RsGxsGroupId&      channel_group_id,
-                               std::string&       error_message     )=0;
+	virtual bool createChannelV2(
+	        const std::string& name, const std::string& description,
+	        const RsGxsImage& thumbnail = RsGxsImage(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        RsGxsCircleType circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& channelId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
 	/**
 	 * @brief Add a comment on a post or on another comment
 	 * @jsonapi{development}
-	 * @param[in]  groupId           Id of the channel in which the comment is to be posted
-	 * @param[in]  parentMsgId       Id of the parent of the comment that is either a channel post Id or the Id of another comment.
-	 * @param[in]  comment           UTF-8 string containing the comment
-	 * @param[out] commentMessageId  Id of the comment that was created
-	 * @param[out] error_string      Error message supplied when the comment creation fails.
+	 * @param[in] channelId Id of the channel in which the comment is to be posted
+	 * @param[in] parentId Id of the parent of the comment that is either a
+	 *	channel post Id or the Id of another comment.
+	 * @param[in] comment UTF-8 string containing the comment
+	 * @param[out] commentMessageId Optional storage for the id of the comment
+	 *	that was created, meaningful only on success.
+	 * @param[out] errorMessage Optional storage for error message, meaningful
+	 *	only on failure.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createComment(const RsGxsGroupId&   groupId,
-	                           const RsGxsMessageId& parentMsgId,
-	                           const std::string&    comment,
-	                           RsGxsMessageId&       commentMessageId,
-                               std::string&          error_message     )=0;
+	virtual bool createCommentV2(
+	        const RsGxsGroupId& channelId, const RsGxsMessageId& parentId,
+	        const std::string& comment,
+	        RsGxsMessageId& commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string) )=0;
 
 	/**
 	 * @brief Create channel post. Blocking API.
 	 * @jsonapi{development}
-	 * @param[in] groupId        Id of the channel where to put the post (publish rights needed!)
-	 * @param[in] origMsgId      Id of the post you are replacing. If left blank (RsGxsMssageId()="0000.....0000", a new post will be created
-	 * @param[in] msgName        Title of the post
-	 * @param[in] msg            Text content of the post
-	 * @param[in] files          List of attached files. These are supposed to be shared otherwise (use ExtraFileHash() below)
-	 * @param[in] thumbnail      Image displayed in the list of posts. Can be left blank.
-	 * @param[out] messsageId    Id of the message that was created
-	 * @param[out] error_message Error text if anything bad happens
+	 * @param[in] channelId Id of the channel where to put the post. Beware you
+	 *	need publish rights on that channel to post.
+	 * @param[in] title Title of the post
+	 * @param[in] mBody Text content of the post
+	 * @param[in] files Optional list of attached files. These are supposed to
+	 *	be already shared, @see ExtraFileHash() below otherwise.
+	 * @param[in] thumbnail Optional thumbnail image for the post.
+	 * @param[in] origPostId If this is supposed to replace an already existent
+	 *	post, the id of the old post. If left blank a new post will be created.
+	 * @param[out] postId Optional storage for the id of the created post,
+	 *	meaningful only on success.
+	 * @param[out] errorMessage Optional storage for the error message,
+	 *	meaningful only on failure.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createPost(const RsGxsGroupId&         groupId,
-    						const RsGxsMessageId&       origMsgId,
-							const std::string&          msgName,
-							const std::string&          msg,
-							const std::list<RsGxsFile>& files,
-							const RsGxsImage&           thumbnail,
-							RsGxsMessageId&             messageId,
-                            std::string&                error_message) = 0;
+	virtual bool createPostV2(
+	        const RsGxsGroupId& channelId, const std::string& title,
+	        const std::string& mBody,
+	        const std::list<RsGxsFile>& files = std::list<RsGxsFile>(),
+	        const RsGxsImage& thumbnail = RsGxsImage(),
+	        const RsGxsMessageId& origPostId = RsGxsMessageId(),
+	        RsGxsMessageId& postId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
 	/**
-	 * @brief createVote
+	 * @brief Create a vote
 	 * @jsonapi{development}
-	 * @param[in]  groupId             Id of the channel where to put the post (publish rights needed!)
-	 * @param[in]  threadId            Id of the channel post in which a comment is voted
-	 * @param[in]  commentMesssageId   Id of the comment that is voted
-	 * @param[in]  authorId            Id of the author. Needs to be your identity.
-	 * @param[in]  voteType            Type of vote (GXS_VOTE_NONE=0x00, GXS_VOTE_DOWN=0x01, GXS_VOTE_UP=0x02)
-	 * @param[out] voteMessageId       Id of the vote message produced
-	 * @param[out] error_message       Error text if anything bad happens
+	 * @param[in] channelId Id of the channel where to vote
+	 * @param[in] postId Id of the channel post of which a comment is voted
+	 * @param[in] commentId Id of the comment that is voted
+	 * @param[in] authorId Id of the author. Needs to be of an owned identity.
+	 * @param[in] vote Vote value, either RsGxsVoteType::DOWN or
+	 *	RsGxsVoteType::UP
+	 * @param[out] voteId Optional storage for the id of the created vote,
+	 *	meaningful only on success.
+	 * @param[out] errorMessage Optional storage for error message, meaningful
+	 *	only on failure.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createVote( const RsGxsGroupId&         groupId,
-                             const RsGxsMessageId&       threadId,
-                             const RsGxsMessageId&       commentMessageId,
-                             const RsGxsId&              authorId,
-                             uint32_t                    voteType,
-                             RsGxsMessageId&             voteMessageId,
-                             std::string&                error_message)=0;
+	virtual bool createVoteV2(
+	        const RsGxsGroupId& channelId, const RsGxsMessageId& postId,
+	        const RsGxsMessageId& commentId, const RsGxsId& authorId,
+	        RsGxsVoteType vote,
+	        RsGxsMessageId& voteId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
 	/**
 	 * @brief Edit channel details.
@@ -372,6 +381,16 @@ public:
 	/* Following functions are deprecated as they expose internal functioning
 	 * semantic, instead of a safe to use API */
 
+	/**
+	 * @brief Create channel. Blocking API.
+	 * @jsonapi{development}
+	 * @deprecated { substituted by createChannelV2 }
+	 * @param[inout] channel Channel data (name, description...)
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(createChannelV2)
+	virtual bool createChannel(RsGxsChannelGroup& channel) = 0;
+
 	RS_DEPRECATED_FOR(getChannelsInfo)
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
 
@@ -429,8 +448,28 @@ public:
 	 * @param[in] group Channel data (name, description...)
 	 * @return false on error, true otherwise
 	 */
-	RS_DEPRECATED_FOR(createChannel)
+	RS_DEPRECATED_FOR(createChannelV2)
 	virtual bool createGroup(uint32_t& token, RsGxsChannelGroup& group) = 0;
+
+	/**
+	 * @brief Add a comment on a post or on another comment
+	 * @jsonapi{development}
+	 * @deprecated
+	 * @param[inout] comment
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(createCommentV2)
+	virtual bool createComment(RsGxsComment& comment) = 0;
+
+	/**
+	 * @brief Create channel post. Blocking API.
+	 * @jsonapi{development}
+	 * @deprecated
+	 * @param[inout] post
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(createPostV2)
+	virtual bool createPost(RsGxsChannelPost& post) = 0;
 
 	/**
 	 * @brief Request post creation.
@@ -442,8 +481,18 @@ public:
 	 * @param[in] post
 	 * @return false on error, true otherwise
 	 */
-	RS_DEPRECATED
+	RS_DEPRECATED_FOR(createPostV2)
 	virtual bool createPost(uint32_t& token, RsGxsChannelPost& post) = 0;
+
+	/**
+	 * @brief createVote
+	 * @jsonapi{development}
+	 * @deprecated
+	 * @param[inout] vote
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED_FOR(createVoteV2)
+	virtual bool createVote(RsGxsVote& vote) = 0;
 
 	/**
 	 * @brief Request channel change.
