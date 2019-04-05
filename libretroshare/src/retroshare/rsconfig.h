@@ -296,6 +296,7 @@ public:
     virtual int GetMaxDataRates( int &inKb, int &outKb ) = 0;
     
     virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
+    virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb ) = 0;
 };
 
 #endif
