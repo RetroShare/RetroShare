@@ -52,6 +52,8 @@ private slots:
 	void smileyWidgetForums();
 	void addSmileys();
 	void addFile();
+	void addPicture();
+	void checkLength();
 	void reject();
 
 protected:

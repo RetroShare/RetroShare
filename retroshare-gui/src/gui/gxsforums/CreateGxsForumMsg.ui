@@ -201,6 +201,29 @@
              </widget>
             </item>
             <item>
+             <widget class="QToolButton" name="attachPictureButton">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="toolTip">
+               <string>Attach a Picture</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/attach-image.png</normaloff>:/icons/png/attach-image.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>24</width>
+                <height>24</height>
+               </size>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer>
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
@@ -369,6 +392,7 @@ p, li { white-space: pre-wrap; }
  <resources>
   <include location="../images.qrc"/>
   <include location="../emojione.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
