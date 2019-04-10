@@ -83,6 +83,8 @@ pqihandler::pqihandler() : coreMtx("pqihandler")
     rateMax_in = 0.01;
     rateTotal_in = 0.0 ;
     rateTotal_out = 0.0 ;
+	traffInSum = 0;
+	traffOutSum = 0;
     last_m = time(NULL) ;
     nb_ticks = 0 ;
     mLastRateCapUpdate = 0 ;
@@ -371,6 +373,9 @@ int     pqihandler::UpdateRates()
 	{
 		SearchModule *mod = (it -> second);
 		float crate_in = mod -> pqi -> getRate(true);
+
+		traffInSum += mod -> pqi -> getTraffic(true);
+		traffOutSum += mod -> pqi -> getTraffic(false);
         
 #ifdef PQI_HDL_DEBUG_UR
         if(crate_in > 0.0)
@@ -540,4 +545,8 @@ void    pqihandler::locked_StoreCurrentRates(float in, float out)
 	rateTotal_out = out;
 }
 
-
+void pqihandler::GetTraffic(uint64_t &in, uint64_t &out)
+{
+	in = traffInSum;
+	out = traffOutSum;
+}

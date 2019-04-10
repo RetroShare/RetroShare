@@ -32,7 +32,7 @@ class RatesStatus : public QWidget
 public:
     RatesStatus(QWidget *parent = 0);
 
-    void getRatesStatus(float downKb, float upKb);
+	void getRatesStatus(float downKb, uint64_t down, float upKb, uint64_t upl);
     void setCompactMode(bool compact) {_compactMode = compact; }
 
 private:

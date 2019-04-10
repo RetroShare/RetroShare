@@ -186,7 +186,7 @@ class NetInterface;
 class PQInterface: public RateInterface
 {
 	public:
-		explicit PQInterface(const RsPeerId &id) :peerId(id) { return; }
+		explicit PQInterface(const RsPeerId &id) :peerId(id), traf_in(0), traf_out(0) { return; }
 		virtual	~PQInterface() { return; }
 
 		/*!
@@ -227,6 +227,22 @@ class PQInterface: public RateInterface
 		virtual int	notifyEvent(NetInterface * /*ni*/, int /*event*/,
 								const sockaddr_storage & /*remote_peer_address*/)
 		{ return 0; }
+
+		virtual uint64_t getTraffic(bool in)
+		{
+			uint64_t ret = 0;
+			if (in)
+			{
+				ret = traf_in;
+				traf_in = 0;
+				return ret;
+			}
+			ret = traf_out;
+			traf_out = 0;
+			return ret;
+		}
+		uint64_t traf_in;
+		uint64_t traf_out;
 
 	private:
 
