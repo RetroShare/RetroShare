@@ -314,7 +314,7 @@ LLwaitTokenBeginLabel:
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		/* Work around for very slow/old android devices, we don't expect this
 		 * to be necessary on newer devices. If it take unreasonably long
-		 * something worser is already happening elsewere amd we return anyway.
+		 * something worser is already happening elsewere and we return anyway.
 		 */
 		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
 		        && maxWorkAroundCnt-- > 0 )
