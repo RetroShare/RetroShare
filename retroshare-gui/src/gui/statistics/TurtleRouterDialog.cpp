@@ -174,7 +174,7 @@ void TurtleRouterDialog::updateTunnelRequests(	const std::vector<std::vector<std
 			num /= 1024.0f,++k;
 		sprintf(tmp,"%3.2f %s",num,units[k].c_str()) ;
 		
-		float num2 = strtol(tunnels_info[i][6].c_str(), NULL, 0);
+		float num2 = strtoull(tunnels_info[i][6].c_str(), NULL, 0);
 		char tmp2[100] ;
 		std::string units2[4] = { "B","KB","MB","GB" } ;
 		int k2=0 ;
