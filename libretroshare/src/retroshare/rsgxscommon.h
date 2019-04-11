@@ -19,11 +19,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#pragma once
 
-#ifndef RETROSHARE_GXS_COMMON_OBJS_INTERFACE_H
-#define RETROSHARE_GXS_COMMON_OBJS_INTERFACE_H
-
-#include <inttypes.h>
+#include <cstdint>
 #include <string>
 #include <list>
 
@@ -79,10 +77,12 @@ struct RsGxsImage  : RsSerializable
 	}
 };
 
-
-#define GXS_VOTE_NONE 	0x0000
-#define GXS_VOTE_DOWN 	0x0001
-#define GXS_VOTE_UP	0x0002
+enum class RsGxsVoteType : uint32_t
+{
+	NONE = 0, /// Used to detect unset vote?
+	DOWN = 1, /// Negative vote
+	UP = 2    /// Positive vote
+};
 
 
 // Status Flags to indicate Voting....
@@ -181,7 +181,11 @@ struct RsGxsCommentService
 	        std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) = 0;
 };
 
+/// @deprecated use RsGxsVoteType::NONE instead @see RsGxsVoteType
+#define GXS_VOTE_NONE 0x0000
 
+/// @deprecated use RsGxsVoteType::DOWN instead @see RsGxsVoteType
+#define GXS_VOTE_DOWN 0x0001
 
-#endif
-
+/// @deprecated use RsGxsVoteType::UP instead @see RsGxsVoteType
+#define GXS_VOTE_UP	0x0002
