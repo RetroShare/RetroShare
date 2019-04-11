@@ -53,6 +53,7 @@ RsItem *RsTurtleSerialiser::create_item(uint16_t service,uint8_t item_subtype) c
 	case RS_TURTLE_SUBTYPE_OPEN_TUNNEL  			:	return new RsTurtleOpenTunnelItem();
 	case RS_TURTLE_SUBTYPE_TUNNEL_OK    			:	return new RsTurtleTunnelOkItem();
 	case RS_TURTLE_SUBTYPE_GENERIC_DATA 			:	return new RsTurtleGenericDataItem();
+	case RS_TURTLE_SUBTYPE_GENERIC_FAST_DATA 		:	return new RsTurtleGenericFastDataItem();
 	case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST	:	return new RsTurtleGenericSearchRequestItem();
 	case RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT	:	return new RsTurtleGenericSearchResultItem();
 
@@ -244,8 +245,12 @@ void RsTurtleTunnelOkItem::serial_process(RsGenericSerializer::SerializeJob j,Rs
 void RsTurtleGenericDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
-
     RsTypeSerializer::TlvMemBlock_proxy prox(data_bytes,data_size) ;
-
+    RsTypeSerializer::serial_process(j,ctx,prox,"data bytes") ;
+}
+void RsTurtleGenericFastDataItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process<uint32_t>(j,ctx,tunnel_id ,"tunnel_id") ;
+    RsTypeSerializer::TlvMemBlock_proxy prox(data_bytes,data_size) ;
     RsTypeSerializer::serial_process(j,ctx,prox,"data bytes") ;
 }

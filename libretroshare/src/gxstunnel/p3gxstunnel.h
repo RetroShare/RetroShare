@@ -128,14 +128,12 @@ public:
     // Creates the invite if the public key of the distant peer is available.
     // Om success, stores the invite in the map above, so that we can respond to tunnel requests.
     //
-    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t service_id,uint32_t& error_code) ;
-    
-    virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id,uint32_t service_id) ;
-    virtual bool getTunnelsInfo(std::vector<GxsTunnelInfo>& infos);
-    virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info);
-    virtual bool sendData(const RsGxsTunnelId& tunnel_id,uint32_t service_id,const uint8_t *data,uint32_t size) ;
-    
-    virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) ;
+    virtual bool requestSecuredTunnel(const RsGxsId& to_id,const RsGxsId& from_id,RsGxsTunnelId& tunnel_id,uint32_t service_id,uint32_t& error_code) override ;
+    virtual bool closeExistingTunnel(const RsGxsTunnelId &tunnel_id,uint32_t service_id) override ;
+    virtual bool getTunnelsInfo(std::vector<GxsTunnelInfo>& infos) override ;
+    virtual bool getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelInfo& info) override ;
+    virtual bool sendData(const RsGxsTunnelId& tunnel_id,uint32_t service_id,const uint8_t *data,uint32_t size) override ;
+    virtual bool registerClientService(uint32_t service_id,RsGxsTunnelClientService *service) override ;
 
     // derived from p3service
     
@@ -149,7 +147,7 @@ private:
     class GxsTunnelPeerInfo
     {
     public:
-        GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
+        GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0),accepts_fast_turtle_items(false)
         {
             memset(aes_key, 0, GXS_TUNNEL_AES_KEY_SIZE);
             
@@ -158,20 +156,22 @@ private:
         }
 
         rstime_t last_contact ; 		// used to keep track of working connexion
-	rstime_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
+		rstime_t last_keep_alive_sent ;	// last time we sent a keep alive packet.
 
         unsigned char aes_key[GXS_TUNNEL_AES_KEY_SIZE] ;
 
-        uint32_t status ;		// info: do we have a tunnel ?
-        RsPeerId virtual_peer_id;  	// given by the turtle router. Identifies the tunnel.
-        RsGxsId to_gxs_id;  		// gxs id we're talking to
-        RsGxsId own_gxs_id ;         	// gxs id we're using to talk.
-        RsTurtleGenericTunnelItem::Direction direction ; // specifiec wether we are client(managing the tunnel) or server.
-        TurtleFileHash hash ;		// hash that is last used. This is necessary for handling tunnel establishment
-        std::set<uint32_t> client_services ;// services that used this tunnel
-        std::map<uint64_t,rstime_t> received_data_prints ; // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
-        uint32_t total_sent ;
-        uint32_t total_received ;
+        uint32_t status ;                                     // info: do we have a tunnel ?
+        RsPeerId virtual_peer_id;                             // given by the turtle router. Identifies the tunnel.
+        RsGxsId to_gxs_id;                                    // gxs id we're talking to
+        RsGxsId own_gxs_id ;                                  // gxs id we're using to talk.
+        RsTurtleGenericTunnelItem::Direction direction ;      // specifiec wether we are client(managing the tunnel) or server.
+        TurtleFileHash hash ;                                 // hash that is last used. This is necessary for handling tunnel establishment
+        std::set<uint32_t> client_services ;                  // services that used this tunnel
+        std::map<uint64_t,rstime_t> received_data_prints ;    // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
+        uint32_t total_sent ;                                 // total data sent to this peer
+        uint32_t total_received ;                             // total data received by this peer
+        bool accepts_fast_turtle_items;                       // does the tunnel accept RsTurtleGenericFastDataItem type?
+        bool already_probed_for_fast_items;                   // has the tunnel been probed already? If not, a fast item will be sent
     };
 
     class GxsTunnelDHInfo
@@ -243,7 +243,7 @@ private:
     bool locked_sendEncryptedTunnelData(RsGxsTunnelItem *item) ;
     bool locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *item);	// this limits the usage to DH items. Others should be encrypted!
     
-    bool handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id) ;
+    bool handleEncryptedData(const uint8_t *data_bytes, uint32_t data_size, const TurtleFileHash& hash, const RsPeerId& virtual_peer_id, bool accepts_fast_items) ;
 
     // local data
     
