@@ -1329,9 +1329,9 @@ void ChatWidget::toogle_SeachWithoutLimit()
 	bSearchWithoutLimit=!bSearchWithoutLimit;
 }
 
-void ChatWidget::eraseBannedMessages(RsGxsId id)
+void ChatWidget::eraseBannedMessages(RsGxsId *id)
 {
-	QString qsStringToFind = PERSONID + QString::fromStdString(id.toStdString());
+	QString qsStringToFind = PERSONID + QString::fromStdString(id->toStdString());
 	QTextDocument *qtdDocument = ui->textBrowser->document();
 	QString source = qtdDocument->toHtml();
 	QStringList list = source.split("\n");
