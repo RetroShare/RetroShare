@@ -1,29 +1,25 @@
-/*
- * libretroshare/src/dht: p3bitdht.h
- *
- * BitDht interface for RetroShare.
- *
- * Copyright 2009-2010 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/dht: p3bitdht_peernet.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2010 by Robert Fernie. <drbob@lunamutt.com>                  *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "dht/p3bitdht.h"
 
 #include "bitdht/bdstddht.h"
@@ -184,18 +180,24 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*/, uint32_t /*flags*/, uint32_t /*age*/)
+int p3BitDht::addBadPeer( const sockaddr_storage &addr, uint32_t /*reason*/,
+                          uint32_t /*flags*/, uint32_t /*age*/ )
 {
 	//mUdpBitDht->updateKnownPeer(&id, 0, bdflags);
 
-	struct sockaddr_in addrv4;
-	if (addr.ss_family != AF_INET)
+	sockaddr_in addrv4;
+	sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(addr, tmpaddr);
+	if(!sockaddr_storage_ipv6_to_ipv4(tmpaddr))
 	{
-		std::cerr << "p3BitDht::addBadPeer() cannot handle IPV6 Yet, aborting";
-		std::cerr << std::endl;
-		abort();
+		std::cerr << __PRETTY_FUNCTION__ << " Error: got non IPv4 address!"
+		          << std::endl;
+		sockaddr_storage_dump(addr);
+		print_stacktrace();
+		return -EINVAL;
 	}
-	struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
+
+	struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
 
 	// convert.
 	addrv4.sin_family = ap->sin_family;
@@ -216,39 +218,30 @@ int p3BitDht::addBadPeer(const struct sockaddr_storage &addr, uint32_t /*reason*
 }
 
 
-int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &addr, uint32_t flags) 
+int p3BitDht::addKnownPeer( const RsPeerId &pid,
+                            const sockaddr_storage &addr, uint32_t flags )
 {
-    struct sockaddr_in addrv4;
-    sockaddr_clear(&addrv4);
+	sockaddr_in addrv4;
+	sockaddr_clear(&addrv4);
 
-	if (addr.ss_family != AF_INET)
-    {
-        if(addr.ss_family != AF_UNSPEC)
-        {
-            std::cerr << "p3BitDht::addKnownPeer() Warning! Non IPv4 Address - Cannot handle IPV6 Yet. addr.ss_family=" << addr.ss_family;
-            std::cerr << std::endl;
-        }
-
-		if (flags & NETASSIST_KNOWN_PEER_ONLINE)
-		{
-			std::cerr << "p3BitDht::addKnownPeer() Non IPv4 Address & ONLINE. Abort()ing.";
-			std::cerr << std::endl;
-			abort();
-		}
-	}
-	else
+	sockaddr_storage tmpaddr;
+	sockaddr_storage_copy(addr, tmpaddr);
+	if( !sockaddr_storage_isnull(addr) &&
+	         !sockaddr_storage_ipv6_to_ipv4(tmpaddr) )
 	{
-
-		// convert.
-		struct sockaddr_in *ap = (struct sockaddr_in *) &addr;
-	
-		addrv4.sin_family = ap->sin_family;
-		addrv4.sin_addr = ap->sin_addr;
-		addrv4.sin_port = ap->sin_port;	
+		std::cerr << __PRETTY_FUNCTION__ << " Error: got non IPv4 address!"
+		          << std::endl;
+		sockaddr_storage_dump(addr);
+		print_stacktrace();
+		return -EINVAL;
 	}
 
-	
-	
+	// convert.
+	struct sockaddr_in *ap = (struct sockaddr_in *) &tmpaddr;
+	addrv4.sin_family = ap->sin_family;
+	addrv4.sin_addr = ap->sin_addr;
+	addrv4.sin_port = ap->sin_port;
+
 	int p3type = 0;
 	int bdflags = 0;
 	bdId id;
@@ -295,7 +288,7 @@ int p3BitDht::addKnownPeer(const RsPeerId &pid, const struct sockaddr_storage &a
 
 	if (!isOwnId)
 	{
-		RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
+		RS_STACK_MUTEX(dhtMtx);
 		DhtPeerDetails *dpd = addInternalPeer_locked(pid, p3type);
 	
 	

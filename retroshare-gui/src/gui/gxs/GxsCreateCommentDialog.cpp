@@ -1,32 +1,28 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsCreateCommentDialog.cpp                       *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie   <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsCreateCommentDialog.h"
 #include "ui_GxsCreateCommentDialog.h"
-
 #include "util/HandleRichText.h"
 
+#include <QPushButton>
 #include <QMessageBox>
 #include <iostream>
 
@@ -39,8 +35,29 @@ GxsCreateCommentDialog::GxsCreateCommentDialog(TokenQueue *tokQ, RsGxsCommentSer
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(createComment()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 
+
 	/* fill in the available OwnIds for signing */
     ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	
+}
+
+void GxsCreateCommentDialog::loadComment(const QString &msgText, const QString &msgAuthor, const RsGxsId &msgAuthorId)
+{
+
+	setWindowTitle(tr("Reply to Comment") );
+	ui->titleLabel->setId(msgAuthorId);
+	ui->commentLabel->setText(msgText);
+
+	ui->avatarLabel->setGxsId(msgAuthorId);
+	ui->avatarLabel->setFrameType(AvatarWidget::NO_FRAME);
+
+	ui->replaytolabel->setId(msgAuthorId);
+	ui->replaytolabel->setText( tr("Replying to") + " @" + msgAuthor);
+	
+	ui->commentTextEdit->setPlaceholderText( tr("Type your reply"));
+	ui->buttonBox->button(QDialogButtonBox::Ok)->setText("Reply");
+	ui->signedLabel->setText("Reply as");
 }
 
 void GxsCreateCommentDialog::createComment()
@@ -88,7 +105,7 @@ void GxsCreateCommentDialog::createComment()
 	}//switch (ui->idChooser->getChosenId(authorId))
 
 	uint32_t token;
-	mCommentService->createComment(token, comment);
+	mCommentService->createNewComment(token, comment);
 	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
 	close();
 }

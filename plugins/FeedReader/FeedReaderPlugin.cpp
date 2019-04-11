@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare GUI is distributed under the following license:
- *
- *  Copyright (C) 2012 by Thunder
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * plugins/FeedReader/FeedReaderPlugin.cpp                                     *
+ *                                                                             *
+ * Copyright (C) 2012 by Thunder <retroshare.project@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QApplication>
 #include <QIcon>
@@ -56,7 +55,7 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	uint32_t RETROSHARE_PLUGIN_revision = RS_REVISION_NUMBER ;
+	uint32_t RETROSHARE_PLUGIN_revision = 0;
 
 	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
@@ -72,8 +71,8 @@ void FeedReaderPlugin::getPluginVersion(int& major, int& minor, int &build, int&
 {
 	major = RS_MAJOR_VERSION;
 	minor = RS_MINOR_VERSION;
-	build = RS_BUILD_NUMBER;
-	svn_rev = RS_REVISION_NUMBER;
+	build = RS_MINI_VERSION;
+	svn_rev = 0;
 }
 
 FeedReaderPlugin::FeedReaderPlugin()

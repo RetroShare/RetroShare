@@ -1,30 +1,34 @@
+################################################################################
+# libretroshare.pro                                                            #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Lesser General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
 CONFIG += staticlib
-CONFIG += create_prl
 CONFIG -= qt
 TARGET = retroshare
 TARGET_PRL = libretroshare
 DESTDIR = lib
 
-#CONFIG += dsdv
-
-retrotor {
-	DEFINES *= RETROTOR
-	CONFIG -= bitdht
-} else {
-	CONFIG += bitdht
-}
+!include("use_libretroshare.pri"):error("Including")
 
 # the dht stunner is used to obtain RS external ip addr. when it is natted
 # this system is unreliable and rs supports a newer and better one (asking connected peers)
 # CONFIG += useDhtStunner
-
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
@@ -97,6 +101,7 @@ HEADERS +=	tcponudp/udppeer.h \
 		tcponudp/tcpstream.h \
 		tcponudp/tou.h \
 		tcponudp/udprelay.h \
+		tcponudp/rsudpstack.h \
 		pqi/pqissludp.h \
 
 SOURCES +=	tcponudp/udppeer.cc \
@@ -150,6 +155,7 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsconfig.h \
 					retroshare/rsversion.h \
 					retroshare/rsservicecontrol.h \
+					retroshare/rsgxsdistsync.h 
 
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
@@ -187,12 +193,6 @@ linux-* {
 		}
 	}
 
-	#CONFIG += version_detail_bash_script
-
-	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
-    CONFIG += upnp_libupnp
-
 	# Check if the systems libupnp has been Debian-patched
 	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
 		# Normal libupnp
@@ -201,23 +201,14 @@ linux-* {
 		DEFINES *= PATCHED_LIBUPNP
 	}
 
-	PKGCONFIG *= libssl libupnp
-	PKGCONFIG *= libcrypto zlib
-	LIBS *= -lpthread -ldl
-}
+    PKGCONFIG *= libssl
+    equals(RS_UPNP_LIB, "upnp ixml threadutil"):PKGCONFIG *= libupnp
+    PKGCONFIG *= libcrypto zlib
+    no_sqlcipher:PKGCONFIG *= sqlite3
+    LIBS *= -ldl
 
-linux-* {
 	DEFINES *= PLUGIN_DIR=\"\\\"$${PLUGIN_DIR}\\\"\"
 	DEFINES *= DATA_DIR=\"\\\"$${DATA_DIR}\\\"\"
-
-	## where to put the librarys interface
-	#include_rsiface.path = "$${INC_DIR}"
-	#include_rsiface.files = $$PUBLIC_HEADERS
-	#INSTALLS += include_rsiface
-
-	## where to put the shared library itself
-	#target.path = "$$LIB_DIR"
-	#INSTALLS *= target
 }
 
 linux-g++ {
@@ -229,16 +220,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-    linux-* {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.sh
-    }
-    win32 {
-        QMAKE_EXTRA_TARGETS += write_version_detail
-        PRE_TARGETDEPS = write_version_detail
-        write_version_detail.commands = $$PWD/version_detail.bat
-    }
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ####################
@@ -252,8 +235,6 @@ win32-x-g++ {
 	QMAKE_AR = i586-mingw32msvc-ar
 	DEFINES *= STATICLIB WIN32
 
-	CONFIG += upnp_miniupnpc
-
         SSL_DIR=../../../../openssl
 	UPNPC_DIR = ../../../../miniupnpc-1.3
 	GPG_ERROR_DIR = ../../../../libgpg-error-1.7
@@ -263,13 +244,11 @@ win32-x-g++ {
 }
 ################################# Windows ##########################################
 
-win32 {
+win32-g++ {
 	QMAKE_CC = $${QMAKE_CXX}
 	OBJECTS_DIR = temp/obj
 	MOC_DIR = temp/moc
-	DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-	# This defines the platform to be WinXP or later and is needed for getaddrinfo (_WIN32_WINNT_WINXP)
-	DEFINES *= WINVER=0x0501
+    DEFINES *= STATICLIB
 
 	# Switch on extra warnings
 	QMAKE_CFLAGS += -Wextra
@@ -287,17 +266,8 @@ win32 {
 
 	DEFINES += USE_CMD_ARGS
 
-	CONFIG += upnp_miniupnpc
-
-	no_sqlcipher {
-		PKGCONFIG *= sqlite3
-		LIBS += -lsqlite3
-	} else {
-		LIBS += -lsqlcipher
-	}
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
+    wLibs = ws2_32 gdi32 uuid iphlpapi crypt32 ole32 winmm
+    LIBS += $$linkDynamicLibs(wLibs)
 }
 
 ################################# MacOSX ##########################################
@@ -306,21 +276,9 @@ mac {
 		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		#DEFINES = WINDOWS_SYS WIN32 STATICLIB MINGW
-		#DEFINES *= MINIUPNPC_VERSION=13
-
-		CONFIG += upnp_miniupnpc
-                CONFIG += c++11
-
-		# zeroconf disabled at the end of libretroshare.pro (but need the code)
-		#CONFIG += zeroconf
-		#CONFIG += zcnatassist
 
 		# Beautiful Hack to fix 64bit file access.
 		QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dfopen64=fopen -Dvstatfs64=vstatfs
-
-		#GPG_ERROR_DIR = ../../../../libgpg-error-1.7
-		#GPGME_DIR  = ../../../../gpgme-1.1.8
 
 		for(lib, LIB_DIR):LIBS += -L"$$lib"
 		for(bin, BIN_DIR):LIBS += -L"$$bin"
@@ -344,10 +302,6 @@ freebsd-* {
 	INCLUDEPATH *= /usr/local/include/glib-2.0
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-
-	# linux/bsd can use either - libupnp is more complete and packaged.
-	#CONFIG += upnp_miniupnpc 
-    CONFIG += upnp_libupnp
 }
 
 ################################# OpenBSD ##########################################
@@ -357,8 +311,6 @@ openbsd-* {
 	INCLUDEPATH += $$system(pkg-config --cflags glib-2.0 | sed -e "s/-I//g")
 
 	QMAKE_CXXFLAGS *= -Dfseeko64=fseeko -Dftello64=ftello -Dstat64=stat -Dstatvfs64=statvfs -Dfopen64=fopen
-
-	CONFIG += upnp_libupnp
 }
 
 ################################# Haiku ##########################################
@@ -370,7 +322,6 @@ haiku-* {
 	INCLUDEPATH *= $${OPENPGPSDK_DIR} ../openpgpsdk
 	DEFINES *= NO_SQLCIPHER
 	CONFIG += release
-	CONFIG += upnp_libupnp
 	DESTDIR = lib
 }
 
@@ -397,7 +348,9 @@ HEADERS +=	ft/ftchunkmap.h \
 			ft/ftturtlefiletransferitem.h 
 
 HEADERS += crypto/chacha20.h \
-				crypto/hashstream.h
+			  crypto/rsaes.h \
+				crypto/hashstream.h \
+				crypto/rscrypto.h
 
 HEADERS += directory_updater.h \
 				directory_list.h \
@@ -412,7 +365,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/authgpg.h \
 			pgp/pgphandler.h \
 			pgp/pgpkeyutil.h \
-			pgp/rsaes.h \
 			pgp/rscertificate.h \
 			pgp/pgpauxutils.h \
 			pqi/p3cfgmgr.h \
@@ -424,7 +376,6 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqos.h \
 			pqi/pqi.h \
 			pqi/pqi_base.h \
-			pqi/pqiarchive.h \
 			pqi/pqiassist.h \
 			pqi/pqibin.h \
 			pqi/pqihandler.h \
@@ -439,6 +390,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiperson.h \
 			pqi/pqipersongrp.h \
 			pqi/pqiservice.h \
+			pqi/pqiservicemonitor.h \
 			pqi/pqissl.h \
 			pqi/pqissllistener.h \
 			pqi/pqisslpersongrp.h \
@@ -463,12 +415,12 @@ HEADERS +=	rsserver/p3face.h \
 			rsserver/p3serverconfig.h
 
 HEADERS +=  grouter/groutercache.h \
-				grouter/rsgrouter.h \
+				retroshare/rsgrouter.h \
 				grouter/grouteritems.h \
 				grouter/p3grouter.h \
 				grouter/rsgroutermatrix.h \
 				grouter/groutertypes.h \
-				grouter/rsgrouterclient.h 
+				grouter/grouterclientservice.h
 
 HEADERS +=	rsitems/rsitem.h \
 			rsitems/itempriorities.h \
@@ -516,7 +468,7 @@ HEADERS +=  services/autoproxy/p3i2pbob.h \
 			services/p3discovery2.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
-			services/p3serviceinfo.cc \
+			services/p3serviceinfo.h  \
 
 HEADERS +=	turtle/p3turtle.h \
 			turtle/rsturtleitem.h \
@@ -526,9 +478,9 @@ HEADERS +=	turtle/p3turtle.h \
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
 			util/rsmemory.h \
-			util/rscompress.h \
 			util/smallobject.h \
 			util/rsdir.h \
+			util/argstream.h \
 			util/rsdiscspace.h \
 			util/rsnet.h \
 			util/extaddrfinder.h \
@@ -540,17 +492,16 @@ HEADERS +=	util/folderiterator.h \
 			util/rsstring.h \
 			util/rsstd.h \
 			util/rsthreads.h \
-			util/rsversioninfo.h \
 			util/rswin.h \
 			util/rsrandom.h \
-			util/pugiconfig.h \  
 			util/rsmemcache.h \
 			util/rstickevent.h \
 			util/rsrecogn.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h
+            util/cxx11retrocompat.h \
+            util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -561,10 +512,12 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-			ft/ftturtlefiletransferitem.cc 
+            ft/ftturtlefiletransferitem.cc
 
 SOURCES += crypto/chacha20.cpp \
-			  crypto/hashstream.cc
+           crypto/hashstream.cc\
+           crypto/rsaes.cc \
+           crypto/rscrypto.cpp
 
 SOURCES += chat/distantchat.cc \
 			  chat/p3chatservice.cc \
@@ -583,7 +536,6 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/p3netmgr.cc \
 			pqi/p3notify.cc \
 			pqi/pqiqos.cc \
-			pqi/pqiarchive.cc \
 			pqi/pqibin.cc \
 			pqi/pqihandler.cc \
 			pqi/p3historymgr.cc \
@@ -655,6 +607,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			rsitems/rsgxsupdateitems.cc \
 			rsitems/rsserviceinfoitems.cc \
 
+
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
             services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
@@ -677,7 +630,6 @@ SOURCES +=	turtle/p3turtle.cc \
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
 			util/rsexpr.cc \
-			util/rscompress.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
 			util/rsmemory.cc \
@@ -689,27 +641,20 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsprint.cc \
 			util/rsstring.cc \
 			util/rsthreads.cc \
-			util/rsversioninfo.cc \
-			util/rswin.cc \
-			util/rsaes.cc \
 			util/rsrandom.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
-			util/rstime.cc
+            util/rstime.cc \
+            util/rsurl.cc
 
-
-upnp_miniupnpc {
+equals(RS_UPNP_LIB, miniupnpc) {
 	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
 	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
-}
-
-upnp_libupnp {
+} else {
 	HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
 	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
 	DEFINES *= RS_USE_LIBUPNP
 }
-
-
 
 zeroconf {
 
@@ -743,42 +688,46 @@ DEFINES *= SQLITE_HAS_CODEC
 DEFINES *= GXS_ENABLE_SYNC_MSGS
 
 HEADERS += rsitems/rsnxsitems.h \
+	rsitems/rsgxsitems.h \
+	retroshare/rstokenservice.h \
+	retroshare/rsgxsservice.h \
+	retroshare/rsgxsflags.h \
+	retroshare/rsgxsifacetypes.h \
+	retroshare/rsgxsiface.h \
+	retroshare/rsgxscommon.h \
+	retroshare/rsgxsifacehelper.h \
+	util/retrodb.h \
+	util/rsdbbind.h \
+	util/contentvalue.h \
+	gxs/rsgxsutil.h \
+	gxs/gxssecurity.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
 	gxs/rsdataservice.h \
 	gxs/rsgxsnetservice.h \
-	retroshare/rsgxsflags.h \
-	retroshare/rsgxsifacetypes.h \
+	gxs/rsgxsnettunnel.h \
 	gxs/rsgenexchange.h \
+	gxs/rsnxs.h \
 	gxs/rsnxsobserver.h \
 	gxs/rsgxsdata.h \
-	retroshare/rstokenservice.h \
 	gxs/rsgxsdataaccess.h \
-	retroshare/rsgxsservice.h \
-	rsitems/rsgxsitems.h \
-	util/retrodb.h \
-	util/rsdbbind.h \
-	gxs/rsgxsutil.h \
-	util/contentvalue.h \
-	gxs/gxssecurity.h \
-	gxs/rsgxsifacehelper.h \
 	gxs/gxstokenqueue.h \
 	gxs/rsgxsnetutils.h \
-	gxs/rsgxsiface.h \
 	gxs/rsgxsrequesttypes.h
 
 
 SOURCES += rsitems/rsnxsitems.cc \
-	gxs/rsdataservice.cc \
-	gxs/rsgenexchange.cc \
-	gxs/rsgxsnetservice.cc \
-	gxs/rsgxsdata.cc \
 	rsitems/rsgxsitems.cc \
-	gxs/rsgxsdataaccess.cc \
 	util/retrodb.cc \
 	util/contentvalue.cc \
 	util/rsdbbind.cc \
 	gxs/gxssecurity.cc \
+	gxs/rsgxsdataaccess.cc \
+	gxs/rsdataservice.cc \
+	gxs/rsgenexchange.cc \
+	gxs/rsgxsnetservice.cc \
+	gxs/rsgxsnettunnel.cc \
+	gxs/rsgxsdata.cc \
 	gxs/gxstokenqueue.cc \
 	gxs/rsgxsnetutils.cc \
 	gxs/rsgxsutil.cc \
@@ -793,14 +742,19 @@ SOURCES += gxstunnel/p3gxstunnel.cc \
 				gxstunnel/rsgxstunnelitems.cc 
 
 # new serialization code
-HEADERS += serialiser/rsserializer.h \
-           serialiser/rstypeserializer.h
+HEADERS += serialiser/rsserializable.h \
+           serialiser/rsserializer.h \
+           serialiser/rstypeserializer.h \
+           util/rsjson.h
 
-SOURCES += serialiser/rsserializer.cc \
-           serialiser/rstypeserializer.cc 
+SOURCES += serialiser/rsserializable.cc \
+           serialiser/rsserializer.cc \
+           serialiser/rstypeserializer.cc \
+           util/rsjson.cc
 
 # Identity Service
 HEADERS += retroshare/rsidentity.h \
+    retroshare/rsreputations.h \
 	gxs/rsgixs.h \
 	services/p3idservice.h \
 	rsitems/rsgxsiditems.h \
@@ -885,8 +839,91 @@ rs_gxs_trans {
     SOURCES += gxstrans/p3gxstransitems.cc gxstrans/p3gxstrans.cc
 }
 
+rs_jsonapi {
+    JSONAPI_GENERATOR_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/)
+    JSONAPI_GENERATOR_OUT=$$clean_path($${RS_BUILD_PATH}/jsonapi-generator/src/)
+    isEmpty(JSONAPI_GENERATOR_EXE) {
+        win32 {
+            CONFIG(release, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/release/jsonapi-generator.exe)
+            }
+        CONFIG(debug, debug|release) {
+                JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/debug/jsonapi-generator.exe)
+            }
+        } else {
+            JSONAPI_GENERATOR_EXE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator)
+        }
+    }
 
+    DOXIGEN_INPUT_DIRECTORY=$$clean_path($${PWD})
+    DOXIGEN_CONFIG_SRC=$$clean_path($${RS_SRC_PATH}/jsonapi-generator/src/jsonapi-generator-doxygen.conf)
+    DOXIGEN_CONFIG_OUT=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-generator-doxygen-final.conf)
+    WRAPPERS_INCL_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-includes.inl)
+    WRAPPERS_REG_FILE=$$clean_path($${JSONAPI_GENERATOR_OUT}/jsonapi-wrappers.inl)
 
+    no_rs_cross_compiling {
+        DUMMYRESTBEDINPUT = FORCE
+        CMAKE_GENERATOR_OVERRIDE=""
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        genrestbedlib.name = Generating libresbed.
+        genrestbedlib.input = DUMMYRESTBEDINPUT
+        genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
+        genrestbedlib.CONFIG += target_predeps combine
+        genrestbedlib.variable_out = PRE_TARGETDEPS
+        genrestbedlib.commands = \
+            cd $${RS_SRC_PATH} && \
+            git submodule update --init --recommend-shallow supportlibs/restbed && \
+            cd $${RESTBED_SRC_PATH} && \
+            git submodule update --init --recommend-shallow dependency/asio && \
+            git submodule update --init --recommend-shallow dependency/catch && \
+            git submodule update --init --recommend-shallow dependency/kashmir && \
+            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
+            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
+            make
+        QMAKE_EXTRA_COMPILERS += genrestbedlib
+
+        RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
+        genrestbedheader.name = Generating restbed header.
+        genrestbedheader.input = genrestbedlib.output
+        genrestbedheader.output = $${RESTBED_HEADER_FILE}
+        genrestbedheader.CONFIG += target_predeps combine no_link
+        genrestbedheader.variable_out = HEADERS
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        QMAKE_EXTRA_COMPILERS += genrestbedheader
+    }
+
+    INCLUDEPATH *= $${JSONAPI_GENERATOR_OUT}
+    DEPENDPATH *= $${JSONAPI_GENERATOR_OUT}
+    APIHEADERS = $$files($${RS_SRC_PATH}/libretroshare/src/retroshare/*.h)
+    #Make sure that the jsonapigenerator executable are ready
+    APIHEADERS += $${JSONAPI_GENERATOR_EXE}
+
+    genjsonapi.name = Generating jsonapi headers.
+    genjsonapi.input = APIHEADERS
+    genjsonapi.output = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
+    genjsonapi.clean = $${WRAPPERS_INCL_FILE} $${WRAPPERS_REG_FILE}
+    genjsonapi.CONFIG += target_predeps combine no_link
+    genjsonapi.variable_out = HEADERS
+    genjsonapi.commands = \
+        mkdir -p $${JSONAPI_GENERATOR_OUT} && \
+        cp $${DOXIGEN_CONFIG_SRC} $${DOXIGEN_CONFIG_OUT} && \
+        echo OUTPUT_DIRECTORY=$${JSONAPI_GENERATOR_OUT} >> $${DOXIGEN_CONFIG_OUT} && \
+        echo INPUT=$${DOXIGEN_INPUT_DIRECTORY} >> $${DOXIGEN_CONFIG_OUT} && \
+        doxygen $${DOXIGEN_CONFIG_OUT} && \
+        $${JSONAPI_GENERATOR_EXE} $${JSONAPI_GENERATOR_SRC} $${JSONAPI_GENERATOR_OUT};
+    QMAKE_EXTRA_COMPILERS += genjsonapi
+
+    # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
+    QMAKE_EXTRA_TARGETS += libretroshare
+
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h
+    SOURCES += jsonapi/jsonapi.cpp
+}
+
+rs_deep_search {
+    HEADERS += deep_search/deep_search.h
+}
 
 ###########################################################################################################
 # OLD CONFIG OPTIONS.
@@ -925,28 +962,19 @@ test_bitdht {
 ################################# Android #####################################
 
 android-* {
-## ifaddrs is missing on Android to add them don't use the one from
-## https://github.com/morristech/android-ifaddrs
-## because it crash, use QNetworkInterface from Qt instead
-    CONFIG *= qt
-    QT *= network
-
+## TODO: This probably disable largefile support and maybe is not necessary with
+## __ANDROID_API__ >= 24 hence should be made conditional or moved to a
+## compatibility header
     DEFINES *= "fopen64=fopen"
     DEFINES *= "fseeko64=fseeko"
     DEFINES *= "ftello64=ftello"
-    LIBS *= -lbz2 -lupnp -lixml -lthreadutil -lsqlite3
 
-## Static library are verysensible to order in command line, has to be in the
-## end of file for this reason
+## Static library are very susceptible to order in command line
+    sLibs = bz2 $$RS_UPNP_LIB $$RS_SQL_LIB ssl crypto
 
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lsqlcipher
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlcipher.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lssl
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libssl.a
-
-    LIBS += -L$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/ -lcrypto
-    PRE_TARGETDEPS += $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libcrypto.a
+    LIBS += $$linkStaticLibs(sLibs)
+    PRE_TARGETDEPS += $$pretargetStaticLibs(sLibs)
 
     HEADERS += util/androiddebug.h
 }
+

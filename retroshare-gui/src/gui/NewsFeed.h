@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/NewsFeed.h                                                              *
+ *                                                                             *
+ * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _NEWS_FEED_DIALOG_H
 #define _NEWS_FEED_DIALOG_H
@@ -29,6 +28,25 @@
 #include <retroshare-gui/RsAutoUpdatePage.h>
 
 #define IMAGE_NEWSFEED ":/icons/plugins_128.png"
+
+const uint32_t NEWSFEED_PEERLIST =       0x0001;
+
+const uint32_t NEWSFEED_FORUMNEWLIST =   0x0002;
+const uint32_t NEWSFEED_FORUMMSGLIST =   0x0003;
+const uint32_t NEWSFEED_CHANNELNEWLIST = 0x0004;
+//const uint32_t NEWSFEED_CHANNELMSGLIST = 0x0005;
+#if 0
+const uint32_t NEWSFEED_BLOGNEWLIST =    0x0006;
+const uint32_t NEWSFEED_BLOGMSGLIST =    0x0007;
+#endif
+
+const uint32_t NEWSFEED_MESSAGELIST =      0x0008;
+const uint32_t NEWSFEED_CHATMSGLIST =      0x0009;
+const uint32_t NEWSFEED_SECLIST =          0x000a;
+const uint32_t NEWSFEED_POSTEDNEWLIST =    0x000b;
+const uint32_t NEWSFEED_POSTEDMSGLIST =    0x000c;
+const uint32_t NEWSFEED_CIRCLELIST    =    0x000d;
+const uint32_t NEWSFEED_CHANNELPUBKEYLIST= 0x000e;
 
 namespace Ui {
 class NewsFeed;
@@ -102,6 +120,7 @@ private:
 	void addFeedItemChannelNew(const RsFeedItem &fi);
 //	void addFeedItemChannelUpdate(const RsFeedItem &fi);
 	void addFeedItemChannelMsg(const RsFeedItem &fi);
+	void addFeedItemChannelPublishKey(const RsFeedItem &fi);
 
 	void addFeedItemForumNew(const RsFeedItem &fi);
 //	void addFeedItemForumUpdate(const RsFeedItem &fi);

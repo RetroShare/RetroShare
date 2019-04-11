@@ -1,29 +1,25 @@
-/*
- * "$Id: pqinetwork.cc,v 1.18 2007-04-15 18:45:18 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright (C) 2004-2006  Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqinetwork.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifdef WINDOWS_SYS
 #	include "util/rswin.h"
 #	include "util/rsmemory.h"
@@ -41,6 +37,7 @@
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
 #include "util/rsnet.h"
+#include "util/stacktrace.h"
 
 static struct RsLog::logInfo pqinetzoneInfo = {RsLog::Default, "pqinet"};
 #define pqinetzone &pqinetzoneInfo
@@ -335,15 +332,17 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 	struct ifaddrs *ifsaddrs, *ifa;
 	if(getifaddrs(&ifsaddrs) != 0) 
 	{
-	   std::cerr << "FATAL ERROR: getLocalAddresses failed!" << std::endl;
-	   return false ;
+		std::cerr << __PRETTY_FUNCTION__ << " FATAL ERROR: " << errno << " "
+		          << strerror(errno) << std::endl;
+		print_stacktrace();
+		return false;
 	}
 	for ( ifa = ifsaddrs; ifa; ifa = ifa->ifa_next )
 		if ( ifa->ifa_addr && (ifa->ifa_flags & IFF_UP) )
 		{
 			sockaddr_storage tmp;
 			sockaddr_storage_clear(tmp);
-			if (sockaddr_storage_copyip(tmp, * reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
+			if (sockaddr_storage_copyip(tmp, *reinterpret_cast<sockaddr_storage*>(ifa->ifa_addr)))
 				addrs.push_back(tmp);
 		}
 	freeifaddrs(ifsaddrs);
@@ -438,43 +437,17 @@ int unix_fcntl_nonblock(int fd)
 }
 
 
-int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
+int unix_connect(int fd, const sockaddr_storage &serv_addr)
 {
 #ifdef NET_DEBUG
-	std::cerr << "unix_connect()";
-	std::cerr << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
-	const struct sockaddr_storage *ss_addr = (struct sockaddr_storage *) serv_addr;
-	socklen_t len = socklen;
-
-	switch (ss_addr->ss_family)
-	{
-		case AF_INET:
-			len = sizeof(struct sockaddr_in);
-			break;
-		case AF_INET6:
-			len = sizeof(struct sockaddr_in6);
-			break;
-	}
-
-	if (len > socklen)
-	{
-		std::cerr << "unix_connect() ERROR len > socklen";
-		std::cerr << std::endl;
-
-		len = socklen;
-		//return EINVAL;
-	}
-
-	int ret = connect(fd, serv_addr, len);
+	int ret = connect( fd, (const struct sockaddr *) &serv_addr,
+	                   sizeof(struct sockaddr_in6) );
 
 /******************* WINDOWS SPECIFIC PART ******************/
 #ifdef WINDOWS_SYS // WINDOWS
-
-#ifdef NET_DEBUG
-	std::cerr << "unix_connect()" << std::endl;
-#endif
 	if (ret != 0)
 	{
 		errno = WinToUnixError(WSAGetLastError());

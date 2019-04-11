@@ -1,41 +1,26 @@
-/* Copyright (C) 2005-2010, Thorvald Natvig <thorvald@natvig.com>
-
-   All rights reserved.
-
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-
-   - Redistributions of source code must retain the above copyright notice,
-     this list of conditions and the following disclaimer.
-   - Redistributions in binary form must reproduce the above copyright notice,
-     this list of conditions and the following disclaimer in the documentation
-     and/or other materials provided with the distribution.
-   - Neither the name of the Mumble Developers nor the names of its
-     contributors may be used to endorse or promote products derived from this
-     software without specific prior written permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-   ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR
-   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-   PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-   PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-   LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-   NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
+/*******************************************************************************
+ * plugins/VOIP/gui/AudioWizard.cpp                                            *
+ *                                                                             *
+ * Copyright (C) 2005-2010 Thorvald Natvig <thorvald@natvig.com>               *
+ * Copyright (C) 2012 by Retroshare Team <retroshare.project@gmail.com>        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <QTimer>
 
 #include "AudioWizard.h"
-//#include "AudioInput.h"
-//#include "Global.h"
-//#include "Settings.h"
-//#include "Log.h"
-//#include "MainWindow.h"
 #include "audiodevicehelper.h"
 #include "interface/rsVOIP.h"
 
@@ -130,23 +115,6 @@ AudioWizard::AudioWizard(QWidget *p) : QWizard(p) {
 	ticker->start(20);
         connect( ticker, SIGNAL( timeout ( ) ), this, SLOT( on_Ticker_timeout() ) );
 }
-
-/*bool AudioWizard::eventFilter(QObject *obj, QEvent *evt) {
-	if ((evt->type() == QEvent::MouseButtonPress) ||
-	        (evt->type() == QEvent::MouseMove)) {
-		QMouseEvent *qme = dynamic_cast<QMouseEvent *>(evt);
-		if (qme) {
-			if (qme->buttons() & Qt::LeftButton) {
-				QPointF qpf = qgvView->mapToScene(qme->pos());
-				fX = static_cast<float>(qpf.x());
-				fY = static_cast<float>(qpf.y());
-			}
-		}
-	}
-	return QWizard::eventFilter(obj, evt);
-}*/
-
-
 
 void AudioWizard::on_qsMaxAmp_valueChanged(int v) {
         rsVOIP->setVoipiMinLoudness(qMin(v, 30000));
@@ -266,44 +234,6 @@ void AudioWizard::on_qrContinuous_clicked(bool on) {
                 bTransmitChanged = true;
         }
 }
-
-/*void AudioWizard::on_skwPTT_keySet(bool valid, bool last) {
-	if (valid)
-		qrPTT->setChecked(true);
-	else if (qrPTT->isChecked())
-		qrAmplitude->setChecked(true);
-	updateTriggerWidgets(valid);
-	bTransmitChanged = true;
-
-	if (last) {
-
-		const QList<QVariant> &buttons = skwPTT->getShortcut();
-		QList<Shortcut> ql;
-		bool found = false;
-		foreach(Shortcut s, g.s.qlShortcuts) {
-			if (s.iIndex == g.mw->gsPushTalk->idx) {
-				if (buttons.isEmpty())
-					continue;
-				else if (! found) {
-					s.qlButtons = buttons;
-					found = true;
-				}
-			}
-			ql << s;
-		}
-		if (! found && ! buttons.isEmpty()) {
-			Shortcut s;
-			s.iIndex = g.mw->gsPushTalk->idx;
-			s.bSuppress = false;
-			s.qlButtons = buttons;
-			ql << s;
-		}
-		g.s.qlShortcuts = ql;
-		GlobalShortcutEngine::engine->bNeedRemap = true;
-		GlobalShortcutEngine::engine->needRemap();
-	}
-}*/
-
 
 void AudioWizard::updateTriggerWidgets(bool vad_on) {
         if (!vad_on)

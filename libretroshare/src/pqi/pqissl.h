@@ -1,30 +1,25 @@
-/*
- * "$Id: pqissl.h,v 1.18 2007-03-11 14:54:22 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissl.h                                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_SSL_HEADER
 #define MRK_PQI_SSL_HEADER
 
@@ -81,7 +76,7 @@ class cert;
 
 class pqissllistener;
 class p3LinkMgr;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 class pqissl: public NetBinInterface
 {
@@ -114,16 +109,13 @@ virtual bool cansend(uint32_t usec);
 
 virtual int close(); /* BinInterface version of reset() */
 virtual RsFileHash gethash(); /* not used here */
-virtual bool bandwidthLimited() { return true ; } // replace by !sameLAN to avoid bandwidth limiting on LAN
+virtual bool bandwidthLimited() { return true ; }
 
 public:
 
-/* Completion of the SSL connection, 
- * this is public, so it can be called by
- * the listener (should make friends??) 
- */
+/// initiate incoming connection.
+int accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr);
 
-int	accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
 void getCryptoParams(RsPeerCryptoParams& params) ;
 bool actAsServer();
 
@@ -139,7 +131,10 @@ protected:
 	RsMutex mSslMtx; /**** MUTEX protects data and fn below ****/
 
 virtual int reset_locked();
-int	accept_locked(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr); 
+
+	/// initiate incoming connection.
+	int accept_locked( SSL *ssl, int fd,
+	                   const sockaddr_storage& foreign_addr );
 
 	// A little bit of information to describe 
 	// the SSL state, this is needed
@@ -200,14 +195,14 @@ bool  	CheckConnectionTimeout();
 	int attempt_ts;
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
-	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
+	rstime_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 	uint32_t mConnectDelay;
-	time_t   mConnectTS;
+	rstime_t   mConnectTS;
 	uint32_t mConnectTimeout;
-	time_t   mTimeoutTS;
+	rstime_t   mTimeoutTS;
 
 private:
 	// ssl only fns.

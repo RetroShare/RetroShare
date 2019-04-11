@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/pqi: p3peermgr.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3peermgr.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_PEER_MANAGER_HEADER
 #define MRK_PQI_PEER_MANAGER_HEADER
 
@@ -69,8 +65,8 @@ const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
  * remove locations offline since 90 days
  * stopt sending locations via discovery when offline for +30 days
  */
-const time_t RS_PEER_OFFLINE_DELETE  = (90 * 24 * 3600);
-const time_t RS_PEER_OFFLINE_NO_DISC = (30 * 24 * 3600);
+const rstime_t RS_PEER_OFFLINE_DELETE  = (90 * 24 * 3600);
+const rstime_t RS_PEER_OFFLINE_NO_DISC = (30 * 24 * 3600);
 
 class peerState
 {
@@ -89,7 +85,7 @@ class peerState
         struct sockaddr_storage serveraddr;
         std::string dyndns;
 
-        time_t lastcontact;
+        rstime_t lastcontact;
 
 	/* list of addresses from various sources */
 	pqiIpAddrSet ipAddrs;
@@ -107,7 +103,7 @@ class peerState
 };
 
 class RsNodeGroupItem;
-class RsGroupInfo;
+struct RsGroupInfo;
 
 std::string textPeerState(peerState &state);
 
@@ -119,17 +115,20 @@ class p3NetMgrIMPL;
 
 class p3PeerMgr
 {
-	public:
+public:
 
-        p3PeerMgr() { return; }
-virtual ~p3PeerMgr() { return; }
+	p3PeerMgr() {}
+	virtual ~p3PeerMgr() {}
 
-virtual bool 	addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
-					uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL, 
-                    time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT)) = 0;
-virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
+	virtual bool addFriend( const RsPeerId &ssl_id, const RsPgpId &gpg_id,
+	                        uint32_t netMode = RS_NET_MODE_UDP,
+	                        uint16_t vsDisc = RS_VS_DISC_FULL,
+	                        uint16_t vsDht = RS_VS_DHT_FULL,
+	                        rstime_t lastContact = 0,
+	                        ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT) ) = 0;
 
-virtual bool	isFriend(const RsPeerId& ssl_id) = 0;
+	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
+	virtual bool isFriend(const RsPeerId& ssl_id) = 0;
 
 virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids) = 0;
 virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
@@ -146,7 +145,7 @@ virtual bool    getGroupInfoByName(const std::string& groupName, RsGroupInfo &gr
 virtual bool    getGroupInfoList(std::list<RsGroupInfo> &groupInfoList) = 0;
 virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list<RsPgpId> &peerIds, bool assign) = 0;
 
-    virtual bool resetOwnExternalAddressList() = 0 ;
+	virtual bool resetOwnExternalAddressList() = 0 ;
 
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPgpId& gpg_id) =0;
 	virtual ServicePermissionFlags servicePermissionFlags(const RsPeerId& ssl_id) =0;
@@ -160,6 +159,7 @@ virtual bool    assignPeersToGroup(const RsNodeGroupId &groupId, const std::list
 	 * 3) p3disc  - reasonable
 	 */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator) = 0;
 virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr) = 0;
 virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns) = 0;
@@ -241,7 +241,7 @@ public:
 
     virtual bool addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
                               uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL,
-                              time_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
+                              rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);
 
@@ -274,6 +274,7 @@ public:
      * 3) p3disc  - reasonable
      */
 
+	virtual bool addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator);
     virtual bool 	setLocalAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool 	setExtAddress(const RsPeerId &id, const struct sockaddr_storage &addr);
     virtual bool    setDynDNS(const RsPeerId &id, const std::string &dyndns);
@@ -354,9 +355,9 @@ public:
     bool 	setOwnNetworkMode(uint32_t netMode);
     bool 	setOwnVisState(uint16_t vs_disc, uint16_t vs_dht);
 
-    int 	getConnectAddresses(const RsPeerId &id,
-                                struct sockaddr_storage &lAddr, struct sockaddr_storage &eAddr,
-                                pqiIpAddrSet &histAddrs, std::string &dyndns);
+	int getConnectAddresses( const RsPeerId &id, sockaddr_storage &lAddr,
+	                         sockaddr_storage &eAddr, pqiIpAddrSet &histAddrs,
+	                         std::string &dyndns );
 
 
 protected:

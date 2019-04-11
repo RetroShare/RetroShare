@@ -1,8 +1,29 @@
+/*******************************************************************************
+ * libretroshare/src/pqi: pqinetstatebox.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 Retroshare Team <retroshare.project@gmail.com>               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "retroshare/rsconfig.h"
 #include "util/rsnet.h"
 #include "pqi/pqinetstatebox.h"
-#include "time.h"
+#include "util/rstime.h"
 
 #ifdef RS_USE_BITDHT
 #include "bitdht/bdiface.h"
@@ -170,7 +191,7 @@ void pqiNetStateBox::reset()
 {
 
 	mStatusOkay = false;
-	//time_t mStatusTS;
+	//rstime_t mStatusTS;
 	
 	mNetworkMode = RSNET_NETWORK_UNKNOWN;
 	mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
@@ -223,7 +244,7 @@ int pqiNetStateBox::statusOkay()
 	{
 		return 0;
 	}
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mStatusTS > NETSTATE_TIMEOUT)
 	{
 		return 0;
@@ -247,7 +268,7 @@ void pqiNetStateBox::clearOldNetworkData()
 {
 #ifdef RS_USE_DHT_STUNNER
 	/* check if any measurements are too old to consider */
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	if (now - mStunProxyTS > NETSTATE_PARAM_TIMEOUT)
 	{
 		mStunProxySet = false;
@@ -271,7 +292,7 @@ void pqiNetStateBox::clearOldNetworkData()
 void pqiNetStateBox::determineNetworkState()
 {
 	clearOldNetworkData();
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* now we use the remaining valid input to determine network state */
 

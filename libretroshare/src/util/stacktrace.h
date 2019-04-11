@@ -1,43 +1,57 @@
-/*
- * stacktrace.h
- *
- * Copyright (C) 2016 Gioacchino Mazzurco <gio@eigenlab.org>
- * Copyright (C) 2008 Timo Bingmann http://idlebox.net/
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- */
+/*******************************************************************************
+ * libretroshare                                                               *
+ *                                                                             *
+ * Copyright (C) 2016-2018 Gioacchino Mazzurco <gio@eigenlab.org>              *
+ * Copyright (C) 2008 Timo Bingmann http://idlebox.net/                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
-#ifndef _STACKTRACE_H_
-#define _STACKTRACE_H_
-
+#include <cstdio>
+#include <csignal>
+#include <cstdlib>
 #include <stdio.h>
 
 #if defined(__linux__) && defined(__GLIBC__)
 
-#include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
 
-/** Print a demangled stack backtrace of the caller function to FILE* out. */
-static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames = 63)
+/**
+ * @brief Print a backtrace to FILE* out.
+ * @param[in] demangle true to demangle C++ symbols requires malloc working, in
+ *	some patological cases like a SIGSEGV received during a malloc this would
+ *	cause deadlock so pass false if you may be in such situation (like in a
+ *	SIGSEGV handler )
+ * @param[in] out output file
+ * @param[in] maxFrames maximum number of stack frames you want to bu printed
+ */
+static inline void print_stacktrace(
+        bool demangle = true, FILE *out = stderr, unsigned int maxFrames = 63 )
 {
+	if(!out)
+	{
+		fprintf(stderr, "print_stacktrace invalid output file!\n");
+		return;
+	}
+
 	fprintf(out, "stack trace:\n");
 
 	// storage array for stack trace address data
-	void* addrlist[max_frames+1];
+	void* addrlist[maxFrames+1];
 
 	// retrieve current stack addresses
 	int addrlen = backtrace(addrlist, sizeof(addrlist) / sizeof(void*));
@@ -45,6 +59,19 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 	if (addrlen == 0)
 	{
 		fprintf(out, "  <empty, possibly corrupt>\n");
+		return;
+	}
+
+	if(!demangle)
+	{
+		int outFd = fileno(out);
+		if(outFd < 0)
+		{
+			fprintf(stderr, "print_stacktrace invalid output file descriptor!\n");
+			return;
+		}
+
+		backtrace_symbols_fd(addrlist, addrlen, outFd);
 		return;
 	}
 
@@ -62,8 +89,8 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 	{
 		char *begin_name = 0, *begin_offset = 0, *end_offset = 0;
 
-		// find parentheses and +address offset surrounding the mangled name:
-		// ./module(function+0x15c) [0x8048a6d]
+		/* find parentheses and +address offset surrounding the mangled
+		 * name: ./module(function+0x15c) [0x8048a6d] */
 		for (char *p = symbollist[i]; *p; ++p)
 		{
 			if (*p == '(') begin_name = p;
@@ -75,7 +102,8 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 			}
 		}
 
-		if (begin_name && begin_offset && end_offset && begin_name < begin_offset)
+		if ( begin_name && begin_offset && end_offset
+		     && begin_name < begin_offset )
 		{
 			*begin_name++ = '\0';
 			*begin_offset++ = '\0';
@@ -86,17 +114,20 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 			// __cxa_demangle():
 
 			int status;
-			char* ret = abi::__cxa_demangle(begin_name, funcname, &funcnamesize, &status);
+			char* ret = abi::__cxa_demangle(
+			            begin_name, funcname, &funcnamesize, &status );
 			if (status == 0)
 			{
 				funcname = ret; // use possibly realloc()-ed string
-				fprintf(out, "  %s : %s+%s\n", symbollist[i], funcname, begin_offset);
+				fprintf( out, "  %s : %s+%s\n",
+				         symbollist[i], funcname, begin_offset );
 			}
 			else
 			{
 				// demangling failed. Output function name as a C function with
 				// no arguments.
-				fprintf(out, "  %s : %s()+%s\n", symbollist[i], begin_name, begin_offset);
+				fprintf( out, "  %s : %s()+%s\n",
+				         symbollist[i], begin_name, begin_offset );
 			}
 		}
 		else
@@ -111,12 +142,61 @@ static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames 
 }
 
 #else // defined(__linux__) && defined(__GLIBC__)
-static inline void print_stacktrace(FILE *out = stderr, unsigned int max_frames = 63)
+static inline void print_stacktrace(
+        bool demangle = true, FILE *out = stderr, unsigned int max_frames = 63 )
 {
+	(void) demangle;
 	(void) max_frames;
 
 	fprintf(out, "TODO: 2016/01/01 print_stacktrace not implemented yet for WINDOWS_SYS and ANDROID\n");
 }
 #endif // defined(__linux__) && defined(__GLIBC__)
 
-#endif // _STACKTRACE_H_
+/**
+ * @brief CrashStackTrace catch crash signals and print stack trace
+ * Inspired too https://oroboro.com/stack-trace-on-crash/
+ */
+struct CrashStackTrace
+{
+	CrashStackTrace()
+	{
+		signal(SIGABRT, &CrashStackTrace::abortHandler);
+		signal(SIGSEGV, &CrashStackTrace::abortHandler);
+		signal(SIGILL,  &CrashStackTrace::abortHandler);
+		signal(SIGFPE,  &CrashStackTrace::abortHandler);
+#ifdef SIGBUS
+		signal(SIGBUS,  &CrashStackTrace::abortHandler);
+#endif
+	}
+
+	static void abortHandler(int signum)
+	{
+		// associate each signal with a signal name string.
+		const char* name = nullptr;
+		switch(signum)
+		{
+		case SIGABRT: name = "SIGABRT";  break;
+		case SIGSEGV: name = "SIGSEGV";  break;
+		case SIGILL:  name = "SIGILL";   break;
+		case SIGFPE:  name = "SIGFPE";   break;
+#ifdef SIGBUS
+		case SIGBUS:  name = "SIGBUS";   break;
+#endif
+		}
+
+		/** Notify the user which signal was caught. We use printf, because this
+		 * is the most basic output function. Once you get a crash, it is
+		 * possible that more complex output systems like streams and the like
+		 * may be corrupted. So we make the most basic call possible to the
+		 * lowest level, most standard print function. */
+		if(name)
+			fprintf(stderr, "Caught signal %d (%s)\n", signum, name);
+		else
+			fprintf(stderr, "Caught signal %d\n", signum);
+
+		print_stacktrace(false);
+
+		exit(-signum);
+	}
+};
+

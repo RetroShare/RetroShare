@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/ApiServer.cpp                                                 *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "ApiServer.h"
 
 #include <retroshare/rspeers.h>
@@ -17,7 +38,7 @@
 #include "ChannelsHandler.h"
 #include "StatsHandler.h"
 
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
     #include "SettingsHandler.h"
 #endif
 
@@ -240,9 +261,9 @@ public:
 	    mTransfersHandler(sts, ifaces.mFiles, ifaces.mPeers, *ifaces.mNotify),
         mChatHandler(sts, ifaces.mNotify, ifaces.mMsgs, ifaces.mPeers, ifaces.mIdentity, &mPeersHandler),
         mApiPluginHandler(sts, ifaces),
-	    mChannelsHandler(ifaces.mGxsChannels),
+	    mChannelsHandler(*ifaces.mGxsChannels),
 	    mStatsHandler()
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 	    ,mSettingsHandler(sts)
 #endif
     {
@@ -272,7 +293,7 @@ public:
                                   &ChannelsHandler::handleRequest);
 		router.addResourceHandler("stats", dynamic_cast<ResourceRouter*>(&mStatsHandler),
 		                          &StatsHandler::handleRequest);
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 		router.addResourceHandler("settings", dynamic_cast<ResourceRouter*>(&mSettingsHandler),
 		                                  &SettingsHandler::handleRequest);
 #endif
@@ -290,7 +311,7 @@ public:
     ChannelsHandler mChannelsHandler;
 	StatsHandler mStatsHandler;
 
-#ifdef LIBRESAPI_QT
+#ifdef LIBRESAPI_SETTINGS
 	SettingsHandler mSettingsHandler;
 #endif
 };

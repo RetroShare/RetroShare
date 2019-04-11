@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/pgp: pgphandler.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 Cyril Soler <csoler@users.sourceforge.net>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <stdexcept>
 #include <sstream>
 #include <iostream>
@@ -580,8 +601,8 @@ const ops_keydata_t *PGPHandler::locked_getPublicKey(const RsPgpId& id,bool stam
 	{
 		if(stamp_the_key)		// Should we stamp the key as used?
 		{
-			static time_t last_update_db_because_of_stamp = 0 ;
-			time_t now = time(NULL) ;
+			static rstime_t last_update_db_because_of_stamp = 0 ;
+			rstime_t now = time(NULL) ;
 
 			res->second._time_stamp = now ;
 
@@ -686,6 +707,36 @@ bool PGPHandler::exportGPGKeyPair(const std::string& filename,const RsPgpId& exp
 
 	fclose(f) ;
 	return true ;
+}
+
+bool PGPHandler::exportGPGKeyPairToString(
+        std::string& data, const RsPgpId& exportedKeyId,
+        bool includeSignatures, std::string& errorMsg ) const
+{
+	RS_STACK_MUTEX(pgphandlerMtx);
+
+	const ops_keydata_t *pubkey = locked_getPublicKey(exportedKeyId,false);
+
+	if(!pubkey)
+	{
+		errorMsg = "Cannot output key " + exportedKeyId.toStdString() +
+		           ": not found in public keyring.";
+		return false;
+	}
+	const ops_keydata_t *seckey = locked_getSecretKey(exportedKeyId);
+
+	if(!seckey)
+	{
+		errorMsg = "Cannot output key " + exportedKeyId.toStdString() +
+		           ": not found in secret keyring.";
+		return false;
+	}
+
+	data  = makeRadixEncodedPGPKey(pubkey, includeSignatures);
+	data += "\n";
+	data += makeRadixEncodedPGPKey(seckey, includeSignatures);
+	data += "\n";
+	return true;
 }
 
 bool PGPHandler::getGPGDetailsFromBinaryBlock(const unsigned char *mem_block,size_t mem_size,RsPgpId& key_id, std::string& name, std::list<RsPgpId>& signers) const

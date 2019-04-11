@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/statistics/DhtWindow.cpp                                                *
+ *                                                                             *
+ * Copyright (c) 2011 Robert Fernie   <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "DhtWindow.h"
 #include "ui_DhtWindow.h"
@@ -288,7 +287,7 @@ void DhtWindow::updateNetPeers()
 	rsDht->getNetPeerList(peerIds);
 
 	/* collate peer stats */
-	int nPeers = peerIds.size();
+	size_t nPeers = peerIds.size();
 
 	// from DHT peers
 	int nOnlinePeers = 0;
@@ -339,7 +338,7 @@ void DhtWindow::updateNetPeers()
 	for(it = peerIds.begin(); it != peerIds.end(); ++it)
 	{
 		/* find the entry */
-		QTreeWidgetItem *peer_item = NULL;
+		QTreeWidgetItem *peer_item = nullptr;
 #if 0
 		QString qpeerid = QString::fromStdString(*it);
 		int itemCount = ui.peerTreeWidget->topLevelItemCount();
@@ -438,7 +437,7 @@ void DhtWindow::updateNetPeers()
 			case RSDHT_PEERCONN_CONNECTED:
 			{
 				cpsstr = tr("Connected");
-				break;
+
 				switch(status.mPeerConnectMode)
 				{
 					default:

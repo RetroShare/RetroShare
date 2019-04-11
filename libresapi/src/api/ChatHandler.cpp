@@ -1,21 +1,25 @@
-/*
- * libresapi
- * Copyright (C) 2015  electron128 <electron128@yahoo.com>
- * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * libresapi/api/ChatHandler.cpp                                               *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2015 by electron128         <electron128@yahoo.com>               *
+ * Copyright 2017 by Gioacchino Mazzurco <gio@eigenlab.org>                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "ChatHandler.h"
 #include "Pagination.h"
@@ -128,8 +132,8 @@ public:
     SendLobbyParticipantsTask(RsIdentity* idservice, ChatHandler::LobbyParticipantsInfo pi):
         GxsResponseTask(idservice, 0), mParticipantsInfo(pi)
     {
-        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
-        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+		const auto& map = mParticipantsInfo.participants;
+		for(auto mit = map.begin(); mit != map.end(); ++mit)
         {
             requestGxsId(mit->first);
         }
@@ -140,8 +144,8 @@ protected:
     virtual void gxsDoWork(Request &/*req*/, Response &resp)
     {
         resp.mDataStream.getStreamToMember();
-        const std::map<RsGxsId, time_t>& map = mParticipantsInfo.participants;
-        for(std::map<RsGxsId, time_t>::const_iterator mit = map.begin(); mit != map.end(); ++mit)
+		const auto& map = mParticipantsInfo.participants;
+		for(auto mit = map.begin(); mit != map.end(); ++mit)
         {
             StreamBase& stream = resp.mDataStream.getStreamToMember();
             double last_active = mit->second;

@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/serialiser: rsserializer.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2016 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsserializer.cc                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2016  Cyril Soler <csoler@users.sourceforge.net>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <typeinfo>
 
 #include "rsitems/rsitem.h"
@@ -30,11 +26,13 @@
 #include "util/rsprint.h"
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
+#include "util/stacktrace.h"
 
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE   ( 0x0002 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER ( 0x0004 );
+const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_YIELDING    ( 0x0008 );
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
@@ -244,3 +242,31 @@ RsItem *RsRawSerialiser::deserialise(void *data, uint32_t *pktsize)
 	return item;
 }
 
+
+RsGenericSerializer::SerializeContext::SerializeContext(
+        uint8_t* data, uint32_t size, SerializationFlags flags,
+        RsJson::AllocatorType* allocator ) :
+    mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
+    mJson(rapidjson::kObjectType, allocator)
+{
+	if(data)
+	{
+		if(size == 0)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " data passed without "
+			          << "size! This make no sense report to developers!"
+			          << std::endl;
+			print_stacktrace();
+		}
+
+		if(flags & SERIALIZATION_FLAG_YIELDING)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " Attempt to create a "
+			          << "binary serialization context with "
+			          << "SERIALIZATION_FLAG_YIELDING! "
+			          << "This make no sense report to developers!"
+			          << std::endl;
+			print_stacktrace();
+		}
+	}
+}

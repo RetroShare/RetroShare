@@ -1,9 +1,30 @@
+/*******************************************************************************
+ * libretroshare/src/util: folderiterator.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <time.h>
+#include "util/rstime.h"
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
@@ -206,12 +227,12 @@ bool FolderIterator::readdir()
 #endif
 }
 
-time_t FolderIterator::dir_modtime() const { return mFolderModTime ; }
+rstime_t FolderIterator::dir_modtime() const { return mFolderModTime ; }
 
 const std::string& FolderIterator::file_fullpath() { return mFullPath ; }
 const std::string& FolderIterator::file_name()     { return mFileName ; }
 uint64_t           FolderIterator::file_size()     { return mFileSize ; }
-time_t             FolderIterator::file_modtime()  { return mFileModTime ; }
+rstime_t             FolderIterator::file_modtime()  { return mFileModTime ; }
 uint8_t            FolderIterator::file_type()     { return mType ; }
 
 bool FolderIterator::closedir()

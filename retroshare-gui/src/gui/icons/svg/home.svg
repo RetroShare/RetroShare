@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg4155"
+   version="1.1"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   xml:space="preserve"
+   width="128"
+   height="128"
+   viewBox="0 0 128 128"
+   sodipodi:docname="home.svg"><metadata
+     id="metadata4161"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs4159" /><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1024"
+     inkscape:window-height="705"
+     id="namedview4157"
+     showgrid="false"
+     inkscape:zoom="2.559375"
+     inkscape:cx="50.758472"
+     inkscape:cy="45.909646"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g4163" /><g
+     id="g4163"
+     inkscape:groupmode="layer"
+     inkscape:label="ink_ext_XXXXXX"
+     transform="matrix(1.25,0,0,-1.25,0,128)"><path
+       inkscape:connector-curvature="0"
+       id="path4167"
+       style="fill:#039bd5;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.60000002"
+       d="M 102.4,51.2 C 102.4,22.9232 79.4768,0 51.2,0 22.9232,0 0,22.9232 0,51.2 c 0,28.2768 22.9232,51.2 51.2,51.2 28.2768,0 51.2,-22.9232 51.2,-51.2" /><g
+       id="g3935"
+       transform="matrix(0.1570474,0,0,-0.1570474,10.852286,93.087381)"><g
+         id="home"><polygon
+           points="433.5,267.75 510,267.75 255,38.25 0,267.75 76.5,267.75 76.5,471.75 204,471.75 204,318.75 306,318.75 306,471.75 433.5,471.75 "
+           id="polygon3932"
+           style="fill:#ffffff" /></g></g></g></svg>

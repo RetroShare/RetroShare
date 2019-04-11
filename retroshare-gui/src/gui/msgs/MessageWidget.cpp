@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/MessageWidget.cpp                               *
+ *                                                                             *
+ * Copyright (C) 2011 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMenu>
 #include <QToolButton>
@@ -28,6 +27,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QTextCodec>
+#include <QDesktopServices>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
@@ -108,7 +108,7 @@ MessageWidget *MessageWidget::openMsg(const std::string &msgId, bool window)
 	msgWidget->isWindow = window;
 	msgWidget->fill(msgId);
 
-	if (parent) {
+    if (parent) {
 		parent->addWidget(msgWidget);
 	}
 
@@ -600,8 +600,8 @@ void MessageWidget::fill(const std::string &msgId)
 		link = RetroShareLink::createMessage(msgInfo.rspeerid_srcId, "");
 	}
 
-	if ((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) {
-		ui.fromText->setText("RetroShare");
+	if (((msgInfo.msgflags & RS_MSG_SYSTEM) && msgInfo.rspeerid_srcId == ownId) || msgInfo.rspeerid_srcId.isNull()) {
+		ui.fromText->setText("[Notification]");
 		if (toolButtonReply) toolButtonReply->setEnabled(false);
 	} else {
 		ui.fromText->setText(link.toHtml());
@@ -756,18 +756,19 @@ void MessageWidget::anchorClicked(const QUrl &url)
 {
 	RetroShareLink link(url);
 
-	if (link.valid() == false) {
-		return;
+	if(link.valid())
+	{
+		if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
+			std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
+			//	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
+		}
+
+		QList<RetroShareLink> links;
+		links.append(link);
+		RetroShareLink::process(links);
 	}
-
-    if (link.type() == RetroShareLink::TYPE_CERTIFICATE && currMsgFlags & RS_MSG_USER_REQUEST) {
-        std::cerr << "(WW) Calling some disabled code in MessageWidget::anchorClicked(). Please contact the developpers." << std::endl;
-    //	link.setSubType(RSLINK_SUBTYPE_CERTIFICATE_USER_REQUEST);
-    }
-
-	QList<RetroShareLink> links;
-	links.append(link);
-	RetroShareLink::process(links);
+    else
+		QDesktopServices::openUrl(url) ;
 }
 
 void MessageWidget::loadImagesAlways()

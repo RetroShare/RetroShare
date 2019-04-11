@@ -116,7 +116,7 @@ testConnect::~testConnect()
 int     testConnect::connect(struct sockaddr_in raddr)
 {
 	int cidx = findWhichConnect(this);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	testConnectState[cidx] |= TST_STATE_CONNECT;
 	testConnectTimes[cidx].push_back(now);
@@ -148,7 +148,7 @@ int     testConnect::stoplistening()
 int     testConnect::reset()
 {
 	int cidx = findWhichConnect(this);
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	// reset everything except listening.
 	testResetState[cidx].push_back(testConnectState[cidx]);

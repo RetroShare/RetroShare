@@ -1,33 +1,52 @@
+################################################################################
+# uselibresapi.pri                                                             #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Affero General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Affero General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Affero General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
 QT     += network xml 
-CONFIG += qt gui uic qrc resources idle bitdht
-CONFIG += link_prl
+CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
-# Plz never commit the .pro with these flags enabled.
-# Use this flag when developping new features only.
-#
-#CONFIG += unfinished
-#CONFIG += debug
-#DEFINES *= SIGFPE_DEBUG
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
+INCLUDEPATH *= $${PWD} retroshare-gui
 
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-	QMAKE_LFLAGS *= -pg 
+libresapihttpserver {
+    !include("../../libresapi/src/use_libresapi.pri"):error("Including")
+    HEADERS *= gui/settings/WebuiPage.h
+    SOURCES *= gui/settings/WebuiPage.cpp
+    FORMS *= gui/settings/WebuiPage.ui
+} else {
+    !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 }
 
-retrotor {
-	DEFINES *= RETROTOR
-
-	FORMS   += TorControl/TorControlWindow.ui
-	SOURCES += TorControl/TorControlWindow.cpp
-	HEADERS += TorControl/TorControlWindow.h
+rs_jsonapi {
+    HEADERS *= gui/settings/JsonApiPage.h
+    SOURCES *= gui/settings/JsonApiPage.cc
+    FORMS *= gui/settings/JsonApiPage.ui
 }
+
+
+FORMS   += TorControl/TorControlWindow.ui
+SOURCES += TorControl/TorControlWindow.cpp
+HEADERS += TorControl/TorControlWindow.h
 
 #QMAKE_CFLAGS += -fmudflap 
 #LIBS *= /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflap.a /usr/lib/gcc/x86_64-linux-gnu/4.4/libmudflapth.a
@@ -58,22 +77,6 @@ DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
 MOC_DIR = temp/moc
-
-#CONFIG += debug
-debug {
-	QMAKE_CFLAGS += -g
-	QMAKE_CXXFLAGS -= -O2
-	QMAKE_CXXFLAGS += -O0
-	QMAKE_CFLAGS -= -O2
-	QMAKE_CFLAGS += -O0
-}
-
-DEPENDPATH *= retroshare-gui
-INCLUDEPATH *= retroshare-gui
-
-# treat warnings as error for better removing
-#QMAKE_CFLAGS += -Werror
-#QMAKE_CXXFLAGS += -Werror
 
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
@@ -127,17 +130,8 @@ linux-g++-64 {
 }
 
 version_detail_bash_script {
-	linux-* {
-		DEFINES += ADD_LIBRETROSHARE_VERSION_INFO
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.sh
-	}
-	win32 {
-		QMAKE_EXTRA_TARGETS += write_version_detail
-		PRE_TARGETDEPS = write_version_detail
-		write_version_detail.commands = $$PWD/version_detail.bat
-	}
+	warning("Version detail script is deprecated.")
+	warning("Remove references to version_detail_bash_script from all of your build scripts!")
 }
 
 #################### Cross compilation for windows under Linux ###################
@@ -165,10 +159,12 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32 {
+win32-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
+	} else {
+		CONFIG -= console
 	}
 
 	# Switch on extra warnings
@@ -183,8 +179,9 @@ win32 {
 		QMAKE_LFLAGS += -Wl,-nxcompat
 	}
 
-	# solve linker warnings because of the order of the libraries
-	QMAKE_LFLAGS += -Wl,--start-group
+    # Fix linking error (ld.exe: Error: export ordinal too large) due to too
+    # many exported symbols.
+    QMAKE_LFLAGS+=-Wl,--exclude-libs,ALL
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -197,15 +194,10 @@ win32 {
 	#QMAKE_CFLAGS_DEBUG += -O2
 
 	OBJECTS_DIR = temp/obj
-	#LIBS += -L"D/Qt/2009.03/qt/plugins/imageformats"
-	#QTPLUGIN += qjpeg
 
-	for(lib, LIB_DIR):LIBS += -L"$$lib"
-	for(bin, BIN_DIR):LIBS += -L"$$bin"
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
 
-	LIBS += -lssl -lcrypto -lpthread -lminiupnpc -lz -lws2_32
-	LIBS += -luuid -lole32 -liphlpapi -lcrypt32 -lgdi32
-	LIBS += -lwinmm
 	RC_FILE = gui/images/retroshare_win.rc
 
 	# export symbols for the plugins
@@ -217,11 +209,6 @@ win32 {
 	} else {
 		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
 	}
-
-	DEFINES *= WINDOWS_SYS WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
-
-	DEPENDPATH += . $$INC_DIR
-	INCLUDEPATH += . $$INC_DIR
 
 	greaterThan(QT_MAJOR_VERSION, 4) {
 		# Qt 5
@@ -307,53 +294,32 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
-
-
-############################## Common stuff ######################################
-
-# On Linux systems that alredy have libssl and libcrypto it is advisable
-# to rename the patched version of SSL to something like libsslxpgp.a and libcryptoxpg.a
-
-# ###########################################
-
-DEPENDPATH += . $$PWD/../../libretroshare/src/
-INCLUDEPATH += $$PWD/../../libretroshare/src/
-
-PRE_TARGETDEPS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-LIBS *= $$OUT_PWD/../../libretroshare/src/lib/libretroshare.a
-
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 }
 
-# webinterface
-DEPENDPATH += $$PWD/../../libresapi/src
-INCLUDEPATH += $$PWD/../../libresapi/src
-PRE_TARGETDEPS *= $$OUT_PWD/../../libresapi/src/lib/libresapi.a
-LIBS += $$OUT_PWD/../../libresapi/src/lib/libresapi.a
+# Tor controller
 
-retrotor {
 HEADERS += 	TorControl/AddOnionCommand.h \
-				TorControl/AuthenticateCommand.h \
-				TorControl/GetConfCommand.h \
-				TorControl/HiddenService.h \
-				TorControl/ProtocolInfoCommand.h \
-				TorControl/SetConfCommand.h \
-				TorControl/TorControlCommand.h \
-				TorControl/TorControl.h \
-				TorControl/TorControlSocket.h \
-				TorControl/TorManager.h \
-				TorControl/TorProcess.h \
-				TorControl/TorProcess_p.h \
-				TorControl/TorSocket.h \
-				TorControl/Useful.h            \
-				TorControl/CryptoKey.h         \
-				TorControl/PendingOperation.h  \
-				TorControl/SecureRNG.h         \
-				TorControl/Settings.h          \
-				TorControl/StrUtil.h        \
-				TorControl/TorProcess_p.h        
+           	TorControl/AuthenticateCommand.h \
+           	TorControl/CryptoKey.h \
+           	TorControl/GetConfCommand.h \
+           	TorControl/HiddenService.h \
+           	TorControl/PendingOperation.h  \
+           	TorControl/ProtocolInfoCommand.h \
+           	TorControl/SecureRNG.h \
+           	TorControl/SetConfCommand.h \
+           	TorControl/Settings.h \
+           	TorControl/StrUtil.h \
+           	TorControl/TorControl.h \
+           	TorControl/TorControlCommand.h \
+           	TorControl/TorControlSocket.h \
+           	TorControl/TorManager.h \
+           	TorControl/TorProcess.h \
+           	TorControl/TorProcess_p.h \
+           	TorControl/TorSocket.h \
+           	TorControl/Useful.h
 
 SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/AuthenticateCommand.cpp \
@@ -372,7 +338,6 @@ SOURCES += 	TorControl/AddOnionCommand.cpp \
 				TorControl/SecureRNG.cpp         \
 				TorControl/Settings.cpp          \
 				TorControl/StrUtil.cpp        
-}
 
 # Input
 HEADERS +=  rshare.h \
@@ -415,6 +380,7 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/DLListDelegate.h \
             gui/FileTransfer/ULListDelegate.h \
             gui/FileTransfer/TransfersDialog.h \
+            gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
             gui/statistics/dhtgraph.h \
@@ -437,7 +403,6 @@ HEADERS +=  rshare.h \
             util/stringutil.h \
             util/RsNetUtil.h \
             util/DateTime.h \
-            util/win32.h \
             util/RetroStyleLabel.h \
             util/dllexport.h \
             util/NonCopyable.h \
@@ -445,7 +410,7 @@ HEADERS +=  rshare.h \
             util/dllexport.h \
             util/global.h \
             util/rsqtutildll.h \
-            util/Interface.h \
+#            util/Interface.h \
             util/PixmapMerging.h \
             util/MouseEventFilter.h \
             util/EventFilter.h \
@@ -459,6 +424,7 @@ HEADERS +=  rshare.h \
             util/ObjectPainter.h \
             util/QtVersion.h \
             util/RsFile.h \
+            util/qtthreadsutils.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -481,6 +447,7 @@ HEADERS +=  rshare.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
             gui/msgs/MessageWidget.h \
+            gui/msgs/MessageModel.h \
             gui/msgs/TagsMenu.h \
             gui/msgs/textformat.h \
             gui/msgs/MessageUserNotify.h \
@@ -494,7 +461,6 @@ HEADERS +=  rshare.h \
             gui/settings/PeoplePage.h \
             gui/settings/AboutPage.h \
             gui/settings/ServerPage.h \
-            gui/settings/NetworkPage.h \
             gui/settings/NotifyPage.h \
             gui/settings/CryptoPage.h \
             gui/settings/MessagePage.h \
@@ -527,7 +493,7 @@ HEADERS +=  rshare.h \
             gui/common/RsUrlHandler.h \
             gui/common/RsCollectionDialog.h \
             gui/common/rwindow.h \
-            gui/common/html.h \
+            gui/common/rshtml.h \
             gui/common/AvatarDefs.h \
             gui/common/GroupFlagsWidget.h \
             gui/common/GroupSelectionBox.h \
@@ -595,7 +561,7 @@ HEADERS +=  rshare.h \
             gui/elastic/graphwidget.h \
             gui/elastic/edge.h \
             gui/elastic/arrow.h \
-            gui/elastic/node.h \
+            gui/elastic/elnode.h \
             gui/NewsFeed.h \
             gui/feeds/FeedItem.h \
             gui/feeds/FeedHolder.h \
@@ -617,7 +583,8 @@ HEADERS +=  rshare.h \
     util/imageutil.h \
     gui/NetworkDialog/pgpid_item_model.h \
     gui/NetworkDialog/pgpid_item_proxy.h \
-    gui/common/RsCollection.h
+    gui/common/RsCollection.h \
+    util/retroshareWin32.h
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -647,6 +614,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/DetailsDialog.ui \
             gui/FileTransfer/SearchDialog.ui \
             gui/FileTransfer/SharedFilesDialog.ui \
+            gui/FileTransfer/BannedFilesDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
             gui/MessengerWindow.ui \
@@ -678,7 +646,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/settings/settingsw.ui \
             gui/settings/GeneralPage.ui \
             gui/settings/ServerPage.ui \
-            gui/settings/NetworkPage.ui \
             gui/settings/NotifyPage.ui \
             gui/settings/PeoplePage.ui \
             gui/settings/CryptoPage.ui \
@@ -793,6 +760,7 @@ SOURCES +=  main.cpp \
             gui/FileTransfer/xprogressbar.cpp \
             gui/FileTransfer/DetailsDialog.cpp \
             gui/FileTransfer/TransferUserNotify.cpp \
+            gui/FileTransfer/BannedFilesDialog.cpp \
             gui/MainPage.cpp \
             gui/HelpDialog.cpp \
             gui/LogoBar.cpp \
@@ -801,10 +769,9 @@ SOURCES +=  main.cpp \
             util/stringutil.cpp \
             util/RsNetUtil.cpp \
             util/DateTime.cpp \
-            util/win32.cpp \
             util/RetroStyleLabel.cpp \
             util/WidgetBackgroundImage.cpp \
-            util/NonCopyable.cpp \
+#            util/NonCopyable.cpp \
             util/PixmapMerging.cpp \
             util/MouseEventFilter.cpp \
             util/EventFilter.cpp \
@@ -836,6 +803,7 @@ SOURCES +=  main.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
+            gui/msgs/MessageModel.cpp \
             gui/msgs/TagsMenu.cpp \
             gui/msgs/MessageUserNotify.cpp \
             gui/common/RsButtonOnText.cpp \
@@ -845,7 +813,7 @@ SOURCES +=  main.cpp \
             gui/common/RsCollectionDialog.cpp \
             gui/common/RsUrlHandler.cpp \
             gui/common/rwindow.cpp \
-            gui/common/html.cpp \
+            gui/common/rshtml.cpp \
             gui/common/AvatarDefs.cpp \
             gui/common/AvatarDialog.cpp \
             gui/common/GroupFlagsWidget.cpp \
@@ -902,7 +870,6 @@ SOURCES +=  main.cpp \
             gui/settings/GeneralPage.cpp \
             gui/settings/AboutPage.cpp \
             gui/settings/ServerPage.cpp \
-            gui/settings/NetworkPage.cpp \
             gui/settings/NotifyPage.cpp \
             gui/settings/CryptoPage.cpp \
             gui/settings/PeoplePage.cpp \
@@ -946,7 +913,7 @@ SOURCES +=  main.cpp \
             gui/elastic/graphwidget.cpp \
             gui/elastic/edge.cpp \
             gui/elastic/arrow.cpp \
-            gui/elastic/node.cpp \
+            gui/elastic/elnode.cpp \
             gui/NewsFeed.cpp \
             gui/feeds/FeedItem.cpp \
             gui/feeds/FeedHolder.cpp \
@@ -979,7 +946,8 @@ SOURCES +=  main.cpp \
     util/imageutil.cpp \
     gui/NetworkDialog/pgpid_item_model.cpp \
     gui/NetworkDialog/pgpid_item_proxy.cpp \
-    gui/common/RsCollection.cpp
+    gui/common/RsCollection.cpp \
+    util/retroshareWin32.cpp
 #            gui/ForumsDialog.cpp \
 #            gui/forums/ForumDetails.cpp \
 #            gui/forums/EditForumDetails.cpp \
@@ -1261,7 +1229,7 @@ gxsforums {
 		gui/gxsforums/GxsForumGroupDialog.h \
 		gui/gxsforums/CreateGxsForumMsg.h \
 		gui/gxsforums/GxsForumThreadWidget.h \
-		gui/gxsforums/GxsForumsFillThread.h \
+		gui/gxsforums/GxsForumModel.h \
 		gui/gxsforums/GxsForumUserNotify.h \
 		gui/feeds/GxsForumGroupItem.h \
 		gui/feeds/GxsForumMsgItem.h
@@ -1275,7 +1243,7 @@ gxsforums {
 		gui/gxsforums/GxsForumGroupDialog.cpp \
 		gui/gxsforums/CreateGxsForumMsg.cpp \
 		gui/gxsforums/GxsForumThreadWidget.cpp \
-		gui/gxsforums/GxsForumsFillThread.cpp \
+		gui/gxsforums/GxsForumModel.cpp \
 		gui/gxsforums/GxsForumUserNotify.cpp \
 		gui/feeds/GxsForumGroupItem.cpp \
 		gui/feeds/GxsForumMsgItem.cpp
@@ -1418,8 +1386,43 @@ gxsgui {
 	
 }
 
-libresapihttpserver {
-    HEADERS *= gui/settings/WebuiPage.h
-    SOURCES *= gui/settings/WebuiPage.cpp
-    FORMS *= gui/settings/WebuiPage.ui
+cmark {
+  DEFINES *= USE_CMARK
+
+  HEADERS += \
+    ../../supportlibs/cmark/src/buffer.h								 \
+    ../../supportlibs/cmark/src/chunk.h									 \
+    ../../supportlibs/cmark/src/cmark.h									 \
+    ../../supportlibs/cmark/src/cmark_ctype.h						 \
+    ../../supportlibs/cmark/src/houdini.h								 \
+    ../../supportlibs/cmark/src/inlines.h								 \
+    ../../supportlibs/cmark/src/iterator.h							 \
+    ../../supportlibs/cmark/src/node.h									 \
+    ../../supportlibs/cmark/src/parser.h								 \
+    ../../supportlibs/cmark/src/references.h						 \
+    ../../supportlibs/cmark/src/render.h								 \
+    ../../supportlibs/cmark/src/scanners.h							 \
+    ../../supportlibs/cmark/src/utf8.h									 \
+
+  SOURCES += \
+    ../../supportlibs/cmark/src/blocks.c									 \
+    ../../supportlibs/cmark/src/buffer.c									 \
+    ../../supportlibs/cmark/src/cmark.c										 \
+    ../../supportlibs/cmark/src/cmark_ctype.c							 \
+    ../../supportlibs/cmark/src/commonmark.c							 \
+    ../../supportlibs/cmark/src/houdini_href_e.c					 \
+    ../../supportlibs/cmark/src/houdini_html_e.c					 \
+    ../../supportlibs/cmark/src/houdini_html_u.c					 \
+    ../../supportlibs/cmark/src/html.c										 \
+    ../../supportlibs/cmark/src/inlines.c									 \
+    ../../supportlibs/cmark/src/iterator.c								 \
+    ../../supportlibs/cmark/src/latex.c										 \
+    ../../supportlibs/cmark/src/man.c											 \
+    ../../supportlibs/cmark/src/node.c										 \
+    ../../supportlibs/cmark/src/references.c							 \
+    ../../supportlibs/cmark/src/render.c									 \
+    ../../supportlibs/cmark/src/scanners.c								 \
+    ../../supportlibs/cmark/src/utf8.c										 \
+    ../../supportlibs/cmark/src/xml.c											 \
+
 }

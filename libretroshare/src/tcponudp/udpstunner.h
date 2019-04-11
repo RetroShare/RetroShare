@@ -1,29 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/tcponudp: udpstunner.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010-2010 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_UDP_STUN_H
 #define RS_UDP_STUN_H
-/*
- * tcponudp/udpstunner.h
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #ifndef WINDOWS_SYS
 #include <netinet/in.h>
@@ -59,7 +56,7 @@ class TouStunPeer
 	std::string id;
 	struct sockaddr_in remote, eaddr;
 	bool response;
-	time_t lastsend;
+	rstime_t lastsend;
 	uint32_t failCount;
 };
 
@@ -92,7 +89,7 @@ bool    dropStunPeer(const struct sockaddr_in &remote);
 
 bool    getStunPeer(int idx, std::string &id,
                 struct sockaddr_in &remote, struct sockaddr_in &eaddr,
-                uint32_t &failCount, time_t &lastSend);
+                uint32_t &failCount, rstime_t &lastSend);
 
 bool	needStunPeers();
 
@@ -128,12 +125,12 @@ bool    locked_checkExternalAddress();
 
         bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
-	time_t eaddrTime;
+	rstime_t eaddrTime;
 
-	time_t mStunLastRecvResp;
-	time_t mStunLastRecvAny;
-	time_t mStunLastSendStun;
-	time_t mStunLastSendAny;
+	rstime_t mStunLastRecvResp;
+	rstime_t mStunLastRecvAny;
+	rstime_t mStunLastSendStun;
+	rstime_t mStunLastSendAny;
 
 	std::list<TouStunPeer> mStunList; /* potentials */
 
@@ -151,7 +148,7 @@ bool    locked_checkExternalAddress();
 	double mSuccessRate;
 
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
-	time_t mExclusiveModeTS;
+	rstime_t mExclusiveModeTS;
 	std::string mExclusiveHolder;
 	bool mForceRestun;
 

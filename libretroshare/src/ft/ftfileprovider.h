@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft ftFileProvider.h
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftfileprovider.h                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef FT_FILE_PROVIDER_HEADER
 #define FT_FILE_PROVIDER_HEADER
@@ -68,7 +65,7 @@ class ftFileProvider
 
 		// Removes inactive peers from the client list. Returns true if all peers have been removed.
 		//
-		bool purgeOldPeers(time_t now,uint32_t max_duration) ;
+		bool purgeOldPeers(rstime_t now,uint32_t max_duration) ;
 
 		const RsFileHash& fileHash() const { return hash ; }
 		const std::string& fileName() const { return file_name ; }
@@ -91,12 +88,12 @@ class ftFileProvider
 				PeerUploadInfo() 
 					: req_loc(0),req_size(1),  lastTS_t(0), lastTS(0),transfer_rate(0), total_size(0), client_chunk_map_stamp(0) {}
 
-				void updateStatus(uint64_t offset,uint32_t data_size,time_t now) ;
+				void updateStatus(uint64_t offset,uint32_t data_size,rstime_t now) ;
 
 				uint64_t   req_loc;
 				uint32_t   req_size;
-				time_t    lastTS_t; 	// used for estimating transfer rate.
-				time_t    lastTS;   	// last update time (for purging)
+				rstime_t    lastTS_t; 	// used for estimating transfer rate.
+				rstime_t    lastTS;   	// last update time (for purging)
 
 				// these two are used for speed estimation
 				float 	  transfer_rate ;
@@ -104,7 +101,7 @@ class ftFileProvider
 
 				// Info about what the downloading peer already has
 				CompressedChunkMap client_chunk_map ;
-				time_t client_chunk_map_stamp ;
+				rstime_t client_chunk_map_stamp ;
 		};
 
 		// Contains statistics (speed, peer name, etc.) of all uploading peers for that file.

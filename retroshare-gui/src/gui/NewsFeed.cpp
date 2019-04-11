@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/NewsFeed.cpp                                                            *
+ *                                                                             *
+ * Copyright (c) 2008 Robert Fernie    <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QTimer>
 #include <QDateTime>
@@ -57,24 +56,6 @@
 
 #include "common/FeedNotify.h"
 #include "notifyqt.h"
-
-const uint32_t NEWSFEED_PEERLIST =       0x0001;
-
-const uint32_t NEWSFEED_FORUMNEWLIST =   0x0002;
-const uint32_t NEWSFEED_FORUMMSGLIST =   0x0003;
-const uint32_t NEWSFEED_CHANNELNEWLIST = 0x0004;
-//const uint32_t NEWSFEED_CHANNELMSGLIST = 0x0005;
-#if 0
-const uint32_t NEWSFEED_BLOGNEWLIST =    0x0006;
-const uint32_t NEWSFEED_BLOGMSGLIST =    0x0007;
-#endif
-
-const uint32_t NEWSFEED_MESSAGELIST =    0x0008;
-const uint32_t NEWSFEED_CHATMSGLIST =    0x0009;
-const uint32_t NEWSFEED_SECLIST =        0x000a;
-const uint32_t NEWSFEED_POSTEDNEWLIST =  0x000b;
-const uint32_t NEWSFEED_POSTEDMSGLIST =  0x000c;
-const uint32_t NEWSFEED_CIRCLELIST    =  0x000d;
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -281,20 +262,20 @@ void NewsFeed::updateDisplay()
 						mTokenQueueChannel = new TokenQueue(rsGxsChannels->getTokenService(), instance);
 					}
 
-					RsGxsGroupId grpId(fi.mId1);
-					if (!grpId.isNull()) {
-						RsTokReqOptions opts;
-						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+					addFeedItemChannelPublishKey(fi);
 
-						std::list<RsGxsGroupId> grpIds;
-						grpIds.push_back(grpId);
-
-						uint32_t token;
-						mTokenQueueChannel->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_PUBLISHKEY);
-					}
+//					RsGxsGroupId grpId(fi.mId1);
+//					if (!grpId.isNull()) {
+//						RsTokReqOptions opts;
+//						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+//
+//						std::list<RsGxsGroupId> grpIds;
+//						grpIds.push_back(grpId);
+//
+//						uint32_t token;
+//						mTokenQueueChannel->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_PUBLISHKEY);
+//					}
 				}
-//				if (flags & RS_FEED_TYPE_CHANNEL)
-//					addFeedItemChannelPublishKey(fi);
 				break;
 
 			case RS_FEED_ITEM_FORUM_NEW:
@@ -384,8 +365,8 @@ void NewsFeed::updateDisplay()
 						opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 						GxsMsgReq msgIds;
-						std::vector<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
-						vect_msgIds.push_back(msgId);
+						std::set<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
+						vect_msgIds.insert(msgId);
 
 						uint32_t token;
 						mTokenQueueCircle->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_MESSAGE);
@@ -769,6 +750,14 @@ void NewsFeed::loadChannelPublishKey(const uint32_t &token)
 #ifdef UNUSED_CODE
 	MessageComposer::sendChannelPublishKey(groups[0]);
 #endif
+
+	RsGxsChannelGroup& grp = *groups.begin();
+
+	RsFeedItem fi;
+	fi.mId1 = grp.mMeta.mGroupId.toStdString();
+
+
+	addFeedItemChannelPublishKey(fi);
 }
 
 void NewsFeed::loadForumGroup(const uint32_t &token)
@@ -863,6 +852,8 @@ void NewsFeed::loadForumPublishKey(const uint32_t &token)
 #ifdef UNUSED_CODE
 	MessageComposer::sendForumPublishKey(groups[0]);
 #endif
+
+	std::cerr << "(EE) Unimplemented code: received an order to load/display item for received forum publish key, but the implementation is missing." << std::endl;
 }
 
 void NewsFeed::loadPostedGroup(const uint32_t &token)
@@ -1353,6 +1344,24 @@ void NewsFeed::addFeedItemChannelMsg(const RsFeedItem &fi)
 
 	/* make new widget */
 	GxsChannelPostItem *item = new GxsChannelPostItem(this, NEWSFEED_CHANNELNEWLIST, grpId, msgId, false, true);
+
+	/* add to layout */
+	addFeedItem(item);
+
+#ifdef NEWS_DEBUG
+	std::cerr << "NewsFeed::addFeedItemChanMsg()";
+	std::cerr << std::endl;
+#endif
+}
+void NewsFeed::addFeedItemChannelPublishKey(const RsFeedItem &fi)
+{
+	RsGxsGroupId grpId(fi.mId1);
+
+	if (grpId.isNull())
+		return;
+
+	/* make new widget */
+	GxsChannelGroupItem *item = new GxsChannelGroupItem(this, NEWSFEED_CHANNELPUBKEYLIST, grpId, false, true);
 
 	/* add to layout */
 	addFeedItem(item);

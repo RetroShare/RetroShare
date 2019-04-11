@@ -1,30 +1,24 @@
-/*
- * libretroshare/src/pqi pqiperson.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqiperson.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie.                                     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_PERSON_HEADER
 #define MRK_PQI_PERSON_HEADER
 
@@ -36,7 +30,7 @@
 #include <list>
 
 class pqiperson;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 static const int CONNECT_RECEIVED     = 1; 
 static const int CONNECT_SUCCESS      = 2;
@@ -44,7 +38,7 @@ static const int CONNECT_UNREACHABLE  = 3;
 static const int CONNECT_FIREWALLED   = 4;
 static const int CONNECT_FAILED       = 5;
 
-static const time_t HEARTBEAT_REPEAT_TIME = 5;
+static const rstime_t HEARTBEAT_REPEAT_TIME = 5;
 
 #include "pqi/pqiqosstreamer.h"
 #include "pqi/pqithreadstreamer.h"
@@ -149,6 +143,7 @@ public:
 	virtual int getQueueSize(bool in);
 	virtual void getRates(RsBwRates &rates);
 	virtual float getRate(bool in);
+	virtual uint64_t getTraffic(bool in);
 	virtual void setMaxRate(bool in, float val);
 	virtual void setRateCap(float val_in, float val_out);
 	virtual int gatherStatistics(std::list<RSTrafficClue>& outqueue_lst,
@@ -173,7 +168,7 @@ private:
 	pqiconnect *activepqi;
 	bool inConnectAttempt;
 	//int waittimes;
-	time_t lastHeartbeatReceived; // use to track connection failure
+	rstime_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
 };
 

@@ -1,34 +1,29 @@
-/*
- * libretroshare/src/pqi pqistreamer.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqistreamer.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_STREAMER_HEADER
 #define MRK_PQI_STREAMER_HEADER
 
 #include <stdint.h>               // for uint32_t
-#include <time.h>                 // for time_t
+#include "util/rstime.h"                 // for rstime_t
 #include <iostream>               // for operator<<, basic_ostream, cerr, endl
 #include <list>                   // for list
 #include <map>                    // for map
@@ -38,7 +33,7 @@
 #include "retroshare/rstypes.h"   // for RsPeerId
 #include "util/rsthreads.h"       // for RsMutex
 
-class RsItem;
+struct RsItem;
 class RsSerialiser;
 
 struct PartialPacketRecord
@@ -70,7 +65,7 @@ class pqistreamer: public PQInterface
 		virtual RsItem *GetItem();
 		virtual int     status();
 
-		time_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
+		rstime_t  getLastIncomingTS(); 	// Time of last data packet, for checking a connection is alive.
 		virtual void    getRates(RsBwRates &rates);
 		virtual int     getQueueSize(bool in); // extracting data.
 		virtual int     gatherStatistics(std::list<RSTrafficClue>& outqueue_stats,std::list<RSTrafficClue>& inqueue_stats); // extracting data.
@@ -169,7 +164,7 @@ class pqistreamer: public PQInterface
 		double mAvgDtOut;	// average time diff between 2 rounds of sending data
 		double mAvgDtIn;	// average time diff between 2 rounds of receiving data
 
-		time_t mLastIncomingTs;
+		rstime_t mLastIncomingTs;
 	
         	// traffic statistics
 
@@ -177,10 +172,10 @@ class pqistreamer: public PQInterface
         	std::list<RSTrafficClue> mPreviousStatsChunk_Out ;
         	std::list<RSTrafficClue> mCurrentStatsChunk_In ;
         	std::list<RSTrafficClue> mCurrentStatsChunk_Out ;
-		time_t mStatisticsTimeStamp ;
+		rstime_t mStatisticsTimeStamp ;
 
         bool mAcceptsPacketSlicing ;
-        time_t mLastSentPacketSlicingProbe ;
+        rstime_t mLastSentPacketSlicingProbe ;
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
         RsItem *addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         

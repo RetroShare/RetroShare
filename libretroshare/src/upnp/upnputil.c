@@ -1,10 +1,32 @@
+/*******************************************************************************
+ * libretroshare/src/upnp: upnputil.c                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ * From MiniUPnPc, re-licensed with permission                                 *
+ *                                                                             *
+ * Copyright (c) 2005-2016, Thomas BERNARD                                     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 //this file uses miniupnp
 //From https://github.com/miniupnp/miniupnp/blob/master/miniupnpc/upnpc.c
 
 #include "upnp/upnputil.h"
 
 #if MINIUPNPC_API_VERSION >= -4//1.0 2008/02/18
-#include <time.h>
+#include "util/rstime.h"
 #endif
 
 /* protofix() checks if protocol is "UDP" or "TCP"
@@ -36,7 +58,7 @@ void DisplayInfos(struct UPNPUrls * urls,
 	char lastconnerr[64];
 	unsigned int uptime;
 	unsigned int brUp, brDown;
-	time_t timenow, timestarted;
+	time_t timenow, timestarted;  // Don't use rstime_t here or ctime break on windows
 	int r;
 #if MINIUPNPC_API_VERSION >= -2//1.4 2010/12/09
 	const char * servicetype = data->first.servicetype;

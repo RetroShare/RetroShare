@@ -90,10 +90,10 @@ Classes
       - std::string   name
       - RsFileHash    hash
       - uint64_t      size
-      - time_t        Last modification time
+      - rstime_t        Last modification time
 
    LocalFileInfo: public FileInfo
-      - time_t        Last data access time
+      - rstime_t        Last data access time
       - uint64_t      Total data uploaded
       - uint32_t      ShareFlags
    

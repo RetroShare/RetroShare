@@ -24,7 +24,13 @@ if not exist "%EnvToolsPath%" mkdir "%EnvToolsPath%"
 if not exist "%EnvDownloadPath%" mkdir "%EnvDownloadPath%"
 
 call "%~dp0tools\prepare-tools.bat"
-exit /B %ERRORLEVEL%
+if errorlevel 1 exit /B %ERRORLEVEL%
+
+:: Add MinGit to PATH
+set PATH=%EnvToolsPath%\MinGit\cmd;%PATH%
+set HOME=%EnvToolsPath%\MinGit\home
+
+exit /B 0
 
 :error_env
 echo Failed to initialize environment.

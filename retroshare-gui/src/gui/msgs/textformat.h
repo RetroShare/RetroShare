@@ -1,28 +1,25 @@
-/***************************************************************************
- *   This file is distributed under the following license:                 *
- *   Copyright (c) 2006-2010 RetroShare Team                               *
- *   Copyright (C) 2008-2009 Mehrdad Momeny <mehrdad.momeny@gmail.com>     *
- *   Copyright (C) 2008-2009 Golnaz Nilieh <g382nilieh@gmail.com>          *
- *                                                                         *
- *   It is a modified version of "bilbotextformat.h", which was part       *
- *   of the Bilbo Blogger. It has been customized for                      *
- *   use in RetroShare, at January 2010.                                   *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 3 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/msgs/TagsMenu.h                                      *
+ *                                                                             *
+ * Copyright (C) 2006-2010 by Retroshare Team  <retroshare.project@gmail.com>  *
+ * Copyright (C) 2008-2009 Mehrdad Momeny <mehrdad.momeny@gmail.com>           *
+ * Copyright (C) 2008-2009 Golnaz Nilieh <g382nilieh@gmail.com>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #ifndef TEXTFORMAT_H
 #define TEXTFORMAT_H
 

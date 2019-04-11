@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftserver.h
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftserver.h                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef FT_SERVER_HEADER
 #define FT_SERVER_HEADER
@@ -42,6 +39,8 @@
 #include <map>
 #include <list>
 #include <iostream>
+#include <functional>
+#include <chrono>
 
 #include "ft/ftdata.h"
 #include "turtle/turtleclientservice.h"
@@ -95,8 +94,11 @@ public:
 
     // Implements RsTurtleClientService
     //
+
+    uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
-    virtual void receiveTurtleData(RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+    virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
+	virtual void ftReceiveSearchResult(RsTurtleFTSearchResultItem *item);	// We dont use TurtleClientService::receiveSearchResult() because of backward compatibility.
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 
@@ -143,6 +145,15 @@ public:
 	virtual void setFilePermDirectDL(uint32_t perm) ;
 	virtual uint32_t filePermDirectDL() ;
 
+	/// @see RsFiles
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        rstime_t maxWait = 300 );
+
+	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
+	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
+
     /***
          * Control of Downloads Priority.
          ***/
@@ -169,7 +180,7 @@ public:
          * Extra List Access
          ***/
     virtual bool ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t size, uint32_t period, TransferRequestFlags flags);
-    virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags);
+    virtual bool ExtraFileRemove(const RsFileHash& hash);
     virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags);
     virtual bool ExtraFileStatus(std::string localpath, FileInfo &info);
     virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath);
@@ -178,8 +189,13 @@ public:
     /***
          * Directory Listing / Search Interface
          ***/
-    virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details);
     virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags);
+
+	/// @see RsFiles::RequestDirDetails
+	virtual bool requestDirDetails(
+	        DirDetails &details, std::uintptr_t handle = 0,
+	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL );
+
     virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;
     virtual uint32_t getType(void *ref,FileSearchFlags flags) ;
 
@@ -188,6 +204,11 @@ public:
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags);
     virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id);
 	virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) ;
+
+    virtual int banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size) ;
+    virtual int unbanFile(const RsFileHash& real_file_hash);
+    virtual bool getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files) ;
+	virtual bool isHashBanned(const RsFileHash& hash);
 
     /***
          * Utility Functions
@@ -202,8 +223,8 @@ public:
          * Directory Handling
          ***/
     virtual void requestDirUpdate(void *ref) ;			// triggers the update of the given reference. Used when browsing.
-    virtual void	setDownloadDirectory(std::string path);
-    virtual void	setPartialsDirectory(std::string path);
+	virtual bool setDownloadDirectory(const std::string& path);
+	virtual bool setPartialsDirectory(const std::string& path);
     virtual std::string getDownloadDirectory();
     virtual std::string getPartialsDirectory();
 
@@ -234,6 +255,8 @@ public:
 	virtual bool ignoreDuplicates() ;
 	virtual void setIgnoreDuplicates(bool ignore) ;
 
+    static bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
+
     /***************************************************************/
     /*************** Data Transfer Interface ***********************/
     /***************************************************************/
@@ -250,7 +273,7 @@ public:
     static void deriveEncryptionKey(const RsFileHash& hash, uint8_t *key);
 
     bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
-    bool decryptItem(RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
+    bool decryptItem(const RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
 
     /*************** Internal Transfer Fns *************************/
     virtual int tick();
@@ -279,7 +302,6 @@ protected:
     // fnds out what is the real hash of encrypted hash hash
     bool findRealHash(const RsFileHash& hash, RsFileHash& real_hash);
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
-    bool encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
 private:
@@ -309,7 +331,19 @@ private:
 
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
-    std::map<RsPeerId,std::map<RsFileHash,time_t> > mUploadLimitMap ;
+    std::map<RsPeerId,std::map<RsFileHash,rstime_t> > mUploadLimitMap ;
+
+	/** Store search callbacks with timeout*/
+	std::map<
+	    TurtleRequestId,
+	    std::pair<
+	        std::function<void (const std::list<TurtleFileInfo>& results)>,
+	        std::chrono::system_clock::time_point >
+	 > mSearchCallbacksMap;
+	RsMutex mSearchCallbacksMapMutex;
+
+	/// Cleanup mSearchCallbacksMap
+	void cleanTimedOutSearches();
 };
 
 

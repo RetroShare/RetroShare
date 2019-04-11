@@ -1,28 +1,25 @@
-/*
- * libretroshare/src/util: rsnet.cc
- *
- * Universal Networking Header for RetroShare.
- *
- * Copyright 2007-2008 by Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/util: rsnet.cc                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright 2015-2018 Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "util/rsnet.h"
 #include "util/rsthreads.h"
@@ -33,6 +30,8 @@
 #else
 #include <netdb.h>
 #endif
+
+#include <cstring>
 
 /* enforce LITTLE_ENDIAN on Windows */
 #ifdef WINDOWS_SYS
@@ -79,55 +78,25 @@ void sockaddr_clear(struct sockaddr_in *addr)
 
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr)
 {
-    addrinfo *info = NULL;
-    int res = getaddrinfo(hostname.c_str(),NULL,NULL,&info) ;
+	addrinfo hint; memset(&hint, 0, sizeof(hint));
+	hint.ai_family = AF_INET;
+	addrinfo* info = nullptr;
+	int res = getaddrinfo(hostname.c_str(), nullptr, &hint, &info);
 
-    bool ok = true;
-    if(res > 0 || info == NULL || info->ai_addr == NULL)
-    {
-	std::cerr << "(EE) getaddrinfo returned error " << res << " on string \"" << hostname << "\"" << std::endl;
-	returned_addr.s_addr = 0 ;
-        ok = false;
-    }
-    else
-        returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr ;
-    
-    if(info)
-        freeaddrinfo(info) ;
-    
-#ifdef DEPRECATED_TO_REMOVE
-#if defined(WINDOWS_SYS) || defined(__APPLE__) || defined(__HAIKU__)
-	hostent *result = gethostbyname(hostname.c_str()) ;
-#else
-    RsTemporaryMemory mem(8192) ;
+	bool ok = true;
+	if(res > 0 || !info || !info->ai_addr)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "(EE) getaddrinfo returned error "
+		          << res << " on string \"" << hostname << "\"" << std::endl;
+		returned_addr.s_addr = 0;
+		ok = false;
+	}
+	else
+		returned_addr.s_addr = ((sockaddr_in*)info->ai_addr)->sin_addr.s_addr;
 
-    if(!mem)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": Cannot allocate memory!" << std::endl;
-	    return false; // Do something.
-    }
+	if(info) freeaddrinfo(info);
 
-    int error = 0;
-    struct hostent pHost;
-    struct hostent *result;
-
-    if(gethostbyname_r(hostname.c_str(), &pHost, (char*)(unsigned char*)mem, mem.size(), &result, &error) != 0)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": cannot call gethostname_r. Internal error reported. Check buffer size." << std::endl;
-	    return false ;
-    }
-#endif
-    if(!result)
-    {
-	    std::cerr << __PRETTY_FUNCTION__ << ": gethostname returned null result." << std::endl;
-	    return false ;
-    }
-    // Use contents of result.
-
-    returned_addr.s_addr = *(unsigned long*) (result->h_addr);
-#endif
-    
-    return ok;
+	return ok;
 }
 
 bool    isValidNet(const struct in_addr *addr)

@@ -118,12 +118,17 @@ TorProcess *TorManager::process()
     return d->process;
 }
 
-QString TorManager::dataDirectory() const
+bool TorManager::isTorAvailable()
+{
+    return !instance()->d->torExecutablePath().isNull();
+}
+
+QString TorManager::torDataDirectory() const
 {
     return d->dataDir;
 }
 
-void TorManager::setDataDirectory(const QString &path)
+void TorManager::setTorDataDirectory(const QString &path)
 {
     d->dataDir = QDir::fromNativeSeparators(path);
 
@@ -446,7 +451,8 @@ QString TorManagerPrivate::torExecutablePath() const
 {
     SettingsObject settings(QStringLiteral("tor"));
     QString path = settings.read("executablePath").toString();
-    if (!path.isEmpty())
+
+    if (!path.isEmpty() && QFile::exists(path))
         return path;
 
 #ifdef Q_OS_WIN
@@ -456,11 +462,21 @@ QString TorManagerPrivate::torExecutablePath() const
 #endif
 
     path = qApp->applicationDirPath();
+
     if (QFile::exists(path + filename))
         return path + filename;
 
 #ifdef BUNDLED_TOR_PATH
     path = QStringLiteral(BUNDLED_TOR_PATH);
+    if (QFile::exists(path + filename))
+        return path + filename;
+#endif
+
+#ifdef __APPLE__
+    // on MacOS, try traditional brew installation path
+
+    path = QStringLiteral("/usr/local/opt/tor/bin") ;
+
     if (QFile::exists(path + filename))
         return path + filename;
 #endif

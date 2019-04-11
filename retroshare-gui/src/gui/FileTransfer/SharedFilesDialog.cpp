@@ -1,23 +1,22 @@
-/****************************************************************
- *  RShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/SharedFilesDialog.cpp                   *
+ *                                                                             *
+ * Copyright (c) 2009 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "SharedFilesDialog.h"
 
@@ -36,6 +35,8 @@
 #include "gui/settings/rsharesettings.h"
 #include "util/QtVersion.h"
 #include "util/RsAction.h"
+#include "util/misc.h"
+#include "util/rstime.h"
 
 #include <retroshare/rsexpr.h>
 #include <retroshare/rsfiles.h>
@@ -74,12 +75,15 @@
 #define IMAGE_COLLOPEN       ":/images/library.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
+#define IMAGE_REMOVE         ":/images/deletemail24.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
 #define VIEW_TYPE_FLAT       1
 
 #define MAX_SEARCH_RESULTS   3000
+
+#define DISABLE_SEARCH_WHILE_TYPING  1
 
 // Define to avoid using the search in treeview, because it is really slow for now.
 //
@@ -146,7 +150,7 @@ public:
 
 /** Constructor */
 SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareDirModel *_flat_model,QWidget *parent)
-: RsAutoUpdatePage(1000,parent),model(NULL)
+  : RsAutoUpdatePage(1000,parent), model(NULL)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -163,18 +167,26 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 
 	tree_model = _tree_model ;
 	flat_model = _flat_model ;
+	connect(flat_model, SIGNAL(layoutChanged()), this, SLOT(updateDirTreeView()) );
+
+	// For filtering items we use a trick: the underlying model will use this FilterRole role to highlight selected items
+	// while the filterProxyModel will select them using the pre-chosen string "filtered".
 
 	tree_proxyModel = new SFDSortFilterProxyModel(tree_model, this);
 	tree_proxyModel->setSourceModel(tree_model);
 	tree_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
 	tree_proxyModel->setSortRole(RetroshareDirModel::SortRole);
 	tree_proxyModel->sort(COLUMN_NAME);
+	tree_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
+	tree_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
 
     flat_proxyModel = new SFDSortFilterProxyModel(flat_model, this);
     flat_proxyModel->setSourceModel(flat_model);
     flat_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     flat_proxyModel->setSortRole(RetroshareDirModel::SortRole);
     flat_proxyModel->sort(COLUMN_NAME);
+	flat_proxyModel->setFilterRole(RetroshareDirModel::FilterRole);
+	flat_proxyModel->setFilterRegExp(QRegExp(QString(RETROSHARE_DIR_MODEL_FILTER_STRING))) ;
 
     // Mr.Alice: I removed this because it causes a crash for some obscur reason. Apparently when the model is changed, the proxy model cannot
     // deal with the change by itself. Should I call something specific? I've no idea. Removing this does not seem to cause any harm either.
@@ -185,7 +197,14 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
     connect(ui.filterClearButton, SIGNAL(clicked()), this, SLOT(clearFilter()));
 	connect(ui.filterStartButton, SIGNAL(clicked()), this, SLOT(startFilter()));
 	connect(ui.filterPatternLineEdit, SIGNAL(returnPressed()), this, SLOT(startFilter()));
-	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(filterRegExpChanged()));
+	connect(ui.filterPatternLineEdit, SIGNAL(textChanged(const QString &)), this, SLOT(onFilterTextEdited()));
+	//Hidden by default, shown on onFilterTextEdited
+	ui.filterClearButton->hide();
+	ui.filterStartButton->hide();
+
+//	mFilterTimer = new RsProtectedTimer( this );
+//	mFilterTimer->setSingleShot( true ); // Ensure the timer will fire only once after it was started
+//	connect(mFilterTimer, SIGNAL(timeout()), this, SLOT(filterRegExpChanged()));
 
 	/* Set header resize modes and initial section sizes  */
 	QHeaderView * header = ui.dirTreeView->header () ;
@@ -210,6 +229,9 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
+  removeExtraFileAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Stop sharing this file" ), this );
+  connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
+
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
 	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate())) ;
 	collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this) ;
@@ -229,12 +251,6 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
 
 	// load settings
 	processSettings(true);
-	// Force to show columns even if hidden in setting
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
 	// Setup the current view model.
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
@@ -260,16 +276,11 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
-	connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
-	connect(ui.dirTreeView, SIGNAL(  doubleClicked(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
+    connect(ui.dirTreeView, SIGNAL(  expanded(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
+    connect(ui.dirTreeView, SIGNAL(  doubleClicked(const QModelIndex & ) ), this, SLOT(   expanded(const QModelIndex & ) ) );
 
 	// load settings
 	processSettings(true);
-	// Force to show columns even if hidden in setting
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
 	// Setup the current view model.
 	//
 	changeCurrentViewModel(ui.viewType_CB->currentIndex()) ;
@@ -346,7 +357,7 @@ void LocalSharedFilesDialog::processSettings(bool bLoad)
 }
 void RemoteSharedFilesDialog::processSettings(bool bLoad)
 {
-	Settings->beginGroup("SharedFilesDialog");
+	Settings->beginGroup("RemoteSharedFilesDialog");
 
 	if (bLoad) {
 		// load settings
@@ -420,15 +431,11 @@ void SharedFilesDialog::changeCurrentViewModel(int viewTypeIndex)
 	ui.dirTreeView->header()->headerDataChanged(Qt::Horizontal, COLUMN_NAME, COLUMN_WN_VISU_DIR) ;
 
 //    recursRestoreExpandedItems(ui.dirTreeView->rootIndex(),expanded_indexes);
-    FilterItems();
+	FilterItems();
 }
 
 void LocalSharedFilesDialog::showProperColumns()
 {
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-
 	if(model == tree_model)
 	{
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
@@ -454,10 +461,6 @@ void LocalSharedFilesDialog::showProperColumns()
 }
 void RemoteSharedFilesDialog::showProperColumns()
 {
-	ui.dirTreeView->setColumnHidden(COLUMN_NAME, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_SIZE, false) ;
-	ui.dirTreeView->setColumnHidden(COLUMN_AGE, false) ;
-
 	if(model == tree_model)
 	{
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
@@ -509,53 +512,63 @@ void RemoteSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 {
 	if (!rsPeers) return; /* not ready yet! */
 
+	QMenu *contextMenu = new QMenu(this);
+
 	QModelIndex idx = ui.dirTreeView->indexAt(point) ;
-	if (!idx.isValid()) return;
-
-	QModelIndex midx = proxyModel->mapToSource(idx) ;
-	if (!midx.isValid()) return;
-
-	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
-	int type = model->getType(midx) ;
-	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
-
-
-	QMenu contextMnu( this ) ;
-
-	collCreateAct->setEnabled(true);
-	collOpenAct->setEnabled(true);
-
-	QMenu collectionMenu(tr("Collection"), this);
-	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
-	collectionMenu.addAction(collCreateAct);
-	collectionMenu.addAction(collOpenAct);
-
-	QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
-
-	if(type == DIR_TYPE_DIR || list.size() > 1)
+	if (idx.isValid())
 	{
-		QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), &contextMnu ) ;
-		connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
-		contextMnu.addAction( downloadActI) ;
+
+		QModelIndex midx = proxyModel->mapToSource(idx) ;
+		if (midx.isValid())
+		{
+
+			currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
+			int type = model->getType(midx) ;
+			if ( (type == DIR_TYPE_DIR) || (type == DIR_TYPE_FILE) )
+			{
+				collCreateAct->setEnabled(true);
+				collOpenAct->setEnabled(true);
+
+				QModelIndexList list = ui.dirTreeView->selectionModel()->selectedRows() ;
+
+				if(type == DIR_TYPE_DIR || list.size() > 1)
+				{
+					QAction *downloadActI = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download..." ), contextMenu ) ;
+					connect( downloadActI , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelectedInteractive() ) ) ;
+					contextMenu->addAction( downloadActI) ;
+				}
+				else
+				{
+					QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), contextMenu ) ;
+					connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
+					contextMenu->addAction( downloadAct) ;
+				}
+
+				contextMenu->addSeparator() ;//------------------------------------
+				contextMenu->addAction( copylinkAct) ;
+				contextMenu->addAction( sendlinkAct) ;
+				contextMenu->addSeparator() ;//------------------------------------
+				contextMenu->addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+
+				contextMenu->addSeparator() ;//------------------------------------
+
+				QMenu collectionMenu(tr("Collection"), this);
+				collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+				collectionMenu.addAction(collCreateAct);
+				collectionMenu.addAction(collOpenAct);
+				contextMenu->addMenu(&collectionMenu) ;
+
+			}
+
+		}
 	}
-	else
-	{
-		QAction *downloadAct = new QAction(QIcon(IMAGE_DOWNLOAD), tr( "Download" ), &contextMnu ) ;
-		connect( downloadAct , SIGNAL( triggered() ), this, SLOT( downloadRemoteSelected() ) ) ;
-		contextMnu.addAction( downloadAct) ;
-	}
 
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addAction( copylinkAct) ;
-	contextMnu.addAction( sendlinkAct) ;
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+	contextMenu = model->getContextMenu(contextMenu);
 
+	if (!contextMenu->children().isEmpty())
+		contextMenu->exec(QCursor::pos()) ;
 
-	contextMnu.addSeparator() ;//------------------------------------
-	contextMnu.addMenu(&collectionMenu) ;
-
-	contextMnu.exec(QCursor::pos()) ;
+	delete contextMenu;
 }
 
 QModelIndexList SharedFilesDialog::getSelected()
@@ -926,9 +939,42 @@ void SharedFilesDialog::restoreExpandedPathsAndSelection(const std::set<std::str
         std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
         recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0),path,expanded_indexes,hidden_indexes,selected_indexes);
     }
-    QItemSelection selection ;
+    //QItemSelection selection ;
 
     ui.dirTreeView->blockSignals(false) ;
+}
+
+void SharedFilesDialog::expandAll()
+{
+    if(ui.dirTreeView->model() == NULL || ui.dirTreeView->model() == flat_proxyModel)	// this method causes infinite loops on flat models
+        return ;
+
+    ui.dirTreeView->blockSignals(true) ;
+
+#ifdef DEBUG_SHARED_FILES_DIALOG
+    std::cerr << "Restoring expanded items. " << std::endl;
+#endif
+    for(int row = 0; row < ui.dirTreeView->model()->rowCount(); ++row)
+    {
+        std::string path = ui.dirTreeView->model()->index(row,0).data(Qt::DisplayRole).toString().toStdString();
+        recursExpandAll(ui.dirTreeView->model()->index(row,0));
+    }
+
+    ui.dirTreeView->blockSignals(false) ;
+
+}
+
+void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
+{
+	ui.dirTreeView->setExpanded(index,true) ;
+
+	for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
+	{
+		QModelIndex idx(index.child(row,0)) ;
+
+		if(ui.dirTreeView->model()->rowCount(idx) > 0)
+			recursExpandAll(idx) ;
+	}
 }
 
 void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp,
@@ -982,8 +1028,8 @@ void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, con
 	 bool invisible = vis.find(local_path) != vis.end();
 	ui.dirTreeView->setRowHidden(index.row(),index.parent(),invisible ) ;
 
-	if(invisible)
-		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
+//	if(invisible)
+//		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
 
     if(!invisible && exp.find(local_path) != exp.end())
     {
@@ -1015,12 +1061,12 @@ void  SharedFilesDialog::postModDirectories(bool local)
 	flat_model->postMods();
 	ui.dirTreeView->update() ;
 
-    if (ui.filterPatternLineEdit->text().isEmpty() == false)
+	if (ui.filterPatternLineEdit->text().isEmpty() == false)
 		FilterItems();
 
-    ui.dirTreeView->setSortingEnabled(true);
+	ui.dirTreeView->setSortingEnabled(true);
 
-    restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
+	restoreExpandedPathsAndSelection(expanded_indexes,hidden_indexes,selected_indexes) ;
 
 #ifdef DEBUG_SHARED_FILES_DIALOG
     std::cerr << "****** updated directories! Re-enabling sorting ******" << std::endl;
@@ -1050,7 +1096,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
 	currentFile = model->data(midx, RetroshareDirModel::FileNameRole).toString() ;
 	int type = model->getType(midx) ;
-	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE) return;
+	if (type != DIR_TYPE_DIR && type != DIR_TYPE_FILE && type != DIR_TYPE_EXTRA_FILE) return;
 
 	QMenu contextMnu(this) ;
 
@@ -1084,58 +1130,71 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 			contextMnu.addMenu(&collectionMenu) ;
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addAction(QIcon(IMAGE_MSG), tr("Recommend in a message to..."), this, SLOT(recommendFilesToMsg())) ;
+        break;
+
+        case DIR_TYPE_EXTRA_FILE:
+        	contextMnu.addAction(openfileAct) ;
+			contextMnu.addSeparator() ;//------------------------------------
+			contextMnu.addAction(copylinkAct) ;
+			contextMnu.addAction(sendlinkAct) ;
+			contextMnu.addAction(removeExtraFileAct) ;
+
 		break ;
 
 		default :
 		return ;
 	}
 
-	GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
 	QMenu shareChannelMenu(tr("Share on channel...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
-
-	if(channelDialog != NULL)
-	{
-		shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
-
-		std::list<RsGroupMetaData> grp_metas ;
-		channelDialog->getGroupList(grp_metas) ;
-
-		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
-
-		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_PUBLISHER((*it).mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
-
-		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
-
-		for(auto it(grplist.begin());it!=grplist.end();++it)
-				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
-
-		contextMnu.addMenu(&shareChannelMenu) ;
-	}
-
-	GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
 	QMenu shareForumMenu(tr("Share on forum...")) ; // added here because the shareChannelMenu QMenu object is deleted afterwards
 
-	if(forumsDialog != NULL)
+    if(type != DIR_TYPE_EXTRA_FILE)
 	{
-		shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
+		GxsChannelDialog *channelDialog = dynamic_cast<GxsChannelDialog*>(MainWindow::getPage(MainWindow::Channels));
 
-		std::list<RsGroupMetaData> grp_metas ;
-		forumsDialog->getGroupList(grp_metas) ;
+		if(channelDialog != NULL)
+		{
+			shareChannelMenu.setIcon(QIcon(IMAGE_CHANNEL));
 
-		std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+			std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
+			channelDialog->getGroupList(grp_metas) ;
 
-		for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
-			if(IS_GROUP_SUBSCRIBED((*it).mSubscribeFlags))
-				grplist.push_back(std::make_pair((*it).mGroupName, (*it).mGroupId));
+			std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
 
-		std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+			for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+				if(IS_GROUP_PUBLISHER((*it).second.mSubscribeFlags) && IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+					grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
 
-		for(auto it(grplist.begin());it!=grplist.end();++it)
-			shareForumMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareInForum()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+			std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
 
-		contextMnu.addMenu(&shareForumMenu) ;
+			for(auto it(grplist.begin());it!=grplist.end();++it)
+				shareChannelMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareOnChannel()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+
+			contextMnu.addMenu(&shareChannelMenu) ;
+		}
+
+		GxsForumsDialog *forumsDialog = dynamic_cast<GxsForumsDialog*>(MainWindow::getPage(MainWindow::Forums));
+
+		if(forumsDialog != NULL)
+		{
+			shareForumMenu.setIcon(QIcon(IMAGE_FORUMS));
+
+			std::map<RsGxsGroupId,RsGroupMetaData> grp_metas ;
+			forumsDialog->getGroupList(grp_metas) ;
+
+			std::vector<std::pair<std::string,RsGxsGroupId> > grplist ; // I dont use a std::map because two or more channels may have the same name.
+
+			for(auto it(grp_metas.begin());it!=grp_metas.end();++it)
+				if(IS_GROUP_SUBSCRIBED((*it).second.mSubscribeFlags))
+					grplist.push_back(std::make_pair((*it).second.mGroupName, (*it).second.mGroupId));
+
+			std::sort(grplist.begin(),grplist.end(),ChannelCompare()) ;
+
+			for(auto it(grplist.begin());it!=grplist.end();++it)
+				shareForumMenu.addAction(QString::fromUtf8((*it).first.c_str()), this, SLOT(shareInForum()))->setData(QString::fromStdString((*it).second.toStdString())) ;
+
+			contextMnu.addMenu(&shareForumMenu) ;
+		}
 	}
 
 	contextMnu.exec(QCursor::pos()) ;
@@ -1254,33 +1313,43 @@ void SharedFilesDialog::indicatorChanged(int index)
 	updateDisplay() ;
 }
 
-void SharedFilesDialog::filterRegExpChanged()
+void SharedFilesDialog::onFilterTextEdited()
 {
-    QString text = ui.filterPatternLineEdit->text();
+	QString text = ui.filterPatternLineEdit->text();
 
-    if (text.isEmpty()) {
-        ui.filterClearButton->hide();
-    } else {
-        ui.filterClearButton->show();
-    }
+	if (text.isEmpty()) {
+		ui.filterClearButton->hide();
+	} else {
+		ui.filterClearButton->show();
+	}
 
-    if (text == lastFilterString) {
-        ui.filterStartButton->hide();
-    } else {
-        ui.filterStartButton->show();
-    }
-
-	//bool valid = false ;
-	//QColor color ;
+	if (text == lastFilterString) {
+		ui.filterStartButton->hide();
+	} else {
+		ui.filterStartButton->show();
+	}
 
 	if(text.length() > 0 && text.length() < 3)
 	{
-		//valid = false;
-
 		ui.filterStartButton->setEnabled(false) ;
 		ui.filterPatternFrame->setToolTip(tr("Search string should be at least 3 characters long.")) ;
 		return ;
 	}
+
+	ui.filterStartButton->setEnabled(true) ;
+	ui.filterPatternFrame->setToolTip(QString());
+
+	//FilterItems();
+#ifndef DISABLE_SEARCH_WHILE_TYPING
+	mFilterTimer->start( 500 ); // This will fire filterRegExpChanged after 500 ms.
+	// If the user types something before it fires, the timer restarts counting
+#endif
+}
+
+#ifdef DEPRECATED_CODE
+void SharedFilesDialog::filterRegExpChanged()
+{
+	QString text = ui.filterPatternLineEdit->text();
 
 	if(text.length() > 0 && proxyModel == tree_proxyModel)
 	{
@@ -1314,17 +1383,8 @@ void SharedFilesDialog::filterRegExpChanged()
 
 	ui.filterStartButton->setEnabled(true) ;
 	ui.filterPatternFrame->setToolTip(QString());
-
-	/* unpolish widget to clear the stylesheet's palette cache */
-	// ui.filterPatternFrame->style()->unpolish(ui.filterPatternFrame);
-
-	// QPalette palette = ui.filterPatternLineEdit->palette();
-	// palette.setColor(ui.filterPatternLineEdit->backgroundRole(), color);
-	// ui.filterPatternLineEdit->setPalette(palette);
-
-	// //ui.searchLineFrame->setProperty("valid", valid);
-	// Rshare::refreshStyleSheet(ui.filterPatternFrame, false);
 }
+#endif
 
 /* clear Filter */
 void SharedFilesDialog::clearFilter()
@@ -1338,18 +1398,34 @@ void SharedFilesDialog::clearFilter()
 /* clear Filter */
 void SharedFilesDialog::startFilter()
 {
-    ui.filterStartButton->hide();
-    lastFilterString = ui.filterPatternLineEdit->text();
+	ui.filterStartButton->hide();
+	lastFilterString = ui.filterPatternLineEdit->text();
 
-    FilterItems();
+	FilterItems();
 }
 
+void SharedFilesDialog::updateDirTreeView()
+{
+	if (model == flat_model)
+	{
+		size_t maxSize = 0;
+		FlatStyle_RDM* flat = dynamic_cast<FlatStyle_RDM*>(flat_model);
+		if (flat && flat->isMaxRefsTableSize(&maxSize))
+		{
+			ui.dirTreeView->setToolTip(tr("Warning: You reach max (%1) files in flat list. No more will be added.").arg(maxSize));
+			return;
+		}
+	}
+	ui.dirTreeView->setToolTip("");
+}
+
+//#define DEBUG_SHARED_FILES_DIALOG
+
+#ifdef DEPRECATED_CODE
 // This macro make the search expand all items that contain the searched text.
 // A bug however, makes RS expand everything when nothing is selected, which is a pain.
 
 #define EXPAND_WHILE_SEARCHING 1
-
-//#define DEBUG_SHARED_FILES_DIALOG
 
 void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxyModel,const QModelIndex& indx,uint32_t depth,const std::vector<std::set<void*> >& pointers,QList<QModelIndex>& hidden_list)
 {
@@ -1406,6 +1482,8 @@ void recursMakeVisible(QTreeView *tree,const QSortFilterProxyModel *proxyModel,c
 
 void SharedFilesDialog::restoreInvisibleItems()
 {
+	std::cerr << "Restoring " << mHiddenIndexes.size() << " invisible indexes" << std::endl;
+
 	for(QList<QModelIndex>::const_iterator it(mHiddenIndexes.begin());it!=mHiddenIndexes.end();++it)
 	{
 		QModelIndex indx = proxyModel->mapFromSource(*it);
@@ -1416,6 +1494,7 @@ void SharedFilesDialog::restoreInvisibleItems()
 
 	mHiddenIndexes.clear();
 }
+#endif
 
 class QCursorContextBlocker
 {
@@ -1448,115 +1527,74 @@ void SharedFilesDialog::FilterItems()
 
 	if(mLastFilterText == text)	// do not filter again if we already did. This is an optimization
 	{
+#ifdef DEBUG_SHARED_FILES_DIALOG
 		std::cerr << "Last text is equal to text. skipping" << std::endl;
+#endif
 		return ;
 	}
 
-	std::cerr << "New last text. Performing the filter" << std::endl;
+#ifdef DEBUG_SHARED_FILES_DIALOG
+	std::cerr << "New last text. Performing the filter on string \"" << text.toStdString() << "\"" << std::endl;
+#endif
 	mLastFilterText = text ;
-	model->update() ;
-	restoreInvisibleItems();
 
 	QCursorContextBlocker q(ui.dirTreeView) ;
 
-	if(proxyModel == tree_proxyModel)
+	QCoreApplication::processEvents() ;
+
+	std::list<DirDetails> result_list ;
+	uint32_t found = 0 ;
+
+	if(text == "")
 	{
-		QCoreApplication::processEvents() ;
-
-		std::list<std::string> keywords ;
-		std::list<DirDetails> result_list ;
-
-		if(text == "")
-			return ;
-
-		if(text.length() < 3)
-			return ;
-
-		FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
-		QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
-
-		for(auto it(lst.begin());it!=lst.end();++it)
-			keywords.push_back((*it).toStdString());
-
-		if(keywords.size() > 1)
-		{
-			RsRegularExpression::NameExpression exp(RsRegularExpression::ContainsAllStrings,keywords,true);
-			rsFiles->SearchBoolExp(&exp,result_list, flags) ;
-		}
-		else
-			rsFiles->SearchKeywords(keywords,result_list, flags) ;
-
-#ifdef DEBUG_SHARED_FILES_DIALOG
-		std::cerr << "Found " << result_list.size() << " results" << std::endl;
-#endif
-
-		if(result_list.size() > MAX_SEARCH_RESULTS)
-			return ;
-#ifdef DEBUG_SHARED_FILES_DIALOG
-		std::cerr << "Found this result: " << std::endl;
-#endif
-		std::vector<std::set<void*> > pointers(2,std::set<void*>());	// at least two levels need to be here.
-
-		// Then show only the ones we need
-		for(auto it(result_list.begin());it!=result_list.end();++it)
-		{
-#ifdef DEBUG_SHARED_FILES_DIALOG
-			std::cerr << (void*)(*it).ref << "  parents: " ;
-#endif
-
-			DirDetails& det(*it) ;
-			void *p = NULL;
-			std::list<void*> lst ;
-
-			lst.push_back(det.ref) ;
-
-			while(det.type == DIR_TYPE_FILE || det.type == DIR_TYPE_DIR)
-			{
-				p = det.parent ;
-				rsFiles->RequestDirDetails( p, det, flags);
-
-#ifdef DEBUG_SHARED_FILES_DIALOG
-				std::cerr << " " << (void*)p << "(" << (int)det.type << ")";
-#endif
-
-				lst.push_front(p) ;
-			}
-
-#ifdef DEBUG_SHARED_FILES_DIALOG
-			std::cerr << std::endl;
-#endif
-
-			uint32_t u=0;
-			for(auto it2(lst.begin());it2!=lst.end();++it2,++u)
-			{
-				if(pointers.size() <= u)
-					pointers.resize(u+5) ;
-
-				pointers[u].insert(*it2) ;
-			}
-		}
-
-		int rowCount = ui.dirTreeView->model()->rowCount();
-		for (int row = 0; row < rowCount; ++row)
-			recursMakeVisible(ui.dirTreeView,proxyModel,ui.dirTreeView->model()->index(row, COLUMN_NAME),0,pointers,mHiddenIndexes);
+		model->filterItems(std::list<std::string>(),found) ;
+		model->update() ;
+		return ;
 	}
+
+	if(text.length() < 3)
+		return ;
+
+	//FileSearchFlags flags = isRemote()?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL;
+	QStringList lst = text.split(" ",QString::SkipEmptyParts) ;
+	std::list<std::string> keywords ;
+
+	for(auto it(lst.begin());it!=lst.end();++it)
+		keywords.push_back((*it).toStdString());
+
+	model->filterItems(keywords,found) ;
+	model->update() ;
+
+	if(found > 0)
+		expandAll();
+
+	if(found == 0)
+		ui.filterPatternFrame->setToolTip(tr("No result.")) ;
+	else if(found > MAX_SEARCH_RESULTS)
+		ui.filterPatternFrame->setToolTip(tr("More than %1 results. Add more/longer search words to select less.").arg(MAX_SEARCH_RESULTS)) ;
 	else
-	{
-		int rowCount = ui.dirTreeView->model()->rowCount();
-		for (int row = 0; row < rowCount; ++row)
-			flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
-	}
+		ui.filterPatternFrame->setToolTip(tr("Found %1 results.").arg(found)) ;
 
-#ifdef DEPRECATED_CODE
-    int rowCount = ui.dirTreeView->model()->rowCount();
-    for (int row = 0; row < rowCount; ++row)
-		 if(proxyModel == tree_proxyModel)
-			 tree_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
-		 else
-			 flat_FilterItem(ui.dirTreeView->model()->index(row, COLUMN_NAME), text, 0);
+#ifdef DEBUG_SHARED_FILES_DIALOG
+	std::cerr << found << " results found by search." << std::endl;
 #endif
 }
 
+void SharedFilesDialog::removeExtraFile()
+{
+	std::list<DirDetails> files_info ;
+
+	model->getFileInfoFromIndexList(getSelected(),files_info);
+
+    for(auto it(files_info.begin());it!=files_info.end();++it)
+    {
+        std::cerr << "removing file " << (*it).name << ", hash = " << (*it).hash << std::endl;
+
+        rsFiles->ExtraFileRemove((*it).hash);
+    }
+}
+
+#ifdef DEPRECATED_CODE
 bool SharedFilesDialog::flat_FilterItem(const QModelIndex &index, const QString &text, int /*level*/)
 {
 	if(index.data(RetroshareDirModel::FileNameRole).toString().contains(text, Qt::CaseInsensitive)) 
@@ -1606,4 +1644,4 @@ bool SharedFilesDialog::tree_FilterItem(const QModelIndex &index, const QString 
 
     return (visible || visibleChildCount);
 }
-
+#endif

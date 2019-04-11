@@ -1,28 +1,23 @@
-/*
- *	xProgressBar: A custom progress bar for Qt 4.
- *	Author: xEsk (Xesc & Technology 2008)
- *
- *	Changelog:
- *
- *	v1.0:
- *	-----
- *		- First release
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/xprogressbar.cpp                        *
+ *                                                                             *
+ * Copyright (c) xEsk (Xesc & Technology 2008)                                 *
+ * Copyright (c) 2010 Retroshare Tram           <retroshare.project@gmail.com> *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <math.h>
 #include <retroshare/rstypes.h>
@@ -233,8 +228,12 @@ void xProgressBar::paint()
 
 	uint32_t ss = _pinfo.nb_chunks ;
 
-	if(ss > 1)	// for small files we use a more progressive display
+	QRect bounding = painter->boundingRect(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
+
+#ifdef TO_BE_REMOVED
+	if((ss > 1) && (rect.width() > (1.5*bounding.width())))	// for small files we use a more progressive display
 	{
+#endif
 		if(!_pinfo.cmap._map.empty())
 		{
 			if (ss > width)
@@ -302,8 +301,9 @@ void xProgressBar::paint()
 
 		overPaintSelectedChunks( _pinfo.chunks_in_progress , QColor(170, 20,9), QColor(223,121,123), width,ss) ;
 		overPaintSelectedChunks( _pinfo.chunks_in_checking , QColor(186,143,0), QColor(223,196, 61), width,ss) ;
+#ifdef TO_BE_REMOVED
 	}
-	else
+	else if ((rect.width() < bounding.width()) || !displayText)
 	{
 		// calculate progress value
 		int preWidth = static_cast<int>((rect.width() - 1 - hSpan)*(_pinfo.progress/100.0f));
@@ -314,15 +314,25 @@ void xProgressBar::paint()
 		painter->setBrush(linearGrad);
 		painter->drawRect(rect.x() + hSpan, rect.y() + vSpan, rect.width() - progressWidth - hSpan, rect.height() - 1 - vSpan * 2);
 	}
+#endif
 	painter->setOpacity(1.0f) ;
 
 	
 	// paint text?
-	if (displayText)
+	if (displayText && (rect.width() >= bounding.width()))
 	{
-		QLocale locale;
+		QColor colorInt (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 127);
+		QColor colorBor (255-textColor.red(), 255-textColor.green(), 255-textColor.blue(), 63);
+		QRadialGradient radialGrad(bounding.x()+(bounding.width()/2), bounding.y()+(bounding.height()/2),bounding.width()/2);
+		radialGrad.setColorAt(0.0, colorInt);
+		radialGrad.setColorAt(1.0, colorBor);
+		radialGrad.setSpread(QGradient::ReflectSpread);
+		painter->setPen(colorBor);
+		painter->setBrush(radialGrad);
+		painter->drawRoundedRect(bounding.adjusted(-2,2,2,-3),4.0,4.0);
+
 		painter->setPen(textColor);
-		painter->drawText(rect, Qt::AlignCenter, locale.toString(_pinfo.progress, 'f', 2) + "%");
+		painter->drawText(rect, Qt::AlignCenter, QLocale().toString(_pinfo.progress, 'f', 2) + "%");
 	}
 
 	backgroundColor.setRgb(255, 255, 255);

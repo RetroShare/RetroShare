@@ -1,25 +1,22 @@
-/*************************************:***************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011 - 2011 RetroShare Team
- *
- *  Cyril Soler (csoler@users.sourceforge.net)
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RsCollection.cpp                                                 *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <stdexcept>
 #include <retroshare/rsfiles.h>
@@ -87,6 +84,46 @@ void RsCollection::downloadFiles() const
 	recursCollectColFileInfos(docElem,colFileInfos,QString(),false) ;
 
 	RsCollectionDialog(_fileName, colFileInfos, false).exec() ;
+}
+
+void RsCollection::autoDownloadFiles() const
+{
+	QDomElement docElem = _xml_doc.documentElement();
+
+	std::vector<ColFileInfo> colFileInfos;
+
+	recursCollectColFileInfos(docElem,colFileInfos,QString(),false);
+
+	QString dlDir = QString::fromUtf8(rsFiles->getDownloadDirectory().c_str());
+
+	foreach(ColFileInfo colFileInfo, colFileInfos)
+	{
+		autoDownloadFiles(colFileInfo, dlDir);
+	}
+}
+
+void RsCollection::autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const
+{
+	if (!colFileInfo.filename_has_wrong_characters)
+	{
+		QString cleanPath = dlDir + colFileInfo.path ;
+		std::cout << "making directory " << cleanPath.toStdString() << std::endl;
+
+		if(!QDir(QApplication::applicationDirPath()).mkpath(cleanPath))
+			std::cerr << "Unable to make path: " + cleanPath.toStdString() << std::endl;
+
+		if (colFileInfo.type==DIR_TYPE_FILE)
+			rsFiles->FileRequest(colFileInfo.name.toUtf8().constData(),
+			                     RsFileHash(colFileInfo.hash.toStdString()),
+			                     colFileInfo.size,
+			                     cleanPath.toUtf8().constData(),
+			                     RS_FILE_REQ_ANONYMOUS_ROUTING,
+			                     std::list<RsPeerId>());
+	}
+	foreach(ColFileInfo colFileInfoChild, colFileInfo.children)
+	{
+		autoDownloadFiles(colFileInfoChild, dlDir);
+	}
 }
 
 static QString purifyFileName(const QString& input,bool& bad)

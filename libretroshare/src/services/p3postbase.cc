@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3posted.cc
- *
- * Posted interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3postbase.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <retroshare/rsidentity.h>
 
 #include "retroshare/rsgxsflags.h"
@@ -110,9 +106,8 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			std::cerr << std::endl;
 #endif
 
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-			for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+			for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 			{
 #ifdef POSTBASE_DEBUG
 				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
@@ -123,10 +118,9 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
 
-				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
-					std::vector<RsGxsMessageId>::iterator mit1;
-					for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 					{
 						notify->AddFeedItem(RS_FEED_ITEM_POSTED_MSG, mit->first.toStdString(), mit1->toStdString());
 					}
@@ -151,7 +145,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << std::endl;
 #endif
 
-				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVE)
+				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
 					notify->AddFeedItem(RS_FEED_ITEM_POSTED_NEW, git->toStdString());
 				}
@@ -431,7 +425,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 		mBgIncremental = unprocessed;
 	}
 
-	std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > postMap;
+	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > postMap;
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
@@ -487,7 +481,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 #endif
 
 				/* but we need to notify GUI about them */	
-				msgChanges->msgChangeMap[mit->first].push_back((*vit)->meta.mMsgId);
+				msgChanges->msgChangeMap[mit->first].insert((*vit)->meta.mMsgId);
 			}
 			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
 			{
@@ -546,7 +540,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 				if (sit == mBgStatsMap.end())
 				{
 					// add to map of ones to update.		
-					postMap[groupId].push_back(threadId);	
+					postMap[groupId].insert(threadId);
 
 					mBgStatsMap[threadId] = PostStats(0,0,0);
 					sit = mBgStatsMap.find(threadId);
@@ -704,7 +698,7 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 #endif
 
 				stats.increment(it->second);
-				msgChanges->msgChangeMap[mit->first].push_back(vit->mMsgId);
+				msgChanges->msgChangeMap[mit->first].insert(vit->mMsgId);
 			}
 			else
 			{

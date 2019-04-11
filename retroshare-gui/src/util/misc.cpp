@@ -1,24 +1,23 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2008, defnax
- * Copyright (C) 2006  Christophe Dumez
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- *
- *************************************************************************/
+/*******************************************************************************
+ * util/misc.cpp                                                               *
+ *                                                                             *
+ * Copyright (c) 2008, defnax           <retroshare.project@gmail.com>         *
+ * Copyright (C) 2006  Christophe Dumez                                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QString>
 #include <QDir>
@@ -26,6 +25,7 @@
 #include <QByteArray>
 #include <QBuffer>
 #include <time.h>
+#include <QFontDialog>
 
 #include "misc.h"
 
@@ -316,7 +316,11 @@ bool misc::getOpenFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     file = QFileDialog::getOpenFileName(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -339,7 +343,11 @@ bool misc::getOpenFileNames(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type);
 
+#ifdef RS_NATIVEDIALOGS
+    files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks |                                    options);
+#else
     files = QFileDialog::getOpenFileNames(parent, caption, lastDir, filter, NULL, QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (files.isEmpty())
         return false;
@@ -365,7 +373,11 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
 {
     QString lastDir = Settings->getLastDir(type) + "/" + file;
 
+#ifdef RS_NATIVEDIALOGS
+    file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter,                                    options);
+#else
     file = QFileDialog::getSaveFileName(parent, caption, lastDir, filter, selectedFilter, QFileDialog::DontUseNativeDialog | options);
+#endif
 
     if (file.isEmpty())
         return false;
@@ -373,5 +385,23 @@ bool misc::getSaveFileName(QWidget *parent, RshareSettings::enumLastDir type
     lastDir = QFileInfo(file).absoluteDir().absolutePath();
     Settings->setLastDir(type, lastDir);
 
-    return true;
+	return true;
+}
+
+QFont misc::getFont(bool *ok, const QFont &initial, QWidget *parent, const QString &title)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFontDialog::getFont(ok, initial, parent, title);
+#else
+		return QFontDialog::getFont(ok, initial, parent, title, QFontDialog::DontUseNativeDialog);
+#endif
+}
+
+QString misc::getExistingDirectory(QWidget *parent, const QString &caption, const QString &dir)
+{
+#ifdef RS_NATIVEDIALOGS
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#else
+		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+#endif
 }

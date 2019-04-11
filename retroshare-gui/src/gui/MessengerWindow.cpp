@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/MessengerWindow.cpp                                                     *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QFile>
 #include <QFileInfo>
@@ -109,20 +108,21 @@ MessengerWindow::MessengerWindow(QWidget* parent, Qt::WindowFlags flags)
         }
         expandedGroups.clear();
 
-    ui.messagelineEdit->setMinimumWidth(20);
 
     /* Initialize friend list */
     QToolButton *button = new QToolButton(this);
-    button->setIcon(QIcon(":/images/user/add_user24.png"));
+    button->setIcon(QIcon(":/icons/png/invite.png"));
     button->setToolTip(tr("Add a Friend"));
     connect(button, SIGNAL(clicked()), this, SLOT(addFriend()));
     ui.friendList->addToolButton(button);
+	button->setIconSize(QSize(27, 27));
 
     button = new QToolButton(this);
-    button->setIcon(QIcon(":/images/friendsfolder24.png"));
+    button->setIcon(QIcon(":/icons/png/filesharing.png"));
     button->setToolTip(tr("Share files for your friends"));
     connect(button, SIGNAL(clicked()), this, SLOT(openShareManager()));
-    ui.friendList->addToolButton(button);
+    ui.friendList->addToolButton(button);	
+	button->setIconSize(QSize(27, 27));
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
@@ -222,6 +222,7 @@ void MessengerWindow::updateOwnStatus(const QString &peer_id, int status)
         // my status has changed
 
         ui.statusButton->setText(m_nickName + " (" + StatusDefs::name(status) + ")");
+		ui.statusButton->setIcon(QIcon(StatusDefs::imageIM(status)));
 
         return;
     }

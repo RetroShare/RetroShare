@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/services/autoproxy: p3i2pbob.cc                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Sehraf                                                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <sstream>
 #include <unistd.h>		/* for usleep() */
 
@@ -37,7 +58,7 @@ static const int sleepFactorSlow      = 20; // 1s
 
 static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Default, "p3I2pBob"};
 
-static const time_t selfCheckPeroid = 30;
+static const rstime_t selfCheckPeroid = 30;
 
 void doSleep(useconds_t timeToSleepMS) {
 	rstime::rs_usleep((useconds_t) (timeToSleepMS * 1000));
@@ -890,7 +911,7 @@ bool p3I2pBob::connectI2P()
 	}
 
 	// create socket
-	mSocket = unix_socket(AF_INET, SOCK_STREAM, 0);
+	mSocket = unix_socket(PF_INET, SOCK_STREAM, 0);
 	if (mSocket < 0)
 	{
 		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to open socket! Socket Error: " + socket_errorType(errno));
@@ -898,7 +919,7 @@ bool p3I2pBob::connectI2P()
 	}
 
 	// connect
-	int err = unix_connect(mSocket, (struct sockaddr *)&mI2PProxyAddr, sizeof(mI2PProxyAddr));
+	int err = unix_connect(mSocket, mI2PProxyAddr);
 	if (err != 0) {
 		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to connect to BOB! Socket Error: " + socket_errorType(errno));
 		return false;

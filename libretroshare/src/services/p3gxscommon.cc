@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxscommon.cc
- *
- * GxsChannels interface for RetroShare.
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscommon.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2013 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "retroshare/rsgxscommon.h"
 #include "services/p3gxscommon.h"
 #include "rsitems/rsgxscommentitems.h"
@@ -502,8 +498,8 @@ bool p3GxsCommentService::createGxsVote(uint32_t &token, RsGxsVote &vote)
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
-	vect_msgIds.push_back(parentId.second);
+	std::set<RsGxsMessageId> &vect_msgIds = msgIds[parentId.first];
+	vect_msgIds.insert(parentId.second);
 
 	uint32_t int_token;
 	mExchange->getTokenService()->requestMsgInfo(int_token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, msgIds);
@@ -556,24 +552,22 @@ void p3GxsCommentService::load_PendingVoteParent(const uint32_t &token)
 			pit = mPendingVotes.find(parentId);
 			if (pit == mPendingVotes.end())
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Finding Pending Vote";
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__
+				          << " ERROR Finding Pending Vote" << std::endl;
 				continue;
 			}
 
 			RsGxsVote vote = pit->second.mVote;
 			if (meta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
 			{
-                		std::cerr << "p3GxsCommentService::load_PendingVoteParent() ERROR Already Voted";
-				std::cerr << std::endl;
-                		std::cerr << "mGroupId: " << meta.mGroupId;
-				std::cerr << std::endl;
-                		std::cerr << "mMsgId: " << meta.mMsgId;
-				std::cerr << std::endl;
+				std::cerr << __PRETTY_FUNCTION__ << " ERROR Already Voted"
+				          << std::endl
+				          << "mGroupId: " << meta.mGroupId << std::endl
+				          << "mMsgId: " << meta.mMsgId << std::endl;
 
 				pit->second.mStatus = VoteHolder::VOTE_ERROR;
-				uint32_t status = RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
-				mExchange->updatePublicRequestStatus(pit->second.mReqToken, status);
+				mExchange->updatePublicRequestStatus(
+				            pit->second.mReqToken, RsTokenService::FAILED );
 				continue;
 			}
 
@@ -617,8 +611,8 @@ void p3GxsCommentService::completeInternalVote(uint32_t &token)
 	{
 		if (it->second.mVoteToken == token)
 		{
-
-			uint32_t status = mExchange->getTokenService()->requestStatus(token);
+			RsTokenService::GxsRequestStatus status =
+			        mExchange->getTokenService()->requestStatus(token);
 			mExchange->updatePublicRequestStatus(it->second.mReqToken, status);
 
 #ifdef DEBUG_GXSCOMMON

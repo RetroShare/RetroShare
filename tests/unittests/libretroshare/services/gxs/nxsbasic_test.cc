@@ -1,13 +1,25 @@
+/*******************************************************************************
+ * unittests/libretroshare/services/gxs/nxsbasic_test.cc                       *
+ *                                                                             *
+ * Copyright 2012      by Robert Fernie    <retroshare.project@gmail.com>      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 
 #include <gtest/gtest.h>
 
-// from librssimulator
-//#include "peer/PeerNode.h"
-
-// from libretroshare
-//#include "gxs/rsgixs.h"
-//#include "gxs/rsdataservice.h"
-//#include "gxs/rsgxsnetservice.h"
 #include "rsitems/rsnxsitems.h"
 
 // local
@@ -118,14 +130,14 @@ TEST(libretroshare_services, DISABLED_GXS_nxs_basic2)
 	uint32_t token2;
 
 	ASSERT_TRUE(testService->submitTestGroup(token1, grp1));
-	while(tokenService->requestStatus(token1) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token1) != RsTokenService::COMPLETE)
 	{
 		tester.tick();
 		sleep(1);
 	}
 
 	ASSERT_TRUE(testService->submitTestGroup(token2, grp2));
-	while(tokenService->requestStatus(token2) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	while(tokenService->requestStatus(token2) != RsTokenService::COMPLETE)
 	{
 		tester.tick();
 		sleep(1);

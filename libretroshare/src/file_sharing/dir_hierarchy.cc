@@ -1,30 +1,27 @@
-/*
- * RetroShare Internal directory storage class.
- *
- *     file_sharing/dir_hierarchy.cc
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: dir_hierarchy.cc                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #include <sstream>
 #include <algorithm>
-#include <time.h>
+#include "util/rstime.h"
 #include "util/rsdir.h"
 #include "util/rsprint.h"
 #include "retroshare/rsexpr.h"
@@ -359,7 +356,7 @@ bool InternalFileHierarchyStorage::updateHash(const DirectoryStorage::EntryIndex
 
     return true;
 }
-bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const time_t modf_time)
+bool InternalFileHierarchyStorage::updateFile(const DirectoryStorage::EntryIndex& file_index,const RsFileHash& hash, const std::string& fname,uint64_t size, const rstime_t modf_time)
 {
     if(!checkIndex(file_index,FileStorageNode::TYPE_FILE))
     {
@@ -430,7 +427,7 @@ DirectoryStorage::EntryIndex InternalFileHierarchyStorage::allocateNewIndex()
 	return mNodes.size()-1 ;
 }
 
-bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,time_t most_recent_time,time_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<FileEntry>& subfiles_array)
+bool InternalFileHierarchyStorage::updateDirEntry(const DirectoryStorage::EntryIndex& indx,const std::string& dir_name,rstime_t most_recent_time,rstime_t dir_modtime,const std::vector<RsFileHash>& subdirs_hash,const std::vector<FileEntry>& subfiles_array)
 {
     if(!checkIndex(indx,FileStorageNode::TYPE_DIR))
     {
@@ -602,7 +599,7 @@ void InternalFileHierarchyStorage::getStatistics(SharedDirStats& stats) const
     stats.total_shared_size = mTotalSize ;
 }
 
-bool InternalFileHierarchyStorage::getTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* m) const
+bool InternalFileHierarchyStorage::getTS(const DirectoryStorage::EntryIndex& index,rstime_t& TS,rstime_t DirEntry::* m) const
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
     {
@@ -617,7 +614,7 @@ bool InternalFileHierarchyStorage::getTS(const DirectoryStorage::EntryIndex& ind
     return true;
 }
 
-bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& index,time_t& TS,time_t DirEntry::* m)
+bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& index,rstime_t& TS,rstime_t DirEntry::* m)
 {
     if(!checkIndex(index,FileStorageNode::TYPE_DIR))
     {
@@ -634,11 +631,11 @@ bool InternalFileHierarchyStorage::setTS(const DirectoryStorage::EntryIndex& ind
 
 // Do a complete recursive sweep over sub-directories and files, and update the lst modf TS. This could be also performed by a cleanup method.
 
-time_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index,bool& unfinished_files_present)
+rstime_t InternalFileHierarchyStorage::recursUpdateLastModfTime(const DirectoryStorage::EntryIndex& dir_index,bool& unfinished_files_present)
 {
     DirEntry& d(*static_cast<DirEntry*>(mNodes[dir_index])) ;
 
-    time_t largest_modf_time = d.dir_modtime ;
+    rstime_t largest_modf_time = d.dir_modtime ;
     unfinished_files_present = false ;
 
     for(uint32_t i=0;i<d.subfiles.size();++i)
@@ -735,7 +732,7 @@ public:
     inline virtual const std::string& file_name()       const { return mFe.file_name ; }
     inline virtual uint64_t           file_size()       const { return mFe.file_size ; }
     inline virtual const RsFileHash&  file_hash()       const { return mFe.file_hash ; }
-    inline virtual time_t             file_modtime()    const { return mFe.file_modtime ; }
+    inline virtual rstime_t             file_modtime()    const { return mFe.file_modtime ; }
 	inline virtual std::string        file_parent_path()const { return RsDirUtil::makePath(mDe.dir_parent_path, mDe.dir_name) ; }
     inline virtual uint32_t           file_popularity() const { NOT_IMPLEMENTED() ; return 0; }
 
@@ -868,7 +865,7 @@ void InternalFileHierarchyStorage::print() const
     for(uint32_t i=0;i<mNodes.size();++i)
         if(mNodes[i] == NULL)
         {
-            std::cerr << "  Node " << i << ": empty " << std::endl;
+            //std::cerr << "  Node " << i << ": empty " << std::endl;
             ++nempty ;
         }
         else if(mNodes[i]->type() == FileStorageNode::TYPE_DIR)
@@ -1185,6 +1182,11 @@ bool InternalFileHierarchyStorage::load(const std::string& fname)
             free(node_section_data) ;
         }
         free(buffer) ;
+
+        std::string err_str ;
+
+        if(!check(err_str))
+            std::cerr << "(EE) Error while loading file hierarchy " << fname << std::endl;
 
         return true ;
     }

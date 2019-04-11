@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupDialog.h                                 *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _GXS_GROUP_DIALOG_H
 #define _GXS_GROUP_DIALOG_H
@@ -55,44 +52,45 @@ public:
 
 /*** Group flags affect what is visually enabled that gets input into the grpMeta ***/
 
-#define GXS_GROUP_FLAGS_NAME			0x00000001
-#define GXS_GROUP_FLAGS_ICON			0x00000002
-#define GXS_GROUP_FLAGS_DESCRIPTION		0x00000004
-#define GXS_GROUP_FLAGS_DISTRIBUTION		0x00000008
-#define GXS_GROUP_FLAGS_PUBLISHSIGN		0x00000010
-#define GXS_GROUP_FLAGS_SHAREKEYS		0x00000020
-#define GXS_GROUP_FLAGS_PERSONALSIGN		0x00000040
-#define GXS_GROUP_FLAGS_COMMENTS		0x00000080
-#define GXS_GROUP_FLAGS_EXTRA			0x00000100
-#define GXS_GROUP_FLAGS_ANTI_SPAM   		0x00000200
+#define GXS_GROUP_FLAGS_NAME              0x00000001
+#define GXS_GROUP_FLAGS_ICON              0x00000002
+#define GXS_GROUP_FLAGS_DESCRIPTION       0x00000004
+#define GXS_GROUP_FLAGS_DISTRIBUTION      0x00000008
+#define GXS_GROUP_FLAGS_PUBLISHSIGN       0x00000010
+#define GXS_GROUP_FLAGS_SHAREKEYS         0x00000020
+#define GXS_GROUP_FLAGS_PERSONALSIGN      0x00000040
+#define GXS_GROUP_FLAGS_COMMENTS          0x00000080
+#define GXS_GROUP_FLAGS_EXTRA             0x00000100
+#define GXS_GROUP_FLAGS_ANTI_SPAM         0x00000200
+#define GXS_GROUP_FLAGS_ADDADMINS         0x00000400
 
 /*** Default flags are used to determine privacy of group, signatures required ***
  *** whether publish or id and whether comments are allowed or not             ***/
 
-#define GXS_GROUP_DEFAULTS_DISTRIB_MASK	0x0000000f
-#define GXS_GROUP_DEFAULTS_PUBLISH_MASK	0x000000f0
-#define GXS_GROUP_DEFAULTS_PERSONAL_MASK	0x00000f00
-#define GXS_GROUP_DEFAULTS_COMMENTS_MASK	0x0000f000
+#define GXS_GROUP_DEFAULTS_DISTRIB_MASK               0x0000000f
+#define GXS_GROUP_DEFAULTS_PUBLISH_MASK               0x000000f0
+#define GXS_GROUP_DEFAULTS_PERSONAL_MASK              0x00000f00
+#define GXS_GROUP_DEFAULTS_COMMENTS_MASK              0x0000f000
 
-#define GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC	0x00000001
-#define GXS_GROUP_DEFAULTS_DISTRIB_GROUP	0x00000002
-#define GXS_GROUP_DEFAULTS_DISTRIB_LOCAL	0x00000004
+#define GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC             0x00000001
+#define GXS_GROUP_DEFAULTS_DISTRIB_GROUP              0x00000002
+#define GXS_GROUP_DEFAULTS_DISTRIB_LOCAL              0x00000004
 
-#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN	0x00000010
-#define GXS_GROUP_DEFAULTS_PUBLISH_THREADS	0x00000020
-#define GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED	0x00000040
-#define GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED	0x00000080
+#define GXS_GROUP_DEFAULTS_PUBLISH_OPEN               0x00000010
+#define GXS_GROUP_DEFAULTS_PUBLISH_THREADS            0x00000020
+#define GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED           0x00000040
+#define GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED          0x00000080
 
-#define GXS_GROUP_DEFAULTS_PERSONAL_PGP	0x00000100
-#define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED	0x00000200
-#define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB	0x00000400
+#define GXS_GROUP_DEFAULTS_PERSONAL_PGP               0x00000100
+#define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED          0x00000200
+#define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB           0x00000400
 
-#define GXS_GROUP_DEFAULTS_COMMENTS_YES	0x00001000
-#define GXS_GROUP_DEFAULTS_COMMENTS_NO		0x00002000
+#define GXS_GROUP_DEFAULTS_COMMENTS_YES               0x00001000
+#define GXS_GROUP_DEFAULTS_COMMENTS_NO                0x00002000
 
-#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP		0x00100000
-#define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK		0x00200000
-#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN	0x00400000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP         0x00100000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK             0x00200000
+#define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP_KNOWN   0x00400000
 
 /*!
  * The aim of this dialog is to be convenient to encapsulate group
@@ -121,6 +119,7 @@ public:
 	enum UiType {
 		UITYPE_SERVICE_HEADER,
 		UITYPE_KEY_SHARE_CHECKBOX,
+		UITYPE_ADD_ADMINS_CHECKBOX,
 		UITYPE_CONTACTS_DOCK,
 		UITYPE_BUTTONBOX_OK
 	};
@@ -164,6 +163,7 @@ private:
 protected slots:
 	void submitGroup();
 	void addGroupLogo();
+	void filterComboBoxChanged(int);
 
 protected:
 	virtual void showEvent(QShowEvent*);
@@ -172,7 +172,14 @@ protected:
 	virtual QPixmap serviceImage() = 0;
 	virtual QIcon serviceWindowIcon();
 
-	void setUiText(UiType uiType, const QString &text);
+    /*!
+     * \brief setUiToolTip/setUiText
+     * 		Sets the text and tooltip of some parts of the UI
+     * \param uiType	widget to set
+     * \param text		text to set
+     */
+	void setUiToolTip(UiType uiType, const QString &text);
+	void setUiText   (UiType uiType, const QString &text);
 
 	/*!
 	 * It is up to the service to do the actual group creation
@@ -219,12 +226,20 @@ protected:
 	 */
 	QString getDescription();
 
+    /*!
+     * \brief getSelectedModerators
+     * 			Returns the set of ids that hve been selected as moderators.
+     */
+	void getSelectedModerators(std::set<RsGxsId>& ids);
+	void setSelectedModerators(const std::set<RsGxsId>& ids);
+
 private slots:
 	/* actions to take.... */
 	void cancelDialog();
 
 	// set private forum key share list
 	void setShareList();
+	void setAdminsList();
 
 	void updateCircleOptions();
 

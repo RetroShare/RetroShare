@@ -1,35 +1,29 @@
-/*
- * libretroshare/src/services msgservice.cc
- *
- * Services for RetroShare.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/services: p3msgservice.cc                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
 
 #include "pqi/pqibin.h"
-#include "pqi/pqiarchive.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/authgpg.h"
 #include "pqi/p3cfgmgr.h"
@@ -145,8 +139,8 @@ int	p3MsgService::tick()
 
 	incomingMsgs(); 
 
-	static time_t last_management_time = 0 ;
-	time_t now = time(NULL) ;
+	static rstime_t last_management_time = 0 ;
+	rstime_t now = time(NULL) ;
 
 	if(now > last_management_time + 5)
 	{
@@ -164,7 +158,7 @@ void p3MsgService::cleanListOfReceivedMessageHashes()
 {
 	RS_STACK_MUTEX(recentlyReceivedMutex);
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	for( auto it = mRecentlyReceivedMessageHashes.begin();
 	     it != mRecentlyReceivedMessageHashes.end(); )
@@ -858,21 +852,21 @@ bool p3MsgService::getMessage(const std::string &mId, MessageInfo &msg)
 
 	std::map<uint32_t, RsMsgSrcId*>::const_iterator it = mSrcIds.find(msgId) ;
 	if(it != mSrcIds.end())
-		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;
+		msg.rsgxsid_srcId = RsGxsId(it->second->srcId) ;	// (cyril) this is a hack. Not good. I'm not removing it because it may have consequences, but I dont like this.
 
 	return true;
 }
 
-void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxNew, unsigned int *pnOutbox, unsigned int *pnDraftbox, unsigned int *pnSentbox, unsigned int *pnTrashbox)
+void p3MsgService::getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox)
 {
     RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
 
-    if (pnInbox) *pnInbox = 0;
-    if (pnInboxNew) *pnInboxNew = 0;
-    if (pnOutbox) *pnOutbox = 0;
-    if (pnDraftbox) *pnDraftbox = 0;
-    if (pnSentbox) *pnSentbox = 0;
-    if (pnTrashbox) *pnTrashbox = 0;
+	nInbox = 0;
+	nInboxNew = 0;
+	nOutbox = 0;
+	nDraftbox = 0;
+	nSentbox = 0;
+	nTrashbox = 0;
 
     std::map<uint32_t, RsMsgItem *>::iterator mit;
     std::map<uint32_t, RsMsgItem *> *apMsg [2] = { &imsg, &msgOutgoing };
@@ -883,24 +877,23 @@ void p3MsgService::getMessageCount(unsigned int *pnInbox, unsigned int *pnInboxN
             initRsMIS(mit->second, mis);
 
             if (mis.msgflags & RS_MSG_TRASH) {
-                if (pnTrashbox) ++(*pnTrashbox);
+				++nTrashbox;
                 continue;
             }
             switch (mis.msgflags & RS_MSG_BOXMASK) {
             case RS_MSG_INBOX:
-                    if (pnInbox) ++(*pnInbox);
-                    if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW) {
-                        if (pnInboxNew) ++(*pnInboxNew);
-                    }
+				    ++nInbox;
+				    if ((mis.msgflags & RS_MSG_NEW) == RS_MSG_NEW)
+						++nInboxNew;
                     break;
             case RS_MSG_OUTBOX:
-                    if (pnOutbox) ++(*pnOutbox);
+				    ++nOutbox;
                     break;
             case RS_MSG_DRAFTBOX:
-                    if (pnDraftbox) ++(*pnDraftbox);
+				   ++nDraftbox;
                     break;
             case RS_MSG_SENTBOX:
-                    if (pnSentbox) ++(*pnSentbox);
+				    ++nSentbox;
                     break;
             }
         }
@@ -1297,6 +1290,12 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
     return false;
 }
 
+bool 	p3MsgService::getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info)
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+    return locked_getMessageTag(msgId,info);
+}
+
 bool 	p3MsgService::getMessageTagTypes(MsgTagType& tags)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1420,10 +1419,8 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 	return true;
 }
 
-bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
+bool 	p3MsgService::locked_getMessageTag(const std::string &msgId, MsgTagInfo& info)
 {
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
 	uint32_t mid = atoi(msgId.c_str());
 	if (mid == 0) {
 		std::cerr << "p3MsgService::MessageGetMsgTag: Unknown msgId " << msgId << std::endl;
@@ -1747,6 +1744,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.title = msg->subject;
 	mis.count = msg->attachment.items.size();
 	mis.ts = msg->sendTime;
+
+    MsgTagInfo taginfo;
+    locked_getMessageTag(mis.msgId,taginfo);
+    mis.msgtags = taginfo.tagIds ;
 }
 
 void p3MsgService::initMIRsMsg(RsMsgItem *msg,const MessageInfo& info)

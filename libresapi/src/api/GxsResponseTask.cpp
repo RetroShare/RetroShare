@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/GxsResponseTask.cpp                                           *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "GxsResponseTask.h"
 
 #include "Operators.h"
@@ -21,11 +42,11 @@ bool GxsResponseTask::doWork(Request &req, Response &resp)
         for(std::vector<uint32_t>::iterator vit = mWaitingTokens.begin(); vit != mWaitingTokens.end(); ++vit)
         {
             uint8_t status = mTokenService->requestStatus(*vit);
-            if(status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+            if(status != RsTokenService::COMPLETE)
             {
                 ready = false;
             }
-            if(status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+            if(status == RsTokenService::FAILED)
             {
                 std::cerr   << "GxsResponseTask::doWork() Error: token failed. aborting." << std::endl;
                 resp.setFail("GxsResponseTask::doWork() Error: token failed.");

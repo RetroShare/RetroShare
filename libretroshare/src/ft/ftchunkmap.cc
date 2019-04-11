@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftdata.cc
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2010 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftchunkmap.cc                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 
 /********
  * #define DEBUG_FTCHUNK 1
@@ -34,11 +31,12 @@
 #include <stdlib.h>
 #include "retroshare/rspeers.h"
 #include "ftchunkmap.h"
-#include <time.h>
+#include "util/rstime.h"
 
 static const uint32_t SOURCE_CHUNK_MAP_UPDATE_PERIOD	=   60 ; //! TTL for chunkmap info
 static const uint32_t INACTIVE_CHUNK_TIME_LAPSE 		= 3600 ; //! TTL for an inactive chunk
 static const uint32_t FT_CHUNKMAP_MAX_CHUNK_JUMP		=   50 ; //! Maximum chunk jump in progressive DL mode
+static const uint32_t FT_CHUNKMAP_MAX_SLICE_REASK_DELAY =   10 ; //! Maximum time to re-ask a slice to another peer at end of transfer
 
 std::ostream& operator<<(std::ostream& o,const ftChunk& c)
 {
@@ -120,7 +118,7 @@ void ChunkMap::setAvailabilityMap(const CompressedChunkMap& map)
 		}
 }
 
-void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
+void ChunkMap::dataReceived(const ftChunk::OffsetInFile& cid)
 {
 	// 1 - find which chunk contains the received data.
 	//
@@ -139,7 +137,7 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 		return ;
 	}
 
-	std::map<ftChunk::ChunkId,uint32_t>::iterator it(itc->second._slices.find(cid)) ;
+	std::map<ftChunk::OffsetInFile,ChunkDownloadInfo::SliceRequestInfo>::iterator it(itc->second._slices.find(cid)) ;
 
 	if(it == itc->second._slices.end()) 
 	{
@@ -150,8 +148,8 @@ void ChunkMap::dataReceived(const ftChunk::ChunkId& cid)
 		return ;
 	}
 
-	_total_downloaded += it->second ;
-	itc->second._remains -= it->second ;
+	_total_downloaded += it->second.size ;
+	itc->second._remains -= it->second.size ;
 	itc->second._slices.erase(it) ;
 	itc->second._last_data_received = time(NULL) ;	// update time stamp
 
@@ -256,6 +254,38 @@ void ChunkMap::setChunkCheckingResult(uint32_t chunk_number,bool check_succeeded
 	}
 }
 
+bool ChunkMap::reAskPendingChunk( const RsPeerId& peer_id,
+                                  uint32_t /*size_hint*/,
+                                  uint64_t& offset, uint32_t& size)
+{
+	// make sure that we're at the end of the file. No need to be too greedy in the middle of it.
+
+	for(uint32_t i=0;i<_map.size();++i)
+		if(_map[i] == FileChunksInfo::CHUNK_OUTSTANDING)
+			return false ;
+
+	rstime_t now = time(NULL);
+
+	for(std::map<uint32_t,ChunkDownloadInfo>::iterator it(_slices_to_download.begin());it!=_slices_to_download.end();++it)
+		for(std::map<ftChunk::OffsetInFile,ChunkDownloadInfo::SliceRequestInfo >::iterator it2(it->second._slices.begin());it2!=it->second._slices.end();++it2)
+			if(it2->second.request_time + FT_CHUNKMAP_MAX_SLICE_REASK_DELAY < now && it2->second.peers.end()==it2->second.peers.find(peer_id))
+			{
+				offset = it2->first;
+				size   = it2->second.size ;
+
+#ifdef DEBUG_FTCHUNK
+				std::cerr << "*** ChunkMap::reAskPendingChunk: re-asking slice (" << offset << ", " << size << ") to peer " << peer_id << std::endl;
+#endif
+
+				it2->second.request_time = now ;
+				it2->second.peers.insert(peer_id) ;
+
+				return true ;
+			}
+
+	return false ;
+}
+
 // Warning: a chunk may be empty, but still being downloaded, so asking new slices from it
 // will produce slices of size 0. This happens at the end of each chunk.
 // --> I need to get slices from the next chunk, in such a case.
@@ -295,7 +325,7 @@ bool ChunkMap::getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& 
 			ChunkDownloadInfo& cdi(_slices_to_download[c]) ;
 			falsafe_it = pit ;											// let's keep this one just in case.
 
-			if(cdi._slices.rbegin() != cdi._slices.rend() && cdi._slices.rbegin()->second*0.7 <= (float)size_hint)
+			if(cdi._slices.rbegin() != cdi._slices.rend() && cdi._slices.rbegin()->second.size*0.7 <= (float)size_hint)
 			{
 				it = pit ;
 #ifdef DEBUG_FTCHUNK
@@ -348,8 +378,13 @@ bool ChunkMap::getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& 
 	// Get the first slice of the chunk, that is at most of length size
 	//
 	it->second.getSlice(size_hint,chunk) ;
-	_slices_to_download[chunk.offset/_chunk_size]._slices[chunk.id] = chunk.size ;
 	_slices_to_download[chunk.offset/_chunk_size]._last_data_received = time(NULL) ;
+
+	ChunkDownloadInfo::SliceRequestInfo& r(_slices_to_download[chunk.offset/_chunk_size]._slices[chunk.id]);
+
+	r.size = chunk.size ;
+	r.request_time = time(NULL);
+	r.peers.insert(peer_id);
 
 	chunk.peer_id = peer_id ;
 
@@ -362,10 +397,10 @@ bool ChunkMap::getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& 
 	return true ;
 }
 
-void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
+void ChunkMap::removeInactiveChunks(std::vector<ftChunk::OffsetInFile>& to_remove)
 {
 	to_remove.clear() ;
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	for(std::map<ChunkNumber,ChunkDownloadInfo>::iterator it(_slices_to_download.begin());it!=_slices_to_download.end();)
 		if(now - it->second._last_data_received > (int)INACTIVE_CHUNK_TIME_LAPSE)
@@ -377,7 +412,7 @@ void ChunkMap::removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove)
 			//
 			std::map<ChunkNumber,ChunkDownloadInfo>::iterator tmp(it) ;
 
-			for(std::map<ftChunk::ChunkId,uint32_t>::const_iterator it2(it->second._slices.begin());it2!=it->second._slices.end();++it2)
+			for(std::map<ftChunk::OffsetInFile,ChunkDownloadInfo::SliceRequestInfo>::const_iterator it2(it->second._slices.begin());it2!=it->second._slices.end();++it2)
 				to_remove.push_back(it2->first) ;
 
 			_map[it->first] = FileChunksInfo::CHUNK_OUTSTANDING ;	// reset the chunk
@@ -538,7 +573,7 @@ uint32_t ChunkMap::getAvailableChunk(const RsPeerId& peer_id,bool& map_is_too_ol
 	// useful to get a new map that will also be full, but because we need to be careful not to mislead information,
 	// we still keep asking.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if((!peer_chunks->is_full) && ((int)now - (int)peer_chunks->TS > (int)SOURCE_CHUNK_MAP_UPDATE_PERIOD)) 
 	{

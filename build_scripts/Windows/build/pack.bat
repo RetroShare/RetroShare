@@ -10,21 +10,18 @@ if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
 
-:: Get gcc versions
-call "%ToolsPath%\get-gcc-version.bat" GCCVersion
-if "%GCCVersion%"=="" echo Cannot get gcc version.& exit /B 1
+:: Initialize environment
+call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
+if errorlevel 1 goto error_env
 
 :: Check external libraries
-if not exist "%RootPath%\libs" echo Please build external libraries first.& exit /B 1
+if not exist "%BuildLibsPath%\libs" %cecho% error "Please build external libraries first." & exit /B 1
 
 :: Check gcc version of external libraries
-if not exist "%RootPath%\libs\gcc-version" echo Cannot get gcc version of external libraries.& exit /B 1
-set /P LibsGCCVersion=<"%RootPath%\libs\gcc-version"
-if "%LibsGCCVersion%" NEQ "%GCCVersion%" echo Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%).& exit /B 1
-
-:: Initialize environment
-call "%~dp0env.bat"
-if errorlevel 1 goto error_env
+if not exist "%BuildLibsPath%\libs\gcc-version" %cecho% error "Cannot get gcc version of external libraries." & exit /B 1
+set /P LibsGCCVersion=<"%BuildLibsPath%\libs\gcc-version"
+if "%LibsGCCVersion%" NEQ "%GCCVersion%" %cecho% error "Please use correct version of external libraries. (gcc %GCCVersion% ^<^> libs %LibsGCCVersion%)." & exit /B 1
 
 :: Remove deploy path
 if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
@@ -35,27 +32,21 @@ if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 :: Get compiled revision
 set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
-	echo File not found
+	%cecho% error "File not found"
 	echo %GetRsVersion%
 	goto error
 )
 
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& goto error
-
 :: Get compiled version
-call "%GetRsVersion%" RS_MAJOR_VERSION RsMajorVersion
-if "%RsMajorVersion%"=="" echo Major version not found.& goto error
+call "%GetRsVersion%" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+if errorlevel 1 %cecho% error "Version not found."& goto error
 
-call "%GetRsVersion%" RS_MINOR_VERSION RsMinorVersion
-if "%RsMinorVersion%"=="" echo Minor version not found.& goto error
+if "%RsVersion.Major%"=="" %cecho% error "Major version not found."& goto error
+if "%RsVersion.Minor%"=="" %cecho% error "Minor version not found."& goto error
+if "%RsVersion.Mini%"=="" %cecho% error "Mini number not found".& goto error
+if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& goto error
 
-call "%GetRsVersion%" RS_BUILD_NUMBER RsBuildNumber
-if "%RsBuildNumber%"=="" echo Build number not found.& goto error
-
-call "%GetRsVersion%" RS_BUILD_NUMBER_ADD RsBuildNumberAdd
-
-set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%%RsBuildNumberAdd%
+set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
@@ -64,6 +55,14 @@ wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
 set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
+
+if "%ParamTor%"=="1" (
+	:: Check for tor executable
+	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
+		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
+		goto error
+	)
+)
 
 set QtMainVersion=%QtVersion:~0,1%
 
@@ -75,9 +74,9 @@ if "%QtMainVersion%"=="4" set QtMainVersion2=4
 if "%QtMainVersion%"=="5" set QtMainVersion1=5
 
 if "%RsBuildConfig%" NEQ "release" (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%-%RsBuildConfig%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.7z
 ) else (
-	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%.7z
+	set Archive=%RsPackPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.7z
 )
 
 if exist "%Archive%" del /Q "%Archive%"
@@ -85,12 +84,12 @@ if exist "%Archive%" del /Q "%Archive%"
 :: Create deploy path
 mkdir "%RsDeployPath%"
 
-title Pack - %SourceName%-%RsBuildConfig% [copy files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% [copy files]
 
 set ExtensionsFile=%SourcePath%\libretroshare\src\rsserver\rsinit.cc
 set Extensions=
 for /f %%e in ('type "%ExtensionsFile%" ^| "%EnvSedExe%" -n "s/^.*\/\(extensions[^/]*\)\/.*$/\1/p" ^| "%EnvSedExe%" -n "1,1p"') do set Extensions=%%e
-if "%Extensions%"=="" echo Folder for extensions not found in %ExtensionsFile%& goto error
+if "%Extensions%"=="" %cecho% error "Folder for extensions not found in %ExtensionsFile%"& goto error
 
 :: Copy files
 mkdir "%RsDeployPath%\Data\%Extensions%"
@@ -113,7 +112,7 @@ for /D %%D in ("%RsBuildPath%\plugins\*") do (
 )
 
 echo copy external binaries
-copy "%RootPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
+copy "%BuildLibsPath%\libs\bin\*.dll" "%RsDeployPath%" %Quite%
 
 echo copy dependencies
 call :copy_dependencies "%RsDeployPath%\retroshare.exe" "%RsDeployPath%"
@@ -126,6 +125,12 @@ if "%QtMainVersion%"=="5" (
 	copy "%QtPath%\..\plugins\platforms\qwindows.dll" "%RsDeployPath%\platforms" %Quite%
 	mkdir "%RsDeployPath%\audio"
 	copy "%QtPath%\..\plugins\audio\qtaudio_windows.dll" "%RsDeployPath%\audio" %Quite%
+)
+
+if exist "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" (
+	echo Copy styles
+	mkdir "%RsDeployPath%\styles" %Quite%
+	copy "%QtPath%\..\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtPath%\..\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
@@ -166,8 +171,13 @@ if exist "%SourcePath%\libresapi\src\webui" (
 	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
 )
 
+if "%ParamTor%"=="1" (
+	echo copy tor
+	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
+)
+
 rem pack files
-title Pack - %SourceName%-%RsBuildConfig% [pack files]
+title Pack - %SourceName%%RsType%-%RsBuildConfig% [pack files]
 
 "%EnvSevenZipExe%" a -mx=9 -t7z "%Archive%" "%RsDeployPath%\*"
 
@@ -198,13 +208,19 @@ if exist "%~1\%RsBuildConfig%\%~n1.dll" (
 goto :EOF
 
 :copy_dependencies
+set CopyDependenciesCopiedSomething=0
 for /F "usebackq" %%A in (`%ToolsPath%\depends.bat list %1`) do (
-	if exist "%QtPath%\%%A" (
-		copy "%QtPath%\%%A" %2 %Quite%
-	) else (
-		if exist "%MinGWPath%\%%A" (
-			copy "%MinGWPath%\%%A" %2 %Quite%
+	if not exist "%~2\%%A" (
+		if exist "%QtPath%\%%A" (
+			set CopyDependenciesCopiedSomething=1
+			copy "%QtPath%\%%A" %2 %Quite%
+		) else (
+			if exist "%MinGWPath%\%%A" (
+				set CopyDependenciesCopiedSomething=1
+				copy "%MinGWPath%\%%A" %2 %Quite%
+			)
 		)
 	)
 )
+if "%CopyDependenciesCopiedSomething%"=="1" goto copy_dependencies
 goto :EOF

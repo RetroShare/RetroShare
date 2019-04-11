@@ -268,22 +268,34 @@ border-image: url(:/images/closepressed.png)
              </layout>
             </item>
             <item>
-             <widget class="MimeTextEdit" name="chatTextEdit">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
+             <widget class="QSplitter" name="chatTextEditHSplitter">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
               </property>
-              <property name="minimumSize">
-               <size>
-                <width>0</width>
-                <height>30</height>
-               </size>
+              <property name="handleWidth">
+               <number>2</number>
               </property>
-              <property name="placeholderText" stdset="0">
-               <string>Type a message here</string>
+              <property name="childrenCollapsible">
+               <bool>false</bool>
               </property>
+              <widget class="MimeTextEdit" name="chatTextEdit">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="placeholderText" stdset="0">
+                <string>Type a message here</string>
+               </property>
+              </widget>
+              <widget class="RSTextBrowser" name="cmPreview"/>
              </widget>
             </item>
            </layout>
@@ -577,12 +589,6 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="toolTip">
               <string>Send</string>
-             </property>
-             <property name="whatsThis">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;QToolButton:disabled {&lt;/p&gt;&lt;p&gt;	image: url(:/icons/png/send-message-blocked.png) ;&lt;/p&gt;&lt;p&gt;}&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-             </property>
-             <property name="styleSheet">
-              <string notr="true"/>
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
@@ -921,6 +927,21 @@ border-image: url(:/images/closepressed.png)
     <string>Show Hidden Images</string>
    </property>
   </action>
+  <action name="actionSend_as_CommonMark">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/png/markdown-mark.png</normaloff>:/icons/png/markdown-mark.png</iconset>
+   </property>
+   <property name="text">
+    <string>Send as CommonMark</string>
+   </property>
+   <property name="toolTip">
+    <string>Text will be formatted using CommonMark.</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -951,8 +972,8 @@ border-image: url(:/images/closepressed.png)
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/util: extaddrfinder.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "extaddrfinder.h"
 
 #include "pqi/pqinetwork.h"
@@ -15,7 +36,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 const uint32_t MAX_IP_STORE =	300; /* seconds ip address timeout */
 
@@ -94,7 +115,10 @@ static void getPage(const std::string& server_name,std::string& page)
 #endif
     	std::cerr << "ExtAddrFinder: resolved hostname " << server_name << " to " << rs_inet_ntoa(in) << std::endl;
 
-	if(unix_connect(sockfd,(struct sockaddr *)&serveur, sizeof(serveur)) == -1)
+	sockaddr_storage server;
+	sockaddr_storage_setipv4(server, &serveur);
+	sockaddr_storage_setport(server, 80);
+	if(unix_connect(sockfd, server) == -1)
 	{
 		std::cerr << "ExtAddrFinder: Connection error to " << server_name << std::endl ;
 		unix_close(sockfd);
@@ -172,7 +196,6 @@ void* doExtAddrSearch(void *p)
 			af->mFoundTS = time(NULL) ;
 			af->mSearching = false ;
 		}
-		pthread_exit(NULL);
 		return NULL ;
 	}
 
@@ -189,7 +212,6 @@ void* doExtAddrSearch(void *p)
 			af->mFoundTS = time(NULL) ;
 			af->mSearching = false ;
 		}
-		pthread_exit(NULL);
 		return NULL ;
 	}
 
@@ -200,7 +222,6 @@ void* doExtAddrSearch(void *p)
 		af->mSearching = false ;
 	}
 
-	pthread_exit(NULL);
 	return NULL ;
 }
 
@@ -232,7 +253,7 @@ bool ExtAddrFinder::hasValidIP(struct sockaddr_storage &addr)
 			addr = mAddr;
 		}
 	}
-	time_t delta;
+	rstime_t delta;
 	{
 		RsStackMutex mut(mAddrMtx) ;
 		//timeout the current ip

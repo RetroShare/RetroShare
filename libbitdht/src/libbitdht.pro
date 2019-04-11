@@ -1,3 +1,21 @@
+################################################################################
+# libbitdht.pro                                                                #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Affero General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Affero General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Affero General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -6,22 +24,9 @@ CONFIG -= qt
 TARGET = bitdht
 DESTDIR = lib
 
+!include("use_libbitdht.pri"):error("Including")
+
 QMAKE_CXXFLAGS *= -Wall -DBE_DEBUG
-
-profiling {
-	QMAKE_CXXFLAGS -= -fomit-frame-pointer
-	QMAKE_CXXFLAGS *= -pg -g -fno-omit-frame-pointer
-}
-
-release {
-	# not much here yet.
-}
-
-#CONFIG += debug
-debug {
-        QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
-        QMAKE_CXXFLAGS *= -g -fno-omit-frame-pointer
-}
 
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
@@ -73,7 +78,7 @@ win32 {
 		QMAKE_CC = $${QMAKE_CXX}
 		OBJECTS_DIR = temp/obj
 		MOC_DIR = temp/moc
-		DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+        DEFINES *= STATICLIB WIN32_LEAN_AND_MEAN
 		# These have been replaced by _WIN32 && __MINGW32__
 		#DEFINES *= WINDOWS_SYS WIN32 STATICLIB MINGW
 

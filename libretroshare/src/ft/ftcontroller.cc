@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftcontroller.cc
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftcontroller.cc                                       *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <drbob@lunamutt.com>                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*
  * ftController
@@ -64,7 +61,7 @@
 #include "rsitems/rsconfigitems.h"
 #include <stdio.h>
 #include <unistd.h>		/* for (u)sleep() */
-#include <time.h>
+#include "util/rstime.h"
 
 /******
  * #define CONTROL_DEBUG 1
@@ -88,16 +85,13 @@ ftFileControl::ftFileControl()
 	return;
 }
 
-ftFileControl::ftFileControl(std::string fname,
-		std::string tmppath, std::string dest,
-        uint64_t size, const RsFileHash &hash, TransferRequestFlags flags,
-		ftFileCreator *fc, ftTransferModule *tm)
-	:mName(fname), mCurrentPath(tmppath), mDestination(dest),
-	 mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash),
-	 mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
-{
-    return;
-}
+ftFileControl::ftFileControl(const std::string& fname, const std::string& tmppath, const std::string& dest
+                           , uint64_t size, const RsFileHash &hash, TransferRequestFlags flags
+                           , ftFileCreator *fc, ftTransferModule *tm)
+  : mName(fname), mCurrentPath(tmppath), mDestination(dest)
+  , mTransfer(tm), mCreator(fc), mState(DOWNLOADING), mHash(hash)
+  , mSize(size), mFlags(flags), mCreateTime(0), mQueuePriority(0), mQueuePosition(0)
+{}
 
 ftController::ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId)
   : p3Config(),
@@ -232,7 +226,7 @@ void ftController::data_tick()
 			doPending = (mFtActive) && (!mFtPendingDone);
 		}
 
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		if(now > last_save_time + SAVE_TRANSFERS_DELAY)
 		{
 			IndicateConfigChanged() ;
@@ -427,11 +421,11 @@ void ftController::checkDownloadQueue()
 
 	// Check for inactive transfers, and queued transfers with online sources.
 	//
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     for(std::map<RsFileHash,ftFileControl*>::const_iterator it(mDownloads.begin());it!=mDownloads.end() ;++it)
 		if(	it->second->mState != ftFileControl::QUEUED  && (it->second->mState == ftFileControl::PAUSED
-                    || now > it->second->mTransfer->lastActvTimeStamp() + (time_t)MAX_TIME_INACTIVE_REQUEUED))
+                    || now > it->second->mTransfer->lastActvTimeStamp() + (rstime_t)MAX_TIME_INACTIVE_REQUEUED))
         {
 			inactive_transfers.push_back(it->second) ;
         }
@@ -1402,25 +1396,25 @@ bool 	ftController::FileControl(const RsFileHash& hash, uint32_t flags)
 	return true;
 }
 
-bool 	ftController::FileClearCompleted()
+bool ftController::FileClearCompleted()
 {
 #ifdef CONTROL_DEBUG
 	std::cerr << "ftController::FileClearCompleted()" <<std::endl;
 #endif
 	{
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+		RS_STACK_MUTEX(ctrlMutex);
 
-        for(std::map<RsFileHash, ftFileControl*>::iterator it(mCompleted.begin());it!=mCompleted.end();++it)
-			delete it->second ;
+		for(auto it(mCompleted.begin()); it != mCompleted.end(); ++it)
+			delete it->second;
 
 		mCompleted.clear();
 
 		IndicateConfigChanged();
-	}  /******* UNLOCKED ********/
+	}
 
 	RsServer::notify()->notifyDownloadCompleteCount(0);
 
-	return false;
+	return true;
 }
 
 	/* get Details of File Transfers */
@@ -1475,24 +1469,24 @@ bool 	ftController::setPartialsDirectory(std::string path)
 
 	/* check it is not a subdir of download / shared directories (BAD) - TODO */
 	{
-        RsStackMutex stack(ctrlMutex);
+		RsStackMutex stack(ctrlMutex);
 
-        path = RsDirUtil::convertPathToUnix(path);
+		path = RsDirUtil::convertPathToUnix(path);
 
-        if (!path.find(mDownloadPath)) {
-            return false;
-        }
+		if (path.find(mDownloadPath) != std::string::npos) {
+			return false;
+		}
 
-        if (rsFiles) {
-            std::list<SharedDirInfo>::iterator it;
-            std::list<SharedDirInfo> dirs;
-            rsFiles->getSharedDirectories(dirs);
-            for (it = dirs.begin(); it != dirs.end(); ++it) {
-                if (!path.find((*it).filename)) {
-                    return false;
-                }
-            }
-        }
+		if (rsFiles) {
+			std::list<SharedDirInfo>::iterator it;
+			std::list<SharedDirInfo> dirs;
+			rsFiles->getSharedDirectories(dirs);
+			for (it = dirs.begin(); it != dirs.end(); ++it) {
+				if (path.find((*it).filename) != std::string::npos) {
+					return false;
+				}
+			}
+		}
 	}
 
 	/* check if it exists */

@@ -1,23 +1,23 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2009 The RetroShare Team, Oleksiy Bilyanskyy
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/connect/ConnectFriendWizard.cpp                                         *
+ *                                                                             *
+ * Copyright (C) 2009 retroshare team <retroshare.project@gmail.com>           *
+ * Copyright (C) 2009 Oleksiy Bilyanskyy                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QCheckBox>
 #include <QClipboard>
@@ -127,7 +127,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     body = GetStartedDialog::GetInviteText();
 	
     body += "\n" + GetStartedDialog::GetCutBelowText();
-    body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+	body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 	
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
@@ -143,11 +143,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 		ui->trustEdit->hide();
 	}
 	
-	unsigned int onlineCount = 0, friendCount = 0;
-    rsPeers->getPeerCount (&friendCount, &onlineCount, false);
-	if(friendCount<30)
-		ui->makefriend_infolabel->hide();
-
 	//Add warning to direct source checkbox depends general setting.
 	switch (rsFiles->filePermDirectDL())
 	{
@@ -436,7 +431,7 @@ void ConnectFriendWizard::initializePage(int id)
 		QString body = ui->inviteTextEdit->toPlainText();
 
 		body += "\n" + GetStartedDialog::GetCutBelowText();
-		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 
 		ui->inviteTextEdit->setPlainText(body);
 		}
@@ -797,7 +792,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			QString body = ui->inviteTextEdit->toPlainText();
 
 			body += "\n" + GetStartedDialog::GetCutBelowText();
-			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite(false).c_str());
+			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 
 			sendMail (mailaddresses, ui->subjectEdit->text(), body);
 		}
@@ -974,6 +969,10 @@ void ConnectFriendWizard::accept()
 				std::cerr << "ConnectFriendWizard::accept() : setting DynDNS." << std::endl;
 				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
 			}
+			for(auto&& ipr : peerDetails.ipAddressList)
+				rsPeers->addPeerLocator(
+				            peerDetails.id,
+				            RsUrl(ipr.substr(0, ipr.find(' '))) );
 		}
 
 	}
@@ -994,7 +993,8 @@ void ConnectFriendWizard::accept()
 
 void ConnectFriendWizard::updateOwnCert()
 {
-	std::string invite = rsPeers->GetRetroshareInvite(ui->userCertIncludeSignaturesButton->isChecked());
+	std::string invite = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(),
+	            ui->userCertIncludeSignaturesButton->isChecked() );
 
 	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
 
@@ -1170,7 +1170,7 @@ void ConnectFriendWizard::generateCertificateCalled()
 	std::cerr << "  generateCertificateCalled" << std::endl;
 #endif
 
-	std::string cert = rsPeers->GetRetroshareInvite(false);
+	std::string cert = rsPeers->GetRetroshareInvite();
 	if (cert.empty()) {
 		QMessageBox::information(this, "RetroShare", tr("Sorry, create certificate failed"), QMessageBox::Ok, QMessageBox::Ok);
 		return;

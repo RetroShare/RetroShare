@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxscircles.cc
- *
- * Circles Interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxscircles.cc                                 *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "rsitems/rsgxscircleitems.h"
 
 #include "services/p3gxscircles.h"
@@ -111,16 +107,16 @@ RsGxsCircles *rsGxsCircles = NULL;
 /******************* Startup / Tick    ******************************************/
 /********************************************************************************/
 
-p3GxsCircles::p3GxsCircles(RsGeneralDataService *gds, RsNetworkExchangeService *nes, 
-	p3IdService *identities, PgpAuxUtils *pgpUtils)
-	: RsGxsCircleExchange(gds, nes, new RsGxsCircleSerialiser(), 
-			RS_SERVICE_GXS_TYPE_GXSCIRCLE, identities, circleAuthenPolicy()), 
-	RsGxsCircles(this), GxsTokenQueue(this), RsTickEvent(), 
-	mIdentities(identities), 
-	mPgpUtils(pgpUtils),
-	mCircleMtx("p3GxsCircles"),
-        mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache")
-
+p3GxsCircles::p3GxsCircles(
+        RsGeneralDataService *gds, RsNetworkExchangeService *nes,
+        p3IdService *identities, PgpAuxUtils *pgpUtils) :
+    RsGxsCircleExchange(
+        gds, nes, new RsGxsCircleSerialiser(), RS_SERVICE_GXS_TYPE_GXSCIRCLE,
+        identities, circleAuthenPolicy() ),
+    RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
+    RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
+    mCircleMtx("p3GxsCircles"),
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
@@ -157,7 +153,118 @@ RsServiceInfo p3GxsCircles::getServiceInfo()
                 GXS_CIRCLES_MIN_MINOR_VERSION);
 }
 
+bool p3GxsCircles::createCircle(RsGxsCircleGroup& cData)
+{
+	uint32_t token;
+	createGroup(token, cData);
 
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting created"
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsCircles::editCircle(RsGxsCircleGroup& cData)
+{
+	uint32_t token;
+	updateGroup(token, cData);
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, cData.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated"
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsCircles::getCirclesSummaries(std::list<RsGroupMetaData>& circles)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, circles);
+}
+
+bool p3GxsCircles::getCirclesInfo( const std::list<RsGxsGroupId>& circlesIds,
+                                   std::vector<RsGxsCircleGroup>& circlesInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, circlesIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, circlesInfo);
+}
+
+bool p3GxsCircles::getCircleRequests( const RsGxsGroupId& circleId,
+                                      std::vector<RsGxsCircleMsg>& requests )
+{
+	uint32_t token;
+	std::list<RsGxsGroupId> grpIds { circleId };
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	if( !requestMsgInfo(token, opts, grpIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getMsgData(token, requests);
+}
+
+bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
+                                      const RsGxsCircleId& circleId )
+{
+	const std::list<RsGxsGroupId> circlesIds{ RsGxsGroupId(circleId) };
+	std::vector<RsGxsCircleGroup> circlesInfo;
+
+	if(!getCirclesInfo(circlesIds, circlesInfo))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting group data."
+		          << std::endl;
+		return false;
+	}
+
+	if(circlesInfo.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Circle: "
+		          << circleId.toStdString() << " not found!" << std::endl;
+		return false;
+	}
+
+	RsGxsCircleGroup& circleGrp = circlesInfo[0];
+
+	if(!(circleGrp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Attempt to edit non-own "
+		          << "circle: " << circleId.toStdString() << std::endl;
+		return false;
+	}
+
+	circleGrp.mInvitedMembers.insert(identities.begin(), identities.end());
+
+	return editCircle(circleGrp);
+}
 
 uint32_t p3GxsCircles::circleAuthenPolicy()
 {
@@ -183,7 +290,7 @@ void	p3GxsCircles::service_tick()
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
     
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
     	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
 	{
 		checkCircleCache();
@@ -212,14 +319,15 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #ifdef DEBUG_CIRCLES
 			std::cerr << "  Found circle Message Change Notification" << std::endl;
 #endif
-			for(std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
+			for(auto mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(mit->first));
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
-					for (std::vector<RsGxsMessageId>::const_iterator msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
+
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
+					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						const RsGxsMessageId& msgId = *msgIdIt;
 						notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_MEMB_REQ,RsGxsCircleId(mit->first).toStdString(),msgId.toStdString());
@@ -261,7 +369,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
 				force_cache_reload(RsGxsCircleId(*git)) ;
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVE) )
+				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
 			}
 
@@ -322,32 +430,6 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 
     return false;
 }
-
-
-bool p3GxsCircles:: getCirclePersonalIdList(std::list<RsGxsCircleId> &circleIds)
-{
-#ifdef DEBUG_CIRCLES
-	std::cerr << "p3GxsCircles::getCircleIdList()";
-	std::cerr << std::endl;
-#endif // DEBUG_CIRCLES
-
-	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-	if (circleIds.empty())
-	{
-		circleIds = mCirclePersonalIdList;
-	}
-	else
-	{
-		std::list<RsGxsCircleId>::const_iterator it;
-		for(it = mCirclePersonalIdList.begin(); it != mCirclePersonalIdList.begin(); ++it)
-		{
-			circleIds.push_back(*it);
-		}
-	}
-
-	return true;
-}
-
 
 bool p3GxsCircles:: getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds)
 {
@@ -1283,7 +1365,7 @@ bool p3GxsCircles::checkCircleCache()
 
 bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& cache)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
 	{ 
@@ -1656,8 +1738,8 @@ void p3GxsCircles::checkDummyIdData()
 
 	// check the token.
         uint32_t status =  rsIdentity->getTokenService()->requestStatus(mDummyIdToken);
-        if ( (RsTokenService::GXS_REQUEST_V2_STATUS_FAILED == status) ||
-                         (RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE == status) )
+        if ( (RsTokenService::FAILED == status) ||
+                         (RsTokenService::COMPLETE == status) )
 	{
 		std::vector<RsGxsIdGroup> ids;
 		if (!rsIdentity->getGroupData(mDummyIdToken, ids))
@@ -2120,7 +2202,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 #ifdef DEBUG_CIRCLES
                     std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
 #endif
-                    messages_to_delete[RsGxsGroupId(cid)].push_back(it->second[i]->meta.mMsgId) ;
+                    messages_to_delete[RsGxsGroupId(cid)].insert(it->second[i]->meta.mMsgId) ;
                 }
             }
             

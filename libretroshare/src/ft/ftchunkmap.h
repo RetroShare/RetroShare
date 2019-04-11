@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * libretroshare/src/ft: ftchunkmap.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma once
 
 #include <map>
@@ -32,7 +54,7 @@ class ftController ;
 class ftChunk 
 {
 	public:
-		typedef uint64_t ChunkId ;
+		typedef uint64_t OffsetInFile ;
 
 		ftChunk():offset(0), size(0), id(0), ts(0),ref_cnt(NULL) {}
 
@@ -40,8 +62,8 @@ class ftChunk
 
 		uint64_t offset;	// current offset of the slice
 		uint64_t size;		// size remaining to download
-		ChunkId  id ;		// id of the chunk. Equal to the starting offset of the chunk
-		time_t   ts;		// time of last data received
+		OffsetInFile  id ;		// id of the chunk. Equal to the starting offset of the chunk
+		rstime_t   ts;		// time of last data received
 		int	  *ref_cnt; // shared counter of number of sub-blocks. Used when a slice gets split.
 		RsPeerId peer_id ;
 };
@@ -70,19 +92,26 @@ class Chunk
 		uint64_t _end ;		// const
 };
 
-class ChunkDownloadInfo
+struct ChunkDownloadInfo
 {
 	public:
-		std::map<ftChunk::ChunkId,uint32_t> _slices ;
+		struct SliceRequestInfo
+		{
+			uint32_t           size ;              // size of the slice
+			rstime_t             request_time ;      // last request time
+			std::set<RsPeerId> peers ;             // peers the slice was requested to. Normally only one, except at the end of the file.
+		};
+
+		std::map<ftChunk::OffsetInFile,SliceRequestInfo> _slices ;
 		uint32_t _remains ;
-		time_t _last_data_received ;
+		rstime_t _last_data_received ;
 };
 
 class SourceChunksInfo
 {
 	public:
 		CompressedChunkMap cmap ;	//! map of what the peer has/doens't have
-		time_t TS ;						//! last update time for this info
+		rstime_t TS ;						//! last update time for this info
 		bool is_full ;					//! is the map full ? In such a case, re-asking for it is unnecessary.
 
 		// Returns true if the offset is starting in a mapped chunk.
@@ -109,24 +138,29 @@ class ChunkMap
 		/// destructor
 		virtual ~ChunkMap() {}
 
-      /// Returns an slice of data to be asked to the peer within a chunk.
+		/// Returns an slice of data to be asked to the peer within a chunk.
 		/// If a chunk is already been downloaded by this peer, take a slice at
 		/// the beginning of this chunk, or at least where it starts.
-		/// If not, randomly/streamly select a new chunk depending on the strategy. 
-      /// adds an entry in the chunk_ids map, and sets up 1 interval for it.
-      /// the chunk should be available from the designated peer. 
+		/// If not, randomly/streamly select a new chunk depending on the strategy.
+		/// adds an entry in the chunk_ids map, and sets up 1 interval for it.
+		/// the chunk should be available from the designated peer.
 		/// On return:
 		/// 	- source_chunk_map_needed 	= true if the source map should be asked
 
       virtual bool getDataChunk(const RsPeerId& peer_id,uint32_t size_hint,ftChunk& chunk,bool& source_chunk_map_needed) ; 
 
-      /// Notify received a slice of data. This needs to 
-      ///   - carve in the map of chunks what is received, what is not.
-      ///   - tell which chunks are finished. For this, each interval must know what chunk number it has been attributed
-      ///    when the interval is split in the middle, the number of intervals for the chunk is increased. If the interval is
-      ///    completely covered by the data, the interval number is decreased.
+		/// Returns an already pending slice that was being downloaded but hasn't arrived yet. This is mostly used at the end of the file
+		/// in order to re-ask pendign slices to active peers while slow peers take a lot of time to send their remaining slices.
+		///
+		bool reAskPendingChunk(const RsPeerId& peer_id,uint32_t size_hint,uint64_t& offset,uint32_t& size);
 
-      virtual void dataReceived(const ftChunk::ChunkId& c_id) ;
+		/// Notify received a slice of data. This needs to
+		///   - carve in the map of chunks what is received, what is not.
+		///   - tell which chunks are finished. For this, each interval must know what chunk number it has been attributed
+		///    when the interval is split in the middle, the number of intervals for the chunk is increased. If the interval is
+		///    completely covered by the data, the interval number is decreased.
+
+		virtual void dataReceived(const ftChunk::OffsetInFile& c_id) ;
 
       /// Decides how chunks are selected. 
       ///    STREAMING: the 1st chunk is always returned
@@ -163,7 +197,7 @@ class ChunkMap
 
 		/// Remove active chunks that have not received any data for the last 60 seconds, and return
 		/// the list of slice numbers that should be canceled.
-		void removeInactiveChunks(std::vector<ftChunk::ChunkId>& to_remove) ;
+		void removeInactiveChunks(std::vector<ftChunk::OffsetInFile>& to_remove) ;
 
 		/// Updates the peer's availablility map
 		//
@@ -214,7 +248,7 @@ class ChunkMap
 		uint32_t												_chunk_size ;						//! Size of chunks. Common to all chunks.
 		FileChunksInfo::ChunkStrategy 				_strategy ;							//! how do we allocate new chunks
 		std::map<RsPeerId,Chunk>					   _active_chunks_feed ; 			//! vector of chunks being downloaded. Exactly 1 chunk per peer.
-		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; 			//! list of (slice id,slice size) 
+		std::map<ChunkNumber,ChunkDownloadInfo>	_slices_to_download ; 			//! list of (slice offset,slice size) currently being downloaded
 		std::vector<FileChunksInfo::ChunkState>	_map ;								//! vector of chunk state over the whole file
 		std::map<RsPeerId,SourceChunksInfo>		_peers_chunks_availability ;	//! what does each source peer have
 		uint64_t												_total_downloaded ;				//! completion for the file

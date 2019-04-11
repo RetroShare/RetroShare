@@ -23,7 +23,7 @@ function progressBar(file){
 	m("div[style="
 	    + 'background-color:lime;'
 	    + 'height:100%;'
-	    + 'width:' + (file.transfered  /  file.size * 100)+'%'
+	    + 'width:' + (file.transferred  /  file.size * 100)+'%'
 	    + ']'
 	,"")
 	]);
@@ -33,7 +33,7 @@ function cntrlBtn(file, act) {
     return(
         m("div.btn",{
             onclick: function(){
-                rs.request("transfers/control_download",{action: act, id: file.id});
+                rs.request("transfers/control_download",{action: act, hash: file.hash});
             }
         },
         act)
@@ -68,7 +68,7 @@ module.exports = {
                 ]),
             	paths.map(function (file){
             	    var ctrlBtn = m("div","");
-                    var progress = file.transfered  /  file.size * 100;
+                    var progress = file.transferred  /  file.size * 100;
             	    return m("tr",[
             	        m("td",[
             	            m("a.filelink",

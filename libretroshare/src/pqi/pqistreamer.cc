@@ -1,35 +1,30 @@
-/*
- * "$Id: pqistreamer.cc,v 1.19 2007-02-18 21:46:50 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqistreamer.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqistreamer.h"
 
 #include <sys/time.h>             // for gettimeofday
 #include <stdlib.h>               // for free, realloc, exit
 #include <string.h>               // for memcpy, memset, memcmp
-#include <time.h>                 // for NULL, time, time_t
+#include "util/rstime.h"                 // for NULL, time, rstime_t
 #include <algorithm>              // for min
 #include <iostream>               // for operator<<, ostream, basic_ostream
 #include <string>                 // for string, allocator, operator<<, oper...
@@ -221,6 +216,7 @@ float pqistreamer::getRate(bool b)
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
     	return RateInterface::getRate(b) ;
 }
+
 void pqistreamer::setMaxRate(bool b,float f)
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
@@ -434,7 +430,7 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
 
 void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::list<RSTrafficClue>& lst)
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if(now > mStatisticsTimeStamp)	// new chunk => get rid of oldest, replace old list by current list, clear current list.
     {
@@ -458,7 +454,7 @@ void pqistreamer::locked_addTrafficClue(const RsItem *pqi,uint32_t pktsize,std::
     lst.push_back(tc) ;
 }
 
-time_t	pqistreamer::getLastIncomingTS()
+rstime_t	pqistreamer::getLastIncomingTS()
 {
 	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
@@ -558,7 +554,7 @@ int	pqistreamer::handleoutgoing_locked()
 
         	// Checks for inserting a packet slicing probe. We do that to send the other peer the information that packet slicing can be used.
         	// if so, we enable it for the session. This should be removed (because it's unnecessary) when all users have switched to the new version.
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
         
             if(now > mLastSentPacketSlicingProbe + PQISTREAM_PACKET_SLICING_PROBE_DELAY)
         	{
@@ -1231,7 +1227,7 @@ void    pqistreamer::outSentBytes_locked(uint32_t outb)
 	mTotalSent += outb;
 	mCurrSent += outb;
 	mAvgSentCount += outb;
-
+	PQInterface::traf_out += outb;
 	return;
 }
 
@@ -1248,7 +1244,7 @@ void    pqistreamer::inReadBytes_locked(uint32_t inb)
 	mTotalRead += inb;
 	mCurrRead += inb;
 	mAvgReadCount += inb;
-
+	PQInterface::traf_in += inb;
 	return;
 }
 

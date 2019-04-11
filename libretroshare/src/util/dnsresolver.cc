@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/util: dnsresolver.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "dnsresolver.h"
 
 #include "pqi/pqinetwork.h"
@@ -15,10 +36,10 @@
 #include <vector>
 #include <algorithm>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
-const time_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
-const time_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */
+const rstime_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
+const rstime_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */
 
 static const std::string ADDR_AGENT  = "Mozilla/5.0";
 
@@ -30,7 +51,7 @@ void *solveDNSEntries(void *p)
 	while(more_to_go)
 	{
 		// get an address request
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		more_to_go = false ;
 
 		std::string next_call = "" ;
@@ -131,7 +152,7 @@ bool DNSResolver::getIPAddressFromString(const std::string& server_name,struct s
 		RsStackMutex mut(_rdnsMtx) ;
 
 		std::map<std::string, AddrInfo>::iterator it(_addr_map->find(server_name)) ;
-		time_t now = time(NULL) ;
+		rstime_t now = time(NULL) ;
 		AddrInfo *addr_info ;
 
 		if(it != _addr_map->end())

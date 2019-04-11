@@ -65,7 +65,7 @@ INITTEST();
 #define RESTART_EXPECT_UPNP_ADDR		3
 #define RESTART_EXPECT_DHT_ADDR			4
 
-int test_p3connmgr_restart_test(uint32_t expectState, time_t timeout);
+int test_p3connmgr_restart_test(uint32_t expectState, rstime_t timeout);
 
 
 #define RESET_VIA_LOCAL_ADDR		1
@@ -235,7 +235,7 @@ int force_reset(uint32_t method)
 }
 
 /* Generic restart test */
-int test_p3connmgr_restart_test(uint32_t expectState, time_t timeout)
+int test_p3connmgr_restart_test(uint32_t expectState, rstime_t timeout)
 {
 	/* force reset network */
 	struct sockaddr_in tst_addr;
@@ -245,7 +245,7 @@ int test_p3connmgr_restart_test(uint32_t expectState, time_t timeout)
 	mConnMgr->setLocalAddress(AuthSSL::getAuthSSL()->OwnId(), tst_addr);
 
 	/* tick */
-	time_t start = time(NULL);
+	rstime_t start = time(NULL);
 	bool extAddr = false;
 
 	while ((start > time(NULL) - timeout) && (!extAddr))

@@ -109,11 +109,6 @@ ConnectFrientWizard QLabel#requestinfolabel
 	qproperty-fontSizeFactor: 125;
 }
 
-ConnectFriendWizard QLabel#makefriend_infolabel
-{
-	qproperty-fontSizeFactor: 125;
-}
-
 ShareManager QLabel#labelInstructions
 {
 	qproperty-fontSizeFactor: 125;
@@ -244,9 +239,15 @@ OpModeStatus[opMode="Minimal"] {
 	background: #FFCCCC;
 }
 
+/*Property Values at end to overwrite other settings*/
+
 [new=false] {
 	background: #F8F8F8;
 }
 [new=true] {
 	background: #DCECFD;
+}
+
+[WrongValue="true"] {
+	background-color: #FF8080;
 }

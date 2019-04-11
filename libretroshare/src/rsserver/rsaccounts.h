@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/rsserver/rsaccounts.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2013-2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: rsaccounts.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013-2014 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*********************************************************************
  * Header providing interface for libretroshare access to RsAccounts stuff.
@@ -53,6 +49,7 @@ class AccountDetails
 		std::string mLocation;
 		bool mIsHiddenLoc;
 		bool mFirstRun;
+        bool mIsAutoTor;
 
 };
 
@@ -62,9 +59,6 @@ class RsAccountsDetail
 		RsAccountsDetail();
 
 	// These functions are externally accessible via RsAccounts namespace.
-
-
-
 	// These functions are accessible from inside libretroshare.
 
 		bool	setupBaseDirectory(std::string alt_basedir);
@@ -91,51 +85,45 @@ class RsAccountsDetail
 		// PGP Path is only dependent on BaseDirectory.
 		std::string 	PathPGPDirectory();
 
-		// Below are dependent on mPreferredId.
-		std::string 	PathAccountDirectory();
-		std::string 	PathAccountKeysDirectory();
-		std::string 	PathKeyFile();
-		std::string 	PathCertFile();
-        std::string     LocationName();
+        // Generate a new account based on a given PGP key returns its SSL id and sets it to be the preferred account.
+
+		bool GenerateSSLCertificate(const RsPgpId& gpg_id,  const std::string& org, const std::string& loc,  const std::string& country, bool ishiddenloc,  bool is_auto_tor,const std::string& passwd, RsPeerId &sslId,  std::string &errString);
 
 		// PGP Accounts.
 
 		int  	GetPGPLogins(std::list<RsPgpId> &pgpIds);
-		int	GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
+		int	    GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email);
 		bool	GeneratePGPCertificate(const std::string&, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString);
-
-                bool    SelectPGPAccount(const RsPgpId& pgpId);
+		bool    SelectPGPAccount(const RsPgpId& pgpId);
 
 		// PGP Support Functions.
 		bool    exportIdentity(const std::string& fname,const RsPgpId& pgp_id) ;
 		bool    importIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error) ;
+	bool exportIdentityToString(
+	        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+	        std::string& errorMsg );
         bool    importIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error) ;
-        	void    getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
+		void    getUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys);
 		bool    copyGnuPGKeyrings() ;
 
-
 		// Selecting Rs Account.
+		bool getAccountIds(std::list<RsPeerId> &ids);
 		bool selectAccountByString(const std::string &prefUserString);
 		bool selectId(const RsPeerId& preferredId);
-
-		// Details of Rs Account.
-		bool getPreferredAccountId(RsPeerId &id);
-		bool getAccountDetails(const RsPeerId &id, RsPgpId& gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
-
-		bool getAccountOptions(bool &ishidden, bool &isFirstTimeRun);
-
-
-		bool getAccountIds(std::list<RsPeerId> &ids);
-
-		bool GenerateSSLCertificate(const RsPgpId& gpg_id, 
-			const std::string& org, const std::string& loc, 
-			const std::string& country, const bool ishiddenloc, 
-			const std::string& passwd, RsPeerId &sslId, 
-			std::string &errString);
-
-		// From init file.
 		bool storePreferredAccount();
 		bool loadPreferredAccount();
+
+		// Details of current Rs Account.
+		bool getCurrentAccountId(RsPeerId &id);
+		bool getCurrentAccountDetails(const RsPeerId &id, RsPgpId& gpgId, std::string &gpgName, std::string &gpgEmail, std::string &location);
+		bool getCurrentAccountOptions(bool &ishidden, bool &isautotor, bool &isFirstTimeRun);
+
+		std::string 	getCurrentAccountPathAccountDirectory();
+		std::string 	getCurrentAccountPathAccountKeysDirectory();
+		std::string 	getCurrentAccountPathKeyFile();
+		std::string 	getCurrentAccountPathCertFile();
+        std::string     getCurrentAccountLocationName();
+
 
 	private:
 		bool checkPreferredId();
@@ -159,6 +147,4 @@ class RsAccountsDetail
 		std::map<std::string,std::vector<std::string> > mUnsupportedKeys ;
 };
 
-// Global singleton declaration of data.
-extern RsAccountsDetail *rsAccounts;
 

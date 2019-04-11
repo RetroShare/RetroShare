@@ -1,28 +1,25 @@
-/*
- * libretroshare/src/rsserver: p3peers.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: p3peers.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "util/radix64.h"
 #include "pgp/pgpkeyutil.h"
 
@@ -37,6 +34,7 @@
 #include "pqi/authgpg.h"
 #include "retroshare/rsinit.h"
 #include "retroshare/rsfiles.h"
+#include "util/rsurl.h"
 
 #include "pgp/rscertificate.h"
 
@@ -203,6 +201,15 @@ bool	p3Peers::getFriendList(std::list<RsPeerId> &ids)
 //	return true;
 //}
 
+bool p3Peers::getPeersCount(
+        uint32_t& peersCount, uint32_t& onlinePeersCount,
+        bool countLocations )
+{
+	peersCount = mPeerMgr->getFriendCount(countLocations, false);
+	onlinePeersCount = mPeerMgr->getFriendCount(countLocations, true);
+	return true;
+}
+
 bool p3Peers::getPeerCount (unsigned int *friendCount, unsigned int *onlineCount, bool ssl)
 {
 #ifdef P3PEERS_DEBUG
@@ -332,26 +339,28 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		d.hiddenNodePort = 0;
 		d.hiddenType = RS_HIDDEN_TYPE_NONE;
 
-		if (sockaddr_storage_isnull(ps.localaddr))
+		if(!sockaddr_storage_isnull(ps.localaddr))
+		{
+			sockaddr_storage_ipv6_to_ipv4(ps.localaddr);
+			d.localAddr = sockaddr_storage_iptostring(ps.localaddr);
+			d.localPort = sockaddr_storage_port(ps.localaddr);
+		}
+		else
 		{
 			d.localAddr	= "INVALID_IP";
 			d.localPort	= 0;
 		}
-		else
-		{
-			d.localAddr	= sockaddr_storage_iptostring(ps.localaddr);
-			d.localPort	= sockaddr_storage_port(ps.localaddr);
-		}
 
-		if (sockaddr_storage_isnull(ps.serveraddr))
+		if(!sockaddr_storage_isnull(ps.serveraddr))
+		{
+			sockaddr_storage_ipv6_to_ipv4(ps.serveraddr);
+			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
+			d.extPort = sockaddr_storage_port(ps.serveraddr);
+		}
+		else
 		{
 			d.extAddr = "INVALID_IP";
 			d.extPort = 0;
-		}
-		else
-		{
-			d.extAddr = sockaddr_storage_iptostring(ps.serveraddr);
-			d.extPort = sockaddr_storage_port(ps.serveraddr);
 		}
 
 		d.dyndns        = ps.dyndns;
@@ -360,16 +369,16 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 		for(it = ps.ipAddrs.mLocal.mAddrs.begin(); 
 		    it != ps.ipAddrs.mLocal.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "L:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
 		}
 		for(it = ps.ipAddrs.mExt.mAddrs.begin(); it != ps.ipAddrs.mExt.mAddrs.end(); ++it)
 		{
+			sockaddr_storage_ipv6_to_ipv4(it->mAddr);
 			std::string toto;
-			toto += "E:";
 			toto += sockaddr_storage_tostring(it->mAddr);
 			rs_sprintf_append(toto, "    %ld sec", time(NULL) - it->mSeenTime);
 			d.ipAddressList.push_back(toto);
@@ -416,6 +425,7 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	if (pcs.state & RS_PEER_S_CONNECTED)
 	{
+		sockaddr_storage_ipv6_to_ipv4(pcs.connectaddr);
 		d.connectAddr = sockaddr_storage_iptostring(pcs.connectaddr);
 		d.connectPort = sockaddr_storage_port(pcs.connectaddr);
 	}
@@ -557,11 +567,11 @@ std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
         return AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 }
 
+bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
+{ return AuthGPG::getAuthGPG()->isGPGAccepted(pgpId); }
+
 bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
-{
-        /* get from mAuthMgr as it should have more peers? */
-        return AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id_is_friend);
-}
+{ return isPgpFriend(gpg_id_is_friend); }
 
 std::string p3Peers::getPeerName(const RsPeerId& ssl)
 {
@@ -735,7 +745,7 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
@@ -900,68 +910,36 @@ bool 	p3Peers::setHiddenNode(const RsPeerId &id, const std::string &address, uin
 	return true;
 }
 
-bool 	p3Peers::setLocalAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::addPeerLocator(const RsPeerId &ssl_id, const RsUrl& locator)
+{ return mPeerMgr->addPeerLocator(ssl_id, locator); }
+
+bool p3Peers::setLocalAddress(const RsPeerId &id,
+                              const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setLocalAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
 
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
-
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setLocalAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setLocalAddress(id, addr);
 	return false;
 }
 
-bool 	p3Peers::setExtAddress(const RsPeerId &id, const std::string &addr_str, uint16_t port)
+bool p3Peers::setExtAddress(const RsPeerId &id,
+                            const std::string &addr_str, uint16_t port)
 {
 #ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::setExtAddress() " << id << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " " << id << " " << addr_str << " "
+	          << port << std::endl;
 #endif
-        if(port < 1024)
-        {
-            std::cerr << "(EE) attempt to use a port that is reserved to the system: " << port << std::endl;
-            return false ;
-        }
 
-
-	// NOTE THIS IS IPV4 FOR NOW.
-	struct sockaddr_storage addr;
-	struct sockaddr_in *addrv4p = (struct sockaddr_in *) &addr;
-	addrv4p->sin_family = AF_INET;
-	addrv4p->sin_port = htons(port);
-
-	int ret = 1;
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-#ifndef WINDOWS_SYS
-	if (ret && (0 != inet_aton(addr_str.c_str(), &(addrv4p->sin_addr))))
-#else
-	addrv4p->sin_addr.s_addr = inet_addr(addr_str.c_str());
-	if (ret)
-#endif
-/********************************** WINDOWS/UNIX SPECIFIC PART *******************/
-	{
-		return mPeerMgr->setExtAddress(id, addr);
-	}
+	sockaddr_storage addr;
+	if (sockaddr_storage_inet_pton(addr, addr_str))
+		if (sockaddr_storage_setport(addr, port))
+			return mPeerMgr->setExtAddress(id, addr);
 	return false;
 }
 
@@ -1076,31 +1054,28 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 //===========================================================================
 	/* Auth Stuff */
-std::string p3Peers::GetRetroshareInvite(bool include_signatures)
-{
-	return GetRetroshareInvite(getOwnId(),include_signatures);
-}
+
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
 	unsigned char *mem_block = NULL;
 	size_t mem_block_size = 0;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(pgp_id),mem_block,mem_block_size,false,include_signatures))
+	if( !AuthGPG::getAuthGPG()->exportPublicKey(
+	             RsPgpId(pgp_id), mem_block, mem_block_size,
+	             false, include_signatures ) )
 	{
-		std::cerr << "Cannot output certificate for id \"" << pgp_id << "\". Sorry." << std::endl;
+		std::cerr << "Cannot output certificate for id \"" << pgp_id
+		          << "\". Sorry." << std::endl;
 		return "" ;
 	}
 
-	RsPeerDetails Detail ;
+	RsPeerDetails Detail;
+	if(!getGPGDetails(pgp_id,Detail)) return "";
 
-	if(!getGPGDetails(pgp_id,Detail) )
-		return "" ;
+	RsCertificate cert( Detail,mem_block,mem_block_size );
+	delete[] mem_block ;
 
-	RsCertificate cert( Detail,mem_block,mem_block_size ) ;
-
-    delete[] mem_block ;
-
-	return cert.armouredPGPKey() ;
+	return cert.armouredPGPKey();
 }
 
 
@@ -1129,61 +1104,144 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	return true ;
 }
 
-std::string p3Peers::GetRetroshareInvite(const RsPeerId& ssl_id,bool include_signatures)
+bool p3Peers::acceptInvite( const std::string& invite,
+                            ServicePermissionFlags flags )
+{
+	if(invite.empty()) return false;
+
+	const std::string* radixPtr(&invite);
+
+	RsUrl url(invite);
+	std::map<std::string, std::string> query(url.query());
+
+	if(query.find("radix") != query.end())
+		radixPtr = &query["radix"];
+
+	const std::string& radix(*radixPtr);
+	if(radix.empty()) return false;
+
+	RsPgpId pgpId;
+	RsPeerId sslId;
+	std::string errorString;
+
+	if(!loadCertificateFromString(radix, sslId, pgpId, errorString))
+		return false;
+
+	RsPeerDetails peerDetails;
+	uint32_t errorCode;
+
+	if(!loadDetailsFromStringCert(radix, peerDetails, errorCode))
+		return false;
+
+	if(peerDetails.gpg_id.isNull())
+		return false;
+
+	addFriend(peerDetails.id, peerDetails.gpg_id, flags);
+
+	if (!peerDetails.location.empty())
+		setLocation(peerDetails.id, peerDetails.location);
+
+	// Update new address even the peer already existed.
+	if (peerDetails.isHiddenNode)
+	{
+		setHiddenNode( peerDetails.id,
+		               peerDetails.hiddenNodeAddress,
+		               peerDetails.hiddenNodePort );
+	}
+	else
+	{
+		//let's check if there is ip adresses in the certificate.
+		if (!peerDetails.extAddr.empty() && peerDetails.extPort)
+			setExtAddress( peerDetails.id,
+			               peerDetails.extAddr,
+			               peerDetails.extPort );
+		if (!peerDetails.localAddr.empty() && peerDetails.localPort)
+			setLocalAddress( peerDetails.id,
+			                 peerDetails.localAddr,
+			                 peerDetails.localPort );
+		if (!peerDetails.dyndns.empty())
+			setDynDNS(peerDetails.id, peerDetails.dyndns);
+		for(auto&& ipr : peerDetails.ipAddressList)
+			addPeerLocator(
+			            peerDetails.id,
+			            RsUrl(ipr.substr(0, ipr.find(' '))) );
+	}
+
+	return true;
+}
+
+std::string p3Peers::GetRetroshareInvite(
+        const RsPeerId& sslId, bool include_signatures,
+        bool includeExtraLocators )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite()" << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << std::endl;
 #endif
+	const RsPeerId& ssl_id(sslId.isNull() ? getOwnId() : sslId);
 
 	//add the sslid, location, ip local and external address after the signature
-	RsPeerDetails Detail;
-	std::string invite ;
+	RsPeerDetails detail;
+	std::string invite;
 
-	if (getPeerDetails(ssl_id, Detail)) 
+	if (getPeerDetails(ssl_id, detail))
 	{
-		unsigned char *mem_block = NULL;
+		if(!includeExtraLocators) detail.ipAddressList.clear();
+
+		unsigned char *mem_block = nullptr;
 		size_t mem_block_size = 0;
 
-		if(!AuthGPG::getAuthGPG()->exportPublicKey(RsPgpId(Detail.gpg_id),mem_block,mem_block_size,false,include_signatures))
+		if(!AuthGPG::getAuthGPG()->exportPublicKey(
+		            RsPgpId(detail.gpg_id), mem_block, mem_block_size, false,
+		            include_signatures ))
 		{
-			std::cerr << "Cannot output certificate for id \"" << Detail.gpg_id << "\". Sorry." << std::endl;
-			return "" ;
+			std::cerr << "Cannot output certificate for id \"" << detail.gpg_id
+			          << "\". Sorry." << std::endl;
+			return "";
 		}
 
-		RsCertificate cert( Detail,mem_block,mem_block_size ) ;
+		RsCertificate cert(detail, mem_block, mem_block_size);
+		delete[] mem_block;
 
-        delete[] mem_block ;
-
-		return cert.toStdString() ;
-
+		return cert.toStdString();
 	}
 
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::GetRetroshareInvite() returns : \n" << invite << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " returns : \n" << invite << std::endl;
 #endif
 	return invite;
 }
 
 //===========================================================================
 
-bool 	p3Peers::loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id, RsPgpId& gpg_id, std::string& error_string)
+bool p3Peers::loadCertificateFromString(
+        const std::string& cert, RsPeerId& ssl_id,
+        RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt(cert) ;
-	RsPgpId gpgid ;
+	RsCertificate crt;
+	uint32_t errNum = 0;
+	if(!crt.initializeFromString(cert,errNum))
+	{
+		error_string = "RsCertificate failed with errno: "
+		        + std::to_string(errNum) + " parsing: " + cert;
+		return false;
+	}
 
-	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(crt.armouredPGPKey(),gpgid,error_string) ;
+	RsPgpId gpgid;
+	bool res = AuthGPG::getAuthGPG()->
+	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid() ;
+	ssl_id = crt.sslid();
 
-	return res ;
+	return res;
 }
 
-bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetails &pd,uint32_t& error_code)
+bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
+                                         RsPeerDetails &pd,
+                                         uint32_t& error_code )
 {
 #ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromString() ";
-	std::cerr << std::endl;
+	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
 #endif
 	//parse the text to get ip address
 	try 
@@ -1223,9 +1281,11 @@ bool 	p3Peers::loadDetailsFromStringCert(const std::string &certstr, RsPeerDetai
 			pd.localPort = cert.loc_port_us();
 			pd.extAddr = cert.ext_ip_string();
 			pd.extPort = cert.ext_port_us();
-			pd.dyndns = cert.dns_string() ;
+			pd.dyndns = cert.dns_string();
+			for(const RsUrl& locator : cert.locators())
+				pd.ipAddressList.push_back(locator.toString());
 		}
-	} 
+	}
 	catch(uint32_t e) 
 	{
 		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;

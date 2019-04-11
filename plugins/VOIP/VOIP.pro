@@ -1,3 +1,21 @@
+################################################################################
+# VOIP.pro                                                                     #
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+#                                                                              #
+# This program is free software: you can redistribute it and/or modify         #
+# it under the terms of the GNU Affero General Public License as               #
+# published by the Free Software Foundation, either version 3 of the           #
+# License, or (at your option) any later version.                              #
+#                                                                              #
+# This program is distributed in the hope that it will be useful,              #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# GNU Lesser General Public License for more details.                          #
+#                                                                              #
+# You should have received a copy of the GNU Lesser General Public License     #
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+################################################################################
+
 !include("../Common/retroshare_plugin.pri"): error("Could not include file ../Common/retroshare_plugin.pri")
 
 greaterThan(QT_MAJOR_VERSION, 4) {
@@ -10,11 +28,23 @@ exists($$[QMAKE_MKSPECS]/features/mobility.prf) {
 } else {
   QT += multimedia
 }
+
 CONFIG += qt uic qrc resources
 MOBILITY = multimedia
+TARGET = VOIP
+TARGET_PRL = VOIP
+DESTDIR = lib
+
+target.files = lib/libVOIP.so
 
 DEPENDPATH += $$PWD/../../retroshare-gui/src/temp/ui
 INCLUDEPATH += $$PWD/../../retroshare-gui/src/temp/ui
+
+# when rapidjson is mainstream on all distribs, we will not need the sources anymore
+# in the meantime, they are part of the RS directory so that it is always possible to find them
+
+INCLUDEPATH += ../../rapidjson-1.1.0
+
 
 #################################### Linux #####################################
 
@@ -35,9 +65,9 @@ win32 {
 	DEPENDPATH += . $$INC_DIR
 	INCLUDEPATH += . $$INC_DIR
 
-	OPENCV_VERSION = "320"
+	OPENCV_VERSION = "341"
 	USE_PRECOMPILED_LIBS =
-	for(lib, LIB_DIR) {
+	for(lib, RS_LIB_DIR) {
 #message(Scanning $$lib)
 		exists( $$lib/opencv/libopencv_core$${OPENCV_VERSION}.a) {
 			isEmpty(USE_PRECOMPILED_LIBS) {
@@ -76,7 +106,7 @@ win32 {
 		message(Use system opencv libraries.)
 		LIBS += -lopencv_core -lopencv_highgui -lopencv_imgproc
 	}
-	LIBS += -lz -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
+	LIBS += -lzlib -lole32 -loleaut32 -luuid -lvfw32 -llibjpeg -llibtiff -llibpng -llibjasper -lIlmImf
 	LIBS += -lavifil32 -lavicap32 -lavcodec -lavutil -lswresample
 }
 

@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/util: rsrandom.cc                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ *  Copyright (C) 2010 Cyril Soler <csoler@users.sourceforge.net>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
@@ -16,7 +37,7 @@ RsMutex RSRandom::rndMtx("RSRandom") ;
 // have anyway)
 //
 #ifdef WINDOWS_SYS
-#include <time.h>
+#include "util/rstime.h"
 #ifdef WIN_PTHREADS_H
 static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self())*0x1293fe)^0x18e34a12 ) ;
 #else
@@ -34,6 +55,10 @@ bool RSRandom::seed(uint32_t s)
 	MT[0]= s & 0xffffffffUL;
 	for (j=1; j<N; j++) 
 		MT[j] = (1812433253UL * (MT[j-1] ^ (MT[j-1] >> 30)) + j) & 0xffffffffUL ;
+
+    // This *does not* replace the internal seed state of RAND_bytes(), but only *adds* entropy to the random pool
+    // So calling this method with the same value twice does not guarranty that the output of the random bytes
+    // will be the same.
 
 	RAND_seed((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
 	locked_next_state() ;
@@ -66,11 +91,13 @@ uint32_t RSRandom::random_u32()
 		y = MT[index] ;
 	}
 
+#ifdef UNNECESSARY_CODE
 	// Tempering
 	y ^= (y >> 11);
 	y ^= (y << 7 ) & 0x9d2c5680UL;
 	y ^= (y << 15) & 0xefc60000UL;
 	y ^= (y >> 18);
+#endif
 
 	return y;
 }

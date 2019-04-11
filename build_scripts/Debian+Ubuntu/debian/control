@@ -1,46 +1,41 @@
 Source: retroshare
 Section: devel
-Priority: standard
+Priority: optional
 Maintainer: Cyril Soler <csoler@users.sourceforge.net>
-Build-Depends: debhelper (>= 7),  libglib2.0-dev, libupnp-dev, qt4-dev-tools, libqt4-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libqt4-opengl-dev, libqtmultimediakit1, qtmobility-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.5, libsqlcipher-dev, libmicrohttpd-dev, libavcodec-dev
-Standards-Version: 3.9.3
+Build-Depends: debhelper (>= 9),  git, libglib2.0-dev, libupnp-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.6, libsqlcipher-dev, libmicrohttpd-dev, libavcodec-dev, qtmultimedia5-dev, qttools5-dev, libqt5x11extras5-dev, qtbase5-dev, qt5-qmake, qtbase5-dev-tools
+Standards-Version: 4.1.4
 Homepage: http://retroshare.sourceforge.net
 
 Package: retroshare-voip-plugin
 Architecture: any
-Conflicts: retroshare06-voip-plugin
-Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqtmultimediakit1
+Conflicts: 
+Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
 Description: RetroShare VOIP plugin
- This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
+ This package provides a plugin for RetroShare, a secured Friend-to-Friend communication
  plateform. The plugin adds voice-over-IP functionality to the private chat window. Both
  friends chatting together need the plugin installed to be able to talk together.
 
 Package: retroshare-feedreader-plugin
 Architecture: any
-Conflicts: retroshare06-feedreader-plugin
+Conflicts:
 Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
 Description: RetroShare FeedReader plugin
- This package provides a plugin for RetroShare, a secured Friend-to-Friend communication 
- plateform. The plugin adds a RSS feed reader tab to retroshare.
+ Plugin for Retroshare, adding a RSS feed reader tab to retroshare.
 
 Package: retroshare-nogui
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare,retroshare06-nogui
-Description: Secure communication with friends
- This is the command-line client for RetroShare network. This client
- can be contacted and talked-to using SSL. Clients exist for portable
- devices running e.g. Android. 
+Conflicts: retroshare
+Description: headless version of Retroshare
+ Headless version of the Retroshare platform.
 
 Package: retroshare
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
-Conflicts: retroshare-nogui,retroshare06
+Conflicts: retroshare-nogui
 Description: Secure communication with friends
- RetroShare is a Open Source cross-platform, private and secure decentralised 
- commmunication platform. It lets you to securely chat and share files with your 
- friends and family, using a web-of-trust to authenticate peers and OpenSSL to 
- encrypt all communication. RetroShare provides filesharing, chat, messages, 
- forums and channels.
+ RetroShare is a Open Source, private and secure decentralised
+ commmunication platform. It creates  mesh of computers linked with TLS connections,
+ on top of which it provides file transfer, asynchronous email, forums, channels and chat.
 
 

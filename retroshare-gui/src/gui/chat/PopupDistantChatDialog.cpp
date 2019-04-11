@@ -1,23 +1,24 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2013, Cyril Soler
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/PopupDistantChatDialog.cpp                                         *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2013, Cyril Soler <csoler@users.sourceforge.net>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QTimer>
 #include <QCloseEvent>
@@ -135,7 +136,7 @@ void PopupDistantChatDialog::updateDisplay()
 		break ;
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
 		//std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
-		_status_label->setIcon(QIcon(IMAGE_RED_LED));
+		_status_label->setIcon(QIcon(IMAGE_YEL_LED));
 		msg = QObject::tr( "Tunnel is pending... Messages will be delivered as"
 		                   " soon as possible" );
 		_status_label->setToolTip(msg);
@@ -181,11 +182,13 @@ void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 	PopupChatDialog::closeEvent(e) ;
 }
 
-QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/) const
+QString PopupDistantChatDialog::getPeerName(const ChatId& /*id*/, QString& additional_info) const
 {
     DistantChatPeerInfo tinfo;
 
     rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
+
+	additional_info = QString("Identity ID: ") + QString::fromStdString(tinfo.to_id.toStdString());
 
     RsIdentityDetails details  ;
     if(rsIdentity->getIdDetails(tinfo.to_id,details))

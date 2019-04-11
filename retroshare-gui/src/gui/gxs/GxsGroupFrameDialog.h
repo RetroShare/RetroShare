@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupFrameDialog.h                            *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _GXSGROUPFRAMEDIALOG_H
 #define _GXSGROUPFRAMEDIALOG_H
@@ -42,7 +41,7 @@ class GroupTreeWidget;
 class GroupItemInfo;
 class GxsMessageFrameWidget;
 class UIStateHelper;
-class RsGxsCommentService;
+struct RsGxsCommentService;
 class GxsCommentDialog;
 
 class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
@@ -67,11 +66,12 @@ public:
 		ICON_SUBSCRIBED_GROUP,
 		ICON_POPULAR_GROUP,
 		ICON_OTHER_GROUP,
+		ICON_SEARCH,
 		ICON_DEFAULT
 	};
 
 public:
-	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0);
+	GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent = 0,bool allow_dist_sync=false);
 	virtual ~GxsGroupFrameDialog();
 
 	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
@@ -81,7 +81,7 @@ public:
 
 	virtual QString getHelpString() const =0;
 
-	virtual void getGroupList(std::list<RsGroupMetaData>& groups) ;
+	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
 protected:
 	virtual void showEvent(QShowEvent *event);
@@ -94,6 +94,7 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+    virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
 private slots:
 	void todo();
@@ -106,8 +107,9 @@ private slots:
 
 	void restoreGroupKeys();
 	void newGroup();
+    void distantRequestGroupData();
 
-	void changedGroup(const QString &groupId);
+	void changedCurrentGroup(const QString &groupId);
 	void groupTreeMiddleButtonClicked(QTreeWidgetItem *item);
 	void openInNewTab();
 	void messageTabCloseRequested(int index);
@@ -130,10 +132,15 @@ private slots:
 
 	void loadComment(const RsGxsGroupId &grpId, const QVector<RsGxsMessageId>& msg_versions,const RsGxsMessageId &most_recent_msgId, const QString &title);
 
+    void searchNetwork(const QString &search_string) ;
+	void removeAllSearches();
+	void removeCurrentSearch();
+
 private:
 	virtual QString text(TextType type) = 0;
 	virtual QString icon(IconType type) = 0;
 	virtual QString settingsGroupName() = 0;
+    virtual TurtleRequestId distantSearch(const QString& search_string) ;
 
 	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue) = 0;
 	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId) = 0;
@@ -142,10 +149,12 @@ private:
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
 	virtual RsGxsCommentService *getCommentService() { return NULL; }
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
+    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
 
 	void initUi();
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
+	void updateSearchResults();
 
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
@@ -153,7 +162,7 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::list<RsGroupMetaData> &groupList, const RsUserdata *userdata);
+	void insertGroupsData(const std::map<RsGxsGroupId, RsGroupMetaData> &groupList, const RsUserdata *userdata);
 
 	void requestGroupSummary();
 	void loadGroupSummary(const uint32_t &token);
@@ -180,6 +189,7 @@ protected:
 private:
 	bool mInitialized;
 	bool mInFill;
+    bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
@@ -200,7 +210,10 @@ private:
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
 
-	std::list<RsGroupMetaData> mCachedGroupMetas;
+	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
+
+    std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
+    std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;
 };
 
 #endif

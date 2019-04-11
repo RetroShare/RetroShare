@@ -1,0 +1,49 @@
+Creation of a new Debian changelog:
+   
+   dch --create --package retroshare --newversion 0.6.4-1
+
+   Note: dch reads email in $DEBMAIL or $USER@$HOSTNAME, so it should be made correct in debian/changlog
+         If the email does not match the email in mentors, the package will be rejected.
+
+dget command to retrieve source package:
+
+   dget -u https://launchpad.net/~retroshare/+archive/ubuntu/stable/+files/retroshare_0.6.4-1.20180313.0e6d27ad~xenial.dsc
+
+   (-u means don't check PGP signature)
+
+When ready:
+   * updload the package in a place that can be used to dget the package on mentors.debian.net.
+
+   dput mentors retroshare_0.6.4-1_source.changes
+
+Checking with lintian:
+   lintian -EI --pedantic --profile debian retroshare_0.6.4-1_source.changes
+   echo -e 'display-info=y\ndisplay-experimental=y\npedantic=y\ncolor=auto' > ~/.config/lintian/lintianrc
+
+   Also apply lintian to binaries
+      * fix overlinking in voip plugin
+
+Turn the RFP bug into ITP 
+   you have to send an e-mail to control@bugs.debian.org and use the "retitle" command
+   [05/13/2018] successfully retitled. The mail *body* (instead of subject) needs to contain the command in a single line.
+
+Todo
+   x make a sid binary package. 
+   * test in sid using pbuilder chroot system (pbuilder login)
+   x upload to mentors
+   x request for sponsorship
+   * 
+
+Getting help: 
+   https://webchat.oftc.net/
+
+Bug creation/report
+   reportbug -B debian
+
+Re-do debian/rules according to
+   https://sources.debian.org/src/sleepyhead/1.0.0-beta-2+dfsg-5/debian/rules/
+   the proper way to use qtchooser in d/rules is exporting QT_SELECT in d/rules, see https://pkg-kde.alioth.debian.org/packagingqtbasedstuff.html
+   disable autologin
+
+Put the package on salsa:
+	salsa.debian.org

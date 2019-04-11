@@ -1,36 +1,31 @@
-/*
- * libretroshare/src/chat: distantchat.cc
- *
- * Services for RetroShare.
- *
- * Copyright 2014 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/chat: distantchat.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2015 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <unistd.h>
 
 #include "openssl/rand.h"
 #include "openssl/dh.h"
 #include "openssl/err.h"
 
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsprint.h"
 #include "util/rsmemory.h"
 
@@ -106,8 +101,8 @@ int p3GxsTunnelService::tick()
 {
     
 #ifdef DEBUG_GXS_TUNNEL    
-    time_t now = time(NULL);
-	static time_t last_dump = 0;
+    rstime_t now = time(NULL);
+	static rstime_t last_dump = 0;
     
     if(now > last_dump + INTERVAL_BETWEEN_DEBUG_DUMP )
     {
@@ -143,7 +138,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelDHPublicKeyItem*>::iterator it=pendingDHItems.begin();it!=pendingDHItems.end();)
 		    if(locked_sendClearTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingDHItems.erase(it) ;
+			}
 		    else
 			    ++it ;
     }
@@ -155,7 +153,10 @@ void p3GxsTunnelService::flush()
 
 	    for(std::list<RsGxsTunnelItem*>::iterator it=pendingGxsTunnelItems.begin();it!=pendingGxsTunnelItems.end();)
 		    if(locked_sendEncryptedTunnelData(*it) )
+			{
+				delete *it ;
 			    it = pendingGxsTunnelItems.erase(it) ;
+			}
 		    else
 		    {
 			    ++it ;
@@ -170,7 +171,7 @@ void p3GxsTunnelService::flush()
     {
 	    RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-	    time_t now = time(NULL) ;
+	    rstime_t now = time(NULL) ;
 
 	    for(std::map<uint64_t, GxsTunnelData>::iterator it = pendingGxsTunnelDataItems.begin();it != pendingGxsTunnelDataItems.end();++it)
 		    if(now > RS_GXS_TUNNEL_DELAY_BETWEEN_RESEND + it->second.last_sending_attempt)
@@ -193,7 +194,7 @@ void p3GxsTunnelService::flush()
 
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     for(std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it(_gxs_tunnel_contacts.begin());it!=_gxs_tunnel_contacts.end();)
     {
@@ -255,13 +256,13 @@ void p3GxsTunnelService::flush()
         
         // clean old received data prints.
         
-        for(std::map<uint64_t,time_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
+        for(std::map<uint64_t,rstime_t>::iterator it2=it->second.received_data_prints.begin();it2!=it->second.received_data_prints.end();)
             if(now > it2->second + RS_GXS_TUNNEL_DATA_PRINT_STORAGE_DELAY)
             {
 #ifdef DEBUG_GXS_TUNNEL
                 std::cerr << "(II) erasing old data print for message #" << it2->first << " in tunnel " << it->first << std::endl;
 #endif
-                std::map<uint64_t,time_t>::iterator tmp(it2) ;
+                std::map<uint64_t,rstime_t>::iterator tmp(it2) ;
                 ++tmp ;
                 it->second.received_data_prints.erase(it2) ;
                 it2 = tmp ;
@@ -369,11 +370,11 @@ void p3GxsTunnelService::handleRecvTunnelDataItem(const RsGxsTunnelId& tunnel_id
             std::map<RsGxsTunnelId,GxsTunnelPeerInfo>::iterator it2 = _gxs_tunnel_contacts.find(tunnel_id) ; 
             
             if(it2 != _gxs_tunnel_contacts.end())
-	    {
-		    it2->second.client_services.insert(item->service_id) ;
-		    peer_from = it2->second.to_gxs_id ;
-		    is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_CLIENT);
-	    }
+			{
+				it2->second.client_services.insert(item->service_id) ;
+				peer_from = it2->second.to_gxs_id ;
+				is_client_side = (it2->second.direction == RsTurtleGenericDataItem::DIRECTION_SERVER);
+			}
             
             // Check if the item has already been received. This is necessary because we actually re-send items until an ACK is received. If the ACK gets lost (connection interrupted) the
             // item may be received twice. This is conservative and ensure that no item is lost nor received twice.
@@ -679,7 +680,7 @@ void p3GxsTunnelService::removeVirtualPeer(const TurtleFileHash& hash,const Turt
     }
 }
 
-void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,const RsFileHash& hash, const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction)
+void p3GxsTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *gitem, const RsFileHash& hash, const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem::Direction direction)
 {
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "GxsTunnelService::receiveTurtleData(): Received turtle data. " << std::endl;
@@ -691,7 +692,7 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
     (void) direction;
 #endif
 
-    RsTurtleGenericDataItem *item = dynamic_cast<RsTurtleGenericDataItem*>(gitem) ;
+    const RsTurtleGenericDataItem *item = dynamic_cast<const RsTurtleGenericDataItem*>(gitem) ;
 
     if(item == NULL)
     {
@@ -744,6 +745,8 @@ void p3GxsTunnelService::receiveTurtleData(RsTurtleGenericTunnelItem *gitem,cons
         }
         else
             std::cerr << "(EE) Deserialiased item has unexpected type." << std::endl;
+
+		delete citem ;
     }
 }
 
@@ -1442,7 +1445,7 @@ void p3GxsTunnelService::startClientGxsTunnelConnection(const RsGxsId& to_gxs_id
 
     GxsTunnelPeerInfo info ;
 
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     info.last_contact = now ;
     info.last_keep_alive_sent = now ;
@@ -1636,7 +1639,7 @@ void p3GxsTunnelService::debug_dump()
 {
     RS_STACK_MUTEX(mGxsTunnelMtx); /********** STACK LOCKED MTX ******/
     
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
     
     std::cerr << "p3GxsTunnelService::debug_dump()" << std::endl;
     std::cerr << "  Registered client services: " << std::endl;

@@ -1,27 +1,24 @@
-/*
- * "$Id: pqidebug.cc,v 1.6 2007-02-18 21:46:49 rmf24 Exp $"
- *
- * 3P/RS network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/util: rsdebug.cc                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie   <retroshare@lunamutt.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "util/rsdebug.h"
 #include "util/rsthreads.h"
@@ -29,7 +26,7 @@
 
 #include <map>
 #include <stdio.h>
-#include <time.h>
+#include "util/rstime.h"
 
 const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
 const int RS_DEBUG_LOGFILE 	= 2;  /* stuff goes to logfile */
@@ -145,12 +142,13 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 	if(info->lvl == RsLog::None)
 		return;
 
-	RsStackMutex stack(logMtx); /******** LOCKED ****************/
-
 	bool process = info->lvl == RsLog::Default ? (lvl <= defaultLevel) : lvl <= info->lvl;
-	if(process)
+	if(!process)
+		return;
+
 	{
-		time_t t = time(NULL);
+		RS_STACK_MUTEX(logMtx);
+		time_t t = time(NULL); // Don't use rstime_t here or ctime break on windows
 
 		if (debugMode == RS_DEBUG_LOGCRASH)
 		{
@@ -182,6 +180,9 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 		fprintf(ofd, "(%s Z: %s, lvl: %u): %s \n",
 				timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		fflush(ofd);
+
+		fprintf(stdout, "(%s Z: %s, lvl: %u): %s \n",
+		        timestr2.c_str(), info->name.c_str(), (unsigned int)info->lvl, msg.c_str());
 		lineCount++;
 	}
 }

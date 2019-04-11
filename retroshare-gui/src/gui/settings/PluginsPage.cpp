@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/PluginsPage.cpp                                                *
+ *                                                                             *
+ * Copyright 2006, Crypton         <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <iostream>
 
@@ -33,7 +32,7 @@
 
 #include "../MainWindow.h"
 
-PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
+settings::PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
     ui.setupUi(this);
@@ -123,7 +122,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 			 if(plugin == NULL || plugin->qt_config_panel() == NULL)
                  item->_configure_PB->hide() ;
-				 
+
 
 			 if(plugin != NULL){
 				 item->enableButton->hide();
@@ -159,7 +158,7 @@ PluginsPage::PluginsPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableAll,SIGNAL(toggled(bool)),this,SLOT(toggleEnableAll(bool))) ;
 }
-QString PluginsPage::helpText() const
+QString settings::PluginsPage::helpText() const
 {
    return tr("<h1><img width=\"24\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Plugins</h1>     \
               <p>Plugins are loaded from the directories listed in the bottom list.</p>         \
@@ -171,11 +170,11 @@ QString PluginsPage::helpText() const
               <p>If you want to develop your own plugins, contact the developpers team          \
               they will be happy to help you out!</p>") ;
 }
-void PluginsPage::toggleEnableAll(bool b)
+void settings::PluginsPage::toggleEnableAll(bool b)
 {
 	rsPlugins->allowAllPlugins(b) ;
 }
-void PluginsPage::aboutPlugin(int i)
+void settings::PluginsPage::aboutPlugin(int i)
 {
 	std::cerr << "Launching about window for plugin " << i << std::endl;
 
@@ -183,7 +182,7 @@ void PluginsPage::aboutPlugin(int i)
 	if(rsPlugins->plugin(i) != NULL && (dialog = rsPlugins->plugin(i)->qt_about_page()) != NULL)
 		dialog->exec() ;
 }
-void PluginsPage::configurePlugin(int i)
+void settings::PluginsPage::configurePlugin(int i)
 {
 	std::cerr << "Launching configuration window for plugin " << i << std::endl;
 
@@ -191,14 +190,14 @@ void PluginsPage::configurePlugin(int i)
 		rsPlugins->plugin(i)->qt_config_panel()->show() ;
 }
 
-void PluginsPage::enablePlugin(const QString& hash)
+void settings::PluginsPage::enablePlugin(const QString& hash)
 {
 	std::cerr << "Switching status of plugin " << hash.toStdString() << " to  enable" << std::endl;
 
         rsPlugins->enablePlugin(RsFileHash(hash.toStdString()) );
 }
 
-void PluginsPage::disablePlugin(const QString& hash)
+void settings::PluginsPage::disablePlugin(const QString& hash)
 {
 	std::cerr << "Switching status of plugin " << hash.toStdString() << " to disable " << std::endl;
 
@@ -206,11 +205,11 @@ void PluginsPage::disablePlugin(const QString& hash)
 }
 
 
-PluginsPage::~PluginsPage()
+settings::PluginsPage::~PluginsPage()
 {
 }
 
 /** Loads the settings for this page */
-void PluginsPage::load()
+void settings::PluginsPage::load()
 {
 }

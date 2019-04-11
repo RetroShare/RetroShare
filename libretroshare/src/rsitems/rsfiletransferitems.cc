@@ -1,29 +1,24 @@
-
-/*
- * libretroshare/src/serialiser: rsbaseitems.cc
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsfiletransferitems.cc                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
 #include "rsitems/rsfiletransferitems.h"
@@ -89,48 +84,6 @@ void RsFileTransferSingleChunkCrcItem::serial_process(RsGenericSerializer::Seria
     RsTypeSerializer::serial_process          (j,ctx,hash,        "hash") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,chunk_number,"chunk_number") ;
     RsTypeSerializer::serial_process          (j,ctx,check_sum,   "check_sum") ;
-}
-
-//===================================================================================================//
-//                                         CompressedChunkMap                                        //
-//===================================================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const CompressedChunkMap& s)
-{
-	return 4 + 4*s._map.size() ;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset,const CompressedChunkMap& s)
-{
-    bool ok = true ;
-
-	ok &= setRawUInt32(data, size, &offset, s._map.size());
-
-	for(uint32_t i=0;i<s._map.size() && ok;++i)
-		ok &= setRawUInt32(data, size, &offset, s._map[i]);
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size,uint32_t& offset,CompressedChunkMap& s)
-{
-	uint32_t S =0;
-	bool ok = getRawUInt32(data, size, &offset, &S);
-
-	if(ok)
-	{
-		s._map.resize(S) ;
-
-		for(uint32_t i=0;i<S && ok;++i)
-			ok &= getRawUInt32(data, size, &offset, &(s._map[i]));
-	}
-
-    return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const CompressedChunkMap& s)
-{
-    std::cerr << "  [Compressed chunk map] " << n << " : length=" << s._map.size() << std::endl;
 }
 
 //===================================================================================================//

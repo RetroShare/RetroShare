@@ -1126,9 +1126,15 @@ OpModeStatus[opMode="Minimal"] {
 	background: #700000;
 }
 
+/*Property Values at end to overwrite other settings*/
+
 [new=false] {
 	background: #202020;
 }
 [new=true] {
 	background: #005000;
+}
+
+[WrongValue="true"] {
+	background-color: #702020;
 }

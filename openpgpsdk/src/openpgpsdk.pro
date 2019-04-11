@@ -1,3 +1,23 @@
+#
+# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>
+# All rights reserved.
+# Contributors: retroshare team. The Contributors have asserted
+# their moral rights under the UK Copyright Design and Patents Act 1988 to
+# be recorded as the authors of this copyright work.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may not
+# use this file except in compliance with the License.
+#
+# You may obtain a copy of the License at
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#                                                                              #
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -9,8 +29,8 @@ QMAKE_CXXFLAGS *= -Wall -Werror -W
 
 TARGET = ops
 DESTDIR = lib
-DEPENDPATH += . $$INC_DIR
-INCLUDEPATH += . $$INC_DIR
+
+!include(use_openpgpsdk.pri):error("Including")
 
 #################################### Windows #####################################
 
@@ -18,8 +38,12 @@ linux-* {
 	OBJECTS_DIR = temp/linux/obj
 }
 
-win32 {
-	DEFINES *= WIN32_LEAN_AND_MEAN _USE_32BIT_TIME_T
+win32-g++ {
+
+    HEADERS += openpgpsdk/opsstring.h
+    SOURCES += openpgpsdk/opsstring.c
+
+    DEFINES *= WIN32_LEAN_AND_MEAN
 
 	# Switch off optimization for release version
 	QMAKE_CXXFLAGS_RELEASE -= -O2
@@ -27,9 +51,13 @@ win32 {
 	QMAKE_CFLAGS_RELEASE -= -O2
 	QMAKE_CFLAGS_RELEASE += -O0
 
-	# Switch on optimization for debug version
-	#QMAKE_CXXFLAGS_DEBUG += -O2
-	#QMAKE_CFLAGS_DEBUG += -O2
+    mLibs = bz2 z ssl crypto
+    static {
+        LIBS += $$linkStaticLibs(mLibs)
+        PRE_TARGETDEPS += $$pretargetStaticLibs(mLibs)
+    } else {
+        LIBS += $$linkDynamicLibs(mLibs)
+    }
 }
 
 
@@ -74,9 +102,6 @@ HEADERS += openpgpsdk/writer.h \
            openpgpsdk/parse_local.h \
            openpgpsdk/keyring_local.h \
            openpgpsdk/opsdir.h
-win32{
-HEADERS += openpgpsdk/opsstring.h
-}
 
 SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/compress.c \
@@ -116,9 +141,7 @@ SOURCES += openpgpsdk/accumulate.c \
            openpgpsdk/writer_skey_checksum.c \
            openpgpsdk/writer_stream_encrypt_se_ip.c \
            openpgpsdk/opsdir.c
-win32{
-SOURCES += openpgpsdk/opsstring.c
-}
+
 
 ################################# Android #####################################
 

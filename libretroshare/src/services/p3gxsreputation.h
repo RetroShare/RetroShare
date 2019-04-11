@@ -1,29 +1,24 @@
-/*
- * libretroshare/src/services/p3gxsreputation.h
- *
- * Exchange list of Peers Reputations.
- *
- * Copyright 2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxsreputation.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2014-2014 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef SERVICE_RSGXSREPUTATION_HEADER
 #define SERVICE_RSGXSREPUTATION_HEADER
 
@@ -56,30 +51,32 @@ public:
     :mPeerId(peerId), mLatestUpdate(0), mLastQuery(0) { return; }
 
 	RsPeerId mPeerId;
-	time_t mLatestUpdate;
-	time_t mLastQuery;
+	rstime_t mLatestUpdate;
+	rstime_t mLastQuery;
 };
 
 struct BannedNodeInfo
 {
-    time_t last_activity_TS ;			// updated everytime a node or one of its former identities is required
+    rstime_t last_activity_TS ;			// updated everytime a node or one of its former identities is required
     std::set<RsGxsId> known_identities ;	// list of known identities from this node. This is kept for a while, and useful in order to avoid re-asking these keys.
 };
 
 class Reputation
 {
 public:
-	Reputation()
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
-                                                                                            
-	Reputation(const RsGxsId& /*about*/)
-        	:mOwnOpinion(RsReputations::OPINION_NEUTRAL), mOwnOpinionTs(0),mFriendAverage(1.0f), mReputationScore(RsReputations::OPINION_NEUTRAL),mIdentityFlags(0){ }
+	Reputation() :
+	    mOwnOpinion(static_cast<int32_t>(RsOpinion::NEUTRAL)), mOwnOpinionTs(0),
+	    mFriendAverage(1.0f),
+	    /* G10h4ck: TODO shouln't this be initialized with
+		 * RsReputation::NEUTRAL or UNKOWN? */
+	    mReputationScore(static_cast<float>(RsOpinion::NEUTRAL)),
+	    mIdentityFlags(0) {}
 
 	void updateReputation();
 
-	std::map<RsPeerId, RsReputations::Opinion> mOpinions;
+	std::map<RsPeerId, RsOpinion> mOpinions;
 	int32_t mOwnOpinion;
-	time_t  mOwnOpinionTs;
+	rstime_t  mOwnOpinionTs;
 
 	float mFriendAverage ;
     uint32_t mFriendsPositive ;		// number of positive vites from friends
@@ -91,16 +88,11 @@ public:
     
 	uint32_t mIdentityFlags;
 
-    time_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
+    rstime_t mLastUsedTS ;			// last time the reputation was asked. Used to keep track of activity and clean up some reputation data.
 };
 
 
 //!The p3GxsReputation service.
- /**
-  *
-  * 
-  */
-
 class p3GxsReputation: public p3Service, public p3Config, public RsGixsReputation, public RsReputations /* , public pqiMonitor */
 {
 public:
@@ -108,20 +100,26 @@ public:
     virtual RsServiceInfo getServiceInfo();
 
     /***** Interface for RsReputations *****/
-    virtual bool setOwnOpinion(const RsGxsId& key_id, const Opinion& op) ;
-    virtual bool getOwnOpinion(const RsGxsId& key_id, Opinion& op) ;
-    virtual bool getReputationInfo(const RsGxsId& id, const RsPgpId &ownerNode, ReputationInfo& info,bool stamp=true) ;
+	virtual bool setOwnOpinion(const RsGxsId& key_id, RsOpinion op);
+	virtual bool getOwnOpinion(const RsGxsId& key_id, RsOpinion& op) ;
+	virtual bool getReputationInfo(
+	        const RsGxsId& id, const RsPgpId& ownerNode, RsReputationInfo& info,
+	        bool stamp = true );
     virtual bool isIdentityBanned(const RsGxsId& id) ;
 
     virtual bool isNodeBanned(const RsPgpId& id);
     virtual void banNode(const RsPgpId& id,bool b) ;
-    virtual ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL);
 
-    virtual void setNodeAutoPositiveOpinionForContacts(bool b) ;
-    virtual bool nodeAutoPositiveOpinionForContacts() ;
+	RsReputationLevel overallReputationLevel(const RsGxsId& id) override;
 
-    virtual void setRememberDeletedNodesThreshold(uint32_t days) ;
-    virtual uint32_t rememberDeletedNodesThreshold() ;
+	virtual RsReputationLevel overallReputationLevel(
+	        const RsGxsId& id, uint32_t* identity_flags );
+
+	virtual void setAutoPositiveOpinionForContacts(bool b) ;
+	virtual bool autoPositiveOpinionForContacts() ;
+
+	virtual void setRememberBannedIdThreshold(uint32_t days) ;
+	virtual uint32_t rememberBannedIdThreshold() ;
 
 	uint32_t thresholdForRemotelyNegativeReputation();
 	uint32_t thresholdForRemotelyPositiveReputation();
@@ -149,12 +147,13 @@ private:
 
     bool SendReputations(RsGxsReputationRequestItem *request);
     bool RecvReputations(RsGxsReputationUpdateItem *item);
-    bool updateLatestUpdate(RsPeerId peerid, time_t latest_update);
+    bool updateLatestUpdate(RsPeerId peerid, rstime_t latest_update);
 
     void updateBannedNodesProxy();
 
     // internal update of data. Takes care of cleaning empty boxes.
-    void locked_updateOpinion(const RsPeerId &from, const RsGxsId &about, RsReputations::Opinion op);
+	void locked_updateOpinion(
+	        const RsPeerId& from, const RsGxsId& about, RsOpinion op);
     bool loadReputationSet(RsGxsReputationSetItem *item,  const std::set<RsPeerId> &peerSet);
 #ifdef TO_REMOVE
 	bool loadReputationSet_deprecated3(RsGxsReputationSetItem_deprecated3 *item, const std::set<RsPeerId> &peerSet);
@@ -169,11 +168,11 @@ private:
 private:
     RsMutex mReputationMtx;
 
-    time_t mLastCleanUp;
-    time_t mRequestTime;
-    time_t mStoreTime;
-    time_t mLastBannedNodesUpdate ;
-        time_t mLastIdentityFlagsUpdate ;
+    rstime_t mLastCleanUp;
+    rstime_t mRequestTime;
+    rstime_t mStoreTime;
+    rstime_t mLastBannedNodesUpdate ;
+        rstime_t mLastIdentityFlagsUpdate ;
     bool   mReputationsUpdated;
 
     //float mAutoBanIdentitiesLimit ;
@@ -184,7 +183,7 @@ private:
     // Data for Reputation.
     std::map<RsPeerId, ReputationConfig> mConfig;
     std::map<RsGxsId, Reputation> mReputations;
-    std::multimap<time_t, RsGxsId> mUpdated;
+    std::multimap<rstime_t, RsGxsId> mUpdated;
 
     // PGP Ids auto-banned. This is updated regularly.
     std::map<RsPgpId,BannedNodeInfo> mBannedPgpIds ;
@@ -196,7 +195,7 @@ private:
     uint32_t mMaxPreventReloadBannedIds ;
 
     bool mChanged ; // slow version of IndicateConfigChanged();
-    time_t mLastReputationConfigSaved ;
+    rstime_t mLastReputationConfigSaved ;
 };
 
 #endif //SERVICE_RSGXSREPUTATION_HEADER

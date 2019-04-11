@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxsflags.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2018 by Retroshare Team <retroshare.project@gmail.com>       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSFLAGS_H
 #define RSGXSFLAGS_H
 
@@ -31,14 +52,15 @@ namespace GXS_SERV {
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_MASK           = 0x0000ff00;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_NONE           = 0x00000000;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG            = 0x00000100;   // Anti-spam feature. Allows to ask higher reputation to anonymous IDs
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN    = 0x00000400;
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;   // unused
+    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN    = 0x00000400;	// ???
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES = 0x00000800;	// not used anymore
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN      = 0x00001000;   // Anti-spam feature. Allows to ask higher reputation to unknown IDs and anonymous IDs
 
+    // These are *not used*
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_MASK       = 0x000000ff;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  = 0x00000001;
-    static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED  = 0x00000002;
+    static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED  = 0x00000002;	// unused
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_THREADHEAD = 0x00000004;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_NONEREQ    = 0x00000008;
     
@@ -94,8 +116,7 @@ namespace GXS_SERV {
     /** START GXS Grp status flags **/
 
     static const uint32_t GXS_GRP_STATUS_UNPROCESSED = 0x000000100;
-
-    static const uint32_t GXS_GRP_STATUS_UNREAD = 0x00000200;
+    static const uint32_t GXS_GRP_STATUS_UNREAD      = 0x000000200;
 
     /** END GXS Grp status flags **/
 }

@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2009 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/CryptoPage.cpp                                                 *
+ *                                                                             *
+ * Copyright 2006, Retroshare Team <retroshare.project@gmail.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDate>
 #include <QMessageBox>
@@ -31,6 +30,7 @@
 #include "util/misc.h"
 #include "util/DateTime.h"
 #include <gui/RetroShareLink.h>
+#include <gui/connect/ConfCertDialog.h>
 #include <gui/profile/ProfileManager.h>
 #include <gui/statistics/StatisticsWindow.h>
 
@@ -47,6 +47,7 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 //  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
   connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
   connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+  connect(ui._includeAllIPs_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
   connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
   connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
 
@@ -96,8 +97,15 @@ CryptoPage::~CryptoPage()
 void
 CryptoPage::load()
 {
-    /* Loads ouer default Puplickey */
-    ui.certplainTextEdit->setPlainText(QString::fromUtf8(rsPeers->GetRetroshareInvite(ui._includeSignatures_CB->isChecked()).c_str()));
+	ui.certplainTextEdit->setPlainText(
+	            QString::fromUtf8(
+	                rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ).c_str()
+                    ) );
+
+    RsPeerDetails detail;
+    rsPeers->getPeerDetails(rsPeers->getOwnId(),detail);
+
+    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
 }
 void
 CryptoPage::copyRSLink()

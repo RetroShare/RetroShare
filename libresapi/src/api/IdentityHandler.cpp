@@ -1,22 +1,25 @@
-/*
- * libresapi
- *
- * Copyright (C) 2015  electron128 <electron128@yahoo.com>
- * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * libresapi/api/IdentityHandler.cpp                                           *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2015  electron128 <electron128@yahoo.com>                     *
+ * Copyright (C) 2017  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "IdentityHandler.h"
 
@@ -220,15 +223,15 @@ void IdentityHandler::handleWildcard(Request & /*req*/, Response &resp)
 
 	time_t timeout = time(NULL)+10;
 	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
-	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
-	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	while( rStatus != RsTokenService::COMPLETE &&
+	       rStatus != RsTokenService::FAILED &&
 	       time(NULL) < timeout )
 	{
 		usleep(50*1000);
 		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -277,15 +280,15 @@ void IdentityHandler::handleNotOwnIdsRequest(Request & /*req*/, Response &resp)
 
 	time_t timeout = time(NULL)+10;
 	uint8_t rStatus = mRsIdentity->getTokenService()->requestStatus(token);
-	while( rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE &&
-	       rStatus != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED &&
+	while( rStatus != RsTokenService::COMPLETE &&
+	       rStatus != RsTokenService::FAILED &&
 	       time(NULL) < timeout )
 	{
 		usleep(50*1000);
 		rStatus = mRsIdentity->getTokenService()->requestStatus(token);
 	}
 
-	if(rStatus == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(rStatus == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -327,8 +330,8 @@ void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{
@@ -339,7 +342,7 @@ void IdentityHandler::handleOwnIdsRequest(Request & /*req*/, Response &resp)
 #endif
 	}
 
-	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+	if(mRsIdentity->getTokenService()->requestStatus(token) == RsTokenService::COMPLETE)
 	{
 		std::vector<RsGxsIdGroup> grps;
 		ok &= mRsIdentity->getGroupData(token, grps);
@@ -410,8 +413,8 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{
@@ -501,7 +504,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 
 	resp.mDataStream << makeKeyValue("bannned_node", rsReputations->isNodeBanned(data.mPgpId));
 
-	RsReputations::ReputationInfo info;
+	RsReputationInfo info;
 	rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId), data.mPgpId, info);
 	resp.mDataStream << makeKeyValue("friends_positive_votes", info.mFriendsPositiveVotes);
 	resp.mDataStream << makeKeyValue("friends_negative_votes", info.mFriendsNegativeVotes);
@@ -518,7 +521,7 @@ void IdentityHandler::handleGetIdentityDetails(Request& req, Response& resp)
 	StreamBase& usagesStream = resp.mDataStream.getStreamToMember("usages");
 	usagesStream.getStreamToMember();
 
-	for(std::map<RsIdentityUsage,time_t>::const_iterator it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
+	for(auto it(details.mUseCases.begin()); it != details.mUseCases.end(); ++it)
 	{
 		usagesStream.getStreamToMember()
 		        << makeKeyValue("usage_time", (uint32_t)data.mLastUsageTS)
@@ -545,8 +548,8 @@ void IdentityHandler::handleSetAvatar(Request& req, Response& resp)
 	mRsIdentity->getTokenService()->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
 
 	time_t start = time(NULL);
-	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
-	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+	while((mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::COMPLETE)
+	      &&(mRsIdentity->getTokenService()->requestStatus(token) != RsTokenService::FAILED)
 	      &&((time(NULL) < (start+10)))
 	      )
 	{
@@ -634,18 +637,12 @@ void IdentityHandler::handleSetOpinion(Request& req, Response& resp)
 	int own_opinion;
 	req.mStream << makeKeyValueReference("own_opinion", own_opinion);
 
-	RsReputations::Opinion opinion;
+	RsOpinion opinion;
 	switch(own_opinion)
 	{
-	    case 0:
-		    opinion = RsReputations::OPINION_NEGATIVE;
-		    break;
-	    case 1: opinion =
-		    RsReputations::OPINION_NEUTRAL;
-		    break;
-	    case 2:
-		    opinion = RsReputations::OPINION_POSITIVE;
-		    break;
+	case 0: opinion = RsOpinion::NEGATIVE; break;
+	case 1: opinion = RsOpinion::NEUTRAL; break;
+	case 2: opinion = RsOpinion::POSITIVE; break;
 	default:
 		resp.setFail();
 		return;

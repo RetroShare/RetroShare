@@ -1,19 +1,18 @@
-:: Usage:
-:: call git-log.bat [no-ask]
-
 @echo off
 
 setlocal
 
 set NoAsk=
-if "%~1"=="no-ask" set NoAsk=1
+if "%~2"=="no-ask" set NoAsk=1
 
 :: Initialize environment
 call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
-call "%~dp0env.bat"
+
+call "%~dp0env.bat" %*
+if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
 :: Check git executable
@@ -58,7 +57,7 @@ for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do 
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
 :: Get last revision
-set RsLastRefFile=%BuildPath%\Qt-%QtVersion%-%RsBuildConfig%-LastRef.txt
+set RsLastRefFile=%BuildPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%-LastRef.txt
 set RsLastRef=
 if exist "%RsLastRefFile%" set /P RsLastRef=<"%RsLastRefFile%"
 
@@ -86,9 +85,9 @@ if %errorlevel%==2 exit /B 1
 :no_confirm
 
 if "%RsBuildConfig%" NEQ "release" (
-	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%-%RsBuildConfig%.txt
+	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.txt
 ) else (
-	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsArchiveAdd%.txt
+	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.txt
 )
 
 title %SourceName%-%RsBuildConfig% [git log]

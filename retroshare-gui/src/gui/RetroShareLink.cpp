@@ -1,21 +1,22 @@
-/***************************************************************************
- *   Copyright (C) 2009                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+/*******************************************************************************
+ * gui/RetroshareLink.cpp                                                      *
+ *                                                                             *
+ * Copyright (c) 2009 Cyril Soler      <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "RetroShareLink.h"
 
@@ -397,7 +398,7 @@ void RetroShareLink::fromUrl(const QUrl& url)
 		_name  = decodedQueryItemValue(urlQuery, FILE_TREE_NAME);
 		_size  = urlQuery.queryItemValue(FILE_TREE_SIZE).toULongLong(&ok);
 		_radix = decodedQueryItemValue(urlQuery, FILE_TREE_DATA);
-		_count = urlQuery.queryItemValue(FILE_TREE_COUNT).toULongLong(&ok);
+		_count = urlQuery.queryItemValue(FILE_TREE_COUNT).toUInt(&ok);
 
 #ifdef DEBUG_RSLINK
 		std::cerr << "Got a file tree link!!" << std::endl;
@@ -553,7 +554,10 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 	RetroShareLink link;
 	link.clear();
 
-#warning csoler 2012-08-14: This is baaaaaad code:
+#ifndef RS_NO_WARN_CPP
+#pragma message("csoler 2012-08-14: This is baaaaaad code")
+#endif
+
 	// 	- we should not need to parse and re-read a cert in old format.
 	//
 	RsPeerDetails detail;
@@ -562,7 +566,7 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 	} else {
 
 		link._type = TYPE_CERTIFICATE;
-		link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false).c_str());
+		link._radix = QString::fromUtf8(rsPeers->GetRetroshareInvite(ssl_id,false,false).c_str());
 		link._name = QString::fromUtf8(detail.name.c_str());
 		link._location = QString::fromUtf8(detail.location.c_str());
 		link._radix.replace("\n","");
@@ -730,10 +734,11 @@ void RetroShareLink::check()
 			if(!checkSSLId(_SSLid))
 				_valid = false;			// no break! We also test file stuff below.
 			/* fallthrough */
+			[[clang::fallthrough]];
 		case TYPE_FILE_TREE:
 			/* fallthrough */
 		case TYPE_FILE:
-			if(_size > (((uint64_t)1)<<40))	// 1TB. Who has such large files?
+			if(_size > ((static_cast<uint64_t>(1))<<40))	// 1TB. Who has such large files?
 				_valid = false;
 
 			if(!checkName(_name))
@@ -860,17 +865,17 @@ QString RetroShareLink::title() const
 		break;
 
 		case TYPE_FILE:
-		return QString("%1 (%2)").arg(hash()).arg(misc::friendlyUnit(size()));
+		return QString("Size: %2  hash: %1").arg(hash()).arg(misc::friendlyUnit(size()));
 
 		case TYPE_PERSON:
 		return PeerDefs::rsidFromId(RsPgpId(hash().toStdString()));
 
 		case TYPE_FORUM:
-			/* fallthrough */
+			return QString("Forum id: %1").arg(hash());
 		case TYPE_CHANNEL:
-			/* fallthrough */
+			return QString("Channel id: %1").arg(hash());
 		case TYPE_SEARCH:
-		break;
+			return QString("Search files");
 
 		case TYPE_MESSAGE:
 		return PeerDefs::rsidFromId(RsPeerId(hash().toStdString()));
@@ -1172,9 +1177,9 @@ bool RetroShareLink::checkSSLId(const QString& ssl_id)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>96 && b<103)))
+		if(!((b>='0' && b<='9') || (b>='a' && b<='f')))
 			return false ;
 	}
 
@@ -1190,9 +1195,9 @@ bool RetroShareLink::checkPGPId(const QString& pgp_id)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>64 && b<71)))
+		if(!((b>='0' && b<='9') || (b>='A' && b<='F')))
 			return false ;
 	}
 
@@ -1205,15 +1210,14 @@ bool RetroShareLink::checkRadix64(const QString& s)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!(  (b > 46 && b < 58) || (b > 64 && b < 91) || (b > 96 && b < 123) || b=='+' || b=='='))
+		if(!(  (b >= '0' && b <= '9') || (b >= 'A' && b <= 'Z') || (b >= 'a' && b <= 'z') || b=='/' || b=='+' || b=='='))
 		{
 			std::cerr << "Character not allowed in radix: " << b << std::endl;
 			return false;
 		}
 	}
-	std::cerr << "Radix check: passed" << std::endl;
 	return true ;
 }
 
@@ -1226,9 +1230,9 @@ bool RetroShareLink::checkHash(const QString& hash)
 
 	for(int i=0;i<qb.length();++i)
 	{
-		unsigned char b(qb[i]) ;
+		char b(qb[i]) ;
 
-		if(!((b>47 && b<58) || (b>96 && b<103)))
+		if(!((b>='0' && b<='9') || (b>='a' && b<='f')))
 			return false ;
 	}
 
@@ -1387,13 +1391,6 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				++countUnknown;
 			break;
 
-			case TYPE_FILE:
-			{
-				col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
-				fileLinkFound = true;
-			}
-			break;
-
 			case TYPE_PERSON:
 			{
 #ifdef DEBUG_RSLINK
@@ -1512,7 +1509,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				{
 					if(gxs_details.mFlags & RS_IDENTITY_FLAGS_IS_OWN_ID)
 					{
-						QMessageBox::warning(NULL,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
+						QMessageBox::warning(nullptr,QString("Cannot send message to yourself"),QString("This identity is owned by you. You wouldn't want to send yourself a message right?"));
 						break ;
 					}
 
@@ -1548,6 +1545,24 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break ;
 
+			case TYPE_FILE:
+			{
+				FileInfo fi1;
+				if(links.size()==1 && rsFiles->alreadyHaveFile(RsFileHash(link.hash().toStdString()), fi1)
+					&& !link.name().endsWith(RsCollection::ExtensionString))
+				{
+					/* fallthrough */
+				}
+				else
+				{
+					col.merge_in(link.name(),link.size(),RsFileHash(link.hash().toStdString())) ;
+					fileLinkFound = true;
+					break;
+				}
+			}
+			//break;
+			/* fallthrough */
+			[[clang::fallthrough]];
 			case TYPE_EXTRAFILE:
 			{
 #ifdef DEBUG_RSLINK
@@ -1610,7 +1625,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						question += QObject::tr("Before you do so, please make sure that this file does not contain malicious executable code.");
 						question += "<br><br>" + cleanname + "</body></html>";
 
-						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, 0);
+						QMessageBox mb(QObject::tr("Confirmation"), question, QMessageBox::Warning, QMessageBox::Yes, QMessageBox::No, links.size()>1 ? QMessageBox::NoToAll : 0, nullptr);
 						int ret = mb.exec();
 						if(ret == QMessageBox::Yes) {
 							++countFileOpened;
@@ -1622,14 +1637,14 @@ static void processList(const QStringList &list, const QString &textSingular, co
 						} else if (ret == QMessageBox::NoToAll) {
 							dontOpenNextFile = true;
 						}
+						needNotifySuccess = false;
 					}
 				}
 
 				if (rsFiles->FileRequest(cleanname.toUtf8().constData(), RsFileHash(link.hash().toStdString()), link.size(), "", RS_FILE_REQ_ANONYMOUS_ROUTING, srcIds)) {
 					fileAdded.append(link.name());
 				} else {
-					if (!bFileOpened) fileExist.append(link.name());
-				}
+					if (!bFileOpened && links.size()>1) fileExist.append(link.name());}
 			}
 			break;
 
@@ -1685,9 +1700,9 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			case TYPE_IDENTITY:
 			{
 				if(rsIdentity->deserialiseIdentityFromMemory(link.radixGroupData().toStdString()))
-					QMessageBox::information(NULL,QObject::tr("Identity added to People"),QObject::tr("The identity was added to people. You can now chat with it, send messages to it, etc.")) ;
+					QMessageBox::information(nullptr,QObject::tr("Identity added to People"),QObject::tr("The identity was added to people. You can now chat with it, send messages to it, etc.")) ;
 				else
-					QMessageBox::warning(NULL,QObject::tr("Identity cannot be added to People"),QObject::tr("The identity was not added to people. Some error occured. The link is probably corrupted.")) ;
+					QMessageBox::warning(nullptr,QObject::tr("Identity cannot be added to People"),QObject::tr("The identity was not added to people. Some error occured. The link is probably corrupted.")) ;
 			}
 			break;
 
@@ -1731,7 +1746,7 @@ static void processList(const QStringList &list, const QString &textSingular, co
 				else
 				{
 					ChatDialog* chatDialog = ChatDialog::getChat(chatId, Settings->getChatFlags());
-					if (chatDialog != NULL) {
+					if (chatDialog) {
 						chatroomFound.append(link.name());
 					} else {
 						chatroomUnknown.append(link.name());
@@ -1968,7 +1983,9 @@ void RSLinkClipboard::parseText(QString text, QList<RetroShareLink> &links,Retro
 {
 	links.clear();
 
+#ifdef DEBUG_RSLINK
 	std::cerr << "Parsing text:" << text.toStdString() << std::endl ;
+#endif
 
 	QRegExp rx(QString("retroshare://(%1)[^\r\n]+").arg(HOST_REGEXP));
 

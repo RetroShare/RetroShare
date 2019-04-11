@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxsforums/CreateGxsForumMsg.cpp                      *
+ *                                                                             *
+ * Copyright 2013 Robert Fernie        <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "CreateGxsForumMsg.h"
 
@@ -50,8 +49,9 @@
 //#define ENABLE_GENERATE
 
 /** Constructor */
-CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId,const RsGxsMessageId& mOId,const RsGxsId& posterId)
-: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint), mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId)
+CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessageId &pId, const RsGxsMessageId& mOId, const RsGxsId& posterId, bool isModerating)
+    : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
+      mForumId(fId), mParentId(pId), mOrigMsgId(mOId),mPosterId(posterId),mIsModerating(isModerating)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -86,7 +86,7 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/konversation64.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
 	ui.headerFrame->setHeaderText(text);
 
 	ui.generateSpinBox->setEnabled(false);
@@ -185,8 +185,8 @@ void  CreateGxsForumMsg::newMsg()
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 		GxsMsgReq msgIds;
-		std::vector<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.push_back(mParentId);
+		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
+		vect.insert(mParentId);
 
 		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
 		//std::cerr << std::endl;
@@ -205,8 +205,8 @@ void  CreateGxsForumMsg::newMsg()
 		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 		GxsMsgReq msgIds;
-		std::vector<RsGxsMessageId> &vect = msgIds[mForumId];
-		vect.push_back(mOrigMsgId);
+		std::set<RsGxsMessageId> &vect = msgIds[mForumId];
+		vect.insert(mOrigMsgId);
 
 		//std::cerr << "ForumsV2Dialog::newMsg() Requesting Parent Summary(" << mParentId << ")";
 		//std::cerr << std::endl;
@@ -355,7 +355,9 @@ void  CreateGxsForumMsg::createMsg()
 	msg.mMeta.mGroupId = mForumId;
 	msg.mMeta.mParentId = mParentId;
 	msg.mMeta.mOrigMsgId = mOrigMsgId;
+	msg.mMeta.mMsgFlags = mIsModerating?RS_GXS_FORUM_MSG_FLAGS_MODERATED : 0;
 	msg.mMeta.mMsgId.clear() ;
+
 	if (mParentMsgLoaded) {
 		msg.mMeta.mThreadId = mParentMsg.mMeta.mThreadId;
 	}//if (mParentMsgLoaded)

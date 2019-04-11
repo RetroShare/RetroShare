@@ -1,11 +1,36 @@
+/*******************************************************************************
+ * gui/statistics/TurtleRouterDialog.cpp                                       *
+ *                                                                             *
+ * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QObject>
+#include <util/rsprint.h>
 #include <retroshare/rsturtle.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsgxstunnel.h>
+#include <retroshare/rsservicecontrol.h>
+#include <retroshare/rsidentity.h>
+#include <retroshare/rsgxsdistsync.h>
 #include "TurtleRouterDialog.h"
 #include <QPainter>
 #include <QStylePainter>
 #include <algorithm> // for sort
+#include <time.h>
 
 #include "gui/settings/rsharesettings.h"
 
@@ -240,19 +265,14 @@ QTreeWidgetItem *TurtleRouterDialog::findParentHashItem(const std::string& hash)
 	else
 		return items.front() ;
 }
+
 //=======================================================================================================================//
 
-
-GxsTunnelsDialog::GxsTunnelsDialog(QWidget *parent)
+TunnelStatisticsDialog::TunnelStatisticsDialog(QWidget *parent)
 	: RsAutoUpdatePage(2000,parent)
 {
-//	setupUi(this) ;
-	
 	m_bProcessSettings = false;
 
-        //float fontHeight = QFontMetricsF(font()).height();
-        //float fact = fontHeight/14.0;
-	
 	maxWidth = 200 ;
 	maxHeight = 200 ;
 
@@ -260,14 +280,13 @@ GxsTunnelsDialog::GxsTunnelsDialog(QWidget *parent)
     processSettings(true);
 }
 
-GxsTunnelsDialog::~GxsTunnelsDialog()
+TunnelStatisticsDialog::~TunnelStatisticsDialog()
 {
-
     // save settings
     processSettings(false);
 }
 
-void GxsTunnelsDialog::processSettings(bool bLoad)
+void TunnelStatisticsDialog::processSettings(bool bLoad)
 {
     m_bProcessSettings = true;
 
@@ -284,7 +303,77 @@ void GxsTunnelsDialog::processSettings(bool bLoad)
     m_bProcessSettings = false;
 }
 
-void GxsTunnelsDialog::updateDisplay()
+QString TunnelStatisticsDialog::getPeerName(const RsPeerId &peer_id)
+{
+    static std::map<RsPeerId, QString> names ;
+
+    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
+
+	if( it != names.end())
+		return it->second ;
+	else
+	{
+		RsPeerDetails detail ;
+		if(!rsPeers->getPeerDetails(peer_id,detail))
+			return tr("Unknown Peer");
+
+		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
+	}
+}
+
+QString TunnelStatisticsDialog::getPeerName(const RsGxsId& gxs_id)
+{
+    static std::map<RsGxsId, QString> names ;
+
+    std::map<RsGxsId,QString>::const_iterator it = names.find(gxs_id) ;
+
+	if( it != names.end())
+		return it->second ;
+	else
+	{
+		RsIdentityDetails detail ;
+
+		if(!rsIdentity->getIdDetails(gxs_id,detail))
+			return tr("Unknown Peer");
+
+		return (names[gxs_id] = QString::fromUtf8(detail.mNickname.c_str())) ;
+	}
+}
+
+
+QString TunnelStatisticsDialog::speedString(float f)
+{
+	if(f < 1.0f)
+		return QString("0 B/s") ;
+	if(f < 1024.0f)
+		return QString::number((int)f)+" B/s" ;
+
+	return QString::number(f/1024.0,'f',2) + " KB/s";
+}
+
+void TunnelStatisticsDialog::paintEvent(QPaintEvent */*event*/)
+{
+    QStylePainter(this).drawPixmap(0, 0, pixmap);
+}
+
+void TunnelStatisticsDialog::resizeEvent(QResizeEvent *event)
+{
+    QRect TaskGraphRect = geometry();
+
+    maxWidth = TaskGraphRect.width();
+    maxHeight = TaskGraphRect.height() ;
+
+    QWidget::resizeEvent(event);
+    update();
+}
+//=======================================================================================================================//
+
+GxsAuthenticatedTunnelsDialog::GxsAuthenticatedTunnelsDialog(QWidget *parent)
+    : TunnelStatisticsDialog(parent)
+{
+}
+
+void GxsAuthenticatedTunnelsDialog::updateDisplay()
 {
     // Request info about ongoing tunnels
     
@@ -334,8 +423,8 @@ void GxsTunnelsDialog::updateDisplay()
 		// draw...
 
 		painter.drawText(ox+4*cellx,oy+celly,tr("Tunnel ID: %1").arg(QString::fromStdString(tunnel_infos[i].tunnel_id.toStdString()))) ; oy += celly ;
-		painter.drawText(ox+6*cellx,oy+celly,tr("from: %1").arg(QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString()))) ; oy += celly ;
-		painter.drawText(ox+6*cellx,oy+celly,tr("to: %1").arg(QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString()))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("from: %1 (%2)").arg(QString::fromStdString(tunnel_infos[i].source_gxs_id.toStdString())).arg(getPeerName(tunnel_infos[i].source_gxs_id))) ; oy += celly ;
+		painter.drawText(ox+6*cellx,oy+celly,tr("to: %1 (%2)").arg(QString::fromStdString(tunnel_infos[i].destination_gxs_id.toStdString())).arg(getPeerName(tunnel_infos[i].destination_gxs_id))) ; oy += celly ;
 		painter.drawText(ox+6*cellx,oy+celly,tr("status: %1").arg(QString::number(tunnel_infos[i].tunnel_status))) ; oy += celly ;
 		painter.drawText(ox+6*cellx,oy+celly,tr("total sent: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_sent))) ; oy += celly ;
 		painter.drawText(ox+6*cellx,oy+celly,tr("total recv: %1 bytes").arg(QString::number(tunnel_infos[i].total_size_received))) ; oy += celly ;
@@ -350,46 +439,197 @@ void GxsTunnelsDialog::updateDisplay()
 	maxHeight = std::max(oy,10*celly);
 }
 
-QString GxsTunnelsDialog::getPeerName(const RsPeerId &peer_id)
+//=======================================================================================================================//
+
+GxsNetTunnelsDialog::GxsNetTunnelsDialog(QWidget *parent)
+    : TunnelStatisticsDialog(parent)
 {
-    static std::map<RsPeerId, QString> names ;
+}
 
-    std::map<RsPeerId,QString>::const_iterator it = names.find(peer_id) ;
+static QString getGroupStatusString(RsGxsNetTunnelGroupInfo::GroupStatus group_status)
+{
+    switch(group_status)
+    {
+    default:
+	   	    case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            : return QObject::tr("Unknown") ;
+	   	    case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE               : return QObject::tr("Idle");
+	   	    case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    : return QObject::tr("Virtual peers available");
+    }
+    return QString();
+}
 
-	if( it != names.end())
-		return it->second ;
-	else
+static QString getGroupPolicyString(RsGxsNetTunnelGroupInfo::GroupPolicy group_policy)
+{
+    switch(group_policy)
+    {
+    default:
+	 		case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_UNKNOWN            : return QObject::tr("Unknown") ;
+	 		case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE            : return QObject::tr("Passive") ;
+	 		case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             : return QObject::tr("Active") ;
+	 		case RsGxsNetTunnelGroupInfo::RS_GXS_NET_TUNNEL_GRP_POLICY_REQUESTING         : return QObject::tr("Requesting peers") ;
+    }
+    return QString();
+}
+
+static QString getLastContactString(time_t last_contact)
+{
+    time_t now = time(NULL);
+
+    if(last_contact == 0)
+        return QObject::tr("Never");
+
+    return QString::number(now - last_contact) + " secs ago" ;
+}
+
+static QString getServiceNameString(uint16_t service_id)
+{
+	static RsPeerServiceInfo ownServices;
+
+    if(ownServices.mServiceList.find(service_id) == ownServices.mServiceList.end())
+		rsServiceControl->getOwnServices(ownServices);
+
+    return QString::fromUtf8(ownServices.mServiceList[RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id)].mServiceName.c_str()) ;
+}
+
+static QString getVirtualPeerStatusString(uint8_t status)
+{
+	switch(status)
 	{
-		RsPeerDetails detail ;
-		if(!rsPeers->getPeerDetails(peer_id,detail))
-			return tr("Unknown Peer");
-
-		return (names[peer_id] = QString::fromUtf8(detail.name.c_str())) ;
+	default:
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   : return QObject::tr("Unknown") ;
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK : return QObject::tr("Tunnel OK") ;
+	case RsGxsNetTunnelVirtualPeerInfo::RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    : return QObject::tr("Tunnel active") ;
 	}
+	return QString();
 }
 
-QString GxsTunnelsDialog::speedString(float f)
+static QString getSideString(uint8_t side)
 {
-	if(f < 1.0f) 
-		return QString("0 B/s") ;
-	if(f < 1024.0f)
-		return QString::number((int)f)+" B/s" ;
-
-	return QString::number(f/1024.0,'f',2) + " KB/s";
+    return side?QObject::tr("Client"):QObject::tr("Server") ;
 }
 
-void GxsTunnelsDialog::paintEvent(QPaintEvent */*event*/)
+static QString getMasterKeyString(const uint8_t *key,uint32_t size)
 {
-    QStylePainter(this).drawPixmap(0, 0, pixmap);
+    return QString::fromStdString(RsUtil::BinToHex(key,size,10));
 }
 
-void GxsTunnelsDialog::resizeEvent(QResizeEvent *event)
+void GxsNetTunnelsDialog::updateDisplay()
 {
-    QRect TaskGraphRect = geometry();
-    
-    maxWidth = TaskGraphRect.width();
-    maxHeight = TaskGraphRect.height() ;
+	// Request info about ongoing tunnels
 
-    QWidget::resizeEvent(event);
-    update();
+	std::map<RsGxsGroupId,RsGxsNetTunnelGroupInfo> groups;                                 // groups on the client and server side
+    std::map<TurtleVirtualPeerId,RsGxsNetTunnelVirtualPeerId> turtle2gxsnettunnel;         // convertion table from turtle to net tunnel virtual peer id
+	std::map<RsGxsNetTunnelVirtualPeerId, RsGxsNetTunnelVirtualPeerInfo> virtual_peers;    // current virtual peers, which group they provide, and how to talk to them through turtle
+	Bias20Bytes bias;
+
+	rsGxsDistSync->getStatistics(groups,virtual_peers,turtle2gxsnettunnel,bias) ;
+
+    // RsGxsNetTunnelGroupInfo:
+    //
+	//   enum GroupStatus {
+	//   	    RS_GXS_NET_TUNNEL_GRP_STATUS_UNKNOWN            = 0x00,	// unknown status
+	//   	    RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE               = 0x01,	// no virtual peers requested, just waiting
+	//   	    RS_GXS_NET_TUNNEL_GRP_STATUS_VPIDS_AVAILABLE    = 0x02	// some virtual peers are available. Data can be read/written
+	//   };
+	//   enum GroupPolicy {
+	//   	    RS_GXS_NET_TUNNEL_GRP_POLICY_UNKNOWN            = 0x00,	// nothing has been set
+	//   	    RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE            = 0x01,	// group is available for server side tunnels, but does not explicitely request tunnels
+	//   	    RS_GXS_NET_TUNNEL_GRP_POLICY_ACTIVE             = 0x02,	// group will only explicitely request tunnels if none available
+	//   	    RS_GXS_NET_TUNNEL_GRP_POLICY_REQUESTING         = 0x03,	// group explicitely requests tunnels
+	//      };
+    //
+	//   RsGxsNetTunnelGroupInfo() : group_policy(RS_GXS_NET_TUNNEL_GRP_POLICY_PASSIVE),group_status(RS_GXS_NET_TUNNEL_GRP_STATUS_IDLE),last_contact(0) {}
+    //
+	//   GroupPolicy        group_policy ;
+	//   GroupStatus        group_status ;
+	//   time_t             last_contact ;
+	//   RsFileHash         hash ;
+	//   uint16_t           service_id ;
+	//   std::set<RsPeerId> virtual_peers ;
+    //
+ 	// struct RsGxsNetTunnelVirtualPeerInfo:
+	//
+	// 	enum {   RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN   = 0x00,		// unknown status.
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_TUNNEL_OK = 0x01,		// tunnel has been established and we're waiting for virtual peer id
+	// 		     RS_GXS_NET_TUNNEL_VP_STATUS_ACTIVE    = 0x02		// virtual peer id is known. Data can transfer.
+	// 	     };
+	//
+	// 	RsGxsNetTunnelVirtualPeerInfo() : vpid_status(RS_GXS_NET_TUNNEL_VP_STATUS_UNKNOWN), last_contact(0),side(0) { memset(encryption_master_key,0,32) ; }
+	// 	virtual ~RsGxsNetTunnelVirtualPeerInfo(){}
+	//
+	// 	uint8_t vpid_status ;					// status of the peer
+	// 	time_t  last_contact ;					// last time some data was sent/recvd
+	// 	uint8_t side ;	                        // client/server
+	// 	uint8_t encryption_master_key[32];
+	//
+	// 	RsPeerId      turtle_virtual_peer_id ;  // turtle peer to use when sending data to this vpid.
+	//
+	// 	RsGxsGroupId group_id ;					// group that virtual peer is providing
+	// 	uint16_t service_id ; 					// this is used for checkng consistency of the incoming data
+
+	// update the pixmap
+	//
+
+    // now draw the shit
+	QPixmap tmppixmap(maxWidth, maxHeight);
+	tmppixmap.fill(Qt::transparent);
+	//setFixedHeight(maxHeight);
+
+	QPainter painter(&tmppixmap);
+	painter.initFrom(this);
+
+	// extracts the height of the fonts in pixels. This is used to calibrate the size of the objects to draw.
+
+	float fontHeight = QFontMetricsF(font()).height();
+	float fact = fontHeight/14.0;
+
+	int cellx = 6*fact ;
+	int celly = (10+4)*fact ;
+	int ox=5*fact,oy=5*fact ;
+
+	painter.setPen(QColor::fromRgb(0,0,0)) ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("Random Bias: %1").arg(getMasterKeyString(bias.toByteArray(),20))) ; oy += celly ;
+	painter.drawText(ox+2*cellx,oy+celly,tr("GXS Groups:")) ; oy += celly ;
+
+	for(auto it(groups.begin());it!=groups.end();++it)
+    {
+		painter.drawText(ox+4*cellx,oy+celly,tr("Service: %1 (%2) - Group ID: %3,\t policy: %4, \tstatus: %5, \tlast contact: %6")
+		.arg("0x" + QString::number(it->second.service_id, 16))
+                .arg(getServiceNameString(it->second.service_id))
+                .arg(QString::fromStdString(it->first.toStdString()))
+                .arg(getGroupPolicyString(it->second.group_policy))
+                .arg(getGroupStatusString(it->second.group_status))
+                .arg(getLastContactString(it->second.last_contact))
+		                 ),oy+=celly ;
+
+
+        for(auto it2(it->second.virtual_peers.begin());it2!=it->second.virtual_peers.end();++it2)
+        {
+            auto it4 = turtle2gxsnettunnel.find(*it2) ;
+
+            if(it4 != turtle2gxsnettunnel.end())
+            {
+				auto it3 = virtual_peers.find(it4->second) ;
+
+				if(virtual_peers.end() != it3)
+					painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1:\tstatus: %2/%3, \tlast contact: %4, \tMaster key: %5.")
+					                 .arg(QString::fromStdString((*it2).toStdString()))
+					                 .arg(getVirtualPeerStatusString(it3->second.vpid_status))
+					                 .arg(getSideString(it3->second.side))
+					                 .arg(getLastContactString(it3->second.last_contact))
+					                 .arg(getMasterKeyString(it3->second.encryption_master_key,32))
+					                 ),oy+=celly ;
+            }
+            else
+				painter.drawText(ox+6*cellx,oy+celly,tr("Peer: %1: no information available")
+				                 .arg(QString::fromStdString((*it2).toStdString()))
+                                 ),oy+=celly;
+
+        }
+    }
+
+	oy += celly ;
+
+	pixmap = tmppixmap;
+	maxHeight = std::max(oy,10*celly);
 }

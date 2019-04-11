@@ -1,30 +1,25 @@
-/*
- * "$Id: pqinetwork.h,v 1.15 2007-04-15 18:45:18 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright (C) 2004-2006  Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqinetwork.h                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_NETWORKING_HEADER
 #define MRK_PQI_NETWORKING_HEADER
 
@@ -103,7 +98,7 @@ bool getLocalAddresses(std::vector<sockaddr_storage> & addrs);
 int unix_close(int sockfd);
 int unix_socket(int domain, int type, int protocol);
 int unix_fcntl_nonblock(int sockfd);
-int unix_connect(int sockfd, const struct sockaddr *serv_addr, socklen_t addrlen);
+int unix_connect(int sockfd, const sockaddr_storage& serv_addr);
 int unix_getsockopt_error(int sockfd, int *err);
 
 #ifdef WINDOWS_SYS // WINDOWS

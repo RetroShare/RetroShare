@@ -1,29 +1,24 @@
-/*
- * libretroshare/src/pqi: p3servicecontrol.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3servicecontrol.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2014-2014 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef P3_SERVICE_CONTROL_HEADER
 #define P3_SERVICE_CONTROL_HEADER
 
@@ -100,8 +95,8 @@ virtual bool getServicePermissions(uint32_t serviceId, RsServicePermissions &per
 virtual bool updateServicePermissions(uint32_t serviceId, const RsServicePermissions &permissions);
 
 	// Get List of Peers using this Service.
-virtual void getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet);
-virtual bool isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId);
+virtual void getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet);
+virtual bool isPeerConnected(uint32_t serviceId, const RsPeerId &peerId);
 
     // Gets the list of items used by that service
 virtual bool getServiceItemNames(uint32_t serviceId,std::map<uint8_t,std::string>& names) ;
