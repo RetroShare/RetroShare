@@ -340,12 +340,14 @@ void  CreateGxsForumMsg::loadFormInformation()
 	//ui.forumMessage->setText("");
 }
 
+static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
+
 void CreateGxsForumMsg::checkLength()
 {
 	QString text;
 	RsHtml::optimizeHtml(ui.forumMessage, text);
 	std::wstring msg = text.toStdWString();
-	int charRemains = 199000 - msg.length(); // MAX_ALLOWED_GXS_MESSAGE_SIZE
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
 	if(charRemains >= 0)
 		text = tr("It remains %1 characters\nafter HTML conversion.").arg(charRemains);
 	else
@@ -509,7 +511,7 @@ void CreateGxsForumMsg::addPicture()
 	QString file;
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
 		QString encodedImage;
-		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, 199000 - 200)) {		// MAX_ALLOWED_GXS_MESSAGE_SIZE -200 for the html stuff
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
 			ui.forumMessage->textCursor().insertFragment(fragment);
 		}
