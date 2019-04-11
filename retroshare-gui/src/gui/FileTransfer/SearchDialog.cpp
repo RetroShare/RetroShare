@@ -329,12 +329,14 @@ void SearchDialog::searchResultWidgetCustomPopupMenu( QPoint /*point*/ )
 	QMenu contextMnu(this) ;
 
 	contextMnu.addAction(QIcon(IMAGE_START), tr("Download"), this, SLOT(download())) ;
-	contextMnu.addAction(QIcon(IMAGE_BANFILE), tr("Mark as bad"), this, SLOT(ban())) ;
 	contextMnu.addSeparator();//--------------------------------------
 
 	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyResultLink())) ;
 	contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Send RetroShare Link"), this, SLOT(sendLinkTo())) ;
 	contextMnu.addSeparator();//--------------------------------------
+
+    contextMnu.addAction(QIcon(IMAGE_BANFILE), tr("Mark as bad"), this, SLOT(ban())) ;
+    contextMnu.addSeparator();//--------------------------------------
 
 	QMenu collectionMenu(tr("Collection"), this);
 	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
