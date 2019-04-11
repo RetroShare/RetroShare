@@ -291,6 +291,10 @@ void ChatLobbyDialog::voteParticipant()
 		rsReputations->setOwnOpinion(nickname, op);
 		std::cerr << "Giving opinion to GXS id " << nickname << " to " << op<< std::endl;
 		dynamic_cast<GxsIdRSTreeWidgetItem*>(*item)->forceUpdate();
+		if (op == RsReputations::OPINION_NEGATIVE)
+		{
+			ui.chatWidget->eraseBannedMessages(nickname);
+		}
     }
 }
 

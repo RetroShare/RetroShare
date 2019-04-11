@@ -521,6 +521,11 @@ void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)
 	}
 }
 
+void NotifyQt::notifyReputationChange(RsGxsId id)
+{
+	emit ReputationChange(id);
+}
+
 void NotifyQt::notifyChatLobbyEvent(uint64_t lobby_id,uint32_t event_type,const RsGxsId& nickname,const std::string& str)
 {
 	{

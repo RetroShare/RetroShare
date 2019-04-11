@@ -166,6 +166,7 @@ ChatWidget::ChatWidget(QWidget *parent) :
 
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 
+	connect(NotifyQt::getInstance(), SIGNAL(ReputationChange(RsGxsId)), this, SLOT(updateReputationChange(RsGxsId)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&, int)), this, SLOT(updateStatus(const QString&, int)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerHasNewCustomStateString(const QString&, const QString&)), this, SLOT(updatePeersCustomStateString(const QString&, const QString&)));
 	connect(NotifyQt::getInstance(), SIGNAL(chatFontChanged()), this, SLOT(resetFonts()));
@@ -1324,6 +1325,35 @@ void ChatWidget::toogle_MoveToCursor()
 void ChatWidget::toogle_SeachWithoutLimit()
 {
 	bSearchWithoutLimit=!bSearchWithoutLimit;
+}
+
+void ChatWidget::eraseBannedMessages(RsGxsId id)
+{
+	QString qsStringToFind = PERSONID + QString::fromStdString(id.toStdString());
+	QTextDocument *qtdDocument = ui->textBrowser->document();
+	QString source = qtdDocument->toHtml();
+	QStringList list = source.split("\n");
+	QStringList out;
+	bool redraw = false;
+	for (QStringList::iterator it=list.begin();it!=list.end();++it)
+	{
+		if((*it).contains(qsStringToFind))
+			redraw = true;
+		else
+			out << *it;
+	}
+	if(redraw)
+	{
+		QString output = out.join("\n");
+		qtdDocument->clear();
+		qtdDocument->setHtml(output);
+	}
+}
+
+void ChatWidget::updateReputationChange(RsGxsId id)
+{
+	if(rsReputations->overallReputationLevel(id) == RsReputations::REPUTATION_REMOTELY_NEGATIVE)
+		eraseBannedMessages(id);
 }
 
 bool ChatWidget::findText(const QString& qsStringToFind)

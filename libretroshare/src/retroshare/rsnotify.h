@@ -223,6 +223,7 @@ class NotifyClient
 		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
 		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
 		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+		virtual void notifyReputationChange	(RsGxsId id) {}
 		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
 		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
 		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}

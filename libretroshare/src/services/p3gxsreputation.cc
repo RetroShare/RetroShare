@@ -32,6 +32,7 @@
 
 #include "rsitems/rsgxsreputationitems.h"
 #include "rsitems/rsconfigitems.h"
+#include "rsserver/p3face.h"
 
 #include <sys/time.h>
 
@@ -718,6 +719,7 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 	    std::cerr << "  reputation changed. re-calculating." << std::endl;
 #endif
 	    reputation.updateReputation() ;
+		RsServer::notify()->notifyReputationChange(about) ;
     }
     
     if(updated)
