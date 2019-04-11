@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: gxsdataservice.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2012 by Evi-Parker Christopher                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSDATASERVICE_H
 #define RSDATASERVICE_H
-
-/*
- * libretroshare/src/gxs: rsdataservice.h
- *
- * General Data service, interface for RetroShare.
- *
- * Copyright 2011-2012 by Evi-Parker Christopher
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "gxs/rsgds.h"
 #include "util/retrodb.h"
@@ -51,10 +47,14 @@ public:
      * Retrieves all msgs
      * @param reqIds requested msg ids (grpId,msgId), leave msg list empty to get all msgs for the grp
      * @param msg result of msg retrieval
-     * @param cache whether to store results of this retrieval in memory for faster later retrieval
+	 * @param cache IGNORED whether to store results of this retrieval in memory
+	 *	for faster later retrieval
+	 * @param strictFilter if true do not request any message if reqIds is empty
      * @return error code
-     */
-    int retrieveNxsMsgs(const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache, bool withMeta = false);
+	 */
+	int retrieveNxsMsgs(
+	        const GxsMsgReq& reqIds, GxsMsgResult& msg, bool cache,
+	        bool withMeta = false );
 
     /*!
      * Retrieves groups, if empty, retrieves all grps, if map is not empty
@@ -110,7 +110,7 @@ public:
      * @param msgId msgsids retrieved
      * @return error code
      */
-    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgId);
+    int retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgId);
 
     /*!
      * @return the cache size set for this RsGeneralDataService in bytes
@@ -349,7 +349,7 @@ private:
 	void locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta);
 
     std::map<RsGxsGroupId,RsGxsGrpMetaData*> mGrpMetaDataCache ;
-	std::list<std::pair<time_t,RsGxsGrpMetaData*> > mOldCachedItems ;
+	std::list<std::pair<rstime_t,RsGxsGrpMetaData*> > mOldCachedItems ;
 
     bool mGrpMetaDataCache_ContainsAllDatabase ;
 };

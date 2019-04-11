@@ -22,7 +22,6 @@ android-* {
     HEADERS += NativeCalls.h androidplatforminteracions.h
     SOURCES += NativeCalls.cpp androidplatforminteracions.cpp
 
-    ANDROID_EXTRA_LIBS *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/libsqlite3.so
     ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 

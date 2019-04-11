@@ -1,23 +1,25 @@
-/****************************************************************
- * This file is distributed under the following license:
- *
- * Copyright (c) 2010, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/GroupTreeWidget.cpp                                              *
+ *                                                                             *
+ * Copyright (C) 2010, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include <iostream>
+
 #include "GroupTreeWidget.h"
 #include "ui_GroupTreeWidget.h"
 
@@ -43,7 +45,8 @@
 #define COLUMN_NAME        0
 #define COLUMN_UNREAD      1
 #define COLUMN_POPULARITY  2
-#define COLUMN_COUNT       3
+#define COLUMN_LAST_POST   3
+#define COLUMN_COUNT       4
 #define COLUMN_DATA        COLUMN_NAME
 
 #define ROLE_ID              Qt::UserRole
@@ -57,6 +60,8 @@
 #define ROLE_SUBSCRIBE_FLAGS Qt::UserRole + 8
 #define ROLE_COLOR           Qt::UserRole + 9
 #define ROLE_SAVED_ICON      Qt::UserRole + 10
+#define ROLE_SEARCH_STRING   Qt::UserRole + 11
+#define ROLE_REQUEST_ID      Qt::UserRole + 12
 
 #define FILTER_NAME_INDEX  0
 #define FILTER_DESC_INDEX  1
@@ -100,9 +105,12 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 
 	/* Initialize tree widget */
 	ui->treeWidget->setColumnCount(COLUMN_COUNT);
+	ui->treeWidget->enableColumnCustomize(true);
+	ui->treeWidget->setColumnCustomizable(COLUMN_NAME, false);
 
 	int S = QFontMetricsF(font()).height() ;
 	int W = QFontMetricsF(font()).width("999") ;
+	int D = QFontMetricsF(font()).width("9999-99-99[]") ;
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView *header = ui->treeWidget->header ();
@@ -113,16 +121,29 @@ GroupTreeWidget::GroupTreeWidget(QWidget *parent) :
 	header->resizeSection(COLUMN_UNREAD, W+4) ;
 	QHeaderView_setSectionResizeModeColumn(header, COLUMN_POPULARITY, QHeaderView::Fixed);
 	header->resizeSection(COLUMN_POPULARITY, 2*S) ;
+	QHeaderView_setSectionResizeModeColumn(header, COLUMN_LAST_POST, QHeaderView::Fixed);
+	header->resizeSection(COLUMN_LAST_POST, D+4) ;
+	header->setSectionHidden(COLUMN_LAST_POST, true);
+
+	QTreeWidgetItem *headerItem = ui->treeWidget->headerItem();
+	headerItem->setText(COLUMN_NAME, tr("Name"));
+	headerItem->setText(COLUMN_UNREAD, tr("Unread"));
+	headerItem->setText(COLUMN_POPULARITY, tr("Popularity"));
+	headerItem->setText(COLUMN_LAST_POST, tr("Last Post"));
 
 	/* add filter actions */
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_NAME_INDEX , tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Description"), FILTER_DESC_INDEX , tr("Search Description"));
 	ui->filterLineEdit->setCurrentFilter(FILTER_NAME_INDEX);
 
+    ui->distantSearchLineEdit->setPlaceholderText(tr("Search entire network...")) ;
+
+    connect(ui->distantSearchLineEdit,SIGNAL(returnPressed()),this,SLOT(distantSearch())) ;
+
 	/* Initialize display button */
 	initDisplayMenu(ui->displayButton);
 
-	ui->treeWidget->setIconSize(QSize(S*1.6,S*1.6));
+	ui->treeWidget->setIconSize(QSize(S*1.8,S*1.8));	
 }
 
 GroupTreeWidget::~GroupTreeWidget()
@@ -192,9 +213,10 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 	ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
-void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
+// Load and save settings (group must be started from the caller)
+void GroupTreeWidget::processSettings(bool load)
 {
-	if (settings == NULL) {
+	if (Settings == NULL) {
 		return;
 	}
 
@@ -204,16 +226,18 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 	const int SORTBY_POSTS = 4;
 	const int SORTBY_UNREAD = 5;
 
+	ui->treeWidget->processSettings(load);
+
 	if (load) {
-		// load settings
+		// load Settings
 
 		// state of order
-		bool ascSort = settings->value("GroupAscSort", true).toBool();
+		bool ascSort = Settings->value("GroupAscSort", true).toBool();
 		actionSortAscending->setChecked(ascSort);
 		actionSortDescending->setChecked(!ascSort);
 
 		// state of sort
-		int sortby = settings->value("GroupSortBy").toInt();
+		int sortby = Settings->value("GroupSortBy").toInt();
 		switch (sortby) {
 		case SORTBY_NAME:
 			if (actionSortByName) {
@@ -242,10 +266,10 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 			break;
 		}
 	} else {
-		// save settings
+		// save Settings
 
 		// state of order
-		settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
+		Settings->setValue("GroupAscSort", !(actionSortDescending && actionSortDescending->isChecked())); //True by default
 
 		// state of sort
 		int sortby = SORTBY_NAME;
@@ -260,7 +284,7 @@ void GroupTreeWidget::processSettings(RshareSettings *settings, bool load)
 		} else if (actionSortByUnread && actionSortByUnread->isChecked()) {
 			sortby = SORTBY_UNREAD;
 		}
-		settings->setValue("GroupSortBy", sortby);
+		Settings->setValue("GroupSortBy", sortby);
 	}
 }
 
@@ -381,7 +405,7 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 
 	int S = QFontMetricsF(font).height();
 
-	item->setSizeHint(COLUMN_NAME, QSize(S*1.1, S*1.1));
+	item->setSizeHint(COLUMN_NAME, QSize(S*1.9, S*1.9));
 	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
 	nameLabel->setTextColor(textColorCategory());
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
@@ -389,6 +413,54 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	item->setExpanded(expand);
 
 	return item;
+}
+
+void GroupTreeWidget::removeSearchItem(QTreeWidgetItem *item)
+{
+    ui->treeWidget->takeTopLevelItem(ui->treeWidget->indexOfTopLevelItem(item)) ;
+}
+
+QTreeWidgetItem *GroupTreeWidget::addSearchItem(const QString& search_string, uint32_t id, const QIcon& icon)
+{
+    QTreeWidgetItem *item = addCategoryItem(search_string,icon,true);
+
+    item->setData(COLUMN_DATA,ROLE_SEARCH_STRING,search_string) ;
+    item->setData(COLUMN_DATA,ROLE_REQUEST_ID   ,id) ;
+
+    return item;
+}
+
+void GroupTreeWidget::setDistSearchVisible(bool visible)
+{
+    ui->distantSearchLineEdit->setVisible(visible);
+}
+
+bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint32_t& search_req_id)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL)
+		return false;
+
+    QTreeWidgetItem *parent = item->parent();
+
+    if(parent == NULL)
+        return false ;
+
+	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+    group_id = itemId(item) ;
+
+    return search_req_id > 0;
+}
+
+bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
+{
+    QTreeWidgetItem *item = ui->treeWidget->itemAt(point);
+	if (item == NULL)
+		return false;
+
+	search_req_id = item->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+
+    return search_req_id > 0;
 }
 
 QString GroupTreeWidget::itemId(QTreeWidgetItem *item)
@@ -453,6 +525,11 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting
+		if(itemInfo.lastpost == QDateTime::fromTime_t(0))
+			item->setText(COLUMN_LAST_POST, tr("Never"));
+		else
+			item->setText(COLUMN_LAST_POST, itemInfo.lastpost.toString(Qt::ISODate).replace("T"," "));
+
 
 		/* Set visible posts */
 		item->setData(COLUMN_DATA, ROLE_POSTS, -itemInfo.max_visible_posts);// negative for correct sorting
@@ -747,6 +824,13 @@ void GroupTreeWidget::resort(QTreeWidgetItem *categoryItem)
 			ui->treeWidget->topLevelItem(child)->sortChildren(COLUMN_DATA, order);
 		}
 	}
+}
+
+void GroupTreeWidget::distantSearch()
+{
+    emit distantSearchRequested(ui->distantSearchLineEdit->text());
+
+    ui->distantSearchLineEdit->clear();
 }
 
 void GroupTreeWidget::sort()

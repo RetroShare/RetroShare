@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsIdDetails.h                                   *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie     <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _GXS_ID_DETAILS_H
 #define _GXS_ID_DETAILS_H
@@ -52,7 +49,8 @@ typedef void (*GxsIdDetailsCallbackFunction)(GxsIdDetailsType type, const RsIden
 class ReputationItemDelegate: public QStyledItemDelegate
 {
 public:
-    ReputationItemDelegate(RsReputations::ReputationLevel max_level_to_display) : mMaxLevelToDisplay(max_level_to_display) {}
+	ReputationItemDelegate(RsReputationLevel max_level_to_display) :
+	    mMaxLevelToDisplay(static_cast<uint32_t>(max_level_to_display)) {}
 
     virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
@@ -66,6 +64,7 @@ class GxsIdDetails : public QObject
 	Q_OBJECT
 
 public:
+    static const int ICON_TYPE_NONE       = 0x0000 ;
     static const int ICON_TYPE_AVATAR     = 0x0001 ;
     static const int ICON_TYPE_PGP        = 0x0002 ;
     static const int ICON_TYPE_RECOGN     = 0x0004 ;
@@ -79,7 +78,7 @@ public:
 	static void cleanup();
 
 	/* Information */
-	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment);
+	static bool MakeIdDesc(const RsGxsId &id, bool doIcons, QString &desc, QList<QIcon> &icons, QString& comment, uint32_t icon_types=ICON_TYPE_ALL);
 
 	static QString getName(const RsIdentityDetails &details);
 	static QString getComment(const RsIdentityDetails &details);
@@ -98,12 +97,13 @@ public:
 	static QString getNameForType(GxsIdDetailsType type, const RsIdentityDetails &details);
 
 	static QIcon getLoadingIcon(const RsGxsId &id);
-	static QIcon getReputationIcon(RsReputations::ReputationLevel icon_index, uint32_t min_reputation);
+	static QIcon getReputationIcon(
+	        RsReputationLevel icon_index, uint32_t min_reputation );
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 
 	//static QImage makeDefaultIcon(const RsGxsId& id);
-    static QImage makeDefaultIcon(const RsGxsId& id);
+    static const QImage& makeDefaultIcon(const RsGxsId& id);
 
 	/* Processing */
 	static void enableProcess(bool enable);
@@ -157,6 +157,11 @@ protected:
 	/* Pending data */
 	QMap<QObject*,CallbackData> mPendingData;
 	QMap<QObject*,CallbackData>::iterator mPendingDataIterator;
+
+    static uint32_t mImagesAllocated;
+    static std::map<RsGxsId,std::pair<time_t,QImage> > mDefaultIconCache;
+    static time_t mLastIconCacheCleaning;
+
     int mCheckTimerId;
 	int mProcessDisableCount;
 

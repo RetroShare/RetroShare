@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/pqi: p3servicecontrol.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3servicecontrol.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2014-2014  Robert Fernie                                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iostream>
 
 #include "p3servicecontrol.h"
@@ -463,10 +459,7 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 #endif
 
 	// must allow ServiceInfo through, or we have nothing!
-#define FULLID_SERVICEINFO ((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + ((RS_SERVICE_TYPE_SERVICEINFO) << 8))
-
-	//if (serviceId == RS_SERVICE_TYPE_SERVICEINFO)
-	if (serviceId == FULLID_SERVICEINFO)
+	if (serviceId == RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(RS_SERVICE_TYPE_SERVICEINFO))
 	{
 #ifdef SERVICECONTROL_DEBUG
 		std::cerr << "p3ServiceControl::checkFilter() Allowed SERVICEINFO";
@@ -991,9 +984,9 @@ void p3ServiceControl::filterChangeAdded_locked(const RsPeerId &peerId, uint32_t
 
 
 
-void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPeerId> &peerSet)
+void p3ServiceControl::getPeersConnected(uint32_t serviceId, std::set<RsPeerId> &peerSet)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1008,9 +1001,9 @@ void p3ServiceControl::getPeersConnected(const uint32_t serviceId, std::set<RsPe
 }
 
 
-bool p3ServiceControl::isPeerConnected(const uint32_t serviceId, const RsPeerId &peerId)
+bool p3ServiceControl::isPeerConnected(uint32_t serviceId, const RsPeerId &peerId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, std::set<RsPeerId> >::iterator mit;
 	mit = mServicePeerMap.find(serviceId);
@@ -1373,13 +1366,18 @@ RsServiceInfo::RsServiceInfo(
 		const uint16_t min_version_major,
 		const uint16_t min_version_minor)
  :mServiceName(service_name),
-  mServiceType((((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) service_type) << 8)),
+  mServiceType(RsServiceInfoUIn16ToFullServiceId(service_type)),
   mVersionMajor(version_major),
   mVersionMinor(version_minor),
   mMinVersionMajor(min_version_major),
   mMinVersionMinor(min_version_minor)
 {
-	return;
+  return;
+}
+
+unsigned int RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(uint16_t serviceType)
+{
+  return (((uint32_t) RS_PKT_VERSION_SERVICE) << 24) + (((uint32_t) serviceType) << 8);
 }
 
 

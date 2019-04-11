@@ -1,29 +1,25 @@
-/*
- * "$Id: pqissl.cc,v 1.28 2007-03-17 19:32:59 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissl.cc                                            *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqissl.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/sslfns.h"
@@ -67,10 +63,10 @@ const int PQISSL_UDP_FLAG = 0x02;
 
 //#define PQISSL_DEBUG 		1
 //#define PQISSL_LOG_DEBUG 	1
-
+//#define PQISSL_LOG_DEBUG2 	1
 
 static const int PQISSL_MAX_READ_ZERO_COUNT = 20;
-static const time_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
+static const rstime_t PQISSL_MAX_READ_ZERO_TIME = 15; // 15 seconds of no data => reset. (atm HeartBeat pkt sent 5 secs)
 
 static const int PQISSL_SSL_CONNECT_TIMEOUT = 30;
 
@@ -238,7 +234,9 @@ int pqissl::reset_locked()
 #endif
 	}
 
+#ifdef PQISSL_LOG_DEBUG2
 	rslog(RSL_ALERT, pqisslzone, outLog);
+#endif
 
 	// notify people of problem!
 	// but only if we really shut something down.
@@ -306,25 +304,15 @@ void pqissl::getCryptoParams(RsPeerCryptoParams& params)
 	if(active)
 	{
 		params.connexion_state = 1 ;
-		params.cipher_name = std::string( SSL_get_cipher(ssl_connection));
-
-		int alg ;
-		int al2 = SSL_get_cipher_bits(ssl_connection,&alg);
-
-		params.cipher_bits_1 = alg ;
-		params.cipher_bits_2 = al2 ;
 
 		char *desc = SSL_CIPHER_description(SSL_get_current_cipher(ssl_connection), NULL, 0);
-		params.cipher_version = std::string(desc).find("TLSv1.2") != std::string::npos ? std::string("TLSv1.2") : std::string("TLSv1");
+		params.cipher_name = std::string(desc);
 		OPENSSL_free(desc);
 	}
 	else
 	{
 		params.connexion_state = 0 ;
 		params.cipher_name.clear() ;
-		params.cipher_bits_1 = 0 ;
-		params.cipher_bits_2 = 0 ;
-		params.cipher_version.clear() ;
 	}
 }
 
@@ -714,10 +702,11 @@ int pqissl::Initiate_Connection()
 	//std::cerr << "Setting Connect Timeout " << mConnectTimeout << " Seconds into Future " << std::endl;
 
 	sockaddr_storage_ipv4_to_ipv6(addr);
-
+#ifdef PQISSL_DEBUG
 	std::cerr << __PRETTY_FUNCTION__ << " Connecting To: "
 	          << PeerId().toStdString() <<" via: "
 	          << sockaddr_storage_tostring(addr) << std::endl;
+#endif
 
 	if (0 != (err = unix_connect(osock, addr)))
 	{
@@ -728,11 +717,13 @@ int pqissl::Initiate_Connection()
 			sockfd = osock;
 			return 0;
 		default:
+#ifdef PQISSL_DEBUG
 			std::cerr << __PRETTY_FUNCTION__ << " Failure connect "
 			          << sockaddr_storage_tostring(addr)
 			          << " returns: "
 			          << err << " -> errno: " << errno << " "
 			          << socket_errorType(errno) << std::endl;
+#endif
 
 			net_internal_close(osock);
 			osock = -1;
@@ -775,10 +766,14 @@ bool  	pqissl::CheckConnectionTimeout()
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
 
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_WARNING, pqisslzone, out);
+#endif
 		/* as sockfd is valid, this should close it all up */
 		
+#ifdef PQISSL_LOG_DEBUG2
 		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
+#endif
 		reset_locked();
 		return true;
 	}
@@ -917,7 +912,9 @@ int 	pqissl::Basic_Connection_Complete()
 			{
 				std::string out;
 				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
+#ifdef PQISSL_LOG_DEBUG2
 				rslog(RSL_WARNING, pqisslzone, out);
+#endif
 			}
 			return 1;
 		}
@@ -942,8 +939,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
-
+#endif
 			// Then send unreachable message.
 			net_internal_close(sockfd);
 			sockfd=-1;
@@ -954,7 +952,9 @@ int 	pqissl::Basic_Connection_Complete()
 		}
 		else if (err == ECONNREFUSED)
 		{
+#ifdef PQISSL_DEBUG
 			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
+#endif
 
 			// Then send unreachable message.
 			net_internal_close(sockfd);

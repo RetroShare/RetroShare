@@ -1,28 +1,25 @@
-/*
- * libretroshare/src/pqi: p3linkmgr.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright (C) 2007-2011  Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/pqi: p3linkmgr.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2011 by Robert Fernie.                                       *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "pqi/p3linkmgr.h"
 
@@ -57,6 +54,7 @@ static struct RsLog::logInfo p3connectzoneInfo = {RsLog::Default, "p3connect"};
 
 /****
  * #define LINKMGR_DEBUG 1
+ * #define LINKMGR_DEBUG_LOG	1
  * #define LINKMGR_DEBUG_CONNFAIL 1
  * #define LINKMGR_DEBUG_ACTIONS  1
  * #define LINKMGR_DEBUG_LINKTYPE	1
@@ -330,9 +328,9 @@ void    p3LinkMgrIMPL::statusTick()
         //std::list<std::string> dummyToRemove;
 
       {
-	time_t now = time(NULL);
-	time_t oldavail = now - MAX_AVAIL_PERIOD;
-        time_t retry = now - mRetryPeriod;
+	rstime_t now = time(NULL);
+	rstime_t oldavail = now - MAX_AVAIL_PERIOD;
+        rstime_t retry = now - mRetryPeriod;
 
       	RsStackMutex stack(mLinkMtx);  /******   LOCK MUTEX ******/
         std::map<RsPeerId, peerConnectState>::iterator it;
@@ -621,7 +619,9 @@ bool p3LinkMgrIMPL::connectAttempt(const RsPeerId &id, struct sockaddr_storage &
 
          }
 
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgrIMPL::connectAttempt() called id: " + id.toStdString());
+#endif
 
         it->second.lastattempt = time(NULL); 
         it->second.inConnAttempt = true;
@@ -824,7 +824,9 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 					out += " FAILED ATTEMPT (Not Connected)";
 				}
 			}
+#ifdef LINKMGR_DEBUG_LOG
 			rslog(RSL_WARNING, p3connectzone, out);
+#endif
 		}
 
 
@@ -1079,7 +1081,7 @@ void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
         std::map<RsPeerId, peerConnectState>::iterator it;
 	bool isFriend = true;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	peerAddrInfo details;
 	details.type    = type;
@@ -1657,7 +1659,7 @@ bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 
 #define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
 
-bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)
 {
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
@@ -1804,7 +1806,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::const_iterator ait;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses()";
@@ -2060,8 +2062,9 @@ bool  p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState *peer)
 
 int p3LinkMgrIMPL::addFriend(const RsPeerId &id, bool isVisible)
 {
+#ifdef LINKMGR_DEBUG_LOG
 	rslog(RSL_WARNING, p3connectzone, "p3LinkMgr::addFriend() id: " + id.toStdString());
-
+#endif
 	{
 		RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 	
@@ -2204,7 +2207,7 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
     return;
 }
 
-bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, time_t age)
+bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, rstime_t age)
 {
     RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
 

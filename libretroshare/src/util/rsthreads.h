@@ -1,28 +1,24 @@
-/*
- * "$Id: rsthreads.h,v 1.1 2007-02-19 20:08:30 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/util: rsthreads.h                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <pthread.h>
@@ -31,7 +27,11 @@
 #include <iostream>
 #include <unistd.h>
 #include <semaphore.h>
+#include <thread>
+#include <functional>
+
 #include <util/rsmemory.h>
+#include "util/rstime.h"
 
 /* RsIface Thread Wrappers */
 
@@ -241,7 +241,7 @@ pthread_t  createThread(RsThread &thread);
 
 class RsThread
 {
-    public:
+public:
     RsThread();
     virtual ~RsThread() {}
 
@@ -260,6 +260,17 @@ class RsThread
     // you need to call shouldStop() in order to check for a possible stopping order.
 
     void ask_for_stop();
+
+	/**
+	 * Execute given function on another thread without blocking the caller
+	 * execution.
+	 * This can be generalized with variadic template, ATM it is enough to wrap
+	 *	any kind of function call or job into a lambda which get no paramethers
+	 *	and return nothing but can capture
+	 * This can be easly optimized later by using a thread pool
+	 */
+	static void async(const std::function<void()>& fn)
+	{ std::thread(fn).detach(); }
 
 protected:
     virtual void runloop() =0; /* called once the thread is started. Should be overloaded by subclasses. */
@@ -313,7 +324,7 @@ private:
     uint32_t mMinSleep; /* ms */
     uint32_t mMaxSleep; /* ms */
     uint32_t mLastSleep; /* ms */
-    time_t   mLastWork;  /* secs */
+    rstime_t   mLastWork;  /* secs */
     float    mRelaxFactor;
 };
 

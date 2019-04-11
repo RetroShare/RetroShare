@@ -1,32 +1,28 @@
-/*
- * libretroshare/src/services: groutermatrix.h
- *
- * Services for RetroShare.
- *
- * Copyright 2013 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/grouter: groutertypes.h                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <stdint.h>
-#include <time.h>
+#include "util/rstime.h"
 #include <list>
 #include "pgp/rscertificate.h"
 #include "turtle/p3turtle.h"
@@ -60,9 +56,9 @@ static const uint32_t MAX_INACTIVE_DATA_PIPE_DELAY         = 300         ; // cl
 static const uint32_t GROUTER_MAX_DUPLICATION_FACTOR       = 10          ; // max number of duplicates for a given message to keep in the network
 static const uint32_t GROUTER_MAX_BRANCHING_FACTOR         = 3           ; // max number of branches, for locally forwarding items
 
-static const time_t   RS_GROUTER_DEBUG_OUTPUT_PERIOD       =      10 ; // Output everything
-static const time_t   RS_GROUTER_AUTOWASH_PERIOD           =      10 ; // Autowash every minute. Not a costly operation.
-static const time_t   RS_GROUTER_MATRIX_UPDATE_PERIOD      =   60*10 ; // Check for key advertising every 10 minutes
+static const rstime_t   RS_GROUTER_DEBUG_OUTPUT_PERIOD       =      10 ; // Output everything
+static const rstime_t   RS_GROUTER_AUTOWASH_PERIOD           =      10 ; // Autowash every minute. Not a costly operation.
+static const rstime_t   RS_GROUTER_MATRIX_UPDATE_PERIOD      =   60*10 ; // Check for key advertising every 10 minutes
 static const uint32_t GROUTER_ITEM_MAX_CACHE_KEEP_TIME     = 2*86400 ; // Cached items are kept for 48 hours at most.
 
 static const uint32_t RS_GROUTER_DATA_STATUS_UNKNOWN       = 0x0000 ;	// unknown. Unused.
@@ -83,7 +79,7 @@ class FriendTrialRecord
 {
 	public:
 		RsPeerId  friend_id ;			// id of the friend
-		time_t    time_stamp ;			// time of the last tried
+		rstime_t    time_stamp ;			// time of the last tried
 		float     probability ;			// probability at which the item was selected
 		uint32_t  nb_friends ;			// number of friends at the time of sending the item
 	
@@ -112,9 +108,9 @@ public:
     uint32_t data_status ;		// pending, waiting, etc.
     uint32_t tunnel_status ;		// status of tunnel handling.
 
-    time_t received_time_TS ;		// time at which the item was originally received
-    time_t last_sent_TS ;		// last time the item was sent
-    time_t last_tunnel_request_TS ;	// last time tunnels have been asked for this item.
+    rstime_t received_time_TS ;		// time at which the item was originally received
+    rstime_t last_sent_TS ;		// last time the item was sent
+    rstime_t last_tunnel_request_TS ;	// last time tunnels have been asked for this item.
     uint32_t sending_attempts ;		// number of times tunnels have been asked for this peer without success
 
     GRouterServiceId client_id ;	// service ID of the client. Only valid when origin==OwnId
@@ -129,7 +125,7 @@ public:
 
     // non serialised data
 
-    time_t data_transaction_TS ;
+    rstime_t data_transaction_TS ;
 
     static const uint32_t ROUTING_FLAGS_ALLOW_TUNNELS  = 0x0001;
     static const uint32_t ROUTING_FLAGS_ALLOW_FRIENDS  = 0x0002;

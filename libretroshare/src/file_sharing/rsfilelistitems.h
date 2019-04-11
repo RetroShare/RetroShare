@@ -1,27 +1,24 @@
-/*
- * RetroShare File lists service items.
- *
- *      file_sharing/rsfilelistitems.h
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: rsfilelistsitems.h                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2018 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #pragma once
 
 #include <map>
@@ -36,12 +33,13 @@
 #include "gxs/rsgxsdata.h"
 
 #include "serialiser/rsserializer.h"
+#include "retroshare/rsfiles.h"
 
-// These items have "flag type" numbers, but this is not used.
-
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM    = 0x01;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM    = 0x02;
-const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM      = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_REQ_ITEM             = 0x01;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_SYNC_RSP_ITEM             = 0x02;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_CONFIG_ITEM               = 0x03;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM        = 0x04;
+const uint8_t RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_CONFIG_ITEM = 0x05;
 
 /*!
  * Base class for filelist sync items
@@ -104,6 +102,29 @@ public:
     uint64_t   request_id;                // use to determine if changes that have occured since last hash
 
     RsTlvBinaryData directory_content_data ;	// encoded binary data. This allows to vary the encoding format, in a way that is transparent to the serialiser.
+};
+
+class RsFileListsBannedHashesItem: public RsFileListsItem
+{
+public:
+	RsFileListsBannedHashesItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_ITEM){}
+
+    virtual void clear() { encrypted_hashes.clear(); }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    uint32_t session_id ;                  // used to allow to send in multiple parts.
+    std::set<RsFileHash> encrypted_hashes ;// hash of hash for each banned file.
+};
+
+class RsFileListsBannedHashesConfigItem: public RsFileListsItem
+{
+public:
+	RsFileListsBannedHashesConfigItem() : RsFileListsItem(RS_PKT_SUBTYPE_FILELISTS_BANNED_HASHES_CONFIG_ITEM){}
+
+    virtual void clear() { primary_banned_files_list.clear(); }
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    std::map<RsFileHash,BannedFileEntry> primary_banned_files_list ;
 };
 
 class RsFileListsSerialiser : public RsServiceSerializer

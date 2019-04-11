@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * retroshare-gui/src/gui/People/IdentityWidget.cpp                            *
+ *                                                                             *
+ * Copyright (C) 2018 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "retroshare/rsreputations.h"
 #include "gui/People/IdentityWidget.h"
 #include "ui_IdentityWidget.h"
 
@@ -31,6 +52,11 @@ IdentityWidget::IdentityWidget(QString name/*=QString()*/, QWidget *parent/*=0*/
 	ui->labelGXSId->setText(_keyId);
 	ui->labelGXSId->setToolTip(_keyId);
 	ui->labelGXSId->setVisible(false);
+	
+	ui->labelPositive->setVisible(false);
+	ui->labelNegative->setVisible(false);
+	ui->label_PosIcon_2->setVisible(false);
+	ui->label_NegIcon_2->setVisible(false);
 
 	ui->pbAdd->setVisible(false);
 	QObject::connect(ui->pbAdd, SIGNAL(clicked()), this, SLOT(pbAdd_clicked()));
@@ -60,19 +86,19 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		_group_info = gxs_group_info;
 		_haveGXSId = true;
 
+		RsReputationInfo info ;
+		rsReputations->getReputationInfo(RsGxsId(_group_info.mMeta.mGroupId),_group_info.mPgpId,info) ;
+		
 		m_myName = QString::fromUtf8(_group_info.mMeta.mGroupName.c_str());
+		//ui->labelName->setId(RsGxsId(_group_info.mMeta.mGroupId));
 		ui->labelName->setText(m_myName);
-		if (_havePGPDetail) {
-			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
-			                          .append(tr("PGP name:").append(" "+_nickname)));
-		} else {//if (m_myName != _nickname)
-			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName));
-		}//else (m_myName != _nickname)
-
 
 		_gxsId = QString::fromStdString(_group_info.mMeta.mGroupId.toStdString());
+		ui->labelGXSId->setId(RsGxsId(_group_info.mMeta.mGroupId));
 		ui->labelGXSId->setText(_gxsId);
-		ui->labelGXSId->setToolTip(tr("GXS id:").append(" "+_gxsId));
+
+		ui->labelPositive->setText(QString::number(info.mFriendsPositiveVotes));
+		ui->labelNegative->setText(QString::number(info.mFriendsNegativeVotes));
 
 		if (!_havePGPDetail) {
 			QFont font = ui->labelName->font();
@@ -80,8 +106,8 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 			ui->labelName->setFont(font);
 
 			_keyId=QString::fromStdString(_group_info.mMeta.mGroupId.toStdString());
+			ui->labelKeyId->setId(RsGxsId(_group_info.mMeta.mGroupId));
 			ui->labelKeyId->setText(_keyId);
-			ui->labelKeyId->setToolTip(tr("GXS id:").append(" "+_keyId));
 			ui->labelKeyId->setVisible(false);
 
     /// (TODO) Get real ident icon
@@ -113,10 +139,10 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		if (!_haveGXSId) m_myName = _nickname;
 		ui->labelName->setText(m_myName);
 		if (_haveGXSId) {
-			ui->labelName->setToolTip(tr("GXS name:").append(" "+m_myName).append("\n")
-			                          .append(tr("PGP name:").append(" "+_nickname)));
+			ui->labelName->setToolTip(tr("GXS name:") + (" "+m_myName) + ("\n")
+			                          +(tr("PGP name:")+(" "+_nickname)));
 		} else {//if (m_myName != _nickname)
-			ui->labelName->setToolTip(tr("PGP name:").append(" "+_nickname));
+			ui->labelName->setToolTip(tr("PGP name:")+(" "+_nickname));
 		}//else (m_myName != _nickname)
 
 		QFont font = ui->labelName->font();
@@ -125,7 +151,7 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 
 		_keyId = QString::fromStdString(_details.gpg_id.toStdString());
 		ui->labelKeyId->setText(_keyId);
-		ui->labelKeyId->setToolTip(tr("PGP id:").append(" "+_keyId));
+		ui->labelKeyId->setToolTip(tr("PGP id:")+(" "+_keyId));
 
 		if (!_haveGXSId) {
 			QPixmap avatar;
@@ -197,6 +223,10 @@ void IdentityWidget::setIsCurrent(bool value)
 	m_isCurrent=value;
 	ui->labelKeyId->setVisible(value);
 	ui->labelGXSId->setVisible(value && (_haveGXSId && _havePGPDetail));
+	ui->labelPositive->setVisible(value);
+	ui->labelNegative->setVisible(value);
+	ui->label_PosIcon_2->setVisible(value);
+	ui->label_NegIcon_2->setVisible(value);
 	ui->pbAdd->setVisible(value);
 }
 /*

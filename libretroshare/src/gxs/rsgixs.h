@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgixs.h                                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Robert Fernie, Evi-Parker Christopher                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGIXS_H
 #define RSGIXS_H
-
-/*
- * libretroshare/src/gxs: gxs.h
- *
- * General Identity Exchange Service interface for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie, Christopher Evi-Prker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "gxs/rsgxs.h"
 #include "gxs/rsgenexchange.h"
@@ -131,7 +127,7 @@ public:
 	                          const RsGxsId& encryption_key_id,
 	                          uint32_t& encryption_error, bool force_load) = 0 ;
 
-    virtual bool getOwnIds(std::list<RsGxsId>& ids) = 0;
+	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false)=0;
     virtual bool isOwnId(const RsGxsId& key_id) = 0 ;
 
     virtual void timeStampKey(const RsGxsId& key_id,const RsIdentityUsage& reason) = 0 ;
@@ -182,25 +178,23 @@ public:
 	uint32_t reputation_level ;
 };
 
-class RsGixsReputation
+struct RsGixsReputation
 {
-public:
-	// get Reputation.
-	virtual RsReputations::ReputationLevel overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags=NULL) = 0;
+	virtual RsReputationLevel overallReputationLevel(
+	        const RsGxsId& id, uint32_t* identity_flags = nullptr ) = 0;
 	virtual ~RsGixsReputation(){}
 };
 
 /*** This Class pulls all the GXS Interfaces together ****/
 
-class RsGxsIdExchange: 
-	public RsGenExchange, 
-	public RsGixs
+struct RsGxsIdExchange : RsGenExchange, RsGixs
 {
-public:
-	RsGxsIdExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, uint32_t authenPolicy)
-	:RsGenExchange(gds,ns,serviceSerialiser,mServType, this, authenPolicy) { return; }
-virtual ~RsGxsIdExchange() { return; }
-
+	RsGxsIdExchange(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* ns,
+	        RsSerialType* serviceSerialiser, uint16_t mServType,
+	        uint32_t authenPolicy )
+	    : RsGenExchange(
+	          gds, ns, serviceSerialiser, mServType, this, authenPolicy ) {}
 };
 
 
@@ -225,7 +219,7 @@ class RsGcxs
     
         virtual bool isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId& destination_group, const RsGxsId& id) = 0;
         
-	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) =0;
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) =0;
 };
 
 
@@ -238,7 +232,7 @@ public:
 	:RsGenExchange(gds,ns,serviceSerialiser,mServType, gixs, authenPolicy)  { return; }
 	virtual ~RsGxsCircleExchange() { return; }
     
-	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,time_t& grp_server_update_TS,time_t& msg_server_update_TS) 
+	virtual bool getLocalCircleServerUpdateTS(const RsGxsCircleId& gid,rstime_t& grp_server_update_TS,rstime_t& msg_server_update_TS) 
 	{
 		return RsGenExchange::getGroupServerUpdateTS(RsGxsGroupId(gid),grp_server_update_TS,msg_server_update_TS) ;
 	}

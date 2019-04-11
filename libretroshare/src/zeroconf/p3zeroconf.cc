@@ -1,29 +1,24 @@
-/*
- * libretroshare/src/zeroconf: p3zeroconf.cc
- *
- * ZeroConf interface for RetroShare.
- *
- * Copyright 2011-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
+/*******************************************************************************
+ * libretroshare/src/zeroconf: p3zeroconf.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "zeroconf/p3zeroconf.h"
 #include <openssl/sha.h>
 #include <iostream>
@@ -364,7 +359,7 @@ void p3ZeroConf::checkServiceFDs()
 	{
 		locked_checkFD(mResolveRef);
 
-		time_t age = time(NULL) - mResolveStatusTS;
+		rstime_t age = time(NULL) - mResolveStatusTS;
 		if (age > ZC_MAX_RESOLVE_TIME)
 		{
 			std::cerr << "p3ZeroConf::checkServiceFDs() Killing very old Resolve request";
@@ -379,7 +374,7 @@ void p3ZeroConf::checkServiceFDs()
 	{
 		locked_checkFD(mQueryRef);
 
-		time_t age = time(NULL) - mQueryStatusTS;
+		rstime_t age = time(NULL) - mQueryStatusTS;
 		if (age > ZC_MAX_QUERY_TIME)
 		{
 			std::cerr << "p3ZeroConf::checkServiceFDs() Killing very old Query request";
@@ -499,7 +494,7 @@ int p3ZeroConf::checkLocationResults()
 	std::cerr << "sslid = " << lr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	mPeerMgr->addFriend(lr.sslId, lr.gpgId, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now);
 	return 1;
 }
@@ -560,7 +555,7 @@ int p3ZeroConf::checkQueryResults()
 	std::cerr << "sslid = " << qr.sslId;
 	std::cerr << std::endl;
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	uint32_t flags = RS_CB_FLAG_MODE_TCP;
 	uint32_t source = RS_CB_DHT; // SHOULD ADD NEW SOURCE ZC???
 	struct sockaddr_storage dummyProxyAddr, dummySrcAddr;
@@ -1375,7 +1370,7 @@ class RsZCBrowseDetails
 	RsZCBrowseDetails();
 
 	uint32_t mBrowseState;
-	time_t   mBrowseUpdate;
+	rstime_t   mBrowseUpdate;
 
 	uint32_t mBrowseInterfaceIndex;
 	std::string mBrowserServiceName;
@@ -1403,7 +1398,7 @@ class RsZCPeerDetails
 	/* Browse Info */
 
 	uint32_t mBrowseState;
-	time_t   mBrowseUpdate;
+	rstime_t   mBrowseUpdate;
 
 	uint32_t mBrowseInterfaceIndex;
 	std::string mBrowserServiceName;

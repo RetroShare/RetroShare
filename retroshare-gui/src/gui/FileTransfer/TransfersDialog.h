@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/FileTransfer/TransfersDialog.h                       *
+ *                                                                             *
+ * Copyright (c) 2007 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _TRANSFERSDIALOG_H
 #define _TRANSFERSDIALOG_H
@@ -55,7 +54,8 @@ public:
 						 /* Fixed numbers for load and save the last page */
 			 				SearchTab              = 0,  /** Network page. */
 							LocalSharedFilesTab    = 1,  /** Network new graph. */
-							RemoteSharedFilesTab   = 2   /** Old group chat page. */
+							RemoteSharedFilesTab   = 2,  /** Old group chat page. */
+							DownloadTab            = 3
 		 };
 
 
@@ -91,6 +91,7 @@ private slots:
     void downloadListCustomPopupMenu( QPoint point );
     void downloadListHeaderCustomPopupMenu( QPoint point );
     void uploadsListCustomPopupMenu( QPoint point );
+	void uploadsListHeaderCustomPopupMenu (QPoint point );
 
     void cancel();
     void forceCheck();
@@ -107,9 +108,6 @@ private slots:
     void collapseAllDL();
     void expandAllUL();
     void collapseAllUL();
-
-//    void rootdecorated();
-//    void rootisnotdecorated();
 
     void pauseFileTransfer();
     void resumeFileTransfer();
@@ -146,6 +144,7 @@ private slots:
     void collModif();
     void collView();
     void collOpen();
+    void collAutoOpen(const QString& fileHash);
 
     void setShowDLSizeColumn(bool show);
     void setShowDLCompleteColumn(bool show);
@@ -159,6 +158,13 @@ private slots:
     void setShowDLIDColumn(bool show);
     void setShowDLLastDLColumn(bool show);
     void setShowDLPath(bool show);
+
+	void setShowULPeerColumn(bool show);
+	void setShowULSizeColumn(bool show);
+	void setShowULTransferredColumn(bool show);
+	void setShowULSpeedColumn(bool show);
+	void setShowULProgressColumn(bool show);
+	void setShowULHashColumn(bool show);
 
     void filterChanged(const QString &text);
 
@@ -219,7 +225,7 @@ private:
     QAction *collViewAct;
     QAction *collOpenAct;
 
-    /** Defines the actions for the header context menu */
+	/** Defines the actions for the header context menu in download */
     QAction* showDLSizeAct;
     QAction* showDLCompleteAct;
     QAction* showDLDLSpeedAct;
@@ -236,6 +242,14 @@ private:
     /** Defines the actions for the upload context menu */
     QAction* ulOpenFolderAct;
     QAction* ulCopyLinkAct;
+
+	/** Defines the actions for the header context menu in upload*/
+	QAction* showULPeerAct;
+	QAction* showULSizeAct;
+	QAction* showULTransferredAct;
+	QAction* showULSpeedAct;
+	QAction* showULProgressAct;
+	QAction* showULHashAct;
 
     bool m_bProcessSettings;
     void processSettings(bool bLoad);

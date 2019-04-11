@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2011 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/FriendsDialog.cpp                                                       *
+ *                                                                             *
+ * Copyright (C) 2012 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <time.h>
 
@@ -69,9 +68,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
 
-    if (instance == NULL) {
-        instance = this;
-    }
+	if (!instance) instance = this;
+
+#ifdef RS_DIRECT_CHAT
     QString msg = tr("Retroshare broadcast chat: messages are sent to all connected friends.");
     // "<font color='grey'>" + DateTime::formatTime(QTime::currentTime()) + "</font> -
     msg = QString("<font color='blue'><i>" + msg + "</i></font>");
@@ -82,6 +81,10 @@ FriendsDialog::FriendsDialog(QWidget *parent)
             this, SLOT(chatMessageReceived(ChatMessage)));
     connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)),
             this, SLOT(chatStatusReceived(ChatId,QString)));
+#else // def RS_DIRECT_CHAT
+	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
+#endif // def RS_DIRECT_CHAT
+
 
     connect( ui.mypersonalstatusLabel, SIGNAL(clicked()), SLOT(statusmessage()));
     connect( ui.actionSet_your_Avatar, SIGNAL(triggered()), this, SLOT(getAvatar()));

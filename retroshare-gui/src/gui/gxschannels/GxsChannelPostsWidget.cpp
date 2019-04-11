@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxschannels/GxsChannelPostsWidget.cpp                *
+ *                                                                             *
+ * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDateTime>
 #include <QSignalMapper>
@@ -32,8 +31,12 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/feeds/SubFileItem.h"
 #include "gui/notifyqt.h"
-#include <algorithm>
+#include "gui/RetroShareLink.h"
+#include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
+
+#include <algorithm>
 
 #define CHAN_DEFAULT_IMAGE ":/images/channels.png"
 
@@ -241,8 +244,6 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 	ui->logoLabel->setPixmap(chanImage);
 
-	ui->subscribersLabel->setText(QString::number(group.mMeta.mPop)) ;
-
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
 		mStateHelper->setWidgetEnabled(ui->postButton, true);
@@ -253,10 +254,14 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	}
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, true);
+
 
     bool autoDownload ;
             rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
+	
+	RetroShareLink link;
 
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
 		ui->feedToolButton->setEnabled(true);
@@ -264,6 +269,9 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		ui->fileToolButton->setEnabled(true);
 		ui->infoWidget->hide();
 		setViewMode(viewMode());
+		
+		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
+
 
 		ui->infoPosts->clear();
 		ui->infoDescription->clear();
@@ -273,9 +281,23 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
             ui->infoLastPost->setText(tr("Never"));
         else
             ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-        ui->infoDescription->setText(QString::fromUtf8(group.mDescription.c_str()));
+			QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
+
+			unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
+
+			// embed smileys ?
+			if (Settings->valueFromGroup(QString("ChannelPostsWidget"), QString::fromUtf8("Emoteicons_ChannelDecription"), true).toBool()) {
+				formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
+			}
+
+			formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
+
+			ui->infoDescription->setText(formatDescription);
         
         	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
+			
+			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+			ui->infoAdministrator->setText(link.toHtml());
         
         	QString distrib_string ( "[unknown]" );
             
@@ -311,6 +333,9 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 
 		ui->feedToolButton->setEnabled(false);
 		ui->fileToolButton->setEnabled(false);
+		
+		ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+
 	}
 }
 
@@ -596,6 +621,20 @@ void GxsChannelPostsWidget::clearPosts()
 	ui->fileWidget->clear();
 }
 
+void GxsChannelPostsWidget::blank()
+{
+	mStateHelper->setWidgetEnabled(ui->postButton, false);
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+	
+	clearPosts();
+
+    groupNameChanged(QString());
+
+	ui->infoWidget->hide();
+	ui->feedWidget->show();
+	ui->fileWidget->hide();
+}
+
 bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 {
 	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);
@@ -608,13 +647,13 @@ bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 
 void GxsChannelPostsWidget::subscribeGroup(bool subscribe)
 {
-	if (groupId().isNull()) {
-		return;
-	}
+	RsGxsGroupId grpId(groupId());
+	if (grpId.isNull()) return;
 
-	uint32_t token;
-	rsGxsChannels->subscribeToGroup(token, groupId(), subscribe);
-//	mChannelQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
+	RsThread::async([=]()
+	{
+		rsGxsChannels->subscribeToChannel(grpId, subscribe);
+	} );
 }
 
 void GxsChannelPostsWidget::setAutoDownload(bool autoDl)
@@ -630,12 +669,35 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 		return;
 	}
 
-    bool autoDownload ;
-        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+	bool autoDownload;
+	if(!rsGxsChannels->getChannelAutoDownload(grpId, autoDownload))
 	{
-		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
-		std::cerr << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " failed to get autodownload value "
+		          << "for channel: " << grpId.toStdString() << std::endl;
+		return;
 	}
+
+	RsThread::async([this, grpId, autoDownload]()
+	{
+		if(!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to set autodownload "
+			          << "for channel: " << grpId.toStdString() << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [=]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
+			          << "thread but was scheduled by async thread" << std::endl;
+		}, this );
+	});
 }
 
 bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
@@ -643,12 +705,22 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	std::vector<RsGxsChannelGroup> groups;
 	rsGxsChannels->getGroupData(token, groups);
 
-	if (groups.size() == 1)
+	if(groups.size() == 1)
 	{
 		insertChannelDetails(groups[0]);
 		metaData = groups[0].mMeta;
 		return true;
 	}
+    else
+    {
+        RsGxsChannelGroup distant_group;
+        if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
+        {
+			insertChannelDetails(distant_group);
+			metaData = distant_group.mMeta;
+            return true ;
+        }
+    }
 
 	return false;
 }

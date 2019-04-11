@@ -1,24 +1,24 @@
-/****************************************************************
- *
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011, RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/chat/ChatWidget.h                                                       *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
@@ -36,6 +36,9 @@
 
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsfiles.h>
+
+//For PersonId anchor.
+#define PERSONID "PersonId:"
 
 class QAction;
 class QTextEdit;
@@ -127,6 +130,8 @@ public:
 public slots:
 	void updateStatus(const QString &peer_id, int status);
 	void updateReputationChange(RsGxsId);
+	void setUseCMark(const bool bUseCMark);
+	void updateCMPreview();
 
 private slots:
 	//void pasteCreateMsgLink() ;
@@ -139,6 +144,7 @@ signals:
 	void infoChanged(ChatWidget*);
 	void newMessage(ChatWidget*);
 	void statusChanged(int);
+	void textBrowserAskContextMenu(QMenu* contextMnu, QString anchorForPosition, const QPoint point);
 
 protected:
 	bool eventFilter(QObject *obj, QEvent *event);
@@ -220,7 +226,8 @@ private:
 	bool typing;
 	int peerStatus;
 
-    bool sendingBlocked;
+	bool sendingBlocked;
+	bool useCMark;
 
 	time_t lastStatusSendTime;
 

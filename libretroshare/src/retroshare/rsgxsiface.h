@@ -1,28 +1,24 @@
-
-/*
- * libretroshare/src/gxs/: rsgxsifaceimpl.h
- *
- * RetroShare GXS. RsGxsIface
- *
- * Copyright 2012 by Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsgxsiface.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 by Christopher Evi-Parker                                    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef RSGXSIFACE_H_
 #define RSGXSIFACE_H_
@@ -31,31 +27,69 @@
 #include "retroshare/rsgxsservice.h"
 #include "gxs/rsgxsdata.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
+#include "serialiser/rsserializable.h"
+
+/*!
+ * This structure is used to transport group summary information when a GXS
+ * service is searched. It contains the group information as well as a context
+ * string to tell where the information was found. It is more compact than a
+ * GroupMeta object, so as to make search responses as light as possible.
+ */
+struct RsGxsGroupSummary : RsSerializable
+{
+	RsGxsGroupSummary() :
+	    mPublishTs(0), mNumberOfMessages(0),mLastMessageTs(0),
+	    mSignFlags(0),mPopularity(0) {}
+
+	RsGxsGroupId mGroupId;
+	std::string  mGroupName;
+	RsGxsId      mAuthorId;
+	rstime_t       mPublishTs;
+	uint32_t     mNumberOfMessages;
+	rstime_t       mLastMessageTs;
+	uint32_t     mSignFlags;
+	uint32_t     mPopularity;
+
+	std::string  mSearchContext;
+
+	/// @see RsSerializable::serial_process
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mGroupId);
+		RS_SERIAL_PROCESS(mGroupName);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPublishTs);
+		RS_SERIAL_PROCESS(mNumberOfMessages);
+		RS_SERIAL_PROCESS(mLastMessageTs);
+		RS_SERIAL_PROCESS(mSignFlags);
+		RS_SERIAL_PROCESS(mPopularity);
+		RS_SERIAL_PROCESS(mSearchContext);
+	}
+};
+
 
 /*!
  * Stores ids of changed gxs groups and messages. It is used to notify the GUI about changes.
  */
-class RsGxsChanges
+struct RsGxsChanges
 {
-public:
     RsGxsChanges(): mService(0){}
     RsTokenService *mService;
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgs;
-    std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > mMsgsMeta;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgs;
+    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;
     std::list<RsGxsGroupId> mGrps;
     std::list<RsGxsGroupId> mGrpsMeta;
+    std::list<TurtleRequestId> mDistantSearchReqs;
 };
 
 /*!
  * All implementations must offer thread safety
  */
-class RsGxsIface
+struct RsGxsIface
 {
-public:
-
-	virtual ~RsGxsIface(){};
-
-public:
+	virtual ~RsGxsIface() {}
 
     /*!
      * Gxs services should call this for automatic handling of
@@ -183,7 +217,8 @@ public:
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) = 0;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) = 0;
 
-    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags)=0;
+	virtual RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags,uint32_t identity_flags ) = 0;
 };
 
 

@@ -1,0 +1,24 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+DPKG_EXPORT_BUILDFLAGS = 1
+
+# skip *-dbgsym packages
+DEB_BUILD_OPTIONS=noddebs
+
+include /usr/share/dpkg/default.mk
+
+#export DEB_BUILD_MAINT_PTIONS = hardening=+all
+export QT_SELECT = qt5
+
+MY_BUILDDIR = _build
+
+%:
+	dh $@ --buildsystem=qmake --builddirectory=$(MY_BUILDDIR)
+
+# Override dh_auto_configure in order to call qmake on the parent dir. We call mkdir here because of #800738.
+
+override_dh_auto_configure:
+	@mkdir -p $(MY_BUILDDIR)
+	dh_auto_configure -- CONFIG="unix release retroshare_plugins rs_autologin" PREFIX=/usr LIB_DIR=/usr/lib ../src

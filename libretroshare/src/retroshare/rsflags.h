@@ -23,7 +23,7 @@
 template<int n> class t_RsFlags32
 {
 	public:
-		inline t_RsFlags32() { _bits=0; }
+	    inline t_RsFlags32() : _bits(0) {}
 		inline explicit t_RsFlags32(uint32_t N) : _bits(N) {}					// allows initialization from a set of uint32_t
 
 		inline t_RsFlags32<n> operator| (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits | f._bits) ; }

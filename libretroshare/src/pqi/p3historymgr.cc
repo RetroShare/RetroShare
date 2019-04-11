@@ -1,29 +1,25 @@
-/*
- * libretroshare/src/services: p3HistoryMgr.cc
- *
- * RetroShare C++ .
- *
- * Copyright 2011 by Thunder.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-#include <time.h>
+/*******************************************************************************
+ * libretroshare/src/pqi: p3historymgr.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011 by Thunder.                                                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#include "util/rstime.h"
 
 #include "p3historymgr.h"
 #include "rsitems/rshistoryitems.h"
@@ -67,12 +63,12 @@ p3HistoryMgr::~p3HistoryMgr()
 
 /***** p3HistoryMgr *****/
 
-//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &peerId, const RsChatMsgItem *chatItem)
+//void p3HistoryMgr::addMessage(bool incoming, const RsPeerId &chatPeerId, const RsPeerId &msgPeerId, const RsChatMsgItem *chatItem)
 void p3HistoryMgr::addMessage(const ChatMessage& cm)
 {
 	uint32_t addMsgId = 0;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(mLastCleanTime + MSG_HISTORY_CLEANING_PERIOD < now)
 	{
@@ -84,48 +80,48 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 		RsStackMutex stack(mHistoryMtx); /********** STACK LOCKED MTX ******/
 
 
-        RsPeerId peerId; // id of sending peer
-        RsPeerId chatPeerId; // id of chat endpoint
-        std::string peerName; //name of sending peer
+		RsPeerId msgPeerId; // id of sending peer
+		RsPeerId chatPeerId; // id of chat endpoint
+		std::string peerName; //name of sending peer
 
-        bool enabled = false;
-        if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
-            peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
-            enabled = true;
+		bool enabled = false;
+		if (cm.chat_id.isBroadcast() && mPublicEnable == true) {
+			peerName = rsPeers->getPeerName(cm.broadcast_peer_id);
+			enabled = true;
 		}
-        if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
-            peerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
-            peerName = rsPeers->getPeerName(peerId);
-            enabled = true;
-        }
-        if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
-            peerName = cm.lobby_peer_gxs_id.toStdString();
-            enabled = true;
-        }
+		if (cm.chat_id.isPeerId() && mPrivateEnable == true) {
+			msgPeerId = cm.incoming ? cm.chat_id.toPeerId() : rsPeers->getOwnId();
+			peerName = rsPeers->getPeerName(msgPeerId);
+			enabled = true;
+		}
+		if (cm.chat_id.isLobbyId() && mLobbyEnable == true) {
+			peerName = cm.lobby_peer_gxs_id.toStdString();
+			enabled = true;
+		}
 
-        if(cm.chat_id.isDistantChatId())
-	{
-		DistantChatPeerInfo dcpinfo;
-		if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
-			peerName = cm.chat_id.toPeerId().toStdString();
-		enabled = true;
-	}
+		if(cm.chat_id.isDistantChatId())
+		{
+			DistantChatPeerInfo dcpinfo;
+			if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
+				peerName = cm.chat_id.toPeerId().toStdString();
+			enabled = true;
+		}
 
-        if(enabled == false)
-            return;
+		if(enabled == false)
+			return;
 
-        if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))
-            return;
+		if(!chatIdToVirtualPeerId(cm.chat_id, chatPeerId))
+			return;
 
 		RsHistoryMsgItem* item = new RsHistoryMsgItem;
 		item->chatPeerId = chatPeerId;
-        item->incoming = cm.incoming;
-		item->peerId = peerId;
-        item->peerName = peerName;
-        item->sendTime = cm.sendTime;
-        item->recvTime = cm.recvTime;
+		item->incoming = cm.incoming;
+		item->msgPeerId = msgPeerId;
+		item->peerName = peerName;
+		item->sendTime = cm.sendTime;
+		item->recvTime = cm.recvTime;
 
-        item->message = cm.msg ;
+		item->message = cm.msg ;
 		//librs::util::ConvertUtf16ToUtf8(chatItem->message, item->message);
 
 		std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.find(item->chatPeerId);
@@ -138,7 +134,7 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 			uint32_t limit;
 			if (chatPeerId.isNull()) 
 				limit = mPublicSaveCount;
-            else if (cm.chat_id.isLobbyId())
+			else if (cm.chat_id.isLobbyId())
 				limit = mLobbySaveCount;
 			else 
 				limit = mPrivateSaveCount;
@@ -174,7 +170,7 @@ void p3HistoryMgr::cleanOldMessages()
 #ifdef HISTMGR_DEBUG
 	std::cerr << "****** cleaning old messages." << std::endl;
 #endif
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 	bool changed = false ;
 
 	for(std::map<RsPeerId, std::map<uint32_t, RsHistoryMsgItem*> >::iterator mit = mMessages.begin(); mit != mMessages.end();) 
@@ -424,7 +420,7 @@ static void convertMsg(const RsHistoryMsgItem* item, HistoryMsg &msg)
 	msg.msgId = item->msgId;
 	msg.chatPeerId = item->chatPeerId;
 	msg.incoming = item->incoming;
-	msg.peerId = item->peerId;
+	msg.peerId = item->msgPeerId;
 	msg.peerName = item->peerName;
 	msg.sendTime = item->sendTime;
 	msg.recvTime = item->recvTime;

@@ -1,31 +1,27 @@
-/*
- * tcponudp/udpstunner.cc
- *
- * libretroshare.
- *
- * Copyright 2010 by Robert Fernie
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 3 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/tcponudp: udpstunner.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010-2010 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "tcponudp/udpstunner.h"
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "util/rsrandom.h"
 #include "util/rsprint.h"
@@ -115,7 +111,7 @@ void	UdpStunner::SimSymmetricNat()
 int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since last send/recv */
 {
         RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
@@ -191,7 +187,7 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 		return 0;
 	}
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	mExclusiveMode = false;
 	if (forceStun)
 	{
@@ -334,7 +330,7 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 		if (!pkt)
 			return false;
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 		mStunLastSendAny = now;
 		int sentlen = sendPkt(pkt, len, from, STUN_TTL);
 		free(pkt);
@@ -460,7 +456,7 @@ int     UdpStunner::doStun(struct sockaddr_in stun_addr)
 	{
 		RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 		mStunLastSendStun = now;
 		mStunLastSendAny = now;
 	}
@@ -754,7 +750,7 @@ bool    UdpStunner::checkStunDesired()
 	std::cerr << std::endl;
 #endif
 
-	time_t now;
+	rstime_t now;
 	{
           RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 
@@ -804,7 +800,7 @@ bool    UdpStunner::checkStunDesired()
 
 #define RATE_SCALE (3.0)
 	  double stunPeriod = (mTargetStunPeriod / (RATE_SCALE)) * (1.0 + mSuccessRate * (RATE_SCALE - 1.0));
-	  time_t nextStun = mStunLastRecvResp + (int) stunPeriod;
+	  rstime_t nextStun = mStunLastRecvResp + (int) stunPeriod;
 
 #ifdef DEBUG_UDP_STUNNER
 	std::cerr << "UdpStunner::checkStunDesired() TargetStunPeriod: " << mTargetStunPeriod;
@@ -838,7 +834,7 @@ bool    UdpStunner::attemptStun()
 {
 	bool found = false;
 	TouStunPeer peer;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 #ifdef DEBUG_UDP_STUNNER
 	std::cerr << "UdpStunner::attemptStun()";
@@ -1004,7 +1000,7 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	 
 	mSuccessRate += (1.0-TOU_SUCCESS_LPF_FACTOR); 
 
-	time_t now = time(NULL);	
+	rstime_t now = time(NULL);	
         mStunLastRecvResp = now;
         mStunLastRecvAny = now;
 
@@ -1029,7 +1025,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 
 	bool found1 = false;
 	bool found2 = false;
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	/* iterator backwards - as these are the most recent */
 
 	/********
@@ -1052,7 +1048,7 @@ bool    UdpStunner::locked_checkExternalAddress()
 		   4) recent age.
 		 */
 
-		time_t age = (now - it->lastsend);
+		rstime_t age = (now - it->lastsend);
 		if (it->response && 
 #ifdef UDPSTUN_ALLOW_LOCALNET	
 			( mAcceptLocalNet || isExternalNet(&(it->eaddr.sin_addr))) &&
@@ -1136,7 +1132,7 @@ bool    UdpStunner::locked_printStunList()
 #ifdef DEBUG_UDP_STUNNER
 	std::string out = "locked_printStunList()\n";
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 	rs_sprintf_append(out, "\tLastSendStun: %ld\n", now - mStunLastSendStun);
 	rs_sprintf_append(out, "\tLastSendAny: %ld\n", now - mStunLastSendAny);
 	rs_sprintf_append(out, "\tLastRecvResp: %ld\n", now - mStunLastRecvResp);
@@ -1161,7 +1157,7 @@ bool    UdpStunner::locked_printStunList()
 	
 bool    UdpStunner::getStunPeer(int idx, std::string &id,
 		struct sockaddr_in &remote, struct sockaddr_in &eaddr, 
-		uint32_t &failCount, time_t &lastSend)
+		uint32_t &failCount, rstime_t &lastSend)
 {
 	RsStackMutex stack(stunMtx);   /********** LOCK MUTEX *********/
 

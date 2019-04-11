@@ -142,7 +142,7 @@ p, li { white-space: pre-wrap; }
           <bool>true</bool>
          </property>
          <property name="acceptRichText">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextBrowserInteraction</set>
@@ -183,7 +183,7 @@ p, li { white-space: pre-wrap; }
           <bool>true</bool>
          </property>
          <property name="acceptRichText">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextBrowserInteraction</set>
@@ -236,6 +236,9 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:600;&quot;&gt;German: &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Jan&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt; font-weight:600;&quot;&gt; &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Keller&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt; &amp;lt;&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;trilarion@users.sourceforge.net&lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;&amp;gt;&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-weight:600;&quot;&gt;Polish: &lt;/span&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2';&quot;&gt;Maciej Mrug&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
+         <property name="overwriteMode">
+          <bool>true</bool>
+         </property>
          <property name="acceptRichText">
           <bool>false</bool>
          </property>
@@ -275,7 +278,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTextEdit::WidgetWidth</enum>
          </property>
          <property name="acceptRichText">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="textInteractionFlags">
           <set>Qt::TextBrowserInteraction</set>

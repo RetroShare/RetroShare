@@ -10,19 +10,21 @@
     <height>320</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="margin">
+  <layout class="QVBoxLayout" name="FriendSelectionWidgetVLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="filterLabel">
-     <property name="text">
-      <string>Search :</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="filterHLayout">
      <item>
       <widget class="LineEditClear" name="filterLineEdit"/>
      </item>

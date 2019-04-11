@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/ServerPage.cpp                                                 *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "ServerPage.h"
 
@@ -29,11 +28,12 @@
 
 #include <iostream>
 
-#include <retroshare/rsbanlist.h>
-#include <retroshare/rsconfig.h>
-#include <retroshare/rsdht.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsturtle.h>
+#include "retroshare/rsbanlist.h"
+#include "retroshare/rsconfig.h"
+#include "retroshare/rsdht.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsturtle.h"
+#include "retroshare/rsinit.h"
 
 #include <QCheckBox>
 #include <QMovie>
@@ -62,23 +62,14 @@
 ///
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
-#ifdef RETROTOR
-static const uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
-static const uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
-
-static const uint32_t TAB_NETWORK                 = 0;
-static const uint32_t TAB_HIDDEN_SERVICE          = 1;
-static const uint32_t TAB_IP_FILTERS              = 99;	// This is a trick: these tabs do not exist, so enabling/disabling them has no effect
-static const uint32_t TAB_RELAYS                  = 99;
-#else
 const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
-const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 2;
+const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
+const static uint32_t TAB_HIDDEN_SERVICE_I2P_BOB  = 2;
 
 const static uint32_t TAB_NETWORK                 = 0;
-const static uint32_t TAB_IP_FILTERS              = 1;
-const static uint32_t TAB_HIDDEN_SERVICE          = 2;
+const static uint32_t TAB_HIDDEN_SERVICE          = 1;
+const static uint32_t TAB_IP_FILTERS              = 2;
 const static uint32_t TAB_RELAYS                  = 3;
-#endif
 
 //#define SERVER_DEBUG 1
 
@@ -90,13 +81,15 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   manager = NULL ;
 
-#ifdef RETROTOR
+  if(RsAccounts::isTorAuto())
+  {
   	// Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
-	ui.tabWidget->removeTab(3) ;	// remove relays. Not useful in Tor mode.
-	ui.tabWidget->removeTab(1) ;	// remove IP filters. Not useful in Tor mode.
+	ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
+	ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
 
-	ui.hiddenServiceTab->removeTab(1) ; // remove the Automatic I2P/BOB tab
+	ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB) ; // remove the Automatic I2P/BOB tab
+
 	ui.hiddenpage_proxyAddress_i2p->hide() ;
 	ui.hiddenpage_proxyLabel_i2p->hide() ;
 	ui.hiddenpage_proxyPort_i2p->hide() ;
@@ -109,7 +102,8 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
 	ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-#endif
+  }
+
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_STATUS,new QTableWidgetItem(tr("Status"))) ;
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_ORIGIN,new QTableWidgetItem(tr("Origin"))) ;
@@ -137,7 +131,6 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     for(std::list<std::string>::const_iterator it(ip_servers.begin());it!=ip_servers.end();++it)
         ui.IPServersLV->addItem(QString::fromStdString(*it)) ;
 
-    ui.hiddenServiceTab->setTabEnabled(TAB_HIDDEN_SERVICE_INCOMING, false);
     ui.gbBob->setEnabled(false);
     ui.swBobAdvanced->setCurrentIndex(0);
 
@@ -197,6 +190,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
     std::cerr << std::endl;
 #endif
 
+    connect(ui.discComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.netModeComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(saveAddresses()));
     connect(ui.localAddress,   SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
     connect(ui.extAddress,     SIGNAL(textChanged(QString)),this,SLOT(saveAddresses()));
@@ -235,6 +229,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
 	QObject::connect(ui.enableCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
 	QObject::connect(ui.serverCheckBox,SIGNAL(toggled(bool)),this,SLOT(updateRelayMode()));
+
+	// when the network menu is opened and the hidden service tab is already selected updateOutProxyIndicator() won't be called and thus resulting in wrong proxy indicators.
+	if (ui.tabWidget->currentIndex() == TAB_HIDDEN_SERVICE)
+		updateOutProxyIndicator();
 }
 
 void ServerPage::saveAndTestInProxy()
@@ -338,8 +336,8 @@ void ServerPage::load()
     if (mIsHiddenNode)
     {
         mHiddenType = detail.hiddenType;
-        ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
-		ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
+        //ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
+		//ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
         loadHiddenNode();
         return;
     }
@@ -844,10 +842,15 @@ void ServerPage::updateStatus()
         return;
     }
 
-    /* load up configuration from rsPeers */
-    RsPeerDetails detail;
-    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
-        return;
+	/* load up configuration from rsPeers */
+	RsPeerDetails detail;
+	if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " getPeerDetails(...) failed!"
+		          << " This is unexpected report to developers please."
+		          << std::endl;
+		return;
+	}
 
     /* only update if can't edit */
     if (!ui.localPort->isEnabled())
@@ -1005,7 +1008,7 @@ void ServerPage::saveRates()
 
 void ServerPage::tabChanged(int page)
 {
-	if(page == 2)
+	if(page == TAB_HIDDEN_SERVICE)
 		updateOutProxyIndicator();
 }
 

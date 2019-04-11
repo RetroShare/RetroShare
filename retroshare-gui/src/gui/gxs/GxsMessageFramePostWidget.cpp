@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2014 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsMessageFramePostWidget.cpp                    *
+ *                                                                             *
+ * Copyright 2014 Retroshare Team           <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <algorithm>
 #include <QApplication>
@@ -109,21 +108,22 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 	}
 
 	bool updateGroup = false;
-	const std::list<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-	if (std::find(grpIdsMeta.begin(), grpIdsMeta.end(), groupId()) != grpIdsMeta.end()) {
-		updateGroup = true;
-	}
+	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
-	const std::list<RsGxsGroupId> &grpIds = getGrpIds();
-	if (!groupId().isNull() && std::find(grpIds.begin(), grpIds.end(), groupId()) != grpIds.end()) {
+    if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
+		updateGroup = true;
+
+	const std::set<RsGxsGroupId> &grpIds = getGrpIds();
+	if (!groupId().isNull() && grpIds.find(groupId())!=grpIds.end())
+    {
 		updateGroup = true;
 		/* Do we need to fill all posts? */
 		requestAllPosts();
 	} else {
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgs;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgs;
 		getAllMsgIds(msgs);
 		if (!msgs.empty()) {
-			std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
+			auto mit = msgs.find(groupId());
 			if (mit != msgs.end()) {
 				requestPosts(mit->second);
 			}
@@ -341,7 +341,7 @@ void GxsMessageFramePostWidget::loadAllPosts(const uint32_t &token)
 	emit groupChanged(this);
 }
 
-void GxsMessageFramePostWidget::requestPosts(const std::vector<RsGxsMessageId> &msgIds)
+void GxsMessageFramePostWidget::requestPosts(const std::set<RsGxsMessageId> &msgIds)
 {
 #ifdef ENABLE_DEBUG
 	std::cerr << "GxsMessageFramePostWidget::requestPosts()";

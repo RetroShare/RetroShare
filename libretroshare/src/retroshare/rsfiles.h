@@ -1,40 +1,45 @@
-#ifndef RS_FILES_GUI_INTERFACE_H
-#define RS_FILES_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/rsiface: rsfiles.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsfiles.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include <list>
 #include <iostream>
 #include <string>
+#include <functional>
+#include <chrono>
+#include <cstdint>
 
 #include "rstypes.h"
+#include "serialiser/rsserializable.h"
+#include "rsturtle.h"
+#include "util/rstime.h"
 
 class RsFiles;
-extern RsFiles  *rsFiles;
+
+/**
+ * Pointer to global instance of RsFiles service implementation
+ * @jsonapi{development}
+ */
+extern RsFiles* rsFiles;
 
 namespace RsRegularExpression { class Expression; }
 
@@ -108,7 +113,7 @@ const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// di
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
-struct SharedDirInfo
+struct SharedDirInfo : RsSerializable
 {
 	static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)
 	{
@@ -122,10 +127,22 @@ struct SharedDirInfo
 		return it1 == l1.end() && it2 == l2.end() ;
 	}
 
-	std::string filename ;
-	std::string virtualname ;
-    FileStorageFlags shareflags ;		// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
-    std::list<RsNodeGroupId> parent_groups ;
+	std::string filename;
+	std::string virtualname;
+
+	/// combnation of DIR_FLAGS_ANONYMOUS_DOWNLOAD | DIR_FLAGS_BROWSABLE | ...
+	FileStorageFlags shareflags;
+	std::list<RsNodeGroupId> parent_groups;
+
+	/// @see RsSerializable::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(filename);
+		RS_SERIAL_PROCESS(virtualname);
+		RS_SERIAL_PROCESS(shareflags);
+		RS_SERIAL_PROCESS(parent_groups);
+	}
 };
 
 struct SharedDirStats
@@ -166,53 +183,192 @@ public:
 	uint64_t mTotalSize ;
 };
 
+struct BannedFileEntry : RsSerializable
+{
+	BannedFileEntry() : mFilename(""), mSize(0), mBanTimeStamp(0) {}
+
+	std::string mFilename;
+	uint64_t mSize;
+	rstime_t mBanTimeStamp;
+
+	/// @see RsSerializable::serial_process
+	virtual void serial_process(RsGenericSerializer::SerializeJob j,
+	                            RsGenericSerializer::SerializeContext& ctx)
+	{
+		RS_SERIAL_PROCESS(mFilename);
+		RS_SERIAL_PROCESS(mSize);
+		RS_SERIAL_PROCESS(mBanTimeStamp);
+	}
+};
+
 class RsFiles
 {
-	public:
+public:
+	RsFiles() {}
+	virtual ~RsFiles() {}
 
-		RsFiles() { return; }
-		virtual ~RsFiles() { return; }
+	/**
+	 * Provides file data for the gui, media streaming or rpc clients.
+	 * It may return unverified chunks. This allows streaming without having to
+	 * wait for hashes or completion of the file.
+	 * This function returns an unspecified amount of bytes. Either as much data
+	 * as available or a sensible maximum. Expect a block size of around 1MiB.
+	 * To get more data, call this function repeatedly with different offsets.
+	 *
+	 * @jsonapi{development,manualwrapper}
+	 * note the missing @ the wrapper for this is written manually not
+	 * autogenerated @see JsonApiServer.
+	 *
+	 * @param[in] hash hash of the file. The file has to be available on this node
+	 * 	or it has to be in downloading state.
+	 * @param[in] offset where the desired block starts
+	 * @param[inout] requested_size size of pre-allocated data. Will be updated
+	 * 	by the function.
+	 * @param data pre-allocated memory chunk of size 'requested_size' by the
+	 * 	client
+	 * @return Returns false in case
+	 * 	- the files is not available on the local node
+	 * 	- not downloading
+	 * 	- the requested data was not downloaded yet
+	 * 	- end of file was reached
+	 */
+	virtual bool getFileData( const RsFileHash& hash, uint64_t offset,
+	                          uint32_t& requested_size, uint8_t* data ) = 0;
 
-        /**
-         * Provides file data for the gui: media streaming or rpc clients.
-         * It may return unverified chunks. This allows streaming without having to wait for hashes or completion of the file.
-         * This function returns an unspecified amount of bytes. Either as much data as available or a sensible maximum. Expect a block size of around 1MiB.
-         * To get more data, call this function repeatedly with different offsets.
-         * Returns false in case
-         * - the files is not available on the local node
-         * - not downloading
-         * - the requested data was not downloaded yet
-         * - end of file was reached
-         * @param hash hash of a file. The file has to be available on this node or it has to be in downloading state.
-         * @param offset where the desired block starts
-     * @param requested_size size of pre-allocated data. Will be updated by the function.
-         * @param data pre-allocated memory chunk of size 'requested_size' by the client
-         */
-        virtual bool getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& requested_size,uint8_t *data)=0;
+	/**
+	 * @brief Check if we already have a file
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[out] info storage for the possibly found file information
+	 * @return true if the file is already present, false otherwise
+	 */
+	virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info) = 0;
 
-		/***
-		 *  Control of Downloads.
-		 ***/
+	/**
+	 * @brief Initiate downloading of a file
+	 * @jsonapi{development}
+	 * @param[in] fileName
+	 * @param[in] hash
+	 * @param[in] size
+	 * @param[in] destPath in not empty specify a destination path
+	 * @param[in] flags you usually want RS_FILE_REQ_ANONYMOUS_ROUTING
+	 * @param[in] srcIds eventually specify known sources
+	 * @return false if we already have the file, true otherwhise
+	 */
+	virtual bool FileRequest(
+	        const std::string& fileName, const RsFileHash& hash, uint64_t size,
+	        const std::string& destPath, TransferRequestFlags flags,
+	        const std::list<RsPeerId>& srcIds ) = 0;
 
-		virtual bool alreadyHaveFile(const RsFileHash& hash, FileInfo &info) = 0;
-		/// Returns false is we already have the file. Otherwise, initiates the dl and returns true.
-		virtual bool FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds) = 0;
-		virtual bool FileCancel(const RsFileHash& hash) = 0;
-		virtual bool setDestinationDirectory(const RsFileHash& hash,const std::string& new_path) = 0;
-		virtual bool setDestinationName(const RsFileHash& hash,const std::string& new_name) = 0;
-		virtual bool setChunkStrategy(const RsFileHash& hash,FileChunksInfo::ChunkStrategy) = 0;
-		virtual void setDefaultChunkStrategy(FileChunksInfo::ChunkStrategy) = 0;
-		virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;
-		virtual uint32_t freeDiskSpaceLimit() const =0;
-		virtual void setFreeDiskSpaceLimit(uint32_t size_in_mb) =0;
-		virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
-		virtual bool FileClearCompleted() = 0;
+	/**
+	 * @brief Cancel file downloading
+	 * @jsonapi{development}
+	 * @param[in] hash
+	 * @return false if the file is not in the download queue, true otherwhise
+	 */
+	virtual bool FileCancel(const RsFileHash& hash) = 0;
+
+	/**
+	 * @brief Set destination directory for given file
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] newPath
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool setDestinationDirectory(
+	        const RsFileHash& hash, const std::string& newPath ) = 0;
+
+	/**
+	 * @brief Set name for dowloaded file
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] newName
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool setDestinationName(
+	        const RsFileHash& hash, const std::string& newName ) = 0;
+
+	/**
+	 * @brief Set chunk strategy for file, useful to set streaming mode to be
+	 * able of see video or other media preview while it is still downloading
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] newStrategy
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool setChunkStrategy(
+	        const RsFileHash& hash,
+	        FileChunksInfo::ChunkStrategy newStrategy ) = 0;
+
+	/**
+	 * @brief Set default chunk strategy
+	 * @jsonapi{development}
+	 * @param[in] strategy
+	 */
+	virtual void setDefaultChunkStrategy(
+	        FileChunksInfo::ChunkStrategy strategy ) = 0;
+
+	/**
+	 * @brief Get default chunk strategy
+	 * @jsonapi{development}
+	 * @return current default chunck strategy
+	 */
+	virtual FileChunksInfo::ChunkStrategy defaultChunkStrategy() = 0;
+
+	/**
+	 * @brief Get free disk space limit
+	 * @jsonapi{development}
+	 * @return current minimum free space on disk in MB
+	 */
+	virtual uint32_t freeDiskSpaceLimit() const = 0;
+
+	/**
+	 * @brief Set minimum free disk space limit
+	 * @jsonapi{development}
+	 * @param[in] minimumFreeMB minimum free space in MB
+	 */
+	virtual void setFreeDiskSpaceLimit(uint32_t minimumFreeMB) = 0;
+
+	/**
+	 * @brief Controls file transfer
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] flags action to perform. Pict into { RS_FILE_CTRL_PAUSE, RS_FILE_CTRL_START, RS_FILE_CTRL_FORCE_CHECK } }
+	 * @return false if error occured such as unknown hash.
+	 */
+	virtual bool FileControl(const RsFileHash& hash, uint32_t flags) = 0;
+
+	/**
+	 * @brief Clear completed downloaded files list
+	 * @jsonapi{development}
+	 * @return false on error, true otherwise
+	 */
+	virtual bool FileClearCompleted() = 0;
+
 		virtual void setDefaultEncryptionPolicy(uint32_t policy)=0;	// RS_FILE_CTRL_ENCRYPTION_POLICY_STRICT/PERMISSIVE
 		virtual uint32_t defaultEncryptionPolicy()=0;
 		virtual void setMaxUploadSlotsPerFriend(uint32_t n)=0;
 		virtual uint32_t getMaxUploadSlotsPerFriend()=0;
 		virtual void setFilePermDirectDL(uint32_t perm)=0;
 		virtual uint32_t filePermDirectDL()=0;
+
+	/**
+	 * @brief Request remote files search
+	 * @jsonapi{development}
+	 * @param[in] matchString string to look for in the search
+	 * @param multiCallback function that will be called each time a search
+	 * result is received
+	 * @param[in] maxWait maximum wait time in seconds for search results
+	 * @return false on error, true otherwise
+	 */
+	virtual bool turtleSearchRequest(
+	        const std::string& matchString,
+	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        rstime_t maxWait = 300 ) = 0;
+
+	virtual TurtleRequestId turtleSearch(const std::string& string_to_match) = 0;
+	virtual TurtleRequestId turtleSearch(
+	        const RsRegularExpression::LinearizedExpression& expr) = 0;
 
 		/***
 		 * Control of Downloads Priority.
@@ -223,38 +379,92 @@ class RsFiles
 		virtual bool changeDownloadSpeed(const RsFileHash& hash, int speed) = 0;
 		virtual bool getDownloadSpeed(const RsFileHash& hash, int & speed) = 0;
 		virtual bool clearDownload(const RsFileHash& hash) = 0;
-//		virtual void getDwlDetails(std::list<DwlDetails> & details) = 0;
 
-		/***
-		 * Download / Upload Details.
-		 ***/
-        virtual void FileDownloads(std::list<RsFileHash> &hashs) = 0;
-		virtual bool FileUploads(std::list<RsFileHash> &hashs) = 0;
-		virtual bool FileDetails(const RsFileHash &hash, FileSearchFlags hintflags, FileInfo &info) = 0;
+	/**
+	 * @brief Get incoming files list
+	 * @jsonapi{development}
+	 * @param[out] hashs storage for files identifiers list
+	 */
+	virtual void FileDownloads(std::list<RsFileHash>& hashs) = 0;
+
+	/**
+	 * @brief Get outgoing files list
+	 * @jsonapi{development}
+	 * @param[out] hashs storage for files identifiers list
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool FileUploads(std::list<RsFileHash>& hashs) = 0;
+
+	/**
+	 * @brief Get file details
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] hintflags filtering hint (RS_FILE_HINTS_EXTRA|...|RS_FILE_HINTS_LOCAL)
+	 * @param[out] info storage for file information
+	 * @return true if file found, false otherwise
+	 */
+	virtual bool FileDetails(
+	        const RsFileHash& hash, FileSearchFlags hintflags, FileInfo& info ) = 0;
+
         virtual bool isEncryptedSource(const RsPeerId& virtual_peer_id) =0;
 
-		/// Gives chunk details about the downloaded file with given hash.
-		virtual bool FileDownloadChunksDetails(const RsFileHash& hash,FileChunksInfo& info) = 0 ;
+	/**
+	 * @brief Get chunk details about the downloaded file with given hash.
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[out] info storage for file information
+	 * @return true if file found, false otherwise
+	 */
+	virtual bool FileDownloadChunksDetails(
+	        const RsFileHash& hash, FileChunksInfo& info) = 0;
 
-		/// details about the upload with given hash
-		virtual bool FileUploadChunksDetails(const RsFileHash& hash,const RsPeerId& peer_id,CompressedChunkMap& map) = 0 ;
+	/**
+	 * @brief Get details about the upload with given hash
+	 * @jsonapi{development}
+	 * @param[in] hash file identifier
+	 * @param[in] peer_id peer identifier
+	 * @param[out] map storage for chunk info
+	 * @return true if file found, false otherwise
+	 */
+	virtual bool FileUploadChunksDetails(
+	        const RsFileHash& hash, const RsPeerId& peer_id,
+	        CompressedChunkMap& map ) = 0;
 
 		/***
 		 * Extra List Access
 		 ***/
 		//virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags) = 0;
-		virtual bool ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags) = 0;
+		virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
 		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags) = 0;
 		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
 		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath) = 0;
 
+	/**
+	 * @brief Request directory details, subsequent multiple call may be used to
+	 * explore a whole directory tree.
+	 * @jsonapi{development}
+	 * @param[out] details Storage for directory details
+	 * @param[in] handle element handle 0 for root, pass the content of
+	 *	DirDetails::child[x].ref after first call to explore deeper, be aware
+	 *	that is not a real pointer but an index used internally by RetroShare.
+	 * @param[in] flags file search flags RS_FILE_HINTS_*
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool requestDirDetails(
+	        DirDetails &details, std::uintptr_t handle = 0,
+	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL ) = 0;
 
+	/***
+	 * Directory Listing / Search Interface
+	 */
+	/**
+	 * Kept for retrocompatibility, it was originally written for easier
+	 * interaction with Qt. As soon as you can, you should prefer to use the
+	 * version of this methodn which take `std::uintptr_t handle` as paramether.
+	 */
+	virtual int RequestDirDetails(
+	        void* handle, DirDetails& details, FileSearchFlags flags ) = 0;
 
-		/***
-		 * Directory Listing / Search Interface
-		 */
-		virtual int RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details) = 0;
-		virtual int RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags) = 0;
         virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) =0;
         virtual uint32_t getType(void *ref,FileSearchFlags flags) = 0;
 
@@ -264,12 +474,54 @@ class RsFiles
         virtual int SearchBoolExp(RsRegularExpression::Expression * exp, std::list<DirDetails> &results,FileSearchFlags flags,const RsPeerId& peer_id) = 0;
 		virtual int getSharedDirStatistics(const RsPeerId& pid, SharedDirStats& stats) =0;
 
+	/**
+	 * @brief Ban unwanted file from being, searched and forwarded by this node
+	 * @jsonapi{development}
+	 * @param[in] realFileHash this is what will really enforce banning
+	 * @param[in] filename expected name of the file, for the user to read
+	 * @param[in] fileSize expected file size, for the user to read
+	 * @return meaningless value
+	 */
+	virtual int banFile( const RsFileHash& realFileHash,
+	                     const std::string& filename, uint64_t fileSize ) = 0;
+
+	/**
+	 * @brief Remove file from unwanted list
+	 * @jsonapi{development}
+	 * @param[in] realFileHash hash of the file
+	 * @return meaningless value
+	 */
+	virtual int unbanFile(const RsFileHash& realFileHash) = 0;
+
+	/**
+	 * @brief Get list of banned files
+	 * @jsonapi{development}
+	 * @param[out] bannedFiles storage for banned files information
+	 * @return meaningless value
+	 */
+	virtual bool getPrimaryBannedFilesList(
+	        std::map<RsFileHash,BannedFileEntry>& bannedFiles ) = 0;
+
+	/**
+	 * @brief Check if a file is on banned list
+	 * @jsonapi{development}
+	 * @param[in] hash hash of the file
+	 * @return true if the hash is on the list, false otherwise
+	 */
+	virtual bool isHashBanned(const RsFileHash& hash) = 0;
+
 		/***
 		 * Utility Functions.
 		 ***/
 		virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath) = 0;
-		virtual void ForceDirectoryCheck() = 0;
-		virtual void updateSinceGroupPermissionsChanged() = 0;
+
+	/**
+	 * @brief Force shared directories check
+	 * @jsonapi{development}
+	 */
+	virtual void ForceDirectoryCheck() = 0;
+
+	virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;
 		virtual bool copyFile(const std::string& source,const std::string& dest) = 0;
 
@@ -278,16 +530,76 @@ class RsFiles
 		 ***/
         virtual void requestDirUpdate(void *ref) =0 ;			// triggers the update of the given reference. Used when browsing.
 
-		virtual void    setDownloadDirectory(std::string path) = 0;
-		virtual void    setPartialsDirectory(std::string path) = 0;
-		virtual std::string getDownloadDirectory() = 0;
-		virtual std::string getPartialsDirectory() = 0;
+	/**
+	 * @brief Set default complete downloads directory
+	 * @jsonapi{development}
+	 * @param[in] path directory path
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool setDownloadDirectory(const std::string& path) = 0;
 
-        virtual bool    getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
-        virtual bool    setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
-        virtual bool    addSharedDirectory(const SharedDirInfo& dir) = 0;
-		virtual bool    updateShareFlags(const SharedDirInfo& dir) = 0;	// updates the flags. The directory should already exist !
-		virtual bool    removeSharedDirectory(std::string dir) = 0;
+	/**
+	 * @brief Set partial downloads directory
+	 * @jsonapi{development}
+	 * @param[in] path directory path
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool setPartialsDirectory(const std::string& path) = 0;
+
+	/**
+	 * @brief Get default complete downloads directory
+	 * @jsonapi{development}
+	 * @return default completed downloads directory path
+	 */
+	virtual std::string getDownloadDirectory() = 0;
+
+	/**
+	 * @brief Get partial downloads directory
+	 * @jsonapi{development}
+	 * @return partials downloads directory path
+	 */
+	virtual std::string getPartialsDirectory() = 0;
+
+	/**
+	 * @brief Get list of current shared directories
+	 * @jsonapi{development}
+	 * @param[out] dirs storage for the list of share directories
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getSharedDirectories(std::list<SharedDirInfo>& dirs) = 0;
+
+	/**
+	 * @brief Set shared directories
+	 * @jsonapi{development}
+	 * @param[in] dirs list of shared directories with share options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool setSharedDirectories(const std::list<SharedDirInfo>& dirs) = 0;
+
+	/**
+	 * @brief Add shared directory
+	 * @jsonapi{development}
+	 * @param[in] dir directory to share with sharing options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool addSharedDirectory(const SharedDirInfo& dir) = 0;
+
+	/**
+	 * @brief Updates shared directory sharing flags.
+	 * The directory should be already shared!
+	 * @jsonapi{development}
+	 * @param[in] dir Shared directory with updated sharing options
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool updateShareFlags(const SharedDirInfo& dir) = 0;
+
+	/**
+	 * @brief Remove directory from shared list
+	 * @jsonapi{development}
+	 * @param[in] dir Path of the directory to remove from shared list
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool removeSharedDirectory(std::string dir) = 0;
 
 		virtual bool getIgnoreLists(std::list<std::string>& ignored_prefixes, std::list<std::string>& ignored_suffixes,uint32_t& flags) =0;
 		virtual void setIgnoreLists(const std::list<std::string>& ignored_prefixes, const std::list<std::string>& ignored_suffixes,uint32_t flags) =0;
@@ -309,8 +621,4 @@ class RsFiles
 
 		virtual bool	ignoreDuplicates() = 0;
 		virtual void 	setIgnoreDuplicates(bool ignore) = 0;
-
 };
-
-
-#endif

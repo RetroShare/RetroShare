@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * libretroshare/src/ft: ftchunkmap.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2010 by Cyril Soler <csoler@users.sourceforge.net>                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
+
 #pragma once
 
 #include <map>
@@ -41,7 +63,7 @@ class ftChunk
 		uint64_t offset;	// current offset of the slice
 		uint64_t size;		// size remaining to download
 		OffsetInFile  id ;		// id of the chunk. Equal to the starting offset of the chunk
-		time_t   ts;		// time of last data received
+		rstime_t   ts;		// time of last data received
 		int	  *ref_cnt; // shared counter of number of sub-blocks. Used when a slice gets split.
 		RsPeerId peer_id ;
 };
@@ -76,20 +98,20 @@ struct ChunkDownloadInfo
 		struct SliceRequestInfo
 		{
 			uint32_t           size ;              // size of the slice
-			time_t             request_time ;      // last request time
+			rstime_t             request_time ;      // last request time
 			std::set<RsPeerId> peers ;             // peers the slice was requested to. Normally only one, except at the end of the file.
 		};
 
 		std::map<ftChunk::OffsetInFile,SliceRequestInfo> _slices ;
 		uint32_t _remains ;
-		time_t _last_data_received ;
+		rstime_t _last_data_received ;
 };
 
 class SourceChunksInfo
 {
 	public:
 		CompressedChunkMap cmap ;	//! map of what the peer has/doens't have
-		time_t TS ;						//! last update time for this info
+		rstime_t TS ;						//! last update time for this info
 		bool is_full ;					//! is the map full ? In such a case, re-asking for it is unnecessary.
 
 		// Returns true if the offset is starting in a mapped chunk.

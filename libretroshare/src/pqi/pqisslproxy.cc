@@ -1,30 +1,24 @@
-/*
- * pqisslproxy.cc
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqisslproxy.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2013 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqisslproxy.h"
 #include "pqi/pqinetwork.h"
 
@@ -42,6 +36,7 @@ static struct RsLog::logInfo pqisslproxyzoneInfo = {RsLog::Default, "pqisslproxy
 #define pqisslproxyzone &pqisslproxyzoneInfo
 
 // #define PROXY_DEBUG	1
+// #define PROXY_DEBUG_LOG	1
 
 #define PROXY_STATE_FAILED			0
 #define PROXY_STATE_INIT			1
@@ -593,8 +588,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, const std::string &value)
 	        {
 	                std::string out;
 	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s DOMAIN_ADDRESS: %s", PeerId().toStdString().c_str(), value.c_str());
+#ifdef PROXY_DEBUG_LOG
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
-	
+#endif
 	                mDomainAddress = value;
 #ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;
@@ -615,8 +611,9 @@ bool pqisslproxy::connect_parameter(uint32_t type, uint32_t value)
 	        {
 	                std::string out;
 	                rs_sprintf(out, "pqisslproxy::connect_parameter() Peer: %s REMOTE_PORT: %lu", PeerId().toStdString().c_str(), value);
+#ifdef PROXY_DEBUG_LOG
 	                rslog(RSL_WARNING, pqisslproxyzone, out);
-	
+#endif
 	        	mRemotePort = value;
 #ifdef PROXY_DEBUG
 	                std::cerr << out << std::endl;

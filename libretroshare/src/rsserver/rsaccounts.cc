@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/rsserver/rsaccounts.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2013-2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/rsserver: rsaccounts.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2013-2014 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*********************************************************************
  * Libretroshare interface declared in rsaccounts.h.
@@ -53,7 +49,7 @@
 #include <openssl/ssl.h>
 
 // Global singleton declaration of data.
-RsAccountsDetail *rsAccounts;
+RsAccountsDetail* RsAccounts::rsAccountsDetails = nullptr;
 
 /* Uses private class - so must be hidden */
 static bool checkAccount(const std::string &accountdir, AccountDetails &account,std::map<std::string,std::vector<std::string> >& unsupported_keys);
@@ -71,11 +67,8 @@ RsAccountsDetail::RsAccountsDetail() : mAccountsLocked(false), mPreferredId("")
 bool RsAccountsDetail::loadAccounts()
 {
 	int failing_accounts ;
-#ifdef RETROTOR
-	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,true);
-#else
+#warning we might need some switch here for hidden nodes only
 	getAvailableAccounts(mAccounts,failing_accounts,mUnsupportedKeys,false);
-#endif
 
 	loadPreferredAccount();
 	checkPreferredId();
@@ -109,7 +102,7 @@ bool RsAccountsDetail::checkAccountDirectory()
 		return false;
 	}
 
-	return setupAccount(PathAccountDirectory());
+	return setupAccount(getCurrentAccountPathAccountDirectory());
 }
 
 #warning we need to clean that up. Login should only ask for a SSL id, instead of a std::string.
@@ -223,7 +216,7 @@ std::string RsAccountsDetail::PathBaseDirectory()
 }
 
 
-std::string RsAccountsDetail::PathAccountDirectory()
+std::string RsAccountsDetail::getCurrentAccountPathAccountDirectory()
 {
 	std::string path;
 
@@ -239,9 +232,9 @@ std::string RsAccountsDetail::PathAccountDirectory()
 	return path;
 }
 
-std::string RsAccountsDetail::PathAccountKeysDirectory()
+std::string RsAccountsDetail::getCurrentAccountPathAccountKeysDirectory()
 {
-	std::string path = PathAccountDirectory();
+	std::string path = getCurrentAccountPathAccountDirectory();
 	if (path.empty())
 	{
 		return path;	
@@ -251,9 +244,9 @@ std::string RsAccountsDetail::PathAccountKeysDirectory()
 	return path;
 }
 
-std::string RsAccountsDetail::PathKeyFile()
+std::string RsAccountsDetail::getCurrentAccountPathKeyFile()
 {
-	std::string path = PathAccountKeysDirectory();
+	std::string path = getCurrentAccountPathAccountKeysDirectory();
 	if (path.empty())
 	{
 		return path;	
@@ -263,9 +256,9 @@ std::string RsAccountsDetail::PathKeyFile()
 	return path;
 }
 
-std::string RsAccountsDetail::PathCertFile()
+std::string RsAccountsDetail::getCurrentAccountPathCertFile()
 {
-	std::string path = PathAccountKeysDirectory();
+	std::string path = getCurrentAccountPathAccountKeysDirectory();
 	if (path.empty())
 	{
         return path;
@@ -274,7 +267,7 @@ std::string RsAccountsDetail::PathCertFile()
 	return path;
 }
 
-std::string RsAccountsDetail::LocationName()
+std::string RsAccountsDetail::getCurrentAccountLocationName()
 {
     std::map<RsPeerId, AccountDetails>::const_iterator it;
     it = mAccounts.find(mPreferredId);
@@ -454,7 +447,7 @@ bool	RsAccountsDetail::storePreferredAccount()
  *
  */
 
-bool     RsAccountsDetail::getPreferredAccountId(RsPeerId &id)
+bool     RsAccountsDetail::getCurrentAccountId(RsPeerId &id)
 {
 	id = mPreferredId;
 	return (!mPreferredId.isNull());
@@ -483,7 +476,7 @@ bool     RsAccountsDetail::getAccountIds(std::list<RsPeerId> &ids)
 }
 
 
-bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
+bool     RsAccountsDetail::getCurrentAccountDetails(const RsPeerId &id,
                                 RsPgpId &gpgId, std::string &gpgName, 
                                 std::string &gpgEmail, std::string &location)
 {
@@ -500,14 +493,16 @@ bool     RsAccountsDetail::getAccountDetails(const RsPeerId &id,
 	return false;
 }
 
-bool RsAccountsDetail::getAccountOptions(bool &ishidden, bool &isFirstTimeRun)
+bool RsAccountsDetail::getCurrentAccountOptions(bool &ishidden,bool& isautotor, bool &isFirstTimeRun)
 {
 	std::map<RsPeerId, AccountDetails>::iterator it;
 	it = mAccounts.find(mPreferredId);
 	if (it != mAccounts.end())
 	{
-		ishidden = it->second.mIsHiddenLoc;
+		ishidden       = it->second.mIsHiddenLoc;
 		isFirstTimeRun = it->second.mFirstRun;
+        isautotor      = it->second.mIsAutoTor;
+
 		return true;
 	}
 	return false;
@@ -602,7 +597,9 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 		std::string lochex = (*it).substr(6);  // rest of string.
 
 		bool hidden_location = false;
+		bool auto_tor = false;
 		bool valid_prefix = false;
+
 		if (prefix == "LOC06_")
 		{
 			valid_prefix = true;
@@ -611,6 +608,8 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 		{
 			valid_prefix = true;
 			hidden_location = true;
+
+            auto_tor = RsDirUtil::checkDirectory(mBaseDirectory+"/"+*it+"/hidden_service");
 		}
 		else
 		{
@@ -630,7 +629,9 @@ bool RsAccountsDetail::getAvailableAccounts(std::map<RsPeerId, AccountDetails> &
 
 			AccountDetails tmpId;
 			tmpId.mIsHiddenLoc = hidden_location;
+			tmpId.mIsAutoTor = auto_tor;
 			tmpId.mAccountDir = *it;
+
 			if (checkAccount(accountdir, tmpId,unsupported_keys))
 			{
 #ifdef GPG_DEBUG
@@ -696,7 +697,7 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 		std::cerr << "issuerName: " << account.mPgpId << " id: " << account.mSslId << std::endl;
 #endif
 
-		if(! rsAccounts->GetPGPLoginDetails(account.mPgpId, account.mPgpName, account.mPgpEmail))
+		if(! RsAccounts::GetPGPLoginDetails(account.mPgpId, account.mPgpName, account.mPgpEmail))
 			return false ;
 
 		if(!AuthGPG::getAuthGPG()->haveSecretKey(account.mPgpId))
@@ -810,7 +811,7 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 	/* Use RetroShare's exe dir */
 	dataDirectory = ".";
 #elif defined(ANDROID)
-	dataDirectory = defaultBaseDirectory()+"/usr/share/retroshare";
+	dataDirectory = PathBaseDirectory()+"/usr/share/retroshare";
 #elif defined(DATA_DIR)
 	// cppcheck-suppress ConfigurationNotChecked
 	dataDirectory = DATA_DIR;
@@ -929,6 +930,14 @@ bool RsAccountsDetail::importIdentityFromString(const std::string &data, RsPgpId
     return AuthGPG::getAuthGPG()->importProfileFromString(data, imported_pgp_id, import_error);
 }
 
+bool RsAccountsDetail::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, bool includeSignatures,
+        std::string& errorMsg )
+{
+	return AuthGPG::getAuthGPG()->exportIdentityToString(
+	            data, pgpId, includeSignatures, errorMsg );
+}
+
 bool RsAccountsDetail::copyGnuPGKeyrings()
 {
 	std::string pgp_dir = PathPGPDirectory() ;
@@ -987,7 +996,7 @@ bool RsAccountsDetail::copyGnuPGKeyrings()
 
 
                 /* Create SSL Certificates */
-bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, bool ishiddenloc,bool isautotor, const std::string& passwd, RsPeerId &sslId, std::string &errString)
 {
 	/* select the PGP Identity first */
 	if (!SelectPGPAccount(pgp_id))
@@ -1140,6 +1149,7 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 
 	newAccount.mLocation = loc;
 	newAccount.mIsHiddenLoc = ishiddenloc;
+	newAccount.mIsAutoTor = isautotor;
 
 	newAccount.mFirstRun = true;
 
@@ -1263,80 +1273,169 @@ bool     RsInit::LoadPassword(const std::string& id, const std::string& inPwd)
  * PUBLIC INTERFACE FUNCTIONS 
  ********************************************************************************/
 
+bool RsAccounts::init(const std::string& opt_base_dir,int& error_code)
+{
+	rsAccountsDetails = new RsAccountsDetail;
+	rsAccounts = new RsAccounts;
+
+	// first check config directories, and set bootstrap values.
+	if(!rsAccountsDetails->setupBaseDirectory(opt_base_dir))
+    {
+		error_code = RS_INIT_BASE_DIR_ERROR ;
+        return false ;
+    }
+
+	// Setup PGP stuff.
+	std::string pgp_dir = rsAccountsDetails->PathPGPDirectory();
+
+	if(!RsDirUtil::checkCreateDirectory(pgp_dir))
+		throw std::runtime_error("Cannot create pgp directory " + pgp_dir) ;
+
+	AuthGPG::init(	pgp_dir + "/retroshare_public_keyring.gpg",
+	                pgp_dir + "/retroshare_secret_keyring.gpg",
+	                pgp_dir + "/retroshare_trustdb.gpg",
+	                pgp_dir + "/lock");
+
+	// load Accounts.
+	if (!rsAccountsDetails->loadAccounts())
+    {
+		error_code = RS_INIT_NO_KEYRING ;
+        return false ;
+    }
+    return true;
+}
+
         // Directories.
 std::string RsAccounts::ConfigDirectory() { return RsAccountsDetail::PathBaseDirectory(); }
-std::string RsAccounts::DataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
-std::string RsAccounts::PGPDirectory() { return rsAccounts->PathPGPDirectory(); }
-std::string RsAccounts::AccountDirectory() { return rsAccounts->PathAccountDirectory(); }
+std::string RsAccounts::systemDataDirectory(bool check) { return RsAccountsDetail::PathDataDirectory(check); }
+std::string RsAccounts::PGPDirectory() { return rsAccountsDetails->PathPGPDirectory(); }
+std::string RsAccounts::AccountDirectory() { return rsAccountsDetails->getCurrentAccountPathAccountDirectory(); }
+std::string RsAccounts::AccountKeysDirectory() { return rsAccountsDetails->getCurrentAccountPathAccountKeysDirectory(); }
+std::string RsAccounts::AccountPathCertFile() { return rsAccountsDetails->getCurrentAccountPathCertFile(); }
+std::string RsAccounts::AccountPathKeyFile() { return rsAccountsDetails->getCurrentAccountPathKeyFile(); }
+std::string RsAccounts::AccountLocationName() { return rsAccountsDetails->getCurrentAccountLocationName(); }
+
+bool RsAccounts::lockPreferredAccount()  { return rsAccountsDetails->lockPreferredAccount();}	// are these methods any useful??
+void RsAccounts::unlockPreferredAccount() { rsAccountsDetails->unlockPreferredAccount(); }
+
+bool RsAccounts::checkCreateAccountDirectory() { return rsAccountsDetails->checkAccountDirectory(); }
 
 // PGP Accounts.
 int     RsAccounts::GetPGPLogins(std::list<RsPgpId> &pgpIds)
 {
-	return rsAccounts->GetPGPLogins(pgpIds);
+	return rsAccountsDetails->GetPGPLogins(pgpIds);
 }
 
 int     RsAccounts::GetPGPLoginDetails(const RsPgpId& id, std::string &name, std::string &email)
 {
-	return rsAccounts->GetPGPLoginDetails(id, name, email);
+	return rsAccountsDetails->GetPGPLoginDetails(id, name, email);
 }
 
 bool    RsAccounts::GeneratePGPCertificate(const std::string &name, const std::string& email, const std::string& passwd, RsPgpId &pgpId, const int keynumbits, std::string &errString)
 {
-	return rsAccounts->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
+	return rsAccountsDetails->GeneratePGPCertificate(name, email, passwd, pgpId, keynumbits, errString);
 }
 
 // PGP Support Functions.
 bool    RsAccounts::ExportIdentity(const std::string& fname,const RsPgpId& pgp_id)
 {
-	return rsAccounts->exportIdentity(fname,pgp_id);
+	return rsAccountsDetails->exportIdentity(fname,pgp_id);
 }
 
 bool    RsAccounts::ImportIdentity(const std::string& fname,RsPgpId& imported_pgp_id,std::string& import_error)
 {
-	return rsAccounts->importIdentity(fname,imported_pgp_id,import_error);
+	return rsAccountsDetails->importIdentity(fname,imported_pgp_id,import_error);
 }
 
-bool    RsAccounts::ImportIdentityFromString(const std::string& data,RsPgpId& imported_pgp_id,std::string& import_error)
+bool RsAccounts::importIdentityFromString(
+        const std::string& data, RsPgpId& imported_pgp_id,
+        std::string& import_error )
 {
-    return rsAccounts->importIdentityFromString(data,imported_pgp_id,import_error);
+	return rsAccountsDetails->
+	        importIdentityFromString(data, imported_pgp_id, import_error);
+}
+
+/*static*/ bool RsAccounts::exportIdentityToString(
+        std::string& data, const RsPgpId& pgpId, std::string& errorMsg,
+        bool includeSignatures )
+{
+	return rsAccountsDetails->exportIdentityToString(
+	            data, pgpId, includeSignatures, errorMsg);
 }
 
 void    RsAccounts::GetUnsupportedKeys(std::map<std::string,std::vector<std::string> > &unsupported_keys)
 {
-	return rsAccounts->getUnsupportedKeys(unsupported_keys);
+	return rsAccountsDetails->getUnsupportedKeys(unsupported_keys);
 }
 
 bool    RsAccounts::CopyGnuPGKeyrings() 
 {
-	return rsAccounts->copyGnuPGKeyrings();
+	return rsAccountsDetails->copyGnuPGKeyrings();
 }
 
+void RsAccounts::storeSelectedAccount() { rsAccountsDetails->storePreferredAccount() ;}
 // Rs Accounts
 bool    RsAccounts::SelectAccount(const RsPeerId &id)
 {
-	return rsAccounts->selectId(id);
+	return rsAccountsDetails->selectId(id);
 }
 
 bool    RsAccounts::GetPreferredAccountId(RsPeerId &id)
 {
-	return rsAccounts->getPreferredAccountId(id);
+	return rsAccountsDetails->getCurrentAccountId(id);
+}
+
+bool RsAccounts::getCurrentAccountOptions(bool& is_hidden,bool& is_tor_auto,bool& is_first_time)
+{
+    return rsAccountsDetails->getCurrentAccountOptions(is_hidden,is_tor_auto,is_first_time);
+}
+bool RsAccounts::isHiddenNode()
+{
+    bool hidden = false ;
+    bool is_tor_only = false ;
+    bool is_first_time = false ;
+
+    if(!getCurrentAccountOptions(hidden,is_tor_only,is_first_time))
+    {
+        std::cerr << "(EE) Critical problem: RsAccounts::getCurrentAccountOptions() called but no account chosen!" << std::endl;
+        throw std::runtime_error("inconsistent configuration") ;
+    }
+
+    return hidden ;
+}
+bool RsAccounts::isTorAuto()
+{
+    bool hidden = false ;
+    bool is_tor_only = false ;
+    bool is_first_time = false ;
+
+    if(!getCurrentAccountOptions(hidden,is_tor_only,is_first_time))
+    {
+        std::cerr << "(EE) Critical problem: RsAccounts::getCurrentAccountOptions() called but no account chosen!" << std::endl;
+        throw std::runtime_error("inconsistent configuration") ;
+    }
+
+    return is_tor_only ;
 }
 
 bool    RsAccounts::GetAccountIds(std::list<RsPeerId> &ids)
 {
-	return rsAccounts->getAccountIds(ids);
+	return rsAccountsDetails->getAccountIds(ids);
 }
 
 bool    RsAccounts::GetAccountDetails(const RsPeerId &id,
 		RsPgpId &pgpId, std::string &pgpName,
 		std::string &pgpEmail, std::string &location)
 {
-	return rsAccounts->getAccountDetails(id, pgpId, pgpName, pgpEmail, location);
+	return rsAccountsDetails->getCurrentAccountDetails(id, pgpId, pgpName, pgpEmail, location);
 }
 
-bool    RsAccounts::GenerateSSLCertificate(const RsPgpId& pgp_id, const std::string& org, const std::string& loc, const std::string& country, const bool ishiddenloc, const std::string& passwd, RsPeerId &sslId, std::string &errString)
+bool RsAccounts::createNewAccount(
+        const RsPgpId& pgp_id, const std::string& org, const std::string& loc,
+        const std::string& country, bool ishiddenloc, bool isautotor,
+        const std::string& passwd, RsPeerId &sslId, std::string &errString )
 {
-	return rsAccounts->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, passwd, sslId, errString);
+	return rsAccountsDetails->GenerateSSLCertificate(pgp_id, org, loc, country, ishiddenloc, isautotor, passwd, sslId, errString);
 }
 
 /*********************************************************************************

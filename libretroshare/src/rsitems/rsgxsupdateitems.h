@@ -1,45 +1,33 @@
+/*******************************************************************************
+ * libretroshare/src/rsitems: rsgxsupdateitems.h                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012 Christopher Evi-Parker                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSUPDATEITEMS_H_
 #define RSGXSUPDATEITEMS_H_
 
-/*
- * libretroshare/src/serialiser: rsgxsupdateitems.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2012 Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
-#if 0
-#include <map>
-#include "rsitems/rsserviceids.h"
-#include "serialiser/rsserial.h"
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvkeys.h"
-#endif
-
 #include "gxs/rsgxs.h"
 #include "gxs/rsgxsdata.h"
+#include "gxs/rsgxsnettunnel.h"
 #include "serialiser/rstlvidset.h"
+#include "serialiser/rstypeserializer.h"
+#include "serialiser/rsserializable.h"
 
 
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_UPDATE             = 0x01;
@@ -48,6 +36,7 @@ const uint8_t RS_PKT_SUBTYPE_GXS_MSG_UPDATE             = 0x03;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_GRP_UPDATE      = 0x04;
 const uint8_t RS_PKT_SUBTYPE_GXS_SERVER_MSG_UPDATE      = 0x08;
 const uint8_t RS_PKT_SUBTYPE_GXS_GRP_CONFIG             = 0x09;
+const uint8_t RS_PKT_SUBTYPE_GXS_RANDOM_BIAS            = 0x0a;
 
 class RsGxsNetServiceItem: public RsItem
 {
@@ -78,8 +67,8 @@ public:
 
 	RsTlvPeerIdSet suppliers;		// list of friends who feed this group
 	uint32_t max_visible_count ;	// max visible count reported by contributing friends
-	time_t statistics_update_TS ;	// last time the max visible count was updated.
-	time_t last_group_modification_TS ;	// last time the group was modified, either in meta data or in the list of messages posted in it.
+	rstime_t statistics_update_TS ;	// last time the max visible count was updated.
+	rstime_t last_group_modification_TS ;	// last time the group was modified, either in meta data or in the list of messages posted in it.
 };
 
 class RsGxsGrpConfigItem : public RsGxsNetServiceItem, public RsGxsGrpConfig
@@ -140,16 +129,25 @@ public:
 class RsGxsMsgUpdate
 {
 public:
-    struct MsgUpdateInfo
+	struct MsgUpdateInfo : RsSerializable
     {
         MsgUpdateInfo(): time_stamp(0), message_count(0) {}
 
         uint32_t time_stamp ;
         uint32_t message_count ;
+
+		/// @see RsSerializable
+		void serial_process(RsGenericSerializer::SerializeJob j,
+		                    RsGenericSerializer::SerializeContext& ctx)
+		{
+			RS_SERIAL_PROCESS(time_stamp);
+			RS_SERIAL_PROCESS(message_count);
+		}
     };
 
     std::map<RsGxsGroupId, MsgUpdateInfo> msgUpdateInfos;
 };
+
 
 class RsGxsMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsMsgUpdate
 {
@@ -185,7 +183,6 @@ public:
 
 	RsGxsGroupId grpId;
 };
-
 
 class RsGxsUpdateSerialiser : public RsServiceSerializer
 {

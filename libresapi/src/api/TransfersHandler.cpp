@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/TransfersHandler.cpp                                          *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "TransfersHandler.h"
 #include "Operators.h"
 #include <algorithm>
@@ -15,6 +36,14 @@ TransfersHandler::TransfersHandler(StateTokenServer *sts, RsFiles *files, RsPeer
 	addResourceHandler("downloads", this, &TransfersHandler::handleDownloads);
 	addResourceHandler("uploads", this, &TransfersHandler::handleUploads);
 	addResourceHandler("control_download", this, &TransfersHandler::handleControlDownload);
+
+	addResourceHandler( "set_file_destination_directory", this,
+	                    &TransfersHandler::handleSetFileDestinationDirectory );
+	addResourceHandler( "set_file_destination_name", this,
+	                    &TransfersHandler::handleSetFileDestinationName );
+	addResourceHandler( "set_file_chunk_strategy", this,
+	                    &TransfersHandler::handleSetFileChunkStrategy );
+
 	mStateToken = mStateTokenServer->getNewToken();
 	mStateTokenServer->registerTickClient(this);
 	mNotify.registerNotifyClient(this);
@@ -286,6 +315,60 @@ void TransfersHandler::handleUploads(Request & /* req */, Response &resp)
 		}
 	}
 	resp.setOk();
+}
+
+void TransfersHandler::handleSetFileDestinationDirectory( Request& req,
+                                                          Response& resp )
+{
+	mStateTokenServer->replaceToken(mStateToken);
+
+	std::string hashString;
+	std::string newPath;
+	req.mStream << makeKeyValueReference("path", newPath);
+	req.mStream << makeKeyValueReference("hash", hashString);
+	RsFileHash hash(hashString);
+
+	if (mFiles->setDestinationDirectory(hash, newPath)) resp.setOk();
+	else resp.setFail();
+}
+
+void TransfersHandler::handleSetFileDestinationName( Request& req,
+                                                     Response& resp )
+{
+	mStateTokenServer->replaceToken(mStateToken);
+
+	std::string hashString;
+	std::string newName;
+	req.mStream << makeKeyValueReference("name", newName);
+	req.mStream << makeKeyValueReference("hash", hashString);
+	RsFileHash hash(hashString);
+
+	if (mFiles->setDestinationName(hash, newName)) resp.setOk();
+	else resp.setFail();
+}
+
+void TransfersHandler::handleSetFileChunkStrategy(Request& req, Response& resp)
+{
+	mStateTokenServer->replaceToken(mStateToken);
+
+	std::string hashString;
+	std::string newChunkStrategyStr;
+	req.mStream << makeKeyValueReference("chuck_stategy", newChunkStrategyStr);
+	req.mStream << makeKeyValueReference("hash", hashString);
+
+	RsFileHash hash(hashString);
+	FileChunksInfo::ChunkStrategy newStrategy =
+	        FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE;
+
+	if ( newChunkStrategyStr == "streaming" )
+		newStrategy = FileChunksInfo::CHUNK_STRATEGY_STREAMING;
+	else if ( newChunkStrategyStr == "random" )
+		newStrategy = FileChunksInfo::CHUNK_STRATEGY_RANDOM;
+	else if ( newChunkStrategyStr == "progressive" )
+		newStrategy = FileChunksInfo::CHUNK_STRATEGY_PROGRESSIVE;
+
+	if (mFiles->setChunkStrategy(hash, newStrategy)) resp.setOk();
+	else resp.setFail();
 }
 
 } // namespace resource_api

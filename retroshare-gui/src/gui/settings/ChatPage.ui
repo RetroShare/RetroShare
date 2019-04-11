@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1216</width>
-    <height>1107</height>
+    <height>1127</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -231,7 +231,7 @@
          <item>
           <widget class="QGroupBox" name="chatLobbyGBox">
            <property name="title">
-            <string>Chat Lobby</string>
+            <string>Chat Rooms</string>
            </property>
            <layout class="QVBoxLayout" name="chatLobbyGBoxVLayout">
             <item>
@@ -244,7 +244,7 @@
             <item>
              <widget class="QLabel" name="defIDLabel">
               <property name="text">
-               <string>Default identity for chat lobbies:</string>
+               <string>Default identity for chat rooms:</string>
               </property>
              </widget>
             </item>
@@ -866,11 +866,11 @@
           <enum>QTabWidget::North</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="publicTab">
           <attribute name="title">
-           <string>Group chat</string>
+           <string>Chat rooms</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout">
            <item>

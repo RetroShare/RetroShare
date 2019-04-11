@@ -24,7 +24,7 @@
  */
 
 #include <iostream>
-#include <time.h>
+#include "util/rstime.h"
 #include "serialiser/rsdistribitems.h"
 #include "serialiser/rschannelitems.h"
 #include "serialiser/rsforumitems.h"
@@ -46,7 +46,7 @@ INITTEST()
 RsSerialType* init_item(RsDistribGrp& grp)
 {
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	/* create Keys */
 

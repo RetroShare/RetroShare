@@ -1,47 +1,40 @@
-#ifndef RETROSHARE_GUI_INTERFACE_H
-#define RETROSHARE_GUI_INTERFACE_H
-
-/*
- * "$Id: rsiface.h,v 1.9 2007-04-21 19:08:51 rmf24 Exp $"
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsiface.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+#pragma once
 
 #include "retroshare/rsnotify.h"
 #include "rstypes.h"
 
 #include <map>
+#include <functional>
 
-class NotifyBase;
 class RsServer;
 class RsInit;
-class RsPeerCryptoParams;
-struct TurtleFileInfo ;
+struct RsPeerCryptoParams;
+class RsControl;
 
-/* RsInit -> Configuration Parameters for RetroShare Startup
- */
+/// RsInit -> Configuration Parameters for RetroShare Startup
+RsInit* InitRsConfig();
 
-RsInit *InitRsConfig();
 /* extract various options for GUI */
 const char   *RsConfigDirectory(RsInit *config);
 bool    RsConfigStartMinimised(RsInit *config);
@@ -51,30 +44,50 @@ void    CleanupRsConfig(RsInit *);
 // Called First... (handles comandline options) 
 int InitRetroShare(int argc, char **argv, RsInit *config);
 
-class RsControl /* The Main Interface Class - for controlling the server */
+/**
+ * Pointer to global instance of RsControl needed to expose JSON API
+ * @jsonapi{development}
+ */
+extern RsControl* rsControl;
+
+/** The Main Interface Class - for controlling the server */
+class RsControl
 {
 public:
 	/// TODO: This should return a reference instead of a pointer!
-	static RsControl *instance();
-	static void earlyInitNotificationSystem() { instance(); }
+	static RsControl* instance();
+	static void earlyInitNotificationSystem() { rsControl = instance(); }
 
-		/* Real Startup Fn */
-		virtual int StartupRetroShare() = 0;
+	/* Real Startup Fn */
+	virtual int StartupRetroShare() = 0;
 
-		/****************************************/
-		/* Config */
+	/**
+	 * @brief Check if core is fully ready, true only after StartupRetroShare()
+	 *	finish and before rsGlobalShutDown() begin
+	 * @jsonapi{development}
+	 */
+	virtual bool isReady() = 0;
 
-		virtual void    ConfigFinalSave( ) 			   = 0;
-		virtual void 	rsGlobalShutDown( )			   = 0;
+	virtual void ConfigFinalSave() = 0;
 
-		/****************************************/
+	/**
+	 * @brief Turn off RetroShare
+	 * @jsonapi{development,manualwrapper}
+	 */
+	virtual void rsGlobalShutDown() = 0;
 
-		virtual bool getPeerCryptoDetails(const RsPeerId& ssl_id,RsPeerCryptoParams& params) = 0;
-		virtual void getLibraries(std::list<RsLibraryInfo> &libraries) = 0;
+	virtual bool getPeerCryptoDetails(
+	        const RsPeerId& ssl_id,RsPeerCryptoParams& params ) = 0;
+	virtual void getLibraries(std::list<RsLibraryInfo> &libraries) = 0;
 
-	protected:
-		RsControl() {}	// should not be used, hence it's private.
+	/**
+	 * @brief Set shutdown callback, useful if main runlop is controlled by
+	 *	another entity such as QCoreApplication
+	 * @param callback function to call when shutdown is almost complete
+	 */
+	virtual void setShutdownCallback(const std::function<void(int)>& callback) = 0;
+
+protected:
+	RsControl() {}	// should not be used, hence it's private.
 };
 
-
-#endif

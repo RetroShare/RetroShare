@@ -1,35 +1,38 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006 - 2010 RetroShare Team
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/settings/TransferPage.cpp                                               *
+ *                                                                             *
+ * Copyright (c) 2010 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "TransferPage.h"
 
 #include "rshare.h"
+#include "gui/ShareManager.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/misc.h"
+
+#include "retroshare/rsiface.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rspeers.h"
+
+#include <QCheckBox>
+#include <QToolTip>
 
 #include <iostream>
-
-#include <util/misc.h>
-#include <gui/ShareManager.h>
-#include <retroshare/rsiface.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rspeers.h>
 
 TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
@@ -46,6 +49,7 @@ TransferPage::TransferPage(QWidget * parent, Qt::WindowFlags flags)
 	QObject::connect(ui._filePermDirectDL_CB,SIGNAL(activated(int)),this,SLOT(updateFilePermDirectDL(int)));
 
 	QObject::connect(ui.incomingButton, SIGNAL(clicked( bool ) ), this , SLOT( setIncomingDirectory() ) );
+	QObject::connect(ui.autoDLColl_CB, SIGNAL(toggled(bool)), this, SLOT(updateAutoDLColl()));
 	QObject::connect(ui.partialButton, SIGNAL(clicked( bool ) ), this , SLOT( setPartialsDirectory() ) );
 	QObject::connect(ui.editShareButton, SIGNAL(clicked()), this, SLOT(editDirectories()));
 	QObject::connect(ui.autoCheckDirectories_CB, SIGNAL(clicked(bool)), this, SLOT(toggleAutoCheckDirectories(bool)));
@@ -127,6 +131,7 @@ void TransferPage::load()
     whileBlocking(ui.autoCheckDirectories_CB)->setChecked(rsFiles->watchEnabled()) ; ;
 
 	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+	whileBlocking(ui.autoDLColl_CB)->setChecked(Settings->valueFromGroup("Transfer", "AutoDLColl", false).toBool());
 	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
 	whileBlocking(ui.followSymLinks_CB)->setChecked(rsFiles->followSymLinks());
 	whileBlocking(ui.ignoreDuplicates_CB)->setChecked(rsFiles->ignoreDuplicates());
@@ -225,11 +230,28 @@ void TransferPage::setIncomingDirectory()
 		return;
 	}
 
-	ui.incomingDir->setText(qdir);
-	std::string dir = ui.incomingDir->text().toUtf8().constData();
+	std::string dir = qdir.toUtf8().constData();
+	if(!dir.empty())
+	{
+		if (!rsFiles->setDownloadDirectory(dir))
+		{
+			ui.incomingDir->setToolTip( tr("Invalid Input. Have you got the right to write on it?") );
+			ui.incomingDir->setProperty("WrongValue", true);
+		}
+		else
+		{
+			ui.incomingDir->setToolTip( "" );
+			ui.incomingDir->setProperty("WrongValue", false);
+		}
+	}
+	ui.incomingDir->style()->unpolish(ui.incomingDir);
+	ui.incomingDir->style()->polish(  ui.incomingDir);
+	whileBlocking(ui.incomingDir)->setText(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()));
+}
 
-    if(!dir.empty())
-		rsFiles->setDownloadDirectory(dir);
+void TransferPage::updateAutoDLColl()
+{
+	Settings->setValueToGroup("Transfer", "AutoDLColl", ui.autoDLColl_CB->isChecked());
 }
 
 void TransferPage::setPartialsDirectory()
@@ -239,11 +261,25 @@ void TransferPage::setPartialsDirectory()
 		return;
 	}
 
-	ui.partialsDir->setText(qdir);
-    std::string	dir = ui.partialsDir->text().toUtf8().constData();
+	std::string	dir = qdir.toUtf8().constData();
 	if (!dir.empty())
-		rsFiles->setPartialsDirectory(dir);
+	{
+		if (!rsFiles->setPartialsDirectory(dir))
+		{
+			ui.partialsDir->setToolTip( tr("Invalid Input. It can't be an already shared directory.") );
+			ui.partialsDir->setProperty("WrongValue", true);
+		}
+		else
+		{
+			ui.partialsDir->setToolTip( "" );
+			ui.partialsDir->setProperty("WrongValue", false);
+		}
+	}
+	ui.partialsDir->style()->unpolish(ui.partialsDir);
+	ui.partialsDir->style()->polish(  ui.partialsDir);
+	whileBlocking(ui.partialsDir)->setText(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()));
 }
+
 void TransferPage::toggleAutoCheckDirectories(bool b)
 {
 	ui.autoCheckDirectoriesDelay_SB->setEnabled(b);

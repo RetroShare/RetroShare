@@ -1,0 +1,88 @@
+<?xml version="1.0"?>
+<manifest
+    package="org.retroshare.service"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionName="0.6.4" android:versionCode="1"
+    android:installLocation="auto">
+    <application android:name="org.qtproject.qt5.android.bindings.QtApplication" android:hardwareAccelerated="true" android:label="RetroShare" android:icon="@drawable/retroshare_service_128x128">
+        <activity
+            android:name=".RetroShareServiceControlActivity"
+            android:label="RetroShare" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <receiver android:name=".BootCompletedReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".AppUpdatedReceiver" android:enabled="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- For adding service(s) please check:
+          ++ https://wiki.qt.io/AndroidServices -->
+        <service android:name=".RetroShareServiceAndroid" android:process=":rs" android:label="RetroShare Service" android:exported="true">
+            <!-- android:exported="true" Added to be able to run the service
+              ++ from adb shell
+              ++ android:process=":rs" is needed to force the service to run on
+              ++ a separate process than the Activity -->
+
+            <!-- Qt Application to launch -->
+            <meta-data android:name="android.app.lib_name" android:value="retroshare-service"/>
+
+            <!-- Ministro -->
+            <meta-data android:name="android.app.qt_sources_resource_id" android:resource="@array/qt_sources"/>
+            <meta-data android:name="android.app.repository" android:value="default"/>
+            <meta-data android:name="android.app.qt_libs_resource_id" android:resource="@array/qt_libs"/>
+            <meta-data android:name="android.app.bundled_libs_resource_id" android:resource="@array/bundled_libs"/>
+            <!-- Deploy Qt libs as part of package -->
+            <meta-data android:name="android.app.bundle_local_qt_libs" android:value="-- %%BUNDLE_LOCAL_QT_LIBS%% --"/>
+            <meta-data android:name="android.app.bundled_in_lib_resource_id" android:resource="@array/bundled_in_lib"/>
+            <meta-data android:name="android.app.bundled_in_assets_resource_id" android:resource="@array/bundled_in_assets"/>
+            <!-- Run with local libs -->
+            <meta-data android:name="android.app.use_local_qt_libs" android:value="-- %%USE_LOCAL_QT_LIBS%% --"/>
+            <meta-data android:name="android.app.libs_prefix" android:value="/data/local/tmp/qt/"/>
+            <meta-data android:name="android.app.load_local_libs" android:value="-- %%INSERT_LOCAL_LIBS%% --"/>
+            <meta-data android:name="android.app.load_local_jars" android:value="-- %%INSERT_LOCAL_JARS%% --"/>
+            <meta-data android:name="android.app.static_init_classes" android:value="-- %%INSERT_INIT_CLASSES%% --"/>
+            <!--  Messages maps -->
+            <meta-data android:value="@string/ministro_not_found_msg" android:name="android.app.ministro_not_found_msg"/>
+            <meta-data android:value="@string/ministro_needed_msg" android:name="android.app.ministro_needed_msg"/>
+            <meta-data android:value="@string/fatal_error_msg" android:name="android.app.fatal_error_msg"/>
+            <!--  Messages maps -->
+
+            <!-- Background running -->
+            <meta-data android:name="android.app.background_running" android:value="true"/>
+            <!-- Background running -->
+        </service>
+    </application>
+
+    <uses-sdk android:minSdkVersion="16" android:targetSdkVersion="18"/>
+    <supports-screens android:largeScreens="true" android:normalScreens="true" android:anyDensity="true" android:smallScreens="true"/>
+
+    <!-- The following comment will be replaced upon deployment with default
+      ++ permissions based on the dependencies of the application.
+      ++ Remove the comment if you do not require these default permissions. -->
+    <!-- %%INSERT_PERMISSIONS -->
+
+    <!-- The following comment will be replaced upon deployment with default
+      ++ features based on the dependencies of the application.
+      ++ Remove the comment if you do not require these default features. -->
+    <!-- %%INSERT_FEATURES -->
+
+    <!-- Added by G10h4ck: Needed permission for autostart at boot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- Added by Angesoc: used to access files shared by other apps -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- Added by G10h4ck: Needed permission for network usage -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>

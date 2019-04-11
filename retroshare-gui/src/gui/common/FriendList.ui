@@ -81,7 +81,7 @@
      </attribute>
      <column>
       <property name="text">
-       <string>Trusted nodes</string>
+       <string>Friends</string>
       </property>
       <property name="textAlignment">
        <set>AlignCenter</set>

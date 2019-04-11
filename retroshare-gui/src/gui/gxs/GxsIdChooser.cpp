@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsIdChooser.cpp                                 *
+ *                                                                             *
+ * Copyright 2012-2013 by Robert Fernie     <retroshare.project@gmail.com>     *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GxsIdChooser.h"
 #include "GxsIdDetails.h"
@@ -127,10 +124,9 @@ void GxsIdChooser::setDefaultId(const RsGxsId &defId)
 static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
 	GxsIdChooser *chooser = dynamic_cast<GxsIdChooser*>(object);
-	if (!chooser) {
+
+	if (!chooser)
 		return;
-	}
-    
 
     // this prevents the objects that depend on what's in the combo-box to activate and
     // perform any change.Only user-changes should cause this.
@@ -185,6 +181,31 @@ static void loadPrivateIdsCallback(GxsIdDetailsType type, const RsIdentityDetail
             chooser->setEntryEnabled(index,false) ;
         
     chooser->model()->sort(0);
+
+	// now restore the current item. Problem is, we cannot use the ID position because it may have changed.
+#ifdef IDCHOOSER_DEBUG
+    std::cerr << "GxsIdChooser: default ID = " << chooser->defaultId() << std::endl;
+#endif
+	if(!chooser->defaultId().isNull())
+	{
+		for(int indx=0;indx<chooser->count();++indx)
+			if(RsGxsId(chooser->itemData(indx).toString().toStdString()) == chooser->defaultId())
+			{
+				chooser->setCurrentIndex(indx);
+#ifdef IDCHOOSER_DEBUG
+				std::cerr << "GxsIdChooser-003 " << (void*)chooser << " setting current index to " << indx << " because it has ID=" << chooser->defaultId() << std::endl;
+#endif
+				break;
+			}
+	}
+	else
+    {
+		RsGxsId id;
+        GxsIdChooser::ChosenId_Ret cid = chooser->getChosenId(id) ;
+
+        if(cid == GxsIdChooser::UnKnowId || cid == GxsIdChooser::KnowId)
+            chooser->setDefaultId(id) ;
+    }
 
     chooser->blockSignals(false) ;
 }
@@ -330,6 +351,7 @@ void GxsIdChooser::setDefaultItem()
 
 	if (def >= 0) {
 		setCurrentIndex(def);
+        std::cerr << "GxsIdChooser-002" << (void*)this << " setting current index to " << def << std::endl;
 	}
 }
 
@@ -341,6 +363,7 @@ bool GxsIdChooser::setChosenId(const RsGxsId &gxsId)
 	int index = findData(id);
 	if (index >= 0) {
 		setCurrentIndex(index);
+        std::cerr << "GxsIdChooser-001" << (void*)this << " setting current index to " << index << std::endl;
 		return true;
 	}
 	return false;
@@ -382,6 +405,11 @@ void GxsIdChooser::myCurrentIndexChanged(int index)
 	} else {
 		setToolTip("");
 	}
+	QVariant var = itemData(index);
+	RsGxsId gxsId(var.toString().toStdString());
+
+    if(!gxsId.isNull())
+        mDefaultId = gxsId;
 }
 
 void GxsIdChooser::indexActivated(int index)

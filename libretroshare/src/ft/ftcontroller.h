@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/ft: ftcontroller.h
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftcontroller.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <drbob@lunamutt.com>                        *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef FT_CONTROLLER_HEADER
 #define FT_CONTROLLER_HEADER
@@ -73,9 +70,9 @@ class ftFileControl
 		};
 
 		ftFileControl();
-		ftFileControl(std::string fname, std::string tmppath, std::string dest,
-                            uint64_t size, const RsFileHash& hash, TransferRequestFlags flags,
-							ftFileCreator *fc, ftTransferModule *tm);
+		ftFileControl( const std::string& fname, const std::string& tmppath, const std::string& dest
+		             , uint64_t size, const RsFileHash& hash, TransferRequestFlags flags
+		             , ftFileCreator *fc, ftTransferModule *tm);
 
 		std::string	   mName;
 		std::string	   mCurrentPath; /* current full path (including name) */
@@ -86,7 +83,7 @@ class ftFileControl
         RsFileHash	   mHash;
 		uint64_t	   mSize;
 		TransferRequestFlags mFlags;
-		time_t		mCreateTime;
+		rstime_t		mCreateTime;
 		uint32_t		mQueuePriority ;
 		uint32_t		mQueuePosition ;
 };
@@ -175,8 +172,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
         void FileDownloads(std::list<RsFileHash> &hashs);
 
 		/* Directory Handling */
-        bool 	setDownloadDirectory(std::string path);
-		bool 	setPartialsDirectory(std::string path);
+		bool setDownloadDirectory(std::string path);
+		bool setPartialsDirectory(std::string path);
 		std::string getDownloadDirectory();
 		std::string getPartialsDirectory();
         bool 	FileDetails(const RsFileHash &hash, FileInfo &info);
@@ -229,8 +226,8 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		bool    setPeerState(ftTransferModule *tm, const RsPeerId& id,
 				uint32_t maxrate, bool online);
 
-		time_t last_save_time ;
-		time_t last_clean_time ;
+		rstime_t last_save_time ;
+		rstime_t last_clean_time ;
 		/* pointers to other components */
 
 		ftSearch *mSearch;

@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * retroshare-gui/src/gui/NetworkDialog/pgpid_item_model.cpp                   *
+ *                                                                             *
+ * Copyright (C) 2018 by Retroshare Team     <retroshare.project@gmail.com>    *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include "pgpid_item_model.h"
 #include <time.h>
 #include <retroshare/rspeers.h>
@@ -28,7 +48,7 @@ QVariant pgpid_item_model::headerData(int section, Qt::Orientation orientation, 
                 return QString(tr("Name of the profile"));
                 break;
             case COLUMN_I_AUTH_PEER:
-                return QString(tr("This column indicates trust level and whether you signed the profile PGP key"));
+                return QString(tr("This column indicates the trust level you indicated and whether you signed the profile PGP key"));
                 break;
             case COLUMN_PEER_AUTH_ME:
                 return QString(tr("Did that peer sign your own profile PGP key"));
@@ -124,7 +144,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     if (!rsPeers->getGPGDetails(*it, detail))
         return QVariant();
     //shit code end
-    if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering
+    if(role == Qt::EditRole) //some columns return raw data for editrole, used for proper filtering and sorting
     {
         switch(index.column())
         {
@@ -208,14 +228,10 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
             break;
         case COLUMN_CHECK:
         {
-            if (detail.accept_connection)
-            {
+            if (detail.accept_connection || rsPeers->getGPGOwnId() == detail.gpg_id)
                 return tr("Accepted");
-            }
-            else
-            {
-                return tr(" - ");
-            }
+			else
+                return tr("Denied");
         }
             break;
 

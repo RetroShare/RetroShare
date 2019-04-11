@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/MessagesDialog.h                                                        *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #ifndef _MESSAGESDIALOG_H
 #define _MESSAGESDIALOG_H
@@ -31,6 +30,9 @@
 
 class RSTreeWidgetItemCompareRole;
 class MessageWidget;
+class QTreeWidgetItem;
+class RsMessageModel;
+class MessageSortFilterProxyModel ;
 
 class MessagesDialog : public MainPage
 {
@@ -57,25 +59,33 @@ public:
 
   void setTextColorInbox(QColor color) { mTextColorInbox = color; }
 
+signals:
+  void messagesAboutToLoad();
+  void messagesLoaded();
+
 protected:
   bool eventFilter(QObject *obj, QEvent *ev);
-  void changeEvent(QEvent *e);
+  int getSelectedMessages(QList<QString>& mid);
 
 public slots:
-  void insertMessages();
+  //void insertMessages();
   void messagesTagsChanged();
-  
+  void preModelUpdate();
+  void postModelUpdate();
+
 private slots:
   /** Create the context popup menu and it's submenus */
   void messageTreeWidgetCustomPopupMenu(QPoint point);
   void folderlistWidgetCustomPopupMenu(QPoint);
+  void showAuthorInPeopleTab();
+  void sortColumn(int col,Qt::SortOrder so);
 
   void changeBox(int newrow);
   void changeQuickView(int newrow);
   void updateCurrentMessage();
-  void currentItemChanged(QTreeWidgetItem *item);
-  void clicked(QTreeWidgetItem *item, int column);
-  void doubleClicked(QTreeWidgetItem *item, int column);
+  void clicked(const QModelIndex&);
+  void doubleClicked(const QModelIndex&);
+  void currentChanged(const QModelIndex& new_proxy_index, const QModelIndex &old_proxy_index);
 
   void newmessage();
   void openAsWindow();
@@ -104,33 +114,19 @@ private slots:
   void tabCloseRequested(int tab);
 
 private:
-  class LockUpdate
-  {
-  public:
-      LockUpdate (MessagesDialog *pDialog, bool bUpdate);
-      ~LockUpdate ();
-
-      void setUpdate(bool bUpdate);
-
-  private:
-      MessagesDialog *m_pDialog;
-      bool m_bUpdate;
-  };
-
   void updateInterface();
 
   void connectActions();
 
   void updateMessageSummaryList();
-  void insertMsgTxtAndFiles(QTreeWidgetItem *item = NULL, bool bSetToRead = true);
+  void insertMsgTxtAndFiles(const QModelIndex& proxy_index = QModelIndex());
 
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
-  void setMsgStar(const QList<QTreeWidgetItem *> &items, bool mark);
 
-  int getSelectedMsgCount (QList<QTreeWidgetItem *> *items, QList<QTreeWidgetItem *> *itemsRead, QList<QTreeWidgetItem *> *itemsUnread, QList<QTreeWidgetItem *> *itemsStar);
-  bool isMessageRead(QTreeWidgetItem *item);
-  bool hasMessageStar(QTreeWidgetItem *item);
+  int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar);
+  bool isMessageRead(const QModelIndex &real_index);
+  bool hasMessageStar(const QModelIndex &index);
 
   void processSettings(bool load);
 
@@ -151,14 +147,19 @@ private:
   QTimer *timer;
   int timerIndex;
 
-  RSTreeWidgetItemCompareRole *mMessageCompareRole;
+  //RSTreeWidgetItemCompareRole *mMessageCompareRole;
+
   MessageWidget *msgWidget;
+  RsMessageModel *mMessageModel;
+  MessageSortFilterProxyModel *mMessageProxyModel;
 
   /* Color definitions (for standard see qss.default) */
   QColor mTextColorInbox;
 
   /** Qt Designer generated object */
   Ui::MessagesDialog ui;
+
+  QList<QString> mTmpSavedSelectedIds;
 };
 
 #endif

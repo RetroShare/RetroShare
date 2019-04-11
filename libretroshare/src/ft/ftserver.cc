@@ -1,56 +1,58 @@
-/*
- * libretroshare/src/ft: ftserver.cc
- *
- * File Transfer for RetroShare.
- *
- * Copyright 2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/ft: ftserver.cc                                           *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
-#include <iostream>
-#include <time.h>
-#include "util/rsdebug.h"
-#include "util/rsdir.h"
-#include "util/rsprint.h"
 #include "crypto/chacha20.h"
-#include "retroshare/rstypes.h"
-#include "retroshare/rspeers.h"
 //const int ftserverzone = 29539;
 
 #include "file_sharing/p3filelists.h"
-#include "ft/ftturtlefiletransferitem.h"
-#include "ft/ftserver.h"
-#include "ft/ftextralist.h"
-#include "ft/ftfilesearch.h"
 #include "ft/ftcontroller.h"
-#include "ft/ftfileprovider.h"
 #include "ft/ftdatamultiplex.h"
 //#include "ft/ftdwlqueue.h"
-#include "turtle/p3turtle.h"
-#include "pqi/p3notify.h"
-#include "rsserver/p3face.h"
+#include "ft/ftextralist.h"
+#include "ft/ftfileprovider.h"
+#include "ft/ftfilesearch.h"
+#include "ft/ftserver.h"
+#include "ft/ftturtlefiletransferitem.h"
 
-#include "pqi/pqi.h"
 #include "pqi/p3linkmgr.h"
+#include "pqi/p3notify.h"
+#include "pqi/pqi.h"
+
+#include "retroshare/rstypes.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsinit.h"
 
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
+
+#include "rsserver/p3face.h"
+#include "turtle/p3turtle.h"
+
+#include "util/rsdebug.h"
+#include "util/rsdir.h"
+#include "util/rsprint.h"
+
+#include <iostream>
+#include "util/rstime.h"
 
 /***
  * #define SERVER_DEBUG       1
@@ -60,8 +62,8 @@
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
 
-static const time_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
-static const time_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
+static const rstime_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
+static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
 
 /* Setup */
 ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
@@ -69,7 +71,8 @@ ftServer::ftServer(p3PeerMgr *pm, p3ServiceControl *sc)
       mPeerMgr(pm), mServiceCtrl(sc),
       mFileDatabase(NULL),
       mFtController(NULL), mFtExtra(NULL),
-      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer")
+      mFtDataplex(NULL), mFtSearch(NULL), srvMutex("ftServer"),
+      mSearchCallbacksMapMutex("ftServer callbacks map")
 {
 	addSerialType(new RsFileTransferSerialiser()) ;
 }
@@ -145,9 +148,20 @@ void ftServer::SetupFtServer()
 	/* make Controller */
 	mFtController = new ftController(mFtDataplex, mServiceCtrl, getServiceInfo().mServiceType);
 	mFtController -> setFtSearchNExtra(mFtSearch, mFtExtra);
-	std::string tmppath = ".";
-	mFtController->setPartialsDirectory(tmppath);
-	mFtController->setDownloadDirectory(tmppath);
+
+	std::string emergencySaveDir = RsAccounts::AccountDirectory();
+	std::string emergencyPartialsDir = RsAccounts::AccountDirectory();
+
+	if (emergencySaveDir != "")
+	{
+		emergencySaveDir += "/";
+		emergencyPartialsDir += "/";
+	}
+	emergencySaveDir += "Downloads";
+	emergencyPartialsDir += "Partials";
+
+	mFtController->setDownloadDirectory(emergencySaveDir);
+	mFtController->setPartialsDirectory(emergencyPartialsDir);
 
 	/* complete search setup */
 	mFtSearch->addSearchMode(mFtExtra, RS_FILE_HINTS_EXTRA);
@@ -160,8 +174,11 @@ void ftServer::SetupFtServer()
 void ftServer::connectToFileDatabase(p3FileDatabase *fdb)
 {
 	mFileDatabase = fdb ;
+
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_LOCAL);	// due to a bug in addSearchModule, modules can only be added one by one. Using | between flags wont work.
 	mFtSearch->addSearchMode(fdb, RS_FILE_HINTS_REMOTE);
+
+    mFileDatabase->setExtraList(mFtExtra);
 }
 void ftServer::connectToTurtleRouter(p3turtle *fts)
 {
@@ -412,9 +429,9 @@ void ftServer::requestDirUpdate(void *ref)
 }
 
 /* Directory Handling */
-void ftServer::setDownloadDirectory(std::string path)
+bool ftServer::setDownloadDirectory(const std::string& path)
 {
-	mFtController->setDownloadDirectory(path);
+	return mFtController->setDownloadDirectory(path);
 }
 
 std::string ftServer::getDownloadDirectory()
@@ -422,9 +439,9 @@ std::string ftServer::getDownloadDirectory()
 	return mFtController->getDownloadDirectory();
 }
 
-void ftServer::setPartialsDirectory(std::string path)
+bool ftServer::setPartialsDirectory(const std::string& path)
 {
-	mFtController->setPartialsDirectory(path);
+	return mFtController->setPartialsDirectory(path);
 }
 
 std::string ftServer::getPartialsDirectory()
@@ -660,9 +677,10 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 	return mFtExtra->addExtraFile(fname, hash, size, period, flags);
 }
 
-bool ftServer::ExtraFileRemove(const RsFileHash& hash, TransferRequestFlags flags)
+bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 {
-	return mFtExtra->removeExtraFile(hash, flags);
+	mFileDatabase->removeExtraFile(hash);
+    return true;
 }
 
 bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
@@ -684,22 +702,23 @@ bool ftServer::ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t
 /******************** Directory Listing ************************/
 /***************************************************************/
 
-int ftServer::RequestDirDetails(const RsPeerId& uid, const std::string& path, DirDetails &details)
-{
-	return mFileDatabase->RequestDirDetails(uid, path, details);
-}
-
 bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags)
 {
 	return mFileDatabase->findChildPointer(ref,row,result,flags) ;
 }
+
+bool ftServer::requestDirDetails(
+        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+{ return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
+
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
 {
 	return mFileDatabase->RequestDirDetails(ref,details,flags) ;
 }
-uint32_t ftServer::getType(void *ref, FileSearchFlags /* flags */)
+
+uint32_t ftServer::getType(void *ref, FileSearchFlags flags)
 {
-	return mFileDatabase->getType(ref) ;
+	return mFileDatabase->getType(ref,flags) ;
 }
 /***************************************************************/
 /******************** Search Interface *************************/
@@ -1219,6 +1238,21 @@ static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
 
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {
+#ifndef USE_NEW_METHOD
+    uint32_t item_serialized_size = size(clear_item) ;
+
+	RsTemporaryMemory data(item_serialized_size) ;
+
+	if(data == NULL)
+		return false ;
+
+    serialise(clear_item, data, &item_serialized_size);
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	return p3turtle::encryptData(data,item_serialized_size,encryption_key,encrypted_item) ;
+#else
 	uint8_t initialization_vector[ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE] ;
 
 	RSRandom::random_bytes(initialization_vector,ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE) ;
@@ -1297,12 +1331,34 @@ bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHas
 #endif
 
 	return true ;
+#endif
 }
 
 // Decrypts the given item using aead-chacha20-poly1305
 
-bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
+bool ftServer::decryptItem(const RsTurtleGenericDataItem *encrypted_item,const RsFileHash& hash,RsTurtleGenericTunnelItem *& decrypted_item)
 {
+#ifndef USE_NEW_METHOD
+	unsigned char *data = NULL ;
+	uint32_t data_size = 0 ;
+
+	uint8_t encryption_key[32] ;
+	deriveEncryptionKey(hash,encryption_key) ;
+
+	if(!p3turtle::decryptItem(encrypted_item,encryption_key,data,data_size))
+	{
+		FTSERVER_ERROR() << "Cannot decrypt data!" << std::endl;
+
+		if(data)
+			free(data) ;
+		return false ;
+	}
+	decrypted_item = dynamic_cast<RsTurtleGenericTunnelItem*>(deserialise(data,&data_size)) ;
+	free(data);
+
+	return (decrypted_item != NULL);
+
+#else
 	uint8_t encryption_key[32] ;
 	deriveEncryptionKey(hash,encryption_key) ;
 
@@ -1378,6 +1434,7 @@ bool ftServer::decryptItem(RsTurtleGenericDataItem *encrypted_item,const RsFileH
 		return false ;
 
 	return true ;
+#endif
 }
 
 bool ftServer::encryptHash(const RsFileHash& hash, RsFileHash& hash_of_hash)
@@ -1415,9 +1472,34 @@ bool ftServer::findRealHash(const RsFileHash& hash, RsFileHash& real_hash)
 		return false ;
 }
 
+TurtleSearchRequestId ftServer::turtleSearch(const std::string& string_to_match)
+{
+    return mTurtleRouter->turtleSearch(string_to_match) ;
+}
+TurtleSearchRequestId ftServer::turtleSearch(const RsRegularExpression::LinearizedExpression& expr)
+{
+    return mTurtleRouter->turtleSearch(expr) ;
+}
+
+#warning we should do this here, but for now it is done by turtle router.
+//   // Dont delete the item. The client (p3turtle) is doing it after calling this.
+//   //
+//   void ftServer::receiveSearchResult(RsTurtleSearchResultItem *item)
+//   {
+//       RsTurtleFTSearchResultItem *ft_sr = dynamic_cast<RsTurtleFTSearchResultItem*>(item) ;
+//
+//       if(ft_sr == NULL)
+//       {
+//   		FTSERVER_ERROR() << "(EE) ftServer::receiveSearchResult(): item cannot be cast to a RsTurtleFTSearchResultItem" << std::endl;
+//           return ;
+//       }
+//
+//   	RsServer::notify()->notifyTurtleSearchResult(ft_sr->request_id,ft_sr->result) ;
+//   }
+
 // Dont delete the item. The client (p3turtle) is doing it after calling this.
 //
-void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
+void ftServer::receiveTurtleData(const RsTurtleGenericTunnelItem *i,
                                  const RsFileHash& hash,
                                  const RsPeerId& virtual_peer_id,
                                  RsTurtleGenericTunnelItem::Direction direction)
@@ -1437,7 +1519,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 		}
 
 		RsTurtleGenericTunnelItem *decrypted_item ;
-		if(!decryptItem(dynamic_cast<RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
+		if(!decryptItem(dynamic_cast<const RsTurtleGenericDataItem *>(i),real_hash,decrypted_item))
 		{
 			FTSERVER_ERROR() << "(EE) decryption error." << std::endl;
 			return ;
@@ -1453,7 +1535,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 	{
 	case RS_TURTLE_SUBTYPE_FILE_REQUEST:
 	{
-		RsTurtleFileRequestItem *item = dynamic_cast<RsTurtleFileRequestItem *>(i) ;
+		const RsTurtleFileRequestItem *item = dynamic_cast<const RsTurtleFileRequestItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1466,7 +1548,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_FILE_DATA :
 	{
-		RsTurtleFileDataItem *item = dynamic_cast<RsTurtleFileDataItem *>(i) ;
+		const RsTurtleFileDataItem *item = dynamic_cast<const RsTurtleFileDataItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1474,7 +1556,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 #endif
 			getMultiplexer()->recvData(virtual_peer_id,hash,0,item->chunk_offset,item->chunk_size,item->chunk_data) ;
 
-			item->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
+			const_cast<RsTurtleFileDataItem*>(item)->chunk_data = NULL ;	// this prevents deletion in the destructor of RsFileDataItem, because data will be deleted
 			// down _ft_server->getMultiplexer()->recvData()...in ftTransferModule::recvFileData
 		}
 	}
@@ -1482,7 +1564,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_FILE_MAP :
 	{
-		RsTurtleFileMapItem *item = dynamic_cast<RsTurtleFileMapItem *>(i) ;
+		const RsTurtleFileMapItem *item = dynamic_cast<const RsTurtleFileMapItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1505,7 +1587,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_CHUNK_CRC :
 	{
-		RsTurtleChunkCrcItem *item = dynamic_cast<RsTurtleChunkCrcItem *>(i) ;
+		const RsTurtleChunkCrcItem *item = dynamic_cast<const RsTurtleChunkCrcItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1518,7 +1600,7 @@ void ftServer::receiveTurtleData(RsTurtleGenericTunnelItem *i,
 
 	case RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST:
 	{
-		RsTurtleChunkCrcRequestItem *item = dynamic_cast<RsTurtleChunkCrcRequestItem *>(i) ;
+		const RsTurtleChunkCrcRequestItem *item = dynamic_cast<const RsTurtleChunkCrcRequestItem *>(i) ;
 		if (item)
 		{
 #ifdef SERVER_DEBUG
@@ -1544,8 +1626,8 @@ int	ftServer::tick()
 	if(handleIncoming())
 		moreToTick = true;
 
-	static time_t last_law_priority_tasks_handling_time = 0 ;
-	time_t now = time(NULL) ;
+	static rstime_t last_law_priority_tasks_handling_time = 0 ;
+	rstime_t now = time(NULL) ;
 
 	if(last_law_priority_tasks_handling_time + FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD < now)
 	{
@@ -1554,6 +1636,7 @@ int	ftServer::tick()
 		mFtDataplex->deleteUnusedServers() ;
 		mFtDataplex->handlePendingCrcRequests() ;
 		mFtDataplex->dispatchReceivedChunkCheckSum() ;
+		cleanTimedOutSearches();
 	}
 
 	return moreToTick;
@@ -1584,10 +1667,10 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
 
     // Find the latest records for this pid.
 
-    std::map<RsFileHash,time_t>& tmap(mUploadLimitMap[pid]) ;
-    std::map<RsFileHash,time_t>::iterator it ;
+    std::map<RsFileHash,rstime_t>& tmap(mUploadLimitMap[pid]) ;
+    std::map<RsFileHash,rstime_t>::iterator it ;
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     // If the limit has been decresed, we arbitrarily drop some ongoing slots.
 
@@ -1612,7 +1695,7 @@ bool ftServer::checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash)
     for(it = tmap.begin();it!=tmap.end() && cleaned<2;)
         if(it->second + FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD < now)
 		{
-			std::map<RsFileHash,time_t>::iterator tmp(it) ;
+			std::map<RsFileHash,rstime_t>::iterator tmp(it) ;
             ++tmp;
  			tmap.erase(it) ;
             it = tmp;
@@ -1744,15 +1827,90 @@ int ftServer::handleIncoming()
  **********************************
  *********************************/
 
+void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
+{
+	bool hasCallback = false;
+
+	{
+		RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+		auto cbpt = mSearchCallbacksMap.find(item->request_id);
+		if(cbpt != mSearchCallbacksMap.end())
+		{
+			hasCallback = true;
+			cbpt->second.first(item->result);
+		}
+	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+
+	if(!hasCallback)
+		RsServer::notify()->notifyTurtleSearchResult(item->PeerId(),item->request_id, item->result );
+}
+
 /***************************** CONFIG ****************************/
 
 bool    ftServer::addConfiguration(p3ConfigMgr *cfgmgr)
 {
 	/* add all the subbits to config mgr */
-	cfgmgr->addConfiguration("ft_database.cfg", mFileDatabase);
-	cfgmgr->addConfiguration("ft_extra.cfg", mFtExtra);
+	cfgmgr->addConfiguration("ft_database.cfg" , mFileDatabase);
+	cfgmgr->addConfiguration("ft_extra.cfg"    , mFtExtra     );
 	cfgmgr->addConfiguration("ft_transfers.cfg", mFtController);
 
 	return true;
 }
+
+bool ftServer::turtleSearchRequest(
+        const std::string& matchString,
+        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+        rstime_t maxWait )
+{
+	if(matchString.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " match string can't be empty!"
+		          << std::endl;
+		return false;
+	}
+
+	TurtleRequestId sId = turtleSearch(matchString);
+
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	mSearchCallbacksMap.emplace(
+	            sId,
+	            std::make_pair(
+	                multiCallback,
+	                std::chrono::system_clock::now() +
+	                    std::chrono::seconds(maxWait) ) );
+
+	return true;
+}
+
+void ftServer::cleanTimedOutSearches()
+{
+	RS_STACK_MUTEX(mSearchCallbacksMapMutex);
+	auto now = std::chrono::system_clock::now();
+	for( auto cbpt = mSearchCallbacksMap.begin();
+	     cbpt != mSearchCallbacksMap.end(); )
+		if(cbpt->second.second <= now)
+			cbpt = mSearchCallbacksMap.erase(cbpt);
+		else ++cbpt;
+}
+
+// Offensive content file filtering
+
+int ftServer::banFile(const RsFileHash& real_file_hash, const std::string& filename, uint64_t file_size)
+{
+    return mFileDatabase->banFile(real_file_hash,filename,file_size) ;
+}
+int ftServer::unbanFile(const RsFileHash& real_file_hash)
+{
+    return mFileDatabase->unbanFile(real_file_hash) ;
+}
+bool ftServer::getPrimaryBannedFilesList(std::map<RsFileHash,BannedFileEntry>& banned_files)
+{
+    return mFileDatabase->getPrimaryBannedFilesList(banned_files) ;
+}
+
+bool ftServer::isHashBanned(const RsFileHash& hash)
+{
+    return mFileDatabase->isFileBanned(hash);
+}
+
 

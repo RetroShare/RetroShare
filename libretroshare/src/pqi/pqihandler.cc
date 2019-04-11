@@ -1,32 +1,28 @@
-/*
- * "$Id: pqihandler.cc,v 1.12 2007-03-31 09:41:32 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqihandler.cc                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2004-2006  Robert Fernie                                      *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "pqi/pqihandler.h"
 
 #include <stdlib.h>               // for NULL
-#include <time.h>                 // for time, time_t
+#include "util/rstime.h"                 // for time, rstime_t
 #include <algorithm>              // for sort
 #include <iostream>               // for dec
 #include <string>                 // for string, char_traits, operator+, bas...
@@ -87,6 +83,8 @@ pqihandler::pqihandler() : coreMtx("pqihandler")
     rateMax_in = 0.01;
     rateTotal_in = 0.0 ;
     rateTotal_out = 0.0 ;
+	traffInSum = 0;
+	traffOutSum = 0;
     last_m = time(NULL) ;
     nb_ticks = 0 ;
     mLastRateCapUpdate = 0 ;
@@ -125,7 +123,7 @@ int	pqihandler::tick()
 #endif
 	}
 
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
 	if(now > mLastRateCapUpdate + 5)
 	{
@@ -375,6 +373,9 @@ int     pqihandler::UpdateRates()
 	{
 		SearchModule *mod = (it -> second);
 		float crate_in = mod -> pqi -> getRate(true);
+
+		traffInSum += mod -> pqi -> getTraffic(true);
+		traffOutSum += mod -> pqi -> getTraffic(false);
         
 #ifdef PQI_HDL_DEBUG_UR
         if(crate_in > 0.0)
@@ -544,4 +545,8 @@ void    pqihandler::locked_StoreCurrentRates(float in, float out)
 	rateTotal_out = out;
 }
 
-
+void pqihandler::GetTraffic(uint64_t &in, uint64_t &out)
+{
+	in = traffInSum;
+	out = traffOutSum;
+}

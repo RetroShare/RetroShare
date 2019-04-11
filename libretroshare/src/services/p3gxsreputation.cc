@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxsreputation.cc
- *
- * Gxs Reputation Service  for RetroShare.
- *
- * Copyright 2011-2014 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxsreputation.cc                              *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2014-2014 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <math.h>
 #include "pqi/p3linkmgr.h"
 
@@ -66,7 +62,7 @@
  * 	- auto-clean reputations for default values
  *
  * std::map<RsGxsId, Reputation> mReputations.
- * std::multimap<time_t, RsGxsId> mUpdated.
+ * std::multimap<rstime_t, RsGxsId> mUpdated.
  *
  * std::map<RsPeerId, ReputationConfig> mConfig;
  *
@@ -192,7 +188,7 @@ int	p3GxsReputation::tick()
 	processIncoming();
 	sendPackets();
 
-	time_t now = time(NULL);
+	rstime_t now = time(NULL);
 
 	if(mLastCleanUp + CLEANUP_PERIOD < now)
 	{
@@ -222,7 +218,7 @@ int	p3GxsReputation::tick()
 	}
 
 #ifdef DEBUG_REPUTATION
-	static time_t last_debug_print = time(NULL) ;
+	static rstime_t last_debug_print = time(NULL) ;
 
 	if(now > 10+last_debug_print)
 	{
@@ -241,7 +237,7 @@ int	p3GxsReputation::tick()
 	return 0;
 }
 
-void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
+void p3GxsReputation::setAutoPositiveOpinionForContacts(bool b)
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -254,13 +250,13 @@ void p3GxsReputation::setNodeAutoPositiveOpinionForContacts(bool b)
         IndicateConfigChanged() ;
     }
 }
-bool p3GxsReputation::nodeAutoPositiveOpinionForContacts()
+bool p3GxsReputation::autoPositiveOpinionForContacts()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
     return mAutoSetPositiveOptionToContacts ;
 }
 
-void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
+void p3GxsReputation::setRememberBannedIdThreshold(uint32_t days)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -270,7 +266,7 @@ void p3GxsReputation::setRememberDeletedNodesThreshold(uint32_t days)
         IndicateConfigChanged();
     }
 }
-uint32_t p3GxsReputation::rememberDeletedNodesThreshold()
+uint32_t p3GxsReputation::rememberBannedIdThreshold()
 {
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -374,7 +370,7 @@ void p3GxsReputation::cleanup()
 #ifdef DEBUG_REPUTATION
 	std::cerr << "p3GxsReputation::cleanup() " << std::endl;
 #endif
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
 
     // We should keep opinions about identities that do not exist anymore, but only rely on the usage TS. That will in particular avoid asking p3idservice about deleted
     // identities, which would cause an excess of hits to the database. We do it in two steps to avoid a deadlock when calling rsIdentity from here.
@@ -387,7 +383,10 @@ void p3GxsReputation::cleanup()
         {
             bool should_delete = false ;
 
-            if(it->second.mOwnOpinion == RsReputations::OPINION_NEGATIVE && mMaxPreventReloadBannedIds != 0 && it->second.mOwnOpinionTs + mMaxPreventReloadBannedIds < now)
+			if( it->second.mOwnOpinion ==
+			        static_cast<int32_t>(RsOpinion::NEGATIVE) &&
+			        mMaxPreventReloadBannedIds != 0 &&
+			        it->second.mOwnOpinionTs + mMaxPreventReloadBannedIds < now )
             {
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  ID " << it->first << ": own is negative for more than " << mMaxPreventReloadBannedIds/86400 << " days. Reseting it!" << std::endl;
@@ -397,7 +396,10 @@ void p3GxsReputation::cleanup()
 
             // Delete slots with basically no information
 
-            if(it->second.mOpinions.empty() && it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL && (it->second.mOwnerNode.isNull()))
+			if( it->second.mOpinions.empty() &&
+			        it->second.mOwnOpinion ==
+			            static_cast<int32_t>(RsOpinion::NEUTRAL) &&
+			        it->second.mOwnerNode.isNull() )
             {
 #ifdef DEBUG_REPUTATION
                 std::cerr << "  ID " << it->first << ": own is neutral and no opinions from friends => remove entry" << std::endl;
@@ -466,23 +468,20 @@ void p3GxsReputation::cleanup()
 			RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
 			for(std::map<RsGxsId,Reputation>::iterator it(mReputations.begin());it!=mReputations.end();++it)
-				if(it->second.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+				if( it->second.mOwnOpinion ==
+				        static_cast<int32_t>(RsOpinion::NEUTRAL) )
 					should_set_to_positive_candidates.push_back(it->first) ;
 		}
 
 		for(std::list<RsGxsId>::const_iterator it(should_set_to_positive_candidates.begin());it!=should_set_to_positive_candidates.end();++it)
 			if(rsIdentity->isARegularContact(*it))
-			        setOwnOpinion(*it,RsReputations::OPINION_POSITIVE) ;
+				    setOwnOpinion(*it, RsOpinion::POSITIVE);
 	}
 }
 
-const float RsReputations::REPUTATION_THRESHOLD_ANTI_SPAM = 1.4f ;
-const float RsReputations::REPUTATION_THRESHOLD_DEFAULT   = 1.0f ;
-
-
-static RsReputations::Opinion safe_convert_uint32t_to_opinion(uint32_t op)
+static RsOpinion safe_convert_uint32t_to_opinion(uint32_t op)
 {
-	return RsReputations::Opinion(std::min((uint32_t)op,UPPER_LIMIT)) ;
+	return RsOpinion(std::min( static_cast<uint32_t>(op), UPPER_LIMIT ));
 }
 /***** Implementation ******/
 
@@ -551,12 +550,12 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 #endif
 
 	RsPeerId peerId = request->PeerId();
-	time_t last_update = request->mLastUpdate;
-	time_t now = time(NULL);
+	rstime_t last_update = request->mLastUpdate;
+	rstime_t now = time(NULL);
 
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
-	std::multimap<time_t, RsGxsId>::iterator tit;
+	std::multimap<rstime_t, RsGxsId>::iterator tit;
 	tit = mUpdated.upper_bound(last_update); // could skip some - (fixed below).
 
 	int count = 0;
@@ -636,13 +635,14 @@ bool p3GxsReputation::SendReputations(RsGxsReputationRequestItem *request)
 	return true;
 }
 
-void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& about,RsReputations::Opinion op)
+void p3GxsReputation::locked_updateOpinion(
+        const RsPeerId& from, const RsGxsId& about, RsOpinion op )
 {
     /* find matching Reputation */
     std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(about);
 
-    RsReputations::Opinion new_opinion = safe_convert_uint32t_to_opinion(op);
-    RsReputations::Opinion old_opinion = RsReputations::OPINION_NEUTRAL ;	// default if not set
+	RsOpinion new_opinion = op;
+	RsOpinion old_opinion = RsOpinion::NEUTRAL ;	// default if not set
 
     bool updated = false ;
 
@@ -663,9 +663,9 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 	    std::cerr << "  no preview record"<< std::endl;
 #endif
 
-	    if(new_opinion != RsReputations::OPINION_NEUTRAL)
+		if(new_opinion != RsOpinion::NEUTRAL)
 	    {
-		    mReputations[about] = Reputation(about);
+			mReputations[about] = Reputation();
 		    rit = mReputations.find(about);
 	    }
 	    else
@@ -679,11 +679,11 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 
     Reputation& reputation = rit->second;
 
-    std::map<RsPeerId,RsReputations::Opinion>::iterator it2 = reputation.mOpinions.find(from) ;
+	std::map<RsPeerId,RsOpinion>::iterator it2 = reputation.mOpinions.find(from) ;
 
     if(it2 == reputation.mOpinions.end())
     {
-	    if(new_opinion != RsReputations::OPINION_NEUTRAL)
+		if(new_opinion != RsOpinion::NEUTRAL)
 	    {
 		    reputation.mOpinions[from] = new_opinion;	// filters potentially tweaked reputation score sent by friend
 		    updated = true ;
@@ -693,7 +693,7 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
     {
 	    old_opinion = it2->second ;
 
-	    if(new_opinion == RsReputations::OPINION_NEUTRAL)
+		if(new_opinion == RsOpinion::NEUTRAL)
 	    {
 		    reputation.mOpinions.erase(it2) ;		// don't store when the opinion is neutral
 		    updated = true ;
@@ -705,7 +705,8 @@ void p3GxsReputation::locked_updateOpinion(const RsPeerId& from,const RsGxsId& a
 	    }
     }
 
-    if(reputation.mOpinions.empty() && reputation.mOwnOpinion == RsReputations::OPINION_NEUTRAL)
+	if( reputation.mOpinions.empty() &&
+	        reputation.mOwnOpinion == static_cast<int32_t>(RsOpinion::NEUTRAL) )
     {
 	    mReputations.erase(rit) ;
 #ifdef DEBUG_REPUTATION
@@ -747,7 +748,7 @@ bool p3GxsReputation::RecvReputations(RsGxsReputationUpdateItem *item)
 }
 
 
-bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
+bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,rstime_t latest_update)
 {
 	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -772,9 +773,10 @@ bool p3GxsReputation::updateLatestUpdate(RsPeerId peerid,time_t latest_update)
  * Opinion
  ****/
 
-RsReputations::ReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id,uint32_t *identity_flags)
+RsReputationLevel p3GxsReputation::overallReputationLevel(
+        const RsGxsId& id, uint32_t* identity_flags )
 {
-    ReputationInfo info ;
+	RsReputationInfo info ;
     getReputationInfo(id,RsPgpId(),info) ;
 
     RsPgpId owner_id ;
@@ -811,12 +813,14 @@ bool p3GxsReputation::getIdentityFlagsAndOwnerId(const RsGxsId& gxsid, uint32_t&
    return true ;
 }
 
-bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputations::ReputationInfo& info, bool stamp)
+bool p3GxsReputation::getReputationInfo(
+        const RsGxsId& gxsid, const RsPgpId& ownerNode, RsReputationInfo& info,
+        bool stamp )
 {
     if(gxsid.isNull())
         return false ;
         
-    time_t now = time(NULL) ;
+	rstime_t now = time(nullptr);
 
     RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
@@ -828,8 +832,8 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 
     if(it == mReputations.end())
     {
-        info.mOwnOpinion = RsReputations::OPINION_NEUTRAL ;
-        info.mFriendAverageScore = REPUTATION_THRESHOLD_DEFAULT ;
+		info.mOwnOpinion = RsOpinion::NEUTRAL ;
+        info.mFriendAverageScore = RS_REPUTATION_THRESHOLD_DEFAULT ;
         info.mFriendsNegativeVotes = 0 ;
         info.mFriendsPositiveVotes = 0 ;
 
@@ -839,7 +843,9 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
     {
         Reputation& rep(it->second) ;
 
-        info.mOwnOpinion = RsReputations::Opinion(rep.mOwnOpinion) ;
+		info.mOwnOpinion =
+		        safe_convert_uint32t_to_opinion(
+		            static_cast<uint32_t>(rep.mOwnOpinion) );
         info.mFriendAverageScore = rep.mFriendAverage ;
         info.mFriendsNegativeVotes = rep.mFriendsNegative ;
         info.mFriendsPositiveVotes = rep.mFriendsPositive ;
@@ -859,18 +865,18 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 
     // 0 - check for own opinion. If positive or negative, it decides on the result
 
-    if(info.mOwnOpinion == RsReputations::OPINION_NEGATIVE)
+	if(info.mOwnOpinion == RsOpinion::NEGATIVE)
     {
     	// own opinion is always read in priority
 
-        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::LOCALLY_NEGATIVE;
         return true ;
     }
-     if(info.mOwnOpinion == RsReputations::OPINION_POSITIVE)
+	 if(info.mOwnOpinion == RsOpinion::POSITIVE)
     {
     	// own opinion is always read in priority
 
-        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_POSITIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::LOCALLY_POSITIVE;
         return true ;
     }
 
@@ -895,7 +901,7 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 #ifdef DEBUG_REPUTATION2
         std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned (found in banned nodes list)." << std::endl;
 #endif
-        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::LOCALLY_NEGATIVE;
         return true ;
     }
     // also check the proxy
@@ -905,17 +911,17 @@ bool p3GxsReputation::getReputationInfo(const RsGxsId& gxsid, const RsPgpId& own
 #ifdef DEBUG_REPUTATION2
         std::cerr << "p3GxsReputations: identity " << gxsid << " is banned because owner node ID " << owner_id << " is banned (found in proxy)." << std::endl;
 #endif
-        info.mOverallReputationLevel = RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::LOCALLY_NEGATIVE;
         return true;
     }
     // 2 - now, our own opinion is neutral, which means we rely on what our friends tell
 
     if(info.mFriendsPositiveVotes >= info.mFriendsNegativeVotes + mMinVotesForRemotelyPositive)
-        info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_POSITIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::REMOTELY_POSITIVE;
     else if(info.mFriendsPositiveVotes + mMinVotesForRemotelyNegative <= info.mFriendsNegativeVotes)
-        info.mOverallReputationLevel = RsReputations::REPUTATION_REMOTELY_NEGATIVE ;
+		info.mOverallReputationLevel = RsReputationLevel::REMOTELY_NEGATIVE;
     else
-        info.mOverallReputationLevel = RsReputations::REPUTATION_NEUTRAL ;
+		info.mOverallReputationLevel = RsReputationLevel::NEUTRAL;
 
 #ifdef DEBUG_REPUTATION2
         std::cerr << "  information present. OwnOp = " << info.mOwnOpinion << ", owner node=" << owner_id << ", overall score=" << info.mAssessment << std::endl;
@@ -975,16 +981,20 @@ void p3GxsReputation::banNode(const RsPgpId& id,bool b)
         }
     }
 }
+
+RsReputationLevel p3GxsReputation::overallReputationLevel(const RsGxsId& id)
+{ return overallReputationLevel(id, nullptr); }
+
 bool p3GxsReputation::isNodeBanned(const RsPgpId& id)
 {
-    RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 
     return mBannedPgpIds.find(id) != mBannedPgpIds.end();
 }
 
 bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
 {
-    RsReputations::ReputationInfo info ;
+	RsReputationInfo info;
     
     if(!getReputationInfo(id,RsPgpId(),info))
         return false ;
@@ -992,10 +1002,11 @@ bool p3GxsReputation::isIdentityBanned(const RsGxsId &id)
 #ifdef DEBUG_REPUTATION
     std::cerr << "isIdentityBanned(): returning " << (info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE) << " for GXS id " << id << std::endl;
 #endif
-    return info.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE ;
+	return info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE;
 }
 
-bool p3GxsReputation::getOwnOpinion(const RsGxsId& gxsid, RsReputations::Opinion& opinion)
+bool p3GxsReputation::getOwnOpinion(
+        const RsGxsId& gxsid, RsOpinion& opinion )
 {
 #ifdef DEBUG_REPUTATION
     std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
@@ -1006,19 +1017,21 @@ bool p3GxsReputation::getOwnOpinion(const RsGxsId& gxsid, RsReputations::Opinion
         return false ;
     }
 
-	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	RS_STACK_MUTEX(mReputationMtx);
 
 	std::map<RsGxsId, Reputation>::iterator rit = mReputations.find(gxsid);
 
-    if(rit != mReputations.end())
-        opinion = RsReputations::Opinion(rit->second.mOwnOpinion) ;
-    else
-        opinion = RsReputations::OPINION_NEUTRAL ;
+	if(rit != mReputations.end())
+		opinion = safe_convert_uint32t_to_opinion(
+		            static_cast<uint32_t>(rit->second.mOwnOpinion) );
+	else
+		opinion = RsOpinion::NEUTRAL;
 
     return true;
 }
 
-bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::Opinion& opinion)
+bool p3GxsReputation::setOwnOpinion(
+        const RsGxsId& gxsid, RsOpinion opinion )
 {
 #ifdef DEBUG_REPUTATION
     std::cerr << "setOwnOpinion(): for GXS id " << gxsid << " to " << opinion << std::endl;
@@ -1028,8 +1041,8 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
         std::cerr << "  ID " << gxsid << " is rejected. Look for a bug in calling method." << std::endl;
         return false ;
     }
-                     
-	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+
+	RS_STACK_MUTEX(mReputationMtx);
 
 	std::map<RsGxsId, Reputation>::iterator rit;
 
@@ -1039,7 +1052,7 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	if (rit == mReputations.end())
 	{
 #warning csoler 2017-01-05: We should set the owner node id here.
-		mReputations[gxsid] = Reputation(gxsid);
+		mReputations[gxsid] = Reputation();
 		rit = mReputations.find(gxsid);
 	}
 
@@ -1047,13 +1060,13 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 	Reputation &reputation = rit->second;
 	if (reputation.mOwnOpinionTs != 0)
 	{
-		if (reputation.mOwnOpinion == opinion)
+		if (reputation.mOwnOpinion == static_cast<int32_t>(opinion))
 		{
 			// if opinion is accurate, don't update.
 			return false;
 		}
 
-		std::multimap<time_t, RsGxsId>::iterator uit, euit;
+		std::multimap<rstime_t, RsGxsId>::iterator uit, euit;
 		uit = mUpdated.lower_bound(reputation.mOwnOpinionTs);
 		euit = mUpdated.upper_bound(reputation.mOwnOpinionTs);
 		for(; uit != euit; ++uit)
@@ -1066,8 +1079,8 @@ bool p3GxsReputation::setOwnOpinion(const RsGxsId& gxsid, const RsReputations::O
 		}
 	}
 
-	time_t now = time(NULL);
-	reputation.mOwnOpinion = opinion;
+	rstime_t now = time(nullptr);
+	reputation.mOwnOpinion = static_cast<int32_t>(opinion);
 	reputation.mOwnOpinionTs = now;
 	reputation.updateReputation();
 
@@ -1132,7 +1145,7 @@ bool p3GxsReputation::saveList(bool& cleanup, std::list<RsItem*> &savelist)
         item->mOwnerNodeId = rit->second.mOwnerNode;
         item->mLastUsedTS = rit->second.mLastUsedTS;
 
-		std::map<RsPeerId, RsReputations::Opinion>::iterator oit;
+		std::map<RsPeerId, RsOpinion>::iterator oit;
 		for(oit = rit->second.mOpinions.begin(); oit != rit->second.mOpinions.end(); ++oit)
 		{
 			// should be already limited.
@@ -1390,8 +1403,8 @@ bool p3GxsReputation::loadReputationSet(RsGxsReputationSetItem *item, const std:
 
 int	p3GxsReputation::sendPackets()
 {
-	time_t now = time(NULL);
-	time_t requestTime, storeTime;
+	rstime_t now = time(NULL);
+	rstime_t requestTime, storeTime;
 	{
 		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
 		requestTime = mRequestTime;
@@ -1451,7 +1464,7 @@ void p3GxsReputation::sendReputationRequests()
 int p3GxsReputation::sendReputationRequest(RsPeerId peerid)
 {
 #ifdef DEBUG_REPUTATION
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 	std::cerr << "  p3GxsReputation::sendReputationRequest(" << peerid << ") " ;
 #endif
 
@@ -1498,15 +1511,16 @@ void Reputation::updateReputation()
     // accounts for all friends. Neutral opinions count for 1-1=0
     // because the average is performed over only accessible peers (not the total number) we need to shift to 1
 
-    for(std::map<RsPeerId,RsReputations::Opinion>::const_iterator it(mOpinions.begin());it!=mOpinions.end();++it)
+	for( std::map<RsPeerId,RsOpinion>::const_iterator it(mOpinions.begin());
+	     it != mOpinions.end(); ++it )
     {
-        if( it->second == RsReputations::OPINION_NEGATIVE)
+		if( it->second == RsOpinion::NEGATIVE)
             ++mFriendsNegative ;
 
-        if( it->second == RsReputations::OPINION_POSITIVE)
+		if( it->second == RsOpinion::POSITIVE)
             ++mFriendsPositive ;
 
-        friend_total += it->second - 1 ;
+		friend_total += static_cast<int>(it->second) - 1;
     }
 
     if(mOpinions.empty())	// includes the case of no friends!
@@ -1560,11 +1574,10 @@ void Reputation::updateReputation()
     }
 
     // now compute a bias for PGP-signed ids.
-    
-    if(mOwnOpinion == RsReputations::OPINION_NEUTRAL)
-	    mReputationScore = mFriendAverage ;
-    else
-	    mReputationScore = (float)mOwnOpinion ;
+
+	if(mOwnOpinion == static_cast<int32_t>(RsOpinion::NEUTRAL))
+		mReputationScore = mFriendAverage;
+	else mReputationScore = static_cast<float>(mOwnOpinion);
 }
 
 void p3GxsReputation::debug_print()
@@ -1573,19 +1586,22 @@ void p3GxsReputation::debug_print()
     std::cerr << "  GXS ID data: " << std::endl;
     std::cerr << std::dec ;
 
-std::map<RsGxsId,Reputation> rep_copy;
+	std::map<RsGxsId,Reputation> rep_copy;
 
-{
-		RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
-    rep_copy = mReputations ;
-}
-    time_t now = time(NULL) ;
+	{
+		RS_STACK_MUTEX(mReputationMtx);
+		rep_copy = mReputations;
+	}
 
-    for(std::map<RsGxsId,Reputation>::const_iterator it(rep_copy.begin());it!=rep_copy.end();++it)
+	rstime_t now = time(nullptr);
+
+
+	for( std::map<RsGxsId,Reputation>::const_iterator it(rep_copy.begin());
+	     it != rep_copy.end(); ++it )
     {
-        RsReputations::ReputationInfo info ;
-        getReputationInfo(it->first,RsPgpId(),info,false) ;
-        uint32_t lev = info.mOverallReputationLevel;
+		RsReputationInfo info;
+		getReputationInfo(it->first, RsPgpId(), info, false);
+		uint32_t lev = static_cast<uint32_t>(info.mOverallReputationLevel);
 
         std::cerr << "    " << it->first << ": own: " << it->second.mOwnOpinion
                   << ", PGP id=" << it->second.mOwnerNode
@@ -1602,7 +1618,7 @@ std::map<RsGxsId,Reputation> rep_copy;
 #endif
     }
 
-	RsStackMutex stack(mReputationMtx); /****** LOCKED MUTEX *******/
+	RS_STACK_MUTEX(mReputationMtx);
     std::cerr << "  Banned RS nodes by ID: " << std::endl;
 
     for(std::map<RsPgpId,BannedNodeInfo>::const_iterator it(mBannedPgpIds.begin());it!=mBannedPgpIds.end();++it)

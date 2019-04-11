@@ -1,28 +1,27 @@
-/*
- * libretroshare/src/util: rsnet_ss.cc
- *
- * sockaddr_storage functions for RetroShare.
- *
- * Copyright 2013-2013 by Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/util: rsnet_ss.cc                                         *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright 2015-2018 Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include "util/rsurl.h"
 
 #include <sstream>
 #include <iomanip>
@@ -190,8 +189,7 @@ bool sockaddr_storage_copyip(struct sockaddr_storage &dst, const struct sockaddr
 uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 {
 #ifdef SS_DEBUG
-	std::cerr << "sockaddr_storage_port()";
-	std::cerr << std::endl;
+	std::cerr << "sockaddr_storage_port()" << std::endl;
 #endif
 	switch(addr.ss_family)
 	{
@@ -201,8 +199,10 @@ uint16_t sockaddr_storage_port(const struct sockaddr_storage &addr)
 			return sockaddr_storage_ipv6_port(addr);
 		default:
 			std::cerr << "sockaddr_storage_port() invalid addr.ss_family" << std::endl;
+#ifdef SS_DEBUG
 			sockaddr_storage_dump(addr);
 			print_stacktrace();
+#endif
 			break;
 	}
 	return 0;
@@ -491,27 +491,32 @@ bool sockaddr_storage_sameip(const struct sockaddr_storage &addr, const struct s
 
 std::string sockaddr_storage_tostring(const struct sockaddr_storage &addr)
 {
-	std::string output;
-	output += sockaddr_storage_familytostring(addr);
+	RsUrl url;
 
 	switch(addr.ss_family)
 	{
 	case AF_INET:
-		output += "=";
-		output += sockaddr_storage_iptostring(addr);
-		output += ":";
-		output += sockaddr_storage_porttostring(addr);
+		url.setScheme("ipv4");
 		break;
 	case AF_INET6:
-		output += "=[";
-		output += sockaddr_storage_iptostring(addr);
-		output += "]:";
-		output += sockaddr_storage_porttostring(addr);
+		url.setScheme("ipv6");
 		break;
 	default:
-		break;
+		return "AF_INVALID";
 	}
-	return output;
+
+	url.setHost(sockaddr_storage_iptostring(addr))
+	   .setPort(sockaddr_storage_port(addr));
+
+	return url.toString();
+}
+
+bool sockaddr_storage_fromString(const std::string& str, sockaddr_storage &addr)
+{
+	RsUrl url(str);
+	bool valid = sockaddr_storage_inet_pton(addr, url.host());
+	if(url.hasPort()) sockaddr_storage_setport(addr, url.port());
+	return valid;
 }
 
 void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString)
@@ -606,9 +611,11 @@ std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr)
 		break;
 	default:
 		output = "INVALID_IP";
-		std::cerr << __PRETTY_FUNCTION__ << " Got invalid IP:" << std::endl;
+		std::cerr << __PRETTY_FUNCTION__ << " Got invalid IP!" << std::endl;
+#ifdef SS_DEBUG
 		sockaddr_storage_dump(addr);
 		print_stacktrace();
+#endif
 		break;
 	}
 	return output;

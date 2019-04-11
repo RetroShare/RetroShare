@@ -1,3 +1,23 @@
+/*******************************************************************************
+ * gui/statistics/BandwidthStatsWidget.cpp                                     *
+ *                                                                             *
+ * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <QComboBox>
 #include <QTimer>
 
@@ -117,7 +137,7 @@ void BandwidthStatsWidget::updateComboBoxes()
     {
 	    if(*it != ui.service_CB->itemData(indx).toInt())
 	    {
-	    QString sname = QString::fromUtf8(service_info_map.mServiceList[ ((*it)<<8) + 0x02000000].mServiceName.c_str()) ;
+	    QString sname = QString::fromUtf8(service_info_map.mServiceList[RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(*it)].mServiceName.c_str()) ;
 
 		    if(ui.service_CB->count() <= indx)
 			    ui.service_CB->addItem(sname + " (0x"+QString::number(*it,16)+")",QVariant(*it)) ;

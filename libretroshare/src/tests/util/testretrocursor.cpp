@@ -2,7 +2,7 @@
 #include <iostream>
 #include <memory.h>
 #include <sstream>
-#include <time.h>
+#include "util/rstime.h"
 
 #include "retrodb.h"
 #include "utest.h"

@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxschannels/CreateGxsChannelMsg.cpp                  *
+ *                                                                             *
+ * Copyright 2008 by Robert Fernie     <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QDragEnterEvent>
 #include <QMessageBox>
@@ -31,6 +30,7 @@
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/misc.h"
+#include "util/rsdir.h"
 
 #include <retroshare/rsfiles.h>
 
@@ -449,11 +449,10 @@ void CreateGxsChannelMsg::addAttachment(const std::string &path)
 	}
 
 	FileInfo fInfo;
-	std::string filename;
+	std::string filename = RsDirUtil::getTopDir(path);
 	uint64_t size = 0;
     RsFileHash hash ;
-
-	rsGxsChannels->ExtraFileHash(path, filename);
+	rsGxsChannels->ExtraFileHash(path);
 
     // Only path and filename are valid.
     // Destroyed when fileFrame (this subfileitem) is destroyed
@@ -604,7 +603,7 @@ void CreateGxsChannelMsg::newChannelMsg()
 			GxsMsgReq message_ids;
 
 			opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-            message_ids[mChannelId].push_back(mOrigPostId);
+            message_ids[mChannelId].insert(mOrigPostId);
 			mChannelQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, message_ids, CREATEMSG_CHANNEL_POST_INFO);
         }
 	}

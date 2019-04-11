@@ -1,27 +1,24 @@
-/*
- * RetroShare Directory watching system.
- *
- *      file_sharing/directory_updater.cc
- *
- * Copyright 2016 Mr.Alice
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare.project@gmail.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/file_sharing: directory_updater.cc                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 by Mr.Alice <mralice@users.sourceforge.net>                  *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ ******************************************************************************/
 #include "util/folderiterator.h"
 #include "util/rstime.h"
 #include "rsserver/p3face.h"
@@ -67,16 +64,29 @@ void LocalDirectoryUpdater::setEnabled(bool b)
 
 void LocalDirectoryUpdater::data_tick()
 {
-    time_t now = time(NULL) ;
+    rstime_t now = time(NULL) ;
 
     if (mIsEnabled || mForceUpdate)
     {
         if(now > mDelayBetweenDirectoryUpdates + mLastSweepTime)
         {
-            if(sweepSharedDirectories())
+            bool some_files_not_ready = false ;
+
+            if(sweepSharedDirectories(some_files_not_ready))
             {
-                mNeedsFullRecheck = false;
-                mLastSweepTime = now ;
+                if(some_files_not_ready)
+                {
+					mNeedsFullRecheck = true ;
+					mLastSweepTime = now - mDelayBetweenDirectoryUpdates + 60 ; // retry 20 secs from now
+
+					std::cerr << "(II) some files being modified. Will re-scan in 60 secs." << std::endl;
+                }
+				else
+                {
+					mNeedsFullRecheck = false ;
+					mLastSweepTime = now ;
+                }
+
                 mSharedDirectories->notifyTSChanged();
                 mForceUpdate = false ;
             }
@@ -111,7 +121,7 @@ void LocalDirectoryUpdater::forceUpdate()
 		mHashCache->togglePauseHashingProcess();
 }
 
-bool LocalDirectoryUpdater::sweepSharedDirectories()
+bool LocalDirectoryUpdater::sweepSharedDirectories(bool& some_files_not_ready)
 {
     if(mHashSalt.isNull())
     {
@@ -158,8 +168,8 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
 #endif
 		existing_dirs.insert(RsDirUtil::removeSymLinks(stored_dir_it.name()));
 
-        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
-                                                                            // are not necessarily in the same order.
+        recursUpdateSharedDir(stored_dir_it.name(), *stored_dir_it,existing_dirs,1,some_files_not_ready) ;		// here we need to use the list that was stored, instead of the shared dir list, because the two
+                                                                            									// are not necessarily in the same order.
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
@@ -168,7 +178,7 @@ bool LocalDirectoryUpdater::sweepSharedDirectories()
     return true ;
 }
 
-void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth)
+void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_path, DirectoryStorage::EntryIndex indx,std::set<std::string>& existing_directories,uint32_t current_depth,bool& some_files_not_ready)
 {
 #ifdef DEBUG_LOCAL_DIR_UPDATER
     std::cerr << "[directory storage]   parsing directory " << cumulated_path << ", index=" << indx << std::endl;
@@ -180,12 +190,14 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 
     librs::util::FolderIterator dirIt(cumulated_path,mFollowSymLinks,false);	// disallow symbolic links and files from the future.
 
-    time_t dir_local_mod_time ;
+    rstime_t dir_local_mod_time ;
     if(!mSharedDirectories->getDirectoryLocalModTime(indx,dir_local_mod_time))
     {
         std::cerr << "(EE) Cannot get local mod time for dir index " << indx << std::endl;
         return;
     }
+
+    rstime_t now = time(NULL) ;
 
     if(mNeedsFullRecheck || dirIt.dir_modtime() > dir_local_mod_time)	// the > is because we may have changed the virtual name, and therefore the TS wont match.
 																		// we only want to detect when the directory has changed on the disk
@@ -200,11 +212,23 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 		   {
 			   switch(dirIt.file_type())
 			   {
-			   case librs::util::FolderIterator::TYPE_FILE:	subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
-				   subfiles[dirIt.file_name()].size = dirIt.file_size();
+			   case librs::util::FolderIterator::TYPE_FILE:
+
+                   if(dirIt.file_modtime() + MIN_TIME_AFTER_LAST_MODIFICATION < now)
+				   {
+					   subfiles[dirIt.file_name()].modtime = dirIt.file_modtime() ;
+					   subfiles[dirIt.file_name()].size = dirIt.file_size();
 #ifdef DEBUG_LOCAL_DIR_UPDATER
-				   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
+					   std::cerr << "  adding sub-file \"" << dirIt.file_name() << "\"" << std::endl;
 #endif
+				   }
+                   else
+                   {
+                       some_files_not_ready = true ;
+
+                       std::cerr << "(WW) file " << dirIt.file_fullpath() << " is probably being modified. Keeping it for later." << std::endl;
+                   }
+
 				   break;
 
 			   case librs::util::FolderIterator::TYPE_DIR:
@@ -276,7 +300,7 @@ void LocalDirectoryUpdater::recursUpdateSharedDir(const std::string& cumulated_p
 #ifdef DEBUG_LOCAL_DIR_UPDATER
 			std::cerr << "  recursing into " << stored_dir_it.name() << std::endl;
 #endif
-			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1) ;
+			recursUpdateSharedDir(cumulated_path + "/" + stored_dir_it.name(), *stored_dir_it,existing_directories,current_depth+1,some_files_not_ready) ;
 		}
 }
 

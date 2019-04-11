@@ -1,28 +1,24 @@
-
-/*
- * libretroshare/src/gxs: rsdataservice.cc
- *
- * Data Access, interface for RetroShare.
- *
- * Copyright 2011-2011 by Evi-Parker Christopher
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/gxs: gxsdataservice.cc                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2011-2011 by Evi-Parker Christopher                               *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 /*****
  * #define RS_DATA_SERVICE_DEBUG       1
@@ -952,11 +948,13 @@ void RsDataService::locked_updateGrpMetaCache(const RsGxsGrpMetaData& meta)
 
 	if(it != mGrpMetaDataCache.end())
 		*(it->second) = meta ;
+    else
+        mGrpMetaDataCache[meta.mGroupId] = new RsGxsGrpMetaData(meta) ;
 }
 
 void RsDataService::locked_clearGrpMetaCache(const RsGxsGroupId& gid)
 {
-	time_t now = time(NULL) ;
+	rstime_t now = time(NULL) ;
     auto it = mGrpMetaDataCache.find(gid) ;
 
 	// We dont actually delete the item, because it might be used by a calling client.
@@ -1200,27 +1198,27 @@ void RsDataService::locked_retrieveGroups(RetroCursor* c, std::vector<RsNxsGrp*>
     }
 }
 
-int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */, bool withMeta)
+int RsDataService::retrieveNxsMsgs(
+        const GxsMsgReq &reqIds, GxsMsgResult &msg, bool /* cache */,
+        bool withMeta )
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
     int resultCount = 0;
 #endif
 
-    GxsMsgReq::const_iterator mit = reqIds.begin();
-
-    for(; mit != reqIds.end(); ++mit)
+	for(auto mit = reqIds.begin(); mit != reqIds.end(); ++mit)
     {
 
         const RsGxsGroupId& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsNxsMsg*> msgSet;
 
-        if(msgIdV.empty()){
-
-            RsStackMutex stack(mDbMutex);
+		if(msgIdV.empty())
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString() + "'", "");
 
@@ -1230,15 +1228,16 @@ int RsDataService::retrieveNxsMsgs(const GxsMsgReq &reqIds, GxsMsgResult &msg, b
             }
 
             delete c;
-        }else{
+		}
+		else
+		{
+			RS_STACK_MUTEX(mDbMutex);
 
             // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
-
-            for(; sit!=msgIdV.end();++sit){
+			for( std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+			     sit!=msgIdV.end();++sit )
+			{
                 const RsGxsMessageId& msgId = *sit;
-
-                RsStackMutex stack(mDbMutex);
 
                 RetroCursor* c = mDb->sqlQuery(MSG_TABLE_NAME, withMeta ? mMsgColumnsWithMeta : mMsgColumns, KEY_GRP_ID+ "='" + grpId.toStdString()
                                                + "' AND " + KEY_MSG_ID + "='" + msgId.toStdString() + "'", "");
@@ -1303,7 +1302,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         const RsGxsGroupId& grpId = mit->first;
 
         // if vector empty then request all messages
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         std::vector<RsGxsMsgMetaData*> metaSet;
 
         if(msgIdV.empty()){
@@ -1319,7 +1318,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
         }else{
 
             // request each grp
-            std::vector<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
+            std::set<RsGxsMessageId>::const_iterator sit = msgIdV.begin();
 
             for(; sit!=msgIdV.end(); ++sit){
                 const RsGxsMessageId& msgId = *sit;
@@ -1375,7 +1374,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
     std::cerr << std::endl;
 #endif
 
-    RsStackMutex stack(mDbMutex);
+	RS_STACK_MUTEX(mDbMutex);
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
@@ -1559,7 +1558,7 @@ int RsDataService::removeMsgs(const GxsMsgReq& msgIds)
 
     for(; mit != msgIds.end(); ++mit)
     {
-        const std::vector<RsGxsMessageId>& msgIdV = mit->second;
+        const std::set<RsGxsMessageId>& msgIdV = mit->second;
         const RsGxsGroupId& grpId = mit->first;
 
         // delete messages
@@ -1620,7 +1619,7 @@ int RsDataService::retrieveGroupIds(std::vector<RsGxsGroupId> &grpIds)
     return 1;
 }
 
-int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_vector& msgIds)
+int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std_set& msgIds)
 {
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
     rstime::RsScopeTimer timer("");
@@ -1641,7 +1640,7 @@ int RsDataService::retrieveMsgIds(const RsGxsGroupId& grpId, RsGxsMessageId::std
             if(c->columnCount() != 1)
             std::cerr << "(EE) ********* not retrieving all columns!!" << std::endl;
 
-            msgIds.push_back(RsGxsMessageId(msgId));
+            msgIds.insert(RsGxsMessageId(msgId));
             valid = c->moveToNext();
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
@@ -1672,8 +1671,8 @@ bool RsDataService::locked_removeMessageEntries(const GxsMsgReq& msgIds)
     for(; mit != msgIds.end(); ++mit)
     {
         const RsGxsGroupId& grpId = mit->first;
-        const std::vector<RsGxsMessageId>& msgsV = mit->second;
-        std::vector<RsGxsMessageId>::const_iterator vit = msgsV.begin();
+        const std::set<RsGxsMessageId>& msgsV = mit->second;
+        std::set<RsGxsMessageId>::const_iterator vit = msgsV.begin();
 
         for(; vit != msgsV.end(); ++vit)
         {

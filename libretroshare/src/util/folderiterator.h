@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libretroshare/src/util: folderiterator.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright (C) 2017 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef FOLDERITERATOR_H
 #define FOLDERITERATOR_H
 
@@ -15,6 +36,7 @@
     #include <dirent.h>
 #endif
 
+#include "util/rstime.h"
 
 namespace librs { namespace util {
 
@@ -31,7 +53,7 @@ public:
          };
 
     // info about current parent directory
-    time_t dir_modtime() const ;
+    rstime_t dir_modtime() const ;
 
     // info about directory content
 
@@ -45,7 +67,7 @@ public:
     const std::string& file_fullpath() ;
     uint64_t file_size() ;
     uint8_t file_type() ;
-    time_t   file_modtime() ;
+    rstime_t   file_modtime() ;
 
 private:
     bool is_open;
@@ -61,8 +83,8 @@ private:
 #endif
     bool updateFileInfo(bool &should_skip) ;
 
-    time_t mFileModTime ;
-    time_t mFolderModTime ;
+    rstime_t mFileModTime ;
+    rstime_t mFolderModTime ;
     uint64_t mFileSize ;
     uint8_t mType ;
     std::string mFileName ;

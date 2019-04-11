@@ -1,27 +1,24 @@
-/*
- * libretroshare/src/services: p3turtle.h
- *
- * Services for RetroShare.
- *
- * Copyright 2009 by Cyril Soler
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "csoler@users.sourceforge.net".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/turtle: p3turtle.h                                        *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2009-2018 by Cyril Soler <csoler@users.sourceforge.net>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 //====================================== General setup of the router ===================================//
 //
@@ -169,10 +166,12 @@ class TurtleSearchRequestInfo
 {
 	public:
 		TurtlePeerId origin ;         // where the request came from.
-		uint32_t	time_stamp ;      // last time the tunnel was actually used. Used for cleaning old tunnels.
-		int depth ;                   // depth of the request. Used to optimize tunnel length.
-		uint32_t    result_count;     // responses to this request. Useful to avoid spamming tunnel responses.
-		std::string keywords;
+		uint32_t	 time_stamp ;     // last time the tunnel was actually used. Used for cleaning old tunnels.
+		int          depth ;          // depth of the request. Used to optimize tunnel length.
+		uint32_t     result_count;    // responses to this request. Useful to avoid spamming tunnel responses.
+		std::string  keywords;
+        uint16_t     service_id;      // ID of the client service who issues the request. This is null if the request does not have a local origin.
+        uint32_t     max_allowed_hits;// Max number of hits allowed for this search. This actually depends on the type of search (files, GXS groups, GXS group data, etc)
 };
 class TurtleTunnelRequestInfo
 {
@@ -208,7 +207,7 @@ class TurtleHashInfo
 	public:
 		std::vector<TurtleTunnelId> tunnels ;		// list of active tunnel ids for this file hash
         TurtleRequestId last_request ;			// last request for the tunnels of this hash
-        time_t last_digg_time ;				// last time the tunnel digging happenned.
+        rstime_t last_digg_time ;				// last time the tunnel digging happenned.
         RsTurtleClientService *service ; 		// client service to which items should be sent. Never NULL.
         bool use_aggressive_mode ;			// allow to re-digg tunnels even when some are already available
 };
@@ -244,11 +243,16 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		// the request id, which will be further used by the gui to store results
 		// as they come back.
 		//
-		// Eventually, search requests should be handled by client services. We will therefore
-		// remove the specific file search packets from the turtle router.
-		//
-		virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
-        virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
+        // The first two methods are old style search requests for FT, while the 3rd one is using a generic search data type, that is only to
+        // be deserialized by the service. The memory ownership is kept by the calling function. Similarly, the search response will be a
+        // generic data type that is to be deserialized by the client service.
+        //
+        // Eventually, search requests will use the generic system
+        // even for FT. We need to keep the old method for a while for backward compatibility.
+        //
+        virtual TurtleRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
+        virtual TurtleRequestId turtleSearch(const std::string& string_to_match) ;
+        virtual TurtleRequestId turtleSearch(unsigned char *search_bin_data,uint32_t search_bin_data_len,RsTurtleClientService *client_service) ;
 
 		// Initiates tunnel handling for the given file hash.  tunnels.  Launches
 		// an exception if an error occurs during the initialization process. The
@@ -332,6 +336,12 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		/// Send a data request into the correct tunnel for the given file hash
 		void sendTurtleData(const RsPeerId& virtual_peer_id, RsTurtleGenericTunnelItem *item) ;
 
+		/// Encrypts/decrypts an item, using a autenticated construction + chacha20, based on the given 32 bytes master key.
+		/// Input values are not touched (memory is not released). Memory ownership of outputs is left to the client.
+		///
+		static bool encryptData(const unsigned char *clear_data,uint32_t clear_data_size,uint8_t *encryption_master_key,RsTurtleGenericDataItem *& encrypted_item);
+		static bool decryptItem(const RsTurtleGenericDataItem *item, uint8_t* encryption_master_key, unsigned char *& decrypted_data,uint32_t& decrypted_data_size);
+
 	private:
 		//--------------------------- Admin/Helper functions -------------------------//
 		
@@ -385,10 +395,9 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		//------ Functions connecting the turtle router to other components.----------//
 		
 		/// Performs a search calling local cache and search structure.
-		void performLocalSearch(const std::string& match_string,std::list<TurtleFileInfo>& result) ;
-
-		/// Returns a search result upwards (possibly to the gui)
-		void returnSearchResult(RsTurtleSearchResultItem *item) ;
+		void performLocalSearch        (RsTurtleSearchRequestItem        *item, uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits) ;
+		void performLocalSearch_files  (RsTurtleFileSearchRequestItem    *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result, uint32_t &max_allowed_hits) ;
+		void performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item, uint32_t& req_result_count, std::list<RsTurtleSearchResultItem*>& result, uint32_t &max_allowed_hits) ;
 
 		/// Returns true if the file with given hash is hosted locally, and accessible in anonymous mode the supplied peer.
 		virtual bool performLocalHashSearch(const TurtleFileHash& hash,const RsPeerId& client_peer_id,RsTurtleClientService *& service);
@@ -410,7 +419,7 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		std::map<TurtleTunnelRequestId,TurtleTunnelRequestInfo> 	_tunnel_requests_origins ;
 
 		/// stores adequate tunnels for each file hash locally managed
-		std::map<TurtleFileHash,TurtleHashInfo>				_incoming_file_hashes ;		
+		std::map<TurtleFileHash,TurtleHashInfo>			   	_incoming_file_hashes ;
 
 		/// stores file info for each file we provide.
         std::map<TurtleTunnelId,RsTurtleClientService *>	_outgoing_tunnel_client_services ;
@@ -425,12 +434,12 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
         std::set<TurtleFileHash>								_hashes_to_remove ;
 
 		/// List of client services that have regitered.
-		std::list<RsTurtleClientService*>						_registered_services ;
+		std::map<uint16_t,RsTurtleClientService*>						_registered_services ;
 
-		time_t _last_clean_time ;
-		time_t _last_tunnel_management_time ;
-		time_t _last_tunnel_campaign_time ;
-		time_t _last_tunnel_speed_estimate_time ;
+		rstime_t _last_clean_time ;
+		rstime_t _last_tunnel_management_time ;
+		rstime_t _last_tunnel_campaign_time ;
+		rstime_t _last_tunnel_speed_estimate_time ;
 
 		std::list<pqipeer> _online_peers;
 

@@ -18,8 +18,8 @@ GenExchangeTest::~GenExchangeTest()
 void GenExchangeTest::pollForToken(uint32_t token, const RsTokReqOptions &opts, bool fill)
 {
     double timeDelta = 0.2;
-    time_t now = time(NULL);
-    time_t stopw = now + mPollingTO;
+    rstime_t now = time(NULL);
+    rstime_t stopw = now + mPollingTO;
 
     while(now < stopw)
     {
@@ -84,8 +84,8 @@ bool GenExchangeTest::pollForMsgAcknowledgement(uint32_t token,
 {
     double timeDelta = 0.2;
 
-    time_t now = time(NULL);
-	time_t stopw = now + mPollingTO;
+    rstime_t now = time(NULL);
+	rstime_t stopw = now + mPollingTO;
 
     while(now < stopw)
     {
@@ -123,8 +123,8 @@ bool GenExchangeTest::pollForGrpAcknowledgement(uint32_t token,
 		RsGxsGroupId& grpId)
 {
     double timeDelta = 0.2;
-    time_t now = time(NULL);
-	time_t stopw = now + mPollingTO;
+    rstime_t now = time(NULL);
+	rstime_t stopw = now + mPollingTO;
     while(now < stopw)
     {
 #ifndef WINDOWS_SYS

@@ -1,26 +1,26 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2008 Robert Fernie
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxschannels/GxsChannelDialog.cpp                     *
+ *                                                                             *
+ * Copyright 2013 by Robert Fernie     <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMenu>
 #include <QFileDialog>
+#include <QMetaObject>
 
 #include <retroshare/rsfiles.h>
 
@@ -34,6 +34,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/notifyqt.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "util/qtthreadsutils.h"
 
 class GxsChannelGroupInfoData : public RsUserdata
 {
@@ -47,7 +48,7 @@ public:
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent)
+	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
 }
 
@@ -130,13 +131,15 @@ QString GxsChannelDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/images/folder16.png";
+		return ":/icons/png/channel.png";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/images/folder_red.png";
+		return ":/icons/png/channel-subscribed.png";
 	case ICON_POPULAR_GROUP:
-		return ":/images/folder_green.png";
+		return ":/icons/png/channel-popular.png";
 	case ICON_OTHER_GROUP:
-		return ":/images/folder_yellow.png";
+		return ":/icons/png/channel-other.png";
+    case ICON_SEARCH:
+        return ":/images/find.png";
 	case ICON_DEFAULT:
 		return ":/images/channels.png";
 	}
@@ -274,17 +277,37 @@ QWidget *GxsChannelDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, 
 void GxsChannelDialog::toggleAutoDownload()
 {
 	RsGxsGroupId grpId = groupId();
-	if (grpId.isNull()) {
+	if (grpId.isNull()) return;
+
+	bool autoDownload;
+	if(!rsGxsChannels->getChannelAutoDownload(grpId, autoDownload))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " failed to get autodownload value "
+		          << "for channel: " << grpId.toStdString() << std::endl;
 		return;
 	}
 
-    bool autoDownload ;
-
-        if(!rsGxsChannels->getChannelAutoDownload(grpId,autoDownload) || !rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+	RsThread::async([this, grpId, autoDownload]()
 	{
-		std::cerr << "GxsChannelDialog::toggleAutoDownload() Auto Download failed to set";
-		std::cerr << std::endl;
-	}
+		if(!rsGxsChannels->setChannelAutoDownload(grpId, !autoDownload))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to set autodownload "
+			          << "for channel: " << grpId << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [=]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
+			          << "thread but was scheduled by async thread" << std::endl;
+		}, this );
+	});
 }
 
 void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
@@ -333,4 +356,25 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo
 	if (iconIt != channelData->mIcon.end()) {
 		groupItemInfo.icon = iconIt.value();
 	}
+}
+
+TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
+{
+    return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
+}
+
+bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+{
+    return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
+}
+
+void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
+{
+    RsGxsChannelGroup distant_group;
+
+	if( rsGxsChannels->retrieveDistantGroup(grpId,distant_group)) // normally we should also check that the group meta is not already here.
+    {
+        std::cerr << "GxsChannelDialog::checkRequestGroup() sending turtle request for group data for group " << grpId << std::endl;
+        rsGxsChannels->turtleGroupRequest(grpId);
+    }
 }

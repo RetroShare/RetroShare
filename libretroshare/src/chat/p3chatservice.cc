@@ -1,34 +1,32 @@
-/*
- * "$Id: p3ChatService.cc,v 1.24 2007-05-05 16:10:06 rmf24 Exp $"
- *
- * Other Bits for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * libretroshare/src/chat: chatservice.cc                                      *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2008 by Robert Fernie.                                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
 #include <math.h>
 #include <sstream>
 #include <unistd.h>
 
 #include "util/rsdir.h"
 #include "util/radix64.h"
-#include "util/rsaes.h"
+#include "crypto/rsaes.h"
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
 #include "retroshare/rsiface.h"
@@ -523,12 +521,12 @@ class MsgCounter
 	public:
 		MsgCounter() {}
 
-		void clean(time_t max_time)
+		void clean(rstime_t max_time)
 		{
 			while(!recv_times.empty() && recv_times.front() < max_time)
 				recv_times.pop_front() ;
 		}
-		std::list<time_t> recv_times ;
+		std::list<rstime_t> recv_times ;
 };
 
 void p3ChatService::handleIncomingItem(RsItem *item)
@@ -850,9 +848,18 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
             RsServer::notify()->AddPopupMessage(popupChatFlag, ci->PeerId().toStdString(), name, message); /* notify private chat message */
         else
         {
-            /* notify public chat message */
-            RsServer::notify()->AddPopupMessage(RS_POPUP_GROUPCHAT, ci->PeerId().toStdString(), "", message);
-            RsServer::notify()->AddFeedItem(RS_FEED_ITEM_CHAT_NEW, ci->PeerId().toStdString(), message, "");
+#ifdef RS_DIRECT_CHAT
+			/* notify public chat message */
+			RsServer::notify()->AddPopupMessage(
+			            RS_POPUP_GROUPCHAT,
+			            ci->PeerId().toStdString(), "", message );
+			RsServer::notify()->AddFeedItem(
+			            RS_FEED_ITEM_CHAT_NEW,
+			            ci->PeerId().toStdString(), message, "" );
+#else // def RS_DIRECT_CHAT
+			/* Ignore deprecated direct node broadcast chat messages */
+			return false;
+#endif
         }
     }
 

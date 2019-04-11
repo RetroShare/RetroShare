@@ -1,3 +1,24 @@
+/*******************************************************************************
+ * libresapi/api/RsControlModule.h                                             *
+ *                                                                             *
+ * LibResAPI: API for local socket server                                      *
+ *                                                                             *
+ * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
 #include <util/rsthreads.h>
@@ -29,7 +50,7 @@ public:
     // full_control: set to true if this module should handle rsinit and login
     // set to false if rsinit is handled by the Qt gui
     RsControlModule(int argc, char **argv, StateTokenServer* sts, ApiServer* apiserver, bool full_control);
-    ~RsControlModule();
+    ~RsControlModule() override;
 
     // returns true if the process should terminate
     bool processShouldExit();
@@ -41,10 +62,12 @@ public:
 	virtual bool askForPassword(const std::string &title, const std::string& key_details, bool prev_is_bad , std::string& password,bool& canceled) override;
 	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason = "") override;
 
+	virtual void requestShutdown();
+
 protected:
     // from RsThread
     // wee need a thread to call into things which block like askForPassword()
-    virtual void run();
+    virtual void run() override;
 
 private:
     void handleRunState(Request& req, Response& resp);

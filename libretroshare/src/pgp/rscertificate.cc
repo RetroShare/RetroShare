@@ -1,3 +1,25 @@
+/*******************************************************************************
+ * libretroshare/src/pgp: rscertificate.cc                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2016 Cyril Soler <csoler@users.sourceforge.net>                   *
+ * Copyright 2018 Gioacchino Mazzurco <gio@eigenlab.org>                       *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include <iostream>
 #include <sstream>
 #include <stdio.h>
@@ -8,28 +30,25 @@
 #include <pgp/pgpkeyutil.h>
 #include "rscertificate.h"
 #include "util/rsstring.h"
+#include "util/stacktrace.h"
 
 //#define DEBUG_RSCERTIFICATE
 
-static const std::string PGP_CERTIFICATE_START     ( "-----BEGIN PGP PUBLIC KEY BLOCK-----" );
-static const std::string PGP_CERTIFICATE_END       ( "-----END PGP PUBLIC KEY BLOCK-----" );
-static const std::string EXTERNAL_IP_BEGIN_SECTION ( "--EXT--" );
-static const std::string LOCAL_IP_BEGIN_SECTION    ( "--LOCAL--" );
-static const std::string SSLID_BEGIN_SECTION       ( "--SSLID--" );
-static const std::string LOCATION_BEGIN_SECTION    ( "--LOCATION--" );
-static const std::string HIDDEN_NODE_BEGIN_SECTION    ( "--HIDDEN--" );
+static const uint8_t CERTIFICATE_VERSION_06 = 0x06;
 
-static const uint8_t CERTIFICATE_PTAG_PGP_SECTION           = 0x01 ;  
-static const uint8_t CERTIFICATE_PTAG_EXTIPANDPORT_SECTION  = 0x02 ;  
-static const uint8_t CERTIFICATE_PTAG_LOCIPANDPORT_SECTION  = 0x03 ;  
-static const uint8_t CERTIFICATE_PTAG_DNS_SECTION           = 0x04 ;  
-static const uint8_t CERTIFICATE_PTAG_SSLID_SECTION         = 0x05 ;  
-static const uint8_t CERTIFICATE_PTAG_NAME_SECTION          = 0x06 ;  
-static const uint8_t CERTIFICATE_PTAG_CHECKSUM_SECTION      = 0x07 ;  
-static const uint8_t CERTIFICATE_PTAG_HIDDENNODE_SECTION    = 0x08 ;  
-static const uint8_t CERTIFICATE_PTAG_VERSION_SECTION       = 0x09 ;  
-
-static const uint8_t CERTIFICATE_VERSION_06 = 0x06 ;
+enum CertificatePtag : uint8_t
+{
+	CERTIFICATE_PTAG_PGP_SECTION           = 0x01,
+	CERTIFICATE_PTAG_EXTIPANDPORT_SECTION  = 0x02,
+	CERTIFICATE_PTAG_LOCIPANDPORT_SECTION  = 0x03,
+	CERTIFICATE_PTAG_DNS_SECTION           = 0x04,
+	CERTIFICATE_PTAG_SSLID_SECTION         = 0x05,
+	CERTIFICATE_PTAG_NAME_SECTION          = 0x06,
+	CERTIFICATE_PTAG_CHECKSUM_SECTION      = 0x07,
+	CERTIFICATE_PTAG_HIDDENNODE_SECTION    = 0x08,
+	CERTIFICATE_PTAG_VERSION_SECTION       = 0x09,
+	CERTIFICATE_PTAG_EXTRA_LOCATOR         = 10
+};
 
 static bool is_acceptable_radix64Char(char c)
 {
@@ -70,6 +89,17 @@ void RsCertificate::addPacket(uint8_t ptag, const unsigned char *mem, size_t siz
 	offset += size ;
 }
 
+const RsCertificate&RsCertificate::operator=(const RsCertificate&)
+{
+	memset(ipv4_external_ip_and_port,0,6);
+	memset(ipv4_internal_ip_and_port,0,6);
+	binary_pgp_key = nullptr;
+	binary_pgp_key_size = 0;
+	only_pgp = false;
+	hidden_node = false;
+	return *this;
+}
+
 std::string RsCertificate::toStdString() const
 {
 	//std::string res ;
@@ -95,6 +125,14 @@ std::string RsCertificate::toStdString() const
 
 		addPacket( CERTIFICATE_PTAG_NAME_SECTION        , (unsigned char *)location_name.c_str() ,location_name.length()   , buf, p, BS ) ;
 		addPacket( CERTIFICATE_PTAG_SSLID_SECTION       , location_id.toByteArray()              ,location_id.SIZE_IN_BYTES, buf, p, BS ) ;
+
+		for (const RsUrl& locator : mLocators)
+		{
+			std::string urlStr(locator.toString());
+			addPacket( CERTIFICATE_PTAG_EXTRA_LOCATOR,
+			           (unsigned char *) urlStr.c_str(), urlStr.size(),
+			           buf, p, BS );
+		}
 	}
 
 	uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(buf,p) ;
@@ -128,17 +166,21 @@ std::string RsCertificate::toStdString() const
 	return out2 ;
 }
 
-RsCertificate::RsCertificate(const std::string& str)
-	: 
-	location_name(""), 
-	pgp_version("Version: OpenPGP:SDK v0.9"),
-		dns_name(""),only_pgp(true)
+RsCertificate::RsCertificate(const std::string& str) :
+    location_name(""), pgp_version("Version: OpenPGP:SDK v0.9"),
+    dns_name(""), only_pgp(true)
 {
-	uint32_t err_code ;
-	binary_pgp_key = NULL ;
+	uint32_t err_code;
+	binary_pgp_key = nullptr;
 
-	if(!initFromString(str,err_code)) 
-		throw err_code ;
+	if(!initializeFromString(str, err_code))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " is deprecated because it can "
+		          << "miserably fail like this! str: " << str
+		          << " err_code: " << err_code << std::endl;
+		print_stacktrace();
+		throw err_code;
+	}
 }
 
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
@@ -195,7 +237,10 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 				memset(ipv4_external_ip_and_port,0,6) ;
 			}
 
-			dns_name = Detail.dyndns ;
+			dns_name = Detail.dyndns;
+
+			for(auto&& ipr : Detail.ipAddressList)
+				mLocators.insert(RsUrl(ipr.substr(0, ipr.find(' '))));
 		}
 	}
 	else
@@ -227,7 +272,7 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 	ip_and_port[5] =  port        & 0xff ;
 }
 
-bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
+bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_code)
 {
 	try
 	{
@@ -254,21 +299,21 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
         std::vector<uint8_t> bf = Radix64::decode(str) ;
         size_t size = bf.size();
 
-		bool checksum_check_passed = false ;
-        unsigned char *buf = bf.data() ;
-		size_t total_s = 0 ;
-		only_pgp = true ;
-		uint8_t certificate_version = 0x00 ;
+		bool checksum_check_passed = false;
+		unsigned char *buf = bf.data();
+		size_t total_s = 0;
+		only_pgp = true;
+		uint8_t certificate_version = 0x00;
 
 		while(total_s < size)
 		{
 			uint8_t ptag = buf[0];
-			buf = &buf[1] ;
+			buf = &buf[1];
 
-			unsigned char *buf2 = buf ;
-			uint32_t s = PGPKeyParser::read_125Size(buf) ;
+			unsigned char *buf2 = buf;
+			uint32_t s = PGPKeyParser::read_125Size(buf);
 
-			total_s += 1 + ((unsigned long)buf-(unsigned long)buf2) ;
+			total_s += 1 + ((size_t)buf-(size_t)buf2) ;
 
 			if(total_s > size)
 			{
@@ -281,90 +326,80 @@ bool RsCertificate::initFromString(const std::string& instr,uint32_t& err_code)
 #endif
 			switch(ptag)
 			{
-				case CERTIFICATE_PTAG_VERSION_SECTION: certificate_version = buf[0] ;
-																buf = &buf[s] ;
-																break ;
-				
-
-				case CERTIFICATE_PTAG_PGP_SECTION: binary_pgp_key = new unsigned char[s] ;
-															  memcpy(binary_pgp_key,buf,s) ;
-															  binary_pgp_key_size = s ;
-															  buf = &buf[s] ;
-															  break ;
-
-				case CERTIFICATE_PTAG_NAME_SECTION: location_name = std::string((char *)buf,s) ;
-																buf = &buf[s] ;
-																break ;
-
-				case CERTIFICATE_PTAG_SSLID_SECTION: 
-																if(s != location_id.SIZE_IN_BYTES)
-																{
-																	err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID ;
-																	return false ;
-																}
-
-																location_id = RsPeerId(buf) ;
-																buf = &buf[s] ;
-																only_pgp = false ;
-																break ;
-
-				case CERTIFICATE_PTAG_DNS_SECTION: dns_name = std::string((char *)buf,s) ;
-															  buf = &buf[s] ;
-															  break ;
-
-				case CERTIFICATE_PTAG_HIDDENNODE_SECTION: 
-					hidden_node_address = std::string((char *)buf,s);
-					hidden_node = true;
-					buf = &buf[s];
-				
-					break ;
-
-				case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION: 
-															  if(s != 6)
-
-															  {
-																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
-																  return false ;
-															  }
-
-															  memcpy(ipv4_internal_ip_and_port,buf,s) ;
-															  buf = &buf[s] ;
-															  break ;
-				case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION: 
-															  if(s != 6)
-															  {
-																  err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
-																  return false ;
-															  }
-
-															  memcpy(ipv4_external_ip_and_port,buf,s) ;
-															  buf = &buf[s] ;
-															  break ;
-				case CERTIFICATE_PTAG_CHECKSUM_SECTION: 
-															  {
-																  if(s != 3 || total_s+3 != size)
-																  {
-																	  err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION ;
-																	  return false ;
-																  }
-                                                                  uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(bf.data(),size-5) ;
-																  uint32_t certificate_crc = buf[0] + (buf[1] << 8) + (buf[2] << 16) ;
-
-																  if(computed_crc != certificate_crc)
-																  {
-																	  err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR ;
-																	  return false ;
-																  }
-																  else
-																	  checksum_check_passed = true ;
-															  }
-															  break ;
-				default:
-															  std::cerr << "(WW) unknwown PTAG 0x" << std::hex << ptag << std::dec << " in certificate! Ignoring it." << std::endl;
-															  buf = &buf[s] ;
-															  break ;
+			case CERTIFICATE_PTAG_VERSION_SECTION:
+				certificate_version = buf[0];
+				break;
+			case CERTIFICATE_PTAG_PGP_SECTION:
+				binary_pgp_key = new unsigned char[s];
+				memcpy(binary_pgp_key,buf,s);
+				binary_pgp_key_size = s;
+				break;
+			case CERTIFICATE_PTAG_NAME_SECTION:
+				location_name = std::string((char *)buf,s);
+				break;
+			case CERTIFICATE_PTAG_SSLID_SECTION:
+				if(s != location_id.SIZE_IN_BYTES)
+				{
+					err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID;
+					return false;
+				}
+				location_id = RsPeerId(buf);
+				only_pgp = false;
+				break;
+			case CERTIFICATE_PTAG_DNS_SECTION:
+				dns_name = std::string((char *)buf,s);
+				break;
+			case CERTIFICATE_PTAG_HIDDENNODE_SECTION:
+				hidden_node_address = std::string((char *)buf,s);
+				hidden_node = true;
+				break;
+			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION:
+				if(s != 6)
+				{
+					err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
+					return false;
+				}
+				memcpy(ipv4_internal_ip_and_port,buf,s);
+				break;
+			case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION:
+				if(s != 6)
+				{
+					err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
+					return false;
+				}
+				memcpy(ipv4_external_ip_and_port,buf,s);
+				break;
+			case CERTIFICATE_PTAG_CHECKSUM_SECTION:
+			{
+				if(s != 3 || total_s+3 != size)
+				{
+					err_code =
+					        CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION;
+					return false;
+				}
+				uint32_t computed_crc =
+				        PGPKeyManagement::compute24bitsCRC(bf.data(),size-5);
+				uint32_t certificate_crc =
+				        buf[0] + (buf[1] << 8) + (buf[2] << 16);
+				if(computed_crc != certificate_crc)
+				{
+					err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
+					return false;
+				}
+				else checksum_check_passed = true;
+				break;
+			}
+			case CERTIFICATE_PTAG_EXTRA_LOCATOR:
+				mLocators.insert(RsUrl(std::string((char *)buf, s)));
+				break;
+			default:
+				std::cerr << "(WW) unknwown PTAG 0x" << std::hex << ptag
+				          << std::dec << " in certificate! Ignoring it."
+				          << std::endl;
+				break;
 			}
 
+			buf = &buf[s];
 			total_s += s ;
 		}
 

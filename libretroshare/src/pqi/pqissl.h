@@ -1,31 +1,25 @@
-/*
- * "$Id: pqissl.h,v 1.18 2007-03-11 14:54:22 rmf24 Exp $"
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2004-2006 by Robert Fernie.
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
-
-
+/*******************************************************************************
+ * libretroshare/src/pqi: pqissl.h                                             *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_SSL_HEADER
 #define MRK_PQI_SSL_HEADER
 
@@ -82,7 +76,7 @@ class cert;
 
 class pqissllistener;
 class p3LinkMgr;
-class RsPeerCryptoParams ;
+struct RsPeerCryptoParams;
 
 class pqissl: public NetBinInterface
 {
@@ -201,14 +195,14 @@ bool  	CheckConnectionTimeout();
 	int attempt_ts;
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
-	time_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
+	rstime_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
 	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 	uint32_t mConnectDelay;
-	time_t   mConnectTS;
+	rstime_t   mConnectTS;
 	uint32_t mConnectTimeout;
-	time_t   mTimeoutTS;
+	rstime_t   mTimeoutTS;
 
 private:
 	// ssl only fns.

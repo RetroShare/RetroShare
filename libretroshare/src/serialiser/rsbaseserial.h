@@ -1,35 +1,33 @@
+/*******************************************************************************
+ * libretroshare/src/serialiser: rsbaseserial.h                                *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_BASE_PACKING_H
 #define RS_BASE_PACKING_H
-
-/*
- * libretroshare/src/serialiser: rsbaseserial.h
- *
- * RetroShare Serialiser.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include <string>
 #include <stdlib.h>
 #include <stdint.h>
-#include <retroshare/rsids.h>
+
+#include "retroshare/rsids.h"
+#include "util/rstime.h"
 
 /*******************************************************************
  * This is at the lowlevel packing routines. They are usually 
@@ -67,8 +65,8 @@ uint32_t getRawStringSize(const std::string &outStr);
 bool getRawString(const void *data, uint32_t size, uint32_t *offset, std::string &outStr);
 bool setRawString(void *data, uint32_t size, uint32_t *offset, const std::string &inStr);
 
-bool getRawTimeT(const void *data, uint32_t size, uint32_t *offset, time_t& outStr);
-bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const time_t& inStr);
+bool getRawTimeT(const void *data, uint32_t size, uint32_t *offset, rstime_t& outTime);
+bool setRawTimeT(void *data, uint32_t size, uint32_t *offset, const rstime_t& inTime);
 
 #endif
 

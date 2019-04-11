@@ -1,25 +1,22 @@
-/*
- * Retroshare Gxs Support
- *
- * Copyright 2012-2013 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
+/*******************************************************************************
+ * retroshare-gui/src/gui/gxs/GxsGroupDialog.cpp                               *
+ *                                                                             *
+ * Copyright 2012-2013  by Robert Fernie      <retroshare.project@gmail.com>   *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QMessageBox>
 
@@ -27,6 +24,7 @@
 #include "util/DateTime.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
+#include "gui/RetroShareLink.h"
 #include "retroshare/rsgxsflags.h"
 
 #include <algorithm>
@@ -37,6 +35,7 @@
 #include <gui/settings/rsharesettings.h>
 
 #include <iostream>
+
 
 // Control of Publish Signatures.
 // 
@@ -101,6 +100,9 @@ void GxsGroupDialog::init()
 	connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(submitGroup()));
 	connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(cancelDialog()));
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
+	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
+	connect(ui.filtercomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
+
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -115,14 +117,32 @@ void GxsGroupDialog::init()
 
 	if (!ui.pubKeyShare_cb->isChecked())
 	{
-		ui.contactsdockWidget->hide();
-		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+		ui.shareKeyList->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 	}
+	if (!ui.addAdmins_cb->isChecked())
+	{
+		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
+	
+	/* Add filter types */
+    ui.filtercomboBox->addItem(tr("All People"));
+    ui.filtercomboBox->addItem(tr("My Contacts"));
+	ui.filtercomboBox->setCurrentIndex(0);
 
 	/* initialize key share list */
-	ui.keyShareList->setHeaderText(tr("Contacts:"));
-	ui.keyShareList->setModus(FriendSelectionWidget::MODUS_CHECK);
-	ui.keyShareList->start();
+	ui.shareKeyList->setHeaderText(tr("Contacts:"));
+	ui.shareKeyList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.shareKeyList->start();
+
+	/* initialize key share list */
+	ui.adminsList->setHeaderText(tr("Moderators:"));
+	ui.adminsList->setModus(FriendSelectionWidget::MODUS_CHECK);
+	ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+	ui.adminsList->start();
+	
 
 	/* Setup Reasonable Defaults */
 
@@ -165,10 +185,28 @@ void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
 		ui.pubKeyShare_cb->setText(text);
 		break;
 	case UITYPE_CONTACTS_DOCK:
-		ui.contactsdockWidget->setWindowTitle(text);
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		//ui.contactsdockWidget->setWindowTitle(text);
 		break;
 	case UITYPE_BUTTONBOX_OK:
 		ui.buttonBox->button(QDialogButtonBox::Ok)->setText(text);
+		break;
+	}
+}
+
+void GxsGroupDialog::setUiToolTip(UiType uiType, const QString &text)
+{
+	switch (uiType)
+	{
+	case UITYPE_KEY_SHARE_CHECKBOX:
+		ui.pubKeyShare_cb->setToolTip(text);
+		break;
+	case UITYPE_ADD_ADMINS_CHECKBOX:
+		ui.addAdmins_cb->setToolTip(text);
+		break;
+	case UITYPE_BUTTONBOX_OK:
+		ui.buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
+    default:
 		break;
 	}
 }
@@ -345,6 +383,9 @@ void GxsGroupDialog::setupVisibility()
 	ui.publishGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PUBLISHSIGN);
 
 	ui.pubKeyShare_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_SHAREKEYS);
+	ui.addAdmins_cb->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.label_8->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
+	ui.moderatorsLabel->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ADDADMINS);
 
 	ui.personalGroupBox->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_PERSONALSIGN);
 
@@ -412,6 +453,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     setupReadonly();
     clearForm();
     setGroupSignFlags(mGrpMeta.mSignFlags) ;
+	
+	RetroShareLink link;
 
     /* setup name */
     ui.groupName->setText(QString::fromUtf8(mGrpMeta.mGroupName.c_str()));
@@ -425,6 +468,10 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
+
+	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
+	ui.authorLabel->setText(link.toHtml());
+	
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
 
@@ -708,12 +755,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
         	// (cyril) very weird piece of code. Need to clear this up.
         
 		ui.comments_allowed->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Allowed") ;
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Forbidden") ;
 	}
 }
 
@@ -828,6 +875,38 @@ QString GxsGroupDialog::getDescription()
 	return ui.groupDesc->toPlainText();
 }
 
+void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
+{
+	ui.adminsList->selectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, true);
+}
+
+void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
+{
+	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
+
+	QString moderatorsListString ;
+    RsIdentityDetails det;
+	RetroShareLink link;
+
+    for(auto it(ids.begin());it!=ids.end();++it)
+    {
+		rsIdentity->getIdDetails(*it,det);
+
+        if(!moderatorsListString.isNull())
+            moderatorsListString += ", " ;
+
+        if(det.mNickname.empty())
+			moderatorsListString += "[Unknown]";
+		
+		link = RetroShareLink::createMessage(det.mId, "");
+		if (link.valid())
+				moderatorsListString += link.toHtml() + "   ";
+
+    }
+	//ui.moderatorsLabel->setId(det.mId);
+	ui.moderatorsLabel->setText(moderatorsListString);
+}
+
 /***********************************************************************************
   Share Lists.
  ***********************************************************************************/
@@ -835,6 +914,22 @@ QString GxsGroupDialog::getDescription()
 void GxsGroupDialog::sendShareList(std::string /*groupId*/)
 {
 	close();
+}
+
+void GxsGroupDialog::setAdminsList()
+{
+	if (ui.addAdmins_cb->isChecked())
+    {
+		//this->resize(this->size().width() + ui.contactsdockWidget->size().width(), this->size().height());
+		ui.adminsList->show();
+		ui.filtercomboBox->show();
+	}
+    else
+    {  // hide share widget
+		ui.adminsList->hide();
+		ui.filtercomboBox->hide();
+		//this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
+	}
 }
 
 void GxsGroupDialog::setShareList()
@@ -851,6 +946,21 @@ void GxsGroupDialog::setShareList()
 //		this->resize(this->size().width() - ui.contactsdockWidget->size().width(), this->size().height());
 //	}
 }
+
+void GxsGroupDialog::filterComboBoxChanged(int i)
+{
+	switch(i)
+	{
+	default:
+	case 0:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_GXS);
+		break;
+	case 1:
+		ui.adminsList->setShowType(FriendSelectionWidget::SHOW_CONTACTS);
+		break;
+	}
+}
+
 
 /***********************************************************************************
   Loading Group.

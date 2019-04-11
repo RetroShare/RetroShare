@@ -1,31 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsnotify.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RS_NOTIFY_GUI_INTERFACE_H
 #define RS_NOTIFY_GUI_INTERFACE_H
-
-/*
- * libretroshare/src/rsiface: rsnotify.h
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2007-2008 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
 
 #include <map>
 #include <list>
@@ -38,7 +33,7 @@
 
 class ChatId;
 class ChatMessage;
-class RsGxsChanges;
+struct RsGxsChanges;
 
 class RsNotify;
 extern RsNotify   *rsNotify;
@@ -186,7 +181,7 @@ class RsFeedItem
 // This mechanism can be used in plugins, new services, etc.
 //	
 
-class NotifyClient ;
+class NotifyClient;
 
 class RsNotify 
 {
@@ -213,41 +208,42 @@ class RsNotify
 
 class NotifyClient
 {
-	public:
-		NotifyClient() {}
-		virtual ~NotifyClient() {}
+public:
+	NotifyClient() {}
+	virtual ~NotifyClient() {}
 
-		virtual void notifyListPreChange              (int /* list */, int /* type */) {}
-		virtual void notifyListChange                 (int /* list */, int /* type */) {}
-		virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
-		virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
-		virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
-		virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
-		virtual void notifyReputationChange	(RsGxsId id) {}
-		virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
-		virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
-		virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
-		virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
-		virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleFileInfo>& /* files         */) {}
-		virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
-		virtual void notifyOwnAvatarChanged           () {}
-		virtual void notifyOwnStatusMessageChanged    () {}
-		virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
-		virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
-        virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
-		virtual void notifyConnectionWithoutCert      () {}
+	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
+	virtual void notifyListChange                 (int /* list */, int /* type */) {}
+	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
+	virtual void notifyChatMessage                (const ChatMessage& /* msg      */) {}
+	virtual void notifyChatStatus                 (const ChatId&      /* chat_id  */, const std::string& /* status_string */) {}
+	virtual void notifyChatCleared                (const ChatId&      /* chat_id  */) {}
+	virtual void notifyChatLobbyEvent             (uint64_t           /* lobby id */, uint32_t           /* event type    */ ,const RsGxsId& /* nickname */,const std::string& /* any string */) {}
+	virtual void notifyChatLobbyTimeShift         (int                /* time_shift*/) {}
+	virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
+  virtual void notifyReputationChange           (RsGxsId id) {}
+	virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
+	virtual void notifyTurtleSearchResult         (const RsPeerId&    /* pid       */, uint32_t                         /* search_id     */, const std::list<TurtleFileInfo>& /* files         */) {}
+#warning MISSING CODE HERE
+	// virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) {}
+	virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
+	virtual void notifyOwnAvatarChanged           () {}
+	virtual void notifyOwnStatusMessageChanged    () {}
+	virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
+	virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
+	virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
+	virtual void notifyConnectionWithoutCert      () {}
 
-		/* one or more peers has changed the states */
-		virtual void notifyPeerStatusChangedSummary   () {}
-		virtual void notifyDiscInfoChanged            () {}
+	/* one or more peers has changed the states */
+	virtual void notifyPeerStatusChangedSummary   () {}
+	virtual void notifyDiscInfoChanged            () {}
 
-		virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
-		virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
-		virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
-		virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
+	virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
+	virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
+	virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
+	virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}
 
-		virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
-		virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
-
+	virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
+	virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 };
 #endif

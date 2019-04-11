@@ -91,7 +91,7 @@ public:
 		std::vector<RsGxsTransOutgoingRecord> outgoing_records;
 	};
 
-	RsGxsTrans(RsGxsIface *gxs) : RsGxsIfaceHelper(gxs) {}
+	RsGxsTrans(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 
 	virtual ~RsGxsTrans() {}
 

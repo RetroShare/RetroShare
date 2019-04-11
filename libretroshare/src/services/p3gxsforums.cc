@@ -1,28 +1,24 @@
-/*
- * libretroshare/src/services p3gxsforums.cc
- *
- * GxsForums interface for RetroShare.
- *
- * Copyright 2012-2012 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2.1 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/services: p3gxsforums.cc                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #include "services/p3gxsforums.h"
 #include "rsitems/rsgxsforumitems.h"
 
@@ -55,7 +51,8 @@ p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
                           RsNetworkExchangeService *nes, RsGixs* gixs ) :
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
                    RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
-    RsGxsForums(this), mGenToken(0), mGenActive(false), mGenCount(0)
+    RsGxsForums(static_cast<RsGxsIface&>(*this)), mGenToken(0),
+    mGenActive(false), mGenCount(0)
 {
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
@@ -107,13 +104,13 @@ struct RsGxsForumNotifyRecordsItem: public RsItem
 
     virtual ~RsGxsForumNotifyRecordsItem() {}
 
-	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx )
-	{
-		RS_REGISTER_SERIAL_MEMBER(records);
-	}
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{ RS_SERIAL_PROCESS(records); }
+
 	void clear() {}
 
-	std::map<RsGxsGroupId,time_t> records;
+	std::map<RsGxsGroupId,rstime_t> records;
 };
 
 class GxsForumsConfigSerializer : public RsServiceSerializer
@@ -155,7 +152,7 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 		RsItem *item = loadList.front();
 		loadList.pop_front();
 
-		time_t now = time(NULL);
+		rstime_t now = time(NULL);
 
 		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
 
@@ -196,24 +193,22 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				switch (c->getType())
 				{
+                default:
 					case RsGxsNotify::TYPE_PROCESSED:
-					case RsGxsNotify::TYPE_PUBLISH:
+					case RsGxsNotify::TYPE_PUBLISHED:
 						break;
 
-					case RsGxsNotify::TYPE_RECEIVE:
+					case RsGxsNotify::TYPE_RECEIVED_NEW:
 					{
 						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
 						if (msgChange)
 						{
-							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-							std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator mit;
-							for (mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+							std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+
+							for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 							{
-								std::vector<RsGxsMessageId>::iterator mit1;
-								for (mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-								{
+								for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
-								}
 							}
 							break;
 						}
@@ -242,7 +237,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						break;
 					}
 
-					case RsGxsNotify::TYPE_PUBLISHKEY:
+					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 					{
 						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
 						if (grpChange)
@@ -300,6 +295,11 @@ bool p3GxsForums::getGroupData(const uint32_t &token, std::vector<RsGxsForumGrou
 		}
 	}
 	return ok;
+}
+
+bool p3GxsForums::getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas)
+{
+	return RsGenExchange::getMsgMeta(token, msg_metas);
 }
 
 /* Okay - chris is not going to be happy with this...
@@ -384,6 +384,137 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 
 /********************************************************************************************/
 
+bool p3GxsForums::createForum(RsGxsForumGroup& forum)
+{
+	uint32_t token;
+	if(!createGroup(token, forum))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, forum.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsForums::editForum(RsGxsForumGroup& forum)
+{
+	uint32_t token;
+	if(!updateGroup(token, forum))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed updating group."
+		          << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
+		          << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, forum.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
+		          << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return getGroupSummary(token, forums);
+}
+
+bool p3GxsForums::getForumsInfo(
+        const std::list<RsGxsGroupId>& forumIds,
+        std::vector<RsGxsForumGroup>& forumsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, forumIds)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, forumsInfo);
+}
+
+bool p3GxsForums::getForumContent(
+        const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,
+        std::vector<RsGxsForumMsg>& msgs )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	GxsMsgReq msgIds;
+	msgIds[forumId] = msgs_to_request;
+
+	if( !requestMsgInfo(token, opts, msgIds) ||
+	        waitToken(token,std::chrono::seconds(5)) != RsTokenService::COMPLETE )
+		return false;
+
+	return getMsgData(token, msgs);
+}
+
+
+bool p3GxsForums::getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_META;
+
+    GxsMsgMetaMap meta_map;
+    std::list<RsGxsGroupId> forumIds;
+    forumIds.push_back(forumId);
+
+	if( !requestMsgInfo(token, opts, forumIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+	bool res = getMsgMetaData(token, meta_map);
+
+    msg_metas = meta_map[forumId];
+
+    return res;
+}
+
+bool p3GxsForums::markRead(const RsGxsGrpMsgIdPair& msgId, bool read)
+{
+	uint32_t token;
+	setMessageReadStatus(token, msgId, read);
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+	return true;
+}
+
+bool p3GxsForums::subscribeToForum(
+        const RsGxsGroupId& groupId, bool subscribe )
+{
+	uint32_t token;
+	if( !RsGenExchange::subscribeToGroup(token, groupId, subscribe)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return true;
+}
+
 bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::createGroup()" << std::endl;
@@ -410,6 +541,17 @@ bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
 
         RsGenExchange::updateGroup(token, grpItem);
 	return true;
+}
+
+bool p3GxsForums::createMessage(RsGxsForumMsg& message)
+{
+	uint32_t token;
+	if( !createMsg(token, message)
+	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+	if(RsGenExchange::getPublishedMsgMeta(token, message.mMeta)) return true;
+
+	return false;
 }
 
 bool p3GxsForums::createMsg(uint32_t &token, RsGxsForumMsg &msg)
@@ -492,12 +634,12 @@ void p3GxsForums::dummy_tick()
 		std::cerr << std::endl;
 
 		uint32_t status = RsGenExchange::getTokenService()->requestStatus(mGenToken);
-		if (status != RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE)
+		if (status != RsTokenService::COMPLETE)
 		{
 			std::cerr << "p3GxsForums::dummy_tick() Status: " << status;
 			std::cerr << std::endl;
 
-			if (status == RsTokenService::GXS_REQUEST_V2_STATUS_FAILED)
+			if (status == RsTokenService::FAILED)
 			{
 				std::cerr << "p3GxsForums::dummy_tick() generateDummyMsgs() FAILED";
 				std::cerr << std::endl;

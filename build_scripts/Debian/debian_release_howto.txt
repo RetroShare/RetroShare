@@ -1,0 +1,151 @@
+Creation of a new Debian changelog:
+   
+   dch --create --package retroshare --newversion 0.6.4-1
+
+   Note: dch reads email in $DEBMAIL or $USER@$HOSTNAME, so it should be made correct in debian/changlog
+         If the email does not match the email in mentors, the package will be rejected.
+
+dget command to retrieve source package:
+
+   dget -u https://launchpad.net/~retroshare/+archive/ubuntu/stable/+files/retroshare_0.6.4-1.20180313.0e6d27ad~xenial.dsc
+
+   (-u means don't check PGP signature)
+
+When ready:
+   * updload the package in a place that can be used to dget the package on mentors.debian.net.
+
+   dput mentors retroshare_0.6.4-1_source.changes
+
+Checking with lintian:
+   lintian -EI --pedantic --profile debian retroshare_0.6.4-1_source.changes
+   echo -e 'display-info=y\ndisplay-experimental=y\npedantic=y\ncolor=auto' > ~/.config/lintian/lintianrc
+
+   Also apply lintian to binaries
+      * fix overlinking in voip plugin
+
+Turn the RFP bug into ITP 
+   you have to send an e-mail to control@bugs.debian.org and use the "retitle" command
+   [05/13/2018] successfully retitled. The mail *body* (instead of subject) needs to contain the command in a single line.
+
+Todo
+   x make a sid binary package. 
+   * test in sid using pbuilder chroot system (pbuilder login)
+   x upload to mentors
+   x request for sponsorship
+   * 
+
+Getting help: 
+   https://webchat.oftc.net/
+
+Bug creation/report
+   reportbug -B debian
+
+Re-do debian/rules according to
+   https://sources.debian.org/src/sleepyhead/1.0.0-beta-2+dfsg-5/debian/rules/
+   the proper way to use qtchooser in d/rules is exporting QT_SELECT in d/rules, see https://pkg-kde.alioth.debian.org/packagingqtbasedstuff.html
+   disable autologin
+
+Put the package on salsa:
+   salsa.debian.org
+
+Debian binary changes file signature:
+   gpg --clearsign -u 0932399B retroshare_0.6.4-1_amd64.changes
+
+   Signature does only work when done with debsign:
+     debsign -k0932399B retroshare_0.6.4-1.dsc
+     debsign -k0932399B retroshare_0.6.4-1_source.changes
+     debsign -k0932399B retroshare_0.6.4-1_amd64.changes
+
+Uploading-to-mentors bug:
+   Apparently the system prevents you from uploading while a package is in the
+   queue. So the upload responds "403 forbidden" whene e.g. the previous
+   upload was cancelled by ^C.
+   
+
+Licensing issues:
+   Various licenses involved:
+
+      L: re-licence to LGPLv3
+      A: re-licence to AGPLv3
+      D: delete
+      d: delete in debian package to avoid licensing problems
+
+         Code part                              |    Licenses            | A|     Authors                                  | Comment
+      ------------------------------------------+------------------------+--+----------------------------------------------+-------------------------------------------------
+      libbitdht                                 |    GPLv3               |  |     drbob, csoler, Retroshare team           | 
+         bitdht/bencode.h                       |       Public domain    |  |         Mike Frysinger <vapier@gmail.com>    |
+         bitdht/bdrandom.h                      |    GPLv2               | L|     csoler                                   |
+      ------------------------------------------+------------------------+--+----------------------------------------------+-------------------------------------------------
+      libresapi                                 |    GPLv3               |  |     G10H4ck, [], electron128                 | Most files are unlicenced
+         src/api/json.h                         |    MIT                 |  |     Jeff Weinstein (jeff.weinstein at gmail) | 
+         src/api/webui-src/app/mithril.min.js   |    MIT                 |  |     Leo Horie                                | 
+      libretroshare                             |    GPLv2,GPLv3         |  |     csoler,drbob,Mr-alice,Chris,Thunder      | Some files unversionned.
+         plugins/dlfcn_win32.cc                 |       GPLv2.1          | L|     Ramiro Polla                             |
+         pqi/authgpg.h                          |       GPLv2            | L|     Raghu Dev R.                             | .cc is authed by drbob
+         upnp/UPnPBase.h                        |       GPLv2            | L|     Marcelo Roberto Jimenez, aMule Team      | other code in upnp/ not copyrighted. Re-licensed with permission 10/11/2018
+         util/pugiconfig.h                      |       MIT              |  |     Arseny Kapoulkyne                        | [unused file!]
+         util/rsstring.h                        |       GPLv2            | L|     Thomas Kister                            |
+         util/rswin.h                           |       GPLv2            | L|     Thomas Kister                            |
+         util/rsversioninfo.h                   |       [none]           |  |     Alexandrut                               |
+         util/stacktrace.h                      |       GPLv2            | R|     Timo Bingmann, G10H4ck                   |
+      librssimulator                            |    [None]              |dA|     No authors                               |
+      openpgpsdk                                |    Apache              |  |     Rachell Wilmer, Ben Laurie               |
+      pegmarkdown                               |    All right reserved  |  |     Daniel Jalkut - Code currently unused    | will be deleted when creating debian package
+      plugins/feedreader                        |    GPLv2               | A|     Thunder                                  |
+      plugins/VOIP                              |                        |  |                                              |
+             AudioInputConfig.h+                |    All right reserved  | A|     Thorvald Natvig                          | Permission to re-license on 04/11/2018
+             AudioStats.h+                      |    All right reserved  | A|     Thorvald Natvig                          | 
+             AudioWizard.h+                     |    All right reserved  | A|     Thorvald Natvig                          | 
+             SpeexProcessor.h                   |                        |  |     Peter Zotov                              |
+      retroshare-android-notify-*               |    GPLv3               |  |     G10H4ck                                  |
+      retroshare-android-service                |    GPLv3               |  |     G10H4ck                                  | 
+      retroshare-gui/src                        |                        |  |     Thunder, csoler, drbob, crypton          |
+          control/*                             |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | [Unused code]
+          common/ElideLabel.h                   |    BSD                 |  |     Qt Toolkit                               | 
+          common/FlowLayout.h                   |    BSD                 |  |     Qt Toolkit                               | Is that really Qt code?? Qt examples can be used.
+          common/html.h                         |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/rwindow.h                      |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/vmessagebox.h                  |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          common/PictureFlow                    |    unclear             |  |     Ariya Hidayat (@kde.org)                 | [Unused code]
+          elastic/*                             |    LGPL                |  |     Trolltech                                |
+          FileTransfer/FTIWidget                |    GPLv2               |  |     defnax, lsn752                           |
+          FileTransfer/xprogressb               |    GPLv2               |  |     Xesc                                     |
+          help/browser.h                        |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          images/retroshare_win.rc.h            |    GPLv2               |  |     crypton                                  | [Unused code]
+          msgs/textformat.h                     |    GPLv3               |  |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          settings/rsettings.h                  |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/BandwidthGraphW.h          |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          statistics/dhtgraph.h                 |    GPLv2               |  |     Matt Edman, defnax, Justin Hiple         | 
+          toaster/MessageToaster.h              |    GPLv3               |  |     Xesc                                     |
+          toaster/DownloadToaster.h             |    GPLv3               |  |     Xesc                                     |
+          About{Widget,Dialog}.h                |    GPLv2               |  |     Unipro, Russia                           | Very small file.
+          linetypes.h                           |    GPLv2               |  |     Merdhah Momeny, Golnaz Nilieh            | very simple .h. Can be re-implemented
+          mainpagestack.h                       |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          land/langagesupport.h                 |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          util/log.h                            |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          idle/idle.h                           |    GPLv2               |  |     Justin Karneges                          | May be re-implemented
+          TorControl/*                          |*   Public domaine      |  |     John Brooks                              | Code from Ricochet.im
+          util/HandleRichText.h                 |    GPLv2               |  |     Thomas Kister                            |
+          util/misc.h                           |    GPLv2               |  |     defnax, Christophe Dumez                 |
+          util/printpreview.h                   |    GPLv2               |  |     Trolltech example                        |
+          util/retrosharewin32.h                |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          util/stringutil.h                     |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+          rshare.h                              |    GPLv2               |  |     Matt Edman, crypton, Justin Hiple        | 
+      retroshare-nogui/*                        |    GPLv2               |  |     drbob                                    |
+
+
+   Plan: move to GPLv3 with OpenSSL exception
+
+      - Appache is compatible with GPLv3
+
+   Many files unversionned.
+
+   Use a pointer to the top level licence file
+
+
+Files after switch:
+
+   libresapi/api/json.h                        MIT license              Copyright (c) 2013 Jeff Weinstein (jeff.weinstein at gmail)
+	libretroshare/src/tcponudp/bss_tou.cc       SSL Licence              Copyright (C) 1995-1998 Eric Young (eay@cryptsoft.com)
+	libretroshare/src/upnp/UPnPBase.{h,cpp}     GPL Licence              Copyright (c) 2004-2009 Marcelo Roberto Jimenez ( phoenix@amule.org )
+

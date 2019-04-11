@@ -24,7 +24,7 @@
 #include "dbase/findex.h"
 #include <iostream>
 
-FileIndex *createBasicFileIndex(time_t age);
+FileIndex *createBasicFileIndex(rstime_t age);
 
 int main()
 {
@@ -54,7 +54,7 @@ int main()
 }
 
 
-FileIndex *createBasicFileIndex(time_t age)
+FileIndex *createBasicFileIndex(rstime_t age)
 {
 	FileIndex *fi = new FileIndex("A SILLY ID");
 

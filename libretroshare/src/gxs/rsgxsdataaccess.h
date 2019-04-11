@@ -1,30 +1,26 @@
+/*******************************************************************************
+ * libretroshare/src/gxs: rsgxsdataaccess.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2012 by Christopher Evi-Parker, Robert Fernie                *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef RSGXSDATAACCESS_H
 #define RSGXSDATAACCESS_H
-
-/*
- * libretroshare/src/retroshare: rsgxsdataaccess.cc
- *
- * RetroShare C++ Interface.
- *
- * Copyright 2012-2012 by Robert Fernie, Christopher Evi-Parker
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
 
 #include "retroshare/rstokenservice.h"
 #include "rsgxsrequesttypes.h"
@@ -48,6 +44,8 @@ public:
 	 * deprecated and should be removed as soon as possible as it is cause of
 	 * many confusions, instead use const RsTokReqOptions::mReqType &opts to
 	 * specify the kind of data you are interested in.
+	 * Most of the methods use const uint32_t &token as param type change it to
+	 * uint32_t
 	 */
 
     /*!
@@ -121,7 +119,7 @@ public:
 
 
     /* Poll */
-    uint32_t requestStatus(const uint32_t token);
+	GxsRequestStatus requestStatus(const uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);
@@ -155,6 +153,14 @@ public:
      * @return false if msg could not be added, true otherwise
      */
     bool addMsgData(RsNxsMsg* msg);
+
+    /*!
+     * This retrieves a group from the gxs data base, this is a blocking call \n
+     * @param grp the group to add, memory ownership passed to the callee
+     * @return false if group cound not be retrieved
+     */
+    bool getGroupData(const RsGxsGroupId& grpId,RsNxsGrp *& grp_data);
+
 
 public:
 
@@ -296,7 +302,7 @@ private:
      * @param status the status to set
      * @return
      */
-    bool locked_updateRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool locked_updateRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * Use to query the status and other values of a given token
@@ -307,7 +313,8 @@ private:
      * @param ts time stamp
      * @return false if token does not exist, true otherwise
      */
-    bool checkRequestStatus(const uint32_t &token, uint32_t &status, uint32_t &reqtype, uint32_t &anstype, time_t &ts);
+	bool checkRequestStatus( uint32_t token, GxsRequestStatus &status,
+	                         uint32_t &reqtype, uint32_t &anstype, rstime_t &ts);
 
             // special ones for testing (not in final design)
     /*!
@@ -337,14 +344,14 @@ public:
      * @param status
      * @return false if token could not be found, true if token disposed of
      */
-    bool updatePublicRequestStatus(const uint32_t &token, const uint32_t &status);
+	bool updatePublicRequestStatus(uint32_t token, GxsRequestStatus status);
 
     /*!
      * This gets rid of a publicly issued token
      * @param token
      * @return false if token could not found, true if token disposed of
      */
-    bool disposeOfPublicToken(const uint32_t &token);
+	bool disposeOfPublicToken(uint32_t token);
 
 private:
 
@@ -484,7 +491,7 @@ private:
     RsMutex mDataMutex; /* protecting below */
 
     uint32_t mNextToken;
-    std::map<uint32_t, uint32_t> mPublicToken;
+	std::map<uint32_t, GxsRequestStatus> mPublicToken;
     std::map<uint32_t, GxsRequest*> mRequests;
 
 

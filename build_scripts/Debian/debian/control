@@ -1,0 +1,39 @@
+Source: retroshare
+Section: devel
+Priority: optional
+Maintainer: Cyril Soler <csoler@users.sourceforge.net>
+Build-Depends: debhelper (>= 10),  libglib2.0-dev, libupnp-dev, libssl-dev, libxss-dev, libgnome-keyring-dev, libbz2-dev, libspeex-dev, libspeexdsp-dev, libxslt1-dev, cmake, libcurl4-openssl-dev, libopencv-dev, tcl8.6, libsqlcipher-dev, libmicrohttpd-dev, libavcodec-dev, qtmultimedia5-dev, qttools5-dev, libqt5x11extras5-dev, qtbase5-dev, qt5-qmake, qtbase5-dev-tools
+Standards-Version: 4.1.4
+Homepage: http://retroshare.sourceforge.net
+
+# Package: retroshare-voip-plugin
+# Architecture: any
+# Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare, libspeex1, libspeexdsp1, libqt5multimedia5
+# Description: VOIP plugin for the Retroshare communication platform
+#  This package provides a plugin for RetroShare, a secured Friend-to-Friend
+#  communication plateform. The plugin adds voice-over-IP functionality to the
+#  private chat window. Both friends chatting together need the plugin installed
+#  to be able to talk together.
+# 
+# Package: retroshare-feedreader-plugin
+# Architecture: any
+# Depends: ${shlibs:Depends}, ${misc:Depends}, retroshare
+# Description: FeedReader plugin for the Retroshare communication platform
+#  Plugin for Retroshare, adding a RSS feed reader tab to retroshare.
+
+Package: retroshare-nogui
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
+Conflicts: retroshare
+Description: headless version of Retroshare software
+ Headless version of the Retroshare platform.
+
+Package: retroshare
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnome-keyring
+Conflicts: retroshare-nogui
+Description: Secure communication with friends
+ RetroShare is a Open Source, private and secure decentralised
+ commmunication platform. It creates  mesh of computers linked with TLS
+ connections, on top of which it provides file transfer, asynchronous email,
+ forums, channels and chat.

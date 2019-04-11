@@ -1,34 +1,30 @@
-/*
- * libretroshare/src/pqi: p3linkmgr.h
- *
- * 3P/PQI network interface for RetroShare.
- *
- * Copyright 2007-2011 by Robert Fernie.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License Version 2 as published by the Free Software Foundation.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
- * USA.
- *
- * Please report all bugs and problems to "retroshare@lunamutt.com".
- *
- */
-
+/*******************************************************************************
+ * libretroshare/src/pqi: p3linkmgr.h                                          *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2007-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #ifndef MRK_PQI_LINK_MANAGER_HEADER
 #define MRK_PQI_LINK_MANAGER_HEADER
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
-
+#include "util/rstime.h"
 #include "pqi/pqiassist.h"
 
 #include "pqi/p3cfgmgr.h"
@@ -65,7 +61,7 @@ class peerAddrInfo
 	bool 		found;
 	uint32_t 	type;
 	pqiIpAddrSet	addrs;
-	time_t		ts;
+	rstime_t		ts;
 };
 
 class peerConnectAddress
@@ -78,7 +74,7 @@ class peerConnectAddress
 	uint32_t period; /* UDP only */
 	uint32_t type;
 	uint32_t flags;  /* CB FLAGS defined in pqimonitor.h */
-	time_t ts;
+	rstime_t ts;
 	
 	// Extra Parameters for Relay connections.
 	struct sockaddr_storage proxyaddr; 
@@ -103,8 +99,8 @@ class peerConnectState
 
 	uint32_t connecttype;  // RS_NET_CONN_TCP_ALL / RS_NET_CONN_UDP_ALL
 	bool actAsServer;
-	time_t lastavailable;
-	time_t lastattempt;
+	rstime_t lastavailable;
+	rstime_t lastattempt;
 
 	std::string name;
 
@@ -126,14 +122,14 @@ class peerConnectState
 
 	/* information about denial */
 	bool wasDeniedConnection;
-        time_t deniedTS;
+        rstime_t deniedTS;
 	bool deniedInConnAttempt; /* is below valid */
 	peerConnectAddress deniedConnectionAttempt;
 };
 
 class p3tunnel; 
 class RsPeerGroupItem_deprecated;
-class RsGroupInfo;
+struct RsGroupInfo;
 
 class p3PeerMgr;
 class p3NetMgr;
@@ -186,7 +182,7 @@ virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
 virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
-virtual bool 	checkPotentialAddr(const struct sockaddr_storage &addr, time_t age)=0;
+virtual bool 	checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)=0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
@@ -273,7 +269,7 @@ int 	removeFriend(const RsPeerId &ssl_id);
 
 void 	printPeerLists(std::ostream &out);
 
-virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, time_t age);
+virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age);
 protected:
 	/* THESE CAN PROBABLY BE REMOVED */
 //bool	shutdown(); /* blocking shutdown call */
@@ -306,7 +302,7 @@ void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
-bool  	locked_CheckPotentialAddr(const struct sockaddr_storage &addr, time_t age);
+bool  	locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age);
 bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAddress &pca, bool pushFront);
 
 

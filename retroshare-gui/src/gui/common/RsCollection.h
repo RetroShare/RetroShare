@@ -1,25 +1,22 @@
-/*************************************:***************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2011 - 2011 RetroShare Team
- *
- *  Cyril Soler (csoler@users.sourceforge.net)
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/common/RsCollection.h                                                   *
+ *                                                                             *
+ * Copyright (C) 2011, Retroshare Team <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 // Implements a RetroShare collection file. Such a file contains
 //
@@ -88,6 +85,8 @@ public:
 
 	// Download the content.
 	void downloadFiles() const ;
+	// Auto Download all the content.
+	void autoDownloadFiles() const ;
 
 	qulonglong size();
 
@@ -105,6 +104,8 @@ private:
 	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this
 	static bool checkFile(const QString &fileName, bool showError);
+	// Auto Download recursively.
+	void autoDownloadFiles(ColFileInfo colFileInfo, QString dlDir) const ;
 
 	QDomDocument _xml_doc ;
 	QString _fileName ;

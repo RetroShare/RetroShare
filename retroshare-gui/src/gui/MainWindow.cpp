@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006, 2007 crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/MainWindow.cpp                                                          *
+ *                                                                             *
+ * Copyright (c) 2006 Crypton          <retroshare.project@gmail.com>          *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QColorDialog>
 #include <QDesktopServices>
@@ -84,12 +83,13 @@
 #include "statusbar/ToasterDisable.h"
 #include "statusbar/SysTrayStatus.h"
 #include "statusbar/torstatus.h"
-#include <retroshare/rsstatus.h>
 
-#include <retroshare/rsiface.h>
-#include <retroshare/rspeers.h>
-#include <retroshare/rsfiles.h>
-#include <retroshare/rsnotify.h>
+#include "retroshare/rsstatus.h"
+#include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsfiles.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rsinit.h"
 
 #include "gui/gxschannels/GxsChannelDialog.h"
 #include "gui/gxsforums/GxsForumsDialog.h"
@@ -107,9 +107,12 @@
 #include "gui/common/RsCollection.h"
 #include "settings/rsettingswin.h"
 #include "settings/rsharesettings.h"
-#include "settings/WebuiPage.h"
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
+
+#ifdef ENABLE_WEBUI
+#	include "settings/WebuiPage.h"
+#endif
 
 #include <iomanip>
 #include <unistd.h>
@@ -247,14 +250,15 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
 	if(hiddenmode)
 	{
-#ifdef RETROTOR
-		torstatus = new TorStatus();
-		torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
-		statusBar()->addWidget(torstatus);
-		torstatus->getTorStatus();
-#else
-		torstatus = NULL ;
-#endif
+        if(RsAccounts::isHiddenNode())
+		{
+			torstatus = new TorStatus();
+			torstatus->setVisible(Settings->valueFromGroup("StatusBar", "ShowTor", QVariant(true)).toBool());
+			statusBar()->addWidget(torstatus);
+			torstatus->getTorStatus();
+		}
+        else
+			torstatus = NULL ;
 
 		natstatus = NULL ;
 		dhtstatus = NULL ;
@@ -430,7 +434,7 @@ void MainWindow::initStackedPage()
 
 #ifndef RS_RELEASE_VERSION
 #ifdef PLUGINMGR
-  addPage(pluginsPage = new PluginsPage(ui->stackPages), grp, NULL);
+  addPage(pluginsPage = new gui::PluginsPage(ui->stackPages), grp, NULL);
 #endif
 #endif
 
@@ -640,10 +644,10 @@ const QList<UserNotify*> &MainWindow::getUserNotifyList()
 
 /*static*/ void MainWindow::displayLobbySystrayMsg(const QString& title,const QString& msg)
 {
-    if (_instance == NULL) 
+    if (_instance == NULL)
         return;
 
-    if(Settings->getDisplayTrayChatLobby()) 
+    if(Settings->getDisplayTrayChatLobby())
 		 _instance->displaySystrayMsg(title,msg) ;
 }
 
@@ -726,20 +730,23 @@ void MainWindow::updateStatus()
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
+	uint64_t down = 0;
+	uint64_t up = 0;
+	rsConfig->GetTrafficSum(down, up);
 
     if (ratesstatus)
-        ratesstatus->getRatesStatus(downKb, upKb);
+        ratesstatus->getRatesStatus(downKb, down, upKb, up);
 
-	if(torstatus)
-		torstatus->getTorStatus();
+    if(torstatus)
+        torstatus->getTorStatus();
 
     if(!hiddenmode)
     {
-    if (natstatus)
-        natstatus->getNATStatus();
-        
-    if (dhtstatus)
-        dhtstatus->getDHTStatus();
+        if (natstatus)
+            natstatus->getNATStatus();
+
+        if (dhtstatus)
+            dhtstatus->getDHTStatus();
     }
 
     if (discstatus) {
@@ -1008,7 +1015,7 @@ void SetForegroundWindowInternal(HWND hWnd)
        return NULL;
    }
 
-   switch (page) 
+   switch (page)
 	{
 		case Network:
 			return _instance->friendsDialog->networkDialog;
@@ -1431,27 +1438,37 @@ void MainWindow::settingsChanged()
 void MainWindow::externalLinkActivated(const QUrl &url)
 {
 	static bool already_warned = false ;
+	bool never_ask_me = Settings->value("NeverAskMeForExternalLinkActivated",false).toBool();
 
-	if(!already_warned)
+	if(!already_warned && !never_ask_me)
 	{
 		QMessageBox mb(QObject::tr("Confirmation"), QObject::tr("Do you want this link to be handled by your system?")+"<br/><br/>"+ url.toString()+"<br/><br/>"+tr("Make sure this link has not been forged to drag you to a malicious website."), QMessageBox::Question, QMessageBox::Yes,QMessageBox::No, 0);
 
-		QCheckBox *checkbox = new QCheckBox(tr("Don't ask me again")) ;
+		QCheckBox *dontAsk_CB = new QCheckBox(tr("Don't ask me again"));
+		QCheckBox *neverAsk_CB = new QCheckBox(tr("Never ask me again"));
+		dontAsk_CB->setToolTip(tr("This will be saved only for this session."));
+		neverAsk_CB->setToolTip(tr("This will be saved permanently. You'll need to clean RetroShare.conf to revert."));
 		QGridLayout* layout = qobject_cast<QGridLayout*>(mb.layout());
 		if (layout)
 		{
-			layout->addWidget(checkbox,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(dontAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
+			layout->addWidget(neverAsk_CB,layout->rowCount(),0,1, layout->columnCount(), Qt::AlignLeft);
 		} else {
 			//Not QGridLayout so add at end
-			mb.layout()->addWidget(checkbox) ;
+			mb.layout()->addWidget(dontAsk_CB);
+			mb.layout()->addWidget(neverAsk_CB);
 		}
 
 		int res = mb.exec() ;
 
-		if (res == QMessageBox::No) 
+		if (res == QMessageBox::No)
 			return ;
-		else if(checkbox->isChecked())
+
+		if(dontAsk_CB->isChecked())
 			already_warned = true ;
+
+		if(neverAsk_CB->isChecked())
+			Settings->setValue("NeverAskMeForExternalLinkActivated",true);
 	}
 
 	QDesktopServices::openUrl(url) ;

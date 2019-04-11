@@ -1,23 +1,22 @@
-/****************************************************************
- *  RetroShare is distributed under the following license:
- *
- *  Copyright (C) 2006,  crypton
- *
- *  This program is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU General Public License
- *  as published by the Free Software Foundation; either version 2
- *  of the License, or (at your option) any later version.
- *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with this program; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
- *  Boston, MA  02110-1301, USA.
- ****************************************************************/
+/*******************************************************************************
+ * gui/GenCertDialog.cpp                                                       *
+ *                                                                             *
+ * Copyright (C) 2006 Crypton         <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include "GenCertDialog.h"
 
@@ -34,6 +33,7 @@
 
 #include <rshare.h>
 #include "gui/settings/rsharesettings.h"
+#include "TorControl/TorManager.h"
 #include "util/misc.h"
 
 #include <retroshare/rsidentity.h>
@@ -136,7 +136,7 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	//ui.headerFrame->setHeaderText(tr("Create a new profile"));
 
 	connect(ui.reuse_existing_node_CB, SIGNAL(triggered()), this, SLOT(switchReuseExistingNode()));
-	connect(ui.adv_checkbox, SIGNAL(triggered()), this, SLOT(setupState()));
+	connect(ui.adv_checkbox, SIGNAL(toggled(bool)), this, SLOT(setupState()));
 	connect(ui.nodeType_CB, SIGNAL(currentIndexChanged(int)), this, SLOT(setupState()));
 
 	connect(ui.genButton, SIGNAL(clicked()), this, SLOT(genPerson()));
@@ -181,10 +181,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	 * mark last one as default.
 	 */
 	 
-	QMenu *menu = new QMenu(tr("Advanced options"));
-	menu->addAction(ui.adv_checkbox);
-	menu->addAction(ui.reuse_existing_node_CB);
-    ui.optionsButton->setMenu(menu);
+	//QMenu *menu = new QMenu(tr("Advanced options"));
+	//menu->addAction(ui.adv_checkbox);
+	//menu->addAction(ui.reuse_existing_node_CB);
+ //   ui.optionsButton->setMenu(menu);
 
     mAllFieldsOk = false ;
     mEntropyOk = false ;
@@ -195,10 +195,10 @@ GenCertDialog::GenCertDialog(bool onlyGenerateIdentity, QWidget *parent)
 	ui.nodeType_CB->setCurrentIndex(1);
 	ui.nodeType_CB->setEnabled(false);
 #endif
-#ifdef RETROTOR
-	ui.adv_checkbox->setChecked(false);
-	ui.adv_checkbox->setVisible(true);
-#endif
+//#ifdef RETROTOR
+//	ui.adv_checkbox->setChecked(false);
+//	ui.adv_checkbox->setVisible(true);
+//#endif
 
 	initKeyList();
     setupState();
@@ -259,30 +259,39 @@ void GenCertDialog::setupState()
 {
 	bool adv_state = ui.adv_checkbox->isChecked();
 
-#ifdef RETROTOR
-	bool retrotor = true ;
-#else
-	bool retrotor = false ;
-#endif
-
     if(!adv_state)
     {
         ui.reuse_existing_node_CB->setChecked(false) ;
-        ui.nodeType_CB->setCurrentIndex(retrotor?1:0) ;
         ui.keylength_comboBox->setCurrentIndex(0) ;
+//        ui.nodeType_CB->setCurrentIndex(0);
     }
-	bool hidden_state = ui.nodeType_CB->currentIndex()==1;
+	ui.reuse_existing_node_CB->setVisible(adv_state) ;
+
+//    ui.nodeType_CB->setVisible(adv_state) ;
+//    ui.nodeType_LB->setVisible(adv_state) ;
+//    ui.nodeTypeExplanation_TE->setVisible(adv_state) ;
+
+	bool hidden_state = ui.nodeType_CB->currentIndex()==1 || ui.nodeType_CB->currentIndex()==2;
     bool generate_new = !ui.reuse_existing_node_CB->isChecked();
+    bool tor_auto = ui.nodeType_CB->currentIndex()==1;
 
 	genNewGPGKey = generate_new;
+
+    switch(ui.nodeType_CB->currentIndex())
+    {
+    case 0: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is visible to trusted nodes only. You can also connect to hidden nodes if running Tor on your machine. Best choice for sharing with trusted friends.</b>"));
+        break;
+    case 1: ui.nodeTypeExplanation_TE->setText(tr("<b>Your IP is hidden. All traffic happens over the Tor network. Best choice if you cannot trust friend nodes with your own IP.</b>"));
+        break;
+    case 2: ui.nodeTypeExplanation_TE->setText(tr("<b>Hidden node for advanced users only. Allows to use other proxy solutions such as I2P.</b>"));
+        break;
+    }
 
 	//ui.no_node_label->setVisible(false);
 
 	setWindowTitle(generate_new?tr("Create new profile and new Retroshare node"):tr("Create new Retroshare node"));
 	//ui.headerFrame->setHeaderText(generate_new?tr("Create a new profile and node"):tr("Create a new node"));
 
-    ui.label_nodeType->setVisible(adv_state && !retrotor) ;
-    ui.nodeType_CB->setVisible(adv_state && !retrotor) ;
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
     ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
@@ -318,13 +327,13 @@ void GenCertDialog::setupState()
 	ui.entropy_bar->setVisible(true);
 	ui.genButton->setVisible(true);
 
-	ui.hiddenaddr_input->setVisible(hidden_state && !retrotor);
-	ui.hiddenaddr_label->setVisible(hidden_state && !retrotor);
+	ui.hiddenaddr_input->setVisible(hidden_state && !tor_auto);
+	ui.hiddenaddr_label->setVisible(hidden_state && !tor_auto);
 
-	ui.hiddenport_label->setVisible(hidden_state && !retrotor);
-	ui.hiddenport_spinBox->setVisible(hidden_state && !retrotor);
+	ui.hiddenport_label->setVisible(hidden_state && !tor_auto);
+	ui.hiddenport_spinBox->setVisible(hidden_state && !tor_auto);
 
-	ui.cbUseBob->setVisible(hidden_state && !retrotor);
+	ui.cbUseBob->setVisible(hidden_state && !tor_auto);
 
 	if(!mAllFieldsOk)
 	{
@@ -470,7 +479,6 @@ void GenCertDialog::genPerson()
 	/* Check the data from the GUI. */
 	std::string genLoc  = ui.node_input->text().toUtf8().constData();
 	RsPgpId PGPId;
-	bool isHiddenLoc = false;
 
 	if(ui.nickname_input->isVisible())
 	{
@@ -503,18 +511,26 @@ void GenCertDialog::genPerson()
 		}
 	}
 
-	if (ui.nodeType_CB->currentIndex()==1)
+	bool isHiddenLoc = (ui.nodeType_CB->currentIndex()>0);
+    bool isAutoTor = (ui.nodeType_CB->currentIndex()==1);
+
+    if(isAutoTor && !Tor::TorManager::isTorAvailable())
+    {
+        QMessageBox::critical(this,tr("Tor is not available"),tr("No Tor executable has been found on your system. You need to install Tor before creating a hidden identity.")) ;
+        return ;
+    }
+
+    if(isHiddenLoc)
 	{
 		std::string hl = ui.hiddenaddr_input->text().toStdString();
 		uint16_t port  = ui.hiddenport_spinBox->value();
+
 		bool useBob    = ui.cbUseBob->isChecked();
 
 		if (useBob && hl.empty())
 			hl = "127.0.0.1";
 
 		RsInit::SetHiddenLocation(hl, port, useBob);	/* parses it */
-
-		isHiddenLoc = true;
 	}
 
 
@@ -620,7 +636,7 @@ void GenCertDialog::genPerson()
 	std::string err;
 	this->hide();//To show dialog asking password PGP Key.
 	std::cout << "RsAccounts::GenerateSSLCertificate" << std::endl;
-	bool okGen = RsAccounts::GenerateSSLCertificate(PGPId, "", genLoc, "", isHiddenLoc, sslPasswd, sslId, err);
+	bool okGen = RsAccounts::createNewAccount(PGPId, "", genLoc, "", isHiddenLoc, isAutoTor, sslPasswd, sslId, err);
 
 	if (okGen)
 	{
