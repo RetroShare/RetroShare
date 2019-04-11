@@ -101,7 +101,7 @@ public:
     void updateStatusString(const QString &statusMask, const QString &statusString, bool permanent = false);
 
 	void addToolsAction(QAction *action);
-	void eraseBannedMessages(RsGxsId id);
+	void eraseBannedMessages(RsGxsId *id);
 
 	QString getTitle() { return title; }
 	int getPeerStatus() { return peerStatus; }
