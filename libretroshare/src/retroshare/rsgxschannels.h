@@ -129,7 +129,7 @@ public:
 	        const RsGxsId&     authorId = RsGxsId(),
 	        RsGxsCircleType    circleType = RsGxsCircleType::PUBLIC,
 	        const RsGxsCircleId& circleId = RsGxsCircleId(),
-	        RsGxsGroupId& channelGroupId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        RsGxsGroupId& channelId    = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string&  errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) = 0;
 
