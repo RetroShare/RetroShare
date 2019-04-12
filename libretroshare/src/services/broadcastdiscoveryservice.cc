@@ -158,9 +158,9 @@ void BroadcastDiscoveryService::data_tick()
 		{
 			for (auto&& pp : mChangedData)
 			{
-				std::cout << __PRETTY_FUNCTION__ << " Got: >>>" << pp.second
+				std::cerr << __PRETTY_FUNCTION__ << " Got >>>" << pp.second
 				          << "<<< from: " << UDC::IpToString(pp.first.ip())
-				          << std::endl;
+				          << ":" << pp.first.port() << std::endl;
 
 				RsBroadcastDiscoveryResult rbdr =
 				        createResult(pp.first, pp.second);
