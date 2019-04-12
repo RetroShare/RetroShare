@@ -165,7 +165,14 @@ void BroadcastDiscoveryService::data_tick()
 				RsBroadcastDiscoveryResult rbdr =
 				        createResult(pp.first, pp.second);
 
-				mRsPeers.addPeerLocator(rbdr.mSslId, rbdr.locator);
+				if( rbdr.locator.hasPort() && mRsPeers.isFriend(rbdr.mSslId) &&
+				        !mRsPeers.isOnline(rbdr.mSslId) )
+				{
+					mRsPeers.setLocalAddress(
+					            rbdr.mSslId, rbdr.locator.host(),
+					            rbdr.locator.port() );
+					mRsPeers.connectAttempt(rbdr.mSslId);
+				}
 
 				for( const timedDiscHandlers_t& evtHandler :
 				     mPeersDiscoveredEventHandlersList ) evtHandler.first(rbdr);
