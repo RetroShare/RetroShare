@@ -15,13 +15,16 @@
 # You should have received a copy of the GNU Lesser General Public License     #
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
-DEPENDPATH *= $$clean_path($${PWD}/../../libretroshare/src/)
-INCLUDEPATH  *= $$clean_path($${PWD}/../../libretroshare/src)
-LIBS *= -L$$clean_path($${OUT_PWD}/../../libretroshare/src/lib/) -lretroshare
+RS_SRC_PATH=$$clean_path($${PWD}/../../)
+RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
+
+DEPENDPATH *= $$clean_path($${RS_SRC_PATH}/libretroshare/src/)
+INCLUDEPATH  *= $$clean_path($${RS_SRC_PATH}/libretroshare/src)
+LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
 
 equals(TARGET, retroshare):equals(TEMPLATE, lib){
 } else {
-    PRE_TARGETDEPS *= $$clean_path($$OUT_PWD/../../libretroshare/src/lib/libretroshare.a)
+    PRE_TARGETDEPS *= $$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/libretroshare.a)
 }
 
 !include("../../openpgpsdk/src/use_openpgpsdk.pri"):error("Including")
@@ -48,9 +51,6 @@ mLibs = $$RS_SQL_LIB ssl crypto $$RS_THREAD_LIB $$RS_UPNP_LIB
 dLibs =
 
 rs_jsonapi {
-    RS_SRC_PATH=$$clean_path($${PWD}/../../)
-    RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
-
     no_rs_cross_compiling {
         RESTBED_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/restbed)
         RESTBED_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/restbed)
@@ -71,6 +71,20 @@ linux-* {
 rs_deep_search {
     mLibs += xapian
     win32-g++:mLibs += rpcrt4
+}
+
+rs_broadcast_discovery {
+    no_rs_cross_compiling {
+        UDP_DISCOVERY_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/udp-discovery-cpp/)
+        UDP_DISCOVERY_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/udp-discovery-cpp/)
+        INCLUDEPATH *= $$clean_path($${UDP_DISCOVERY_SRC_PATH})
+        DEPENDPATH *= $$clean_path($${UDP_DISCOVERY_BUILD_PATH})
+        QMAKE_LIBDIR *= $$clean_path($${UDP_DISCOVERY_BUILD_PATH})
+        # Using sLibs would fail as libudp-discovery.a is generated at compile-time
+        LIBS *= -L$$clean_path($${UDP_DISCOVERY_BUILD_PATH}) -ludp-discovery
+    } else:sLibs *= udp-discovery
+
+    win32-g++:dLibs *= wsock32
 }
 
 static {

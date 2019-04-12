@@ -40,6 +40,9 @@ define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37
 
 define_default_value RESTBED_SOURCE_VERSION "4.6"
 
+define_default_value UDP_DISCOVERY_CPP_SOURCE "https://github.com/truvorskameikin/udp-discovery-cpp.git"
+define_default_value UDP_DISCOVERY_CPP_VERSION "develop"
+
 define_default_value XAPIAN_SOURCE_VERSION "1.4.7"
 define_default_value XAPIAN_SOURCE_SHA256 13f08a0b649c7afa804fa0e85678d693fd6069dd394c9b9e7d41973d74a3b5d3
 
@@ -203,7 +206,7 @@ build_bzlib()
 	rm -rf $B_dir
 
 	verified_download $B_dir.tar.gz $BZIP2_SOURCE_SHA256 \
-		http://trumpetti.atm.tut.fi/gentoo/distfiles/bzip2-${BZIP2_SOURCE_VERSION}.tar.gz
+		http://distfiles.gentoo.org/distfiles/bzip2-${BZIP2_SOURCE_VERSION}.tar.gz
 
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
@@ -342,6 +345,23 @@ build_restbed()
 	cd ..
 }
 
+build_udp-discovery-cpp()
+{
+	S_dir="udp-discovery-cpp"
+	[ -d $S_dir ] || git clone $UDP_DISCOVERY_CPP_SOURCE $S_dir
+	cd $S_dir
+	git checkout $UDP_DISCOVERY_CPP_VERSION
+	cd ..
+
+	B_dir="udp-discovery-cpp-build"
+	rm -rf ${B_dir}; mkdir ${B_dir}; cd ${B_dir}
+	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../udp-discovery-cpp
+	make -j${HOST_NUM_CPU}
+	cp libudp-discovery.a "${PREFIX}/lib/"
+	cp ../$S_dir/*.hpp "${PREFIX}/include/"
+	cd ..
+}
+
 build_xapian()
 {
 	B_dir="xapian-core-${XAPIAN_SOURCE_VERSION}"
@@ -372,6 +392,7 @@ build_sqlcipher
 build_libupnp
 build_rapidjson
 build_restbed
+build_udp-discovery-cpp
 build_xapian
 delete_copied_includes
 

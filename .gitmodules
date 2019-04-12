@@ -7,3 +7,7 @@
 [submodule "build_scripts/OBS"]
 	path = build_scripts/OBS
 	url = https://github.com/RetroShare/OBS.git
+[submodule "supportlibs/udp-discovery-cpp"]
+	path = supportlibs/udp-discovery-cpp
+	url = https://github.com/truvorskameikin/udp-discovery-cpp.git
+	branch = develop

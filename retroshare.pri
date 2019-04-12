@@ -167,9 +167,14 @@ CONFIG *= no_rs_deep_search
 rs_deep_search:CONFIG -= no_rs_deep_search
 
 # To enable native dialogs append the following assignation to qmake command
-#line "CONFIG+=rs_use_native_dialogs"
+# line "CONFIG+=rs_use_native_dialogs"
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
+
+# To disable broadcast discovery happend the following assignation to qmake
+# command line "CONFIG+=no_rs_broadcast_discovery"
+CONFIG *= rs_broadcast_discovery
+no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -487,6 +492,8 @@ rs_deep_search {
 }
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
+
+rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer

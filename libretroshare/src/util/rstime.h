@@ -45,11 +45,14 @@ typedef int64_t rstime_t;
 // Do we really need this? Our names have rs prefix to avoid pollution already!
 namespace rstime {
 
-	/*!
-	 * \brief This is a cross-system definition of usleep, which accepts any 32 bits number of micro-seconds.
-	 */
-    RS_DEPRECATED_FOR("std::this_thread::sleep_for")
-	int rs_usleep(uint32_t micro_seconds);
+/**
+ * @deprecated { std::this_thread::sleep_for or
+ * std::this_thread::sleep_until instead }
+ * @brief This is a cross-system definition of usleep, which accepts any
+ * 32 bits number of micro-seconds.
+ */
+RS_DEPRECATED_FOR("std::this_thread::sleep_for")
+int rs_usleep(uint32_t micro_seconds);
 
 	/* Use this class to measure and display time duration of a given environment:
 
