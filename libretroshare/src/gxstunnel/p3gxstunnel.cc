@@ -770,7 +770,11 @@ void p3GxsTunnelService::receiveTurtleData(const RsTurtleGenericTunnelItem *gite
 
 // This function encrypts the given data and adds a MAC and an IV into a serialised memory chunk that is then sent through the tunnel.
 
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
 bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id,bool accepts_fast_items)
+#else
+bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t data_size,const TurtleFileHash& hash,const RsPeerId& virtual_peer_id)
+#endif
 {
 #ifdef DEBUG_GXS_TUNNEL
     std::cerr << "p3GxsTunnelService::handleEncryptedDataItem()" << std::endl;
@@ -813,9 +817,15 @@ bool p3GxsTunnelService::handleEncryptedData(const uint8_t *data_bytes,uint32_t 
             std::cerr << "(EE) no tunnel data for tunnel ID=" << tunnel_id << ". This is a bug." << std::endl;
             return false ;
         }
-
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
         if(accepts_fast_items)
-            it2->second.accepts_fast_turtle_items = accepts_fast_items;
+        {
+            if(!it2->second.accepts_fast_turtle_items)
+                std::cerr << "(II) received probe for Fast track turtle items for tunnel VPID " << it2->second.virtual_peer_id << ": switching to Fast items mode." << std::endl;
+
+            it2->second.accepts_fast_turtle_items = true;
+        }
+#endif
 
         memcpy(aes_key,it2->second.aes_key,GXS_TUNNEL_AES_KEY_SIZE) ;
 
@@ -1342,27 +1352,48 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
     // We send the item through the turtle tunnel. We do that using the new 'fast' item type if the tunnel accepts it, and using the old slow one otherwise.
     // Still if the tunnel hasn't been probed, we duplicate the packet using the new fast item format. The packet being received twice on the other side will
     // be discarded with a warning.
+    // Note that because the data is deleted by sendTurtleData(), we need to send all packets at the end, and properly duplicate the data when needed.
+
+#ifdef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+	RsTurtleGenericFastDataItem *gitem = new RsTurtleGenericFastDataItem;
+	gitem->data_bytes = data_bytes;
+	gitem->data_size  = data_size ;
+#else
+	RsTurtleGenericDataItem *gitem = NULL;
+	RsTurtleGenericFastDataItem *gitem2 = NULL;
 
 	if(!it->second.accepts_fast_turtle_items)
 	{
-		RsTurtleGenericDataItem *gitem = new RsTurtleGenericDataItem ;
+        std::cerr << "Sending old format (slow) item for packet IV=" << std::hex << IV << std::dec << " in tunnel VPID=" << it->second.virtual_peer_id << std::endl;
+		gitem = new RsTurtleGenericDataItem ;
 
 		gitem->data_bytes = data_bytes;
 		gitem->data_size  = data_size ;
-
-		mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 	}
 
 	if(it->second.accepts_fast_turtle_items || !it->second.already_probed_for_fast_items)
 	{
-		RsTurtleGenericFastDataItem *gitem = new RsTurtleGenericFastDataItem ;
-#warning we should duplicate the data here, otherwise it's gonna crash
-		gitem->data_bytes = data_bytes;
-		gitem->data_size  = data_size ;
+        std::cerr << "Sending new format (fast) item for packet IV=" << std::hex << IV << std::dec << " in tunnel VPID=" << it->second.virtual_peer_id << std::endl;
+		gitem2 = new RsTurtleGenericFastDataItem ;
+
+        if(gitem != NULL)	// duplicate the data because it was already sent in gitem.
+		{
+			gitem2->data_bytes = rs_malloc(data_size);
+			gitem2->data_size  = data_size ;
+            memcpy(gitem2->data_bytes,data_bytes,data_size);
+		}
+		else
+		{
+			gitem2->data_bytes = data_bytes;
+			gitem2->data_size  = data_size ;
+		}
 
 		it->second.already_probed_for_fast_items = true;
-		mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
+
 	}
+	if(gitem2) mTurtle->sendTurtleData(virtual_peer_id,gitem2) ;
+#endif
+    if(gitem)  mTurtle->sendTurtleData(virtual_peer_id,gitem) ;
 
 	return true ;
 }

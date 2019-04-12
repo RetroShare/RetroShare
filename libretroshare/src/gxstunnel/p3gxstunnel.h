@@ -147,7 +147,10 @@ private:
     class GxsTunnelPeerInfo
     {
     public:
-        GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0),accepts_fast_turtle_items(false)
+        GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+					          ,accepts_fast_turtle_items(false)
+#endif
         {
             memset(aes_key, 0, GXS_TUNNEL_AES_KEY_SIZE);
             
@@ -170,8 +173,10 @@ private:
         std::map<uint64_t,rstime_t> received_data_prints ;    // list of recently received messages, to avoid duplicates. Kept for 20 mins at most.
         uint32_t total_sent ;                                 // total data sent to this peer
         uint32_t total_received ;                             // total data received by this peer
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
         bool accepts_fast_turtle_items;                       // does the tunnel accept RsTurtleGenericFastDataItem type?
         bool already_probed_for_fast_items;                   // has the tunnel been probed already? If not, a fast item will be sent
+#endif
     };
 
     class GxsTunnelDHInfo
@@ -243,7 +248,11 @@ private:
     bool locked_sendEncryptedTunnelData(RsGxsTunnelItem *item) ;
     bool locked_sendClearTunnelData(RsGxsTunnelDHPublicKeyItem *item);	// this limits the usage to DH items. Others should be encrypted!
     
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
     bool handleEncryptedData(const uint8_t *data_bytes, uint32_t data_size, const TurtleFileHash& hash, const RsPeerId& virtual_peer_id, bool accepts_fast_items) ;
+#else
+    bool handleEncryptedData(const uint8_t *data_bytes, uint32_t data_size, const TurtleFileHash& hash, const RsPeerId& virtual_peer_id) ;
+#endif
 
     // local data
     
