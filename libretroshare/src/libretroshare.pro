@@ -883,7 +883,7 @@ rs_jsonapi {
                 $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
                 -H$$shell_path($${RESTBED_SRC_PATH}) && \
-            make
+            $(MAKE)
         QMAKE_EXTRA_COMPILERS += genrestbedlib
 
         RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
@@ -892,7 +892,7 @@ rs_jsonapi {
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
         genrestbedheader.CONFIG += target_predeps combine no_link
         genrestbedheader.variable_out = HEADERS
-        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
@@ -936,7 +936,14 @@ rs_broadcast_discovery {
     no_rs_cross_compiling {
         DUMMYQMAKECOMPILERINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        CMAKE_C_COMPILER_OVERRIDE=""
+        win32-g++ {
+            CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            APPVEYOR=$$(APPVEYOR)
+            equals(APPVEYOR, "True") {
+                CMAKE_C_COMPILER_OVERRIDE="-DCMAKE_C_COMPILER=gcc"
+            }
+        }
         udpdiscoverycpplib.name = Generating libudp-discovery.a.
         udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
@@ -948,12 +955,13 @@ rs_broadcast_discovery {
             true ) && \
             mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
             cd $${UDP_DISCOVERY_BUILD_PATH} && \
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+            cmake $${CMAKE_C_COMPILER_OVERRIDE} \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
                 $${CMAKE_GENERATOR_OVERRIDE} \
                 -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
                 -H$$shell_path($${UDP_DISCOVERY_SRC_PATH}) && \
-            make
+            $(MAKE)
         QMAKE_EXTRA_COMPILERS += udpdiscoverycpplib
     }
 }
