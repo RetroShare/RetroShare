@@ -212,12 +212,13 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	virtual bool createComment(RsGxsComment& comment) override;
 
 	/// Implementation of @see RsGxsChannels::createComment
-	virtual bool createCommentV2(
-	        const RsGxsGroupId& channelId, const RsGxsMessageId& parentId,
-	        const std::string& comment,
-	        RsGxsMessageId& commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
+	virtual bool createCommentV2(const RsGxsGroupId&   channelId,
+										  const RsGxsMessageId& threadId,
+										  const RsGxsMessageId& parentId,
+										  const RsGxsId&        authorId,
+										  const std::string&    comment,
+										  RsGxsMessageId& commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+										  std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)) override;
 
 	/// Implementation of @see RsGxsChannels::editChannel
 	virtual bool editChannel(RsGxsChannelGroup& channel) override;
