@@ -1147,7 +1147,9 @@ bool p3GxsChannels::createChannelV2(
 	}
 
 	// wait for the group creation to complete.
-	RsTokenService::GxsRequestStatus wSt = waitToken(token);
+	RsTokenService::GxsRequestStatus wSt =
+	        waitToken( token, std::chrono::milliseconds(5000),
+	                   std::chrono::milliseconds(20) );
 	if(wSt != RsTokenService::COMPLETE)
 	{
 		errorMessage = "GXS operation waitToken failed with: "
@@ -1450,63 +1452,89 @@ bool p3GxsChannels::createCommentV2(const RsGxsGroupId&   channelId,
 	std::vector<RsGxsChannelPost> posts;
 	std::vector<RsGxsComment> comments;
 
-	if(!getChannelContent( channelId,std::set<RsGxsMessageId>({threadId}),posts,comments )) // does the post thread exist?
+	if(!getChannelContent( // does the post thread exist?
+	            channelId,std::set<RsGxsMessageId>({threadId}), posts, comments ))
 	{
-		errorMessage = "You cannot comment post " + threadId.toStdString() + " of channel with Id " + channelId.toStdString() + ": this post does not exists locally!";
+		errorMessage = "You cannot comment post " + threadId.toStdString() +
+		        " of channel with Id " + channelId.toStdString() +
+		        ": this post does not exists locally!";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 
-	if(posts.size() != 1 || !posts[0].mMeta.mParentId.isNull()) // check that the post thread Id is actually that of a post thread
+	// check that the post thread Id is actually that of a post thread
+	if(posts.size() != 1 || !posts[0].mMeta.mParentId.isNull())
 	{
-		errorMessage = std::string("You cannot comment post " + threadId.toStdString() + " of channel with Id " + channelId.toStdString() + ": supplied threadId is not a thread, or parentMsgId is not a comment!");
+		errorMessage = "You cannot comment post " + threadId.toStdString() +
+		        " of channel with Id " + channelId.toStdString() +
+		        ": supplied threadId is not a thread, or parentMsgId is not a" +
+		        " comment!";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 
 	if(!parentId.isNull())
-		if(!getChannelContent( channelId,std::set<RsGxsMessageId>({parentId}),posts,comments )) // does the post thread exist?
+		if(!getChannelContent( // does the post thread exist?
+		            channelId,std::set<RsGxsMessageId>({parentId}),posts,comments ))
 		{
-			errorMessage = std::string("You cannot comment post " + parentId.toStdString() + ": supplied parent comment Id is not a comment!");
+			errorMessage = "You cannot comment post " + parentId.toStdString() +
+			        ": supplied parent comment Id is not a comment!";
+			std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+			          << std::endl;
 			return false;
 		}
-		else if(comments.size() != 1 || comments[0].mMeta.mParentId.isNull()) // is the comment parent actually a comment?
-		{
-			errorMessage = std::string("You cannot comment post " + parentId.toStdString() + " of channel with Id " + channelId.toStdString() + ": supplied mParentMsgId is not a comment Id!");
+		else if(comments.size() != 1 || comments[0].mMeta.mParentId.isNull())
+		{ // is the comment parent actually a comment?
+			errorMessage = "You cannot comment post " + parentId.toStdString()
+			        + " of channel with Id " + channelId.toStdString() +
+			        ": supplied mParentMsgId is not a comment Id!";
+			std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+			          << std::endl;
 			return false;
 		}
 
 	if(!rsIdentity->isOwnId(authorId)) // is the voter ID actually ours?
 	{
-		errorMessage = std::string("You cannot comment to channel with Id " + channelId.toStdString() + " with identity " + authorId.toStdString() + " because it is not yours.");
+		errorMessage = "You cannot comment to channel with Id " +
+		        channelId.toStdString() + " with identity " +
+		        authorId.toStdString() + " because it is not yours.";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 
 	// Now create the comment
-
 	RsGxsComment cmt;
-
 	cmt.mMeta.mGroupId  = channelId;
 	cmt.mMeta.mThreadId = threadId;
 	cmt.mMeta.mParentId = parentId;
 	cmt.mMeta.mAuthorId = authorId;
-
 	cmt.mComment = comment;
 
 	uint32_t token;
 	if(!createNewComment(token, cmt))
 	{
 		errorMessage = "Failed creating comment.";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 
 	if(waitToken(token) != RsTokenService::COMPLETE)
 	{
 		errorMessage = "GXS operation failed.";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 
 	if(!RsGenExchange::getPublishedMsgMeta(token, cmt.mMeta))
 	{
-		errorMessage = "Failure getting generated comment data.";
+		errorMessage = "Failure getting created comment data.";
+		std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
+		          << std::endl;
 		return false;
 	}
 

@@ -185,9 +185,10 @@ class NetInterface;
  **/
 class PQInterface: public RateInterface
 {
-	public:
-		explicit PQInterface(const RsPeerId &id) :traf_in(0), traf_out(0),peerId(id) { return; }
-		virtual	~PQInterface() { return; }
+public:
+	explicit PQInterface(const RsPeerId &id) :
+	    traf_in(0), traf_out(0), peerId(id) {}
+	virtual	~PQInterface() {}
 
 		/*!
 		 * allows user to send RsItems to a particular facility  (file, network)

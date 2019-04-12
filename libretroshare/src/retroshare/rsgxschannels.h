@@ -104,58 +104,80 @@ public:
 	/**
 	 * @brief Create channel. Blocking API.
 	 * @jsonapi{development}
-	 * @param[in]  name        Name of the channel
-	 * @param[in]  description Description of the channel
-	 * @param[in]  thumbnail   Optional image to show as channel thumbnail.
-	 * @param[in]  authorId    Optional id of the author. Leave empty for an	anonymous channel.
-	 * @param[in]  circleType  Optional visibility rule, default public.
-	 * @param[in]  circleId    If the channel is not public specify the id of the circle who can see the channel. Depending on the value you pass for
-	 *	                        circleType this should be be an external circle if EXTERNAL is passed, a
-	 *	                        local friend group id if NODES_GROUP is passed, empty otherwise.
-	 * @param[out] channelId   Optional storage for the id of the created channel, meaningful only if creations succeeds.
-	 * @param[out] errorMessage Optional storage for error messsage, meaningful only if creation fail.
+	 * @param[in]  name         Name of the channel
+	 * @param[in]  description  Description of the channel
+	 * @param[in]  thumbnail    Optional image to show as channel thumbnail.
+	 * @param[in]  authorId     Optional id of the author. Leave empty for an
+	 *                          anonymous channel.
+	 * @param[in]  circleType   Optional visibility rule, default public.
+	 * @param[in]  circleId     If the channel is not public specify the id of
+	 *                          the circle who can see the channel. Depending on
+	 *                          the value you pass for
+	 *                          circleType this should be be an external circle
+	 *                          if EXTERNAL is passed, a local friend group id
+	 *                          if NODES_GROUP is passed, empty otherwise.
+	 * @param[out] channelId    Optional storage for the id of the created
+	 *                          channel, meaningful only if creations succeeds.
+	 * @param[out] errorMessage Optional storage for error messsage, meaningful
+	 *                          only if creation fail.
 	 * @return False on error, true otherwise.
 	 */
-	virtual bool createChannelV2(const std::string& name,
-	                             const std::string& description,
-	                             const RsGxsImage&  thumbnail     = RsGxsImage(),
-	                             const RsGxsId&     authorId      = RsGxsId(),
-	                             RsGxsCircleType circleType       = RsGxsCircleType::PUBLIC,
-	                             const RsGxsCircleId& circleId    = RsGxsCircleId(),
-	                             RsGxsGroupId& channelGroupId     = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
-	                             std::string& errorMessage        = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+	virtual bool createChannelV2(
+	        const std::string& name,
+	        const std::string& description,
+	        const RsGxsImage&  thumbnail = RsGxsImage(),
+	        const RsGxsId&     authorId = RsGxsId(),
+	        RsGxsCircleType    circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& channelGroupId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string&  errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	/**
 	 * @brief Add a comment on a post or on another comment. Blocking API.
 	 * @jsonapi{development}
-	 * @param[in]  channelId Id of the channel in which the comment is to be posted
-	 * @param[in]  threadId  Id of the post (that is a thread) in the channel where the comment is placed
-	 * @param[in]  parentId  Id of the parent of the comment that is either a channel post Id or the Id of another comment.
+	 * @param[in]  channelId Id of the channel in which the comment is to be
+	 *                       posted
+	 * @param[in]  threadId  Id of the post (that is a thread) in the channel
+	 *                       where the comment is placed
+	 * @param[in]  parentId  Id of the parent of the comment that is either a
+	 *                       channel post Id or the Id of another comment.
 	 * @param[in]  authorId  Id of the author of the comment
-	 * @param[in]  comment UTF-8 string containing the comment itself
-	 * @param[out] commentMessageId Optional storage for the id of the comment that was created, meaningful only on success.
-	 * @param[out] errorMessage Optional storage for error message, meaningful	only on failure.
+	 * @param[in]  comment   UTF-8 string containing the comment itself
+	 * @param[out] commentMessageId Optional storage for the id of the comment
+	 *                              that was created, meaningful only on success.
+	 * @param[out] errorMessage Optional storage for error message, meaningful
+	 *                          only on failure.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createCommentV2(const RsGxsGroupId&   channelId,
-	                             const RsGxsMessageId& threadId,
-	                             const RsGxsMessageId& parentId,
-	                             const RsGxsId&        authorId,
-	                             const std::string&    comment,
-	                             RsGxsMessageId&       commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
-	                             std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string) )=0;
+	virtual bool createCommentV2(
+	        const RsGxsGroupId&   channelId,
+	        const RsGxsMessageId& threadId,
+	        const RsGxsMessageId& parentId,
+	        const RsGxsId&        authorId,
+	        const std::string&    comment,
+	        RsGxsMessageId&       commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	/**
 	 * @brief Create channel post. Blocking API.
 	 * @jsonapi{development}
-	 * @param[in]  channelId    Id of the channel where to put the post. Beware you need publish rights on that channel to post.
+	 * @param[in]  channelId    Id of the channel where to put the post. Beware
+	 *                          you need publish rights on that channel to post.
 	 * @param[in]  title        Title of the post
 	 * @param[in]  mBody        Text content of the post
-	 * @param[in]  files        Optional list of attached files. These are supposed to be already shared, @see ExtraFileHash() below otherwise.
+	 * @param[in]  files        Optional list of attached files. These are
+	 *                          supposed to be already shared,
+	 *                          @see ExtraFileHash() below otherwise.
 	 * @param[in]  thumbnail    Optional thumbnail image for the post.
-	 * @param[in]  origPostId   If this is supposed to replace an already existent post, the id of the old post. If left blank a new post will be created.
-	 * @param[out] postId       Optional storage for the id of the created post, meaningful only on success.
-	 * @param[out] errorMessage Optional storage for the error message,	meaningful only on failure.
+	 * @param[in]  origPostId   If this is supposed to replace an already
+	 *                          existent post, the id of the old post. If left
+	 *                          blank a new post will be created.
+	 * @param[out] postId       Optional storage for the id of the created post,
+	 *                          meaningful only on success.
+	 * @param[out] errorMessage Optional storage for the error message,
+	 *                          meaningful only on failure.
 	 * @return false on error, true otherwise
 	 */
 	virtual bool createPostV2(
@@ -171,13 +193,17 @@ public:
 	 * @brief Create a vote
 	 * @jsonapi{development}
 	 * @param[in]  channelId    Id of the channel where to vote
-	 * @param[in]  postId       Id of the channel post of which a comment is voted
+	 * @param[in]  postId       Id of the channel post of which a comment is
+	 *                          voted.
 	 * @param[in]  commentId    Id of the comment that is voted
-	 * @param[in]  authorId     Id of the author. Needs to be of an owned identity.
-	 * @param[in]  vote         Vote value, either RsGxsVoteType::DOWN or RsGxsVoteType::UP
-	 * @param[out] voteId       Optional storage for the id of the created vote, meaningful only on success.
+	 * @param[in]  authorId     Id of the author. Needs to be of an owned
+	 *                          identity.
+	 * @param[in]  vote         Vote value, either RsGxsVoteType::DOWN or
+	 *                          RsGxsVoteType::UP
+	 * @param[out] voteId       Optional storage for the id of the created vote,
+	 *                          meaningful only on success.
 	 * @param[out] errorMessage Optional storage for error message, meaningful
-	 *	only on failure.
+	 *                          only on failure.
 	 * @return false on error, true otherwise
 	 */
 	virtual bool createVoteV2(
