@@ -117,7 +117,7 @@ void RsEventsService::data_tick()
 	        std::chrono::milliseconds(1);
 
 	std::unique_ptr<RsEvent> eventPtr(nullptr);
-	uint futureEventsCounter = 0;
+	size_t futureEventsCounter = 0;
 
 dispatchEventFromQueueLock:
 	mEventQueueMtx.lock();
