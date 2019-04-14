@@ -40,7 +40,7 @@
 #include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/SharedFilesDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
-#include "MessagesDialog.h"
+#include "gui/msgs/MessagesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"

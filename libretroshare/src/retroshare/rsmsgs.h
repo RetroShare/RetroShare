@@ -563,8 +563,8 @@ public:
 	/**
 	 * @brief MessageToTrash
 	 * @jsonapi{development}
-	 * @param[in] msgId
-	 * @param[in] bTrash
+	 * @param[in] msgId        Id of the message to mode to trash box
+	 * @param[in] bTrash       Move to trash if true, otherwise remove from trash
 	 * @return true on success
 	 */
 	virtual bool MessageToTrash(const std::string &msgId, bool bTrash)   = 0;

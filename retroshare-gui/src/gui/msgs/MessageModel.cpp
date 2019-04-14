@@ -336,11 +336,11 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
             || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
             || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
-
-    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString()
-              << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
+#ifdef DEBUG_MESSAGE_MODEL
+    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
     foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
     std::cerr          << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
+#endif
 
     return passes_quick_view && passes_strings;
 }
@@ -621,10 +621,10 @@ void RsMessageModel::getMessageSummaries(BoxName box,std::list<Rs::Msgs::MsgInfo
 
         switch(box)
         {
-		case BOX_INBOX  : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX  ; break ;
-        case BOX_SENT   : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX; break ;
-        case BOX_OUTBOX : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX ; break ;
-        case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  ; break ;
+		case BOX_INBOX  : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_INBOX     && !(it->msgflags & RS_MSG_TRASH); break ;
+        case BOX_SENT   : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_SENTBOX   && !(it->msgflags & RS_MSG_TRASH); break ;
+        case BOX_OUTBOX : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_OUTBOX    && !(it->msgflags & RS_MSG_TRASH); break ;
+        case BOX_DRAFTS : ok = (it->msgflags & RS_MSG_BOXMASK) == RS_MSG_DRAFTBOX  && !(it->msgflags & RS_MSG_TRASH); break ;
         case BOX_TRASH  : ok = (it->msgflags & RS_MSG_TRASH) ; break ;
         default:
             			++it;

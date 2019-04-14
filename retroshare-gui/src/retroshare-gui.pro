@@ -443,6 +443,7 @@ HEADERS +=  rshare.h \
             gui/connect/ConfCertDialog.h \
             gui/connect/PGPKeyDialog.h \
             gui/connect/FriendRecommendDialog.h \
+            gui/msgs/MessagesDialog.h \
             gui/msgs/MessageInterface.h \
             gui/msgs/MessageComposer.h \
             gui/msgs/MessageWindow.h \
@@ -541,7 +542,6 @@ HEADERS +=  rshare.h \
             gui/common/ToasterNotify.h \
             gui/style/RSStyle.h \
             gui/style/StyleDialog.h \
-            gui/MessagesDialog.h \
             gui/help/browser/helpbrowser.h \
             gui/help/browser/helptextbrowser.h \
             gui/statusbar/peerstatus.h \
@@ -621,7 +621,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/FriendsDialog.ui \
             gui/ShareManager.ui \
 #            gui/ShareDialog.ui \
-            gui/MessagesDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
             gui/ServicePermissionDialog.ui \
@@ -640,6 +639,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/connect/ConnectFriendWizard.ui \
             gui/connect/ConnectProgressDialog.ui \
             gui/connect/FriendRecommendDialog.ui \
+            gui/msgs/MessagesDialog.ui \
             gui/msgs/MessageComposer.ui \
             gui/msgs/MessageWindow.ui\
             gui/msgs/MessageWidget.ui\
@@ -745,7 +745,6 @@ SOURCES +=  main.cpp \
 #            gui/ShareDialog.cpp \
 #            gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
-            gui/MessagesDialog.cpp \
             gui/im_history/ImHistoryBrowser.cpp \
             gui/im_history/IMHistoryItemDelegate.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
@@ -800,6 +799,7 @@ SOURCES +=  main.cpp \
             gui/chat/ChatLobbyUserNotify.cpp \
             gui/connect/ConfCertDialog.cpp \
             gui/connect/PGPKeyDialog.cpp \
+            gui/msgs/MessagesDialog.cpp \
             gui/msgs/MessageComposer.cpp \
             gui/msgs/MessageWidget.cpp \
             gui/msgs/MessageWindow.cpp \
