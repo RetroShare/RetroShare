@@ -201,7 +201,7 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	rbdr.locator.
 	        setScheme("ipv4").
 	        setHost(UDC::IpToString(ipp.ip())).
-	        setPort(static_cast<uint16_t>(ipp.port()) );
+	        setPort(bdp.mLocalPort);
 
 	return rbdr;
 }
