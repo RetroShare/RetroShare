@@ -191,27 +191,27 @@ QFrame#Chatbuttonframe{
 }
 
 QFrame#frame_2{
-        border-image: url(qss/redscorpion/red.png);
+        border-image: url(%THISPATH%/redscorpion/red.png);
 
 
 border: 1px solid #CCCCCC;
 }
 
 QFrame#buttonframe{
-        border-image: url(qss/redscorpion/red.png);
+        border-image: url(%THISPATH%/redscorpion/red.png);
 
 
 border: 1px solid #CCCCCC;
 }
 
 QFrame#frame{
-        border-image: url(qss/redscorpion/red.png);
+        border-image: url(%THISPATH%/redscorpion/red.png);
 
         border: 1px solid #CCCCCC;
 }
 
 QFrame#chheaderframe{
-        border-image: url(qss/redscorpion/red.png);
+        border-image: url(%THISPATH%/redscorpion/red.png);
 
 
 border: 1px solid #CCCCCC;

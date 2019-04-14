@@ -34,7 +34,7 @@ QWidget#chatcentralwidget{
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 
 }
@@ -42,17 +42,17 @@ QToolBar#chattoolBar{
 
 /* Customize the toolbar. */
 QToolBar#toolBarPage {
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 }
 
 QToolBar#toolBarAction {
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 }
 
 QTabBar::tab {
-         border-image: url(qss/blue/tab1.png);
+         border-image: url(%THISPATH%/blue/tab1.png);
          min-width: 8ex;
          padding: 4px;
 
@@ -66,13 +66,13 @@ QTabBar::tab:!selected {
      
 QTabBar::tab:selected, QTabBar::tab:hover {
 
-         border-image: url(qss/orangesurfer/tab_hover.png);
+         border-image: url(%THISPATH%/blue/tab_hover.png);
 
 
 }
 
 QTabBar::tab:selected {
-		border-image: url(qss/blue/tabselected.png);
+		border-image: url(%THISPATH%/blue/tabselected.png);
 }
 
 QPushButton#okButton {
@@ -128,13 +128,13 @@ QStatusBar{
 
 QFrame#messengerframetop{
          
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 }
 
 QFrame#Chatbuttonframe{
          
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 }
 
@@ -169,7 +169,7 @@ QLabel#fromText{
 
 }
 QSplitter#splitter{
-    border-image: url(qss/blue/blue.png);
+    border-image: url(%THISPATH%/blue/blue.png);
 
 }
 
