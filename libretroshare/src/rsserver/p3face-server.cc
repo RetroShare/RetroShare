@@ -39,6 +39,9 @@ int rsserverzone = 101;
 
 #include "util/rsdebug.h"
 
+#include "retroshare/rsevents.h"
+#include "services/rseventsservice.h"
+
 
 /****
 #define DEBUG_TICK 1
@@ -81,6 +84,12 @@ RsServer::RsServer() :
     coreMutex("RsServer"), mShutdownCallback([](int){}),
     coreReady(false)
 {
+	{
+		RsEventsService* tmpRsEvtPtr = new RsEventsService();
+		rsEvents.reset(tmpRsEvtPtr);
+		startServiceThread(tmpRsEvtPtr, "RsEventsService");
+	}
+
 	// This is needed asap.
 	//
 	mNotify = new p3Notify() ;

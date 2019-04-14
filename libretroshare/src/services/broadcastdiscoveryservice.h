@@ -43,14 +43,6 @@ public:
 	/// @see RsBroadcastDiscovery
 	std::vector<RsBroadcastDiscoveryResult> getDiscoveredPeers() override;
 
-	/// @see RsBroadcastDiscovery
-	bool registerPeersDiscoveredEventHandler(
-	        const std::function<void (const RsBroadcastDiscoveryResult&)>&
-	        multiCallback,
-	        rstime_t maxWait = 300,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
-
 	/// @see RsTickingThread
 	void data_tick() override;
 
@@ -67,16 +59,6 @@ protected:
 	RsMutex mDiscoveredDataMutex;
 
 	RsPeers& mRsPeers; // TODO: std::shared_ptr<RsPeers> mRsPeers;
-
-	typedef std::pair<
-	std::function<void (const RsBroadcastDiscoveryResult&)>,
-	    std::chrono::system_clock::time_point > timedDiscHandlers_t;
-	/** Store peer discovered event handlers with timeout */
-	std::forward_list<timedDiscHandlers_t> mPeersDiscoveredEventHandlersList;
-	RsMutex mPeersDiscoveredEventHandlersListMutex;
-
-	/// Cleanup mPeersDiscoveredEventHandlersList
-	void cleanTimedOutEventHandlers();
 
 	RsBroadcastDiscoveryResult createResult(
 	        const UDC::IpPort& ipp, const std::string& uData );

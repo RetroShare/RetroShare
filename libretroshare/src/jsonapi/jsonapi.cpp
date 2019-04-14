@@ -37,6 +37,7 @@
 #include "retroshare/rsinit.h"
 #include "util/rsurl.h"
 #include "util/rstime.h"
+#include "retroshare/rsevents.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
@@ -275,6 +276,64 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 			}
 
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+		} );
+	}, true);
+
+	registerHandler("/rsEvents/registerEventsHandler",
+	        [this](const std::shared_ptr<rb::Session> session)
+	{
+		const std::multimap<std::string, std::string> headers
+		{
+			{ "Connection", "keep-alive" },
+			{ "Content-Type", "text/event-stream" }
+		};
+		session->yield(rb::OK, headers);
+
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			if( !checkRsServicePtrReady(
+						rsEvents, "rsEvents", cAns, session ) )
+				return;
+
+			const std::weak_ptr<rb::Session> weakSession(session);
+			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
+			std::function<void(const RsEvent&)> multiCallback =
+			        [weakSession, hId](const RsEvent& event)
+			{
+				auto session = weakSession.lock();
+				if(!session || session->is_closed())
+				{
+					if(rsEvents) rsEvents->unregisterEventsHandler(hId);
+					return;
+				}
+
+				RsGenericSerializer::SerializeContext ctx;
+				RsTypeSerializer::serial_process(
+				            RsGenericSerializer::TO_JSON, ctx,
+				            const_cast<RsEvent&>(event), "event" );
+
+				std::stringstream message;
+				message << "data: " << compactJSON << ctx.mJson << "\n\n";
+				session->yield(message.str());
+			};
+
+			bool retval = rsEvents->registerEventsHandler(multiCallback, hId);
+
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(retval);
+			}
+
+			// return them to the API caller
+			std::stringstream message;
+			message << "data: " << compactJSON << cAns.mJson << "\n\n";
+			session->yield(message.str());
 		} );
 	}, true);
 

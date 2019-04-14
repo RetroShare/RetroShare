@@ -29,9 +29,11 @@
 #include "retroshare/rspeers.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rsserializer.h"
+#include "retroshare/rsevents.h"
 
 /*extern*/ std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery(nullptr);
 RsBroadcastDiscovery::~RsBroadcastDiscovery() { /* Beware of Rs prefix! */ }
+RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() {}
 
 struct BroadcastDiscoveryPack : RsSerializable
 {
@@ -87,9 +89,7 @@ struct BroadcastDiscoveryPack : RsSerializable
 BroadcastDiscoveryService::BroadcastDiscoveryService(
         RsPeers& pRsPeers ) :
     mDiscoveredDataMutex("BroadcastDiscoveryService discovered data mutex"),
-    mRsPeers(pRsPeers),
-    mPeersDiscoveredEventHandlersListMutex(
-        "BroadcastDiscoveryService event handlers mutex" )
+    mRsPeers(pRsPeers)
 {
 	if(mRsPeers.isHiddenNode(mRsPeers.getOwnId())) return;
 
@@ -151,10 +151,7 @@ void BroadcastDiscoveryService::data_tick()
 		}
 		mDiscoveredDataMutex.unlock();
 
-		cleanTimedOutEventHandlers();
-
-		mPeersDiscoveredEventHandlersListMutex.lock();
-		if(!mChangedData.empty() && !mPeersDiscoveredEventHandlersList.empty())
+		if(!mChangedData.empty())
 		{
 			for (auto&& pp : mChangedData)
 			{
@@ -173,12 +170,13 @@ void BroadcastDiscoveryService::data_tick()
 					            rbdr.locator.port() );
 					mRsPeers.connectAttempt(rbdr.mSslId);
 				}
-
-				for( const timedDiscHandlers_t& evtHandler :
-				     mPeersDiscoveredEventHandlersList ) evtHandler.first(rbdr);
+				else if(rsEvents)
+				{
+					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
+					rsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(rbdr)));
+				}
 			}
 		}
-		mPeersDiscoveredEventHandlersListMutex.unlock();
 	}
 
 	/* Probably this would be better if done only on actual change */
@@ -204,41 +202,4 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	        setPort(bdp.mLocalPort);
 
 	return rbdr;
-}
-
-void BroadcastDiscoveryService::cleanTimedOutEventHandlers()
-{
-	auto now = std::chrono::system_clock::now();
-
-	RS_STACK_MUTEX(mPeersDiscoveredEventHandlersListMutex);
-	mPeersDiscoveredEventHandlersList.remove_if(
-	            [&](timedDiscHandlers_t h) { return h.second <= now; } );
-}
-
-bool BroadcastDiscoveryService::registerPeersDiscoveredEventHandler(
-           const std::function<void (const RsBroadcastDiscoveryResult&)>&
-           multiCallback, rstime_t maxWait, std::string& errorMessage )
-{
-	auto now = std::chrono::system_clock::now();
-	auto timeout = std::chrono::system_clock::time_point::max();
-	if(maxWait != std::numeric_limits<rstime_t>::max())
-		timeout = now + std::chrono::seconds(maxWait);
-
-	if(timeout <= now)
-	{
-		errorMessage = " Invalid maxWait value: " + std::to_string(maxWait) +
-		        " either too big or too little, use: " +
-		        "std::numeric_limits<rstime_t>::max() == " +
-		        std::to_string(std::numeric_limits<rstime_t>::max()) +
-		        " if you meant \"wait forever\"";
-
-		std::cerr << __PRETTY_FUNCTION__ << errorMessage << std::endl;
-		return false;
-	}
-
-	RS_STACK_MUTEX(mPeersDiscoveredEventHandlersListMutex);
-	mPeersDiscoveredEventHandlersList.push_front(
-	            std::make_pair(multiCallback,timeout) );
-
-	return true;
 }

@@ -134,6 +134,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
 PUBLIC_HEADERS =	retroshare/rsdisc.h \
+    retroshare/rsevents.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
 					retroshare/rshistory.h \
@@ -459,6 +460,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsserviceinfoitems.h \
 
 HEADERS +=  services/autoproxy/p3i2pbob.h \
+            services/rseventsservice.h \
             services/autoproxy/rsautoproxymonitor.h \
             services/p3msgservice.h \
 			services/p3service.h \
@@ -609,6 +611,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
+    services/rseventsservice.cc \
             services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
 			services/p3service.cc \

@@ -30,6 +30,7 @@
 #include "util/rstime.h"
 #include "util/rsurl.h"
 #include "util/rsmemory.h"
+#include "retroshare/rsevents.h"
 
 class RsBroadcastDiscovery;
 
@@ -46,6 +47,7 @@ struct RsBroadcastDiscoveryResult : RsSerializable
 	std::string mProfileName;
 	RsUrl locator;
 
+	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
@@ -56,11 +58,34 @@ struct RsBroadcastDiscoveryResult : RsSerializable
 	}
 };
 
+struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
+{
+	RsBroadcastDiscoveryPeerFoundEvent(
+	        const RsBroadcastDiscoveryResult& eventData ) :
+	    RsEvent(RsEventType::BROADCAST_DISCOVERY_PEER_FOUND), mData(eventData) {}
+
+	RsBroadcastDiscoveryResult mData;
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mData);
+	}
+
+	~RsBroadcastDiscoveryPeerFoundEvent();
+};
+
+/**
+ * Announce own RetroShare instace and look friends and peers in own broadcast
+ * domain (aka LAN).
+ * Emit event @see RsBroadcastDiscoveryPeerFoundEvent when a new peer (not
+ * friend yet) is found.
+ */
 class RsBroadcastDiscovery
 {
 public:
-	virtual ~RsBroadcastDiscovery();
-
 	/**
 	 * @brief Get potential peers that have been discovered up until now
 	 * @jsonapi{development}
@@ -68,20 +93,5 @@ public:
 	 */
 	virtual std::vector<RsBroadcastDiscoveryResult> getDiscoveredPeers() = 0;
 
-	/**
-	 * @brief registerPeersDiscoveredEventHandler
-	 * @jsonapi{development}
-	 * @param multiCallback function that will be called each time a potential
-	 *	peer is discovered
-	 * @param[in] maxWait maximum wait time in seconds for discovery results,
-	 *	passing std::numeric_limits<rstime_t>::max() means wait forever.
-	 * @param[out] errorMessage Optional storage for error message, meaningful
-	 *	only on failure.
-	 * @return false on error, true otherwise
-	 */
-	virtual bool registerPeersDiscoveredEventHandler(
-	        const std::function<void (const RsBroadcastDiscoveryResult& result)>&
-	        multiCallback,
-	        rstime_t maxWait = 300,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+	virtual ~RsBroadcastDiscovery();
 };
