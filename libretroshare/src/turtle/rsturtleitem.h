@@ -52,6 +52,7 @@ const uint8_t RS_TURTLE_SUBTYPE_FILE_MAP_REQUEST        = 0x11 ;
 // const uint8_t RS_TURTLE_SUBTYPE_FILE_CRC_REQUEST        = 0x13 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC               = 0x14 ;
 const uint8_t RS_TURTLE_SUBTYPE_CHUNK_CRC_REQUEST       = 0x15 ;
+const uint8_t RS_TURTLE_SUBTYPE_GENERIC_FAST_DATA   	= 0x16 ;
 
 
 class TurtleSearchRequestInfo ;
@@ -331,6 +332,28 @@ class RsTurtleGenericDataItem: public RsTurtleGenericTunnelItem
 		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 };
 
+// Same, but with a fact priority. Can rather be used for e.g. distant chat.
+//
+class RsTurtleGenericFastDataItem: public RsTurtleGenericTunnelItem
+{
+	public:
+        RsTurtleGenericFastDataItem() : RsTurtleGenericTunnelItem(RS_TURTLE_SUBTYPE_GENERIC_FAST_DATA), data_size(0), data_bytes(0) { setPriorityLevel(QOS_PRIORITY_RS_TURTLE_GENERIC_FAST_DATA);}
+		virtual ~RsTurtleGenericFastDataItem() { if(data_bytes != NULL) free(data_bytes) ; }
+
+		virtual bool shouldStampTunnel() const { return true ; }
+
+		uint32_t data_size ;
+		void *data_bytes ;
+
+        void clear()
+        {
+            free(data_bytes) ;
+            data_bytes = NULL ;
+            data_size = 0;
+        }
+	protected:
+		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+};
 /***********************************************************************************/
 /*                           Turtle Serialiser class                               */
 /***********************************************************************************/
