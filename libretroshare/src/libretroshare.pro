@@ -882,7 +882,8 @@ rs_jsonapi {
             git submodule update --init --recommend-shallow dependency/kashmir ; \
             true ) && \
             mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
                 $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
                 -H$$shell_path($${RESTBED_SRC_PATH}) && \
@@ -939,14 +940,7 @@ rs_broadcast_discovery {
     no_rs_cross_compiling {
         DUMMYQMAKECOMPILERINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        CMAKE_C_COMPILER_OVERRIDE=""
-        win32-g++ {
-            CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
-            APPVEYOR=$$(APPVEYOR)
-            equals(APPVEYOR, "True") {
-                CMAKE_C_COMPILER_OVERRIDE="-DCMAKE_C_COMPILER=gcc"
-            }
-        }
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
         udpdiscoverycpplib.name = Generating libudp-discovery.a.
         udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
@@ -958,7 +952,7 @@ rs_broadcast_discovery {
             true ) && \
             mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
             cd $${UDP_DISCOVERY_BUILD_PATH} && \
-            cmake $${CMAKE_C_COMPILER_OVERRIDE} \
+            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
                 $${CMAKE_GENERATOR_OVERRIDE} \
                 -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \

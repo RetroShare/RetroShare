@@ -324,6 +324,19 @@ defineReplace(linkDynamicLibs) {
     return($$retDlib)
 }
 
+## On some environements qmake chose a C++ compiler as C compiler, this breaks
+## some sub targets, such as those based on cmake which test for chosen C
+## compiler to be a proper C compiler. This function try to deduce the correct C
+## compiler also in those cases, and return it. So you can use
+## $$fixQmakeCC($$QMAKE_CC) in those cases instead of plain $$QMAKE_CC
+defineReplace(fixQmakeCC) {
+    retVal = $$1
+    contains(1, .*\+\+$):retVal=$$str_member($$1, 0 ,-3)
+    contains(1, .*g\+\+$):retVal=$$str_member($$1, 0 ,-3)cc
+    contains(1, .*clang\+\+$):retVal=$$str_member($$1, 0 ,-3)
+    return($$retVal)
+}
+
 ################################################################################
 ## Statements and variables that depends on build options (CONFIG) goes here ###
 ################################################################################
