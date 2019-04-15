@@ -59,11 +59,13 @@ enum class RsEventType : uint32_t
  */
 struct RsEvent : RsSerializable
 {
-	RsEvent() = delete;
+protected:
 	RsEvent(RsEventType type) :
 	    mType(type), mTimePoint(std::chrono::system_clock::now()) {}
-	virtual ~RsEvent();
 
+	RsEvent() = delete;
+
+public:
 	RsEventType mType;
 	std::chrono::system_clock::time_point mTimePoint;
 
@@ -81,6 +83,8 @@ struct RsEvent : RsSerializable
 		RS_SERIAL_PROCESS(mTime);
 		mTimePoint = std::chrono::system_clock::from_time_t(mTime);
 	}
+
+	virtual ~RsEvent();
 };
 
 typedef uint32_t RsEventsHandlerId_t;
