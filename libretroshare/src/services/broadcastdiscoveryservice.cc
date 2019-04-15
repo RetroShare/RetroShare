@@ -170,10 +170,15 @@ void BroadcastDiscoveryService::data_tick()
 					            rbdr.locator.port() );
 					mRsPeers.connectAttempt(rbdr.mSslId);
 				}
-				else if(rsEvents)
+				else
 				{
 					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
-					rsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(rbdr)));
+
+					// Ensure rsEvents is not deleted while we use it
+					std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
+					if(lockedRsEvents)
+						lockedRsEvents->postEvent(
+						            std::unique_ptr<Evt_t>(new Evt_t(rbdr)) );
 				}
 			}
 		}

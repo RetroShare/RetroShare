@@ -33,6 +33,9 @@ class RsEvents;
 /**
  * Pointer to global instance of RsEvents service implementation
  * @jsonapi{development}
+ *
+ * TODO: this should become std::weak_ptr once we have a reasonable services
+ * management.
  */
 extern std::shared_ptr<RsEvents> rsEvents;
 
