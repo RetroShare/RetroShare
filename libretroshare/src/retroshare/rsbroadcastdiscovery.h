@@ -59,6 +59,10 @@ struct RsBroadcastDiscoveryResult : RsSerializable
 		RS_SERIAL_PROCESS(mProfileName);
 		RS_SERIAL_PROCESS(locator);
 	}
+
+	RsBroadcastDiscoveryResult() = default;
+	RsBroadcastDiscoveryResult (const RsBroadcastDiscoveryResult&) = default;
+	~RsBroadcastDiscoveryResult() override;
 };
 
 struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
@@ -77,7 +81,7 @@ struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
 		RS_SERIAL_PROCESS(mData);
 	}
 
-	~RsBroadcastDiscoveryPeerFoundEvent();
+	~RsBroadcastDiscoveryPeerFoundEvent() override;
 };
 
 /**

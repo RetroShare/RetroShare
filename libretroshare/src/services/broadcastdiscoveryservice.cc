@@ -37,6 +37,7 @@
 
 /*extern*/ std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery(nullptr);
 RsBroadcastDiscovery::~RsBroadcastDiscovery() { /* Beware of Rs prefix! */ }
+RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() {}
 RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() {}
 
 struct BroadcastDiscoveryPack : RsSerializable
@@ -87,7 +88,12 @@ struct BroadcastDiscoveryPack : RsSerializable
 		serial_process(RsGenericSerializer::SERIALIZE, ctx);
 		return std::string(reinterpret_cast<char*>(buffer.data()), ctx.mOffset);
 	}
+
+	BroadcastDiscoveryPack(const BroadcastDiscoveryPack&) = default;
+	~BroadcastDiscoveryPack() override;
 };
+
+BroadcastDiscoveryPack::~BroadcastDiscoveryPack() {};
 
 BroadcastDiscoveryService::BroadcastDiscoveryService(
         RsPeers& pRsPeers ) :
