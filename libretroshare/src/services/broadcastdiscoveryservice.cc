@@ -31,6 +31,10 @@
 #include "serialiser/rsserializer.h"
 #include "retroshare/rsevents.h"
 
+#ifdef RS_BROADCAST_DISCOVERY_DEBUG
+# include "util/radix64.h"
+#endif
+
 /*extern*/ std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery(nullptr);
 RsBroadcastDiscovery::~RsBroadcastDiscovery() { /* Beware of Rs prefix! */ }
 RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() {}
@@ -84,7 +88,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 		return std::string(reinterpret_cast<char*>(buffer.data()), ctx.mOffset);
 	}
 };
-
 
 BroadcastDiscoveryService::BroadcastDiscoveryService(
         RsPeers& pRsPeers ) :
@@ -155,9 +158,17 @@ void BroadcastDiscoveryService::data_tick()
 		{
 			for (auto&& pp : mChangedData)
 			{
-				std::cerr << __PRETTY_FUNCTION__ << " Got >>>" << pp.second
-				          << "<<< from: " << UDC::IpToString(pp.first.ip())
+#ifdef RS_BROADCAST_DISCOVERY_DEBUG
+				{
+				std::string b64Data;
+				Radix64::encode(
+				            reinterpret_cast<const unsigned char*>(pp.second.data()),
+				            static_cast<int>(pp.second.size()), b64Data );
+				std::cerr << __PRETTY_FUNCTION__ << " Got: " << b64Data
+				          << " Base64 from: " << UDC::IpToString(pp.first.ip())
 				          << ":" << pp.first.port() << std::endl;
+				}
+#endif // def RS_BROADCAST_DISCOVERY_DEBUG
 
 				RsBroadcastDiscoveryResult rbdr =
 				        createResult(pp.first, pp.second);
