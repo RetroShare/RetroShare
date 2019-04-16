@@ -786,13 +786,11 @@ GenCertDialog QFrame#profileframe{
 
 PostedListWidget QComboBox#comboBox {
 	font: bold;
-	font-size: 15px;
 	color: #0099cc;
 }
 
 PostedListWidget QToolButton#submitPostButton {
 	font: bold;
-	font-size: 15px;
 }
 
 PostedListWidget QToolButton#subscribeToolButton {
@@ -907,10 +905,7 @@ PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#site
 	color: #787c7e;
 }
 
-
-
 GxsCommentDialog QComboBox#sortBox {
 	font: bold;
-	font-size: 12px;
 	color: #0099cc;
 }
