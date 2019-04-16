@@ -43,6 +43,7 @@ class RsBroadcastDiscovery;
  */
 extern std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery;
 
+
 struct RsBroadcastDiscoveryResult : RsSerializable
 {
 	PGPFingerprintType mPgpFingerprint;
@@ -65,6 +66,11 @@ struct RsBroadcastDiscoveryResult : RsSerializable
 	~RsBroadcastDiscoveryResult() override;
 };
 
+
+/**
+ * @brief Event emitted when a non friend new peer is found in the local network
+ * @see RsEvents
+ */
 struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
 {
 	RsBroadcastDiscoveryPeerFoundEvent(
@@ -83,6 +89,7 @@ struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
 
 	~RsBroadcastDiscoveryPeerFoundEvent() override;
 };
+
 
 /**
  * Announce own RetroShare instace and look friends and peers in own broadcast
