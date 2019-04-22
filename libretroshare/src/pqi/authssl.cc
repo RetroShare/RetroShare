@@ -1083,7 +1083,7 @@ bool AuthSSLimpl::checkX509PgpSignature(X509 *x509, uint32_t& diagnostic)
 
 		/* NOW check sign via GPG Functions */
 
-		Dbg1() << __PRETTY_FUNCTION__
+		Dbg2() << __PRETTY_FUNCTION__
 		       << " verifying the PGP Key signature with finger print: "
 		       << pd.fpr << std::endl;
 
@@ -1159,10 +1159,11 @@ bool AuthSSLimpl::checkX509PgpSignature(X509 *x509, uint32_t& diagnostic)
 			goto err;
 		}
 
-		Dbg1() << __PRETTY_FUNCTION__ <<  "Verified: " << sigtypestring
-		       << " signature of certificate " << sslcert::getCertSslId(*x509)
+		Dbg1() << __PRETTY_FUNCTION__ << " Verified: " << sigtypestring
+		       << " signature of certificate sslId: "
+		       << sslcert::getCertSslId(*x509)
 		       << ", Version " << std::hex << certificate_version << std::dec
-		       << " using PGP key " << pd.fpr << std::endl;
+		       << " using PGP key " << pd.fpr << " " << pd.name << std::endl;
 	}
 
 	EVP_MD_CTX_destroy(ctx);

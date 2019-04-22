@@ -103,7 +103,7 @@ p3discovery2::p3discovery2(
     p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr),
     mServiceCtrl(sc), mGixs(gixs), mDiscMtx("p3discovery2"), mLastPgpUpdate(0)
 {
-	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
 	RS_STACK_MUTEX(mDiscMtx);
 	addSerialType(new RsDiscSerialiser());
@@ -1264,13 +1264,14 @@ void p3discovery2::rsEventsHandler(const RsEvent& event)
 	{
 	case RsEventType::AUTHSSL_CONNECTION_AUTENTICATION:
 	{
-		Dbg1() << __PRETTY_FUNCTION__ << " AUTHSSL_CONNECTION_AUTENTICATION "
-		       << "event: " << event << std::endl;
-
 		using Evt_t = RsAuthSslConnectionAutenticationEvent;
 		const Evt_t& evt = static_cast<const Evt_t&>(event);
 		if(evt.mIsPendingPpg)
 		{
+			Dbg1() << __PRETTY_FUNCTION__
+			       << " AUTHSSL_CONNECTION_AUTENTICATION event: " << event
+			       << std::endl;
+
 			const RsPeerId& sslId = evt.mSslId;
 			RsThread::async([sslId]()
 			{ /* Make sure the connection is ready before requesting invite. */

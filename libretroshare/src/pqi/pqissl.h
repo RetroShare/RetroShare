@@ -31,6 +31,7 @@
 #include "pqi/pqi_base.h"
 #include "pqi/authssl.h"
 #include "util/rsdebug.h"
+#include "retroshare/rsevents.h"
 
 #ifndef RS_DEBUG_PQISSL
 #	define RS_DEBUG_PQISSL 1
@@ -56,24 +57,22 @@ const int PQISSL_UDP_FLAG = 0x02;
 /* TCP buffer size for Windows systems */
 const int WINDOWS_TCP_BUFFER_SIZE = 512 * 1024; // 512 KB
 
-/***************************** pqi Net SSL Interface *********************************
- * This provides the base SSL interface class, 
- * and handles most of the required functionality.
- *
- * there are a series of small fn's that can be overloaded
- * to provide alternative behaviour....
- *
- * Classes expected to inherit from this are:
- *
- * pqissllistener 	-> pqissllistener  (tcp only)
- * 			-> pqixpgplistener (tcp only)	
- *
- * pqissl	 	-> pqissltcp
- * 			-> pqissludp
- * 			-> pqixpgptcp
- * 			-> pqixpgpudp
- *
- */
+struct RemotePeerRefusedConnectionEvent : RsEvent
+{
+	RemotePeerRefusedConnectionEvent();
+
+	RsPeerId mPeerId;
+	std::string errorMessage;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j,ctx);
+		RS_SERIAL_PROCESS(mPeerId);
+		RS_SERIAL_PROCESS(errorMessage);
+	}
+};
+
 
 class pqissl;
 class cert;
@@ -82,6 +81,14 @@ class pqissllistener;
 class p3LinkMgr;
 struct RsPeerCryptoParams;
 
+/**
+ * pqi Net SSL Interface
+ * This provides the base SSL interface class,
+ * and handles most of the required functionality.
+ *
+ * there are a series of small fn's that can be overloaded
+ * to provide alternative behaviour....
+ */
 class pqissl: public NetBinInterface
 {
 public:

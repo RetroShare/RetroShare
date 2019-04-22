@@ -917,7 +917,7 @@ int pqissl::SSL_Connection_Complete()
 
 	/* if we are passive - then accept! */
 	int err;
-	if (sslmode)
+	if(sslmode)
 	{
 		err = SSL_connect(ssl_connection);
 
@@ -938,19 +938,27 @@ int pqissl::SSL_Connection_Complete()
 		if ((serr == SSL_ERROR_WANT_READ) 
 				|| (serr == SSL_ERROR_WANT_WRITE))
 		{
-			Dbg1() << __PRETTY_FUNCTION__ << " Waiting for SSL handshake!"
+			Dbg3() << __PRETTY_FUNCTION__ << " Waiting for SSL handshake!"
 			       << std::endl;
 
 			waiting = WAITING_SSL_CONNECTION;
 			return pending;
 		}
 
-		std::string errMsg;
-		printSSLError(ssl_connection, err, serr, ERR_get_error(), errMsg);
-		Dbg1() << __PRETTY_FUNCTION__ << " SSL error: " << errMsg << std::endl;
-
 		reset_locked();
 		waiting = WAITING_FAIL_INTERFACE;
+
+		using Evt_t = RemotePeerRefusedConnectionEvent;
+		std::unique_ptr<Evt_t> evt(new Evt_t);
+		evt->mPeerId = PeerId();
+		evt->errorMessage = "err: " + std::to_string(err) + " serr: " +
+		        std::to_string(serr) + " faling at this point usually "
+		        "means that the peer: " + PeerId().toStdString()
+		        + " doesn't consider this node a friend!";
+
+		RsErr() << __PRETTY_FUNCTION__ << " " << evt->errorMessage << std::endl;
+
+		rsEvents->postEvent(std::move(evt));
 
 		return failure;
 	}
@@ -1666,3 +1674,6 @@ int pqissl::net_internal_fcntl_nonblock(int fd)
 {
 	return unix_fcntl_nonblock(fd);
 }
+
+RemotePeerRefusedConnectionEvent::RemotePeerRefusedConnectionEvent() :
+    RsEvent(RsEventType::REMOTE_PEER_REFUSED_CONNECTION) {}
