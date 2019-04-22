@@ -54,7 +54,7 @@ public:
 	bool initializeFromString(const std::string& str, uint32_t& errCode);
 
 	/// Constructs from binary gpg key, and RsPeerDetails.
-	RsCertificate( const RsPeerDetails& details,
+	RS_DEPRECATED RsCertificate( const RsPeerDetails& details,
 	               const unsigned char *gpg_mem_block,
 	               size_t gpg_mem_block_size );
 

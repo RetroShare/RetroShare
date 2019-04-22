@@ -35,9 +35,9 @@ static struct RsLog::logInfo pqipersonzoneInfo = {RsLog::Default, "pqiperson"};
  ****/
 
 pqiperson::pqiperson(const RsPeerId& id, pqipersongrp *pg) :
-	PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
-	active(false), activepqi(NULL), inConnectAttempt(false),// waittimes(0),
-	pqipg(pg) {} // TODO: must check id!
+    PQInterface(id), mNotifyMtx("pqiperson-notify"), mPersonMtx("pqiperson"),
+    active(false), activepqi(nullptr), inConnectAttempt(false), pqipg(pg)
+{} // TODO: must check id!
 
 pqiperson::~pqiperson()
 {
@@ -488,53 +488,37 @@ int pqiperson::stoplistening()
 	return 1;
 }
 
-int	pqiperson::connect(uint32_t type, const sockaddr_storage &raddr,
+int pqiperson::connect(uint32_t type, const sockaddr_storage& raddr,
 					   const sockaddr_storage &proxyaddr,
 					   const sockaddr_storage &srcaddr,
 					   uint32_t delay, uint32_t period, uint32_t timeout,
 					   uint32_t flags, uint32_t bandwidth,
 					   const std::string &domain_addr, uint16_t domain_port)
 {
-#ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::connect() Id: " << PeerId().toStdString()
-			  << " type: " << type << " addr: "
-			  << sockaddr_storage_tostring(raddr) << " proxyaddr: "
-			  << sockaddr_storage_tostring(proxyaddr) << " srcaddr: "
-			  << sockaddr_storage_tostring(srcaddr) << " delay: " << delay
-			  << " period: " << period << " timeout: " << timeout << " flags: "
-			  << flags << " bandwidth: " << bandwidth << std::endl;
-#endif
+	Dbg1() << __PRETTY_FUNCTION__ << " id: " << PeerId() << " type: " << type
+	       << " raddr: " << raddr << " proxyaddr: " << proxyaddr
+	       << " srcaddr: " << srcaddr << " delay: " << delay
+	       << " period: " << period << " timeout: " << timeout
+	       << " flags: " << flags << " bandwidth: " << bandwidth << std::endl;
 
 	RS_STACK_MUTEX(mPersonMtx);
 
 	std::map<uint32_t, pqiconnect *>::iterator it;
-	
 	it = kids.find(type);
 	if (it == kids.end())
 	{
-		/* notify of fail! */
+		RsErr() << __PRETTY_FUNCTION__ << " unhandled type: "
+		        << type << std::endl;
+
 		pqipg->notifyConnect(PeerId(), type, false, false, raddr);
 		return 0;
 	}
 
-	pqiconnect *pqi = it->second;
-
-#ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::connect() resetting for new connection attempt" << std::endl;
-#endif
-
-	/* set the parameters */
+	pqiconnect* pqi = it->second;
 	pqi->reset();
 
-#ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::connect() clearing rate cap" << std::endl;
-#endif
 	setRateCap_locked(0,0);
 
-#ifdef PERSON_DEBUG
-	std::cerr << "pqiperson::connect() setting connect_parameters" << std::endl;
-#endif
-	
 	// These two are universal.
 	pqi->connect_parameter(NET_PARAM_CONNECT_DELAY, delay);
 	pqi->connect_parameter(NET_PARAM_CONNECT_TIMEOUT, timeout);

@@ -65,7 +65,12 @@ public:
 	virtual bool getPeerCount (unsigned int *friendCount, unsigned int *onlineCount, bool ssl);
 
 	virtual bool isOnline(const RsPeerId &id);
+
 	virtual bool isFriend(const RsPeerId &id);
+
+	/// @see RsPeers
+	bool isFriendPendingPgp(const RsPeerId& sslId) override;
+
 	virtual bool isPgpFriend(const RsPgpId& pgpId);
 
 	RS_DEPRECATED_FOR(isPgpFriend)
@@ -91,6 +96,11 @@ public:
 	virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT);
 	virtual	bool removeFriend(const RsPgpId& gpgid);
 	virtual bool removeFriendLocation(const RsPeerId& sslId);
+
+	/// @see RsPeers
+	bool addFriendPendingPgp(
+	        const RsPeerId& sslId,
+	        const RsPeerDetails& dt = RsPeerDetails() ) override;
 
 	/* keyring management */
 	virtual bool removeKeysFromPGPKeyring(const std::set<RsPgpId> &pgp_ids,std::string& backup_file,uint32_t& error_code);
@@ -123,12 +133,23 @@ public:
 	virtual	std::string GetRetroshareInvite(
 	        const RsPeerId& ssl_id = RsPeerId(),
 	        bool include_signatures = false, bool includeExtraLocators = true );
-	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures);
+
+	virtual std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures);
+
+	/// @see RsPeers
+	bool getShortInvite(
+	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	        bool formatRadix = false, bool includeFingerprint = false,
+	        bool bareBones = false ) override;
 
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
 
 	/// @see RsPeers::acceptInvite
 	virtual bool acceptInvite(
+	        const std::string& invite,
+	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT );
+
+	virtual bool acceptLongInvite(
 	        const std::string& invite,
 	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT );
 

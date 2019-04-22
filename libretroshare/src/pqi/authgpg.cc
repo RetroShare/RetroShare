@@ -445,17 +445,15 @@ bool AuthGPG::isKeySupported(const RsPgpId& id) const
 
 bool AuthGPG::getGPGDetails(const RsPgpId& pgp_id, RsPeerDetails &d)
 {
-	RsStackMutex stack(gpgMtxData); /******* LOCKED ******/
+	RS_STACK_MUTEX(gpgMtxData);
 
-	const PGPCertificateInfo *pc = PGPHandler::getCertificateInfo(pgp_id) ;
+	const PGPCertificateInfo* pc = PGPHandler::getCertificateInfo(pgp_id);
+	if(!pc) return false;
 
-	if(pc == NULL)
-		return false ;
-
-	const PGPCertificateInfo& cert(*pc) ;
+	const PGPCertificateInfo& cert(*pc);
 
 	d.id.clear() ;
-	d.gpg_id = pgp_id ;
+	d.gpg_id = pgp_id;
 	d.name = cert._name;
 	d.lastUsed = cert._time_stamp;
 	d.email = cert._email;

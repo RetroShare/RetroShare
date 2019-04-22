@@ -42,10 +42,12 @@ const unsigned long PQIPERSON_NO_LISTENER = 	0x0001;
 const unsigned long PQIPERSON_ALL_BW_LIMITED =  0x0010;
 struct RsPeerCryptoParams;
 
-class pqipersongrp: public pqihandler, public pqiMonitor, public p3ServiceServer, public pqiNetListener
+class pqipersongrp:
+        public pqihandler, public pqiMonitor, public p3ServiceServer,
+        public pqiNetListener
 {
-	public:
-    pqipersongrp(p3ServiceControl *ctrl, unsigned long flags);
+public:
+	pqipersongrp(p3ServiceControl* ctrl, unsigned long flags);
 
 	/*************************** Setup *************************/
 	/* pqilistener */

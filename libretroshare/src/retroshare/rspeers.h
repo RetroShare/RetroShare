@@ -265,7 +265,7 @@ struct RsPeerDetails : RsSerializable
 
 	/* basic stats */
 	uint32_t lastConnect;           /* how long ago */
-	uint32_t lastUsed;              /* how long ago since last used: signature verif, connect attempt, etc */
+	rstime_t lastUsed;              /* how long ago since last used: signature verif, connect attempt, etc */
 	uint32_t connectState;          /* RS_PEER_CONNECTSTATE_... */
 	std::string connectStateString; /* Additional string like ip address */
 	uint32_t connectPeriod;
@@ -429,6 +429,16 @@ public:
 	virtual bool isFriend(const RsPeerId& sslId) = 0;
 
 	/**
+	 * @brief Check if given peer is a trusted node pending PGP retrieval
+	 * Peers added through short invite remain in this state as long as their
+	 * PGP key is not received and verified/approved by the user
+	 * @jsonapi{development}
+	 * @param[in] sslId id of the peer to check
+	 * @return true if the node is trusted, false otherwise
+	 */
+	virtual bool isFriendPendingPgp(const RsPeerId& sslId) = 0;
+
+	/**
 	 * @brief Check if given PGP id is trusted
 	 * @jsonapi{development}
 	 * @param[in] pgpId PGP id to check
@@ -440,7 +450,7 @@ public:
 	virtual std::string getGPGName(const RsPgpId& gpg_id) = 0;
 
 	/**
-	 * @brief Get details details of the given peer
+	 * @brief Get details of the given peer
 	 * @jsonapi{development}
 	 * @param[in] sslId id of the peer
 	 * @param[out] det storage for the details of the peer
@@ -448,7 +458,14 @@ public:
 	 */
 	virtual bool getPeerDetails(const RsPeerId& sslId, RsPeerDetails& det) = 0;
 
-	virtual bool getGPGDetails(const RsPgpId& gpg_id, RsPeerDetails &d) = 0;
+	/**
+	 * @brief Get details of the given PGP id
+	 * @jsonapi{development}
+	 * @param[in] pgpId id of the PGP
+	 * @param[out] det storage for the PGP details
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getGPGDetails(const RsPgpId& pgpId, RsPeerDetails& det) = 0;
 
 	/* Using PGP Ids */
 	virtual const RsPgpId& getGPGOwnId() = 0;
@@ -476,8 +493,19 @@ public:
 	 * @param[in] flags service permissions flag
 	 * @return false if error occurred, true otherwise
 	 */
-	virtual bool addFriend( const RsPeerId &sslId, const RsPgpId& gpgId,
+	virtual bool addFriend( const RsPeerId& sslId, const RsPgpId& gpgId,
 	                        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
+
+	/**
+	 * @brief Add trusted node pending PGP key
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the node to add
+	 * @param[in] details Optional extra details known about the node to add
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool addFriendPendingPgp(
+	        const RsPeerId& sslId,
+	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
 
 	/**
 	 * @brief Revoke connection trust from to node
@@ -598,6 +626,24 @@ public:
 	        const RsPeerId& sslId = RsPeerId(),
 	        bool includeSignatures = false,
 	        bool includeExtraLocators = true ) = 0;
+
+	/**
+	 * @brief Get RetroShare short invite of the given peer
+	 * @jsonapi{development}
+	 * @param[out] invite storage for the generated invite
+	 * @param[in] sslId Id of the peer of which we want to generate an invite,
+	 *	a null id (all 0) is passed, an invite for own node is returned.
+	 * @param[in] formatRadix true to get in base64 format false to get URL.
+	 * @param[in] includeFingerprint true to include PGP fingerprint in the URL.
+	 * @param[in] bareBones true to get smalles invite, which miss also
+	 *	the information necessary to attempt an outgoing connection, but still
+	 *	enough to accept an incoming one.
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getShortInvite(
+	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	        bool formatRadix = false, bool includeFingerprint = false,
+	        bool bareBones = false ) = 0;
 
 	/**
 	 * @brief Add trusted node from invite

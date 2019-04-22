@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_SSL_LISTEN_HEADER
-#define MRK_PQI_SSL_LISTEN_HEADER
+#pragma once
 
 #include <openssl/ssl.h>
 
@@ -34,6 +33,10 @@
 #include "pqi/pqilistener.h"
 
 #include "pqi/authssl.h"
+
+#ifndef RS_DEBUG_PQISSLLISTENER
+#	define RS_DEBUG_PQISSLLISTENER 1
+#endif
 
 /***************************** pqi Net SSL Interface *********************************
  */
@@ -98,10 +101,39 @@ protected:
 	p3PeerMgr *mPeerMgr;
 
 private:
+	/**
+	 * @deprecated When this function get called the information is usually not
+	 * available anymore because the authentication is completely handled by
+	 * OpenSSL through @see AuthSSL::VerifyX509Callback, so debug messages and
+	 * notifications generated from this functions are most of the time
+	 * misleading saying that the certificate wasn't provided by the peer, while
+	 * it have been provided but already deleted by OpenSSL.
+	 */
+	RS_DEPRECATED
 	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
+
 	bool active;
 	int lsock;
-	std::list<IncomingSSLInfo> incoming_ssl ;
+	std::list<IncomingSSLInfo> incoming_ssl;
+
+protected:
+#if defined(RS_DEBUG_PQISSLLISTENER) && RS_DEBUG_PQISSLLISTENER == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQISSLLISTENER) && RS_DEBUG_PQISSLLISTENER == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQISSLLISTENER) && RS_DEBUG_PQISSLLISTENER >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_PQISSLLISTENER
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_PQISSLLISTENER
 };
 
 
@@ -123,6 +155,3 @@ public:
 private:
 	std::map<RsPeerId, pqissl*> listenaddr;
 };
-
-
-#endif // MRK_PQI_SSL_LISTEN_HEADER

@@ -502,7 +502,7 @@ X509 *loadX509FromPEM(std::string pem)
 
 	BIO *bp = BIO_new_mem_buf(certstr, -1);
 
-	X509 *pc = PEM_read_bio_X509(bp, NULL, NULL, NULL);
+	X509* pc = PEM_read_bio_X509(bp, nullptr, nullptr, nullptr);
 
 	BIO_free(bp);
 	free(certstr);
@@ -589,7 +589,7 @@ bool getX509id(X509 *x509, RsPeerId& xid)
 #endif
 
 	xid.clear() ;
-	if (x509 == NULL)
+	if (x509 == nullptr)
 	{
 #ifdef AUTHSSL_DEBUG
 		std::cerr << "AuthSSL::getX509id() NULL pointer";
@@ -675,13 +675,6 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-/* XXX FIX */
-bool CheckX509Certificate(X509 */*x509*/)
-{
-
-	return true;
-}
-
 uint64_t getX509SerialNumber(X509 *cert)
 {
 	ASN1_INTEGER *serial = X509_get_serialNumber(cert);
@@ -730,19 +723,12 @@ int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &locat
 	}
 
 	// get xPGP certificate.
-	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
+	X509 *x509 = PEM_read_X509(tmpfp, nullptr, nullptr, nullptr);
 	fclose(tmpfp);
 
 	// check the certificate.
 	bool valid = false;
-	if (x509)
-	{
-                valid = CheckX509Certificate(x509);
-		if (valid)
-		{
-                	valid = getX509id(x509, userId);
-		}
-	}
+	if(x509) valid = getX509id(x509, userId);
 
 	if (valid)
 	{

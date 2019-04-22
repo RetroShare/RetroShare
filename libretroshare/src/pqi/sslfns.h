@@ -113,7 +113,6 @@ bool getX509id(X509 *x509, RsPeerId &xid);
 
 int pem_passwd_cb(char *buf, int size, int rwflag, void *password);
 
-bool CheckX509Certificate(X509 *x509);
 // Not dependent on sslroot. load, and detroys the X509 memory.
 int	LoadCheckX509(const char *cert_file, RsPgpId& issuer, std::string &location, RsPeerId& userId);
 

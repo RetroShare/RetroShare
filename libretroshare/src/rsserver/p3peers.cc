@@ -248,6 +248,9 @@ bool    p3Peers::isFriend(const RsPeerId &ssl_id)
         return mPeerMgr->isFriend(ssl_id);
 }
 
+bool p3Peers::isFriendPendingPgp(const RsPeerId& sslId)
+{ return isFriend(sslId) && !isPgpFriend(getGPGId(sslId)); }
+
 bool p3Peers::getPeerMaximumRates(const RsPeerId& pid,uint32_t& maxUploadRate,uint32_t& maxDownloadRate)
 {
     return mPeerMgr->getMaxRates(pid,maxUploadRate,maxDownloadRate) ;
@@ -745,9 +748,13 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
-	rstime_t now = time(NULL);
+	rstime_t now = time(nullptr);
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
+
+bool p3Peers::addFriendPendingPgp(
+        const RsPeerId& sslId, const RsPeerDetails& dt)
+{ return mPeerMgr->addFriendPendingPgp(sslId, dt); }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
@@ -1104,7 +1111,136 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	return true ;
 }
 
+bool p3Peers::getShortInvite(
+        std::string& invite, const RsPeerId& pSslId, bool formatRadix,
+        bool includeFingerprint, bool bareBones )
+{
+	const RsPeerId& sslId(pSslId.isNull() ? getOwnId() : pSslId);
+
+	RsPeerDetails dts;
+	if (!getPeerDetails(sslId, dts)) return false;
+
+	RsUrl inviteUrl;
+	inviteUrl
+	        .setScheme("rs")
+	        .setHost(dts.id.toStdString())
+	        .setQueryKV("name", dts.name);
+
+	if(!bareBones)
+	{
+		if(!dts.dyndns.empty()) inviteUrl.setQueryKV("dyndns", dts.dyndns);
+
+		if(dts.isHiddenNode)
+			inviteUrl.setQueryKV("hiddenNodeAddress", dts.hiddenNodeAddress)
+			        .setQueryKV(
+			            "hiddenNodePort", std::to_string(dts.hiddenNodePort) )
+			        .setQueryKV("hiddenType", std::to_string(dts.hiddenType));
+		else if(dts.extPort && !dts.extAddr.empty())
+			inviteUrl.setQueryKV("extAddr", dts.extAddr)
+			        .setQueryKV("extPort", std::to_string(dts.extPort));
+		else if ( !dts.ipAddressList.empty() &&
+		          !dts.ipAddressList.front().empty() )
+			inviteUrl.setQueryKV("locator", dts.ipAddressList.front());
+
+		if(includeFingerprint && ( !dts.fpr.isNull() ||
+		                           getGPGDetails(dts.gpg_id, dts) ))
+			inviteUrl.setQueryKV("fpr", dts.fpr.toStdString());
+	}
+
+	invite = inviteUrl.toString();
+	if(formatRadix)
+		Radix64::encode(
+		            reinterpret_cast<const uint8_t*>(invite.data()),
+		            static_cast<int>(invite.length()), invite );
+
+	return true;
+}
+
 bool p3Peers::acceptInvite( const std::string& invite,
+                            ServicePermissionFlags flags )
+{
+	if(invite.empty()) return false;
+	if(acceptLongInvite(invite, flags)) return true;
+
+	RsUrl url(invite);
+	if(url.scheme() != "rs" || url.host().empty())
+	{
+		std::vector<uint8_t> buf = Radix64::decode(invite);
+		std::string urlStr(reinterpret_cast<char*>(buf.data()), buf.size());
+		url = RsUrl(urlStr);
+	}
+
+	if(url.scheme() != "rs" || url.host().empty()) return false;
+
+	RsPeerId sslId(url.host());
+	RsPeerDetails dts;
+	getPeerDetails(sslId, dts); // Keep data we already have
+
+	dts.id = sslId;
+
+	if(url.hasQueryK("name")) dts.name = *url.getQueryV("name");
+	if(url.hasQueryK("dyndns")) dts.dyndns = *url.getQueryV("dyndns");
+
+	if(url.hasQueryK("hiddenNodeAddress"))
+	{
+		dts.isHiddenNode = true;
+		dts.hiddenNodeAddress = *url.getQueryV("hiddenNodeAddress");
+	}
+
+	if(url.hasQueryK("hiddenNodePort"))
+		dts.hiddenNodePort = static_cast<uint16_t>(
+		            std::stoul(*url.getQueryV("hiddenNodePort")) );
+
+	if(url.hasQueryK("hiddenType"))
+		dts.hiddenType = static_cast<uint32_t>(
+		            std::stoul(*url.getQueryV("hiddenType")) );
+
+	if(url.hasQueryK("extAddr")) dts.extAddr = *url.getQueryV("extAddr");
+
+	if(url.hasQueryK("extPort"))
+		dts.extPort = static_cast<uint16_t>(
+		            std::stoul(*url.getQueryV("extPort")) );
+
+	if(url.hasQueryK("locator"))
+		dts.ipAddressList.push_back(*url.getQueryV("locator"));
+
+	if(url.hasQueryK("fpr"))
+		dts.fpr = PGPFingerprintType(*url.getQueryV("fpr"));
+
+	if(!addFriendPendingPgp(dts.id, dts)) return false;
+
+	if (!dts.location.empty())
+		setLocation(dts.id, dts.location);
+
+	// Update new address even if the peer already existed.
+	if (dts.isHiddenNode)
+	{
+		setHiddenNode( dts.id,
+		               dts.hiddenNodeAddress,
+		               dts.hiddenNodePort );
+	}
+	else
+	{
+		//let's check if there is ip adresses in the certificate.
+		if (!dts.extAddr.empty() && dts.extPort)
+			setExtAddress( dts.id,
+			               dts.extAddr,
+			               dts.extPort );
+		if (!dts.localAddr.empty() && dts.localPort)
+			setLocalAddress( dts.id,
+			                 dts.localAddr,
+			                 dts.localPort );
+		if (!dts.dyndns.empty())
+			setDynDNS(dts.id, dts.dyndns);
+		for(auto&& ipr : dts.ipAddressList)
+			addPeerLocator(
+			            dts.id,
+			            RsUrl(ipr.substr(0, ipr.find(' '))) );
+	}
+	return true;
+}
+
+bool p3Peers::acceptLongInvite( const std::string& invite,
                             ServicePermissionFlags flags )
 {
 	if(invite.empty()) return false;

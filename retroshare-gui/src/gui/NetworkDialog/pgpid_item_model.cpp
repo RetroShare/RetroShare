@@ -148,9 +148,7 @@ QVariant pgpid_item_model::data(const QModelIndex &index, int role) const
     {
         switch(index.column())
         {
-        case COLUMN_LAST_USED:
-            return detail.lastUsed;
-            break;
+		case COLUMN_LAST_USED: return static_cast<long long>(detail.lastUsed);
         case COLUMN_I_AUTH_PEER:
         {
             if (detail.ownsign)

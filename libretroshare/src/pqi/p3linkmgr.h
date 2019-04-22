@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_LINK_MANAGER_HEADER
-#define MRK_PQI_LINK_MANAGER_HEADER
+#pragma once
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
@@ -30,6 +29,11 @@
 #include "pqi/p3cfgmgr.h"
 
 #include "util/rsthreads.h"
+#include "util/rsdebug.h"
+
+#ifndef RS_DEBUG_LINKMGR
+#	define RS_DEBUG_LINKMGR 1
+#endif
 
 class ExtAddrFinder ;
 class DNSResolver ;
@@ -146,11 +150,7 @@ std::string textPeerConnectState(peerConnectState &state);
 
 class p3LinkMgr: public pqiConnectCb
 {
-	public:
-
-        p3LinkMgr() { return; }
-virtual ~p3LinkMgr() { return; }
-
+public:
 
 virtual const 	RsPeerId& getOwnId() = 0;
 virtual bool  	isOnline(const RsPeerId &ssl_id) = 0;
@@ -177,27 +177,40 @@ virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 
-	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
+	/************* DEPRECATED FUNCTIONS (TO REMOVE) ********/
+	RS_DEPRECATED
+	virtual void getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
 
-virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
-virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
+	RS_DEPRECATED
+	virtual bool getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
-virtual bool 	checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)=0;
+	RS_DEPRECATED
+	virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)=0;
 
-	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
-virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
-	/******* overloaded from pqiConnectCb *************/
-// THESE MUSTn't BE specfied HERE - as overloaded from pqiConnectCb.
-//virtual void    peerStatus(std::string id, const pqiIpAddrSet &addrs, 
-//                        uint32_t type, uint32_t flags, uint32_t source) = 0;
-//virtual void    peerConnectRequest(std::string id, const struct sockaddr_storage &raddr,
-//                        const struct sockaddr_storage &proxyaddr,  const struct sockaddr_storage &srcaddr,
-//                        uint32_t source, uint32_t flags, uint32_t delay, uint32_t bandwidth) = 0;
+	RS_DEPRECATED
+	virtual int addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
 
-/****************************************************************************/
-/****************************************************************************/
-/****************************************************************************/
+	virtual ~p3LinkMgr();
 
+protected:
+
+#if defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_LINKMGR
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_LINKMGR
 };
 
 
@@ -338,5 +351,3 @@ private:
 	/* relatively static list of banned ip addresses */
 	std::list<struct sockaddr_storage> mBannedIpList;
 };
-
-#endif // MRK_PQI_LINK_MANAGER_HEADER

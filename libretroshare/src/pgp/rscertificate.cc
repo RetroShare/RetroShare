@@ -31,6 +31,7 @@
 #include "rscertificate.h"
 #include "util/rsstring.h"
 #include "util/stacktrace.h"
+#include "util/rsdebug.h"
 
 //#define DEBUG_RSCERTIFICATE
 
@@ -175,9 +176,9 @@ RsCertificate::RsCertificate(const std::string& str) :
 
 	if(!initializeFromString(str, err_code))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " is deprecated because it can "
-		          << "miserably fail like this! str: " << str
-		          << " err_code: " << err_code << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " is deprecated because it can "
+		        << "miserably fail like this! str: " << str
+		        << " err_code: " << err_code << std::endl;
 		print_stacktrace();
 		throw err_code;
 	}
@@ -186,8 +187,13 @@ RsCertificate::RsCertificate(const std::string& str) :
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
 	:pgp_version("Version: OpenPGP:SDK v0.9")
 {
-	if(binary_pgp_block_size == 0 || binary_pgp_block == NULL)
-		throw std::runtime_error("Cannot init a certificate with a void key block.") ;
+	if(binary_pgp_block_size == 0 || binary_pgp_block == nullptr)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " is deprecated because it can "
+		        << "miserably fail like this! " << std::endl;
+		print_stacktrace();
+		throw std::runtime_error("Cannot init a certificate with a void key block.");
+	}
 
 	binary_pgp_key = new unsigned char[binary_pgp_block_size] ;
 	memcpy(binary_pgp_key,binary_pgp_block,binary_pgp_block_size) ;

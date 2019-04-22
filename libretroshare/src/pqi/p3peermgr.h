@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_PEER_MANAGER_HEADER
-#define MRK_PQI_PEER_MANAGER_HEADER
+#pragma once
 
 #include <retroshare/rspeers.h>
 #include "pqi/pqimonitor.h"
@@ -68,13 +67,16 @@ const uint32_t RS_NET_FLAGS_TRUSTS_ME 		= 0x0020;
 const rstime_t RS_PEER_OFFLINE_DELETE  = (90 * 24 * 3600);
 const rstime_t RS_PEER_OFFLINE_NO_DISC = (30 * 24 * 3600);
 
-class peerState
+struct peerState
 {
-	public:
-	peerState(); /* init */
+	peerState();
 
 	RsPeerId id;
 	RsPgpId gpg_id;
+
+	/** We should start using full PGP fingerprint instead of short PGP id to
+	 * identify peers */
+	PGPFingerprintType mPgpFingerprint;
 
 	uint32_t netMode; /* EXT / UPNP / UDP / HIDDEN / INVALID */
 	/* visState */
@@ -127,7 +129,13 @@ public:
 	                        rstime_t lastContact = 0,
 	                        ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT) ) = 0;
 
+	/// @see p3Peers
+	virtual bool addFriendPendingPgp(
+	        const RsPeerId& sslId,
+	        const RsPeerDetails& dt = RsPeerDetails() ) = 0;
+
 	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
+
 	virtual bool isFriend(const RsPeerId& ssl_id) = 0;
 
 virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids) = 0;
@@ -244,6 +252,11 @@ public:
                               rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);
+
+	/// @see p3PeerMgr
+	virtual bool addFriendPendingPgp(
+	        const RsPeerId& sslId,
+	        const RsPeerDetails& dt = RsPeerDetails() );
 
     virtual bool	isFriend(const RsPeerId &ssl_id);
 
@@ -394,7 +407,7 @@ private:
 
     peerState mOwnState;
 
-    std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
+	std::map<RsPeerId, peerState> mFriendList;
     std::map<RsPeerId, peerState> mOthersList;
 
     std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
@@ -413,5 +426,3 @@ private:
     uint32_t mProxyServerStatusI2P ;
 
 };
-
-#endif // MRK_PQI_PEER_MANAGER_HEADER

@@ -19,15 +19,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_PERSON_HEADER
-#define MRK_PQI_PERSON_HEADER
+#pragma once
 
-
-#include <string>
 #include "pqi/pqi.h"
 #include "util/rsnet.h"
+#include "util/rsdebug.h"
 
 #include <list>
+#include <string>
+
+#ifndef RS_DEBUG_PQIPERSON
+#	define RS_DEBUG_PQIPERSON 1
+#endif
+
+#ifndef RS_DEBUG_PQICONNECT
+#	define RS_DEBUG_PQICONNECT 1
+#endif
 
 class pqiperson;
 struct RsPeerCryptoParams;
@@ -55,7 +62,9 @@ public:
 	virtual bool getCryptoParams(RsPeerCryptoParams& params);
 
 	// presents a virtual NetInterface -> passes to ni.
-	virtual int	connect(const struct sockaddr_storage &raddr) { return ni->connect(raddr); }
+	virtual int connect(const sockaddr_storage& raddr)
+	{ return ni->connect(raddr); }
+
 	virtual int	listen() { return ni->listen(); }
 	virtual int	stoplistening() { return ni->stoplistening(); }
     	virtual int 	reset() { pqistreamer::reset(); return ni->reset(); }
@@ -73,23 +82,38 @@ public:
 
 protected:
 	NetBinInterface *ni;
+
+#if defined(RS_DEBUG_PQICONNECT) && RS_DEBUG_PQICONNECT == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQICONNECT) && RS_DEBUG_PQICONNECT == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQICONNECT) && RS_DEBUG_PQICONNECT >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_PQICONNECT
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_PQICONNECT
 };
 
 
 class pqipersongrp;
 
-class NotifyData
+struct NotifyData
 {
-public:
-	NotifyData() : mNi(NULL), mState(0)
-	{
-		sockaddr_storage_clear(mAddr);
-	}
+	NotifyData() : mNi(nullptr), mState(0)
+	{ sockaddr_storage_clear(mAddr); }
 
 	NotifyData(NetInterface *ni, int state, const sockaddr_storage &addr) :
-		mNi(ni), mState(state), mAddr(addr) {}
+	    mNi(ni), mState(state), mAddr(addr) {}
 
-	NetInterface *mNi;
+	NetInterface* mNi;
 	int mState;
 	sockaddr_storage mAddr;
 };
@@ -106,7 +130,7 @@ public:
 	int listen();
 	int stoplistening();
 	
-	int	connect(uint32_t type, const sockaddr_storage &raddr,
+	int connect(uint32_t type, const sockaddr_storage &raddr,
 				const sockaddr_storage &proxyaddr, const sockaddr_storage &srcaddr,
 				uint32_t delay, uint32_t period, uint32_t timeout, uint32_t flags,
 				uint32_t bandwidth, const std::string &domain_addr, uint16_t domain_port);
@@ -170,6 +194,22 @@ private:
 	//int waittimes;
 	rstime_t lastHeartbeatReceived; // use to track connection failure
 	pqipersongrp *pqipg; /* parent for callback */
-};
 
-#endif
+#if defined(RS_DEBUG_PQIPERSON) && RS_DEBUG_PQIPERSON == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQIPERSON) && RS_DEBUG_PQIPERSON == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQIPERSON) && RS_DEBUG_PQIPERSON >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_PQIPERSON
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_PQIPERSON
+};

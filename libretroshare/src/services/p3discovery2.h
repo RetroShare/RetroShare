@@ -119,7 +119,10 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 	void processContactInfo(const SSLID &fromId, const RsDiscContactItem *info);
 
 	void requestPGPCertificate(const PGPID &aboutId, const SSLID &toId);
-	void recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPgpListItem *item);
+
+	void recvPGPCertificateRequest(
+	        const RsPeerId& fromId, const RsDiscPgpListItem* item );
+
 	void sendPGPCertificate(const PGPID &aboutId, const SSLID &toId);
 	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);
 	void recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids);

@@ -432,7 +432,10 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
     // In the case the callback did not succeed the SSL certificate will not be accessible
     // from SSL_get_peer_certificate, so we need to get it from the callback system.
     //
-    AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
+	AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(
+	            incoming_connexion_info.gpgid,
+	            incoming_connexion_info.sslid,
+	            incoming_connexion_info.sslcn );
 
 #ifdef DEBUG_LISTENNER
     std::cerr << "Info from callback: " << std::endl;
@@ -472,7 +475,6 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 				// zero means still continuing....
 				return 0;
 			}
-			break;
 			case SSL_ERROR_SYSCALL:
 			{
 				std::string out = "pqissllistenbase::continueSSL() Connection failed!\n";
@@ -483,7 +485,6 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 				// basic-error while connecting, no security message needed
 				return -1;
 			}
-			break;
 		}
 
 		/* we have failed -> get certificate if possible */
@@ -574,55 +575,19 @@ int pqissllistenbase::closeConnection(int fd, SSL *ssl)
 
 
 
-int 	pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& info)
+int pqissllistenbase::Extract_Failed_SSL_Certificate(const IncomingSSLInfo& info)
 {
-  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, "pqissllistenbase::Extract_Failed_SSL_Certificate()");
+	/* Real authorization is performed before into AuthSSL::VerifyX509Callback
+	 * so this function is most probably useless now */
 
-	std::cerr << "pqissllistenbase::Extract_Failed_SSL_Certificate() FAILED CONNECTION due to security!";
-	std::cerr << std::endl;
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
 
-	// Get the Peer Certificate....
-	X509 *peercert = SSL_get_peer_certificate(info.ssl);
+	X509* peercert = SSL_get_peer_certificate(info.ssl);
 
-	std::cerr << "Extract_Failed_SSL_Certificate: " << std::endl;
-	std::cerr << "   SSL    = " << (void*)info.ssl << std::endl;
-	std::cerr << "   GPG id = " << info.gpgid << std::endl;
-	std::cerr << "   SSL id = " << info.sslid << std::endl;
-	std::cerr << "   SSL cn = " << info.sslcn << std::endl;
-	std::cerr << "   addr+p = " << sockaddr_storage_tostring(info.addr) << std::endl;
+	AuthSSL::getAuthSSL()->FailedCertificate(
+	            peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true );
 
-	if (peercert == NULL)
-	{
-		std::string out;
-		out += "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
-		out += sockaddr_storage_tostring(info.addr);
-		out += " ERROR Peer didn't give Cert!";
-		std::cerr << out << std::endl;
-        AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
-
-		pqioutput(PQL_WARNING, pqissllistenzone, out);
-		return -1;
-	}
-
-  	pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, 
-	  "pqissllistenbase::Extract_Failed_SSL_Certificate() Have Peer Cert - Registering");
-
-	{
-		std::string out;
-		out += "pqissllistenbase::Extract_Failed_SSL_Certificate() from: ";
-		out += sockaddr_storage_tostring(info.addr);
-		out += " Passing Cert to AuthSSL() for analysis";
-		std::cerr << out << std::endl;
-
-		pqioutput(PQL_WARNING, pqissllistenzone, out);
-		std::cerr << out << std::endl;
-	}
-
-	// save certificate... (and ip locations)
-	// false for outgoing....
-	AuthSSL::getAuthSSL()->FailedCertificate(peercert, info.gpgid,info.sslid,info.sslcn,info.addr, true);
-
-	return 1;
+	return peercert ? 1 : -1;
 }
 
 
@@ -830,91 +795,38 @@ int pqissllistener::status()
 }
 
 int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
-{ 
+{
+	Dbg2() << __PRETTY_FUNCTION__ << " fd: " << fd
+	       << " info.sslid: " << info.sslid << " info.gpgid: "<< info.gpgid
+	       << " info.addr: " << info.addr << " info.sslcn: " << info.sslcn
+	       << std::endl;
+
+	constexpr int failure = -1;
+	constexpr int success = 1;
 
 	// Get the Peer Certificate....
-	X509 *peercert = SSL_get_peer_certificate(info.ssl);
+	X509* peercert = SSL_get_peer_certificate(info.ssl);
 
-	if (peercert == NULL)
+	if(!peercert)
 	{
-  	        pqioutput(PQL_WARNING, pqissllistenzone, 
-		 "pqissllistener::completeConnection() Peer Did Not Provide Cert!");
-
-		// failure -1, pending 0, sucess 1.
-		// pqissllistenbase will shutdown!
-		return -1;
+		Dbg1() << __PRETTY_FUNCTION__ << " failed peer did not provide cert!"
+		       << std::endl;
+		return failure;
 	}
 
-	// Check cert.
-	RsPeerId newPeerId;
+	RsPeerId connPeerId = sslcert::getCertSslId(*peercert);
 
-
-	/****
-	 * As the validation is actually done before this...
-	 * we should only need to call CheckCertificate here!
-	 ****/
-
-        bool certOk = AuthSSL::getAuthSSL()->ValidateCertificate(peercert, newPeerId);
-
-	bool found = false;
-	std::map<RsPeerId, pqissl *>::iterator it;
-
-	// Let connected one through as well! if ((npc == NULL) || (npc -> Connected()))
-	if (!certOk)
+	std::map<RsPeerId, pqissl*>::iterator it = listenaddr.find(connPeerId);
+	if(it == listenaddr.end())
 	{
-  	        pqioutput(PQL_WARNING, pqissllistenzone, 
-		 "pqissllistener::completeConnection() registerCertificate Failed!");
+		RsPgpId pgpId = sslcert::getCertIssuer(*peercert);
 
-		// bad - shutdown.
-		// pqissllistenbase will shutdown!
-		X509_free(peercert);
+		Dbg1() << __PRETTY_FUNCTION__ << " Connection signed by a known PGP "
+		       << "friend " << pgpId << " with a new SSL id: " << connPeerId
+		       << " from " << info.addr << " adding to the SSL friend list"
+		       << std::endl;
 
-		return -1;
-	}
-	else
-	{
-		std::string out = "pqissllistener::continueSSL()\nchecking: " + newPeerId.toStdString() + "\n";
-		// check if cert is in our list.....
-		for(it = listenaddr.begin();(found!=true) && (it!=listenaddr.end());)
-		{
-			out + "\tagainst: " + it->first.toStdString() + "\n";
-			if (it -> first == newPeerId)
-			{
-				// accept even if already connected.
-				out += "\t\tMatch!";
-				found = true;
-			}
-			else
-			{
-				++it;
-			}
-		}
-
-		pqioutput(PQL_DEBUG_BASIC, pqissllistenzone, out);
-	}
-	
-	if (found == false)
-	{
-		std::string out = "No Matching Certificate for Connection:";
-		out += sockaddr_storage_tostring(info.addr);
-		out += "\npqissllistenbase: Will shut it down!";
-		pqioutput(PQL_WARNING, pqissllistenzone, out);
-
-		// but as it passed the authentication step, 
-		// we can add it into the AuthSSL, and mConnMgr.
-
-		AuthSSL::getAuthSSL()->CheckCertificate(newPeerId, peercert);
-
-		/* now need to get GPG id too */
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-		RsPgpId pgpid(std::string(getX509CNString(peercert->cert_info->issuer)));
-#else
-		RsPgpId pgpid(std::string(getX509CNString(X509_get_issuer_name(peercert))));
-#endif
-		mPeerMgr->addFriend(newPeerId, pgpid);
-	
-		X509_free(peercert);
-		return -1;
+		mPeerMgr->addFriend(connPeerId, pgpId);
 	}
 
 	// Cleanup cert.
@@ -924,19 +836,16 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	AcceptedSSL as;
 	as.mFd = fd;
 	as.mSSL = info.ssl;
-	as.mPeerId = newPeerId;
+	as.mPeerId = connPeerId;
 	as.mAddr = info.addr;
-	as.mAcceptTS = time(NULL);
+	as.mAcceptTS = time(nullptr);
 
 	accepted_ssl.push_back(as);
 
-	std::string out = "pqissllistener::completeConnection() Successful Connection with: " + newPeerId.toStdString();
-	out += " for Connection:";
-	out += sockaddr_storage_tostring(info.addr);
-	out += " Adding to WAIT-ACCEPT Queue";
-	pqioutput(PQL_WARNING, pqissllistenzone, out);
+	Dbg1() << __PRETTY_FUNCTION__ << "Successful Connection with: "
+	       << connPeerId.toStdString() << " from " << info.addr << std::endl;
 
-	return 1;
+	return success;
 }
 
 int pqissllistener::finaliseConnection(int fd, SSL *ssl, const RsPeerId& peerId, const struct sockaddr_storage &remote_addr)

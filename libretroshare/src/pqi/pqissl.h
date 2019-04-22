@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_SSL_HEADER
-#define MRK_PQI_SSL_HEADER
+#pragma once
 
 // operating system specific network header.
 #include "pqi/pqinetwork.h"
@@ -31,6 +30,11 @@
 
 #include "pqi/pqi_base.h"
 #include "pqi/authssl.h"
+#include "util/rsdebug.h"
+
+#ifndef RS_DEBUG_PQISSL
+#	define RS_DEBUG_PQISSL 1
+#endif
 
 #define WAITING_NOT            0
 #define WAITING_DELAY	       1
@@ -119,7 +123,6 @@ int accept(SSL *ssl, int fd, const struct sockaddr_storage &foreign_addr);
 void getCryptoParams(RsPeerCryptoParams& params) ;
 bool actAsServer();
 
-
 protected:
 
 
@@ -158,8 +161,6 @@ virtual int Basic_Connection_Complete();
 int Initiate_SSL_Connection();
 int SSL_Connection_Complete();
 int Authorise_SSL_Connection();
-
-int Extract_Failed_SSL_Certificate(); // try to get cert anyway.
 
 	// check connection timeout.
 bool  	CheckConnectionTimeout();
@@ -207,9 +208,23 @@ bool  	CheckConnectionTimeout();
 private:
 	// ssl only fns.
 	int connectInterface(const struct sockaddr_storage &addr);
+
+protected:
+#if defined(RS_DEBUG_PQISSL) && RS_DEBUG_PQISSL == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQISSL) && RS_DEBUG_PQISSL == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_PQISSL) && RS_DEBUG_PQISSL >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_PQISSL
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_PQISSL
 };
-
-
-
-
-#endif // MRK_PQI_SSL_HEADER

@@ -34,11 +34,6 @@
 #include "pqi/p3historymgr.h"
 #include "pqi/pqinetwork.h"        // for getLocalAddresses
 
-//#include "pqi/p3dhtmgr.h" // Only need it for constants.
-//#include "tcponudp/tou.h"
-//#include "util/extaddrfinder.h"
-//#include "util/dnsresolver.h"
-
 #include "util/rsprint.h"
 #include "util/rsstring.h"
 #include "util/rsdebug.h"
@@ -900,7 +895,10 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 /*******************************************************************/
 /*******************************************************************/
 
-bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg_id, uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht, rstime_t lastContact,ServicePermissionFlags service_flags)
+bool p3PeerMgrIMPL::addFriend(
+        const RsPeerId& input_id, const RsPgpId& input_gpg_id,
+        uint32_t netMode, uint16_t vs_disc, uint16_t vs_dht,
+        rstime_t lastContact, ServicePermissionFlags service_flags )
 {
 	bool notifyLinkMgr = false;
 	RsPeerId id = input_id ;
@@ -940,18 +938,6 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			/* (1) already exists */
 			return true;
 		}
-
-		//Authentication is now tested at connection time, we don't store the ssl cert anymore
-		//
-		if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
-		{
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::addFriend() gpg is not accepted" << std::endl;
-#endif
-			/* no auth */
-			return false;
-		}
-
 
 		/* check if it is in others */
 		if (mOthersList.end() != (it = mOthersList.find(id)))
@@ -1039,10 +1025,10 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
         rslog(RSL_WARNING, p3peermgrzone, "p3PeerMgr::removeFriend() id: " + id.toStdString());
 
 	std::list<RsPeerId> sslid_toRemove; // This is a list of SSLIds.
-	rsPeers->getAssociatedSSLIds(id,sslid_toRemove) ;
+	rsPeers->getAssociatedSSLIds(id, sslid_toRemove);
 
 	{
-		RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		RS_STACK_MUTEX(mPeerMtx);
 
 		/* move to othersList */
         //bool success = false;
@@ -1101,6 +1087,72 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 
         return !sslid_toRemove.empty();
 }
+
+bool p3PeerMgrIMPL::addFriendPendingPgp(
+        const RsPeerId& sslId, const RsPeerDetails& dt )
+{
+	if(sslId.isNull() || sslId == getOwnId()) return false;
+
+	bool notifyLinkMgr = false;
+
+	{
+		RS_STACK_MUTEX(mPeerMtx);
+
+		peerState pstate;
+
+		/* If in mOthersList -> move over */
+		auto it = mOthersList.find(sslId);
+		if (it != mOthersList.end())
+		{
+			pstate = it->second;
+			mOthersList.erase(it);
+		}
+
+		pstate.id = sslId;
+		if(!dt.gpg_id.isNull())  pstate.gpg_id = dt.gpg_id;
+		if(!dt.fpr.isNull())     pstate.mPgpFingerprint = dt.fpr;
+		if(!dt.name.empty())     pstate.name = dt.name;
+		if(!dt.dyndns.empty())   pstate.dyndns = dt.dyndns;
+		pstate.hiddenNode = dt.isHiddenNode;
+		if(!dt.hiddenNodeAddress.empty())
+			pstate.hiddenDomain = dt.hiddenNodeAddress;
+		if(dt.hiddenNodePort)    pstate.hiddenPort = dt.hiddenNodePort;
+		if(dt.hiddenType)        pstate.hiddenType = dt.hiddenType;
+		if(!dt.location.empty()) pstate.location = dt.location;
+		mFriendList[sslId] = pstate;
+
+		mStatusChanged = true;
+		notifyLinkMgr = true;
+	}
+
+	IndicateConfigChanged();
+	if (notifyLinkMgr) mLinkMgr->addFriend(sslId, dt.vs_dht != RS_VS_DHT_OFF);
+
+	// To update IP addresses is much more confortable to use locators
+	if(!dt.isHiddenNode)
+	{
+		for(const std::string& locator : dt.ipAddressList)
+			addPeerLocator(sslId, locator);
+
+		if(dt.extPort && !dt.extAddr.empty())
+		{
+			RsUrl extLocator;
+			extLocator.setScheme("ipv4").setHost(dt.extAddr).setPort(dt.extPort);
+			addPeerLocator(sslId, extLocator);
+		}
+
+		if(dt.localPort && !dt.localAddr.empty())
+		{
+			RsUrl locator;
+			locator.setScheme("ipv4").setHost(dt.localAddr)
+			       .setPort(dt.localPort);
+			addPeerLocator(sslId, locator);
+		}
+	}
+
+	return true;
+}
+
 bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 {
 
@@ -1368,7 +1420,7 @@ bool p3PeerMgrIMPL::addPeerLocator(const RsPeerId &sslId, const RsUrl& locator)
 	if(!locator.hasPort() || host.empty() ||
 	   !sockaddr_storage_inet_pton(ip.mAddr, host) ||
 	   !sockaddr_storage_setport(ip.mAddr, locator.port())) return false;
-	ip.mSeenTime = time(NULL);
+	ip.mSeenTime = time(nullptr);
 
 	bool changed = false;
 

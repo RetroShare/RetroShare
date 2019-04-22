@@ -1,9 +1,8 @@
 /*******************************************************************************
- * libretroshare/src/util: rsdebug.h                                           *
+ * RetroShare debugging utilities                                              *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2004-2008 by Robert Fernie   <retroshare@lunamutt.com>            *
+ * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,16 +18,109 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-/* Moved from pqi/ to util/ so it can be used more generally.
- */
+#pragma once
 
-#ifndef RS_LOG_DEBUG_H
-#define RS_LOG_DEBUG_H
+#include <ostream>
+#include <iostream>
+
+#include "util/rsdeprecate.h"
+
+/**
+ * Comfortable error message reporting, supports chaining like std::cerr
+ * To report an error message you can just write:
+@code{.cpp}
+RsErr() << __PRETTY_FUNCTION__ << "My debug message" << std::cerr;
+@endcode
+ */
+struct RsErr
+{
+	inline RsErr() = default;
+
+	template<typename T>
+	std::ostream& operator<<(const T& val)
+	{ return std::cerr << time(nullptr) << " Error: " << val; }
+};
+
+/**
+ * Comfortable debug message reporting, supports chaining like std::cerr but can
+ * be easly and selectively disabled at compile time to reduce generated binary
+ * size and performance impact without too many #ifdef around.
+ *
+ * To selectively debug your class you can just add something like this at the
+ * end of class declaration:
+@code{.cpp}
+#if defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_LINKMGR) && RS_DEBUG_LINKMGR >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_LINKMGR
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_LINKMGR
+@endcode
+ * And the you can write debug messages around the code like this:
+@code{.cpp}
+Dbg2() << "Level 2 debug message example, this will be compiled and "
+	   << "printed" << std::endl;
+Dbg3() << "Level 3 debug message example, this will not be compiled and "
+	   << "printed, and without #ifdef around!!" << std::endl;
+@endcode
+ * You can get as creative as you want with the naming, so you can have, levels,
+ * zones or whathever you want without polluting too much the code to read, and
+ * the compiled binary, when some debug is not needed!
+ * You can define the name inside your class/scope so you can use even shorter
+ * names like plain Dbg1 without worring about namespace pollution.
+ */
+struct RsDbg
+{
+	inline RsDbg() = default;
+
+	template<typename T>
+	std::ostream& operator<<(const T& val)
+	{ return std::cerr << time(nullptr) << " Debug: " << val; }
+};
+
+/**
+ * Keeps compatible syntax with RsDbg but explicitely do nothing in a way that
+ * any modern compiler should be smart enough to optimize out all the function
+ * calls.
+ */
+struct RsNoDbg
+{
+	inline RsNoDbg() = default;
+
+	/**
+	 * This match most of the types, but might be not enough for templated
+	 * types
+	 */
+	template<typename T>
+	inline RsNoDbg& operator<<(const T&) { return *this; }
+
+	/// needed for manipulators and things like std::endl
+	inline RsNoDbg& operator<<(std::ostream& (*/*pf*/)(std::ostream&))
+	{ return *this; }
+};
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/// All the following lines are DEPRECATED!!
 
 #include <string>
 
 namespace RsLog {
-	enum logLvl {
+    enum RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg") logLvl {
 		None	= -1,
 		Default	=  0,
 		Alert	=  1,
@@ -40,7 +132,7 @@ namespace RsLog {
 	};
 
 	// this struct must be provided by the caller (to rslog())
-	struct logInfo {
+	struct RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg") logInfo {
 		// module specific log lvl
 		logLvl lvl;
 		// module name (displayed in log)
@@ -48,9 +140,16 @@ namespace RsLog {
 	};
 }
 
+RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg")
 int setDebugCrashMode(const char *cfile);
+
+RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg")
 int setDebugFile(const char *fname);
+
+RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg")
 int setOutputLevel(RsLog::logLvl lvl);
+
+RS_DEPRECATED_FOR("RsErr, RsDbg, RsNoDbg")
 void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg);
 
 
@@ -76,7 +175,3 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 #define PQL_DEBUG_ALERT RSL_DEBUG_ALERT 
 #define PQL_DEBUG_BASIC	RSL_DEBUG_BASIC
 #define PQL_DEBUG_ALL 	RSL_DEBUG_ALL
-
-
-
-#endif
