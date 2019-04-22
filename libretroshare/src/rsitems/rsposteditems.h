@@ -48,6 +48,7 @@ public:
 	
 	std::string mDescription;
 	RsTlvImage mGroupImage;
+	std::string mColor;
 
 };
 

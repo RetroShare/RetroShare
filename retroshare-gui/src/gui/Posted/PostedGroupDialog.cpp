@@ -95,6 +95,7 @@ void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMe
 {
 	group.mMeta = meta;
 	group.mDescription = getDescription().toUtf8().constData();
+	group.mColor = getColor().toUtf8().constData();
 
 	QPixmap pixmap = getLogo();
 
@@ -134,7 +135,7 @@ bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &edit
 	return true;
 }
 
-bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description,QString &colorstring)
 {
 	std::cerr << "PostedGroupDialog::service_loadGroup(" << token << ")";
 	std::cerr << std::endl;
@@ -160,6 +161,7 @@ bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroup
 	const RsPostedGroup &group = groups[0];
 	groupMetaData = group.mMeta;
 	description = QString::fromUtf8(group.mDescription.c_str());
+	colorstring =  QString::fromUtf8(group.mColor.c_str());
 	
 	if (group.mGroupImage.mData) {
 		QPixmap pixmap;

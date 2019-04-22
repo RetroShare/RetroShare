@@ -163,6 +163,7 @@ const uint16_t TLV_TYPE_STR_DATE      = 0x00b7;
 const uint16_t TLV_TYPE_STR_PIC_TYPE  = 0x00b8;
 const uint16_t TLV_TYPE_STR_PIC_AUTH  = 0x00b9;
 const uint16_t TLV_TYPE_STR_GXS_ID    = 0x00ba;
+const uint16_t TLV_TYPE_STR_COLOR     = 0x00bb;
 
 
 	/**** Binary Types ****/

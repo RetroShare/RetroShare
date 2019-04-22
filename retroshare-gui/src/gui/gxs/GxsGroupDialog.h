@@ -198,7 +198,7 @@ protected:
 
 	// To be overloaded by users.
 	// use Token to retrieve from service, fill in metaData.
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description) = 0;
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description, QString &colorstring) = 0;
 
 	/*!
 	 * This returns a group logo from the ui \n
@@ -225,6 +225,19 @@ protected:
 	 * @return group description string
 	 */
 	QString getDescription();
+	
+	/*!
+	 * This returns a group color string from the ui
+	 * @return group color string
+	 */
+	QString getColor();
+	
+	/*!
+	 * This sets a group color into the ui \n
+	 * Should be calleld by deriving service
+	 * @param color
+	 */
+	void setColor(const QString &color);
 
     /*!
      * \brief getSelectedModerators
@@ -242,6 +255,7 @@ private slots:
 	void setAdminsList();
 
 	void updateCircleOptions();
+	void chooseColor();
 
 private:
 	bool setCircleParameters(RsGroupMetaData &meta);
@@ -258,11 +272,12 @@ private:
 	void editGroup();
 	void sendShareList(std::string forumId);
 	void loadNewGroupId(const uint32_t &token);
+	void colorChanged();
 
 	// loading existing Groups.
 	void requestGroup(const RsGxsGroupId &groupId);
 	void loadGroup(uint32_t token);
-	void updateFromExistingMeta(const QString &description);
+	void updateFromExistingMeta(const QString &description, const QString &colorstring);
 
 	bool prepareGroupMetaData(RsGroupMetaData &meta);
 
@@ -273,6 +288,10 @@ private:
 	TokenQueue *mInternalTokenQueue;
 	RsGroupMetaData mGrpMeta;
 
+		QColor currentColor;
+		QString color;
+		QString mColor;
+	
 	Mode mMode;
 	uint32_t mEnabledFlags;
 	uint32_t mReadonlyFlags;

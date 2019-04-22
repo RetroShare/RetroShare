@@ -112,6 +112,7 @@ void GxsChannelGroupDialog::prepareChannelGroup(RsGxsChannelGroup &group, const 
 {
 	group.mMeta = meta;
 	group.mDescription = getDescription().toUtf8().constData();
+	group.mColor = getColor().toUtf8().constData();
 
 	QPixmap pixmap = getLogo();
 
@@ -150,7 +151,7 @@ bool GxsChannelGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &
 	return true;
 }
 
-bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description, QString &colorstring)
 {
 	std::cerr << "GxsChannelGroupDialog::service_loadGroup(" << token << ")";
 	std::cerr << std::endl;
@@ -176,6 +177,7 @@ bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsG
 	const RsGxsChannelGroup &group = groups[0];
 	groupMetaData = group.mMeta;
 	description = QString::fromUtf8(group.mDescription.c_str());
+	colorstring = QString::fromUtf8(group.mColor.c_str());
 
 	if (group.mImage.mData) {
 		QPixmap pixmap;

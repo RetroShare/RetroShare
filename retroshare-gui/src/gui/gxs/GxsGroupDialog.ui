@@ -157,6 +157,13 @@
                </widget>
               </item>
               <item>
+               <widget class="QPushButton" name="colorButton">
+                <property name="text">
+                 <string>Select Color</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
@@ -609,13 +616,23 @@
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="infogroupBox">
          <property name="title">
           <string>Info</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QGridLayout" name="gridLayout_2">
+            <item row="11" column="2">
+             <widget class="GxsIdLabel" name="moderatorsLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
             <item row="6" column="0">
              <widget class="QLabel" name="distributionLabel">
               <property name="text">
@@ -623,13 +640,10 @@
               </property>
              </widget>
             </item>
-            <item row="10" column="2">
-             <widget class="GxsIdLabel" name="moderatorsLabel">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>TextLabel</string>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
+               <string>Popularity</string>
               </property>
              </widget>
             </item>
@@ -647,13 +661,6 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Popularity</string>
-              </property>
-             </widget>
-            </item>
             <item row="2" column="2">
              <widget class="QLineEdit" name="postsline">
               <property name="text">
@@ -664,21 +671,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QLineEdit" name="nameline">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Posts</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
+            <item row="11" column="0">
              <widget class="QLabel" name="label_8">
               <property name="text">
                <string>Moderators:</string>
@@ -692,6 +685,13 @@
               </property>
              </widget>
             </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Posts</string>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="2">
              <widget class="QLineEdit" name="lastpostline">
               <property name="readOnly">
@@ -699,10 +699,10 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>ID</string>
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="nameline">
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -710,6 +710,13 @@
              <widget class="QLabel" name="commentsLabel">
               <property name="text">
                <string>Comments:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>ID</string>
               </property>
              </widget>
             </item>
@@ -741,13 +748,6 @@
               </item>
              </layout>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Author</string>
-              </property>
-             </widget>
-            </item>
             <item row="7" column="2">
              <widget class="QLabel" name="antiSpamValueLabel">
               <property name="text">
@@ -755,10 +755,10 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="2">
-             <widget class="QLineEdit" name="IDline">
-              <property name="readOnly">
-               <bool>true</bool>
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Author</string>
               </property>
              </widget>
             </item>
@@ -768,6 +768,13 @@
                <string>TextLabel</string>
               </property>
               <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QLineEdit" name="IDline">
+              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
@@ -782,13 +789,27 @@
               </property>
              </widget>
             </item>
+            <item row="12" column="0">
+             <widget class="QLabel" name="label_9">
+              <property name="text">
+               <string>Color</string>
+              </property>
+             </widget>
+            </item>
+            <item row="12" column="2">
+             <widget class="QLabel" name="colorlabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
          </layout>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_3">
+        <widget class="QGroupBox" name="descgroupBox">
          <property name="title">
           <string>Description</string>
          </property>

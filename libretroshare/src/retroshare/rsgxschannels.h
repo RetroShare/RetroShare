@@ -50,6 +50,7 @@ struct RsGxsChannelGroup : RsSerializable
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
+	std::string mColor;
 
 	bool mAutoDownload;
 
@@ -61,6 +62,7 @@ struct RsGxsChannelGroup : RsSerializable
 		RS_SERIAL_PROCESS(mDescription);
 		RS_SERIAL_PROCESS(mImage);
 		RS_SERIAL_PROCESS(mAutoDownload);
+		RS_SERIAL_PROCESS(mColor);
 	}
 };
 

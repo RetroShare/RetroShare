@@ -176,6 +176,7 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 	if (groupId().isNull()) {
 		ui->nameLabel->setText(tr("No Channel Selected"));
 		ui->logoLabel->setPixmap(QPixmap(":/images/channels.png"));
+		ui->headFrame->setStyleSheet(QString("QFrame#headFrame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F2F2F2, stop:1 #E6E6E6);border: 1px solid #CCCCCC; };"));
 	} else {
 		ui->nameLabel->setText(name);
 	}
@@ -243,6 +244,10 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
 	ui->logoLabel->setPixmap(chanImage);
+	
+	QString colorstring = QString::fromUtf8(group.mColor.c_str());
+	//ui->groupBox->setStyleSheet(QString("QGroupBox#groupBox{border: 1px solid %1};").arg(colorstring));
+	ui->headFrame->setStyleSheet(QString("QFrame#headFrame{background-color: %1 };").arg(colorstring));
 
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
@@ -269,9 +274,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 		ui->fileToolButton->setEnabled(true);
 		ui->infoWidget->hide();
 		setViewMode(viewMode());
-		
-		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
 
+		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
 
 		ui->infoPosts->clear();
 		ui->infoDescription->clear();

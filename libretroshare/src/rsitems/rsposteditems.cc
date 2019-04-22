@@ -51,8 +51,12 @@ void RsGxsPostedGroupItem::serial_process(RsGenericSerializer::SerializeJob j,Rs
 
 	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mGroupImage.empty())
 		return ;
+	
+	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mColor.empty())
+		return ;
 
 	RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroupImage,"mGroupImage") ;
+	RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_COLOR,mColor,"mColor") ;
 }
 
 RsItem *RsGxsPostedSerialiser::create_item(uint16_t service_id,uint8_t item_subtype) const
@@ -119,6 +123,7 @@ void RsGxsPostedGroupItem::clear()
 {
 	mDescription.clear();
 	mGroupImage.TlvClear();
+	mColor.clear();
 }
 
 bool RsGxsPostedGroupItem::fromPostedGroup(RsPostedGroup &group, bool moveImage)
@@ -126,6 +131,7 @@ bool RsGxsPostedGroupItem::fromPostedGroup(RsPostedGroup &group, bool moveImage)
 	clear();
 	meta = group.mMeta;
 	mDescription = group.mDescription;
+	mColor = group.mColor;
 
 	if (moveImage)
 	{
@@ -144,6 +150,8 @@ bool RsGxsPostedGroupItem::toPostedGroup(RsPostedGroup &group, bool moveImage)
 {
 	group.mMeta = meta;
 	group.mDescription = mDescription;
+	group.mColor= mColor;
+	
 	if (moveImage)
 	{
 		group.mGroupImage.take((uint8_t *) mGroupImage.binData.bin_data, mGroupImage.binData.bin_len);

@@ -129,7 +129,7 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &ed
 	return true;
 }
 
-bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description , QString &colorstring)
 {
 	std::cerr << "GxsForumGroupDialog::service_loadGroup(" << token << ")";
 	std::cerr << std::endl;

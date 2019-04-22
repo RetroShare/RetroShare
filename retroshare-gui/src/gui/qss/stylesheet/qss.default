@@ -89,6 +89,11 @@ GxsChannelPostsWidget QLabel#nameLabel
 	qproperty-fontSizeFactor: 250;
 }
 
+PostedListWidget QLabel#nameLabel
+{
+	qproperty-fontSizeFactor: 250;
+}
+
 CreateLobbyDialog QLabel#lobbyInfoLabel
 {
 	qproperty-fontSizeFactor: 150;

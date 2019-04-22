@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QColorDialog>
 
 #include "util/misc.h"
 #include "util/DateTime.h"
@@ -102,6 +103,7 @@ void GxsGroupDialog::init()
 	connect(ui.pubKeyShare_cb, SIGNAL(clicked()), this, SLOT(setShareList()));
 	connect(ui.addAdmins_cb, SIGNAL(clicked()), this, SLOT(setAdminsList()));
 	connect(ui.filtercomboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(filterComboBoxChanged(int)));
+	connect(ui.colorButton, SIGNAL(clicked()), this, SLOT(chooseColor()));
 
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
@@ -438,7 +440,7 @@ void GxsGroupDialog::newGroup()
 	clearForm();
 }
 
-void GxsGroupDialog::updateFromExistingMeta(const QString &description)
+void GxsGroupDialog::updateFromExistingMeta(const QString &description, const QString &colorstring)
 {
     std::cerr << "void GxsGroupDialog::updateFromExistingMeta()";
     std::cerr << std::endl;
@@ -471,7 +473,7 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
 	ui.authorLabel->setText(link.toHtml());
-	
+		
     ui.IDline->setText(QString::fromStdString(mGrpMeta.mGroupId.toStdString()));
     ui.descriptiontextEdit->setPlainText(description);
 
@@ -493,6 +495,20 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     /* set description */
     ui.groupDesc->setPlainText(description);
     QString distribution_string = "[Unknown]";
+	
+	/* set hex color string */
+	ui.colorlabel->setText(colorstring);
+	ui.colorButton->setText(colorstring);
+	
+	//ui.infogroupBox->setStyleSheet(QString("QGroupBox{border: 1px solid %1};").arg(colorstring));
+	//ui.distribGroupBox->setStyleSheet(QString("QGroupBox{border: 1px solid %1};").arg(colorstring));
+	//ui.descgroupBox->setStyleSheet(QString("QGroupBox{border: 1px solid %1};").arg(colorstring));
+	ui.headerFrame->setStyleSheet(QString("QFrame{background-color: %1 };").arg(colorstring));
+
+	QPixmap pix(16, 16);
+	pix.fill(colorstring);
+	ui.colorButton->setIcon(pix);
+
 
     switch(mGrpMeta.mCircleType)
     {
@@ -627,6 +643,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 	// Fill in the MetaData as best we can.
 	meta.mGroupName = std::string(name.toUtf8());
 
+
 	meta.mGroupFlags = flags;
 	meta.mSignFlags = getGroupSignFlags();
 
@@ -755,12 +772,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
         	// (cyril) very weird piece of code. Need to clear this up.
         
 		ui.comments_allowed->setChecked(true);
-		ui.commentsValueLabel->setText("Allowed") ;
+        	ui.commentsValueLabel->setText("Allowed") ;
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
-		ui.commentsValueLabel->setText("Forbidden") ;
+        	ui.commentsValueLabel->setText("Allowed") ;
 	}
 }
 
@@ -988,9 +1005,11 @@ void GxsGroupDialog::loadGroup(uint32_t token)
 	std::cerr << std::endl;
 
 	QString description;
-	if (service_loadGroup(token, mMode, mGrpMeta, description))
+	QString colorstring;
+
+	if (service_loadGroup(token, mMode, mGrpMeta, description, colorstring ))
 	{
-		updateFromExistingMeta(description);
+		updateFromExistingMeta(description, colorstring);
 	}
 }
 
@@ -1013,4 +1032,37 @@ void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 				break;
 		}
 	}
+}
+
+void GxsGroupDialog::chooseColor()
+{
+	//bool ok;
+	QColor color = QColorDialog::getColor(Qt::white, this);
+	if (color.isValid()) {
+		currentColor = QColor(color);
+		colorChanged();
+	}
+}
+
+void GxsGroupDialog::colorChanged()
+{
+	QPixmap pix(16, 16);
+	pix.fill(currentColor);
+	ui.colorButton->setIcon(pix);
+	ui.colorButton->setText(currentColor.name());
+	ui.headerFrame->setStyleSheet(QString("QFrame{background-color: %1 };").arg(currentColor.name()));
+
+}
+
+void GxsGroupDialog::setColor(const QString &color)
+{
+	mColor = color;
+
+	// to show the selected
+	ui.colorButton->setText(mColor);
+}
+
+QString GxsGroupDialog::getColor()
+{
+	return ui.colorButton->text();
 }

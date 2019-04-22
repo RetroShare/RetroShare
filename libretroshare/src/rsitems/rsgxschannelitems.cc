@@ -45,6 +45,7 @@ void RsGxsChannelGroupItem::clear()
 {
 	mDescription.clear();
 	mImage.TlvClear();
+	mColor.clear();
 }
 
 bool RsGxsChannelGroupItem::fromChannelGroup(RsGxsChannelGroup &group, bool moveImage)
@@ -52,6 +53,7 @@ bool RsGxsChannelGroupItem::fromChannelGroup(RsGxsChannelGroup &group, bool move
 	clear();
 	meta = group.mMeta;
 	mDescription = group.mDescription;
+	mColor = group.mColor;
 
 	if (moveImage)
 	{
@@ -72,6 +74,8 @@ bool RsGxsChannelGroupItem::toChannelGroup(RsGxsChannelGroup &group, bool moveIm
 {
 	group.mMeta = meta;
 	group.mDescription = mDescription;
+	group.mColor= mColor;
+
 	if (moveImage)
 	{
 		group.mImage.take((uint8_t *) mImage.binData.bin_data, mImage.binData.bin_len);
@@ -89,6 +93,14 @@ void RsGxsChannelGroupItem::serial_process(RsGenericSerializer::SerializeJob j,R
 {
     RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_DESCR,mDescription,"mDescription") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mImage,"mImage") ;
+	
+	if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+        return ;
+	
+	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mColor.empty())
+		return ;
+	
+	RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_DESCR,mColor,"mColor") ;
 }
 
 bool RsGxsChannelPostItem::fromChannelPost(RsGxsChannelPost &post, bool moveImage)

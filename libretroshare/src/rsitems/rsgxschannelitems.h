@@ -57,6 +57,7 @@ public:
 
 	std::string mDescription;
 	RsTlvImage mImage;
+	std::string mColor;
 };
 
 class RsGxsChannelPostItem : public RsGxsMsgItem

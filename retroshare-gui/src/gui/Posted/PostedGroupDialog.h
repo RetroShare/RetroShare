@@ -37,7 +37,7 @@ protected:
 	virtual void initUi();
 	virtual QPixmap serviceImage();
 	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description, QString &colorstring);
 	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
 
 private:
