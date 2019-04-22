@@ -409,6 +409,7 @@ public:
 	 * @return returns 1 on succes and 0 otherwise
 	 */
     virtual int GetCurrentDataRates( float &inKb, float &outKb ) = 0;
+    virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb ) = 0;
 };
 
 #endif

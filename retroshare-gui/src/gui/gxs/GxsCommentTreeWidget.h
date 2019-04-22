@@ -27,6 +27,8 @@
 #include <retroshare/rsgxscommon.h>
 #include <retroshare/rsidentity.h>
 
+class RSTreeWidgetItemCompareRole;
+
 class GxsCommentTreeWidget : public QTreeWidget, public TokenResponse
 {
     Q_OBJECT
@@ -96,6 +98,8 @@ protected:
 
     std::map<RsGxsMessageId, QTreeWidgetItem *> mLoadingMap;
     std::multimap<RsGxsMessageId, QTreeWidgetItem *> mPendingInsertMap;
+	
+	RSTreeWidgetItemCompareRole *commentsRole;
 
     TokenQueue *mTokenQueue;
     RsTokenService *mRsTokenService;

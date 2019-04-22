@@ -134,13 +134,22 @@ void PostedGroupItem::fill()
 //	ui->nameLabel->setText(groupName());
 
 	ui->descLabel->setText(QString::fromUtf8(mGroup.mDescription.c_str()));
-
-	//TODO - nice icon for subscribed group
-	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+	
+	if (mGroup.mGroupImage.mData != NULL) {
+		QPixmap postedImage;
+		postedImage.loadFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, "PNG");
+		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
 		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
 	}
+
+
+	//TODO - nice icon for subscribed group
+//	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
+//		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+//	} else {
+//		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+//	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
 		ui->subscribeButton->setEnabled(false);

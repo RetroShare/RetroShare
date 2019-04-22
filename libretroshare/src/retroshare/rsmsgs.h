@@ -93,8 +93,8 @@ const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_PGP_SIGNED    ( 0x00000010 ) ; // requi
 typedef uint64_t	ChatLobbyId ;
 typedef uint64_t	ChatLobbyMsgId ;
 typedef std::string ChatLobbyNickName ;
-
-typedef uint64_t     MessageId ;
+typedef std::string RsMailMessageId;			// should be uint32_t !!
+typedef uint64_t    MessageId ;
 
 
 namespace Rs
@@ -237,10 +237,11 @@ struct MsgInfoSummary : RsSerializable
 	MsgInfoSummary() : msgflags(0), count(0), ts(0) {}
 	virtual ~MsgInfoSummary() = default;
 
-	std::string msgId;
+    RsMailMessageId msgId;
 	RsPeerId srcId;
 
 	uint32_t msgflags;
+    std::list<uint32_t> msgtags;	// that leaves 25 bits for user-defined tags.
 
 	std::string title;
 	int count; /* file count     */
@@ -253,6 +254,7 @@ struct MsgInfoSummary : RsSerializable
 		RS_SERIAL_PROCESS(srcId);
 
 		RS_SERIAL_PROCESS(msgflags);
+		RS_SERIAL_PROCESS(msgtags);
 
 		RS_SERIAL_PROCESS(title);
 		RS_SERIAL_PROCESS(count);
@@ -561,8 +563,8 @@ public:
 	/**
 	 * @brief MessageToTrash
 	 * @jsonapi{development}
-	 * @param[in] msgId
-	 * @param[in] bTrash
+	 * @param[in] msgId        Id of the message to mode to trash box
+	 * @param[in] bTrash       Move to trash if true, otherwise remove from trash
 	 * @return true on success
 	 */
 	virtual bool MessageToTrash(const std::string &msgId, bool bTrash)   = 0;

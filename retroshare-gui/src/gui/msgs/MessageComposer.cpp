@@ -976,7 +976,8 @@ MessageComposer *MessageComposer::newMsg(const std::string &msgId /* = ""*/)
 
     msgComposer->addEmptyRecipient();
 
-    if (msgId.empty() == false) {
+    if (!msgId.empty())
+    {
         // fill existing message
         MessageInfo msgInfo;
         if (!rsMail->getMessage(msgId, msgInfo)) {

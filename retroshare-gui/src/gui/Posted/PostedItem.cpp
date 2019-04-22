@@ -109,7 +109,18 @@ void PostedItem::setup()
 	
 	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
 	connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
-		
+	
+	
+	int S = QFontMetricsF(font()).height() ;
+	
+	ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->voteDownButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->expandButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->notesButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->readButton->setIconSize(QSize(S*1.5,S*1.5));
+	ui->shareButton->setIconSize(QSize(S*1.5,S*1.5));
+	
 	QMenu *menu = new QMenu();
 	menu->addAction(CopyLinkAction);
 	ui->shareButton->setMenu(menu);
@@ -235,20 +246,25 @@ void PostedItem::fill()
 		return;
 	}
 
+	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+
 	mInFill = true;
-	
+	int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
+	int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
+
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
 		pixmap.loadFromData(mPost.mImage.mData, mPost.mImage.mSize, "PNG");
 		// Wiping data - as its been passed to thumbnail.
 		
-		QPixmap sqpixmap = pixmap.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		ui->pictureLabel->setPixmap(sqpixmap);			
-				
-		ui->thumbnailLabel->setPixmap(pixmap);
-	}else
+		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+		ui->thumbnailLabel->setPixmap(sqpixmap);
+		ui->pictureLabel->setPixmap(pixmap);
+	}
+	else
 	{
+		//ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
 		ui->expandButton->setDisabled(true);
 	}
 
@@ -290,7 +306,7 @@ void PostedItem::fill()
 		urlstr += QString(" </span></a>");
 
 		QString siteurl = url.scheme() + "://" + url.host();
-		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#2255AA;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
+		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 		
 		ui->titleLabel->setText(urlstr);
 	}else

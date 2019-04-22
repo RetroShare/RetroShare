@@ -217,7 +217,8 @@ struct RsGxsIface
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) = 0;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) = 0;
 
-    virtual RsReputations::ReputationLevel minReputationForForwardingMessages(uint32_t group_sign_flags,uint32_t identity_flags)=0;
+	virtual RsReputationLevel minReputationForForwardingMessages(
+	        uint32_t group_sign_flags,uint32_t identity_flags ) = 0;
 };
 
 

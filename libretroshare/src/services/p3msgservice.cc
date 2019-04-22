@@ -1290,6 +1290,12 @@ bool p3MsgService::MessageToDraft(MessageInfo &info, const std::string &msgParen
     return false;
 }
 
+bool 	p3MsgService::getMessageTag(const std::string &msgId, Rs::Msgs::MsgTagInfo& info)
+{
+	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
+    return locked_getMessageTag(msgId,info);
+}
+
 bool 	p3MsgService::getMessageTagTypes(MsgTagType& tags)
 {
 	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1413,10 +1419,8 @@ bool    p3MsgService::removeMessageTagType(uint32_t tagId)
 	return true;
 }
 
-bool 	p3MsgService::getMessageTag(const std::string &msgId, MsgTagInfo& info)
+bool 	p3MsgService::locked_getMessageTag(const std::string &msgId, MsgTagInfo& info)
 {
-	RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
-
 	uint32_t mid = atoi(msgId.c_str());
 	if (mid == 0) {
 		std::cerr << "p3MsgService::MessageGetMsgTag: Unknown msgId " << msgId << std::endl;
@@ -1740,6 +1744,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	mis.title = msg->subject;
 	mis.count = msg->attachment.items.size();
 	mis.ts = msg->sendTime;
+
+    MsgTagInfo taginfo;
+    locked_getMessageTag(mis.msgId,taginfo);
+    mis.msgtags = taginfo.tagIds ;
 }
 
 void p3MsgService::initMIRsMsg(RsMsgItem *msg,const MessageInfo& info)

@@ -77,18 +77,18 @@ void TS_dumpState() ;
 //    - The total number of TR per second emmited from self will be MAX_TUNNEL_REQS_PER_SECOND / TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS = 0.5
 //    - I updated forward probabilities to higher values, and min them to 1/nb_connected_friends to prevent blocking tunnels.
 //
-static const rstime_t TUNNEL_REQUESTS_LIFE_TIME 	           = 240 ;		/// life time for tunnel requests in the cache.
-static const rstime_t SEARCH_REQUESTS_LIFE_TIME 	           = 240 ;		/// life time for search requests in the cache
-static const rstime_t REGULAR_TUNNEL_DIGGING_TIME            = 300 ;		/// maximum interval between two tunnel digging campaigns.
-static const rstime_t MAXIMUM_TUNNEL_IDLE_TIME 	           =  60 ;		/// maximum life time of an unused tunnel.
-static const rstime_t EMPTY_TUNNELS_DIGGING_TIME 	           =  50 ;		/// look into tunnels regularly every 50 sec.
-static const rstime_t TUNNEL_SPEED_ESTIMATE_LAPSE	           =   5 ;		/// estimate tunnel speed every 5 seconds
-static const rstime_t TUNNEL_CLEANING_LAPS_TIME  	           =  10 ;		/// clean tunnels every 10 secs
-static const rstime_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS   =   2 ;        /// Tunnel management calls every 2 secs.
-static const uint32_t MAX_TUNNEL_REQS_PER_SECOND           =   1 ;		/// maximum number of tunnel requests issued per second. Was 0.5 before
-static const uint32_t MAX_ALLOWED_SR_IN_CACHE              = 120 ;		/// maximum number of search requests allowed in cache. That makes 2 per sec.
-static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_FILES  =5000 ;		/// maximum number of search results forwarded back to the source.
-static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_DEFAULT= 100 ;		/// default maximum number of search results forwarded back source.
+static const rstime_t TUNNEL_REQUESTS_LIFE_TIME                = 240 ; /// life time for tunnel requests in the cache.
+static const rstime_t SEARCH_REQUESTS_LIFE_TIME                = 240 ; /// life time for search requests in the cache
+static const rstime_t REGULAR_TUNNEL_DIGGING_TIME              = 300 ; /// maximum interval between two tunnel digging campaigns.
+static const rstime_t MAXIMUM_TUNNEL_IDLE_TIME                 =  60 ; /// maximum life time of an unused tunnel.
+static const rstime_t EMPTY_TUNNELS_DIGGING_TIME               =  50 ; /// look into tunnels regularly every 50 sec.
+static const rstime_t TUNNEL_SPEED_ESTIMATE_LAPSE              =   5 ; /// estimate tunnel speed every 5 seconds
+static const rstime_t TUNNEL_CLEANING_LAPS_TIME                =  10 ; /// clean tunnels every 10 secs
+static const rstime_t TIME_BETWEEN_TUNNEL_MANAGEMENT_CALLS     =   2 ; /// Tunnel management calls every 2 secs.
+static const uint32_t MAX_TUNNEL_REQS_PER_SECOND               =   1 ; /// maximum number of tunnel requests issued per second. Was 0.5 before
+static const uint32_t MAX_ALLOWED_SR_IN_CACHE                  = 120 ; /// maximum number of search requests allowed in cache. That makes 2 per sec.
+static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_FILES      =5000 ; /// maximum number of search results forwarded back to the source.
+static const uint32_t TURTLE_SEARCH_RESULT_MAX_HITS_DEFAULT    = 100 ; /// default maximum number of search results forwarded back source.
 
 static const float depth_peer_probability[7] = { 1.0f,0.99f,0.9f,0.7f,0.6f,0.5,0.4f } ;
 

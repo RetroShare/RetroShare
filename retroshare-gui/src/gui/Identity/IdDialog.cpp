@@ -344,7 +344,9 @@ IdDialog::IdDialog(QWidget *parent) :
 	ui->idTreeWidget->setColumnWidth(RSID_COL_IDTYPE, 18 * fontWidth);
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
 	
-    ui->idTreeWidget->setItemDelegateForColumn(RSID_COL_VOTES,new ReputationItemDelegate(RsReputations::ReputationLevel(0xff))) ;
+	ui->idTreeWidget->setItemDelegateForColumn(
+	            RSID_COL_VOTES,
+	            new ReputationItemDelegate(RsReputationLevel(0xff)));
 
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * idheader = ui->idTreeWidget->header();
@@ -1444,8 +1446,9 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	RsIdentityDetails idd ;
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
-	bool isBanned = idd.mReputation.mOverallReputationLevel == RsReputations::REPUTATION_LOCALLY_NEGATIVE;
-	uint32_t item_flags = 0 ;
+	bool isBanned = idd.mReputation.mOverallReputationLevel ==
+	        RsReputationLevel::LOCALLY_NEGATIVE;
+	uint32_t item_flags = 0;
 
 	/* do filtering */
 	bool ok = false;
@@ -1514,8 +1517,12 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
     item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
-    item->setData(RSID_COL_VOTES,Qt::DecorationRole, idd.mReputation.mOverallReputationLevel);
-    item->setData(RSID_COL_VOTES,SortRole, idd.mReputation.mOverallReputationLevel);
+	item->setData(
+	            RSID_COL_VOTES,Qt::DecorationRole,
+	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
+	item->setData(
+	            RSID_COL_VOTES,SortRole,
+	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
 
     if(isOwnId)
     {
@@ -1871,6 +1878,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
 	{
 		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
+		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, false);
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
@@ -1880,6 +1888,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		// No Reputation yet!
 		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
+		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, true);
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
@@ -1910,7 +1919,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 
 #endif
 
-    RsReputations::ReputationInfo info ;
+	RsReputationInfo info;
     rsReputations->getReputationInfo(RsGxsId(data.mMeta.mGroupId),data.mPgpId,info) ;
 
     QString frep_string ;
@@ -1925,23 +1934,32 @@ void IdDialog::insertIdDetails(uint32_t token)
     ui->label_positive->setText(QString::number(info.mFriendsPositiveVotes));
     ui->label_negative->setText(QString::number(info.mFriendsNegativeVotes));
 
-    switch(info.mOverallReputationLevel)
-    {
-    	case RsReputations::REPUTATION_LOCALLY_POSITIVE:  ui->overallOpinion_TF->setText(tr("Positive")) ; break ;
-    	case RsReputations::REPUTATION_LOCALLY_NEGATIVE:  ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_POSITIVE: ui->overallOpinion_TF->setText(tr("Positive (according to your friends)")) ; break ;
-    	case RsReputations::REPUTATION_REMOTELY_NEGATIVE: ui->overallOpinion_TF->setText(tr("Negative (according to your friends)")) ; break ;
-    default:
-    	case RsReputations::REPUTATION_NEUTRAL:           ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
-    }
-    
-    switch(info.mOwnOpinion)
+	switch(info.mOverallReputationLevel)
 	{
-        case RsReputations::OPINION_NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break ;
-        case RsReputations::OPINION_NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break ;
-        case RsReputations::OPINION_POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break ;
-        default:
-            std::cerr << "Unexpected value in own opinion: " << info.mOwnOpinion << std::endl;
+	case RsReputationLevel::LOCALLY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive")); break;
+	case RsReputationLevel::LOCALLY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (Banned by you)")); break;
+	case RsReputationLevel::REMOTELY_POSITIVE:
+		ui->overallOpinion_TF->setText(tr("Positive (according to your friends)"));
+		break;
+	case RsReputationLevel::REMOTELY_NEGATIVE:
+		ui->overallOpinion_TF->setText(tr("Negative (according to your friends)"));
+		break;
+	case RsReputationLevel::NEUTRAL: // fallthrough
+	default:
+		ui->overallOpinion_TF->setText(tr("Neutral")) ; break ;
+	}
+
+	switch(info.mOwnOpinion)
+	{
+	case RsOpinion::NEGATIVE: ui->ownOpinion_CB->setCurrentIndex(0); break;
+	case RsOpinion::NEUTRAL : ui->ownOpinion_CB->setCurrentIndex(1); break;
+	case RsOpinion::POSITIVE: ui->ownOpinion_CB->setCurrentIndex(2); break;
+	default:
+		std::cerr << "Unexpected value in own opinion: "
+		          << static_cast<uint32_t>(info.mOwnOpinion) << std::endl;
+		break;
 	}
 
     // now fill in usage cases
@@ -2060,19 +2078,19 @@ void IdDialog::modifyReputation()
 #endif
 
 	RsGxsId id(ui->lineEdit_KeyId->text().toStdString());
-    
-    	RsReputations::Opinion op ;
 
-    	switch(ui->ownOpinion_CB->currentIndex())
-        {
-        	case 0: op = RsReputations::OPINION_NEGATIVE ; break ;
-        	case 1: op = RsReputations::OPINION_NEUTRAL  ; break ;
-        	case 2: op = RsReputations::OPINION_POSITIVE ; break ;
-        default:
-            std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-            
-        }
-    	rsReputations->setOwnOpinion(id,op) ;
+	RsOpinion op;
+
+	switch(ui->ownOpinion_CB->currentIndex())
+	{
+	case 0: op = RsOpinion::NEGATIVE; break;
+	case 1: op = RsOpinion::NEUTRAL ; break;
+	case 2: op = RsOpinion::POSITIVE; break;
+	default:
+		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
+		return;
+	}
+	rsReputations->setOwnOpinion(id,op);
 
 #ifdef ID_DEBUG
 	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
@@ -2386,17 +2404,12 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 		switch(det.mReputation.mOwnOpinion)
 		{
-		case RsReputations::OPINION_NEGATIVE:  ++n_negative_reputations ;
-			break ;
-
-		case RsReputations::OPINION_POSITIVE: ++n_positive_reputations ;
-			break ;
-
-		case RsReputations::OPINION_NEUTRAL: ++n_neutral_reputations ;
-			break ;
+		case RsOpinion::NEGATIVE: ++n_negative_reputations; break;
+		case RsOpinion::POSITIVE: ++n_positive_reputations; break;
+		case RsOpinion::NEUTRAL:  ++n_neutral_reputations;  break;
 		}
 
-		++n_selected_items ;
+		++n_selected_items;
 
 		if(rsIdentity->isARegularContact(keyId))
 			++n_is_a_contact ;
@@ -2674,7 +2687,7 @@ void IdDialog::negativePerson()
         
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEGATIVE) ;
+	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEGATIVE);
     }
 
 	requestIdDetails();
@@ -2690,7 +2703,7 @@ void IdDialog::neutralPerson()
 
 	std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_NEUTRAL) ;
+	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEUTRAL);
     }
 
 	requestIdDetails();
@@ -2703,9 +2716,9 @@ void IdDialog::positivePerson()
     {
         QTreeWidgetItem *item = *it ;
 
-	std::string Id = item->text(RSID_COL_KEYID).toStdString();
+		std::string Id = item->text(RSID_COL_KEYID).toStdString();
 
-	rsReputations->setOwnOpinion(RsGxsId(Id),RsReputations::OPINION_POSITIVE) ;
+		rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::POSITIVE);
     }
 
 	requestIdDetails();

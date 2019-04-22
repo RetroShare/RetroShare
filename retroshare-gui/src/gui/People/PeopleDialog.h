@@ -31,7 +31,7 @@
 
 #include "ui_PeopleDialog.h"
 
-#define IMAGE_IDENTITY          ":/icons/friends_128.png"
+#define IMAGE_IDENTITY          ":/icons/png/people.png"
 
 class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
 {
@@ -84,8 +84,11 @@ private slots:
 	void pf_dropEventOccursInt(QDropEvent *event);
 	
 	void chatIdentity();
-  void sendMessage();
-  void personDetails();
+	void sendMessage();
+	void personDetails();
+	void sendInvite();
+	void addtoContacts();
+
 
 private:
 	void reloadAll();

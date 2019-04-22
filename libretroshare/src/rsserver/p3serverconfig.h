@@ -91,6 +91,7 @@ virtual bool     setOperatingMode(const std::string &opModeStr);
 virtual int SetMaxDataRates( int downKb, int upKb );
 virtual int GetMaxDataRates( int &downKb, int &upKb );
 virtual int GetCurrentDataRates( float &inKb, float &outKb );
+virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb );
 
 /********************* ABOVE is RsConfig Interface *******/
 

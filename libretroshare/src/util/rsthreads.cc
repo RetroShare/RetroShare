@@ -201,7 +201,7 @@ void RsThread::start(const std::string &threadName)
                 if(threadName.length() > 15)
                 {
 #ifdef DEBUG_THREADS
-                    THREAD_DEBUG << "RsThread::start called with to long name '" << name << "' truncating..." << std::endl;
+                    THREAD_DEBUG << "RsThread::start called with to long name '" << threadName << "' truncating..." << std::endl;
 #endif
                     RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
                 } else {

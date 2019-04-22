@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>617</width>
-    <height>190</height>
+    <width>825</width>
+    <height>337</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -67,6 +67,12 @@
       </property>
       <item row="0" column="0" rowspan="2">
        <widget class="QFrame" name="voteFrame">
+        <property name="minimumSize">
+         <size>
+          <width>37</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -100,12 +106,6 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <property name="minimumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
            <property name="toolTip">
             <string>Vote up</string>
            </property>
@@ -115,12 +115,6 @@
            <property name="icon">
             <iconset resource="Posted_images.qrc">
              <normaloff>:/images/up-arrow.png</normaloff>:/images/up-arrow.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -161,12 +155,6 @@
             <iconset resource="Posted_images.qrc">
              <normaloff>:/images/down-arrow.png</normaloff>:/images/down-arrow.png</iconset>
            </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
-           </property>
            <property name="autoRaise">
             <bool>true</bool>
            </property>
@@ -198,6 +186,12 @@
         </property>
         <item>
          <widget class="QLabel" name="thumbnailLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
             <width>100</width>
@@ -312,7 +306,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="leftMargin">
            <number>0</number>
@@ -372,25 +366,6 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="siteBoldLabel">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Site</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QLabel" name="siteLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -426,6 +401,9 @@
         </item>
         <item>
          <layout class="QHBoxLayout" name="buttonHLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -705,8 +683,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

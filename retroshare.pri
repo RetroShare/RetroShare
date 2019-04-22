@@ -155,6 +155,7 @@ rs_macos10.9:CONFIG -= rs_macos10.11
 rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 rs_macos10.13:CONFIG -= rs_macos10.11
+rs_macos10.14:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
@@ -229,11 +230,18 @@ isEmpty(RS_UPNP_LIB):RS_UPNP_LIB = upnp ixml threadutil
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
 #
-#      What: Do not hash PGP certificate twice when signing
+#    What: Do not hash PGP certificate twice when signing
 #
 #  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
 #
 #  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_004:
+#
+#    What: Do not probe that GXS tunnels accept fast items. Just assume they do.
+#    Why:  Avoids sending probe packets
+#    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
+#
 ###########################################################################################################################################################
 
 #CONFIG += rs_v07_changes
@@ -241,6 +249,8 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 
 ################################################################################
@@ -644,6 +654,14 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
+	rs_macos10.14 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.14 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.14
+		QMAKE_MAC_SDK = macosx10.14
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+
 
 
 	message(***retroshare.pri:MacOSX)
@@ -656,10 +674,10 @@ macx-* {
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
 	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
 	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/include"
-	INC_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/include"
+	INC_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/include"
 	LIB_DIR += "/usr/local/opt/openssl/lib/"
 	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib"
-	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.0.1/lib"
+	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/lib"
 	LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
 	CONFIG += c++11
 	INCLUDEPATH += "/usr/local/include"

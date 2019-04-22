@@ -786,13 +786,11 @@ GenCertDialog QFrame#profileframe{
 
 PostedListWidget QComboBox#comboBox {
 	font: bold;
-	font-size: 15px;
 	color: #0099cc;
 }
 
 PostedListWidget QToolButton#submitPostButton {
 	font: bold;
-	font-size: 15px;
 }
 
 PostedListWidget QToolButton#subscribeToolButton {
@@ -830,10 +828,7 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 
 GxsChannelPostsWidget QFrame#infoFrame
 { 
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+
 }
 
 GxsChannelPostsWidget QToolButton#subscribeToolButton {
@@ -889,8 +884,12 @@ PostedItem QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
-PostedItem QFrame#mainFrame{
+PostedItem QFrame#mainFrame [new=false]{
 	background: white;
+}
+
+PostedItem > QFrame#mainFrame[new=true] {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F0F8FD, stop:0.8 #E6F2FD, stop: 0.81 #E6F2FD, stop: 1 #D2E7FD);
 }
 
 PostedItem QFrame#frame_picture{
@@ -906,8 +905,7 @@ PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#site
 	color: #787c7e;
 }
 
-PostedItem QToolButton#commentButton, QPushButton#shareButton, QToolButton#notesButton{
-	font-size: 12px;
-	color: #878a8c;
-	font-weight: bold;
+GxsCommentDialog QComboBox#sortBox {
+	font: bold;
+	color: #0099cc;
 }

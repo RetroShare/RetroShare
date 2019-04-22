@@ -291,7 +291,7 @@ bool ChatLobbyUserNotify::checkWord(QString message, QString word)
 	    && (!word.isEmpty())) {
 		QString eow=" ~!@#$%^&*()_+{}|:\"<>?,./;'[]\\-="; // end of word
 		bool bFirstCharEOW = (nFound==0)?true:(eow.indexOf(message.at(nFound-1)) != -1);
-		bool bLastCharEOW = ((nFound+word.length()-1) < message.length())
+		bool bLastCharEOW = (nFound+word.length() < message.length())
 		    ?(eow.indexOf(message.at(nFound+word.length())) != -1)
 		   :true;
 		bFound = (bFirstCharEOW && bLastCharEOW);

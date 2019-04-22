@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>775</width>
+    <width>842</width>
     <height>485</height>
    </rect>
   </property>
@@ -454,7 +454,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -726,7 +726,7 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="RSTreeWidget" name="messageTreeWidget">
+          <widget class="QTreeView" name="messageTreeWidget">
            <property name="contextMenuPolicy">
             <enum>Qt::CustomContextMenu</enum>
            </property>
@@ -745,11 +745,9 @@
            <property name="expandsOnDoubleClick">
             <bool>false</bool>
            </property>
-           <column>
-            <property name="text">
-             <string notr="true">1</string>
-            </property>
-           </column>
+           <attribute name="headerCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
           </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QGridLayout" name="msgLayout"/>
@@ -844,11 +842,6 @@
    <header location="global">gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
-   <class>RSTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>gui/common/RSTreeWidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
@@ -860,8 +853,8 @@
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="icons.qrc"/>
   <include location="images.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections/>
 </ui>
