@@ -1694,7 +1694,7 @@ bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 bool p3LinkMgrIMPL::locked_CheckPotentialAddr(
         const sockaddr_storage& addr, rstime_t /*age*/ )
 {
-	Dbg1() << __PRETTY_FUNCTION__ << " addr: " << addr << std::endl;
+	Dbg3() << __PRETTY_FUNCTION__ << " addr: " << addr << std::endl;
 
 	if(!sockaddr_storage_isValidNet(addr))
 	{/* if invalid - quick rejection */

@@ -184,21 +184,21 @@ bool  	CheckConnectionTimeout();
 	// addition for udp (tcp version == ACTIVE).
 	int sslmode;     
 
-	SSL *ssl_connection;
+	SSL* ssl_connection;
 	int sockfd;
 
-	struct sockaddr_storage remote_addr;
+	sockaddr_storage remote_addr;
 
 	void *readpkt;
 	int pktlen;
 	int total_len ; // saves the reading state accross successive calls.
 
-	int attempt_ts;
+	rstime_t attempt_ts;
 
 	int n_read_zero; /* a counter to determine if the connection is really dead */
 	rstime_t mReadZeroTS; /* timestamp of first READ_ZERO occurance */
 
-	int ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
+	rstime_t ssl_connect_timeout; /* timeout to ensure that we don't get stuck (can happen on udp!) */
 
 	uint32_t mConnectDelay;
 	rstime_t   mConnectTS;

@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2013 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2004-2013  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,10 +20,11 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_SERVICES_DISCOVERY2_H
-#define MRK_SERVICES_DISCOVERY2_H
+#pragma once
 
 // Discovery2: Improved discovery service.
+
+#include <memory>
 
 #include "retroshare/rsdisc.h"
 
@@ -36,48 +38,47 @@
 #include "pqi/authgpg.h"
 #include "gxs/rsgixs.h"
 
-class p3ServiceControl;
+#ifndef RS_DEBUG_P3DISCOVERY
+#	define RS_DEBUG_P3DISCOVERY 4
+#endif
 
+class p3ServiceControl;
 
 typedef RsPgpId PGPID;
 typedef RsPeerId SSLID;
 
-class DiscSslInfo
+struct DiscSslInfo
 {
-	public:
-	DiscSslInfo() { mDiscStatus = 0; }
+	DiscSslInfo() : mDiscStatus(0) {}
 	uint16_t mDiscStatus;
 };
 
-class DiscPeerInfo
+struct DiscPeerInfo
 {
-	public:
 	DiscPeerInfo() {}
 
 	std::string mVersion;
-	//uint32_t mStatus;
 };
 
-class DiscPgpInfo
+struct DiscPgpInfo
 {
-	public:
 	DiscPgpInfo() {}
 
-void    mergeFriendList(const std::set<PGPID> &friends);
+	void mergeFriendList(const std::set<PGPID> &friends);
 
-	//PGPID mPgpId;
 	std::set<PGPID> mFriendSet;
 	std::map<SSLID, DiscSslInfo> mSslIds;
 };
 
 
-
-class p3discovery2: public RsDisc, public p3Service, public pqiServiceMonitor, public AuthGPGService
+class p3discovery2 : public RsDisc, public p3Service, public pqiServiceMonitor,
+        public AuthGPGService
 {
-	public:
+public:
 
-	p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc,RsGixs *gixs);
-virtual ~p3discovery2();
+	p3discovery2( p3PeerMgr* peerMgr, p3LinkMgr* linkMgr, p3NetMgr* netMgr,
+	              p3ServiceControl* sc, RsGixs* gixs );
+	virtual ~p3discovery2();
 
 virtual RsServiceInfo getServiceInfo();
 
@@ -92,12 +93,25 @@ virtual RsServiceInfo getServiceInfo();
 	bool getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId> &gpg_friends);
 	bool getPeerVersion(const RsPeerId &id, std::string &version);
 	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
+
+	/// @see RsDisc
+	bool sendInvite(
+	        const RsPeerId& inviteId, const RsPeerId& toSslId,
+	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsDisc
+	bool requestInvite(
+	        const RsPeerId& inviteId, const RsPeerId& toSslId,
+	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
         /************* from AuthGPService ****************/
 virtual AuthGPGOperation *getGPGOperation();
 virtual void setGPGOperation(AuthGPGOperation *operation);
 
 
-	private:
+private:
 
 	PGPID getPGPId(const SSLID &id);
 
@@ -129,7 +143,11 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 
 	bool setPeerVersion(const SSLID &peerId, const std::string &version);
 
-	private:
+	void recvInvite(std::unique_ptr<RsGossipDiscoveryInviteItem> inviteItem);
+
+	void rsEventsHandler(const RsEvent& event);
+	RsEventsHandlerId_t mRsEventsHandle;
+
 
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
@@ -150,7 +168,23 @@ virtual void setGPGOperation(AuthGPGOperation *operation);
 
 	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
 	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertOutList;
+
+protected:
+#if defined(RS_DEBUG_P3DISCOVERY) && RS_DEBUG_P3DISCOVERY == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_P3DISCOVERY) && RS_DEBUG_P3DISCOVERY == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_P3DISCOVERY) && RS_DEBUG_P3DISCOVERY >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_P3DISCOVERY
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_P3DISCOVERY
 };
-
-
-#endif // MRK_SERVICES_DISCOVERY2_H

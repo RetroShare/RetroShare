@@ -29,6 +29,7 @@
 
 #include "retroshare/rstypes.h"
 #include "retroshare/rsevents.h"
+#include "util/rsmemory.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsDisc;
@@ -47,20 +48,19 @@ extern RsDisc* rsDisc;
 /**
  * @brief Emitted when a pending PGP certificate is received
  */
-struct RsDiscPendingPgpReceivedEvent : RsEvent
+struct RsGossipDiscoveryPendingPgpFriendInviteReceivedEvent : RsEvent
 {
-	RsDiscPendingPgpReceivedEvent(const RsPgpId& pgpId, std::string pgpCert);
+	RsGossipDiscoveryPendingPgpFriendInviteReceivedEvent(
+	        const std::string& invite );
 
-	RsPgpId mPgpId;
-	std::string mPgpCert;
+	std::string mInvite;
 
 	/// @see RsSerializable
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,
-	                            RsGenericSerializer::SerializeContext& ctx)
+	virtual void serial_process( RsGenericSerializer::SerializeJob j,
+	                             RsGenericSerializer::SerializeContext& ctx )
 	{
 		RsEvent::serial_process(j,ctx);
-		RS_SERIAL_PROCESS(mPgpId);
-		RS_SERIAL_PROCESS(mPgpCert);
+		RS_SERIAL_PROCESS(mInvite);
 	}
 };
 
@@ -104,22 +104,32 @@ public:
 	virtual bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount) = 0;
 
 	/**
-	 * @brief Send PGP certificate to given peer
+	 * @brief Send RetroShare invite to given peer
 	 * @jsonapi{development}
-	 * @param[in] pgpId id of the PGP certificate to send
-	 * @param[in] toSslId ssl id of the destination
+	 * @param[in] inviteId id of peer of which send the invite
+	 * @param[in] toSslId ssl id of the destination peer
+	 * @param[out] errorMessage Optional storage for the error message,
+	 *	meaningful only on failure.
+	 * @return true on success false otherwise
 	 */
-	virtual void sendPGPCertificate(
-	        const RsPgpId& pgpId, const RsPeerId& toSslId ) = 0;
+	virtual bool sendInvite(
+	        const RsPeerId& inviteId, const RsPeerId& toSslId,
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	/**
-	 * @brief Request PGP certificate to given peer
+	 * @brief Request RetroShare certificate to given peer
 	 * @jsonapi{development}
-	 * @param[in] pgpId id of the PGP certificate to request
+	 * @param[in] inviteId id of the peer of which request the invite
 	 * @param[in] toSslId id of the destination of the request
+	 * @param[out] errorMessage Optional storage for the error message,
+	 *	meaningful only on failure.
+	 * @return true on success false otherwise
 	 */
-	virtual void requestPGPCertificate(
-	        const RsPgpId& pgpId, const RsPeerId& toSslId ) = 0;
+	virtual bool requestInvite(
+	        const RsPeerId& inviteId, const RsPeerId& toSslId,
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	virtual ~RsDisc();
 };

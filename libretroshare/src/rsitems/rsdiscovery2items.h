@@ -31,17 +31,24 @@
 
 #include "serialiser/rsserializer.h"
 
+// TODO: port to RsGossipDiscoveryItemType
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
 const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
 const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT_deprecated = 0x03;
-const uint8_t RS_PKT_SUBTYPE_DISC_SERVICES           = 0x04;
 const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
 const uint8_t RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      = 0x06;
 
+enum class RsGossipDiscoveryItemType : uint8_t
+{
+	INVITE = 7,
+	INVITE_REQUEST = 8
+};
+
 class RsDiscItem: public RsItem
 {
-	protected:
-		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+protected:
+	RsDiscItem(uint8_t subtype) :
+	    RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
 };
 
 
@@ -68,8 +75,6 @@ public:
 	RsTlvPgpIdSet pgpIdSet;
 };
 
-
-
 class RsDiscPgpCertItem: public RsDiscItem
 {
 public:
@@ -88,7 +93,6 @@ public:
 	RsPgpId pgpId;
 	std::string pgpCert;
 };
-
 
 class RsDiscContactItem: public RsDiscItem
 {
@@ -156,38 +160,38 @@ public:
 
     std::list<RsGxsId> ownIdentityList ;
 };
-#if 0
-class RsDiscServicesItem: public RsDiscItem
+
+struct RsGossipDiscoveryInviteItem : RsDiscItem
 {
-	public:
+	RsGossipDiscoveryInviteItem();
 
-	RsDiscServicesItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_SERVICES)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_SERVICES); 
-	}
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mInvite); }
+	void clear() override { mInvite.clear(); }
 
-virtual ~RsDiscServicesItem();
-
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-
-	std::string version;
-	RsTlvServiceIdMap mServiceIdMap;
+	std::string mInvite;
 };
 
-#endif
+struct RsGossipDiscoveryInviteRequestItem : RsDiscItem
+{
+	RsGossipDiscoveryInviteRequestItem();
 
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mInviteId); }
+	void clear() override { mInviteId.clear(); }
+
+	RsPeerId mInviteId;
+};
 
 class RsDiscSerialiser: public RsServiceSerializer
 {
-        public:
-        RsDiscSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_DISC) {}
+public:
+	RsDiscSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_DISC) {}
+	virtual ~RsDiscSerialiser() {}
 
-		virtual     ~RsDiscSerialiser() {}
-
-        RsItem *create_item(uint16_t service,uint8_t item_subtype) const ;
+	RsItem* create_item(uint16_t service, uint8_t item_subtype) const;
 };
 
 

@@ -1317,9 +1317,7 @@ std::string p3Peers::GetRetroshareInvite(
 
 	//add the sslid, location, ip local and external address after the signature
 	RsPeerDetails detail;
-	std::string invite;
-
-	if (getPeerDetails(ssl_id, detail))
+	if(getPeerDetails(ssl_id, detail))
 	{
 		if(!includeExtraLocators) detail.ipAddressList.clear();
 
@@ -1327,12 +1325,12 @@ std::string p3Peers::GetRetroshareInvite(
 		size_t mem_block_size = 0;
 
 		if(!AuthGPG::getAuthGPG()->exportPublicKey(
-		            RsPgpId(detail.gpg_id), mem_block, mem_block_size, false,
+		            detail.gpg_id, mem_block, mem_block_size, false,
 		            include_signatures ))
 		{
-			std::cerr << "Cannot output certificate for id \"" << detail.gpg_id
-			          << "\". Sorry." << std::endl;
-			return "";
+			RsErr() << __PRETTY_FUNCTION__ << " Cannot output certificate for "
+			        << "PGP id: " << detail.gpg_id << std::endl;
+			return std::string();
 		}
 
 		RsCertificate cert(detail, mem_block, mem_block_size);
@@ -1341,10 +1339,10 @@ std::string p3Peers::GetRetroshareInvite(
 		return cert.toStdString();
 	}
 
-#ifdef P3PEERS_DEBUG
-	std::cerr << __PRETTY_FUNCTION__ << " returns : \n" << invite << std::endl;
-#endif
-	return invite;
+	RsErr() << __PRETTY_FUNCTION__ << " peer: " << ssl_id
+	        << " not found! Returning empty!" << std::endl;
+
+	return std::string();
 }
 
 //===========================================================================

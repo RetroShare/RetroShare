@@ -705,10 +705,10 @@ int pqissl::Initiate_Connection()
  *
  */
 
-bool  	pqissl::CheckConnectionTimeout()
+bool pqissl::CheckConnectionTimeout()
 {
 	/* new TimeOut code. */
-	if (time(NULL) > mTimeoutTS)
+	if (time(nullptr) > mTimeoutTS)
 	{
 		std::string out;
 		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Connection Timed Out. Peer: %s Period: %lu", PeerId().toStdString().c_str(), mConnectTimeout);
@@ -731,36 +731,35 @@ bool  	pqissl::CheckConnectionTimeout()
 
 int pqissl::Basic_Connection_Complete()
 {
-#ifdef PQISSL_LOG_DEBUG 
-	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Basic_Connection_Complete()...");
-#endif
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
+
+	constexpr int failure = -1;
+	constexpr int pending = 0;
+	constexpr int success = 1;
 
 	if (CheckConnectionTimeout())
 	{
-		// calls reset.
-		return -1;
+		RsErr() << __PRETTY_FUNCTION__ << " connection timeout" << std::endl;
+		return failure;
 	}
 
 	if (waiting != WAITING_SOCK_CONNECT)
 	{
-		rslog(RSL_ALERT, pqisslzone, 
-	  		"pqissl::Basic_Connection_Complete() Wrong Mode");
-		return -1;
+		RsErr() << __PRETTY_FUNCTION__ << " Wrong Mode: "
+		        << "waiting != WAITING_SOCK_CONNECT" << std::endl;
+		return failure;
 	}
 
-        if (sockfd == -1)
-        {
-                rslog(RSL_ALERT, pqisslzone,
-                        "pqissl::Basic_Connection_Complete() problem with the socket descriptor. Aborting");
-		rslog(RSL_ALERT, pqisslzone, "pqissl::Basic_Connection_Complete() -> calling reset()");
-                reset_locked();
-                return -1;
-        }
+	if (sockfd == -1)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " sockfd == -1 " << std::endl;
+		reset_locked();
+		return failure;
+	}
 
-        // use select on the opened socket.
+	// use select on the opened socket.
 	// Interestingly - This code might be portable....
-	
+
 	fd_set ReadFDs, WriteFDs, ExceptFDs;
 	FD_ZERO(&ReadFDs);
 	FD_ZERO(&WriteFDs);
@@ -774,171 +773,93 @@ int pqissl::Basic_Connection_Complete()
 	timeout.tv_sec = 0;
 	timeout.tv_usec = 0;
 
-#ifdef PQISSL_LOG_DEBUG 
-  	rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  "pqissl::Basic_Connection_Complete() Selecting ....");
-#endif
+	Dbg2() << __PRETTY_FUNCTION__ << " selecting..." << std::endl;
 
 	int sr = 0;
-	if (0 > (sr = select(sockfd + 1, 
-			&ReadFDs, &WriteFDs, &ExceptFDs, &timeout))) 
+	if((sr = select( sockfd + 1,
+	                 &ReadFDs, &WriteFDs, &ExceptFDs, &timeout )) <= 0)
 	{
-		// select error.
-  		rslog(RSL_WARNING, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Select ERROR(1)");
-		
+		Dbg2() << __PRETTY_FUNCTION__ << " Select ERROR: " << sr << std::endl;
+
 		net_internal_close(sockfd);
 		sockfd=-1;
-		//reset();
 		waiting = WAITING_FAIL_INTERFACE;
-		return -1;
+		return failure;
 	}
 
-#ifdef PQISSL_LOG_DEBUG 
-	{
-		std::string out;
-		rs_sprintf(out, "pqissl::Basic_Connection_Complete() Select returned %d", sr);
-		rslog(RSL_DEBUG_BASIC, pqisslzone, out);
-	}
-#endif
-		
+	Dbg2() << __PRETTY_FUNCTION__ << " select returned: " << sr << std::endl;
 
-	if (FD_ISSET(sockfd, &ExceptFDs))
+	if(FD_ISSET(sockfd, &ExceptFDs))
 	{
-		// error - reset socket.
-		// this is a definite bad socket!.
-		
-  		rslog(RSL_WARNING, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Select ERROR(2)");
-		
+		RsErr() << __PRETTY_FUNCTION__ << " FD_ISSET(sockfd, &ExceptFDs)"
+		        << std::endl;
+
 		net_internal_close(sockfd);
 		sockfd=-1;
-		//reset();
 		waiting = WAITING_FAIL_INTERFACE;
-		return -1;
+		return failure;
 	}
 
-	if (FD_ISSET(sockfd, &WriteFDs))
-	{
-#ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Can Write!");
-#endif
-	}
+	if(FD_ISSET(sockfd, &WriteFDs))
+		Dbg2() << __PRETTY_FUNCTION__ << " Can Write!" << std::endl;
 	else
 	{
-#ifdef PQISSL_LOG_DEBUG 
-		// happens frequently so switched to debug msg.
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Not Yet Ready!");
-#endif
-		return 0;
+		Dbg2() << __PRETTY_FUNCTION__ << " Not yet ready!" << std::endl;
+		return pending;
 	}
 
 	if (FD_ISSET(sockfd, &ReadFDs))
-	{
-#ifdef PQISSL_LOG_DEBUG 
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Can Read!");
-#endif
-	}
+		Dbg2() << __PRETTY_FUNCTION__ << " Can Read!" << std::endl;
 	else
-	{
-#ifdef PQISSL_LOG_DEBUG 
-		// not ready return -1;
-  		rslog(RSL_DEBUG_BASIC, pqisslzone, 
-	  	  "pqissl::Basic_Connection_Complete() Cannot Read!");
-#endif
-	}
+		Dbg2() << __PRETTY_FUNCTION__ << " Cannot read!" << std::endl;
 
 	int err = 1;
-	if (0==unix_getsockopt_error(sockfd, &err))
+	if(unix_getsockopt_error(sockfd, &err) == 0)
 	{
-		if (err == 0)
+		switch (err)
 		{
-			{
-				std::string out;
-				rs_sprintf(out, "pqissl::Basic_Connection_Complete() TCP Connection Complete: cert: %s on osock: ", PeerId().toStdString().c_str(), sockfd);
-#ifdef PQISSL_LOG_DEBUG2
-				rslog(RSL_WARNING, pqisslzone, out);
-#endif
-			}
-			return 1;
-		}
-		else if (err == EINPROGRESS)
-		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EINPROGRESS: cert: " + PeerId().toStdString());
-
-			return 0;
-		}
-		else if ((err == ENETUNREACH) || (err == ETIMEDOUT))
-		{
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ENETUNREACH/ETIMEDOUT: cert: " + PeerId().toStdString());
-
-			// Then send unreachable message.
+		case 0:
+			Dbg2() << __PRETTY_FUNCTION__ << "TCP Connection Complete with: "
+			       << PeerId() << " on socket: " << sockfd << std::endl;
+			return success;
+		case EINPROGRESS:
+			Dbg2() << __PRETTY_FUNCTION__ << " err == EINPROGRESS peer: "
+			       << PeerId() << std::endl;
+			return pending;
+		default:
+			Dbg2() << __PRETTY_FUNCTION__ << " network connection err: "
+			       << err << " " << socket_errorType(err) << std::endl;
 			net_internal_close(sockfd);
 			sockfd=-1;
-			//reset();
-			
 			waiting = WAITING_FAIL_INTERFACE;
-
-			return -1;
+			return failure;
 		}
-		else if ((err == EHOSTUNREACH) || (err == EHOSTDOWN))
-		{
-#ifdef PQISSL_DEBUG
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() EHOSTUNREACH/EHOSTDOWN: cert: " + PeerId().toStdString());
-#endif
-			// Then send unreachable message.
-			net_internal_close(sockfd);
-			sockfd=-1;
-			//reset();
-			waiting = WAITING_FAIL_INTERFACE;
-
-			return -1;
-		}
-		else if (err == ECONNREFUSED)
-		{
-#ifdef PQISSL_DEBUG
-			rslog(RSL_WARNING, pqisslzone, "pqissl::Basic_Connection_Complete() ECONNREFUSED: cert: " + PeerId().toStdString());
-#endif
-
-			// Then send unreachable message.
-			net_internal_close(sockfd);
-			sockfd=-1;
-			//reset();
-			waiting = WAITING_FAIL_INTERFACE;
-
-			return -1;
-		}
-			
-		std::string out;
-		rs_sprintf(out, "Error: Connection Failed UNKNOWN ERROR: %d - %s", err, socket_errorType(err).c_str());
-		rslog(RSL_WARNING, pqisslzone, out);
-
-		net_internal_close(sockfd);
-		sockfd=-1;
-		//reset(); // which will send Connect Failed,
-		return -1;
 	}
 
-  	rslog(RSL_ALERT, pqisslzone, 
-	  "pqissl::Basic_Connection_Complete() BAD GETSOCKOPT!");
-	waiting = WAITING_FAIL_INTERFACE;
+	RsErr() << __PRETTY_FUNCTION__ << " unix_getsockopt_error failed!"
+	        << std::endl;
 
-	return -1;
+	waiting = WAITING_FAIL_INTERFACE;
+	return failure;
 }
 
 
 int pqissl::Initiate_SSL_Connection()
 {
-	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
+
+	constexpr int failure = -1;
+	constexpr int pending = 0;
+	constexpr int success = 1;
 
 	int err = Basic_Connection_Complete();
-	if(err <= 0)
+
+	if(err == pending) return pending;
+
+	if(err < 0)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Basic_Connection_Complete() failed "
-		        << " err: " << err << std::endl;
+		Dbg2() << __PRETTY_FUNCTION__ << " Basic_Connection_Complete() failed "
+		       << " err: " << err << std::endl;
 		return err;
 	}
 
@@ -968,10 +889,11 @@ int pqissl::Initiate_SSL_Connection()
 		printSSLError(ssl, err, SSL_get_error(ssl, err), ERR_get_error(), errMsg);
 		RsErr() << __PRETTY_FUNCTION__ << " net_internal_SSL_set_fd failed! "
 		        << "err:" << err << " out: " << errMsg << std::endl;
+		return failure;
 	}
 
 	waiting = WAITING_SSL_CONNECTION;
-	return 1;
+	return success;
 }
 
 int pqissl::SSL_Connection_Complete()
@@ -1045,7 +967,11 @@ int pqissl::Authorise_SSL_Connection()
 	/* Real authorization is performed before into AuthSSL::VerifyX509Callback
 	 * so this function is most probably useless now */
 
-	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
+
+	constexpr int failure = -1;
+	constexpr int pending = 0;
+	constexpr int success = 1;
 
 	if(time(nullptr) > ssl_connect_timeout)
 	{
@@ -1055,10 +981,12 @@ int pqissl::Authorise_SSL_Connection()
 	}
 
 	int err = SSL_Connection_Complete();
-	if (err <= 0)
+	if(err == pending) return pending;
+
+	if (err < 0)
 	{
 		RsErr() << __PRETTY_FUNCTION__ << " SSL_Connection_Complete() failed "
-		        << "err: " << err;
+		        << "err: " << err << std::endl;
 		return err;
 	}
 
@@ -1068,10 +996,11 @@ int pqissl::Authorise_SSL_Connection()
 	X509* peercert = SSL_get_peer_certificate(ssl_connection);
 	if (!peercert)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Peer Didn't Give Cert!" << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Failure getting peer certificate"
+		        << std::endl;
 		// Failed completely
 		reset_locked();
-		return -1;
+		return failure;
 	}
 
 	RsPeerId certPeerId = sslcert::getCertSslId(*peercert);
@@ -1082,7 +1011,7 @@ int pqissl::Authorise_SSL_Connection()
 		        << " we are attempting to connect to" << std::endl;
 		// Failed completely
 		reset_locked();
-		return -1;
+		return failure;
 	}
 
 	uint32_t check_result;
@@ -1105,14 +1034,14 @@ int pqissl::Authorise_SSL_Connection()
 		            sockaddr_storage_iptostring(remote_addr), "", "",
 		            check_result );
 		reset_locked();
-		return 0;
+		return failure;
 	}
 
-	Dbg1() << __PRETTY_FUNCTION__ << " Accepting connection with: " << PeerId()
+	Dbg2() << __PRETTY_FUNCTION__ << " Accepting connection with: " << PeerId()
 	       << " remote_addr: " << remote_addr << std::endl;
 
 	accept_locked(ssl_connection, sockfd, remote_addr);
-	return 1;
+	return success;
 }
 
 

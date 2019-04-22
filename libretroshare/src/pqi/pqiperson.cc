@@ -495,7 +495,7 @@ int pqiperson::connect(uint32_t type, const sockaddr_storage& raddr,
 					   uint32_t flags, uint32_t bandwidth,
 					   const std::string &domain_addr, uint16_t domain_port)
 {
-	Dbg1() << __PRETTY_FUNCTION__ << " id: " << PeerId() << " type: " << type
+	Dbg2() << __PRETTY_FUNCTION__ << " id: " << PeerId() << " type: " << type
 	       << " raddr: " << raddr << " proxyaddr: " << proxyaddr
 	       << " srcaddr: " << srcaddr << " delay: " << delay
 	       << " period: " << period << " timeout: " << timeout

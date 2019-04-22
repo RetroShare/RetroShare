@@ -43,22 +43,21 @@
 
 RsItem *RsDiscSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
 {
-    if(service != RS_SERVICE_TYPE_DISC)
-        return NULL ;
+	if(service != RS_SERVICE_TYPE_DISC) return nullptr;
 
-    switch(item_subtype)
-    {
+	switch(item_subtype)
+	{
 	case RS_PKT_SUBTYPE_DISC_PGP_LIST           : return new RsDiscPgpListItem() ; //= 0x01;
 	case RS_PKT_SUBTYPE_DISC_PGP_CERT           : return new RsDiscPgpCertItem() ;      //= 0x02;
-	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return NULL ;                         //= 0x03;
-#if 0
-	case RS_PKT_SUBTYPE_DISC_SERVICES           : return new RsDiscServicesItem();      //= 0x04;
-#endif
+	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return nullptr;                         //= 0x03;
 	case RS_PKT_SUBTYPE_DISC_CONTACT            : return new RsDiscContactItem();       //= 0x05;
 	case RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      : return new RsDiscIdentityListItem();  //= 0x06;
-    default:
-    return NULL ;
-    }
+	case static_cast<uint8_t>(RsGossipDiscoveryItemType::INVITE):
+		return new RsGossipDiscoveryInviteItem();
+	case static_cast<uint8_t>(RsGossipDiscoveryItemType::INVITE_REQUEST):
+		return  new RsGossipDiscoveryInviteRequestItem();
+	default: return nullptr;
+	}
 }
 
 /*************************************************************************/
@@ -156,3 +155,11 @@ void RsDiscIdentityListItem::serial_process(RsGenericSerializer::SerializeJob j,
     RS_SERIAL_PROCESS(ownIdentityList);
 }
 
+
+RsGossipDiscoveryInviteItem::RsGossipDiscoveryInviteItem() :
+    RsDiscItem(static_cast<uint8_t>(RsGossipDiscoveryItemType::INVITE))
+{ setPriorityLevel(QOS_PRIORITY_RS_DISC_ASK_INFO); }
+
+RsGossipDiscoveryInviteRequestItem::RsGossipDiscoveryInviteRequestItem() :
+    RsDiscItem(static_cast<uint8_t>(RsGossipDiscoveryItemType::INVITE_REQUEST))
+{ setPriorityLevel(QOS_PRIORITY_RS_DISC_REPLY); }
