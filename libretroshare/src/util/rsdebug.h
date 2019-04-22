@@ -22,6 +22,7 @@
 
 #include <ostream>
 #include <iostream>
+#include <ctime>
 
 #include "util/rsdeprecate.h"
 
