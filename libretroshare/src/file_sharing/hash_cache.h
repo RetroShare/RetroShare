@@ -97,6 +97,9 @@ private:
      */
     void clean() ;
 
+    void startHashThread();
+    void stopHashThread();
+
     // loading/saving the entire hash database to a file
 
     void locked_save() ;

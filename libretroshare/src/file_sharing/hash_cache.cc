@@ -133,12 +133,7 @@ void HashStorage::data_tick()
 
                 if(!mChanged)	// otherwise it might prevent from saving the hash cache
                 {
-                    std::cerr << "Stopping hashing thread." << std::endl;
-                    shutdown();
-                    mRunning = false ;
-                    mTotalSizeToHash = 0;
-                    mTotalFilesToHash = 0;
-                    std::cerr << "done." << std::endl;
+                    stopHashThread();
                 }
 
                 RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
@@ -262,10 +257,12 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_
         it->second.time_stamp = now ;
 
 #ifdef WINDOWS_SYS
-        if(it->second.time_stamp != (uint64_t)mod_time)
+        if(it->second.modf_stamp != (uint64_t)mod_time)
         {
             std::cerr << "(WW) detected a 1 hour shift in file modification time. This normally happens to many files at once, when daylight saving time shifts (file=\"" << full_path << "\")." << std::endl;
-            it->second.time_stamp = (uint64_t)mod_time;
+            it->second.modf_stamp = (uint64_t)mod_time;
+            mChanged = true;
+            startHashThread();
         }
 #endif
 
@@ -301,6 +298,13 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_
     mTotalSizeToHash += size ;
     ++mTotalFilesToHash;
 
+    startHashThread();
+
+    return false;
+}
+
+void HashStorage::startHashThread()
+{
     if(!mRunning)
     {
         mRunning = true ;
@@ -308,10 +312,21 @@ bool HashStorage::requestHash(const std::string& full_path,uint64_t size,rstime_
         mHashCounter = 0;
         mTotalHashedSize = 0;
 
-		start("fs hash cache") ;
+        start("fs hash cache") ;
     }
+}
 
-    return false;
+void HashStorage::stopHashThread()
+{
+    if (mRunning)
+    {
+        std::cerr << "Stopping hashing thread." << std::endl;
+        shutdown();
+        mRunning = false ;
+        mTotalSizeToHash = 0;
+        mTotalFilesToHash = 0;
+        std::cerr << "done." << std::endl;
+    }
 }
 
 void HashStorage::clean()

@@ -44,6 +44,7 @@ class RsPostedGroup
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+	RsGxsImage mGroupImage;
 
 };
 

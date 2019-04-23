@@ -1878,6 +1878,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	if (isOwnId)
 	{
 		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, false);
+		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, false);
 		ui->editIdentity->setEnabled(true);
 		ui->removeIdentity->setEnabled(true);
 		ui->chatIdentity->setEnabled(false);
@@ -1887,6 +1888,7 @@ void IdDialog::insertIdDetails(uint32_t token)
 	{
 		// No Reputation yet!
 		mStateHelper->setWidgetEnabled(ui->ownOpinion_CB, true);
+		mStateHelper->setWidgetEnabled(ui->autoBanIdentities_CB, true);
 		ui->editIdentity->setEnabled(false);
 		ui->removeIdentity->setEnabled(false);
 		ui->chatIdentity->setEnabled(true);
@@ -2086,7 +2088,7 @@ void IdDialog::modifyReputation()
 	case 2: op = RsOpinion::POSITIVE; break;
 	default:
 		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-		break;
+		return;
 	}
 	rsReputations->setOwnOpinion(id,op);
 

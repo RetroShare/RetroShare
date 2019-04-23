@@ -61,11 +61,15 @@ const uint32_t ChannelEditDefaultsFlags = ChannelCreateDefaultsFlags;
 GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
     : GxsGroupDialog(tokenQueue, ChannelCreateEnabledFlags, ChannelCreateDefaultsFlags, parent)
 {
+    ui.commentGroupBox->setEnabled(false);	// These are here because comments_allowed are actually not used yet, so the group will not be changed by the setting and when
+    ui.comments_allowed->setChecked(true);	// the group info is displayed it will therefore be set to "disabled" in all cases although it is enabled.
 }
 
 GxsChannelGroupDialog::GxsChannelGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
     : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, ChannelEditEnabledFlags, ChannelEditDefaultsFlags, parent)
 {
+    ui.commentGroupBox->setEnabled(false);	// These are here because comments_allowed are actually not used yet, so the group will not be changed by the setting and when
+    ui.comments_allowed->setChecked(true);	// the group info is displayed it will therefore be set to "disabled" in all cases although it is enabled.
 }
 
 void GxsChannelGroupDialog::initUi()

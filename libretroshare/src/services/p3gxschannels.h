@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,19 +20,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef P3_GXSCHANNELS_SERVICE_HEADER
-#define P3_GXSCHANNELS_SERVICE_HEADER
+#pragma once
 
 
 #include "retroshare/rsgxschannels.h"
 #include "services/p3gxscommon.h"
 #include "gxs/rsgenexchange.h"
 #include "gxs/gxstokenqueue.h"
+#include "util/rsmemory.h"
 
 #include "util/rstickevent.h"
 
 #include <map>
 #include <string>
+
 
 
 class SSGxsChannelGroup
@@ -191,23 +192,64 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	                       std::vector<RsGxsComment>& comments );
 
 	/// Implementation of @see RsGxsChannels::getContentSummaries
-	virtual bool getContentSummaries( const RsGxsGroupId& channelId,
-	                                  std::vector<RsMsgMetaData>& summaries );
+	virtual bool getContentSummaries(
+	        const RsGxsGroupId& channelId,
+	        std::vector<RsMsgMetaData>& summaries ) override;
 
-	/// Implementation of @see RsGxsChannels::createChannel
-	virtual bool createChannel(RsGxsChannelGroup& channel);
+	/// Implementation of @see RsGxsChannels::createChannelV2
+	virtual bool createChannelV2(
+	        const std::string& name, const std::string& description,
+	        const RsGxsImage& thumbnail = RsGxsImage(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        RsGxsCircleType circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& channelId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @deprecated Implementation of @see RsGxsChannels::createComment
+	RS_DEPRECATED_FOR(createCommentV2)
+	virtual bool createComment(RsGxsComment& comment) override;
 
 	/// Implementation of @see RsGxsChannels::createComment
-	virtual bool createComment(RsGxsComment& comment);
+	virtual bool createCommentV2(
+	        const RsGxsGroupId&   channelId, const RsGxsMessageId& threadId,
+	        const RsGxsMessageId& parentId,  const RsGxsId&        authorId,
+	        const std::string&    comment,
+	        RsGxsMessageId& commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 	/// Implementation of @see RsGxsChannels::editChannel
-	virtual bool editChannel(RsGxsChannelGroup& channel);
+	virtual bool editChannel(RsGxsChannelGroup& channel) override;
 
-	/// Implementation of @see RsGxsChannels::createPost
-	virtual bool createPost(RsGxsChannelPost& post);
+	/// @deprecated Implementation of @see RsGxsChannels::createPost
+	RS_DEPRECATED_FOR(createPostV2)
+	virtual bool createPost(RsGxsChannelPost& post) override;
 
-	/// Implementation of @see RsGxsChannels::createVote
-	virtual bool createVote(RsGxsVote& vote);
+	/// Implementation of @see RsGxsChannels::createPostV2
+	bool createPostV2(
+	        const RsGxsGroupId& channelId, const std::string& title,
+	        const std::string& body,
+	        const std::list<RsGxsFile>& files = std::list<RsGxsFile>(),
+	        const RsGxsImage& thumbnail = RsGxsImage(),
+	        const RsGxsMessageId& origPostId = RsGxsMessageId(),
+	        RsGxsMessageId& postId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @deprecated Implementation of @see RsGxsChannels::createVote
+	RS_DEPRECATED_FOR(createVoteV2)
+	virtual bool createVote(RsGxsVote& vote) override;
+
+	/// Implementation of @see RsGxsChannels::createVoteV2
+	virtual bool createVoteV2(
+	        const RsGxsGroupId& channelId, const RsGxsMessageId& postId,
+	        const RsGxsMessageId& commentId, const RsGxsId& authorId,
+	        RsGxsVoteType vote,
+	        RsGxsMessageId& voteId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 	/// Implementation of @see RsGxsChannels::subscribeToChannel
 	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
@@ -218,6 +260,10 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	virtual bool shareChannelKeys(
 	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers );
+
+	/// Implementation of @see RsGxsChannels::createChannel
+	RS_DEPRECATED_FOR(createChannelV2)
+	virtual bool createChannel(RsGxsChannelGroup& channel) override;
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.
@@ -263,9 +309,11 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	class ChannelDummyRef
 	{
 		public:
-		ChannelDummyRef() { return; }
-		ChannelDummyRef(const RsGxsGroupId &grpId, const RsGxsMessageId &threadId, const RsGxsMessageId &msgId)
-		:mGroupId(grpId), mThreadId(threadId), mMsgId(msgId) { return; }
+		ChannelDummyRef() {}
+		ChannelDummyRef(
+		        const RsGxsGroupId &grpId, const RsGxsMessageId &threadId,
+		        const RsGxsMessageId &msgId ) :
+		    mGroupId(grpId), mThreadId(threadId), mMsgId(msgId) {}
 
 		RsGxsGroupId mGroupId;
 		RsGxsMessageId mThreadId;
@@ -309,5 +357,3 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	/// Cleanup mSearchCallbacksMap and mDistantChannelsCallbacksMap
 	void cleanTimedOutCallbacks();
 };
-
-#endif 

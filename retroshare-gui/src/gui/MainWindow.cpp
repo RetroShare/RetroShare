@@ -40,7 +40,7 @@
 #include "gui/FileTransfer/SearchDialog.h"
 #include "gui/FileTransfer/SharedFilesDialog.h"
 #include "gui/FileTransfer/TransfersDialog.h"
-#include "MessagesDialog.h"
+#include "gui/msgs/MessagesDialog.h"
 #include "PluginsPage.h"
 #include "NewsFeed.h"
 #include "ShareManager.h"
@@ -730,9 +730,12 @@ void MainWindow::updateStatus()
     float downKb = 0;
     float upKb = 0;
     rsConfig->GetCurrentDataRates(downKb, upKb);
+	uint64_t down = 0;
+	uint64_t up = 0;
+	rsConfig->GetTrafficSum(down, up);
 
     if (ratesstatus)
-        ratesstatus->getRatesStatus(downKb, upKb);
+        ratesstatus->getRatesStatus(downKb, down, upKb, up);
 
     if(torstatus)
         torstatus->getTorStatus();

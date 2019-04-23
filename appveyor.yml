@@ -85,7 +85,8 @@ environment:
 #  - cmd: echo This is batch again
 #  - cmd: set MY_VAR=12345
 install:
-  - git submodule update --init
+  # We cannot get OBS submodule as it use illegal folder name for windows.
+  #- git submodule update --init
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
@@ -195,11 +196,13 @@ after_build:
   - windeployqt %RS_DEPLOY%\retroshare.exe
 
   - copy C:\msys64\mingw32\bin\libbz2*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libeay32.dll %RS_DEPLOY%\
+  #- copy C:\msys64\mingw32\bin\libeay32.dll %RS_DEPLOY%\
+  - copy C:\OpenSSL-Win32\libeay32.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libminiupnpc.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlcipher*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libsqlite3*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\ssleay32.dll %RS_DEPLOY%\
+  #- copy C:\msys64\mingw32\bin\ssleay32.dll %RS_DEPLOY%\
+  - copy C:\OpenSSL-Win32\ssleay32.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\zlib*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libgcc_s_dw2*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libstdc*.dll %RS_DEPLOY%\

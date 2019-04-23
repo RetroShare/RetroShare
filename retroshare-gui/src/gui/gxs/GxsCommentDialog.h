@@ -45,6 +45,7 @@ private slots:
 	void refresh();
     void idChooserReady();
 	void voterSelectionChanged( int index );
+	void sortComments(int);
 
 private:
 	RsGxsGroupId   mGrpId;

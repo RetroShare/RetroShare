@@ -117,7 +117,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../icons.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -284,7 +284,7 @@
              <x>0</x>
              <y>0</y>
              <width>1372</width>
-             <height>1000</height>
+             <height>999</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -562,7 +562,11 @@ border-image: url(:/images/closepressed.png)
                 </widget>
                </item>
                <item row="2" column="2" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_Type"/>
+                <widget class="QLineEdit" name="lineEdit_Type">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="0" column="0" colspan="2">
                 <widget class="QLabel" name="label_Nickname">
@@ -646,7 +650,11 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="7" column="2" colspan="2">
-                <widget class="QLineEdit" name="lineEdit_LastUsed"/>
+                <widget class="QLineEdit" name="lineEdit_LastUsed">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="label_Type">
@@ -891,7 +899,11 @@ p, li { white-space: pre-wrap; }
                 </widget>
                </item>
                <item row="6" column="2">
-                <widget class="QLineEdit" name="lineEdit_PublishTS"/>
+                <widget class="QLineEdit" name="lineEdit_PublishTS">
+                 <property name="readOnly">
+                  <bool>true</bool>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -1087,8 +1099,8 @@ p, li { white-space: pre-wrap; }
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

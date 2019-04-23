@@ -230,11 +230,18 @@ isEmpty(RS_UPNP_LIB):RS_UPNP_LIB = upnp ixml threadutil
 #
 #  V07_NON_BACKWARD_COMPATIBLE_CHANGE_003:
 #
-#      What: Do not hash PGP certificate twice when signing
+#    What: Do not hash PGP certificate twice when signing
 #
 #  	 Why: hasing twice is not per se a security issue, but it makes it harder to change the settings for hashing.
 #
 #  	 Backward compat: patched peers cannot connect to non patched peers older than Nov 2017.
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_004:
+#
+#    What: Do not probe that GXS tunnels accept fast items. Just assume they do.
+#    Why:  Avoids sending probe packets
+#    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
+#
 ###########################################################################################################################################################
 
 #CONFIG += rs_v07_changes
@@ -242,6 +249,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 }
 

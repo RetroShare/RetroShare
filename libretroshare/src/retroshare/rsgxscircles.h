@@ -42,23 +42,34 @@ class RsGxsCircles;
  */
 extern RsGxsCircles* rsGxsCircles;
 
+enum class RsGxsCircleType : uint32_t // 32 bit overkill, just for retrocompat
+{
+	UNKNOWN           = 0, /// Used to detect uninizialized values.
+	PUBLIC            = 1, /// Public distribution
+	EXTERNAL          = 2, /// Restricted to an external circle
 
-// TODO: convert to enum
-/// The meaning of the different circle types is:
-static const uint32_t GXS_CIRCLE_TYPE_UNKNOWN           = 0x0000 ;	/// Used to detect uninizialized values.
-static const uint32_t GXS_CIRCLE_TYPE_PUBLIC            = 0x0001 ;	// not restricted to a circle
-static const uint32_t GXS_CIRCLE_TYPE_EXTERNAL          = 0x0002 ;	// restricted to an external circle, made of RsGxsId
-static const uint32_t GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY = 0x0003 ;	// restricted to a subset of friend nodes of a given RS node given by a RsPgpId list
-static const uint32_t GXS_CIRCLE_TYPE_LOCAL             = 0x0004 ;	// not distributed at all
-static const uint32_t GXS_CIRCLE_TYPE_EXT_SELF          = 0x0005 ;	// self-restricted. Not used, except at creation time when the circle ID isn't known yet. Set to EXTERNAL afterwards.
-static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006 ;	// distributed to nodes signed by your own PGP key only.
+	/** Restricted to a group of friend nodes, the administrator of the circle
+	 * behave as a hub for them */
+	NODES_GROUP        = 3,
 
+	LOCAL              = 4, /// not distributed at all
+
+	/** Self-restricted. Used only at creation time of self-restricted circles
+	 *  when the circle id isn't known yet. Once the circle id is known the type
+	 *  is set to EXTERNAL, and the external circle id is set to the id of the
+	 *  circle itself.
+	 */
+	EXT_SELF           = 5,
+
+	/// distributed to nodes signed by your own PGP key only.
+	YOUR_EYES_ONLY     = 6
+};
+
+// TODO: convert to enum class
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST = 0x0001 ;// user is validated by circle admin
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED    = 0x0002 ;// user has subscribed the group
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE = 0x0004 ;// key is available, so we can encrypt for this circle
 static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0007 ;// user is allowed. Combines all flags above.
-
-static const uint32_t GXS_CIRCLE_FLAGS_IS_EXTERNAL   = 0x0008 ;// user is allowed
 
 
 struct RsGxsCircleGroup : RsSerializable
@@ -110,8 +121,9 @@ struct RsGxsCircleMsg : RsSerializable
 struct RsGxsCircleDetails : RsSerializable
 {
 	RsGxsCircleDetails() :
-	    mCircleType(GXS_CIRCLE_TYPE_EXTERNAL), mAmIAllowed(false) {}
-	~RsGxsCircleDetails() {}
+	    mCircleType(static_cast<uint32_t>(RsGxsCircleType::EXTERNAL)),
+	    mAmIAllowed(false) {}
+	~RsGxsCircleDetails() override {}
 
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
@@ -264,3 +276,34 @@ public:
 	RS_DEPRECATED_FOR("editCircle, inviteIdsToCircle")
 	virtual void updateGroup(uint32_t &token, RsGxsCircleGroup &group) = 0;
 };
+
+
+/// @deprecated Used to detect uninizialized values.
+RS_DEPRECATED_FOR("RsGxsCircleType::UNKNOWN")
+static const uint32_t GXS_CIRCLE_TYPE_UNKNOWN           = 0x0000;
+
+/// @deprecated not restricted to a circle
+RS_DEPRECATED_FOR("RsGxsCircleType::PUBLIC")
+static const uint32_t GXS_CIRCLE_TYPE_PUBLIC            = 0x0001;
+
+/// @deprecated restricted to an external circle, made of RsGxsId
+RS_DEPRECATED_FOR("RsGxsCircleType::EXTERNAL")
+static const uint32_t GXS_CIRCLE_TYPE_EXTERNAL          = 0x0002;
+
+/// @deprecated restricted to a subset of friend nodes of a given RS node given
+/// by a RsPgpId list
+RS_DEPRECATED_FOR("RsGxsCircleType::NODES_GROUP")
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY = 0x0003;
+
+/// @deprecated not distributed at all
+RS_DEPRECATED_FOR("RsGxsCircleType::LOCAL")
+static const uint32_t GXS_CIRCLE_TYPE_LOCAL             = 0x0004;
+
+/// @deprecated self-restricted. Not used, except at creation time when the
+/// circle ID isn't known yet. Set to EXTERNAL afterwards.
+RS_DEPRECATED_FOR("RsGxsCircleType::EXT_SELF")
+static const uint32_t GXS_CIRCLE_TYPE_EXT_SELF          = 0x0005;
+
+/// @deprecated distributed to nodes signed by your own PGP key only.
+RS_DEPRECATED_FOR("RsGxsCircleType::YOUR_EYES_ONLY")
+static const uint32_t GXS_CIRCLE_TYPE_YOUR_EYES_ONLY    = 0x0006;

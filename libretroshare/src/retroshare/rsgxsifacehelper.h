@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright 2011 by Christopher Evi-Parker                                    *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,9 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
-#ifndef RSGXSIFACEIMPL_H
-#define RSGXSIFACEIMPL_H
+#pragma once
 
 #include <chrono>
 #include <thread>
@@ -292,19 +290,51 @@ protected:
 	 * Useful for blocking API implementation.
 	 * @param[in] token token associated to the request caller is waiting for
 	 * @param[in] maxWait maximum waiting time in milliseconds
+	 * @param[in] checkEvery time in millisecond between status checks
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500) )
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2))
 	{
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		auto wkStartime = std::chrono::steady_clock::now();
+		int maxWorkAroundCnt = 10;
+LLwaitTokenBeginLabel:
+#endif
 		auto timeout = std::chrono::steady_clock::now() + maxWait;
 		auto st = requestStatus(token);
 		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
 		       && std::chrono::steady_clock::now() < timeout )
 		{
-			std::this_thread::sleep_for(std::chrono::milliseconds(2));
+			std::this_thread::sleep_for(checkEvery);
 			st = requestStatus(token);
 		}
+
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		/* Work around for very slow/old android devices, we don't expect this
+		 * to be necessary on newer devices. If it take unreasonably long
+		 * something worser is already happening elsewere and we return anyway.
+		 */
+		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
+		        && maxWorkAroundCnt-- > 0 )
+		{
+			maxWait *= 10;
+			checkEvery *= 3;
+			std::cerr << __PRETTY_FUNCTION__ << " Slow Android device "
+			          << " workaround st: " << st
+			          << " maxWorkAroundCnt: " << maxWorkAroundCnt
+			          << " maxWait: " << maxWait.count()
+			          << " checkEvery: " << checkEvery.count() << std::endl;
+			goto LLwaitTokenBeginLabel;
+		}
+		std::cerr << __PRETTY_FUNCTION__ << " lasted: "
+		          << std::chrono::duration_cast<std::chrono::milliseconds>(
+		                 std::chrono::steady_clock::now() - wkStartime ).count()
+		          << "ms" << std::endl;
+
+#endif
+
 		return st;
 	}
 
@@ -312,5 +342,3 @@ private:
 	RsGxsIface& mGxs;
 	RsTokenService& mTokenService;
 };
-
-#endif // RSGXSIFACEIMPL_H

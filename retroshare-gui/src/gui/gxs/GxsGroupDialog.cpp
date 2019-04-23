@@ -755,12 +755,12 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
         	// (cyril) very weird piece of code. Need to clear this up.
         
 		ui.comments_allowed->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Allowed") ;
 	}
 	else
 	{
 		ui.comments_no->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+		ui.commentsValueLabel->setText("Forbidden") ;
 	}
 }
 
