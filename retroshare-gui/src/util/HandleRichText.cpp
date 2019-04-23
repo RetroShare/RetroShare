@@ -34,11 +34,14 @@
 #include "util/rstime.h"
 
 #ifdef USE_CMARK
-//Include for CMark
-// This needs to be fixed: use system library if available, etc.
-#include <gui/../../../supportlibs/cmark/src/cmark.h>
-#include <gui/../../../supportlibs/cmark/src/node.h>
-#endif
+  //Include for CMark
+  #ifdef HAS_CMARK
+    #include <cmark.h>
+  #else
+    #include <gui/../../../supportlibs/cmark/src/cmark.h>
+    #include <gui/../../../supportlibs/cmark/src/node.h>
+  #endif // HAS_CMARK
+#endif // USE_CMARK
 
 #include <iostream>
 

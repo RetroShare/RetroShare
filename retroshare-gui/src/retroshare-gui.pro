@@ -81,7 +81,21 @@ MOC_DIR = temp/moc
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
-    CONFIG += link_pkgconfig
+        CONFIG += link_pkgconfig
+
+        # auto detect installed version of cmark
+        cmark {
+                CMARK_AVAILABLE = $$system(pkg-config --exists libcmark && echo yes)
+                isEmpty(CMARK_AVAILABLE) {
+                        message("using built-in cmark")
+                        CONFIG += cmark_builtin
+                } else {
+                        message("using systems cmark")
+                        DEFINES += HAS_CMARK
+                        PKGCONFIG += libcmark
+                }
+        }
+
 
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
@@ -118,7 +132,6 @@ unix {
 	pixmap_files.path = "$${PREFIX}/share/pixmaps"
 	pixmap_files.files = ../../data/retroshare.xpm
 	INSTALLS += pixmap_files
-
 }
 
 linux-g++ {
@@ -1389,6 +1402,7 @@ gxsgui {
 cmark {
   DEFINES *= USE_CMARK
 
+    cmark_builtin {
   HEADERS += \
     ../../supportlibs/cmark/src/buffer.h								 \
     ../../supportlibs/cmark/src/chunk.h									 \
@@ -1424,5 +1438,5 @@ cmark {
     ../../supportlibs/cmark/src/scanners.c								 \
     ../../supportlibs/cmark/src/utf8.c										 \
     ../../supportlibs/cmark/src/xml.c											 \
-
+    }
 }

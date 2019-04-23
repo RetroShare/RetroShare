@@ -32,6 +32,8 @@ CONFIG *= gxsdistsync
 
 # disabled by the time we fix compilation
 CONFIG *= no_cmark
+# still allow overwriting
+cmark:CONFIG -= no_cmark
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
