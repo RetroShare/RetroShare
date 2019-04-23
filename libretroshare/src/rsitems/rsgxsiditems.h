@@ -67,11 +67,9 @@ public:
     // Avatar
     RsTlvImage mImage ;
 };
-class RsGxsIdLocalInfoItem : public RsGxsIdItem
+
+struct RsGxsIdLocalInfoItem : public RsGxsIdItem
 {
-
-public:
-
     RsGxsIdLocalInfoItem():  RsGxsIdItem(RS_PKT_SUBTYPE_GXSID_LOCAL_INFO_ITEM) {}
     virtual ~RsGxsIdLocalInfoItem() {}
 
@@ -82,39 +80,6 @@ public:
     std::map<RsGxsId,rstime_t> mTimeStamps ;
     std::set<RsGxsId> mContacts ;
 };
-
-#if 0
-class RsGxsIdOpinionItem : public RsGxsMsgItem
-{
-public:
-
-    RsGxsIdOpinionItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
-			RS_PKT_SUBTYPE_GXSID_OPINION_ITEM) {return; }
-        virtual ~RsGxsIdOpinionItem() { return;}
-        void clear();
-    virtual bool serialise(void *data,uint32_t& size) = 0 ;
-    virtual uint32_t serial_size() = 0 ;
-
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
-	RsGxsIdOpinion opinion;
-};
-
-class RsGxsIdCommentItem : public RsGxsMsgItem
-{
-public:
-
-    RsGxsIdCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_GXSID,
-                                          RS_PKT_SUBTYPE_GXSID_COMMENT_ITEM) { return; }
-    virtual ~RsGxsIdCommentItem() { return; }
-    void clear();
-    virtual bool serialise(void *data,uint32_t& size) = 0 ;
-    virtual uint32_t serial_size() = 0 ;
-
-    std::ostream &print(std::ostream &out, uint16_t indent = 0);
-    RsGxsIdComment comment;
-
-};
-#endif
 
 class RsGxsIdSerialiser : public RsServiceSerializer
 {

@@ -28,9 +28,6 @@
 #include "util/rstime.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
-std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
-
 class RsGxsGrpItem : public RsItem
 {
 

@@ -1629,63 +1629,9 @@ RsPeerDetails::RsPeerDetails()
           lastConnect(0),lastUsed(0),connectState(0),connectStateString(""),
           connectPeriod(0),
           foundDHT(false), wasDeniedConnection(false), deniedTS(0),
-          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN)
-{
-}
+          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN) {}
 
-std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
-{
-	out << "RsPeerDetail: " << detail.name << "  <" << detail.id << ">";
-	out << std::endl;
-
-	out << " email:   " << detail.email;
-	out << " location:" << detail.location;
-	out << " org:     " << detail.org;
-	out << std::endl;
-
-	out << " fpr:     " << detail.fpr;
-	out << " authcode:" << detail.authcode;
-	out << std::endl;
-
-	out << " signers:";
-	out << std::endl;
-
-	std::list<RsPgpId>::const_iterator it;
-        for(it = detail.gpgSigners.begin();
-                it != detail.gpgSigners.end(); ++it)
-	{
-		out << "\t" << *it;
-		out << std::endl;
-	}
-	out << std::endl;
-
-	out << " trustLvl:    " << detail.trustLvl;
-        out << " ownSign:     " << detail.ownsign;
-	out << std::endl;
-
-	out << " state:       " << detail.state;
-	out << " netMode:     " << detail.netMode;
-	out << std::endl;
-
-	out << " localAddr:   " << detail.localAddr;
-	out << ":" << detail.localPort;
-	out << std::endl;
-	out << " extAddr:   " << detail.extAddr;
-	out << ":" << detail.extPort;
-	out << std::endl;
-
-
-	out << " lastConnect:       " << detail.lastConnect;
-	out << " connectPeriod:     " << detail.connectPeriod;
-	out << std::endl;
-
-	return out;
-}
-
-RsGroupInfo::RsGroupInfo()
-{
-	flag = 0;
-}
+RsGroupInfo::RsGroupInfo() : flag(0) {}
 
 ServicePermissionFlags p3Peers::servicePermissionFlags(const RsPeerId& ssl_id) 
 {

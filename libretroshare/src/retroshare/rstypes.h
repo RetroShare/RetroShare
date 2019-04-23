@@ -257,8 +257,6 @@ struct FileInfo : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream &out, const FileInfo& info);
-
 /**
  * Pointers in this class have no real meaning as pointers, they are used as
  * indexes, internally by retroshare.
@@ -378,8 +376,6 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(parent_groups);
 	}
 };
-
-std::ostream &operator<<(std::ostream &out, const DirDetails& details);
 
 class FileDetail
 {

@@ -559,9 +559,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqiqosstreamer.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc \
-			pqi/p3servicecontrol.cc \
-
-#			pqi/p3dhtmgr.cc \
+                        pqi/p3servicecontrol.cc
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \
@@ -573,7 +571,6 @@ SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsaccounts.cc \
 			rsserver/rsloginhandler.cc \
-			rsserver/rstypes.cc \
 			rsserver/p3serverconfig.cc
 
 SOURCES +=  grouter/p3grouter.cc \
@@ -624,11 +621,7 @@ SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
 			services/p3serviceinfo.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
-				turtle/rsturtleitem.cc 
-#				turtle/turtlerouting.cc \
-#				turtle/turtlesearch.cc \
-#				turtle/turtletunnels.cc
-
+                                turtle/rsturtleitem.cc
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
