@@ -656,31 +656,6 @@ equals(RS_UPNP_LIB, miniupnpc) {
 	DEFINES *= RS_USE_LIBUPNP
 }
 
-zeroconf {
-
-HEADERS +=	zeroconf/p3zeroconf.h \
-
-SOURCES +=	zeroconf/p3zeroconf.cc  \
-
-# Disable Zeroconf (we still need the code for zcnatassist
-#	DEFINES *= RS_ENABLE_ZEROCONF
-
-}
-
-# This is seperated from the above for windows/linux platforms.
-# It is acceptable to build in zeroconf and have it not work, 
-# but unacceptable to rely on Apple's libraries for Upnp when we have alternatives. '
-
-zcnatassist {
-
-HEADERS +=	zeroconf/p3zcnatassist.h \
-
-SOURCES +=	zeroconf/p3zcnatassist.cc \
-
-	DEFINES *= RS_ENABLE_ZCNATASSIST
-
-}
-
 # new gxs cache system
 # this should be disabled for releases until further notice.
 

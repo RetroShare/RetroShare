@@ -728,19 +728,11 @@ RsGRouter *rsGRouter = NULL ;
 #include "util/rsdir.h"
 #include "util/rsrandom.h"
 
-#ifdef RS_ENABLE_ZEROCONF
-	#include "zeroconf/p3zeroconf.h"
-#endif
-
-#ifdef RS_ENABLE_ZCNATASSIST
-	#include "zeroconf/p3zcnatassist.h"
-#else
-        #ifdef RS_USE_LIBUPNP
-		#include "upnp/upnphandler_linux.h"
-	#else
-		#include "upnp/upnphandler_miniupnp.h"
-        #endif
-#endif
+#ifdef RS_USE_LIBUPNP
+#	include "upnp/upnphandler_linux.h"
+#else // def RS_USE_LIBUPNP
+#	include "upnp/upnphandler_miniupnp.h"
+#endif // def RS_USE_LIBUPNP
 
 #include "services/autoproxy/p3i2pbob.h"
 #include "services/autoproxy/rsautoproxymonitor.h"
@@ -1583,23 +1575,9 @@ int RsServer::StartupRetroShare()
 		mNetMgr->addNetListener(mProxyStack);
 #endif
 
-#ifdef RS_ENABLE_ZEROCONF
-		p3ZeroConf *mZeroConf = new p3ZeroConf(
-		            AuthGPG::getAuthGPG()->getGPGOwnId(), ownId,
-		            mLinkMgr, mNetMgr, mPeerMgr);
-		mNetMgr->addNetAssistConnect(2, mZeroConf);
-		mNetMgr->addNetListener(mZeroConf);
-#endif
-
-#ifdef RS_ENABLE_ZCNATASSIST
-		// Apple's UPnP & NAT-PMP assistance.
-		p3zcNatAssist *mZcNatAssist = new p3zcNatAssist();
-		mNetMgr->addNetAssistFirewall(1, mZcNatAssist);
-#else
 		// Original UPnP Interface.
 		pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 		mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
-#endif
 	}
 
 	/**************************************************************************/
