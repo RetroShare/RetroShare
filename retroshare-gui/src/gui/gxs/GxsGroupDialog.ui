@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>623</width>
     <height>633</height>
    </rect>
   </property>
@@ -640,13 +640,6 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="label_10">
-              <property name="text">
-               <string>Popularity</string>
-              </property>
-             </widget>
-            </item>
             <item row="0" column="0">
              <widget class="QLabel" name="label_3">
               <property name="text">
@@ -654,10 +647,10 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="label_11">
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_10">
               <property name="text">
-               <string>Last Post</string>
+               <string>Popularity</string>
               </property>
              </widget>
             </item>
@@ -678,17 +671,24 @@
               </property>
              </widget>
             </item>
-            <item row="1" column="2">
-             <widget class="QLineEdit" name="popline">
+            <item row="3" column="0">
+             <widget class="QLabel" name="label_11">
+              <property name="text">
+               <string>Last Post</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="nameline">
               <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Posts</string>
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="popline">
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -699,10 +699,10 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QLineEdit" name="nameline">
-              <property name="readOnly">
-               <bool>true</bool>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Posts</string>
               </property>
              </widget>
             </item>
@@ -748,33 +748,12 @@
               </item>
              </layout>
             </item>
-            <item row="7" column="2">
-             <widget class="QLabel" name="antiSpamValueLabel">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Author</string>
-              </property>
-             </widget>
-            </item>
             <item row="5" column="2">
              <widget class="QLabel" name="commentsValueLabel">
               <property name="text">
                <string>TextLabel</string>
               </property>
               <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLineEdit" name="IDline">
-              <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
@@ -789,17 +768,24 @@
               </property>
              </widget>
             </item>
-            <item row="12" column="0">
-             <widget class="QLabel" name="label_9">
+            <item row="7" column="2">
+             <widget class="QLabel" name="antiSpamValueLabel">
               <property name="text">
-               <string>Color</string>
+               <string>TextLabel</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="2">
-             <widget class="QLabel" name="colorlabel">
+            <item row="9" column="0">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>TextLabel</string>
+               <string>Author</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="2">
+             <widget class="QLineEdit" name="IDline">
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
              </widget>
             </item>

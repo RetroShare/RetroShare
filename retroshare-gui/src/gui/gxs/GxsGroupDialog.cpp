@@ -497,7 +497,6 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description, const QS
     QString distribution_string = "[Unknown]";
 	
 	/* set hex color string */
-	ui.colorlabel->setText(colorstring);
 	ui.colorButton->setText(colorstring);
 	
 	//ui.infogroupBox->setStyleSheet(QString("QGroupBox{border: 1px solid %1};").arg(colorstring));
@@ -777,7 +776,7 @@ void GxsGroupDialog::setGroupSignFlags(uint32_t signFlags)
 	else
 	{
 		ui.comments_no->setChecked(true);
-        	ui.commentsValueLabel->setText("Allowed") ;
+        	ui.commentsValueLabel->setText("Forbidden") ;
 	}
 }
 
