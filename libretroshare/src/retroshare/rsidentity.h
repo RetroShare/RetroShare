@@ -151,11 +151,9 @@ struct RsGxsIdGroup : RsSerializable
 	                     RsGenericSerializer::SerializeContext& ctx ) override;
 };
 
-std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
-
 // DATA TYPE FOR EXTERNAL INTERFACE.
 
-struct RsRecognTag
+struct RS_DEPRECATED RsRecognTag
 {
 	RsRecognTag(uint16_t tc, uint16_t tt, bool v) :
 	    tag_class(tc), tag_type(tt), valid(v) {}
@@ -166,7 +164,7 @@ struct RsRecognTag
 };
 
 
-struct RsRecognTagDetails
+struct RS_DEPRECATED RsRecognTagDetails
 {
 	RsRecognTagDetails() :
 	    valid_from(0), valid_to(0), tag_class(0), tag_type(0), is_valid(false),
