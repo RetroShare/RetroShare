@@ -60,6 +60,9 @@ enum class RsEventType : uint32_t
 	/// @see pqissl
 	REMOTE_PEER_REFUSED_CONNECTION                          = 4,
 
+	/// @see RsGxsChanges
+	GXS_CHANGES                                             = 5,
+
 	MAX       /// Used to detect invalid event type passed
 };
 
