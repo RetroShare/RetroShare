@@ -371,6 +371,7 @@ void GxsGroupDialog::setupVisibility()
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
+	ui.colorButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_COLOR);
 
 	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 

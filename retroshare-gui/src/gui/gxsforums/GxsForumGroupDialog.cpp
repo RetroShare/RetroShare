@@ -28,6 +28,7 @@
 const uint32_t ForumCreateEnabledFlags = ( 
 			GXS_GROUP_FLAGS_NAME          |
 //			GXS_GROUP_FLAGS_ICON          |
+//			GXS_GROUP_FLAGS_COLOR         |
 			GXS_GROUP_FLAGS_DESCRIPTION   |
 			GXS_GROUP_FLAGS_DISTRIBUTION  |
 			// GXS_GROUP_FLAGS_PUBLISHSIGN|

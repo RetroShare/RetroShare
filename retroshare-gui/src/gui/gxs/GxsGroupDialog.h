@@ -63,6 +63,8 @@ public:
 #define GXS_GROUP_FLAGS_EXTRA             0x00000100
 #define GXS_GROUP_FLAGS_ANTI_SPAM         0x00000200
 #define GXS_GROUP_FLAGS_ADDADMINS         0x00000400
+#define GXS_GROUP_FLAGS_COLOR             0x00000800
+
 
 /*** Default flags are used to determine privacy of group, signatures required ***
  *** whether publish or id and whether comments are allowed or not             ***/
