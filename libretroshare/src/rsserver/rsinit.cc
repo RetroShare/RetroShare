@@ -34,7 +34,7 @@
 
 #ifdef __ANDROID__
 #	include <QFile> // To install bdboot.txt
-#	include <QString> // for String::fromStdString(...)
+#	include <QString> // for QString::fromStdString(...)
 #endif
 
 #include "util/argstream.h"
@@ -97,6 +97,11 @@ RsDht *rsDht = NULL ;
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
 #endif
+
+#ifdef RS_BROADCAST_DISCOVERY
+#	include "retroshare/rsbroadcastdiscovery.h"
+#	include "services/broadcastdiscoveryservice.h"
+#endif // def RS_BROADCAST_DISCOVERY
 
 // #define GPG_DEBUG
 // #define AUTHSSL_DEBUG
@@ -1454,6 +1459,12 @@ int RsServer::StartupRetroShare()
 	                             mHistoryMgr, *mGxsTrans );
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
+#ifdef RS_BROADCAST_DISCOVERY
+	rsBroadcastDiscovery.reset(new BroadcastDiscoveryService(*rsPeers));
+	BroadcastDiscoveryService& tBroadcastDiscoveryService =
+	        static_cast<BroadcastDiscoveryService&>(*rsBroadcastDiscovery);
+#endif // def RS_BROADCAST_DISCOVERY
+
 #ifdef ENABLE_GROUTER
     p3GRouter *gr = new p3GRouter(serviceCtrl,mGxsIdService) ;
 	rsGRouter = gr ;
@@ -1841,9 +1852,13 @@ int RsServer::StartupRetroShare()
 #	ifdef RS_GXS_TRANS
 	startServiceThread(mGxsTrans, "gxs trans");
 	startServiceThread(gxstrans_ns, "gxs trans ns");
-#	endif // RS_GXS_TRANS
+#	endif // def RS_GXS_TRANS
 
 #endif // RS_ENABLE_GXS
+
+#ifdef RS_BROADCAST_DISCOVERY
+	startServiceThread(&tBroadcastDiscoveryService, "Broadcast Discovery");
+#endif // def RS_BROADCAST_DISCOVERY
 
 	ftserver->StartupThreads();
 	ftserver->ResumeTransfers();

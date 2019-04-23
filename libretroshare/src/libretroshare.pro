@@ -134,6 +134,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
 PUBLIC_HEADERS =	retroshare/rsdisc.h \
+    retroshare/rsevents.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
 					retroshare/rshistory.h \
@@ -459,6 +460,7 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsserviceinfoitems.h \
 
 HEADERS +=  services/autoproxy/p3i2pbob.h \
+            services/rseventsservice.h \
             services/autoproxy/rsautoproxymonitor.h \
             services/p3msgservice.h \
 			services/p3service.h \
@@ -609,6 +611,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
+    services/rseventsservice.cc \
             services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
 			services/p3service.cc \
@@ -840,22 +843,26 @@ rs_jsonapi {
         DUMMYRESTBEDINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
         win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
-        genrestbedlib.name = Generating libresbed.
+        genrestbedlib.name = Generating librestbed.
         genrestbedlib.input = DUMMYRESTBEDINPUT
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
         genrestbedlib.commands = \
-            cd $${RS_SRC_PATH} && \
-            git submodule update --init --recommend-shallow supportlibs/restbed && \
-            cd $${RESTBED_SRC_PATH} && \
-            git submodule update --init --recommend-shallow dependency/asio && \
-            git submodule update --init --recommend-shallow dependency/catch && \
-            git submodule update --init --recommend-shallow dependency/kashmir && \
-            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
-                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
-            make
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init --recommend-shallow supportlibs/restbed ; \
+            cd $${RESTBED_SRC_PATH} ; \
+            git submodule update --init --recommend-shallow dependency/asio ; \
+            git submodule update --init --recommend-shallow dependency/catch ; \
+            git submodule update --init --recommend-shallow dependency/kashmir ; \
+            true ) && \
+            mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
+            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. \
+                -H$$shell_path($${RESTBED_SRC_PATH}) && \
+            $(MAKE)
         QMAKE_EXTRA_COMPILERS += genrestbedlib
 
         RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
@@ -864,7 +871,7 @@ rs_jsonapi {
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
         genrestbedheader.CONFIG += target_predeps combine no_link
         genrestbedheader.variable_out = HEADERS
-        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
@@ -898,6 +905,37 @@ rs_jsonapi {
 
 rs_deep_search {
     HEADERS += deep_search/deep_search.h
+}
+
+rs_broadcast_discovery {
+    HEADERS += retroshare/rsbroadcastdiscovery.h \
+        services/broadcastdiscoveryservice.h
+    SOURCES += services/broadcastdiscoveryservice.cc
+
+    no_rs_cross_compiling {
+        DUMMYQMAKECOMPILERINPUT = FORCE
+        CMAKE_GENERATOR_OVERRIDE=""
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        udpdiscoverycpplib.name = Generating libudp-discovery.a.
+        udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
+        udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
+        udpdiscoverycpplib.CONFIG += target_predeps combine
+        udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
+        udpdiscoverycpplib.commands = \
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init --recommend-shallow supportlibs/udp-discovery-cpp || \
+            true ) && \
+            mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
+            cd $${UDP_DISCOVERY_BUILD_PATH} && \
+            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                $${CMAKE_GENERATOR_OVERRIDE} \
+                -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. \
+                -H$$shell_path($${UDP_DISCOVERY_SRC_PATH}) && \
+            $(MAKE)
+        QMAKE_EXTRA_COMPILERS += udpdiscoverycpplib
+    }
 }
 
 ###########################################################################################################

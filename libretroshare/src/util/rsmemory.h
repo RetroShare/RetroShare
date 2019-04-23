@@ -60,7 +60,7 @@ bool myFunnyFunction(
  * passed, so any effect on performace would happen only in case where the
  * function is called without the parameter.
  */
-#define RS_DEFAULT_STORAGE_PARAM(Type) *std::unique_ptr<Type>(new Type)
+#define RS_DEFAULT_STORAGE_PARAM(Type,...) *std::unique_ptr<Type>(new Type(__VA_ARGS__))
 
 void *rs_malloc(size_t size) ;
 

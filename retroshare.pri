@@ -167,9 +167,14 @@ CONFIG *= no_rs_deep_search
 rs_deep_search:CONFIG -= no_rs_deep_search
 
 # To enable native dialogs append the following assignation to qmake command
-#line "CONFIG+=rs_use_native_dialogs"
+# line "CONFIG+=rs_use_native_dialogs"
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
+
+# To disable broadcast discovery happend the following assignation to qmake
+# command line "CONFIG+=no_rs_broadcast_discovery"
+CONFIG *= rs_broadcast_discovery
+no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -325,6 +330,19 @@ defineReplace(linkDynamicLibs) {
     }
 
     return($$retDlib)
+}
+
+## On some environements qmake chose a C++ compiler as C compiler, this breaks
+## some sub targets, such as those based on cmake which test for chosen C
+## compiler to be a proper C compiler. This function try to deduce the correct C
+## compiler also in those cases, and return it. So you can use
+## $$fixQmakeCC($$QMAKE_CC) in those cases instead of plain $$QMAKE_CC
+defineReplace(fixQmakeCC) {
+    retVal = $$1
+    contains(1, .*\+\+$):retVal=$$str_member($$1, 0 ,-3)
+    contains(1, .*g\+\+$):retVal=$$str_member($$1, 0 ,-3)cc
+    contains(1, .*clang\+\+$):retVal=$$str_member($$1, 0 ,-3)
+    return($$retVal)
 }
 
 ################################################################################
@@ -495,6 +513,8 @@ rs_deep_search {
 }
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
+
+rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer

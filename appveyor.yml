@@ -136,6 +136,7 @@ before_package:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
+  - env
   - qmake -Wall -spec win32-g++ "CONFIG=debug"
   - mingw32-make -j3
 

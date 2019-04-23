@@ -1,20 +1,19 @@
 /*******************************************************************************
- * libretroshare/src/gxs: jsonapi.cpp                                          *
- *                                                                             *
  * RetroShare JSON API                                                         *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Lesser General Public License as              *
+ * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
- * GNU Lesser General Public License for more details.                         *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+ * GNU Affero General Public License for more details.                         *
  *                                                                             *
- * You should have received a copy of the GNU Lesser General Public License    *
+ * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
@@ -38,6 +37,7 @@
 #include "retroshare/rsinit.h"
 #include "util/rsurl.h"
 #include "util/rstime.h"
+#include "retroshare/rsevents.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
@@ -96,7 +96,7 @@ JsonApiServer::corsOptionsHeaders =
 
 
 /*static*/ bool JsonApiServer::checkRsServicePtrReady(
-        void* serviceInstance, const std::string& serviceName,
+        const void* serviceInstance, const std::string& serviceName,
         RsGenericSerializer::SerializeContext& ctx,
         const std::shared_ptr<restbed::Session> session)
 {
@@ -276,6 +276,64 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 			}
 
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+		} );
+	}, true);
+
+	registerHandler("/rsEvents/registerEventsHandler",
+	        [this](const std::shared_ptr<rb::Session> session)
+	{
+		const std::multimap<std::string, std::string> headers
+		{
+			{ "Connection", "keep-alive" },
+			{ "Content-Type", "text/event-stream" }
+		};
+		session->yield(rb::OK, headers);
+
+		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( reqSize, [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			if( !checkRsServicePtrReady(
+						rsEvents, "rsEvents", cAns, session ) )
+				return;
+
+			const std::weak_ptr<rb::Session> weakSession(session);
+			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
+			std::function<void(const RsEvent&)> multiCallback =
+			        [weakSession, hId](const RsEvent& event)
+			{
+				auto session = weakSession.lock();
+				if(!session || session->is_closed())
+				{
+					if(rsEvents) rsEvents->unregisterEventsHandler(hId);
+					return;
+				}
+
+				RsGenericSerializer::SerializeContext ctx;
+				RsTypeSerializer::serial_process(
+				            RsGenericSerializer::TO_JSON, ctx,
+				            const_cast<RsEvent&>(event), "event" );
+
+				std::stringstream message;
+				message << "data: " << compactJSON << ctx.mJson << "\n\n";
+				session->yield(message.str());
+			};
+
+			bool retval = rsEvents->registerEventsHandler(multiCallback, hId);
+
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(retval);
+			}
+
+			// return them to the API caller
+			std::stringstream message;
+			message << "data: " << compactJSON << cAns.mJson << "\n\n";
+			session->yield(message.str());
 		} );
 	}, true);
 
