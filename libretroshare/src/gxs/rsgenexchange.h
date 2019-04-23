@@ -113,7 +113,10 @@ public:
      * @param gixs This is used for verification of msgs and groups received by Gen Exchange using identities.
      * @param authenPolicy This determines the authentication used for verfying authorship of msgs and groups
      */
-    RsGenExchange(RsGeneralDataService* gds, RsNetworkExchangeService* ns, RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs, uint32_t authenPolicy);
+	RsGenExchange(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* ns,
+	        RsSerialType* serviceSerialiser, uint16_t mServType, RsGixs* gixs,
+	        uint32_t authenPolicy );
 
     virtual ~RsGenExchange();
 
