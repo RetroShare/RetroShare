@@ -106,6 +106,8 @@ bool GxsForumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMeta
 	RsGxsForumGroup grp;
 	grp.mMeta = meta;
 	grp.mDescription = getDescription().toUtf8().constData();
+	grp.mColor = getColor().toUtf8().constData();
+	
 	getSelectedModerators(grp.mAdminList.ids);
 
 	rsGxsForums->createGroup(token, grp);
@@ -120,6 +122,7 @@ bool GxsForumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &ed
 
 	grp.mMeta = editedMeta;
 	grp.mDescription = getDescription().toUtf8().constData();
+	grp.mColor = getColor().toUtf8().constData();
 
 	getSelectedModerators(grp.mAdminList.ids);
 
@@ -158,6 +161,7 @@ bool GxsForumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGro
 
 	groupMetaData = groups[0].mMeta;
 	description = QString::fromUtf8(groups[0].mDescription.c_str());
+	colorstring = QString::fromUtf8(groups[0].mColor.c_str());
 
     // Local information. Description should be handled here.
 

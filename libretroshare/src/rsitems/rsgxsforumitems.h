@@ -46,6 +46,7 @@ public:
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
 	RsGxsForumGroup mGroup;
+	std::string mColor;
 };
 
 class RsGxsForumMsgItem : public RsGxsMsgItem

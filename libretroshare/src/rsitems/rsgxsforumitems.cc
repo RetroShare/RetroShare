@@ -43,6 +43,7 @@ RsItem *RsGxsForumSerialiser::create_item(uint16_t service_id,uint8_t item_subty
 void RsGxsForumGroupItem::clear()
 {
 	mGroup.mDescription.clear();
+	mColor.clear();
 }
 
 void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -53,9 +54,13 @@ void RsGxsForumGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 
     if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
         return ;
+	
+	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mColor.empty())
+		return ;
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mAdminList  ,"admin_list"  ) ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,mGroup.mPinnedPosts,"pinned_posts") ;
+	RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_COLOR,mColor,"mColor") ;
 }
 
 void RsGxsForumMsgItem::clear()

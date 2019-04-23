@@ -58,6 +58,7 @@ struct RsGxsForumGroup : RsSerializable
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
+	std::string mColor;
 
 	/* What's below is optional, and handled by the serialiser
 	 * TODO: run away from TLV old serializables as those types are opaque to
@@ -73,6 +74,7 @@ struct RsGxsForumGroup : RsSerializable
 		RS_SERIAL_PROCESS(mDescription);
 		RS_SERIAL_PROCESS(mAdminList);
 		RS_SERIAL_PROCESS(mPinnedPosts);
+		RS_SERIAL_PROCESS(mColor);
 	}
 
     // utility functions
