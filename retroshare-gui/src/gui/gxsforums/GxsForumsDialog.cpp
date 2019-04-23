@@ -125,6 +125,8 @@ QString GxsForumsDialog::icon(IconType type)
 		return ":/icons/png/feed-popular.png";
 	case ICON_OTHER_GROUP:
 		return ":/icons/png/feed-other.png";
+	case ICON_SEARCH:
+		return ":/images/find.png";
 	case ICON_DEFAULT:
 		return ":/icons/png/forums-default.png";
 	}
