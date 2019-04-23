@@ -88,10 +88,6 @@ struct RsPeerServiceInfo : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info);
-std::ostream &operator<<(std::ostream &out, const RsServiceInfo &info);
-
-
 struct RsServicePermissions : RsSerializable
 {
     RsServicePermissions();

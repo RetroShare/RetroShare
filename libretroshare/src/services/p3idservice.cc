@@ -4542,65 +4542,6 @@ std::string rsIdTypeToString(uint32_t idtype)
  * 
  */
 
-
-/************************************************************************************/
-/*
- * Scoring system.
- * -100 to 100 is expected range.
- * 
- *
- * Each Lobby has a publish threshold.
- *   - As part of Lobby definition. ???
- *   - Locally Set.
- *
- * Threshold:
- *   50 VIP List.
- *   20 Dress Code
- *   10 Limit Riffraff.
- *   0 Accept All.
- *
- * Implicit Scores:
- *   +50 for known PGP
- *   +10 for unknown PGP  (want to encourage usage).
- *   +5 for Anon ID.
- *
- * Own Scores:
- *   +1000 Accepted
- *   +50 Friend
- *   +10 Interesting
- *   0 Mostly Harmless
- *   -10 Annoying.
- *   -50 Troll
- *   -1000 Total Banned
- *
- *
- * 
-
-
-
-Processing Algorithm:
- *  - Grab all Groups which have received messages. 
- *  (opt 1)-> grab latest msgs for each of these and process => score.
- *  (opt 2)-> try incremental system (people probably won't change opinions often -> just set them once)
- *      --> if not possible, fallback to full calculation.
- *
- * 
- */
-
-
-
-
-std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &grp)
-{
-	out << "RsGxsIdGroup: Meta: " << grp.mMeta;
-	out << " PgpIdHash: " << grp.mPgpIdHash;
-	out << " PgpIdSign: [binary]"; // << grp.mPgpIdSign;
-	out << std::endl;
-	
-	return out;
-}
-
-
 void p3IdService::checkPeerForIdentities()
 {
 	RsStackMutex stack(mIdMtx);

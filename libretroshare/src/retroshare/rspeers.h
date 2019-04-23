@@ -358,8 +358,6 @@ struct RsGroupInfo : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail);
-
 /** The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
  * A same GPG person can have multiple peer running with different SSL certs

@@ -75,7 +75,7 @@ struct RsGxsGroupSummary : RsSerializable
  */
 struct RsGxsChanges
 {
-    RsGxsChanges(): mService(0){}
+	RsGxsChanges(): mService(nullptr){}
     RsTokenService *mService;
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgs;
     std::map<RsGxsGroupId, std::set<RsGxsMessageId> > mMsgsMeta;

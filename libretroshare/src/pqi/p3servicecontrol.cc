@@ -1392,29 +1392,6 @@ RsServiceInfo::RsServiceInfo()
 	return;
 }
 
-std::ostream &operator<<(std::ostream &out, const RsPeerServiceInfo &info)
-{
-	out << "RsPeerServiceInfo(" << info.mPeerId << ")";
-	out << std::endl;
-	std::map<uint32_t, RsServiceInfo>::const_iterator it;
-	for(it = info.mServiceList.begin(); it != info.mServiceList.end(); ++it)
-	{
-		out << "\t Service:" << it->first << " : ";
-		out << it->second;
-		out << std::endl;
-	}
-	return out;
-}
-
-
-std::ostream &operator<<(std::ostream &out, const RsServiceInfo &info)
-{
-	out << "RsServiceInfo(" << info.mServiceType << "): " << info.mServiceName;
-	out << " Version(" << info.mVersionMajor << "," << info.mVersionMinor << ")";
-	out << " MinVersion(" << info.mMinVersionMajor << "," << info.mMinVersionMinor << ")";
-	return out;
-}
-
 std::ostream &operator<<(std::ostream &out, const ServicePeerFilter &filter)
 {
 	out << "ServicePeerFilter DenyAll: " << filter.mDenyAll;
