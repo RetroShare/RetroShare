@@ -33,7 +33,7 @@
 
 #ifdef RS_USE_LIBUPNP
 #	include "upnp/upnpconfig.h"
-#else // def RS_USE_LIBUPNP
+#elif defined(RS_USE_LIBMINIUPNPC)
 #	include "miniupnpc/miniupnpc.h"
 #endif // def RS_USE_LIBUPNP
 
@@ -89,7 +89,7 @@ void RsServer::getLibraries(std::list<RsLibraryInfo> &libraries)
 
 #ifdef RS_USE_LIBUPNP
 	libraries.push_back(RsLibraryInfo("UPnP (libupnp)", UPNP_VERSION_STRING));
-#else // def RS_USE_LIBUPNP
+#elif defined(RS_USE_LIBMINIUPNPC)
 	libraries.push_back(RsLibraryInfo("UPnP (MiniUPnP)", MINIUPNPC_VERSION));
 #endif // def RS_USE_LIBUPNP
 
