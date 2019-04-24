@@ -1138,3 +1138,74 @@ OpModeStatus[opMode="Minimal"] {
 [WrongValue="true"] {
 	background-color: #702020;
 }
+
+/* changes for the subscribe Button */
+
+PostedListWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+}
+
+PostedListWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+GxsForumThreadWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 14px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+  max-height: 27px;
+}
+
+GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton {
+	font: bold;
+	font-size: 14px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	max-height: 27px;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+	background: #03b1f3;
+	border-radius: 4px;
+	border: 1px solid gray;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+	background: gray;
+	border-radius: 4px;
+	border: 1px solid gray;
+	color: lightgray;
+}
+
+/* only for MenuButtonPopup */
+GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+    padding-right: 0px; 
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+    image: none;
+}
+
+GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+    image: none;
+
+}
