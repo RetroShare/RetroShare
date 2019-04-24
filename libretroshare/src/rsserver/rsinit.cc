@@ -1586,9 +1586,11 @@ int RsServer::StartupRetroShare()
 		mNetMgr->addNetListener(mProxyStack);
 #endif
 
+#if defined(RS_USE_LIBMINIUPNPC) || defined(RS_USE_LIBUPNP)
 		// Original UPnP Interface.
 		pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 		mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
+#endif // defined(RS_USE_LIBMINIUPNPC) || defined(RS_USE_LIBUPNP)
 	}
 
 	/**************************************************************************/
