@@ -651,16 +651,14 @@ SOURCES +=	util/folderiterator.cc \
             util/rsurl.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
-	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
-	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
+        HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
+        SOURCES += rs_upnp/upnputil.c rs_upnp/upnphandler_miniupnp.cc
 }
-equals(RS_UPNP_LIB, "upnp ixml") { ## libupnp-1.8.x
-    # Not supported yet
-}
-equals(RS_UPNP_LIB, "upnp ixml threadutil") { ## libupnp-1.6.x
-        HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
-        SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
-        DEFINES *= RS_USE_LIBUPNP
+
+contains(RS_UPNP_LIB, upnp) {
+        HEADERS += rs_upnp/upnp18_retrocompat.h
+        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_linux.h
+        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_linux.cc
 }
 
 # new gxs cache system

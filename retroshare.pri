@@ -723,10 +723,6 @@ isEmpty(RS_UPNP_LIB) {
         !isEmpty(attemptPath):RS_UPNP_LIB += $${mLib}
     }
 
-    ## Workaround as libupnp-1.8.x is not supported yet
-    equals(RS_UPNP_LIB, "upnp ixml"):RS_UPNP_LIB=
-    ## END Workaround as libupnp-1.8.x is not supported yet
-
     isEmpty(RS_UPNP_LIB) {
         __TEMP_UPNP_LIBS=$$findFileInPath(libminiupnpc.a, QMAKE_LIBDIR)
         !isEmpty(__TEMP_UPNP_LIBS):RS_UPNP_LIB=miniupnpc
@@ -743,9 +739,7 @@ isEmpty(RS_UPNP_LIB) {
 
 equals(RS_UPNP_LIB, none):RS_UPNP_LIB=
 equals(RS_UPNP_LIB, miniupnpc):DEFINES*=RS_USE_LIBMINIUPNPC
-equals(RS_UPNP_LIB, "upnp ixml"):DEFINES*=RS_USE_LIBUPNP_1_8_X
-## libupnp-1.6.x
-equals(RS_UPNP_LIB, "upnp ixml threadutil"):DEFINES*=RS_USE_LIBUPNP
+contains(RS_UPNP_LIB, upnp):DEFINES*=RS_USE_LIBUPNP
 
 
 ## Retrocompatibility assignations, get rid of this ASAP

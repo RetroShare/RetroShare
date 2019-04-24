@@ -113,20 +113,18 @@ public:
 	
 	// Convenience function to avoid repetitive processing of error
 	// messages
-	std::string processUPnPErrorMessage(
-		const std::string &messsage,
-		int code,
-		const DOMString errorString,
-		IXML_Document *doc) const;
+	std::string processUPnPErrorMessage(const std::string &messsage,
+	    int code,
+	    const DOMString errorString,
+	    const IXML_Document* doc) const;
 
 	// Processing response to actions
 	void ProcessActionResponse(
-		IXML_Document *RespDoc,
-		const std::string &actionName) const;
+	        const IXML_Document* RespDoc,
+	        const std::string& actionName ) const;
 	
 	// IXML_Element
-	IXML_Element *Element_GetRootElement(
-		IXML_Document *doc) const;
+	IXML_Element* Element_GetRootElement(const IXML_Document* doc) const;
 	IXML_Element *Element_GetFirstChild(
 		IXML_Element *parent) const;
 	IXML_Element *Element_GetNextSibling(
@@ -597,13 +595,10 @@ public:
 
 	// Callback function
 	static int Callback(
-		Upnp_EventType EventType,
-		void* Event,
-		void* Cookie);
-	void OnEventReceived(
-		const std::string &Sid,
-		int EventKey,
-		IXML_Document *ChangedVariables);
+	        Upnp_EventType EventType, const void* Event, void* Cookie );
+	void OnEventReceived(const std::string &Sid,
+	    int EventKey,
+	    const IXML_Document* ChangedVariables);
 
 private:
 	void AddRootDevice(
