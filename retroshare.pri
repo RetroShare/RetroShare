@@ -348,6 +348,7 @@ defineReplace(fixQmakeCC) {
     retVal = $$1
     contains(1, .*\+\+$):retVal=$$str_member($$1, 0 ,-3)
     contains(1, .*g\+\+$):retVal=$$str_member($$1, 0 ,-3)cc
+    contains(1, .*g\+\+-[0-9]$):retVal=$$str_member($$1, 0 ,-5)cc$$str_member($$1, -2 ,-1)
     contains(1, .*clang\+\+$):retVal=$$str_member($$1, 0 ,-3)
     return($$retVal)
 }
