@@ -33,9 +33,6 @@ static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
 class DistantChatService: public RsGxsTunnelService::RsGxsTunnelClientService
 {
 public:
-    // So, public interface only uses DistandChatPeerId, but internally, this is converted into a RsGxsTunnelService::RsGxsTunnelId
-    
-   
     DistantChatService() ;
 
     virtual void triggerConfigSave()=0 ;
@@ -91,9 +88,13 @@ public:
     virtual void connectToGxsTunnelService(RsGxsTunnelService *tunnel_service) ;
     
 private:
-    virtual bool acceptDataFromPeer(const RsGxsId& gxs_id, const RsGxsTunnelService::RsGxsTunnelId& tunnel_id, bool am_I_client_side) ;
-    virtual void notifyTunnelStatus(const RsGxsTunnelService::RsGxsTunnelId& tunnel_id,uint32_t tunnel_status) ;
-    virtual void receiveData(const RsGxsTunnelService::RsGxsTunnelId& id,unsigned char *data,uint32_t data_size) ;
+	virtual bool acceptDataFromPeer(
+	        const RsGxsId& gxs_id, const RsGxsTunnelId& tunnel_id,
+	        bool am_I_client_side);
+	virtual void notifyTunnelStatus(
+	        const RsGxsTunnelId& tunnel_id, uint32_t tunnel_status);
+	virtual void receiveData(
+	        const RsGxsTunnelId& id, unsigned char* data, uint32_t data_size );
 
     // Utility functions.
     
