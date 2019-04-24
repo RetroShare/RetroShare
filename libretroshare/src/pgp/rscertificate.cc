@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2016 Cyril Soler <csoler@users.sourceforge.net>                   *
- * Copyright 2018 Gioacchino Mazzurco <gio@eigenlab.org>                       *
+ * Copyright (C) 2016  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -55,6 +55,7 @@ static bool is_acceptable_radix64Char(char c)
 {
 	return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || c == '+' || c == '/' ||  c == '=' ;
 }
+
 
 RsCertificate::~RsCertificate()
 {
@@ -167,23 +168,6 @@ std::string RsCertificate::toStdString() const
 	return out2 ;
 }
 
-RsCertificate::RsCertificate(const std::string& str) :
-    location_name(""), pgp_version("Version: OpenPGP:SDK v0.9"),
-    dns_name(""), only_pgp(true)
-{
-	uint32_t err_code;
-	binary_pgp_key = nullptr;
-
-	if(!initializeFromString(str, err_code))
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " is deprecated because it can "
-		        << "miserably fail like this! str: " << str
-		        << " err_code: " << err_code << std::endl;
-		print_stacktrace();
-		throw err_code;
-	}
-}
-
 RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *binary_pgp_block,size_t binary_pgp_block_size)
 	:pgp_version("Version: OpenPGP:SDK v0.9")
 {
@@ -262,6 +246,91 @@ RsCertificate::RsCertificate(const RsPeerDetails& Detail, const unsigned char *b
 	}
 }
 
+
+/*static*/ std::unique_ptr<RsCertificate> RsCertificate::fromMemoryBlock(
+        const RsPeerDetails& Detail, const uint8_t* binary_pgp_block,
+        size_t binary_pgp_block_size )
+{
+	if(binary_pgp_block_size == 0 || binary_pgp_block == nullptr)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " invalid parameters! " << std::endl;
+		print_stacktrace();
+		return nullptr;
+	}
+
+	std::unique_ptr<RsCertificate> crt(new RsCertificate);
+
+	crt->binary_pgp_key = new uint8_t[binary_pgp_block_size];
+	memcpy(crt->binary_pgp_key, binary_pgp_block, binary_pgp_block_size);
+	crt->binary_pgp_key_size = binary_pgp_block_size;
+
+	if(!Detail.isOnlyGPGdetail)
+	{
+		crt->only_pgp = false;
+		crt->location_id = RsPeerId(Detail.id);
+		crt->location_name = Detail.location;
+
+		if (Detail.isHiddenNode)
+		{
+			crt->hidden_node = true;
+			crt->hidden_node_address = Detail.hiddenNodeAddress;
+			rs_sprintf_append(
+			            crt->hidden_node_address, ":%u", Detail.hiddenNodePort);
+
+			memset(crt->ipv4_internal_ip_and_port, 0, 6);
+			memset(crt->ipv4_external_ip_and_port, 0, 6);
+			crt->dns_name = "";
+		}
+		else
+		{
+			crt->hidden_node = false;
+			crt->hidden_node_address = "";
+
+			try
+			{
+				scan_ip( Detail.localAddr, Detail.localPort,
+				         crt->ipv4_internal_ip_and_port );
+			}
+			catch(...)
+			{
+				RsErr() << __PRETTY_FUNCTION__ << " Invalid LocalAddress: "
+				        << Detail.localAddr << std::endl;
+				memset(crt->ipv4_internal_ip_and_port, 0, 6);
+			}
+
+			try
+			{
+				scan_ip( Detail.extAddr, Detail.extPort,
+				         crt->ipv4_external_ip_and_port );
+			}
+			catch(...)
+			{
+				RsErr() << __PRETTY_FUNCTION__ << " Invalid ExternalAddress: "
+				        << Detail.extAddr << std::endl;
+				memset(crt->ipv4_external_ip_and_port, 0, 6);
+			}
+
+			crt->dns_name = Detail.dyndns;
+
+			for(auto&& ipr : Detail.ipAddressList)
+				crt->mLocators.insert(RsUrl(ipr.substr(0, ipr.find(' '))));
+		}
+	}
+	else
+	{
+		crt->only_pgp = true ;
+		crt->hidden_node = false;
+		crt->hidden_node_address = "";
+		crt->location_id = RsPeerId() ;
+		crt->location_name = "" ;
+		memset(crt->ipv4_internal_ip_and_port, 0, 6);
+		memset(crt->ipv4_external_ip_and_port, 0, 6);
+		crt->dns_name = "";
+	}
+
+	return crt; // Implicit move semantic
+}
+
 void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,unsigned char *ip_and_port)
 {
 	int d0,d1,d2,d3 ;
@@ -278,8 +347,11 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 	ip_and_port[5] =  port        & 0xff ;
 }
 
-bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_code)
+/*static*/ std::unique_ptr<RsCertificate> RsCertificate::fromString(
+        const std::string& instr, uint32_t& err_code )
 {
+	std::unique_ptr<RsCertificate> crt(new RsCertificate);
+
 	try
 	{
 		std::string str ;
@@ -293,7 +365,7 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 				continue ;
 
 			if(! is_acceptable_radix64Char(instr[i]))
-				return false ;
+				return nullptr;
 
 			str += instr[i] ;
 		}
@@ -308,7 +380,7 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 		bool checksum_check_passed = false;
 		unsigned char *buf = bf.data();
 		size_t total_s = 0;
-		only_pgp = true;
+		crt->only_pgp = true;
 		uint8_t certificate_version = 0x00;
 
 		while(total_s < size)
@@ -324,7 +396,7 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 			if(total_s > size)
 			{
 				err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
-				return false ;
+				return nullptr;
 			}
 
 #ifdef DEBUG_RSCERTIFICATE
@@ -336,44 +408,46 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 				certificate_version = buf[0];
 				break;
 			case CERTIFICATE_PTAG_PGP_SECTION:
-				binary_pgp_key = new unsigned char[s];
-				memcpy(binary_pgp_key,buf,s);
-				binary_pgp_key_size = s;
+				crt->binary_pgp_key = new unsigned char[s];
+				memcpy(crt->binary_pgp_key, buf, s);
+				crt->binary_pgp_key_size = s;
 				break;
 			case CERTIFICATE_PTAG_NAME_SECTION:
-				location_name = std::string((char *)buf,s);
+				crt->location_name =
+				        std::string(reinterpret_cast<char*>(buf), s);
 				break;
 			case CERTIFICATE_PTAG_SSLID_SECTION:
-				if(s != location_id.SIZE_IN_BYTES)
+				if(s != crt->location_id.SIZE_IN_BYTES)
 				{
 					err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID;
-					return false;
+					return nullptr;
 				}
-				location_id = RsPeerId(buf);
-				only_pgp = false;
+				crt->location_id = RsPeerId(buf);
+				crt->only_pgp = false;
 				break;
 			case CERTIFICATE_PTAG_DNS_SECTION:
-				dns_name = std::string((char *)buf,s);
+				crt->dns_name = std::string(reinterpret_cast<char*>(buf), s);
 				break;
 			case CERTIFICATE_PTAG_HIDDENNODE_SECTION:
-				hidden_node_address = std::string((char *)buf,s);
-				hidden_node = true;
+				crt->hidden_node_address =
+				        std::string(reinterpret_cast<char*>(buf),s);
+				crt->hidden_node = true;
 				break;
 			case CERTIFICATE_PTAG_LOCIPANDPORT_SECTION:
 				if(s != 6)
 				{
 					err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCAL_IP;
-					return false;
+					return nullptr;
 				}
-				memcpy(ipv4_internal_ip_and_port,buf,s);
+				memcpy(crt->ipv4_internal_ip_and_port, buf, s);
 				break;
 			case CERTIFICATE_PTAG_EXTIPANDPORT_SECTION:
 				if(s != 6)
 				{
 					err_code = CERTIFICATE_PARSING_ERROR_INVALID_EXTERNAL_IP;
-					return false;
+					return nullptr;
 				}
-				memcpy(ipv4_external_ip_and_port,buf,s);
+				memcpy(crt->ipv4_external_ip_and_port, buf, s);
 				break;
 			case CERTIFICATE_PTAG_CHECKSUM_SECTION:
 			{
@@ -381,7 +455,7 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 				{
 					err_code =
 					        CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION;
-					return false;
+					return nullptr;
 				}
 				uint32_t computed_crc =
 				        PGPKeyManagement::compute24bitsCRC(bf.data(),size-5);
@@ -390,18 +464,19 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 				if(computed_crc != certificate_crc)
 				{
 					err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
-					return false;
+					return nullptr;
 				}
 				else checksum_check_passed = true;
 				break;
 			}
 			case CERTIFICATE_PTAG_EXTRA_LOCATOR:
-				mLocators.insert(RsUrl(std::string((char *)buf, s)));
+				crt->mLocators.insert(
+				            RsUrl(std::string(reinterpret_cast<char*>(buf), s)));
 				break;
 			default:
-				std::cerr << "(WW) unknwown PTAG 0x" << std::hex << ptag
-				          << std::dec << " in certificate! Ignoring it."
-				          << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " unknwown PTAG 0x"
+				        << std::hex << ptag << std::dec
+				        << " in certificate! Ignoring it." << std::endl;
 				break;
 			}
 
@@ -412,30 +487,28 @@ bool RsCertificate::initializeFromString(const std::string& instr,uint32_t& err_
 		if(!checksum_check_passed)
 		{
 			err_code = CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM ;
-			return false ;
+			return nullptr;
 		}
 
 		if(certificate_version != CERTIFICATE_VERSION_06)
 		{
 			err_code = CERTIFICATE_PARSING_ERROR_WRONG_VERSION ;
-			return false ;
+			return nullptr;
 		}
 #ifdef DEBUG_RSCERTIFICATE
 		std::cerr << "Certificate is version " << (int)certificate_version << std::endl;
 #endif
 
 		if(total_s != size)	
-			std::cerr << "(EE) Certificate contains trailing characters. Weird." << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Certificate contains trailing "
+			        << "characters. Weird." << std::endl;
 
-		return true ;
+		return crt; // Implicit move semantic
 	}
-	catch(std::exception& e)
+	catch(std::exception&)
 	{
-		if(binary_pgp_key != NULL)
-			delete[] binary_pgp_key ;
-
-		err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR ;
-		return false ;
+		err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+		return nullptr;
 	}
 }
 
@@ -456,6 +529,7 @@ std::string RsCertificate::ext_ip_string() const
 	os << (int)ipv4_external_ip_and_port[0] << "." << (int)ipv4_external_ip_and_port[1] << "." << (int)ipv4_external_ip_and_port[2] << "." << (int)ipv4_external_ip_and_port[3] ;
 	return os.str() ;
 }
+
 std::string RsCertificate::loc_ip_string() const
 {
 	std::ostringstream os ;
@@ -473,28 +547,21 @@ unsigned short RsCertificate::loc_port_us() const
 	return (int)ipv4_internal_ip_and_port[4]*256 + (int)ipv4_internal_ip_and_port[5] ;
 }
 
-bool RsCertificate::cleanCertificate(const std::string& input,std::string& output,Format& format,int& error_code,bool check_content)
+bool RsCertificate::cleanCertificate(
+        const std::string& input, std::string& output, Format& format,
+        int& error_code, bool check_content )
 {
 	if(cleanCertificate(input,output,error_code))
 	{
-		format = RS_CERTIFICATE_RADIX ;
-
-        if(!check_content)
-            return true ;
-
-        try
-        {
-			RsCertificate c(input) ;
-            return true ;
-        }
-        catch(uint32_t err_code)
-        {
-            error_code = err_code ;
-            return false;
-        }
+		format = RS_CERTIFICATE_RADIX;
+		if(!check_content) return true;
+		uint32_t errCode;
+		auto crt = RsCertificate::fromString(input, errCode);
+		error_code = static_cast<int>(errCode);
+		return crt != nullptr;
 	}
 
-	return false ;
+	return false;
 }
 
 std::string RsCertificate::armouredPGPKey() const

@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2016 Cyril Soler <csoler@users.sourceforge.net>                   *
+ * Copyright (C) 2016  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -23,9 +24,11 @@
 
 #include "retroshare/rstypes.h"
 #include "util/rsurl.h"
+#include "util/rsmemory.h"
 
 #include <set>
 #include <string>
+#include <memory>
 
 struct RsPeerDetails;
 
@@ -35,30 +38,30 @@ public:
 	typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX } Format;
 
 	/**
-	 * @brief Costruct an empty certificate, use toghether with
-	 * if(initializeFromString) for safe certificate radix string parsing
+	 * @brief Create certificate object from certificate string
+	 * @param[in] str radix format string
+	 * @param[out] errorCode Optional storage for eventual error code,
+	 *	meaningful only on failure
+	 * @return nullptr on failure, pointer to the generated certificate
+	 *	otherwise
 	 */
-	RsCertificate() :
-	    ipv4_external_ip_and_port{0,0,0,0,0,0},
-	    ipv4_internal_ip_and_port{0,0,0,0,0,0},
-	    binary_pgp_key(nullptr), binary_pgp_key_size(0),
-	    pgp_version("Version: OpenPGP:SDK v0.9"), only_pgp(true),
-	    hidden_node(false) {}
+	static std::unique_ptr<RsCertificate> fromString(
+	        const std::string& str,
+	        uint32_t& errorCode = RS_DEFAULT_STORAGE_PARAM(uint32_t) );
 
 	/**
-	 * @brief Initialize from certificate string
-	 * @param[in] str radix format string
-	 * @param[out] errCode storage for eventual error code
-	 * @return false on failure, true otherwise
+	 * @brief Create certificate object from details and PGP memory block
+	 * @param[in] details peer details
+	 * @param[in] binary_pgp_block pointer to PGP memory block
+	 * @param[in] binary_pgp_block_size size of PGP memory block
+	 * @return nullptr on failure, pointer to the generated certificate
+	 *	otherwise
 	 */
-	bool initializeFromString(const std::string& str, uint32_t& errCode);
+	static std::unique_ptr<RsCertificate> fromMemoryBlock(
+	        const RsPeerDetails& details, const uint8_t* binary_pgp_block,
+	        size_t binary_pgp_block_size);
 
-	/// Constructs from binary gpg key, and RsPeerDetails.
-	RS_DEPRECATED RsCertificate( const RsPeerDetails& details,
-	               const unsigned char *gpg_mem_block,
-	               size_t gpg_mem_block_size );
-
-	virtual ~RsCertificate();
+	~RsCertificate();
 
 	/// Convert to certificate radix string
 	std::string toStdString() const;
@@ -86,10 +89,12 @@ public:
 
 	/**
 	 * @deprecated using this costructor may raise exception that cause
-	 *	crash if not handled, use empty constructor + if(initFromString) for a
-	 *	safer behaviour.
+	 *	crash if not handled.
 	 */
-	RS_DEPRECATED explicit RsCertificate(const std::string& input_string);
+	RS_DEPRECATED_FOR("RsCertificate::fromMemoryBlock(...)")
+	RsCertificate( const RsPeerDetails& details,
+	               const unsigned char *gpg_mem_block,
+	               size_t gpg_mem_block_size );
 
 private:
 	// new radix format
@@ -104,6 +109,14 @@ private:
 
 	RsCertificate(const RsCertificate&) {} /// non copy-able
 	const RsCertificate& operator=(const RsCertificate&); /// non copy-able
+
+	/// @brief Costruct an empty certificate
+	RsCertificate() :
+	    ipv4_external_ip_and_port{0,0,0,0,0,0},
+	    ipv4_internal_ip_and_port{0,0,0,0,0,0},
+	    binary_pgp_key(nullptr), binary_pgp_key_size(0),
+	    pgp_version("Version: OpenPGP:SDK v0.9"), only_pgp(true),
+	    hidden_node(false) {}
 
 	unsigned char ipv4_external_ip_and_port[6];
 	unsigned char ipv4_internal_ip_and_port[6];

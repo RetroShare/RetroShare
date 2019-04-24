@@ -1351,9 +1351,10 @@ bool p3Peers::loadCertificateFromString(
         const std::string& cert, RsPeerId& ssl_id,
         RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt;
 	uint32_t errNum = 0;
-	if(!crt.initializeFromString(cert,errNum))
+	auto crt = RsCertificate::fromString(cert,errNum);
+
+	if(!crt)
 	{
 		error_string = "RsCertificate failed with errno: "
 		        + std::to_string(errNum) + " parsing: " + cert;
@@ -1362,10 +1363,10 @@ bool p3Peers::loadCertificateFromString(
 
 	RsPgpId gpgid;
 	bool res = AuthGPG::getAuthGPG()->
-	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
+	        LoadCertificateFromString(crt->armouredPGPKey(), gpgid,error_string);
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid();
+	ssl_id = crt->sslid();
 
 	return res;
 }
@@ -1377,10 +1378,15 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
 #ifdef P3PEERS_DEBUG
 	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
 #endif
-	//parse the text to get ip address
-	try 
+	auto certPtr = RsCertificate::fromString(certstr, error_code);
+	if(!certPtr)
 	{
-		RsCertificate cert(certstr) ;
+		RsErr() << __PRETTY_FUNCTION__ << " Parsing certificate string err:"
+		        << error_code << std::endl;
+		return false;
+	}
+
+	RsCertificate& cert = *certPtr;
 
 		if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(), pd.gpg_id,pd.name,pd.gpgSigners))
 			return false;
@@ -1419,18 +1425,8 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
 			for(const RsUrl& locator : cert.locators())
 				pd.ipAddressList.push_back(locator.toString());
 		}
-	}
-	catch(uint32_t e) 
-	{
-		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;
-		error_code = e;
-		return false ;
-	}
 
-	if (pd.gpg_id.isNull())
-		return false;
-	else 
-		return true;
+	return !pd.gpg_id.isNull();
 }
 
 bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
