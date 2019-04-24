@@ -32,9 +32,9 @@
 #endif
 
 #ifdef RS_USE_LIBUPNP
-#	include "upnp/upnpconfig.h"
+#	include <upnp/upnpconfig.h>
 #elif defined(RS_USE_LIBMINIUPNPC)
-#	include "miniupnpc/miniupnpc.h"
+#	include <miniupnpc/miniupnpc.h>
 #endif // def RS_USE_LIBUPNP
 
 std::string RsServer::getSQLCipherVersion()

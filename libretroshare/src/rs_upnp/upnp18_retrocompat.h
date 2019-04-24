@@ -19,7 +19,7 @@
  *******************************************************************************/
 #pragma once
 
-#include "upnp/upnp.h"
+#include <upnp/upnp.h>
 
 
 #if UPNP_VERSION < 10800

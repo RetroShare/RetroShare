@@ -23,7 +23,7 @@
 //this file uses miniupnp
 //From https://github.com/miniupnp/miniupnp/blob/master/miniupnpc/upnpc.c
 
-#include "upnp/upnputil.h"
+#include "rs_upnp/upnputil.h"
 
 #if MINIUPNPC_API_VERSION >= -4//1.0 2008/02/18
 #include "util/rstime.h"
