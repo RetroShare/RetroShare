@@ -245,10 +245,11 @@ after_build:
 #      artifacts configuration    #
 #---------------------------------#
 
-artifacts:
-  - path: $(RS_DEPLOY)
-  - path: '**\*.exe'
-  - path: filelist.txt
+#artifacts:
+#  - path: '**\*.exe'
+#  - path: filelist.txt
+# - path: $(RS_DEPLOY)
+
 #
 #  # pushing a single file
 #  - path: test.zip
