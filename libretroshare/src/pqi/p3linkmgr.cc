@@ -1457,7 +1457,14 @@ void p3LinkMgrIMPL::peerConnectRequest(
 /*******************************************************************/
        /*************** External Control ****************/
 bool p3LinkMgrIMPL::retryConnect(const RsPeerId &id)
-{ return retryConnectTCP(id); }
+{
+// P3CONNMGR_NO_TCP_CONNECTIONS defined when debugging with UDP connections only
+#ifndef P3CONNMGR_NO_TCP_CONNECTIONS
+	return retryConnectTCP(id);
+#else // def P3CONNMGR_NO_TCP_CONNECTIONS
+	return false;
+#endif // def P3CONNMGR_NO_TCP_CONNECTIONS
+}
 
 
 
