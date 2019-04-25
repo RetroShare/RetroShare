@@ -194,13 +194,13 @@ linux-* {
 		}
 	}
 
-	# Check if the systems libupnp has been Debian-patched
-	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
-		# Normal libupnp
-	} else {
-		# Patched libupnp or new unreleased version
-		DEFINES *= PATCHED_LIBUPNP
-	}
+    contains(RS_UPNP_LIB, threadutil) { # ensure we don't break libpnp-1.8.x
+        # Check if the systems libupnp-1.6.x has been Debian-patched
+        !system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
+            # Patched libupnp or new unreleased version
+            DEFINES *= PATCHED_LIBUPNP
+        }
+    }
 
     PKGCONFIG *= libssl
     equals(RS_UPNP_LIB, "upnp ixml threadutil"):PKGCONFIG *= libupnp
