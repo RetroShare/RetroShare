@@ -21,15 +21,20 @@
  *******************************************************************************/
 #pragma once
 
-// RSRandom contains a random number generator that is
-// - thread safe
-// - system independant
-// - fast
-// - CRYPTOGRAPHICALLY SAFE, because it is based on openssl random number generator
-
 #include <vector>
 #include <util/rsthreads.h>
 
+/**
+ * RsRandom provide a random number generator that is
+ * - thread safe
+ * - system independant
+ * - fast
+ * - CRYPTOGRAPHICALLY SAFE, because it is based on openssl random number
+ *   generator
+ *
+ * Use the RsRandom alias instead of RSRandom name to be consistent with the
+ * RetroShare class naming
+ */
 class RSRandom
 {
 	public:
@@ -52,3 +57,5 @@ class RSRandom
 		static uint32_t index ;
 		static std::vector<uint32_t> MT ;
 };
+
+using RsRandom = RSRandom;

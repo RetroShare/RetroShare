@@ -39,7 +39,7 @@
 #include "util/rsprint.h"
 #include "util/rsdebug.h"
 #include "util/rsstring.h"
-
+#include "util/rsrandom.h"
 #include "rsitems/rsconfigitems.h"
 
 #include "retroshare/rsiface.h"
@@ -2025,7 +2025,8 @@ bool p3LinkMgrIMPL::locked_ConnectAttempt_Complete(peerConnectState* peer)
 {
 	/* flag as last attempt to prevent loop */
 	//add a random perturbation between 0 and 2 sec.
-	peer->lastattempt = time(nullptr) + rand() % MAX_RANDOM_ATTEMPT_OFFSET;
+	peer->lastattempt = time(nullptr) +
+	        RsRandom::random_u32() % MAX_RANDOM_ATTEMPT_OFFSET;
 
 	if (peer->inConnAttempt) 
 	{
