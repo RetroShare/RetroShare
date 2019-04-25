@@ -30,6 +30,9 @@ using UpnpEventSubscribe   = Upnp_Event_Subscribe;
 using UpnpActionComplete   = Upnp_Action_Complete;
 using UpnpStateVarComplete = Upnp_State_Var_Complete;
 
+static inline const char* UpnpStateVarComplete_get_CurrentVal_cstr(
+        const UpnpStateVarComplete* esvc) noexcept { return esvc->CurrentVal; }
+
 #endif // UPNP_VERSION < 10800
 
 #if UPNP_VERSION < 10624
@@ -75,8 +78,5 @@ static inline int UpnpStateVarComplete_get_ErrCode(
 
 static inline const char* UpnpStateVarComplete_get_StateVarName_cstr(
         const UpnpStateVarComplete* esvc) noexcept { return esvc->StateVarName; }
-
-static inline const char* UpnpStateVarComplete_get_CurrentVal_cstr(
-        const UpnpStateVarComplete* esvc) noexcept { return esvc->CurrentVal; }
 
 #endif // UPNP_VERSION < 10624
