@@ -30,6 +30,10 @@ class RsGixs ;
 
 static const uint32_t DISTANT_CHAT_AES_KEY_SIZE = 16 ;
 
+/**
+ * Public interface only uses DistandChatPeerId, but internally, this is
+ * converted into a RsGxsTunnelId
+ */
 class DistantChatService: public RsGxsTunnelService::RsGxsTunnelClientService
 {
 public:
