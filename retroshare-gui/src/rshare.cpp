@@ -755,6 +755,9 @@ void Rshare::loadStyleSheet(const QString &sheetName)
                     styleSheet += QLatin1String(file.readAll()) + "\n";
                     file.close();
                 }
+
+                /* replace %THISPATH% by file path so url can get relative files */
+                styleSheet = styleSheet.replace("url(%THISPATH%",QString("url(%1").arg(fileInfo.absolutePath()));
             }
         }
     }
