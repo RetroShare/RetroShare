@@ -21,14 +21,17 @@
  *******************************************************************************/
 #pragma once
 
-#include <retroshare/rspeers.h>
+#include "retroshare/rspeers.h"
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
 #include "pqi/pqiassist.h"
-
 #include "pqi/p3cfgmgr.h"
-
+#include "util/rsdebug.h"
 #include "util/rsthreads.h"
+
+#ifndef RS_DEBUG_P3PEERMGR
+#	define RS_DEBUG_P3PEERMGR 1
+#endif
 
 /* RS_VIS_STATE -> specified in rspeers.h
  */
@@ -235,7 +238,24 @@ virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage 
 /*************************************************************************************************/
 /*************************************************************************************************/
 
-
+protected:
+#if defined(RS_DEBUG_P3PEERMGR) && RS_DEBUG_P3PEERMGR == 1
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_P3PEERMGR) && RS_DEBUG_P3PEERMGR == 2
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsNoDbg;
+#elif defined(RS_DEBUG_P3PEERMGR) && RS_DEBUG_P3PEERMGR >= 3
+	using Dbg1 = RsDbg;
+	using Dbg2 = RsDbg;
+	using Dbg3 = RsDbg;
+#else // RS_DEBUG_P3DISCOVERY
+	using Dbg1 = RsNoDbg;
+	using Dbg2 = RsNoDbg;
+	using Dbg3 = RsNoDbg;
+#endif // RS_DEBUG_P3DISCOVERY
 };
 
 

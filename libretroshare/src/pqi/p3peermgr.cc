@@ -939,6 +939,16 @@ bool p3PeerMgrIMPL::addFriend(
 			return true;
 		}
 
+		if ( !AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&
+		        gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId() )
+		{
+#ifdef PEER_DEBUG
+			std::cerr << "p3PeerMgrIMPL::addFriend() gpg is not accepted"
+			          << std::endl;
+#endif
+			return false;
+		}
+
 		/* check if it is in others */
 		if (mOthersList.end() != (it = mOthersList.find(id)))
 		{
@@ -2394,10 +2404,19 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 			    pitem->print(std::cerr, 10);
 			    std::cerr << std::endl;
 #endif
-			    /* ************* */
-			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
-			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
-			    setLocation(pitem->nodePeerId, pitem->location);
+				/* permission flags is used as a mask for the existing perms,
+				 * so we set it to 0xffff.
+				 * If addFriend(...) return false at this point it means it is
+				 * an SSL-only friend, load it with addFriendPendingPgp(...) */
+				if(!addFriend( peer_id, peer_pgp_id, pitem->netMode,
+				               pitem->vs_disc, pitem->vs_dht,
+				               pitem->lastContact, RS_NODE_PERM_ALL ))
+				{
+					Dbg1() << __PRETTY_FUNCTION__ << " loading SSL-only friend: "
+					       << peer_id << " " << pitem->location << std::endl;
+					addFriendPendingPgp(peer_id);
+				}
+				setLocation(pitem->nodePeerId, pitem->location);
 		    }
 
 		    if (pitem->netMode == RS_NET_MODE_HIDDEN)
