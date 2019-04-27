@@ -59,6 +59,8 @@ struct RsUrl : RsSerializable
 	RsUrl& setQuery(const std::map<std::string, std::string>& query);
 	RsUrl& setQueryKV(const std::string& key, const std::string& value);
 	RsUrl& delQueryK(const std::string& key);
+	bool hasQueryK(const std::string& key);
+	const std::string* getQueryV(const std::string& key);
 
 	const std::string& fragment() const;
 	RsUrl& setFragment(const std::string& fragment);
