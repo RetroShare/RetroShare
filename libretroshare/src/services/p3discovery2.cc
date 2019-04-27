@@ -1283,7 +1283,7 @@ void p3discovery2::rsEventsHandler(const RsEvent& event)
 					if(rsPeers->isOnline(sslId))
 					{
 						// Need to wait a bit more even if online
-						std::this_thread::sleep_for(std::chrono::seconds(2));
+						//std::this_thread::sleep_for(std::chrono::seconds(2));
 						if(rsDisc && rsDisc->requestInvite(sslId, sslId))
 							return; // RsThread::async
 					}
