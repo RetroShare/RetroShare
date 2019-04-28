@@ -844,36 +844,36 @@ protected:
 // t_RsGenericId<...> declarations                                            //
 //============================================================================//
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static bool serialize(
 	        uint8_t data[], uint32_t size, uint32_t &offset,
-	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
+	        const t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member );
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static bool deserialize(
 	        const uint8_t data[], uint32_t size, uint32_t &offset,
-	        t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
+	        t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member );
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static uint32_t serial_size(
 	        const t_RsGenericIdType<
-	        ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
+	        ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member );
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static void print_data(
 	        const std::string& name,
 	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member );
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static bool to_JSON(
 	        const std::string& membername,
-	        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+	        const t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member,
 	        RsJson& jVal );
 
-	template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+	template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 	static bool from_JSON(
 	        const std::string& memberName,
-	        t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
+	        t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member,
 	        RsJson& jDoc );
 
 //============================================================================//
@@ -914,41 +914,43 @@ protected:
 //                            t_RsGenericId<...>                              //
 //============================================================================//
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 bool RsTypeSerializer::serialize (
         uint8_t data[], uint32_t size, uint32_t &offset,
         const t_RsGenericIdType<
-        ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
+        ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member )
 {
 	return (*const_cast<const t_RsGenericIdType<
-	      ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER> *>(&member)
-	      ).serialise(data,size,offset);
+	      ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER> *>(&member)
+	      ).serialise(data, size, offset);
 }
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 bool RsTypeSerializer::deserialize(
         const uint8_t data[], uint32_t size, uint32_t &offset,
-        t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
-{ return member.deserialise(data,size,offset); }
+        t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member )
+{ return member.deserialise(data, size, offset); }
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 uint32_t RsTypeSerializer::serial_size(
-        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
+        const t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member )
 { return member.serial_size(); }
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
 void RsTypeSerializer::print_data(
         const std::string& /*name*/,
-        const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member )
+        const t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member )
 {
-	std::cerr << "  [RsGenericId<" << std::hex << UNIQUE_IDENTIFIER << ">] : "
+	std::cerr << "  [RsGenericId<" << std::hex
+	          << static_cast<uint32_t>(UNIQUE_IDENTIFIER) << ">] : "
 	          << member << std::endl;
 }
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
-bool RsTypeSerializer::to_JSON( const std::string& memberName,
-                                const t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
-                                RsJson& jDoc )
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
+bool RsTypeSerializer::to_JSON(
+        const std::string& memberName,
+        const t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member,
+        RsJson& jDoc )
 {
 	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
 
@@ -964,10 +966,11 @@ bool RsTypeSerializer::to_JSON( const std::string& memberName,
 	return true;
 }
 
-template<uint32_t ID_SIZE_IN_BYTES,bool UPPER_CASE,uint32_t UNIQUE_IDENTIFIER>
-bool RsTypeSerializer::from_JSON( const std::string& membername,
-                                  t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>& member,
-                                  RsJson& jVal )
+template<uint32_t ID_SIZE_IN_BYTES, bool UPPER_CASE, RsGenericIdType UNIQUE_IDENTIFIER>
+bool RsTypeSerializer::from_JSON(
+        const std::string& membername,
+        t_RsGenericIdType<ID_SIZE_IN_BYTES, UPPER_CASE, UNIQUE_IDENTIFIER>& member,
+        RsJson& jVal )
 {
 	const char* mName = membername.c_str();
 	bool ret = jVal.HasMember(mName);
@@ -975,7 +978,9 @@ bool RsTypeSerializer::from_JSON( const std::string& membername,
 	{
 		rapidjson::Value& v = jVal[mName];
 		ret = ret && v.IsString();
-		if(ret) member = t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(std::string(v.GetString()));
+		if(ret) member =
+		        t_RsGenericIdType<ID_SIZE_IN_BYTES,UPPER_CASE,UNIQUE_IDENTIFIER>(
+		            std::string(v.GetString()) );
 	}
 	return ret;
 }

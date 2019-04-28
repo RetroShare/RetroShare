@@ -37,15 +37,6 @@
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
-// This adds a level of indirection to types, so we can easily change them if needed
-//
-//typedef std::string   RsCertId;	// unused
-//typedef std::string   RsChanId;
-//typedef std::string   RsMsgId;
-//typedef std::string   RsAuthId;
-
-typedef SSLIdType     RsPeerId ;
-typedef PGPIdType     RsPgpId ;
 typedef Sha1CheckSum  RsFileHash ;
 typedef Sha1CheckSum  RsMessageId ;
 
