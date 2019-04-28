@@ -19,35 +19,39 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include "rsrandom.h"
+
 #include <stdlib.h>
 #include <string>
 #include <unistd.h>
-#include "rsrandom.h"
-
 #include <openssl/rand.h>
 
-uint32_t RSRandom::index = RSRandom::N ;
-std::vector<uint32_t> RSRandom::MT(RSRandom::N,0u) ;
-RsMutex RSRandom::rndMtx("RSRandom") ;
+uint32_t RsRandom::index = RsRandom::N;
+std::vector<uint32_t> RsRandom::MT(RsRandom::N,0u);
+RsMutex RsRandom::rndMtx("RsRandom");
 
-// According to our tests (cyril+thunder), on both Windows and Linux does
-// RAND_bytes init itself automatically at first call, from system-based
-// unpredictable values, so that seeding is not even needed.
-// This call still adds some randomness (not much actually, but it's always good to
-// have anyway)
-//
+/* According to our tests (cyril+thunder), on both Windows and Linux does
+ * RAND_bytes init itself automatically at first call, from system-based
+ * unpredictable values, so that seeding is not even needed.
+ * This call still adds some randomness (not much actually, but it's always good
+ * to have anyway) */
 #ifdef WINDOWS_SYS
-#include "util/rstime.h"
-#ifdef WIN_PTHREADS_H
-static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self())*0x1293fe)^0x18e34a12 ) ;
-#else
-static bool auto_seed = RSRandom::seed( (time(NULL) + ((uint32_t) pthread_self().p)*0x1293fe)^0x18e34a12 ) ;
-#endif
+#	include "util/rstime.h"
+#	ifdef WIN_PTHREADS_H
+static bool auto_seed = RSRandom::seed(
+            (time(nullptr) +
+             static_cast<uint32_t>(pthread_self()) *0x1293fe)^0x18e34a12 );
+#	else // def WIN_PTHREADS_H
+static bool auto_seed = RSRandom::seed(
+            (time(nullptr) +
+             static_cast<uint32_t>(pthread_self().p)*0x1293fe)^0x18e34a12 );
+#	endif // def WIN_PTHREADS_H
 #endif
 
-bool RSRandom::seed(uint32_t s) 
+bool RsRandom::seed(uint32_t s)
 {
-	RsStackMutex mtx(rndMtx) ;
+	RS_STACK_MUTEX(rndMtx);
 
 	MT.resize(N,0) ;	// because MT might not be already resized
 
@@ -66,22 +70,22 @@ bool RSRandom::seed(uint32_t s)
 	return true ;
 }
 
-void RSRandom::random_bytes(unsigned char *data,uint32_t size) 
+void RsRandom::random_bytes(unsigned char *data,uint32_t size)
 {
 	RAND_bytes(data,size) ;
 }
-void RSRandom::locked_next_state() 
+void RsRandom::locked_next_state()
 {
 	RAND_bytes((unsigned char *)&MT[0],N*sizeof(uint32_t)) ;
 	index = 0 ;
 }
 
-uint32_t RSRandom::random_u32() 
+uint32_t RsRandom::random_u32()
 {
 	uint32_t y;
 
 	{
-		RsStackMutex mtx(rndMtx) ;
+		RS_STACK_MUTEX(rndMtx);
 
 		index++ ;
 
@@ -102,22 +106,22 @@ uint32_t RSRandom::random_u32()
 	return y;
 }
 
-uint64_t RSRandom::random_u64() 
+uint64_t RsRandom::random_u64()
 {
 	return ((uint64_t)random_u32() << 32ul) + random_u32() ;
 }
 
-float RSRandom::random_f32() 
+float RsRandom::random_f32()
 {
 	return random_u32() / (float)(~(uint32_t)0) ;
 }
 
-double RSRandom::random_f64() 
+double RsRandom::random_f64()
 {
 	return random_u64() / (double)(~(uint64_t)0) ;
 }
 
-std::string RSRandom::random_alphaNumericString(uint32_t len)
+std::string RsRandom::random_alphaNumericString(uint32_t len)
 {
 	std::string s = "" ;
 
