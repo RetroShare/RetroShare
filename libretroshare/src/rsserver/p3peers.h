@@ -33,6 +33,7 @@
 #include "retroshare/rspeers.h"
 #include "util/rsurl.h"
 #include "util/rsdeprecate.h"
+#include "util/rsdebug.h"
 
 class p3LinkMgr;
 class p3PeerMgr;
@@ -170,6 +171,8 @@ private:
 	p3LinkMgr *mLinkMgr;
 	p3PeerMgr *mPeerMgr;
 	p3NetMgr *mNetMgr;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
 
 #endif
