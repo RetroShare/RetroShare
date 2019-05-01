@@ -1217,9 +1217,10 @@ bool p3Peers::loadCertificateFromString(
         const std::string& cert, RsPeerId& ssl_id,
         RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt;
 	uint32_t errNum = 0;
-	if(!crt.initializeFromString(cert,errNum))
+	auto crt = RsCertificate::fromString(cert, errNum);
+
+	if(!crt)
 	{
 		error_string = "RsCertificate failed with errno: "
 		        + std::to_string(errNum) + " parsing: " + cert;
@@ -1227,11 +1228,11 @@ bool p3Peers::loadCertificateFromString(
 	}
 
 	RsPgpId gpgid;
-	bool res = AuthGPG::getAuthGPG()->
-	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
+	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(
+	            crt->armouredPGPKey(), gpgid, error_string );
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid();
+	ssl_id = crt->sslid();
 
 	return res;
 }
@@ -1240,63 +1241,53 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
                                          RsPeerDetails &pd,
                                          uint32_t& error_code )
 {
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
-#endif
-	//parse the text to get ip address
-	try 
-	{
-		RsCertificate cert(certstr) ;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
-		if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(), pd.gpg_id,pd.name,pd.gpgSigners))
-			return false;
+	auto certPtr = RsCertificate::fromString(certstr, error_code);
+	if(!certPtr) return false;
 
-#ifdef P3PEERS_DEBUG
-		std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
-#endif
+	RsCertificate& cert = *certPtr;
 
-		pd.id = cert.sslid() ;
-		pd.location = cert.location_name_string();
-
-		pd.isOnlyGPGdetail = pd.id.isNull();
-        pd.service_perm_flags = RS_NODE_PERM_DEFAULT ;
-
-		if (!cert.hidden_node_string().empty())
-		{
-			pd.isHiddenNode = true;
-
-			std::string domain;
-			uint16_t port;
-			if (splitAddressString(cert.hidden_node_string(), domain, port))
-			{
-				pd.hiddenNodeAddress = domain;
-				pd.hiddenNodePort = port;
-				pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
-			}
-		}
-		else
-		{
-			pd.isHiddenNode = false;
-			pd.localAddr = cert.loc_ip_string();
-			pd.localPort = cert.loc_port_us();
-			pd.extAddr = cert.ext_ip_string();
-			pd.extPort = cert.ext_port_us();
-			pd.dyndns = cert.dns_string();
-			for(const RsUrl& locator : cert.locators())
-				pd.ipAddressList.push_back(locator.toString());
-		}
-	}
-	catch(uint32_t e) 
-	{
-		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;
-		error_code = e;
-		return false ;
-	}
-
-	if (pd.gpg_id.isNull())
+	if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(
+	            cert.pgp_key(), cert.pgp_key_size(),
+	            pd.gpg_id, pd.name, pd.gpgSigners ))
 		return false;
-	else 
-		return true;
+
+	Dbg4() << __PRETTY_FUNCTION__ << " Parsing cert for sslid, location, ext "
+	       << " and local address details. : " << certstr << std::endl;
+
+	pd.id = cert.sslid();
+	pd.location = cert.location_name_string();
+
+	pd.isOnlyGPGdetail = pd.id.isNull();
+	pd.service_perm_flags = RS_NODE_PERM_DEFAULT;
+
+	if (!cert.hidden_node_string().empty())
+	{
+		pd.isHiddenNode = true;
+
+		std::string domain;
+		uint16_t port;
+		if (splitAddressString(cert.hidden_node_string(), domain, port))
+		{
+			pd.hiddenNodeAddress = domain;
+			pd.hiddenNodePort = port;
+			pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
+		}
+	}
+	else
+	{
+		pd.isHiddenNode = false;
+		pd.localAddr = cert.loc_ip_string();
+		pd.localPort = cert.loc_port_us();
+		pd.extAddr = cert.ext_ip_string();
+		pd.extPort = cert.ext_port_us();
+		pd.dyndns = cert.dns_string();
+		for(const RsUrl& locator : cert.locators())
+			pd.ipAddressList.push_back(locator.toString());
+	}
+
+	return true;
 }
 
 bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
