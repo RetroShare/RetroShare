@@ -84,7 +84,8 @@ bool isExternalNet(const struct in_addr *addr);
 // uses a re-entrant version of gethostbyname
 bool rsGetHostByName(const std::string& hostname, in_addr& returned_addr) ;
 
-std::ostream& operator<<(std::ostream& o,const struct sockaddr_in&) ;
+std::ostream& operator<<(std::ostream& o, const sockaddr_in&);
+std::ostream& operator<<(std::ostream& o, const sockaddr_storage&);
 
 /* thread-safe version of inet_ntoa */
 std::string rs_inet_ntoa(struct in_addr in);
@@ -143,10 +144,6 @@ std::string sockaddr_storage_familytostring(const struct sockaddr_storage &addr)
 std::string sockaddr_storage_iptostring(const struct sockaddr_storage &addr);
 std::string sockaddr_storage_porttostring(const struct sockaddr_storage &addr);
 void sockaddr_storage_dump(const sockaddr_storage & addr, std::string * outputString = NULL);
-
-// output
-//void sockaddr_storage_output(const struct sockaddr_storage &addr, std::ostream &out);
-//void sockaddr_storage_ipoutput(const struct sockaddr_storage &addr, std::ostream &out);
 
 // net checks.
 bool sockaddr_storage_isnull(const struct sockaddr_storage &addr);
