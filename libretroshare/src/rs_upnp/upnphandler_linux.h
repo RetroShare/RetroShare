@@ -31,7 +31,7 @@
 #include "util/rsthreads.h"
 
 #include <upnp/upnp.h>
-#include "upnp/UPnPBase.h"
+#include "rs_upnp/UPnPBase.h"
 
 #define RS_UPNP_S_UNINITIALISED  0
 #define RS_UPNP_S_UNAVAILABLE    1

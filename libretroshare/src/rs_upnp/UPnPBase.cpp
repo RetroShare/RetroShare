@@ -6,6 +6,7 @@
  * Copyright (c) 2004-2009 Marcelo Roberto Jimenez ( phoenix@amule.org )       *
  * Copyright (c) 2006-2009 aMule Team ( admin@amule.org / http://www.amule.org)*
  * Copyright (c) 2009-2010 Retroshare Team                                     *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,12 +26,14 @@
 #define UPNP_C
 
 #include "UPnPBase.h"
+
 #include <stdio.h>
 #include <string.h>
 #include <sstream> // for std::istringstream
-
 #include <algorithm>		// For transform()
+
 #include "util/rsstring.h"
+#include "rs_upnp/upnp18_retrocompat.h"
 
 #ifdef __GNUC__
 	#if __GNUC__ >= 4
@@ -115,7 +118,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 	const std::string &message,
 	int errorCode,
 	const DOMString errorString,
-	IXML_Document *doc) const
+    const IXML_Document* doc) const
 {
 	/* remove unused parameter warnings */
 	(void) message;
@@ -159,7 +162,7 @@ std::string CUPnPLib::processUPnPErrorMessage(
 
 
 void CUPnPLib::ProcessActionResponse(
-	IXML_Document *RespDoc,
+    const IXML_Document* RespDoc,
 	const std::string &actionName) const
 {
 	/* remove unused parameter warnings */
@@ -196,11 +199,11 @@ void CUPnPLib::ProcessActionResponse(
  * \brief Returns the root node of a given document.
  */
 IXML_Element *CUPnPLib::Element_GetRootElement(
-	IXML_Document *doc) const
+    const IXML_Document* doc) const
 {
-	IXML_Element *root = REINTERPRET_CAST(IXML_Element *)(
+	IXML_Element* root = REINTERPRET_CAST(IXML_Element *)(
 		ixmlNode_getFirstChild(
-			REINTERPRET_CAST(IXML_Node *)(doc)));
+	        REINTERPRET_CAST(IXML_Node *)(const_cast<IXML_Document*>(doc))));
 
 	return root;
 }
@@ -748,7 +751,7 @@ bool CUPnPService::Execute(
 		GetAbsControlURL().c_str(),
 		GetServiceType().c_str(),
 		NULL, ActionDoc,
-		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
+	    reinterpret_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
 		NULL);
 	return true;
 }
@@ -948,7 +951,7 @@ m_WanService(NULL)
 #endif
 
 	ret = UpnpRegisterClient(
-		static_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
+	    reinterpret_cast<Upnp_FunPtr>(&CUPnPControlPoint::Callback),
 		&m_UPnPClientHandle,
 		&m_UPnPClientHandle);
 	if (ret != UPNP_E_SUCCESS) {
@@ -1295,185 +1298,132 @@ bool CUPnPControlPoint::PrivateGetExternalIpAdress()
 
 
 // This function is static
-int CUPnPControlPoint::Callback(Upnp_EventType EventType, void *Event, void * /*Cookie*/)
+int CUPnPControlPoint::Callback(
+            Upnp_EventType EventType, const void* Event, void * /*Cookie*/ )
 {
+	if(!Event) return 0;
+
 	std::string msg;
 	std::string msg2;
-	// Somehow, this is unreliable. UPNP_DISCOVERY_ADVERTISEMENT_ALIVE events
-	// happen with a wrong cookie and... boom!
-	// CUPnPControlPoint *upnpCP = static_cast<CUPnPControlPoint *>(Cookie);
-	CUPnPControlPoint *upnpCP = CUPnPControlPoint::s_CtrlPoint ;
 
-	if (upnpCP == NULL)
-		return 0;
-	
-	//fprintf(stderr, "Callback: %d, Cookie: %p\n", EventType, Cookie);
-	switch (EventType) {
-	case UPNP_DISCOVERY_ADVERTISEMENT_ALIVE:
-#ifdef UPNP_DEBUG
-		std::cerr << "CUPnPControlPoint::Callback() UPNP_DISCOVERY_ADVERTISEMENT_ALIVE: ";
-#endif
-		goto upnpDiscovery;
-	case UPNP_DISCOVERY_SEARCH_RESULT: {
-#ifdef UPNP_DEBUG
-		std::cerr << "UPNP_DISCOVERY_SEARCH_RESULT: ";
-#endif
-		// UPnP Discovery
-upnpDiscovery:
-		struct Upnp_Discovery *d_event = (struct Upnp_Discovery *)Event;
-		IXML_Document *doc = NULL;
-		int ret;
-		if (d_event->ErrCode != UPNP_E_SUCCESS) {
-#ifdef UPNP_DEBUG
-                        std::cerr << upnpCP->m_upnpLib.GetUPnPErrorMessage(d_event->ErrCode) << "." << std::endl;
-#endif
-		}
-#ifdef UPNP_DEBUG
-		std::cerr << "CUPnPControlPoint::Callback() URetrieving device description from " <<
-				d_event->Location << "." << std::endl;
-#endif
+	CUPnPControlPoint* upnpCP = CUPnPControlPoint::s_CtrlPoint;
+	if (!upnpCP) return 0;
+
+	switch (EventType)
+	{
+	case UPNP_DISCOVERY_ADVERTISEMENT_ALIVE: /*fallthrough*/
+	case UPNP_DISCOVERY_SEARCH_RESULT:
+	{
+		const UpnpDiscovery* d_event = static_cast<const UpnpDiscovery*>(Event);
+
 		// Get the XML tree device description in doc
-		ret = UpnpDownloadXmlDoc(d_event->Location, &doc); 
-		if (ret != UPNP_E_SUCCESS) {
-#ifdef UPNP_DEBUG
-			std::cerr << "CUPnPControlPoint::Callback() UError retrieving device description from " <<
-				d_event->Location << ": " <<
-				upnpCP->m_upnpLib.GetUPnPErrorMessage(ret) << ".";
-#endif
-		} else {
-#ifdef UPNP_DEBUG
-			std::cerr << "CUPnPControlPoint::Callback() URetrieving device description from " <<
-				d_event->Location << "." << std::endl;
-#endif
+		IXML_Document* doc = nullptr;
+		UpnpDownloadXmlDoc(UpnpDiscovery_get_Location_cstr(d_event), &doc);
+		if (!doc) break;
+
+		IXML_Element* root = upnpCP->m_upnpLib.Element_GetRootElement(doc);
+
+		// Extract the URLBase
+		const std::string urlBase = upnpCP->m_upnpLib.
+		    Element_GetChildValueByTag(root, "URLBase");
+		// Get the root device
+		IXML_Element *rootDevice = upnpCP->m_upnpLib.
+		    Element_GetFirstChildByTag(root, "device");
+		// Extract the deviceType
+		std::string devType(upnpCP->m_upnpLib.
+		    Element_GetChildValueByTag(rootDevice, "deviceType"));
+
+		// Only add device if it is an InternetGatewayDevice
+		if (stdStringIsEqualCI(devType, upnpCP->m_upnpLib.UPNP_DEVICE_IGW))
+		{
+			// This condition can be used to auto-detect
+			// the UPnP device we are interested in.
+			// Obs.: Don't block the entry here on this
+			// condition! There may be more than one device,
+			// and the first that enters may not be the one
+			// we are interested in!
+			upnpCP->SetIGWDeviceDetected(true);
+			// Log it if not UPNP_DISCOVERY_ADVERTISEMENT_ALIVE,
+			// we don't want to spam our logs.
+			//if (EventType != UPNP_DISCOVERY_ADVERTISEMENT_ALIVE) {
+			// Add the root device to our list
+			upnpCP->AddRootDevice(
+			        rootDevice, urlBase,
+			        UpnpDiscovery_get_Location_cstr(d_event),
+			        UpnpDiscovery_get_Expires(d_event) );
 		}
-		if (doc) {
-			// Get the root node
-			IXML_Element *root =
-				upnpCP->m_upnpLib.Element_GetRootElement(doc);
-			// Extract the URLBase
-			const std::string urlBase = upnpCP->m_upnpLib.
-				Element_GetChildValueByTag(root, "URLBase");
-			// Get the root device
-			IXML_Element *rootDevice = upnpCP->m_upnpLib.
-				Element_GetFirstChildByTag(root, "device");
-			// Extract the deviceType
-			std::string devType(upnpCP->m_upnpLib.
-				Element_GetChildValueByTag(rootDevice, "deviceType"));
-			// Only add device if it is an InternetGatewayDevice
-			if (stdStringIsEqualCI(devType, upnpCP->m_upnpLib.UPNP_DEVICE_IGW)) {
-				// This condition can be used to auto-detect
-				// the UPnP device we are interested in.
-				// Obs.: Don't block the entry here on this 
-				// condition! There may be more than one device,
-				// and the first that enters may not be the one
-				// we are interested in!
-				upnpCP->SetIGWDeviceDetected(true);
-				// Log it if not UPNP_DISCOVERY_ADVERTISEMENT_ALIVE,
-				// we don't want to spam our logs.
-				//if (EventType != UPNP_DISCOVERY_ADVERTISEMENT_ALIVE) {
-#ifdef UPNP_DEBUG
-					std::cerr << "Internet Gateway Device Detected." << std::endl;
-#endif
-				//}
-#ifdef UPNP_DEBUG
-				std::cerr << "CUPnPControlPoint::Callback() UGetting root device desc." << std::endl;
-#endif
-				// Add the root device to our list
-				upnpCP->AddRootDevice(rootDevice, urlBase,
-					d_event->Location, d_event->Expires);
-#ifdef UPNP_DEBUG
-				std::cerr << "CUPnPControlPoint::Callback() UFinishing getting root device desc." << std::endl;
-#endif
-			}
-			// Free the XML doc tree
-			ixmlDocument_free(doc);
-		}
+
+		// Free the XML doc tree
+		ixmlDocument_free(doc);
 		break;
 	}
-	case UPNP_DISCOVERY_SEARCH_TIMEOUT: {
-		//fprintf(stderr, "Callback: UPNP_DISCOVERY_SEARCH_TIMEOUT\n");
-		// Search timeout
-#ifdef UPNP_DEBUG
-		std::cerr << "CUPnPControlPoint::Callback() UUPNP_DISCOVERY_SEARCH_TIMEOUT : unlocking mutex." << std::endl;
-#endif
-
+	case UPNP_DISCOVERY_SEARCH_TIMEOUT:
+	{
 		// Unlock the search timeout mutex
 		upnpCP->m_WaitForSearchTimeoutMutex.unlock();
-		
 		break;
 	}
-	case UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE: {
-		//fprintf(stderr, "Callback: UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE\n");
-		// UPnP Device Removed
-		struct Upnp_Discovery *dab_event = (struct Upnp_Discovery *)Event;
-		if (dab_event->ErrCode != UPNP_E_SUCCESS) {
-#ifdef UPNP_DEBUG
-			std::cerr << "CUPnPControlPoint::Callback() Uerror(UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE): " <<
-				upnpCP->m_upnpLib.GetUPnPErrorMessage(dab_event->ErrCode) <<
-				"." << std::endl;
-#endif
-		}
-		std::string devType = dab_event->DeviceType;
+	case UPNP_DISCOVERY_ADVERTISEMENT_BYEBYE: // UPnP Device Removed
+	{
+		const UpnpDiscovery* dab_event = static_cast<const UpnpDiscovery*>(Event);
+		if(!dab_event) break;
+
+		std::string devType = UpnpDiscovery_get_DeviceType_cstr(dab_event);
+
 		// Check for an InternetGatewayDevice and removes it from the list
 		std::transform(devType.begin(), devType.end(), devType.begin(), tolower);
-		if (stdStringIsEqualCI(devType, upnpCP->m_upnpLib.UPNP_DEVICE_IGW)) {
-			upnpCP->RemoveRootDevice(dab_event->DeviceId);
-		}
+		if (stdStringIsEqualCI(devType, upnpCP->m_upnpLib.UPNP_DEVICE_IGW))
+			upnpCP->RemoveRootDevice(
+			            UpnpDiscovery_get_DeviceID_cstr(dab_event) );
 		break;
 	}
-	case UPNP_EVENT_RECEIVED: {
-#ifdef UPNP_DEBUG
-		fprintf(stderr, "Callback: UPNP_EVENT_RECEIVED\n");
-#endif
+	case UPNP_EVENT_RECEIVED:
+	{
 		// Event reveived
-		struct Upnp_Event *e_event = (struct Upnp_Event *)Event;
-		const std::string Sid = e_event->Sid;
+		const UpnpEvent* e_event = static_cast<const UpnpEvent*>(Event);
+
+		const std::string Sid = UpnpEvent_get_SID_cstr(e_event);
+
 		// Parses the event
-		upnpCP->OnEventReceived(Sid, e_event->EventKey, e_event->ChangedVariables);
+		upnpCP->OnEventReceived( Sid,
+		                         UpnpEvent_get_EventKey(e_event),
+		                         UpnpEvent_get_ChangedVariables(e_event) );
 		break;
 	}
 	case UPNP_EVENT_SUBSCRIBE_COMPLETE:
-		//fprintf(stderr, "Callback: UPNP_EVENT_SUBSCRIBE_COMPLETE\n");
 		msg += "error(UPNP_EVENT_SUBSCRIBE_COMPLETE): ";
 		goto upnpEventRenewalComplete;
 	case UPNP_EVENT_UNSUBSCRIBE_COMPLETE:
-		//fprintf(stderr, "Callback: UPNP_EVENT_UNSUBSCRIBE_COMPLETE\n");
 		msg += "error(UPNP_EVENT_UNSUBSCRIBE_COMPLETE): ";
 		goto upnpEventRenewalComplete;
-	case UPNP_EVENT_RENEWAL_COMPLETE: {
-		//fprintf(stderr, "Callback: UPNP_EVENT_RENEWAL_COMPLETE\n");
+	case UPNP_EVENT_RENEWAL_COMPLETE:
+	{
 		msg += "error(UPNP_EVENT_RENEWAL_COMPLETE): ";
 upnpEventRenewalComplete:
-		struct Upnp_Event_Subscribe *es_event =
-			(struct Upnp_Event_Subscribe *)Event;
-		if (es_event->ErrCode != UPNP_E_SUCCESS) {
+		const UpnpEventSubscribe* es_event =
+		        static_cast<const UpnpEventSubscribe*>(Event);
+
+		if (UpnpEventSubscribe_get_ErrCode(es_event) != UPNP_E_SUCCESS)
+		{
 			msg += "Error in Event Subscribe Callback";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg, es_event->ErrCode, NULL, NULL);
-		} else {
-#if 0
-			TvCtrlPointHandleSubscribeUpdate(
-				es_event->PublisherUrl,
-				es_event->Sid,
-				es_event->TimeOut );
-#endif
+			            msg, UpnpEventSubscribe_get_ErrCode(es_event),
+			            nullptr, nullptr );
 		}
 		
 		break;
 	}
-	
 	case UPNP_EVENT_AUTORENEWAL_FAILED:
-		//fprintf(stderr, "Callback: UPNP_EVENT_AUTORENEWAL_FAILED\n");
 		msg += "CUPnPControlPoint::Callback() error(UPNP_EVENT_AUTORENEWAL_FAILED): ";
 		msg2 += "UPNP_EVENT_AUTORENEWAL_FAILED: ";
 		goto upnpEventSubscriptionExpired;
 	case UPNP_EVENT_SUBSCRIPTION_EXPIRED: {
-		//fprintf(stderr, "Callback: UPNP_EVENT_SUBSCRIPTION_EXPIRED\n");
 		msg += "CUPnPControlPoint::Callback() error(UPNP_EVENT_SUBSCRIPTION_EXPIRED): ";
 		msg2 += "UPNP_EVENT_SUBSCRIPTION_EXPIRED: ";
 upnpEventSubscriptionExpired:
-		struct Upnp_Event_Subscribe *es_event =
-			(struct Upnp_Event_Subscribe *)Event;
+		const UpnpEventSubscribe* es_event =
+		        static_cast<const UpnpEventSubscribe*>(Event);
+
 		Upnp_SID newSID;
 		int TimeOut = 1801;
 		int ret = UpnpSubscribe(
@@ -1481,20 +1431,25 @@ upnpEventSubscriptionExpired:
 #ifdef PATCHED_LIBUPNP
 			UpnpString_get_String(es_event->PublisherUrl),
 #else
-			es_event->PublisherUrl,
+		            UpnpEventSubscribe_get_PublisherUrl_cstr(es_event),
 #endif
 			&TimeOut,
 			newSID);
-		if (ret != UPNP_E_SUCCESS) {
+		if (ret != UPNP_E_SUCCESS)
+		{
 			msg += "Error Subscribing to EventURL";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg, es_event->ErrCode, NULL, NULL);
-		} else {
+			            msg, UpnpEventSubscribe_get_ErrCode(es_event),
+			            nullptr, nullptr );
+		}
+		else
+		{
 			ServiceMap::iterator it =
 #ifdef PATCHED_LIBUPNP
 				upnpCP->m_ServiceMap.find(UpnpString_get_String(es_event->PublisherUrl));
 #else
-				upnpCP->m_ServiceMap.find(es_event->PublisherUrl);
+			    upnpCP->m_ServiceMap.find(
+			            UpnpEventSubscribe_get_PublisherUrl_cstr(es_event) );
 #endif
 			if (it != upnpCP->m_ServiceMap.end()) {
 				CUPnPService &service = *(it->second);
@@ -1504,7 +1459,7 @@ upnpEventSubscriptionExpired:
 #ifdef PATCHED_LIBUPNP
 					UpnpString_get_String(es_event->PublisherUrl) <<
 #else
-					es_event->PublisherUrl <<
+				    UpnpEventSubscribe_get_PublisherUrl_cstr(es_event) <<
 #endif
 					"' with SID == '" <<
 					newSID << "'." << std::endl;
@@ -1512,7 +1467,9 @@ upnpEventSubscriptionExpired:
 				// service is the same. But here we only have one
 				// service, so...
 				upnpCP->RefreshPortMappings();
-			} else {
+			}
+			else
+			{
 #ifdef UPNP_DEBUG
 				std::cerr << "CUPnPControlPoint::Callback() Error: did not find service " <<
 					newSID << " in the service map." << std::endl;
@@ -1521,41 +1478,49 @@ upnpEventSubscriptionExpired:
 		}
 		break;
 	}
-	case UPNP_CONTROL_ACTION_COMPLETE: {
-		//fprintf(stderr, "Callback: UPNP_CONTROL_ACTION_COMPLETE\n");
+	case UPNP_CONTROL_ACTION_COMPLETE:
+	{
 		// This is here if we choose to do this asynchronously
-		struct Upnp_Action_Complete *a_event =
-			(struct Upnp_Action_Complete *)Event;
-		if (a_event->ErrCode != UPNP_E_SUCCESS) {
+		const UpnpActionComplete* a_event =
+		        static_cast<const UpnpActionComplete*>(Event);
+		if(UpnpActionComplete_get_ErrCode(a_event) != UPNP_E_SUCCESS)
+		{
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				"UpnpSendActionAsync",
-				a_event->ErrCode, NULL,
-				a_event->ActionResult);
-		} else {
+			            "UpnpSendActionAsync",
+			            UpnpActionComplete_get_ErrCode(a_event), nullptr,
+			            UpnpActionComplete_get_ActionResult(a_event) );
+		}
+		else
+		{
 			// Check the response document
 			upnpCP->m_upnpLib.ProcessActionResponse(
-				a_event->ActionResult,
-				"<UpnpSendActionAsync>");
+			            UpnpActionComplete_get_ActionResult(a_event),
+			            "<UpnpSendActionAsync>" );
 		}
 		/* No need for any processing here, just print out results.
 		 * Service state table updates are handled by events.
 		 */
 		break;
 	}
-	case UPNP_CONTROL_GET_VAR_COMPLETE: {
-#ifdef UPNP_DEBUG
-		fprintf(stderr, "CUPnPControlPoint::Callback() Callback: UPNP_CONTROL_GET_VAR_COMPLETE\n");
-#endif
+	case UPNP_CONTROL_GET_VAR_COMPLETE:
+	{
 		msg += "CUPnPControlPoint::Callback() error(UPNP_CONTROL_GET_VAR_COMPLETE): ";
-		struct Upnp_State_Var_Complete *sv_event =
-			(struct Upnp_State_Var_Complete *)Event;
-		if (sv_event->ErrCode != UPNP_E_SUCCESS) {
+		const UpnpStateVarComplete* sv_event =
+		        static_cast<const UpnpStateVarComplete*>(Event);
+		if (UpnpStateVarComplete_get_ErrCode(sv_event) != UPNP_E_SUCCESS)
+		{
 			msg += "m_UpnpGetServiceVarStatusAsync";
 			upnpCP->m_upnpLib.processUPnPErrorMessage(
-				msg, sv_event->ErrCode, NULL, NULL);
-		} else {
-		    //add the variable to the wanservice property map
-		    (upnpCP->m_WanService->propertyMap)[std::string(sv_event->StateVarName)] = std::string(sv_event->CurrentVal);
+			            msg, UpnpStateVarComplete_get_ErrCode(sv_event),
+			            nullptr, nullptr );
+		}
+		else
+		{
+			//add the variable to the wanservice property map
+			(upnpCP->m_WanService->propertyMap)[
+			        std::string(
+			            UpnpStateVarComplete_get_StateVarName_cstr(sv_event) ) ]
+			        = std::string(UpnpStateVarComplete_get_CurrentVal_cstr(sv_event));
 		}
 		break;
 	}
@@ -1603,7 +1568,7 @@ eventSubscriptionRequest:
 void CUPnPControlPoint::OnEventReceived(
 		const std::string &Sid,
 		int EventKey,
-		IXML_Document *ChangedVariablesDoc)
+        const IXML_Document* ChangedVariablesDoc)
 {
 	/* remove unused parameter warnings */
 	(void) EventKey;

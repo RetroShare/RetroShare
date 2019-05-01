@@ -31,8 +31,8 @@ define_default_value SQLITE_SOURCE_SHA256 da9a1484423d524d3ac793af518cdf870c8255
 define_default_value SQLCIPHER_SOURCE_VERSION "3.4.2"
 define_default_value SQLCIPHER_SOURCE_SHA256 69897a5167f34e8a84c7069f1b283aba88cdfa8ec183165c4a5da2c816cfaadb
 
-define_default_value LIBUPNP_SOURCE_VERSION "1.6.25"
-define_default_value LIBUPNP_SOURCE_SHA256 c5a300b86775435c076d58a79cc0d5a977d76027d2a7d721590729b7f369fa43
+define_default_value LIBUPNP_SOURCE_VERSION "1.8.4"
+define_default_value LIBUPNP_SOURCE_SHA256 976c3e4555604cdd8391ed2f359c08c9dead3b6bf131c24ce78e64d6669af2ed
 
 define_default_value INSTALL_QT_ANDROID "false"
 define_default_value QT_VERSION "5.12.0"
@@ -297,19 +297,23 @@ build_sqlcipher()
 
 build_libupnp()
 {
-	B_dir="libupnp-${LIBUPNP_SOURCE_VERSION}"
+	B_dir="pupnp-release-${LIBUPNP_SOURCE_VERSION}"
+	B_ext=".tar.gz"
+	B_file="${B_dir}${B_ext}"
 	rm -rf $B_dir
 
-	verified_download $B_dir.tar.bz2 $LIBUPNP_SOURCE_SHA256 \
-		https://sourceforge.net/projects/pupnp/files/pupnp/libUPnP%20${LIBUPNP_SOURCE_VERSION}/$B_dir.tar.bz2
+	verified_download $B_file $LIBUPNP_SOURCE_SHA256 \
+		https://github.com/mrjimenez/pupnp/archive/release-${LIBUPNP_SOURCE_VERSION}${B_ext}
 
-	tar -xf $B_dir.tar.bz2
+	tar -xf $B_file
 	cd $B_dir
+	./bootstrap
 ## liupnp must be configured as static library because if not the linker will
 ## look for libthreadutils.so.6 at runtime that cannot be packaged on android
 ## as it supports only libname.so format for libraries, thus resulting in a
 ## crash at startup.
 	./configure --enable-static --disable-shared --disable-samples \
+		--disable-largefile \
 		--prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
 	make -j${HOST_NUM_CPU}
 	make install

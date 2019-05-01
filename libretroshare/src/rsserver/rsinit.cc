@@ -734,9 +734,9 @@ RsGRouter *rsGRouter = NULL ;
 #include "util/rsrandom.h"
 
 #ifdef RS_USE_LIBUPNP
-#	include "upnp/upnphandler_linux.h"
+#	include "rs_upnp/upnphandler_linux.h"
 #else // def RS_USE_LIBUPNP
-#	include "upnp/upnphandler_miniupnp.h"
+#	include "rs_upnp/upnphandler_miniupnp.h"
 #endif // def RS_USE_LIBUPNP
 
 #include "services/autoproxy/p3i2pbob.h"
@@ -1586,9 +1586,11 @@ int RsServer::StartupRetroShare()
 		mNetMgr->addNetListener(mProxyStack);
 #endif
 
+#if defined(RS_USE_LIBMINIUPNPC) || defined(RS_USE_LIBUPNP)
 		// Original UPnP Interface.
 		pqiNetAssistFirewall *mUpnpMgr = new upnphandler();
 		mNetMgr->addNetAssistFirewall(1, mUpnpMgr);
+#endif // defined(RS_USE_LIBMINIUPNPC) || defined(RS_USE_LIBUPNP)
 	}
 
 	/**************************************************************************/

@@ -31,8 +31,8 @@ extern "C" {
 #endif
 /* This stuff is actually C */
 
-#include "upnp/upnphandler_miniupnp.h"
-#include "upnp/upnputil.h"
+#include "rs_upnp/upnphandler_miniupnp.h"
+#include "rs_upnp/upnputil.h"
 
 class uPnPConfigData
 {

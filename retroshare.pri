@@ -203,10 +203,17 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 # use (pthread, "") usually depends on platform.
 isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 
-# Specify UPnP library to use appending the following assignation to qmake
-# command line 'RS_UPNP_LIB=miniupnpc' the name of the UPNP library to use
-# (miniupnpc, "upnp ixml threadutil") usually depends on platform.
-isEmpty(RS_UPNP_LIB):RS_UPNP_LIB = upnp ixml threadutil
+# Specify UPnP library to use, appending the following assignation to qmake
+# command line
+# 'RS_UPNP_LIB=none' do not compile UPnP support
+# 'RS_UPNP_LIB=miniupnpc' to use miniupnpc
+# 'RS_UPNP_LIB="upnp ixml threadutil"' to use libupnp-1.6.x
+# 'RS_UPNP_LIB="upnp ixml"' to use libupnp-1.8.x
+# Which library is better suited usually depends on the platform.
+# See http://miniupnp.free.fr/ and http://pupnp.sourceforge.net/ for more
+# information about the libraries. Autodetection is attempted by default.
+#RS_UPNP_LIB=
+
 
 ###########################################################################################################################################################
 #
@@ -302,7 +309,7 @@ defineReplace(linkStaticLibs) {
     return($$retSlib)
 }
 
-## This function return pretarget deps for the static the libraries contained in
+## This function return pretarget deps for the static libraries contained in
 ## the variable given as paramether.
 defineReplace(pretargetStaticLibs) {
     libsVarName = $$1
@@ -341,6 +348,7 @@ defineReplace(fixQmakeCC) {
     retVal = $$1
     contains(1, .*\+\+$):retVal=$$str_member($$1, 0 ,-3)
     contains(1, .*g\+\+$):retVal=$$str_member($$1, 0 ,-3)cc
+    contains(1, .*g\+\+-[0-9]$):retVal=$$str_member($$1, 0 ,-5)cc$$str_member($$1, -2 ,-1)
     contains(1, .*clang\+\+$):retVal=$$str_member($$1, 0 ,-3)
     return($$retVal)
 }
@@ -704,6 +712,34 @@ macx-* {
 	RS_UPNP_LIB = miniupnpc
 	QT += macextras
 }
+
+# If not yet defined attempt UPnP library autodetection should works at least
+# for miniupnc libupnp-1.6.x and libupnp-1.8.x
+isEmpty(RS_UPNP_LIB) {
+    __TEMP_UPNP_LIBS = upnp ixml threadutil
+    for(mLib, __TEMP_UPNP_LIBS) {
+        attemptPath=$$findFileInPath(lib$${mLib}.a, QMAKE_LIBDIR)
+        isEmpty(attemptPath):attemptPath=$$findFileInPath(lib$${mLib}.so, QMAKE_LIBDIR)
+        !isEmpty(attemptPath):RS_UPNP_LIB += $${mLib}
+    }
+
+    isEmpty(RS_UPNP_LIB) {
+        __TEMP_UPNP_LIBS=$$findFileInPath(libminiupnpc.a, QMAKE_LIBDIR)
+        !isEmpty(__TEMP_UPNP_LIBS):RS_UPNP_LIB=miniupnpc
+        __TEMP_UPNP_LIBS=$$findFileInPath(libminiupnpc.so, QMAKE_LIBDIR)
+        !isEmpty(__TEMP_UPNP_LIBS):RS_UPNP_LIB=miniupnpc
+    }
+
+    isEmpty(RS_UPNP_LIB) {
+        warning("RS_UPNP_LIB detection failed, UPnP support disabled!")
+    } else {
+        message("Autodetected RS_UPNP_LIB=$$RS_UPNP_LIB")
+    }
+}
+
+equals(RS_UPNP_LIB, none):RS_UPNP_LIB=
+equals(RS_UPNP_LIB, miniupnpc):DEFINES*=RS_USE_LIBMINIUPNPC
+contains(RS_UPNP_LIB, upnp):DEFINES*=RS_USE_LIBUPNP
 
 
 ## Retrocompatibility assignations, get rid of this ASAP

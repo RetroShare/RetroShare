@@ -28,7 +28,7 @@ extern "C" {
 #endif
 /* This stuff is actually C */
 
-#include "upnp/upnphandler_linux.h"
+#include "rs_upnp/upnphandler_linux.h"
 
 #include "util/rsnet.h"
 
