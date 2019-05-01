@@ -553,6 +553,8 @@ void PostedListWidget::blank()
     clearPosts();
 	
 	groupNameChanged(QString());
+	
+	ui->infoframe->hide();										
 }
 
 void PostedListWidget::clearPosts()
