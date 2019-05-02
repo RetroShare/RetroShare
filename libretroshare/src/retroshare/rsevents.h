@@ -48,7 +48,17 @@ enum class RsEventType : uint32_t
 {
 	NONE = 0, /// Used to detect uninitialized event
 
-	BROADCAST_DISCOVERY_PEER_FOUND = 1, /// @see RsBroadcastDiscovery
+	/// @see RsBroadcastDiscovery
+	BROADCAST_DISCOVERY_PEER_FOUND                          = 1,
+
+	/// @see RsDiscPendingPgpReceivedEvent
+	GOSSIP_DISCOVERY_PENDIG_PGP_CERT_RECEIVED               = 2,
+
+	/// @see AuthSSL
+	AUTHSSL_CONNECTION_AUTENTICATION                        = 3,
+
+	/// @see pqissl
+	REMOTE_PEER_REFUSED_CONNECTION                          = 4,
 
 	MAX       /// Used to detect invalid event type passed
 };
@@ -74,8 +84,8 @@ public:
 	 * of serial_process
 	 * @see RsSerializable
 	 */
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,
-	                            RsGenericSerializer::SerializeContext& ctx)
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RS_SERIAL_PROCESS(mType);
 
@@ -84,7 +94,7 @@ public:
 		mTimePoint = std::chrono::system_clock::from_time_t(mTime);
 	}
 
-	virtual ~RsEvent();
+	~RsEvent() override;
 };
 
 typedef uint32_t RsEventsHandlerId_t;
