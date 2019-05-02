@@ -134,6 +134,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
 PUBLIC_HEADERS =	retroshare/rsdisc.h \
+    retroshare/rsgossipdiscovery \
     retroshare/rsevents.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
@@ -452,7 +453,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rstlvbanlist.h \
 			rsitems/rsbanlistitems.h \
 			rsitems/rsbwctrlitems.h \
-			rsitems/rsdiscovery2items.h \
+    gossipdiscovery/gossipdiscoveryitems.h \
 			rsitems/rsheartbeatitems.h \
 			rsitems/rsrttitems.h \
 			rsitems/rsgxsrecognitems.h \
@@ -466,8 +467,8 @@ HEADERS +=  services/autoproxy/p3i2pbob.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3banlist.h \
-			services/p3bwctrl.h \
-			services/p3discovery2.h \
+    services/p3bwctrl.h \
+    gossipdiscovery/p3gossipdiscovery.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
 			services/p3serviceinfo.h  \
@@ -603,7 +604,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvbanlist.cc \
 			rsitems/rsbanlistitems.cc \
 			rsitems/rsbwctrlitems.cc \
-			rsitems/rsdiscovery2items.cc \
+    gossipdiscovery/gossipdiscoveryitems.cc \
 			rsitems/rsrttitems.cc \
 			rsitems/rsgxsrecognitems.cc \
 			rsitems/rsgxsupdateitems.cc \
@@ -618,7 +619,7 @@ SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
 			services/p3statusservice.cc \
 			services/p3banlist.cc \
 			services/p3bwctrl.cc \
-			services/p3discovery2.cc \
+    gossipdiscovery/p3gossipdiscovery.cc \
 			services/p3heartbeat.cc \
 			services/p3rtt.cc \
 			services/p3serviceinfo.cc \
