@@ -388,7 +388,14 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 		buf = &buf[1];
 
 		unsigned char *buf2 = buf;
-		uint32_t s = PGPKeyParser::read_125Size(buf);
+		uint32_t s = 0;
+
+		try { s = PGPKeyParser::read_125Size(buf); }
+		catch (...)
+		{
+			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+			return nullptr;
+		}
 
 		total_s += 1 + (
 		            reinterpret_cast<size_t>(buf) -
@@ -425,7 +432,8 @@ void RsCertificate::scan_ip(const std::string& ip_string, unsigned short port,un
 				err_code = CERTIFICATE_PARSING_ERROR_INVALID_LOCATION_ID;
 				return nullptr;
 			}
-			crt->location_id = RsPeerId(buf);
+			// We just checked buffer size so next line is not unsafe
+			crt->location_id = RsPeerId::fromBufferUnsafe(buf);
 			crt->only_pgp = false;
 			break;
 		case CERTIFICATE_PTAG_DNS_SECTION:
