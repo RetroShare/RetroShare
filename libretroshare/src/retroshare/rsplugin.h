@@ -30,6 +30,7 @@
 #include "retroshare/rsfiles.h"
 #include "retroshare/rsversion.h"
 #include "util/rsinitedptr.h"
+#include "retroshare/rsdisc.h"
 
 class RsPluginHandler ;
 extern RsPluginHandler *rsPlugins ;
@@ -40,7 +41,6 @@ class RsReputations ;
 class RsTurtle ;
 class RsGxsTunnelService ;
 class RsDht ;
-class RsDisc ;
 class RsMsgs ;
 class RsGxsForums;
 class RsGxsChannels;

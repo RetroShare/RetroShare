@@ -1,9 +1,10 @@
 /*******************************************************************************
- * libretroshare/src/rsitems: rsdiscitems.h                                    *
+ * Gossip discovery service items                                              *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_DISC_ITEMS_H
-#define RS_DISC_ITEMS_H
+#pragma once
 
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvidset.h"
@@ -31,79 +31,77 @@
 
 #include "serialiser/rsserializer.h"
 
-const uint8_t RS_PKT_SUBTYPE_DISC_PGP_LIST           = 0x01;
-const uint8_t RS_PKT_SUBTYPE_DISC_PGP_CERT           = 0x02;
-const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT_deprecated = 0x03;
-const uint8_t RS_PKT_SUBTYPE_DISC_SERVICES           = 0x04;
-const uint8_t RS_PKT_SUBTYPE_DISC_CONTACT            = 0x05;
-const uint8_t RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      = 0x06;
+enum class RsGossipDiscoveryItemType : uint8_t
+{
+	PGP_LIST           = 1,
+	PGP_CERT           = 2,
+	CONTACT            = 5,
+	IDENTITY_LIST      = 6,
+	INVITE             = 7,
+	INVITE_REQUEST     = 8
+};
 
 class RsDiscItem: public RsItem
 {
-	protected:
-		RsDiscItem(uint8_t subtype) :RsItem(RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, subtype) {}
+protected:
+	RsDiscItem(RsGossipDiscoveryItemType subtype);
+
+public:
+	RsDiscItem() = delete;
+	virtual ~RsDiscItem();
 };
 
-
-#define DISC_PGP_LIST_MODE_NONE		0x00
-#define DISC_PGP_LIST_MODE_FRIENDS	0x01
-#define DISC_PGP_LIST_MODE_GETCERT	0x02
+/// uint32_t overkill just for retro-compatibility
+enum class RsGossipDiscoveryPgpListMode : uint32_t
+{
+	NONE    = 0,
+	FRIENDS = 1,
+	GETCERT = 2
+};
 
 class RsDiscPgpListItem: public RsDiscItem
 {
 public:
 
-	RsDiscPgpListItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_LIST)
-	{
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST);
-	}
+	RsDiscPgpListItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_LIST)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_LIST); }
 
-    virtual ~RsDiscPgpListItem(){}
+	void clear() override;
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override;
 
-	virtual  void clear();
-	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
-
-	uint32_t mode;
+	RsGossipDiscoveryPgpListMode mode;
 	RsTlvPgpIdSet pgpIdSet;
 };
-
-
 
 class RsDiscPgpCertItem: public RsDiscItem
 {
 public:
 
-	RsDiscPgpCertItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_PGP_CERT)
-	{
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT);
-	}
+	RsDiscPgpCertItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
 
-    virtual ~RsDiscPgpCertItem(){}
-
-	virtual  void clear();
-	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
+	void clear() override;
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx) override;
 
 	RsPgpId pgpId;
 	std::string pgpCert;
 };
 
-
 class RsDiscContactItem: public RsDiscItem
 {
 public:
 
-	RsDiscContactItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_CONTACT)
-	{
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT);
-	}
+	RsDiscContactItem() : RsDiscItem(RsGossipDiscoveryItemType::CONTACT)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT); }
 
-    virtual ~RsDiscContactItem() {}
-
-	virtual  void clear();
-	virtual void serial_process(RsGenericSerializer::SerializeJob /* j */,RsGenericSerializer::SerializeContext& /* ctx */);
+	void clear() override;
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override;
 
 	RsPgpId pgpId;
 	RsPeerId sslId;
@@ -143,53 +141,47 @@ class RsDiscIdentityListItem: public RsDiscItem
 {
 public:
 
-	RsDiscIdentityListItem()
-	    :RsDiscItem(RS_PKT_SUBTYPE_DISC_IDENTITY_LIST)
-	{
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT);
-	}
+	RsDiscIdentityListItem() :
+	    RsDiscItem(RsGossipDiscoveryItemType::IDENTITY_LIST)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_CONTACT); }
 
-    virtual ~RsDiscIdentityListItem() {}
+	void clear() override { ownIdentityList.clear(); }
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx) override;
 
-    virtual void clear() { ownIdentityList.clear() ; }
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
-
-    std::list<RsGxsId> ownIdentityList ;
+	std::list<RsGxsId> ownIdentityList;
 };
-#if 0
-class RsDiscServicesItem: public RsDiscItem
+
+struct RsGossipDiscoveryInviteItem : RsDiscItem
 {
-	public:
+	RsGossipDiscoveryInviteItem();
 
-	RsDiscServicesItem()
-        :RsDiscItem(RS_PKT_SUBTYPE_DISC_SERVICES)
-	{ 
-		setPriorityLevel(QOS_PRIORITY_RS_DISC_SERVICES); 
-	}
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mInvite); }
+	void clear() override { mInvite.clear(); }
 
-virtual ~RsDiscServicesItem();
-
-virtual  void clear();
-virtual std::ostream &print(std::ostream &out, uint16_t indent = 0);
-
-
-	std::string version;
-	RsTlvServiceIdMap mServiceIdMap;
+	std::string mInvite;
 };
 
-#endif
+struct RsGossipDiscoveryInviteRequestItem : RsDiscItem
+{
+	RsGossipDiscoveryInviteRequestItem();
 
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mInviteId); }
+	void clear() override { mInviteId.clear(); }
+
+	RsPeerId mInviteId;
+};
 
 class RsDiscSerialiser: public RsServiceSerializer
 {
-        public:
-        RsDiscSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_DISC) {}
+public:
+	RsDiscSerialiser() :RsServiceSerializer(RS_SERVICE_TYPE_DISC) {}
+	virtual ~RsDiscSerialiser() {}
 
-		virtual     ~RsDiscSerialiser() {}
-
-        RsItem *create_item(uint16_t service,uint8_t item_subtype) const ;
+	RsItem* create_item(uint16_t service, uint8_t item_subtype) const;
 };
-
-
-#endif // RS_DISC_ITEMS_H
-

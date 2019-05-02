@@ -1,10 +1,10 @@
 /*******************************************************************************
- * libretroshare/src/services: p3discovery2.cc                                 *
+ * RetroShare gossip discovery service implementation                          *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2013 Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2004-2013  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,20 +20,22 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include "services/p3discovery2.h"
+
+#include "gossipdiscovery/p3gossipdiscovery.h"
 #include "pqi/p3peermgr.h"
 #include "retroshare/rsversion.h"
-
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
-
-
-// Interface pointer.
-RsDisc *rsDisc = NULL;
+#include "util/rsdebug.h"
 
 /****
  * #define P3DISC_DEBUG	1
  ****/
+
+/*extern*/ std::shared_ptr<RsGossipDiscovery> rsGossipDiscovery(nullptr);
+
+RsGossipDiscovery::~RsGossipDiscovery() {};
+
 
 static bool populateContactInfo( const peerState &detail,
                                  RsDiscContactItem *pkt,
@@ -48,8 +50,8 @@ static bool populateContactInfo( const peerState &detail,
 	pkt->netMode = detail.netMode;
 	pkt->vs_disc = detail.vs_disc;
 	pkt->vs_dht = detail.vs_dht;
-	
-	pkt->lastContact = time(NULL);
+
+	pkt->lastContact = time(nullptr);
 
 	if (detail.hiddenNode)
 	{
@@ -94,24 +96,23 @@ void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 }
 
 
-p3discovery2::p3discovery2(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr *netMgr, p3ServiceControl *sc, RsGixs *gixs)
-:p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr), mServiceCtrl(sc), mGixs(gixs),mDiscMtx("p3discovery2")
+p3discovery2::p3discovery2(
+        p3PeerMgr* peerMgr, p3LinkMgr* linkMgr, p3NetMgr* netMgr,
+        p3ServiceControl* sc, RsGixs* gixs ) :
+    p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr),
+    mServiceCtrl(sc), mGixs(gixs), mDiscMtx("p3discovery2"), mLastPgpUpdate(0)
 {
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
+	RS_STACK_MUTEX(mDiscMtx);
 	addSerialType(new RsDiscSerialiser());
 
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::p3discovery2()";
-	std::cerr << std::endl;
-#endif
-
-	mLastPgpUpdate = 0;
-	
 	// Add self into PGP FriendList.
 	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
-	
-	return;
+
+	rsEvents->registerEventsHandler(
+	            [this](const RsEvent& event){ rsEventsHandler(event); },
+	            mRsEventsHandle );
 }
 
 
@@ -131,17 +132,8 @@ RsServiceInfo p3discovery2::getServiceInfo()
                 DISCOVERY_MIN_MINOR_VERSION);
 }
 
-
-
-
-
-
 p3discovery2::~p3discovery2()
-{
-	return;
-	
-}
-
+{ rsEvents->unregisterEventsHandler(mRsEventsHandle); }
 
 void p3discovery2::addFriend(const SSLID &sslId)
 {
@@ -243,14 +235,12 @@ void p3discovery2::removeFriend(const SSLID &sslId)
 	}
 }
 
-
 PGPID p3discovery2::getPGPId(const SSLID &id)
 {
 	PGPID pgpId;
 	mPeerMgr->getGpgId(id, pgpId);
 	return pgpId;
 }
-
 
 int p3discovery2::tick()
 {
@@ -259,70 +249,66 @@ int p3discovery2::tick()
 
 int p3discovery2::handleIncoming()
 {
-	RsItem *item = NULL;
+	RsItem* item = nullptr;
 
 	int nhandled = 0;
 	// While messages read
 	while(nullptr != (item = recvItem()))
 	{
-		RsDiscPgpListItem *pgplist = nullptr;
-		RsDiscPgpCertItem *pgpcert = nullptr;
-		RsDiscContactItem *contact = nullptr;
-		RsDiscIdentityListItem *gxsidlst = nullptr;
-		nhandled++;
+		RsDiscPgpListItem* pgplist = nullptr;
+		RsDiscPgpCertItem* pgpcert = nullptr;
+		RsDiscContactItem* contact = nullptr;
+		RsDiscIdentityListItem* gxsidlst = nullptr;
+		RsGossipDiscoveryInviteItem* invite = nullptr;
+		RsGossipDiscoveryInviteRequestItem* inviteReq = nullptr;
 
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3discovery2::handleIncoming() Received Message!" << std::endl;
-		item -> print(std::cerr);
-		std::cerr  << std::endl;
-#endif
+		++nhandled;
 
-		if (nullptr != (contact = dynamic_cast<RsDiscContactItem *> (item)))
+		Dbg4() << __PRETTY_FUNCTION__ << " Received item: " << std::endl
+		       << *item << std::endl;
+
+		if((contact = dynamic_cast<RsDiscContactItem *>(item)) != nullptr)
 		{
-			if (item->PeerId() == contact->sslId) /* self describing */
+			if (item->PeerId() == contact->sslId)
 				recvOwnContactInfo(item->PeerId(), contact);
-            else
-                processContactInfo(item->PeerId(), contact);
+			else processContactInfo(item->PeerId(), contact);
 		}
-        else  if (nullptr != (gxsidlst = dynamic_cast<RsDiscIdentityListItem *> (item)))
-        {
-            recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList) ;
-            delete item;
-        }
-        else  if (nullptr != (pgpcert = dynamic_cast<RsDiscPgpCertItem *> (item)))
-			recvPGPCertificate(item->PeerId(), pgpcert);
-		else if (nullptr != (pgplist = dynamic_cast<RsDiscPgpListItem *> (item)))
+		else if( (gxsidlst = dynamic_cast<RsDiscIdentityListItem *>(item))
+		         != nullptr )
 		{
-			/* two types */
-			if (pgplist->mode == DISC_PGP_LIST_MODE_FRIENDS)
-			{
+			recvIdentityList(item->PeerId(),gxsidlst->ownIdentityList);
+			delete item;
+		}
+		else if((pgpcert = dynamic_cast<RsDiscPgpCertItem *>(item)) != nullptr)
+			recvPGPCertificate(item->PeerId(), pgpcert);
+		else if((pgplist = dynamic_cast<RsDiscPgpListItem *>(item)) != nullptr)
+		{
+			if (pgplist->mode == RsGossipDiscoveryPgpListMode::FRIENDS)
 				processPGPList(pgplist->PeerId(), pgplist);
-				
-			}
-			else if (pgplist->mode == DISC_PGP_LIST_MODE_GETCERT)
-			{
+			else if (pgplist->mode == RsGossipDiscoveryPgpListMode::GETCERT)
 				recvPGPCertificateRequest(pgplist->PeerId(), pgplist);
-			}
-			else
-			{
-                		delete item ;
-			}
+			else delete item;
+		}
+		else if( (invite = dynamic_cast<RsGossipDiscoveryInviteItem*>(item))
+		         != nullptr )
+			recvInvite(std::unique_ptr<RsGossipDiscoveryInviteItem>(invite));
+		else if( (inviteReq =
+		          dynamic_cast<RsGossipDiscoveryInviteRequestItem*>(item))
+		         != nullptr )
+		{
+			sendInvite(inviteReq->mInviteId, item->PeerId());
+			delete item;
 		}
 		else
 		{
-#ifdef P3DISC_DEBUG
-			std::cerr << "p3discovery2::handleIncoming() Unknown Received Message!" << std::endl;
-			item -> print(std::cerr);
-			std::cerr  << std::endl;
-#endif
+			RsWarn() << __PRETTY_FUNCTION__ << " Received unknown item type! "
+			         << std::endl << item << std::endl;
 			delete item;
 		}
 	}
 
 	return nhandled;
 }
-
-
 
 void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 {
@@ -371,7 +357,6 @@ void p3discovery2::sendOwnContactInfo(const SSLID &sslid)
 		sendItem(pkt2);
 	}
 }
-
 
 void p3discovery2::recvOwnContactInfo(const SSLID &fromId, const RsDiscContactItem *item)
 {
@@ -477,7 +462,6 @@ void p3discovery2::updatePeerAddresses(const RsDiscContactItem *item)
 	}
 }
 
-
 void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 {
 	if (item->isHidden)
@@ -512,7 +496,6 @@ void p3discovery2::updatePeerAddressList(const RsDiscContactItem *item)
 	}
 }
 
-
 // Starts the Discovery process.
 // should only be called it DISC2_STATUS_NOT_HIDDEN(OwnInfo.status).
 void p3discovery2::sendPGPList(const SSLID &toId)
@@ -528,7 +511,7 @@ void p3discovery2::sendPGPList(const SSLID &toId)
 
 	RsDiscPgpListItem *pkt = new RsDiscPgpListItem();
 
-	pkt->mode = DISC_PGP_LIST_MODE_FRIENDS;
+	pkt->mode = RsGossipDiscoveryPgpListMode::FRIENDS;
 
 	std::map<PGPID, DiscPgpInfo>::const_iterator it;
 	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
@@ -653,9 +636,6 @@ void p3discovery2::updatePgpFriendList()
 
 }
 
-
-
-
 void p3discovery2::processPGPList(const SSLID &fromId, const RsDiscPgpListItem *item)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -666,7 +646,7 @@ void p3discovery2::processPGPList(const SSLID &fromId, const RsDiscPgpListItem *
 #endif
 
 	std::map<PGPID, DiscPgpInfo>::iterator it;
-	PGPID fromPgpId = getPGPId(fromId);	
+	PGPID fromPgpId = getPGPId(fromId);
 	it = mFriendList.find(fromPgpId);
 	if (it == mFriendList.end())
 	{
@@ -699,7 +679,7 @@ void p3discovery2::processPGPList(const SSLID &fromId, const RsDiscPgpListItem *
 
 	if (requestUnknownPgpCerts)
 	{
-        std::set<PGPID>::const_iterator fit;
+		std::set<PGPID>::const_iterator fit;
 		for(fit = item->pgpIdSet.ids.begin(); fit != item->pgpIdSet.ids.end(); ++fit)
 		{
 			if (!AuthGPG::getAuthGPG()->isGPGId(*fit))
@@ -825,7 +805,6 @@ void p3discovery2::updatePeers_locked(const SSLID &aboutId)
 	}
 }
 
-
 void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toId)
 {
 #ifdef P3DISC_DEBUG
@@ -905,7 +884,6 @@ void p3discovery2::sendContactInfo_locked(const PGPID &aboutId, const SSLID &toI
 		}
 	}
 }
-
 
 void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactItem *item)
 {
@@ -1001,8 +979,6 @@ void p3discovery2::processContactInfo(const SSLID &fromId, const RsDiscContactIt
     delete item;
 }
 
-
-
 /* we explictly request certificates, instead of getting them all the time
  */
 void p3discovery2::requestPGPCertificate(const PGPID &aboutId, const SSLID &toId)
@@ -1014,7 +990,7 @@ void p3discovery2::requestPGPCertificate(const PGPID &aboutId, const SSLID &toId
 	
 	RsDiscPgpListItem *pkt = new RsDiscPgpListItem();
 	
-	pkt->mode = DISC_PGP_LIST_MODE_GETCERT;
+	pkt->mode = RsGossipDiscoveryPgpListMode::GETCERT;
     pkt->pgpIdSet.ids.insert(aboutId);
 	pkt->PeerId(toId);
 	
@@ -1027,93 +1003,46 @@ void p3discovery2::requestPGPCertificate(const PGPID &aboutId, const SSLID &toId
 	sendItem(pkt);
 }
 
- /* comment */
-void p3discovery2::recvPGPCertificateRequest(const SSLID &fromId, const RsDiscPgpListItem *item)
+void p3discovery2::recvPGPCertificateRequest(
+        const RsPeerId& fromId, const RsDiscPgpListItem* item )
 {
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::recvPPGPCertificateRequest() from " << fromId;
-	std::cerr << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " from " << fromId << std::endl;
 #endif
 
-    std::set<RsPgpId>::const_iterator it;
-	for(it = item->pgpIdSet.ids.begin(); it != item->pgpIdSet.ids.end(); ++it)
-	{
-		// NB: This doesn't include own certificates? why not.
-		// shouldn't be a real problem. Peer must have own PgpCert already.
-		if (AuthGPG::getAuthGPG()->isGPGAccepted(*it))
-		{
-			sendPGPCertificate(*it, fromId);
-		}
-	}
+	RsPgpId ownPgpId = AuthGPG::getAuthGPG()->getGPGOwnId();
+	for(const RsPgpId& pgpId : item->pgpIdSet.ids)
+		if (pgpId == ownPgpId || AuthGPG::getAuthGPG()->isGPGAccepted(pgpId))
+			sendPGPCertificate(pgpId, fromId);
 	delete item;
 }
 
 
 void p3discovery2::sendPGPCertificate(const PGPID &aboutId, const SSLID &toId)
 {
-
-	/* for Relay Connections (and other slow ones) we don't want to 
-	 * to waste bandwidth sending certificates. So don't add it.
-	 */
-
-	uint32_t linkType = mLinkMgr->getLinkType(toId);
-	if ((linkType & RS_NET_CONN_SPEED_TRICKLE) || 
-		(linkType & RS_NET_CONN_SPEED_LOW))
-	{
-		std::cerr << "p3discovery2::sendPGPCertificate() Not sending Certificates to: " << toId;
-		std::cerr << " (low bandwidth)" << std::endl;
-		return;
-	}
-
-	RsDiscPgpCertItem *item = new RsDiscPgpCertItem();
+	RsDiscPgpCertItem* item = new RsDiscPgpCertItem();
 	item->pgpId = aboutId;
 	item->PeerId(toId);
-	
-	
-#ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::sendPGPCertificate() queuing for Cert generation:" << std::endl;
-	item->print(std::cerr);
-	std::cerr  << std::endl;
-#endif
 
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
-	/* queue it! */
-	
-	mPendingDiscPgpCertOutList.push_back(item);
+	Dbg4() << __PRETTY_FUNCTION__ << " queuing for Cert generation: "
+	       << std::endl << *item << std::endl;
+
+	{
+		RS_STACK_MUTEX(mDiscMtx);
+		mPendingDiscPgpCertOutList.push_back(item);
+	}
 }
 
-						  
-void p3discovery2::recvPGPCertificate(const SSLID &/*fromId*/, RsDiscPgpCertItem *item)
+void p3discovery2::recvPGPCertificate(
+        const SSLID& /*fromId*/, RsDiscPgpCertItem* item )
 {
-	
 #ifdef P3DISC_DEBUG
-	std::cerr << "p3discovery2::recvPGPCertificate() queuing for Cert loading" << std::endl;
-	std::cerr  << std::endl;
+	std::cerr << __PRETTY_FUNCTION__ << " queuing for Cert loading" << std::endl;
 #endif
-
-
-	/* should only happen if in FULL Mode */
-	peerState pstate;
-	mPeerMgr->getOwnNetStatus(pstate);
-	if (pstate.vs_disc != RS_VS_DISC_FULL)
-	{
-#ifdef P3DISC_DEBUG
-		std::cerr << "p3discovery2::recvPGPCertificate() Not Loading Certificates as in MINIMAL MODE";
-		std::cerr << std::endl;
-#endif
-
-		delete item;
-	}	
-
-	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
 	/* push this back to be processed by pgp when possible */
-
+	RS_STACK_MUTEX(mDiscMtx);
 	mPendingDiscPgpCertInList.push_back(item);
 }
-						  
-				  
-						  
-						  
 
         /************* from pqiServiceMonitor *******************/
 void p3discovery2::statusChange(const std::list<pqiServicePeer> &plist)
@@ -1210,8 +1139,45 @@ bool p3discovery2::getWaitingDiscCount(size_t &sendCount, size_t &recvCount)
 
 	return true;
 }
-						  
-						  
+
+bool p3discovery2::sendInvite(
+        const RsPeerId& inviteId, const RsPeerId& toSslId,
+        std::string& errorMsg )
+{
+	RsPeers& mPeers = *rsPeers;
+
+	std::string&& invite = mPeers.GetRetroshareInvite(inviteId);
+
+	if(invite.empty())
+	{
+		errorMsg = "Failure generating invite for peer: " +
+		        inviteId.toStdString() + " are you sure is a friend?";
+		RsErr() << __PRETTY_FUNCTION__ << " " << errorMsg << std::endl;
+		return false;
+	}
+
+	RsGossipDiscoveryInviteItem* item = new RsGossipDiscoveryInviteItem;
+	item->PeerId(toSslId);
+	item->mInvite = mPeers.GetRetroshareInvite(inviteId, true, true);
+
+	return sendItem(item);
+}
+
+bool p3discovery2::requestInvite(
+        const RsPeerId& inviteId, const RsPeerId& toSslId,
+        std::string& /*errorMsg*/ )
+{
+	Dbg2() << __PRETTY_FUNCTION__ << " inviteId: " << inviteId
+	       << " toSslId: " << toSslId << std::endl;
+
+	RsGossipDiscoveryInviteRequestItem* item =
+	        new RsGossipDiscoveryInviteRequestItem;
+	item->PeerId(toSslId);
+	item->mInviteId = inviteId;
+
+	return sendItem(item);
+}
+
 bool p3discovery2::getDiscPgpFriends(const PGPID &pgp_id, std::list<PGPID> &proxyPgpIds)
 {
 	/* find id -> and extract the neighbour_of ids */
@@ -1236,8 +1202,7 @@ bool p3discovery2::getDiscPgpFriends(const PGPID &pgp_id, std::list<PGPID> &prox
 	}
 	return true;
 }
-						  
-						  
+
 bool p3discovery2::getPeerVersion(const SSLID &peerId, std::string &version)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -1253,8 +1218,7 @@ bool p3discovery2::getPeerVersion(const SSLID &peerId, std::string &version)
 	version = it->second.mVersion;
 	return true;
 }
-						  
-						  
+
 bool p3discovery2::setPeerVersion(const SSLID &peerId, const std::string &version)
 {
 	RsStackMutex stack(mDiscMtx); /********** STACK LOCKED MTX ******/
@@ -1270,7 +1234,28 @@ bool p3discovery2::setPeerVersion(const SSLID &peerId, const std::string &versio
 	it->second.mVersion = version;
 	return true;
 }
-						  
+
+void p3discovery2::recvInvite(
+        std::unique_ptr<RsGossipDiscoveryInviteItem> inviteItem )
+{
+	typedef RsGossipDiscoveryFriendInviteReceivedEvent Evt_t;
+
+	// Ensure rsEvents is not deleted while we use it
+	std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
+	if(lockedRsEvents)
+		lockedRsEvents->postEvent(
+		            std::unique_ptr<Evt_t>(new Evt_t(inviteItem->mInvite)) );
+}
+
+void p3discovery2::rsEventsHandler(const RsEvent& event)
+{
+	switch(event.mType)
+	{
+	// TODO: When an SSL-only friend become online requestInvite(...)
+	default: break;
+	}
+}
+
 
 /*************************************************************************************/
 /*			AuthGPGService						     */
@@ -1344,3 +1329,7 @@ void p3discovery2::setGPGOperation(AuthGPGOperation *operation)
 	/* ignore other operations */
 }
 
+RsGossipDiscoveryFriendInviteReceivedEvent::
+RsGossipDiscoveryFriendInviteReceivedEvent(const std::string& invite) :
+    RsEvent(RsEventType::GOSSIP_DISCOVERY_INVITE_RECEIVED),
+    mInvite(invite) {}

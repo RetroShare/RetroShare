@@ -1,9 +1,10 @@
 /*******************************************************************************
- * libretroshare/src/rsitems: rsdiscitems.cc                                   *
+ * Gossip discovery service items                                              *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2007-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,60 +20,49 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include "rsitems/rsdiscovery2items.h"
+
+#include "gossipdiscovery/gossipdiscoveryitems.h"
 #include "serialiser/rsbaseserial.h"
-
 #include "serialiser/rstypeserializer.h"
-
-#if 0
-
-#include "rsitems/rsserviceids.h"
-
-#include "serialiser/rstlvbase.h"
-#include "serialiser/rstlvtypes.h"
-#endif
-
-/***
- * #define RSSERIAL_DEBUG 		1
- * #define RSSERIAL_ERROR_DEBUG 	1
- ***/
-
-#define RSSERIAL_ERROR_DEBUG 		1
+#include "serialiser/rsserializable.h"
 
 #include <iostream>
 
-RsItem *RsDiscSerialiser::create_item(uint16_t service,uint8_t item_subtype) const
+RsItem *RsDiscSerialiser::create_item(
+        uint16_t service, uint8_t item_subtype ) const
 {
-    if(service != RS_SERVICE_TYPE_DISC)
-        return NULL ;
+	if(service != RS_SERVICE_TYPE_DISC) return nullptr;
 
-    switch(item_subtype)
-    {
-	case RS_PKT_SUBTYPE_DISC_PGP_LIST           : return new RsDiscPgpListItem() ; //= 0x01;
-	case RS_PKT_SUBTYPE_DISC_PGP_CERT           : return new RsDiscPgpCertItem() ;      //= 0x02;
-	case RS_PKT_SUBTYPE_DISC_CONTACT_deprecated : return NULL ;                         //= 0x03;
-#if 0
-	case RS_PKT_SUBTYPE_DISC_SERVICES           : return new RsDiscServicesItem();      //= 0x04;
-#endif
-	case RS_PKT_SUBTYPE_DISC_CONTACT            : return new RsDiscContactItem();       //= 0x05;
-	case RS_PKT_SUBTYPE_DISC_IDENTITY_LIST      : return new RsDiscIdentityListItem();  //= 0x06;
-    default:
-    return NULL ;
-    }
+	switch(static_cast<RsGossipDiscoveryItemType>(item_subtype))
+	{
+	case RsGossipDiscoveryItemType::PGP_LIST: return new RsDiscPgpListItem();
+	case RsGossipDiscoveryItemType::PGP_CERT: return new RsDiscPgpCertItem();
+	case RsGossipDiscoveryItemType::CONTACT:  return new RsDiscContactItem();
+	case RsGossipDiscoveryItemType::IDENTITY_LIST:
+		return new RsDiscIdentityListItem();
+	case RsGossipDiscoveryItemType::INVITE:
+		return new RsGossipDiscoveryInviteItem();
+	case RsGossipDiscoveryItemType::INVITE_REQUEST:
+		return  new RsGossipDiscoveryInviteRequestItem();
+	}
+
+	return nullptr;
 }
 
 /*************************************************************************/
 
-void 	RsDiscPgpListItem::clear()
+void RsDiscPgpListItem::clear()
 {
-	mode = DISC_PGP_LIST_MODE_NONE;
+	mode = RsGossipDiscoveryPgpListMode::NONE;
 	pgpIdSet.TlvClear();
 }
 
-void RsDiscPgpListItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+void RsDiscPgpListItem::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
 {
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,mode,"mode") ;
-    RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpIdSet,"pgpIdSet") ;
+	RS_SERIAL_PROCESS(mode);
+	RS_SERIAL_PROCESS(pgpIdSet);
 }
 
 void 	RsDiscPgpCertItem::clear()
@@ -156,3 +146,17 @@ void RsDiscIdentityListItem::serial_process(RsGenericSerializer::SerializeJob j,
     RS_SERIAL_PROCESS(ownIdentityList);
 }
 
+
+RsGossipDiscoveryInviteItem::RsGossipDiscoveryInviteItem() :
+    RsDiscItem(RsGossipDiscoveryItemType::INVITE)
+{ setPriorityLevel(QOS_PRIORITY_RS_DISC_ASK_INFO); }
+
+RsGossipDiscoveryInviteRequestItem::RsGossipDiscoveryInviteRequestItem() :
+    RsDiscItem(RsGossipDiscoveryItemType::INVITE_REQUEST)
+{ setPriorityLevel(QOS_PRIORITY_RS_DISC_REPLY); }
+
+RsDiscItem::RsDiscItem(RsGossipDiscoveryItemType subtype) :
+    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC,
+            static_cast<uint8_t>(subtype) ) {}
+
+RsDiscItem::~RsDiscItem() {}
