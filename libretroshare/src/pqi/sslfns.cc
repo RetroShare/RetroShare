@@ -31,6 +31,7 @@
 #include "pqi/pqi_base.h"
 #include "util/rsdir.h"
 #include "util/rsstring.h"
+#include "pqi/authssl.h"
 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
@@ -675,13 +676,6 @@ int pem_passwd_cb(char *buf, int size, int rwflag, void *password)
 	return(strlen(buf));
 }
 
-/* XXX FIX */
-bool CheckX509Certificate(X509 */*x509*/)
-{
-
-	return true;
-}
-
 uint64_t getX509SerialNumber(X509 *cert)
 {
 	ASN1_INTEGER *serial = X509_get_serialNumber(cert);
@@ -711,67 +705,39 @@ uint32_t getX509RetroshareCertificateVersion(X509 *cert)
 	}
 }
 
-// Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, RsPgpId& issuerName, std::string &location, RsPeerId &userId)
+int LoadCheckX509(
+        const char* cert_file, RsPgpId& issuer, std::string& location,
+        RsPeerId& userId )
 {
-	/* This function loads the X509 certificate from the file, 
-	 * and checks the certificate 
-	 */
+	constexpr int failure = 0;
+	constexpr int success = 1;
 
 	FILE *tmpfp = RsDirUtil::rs_fopen(cert_file, "r");
-	if (tmpfp == NULL)
+	if (tmpfp == nullptr)
 	{
-#ifdef AUTHSSL_DEBUG
-		std::cerr << "sslroot::LoadCheckAndGetX509Name()";
-		std::cerr << " Failed to open Certificate File:" << cert_file;
-		std::cerr << std::endl;
-#endif
-		return 0;
+		RsErr() << __PRETTY_FUNCTION__ << " Failed to open Certificate File: "
+		        << cert_file << std::endl;
+		return failure;
 	}
 
 	// get xPGP certificate.
-	X509 *x509 = PEM_read_X509(tmpfp, NULL, NULL, NULL);
+	X509* x509 = PEM_read_X509(tmpfp, nullptr, nullptr, nullptr);
 	fclose(tmpfp);
 
-	// check the certificate.
-	bool valid = false;
-	if (x509)
+	if(!x509)
 	{
-                valid = CheckX509Certificate(x509);
-		if (valid)
-		{
-                	valid = getX509id(x509, userId);
-		}
+		RsErr() << __PRETTY_FUNCTION__ << " PEM_read_X509 failed!" << std::endl;
+		return failure;
 	}
 
-	if (valid)
-	{
-		// extract the name.
-#if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-		issuerName = RsPgpId(std::string(getX509CNString(x509->cert_info->issuer)));
-		location = getX509LocString(x509->cert_info->subject);
-#else
-		issuerName = RsPgpId(std::string(getX509CNString(X509_get_issuer_name(x509))));
-		location = getX509LocString(X509_get_subject_name(x509));
-#endif
-	}
+	userId = RsX509Cert::getCertSslId(*x509);
+	issuer = RsX509Cert::getCertIssuer(*x509);
+	location = RsX509Cert::getCertLocation(*x509);
 
-#ifdef AUTHSSL_DEBUG
-	std::cout << getX509Info(x509) << std::endl ;
-#endif
-	// clean up.
 	X509_free(x509);
 
-	if (valid)
-	{
-		// happy!
-		return 1;
-	}
-	else
-	{
-		// something went wrong!
-		return 0;
-	}
+	if(userId.isNull() || issuer.isNull()) return failure;
+	else return success;
 }
 
 std::string getX509NameString(X509_NAME *name)
@@ -896,10 +862,9 @@ std::string getX509Info(X509 *cert)
 
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out)
+int printSSLError(
+        SSL*, int retval, int err, unsigned long err2, std::string& out )
 {
-	(void) ssl; /* remove unused parameter warnings */
-
 	std::string reason;
 
 	std::string mainreason = std::string("UNKNOWN ERROR CODE");
@@ -939,7 +904,18 @@ int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string
 	{
 		mainreason =  std::string("SSL_ERROR_SSL");
 	}
-	rs_sprintf_append(out, "RetVal(%d) -> SSL Error: %s\n\t + ERR Error: %s\n", retval, mainreason.c_str(), ERR_error_string(err2, NULL));
+	rs_sprintf_append( out,
+	                   "RetVal(%d) -> SSL Error: %s\n\t + ERR Error: %s\n",
+	                   retval, mainreason.c_str(),
+	                   ERR_error_string(err2, nullptr) );
 	return 1;
 }
 
+
+std::string sslErrorToString(int retval, int err, unsigned long err2)
+{
+	std::string ret;
+	// When printSSLError will be removed it's code will be moved here
+	printSSLError(nullptr, retval, err, err2, ret);
+	return ret;
+}
