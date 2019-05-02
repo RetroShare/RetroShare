@@ -915,7 +915,7 @@ bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &impo
 	}
 	if(memcmp( pubkey->fingerprint.fingerprint,
 	           seckey->fingerprint.fingerprint,
-	           RsPpgFingerprint::SIZE_IN_BYTES ) != 0)
+	           RsPgpFingerprint::SIZE_IN_BYTES ) != 0)
 	{
 		import_error = "Public and private keys do nt have the same fingerprint. Sorry!" ;
 		return false ;
@@ -945,7 +945,7 @@ bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &impo
 		if(!memcmp(
 		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
 		            pubkey->key_id,
-		            RsPpgFingerprint::SIZE_IN_BYTES ))
+		            RsPgpFingerprint::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
@@ -1095,7 +1095,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 		if(!memcmp(
 		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
 		            keydata->key_id,
-		            RsPpgFingerprint::SIZE_IN_BYTES ))
+		            RsPgpFingerprint::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
@@ -1174,7 +1174,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsPgpId,PG
 	{
 		if(memcmp( existing_key->fingerprint.fingerprint,
 		           keydata->fingerprint.fingerprint,
-		           RsPpgFingerprint::SIZE_IN_BYTES ))
+		           RsPgpFingerprint::SIZE_IN_BYTES ))
 		{
 			std::cerr << "(EE) attempt to merge key with identical id, but different fingerprint!" << std::endl;
 			return false ;
