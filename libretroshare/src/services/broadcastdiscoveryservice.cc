@@ -44,7 +44,7 @@ struct BroadcastDiscoveryPack : RsSerializable
 {
 	BroadcastDiscoveryPack() : mLocalPort(0) {}
 
-	PGPFingerprintType mPgpFingerprint;
+	RsPgpFingerprint mPgpFingerprint;
 	RsPeerId mSslId;
 	uint16_t mLocalPort;
 	std::string mProfileName;

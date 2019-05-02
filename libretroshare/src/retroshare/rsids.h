@@ -325,7 +325,7 @@ using RsPeerId          = t_RsGenericIdType<_RsIdSize::SSL_ID         , false, R
 using RsPgpId           = t_RsGenericIdType<_RsIdSize::PGP_ID         , true,  RsGenericIdType::PGP_ID         >;
 using Sha1CheckSum      = t_RsGenericIdType<_RsIdSize::SHA1           , false, RsGenericIdType::SHA1           >;
 using Sha256CheckSum    = t_RsGenericIdType<_RsIdSize::SHA256         , false, RsGenericIdType::SHA256         >;
-using RsPpgFingerprint  = t_RsGenericIdType<_RsIdSize::PGP_FINGERPRINT, true,  RsGenericIdType::PGP_FINGERPRINT>;
+using RsPgpFingerprint  = t_RsGenericIdType<_RsIdSize::PGP_FINGERPRINT, true,  RsGenericIdType::PGP_FINGERPRINT>;
 using Bias20Bytes       = t_RsGenericIdType<_RsIdSize::SHA1           , true,  RsGenericIdType::BIAS_20_BYTES  >;
 using RsGxsGroupId      = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::GXS_GROUP      >;
 using RsGxsId           = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::GXS_ID         >;
@@ -335,4 +335,4 @@ using DistantChatPeerId = t_RsGenericIdType<_RsIdSize::SSL_ID         , false, R
 using RsNodeGroupId     = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::NODE_GROUP     >;
 
 /// @deprecated Ugly name kept temporarly only because it is used in many places
-using PGPFingerprintType RS_DEPRECATED_FOR(RsPpgFingerprint) = RsPpgFingerprint;
+using PGPFingerprintType RS_DEPRECATED_FOR(RsPpgFingerprint) = RsPgpFingerprint;
