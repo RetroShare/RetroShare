@@ -351,7 +351,7 @@ void IdDetailsDialog::modifyReputation()
 	case 2: op = RsOpinion::POSITIVE; break;
 	default:
 		std::cerr << "Wrong value from opinion combobox. Bug??" << std::endl;
-		break;
+		return;
 	}
 	rsReputations->setOwnOpinion(id,op);
 
