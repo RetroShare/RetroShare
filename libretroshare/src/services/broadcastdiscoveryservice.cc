@@ -31,10 +31,6 @@
 #include "serialiser/rsserializer.h"
 #include "retroshare/rsevents.h"
 
-#ifdef RS_BROADCAST_DISCOVERY_DEBUG
-# include "util/radix64.h"
-#endif
-
 /*extern*/ std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery(nullptr);
 RsBroadcastDiscovery::~RsBroadcastDiscovery() { /* Beware of Rs prefix! */ }
 RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() {}
@@ -141,45 +137,33 @@ void BroadcastDiscoveryService::data_tick()
 	if( mUdcParameters.can_discover() &&
 	        !mRsPeers.isHiddenNode(mRsPeers.getOwnId()) )
 	{
-		auto newEndpoints = mUdcEndpoint.ListDiscovered();
-		std::set< std::pair<UDC::IpPort, std::string> > mChangedData;
+		auto currentEndpoints = mUdcEndpoint.ListDiscovered();
+		std::map<UDC::IpPort, std::string> currentMap;
+		std::map<UDC::IpPort, std::string> updateMap;
 
 		mDiscoveredDataMutex.lock();
-		for(auto&& dEndpoint: newEndpoints)
+		for(auto&& dEndpoint: currentEndpoints)
 		{
+			currentMap[dEndpoint.ip_port()] = dEndpoint.user_data();
+
 			auto findIt = mDiscoveredData.find(dEndpoint.ip_port());
 			if( !dEndpoint.user_data().empty() && (
 			            findIt == mDiscoveredData.end() ||
-			            (*findIt).second != dEndpoint.user_data() ) )
-			{
-				mDiscoveredData[dEndpoint.ip_port()] = dEndpoint.user_data();
-				mChangedData.insert(std::make_pair(
-				                        dEndpoint.ip_port(),
-				                        dEndpoint.user_data() ));
-			}
+			            findIt->second != dEndpoint.user_data() ) )
+				updateMap[dEndpoint.ip_port()] = dEndpoint.user_data();
 		}
+		mDiscoveredData = currentMap;
 		mDiscoveredDataMutex.unlock();
 
-		if(!mChangedData.empty())
+		if(!updateMap.empty())
 		{
-			for (auto&& pp : mChangedData)
+			for (auto&& pp : updateMap)
 			{
-#ifdef RS_BROADCAST_DISCOVERY_DEBUG
-				{
-				std::string b64Data;
-				Radix64::encode(
-				            reinterpret_cast<const unsigned char*>(pp.second.data()),
-				            static_cast<int>(pp.second.size()), b64Data );
-				std::cerr << __PRETTY_FUNCTION__ << " Got: " << b64Data
-				          << " Base64 from: " << UDC::IpToString(pp.first.ip())
-				          << ":" << pp.first.port() << std::endl;
-				}
-#endif // def RS_BROADCAST_DISCOVERY_DEBUG
-
 				RsBroadcastDiscoveryResult rbdr =
 				        createResult(pp.first, pp.second);
 
-				if( rbdr.locator.hasPort() && mRsPeers.isFriend(rbdr.mSslId) &&
+				const bool isFriend = mRsPeers.isFriend(rbdr.mSslId);
+				if( isFriend && rbdr.locator.hasPort() &&
 				        !mRsPeers.isOnline(rbdr.mSslId) )
 				{
 					mRsPeers.setLocalAddress(
@@ -187,7 +171,7 @@ void BroadcastDiscoveryService::data_tick()
 					            rbdr.locator.port() );
 					mRsPeers.connectAttempt(rbdr.mSslId);
 				}
-				else
+				else if(!isFriend)
 				{
 					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
 
