@@ -945,7 +945,7 @@ bool PGPHandler::checkAndImportKeyPair(ops_keyring_t *tmp_keyring, RsPgpId &impo
 		if(!memcmp(
 		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
 		            pubkey->key_id,
-		            RsPgpFingerprint::SIZE_IN_BYTES ))
+		            RsPgpId::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
@@ -1095,7 +1095,7 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 		if(!memcmp(
 		            static_cast<uint8_t*>(result->valid_sigs[i].signer_id),
 		            keydata->key_id,
-		            RsPgpFingerprint::SIZE_IN_BYTES ))
+		            RsPgpId::SIZE_IN_BYTES ))
 		{
 			found = true ;
 			break ;
