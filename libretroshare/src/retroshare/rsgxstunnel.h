@@ -29,8 +29,6 @@
 class RsGxsTunnelService
 {
 public:
-    typedef GXSTunnelId RsGxsTunnelId ;
-    
     enum {
 	RS_GXS_TUNNEL_ERROR_NO_ERROR          = 0x0000,
 	RS_GXS_TUNNEL_ERROR_UNKNOWN_GXS_ID    = 0x0001  

@@ -217,7 +217,9 @@ bool GrpCircleVetting::expired()
 {
 	return  time(NULL) > (mTimeStamp + EXPIRY_PERIOD_OFFSET);
 }
-bool GrpCircleVetting::canSend(const SSLIdType& peerId, const RsGxsCircleId& circleId,bool& should_encrypt)
+bool GrpCircleVetting::canSend(
+        const RsPeerId& peerId, const RsGxsCircleId& circleId,
+        bool& should_encrypt )
 {
 	if(mCircles->isLoaded(circleId))
 	{

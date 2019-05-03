@@ -1062,7 +1062,7 @@ void p3GxsTunnelService::handleRecvDHPublicKey(RsGxsTunnelDHPublicKeyItem *item)
 
 // Note: for some obscure reason, the typedef does not work here. Looks like a compiler error. So I use the primary type.
 
-/*static*/ GXSTunnelId p3GxsTunnelService::makeGxsTunnelId(
+/*static*/ RsGxsTunnelId p3GxsTunnelService::makeGxsTunnelId(
         const RsGxsId &own_id, const RsGxsId &distant_id )
 {
     unsigned char mem[RsGxsId::SIZE_IN_BYTES * 2] ;
