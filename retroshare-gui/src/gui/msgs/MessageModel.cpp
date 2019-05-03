@@ -291,58 +291,66 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
 
 bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-    QString s ;
-    bool passes_strings = true ;
+	QString s ;
+	bool passes_strings = true ;
 
-    if(!mFilterStrings.empty())
+	if(!mFilterStrings.empty())
 	{
 		switch(mFilterType)
 		{
-		case FILTER_TYPE_SUBJECT: 	s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
+			case FILTER_TYPE_SUBJECT:   s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
 			break;
 
-		case FILTER_TYPE_FROM:      s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
-            						if(s.isNull())
-                                        passes_strings = false;
-            break;
-		case FILTER_TYPE_DATE:   	s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
+			case FILTER_TYPE_FROM:      s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
+				if(s.isNull())
+					passes_strings = false;
 			break;
-		case FILTER_TYPE_CONTENT:   {
-			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
-			s = QTextDocument(QString::fromUtf8(minfo.msg.c_str())).toPlainText();
+
+			case FILTER_TYPE_DATE:      s = displayRole(fmpe,COLUMN_THREAD_DATE).toString();
+			break;
+
+			case FILTER_TYPE_CONTENT:
+			{
+				Rs::Msgs::MessageInfo minfo;
+				rsMsgs->getMessage(fmpe.msgId,minfo);
+				s = QTextDocument(QString::fromUtf8(minfo.msg.c_str())).toPlainText();
+			}
+			break;
+
+			case FILTER_TYPE_TAGS:      s = displayRole(fmpe,COLUMN_THREAD_TAGS).toString();
+			break;
+
+			case FILTER_TYPE_ATTACHMENTS:
+			{
+				Rs::Msgs::MessageInfo minfo;
+				rsMsgs->getMessage(fmpe.msgId,minfo);
+
+				for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
+					s += QString::fromUtf8((*it).fname.c_str())+" ";
+			}
+			break;
+
+			case FILTER_TYPE_NONE:
+			break;
 		}
-			break;
-		case FILTER_TYPE_TAGS:		s = displayRole(fmpe,COLUMN_THREAD_TAGS).toString();
-			break;
-
-		case FILTER_TYPE_ATTACHMENTS:
-		{
-			Rs::Msgs::MessageInfo minfo;
-			rsMsgs->getMessage(fmpe.msgId,minfo);
-
-			for(auto it(minfo.files.begin());it!=minfo.files.end();++it)
-				s += QString::fromUtf8((*it).fname.c_str())+" ";
-		}
-		};
 	}
 
-    if(!s.isNull())
+	if(!s.isNull())
 		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
 			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
 
-    bool passes_quick_view =
-            (mQuickViewFilter==QUICK_VIEW_ALL)
-            || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
-            || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
-            || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
+	bool passes_quick_view =
+	    (mQuickViewFilter==QUICK_VIEW_ALL)
+	    || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
+	    || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
+	    || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
 #ifdef DEBUG_MESSAGE_MODEL
-    std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
-    foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
-    std::cerr          << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
+	std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
+	foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
+	std::cerr          << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
 #endif
 
-    return passes_quick_view && passes_strings;
+	return passes_quick_view && passes_strings;
 }
 
 QVariant RsMessageModel::filterRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
