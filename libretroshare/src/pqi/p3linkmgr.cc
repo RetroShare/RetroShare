@@ -1656,30 +1656,8 @@ bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 	return false;
 }
 
-
-#define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
-
-bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const sockaddr_storage& addr)
 {
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
-	std::cerr << sockaddr_storage_tostring(addr);
-	std::cerr << ", " << age << ")";
-	std::cerr << std::endl;
-#endif
-
-	/*
-	 * if it is old - quick rejection 
-	 */
-	if (age > MAX_TCP_ADDR_AGE)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - TOO OLD"; 
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
-
 	/* if invalid - quick rejection */
 	if ( ! sockaddr_storage_isValidNet(addr) )
 	{
@@ -1726,7 +1704,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddress(peerConnectState *pee
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses()";
 	std::cerr << std::endl;
 #endif
-	if (locked_CheckPotentialAddr(remoteAddr, 0))
+	if(locked_CheckPotentialAddr(remoteAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses() ";
@@ -1757,7 +1735,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pe
 #endif
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
-	if (locked_CheckPotentialAddr(localAddr, 0))
+	if (locked_CheckPotentialAddr(localAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
@@ -1778,7 +1756,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pe
 		addAddressIfUnique(peer->connAddrs, pca, false);
 	}
 
-	if (locked_CheckPotentialAddr(serverAddr, 0))
+	if (locked_CheckPotentialAddr(serverAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
@@ -1806,7 +1784,6 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::const_iterator ait;
-	rstime_t now = time(NULL);
 
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses()";
@@ -1814,7 +1791,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 #endif
     for(ait = ipAddrs.mLocal.mAddrs.begin();  ait != ipAddrs.mLocal.mAddrs.end(); ++ait)
 	{
-		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr))
 		{
 
 #ifdef LINKMGR_DEBUG
@@ -1841,7 +1818,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	for(ait = ipAddrs.mExt.mAddrs.begin(); 
 		ait != ipAddrs.mExt.mAddrs.end(); ++ait)
 	{
-		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr))
 		{
 	
 #ifdef LINKMGR_DEBUG
@@ -1898,7 +1875,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 			pca.bandwidth = 0;
 			
 			/* check address validity */
-			if (locked_CheckPotentialAddr(pca.addr, 0))
+			if (locked_CheckPotentialAddr(pca.addr))
 			{
 				addAddressIfUnique(peer->connAddrs, pca, true);
 			}
@@ -1959,7 +1936,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	pca.domain_port = domain_port;
 			
 	/* check address validity */
-	if (locked_CheckPotentialAddr(pca.addr, 0))
+	if (locked_CheckPotentialAddr(pca.addr))
 	{
 		addAddressIfUnique(peer->connAddrs, pca, true);
 	}
@@ -2207,11 +2184,10 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
     return;
 }
 
-bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, rstime_t age)
+bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage& addr)
 {
-    RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-    return locked_CheckPotentialAddr(addr,age) ;
+	RS_STACK_MUTEX(mLinkMtx);
+	return locked_CheckPotentialAddr(addr);
 }
 
 
