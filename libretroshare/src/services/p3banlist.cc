@@ -62,7 +62,7 @@ p3BanList::p3BanList(p3ServiceControl *sc, p3NetMgr */*nm*/)
   : p3Service(), mBanMtx("p3BanList"), mServiceCtrl(sc)
   , mSentListTime(0), mLastDhtInfoRequest(0)
   // default number of IPs in same range to trigger a complete IP /24 filter.
-  , mAutoRangeLimit(100), mAutoRangeIps(false)
+  , mAutoRangeLimit(2), mAutoRangeIps(true)
   , mIPFilteringEnabled(true)
   , mIPFriendGatheringEnabled(false)
   , mIPDHTGatheringEnabled(false)
@@ -1202,7 +1202,7 @@ void p3BanList::sendBanLists()
 	}
 }
 
-
+// Send all manually banned ranges to friends
 
 int p3BanList::sendBanSet(const RsPeerId& peerid)
 {
