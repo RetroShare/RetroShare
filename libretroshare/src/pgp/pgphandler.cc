@@ -1197,37 +1197,7 @@ bool PGPHandler::locked_addOrMergeKey(ops_keyring_t *keyring,std::map<RsPgpId,PG
 
 	return ret ;
 }
-//   bool PGPHandler::encryptTextToString(const RsPgpId& key_id,const std::string& text,std::string& outstring) 
-//   {
-//   	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-//   
-//   	const ops_keydata_t *public_key = getPublicKey(key_id) ;
-//   
-//   	if(public_key == NULL)
-//   	{
-//   		std::cerr << "Cannot get public key of id " << key_id.toStdString() << std::endl;
-//   		return false ;
-//   	}
-//   
-//   	if(public_key->type != OPS_PTAG_CT_PUBLIC_KEY)
-//   	{
-//   		std::cerr << "PGPHandler::encryptTextToFile(): ERROR: supplied id did not return a public key!" << std::endl;
-//   		return false ;
-//   	}
-//   
-//   	ops_create_info_t *info;
-//   	ops_memory_t *buf = NULL ;
-//      ops_setup_memory_write(&info, &buf, 0);
-//   
-//   	ops_encrypt_stream(info, public_key, NULL, ops_false, ops_true);
-//   	ops_write(text.c_str(), text.length(), info);
-//   	ops_writer_close(info);
-//   
-//   	outstring = std::string((char *)ops_memory_get_data(buf),ops_memory_get_length(buf)) ;
-//   	ops_create_info_delete(info);
-//   
-//   	return true ;
-//   }
+
 bool PGPHandler::encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) 
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
@@ -2129,4 +2099,3 @@ bool PGPHandler::removeKeysFromPGPKeyring(const std::set<RsPgpId>& keys_to_remov
 
 	return true ;
 }
-
