@@ -1476,12 +1476,12 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 	bool changed = false;
 	uint32_t check_res = 0;
 
-	if( rsBanList!=NULL && !rsBanList->isAddressAccepted(
-	            addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, &check_res) )
+	if(rsBanList && !rsBanList->isAddressAccepted(
+	            addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, check_res ))
 	{
-		std::cerr << "(SS) trying to set external contact address for peer "
-		          << id << " to a banned address "
-		          << sockaddr_storage_iptostring(addr) << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " trying to set external contact "
+		        << "address for peer: " << id << " to a banned address " << addr
+		        << std::endl;
 		return false;
 	}
 

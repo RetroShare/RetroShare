@@ -306,12 +306,15 @@ bool p3BanList::acceptedBanRanges_locked(const BanListPeer& blp)
     }
     return false ;
 }
-bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checking_flags,uint32_t *check_result)
+bool p3BanList::isAddressAccepted(
+        const sockaddr_storage& dAddr, uint32_t checking_flags,
+        uint32_t& check_result )
 {
+	check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
+	if(!mIPFilteringEnabled) return true;
+
 	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 
-	if(!mIPFilteringEnabled) return true;
-	if(check_result != NULL) *check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
 	if(!sockaddr_storage_ipv6_to_ipv4(addr)) return true;
 	if(sockaddr_storage_isLoopbackNet(addr)) return true;
 
@@ -332,9 +335,8 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
     white_list_found = white_list_found || (mWhiteListedRanges.find(addr_32) != mWhiteListedRanges.end()) ;
 
     if(white_list_found)
-    {
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+	{
+		check_result = RSBANLIST_CHECK_RESULT_ACCEPTED;
 #ifdef DEBUG_BANLIST
       std::cerr << ". Address is in whitelist. Accepting" << std::endl;
 #endif
@@ -342,9 +344,8 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
     }
 
     if(checking_flags & RSBANLIST_CHECKING_FLAGS_WHITELIST)
-    {
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED ;
+	{
+		check_result = RSBANLIST_CHECK_RESULT_NOT_WHITELISTED;
 #ifdef DEBUG_BANLIST
       std::cerr << ". Address is not whitelist, and whitelist is required. Rejecting" << std::endl;
 #endif
@@ -356,8 +357,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 #ifdef DEBUG_BANLIST
       std::cerr << ". No blacklisting required. Accepting." << std::endl;
 #endif
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+	    check_result = RSBANLIST_CHECK_RESULT_ACCEPTED;
         return true;
     }
 
@@ -369,8 +369,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 #ifdef DEBUG_BANLIST
       std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/16. returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-      if(check_result != NULL)
-          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+	    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED;
       return false ;
   }
 
@@ -380,8 +379,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 #ifdef DEBUG_BANLIST
       std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/24.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-      if(check_result != NULL)
-          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+	    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED;
       return false ;
   }
 
@@ -391,8 +389,7 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 #ifdef DEBUG_BANLIST
       std::cerr << " found in blacklisted range " << sockaddr_storage_iptostring(it->first) << "/32.  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-        if(check_result != NULL)
-            *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+	    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED;
         return false ;
     }
 
@@ -402,16 +399,14 @@ bool p3BanList::isAddressAccepted(const sockaddr_storage &dAddr, uint32_t checki
 #ifdef DEBUG_BANLIST
       std::cerr << "found as blacklisted address " << sockaddr_storage_iptostring(it->first) << ".  returning false. attempts=" << it->second.connect_attempts << std::endl;
 #endif
-      if(check_result != NULL)
-          *check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED ;
+	    check_result = RSBANLIST_CHECK_RESULT_BLACKLISTED;
       return false ;
   }
 
 #ifdef DEBUG_BANLIST
   std::cerr << " not blacklisted. Accepting." << std::endl;
 #endif
-    if(check_result != NULL)
-        *check_result = RSBANLIST_CHECK_RESULT_ACCEPTED ;
+        check_result = RSBANLIST_CHECK_RESULT_ACCEPTED;
     return true ;
 }
 void p3BanList::getWhiteListedIps(std::list<BanListPeer> &lst)
@@ -1304,4 +1299,4 @@ int p3BanList::printBanSources_locked(std::ostream &out)
     return true ;
 }
 
-
+RsBanList::~RsBanList() = default;
