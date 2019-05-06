@@ -33,12 +33,12 @@
 
 enum class RsGossipDiscoveryItemType : uint8_t
 {
-	PGP_LIST           = 1,
-	PGP_CERT           = 2,
-	CONTACT            = 5,
-	IDENTITY_LIST      = 6,
-	INVITE             = 7,
-	INVITE_REQUEST     = 8
+	PGP_LIST           = 0x1,
+	PGP_CERT           = 0x2,
+	CONTACT            = 0x5,
+	IDENTITY_LIST      = 0x6,
+	INVITE             = 0x7,
+	INVITE_REQUEST     = 0x8
 };
 
 class RsDiscItem: public RsItem
@@ -51,12 +51,17 @@ public:
 	virtual ~RsDiscItem();
 };
 
-/// uint32_t overkill just for retro-compatibility
+/**
+ * This enum is underlined by uint32_t for historical reasons.
+ * We are conscious that uint32_t is an overkill for so few possible values but,
+ * changing here it at this point would break binary serialized item
+ * retro-compatibility.
+ */
 enum class RsGossipDiscoveryPgpListMode : uint32_t
 {
-	NONE    = 0,
-	FRIENDS = 1,
-	GETCERT = 2
+	NONE    = 0x0,
+	FRIENDS = 0x1,
+	GETCERT = 0x2
 };
 
 class RsDiscPgpListItem: public RsDiscItem
