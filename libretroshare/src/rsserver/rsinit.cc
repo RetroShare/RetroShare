@@ -745,7 +745,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "services/p3gxsreputation.h"
 #include "services/p3serviceinfo.h"
 #include "services/p3heartbeat.h"
-#include "services/p3discovery2.h"
+#include "gossipdiscovery/p3gossipdiscovery.h"
 #include "services/p3msgservice.h"
 #include "services/p3statusservice.h"
 
@@ -1484,7 +1484,7 @@ int RsServer::StartupRetroShare()
 
 	mGxsNetTunnel->connectToTurtleRouter(tr) ;
 
-	rsDisc  = mDisc;
+	rsGossipDiscovery.reset(mDisc);
 	rsMsgs  = new p3Msgs(msgSrv, chatSrv);
 
 	// connect components to turtle router.

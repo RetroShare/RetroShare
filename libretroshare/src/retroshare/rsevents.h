@@ -52,7 +52,7 @@ enum class RsEventType : uint32_t
 	BROADCAST_DISCOVERY_PEER_FOUND                          = 1,
 
 	/// @see RsDiscPendingPgpReceivedEvent
-	GOSSIP_DISCOVERY_PENDIG_PGP_CERT_RECEIVED               = 2,
+	GOSSIP_DISCOVERY_INVITE_RECEIVED                        = 2,
 
 	/// @see AuthSSL
 	AUTHSSL_CONNECTION_AUTENTICATION                        = 3,
