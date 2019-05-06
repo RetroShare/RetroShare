@@ -1729,7 +1729,7 @@ static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkM
     /* remove unused parameter warnings */
     (void) pid;
 #endif
-      if(!link_mgr->checkPotentialAddr( (*it2).mAddr,now - (*it2).mSeenTime))
+		if(!link_mgr->checkPotentialAddr((*it2).mAddr))
       {
 #ifdef PEER_DEBUG
         std::cerr << "  (SS) Removing Banned/old IP address " << sockaddr_storage_iptostring( (*it2).mAddr) << " from peer " << pid << ", age = " << now - (*it2).mSeenTime << std::endl;
