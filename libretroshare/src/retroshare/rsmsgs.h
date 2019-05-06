@@ -485,14 +485,13 @@ public:
 	}
 };
 
-std::ostream &operator<<(std::ostream &out, const Rs::Msgs::MessageInfo &info);
 
 class RsMsgs;
 /**
  * @brief Pointer to retroshare's message service
  * @jsonapi{development}
  */
-extern RsMsgs   *rsMsgs;
+extern RsMsgs* rsMsgs;
 
 class RsMsgs 
 {

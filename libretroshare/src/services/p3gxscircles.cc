@@ -40,7 +40,7 @@
  * #define DEBUG_CIRCLES	 1
  ****/
 
-RsGxsCircles *rsGxsCircles = NULL;
+/*extern*/ RsGxsCircles* rsGxsCircles = nullptr;
 
 /******
  *
@@ -1858,47 +1858,6 @@ void p3GxsCircles::generateDummyCircle()
 	createGroup(dummyToken, group);
 }
 
-
-/************************************************************************************/
-/************************************************************************************/
-/************************************************************************************/
-/************************************************************************************/
-
-
-std::ostream &operator<<(std::ostream &out, const RsGxsCircleGroup &grp)
-{
-	out << "RsGxsCircleGroup: Meta: " << grp.mMeta;
-	out << "InvitedMembers: ";
-	out << std::endl;
-
-        std::set<RsGxsId>::const_iterator it;
-        std::set<RsGxsCircleId>::const_iterator sit;
-	for(it = grp.mInvitedMembers.begin();
-		it != grp.mInvitedMembers.begin(); ++it)
-	{
-		out << "\t" << *it;
-		out << std::endl;
-	}
-
-	for(sit = grp.mSubCircles.begin();
-		sit != grp.mSubCircles.begin(); ++sit)
-	{
-		out << "\t" << *it;
-		out << std::endl;
-	}
-	return out;
-}
-
-std::ostream &operator<<(std::ostream &out, const RsGxsCircleMsg &msg)
-{
-	out << "RsGxsCircleMsg: Meta: " << msg.mMeta;
-	out << std::endl;
-	
-	return out;
-}
-
-
-
 	// Overloaded from GxsTokenQueue for Request callbacks.
 void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 {
@@ -1921,21 +1880,12 @@ void p3GxsCircles::handleResponse(uint32_t token, uint32_t req_type)
 		case CIRCLEREQ_CACHELOAD:
 			cache_load_for_token(token);
 			break;
-
-#if 0
-		case CIRCLEREQ_CACHETEST:
-			cachetest_handlerequest(token);
-			break;
-#endif
-
-		default:
-			/* error */
-			std::cerr << "p3GxsCircles::handleResponse() Unknown Request Type: " << req_type;
-			std::cerr << std::endl;
-			break;
+	default:
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown Request Type: "
+		        << req_type << std::endl;
+		break;
 	}
 }
-
 
 	// Overloaded from RsTickEvent for Event callbacks.
 void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
@@ -1960,14 +1910,7 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 			cache_reloadids(RsGxsCircleId(elabel));
 			break;
 
-#if 0
-		case CIRCLE_EVENT_CACHETEST:
-			cachetest_getlist();
-			break;
-#endif
-
-
-		case CIRCLE_EVENT_DUMMYSTART:
+	case CIRCLE_EVENT_DUMMYSTART:
 			generateDummyData();
 			break;
 
@@ -1979,11 +1922,10 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 			generateDummyCircle();
 			break;
 
-		default:
-			/* error */
-			std::cerr << "p3GxsCircles::handle_event() Unknown Event Type: " << event_type;
-			std::cerr << std::endl;
-			break;
+	default:
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: " << event_type
+		        << std::endl;
+		break;
 	}
 }
 
