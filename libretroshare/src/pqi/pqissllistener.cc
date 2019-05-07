@@ -793,19 +793,23 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		          << "certificate signature. This should never happen at this "
 		          << "point!" << std::endl;
 		print_stacktrace();
+
+		X509_free(peercert); // not needed but just in case we change to return
 		exit(failure);
 	}
 
 	if( !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
-		        << " is not friend. It is very unlikely to happen at this "
-		        << "point! Either the user must have been so fast to deny "
-		        << "friendship just after VerifyX509Callback have returned "
-		        << "success and just before this code being executed, or "
-		        << "something really fishy is happening! Share the full log "
-		        << "with developers." << std::endl;
+		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
+		          << " is not friend. It is very unlikely to happen at this "
+		          << "point! Either the user must have been so fast to deny "
+		          << "friendship just after VerifyX509Callback have returned "
+		          << "success and just before this code being executed, or "
+		          << "something really fishy is happening! Share the full log "
+		          << "with developers." << std::endl;
 		print_stacktrace();
+
+		X509_free(peercert); // not needed but just in case we change to return
 		exit(failure);
 	}
 #endif //def RS_PQISSL_AUTH_REDUNDANT_CHECK
