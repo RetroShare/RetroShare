@@ -853,7 +853,7 @@ rs_jsonapi {
             git submodule update --init --recommend-shallow dependency/kashmir ; \
             true ) && \
             mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
-            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
+            cmake \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
                 $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
                 -DCMAKE_INSTALL_PREFIX=. -B. \
