@@ -846,11 +846,11 @@ rs_jsonapi {
         genrestbedlib.variable_out = PRE_TARGETDEPS
         genrestbedlib.commands = \
             cd $${RS_SRC_PATH} && ( \
-            git submodule update --init --recommend-shallow supportlibs/restbed ; \
+            git submodule update --init supportlibs/restbed ; \
             cd $${RESTBED_SRC_PATH} ; \
-            git submodule update --init --recommend-shallow dependency/asio ; \
-            git submodule update --init --recommend-shallow dependency/catch ; \
-            git submodule update --init --recommend-shallow dependency/kashmir ; \
+            git submodule update --init dependency/asio ; \
+            git submodule update --init dependency/catch ; \
+            git submodule update --init dependency/kashmir ; \
             true ) && \
             mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
             cmake \
@@ -919,7 +919,7 @@ rs_broadcast_discovery {
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
         udpdiscoverycpplib.commands = \
             cd $${RS_SRC_PATH} && ( \
-            git submodule update --init --recommend-shallow supportlibs/udp-discovery-cpp || \
+            git submodule update --init supportlibs/udp-discovery-cpp || \
             true ) && \
             mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
             cd $${UDP_DISCOVERY_BUILD_PATH} && \
