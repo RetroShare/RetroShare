@@ -533,6 +533,14 @@ void p3GxsTrans::service_tick()
 		for(std::map<RsGxsId,MsgSizeCount>::const_iterator it(per_user_statistics.begin());it!=per_user_statistics.end();++it)
 			std::cerr << "  " << it->first << ": " << it->second.count << " " << it->second.size << std::endl;
 #endif
+        // Waiting here is very important because the thread may still be updating its semaphores after setting isDone() to true
+        // If we delete it during this operation it will corrupt the stack and cause unpredictable errors.
+
+        while(mCleanupThread->isRunning())
+        {
+            std::cerr << "Waiting for mCleanupThread to terminate..." << std::endl;
+            rstime::rs_usleep(500*1000);
+        }
 
 		delete mCleanupThread;
 		mCleanupThread=NULL ;

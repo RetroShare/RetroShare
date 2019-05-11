@@ -66,8 +66,8 @@ void RsThread::go()
 
     runloop();
 
-    mHasStoppedSemaphore.set(1);
     mShouldStopSemaphore.set(0);
+    mHasStoppedSemaphore.set(1);	// last value that we modify because this is interpreted as a signal that the object can be deleted.
 }
 void *RsThread::rsthread_init(void* p)
 {
