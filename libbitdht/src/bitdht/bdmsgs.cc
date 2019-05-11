@@ -827,9 +827,10 @@ int decodeCompactPeerId(struct sockaddr_in *addr, char *enc, int len)
 
 	memset(addr, 0, sizeof(struct sockaddr_in));
 
-	uint32_t *ip = (uint32_t *) (enc);
+	//uint32_t *ip = (uint32_t *) (enc);
 	uint16_t *port = (uint16_t *) (&enc[4]);
-	addr->sin_addr.s_addr = (*ip); 
+
+    memcpy(& addr->sin_addr.s_addr, enc, sizeof(in_addr_t));  // aligned version of  "addr->sin_addr.s_addr = (*ip); "
 	addr->sin_port = (*port); 
 	addr->sin_family = AF_INET;
 

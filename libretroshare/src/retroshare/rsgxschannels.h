@@ -47,6 +47,8 @@ extern RsGxsChannels* rsGxsChannels;
 
 struct RsGxsChannelGroup : RsSerializable
 {
+    RsGxsChannelGroup() : mAutoDownload(false) {}
+
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;

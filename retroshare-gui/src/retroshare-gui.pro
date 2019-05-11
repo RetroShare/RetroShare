@@ -92,6 +92,10 @@ linux-* {
 	DEFINES *= HAVE_XSS # for idle time, libx screensaver extensions
 }
 
+rs_sanitize {
+	LIBS *= -lasan -lubsan
+}
+
 unix {
 	target.path = "$${BIN_DIR}"
 	INSTALLS += target

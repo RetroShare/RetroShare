@@ -1945,7 +1945,10 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
     // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,entry index) pair, in a way
     // that cannot be brute-forced or reverse-engineered, which explains the random bias and the usage of the hash, that is itself random.
 
-    uint64_t r = random_bias ^ *((uint64_t*)tmp.toByteArray()) ;
+    uint64_t tmp2 ;
+    memcpy(&tmp2,tmp.toByteArray(),sizeof(uint64_t));
+
+    uint64_t r = random_bias ^ tmp2;
 
 #ifdef DEBUG_P3FILELISTS
     std::cerr << "Creating ID " << std::hex << r << std::dec << " from peer id " << peer_id << " and hash " << hash << std::endl;
