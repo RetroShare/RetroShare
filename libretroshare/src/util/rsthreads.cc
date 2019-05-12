@@ -103,6 +103,16 @@ RsThread::RsThread()
     mShouldStopSemaphore.set(0) ;
 }
 
+RsThread::~RsThread()
+{
+	if(isRunning())
+    {
+		std::cerr << "(EE) Deleting a thread that is actually running! Something is very wrong here:" << std::endl;
+
+        print_stacktrace();
+    }
+}
+
 bool RsThread::isRunning()
 {
     // do we need a mutex for this ?

@@ -243,7 +243,7 @@ class RsThread
 {
 public:
     RsThread();
-    virtual ~RsThread() {}
+    virtual ~RsThread() ;
 
     void start(const std::string &threadName = "");
 
