@@ -784,10 +784,13 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 #ifdef RS_PQISSL_AUTH_DOUBLE_CHECK
 	/* At this point the actual connection authentication has already been
 	 * performed in AuthSSL::VerifyX509Callback, any furter authentication check
-	 * like the following two are redundant. */
+	 * like the followings are redundant. */
+
+	bool isSslOnlyFriend = rsPeers->isSslOnlyFriend(newPeerId);
 
 	uint32_t authErrCode = 0;
-	if(!AuthSSL::instance().AuthX509WithGPG(peercert, authErrCode))
+	if( !isSslOnlyFriend &&
+	        !AuthSSL::instance().AuthX509WithGPG(peercert, authErrCode) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " failure verifying peer "
 		          << "certificate signature. This should never happen at this "
@@ -798,7 +801,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		exit(failure);
 	}
 
-	if( pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
+	if( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
 	        !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId
@@ -822,7 +825,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 		else ++it;
 	}
 
-	if (found == false)
+	if (!found)
 	{
 		Dbg1() << __PRETTY_FUNCTION__ << " got secure connection from address: "
 		       << info.addr << " with previously unknown SSL certificate: "

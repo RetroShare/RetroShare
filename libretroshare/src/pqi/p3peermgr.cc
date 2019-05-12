@@ -1029,6 +1029,73 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 	return true;
 }
 
+
+bool p3PeerMgrIMPL::addSslOnlyFriend(
+        const RsPeerId& sslId, const RsPeerDetails& dt )
+{
+	if(sslId.isNull() || sslId == getOwnId()) return false;
+
+	peerState pstate;
+
+	{ RS_STACK_MUTEX(mPeerMtx);
+
+		/* If in mOthersList -> move over */
+		auto it = mOthersList.find(sslId);
+		if (it != mOthersList.end())
+		{
+			pstate = it->second;
+			mOthersList.erase(it);
+		}
+
+	} // RS_STACK_MUTEX(mPeerMtx);
+
+	pstate.id = sslId;
+
+	if(!dt.name.empty())     pstate.name = dt.name;
+	if(!dt.dyndns.empty())   pstate.dyndns = dt.dyndns;
+	pstate.hiddenNode = dt.isHiddenNode;
+	if(!dt.hiddenNodeAddress.empty())
+		pstate.hiddenDomain = dt.hiddenNodeAddress;
+	if(dt.hiddenNodePort)    pstate.hiddenPort = dt.hiddenNodePort;
+	if(dt.hiddenType)        pstate.hiddenType = dt.hiddenType;
+	if(!dt.location.empty()) pstate.location = dt.location;
+
+	{ RS_STACK_MUTEX(mPeerMtx);
+
+		mFriendList[sslId] = pstate;
+		mStatusChanged = true;
+
+	} // RS_STACK_MUTEX(mPeerMtx);
+
+	IndicateConfigChanged();
+	mLinkMgr->addFriend(sslId, dt.vs_dht != RS_VS_DHT_OFF);
+
+	// To update IP addresses is much more confortable to use locators
+	if(!dt.isHiddenNode)
+	{
+		for(const std::string& locator : dt.ipAddressList)
+			addPeerLocator(sslId, locator);
+
+		if(dt.extPort && !dt.extAddr.empty())
+		{
+			RsUrl locator;
+			locator.setScheme("ipv4").setHost(dt.extAddr)
+			       .setPort(dt.extPort);
+			addPeerLocator(sslId, locator);
+		}
+
+		if(dt.localPort && !dt.localAddr.empty())
+		{
+			RsUrl locator;
+			locator.setScheme("ipv4").setHost(dt.localAddr)
+			       .setPort(dt.localPort);
+			addPeerLocator(sslId, locator);
+		}
+	}
+
+	return true;
+}
+
 bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 {
 #ifdef PEER_DEBUG
@@ -2344,7 +2411,15 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 			    /* ************* */
 			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
-			    addFriend(peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL);
+				if(!addFriend( peer_id, peer_pgp_id, pitem->netMode,
+				               pitem->vs_disc, pitem->vs_dht,
+				               pitem->lastContact, RS_NODE_PERM_ALL ))
+				{
+					RsInfo() << __PRETTY_FUNCTION__ << " loading SSL-only "
+					         << "friend: " << peer_id << " " << pitem->location
+					         << std::endl;
+					addSslOnlyFriend(peer_id);
+				}
 			    setLocation(pitem->nodePeerId, pitem->location);
 		    }
 

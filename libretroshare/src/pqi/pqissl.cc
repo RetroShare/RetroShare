@@ -35,7 +35,7 @@
 #include "pqi/pqissllistener.h"
 
 #include "pqi/p3linkmgr.h"
-#include <retroshare/rspeers.h>
+#include "retroshare/rspeers.h"
 #include <retroshare/rsdht.h>
 #include <retroshare/rsbanlist.h>
 
@@ -1180,10 +1180,13 @@ int pqissl::Authorise_SSL_Connection()
 
 	/* At this point the actual connection authentication has already been
 	 * performed in AuthSSL::VerifyX509Callback, any furter authentication check
-	 * like the following two are redundant. */
+	 * like the followings are redundant. */
+
+	bool isSslOnlyFriend = rsPeers->isSslOnlyFriend(certPeerId);
 
 	uint32_t authErrCode = 0;
-	if(!AuthSSL::instance().AuthX509WithGPG(peercert, authErrCode))
+	if( !isSslOnlyFriend &&
+	        !AuthSSL::instance().AuthX509WithGPG(peercert, authErrCode) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " failure verifying peer "
 		          << "certificate signature. This should never happen at this "
@@ -1195,7 +1198,7 @@ int pqissl::Authorise_SSL_Connection()
 	}
 
 	RsPgpId pgpId = RsX509Cert::getCertIssuer(*peercert);
-	if( pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
+	if( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
 	        !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " pgpId: " << pgpId

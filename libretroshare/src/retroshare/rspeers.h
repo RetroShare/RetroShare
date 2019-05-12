@@ -31,6 +31,7 @@
 #include "util/rsurl.h"
 #include "util/rsdeprecate.h"
 #include "util/rstime.h"
+#include "retroshare/rsevents.h"
 
 class RsPeers;
 
@@ -358,6 +359,23 @@ struct RsGroupInfo : RsSerializable
 	}
 };
 
+/** Event emitted when a peer change state */
+struct RsPeerStateChangedEvent : RsEvent
+{
+	/// @param[in] sslId is of the peer which changed state
+	RsPeerStateChangedEvent(RsPeerId sslId);
+
+	/// Storage fot the id of the peer that changed state
+	RsPeerId mSslId;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mSslId);
+	}
+};
+
 /** The Main Interface Class - for information about your Peers
  * A peer is another RS instance, means associated with an SSL certificate
  * A same GPG person can have multiple peer running with different SSL certs
@@ -434,6 +452,16 @@ public:
 	 */
 	virtual bool isPgpFriend(const RsPgpId& pgpId) = 0;
 
+	/**
+	 * @brief Check if given peer is a trusted SSL node pending PGP approval
+	 * Peers added through short invite remain in this state as long as their
+	 * PGP key is not received and verified/approved by the user.
+	 * @jsonapi{development}
+	 * @param[in] sslId id of the peer to check
+	 * @return true if the node is trusted, false otherwise
+	 */
+	virtual bool isSslOnlyFriend(const RsPeerId& sslId) = 0;
+
 	virtual std::string getPeerName(const RsPeerId &ssl_id) = 0;
 	virtual std::string getGPGName(const RsPgpId& gpg_id) = 0;
 
@@ -474,8 +502,24 @@ public:
 	 * @param[in] flags service permissions flag
 	 * @return false if error occurred, true otherwise
 	 */
-	virtual bool addFriend( const RsPeerId &sslId, const RsPgpId& gpgId,
-	                        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
+	virtual bool addFriend(
+	        const RsPeerId& sslId, const RsPgpId& gpgId,
+	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
+
+	/**
+	 * @brief Add SSL-only trusted node
+	 * When adding an SSL-only node, it is authorized to connect. Every time a
+	 * connection is established the user is notified about the need to verify
+	 * the PGP fingerprint, until she does, at that point the node become a full
+	 * SSL+PGP friend.
+	 * @jsonapi{development}
+	 * @param[in] sslId SSL id of the node to add
+	 * @param[in] details Optional extra details known about the node to add
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool addSslOnlyFriend(
+	        const RsPeerId& sslId,
+	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
 
 	/**
 	 * @brief Revoke connection trust from to node
@@ -596,6 +640,38 @@ public:
 	        const RsPeerId& sslId = RsPeerId(),
 	        bool includeSignatures = false,
 	        bool includeExtraLocators = true ) = 0;
+
+	/**
+	 * @brief Get RetroShare short invite of the given peer
+	 * @jsonapi{development}
+	 * @param[out] invite storage for the generated invite
+	 * @param[in] sslId Id of the peer of which we want to generate an invite,
+	 *	a null id (all 0) is passed, an invite for own node is returned.
+	 * @param[in] formatRadix true to get in base64 format false to get URL.
+	 * @param[in] bareBones true to get smallest invite, which miss also
+	 *	the information necessary to attempt an outgoing connection, but still
+	 *	enough to accept an incoming one.
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare invite
+	 *	radix, this is primarly useful to trick other applications into making
+	 *	the invite clickable, or to disguise the RetroShare invite into a
+	 *	"normal" looking web link. Used only if formatRadix is false.
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getShortInvite(
+	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	        bool formatRadix = false, bool bareBones = false,
+	        const std::string& baseUrl = "https://retroshare.me/" ) = 0;
+
+	/**
+	 * @brief Parse the give short invite to extract contained information
+	 * @jsonapi{development}
+	 * @param[in] invite string containing the short invite to parse
+	 * @param[out] details storage for the extracted information, consider it
+	 *	valid only if the function return true
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool parseShortInvite(
+	        const std::string& invite, RsPeerDetails& details ) = 0;
 
 	/**
 	 * @brief Add trusted node from invite
@@ -749,6 +825,3 @@ public:
 	RS_DEPRECATED_FOR(isPgpFriend)
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend) = 0;
 };
-
-
-

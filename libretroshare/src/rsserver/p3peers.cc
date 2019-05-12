@@ -570,6 +570,9 @@ std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
 bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
 { return AuthGPG::getAuthGPG()->isGPGAccepted(pgpId); }
 
+bool p3Peers::isSslOnlyFriend(const RsPeerId& sslId)
+{ return isFriend(sslId) && !isPgpFriend(getGPGId(sslId)); }
+
 bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
 { return isPgpFriend(gpg_id_is_friend); }
 
@@ -748,6 +751,10 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	rstime_t now = time(NULL);
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
+
+bool p3Peers::addSslOnlyFriend(
+        const RsPeerId& sslId, const RsPeerDetails& details )
+{ return mPeerMgr->addSslOnlyFriend(sslId, details); }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
@@ -1102,6 +1109,221 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	delete[] mem_block ;
 
 	return true ;
+}
+
+enum class RsShortInviteFieldType : uint8_t
+{
+	SSL_ID          = 0x00,
+	PEER_NAME       = 0x01,
+	LOCATOR         = 0x02,
+
+	/* The following will be deprecated, and ported to LOCATOR when generic
+	 * trasport layer will be implemented */
+	HIDDEN_LOCATOR  = 0x90,
+	DNS_LOCATOR     = 0x91,
+	EXT4_LOCATOR    = 0x92,
+};
+
+bool p3Peers::getShortInvite(
+        std::string& invite, const RsPeerId& _sslId, bool formatRadix,
+        bool bareBones, const std::string& baseUrl )
+{
+	RsPeerId sslId = _sslId;
+	if(sslId.isNull()) sslId = getOwnId();
+
+	RsPeerDetails tDetails;
+	if(!getPeerDetails(sslId, tDetails)) return false;
+
+	std::vector<uint8_t> inviteBuf(1000, 0);
+	RsGenericSerializer::SerializeContext ctx(
+	            inviteBuf.data(), static_cast<uint32_t>(inviteBuf.size()));
+	RsGenericSerializer::SerializeJob j = RsGenericSerializer::SERIALIZE;
+
+	RsShortInviteFieldType tType = RsShortInviteFieldType::SSL_ID;
+	RS_SERIAL_PROCESS(tType);
+	RS_SERIAL_PROCESS(sslId);
+
+	tType = RsShortInviteFieldType::PEER_NAME;
+	RS_SERIAL_PROCESS(tType);
+	RS_SERIAL_PROCESS(tDetails.name);
+
+	if(!bareBones)
+	{
+		/* If is hidden use hidden address and port as locator, else if we have
+		 * a valid dyndns and extPort use that as locator, else if we have a
+		 * valid extAddr and extPort use that as locator, otherwise use most
+		 * recently known locator */
+		sockaddr_storage tExt;
+		if(tDetails.isHiddenNode)
+		{
+			tType = RsShortInviteFieldType::HIDDEN_LOCATOR;
+			RS_SERIAL_PROCESS(tType);
+			RS_SERIAL_PROCESS(tDetails.hiddenType);
+			RS_SERIAL_PROCESS(tDetails.hiddenNodeAddress);
+			RS_SERIAL_PROCESS(tDetails.hiddenNodePort);
+		}
+		else if( !tDetails.dyndns.empty() &&
+		         (tDetails.extPort || tDetails.localPort) )
+		{
+			uint16_t tPort = tDetails.extPort ?
+			            tDetails.extPort : tDetails.localPort;
+			tType = RsShortInviteFieldType::DNS_LOCATOR;
+			RS_SERIAL_PROCESS(tType);
+			RS_SERIAL_PROCESS(tDetails.dyndns);
+			RS_SERIAL_PROCESS(tPort);
+		}
+		else if( sockaddr_storage_inet_pton(tExt, tDetails.extAddr) &&
+		         sockaddr_storage_isValidNet(tExt) &&
+		         sockaddr_storage_ipv6_to_ipv4(tExt) &&
+		         tDetails.extPort )
+		{
+			uint32_t t4Addr =
+			        reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
+
+			tType = RsShortInviteFieldType::EXT4_LOCATOR;
+			RS_SERIAL_PROCESS(tType);
+			RS_SERIAL_PROCESS(t4Addr);
+			RS_SERIAL_PROCESS(tDetails.extPort);
+		}
+		else if(!tDetails.ipAddressList.empty())
+		{
+			const std::string& tLc = tDetails.ipAddressList.front();
+			std::string tLocator = tLc.substr(0, tLc.find_first_of(" ")-1);
+			tType = RsShortInviteFieldType::LOCATOR;
+			RS_SERIAL_PROCESS(tType);
+			RS_SERIAL_PROCESS(tLocator);
+		}
+	}
+
+	Radix64::encode(ctx.mData, static_cast<int>(ctx.mOffset), invite);
+
+	if(!formatRadix)
+	{
+		RsUrl inviteUrl(baseUrl);
+		inviteUrl.setQueryKV("rsInvite", invite);
+		invite = inviteUrl.toString();
+	}
+
+	return ctx.mOk;
+}
+
+bool p3Peers::parseShortInvite(
+            const std::string& inviteStrUrl, RsPeerDetails& details )
+{
+	if(inviteStrUrl.empty())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " can't parse empty invite"
+		        << std::endl;
+		return false;
+	}
+
+	const std::string* rsInvite = &inviteStrUrl;
+
+	RsUrl inviteUrl(inviteStrUrl);
+	if(inviteUrl.hasQueryK("rsInvite"))
+		rsInvite = inviteUrl.getQueryV("rsInvite");
+
+	std::vector<uint8_t> inviteBuf = Radix64::decode(*rsInvite);
+	RsGenericSerializer::SerializeContext ctx(
+	            inviteBuf.data(), static_cast<uint32_t>(inviteBuf.size()));
+	RsGenericSerializer::SerializeJob j = RsGenericSerializer::DESERIALIZE;
+
+	while(ctx.mOk && ctx.mOffset < ctx.mSize)
+	{
+		RsShortInviteFieldType fieldType;
+		RS_SERIAL_PROCESS(fieldType);
+
+		if(!ctx.mOk)
+		{
+			RsWarn() << __PRETTY_FUNCTION__ << " failed to parse fieldType"
+			         << std::endl;
+			break;
+		}
+
+		switch (fieldType)
+		{
+		case RsShortInviteFieldType::SSL_ID:
+			RS_SERIAL_PROCESS(details.id);
+			break;
+		case RsShortInviteFieldType::PEER_NAME:
+			RS_SERIAL_PROCESS(details.name);
+			break;
+		case RsShortInviteFieldType::LOCATOR:
+		{
+			std::string locatorStr;
+			RS_SERIAL_PROCESS(locatorStr);
+			if(ctx.mOk) details.ipAddressList.push_back(locatorStr);
+			else RsWarn() << __PRETTY_FUNCTION__ << " failed to parse locator"
+			              << std::endl;
+			break;
+		}
+		case RsShortInviteFieldType::DNS_LOCATOR:
+			RS_SERIAL_PROCESS(details.dyndns);
+			if(!ctx.mOk)
+			{
+				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse DNS "
+				          << "locator host" << std::endl;
+				break;
+			}
+
+			RS_SERIAL_PROCESS(details.extPort);
+			if(!ctx.mOk) RsWarn() << __PRETTY_FUNCTION__ << " failed to parse "
+			                      << "DNS locator port" << std::endl;
+
+			break;
+
+		case RsShortInviteFieldType::EXT4_LOCATOR:
+		{
+			sockaddr_in tExtAddr;
+			RS_SERIAL_PROCESS(tExtAddr.sin_addr.s_addr);
+			if(!ctx.mOk)
+			{
+				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse IPv4"
+				         << std::endl;
+				break;
+			}
+			details.extAddr = rs_inet_ntoa(tExtAddr.sin_addr);
+
+			RS_SERIAL_PROCESS(details.extPort);
+			if(!ctx.mOk)
+				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse extPort"
+				         << std::endl;
+
+			break;
+		}
+
+		case RsShortInviteFieldType::HIDDEN_LOCATOR:
+			RS_SERIAL_PROCESS(details.hiddenType);
+			if(!ctx.mOk)
+			{
+				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse hiddenType"
+				         << std::endl;
+				break;
+			}
+
+			RS_SERIAL_PROCESS(details.hiddenNodeAddress);
+			if(!ctx.mOk)
+			{
+				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse "
+				         << "hiddenNodeAddress" << std::endl;
+				break;
+			}
+
+			RS_SERIAL_PROCESS(details.hiddenNodePort);
+			if(!ctx.mOk) RsWarn() << __PRETTY_FUNCTION__ << " failed to parse "
+			                      << "hiddenNodePort" << std::endl;
+
+			break;
+
+		default:
+			RsWarn() << __PRETTY_FUNCTION__ << " got unkown field type: "
+			         << static_cast<uint32_t>(fieldType) << std::endl;
+			break;
+		}
+	}
+
+
+	return ctx.mOk;
 }
 
 bool p3Peers::acceptInvite( const std::string& invite,
@@ -1503,4 +1725,5 @@ void p3Peers::setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermi
 	mPeerMgr->setServicePermissionFlags(gpg_id,flags) ;
 }
 
-
+RsPeerStateChangedEvent::RsPeerStateChangedEvent(RsPeerId sslId) :
+    RsEvent(RsEventType::PEER_STATE_CHANGED), mSslId(sslId) {}
