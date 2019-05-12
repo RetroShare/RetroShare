@@ -25,6 +25,7 @@
 #include <errno.h>    // for errno
 #include <iostream>
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #include "util/rstime.h"
 
@@ -107,8 +108,7 @@ RsThread::~RsThread()
 {
 	if(isRunning())
     {
-		std::cerr << "(EE) Deleting a thread that is actually running! Something is very wrong here:" << std::endl;
-
+		RsErr() << "Deleting a thread that is still running! Something is very wrong here and Retroshare is likely to crash because of this." << std::endl;
         print_stacktrace();
     }
 }
