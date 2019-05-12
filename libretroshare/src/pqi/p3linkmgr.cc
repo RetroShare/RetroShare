@@ -101,14 +101,20 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	: connecttype(0),
-	 lastavailable(0),
-         lastattempt(0),
-         name(""),
-         state(0), actions(0),
-	 source(0), 
-	 inConnAttempt(0), 
-	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
+	: dhtVisible(false),
+      connecttype(0),
+      actAsServer(false),
+      lastavailable(0),
+      lastattempt(0),
+      name(""),
+      state(0),
+      actions(0),
+      linkType(0),
+      source(0),
+      inConnAttempt(false),
+      wasDeniedConnection(false),
+      deniedTS(0),
+      deniedInConnAttempt(false)
 {
 }
 

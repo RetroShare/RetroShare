@@ -461,6 +461,10 @@ rs_onlyhiddennode {
     message("QMAKE: You have enabled only hidden node.")
 }
 
+rs_sanitize {
+	QMAKE_CXXFLAGS *= -fsanitize=address -fsanitize=bounds -fsanitize=undefined
+}
+
 no_rs_deprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations

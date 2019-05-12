@@ -58,6 +58,9 @@ linux-g++-64 {
 	OBJECTS_DIR = temp/linux-g++-64/obj
 }
 
+rs_sanitize {
+	LIBS *= -lasan -lubsan
+}
 #################### Cross compilation for windows under Linux ###################
 
 win32-x-g++ {

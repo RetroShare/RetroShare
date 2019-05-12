@@ -61,7 +61,7 @@ namespace RsMemoryManagement
 			
 			inline bool chunkOwnsPointer(const Chunk& c,void *p) const 
 			{ 
-				return p >= c._data && (static_cast<unsigned char *>(p)-c._data)/_blockSize < _numBlocks ; 
+				return intptr_t(p) >= intptr_t(c._data) && (intptr_t(static_cast<unsigned char *>(p))-intptr_t(c._data))/intptr_t(_blockSize)< intptr_t( _numBlocks );
 			}
 
             void printStatistics() const ;
