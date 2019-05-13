@@ -1274,14 +1274,16 @@ bool p3Peers::parseShortInvite(
 
 		case RsShortInviteFieldType::EXT4_LOCATOR:
 		{
-			sockaddr_in tExtAddr;
-			RS_SERIAL_PROCESS(tExtAddr.sin_addr.s_addr);
+			uint32_t t4Addr = 0;
+			RS_SERIAL_PROCESS(t4Addr);
 			if(!ctx.mOk)
 			{
 				RsWarn() << __PRETTY_FUNCTION__ << " failed to parse IPv4"
 				         << std::endl;
 				break;
 			}
+			sockaddr_in tExtAddr;
+			tExtAddr.sin_addr.s_addr = t4Addr;
 			details.extAddr = rs_inet_ntoa(tExtAddr.sin_addr);
 
 			RS_SERIAL_PROCESS(details.extPort);
