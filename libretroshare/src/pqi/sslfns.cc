@@ -705,41 +705,6 @@ uint32_t getX509RetroshareCertificateVersion(X509 *cert)
 	}
 }
 
-int LoadCheckX509(
-        const char* cert_file, RsPgpId& issuer, std::string& location,
-        RsPeerId& userId )
-{
-	constexpr int failure = 0;
-	constexpr int success = 1;
-
-	FILE *tmpfp = RsDirUtil::rs_fopen(cert_file, "r");
-	if (tmpfp == nullptr)
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Failed to open Certificate File: "
-		        << cert_file << std::endl;
-		return failure;
-	}
-
-	// get xPGP certificate.
-	X509* x509 = PEM_read_X509(tmpfp, nullptr, nullptr, nullptr);
-	fclose(tmpfp);
-
-	if(!x509)
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " PEM_read_X509 failed!" << std::endl;
-		return failure;
-	}
-
-	userId = RsX509Cert::getCertSslId(*x509);
-	issuer = RsX509Cert::getCertIssuer(*x509);
-	location = RsX509Cert::getCertLocation(*x509);
-
-	X509_free(x509);
-
-	if(userId.isNull() || issuer.isNull()) return failure;
-	else return success;
-}
-
 std::string getX509NameString(X509_NAME *name)
 {
 	std::string namestr;

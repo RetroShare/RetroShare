@@ -1276,8 +1276,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	AuthSSL::instance().setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
-
+	setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
 	LocalStoreCert(x509Cert);
 
 	Dbg1() << __PRETTY_FUNCTION__ << " authentication successfull!" << std::endl;
@@ -1292,6 +1291,47 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	}
 
 	return verificationSuccess;
+}
+
+bool AuthSSLimpl::parseX509DetailsFromFile(
+        const std::string& certFilePath, RsPeerId& certId,
+        RsPgpId& issuer, std::string& location )
+{
+	FILE* tmpfp = RsDirUtil::rs_fopen(certFilePath.c_str(), "r");
+	if(!tmpfp)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Failed to open Certificate File: "
+		        << certFilePath << std::endl;
+		return false;
+	}
+
+	// get xPGP certificate.
+	X509* x509 = PEM_read_X509(tmpfp, nullptr, nullptr, nullptr);
+	fclose(tmpfp);
+
+	if(!x509)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " PEM_read_X509 failed!" << std::endl;
+		return false;
+	}
+
+	uint32_t diagnostic = 0;
+	if(!AuthX509WithGPG(x509, diagnostic))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " AuthX509WithGPG failed with "
+		        << "diagnostic: " << diagnostic << std::endl;
+		return false;
+	}
+
+	certId = RsX509Cert::getCertSslId(*x509);
+	issuer = RsX509Cert::getCertIssuer(*x509);
+	location = RsX509Cert::getCertLocation(*x509);
+
+	X509_free(x509);
+
+	if(certId.isNull() || issuer.isNull()) return false;
+
+	return true;
 }
 
 

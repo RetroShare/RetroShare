@@ -686,7 +686,8 @@ static bool checkAccount(const std::string &accountdir, AccountDetails &account,
 	bool ret = false;
 
 	/* check against authmanagers private keys */
-	if (LoadCheckX509(cert_name.c_str(), account.mPgpId, account.mLocation, account.mSslId))
+	if(AuthSSL::instance().parseX509DetailsFromFile(
+	            cert_name, account.mSslId, account.mPgpId, account.mLocation ))
 	{
         // new locations store the name in an extra file
         if(account.mLocation == "")
@@ -1117,8 +1118,11 @@ bool     RsAccountsDetail::GenerateSSLCertificate(const RsPgpId& pgp_id, const s
 	std::string location;
 	RsPgpId pgpid_retrieved;
 
-	if (LoadCheckX509(cert_name.c_str(), pgpid_retrieved, location, sslId) == 0) {
-		std::cerr << "RsInit::GenerateSSLCertificate() Cannot check own signature, maybe the files are corrupted." << std::endl;
+	if(!AuthSSL::instance().parseX509DetailsFromFile(
+	            cert_name, sslId, pgpid_retrieved, location ))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot check own signature, maybe "
+		        << "the files are corrupted." << std::endl;
 		return false;
 	}
 

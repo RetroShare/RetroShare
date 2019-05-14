@@ -115,14 +115,6 @@ bool getX509id(X509 *x509, RsPeerId &xid);
 
 int pem_passwd_cb(char *buf, int size, int rwflag, void *password);
 
-/** This function loads the X509 certificate from the file, and checks the
- * certificate.
- * Not dependent on sslroot. load, and detroys the X509 memory. */
-int LoadCheckX509(
-        const char* cert_file, RsPgpId& issuer, std::string& location,
-        RsPeerId& userId );
-
-
 std::string getX509NameString(X509_NAME *name);
 std::string getX509CNString(X509_NAME *name);
 std::string getX509TypeString(X509_NAME *name, const char *type, int len);

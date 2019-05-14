@@ -169,6 +169,16 @@ public:
 	virtual void getCurrentConnectionAttemptInfo(
 	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) = 0;
 
+
+	/**
+	 * This function parse X509 certificate from the file and return some
+	 * verified informations, like ID and signer
+	 * @return false on error, true otherwise
+	 */
+	virtual bool parseX509DetailsFromFile(
+	        const std::string& certFilePath, RsPeerId& certId, RsPgpId& issuer,
+	        std::string& location ) = 0;
+
 	virtual ~AuthSSL();
 
 protected:
@@ -223,10 +233,15 @@ public:
 	virtual X509* SignX509ReqWithGPG(X509_REQ *req, long days) override;
 
 	/// @see AuthSSL
-	bool AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic) override;
+	bool AuthX509WithGPG(X509 *x509, uint32_t& auth_diagnostic) override;
 
 	/// @see AuthSSL
 	int VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) override;
+
+	/// @see AuthSSL
+	bool parseX509DetailsFromFile(
+	        const std::string& certFilePath, RsPeerId& certId,
+	        RsPgpId& issuer, std::string& location ) override;
 
 
 /*****************************************************************/
