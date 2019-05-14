@@ -1240,9 +1240,11 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	constexpr int success = 1;
 
 #ifdef RS_PQISSL_BANLIST_REDUNDANT_CHECK
-	/* TODO: It make no sense to check banlist at this point, as we are actively
-	 * attempting the connection, we decide the address to which to connect to,
-	 * banned addresses should never get here */
+	/* At this point, as we are actively attempting the connection, we decide
+	 * the address to which to connect to, banned addresses should never get
+	 * here as the filtering for banned addresses happens much before, this
+	 * check is therefore redundant, and if it trigger something really fishy
+	 * must be happening (a bug somewhere else in the code). */
 	uint32_t check_result;
 	uint32_t checking_flags = RSBANLIST_CHECKING_FLAGS_BLACKLIST;
 
@@ -1253,11 +1255,13 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	                                                checking_flags,
 	                                                &check_result ) )
 	{
-		std::cerr << __PRETTY_FUNCTION__
-		          << " (SS) refusing incoming SSL connection from blacklisted "
-		          << "foreign address "
-		          << sockaddr_storage_iptostring(foreign_addr)
-		          << ". Reason: " << check_result << "." << std::endl;
+		RsErr() << __PRETTY_FUNCTION__
+		        << " Refusing incoming SSL connection from blacklisted "
+		        << "foreign address " << foreign_addr
+		        << ". Reason: " << check_result << ". This should never happen "
+		        << "at this point! Please report full log to developers!"
+		        << std::endl;
+		print_stacktrace();
 
 		RsServer::notify()->AddFeedItem(
 		            RS_FEED_ITEM_SEC_IP_BLACKLISTED,
