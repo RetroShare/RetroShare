@@ -31,9 +31,9 @@
 #include "pqi/pqi_base.h"
 #include "pqi/authssl.h"
 
-#define RS_PQISSL_AUTH_REDUNDANT_CHECK 1
+#define RS_PQISSL_AUTH_DOUBLE_CHECK 1
 
-#define RS_PQISSL_BANLIST_REDUNDANT_CHECK 1
+#define RS_PQISSL_BANLIST_DOUBLE_CHECK 1
 
 
 #define WAITING_NOT            0

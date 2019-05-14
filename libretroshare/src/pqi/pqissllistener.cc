@@ -781,7 +781,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 	RsPgpId pgpId = RsX509Cert::getCertIssuer(*peercert);
 	RsPeerId newPeerId = RsX509Cert::getCertSslId(*peercert);
 
-#ifdef RS_PQISSL_AUTH_REDUNDANT_CHECK
+#ifdef RS_PQISSL_AUTH_DOUBLE_CHECK
 	/* At this point the actual connection authentication has already been
 	 * performed in AuthSSL::VerifyX509Callback, any furter authentication check
 	 * like the following two are redundant. */

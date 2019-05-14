@@ -32,7 +32,7 @@
 #include "util/rsdebug.h"
 #include "pqi/pqinetwork.h"
 
-#define RS_PQISSL_AUTH_REDUNDANT_CHECK 1
+#define RS_PQISSL_AUTH_DOUBLE_CHECK 1
 
 /***************************** pqi Net SSL Interface *********************************
  */

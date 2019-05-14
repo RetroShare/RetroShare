@@ -1151,7 +1151,7 @@ int pqissl::Authorise_SSL_Connection()
 	// reset switch.
 	waiting = WAITING_NOT;
 
-#ifdef RS_PQISSL_AUTH_REDUNDANT_CHECK
+#ifdef RS_PQISSL_AUTH_DOUBLE_CHECK
 	X509* peercert = SSL_get_peer_certificate(ssl_connection);
 	if (!peercert)
 	{
@@ -1239,7 +1239,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	constexpr int failure = -1;
 	constexpr int success = 1;
 
-#ifdef RS_PQISSL_BANLIST_REDUNDANT_CHECK
+#ifdef RS_PQISSL_BANLIST_DOUBLE_CHECK
 	/* At this point, as we are actively attempting the connection, we decide
 	 * the address to which to connect to, banned addresses should never get
 	 * here as the filtering for banned addresses happens much before, this
