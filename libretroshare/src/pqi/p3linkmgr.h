@@ -171,8 +171,6 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
 virtual bool	retryConnect(const RsPeerId &id) = 0;
 
-virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
-
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
@@ -229,8 +227,6 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 	
 virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
 virtual bool	retryConnect(const RsPeerId &id);
-
-virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
 
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr);

@@ -21,10 +21,6 @@
  *******************************************************************************/
 #pragma once
 
-#pragma once
-
-// This class implements an abstract pgp handler to be used in RetroShare.
-//
 #include <stdint.h>
 #include <string>
 #include <list>
@@ -80,6 +76,7 @@ class PGPCertificateInfo
 		static const uint8_t PGP_CERTIFICATE_TYPE_RSA     = 0x02 ;
 };
 
+/// This class offer an abstract pgp handler to be used in RetroShare.
 class PGPHandler
 {
 	public:
@@ -125,8 +122,6 @@ class PGPHandler
 
 		bool encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) ;
 		bool decryptTextFromFile(const RsPgpId& key_id,std::string& text,const std::string& encrypted_inputfile) ;
-		//bool encryptTextToString(const RsPgpId& key_id,const std::string& text,std::string& outstring) ;
-		//bool decryptTextFromString(const RsPgpId& key_id,const std::string& encrypted_text,std::string& outstring) ;
 
 		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const RsPgpId&,bool) ;
@@ -232,4 +227,3 @@ class PGPHandler
 		static PassphraseCallback _passphrase_callback ;
 		static bool mergeKeySignatures(ops_keydata_t *dst,const ops_keydata_t *src) ;	// returns true if signature lists are different
 };
-

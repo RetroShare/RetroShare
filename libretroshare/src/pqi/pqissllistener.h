@@ -19,21 +19,20 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_SSL_LISTEN_HEADER
-#define MRK_PQI_SSL_LISTEN_HEADER
+#pragma once
 
 #include <openssl/ssl.h>
-
-// operating system specific network header.
-#include "pqi/pqinetwork.h"
 
 #include <string>
 #include <map>
 
 #include "pqi/pqi_base.h"
 #include "pqi/pqilistener.h"
-
 #include "pqi/authssl.h"
+#include "util/rsdebug.h"
+#include "pqi/pqinetwork.h"
+
+#define RS_PQISSL_AUTH_DOUBLE_CHECK 1
 
 /***************************** pqi Net SSL Interface *********************************
  */
@@ -98,7 +97,7 @@ protected:
 	p3PeerMgr *mPeerMgr;
 
 private:
-	int Extract_Failed_SSL_Certificate(const IncomingSSLInfo&);
+
 	bool active;
 	int lsock;
 	std::list<IncomingSSLInfo> incoming_ssl ;
@@ -122,7 +121,6 @@ public:
 
 private:
 	std::map<RsPeerId, pqissl*> listenaddr;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-
-#endif // MRK_PQI_SSL_LISTEN_HEADER

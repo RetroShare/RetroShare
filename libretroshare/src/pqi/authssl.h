@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 by Robert Fernie, Retroshare Team.                      *
+ * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,21 +20,8 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_AUTH_SSL_HEADER
-#define MRK_AUTH_SSL_HEADER
+#pragma once
 
-/* 
- * This is an implementation of SSL certificate authentication, which is
- * overloaded with pgp style signatures, and web-of-trust authentication.
- *
- * only the owner ssl cert is store, the rest is jeus callback verification
- * 	
- * To use as an SSL authentication system, you must use a common CA certificate.
- *  * The pqissl stuff doesn't need to differentiate between SSL, SSL + PGP,
- *  as its X509 certs.
- *  * The rsserver stuff has to distinguish between all three types ;(
- * 
- */
 
 #include <openssl/evp.h>
 #include <openssl/x509.h>
@@ -42,197 +30,263 @@
 #include <map>
 
 #include "util/rsthreads.h"
-
 #include "pqi/pqi_base.h"
 #include "pqi/pqinetwork.h"
 #include "pqi/p3cfgmgr.h"
+#include "util/rsmemory.h"
+#include "retroshare/rsevents.h"
 
-/* This #define removes Connection Manager references in AuthSSL.
- * They should not be here. What about Objects and orthogonality?
- * This code is also stopping immediate reconnections from working.
+/**
+ * Functions to interact elegantly with X509 certificates, using this functions
+ * you can avoid annoying #ifdef *SSL_VERSION_NUMBER all around the code.
+ * Function names should be self descriptive.
  */
-
-class AuthSSL;
-
-class sslcert
+namespace RsX509Cert
 {
-        public:
-        sslcert(X509* x509, const RsPeerId& id);
-        sslcert();
-
-        /* certificate parameters */
-        RsPeerId id;
-        std::string name;
-        std::string location;
-        std::string org;
-        std::string email;
-
-        RsPgpId issuer;
-        PGPFingerprintType fpr;
-
-        /* Auth settings */
-        bool authed;
-
-        /* INTERNAL Parameters */
-        X509* certificate;
+std::string getCertName(const X509& x509);
+std::string getCertLocation(const X509& x509);
+std::string getCertOrg(const X509& x509);
+RsPgpId getCertIssuer(const X509& x509);
+std::string getCertIssuerString(const X509& x509);
+RsPeerId getCertSslId(const X509& x509);
+const EVP_PKEY* getPubKey(const X509& x509);
 };
 
-/* required to install instance */
+/**
+ * Event triggered by AuthSSL when authentication of a connection attempt either
+ * fail or success
+ */
+struct RsAuthSslConnectionAutenticationEvent : RsEvent
+{
+	RsAuthSslConnectionAutenticationEvent();
 
+	bool mSuccess;
+	RsPeerId mSslId;
+	std::string mSslCn;
+	RsPgpId mPgpId;
+	std::string mErrorMsg;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mSuccess);
+		RS_SERIAL_PROCESS(mSslId);
+		RS_SERIAL_PROCESS(mSslCn);
+		RS_SERIAL_PROCESS(mPgpId);
+		RS_SERIAL_PROCESS(mErrorMsg);
+	}
+};
+
+
+/**
+ * This is an implementation of SSL certificate authentication with PGP
+ * signatures, instead of centralized certification authority.
+ */
 class AuthSSL
 {
-	public:
-	AuthSSL();
+public:
+	static AuthSSL& instance();
 
-static AuthSSL *getAuthSSL();
-static void    AuthSSLInit();
+	RS_DEPRECATED_FOR(AuthSSL::instance())
+	static AuthSSL* getAuthSSL();
 
-        /* Initialisation Functions (Unique) */
-virtual bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) = 0;
+	/* Initialisation Functions (Unique) */
+	virtual bool validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) = 0;
 
-virtual bool	active() = 0;
-virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
-                    const char *passwd, std::string alternative_location_name) = 0;
-virtual bool	CloseAuth() = 0;
+	virtual bool active() = 0;
+	virtual int InitAuth(
+	        const char* srvr_cert, const char* priv_key, const char* passwd,
+	        std::string alternative_location_name ) = 0;
+	virtual bool CloseAuth() = 0;
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
-	
-        /* get Certificate Id */
-virtual	const RsPeerId& OwnId() = 0;
-virtual	std::string getOwnLocation() = 0;
+
+	/* get Certificate Id */
+	virtual const RsPeerId& OwnId() = 0;
+	virtual std::string getOwnLocation() = 0;
 
 	/* Load/Save certificates */
-virtual	std::string SaveOwnCertificateToString() = 0;
-	
+	virtual std::string SaveOwnCertificateToString() = 0;
+
 	/* Sign / Encrypt / Verify Data */
-virtual bool 	SignData(std::string input, std::string &sign) = 0;
-virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign) = 0;
+	virtual bool SignData(std::string input, std::string &sign) = 0;
+	virtual bool SignData(
+	        const void* data, const uint32_t len, std::string& sign ) = 0;
 
-virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*) = 0;
-virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*) = 0;
-virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int) = 0;
-virtual bool	VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId) = 0;
+	virtual bool SignDataBin(std::string, unsigned char*, unsigned int*) = 0;
+	virtual bool SignDataBin(
+	        const void*, uint32_t, unsigned char*, unsigned int* ) = 0;
+	virtual bool VerifyOwnSignBin(
+	        const void*, uint32_t, unsigned char*, unsigned int ) = 0;
+	virtual bool VerifySignBin(
+	        const void* data, const uint32_t len, unsigned char* sign,
+	        unsigned int signlen, const RsPeerId& sslId ) = 0;
 
-// return : false if encrypt failed
-virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId) = 0;
-// return : false if decrypt fails
-virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen) = 0;
+	/// return false if failed
+	virtual bool encrypt(
+	        void*& out, int& outlen, const void* in, int inlen,
+	        const RsPeerId& peerId ) = 0;
+	/// return false if failed
+	virtual bool decrypt(void*& out, int& outlen, const void* in, int inlen) = 0;
+
+	virtual X509* SignX509ReqWithGPG(X509_REQ* req, long days) = 0;
+
+	/**
+	 * @brief Verify PGP signature correcteness on given X509 certificate
+	 * Beware this doesn't check if the PGP signer is friend or not, just if the
+	 * signature is valid!
+	 * @param[in] x509 pointer ti the X509 certificate to check
+	 * @param[out] diagnostic one of RS_SSL_HANDSHAKE_DIAGNOSTIC_* diagnostic
+	 *	codes
+	 * @return true if correctly signed, false otherwise
+	 */
+	virtual bool AuthX509WithGPG(
+	        X509* x509,
+	        uint32_t& diagnostic = RS_DEFAULT_STORAGE_PARAM(uint32_t)
+	        ) = 0;
+
+	/**
+	 * @brief Callback provided to OpenSSL to authenticate connections
+	 * This is the ultimate place where connection attempts get accepted
+	 * if authenticated or refused if not authenticated.
+	 * Emits @see RsAuthSslConnectionAutenticationEvent.
+	 * @param preverify_ok passed by OpenSSL ignored as this call is the first
+	 *	in the authentication callback chain
+	 * @param ctx OpenSSL connection context
+	 * @return 0 if authentication failed, 1 if success see OpenSSL
+	 *	documentation
+	 */
+	virtual int VerifyX509Callback(int preverify_ok, X509_STORE_CTX* ctx) = 0;
+
+	/// SSL specific functions used in pqissl/pqissllistener
+	virtual SSL_CTX* getCTX() = 0;
+
+	virtual void setCurrentConnectionAttemptInfo(
+	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
+	        const std::string& ssl_cn ) = 0;
+	virtual void getCurrentConnectionAttemptInfo(
+	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) = 0;
 
 
-virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days) = 0;
-virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic)=0;
+	/**
+	 * This function parse X509 certificate from the file and return some
+	 * verified informations, like ID and signer
+	 * @return false on error, true otherwise
+	 */
+	virtual bool parseX509DetailsFromFile(
+	        const std::string& certFilePath, RsPeerId& certId, RsPgpId& issuer,
+	        std::string& location ) = 0;
 
+	virtual ~AuthSSL();
 
-virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) = 0;
-virtual bool 	ValidateCertificate(X509 *x509, RsPeerId& peerId) = 0; /* validate + get id */
+protected:
+	AuthSSL() {}
 
-	public: /* SSL specific functions used in pqissl/pqissllistener */
-virtual SSL_CTX *getCTX() = 0;
-
-/* Restored these functions: */
-virtual void   setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn) = 0 ;
-virtual void   getCurrentConnectionAttemptInfo(      RsPgpId& gpg_id,      RsPeerId& ssl_id,      std::string& ssl_cn) = 0 ;
-
-virtual bool    FailedCertificate(X509 *x509, const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0; /* store for discovery */
-virtual bool 	CheckCertificate(const RsPeerId& peerId, X509 *x509) = 0; /* check that they are exact match */
-
-static void setAuthSSL_debug(AuthSSL*) ;	// used for debug only. The real function is InitSSL()
-static AuthSSL *instance_ssl ;
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
 
 
 class AuthSSLimpl : public AuthSSL, public p3Config
 {
-	public:
+public:
 
-        /* Initialisation Functions (Unique) */
+	/** Initialisation Functions (Unique) */
 	AuthSSLimpl();
-bool    validateOwnCertificate(X509 *x509, EVP_PKEY *pkey);
+	bool validateOwnCertificate(X509 *x509, EVP_PKEY *pkey) override;
 
-virtual bool	active();
-virtual int	InitAuth(const char *srvr_cert, const char *priv_key, 
-                     const char *passwd, std::string alternative_location_name);
-virtual bool	CloseAuth();
+	bool active() override;
+	int InitAuth( const char *srvr_cert, const char *priv_key,
+	              const char *passwd, std::string alternative_location_name )
+	override;
+
+	bool CloseAuth() override;
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
-	
-        /* get Certificate Id */
-virtual	const RsPeerId& OwnId();
-virtual	std::string getOwnLocation();
+
+	const RsPeerId& OwnId() override;
+	virtual std::string getOwnLocation() override;
 
 	/* Load/Save certificates */
-virtual	std::string SaveOwnCertificateToString();
-	
+	virtual std::string SaveOwnCertificateToString() override;
+
 	/* Sign / Encrypt / Verify Data */
-virtual bool 	SignData(std::string input, std::string &sign);
-virtual bool 	SignData(const void *data, const uint32_t len, std::string &sign);
+	bool SignData(std::string input, std::string &sign) override;
+	bool SignData(
+	        const void *data, const uint32_t len, std::string &sign) override;
 
-virtual bool 	SignDataBin(std::string, unsigned char*, unsigned int*);
-virtual bool    SignDataBin(const void*, uint32_t, unsigned char*, unsigned int*);
-virtual bool    VerifyOwnSignBin(const void*, uint32_t, unsigned char*, unsigned int);
-virtual bool	VerifySignBin(const void *data, const uint32_t len,
-                        unsigned char *sign, unsigned int signlen, const RsPeerId& sslId);
+	bool SignDataBin(std::string, unsigned char*, unsigned int*) override;
+	virtual bool SignDataBin(
+	        const void*, uint32_t, unsigned char*, unsigned int*) override;
+	bool VerifyOwnSignBin(
+	        const void*, uint32_t, unsigned char*, unsigned int) override;
+	virtual bool VerifySignBin(
+	        const void *data, const uint32_t len, unsigned char *sign,
+	        unsigned int signlen, const RsPeerId& sslId) override;
 
-// return : false if encrypt failed
-virtual bool     encrypt(void *&out, int &outlen, const void *in, int inlen, const RsPeerId& peerId);
-// return : false if decrypt fails
-virtual bool     decrypt(void *&out, int &outlen, const void *in, int inlen);
+	bool encrypt(
+	        void*& out, int& outlen, const void* in, int inlen,
+	        const RsPeerId& peerId ) override;
+	bool decrypt(void *&out, int &outlen, const void *in, int inlen) override;
 
+	virtual X509* SignX509ReqWithGPG(X509_REQ *req, long days) override;
 
-virtual X509* 	SignX509ReqWithGPG(X509_REQ *req, long days);
-virtual bool 	AuthX509WithGPG(X509 *x509,uint32_t& auth_diagnostic);
+	/// @see AuthSSL
+	bool AuthX509WithGPG(X509 *x509, uint32_t& auth_diagnostic) override;
 
+	/// @see AuthSSL
+	int VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) override;
 
-virtual int 	VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx);
-virtual bool 	ValidateCertificate(X509 *x509, RsPeerId& peerId); /* validate + get id */
+	/// @see AuthSSL
+	bool parseX509DetailsFromFile(
+	        const std::string& certFilePath, RsPeerId& certId,
+	        RsPgpId& issuer, std::string& location ) override;
 
 
 /*****************************************************************/
 /***********************  p3config  ******************************/
-        /* Key Functions to be overloaded for Full Configuration */
-        virtual RsSerialiser *setupSerialiser();
-        virtual bool saveList(bool &cleanup, std::list<RsItem *>& );
-        virtual bool    loadList(std::list<RsItem *>& load);
+	/* Key Functions to be overloaded for Full Configuration */
+	RsSerialiser* setupSerialiser() override;
+	bool saveList(bool &cleanup, std::list<RsItem *>& ) override;
+	bool loadList(std::list<RsItem *>& load) override;
 /*****************************************************************/
 
-	public: /* SSL specific functions used in pqissl/pqissllistener */
-virtual SSL_CTX *getCTX();
+public:
+	/* SSL specific functions used in pqissl/pqissllistener */
+	SSL_CTX* getCTX() override;
 
-/* Restored these functions: */
-virtual void   setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn) ;
-virtual void   getCurrentConnectionAttemptInfo(      RsPgpId& gpg_id,      RsPeerId& ssl_id,      std::string& ssl_cn) ;
-virtual bool    FailedCertificate(X509 *x509, const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming); /* store for discovery */
-virtual bool 	CheckCertificate(const RsPeerId& peerId, X509 *x509); /* check that they are exact match */
+	/* Restored these functions: */
+	void setCurrentConnectionAttemptInfo(
+	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
+	        const std::string& ssl_cn ) override;
+	void getCurrentConnectionAttemptInfo(
+	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) override;
 
 
-    private:
+private:
 
-bool    LocalStoreCert(X509* x509);
-bool 	RemoveX509(const RsPeerId id);
+	bool LocalStoreCert(X509* x509);
+	bool RemoveX509(const RsPeerId id);
 
 	/*********** LOCKED Functions ******/
-bool 	locked_FindCert(const RsPeerId& id, sslcert **cert);
+	bool locked_FindCert(const RsPeerId& id, X509** cert);
 
 	/* Data */
 	/* these variables are constants -> don't need to protect */
 	SSL_CTX *sslctx;
 	RsPeerId mOwnId;
-	sslcert *mOwnCert;
+	X509* mOwnCert;
 
-        RsMutex sslMtx;  /* protects all below */
+	RsMutex sslMtx;  /* protects all below */
 
-
-        EVP_PKEY *mOwnPrivateKey;
-        EVP_PKEY *mOwnPublicKey;
+	EVP_PKEY* mOwnPrivateKey;
+	EVP_PKEY* mOwnPublicKey;
 
 	int init;
+	std::map<RsPeerId, X509*> mCerts;
 
-        std::map<RsPeerId, sslcert *> mCerts;
-
-		  RsPgpId _last_gpgid_to_connect ;
-		  std::string _last_sslcn_to_connect ;
-		  RsPeerId _last_sslid_to_connect ;
+	RsPgpId _last_gpgid_to_connect;
+	std::string _last_sslcn_to_connect;
+	RsPeerId _last_sslid_to_connect;
 };
-
-#endif // MRK_AUTH_SSL_HEADER

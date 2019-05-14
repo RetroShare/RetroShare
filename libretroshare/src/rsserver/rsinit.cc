@@ -397,9 +397,8 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 	 * 2) Get List of Available Accounts.
 	 * 4) Get List of GPG Accounts.
 	 */
-		/* create singletons */
-		AuthSSL::AuthSSLInit();
-		AuthSSL::getAuthSSL() -> InitAuth(NULL, NULL, NULL, "");
+		/* Initialize AuthSSL */
+		AuthSSL::instance().InitAuth(nullptr, nullptr, nullptr, "");
 
 		rsLoginHelper = new RsLoginHelper;
 
