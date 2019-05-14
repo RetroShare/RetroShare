@@ -974,9 +974,9 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509, uint32_t& diagnostic)
 	RsPeerDetails pd;
 	if (!AuthGPG::getAuthGPG()->getGPGDetails(issuer, pd))
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " X509 NOT authenticated : "
-		        << "AuthGPG::getAuthGPG()->getGPGDetails(" << issuer
-		        << ",...) returned false." << std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " X509 NOT authenticated : "
+		         << "AuthGPG::getAuthGPG()->getGPGDetails(" << issuer
+		         << ",...) returned false." << std::endl;
 		diagnostic = RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN;
 		return false;
 	}
@@ -1125,11 +1125,11 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509, uint32_t& diagnostic)
 			goto err;
 		}
 
-		Dbg1() << __PRETTY_FUNCTION__ << " Verified: " << sigtypestring
-		       << " signature of certificate sslId: "
-		       << RsX509Cert::getCertSslId(*x509)
-		       << ", Version " << std::hex << certificate_version << std::dec
-		       << " using PGP key " << pd.fpr << " " << pd.name << std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " Verified: " << sigtypestring
+		         << " signature of certificate sslId: "
+		         << RsX509Cert::getCertSslId(*x509)
+		         << ", Version " << std::hex << certificate_version << std::dec
+		         << " using PGP key " << pd.fpr << " " << pd.name << std::endl;
 	}
 
 	EVP_MD_CTX_destroy(ctx);
@@ -1140,9 +1140,9 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509, uint32_t& diagnostic)
 
 	return true;
 
-err:
-	RsErr() << __PRETTY_FUNCTION__ << " X509 PGP authentication failed with "
-	        << "diagnostic: " << diagnostic << std::endl;
+err: // TODO: this label is very short and might collide every easly
+	RsInfo() << __PRETTY_FUNCTION__ << " X509 PGP authentication failed with "
+	         << "diagnostic: " << diagnostic << std::endl;
 
 	if(buf_in) OPENSSL_free(buf_in);
 
@@ -1232,7 +1232,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	}
 
 	uint32_t auth_diagnostic;
-	if (!AuthX509WithGPG(x509Cert, auth_diagnostic))
+	if(!AuthX509WithGPG(x509Cert, auth_diagnostic))
 	{
 		std::string errMsg = "Certificate was rejected because PGP "
 		                     "signature verification failed with diagnostic: "
