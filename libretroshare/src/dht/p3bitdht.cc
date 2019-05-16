@@ -85,7 +85,10 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 			return 0;
 
 		// now check the filter
-		if(rsBanList->isAddressAccepted(*(const sockaddr_storage*)addr, RSBANLIST_CHECKING_FLAGS_BLACKLIST, NULL)) {
+		if(rsBanList->isAddressAccepted(
+		            *reinterpret_cast<const sockaddr_storage*>(addr),
+		            RSBANLIST_CHECKING_FLAGS_BLACKLIST ))
+		{
 			*isBanned = false;
 		} else {
 #ifdef DEBUG_BITDHT

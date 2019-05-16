@@ -1251,9 +1251,8 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
 		checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
 
-	if( rsBanList && !rsBanList->isAddressAccepted( foreign_addr,
-	                                                checking_flags,
-	                                                &check_result ) )
+	if(rsBanList && !rsBanList->isAddressAccepted(
+	            foreign_addr, checking_flags, check_result ))
 	{
 		RsErr() << __PRETTY_FUNCTION__
 		        << " Refusing incoming SSL connection from blacklisted "
