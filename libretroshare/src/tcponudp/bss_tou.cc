@@ -3,8 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
- * Copyright 1995-1998 Eric Young (eay@cryptsoft.com)                          *
+ * Copyright (C) 1995-1998  Eric Young <eay@cryptsoft.com>                     *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,19 +26,17 @@
 
 #include "bio_tou.h"
 
-// STUFF defined in the header.......
-//int BIO_tou_socket_should_retry(int s, int e);
-//int BIO_tou_socket_non_fatal_error(int error);
-//#define BIO_TYPE_TOU_SOCKET     (30|0x0400|0x0100)      /* NEW rmfern type */
-//BIO_METHOD *BIO_s_tou_socket(void);
-
 #include <stdio.h>
 #include <errno.h>
-#define USE_SOCKETS
-//#include "cryptlib.h"
-#include <openssl/bio.h>
 #include <string.h> /* for strlen() */
 
+#define USE_SOCKETS
+#include <openssl/bio.h>
+
+#include "tou.h"
+#include "util/rsdebug.h"
+
+RS_SET_CONTEXT_DEBUG_LEVEL(0);
 
 static int tou_socket_write(BIO *h, const char *buf, int num);
 static int tou_socket_read(BIO *h, char *buf, int size);
@@ -48,13 +47,12 @@ static int tou_socket_free(BIO *data);
 static int get_last_tou_socket_error(int s);
 static int clear_tou_socket_error(int s);
 
-#include "tou.h"
-
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 
 static int  BIO_get_init(BIO *a) { return a->init; }
 
-#if (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000) || (!defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L)
+#if (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000) \
+	|| (!defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L)
 
 static int  BIO_get_shutdown(BIO *a) { return a->shutdown; }
 static void BIO_set_init(BIO *a,int i) { a->init=i; }
@@ -62,7 +60,8 @@ static void BIO_set_data(BIO *a,void *p) { a->ptr = p; }
 long (*BIO_meth_get_ctrl(const BIO_METHOD* biom)) (BIO*, int, long, void*)
 { return biom->ctrl; }
 
-#endif
+#endif /* (defined(LIBRESSL_VERSION_NUMBER) && LIBRESSL_VERSION_NUMBER < 0x20700000) \
+|| (!defined(LIBRESSL_VERSION_NUMBER) && OPENSSL_VERSION_NUMBER < 0x10100000L) */
 
 static BIO_METHOD methods_tou_sockp =
 {
@@ -71,22 +70,20 @@ static BIO_METHOD methods_tou_sockp =
     tou_socket_write,
     tou_socket_read,
     tou_socket_puts,
-    NULL, /* tou_gets, */
+    nullptr, // bgets
     tou_socket_ctrl,
     tou_socket_new,
     tou_socket_free,
-    NULL,
+    nullptr, // callback_ctrl
 };
 
 BIO_METHOD* BIO_s_tou_socket(void)
 {
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "BIO_s_tou_socket(void)\n");
-#endif
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
 	return(&methods_tou_sockp);
 }
 
-#else
+#else // OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 
 BIO_METHOD* BIO_s_tou_socket(void)
 {
@@ -106,46 +103,28 @@ BIO_METHOD* BIO_s_tou_socket(void)
 	return methods_tou_sockp_ptr;
 }
 
-#endif
-
-BIO *BIO_new_tou_socket(int fd, int close_flag)
-	{
-	BIO *ret;
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "BIO_new_tou_socket(%d)\n", fd);
-#endif
-
-	ret=BIO_new(BIO_s_tou_socket());
-	if (ret == NULL) return(NULL);
-	BIO_set_fd(ret,fd,close_flag);
-	return(ret);
-	}
+#endif // OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
 
 static int tou_socket_new(BIO *bi)
-	{
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "tou_socket_new()\n");
-#endif
+{
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+
     BIO_set_init(bi,0) ;
-    BIO_set_data(bi,NULL) ;	// sets bi->ptr
+	BIO_set_data(bi, nullptr);	// sets bi->ptr
     BIO_set_flags(bi,0) ;
     BIO_set_fd(bi,0,0) ;
 	return(1);
-	}
+}
 
 static int tou_socket_free(BIO *a)
-	{
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "tou_socket_free()\n");
-#endif
-	if (a == NULL) return(0);
+{
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+
+	if (!a) return(0);
 
     if(BIO_get_shutdown(a))
 		{
-		if(BIO_get_init(a))
-			{
-			tou_close(BIO_get_fd(a,NULL));
-			}
+		if(BIO_get_init(a)) tou_close(static_cast<int>(BIO_get_fd(a, nullptr)));
         BIO_set_init(a,0) ;
         BIO_set_flags(a,0) ;
 		}
@@ -153,13 +132,12 @@ static int tou_socket_free(BIO *a)
 	}
 	
 static int tou_socket_read(BIO *b, char *out, int outl)
-	{
-	int ret=0;
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "tou_socket_read(%p,%p,%d)\n",b,out,outl);
-#endif
+{
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
 
-	if (out != NULL)
+	int ret=0;
+
+	if (!out)
 		{
 		clear_tou_socket_error(BIO_get_fd(b,NULL));
 		/* call tou library */
@@ -312,69 +290,66 @@ int BIO_tou_socket_should_retry(int s, int i)
 	}
 
 int BIO_tou_socket_non_fatal_error(int err)
-	{
-	switch (err)
-		{
-#if defined(OPENSSL_SYS_WINDOWS)
-# if defined(WSAEWOULDBLOCK)
-	case WSAEWOULDBLOCK:
-# endif
+{
+	constexpr int fatalError = 0;
+	constexpr int nonFatalError = 1;
 
-# if 0 /* This appears to always be an error */
-#  if defined(WSAENOTCONN)
-	case WSAENOTCONN:
-#  endif
-# endif
-#endif
+	switch (err)
+	{
+#if defined(OPENSSL_SYS_WINDOWS)
+#	if defined(WSAEWOULDBLOCK)
+	case WSAEWOULDBLOCK:
+#	endif // defined(WSAEWOULDBLOCK)
+#endif // defined(OPENSSL_SYS_WINDOWS)
 
 #ifdef EWOULDBLOCK
-# ifdef WSAEWOULDBLOCK
-#  if WSAEWOULDBLOCK != EWOULDBLOCK
+#	ifdef WSAEWOULDBLOCK
+#		if WSAEWOULDBLOCK != EWOULDBLOCK
 	case EWOULDBLOCK:
-#  endif
-# else
+#		endif // WSAEWOULDBLOCK != EWOULDBLOCK
+#	else // def WSAEWOULDBLOCK
 	case EWOULDBLOCK:
-# endif
+#	endif // def WSAEWOULDBLOCK
 #endif
 
 #if defined(ENOTCONN)
 	case ENOTCONN:
-#endif
+#endif // defined(ENOTCONN)
 
 #ifdef EINTR
 	case EINTR:
-#endif
+#endif // def EINTR
 
 #ifdef EAGAIN
-#if EWOULDBLOCK != EAGAIN
+#	if EWOULDBLOCK != EAGAIN
 	case EAGAIN:
-# endif
-#endif
+#	endif //  EWOULDBLOCK != EAGAIN
+#endif // def EAGAIN
 
 #ifdef EPROTO
 	case EPROTO:
-#endif
+#endif // def EPROTO
 
 #ifdef EINPROGRESS
 	case EINPROGRESS:
-#endif
+#endif // def EINPROGRESS
 
 #ifdef EALREADY
 	case EALREADY:
-#endif
+#endif // def EALREADY
 
+		Dbg2() << __PRETTY_FUNCTION__ << " err: " << err
+		       << " return nonFatalError " << nonFatalError << std::endl;
+		return nonFatalError;
 
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "BIO_tou_socket_non_fatal_error(%d) = 1\n", err);
-#endif
-		return(1);
-		/* break; */
 	default:
 		break;
-		}
-#ifdef DEBUG_TOU_BIO
-	fprintf(stderr, "BIO_tou_socket_non_fatal_error(%d) = 0\n", err);
-#endif
-	return(0);
 	}
-#endif
+
+	Dbg2() << __PRETTY_FUNCTION__ << " err: " << err << " return fatalError "
+	       << fatalError << std::endl;
+
+	return fatalError;
+}
+
+#endif // ndef OPENSSL_NO_SOCK
