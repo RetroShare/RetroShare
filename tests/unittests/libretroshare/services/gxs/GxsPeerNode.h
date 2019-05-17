@@ -30,7 +30,7 @@
 
 #include "gxstestservice.h"
 
-class	RsGxsIdExchange;
+struct  RsGxsIdExchange;
 class	RsGxsCircleExchange;
 class	GxsTestService;
 class 	RsGeneralDataService;

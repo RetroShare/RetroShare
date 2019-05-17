@@ -67,7 +67,7 @@ class ChatWidgetHolder;
 // for gxs based plugins
 struct RsIdentity;
 class RsNxsNetMgr;
-class RsGxsIdExchange;
+struct RsGxsIdExchange;
 class RsGcxs;
 class PgpAuxUtils;
 class p3Config;
