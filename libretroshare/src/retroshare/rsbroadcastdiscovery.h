@@ -46,19 +46,17 @@ extern std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery;
 
 struct RsBroadcastDiscoveryResult : RsSerializable
 {
-	PGPFingerprintType mPgpFingerprint;
 	RsPeerId mSslId;
 	std::string mProfileName;
-	RsUrl locator;
+	RsUrl mLocator;
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
-		RS_SERIAL_PROCESS(mPgpFingerprint);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mProfileName);
-		RS_SERIAL_PROCESS(locator);
+		RS_SERIAL_PROCESS(mLocator);
 	}
 
 	RsBroadcastDiscoveryResult() = default;
