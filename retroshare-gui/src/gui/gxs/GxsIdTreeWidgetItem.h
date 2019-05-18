@@ -101,7 +101,7 @@ public:
         QString comment;
 
         QFontMetricsF fm(option.font);
-        float f = fm.height();
+		//float f = fm.height();
 
 		QIcon icon ;
 
@@ -145,12 +145,13 @@ public:
 
 		QIcon icon ;
 
-        if(id.isNull())
-        {
-            str = tr("[Notification]");
-            icon = QIcon(":/icons/logo_128.png");
-        }
-        else if(! computeNameIconAndComment(id,str,icon,comment))
+		if(id.isNull())
+		{
+			str = tr("[Notification]");
+			icon = QIcon(":/icons/logo_128.png");
+		}
+		else if(! computeNameIconAndComment(id,str,icon,comment))
+		{
 			if(mReloadPeriod > 3)
 			{
 				str = tr("[Unknown]");
@@ -161,6 +162,7 @@ public:
 				icon = GxsIdDetails::getLoadingIcon(id);
 				launchAsyncLoading();
 			}
+		}
 
 		QPixmap pix = icon.pixmap(r.size());
 		const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
