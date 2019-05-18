@@ -494,10 +494,15 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
 			items->append(m);
 
 		if (m.data(RsMessageModel::UnreadRole).toBool())
+		{
 			if (itemsUnread)
-                itemsUnread->append(m);
-            else if(itemsRead)
-                itemsRead->append(m);
+				itemsUnread->append(m);
+			else
+			{
+				if(itemsRead)
+					itemsRead->append(m);
+			}
+		}
 
 		if (itemsStar && m.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR)
 			itemsStar->append(m);
@@ -808,12 +813,8 @@ void MessagesDialog::messagesTagsChanged()
     mMessageModel->updateMessages();
 }
 
-static void InitIconAndFont(QTreeWidgetItem *item)
-{
-}
-
 // click in messageTreeWidget
-void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& old_proxy_index)
+void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& /*old_proxy_index*/)
 {
     if(!new_proxy_index.isValid())
         return;
