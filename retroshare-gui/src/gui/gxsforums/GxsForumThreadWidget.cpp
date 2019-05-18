@@ -218,7 +218,7 @@ public:
         QString comment;
 
         QFontMetricsF fm(option.font);
-        float f = fm.height();
+		//float f = fm.height();
 
 		QIcon icon ;
 
@@ -630,10 +630,10 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
 	}
 }
 
-void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, const QList<RsGxsMessageId>& expanded_items)
+void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& /*index*/, const QList<RsGxsMessageId>& expanded_items)
 {
- 	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
-        ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
+	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
+		ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
 }
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
@@ -1235,16 +1235,16 @@ void GxsForumThreadWidget::insertMessage()
 
         int current_index = 0 ;
 
-        for(int i=0;i<post_versions.size();++i)
+        for(int i=0;i< static_cast<int>(post_versions.size());++i)
         {
-            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[i].first));
-            ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[i].second.toStdString()));
+            ui->versions_CB->insertItem(i, ((i==0)?tr("(Latest) "):tr("(Old) "))+" "+DateTime::formatLongDateTime( post_versions[static_cast<size_t>(i)].first));
+            ui->versions_CB->setItemData(i,QString::fromStdString(post_versions[static_cast<size_t>(i)].second.toStdString()));
 
 #ifdef DEBUG_FORUMS
             std::cerr << "  added new post version " << post_versions[i].first << " " << post_versions[i].second << std::endl;
 #endif
 
-            if(mThreadId == post_versions[i].second)
+            if(mThreadId == post_versions[static_cast<size_t>(i)].second)
                 current_index = i ;
         }
 
@@ -1347,10 +1347,10 @@ void GxsForumThreadWidget::previousMessage()
 	QModelIndex parentIndex = current_index.parent();
 
 	int index = current_index.row();
-	int count = mThreadModel->rowCount(parentIndex) ;
+	//int count = mThreadModel->rowCount(parentIndex) ;
 
 	if (index > 0)
-    {
+	{
 		QModelIndex prevItem = mThreadProxyModel->index(index - 1,0,parentIndex) ;
 
 		if (prevItem.isValid()) {
