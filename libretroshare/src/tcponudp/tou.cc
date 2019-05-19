@@ -179,7 +179,7 @@ bool tou_stream_check(int sockfd)
 		return false;
 	}
 
-	if(sockfd >= tou_streams.size())
+	if(sockfd >= static_cast<int>(tou_streams.size()))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " ERROR sockfd: " << sockfd
 		          << " out of bound!" << std::endl;
@@ -187,7 +187,7 @@ bool tou_stream_check(int sockfd)
 		return false;
 	}
 
-	if(!tou_streams[sockfd])
+	if(!tou_streams[static_cast<size_t>(sockfd)])
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " ERROR tou_streams[sockfd] == NULL"
 		          << std::endl;
