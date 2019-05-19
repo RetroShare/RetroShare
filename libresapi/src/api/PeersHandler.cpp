@@ -643,7 +643,6 @@ void PeersHandler::handleWildcard(Request &req, Response &resp)
 			std::string error_string;
 			RsPeerDetails peerDetails;
 
-			RsPgpId own_pgp = mRsPeers->getGPGOwnId();
 			RsPeerId ownpeer_id = mRsPeers->getOwnId();
 
 			do
