@@ -81,7 +81,7 @@ int RsMessageModel::rowCount(const QModelIndex& parent) const
     return 0;
 }
 
-int RsMessageModel::columnCount(const QModelIndex &parent) const
+int RsMessageModel::columnCount(const QModelIndex &/*parent*/) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
@@ -155,7 +155,7 @@ Qt::ItemFlags RsMessageModel::flags(const QModelIndex& index) const
     return QAbstractItemModel::flags(index);
 }
 
-QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant RsMessageModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
 {
 	if(role == Qt::DisplayRole)
 		switch(section)
@@ -268,7 +268,7 @@ QVariant RsMessageModel::data(const QModelIndex &index, int role) const
 	}
 }
 
-QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
 {
 	Rs::Msgs::MsgTagType tags;
 	rsMsgs->getMessageTagTypes(tags);
@@ -281,7 +281,7 @@ QVariant RsMessageModel::textColorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int 
 	return QVariant();
 }
 
-QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
 // 	if(column != COLUMN_THREAD_DATA)
 //        return QVariant();
@@ -289,7 +289,7 @@ QVariant RsMessageModel::statusRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
     return QVariant();//fmpe.mMsgStatus);
 }
 
-bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int /*column*/) const
 {
 	QString s ;
 	bool passes_strings = true ;
@@ -361,12 +361,9 @@ QVariant RsMessageModel::filterRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col
 	return QVariant(QString());
 }
 
-uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
+uint32_t RsMessageModel::updateFilterStatus(ForumModelIndex /*i*/,int /*column*/,const QStringList& /*strings*/)
 {
-    QString s ;
-	uint32_t count = 0;
-
-	return count;
+	return 0;
 }
 
 
@@ -408,7 +405,7 @@ QVariant RsMessageModel::toolTipRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
     return QVariant();
 }
 
-QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &fmpe, int column) const
+QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &/*fmpe*/, int /*column*/) const
 {
     return QVariant();
 }
@@ -426,7 +423,7 @@ QVariant RsMessageModel::sizeHintRole(int col) const
 	}
 }
 
-QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
+QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int /*column*/) const
 {
     return QVariant();
 }
@@ -518,10 +515,12 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
 QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
 	if(col == COLUMN_THREAD_READ)
+	{
 		if(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 			return QIcon(":/images/message-state-unread.png");
 		else
 			return QIcon(":/images/message-state-read.png");
+	}
 
     if(col == COLUMN_THREAD_SUBJECT)
     {
@@ -658,7 +657,8 @@ void RsMessageModel::updateMessages()
     emit messagesLoaded();
 }
 
-static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
+//static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
+//TODO: Add RsMessageModel::computeMessagesHierarchy here
 
 void RsMessageModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
