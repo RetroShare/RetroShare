@@ -1873,21 +1873,24 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 			// 	because there is not too much file hashes to be active at a time,
 			// 	and this mostly prevents from sending the hash back in the tunnel.
 
-			bool found = false ;
+#ifdef P3TURTLE_DEBUG
+			bool ownTunnelFound = false ;
+#endif
 			for(std::map<TurtleFileHash,TurtleHashInfo>::iterator it(_incoming_file_hashes.begin());it!=_incoming_file_hashes.end();++it)
 				if(it->second.last_request == item->request_id)
 				{
-					found = true ;
-
+#ifdef P3TURTLE_DEBUG
+					ownTunnelFound = true ;
+#endif
 					{
 						// add the tunnel uniquely
-						bool found = false ;
+						bool alreadyExist = false ;
 
 						for(unsigned int j=0;j<it->second.tunnels.size();++j)
 							if(it->second.tunnels[j] == item->tunnel_id)
-								found = true ;
+								alreadyExist = true ;
 
-						if(!found)
+						if(!alreadyExist)
 							it->second.tunnels.push_back(item->tunnel_id) ;
 
 						tunnel.hash = it->first ;		// because it's a local tunnel
@@ -1904,7 +1907,7 @@ void p3turtle::handleTunnelResult(RsTurtleTunnelOkItem *item)
 					}
 				}
 #ifdef P3TURTLE_DEBUG
-			if(!found)
+			if(!ownTunnelFound)
 				std::cerr << "p3turtle: error. Could not find hash that emmitted tunnel request " << reinterpret_cast<void*>(item->tunnel_id) << std::endl ;
 #endif
 		}
