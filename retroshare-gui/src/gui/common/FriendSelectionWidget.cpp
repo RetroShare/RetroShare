@@ -245,7 +245,6 @@ void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const Token
 
 	RsGxsIdGroup data;
 	std::vector<RsGxsIdGroup> datavector;
-	std::vector<RsGxsIdGroup>::iterator vit;
 
 	if (!rsIdentity->getGroupData(token, datavector))
 	{
@@ -688,10 +687,10 @@ void FriendSelectionWidget::requestGXSIdList()
 }
 
 // This call is inlined so that there's no linking conflict with MinGW on Windows
-template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
+template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool /*add*/)
 {
-    mPreSelectedGxsIds = ids ;
-    requestGXSIdList();
+	mPreSelectedGxsIds = ids ;
+	requestGXSIdList();
 }
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)
