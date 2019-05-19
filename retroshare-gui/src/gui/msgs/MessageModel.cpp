@@ -430,23 +430,24 @@ QVariant RsMessageModel::authorRole(const Rs::Msgs::MsgInfoSummary& /*fmpe*/,int
 
 QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const
 {
-    switch(column)
-    {
-	case COLUMN_THREAD_DATE:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
+	switch(column)
+	{
+		case COLUMN_THREAD_DATE:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
 
-	case COLUMN_THREAD_READ:  return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
+		case COLUMN_THREAD_READ:  return QVariant(static_cast<bool>(IS_MESSAGE_UNREAD(fmpe.msgflags)) );
 
-	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
+		case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 
-    case COLUMN_THREAD_AUTHOR:{
-        						QString name;
+		case COLUMN_THREAD_AUTHOR:{
+			QString name;
 
-        						if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
-                                    return name;
-    }
-    default:
-        return displayRole(fmpe,column);
-    }
+			if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+				return name;
+		}
+		/* fallthrough */
+		default:
+		return displayRole(fmpe,column);
+	}
 }
 
 QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
