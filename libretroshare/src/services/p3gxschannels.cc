@@ -1476,8 +1476,9 @@ bool p3GxsChannels::createCommentV2(const RsGxsGroupId&   channelId,
 	}
 
 	if(!parentId.isNull())
-		if(!getChannelContent( // does the post thread exist?
-		            channelId,std::set<RsGxsMessageId>({parentId}),posts,comments ))
+	{
+		// does the post thread exist?
+		if(!getChannelContent( channelId,std::set<RsGxsMessageId>({parentId}),posts,comments ))
 		{
 			errorMessage = "You cannot comment post " + parentId.toStdString() +
 			        ": supplied parent comment Id is not a comment!";
@@ -1485,15 +1486,17 @@ bool p3GxsChannels::createCommentV2(const RsGxsGroupId&   channelId,
 			          << std::endl;
 			return false;
 		}
-		else if(comments.size() != 1 || comments[0].mMeta.mParentId.isNull())
-		{ // is the comment parent actually a comment?
+		// is the comment parent actually a comment?
+		if(comments.size() != 1 || comments[0].mMeta.mParentId.isNull())
+		{
 			errorMessage = "You cannot comment post " + parentId.toStdString()
-			        + " of channel with Id " + channelId.toStdString() +
-			        ": supplied mParentMsgId is not a comment Id!";
+			    + " of channel with Id " + channelId.toStdString() +
+			    ": supplied mParentMsgId is not a comment Id!";
 			std::cerr << __PRETTY_FUNCTION__ << " Error: " << errorMessage
 			          << std::endl;
 			return false;
 		}
+	}
 
 	if(!rsIdentity->isOwnId(authorId)) // is the voter ID actually ours?
 	{
