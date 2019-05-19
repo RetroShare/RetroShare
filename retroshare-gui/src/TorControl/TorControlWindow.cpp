@@ -14,7 +14,7 @@
 #include "TorControl.h"
 #include "HiddenService.h"
 
-TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
+TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget */*parent*/)
 	: mTorManager(tm)
 {
 	setupUi(this) ;
@@ -28,8 +28,8 @@ TorControlDialog::TorControlDialog(Tor::TorManager *tm,QWidget *parent)
 
     //QTimer::singleShot(2000,this,SLOT(checkForHiddenService())) ;
 
-    mIncomingServer = new QTcpServer(this) ;
-    mHiddenService = NULL ;
+	mIncomingServer = new QTcpServer(this) ;
+	mHiddenService = nullptr ;
 	mHiddenServiceStatus = HIDDEN_SERVICE_STATUS_UNKNOWN;
 	//mBootstrapPhaseFinished = false ;
 
