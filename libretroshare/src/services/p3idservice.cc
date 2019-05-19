@@ -4336,8 +4336,6 @@ void p3IdService::generateDummy_OwnIds()
 
 	/* grab all the gpg ids... and make some ids */
 
-	RsPgpId ownId = mPgpUtils->getPGPOwnId();
-
 #if 0
 	// generate some ownIds.
     //int genCount = 0;
