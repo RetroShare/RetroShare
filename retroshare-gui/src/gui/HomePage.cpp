@@ -96,7 +96,7 @@ HomePage::HomePage(QWidget *parent) :
              registerHelpButton(ui->helpButton,help_str,"HomePage") ;
 }
 
-void HomePage::certContextMenu(QPoint point)
+void HomePage::certContextMenu(QPoint /*point*/)
 {
     QMenu menu(this) ;
 
