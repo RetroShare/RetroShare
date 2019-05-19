@@ -369,6 +369,8 @@ m_direction           (upnpLib.Element_GetChildValueByTag(argument, "direction")
 m_retval              (upnpLib.Element_GetFirstChildByTag(argument, "retval")),
 m_relatedStateVariable(upnpLib.Element_GetChildValueByTag(argument, "relatedStateVariable"))
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
 
 #ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPArgument::CUPnPArgument() \n    Argument:"                  <<
@@ -391,6 +393,9 @@ m_UPnPControlPoint(upnpControlPoint),
 m_ArgumentList(upnpControlPoint, upnpLib, action, SCPDURL),
 m_name(upnpLib.Element_GetChildValueByTag(action, "name"))
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
+
 #ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPAction::CUPnPAction() \n    Action:"    <<
 		"\n        name: " << m_name;
@@ -408,6 +413,9 @@ CUPnPAllowedValue::CUPnPAllowedValue(
 m_UPnPControlPoint(upnpControlPoint),
 m_allowedValue(upnpLib.Element_GetTextValue(allowedValue))
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
+
 #ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPAllowedValue::CUPnPAllowedValue() \n    AllowedValue:"      <<
 		"\n        allowedValue: " << m_allowedValue;
@@ -429,6 +437,9 @@ m_dataType    (upnpLib.Element_GetChildValueByTag(stateVariable, "dataType")),
 m_defaultValue(upnpLib.Element_GetChildValueByTag(stateVariable, "defaultValue")),
 m_sendEvents  (upnpLib.Element_GetAttributeByTag (stateVariable, "sendEvents"))
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
+
 #ifdef UPNP_DEBUG
 	std::cerr <<	"CUPnPStateVariable::CUPnPStateVariable() \n    StateVariable:"     <<
 		"\n        name: "         << m_name <<
@@ -451,6 +462,8 @@ m_ActionList(upnpControlPoint, upnpLib, scpd, SCPDURL),
 m_ServiceStateTable(upnpControlPoint, upnpLib, scpd, SCPDURL),
 m_SCPDURL(SCPDURL)
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
 }
 
 
@@ -836,8 +849,11 @@ m_UDN              (upnpLib.Element_GetChildValueByTag(device, "UDN")),
 m_UPC              (upnpLib.Element_GetChildValueByTag(device, "UPC")),
 m_presentationURL  (upnpLib.Element_GetChildValueByTag(device, "presentationURL"))
 {
-	int presURLlen = strlen(URLBase.c_str()) +
-		strlen(m_presentationURL.c_str()) + 2;
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
+
+	size_t presURLlen = strlen(URLBase.c_str())
+	                  + strlen(m_presentationURL.c_str()) + 2;
 	std::vector<char> vpresURL(presURLlen);
 	char* presURL = &vpresURL[0];
 	int errcode = UpnpResolveURL(
@@ -889,6 +905,9 @@ m_URLBase(OriginalURLBase),
 m_location(location),
 m_expires(expires)
 {
+	/* remove unused private field warnings */
+	(void) m_UPnPControlPoint;
+
 #ifdef UPNP_DEBUG
 	std::cerr <<
 		"CUPnPRootDevice::CUPnPRootDevice() \n    Root Device: "       <<
