@@ -30,62 +30,6 @@
 
 #include "gui/common/StatusDefs.h"
 
-/* maintain one static dialog per SSL ID */
-
-static std::map<RsPeerId, ConnectProgressDialog *> instances;
-
-int calcProgress(time_t now, time_t start, int period50, int period75, int period100);
-
-ConnectProgressDialog *ConnectProgressDialog::instance(const RsPeerId& peer_id)
-{
-	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
-	it = instances.find(peer_id);
-	if (it != instances.end())
-	{
-		return it->second;
-	}
-
-	ConnectProgressDialog *d = new ConnectProgressDialog(peer_id);
-	instances[peer_id] = d;
-	return d;
-}
-
-ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent, Qt::WindowFlags flags)
-	:QDialog(parent, flags), mId(id), ui(new Ui::ConnectProgressDialog)
-{
-	ui->setupUi(this);
-	setAttribute(Qt::WA_DeleteOnClose, true);
-
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
-	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
-
-	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
-
-	mAmIHiddenNode = rsPeers->isHiddenNode(rsPeers->getOwnId()) ;
-	mIsPeerHiddenNode = rsPeers->isHiddenNode(id) ;
-}
-
-ConnectProgressDialog::~ConnectProgressDialog()
-{
-	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
-	it = instances.find(mId);
-	if (it != instances.end())
-	{
-		instances.erase(it);
-	}
-}
-
-void ConnectProgressDialog::showProgress(const RsPeerId& peer_id)
-{
-    ConnectProgressDialog *d = instance(peer_id);
-
-    d->initDialog();
-    d->show();
-    d->raise();
-    d->activateWindow();
-
-    /* window will destroy itself! */
-}
 
 const uint32_t CONNECT_STATE_INIT		= 0;
 const uint32_t CONNECT_STATE_PROGRESS		= 1;
@@ -139,6 +83,68 @@ const int CONNECT_UDP_PERIOD = 600;
 
 /* connection must stay up for 5 seconds to be considered okay */
 const int REQUIRED_CONTACT_PERIOD = 5;
+
+/* maintain one static dialog per SSL ID */
+
+static std::map<RsPeerId, ConnectProgressDialog *> instances;
+
+int calcProgress(time_t now, time_t start, int period50, int period75, int period100);
+
+ConnectProgressDialog *ConnectProgressDialog::instance(const RsPeerId& peer_id)
+{
+	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
+	it = instances.find(peer_id);
+	if (it != instances.end())
+	{
+		return it->second;
+	}
+
+	ConnectProgressDialog *d = new ConnectProgressDialog(peer_id);
+	instances[peer_id] = d;
+	return d;
+}
+
+ConnectProgressDialog::ConnectProgressDialog(const RsPeerId& id, QWidget *parent, Qt::WindowFlags flags)
+	: QDialog(parent, flags),
+	  mTimer(nullptr),
+	  mState(CONNECT_STATE_INIT),
+	  mId(id),
+	  mInitTS(0),
+	  ui(new Ui::ConnectProgressDialog)
+{
+	ui->setupUi(this);
+	setAttribute(Qt::WA_DeleteOnClose, true);
+
+	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+	ui->headerFrame->setHeaderText(tr("Connection Assistant"));
+
+	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(stopAndClose()));
+
+	mAmIHiddenNode = rsPeers->isHiddenNode(rsPeers->getOwnId()) ;
+	mIsPeerHiddenNode = rsPeers->isHiddenNode(id) ;
+}
+
+ConnectProgressDialog::~ConnectProgressDialog()
+{
+	std::map<RsPeerId, ConnectProgressDialog *>::iterator it;
+	it = instances.find(mId);
+	if (it != instances.end())
+	{
+		instances.erase(it);
+	}
+}
+
+void ConnectProgressDialog::showProgress(const RsPeerId& peer_id)
+{
+    ConnectProgressDialog *d = instance(peer_id);
+
+    d->initDialog();
+    d->show();
+    d->raise();
+    d->activateWindow();
+
+    /* window will destroy itself! */
+}
 
 void ConnectProgressDialog::initDialog()
 {
