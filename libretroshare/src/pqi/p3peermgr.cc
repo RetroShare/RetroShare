@@ -1719,7 +1719,9 @@ bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8
 static bool cleanIpList(std::list<pqiIpAddress>& lst,const RsPeerId& pid,p3LinkMgr *link_mgr)
 {
     bool changed = false ;
+#ifdef PEER_DEBUG
     rstime_t now = time(NULL) ;
+#endif
 
     for(std::list<pqiIpAddress>::iterator it2(lst.begin());it2 != lst.end();)
     {
