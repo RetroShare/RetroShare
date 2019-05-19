@@ -194,7 +194,7 @@ bool p3GxsCommentService::getGxsCommentData(const uint32_t &token, std::vector<R
 		
 		for(; mit != msgData.end();  ++mit)
 		{
-			RsGxsGroupId grpId = mit->first;
+			//RsGxsGroupId grpId = mit->first;
 			std::vector<RsGxsMsgItem*>& msgItems = mit->second;
 			std::vector<RsGxsMsgItem*>::iterator vit = msgItems.begin();
 
