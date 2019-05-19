@@ -62,11 +62,11 @@
 ///
 
 // Tabs numbers *after* non relevant tabs are removed. So do not use them to add/remove tabs!!
-const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
+//const static uint32_t TAB_HIDDEN_SERVICE_OUTGOING = 0;
 const static uint32_t TAB_HIDDEN_SERVICE_INCOMING = 1;
 const static uint32_t TAB_HIDDEN_SERVICE_I2P_BOB  = 2;
 
-const static uint32_t TAB_NETWORK                 = 0;
+//const static uint32_t TAB_NETWORK                 = 0;
 const static uint32_t TAB_HIDDEN_SERVICE          = 1;
 const static uint32_t TAB_IP_FILTERS              = 2;
 const static uint32_t TAB_RELAYS                  = 3;
