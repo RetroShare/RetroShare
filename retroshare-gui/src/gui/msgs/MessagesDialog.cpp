@@ -82,7 +82,7 @@
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    MessageSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) , m_sortingEnabled(false) {}
+    MessageSortFilterProxyModel(const QHeaderView */*header*/,QObject *parent = nullptr): QSortFilterProxyModel(parent)/*,m_header(header)*/ , m_sortingEnabled(false) {}
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -102,7 +102,7 @@ public:
 
     void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
 private:
-    const QHeaderView *m_header ;
+    //const QHeaderView *m_header ;
     bool m_sortingEnabled;
 };
 
