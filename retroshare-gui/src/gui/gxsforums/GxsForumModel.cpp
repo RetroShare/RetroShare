@@ -833,7 +833,6 @@ void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumMode
     uint32_t idflags =0;
 	RsReputationLevel reputation_level =
 	        rsReputations->overallReputationLevel(fentry.mAuthorId, &idflags);
-	bool redacted = false;
 
 	if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
         fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
