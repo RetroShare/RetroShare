@@ -4383,9 +4383,8 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     uint32_t transN = locked_getTransactionId();
     RsGxsCircleId should_encrypt_to_this_circle_id ;
 
-    rstime_t now = time(NULL) ;
-
 #ifndef RS_GXS_SEND_ALL
+    rstime_t now = time(NULL) ;
     uint32_t max_send_delay = locked_getGrpConfig(item->grpId).msg_req_delay;	// we should use "sync" but there's only one variable used in the GUI: the req one.
 #endif
 
