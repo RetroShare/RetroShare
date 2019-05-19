@@ -68,8 +68,8 @@ std::string 	RsDirUtil::getTopDir(const std::string& dir)
 
 	/* find the subdir: [/][dir1.../]<top>[/]
 	 */
-	int i,j;
-	int len = dir.length();
+	size_t i,j;
+	size_t len = dir.length();
 	for(j = len - 1; (j > 0) && (dir[j] == '/'); j--) ;
 	for(i = j; (i > 0) && (dir[i] != '/'); i--) ;
 
@@ -103,7 +103,7 @@ const char *RsDirUtil::scanf_string_for_uint(int bytes)
 
 bool RsDirUtil::splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file)
 {
-	int i = full_path.rfind('/', full_path.size()-1);
+	size_t i = full_path.rfind('/', full_path.size()-1);
 
 	if(i == full_path.size()-1)	// '/' not found!
 	{
@@ -124,8 +124,8 @@ void RsDirUtil::removeTopDir(const std::string& dir, std::string& path)
 
 	/* remove the subdir: [/][dir1.../]<top>[/]
 	 */
-	int j = dir.find_last_not_of('/');
-	int i = dir.rfind('/', j);
+	size_t j = dir.find_last_not_of('/');
+	size_t i = dir.rfind('/', j);
 
 	/* remove any more slashes */
 	if (i > 0)
@@ -145,8 +145,8 @@ std::string 	RsDirUtil::getRootDir(const std::string& dir)
 
 	/* find the subdir: [/]root[/...]
 	 */
-	int i,j;
-	int len = dir.length();
+	size_t i,j;
+	size_t len = dir.length();
 	for(i = 0; (i < len) && (dir[i] == '/'); i++) ;
 	for(j = i; (j < len) && (dir[j] != '/'); j++) ;
 	if (i == j)
@@ -160,8 +160,8 @@ std::string 	RsDirUtil::getRootDir(const std::string& dir)
 
 std::string RsDirUtil::removeRootDir(const std::string& path)
 {
-	unsigned int i, j;
-	unsigned int len = path.length();
+	size_t i, j;
+	size_t len = path.length();
 	std::string output;
 
 	/* chew leading '/'s */
@@ -230,8 +230,8 @@ std::string RsDirUtil::removeRootDirs(const std::string& path, const std::string
 int	RsDirUtil::breakupDirList(const std::string& path, 
 			std::list<std::string> &subdirs)
 {
-	int start = 0;
-	unsigned int i;
+	size_t start = 0;
+	size_t i;
 	for(i = 0; i < path.length(); i++)
 	{
 		if (path[i] == '/')
@@ -327,14 +327,14 @@ bool RsDirUtil::copyFile(const std::string& source,const std::string& dest)
 #else
 	FILE *in = fopen64(source.c_str(),"rb") ;
 
-	if(in == NULL)
+	if(in == nullptr)
 	{
 		return false ;
 	}
 
 	FILE *out = fopen64(dest.c_str(),"wb") ;
 
-	if(out == NULL)
+	if(out == nullptr)
 	{
 		fclose (in);
 		return false ;
@@ -410,7 +410,7 @@ bool	RsDirUtil::checkFile(const std::string& filename,uint64_t& file_size,bool d
 		return false;
 	}
 
-	file_size = buf.st_size ;
+	file_size = static_cast<size_t>(buf.st_size) ;
 
 	if(disallow_empty_file && buf.st_size == 0)
 		return false ;
@@ -557,7 +557,7 @@ bool RsDirUtil::getFileHash(const std::string& filepath, RsFileHash &hash, uint6
 {
 	FILE *fd;
 
-	if (NULL == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
+	if (nullptr == (fd = RsDirUtil::rs_fopen(filepath.c_str(), "rb")))
 		return false;
 
 	int  len;
@@ -830,7 +830,7 @@ int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_
 	if(lock_handle == -1)
 	{
 		std::cerr << "Could not open lock file " << lock_file_path.c_str() << std::flush;
-		perror(NULL);
+		perror(nullptr);
 		return 2;
 	}
 
@@ -845,7 +845,7 @@ int RsDirUtil::createLockFile(const std::string& lock_file_path, rs_lock_handle_
 	{
 		int fcntlErr = errno;
 		std::cerr << "Could not request lock on file " << lock_file_path.c_str() << std::flush;
-		perror(NULL);
+		perror(nullptr);
 
 		// there's no lock so let's release the file handle immediately
 		close(lock_handle);
