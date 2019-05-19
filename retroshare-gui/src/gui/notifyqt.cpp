@@ -563,9 +563,9 @@ void NotifyQt::notifyChatCleared(const ChatId& chat_id)
 	emit chatCleared(chat_id);
 }
 
-void NotifyQt::notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups)
+void NotifyQt::notifyTurtleSearchResult(uint32_t /*search_id*/,const std::list<TurtleGxsInfo>& /*found_groups*/)
 {
-    std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
+	std::cerr << "(EE) missing code to handle GXS turtle search result." << std::endl;
 }
 
 void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,const std::list<TurtleFileInfo>& files)
