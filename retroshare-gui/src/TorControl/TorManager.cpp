@@ -238,8 +238,8 @@ void TorManager::hiddenServicePrivateKeyChanged()
 
 	s << "-----BEGIN RSA PRIVATE KEY-----" << endl;
 
-	for(uint32_t i=0;i<key.length();i+=64)
-	    s << key.mid(i,64) << endl ;
+	for(int i=0;i<key.length();i+=64)
+		s << key.mid(i,64) << endl ;
 
 	s << "-----END RSA PRIVATE KEY-----" << endl;
 
