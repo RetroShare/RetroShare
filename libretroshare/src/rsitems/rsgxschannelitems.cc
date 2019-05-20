@@ -100,7 +100,7 @@ void RsGxsChannelGroupItem::serial_process(RsGenericSerializer::SerializeJob j,R
 	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mColor.empty())
 		return ;
 	
-	RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_DESCR,mColor,"mColor") ;
+	RsTypeSerializer::serial_process           (j,ctx,TLV_TYPE_STR_COLOR,mColor,"mColor") ;
 }
 
 bool RsGxsChannelPostItem::fromChannelPost(RsGxsChannelPost &post, bool moveImage)
