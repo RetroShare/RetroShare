@@ -27,6 +27,7 @@
 #include "retroshare/rsiface.h"
 #include "rsserver/p3face.h"
 #include "util/rsdebug.h"
+#include "retroshare/rspeers.h"
 
 /****
  * #define P3DISC_DEBUG	1
@@ -1249,9 +1250,25 @@ void p3discovery2::recvInvite(
 
 void p3discovery2::rsEventsHandler(const RsEvent& event)
 {
+	Dbg3() << __PRETTY_FUNCTION__ << " " << static_cast<uint32_t>(event.mType)
+	       << std::endl;
+
 	switch(event.mType)
 	{
-	// TODO: When an SSL-only friend become online requestInvite(...)
+	case RsEventType::PEER_STATE_CHANGED:
+	{
+		const RsPeerId& sslId =
+		        static_cast<const RsPeerStateChangedEvent&>(event).mSslId;
+		if( rsPeers && rsPeers->isSslOnlyFriend(sslId) &&
+		        mServiceCtrl->isPeerConnected(
+		            getServiceInfo().mServiceType, sslId ) )
+		{
+			if(!requestInvite(sslId, sslId))
+				RsErr() << __PRETTY_FUNCTION__ << " requestInvite to peer "
+				        << sslId << " failed" << std::endl;
+		}
+		break;
+	}
 	default: break;
 	}
 }

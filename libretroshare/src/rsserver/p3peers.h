@@ -69,6 +69,9 @@ public:
 	virtual bool isFriend(const RsPeerId &id);
 	virtual bool isPgpFriend(const RsPgpId& pgpId);
 
+	/// @see RsPeers
+	bool isSslOnlyFriend(const RsPeerId& sslId) override;
+
 	RS_DEPRECATED_FOR(isPgpFriend)
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend);
 
@@ -90,6 +93,12 @@ public:
 
 	/* Add/Remove Friends */
 	virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT);
+
+	/// @see RsPeers
+	bool addSslOnlyFriend(
+	            const RsPeerId& sslId,
+	            const RsPeerDetails& details = RsPeerDetails() ) override;
+
 	virtual	bool removeFriend(const RsPgpId& gpgid);
 	virtual bool removeFriendLocation(const RsPeerId& sslId);
 
@@ -127,6 +136,16 @@ public:
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures);
 
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
+
+	/// @see RsPeers
+	bool getShortInvite(
+	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	        bool formatRadix = false, bool bareBones = false,
+	        const std::string& baseUrl = "https://retroshare.me/" ) override;
+
+	/// @see RsPeers
+	bool parseShortInvite(
+	            const std::string& invite, RsPeerDetails& details ) override;
 
 	/// @see RsPeers::acceptInvite
 	virtual bool acceptInvite(

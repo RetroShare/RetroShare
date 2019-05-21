@@ -1196,6 +1196,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	std::string sslCn = RsX509Cert::getCertIssuerString(*x509Cert);
 	RsPgpId pgpId(sslCn);
 
+
 	if(sslId.isNull())
 	{
 		std::string errMsg = "x509Cert has invalid sslId!";
@@ -1231,8 +1232,10 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
+	bool isSslOnlyFriend = rsPeers->isSslOnlyFriend(sslId);
+
 	uint32_t auth_diagnostic;
-	if(!AuthX509WithGPG(x509Cert, auth_diagnostic))
+	if(!isSslOnlyFriend && !AuthX509WithGPG(x509Cert, auth_diagnostic))
 	{
 		std::string errMsg = "Certificate was rejected because PGP "
 		                     "signature verification failed with diagnostic: "
@@ -1255,7 +1258,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	if ( pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
+	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
 	     !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
@@ -1279,7 +1282,9 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
 	LocalStoreCert(x509Cert);
 
-	Dbg1() << __PRETTY_FUNCTION__ << " authentication successfull!" << std::endl;
+	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for "
+	         << "sslId: " << sslId << " isSslOnlyFriend: " << isSslOnlyFriend
+	         << std::endl;
 
 	if(rsEvents)
 	{

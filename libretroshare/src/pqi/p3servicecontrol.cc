@@ -28,6 +28,8 @@
 #include "rsitems/rsnxsitems.h"
 #include "pqi/p3cfgmgr.h"
 #include "pqi/pqiservice.h"
+#include "retroshare/rspeers.h"
+#include "retroshare/rsevents.h"
 
 /*******************************/
 // #define SERVICECONTROL_DEBUG	1
@@ -756,6 +758,12 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 		mPeerFilterMap[peerId] = peerFilter;
 	}
 	recordFilterChanges_locked(peerId, originalFilter, peerFilter);
+
+	using Evt_t = RsPeerStateChangedEvent;
+	std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
+	if(lockedRsEvents)
+		lockedRsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(peerId)));
+
 	return true;
 }
 
