@@ -89,7 +89,7 @@ static const std::string kConfigKeyProxyServerPortI2P = "PROXY_SERVER_PORT_I2P";
 void  printConnectState(std::ostream &out, peerState &peer);
 
 peerState::peerState()
-	:netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0),
+	:skip_pgp_signature_validation(false),netMode(RS_NET_MODE_UNKNOWN), vs_disc(RS_VS_DISC_FULL), vs_dht(RS_VS_DHT_FULL), lastcontact(0),
 	 hiddenNode(false), hiddenPort(0), hiddenType(RS_HIDDEN_TYPE_NONE)
 {
         sockaddr_storage_clear(localaddr);
@@ -338,8 +338,22 @@ bool p3PeerMgrIMPL::isFriend(const RsPeerId& id)
 #ifdef PEER_DEBUG_COMMON
                 std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") called" << std::endl;
 #endif
-        RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+		RS_STACK_MUTEX(mPeerMtx);
         bool ret = (mFriendList.end() != mFriendList.find(id));
+#ifdef PEER_DEBUG_COMMON
+                std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") returning : " << ret << std::endl;
+#endif
+        return ret;
+}
+bool p3PeerMgrIMPL::isSslOnlyFriend(const RsPeerId& id)
+{
+#ifdef PEER_DEBUG_COMMON
+                std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") called" << std::endl;
+#endif
+		RS_STACK_MUTEX(mPeerMtx);
+        auto it = mFriendList.find(id);
+        bool ret = it != mFriendList.end() && it->second.skip_pgp_signature_validation ;
+
 #ifdef PEER_DEBUG_COMMON
                 std::cerr << "p3PeerMgrIMPL::isFriend(" << id << ") returning : " << ret << std::endl;
 #endif
@@ -348,7 +362,7 @@ bool p3PeerMgrIMPL::isFriend(const RsPeerId& id)
 
 bool    p3PeerMgrIMPL::getPeerName(const RsPeerId &ssl_id, std::string &name)
 {
-	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+	RS_STACK_MUTEX(mPeerMtx);
 
 	/* check for existing */
 	std::map<RsPeerId, peerState>::iterator it;
@@ -915,9 +929,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 
 		if (id == AuthSSL::getAuthSSL()->OwnId())
 		{
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::addFriend() cannot add own id as a friend." << std::endl;
-#endif
+			RsErr() << "p3PeerMgrIMPL::addFriend() cannot add own id as a friend. That's a bug!" << std::endl;
 			/* (1) already exists */
 			return false;
 		}
@@ -937,8 +949,19 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() Already Exists" << std::endl;
 #endif
-			/* (1) already exists */
-			return true;
+            if(it->second.gpg_id.isNull())	// already exists as a SSL-only friend
+            {
+				it->second.gpg_id = input_gpg_id;
+				it->second.skip_pgp_signature_validation = false;
+                return true;
+            }
+            else if(it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
+            {
+                RsErr() << "Trying to add SSL id (" << id << ") that is already a friend with existing PGP key (" << it->second.gpg_id << ") but using a different PGP key (" << input_gpg_id << "). This is a bug!" << std::endl;
+                return false;
+            }
+            else
+				return true; /* (1) already exists */
 		}
 
 		//Authentication is now tested at connection time, we don't store the ssl cert anymore
@@ -973,6 +996,15 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			it->second.netMode  = netMode;
 			it->second.lastcontact = lastContact;
 
+			if(!it->second.gpg_id.isNull() && it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
+            {
+                RsErr() << "Trying to add SSL id (" << id << ") that is already known (but not friend) with existing PGP key (" << it->second.gpg_id << ") but using a different PGP key (" << input_gpg_id << "). This is a bug!" << std::endl;
+                return false;
+            }
+
+			it->second.gpg_id = input_gpg_id;
+			it->second.skip_pgp_signature_validation = false;
+
 			mStatusChanged = true;
 
 			notifyLinkMgr = true;
@@ -996,6 +1028,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			pstate.vs_dht = vs_dht;
 			pstate.netMode = netMode;
 			pstate.lastcontact = lastContact;
+
+			it->second.gpg_id = input_gpg_id;
+			it->second.skip_pgp_signature_validation = false;
 
 			/* addr & timestamps -> auto cleared */
 
@@ -1030,14 +1065,18 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 }
 
 
-bool p3PeerMgrIMPL::addSslOnlyFriend(
-        const RsPeerId& sslId, const RsPeerDetails& dt )
+bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPeerDetails& dt )
 {
-	if(sslId.isNull() || sslId == getOwnId()) return false;
+	if(sslId.isNull() || sslId == getOwnId())
+    {
+        RsErr() <<"Attempt to add yourself or a null ID as SSL-only friend (id=" << sslId << ")" << std::endl;
+        return false;
+    }
 
 	peerState pstate;
 
-	{ RS_STACK_MUTEX(mPeerMtx);
+	{
+        RS_STACK_MUTEX(mPeerMtx);
 
 		/* If in mOthersList -> move over */
 		auto it = mOthersList.find(sslId);
@@ -1047,8 +1086,16 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 			mOthersList.erase(it);
 		}
 
+
 	} // RS_STACK_MUTEX(mPeerMtx);
 
+	if(!pstate.gpg_id.isNull() && AuthGPG::getAuthGPG()->isGPGAccepted(pstate.gpg_id))
+	{
+		RsErr() << "Trying to add as SSL-only friend a peer which PGP id is already a friend. This means the code is inconsistent. Not doing this!" << std::endl;
+		return false;
+	}
+
+	pstate.gpg_id.clear();
 	pstate.id = sslId;
 
 	if(!dt.name.empty())     pstate.name = dt.name;
@@ -1059,6 +1106,8 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	if(dt.hiddenNodePort)    pstate.hiddenPort = dt.hiddenNodePort;
 	if(dt.hiddenType)        pstate.hiddenType = dt.hiddenType;
 	if(!dt.location.empty()) pstate.location = dt.location;
+
+    pstate.skip_pgp_signature_validation = true;
 
 	{ RS_STACK_MUTEX(mPeerMtx);
 

@@ -110,6 +110,12 @@ RsThread::~RsThread()
     {
 		RsErr() << "Deleting a thread that is still running! Something is very wrong here and Retroshare is likely to crash because of this." << std::endl;
         print_stacktrace();
+
+        while(isRunning())
+        {
+            std::cerr << "." << std::endl;
+            rstime::rs_usleep(1000*1000);
+        }
     }
 }
 

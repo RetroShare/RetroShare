@@ -571,7 +571,20 @@ bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
 { return AuthGPG::getAuthGPG()->isGPGAccepted(pgpId); }
 
 bool p3Peers::isSslOnlyFriend(const RsPeerId& sslId)
-{ return isFriend(sslId) && !isPgpFriend(getGPGId(sslId)); }
+{
+    bool has_ssl_only_flag = mPeerMgr->isSslOnlyFriend(sslId) ;
+
+    if(has_ssl_only_flag)
+    {
+        if(isPgpFriend(getGPGId(sslId)))
+        {
+            RsErr() << "Peer " << sslId << " has SSL-friend-only flag but his PGP id is in the list of friends. This is inconsistent (Bug in the code). Returning false for security reasons." << std::endl;
+			return false;
+        }
+        return true;
+	}
+    return false;
+}
 
 bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
 { return isPgpFriend(gpg_id_is_friend); }
