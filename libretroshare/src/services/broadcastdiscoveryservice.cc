@@ -40,7 +40,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 {
 	BroadcastDiscoveryPack() : mLocalPort(0) {}
 
-	RsPgpFingerprint mPgpFingerprint;
 	RsPeerId mSslId;
 	uint16_t mLocalPort;
 	std::string mProfileName;
@@ -48,7 +47,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
-		RS_SERIAL_PROCESS(mPgpFingerprint);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mLocalPort);
 		RS_SERIAL_PROCESS(mProfileName);
@@ -57,7 +55,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 	static BroadcastDiscoveryPack fromPeerDetails(const RsPeerDetails& pd)
 	{
 		BroadcastDiscoveryPack bdp;
-		bdp.mPgpFingerprint = pd.fpr;
 		bdp.mSslId = pd.id;
 		bdp.mLocalPort = pd.localPort;
 		bdp.mProfileName = pd.name;
@@ -163,12 +160,12 @@ void BroadcastDiscoveryService::data_tick()
 				        createResult(pp.first, pp.second);
 
 				const bool isFriend = mRsPeers.isFriend(rbdr.mSslId);
-				if( isFriend && rbdr.locator.hasPort() &&
+				if( isFriend && rbdr.mLocator.hasPort() &&
 				        !mRsPeers.isOnline(rbdr.mSslId) )
 				{
 					mRsPeers.setLocalAddress(
-					            rbdr.mSslId, rbdr.locator.host(),
-					            rbdr.locator.port() );
+					            rbdr.mSslId, rbdr.mLocator.host(),
+					            rbdr.mLocator.port() );
 					mRsPeers.connectAttempt(rbdr.mSslId);
 				}
 				else if(!isFriend)
@@ -199,10 +196,9 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	        BroadcastDiscoveryPack::fromSerializedString(uData);
 
 	RsBroadcastDiscoveryResult rbdr;
-	rbdr.mPgpFingerprint = bdp.mPgpFingerprint;
 	rbdr.mSslId = bdp.mSslId;
 	rbdr.mProfileName = bdp.mProfileName;
-	rbdr.locator.
+	rbdr.mLocator.
 	        setScheme("ipv4").
 	        setHost(UDC::IpToString(ipp.ip())).
 	        setPort(bdp.mLocalPort);
