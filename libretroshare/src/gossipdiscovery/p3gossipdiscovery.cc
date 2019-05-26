@@ -100,7 +100,7 @@ void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 p3discovery2::p3discovery2(
         p3PeerMgr* peerMgr, p3LinkMgr* linkMgr, p3NetMgr* netMgr,
         p3ServiceControl* sc, RsGixs* gixs ) :
-    p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr),
+    p3Service(),  mRsEventsHandle(0), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr),
     mServiceCtrl(sc), mGixs(gixs), mDiscMtx("p3discovery2"), mLastPgpUpdate(0)
 {
 	Dbg3() << __PRETTY_FUNCTION__ << std::endl;

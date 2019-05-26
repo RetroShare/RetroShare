@@ -1718,7 +1718,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
 	sockaddr_storage_clear(addr_filtered) ;
 	sockaddr_storage_copyip(addr_filtered,addr) ;
 
-#ifdef PEER_DEBUG
+#ifndef PEER_DEBUG
 	std::cerr << "Own external address is " << sockaddr_storage_iptostring(addr_filtered) << ", as reported by friend " << from << std::endl;
 #endif
 
