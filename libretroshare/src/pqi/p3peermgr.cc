@@ -944,7 +944,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 #endif
 
 		std::map<RsPeerId, peerState>::iterator it;
-		if (mFriendList.end() != mFriendList.find(id))
+		if (mFriendList.end() != (it=mFriendList.find(id)))
 		{
 #ifdef PEER_DEBUG
 			std::cerr << "p3PeerMgrIMPL::addFriend() Already Exists" << std::endl;
@@ -1029,8 +1029,8 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			pstate.netMode = netMode;
 			pstate.lastcontact = lastContact;
 
-			it->second.gpg_id = input_gpg_id;
-			it->second.skip_pgp_signature_validation = false;
+			pstate.gpg_id = input_gpg_id;
+			pstate.skip_pgp_signature_validation = false;
 
 			/* addr & timestamps -> auto cleared */
 
@@ -1821,7 +1821,7 @@ bool p3PeerMgrIMPL::getExtAddressReportedByFriends(sockaddr_storage &addr, uint8
 {
         RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
-        uint32_t count ;
+        uint32_t count =0;
 
         locked_computeCurrentBestOwnExtAddressCandidate(addr,count) ;
 
