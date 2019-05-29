@@ -149,7 +149,7 @@ private:
     public:
         GxsTunnelPeerInfo() : last_contact(0), last_keep_alive_sent(0), status(0), direction(0)
 #ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
-					          ,accepts_fast_turtle_items(false)
+		                    ,accepts_fast_turtle_items(false),already_probed_for_fast_items(false)
 #endif
         {
             memset(aes_key, 0, GXS_TUNNEL_AES_KEY_SIZE);
