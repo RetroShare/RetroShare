@@ -73,13 +73,13 @@ bool ConnectFriendPage::isComplete() const
 	return QWizardPage::isComplete();
 }
 
-ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
-	QWizard(parent), ui(new Ui::ConnectFriendWizard)
+ConnectFriendWizard::ConnectFriendWizard(QWidget *parent)
+  : QWizard(parent), error(false)
+  , mTitleFontSize(0) // Standard
+  , mTitleFontWeight(0) // Standard
+  , ui(new Ui::ConnectFriendWizard)
 {
 	ui->setupUi(this);
-
-	mTitleFontSize = 0; // Standard
-	mTitleFontWeight = 0; // Standard
 
     // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
     ui->userFrame->hide();
@@ -833,7 +833,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 
 int ConnectFriendWizard::nextId() const
 {
-	switch ((Page) currentId()) {
+	switch ( static_cast<Page>(currentId()) ) {
 	case Page_Intro:
 		if (ui->textRadioButton->isChecked()) return Page_Text;
 		if (ui->certRadioButton->isChecked()) return Page_Cert;
