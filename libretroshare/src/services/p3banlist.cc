@@ -615,9 +615,10 @@ void p3BanList::getDhtInfo()
 
         addBanEntry(ownId, ad, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
     }
-
-    RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-    condenseBanSources_locked() ;
+	{
+		RS_STACK_MUTEX(mBanMtx) ; /****** LOCKED MUTEX *******/
+		condenseBanSources_locked() ;
+	}
 }
 
 /***** Implementation ******/
