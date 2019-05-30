@@ -644,7 +644,11 @@ void p3GxsTrans::service_tick()
 }
 
 RsGenExchange::ServiceCreate_Return p3GxsTrans::service_CreateGroup(
-        RsGxsGrpItem* /*grpItem*/, RsTlvSecurityKeySet& /*keySet*/ )
+        RsGxsGrpItem*
+#ifdef DEBUG_GXSTRANS
+                      grpItem
+#endif
+                              , RsTlvSecurityKeySet& /*keySet*/ )
 {
 #ifdef DEBUG_GXSTRANS
 	std::cout << "p3GxsTrans::service_CreateGroup(...) "
@@ -687,8 +691,8 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			     it != msgChange->msgChangeMap.end(); ++it )
 			{
 				const RsGxsGroupId& grpId = it->first;
-				const std::vector<RsGxsMessageId>& msgsIds = it->second;
-				typedef std::vector<RsGxsMessageId>::const_iterator itT;
+				const std::set<RsGxsMessageId>& msgsIds = it->second;
+				typedef std::set<RsGxsMessageId>::const_iterator itT;
 				for(itT vit = msgsIds.begin(); vit != msgsIds.end(); ++vit)
 				{
 					const RsGxsMessageId& msgId = *vit;
@@ -818,7 +822,9 @@ bool p3GxsTrans::dispatchDecryptedMail( const RsGxsId& authorId,
                                         uint32_t decrypted_data_size )
 {
 #ifdef DEBUG_GXSTRANS
-	std::cout << "p3GxsTrans::dispatchDecryptedMail(, , " << decrypted_data_size
+	std::cout << "p3GxsTrans::dispatchDecryptedMail(" << authorId << ", "
+	                                                  << decryptId << ", "
+	                                                  << decrypted_data_size
 	          << ")" << std::endl;
 #endif
 
@@ -1307,7 +1313,7 @@ bool p3GxsTrans::acceptNewMessage(const RsGxsMsgMetaData *msgMeta,uint32_t msg_s
 
 #ifdef DEBUG_GXSTRANS
 	std::cerr << "GxsTrans::acceptMessage(): size=" << msg_size << ", grp=" << msgMeta->mGroupId << ", gxs_id=" << msgMeta->mAuthorId << ", pgp_linked=" << pgp_linked << ", current (size,cnt)=("
-	          << s.size << "," << s.count << ") reputation=" << rep_lev << ", limits=(" << max_size << "," << max_count << ") " ;
+	          << s.size << "," << s.count << ") reputation=" << static_cast<uint8_t>(rep_lev) << ", limits=(" << max_size << "," << max_count << ") " ;
 #endif
 
 	if(s.size + msg_size > max_size || 1+s.count > max_count)
