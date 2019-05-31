@@ -1112,26 +1112,20 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 		// copy msg data and meta in allmsgData buffer
 		if(grp.grp.bin_data && grp.grp.bin_len>0)
 		{
-
 			memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
 			memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
-
-			/* calc and check signature */
-			EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
-
-			EVP_VerifyInit(mdctx, EVP_sha1());
-			EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
-			signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
-			EVP_MD_CTX_destroy(mdctx);
-
-			if(i>0)
-				std::cerr << "(WW) Checking group signature with old api version " << i+1 << " : tag " << std::hex << api_versions_to_check[i] << std::dec << " result: " << signOk << std::endl;
 		}
-		else
-		{
-			std::cerr << "(EE) Group without data:" << std::endl;
-			const_cast<RsNxsGrp*>(&grp)->print(std::cerr, '\t');
-		}
+
+		/* calc and check signature */
+		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
+
+		EVP_VerifyInit(mdctx, EVP_sha1());
+		EVP_VerifyUpdate(mdctx, allGrpData, allGrpDataLen);
+		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
+		EVP_MD_CTX_destroy(mdctx);
+
+		if(i>0)
+			std::cerr << "(WW) Checking group signature with old api version " << i+1 << " : tag " << std::hex << api_versions_to_check[i] << std::dec << " result: " << signOk << std::endl;
 	}
 
 	/* clean up */
