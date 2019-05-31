@@ -606,7 +606,9 @@ template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_
 
     bool ok = serialize<uint32_t>(data,size,offset,r.second) ;
 
-    memcpy(&data[offset],r.first,r.second) ;
+    if(r.first && r.second!=0)
+        memcpy(&data[offset], r.first, r.second) ;
+
     offset += r.second ;
 
     if(!ok)
