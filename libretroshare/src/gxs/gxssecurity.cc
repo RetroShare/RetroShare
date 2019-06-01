@@ -1111,10 +1111,9 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 
 		// copy msg data and meta in allmsgData buffer
 		if(grp.grp.bin_data && grp.grp.bin_len>0)
-		{
 			memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
-			memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
-		}
+
+		memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
 
 		/* calc and check signature */
 		EVP_MD_CTX *mdctx = EVP_MD_CTX_create();
