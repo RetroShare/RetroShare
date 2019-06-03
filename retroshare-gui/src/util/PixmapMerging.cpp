@@ -18,21 +18,22 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <gui/gxs/GxsIdDetails.h>
 #include <util/PixmapMerging.h>
 
 #include <QPixmap>
 #include <QPainter>
 
-QPixmap PixmapMerging::merge(const std::string & foregroundPixmapData, const std::string & backgroundPixmapFilename) {
-	QImage foregroundImage;
-	foregroundImage.loadFromData((uchar *) foregroundPixmapData.c_str(), foregroundPixmapData.size());
+QPixmap PixmapMerging::merge(const std::string & foregroundPixmapData, const std::string & backgroundPixmapFilename)
+{
+	QPixmap foregroundImage;
+	GxsIdDetails::loadPixmapFromData((uchar *) foregroundPixmapData.c_str(), foregroundPixmapData.size(),foregroundImage);
 
 	QPixmap backgroundPixmap = QPixmap(QString::fromStdString(backgroundPixmapFilename));
 
 	if (!foregroundImage.isNull()) {
 		QPainter painter(&backgroundPixmap);
-		painter.drawImage(0, 0,
-				foregroundImage.scaled(backgroundPixmap.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+		painter.drawPixmap(0, 0, foregroundImage.scaled(backgroundPixmap.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 		painter.end();
 	}
 

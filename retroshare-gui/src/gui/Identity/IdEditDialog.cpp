@@ -195,7 +195,7 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 		ui->avatarLabel->setPixmap(mAvatar);
 	} else {
 		// we need to use the default pixmap here, generated from the ID
-		ui->avatarLabel->setPixmap(QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId))));
+		ui->avatarLabel->setPixmap(GxsIdDetails::makeDefaultIcon(RsGxsId(mEditGroup.mMeta.mGroupId)));
 	}
 }
 
@@ -257,9 +257,8 @@ void IdEditDialog::loadExistingId(uint32_t token)
 	mGroupId = mEditGroup.mMeta.mGroupId;
 
 	QPixmap avatar;
-	if (mEditGroup.mImage.mSize > 0) {
-		avatar.loadFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, "PNG");
-	}
+	if (mEditGroup.mImage.mSize > 0)
+		GxsIdDetails::loadPixmapFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, avatar);
 
 	setAvatar(avatar);
 

@@ -20,6 +20,7 @@
 #include <QBuffer>
 
 #include "PostedGroupDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include <retroshare/rswiki.h>
 #include <iostream>
@@ -163,9 +164,9 @@ bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroup
 	
 	if (group.mGroupImage.mData) {
 		QPixmap pixmap;
-		if (pixmap.loadFromData(group.mGroupImage.mData, group.mGroupImage.mSize, "PNG")) {
+		if (GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, pixmap))
 			setLogo(pixmap);
-		}
+
 	} else {
 			setLogo(QPixmap(":/icons/png/posted.png"));
 	}

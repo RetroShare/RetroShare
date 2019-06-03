@@ -100,7 +100,8 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 		ui->labelPositive->setText(QString::number(info.mFriendsPositiveVotes));
 		ui->labelNegative->setText(QString::number(info.mFriendsNegativeVotes));
 
-		if (!_havePGPDetail) {
+		if (!_havePGPDetail)
+		{
 			QFont font = ui->labelName->font();
 			font.setItalic(false);
 			ui->labelName->setFont(font);
@@ -111,20 +112,16 @@ void IdentityWidget::updateData(const RsGxsIdGroup &gxs_group_info)
 			ui->labelKeyId->setVisible(false);
 
 			/// (TODO) Get real ident icon
-			QImage image;
+			QPixmap pixmap;
 
-			if(!( (_group_info.mImage.mSize > 0) && image.loadFromData(_group_info.mImage.mData, _group_info.mImage.mSize, "PNG") ))
-				image = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
-			
-			if (_avatar != image) {
-				_avatar = image;
-				_scene->clear();
-				_scene->addPixmap(QPixmap::fromImage(image.scaled(ui->graphicsView->width(),ui->graphicsView->height())));
-				emit imageUpdated();
-			}//if (_avatar != image)
-		}//if (!_havePGPDetail)
+			if(!( (_group_info.mImage.mSize > 0) && GxsIdDetails::loadPixmapFromData(_group_info.mImage.mData, _group_info.mImage.mSize, pixmap) ))
+				pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(_group_info.mMeta.mGroupId));
 
-	//}//if (_group_info != gxs_group_info)
+			_avatar = pixmap.toImage();
+			_scene->clear();
+			_scene->addPixmap(pixmap.scaled(ui->graphicsView->width(),ui->graphicsView->height()));
+			emit imageUpdated();
+		}
 }
 
 void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
@@ -136,12 +133,10 @@ void IdentityWidget::updateData(const RsPeerDetails &pgp_details)
 		_nickname = QString::fromUtf8(_details.name.c_str());
 		if (!_haveGXSId) m_myName = _nickname;
 		ui->labelName->setText(m_myName);
-		if (_haveGXSId) {
-			ui->labelName->setToolTip(tr("GXS name:") + (" "+m_myName) + ("\n")
-			                          +(tr("PGP name:")+(" "+_nickname)));
-		} else {//if (m_myName != _nickname)
+		if (_haveGXSId)
+			ui->labelName->setToolTip(tr("GXS name:") + (" "+m_myName) + ("\n") +(tr("PGP name:")+(" "+_nickname)));
+		else
 			ui->labelName->setToolTip(tr("PGP name:")+(" "+_nickname));
-		}//else (m_myName != _nickname)
 
 		QFont font = ui->labelName->font();
 		font.setItalic(true);
@@ -210,11 +205,6 @@ void IdentityWidget::setIsSelected(bool value)
 	font.setBold(value);
 	ui->labelName->setFont(font);
 }
-/*
-bool IdentityWidget::isSelected()
-{
-	return m_isSelected;
-}*/
 
 void IdentityWidget::setIsCurrent(bool value)
 {
@@ -227,11 +217,6 @@ void IdentityWidget::setIsCurrent(bool value)
 	ui->label_NegIcon_2->setVisible(value);
 	ui->pbAdd->setVisible(value);
 }
-/*
-bool IdentityWidget::isCurrent()
-{
-	return m_isCurrent;
-}*/
 
 void IdentityWidget::pbAdd_clicked()
 {

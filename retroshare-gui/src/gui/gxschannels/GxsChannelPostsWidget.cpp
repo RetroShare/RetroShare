@@ -26,6 +26,7 @@
 #include "GxsChannelPostsWidget.h"
 #include "ui_GxsChannelPostsWidget.h"
 #include "gui/feeds/GxsChannelPostItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/settings/rsharesettings.h"
@@ -238,7 +239,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	/* IMAGE */
 	QPixmap chanImage;
 	if (group.mImage.mData != NULL) {
-		chanImage.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
+		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage);
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}

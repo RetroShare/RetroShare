@@ -24,6 +24,8 @@
 #include <QMutexLocker>
 
 #include <math.h>
+#include <util/rsdir.h>
+#include "gui/common/AvatarDialog.h"
 #include "GxsIdDetails.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
@@ -66,7 +68,7 @@
 
 uint32_t GxsIdDetails::mImagesAllocated = 0;
 time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
-std::map<RsGxsId,std::pair<time_t,QImage> > GxsIdDetails::mDefaultIconCache ;
+std::map<RsGxsId,std::pair<time_t,QPixmap> > GxsIdDetails::mDefaultIconCache ;
 
 #define ICON_CACHE_STORAGE_TIME 		  600
 #define DELAY_BETWEEN_ICON_CACHE_CLEANING 300
@@ -457,12 +459,35 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-const QImage& GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 {
+    checkCleanImagesCache();
+
     // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
     // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
     // on a regular time basis so as to get rid of unused images.
 
+    time_t now = time(NULL);
+
+    // now look for the icon
+
+    auto it = mDefaultIconCache.find(id);
+
+    if(it != mDefaultIconCache.end())
+    {
+        it->second.first = now;
+        return it->second.second;
+    }
+
+    QPixmap image = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+
+    mDefaultIconCache[id] = std::make_pair(now,image);
+
+    return image;
+}
+
+void GxsIdDetails::checkCleanImagesCache()
+{
     time_t now = time(NULL);
 
     // cleanup the cache every 10 mins
@@ -484,25 +509,50 @@ const QImage& GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
         mLastIconCacheCleaning = now;
         std::cerr << "(II) Removed " << nb_deleted << " unused icons. Cache contains " << mDefaultIconCache.size() << " icons"<< std::endl;
     }
+}
+
+
+bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,QPixmap& pixmap)
+{
+    // The trick below converts the data into an Id that can be read in the image cache. Because this method is mainly dedicated to loading
+    // avatars, we could also use the GxsId as id, but the avatar may change in time, so we actually need to make the id from the data itself.
+
+    assert(Sha1CheckSum::SIZE_IN_BYTES >= RsGxsId::SIZE_IN_BYTES);
+
+    Sha1CheckSum chksum = RsDirUtil::sha1sum(data,data_len);
+    RsGxsId id(chksum.toByteArray());
+
+    // We use a cache for images. QImage has its own smart pointer system, but it does not prevent
+    // the same image to be allocated many times. We do this using a cache. The cache is also cleaned-up
+    // on a regular time basis so as to get rid of unused images.
+
+    checkCleanImagesCache();
 
     // now look for the icon
 
+    time_t now = time(NULL);
     auto it = mDefaultIconCache.find(id);
 
     if(it != mDefaultIconCache.end())
     {
         it->second.first = now;
-        return it->second.second;
+		pixmap = it->second.second;
+
+        return true;
     }
 
-    QImage image = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    if(! pixmap.loadFromData(data,data_len))
+        return false;
 
-    mDefaultIconCache[id] = std::make_pair(now,image);
-    it = mDefaultIconCache.find(id);
+    // This resize is here just to prevent someone to explicitely add a huge blank image to screw up the UI
 
-    return it->second.second;
+    if(pixmap.width() != AvatarDialog::RS_AVATAR_IMAGE_W || pixmap.height() != AvatarDialog::RS_AVATAR_IMAGE_H)
+		pixmap = pixmap.scaled(AvatarDialog::RS_AVATAR_IMAGE_W,AvatarDialog::RS_AVATAR_IMAGE_H,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+
+    mDefaultIconCache[id] = std::make_pair(now,pixmap);
+
+    return true;
 }
-
 /**
  * @brief GxsIdDetails::getSprite
  * @param shapeType: type of shape (0 to 15)
@@ -820,7 +870,7 @@ void GxsIdDetails::drawRotatedPolygon( QPixmap *pixmap,
  * @param rotate: If the shapes could be rotated
  * @return QImage of computed hash
  */
-QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
+QPixmap GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 {
 	bool ok;
 	quint8 csh = hash.mid(0, 1).toInt(&ok,16);// Corner sprite shape
@@ -881,7 +931,7 @@ QImage GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 	}
 	drawRotatedPolygon(&pixmap, center, size, size, 0, 0, size, fillCenter);
 
-	return pixmap.toImage();
+	return pixmap;
 }
 
 //static bool CreateIdIcon(const RsGxsId &id, QIcon &idIcon)
@@ -1089,11 +1139,11 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 
     if(icon_types & ICON_TYPE_AVATAR)
     {
-        if(details.mAvatar.mSize == 0 || !pix.loadFromData(details.mAvatar.mData, details.mAvatar.mSize, "PNG"))
+        if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, pix))
 #if QT_VERSION < 0x040700
-            pix = QPixmap::fromImage(makeDefaultIcon(details.mId));
+            pix = makeDefaultIcon(details.mId);
 #else
-            pix.convertFromImage(makeDefaultIcon(details.mId));
+            pix = makeDefaultIcon(details.mId);
 #endif
 
 

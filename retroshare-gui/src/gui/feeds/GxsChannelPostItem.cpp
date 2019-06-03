@@ -22,6 +22,7 @@
 #include <QFileInfo>
 #include <QStyle>
 
+#include "gui/gxs/GxsIdDetails.h"
 #include "rshare.h"
 #include "GxsChannelPostItem.h"
 #include "ui_GxsChannelPostItem.h"
@@ -392,7 +393,7 @@ void GxsChannelPostItem::fill()
 	if(mPost.mThumbnail.mData != NULL)
 	{
 		QPixmap thumbnail;
-		thumbnail.loadFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, "PNG");
+		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail);
 		// Wiping data - as its been passed to thumbnail.
 		ui->logoLabel->setPixmap(thumbnail);
 	}

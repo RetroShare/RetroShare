@@ -23,6 +23,7 @@
 
 #include "FeedHolder.h"
 #include "gui/RetroShareLink.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 /****
  * #define DEBUG_ITEM 1
@@ -137,7 +138,7 @@ void PostedGroupItem::fill()
 	
 	if (mGroup.mGroupImage.mData != NULL) {
 		QPixmap postedImage;
-		postedImage.loadFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, "PNG");
+		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
 		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));

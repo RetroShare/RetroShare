@@ -25,6 +25,7 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 
 #include "ui_PostedItem.h"
@@ -255,7 +256,7 @@ void PostedItem::fill()
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
-		pixmap.loadFromData(mPost.mImage.mData, mPost.mImage.mSize, "PNG");
+		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap);
 		// Wiping data - as its been passed to thumbnail.
 		
 		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);

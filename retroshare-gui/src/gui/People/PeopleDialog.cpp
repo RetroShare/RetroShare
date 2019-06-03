@@ -426,15 +426,15 @@ void PeopleDialog::iw_AddButtonClickedExt()
 {
 	IdentityWidget *dest=
 	    qobject_cast<IdentityWidget *>(QObject::sender());
-	if (dest) {
+	if (dest)
+    {
 		QMenu contextMnu( this );
 		
 		QMenu *mnu = contextMnu.addMenu(QIcon(":/icons/png/circles.png"),tr("Invite to Circle")) ;
 
 		std::map<RsGxsGroupId, CircleWidget*>::iterator itCurs;
-		for( itCurs =_ext_circles_widgets.begin();
-		     itCurs != _ext_circles_widgets.end();
-		     ++itCurs) {
+		for( itCurs =_ext_circles_widgets.begin(); itCurs != _ext_circles_widgets.end(); ++itCurs)
+        {
 			CircleWidget *curs = itCurs->second;
 			QIcon icon = QIcon(curs->getImage());
 			QString name = curs->getName();
@@ -442,7 +442,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			QAction *action = mnu->addAction(icon, name, this, SLOT(addToCircleExt()));
 			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
 			                + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
-		}//for( itCurs =_ext_circles_widgets.begin();
+		}
 		
 		  std::list<RsGxsId> own_identities ;
       rsIdentity->getOwnIds(own_identities) ;
@@ -467,8 +467,8 @@ void PeopleDialog::iw_AddButtonClickedExt()
 
 					QPixmap pixmap ;
 
-					if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-						pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+					if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap))
+						pixmap = GxsIdDetails::makeDefaultIcon(*it) ;
 
 					QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
 					action->setData(QString::fromStdString((*it).toStdString()) + ";" + QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString())) ;
@@ -492,7 +492,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			actionDetails->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 
 		contextMnu.exec(QCursor::pos());
-	}//if (dest)
+	}
 }
 
 void PeopleDialog::iw_AddButtonClickedInt()
@@ -513,10 +513,10 @@ void PeopleDialog::iw_AddButtonClickedInt()
 			QAction *action = contextMnu.addAction(icon, name, this, SLOT(addToCircleInt()));
 			action->setData(QString::fromStdString(curs->groupInfo().mGroupId.toStdString())
 			                + ";" + QString::fromStdString(dest->details().gpg_id.toStdString()));
-		}//for( itCurs =_int_circles_widgets.begin();
+		}
 
 		contextMnu.exec(QCursor::pos());
-	}//if (dest)
+	}
 }
 
 void PeopleDialog::addToCircleExt()
