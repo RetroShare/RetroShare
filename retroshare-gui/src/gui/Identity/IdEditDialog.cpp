@@ -258,7 +258,7 @@ void IdEditDialog::loadExistingId(uint32_t token)
 
 	QPixmap avatar;
 	if (mEditGroup.mImage.mSize > 0)
-		GxsIdDetails::loadPixmapFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, avatar);
+		GxsIdDetails::loadPixmapFromData(mEditGroup.mImage.mData, mEditGroup.mImage.mSize, avatar,GxsIdDetails::LARGE);
 
 	setAvatar(avatar);
 

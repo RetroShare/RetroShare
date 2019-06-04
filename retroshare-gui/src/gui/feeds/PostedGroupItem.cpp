@@ -138,7 +138,7 @@ void PostedGroupItem::fill()
 	
 	if (mGroup.mGroupImage.mData != NULL) {
 		QPixmap postedImage;
-		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage);
+		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
 		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));

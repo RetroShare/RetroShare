@@ -393,7 +393,7 @@ void GxsChannelPostItem::fill()
 	if(mPost.mThumbnail.mData != NULL)
 	{
 		QPixmap thumbnail;
-		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail);
+		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 		ui->logoLabel->setPixmap(thumbnail);
 	}

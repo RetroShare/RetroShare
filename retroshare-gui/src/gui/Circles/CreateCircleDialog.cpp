@@ -270,8 +270,8 @@ void CreateCircleDialog::addMember(const RsGxsIdGroup &idGroup)
 
 	QPixmap pixmap ;
 
-	if(idGroup.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idGroup.mImage.mData, idGroup.mImage.mSize, pixmap))
-		pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId));
+	if(idGroup.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idGroup.mImage.mData, idGroup.mImage.mSize, pixmap, GxsIdDetails::SMALL))
+		pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId),GxsIdDetails::SMALL);
 
 	if (idGroup.mPgpKnown){
 		RsPeerDetails details;
@@ -331,8 +331,8 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 
 			QPixmap pixmap ;
 
-			if(gxs_details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(gxs_details.mAvatar.mData, gxs_details.mAvatar.mSize, pixmap))
-				pixmap = GxsIdDetails::makeDefaultIcon(gxs_details.mId);
+			if(gxs_details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(gxs_details.mAvatar.mData, gxs_details.mAvatar.mSize, pixmap, GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(gxs_details.mId,GxsIdDetails::SMALL);
 
 			addMember(keyId, idtype, nickname, QIcon(pixmap));
 
@@ -814,8 +814,8 @@ void CreateCircleDialog::loadIdentities(uint32_t token)
 
 		QPixmap pixmap ;
 
-		if(idGroup.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idGroup.mImage.mData, idGroup.mImage.mSize, pixmap))
-			pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId)) ;
+		if(idGroup.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idGroup.mImage.mData, idGroup.mImage.mSize, pixmap, GxsIdDetails::SMALL))
+			pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId),GxsIdDetails::SMALL) ;
 
 		if (idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 		{

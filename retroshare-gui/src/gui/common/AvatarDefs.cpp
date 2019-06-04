@@ -41,7 +41,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 	}
 
 	/* load image */
-	GxsIdDetails::loadPixmapFromData(data, size, avatar) ;
+	GxsIdDetails::loadPixmapFromData(data, size, avatar,GxsIdDetails::ORIGINAL) ;
 
 	free(data);
 }
@@ -58,7 +58,7 @@ void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     }
 
     /* load image */
-    GxsIdDetails::loadPixmapFromData(data, size, avatar) ;
+    GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
 
     free(data);
 }
@@ -77,8 +77,8 @@ void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
 
     /* load image */
 
-        if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar))
-            avatar = GxsIdDetails::makeDefaultIcon(gxsId);
+        if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar,GxsIdDetails::LARGE))
+            avatar = GxsIdDetails::makeDefaultIcon(gxsId,GxsIdDetails::LARGE);
 }
 
 void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)

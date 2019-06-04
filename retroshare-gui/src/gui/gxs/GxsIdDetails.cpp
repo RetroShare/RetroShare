@@ -68,10 +68,10 @@
 
 uint32_t GxsIdDetails::mImagesAllocated = 0;
 time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
-std::map<RsGxsId,std::pair<time_t,QPixmap> > GxsIdDetails::mDefaultIconCache ;
+std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultIconCache ;
 
-#define ICON_CACHE_STORAGE_TIME 		  600
-#define DELAY_BETWEEN_ICON_CACHE_CLEANING 300
+#define ICON_CACHE_STORAGE_TIME 		  60
+#define DELAY_BETWEEN_ICON_CACHE_CLEANING 30
 
 void ReputationItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -459,7 +459,7 @@ static bool findTagIcon(int tag_class, int /*tag_type*/, QIcon &icon)
  * Bring the source code from this adaptation:
  * http://francisshanahan.com/identicon5/test.html
  */
-const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
+const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
 {
     checkCleanImagesCache();
 
@@ -471,17 +471,28 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id)
 
     // now look for the icon
 
-    auto it = mDefaultIconCache.find(id);
+    auto& it = mDefaultIconCache[id];
 
-    if(it != mDefaultIconCache.end())
+    if(it[(int)size].second.width() > 0)
     {
-        it->second.first = now;
-        return it->second.second;
+        it[(int)size].first = now;
+        return it[(int)size].second;
     }
 
-    QPixmap image = drawIdentIcon(QString::fromStdString(id.toStdString()),64*3, true);
+    int S =0;
 
-    mDefaultIconCache[id] = std::make_pair(now,image);
+    switch(size)
+    {
+    	case SMALL:  S = 16*3 ; break;
+    default:
+    	case MEDIUM: S = 32*3 ; break;
+    	case ORIGINAL:
+    	case LARGE:  S = 64*3 ; break;
+    }
+
+    QPixmap image = drawIdentIcon(QString::fromStdString(id.toStdString()),S,true);
+
+    it[(int)size] = std::make_pair(now,image);
 
     return image;
 }
@@ -498,13 +509,26 @@ void GxsIdDetails::checkCleanImagesCache()
         int nb_deleted = 0;
 
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
-            if(it->second.first + ICON_CACHE_STORAGE_TIME < now && it->second.second.isDetached())
-            {
+        {
+            bool all_empty = true ;
+
+            for(int i=0;i<4;++i)
+				if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
+				{
+                    it->second[i].second = QPixmap();
+
+					std::cerr << "Deleting pixmap " << it->first << " size " << i << std::endl;
+					it = mDefaultIconCache.erase(it);
+					++nb_deleted;
+				}
+				else
+					all_empty = false;
+
+            if(all_empty)
 				it = mDefaultIconCache.erase(it);
-                ++nb_deleted;
-            }
 			else
 				++it;
+        }
 
         mLastIconCacheCleaning = now;
         std::cerr << "(II) Removed " << nb_deleted << " unused icons. Cache contains " << mDefaultIconCache.size() << " icons"<< std::endl;
@@ -512,7 +536,7 @@ void GxsIdDetails::checkCleanImagesCache()
 }
 
 
-bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,QPixmap& pixmap)
+bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,QPixmap& pixmap, AvatarSize size)
 {
     // The trick below converts the data into an Id that can be read in the image cache. Because this method is mainly dedicated to loading
     // avatars, we could also use the GxsId as id, but the avatar may change in time, so we actually need to make the id from the data itself.
@@ -531,12 +555,12 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
     // now look for the icon
 
     time_t now = time(NULL);
-    auto it = mDefaultIconCache.find(id);
+    auto& it = mDefaultIconCache[id];
 
-    if(it != mDefaultIconCache.end())
+    if(it[(int)size].second.width() > 0)
     {
-        it->second.first = now;
-		pixmap = it->second.second;
+        it[(int)size].first = now;
+		pixmap = it[(int)size].second;
 
         return true;
     }
@@ -546,11 +570,23 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
 
     // This resize is here just to prevent someone to explicitely add a huge blank image to screw up the UI
 
-    if(pixmap.width() != AvatarDialog::RS_AVATAR_IMAGE_W || pixmap.height() != AvatarDialog::RS_AVATAR_IMAGE_H)
-		pixmap = pixmap.scaled(AvatarDialog::RS_AVATAR_IMAGE_W,AvatarDialog::RS_AVATAR_IMAGE_H,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+    int wanted_S=0;
 
-    mDefaultIconCache[id] = std::make_pair(now,pixmap);
+    switch(size)
+    {
+    case ORIGINAL:  wanted_S = 0   ;break;
+    case SMALL:     wanted_S = 32  ;break;
+    default:
+    case MEDIUM:    wanted_S = 64  ;break;
+    case LARGE:     wanted_S = 128 ;break;
+    }
 
+    if(wanted_S > 0)
+		pixmap = pixmap.scaled(wanted_S,wanted_S,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+
+    mDefaultIconCache[id][(int)size] = std::make_pair(now,pixmap);
+
+    std::cerr << "Allocated new icon " << id << " size " << (int)size << std::endl;
     return true;
 }
 /**

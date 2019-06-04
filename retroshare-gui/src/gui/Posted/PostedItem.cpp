@@ -256,7 +256,7 @@ void PostedItem::fill()
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
-		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap);
+		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 		
 		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);

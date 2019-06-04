@@ -160,8 +160,8 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
                 return RSTreeWidgetItem::data(column, role);
 			else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
 				pix = QPixmap(BANNED_IMAGE);
-			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix) )
-				pix = GxsIdDetails::makeDefaultIcon(mId);
+			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
+				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 
 			int S = QFontMetricsF(font(column)).height();
 

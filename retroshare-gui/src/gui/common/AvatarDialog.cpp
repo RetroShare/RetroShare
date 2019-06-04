@@ -45,8 +45,8 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	updateInterface();
 }
 
-const int AvatarDialog::RS_AVATAR_IMAGE_W = 128;
-const int AvatarDialog::RS_AVATAR_IMAGE_H = 128;
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W = 64;
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H = 64;
 
 AvatarDialog::~AvatarDialog()
 {
@@ -55,7 +55,7 @@ AvatarDialog::~AvatarDialog()
 
 void AvatarDialog::changeAvatar()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), RS_AVATAR_IMAGE_W,RS_AVATAR_IMAGE_H);
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load Avatar"), RS_AVATAR_DEFAULT_IMAGE_W,RS_AVATAR_DEFAULT_IMAGE_H);
 
 	if (img.isNull())
 		return;

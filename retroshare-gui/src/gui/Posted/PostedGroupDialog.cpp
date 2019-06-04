@@ -164,7 +164,7 @@ bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroup
 	
 	if (group.mGroupImage.mData) {
 		QPixmap pixmap;
-		if (GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, pixmap))
+		if (GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, pixmap,GxsIdDetails::ORIGINAL))
 			setLogo(pixmap);
 
 	} else {
