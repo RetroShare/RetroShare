@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#ifdef UNUSED_CODE
 #include <gui/gxs/GxsIdDetails.h>
 #include <util/PixmapMerging.h>
 
@@ -39,3 +40,5 @@ QPixmap PixmapMerging::merge(const std::string & foregroundPixmapData, const std
 
 	return backgroundPixmap;
 }
+
+#endif
