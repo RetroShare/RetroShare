@@ -507,6 +507,8 @@ void GxsIdDetails::checkCleanImagesCache()
     {
         std::cerr << "(II) Cleaning the icons cache." << std::endl;
         int nb_deleted = 0;
+        uint32_t size_deleted = 0;
+        uint32_t total_size = 0;
 
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
@@ -515,14 +517,20 @@ void GxsIdDetails::checkCleanImagesCache()
             for(int i=0;i<4;++i)
 				if(it->second[i].first + ICON_CACHE_STORAGE_TIME < now && it->second[i].second.isDetached())
 				{
-                    it->second[i].second = QPixmap();
+                    int s = it->second[i].second.width()*it->second[i].second.height()*4;
 
-					std::cerr << "Deleting pixmap " << it->first << " size " << i << std::endl;
+					std::cerr << "Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
+
+                    it->second[i].second = QPixmap();
 					it = mDefaultIconCache.erase(it);
 					++nb_deleted;
+                    size_deleted += s;
 				}
 				else
+                {
 					all_empty = false;
+                    total_size += it->second[i].second.width()*it->second[i].second.height()*4;
+                }
 
             if(all_empty)
 				it = mDefaultIconCache.erase(it);
@@ -531,7 +539,7 @@ void GxsIdDetails::checkCleanImagesCache()
         }
 
         mLastIconCacheCleaning = now;
-        std::cerr << "(II) Removed " << nb_deleted << " unused icons. Cache contains " << mDefaultIconCache.size() << " icons"<< std::endl;
+        std::cerr << "(II) Removed " << nb_deleted << " (" << size_deleted << " bytes) unused icons. Cache contains " << mDefaultIconCache.size() << " icons (" << total_size << " bytes)"<< std::endl;
     }
 }
 
