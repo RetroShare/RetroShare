@@ -772,7 +772,7 @@ void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
     for(std::list<RsGxsFile>::const_iterator it(post.mFiles.begin());it!=post.mFiles.end();++it)
         addAttachment(it->mHash,it->mName,it->mSize,true,RsPeerId(),true);
 
-    GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture);
+    GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData,post.mThumbnail.mSize,picture,GxsIdDetails::ORIGINAL);
 	thumbnail_label->setPixmap(picture);
 }
 

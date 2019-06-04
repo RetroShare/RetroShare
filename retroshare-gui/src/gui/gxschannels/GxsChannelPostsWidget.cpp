@@ -239,7 +239,7 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 	/* IMAGE */
 	QPixmap chanImage;
 	if (group.mImage.mData != NULL) {
-		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage);
+		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}

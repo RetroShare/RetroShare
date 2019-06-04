@@ -181,7 +181,7 @@ bool GxsChannelGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsG
 	if (group.mImage.mData) {
 		QPixmap pixmap;
 
-		if (GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize,pixmap)) {
+		if (GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize,pixmap,GxsIdDetails::ORIGINAL)) {
 			setLogo(pixmap);
 		}
 	}
