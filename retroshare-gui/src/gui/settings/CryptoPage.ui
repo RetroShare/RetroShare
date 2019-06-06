@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>989</width>
+    <width>1531</width>
     <height>678</height>
    </rect>
   </property>
@@ -457,6 +457,13 @@
           <widget class="QCheckBox" name="_includeSignatures_CB">
            <property name="text">
             <string>Include signatures</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_shortFormat_CB">
+           <property name="text">
+            <string>Short format</string>
            </property>
           </widget>
          </item>

@@ -1129,6 +1129,7 @@ enum class RsShortInviteFieldType : uint8_t
 	SSL_ID          = 0x00,
 	PEER_NAME       = 0x01,
 	LOCATOR         = 0x02,
+	PGP_FINGERPRINT = 0x03,
 
 	/* The following will be deprecated, and ported to LOCATOR when generic
 	 * trasport layer will be implemented */
@@ -1155,6 +1156,10 @@ bool p3Peers::getShortInvite(
 	RsShortInviteFieldType tType = RsShortInviteFieldType::SSL_ID;
 	RS_SERIAL_PROCESS(tType);
 	RS_SERIAL_PROCESS(sslId);
+
+	tType = RsShortInviteFieldType::PGP_FINGERPRINT;
+	RS_SERIAL_PROCESS(tType);
+	RS_SERIAL_PROCESS(tDetails.fpr);
 
 	tType = RsShortInviteFieldType::PEER_NAME;
 	RS_SERIAL_PROCESS(tType);
@@ -1220,8 +1225,7 @@ bool p3Peers::getShortInvite(
 	return ctx.mOk;
 }
 
-bool p3Peers::parseShortInvite(
-            const std::string& inviteStrUrl, RsPeerDetails& details )
+bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& details )
 {
 	if(inviteStrUrl.empty())
 	{
@@ -1261,6 +1265,11 @@ bool p3Peers::parseShortInvite(
 		case RsShortInviteFieldType::PEER_NAME:
 			RS_SERIAL_PROCESS(details.name);
 			break;
+
+        case RsShortInviteFieldType::PGP_FINGERPRINT:
+			RS_SERIAL_PROCESS(details.fpr);
+            break;
+
 		case RsShortInviteFieldType::LOCATOR:
 		{
 			std::string locatorStr;

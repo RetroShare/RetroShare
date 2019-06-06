@@ -48,7 +48,8 @@
 HomePage::HomePage(QWidget *parent) :
 	MainPage(parent),
 	ui(new Ui::HomePage),
-    mIncludeAllIPs(false)
+    mIncludeAllIPs(false),
+    mUseShortFormat(true)
 {
     ui->setupUi(this);
 
@@ -109,11 +110,19 @@ void HomePage::certContextMenu(QPoint point)
     menu.addAction(CopyAction);
     menu.addAction(SaveAction);
 
+	QAction *shortFormatAct = new QAction(QIcon(), tr("Use new (short) certificate format"),this);
+	connect(shortFormatAct, SIGNAL(triggered()), this, SLOT(toggleUseShortFormat()));
+	shortFormatAct->setCheckable(true);
+	shortFormatAct->setChecked(mUseShortFormat);
+
+	menu.addAction(shortFormatAct);
+
     if(!RsAccounts::isHiddenNode())
 	{
-		QAction *includeIPsAct = new QAction(QIcon(), mIncludeAllIPs? tr("Include only current IP"):tr("Include all your known IPs"),this);
+		QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
 		connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
 		includeIPsAct->setCheckable(true);
+		includeIPsAct->setChecked(mIncludeAllIPs);
 
 		menu.addAction(includeIPsAct);
 	}
@@ -121,6 +130,11 @@ void HomePage::certContextMenu(QPoint point)
     menu.exec(QCursor::pos());
 }
 
+void HomePage::toggleUseShortFormat()
+{
+    mUseShortFormat = !mUseShortFormat;
+    updateOwnCert();
+}
 void HomePage::toggleIncludeAllIPs()
 {
     mIncludeAllIPs = !mIncludeAllIPs;
@@ -144,11 +158,16 @@ void HomePage::updateOwnCert()
         return ;
     }
 
-	std::string invite = rsPeers->GetRetroshareInvite(detail.id,false,include_extra_locators);
+	std::string invite ;
+
+    if(mUseShortFormat)
+		rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
+	else
+		invite = rsPeers->GetRetroshareInvite(detail.id,false,include_extra_locators);
 
 	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
 
-    QString description = ConfCertDialog::getCertificateDescription(detail,false,include_extra_locators);
+    QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
 
 	ui->userCertEdit->setToolTip(description);
 }
