@@ -398,6 +398,7 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
 
     // now look for the icon
 
+    QMutexLocker lock(&mInstance->mMutex);
     auto& it = mDefaultIconCache[id];
 
     if(it[(int)size].second.width() > 0)
@@ -436,6 +437,8 @@ void GxsIdDetails::checkCleanImagesCache()
         int nb_deleted = 0;
         uint32_t size_deleted = 0;
         uint32_t total_size = 0;
+
+        QMutexLocker lock(&mInstance->mMutex);
 
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
@@ -488,6 +491,8 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
     checkCleanImagesCache();
 
     // now look for the icon
+
+    QMutexLocker lock(&mInstance->mMutex);
 
     time_t now = time(NULL);
     auto& it = mDefaultIconCache[id];
