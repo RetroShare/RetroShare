@@ -70,6 +70,9 @@ uint32_t GxsIdDetails::mImagesAllocated = 0;
 time_t GxsIdDetails::mLastIconCacheCleaning = time(NULL);
 std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > GxsIdDetails::mDefaultIconCache ;
 
+QMutex GxsIdDetails::mMutex;
+QMutex GxsIdDetails::mIconCacheMutex;
+
 #define ICON_CACHE_STORAGE_TIME 		  240
 #define DELAY_BETWEEN_ICON_CACHE_CLEANING 120
 
@@ -186,7 +189,8 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 			killTimer(mCheckTimerId);
 			mCheckTimerId = 0;
 
-			if (rsIdentity) {
+            if (rsIdentity)
+            {
 				QMutexLocker lock(&mMutex);
 
 				if (mProcessDisableCount == 0) {
@@ -238,14 +242,14 @@ void GxsIdDetails::timerEvent(QTimerEvent *event)
 				}
 			}
 
-			QMutexLocker lock(&mMutex);
+            bool empty = false ;
+            {
+                QMutexLocker lock(&mMutex);
+                empty = mPendingData.empty();
+            }
 
-			if (mPendingData.empty()) {
-				/* All done */
-			} else {
-				/* Start timer */
+            if (!empty)  /* Start timer */
 				doStartTimer();
-			}
 		}
 	}
 
@@ -268,7 +272,7 @@ void GxsIdDetails::enableProcess(bool enable)
 		return;
 	}
 
-	QMutexLocker lock(&mInstance->mMutex);
+    QMutexLocker lock(&mMutex);
 
 	if (enable) {
 		--mInstance->mProcessDisableCount;
@@ -294,7 +298,7 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 
     	// remove any existing call for this object. This is needed for when the same widget is used to display IDs that vary in time.
 	{
-		QMutexLocker lock(&mInstance->mMutex);
+        QMutexLocker lock(&mMutex);
 
         	// check if a pending request is not already on its way. If so, replace it.
         
@@ -341,7 +345,7 @@ bool GxsIdDetails::process(const RsGxsId &id, GxsIdDetailsCallbackFunction callb
 	pendingData.mData = data;
 
 	{
-		QMutexLocker lock(&mInstance->mMutex);
+        QMutexLocker lock(&mMutex);
 
         	// check if a pending request is not already on its way. If so, replace it.
         
@@ -398,7 +402,7 @@ const QPixmap GxsIdDetails::makeDefaultIcon(const RsGxsId& id, AvatarSize size)
 
     // now look for the icon
 
-    QMutexLocker lock(&mInstance->mMutex);
+    QMutexLocker lock(&mIconCacheMutex);
     auto& it = mDefaultIconCache[id];
 
     if(it[(int)size].second.width() > 0)
@@ -438,7 +442,7 @@ void GxsIdDetails::checkCleanImagesCache()
         uint32_t size_deleted = 0;
         uint32_t total_size = 0;
 
-        QMutexLocker lock(&mInstance->mMutex);
+        QMutexLocker lock(&mIconCacheMutex);
 
         for(auto it(mDefaultIconCache.begin());it!=mDefaultIconCache.end();)
         {
@@ -492,7 +496,7 @@ bool GxsIdDetails::loadPixmapFromData(const unsigned char *data,size_t data_len,
 
     // now look for the icon
 
-    QMutexLocker lock(&mInstance->mMutex);
+    QMutexLocker lock(&mIconCacheMutex);
 
     time_t now = time(NULL);
     auto& it = mDefaultIconCache[id];

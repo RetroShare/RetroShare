@@ -176,7 +176,8 @@ protected:
 	int mProcessDisableCount;
 
 	/* Thread safe */
-	QMutex mMutex;
+    static QMutex mMutex;
+    static QMutex mIconCacheMutex;
 };
 
 #endif
