@@ -311,7 +311,7 @@ bool AuthSSLimpl::active() { return init; }
 
 int AuthSSLimpl::InitAuth(
         const char* cert_file, const char* priv_key_file, const char* passwd,
-        std::string /*alternative_location_name*/ )
+        std::string locationName )
 {
 	/* single call here si don't need to invoke mutex yet */
 	static int initLib = 0;
@@ -520,6 +520,8 @@ int AuthSSLimpl::InitAuth(
 	else
 		std::cerr << std::endl;
 
+	mOwnLocationName = locationName;
+
 	init = 1;
 	return 1;
 }
@@ -575,7 +577,7 @@ const RsPeerId& AuthSSLimpl::OwnId()
 }
 
 std::string AuthSSLimpl::getOwnLocation()
-{ return RsX509Cert::getCertLocation(*mOwnCert); }
+{ return mOwnLocationName; }
 
 std::string AuthSSLimpl::SaveOwnCertificateToString()
 { return saveX509ToPEM(mOwnCert); }

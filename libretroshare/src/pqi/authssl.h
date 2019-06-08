@@ -98,7 +98,7 @@ public:
 	virtual bool active() = 0;
 	virtual int InitAuth(
 	        const char* srvr_cert, const char* priv_key, const char* passwd,
-	        std::string alternative_location_name ) = 0;
+	        std::string locationName ) = 0;
 	virtual bool CloseAuth() = 0;
 
 	/*********** Overloaded Functions from p3AuthMgr **********/
@@ -198,7 +198,7 @@ public:
 
 	bool active() override;
 	int InitAuth( const char *srvr_cert, const char *priv_key,
-	              const char *passwd, std::string alternative_location_name )
+	              const char *passwd, std::string locationName )
 	override;
 
 	bool CloseAuth() override;
@@ -277,6 +277,14 @@ private:
 	SSL_CTX *sslctx;
 	RsPeerId mOwnId;
 	X509* mOwnCert;
+
+	/**
+	 * If the location name is included in SSL certificate it becomes a public
+	 * information, because anyone able to open an SSL connection to the host is
+	 * able to read it. To avoid that location name is now stored separately and
+	 * and not included in the SSL certificate.
+	 */
+	std::string mOwnLocationName;
 
 	RsMutex sslMtx;  /* protects all below */
 
