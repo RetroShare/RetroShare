@@ -56,7 +56,7 @@ HomePage::HomePage(QWidget *parent) :
 	updateOwnCert();
 		
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-	connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
+	//connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
 	
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
@@ -76,11 +76,9 @@ HomePage::HomePage(QWidget *parent) :
 
     QObject::connect(ui->userCertEdit,SIGNAL(customContextMenuRequested(QPoint)),this,SLOT(certContextMenu(QPoint)));
 
-    connect(ui->runStartWizard_PB,SIGNAL(clicked()), this,SLOT(runStartWizard())) ;
 	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
-	ui->runStartWizard_PB->hide(); // until future rework
-	ui->LoadCertFileButton->hide(); // duplicates functionality => not good.
+	//ui->LoadCertFileButton->hide(); // duplicates functionality => not good.
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -251,18 +249,13 @@ void HomePage::webMail()
     connwiz.exec ();
 }
 
-void HomePage::loadCert()
-{
-    ConnectFriendWizard connwiz (this);
-
-    connwiz.setStartId(ConnectFriendWizard::Page_Cert);
-    connwiz.exec ();
-}
-
-void HomePage::runStartWizard()
-{
-    QuickStartWizard(this).exec();
-}
+// void HomePage::loadCert()
+// {
+//     ConnectFriendWizard connwiz (this);
+//
+//     connwiz.setStartId(ConnectFriendWizard::Page_Cert);
+//     connwiz.exec ();
+// }
 
 void HomePage::openWebHelp()
 {
