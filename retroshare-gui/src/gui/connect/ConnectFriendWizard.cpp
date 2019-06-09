@@ -418,22 +418,6 @@ void ConnectFriendWizard::initializePage(int id)
 		break;
 	case Page_WebMail:
 
-	case Page_Email:
-		{
-		ui->EmailPage->registerField("addressEdit*", ui->addressEdit);
-		ui->EmailPage->registerField("subjectEdit*", ui->subjectEdit);
-
-		ui->subjectEdit->setText(tr("RetroShare Invitation"));
-		ui->inviteTextEdit->setPlainText(GetStartedDialog::GetInviteText());
-		
-		QString body = ui->inviteTextEdit->toPlainText();
-
-		body += "\n" + GetStartedDialog::GetCutBelowText();
-		body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
-
-		ui->inviteTextEdit->setPlainText(body);
-		}
-		break;
 	case Page_ErrorMessage:
 		break;
 	case Page_Conclusion:
@@ -762,21 +746,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 			break;
 		}
-	case Page_Email:
-		{
-			QString mailaddresses = ui->addressEdit->text();
-			if (mailaddresses.isEmpty()) {
-				return false;
-			}
-
-			QString body = ui->inviteTextEdit->toPlainText();
-
-			body += "\n" + GetStartedDialog::GetCutBelowText();
-			body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
-
-			sendMail (mailaddresses, ui->subjectEdit->text(), body);
-		}
-		break;
 	case Page_ErrorMessage:
 		break;
 	case Page_Conclusion:
@@ -817,7 +786,6 @@ int ConnectFriendWizard::nextId() const
 	case Page_Text:
 	case Page_Cert:
 	case Page_WebMail:
-	case Page_Email:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
 	case Page_FriendRequest:
@@ -1309,9 +1277,9 @@ void ConnectFriendWizard::signAllSelectedUsers()
 
 //============================= RsidPage =====================================
 
-#endif
 
 //============================ Emailpage =====================================
+#endif
 
 //========================= ErrorMessagePage =================================
 

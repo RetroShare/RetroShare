@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>604</height>
+    <width>1161</width>
+    <height>817</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -574,58 +574,6 @@
        </size>
       </property>
      </spacer>
-    </item>
-   </layout>
-  </widget>
-  <widget class="ConnectFriendPage" name="EmailPage">
-   <property name="title">
-    <string>Invite Friends by Email</string>
-   </property>
-   <property name="subTitle">
-    <string>Enter your friends' email addresses (separate each one with a semicolon)</string>
-   </property>
-   <attribute name="pageId">
-    <string notr="true">ConnectFriendWizard::Page_Email</string>
-   </attribute>
-   <layout class="QVBoxLayout" name="EmailPageVLayout">
-    <item>
-     <layout class="QHBoxLayout" name="addressHLayout">
-      <item>
-       <widget class="QLabel" name="addressLabel">
-        <property name="text">
-         <string>Your friends' email addresses:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="addressEdit">
-        <property name="whatsThis">
-         <string>Enter Friends Email addresses</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="subjectHLayout">
-      <item>
-       <widget class="QLabel" name="subjectLabel">
-        <property name="text">
-         <string>Subject:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLineEdit" name="subjectEdit"/>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QPlainTextEdit" name="inviteTextEdit">
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>

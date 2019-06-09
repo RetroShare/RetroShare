@@ -50,7 +50,7 @@ class ConnectFriendWizard : public QWizard
 	Q_PROPERTY(QString titleColor READ titleColor WRITE setTitleColor)
 
 public:
-	enum Page { Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_WebMail, Page_Email, Page_FriendRequest, Page_FriendRecommendations };
+	enum Page { Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_WebMail, Page_FriendRequest, Page_FriendRecommendations };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
