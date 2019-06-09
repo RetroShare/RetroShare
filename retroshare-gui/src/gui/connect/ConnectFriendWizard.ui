@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>1100</width>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,7 +45,7 @@
     <item>
      <widget class="QRadioButton" name="foffRadioButton">
       <property name="text">
-       <string>&amp;Make friend with selected friends of my friends</string>
+       <string>Ma&amp;ke friend with selected friends of my friends</string>
       </property>
      </widget>
     </item>
@@ -59,7 +59,7 @@
     <item>
      <widget class="QRadioButton" name="webmailRadioButton">
       <property name="text">
-       <string>&amp;Send an Invitation by Web Mail Providers</string>
+       <string>Send an In&amp;vitation by Web Mail Providers</string>
       </property>
      </widget>
     </item>
@@ -1503,6 +1503,12 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>AvatarWidget</class>
+   <extends>QLabel</extends>
+   <header>gui/common/AvatarWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
@@ -1511,12 +1517,6 @@
    <class>FriendSelectionWidget</class>
    <extends>QWidget</extends>
    <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>AvatarWidget</class>
-   <extends>QLabel</extends>
-   <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -1537,8 +1537,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

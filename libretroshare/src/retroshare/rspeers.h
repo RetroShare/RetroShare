@@ -205,6 +205,14 @@ std::string RsPeerNetModeString(uint32_t netModel);
 std::string RsPeerLastConnectString(uint32_t lastConnect);
 
 
+/* We should definitely split this into 2 sub-structures:
+ *    PGP info (or profile info) with all info related to PGP keys
+ *    peer info:  all network related information
+ *
+ *   Plus top level information:
+ *    isOnlyPgpDetail  (this could be obsolete if the methods to query about PGP info is a different function)
+ *    peer Id
+ */
 struct RsPeerDetails : RsSerializable
 {
 	RsPeerDetails();
@@ -228,6 +236,7 @@ struct RsPeerDetails : RsSerializable
 	uint32_t trustLvl;
 	uint32_t validLvl;
 
+    bool skip_signature_validation;
 	bool ownsign; /* we have signed the remote peer GPG key */
 	bool hasSignedMe; /* the remote peer has signed my GPG key */
 
@@ -519,6 +528,7 @@ public:
 	 */
 	virtual bool addSslOnlyFriend(
 	        const RsPeerId& sslId,
+	        const RsPgpId& pgp_id,
 	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
 
 	/**

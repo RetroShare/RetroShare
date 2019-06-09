@@ -922,7 +922,7 @@ void ConnectFriendWizard::accept()
 		return;
 	}
 
-	if (!mCertificate.empty() && add_key_to_keyring)
+    if(!peerDetails.skip_signature_validation && !mCertificate.empty() && add_key_to_keyring)
 	{
 		RsPgpId pgp_id ;
 		RsPeerId ssl_id ;
@@ -940,28 +940,33 @@ void ConnectFriendWizard::accept()
 	if(accept_connection && !peerDetails.gpg_id.isNull()) 
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
-        rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
-        rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
 
-    if(ui->_addIPToWhiteList_CB_2->isChecked())
-    {
-        sockaddr_storage addr ;
-        if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
-        {
-            std::cerr << "ConclusionPage::adding IP " << sockaddr_storage_tostring(addr) << " to whitelist." << std::endl;
-            rsBanList->addIpRange(addr,ui->_addIPToWhiteList_ComboBox_2->currentIndex(),RSBANLIST_TYPE_WHITELIST,std::string(tr("Added with certificate from %1").arg(ui->nameEdit->text()).toUtf8().constData()));
-        }
-    }
+        if(peerDetails.skip_signature_validation)
+			rsPeers->addSslOnlyFriend(peerDetails.id, peerDetails.gpg_id,peerDetails);
+		else
+			rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;
+
+		rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
+
+		if(ui->_addIPToWhiteList_CB_2->isChecked())
+		{
+			sockaddr_storage addr ;
+			if(sockaddr_storage_ipv4_aton(addr,peerDetails.extAddr.c_str()) && sockaddr_storage_isValidNet(addr))
+			{
+				std::cerr << "ConclusionPage::adding IP " << sockaddr_storage_tostring(addr) << " to whitelist." << std::endl;
+				rsBanList->addIpRange(addr,ui->_addIPToWhiteList_ComboBox_2->currentIndex(),RSBANLIST_TYPE_WHITELIST,std::string(tr("Added with certificate from %1").arg(ui->nameEdit->text()).toUtf8().constData()));
+			}
+		}
 
 		if(sign)
 		{
 			std::cerr << "ConclusionPage::validatePage() signing GPG key." << std::endl;
 			rsPeers->signGPGCertificate(peerDetails.gpg_id); //bye default sign set accept_connection to true;
 			rsPeers->setServicePermissionFlags(peerDetails.gpg_id,serviceFlags()) ;
-		} 
+		}
 
-		if (!groupId.isEmpty()) 
-            rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
+		if (!groupId.isEmpty())
+			rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
 	}
 
 	if ((accept_connection) && (!peerDetails.id.isNull()))

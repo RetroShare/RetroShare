@@ -1571,6 +1571,11 @@ void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const Rs
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
 }
 
+RsPgpId PGPHandler::pgpIdFromFingerprint(const PGPFingerprintType& f)
+{
+    return RsPgpId(f.toByteArray() + _RsIdSize::PGP_FINGERPRINT - _RsIdSize::PGP_ID);
+}
+
 bool PGPHandler::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.

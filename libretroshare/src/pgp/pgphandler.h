@@ -153,6 +153,7 @@ class PGPHandler
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
+        static RsPgpId pgpIdFromFingerprint(const PGPFingerprintType& f) ;
 
 		// Gets info about the key. Who are the signers, what's the owner's name, etc.
 		//

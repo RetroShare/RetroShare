@@ -1065,7 +1065,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 }
 
 
-bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPeerDetails& dt )
+bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,const RsPeerDetails& dt )
 {
 	if(sslId.isNull() || sslId == getOwnId())
     {
@@ -1095,7 +1095,13 @@ bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPeerDetails
 		return false;
 	}
 
-	pstate.gpg_id.clear();
+    if(pgp_id.isNull())
+    {
+        RsErr() << "Null pgp id for friend added with skip_pgp_signature_validaiton flag. This is not allowed." << std::endl;
+        return false;
+    }
+
+	pstate.gpg_id = pgp_id;
 	pstate.id = sslId;
 
 	if(!dt.name.empty())     pstate.name = dt.name;
@@ -2460,14 +2466,19 @@ bool  p3PeerMgrIMPL::loadList(std::list<RsItem *>& load)
 #endif
 			    /* ************* */
 			    // permission flags is used as a mask for the existing perms, so we set it to 0xffff
-				if(!addFriend( peer_id, peer_pgp_id, pitem->netMode,
-				               pitem->vs_disc, pitem->vs_dht,
-				               pitem->lastContact, RS_NODE_PERM_ALL ))
+
+                RsPeerDetails det ;
+                if(!rsPeers->getGPGDetails(peer_pgp_id,det))
+                {
+                    // would be better to add flags into RsPeerNetItem so that we already have this information. However, it's possible that the PGP key
+                    // has been added in the meantime, so the peer would be loaded with the right pGP key attached.
+
+					RsInfo() << __PRETTY_FUNCTION__ << " loading SSL-only " << "friend: " << peer_id << " " << pitem->location << std::endl;
+					addSslOnlyFriend(peer_id,peer_pgp_id);
+                }
+                else if(!addFriend( peer_id, peer_pgp_id, pitem->netMode, pitem->vs_disc, pitem->vs_dht, pitem->lastContact, RS_NODE_PERM_ALL ))
 				{
-					RsInfo() << __PRETTY_FUNCTION__ << " loading SSL-only "
-					         << "friend: " << peer_id << " " << pitem->location
-					         << std::endl;
-					addSslOnlyFriend(peer_id);
+					RsInfo() << __PRETTY_FUNCTION__ << " cannot add friend friend: " << peer_id << " " << pitem->location << ". Somthing's wrong." << std::endl;
 				}
 			    setLocation(pitem->nodePeerId, pitem->location);
 		    }

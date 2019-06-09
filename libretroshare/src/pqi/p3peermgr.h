@@ -137,6 +137,7 @@ public:
 
 	virtual bool addSslOnlyFriend(
 	        const RsPeerId& sslId,
+	        const RsPgpId& pgpId,
 	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
 
 	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
@@ -256,9 +257,7 @@ public:
                               uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL,
                               rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
 
-	bool addSslOnlyFriend(
-	            const RsPeerId& sslId,
-	            const RsPeerDetails& details = RsPeerDetails() ) override;
+	bool addSslOnlyFriend(const RsPeerId& sslId, const RsPgpId &pgp_id, const RsPeerDetails& details = RsPeerDetails() ) override;
 
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);

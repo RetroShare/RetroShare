@@ -765,9 +765,10 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
 }
 
-bool p3Peers::addSslOnlyFriend(
-        const RsPeerId& sslId, const RsPeerDetails& details )
-{ return mPeerMgr->addSslOnlyFriend(sslId, details); }
+bool p3Peers::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,const RsPeerDetails& details )
+{
+    return mPeerMgr->addSslOnlyFriend(sslId, pgp_id,details);
+}
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
 {
@@ -1241,8 +1242,7 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 		rsInvite = inviteUrl.getQueryV("rsInvite");
 
 	std::vector<uint8_t> inviteBuf = Radix64::decode(*rsInvite);
-	RsGenericSerializer::SerializeContext ctx(
-	            inviteBuf.data(), static_cast<uint32_t>(inviteBuf.size()));
+	RsGenericSerializer::SerializeContext ctx( inviteBuf.data(), static_cast<uint32_t>(inviteBuf.size()));
 	RsGenericSerializer::SerializeJob j = RsGenericSerializer::DESERIALIZE;
 
 	while(ctx.mOk && ctx.mOffset < ctx.mSize)
@@ -1346,6 +1346,20 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 		}
 	}
 
+    // now check if the PGP key is available. If so, add it in the PeerDetails:
+
+    RsPeerDetails pgp_det ;
+    if(getGPGDetails(PGPHandler::pgpIdFromFingerprint(details.fpr),pgp_det) && pgp_det.fpr == details.fpr)
+    {
+        details.issuer      = pgp_det.issuer;
+        details.gpg_id      = pgp_det.gpg_id;
+        details.gpgSigners  = pgp_det.gpgSigners;
+        details.trustLvl    = pgp_det.trustLvl;
+        details.validLvl    = pgp_det.validLvl;
+        details.ownsign     = pgp_det.ownsign;
+        details.hasSignedMe = pgp_det.hasSignedMe;
+        details.accept_connection = pgp_det.accept_connection;
+    }
 
 	return ctx.mOk;
 }
@@ -1730,7 +1744,7 @@ RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
           name(""),email(""),location(""),
           org(""),authcode(""),
-          trustLvl(0), validLvl(0),ownsign(false), 
+          trustLvl(0), validLvl(0),skip_signature_validation(false),ownsign(false),
           hasSignedMe(false),accept_connection(false),
           state(0),actAsServer(false),
           connectPort(0),

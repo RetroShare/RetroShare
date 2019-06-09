@@ -97,6 +97,7 @@ public:
 	/// @see RsPeers
 	bool addSslOnlyFriend(
 	            const RsPeerId& sslId,
+	            const RsPgpId& pgp_id,
 	            const RsPeerDetails& details = RsPeerDetails() ) override;
 
 	virtual	bool removeFriend(const RsPgpId& gpgid);
