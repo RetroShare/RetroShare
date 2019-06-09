@@ -503,6 +503,9 @@ public:
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 
+    // Note: the two methods below could be unified. The fact that one of them can take an optional RsPeerDetails struct as parameter
+    // seems quite inconsistent.
+
 	/**
 	 * @brief Add trusted node
 	 * @jsonapi{development}
@@ -523,12 +526,13 @@ public:
 	 * SSL+PGP friend.
 	 * @jsonapi{development}
 	 * @param[in] sslId SSL id of the node to add
+	 * @param[in] pgpId PGP id of the node to add. Will be used for validation when the key is available.
 	 * @param[in] details Optional extra details known about the node to add
 	 * @return false if error occurred, true otherwise
 	 */
 	virtual bool addSslOnlyFriend(
 	        const RsPeerId& sslId,
-	        const RsPgpId& pgp_id,
+	        const RsPgpId& pgpId,
 	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
 
 	/**
