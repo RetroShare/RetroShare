@@ -416,26 +416,6 @@ void ConnectFriendWizard::initializePage(int id)
 
 		ui->CertificatePage->registerField("friendCertificateFile*", ui->friendFileNameEdit);
 		break;
-	case Page_Foff:
-		ui->userSelectionCB->addItem(tr("Any peer I've not signed"));
-		ui->userSelectionCB->addItem(tr("Friends of my friends who already trust me"));
-		ui->userSelectionCB->addItem(tr("Signed peers showing as denied"));
-
-		ui->selectedPeersTW->setHorizontalHeaderItem(0, new QTableWidgetItem(tr("")));
-		ui->selectedPeersTW->setHorizontalHeaderItem(1, new QTableWidgetItem(tr("Peer name")));
-		ui->selectedPeersTW->setHorizontalHeaderItem(2, new QTableWidgetItem(tr("Also signed by")));
-		ui->selectedPeersTW->setHorizontalHeaderItem(3, new QTableWidgetItem(tr("Peer id")));
-
-		connect(ui->makeFriendButton, SIGNAL(clicked()), this, SLOT(signAllSelectedUsers()));
-		connect(ui->userSelectionCB, SIGNAL(activated(int)), this, SLOT(updatePeersList(int)));
-
-		updatePeersList(ui->userSelectionCB->currentIndex());
-
-		ui->FofPage->setComplete(false);
-		break;
-	case Page_Rsid:
-		ui->RsidPage->registerField("friendRSID*", ui->friendRsidEdit);
-		break;
 	case Page_WebMail:
 
 	case Page_Email:
@@ -782,25 +762,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 			}
 			break;
 		}
-	case Page_Foff:
-		break;
-	case Page_Rsid:
-		{
-			QString rsidstring = ui->friendRsidEdit->text();
-
-			if (rsidstring.isEmpty()) {
-				return false;
-			}
-
-			// search for peer id in string
-			RsPeerId rsidstr = PeerDefs::idFromRsid(rsidstring, false);
-
-			if (rsidstr.isNull() || !rsPeers->getPeerDetails(rsidstr, peerDetails)) {
-				setField("errorMessage", tr("This Peer %1 is not available in your Network").arg(rsidstring));
-				error = false;
-			}
-			break;
-		}
 	case Page_Email:
 		{
 			QString mailaddresses = ui->addressEdit->text();
@@ -855,9 +816,6 @@ int ConnectFriendWizard::nextId() const
 	switch ((Page) currentId()) {
 	case Page_Text:
 	case Page_Cert:
-	case Page_Rsid:
-		return error ? ConnectFriendWizard::Page_Conclusion : ConnectFriendWizard::Page_ErrorMessage;
-	case Page_Foff:
 	case Page_WebMail:
 	case Page_Email:
 	case Page_ErrorMessage:
@@ -1215,6 +1173,7 @@ void ConnectFriendWizard::generateCertificateCalled()
 	}
 }
 
+#ifdef TO_BE_REMOVED
 //============================= FofPage ======================================
 
 void ConnectFriendWizard::updatePeersList(int index)
@@ -1349,6 +1308,8 @@ void ConnectFriendWizard::signAllSelectedUsers()
 }
 
 //============================= RsidPage =====================================
+
+#endif
 
 //============================ Emailpage =====================================
 
