@@ -50,7 +50,7 @@ class ConnectFriendWizard : public QWizard
 	Q_PROPERTY(QString titleColor READ titleColor WRITE setTitleColor)
 
 public:
-	enum Page { Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_WebMail, Page_FriendRecommendations };
+	enum Page { Page_Text, Page_Cert, Page_ErrorMessage, Page_Conclusion, Page_WebMail };
 
 	ConnectFriendWizard(QWidget *parent = 0);
 	~ConnectFriendWizard();
@@ -94,8 +94,8 @@ private slots:
 	ServicePermissionFlags serviceFlags() const ;
 
 	/* CertificatePage */
-	void loadFriendCert();
-	void generateCertificateCalled();
+	//void loadFriendCert();
+	//void generateCertificateCalled();
 
 	/* ConclusionPage */
 	void groupCurrentIndexChanged(int index);

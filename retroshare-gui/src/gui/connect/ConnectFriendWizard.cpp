@@ -84,7 +84,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
     ui->userFrame->hide();
 	
-	ui->userFileFrame->hide(); // in homepage dropmenu now
+//	ui->userFileFrame->hide(); // in homepage dropmenu now
 
 // this define comes from Qt example. I don't have mac, so it wasn't tested
 #ifndef Q_OS_MAC
@@ -408,14 +408,6 @@ void ConnectFriendWizard::initializePage(int id)
 		cleanFriendCert();
 
 		break;
-	case Page_Cert:
-		connect(ui->userFileCreateButton, SIGNAL(clicked()), this, SLOT(generateCertificateCalled()));
-		connect(ui->friendFileNameOpenButton, SIGNAL(clicked()), this, SLOT(loadFriendCert()));
-
-		ui->friendFileNameEdit->setAcceptFile(true);
-
-		ui->CertificatePage->registerField("friendCertificateFile*", ui->friendFileNameEdit);
-		break;
 	case Page_WebMail:
 
 	case Page_ErrorMessage:
@@ -571,18 +563,6 @@ void ConnectFriendWizard::initializePage(int id)
 
 		}
 		break;
-	case Page_FriendRecommendations:
-		ui->frec_recommendList->setHeaderText(tr("Recommend friends"));
-		ui->frec_recommendList->setModus(FriendSelectionWidget::MODUS_CHECK);
-		ui->frec_recommendList->setShowType(FriendSelectionWidget::SHOW_GROUP | FriendSelectionWidget::SHOW_SSL);
-		ui->frec_recommendList->start();
-
-		ui->frec_toList->setHeaderText(tr("To"));
-		ui->frec_toList->setModus(FriendSelectionWidget::MODUS_CHECK);
-		ui->frec_toList->start();
-
-		ui->frec_messageEdit->setText(MessageComposer::recommendMessage());
-		break;
 	}
 }
 
@@ -646,76 +626,10 @@ bool ConnectFriendWizard::validateCurrentPage()
 			error = false;
 			break;
 		}
-	case Page_Cert:
-		{
-			QString fn = ui->friendFileNameEdit->text();
-			if (QFile::exists(fn)) {
-				//Todo: move read from file to p3Peers::loadCertificateFromFile
-
-				// read from file
-				std::string certstr;
-				QFile CertFile(fn);
-				if (CertFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-					certstr = QString(CertFile.readAll()).toStdString();
-					CertFile.close();
-				}
-
-				if (certstr.empty()) {
-					setField("errorMessage", QString(tr("Certificate Load Failed:can't read from file %1")).arg(fn+" ") );
-					error = false;
-					break;
-				}
-
-				uint32_t cert_error_code;
-				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_error_code) || rsPeers->parseShortInvite(certstr,peerDetails))
-                {
-					mCertificate = certstr;
-#ifdef FRIEND_WIZARD_DEBUG
-					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
-#endif
-
-					if(peerDetails.id == rsPeers->getOwnId())
-					{
-						setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
-						error = false;
-					}
-				} else {
-					setField("errorMessage", QString(tr("Certificate Load Failed:something is wrong with %1")).arg(fn) + " : " + getErrorString(cert_error_code));
-					error = false;
-				}
-			} else {
-				setField("errorMessage", QString(tr("Certificate Load Failed:file %1 not found")).arg(fn));
-				error = false;
-			}
-			break;
-		}
 	case Page_ErrorMessage:
 		break;
 	case Page_Conclusion:
 		break;
-	case Page_FriendRecommendations:
-		{
-            std::set<RsPeerId> recommendIds;
-            ui->frec_recommendList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(recommendIds, false);
-
-			if (recommendIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend for recommendation."), QMessageBox::Ok, QMessageBox::Ok);
-				return false;
-			}
-
-            std::set<RsPeerId> toIds;
-            ui->frec_toList->selectedIds<RsPeerId,FriendSelectionWidget::IDTYPE_SSL>(toIds, false);
-
-			if (toIds.empty()) {
-				QMessageBox::warning(this, "RetroShare", tr("Please select at least one friend as recipient."), QMessageBox::Ok, QMessageBox::Ok);
-				return false;
-			}
-
-            std::set<RsPeerId>::iterator toId;
-			for (toId = toIds.begin(); toId != toIds.end(); ++toId) {
-				MessageComposer::recommendFriend(recommendIds, *toId, ui->frec_messageEdit->toHtml(), true);
-			}
-		}
 	}
 
 	return true;
@@ -725,11 +639,9 @@ int ConnectFriendWizard::nextId() const
 {
 	switch ((Page) currentId()) {
 	case Page_Text:
-	case Page_Cert:
 	case Page_WebMail:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
-	case Page_FriendRecommendations:
 		return -1;
 	}
 
@@ -1027,6 +939,7 @@ void ConnectFriendWizard::saveCert()
 	ts << ui->userCertEdit->document()->toPlainText();
 }
 
+#ifdef TO_BE_REMOVED
 //========================== CertificatePage =================================
 
 void ConnectFriendWizard::loadFriendCert()
@@ -1071,7 +984,6 @@ void ConnectFriendWizard::generateCertificateCalled()
 	}
 }
 
-#ifdef TO_BE_REMOVED
 //============================= FofPage ======================================
 
 void ConnectFriendWizard::updatePeersList(int index)

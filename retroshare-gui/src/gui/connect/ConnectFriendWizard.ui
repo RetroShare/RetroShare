@@ -323,69 +323,6 @@
     </item>
    </layout>
   </widget>
-  <widget class="ConnectFriendPage" name="CertificatePage">
-   <property name="title">
-    <string>Certificate files</string>
-   </property>
-   <property name="subTitle">
-    <string>Use PGP certificates saved in files.</string>
-   </property>
-   <attribute name="pageId">
-    <string notr="true">ConnectFriendWizard::Page_Cert</string>
-   </attribute>
-   <layout class="QVBoxLayout" name="CertificatePageVLayout">
-    <item>
-     <widget class="QGroupBox" name="userFileFrame">
-      <property name="title">
-       <string>Import friend's certificate...</string>
-      </property>
-      <property name="flat">
-       <bool>true</bool>
-      </property>
-      <layout class="QHBoxLayout" name="userFileFrameHLayout">
-       <item>
-        <widget class="QLabel" name="userFileLabel">
-         <property name="text">
-          <string>You have to generate a file with your certificate and give it to your friend. Also, you can use a file generated before.</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="userFileCreateButton">
-         <property name="text">
-          <string>Export my certificate...</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="friendFileLabel">
-      <property name="text">
-       <string>Drag and Drop your friends's certificate in this Window or specify path in the box below</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="friendFileNameHLayout">
-      <item>
-       <widget class="DropLineEdit" name="friendFileNameEdit"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="friendFileNameOpenButton">
-        <property name="text">
-         <string>Browse</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
   <widget class="QWizardPage" name="WebmailPage">
    <property name="title">
     <string>RetroShare is better with Friends </string>
@@ -1023,77 +960,12 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWizardPage" name="FriendRecommendationsPage">
-   <property name="title">
-    <string>Friend Recommendations</string>
-   </property>
-   <property name="subTitle">
-    <string>Recommend many friends to each others</string>
-   </property>
-   <attribute name="pageId">
-    <string notr="true">ConnectFriendWizard::Page_FriendRecommendations</string>
-   </attribute>
-   <layout class="QVBoxLayout" name="FriendRecommendationsPageVLayout">
-    <item>
-     <layout class="QHBoxLayout" name="frec_HLayout">
-      <item>
-       <widget class="FriendSelectionWidget" name="frec_recommendList" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="FriendSelectionWidget" name="frec_toList" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="frec_label">
-      <property name="text">
-       <string>Message:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QTextEdit" name="frec_messageEdit">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
  </widget>
  <customwidgets>
   <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>FriendSelectionWidget</class>
-   <extends>QWidget</extends>
-   <header>gui/common/FriendSelectionWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>DropLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>gui/common/DropLineEdit.h</header>
   </customwidget>
   <customwidget>
    <class>ConnectFriendPage</class>
