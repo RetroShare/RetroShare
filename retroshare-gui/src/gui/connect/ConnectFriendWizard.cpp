@@ -91,7 +91,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	setWizardStyle(ModernStyle);
 #endif
 
-	setStartId(Page_Cert);
+	setStartId(Page_Text);
 
 // at this moment I don't know, what information should be in help
 //	setOption(HaveHelpButton, true);
