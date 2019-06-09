@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1134</width>
+    <width>1100</width>
     <height>604</height>
    </rect>
   </property>
@@ -17,69 +17,6 @@
    <iconset resource="../images.qrc">
     <normaloff>:/images/logo/logo_16.png</normaloff>:/images/logo/logo_16.png</iconset>
   </property>
-  <widget class="ConnectFriendPage" name="IntroPage">
-   <property name="title">
-    <string>Add a new Friend</string>
-   </property>
-   <property name="subTitle">
-    <string>This wizard will help you to connect to your friend(s) to RetroShare network.&lt;br&gt;Select how you would like to add a friend:</string>
-   </property>
-   <attribute name="pageId">
-    <string notr="true">ConnectFriendWizard::Page_Intro</string>
-   </attribute>
-   <layout class="QVBoxLayout" name="IntroPageVLayout">
-    <item>
-     <widget class="QRadioButton" name="textRadioButton">
-      <property name="text">
-       <string>Enter the certificate manually</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="certRadioButton">
-      <property name="text">
-       <string>&amp;You get a certificate file from your friend</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="foffRadioButton">
-      <property name="text">
-       <string>Ma&amp;ke friend with selected friends of my friends</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="rsidRadioButton">
-      <property name="text">
-       <string>Enter RetroShare ID manually</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="webmailRadioButton">
-      <property name="text">
-       <string>Send an In&amp;vitation by Web Mail Providers</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="emailRadioButton">
-      <property name="text">
-       <string>&amp;Send an Invitation by Email 
- (Your friend will receive an email with instructions how to download RetroShare)</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QRadioButton" name="friendRecommendationsRadioButton">
-      <property name="text">
-       <string>Recommend many friends to each other</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="ConnectFriendPage" name="TextPage">
    <property name="title">
     <string>RetroShare certificate</string>

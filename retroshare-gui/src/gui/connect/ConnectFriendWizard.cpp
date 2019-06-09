@@ -91,7 +91,7 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	setWizardStyle(ModernStyle);
 #endif
 
-	setStartId(Page_Intro);
+	setStartId(Page_Cert);
 
 // at this moment I don't know, what information should be in help
 //	setOption(HaveHelpButton, true);
@@ -106,8 +106,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	ui->ErrorMessagePage->registerField("errorMessage", ui->messageLabel, "text");
 
 	/* disable not used pages */
-	ui->foffRadioButton->hide();
-	ui->rsidRadioButton->hide();
+	//ui->foffRadioButton->hide();
+	//ui->rsidRadioButton->hide();
 	
 	ui->cp_Label->hide();
 	ui->requestinfolabel->hide();
@@ -277,7 +277,6 @@ QString ConnectFriendWizard::getErrorString(uint32_t error_code)
 void ConnectFriendWizard::setCertificate(const QString &certificate, bool friendRequest)
 {
 	if (certificate.isEmpty()) {
-		setStartId(Page_Intro);
 		return;
 	}
 
@@ -383,9 +382,6 @@ static void fillGroups(ConnectFriendWizard *wizard, QComboBox *comboBox, const Q
 void ConnectFriendWizard::initializePage(int id)
 {
 	switch ((Page) id) {
-	case Page_Intro:
-		ui->textRadioButton->setChecked(true);
-		break;
 	case Page_Text:
 		connect(ui->userCertHelpButton, SIGNAL( clicked()), this, SLOT(showHelpUserCert()));
 		connect(ui->userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
@@ -716,7 +712,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 	error = true;
 
 	switch ((Page) currentId()) {
-	case Page_Intro:
 	case Page_WebMail:
 		break;
 	case Page_Text:
@@ -858,15 +853,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 int ConnectFriendWizard::nextId() const
 {
 	switch ((Page) currentId()) {
-	case Page_Intro:
-		if (ui->textRadioButton->isChecked()) return Page_Text;
-		if (ui->certRadioButton->isChecked()) return Page_Cert;
-		if (ui->foffRadioButton->isChecked()) return Page_Foff;
-		if (ui->rsidRadioButton->isChecked()) return Page_Rsid;
-		if (ui->webmailRadioButton->isChecked()) return Page_WebMail;
-		if (ui->emailRadioButton->isChecked()) return Page_Email;
-		if (ui->friendRecommendationsRadioButton->isChecked()) return Page_FriendRecommendations;
-		return ConnectFriendWizard::Page_Foff;
 	case Page_Text:
 	case Page_Cert:
 	case Page_Rsid:
