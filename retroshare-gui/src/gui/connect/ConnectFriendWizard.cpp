@@ -299,8 +299,6 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 		{
 			mCertificate = certificate.toUtf8().constData();
 
-			// Cyril: I disabled this because it seems to be not used anymore.
-			//setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
 			setStartId(Page_Conclusion);
 			if (friendRequest){
 				ui->cp_Label->show();
@@ -309,7 +307,31 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
 			}
 		}
-    } else {
+    }
+    else if(rsPeers->parseShortInvite(certificate.toUtf8().constData(),peerDetails))
+    {
+		if(peerDetails.id == rsPeers->getOwnId())
+		{
+			setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
+			error = false;
+			setStartId(Page_ErrorMessage);
+		}
+		else
+		{
+			mCertificate = certificate.toUtf8().constData();
+
+			setStartId(Page_Conclusion);
+
+			if (friendRequest){
+				ui->cp_Label->show();
+				ui->requestinfolabel->show();
+				setTitleText(ui->ConclusionPage, tr("Friend request"));
+				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+			}
+		}
+	}
+    else
+    {
 		// error message
 		setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
 		setStartId(Page_ErrorMessage);
@@ -702,7 +724,8 @@ bool ConnectFriendWizard::validateCurrentPage()
 			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
 			uint32_t cert_load_error_code;
 
-			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_load_error_code)) {
+			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_load_error_code) || rsPeers->parseShortInvite(certstr,peerDetails))
+            {
 				mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 				std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
@@ -742,7 +765,8 @@ bool ConnectFriendWizard::validateCurrentPage()
 				}
 
 				uint32_t cert_error_code;
-				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_error_code)) {
+				if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_error_code) || rsPeers->parseShortInvite(certstr,peerDetails))
+                {
 					mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
 					std::cerr << "ConnectFriendWizard got id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
@@ -1058,18 +1082,23 @@ void ConnectFriendWizard::cleanFriendCert()
 	} else {
 		std::string cleanCert;
 		int error_code;
+        bool is_short_format;
 
-		if (rsPeers->cleanCertificate(cert, cleanCert, error_code)) {
+		if (rsPeers->cleanCertificate(cert, cleanCert, is_short_format, error_code))
+        {
 			certValid = true;
-			if (cert != cleanCert) {
-				disconnect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
+
+			if (cert != cleanCert)
+            {
 				QTextCursor textCursor = ui->friendCertEdit->textCursor();
-				ui->friendCertEdit->setPlainText(QString::fromUtf8(cleanCert.c_str()));
-				ui->friendCertEdit->setTextCursor(textCursor);
+
+				whileBlocking(ui->friendCertEdit)->setPlainText(QString::fromUtf8(cleanCert.c_str()));
+				whileBlocking(ui->friendCertEdit)->setTextCursor(textCursor);
+
 				ui->friendCertCleanLabel->setStyleSheet("");
-				connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 			}
-			errorMsg = tr("Certificate appears to be valid");
+			errorMsg = tr("Valid certificate") + (is_short_format?" (Short format)":" (plain format with profile key)");
+
 			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/accepted16.png"));
 		} else {
 			if (error_code > 0) {

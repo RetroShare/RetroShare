@@ -1536,11 +1536,20 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
 	return true;
 }
 
-bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
+bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,int& error_code)
 {
 	RsCertificate::Format format ;
 
-	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
+	bool res = RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
+
+    if(format == RsCertificate::RS_CERTIFICATE_RADIX)
+        is_short_format = false;
+    else if(format == RsCertificate::RS_CERTIFICATE_SHORT_RADIX)
+        is_short_format = true;
+    else
+        return false ;
+
+    return res;
 }
 
 bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)

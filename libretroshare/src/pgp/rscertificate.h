@@ -36,7 +36,7 @@ struct RsPeerDetails;
 class RsCertificate
 {
 public:
-	typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX } Format;
+	typedef enum { RS_CERTIFICATE_OLD_FORMAT, RS_CERTIFICATE_RADIX, RS_CERTIFICATE_SHORT_RADIX } Format;
 
 	/**
 	 * @brief Create certificate object from certificate string
@@ -99,8 +99,7 @@ public:
 
 private:
 	// new radix format
-	static bool cleanCertificate( const std::string& input,
-	                              std::string& output, int&);
+	static bool cleanRadix64( const std::string& input, std::string& output, int&);
 
 	static void scan_ip( const std::string& ip_string, unsigned short port,
 	                     unsigned char *destination_memory );

@@ -717,7 +717,7 @@ public:
 	        uint32_t& errorCode ) = 0;
 
 	// Certificate utils
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code) = 0;
+	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,int& error_code) = 0;
 	virtual	bool saveCertificateToFile(const RsPeerId& id, const std::string &fname) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 
