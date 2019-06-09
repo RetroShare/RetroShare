@@ -147,14 +147,14 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
-			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
+//			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+//			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
-			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
+//			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+//			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
@@ -571,63 +571,6 @@ void ConnectFriendWizard::initializePage(int id)
 
 		}
 		break;
-	case Page_FriendRequest:
-		{
-			std::cerr << "Friend request page id : " << peerDetails.id << "; gpg_id : " << peerDetails.gpg_id << std::endl;
-
-			ui->fr_avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
-			setPixmap(QWizard::LogoPixmap, QPixmap(":/images/user/user_request48.png"));
-
-			ui->fr_signGPGCheckBox->setChecked(false);
-
-			//set the radio button to sign the GPG key
-			if (peerDetails.accept_connection && !peerDetails.ownsign) {
-				//gpg key connection is already accepted, don't propose to accept it again
-				ui->fr_acceptNoSignGPGCheckBox->hide();
-				ui->fr_signGPGCheckBox->show();
-				ui->fr_acceptNoSignGPGCheckBox->setChecked(false);
-			}
-			if (!peerDetails.accept_connection && peerDetails.ownsign) {
-				//gpg key is already signed, don't propose to sign it again
-				ui->fr_acceptNoSignGPGCheckBox->setChecked(true);
-				ui->fr_signGPGCheckBox->hide();
-			}
-			if (!peerDetails.accept_connection && !peerDetails.ownsign) {
-				ui->fr_acceptNoSignGPGCheckBox->setChecked(true);
-				ui->fr_signGPGCheckBox->show();
-				ui->fr_acceptNoSignGPGCheckBox->show();
-			}
-			if (peerDetails.accept_connection && peerDetails.ownsign) {
-				ui->fr_acceptNoSignGPGCheckBox->setChecked(false);
-				ui->fr_acceptNoSignGPGCheckBox->hide();
-				ui->fr_signGPGCheckBox->hide();
-			}
-
-			ui->fr_nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
-			ui->fr_emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
-
-			QString loc = QString::fromUtf8(peerDetails.location.c_str());
-			if (!loc.isEmpty())
-			{
-				loc += " (";
-				loc += QString::fromStdString(peerDetails.id.toStdString());
-				loc += ")";
-			}
-			else
-			{
-				if (!peerDetails.id.isNull())
-				{
-					loc += QString::fromStdString(peerDetails.id.toStdString());
-				}
-			}
-
-			ui->fr_nodeEdit->setText(loc);
-			
-			ui->fr_InfoTopLabel->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
-
-			fillGroups(this, ui->fr_groupComboBox, groupId);
-		}
-		break;
 	case Page_FriendRecommendations:
 		ui->frec_recommendList->setHeaderText(tr("Recommend friends"));
 		ui->frec_recommendList->setModus(FriendSelectionWidget::MODUS_CHECK);
@@ -750,8 +693,6 @@ bool ConnectFriendWizard::validateCurrentPage()
 		break;
 	case Page_Conclusion:
 		break;
-	case Page_FriendRequest:
-		break;
 	case Page_FriendRecommendations:
 		{
             std::set<RsPeerId> recommendIds;
@@ -788,7 +729,6 @@ int ConnectFriendWizard::nextId() const
 	case Page_WebMail:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
-	case Page_FriendRequest:
 	case Page_FriendRecommendations:
 		return -1;
 	}
@@ -800,12 +740,7 @@ ServicePermissionFlags ConnectFriendWizard::serviceFlags() const
 {
     ServicePermissionFlags flags(0) ;
 
-    if (hasVisitedPage(Page_FriendRequest))
-    {
-        if(  ui->_direct_transfer_CB->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
-        if(  ui->_allow_push_CB->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
-        if(  ui->_require_WL_CB->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
-    } else if (hasVisitedPage(Page_Conclusion)) {
+if (hasVisitedPage(Page_Conclusion)) {
         if(  ui->_direct_transfer_CB_2->isChecked()) flags |= RS_NODE_PERM_DIRECT_DL ;
         if(  ui->_allow_push_CB_2->isChecked()) flags |= RS_NODE_PERM_ALLOW_PUSH ;
         if(  ui->_require_WL_CB_2->isChecked()) flags |= RS_NODE_PERM_REQUIRE_WL ;
@@ -824,12 +759,7 @@ void ConnectFriendWizard::accept()
 		sign = ui->signGPGCheckBox->isChecked();
 		accept_connection = ui->acceptNoSignGPGCheckBox->isChecked();
 		add_key_to_keyring = ui->addKeyToKeyring_CB->isChecked() ;
-	} else if (hasVisitedPage(Page_FriendRequest)) {
-		std::cerr << "ConnectFriendWizard::accept() called with page friend request visited" << std::endl;
-
-		sign = ui->fr_signGPGCheckBox->isChecked();
-		accept_connection = ui->fr_acceptNoSignGPGCheckBox->isChecked();
-	} else {
+	} else  {
 		QDialog::accept();
 		return;
 	}
