@@ -129,6 +129,8 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
     body += "\n" + GetStartedDialog::GetCutBelowText();
 	body += "\n\n" + QString::fromUtf8(rsPeers->GetRetroshareInvite().c_str());
 	
+    mIsShortInvite = false;
+
 	std::string advsetting;
 	if(rsConfig->getConfigurationOption(RS_CONFIG_ADVANCED, advsetting) && (advsetting == "YES"))
 	{
@@ -147,14 +149,10 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-//			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
-//			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-//			ui->_direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
-//			ui->_direct_transfer_CB->setToolTip(ui->_direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			ui->_direct_transfer_CB_2->setIcon(QIcon(":/icons/warning_yellow_128.png"));
 			ui->_direct_transfer_CB_2->setToolTip(ui->_direct_transfer_CB_2->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
@@ -309,6 +307,8 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
     }
     else if(rsPeers->parseShortInvite(certificate.toUtf8().constData(),peerDetails))
     {
+        mIsShortInvite = true;
+
 		if(peerDetails.id == rsPeers->getOwnId())
 		{
 			setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
@@ -638,7 +638,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 int ConnectFriendWizard::nextId() const
 {
 	switch ((Page) currentId()) {
-	case Page_Text:
+	case Page_Text:		return Page_Conclusion;
 	case Page_WebMail:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
@@ -676,7 +676,9 @@ void ConnectFriendWizard::accept()
 		return;
 	}
 
-    if(!peerDetails.skip_signature_validation && !mCertificate.empty() && add_key_to_keyring)
+    // add the profile pgp key to keyring
+
+    if(!mIsShortInvite && !mCertificate.empty() && add_key_to_keyring)
 	{
 		RsPgpId pgp_id ;
 		RsPeerId ssl_id ;
@@ -690,6 +692,11 @@ void ConnectFriendWizard::accept()
 	}
 
 	bool runProgressDialog = false;
+
+    // add the peer as friend, either with or without pgp signature validation, depending on whether we have the key or not
+    // Note: that is different than having a short invite or not.
+
+    // first, set data related to profile key.
 
 	if(accept_connection && !peerDetails.gpg_id.isNull()) 
 	{
@@ -723,6 +730,8 @@ void ConnectFriendWizard::accept()
 			rsPeers->assignPeerToGroup(RsNodeGroupId(groupId.toStdString()), peerDetails.gpg_id, true);
 	}
 
+    // Then set data related to node location
+
 	if ((accept_connection) && (!peerDetails.id.isNull()))
 	{
 		runProgressDialog = true;
@@ -753,9 +762,7 @@ void ConnectFriendWizard::accept()
 				rsPeers->setDynDNS(peerDetails.id, peerDetails.dyndns);
 			}
 			for(auto&& ipr : peerDetails.ipAddressList)
-				rsPeers->addPeerLocator(
-				            peerDetails.id,
-				            RsUrl(ipr.substr(0, ipr.find(' '))) );
+				rsPeers->addPeerLocator( peerDetails.id, RsUrl(ipr.substr(0, ipr.find(' '))) );
 		}
 
 	}
@@ -768,7 +775,6 @@ void ConnectFriendWizard::accept()
 	}
 
 	NotifyQt::getInstance()->notifyListChange(NOTIFY_LIST_NEIGHBOURS,1) ;
-
 	QDialog::accept();
 }
 
@@ -841,9 +847,8 @@ void ConnectFriendWizard::cleanFriendCert()
 	} else {
 		std::string cleanCert;
 		int error_code;
-        bool is_short_format;
 
-		if (rsPeers->cleanCertificate(cert, cleanCert, is_short_format, error_code))
+		if (rsPeers->cleanCertificate(cert, cleanCert, mIsShortInvite, error_code))
         {
 			certValid = true;
 
@@ -856,7 +861,7 @@ void ConnectFriendWizard::cleanFriendCert()
 
 				ui->friendCertCleanLabel->setStyleSheet("");
 			}
-			errorMsg = tr("Valid certificate") + (is_short_format?" (Short format)":" (plain format with profile key)");
+			errorMsg = tr("Valid certificate") + (mIsShortInvite?" (Short format)":" (plain format with profile key)");
 
 			ui->friendCertCleanLabel->setPixmap(QPixmap(":/images/accepted16.png"));
 		} else {

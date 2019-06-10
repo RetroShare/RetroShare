@@ -99,13 +99,13 @@ private slots:
 
 	/* ConclusionPage */
 	void groupCurrentIndexChanged(int index);
-	
+
 	/* WebMailPage */
-    void inviteGmail();
-    void inviteYahoo();
-    void inviteOutlook();
-    void inviteAol();
-    void inviteYandex();
+	void inviteGmail();
+	void inviteYahoo();
+	void inviteOutlook();
+	void inviteAol();
+	void inviteYandex();
 
 	void toggleAdvanced();
 
@@ -115,11 +115,13 @@ private:
 	void updateStylesheet();
 	void setTitleText(QWizardPage *page, const QString &title);
 	bool AdvancedVisible;
-	
+
 private:
 	bool error;
 	RsPeerDetails peerDetails;
 	std::string mCertificate;
+
+	bool mIsShortInvite;
 
 	/* Stylesheet */
 	QString mBannerPixmap;
@@ -137,9 +139,9 @@ private:
 
 	/* ConclusionPage */
 	QString groupId;
-	
+
 	/* WebMailPage */
-  QString subject;
+	QString subject;
 	QString body;
 
 	Ui::ConnectFriendWizard *ui;

@@ -1360,6 +1360,8 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
         details.hasSignedMe = pgp_det.hasSignedMe;
         details.accept_connection = pgp_det.accept_connection;
     }
+    else
+        details.skip_signature_validation = true;
 
 	return ctx.mOk;
 }
