@@ -1,5 +1,7 @@
 /*******************************************************************************
- * RetroShare GxsTrans asyncronous redundant small mail trasport on top of GXS *
+ * libretroshare/src/gxstrans: p3gxstrans.h                                    *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
@@ -19,7 +21,7 @@
  *******************************************************************************/
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
 #include <unordered_map>
 #include <map>
 
@@ -68,7 +70,7 @@ struct MsgSizeCount
 };
 
 /**
- * @brief p3GxsTrans is a mail delivery service based on GXS.
+ * @brief p3GxsTrans asyncronous redundant small mail trasport on top of GXS.
  * p3GxsTrans is capable of asynchronous mail delivery and acknowledgement.
  * p3GxsTrans is meant to be capable of multiple encryption options,
  * @see RsGxsTransEncryptionMode at moment messages are encrypted using RSA

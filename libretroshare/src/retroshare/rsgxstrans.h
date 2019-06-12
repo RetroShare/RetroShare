@@ -1,5 +1,7 @@
 /*******************************************************************************
- * RetroShare GxsTrans asyncronous redundant small mail trasport on top of GXS *
+ * libretroshare/src/retroshare: rsgxstrans.h                                  *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
@@ -98,6 +100,7 @@ struct RsGxsTransOutgoingRecord
 	RsGxsGroupId group_id ;
 };
 
+/// RetroShare GxsTrans asyncronous redundant small mail trasport on top of GXS
 class RsGxsTrans: public RsGxsIfaceHelper
 {
 public:

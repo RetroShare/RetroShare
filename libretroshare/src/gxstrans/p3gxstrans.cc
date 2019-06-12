@@ -1,5 +1,7 @@
 /*******************************************************************************
- * RetroShare GxsTrans asyncronous redundant small mail trasport on top of GXS *
+ * libretroshare/src/gxstrans: p3gxstrans.cc                                   *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
@@ -239,10 +241,7 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 		if(!have_preferred_group)
 		{
 			/* This is true only at first run when we haven't received mail
-			 * distribuition groups from friends
-			 * TODO: We should check if we have some connected friend too, to
-			 * avoid to create yet another never used mail distribution group.
-			 */
+			 * distribuition groups from friends */
 
 #ifdef DEBUG_GXSTRANS
 			std::cerr << "p3GxsTrans::handleResponse(...) preferredGroupId.isNu"
@@ -620,9 +619,10 @@ void p3GxsTrans::service_tick()
 				}
 				else
 				{
-					/* TODO: It is a receipt for a message sent by someone else
+					/* It is a receipt for a message sent by someone else
 					 * we can delete original mail from our GXS DB without
-					 * waiting for GXS_STORAGE_PERIOD */
+					 * waiting for GXS_STORAGE_PERIOD, this has been implemented
+					 * already by Cyril into GxsTransIntegrityCleanupThread */
 				}
 				break;
 			}
