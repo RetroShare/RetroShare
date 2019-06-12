@@ -244,14 +244,22 @@ struct RsIdentityUsage : RsSerializable
 		CIRCLE_MEMBERSHIP_CHECK              = 0x13
 	} ;
 
+	RS_DEPRECATED
 	RsIdentityUsage( uint16_t service, const RsIdentityUsage::UsageCode& code,
 	                 const RsGxsGroupId& gid = RsGxsGroupId(),
 	                 const RsGxsMessageId& mid = RsGxsMessageId(),
 	                 uint64_t additional_id=0,
 	                 const std::string& comment = std::string() );
 
+	RsIdentityUsage( RsServiceType service,
+	                 RsIdentityUsage::UsageCode code,
+	                 const RsGxsGroupId& gid = RsGxsGroupId(),
+	                 const RsGxsMessageId& mid = RsGxsMessageId(),
+	                 uint64_t additional_id=0,
+	                 const std::string& comment = std::string() );
+
 	/// Id of the service using that identity, as understood by rsServiceControl
-	uint16_t mServiceId;
+	RsServiceType mServiceId;
 
 	/** Specific code to use. Will allow forming the correct translated message
 	 * in the GUI if necessary. */
@@ -503,6 +511,14 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[in] days number of days
 	 */
 	virtual void setDeleteBannedNodesThreshold(uint32_t days) = 0;
+
+	/**
+	 * @brief request details of a not yet known identity to the network
+	 * @jsonapi{development}
+	 * @param[in] id id of the identity to request
+	 * @return false on error, true otherwise
+	 */
+	virtual bool requestIdentity(const RsGxsId& id) = 0;
 
 
 	RS_DEPRECATED

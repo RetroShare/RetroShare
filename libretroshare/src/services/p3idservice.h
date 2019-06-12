@@ -370,6 +370,9 @@ public:
 	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
 	                                           RsGxsId* id = nullptr);
 
+	/// @see RsIdentity
+	bool requestIdentity(const RsGxsId& id) override;
+
 	/**************** RsGixsReputation Implementation ****************/
 
 	// get Reputation.

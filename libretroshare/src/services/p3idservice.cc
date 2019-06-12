@@ -1153,6 +1153,16 @@ static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId
         old_peers.push_back(*it) ;
 }
 
+bool p3IdService::requestIdentity(const RsGxsId& id)
+{
+	RsIdentityUsage usageInfo( RsServiceType::GXSID,
+	                           RsIdentityUsage::IDENTITY_DATA_UPDATE );
+	std::list<RsPeerId> onlinePeers;
+
+	return rsPeers && rsPeers->getOnlineList(onlinePeers)
+	        && requestKey(id, onlinePeers, usageInfo);
+}
+
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& use_info)
 {
     if(id.isNull())
@@ -4681,11 +4691,33 @@ void RsGxsIdGroup::serial_process(
 }
 
 RsIdentityUsage::RsIdentityUsage(
+        RsServiceType service, RsIdentityUsage::UsageCode code,
+        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
+        uint64_t additional_id, const std::string& comment ) :
+    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),
+    mAdditionalId(additional_id), mComment(comment)
+{
+	/* This is a hack, since it will hash also mHash, but because it is
+	 * initialized to 0, and only computed in the constructor here, it should
+	 * be ok. */
+	librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1);
+
+	hs << static_cast<uint32_t>(service); // G10h4ck: Why uint32 if it's 16 bits?
+	hs << static_cast<uint8_t>(code);
+	hs << gid;
+	hs << mid;
+	hs << static_cast<uint64_t>(additional_id);
+	hs << comment;
+
+	mHash = hs.hash();
+}
+
+RsIdentityUsage::RsIdentityUsage(
         uint16_t service, const RsIdentityUsage::UsageCode& code,
         const RsGxsGroupId& gid, const RsGxsMessageId& mid,
         uint64_t additional_id,const std::string& comment ) :
-    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),
-    mAdditionalId(additional_id), mComment(comment)
+    mServiceId(static_cast<RsServiceType>(service)), mUsageCode(code),
+    mGrpId(gid), mMsgId(mid), mAdditionalId(additional_id), mComment(comment)
 {
 #ifdef DEBUG_IDS
     std::cerr << "New identity usage: " << std::endl;
@@ -4702,7 +4734,7 @@ RsIdentityUsage::RsIdentityUsage(
 	 * be ok. */
     librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
 
-    hs << (uint32_t)service ;
+	hs << (uint32_t)service ; // G10h4ck: Why uint32 if it's 16 bits?
     hs << (uint8_t)code ;
     hs << gid ;
     hs << mid ;
@@ -4717,4 +4749,5 @@ RsIdentityUsage::RsIdentityUsage(
 }
 
 RsIdentityUsage::RsIdentityUsage() :
-    mServiceId(0), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0) {}
+    mServiceId(RsServiceType::NONE), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0)
+{}

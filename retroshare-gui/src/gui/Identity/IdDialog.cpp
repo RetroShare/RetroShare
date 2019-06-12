@@ -1987,11 +1987,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     RetroShareLink::enumType service_type = RetroShareLink::TYPE_UNKNOWN;
 
     switch(u.mServiceId)
-    {
-    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
-    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
-    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
-    case RS_SERVICE_TYPE_CHAT:          service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
+	{
+	case RsServiceType::CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
+	case RsServiceType::FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
+	case RsServiceType::POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+	case RsServiceType::CHAT:      service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
     default:
         service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
