@@ -1,9 +1,7 @@
 /*******************************************************************************
- * libretroshare/src/gxstrans: p3gxstrans.h                                    *
+ * RetroShare GxsTrans asyncronous redundant small mail trasport on top of GXS *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
