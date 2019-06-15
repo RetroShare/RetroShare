@@ -912,7 +912,10 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 	if (chatflags & RS_CHAT_FOCUS)
 	{
 		MainWindow::showWindow(MainWindow::ChatLobby);
-		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
+        MainPage *p = MainWindow::getPage(MainWindow::ChatLobby);
+
+        if(p != NULL)
+			dynamic_cast<ChatLobbyWidget*>(p)->setCurrentChatPage(this) ;
 	}
 }
 

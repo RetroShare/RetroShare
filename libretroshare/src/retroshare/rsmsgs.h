@@ -470,6 +470,8 @@ public:
 	std::map<RsGxsId, rstime_t> gxs_ids ;			// list of non direct friend who participate. Used to display only.
 	rstime_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
 
+    virtual void clear() { gxs_ids.clear(); lobby_id = 0; lobby_name.clear(); lobby_topic.clear(); participating_friends.clear(); }
+
 	// RsSerializable interface
 public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {

@@ -39,12 +39,12 @@
 
 //#define DEBUG_CHAT_LOBBIES 1
 
-static const int 		CONNECTION_CHALLENGE_MAX_COUNT 	  =   20 ; // sends a connection challenge every 20 messages
-static const rstime_t	CONNECTION_CHALLENGE_MAX_MSG_AGE	  =   30 ; // maximum age of a message to be used in a connection challenge
-static const int 		CONNECTION_CHALLENGE_MIN_DELAY 	  =   15 ; // sends a connection at most every 15 seconds
-static const int 		LOBBY_CACHE_CLEANING_PERIOD    	  =   10 ; // clean lobby caches every 10 secs (remove old messages)
+static const int 		CONNECTION_CHALLENGE_MAX_COUNT   =   20 ; // sends a connection challenge every 20 messages
+static const rstime_t	CONNECTION_CHALLENGE_MAX_MSG_AGE =   30 ; // maximum age of a message to be used in a connection challenge
+static const int 		CONNECTION_CHALLENGE_MIN_DELAY   =   15 ; // sends a connection at most every 15 seconds
+static const int 		LOBBY_CACHE_CLEANING_PERIOD      =   10 ; // clean lobby caches every 10 secs (remove old messages)
 
-static const rstime_t 	MAX_KEEP_MSG_RECORD 		    = 1200 ; // keep msg record for 1200 secs max.
+static const rstime_t 	MAX_KEEP_MSG_RECORD                = 1200 ; // keep msg record for 1200 secs max.
 static const rstime_t 	MAX_KEEP_INACTIVE_NICKNAME         =  180 ; // keep inactive nicknames for 3 mn max.
 static const rstime_t  	MAX_DELAY_BETWEEN_LOBBY_KEEP_ALIVE =  120 ; // send keep alive packet every 2 minutes.
 static const rstime_t 	MAX_KEEP_PUBLIC_LOBBY_RECORD       =   60 ; // keep inactive lobbies records for 60 secs max.
@@ -52,7 +52,7 @@ static const rstime_t 	MIN_DELAY_BETWEEN_PUBLIC_LOBBY_REQ =   20 ; // don't ask 
 static const rstime_t 	LOBBY_LIST_AUTO_UPDATE_TIME        =  121 ; // regularly ask for available lobbies every 5 minutes, to allow auto-subscribe to work
 
 static const uint32_t MAX_ALLOWED_LOBBIES_IN_LIST_WARNING = 50 ;
-//static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER     =  5 ; // max number of messages from a given peer in a window for duration below
+//static const uint32_t MAX_MESSAGES_PER_SECONDS_NUMBER   =  5 ; // max number of messages from a given peer in a window for duration below
 static const uint32_t MAX_MESSAGES_PER_SECONDS_PERIOD     = 10 ; // duration window for max number of messages before messages get dropped.
 
 #define        IS_PUBLIC_LOBBY(flags) (flags & RS_CHAT_LOBBY_FLAGS_PUBLIC    )
@@ -1629,6 +1629,8 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 
+    triggerConfigSave();
+
 	return lobby_id ;
 }
 
@@ -1826,14 +1828,18 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
 {
-	if(autoSubscribe){
-		_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
-		RsGxsId gxsId;
-		if (getIdentityForChatLobby(lobby_id, gxsId))
-			_lobby_default_identity[lobby_id] = gxsId;
-	} else {
-		_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
-		_lobby_default_identity.erase(lobby_id);
+	{
+		RS_STACK_MUTEX(mDistributedChatMtx);
+
+		if(autoSubscribe){
+			_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
+			RsGxsId gxsId;
+			if (getIdentityForChatLobby(lobby_id, gxsId))
+				_lobby_default_identity[lobby_id] = gxsId;
+		} else {
+			_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
+			_lobby_default_identity.erase(lobby_id);
+		}
 	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
@@ -1966,6 +1972,15 @@ void DistributedChatService::addToSaveList(std::list<RsItem*>& list) const
 		list.push_back(clci) ;
 	}
 
+    for(auto it(_chat_lobbys.begin());it!=_chat_lobbys.end();++it)
+    {
+        RsSubscribedChatLobbyConfigItem *scli = new RsSubscribedChatLobbyConfigItem;
+
+        scli->info = it->second;	// copies the ChatLobbyInfo part only
+
+        list.push_back(scli);
+    }
+
 	/* Save Default Nick Name */
 	{
 		RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet ;
@@ -2061,6 +2076,56 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
         if(!own_ids.empty())
             _default_identity = own_ids.front() ;
     }
+
+	const RsSubscribedChatLobbyConfigItem *scli = dynamic_cast<const RsSubscribedChatLobbyConfigItem*>(item);
+
+    if(scli != NULL)
+    {
+        if(_chat_lobbys.find(scli->info.lobby_id) != _chat_lobbys.end())	// do nothing if the lobby is already subscribed
+            return true;
+
+        std::cerr << "Re-subscribing to chat lobby " << (void*)scli->info.lobby_id << ", flags = " << scli->info.lobby_flags << std::endl;
+
+        rstime_t now = time(NULL);
+
+        // Add the chat room into visible chat rooms
+		{
+			RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+
+			VisibleChatLobbyRecord& rec(_visible_lobbies[scli->info.lobby_id]) ;
+
+			rec.lobby_id = scli->info.lobby_id ;
+			rec.lobby_name = scli->info.lobby_name ;
+			rec.lobby_topic = scli->info.lobby_topic ;
+			rec.participating_friends = scli->info.participating_friends;
+			rec.total_number_of_peers = 0;
+			rec.last_report_time = now ;
+			rec.lobby_flags = EXTRACT_PRIVACY_FLAGS(scli->info.lobby_flags) ;
+
+			_known_lobbies_flags[scli->info.lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
+        }
+
+        // Add the chat room into subscribed chat rooms
+
+		ChatLobbyEntry entry ;
+        (ChatLobbyInfo&)entry = scli->info;
+
+		 entry.virtual_peer_id = makeVirtualPeerId(entry.lobby_id) ;	// not random, so we keep the same id at restart
+		 entry.connexion_challenge_count = 0 ;
+		 entry.last_activity = now ;
+		 entry.last_connexion_challenge_time = now ;
+		 entry.last_keep_alive_packet_time = now ;
+
+		 RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+		 _chat_lobbys[entry.lobby_id] = entry ;
+
+         // make the UI aware of the existing chat room
+
+		 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+		 return true;
+    }
+
+
 	return false ;
 }
 
