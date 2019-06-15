@@ -72,6 +72,7 @@ class DistributedChatService
 		void setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe);
 		bool getLobbyAutoSubscribe(const ChatLobbyId& lobby_id);
 		void sendLobbyStatusString(const ChatLobbyId& id,const std::string& status_string) ;
+		void sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id) ;
 
         ChatLobbyId createChatLobby(const std::string& lobby_name,const RsGxsId& lobby_identity,const std::string& lobby_topic, const std::set<RsPeerId>& invited_friends,ChatLobbyFlags flags) ;
 
@@ -93,7 +94,7 @@ class DistributedChatService
         bool sendLobbyChat(const ChatLobbyId &lobby_id, const std::string&) ;
         bool handleRecvChatLobbyMsgItem(RsChatMsgItem *item) ;
 
-    bool checkSignature(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id) ;
+		bool checkSignature(RsChatLobbyBouncingObject *obj,const RsPeerId& peer_id) ;
 
     private:
 		/// make some statistics about time shifts, to prevent various issues. 
@@ -119,7 +120,6 @@ class DistributedChatService
 		bool bounceLobbyObject(RsChatLobbyBouncingObject *obj, const RsPeerId& peer_id) ;
 
 		void sendLobbyStatusItem(const ChatLobbyId&, int type, const std::string& status_string) ;
-		void sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id) ;
 		void sendLobbyStatusPeerChangedNickname(const ChatLobbyId& lobby_id, const std::string& newnick) ;
 
 		void sendLobbyStatusNewPeer(const ChatLobbyId& lobby_id) ;

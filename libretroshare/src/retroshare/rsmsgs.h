@@ -834,6 +834,13 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	virtual void unsubscribeChatLobby(const ChatLobbyId &lobby_id) = 0;
 
 	/**
+	 * @brief sendLobbyStatusPeerLeaving notify friend nodes that we're leaving a subscribed lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to leave
+	 */
+	virtual void sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id) = 0;
+
+	/**
 	 * @brief setIdentityForChatLobby set the chat identit
 	 * @jsonapi{development}
 	 * @param[in] lobby_id lobby to change the chat idnetity for

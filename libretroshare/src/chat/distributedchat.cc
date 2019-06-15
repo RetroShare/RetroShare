@@ -933,7 +933,7 @@ void DistributedChatService::sendLobbyStatusPeerChangedNickname(const ChatLobbyI
 }
 
 
-void DistributedChatService::sendLobbyStatusPeerLiving(const ChatLobbyId& lobby_id)
+void DistributedChatService::sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id)
 {
     sendLobbyStatusItem(lobby_id,RS_CHAT_LOBBY_EVENT_PEER_LEFT,std::string()) ;
 }
@@ -990,7 +990,7 @@ bool DistributedChatService::locked_initLobbyBouncableObject(const ChatLobbyId& 
 	while( lobby.msg_cache.find(item.msg_id) != lobby.msg_cache.end() ) ;
 
     RsIdentityDetails details ;
-    if(!rsIdentity->getIdDetails(lobby.gxs_id,details))
+    if(!rsIdentity || !rsIdentity->getIdDetails(lobby.gxs_id,details))
     {
         std::cerr << "(EE) Cannot send chat lobby object. Signign identity " << lobby.gxs_id << " is unknown." << std::endl;
         return false ;
@@ -1580,6 +1580,9 @@ bool DistributedChatService::joinVisibleChatLobby(const ChatLobbyId& lobby_id,co
 		}
 		_chat_lobbys[lobby_id] = entry ;
 	}
+    setLobbyAutoSubscribe(lobby_id,true);
+
+    triggerConfigSave();	// so that we save the subscribed lobbies
 
 	for(std::list<RsPeerId>::const_iterator it(invited_friends.begin());it!=invited_friends.end();++it)
 		invitePeerToLobby(lobby_id,*it) ;
@@ -1668,10 +1671,11 @@ void DistributedChatService::handleFriendUnsubscribeLobby(RsChatLobbyUnsubscribe
 void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 {
 	// send AKN item
-	sendLobbyStatusPeerLiving(id) ;
+	sendLobbyStatusPeerLeaving(id) ;
+	setLobbyAutoSubscribe(id, false);
 
 	{
-		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+		RS_STACK_MUTEX(mDistributedChatMtx);
 
 		std::map<ChatLobbyId,ChatLobbyEntry>::iterator it = _chat_lobbys.find(id) ;
 
@@ -1706,6 +1710,7 @@ void DistributedChatService::unsubscribeChatLobby(const ChatLobbyId& id)
 		_chat_lobbys.erase(it) ;
 	}
 
+    triggerConfigSave();	// so that we save the subscribed lobbies
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_DEL) ;
 
 	// done!
@@ -1828,19 +1833,27 @@ bool DistributedChatService::setIdentityForChatLobby(const ChatLobbyId& lobby_id
 
 void DistributedChatService::setLobbyAutoSubscribe(const ChatLobbyId& lobby_id, const bool autoSubscribe)
 {
-	{
-		RS_STACK_MUTEX(mDistributedChatMtx);
 
-		if(autoSubscribe){
-			_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
+		if(autoSubscribe)
+        {
+            {
+				RS_STACK_MUTEX(mDistributedChatMtx);
+				_known_lobbies_flags[lobby_id] |=  RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE;
+			}
 			RsGxsId gxsId;
+
 			if (getIdentityForChatLobby(lobby_id, gxsId))
+			{
+				RS_STACK_MUTEX(mDistributedChatMtx);
 				_lobby_default_identity[lobby_id] = gxsId;
-		} else {
+			}
+		}
+        else
+        {
+			RS_STACK_MUTEX(mDistributedChatMtx);
 			_known_lobbies_flags[lobby_id] &= ~RS_CHAT_LOBBY_FLAGS_AUTO_SUBSCRIBE ;
 			_lobby_default_identity.erase(lobby_id);
 		}
-	}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
 	triggerConfigSave();
@@ -2116,12 +2129,15 @@ bool DistributedChatService::processLoadListItem(const RsItem *item)
 		 entry.last_connexion_challenge_time = now ;
 		 entry.last_keep_alive_packet_time = now ;
 
-		 RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-		 _chat_lobbys[entry.lobby_id] = entry ;
+		 {
+			 RS_STACK_MUTEX(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
+			 _chat_lobbys[entry.lobby_id] = entry ;
+		 }
 
          // make the UI aware of the existing chat room
 
 		 RsServer::notify()->notifyListChange(NOTIFY_LIST_CHAT_LOBBY_LIST, NOTIFY_TYPE_ADD) ;
+
 		 return true;
     }
 

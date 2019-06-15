@@ -608,21 +608,15 @@ void ChatLobbyWidget::updateDisplay()
 		}
 
         // In the new model (after lobby save to disk) the auto-subscribe flag is used to automatically join lobbies that where
-        // previously being used when the software quits.
+        // previously being used when the t software quits.
 
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-		if (autoSubscribe && !subscribed)
+		if (autoSubscribe && subscribed && _lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 		{
-			if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
-			{
-				if (item == ui.lobbyTreeWidget->currentItem())
-				{
-                    ChatDialog::chatFriend(ChatId(lobby.lobby_id)) ;
-				}else{
-                    ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
-				}
-			}
+			ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RS_CHAT_OPEN);
+
+			addChatPage(dynamic_cast<ChatLobbyDialog*>(cd));
 		}
 
 		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe,lobby_flags);
@@ -689,7 +683,7 @@ void ChatLobbyWidget::updateDisplay()
         if(it == _lobby_infos.end() && rsMsgs->joinVisibleChatLobby(lobby.lobby_id,lobby.gxs_id))
         {
             std::cerr << "Adding back ChatLobbyDialog for subscribed lobby " << std::hex << lobby.lobby_id << std::dec << std::endl;
-			ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
+			ChatDialog::chatFriend(ChatId(lobby.lobby_id),true) ;
         }
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
