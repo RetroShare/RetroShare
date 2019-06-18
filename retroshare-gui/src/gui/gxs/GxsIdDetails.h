@@ -74,6 +74,13 @@ public:
 	GxsIdDetails();
 	virtual ~GxsIdDetails();
 
+    enum AvatarSize {
+        SMALL   = 0x00,
+        MEDIUM  = 0x01,
+        LARGE   = 0x02,
+        ORIGINAL= 0x03
+    };
+
 	static void initialize();
 	static void cleanup();
 
@@ -102,8 +109,11 @@ public:
 
 	static void GenerateCombinedPixmap(QPixmap &pixmap, const QList<QIcon> &icons, int iconSize);
 
-	//static QImage makeDefaultIcon(const RsGxsId& id);
-    static const QImage& makeDefaultIcon(const RsGxsId& id);
+    // These two methods use a cache so as to minimize the memory impact of avatars.
+
+    static const QPixmap makeDefaultIcon(const RsGxsId& id, AvatarSize size = MEDIUM);
+	static bool loadPixmapFromData(const unsigned char *data, size_t data_len, QPixmap& pix, AvatarSize size = MEDIUM);
+	static void  checkCleanImagesCache();
 
 	/* Processing */
 	static void enableProcess(bool enable);
@@ -127,7 +137,7 @@ private:
 	                         quint16 x, quint16 y,
 	                         qreal shapeangle, qreal angle,
 	                         quint16 size, QColor fillColor);
-	static QImage drawIdentIcon(QString hash, quint16 width, bool rotate);
+	static QPixmap drawIdentIcon(QString hash, quint16 width, bool rotate);
 
 private slots:
 	void objectDestroyed(QObject *object);
@@ -159,14 +169,15 @@ protected:
 	QMap<QObject*,CallbackData>::iterator mPendingDataIterator;
 
     static uint32_t mImagesAllocated;
-    static std::map<RsGxsId,std::pair<time_t,QImage> > mDefaultIconCache;
+    static std::map<RsGxsId,std::pair<time_t,QPixmap>[4] > mDefaultIconCache;
     static time_t mLastIconCacheCleaning;
 
     int mCheckTimerId;
 	int mProcessDisableCount;
 
 	/* Thread safe */
-	QMutex mMutex;
+    static QMutex mMutex;
+    static QMutex mIconCacheMutex;
 };
 
 #endif

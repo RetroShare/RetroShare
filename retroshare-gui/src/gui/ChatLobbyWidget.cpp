@@ -322,8 +322,8 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
 
                     QPixmap pixmap ;
 
-                    if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-                        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+                    if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap, GxsIdDetails::SMALL))
+                        pixmap = GxsIdDetails::makeDefaultIcon(*it,GxsIdDetails::SMALL) ;
 
                     QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(subscribeChatLobbyAs()));
                     action->setData(QString::fromStdString((*it).toStdString())) ;

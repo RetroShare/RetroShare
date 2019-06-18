@@ -165,7 +165,7 @@ void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGrou
 		
 		if (group.mGroupImage.mData != NULL) {
 			QPixmap image;
-			image.loadFromData(group.mGroupImage.mData, group.mGroupImage.mSize, "PNG");
+			GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
 			postedData->mIcon[group.mMeta.mGroupId] = image;
 		}
 

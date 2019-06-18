@@ -326,7 +326,7 @@ void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<Rs
 
 		if (group.mImage.mData != NULL) {
 			QPixmap image;
-			image.loadFromData(group.mImage.mData, group.mImage.mSize, "PNG");
+			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
 			channelData->mIcon[group.mMeta.mGroupId] = image;
 		}
 
