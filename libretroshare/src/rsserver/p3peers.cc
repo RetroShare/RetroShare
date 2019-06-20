@@ -1268,6 +1268,8 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 
         case RsShortInviteFieldType::PGP_FINGERPRINT:
 			RS_SERIAL_PROCESS(details.fpr);
+
+            details.gpg_id = PGPHandler::pgpIdFromFingerprint(details.fpr);
             break;
 
 		case RsShortInviteFieldType::LOCATOR:
@@ -1342,6 +1344,7 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 		default:
 			RsWarn() << __PRETTY_FUNCTION__ << " got unkown field type: "
 			         << static_cast<uint32_t>(fieldType) << std::endl;
+            return false;
 			break;
 		}
 	}
