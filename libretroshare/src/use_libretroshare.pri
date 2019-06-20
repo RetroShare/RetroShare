@@ -68,9 +68,13 @@ linux-* {
     mLibs += dl
 }
 
-rs_deep_search {
+rs_deep_channels_index | rs_deep_files_index {
     mLibs += xapian
     win32-g++:mLibs += rpcrt4
+}
+
+rs_deep_files_index_ogg {
+    mLibs += vorbisfile
 }
 
 rs_broadcast_discovery {

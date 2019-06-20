@@ -165,10 +165,20 @@ rs_macos10.14:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# To enable deep search append the following assignation to qmake command line
-# CONFIG *= rs_deep_search
-CONFIG *= no_rs_deep_search
-rs_deep_search:CONFIG -= no_rs_deep_search
+# To enable channel indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_channel_index"
+CONFIG *= no_rs_deep_channel_index
+rs_deep_channel_index:CONFIG -= no_rs_deep_channel_index
+
+# To enable file indexing append the following assignation to qmake command
+# line "CONFIG+=rs_files_index"
+CONFIG *= no_rs_deep_files_index
+rs_deep_files_index:CONFIG -= no_rs_deep_files_index
+
+# To enable Ogg file indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_files_index_ogg"
+CONFIG *= no_rs_deep_files_index_ogg
+rs_deep_files_index_ogg::CONFIG -= no_rs_deep_files_index_ogg
 
 # To enable native dialogs append the following assignation to qmake command
 # line "CONFIG+=rs_use_native_dialogs"
@@ -564,15 +574,10 @@ retroshare_qml_app {
     warning("QMAKE: you have enabled retroshare_qml_app which is deprecated")
 }
 
-rs_deep_search {
-    DEFINES *= RS_DEEP_SEARCH
+rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
-	linux {
-	 exists("/usr/include/xapian-1.3") {
-	 	INCLUDEPATH += /usr/include/xapian-1.3
-	 }
-	}
-}
+rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
+rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 

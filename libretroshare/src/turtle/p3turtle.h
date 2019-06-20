@@ -19,6 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#pragma once
 
 //====================================== General setup of the router ===================================//
 //
@@ -129,10 +130,6 @@
 // Questions:
 // 	- should tunnels be re-used ? nope. The only useful case would be when two peers are exchanging files, which happens quite rarely.
 //
-
-
-#ifndef MRK_PQI_TURTLE_H
-#define MRK_PQI_TURTLE_H
 
 #include <string>
 #include <list>
@@ -464,6 +461,8 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 
 		uint32_t _service_type ;
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
+
 #ifdef P3TURTLE_DEBUG
 		// debug function
 		void dumpState() ;
@@ -472,5 +471,3 @@ class p3turtle: public p3Service, public RsTurtle, public p3Config
 		void TS_dumpState();
 #endif
 };
-
-#endif 
