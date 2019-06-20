@@ -592,12 +592,29 @@ void FriendList::insertPeers()
     std::list<RsPgpId>::iterator gpgIt;
     rsPeers->getGPGAcceptedList(gpgFriends);
 
-    //add own gpg id, if we have more than on node (ssl client)
+    // add own gpg id, if we have more than on node (ssl client)
+
     std::list<RsPeerId> ownSslContacts;
     RsPgpId ownId = rsPeers->getGPGOwnId();
     rsPeers->getAssociatedSSLIds(ownId, ownSslContacts);
     if (ownSslContacts.size() > 0) {
         gpgFriends.push_back(ownId);
+    }
+
+    // Also add SSL peers which PGP key is not available yet.
+
+    std::list<RsPeerId> ssl_friends ;
+    rsPeers->getFriendList(ssl_friends);
+
+    std::cerr << "List of accepted ssl peers: " << std::endl;
+    for(auto it(ssl_friends.begin());it!=ssl_friends.end();++it)
+    {
+        RsPeerDetails pd;
+        if(rsPeers->getPeerDetails(*it,pd) && pd.skip_signature_validation)
+        {
+			std::cerr << "  adding " << *it << " - " << pd.gpg_id << std::endl;
+			gpgFriends.push_back(pd.gpg_id);
+        }
     }
 
     /* get a link to the table */

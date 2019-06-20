@@ -295,7 +295,18 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't return now, we've got fill in the ssl and connection info */
-	getGPGDetails(ps.gpg_id, d);
+
+    if(!getGPGDetails(ps.gpg_id, d))
+    {
+        if(!ps.skip_pgp_signature_validation)
+            return false;
+
+        d.gpg_id = ps.gpg_id ;
+        d.skip_signature_validation = true;
+    }
+    else
+        d.skip_signature_validation = false;
+
 	d.isOnlyGPGdetail = false;
 
 	//get the ssl details
