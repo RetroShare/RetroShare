@@ -84,7 +84,7 @@ public:
 
 	static bool cleanCertificate(
 	        const std::string& input, std::string& output,
-	        RsCertificate::Format& format, int& error_code, bool check_content);
+	        RsCertificate::Format& format, uint32_t& error_code, bool check_content);
 
 	const std::set<RsUrl>& locators() const { return mLocators; }
 
@@ -99,7 +99,7 @@ public:
 
 private:
 	// new radix format
-	static bool cleanRadix64( const std::string& input, std::string& output, int&);
+	static bool cleanRadix64(const std::string& input, std::string& output, uint32_t &);
 
 	static void scan_ip( const std::string& ip_string, unsigned short port,
 	                     unsigned char *destination_memory );

@@ -130,6 +130,8 @@ const uint32_t CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR            = 0x16 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_UNKNOWN_SECTION_PTAG      = 0x17 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_MISSING_CHECKSUM          = 0x18 ;
 const uint32_t CERTIFICATE_PARSING_ERROR_WRONG_VERSION             = 0x19 ;
+const uint32_t CERTIFICATE_PARSING_ERROR_MISSING_PGP_FINGERPRINT   = 0x1a ;
+const uint32_t CERTIFICATE_PARSING_ERROR_MISSING_LOCATION_ID       = 0x1b ;
 
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_NO_ERROR                  = 0x20 ;
 const uint32_t PGP_KEYRING_REMOVAL_ERROR_CANT_REMOVE_SECRET_KEYS   = 0x21 ;
@@ -140,40 +142,40 @@ const uint32_t PGP_KEYRING_REMOVAL_ERROR_DATA_INCONSISTENCY        = 0x24 ;
 /* LinkType Flags */
 
 // CONNECTION
-const uint32_t RS_NET_CONN_TRANS_MASK			= 0x0000ffff;
-const uint32_t RS_NET_CONN_TRANS_TCP_MASK		= 0x0000000f;
-const uint32_t RS_NET_CONN_TRANS_TCP_UNKNOWN		= 0x00000001;
-const uint32_t RS_NET_CONN_TRANS_TCP_LOCAL		= 0x00000002;
-const uint32_t RS_NET_CONN_TRANS_TCP_EXTERNAL		= 0x00000004;
+const uint32_t RS_NET_CONN_TRANS_MASK         = 0x0000ffff;
+const uint32_t RS_NET_CONN_TRANS_TCP_MASK     = 0x0000000f;
+const uint32_t RS_NET_CONN_TRANS_TCP_UNKNOWN  = 0x00000001;
+const uint32_t RS_NET_CONN_TRANS_TCP_LOCAL    = 0x00000002;
+const uint32_t RS_NET_CONN_TRANS_TCP_EXTERNAL = 0x00000004;
 
-const uint32_t RS_NET_CONN_TRANS_UDP_MASK		= 0x000000f0;
-const uint32_t RS_NET_CONN_TRANS_UDP_UNKNOWN		= 0x00000010;
-const uint32_t RS_NET_CONN_TRANS_UDP_DIRECT		= 0x00000020;
-const uint32_t RS_NET_CONN_TRANS_UDP_PROXY		= 0x00000040;
-const uint32_t RS_NET_CONN_TRANS_UDP_RELAY		= 0x00000080;
+const uint32_t RS_NET_CONN_TRANS_UDP_MASK     = 0x000000f0;
+const uint32_t RS_NET_CONN_TRANS_UDP_UNKNOWN  = 0x00000010;
+const uint32_t RS_NET_CONN_TRANS_UDP_DIRECT   = 0x00000020;
+const uint32_t RS_NET_CONN_TRANS_UDP_PROXY    = 0x00000040;
+const uint32_t RS_NET_CONN_TRANS_UDP_RELAY    = 0x00000080;
 
-const uint32_t RS_NET_CONN_TRANS_OTHER_MASK		= 0x00000f00;
+const uint32_t RS_NET_CONN_TRANS_OTHER_MASK   = 0x00000f00;
 
-const uint32_t RS_NET_CONN_TRANS_UNKNOWN		= 0x00001000;
+const uint32_t RS_NET_CONN_TRANS_UNKNOWN      = 0x00001000;
 
 
-const uint32_t RS_NET_CONN_SPEED_MASK			= 0x000f0000;
-const uint32_t RS_NET_CONN_SPEED_UNKNOWN		= 0x00000000;
-const uint32_t RS_NET_CONN_SPEED_TRICKLE		= 0x00010000;
-const uint32_t RS_NET_CONN_SPEED_LOW			= 0x00020000;
-const uint32_t RS_NET_CONN_SPEED_NORMAL			= 0x00040000;
-const uint32_t RS_NET_CONN_SPEED_HIGH			= 0x00080000;
+const uint32_t RS_NET_CONN_SPEED_MASK         = 0x000f0000;
+const uint32_t RS_NET_CONN_SPEED_UNKNOWN      = 0x00000000;
+const uint32_t RS_NET_CONN_SPEED_TRICKLE      = 0x00010000;
+const uint32_t RS_NET_CONN_SPEED_LOW          = 0x00020000;
+const uint32_t RS_NET_CONN_SPEED_NORMAL       = 0x00040000;
+const uint32_t RS_NET_CONN_SPEED_HIGH         = 0x00080000;
 
-const uint32_t RS_NET_CONN_QUALITY_MASK			= 0x00f00000;
-const uint32_t RS_NET_CONN_QUALITY_UNKNOWN		= 0x00000000;
+const uint32_t RS_NET_CONN_QUALITY_MASK       = 0x00f00000;
+const uint32_t RS_NET_CONN_QUALITY_UNKNOWN    = 0x00000000;
 
 // THIS INFO MUST BE SUPPLIED BY PEERMGR....
-const uint32_t RS_NET_CONN_TYPE_MASK			= 0x0f000000;
-const uint32_t RS_NET_CONN_TYPE_UNKNOWN			= 0x00000000;
-const uint32_t RS_NET_CONN_TYPE_ACQUAINTANCE		= 0x01000000;
-const uint32_t RS_NET_CONN_TYPE_FRIEND			= 0x02000000;
-const uint32_t RS_NET_CONN_TYPE_SERVER			= 0x04000000;
-const uint32_t RS_NET_CONN_TYPE_CLIENT			= 0x08000000;
+const uint32_t RS_NET_CONN_TYPE_MASK          = 0x0f000000;
+const uint32_t RS_NET_CONN_TYPE_UNKNOWN       = 0x00000000;
+const uint32_t RS_NET_CONN_TYPE_ACQUAINTANCE  = 0x01000000;
+const uint32_t RS_NET_CONN_TYPE_FRIEND        = 0x02000000;
+const uint32_t RS_NET_CONN_TYPE_SERVER        = 0x04000000;
+const uint32_t RS_NET_CONN_TYPE_CLIENT        = 0x08000000;
 
 // working state of proxy
 
@@ -685,7 +687,7 @@ public:
 	 * @return false if error occurred, true otherwise
 	 */
 	virtual bool parseShortInvite(
-	        const std::string& invite, RsPeerDetails& details ) = 0;
+	        const std::string& invite, RsPeerDetails& details,uint32_t& err_code ) = 0;
 
 	/**
 	 * @brief Add trusted node from invite
@@ -731,7 +733,7 @@ public:
 	        uint32_t& errorCode ) = 0;
 
 	// Certificate utils
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,int& error_code) = 0;
+	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code) = 0;
 	virtual	bool saveCertificateToFile(const RsPeerId& id, const std::string &fname) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 

@@ -145,8 +145,7 @@ public:
 	        const std::string& baseUrl = "https://retroshare.me/" ) override;
 
 	/// @see RsPeers
-	bool parseShortInvite(
-	            const std::string& invite, RsPeerDetails& details ) override;
+	bool parseShortInvite(const std::string& invite, RsPeerDetails& details, uint32_t &err_code ) override;
 
 	/// @see RsPeers::acceptInvite
 	virtual bool acceptInvite(
@@ -158,7 +157,7 @@ public:
 	virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,RsPgpId& pgp_id, std::string& error_string);
 	virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, uint32_t& error_code);
 
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, int& error_code) override;
+	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, uint32_t& error_code) override;
 	virtual	bool saveCertificateToFile(const RsPeerId &id, const std::string &fname);
 	virtual	std::string saveCertificateToString(const RsPeerId &id);
 

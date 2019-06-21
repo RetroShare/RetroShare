@@ -552,13 +552,13 @@ unsigned short RsCertificate::loc_port_us() const
 	return (int)ipv4_internal_ip_and_port[4]*256 + (int)ipv4_internal_ip_and_port[5] ;
 }
 
-bool RsCertificate::cleanCertificate( const std::string& input, std::string& output, Format& format, int& error_code, bool check_content )
+bool RsCertificate::cleanCertificate( const std::string& input, std::string& output, Format& format, uint32_t& error_code, bool check_content )
 {
 	if(cleanRadix64(input,output,error_code))
 	{
         RsPeerDetails details;
 
-        if(rsPeers->parseShortInvite(output,details))
+        if(rsPeers->parseShortInvite(output,details,error_code))
         {
             format = RS_CERTIFICATE_SHORT_RADIX;
             return true;
@@ -584,7 +584,7 @@ std::string RsCertificate::armouredPGPKey() const
 
 // Yeah, this is simple, and that is what's good about the radix format. Can't be broken ;-)
 //
-bool RsCertificate::cleanRadix64(const std::string& instr,std::string& str,int& error_code)
+bool RsCertificate::cleanRadix64(const std::string& instr,std::string& str,uint32_t& error_code)
 {
 	error_code = RS_PEER_CERT_CLEANING_CODE_NO_ERROR ;
 

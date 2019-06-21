@@ -305,7 +305,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 			}
 		}
     }
-    else if(rsPeers->parseShortInvite(certificate.toUtf8().constData(),peerDetails))
+    else if(rsPeers->parseShortInvite(certificate.toUtf8().constData(),peerDetails,cert_load_error_code))
     {
         mIsShortInvite = true;
 
@@ -606,7 +606,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 			std::string certstr = ui->friendCertEdit->toPlainText().toUtf8().constData();
 			uint32_t cert_load_error_code;
 
-			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_load_error_code) || rsPeers->parseShortInvite(certstr,peerDetails))
+			if (rsPeers->loadDetailsFromStringCert(certstr, peerDetails, cert_load_error_code) || rsPeers->parseShortInvite(certstr,peerDetails,cert_load_error_code))
             {
 				mCertificate = certstr;
 #ifdef FRIEND_WIZARD_DEBUG
@@ -846,7 +846,7 @@ void ConnectFriendWizard::cleanFriendCert()
 
 	} else {
 		std::string cleanCert;
-		int error_code;
+		uint32_t error_code;
 
 		if (rsPeers->cleanCertificate(cert, cleanCert, mIsShortInvite, error_code))
         {
