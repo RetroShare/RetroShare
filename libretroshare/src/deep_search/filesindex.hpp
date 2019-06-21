@@ -82,6 +82,14 @@ private:
 		/// Used to store RsFileHash of indexed documents
 		FILE_HASH_VALUENO,
 
+		/** Used to check if some file need reindex because was indexed with an
+		 * older version of the indexer */
+		INDEXER_VERSION_VALUENO,
+
+		/** Used to check if some file need reindex because was indexed with an
+		 * older version of the indexer */
+		INDEXERS_COUNT_VALUENO,
+
 		/// @see Xapian::BAD_VALUENO
 		BAD_VALUENO = Xapian::BAD_VALUENO
 	};
@@ -91,5 +99,5 @@ private:
 	/** Storage for indexers function by order */
 	static std::multimap<int, IndexerFunType> indexersRegister;
 
-	RS_SET_CONTEXT_DEBUG_LEVEL(4)
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

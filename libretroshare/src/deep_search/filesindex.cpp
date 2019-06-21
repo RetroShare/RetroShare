@@ -22,6 +22,7 @@
 #include "deep_search/commonutils.hpp"
 #include "util/rsdebug.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rsversion.h"
 
 #include <utility>
 
@@ -37,31 +38,48 @@ bool DeepFilesIndex::indexFile(
 	if(!dbPtr) return false;
 	Xapian::WritableDatabase& db(*dbPtr);
 
-	if(db.term_exists("Q" + hash.toStdString()))
+	const std::string hashString = hash.toStdString();
+	const std::string idTerm("Q" + hashString);
+
+	Xapian::Document oldDoc;
+	Xapian::PostingIterator pIt = db.postlist_begin(idTerm);
+	if( pIt != db.postlist_end(idTerm) )
 	{
-		Dbg3() << __PRETTY_FUNCTION__ << " skipping laready indexed file: "
-		       << hash << " " << name << std::endl;
-		return true;
+		oldDoc = db.get_document(*pIt);
+		if( oldDoc.get_value(INDEXER_VERSION_VALUENO) ==
+		        RS_HUMAN_READABLE_VERSION &&
+		    std::stoull(oldDoc.get_value(INDEXERS_COUNT_VALUENO)) ==
+		        indexersRegister.size() )
+		{
+			/* Looks like this file has already been indexed by this RetroShare
+			 * exact version, so we can skip it. If the version was different it
+			 * made sense to reindex it as better indexers might be available
+			 * since last time it was indexed */
+			Dbg3() << __PRETTY_FUNCTION__ << " skipping laready indexed file: "
+			       << hash << " " << name << std::endl;
+			return true;
+		}
 	}
+
+	Xapian::Document doc;
 
 	// Set up a TermGenerator that we'll use in indexing.
 	Xapian::TermGenerator termgenerator;
 	//termgenerator.set_stemmer(Xapian::Stem("en"));
-
-	// We make a document and tell the term generator to use this.
-	Xapian::Document doc;
 	termgenerator.set_document(doc);
 
 	for(auto& indexerPair : indexersRegister)
 		if(indexerPair.second(path, name, termgenerator, doc) > 50)
 			break;
 
-	const std::string hashString = hash.toStdString();
-	const std::string idTerm("Q" + hashString);
 	doc.add_boolean_term(idTerm);
 	termgenerator.index_text(name, 1, "N");
 	termgenerator.index_text(name);
 	doc.add_value(FILE_HASH_VALUENO, hashString);
+	doc.add_value(INDEXER_VERSION_VALUENO, RS_HUMAN_READABLE_VERSION);
+	doc.add_value(
+	            INDEXERS_COUNT_VALUENO,
+	            std::to_string(indexersRegister.size()) );
 	db.replace_document(idTerm, doc);
 
 	return true;
@@ -141,3 +159,13 @@ uint32_t DeepFilesIndex::search(
 #	include "deep_search/filesoggindexer.hpp"
 static RsDeepOggFileIndexer oggFileIndexer;
 #endif // def RS_DEEP_FILES_INDEX_OGG
+
+#ifdef RS_DEEP_FILES_INDEX_FLAC
+#	include "deep_search/filesflacindexer.hpp"
+static RsDeepFlacFileIndexer flacFileIndexer;
+#endif // def RS_DEEP_FILES_INDEX_FLAC
+
+#ifdef RS_DEEP_FILES_INDEX_TAGLIB
+#	include "deep_search/filestaglibindexer.hpp"
+static RsDeepTaglibFileIndexer taglibFileIndexer;
+#endif // def RS_DEEP_FILES_INDEX_TAGLIB

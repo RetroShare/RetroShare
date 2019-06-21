@@ -74,7 +74,7 @@ struct RsDeepOggFileIndexer
 					xTG.index_text(tagValue, 1, "XD");
 				else if (tagName == "TITLE")
 					xTG.index_text(tagValue, 1, "S");
-				if(tagName.find("COVERART") != tagName.npos)
+				else if(tagName.find("COVERART") != tagName.npos)
 					continue; // Avoid polluting the index with binary data
 				else if (tagName.find("METADATA_BLOCK_PICTURE") != tagName.npos)
 					continue; // Avoid polluting the index with binary data
@@ -93,5 +93,5 @@ struct RsDeepOggFileIndexer
 		return 0;
 	}
 
-	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

@@ -71,7 +71,7 @@ private:
 	static const std::string& dbPath()
 	{
 		static const std::string dbDir =
-		        RsAccounts::AccountDirectory() + "/deep_search_xapian_db";
+		        RsAccounts::AccountDirectory() + "/deep_channels_xapian_db";
 		return dbDir;
 	}
 };
