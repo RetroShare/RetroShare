@@ -35,6 +35,7 @@ namespace Ui {
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class QToolButton;
+struct PgpItemInfo;
 
 class FriendList : public RsAutoUpdatePage
 {
@@ -137,6 +138,7 @@ private:
     bool importExportFriendlistFileDialog(QString &fileName, bool import);
     bool exportFriendlist(QString &fileName);
     bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
+	void manageProfileLocations(QTreeWidgetItem *gpgItem,const RsPgpId& gpg_id,PgpItemInfo& info);
 
 private slots:
     void groupsChanged();
