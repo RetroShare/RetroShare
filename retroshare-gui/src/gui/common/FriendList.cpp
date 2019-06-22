@@ -871,7 +871,7 @@ void FriendList::insertPeers()
 
     std::list<RsPeerId> ssl_friends ;
     rsPeers->getFriendList(ssl_friends);
-    std::set<RsPgpId> pgp_friends_without_validation;
+    std::map<RsPgpId,std::list<RsPeerDetails> > pgp_friends_without_validation;
 
     std::cerr << "List of accepted ssl peers: " << std::endl;
     for(auto it(ssl_friends.begin());it!=ssl_friends.end();++it)
@@ -881,7 +881,7 @@ void FriendList::insertPeers()
         {
 			std::cerr << "  adding " << *it << " - " << pd.gpg_id << std::endl;
 			gpgFriends.push_back(pd.gpg_id);
-            pgp_friends_without_validation.insert(pd.gpg_id);
+            pgp_friends_without_validation[pd.gpg_id].push_back(pd);
         }
     }
 
@@ -1086,7 +1086,8 @@ void FriendList::insertPeers()
             }
 
             RsPeerDetails detail;
-            if ((!rsPeers->getGPGDetails(gpgId, detail) || !detail.accept_connection) && detail.gpg_id != ownId) {
+            if (pgp_friends_without_validation.find(gpgId) == pgp_friends_without_validation.end() &&
+                    (!rsPeers->getGPGDetails(gpgId, detail) || !detail.accept_connection) && detail.gpg_id != ownId) {
                 // don't accept anymore connection, remove from the view
                 if (gpgItem) {
                     if (groupItem) {
@@ -1097,9 +1098,7 @@ void FriendList::insertPeers()
                 }
 
                 // We still want to add the item if it is unvalidated, in which case getGPGDetails returns false.
-
-                if(pgp_friends_without_validation.find(gpgId) == pgp_friends_without_validation.end())
-					continue;
+				continue;
             }
 
             if (gpgItem == NULL)
@@ -1150,9 +1149,20 @@ void FriendList::insertPeers()
             // update the childs (ssl certs)
 
             PgpItemInfo info;
-            rsPeers->getAssociatedSSLIds(detail.gpg_id, info.sslContacts);
 
-            manageProfileLocations(gpgItem,detail.gpg_id,info);
+            auto itt = pgp_friends_without_validation.find(gpgId);
+            if(itt != pgp_friends_without_validation.end())
+            {
+                info.sslContacts.clear();
+                for(auto itt2(itt->second.begin());itt2!=itt->second.end();++itt2)
+                    info.sslContacts.push_back(itt2->id);
+
+                detail.name = gpgId.toStdString() + tr(" (Unverified yet)").toStdString();
+            }
+            else
+				rsPeers->getAssociatedSSLIds(gpgId, info.sslContacts);
+
+            manageProfileLocations(gpgItem,gpgId,info);
 
             QString gpgName = QString::fromUtf8(detail.name.c_str());
             QString gpgText;
