@@ -110,9 +110,8 @@ p3discovery2::p3discovery2(
 	// Add self into PGP FriendList.
 	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
 
-	rsEvents->registerEventsHandler(
-	            [this](const RsEvent& event){ rsEventsHandler(event); },
-	            mRsEventsHandle );
+	mRsEventsHandle = 0 ; // avoids random behavior if not initialized
+	rsEvents->registerEventsHandler( [this](const RsEvent& event){ rsEventsHandler(event); }, mRsEventsHandle );
 }
 
 
