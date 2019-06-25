@@ -456,7 +456,6 @@ void GxsIdDetails::checkCleanImagesCache()
 					std::cerr << "Deleting pixmap " << it->first << " size " << i << " " << s << " bytes." << std::endl;
 
                     it->second[i].second = QPixmap();
-					it = mDefaultIconCache.erase(it);
 					++nb_deleted;
                     size_deleted += s;
 				}
