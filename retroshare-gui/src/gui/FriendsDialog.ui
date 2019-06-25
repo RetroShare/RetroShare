@@ -199,7 +199,7 @@
         </widget>
        </item>
        <item>
-        <widget class="FriendList" name="friendList" native="true">
+        <widget class="NewFriendList" name="friendList" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
            <horstretch>0</horstretch>
@@ -354,20 +354,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>AvatarWidget</class>
    <extends>QLabel</extends>
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>FriendList</class>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ChatWidget</class>
    <extends>QWidget</extends>
-   <header>gui/common/FriendList.h</header>
+   <header location="global">gui/chat/ChatWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -382,9 +382,9 @@
    <header>gui/common/StyledElidedLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>ChatWidget</class>
+   <class>NewFriendList</class>
    <extends>QWidget</extends>
-   <header location="global">gui/chat/ChatWidget.h</header>
+   <header>NewFriendList.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

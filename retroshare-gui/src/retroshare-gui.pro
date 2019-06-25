@@ -524,6 +524,8 @@ HEADERS +=  rshare.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
             gui/common/FriendList.h \
+            gui/common/FriendListModel.h \
+            gui/common/NewFriendList.h \
             gui/common/FriendSelectionWidget.h \
             gui/common/FriendSelectionDialog.h \
             gui/common/HashBox.h \
@@ -844,6 +846,8 @@ SOURCES +=  main.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
             gui/common/FriendList.cpp \
+            gui/common/FriendListModel.cpp \
+            gui/common/NewFriendList.cpp \
             gui/common/FriendSelectionWidget.cpp \
             gui/common/FriendSelectionDialog.cpp \
             gui/common/HashBox.cpp \
