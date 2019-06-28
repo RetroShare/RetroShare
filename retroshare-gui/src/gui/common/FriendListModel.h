@@ -85,16 +85,22 @@ public:
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
-
 	QModelIndex getIndexOfGroup(const RsNodeGroupId& mid) const;
 
     static const QString FilterString ;
 
     // This method will asynchroneously update the data
 
-    EntryType currentItemData(RsGroupInfo&,RsProfileDetails&,RsNodeDetails&) const;
+	void setDisplayGroups(bool b);
+
+    EntryType getType(const QModelIndex&) const;
+    bool getGroupData  (const QModelIndex&,RsGroupInfo     &) const;
+    bool getProfileData(const QModelIndex&,RsProfileDetails&) const;
+    bool getNodeData   (const QModelIndex&,RsNodeDetails   &) const;
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
+
+    // Overloaded methods from QAbstractItemModel
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;
@@ -109,6 +115,7 @@ public:
 
 	void clear() ;
 
+private:
     QVariant sizeHintRole  (int col) const;
 
 	QVariant displayRole   (const EntryIndex &e, int col) const;

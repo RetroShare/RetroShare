@@ -53,6 +53,12 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
     mFilterStrings.clear();
 }
 
+void RsFriendListModel::setDisplayGroups(bool b)
+{
+    mDisplayGroups = b;
+
+    // should update here
+}
 void RsFriendListModel::preMods()
 {
  	emit layoutAboutToBeChanged();
@@ -602,4 +608,53 @@ void RsFriendListModel::debug_dump() const
 {
     for(auto it(mGroups.begin());it!=mGroups.end();++it)
 		std::cerr << "Group: " << *it << std::endl;
+}
+
+bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & data) const
+{
+    if(!i.isValid())
+        return false;
+
+    EntryIndex e;
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP || e.ind >= mGroups.size())
+        return false;
+
+    data = mGroups[e.ind];
+    return true;
+}
+bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& data) const
+{
+	if(!i.isValid())
+        return false;
+
+    EntryIndex e;
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE || e.ind >= mProfiles.size())
+        return false;
+
+    data = mProfiles[e.ind];
+    return true;
+}
+bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & data) const
+{
+	if(!i.isValid())
+        return false;
+
+    EntryIndex e;
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE || e.ind >= mLocations.size())
+        return false;
+
+    data = mLocations[e.ind];
+    return true;
+}
+
+RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) const
+{
+	if(!i.isValid())
+		return ENTRY_TYPE_UNKNOWN;
+
+	EntryIndex e;
+	if(!convertInternalIdToIndex(i.internalId(),e))
+        return ENTRY_TYPE_UNKNOWN;
+
+    return e.type;
 }

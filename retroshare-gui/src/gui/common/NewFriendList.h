@@ -25,6 +25,7 @@
 #include <QWidget>
 #include <QTreeView>
 
+#include "FriendListModel.h"
 #include "retroshare/rsstatus.h"
 
 namespace Ui {
@@ -37,126 +38,135 @@ class QToolButton;
 
 class NewFriendList: public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
-    Q_PROPERTY(QColor textColorGroup READ textColorGroup WRITE setTextColorGroup)
-    Q_PROPERTY(QColor textColorStatusOffline READ textColorStatusOffline WRITE setTextColorStatusOffline)
-    Q_PROPERTY(QColor textColorStatusAway READ textColorStatusAway WRITE setTextColorStatusAway)
-    Q_PROPERTY(QColor textColorStatusBusy READ textColorStatusBusy WRITE setTextColorStatusBusy)
-    Q_PROPERTY(QColor textColorStatusOnline READ textColorStatusOnline WRITE setTextColorStatusOnline)
-    Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
+	Q_PROPERTY(QColor textColorGroup READ textColorGroup WRITE setTextColorGroup)
+	Q_PROPERTY(QColor textColorStatusOffline READ textColorStatusOffline WRITE setTextColorStatusOffline)
+	Q_PROPERTY(QColor textColorStatusAway READ textColorStatusAway WRITE setTextColorStatusAway)
+	Q_PROPERTY(QColor textColorStatusBusy READ textColorStatusBusy WRITE setTextColorStatusBusy)
+	Q_PROPERTY(QColor textColorStatusOnline READ textColorStatusOnline WRITE setTextColorStatusOnline)
+	Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
 public:
-    enum Column
-    {
-        COLUMN_NAME         = 0,
-        COLUMN_LAST_CONTACT = 1,
-        COLUMN_IP           = 2,
-        COLUMN_ID           = 3
-    };
+	enum Column
+	{
+		COLUMN_NAME         = 0,
+		COLUMN_LAST_CONTACT = 1,
+		COLUMN_IP           = 2,
+		COLUMN_ID           = 3
+	};
 
 public:
-    explicit NewFriendList(QWidget *parent = 0);
-    ~NewFriendList();
+	explicit NewFriendList(QWidget *parent = 0);
+	~NewFriendList();
 
-    // Add a tool button to the tool area
-    void addToolButton(QToolButton *toolButton);
-    void processSettings(bool load);
-    void addGroupToExpand(const RsNodeGroupId &groupId);
-    bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
-    void addPeerToExpand(const RsPgpId &gpgId);
-    bool getExpandedPeers(std::set<RsPgpId> &peers) const;
+	// Add a tool button to the tool area
+	void addToolButton(QToolButton *toolButton);
+	void processSettings(bool load);
+	void addGroupToExpand(const RsNodeGroupId &groupId);
+	bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
+	void addPeerToExpand(const RsPgpId &gpgId);
+	bool getExpandedPeers(std::set<RsPgpId> &peers) const;
 
-    std::string getSelectedGroupId() const;
-    void setColumnVisible(Column column, bool visible);
-    void sortByColumn(Column column, Qt::SortOrder sortOrder);
-    bool isSortByState();
+	std::string getSelectedGroupId() const;
+	void setColumnVisible(Column column, bool visible);
+	void sortByColumn(Column column, Qt::SortOrder sortOrder);
+	bool isSortByState();
 
-    QColor textColorGroup() const { return mTextColorGroup; }
-    QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
-    QColor textColorStatusAway() const { return mTextColorStatus[RS_STATUS_AWAY]; }
-    QColor textColorStatusBusy() const { return mTextColorStatus[RS_STATUS_BUSY]; }
-    QColor textColorStatusOnline() const { return mTextColorStatus[RS_STATUS_ONLINE]; }
-    QColor textColorStatusInactive() const { return mTextColorStatus[RS_STATUS_INACTIVE]; }
+	QColor textColorGroup() const { return mTextColorGroup; }
+	QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
+	QColor textColorStatusAway() const { return mTextColorStatus[RS_STATUS_AWAY]; }
+	QColor textColorStatusBusy() const { return mTextColorStatus[RS_STATUS_BUSY]; }
+	QColor textColorStatusOnline() const { return mTextColorStatus[RS_STATUS_ONLINE]; }
+	QColor textColorStatusInactive() const { return mTextColorStatus[RS_STATUS_INACTIVE]; }
 
-    void setTextColorGroup(QColor color) { mTextColorGroup = color; }
-    void setTextColorStatusOffline(QColor color) { mTextColorStatus[RS_STATUS_OFFLINE] = color; }
-    void setTextColorStatusAway(QColor color) { mTextColorStatus[RS_STATUS_AWAY] = color; }
-    void setTextColorStatusBusy(QColor color) { mTextColorStatus[RS_STATUS_BUSY] = color; }
-    void setTextColorStatusOnline(QColor color) { mTextColorStatus[RS_STATUS_ONLINE] = color; }
-    void setTextColorStatusInactive(QColor color) { mTextColorStatus[RS_STATUS_INACTIVE] = color; }
+	void setTextColorGroup(QColor color) { mTextColorGroup = color; }
+	void setTextColorStatusOffline(QColor color) { mTextColorStatus[RS_STATUS_OFFLINE] = color; }
+	void setTextColorStatusAway(QColor color) { mTextColorStatus[RS_STATUS_AWAY] = color; }
+	void setTextColorStatusBusy(QColor color) { mTextColorStatus[RS_STATUS_BUSY] = color; }
+	void setTextColorStatusOnline(QColor color) { mTextColorStatus[RS_STATUS_ONLINE] = color; }
+	void setTextColorStatusInactive(QColor color) { mTextColorStatus[RS_STATUS_INACTIVE] = color; }
 
 public slots:
-    void filterItems(const QString &text);
-    void sortByState(bool sort);
+	void filterItems(const QString &text);
+	void sortByState(bool sort);
 
-    void setShowGroups(bool show);
-    void setHideUnconnected(bool hidden);
-    void setShowState(bool show);
+	void setShowGroups(bool show);
+	void setHideUnconnected(bool hidden);
+	void setShowState(bool show);
 
 private slots:
-    void peerTreeColumnVisibleChanged(int column, bool visible);
-    void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
-	 void collapseItem(QTreeWidgetItem *item);
-	 void expandItem(QTreeWidgetItem *item);
+	void peerTreeColumnVisibleChanged(int column, bool visible);
+	void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
+	void collapseItem(QTreeWidgetItem *item);
+	void expandItem(QTreeWidgetItem *item);
 
 protected:
-    void changeEvent(QEvent *e);
-    void createDisplayMenu();
+	void changeEvent(QEvent *e);
+	void createDisplayMenu();
 
 private:
-    Ui::NewFriendList *ui;
-    QAction *mActionSortByState;
+	Ui::NewFriendList *ui;
+	RsFriendListModel *mModel;
+	QAction *mActionSortByState;
 
-    // Settings for peer list display
-    bool mShowGroups;
-    bool mShowState;
-    bool mHideUnconnected;
+	QModelIndex getCurrentIndex() const;
 
-    QString mFilterText;
+	bool getCurrentNode(RsFriendListModel::RsNodeDetails& prof) const;
+	bool getCurrentGroup(RsGroupInfo& prof) const;
+	bool getCurrentProfile(RsFriendListModel::RsProfileDetails& prof) const;
 
-    bool groupsHasChanged;
-    std::set<RsNodeGroupId> openGroups;
-    std::set<RsPgpId>   openPeers;
+	// Settings for peer list display
+	bool mShowGroups;
+	bool mShowState;
+	bool mHideUnconnected;
 
-    /* Color definitions (for standard see qss.default) */
-    QColor mTextColorGroup;
-    QColor mTextColorStatus[RS_STATUS_COUNT];
+	QString mFilterText;
 
-    QTreeWidgetItem *getCurrentPeer() const;
+	bool groupsHasChanged;
+	std::set<RsNodeGroupId> openGroups;
+	std::set<RsPgpId>   openPeers;
 
-    bool getOrCreateGroup(const std::string& name, uint flag, RsNodeGroupId& id);
-    bool getGroupIdByName(const std::string& name, RsNodeGroupId& id);
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColorGroup;
+	QColor mTextColorStatus[RS_STATUS_COUNT];
 
-    bool importExportFriendlistFileDialog(QString &fileName, bool import);
-    bool exportFriendlist(QString &fileName);
-    bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
+	bool getOrCreateGroup(const std::string& name, uint flag, RsNodeGroupId& id);
+	bool getGroupIdByName(const std::string& name, RsNodeGroupId& id);
+
+	bool importExportFriendlistFileDialog(QString &fileName, bool import);
+	bool exportFriendlist(QString &fileName);
+	bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
 
 private slots:
-    void groupsChanged();
-    void insertPeers();
-    void peerTreeWidgetCustomPopupMenu();
-    void updateMenu();
+	void groupsChanged();
+	void insertPeers();
+	void peerTreeWidgetCustomPopupMenu();
+	void updateMenu();
 
-    void pastePerson();
+	void pastePerson();
 
-    void connectfriend();
-    void configurefriend();
-    void chatfriend(QTreeWidgetItem *item);
-    void chatfriendproxy();
-    void copyFullCertificate();
-    void addFriend();
-    void msgfriend();
-    void recommendfriend();
-    void removefriend();
-	 void createNewGroup() ;
+	void connectNode();
+	void configureNode();
+	void configureProfile();
+	void chatfriend(QTreeWidgetItem *item);
+	void chatfriendproxy();
+	void copyFullCertificate();
+	void addFriend();
+	void msgNode();
+	void msgGroup();
+	void msgProfile();
+	void recommendNode();
+	void removeNode();
+	void removeProfile();
+	void createNewGroup() ;
 
-    void addToGroup();
-    void moveToGroup();
-    void removeFromGroup();
+	void addToGroup();
+	void moveToGroup();
+	void removeFromGroup();
 
-    void editGroup();
-    void removeGroup();
+	void editGroup();
+	void removeGroup();
 
-    void exportFriendlistClicked();
-    void importFriendlistClicked();
+	void exportFriendlistClicked();
+	void importFriendlistClicked();
 };
