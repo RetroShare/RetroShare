@@ -28,14 +28,14 @@
 #include "retroshare/rsstatus.h"
 
 namespace Ui {
-    class FriendList;
+    class NewFriendList;
 }
 
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class QToolButton;
 
-class NewFriendList : public QTreeView
+class NewFriendList: public QWidget
 {
     Q_OBJECT
 
@@ -104,6 +104,7 @@ protected:
     void createDisplayMenu();
 
 private:
+    Ui::NewFriendList *ui;
     QAction *mActionSortByState;
 
     // Settings for peer list display

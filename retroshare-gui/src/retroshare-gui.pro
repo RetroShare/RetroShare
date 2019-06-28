@@ -692,6 +692,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/common/GroupTreeWidget.ui \
             gui/common/AvatarWidget.ui \
             gui/common/FriendList.ui \
+            gui/common/NewFriendList.ui \
             gui/common/FriendSelectionWidget.ui \
             gui/common/HashBox.ui \
             gui/common/RSImageBlockWidget.ui \
