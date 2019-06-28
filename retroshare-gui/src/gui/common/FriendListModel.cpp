@@ -658,3 +658,54 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
 
     return e.type;
 }
+
+void RsFriendListModel::updateInternalData()
+{
+    preMods();
+
+    mGroups.clear();
+    mLocations.clear();
+    mProfiles.clear();
+
+    // groups
+
+    std::list<RsGroupInfo> groupInfoList;
+    rsPeers->getGroupInfoList(groupInfoList) ;
+
+    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
+        mGroups.push_back(*it);
+
+    // profiles
+
+    std::list<RsPgpId> gpg_ids;
+	rsPeers->getGPGAcceptedList(gpg_ids);
+
+    for(auto it(gpg_ids.begin());it!=gpg_ids.end();++it)
+    {
+        RsProfileDetails det;
+
+        if(!rsPeers->getGPGDetails(*it,det))
+            continue;
+
+        mProfiles.push_back(det);
+    }
+
+    // locations
+
+	std::list<RsPeerId> peer_ids;
+	rsPeers->getFriendList(peer_ids);
+
+    for(auto it(peer_ids.begin());it!=peer_ids.end();++it)
+    {
+        RsNodeDetails det;
+
+        if(!rsPeers->getPeerDetails(*it,det))
+            continue;
+
+        mLocations.push_back(det);
+    }
+
+    postMods();
+}
+
+

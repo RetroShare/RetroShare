@@ -22,7 +22,6 @@
 
 #include <QShortcut>
 #include <QTimer>
-#include <QTreeWidgetItem>
 #include <QWidgetAction>
 #include <QDateTime>
 #include <QPainter>
@@ -110,6 +109,7 @@ Q_DECLARE_METATYPE(ElidedLabel*)
 
 NewFriendList::NewFriendList(QWidget *parent) :
 	 QWidget(parent),
+     ui(new Ui::NewFriendList()),
 //    mCompareRole(new RSTreeWidgetItemCompareRole),
     mShowGroups(true),
     mShowState(false),
@@ -119,12 +119,9 @@ NewFriendList::NewFriendList(QWidget *parent) :
     ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
-	connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
-	connect(ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
+	//connect(ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
 
     connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
@@ -137,8 +134,11 @@ NewFriendList::NewFriendList(QWidget *parent) :
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+
     mModel = new RsFriendListModel();
     ui->peerTreeWidget->setModel(mModel);
+
+    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
 
     /* Add filter actions */
     // QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
@@ -163,9 +163,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     /* Initialize tree */
     // ui->peerTreeWidget->enableColumnCustomize(true);
     // ui->peerTreeWidget->setColumnCustomizable(COLUMN_NAME, false);
-    connect(ui->peerTreeWidget, SIGNAL(columnVisibleChanged(int,bool)), this, SLOT(peerTreeColumnVisibleChanged(int,bool)));
-    connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
-    connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(peerTreeItemCollapsedExpanded(QTreeWidgetItem*)));
 
     QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
 
@@ -270,18 +267,11 @@ void NewFriendList::changeEvent(QEvent *e)
     QWidget::changeEvent(e);
     switch (e->type()) {
     case QEvent::StyleChange:
-        insertPeers();
         break;
     default:
         // remove compiler warnings
         break;
     }
-}
-
-/* Utility Fns */
-inline std::string getRsId(QTreeWidgetItem *item)
-{
-    return item->data(COLUMN_DATA, ROLE_ID).toString().toStdString();
 }
 
 /**
@@ -363,12 +353,6 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
 		case RsFriendListModel::ENTRY_TYPE_PROFILE:
 		{
-#ifdef RS_DIRECT_CHAT
-			contextMenu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
-			contextMenu.addAction(QIcon(IMAGE_MSG), tr("Send message"), this, SLOT(msgProfile()));
-			contextMenu.addSeparator();
-#endif // RS_DIRECT_CHAT
-
 			contextMenu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configureProfile()));
 			contextMenu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
 
@@ -448,7 +432,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 		case RsFriendListModel::ENTRY_TYPE_NODE:
 		{
 #ifdef RS_DIRECT_CHAT
-			contextMenu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatfriendproxy()));
+			contextMenu.addAction(QIcon(IMAGE_CHAT), tr("Chat"), this, SLOT(chatNode()));
 			contextMenu.addAction(QIcon(IMAGE_MSG), tr("Send message to this node"), this, SLOT(msgNode()));
 			contextMenu.addSeparator();
 #endif // RS_DIRECT_CHAT
@@ -497,7 +481,6 @@ void NewFriendList::createNewGroup()
 void NewFriendList::groupsChanged()
 {
     groupsHasChanged = true;
-    insertPeers();
 }
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
@@ -519,37 +502,37 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 	return icon;
 }
 
-static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
-{
-    QWidget *widget = treeWidget->itemWidget(item, NewFriendList::COLUMN_NAME);
-
-    if (!widget) {
-        widget = new QWidget;
-        widget->setAttribute(Qt::WA_TranslucentBackground);
-        nameLabel = new ElidedLabel(widget);
-        textLabel = new ElidedLabel(widget);
-
-        widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
-        widget->setProperty("textLabel", qVariantFromValue(textLabel));
-
-        QVBoxLayout *layout = new QVBoxLayout;
-        layout->setSpacing(0);
-        layout->setContentsMargins(3, 0, 0, 0);
-
-        nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
-        textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
-
-        layout->addWidget(nameLabel);
-        layout->addWidget(textLabel);
-
-        widget->setLayout(layout);
-
-        treeWidget->setItemWidget(item, NewFriendList::COLUMN_NAME, widget);
-    } else {
-        nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
-        textLabel = widget->property("textLabel").value<ElidedLabel*>();
-    }
-}
+// static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
+// {
+//     QWidget *widget = treeWidget->itemWidget(item, NewFriendList::COLUMN_NAME);
+//
+//     if (!widget) {
+//         widget = new QWidget;
+//         widget->setAttribute(Qt::WA_TranslucentBackground);
+//         nameLabel = new ElidedLabel(widget);
+//         textLabel = new ElidedLabel(widget);
+//
+//         widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
+//         widget->setProperty("textLabel", qVariantFromValue(textLabel));
+//
+//         QVBoxLayout *layout = new QVBoxLayout;
+//         layout->setSpacing(0);
+//         layout->setContentsMargins(3, 0, 0, 0);
+//
+//         nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+//         textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+//
+//         layout->addWidget(nameLabel);
+//         layout->addWidget(textLabel);
+//
+//         widget->setLayout(layout);
+//
+//         treeWidget->setItemWidget(item, NewFriendList::COLUMN_NAME, widget);
+//     } else {
+//         nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
+//         textLabel = widget->property("textLabel").value<ElidedLabel*>();
+//     }
+// }
 
 /**
  * Returns a list with all groupIds that are expanded
@@ -583,32 +566,32 @@ bool NewFriendList::getExpandedPeers(std::set<RsPgpId> &peers) const
     return true;
 }
 
-void NewFriendList::collapseItem(QTreeWidgetItem *item)
-{
-	switch (item->type())
-	{
-	case TYPE_GROUP:
-		openGroups.erase(RsNodeGroupId(getRsId(item))) ;
-		break;
-	case TYPE_GPG:
-		openPeers.erase(RsPgpId(getRsId(item))) ;
-	default:
-		break;
-	}
-}
-void NewFriendList::expandItem(QTreeWidgetItem *item)
-{
-	switch (item->type())
-	{
-	case TYPE_GROUP:
-		openGroups.insert(RsNodeGroupId(getRsId(item))) ;
-		break;
-	case TYPE_GPG:
-		openPeers.insert(RsPgpId(getRsId(item))) ;
-	default:
-		break;
-	}
-}
+// void NewFriendList::collapseItem(QTreeWidgetItem *item)
+// {
+// 	switch (item->type())
+// 	{
+// 	case TYPE_GROUP:
+// 		openGroups.erase(RsNodeGroupId(getRsId(item))) ;
+// 		break;
+// 	case TYPE_GPG:
+// 		openPeers.erase(RsPgpId(getRsId(item))) ;
+// 	default:
+// 		break;
+// 	}
+// }
+// void NewFriendList::expandItem(QTreeWidgetItem *item)
+// {
+// 	switch (item->type())
+// 	{
+// 	case TYPE_GROUP:
+// 		openGroups.insert(RsNodeGroupId(getRsId(item))) ;
+// 		break;
+// 	case TYPE_GPG:
+// 		openPeers.insert(RsPgpId(getRsId(item))) ;
+// 	default:
+// 		break;
+// 	}
+// }
 
 void NewFriendList::addFriend()
 {
@@ -648,6 +631,15 @@ void NewFriendList::msgNode()
         return;
 
 	MessageComposer::msgFriend(det.id);
+}
+void NewFriendList::chatNode()
+{
+    RsFriendListModel::RsNodeDetails det;
+
+    if(!getCurrentNode(det))
+        return;
+
+	ChatDialog::chatFriend(ChatId(det.id));
 }
 
 void NewFriendList::recommendNode()
@@ -1091,7 +1083,7 @@ bool NewFriendList::exportFriendlist(QString &fileName)
 /**
  * @brief helper function to show a message box
  */
-void showXMLParsingError()
+static void showXMLParsingError()
 {
     // show error to user
     QMessageBox mbox;
@@ -1287,14 +1279,12 @@ void NewFriendList::setHideUnconnected(bool hidden)
 {
     if (mHideUnconnected != hidden) {
         mHideUnconnected = hidden;
-        insertPeers();
     }
 }
 
 void NewFriendList::setColumnVisible(Column column, bool visible)
 {
     ui->peerTreeWidget->setColumnHidden(column, !visible);
-    peerTreeColumnVisibleChanged(column, visible);
 }
 
 void NewFriendList::sortByColumn(Column column, Qt::SortOrder sortOrder)
@@ -1302,29 +1292,10 @@ void NewFriendList::sortByColumn(Column column, Qt::SortOrder sortOrder)
     ui->peerTreeWidget->sortByColumn(column, sortOrder);
 }
 
-void NewFriendList::peerTreeColumnVisibleChanged(int /*column*/, bool visible)
-{
-    if (visible) {
-        insertPeers();
-    }
-}
-
-void NewFriendList::peerTreeItemCollapsedExpanded(QTreeWidgetItem *item)
-{
-    if (!item) {
-        return;
-    }
-
-    if (item->type() == TYPE_GPG) {
-        insertPeers();
-    }
-}
-
 void NewFriendList::setShowState(bool show)
 {
     if (mShowState != show) {
         mShowState = show;
-        insertPeers();
     }
 }
 

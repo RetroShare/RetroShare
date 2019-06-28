@@ -95,10 +95,6 @@ public slots:
 	void setShowState(bool show);
 
 private slots:
-	void peerTreeColumnVisibleChanged(int column, bool visible);
-	void peerTreeItemCollapsedExpanded(QTreeWidgetItem *item);
-	void collapseItem(QTreeWidgetItem *item);
-	void expandItem(QTreeWidgetItem *item);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -139,7 +135,6 @@ private:
 
 private slots:
 	void groupsChanged();
-	void insertPeers();
 	void peerTreeWidgetCustomPopupMenu();
 	void updateMenu();
 
@@ -148,8 +143,7 @@ private slots:
 	void connectNode();
 	void configureNode();
 	void configureProfile();
-	void chatfriend(QTreeWidgetItem *item);
-	void chatfriendproxy();
+	void chatNode();
 	void copyFullCertificate();
 	void addFriend();
 	void msgNode();

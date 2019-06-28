@@ -1965,7 +1965,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 /**
  * @brief helper function to show a message box
  */
-void showXMLParsingError()
+static void showXMLParsingError()
 {
     // show error to user
     QMessageBox mbox;
