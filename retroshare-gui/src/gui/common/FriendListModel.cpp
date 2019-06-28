@@ -73,28 +73,21 @@ void RsFriendListModel::postMods()
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
 {
-	if(!parent.isValid())
+    if(parent.column() >= COLUMN_THREAD_NB_COLUMNS)
         return 0;
 
-    if(parent.column() > 0)
-        return 0;
-
-	if(mDisplayGroups)
-	{
-		if(mGroups.empty())	// security. Should never happen.
-			return 0;
-
-		if(parent.internalPointer() == NULL)
+	if(parent.internalId() == 0)
+		if(mDisplayGroups)
 			return mGroups.size();
-	}
-    else
-    {
-		if(mProfiles.empty())	// security. Should never happen.
-			return 0;
-
-		if(parent.internalPointer() == NULL)
+		else
 			return mProfiles.size();
-    }
+
+    EntryIndex index;
+    if(!convertInternalIdToIndex(parent.internalId(),index))
+        return 0;
+
+    if(index.type == ENTRY_TYPE_GROUP)
+        return mGroups[index.ind].peerIds.size();
 
     return 0;
 }
@@ -123,7 +116,17 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
     if(!parent.isValid())
         return true;
 
-    return false ;
+	EntryIndex parent_index ;
+    convertInternalIdToIndex(parent.internalId(),parent_index);
+
+    if(parent_index.type == ENTRY_TYPE_NODE)
+        return false;
+    if(parent_index.type == ENTRY_TYPE_PROFILE)
+        return false; // TODO
+    if(parent_index.type == ENTRY_TYPE_GROUP)
+        return !mGroups[parent_index.ind].peerIds.empty();
+
+	return false;
 }
 
 bool RsFriendListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& id)
@@ -207,6 +210,36 @@ QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
 {
     if(!index.isValid())
         return QModelIndex();
+
+	EntryIndex I ;
+    convertInternalIdToIndex(index.internalId(),I);
+
+    if(I.type == ENTRY_TYPE_GROUP)
+        return QModelIndex();
+
+    if(I.type == ENTRY_TYPE_PROFILE)
+        if(mDisplayGroups)
+        {
+            for(int i=0;i<mGroups.size();++i)
+                if(mGroups[i].peerIds.find(mProfiles[I.ind].gpg_id) != mGroups[i].peerIds.end())	// this is costly. We should store indices
+                {
+					quintptr ref ;
+                    EntryIndex parent_index(ENTRY_TYPE_GROUP,i);
+					convertIndexToInternalId(parent_index,ref);
+
+					return createIndex(i,0,ref);
+                }
+        }
+		else
+			return QModelIndex();
+
+//    if(i.type == ENTRY_TYPE_NODE)
+//    {
+//		quintptr ref ;
+//		convertIndexToInternalId(parent_index,ref);
+//
+//		return createIndex(parent_row,0,ref);
+//    }
 
 	return QModelIndex();
 }

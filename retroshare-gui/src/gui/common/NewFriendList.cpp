@@ -108,15 +108,15 @@
 Q_DECLARE_METATYPE(ElidedLabel*)
 
 NewFriendList::NewFriendList(QWidget *parent) :
-	 QWidget(parent),
-     ui(new Ui::NewFriendList()),
-//    mCompareRole(new RSTreeWidgetItemCompareRole),
+    QWidget(parent),
+    ui(new Ui::NewFriendList()),
+    //    mCompareRole(new RSTreeWidgetItemCompareRole),
     mShowGroups(true),
     mShowState(false),
     mHideUnconnected(false),
     groupsHasChanged(false)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
 	//connect(ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
@@ -134,7 +134,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
-
     mModel = new RsFriendListModel();
     ui->peerTreeWidget->setModel(mModel);
 
@@ -146,9 +145,9 @@ NewFriendList::NewFriendList(QWidget *parent) :
     // ui->filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME, QString("%1 %2").arg(tr("Search"), headerText));
     // ui->filterLineEdit->addFilter(QIcon(), tr("ID"), COLUMN_ID, tr("Search ID"));
 
-    // mActionSortByState = new QAction(tr("Sort by state"), this);
-    // mActionSortByState->setCheckable(true);
-    // connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
+    mActionSortByState = new QAction(tr("Sort by state"), this);
+    mActionSortByState->setCheckable(true);
+    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
     // ui->peerTreeWidget->addContextMenuAction(mActionSortByState);
 
     /* Set sort */
@@ -178,6 +177,8 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
     /* Initialize display menu */
     createDisplayMenu();
+
+    mModel->updateInternalData();
 }
 
 NewFriendList::~NewFriendList()
