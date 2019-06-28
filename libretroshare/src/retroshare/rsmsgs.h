@@ -470,6 +470,8 @@ public:
 	std::map<RsGxsId, rstime_t> gxs_ids ;			// list of non direct friend who participate. Used to display only.
 	rstime_t last_activity ;						// last recorded activity. Useful for removing dead lobbies.
 
+    virtual void clear() { gxs_ids.clear(); lobby_id = 0; lobby_name.clear(); lobby_topic.clear(); participating_friends.clear(); }
+
 	// RsSerializable interface
 public:
 	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
@@ -830,6 +832,13 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	 * @param[in] lobby_id lobby to leave
 	 */
 	virtual void unsubscribeChatLobby(const ChatLobbyId &lobby_id) = 0;
+
+	/**
+	 * @brief sendLobbyStatusPeerLeaving notify friend nodes that we're leaving a subscribed lobby
+	 * @jsonapi{development}
+	 * @param[in] lobby_id lobby to leave
+	 */
+	virtual void sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id) = 0;
 
 	/**
 	 * @brief setIdentityForChatLobby set the chat identit

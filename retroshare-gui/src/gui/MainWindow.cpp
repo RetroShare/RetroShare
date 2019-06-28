@@ -172,6 +172,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     ui = new Ui::MainWindow;
     trayIcon = NULL;
 
+	friendsDialog=NULL;
+	idDialog=NULL;
+	chatLobbyDialog=NULL;
+	settingsDialog=NULL;
+	transfersDialog=NULL;
+	messagesDialog=NULL;
+	gxschannelDialog=NULL;
+	gxsforumDialog=NULL;
+	postedDialog=NULL;
+
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
 

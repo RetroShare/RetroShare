@@ -331,10 +331,14 @@ void ChatLobbyWidget::lobbyTreeWidgetCustomPopupMenu(QPoint)
             }
         }
 
+#ifdef TO_BE_REMOVED
+        // This code is not needed anymore because AutoSubscribe is now automatically handled with chat room subscription.
+
         if (item->data(COLUMN_DATA, ROLE_AUTOSUBSCRIBE).toBool())
             contextMnu.addAction(QIcon(IMAGE_AUTOSUBSCRIBE), tr("Remove Auto Subscribe"), this, SLOT(autoSubscribeItem()));
         else if(!own_identities.empty())
             contextMnu.addAction(QIcon(IMAGE_SUBSCRIBE), tr("Add Auto Subscribe"), this, SLOT(autoSubscribeItem()));
+#endif
 
         contextMnu.addAction(QIcon(IMAGE_COPYRSLINK), tr("Copy RetroShare Link"), this, SLOT(copyItemLink()));
     }
@@ -603,19 +607,16 @@ void ChatLobbyWidget::updateDisplay()
 			item->setIcon(COLUMN_NAME, subscribed ? icon : icon.pixmap(ui.lobbyTreeWidget->iconSize(), QIcon::Disabled));
 		}
 
+        // In the new model (after lobby save to disk) the auto-subscribe flag is used to automatically join lobbies that where
+        // previously being used when the t software quits.
+
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
-		if (autoSubscribe && subscribed)
+		if (autoSubscribe && subscribed && _lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
 		{
-			if(_lobby_infos.find(lobby.lobby_id) == _lobby_infos.end())
-			{
-				if (item == ui.lobbyTreeWidget->currentItem())
-				{
-                    ChatDialog::chatFriend(ChatId(lobby.lobby_id)) ;
-				}else{
-                    ChatDialog::chatFriend(ChatId(lobby.lobby_id),false) ;
-				}
-			}
+			ChatDialog *cd = ChatDialog::getChat(ChatId(lobby.lobby_id), RS_CHAT_OPEN);
+
+			addChatPage(dynamic_cast<ChatLobbyDialog*>(cd));
 		}
 
 		updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.total_number_of_peers, subscribed, autoSubscribe,lobby_flags);
@@ -674,6 +675,16 @@ void ChatLobbyWidget::updateDisplay()
 		bool autoSubscribe = rsMsgs->getLobbyAutoSubscribe(lobby.lobby_id);
 
         updateItem(ui.lobbyTreeWidget, item, lobby.lobby_id, lobby.lobby_name,lobby.lobby_topic, lobby.gxs_ids.size(), true, autoSubscribe,lobby_flags);
+
+		std::map<ChatLobbyId,ChatLobbyInfoStruct>::iterator it = _lobby_infos.find(lobby.lobby_id) ;
+
+        // look for chat rooms that are subscribed but not displayed as such
+
+        if(it == _lobby_infos.end() && rsMsgs->joinVisibleChatLobby(lobby.lobby_id,lobby.gxs_id))
+        {
+            std::cerr << "Adding back ChatLobbyDialog for subscribed lobby " << std::hex << lobby.lobby_id << std::dec << std::endl;
+			ChatDialog::chatFriend(ChatId(lobby.lobby_id),true) ;
+        }
 	}
 	publicSubLobbyItem->setHidden(publicSubLobbyItem->childCount()==0);
 	publicSubLobbyItem->setText(COLUMN_NAME, tr("Public Subscribed chat rooms")+ QString(" (") + QString::number(publicSubLobbyItem->childCount())+QString(")"));

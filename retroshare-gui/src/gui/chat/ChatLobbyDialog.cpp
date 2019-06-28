@@ -424,9 +424,8 @@ ChatLobbyDialog::~ChatLobbyDialog()
 	// announce leaving of lobby
 
 	// check that the lobby still exists.
-    if (mChatId.isLobbyId()) {
-        rsMsgs->unsubscribeChatLobby(mChatId.toLobbyId());
-	}
+    if (mChatId.isLobbyId())
+        rsMsgs->sendLobbyStatusPeerLeaving(mChatId.toLobbyId());
 
 	// save settings
 	processSettings(false);
@@ -912,7 +911,10 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 	if (chatflags & RS_CHAT_FOCUS)
 	{
 		MainWindow::showWindow(MainWindow::ChatLobby);
-		dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby))->setCurrentChatPage(this) ;
+        MainPage *p = MainWindow::getPage(MainWindow::ChatLobby);
+
+        if(p != NULL)
+			dynamic_cast<ChatLobbyWidget*>(p)->setCurrentChatPage(this) ;
 	}
 }
 

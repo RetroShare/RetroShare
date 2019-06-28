@@ -147,6 +147,7 @@ class p3Msgs: public RsMsgs
 	  virtual void denyLobbyInvite(const ChatLobbyId& id) ;
 	  virtual void getPendingChatLobbyInvites(std::list<ChatLobbyInvite>& invites) ;
 	  virtual void unsubscribeChatLobby(const ChatLobbyId& lobby_id) ;
+	  virtual void sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id);
       virtual bool setIdentityForChatLobby(const ChatLobbyId& lobby_id,const RsGxsId&) ;
       virtual bool getIdentityForChatLobby(const ChatLobbyId&,RsGxsId& nick) ;
       virtual bool setDefaultIdentityForChatLobby(const RsGxsId&) ;
