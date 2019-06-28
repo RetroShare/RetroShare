@@ -56,7 +56,7 @@
 #include "gui/connect/ConnectProgressDialog.h"
 #include "gui/common/ElidedLabel.h"
 
-#include "FriendList.h"
+#include "NewFriendList.h"
 #include "ui_FriendList.h"
 
 /* Images for context menu icons */
@@ -109,34 +109,34 @@
 Q_DECLARE_METATYPE(ElidedLabel*)
 
 NewFriendList::NewFriendList(QWidget *parent) :
-	 QAbstractItemView(parent),
-    mCompareRole(new RSTreeWidgetItemCompareRole),
+	 QTreeView(parent),
+//    mCompareRole(new RSTreeWidgetItemCompareRole),
     mShowGroups(true),
     mShowState(false),
     mHideUnconnected(false),
     groupsHasChanged(false)
 {
-    connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(ui->peerTreeWidget, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
-    connect(ui->peerTreeWidget, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
-	 connect(ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
+    connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
+    connect(this, SIGNAL(itemExpanded(QTreeWidgetItem *)), this, SLOT(expandItem(QTreeWidgetItem *)));
+	connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem *)), this, SLOT(collapseItem(QTreeWidgetItem *)));
+	connect(this, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(insertPeers()));
 
-    connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
-    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
-    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
-    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
+//    connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
+//    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
+//    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
+//    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
+//    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
 
-    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
-
-    ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
-    ui->filterLineEdit->showFilterIcon();
-
+//    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+//
+//    ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
+//    ui->filterLineEdit->showFilterIcon();
+//
     /* Add filter actions */
-    QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
+    QTreeWidgetItem *headerItem = headerItem();
     QString headerText = headerItem->text(COLUMN_NAME);
     ui->filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME, QString("%1 %2").arg(tr("Search"), headerText));
     ui->filterLineEdit->addFilter(QIcon(), tr("ID"), COLUMN_ID, tr("Search ID"));

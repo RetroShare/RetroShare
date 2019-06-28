@@ -243,7 +243,7 @@ QString StatusDefs::connectStateWithoutTransportTypeString(RsPeerDetails &detail
 	return stateString;
 }
 
-QString StatusDefs::connectStateIpString(RsPeerDetails &details)
+QString StatusDefs::connectStateIpString(const RsPeerDetails &details)
 {
     QString stateString = QString("");
 

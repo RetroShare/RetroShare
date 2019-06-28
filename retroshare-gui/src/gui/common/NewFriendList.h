@@ -18,12 +18,12 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef FRIENDLIST_H
-#define FRIENDLIST_H
+#pragma once
 
 #include <set>
 
 #include <QWidget>
+#include <QTreeView>
 
 #include "retroshare/rsstatus.h"
 
@@ -35,7 +35,7 @@ class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class QToolButton;
 
-class NewFriendList : public QAbstractItemView
+class NewFriendList : public QTreeView
 {
     Q_OBJECT
 
@@ -159,5 +159,3 @@ private slots:
     void exportFriendlistClicked();
     void importFriendlistClicked();
 };
-
-#endif // FRIENDLIST_H

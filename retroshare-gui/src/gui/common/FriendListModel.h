@@ -24,6 +24,7 @@
 #include <QColor>
 
 #include "retroshare/rsmsgs.h"
+#include "retroshare/rspeers.h"
 
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
@@ -43,17 +44,15 @@ public:
 	explicit RsFriendListModel(QObject *parent = NULL);
 	~RsFriendListModel(){}
 
+    class RsNodeDetails: public RsPeerDetails {};// in the near future, there will be a specific class for Profile/Node details in replacement of RsPeerDetails
+    class RsProfileDetails: public RsPeerDetails {};
+
 	enum Columns {
-		COLUMN_THREAD_STAR         = 0x00,
-		COLUMN_THREAD_ATTACHMENT   = 0x01,
-		COLUMN_THREAD_SUBJECT      = 0x02,
-		COLUMN_THREAD_READ         = 0x03,
-		COLUMN_THREAD_AUTHOR       = 0x04,
-		COLUMN_THREAD_DATE         = 0x05,
-		COLUMN_THREAD_TAGS         = 0x06,
-		COLUMN_THREAD_MSGID        = 0x07,
-		COLUMN_THREAD_NB_COLUMNS   = 0x08,
-		COLUMN_THREAD_CONTENT      = 0x08,
+		COLUMN_THREAD_NAME         = 0x00,
+		COLUMN_THREAD_LAST_CONTACT = 0x01,
+		COLUMN_THREAD_IP           = 0x02,
+		COLUMN_THREAD_ID           = 0x03,
+		COLUMN_THREAD_NB_COLUMNS   = 0x04
 	};
 
 	enum Roles{ SortRole           = Qt::UserRole+1,
@@ -65,14 +64,36 @@ public:
               	SrcIdRole          = Qt::UserRole+7,
               };
 
+    enum FilterType{ FILTER_TYPE_NONE = 0x00,
+        			 FILTER_TYPE_ID   = 0x01,
+                     FILTER_TYPE_NAME = 0x02
+                   };
+
+    enum EntryType{ ENTRY_TYPE_UNKNOWN = 0x00,
+                    ENTRY_TYPE_GROUP   = 0x01,
+                    ENTRY_TYPE_PROFILE = 0x02,
+                    ENTRY_TYPE_NODE    = 0x03
+                  };
+
+    struct EntryIndex
+    {
+        EntryIndex(EntryType t,uint32_t i) : type(t),ind(i) {}
+        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),ind(0) {}
+
+        EntryType type;
+        uint32_t ind;
+    };
+
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
-	QModelIndex getIndexOfMessage(const std::string &mid) const;
+
+	QModelIndex getIndexOfGroup(const RsNodeGroupId& mid) const;
 
     static const QString FilterString ;
 
     // This method will asynchroneously update the data
 
-    const RsMessageId& currentMessageId() const;
+    EntryType currentItemData(RsGroupInfo&,RsProfileDetails&,RsNodeDetails&) const;
+
     void setFilter(FilterType filter_type, const QStringList& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -90,15 +111,17 @@ public:
 
     QVariant sizeHintRole  (int col) const;
 
-	QVariant displayRole   (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant toolTipRole   (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant userRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant statusRole    (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant sortRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant fontRole      (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant filterRole    (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
-	QVariant textColorRole (const Rs::Msgs::MsgInfoSummary& fmpe, int col) const;
+	QVariant displayRole   (const EntryIndex &e, int col) const;
+
+	QVariant decorationRole(const EntryIndex& fmpe, int col) const;
+	QVariant toolTipRole   (const EntryIndex &fmpe, int col) const;
+	QVariant userRole      (const EntryIndex& fmpe, int col) const;
+	QVariant statusRole    (const EntryIndex& fmpe, int col) const;
+	QVariant sortRole      (const EntryIndex& fmpe, int col) const;
+	QVariant fontRole      (const EntryIndex& fmpe, int col) const;
+	QVariant textColorRole (const EntryIndex& fmpe, int col) const;
+
+	QVariant filterRole    (const EntryIndex& e, int col) const;
 
     /*!
      * \brief debug_dump
@@ -111,10 +134,11 @@ public slots:
 
 signals:
     void dataLoaded();	// emitted after the messages have been set. Can be used to updated the UI.
+    void friendListChanged();	// emitted after the messages have been set. Can be used to updated the UI.
     void dataAboutToLoad();
 
 private:
-	bool passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int column) const;
+	bool passesFilter(const EntryIndex &e, int column) const;
 
 	void preMods() ;
 	void postMods() ;
@@ -123,15 +147,17 @@ private:
     void *getChildRef(void *ref,int row) const;
     int  getChildrenCount(void *ref) const;
 
-    static bool convertMsgIndexToInternalId(uint32_t entry,quintptr& ref);
-	static bool convertInternalIdToMsgIndex(quintptr ref,uint32_t& index);
+    static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
+	static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 
     QStringList mFilterStrings;
     FilterType  mFilterType;
 
+    bool mDisplayGroups ;
+
     std::vector<RsGroupInfo> mGroups;
-    std::vector<RsPeerDetails> mProfiles;	// normally here we should have a specific class rather than RsPeerDetails
-    std::vector<RsPeerDetails> mLocations;// normally here we should have a specific class rather than RsPeerDetails
+    std::vector<RsProfileDetails> mProfiles;
+    std::vector<RsNodeDetails> mLocations;
 };
