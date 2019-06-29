@@ -49,21 +49,23 @@ public:
 
 	struct HierarchicalGroupInformation
 	{
-		uint32_t group_index;
-		std::vector<uint32_t> child_indices;
+		RsGroupInfo group;
+		std::vector<uint32_t> child_indices;	// index in the array of hierarchical profiles
+        uint32_t parent_row;
 	};
 	struct HierarchicalProfileInformation
 	{
-		uint32_t profile_index;
-		std::vector<uint32_t> child_indices;
-		uint32_t parent_group_index;
+        uint32_t profile_index;					// index in the array of profiles. We cannot store the profile here because of duplication
+		uint32_t parent_group_index;			// index in the array of hierarchical groups
+		std::vector<uint32_t> child_indices;	// index in the array of hierarchical nodes
+        uint32_t parent_row;
 	};
 	struct HierarchicalNodeInformation
 	{
-		uint32_t node_index;
-		uint32_t parent_profile_index;
+        uint32_t node_index;					// index in the array of nodes
+		uint32_t parent_profile_index;			// index in the array of hierarchical profiles
+        uint32_t parent_row;
 	};
-
 
 	enum Columns {
 		COLUMN_THREAD_NAME         = 0x00,
@@ -184,12 +186,11 @@ private:
 
     // A given profile may belong to multiple groups, so the hierarchy is stored using the 3 variables below.
 
-    std::vector<HierarchicalGroupInformation>   mHG;
-    std::vector<HierarchicalProfileInformation> mHP;
-    std::vector<HierarchicalNodeInformation>    mHL;
+    std::vector<HierarchicalGroupInformation>   mGroups;
+    std::vector<HierarchicalProfileInformation> mProfiles;
+    std::vector<HierarchicalNodeInformation>    mLocations;
 
-    std::vector<RsGroupInfo>      mGroups;
-    std::vector<RsProfileDetails> mProfiles;
-    std::vector<RsNodeDetails>    mLocations;
+    std::vector<RsProfileDetails> mProfileDetails;
+    std::vector<RsNodeDetails>    mNodeDetails;
 };
 

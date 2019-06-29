@@ -87,7 +87,10 @@ int RsFriendListModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(index.type == ENTRY_TYPE_GROUP)
-        return mGroups[index.ind].peerIds.size();
+        return mGroups[index.ind].child_indices.size();
+
+    if(index.type == ENTRY_TYPE_PROFILE)
+        return mProfiles[index.ind].child_indices.size();
 
     return 0;
 }
@@ -122,9 +125,9 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
     if(parent_index.type == ENTRY_TYPE_NODE)
         return false;
     if(parent_index.type == ENTRY_TYPE_PROFILE)
-        return false; // TODO
+        return !mProfiles[parent_index.ind].child_indices.empty();
     if(parent_index.type == ENTRY_TYPE_GROUP)
-        return !mGroups[parent_index.ind].peerIds.empty();
+        return !mGroups[parent_index.ind].child_indices.empty();
 
 	return false;
 }
@@ -218,28 +221,20 @@ QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
         return QModelIndex();
 
     if(I.type == ENTRY_TYPE_PROFILE)
-        if(mDisplayGroups)
-        {
-            for(int i=0;i<mGroups.size();++i)
-                if(mGroups[i].peerIds.find(mProfiles[I.ind].gpg_id) != mGroups[i].peerIds.end())	// this is costly. We should store indices
-                {
-					quintptr ref ;
-                    EntryIndex parent_index(ENTRY_TYPE_GROUP,i);
-					convertIndexToInternalId(parent_index,ref);
+	{
+        quintptr ref=0;
+        convertIndexToInternalId( EntryIndex( ENTRY_TYPE_GROUP, mProfiles[I.ind].parent_group_index ), ref);
 
-					return createIndex(i,0,ref);
-                }
-        }
-		else
-			return QModelIndex();
+        return createIndex( mProfiles[I.ind].parent_row,0,ref);
+    }
 
-//    if(i.type == ENTRY_TYPE_NODE)
-//    {
-//		quintptr ref ;
-//		convertIndexToInternalId(parent_index,ref);
-//
-//		return createIndex(parent_row,0,ref);
-//    }
+    if(I.type == ENTRY_TYPE_NODE)
+    {
+		quintptr ref=0 ;
+		convertIndexToInternalId(EntryIndex( ENTRY_TYPE_PROFILE,mLocations[I.ind].parent_profile_index),ref);
+
+		return createIndex( mLocations[I.ind].parent_row,0,ref);
+    }
 
 	return QModelIndex();
 }
@@ -489,7 +484,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 		switch(col)
 		{
-		case COLUMN_THREAD_NAME:   return QVariant(QString::fromUtf8(mGroups[e.ind].name.c_str()));
+		case COLUMN_THREAD_NAME:   return QVariant(QString::fromUtf8(mGroups[e.ind].group.name.c_str()));
 
 		default:
 			return QVariant();
@@ -501,8 +496,8 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 		switch(col)
 		{
-		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mProfiles[e.ind].name.c_str()));
-		case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(mProfiles[e.ind].gpg_id.toStdString()) );
+		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mProfileDetails[mProfiles[e.ind].profile_index].name.c_str()));
+		case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(mProfileDetails[mProfiles[e.ind].profile_index].gpg_id.toStdString()) );
 
 		default:
 			return QVariant();
@@ -514,10 +509,10 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 		switch(col)
 		{
-		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mLocations[e.ind].location.c_str()));
-		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(mLocations[e.ind].lastConnect).toString());
-		case COLUMN_THREAD_IP:             return QVariant(  (mLocations[e.ind].state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(mLocations[e.ind]) : QString("---"));
-		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(mLocations[e.ind].id.toStdString()) );
+		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mNodeDetails[mLocations[e.ind].node_index].location.c_str()));
+		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(mNodeDetails[mLocations[e.ind].node_index].lastConnect).toString());
+		case COLUMN_THREAD_IP:             return QVariant(  (mNodeDetails[mLocations[e.ind].node_index].state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(mNodeDetails[mLocations[e.ind].node_index]) : QString("---"));
+		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(mNodeDetails[mLocations[e.ind].node_index].id.toStdString()) );
 
 		default:
 			return QVariant();
@@ -640,7 +635,9 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 void RsFriendListModel::debug_dump() const
 {
     for(auto it(mGroups.begin());it!=mGroups.end();++it)
-		std::cerr << "Group: " << *it << std::endl;
+    {
+		std::cerr << "Group: " << (*it).group.name << std::endl;
+    }
 }
 
 bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & data) const
@@ -652,7 +649,7 @@ bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP || e.ind >= mGroups.size())
         return false;
 
-    data = mGroups[e.ind];
+    data = mGroups[e.ind].group;
     return true;
 }
 bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& data) const
@@ -664,7 +661,7 @@ bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE || e.ind >= mProfiles.size())
         return false;
 
-    data = mProfiles[e.ind];
+    data = mProfileDetails[mProfiles[e.ind].profile_index];
     return true;
 }
 bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & data) const
@@ -676,7 +673,7 @@ bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE || e.ind >= mLocations.size())
         return false;
 
-    data = mLocations[e.ind];
+    data = mNodeDetails[mLocations[e.ind].node_index];
     return true;
 }
 
@@ -700,79 +697,94 @@ void RsFriendListModel::updateInternalData()
     mLocations.clear();
     mProfiles.clear();
 
-    mHG.clear();
-    mHL.clear();
-    mHP.clear();
+    mNodeDetails.clear();
+    mProfileDetails.clear();
 
     // create a map of profiles and groups
     std::map<RsPgpId,uint32_t> pgp_indexes;
     std::map<RsPeerId,uint32_t> ssl_indexes;
     std::map<RsNodeGroupId,uint32_t> grp_indexes;
 
-    // groups
+    // we start from the top and fill in the blanks as needed
+
+	// groups
 
     std::list<RsGroupInfo> groupInfoList;
     rsPeers->getGroupInfoList(groupInfoList) ;
+    uint32_t group_row = 0;
 
-    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
+    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it,++group_row)
     {
-        grp_indexes[it->group_id] = mGroups.size();
-        mGroups.push_back(*it);
-    }
+		// first, fill the group hierarchical info
 
-    // profiles
+        HierarchicalGroupInformation groupinfo;
+        groupinfo.group = *it;
+        groupinfo.parent_row = group_row;
 
-    std::list<RsPgpId> gpg_ids;
-	rsPeers->getGPGAcceptedList(gpg_ids);
+        uint32_t profile_row = 0;
 
-    for(auto it(gpg_ids.begin());it!=gpg_ids.end();++it)
-    {
-        RsProfileDetails det;
-
-        if(!rsPeers->getGPGDetails(*it,det))
-            continue;
-
-        pgp_indexes[det.gpg_id] = mProfiles.size();
-        mProfiles.push_back(det);
-    }
-
-    // locations
-
-	std::list<RsPeerId> peer_ids;
-	rsPeers->getFriendList(peer_ids);
-
-    for(auto it(peer_ids.begin());it!=peer_ids.end();++it)
-    {
-        RsNodeDetails det;
-
-        if(!rsPeers->getPeerDetails(*it,det))
-            continue;
-
-        ssl_indexes[det.id] = mLocations.size();
-        mLocations.push_back(det);
-    }
-
-    // now build the hierarchy information for the model
-
-    for(uint32_t i=0;i<mGroups.size();++i)
-    {
-        HierarchicalGroupInformation inf;
-
-        inf.group_index = i;
-
-        for(auto it(mGroups[i].peerIds.begin());it!=mGroups[i].peerIds.end();++ii)
+        for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2,++profile_row)
         {
-            auto it2 = pgp_indexes.find(*it);
-            if(it2 == pgp_indexes.end())
-                RsErr() << "Cannot find pgp entry for peer " << *it << " in precomputed map. This is very unexpected." << std::endl;
-			else
-				inf.child_indices.push_back(it2->second);
+            // Then for each peer in this group, make sure that the peer is already known, and if not create it
+
+            auto it3 = pgp_indexes.find(*it2);
+            if(it3 == pgp_indexes.end())// not found
+            {
+                RsProfileDetails profdet;
+
+                rsPeers->getGPGDetails(*it2,profdet);
+
+                pgp_indexes[*it2] = mProfileDetails.size();
+                mProfileDetails.push_back(profdet);
+
+				it3 = pgp_indexes.find(*it2);
+            }
+
+            // ...and also fill the hierarchical profile info
+
+            HierarchicalProfileInformation profinfo;
+
+            profinfo.parent_row = profile_row;
+            profinfo.parent_group_index = mGroups.size();
+            profinfo.profile_index = it3->second;
+
+			// now fill the children nodes of the profile
+
+			std::list<RsPeerId> ssl_ids ;
+			rsPeers->getAssociatedSSLIds(*it2, ssl_ids);
+
+            uint32_t node_row = 0;
+
+			for(auto it4(ssl_ids.begin());it4!=ssl_ids.end();++it4,++node_row)
+			{
+				auto it5 = ssl_indexes.find(*it4);
+				if(it5 == ssl_indexes.end())
+                {
+					RsNodeDetails nodedet;
+
+					rsPeers->getPeerDetails(*it4,nodedet);
+
+					ssl_indexes[*it4] = mNodeDetails.size();
+					mNodeDetails.push_back(nodedet);
+
+					it5 = ssl_indexes.find(*it4);
+                }
+
+                HierarchicalNodeInformation nodeinfo;
+                nodeinfo.parent_row = node_row;
+                nodeinfo.node_index = it5->second;
+                nodeinfo.parent_profile_index = mProfiles.size();
+
+                profinfo.child_indices.push_back(mLocations.size());
+
+				mLocations.push_back(nodeinfo);
+            }
+
+            mProfiles.push_back(profinfo);
         }
 
-        mHG.push_back(inf);
+        mGroups.push_back(groupinfo);
     }
-
-#warning Missing code here !!!
 
     postMods();
 }
