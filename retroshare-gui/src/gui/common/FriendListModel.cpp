@@ -700,13 +700,25 @@ void RsFriendListModel::updateInternalData()
     mLocations.clear();
     mProfiles.clear();
 
+    mHG.clear();
+    mHL.clear();
+    mHP.clear();
+
+    // create a map of profiles and groups
+    std::map<RsPgpId,uint32_t> pgp_indexes;
+    std::map<RsPeerId,uint32_t> ssl_indexes;
+    std::map<RsNodeGroupId,uint32_t> grp_indexes;
+
     // groups
 
     std::list<RsGroupInfo> groupInfoList;
     rsPeers->getGroupInfoList(groupInfoList) ;
 
     for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
+    {
+        grp_indexes[it->group_id] = mGroups.size();
         mGroups.push_back(*it);
+    }
 
     // profiles
 
@@ -720,6 +732,7 @@ void RsFriendListModel::updateInternalData()
         if(!rsPeers->getGPGDetails(*it,det))
             continue;
 
+        pgp_indexes[det.gpg_id] = mProfiles.size();
         mProfiles.push_back(det);
     }
 
@@ -735,8 +748,31 @@ void RsFriendListModel::updateInternalData()
         if(!rsPeers->getPeerDetails(*it,det))
             continue;
 
+        ssl_indexes[det.id] = mLocations.size();
         mLocations.push_back(det);
     }
+
+    // now build the hierarchy information for the model
+
+    for(uint32_t i=0;i<mGroups.size();++i)
+    {
+        HierarchicalGroupInformation inf;
+
+        inf.group_index = i;
+
+        for(auto it(mGroups[i].peerIds.begin());it!=mGroups[i].peerIds.end();++ii)
+        {
+            auto it2 = pgp_indexes.find(*it);
+            if(it2 == pgp_indexes.end())
+                RsErr() << "Cannot find pgp entry for peer " << *it << " in precomputed map. This is very unexpected." << std::endl;
+			else
+				inf.child_indices.push_back(it2->second);
+        }
+
+        mHG.push_back(inf);
+    }
+
+#warning Missing code here !!!
 
     postMods();
 }

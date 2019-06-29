@@ -47,6 +47,24 @@ public:
     class RsNodeDetails: public RsPeerDetails {};// in the near future, there will be a specific class for Profile/Node details in replacement of RsPeerDetails
     class RsProfileDetails: public RsPeerDetails {};
 
+	struct HierarchicalGroupInformation
+	{
+		uint32_t group_index;
+		std::vector<uint32_t> child_indices;
+	};
+	struct HierarchicalProfileInformation
+	{
+		uint32_t profile_index;
+		std::vector<uint32_t> child_indices;
+		uint32_t parent_group_index;
+	};
+	struct HierarchicalNodeInformation
+	{
+		uint32_t node_index;
+		uint32_t parent_profile_index;
+	};
+
+
 	enum Columns {
 		COLUMN_THREAD_NAME         = 0x00,
 		COLUMN_THREAD_LAST_CONTACT = 0x01,
@@ -164,7 +182,14 @@ private:
 
     bool mDisplayGroups ;
 
-    std::vector<RsGroupInfo> mGroups;
+    // A given profile may belong to multiple groups, so the hierarchy is stored using the 3 variables below.
+
+    std::vector<HierarchicalGroupInformation>   mHG;
+    std::vector<HierarchicalProfileInformation> mHP;
+    std::vector<HierarchicalNodeInformation>    mHL;
+
+    std::vector<RsGroupInfo>      mGroups;
     std::vector<RsProfileDetails> mProfiles;
-    std::vector<RsNodeDetails> mLocations;
+    std::vector<RsNodeDetails>    mLocations;
 };
+
