@@ -321,8 +321,8 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 		smGLayout->addWidget(smTab);
 	}
 
-	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*2.6;
-	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*2.6;
+	const int buttonWidth = QFontMetricsF(smWidget->font()).height()*5;
+	const int buttonHeight = QFontMetricsF(smWidget->font()).height()*5;
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
@@ -336,6 +336,19 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 		QWidget *tabGrpWidget = nullptr;
 		if (! bOnlyOneGroup)
 		{
+			//Lazy load tooltips for the current tab
+			QObject::connect(smTab, &QTabWidget::currentChanged, [=](int index){
+				QWidget* current = smTab->widget(index);
+				QList<QPushButton *> children = current->findChildren<QPushButton *>();
+				for(int i = 0; i < children.length(); ++i) {
+					if(!children[i]->toolTip().contains('<')) {
+						QString tooltip;
+						if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300))
+							children[i]->setToolTip(tooltip);
+					}
+				}
+			});
+
 			tabGrpWidget = new QWidget(smTab);
 
 			// (Cyril) Never use an absolute size. It needs to be scaled to the actual font size on the screen.
@@ -394,6 +407,20 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 	}
 
+	//Load tooltips for the first page
+	QWidget * firstpage;
+	if(bOnlyOneGroup) {
+		firstpage = smWidget;
+	} else {
+		firstpage = smTab->currentWidget();
+	}
+	QList<QPushButton *> children = firstpage->findChildren<QPushButton *>();
+	for(int i = 0; i < children.length(); ++i) {
+		QString tooltip;
+		if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300))
+			children[i]->setToolTip(tooltip);
+	}
+
 	//Get left up pos of button
 	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
 	//Get widget's size
@@ -426,6 +453,6 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	if (y < 0) //Widget will be too high
 		y = 0; //Place widget top at screen top
 
-	smWidget->move(x, y) ;
-	smWidget->show() ;
+	smWidget->move(x, y);
+	smWidget->show();
 }
