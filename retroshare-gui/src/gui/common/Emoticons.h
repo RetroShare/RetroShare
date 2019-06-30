@@ -28,8 +28,11 @@ class Emoticons
 {
 public:
     static void load();
+    static void loadSmiley();
+    static void loadSticker(QString foldername);
 
     static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
+    static void showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
 
 //    static void formatText(QString &text);
 };
