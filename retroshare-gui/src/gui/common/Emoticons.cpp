@@ -43,6 +43,7 @@ static QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > Smiley
 static QVector<QString> grpOrdered;
 static QVector<QString > StickerGroups;
 static QStringList filters;
+static QHash<QString, QString> tooltipcache;
 
 void Emoticons::load()
 {
@@ -339,14 +340,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 			//Lazy load tooltips for the current tab
 			QObject::connect(smTab, &QTabWidget::currentChanged, [=](int index){
 				QWidget* current = smTab->widget(index);
-				QList<QPushButton *> children = current->findChildren<QPushButton *>();
-				for(int i = 0; i < children.length(); ++i) {
-					if(!children[i]->toolTip().contains('<')) {
-						QString tooltip;
-						if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300))
-							children[i]->setToolTip(tooltip);
-					}
-				}
+				loadToolTips(current);
 			});
 
 			tabGrpWidget = new QWidget(smTab);
@@ -414,12 +408,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	} else {
 		firstpage = smTab->currentWidget();
 	}
-	QList<QPushButton *> children = firstpage->findChildren<QPushButton *>();
-	for(int i = 0; i < children.length(); ++i) {
-		QString tooltip;
-		if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300))
-			children[i]->setToolTip(tooltip);
-	}
+	loadToolTips(firstpage);
 
 	//Get left up pos of button
 	QPoint butTopLeft = button->mapToGlobal(QPoint(0,0));
@@ -455,4 +444,24 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 	smWidget->move(x, y);
 	smWidget->show();
+}
+
+void Emoticons::loadToolTips(QWidget *container)
+{
+	QList<QPushButton *> children = container->findChildren<QPushButton *>();
+	for(int i = 0; i < children.length(); ++i) {
+		if(!children[i]->toolTip().contains('<')) {
+			if(tooltipcache.contains(children[i]->statusTip())) {
+				children[i]->setToolTip(tooltipcache[children[i]->statusTip()]);
+			} else {
+				QString tooltip;
+				if(RsHtml::makeEmbeddedImage(children[i]->statusTip(), tooltip, 300*300)) {
+					tooltipcache.insert(children[i]->statusTip(), tooltip);
+					children[i]->setToolTip(tooltip);
+				}
+
+			}
+
+		}
+	}
 }

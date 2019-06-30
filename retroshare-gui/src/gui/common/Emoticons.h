@@ -34,7 +34,8 @@ public:
     static void showSmileyWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
     static void showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above);
 
-//    static void formatText(QString &text);
+private:
+    static void loadToolTips(QWidget *container);
 };
 
 #endif
