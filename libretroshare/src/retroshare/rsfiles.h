@@ -208,7 +208,7 @@ public:
 	virtual ~RsFiles() {}
 
 	/**
-	 * Provides file data for the gui, media streaming or rpc clients.
+	 * @brief Provides file data for the gui, media streaming or rpc clients.
 	 * It may return unverified chunks. This allows streaming without having to
 	 * wait for hashes or completion of the file.
 	 * This function returns an unspecified amount of bytes. Either as much data
@@ -224,7 +224,7 @@ public:
 	 * @param[in] offset where the desired block starts
 	 * @param[inout] requested_size size of pre-allocated data. Will be updated
 	 * 	by the function.
-	 * @param data pre-allocated memory chunk of size 'requested_size' by the
+	 * @param[out] data pre-allocated memory chunk of size 'requested_size' by the
 	 * 	client
 	 * @return Returns false in case
 	 * 	- the files is not available on the local node
