@@ -1,10 +1,8 @@
 /*******************************************************************************
- * libretroshare/src/services: p3idservice.cc                                  *
+ * RetroShare GXS identities service                                           *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,6 +18,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
 #include <unistd.h>
 #include <algorithm>
 
@@ -36,6 +35,7 @@
 #include "crypto/hashstream.h"
 #include "gxs/gxssecurity.h"
 #include "retroshare/rspeers.h"
+#include "retroshare/rsnotify.h"
 
 
 //#include "pqi/authgpg.h"
@@ -71,7 +71,7 @@ static const uint32_t MAX_DELAY_BEFORE_CLEANING=    1800 ; // clean old keys eve
 
 static const uint32_t MAX_SERIALISED_IDENTITY_AGE  = 600 ; // after 10 mins, a serialised identity record must be renewed.
 
-RsIdentity *rsIdentity = NULL;
+RsIdentity* rsIdentity = nullptr;
 
 /******
  * Some notes:
@@ -910,40 +910,75 @@ bool p3IdService::createIdentity(
         const std::string& name, const RsGxsImage& avatar,
         bool pseudonimous, const std::string& pgpPassword)
 {
-	if(!pgpPassword.empty())
-		std::cerr<< __PRETTY_FUNCTION__ << " Warning! PGP Password handling "
-		         << "not implemented yet!" << std::endl;
-
+	bool ret = true;
 	RsIdentityParameters params;
+	uint32_t token = 0;
+	RsGroupMetaData meta;
+	RsTokenService::GxsRequestStatus wtStatus = RsTokenService::CANCELLED;
+
+	if(!pseudonimous && !pgpPassword.empty())
+	{
+		if(!rsNotify->cachePgpPassphrase(pgpPassword))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Failure caching password"
+			        << std::endl;
+			ret = false;
+			goto LabelCreateIdentityCleanup;
+		}
+
+		if(!rsNotify->setDisableAskPassword(true))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Failure disabling password user"
+			        << " request" << std::endl;
+			ret = false;
+			goto LabelCreateIdentityCleanup;
+		}
+	}
+
 	params.isPgpLinked = !pseudonimous;
 	params.nickname = name;
 	params.mImage = avatar;
 
-	uint32_t token;
 	if(!createIdentity(token, params))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed creating group."
-		          << std::endl;
-		return false;
+		RsErr() << __PRETTY_FUNCTION__ << " Failed creating GXS group."
+		        << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
 	}
 
-	if(waitToken(token) != RsTokenService::COMPLETE)
+	/* Use custom timeout for waitToken because creating identities involves
+	 * creating multiple signatures, which can take a lot of time expecially on
+	 * slow hardware like phones or embedded devices */
+	if( (wtStatus = waitToken(
+	         token, std::chrono::seconds(10), std::chrono::milliseconds(20) ))
+	        != RsTokenService::COMPLETE )
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed."
-		          << std::endl;
-		return false;
+		RsErr() << __PRETTY_FUNCTION__ << " waitToken("<< token
+		        << ") failed with: " << wtStatus << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
 	}
 
-	RsGroupMetaData meta;
 	if(!RsGenExchange::getPublishedGroupMeta(token, meta))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated "
-		          << " group data." << std::endl;
-		return false;
+		RsErr() << __PRETTY_FUNCTION__ << " Failure getting updated group data."
+		        << std::endl;
+		ret = false;
+		goto LabelCreateIdentityCleanup;
 	}
 
 	id = RsGxsId(meta.mGroupId);
-	return true;
+
+
+LabelCreateIdentityCleanup:
+	if(!pseudonimous && !pgpPassword.empty())
+	{
+		rsNotify->setDisableAskPassword(false);
+		rsNotify->clearPgpPassphrase();
+	}
+
+	return ret;
 }
 
 bool p3IdService::createIdentity(uint32_t& token, RsIdentityParameters &params)
@@ -3309,13 +3344,10 @@ static void calcPGPHash(const RsGxsId &id, const PGPFingerprintType &pgp, Sha1Ch
 
 
 // Must Use meta.
-RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet)
+RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
+        RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet )
 {
-
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::service_CreateGroup()";
-    std::cerr << std::endl;
-#endif // DEBUG_IDS
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
 
     RsGxsIdGroupItem *item = dynamic_cast<RsGxsIdGroupItem *>(grpItem);
     if (!item)
@@ -3325,30 +3357,23 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         return SERVICE_CREATE_FAIL;
     }
 
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::service_CreateGroup() Item is:";
-    std::cerr << std::endl;
-    item->print(std::cerr);
-    std::cerr << std::endl;
-#endif // DEBUG_IDS
-    
     item->meta.mGroupId.clear();
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
-    // find private admin key
-    for(std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit = keySet.private_keys.begin();mit != keySet.private_keys.end(); ++mit)
-        if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
+	// find private admin key
+	for( std::map<RsGxsId, RsTlvPrivateRSAKey>::iterator mit =
+	     keySet.private_keys.begin(); mit != keySet.private_keys.end(); ++mit )
+		if(mit->second.keyFlags == (RSTLV_KEY_DISTRIB_ADMIN | RSTLV_KEY_TYPE_FULL))
         {
             item->meta.mGroupId = RsGxsGroupId(mit->second.keyId);
             break;
         }
 
-    if(item->meta.mGroupId.isNull())
-    {
-        std::cerr << "p3IdService::service_CreateGroup() ERROR no admin key";
-        std::cerr << std::endl;
-        return SERVICE_CREATE_FAIL;
-    }
+	if(item->meta.mGroupId.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " missing admin key!" << std::endl;
+		return SERVICE_CREATE_FAIL;
+	}
     mKeysTS[RsGxsId(item->meta.mGroupId)].TS = time(NULL) ;
 
     /********************* TEMP HACK UNTIL GXS FILLS IN GROUP_ID *****************/
@@ -3396,8 +3421,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         /* create the hash */
         Sha1CheckSum hash;
 
-        /* */
-        PGPFingerprintType ownFinger;
+		RsPgpFingerprint ownFinger;
         RsPgpId ownId(mPgpUtils->getPGPOwnId());
 
 #ifdef DEBUG_IDS
@@ -3412,12 +3436,12 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
         //		}
 #endif
 
-        if (!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
-        {
-            std::cerr << "p3IdService::service_CreateGroup() ERROR Own Finger is stuck";
-            std::cerr << std::endl;
-            return SERVICE_CREATE_FAIL; // abandon attempt!
-        }
+		if(!mPgpUtils->getKeyFingerprint(ownId,ownFinger))
+		{
+			RsErr() << __PRETTY_FUNCTION__
+			        << " failure retriving own PGP fingerprint" << std::endl;
+			return SERVICE_CREATE_FAIL; // abandon attempt!
+		}
 
 #ifdef DEBUG_IDS
         std::cerr << "p3IdService::service_CreateGroup() OwnFingerprint: " << ownFinger.toStdString();
@@ -3439,60 +3463,69 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
 
 #define MAX_SIGN_SIZE 2048
         uint8_t signarray[MAX_SIGN_SIZE];
-        unsigned int sign_size = MAX_SIGN_SIZE;
-        int result ;
-
+		unsigned int sign_size = MAX_SIGN_SIZE;
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-        mPgpUtils->askForDeferredSelfSignature((void *) hash.toByteArray(), hash.SIZE_IN_BYTES, signarray, &sign_size,result, "p3IdService::service_CreateGroup()") ;
+		/* -10 is never returned by askForDeferredSelfSignature therefore we can
+		 * use it to properly detect and handle the case libretroshare is being
+		 * used outside retroshare-gui */
+		int result = -10;
 
-    /* error */
-    switch(result)
-    {
-    case SELF_SIGNATURE_RESULT_PENDING : createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
-        std::cerr << "p3IdService::service_CreateGroup() signature still pending" << std::endl;
-        break ;
-    default:
-    case SELF_SIGNATURE_RESULT_FAILED:  return SERVICE_CREATE_FAIL ;
-        std::cerr << "p3IdService::service_CreateGroup() signature failed" << std::endl;
-        break ;
+		/* This method is DEPRECATED we call it only for retrocompatibility with
+		 * retroshare-gui, when called from something different then
+		 * retroshare-gui for example retroshare-service it miserably fail! */
+		mPgpUtils->askForDeferredSelfSignature(
+		            static_cast<const void*>(hash.toByteArray()),
+		            hash.SIZE_IN_BYTES, signarray, &sign_size, result,
+		            __PRETTY_FUNCTION__ );
 
-    case SELF_SIGNATURE_RESULT_SUCCESS:
-    {
-        // Additional consistency checks.
+		/* If askForDeferredSelfSignature left result untouched it means
+		 * libretroshare is being used by something different then
+		 * retroshare-gui so try calling AuthGPG::getAuthGPG()->SignDataBin
+		 * directly */
+		if( result == -10 )
+			result = AuthGPG::getAuthGPG()->SignDataBin(
+			            static_cast<const void*>(hash.toByteArray()),
+			            hash.SIZE_IN_BYTES, signarray, &sign_size,
+			            __PRETTY_FUNCTION__ )
+			        ?
+			            SELF_SIGNATURE_RESULT_SUCCESS :
+			            SELF_SIGNATURE_RESULT_FAILED;
 
-        if(sign_size == MAX_SIGN_SIZE)
-        {
-            std::cerr << "Inconsistent result. Signature uses full buffer. This is probably an error." << std::endl;
-            return SERVICE_CREATE_FAIL; // abandon attempt!
-        }
-#ifdef DEBUG_IDS
-        std::cerr << "p3IdService::service_CreateGroup() Signature: ";
-        std::string strout;
-#endif
-        /* push binary into string -> really bad! */
-        item->mPgpIdSign = "";
-        for(unsigned int i = 0; i < sign_size; i++)
-        {
-#ifdef DEBUG_IDS
-            rs_sprintf_append(strout, "%02x", (uint32_t) signarray[i]);
-#endif
-            item->mPgpIdSign += signarray[i];
-        }
-        createStatus = SERVICE_CREATE_SUCCESS;
+		switch(result)
+		{
+		case SELF_SIGNATURE_RESULT_PENDING:
+			createStatus = SERVICE_CREATE_FAIL_TRY_LATER;
+			Dbg1() << __PRETTY_FUNCTION__ << " signature still pending"
+			       << std::endl;
+			break;
+		case SELF_SIGNATURE_RESULT_SUCCESS:
+		{
+			// Additional consistency checks.
+			if(sign_size == MAX_SIGN_SIZE)
+			{
+				RsErr() << __PRETTY_FUNCTION__ << "Inconsistent result. "
+				        << "Signature uses full buffer. This is probably an "
+				        << "error." << std::endl;
+				return SERVICE_CREATE_FAIL;
+			}
 
-#ifdef DEBUG_IDS
-        std::cerr << strout;
-        std::cerr << std::endl;
-#endif
-    }
-    }
-        /* done! */
-    }
-    else
-    {
-        createStatus = SERVICE_CREATE_SUCCESS;
-    }
+			/* push binary into string -> really bad! */
+			item->mPgpIdSign = "";
+			for(unsigned int i = 0; i < sign_size; i++)
+				item->mPgpIdSign += static_cast<char>(signarray[i]);
+
+			createStatus = SERVICE_CREATE_SUCCESS;
+			break;
+		}
+		case SELF_SIGNATURE_RESULT_FAILED: /* fall-through */
+		default:
+			RsErr() << __PRETTY_FUNCTION__ << " signature failed with: "
+			        << result << std::endl;
+			return SERVICE_CREATE_FAIL;
+		}
+	}
+	else createStatus = SERVICE_CREATE_SUCCESS;
 
     // Enforce no AuthorId.
     item->meta.mAuthorId.clear() ;
@@ -3503,17 +3536,18 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(RsGxsGrpIte
     // do it like p3gxscircles: save the new grp id
     // this allows the user interface
     // to see the grp id on the list of ownIds immediately after the group was created
-    {
-        RsStackMutex stack(mIdMtx);
+	{
+		RS_STACK_MUTEX(mIdMtx);
         RsGxsId gxsId(item->meta.mGroupId);
         if (std::find(mOwnIds.begin(), mOwnIds.end(), gxsId) == mOwnIds.end())
         {
-            mOwnIds.push_back(gxsId);
-            mKeysTS[gxsId].TS = time(NULL) ;
+			mOwnIds.push_back(gxsId);
+			mKeysTS[gxsId].TS = time(nullptr);
         }
     }
 
-    return createStatus;
+	Dbg2() << __PRETTY_FUNCTION__ << " returns: " << createStatus << std::endl;
+	return createStatus;
 }
 
 
