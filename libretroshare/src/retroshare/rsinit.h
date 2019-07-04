@@ -1,9 +1,8 @@
 /*******************************************************************************
- * libretroshare/src/retroshare: rsinit.h                                      *
+ * RetroShare initialization and login API                                     *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -29,13 +28,6 @@
 #define RS_INIT_AUTH_FAILED    -1 // AuthGPG::InitAuth failed
 #define RS_INIT_BASE_DIR_ERROR -2 // AuthGPG::InitAuth failed
 #define RS_INIT_NO_KEYRING     -3 // Keyring is empty. Need to import it.
-
-
-/****
- * #define RS_USE_PGPSSL 1
- ***/
-
-#define RS_USE_PGPSSL 1
 
 #include <stdint.h>
 #include <list>
