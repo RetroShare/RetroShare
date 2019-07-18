@@ -28,8 +28,8 @@ define_default_value SQLITE_SOURCE_YEAR "2018"
 define_default_value SQLITE_SOURCE_VERSION "3250200"
 define_default_value SQLITE_SOURCE_SHA256 da9a1484423d524d3ac793af518cdf870c8255d209e369bd6a193e9f9d0e3181
 
-define_default_value SQLCIPHER_SOURCE_VERSION "3.4.2"
-define_default_value SQLCIPHER_SOURCE_SHA256 69897a5167f34e8a84c7069f1b283aba88cdfa8ec183165c4a5da2c816cfaadb
+define_default_value SQLCIPHER_SOURCE_VERSION "4.2.0"
+define_default_value SQLCIPHER_SOURCE_SHA256 105c1b813f848da038c03647a8bfc9d42fb46865e6aaf4edfd46ff3b18cdccfc
 
 define_default_value LIBUPNP_SOURCE_VERSION "1.8.4"
 define_default_value LIBUPNP_SOURCE_SHA256 976c3e4555604cdd8391ed2f359c08c9dead3b6bf131c24ce78e64d6669af2ed
@@ -81,15 +81,24 @@ function verified_download()
 	}
 }
 
+cArch=""
+eABI=""
 
-
-if [ "${ANDROID_NDK_ARCH}" == "x86" ]; then
-	cArch="i686"
-	eABI=""
-else
+case "${ANDROID_NDK_ARCH}" in
+"arm")
 	cArch="${ANDROID_NDK_ARCH}"
 	eABI="eabi"
-fi
+	;;
+"arm64")
+	cArch="aarch64"
+	eABI=""
+	;;
+"x86")
+	cArch="i686"
+	eABI=""
+	;;
+esac
+
 export SYSROOT="${NATIVE_LIBS_TOOLCHAIN_PATH}/sysroot/"
 export PREFIX="${SYSROOT}/usr/"
 export CC="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-clang"
@@ -263,7 +272,7 @@ build_sqlite()
 
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
-	./configure --prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
+	./configure --prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	rm -f ${PREFIX}/lib/libsqlite3.so*
@@ -274,6 +283,13 @@ build_sqlite()
 
 build_sqlcipher()
 {
+	case "${ANDROID_NDK_ARCH}" in
+	"arm64")
+		echo sqlcipher not supported for arm64
+		return 0
+	;;
+	esac
+
 	B_dir="sqlcipher-${SQLCIPHER_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -285,7 +301,7 @@ build_sqlcipher()
 	tar -xf $T_file
 	cd $B_dir
 	./configure --build=$(sh ./config.guess) \
-		--host=${ANDROID_NDK_ARCH}-linux \
+		--host=${cArch}-linux \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}" \
 		--enable-tempstore=yes \
 		--disable-tcl --disable-shared \
@@ -314,7 +330,7 @@ build_libupnp()
 ## crash at startup.
 	./configure --enable-static --disable-shared --disable-samples \
 		--disable-largefile \
-		--prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
+		--prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	cd ..
@@ -381,7 +397,7 @@ build_xapian()
 	./configure ${B_endiannes_detection_failure_workaround} ${B_large_file} \
 		--disable-backend-inmemory --disable-backend-remote \
 		--disable--backend-chert --enable-backend-glass \
-		--host=${ANDROID_NDK_ARCH}-linux --enable-static --disable-shared \
+		--host=${cArch}-linux --enable-static --disable-shared \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}"
 	make -j${HOST_NUM_CPU}
 	make install
