@@ -266,13 +266,14 @@ build_openssl()
 build_sqlite()
 {
 	B_dir="sqlite-autoconf-${SQLITE_SOURCE_VERSION}"
+	rm -rf $B_dir
 
 	verified_download $B_dir.tar.gz $SQLITE_SOURCE_SHA256 \
 		https://www.sqlite.org/${SQLITE_SOURCE_YEAR}/$B_dir.tar.gz
 
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
-	./configure --prefix="${PREFIX}" --host=${cArch}-linux
+	./configure --with-pic --prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	rm -f ${PREFIX}/lib/libsqlite3.so*
@@ -300,7 +301,7 @@ build_sqlcipher()
 
 	tar -xf $T_file
 	cd $B_dir
-	./configure --build=$(sh ./config.guess) \
+	./configure --with-pic --build=$(sh ./config.guess) \
 		--host=${cArch}-linux \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}" \
 		--enable-tempstore=yes \
@@ -328,7 +329,7 @@ build_libupnp()
 ## look for libthreadutils.so.6 at runtime that cannot be packaged on android
 ## as it supports only libname.so format for libraries, thus resulting in a
 ## crash at startup.
-	./configure --enable-static --disable-shared --disable-samples \
+	./configure --with-pic --enable-static --disable-shared --disable-samples \
 		--disable-largefile \
 		--prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
@@ -358,7 +359,9 @@ build_restbed()
 	cd ..
 
 	rm -rf restbed-build; mkdir restbed-build ; cd restbed-build
-	cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
+	cmake \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
 	make -j${HOST_NUM_CPU}
 	make install
 	cp "${PREFIX}/library/librestbed.a" "${PREFIX}/lib/"
@@ -375,7 +378,9 @@ build_udp-discovery-cpp()
 
 	B_dir="udp-discovery-cpp-build"
 	rm -rf ${B_dir}; mkdir ${B_dir}; cd ${B_dir}
-	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../udp-discovery-cpp
+	cmake \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../udp-discovery-cpp
 	make -j${HOST_NUM_CPU}
 	cp libudp-discovery.a "${PREFIX}/lib/"
 	cp ../$S_dir/*.hpp "${PREFIX}/include/"
@@ -395,6 +400,7 @@ build_xapian()
 	B_large_file=""
 	[ "${ANDROID_PLATFORM_VER}" -lt "24" ] && B_large_file="--disable-largefile"
 	./configure ${B_endiannes_detection_failure_workaround} ${B_large_file} \
+		--with-pic \
 		--disable-backend-inmemory --disable-backend-remote \
 		--disable--backend-chert --enable-backend-glass \
 		--host=${cArch}-linux --enable-static --disable-shared \
