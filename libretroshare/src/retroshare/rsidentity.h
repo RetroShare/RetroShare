@@ -380,6 +380,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
 	/**
 	 * @brief Get identity details, from the cache
+	 * @jsonapi{development}
 	 * @param[in] id Id of the identity
 	 * @param[out] details Storage for the identity details
 	 * @return false on error, true otherwise
@@ -400,7 +401,7 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[out] ids storage for the ids
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getOwnSignedIds(std::vector<RsGxsId> ids) = 0;
+	virtual bool getOwnSignedIds(std::vector<RsGxsId>& ids) = 0;
 
 	/**
 	 * @brief Get own pseudonimous (unsigned) ids
@@ -408,7 +409,7 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[out] ids storage for the ids
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId> ids) = 0;
+	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) = 0;
 
 	/**
 	 * @brief Check if an id is own

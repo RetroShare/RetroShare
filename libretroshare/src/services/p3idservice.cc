@@ -757,7 +757,7 @@ bool p3IdService::isOwnId(const RsGxsId& id)
 }
 
 
-bool p3IdService::getOwnSignedIds(std::vector<RsGxsId> ids)
+bool p3IdService::getOwnSignedIds(std::vector<RsGxsId>& ids)
 {
 	ids.clear();
 
@@ -769,27 +769,29 @@ bool p3IdService::getOwnSignedIds(std::vector<RsGxsId> ids)
 	if(ownIdsAreLoaded())
 	{
 		RS_STACK_MUTEX(mIdMtx);
-		ids.reserve(mOwnSignedIds.size());
-		ids.insert(ids.end(), mOwnSignedIds.begin(), mOwnSignedIds.end());
+		ids.resize(mOwnSignedIds.size());
+		std::copy(mOwnSignedIds.begin(), mOwnSignedIds.end(), ids.begin());
 		return true;
 	}
 
 	return false;
 }
 
-bool p3IdService::getOwnPseudonimousIds(std::vector<RsGxsId> ids)
+bool p3IdService::getOwnPseudonimousIds(std::vector<RsGxsId>& ids)
 {
 	ids.clear();
 	std::vector<RsGxsId> signedV;
 
 	// this implicitely ensure ids are already loaded ;)
 	if(!getOwnSignedIds(signedV)) return false;
+
 	std::set<RsGxsId> signedS(signedV.begin(), signedV.end());
 
 	{
 		RS_STACK_MUTEX(mIdMtx);
-		std::copy_if(mOwnIds.begin(), mOwnIds.end(), ids.end(),
-		             [&](const RsGxsId& id) {return !signedS.count(id);});
+		ids.resize(mOwnIds.size() - signedV.size());
+		std::copy_if( mOwnIds.begin(), mOwnIds.end(), ids.begin(),
+		              [&](const RsGxsId& id) {return !signedS.count(id);} );
 	}
 
 	return true;

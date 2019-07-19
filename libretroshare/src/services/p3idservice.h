@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef P3_IDENTITY_SERVICE_HEADER
-#define P3_IDENTITY_SERVICE_HEADER
+#pragma once
 
 
 #include "retroshare/rsidentity.h"	// External Interfaces.
@@ -36,33 +35,12 @@
 #include "util/rsmemcache.h"
 #include "util/rstickevent.h"
 #include "util/rsrecogn.h"
-
+#include "util/rsdebug.h"
 #include "pqi/authgpg.h"
 
 #include "rsitems/rsgxsrecognitems.h"
 
 class PgpAuxUtils;
-
-/* 
- * Identity Service
- *
- */
-
-#if 0
-class GxsReputation
-{
-	public:
-	GxsReputation();
-
-	bool updateIdScore(bool pgpLinked, bool pgpKnown);
-	bool update();    // checks ranges and calculates overall score.
-	int mOverallScore;
-	int mIdScore;      // PGP, Known, etc.
-	int mOwnOpinion;
-	int mPeerOpinion;
-};
-
-#endif
 
 class OpinionRequest
 {
@@ -312,10 +290,10 @@ public:
 	/**************** RsGixs Implementation ***************/
 
 	/// @see RsIdentity
-	bool getOwnSignedIds(std::vector<RsGxsId> ids) override;
+	bool getOwnSignedIds(std::vector<RsGxsId>& ids) override;
 
 	/// @see RsIdentity
-	bool getOwnPseudonimousIds(std::vector<RsGxsId> ids) override;
+	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
 	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
 
@@ -641,9 +619,6 @@ private:
 
 	bool mAutoAddFriendsIdentitiesAsContacts;
     uint32_t mMaxKeepKeysBanned ;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(4);
 };
-
-#endif // P3_IDENTITY_SERVICE_HEADER
-
-
-
