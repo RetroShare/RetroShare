@@ -59,25 +59,17 @@ struct RsGxsForumGroup : RsSerializable
 	RsGroupMetaData mMeta;
 	std::string mDescription;
 
-	/* What's below is optional, and handled by the serialiser
-	 * TODO: run away from TLV old serializables as those types are opaque to
-	 *	JSON API! */
+	/* TODO: run away from TLV old serializables as those types are opaque to
+	 * JSON API! */
 	RsTlvGxsIdSet mAdminList;
 	RsTlvGxsMsgIdSet mPinnedPosts;
 
 	/// @see RsSerializable
 	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
-	{
-		RS_SERIAL_PROCESS(mMeta);
-		RS_SERIAL_PROCESS(mDescription);
-		RS_SERIAL_PROCESS(mAdminList);
-		RS_SERIAL_PROCESS(mPinnedPosts);
-	}
+	                             RsGenericSerializer::SerializeContext& ctx );
 
-    // utility functions
-
-    bool canEditPosts(const RsGxsId& id) const { return mAdminList.ids.find(id) != mAdminList.ids.end() || id == mMeta.mAuthorId; }
+	/// utility functions
+	bool canEditPosts(const RsGxsId& id) const;
 };
 
 struct RsGxsForumMsg : RsSerializable
@@ -203,4 +195,3 @@ public:
 	RS_DEPRECATED_FOR(editForum)
 	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
 };
-

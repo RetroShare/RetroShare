@@ -813,3 +813,34 @@ void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 	}
 }
+
+void RsGxsForumGroup::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mMeta);
+	RS_SERIAL_PROCESS(mDescription);
+
+	/* Work around to have usable JSON API, without breaking binary
+	 * serialization retrocompatibility */
+	switch (j)
+	{
+	case RsGenericSerializer::TO_JSON: // fallthrough
+	case RsGenericSerializer::FROM_JSON:
+		RsTypeSerializer::serial_process( j, ctx,
+		                                  mAdminList.ids, "mAdminList" );
+		RsTypeSerializer::serial_process( j, ctx,
+		                                  mPinnedPosts.ids, "mPinnedPosts" );
+		break;
+	default:
+		RS_SERIAL_PROCESS(mAdminList);
+		RS_SERIAL_PROCESS(mPinnedPosts);
+	}
+}
+
+bool RsGxsForumGroup::canEditPosts(const RsGxsId& id) const
+{
+	return mAdminList.ids.find(id) != mAdminList.ids.end() ||
+	        id == mMeta.mAuthorId;
+}
+
