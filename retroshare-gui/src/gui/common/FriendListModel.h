@@ -154,10 +154,10 @@ private:
      * \brief debug_dump
      * 			Dumps the hierarchy of posts in the terminal, to allow checking whether the internal representation is correct.
      */
-    void debug_dump() const;
 
 public slots:
 	void updateInternalData();
+    void debug_dump() const;
 
 signals:
     void dataLoaded();	// emitted after the messages have been set. Can be used to updated the UI.

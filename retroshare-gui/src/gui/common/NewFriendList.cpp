@@ -179,6 +179,10 @@ NewFriendList::NewFriendList(QWidget *parent) :
     createDisplayMenu();
 
     mModel->updateInternalData();
+
+    QTimer *timer = new QTimer;
+    QObject::connect(timer,SIGNAL(timeout()),mModel,SLOT(debug_dump()));
+    timer->start(2000);
 }
 
 NewFriendList::~NewFriendList()

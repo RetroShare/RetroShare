@@ -49,7 +49,7 @@ const QString RsFriendListModel::FilterString("filtered");
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    mDisplayGroups = false;
+    mDisplayGroups = true;
     mFilterStrings.clear();
 }
 
@@ -190,16 +190,21 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex & pa
     }
 
     EntryIndex parent_index ;
-    EntryIndex new_index;
 
     convertInternalIdToIndex(parent.internalId(),parent_index);
 
-    new_index.ind = row;
+    EntryIndex new_index;
 
     switch(parent_index.type)
     {
     case ENTRY_TYPE_GROUP:   new_index.type = ENTRY_TYPE_PROFILE;
+        					 new_index.ind  = mGroups[parent_index.ind].child_indices[row];
+        					 break;
+
     case ENTRY_TYPE_PROFILE: new_index.type = ENTRY_TYPE_NODE;
+        					 new_index.ind  = mProfiles[parent_index.ind].child_indices[row];
+        					 break;
+        break;
     default:
         return QModelIndex();
     }
@@ -634,9 +639,25 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 
 void RsFriendListModel::debug_dump() const
 {
-    for(auto it(mGroups.begin());it!=mGroups.end();++it)
+    for(uint32_t j=0;j<mGroups.size();++j)
     {
-		std::cerr << "Group: " << (*it).group.name << std::endl;
+		std::cerr << "Group: " << mGroups[j].group.name << ", prow="<< mGroups[j].parent_row << ", ";
+		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_indices.size();++i) std::cerr << mGroups[j].child_indices[i] << " " ; std::cerr << std::endl;
+
+        for(uint32_t i=0;i<mGroups[j].child_indices.size();++i)
+        {
+            uint32_t profile_index = mGroups[j].child_indices[i];
+
+            std::cerr << "    Profile " << mProfileDetails[mProfiles[profile_index].profile_index].gpg_id << ", prow=" << mProfiles[profile_index].parent_row << ", parent_index=" << mProfiles[profile_index].parent_group_index << std::endl;
+
+            const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
+
+            for(uint32_t k=0;k<hprof.child_indices.size();++k)
+            {
+                std::cerr << "      Node " << mNodeDetails[mLocations[hprof.child_indices[k]].node_index].id << ", prow=" <<mLocations[hprof.child_indices[k]].parent_row << ", parent_index=" << mLocations[hprof.child_indices[k]].parent_profile_index << std::endl;
+            }
+        }
+
     }
 }
 
@@ -713,6 +734,8 @@ void RsFriendListModel::updateInternalData()
     rsPeers->getGroupInfoList(groupInfoList) ;
     uint32_t group_row = 0;
 
+    RsDbg() << "Updating Groups information: " << std::endl;
+
     for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it,++group_row)
     {
 		// first, fill the group hierarchical info
@@ -722,6 +745,8 @@ void RsFriendListModel::updateInternalData()
         groupinfo.parent_row = group_row;
 
         uint32_t profile_row = 0;
+
+		RsDbg() << "  Group \"" << groupinfo.group.name << "\"" << std::endl;
 
         for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2,++profile_row)
         {
@@ -753,6 +778,8 @@ void RsFriendListModel::updateInternalData()
 			std::list<RsPeerId> ssl_ids ;
 			rsPeers->getAssociatedSSLIds(*it2, ssl_ids);
 
+			RsDbg() << "    Profile: " << *it2 << std::endl;
+
             uint32_t node_row = 0;
 
 			for(auto it4(ssl_ids.begin());it4!=ssl_ids.end();++it4,++node_row)
@@ -770,16 +797,18 @@ void RsFriendListModel::updateInternalData()
 					it5 = ssl_indexes.find(*it4);
                 }
 
+				RsDbg() << "      Node: " << *it4 << std::endl;
+
                 HierarchicalNodeInformation nodeinfo;
                 nodeinfo.parent_row = node_row;
                 nodeinfo.node_index = it5->second;
                 nodeinfo.parent_profile_index = mProfiles.size();
 
                 profinfo.child_indices.push_back(mLocations.size());
-
 				mLocations.push_back(nodeinfo);
             }
 
+            groupinfo.child_indices.push_back(mProfiles.size());
             mProfiles.push_back(profinfo);
         }
 
