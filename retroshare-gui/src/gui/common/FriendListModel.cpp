@@ -193,6 +193,8 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex & pa
 
     convertInternalIdToIndex(parent.internalId(),parent_index);
 
+    RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
+
     EntryIndex new_index;
 
     switch(parent_index.type)
@@ -204,12 +206,13 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex & pa
     case ENTRY_TYPE_PROFILE: new_index.type = ENTRY_TYPE_NODE;
         					 new_index.ind  = mProfiles[parent_index.ind].child_indices[row];
         					 break;
-        break;
     default:
         return QModelIndex();
     }
 	quintptr ref ;
     convertIndexToInternalId(new_index,ref);
+
+    RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
 
     return createIndex(row,column,ref);
 }
@@ -481,6 +484,8 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
+    RsDbg() << "  Display role " << e.type << "," << e.ind << " (col="<< col<<") : " << std::endl;
+
     switch(e.type)
 	{
 	case ENTRY_TYPE_GROUP:
@@ -714,6 +719,9 @@ void RsFriendListModel::updateInternalData()
 {
     preMods();
 
+    beginRemoveRows(QModelIndex(),0,mGroups.size()-1);
+    endInsertRows();
+
     mGroups.clear();
     mLocations.clear();
     mProfiles.clear();
@@ -788,8 +796,10 @@ void RsFriendListModel::updateInternalData()
 				if(it5 == ssl_indexes.end())
                 {
 					RsNodeDetails nodedet;
-
 					rsPeers->getPeerDetails(*it4,nodedet);
+
+                    if(nodedet.location.empty())
+                        nodedet.location = tr("[Unknown]").toStdString();
 
 					ssl_indexes[*it4] = mNodeDetails.size();
 					mNodeDetails.push_back(nodedet);
@@ -814,6 +824,9 @@ void RsFriendListModel::updateInternalData()
 
         mGroups.push_back(groupinfo);
     }
+
+    beginInsertRows(QModelIndex(),0,mGroups.size()-1);
+    endInsertRows();
 
     postMods();
 }

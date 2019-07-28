@@ -839,6 +839,7 @@ void NewFriendList::addToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
+    mModel->updateInternalData();
 }
 
 void NewFriendList::moveToGroup()
@@ -862,6 +863,7 @@ void NewFriendList::moveToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
+    mModel->updateInternalData();
 }
 
 void NewFriendList::removeFromGroup()
@@ -879,6 +881,7 @@ void NewFriendList::removeFromGroup()
 
     // remove from (all) group(s)
     rsPeers->assignPeerToGroup(groupId, gpgId, false);
+    mModel->updateInternalData();
 }
 
 void NewFriendList::editGroup()
@@ -895,6 +898,7 @@ void NewFriendList::editGroup()
         CreateGroup editGrpDialog(groupId, this);
         editGrpDialog.exec();
     }
+    mModel->updateInternalData();
 }
 
 void NewFriendList::removeGroup()
@@ -905,6 +909,7 @@ void NewFriendList::removeGroup()
         return;
 
 	rsPeers->removeGroup(pinfo.id);
+    mModel->updateInternalData();
 }
 
 void NewFriendList::exportFriendlistClicked()
