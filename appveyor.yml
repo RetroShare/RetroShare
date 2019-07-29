@@ -90,7 +90,7 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core
+  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core mingw-w64-i686-cmark
   #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
   #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
@@ -146,6 +146,7 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - env
+  - git submodule update --init
   - qmake -Wall -spec win32-g++ "CONFIG=debug"
   - mingw32-make -j3
 
@@ -244,6 +245,10 @@ after_build:
   - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
+
+## Needed for cmark
+  - copy C:\msys64\mingw32\bin\libcmark*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libdouble-conversion*.dll %RS_DEPLOY%\
 
   - find C:\projects\RetroShare >> filelist.txt
 
