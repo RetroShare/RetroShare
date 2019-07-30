@@ -28,7 +28,7 @@
 #include "gxs/rsgenexchange.h"
 #include "gxs/gxstokenqueue.h"
 #include "util/rsmemory.h"
-
+#include "util/rsdebug.h"
 #include "util/rstickevent.h"
 
 #include <map>
@@ -213,11 +213,14 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	/// Implementation of @see RsGxsChannels::createComment
 	virtual bool createCommentV2(
-	        const RsGxsGroupId&   channelId, const RsGxsMessageId& threadId,
-	        const RsGxsMessageId& parentId,  const RsGxsId&        authorId,
+	        const RsGxsGroupId&   channelId,
+	        const RsGxsMessageId& threadId,
 	        const std::string&    comment,
-	        RsGxsMessageId& commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        const RsGxsId&        authorId,
+	        const RsGxsMessageId& parentId = RsGxsMessageId(),
+	        const RsGxsMessageId& origCommentId = RsGxsMessageId(),
+	        RsGxsMessageId&       commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
 	/// Implementation of @see RsGxsChannels::editChannel
