@@ -142,19 +142,6 @@ struct RsGxsComment : RsSerializable
 		RS_SERIAL_PROCESS(mOwnVote);
 		RS_SERIAL_PROCESS(mVotes);
 	}
-
-	const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
-		out << indent << varName << " of RsGxsComment Values ###################" << std::endl;
-		mMeta.print(out, indent + "  ", "mMeta");
-		out << indent << "  mComment: " << mComment << std::endl;
-		out << indent << "  mUpVotes: " << mUpVotes << std::endl;
-		out << indent << "  mDownVotes: " << mDownVotes << std::endl;
-		out << indent << "  mScore: " << mScore << std::endl;
-		out << indent << "  mOwnVote: " << mOwnVote << std::endl;
-		out << indent << "  mVotes.size(): " << mVotes.size() << std::endl;
-		out << indent << "######################################################" << std::endl;
-		return out;
-	}
 };
 
 

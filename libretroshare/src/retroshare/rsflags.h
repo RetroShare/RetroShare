@@ -1,6 +1,37 @@
+/*******************************************************************************
+ * libretroshare/src/retroshare: rsflags.h                                     *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
+ * Copyright 2012-2019 by Retroshare Team <contact@retroshare.cc>              *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 #pragma once
 
-#include <stdint.h>
+#include <cstdint>
+
+/* G10h4ck: TODO we should redefine flags in a way that the flag declaration and
+ * the flags values (bit fields) would be strongly logically linked.
+ * A possible way is to take an enum class containing the names of each
+ * bitfield and corresponding value as template parameter, this way would also
+ * avoid the need of dumb template parameter that is used only to make the
+ * types incompatible but that doesn't help finding what are the possible values
+ * for a kind of flag. Another appealing approach seems the first one described
+ * here https://softwareengineering.stackexchange.com/questions/194412/using-scoped-enums-for-bit-flags-in-c
+ * a few simple macros could be used instead of the template class */
 
 // This class provides a representation for flags that can be combined with bitwise
 // operations. However, because the class is templated with an id, it's not possible to 

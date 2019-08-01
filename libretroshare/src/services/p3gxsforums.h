@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,21 +20,17 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef P3_GXSFORUMS_SERVICE_HEADER
-#define P3_GXSFORUMS_SERVICE_HEADER
-
-
-#include "retroshare/rsgxsforums.h"
-#include "gxs/rsgenexchange.h"
-
-#include "util/rstickevent.h"
+#pragma once
 
 #include <map>
 #include <string>
 
-/* 
- *
- */
+#include "retroshare/rsgxsforums.h"
+#include "gxs/rsgenexchange.h"
+#include "retroshare/rsgxscircles.h"
+#include "util/rstickevent.h"
+#include "util/rsdebug.h"
+
 
 class p3GxsForums: public RsGenExchange, public RsGxsForums, public p3Config,
 	public RsTickEvent	/* only needed for testing - remove after */
@@ -55,14 +52,39 @@ protected:
 	virtual bool loadList(std::list<RsItem *>& loadList);               // @see p3Config::loadList(std::list<RsItem *>&)
 
 public:
-	/// @see RsGxsForums::createForum
+	/// @see RsGxsForums::createForumV2
+	bool createForumV2(
+	        const std::string& name, const std::string& description,
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& moderatorsIds = std::set<RsGxsId>(),
+	        RsGxsCircleType circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsForums::createPost
+	bool createPost(
+	        const RsGxsGroupId&   forumId,
+	        const std::string&    title,
+	        const std::string&    mBody,
+	        const RsGxsId&        authorId,
+	        const RsGxsMessageId& parentId = RsGxsMessageId(),
+	        const RsGxsMessageId& origPostId = RsGxsMessageId(),
+	        RsGxsMessageId&       postMsgId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsForums::createForum @deprecated
+	RS_DEPRECATED_FOR(createForumV2)
 	virtual bool createForum(RsGxsForumGroup& forum);
 
-	/// @see RsGxsForums::createMessage
+	/// @see RsGxsForums::createMessage  @deprecated
+	RS_DEPRECATED_FOR(createPost)
 	virtual bool createMessage(RsGxsForumMsg& message);
 
 	/// @see RsGxsForums::editForum
-	virtual bool editForum(RsGxsForumGroup& forum);
+	virtual bool editForum(RsGxsForumGroup& forum) override;
 
 	/// @see RsGxsForums::getForumsSummaries
 	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums);
@@ -78,7 +100,7 @@ public:
 	/// @see RsGxsForums::getForumContent
 	virtual bool getForumContent(
 	        const RsGxsGroupId& forumId,
-	        std::set<RsGxsMessageId>& msgs_to_request,
+	        const std::set<RsGxsMessageId>& msgs_to_request,
 	        std::vector<RsGxsForumMsg>& msgs );
 
 	/// @see RsGxsForums::markRead
@@ -130,5 +152,3 @@ bool generateGroup(uint32_t &token, std::string groupName);
     std::map<RsGxsGroupId,rstime_t> mKnownForums ;
 	
 };
-
-#endif 

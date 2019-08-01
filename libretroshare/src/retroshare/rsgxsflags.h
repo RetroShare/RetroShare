@@ -52,12 +52,11 @@ namespace GXS_SERV {
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_MASK           = 0x0000ff00;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_NONE           = 0x00000000;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG            = 0x00000100;   // Anti-spam feature. Allows to ask higher reputation to anonymous IDs
-    static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;   // unused
+	static const uint32_t FLAG_AUTHOR_AUTHENTICATION_REQUIRED       = 0x00000200;
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_IFNOPUBSIGN    = 0x00000400;	// ???
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_TRACK_MESSAGES = 0x00000800;	// not used anymore
     static const uint32_t FLAG_AUTHOR_AUTHENTICATION_GPG_KNOWN      = 0x00001000;   // Anti-spam feature. Allows to ask higher reputation to unknown IDs and anonymous IDs
 
-    // These are *not used*
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_MASK       = 0x000000ff;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ENCRYPTED  = 0x00000001;
     static const uint32_t FLAG_GROUP_SIGN_PUBLISH_ALLSIGNED  = 0x00000002;	// unused
