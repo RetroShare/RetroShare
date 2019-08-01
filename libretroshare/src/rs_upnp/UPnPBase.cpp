@@ -347,12 +347,12 @@ const std::string CUPnPLib::Element_GetAttributeByTag(
 
 
 CUPnPError::CUPnPError(
-	const CUPnPLib &upnpLib,
-	IXML_Document *errorDoc)
-:
-m_root            (upnpLib.Element_GetRootElement(errorDoc)),
-m_ErrorCode       (upnpLib.Element_GetChildValueByTag(m_root, "errorCode")),
-m_ErrorDescription(upnpLib.Element_GetChildValueByTag(m_root, "errorDescription"))
+    const CUPnPLib &upnpLib,
+    const IXML_Document *errorDoc)
+  :
+    m_root            (upnpLib.Element_GetRootElement(errorDoc)),
+    m_ErrorCode       (upnpLib.Element_GetChildValueByTag(m_root, "errorCode")),
+    m_ErrorDescription(upnpLib.Element_GetChildValueByTag(m_root, "errorDescription"))
 {
 }
 
@@ -488,7 +488,8 @@ m_timeout(1801),
 m_SCPD(NULL)
 {
 	int errcode;
-	
+	m_SID[0]=0;
+
 	std::vector<char> vscpdURL(URLBase.length() + m_SCPDURL.length() + 1);
 	char *scpdURL = &vscpdURL[0];
 	errcode = UpnpResolveURL(
@@ -1333,6 +1334,12 @@ int CUPnPControlPoint::Callback(
 		std::string devType(upnpCP->m_upnpLib.
 		    Element_GetChildValueByTag(rootDevice, "deviceType"));
 
+#ifdef UPNP_DEBUG
+		std::cerr << "CUPnPControlPoint::Callback() EventType==UPNP_DISCOVERY_SEARCH_RESULT" << std::endl
+		          << "urlBase:" << urlBase << std::endl
+		          << "devType:" << devType << std::endl;
+#endif
+
 		// Only add device if it is an InternetGatewayDevice
 		if (stdStringIsEqualCI(devType, upnpCP->m_upnpLib.UPNP_DEVICE_IGW))
 		{
@@ -1351,6 +1358,10 @@ int CUPnPControlPoint::Callback(
 			        rootDevice, urlBase,
 			        UpnpDiscovery_get_Location_cstr(d_event),
 			        UpnpDiscovery_get_Expires(d_event) );
+
+#if (UPNP_VERSION > 10624) && (UPNP_VERSION < 10800)
+			upnpCP->m_WaitForSearchTimeoutMutex.unlock();
+#endif
 		}
 
 		// Free the XML doc tree
@@ -1359,6 +1370,13 @@ int CUPnPControlPoint::Callback(
 	}
 	case UPNP_DISCOVERY_SEARCH_TIMEOUT:
 	{
+#if (UPNP_VERSION > 10624) && (UPNP_VERSION < 10800)
+		std::cerr <<  "********************************************************************************" << std::endl
+		          <<  "***                THIS SHOULD NOT HAPPEN !!!  TELL IT TO DEVS               ***" << std::endl
+		          <<  "*** UPnPBase.cpp CUPnPControlPoint::Callback() UPNP_DISCOVERY_SEARCH_TIMEOUT ***" << std::endl
+		          <<  "********************************************************************************" << std::endl;
+#endif
+
 		// Unlock the search timeout mutex
 		upnpCP->m_WaitForSearchTimeoutMutex.unlock();
 		break;
