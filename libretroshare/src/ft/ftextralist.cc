@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008 by Robert Fernie <retroshare@lunamutt.com>                   *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -272,7 +273,8 @@ bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags /*flag
 		 * file is removed after period.
 		 **/
 
-bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags)
+bool ftExtraList::hashExtraFile(
+        std::string path, uint32_t period, TransferRequestFlags flags )
 {
 #ifdef  DEBUG_ELIST
 	std::cerr << "ftExtraList::hashExtraFile() path: " << path;
@@ -282,12 +284,25 @@ bool 	ftExtraList::hashExtraFile(std::string path, uint32_t period, TransferRequ
 	std::cerr << std::endl;
 #endif
 
-	/* add into queue */
-	RS_STACK_MUTEX(extMutex);
+	auto failure = [](std::string errMsg)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		return false;
+	};
+
+	if(!RsDirUtil::fileExists(path))
+		return failure("file: " + path + "not found");
+
+	if(RsDirUtil::checkDirectory(path))
+		return failure("Cannot add a directory: " + path + "as extra file");
 
 	FileDetails details(path, period, flags);
-	details.info.age = time(NULL) + period;
-	mToHash.push_back(details);
+	details.info.age = static_cast<int>(time(nullptr) + period);
+
+	{
+		RS_STACK_MUTEX(extMutex);
+		mToHash.push_back(details); /* add into queue */
+	}
 
 	return true;
 }

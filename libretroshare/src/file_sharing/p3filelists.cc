@@ -968,16 +968,18 @@ int p3FileDatabase::getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& s
     }
 }
 
-void p3FileDatabase::removeExtraFile(const RsFileHash& hash)
+bool p3FileDatabase::removeExtraFile(const RsFileHash& hash)
 {
+	bool ret = false;
     {
     RS_STACK_MUTEX(mFLSMtx) ;
 
-    mExtraFiles->removeExtraFile(hash);
+	ret = mExtraFiles->removeExtraFile(hash);
     mLastExtraFilesCacheUpdate = 0 ; // forced cache reload
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	return ret;
 }
 
 void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const
