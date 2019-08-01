@@ -49,22 +49,17 @@ public:
 
 	struct HierarchicalGroupInformation
 	{
-		RsGroupInfo group;
-		std::vector<uint32_t> child_indices;	// index in the array of hierarchical profiles
-        uint32_t parent_row;
+        RsGroupInfo group_info;
+		std::vector<uint32_t> child_profile_indices;	// index in the array of hierarchical profiles
 	};
 	struct HierarchicalProfileInformation
 	{
-        uint32_t profile_index;					// index in the array of profiles. We cannot store the profile here because of duplication
-		uint32_t parent_group_index;			// index in the array of hierarchical groups
-		std::vector<uint32_t> child_indices;	// index in the array of hierarchical nodes
-        uint32_t parent_row;
+        RsProfileDetails profile_info;
+		std::vector<uint32_t> child_node_indices;		// indices of nodes in the array of nodes.
 	};
 	struct HierarchicalNodeInformation
 	{
-        uint32_t node_index;					// index in the array of nodes
-		uint32_t parent_profile_index;			// index in the array of hierarchical profiles
-        uint32_t parent_row;
+        RsNodeDetails node_info;
 	};
 
 	enum Columns {
@@ -89,19 +84,32 @@ public:
                      FILTER_TYPE_NAME = 0x02
                    };
 
-    enum EntryType{ ENTRY_TYPE_UNKNOWN = 0x00,
-                    ENTRY_TYPE_GROUP   = 0x01,
-                    ENTRY_TYPE_PROFILE = 0x02,
-                    ENTRY_TYPE_NODE    = 0x03
+    enum EntryType{ ENTRY_TYPE_UNKNOWN   = 0x00,
+                    ENTRY_TYPE_GROUP     = 0x01,
+                    ENTRY_TYPE_PROFILE   = 0x02,
+                    ENTRY_TYPE_NODE      = 0x03,
+                    ENTRY_TYPE_TOP_LEVEL = 0x04
                   };
+
+    // This structure encodes the position of a node in the hierarchy. The type tells which of the index fields are valid.
 
     struct EntryIndex
     {
-        EntryIndex(EntryType t,uint32_t i) : type(t),ind(i) {}
-        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),ind(0) {}
+        EntryIndex(EntryType t,uint32_t i) : type(t),profile_index(0),group_index(0),top_level_index(0) {}
+        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),node_index(0),profile_index(0),group_index(0),top_level_index(0) {}
 
-        EntryType type;
-        uint32_t ind;
+        EntryType type;		        // type of the entry (group,profile,location)
+
+        // indexes w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
+
+        uint32_t top_level_index;   // index in the mTopLevel tab
+        uint32_t group_index;		// index of the group in mGroups tab
+        uint32_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
+        uint32_t node_index;		// index of the child node in its own profile
+
+        EntryIndex parent() const;
+        EntryIndex child(int index) const;
+        uint32_t   parentRow(uint32_t nb_groups) const;
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
@@ -114,6 +122,7 @@ public:
 	void setDisplayGroups(bool b);
 
     EntryType getType(const QModelIndex&) const;
+
     bool getGroupData  (const QModelIndex&,RsGroupInfo     &) const;
     bool getProfileData(const QModelIndex&,RsProfileDetails&) const;
     bool getNodeData   (const QModelIndex&,RsNodeDetails   &) const;
@@ -136,6 +145,10 @@ public:
 	void clear() ;
 
 private:
+    const RsGroupInfo      *getGroupInfo  (const EntryIndex&) const;
+    const RsProfileDetails *getProfileInfo(const EntryIndex&) const;
+    const RsNodeDetails    *getNodeInfo   (const EntryIndex&) const;
+
     QVariant sizeHintRole  (int col) const;
 
 	QVariant displayRole   (const EntryIndex &e, int col) const;
@@ -184,13 +197,19 @@ private:
 
     bool mDisplayGroups ;
 
-    // A given profile may belong to multiple groups, so the hierarchy is stored using the 3 variables below.
+    // The 3 vectors below store thehierarchical information for groups, profiles and locations,
+    // meaning which is the child/parent of which. The actual group/profile/node data are also stored in the
+    // structure.
 
     std::vector<HierarchicalGroupInformation>   mGroups;
     std::vector<HierarchicalProfileInformation> mProfiles;
     std::vector<HierarchicalNodeInformation>    mLocations;
 
-    std::vector<RsProfileDetails> mProfileDetails;
-    std::vector<RsNodeDetails>    mNodeDetails;
+    // The top level list contains all nodes to display, which type depends on the option to display groups or not.
+    // Idices in the list may be profile indices or group indices. In the former case the profile child index refers to
+    // the inde in the mProfiles tab, whereas in the the later case, the child index refers to the index of the profile in the
+    // group it belows to.
+
+    std::vector<EntryIndex> mTopLevel;
 };
 

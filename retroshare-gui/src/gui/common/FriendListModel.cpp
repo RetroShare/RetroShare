@@ -57,7 +57,7 @@ void RsFriendListModel::setDisplayGroups(bool b)
 {
     mDisplayGroups = b;
 
-    // should update here
+    updateInternalData();
 }
 void RsFriendListModel::preMods()
 {
@@ -65,10 +65,7 @@ void RsFriendListModel::preMods()
 }
 void RsFriendListModel::postMods()
 {
-    if(mDisplayGroups)
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mGroups.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-    else
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mProfiles.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
@@ -77,22 +74,23 @@ int RsFriendListModel::rowCount(const QModelIndex& parent) const
         return 0;
 
 	if(parent.internalId() == 0)
-		if(mDisplayGroups)
-			return mGroups.size();
-		else
-			return mProfiles.size();
+		return mTopLevel.size();
 
     EntryIndex index;
     if(!convertInternalIdToIndex(parent.internalId(),index))
         return 0;
 
     if(index.type == ENTRY_TYPE_GROUP)
-        return mGroups[index.ind].child_indices.size();
+        return mGroups[index.group_index].child_profile_indices.size();
 
     if(index.type == ENTRY_TYPE_PROFILE)
-        return mProfiles[index.ind].child_indices.size();
+		if(index.group_index < 0xff)
+			return mProfiles[mGroups[index.group_index].child_profile_indices[index.profile_index]].child_node_indices.size();
+        else
+            return mProfiles[index.profile_index].child_node_indices.size();
 
-    return 0;
+    if(index.type == ENTRY_TYPE_NODE)
+        return 0;
 }
 
 int RsFriendListModel::columnCount(const QModelIndex &parent) const
@@ -124,30 +122,114 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
 
     if(parent_index.type == ENTRY_TYPE_NODE)
         return false;
+
     if(parent_index.type == ENTRY_TYPE_PROFILE)
-        return !mProfiles[parent_index.ind].child_indices.empty();
+		if(parent_index.group_index < 0xff)
+			return !mProfiles[mGroups[parent_index.group_index].child_profile_indices[parent_index.profile_index]].child_node_indices.empty();
+        else
+            return !mProfiles[parent_index.profile_index].child_node_indices.empty();
+
     if(parent_index.type == ENTRY_TYPE_GROUP)
-        return !mGroups[parent_index.ind].child_indices.empty();
+        return !mGroups[parent_index.group_index].child_profile_indices.empty();
 
 	return false;
 }
+
+RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
+{
+    EntryIndex i(*this);
+
+    switch(type)
+    {
+    case ENTRY_TYPE_GROUP: i.type = ENTRY_TYPE_TOP_LEVEL;
+        				   i.group_index = 0;
+						   break;
+
+    case ENTRY_TYPE_TOP_LEVEL: i.type = ENTRY_TYPE_UNKNOWN;
+        				   i.top_level_index = 0;
+						   break;
+
+    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
+        				   i.top_level_index = 0;
+						   break;
+
+    case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
+        				   i.node_index = 0;
+						   break;
+    }
+
+    return i;
+}
+
+RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::child(int index) const
+{
+    EntryIndex i(*this);
+
+#warning TODO
+	switch(type)
+    {
+    case ENTRY_TYPE_UNKNOWN: i.type = ENTRY_TYPE_TOP_LEVEL;
+        				   i.top_level_index = index;
+						   break;
+
+    case ENTRY_TYPE_TOP_LEVEL: i.type = ENTRY_TYPE_UNKNOWN;
+        				   i.top_level_index = 0;
+						   break;
+
+    case ENTRY_TYPE_GROUP: i.type = ENTRY_TYPE_PROFILE;
+        				   i.profile_index = 0;
+						   break;
+
+    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
+        				   i.top_level_index = 0;
+						   break;
+
+    case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
+        				   i.node_index = 0;
+						   break;
+    }
+
+    return i;
+
+}
+uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
+{
+    switch(type)
+    {
+    default:
+    	case ENTRY_TYPE_UNKNOWN: return 0;
+    	case ENTRY_TYPE_TOP_LEVEL: return top_level_index;
+    	case ENTRY_TYPE_GROUP    : return group_index;
+		case ENTRY_TYPE_PROFILE  : return (group_index==0xff)?(profile_index+nb_groups):profile_index;
+    	case ENTRY_TYPE_NODE     : return node_index;
+    }
+}
+
+// The index encodes the whole hierarchy of parents. This allows to very efficiently compute indices of the parent of an index.
+//
+// The format is the following:
+//
+//     0x 00 00 00 00
+//        |  |  |  |
+//        |  |  |  +---- location/node index
+//        |  |  +------- profile index
+//        |  +---------- group index
+//        +------------- top level index
+//
+// Only valid indexes a 0x01->0xff. 0x00 means "no index"
+//
 
 bool RsFriendListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& id)
 {
 	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    if(e.ind > 0x0fffffff)
+    if(e.top_level_index > 254 || e.group_index > 254 || e.profile_index > 254 || e.node_index > 254)
+    {
+        RsErr() << "Index out of scope in " << __PRETTY_FUNCTION__ << std::endl;
         return false;
+    }
 
-    if(e.type == ENTRY_TYPE_GROUP)
-		id = e.ind + 0x10000000 ;
-    else if(e.type == ENTRY_TYPE_PROFILE)
-		id = e.ind + 0x20000000 ;
-    else if(e.type == ENTRY_TYPE_NODE)
-		id = e.ind + 0x30000000 ;
-    else
-        return false;
-
+    id = ( (e.top_level_index + 1) << 24) + ((e.group_index+1) << 16) + ((e.profile_index+1) << 8) + (e.node_index+1);
 	return true;
 }
 
@@ -156,23 +238,17 @@ bool RsFriendListModel::convertInternalIdToIndex(quintptr ref,EntryIndex& e)
     if(ref == 0)
         return false ;
 
-    e.ind = ref & 0x0fffffff;
+    e.top_level_index = e.profile_index = e.node_index = e.group_index = 0;
 
-    int t = (ref >> 28)&0xf;
-
-    if(t == 0x1)
-        e.type = ENTRY_TYPE_GROUP ;
-    else if(t==0x2)
-        e.type = ENTRY_TYPE_PROFILE ;
-    else if(t==0x3)
-        e.type = ENTRY_TYPE_NODE ;
-    else
-        return false;
+    e.top_level_index = (ref >> 24) & 0xff;   if(e.top_level_index > 0)  e.top_level_index--; else { e.type = ENTRY_TYPE_UNKNOWN  ; return true; }
+    e.group_index     = (ref >> 16) & 0xff;   if(e.group_index     > 0)  e.group_index--    ; else { e.type = ENTRY_TYPE_TOP_LEVEL; return true; }
+    e.profile_index   = (ref >>  8) & 0xff;   if(e.profile_index   > 0)  e.profile_index--  ; else { e.type = ENTRY_TYPE_GROUP    ; return true; }
+    e.node_index      = (ref >>  0) & 0xff;   if(e.node_index      > 0)  e.node_index--     ; else { e.type = ENTRY_TYPE_PROFILE  ; return true; }
 
 	return true;
 }
 
-QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex & parent) const
+QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& parent) const
 {
     if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
 		return QModelIndex();
@@ -181,35 +257,17 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex & pa
     {
 		quintptr ref ;
 
-        if(mDisplayGroups)
-			convertIndexToInternalId(EntryIndex(ENTRY_TYPE_GROUP,row),ref);
-		else
-			convertIndexToInternalId(EntryIndex(ENTRY_TYPE_PROFILE,row),ref);
-
+		convertIndexToInternalId(EntryIndex(ENTRY_TYPE_TOP_LEVEL,row),ref);
 		return createIndex(row,column,ref) ;
     }
 
     EntryIndex parent_index ;
-
     convertInternalIdToIndex(parent.internalId(),parent_index);
 
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
 
-    EntryIndex new_index;
-
-    switch(parent_index.type)
-    {
-    case ENTRY_TYPE_GROUP:   new_index.type = ENTRY_TYPE_PROFILE;
-        					 new_index.ind  = mGroups[parent_index.ind].child_indices[row];
-        					 break;
-
-    case ENTRY_TYPE_PROFILE: new_index.type = ENTRY_TYPE_NODE;
-        					 new_index.ind  = mProfiles[parent_index.ind].child_indices[row];
-        					 break;
-    default:
-        return QModelIndex();
-    }
-	quintptr ref ;
+    quintptr ref;
+    EntryIndex new_index = parent_index.child(row);
     convertIndexToInternalId(new_index,ref);
 
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
@@ -225,26 +283,15 @@ QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
 	EntryIndex I ;
     convertInternalIdToIndex(index.internalId(),I);
 
-    if(I.type == ENTRY_TYPE_GROUP)
+    EntryIndex p = I.parent();
+
+    if(p.type == ENTRY_TYPE_UNKNOWN)
         return QModelIndex();
 
-    if(I.type == ENTRY_TYPE_PROFILE)
-	{
-        quintptr ref=0;
-        convertIndexToInternalId( EntryIndex( ENTRY_TYPE_GROUP, mProfiles[I.ind].parent_group_index ), ref);
+    quintptr i;
+    convertIndexToInternalId(p,i);
 
-        return createIndex( mProfiles[I.ind].parent_row,0,ref);
-    }
-
-    if(I.type == ENTRY_TYPE_NODE)
-    {
-		quintptr ref=0 ;
-		convertIndexToInternalId(EntryIndex( ENTRY_TYPE_PROFILE,mLocations[I.ind].parent_profile_index),ref);
-
-		return createIndex( mLocations[I.ind].parent_row,0,ref);
-    }
-
-	return QModelIndex();
+	return createIndex(I.parentRow(mGroups.size()),0,i);
 }
 
 Qt::ItemFlags RsFriendListModel::flags(const QModelIndex& index) const
@@ -484,45 +531,57 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-    RsDbg() << "  Display role " << e.type << "," << e.ind << " (col="<< col<<") : " << std::endl;
+    RsDbg() << "  Display role " << e.type << ", (" << e.top_level_index << "," << e.group_index << ","<< e.profile_index << ","<< e.node_index << ") col="<< col<<": " << std::endl;
 
     switch(e.type)
 	{
 	case ENTRY_TYPE_GROUP:
-        if(e.ind >= mGroups.size())
-            return QVariant();
+        {
+  	      const RsGroupInfo *group = getGroupInfo(e);
 
-		switch(col)
-		{
-		case COLUMN_THREAD_NAME:   return QVariant(QString::fromUtf8(mGroups[e.ind].group.name.c_str()));
+  	      if(!group)
+  	          return QVariant();
 
-		default:
-			return QVariant();
-		} break;
+			switch(col)
+			{
+			case COLUMN_THREAD_NAME:   return QVariant(QString::fromUtf8(group->name.c_str()));
+
+			default:
+				return QVariant();
+			}
+    	}
+        break;
 
 	case ENTRY_TYPE_PROFILE:
-        if(e.ind >= mProfiles.size())
-            return QVariant();
-
-		switch(col)
 		{
-		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mProfileDetails[mProfiles[e.ind].profile_index].name.c_str()));
-		case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(mProfileDetails[mProfiles[e.ind].profile_index].gpg_id.toStdString()) );
+ 	       const RsProfileDetails *profile = getProfileInfo(e);
 
-		default:
-			return QVariant();
-		} break;
+ 	       if(!profile)
+ 	           return QVariant();
+
+			switch(col)
+			{
+			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->name.c_str()));
+			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->gpg_id.toStdString()) );
+
+			default:
+				return QVariant();
+			}
+       }
+        break;
 
 	case ENTRY_TYPE_NODE:
-        if(e.ind >= mLocations.size())
+        const RsNodeDetails *node = getNodeInfo(e);
+
+        if(!node)
             return QVariant();
 
 		switch(col)
 		{
-		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(mNodeDetails[mLocations[e.ind].node_index].location.c_str()));
-		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(mNodeDetails[mLocations[e.ind].node_index].lastConnect).toString());
-		case COLUMN_THREAD_IP:             return QVariant(  (mNodeDetails[mLocations[e.ind].node_index].state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(mNodeDetails[mLocations[e.ind].node_index]) : QString("---"));
-		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(mNodeDetails[mLocations[e.ind].node_index].id.toStdString()) );
+		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(node->location.c_str()));
+		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->lastConnect).toString());
+		case COLUMN_THREAD_IP:             return QVariant(  (node->state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(*node) : QString("---"));
+		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->id.toStdString()) );
 
 		default:
 			return QVariant();
@@ -531,6 +590,76 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 		return QVariant();
 	}
 }
+
+const RsGroupInfo *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
+{
+	if(e.group_index >= mGroups.size())
+        return NULL ;
+    else
+        return &mGroups[e.group_index].group_info;
+}
+
+const RsFriendListModel::RsProfileDetails *RsFriendListModel::getProfileInfo(const EntryIndex& e) const
+{
+    // First look into the relevant group, then for the correct profile in this group.
+
+    if(e.type != ENTRY_TYPE_PROFILE)
+        return NULL ;
+
+    if(e.top_level_index >= mTopLevel.size())
+        return NULL ;
+
+    if(e.group_index < 0xff)
+    {
+        const HierarchicalGroupInformation& group(mGroups[e.group_index]);
+
+        if(e.group_index >= group.child_profile_indices.size())
+            return NULL ;
+
+        return &mProfiles[group.child_profile_indices[e.group_index]].profile_info;
+    }
+    else
+    {
+        if(e.group_index >= mProfiles.size())
+            return NULL ;
+
+        return &mProfiles[e.group_index].profile_info;
+	}
+}
+
+const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
+{
+	if(e.type != ENTRY_TYPE_NODE)
+		return NULL ;
+
+    if(e.top_level_index >= mTopLevel.size())
+        return NULL ;
+
+    uint32_t pindex = 0;
+
+    if(e.group_index < 0xff)
+    {
+        const HierarchicalGroupInformation& group(mGroups[e.group_index]);
+
+        if(e.group_index >= group.child_profile_indices.size())
+            return NULL ;
+
+        pindex = group.child_profile_indices[e.group_index];
+    }
+    else
+    {
+        if(e.group_index >= mProfiles.size())
+            return NULL ;
+
+        pindex = e.group_index;
+	}
+
+    if(e.node_index >= mProfiles[pindex].child_node_indices.size())
+        return NULL ;
+
+    return &mLocations[mProfiles[pindex].child_node_indices[e.node_index]].node_info;
+}
+
 
 QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
 {
@@ -593,6 +722,7 @@ void RsFriendListModel::clear()
     mGroups.clear();
     mProfiles.clear();
     mLocations.clear();
+    mTopLevel.clear();
 
 	postMods();
 
@@ -644,26 +774,26 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 
 void RsFriendListModel::debug_dump() const
 {
-    for(uint32_t j=0;j<mGroups.size();++j)
-    {
-		std::cerr << "Group: " << mGroups[j].group.name << ", prow="<< mGroups[j].parent_row << ", ";
-		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_indices.size();++i) std::cerr << mGroups[j].child_indices[i] << " " ; std::cerr << std::endl;
-
-        for(uint32_t i=0;i<mGroups[j].child_indices.size();++i)
-        {
-            uint32_t profile_index = mGroups[j].child_indices[i];
-
-            std::cerr << "    Profile " << mProfileDetails[mProfiles[profile_index].profile_index].gpg_id << ", prow=" << mProfiles[profile_index].parent_row << ", parent_index=" << mProfiles[profile_index].parent_group_index << std::endl;
-
-            const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
-
-            for(uint32_t k=0;k<hprof.child_indices.size();++k)
-            {
-                std::cerr << "      Node " << mNodeDetails[mLocations[hprof.child_indices[k]].node_index].id << ", prow=" <<mLocations[hprof.child_indices[k]].parent_row << ", parent_index=" << mLocations[hprof.child_indices[k]].parent_profile_index << std::endl;
-            }
-        }
-
-    }
+//    for(uint32_t j=0;j<mGroups.size();++j)
+//    {
+//		std::cerr << "Group: " << mGroups[j].group.name << ", prow="<< mGroups[j].parent_row << ", ";
+//		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_indices.size();++i) std::cerr << mGroups[j].child_indices[i] << " " ; std::cerr << std::endl;
+//
+//        for(uint32_t i=0;i<mGroups[j].child_indices.size();++i)
+//        {
+//            uint32_t profile_index = mGroups[j].child_indices[i];
+//
+//            std::cerr << "    Profile " << mProfileDetails[mProfiles[profile_index].profile_index].gpg_id << ", prow=" << mProfiles[profile_index].parent_row << ", parent_index=" << mProfiles[profile_index].parent_group_index << std::endl;
+//
+//            const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
+//
+//            for(uint32_t k=0;k<hprof.child_indices.size();++k)
+//            {
+//                std::cerr << "      Node " << mNodeDetails[mLocations[hprof.child_indices[k]].node_index].id << ", prow=" <<mLocations[hprof.child_indices[k]].parent_row << ", parent_index=" << mLocations[hprof.child_indices[k]].parent_profile_index << std::endl;
+//            }
+//        }
+//
+//    }
 }
 
 bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & data) const
@@ -672,11 +802,18 @@ bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP || e.ind >= mGroups.size())
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP)
         return false;
 
-    data = mGroups[e.ind].group;
-    return true;
+    const RsGroupInfo *ginfo = getGroupInfo(e);
+
+    if(ginfo)
+	{
+		data = *ginfo;
+		return true;
+	}
+    else
+        return false;
 }
 bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& data) const
 {
@@ -684,11 +821,18 @@ bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE || e.ind >= mProfiles.size())
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE)
         return false;
 
-    data = mProfileDetails[mProfiles[e.ind].profile_index];
-    return true;
+    const RsProfileDetails *gprof = getProfileInfo(e);
+
+    if(gprof)
+	{
+		data = *gprof;
+		return true;
+	}
+    else
+        return false;
 }
 bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & data) const
 {
@@ -696,11 +840,18 @@ bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE || e.ind >= mLocations.size())
+	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE)
         return false;
 
-    data = mNodeDetails[mLocations[e.ind].node_index];
-    return true;
+    const RsNodeDetails *gnode = getNodeInfo(e);
+
+    if(gnode)
+	{
+		data = *gnode;
+		return true;
+	}
+    else
+        return false;
 }
 
 RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) const
@@ -719,111 +870,109 @@ void RsFriendListModel::updateInternalData()
 {
     preMods();
 
-    beginRemoveRows(QModelIndex(),0,mGroups.size()-1);
-    endInsertRows();
+    beginRemoveRows(QModelIndex(),0,mTopLevel.size()-1);
+    endRemoveRows();
 
     mGroups.clear();
-    mLocations.clear();
     mProfiles.clear();
+    mLocations.clear();
 
-    mNodeDetails.clear();
-    mProfileDetails.clear();
+    mTopLevel.clear();
 
     // create a map of profiles and groups
-    std::map<RsPgpId,uint32_t> pgp_indexes;
-    std::map<RsPeerId,uint32_t> ssl_indexes;
-    std::map<RsNodeGroupId,uint32_t> grp_indexes;
+    std::map<RsPgpId,      uint32_t> pgp_indices;
 
-    // we start from the top and fill in the blanks as needed
+    // we start from the base and fill all locations in an array
 
-	// groups
+    // peer ids
+
+    std::list<RsPeerId> peer_ids ;
+    rsPeers->getFriendList(peer_ids);
+
+    for(auto it(peer_ids.begin());it!=peer_ids.end();++it)
+    {
+		// profiles
+
+        HierarchicalNodeInformation hnode ;
+        rsPeers->getPeerDetails(*it,hnode.node_info);
+
+        auto it2 = pgp_indices.find(hnode.node_info.gpg_id);
+
+        if(it2 == pgp_indices.end())
+        {
+            HierarchicalProfileInformation hprof ;
+            rsPeers->getGPGDetails(hnode.node_info.gpg_id,hprof.profile_info);
+
+            pgp_indices[hnode.node_info.gpg_id] = mProfiles.size();
+            mProfiles.push_back(hprof);
+
+			it2 = pgp_indices.find(hnode.node_info.gpg_id);
+        }
+		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
+
+        mLocations.push_back(hnode);
+    }
+
+    // groups
 
     std::list<RsGroupInfo> groupInfoList;
     rsPeers->getGroupInfoList(groupInfoList) ;
-    uint32_t group_row = 0;
 
     RsDbg() << "Updating Groups information: " << std::endl;
 
-    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it,++group_row)
+    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
     {
 		// first, fill the group hierarchical info
 
-        HierarchicalGroupInformation groupinfo;
-        groupinfo.group = *it;
-        groupinfo.parent_row = group_row;
+        HierarchicalGroupInformation hgroup;
+        hgroup.group_info = *it;
 
-        uint32_t profile_row = 0;
+		RsDbg() << "  Group \"" << hgroup.group_info.name << "\"" << std::endl;
 
-		RsDbg() << "  Group \"" << groupinfo.group.name << "\"" << std::endl;
-
-        for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2,++profile_row)
+        for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2)
         {
             // Then for each peer in this group, make sure that the peer is already known, and if not create it
 
-            auto it3 = pgp_indexes.find(*it2);
-            if(it3 == pgp_indexes.end())// not found
-            {
-                RsProfileDetails profdet;
+            auto it3 = pgp_indices.find(*it2);
 
-                rsPeers->getGPGDetails(*it2,profdet);
+            if(it3 == pgp_indices.end())// not found
+                RsErr() << "Inconsistency error!" << std::endl;
 
-                pgp_indexes[*it2] = mProfileDetails.size();
-                mProfileDetails.push_back(profdet);
-
-				it3 = pgp_indexes.find(*it2);
-            }
-
-            // ...and also fill the hierarchical profile info
-
-            HierarchicalProfileInformation profinfo;
-
-            profinfo.parent_row = profile_row;
-            profinfo.parent_group_index = mGroups.size();
-            profinfo.profile_index = it3->second;
-
-			// now fill the children nodes of the profile
-
-			std::list<RsPeerId> ssl_ids ;
-			rsPeers->getAssociatedSSLIds(*it2, ssl_ids);
-
-			RsDbg() << "    Profile: " << *it2 << std::endl;
-
-            uint32_t node_row = 0;
-
-			for(auto it4(ssl_ids.begin());it4!=ssl_ids.end();++it4,++node_row)
-			{
-				auto it5 = ssl_indexes.find(*it4);
-				if(it5 == ssl_indexes.end())
-                {
-					RsNodeDetails nodedet;
-					rsPeers->getPeerDetails(*it4,nodedet);
-
-                    if(nodedet.location.empty())
-                        nodedet.location = tr("[Unknown]").toStdString();
-
-					ssl_indexes[*it4] = mNodeDetails.size();
-					mNodeDetails.push_back(nodedet);
-
-					it5 = ssl_indexes.find(*it4);
-                }
-
-				RsDbg() << "      Node: " << *it4 << std::endl;
-
-                HierarchicalNodeInformation nodeinfo;
-                nodeinfo.parent_row = node_row;
-                nodeinfo.node_index = it5->second;
-                nodeinfo.parent_profile_index = mProfiles.size();
-
-                profinfo.child_indices.push_back(mLocations.size());
-				mLocations.push_back(nodeinfo);
-            }
-
-            groupinfo.child_indices.push_back(mProfiles.size());
-            mProfiles.push_back(profinfo);
+            hgroup.child_profile_indices.push_back(it3->second);
         }
 
-        mGroups.push_back(groupinfo);
+        mGroups.push_back(hgroup);
     }
+
+    // now  the top level list
+
+    mTopLevel.clear();
+    std::set<RsPgpId> already_in_a_group;
+
+    if(mDisplayGroups)	// in this case, we list all groups at the top level followed by the profiles without parent group
+    {
+        for(uint32_t i=0;i<mGroups.size();++i)
+        {
+            EntryIndex e;
+            e.type = ENTRY_TYPE_GROUP;
+            e.group_index = i;
+            e.top_level_index = mTopLevel.size();
+
+            mTopLevel.push_back(e);
+        }
+    }
+
+	for(uint32_t i=0;i<mProfiles.size();++i)
+        if(already_in_a_group.find(mProfiles[i].profile_info.gpg_id)==already_in_a_group.end())
+		{
+			EntryIndex e;
+			e.type = ENTRY_TYPE_PROFILE;
+			e.top_level_index = mTopLevel.size();
+			e.profile_index = i;
+			mTopLevel.push_back(e);
+		}
+
+    // finally, tell the model client that layout has changed.
 
     beginInsertRows(QModelIndex(),0,mGroups.size()-1);
     endInsertRows();
