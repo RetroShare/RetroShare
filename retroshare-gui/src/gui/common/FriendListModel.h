@@ -95,21 +95,24 @@ public:
 
     struct EntryIndex
     {
-        EntryIndex(EntryType t,uint32_t i) : type(t),profile_index(0),group_index(0),top_level_index(0) {}
-        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),node_index(0),profile_index(0),group_index(0),top_level_index(0) {}
+    public:
+        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),top_level_index(0xff),group_index(0xff),profile_index(0xff),node_index(0xff) {}
 
         EntryType type;		        // type of the entry (group,profile,location)
 
-        // indexes w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
+        // Indices w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
+        // An index of 0xff means "undefined"
 
-        uint32_t top_level_index;   // index in the mTopLevel tab
-        uint32_t group_index;		// index of the group in mGroups tab
-        uint32_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
-        uint32_t node_index;		// index of the child node in its own profile
+        uint8_t top_level_index;	// index in the mTopLevel tab
+        uint8_t group_index;		// index of the group in mGroups tab
+        uint8_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
+        uint8_t node_index;			// index of the child node in its own profile
 
         EntryIndex parent() const;
-        EntryIndex child(int index) const;
+		EntryIndex child(int row,const std::vector<EntryIndex>& top_level) const;
         uint32_t   parentRow(uint32_t nb_groups) const;
+
+        static EntryIndex topLevelIndex(uint32_t row) { EntryIndex e; e.type=ENTRY_TYPE_TOP_LEVEL; e.top_level_index=row; return e; }
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}

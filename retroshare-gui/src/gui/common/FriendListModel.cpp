@@ -149,7 +149,7 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
         				   i.top_level_index = 0;
 						   break;
 
-    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
+    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0xff)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
         				   i.top_level_index = 0;
 						   break;
 
@@ -161,31 +161,29 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
     return i;
 }
 
-RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::child(int index) const
+RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::child(int row,const std::vector<EntryIndex>& top_level) const
 {
     EntryIndex i(*this);
 
-#warning TODO
 	switch(type)
     {
     case ENTRY_TYPE_UNKNOWN: i.type = ENTRY_TYPE_TOP_LEVEL;
-        				   i.top_level_index = index;
+        				   i.top_level_index = row;
 						   break;
 
-    case ENTRY_TYPE_TOP_LEVEL: i.type = ENTRY_TYPE_UNKNOWN;
-        				   i.top_level_index = 0;
+    case ENTRY_TYPE_TOP_LEVEL:
+        					i = top_level[row];
 						   break;
 
     case ENTRY_TYPE_GROUP: i.type = ENTRY_TYPE_PROFILE;
-        				   i.profile_index = 0;
+        				   i.profile_index = row;
 						   break;
 
-    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
-        				   i.top_level_index = 0;
+    case ENTRY_TYPE_PROFILE: i.type = ENTRY_TYPE_NODE;
+        				   i.node_index = row;
 						   break;
 
-    case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
-        				   i.node_index = 0;
+    case ENTRY_TYPE_NODE:  i = EntryIndex();
 						   break;
     }
 
@@ -223,13 +221,13 @@ bool RsFriendListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& i
 {
 	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    if(e.top_level_index > 254 || e.group_index > 254 || e.profile_index > 254 || e.node_index > 254)
+    if(e.top_level_index > 254 || e.group_index > 255 || e.profile_index > 255 || e.node_index > 255)
     {
         RsErr() << "Index out of scope in " << __PRETTY_FUNCTION__ << std::endl;
         return false;
     }
 
-    id = ( (e.top_level_index + 1) << 24) + ((e.group_index+1) << 16) + ((e.profile_index+1) << 8) + (e.node_index+1);
+    id = ( (e.top_level_index + 1) << 24) + (e.group_index << 16) + (e.profile_index << 8) + e.node_index;
 	return true;
 }
 
@@ -238,12 +236,28 @@ bool RsFriendListModel::convertInternalIdToIndex(quintptr ref,EntryIndex& e)
     if(ref == 0)
         return false ;
 
-    e.top_level_index = e.profile_index = e.node_index = e.group_index = 0;
+    e.profile_index = e.node_index = e.group_index = 0xff;
 
-    e.top_level_index = (ref >> 24) & 0xff;   if(e.top_level_index > 0)  e.top_level_index--; else { e.type = ENTRY_TYPE_UNKNOWN  ; return true; }
-    e.group_index     = (ref >> 16) & 0xff;   if(e.group_index     > 0)  e.group_index--    ; else { e.type = ENTRY_TYPE_TOP_LEVEL; return true; }
-    e.profile_index   = (ref >>  8) & 0xff;   if(e.profile_index   > 0)  e.profile_index--  ; else { e.type = ENTRY_TYPE_GROUP    ; return true; }
-    e.node_index      = (ref >>  0) & 0xff;   if(e.node_index      > 0)  e.node_index--     ; else { e.type = ENTRY_TYPE_PROFILE  ; return true; }
+    e.top_level_index = uint8_t((ref >> 24) & 0xff)-1;
+
+    if(e.top_level_index == 0xff)
+    {
+        e.type = ENTRY_TYPE_UNKNOWN  ;
+        return true;
+    }
+
+    e.group_index     = (ref >> 16) & 0xff;
+    e.profile_index   = (ref >>  8) & 0xff;
+    e.node_index      = (ref >>  0) & 0xff;
+
+    if(e.node_index < 0xff)
+        e.type = ENTRY_TYPE_NODE;
+    else if(e.profile_index < 0xff)
+		e.type = ENTRY_TYPE_PROFILE;
+    else if(e.group_index < 0xff)
+		e.type = ENTRY_TYPE_GROUP;
+    else
+		e.type = ENTRY_TYPE_TOP_LEVEL;
 
 	return true;
 }
@@ -257,7 +271,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     {
 		quintptr ref ;
 
-		convertIndexToInternalId(EntryIndex(ENTRY_TYPE_TOP_LEVEL,row),ref);
+		convertIndexToInternalId(EntryIndex::topLevelIndex(row),ref);
 		return createIndex(row,column,ref) ;
     }
 
@@ -267,7 +281,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
 
     quintptr ref;
-    EntryIndex new_index = parent_index.child(row);
+    EntryIndex new_index = parent_index.child(row,mTopLevel);
     convertIndexToInternalId(new_index,ref);
 
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
@@ -531,7 +545,7 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-    RsDbg() << "  Display role " << e.type << ", (" << e.top_level_index << "," << e.group_index << ","<< e.profile_index << ","<< e.node_index << ") col="<< col<<": " << std::endl;
+    std::cerr << "  Display role " << e.type << ", (" << (int)e.top_level_index << "," << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 
     switch(e.type)
 	{
@@ -544,7 +558,9 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:   return QVariant(QString::fromUtf8(group->name.c_str()));
+			case COLUMN_THREAD_NAME:
+              	std::cerr <<   group->name.c_str() << std::endl;
+                return QVariant(QString::fromUtf8(group->name.c_str()));
 
 			default:
 				return QVariant();
@@ -774,26 +790,24 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 
 void RsFriendListModel::debug_dump() const
 {
-//    for(uint32_t j=0;j<mGroups.size();++j)
-//    {
-//		std::cerr << "Group: " << mGroups[j].group.name << ", prow="<< mGroups[j].parent_row << ", ";
-//		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_indices.size();++i) std::cerr << mGroups[j].child_indices[i] << " " ; std::cerr << std::endl;
-//
-//        for(uint32_t i=0;i<mGroups[j].child_indices.size();++i)
-//        {
-//            uint32_t profile_index = mGroups[j].child_indices[i];
-//
-//            std::cerr << "    Profile " << mProfileDetails[mProfiles[profile_index].profile_index].gpg_id << ", prow=" << mProfiles[profile_index].parent_row << ", parent_index=" << mProfiles[profile_index].parent_group_index << std::endl;
-//
-//            const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
-//
-//            for(uint32_t k=0;k<hprof.child_indices.size();++k)
-//            {
-//                std::cerr << "      Node " << mNodeDetails[mLocations[hprof.child_indices[k]].node_index].id << ", prow=" <<mLocations[hprof.child_indices[k]].parent_row << ", parent_index=" << mLocations[hprof.child_indices[k]].parent_profile_index << std::endl;
-//            }
-//        }
-//
-//    }
+	for(uint32_t j=0;j<mGroups.size();++j)
+	{
+		std::cerr << "Group: " << mGroups[j].group_info.name << ", ";
+		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_profile_indices.size();++i) std::cerr << mGroups[j].child_profile_indices[i] << " " ; std::cerr << std::endl;
+
+		for(uint32_t i=0;i<mGroups[j].child_profile_indices.size();++i)
+		{
+			uint32_t profile_index = mGroups[j].child_profile_indices[i];
+
+			std::cerr << "    Profile " << mProfiles[profile_index].profile_info.gpg_id << std::endl;
+
+			const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
+
+			for(uint32_t k=0;k<hprof.child_node_indices.size();++k)
+				std::cerr << "      Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
+		}
+
+	}
 }
 
 bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & data) const
@@ -886,6 +900,8 @@ void RsFriendListModel::updateInternalData()
 
     // peer ids
 
+    RsDbg() << "Updating Nodes information: " << std::endl;
+
     std::list<RsPeerId> peer_ids ;
     rsPeers->getFriendList(peer_ids);
 
@@ -909,6 +925,8 @@ void RsFriendListModel::updateInternalData()
 			it2 = pgp_indices.find(hnode.node_info.gpg_id);
         }
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
+
+		RsDbg() << "  Peer " << *it << " pgp id = " << hnode.node_info.gpg_id << std::endl;
 
         mLocations.push_back(hnode);
     }
