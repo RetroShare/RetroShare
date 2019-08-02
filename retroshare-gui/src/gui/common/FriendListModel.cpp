@@ -135,22 +135,38 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
 	return false;
 }
 
+RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::topLevelIndex(uint32_t row,uint32_t nb_groups)
+{
+    EntryIndex e;
+
+    if(row < nb_groups)
+    {
+		e.type=ENTRY_TYPE_GROUP;
+		e.group_index=row;
+        return e;
+    }
+    else
+    {
+        e.type = ENTRY_TYPE_PROFILE;
+        e.profile_index = row - nb_groups;
+        e.group_index = 0xff;
+        return e;
+    }
+}
+
 RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
 {
     EntryIndex i(*this);
 
     switch(type)
     {
-    case ENTRY_TYPE_GROUP: i.type = ENTRY_TYPE_TOP_LEVEL;
-        				   i.group_index = 0;
-						   break;
+    case ENTRY_TYPE_GROUP: return EntryIndex();
 
-    case ENTRY_TYPE_TOP_LEVEL: i.type = ENTRY_TYPE_UNKNOWN;
-        				   i.top_level_index = 0;
-						   break;
-
-    case ENTRY_TYPE_PROFILE: i.type = (i.group_index==0xff)?ENTRY_TYPE_TOP_LEVEL:ENTRY_TYPE_GROUP;
-        				   i.top_level_index = 0;
+    case ENTRY_TYPE_PROFILE:
+        					if(i.group_index==0xff)
+                                return EntryIndex();
+                            else
+                                i.type = ENTRY_TYPE_GROUP;
 						   break;
 
     case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
@@ -167,12 +183,8 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::child(int row,const
 
 	switch(type)
     {
-    case ENTRY_TYPE_UNKNOWN: i.type = ENTRY_TYPE_TOP_LEVEL;
-        				   i.top_level_index = row;
-						   break;
-
-    case ENTRY_TYPE_TOP_LEVEL:
-        					i = top_level[row];
+    case ENTRY_TYPE_UNKNOWN:
+						   i = top_level[row];
 						   break;
 
     case ENTRY_TYPE_GROUP: i.type = ENTRY_TYPE_PROFILE;
@@ -195,8 +207,7 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
     switch(type)
     {
     default:
-    	case ENTRY_TYPE_UNKNOWN: return 0;
-    	case ENTRY_TYPE_TOP_LEVEL: return top_level_index;
+    	case ENTRY_TYPE_UNKNOWN  : return 0;
     	case ENTRY_TYPE_GROUP    : return group_index;
 		case ENTRY_TYPE_PROFILE  : return (group_index==0xff)?(profile_index+nb_groups):profile_index;
     	case ENTRY_TYPE_NODE     : return node_index;
@@ -212,7 +223,7 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
 //        |  |  |  +---- location/node index
 //        |  |  +------- profile index
 //        |  +---------- group index
-//        +------------- top level index
+//        +------------- type
 //
 // Only valid indexes a 0x01->0xff. 0x00 means "no index"
 //
@@ -221,13 +232,7 @@ bool RsFriendListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& i
 {
 	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    if(e.top_level_index > 254 || e.group_index > 255 || e.profile_index > 255 || e.node_index > 255)
-    {
-        RsErr() << "Index out of scope in " << __PRETTY_FUNCTION__ << std::endl;
-        return false;
-    }
-
-    id = ( (e.top_level_index + 1) << 24) + (e.group_index << 16) + (e.profile_index << 8) + e.node_index;
+    id = (((uint32_t)e.type) << 24) + ((uint32_t)e.group_index << 16) + (uint32_t)(e.profile_index << 8) + (uint32_t)e.node_index;
 	return true;
 }
 
@@ -236,28 +241,11 @@ bool RsFriendListModel::convertInternalIdToIndex(quintptr ref,EntryIndex& e)
     if(ref == 0)
         return false ;
 
-    e.profile_index = e.node_index = e.group_index = 0xff;
-
-    e.top_level_index = uint8_t((ref >> 24) & 0xff)-1;
-
-    if(e.top_level_index == 0xff)
-    {
-        e.type = ENTRY_TYPE_UNKNOWN  ;
-        return true;
-    }
-
     e.group_index     = (ref >> 16) & 0xff;
     e.profile_index   = (ref >>  8) & 0xff;
     e.node_index      = (ref >>  0) & 0xff;
 
-    if(e.node_index < 0xff)
-        e.type = ENTRY_TYPE_NODE;
-    else if(e.profile_index < 0xff)
-		e.type = ENTRY_TYPE_PROFILE;
-    else if(e.group_index < 0xff)
-		e.type = ENTRY_TYPE_GROUP;
-    else
-		e.type = ENTRY_TYPE_TOP_LEVEL;
+    e.type = static_cast<EntryType>((ref >> 24) & 0xff);
 
 	return true;
 }
@@ -271,7 +259,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     {
 		quintptr ref ;
 
-		convertIndexToInternalId(EntryIndex::topLevelIndex(row),ref);
+		convertIndexToInternalId(EntryIndex::topLevelIndex(row,mGroups.size()),ref);
 		return createIndex(row,column,ref) ;
     }
 
@@ -545,7 +533,7 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-    std::cerr << "  Display role " << e.type << ", (" << (int)e.top_level_index << "," << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
+    std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 
     switch(e.type)
 	{
@@ -594,7 +582,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 		switch(col)
 		{
-		case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(node->location.c_str()));
+        case COLUMN_THREAD_NAME:           return (node->location.empty())?QVariant(QString::fromStdString(node->id.toStdString())):QVariant(QString::fromUtf8(node->location.c_str()));
 		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->lastConnect).toString());
 		case COLUMN_THREAD_IP:             return QVariant(  (node->state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(*node) : QString("---"));
 		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->id.toStdString()) );
@@ -622,25 +610,17 @@ const RsFriendListModel::RsProfileDetails *RsFriendListModel::getProfileInfo(con
     if(e.type != ENTRY_TYPE_PROFILE)
         return NULL ;
 
-    if(e.top_level_index >= mTopLevel.size())
-        return NULL ;
-
     if(e.group_index < 0xff)
     {
         const HierarchicalGroupInformation& group(mGroups[e.group_index]);
 
-        if(e.group_index >= group.child_profile_indices.size())
+        if(e.profile_index >= group.child_profile_indices.size())
             return NULL ;
 
-        return &mProfiles[group.child_profile_indices[e.group_index]].profile_info;
+        return &mProfiles[group.child_profile_indices[e.profile_index]].profile_info;
     }
     else
-    {
-        if(e.group_index >= mProfiles.size())
-            return NULL ;
-
-        return &mProfiles[e.group_index].profile_info;
-	}
+        return &mProfiles[e.profile_index].profile_info;
 }
 
 const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
@@ -648,26 +628,23 @@ const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const Ent
 	if(e.type != ENTRY_TYPE_NODE)
 		return NULL ;
 
-    if(e.top_level_index >= mTopLevel.size())
-        return NULL ;
-
     uint32_t pindex = 0;
 
     if(e.group_index < 0xff)
     {
         const HierarchicalGroupInformation& group(mGroups[e.group_index]);
 
-        if(e.group_index >= group.child_profile_indices.size())
+        if(e.profile_index >= group.child_profile_indices.size())
             return NULL ;
 
-        pindex = group.child_profile_indices[e.group_index];
+        pindex = group.child_profile_indices[e.profile_index];
     }
     else
     {
-        if(e.group_index >= mProfiles.size())
+        if(e.profile_index >= mProfiles.size())
             return NULL ;
 
-        pindex = e.group_index;
+        pindex = e.profile_index;
 	}
 
     if(e.node_index >= mProfiles[pindex].child_node_indices.size())
@@ -974,7 +951,6 @@ void RsFriendListModel::updateInternalData()
             EntryIndex e;
             e.type = ENTRY_TYPE_GROUP;
             e.group_index = i;
-            e.top_level_index = mTopLevel.size();
 
             mTopLevel.push_back(e);
         }
@@ -985,8 +961,9 @@ void RsFriendListModel::updateInternalData()
 		{
 			EntryIndex e;
 			e.type = ENTRY_TYPE_PROFILE;
-			e.top_level_index = mTopLevel.size();
 			e.profile_index = i;
+            e.group_index = 0xff;
+
 			mTopLevel.push_back(e);
 		}
 

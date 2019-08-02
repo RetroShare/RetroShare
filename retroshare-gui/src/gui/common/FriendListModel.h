@@ -87,8 +87,7 @@ public:
     enum EntryType{ ENTRY_TYPE_UNKNOWN   = 0x00,
                     ENTRY_TYPE_GROUP     = 0x01,
                     ENTRY_TYPE_PROFILE   = 0x02,
-                    ENTRY_TYPE_NODE      = 0x03,
-                    ENTRY_TYPE_TOP_LEVEL = 0x04
+                    ENTRY_TYPE_NODE      = 0x03
                   };
 
     // This structure encodes the position of a node in the hierarchy. The type tells which of the index fields are valid.
@@ -96,14 +95,13 @@ public:
     struct EntryIndex
     {
     public:
-        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),top_level_index(0xff),group_index(0xff),profile_index(0xff),node_index(0xff) {}
+        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),group_index(0xff),profile_index(0xff),node_index(0xff) {}
 
         EntryType type;		        // type of the entry (group,profile,location)
 
         // Indices w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
         // An index of 0xff means "undefined"
 
-        uint8_t top_level_index;	// index in the mTopLevel tab
         uint8_t group_index;		// index of the group in mGroups tab
         uint8_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
         uint8_t node_index;			// index of the child node in its own profile
@@ -112,7 +110,7 @@ public:
 		EntryIndex child(int row,const std::vector<EntryIndex>& top_level) const;
         uint32_t   parentRow(uint32_t nb_groups) const;
 
-        static EntryIndex topLevelIndex(uint32_t row) { EntryIndex e; e.type=ENTRY_TYPE_TOP_LEVEL; e.top_level_index=row; return e; }
+        static EntryIndex topLevelIndex(uint32_t row, uint32_t nb_groups) ;
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
