@@ -151,7 +151,7 @@ NewFriendList::NewFriendList(QWidget *parent) :
     // ui->peerTreeWidget->addContextMenuAction(mActionSortByState);
 
     /* Set sort */
-    sortByColumn(COLUMN_NAME, Qt::AscendingOrder);
+    sortByColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
     sortByState(false);
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
@@ -167,10 +167,10 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
     /* Set initial column width */
     int fontWidth = fontMetrics.width("W");
-    ui->peerTreeWidget->setColumnWidth(COLUMN_NAME, 22 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(COLUMN_LAST_CONTACT, 12 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(COLUMN_IP, 15 * fontWidth);
-    ui->peerTreeWidget->setColumnWidth(COLUMN_ID, 32 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_NAME        , 22 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_IP          , 15 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_ID          , 32 * fontWidth);
+    ui->peerTreeWidget->setColumnWidth(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, 12 * fontWidth);
 
     int avatarHeight = fontMetrics.height() * 3;
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
@@ -180,6 +180,10 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
     mModel->updateInternalData();
 
+	QHeaderView *h = ui->peerTreeWidget->header();
+	h->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
     QTimer *timer = new QTimer;
     QObject::connect(timer,SIGNAL(timeout()),mModel,SLOT(debug_dump()));
     timer->start(2000);
@@ -188,7 +192,47 @@ NewFriendList::NewFriendList(QWidget *parent) :
 NewFriendList::~NewFriendList()
 {
     delete ui;
-//    delete(mCompareRole);
+}
+
+void NewFriendList::headerContextMenuRequested(QPoint p)
+{
+	QMenu displayMenu(tr("Show Items"), this);
+
+    displayMenu.addAction(ui->actionHideOfflineFriends);
+    displayMenu.addAction(ui->actionShowState);
+    displayMenu.addAction(ui->actionShowGroups);
+
+    displayMenu.addAction(ui->actionExportFriendlist);
+    displayMenu.addAction(ui->actionImportFriendlist);
+
+    ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
+    ui->actionShowState->setChecked(mShowState);
+    ui->actionShowGroups->setChecked(mShowGroups);
+
+    QHeaderView *header = ui->peerTreeWidget->header();
+
+    {
+	QAction *action = displayMenu.addAction(QIcon(), tr("Last contact"), this, SLOT(toggleColumnVisible()));
+	action->setCheckable(true);
+	action->setData(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT);
+	action->setChecked(!header->isSectionHidden(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT));
+    }
+
+    {
+	QAction *action = displayMenu.addAction(QIcon(), tr("IP"), this, SLOT(toggleColumnVisible()));
+	action->setCheckable(true);
+	action->setData(RsFriendListModel::COLUMN_THREAD_IP);
+	action->setChecked(!header->isSectionHidden(RsFriendListModel::COLUMN_THREAD_IP));
+    }
+
+    {
+	QAction *action = displayMenu.addAction(QIcon(), tr("ID"), this, SLOT(toggleColumnVisible()));
+	action->setCheckable(true);
+	action->setData(RsFriendListModel::COLUMN_THREAD_ID);
+	action->setChecked(!header->isSectionHidden(RsFriendListModel::COLUMN_THREAD_ID));
+    }
+
+    displayMenu.exec(QCursor::pos());
 }
 
 void NewFriendList::addToolButton(QToolButton *toolButton)
@@ -1292,12 +1336,26 @@ void NewFriendList::setHideUnconnected(bool hidden)
     }
 }
 
-void NewFriendList::setColumnVisible(Column column, bool visible)
+void NewFriendList::setColumnVisible(int col,bool visible)
 {
+    ui->peerTreeWidget->setColumnHidden(col, !visible);
+}
+void NewFriendList::toggleColumnVisible()
+{
+	QAction *action = dynamic_cast<QAction*>(sender());
+
+	if (!action)
+		return;
+
+	int column = action->data().toInt();
+	bool visible = action->isChecked();
+
+	//emit columnVisibleChanged(column,visible);
+
     ui->peerTreeWidget->setColumnHidden(column, !visible);
 }
 
-void NewFriendList::sortByColumn(Column column, Qt::SortOrder sortOrder)
+void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)
 {
     ui->peerTreeWidget->sortByColumn(column, sortOrder);
 }
@@ -1376,21 +1434,4 @@ void NewFriendList::addPeerToExpand(const RsPgpId& gpgId)
 
 void NewFriendList::createDisplayMenu()
 {
-    QMenu *displayMenu = new QMenu(tr("Show Items"), this);
-    connect(displayMenu, SIGNAL(aboutToShow()), this, SLOT(updateMenu()));
-
-    displayMenu->addAction(ui->actionHideOfflineFriends);
-    displayMenu->addAction(ui->actionShowState);
-    displayMenu->addAction(ui->actionShowGroups);
-
-//    ui->peerTreeWidget->addContextMenuMenu(displayMenu);
-//    ui->peerTreeWidget->addContextMenuAction(ui->actionExportFriendlist);
-//    ui->peerTreeWidget->addContextMenuAction(ui->actionImportFriendlist);
-}
-
-void NewFriendList::updateMenu()
-{
-    ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
-    ui->actionShowState->setChecked(mShowState);
-    ui->actionShowGroups->setChecked(mShowGroups);
 }

@@ -46,14 +46,6 @@ class NewFriendList: public QWidget
 	Q_PROPERTY(QColor textColorStatusBusy READ textColorStatusBusy WRITE setTextColorStatusBusy)
 	Q_PROPERTY(QColor textColorStatusOnline READ textColorStatusOnline WRITE setTextColorStatusOnline)
 	Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
-public:
-	enum Column
-	{
-		COLUMN_NAME         = 0,
-		COLUMN_LAST_CONTACT = 1,
-		COLUMN_IP           = 2,
-		COLUMN_ID           = 3
-	};
 
 public:
 	explicit NewFriendList(QWidget *parent = 0);
@@ -66,10 +58,10 @@ public:
 	bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
 	void addPeerToExpand(const RsPgpId &gpgId);
 	bool getExpandedPeers(std::set<RsPgpId> &peers) const;
+	void setColumnVisible(int col,bool visible);
 
 	std::string getSelectedGroupId() const;
-	void setColumnVisible(Column column, bool visible);
-	void sortByColumn(Column column, Qt::SortOrder sortOrder);
+	void sortByColumn(int column, Qt::SortOrder sortOrder);
 	bool isSortByState();
 
 	QColor textColorGroup() const { return mTextColorGroup; }
@@ -90,9 +82,11 @@ public slots:
 	void filterItems(const QString &text);
 	void sortByState(bool sort);
 
+	void toggleColumnVisible();
 	void setShowGroups(bool show);
 	void setHideUnconnected(bool hidden);
 	void setShowState(bool show);
+    void headerContextMenuRequested(QPoint);
 
 private slots:
 
@@ -136,7 +130,6 @@ private:
 private slots:
 	void groupsChanged();
 	void peerTreeWidgetCustomPopupMenu();
-	void updateMenu();
 
 	void pastePerson();
 

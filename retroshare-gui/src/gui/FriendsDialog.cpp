@@ -112,9 +112,9 @@ FriendsDialog::FriendsDialog(QWidget *parent)
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
-    ui.friendList->setColumnVisible(NewFriendList::COLUMN_LAST_CONTACT, false);
-    ui.friendList->setColumnVisible(NewFriendList::COLUMN_IP, false);
-    ui.friendList->setColumnVisible(NewFriendList::COLUMN_ID, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID, false);
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();
