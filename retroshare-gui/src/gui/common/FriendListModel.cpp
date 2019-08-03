@@ -46,6 +46,8 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 
 const QString RsFriendListModel::FilterString("filtered");
 
+static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
+
 RsFriendListModel::RsFriendListModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
@@ -362,7 +364,8 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 	switch(role)
 	{
-	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
+	case Qt::DisplayRole: return displayRole(entry,index.column()) ;
+	case Qt::FontRole:    return fontRole(entry,index.column()) ;
 	default:
 		return QVariant();
 	}
@@ -531,6 +534,29 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
     return QVariant();
 }
 
+QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
+{
+	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
+
+    switch(e.type)
+	{
+	case ENTRY_TYPE_GROUP:
+	case ENTRY_TYPE_PROFILE:
+        break;
+
+	case ENTRY_TYPE_NODE:
+        const RsNodeDetails *node = getNodeInfo(e);
+
+        if(!node)
+            return QVariant();
+
+        QFont font ;
+		font.setBold(node->state & RS_PEER_STATE_CONNECTED);
+
+        return QVariant(font);
+	}
+}
+
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
     std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
@@ -650,7 +676,18 @@ const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const Ent
     if(e.node_index >= mProfiles[pindex].child_node_indices.size())
         return NULL ;
 
-    return &mLocations[mProfiles[pindex].child_node_indices[e.node_index]].node_info;
+    time_t now = time(NULL);
+    HierarchicalNodeInformation& node(mLocations[mProfiles[pindex].child_node_indices[e.node_index]]);
+
+    if(node.last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
+    {
+        std::cerr << "Updating ID " << node.node_info.id << std::endl;
+        RsPeerId id(node.node_info.id);				// this avoids zeroing the id field when writing the node data
+        rsPeers->getPeerDetails(id,node.node_info);
+        node.last_update_ts = now;
+    }
+
+	return &node.node_info;
 }
 
 
@@ -721,47 +758,6 @@ void RsFriendListModel::clear()
 
 	emit friendListChanged();
 }
-
-// void RsFriendListModel::setMessages(const std::list<Rs::Msgs::MsgInfoSummary>& msgs)
-// {
-//     preMods();
-//
-//     beginRemoveRows(QModelIndex(),0,mMessages.size()-1);
-//     endRemoveRows();
-//
-//     mMessages.clear();
-//     mMessagesMap.clear();
-//
-//     for(auto it(msgs.begin());it!=msgs.end();++it)
-//     {
-//         mMessagesMap[(*it).msgId] = mMessages.size();
-//     	mMessages.push_back(*it);
-//     }
-//
-//     // now update prow for all posts
-//
-// #ifdef DEBUG_MESSAGE_MODEL
-//     debug_dump();
-// #endif
-//
-//     beginInsertRows(QModelIndex(),0,mMessages.size()-1);
-//     endInsertRows();
-// 	postMods();
-//
-// 	emit messagesLoaded();
-// }
-//
-// void RsFriendListModel::updateMessages()
-// {
-//     emit messagesAboutToLoad();
-//
-//     std::list<Rs::Msgs::MsgInfoSummary> msgs;
-//
-//     getMessageSummaries(mCurrentBox,msgs);
-// 	setMessages(msgs);
-//
-//     emit messagesLoaded();
-// }
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }
 

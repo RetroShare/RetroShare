@@ -59,6 +59,9 @@ public:
 	};
 	struct HierarchicalNodeInformation
 	{
+        HierarchicalNodeInformation() : last_update_ts(0) {}
+
+        rstime_t last_update_ts;
         RsNodeDetails node_info;
 	};
 
@@ -202,9 +205,9 @@ private:
     // meaning which is the child/parent of which. The actual group/profile/node data are also stored in the
     // structure.
 
-    std::vector<HierarchicalGroupInformation>   mGroups;
-    std::vector<HierarchicalProfileInformation> mProfiles;
-    std::vector<HierarchicalNodeInformation>    mLocations;
+    mutable std::vector<HierarchicalGroupInformation>   mGroups;
+    mutable std::vector<HierarchicalProfileInformation> mProfiles;
+    mutable std::vector<HierarchicalNodeInformation>    mLocations;
 
     // The top level list contains all nodes to display, which type depends on the option to display groups or not.
     // Idices in the list may be profile indices or group indices. In the former case the profile child index refers to
