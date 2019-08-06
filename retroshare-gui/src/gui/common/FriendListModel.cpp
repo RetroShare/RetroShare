@@ -367,30 +367,16 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
  	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
+ 	case FilterRole:         return filterRole(entry,index.column()) ;
 	default:
 		return QVariant();
 	}
 
-//    if(role == Qt::FontRole)
-//    {
-//        QFont font ;
-//		font.setBold(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER));
-//
-//        return QVariant(font);
-//    }
-
 // 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 // 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 // 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
-// 	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 //
-// 	case FilterRole:         return filterRole    (fmpe,index.column()) ;
-// 	case StatusRole:         return statusRole    (fmpe,index.column()) ;
 // 	case SortRole:           return sortRole      (fmpe,index.column()) ;
-// 	case MsgFlagsRole:       return fmpe.msgflags ;
-// 	case UnreadRole: 		 return fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
-// 	case MsgIdRole:          return QString::fromStdString(fmpe.msgId) ;
-// 	case SrcIdRole:          return QString::fromStdString(fmpe.srcId.toStdString()) ;
 }
 
 QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) const
@@ -415,39 +401,37 @@ QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int column) const
 
 bool RsFriendListModel::passesFilter(const EntryIndex& e,int column) const
 {
-//     QString s ;
-//     bool passes_strings = true ;
+	QString s ;
+	bool passes_strings = true ;
+
+	if(!mFilterStrings.empty())
+	{
+		switch(mFilterType)
+		{
+		case FILTER_TYPE_ID: 	s = displayRole(e,COLUMN_THREAD_ID).toString();
+			break;
+
+		case FILTER_TYPE_NAME:  s = displayRole(e,COLUMN_THREAD_NAME).toString();
+			//case FILTER_TYPE_NAME:  s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
+			if(s.isNull())
+				passes_strings = false;
+			break;
+		};
+	}
+
+	if(!s.isNull())
+		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
+			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
+
+//	bool passes_quick_view =
+//	        (mQuickViewFilter==QUICK_VIEW_ALL)
+//	        || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
+//	        || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
+//	        || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
 //
-//     if(!mFilterStrings.empty())
-// 	{
-// 		switch(mFilterType)
-// 		{
-// 		case FILTER_TYPE_ID: 	s = displayRole(fmpe,COLUMN_THREAD_SUBJECT).toString();
-// 			break;
-//
-// 		case FILTER_TYPE_NAME:  s = sortRole(fmpe,COLUMN_THREAD_AUTHOR).toString();
-// 								if(s.isNull())
-// 									passes_strings = false;
-//             break;
-// 		};
-// 	}
-//
-//     if(!s.isNull())
-// 		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
-// 			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
-//
-//     bool passes_quick_view =
-//             (mQuickViewFilter==QUICK_VIEW_ALL)
-//             || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
-//             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
-//             || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
-// #ifdef DEBUG_MESSAGE_MODEL
-//     std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
-//     foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
-//     std::cerr          << "\" strings:" << passes_strings << " quick_view:" << passes_quick_view << std::endl;
-// #endif
-//
-//     return passes_quick_view && passes_strings;
+//	return passes_quick_view && passes_strings;
+
+	return passes_strings;
 }
 
 QVariant RsFriendListModel::filterRole(const EntryIndex& e,int column) const
@@ -521,24 +505,25 @@ QVariant RsFriendListModel::sizeHintRole(int col) const
 
 QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
 {
-//    switch(column)
-//    {
-//	case COLUMN_THREAD_DATE:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
+	return displayRole(fmpe,column);
+
+//	switch(column)
+//	{
+//	case COLUMN_THREAD_NAME:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
 //
-//	case COLUMN_THREAD_READ:  return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
+//	case COLUMN_THREAD_ID:  return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
 //
-//	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
+//	case COLUMN_THREAD_IP:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 //
-//    case COLUMN_THREAD_AUTHOR:{
-//        						QString name;
+//	case COLUMN_THREAD_LAST_CONTACT:
+//		QString name;
 //
-//        						if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
-//                                    return name;
-//    }
-//    default:
-//        return displayRole(fmpe,column);
-//    }
-    return QVariant();
+//		if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
+//			return name;
+//	}
+//	default:
+//	}
+//	return QVariant();
 }
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const

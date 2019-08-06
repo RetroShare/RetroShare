@@ -35,16 +35,17 @@ namespace Ui {
 class RSTreeWidgetItemCompareRole;
 class QTreeWidgetItem;
 class QToolButton;
+class FriendListSortFilterProxyModel;
 
 class NewFriendList: public QWidget
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor textColorGroup READ textColorGroup WRITE setTextColorGroup)
-	Q_PROPERTY(QColor textColorStatusOffline READ textColorStatusOffline WRITE setTextColorStatusOffline)
-	Q_PROPERTY(QColor textColorStatusAway READ textColorStatusAway WRITE setTextColorStatusAway)
-	Q_PROPERTY(QColor textColorStatusBusy READ textColorStatusBusy WRITE setTextColorStatusBusy)
-	Q_PROPERTY(QColor textColorStatusOnline READ textColorStatusOnline WRITE setTextColorStatusOnline)
+	Q_PROPERTY(QColor textColorGroup          READ textColorGroup          WRITE setTextColorGroup)
+	Q_PROPERTY(QColor textColorStatusOffline  READ textColorStatusOffline  WRITE setTextColorStatusOffline)
+	Q_PROPERTY(QColor textColorStatusAway     READ textColorStatusAway     WRITE setTextColorStatusAway)
+	Q_PROPERTY(QColor textColorStatusBusy     READ textColorStatusBusy     WRITE setTextColorStatusBusy)
+	Q_PROPERTY(QColor textColorStatusOnline   READ textColorStatusOnline   WRITE setTextColorStatusOnline)
 	Q_PROPERTY(QColor textColorStatusInactive READ textColorStatusInactive WRITE setTextColorStatusInactive)
 
 public:
@@ -80,7 +81,7 @@ public:
 
 public slots:
 	void filterItems(const QString &text);
-	void sortByState(bool sort);
+	void toggleSortByState(bool sort);
 
 	void toggleColumnVisible();
 	void setShowGroups(bool show);
@@ -89,6 +90,7 @@ public slots:
     void headerContextMenuRequested(QPoint);
 
 private slots:
+	void sortColumn(int col,Qt::SortOrder so);
 
 protected:
 	void changeEvent(QEvent *e);
@@ -99,7 +101,7 @@ private:
 	RsFriendListModel *mModel;
 	QAction *mActionSortByState;
 
-	QModelIndex getCurrentIndex() const;
+	QModelIndex getCurrentSourceIndex() const;
 
 	bool getCurrentNode(RsFriendListModel::RsNodeDetails& prof) const;
 	bool getCurrentGroup(RsGroupInfo& prof) const;
@@ -123,6 +125,7 @@ private:
 	bool exportFriendlist(QString &fileName);
 	bool importFriendlist(QString &fileName, bool &errorPeers, bool &errorGroups);
 
+	FriendListSortFilterProxyModel *mProxyModel ;
 private slots:
 	void groupsChanged();
 	void peerTreeWidgetCustomPopupMenu();

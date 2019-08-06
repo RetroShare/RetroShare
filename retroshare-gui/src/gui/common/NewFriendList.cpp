@@ -107,6 +107,36 @@
 
 Q_DECLARE_METATYPE(ElidedLabel*)
 
+class FriendListSortFilterProxyModel: public QSortFilterProxyModel
+{
+public:
+    FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) , m_sortingEnabled(false) {}
+
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+    {
+		return left.data(RsFriendListModel::SortRole) < right.data(RsFriendListModel::SortRole) ;
+    }
+
+    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
+    {
+        return sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
+    }
+
+	void sort( int column, Qt::SortOrder order = Qt::AscendingOrder ) override
+	{
+        if(m_sortingEnabled)
+            return QSortFilterProxyModel::sort(column,order) ;
+	}
+
+    void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
+    void setSortByState(bool b) { m_sortByState = b ; }
+
+private:
+    const QHeaderView *m_header ;
+    bool m_sortingEnabled;
+    bool m_sortByState;
+};
+
 NewFriendList::NewFriendList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::NewFriendList()),
@@ -135,24 +165,36 @@ NewFriendList::NewFriendList(QWidget *parent) :
     ui->filterLineEdit->showFilterIcon();
 
     mModel = new RsFriendListModel();
-    ui->peerTreeWidget->setModel(mModel);
+	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
+
+    mProxyModel->setSourceModel(mModel);
+    mProxyModel->setSortRole(RsFriendListModel::SortRole);
+    mProxyModel->setDynamicSortFilter(false);
+    mProxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+	mProxyModel->setFilterRole(RsFriendListModel::FilterRole);
+	mProxyModel->setFilterRegExp(QRegExp(RsFriendListModel::FilterString));
+
+    ui->peerTreeWidget->setModel(mProxyModel);
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
 
     /* Add filter actions */
-    // QTreeWidgetItem *headerItem = ui->peerTreeWidget->headerItem();
-    // QString headerText = headerItem->text(COLUMN_NAME);
-    // ui->filterLineEdit->addFilter(QIcon(), headerText, COLUMN_NAME, QString("%1 %2").arg(tr("Search"), headerText));
-    // ui->filterLineEdit->addFilter(QIcon(), tr("ID"), COLUMN_ID, tr("Search ID"));
+    QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
+    ui->filterLineEdit->addFilter(QIcon(), headerText, RsFriendListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), headerText));
+    ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsFriendListModel::COLUMN_THREAD_ID, tr("Search ID"));
 
-    mActionSortByState = new QAction(tr("Sort by state"), this);
+    mActionSortByState = new QAction(tr("Display online friends on top"), this);
     mActionSortByState->setCheckable(true);
-    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
-    // ui->peerTreeWidget->addContextMenuAction(mActionSortByState);
+    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
+
+    //setting default filter by column as subject
+    ui->filterLineEdit->setCurrentFilter(RsFriendListModel::COLUMN_THREAD_NAME);
+	ui->peerTreeWidget->setSortingEnabled(true);
 
     /* Set sort */
     sortByColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
-    sortByState(false);
+    toggleSortByState(false);
+    connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
 
     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -192,6 +234,13 @@ NewFriendList::NewFriendList(QWidget *parent) :
 NewFriendList::~NewFriendList()
 {
     delete ui;
+}
+
+void NewFriendList::sortColumn(int col,Qt::SortOrder so)
+{
+    mProxyModel->setSortingEnabled(true);
+    mProxyModel->sort(col,so);
+    mProxyModel->setSortingEnabled(false);
 }
 
 void NewFriendList::headerContextMenuRequested(QPoint p)
@@ -268,7 +317,7 @@ void NewFriendList::processSettings(bool load)
         setShowGroups(Settings->value("showGroups", mShowGroups).toBool());
 
         // sort
-        sortByState(Settings->value("sortByState", isSortByState()).toBool());
+        toggleSortByState(Settings->value("sortByState", isSortByState()).toBool());
 
         // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
@@ -311,6 +360,11 @@ void NewFriendList::processSettings(bool load)
     }
 }
 
+void NewFriendList::toggleSortByState(bool sort)
+{
+    mProxyModel->setSortByState(sort);
+}
+
 void NewFriendList::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
@@ -329,7 +383,7 @@ void NewFriendList::changeEvent(QEvent *e)
  */
 void NewFriendList::peerTreeWidgetCustomPopupMenu()
 {
-    QModelIndex index = getCurrentIndex();
+    QModelIndex index = getCurrentSourceIndex();
     RsFriendListModel::EntryType type = mModel->getType(index);
 
     QMenu contextMenu(this);
@@ -359,6 +413,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     QWidgetAction *widgetAction = new QWidgetAction(this);
     widgetAction->setDefaultWidget(widget);
     contextMenu.addAction(widgetAction);
+    contextMenu.addAction(mActionSortByState);
 
     // create menu entries
     if(index.isValid())
@@ -739,20 +794,20 @@ std::string NewFriendList::getSelectedGroupId() const
     return ginfo.id.toStdString();
 }
 
-QModelIndex NewFriendList::getCurrentIndex() const
+QModelIndex NewFriendList::getCurrentSourceIndex() const
 {
 	QModelIndexList selectedIndexes = ui->peerTreeWidget->selectionModel()->selectedIndexes();
 
     if(selectedIndexes.size() != RsFriendListModel::COLUMN_THREAD_NB_COLUMNS)	// check that a single row is selected
         return QModelIndex();
 
-    return *selectedIndexes.begin();
+    return mProxyModel->mapToSource(*selectedIndexes.begin());
 }
 bool NewFriendList::getCurrentGroup(RsGroupInfo& info) const
 {
     /* get the current, and extract the Id */
 
-    QModelIndex index = getCurrentIndex();
+    QModelIndex index = getCurrentSourceIndex();
 
     if(!index.isValid())
         return false;
@@ -763,7 +818,7 @@ bool NewFriendList::getCurrentNode(RsFriendListModel::RsNodeDetails& prof) const
 {
     /* get the current, and extract the Id */
 
-    QModelIndex index = getCurrentIndex();
+    QModelIndex index = getCurrentSourceIndex();
 
     if(!index.isValid())
         return false;
@@ -774,7 +829,7 @@ bool NewFriendList::getCurrentProfile(RsFriendListModel::RsProfileDetails& prof)
 {
     /* get the current, and extract the Id */
 
-    QModelIndex index = getCurrentIndex();
+    QModelIndex index = getCurrentSourceIndex();
 
     if(!index.isValid())
         return false;
@@ -1365,27 +1420,6 @@ void NewFriendList::setShowState(bool show)
     if (mShowState != show) {
         mShowState = show;
     }
-}
-
-void NewFriendList::sortByState(bool sort)
-{
-//    int columnCount = ui->peerTreeWidget->columnCount();
-//    for (int i = 0; i < columnCount; ++i) {
-//        mCompareRole->setRole(i, ROLE_SORT_GROUP);
-//        mCompareRole->addRole(i, ROLE_SORT_STANDARD_GROUP);
-//
-//        if (sort) {
-//            mCompareRole->addRole(i, ROLE_SORT_STATE);
-//            mCompareRole->addRole(i, ROLE_SORT_NAME);
-//        } else {
-//            mCompareRole->addRole(i, ROLE_SORT_NAME);
-//            mCompareRole->addRole(i, ROLE_SORT_STATE);
-//        }
-//    }
-//
-//    mActionSortByState->setChecked(sort);
-//
-//    ui->peerTreeWidget->resort();
 }
 
 bool NewFriendList::isSortByState()
