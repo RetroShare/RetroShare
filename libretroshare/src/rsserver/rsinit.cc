@@ -1,9 +1,8 @@
 /*******************************************************************************
  * libretroshare/src/retroshare: rsinit.cc                                     *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +19,7 @@
  *                                                                             *
  *******************************************************************************/
 
-/* This is an updated startup class. Class variables are hidden from
- * the GUI / External via a hidden class */
+/// RetroShare initialization and login API implementation
 
 #include <unistd.h>
 

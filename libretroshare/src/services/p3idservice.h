@@ -1,9 +1,8 @@
 /*******************************************************************************
  * libretroshare/src/services: p3idservice.h                                   *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -21,23 +20,22 @@
  *******************************************************************************/
 #pragma once
 
+/// RetroShare GXS identities service
 
-#include "retroshare/rsidentity.h"	// External Interfaces.
-#include "gxs/rsgenexchange.h"		// GXS service.
-#include "gxs/rsgixs.h"			// Internal Interfaces.
-
-#include "gxs/gxstokenqueue.h"		
-#include "rsitems/rsgxsiditems.h"
 
 #include <map>
 #include <string>
 
+#include "retroshare/rsidentity.h"	// External Interfaces.
+#include "gxs/rsgenexchange.h"		// GXS service.
+#include "gxs/rsgixs.h"			// Internal Interfaces.
+#include "util/rsdebug.h"
+#include "gxs/gxstokenqueue.h"		
+#include "rsitems/rsgxsiditems.h"
 #include "util/rsmemcache.h"
 #include "util/rstickevent.h"
 #include "util/rsrecogn.h"
-#include "util/rsdebug.h"
 #include "pqi/authgpg.h"
-
 #include "rsitems/rsgxsrecognitems.h"
 
 class PgpAuxUtils;
@@ -370,6 +368,9 @@ public:
 	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
 	                                           RsGxsId* id = nullptr);
 
+	/// @see RsIdentity
+	bool requestIdentity(const RsGxsId& id) override;
+
 	/**************** RsGixsReputation Implementation ****************/
 
 	// get Reputation.
@@ -620,5 +621,5 @@ private:
 	bool mAutoAddFriendsIdentitiesAsContacts;
     uint32_t mMaxKeepKeysBanned ;
 
-	RS_SET_CONTEXT_DEBUG_LEVEL(4);
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

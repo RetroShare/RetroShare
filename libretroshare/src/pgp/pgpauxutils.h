@@ -23,6 +23,7 @@
 
 #include "retroshare/rsids.h"
 #include "retroshare/rstypes.h"
+#include "util/rsdeprecate.h"
 
 /* This is a small collection of PGP functions that are widely used in libretroshare.
  * This interface class allows these functions to be easily mocked for testing.
@@ -40,6 +41,9 @@ class PgpAuxUtils
 
 	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const =0;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint) = 0;
+
+	/** @deprecated this method depends on retroshare-gui to work */
+	RS_DEPRECATED_FOR("AuthGPG::SignDataBin")
 	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason) = 0;
 };
 
