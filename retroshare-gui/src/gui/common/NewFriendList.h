@@ -64,19 +64,19 @@ public:
 	void sortByColumn(int column, Qt::SortOrder sortOrder);
 	bool isSortByState();
 
-	QColor textColorGroup() const { return mTextColorGroup; }
-	QColor textColorStatusOffline() const { return mTextColorStatus[RS_STATUS_OFFLINE]; }
-	QColor textColorStatusAway() const { return mTextColorStatus[RS_STATUS_AWAY]; }
-	QColor textColorStatusBusy() const { return mTextColorStatus[RS_STATUS_BUSY]; }
-	QColor textColorStatusOnline() const { return mTextColorStatus[RS_STATUS_ONLINE]; }
-	QColor textColorStatusInactive() const { return mTextColorStatus[RS_STATUS_INACTIVE]; }
+	QColor textColorGroup()          const { return mModel->mTextColorGroup; }
+	QColor textColorStatusOffline()  const { return mModel->mTextColorStatus[RS_STATUS_OFFLINE ]; }
+	QColor textColorStatusAway()     const { return mModel->mTextColorStatus[RS_STATUS_AWAY    ]; }
+	QColor textColorStatusBusy()     const { return mModel->mTextColorStatus[RS_STATUS_BUSY    ]; }
+	QColor textColorStatusOnline()   const { return mModel->mTextColorStatus[RS_STATUS_ONLINE  ]; }
+	QColor textColorStatusInactive() const { return mModel->mTextColorStatus[RS_STATUS_INACTIVE]; }
 
-	void setTextColorGroup(QColor color) { mTextColorGroup = color; }
-	void setTextColorStatusOffline(QColor color) { mTextColorStatus[RS_STATUS_OFFLINE] = color; }
-	void setTextColorStatusAway(QColor color) { mTextColorStatus[RS_STATUS_AWAY] = color; }
-	void setTextColorStatusBusy(QColor color) { mTextColorStatus[RS_STATUS_BUSY] = color; }
-	void setTextColorStatusOnline(QColor color) { mTextColorStatus[RS_STATUS_ONLINE] = color; }
-	void setTextColorStatusInactive(QColor color) { mTextColorStatus[RS_STATUS_INACTIVE] = color; }
+	void setTextColorGroup(QColor color)          { mModel->mTextColorGroup = color; }
+	void setTextColorStatusOffline(QColor color)  { mModel->mTextColorStatus[RS_STATUS_OFFLINE ] = color; }
+	void setTextColorStatusAway(QColor color)     { mModel->mTextColorStatus[RS_STATUS_AWAY    ] = color; }
+	void setTextColorStatusBusy(QColor color)     { mModel->mTextColorStatus[RS_STATUS_BUSY    ] = color; }
+	void setTextColorStatusOnline(QColor color)   { mModel->mTextColorStatus[RS_STATUS_ONLINE  ] = color; }
+	void setTextColorStatusInactive(QColor color) { mModel->mTextColorStatus[RS_STATUS_INACTIVE] = color; }
 
 public slots:
 	void filterItems(const QString &text);
@@ -115,10 +115,6 @@ private:
 	bool groupsHasChanged;
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;
-
-	/* Color definitions (for standard see qss.default) */
-	QColor mTextColorGroup;
-	QColor mTextColorStatus[RS_STATUS_COUNT];
 
 	bool getOrCreateGroup(const std::string& name, uint flag, RsNodeGroupId& id);
 	bool getGroupIdByName(const std::string& name, RsNodeGroupId& id);

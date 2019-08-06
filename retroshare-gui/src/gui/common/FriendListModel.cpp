@@ -364,8 +364,9 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 	switch(role)
 	{
-	case Qt::DisplayRole: return displayRole(entry,index.column()) ;
-	case Qt::FontRole:    return fontRole(entry,index.column()) ;
+	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
+	case Qt::FontRole:       return fontRole(entry,index.column()) ;
+ 	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
 	default:
 		return QVariant();
 	}
@@ -381,7 +382,6 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 // 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 // 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 // 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
-// 	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
 // 	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
 //
 // 	case FilterRole:         return filterRole    (fmpe,index.column()) ;
@@ -395,7 +395,14 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) const
 {
-	return QVariant();
+    switch(fmpe.type)
+    {
+    case ENTRY_TYPE_GROUP: return QVariant(QBrush(mTextColorGroup));
+#warning CODE NEEDED HERE!
+    case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[getPeerStatus(fmpe)]));
+    default:
+		return QVariant();
+    }
 }
 
 QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int column) const
@@ -690,6 +697,16 @@ const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const Ent
 	return &node.node_info;
 }
 
+uint32_t RsFriendListModel::getPeerStatus(const EntryIndex& e) const
+{
+    const RsNodeDetails *noded = getNodeInfo(e) ;
+    StatusInfo info;
+
+    if(!noded || !rsStatus->getStatus(noded->id,info))
+        return RS_STATUS_OFFLINE;
+
+    return info.status;
+}
 
 QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
 {

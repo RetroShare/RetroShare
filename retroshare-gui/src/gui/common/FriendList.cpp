@@ -1014,6 +1014,7 @@ void FriendList::insertPeers()
                     if (rsState == 0) {
                         sslFont.setBold(true);
                         sslColor = mTextColorStatus[RS_STATUS_ONLINE];
+
                     } else {
                         sslFont = StatusDefs::font(rsState);
                         sslColor = mTextColorStatus[rsState];

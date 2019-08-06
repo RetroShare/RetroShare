@@ -23,14 +23,9 @@
 #include <QModelIndex>
 #include <QColor>
 
+#include "retroshare/rsstatus.h"
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rspeers.h"
-
-// This class holds the actual hierarchy of posts, represented by identifiers
-// It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
-// safely access the data.
-
-// The model contains a post in place 0 that is the parent of all posts.
 
 typedef uint32_t ForumModelIndex;
 
@@ -148,10 +143,16 @@ public:
 
 	void clear() ;
 
+	/* Color definitions (for standard see qss.default) */
+	QColor mTextColorGroup;
+	QColor mTextColorStatus[RS_STATUS_COUNT];
+
 private:
     const RsGroupInfo      *getGroupInfo  (const EntryIndex&) const;
     const RsProfileDetails *getProfileInfo(const EntryIndex&) const;
     const RsNodeDetails    *getNodeInfo   (const EntryIndex&) const;
+
+	uint32_t getPeerStatus(const EntryIndex& e) const;
 
     QVariant sizeHintRole  (int col) const;
 
