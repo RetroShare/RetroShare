@@ -1,5 +1,5 @@
 /*******************************************************************************
- * RetroShare GXS identities service                                           *
+ * libretroshare/src/services: p3idservice.h                                   *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
  * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
@@ -19,6 +19,9 @@
  *                                                                             *
  *******************************************************************************/
 #pragma once
+
+/// RetroShare GXS identities service
+
 
 #include <map>
 #include <string>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * RetroShare initialization and login API                                     *
+ * libretroshare/src/retroshare: rsinit.h                                      *
  *                                                                             *
  * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
@@ -18,8 +18,10 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_INIT_INTERFACE_H
-#define RETROSHARE_INIT_INTERFACE_H
+#pragma once
+
+/// RetroShare initialization and login API
+
 
 // Initialize ok, result >= 0
 #define RS_INIT_OK              0 // Initialize ok
@@ -332,5 +334,3 @@ struct RsLoginHelper
 	 */
 	bool isLoggedIn();
 };
-
-#endif

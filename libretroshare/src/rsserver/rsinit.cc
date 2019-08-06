@@ -1,5 +1,5 @@
 /*******************************************************************************
- * RetroShare initialization and login API implementation                      *
+ * libretroshare/src/retroshare: rsinit.cc                                     *
  *                                                                             *
  * Copyright (C) 2004-2014  Robert Fernie <retroshare@lunamutt.com>            *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
@@ -19,8 +19,7 @@
  *                                                                             *
  *******************************************************************************/
 
-/* This is an updated startup class. Class variables are hidden from
- * the GUI / External via a hidden class */
+/// RetroShare initialization and login API implementation
 
 #include <unistd.h>
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * RetroShare GXS identities service                                           *
+ * libretroshare/src/services: p3idservice.cc                                  *
  *                                                                             *
  * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
  * Copyright (C) 2017-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
@@ -19,8 +19,13 @@
  *                                                                             *
  *******************************************************************************/
 
+/// RetroShare GXS identities service
+
+
 #include <unistd.h>
 #include <algorithm>
+#include <sstream>
+#include <cstdio>
 
 #include "services/p3idservice.h"
 #include "pgp/pgpauxutils.h"
@@ -37,13 +42,6 @@
 #include "retroshare/rspeers.h"
 #include "retroshare/rsnotify.h"
 
-
-//#include "pqi/authgpg.h"
-
-//#include <retroshare/rspeers.h>
-
-#include <sstream>
-#include <stdio.h>
 
 /****
  * #define DEBUG_IDS	1
