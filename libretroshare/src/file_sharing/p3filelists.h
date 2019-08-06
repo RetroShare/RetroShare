@@ -109,8 +109,8 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
         virtual int  SearchKeywords(const std::list<std::string>& keywords, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) ;
         virtual int  SearchBoolExp(RsRegularExpression::Expression *exp, std::list<DirDetails>& results,FileSearchFlags flags,const RsPeerId& peer_id) const ;
 
-        // Extra file list
-        virtual void removeExtraFile(const RsFileHash& hash);
+	// Extra file list
+	virtual bool removeExtraFile(const RsFileHash& hash);
 
 		// Interface for browsing dir hierarchy
 		//
