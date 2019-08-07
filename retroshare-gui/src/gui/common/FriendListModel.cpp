@@ -384,7 +384,27 @@ QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) con
     switch(fmpe.type)
     {
     case ENTRY_TYPE_GROUP: return QVariant(QBrush(mTextColorGroup));
-#warning CODE NEEDED HERE!
+    case ENTRY_TYPE_PROFILE:
+    {
+		const HierarchicalProfileInformation *prof = getProfileInfo(fmpe);
+
+        if(!prof)
+            return QVariant();
+
+		StatusInfo info;
+
+        for(uint32_t i=0;i<prof->child_node_indices.size();++i)
+        {
+            RsPeerId id = mLocations[prof->child_node_indices[i]].node_info.id;
+
+			if(rsStatus->getStatus(mLocations[prof->child_node_indices[i]].node_info.id,info) && info.status == RS_STATUS_ONLINE)
+                return QVariant(QBrush(mTextColorStatus[info.status]));
+		}
+
+        return QVariant();
+	}
+	break;
+
     case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[getPeerStatus(fmpe)]));
     default:
 		return QVariant();
@@ -534,16 +554,33 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 	{
 	case ENTRY_TYPE_GROUP:
 	case ENTRY_TYPE_PROFILE:
+    {
+		const HierarchicalProfileInformation *prof = getProfileInfo(e);
+
+        if(!prof)
+            return QVariant();
+
+        for(uint32_t i=0;i<prof->child_node_indices.size();++i)
+            if(mLocations[prof->child_node_indices[i]].node_info.state & RS_PEER_STATE_CONNECTED)
+			{
+				QFont font ;
+				font.setBold(true);
+
+                return QVariant(font);
+			}
+
+        return QVariant();
+    }
         break;
 
 	case ENTRY_TYPE_NODE:
-        const RsNodeDetails *node = getNodeInfo(e);
+        const HierarchicalNodeInformation *node = getNodeInfo(e);
 
         if(!node)
             return QVariant();
 
         QFont font ;
-		font.setBold(node->state & RS_PEER_STATE_CONNECTED);
+		font.setBold(node->node_info.state & RS_PEER_STATE_CONNECTED);
 
         return QVariant(font);
 	}
@@ -557,7 +594,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 	{
 	case ENTRY_TYPE_GROUP:
         {
-  	      const RsGroupInfo *group = getGroupInfo(e);
+  	      const HierarchicalGroupInformation *group = getGroupInfo(e);
 
   	      if(!group)
   	          return QVariant();
@@ -565,8 +602,8 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
-              	std::cerr <<   group->name.c_str() << std::endl;
-                return QVariant(QString::fromUtf8(group->name.c_str()));
+              	std::cerr <<   group->group_info.name.c_str() << std::endl;
+                return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
 			default:
 				return QVariant();
@@ -576,15 +613,15 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 	case ENTRY_TYPE_PROFILE:
 		{
- 	       const RsProfileDetails *profile = getProfileInfo(e);
+ 	       const HierarchicalProfileInformation *profile = getProfileInfo(e);
 
  	       if(!profile)
  	           return QVariant();
 
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->name.c_str()));
-			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->gpg_id.toStdString()) );
+			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
+			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
 
 			default:
 				return QVariant();
@@ -593,17 +630,17 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         break;
 
 	case ENTRY_TYPE_NODE:
-        const RsNodeDetails *node = getNodeInfo(e);
+        const HierarchicalNodeInformation *node = getNodeInfo(e);
 
         if(!node)
             return QVariant();
 
 		switch(col)
 		{
-        case COLUMN_THREAD_NAME:           return (node->location.empty())?QVariant(QString::fromStdString(node->id.toStdString())):QVariant(QString::fromUtf8(node->location.c_str()));
-		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->lastConnect).toString());
-		case COLUMN_THREAD_IP:             return QVariant(  (node->state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(*node) : QString("---"));
-		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->id.toStdString()) );
+        case COLUMN_THREAD_NAME:           return (node->node_info.location.empty())?QVariant(QString::fromStdString(node->node_info.id.toStdString())):QVariant(QString::fromUtf8(node->node_info.location.c_str()));
+		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
+		case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
+		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
 		default:
 			return QVariant();
@@ -613,15 +650,15 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 	}
 }
 
-const RsGroupInfo *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
+const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
 {
 	if(e.group_index >= mGroups.size())
         return NULL ;
     else
-        return &mGroups[e.group_index].group_info;
+        return &mGroups[e.group_index];
 }
 
-const RsFriendListModel::RsProfileDetails *RsFriendListModel::getProfileInfo(const EntryIndex& e) const
+const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getProfileInfo(const EntryIndex& e) const
 {
     // First look into the relevant group, then for the correct profile in this group.
 
@@ -635,13 +672,13 @@ const RsFriendListModel::RsProfileDetails *RsFriendListModel::getProfileInfo(con
         if(e.profile_index >= group.child_profile_indices.size())
             return NULL ;
 
-        return &mProfiles[group.child_profile_indices[e.profile_index]].profile_info;
+        return &mProfiles[group.child_profile_indices[e.profile_index]];
     }
     else
-        return &mProfiles[e.profile_index].profile_info;
+        return &mProfiles[e.profile_index];
 }
 
-const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
+const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
 {
 	if(e.type != ENTRY_TYPE_NODE)
 		return NULL ;
@@ -679,15 +716,15 @@ const RsFriendListModel::RsNodeDetails *RsFriendListModel::getNodeInfo(const Ent
         node.last_update_ts = now;
     }
 
-	return &node.node_info;
+	return &node;
 }
 
 uint32_t RsFriendListModel::getPeerStatus(const EntryIndex& e) const
 {
-    const RsNodeDetails *noded = getNodeInfo(e) ;
+    const HierarchicalNodeInformation *noded = getNodeInfo(e) ;
     StatusInfo info;
 
-    if(!noded || !rsStatus->getStatus(noded->id,info))
+    if(!noded || !rsStatus->getStatus(noded->node_info.id,info))
         return RS_STATUS_OFFLINE;
 
     return info.status;
@@ -794,11 +831,11 @@ bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP)
         return false;
 
-    const RsGroupInfo *ginfo = getGroupInfo(e);
+    const HierarchicalGroupInformation *ginfo = getGroupInfo(e);
 
     if(ginfo)
 	{
-		data = *ginfo;
+		data = ginfo->group_info;
 		return true;
 	}
     else
@@ -813,11 +850,11 @@ bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE)
         return false;
 
-    const RsProfileDetails *gprof = getProfileInfo(e);
+    const HierarchicalProfileInformation *gprof = getProfileInfo(e);
 
     if(gprof)
 	{
-		data = *gprof;
+		data = gprof->profile_info;
 		return true;
 	}
     else
@@ -832,11 +869,11 @@ bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & da
 	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE)
         return false;
 
-    const RsNodeDetails *gnode = getNodeInfo(e);
+    const HierarchicalNodeInformation *gnode = getNodeInfo(e);
 
     if(gnode)
 	{
-		data = *gnode;
+		data = gnode->node_info;
 		return true;
 	}
     else

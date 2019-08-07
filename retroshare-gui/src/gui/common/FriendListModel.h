@@ -148,9 +148,9 @@ public:
 	QColor mTextColorStatus[RS_STATUS_COUNT];
 
 private:
-    const RsGroupInfo      *getGroupInfo  (const EntryIndex&) const;
-    const RsProfileDetails *getProfileInfo(const EntryIndex&) const;
-    const RsNodeDetails    *getNodeInfo   (const EntryIndex&) const;
+    const HierarchicalGroupInformation   *getGroupInfo  (const EntryIndex&) const;
+    const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&) const;
+    const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
 	uint32_t getPeerStatus(const EntryIndex& e) const;
 
