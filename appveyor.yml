@@ -105,6 +105,16 @@ install:
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
 
+  # Work-around linker looking for Qt dll in wrong place
+  - copy C:\msys64\mingw32\bin\Qt5UiTools.dll C:\msys64\mingw32\lib\Qt5UiTools.dll
+  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll C:\msys64\mingw32\lib\Qt5PrintSupport.dll
+  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll C:\msys64\mingw32\lib\Qt5Widgets.dll
+  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll C:\msys64\mingw32\lib\Qt5Multimedia.dll
+  - copy C:\msys64\mingw32\bin\Qt5Gui.dll C:\msys64\mingw32\lib\Qt5Gui.dll
+  - copy C:\msys64\mingw32\bin\Qt5Network.dll C:\msys64\mingw32\lib\Qt5Network.dll
+  - copy C:\msys64\mingw32\bin\Qt5Xml.dll C:\msys64\mingw32\lib\Qt5Xml.dll
+  - copy C:\msys64\mingw32\bin\Qt5Core.dll C:\msys64\mingw32\lib\Qt5Core.dll
+
 
 #---------------------------------#
 #       build configuration       #
@@ -137,8 +147,6 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - env
-  - find C:/msys64/mingw32/lib/
-  - find C:/msys64/mingw32/bin/
   - qmake -Wall -spec win32-g++ "CONFIG=debug"
   - mingw32-make -j3
 
