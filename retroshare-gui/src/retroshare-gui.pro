@@ -53,7 +53,7 @@ HEADERS += TorControl/TorControlWindow.h
 
 greaterThan(QT_MAJOR_VERSION, 4) {
 	# Qt 5
-	QT     += uitools widgets multimedia printsupport
+        QT     += widgets multimedia printsupport
 	linux-* {
 		QT += x11extras
 	}
