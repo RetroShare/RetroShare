@@ -1110,7 +1110,9 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 		grpMeta.serialise(metaData, metaDataLen,api_versions_to_check[i]);
 
 		// copy msg data and meta in allmsgData buffer
-		memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
+		if(grp.grp.bin_data && grp.grp.bin_len>0)
+			memcpy(allGrpData, grp.grp.bin_data, grp.grp.bin_len);
+
 		memcpy(allGrpData+(grp.grp.bin_len), metaData, metaDataLen);
 
 		/* calc and check signature */
@@ -1121,8 +1123,8 @@ bool GxsSecurity::validateNxsGrp(const RsNxsGrp& grp, const RsTlvKeySignature& s
 		signOk = EVP_VerifyFinal(mdctx, sigbuf, siglen, signKey);
 		EVP_MD_CTX_destroy(mdctx);
 
-                if(i>0)
-		std::cerr << "(WW) Checking group signature with old api version " << i+1 << " : tag " << std::hex << api_versions_to_check[i] << std::dec << " result: " << signOk << std::endl;
+		if(i>0)
+			std::cerr << "(WW) Checking group signature with old api version " << i+1 << " : tag " << std::hex << api_versions_to_check[i] << std::dec << " result: " << signOk << std::endl;
 	}
 
 	/* clean up */

@@ -310,6 +310,7 @@ bool p3BanList::isAddressAccepted(
         const sockaddr_storage& dAddr, uint32_t checking_flags,
         uint32_t& check_result )
 {
+	RS_STACK_MUTEX(mBanMtx) ; /****** LOCKED MUTEX *******/
 	check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
 	if(!mIPFilteringEnabled) return true;
 
@@ -616,8 +617,8 @@ void p3BanList::getDhtInfo()
         addBanEntry(ownId, ad, RSBANLIST_ORIGIN_SELF, int_reason, time_stamp);
     }
 
-    RsStackMutex stack(mBanMtx); /****** LOCKED MUTEX *******/
-    condenseBanSources_locked() ;
+	RS_STACK_MUTEX(mBanMtx) ; /****** LOCKED MUTEX *******/
+	condenseBanSources_locked() ;
 }
 
 /***** Implementation ******/

@@ -74,12 +74,10 @@ const static uint32_t TAB_RELAYS                  = 3;
 //#define SERVER_DEBUG 1
 
 ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
-    : ConfigPage(parent, flags), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE)
+  : ConfigPage(parent, flags), manager(nullptr), mOngoingConnectivityCheck(0), mIsHiddenNode(false), mHiddenType(RS_HIDDEN_TYPE_NONE), mBobAccessible(false)
 {
   /* Invoke the Qt Designer generated object setup routine */
   ui.setupUi(this);
-
-  manager = NULL ;
 
   if(RsAccounts::isTorAuto())
   {

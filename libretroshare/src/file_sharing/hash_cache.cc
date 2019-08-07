@@ -35,25 +35,26 @@ static const uint32_t DEFAULT_INACTIVITY_SLEEP_TIME = 50*1000;
 static const uint32_t     MAX_INACTIVITY_SLEEP_TIME = 2*1000*1000;
 
 HashStorage::HashStorage(const std::string& save_file_name)
-    : mFilePath(save_file_name), mHashMtx("Hash Storage mutex")
+  : mMaxStorageDurationDays(DEFAULT_HASH_STORAGE_DURATION_DAYS)
+  , mFilePath(save_file_name)
+  , mChanged(false)
+  , mHashingProcessPaused(false)
+  , mHashMtx("Hash Storage mutex")
+  , mRunning(false)
+  , mHashCounter(0)
+  , mInactivitySleepTime(DEFAULT_INACTIVITY_SLEEP_TIME)
+  , mTotalSizeToHash(0)
+  , mTotalHashedSize(0)
+  , mTotalFilesToHash(0)
+  , mLastSaveTime(0)
+  , mHashingTime(0)
+  , mHashedBytes(0)
+  , mCurrentHashingSpeed(0)
 {
-    mInactivitySleepTime = DEFAULT_INACTIVITY_SLEEP_TIME;
-    mRunning = false ;
-    mLastSaveTime = 0 ;
-    mTotalSizeToHash = 0;
-    mTotalFilesToHash = 0;
-	mCurrentHashingSpeed = 0 ;
-    mMaxStorageDurationDays = DEFAULT_HASH_STORAGE_DURATION_DAYS ;
-	mHashingProcessPaused = false;
-	mHashedBytes = 0 ;
-	mHashingTime = 0 ;
+	RS_STACK_MUTEX(mHashMtx) ;
 
-    {
-        RS_STACK_MUTEX(mHashMtx) ;
-
-        if(!locked_load())
-            try_load_import_old_hash_cache();
-    }
+	if(!locked_load())
+		try_load_import_old_hash_cache();
 }
 
 void HashStorage::togglePauseHashingProcess()

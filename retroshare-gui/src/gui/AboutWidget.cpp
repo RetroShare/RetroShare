@@ -66,13 +66,13 @@ AboutWidget::AboutWidget(QWidget* parent)
 void AboutWidget::installAWidget() {
     assert(tWidget == NULL);
     aWidget = new AWidget();
-    QVBoxLayout* l = (QVBoxLayout*)frame->layout();
+    QBoxLayout* l = static_cast<QBoxLayout*>(frame->layout());
     l->insertWidget(0, aWidget);
     l->setStretchFactor(aWidget, 100);
     aWidget->setFocus();
 
     delete tWidget ;
-    tWidget = NULL;
+    tWidget = nullptr;
 }
 
 void AboutWidget::installTWidget() {
@@ -95,7 +95,7 @@ void AboutWidget::installTWidget() {
     vl->addWidget(levelLabel);
     vl->addStretch();
 
-    QHBoxLayout* l = (QHBoxLayout*)frame->layout();
+    QBoxLayout* l = static_cast<QBoxLayout*>(frame->layout());
     l->insertWidget(0, pan);
     l->insertWidget(0, tWidget);
     QRect cRect = frame->contentsRect();
@@ -111,7 +111,7 @@ void AboutWidget::installTWidget() {
     tWidget->start();
 
     delete aWidget ;
-    aWidget = NULL;
+    aWidget = nullptr;
 }
 
 void AboutWidget::switchPages() {
