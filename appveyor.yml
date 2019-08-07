@@ -137,6 +137,8 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - env
+  - find C:/msys64/mingw32/lib/
+  - find C:/msys64/mingw32/bin/
   - qmake -Wall -spec win32-g++ "CONFIG=debug"
   - mingw32-make -j3
 
