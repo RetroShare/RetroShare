@@ -168,11 +168,14 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
         					if(i.group_index==0xff)
                                 return EntryIndex();
                             else
+                            {
                                 i.type = ENTRY_TYPE_GROUP;
+        				   		i.profile_index = 0xff;
+                            }
 						   break;
 
     case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
-        				   i.node_index = 0;
+        				   i.node_index = 0xff;
 						   break;
     }
 
@@ -802,24 +805,40 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 
 void RsFriendListModel::debug_dump() const
 {
-	for(uint32_t j=0;j<mGroups.size();++j)
-	{
-		std::cerr << "Group: " << mGroups[j].group_info.name << ", ";
-		std::cerr << "  children indices: " ; for(uint32_t i=0;i<mGroups[j].child_profile_indices.size();++i) std::cerr << mGroups[j].child_profile_indices[i] << " " ; std::cerr << std::endl;
+    std::cerr << "==== FriendListModel Debug dump ====" << std::endl;
 
-		for(uint32_t i=0;i<mGroups[j].child_profile_indices.size();++i)
+	for(uint32_t j=0;j<mTopLevel.size();++j)
+    {
+        if(mTopLevel[j].type == ENTRY_TYPE_GROUP)
 		{
-			uint32_t profile_index = mGroups[j].child_profile_indices[i];
+			const HierarchicalGroupInformation& hg(mGroups[mTopLevel[j].group_index]);
 
-			std::cerr << "    Profile " << mProfiles[profile_index].profile_info.gpg_id << std::endl;
+			std::cerr << "Group: " << hg.group_info.name << ", ";
+			std::cerr << "  children indices: " ; for(uint32_t i=0;i<hg.child_profile_indices.size();++i) std::cerr << hg.child_profile_indices[i] << " " ; std::cerr << std::endl;
 
-			const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
+			for(uint32_t i=0;i<hg.child_profile_indices.size();++i)
+			{
+				uint32_t profile_index = hg.child_profile_indices[i];
+
+				std::cerr << "    Profile " << mProfiles[profile_index].profile_info.gpg_id << std::endl;
+
+				const HierarchicalProfileInformation& hprof(mProfiles[profile_index]);
+
+				for(uint32_t k=0;k<hprof.child_node_indices.size();++k)
+					std::cerr << "      Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
+			}
+		}
+        else if(mTopLevel[j].type == ENTRY_TYPE_PROFILE)
+        {
+			const HierarchicalProfileInformation& hprof(mProfiles[mTopLevel[j].profile_index]);
+
+			std::cerr << "Profile " << hprof.profile_info.gpg_id << std::endl;
 
 			for(uint32_t k=0;k<hprof.child_node_indices.size();++k)
-				std::cerr << "      Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
-		}
-
-	}
+				std::cerr << "  Node " << mLocations[hprof.child_node_indices[k]].node_info.id << std::endl;
+        }
+    }
+    std::cerr << "====================================" << std::endl;
 }
 
 bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & data) const
@@ -943,36 +962,39 @@ void RsFriendListModel::updateInternalData()
         mLocations.push_back(hnode);
     }
 
-    // groups
+    if(mDisplayGroups)
+	{
+		// groups
 
-    std::list<RsGroupInfo> groupInfoList;
-    rsPeers->getGroupInfoList(groupInfoList) ;
+		std::list<RsGroupInfo> groupInfoList;
+		rsPeers->getGroupInfoList(groupInfoList) ;
 
-    RsDbg() << "Updating Groups information: " << std::endl;
+		RsDbg() << "Updating Groups information: " << std::endl;
 
-    for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
-    {
-		// first, fill the group hierarchical info
+		for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
+		{
+			// first, fill the group hierarchical info
 
-        HierarchicalGroupInformation hgroup;
-        hgroup.group_info = *it;
+			HierarchicalGroupInformation hgroup;
+			hgroup.group_info = *it;
 
-		RsDbg() << "  Group \"" << hgroup.group_info.name << "\"" << std::endl;
+			RsDbg() << "  Group \"" << hgroup.group_info.name << "\"" << std::endl;
 
-        for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2)
-        {
-            // Then for each peer in this group, make sure that the peer is already known, and if not create it
+			for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2)
+			{
+				// Then for each peer in this group, make sure that the peer is already known, and if not create it
 
-            auto it3 = pgp_indices.find(*it2);
+				auto it3 = pgp_indices.find(*it2);
 
-            if(it3 == pgp_indices.end())// not found
-                RsErr() << "Inconsistency error!" << std::endl;
+				if(it3 == pgp_indices.end())// not found
+					RsErr() << "Inconsistency error!" << std::endl;
 
-            hgroup.child_profile_indices.push_back(it3->second);
-        }
+				hgroup.child_profile_indices.push_back(it3->second);
+			}
 
-        mGroups.push_back(hgroup);
-    }
+			mGroups.push_back(hgroup);
+		}
+	}
 
     // now  the top level list
 
@@ -1004,7 +1026,7 @@ void RsFriendListModel::updateInternalData()
 
     // finally, tell the model client that layout has changed.
 
-    beginInsertRows(QModelIndex(),0,mGroups.size()-1);
+    beginInsertRows(QModelIndex(),0,mTopLevel.size()-1);
     endInsertRows();
 
     postMods();

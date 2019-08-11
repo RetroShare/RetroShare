@@ -141,7 +141,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::NewFriendList()),
     //    mCompareRole(new RSTreeWidgetItemCompareRole),
-    mShowGroups(true),
     mShowState(false),
     mHideUnconnected(false),
     groupsHasChanged(false)
@@ -256,7 +255,7 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
 
     ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
     ui->actionShowState->setChecked(mShowState);
-    ui->actionShowGroups->setChecked(mShowGroups);
+    ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
 
     QHeaderView *header = ui->peerTreeWidget->header();
 
@@ -314,7 +313,7 @@ void NewFriendList::processSettings(bool load)
         // states
         setHideUnconnected(Settings->value("hideUnconnected", mHideUnconnected).toBool());
         setShowState(Settings->value("showState", mShowState).toBool());
-        setShowGroups(Settings->value("showGroups", mShowGroups).toBool());
+        setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
         // sort
         toggleSortByState(Settings->value("sortByState", isSortByState()).toBool());
@@ -342,7 +341,7 @@ void NewFriendList::processSettings(bool load)
         // states
         Settings->setValue("hideUnconnected", mHideUnconnected);
         Settings->setValue("showState", mShowState);
-        Settings->setValue("showGroups", mShowGroups);
+        Settings->setValue("showGroups", mModel->getDisplayGroups());
 
         // sort
         Settings->setValue("sortByState", isSortByState());
@@ -463,7 +462,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
             RsFriendListModel::RsProfileDetails details;
             mModel->getProfileData(index,details);
 
-			if(mShowGroups)
+			if(mModel->getDisplayGroups())
 			{
 				QMenu* addToGroupMenu = NULL;
 				QMenu* moveToGroupMenu = NULL;

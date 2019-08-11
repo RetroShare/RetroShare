@@ -108,7 +108,6 @@ private:
 	bool getCurrentProfile(RsFriendListModel::RsProfileDetails& prof) const;
 
 	// Settings for peer list display
-	bool mShowGroups;
 	bool mShowState;
 	bool mHideUnconnected;
 

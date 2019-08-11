@@ -119,6 +119,7 @@ public:
     // This method will asynchroneously update the data
 
 	void setDisplayGroups(bool b);
+    bool getDisplayGroups() const { return mDisplayGroups; }
 
     EntryType getType(const QModelIndex&) const;
 
