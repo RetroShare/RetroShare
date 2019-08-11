@@ -153,7 +153,7 @@ private:
     const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&) const;
     const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
-	uint32_t getPeerStatus(const EntryIndex& e) const;
+	bool getPeerOnlineStatus(const EntryIndex& e) const;
 
     QVariant sizeHintRole  (int col) const;
 

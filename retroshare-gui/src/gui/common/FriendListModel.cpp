@@ -408,7 +408,7 @@ QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) con
 	}
 	break;
 
-    case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[getPeerStatus(fmpe)]));
+    case ENTRY_TYPE_NODE:  return QVariant(QBrush(mTextColorStatus[getPeerOnlineStatus(fmpe)?RS_STATUS_ONLINE:RS_STATUS_OFFLINE]));
     default:
 		return QVariant();
     }
@@ -599,6 +599,16 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         {
   	      const HierarchicalGroupInformation *group = getGroupInfo(e);
 
+          uint32_t nb_online = 0;
+
+          for(uint32_t i=0;i<group->child_profile_indices.size();++i)
+              for(uint32_t j=0;j<mProfiles[group->child_profile_indices[i]].child_node_indices.size();++j)
+                  if(mLocations[mProfiles[group->child_profile_indices[i]].child_node_indices[j]].node_info.state & RS_PEER_STATE_CONNECTED)
+                  {
+                      nb_online++;
+                      break;// only breaks the inner loop, on purpose.
+                  }
+
   	      if(!group)
   	          return QVariant();
 
@@ -606,7 +616,11 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			{
 			case COLUMN_THREAD_NAME:
               	std::cerr <<   group->group_info.name.c_str() << std::endl;
-                return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
+
+                if(!group->child_profile_indices.empty())
+					return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
+                else
+					return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
 			default:
 				return QVariant();
@@ -722,15 +736,10 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNode
 	return &node;
 }
 
-uint32_t RsFriendListModel::getPeerStatus(const EntryIndex& e) const
+bool RsFriendListModel::getPeerOnlineStatus(const EntryIndex& e) const
 {
     const HierarchicalNodeInformation *noded = getNodeInfo(e) ;
-    StatusInfo info;
-
-    if(!noded || !rsStatus->getStatus(noded->node_info.id,info))
-        return RS_STATUS_OFFLINE;
-
-    return info.status;
+    return (noded && (noded->node_info.state & RS_PEER_STATE_CONNECTED));
 }
 
 QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
