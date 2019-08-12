@@ -109,9 +109,6 @@ private:
 
 	// Settings for peer list display
 	bool mShowState;
-	bool mHideUnconnected;
-
-	QString mFilterText;
 
 	bool groupsHasChanged;
 	std::set<RsNodeGroupId> openGroups;

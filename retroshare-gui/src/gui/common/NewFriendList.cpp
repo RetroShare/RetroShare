@@ -110,7 +110,10 @@ Q_DECLARE_METATYPE(ElidedLabel*)
 class FriendListSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) , m_sortingEnabled(false) {}
+    FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),
+        	m_header(header),
+            m_sortingEnabled(false),
+    		m_hideOfflineNodes(false) {}
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -119,6 +122,9 @@ public:
 
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
     {
+        if(m_hideOfflineNodes && !sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::OnlineRole).toBool())
+            return false;
+
         return sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
     }
 
@@ -130,11 +136,15 @@ public:
 
     void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
     void setSortByState(bool b) { m_sortByState = b ; }
+    void setHideOfflineNodes(bool b) { m_hideOfflineNodes = b ; }
+
+    bool hideOfflineNodes() const { return m_hideOfflineNodes ; }
 
 private:
     const QHeaderView *m_header ;
     bool m_sortingEnabled;
     bool m_sortByState;
+    bool m_hideOfflineNodes;
 };
 
 NewFriendList::NewFriendList(QWidget *parent) :
@@ -142,7 +152,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     ui(new Ui::NewFriendList()),
     //    mCompareRole(new RSTreeWidgetItemCompareRole),
     mShowState(false),
-    mHideUnconnected(false),
     groupsHasChanged(false)
 {
 	ui->setupUi(this);
@@ -253,7 +262,7 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
     displayMenu.addAction(ui->actionExportFriendlist);
     displayMenu.addAction(ui->actionImportFriendlist);
 
-    ui->actionHideOfflineFriends->setChecked(mHideUnconnected);
+    ui->actionHideOfflineFriends->setChecked(mProxyModel->hideOfflineNodes());
     ui->actionShowState->setChecked(mShowState);
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
 
@@ -311,7 +320,7 @@ void NewFriendList::processSettings(bool load)
                                                        // restoreState would corrupt the internal sectionCount
 
         // states
-        setHideUnconnected(Settings->value("hideUnconnected", mHideUnconnected).toBool());
+        setHideUnconnected(Settings->value("hideUnconnected", mProxyModel->hideOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mShowState).toBool());
         setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
@@ -339,7 +348,7 @@ void NewFriendList::processSettings(bool load)
         // save settings
 
         // states
-        Settings->setValue("hideUnconnected", mHideUnconnected);
+        Settings->setValue("hideUnconnected", mProxyModel->hideOfflineNodes());
         Settings->setValue("showState", mShowState);
         Settings->setValue("showGroups", mModel->getDisplayGroups());
 
@@ -1385,9 +1394,8 @@ bool NewFriendList::getOrCreateGroup(const std::string& name, uint flag, RsNodeG
 
 void NewFriendList::setHideUnconnected(bool hidden)
 {
-    if (mHideUnconnected != hidden) {
-        mHideUnconnected = hidden;
-    }
+    mProxyModel->setHideOfflineNodes(hidden);
+	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
 }
 
 void NewFriendList::setColumnVisible(int col,bool visible)
@@ -1436,15 +1444,21 @@ void NewFriendList::setShowGroups(bool show)
  */
 void NewFriendList::filterItems(const QString &text)
 {
-	int filterColumn = ui->filterLineEdit->currentFilter();
-	mFilterText = text;
-
     QStringList lst = text.split(' ',QString::SkipEmptyParts);
+	int filterColumn = ui->filterLineEdit->currentFilter();
 
     if(filterColumn == 0)
 		mModel->setFilter(RsFriendListModel::FILTER_TYPE_NAME,lst);
-    else if(filterColumn==1)
+    else //if(filterColumn==1)
 		mModel->setFilter(RsFriendListModel::FILTER_TYPE_ID,lst);
+
+    // We do this in order to trigger a new filtering action in the proxy model.
+	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;
+
+    if(!lst.empty())
+		ui->peerTreeWidget->expandAll();
+    else
+		ui->peerTreeWidget->collapseAll();
 }
 
 /**

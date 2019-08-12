@@ -72,9 +72,7 @@ public:
               	StatusRole         = Qt::UserRole+2,
               	UnreadRole         = Qt::UserRole+3,
               	FilterRole         = Qt::UserRole+4,
-              	MsgIdRole          = Qt::UserRole+5,
-              	MsgFlagsRole       = Qt::UserRole+6,
-              	SrcIdRole          = Qt::UserRole+7,
+              	OnlineRole         = Qt::UserRole+5
               };
 
     enum FilterType{ FILTER_TYPE_NONE = 0x00,
@@ -159,14 +157,14 @@ private:
 
 	QVariant displayRole   (const EntryIndex &e, int col) const;
 
-	QVariant decorationRole(const EntryIndex& fmpe, int col) const;
-	QVariant toolTipRole   (const EntryIndex &fmpe, int col) const;
-	QVariant userRole      (const EntryIndex& fmpe, int col) const;
-	QVariant statusRole    (const EntryIndex& fmpe, int col) const;
-	QVariant sortRole      (const EntryIndex& fmpe, int col) const;
-	QVariant fontRole      (const EntryIndex& fmpe, int col) const;
-	QVariant textColorRole (const EntryIndex& fmpe, int col) const;
-
+	QVariant decorationRole(const EntryIndex& e, int col) const;
+	QVariant toolTipRole   (const EntryIndex& e, int col) const;
+	QVariant userRole      (const EntryIndex& e, int col) const;
+	QVariant statusRole    (const EntryIndex& e, int col) const;
+	QVariant sortRole      (const EntryIndex& e, int col) const;
+	QVariant fontRole      (const EntryIndex& e, int col) const;
+	QVariant textColorRole (const EntryIndex& e, int col) const;
+	QVariant onlineRole    (const EntryIndex& e, int col) const;
 	QVariant filterRole    (const EntryIndex& e, int col) const;
 
     /*!
