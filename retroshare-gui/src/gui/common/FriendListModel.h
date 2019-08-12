@@ -153,10 +153,8 @@ private:
 
 	bool getPeerOnlineStatus(const EntryIndex& e) const;
 
-    QVariant sizeHintRole  (int col) const;
-
-	QVariant displayRole   (const EntryIndex &e, int col) const;
-
+    QVariant sizeHintRole  (const EntryIndex& e, int col) const;
+	QVariant displayRole   (const EntryIndex& e, int col) const;
 	QVariant decorationRole(const EntryIndex& e, int col) const;
 	QVariant toolTipRole   (const EntryIndex& e, int col) const;
 	QVariant userRole      (const EntryIndex& e, int col) const;

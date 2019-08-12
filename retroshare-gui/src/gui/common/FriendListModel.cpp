@@ -27,6 +27,7 @@
 #include <QIcon>
 
 #include "gui/common/StatusDefs.h"
+#include "gui/common/AvatarDefs.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/common/FriendListModel.h"
@@ -334,13 +335,6 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	if(!index.isValid())
 		return QVariant();
 
-	switch(role)
-	{
-	case Qt::SizeHintRole: return sizeHintRole(index.column()) ;
-    case Qt::StatusTipRole:return QVariant();
-    default: break;
-	}
-
 	quintptr ref = (index.isValid())?index.internalId():0 ;
 
 #ifdef DEBUG_MESSAGE_MODEL
@@ -367,9 +361,11 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 	switch(role)
 	{
+	case Qt::SizeHintRole:   return sizeHintRole(entry,index.column()) ;
 	case Qt::DisplayRole:    return displayRole(entry,index.column()) ;
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
  	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
+ 	case Qt::DecorationRole: return decorationRole(entry,index.column()) ;
 
  	case FilterRole:         return filterRole(entry,index.column()) ;
  	case SortRole:           return sortRole(entry,index.column()) ;
@@ -379,7 +375,6 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 		return QVariant();
 	}
 
-// 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 // 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 // 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 //
@@ -494,9 +489,12 @@ QVariant RsFriendListModel::toolTipRole(const EntryIndex& fmpe,int column) const
     return QVariant();
 }
 
-QVariant RsFriendListModel::sizeHintRole(int col) const
+QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
 {
 	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+
+    if(e.type == ENTRY_TYPE_NODE)
+        factor *= 3.0;
 
 	switch(col)
 	{
@@ -771,44 +769,23 @@ QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
     return QVariant();
 }
 
-QVariant RsFriendListModel::decorationRole(const EntryIndex& fmpe,int col) const
+QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) const
 {
-//	if(col == COLUMN_THREAD_READ)
-//		if(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
-//			return QIcon(":/images/message-state-unread.png");
-//		else
-//			return QIcon(":/images/message-state-read.png");
-//
-//    if(col == COLUMN_THREAD_SUBJECT)
-//    {
-//        if(fmpe.msgflags & RS_MSG_NEW         )  return QIcon(":/images/message-state-new.png");
-//        if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return QIcon(":/images/user/user_request16.png");
-//        if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return QIcon(":/images/user/friend_suggestion16.png");
-//        if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return QIcon(":/images/share-icon-16.png");
-//
-//        if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)
-//        {
-//            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied.png");
-//            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded.png");
-//            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw.png");
-//
-//            return QIcon(":/images/message-mail.png");
-//        }
-//		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied-read.png");
-//		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded-read.png");
-//		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw-read.png");
-//
-//		return QIcon(":/images/message-mail-read.png");
-//    }
-//
-//    if(col == COLUMN_THREAD_STAR)
-//        return QIcon((fmpe.msgflags & RS_MSG_STAR) ? (IMAGE_STAR_ON ): (IMAGE_STAR_OFF));
-//
-//    bool isNew = fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
-//
-//    if(col == COLUMN_THREAD_READ)
-//        return QIcon(isNew ? ":/images/message-state-unread.png": ":/images/message-state-read.png");
+    switch(entry.type)
+    {
+    case ENTRY_TYPE_NODE:
+    {
+        const HierarchicalNodeInformation *hn = getNodeInfo(entry);
 
+        if(!hn)
+            return QVariant();
+
+		QPixmap sslAvatar;
+		AvatarDefs::getAvatarFromSslId(RsPeerId(hn->node_info.id.toStdString()), sslAvatar);
+
+        return QVariant(QIcon(sslAvatar));
+    }
+    }
 	return QVariant();
 }
 
