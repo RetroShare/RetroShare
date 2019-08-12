@@ -423,14 +423,6 @@ bool RsFriendListModel::passesFilter(const EntryIndex& e,int column) const
 		for(auto iter(mFilterStrings.begin()); iter != mFilterStrings.end(); ++iter)
 			passes_strings = passes_strings && s.contains(*iter,Qt::CaseInsensitive);
 
-//	bool passes_quick_view =
-//	        (mQuickViewFilter==QUICK_VIEW_ALL)
-//	        || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
-//	        || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
-//	        || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
-//
-//	return passes_quick_view && passes_strings;
-
 	return passes_strings;
 }
 
@@ -771,6 +763,9 @@ QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
 
 QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) const
 {
+    if(col > 0)
+        return QVariant();
+
     switch(entry.type)
     {
     case ENTRY_TYPE_NODE:
