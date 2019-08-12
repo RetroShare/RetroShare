@@ -371,6 +371,7 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 	case Qt::FontRole:       return fontRole(entry,index.column()) ;
  	case Qt::TextColorRole:  return textColorRole(entry,index.column()) ;
  	case FilterRole:         return filterRole(entry,index.column()) ;
+ 	case SortRole:           return sortRole(entry,index.column()) ;
 	default:
 		return QVariant();
 	}
@@ -379,7 +380,6 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 // 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
 // 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 //
-// 	case SortRole:           return sortRole      (fmpe,index.column()) ;
 }
 
 QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) const
@@ -526,27 +526,39 @@ QVariant RsFriendListModel::sizeHintRole(int col) const
 	}
 }
 
-QVariant RsFriendListModel::sortRole(const EntryIndex& fmpe,int column) const
+QVariant RsFriendListModel::sortRole(const EntryIndex& entry,int column) const
 {
-	return displayRole(fmpe,column);
+    switch(column)
+    {
+    case COLUMN_THREAD_LAST_CONTACT:
+    {
+        switch(entry.type)
+		{
+		case ENTRY_TYPE_PROFILE:
+		{
+			const HierarchicalProfileInformation *prof = getProfileInfo(entry);
 
-//	switch(column)
-//	{
-//	case COLUMN_THREAD_NAME:  return QVariant(QString::number(fmpe.ts)); // we should probably have leading zeroes here
-//
-//	case COLUMN_THREAD_ID:  return QVariant((bool)IS_MESSAGE_UNREAD(fmpe.msgflags));
-//
-//	case COLUMN_THREAD_IP:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
-//
-//	case COLUMN_THREAD_LAST_CONTACT:
-//		QString name;
-//
-//		if(GxsIdTreeItemDelegate::computeName(RsGxsId(fmpe.srcId.toStdString()),name))
-//			return name;
-//	}
-//	default:
-//	}
-//	return QVariant();
+			if(!prof)
+				return QVariant();
+
+            uint32_t last_contact = 0;
+			StatusInfo info;
+
+			for(uint32_t i=0;i<prof->child_node_indices.size();++i)
+                last_contact = std::max(last_contact, mLocations[prof->child_node_indices[i]].node_info.lastConnect);
+
+            return QVariant(last_contact);
+		}
+            break;
+        default:
+            return QVariant();
+		}
+    }
+        break;
+
+    default:
+		return displayRole(entry,column);
+    }
 }
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
