@@ -1020,6 +1020,9 @@ void RsFriendListModel::updateInternalData()
             e.group_index = i;
 
             mTopLevel.push_back(e);
+
+            for(uint32_t j=0;j<mGroups[i].child_profile_indices.size();++j)
+                already_in_a_group.insert(mProfiles[mGroups[i].child_profile_indices[j]].profile_info.gpg_id);
         }
     }
 
