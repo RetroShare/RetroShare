@@ -220,7 +220,7 @@ struct RsPeerDetails : RsSerializable
 	
 	RsPgpId issuer;
 
-	PGPFingerprintType fpr; /* pgp fingerprint */
+	RsPgpFingerprint fpr; /* pgp fingerprint */
 	std::string authcode; 	// TODO: 2015/12/31 (cyril) what is this used for ?????
 	std::list<RsPgpId> gpgSigners;
 
