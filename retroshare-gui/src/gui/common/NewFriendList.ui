@@ -67,12 +67,15 @@
     </widget>
    </item>
   </layout>
-  <action name="actionHideOfflineFriends">
+  <action name="actionShowOfflineFriends">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Hide Offline Friends</string>
+    <string>Offline Friends</string>
+   </property>
+   <property name="toolTip">
+    <string>Show Offline Friends</string>
    </property>
   </action>
   <action name="actionShowState">
@@ -80,10 +83,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show State</string>
+    <string>Status</string>
    </property>
    <property name="toolTip">
-    <string>Show State</string>
+    <string>Show status</string>
    </property>
   </action>
   <action name="actionShowGroups">
@@ -91,10 +94,10 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show Groups</string>
+    <string>Groups</string>
    </property>
    <property name="toolTip">
-    <string>Show Groups</string>
+    <string>Show groups</string>
    </property>
   </action>
   <action name="actionExportFriendlist">

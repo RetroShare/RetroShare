@@ -60,6 +60,7 @@ public:
 	void addPeerToExpand(const RsPgpId &gpgId);
 	bool getExpandedPeers(std::set<RsPgpId> &peers) const;
 	void setColumnVisible(int col,bool visible);
+	bool isColumnVisible(int col) const;
 
 	std::string getSelectedGroupId() const;
 	void sortByColumn(int column, Qt::SortOrder sortOrder);
@@ -85,7 +86,7 @@ public slots:
 
 	void toggleColumnVisible();
 	void setShowGroups(bool show);
-	void setHideUnconnected(bool hidden);
+	void setShowUnconnected(bool hidden);
 	void setShowState(bool show);
     void headerContextMenuRequested(QPoint);
 

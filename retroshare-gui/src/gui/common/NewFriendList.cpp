@@ -113,16 +113,22 @@ public:
     FriendListSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),
         	m_header(header),
             m_sortingEnabled(false),
-    		m_hideOfflineNodes(false) {}
+    		m_showOfflineNodes(true) {}
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
+        bool online1 = left .data(RsFriendListModel::OnlineRole).toBool();
+        bool online2 = right.data(RsFriendListModel::OnlineRole).toBool();
+
+        if(online1 != online2 && m_sortByState)
+            return (m_header->sortIndicatorOrder()==Qt::AscendingOrder)?online1:online2 ;	// always put online nodes first
+
 		return left.data(RsFriendListModel::SortRole) < right.data(RsFriendListModel::SortRole) ;
     }
 
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
     {
-        if(m_hideOfflineNodes && !sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::OnlineRole).toBool())
+        if(!m_showOfflineNodes && !sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::OnlineRole).toBool())
             return false;
 
         return sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
@@ -136,15 +142,15 @@ public:
 
     void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
     void setSortByState(bool b) { m_sortByState = b ; }
-    void setHideOfflineNodes(bool b) { m_hideOfflineNodes = b ; }
+    void setShowOfflineNodes(bool b) { m_showOfflineNodes = b ; }
 
-    bool hideOfflineNodes() const { return m_hideOfflineNodes ; }
+    bool showOfflineNodes() const { return m_showOfflineNodes ; }
 
 private:
     const QHeaderView *m_header ;
     bool m_sortingEnabled;
     bool m_sortByState;
-    bool m_hideOfflineNodes;
+    bool m_showOfflineNodes;
 };
 
 NewFriendList::NewFriendList(QWidget *parent) :
@@ -155,19 +161,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     groupsHasChanged(false)
 {
 	ui->setupUi(this);
-
-    connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-	//connect(ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
-
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
-
-    connect(ui->actionHideOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setHideUnconnected(bool)));
-    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
-    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
-    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
-
-    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
@@ -184,8 +177,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
     ui->peerTreeWidget->setModel(mProxyModel);
 
-    connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
-
     /* Add filter actions */
     QString headerText = mModel->headerData(RsFriendListModel::COLUMN_THREAD_NAME,Qt::Horizontal,Qt::DisplayRole).toString();
     ui->filterLineEdit->addFilter(QIcon(), headerText, RsFriendListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), headerText));
@@ -193,7 +184,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
     mActionSortByState = new QAction(tr("Display online friends on top"), this);
     mActionSortByState->setCheckable(true);
-    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
 
     //setting default filter by column as subject
     ui->filterLineEdit->setCurrentFilter(RsFriendListModel::COLUMN_THREAD_NAME);
@@ -202,12 +192,9 @@ NewFriendList::NewFriendList(QWidget *parent) :
     /* Set sort */
     sortByColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
     toggleSortByState(false);
-    connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
-
-    // workaround for Qt bug, should be solved in next Qt release 4.7.0
+     // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
-    connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
 
     /* Initialize tree */
     // ui->peerTreeWidget->enableColumnCustomize(true);
@@ -232,11 +219,27 @@ NewFriendList::NewFriendList(QWidget *parent) :
 
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
-	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 
-    QTimer *timer = new QTimer;
-    QObject::connect(timer,SIGNAL(timeout()),mModel,SLOT(debug_dump()));
-    timer->start(2000);
+//     QTimer *timer = new QTimer;
+//     QObject::connect(timer,SIGNAL(timeout()),mModel,SLOT(debug_dump()));
+//     timer->start(2000);
+
+	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
+	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
+    connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
+	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
+    connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
+
+    connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
+    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
+    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
+
+    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
+    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
+
+    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 }
 
 NewFriendList::~NewFriendList()
@@ -255,14 +258,39 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
 {
 	QMenu displayMenu(tr("Show Items"), this);
 
-    displayMenu.addAction(ui->actionHideOfflineFriends);
+    QWidget *widget = new QWidget(&displayMenu);
+    widget->setStyleSheet( ".QWidget{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,stop:0 #FEFEFE, stop:1 #E8E8E8); border: 1px solid #CCCCCC;}");
+
+    // create menu header
+    QHBoxLayout *hbox = new QHBoxLayout(widget);
+    hbox->setMargin(0);
+    hbox->setSpacing(6);
+
+    QLabel *iconLabel = new QLabel(widget);
+    QPixmap pix = QPixmap(":/images/user/friends24.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+    iconLabel->setPixmap(pix);
+    iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
+    hbox->addWidget(iconLabel);
+
+    QLabel *textLabel = new QLabel("<strong>Show/hide...</strong>", widget);
+    hbox->addWidget(textLabel);
+
+    QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    hbox->addItem(spacerItem);
+
+    widget->setLayout(hbox);
+
+    QWidgetAction *widgetAction = new QWidgetAction(this);
+    widgetAction->setDefaultWidget(widget);
+    displayMenu.addAction(widgetAction);
+
+    displayMenu.addAction(mActionSortByState);
+
+    displayMenu.addAction(ui->actionShowOfflineFriends);
     displayMenu.addAction(ui->actionShowState);
     displayMenu.addAction(ui->actionShowGroups);
 
-    displayMenu.addAction(ui->actionExportFriendlist);
-    displayMenu.addAction(ui->actionImportFriendlist);
-
-    ui->actionHideOfflineFriends->setChecked(mProxyModel->hideOfflineNodes());
+    ui->actionShowOfflineFriends->setChecked(mProxyModel->showOfflineNodes());
     ui->actionShowState->setChecked(mShowState);
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
 
@@ -320,9 +348,13 @@ void NewFriendList::processSettings(bool load)
                                                        // restoreState would corrupt the internal sectionCount
 
         // states
-        setHideUnconnected(Settings->value("hideUnconnected", mProxyModel->hideOfflineNodes()).toBool());
+        setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mShowState).toBool());
         setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
+
+        setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
+        setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID,Settings->value("showID", isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID)).toBool());
+        setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT,Settings->value("showLastContact", isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT)).toBool());
 
         // sort
         toggleSortByState(Settings->value("sortByState", isSortByState()).toBool());
@@ -348,9 +380,13 @@ void NewFriendList::processSettings(bool load)
         // save settings
 
         // states
-        Settings->setValue("hideUnconnected", mProxyModel->hideOfflineNodes());
+        Settings->setValue("hideUnconnected", !mProxyModel->showOfflineNodes());
         Settings->setValue("showState", mShowState);
         Settings->setValue("showGroups", mModel->getDisplayGroups());
+
+        Settings->setValue("showIP",isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP));
+        Settings->setValue("showID",isColumnVisible(RsFriendListModel::COLUMN_THREAD_ID));
+        Settings->setValue("showLastContact",isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT));
 
         // sort
         Settings->setValue("sortByState", isSortByState());
@@ -371,6 +407,7 @@ void NewFriendList::processSettings(bool load)
 void NewFriendList::toggleSortByState(bool sort)
 {
     mProxyModel->setSortByState(sort);
+	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
 }
 
 void NewFriendList::changeEvent(QEvent *e)
@@ -410,7 +447,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
     hbox->addWidget(iconLabel);
 
-    QLabel *textLabel = new QLabel("<strong>RetroShare</strong>", widget);
+    QLabel *textLabel = new QLabel("<strong>Friend list</strong>", widget);
     hbox->addWidget(textLabel);
 
     QSpacerItem *spacerItem = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -421,7 +458,6 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
     QWidgetAction *widgetAction = new QWidgetAction(this);
     widgetAction->setDefaultWidget(widget);
     contextMenu.addAction(widgetAction);
-    contextMenu.addAction(mActionSortByState);
 
     // create menu entries
     if(index.isValid())
@@ -578,6 +614,11 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
     contextMenu.addAction(QIcon(IMAGE_EXPAND), tr("Expand all"), ui->peerTreeWidget, SLOT(expandAll()));
     contextMenu.addAction(QIcon(IMAGE_COLLAPSE), tr("Collapse all"), ui->peerTreeWidget, SLOT(collapseAll()));
+
+    contextMenu.addSeparator();
+
+    contextMenu.addAction(ui->actionExportFriendlist);
+    contextMenu.addAction(ui->actionImportFriendlist);
 
     // contextMenu = ui->peerTreeWidget->createStandardContextMenu(contextMenu);
 
@@ -1392,12 +1433,16 @@ bool NewFriendList::getOrCreateGroup(const std::string& name, uint flag, RsNodeG
 }
 
 
-void NewFriendList::setHideUnconnected(bool hidden)
+void NewFriendList::setShowUnconnected(bool show)
 {
-    mProxyModel->setHideOfflineNodes(hidden);
+    mProxyModel->setShowOfflineNodes(show);
 	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
 }
 
+bool NewFriendList::isColumnVisible(int col) const
+{
+    return !ui->peerTreeWidget->isColumnHidden(col);
+}
 void NewFriendList::setColumnVisible(int col,bool visible)
 {
     ui->peerTreeWidget->setColumnHidden(col, !visible);
@@ -1415,6 +1460,8 @@ void NewFriendList::toggleColumnVisible()
 	//emit columnVisibleChanged(column,visible);
 
     ui->peerTreeWidget->setColumnHidden(column, !visible);
+
+    processSettings(false);	// save settings
 }
 
 void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)

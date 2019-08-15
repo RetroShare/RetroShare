@@ -271,14 +271,17 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
 
     EntryIndex parent_index ;
     convertInternalIdToIndex(parent.internalId(),parent_index);
-
+#ifdef DEBUG_MODEL
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
+#endif
 
     quintptr ref;
     EntryIndex new_index = parent_index.child(row,mTopLevel);
     convertIndexToInternalId(new_index,ref);
 
+#ifdef DEBUG_MODEL
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
+#endif
 
     return createIndex(row,column,ref);
 }
@@ -445,10 +448,12 @@ uint32_t RsFriendListModel::updateFilterStatus(ForumModelIndex i,int column,cons
 
 void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& strings)
 {
+#ifdef DEBUG_MODEL
     std::cerr << "Setting filter to filter_type=" << int(filter_type) << " and strings to " ;
     foreach(const QString& str,strings)
         std::cerr << "\"" << str.toStdString() << "\" " ;
     std::cerr << std::endl;
+#endif
 
     preMods();
 
@@ -580,7 +585,9 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int col) const
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 {
+#ifdef DEBUG_MODEL
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
+#endif
 
     bool b = onlineRole(e,col).toBool();
 
@@ -597,7 +604,9 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
+#ifdef DEBUG_MODEL
     std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
+#endif
 
     switch(e.type)
 	{
@@ -621,7 +630,9 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
+#ifdef DEBUG_MODEL
               	std::cerr <<   group->group_info.name.c_str() << std::endl;
+#endif
 
                 if(!group->child_profile_indices.empty())
 					return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
@@ -733,7 +744,9 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNode
 
     if(node.last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
     {
+#ifdef DEBUG_MODEL
         std::cerr << "Updating ID " << node.node_info.id << std::endl;
+#endif
         RsPeerId id(node.node_info.id);				// this avoids zeroing the id field when writing the node data
         rsPeers->getPeerDetails(id,node.node_info);
         node.last_update_ts = now;
