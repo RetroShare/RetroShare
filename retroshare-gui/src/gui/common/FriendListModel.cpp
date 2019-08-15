@@ -519,7 +519,6 @@ QVariant RsFriendListModel::sortRole(const EntryIndex& entry,int column) const
 				return QVariant();
 
             uint32_t last_contact = 0;
-			StatusInfo info;
 
 			for(uint32_t i=0;i<prof->child_node_indices.size();++i)
                 last_contact = std::max(last_contact, mLocations[prof->child_node_indices[i]].node_info.lastConnect);
@@ -671,7 +670,18 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 
 		switch(col)
 		{
-        case COLUMN_THREAD_NAME:           return (node->node_info.location.empty())?QVariant(QString::fromStdString(node->node_info.id.toStdString())):QVariant(QString::fromUtf8(node->node_info.location.c_str()));
+		case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
+												return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
+
+										{
+											std::string css = rsMsgs->getCustomStateString(node->node_info.id);
+
+											if(!css.empty())
+												return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
+											else
+												return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
+										}
+
 		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
 		case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
 		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
