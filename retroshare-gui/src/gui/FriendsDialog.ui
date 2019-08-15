@@ -145,17 +145,14 @@
           </property>
           <item row="0" column="0" rowspan="2">
            <widget class="AvatarWidget" name="avatar">
-            <property name="minimumSize">
-             <size>
-              <width>61</width>
-              <height>61</height>
-             </size>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="maximumSize">
-             <size>
-              <width>61</width>
-              <height>61</height>
-             </size>
+            <property name="scaledContents">
+             <bool>false</bool>
             </property>
            </widget>
           </item>
