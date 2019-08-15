@@ -64,7 +64,6 @@ public:
 
 	std::string getSelectedGroupId() const;
 	void sortByColumn(int column, Qt::SortOrder sortOrder);
-	bool isSortByState();
 
 	QColor textColorGroup()          const { return mModel->mTextColorGroup; }
 	QColor textColorStatusOffline()  const { return mModel->mTextColorStatus[RS_STATUS_OFFLINE ]; }

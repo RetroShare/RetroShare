@@ -145,6 +145,7 @@ public:
     void setShowOfflineNodes(bool b) { m_showOfflineNodes = b ; }
 
     bool showOfflineNodes() const { return m_showOfflineNodes ; }
+    bool sortByState() const { return m_sortByState ; }
 
 private:
     const QHeaderView *m_header ;
@@ -286,6 +287,8 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
 
     displayMenu.addAction(mActionSortByState);
 
+    mActionSortByState->setChecked(mProxyModel->sortByState());
+
     displayMenu.addAction(ui->actionShowOfflineFriends);
     displayMenu.addAction(ui->actionShowState);
     displayMenu.addAction(ui->actionShowGroups);
@@ -338,14 +341,9 @@ void NewFriendList::addToolButton(QToolButton *toolButton)
 void NewFriendList::processSettings(bool load)
 {
     // state of peer tree
-    //ui->peerTreeWidget->setSettingsVersion(2);
-    //ui->peerTreeWidget->processSettings(load);
 
     if (load) {
         // load settings
-
-//        ui->peerTreeWidget->header()->doItemsLayout(); // is needed because I added a third column
-                                                       // restoreState would corrupt the internal sectionCount
 
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
@@ -357,7 +355,7 @@ void NewFriendList::processSettings(bool load)
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT,Settings->value("showLastContact", isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT)).toBool());
 
         // sort
-        toggleSortByState(Settings->value("sortByState", isSortByState()).toBool());
+        toggleSortByState(Settings->value("sortByState", mProxyModel->sortByState()).toBool());
 
         // open groups
         int arrayIndex = Settings->beginReadArray("Groups");
@@ -389,7 +387,7 @@ void NewFriendList::processSettings(bool load)
         Settings->setValue("showLastContact",isColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT));
 
         // sort
-        Settings->setValue("sortByState", isSortByState());
+        Settings->setValue("sortByState", mProxyModel->sortByState());
 
         // open groups
         Settings->beginWriteArray("Groups");
@@ -408,7 +406,6 @@ void NewFriendList::toggleSortByState(bool sort)
 {
     mProxyModel->setSortByState(sort);
 	mProxyModel->setFilterRegExp(QRegExp(QString(RsFriendListModel::FilterString))) ;// triggers a re-display.
-    processSettings(false);
 }
 
 void NewFriendList::changeEvent(QEvent *e)
@@ -1461,8 +1458,6 @@ void NewFriendList::toggleColumnVisible()
 	//emit columnVisibleChanged(column,visible);
 
     ui->peerTreeWidget->setColumnHidden(column, !visible);
-
-    processSettings(false);	// save settings
 }
 
 void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)
@@ -1472,14 +1467,7 @@ void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)
 
 void NewFriendList::setShowState(bool show)
 {
-    if (mShowState != show) {
-        mShowState = show;
-    }
-}
-
-bool NewFriendList::isSortByState()
-{
-    return mActionSortByState->isChecked();
+	mShowState = show;
 }
 
 void NewFriendList::setShowGroups(bool show)
