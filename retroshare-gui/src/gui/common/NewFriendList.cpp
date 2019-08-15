@@ -158,7 +158,6 @@ NewFriendList::NewFriendList(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::NewFriendList()),
     //    mCompareRole(new RSTreeWidgetItemCompareRole),
-    mShowState(false),
     groupsHasChanged(false)
 {
 	ui->setupUi(this);
@@ -294,7 +293,7 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
     displayMenu.addAction(ui->actionShowGroups);
 
     ui->actionShowOfflineFriends->setChecked(mProxyModel->showOfflineNodes());
-    ui->actionShowState->setChecked(mShowState);
+    ui->actionShowState->setChecked(mModel->getDisplayStatusString());
     ui->actionShowGroups->setChecked(mModel->getDisplayGroups());
 
     QHeaderView *header = ui->peerTreeWidget->header();
@@ -347,7 +346,7 @@ void NewFriendList::processSettings(bool load)
 
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
-        setShowState(Settings->value("showState", mShowState).toBool());
+        setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
         setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
         setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP,Settings->value("showIP", isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP)).toBool());
@@ -379,7 +378,7 @@ void NewFriendList::processSettings(bool load)
 
         // states
         Settings->setValue("hideUnconnected", !mProxyModel->showOfflineNodes());
-        Settings->setValue("showState", mShowState);
+        Settings->setValue("showState", mModel->getDisplayStatusString());
         Settings->setValue("showGroups", mModel->getDisplayGroups());
 
         Settings->setValue("showIP",isColumnVisible(RsFriendListModel::COLUMN_THREAD_IP));
@@ -1467,7 +1466,7 @@ void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)
 
 void NewFriendList::setShowState(bool show)
 {
-	mShowState = show;
+    mModel->setDisplayStatusString(show);
 }
 
 void NewFriendList::setShowGroups(bool show)

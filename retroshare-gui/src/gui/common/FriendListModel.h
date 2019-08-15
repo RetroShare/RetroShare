@@ -119,6 +119,9 @@ public:
 	void setDisplayGroups(bool b);
     bool getDisplayGroups() const { return mDisplayGroups; }
 
+	void setDisplayStatusString(bool b);
+    bool getDisplayStatusString() const { return mDisplayStatusString; }
+
     EntryType getType(const QModelIndex&) const;
 
     bool getGroupData  (const QModelIndex&,RsGroupInfo     &) const;
@@ -198,6 +201,7 @@ private:
     FilterType  mFilterType;
 
     bool mDisplayGroups ;
+    bool mDisplayStatusString ;
 
     // The 3 vectors below store thehierarchical information for groups, profiles and locations,
     // meaning which is the child/parent of which. The actual group/profile/node data are also stored in the

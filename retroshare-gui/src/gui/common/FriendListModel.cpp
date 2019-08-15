@@ -56,6 +56,12 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
     mFilterStrings.clear();
 }
 
+void RsFriendListModel::setDisplayStatusString(bool b)
+{
+    mDisplayStatusString = b;
+	postMods();
+}
+
 void RsFriendListModel::setDisplayGroups(bool b)
 {
     mDisplayGroups = b;
@@ -676,7 +682,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 										{
 											std::string css = rsMsgs->getCustomStateString(node->node_info.id);
 
-											if(!css.empty())
+											if(!css.empty() && mDisplayStatusString)
 												return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
 											else
 												return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
