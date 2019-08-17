@@ -105,8 +105,6 @@ public:
         EntryIndex parent() const;
 		EntryIndex child(int row,const std::vector<EntryIndex>& top_level) const;
         uint32_t   parentRow(uint32_t nb_groups) const;
-
-        static EntryIndex topLevelIndex(uint32_t row, uint32_t nb_groups) ;
     };
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}

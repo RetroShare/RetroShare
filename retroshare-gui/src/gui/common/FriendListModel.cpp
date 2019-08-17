@@ -144,25 +144,6 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
 	return false;
 }
 
-RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::topLevelIndex(uint32_t row,uint32_t nb_groups)
-{
-    EntryIndex e;
-
-    if(row < nb_groups)
-    {
-		e.type=ENTRY_TYPE_GROUP;
-		e.group_index=row;
-        return e;
-    }
-    else
-    {
-        e.type = ENTRY_TYPE_PROFILE;
-        e.profile_index = row - nb_groups;
-        e.group_index = 0xff;
-        return e;
-    }
-}
-
 RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
 {
     EntryIndex i(*this);
@@ -271,7 +252,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     {
 		quintptr ref ;
 
-		convertIndexToInternalId(EntryIndex::topLevelIndex(row,mGroups.size()),ref);
+		convertIndexToInternalId(mTopLevel[row],ref);
 		return createIndex(row,column,ref) ;
     }
 
@@ -607,10 +588,17 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
         return QVariant();
 }
 
+class AutoEndel
+{
+public:
+    ~AutoEndel() { std::cerr << std::endl;}
+};
+
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-#ifdef DEBUG_MODEL
-    std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
+#ifndef DEBUG_MODEL
+    std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
+    AutoEndel x;
 #endif
 
     switch(e.type)
@@ -635,8 +623,8 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
-#ifdef DEBUG_MODEL
-              	std::cerr <<   group->group_info.name.c_str() << std::endl;
+#ifndef DEBUG_MODEL
+              	std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
                 if(!group->child_profile_indices.empty())
@@ -657,6 +645,9 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
  	       if(!profile)
  	           return QVariant();
 
+#ifndef DEBUG_MODEL
+		   std::cerr << profile->profile_info.name.c_str() ;
+#endif
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
@@ -674,6 +665,9 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         if(!node)
             return QVariant();
 
+#ifndef DEBUG_MODEL
+		   std::cerr << node->node_info.location.c_str() ;
+#endif
 		switch(col)
 		{
 		case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
@@ -980,13 +974,36 @@ void RsFriendListModel::updateInternalData()
             mProfiles.push_back(hprof);
 
 			it2 = pgp_indices.find(hnode.node_info.gpg_id);
+
+			RsDbg() << "  Profile " << *it << " pgp id = " << hnode.node_info.gpg_id <<  " (" << hprof.profile_info.name << ")" << std::endl;
         }
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
 
-		RsDbg() << "  Peer " << *it << " pgp id = " << hnode.node_info.gpg_id << std::endl;
-
         mLocations.push_back(hnode);
     }
+
+    // also parse PGP friends that may not have a known location
+
+    std::list<RsPgpId> pgp_friends;
+    rsPeers->getGPGAcceptedList(pgp_friends);
+
+    for(auto it(pgp_friends.begin());it!=pgp_friends.end();++it)
+	{
+		auto it2 = pgp_indices.find(*it);
+
+		if(it2 != pgp_indices.end())
+			continue;
+
+		HierarchicalProfileInformation hprof ;
+		rsPeers->getGPGDetails(*it,hprof.profile_info);
+
+		RsDbg() << "  Profile (without nodes) " << *it << " (" << hprof.profile_info.name << ")" << std::endl;
+
+		pgp_indices[*it] = mProfiles.size();
+		mProfiles.push_back(hprof);
+	}
+
+    // finally, parse groups
 
     if(mDisplayGroups)
 	{
@@ -1024,6 +1041,8 @@ void RsFriendListModel::updateInternalData()
 
     // now  the top level list
 
+    RsDbg() << "Creating top level list" << std::endl;
+
     mTopLevel.clear();
     std::set<RsPgpId> already_in_a_group;
 
@@ -1031,6 +1050,8 @@ void RsFriendListModel::updateInternalData()
     {
         for(uint32_t i=0;i<mGroups.size();++i)
         {
+			RsDbg() << "  Group " << mGroups[i].group_info.name << std::endl;
+
             EntryIndex e;
             e.type = ENTRY_TYPE_GROUP;
             e.group_index = i;
@@ -1045,6 +1066,8 @@ void RsFriendListModel::updateInternalData()
 	for(uint32_t i=0;i<mProfiles.size();++i)
         if(already_in_a_group.find(mProfiles[i].profile_info.gpg_id)==already_in_a_group.end())
 		{
+			RsDbg() << "  Profile " << mProfiles[i].profile_info.name << std::endl;
+
 			EntryIndex e;
 			e.type = ENTRY_TYPE_PROFILE;
 			e.profile_index = i;
