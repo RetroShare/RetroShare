@@ -153,6 +153,10 @@ private:
     const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
 	bool getPeerOnlineStatus(const EntryIndex& e) const;
+	std::map<RsPgpId,uint32_t>::const_iterator checkProfileIndex(const RsPgpId& pgp_id,
+                                                                 std::map<RsPgpId,uint32_t>& pgp_indices,
+                                                                 std::vector<HierarchicalProfileInformation>& mProfiles,
+                                                                 bool create);
 
     QVariant sizeHintRole  (const EntryIndex& e, int col) const;
 	QVariant displayRole   (const EntryIndex& e, int col) const;

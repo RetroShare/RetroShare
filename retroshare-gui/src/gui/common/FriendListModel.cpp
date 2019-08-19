@@ -931,6 +931,30 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
     return e.type;
 }
 
+std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::checkProfileIndex(const RsPgpId& pgp_id,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles,bool create)
+{
+	auto it2 = pgp_indices.find(pgp_id);
+
+	if(it2 == pgp_indices.end())
+	{
+        if(!create)
+        {
+            std::cerr << "(EE) trying to display profile " << pgp_id <<" that is actually not a friend." << std::endl;
+            return it2;
+        }
+		HierarchicalProfileInformation hprof ;
+		rsPeers->getGPGDetails(pgp_id,hprof.profile_info);
+
+		pgp_indices[pgp_id] = mProfiles.size();
+		mProfiles.push_back(hprof);
+
+		it2 = pgp_indices.find(pgp_id);
+
+		RsDbg() << "  Creating profile pgp id = " << pgp_id <<  " (" << hprof.profile_info.name << ")" << std::endl;
+	}
+	return it2;
+}
+
 void RsFriendListModel::updateInternalData()
 {
     preMods();
@@ -945,11 +969,17 @@ void RsFriendListModel::updateInternalData()
     mTopLevel.clear();
 
     // create a map of profiles and groups
-    std::map<RsPgpId,      uint32_t> pgp_indices;
+    std::map<RsPgpId,uint32_t> pgp_indices;
 
-    // we start from the base and fill all locations in an array
+    // parse PGP friends that may or may not have a known location. Create the associated data.
 
-    // peer ids
+    std::list<RsPgpId> pgp_friends;
+    rsPeers->getGPGAcceptedList(pgp_friends);
+
+    for(auto it(pgp_friends.begin());it!=pgp_friends.end();++it)
+    	checkProfileIndex(*it,pgp_indices,mProfiles,true);
+
+     // Now parse peer ids and look for the associated PGP id. If not found, raise an error.
 
     RsDbg() << "Updating Nodes information: " << std::endl;
 
@@ -963,45 +993,15 @@ void RsFriendListModel::updateInternalData()
         HierarchicalNodeInformation hnode ;
         rsPeers->getPeerDetails(*it,hnode.node_info);
 
-        auto it2 = pgp_indices.find(hnode.node_info.gpg_id);
+        auto it2 = checkProfileIndex(hnode.node_info.gpg_id,pgp_indices,mProfiles,false);
 
         if(it2 == pgp_indices.end())
-        {
-            HierarchicalProfileInformation hprof ;
-            rsPeers->getGPGDetails(hnode.node_info.gpg_id,hprof.profile_info);
+            continue;
 
-            pgp_indices[hnode.node_info.gpg_id] = mProfiles.size();
-            mProfiles.push_back(hprof);
-
-			it2 = pgp_indices.find(hnode.node_info.gpg_id);
-
-			RsDbg() << "  Profile " << *it << " pgp id = " << hnode.node_info.gpg_id <<  " (" << hprof.profile_info.name << ")" << std::endl;
-        }
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
-
         mLocations.push_back(hnode);
     }
 
-    // also parse PGP friends that may not have a known location
-
-    std::list<RsPgpId> pgp_friends;
-    rsPeers->getGPGAcceptedList(pgp_friends);
-
-    for(auto it(pgp_friends.begin());it!=pgp_friends.end();++it)
-	{
-		auto it2 = pgp_indices.find(*it);
-
-		if(it2 != pgp_indices.end())
-			continue;
-
-		HierarchicalProfileInformation hprof ;
-		rsPeers->getGPGDetails(*it,hprof.profile_info);
-
-		RsDbg() << "  Profile (without nodes) " << *it << " (" << hprof.profile_info.name << ")" << std::endl;
-
-		pgp_indices[*it] = mProfiles.size();
-		mProfiles.push_back(hprof);
-	}
 
     // finally, parse groups
 
@@ -1027,10 +1027,10 @@ void RsFriendListModel::updateInternalData()
 			{
 				// Then for each peer in this group, make sure that the peer is already known, and if not create it
 
-				auto it3 = pgp_indices.find(*it2);
+				auto it3 = checkProfileIndex(*it2,pgp_indices,mProfiles,false);
 
 				if(it3 == pgp_indices.end())// not found
-					RsErr() << "Inconsistency error!" << std::endl;
+                    continue;
 
 				hgroup.child_profile_indices.push_back(it3->second);
 			}
