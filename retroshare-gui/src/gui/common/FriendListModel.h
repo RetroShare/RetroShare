@@ -149,7 +149,7 @@ public:
 
 private:
     const HierarchicalGroupInformation   *getGroupInfo  (const EntryIndex&) const;
-    const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&) const;
+    const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&)const;
     const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
 	bool getPeerOnlineStatus(const EntryIndex& e) const;
@@ -162,7 +162,6 @@ private:
 	QVariant displayRole   (const EntryIndex& e, int col) const;
 	QVariant decorationRole(const EntryIndex& e, int col) const;
 	QVariant toolTipRole   (const EntryIndex& e, int col) const;
-	QVariant userRole      (const EntryIndex& e, int col) const;
 	QVariant statusRole    (const EntryIndex& e, int col) const;
 	QVariant sortRole      (const EntryIndex& e, int col) const;
 	QVariant fontRole      (const EntryIndex& e, int col) const;
@@ -186,6 +185,7 @@ signals:
 
 private:
 	bool passesFilter(const EntryIndex &e, int column) const;
+	void checkInternalData();
 
 	void preMods() ;
 	void postMods() ;
@@ -204,6 +204,7 @@ private:
 
     bool mDisplayGroups ;
     bool mDisplayStatusString ;
+    rstime_t mLastInternalDataUpdate;
 
     // The 3 vectors below store thehierarchical information for groups, profiles and locations,
     // meaning which is the child/parent of which. The actual group/profile/node data are also stored in the

@@ -178,7 +178,7 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
     ui->filterLineEdit->addFilter(QIcon(), headerText, RsFriendListModel::COLUMN_THREAD_NAME, QString("%1 %2").arg(tr("Search"), headerText));
     ui->filterLineEdit->addFilter(QIcon(), tr("ID"), RsFriendListModel::COLUMN_THREAD_ID, tr("Search ID"));
 
-    mActionSortByState = new QAction(tr("Display online friends on top"), this);
+    mActionSortByState = new QAction(tr("Online friends on top"), this);
     mActionSortByState->setCheckable(true);
 
     //setting default filter by column as subject
@@ -191,10 +191,7 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
-
-    /* Initialize tree */
-    // ui->peerTreeWidget->enableColumnCustomize(true);
-    // ui->peerTreeWidget->setColumnCustomizable(COLUMN_NAME, false);
+	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
 
     QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
 
@@ -216,7 +213,6 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
 
-	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
 	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
@@ -227,7 +223,6 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
     connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-
     connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
     connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
 
@@ -317,9 +312,8 @@ void NewFriendList::headerContextMenuRequested(QPoint p)
 
 void NewFriendList::addToolButton(QToolButton *toolButton)
 {
-    if (!toolButton) {
+    if (!toolButton)
         return;
-    }
 
     /* Initialize button */
     toolButton->setAutoRaise(true);
@@ -334,9 +328,8 @@ void NewFriendList::processSettings(bool load)
 {
     // state of peer tree
 
-    if (load) {
-        // load settings
-
+    if (load) // load settings
+    {
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
@@ -366,7 +359,9 @@ void NewFriendList::processSettings(bool load)
                 std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
-    } else {
+    }
+    else
+    {
         // save settings
 
         // states

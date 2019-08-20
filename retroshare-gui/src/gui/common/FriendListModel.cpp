@@ -46,6 +46,7 @@
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 const QString RsFriendListModel::FilterString("filtered");
+const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; // re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 
 static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
 
@@ -694,8 +695,19 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 	}
 }
 
+// This function makes sure that the internal data gets updated. They are situations where the otification system cannot
+// send the information about changes, such as when the computer is put on sleep.
+
+void RsFriendListModel::checkInternalData()
+{
+    if(mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < time(NULL))
+        updateInternalData();
+}
+
 const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
 {
+    const_cast<RsFriendListModel*>(this)->checkInternalData();
+
 	if(e.group_index >= mGroups.size())
         return NULL ;
     else
@@ -704,6 +716,8 @@ const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGro
 
 const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getProfileInfo(const EntryIndex& e) const
 {
+	const_cast<RsFriendListModel*>(this)->checkInternalData();
+
     // First look into the relevant group, then for the correct profile in this group.
 
     if(e.type != ENTRY_TYPE_PROFILE)
@@ -724,6 +738,8 @@ const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getP
 
 const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
 {
+	const_cast<RsFriendListModel*>(this)->checkInternalData();
+
 	if(e.type != ENTRY_TYPE_NODE)
 		return NULL ;
 
@@ -769,19 +785,6 @@ bool RsFriendListModel::getPeerOnlineStatus(const EntryIndex& e) const
 {
     const HierarchicalNodeInformation *noded = getNodeInfo(e) ;
     return (noded && (noded->node_info.state & RS_PEER_STATE_CONNECTED));
-}
-
-QVariant RsFriendListModel::userRole(const EntryIndex& fmpe,int col) const
-{
-//	switch(col)
-//    {
-//     	case COLUMN_THREAD_AUTHOR:   return QVariant(QString::fromStdString(fmpe.srcId.toStdString()));
-//     	case COLUMN_THREAD_MSGID:    return QVariant(QString::fromStdString(fmpe.msgId));
-//    default:
-//        return QVariant();
-//    }
-
-    return QVariant();
 }
 
 QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) const
@@ -1084,6 +1087,8 @@ void RsFriendListModel::updateInternalData()
     endInsertRows();
 
     postMods();
+
+    mLastInternalDataUpdate = time(NULL);
 }
 
 
