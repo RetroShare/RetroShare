@@ -110,7 +110,6 @@ private:
 	// Settings for peer list display
 	bool mShowState;
 
-	bool groupsHasChanged;
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;
 
@@ -123,11 +122,8 @@ private:
 
 	FriendListSortFilterProxyModel *mProxyModel ;
 private slots:
-	void groupsChanged();
 	void peerTreeWidgetCustomPopupMenu();
-
 	void pastePerson();
-
 	void connectNode();
 	void configureNode();
 	void configureProfile();

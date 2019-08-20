@@ -993,7 +993,9 @@ void RsFriendListModel::updateInternalData()
         HierarchicalNodeInformation hnode ;
         rsPeers->getPeerDetails(*it,hnode.node_info);
 
-        auto it2 = checkProfileIndex(hnode.node_info.gpg_id,pgp_indices,mProfiles,false);
+        // If the Peer ID belong to our own profile, we add our own profile to the list. Otherwise we do not display it in the friend list.
+
+        auto it2 = checkProfileIndex(hnode.node_info.gpg_id,pgp_indices,mProfiles,hnode.node_info.gpg_id == rsPeers->getGPGOwnId());
 
         if(it2 == pgp_indices.end())
             continue;

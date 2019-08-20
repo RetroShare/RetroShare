@@ -460,9 +460,9 @@ public:
 	virtual RsPgpId getGPGId(const RsPeerId& sslId) = 0;
 	virtual bool isKeySupported(const RsPgpId& gpg_ids) = 0;
 	virtual bool getGPGAcceptedList(std::list<RsPgpId> &gpg_ids) = 0;
-	virtual bool getGPGSignedList(std::list<RsPgpId> &gpg_ids) = 0;//friends that we accpet to connect with but we don't want to sign their gpg key
-	virtual bool getGPGValidList(std::list<RsPgpId> &gpg_ids) = 0;
-	virtual bool getGPGAllList(std::list<RsPgpId> &gpg_ids) = 0;
+	virtual bool getGPGSignedList(std::list<RsPgpId> &gpg_ids) = 0;// keys signed by our own PGP key.
+	virtual bool getGPGValidList(std::list<RsPgpId> &gpg_ids) = 0;// all PGP keys without filtering
+	virtual bool getGPGAllList(std::list<RsPgpId> &gpg_ids) = 0;// all PGP keys as well
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 

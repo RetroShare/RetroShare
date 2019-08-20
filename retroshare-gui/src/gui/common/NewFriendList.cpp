@@ -154,11 +154,7 @@ private:
     bool m_showOfflineNodes;
 };
 
-NewFriendList::NewFriendList(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::NewFriendList()),
-    //    mCompareRole(new RSTreeWidgetItemCompareRole),
-    groupsHasChanged(false)
+NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewFriendList())
 {
 	ui->setupUi(this);
 
@@ -220,16 +216,13 @@ NewFriendList::NewFriendList(QWidget *parent) :
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
 
-//     QTimer *timer = new QTimer;
-//     QObject::connect(timer,SIGNAL(timeout()),mModel,SLOT(debug_dump()));
-//     timer->start(2000);
-
 	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
 	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
+
+	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), mModel, SLOT(updateInternalData()));
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
@@ -626,11 +619,6 @@ void NewFriendList::createNewGroup()
 {
     CreateGroup createGrpDialog (RsNodeGroupId(), this);
     createGrpDialog.exec();
-}
-
-void NewFriendList::groupsChanged()
-{
-    groupsHasChanged = true;
 }
 
 static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
