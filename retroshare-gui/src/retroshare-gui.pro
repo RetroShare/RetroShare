@@ -523,7 +523,6 @@ HEADERS +=  rshare.h \
             gui/common/GroupTreeWidget.h \
             gui/common/RSTreeView.h \
             gui/common/AvatarWidget.h \
-            gui/common/FriendList.h \
             gui/common/FriendListModel.h \
             gui/common/NewFriendList.h \
             gui/common/FriendSelectionWidget.h \
@@ -691,7 +690,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/groups/CreateGroup.ui \
             gui/common/GroupTreeWidget.ui \
             gui/common/AvatarWidget.ui \
-            gui/common/FriendList.ui \
             gui/common/NewFriendList.ui \
             gui/common/FriendSelectionWidget.ui \
             gui/common/HashBox.ui \
@@ -846,7 +844,6 @@ SOURCES +=  main.cpp \
             gui/common/GroupTreeWidget.cpp \
             gui/common/RSTreeView.cpp \
             gui/common/AvatarWidget.cpp \
-            gui/common/FriendList.cpp \
             gui/common/FriendListModel.cpp \
             gui/common/NewFriendList.cpp \
             gui/common/FriendSelectionWidget.cpp \
