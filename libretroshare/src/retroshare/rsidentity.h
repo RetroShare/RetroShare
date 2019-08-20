@@ -477,6 +477,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
 	/**
 	 * @brief Set/unset identity as contact
+	 * @jsonapi{development}
 	 * @param[in] id Id of the identity
 	 * @param[in] isContact true to set, false to unset
 	 * @return false on error, true otherwise
