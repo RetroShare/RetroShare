@@ -363,7 +363,6 @@ HEADERS +=  rshare.h \
             gui/AboutDialog.h \
             gui/AboutWidget.h \
             gui/NetworkView.h \
-            gui/MessengerWindow.h \
             gui/FriendsDialog.h \
             gui/ServicePermissionDialog.h \
             gui/RemoteDirModel.h \
@@ -622,7 +621,6 @@ FORMS +=    gui/StartDialog.ui \
             gui/FileTransfer/BannedFilesDialog.ui \
             gui/MainWindow.ui \
             gui/NetworkView.ui \
-            gui/MessengerWindow.ui \
             gui/FriendsDialog.ui \
             gui/ShareManager.ui \
 #            gui/ShareDialog.ui \
@@ -739,7 +737,6 @@ SOURCES +=  main.cpp \
             gui/mainpagestack.cpp \
             gui/MainWindow.cpp \
             gui/NetworkView.cpp \
-            gui/MessengerWindow.cpp \
             gui/FriendsDialog.cpp \
             gui/ServicePermissionDialog.cpp \
             gui/RemoteDirModel.cpp \
@@ -1004,6 +1001,17 @@ unfinishedtranslations {
             lang/retroshare_sr.ts \
             lang/retroshare_zh_TW.ts
 
+}
+
+messenger {
+     SOURCES +=       gui/MessengerWindow.cpp \
+	 				  gui/common/FriendList.cpp
+     HEADERS +=       gui/MessengerWindow.h \
+	 				  gui/common/FriendList.h 
+     FORMS   +=       gui/MessengerWindow.ui \
+	 				  gui/common/FriendList.ui
+
+	 DEFiNES += MESSENGER_WINDOW
 }
 
 # Shifted Qt4.4 dependancies to here.

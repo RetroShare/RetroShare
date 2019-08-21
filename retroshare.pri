@@ -140,6 +140,10 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 CONFIG *= direct_chat
 no_direct_chat:CONFIG -= direct_chat
 
+# To enable messemger window which has been deprecated since RetroShare 0.6.6 append
+# the following assignation to qmake command line "CONFIG+=messenger"
+# CONFIG *= messenger
+
 # To disable bitdht append the following assignation to qmake command line
 # "CONFIG+=no_bitdht"
 CONFIG *= bitdht
