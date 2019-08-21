@@ -46,7 +46,8 @@
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 const QString RsFriendListModel::FilterString("filtered");
-const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; // re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
+const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
+const uint32_t MAX_NODE_UPDATE_DELAY = 1 ; 				// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 
 static const uint32_t NODE_DETAILS_UPDATE_DELAY = 5;	// update each node every 5 secs.
 
@@ -55,6 +56,8 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
 {
     mDisplayGroups = true;
     mFilterStrings.clear();
+    mLastNodeUpdate=0;
+    mLastInternalDataUpdate=0;
 }
 
 void RsFriendListModel::setDisplayStatusString(bool b)
@@ -578,7 +581,7 @@ QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 
     bool b = onlineRole(e,col).toBool();
 
-    if(b && e.type == ENTRY_TYPE_NODE || e.type == ENTRY_TYPE_PROFILE)
+    if(b)
     {
         QFont font ;
 		font.setBold(b);
@@ -698,16 +701,32 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 // This function makes sure that the internal data gets updated. They are situations where the otification system cannot
 // send the information about changes, such as when the computer is put on sleep.
 
-void RsFriendListModel::checkInternalData()
+void RsFriendListModel::checkInternalData(bool force)
 {
-    if(mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < time(NULL))
-        updateInternalData();
+	rstime_t now = time(NULL);
+
+	if(mLastInternalDataUpdate + MAX_INTERNAL_DATA_UPDATE_DELAY < now || force)
+		updateInternalData();
+
+	if(mLastNodeUpdate + MAX_NODE_UPDATE_DELAY < now)
+	{
+		for(uint32_t i=0;i<mLocations.size();++i)
+			if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
+			{
+#ifdef DEBUG_MODEL
+				std::cerr << "Updating ID " << node.node_info.id << std::endl;
+#endif
+				RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
+				rsPeers->getPeerDetails(id,mLocations[i].node_info);
+				mLocations[i].last_update_ts = now;
+			}
+
+		mLastNodeUpdate = now;
+	}
 }
 
 const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGroupInfo(const EntryIndex& e) const
 {
-    const_cast<RsFriendListModel*>(this)->checkInternalData();
-
 	if(e.group_index >= mGroups.size())
         return NULL ;
     else
@@ -716,8 +735,6 @@ const RsFriendListModel::HierarchicalGroupInformation *RsFriendListModel::getGro
 
 const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getProfileInfo(const EntryIndex& e) const
 {
-	const_cast<RsFriendListModel*>(this)->checkInternalData();
-
     // First look into the relevant group, then for the correct profile in this group.
 
     if(e.type != ENTRY_TYPE_PROFILE)
@@ -738,8 +755,6 @@ const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getP
 
 const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNodeInfo(const EntryIndex& e) const
 {
-	const_cast<RsFriendListModel*>(this)->checkInternalData();
-
 	if(e.type != ENTRY_TYPE_NODE)
 		return NULL ;
 
@@ -767,16 +782,6 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNode
 
     time_t now = time(NULL);
     HierarchicalNodeInformation& node(mLocations[mProfiles[pindex].child_node_indices[e.node_index]]);
-
-    if(node.last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
-    {
-#ifdef DEBUG_MODEL
-        std::cerr << "Updating ID " << node.node_info.id << std::endl;
-#endif
-        RsPeerId id(node.node_info.id);				// this avoids zeroing the id field when writing the node data
-        rsPeers->getPeerDetails(id,node.node_info);
-        node.last_update_ts = now;
-    }
 
 	return &node;
 }

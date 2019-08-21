@@ -217,6 +217,8 @@ void p3Notify::notifyChatLobbyEvent(uint64_t lobby_id, uint32_t event_type,const
 void p3Notify::notifyListPreChange(int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListPreChange(list,type) ; }
 void p3Notify::notifyListChange   (int list, int type) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyListChange   (list,type) ; }
 
+void p3Notify::notifyPeerConnected (const std::string& peer_id)                                                                 { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerConnected(peer_id); }
+void p3Notify::notifyPeerDisconnected (const std::string& peer_id)                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerDisconnected(peer_id); }
 void p3Notify::notifyErrorMsg      (int list, int sev, std::string msg)                                                         { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyErrorMsg(list,sev,msg) ; }
 void p3Notify::notifyChatMessage   (const ChatMessage &msg)                                                                     { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatMessage(msg) ; }
 void p3Notify::notifyChatStatus    (const ChatId&  chat_id, const std::string& status_string)                                   { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyChatStatus(chat_id,status_string) ; }

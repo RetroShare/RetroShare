@@ -26,6 +26,7 @@
 #include <QTreeView>
 
 #include "FriendListModel.h"
+#include "RsAutoUpdatePage.h"
 #include "retroshare/rsstatus.h"
 
 namespace Ui {
@@ -37,7 +38,7 @@ class QTreeWidgetItem;
 class QToolButton;
 class FriendListSortFilterProxyModel;
 
-class NewFriendList: public QWidget
+class NewFriendList: public RsAutoUpdatePage
 {
 	Q_OBJECT
 
@@ -65,6 +66,8 @@ public:
 	std::string getSelectedGroupId() const;
 	void sortByColumn(int column, Qt::SortOrder sortOrder);
 
+    void updateDisplay() override;
+
 	QColor textColorGroup()          const { return mModel->mTextColorGroup; }
 	QColor textColorStatusOffline()  const { return mModel->mTextColorStatus[RS_STATUS_OFFLINE ]; }
 	QColor textColorStatusAway()     const { return mModel->mTextColorStatus[RS_STATUS_AWAY    ]; }
@@ -82,6 +85,7 @@ public:
 public slots:
 	void filterItems(const QString &text);
 	void toggleSortByState(bool sort);
+	void forceUpdateDisplay();
 
 	void toggleColumnVisible();
 	void setShowGroups(bool show);

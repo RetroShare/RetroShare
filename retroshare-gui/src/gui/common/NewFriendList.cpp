@@ -32,7 +32,6 @@
 
 #include "GroupDefs.h"
 #include "gui/chat/ChatDialog.h"
-//#include "gui/chat/CreateLobbyDialog.h"
 #include "gui/common/AvatarDefs.h"
 
 #include "gui/connect/ConfCertDialog.h"
@@ -154,7 +153,7 @@ private:
     bool m_showOfflineNodes;
 };
 
-NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewFriendList())
+NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(1000,parent), ui(new Ui::NewFriendList())
 {
 	ui->setupUi(this);
 
@@ -208,7 +207,7 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
     /* Initialize display menu */
     createDisplayMenu();
 
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
 
 	QHeaderView *h = ui->peerTreeWidget->header();
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -217,8 +216,10 @@ NewFriendList::NewFriendList(QWidget *parent) : QWidget(parent), ui(new Ui::NewF
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
 
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), mModel, SLOT(updateInternalData()));
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), mModel, SLOT(updateInternalData()));
+	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(forceUpdateDisplay()));
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(forceUpdateDisplay()));
+	connect(NotifyQt::getInstance(), SIGNAL(peerConnected(const QString&)), this, SLOT(forceUpdateDisplay()));
+	connect(NotifyQt::getInstance(), SIGNAL(peerDisconnected(const QString&)), this, SLOT(forceUpdateDisplay()));
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
@@ -967,7 +968,16 @@ void NewFriendList::addToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
+}
+void NewFriendList::forceUpdateDisplay()
+{
+    mModel->checkInternalData(true);
+}
+
+void NewFriendList::updateDisplay()
+{
+    mModel->checkInternalData(false);
 }
 
 void NewFriendList::moveToGroup()
@@ -991,7 +1001,7 @@ void NewFriendList::moveToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
 }
 
 void NewFriendList::removeFromGroup()
@@ -1009,7 +1019,7 @@ void NewFriendList::removeFromGroup()
 
     // remove from (all) group(s)
     rsPeers->assignPeerToGroup(groupId, gpgId, false);
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
 }
 
 void NewFriendList::editGroup()
@@ -1026,7 +1036,7 @@ void NewFriendList::editGroup()
         CreateGroup editGrpDialog(groupId, this);
         editGrpDialog.exec();
     }
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
 }
 
 void NewFriendList::removeGroup()
@@ -1037,7 +1047,7 @@ void NewFriendList::removeGroup()
         return;
 
 	rsPeers->removeGroup(pinfo.id);
-    mModel->updateInternalData();
+    mModel->checkInternalData(true);
 }
 
 void NewFriendList::exportFriendlistClicked()

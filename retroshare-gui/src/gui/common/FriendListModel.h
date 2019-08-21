@@ -152,6 +152,7 @@ private:
     const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&)const;
     const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
+	void checkNode(HierarchicalNodeInformation& node);
 	bool getPeerOnlineStatus(const EntryIndex& e) const;
 	std::map<RsPgpId,uint32_t>::const_iterator checkProfileIndex(const RsPgpId& pgp_id,
                                                                  std::map<RsPgpId,uint32_t>& pgp_indices,
@@ -175,7 +176,7 @@ private:
      */
 
 public slots:
-	void updateInternalData();
+	void checkInternalData(bool force);
     void debug_dump() const;
 
 signals:
@@ -184,8 +185,8 @@ signals:
     void dataAboutToLoad();
 
 private:
+	void updateInternalData();
 	bool passesFilter(const EntryIndex &e, int column) const;
-	void checkInternalData();
 
 	void preMods() ;
 	void postMods() ;
@@ -205,6 +206,7 @@ private:
     bool mDisplayGroups ;
     bool mDisplayStatusString ;
     rstime_t mLastInternalDataUpdate;
+    rstime_t mLastNodeUpdate;;
 
     // The 3 vectors below store thehierarchical information for groups, profiles and locations,
     // meaning which is the child/parent of which. The actual group/profile/node data are also stored in the
