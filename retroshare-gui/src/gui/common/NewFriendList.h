@@ -105,6 +105,13 @@ private:
 	RsFriendListModel *mModel;
 	QAction *mActionSortByState;
 
+	void recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel);
+	void recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel);
+	void saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes);
+	void restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes, const std::set<QString>& selected_indexes);
+
+    void checkInternalData(bool force);
+
 	QModelIndex getCurrentSourceIndex() const;
 
 	bool getCurrentNode(RsFriendListModel::RsNodeDetails& prof) const;

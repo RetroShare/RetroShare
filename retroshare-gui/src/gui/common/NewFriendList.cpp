@@ -325,6 +325,78 @@ void NewFriendList::addToolButton(QToolButton *toolButton)
     ui->titleBarFrame->layout()->addWidget(toolButton);
 }
 
+void NewFriendList::saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes)
+{
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Saving expended paths and selection..." << std::endl;
+#endif
+
+    for(int row = 0; row < mProxyModel->rowCount(); ++row)
+        recursSaveExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+}
+
+void NewFriendList::restoreExpandedPathsAndSelection(const std::set<QString>& expanded_indexes, const std::set<QString>& selected_indexes)
+{
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "Restoring expended paths and selection..." << std::endl;
+#endif
+
+    ui->peerTreeWidget->blockSignals(true) ;
+
+    for(int row = 0; row < mProxyModel->rowCount(); ++row)
+        recursRestoreExpandedItems(mProxyModel->index(row,0),QString(),expanded_indexes,selected_indexes);
+
+    ui->peerTreeWidget->blockSignals(false) ;
+}
+
+void NewFriendList::recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel)
+{
+    QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
+
+    if(ui->peerTreeWidget->selectionModel()->selection().contains(index))
+        sel.insert(local_path) ;
+
+    if(ui->peerTreeWidget->isExpanded(index))
+    {
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "Index " << local_path.toStdString() << " is expanded." << std::endl;
+#endif
+        if(index.isValid())
+            exp.insert(local_path) ;
+
+        for(int row=0;row<mProxyModel->rowCount(index);++row)
+            recursSaveExpandedItems(index.child(row,0),local_path,exp,sel) ;
+    }
+#ifdef DEBUG_NEW_FRIEND_LIST
+    else
+        std::cerr << "Index " << local_path.toStdString() << " is not expanded." << std::endl;
+#endif
+}
+
+void NewFriendList::recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel)
+{
+    QString local_path = parent_path + index.sibling(index.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole).toString() + " ";
+#ifdef DEBUG_NEW_FRIEND_LIST
+    std::cerr << "at index " << index.row() << ". data[1]=" << local_path.toStdString() << std::endl;
+#endif
+
+    if(sel.find(local_path) != sel.end())
+        ui->peerTreeWidget->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+
+    if(exp.find(local_path) != exp.end())
+    {
+#ifdef DEBUG_NEW_FRIEND_LIST
+        std::cerr << "re expanding index " << local_path.toStdString() << std::endl;
+#endif
+
+        ui->peerTreeWidget->setExpanded(index,true) ;
+
+        for(int row=0;row<mProxyModel->rowCount(index);++row)
+            recursRestoreExpandedItems(index.child(row,0),local_path,exp,sel) ;
+    }
+}
+
+
 void NewFriendList::processSettings(bool load)
 {
     // state of peer tree
@@ -968,16 +1040,16 @@ void NewFriendList::addToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
-    mModel->checkInternalData(true);
+    checkInternalData(true);
 }
 void NewFriendList::forceUpdateDisplay()
 {
-    mModel->checkInternalData(true);
+    checkInternalData(true);
 }
 
 void NewFriendList::updateDisplay()
 {
-    mModel->checkInternalData(false);
+    checkInternalData(false);
 }
 
 void NewFriendList::moveToGroup()
@@ -1001,7 +1073,7 @@ void NewFriendList::moveToGroup()
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
-    mModel->checkInternalData(true);
+    checkInternalData(true);
 }
 
 void NewFriendList::removeFromGroup()
@@ -1019,7 +1091,7 @@ void NewFriendList::removeFromGroup()
 
     // remove from (all) group(s)
     rsPeers->assignPeerToGroup(groupId, gpgId, false);
-    mModel->checkInternalData(true);
+    checkInternalData(true);
 }
 
 void NewFriendList::editGroup()
@@ -1036,7 +1108,7 @@ void NewFriendList::editGroup()
         CreateGroup editGrpDialog(groupId, this);
         editGrpDialog.exec();
     }
-    mModel->checkInternalData(true);
+    checkInternalData(true);
 }
 
 void NewFriendList::removeGroup()
@@ -1047,7 +1119,19 @@ void NewFriendList::removeGroup()
         return;
 
 	rsPeers->removeGroup(pinfo.id);
-    mModel->checkInternalData(true);
+    checkInternalData(true);
+}
+
+void NewFriendList::checkInternalData(bool force)
+{
+    std::set<QString> expanded_indexes;
+	std::set<QString> selected_indexes;
+
+	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+
+    mModel->checkInternalData(force);
+
+	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 }
 
 void NewFriendList::exportFriendlistClicked()

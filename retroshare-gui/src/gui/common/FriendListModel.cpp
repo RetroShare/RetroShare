@@ -600,7 +600,7 @@ public:
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-#ifndef DEBUG_MODEL
+#ifdef DEBUG_MODEL
     std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
     AutoEndel x;
 #endif
@@ -627,7 +627,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
-#ifndef DEBUG_MODEL
+#ifdef DEBUG_MODEL
               	std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
@@ -636,6 +636,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                 else
 					return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
+			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
 			default:
 				return QVariant();
 			}
@@ -649,7 +650,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
  	       if(!profile)
  	           return QVariant();
 
-#ifndef DEBUG_MODEL
+#ifdef DEBUG_MODEL
 		   std::cerr << profile->profile_info.name.c_str() ;
 #endif
 			switch(col)
