@@ -959,7 +959,9 @@ std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::checkProfileIndex(
 
 		it2 = pgp_indices.find(pgp_id);
 
+#ifdef DEBUG_MODEL
 		RsDbg() << "  Creating profile pgp id = " << pgp_id <<  " (" << hprof.profile_info.name << ")" << std::endl;
+#endif
 	}
 	return it2;
 }
@@ -989,9 +991,9 @@ void RsFriendListModel::updateInternalData()
     	checkProfileIndex(*it,pgp_indices,mProfiles,true);
 
      // Now parse peer ids and look for the associated PGP id. If not found, raise an error.
-
+#ifdef DEBUG_MODEL
     RsDbg() << "Updating Nodes information: " << std::endl;
-
+#endif
     std::list<RsPeerId> peer_ids ;
     rsPeers->getFriendList(peer_ids);
 
@@ -1023,7 +1025,9 @@ void RsFriendListModel::updateInternalData()
 		std::list<RsGroupInfo> groupInfoList;
 		rsPeers->getGroupInfoList(groupInfoList) ;
 
+#ifdef DEBUG_MODEL
 		RsDbg() << "Updating Groups information: " << std::endl;
+#endif
 
 		for(auto it(groupInfoList.begin());it!=groupInfoList.end();++it)
 		{
@@ -1032,7 +1036,9 @@ void RsFriendListModel::updateInternalData()
 			HierarchicalGroupInformation hgroup;
 			hgroup.group_info = *it;
 
+#ifdef DEBUG_MODEL
 			RsDbg() << "  Group \"" << hgroup.group_info.name << "\"" << std::endl;
+#endif
 
 			for(auto it2((*it).peerIds.begin());it2!=(*it).peerIds.end();++it2)
 			{
@@ -1052,7 +1058,9 @@ void RsFriendListModel::updateInternalData()
 
     // now  the top level list
 
+#ifdef DEBUG_MODEL
     RsDbg() << "Creating top level list" << std::endl;
+#endif
 
     mTopLevel.clear();
     std::set<RsPgpId> already_in_a_group;
@@ -1061,7 +1069,9 @@ void RsFriendListModel::updateInternalData()
     {
         for(uint32_t i=0;i<mGroups.size();++i)
         {
+#ifdef DEBUG_MODEL
 			RsDbg() << "  Group " << mGroups[i].group_info.name << std::endl;
+#endif
 
             EntryIndex e;
             e.type = ENTRY_TYPE_GROUP;
@@ -1077,7 +1087,9 @@ void RsFriendListModel::updateInternalData()
 	for(uint32_t i=0;i<mProfiles.size();++i)
         if(already_in_a_group.find(mProfiles[i].profile_info.gpg_id)==already_in_a_group.end())
 		{
+#ifdef DEBUG_MODEL
 			RsDbg() << "  Profile " << mProfiles[i].profile_info.name << std::endl;
+#endif
 
 			EntryIndex e;
 			e.type = ENTRY_TYPE_PROFILE;
