@@ -46,6 +46,8 @@
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
+static const uint16_t UNDEFINED_INDEX_VALUE = (sizeof(uintptr_t)==4)?0xff:0xffff;
+
 const QString RsFriendListModel::FilterString("filtered");
 const uint32_t MAX_INTERNAL_DATA_UPDATE_DELAY = 300 ; 	// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
 const uint32_t MAX_NODE_UPDATE_DELAY = 1 ; 				// re-update the internal data every 5 mins. Should properly cover sleep/wake-up changes.
@@ -61,6 +63,11 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
     mLastInternalDataUpdate=0;
 }
 
+RsFriendListModel::EntryIndex::EntryIndex()
+   : type(ENTRY_TYPE_UNKNOWN),group_index(UNDEFINED_INDEX_VALUE),profile_index(UNDEFINED_INDEX_VALUE),node_index(UNDEFINED_INDEX_VALUE)
+{
+}
+
 // The index encodes the whole hierarchy of parents. This allows to very efficiently compute indices of the parent of an index.
 //
 // The format is the following:
@@ -72,21 +79,21 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
 //        |  +---------- group index
 //        +------------- type
 //
-// Only valid indexes a 0x01->0xff. 0x00 means "no index"
+// Only valid indexes a 0x01->UNDEFINED_INDEX_VALUE. 0x00 means "no index"
 // We propose 2 implementations, one for 32bits, that only allows up to 256 friends/groups/nodes, and one for 64bits which allows 16bits values.
 
 template<> bool RsFriendListModel::convertIndexToInternalId<4>(const EntryIndex& e,quintptr& id)
 {
 	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    id = (((uint32_t)e.type) << 24) + ((uint32_t)e.group_index << 16) + (uint32_t)(e.profile_index << 8) + (uint32_t)e.node_index;
+    id = (((uint32_t)e.type) << 24) + ((uint32_t)e.group_index << 16) + ((uint32_t)e.profile_index << 8) + (uint32_t)e.node_index;
 	return true;
 }
 template<> bool RsFriendListModel::convertIndexToInternalId<8>(const EntryIndex& e,quintptr& id)
 {
 	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
 
-    id = (((uint64_t)e.type) << 48) + ((uint64_t)e.group_index << 32) + (uint64_t)(e.profile_index << 16) + (uint64_t)e.node_index;
+    id = (((uint64_t)e.type) << 48) + ((uint64_t)e.group_index << 32) + ((uint64_t)e.profile_index << 16) + (uint64_t)e.node_index;
 	return true;
 }
 
@@ -156,7 +163,7 @@ int RsFriendListModel::rowCount(const QModelIndex& parent) const
         return mGroups[index.group_index].child_profile_indices.size();
 
     if(index.type == ENTRY_TYPE_PROFILE)
-		if(index.group_index < 0xff)
+		if(index.group_index < UNDEFINED_INDEX_VALUE)
 			return mProfiles[mGroups[index.group_index].child_profile_indices[index.profile_index]].child_node_indices.size();
         else
             return mProfiles[index.profile_index].child_node_indices.size();
@@ -182,7 +189,7 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
         return false;
 
     if(parent_index.type == ENTRY_TYPE_PROFILE)
-		if(parent_index.group_index < 0xff)
+		if(parent_index.group_index < UNDEFINED_INDEX_VALUE)
 			return !mProfiles[mGroups[parent_index.group_index].child_profile_indices[parent_index.profile_index]].child_node_indices.empty();
         else
             return !mProfiles[parent_index.profile_index].child_node_indices.empty();
@@ -202,17 +209,17 @@ RsFriendListModel::EntryIndex RsFriendListModel::EntryIndex::parent() const
     case ENTRY_TYPE_GROUP: return EntryIndex();
 
     case ENTRY_TYPE_PROFILE:
-        					if(i.group_index==0xff)
+        					if(i.group_index==UNDEFINED_INDEX_VALUE)
                                 return EntryIndex();
                             else
                             {
                                 i.type = ENTRY_TYPE_GROUP;
-        				   		i.profile_index = 0xff;
+        				   		i.profile_index = UNDEFINED_INDEX_VALUE;
                             }
 						   break;
 
     case ENTRY_TYPE_NODE:  i.type = ENTRY_TYPE_PROFILE;
-        				   i.node_index = 0xff;
+        				   i.node_index = UNDEFINED_INDEX_VALUE;
 						   break;
     }
 
@@ -251,7 +258,7 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
     default:
     	case ENTRY_TYPE_UNKNOWN  : return 0;
     	case ENTRY_TYPE_GROUP    : return group_index;
-		case ENTRY_TYPE_PROFILE  : return (group_index==0xff)?(profile_index+nb_groups):profile_index;
+		case ENTRY_TYPE_PROFILE  : return (group_index==UNDEFINED_INDEX_VALUE)?(profile_index+nb_groups):profile_index;
     	case ENTRY_TYPE_NODE     : return node_index;
     }
 }
@@ -729,7 +736,7 @@ const RsFriendListModel::HierarchicalProfileInformation *RsFriendListModel::getP
     if(e.type != ENTRY_TYPE_PROFILE)
         return NULL ;
 
-    if(e.group_index < 0xff)
+    if(e.group_index < UNDEFINED_INDEX_VALUE)
     {
         const HierarchicalGroupInformation& group(mGroups[e.group_index]);
 
@@ -749,7 +756,7 @@ const RsFriendListModel::HierarchicalNodeInformation *RsFriendListModel::getNode
 
     uint32_t pindex = 0;
 
-    if(e.group_index < 0xff)
+    if(e.group_index < UNDEFINED_INDEX_VALUE)
     {
         const HierarchicalGroupInformation& group(mGroups[e.group_index]);
 
@@ -1084,7 +1091,7 @@ void RsFriendListModel::updateInternalData()
 			EntryIndex e;
 			e.type = ENTRY_TYPE_PROFILE;
 			e.profile_index = i;
-            e.group_index = 0xff;
+            e.group_index = UNDEFINED_INDEX_VALUE;
 
 			mTopLevel.push_back(e);
 		}

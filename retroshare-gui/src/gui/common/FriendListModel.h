@@ -91,7 +91,7 @@ public:
     struct EntryIndex
     {
     public:
-        EntryIndex() : type(ENTRY_TYPE_UNKNOWN),group_index(0xff),profile_index(0xff),node_index(0xff) {}
+        EntryIndex();
 
         EntryType type;		        // type of the entry (group,profile,location)
 
