@@ -599,6 +599,9 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         {
   	      const HierarchicalGroupInformation *group = getGroupInfo(e);
 
+  	      if(!group)
+  	          return QVariant();
+
           uint32_t nb_online = 0;
 
           for(uint32_t i=0;i<group->child_profile_indices.size();++i)
@@ -608,9 +611,6 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
                       nb_online++;
                       break;// only breaks the inner loop, on purpose.
                   }
-
-  	      if(!group)
-  	          return QVariant();
 
 			switch(col)
 			{

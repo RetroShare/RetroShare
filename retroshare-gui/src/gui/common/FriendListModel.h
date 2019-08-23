@@ -98,9 +98,9 @@ public:
         // Indices w.r.t. parent. The set of indices entirely determines the position of the entry in the hierarchy.
         // An index of 0xff means "undefined"
 
-        uint8_t group_index;		// index of the group in mGroups tab
-        uint8_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
-        uint8_t node_index;			// index of the child node in its own profile
+        uint16_t group_index;		// index of the group in mGroups tab
+        uint16_t profile_index;		// index of the child profile in its own group if group_index < 0xff, or in the mProfiles tab otherwise.
+        uint16_t node_index;		// index of the child node in its own profile
 
         EntryIndex parent() const;
 		EntryIndex child(int row,const std::vector<EntryIndex>& top_level) const;
