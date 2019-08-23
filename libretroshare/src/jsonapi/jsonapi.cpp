@@ -280,7 +280,7 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 	}, true);
 
 	registerHandler("/rsEvents/registerEventsHandler",
-	        [this](const std::shared_ptr<rb::Session> session)
+	        [](const std::shared_ptr<rb::Session> session)
 	{
 		const std::multimap<std::string, std::string> headers
 		{
@@ -289,8 +289,9 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 		};
 		session->yield(rb::OK, headers);
 
-		size_t reqSize = session->get_request()->get_header("Content-Length", 0);
-		session->fetch( reqSize, [this](
+		size_t reqSize = static_cast<size_t>(
+		            session->get_request()->get_header("Content-Length", 0) );
+		session->fetch( reqSize, [](
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{
