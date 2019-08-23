@@ -97,7 +97,6 @@ private slots:
 
 protected:
 	void changeEvent(QEvent *e);
-	void createDisplayMenu();
 
 private:
 	Ui::NewFriendList *ui;

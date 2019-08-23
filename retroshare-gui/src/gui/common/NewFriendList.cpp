@@ -79,17 +79,13 @@
 
 #define COLUMN_DATA     0 // column for storing the userdata id
 
-#define ROLE_ID                  Qt::UserRole
-#define ROLE_STANDARD            Qt::UserRole + 1
-#define ROLE_SORT_GROUP          Qt::UserRole + 2
-#define ROLE_SORT_STANDARD_GROUP Qt::UserRole + 3
-#define ROLE_SORT_NAME           Qt::UserRole + 4
-#define ROLE_SORT_STATE          Qt::UserRole + 5
-#define ROLE_FILTER              Qt::UserRole + 6
-
-#define TYPE_GPG   0
-#define TYPE_SSL   1
-#define TYPE_GROUP 2
+// #define ROLE_ID                  Qt::UserRole
+// #define ROLE_STANDARD            Qt::UserRole + 1
+// #define ROLE_SORT_GROUP          Qt::UserRole + 2
+// #define ROLE_SORT_STANDARD_GROUP Qt::UserRole + 3
+// #define ROLE_SORT_NAME           Qt::UserRole + 4
+// #define ROLE_SORT_STATE          Qt::UserRole + 5
+// #define ROLE_FILTER              Qt::UserRole + 6
 
 // states for sorting (equal values are possible)
 // used in BuildSortString - state + name
@@ -203,9 +199,6 @@ NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), u
 
     int avatarHeight = fontMetrics.height() * 3;
     ui->peerTreeWidget->setIconSize(QSize(avatarHeight, avatarHeight));
-
-    /* Initialize display menu */
-    createDisplayMenu();
 
     mModel->checkInternalData(true);
 
@@ -546,8 +539,6 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 			break;
 		}
 
-		//         QMenu *lobbyMenu = NULL;
-
 		switch (type)
 		{
         case RsFriendListModel::ENTRY_TYPE_GROUP:
@@ -587,21 +578,22 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
 				RsPgpId gpgId ( details.gpg_id );
 
-//				QTreeWidgetItem *parent = c->parent();
+                QModelIndex parent = mModel->parent(index);
 
 				bool foundGroup = false;
 				// add action for all groups, except the own group
 				for (std::list<RsGroupInfo>::iterator groupIt = groupInfoList.begin(); groupIt != groupInfoList.end(); ++groupIt) {
 					if (std::find(groupIt->peerIds.begin(), groupIt->peerIds.end(), gpgId) == groupIt->peerIds.end()) {
-//						if (parent) {
-//							if (addToGroupMenu == NULL) {
-//								addToGroupMenu = new QMenu(tr("Add to group"), &contextMenu);
-//							}
-//							QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
-//							addToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
-//							connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
-//							addToGroupMenu->addAction(addToGroupAction);
-//						}
+						if (parent.isValid())
+                        {
+							if (addToGroupMenu == NULL)
+								addToGroupMenu = new QMenu(tr("Add to group"), &contextMenu);
+
+							QAction* addToGroupAction = new QAction(GroupDefs::name(*groupIt), addToGroupMenu);
+							addToGroupAction->setData(QString::fromStdString(groupIt->id.toStdString()));
+							connect(addToGroupAction, SIGNAL(triggered()), this, SLOT(addToGroup()));
+							addToGroupMenu->addAction(addToGroupAction);
+						}
 
 						if (moveToGroupMenu == NULL) {
 							moveToGroupMenu = new QMenu(tr("Move to group"), &contextMenu);
@@ -627,13 +619,18 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 						groupsMenu->addMenu(moveToGroupMenu);
 					}
 
-					if (foundGroup) {
+					if (foundGroup)
+                    {
 						// add remove from group
-//						if (parent && parent->type() == TYPE_GROUP) {
-//							QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group"));
-//							removeFromGroup->setData(parent->data(COLUMN_DATA, ROLE_ID));
-//							connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
-//						}
+						if (parent.isValid() && mModel->getType(parent) == RsFriendListModel::ENTRY_TYPE_GROUP)
+                        {
+                            RsGroupInfo info ;
+                            mModel->getGroupData(parent,info);
+
+							QAction *removeFromGroup = groupsMenu->addAction(tr("Remove from group ")+QString::fromUtf8(info.name.c_str()));
+							removeFromGroup->setData(parent.sibling(parent.row(),RsFriendListModel::COLUMN_THREAD_ID).data(Qt::DisplayRole));
+							connect(removeFromGroup, SIGNAL(triggered()), this, SLOT(removeFromGroup()));
+						}
 
 						QAction *removeFromAllGroups = groupsMenu->addAction(tr("Remove from all groups"));
 						removeFromAllGroups->setData("");
@@ -655,9 +652,9 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
 			contextMenu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Node details"), this, SLOT(configureNode()));
 
-			if (type == TYPE_GPG || type == TYPE_SSL) {
+			if (type == RsFriendListModel::ENTRY_TYPE_PROFILE || type == RsFriendListModel::ENTRY_TYPE_NODE)
 				contextMenu.addAction(QIcon(IMAGE_EXPORTFRIEND), tr("Recommend this node to..."), this, SLOT(recommendNode()));
-			}
+
             RsFriendListModel::RsNodeDetails details;
             mModel->getNodeData(index,details);
 
@@ -1137,13 +1134,11 @@ void NewFriendList::checkInternalData(bool force)
     std::set<QString> expanded_indexes;
 	std::set<QString> selected_indexes;
 
-    if(force)
-		saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
     mModel->checkInternalData(force);
 
-    if(force)
-		restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 }
 
 void NewFriendList::exportFriendlistClicked()
@@ -1543,8 +1538,6 @@ void NewFriendList::toggleColumnVisible()
 	int column = action->data().toInt();
 	bool visible = action->isChecked();
 
-	//emit columnVisibleChanged(column,visible);
-
     ui->peerTreeWidget->setColumnHidden(column, !visible);
 }
 
@@ -1568,7 +1561,7 @@ void NewFriendList::filterItems(const QString &text)
 
     if(filterColumn == 0)
 		mModel->setFilter(RsFriendListModel::FILTER_TYPE_NAME,lst);
-    else //if(filterColumn==1)
+    else
 		mModel->setFilter(RsFriendListModel::FILTER_TYPE_ID,lst);
 
     // We do this in order to trigger a new filtering action in the proxy model.
@@ -1598,6 +1591,3 @@ void NewFriendList::addPeerToExpand(const RsPgpId& gpgId)
     openPeers.insert(gpgId);
 }
 
-void NewFriendList::createDisplayMenu()
-{
-}
