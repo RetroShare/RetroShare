@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2017  Cyril Soler <csoler@users.sourceforge.net>              *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2017       Cyril Soler <csoler@users.sourceforge.net>         *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -32,6 +32,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 #include "util/rsjson.h"
+#include "util/rsdebug.h"
 
 #include <typeinfo> // for typeid
 #include <type_traits>
@@ -907,6 +908,8 @@ protected:
 	static bool from_JSON( const std::string& memberName,
 	                       t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
 	                       RsJson& jDoc );
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
 
 
