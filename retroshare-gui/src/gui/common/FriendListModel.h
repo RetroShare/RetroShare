@@ -195,8 +195,8 @@ private:
     void *getChildRef(void *ref,int row) const;
     int  getChildrenCount(void *ref) const;
 
-    static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
-	static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
+    template<uint8_t> static bool convertIndexToInternalId(const EntryIndex& e,quintptr& ref);
+	template<uint8_t> static bool convertInternalIdToIndex(quintptr ref, EntryIndex& e);
 
 	uint32_t updateFilterStatus(ForumModelIndex i,int column,const QStringList& strings);
 

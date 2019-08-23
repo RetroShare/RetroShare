@@ -61,6 +61,64 @@ RsFriendListModel::RsFriendListModel(QObject *parent)
     mLastInternalDataUpdate=0;
 }
 
+// The index encodes the whole hierarchy of parents. This allows to very efficiently compute indices of the parent of an index.
+//
+// The format is the following:
+//
+//     0x 00 00 00 00
+//        |  |  |  |
+//        |  |  |  +---- location/node index
+//        |  |  +------- profile index
+//        |  +---------- group index
+//        +------------- type
+//
+// Only valid indexes a 0x01->0xff. 0x00 means "no index"
+// We propose 2 implementations, one for 32bits, that only allows up to 256 friends/groups/nodes, and one for 64bits which allows 16bits values.
+
+template<> bool RsFriendListModel::convertIndexToInternalId<4>(const EntryIndex& e,quintptr& id)
+{
+	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
+
+    id = (((uint32_t)e.type) << 24) + ((uint32_t)e.group_index << 16) + (uint32_t)(e.profile_index << 8) + (uint32_t)e.node_index;
+	return true;
+}
+template<> bool RsFriendListModel::convertIndexToInternalId<8>(const EntryIndex& e,quintptr& id)
+{
+	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
+
+    id = (((uint64_t)e.type) << 48) + ((uint64_t)e.group_index << 32) + (uint64_t)(e.profile_index << 16) + (uint64_t)e.node_index;
+	return true;
+}
+
+template<> bool RsFriendListModel::convertInternalIdToIndex<4>(quintptr ref,EntryIndex& e)
+{
+    if(ref == 0)
+        return false ;
+
+    e.group_index     = (ref >> 16) & 0xff;
+    e.profile_index   = (ref >>  8) & 0xff;
+    e.node_index      = (ref >>  0) & 0xff;
+
+    e.type = static_cast<EntryType>((ref >> 24) & 0xff);
+
+	return true;
+}
+
+template<> bool RsFriendListModel::convertInternalIdToIndex<8>(quintptr ref,EntryIndex& e)
+{
+    if(ref == 0)
+        return false ;
+
+    e.group_index     = (ref >> 32) & 0xffff;
+    e.profile_index   = (ref >> 16) & 0xffff;
+    e.node_index      = (ref >>  0) & 0xffff;
+
+    e.type = static_cast<EntryType>((ref >> 48) & 0xffff);
+
+	return true;
+}
+
+
 void RsFriendListModel::setDisplayStatusString(bool b)
 {
     mDisplayStatusString = b;
@@ -91,7 +149,7 @@ int RsFriendListModel::rowCount(const QModelIndex& parent) const
 		return mTopLevel.size();
 
     EntryIndex index;
-    if(!convertInternalIdToIndex(parent.internalId(),index))
+    if(!convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),index))
         return 0;
 
     if(index.type == ENTRY_TYPE_GROUP)
@@ -118,7 +176,7 @@ bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
         return true;
 
 	EntryIndex parent_index ;
-    convertInternalIdToIndex(parent.internalId(),parent_index);
+    convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
 
     if(parent_index.type == ENTRY_TYPE_NODE)
         return false;
@@ -198,42 +256,6 @@ uint32_t   RsFriendListModel::EntryIndex::parentRow(uint32_t nb_groups) const
     }
 }
 
-// The index encodes the whole hierarchy of parents. This allows to very efficiently compute indices of the parent of an index.
-//
-// The format is the following:
-//
-//     0x 00 00 00 00
-//        |  |  |  |
-//        |  |  |  +---- location/node index
-//        |  |  +------- profile index
-//        |  +---------- group index
-//        +------------- type
-//
-// Only valid indexes a 0x01->0xff. 0x00 means "no index"
-//
-
-bool RsFriendListModel::convertIndexToInternalId(const EntryIndex& e,quintptr& id)
-{
-	// the internal id is set to the place in the table of items. We simply shift to allow 0 to mean something special.
-
-    id = (((uint32_t)e.type) << 24) + ((uint32_t)e.group_index << 16) + (uint32_t)(e.profile_index << 8) + (uint32_t)e.node_index;
-	return true;
-}
-
-bool RsFriendListModel::convertInternalIdToIndex(quintptr ref,EntryIndex& e)
-{
-    if(ref == 0)
-        return false ;
-
-    e.group_index     = (ref >> 16) & 0xff;
-    e.profile_index   = (ref >>  8) & 0xff;
-    e.node_index      = (ref >>  0) & 0xff;
-
-    e.type = static_cast<EntryType>((ref >> 24) & 0xff);
-
-	return true;
-}
-
 QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& parent) const
 {
     if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
@@ -243,19 +265,19 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     {
 		quintptr ref ;
 
-		convertIndexToInternalId(mTopLevel[row],ref);
+		convertIndexToInternalId<sizeof(uintptr_t)>(mTopLevel[row],ref);
 		return createIndex(row,column,ref) ;
     }
 
     EntryIndex parent_index ;
-    convertInternalIdToIndex(parent.internalId(),parent_index);
+    convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
 #ifdef DEBUG_MODEL
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
 #endif
 
     quintptr ref;
     EntryIndex new_index = parent_index.child(row,mTopLevel);
-    convertIndexToInternalId(new_index,ref);
+    convertIndexToInternalId<sizeof(uintptr_t)>(new_index,ref);
 
 #ifdef DEBUG_MODEL
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
@@ -270,7 +292,7 @@ QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
         return QModelIndex();
 
 	EntryIndex I ;
-    convertInternalIdToIndex(index.internalId(),I);
+    convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),I);
 
     EntryIndex p = I.parent();
 
@@ -278,7 +300,7 @@ QModelIndex RsFriendListModel::parent(const QModelIndex& index) const
         return QModelIndex();
 
     quintptr i;
-    convertIndexToInternalId(p,i);
+    convertIndexToInternalId<sizeof(uintptr_t)>(p,i);
 
 	return createIndex(I.parentRow(mGroups.size()),0,i);
 }
@@ -332,7 +354,7 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
 
 	EntryIndex entry;
 
-	if(!convertInternalIdToIndex(ref,entry))
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(ref,entry))
 	{
 #ifdef DEBUG_MESSAGE_MODEL
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
@@ -375,9 +397,6 @@ QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) con
 
 QVariant RsFriendListModel::statusRole(const EntryIndex& fmpe,int column) const
 {
-// 	if(column != COLUMN_THREAD_DATA)
-//        return QVariant();
-
     return QVariant();//fmpe.mMsgStatus);
 }
 
@@ -443,24 +462,6 @@ void RsFriendListModel::setFilter(FilterType filter_type, const QStringList& str
 
 QVariant RsFriendListModel::toolTipRole(const EntryIndex& fmpe,int column) const
 {
-//    if(column == COLUMN_THREAD_AUTHOR)
-//	{
-//		QString str,comment ;
-//		QList<QIcon> icons;
-//
-//		if(!GxsIdDetails::MakeIdDesc(RsGxsId(fmpe.srcId.toStdString()), true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-//			return QVariant();
-//
-//		int S = QFontMetricsF(QApplication::font()).height();
-//		QImage pix( (*icons.begin()).pixmap(QSize(4*S,4*S)).toImage());
-//
-//		QString embeddedImage;
-//		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S))
-//			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";
-//
-//		return comment;
-//	}
-
     return QVariant();
 }
 
@@ -865,7 +866,7 @@ bool RsFriendListModel::getGroupData  (const QModelIndex& i,RsGroupInfo     & da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP)
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(i.internalId(),e) || e.type != ENTRY_TYPE_GROUP)
         return false;
 
     const HierarchicalGroupInformation *ginfo = getGroupInfo(e);
@@ -884,7 +885,7 @@ bool RsFriendListModel::getProfileData(const QModelIndex& i,RsProfileDetails& da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE)
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(i.internalId(),e) || e.type != ENTRY_TYPE_PROFILE)
         return false;
 
     const HierarchicalProfileInformation *gprof = getProfileInfo(e);
@@ -903,7 +904,7 @@ bool RsFriendListModel::getNodeData   (const QModelIndex& i,RsNodeDetails   & da
         return false;
 
     EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e) || e.type != ENTRY_TYPE_NODE)
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(i.internalId(),e) || e.type != ENTRY_TYPE_NODE)
         return false;
 
     const HierarchicalNodeInformation *gnode = getNodeInfo(e);
@@ -923,7 +924,7 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
 		return ENTRY_TYPE_UNKNOWN;
 
 	EntryIndex e;
-	if(!convertInternalIdToIndex(i.internalId(),e))
+	if(!convertInternalIdToIndex<sizeof(uintptr_t)>(i.internalId(),e))
         return ENTRY_TYPE_UNKNOWN;
 
     return e.type;
