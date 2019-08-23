@@ -40,6 +40,7 @@
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
+#define IMAGE_GROUP24          ":/images/user/group24.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 
@@ -110,20 +111,6 @@ int RsFriendListModel::columnCount(const QModelIndex &parent) const
 {
 	return COLUMN_THREAD_NB_COLUMNS ;
 }
-
-// bool RsFriendListModel::getProfileData(const QModelIndex& i,Rs::Msgs::MessageInfo& fmpe) const
-// {
-// 	if(!i.isValid())
-//         return true;
-//
-//     quintptr ref = i.internalId();
-// 	uint32_t index = 0;
-//
-// 	if(!convertInternalIdToMsgIndex(ref,index) || index >= mMessages.size())
-// 		return false ;
-//
-// 	return rsMsgs->getMessage(mMessages[index].msgId,fmpe);
-// }
 
 bool RsFriendListModel::hasChildren(const QModelIndex &parent) const
 {
@@ -670,7 +657,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         if(!node)
             return QVariant();
 
-#ifndef DEBUG_MODEL
+#ifdef DEBUG_MODEL
 		   std::cerr << node->node_info.location.c_str() ;
 #endif
 		switch(col)
@@ -800,6 +787,8 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
+    case ENTRY_TYPE_GROUP: return QVariant(QIcon(IMAGE_GROUP24));
+
     case ENTRY_TYPE_NODE:
     {
         const HierarchicalNodeInformation *hn = getNodeInfo(entry);
@@ -812,8 +801,8 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
         return QVariant(QIcon(sslAvatar));
     }
+    default: return QVariant();
     }
-	return QVariant();
 }
 
 void RsFriendListModel::clear()

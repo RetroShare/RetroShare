@@ -153,7 +153,7 @@ private:
     bool m_showOfflineNodes;
 };
 
-NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(1000,parent), ui(new Ui::NewFriendList())
+NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), ui(new Ui::NewFriendList())
 {
 	ui->setupUi(this);
 
@@ -1127,11 +1127,13 @@ void NewFriendList::checkInternalData(bool force)
     std::set<QString> expanded_indexes;
 	std::set<QString> selected_indexes;
 
-	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    if(force)
+		saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
     mModel->checkInternalData(force);
 
-	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    if(force)
+		restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 }
 
 void NewFriendList::exportFriendlistClicked()
