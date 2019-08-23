@@ -126,8 +126,7 @@ FriendList::FriendList(QWidget *parent) :
 #ifdef RS_DIRECT_CHAT
 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 #else
-	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-	         this, SLOT(expandItem(QTreeWidgetItem *)) );
+	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
 #endif
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));

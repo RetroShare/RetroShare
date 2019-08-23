@@ -185,7 +185,7 @@ NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), u
 	ui->peerTreeWidget->setSortingEnabled(true);
 
     /* Set sort */
-    sortByColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
+    sortColumn(RsFriendListModel::COLUMN_THREAD_NAME, Qt::AscendingOrder);
     toggleSortByState(false);
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
@@ -229,6 +229,11 @@ NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), u
 
     connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
 	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
+// #ifdef RS_DIRECT_CHAT
+// 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatNode()));
+// #endif
+
 }
 
 NewFriendList::~NewFriendList()
@@ -238,9 +243,14 @@ NewFriendList::~NewFriendList()
 
 void NewFriendList::sortColumn(int col,Qt::SortOrder so)
 {
+    std::set<QString> expanded_indexes;
+	std::set<QString> selected_indexes;
+
+	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
     mProxyModel->setSortingEnabled(true);
     mProxyModel->sort(col,so);
     mProxyModel->setSortingEnabled(false);
+	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 }
 
 void NewFriendList::headerContextMenuRequested(QPoint p)
@@ -1536,11 +1546,6 @@ void NewFriendList::toggleColumnVisible()
 	//emit columnVisibleChanged(column,visible);
 
     ui->peerTreeWidget->setColumnHidden(column, !visible);
-}
-
-void NewFriendList::sortByColumn(int column, Qt::SortOrder sortOrder)
-{
-    ui->peerTreeWidget->sortByColumn(column, sortOrder);
 }
 
 void NewFriendList::setShowState(bool show)

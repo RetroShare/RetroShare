@@ -64,7 +64,6 @@ public:
 	bool isColumnVisible(int col) const;
 
 	std::string getSelectedGroupId() const;
-	void sortByColumn(int column, Qt::SortOrder sortOrder);
 
     void updateDisplay() override;
 
