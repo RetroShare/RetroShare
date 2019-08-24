@@ -659,7 +659,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
             mModel->getNodeData(index,details);
 
 			if(!rsPeers->isHiddenNode(rsPeers->getOwnId()) || rsPeers->isHiddenNode( details.id ))
-				contextMenu.addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectfriend()));
+				contextMenu.addAction(QIcon(IMAGE_CONNECT), tr("Attempt to connect"), this, SLOT(connectNode()));
 
 			contextMenu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
 
