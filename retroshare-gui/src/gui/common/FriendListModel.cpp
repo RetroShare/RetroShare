@@ -154,6 +154,7 @@ void RsFriendListModel::preMods()
 }
 void RsFriendListModel::postMods()
 {
+ 	emit layoutChanged();
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
