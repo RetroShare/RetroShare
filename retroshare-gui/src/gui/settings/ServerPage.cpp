@@ -81,27 +81,35 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
 
   manager = NULL ;
 
-  if(RsAccounts::isTorAuto())
+  if(RsAccounts::isHiddenNode())
   {
-  	// Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
+	  if(RsAccounts::isTorAuto())
+	  {
+		  // Here we use absolute numbers instead of consts defined above, because the consts correspond to the tab number *after* this tab removal.
 
-	ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
-	ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
+		  ui.tabWidget->removeTab(TAB_RELAYS) ;		// remove relays. Not useful in Tor mode.
+		  ui.tabWidget->removeTab(TAB_IP_FILTERS) ;	// remove IP filters. Not useful in Tor mode.
 
-	ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB) ; // remove the Automatic I2P/BOB tab
+		  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB) ; // remove the Automatic I2P/BOB tab
 
-	ui.hiddenpage_proxyAddress_i2p->hide() ;
-	ui.hiddenpage_proxyLabel_i2p->hide() ;
-	ui.hiddenpage_proxyPort_i2p->hide() ;
-	ui.label_i2p_outgoing->hide() ;
-	ui.iconlabel_i2p_outgoing->hide() ;
-	ui.plainTextEdit->hide() ;
-	ui.hiddenpage_configuration->hide() ;
-	ui.l_hiddenpage_configuration->hide() ;
-	ui.hiddenpageInHelpPlainTextEdit->hide() ;
+		  ui.hiddenpage_proxyAddress_i2p->hide() ;
+		  ui.hiddenpage_proxyLabel_i2p->hide() ;
+		  ui.hiddenpage_proxyPort_i2p->hide() ;
+		  ui.label_i2p_outgoing->hide() ;
+		  ui.iconlabel_i2p_outgoing->hide() ;
+		  ui.plainTextEdit->hide() ;
+		  ui.hiddenpage_configuration->hide() ;
+		  ui.l_hiddenpage_configuration->hide() ;
+		  ui.hiddenpageInHelpPlainTextEdit->hide() ;
 
-	ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
-	ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+		  ui.hiddenpage_outHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+		  ui.hiddenpage_inHeader->setText(tr("Tor has been automatically configured by Retroshare. You shouldn't need to change anything here.")) ;
+	  }
+  }
+  else
+  {
+      ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+      ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_INCOMING);
   }
 
     ui.filteredIpsTable->setHorizontalHeaderItem(COLUMN_RANGE,new QTableWidgetItem(tr("IP Range"))) ;
