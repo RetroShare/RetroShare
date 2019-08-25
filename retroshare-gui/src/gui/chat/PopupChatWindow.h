@@ -55,6 +55,7 @@ protected:
 	void closeEvent(QCloseEvent *event);
 
 private slots:
+	void setStyle();
 	void getAvatar();
 	void tabChanged(ChatDialog *dialog);
 	void tabInfoChanged(ChatDialog *dialog);
@@ -63,9 +64,9 @@ private slots:
 	void dialogClose(ChatDialog *dialog);
 	void dockTab();
 	void undockTab();
-	void setStyle();
 	void setOnTop();
 	void blink(bool on);
+	void showContextMenu(QPoint p);
 
 private:
 	bool tabbedWindow;
