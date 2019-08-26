@@ -18,12 +18,15 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QBuffer>
+
 #include <rshare.h>
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsmsgs.h>
 
 #include "gui/notifyqt.h"
+#include "util/misc.h"
 #include "gui/common/AvatarDefs.h"
 #include "gui/common/AvatarDialog.h"
 
@@ -85,19 +88,33 @@ void AvatarWidget::mouseReleaseEvent(QMouseEvent */*event*/)
 	if (!mFlag.isOwnId) {
 		return;
 	}
+	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Choose avatar"), AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W,AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H);
 
-	AvatarDialog dialog(this);
+	if (img.isNull())
+		return;
 
-	QPixmap avatar;
-	AvatarDefs::getOwnAvatar(avatar, "");
+	setPixmap(img);
 
-	dialog.setAvatar(avatar);
-	if (dialog.exec() == QDialog::Accepted) {
-		QByteArray newAvatar;
-		dialog.getAvatar(newAvatar);
+    QByteArray data;
+	QBuffer buffer(&data);
 
-		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
-	}
+	buffer.open(QIODevice::WriteOnly);
+	img.save(&buffer, "PNG"); // writes image into a in PNG format
+
+	rsMsgs->setOwnAvatarData((unsigned char *)(data.data()), data.size()) ;	// last char 0 included.
+
+//	AvatarDialog dialog(this);
+//
+//	QPixmap avatar;
+//	AvatarDefs::getOwnAvatar(avatar, "");
+//
+//	dialog.setAvatar(avatar);
+//	if (dialog.exec() == QDialog::Accepted) {
+//		QByteArray newAvatar;
+//		dialog.getAvatar(newAvatar);
+//
+//		rsMsgs->setOwnAvatarData((unsigned char *)(newAvatar.data()), newAvatar.size()) ;	// last char 0 included.
+//	}
 }
 
 void AvatarWidget::setFrameType(FrameType type)

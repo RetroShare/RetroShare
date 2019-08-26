@@ -43,6 +43,7 @@
 #include "FriendsDialog.h"
 #include "NetworkView.h"
 #include "NetworkDialog.h"
+#include "gui/common/NewFriendList.h"
 #include "gui/Identity/IdDialog.h"
 #ifdef RS_USE_CIRCLES
 #include "gui/Circles/CirclesDialog.h"
@@ -77,10 +78,8 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.chatWidget->setWelcomeMessage(msg);
     ui.chatWidget->init(ChatId::makeBroadcastId(), tr("Broadcast"));
 
-    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)),
-            this, SLOT(chatMessageReceived(ChatMessage)));
-    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)),
-            this, SLOT(chatStatusReceived(ChatId,QString)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatMessageReceived(ChatMessage)), this, SLOT(chatMessageReceived(ChatMessage)));
+    connect(NotifyQt::getInstance(), SIGNAL(chatStatusChanged(ChatId,QString)), this, SLOT(chatStatusReceived(ChatId,QString)));
 #else // def RS_DIRECT_CHAT
 	ui.tabWidget->removeTab(ui.tabWidget->indexOf(ui.groupChatTab));
 #endif // def RS_DIRECT_CHAT
@@ -97,47 +96,15 @@ FriendsDialog::FriendsDialog(QWidget *parent)
     ui.tabWidget->addTab(networkView = new NetworkView(),QIcon(IMAGE_NETWORK2), tr("Network graph"));
     ui.tabWidget->addTab(networkDialog = new NetworkDialog(),QIcon(IMAGE_PEERS), tr("Keyring"));
 
-    //ui.tabWidget->addTab(new ProfileWidget(), tr("Profile"));
-    //newsFeed = new NewsFeed();
-    //int newsFeedTabIndex = ui.tabWidget->insertTab(0, newsFeed, tr("News Feed"));
-    //ui.tabWidget->setCurrentIndex(newsFeedTabIndex);
-
     ui.tabWidget->hideCloseButton(0);
     ui.tabWidget->hideCloseButton(1);
     ui.tabWidget->hideCloseButton(2);
     ui.tabWidget->hideCloseButton(3);
     ui.tabWidget->hideCloseButton(4);
 
-    /* get the current text and text color of the tab bar */
-    //newsFeedTabColor = ui.tabWidget->tabBar()->tabTextColor(newsFeedTabIndex);
-    //newsFeedText = ui.tabWidget->tabBar()->tabText(newsFeedTabIndex);
-
-    //connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
-
-//    menu = new QMenu();
-//    menu->addAction(ui.actionAdd_Friend);
-//    menu->addAction(ui.actionAdd_Group);
-//    menu->addAction(ui.actionCreate_new_Chat_lobby);
-//
-//    menu->addSeparator();
-//    menu->addAction(ui.actionSet_your_Avatar);
-//    menu->addAction(ui.actionSet_your_Personal_Message);
-//
-//    ui.menutoolButton->setMenu(menu);
-
-    /*QToolButton *addFriendButton = new QToolButton(this);
-    addFriendButton->setIcon(QIcon(":/images/user/add_user24.png"));
-    addFriendButton->setToolTip(tr("Add friend node"));
-    connect(addFriendButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-    ui.friendList->addToolButton(addFriendButton);*/
-
     /* Set initial size the splitter */
     ui.splitter->setStretchFactor(0, 0);
     ui.splitter->setStretchFactor(1, 1);
-    /*remove
-QList<int> sizes;
-    sizes << height() << 100; // Qt calculates the right sizes
-    ui.splitter_2->setSizes(sizes);*/
 
     loadmypersonalstatus();
 
@@ -145,9 +112,9 @@ QList<int> sizes;
 
     // load settings
     RsAutoUpdatePage::lockAllEvents();
-    ui.friendList->setColumnVisible(FriendList::COLUMN_LAST_CONTACT, false);
-    ui.friendList->setColumnVisible(FriendList::COLUMN_IP, false);
-    ui.friendList->setColumnVisible(FriendList::COLUMN_ID, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_LAST_CONTACT, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_IP, false);
+    ui.friendList->setColumnVisible(RsFriendListModel::COLUMN_THREAD_ID, false);
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();

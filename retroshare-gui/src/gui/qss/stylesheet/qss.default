@@ -156,7 +156,7 @@ MessagesDialog
 	qproperty-textColorInbox: rgb(49, 106, 197);
 }
 
-FriendList
+NewFriendList
 {
     qproperty-textColorStatusOffline: black;
     qproperty-textColorStatusAway: gray;
