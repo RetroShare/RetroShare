@@ -72,7 +72,8 @@ public:
               	StatusRole         = Qt::UserRole+2,
               	UnreadRole         = Qt::UserRole+3,
               	FilterRole         = Qt::UserRole+4,
-              	OnlineRole         = Qt::UserRole+5
+              	OnlineRole         = Qt::UserRole+5,
+              	TypeRole           = Qt::UserRole+6
               };
 
     enum FilterType{ FILTER_TYPE_NONE = 0x00,

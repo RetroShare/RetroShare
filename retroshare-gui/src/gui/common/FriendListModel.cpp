@@ -391,14 +391,11 @@ QVariant RsFriendListModel::data(const QModelIndex &index, int role) const
  	case FilterRole:         return filterRole(entry,index.column()) ;
  	case SortRole:           return sortRole(entry,index.column()) ;
  	case OnlineRole:         return onlineRole(entry,index.column()) ;
+ 	case TypeRole:           return QVariant((int)entry.type);
 
 	default:
 		return QVariant();
 	}
-
-// 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
-// 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
-//
 }
 
 QVariant RsFriendListModel::textColorRole(const EntryIndex& fmpe,int column) const
@@ -1115,6 +1112,16 @@ void RsFriendListModel::updateInternalData()
     postMods();
 
     mLastInternalDataUpdate = time(NULL);
+}
+
+QModelIndex RsFriendListModel::getIndexOfGroup(const RsNodeGroupId& mid) const
+{
+    if(mDisplayGroups)
+		for(uint32_t i=0;i<mGroups.size();++i)
+			if(mGroups[i].group_info.id == mid)
+                return index(i,0,QModelIndex());
+
+    return QModelIndex();
 }
 
 

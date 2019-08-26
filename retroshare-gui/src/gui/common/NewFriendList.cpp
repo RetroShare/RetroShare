@@ -112,6 +112,12 @@ public:
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
+        bool is_group_1 = left.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+        bool is_group_2 = right.data(RsFriendListModel::TypeRole).toUInt() == (uint)RsFriendListModel::ENTRY_TYPE_GROUP;
+
+        if(is_group_1 ^ is_group_2)	// if the two are different, put the group first.
+            return is_group_1 ;
+
         bool online1 = left .data(RsFriendListModel::OnlineRole).toBool();
         bool online2 = right.data(RsFriendListModel::OnlineRole).toBool();
 
@@ -425,14 +431,14 @@ void NewFriendList::processSettings(bool load)
 
             std::string gids = Settings->value("open").toString().toStdString();
 
-            RsGroupInfo ginfo ;
-
-            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
-                addGroupToExpand(ginfo.id) ;
-            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
-                addGroupToExpand(ginfo.id) ;
-            else
-                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
+//            RsGroupInfo ginfo ;
+//
+//            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
+//                addGroupToExpand(ginfo.id) ;
+//            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
+//                addGroupToExpand(ginfo.id) ;
+//            else
+//                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
     }
@@ -452,15 +458,15 @@ void NewFriendList::processSettings(bool load)
         // sort
         Settings->setValue("sortByState", mProxyModel->sortByState());
 
-        // open groups
-        Settings->beginWriteArray("Groups");
-        int arrayIndex = 0;
-        std::set<RsNodeGroupId> expandedPeers;
-        getExpandedGroups(expandedPeers);
-        foreach (RsNodeGroupId groupId, expandedPeers) {
-            Settings->setArrayIndex(arrayIndex++);
-            Settings->setValue("open", QString::fromStdString(groupId.toStdString()));
-        }
+//        // open groups
+//        Settings->beginWriteArray("Groups");
+//        int arrayIndex = 0;
+//        std::set<RsNodeGroupId> expandedPeers;
+//        getExpandedGroups(expandedPeers);
+//        foreach (RsNodeGroupId groupId, expandedPeers) {
+//            Settings->setArrayIndex(arrayIndex++);
+//            Settings->setValue("open", QString::fromStdString(groupId.toStdString()));
+//        }
         Settings->endArray();
     }
 }
@@ -715,97 +721,6 @@ static QIcon createAvatar(const QPixmap &avatar, const QPixmap &overlay)
 	return icon;
 }
 
-// static void getNameWidget(QTreeWidget *treeWidget, QTreeWidgetItem *item, ElidedLabel *&nameLabel, ElidedLabel *&textLabel)
-// {
-//     QWidget *widget = treeWidget->itemWidget(item, NewFriendList::COLUMN_NAME);
-//
-//     if (!widget) {
-//         widget = new QWidget;
-//         widget->setAttribute(Qt::WA_TranslucentBackground);
-//         nameLabel = new ElidedLabel(widget);
-//         textLabel = new ElidedLabel(widget);
-//
-//         widget->setProperty("nameLabel", qVariantFromValue(nameLabel));
-//         widget->setProperty("textLabel", qVariantFromValue(textLabel));
-//
-//         QVBoxLayout *layout = new QVBoxLayout;
-//         layout->setSpacing(0);
-//         layout->setContentsMargins(3, 0, 0, 0);
-//
-//         nameLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
-//         textLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
-//
-//         layout->addWidget(nameLabel);
-//         layout->addWidget(textLabel);
-//
-//         widget->setLayout(layout);
-//
-//         treeWidget->setItemWidget(item, NewFriendList::COLUMN_NAME, widget);
-//     } else {
-//         nameLabel = widget->property("nameLabel").value<ElidedLabel*>();
-//         textLabel = widget->property("textLabel").value<ElidedLabel*>();
-//     }
-// }
-
-/**
- * Returns a list with all groupIds that are expanded
- */
-bool NewFriendList::getExpandedGroups(std::set<RsNodeGroupId> &groups) const
-{
-//    int itemCount = ui->peerTreeWidget->topLevelItemCount();
-//    for (int index = 0; index < itemCount; ++index) {
-//        QTreeWidgetItem *item = ui->peerTreeWidget->topLevelItem(index);
-//        if (item->type() == TYPE_GROUP && item->isExpanded()) {
-//            groups.insert(RsNodeGroupId(item->data(COLUMN_DATA, ROLE_ID).toString().toStdString()));
-//        }
-//    }
-    return true;
-}
-
-/**
- * Returns a list with all gpg ids that are expanded
- */
-bool NewFriendList::getExpandedPeers(std::set<RsPgpId> &peers) const
-{
-//    peers.clear();
-//    QTreeWidgetItemIterator it(ui->peerTreeWidget);
-//    while (*it) {
-//        QTreeWidgetItem *item = *it;
-//        if (item->type() == TYPE_GPG && item->isExpanded()) {
-//            peers.insert(peers.end(), RsPgpId(getRsId(item)));
-//        }
-//        ++it;
-//    }
-    return true;
-}
-
-// void NewFriendList::collapseItem(QTreeWidgetItem *item)
-// {
-// 	switch (item->type())
-// 	{
-// 	case TYPE_GROUP:
-// 		openGroups.erase(RsNodeGroupId(getRsId(item))) ;
-// 		break;
-// 	case TYPE_GPG:
-// 		openPeers.erase(RsPgpId(getRsId(item))) ;
-// 	default:
-// 		break;
-// 	}
-// }
-// void NewFriendList::expandItem(QTreeWidgetItem *item)
-// {
-// 	switch (item->type())
-// 	{
-// 	case TYPE_GROUP:
-// 		openGroups.insert(RsNodeGroupId(getRsId(item))) ;
-// 		break;
-// 	case TYPE_GPG:
-// 		openPeers.insert(RsPgpId(getRsId(item))) ;
-// 	default:
-// 		break;
-// 	}
-// }
-
 void NewFriendList::addFriend()
 {
     std::string groupId = getSelectedGroupId();
@@ -1043,7 +958,7 @@ void NewFriendList::addToGroup()
         return;
 
     // automatically expand the group, the peer is added to
-    addGroupToExpand(groupId);
+    expandGroup(groupId);
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
@@ -1076,7 +991,7 @@ void NewFriendList::moveToGroup()
     rsPeers->assignPeerToGroup(RsNodeGroupId(), gpgId, false);
 
     // automatically expand the group, the peer is added to
-    addGroupToExpand(groupId);
+    expandGroup(groupId);
 
     // add to group
     rsPeers->assignPeerToGroup(groupId, gpgId, true);
@@ -1573,21 +1488,8 @@ void NewFriendList::filterItems(const QString &text)
 		ui->peerTreeWidget->collapseAll();
 }
 
-/**
- * Add a groupId to the openGroups list. These groups
- * will be expanded, when they're added to the QTreeWidget
- */
-void NewFriendList::addGroupToExpand(const RsNodeGroupId &groupId)
+void NewFriendList::expandGroup(const RsNodeGroupId& gid)
 {
-    openGroups.insert(groupId);
+    QModelIndex index = mProxyModel->mapFromSource(mModel->getIndexOfGroup(gid));
+	ui->peerTreeWidget->setExpanded(index,true) ;
 }
-
-/**
- * Add a gpgId to the openPeers list. These peers
- * will be expanded, when they're added to the QTreeWidget
- */
-void NewFriendList::addPeerToExpand(const RsPgpId& gpgId)
-{
-    openPeers.insert(gpgId);
-}
-

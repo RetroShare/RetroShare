@@ -56,10 +56,6 @@ public:
 	// Add a tool button to the tool area
 	void addToolButton(QToolButton *toolButton);
 	void processSettings(bool load);
-	void addGroupToExpand(const RsNodeGroupId &groupId);
-	bool getExpandedGroups(std::set<RsNodeGroupId> &groups) const;
-	void addPeerToExpand(const RsPgpId &gpgId);
-	bool getExpandedPeers(std::set<RsPgpId> &peers) const;
 	void setColumnVisible(int col,bool visible);
 	bool isColumnVisible(int col) const;
 
@@ -103,6 +99,7 @@ private:
 	RsFriendListModel *mModel;
 	QAction *mActionSortByState;
 
+	void expandGroup(const RsNodeGroupId& gid);
 	void recursRestoreExpandedItems(const QModelIndex& index, const QString& parent_path, const std::set<QString>& exp, const std::set<QString> &sel);
 	void recursSaveExpandedItems(const QModelIndex& index,const QString& parent_path,std::set<QString>& exp, std::set<QString>& sel);
 	void saveExpandedPathsAndSelection(std::set<QString>& expanded_indexes, std::set<QString>& selected_indexes);
