@@ -66,6 +66,7 @@ void HashingStatus::updateHashingInfo(const QString& s)
 	{
         statusHashing->hide() ;
         hashloader->hide() ;
+        setToolTip(QString());
 
         movie->stop() ;
     } else {

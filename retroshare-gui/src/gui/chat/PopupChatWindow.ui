@@ -10,6 +10,9 @@
     <height>451</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string notr="true">MainWindow</string>
   </property>
