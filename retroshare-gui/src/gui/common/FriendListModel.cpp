@@ -482,18 +482,22 @@ QVariant RsFriendListModel::toolTipRole(const EntryIndex& fmpe,int column) const
 
 QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
 {
-	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float x_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float y_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
     if(e.type == ENTRY_TYPE_NODE)
-        factor *= 3.0;
+        y_factor *= 3.0;
+
+    if(e.type == ENTRY_TYPE_GROUP)
+        y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
 
 	switch(col)
 	{
 	default:
-	case COLUMN_THREAD_NAME:               return QVariant( QSize(factor * 170, factor*14 ));
-	case COLUMN_THREAD_IP:                 return QVariant( QSize(factor * 75 , factor*14 ));
-	case COLUMN_THREAD_ID:                 return QVariant( QSize(factor * 75 , factor*14 ));
-	case COLUMN_THREAD_LAST_CONTACT:       return QVariant( QSize(factor * 75 , factor*14 ));
+	case COLUMN_THREAD_NAME:               return QVariant( QSize(x_factor * 170, y_factor*14*1.2f ));
+	case COLUMN_THREAD_IP:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
+	case COLUMN_THREAD_ID:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
+	case COLUMN_THREAD_LAST_CONTACT:       return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
 	}
 }
 
