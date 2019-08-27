@@ -27,6 +27,7 @@
 
 #include "retroshare/rsevents.h"
 #include "util/rsthreads.h"
+#include "util/rsdebug.h"
 
 class RsEventsService :
         public RsEvents, public RsTickingThread
@@ -38,13 +39,13 @@ public:
 
 	/// @see RsEvents
 	bool postEvent(
-	        std::unique_ptr<RsEvent> event,
+	        std::shared_ptr<const RsEvent> event,
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
 	/// @see RsEvents
 	bool sendEvent(
-	        const RsEvent& event,
+	        std::shared_ptr<const RsEvent> event,
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
@@ -53,7 +54,7 @@ public:
 
 	/// @see RsEvents
 	bool registerEventsHandler(
-	        std::function<void(const RsEvent&)> multiCallback,
+	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
 	        ) override;
 
@@ -63,15 +64,18 @@ public:
 protected:
 	RsMutex mHandlerMapMtx;
 	RsEventsHandlerId_t mLastHandlerId;
-	std::map< RsEventsHandlerId_t, std::function<void(const RsEvent&)> >
-	mHandlerMap;
+	std::map<
+	    RsEventsHandlerId_t,
+	    std::function<void(std::shared_ptr<const RsEvent>)> > mHandlerMap;
 
 	RsMutex mEventQueueMtx;
-	std::deque< std::unique_ptr<RsEvent> > mEventQueue;
+	std::deque< std::shared_ptr<const RsEvent> > mEventQueue;
 
 	/// @see RsTickingThread
 	void data_tick() override;
 
-	void handleEvent(const RsEvent& event);
+	void handleEvent(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t generateUniqueHandlerId_unlocked();
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(3)
 };

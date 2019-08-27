@@ -25,36 +25,43 @@
 #include "services/rseventsservice.h"
 
 
-/*extern*/ std::shared_ptr<RsEvents> rsEvents(nullptr);
+/*extern*/ RsEvents* rsEvents = nullptr;
 RsEvent::~RsEvent() {};
 RsEvents::~RsEvents() {};
 
-bool isEventValid(const RsEvent& event, std::string& errorMessage)
+bool isEventValid(
+        std::shared_ptr<const RsEvent> event, std::string& errorMessage )
 {
-	if(event.mType <= RsEventType::NONE)
+	if(!event)
+	{
+		errorMessage = "Event is null!";
+		return false;
+	}
+
+	if(event->mType <= RsEventType::NONE)
 	{
 		errorMessage = "Event has type NONE: " +
 		        std::to_string(
 		            static_cast<std::underlying_type<RsEventType>::type >(
-		                event.mType ) );
+		                event->mType ) );
 		return false;
 	}
 
-	if(event.mType >= RsEventType::MAX)
+	if(event->mType >= RsEventType::MAX)
 	{
 		errorMessage = "Event has type >= RsEventType::MAX: " +
 		        std::to_string(
 		            static_cast<std::underlying_type<RsEventType>::type >(
-		                event.mType ) );
+		                event->mType ) );
 	}
 
 	return true;
 }
 
-bool RsEventsService::postEvent( std::unique_ptr<RsEvent> event,
+bool RsEventsService::postEvent( std::shared_ptr<const RsEvent> event,
                                  std::string& errorMessage )
 {
-	if(!isEventValid(*event, errorMessage))
+	if(!isEventValid(event, errorMessage))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " Error: "<< errorMessage
 		          << std::endl;
@@ -62,17 +69,16 @@ bool RsEventsService::postEvent( std::unique_ptr<RsEvent> event,
 	}
 
 	RS_STACK_MUTEX(mEventQueueMtx);
-	mEventQueue.push_back(std::move(event));
+	mEventQueue.push_back(event);
 	return true;
 }
 
-bool RsEventsService::sendEvent( const RsEvent& event,
+bool RsEventsService::sendEvent( std::shared_ptr<const RsEvent> event,
                                  std::string& errorMessage )
 {
 	if(!isEventValid(event, errorMessage))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error: "<< errorMessage
-		          << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " "<< errorMessage << std::endl;
 		return false;
 	}
 
@@ -93,12 +99,12 @@ RsEventsHandlerId_t RsEventsService::generateUniqueHandlerId_unlocked()
 }
 
 bool RsEventsService::registerEventsHandler(
-        std::function<void(const RsEvent&)> multiCallback,
+        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
         RsEventsHandlerId_t& hId )
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
 	if(!hId) hId = generateUniqueHandlerId_unlocked();
-	mHandlerMap[hId] = std::move(multiCallback);
+	mHandlerMap[hId] = multiCallback;
 	return true;
 }
 
@@ -116,19 +122,19 @@ void RsEventsService::data_tick()
 	auto nextRunAt = std::chrono::system_clock::now() +
 	        std::chrono::milliseconds(1);
 
-	std::unique_ptr<RsEvent> eventPtr(nullptr);
+	std::shared_ptr<const RsEvent> eventPtr(nullptr);
 	size_t futureEventsCounter = 0;
 
 dispatchEventFromQueueLock:
 	mEventQueueMtx.lock();
 	if(mEventQueue.size() > futureEventsCounter)
 	{
-		eventPtr = std::move(mEventQueue.front());
+		eventPtr = mEventQueue.front();
 		mEventQueue.pop_front();
 
 		if(eventPtr->mTimePoint >= nextRunAt)
 		{
-			mEventQueue.push_back(std::move(eventPtr));
+			mEventQueue.push_back(eventPtr);
 			++futureEventsCounter;
 		}
 	}
@@ -137,17 +143,17 @@ dispatchEventFromQueueLock:
 	if(eventPtr)
 	{
 		/* It is relevant that this stays out of mEventQueueMtx */
-		handleEvent(*eventPtr);
-		eventPtr.reset(nullptr); // ensure memory is freed before sleep
+		handleEvent(eventPtr);
+		eventPtr = nullptr; // ensure refcounter is decremented before sleep
 		goto dispatchEventFromQueueLock;
 	}
 
 	std::this_thread::sleep_until(nextRunAt);
 }
 
-void RsEventsService::handleEvent(const RsEvent& event)
+void RsEventsService::handleEvent(std::shared_ptr<const RsEvent> event)
 {
-	std::function<void(const RsEvent&)> mCallback;
+	std::function<void(std::shared_ptr<const RsEvent>)> mCallback;
 
 	mHandlerMapMtx.lock();
 	auto cbpt = mHandlerMap.begin();
@@ -165,7 +171,7 @@ getHandlerFromMapLock:
 	if(mCallback)
 	{
 		mCallback(event); // It is relevant that this happens outside mutex
-		mCallback = std::function<void(const RsEvent&)>(nullptr);
+		mCallback = std::function<void(std::shared_ptr<const RsEvent>)>(nullptr);
 		goto getHandlerFromMapLock;
 	}
 }

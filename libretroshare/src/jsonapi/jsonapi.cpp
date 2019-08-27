@@ -280,7 +280,7 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 	}, true);
 
 	registerHandler("/rsEvents/registerEventsHandler",
-	        [](const std::shared_ptr<rb::Session> session)
+	        [this](const std::shared_ptr<rb::Session> session)
 	{
 		const std::multimap<std::string, std::string> headers
 		{
@@ -291,7 +291,7 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 
 		size_t reqSize = static_cast<size_t>(
 		            session->get_request()->get_header("Content-Length", 0) );
-		session->fetch( reqSize, [](
+		session->fetch( reqSize, [this](
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{
@@ -303,24 +303,28 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 
 			const std::weak_ptr<rb::Session> weakSession(session);
 			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
-			std::function<void(const RsEvent&)> multiCallback =
-			        [weakSession, hId](const RsEvent& event)
+			std::function<void(std::shared_ptr<const RsEvent>)> multiCallback =
+			        [this, weakSession, hId](std::shared_ptr<const RsEvent> event)
 			{
-				auto session = weakSession.lock();
-				if(!session || session->is_closed())
+				mService.schedule( [weakSession, hId, event]()
 				{
-					if(rsEvents) rsEvents->unregisterEventsHandler(hId);
-					return;
-				}
+					auto session = weakSession.lock();
+					if(!session || session->is_closed())
+					{
+						if(rsEvents) rsEvents->unregisterEventsHandler(hId);
+						return;
+					}
 
-				RsGenericSerializer::SerializeContext ctx;
-				RsTypeSerializer::serial_process(
-				            RsGenericSerializer::TO_JSON, ctx,
-				            const_cast<RsEvent&>(event), "event" );
+					RsGenericSerializer::SerializeContext ctx;
+					RsTypeSerializer::serial_process(
+					            RsGenericSerializer::TO_JSON, ctx,
+					            *const_cast<RsEvent*>(event.get()), "event" );
 
-				std::stringstream message;
-				message << "data: " << compactJSON << ctx.mJson << "\n\n";
-				session->yield(message.str());
+					std::stringstream message;
+					message << "data: " << compactJSON << ctx.mJson << "\n\n";
+
+					session->yield(message.str());
+				} );
 			};
 
 			bool retval = rsEvents->registerEventsHandler(multiCallback, hId);
