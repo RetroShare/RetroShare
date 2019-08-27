@@ -22,6 +22,8 @@
 /// RetroShare initialization and login API implementation
 
 #include <unistd.h>
+#include <math.h>
+#include <termios.h>
 
 #ifndef WINDOWS_SYS
 // for locking instances
@@ -42,6 +44,8 @@
 #include "util/folderiterator.h"
 #include "util/rsstring.h"
 #include "retroshare/rsinit.h"
+#include "retroshare/rsnotify.h"
+#include "retroshare/rsiface.h"
 #include "plugins/pluginmanager.h"
 
 #include "rsserver/rsloginhandler.h"
@@ -114,7 +118,7 @@ RsAccounts* rsAccounts = nullptr;
 
 struct RsInitConfig
 {
-	RsInitConfig() : jsonApiPort(0), jsonApiBindAddress("127.0.0.1") {}
+	RsInitConfig() : jsonApiPort(JsonApiServer::DEFAULT_PORT), jsonApiBindAddress("127.0.0.1") {}
 
 	RsFileHash main_executable_hash;
 
@@ -243,14 +247,6 @@ void RsInit::InitRsConfig()
 	setOutputLevel(RsLog::Warning);
 }
 
-/********
- * LOCALNET_TESTING - allows port restrictions
- *
- * #define LOCALNET_TESTING	1
- *
- ********/
-
-
 #ifdef LOCALNET_TESTING
 
 std::string portRestrictions;
@@ -264,6 +260,12 @@ bool doPortRestrictions = false;
 #endif
 #endif
 
+/********
+ * LOCALNET_TESTING - allows port restrictions
+ *
+ * #define LOCALNET_TESTING	1
+ *
+ ********/
 int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 {
 #ifdef DEBUG_RSINIT
@@ -290,25 +292,20 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 
 
 	argstream as(argc,argv);
-	as      >> option('m',"minimized"        ,rsInitConfig->startMinimised ,"Start minimized."                         )
-	        >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
+	as      >> option('s',"stderr"           ,rsInitConfig->outStderr      ,"output to stderr instead of log file."    )
 	        >> option('u',"udp"              ,rsInitConfig->udpListenerOnly,"Only listen to UDP."                      )
 	        >> option('e',"external-port"    ,rsInitConfig->forceExtPort   ,"Use a forwarded external port."           )
+	        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
 	        >> parameter('l',"log-file"      ,rsInitConfig->logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
 	        >> parameter('d',"debug-level"   ,rsInitConfig->debugLevel     ,"level"     ,"Set debug level."                                            ,false)
 	        >> parameter('i',"ip-address"    ,rsInitConfig->inet           ,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
 	        >> parameter('o',"opmode"        ,rsInitConfig->opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
 	        >> parameter('p',"port"          ,rsInitConfig->port           ,"port", "Set listenning port to use."                                      ,false)
-	        >> parameter('c',"base-dir"      ,opt_base_dir                 ,"directory", "Set base directory."                                         ,false)
-	        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Sets Account to Use, Useful when Autologin is enabled.",false);
+	        >> parameter('U',"user-id"       ,prefUserString               ,"ID", "[ocation Id] Selected account to use and asks for passphrase. Use \"-u list\" in order to list available accounts.",false);
 
 #ifdef RS_JSONAPI
-	as      >> parameter(
-	            "jsonApiPort", rsInitConfig->jsonApiPort, "jsonApiPort",
-	            "Enable JSON API on the specified port", false )
-	        >> parameter(
-	               "jsonApiBindAddress", rsInitConfig->jsonApiBindAddress,
-	               "jsonApiBindAddress", "JSON API Bind Address.", false);
+	as      >> parameter('J', "jsonApiPort", rsInitConfig->jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
+	        >> parameter('P', "jsonApiBindAddress", rsInitConfig->jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
 #endif // ifdef RS_JSONAPI
 
 #ifdef LOCALNET_TESTING
@@ -321,6 +318,7 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 
 	as >> help('h',"help","Display this Help");
 	as.defaultErrorHandling(true,true);
+
 
 		if(rsInitConfig->autoLogin)         rsInitConfig->startMinimised = true ;
 		if(rsInitConfig->outStderr)         rsInitConfig->haveLogFile    = false ;
@@ -408,20 +406,88 @@ int RsInit::InitRetroShare(int argc, char **argv, bool /* strictCheck */)
 		// choose alternative account.
 		if(prefUserString != "")
 		{
-			RsPeerId ssl_id(prefUserString);
+			if(prefUserString == "list")
+            {
+                std::cerr << "Available accounts:" << std::endl;
 
-			if(ssl_id.isNull())
-			{
-				std::cerr << "Invalid User location id: not found in list";
-				std::cerr << std::endl;
-				return RS_INIT_AUTH_FAILED ;
-			}
+                std::list<RsPeerId> account_ids;
+                RsAccounts::GetAccountIds(account_ids);
 
-			if(RsAccounts::SelectAccount(ssl_id))
-			{
-				std::cerr << "Auto-selectng account ID " << ssl_id << std::endl;
-				return RS_INIT_HAVE_ACCOUNT;
-			}
+				int account_number_size = (int)ceil(log(account_ids.size())/log(10.0f)) ;
+                int i=1;
+
+                for(auto it(account_ids.begin());it!=account_ids.end();++it,++i)
+                {
+                    RsPgpId pgp_id;
+                    std::string pgp_name;
+                    std::string loc_name;
+                    std::string pgp_email;
+
+                    RsAccounts::GetAccountDetails(*it,pgp_id,pgp_name,pgp_email,loc_name);
+
+					std::cout << "[" << std::setw(account_number_size) << std::setfill('0')
+                              << i << "] " << *it << " (" << pgp_id << "): " << pgp_name << " \t (" << loc_name << ")" << std::endl;
+				}
+                int nacc=0;
+
+                while(nacc < 1 || nacc >= account_ids.size())
+				{
+					std::cout << "Please enter account number: ";
+					std::cout.flush();
+					std::string str;
+					std::getline(std::cin, str);
+
+					nacc = atoi(str.c_str());
+
+					i=1;
+					for(auto it(account_ids.begin());it!=account_ids.end();++it,++i)
+						if(i==nacc)
+						{
+							prefUserString = (*it).toStdString();
+							break;
+						}
+                    nacc=0;	// allow to continue if something goes wrong.
+
+
+					RsPeerId ssl_id(prefUserString);
+
+					if(ssl_id.isNull())
+					{
+						std::cerr << "Invalid User location id: not found in list";
+						std::cerr << std::endl;
+						continue;
+					}
+
+					if(!RsAccounts::SelectAccount(ssl_id))
+						continue;
+
+					if(!RsLoginHandler::getSSLPassword(ssl_id,true,rsInitConfig->passwd))
+                    {
+                        std::cerr << "No valid password supplied for this account." << std::endl;
+						continue;
+                    }
+
+					std::string lockFile;
+					int retVal = RsInit::LockAndLoadCertificates(false, lockFile);
+
+					switch (retVal)
+					{
+					case 0:	break;
+					case 1:	std::cerr << "Another RetroShare using the same profile is already running on your system. Please close "
+						                 "that instance first\n Lock file:\n" << lockFile << std::endl;
+						continue;
+					case 2:	std::cerr << "An unexpected error occurred when Retroshare tried to acquire the single instance lock\n Lock file:\n"
+						              << lockFile.c_str() << std::endl;
+						continue;
+					case 3:
+					default: std::cerr << "Rshare::loadCertificate() unexpected switch value " << retVal << std::endl;
+						continue;
+					}
+					RsControl::instance()->StartupRetroShare();
+					break;
+				}
+            }
+
 		}
 
 #ifdef RS_AUTOLOGIN
