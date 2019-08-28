@@ -99,8 +99,9 @@ void DiscPgpInfo::mergeFriendList(const std::set<PGPID> &friends)
 p3discovery2::p3discovery2(
         p3PeerMgr* peerMgr, p3LinkMgr* linkMgr, p3NetMgr* netMgr,
         p3ServiceControl* sc, RsGixs* gixs ) :
-    p3Service(), mPeerMgr(peerMgr), mLinkMgr(linkMgr), mNetMgr(netMgr),
-    mServiceCtrl(sc), mGixs(gixs), mDiscMtx("p3discovery2"), mLastPgpUpdate(0)
+    p3Service(), mRsEventsHandle(0), mPeerMgr(peerMgr), mLinkMgr(linkMgr),
+    mNetMgr(netMgr), mServiceCtrl(sc), mGixs(gixs), mDiscMtx("p3discovery2"),
+    mLastPgpUpdate(0)
 {
 	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
@@ -110,8 +111,12 @@ p3discovery2::p3discovery2(
 	// Add self into PGP FriendList.
 	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
 
-	mRsEventsHandle = 0 ; // avoids random behavior if not initialized
-	rsEvents->registerEventsHandler( [this](const RsEvent& event){ rsEventsHandler(event); }, mRsEventsHandle );
+	if(rsEvents)
+		rsEvents->registerEventsHandler(
+		            [this](std::shared_ptr<const RsEvent> event)
+		{
+			rsEventsHandler(*event);
+		}, mRsEventsHandle ); // mRsEventsHandle is zeroed in initializer list
 }
 
 
@@ -1238,12 +1243,9 @@ void p3discovery2::recvInvite(
         std::unique_ptr<RsGossipDiscoveryInviteItem> inviteItem )
 {
 	typedef RsGossipDiscoveryFriendInviteReceivedEvent Evt_t;
-
-	// Ensure rsEvents is not deleted while we use it
-	std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
-	if(lockedRsEvents)
-		lockedRsEvents->postEvent(
-		            std::unique_ptr<Evt_t>(new Evt_t(inviteItem->mInvite)) );
+	if(rsEvents)
+		rsEvents->postEvent(
+		            std::shared_ptr<Evt_t>(new Evt_t(inviteItem->mInvite)) );
 }
 
 void p3discovery2::rsEventsHandler(const RsEvent& event)

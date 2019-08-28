@@ -171,12 +171,9 @@ void BroadcastDiscoveryService::data_tick()
 				else if(!isFriend)
 				{
 					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
-
-					// Ensure rsEvents is not deleted while we use it
-					std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
-					if(lockedRsEvents)
-						lockedRsEvents->postEvent(
-						            std::unique_ptr<Evt_t>(new Evt_t(rbdr)) );
+					if(rsEvents)
+						rsEvents->postEvent(
+						            std::shared_ptr<Evt_t>(new Evt_t(rbdr)) );
 				}
 			}
 		}
