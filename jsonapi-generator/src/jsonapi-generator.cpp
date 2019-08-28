@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	{
 		QDomDocument hDoc;
 		QString hFilePath(it.next());
-		QString parseError; int line, column;
+		QString parseError; int line = -1, column = -1;
 		QFile hFile(hFilePath);
 		if (!hFile.open(QIODevice::ReadOnly) ||
 		        !hDoc.setContent(&hFile, &parseError, &line, &column))
@@ -320,18 +320,13 @@ int main(int argc, char *argv[])
 					        "\t\t\tRS_SERIAL_PROCESS(retval);\n";
 				if(hasOutput) outputParamsSerialization += "\t\t}\n";
 
-				QString captureVars;
-
 				QString sessionEarlyClose;
 				if(hasSingleCallback)
 					sessionEarlyClose = "session->close();";
 
 				QString sessionDelayedClose;
 				if(hasMultiCallback)
-				{
-					sessionDelayedClose = "mService.schedule( [session](){session->close();}, std::chrono::seconds(maxWait+120) );";
-					captureVars = "this";
-				}
+					sessionDelayedClose = "RsThread::async( [=](){ std::this_thread::sleep_for(std::chrono::seconds(maxWait+120)); mService.schedule( [=](){ auto session = weakSession.lock(); if(session && session->is_open()) session->close(); } ); } );";
 
 				QString callbackParamsSerialization;
 
@@ -381,7 +376,6 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("apiPath", apiPath);
 				substitutionsMap.insert("sessionEarlyClose", sessionEarlyClose);
 				substitutionsMap.insert("sessionDelayedClose", sessionDelayedClose);
-				substitutionsMap.insert("captureVars", captureVars);
 				substitutionsMap.insert("callbackName", callbackName);
 				substitutionsMap.insert("callbackParams", callbackParams);
 				substitutionsMap.insert("callbackParamsSerialization", callbackParamsSerialization);

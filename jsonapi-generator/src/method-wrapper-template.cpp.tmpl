@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-registerHandler("$%apiPath%$",
-				[$%captureVars%$](const std::shared_ptr<rb::Session> session)
+registerHandler( "$%apiPath%$",
+                 [](const std::shared_ptr<rb::Session> session)
 {
 	size_t reqSize = session->get_request()->get_header("Content-Length", 0);
 	session->fetch( reqSize, [](
@@ -46,5 +46,5 @@ $%outputParamsSerialization%$
 		// return them to the API caller
 		DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 	} );
-}, $%requiresAuth%$);
+}, $%requiresAuth%$ );
 
