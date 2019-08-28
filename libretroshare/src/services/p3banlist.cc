@@ -306,17 +306,22 @@ bool p3BanList::acceptedBanRanges_locked(const BanListPeer& blp)
     }
     return false ;
 }
+
 bool p3BanList::isAddressAccepted(
         const sockaddr_storage& dAddr, uint32_t checking_flags,
         uint32_t& check_result )
 {
 	check_result = RSBANLIST_CHECK_RESULT_NOCHECK;
-	if(!mIPFilteringEnabled) return true;
 
 	sockaddr_storage addr; sockaddr_storage_copy(dAddr, addr);
 
 	if(!sockaddr_storage_ipv6_to_ipv4(addr)) return true;
 	if(sockaddr_storage_isLoopbackNet(addr)) return true;
+
+
+	RS_STACK_MUTEX(mBanMtx);
+
+	if(!mIPFilteringEnabled) return true;
 
 #ifdef DEBUG_BANLIST
     std::cerr << "isAddressAccepted(): tested addr=" << sockaddr_storage_iptostring(addr) << ", checking flags=" << checking_flags ;
@@ -409,6 +414,7 @@ bool p3BanList::isAddressAccepted(
         check_result = RSBANLIST_CHECK_RESULT_ACCEPTED;
     return true ;
 }
+
 void p3BanList::getWhiteListedIps(std::list<BanListPeer> &lst)
 {
     RS_STACK_MUTEX(mBanMtx) ;
@@ -580,11 +586,6 @@ int p3BanList::tick()
 #endif
 
     return 0;
-}
-
-int	p3BanList::status()
-{
-	return 1;
 }
 
 void p3BanList::getDhtInfo()
