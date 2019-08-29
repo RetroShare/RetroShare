@@ -22,9 +22,10 @@
 #include <cstdint>
 #include <map>
 #include <iostream>
-#include <endpoint.hpp>
 #include <memory>
 #include <forward_list>
+
+#include <udp_discovery_peer.hpp>
 
 #include "retroshare/rsbroadcastdiscovery.h"
 #include "util/rsthreads.h"
@@ -52,8 +53,8 @@ protected:
 
 	void updatePublishedData();
 
-	UDC::EndpointParameters mUdcParameters;
-	UDC::Endpoint mUdcEndpoint;
+	UDC::PeerParameters mUdcParameters;
+	UDC::Peer mUdcPeer;
 
 	std::map<UDC::IpPort, std::string> mDiscoveredData;
 	RsMutex mDiscoveredDataMutex;

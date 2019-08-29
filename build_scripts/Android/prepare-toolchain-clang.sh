@@ -21,8 +21,8 @@ define_default_value HOST_NUM_CPU $(nproc)
 define_default_value BZIP2_SOURCE_VERSION "1.0.6"
 define_default_value BZIP2_SOURCE_SHA256 a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
 
-define_default_value OPENSSL_SOURCE_VERSION "1.1.1"
-define_default_value OPENSSL_SOURCE_SHA256 2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d
+define_default_value OPENSSL_SOURCE_VERSION "1.1.1c"
+define_default_value OPENSSL_SOURCE_SHA256 f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90
 
 define_default_value SQLITE_SOURCE_YEAR "2018"
 define_default_value SQLITE_SOURCE_VERSION "3250200"
@@ -38,7 +38,7 @@ define_default_value INSTALL_QT_ANDROID "false"
 define_default_value QT_VERSION "5.12.0"
 define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37255bf724bfc69e80f7012ba3abeb1f763
 
-define_default_value RESTBED_SOURCE_VERSION "4.6"
+define_default_value RESTBED_SOURCE_VERSION f74f9329dac82e662c1d570b7cd72c192b729eb4
 
 define_default_value UDP_DISCOVERY_CPP_SOURCE "https://github.com/truvorskameikin/udp-discovery-cpp.git"
 define_default_value UDP_DISCOVERY_CPP_VERSION "develop"
@@ -110,6 +110,12 @@ export RANLIB="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-r
 ## More information available at https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 build_toolchain()
 {
+	echo "build_toolchain()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	rm -rf ${NATIVE_LIBS_TOOLCHAIN_PATH}
 	${ANDROID_NDK_PATH}/build/tools/make_standalone_toolchain.py --verbose \
 		--arch ${ANDROID_NDK_ARCH} --install-dir ${NATIVE_LIBS_TOOLCHAIN_PATH} \
@@ -120,6 +126,11 @@ build_toolchain()
 ## This avoid <cmath> include errors due to -isystem and -I ordering issue
 delete_copied_includes()
 {
+	echo "delete_copied_includes()
+################################################################################
+################################################################################
+################################################################################
+"
 	cat "${NATIVE_LIBS_TOOLCHAIN_PATH}/deletefiles" | while read delFile ; do
 		rm "$delFile"
 	done
@@ -128,6 +139,12 @@ delete_copied_includes()
 ## More information available at https://gitlab.com/relan/provisioners/merge_requests/1 and http://stackoverflow.com/a/34032216
 install_qt_android()
 {
+	echo "install_qt_android()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	QT_VERSION_CODE=$(echo $QT_VERSION | tr -d .)
 	QT_INSTALL_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}/Qt
 	QT_INSTALLER="qt-unified-linux-x64-3.0.2-online.run"
@@ -211,6 +228,12 @@ QT_QPA_PLATFORM=minimal ./${QT_INSTALLER} --script ${QT_INSTALLER_SCRIPT}
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
 build_bzlib()
 {
+	echo "build_bzlib()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="bzip2-${BZIP2_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -235,6 +258,12 @@ build_bzlib()
 ## More information available at http://doc.qt.io/qt-5/opensslsupport.html
 build_openssl()
 {
+	echo "build_openssl()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="openssl-${OPENSSL_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -252,7 +281,7 @@ build_openssl()
 	[[ ${ANDROID_NDK_ARCH} =~ .*64.* ]] && oBits=64
 
 	ANDROID_NDK="${ANDROID_NDK_PATH}" PATH="${SYSROOT}/bin/:${PATH}" \
-		./Configure linux-generic${oBits} --prefix="${PREFIX}" \
+		./Configure linux-generic${oBits} -fPIC --prefix="${PREFIX}" \
 		--openssldir="${SYSROOT}/etc/ssl"
 #	sed -i 's/LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \\/LIBNAME=$$i \\/g' Makefile
 #	sed -i '/LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \\/d' Makefile
@@ -265,6 +294,12 @@ build_openssl()
 
 build_sqlite()
 {
+	echo "build_sqlite()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="sqlite-autoconf-${SQLITE_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -284,6 +319,12 @@ build_sqlite()
 
 build_sqlcipher()
 {
+	echo "build_sqlcipher()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	case "${ANDROID_NDK_ARCH}" in
 	"arm64")
 		echo sqlcipher not supported for arm64
@@ -314,6 +355,12 @@ build_sqlcipher()
 
 build_libupnp()
 {
+	echo "build_libupnp()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="pupnp-release-${LIBUPNP_SOURCE_VERSION}"
 	B_ext=".tar.gz"
 	B_file="${B_dir}${B_ext}"
@@ -339,6 +386,12 @@ build_libupnp()
 
 build_rapidjson()
 {
+	echo "build_rapidjson()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="rapidjson-${RAPIDJSON_SOURCE_VERSION}"
 	D_file="${B_dir}.tar.gz"
 	verified_download $D_file $RAPIDJSON_SOURCE_SHA256 \
@@ -349,10 +402,17 @@ build_rapidjson()
 
 build_restbed()
 {
+	echo "build_restbed()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	[ -d restbed ] || git clone --depth=2000 https://github.com/Corvusoft/restbed.git
 	cd restbed
-	git fetch --tags
-	git checkout tags/${RESTBED_SOURCE_VERSION}
+#	git fetch --tags
+#	git checkout tags/${RESTBED_SOURCE_VERSION}
+	git checkout ${RESTBED_SOURCE_VERSION}
 	git submodule update --init dependency/asio
 	git submodule update --init dependency/catch
 	git submodule update --init dependency/kashmir
@@ -370,6 +430,12 @@ build_restbed()
 
 build_udp-discovery-cpp()
 {
+	echo "build_udp-discovery-cpp()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	S_dir="udp-discovery-cpp"
 	[ -d $S_dir ] || git clone $UDP_DISCOVERY_CPP_SOURCE $S_dir
 	cd $S_dir
@@ -389,6 +455,12 @@ build_udp-discovery-cpp()
 
 build_xapian()
 {
+	echo "build_xapian()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="xapian-core-${XAPIAN_SOURCE_VERSION}"
 	D_file="$B_dir.tar.xz"
 	verified_download $D_file $XAPIAN_SOURCE_SHA256 \

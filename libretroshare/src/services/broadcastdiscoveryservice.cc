@@ -100,12 +100,12 @@ BroadcastDiscoveryService::BroadcastDiscoveryService(
 	mUdcParameters.set_port(port);
 	mUdcParameters.set_application_id(appId);
 
-	mUdcEndpoint.Start(mUdcParameters, "");
+	mUdcPeer.Start(mUdcParameters, "");
 	updatePublishedData();
 }
 
 BroadcastDiscoveryService::~BroadcastDiscoveryService()
-{ mUdcEndpoint.Stop(true); }
+{ mUdcPeer.Stop(true); }
 
 std::vector<RsBroadcastDiscoveryResult>
 BroadcastDiscoveryService::getDiscoveredPeers()
@@ -123,7 +123,7 @@ void BroadcastDiscoveryService::updatePublishedData()
 {
 	RsPeerDetails od;
 	mRsPeers.getPeerDetails(mRsPeers.getOwnId(), od);
-	mUdcEndpoint.SetUserData(
+	mUdcPeer.SetUserData(
 	            BroadcastDiscoveryPack::fromPeerDetails(od).serializeToString());
 }
 
@@ -134,7 +134,7 @@ void BroadcastDiscoveryService::data_tick()
 	if( mUdcParameters.can_discover() &&
 	        !mRsPeers.isHiddenNode(mRsPeers.getOwnId()) )
 	{
-		auto currentEndpoints = mUdcEndpoint.ListDiscovered();
+		auto currentEndpoints = mUdcPeer.ListDiscovered();
 		std::map<UDC::IpPort, std::string> currentMap;
 		std::map<UDC::IpPort, std::string> updateMap;
 
