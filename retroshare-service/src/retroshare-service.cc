@@ -17,6 +17,7 @@
  */
 
 #include "util/stacktrace.h"
+#include "jsonapi/jsonapi.h"
 
 CrashStackTrace gCrashStackTrace;
 
@@ -91,11 +92,11 @@ std::string readStringFromKeyboard(const char *prompt, bool show_asterisk=true)
   return password;
 }
 
-class NotifyTxt: public NotifyClient
+class RsServiceNotify: public NotifyClient
 {
 public:
-	NotifyTxt(){}
-	virtual ~NotifyTxt() {}
+	RsServiceNotify(){}
+	virtual ~RsServiceNotify() {}
 
 	virtual bool askForPassword(const std::string& title, const std::string& question, bool prev_is_bad, std::string& password,bool& cancel)
 	{
@@ -126,8 +127,32 @@ int main(int argc, char* argv[])
 	RsControl::earlyInitNotificationSystem();
 
 #ifndef __ANDROID__
-	NotifyTxt *notify = new NotifyTxt();
+	RsServiceNotify *notify = new RsServiceNotify();
 	rsNotify->registerNotifyClient(notify);
+#endif
+
+#ifndef __ANDROID__
+        std::string webui_pass1 = "Y";
+        std::string webui_pass2 = "N";
+
+        for(;;)
+        {
+			webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
+			webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
+
+            if(webui_pass1 != webui_pass2)
+            {
+                std::cerr << "Passwords do not match!" << std::endl;
+                continue;
+            }
+            if(webui_pass1.empty())
+            {
+                std::cerr << "Password cannot be empty!" << std::endl;
+                continue;
+            }
+
+			break;
+        }
 #endif
 
     if(RsInit::InitRetroShare(argc, argv, true))
@@ -135,6 +160,7 @@ int main(int argc, char* argv[])
         std::cerr << "Could not properly init Retroshare core." << std::endl;
         return 1;
     }
+
 #ifdef __ANDROID__
 	rsControl->setShutdownCallback(QCoreApplication::exit);
 
@@ -146,6 +172,9 @@ int main(int argc, char* argv[])
 
 	return app.exec();
 #else
+    if(jsonApiServer)
+		jsonApiServer->authorizeToken("webui:"+webui_pass1);
+
 	while(true)
 	   sleep(1);
 #endif
