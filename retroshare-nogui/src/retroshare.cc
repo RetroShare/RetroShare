@@ -57,8 +57,10 @@
 
 int main(int argc, char **argv)
 {
-#ifdef ENABLE_WEBUI
+	RsConfigOptions conf;
+	conf.main_executable_path = argv[0];
 
+#ifdef ENABLE_WEBUI
     std::string docroot = resource_api::getDefaultDocroot();
     uint16_t httpPort = 0;
 	std::string listenAddress;
@@ -77,8 +79,9 @@ int main(int argc, char **argv)
         std::cerr << args.usage() << std::endl;
         // print libretroshare command line args and exit
         RsInit::InitRsConfig();
-        RsInit::InitRetroShare(argc, argv, true);
-        return 0;
+
+		RsInit::InitRetroShare(conf);
+		return 0;
     }
 
     resource_api::ApiServer api;
@@ -126,7 +129,7 @@ int main(int argc, char **argv)
 
 	bool strictCheck = true;
 	RsInit::InitRsConfig();
-	int initResult = RsInit::InitRetroShare(argc, argv, strictCheck);
+	int initResult = RsInit::InitRetroShare(conf);
 
 	if (initResult < 0) {
 		/* Error occured */

@@ -17,10 +17,13 @@
  */
 
 #include "util/stacktrace.h"
+#include "util/argstream.h"
+#include "retroshare/rsinit.h"
 #include "jsonapi/jsonapi.h"
 
 CrashStackTrace gCrashStackTrace;
 
+#include <cmath>
 #include <csignal>
 
 #ifndef __ANDROID__
@@ -127,39 +130,144 @@ int main(int argc, char* argv[])
 	RsControl::earlyInitNotificationSystem();
 
 #ifndef __ANDROID__
+	std::string webui_pass1 = "Y";
+	std::string webui_pass2 = "N";
+
+	for(;;)
+	{
+		webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
+		webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
+
+		if(webui_pass1 != webui_pass2)
+		{
+			std::cerr << "Passwords do not match!" << std::endl;
+			continue;
+		}
+		if(webui_pass1.empty())
+		{
+			std::cerr << "Password cannot be empty!" << std::endl;
+			continue;
+		}
+
+		break;
+	}
+#endif
+
+#ifdef __APPLE__
+	// TODO: is this still needed with argstream?
+	/* HACK to avoid stupid OSX Finder behaviour
+	 * remove the commandline arguments - if we detect we are launched from Finder,
+	 * and we have the unparsable "-psn_0_12332" option.
+	 * this is okay, as you cannot pass commandline arguments via Finder anyway
+	 */
+	if ((argc >= 2) && (0 == strncmp(argv[1], "-psn", 4))) argc = 1;
+#endif
+
+    std::string prefUserString;
+    RsConfigOptions conf;
+
+	argstream as(argc,argv);
+	as      >> option('s',"stderr"           ,conf.outStderr        ,"output to stderr instead of log file."    )
+	        >> option('u',"udp"              ,conf.udpListenerOnly  ,"Only listen to UDP."                      )
+	        >> parameter('c',"base-dir"      ,conf.optBaseDir       ,"directory", "Set base directory."                                         ,false)
+	        >> parameter('l',"log-file"      ,conf.logfname         ,"logfile"   ,"Set Log filename."                                           ,false)
+	        >> parameter('d',"debug-level"   ,conf.debugLevel       ,"level"     ,"Set debug level."                                            ,false)
+	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
+	        >> parameter('o',"opmode"        ,conf.opModeStr        ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
+	        >> parameter('p',"port"          ,conf.forcedPort       ,"port", "Set listenning port to use."                                      ,false)
+	        >> parameter('U',"user-id"       ,prefUserString        ,"ID", "[ocation Id] Selected account to use and asks for passphrase. Use \"-u list\" in order to list available accounts.",false);
+
+#ifdef RS_JSONAPI
+	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
+	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
+#endif // ifdef RS_JSONAPI
+
+#ifdef LOCALNET_TESTING
+	as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false);
+#endif // ifdef LOCALNET_TESTING
+
+#ifdef RS_AUTOLOGIN
+	as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
+#endif // ifdef RS_AUTOLOGIN
+
+	as >> help('h',"help","Display this Help");
+	as.defaultErrorHandling(true,true);
+
+#ifndef __ANDROID__
 	RsServiceNotify *notify = new RsServiceNotify();
 	rsNotify->registerNotifyClient(notify);
 #endif
 
-#ifndef __ANDROID__
-        std::string webui_pass1 = "Y";
-        std::string webui_pass2 = "N";
+    conf.main_executable_path = argv[0];
 
-        for(;;)
-        {
-			webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
-			webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
-
-            if(webui_pass1 != webui_pass2)
-            {
-                std::cerr << "Passwords do not match!" << std::endl;
-                continue;
-            }
-            if(webui_pass1.empty())
-            {
-                std::cerr << "Password cannot be empty!" << std::endl;
-                continue;
-            }
-
-			break;
-        }
-#endif
-
-    if(RsInit::InitRetroShare(argc, argv, true))
+    if(RS_INIT_OK != RsInit::InitRetroShare(conf))
     {
         std::cerr << "Could not properly init Retroshare core." << std::endl;
         return 1;
     }
+
+	// choose alternative account.
+	if(prefUserString != "")
+	{
+		if(prefUserString == "list")
+		{
+			std::cerr << "Available accounts:" << std::endl;
+
+            std::vector<RsLoginHelper::Location> locations;
+            rsLoginHelper->getLocations(locations);
+
+			int account_number_size = (int)ceil(log(locations.size())/log(10.0f)) ;
+
+			for(uint32_t i=0;i<locations.size();++i)
+				std::cout << "[" << std::setw(account_number_size) << std::setfill('0')
+				          << i+1 << "] " << locations[i].mLocationId << " (" << locations[i].mPgpId << "): " << locations[i].mPgpName
+                          << " \t (" << locations[i].mLocationName << ")" << std::endl;
+
+			int nacc=0;
+
+			while(nacc < 1 || nacc >= locations.size())
+			{
+				std::cout << "Please enter account number: ";
+				std::cout.flush();
+				std::string str;
+				std::getline(std::cin, str);
+
+				nacc = atoi(str.c_str())-1;
+
+                if(nacc >= 0 && nacc < locations.size())
+				{
+					prefUserString = locations[nacc].mLocationId.toStdString();
+					break;
+				}
+				nacc=0;	// allow to continue if something goes wrong.
+			}
+        }
+
+		RsPeerId ssl_id(prefUserString);
+
+		if(ssl_id.isNull())
+		{
+			std::cerr << "Invalid User location id: a hexadecimal ID is expected." << std::endl;
+			return 1;
+		}
+
+		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id,std::string()); // supply empty passwd so that it is properly asked 3 times on console
+
+        std::string lock_file_path = RsAccounts::AccountDirectory()+"/lock" ;
+
+        switch(result)
+        {
+				case RsInit::OK:	break;
+				case RsInit::ERR_ALREADY_RUNNING:	std::cerr << "Another RetroShare using the same profile is already running on your system. Please close "
+					                 							 "that instance first.\nLock file: " << RsInit::lockFilePath() << std::endl;
+					return 1;
+				case RsInit::ERR_CANT_ACQUIRE_LOCK:	std::cerr << "An unexpected error occurred when Retroshare tried to acquire the single instance lock file. \nLock file: " << RsInit::lockFilePath() << std::endl;
+					return 1;
+				case RsInit::ERR_UNKNOWN:
+				default: std::cerr << "Unknown error." << std::endl;
+					return 1;
+		}
+	}
 
 #ifdef __ANDROID__
 	rsControl->setShutdownCallback(QCoreApplication::exit);
