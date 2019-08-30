@@ -21,7 +21,6 @@
 #include <algorithm>
 
 #include <QShortcut>
-#include <QTimer>
 #include <QWidgetAction>
 #include <QDateTime>
 #include <QPainter>
@@ -155,7 +154,7 @@ private:
     bool m_showOfflineNodes;
 };
 
-NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), ui(new Ui::NewFriendList())
+NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent),*/ ui(new Ui::NewFriendList())
 {
 	ui->setupUi(this);
 
@@ -192,7 +191,7 @@ NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), u
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
-	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()));
+	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()),Qt::QueuedConnection);
 
     QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
 
@@ -215,18 +214,20 @@ NewFriendList::NewFriendList(QWidget *parent) : RsAutoUpdatePage(5000,parent), u
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
 
-	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(forceUpdateDisplay()));
-    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(forceUpdateDisplay()));
-	connect(NotifyQt::getInstance(), SIGNAL(peerConnected(const QString&)), this, SLOT(forceUpdateDisplay()));
-	connect(NotifyQt::getInstance(), SIGNAL(peerDisconnected(const QString&)), this, SLOT(forceUpdateDisplay()));
+    // Using Queued connections here is pretty important since the notifications may come from a different thread.
+
+	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged())                , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
+    connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int))              , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
+	connect(NotifyQt::getInstance(), SIGNAL(peerConnected(const QString&))   , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
+	connect(NotifyQt::getInstance(), SIGNAL(peerDisconnected(const QString&)), this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
-    connect(ui->actionShowState, SIGNAL(triggered(bool)), this, SLOT(setShowState(bool)));
-    connect(ui->actionShowGroups, SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool)));
-    connect(ui->actionExportFriendlist, SIGNAL(triggered()), this, SLOT(exportFriendlistClicked()));
-    connect(ui->actionImportFriendlist, SIGNAL(triggered()), this, SLOT(importFriendlistClicked()));
+    connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
+    connect(ui->actionShowGroups,         SIGNAL(triggered(bool)), this, SLOT(setShowGroups(bool))     );
+    connect(ui->actionExportFriendlist,   SIGNAL(triggered())    , this, SLOT(exportFriendlistClicked()));
+    connect(ui->actionImportFriendlist,   SIGNAL(triggered())    , this, SLOT(importFriendlistClicked()));
 
-    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)));
+    connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterItems(QString)),Qt::QueuedConnection);
 	connect(h, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
 
 // #ifdef RS_DIRECT_CHAT
@@ -972,10 +973,10 @@ void NewFriendList::forceUpdateDisplay()
     checkInternalData(true);
 }
 
-void NewFriendList::updateDisplay()
-{
-    checkInternalData(false);
-}
+// void NewFriendList::updateDisplay()
+// {
+//     checkInternalData(false);
+// }
 
 void NewFriendList::moveToGroup()
 {
