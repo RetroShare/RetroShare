@@ -567,7 +567,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 		case RsFriendListModel::ENTRY_TYPE_PROFILE:
 		{
 			contextMenu.addAction(QIcon(IMAGE_FRIENDINFO), tr("Profile details"), this, SLOT(configureProfile()));
-			contextMenu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removefriend()));
+			contextMenu.addAction(QIcon(IMAGE_DENYFRIEND), tr("Deny connections"), this, SLOT(removeProfile()));
 
             RsFriendListModel::RsProfileDetails details;
             mModel->getProfileData(index,details);
@@ -902,6 +902,8 @@ void NewFriendList::removeNode()
 
 	if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this node?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
 		rsPeers->removeFriendLocation(det.id);
+
+    checkInternalData(true);
 }
 
 void NewFriendList::removeProfile()
@@ -913,6 +915,7 @@ void NewFriendList::removeProfile()
 	if ((QMessageBox::question(this, "RetroShare", tr("Do you want to remove this Friend?"), QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes)) == QMessageBox::Yes)
 		rsPeers->removeFriend(det.gpg_id);
 
+    checkInternalData(true);
 }
 
 void NewFriendList::connectNode()
