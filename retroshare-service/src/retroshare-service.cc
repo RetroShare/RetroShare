@@ -284,8 +284,11 @@ int main(int argc, char* argv[])
     if(jsonApiServer)
 		jsonApiServer->authorizeToken("webui:"+webui_pass1);
 
-	while(true)
-	   sleep(1);
+	std::atomic<bool> keepRunning = true;
+	rsControl->setShutdownCallback([&](int){keepRunning = false;});
+
+	while(keepRunning)
+		std::this_thread::sleep_for(std::chrono::seconds(5));
 #endif
 
 }

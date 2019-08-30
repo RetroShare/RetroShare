@@ -22,7 +22,6 @@
 /// RetroShare initialization and login API implementation
 
 #include <unistd.h>
-#include <math.h>
 #include <termios.h>
 
 #ifndef WINDOWS_SYS
