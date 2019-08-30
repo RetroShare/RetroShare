@@ -38,7 +38,7 @@ class QTreeWidgetItem;
 class QToolButton;
 class FriendListSortFilterProxyModel;
 
-class NewFriendList: public RsAutoUpdatePage
+class NewFriendList: public QWidget
 {
 	Q_OBJECT
 
@@ -61,7 +61,7 @@ public:
 
 	std::string getSelectedGroupId() const;
 
-    void updateDisplay() override;
+    //void updateDisplay() override;
 
 	QColor textColorGroup()          const { return mModel->mTextColorGroup; }
 	QColor textColorStatusOffline()  const { return mModel->mTextColorStatus[RS_STATUS_OFFLINE ]; }
