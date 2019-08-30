@@ -287,6 +287,7 @@ class RsTickingThread: public RsThread
 {
 public:
     RsTickingThread();
+    virtual ~RsTickingThread();
 
     void shutdown();
     void fullstop();
