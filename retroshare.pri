@@ -68,8 +68,8 @@ CONFIG *= retroshare_service
 retroshare_service:CONFIG -= no_retroshare_service
 
 # To disable libresapi append the following assignation to qmake command line
-#"CONFIG+=no_libresapi"
-CONFIG *= libresapi
+CONFIG+=no_libresapi
+#CONFIG *= libresapi
 no_libresapi:CONFIG -= libresapi
 
 # To enable libresapi via local socket (unix domain socket or windows named
