@@ -125,33 +125,12 @@ int main(int argc, char* argv[])
 #endif // ifdef SIGBREAK
 
 #endif // def __ANDROID__
+    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "==                        Retroshare Service                          ==" << std::endl;
+    std::cerr << "========================================================================" << std::endl;
 
 	RsInit::InitRsConfig();
 	RsControl::earlyInitNotificationSystem();
-
-#ifndef __ANDROID__
-	std::string webui_pass1 = "Y";
-	std::string webui_pass2 = "N";
-
-	for(;;)
-	{
-		webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
-		webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
-
-		if(webui_pass1 != webui_pass2)
-		{
-			std::cerr << "Passwords do not match!" << std::endl;
-			continue;
-		}
-		if(webui_pass1.empty())
-		{
-			std::cerr << "Password cannot be empty!" << std::endl;
-			continue;
-		}
-
-		break;
-	}
-#endif
 
 #ifdef __APPLE__
 	// TODO: is this still needed with argstream?
@@ -175,7 +154,7 @@ int main(int argc, char* argv[])
 	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
 	        >> parameter('o',"opmode"        ,conf.opModeStr        ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
 	        >> parameter('p',"port"          ,conf.forcedPort       ,"port", "Set listenning port to use."                                      ,false)
-	        >> parameter('U',"user-id"       ,prefUserString        ,"ID", "[ocation Id] Selected account to use and asks for passphrase. Use \"-u list\" in order to list available accounts.",false);
+	        >> parameter('U',"user-id"       ,prefUserString        ,"ID", "[node Id] Selected account to use and asks for passphrase. Use \"-u list\" in order to list available accounts.",false);
 
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
@@ -196,6 +175,28 @@ int main(int argc, char* argv[])
 #ifndef __ANDROID__
 	RsServiceNotify *notify = new RsServiceNotify();
 	rsNotify->registerNotifyClient(notify);
+
+	std::string webui_pass1 = "Y";
+	std::string webui_pass2 = "N";
+
+	for(;;)
+	{
+		webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
+		webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
+
+		if(webui_pass1 != webui_pass2)
+		{
+			std::cerr << "Passwords do not match!" << std::endl;
+			continue;
+		}
+		if(webui_pass1.empty())
+		{
+			std::cerr << "Password cannot be empty!" << std::endl;
+			continue;
+		}
+
+		break;
+	}
 #endif
 
     conf.main_executable_path = argv[0];
