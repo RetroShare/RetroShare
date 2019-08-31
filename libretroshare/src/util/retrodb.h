@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSSQLITE_H
-#define RSSQLITE_H
+#pragma once
 
 #ifdef NO_SQLCIPHER
 #include <sqlite3.h>
@@ -32,9 +31,10 @@
 #include <set>
 #include <list>
 #include <map>
-#include "rsdbbind.h"
 
-#include "contentvalue.h"
+#include "util/rsdebug.h"
+#include "util/rsdbbind.h"
+#include "util/contentvalue.h"
 
 class RetroCursor;
 
@@ -202,6 +202,8 @@ private:
 
     sqlite3* mDb;
     const std::string mKey;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(3)
 };
 
 /*!
@@ -318,5 +320,3 @@ public:
 private:
     sqlite3_stmt* mStmt;
 };
-
-#endif // RSSQLITE_H
