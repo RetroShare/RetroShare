@@ -43,6 +43,46 @@ rs_jsonapi {
     FORMS *= gui/settings/JsonApiPage.ui
 }
 
+# Auto detect installed version of cmark
+rs_gui_cmark {
+	DEFINES *= USE_CMARK
+	no_rs_cross_compiling {
+		message("Using compiled cmark")
+		CMARK_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/cmark)
+		CMARK_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/cmark/build)
+		INCLUDEPATH *= $$clean_path($${RS_SRC_PATH}/src/)
+		DEPENDPATH *= $$clean_path($${RS_SRC_PATH}/src/)
+		QMAKE_LIBDIR *= $$clean_path($${CMARK_BUILD_PATH}/)
+		# Using sLibs would fail as libcmark.a is generated at compile-time
+		LIBS *= -L$$clean_path($${CMARK_BUILD_PATH}/src/) -lcmark
+
+		DUMMYCMARKINPUT = FORCE
+		CMAKE_GENERATOR_OVERRIDE=""
+		win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+		gencmarklib.name = Generating libcmark.
+		gencmarklib.input = DUMMYCMARKINPUT
+		gencmarklib.output = $$clean_path($${CMARK_BUILD_PATH}/src/libcmark.a)
+		gencmarklib.CONFIG += target_predeps combine
+		gencmarklib.variable_out = PRE_TARGETDEPS
+		gencmarklib.commands = \
+		    cd $${RS_SRC_PATH} && ( \
+		    git submodule update --init supportlibs/cmark ; \
+		    cd $${CMARK_SRC_PATH} ; \
+		    true ) && \
+		    mkdir -p $${CMARK_BUILD_PATH} && cd $${CMARK_BUILD_PATH} && \
+		    cmake \
+		        -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+		        $${CMAKE_GENERATOR_OVERRIDE} \
+		        -DCMAKE_INSTALL_PREFIX=. \
+		        -B. \
+		        -H$$shell_path($${CMARK_SRC_PATH}) && \
+		    $(MAKE)
+		QMAKE_EXTRA_COMPILERS += gencmarklib
+	} else {
+		message("Using systems cmark")
+		sLibs *= libcmark
+	}
+}
 
 FORMS   += TorControl/TorControlWindow.ui
 SOURCES += TorControl/TorControlWindow.cpp
@@ -81,7 +121,7 @@ MOC_DIR = temp/moc
 ################################# Linux ##########################################
 # Put lib dir in QMAKE_LFLAGS so it appears before -L/usr/lib
 linux-* {
-    CONFIG += link_pkgconfig
+	CONFIG += link_pkgconfig
 
 	#CONFIG += version_detail_bash_script
 	QMAKE_CXXFLAGS *= -D_FILE_OFFSET_BITS=64
@@ -1398,45 +1438,4 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
-}
-
-cmark {
-  DEFINES *= USE_CMARK
-
-  HEADERS += \
-    ../../supportlibs/cmark/src/buffer.h								 \
-    ../../supportlibs/cmark/src/chunk.h									 \
-    ../../supportlibs/cmark/src/cmark.h									 \
-    ../../supportlibs/cmark/src/cmark_ctype.h						 \
-    ../../supportlibs/cmark/src/houdini.h								 \
-    ../../supportlibs/cmark/src/inlines.h								 \
-    ../../supportlibs/cmark/src/iterator.h							 \
-    ../../supportlibs/cmark/src/node.h									 \
-    ../../supportlibs/cmark/src/parser.h								 \
-    ../../supportlibs/cmark/src/references.h						 \
-    ../../supportlibs/cmark/src/render.h								 \
-    ../../supportlibs/cmark/src/scanners.h							 \
-    ../../supportlibs/cmark/src/utf8.h									 \
-
-  SOURCES += \
-    ../../supportlibs/cmark/src/blocks.c									 \
-    ../../supportlibs/cmark/src/buffer.c									 \
-    ../../supportlibs/cmark/src/cmark.c										 \
-    ../../supportlibs/cmark/src/cmark_ctype.c							 \
-    ../../supportlibs/cmark/src/commonmark.c							 \
-    ../../supportlibs/cmark/src/houdini_href_e.c					 \
-    ../../supportlibs/cmark/src/houdini_html_e.c					 \
-    ../../supportlibs/cmark/src/houdini_html_u.c					 \
-    ../../supportlibs/cmark/src/html.c										 \
-    ../../supportlibs/cmark/src/inlines.c									 \
-    ../../supportlibs/cmark/src/iterator.c								 \
-    ../../supportlibs/cmark/src/latex.c										 \
-    ../../supportlibs/cmark/src/man.c											 \
-    ../../supportlibs/cmark/src/node.c										 \
-    ../../supportlibs/cmark/src/references.c							 \
-    ../../supportlibs/cmark/src/render.c									 \
-    ../../supportlibs/cmark/src/scanners.c								 \
-    ../../supportlibs/cmark/src/utf8.c										 \
-    ../../supportlibs/cmark/src/xml.c											 \
-
 }
