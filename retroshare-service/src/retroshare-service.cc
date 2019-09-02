@@ -125,9 +125,13 @@ int main(int argc, char* argv[])
 #endif // ifdef SIGBREAK
 
 #endif // def __ANDROID__
-    std::cerr << "========================================================================" << std::endl;
-    std::cerr << "==                        Retroshare Service                          ==" << std::endl;
-    std::cerr << "========================================================================" << std::endl;
+    std::cerr << "+================================================================+" << std::endl;
+    std::cerr << "|     o---o                                             o        |" << std::endl;
+    std::cerr << "|      \\ /           - Retroshare Service -            / \\       |" << std::endl;
+    std::cerr << "|       o                                             o---o      |" << std::endl;
+    std::cerr << "+================================================================+" << std::endl;
+
+    std::cerr << std::endl;
 
 	RsInit::InitRsConfig();
 	RsControl::earlyInitNotificationSystem();
@@ -154,7 +158,7 @@ int main(int argc, char* argv[])
 	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."      ,false)
 	        >> parameter('o',"opmode"        ,conf.opModeStr        ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false)
 	        >> parameter('p',"port"          ,conf.forcedPort       ,"port", "Set listenning port to use."                                      ,false)
-	        >> parameter('U',"user-id"       ,prefUserString        ,"ID", "[node Id] Selected account to use and asks for passphrase. Use \"-u list\" in order to list available accounts.",false);
+	        >> parameter('U',"user-id"       ,prefUserString        ,"ID", "[node Id] Selected account to use and asks for passphrase. Use \"-U list\" in order to list available accounts.",false);
 
 #ifdef RS_JSONAPI
 	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
@@ -172,32 +176,31 @@ int main(int argc, char* argv[])
 	as >> help('h',"help","Display this Help");
 	as.defaultErrorHandling(true,true);
 
-#ifndef __ANDROID__
-	RsServiceNotify *notify = new RsServiceNotify();
-	rsNotify->registerNotifyClient(notify);
-
 	std::string webui_pass1 = "Y";
-	std::string webui_pass2 = "N";
 
-	for(;;)
+    if(!prefUserString.empty())
 	{
-		webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
-		webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
+		std::string webui_pass2 = "N";
 
-		if(webui_pass1 != webui_pass2)
+		for(;;)
 		{
-			std::cerr << "Passwords do not match!" << std::endl;
-			continue;
-		}
-		if(webui_pass1.empty())
-		{
-			std::cerr << "Password cannot be empty!" << std::endl;
-			continue;
-		}
+			webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
+			webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
 
-		break;
+			if(webui_pass1 != webui_pass2)
+			{
+				std::cerr << "Passwords do not match!" << std::endl;
+				continue;
+			}
+			if(webui_pass1.empty())
+			{
+				std::cerr << "Password cannot be empty!" << std::endl;
+				continue;
+			}
+
+			break;
+		}
 	}
-#endif
 
     conf.main_executable_path = argv[0];
 
@@ -252,6 +255,9 @@ int main(int argc, char* argv[])
 			return 1;
 		}
 
+		RsServiceNotify *notify = new RsServiceNotify();
+		rsNotify->registerNotifyClient(notify);
+
 		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id,std::string()); // supply empty passwd so that it is properly asked 3 times on console
 
         std::string lock_file_path = RsAccounts::AccountDirectory()+"/lock" ;
@@ -265,7 +271,7 @@ int main(int argc, char* argv[])
 				case RsInit::ERR_CANT_ACQUIRE_LOCK:	std::cerr << "An unexpected error occurred when Retroshare tried to acquire the single instance lock file. \nLock file: " << RsInit::lockFilePath() << std::endl;
 					return 1;
 				case RsInit::ERR_UNKNOWN:
-				default: std::cerr << "Unknown error." << std::endl;
+				default: std::cerr << "Cannot login. Check your passphrase." << std::endl << std::endl;
 					return 1;
 		}
 	}
@@ -281,14 +287,14 @@ int main(int argc, char* argv[])
 
 	return app.exec();
 #else
-    if(jsonApiServer)
+    if(jsonApiServer && !webui_pass1.empty())
 		jsonApiServer->authorizeToken("webui:"+webui_pass1);
 
 	std::atomic<bool> keepRunning(true);
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
 
 	while(keepRunning)
-		std::this_thread::sleep_for(std::chrono::seconds(5));
+		std::this_thread::sleep_for(std::chrono::seconds(2));
 #endif
 
 }
