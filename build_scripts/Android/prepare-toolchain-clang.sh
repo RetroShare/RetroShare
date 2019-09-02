@@ -325,13 +325,6 @@ build_sqlcipher()
 ################################################################################
 "
 
-	case "${ANDROID_NDK_ARCH}" in
-	"arm64")
-		echo sqlcipher not supported for arm64
-		return 0
-	;;
-	esac
-
 	B_dir="sqlcipher-${SQLCIPHER_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -342,6 +335,14 @@ build_sqlcipher()
 
 	tar -xf $T_file
 	cd $B_dir
+	case "${ANDROID_NDK_ARCH}" in
+	"arm64")
+	# SQLCipher config.sub is outdated and doesn't recognize newer architectures
+		rm config.sub
+		autoreconf --verbose --install --force
+		automake --add-missing --copy --force-missing
+	;;
+	esac
 	./configure --with-pic --build=$(sh ./config.guess) \
 		--host=${cArch}-linux \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}" \
