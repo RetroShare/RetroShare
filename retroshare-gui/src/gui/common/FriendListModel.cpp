@@ -819,7 +819,7 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar;
+			QPixmap sslAvatar(AVATAR_DEFAULT_IMAGE);
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 
