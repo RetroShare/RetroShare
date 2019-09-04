@@ -45,7 +45,7 @@ void AvatarDefs::getOwnAvatar(QPixmap &avatar, const QString& defaultImage)
 
 	free(data);
 }
-void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage)
 {
     unsigned char *data = NULL;
     int size = 0;
@@ -54,15 +54,16 @@ void AvatarDefs::getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, cons
     rsMsgs->getAvatarData(RsPeerId(sslId), data, size);
     if (size == 0) {
         avatar = QPixmap(defaultImage);
-        return;
+        return false;
     }
 
     /* load image */
     GxsIdDetails::loadPixmapFromData(data, size, avatar, GxsIdDetails::LARGE) ;
 
     free(data);
+    return true;
 }
-void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const QString& defaultImage)
 {
     //int size = 0;
 
@@ -72,16 +73,18 @@ void AvatarDefs::getAvatarFromGxsId(const RsGxsId& gxsId, QPixmap &avatar, const
     if(!rsIdentity->getIdDetails(gxsId, details))
     {
         avatar = QPixmap(defaultImage);
-        return ;
+        return false;
     }
 
     /* load image */
 
         if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, avatar,GxsIdDetails::LARGE))
             avatar = GxsIdDetails::makeDefaultIcon(gxsId,GxsIdDetails::LARGE);
+
+        return true;
 }
 
-void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
+bool AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const QString& defaultImage)
 {
 	unsigned char *data = NULL;
 	int size = 0;
@@ -105,11 +108,13 @@ void AvatarDefs::getAvatarFromGpgId(const RsPgpId& gpgId, QPixmap &avatar, const
 
 	if (size == 0) {
 		avatar = QPixmap(defaultImage);
-		return;
+		return false;
 	}
 
 	/* load image */
 	GxsIdDetails::loadPixmapFromData(data, size, avatar);
 
 	free(data);
+
+    return true;
 }

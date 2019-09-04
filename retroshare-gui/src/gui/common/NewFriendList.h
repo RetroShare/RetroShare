@@ -90,6 +90,8 @@ public slots:
 
 private slots:
 	void sortColumn(int col,Qt::SortOrder so);
+    void itemExpanded(const QModelIndex&);
+    void itemCollapsed(const QModelIndex&);
 
 protected:
 	void changeEvent(QEvent *e);

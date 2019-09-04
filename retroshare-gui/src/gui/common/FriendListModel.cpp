@@ -491,16 +491,19 @@ QVariant RsFriendListModel::sizeHintRole(const EntryIndex& e,int col) const
     if(e.type == ENTRY_TYPE_NODE)
         y_factor *= 3.0;
 
+    if((e.type == ENTRY_TYPE_PROFILE) && !isProfileExpanded(e))
+        y_factor *= 3.0;
+
     if(e.type == ENTRY_TYPE_GROUP)
         y_factor = std::max(y_factor, 24.0f / 14.0f ); // allows to fit the 24 pixels icon for groups in the line
 
 	switch(col)
 	{
 	default:
-	case COLUMN_THREAD_NAME:               return QVariant( QSize(x_factor * 170, y_factor*14*1.2f ));
-	case COLUMN_THREAD_IP:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
-	case COLUMN_THREAD_ID:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
-	case COLUMN_THREAD_LAST_CONTACT:       return QVariant( QSize(x_factor * 75 , y_factor*14*1.2f ));
+	case COLUMN_THREAD_NAME:               return QVariant( QSize(x_factor * 170, y_factor*14*1.1f ));
+	case COLUMN_THREAD_IP:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.1f ));
+	case COLUMN_THREAD_ID:                 return QVariant( QSize(x_factor * 75 , y_factor*14*1.1f ));
+	case COLUMN_THREAD_LAST_CONTACT:       return QVariant( QSize(x_factor * 75 , y_factor*14*1.1f ));
 	}
 }
 
@@ -811,6 +814,24 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
     switch(entry.type)
     {
     case ENTRY_TYPE_GROUP: return QVariant(QIcon(IMAGE_GROUP24));
+
+    case ENTRY_TYPE_PROFILE:
+    {
+        if(!isProfileExpanded(entry))
+		{
+			QPixmap sslAvatar;
+
+        	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
+
+			for(uint32_t i=0;i<hn->child_node_indices.size();++i)
+				if(AvatarDefs::getAvatarFromSslId(RsPeerId(mLocations[hn->child_node_indices[i]].node_info.id.toStdString()), sslAvatar))
+					return QVariant(QIcon(sslAvatar));
+
+            return QVariant(QIcon(sslAvatar));
+		}
+
+        return QVariant();
+    }
 
     case ENTRY_TYPE_NODE:
     {
@@ -1131,4 +1152,69 @@ QModelIndex RsFriendListModel::getIndexOfGroup(const RsNodeGroupId& mid) const
     return QModelIndex();
 }
 
+void RsFriendListModel::collapseItem(const QModelIndex& index)
+{
+    if(getType(index) != ENTRY_TYPE_PROFILE)
+        return;
+
+    EntryIndex entry;
+
+    if(!convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),entry))
+        return;
+
+ 	const HierarchicalProfileInformation *hp = getProfileInfo(entry);
+    const HierarchicalGroupInformation *hg = getGroupInfo(entry);
+
+    std::string s ;
+
+    if(hg) s += hg->group_info.id.toStdString() ;
+    if(hp) s += hp->profile_info.gpg_id.toStdString();
+
+    if(!s.empty())
+		mExpandedProfiles.erase(s);
+
+    // apparently we cannot be subtle here.
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+}
+
+void RsFriendListModel::expandItem(const QModelIndex& index)
+{
+    if(getType(index) != ENTRY_TYPE_PROFILE)
+        return;
+
+    EntryIndex entry;
+
+    if(!convertInternalIdToIndex<sizeof(uintptr_t)>(index.internalId(),entry))
+        return;
+
+	const HierarchicalProfileInformation *hp = getProfileInfo(entry);
+    const HierarchicalGroupInformation *hg = getGroupInfo(entry);
+
+    std::string s ;
+
+    if(hg) s += hg->group_info.id.toStdString() ;
+    if(hp) s += hp->profile_info.gpg_id.toStdString();
+
+    if(!s.empty())
+		mExpandedProfiles.insert(s);
+
+    // apparently we cannot be subtle here.
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+}
+
+bool RsFriendListModel::isProfileExpanded(const EntryIndex& e) const
+{
+    if(e.type != ENTRY_TYPE_PROFILE)
+        return false;
+
+    const HierarchicalProfileInformation *hp = getProfileInfo(e);
+    const HierarchicalGroupInformation *hg = getGroupInfo(e);
+
+    std::string s ;
+
+    if(hg) s += hg->group_info.id.toStdString() ;
+    if(hp) s += hp->profile_info.gpg_id.toStdString();
+
+    return mExpandedProfiles.find(s) != mExpandedProfiles.end();
+}
 

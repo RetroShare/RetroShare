@@ -35,9 +35,9 @@ class AvatarDefs
 public:
     static void getOwnAvatar(QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
 
-    static void getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static void getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
-    static void getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static bool getAvatarFromSslId(const RsPeerId& sslId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static bool getAvatarFromGpgId(const RsPgpId & gpgId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
+    static bool getAvatarFromGxsId(const RsGxsId & gxsId, QPixmap &avatar, const QString& defaultImage = AVATAR_DEFAULT_IMAGE);
 };
 
 #endif
