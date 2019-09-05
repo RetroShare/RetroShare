@@ -38,8 +38,8 @@ no_retroshare_nogui:CONFIG -= retroshare_nogui
 
 # To disable cmark append the following 
 # assignation to qmake command line "CONFIG+=no_cmark"
-CONFIG *= rs_gui_cmark
-no_rs_gui_cmark:CONFIG -= rs_gui_cmark
+CONFIG *= no_rs_gui_cmark
+rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 
 # To enable RetroShare plugins append the following
 # assignation to qmake command line "CONFIG+=retroshare_plugins"
