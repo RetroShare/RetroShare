@@ -50,8 +50,8 @@ rs_gui_cmark {
 		message("Using compiled cmark")
 		CMARK_SRC_PATH=$$clean_path($${RS_SRC_PATH}/supportlibs/cmark)
 		CMARK_BUILD_PATH=$$clean_path($${RS_BUILD_PATH}/supportlibs/cmark/build)
-		INCLUDEPATH *= $$clean_path($${RS_SRC_PATH}/src/)
-		DEPENDPATH *= $$clean_path($${RS_SRC_PATH}/src/)
+		INCLUDEPATH *= $$clean_path($${CMARK_SRC_PATH}/src/)
+		DEPENDPATH *= $$clean_path($${CMARK_SRC_PATH}/src/)
 		QMAKE_LIBDIR *= $$clean_path($${CMARK_BUILD_PATH}/)
 		# Using sLibs would fail as libcmark.a is generated at compile-time
 		LIBS *= -L$$clean_path($${CMARK_BUILD_PATH}/src/) -lcmark
