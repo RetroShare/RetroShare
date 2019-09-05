@@ -211,6 +211,9 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 	h->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	connect(ui->peerTreeWidget->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
+
+	connect(ui->peerTreeWidget, SIGNAL(expanded(const QModelIndex&)), this, SLOT(itemExpanded(const QModelIndex&)));
+	connect(ui->peerTreeWidget, SIGNAL(collapsed(const QModelIndex&)), this, SLOT(itemCollapsed(const QModelIndex&)));
     connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(toggleSortByState(bool)));
     connect(ui->peerTreeWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(peerTreeWidgetCustomPopupMenu()));
 
@@ -239,6 +242,15 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 NewFriendList::~NewFriendList()
 {
     delete ui;
+}
+
+void NewFriendList::itemExpanded(const QModelIndex& index)
+{
+    mModel->expandItem(mProxyModel->mapToSource(index));
+}
+void NewFriendList::itemCollapsed(const QModelIndex& index)
+{
+    mModel->collapseItem(mProxyModel->mapToSource(index));
 }
 
 void NewFriendList::sortColumn(int col,Qt::SortOrder so)

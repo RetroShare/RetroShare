@@ -129,6 +129,9 @@ public:
 
     void setFilter(FilterType filter_type, const QStringList& strings) ;
 
+    void expandItem(const QModelIndex&) ;
+    void collapseItem(const QModelIndex&) ;
+
     // Overloaded methods from QAbstractItemModel
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
@@ -153,6 +156,7 @@ private:
     const HierarchicalProfileInformation *getProfileInfo(const EntryIndex&)const;
     const HierarchicalNodeInformation    *getNodeInfo(const EntryIndex&) const;
 
+	bool isProfileExpanded(const EntryIndex& e) const;
 	void checkNode(HierarchicalNodeInformation& node);
 	bool getPeerOnlineStatus(const EntryIndex& e) const;
 	std::map<RsPgpId,uint32_t>::const_iterator checkProfileIndex(const RsPgpId& pgp_id,
@@ -223,5 +227,9 @@ private:
     // group it belows to.
 
     std::vector<EntryIndex> mTopLevel;
+
+    // keeps track of expanded/collapsed items, so as to only show icon for collapsed profiles
+
+    std::set<std::string> mExpandedProfiles;
 };
 
