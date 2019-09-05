@@ -117,14 +117,13 @@ RsAccounts* rsAccounts = nullptr;
 
 RsConfigOptions::RsConfigOptions()
         : jsonApiPort(JsonApiServer::DEFAULT_PORT),
-          jsonApiBindAddress("127.0.0.1")
+          jsonApiBindAddress("127.0.0.1"),
+          autoLogin(false),
+          forcedPort(0),
+          udpListenerOnly(false),
+          outStderr(false),
+          debugLevel(5)
 {
-    autoLogin = false;
-	forcedPort=0;
-	udpListenerOnly=false;
-
-	outStderr=false;
-	debugLevel=5;
 }
 
 
