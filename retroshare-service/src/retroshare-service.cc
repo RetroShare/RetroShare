@@ -18,6 +18,7 @@
 
 #include "util/stacktrace.h"
 #include "util/argstream.h"
+#include "util/rskbdinput.h"
 #include "retroshare/rsinit.h"
 #include "jsonapi/jsonapi.h"
 
@@ -25,10 +26,6 @@ CrashStackTrace gCrashStackTrace;
 
 #include <cmath>
 #include <csignal>
-
-#ifndef __ANDROID__
-#include <termios.h>
-#endif
 
 #ifdef __ANDROID__
 #	include <QAndroidService>
@@ -42,59 +39,6 @@ CrashStackTrace gCrashStackTrace;
 #include "retroshare/rsinit.h"
 #include "retroshare/rsiface.h"
 
-#ifndef RS_JSONAPI
-#	error Inconsistent build configuration retroshare_service needs rs_jsonapi
-#endif
-
-int getch() {
-    int ch;
-    struct termios t_old, t_new;
-
-    tcgetattr(STDIN_FILENO, &t_old);
-    t_new = t_old;
-    t_new.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &t_new);
-
-    ch = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
-    return ch;
-}
-
-std::string readStringFromKeyboard(const char *prompt, bool show_asterisk=true)
-{
-  const char BACKSPACE=127;
-  const char RETURN=10;
-
-  std::string password;
-  unsigned char ch=0;
-
-  std::cout <<prompt; std::cout.flush();
-
-  while((ch=getch())!=RETURN)
-    {
-       if(ch==BACKSPACE)
-         {
-            if(password.length()!=0)
-              {
-                 if(show_asterisk)
-                 std::cout <<"\b \b";
-                 password.resize(password.length()-1);
-              }
-         }
-       else
-         {
-             password+=ch;
-             if(show_asterisk)
-                 std::cout <<'*';
-             else
-                 std::cout << ch,std::cout.flush();
-         }
-    }
-  std::cout <<std::endl;
-  return password;
-}
-
 class RsServiceNotify: public NotifyClient
 {
 public:
@@ -104,7 +48,7 @@ public:
 	virtual bool askForPassword(const std::string& title, const std::string& question, bool prev_is_bad, std::string& password,bool& cancel)
 	{
 		std::string question1=title + "\nPlease enter your PGP password for key:\n    " + question + " :";
-		password = readStringFromKeyboard(question1.c_str()) ;
+		password = RsUtil::rs_getpass(question1.c_str()) ;
 		cancel = false ;
 
 		return !password.empty();
@@ -184,8 +128,8 @@ int main(int argc, char* argv[])
 
 		for(;;)
 		{
-			webui_pass1 = readStringFromKeyboard("Please register a password for the web interface: ");
-			webui_pass2 = readStringFromKeyboard("Please enter the same password again            : ");
+			webui_pass1 = RsUtil::rs_getpass("Please register a password for the web interface: ");
+			webui_pass2 = RsUtil::rs_getpass("Please enter the same password again            : ");
 
 			if(webui_pass1 != webui_pass2)
 			{
