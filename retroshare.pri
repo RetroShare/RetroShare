@@ -84,8 +84,8 @@ libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= libresapihttpserver
-no_libresapihttpserver:CONFIG -= libresapihttpserver
+CONFIG *= no_libresapihttpserver
+libresapihttpserver:CONFIG -= no_libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
