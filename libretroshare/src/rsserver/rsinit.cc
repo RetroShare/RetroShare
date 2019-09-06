@@ -115,7 +115,10 @@ RsLoginHelper* rsLoginHelper = nullptr;
 RsAccounts* rsAccounts = nullptr;
 
 RsConfigOptions::RsConfigOptions()
-        : jsonApiPort(JsonApiServer::DEFAULT_PORT),
+        :
+#ifdef RS_JSONAPI
+          jsonApiPort(JsonApiServer::DEFAULT_PORT),
+#endif
           jsonApiBindAddress("127.0.0.1"),
           autoLogin(false),
           forcedPort(0),
