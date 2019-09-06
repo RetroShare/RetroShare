@@ -20,12 +20,15 @@
 
 #ifndef __ANDROID__
 
+#include <util/rskbdinput.h>
+
 #ifdef WINDOWS_SYS
 #include <conio.h>
 #include <stdio.h>
 
 #define PASS_MAX 512
 
+namespace RsUtil {
 std::string rs_getpass(const std::string& prompt,bool no_echo)
 {
     static char getpassbuf [PASS_MAX + 1];
@@ -60,6 +63,7 @@ std::string rs_getpass(const std::string& prompt,bool no_echo)
 
     return std::string(getpassbuf);
 }
+}
 #else
 
 #include <stdio.h>
@@ -84,7 +88,9 @@ static int getch()
     return ch;
 }
 
-std::string rs_getpass(const char *prompt, bool no_echo)
+namespace RsUtil {
+
+std::string rs_getpass(const std::string& prompt, bool no_echo)
 {
   const char BACKSPACE=127;
   const char RETURN=10;
@@ -118,6 +124,6 @@ std::string rs_getpass(const char *prompt, bool no_echo)
 
   return std::string(password);
 }
+}
 #endif
-
 #endif
