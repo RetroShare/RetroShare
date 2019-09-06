@@ -132,9 +132,8 @@ RsConfigOptions::RsConfigOptions()
 struct RsInitConfig
 {
 	RsInitConfig()
-        :
 #ifdef RS_JSONAPI
-          jsonApiPort(JsonApiServer::DEFAULT_PORT),
+        : jsonApiPort(JsonApiServer::DEFAULT_PORT),
           jsonApiBindAddress("127.0.0.1")
 #endif
     {}
