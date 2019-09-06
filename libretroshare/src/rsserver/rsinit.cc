@@ -118,8 +118,8 @@ RsConfigOptions::RsConfigOptions()
         :
 #ifdef RS_JSONAPI
           jsonApiPort(JsonApiServer::DEFAULT_PORT),
-#endif
           jsonApiBindAddress("127.0.0.1"),
+#endif
           autoLogin(false),
           forcedPort(0),
           udpListenerOnly(false),
@@ -131,7 +131,13 @@ RsConfigOptions::RsConfigOptions()
 
 struct RsInitConfig
 {
-	RsInitConfig() : jsonApiPort(JsonApiServer::DEFAULT_PORT), jsonApiBindAddress("127.0.0.1") {}
+	RsInitConfig()
+        :
+#ifdef RS_JSONAPI
+          jsonApiPort(JsonApiServer::DEFAULT_PORT),
+          jsonApiBindAddress("127.0.0.1")
+#endif
+    {}
 
 	RsFileHash main_executable_hash;
 
