@@ -20,6 +20,7 @@
 
 #ifndef __ANDROID__
 
+#include <iostream>
 #include <util/rskbdinput.h>
 
 #ifdef WINDOWS_SYS
