@@ -21,15 +21,15 @@ define_default_value HOST_NUM_CPU $(nproc)
 define_default_value BZIP2_SOURCE_VERSION "1.0.6"
 define_default_value BZIP2_SOURCE_SHA256 a2848f34fcd5d6cf47def00461fcb528a0484d8edef8208d6d2e2909dc61d9cd
 
-define_default_value OPENSSL_SOURCE_VERSION "1.1.1"
-define_default_value OPENSSL_SOURCE_SHA256 2836875a0f89c03d0fdf483941512613a50cfb421d6fd94b9f41d7279d586a3d
+define_default_value OPENSSL_SOURCE_VERSION "1.1.1c"
+define_default_value OPENSSL_SOURCE_SHA256 f6fb3079ad15076154eda9413fed42877d668e7069d9b87396d0804fdb3f4c90
 
 define_default_value SQLITE_SOURCE_YEAR "2018"
 define_default_value SQLITE_SOURCE_VERSION "3250200"
 define_default_value SQLITE_SOURCE_SHA256 da9a1484423d524d3ac793af518cdf870c8255d209e369bd6a193e9f9d0e3181
 
-define_default_value SQLCIPHER_SOURCE_VERSION "3.4.2"
-define_default_value SQLCIPHER_SOURCE_SHA256 69897a5167f34e8a84c7069f1b283aba88cdfa8ec183165c4a5da2c816cfaadb
+define_default_value SQLCIPHER_SOURCE_VERSION "4.2.0"
+define_default_value SQLCIPHER_SOURCE_SHA256 105c1b813f848da038c03647a8bfc9d42fb46865e6aaf4edfd46ff3b18cdccfc
 
 define_default_value LIBUPNP_SOURCE_VERSION "1.8.4"
 define_default_value LIBUPNP_SOURCE_SHA256 976c3e4555604cdd8391ed2f359c08c9dead3b6bf131c24ce78e64d6669af2ed
@@ -38,7 +38,7 @@ define_default_value INSTALL_QT_ANDROID "false"
 define_default_value QT_VERSION "5.12.0"
 define_default_value QT_ANDROID_INSTALLER_SHA256 a214084e2295c9a9f8727e8a0131c37255bf724bfc69e80f7012ba3abeb1f763
 
-define_default_value RESTBED_SOURCE_VERSION "4.6"
+define_default_value RESTBED_SOURCE_VERSION f74f9329dac82e662c1d570b7cd72c192b729eb4
 
 define_default_value UDP_DISCOVERY_CPP_SOURCE "https://github.com/truvorskameikin/udp-discovery-cpp.git"
 define_default_value UDP_DISCOVERY_CPP_VERSION "develop"
@@ -81,15 +81,24 @@ function verified_download()
 	}
 }
 
+cArch=""
+eABI=""
 
-
-if [ "${ANDROID_NDK_ARCH}" == "x86" ]; then
-	cArch="i686"
-	eABI=""
-else
+case "${ANDROID_NDK_ARCH}" in
+"arm")
 	cArch="${ANDROID_NDK_ARCH}"
 	eABI="eabi"
-fi
+	;;
+"arm64")
+	cArch="aarch64"
+	eABI=""
+	;;
+"x86")
+	cArch="i686"
+	eABI=""
+	;;
+esac
+
 export SYSROOT="${NATIVE_LIBS_TOOLCHAIN_PATH}/sysroot/"
 export PREFIX="${SYSROOT}/usr/"
 export CC="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-clang"
@@ -101,6 +110,12 @@ export RANLIB="${NATIVE_LIBS_TOOLCHAIN_PATH}/bin/${cArch}-linux-android${eABI}-r
 ## More information available at https://android.googlesource.com/platform/ndk/+/ics-mr0/docs/STANDALONE-TOOLCHAIN.html
 build_toolchain()
 {
+	echo "build_toolchain()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	rm -rf ${NATIVE_LIBS_TOOLCHAIN_PATH}
 	${ANDROID_NDK_PATH}/build/tools/make_standalone_toolchain.py --verbose \
 		--arch ${ANDROID_NDK_ARCH} --install-dir ${NATIVE_LIBS_TOOLCHAIN_PATH} \
@@ -111,6 +126,11 @@ build_toolchain()
 ## This avoid <cmath> include errors due to -isystem and -I ordering issue
 delete_copied_includes()
 {
+	echo "delete_copied_includes()
+################################################################################
+################################################################################
+################################################################################
+"
 	cat "${NATIVE_LIBS_TOOLCHAIN_PATH}/deletefiles" | while read delFile ; do
 		rm "$delFile"
 	done
@@ -119,6 +139,12 @@ delete_copied_includes()
 ## More information available at https://gitlab.com/relan/provisioners/merge_requests/1 and http://stackoverflow.com/a/34032216
 install_qt_android()
 {
+	echo "install_qt_android()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	QT_VERSION_CODE=$(echo $QT_VERSION | tr -d .)
 	QT_INSTALL_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}/Qt
 	QT_INSTALLER="qt-unified-linux-x64-3.0.2-online.run"
@@ -202,6 +228,12 @@ QT_QPA_PLATFORM=minimal ./${QT_INSTALLER} --script ${QT_INSTALLER_SCRIPT}
 ## More information available at retroshare://file?name=Android%20Native%20Development%20Kit%20Cookbook.pdf&size=29214468&hash=0123361c1b14366ce36118e82b90faf7c7b1b136
 build_bzlib()
 {
+	echo "build_bzlib()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="bzip2-${BZIP2_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -226,6 +258,12 @@ build_bzlib()
 ## More information available at http://doc.qt.io/qt-5/opensslsupport.html
 build_openssl()
 {
+	echo "build_openssl()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="openssl-${OPENSSL_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -243,7 +281,7 @@ build_openssl()
 	[[ ${ANDROID_NDK_ARCH} =~ .*64.* ]] && oBits=64
 
 	ANDROID_NDK="${ANDROID_NDK_PATH}" PATH="${SYSROOT}/bin/:${PATH}" \
-		./Configure linux-generic${oBits} --prefix="${PREFIX}" \
+		./Configure linux-generic${oBits} -fPIC --prefix="${PREFIX}" \
 		--openssldir="${SYSROOT}/etc/ssl"
 #	sed -i 's/LIBNAME=$$i LIBVERSION=$(SHLIB_MAJOR).$(SHLIB_MINOR) \\/LIBNAME=$$i \\/g' Makefile
 #	sed -i '/LIBCOMPATVERSIONS=";$(SHLIB_VERSION_HISTORY)" \\/d' Makefile
@@ -256,14 +294,21 @@ build_openssl()
 
 build_sqlite()
 {
+	echo "build_sqlite()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="sqlite-autoconf-${SQLITE_SOURCE_VERSION}"
+	rm -rf $B_dir
 
 	verified_download $B_dir.tar.gz $SQLITE_SOURCE_SHA256 \
 		https://www.sqlite.org/${SQLITE_SOURCE_YEAR}/$B_dir.tar.gz
 
 	tar -xf $B_dir.tar.gz
 	cd $B_dir
-	./configure --prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
+	./configure --with-pic --prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	rm -f ${PREFIX}/lib/libsqlite3.so*
@@ -274,6 +319,12 @@ build_sqlite()
 
 build_sqlcipher()
 {
+	echo "build_sqlcipher()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="sqlcipher-${SQLCIPHER_SOURCE_VERSION}"
 	rm -rf $B_dir
 
@@ -284,8 +335,16 @@ build_sqlcipher()
 
 	tar -xf $T_file
 	cd $B_dir
-	./configure --build=$(sh ./config.guess) \
-		--host=${ANDROID_NDK_ARCH}-linux \
+	case "${ANDROID_NDK_ARCH}" in
+	"arm64")
+	# SQLCipher config.sub is outdated and doesn't recognize newer architectures
+		rm config.sub
+		autoreconf --verbose --install --force
+		automake --add-missing --copy --force-missing
+	;;
+	esac
+	./configure --with-pic --build=$(sh ./config.guess) \
+		--host=${cArch}-linux \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}" \
 		--enable-tempstore=yes \
 		--disable-tcl --disable-shared \
@@ -297,6 +356,12 @@ build_sqlcipher()
 
 build_libupnp()
 {
+	echo "build_libupnp()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="pupnp-release-${LIBUPNP_SOURCE_VERSION}"
 	B_ext=".tar.gz"
 	B_file="${B_dir}${B_ext}"
@@ -312,9 +377,9 @@ build_libupnp()
 ## look for libthreadutils.so.6 at runtime that cannot be packaged on android
 ## as it supports only libname.so format for libraries, thus resulting in a
 ## crash at startup.
-	./configure --enable-static --disable-shared --disable-samples \
+	./configure --with-pic --enable-static --disable-shared --disable-samples \
 		--disable-largefile \
-		--prefix="${PREFIX}" --host=${ANDROID_NDK_ARCH}-linux
+		--prefix="${PREFIX}" --host=${cArch}-linux
 	make -j${HOST_NUM_CPU}
 	make install
 	cd ..
@@ -322,6 +387,12 @@ build_libupnp()
 
 build_rapidjson()
 {
+	echo "build_rapidjson()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="rapidjson-${RAPIDJSON_SOURCE_VERSION}"
 	D_file="${B_dir}.tar.gz"
 	verified_download $D_file $RAPIDJSON_SOURCE_SHA256 \
@@ -332,17 +403,26 @@ build_rapidjson()
 
 build_restbed()
 {
+	echo "build_restbed()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	[ -d restbed ] || git clone --depth=2000 https://github.com/Corvusoft/restbed.git
 	cd restbed
-	git fetch --tags
-	git checkout tags/${RESTBED_SOURCE_VERSION}
+#	git fetch --tags
+#	git checkout tags/${RESTBED_SOURCE_VERSION}
+	git checkout ${RESTBED_SOURCE_VERSION}
 	git submodule update --init dependency/asio
 	git submodule update --init dependency/catch
 	git submodule update --init dependency/kashmir
 	cd ..
 
 	rm -rf restbed-build; mkdir restbed-build ; cd restbed-build
-	cmake -DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
+	cmake \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
 	make -j${HOST_NUM_CPU}
 	make install
 	cp "${PREFIX}/library/librestbed.a" "${PREFIX}/lib/"
@@ -351,6 +431,12 @@ build_restbed()
 
 build_udp-discovery-cpp()
 {
+	echo "build_udp-discovery-cpp()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	S_dir="udp-discovery-cpp"
 	[ -d $S_dir ] || git clone $UDP_DISCOVERY_CPP_SOURCE $S_dir
 	cd $S_dir
@@ -359,7 +445,9 @@ build_udp-discovery-cpp()
 
 	B_dir="udp-discovery-cpp-build"
 	rm -rf ${B_dir}; mkdir ${B_dir}; cd ${B_dir}
-	cmake -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../udp-discovery-cpp
+	cmake \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../udp-discovery-cpp
 	make -j${HOST_NUM_CPU}
 	cp libudp-discovery.a "${PREFIX}/lib/"
 	cp ../$S_dir/*.hpp "${PREFIX}/include/"
@@ -368,6 +456,12 @@ build_udp-discovery-cpp()
 
 build_xapian()
 {
+	echo "build_xapian()
+################################################################################
+################################################################################
+################################################################################
+"
+
 	B_dir="xapian-core-${XAPIAN_SOURCE_VERSION}"
 	D_file="$B_dir.tar.xz"
 	verified_download $D_file $XAPIAN_SOURCE_SHA256 \
@@ -379,9 +473,10 @@ build_xapian()
 	B_large_file=""
 	[ "${ANDROID_PLATFORM_VER}" -lt "24" ] && B_large_file="--disable-largefile"
 	./configure ${B_endiannes_detection_failure_workaround} ${B_large_file} \
+		--with-pic \
 		--disable-backend-inmemory --disable-backend-remote \
 		--disable--backend-chert --enable-backend-glass \
-		--host=${ANDROID_NDK_ARCH}-linux --enable-static --disable-shared \
+		--host=${cArch}-linux --enable-static --disable-shared \
 		--prefix="${PREFIX}" --with-sysroot="${SYSROOT}"
 	make -j${HOST_NUM_CPU}
 	make install

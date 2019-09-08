@@ -140,14 +140,20 @@ struct RsMsgMetaData : RsSerializable
     std::string mMsgName;
     rstime_t      mPublishTs;
 
-    /// the lower 16 bits for service, upper 16 bits for GXS
-    uint32_t    mMsgFlags;
+	/** the lower 16 bits for service, upper 16 bits for GXS
+	 * @todo mixing service level flags and GXS level flag into the same member
+	 * is prone to confusion, use separated members for those things, this could
+	 * be done without breaking network retro-compatibility */
+	uint32_t mMsgFlags;
 
     // BELOW HERE IS LOCAL DATA, THAT IS NOT FROM MSG.
     // normally READ / UNREAD flags. LOCAL Data.
 
-    /// the first 16 bits for service, last 16 for GXS
-    uint32_t    mMsgStatus;
+	/** the first 16 bits for service, last 16 for GXS
+	 * @todo mixing service level flags and GXS level flag into the same member
+	 * is prone to confusion, use separated members for those things, this could
+	 * be done without breaking network retro-compatibility */
+	uint32_t mMsgStatus;
 
     rstime_t      mChildTs;
     std::string mServiceString; // Service Specific Free-Form extra storage.
@@ -169,25 +175,6 @@ struct RsMsgMetaData : RsSerializable
 		RS_SERIAL_PROCESS(mChildTs);
 		RS_SERIAL_PROCESS(mServiceString);
 	}
-
-    const std::ostream &print(std::ostream &out, std::string indent = "", std::string varName = "") const {
-        out
-            << indent << varName << " of RsMsgMetaData Values ###################" << std::endl
-            << indent << "  mGroupId: " << mGroupId.toStdString() << std::endl
-            << indent << "  mMsgId: " << mMsgId.toStdString() << std::endl
-            << indent << "  mThreadId: " << mThreadId.toStdString() << std::endl
-            << indent << "  mParentId: " << mParentId.toStdString() << std::endl
-            << indent << "  mOrigMsgId: " << mOrigMsgId.toStdString() << std::endl
-            << indent << "  mAuthorId: " << mAuthorId.toStdString() << std::endl
-            << indent << "  mMsgName: " << mMsgName << std::endl
-            << indent << "  mPublishTs: " << mPublishTs << std::endl
-            << indent << "  mMsgFlags: " << std::hex << mMsgFlags << std::dec << std::endl
-            << indent << "  mMsgStatus: " << std::hex << mMsgStatus << std::dec << std::endl
-            << indent << "  mChildTs: " << mChildTs << std::endl
-            << indent << "  mServiceString: " << mServiceString << std::endl
-            << indent << "######################################################" << std::endl;
-        return out;
-    }
 };
 
 class GxsGroupStatistic

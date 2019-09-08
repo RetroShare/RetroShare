@@ -34,6 +34,7 @@
 
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvfileitem.h"
+#include "retroshare/rsmsgs.h"
 
 /* chat Flags */
 const uint32_t RS_CHAT_FLAG_PRIVATE                    = 0x0001;
@@ -81,6 +82,8 @@ const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE_DEPRECATED = 0x1A ;	// to be remo
 
 const uint8_t RS_PKT_SUBTYPE_CHAT_LOBBY_INVITE            = 0x1B ;
 const uint8_t RS_PKT_SUBTYPE_OUTGOING_MAP                 = 0x1C ;
+
+const uint8_t RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG = 0x1D ;
 
 typedef uint64_t 		ChatLobbyId ;
 typedef uint64_t 		ChatLobbyMsgId ;
@@ -296,6 +299,19 @@ struct RsPrivateChatMsgConfigItem : RsChatItem
 	uint32_t sendTime;
 	std::string message;
 	uint32_t recvTime;
+};
+
+class RsSubscribedChatLobbyConfigItem: public RsChatItem
+{
+public:
+    RsSubscribedChatLobbyConfigItem() :RsChatItem(RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG) {}
+	virtual ~RsSubscribedChatLobbyConfigItem() {}
+
+    virtual void clear() { RsChatItem::clear(); info.clear(); }
+
+	void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+
+    ChatLobbyInfo info;
 };
 
 class RsChatLobbyConfigItem: public RsChatItem

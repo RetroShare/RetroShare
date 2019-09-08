@@ -35,8 +35,6 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 
-int rsserverzone = 101;
-
 #include "util/rsdebug.h"
 
 #include "retroshare/rsevents.h"
@@ -86,7 +84,7 @@ RsServer::RsServer() :
 {
 	{
 		RsEventsService* tmpRsEvtPtr = new RsEventsService();
-		rsEvents.reset(tmpRsEvtPtr);
+		rsEvents = tmpRsEvtPtr;
 		startServiceThread(tmpRsEvtPtr, "RsEventsService");
 	}
 
@@ -271,8 +269,6 @@ void 	RsServer::data_tick()
         std::string out;
         rs_sprintf(out, "RsServer::run() WARNING Excessively Long Cycle Time: %g secs => Please DEBUG", cycleTime);
         std::cerr << out << std::endl;
-
-        rslog(RSL_ALERT, rsserverzone, out);
     }
 #endif
 }

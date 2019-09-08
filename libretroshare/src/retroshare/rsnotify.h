@@ -212,6 +212,8 @@ public:
 	NotifyClient() {}
 	virtual ~NotifyClient() {}
 
+    virtual void notifyPeerConnected              (const std::string& /* peer_id */) {}
+    virtual void notifyPeerDisconnected           (const std::string& /* peer_id */) {}
 	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
 	virtual void notifyListChange                 (int /* list */, int /* type */) {}
 	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}

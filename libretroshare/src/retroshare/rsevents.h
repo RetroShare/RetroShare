@@ -37,7 +37,7 @@ class RsEvents;
  * TODO: this should become std::weak_ptr once we have a reasonable services
  * management.
  */
-extern std::shared_ptr<RsEvents> rsEvents;
+extern RsEvents* rsEvents;
 
 /**
  * @brief Events types.
@@ -116,21 +116,20 @@ public:
 	 * @return False on error, true otherwise.
 	 */
 	virtual bool postEvent(
-	        std::unique_ptr<RsEvent> event,
+	        std::shared_ptr<const RsEvent> event,
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) = 0;
 
 	/**
 	 * @brief Send event directly to handlers. Blocking API
-	 * The handlers get exectuded on the caller thread, ensuring the function
-	 * returns only after the event has been handled.
+	 * The handlers get exectuded on the caller thread.
 	 * @param[in] event
 	 * @param[out] errorMessage Optional storage for error messsage, meaningful
 	 *                          only on failure.
 	 * @return False on error, true otherwise.
 	 */
 	virtual bool sendEvent(
-	        const RsEvent& event,
+	        std::shared_ptr<const RsEvent> event,
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) = 0;
 
@@ -155,7 +154,7 @@ public:
 	 * @return False on error, true otherwise.
 	 */
 	virtual bool registerEventsHandler(
-	        std::function<void(const RsEvent&)> multiCallback,
+	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
 	        ) = 0;
 

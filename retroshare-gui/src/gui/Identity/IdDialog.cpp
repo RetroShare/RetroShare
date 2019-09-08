@@ -752,8 +752,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 				QPixmap pixmap ;
 
-				if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-					pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(it->first)) ;
+				if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+					pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::SMALL) ;
 
 				if(has_id)
 					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
@@ -1551,8 +1551,8 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
     QPixmap pixmap ;
 
-    if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
-        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+    if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap,GxsIdDetails::SMALL))
+        pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::SMALL) ;
 
     item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
@@ -1797,8 +1797,8 @@ void IdDialog::insertIdDetails(uint32_t token)
 
     QPixmap pixmap ;
 
-    if(data.mImage.mSize == 0 || !pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
-        pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId))) ;
+    if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap,GxsIdDetails::LARGE))
+        pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::LARGE) ;
 
 #ifdef ID_DEBUG
 	std::cerr << "Setting header frame image : " << pixmap.width() << " x " << pixmap.height() << std::endl;
@@ -1987,11 +1987,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     RetroShareLink::enumType service_type = RetroShareLink::TYPE_UNKNOWN;
 
     switch(u.mServiceId)
-    {
-    case RS_SERVICE_GXS_TYPE_CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
-    case RS_SERVICE_GXS_TYPE_FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
-    case RS_SERVICE_GXS_TYPE_POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
-    case RS_SERVICE_TYPE_CHAT:          service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
+	{
+	case RsServiceType::CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
+	case RsServiceType::FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
+	case RsServiceType::POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+	case RsServiceType::CHAT:      service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
     default:
         service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
@@ -2470,8 +2470,8 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 
 						QPixmap pixmap ;
 
-						if(idd.mAvatar.mSize == 0 || !pixmap.loadFromData(idd.mAvatar.mData, idd.mAvatar.mSize, "PNG"))
-							pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(*it)) ;
+						if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+							pixmap = GxsIdDetails::makeDefaultIcon(*it,GxsIdDetails::SMALL) ;
 
 						QAction *action = mnu->addAction(QIcon(pixmap), QString("%1 (%2)").arg(QString::fromUtf8(idd.mNickname.c_str()), QString::fromStdString((*it).toStdString())), this, SLOT(chatIdentity()));
 						action->setData(QString::fromStdString((*it).toStdString())) ;

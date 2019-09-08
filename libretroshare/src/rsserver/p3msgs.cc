@@ -453,6 +453,10 @@ void p3Msgs::invitePeerToLobby(const ChatLobbyId& lobby_id, const RsPeerId& peer
 {
 	mChatSrv->invitePeerToLobby(lobby_id,peer_id) ;
 }
+void p3Msgs::sendLobbyStatusPeerLeaving(const ChatLobbyId& lobby_id)
+{
+	mChatSrv->sendLobbyStatusPeerLeaving(lobby_id) ;
+}
 void p3Msgs::unsubscribeChatLobby(const ChatLobbyId& lobby_id)
 {
 	mChatSrv->unsubscribeChatLobby(lobby_id) ;

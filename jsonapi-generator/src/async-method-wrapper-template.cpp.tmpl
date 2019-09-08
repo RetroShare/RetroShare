@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-registerHandler("$%apiPath%$",
-		[$%captureVars%$](const std::shared_ptr<rb::Session> session)
+registerHandler( "$%apiPath%$",
+                 [this](const std::shared_ptr<rb::Session> session)
 {
 	const std::multimap<std::string, std::string> headers
 	{
@@ -29,7 +29,7 @@ registerHandler("$%apiPath%$",
 	session->yield(rb::OK, headers);
 
 	size_t reqSize = session->get_request()->get_header("Content-Length", 0);
-	session->fetch( reqSize, [$%captureVars%$](
+	session->fetch( reqSize, [this](
 					const std::shared_ptr<rb::Session> session,
 					const rb::Bytes& body )
 	{
@@ -44,17 +44,24 @@ $%paramsDeclaration%$
 $%inputParamsDeserialization%$
 
 		const std::weak_ptr<rb::Session> weakSession(session);
-		$%callbackName%$ = [weakSession]($%callbackParams%$)
+		$%callbackName%$ = [this, weakSession]($%callbackParams%$)
 		{
 			auto session = weakSession.lock();
 			if(!session || session->is_closed()) return;
 
 $%callbackParamsSerialization%$
 
-			std::stringstream message;
-			message << "data: " << compactJSON << ctx.mJson << "\n\n";
-			session->yield(message.str());
-			$%sessionEarlyClose%$
+			std::stringstream sStream;
+			sStream << "data: " << compactJSON << ctx.mJson << "\n\n";
+			const std::string message = sStream.str();
+
+			mService.schedule( [weakSession, message]()
+			{
+				auto session = weakSession.lock();
+				if(!session || session->is_closed()) return;
+				session->yield(message);
+				$%sessionEarlyClose%$
+			} );
 		};
 
 $%functionCall%$
@@ -67,5 +74,4 @@ $%outputParamsSerialization%$
 		session->yield(message.str());
 		$%sessionDelayedClose%$
 	} );
-}, $%requiresAuth%$);
-
+}, $%requiresAuth%$ );

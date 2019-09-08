@@ -94,6 +94,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	//Resize Tool buttons
 	ui->emoteiconButton->setFixedSize(buttonSize);
 	ui->emoteiconButton->setIconSize(iconSize);
+	ui->stickerButton->setFixedSize(buttonSize);
+	ui->stickerButton->setIconSize(iconSize);
 	ui->attachPictureButton->setFixedSize(buttonSize);
 	ui->attachPictureButton->setIconSize(iconSize);
 	ui->addFileButton->setFixedSize(buttonSize);
@@ -145,6 +147,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->markButton->setToolTip(tr("<b>Mark this selected text</b><br><i>Ctrl+M</i>"));
 
 	connect(ui->emoteiconButton, SIGNAL(clicked()), this, SLOT(smileyWidget()));
+	connect(ui->stickerButton, SIGNAL(clicked()), this, SLOT(stickerWidget()));
 	connect(ui->attachPictureButton, SIGNAL(clicked()), this, SLOT(addExtraPicture()));
 	connect(ui->addFileButton, SIGNAL(clicked()), this , SLOT(addExtraFile()));
 	connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendChat()));
@@ -1543,6 +1546,22 @@ void ChatWidget::addSmiley()
 	if(!ui->chatTextEdit->textCursor().atStart() && ui->chatTextEdit->toPlainText()[ui->chatTextEdit->textCursor().position() - 1] != QChar(' '))
 		smiley = QString(" ") + smiley;
 	ui->chatTextEdit->textCursor().insertText(smiley);
+}
+
+void ChatWidget::stickerWidget()
+{
+	Emoticons::showStickerWidget(this, ui->stickerButton, SLOT(sendSticker()), true);
+}
+
+void ChatWidget::sendSticker()
+{
+	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
+	QString encodedImage;
+	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
+		RsHtml::optimizeHtml(encodedImage, 0);
+		std::string msg = encodedImage.toUtf8().constData();
+		rsMsgs->sendChat(chatId, msg);
+	}
 }
 
 void ChatWidget::clearChatHistory()

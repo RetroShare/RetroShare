@@ -31,10 +31,13 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsconfig.h>
 
+#ifdef MESSENGER_WINDOW
+#include "MessengerWindow.h"
+#endif
+
 #include "rshare.h"
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include "MessengerWindow.h"
 #include "HomePage.h"
 #include "NetworkDialog.h"
 #include "gui/FileTransfer/SearchDialog.h"
@@ -171,6 +174,16 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 {
     ui = new Ui::MainWindow;
     trayIcon = NULL;
+
+	friendsDialog=NULL;
+	idDialog=NULL;
+	chatLobbyDialog=NULL;
+	settingsDialog=NULL;
+	transfersDialog=NULL;
+	messagesDialog=NULL;
+	gxschannelDialog=NULL;
+	gxsforumDialog=NULL;
+	postedDialog=NULL;
 
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
@@ -359,7 +372,9 @@ MainWindow::~MainWindow()
     delete soundStatus;
     delete toasterDisable;
     delete sysTrayStatus;
+#ifdef MESSENGER_WINDOW
     MessengerWindow::releaseInstance();
+#endif
 #ifdef UNFINISHED
     delete applicationWindow;
 #endif
@@ -586,7 +601,9 @@ void MainWindow::createTrayIcon()
     notifyMenu->menuAction()->setVisible(false);
 
     trayMenu->addSeparator();
+#ifdef MESSENGER_WINDOW
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
+#endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
 #ifdef ENABLE_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
@@ -1085,11 +1102,13 @@ void MainWindow::showSettings()
     showWindow(MainWindow::Options);
 }
 
+#ifdef MESSENGER_WINDOW
 /** Shows Messenger window */
 void MainWindow::showMessengerWindow()
 {
     MessengerWindow::showYourself();
 }
+#endif
 
 /** Shows Statistics window */
 void MainWindow::showStatisticsWindow()

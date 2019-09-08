@@ -35,9 +35,7 @@
 
 #ifdef USE_CMARK
 //Include for CMark
-// This needs to be fixed: use system library if available, etc.
-#include <gui/../../../supportlibs/cmark/src/cmark.h>
-#include <gui/../../../supportlibs/cmark/src/node.h>
+#include <cmark.h>
 #endif
 
 #include <iostream>
@@ -593,7 +591,7 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 		// Parse CommonMark
 		int options = CMARK_OPT_DEFAULT;
 		cmark_parser *parser = cmark_parser_new(options);
-		cmark_parser_feed(parser, formattedText.toStdString().c_str(),formattedText.length());
+		cmark_parser_feed(parser, formattedText.toStdString().c_str(),static_cast<size_t>(formattedText.length()));
 		cmark_node *document = cmark_parser_finish(parser);
 		cmark_parser_free(parser);
 		char *result;
@@ -601,7 +599,6 @@ QString RsHtml::formatText(QTextDocument *textDocument, const QString &text, ulo
 		// Get result as html
 		formattedText = QString::fromUtf8(result);
 		//Clean
-		cmark_node_mem(document)->free(result);
 		cmark_node_free(document);
 		//Get document formed HTML
 		textBrowser.setHtml(formattedText);

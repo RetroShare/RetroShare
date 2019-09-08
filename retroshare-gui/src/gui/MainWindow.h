@@ -59,7 +59,6 @@ class NetworkDialog;
 class SearchDialog;
 class TransfersDialog;
 class MessagesDialog;
-class MessengerWindow;
 class PluginsPage;
 class HomePage;
 //class ChannelFeed;
@@ -68,6 +67,9 @@ class MainPage;
 class NewsFeed;
 class UserNotify;
 
+#ifdef MESSENGER_WINDOW
+class MessengerWindow;
+#endif
 #ifdef UNFINISHED
 class ApplicationWindow;
 #endif
@@ -224,7 +226,9 @@ private slots:
     /** Toolbar fns. */
     void addFriend();
     //void newRsCollection();
+#ifdef MESSENGER_WINDOW
     void showMessengerWindow();
+#endif
     void showStatisticsWindow();
 #ifdef ENABLE_WEBUI
     void showWebinterface();

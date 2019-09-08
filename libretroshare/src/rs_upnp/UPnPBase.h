@@ -43,6 +43,7 @@
 	extern std::string stdEmptyString;
 #endif // UPNP_C
 
+//#define UPNP_DEBUG 1
 
 /**
  * Case insensitive std::string comparison
@@ -255,7 +256,7 @@ private:
 public:
 	CUPnPError(
 		const CUPnPLib &upnpLib,
-		IXML_Document *errorDoc);
+		const IXML_Document *errorDoc);
 	~CUPnPError() {}
 	const std::string &getErrorCode() const
 		{ return m_ErrorCode; }

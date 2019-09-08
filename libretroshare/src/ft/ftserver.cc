@@ -678,14 +678,13 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 }
 
 bool ftServer::ExtraFileRemove(const RsFileHash& hash)
-{
-	mFileDatabase->removeExtraFile(hash);
-    return true;
-}
+{ return mFileDatabase->removeExtraFile(hash); }
 
-bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
+bool ftServer::ExtraFileHash(
+        std::string localpath, rstime_t period, TransferRequestFlags flags )
 {
-	return mFtExtra->hashExtraFile(localpath, period, flags);
+	return mFtExtra->hashExtraFile(
+	            localpath, static_cast<uint32_t>(period), flags );
 }
 
 bool ftServer::ExtraFileStatus(std::string localpath, FileInfo &info)

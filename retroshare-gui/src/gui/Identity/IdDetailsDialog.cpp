@@ -183,11 +183,11 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
 	
 	QPixmap pixmap;
 	
-	if(data.mImage.mSize > 0 && pixmap.loadFromData(data.mImage.mData, data.mImage.mSize, "PNG"))
-		ui->avatarLabel->setPixmap(pixmap) ;
+	if(data.mImage.mSize > 0 && GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap, GxsIdDetails::LARGE))
+		ui->avatarLabel->setPixmap(pixmap);
 	else
 	{
-		pixmap = QPixmap::fromImage(GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId)) ) ;
+		pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::LARGE) ;
 		ui->avatarLabel->setPixmap(pixmap) ; // we need to use the default pixmap here, generated from the ID
 	}
 

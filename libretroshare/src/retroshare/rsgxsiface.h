@@ -91,6 +91,7 @@ struct RsGxsChanges : RsEvent
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
+		RsEvent::serial_process(j,ctx);
 		RS_SERIAL_PROCESS(mServiceType);
 		RS_SERIAL_PROCESS(mMsgs);
 		RS_SERIAL_PROCESS(mMsgsMeta);
@@ -99,7 +100,7 @@ struct RsGxsChanges : RsEvent
 		RS_SERIAL_PROCESS(mDistantSearchReqs);
 	}
 
-	RsTokenService* mService; // Weak pointer, not serialized
+	RsTokenService* mService; /// Weak pointer, not serialized
 };
 
 /*!

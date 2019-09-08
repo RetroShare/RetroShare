@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include <stdexcept>
+#include "retroshare/rsmsgs.h"
 #include "util/rstime.h"
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvbase.h"
@@ -52,6 +53,7 @@ RsItem *RsChatSerialiser::create_item(uint16_t service_id,uint8_t item_sub_id) c
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST_REQUEST: return new RsChatLobbyListRequestItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_LIST: return new RsChatLobbyListItem();
 	case RS_PKT_SUBTYPE_CHAT_LOBBY_CONFIG: return new RsChatLobbyConfigItem();
+	case RS_PKT_SUBTYPE_SUBSCRIBED_CHAT_LOBBY_CONFIG: return new RsSubscribedChatLobbyConfigItem();
 	case RS_PKT_SUBTYPE_OUTGOING_MAP: return new PrivateOugoingMapItem();
 	default:
 		std::cerr << "Unknown packet type in chat!" << std::endl;
@@ -170,6 +172,11 @@ void RsChatAvatarItem::serial_process(RsGenericSerializer::SerializeJob j,RsGene
 {
     RsTypeSerializer::TlvMemBlock_proxy b(image_data,image_size) ;
     RsTypeSerializer::serial_process(j,ctx,b,"image data") ;
+}
+
+void RsSubscribedChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    info.serial_process(j,ctx);
 }
 
 void RsChatLobbyConfigItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)

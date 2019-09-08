@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/gxs/GxsIdDetails.h"
 #include "GxsChannelGroupItem.h"
 #include "ui_GxsChannelGroupItem.h"
 
@@ -134,7 +135,7 @@ void GxsChannelGroupItem::fill()
 
 	if (mGroup.mImage.mData != NULL) {
 		QPixmap chanImage;
-		chanImage.loadFromData(mGroup.mImage.mData, mGroup.mImage.mSize, "PNG");
+		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(chanImage));
 	}
 

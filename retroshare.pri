@@ -38,8 +38,8 @@ no_retroshare_nogui:CONFIG -= retroshare_nogui
 
 # To disable cmark append the following 
 # assignation to qmake command line "CONFIG+=no_cmark"
-CONFIG *= no_cmark
-cmark:CONFIG -= no_cmark
+CONFIG *= no_rs_gui_cmark
+rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 
 # To enable RetroShare plugins append the following
 # assignation to qmake command line "CONFIG+=retroshare_plugins"
@@ -139,6 +139,10 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 # the following assignation to qmake command line "CONFIG+=no_direct_chat"
 CONFIG *= direct_chat
 no_direct_chat:CONFIG -= direct_chat
+
+# To enable messemger window which has been deprecated since RetroShare 0.6.6 append
+# the following assignation to qmake command line "CONFIG+=messenger"
+# CONFIG *= messenger
 
 # To disable bitdht append the following assignation to qmake command line
 # "CONFIG+=no_bitdht"

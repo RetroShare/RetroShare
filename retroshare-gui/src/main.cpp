@@ -32,7 +32,6 @@ CrashStackTrace gCrashStackTrace;
 #include "gui/FriendsDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/MainWindow.h"
-#include "gui/MessengerWindow.h"
 #include "gui/NetworkDialog.h"
 #include "gui/NetworkView.h"
 #include "gui/QuickStartWizard.h"
@@ -52,6 +51,9 @@ CrashStackTrace gCrashStackTrace;
 #include "util/rsdir.h"
 #include "util/rstime.h"
 
+#ifdef MESSENGER_WINDOW
+#include "gui/MessengerWindow.h"
+#endif
 #ifdef ENABLE_WEBUI
 #	include "gui/settings/WebuiPage.h"
 #endif

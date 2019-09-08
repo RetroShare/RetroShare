@@ -159,6 +159,8 @@ private slots:
 
 	void smileyWidget();
 	void addSmiley();
+	void stickerWidget();
+	void sendSticker();
 
 	void addExtraFile();
 	void addExtraPicture();

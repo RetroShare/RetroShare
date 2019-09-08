@@ -81,6 +81,13 @@ GeneralPage::GeneralPage(QWidget * parent, Qt::WindowFlags flags) :
 
     ui.checkCloseToTray->setChecked(false) ; // default should be false because some systems to not support this.
 
+    if(!QSystemTrayIcon::isSystemTrayAvailable())
+    {
+		ui.checkCloseToTray->setChecked(false) ; // default should be false because some systems to not support this.
+		ui.checkCloseToTray->setToolTip(tr("No Qt-compatible system tray was found on this system."));
+        Settings->setCloseToTray(false);
+    }
+
     /* Connect signals */
     connect(ui.useLocalServer,                              SIGNAL(toggled(bool)),     this,SLOT(updateUseLocalServer())) ;
     connect(ui.idleSpinBox,                                 SIGNAL(valueChanged(int)), this,SLOT(updateMaxTimeBeforeIdle())) ;

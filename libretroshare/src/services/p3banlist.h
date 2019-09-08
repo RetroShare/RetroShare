@@ -105,7 +105,6 @@ public:
 
      */
     virtual int   tick();
-    virtual int   status();
 
     int     sendPackets();
     bool 	processIncoming();

@@ -40,7 +40,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 {
 	BroadcastDiscoveryPack() : mLocalPort(0) {}
 
-	RsPgpFingerprint mPgpFingerprint;
 	RsPeerId mSslId;
 	uint16_t mLocalPort;
 	std::string mProfileName;
@@ -48,7 +47,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
-		RS_SERIAL_PROCESS(mPgpFingerprint);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mLocalPort);
 		RS_SERIAL_PROCESS(mProfileName);
@@ -57,7 +55,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 	static BroadcastDiscoveryPack fromPeerDetails(const RsPeerDetails& pd)
 	{
 		BroadcastDiscoveryPack bdp;
-		bdp.mPgpFingerprint = pd.fpr;
 		bdp.mSslId = pd.id;
 		bdp.mLocalPort = pd.localPort;
 		bdp.mProfileName = pd.name;
@@ -103,12 +100,12 @@ BroadcastDiscoveryService::BroadcastDiscoveryService(
 	mUdcParameters.set_port(port);
 	mUdcParameters.set_application_id(appId);
 
-	mUdcEndpoint.Start(mUdcParameters, "");
+	mUdcPeer.Start(mUdcParameters, "");
 	updatePublishedData();
 }
 
 BroadcastDiscoveryService::~BroadcastDiscoveryService()
-{ mUdcEndpoint.Stop(true); }
+{ mUdcPeer.Stop(true); }
 
 std::vector<RsBroadcastDiscoveryResult>
 BroadcastDiscoveryService::getDiscoveredPeers()
@@ -126,7 +123,7 @@ void BroadcastDiscoveryService::updatePublishedData()
 {
 	RsPeerDetails od;
 	mRsPeers.getPeerDetails(mRsPeers.getOwnId(), od);
-	mUdcEndpoint.SetUserData(
+	mUdcPeer.SetUserData(
 	            BroadcastDiscoveryPack::fromPeerDetails(od).serializeToString());
 }
 
@@ -137,7 +134,7 @@ void BroadcastDiscoveryService::data_tick()
 	if( mUdcParameters.can_discover() &&
 	        !mRsPeers.isHiddenNode(mRsPeers.getOwnId()) )
 	{
-		auto currentEndpoints = mUdcEndpoint.ListDiscovered();
+		auto currentEndpoints = mUdcPeer.ListDiscovered();
 		std::map<UDC::IpPort, std::string> currentMap;
 		std::map<UDC::IpPort, std::string> updateMap;
 
@@ -163,23 +160,20 @@ void BroadcastDiscoveryService::data_tick()
 				        createResult(pp.first, pp.second);
 
 				const bool isFriend = mRsPeers.isFriend(rbdr.mSslId);
-				if( isFriend && rbdr.locator.hasPort() &&
+				if( isFriend && rbdr.mLocator.hasPort() &&
 				        !mRsPeers.isOnline(rbdr.mSslId) )
 				{
 					mRsPeers.setLocalAddress(
-					            rbdr.mSslId, rbdr.locator.host(),
-					            rbdr.locator.port() );
+					            rbdr.mSslId, rbdr.mLocator.host(),
+					            rbdr.mLocator.port() );
 					mRsPeers.connectAttempt(rbdr.mSslId);
 				}
 				else if(!isFriend)
 				{
 					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
-
-					// Ensure rsEvents is not deleted while we use it
-					std::shared_ptr<RsEvents> lockedRsEvents = rsEvents;
-					if(lockedRsEvents)
-						lockedRsEvents->postEvent(
-						            std::unique_ptr<Evt_t>(new Evt_t(rbdr)) );
+					if(rsEvents)
+						rsEvents->postEvent(
+						            std::shared_ptr<Evt_t>(new Evt_t(rbdr)) );
 				}
 			}
 		}
@@ -199,10 +193,9 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	        BroadcastDiscoveryPack::fromSerializedString(uData);
 
 	RsBroadcastDiscoveryResult rbdr;
-	rbdr.mPgpFingerprint = bdp.mPgpFingerprint;
 	rbdr.mSslId = bdp.mSslId;
 	rbdr.mProfileName = bdp.mProfileName;
-	rbdr.locator.
+	rbdr.mLocator.
 	        setScheme("ipv4").
 	        setHost(UDC::IpToString(ipp.ip())).
 	        setPort(bdp.mLocalPort);

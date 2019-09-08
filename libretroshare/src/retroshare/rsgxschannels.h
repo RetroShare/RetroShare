@@ -142,10 +142,13 @@ public:
 	 *                       posted
 	 * @param[in]  threadId  Id of the post (that is a thread) in the channel
 	 *                       where the comment is placed
+	 * @param[in]  comment   UTF-8 string containing the comment itself
+	 * @param[in]  authorId  Id of the author of the comment
 	 * @param[in]  parentId  Id of the parent of the comment that is either a
 	 *                       channel post Id or the Id of another comment.
-	 * @param[in]  authorId  Id of the author of the comment
-	 * @param[in]  comment   UTF-8 string containing the comment itself
+	 * @param[in]  origCommentId  If this is supposed to replace an already
+	 *                            existent comment, the id of the old post.
+	 *                            If left blank a new post will be created.
 	 * @param[out] commentMessageId Optional storage for the id of the comment
 	 *                              that was created, meaningful only on success.
 	 * @param[out] errorMessage Optional storage for error message, meaningful
@@ -155,9 +158,10 @@ public:
 	virtual bool createCommentV2(
 	        const RsGxsGroupId&   channelId,
 	        const RsGxsMessageId& threadId,
-	        const RsGxsMessageId& parentId,
-	        const RsGxsId&        authorId,
 	        const std::string&    comment,
+	        const RsGxsId&        authorId,
+	        const RsGxsMessageId& parentId = RsGxsMessageId(),
+	        const RsGxsMessageId& origCommentId = RsGxsMessageId(),
 	        RsGxsMessageId&       commentMessageId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
 	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) = 0;

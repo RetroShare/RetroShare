@@ -242,6 +242,10 @@ RsTickingThread::RsTickingThread()
 #endif
 }
 
+RsTickingThread::~RsTickingThread()
+{
+    fullstop();
+}
 void RsSingleJobThread::runloop()
 {
     run() ;
