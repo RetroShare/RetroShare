@@ -20,7 +20,10 @@
 #include "util/argstream.h"
 #include "util/rskbdinput.h"
 #include "retroshare/rsinit.h"
+
+#ifdef RS_JSONAPI
 #include "jsonapi/jsonapi.h"
+#endif
 
 CrashStackTrace gCrashStackTrace;
 
