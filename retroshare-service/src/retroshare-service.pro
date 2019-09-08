@@ -97,11 +97,18 @@ win32-g++ {
 
 	OBJECTS_DIR = temp/obj
 
-	dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
-	LIBS *= $$linkDynamicLibs(dLib)
+    dLib = ws2_32 gdi32 uuid ole32 iphlpapi crypt32 winmm
+    LIBS *= $$linkDynamicLibs(dLib)
 
 	# export symbols for the plugins
-	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-gui.a
+	LIBS += -Wl,--export-all-symbols,--out-implib,lib/libretroshare-service.a
+
+	# create lib directory
+	isEmpty(QMAKE_SH) {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib $(MKDIR) lib
+	} else {
+		QMAKE_PRE_LINK = $(CHK_DIR_EXISTS) lib || $(MKDIR) lib
+	}
 }
 
 
