@@ -29,6 +29,7 @@ CrashStackTrace gCrashStackTrace;
 
 #include <cmath>
 #include <csignal>
+#include <iomanip>
 
 #ifdef __ANDROID__
 #	include <QAndroidService>
@@ -234,8 +235,11 @@ int main(int argc, char* argv[])
 
 	return app.exec();
 #else
+
+#ifdef RS_JSONAPI
     if(jsonApiServer && !webui_pass1.empty())
 		jsonApiServer->authorizeToken("webui:"+webui_pass1);
+#endif
 
 	std::atomic<bool> keepRunning(true);
 	rsControl->setShutdownCallback([&](int){keepRunning = false;});
