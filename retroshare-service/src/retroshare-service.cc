@@ -30,6 +30,7 @@ CrashStackTrace gCrashStackTrace;
 #include <cmath>
 #include <csignal>
 #include <iomanip>
+#include <atomic>
 
 #ifdef __ANDROID__
 #	include <QAndroidService>
