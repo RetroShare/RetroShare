@@ -52,6 +52,8 @@ extern JsonApiServer* jsonApiServer;
  */
 struct JsonApiServer : RsSingleJobThread, p3Config
 {
+	static const uint16_t DEFAULT_PORT = 9092 ;
+
 	/**
 	 * @brief construct a JsonApiServer instance with given parameters
 	 * @param[in] port listening port fpt the JSON API socket
@@ -62,7 +64,7 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	 *	false otherwise, this usually requires user interacion to confirm access
 	 */
 	JsonApiServer(
-	        uint16_t port = 9092,
+	        uint16_t port = DEFAULT_PORT,
 	        const std::string& bindAddress = "127.0.0.1",
 	        const std::function<bool(const std::string&)> newAccessRequestCallback = [](const std::string&){return false;} );
 

@@ -33,8 +33,8 @@ CONFIG *= gxsdistsync
 
 # To disable RetroShare-nogui append the following
 # assignation to qmake command line "CONFIG+=no_retroshare_nogui"
-CONFIG *= retroshare_nogui
-no_retroshare_nogui:CONFIG -= retroshare_nogui
+CONFIG *= no_retroshare_nogui
+retroshare_nogui:CONFIG -= no_retroshare_nogui
 
 # To disable cmark append the following 
 # assignation to qmake command line "CONFIG+=no_cmark"
@@ -64,13 +64,12 @@ retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 
 # To enable RetroShare service append the following assignation to
 # qmake command line "CONFIG+=retroshare_service"
-CONFIG *= no_retroshare_service
+CONFIG *= retroshare_service
 retroshare_service:CONFIG -= no_retroshare_service
 
-# To disable libresapi append the following assignation to qmake command line
-#"CONFIG+=no_libresapi"
-CONFIG *= libresapi
-no_libresapi:CONFIG -= libresapi
+# To enable libresapi (deprecated) append the following assignation to qmake command line
+CONFIG+=no_libresapi
+libresapi:CONFIG -= no_libresapi
 
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
@@ -85,8 +84,8 @@ libresapi_settings:CONFIG -= no_libresapi_settings
 
 # To disable libresapi via HTTP (based on libmicrohttpd) append the following
 # assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= libresapihttpserver
-no_libresapihttpserver:CONFIG -= libresapihttpserver
+CONFIG *= no_libresapihttpserver
+libresapihttpserver:CONFIG -= no_libresapihttpserver
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
