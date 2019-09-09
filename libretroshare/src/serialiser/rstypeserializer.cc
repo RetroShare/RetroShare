@@ -732,11 +732,13 @@ bool RsTypeSerializer::to_JSON(
 	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
 
 	rapidjson::Value key;
-	key.SetString(memberName.c_str(), memberName.length(), allocator);
+	key.SetString( memberName.c_str(),
+	               static_cast<rapidjson::SizeType>(memberName.length()),
+	               allocator );
 
 	std::string encodedValue;
 	Radix64::encode( reinterpret_cast<uint8_t*>(member.first),
-	                 member.second, encodedValue );
+	                 static_cast<int>(member.second), encodedValue );
 
 	rapidjson::Value value;
 	value.SetString(encodedValue.data(), allocator);
