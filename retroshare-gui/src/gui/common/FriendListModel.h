@@ -164,9 +164,10 @@ private:
                                                                  std::vector<HierarchicalProfileInformation>& mProfiles,
                                                                  bool create);
 
-	std::map<RsPgpId,uint32_t>::const_iterator createInvalidatedProfile(const RsPgpFingerprint& pgp_id,
-                                                                 std::map<RsPgpId,uint32_t>& pgp_indices,
-                                                                 std::vector<HierarchicalProfileInformation>& mProfiles);
+	std::map<RsPgpId,uint32_t>::const_iterator createInvalidatedProfile(const RsPgpId& pgp_id,
+                                                                        const RsPgpFingerprint& fpr,
+	                                                                    std::map<RsPgpId,uint32_t>& pgp_indices,
+	                                                                    std::vector<HierarchicalProfileInformation>& mProfiles);
 
     QVariant sizeHintRole  (const EntryIndex& e, int col) const;
 	QVariant displayRole   (const EntryIndex& e, int col) const;

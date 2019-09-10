@@ -973,9 +973,16 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
     return e.type;
 }
 
-std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedProfile(const RsPgpFingerprint& fpr,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles)
+std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedProfile(const RsPgpId& _pgp_id,const RsPgpFingerprint& fpr,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles)
 {
-    RsPgpId pgp_id = rsPeers->pgpIdFromFingerprint(fpr);
+    // This is necessary by the time the full fingerprint is used in PeerNetItem.
+
+    RsPgpId pgp_id;
+
+    if(!fpr.isNull())
+		pgp_id = rsPeers->pgpIdFromFingerprint(fpr);
+    else
+        pgp_id = _pgp_id;
 
     auto it2 = pgp_indices.find(pgp_id);
 
@@ -1087,7 +1094,7 @@ void RsFriendListModel::updateInternalData()
         {
             // This peer's pgp key hasn't been validated yet. We list such peers at the end.
 
-            it2 = createInvalidatedProfile(hnode.node_info.fpr,pgp_indices,mProfiles);
+            it2 = createInvalidatedProfile(hnode.node_info.gpg_id,hnode.node_info.fpr,pgp_indices,mProfiles);
         }
 
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
