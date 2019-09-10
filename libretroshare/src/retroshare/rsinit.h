@@ -38,7 +38,7 @@
 #include <vector>
 #include <retroshare/rstypes.h>
 
-struct RsLoginHelper;
+class RsLoginHelper;
 
 /**
  * Pointer to global instance of RsLoginHelper

@@ -1,19 +1,20 @@
 ################################################################################
 # retroshare.pri                                                               #
-# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
+# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>             #
+# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>              #
 #                                                                              #
 # This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Affero General Public License as               #
+# it under the terms of the GNU Lesser General Public License as               #
 # published by the Free Software Foundation, either version 3 of the           #
 # License, or (at your option) any later version.                              #
 #                                                                              #
 # This program is distributed in the hope that it will be useful,              #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
 # GNU Lesser General Public License for more details.                          #
 #                                                                              #
 # You should have received a copy of the GNU Lesser General Public License     #
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
+# along with this program. If not, see <https://www.gnu.org/licenses/>.        #
 ################################################################################
 
 ################################################################################
@@ -172,10 +173,25 @@ rs_deep_search:CONFIG -= no_rs_deep_search
 CONFIG *= no_rs_use_native_dialogs
 rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 
-# To disable broadcast discovery happend the following assignation to qmake
+# To disable broadcast discovery append the following assignation to qmake
 # command line "CONFIG+=no_rs_broadcast_discovery"
 CONFIG *= rs_broadcast_discovery
 no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
+
+# To enable webui append the following assignation to qmake
+# command line "CONFIG+=rs_webui"
+CONFIG *= no_rs_webui
+rs_webui:CONFIG -= no_rs_webui
+
+# To enable webui append the following assignation to qmake
+# command line "CONFIG+=rs_service_webui_terminal_password"
+CONFIG *= no_rs_service_webui_terminal_password
+rs_service_webui_terminal_password:CONFIG -= no_rs_service_webui_terminal_password
+
+# To enable retroshare-service terminal login append the following assignation
+# to qmake command line "CONFIG+=rs_service_terminal_login"
+CONFIG *= no_rs_service_terminal_login
+rs_service_terminal_login:CONFIG -= no_rs_service_terminal_login
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -432,9 +448,9 @@ gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
-libresapilocalserver:DEFINES *= LIBRESAPI_LOCAL_SERVER
-libresapi_settings:DEFINES *= LIBRESAPI_SETTINGS
-libresapihttpserver:DEFINES *= ENABLE_WEBUI
+rs_webui:DEFINES *= RS_WEBUI
+rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
+rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
@@ -447,7 +463,7 @@ no_sqlcipher {
 
 rs_autologin {
     DEFINES *= RS_AUTOLOGIN
-    RS_AUTOLOGIN_WARNING_MSG = \
+    RS_AUTOLOGIN_WARNING_MSG = QMAKE: \
         You have enabled RetroShare auto-login, this is discouraged. The usage \
         of auto-login on some linux distributions may allow someone having \
         access to your session to steal the SSL keys of your node location and \
@@ -470,7 +486,7 @@ no_rs_deprecatedwarning {
     QMAKE_CXXFLAGS += -Wno-deprecated
     QMAKE_CXXFLAGS += -Wno-deprecated-declarations
     DEFINES *= RS_NO_WARN_DEPRECATED
-    message("QMAKE: You have disabled deprecated warnings.")
+    warning("QMAKE: You have disabled deprecated warnings.")
 }
 
 no_rs_cppwarning {
@@ -478,7 +494,7 @@ no_rs_cppwarning {
     QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
 
     DEFINES *= RS_NO_WARN_CPP
-    message("QMAKE: You have disabled C preprocessor warnings.")
+    warning("QMAKE: You have disabled C preprocessor warnings.")
 }
 
 rs_gxs_trans {
@@ -495,7 +511,7 @@ bitdht {
 }
 
 direct_chat {
-    warning("You have enabled RetroShare direct chat which is deprecated!")
+    warning("QMAKE: You have enabled RetroShare direct chat which is deprecated!")
     DEFINES *= RS_DIRECT_CHAT
 }
 
@@ -513,6 +529,37 @@ build configuration, cross-compiling JSON API requires JSONAPI_GENERATOR_EXE \
 to contain the path to an host executable jsonapi-generator")
 
     DEFINES *= RS_JSONAPI
+}
+
+libresapilocalserver {
+    warning("QMAKE: you have enabled libresapilocalserver which is deprecated")
+    DEFINES *= LIBRESAPI_LOCAL_SERVER
+}
+
+libresapi_settings {
+    warning("QMAKE: you have enabled libresapi_settings which is deprecated")
+    DEFINES *= LIBRESAPI_SETTINGS
+}
+
+libresapihttpserver {
+    warning("QMAKE: you have enabled libresapihttpserver which is deprecated")
+    DEFINES *= ENABLE_WEBUI
+}
+
+retroshare_nogui {
+    warning("QMAKE: you have enabled retroshare_nogui which is deprecated")
+}
+
+retroshare_android_service {
+    warning("QMAKE: you have enabled retroshare_android_service which is deprecated")
+}
+
+retroshare_android_notify_service {
+    warning("QMAKE: you have enabled retroshare_android_notify_service which is deprecated")
+}
+
+retroshare_qml_app {
+    warning("QMAKE: you have enabled retroshare_qml_app which is deprecated")
 }
 
 rs_deep_search {
