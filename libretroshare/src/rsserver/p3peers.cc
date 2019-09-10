@@ -670,6 +670,11 @@ bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char
 	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen, reason);
 }
 
+RsPgpId p3Peers::pgpIdFromFingerprint(const RsPgpFingerprint& fpr)
+{
+	return PGPHandler::pgpIdFromFingerprint(fpr);
+}
+
 bool	p3Peers::getGPGDetails(const RsPgpId &pgp_id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG

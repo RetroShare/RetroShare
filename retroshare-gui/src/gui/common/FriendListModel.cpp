@@ -36,7 +36,7 @@
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
 
-//#define DEBUG_MESSAGE_MODEL
+#define DEBUG_MODEL
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
@@ -728,7 +728,7 @@ void RsFriendListModel::checkInternalData(bool force)
 			if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
 			{
 #ifdef DEBUG_MODEL
-				std::cerr << "Updating ID " << node.node_info.id << std::endl;
+				std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
 #endif
 				RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
 				rsPeers->getPeerDetails(id,mLocations[i].node_info);
@@ -973,6 +973,48 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
     return e.type;
 }
 
+std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedProfile(const RsPgpFingerprint& fpr,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles)
+{
+    RsPgpId pgp_id = rsPeers->pgpIdFromFingerprint(fpr);
+
+    auto it2 = pgp_indices.find(pgp_id);
+
+    if(it2 != pgp_indices.end())
+    {
+        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        return it2;
+    }
+
+	HierarchicalProfileInformation hprof ;
+
+    if(rsPeers->getGPGDetails(pgp_id,hprof.profile_info))
+    {
+        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        return it2;
+    }
+
+    hprof.profile_info.isOnlyGPGdetail = true;
+	hprof.profile_info.gpg_id = pgp_id;
+
+	hprof.profile_info.name = tr("Profile ID ").toStdString() + pgp_id.toStdString() + tr(" (Not yet validated)").toStdString();
+	hprof.profile_info.issuer = pgp_id;
+
+	hprof.profile_info.fpr = fpr; /* pgp fingerprint */
+
+	hprof.profile_info.trustLvl = 0;
+	hprof.profile_info.validLvl = 0;
+
+	pgp_indices[pgp_id] = mProfiles.size();
+	mProfiles.push_back(hprof);
+
+	it2 = pgp_indices.find(pgp_id);
+
+#ifdef DEBUG_MODEL
+		RsDbg() << "  Creating invalidated profile pgp id = " << pgp_id <<  " (" << hprof.profile_info.name << ") and fingerprint " << fpr << std::endl;
+#endif
+	return it2;
+}
+
 std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::checkProfileIndex(const RsPgpId& pgp_id,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles,bool create)
 {
 	auto it2 = pgp_indices.find(pgp_id);
@@ -1042,7 +1084,11 @@ void RsFriendListModel::updateInternalData()
         auto it2 = checkProfileIndex(hnode.node_info.gpg_id,pgp_indices,mProfiles,hnode.node_info.gpg_id == rsPeers->getGPGOwnId());
 
         if(it2 == pgp_indices.end())
-            continue;
+        {
+            // This peer's pgp key hasn't been validated yet. We list such peers at the end.
+
+            it2 = createInvalidatedProfile(hnode.node_info.fpr,pgp_indices,mProfiles);
+        }
 
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
         mLocations.push_back(hnode);

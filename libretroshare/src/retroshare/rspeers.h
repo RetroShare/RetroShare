@@ -505,6 +505,8 @@ public:
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 
+    virtual RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& fpr) = 0;
+
     // Note: the two methods below could be unified. The fact that one of them can take an optional RsPeerDetails struct as parameter
     // seems quite inconsistent.
 
