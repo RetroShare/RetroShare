@@ -760,9 +760,8 @@ bool	p3ServiceControl::updateFilterByPeer_locked(const RsPeerId &peerId)
 	recordFilterChanges_locked(peerId, originalFilter, peerFilter);
 
 	using Evt_t = RsPeerStateChangedEvent;
-	std::shared_ptr<RsEvents> lockedRsEvents ( rsEvents );
-	if(lockedRsEvents)
-		lockedRsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(peerId)));
+	if(rsEvents)
+		rsEvents->postEvent(std::unique_ptr<Evt_t>(new Evt_t(peerId)));
 
 	return true;
 }
