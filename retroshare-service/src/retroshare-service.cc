@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
 	signal(SIGBREAK, signalHandler);
 #endif // ifdef SIGBREAK
 
-	RsInfo() <<
+	RsInfo() << "\n" <<
 	    "+================================================================+\n"
 	    "|     o---o                                             o        |\n"
 	    "|     \\ /           - Retroshare Service -            / \\      |\n"
