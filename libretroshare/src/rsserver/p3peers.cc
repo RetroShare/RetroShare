@@ -1526,11 +1526,24 @@ bool p3Peers::loadCertificateFromString(
 	}
 
 	RsPgpId gpgid;
-	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString(
-	            crt->armouredPGPKey(), gpgid, error_string );
+	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString( crt->armouredPGPKey(), gpgid, error_string );
 
 	gpg_id = gpgid;
 	ssl_id = crt->sslid();
+
+    // now get all friends who declare this key ID to be the one needed to check connections, and clear their "skip_pgp_signature_validation" flag
+
+    if(res)
+		mPeerMgr->notifyPgpKeyReceived(gpgid);
+
+	return res;
+}
+bool p3Peers::loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,uint32_t bin_key_len, RsPgpId& gpg_id, std::string& error_string )
+{
+	bool res = AuthGPG::getAuthGPG()->LoadPGPKeyFromBinaryData( bin_key_data,bin_key_len, gpg_id, error_string );
+
+    if(res)
+		mPeerMgr->notifyPgpKeyReceived(gpg_id);
 
 	return res;
 }

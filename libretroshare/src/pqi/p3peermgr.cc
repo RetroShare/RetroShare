@@ -886,8 +886,7 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
 
 	/* check for existing */
-        std::map<RsPeerId, peerState>::iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
+	for(auto it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
 		if (it->second.lastcontact > 0)
 		{
@@ -910,6 +909,28 @@ bool    p3PeerMgrIMPL::haveOnceConnected()
 }
 
 
+bool p3PeerMgrIMPL::notifyPgpKeyReceived(const RsPgpId& pgp_id)
+{
+	RsStackMutex stack(mPeerMtx); /****** STACK LOCK MUTEX *******/
+
+    bool changed = false;
+
+    for(auto it(mFriendList.begin());it!=mFriendList.end();++it)
+    {
+        if(it->second.gpg_id == pgp_id)
+        {
+            std::cerr << "(WW) notification that full key " << pgp_id << " is available. Reseting short invite flag for peer " << it->first << std::endl;
+            it->second.skip_pgp_signature_validation = false;
+
+            changed = true;
+        }
+    }
+
+    if(changed)
+        IndicateConfigChanged();
+
+    return true;
+}
 
 /*******************************************************************/
 /*******************************************************************/
@@ -946,16 +967,9 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 		std::map<RsPeerId, peerState>::iterator it;
 		if (mFriendList.end() != (it=mFriendList.find(id)))
 		{
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::addFriend() Already Exists" << std::endl;
-#endif
-            if(it->second.gpg_id.isNull())	// already exists as a SSL-only friend
-            {
-				it->second.gpg_id = input_gpg_id;
-				it->second.skip_pgp_signature_validation = false;
-                return true;
-            }
-            else if(it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
+            // The friend may already be here, including with a short invite (meaning the PGP key is unknown).
+
+			if(it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
             {
                 RsErr() << "Trying to add SSL id (" << id << ") that is already a friend with existing PGP key (" << it->second.gpg_id << ") but using a different PGP key (" << input_gpg_id << "). This is a bug!" << std::endl;
                 return false;
@@ -975,6 +989,7 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 			return false;
 		}
 
+        // after that, we know that we have the key, because AuthGPG wouldn't answer yes for a key it doesn't know.
 
 		/* check if it is in others */
 		if (mOthersList.end() != (it = mOthersList.find(id)))

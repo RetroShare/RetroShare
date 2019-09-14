@@ -534,6 +534,19 @@ bool	AuthGPG::getGPGSignedList(std::list<RsPgpId> &ids)
 
  	return PGPHandler::SaveCertificateToString(id,include_signatures) ;
  }
+/* import to GnuPG and other Certificates */
+bool AuthGPG::LoadPGPKeyFromBinaryData(const unsigned char *data,uint32_t data_len, RsPgpId& gpg_id,std::string& error_string)
+{
+	RsStackMutex stack(gpgMtxEngine); /******* LOCKED ******/
+
+	if(PGPHandler::LoadCertificateFromBinaryData(data,data_len,gpg_id,error_string))
+	{
+		updateOwnSignatureFlag(gpg_id,mOwnGpgId) ;
+		return true ;
+	}
+
+	return false ;
+}
 
 /* import to GnuPG and other Certificates */
 bool AuthGPG::LoadCertificateFromString(const std::string &str, RsPgpId& gpg_id,std::string& error_string)

@@ -25,6 +25,7 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvaddrs.h"
+#include "serialiser/rstlvbinary.h"
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsitem.h"
 #include "rsitems/itempriorities.h"
@@ -34,11 +35,12 @@
 enum class RsGossipDiscoveryItemType : uint8_t
 {
 	PGP_LIST           = 0x1,
-	PGP_CERT           = 0x2,
+	PGP_CERT           = 0x2,		// deprecated
 	CONTACT            = 0x5,
 	IDENTITY_LIST      = 0x6,
 	INVITE             = 0x7,
-	INVITE_REQUEST     = 0x8
+	INVITE_REQUEST     = 0x8,
+	PGP_CERT_BINARY    = 0x9,
 };
 
 class RsDiscItem: public RsItem
@@ -94,6 +96,20 @@ public:
 
 	RsPgpId pgpId;
 	std::string pgpCert;
+};
+
+class RsDiscPgpKeyItem: public RsDiscItem
+{
+public:
+
+	RsDiscPgpKeyItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT_BINARY)
+	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
+
+	void clear() override;
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx) override;
+
+	RsPgpId pgpKeyId;				// duplicate information for practical reasons
+	RsTlvBinaryData pgpKeyData;
 };
 
 class RsDiscContactItem: public RsDiscItem

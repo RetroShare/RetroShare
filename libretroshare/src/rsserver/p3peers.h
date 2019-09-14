@@ -157,6 +157,7 @@ public:
 	virtual bool hasExportMinimal();
 
 	virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,RsPgpId& pgp_id, std::string& error_string);
+	virtual bool loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,uint32_t bin_key_len, RsPgpId& gpg_id, std::string& error_string );
 	virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, uint32_t& error_code);
 
 	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, uint32_t& error_code) override;

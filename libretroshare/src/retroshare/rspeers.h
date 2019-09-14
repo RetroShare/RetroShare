@@ -74,7 +74,7 @@ const uint32_t RS_HIDDEN_TYPE_I2P	= 0x0004;
 /* mask to match all valid hidden types */
 const uint32_t RS_HIDDEN_TYPE_MASK	= RS_HIDDEN_TYPE_I2P | RS_HIDDEN_TYPE_TOR;
 
-/* Visibility */
+/* Visibility parameter for discovery */
 const uint32_t RS_VS_DISC_OFF		= 0x0000;
 const uint32_t RS_VS_DISC_MINIMAL	= 0x0001;
 const uint32_t RS_VS_DISC_FULL		= 0x0002;
@@ -733,6 +733,11 @@ public:
 	virtual bool loadDetailsFromStringCert(
 	        const std::string& cert, RsPeerDetails& certDetails,
 	        uint32_t& errorCode ) = 0;
+
+	virtual bool loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,
+                                           uint32_t bin_key_len,
+                                           RsPgpId& gpg_id,
+                                           std::string& error_string )=0;
 
 	// Certificate utils
 	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code) = 0;

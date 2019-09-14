@@ -104,6 +104,7 @@ class PGPHandler
 		bool GeneratePGPCertificate(const std::string& name, const std::string& email, const std::string& passwd, RsPgpId& pgpId, const int keynumbits, std::string& errString) ;
 
 		bool LoadCertificateFromString(const std::string& pem, RsPgpId& gpg_id, std::string& error_string);
+		bool LoadCertificateFromBinaryData(const unsigned char *bin_data,uint32_t bin_data_len, RsPgpId& gpg_id, std::string& error_string);
 
 		std::string SaveCertificateToString(const RsPgpId& id,bool include_signatures) const ;
 		bool exportPublicKey(const RsPgpId& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
@@ -172,6 +173,7 @@ class PGPHandler
 		bool syncDatabase() ;
 
 	private:
+		bool LoadCertificate(const unsigned char *bin_data,uint32_t bin_data_len, bool armoured, RsPgpId& gpg_id, std::string& error_string);
 		void initCertificateInfo(PGPCertificateInfo& cert,const ops_keydata_t *keydata,uint32_t i) ;
 
 		// Returns true if the signatures have been updated

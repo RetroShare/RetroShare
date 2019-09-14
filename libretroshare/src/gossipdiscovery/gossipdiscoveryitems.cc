@@ -36,7 +36,8 @@ RsItem *RsDiscSerialiser::create_item(
 	switch(static_cast<RsGossipDiscoveryItemType>(item_subtype))
 	{
 	case RsGossipDiscoveryItemType::PGP_LIST: return new RsDiscPgpListItem();
-	case RsGossipDiscoveryItemType::PGP_CERT: return new RsDiscPgpCertItem();
+//	case RsGossipDiscoveryItemType::PGP_CERT: return new RsDiscPgpCertItem();
+	case RsGossipDiscoveryItemType::PGP_CERT_BINARY: return new RsDiscPgpKeyItem();
 	case RsGossipDiscoveryItemType::CONTACT:  return new RsDiscContactItem();
 	case RsGossipDiscoveryItemType::IDENTITY_LIST:
 		return new RsDiscIdentityListItem();
@@ -76,6 +77,18 @@ void RsDiscPgpCertItem::serial_process(RsGenericSerializer::SerializeJob j,RsGen
 {
     RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PGPCERT,pgpCert,"pgpCert") ;
+}
+
+void RsDiscPgpKeyItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
+{
+    RsTypeSerializer::serial_process(j,ctx,pgpKeyId,"pgpKeyId") ;
+    RsTypeSerializer::serial_process(j,ctx,pgpKeyData,"pgpKeyData") ;
+}
+
+void RsDiscPgpKeyItem::clear()
+{
+	pgpKeyId.clear();
+	pgpKeyData.TlvClear();
 }
 
 void 	RsDiscContactItem::clear()

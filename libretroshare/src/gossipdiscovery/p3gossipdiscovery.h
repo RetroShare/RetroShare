@@ -130,8 +130,9 @@ private:
 	void recvPGPCertificateRequest(
 	        const RsPeerId& fromId, const RsDiscPgpListItem* item );
 
-	void sendPGPCertificate(const PGPID &aboutId, const SSLID &toId);
-	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);
+	void sendPGPCertificate(const RsPgpId &aboutId, const RsPeerId &toId);
+	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);	// deprecated
+	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpKeyItem *item);
 	void recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids);
 
 	bool setPeerVersion(const SSLID &peerId, const std::string &version);
@@ -160,7 +161,7 @@ private:
 	std::map<SSLID, DiscPeerInfo> mLocationMap;
 
 	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
-	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertOutList;
+	//std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertOutList;
 
 protected:
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)

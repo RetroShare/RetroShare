@@ -80,7 +80,6 @@ class peerState
     // have short invites. However, because this represent a significant security risk, we perform multiple consistency checks
     // whenever we use this flag, in particular:
     //    flat is true  <==>   friend SSL cert is in the friend list, but PGP id is not in the friend list
-    //                         PGP id is undefined and therefore set to null
 
     bool skip_pgp_signature_validation;
 
@@ -139,6 +138,9 @@ public:
 	        const RsPeerId& sslId,
 	        const RsPgpId& pgpId,
 	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
+
+    // Calling this removed the skip_pgp_signature_validation flag on all peers which PGP key is the one supplied.
+    virtual bool notifyPgpKeyReceived(const RsPgpId& pgp_key_id) = 0;
 
 	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
 	virtual bool isFriend(const RsPeerId& ssl_id) = 0;
@@ -258,6 +260,8 @@ public:
                               rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
 
 	bool addSslOnlyFriend(const RsPeerId& sslId, const RsPgpId &pgp_id, const RsPeerDetails& details = RsPeerDetails() ) override;
+
+    virtual bool notifyPgpKeyReceived(const RsPgpId& pgp_key_id) override;
 
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);
