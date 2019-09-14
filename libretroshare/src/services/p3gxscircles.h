@@ -180,7 +180,14 @@ virtual RsServiceInfo getServiceInfo();
 	/*********** External Interface ***************/
 
 	/// @see RsGxsCircles
-	bool createCircle(RsGxsCircleGroup& cData) override;
+	bool createCircle(
+	        const std::string& circleName, RsGxsCircleType circleType,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        const RsGxsCircleId& restrictedId = RsGxsCircleId(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& gxsIdMembers = std::set<RsGxsId>(),
+	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>()
+	        ) override;
 
 	/// @see RsGxsCircles
 	bool editCircle(RsGxsCircleGroup& cData) override;
