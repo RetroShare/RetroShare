@@ -36,9 +36,6 @@
 
 class p3ServiceControl;
 
-using PGPID RS_DEPRECATED_FOR(RsPgpId)  = RsPgpId;
-using SSLID RS_DEPRECATED_FOR(RsPeerId) = RsPeerId;
-
 struct DiscSslInfo
 {
 	DiscSslInfo() : mDiscStatus(0) {}
@@ -56,16 +53,16 @@ struct DiscPgpInfo
 {
 	DiscPgpInfo() {}
 
-	void mergeFriendList(const std::set<PGPID> &friends);
+	void mergeFriendList(const std::set<RsPgpId> &friends);
 
-	std::set<PGPID> mFriendSet;
-	std::map<SSLID, DiscSslInfo> mSslIds;
+	std::set<RsPgpId> mFriendSet;
+	std::map<RsPeerId, DiscSslInfo> mSslIds;
 };
 
 
 class p3discovery2 :
-        public RsGossipDiscovery, public p3Service, public pqiServiceMonitor,
-        public AuthGPGService
+        public RsGossipDiscovery, public p3Service, public pqiServiceMonitor
+        //public AuthGPGService
 {
 public:
 
@@ -87,57 +84,41 @@ virtual RsServiceInfo getServiceInfo();
 	bool getPeerVersion(const RsPeerId &id, std::string &version);
 	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
 
-	/// @see RsGossipDiscovery
-	bool sendInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
-
-	/// @see RsGossipDiscovery
-	bool requestInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
-
-        /************* from AuthGPService ****************/
-virtual AuthGPGOperation *getGPGOperation();
-virtual void setGPGOperation(AuthGPGOperation *operation);
+    /************* from AuthGPService ****************/
+	// virtual AuthGPGOperation *getGPGOperation();
+	// virtual void setGPGOperation(AuthGPGOperation *operation);
 
 
 private:
 
-	PGPID getPGPId(const SSLID &id);
+	RsPgpId getPGPId(const RsPeerId &id);
 
 	int  handleIncoming();
 	void updatePgpFriendList();
 
-	void addFriend(const SSLID &sslId);
-	void removeFriend(const SSLID &sslId);
+	void addFriend(const RsPeerId &sslId);
+	void removeFriend(const RsPeerId &sslId);
 
 	void updatePeerAddresses(const RsDiscContactItem *item);
 	void updatePeerAddressList(const RsDiscContactItem *item);
 
-	void sendOwnContactInfo(const SSLID &sslid);
-	void recvOwnContactInfo(const SSLID &fromId, const RsDiscContactItem *item);
+	void sendOwnContactInfo(const RsPeerId &sslid);
+	void recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContactItem *item);
 
-	void sendPGPList(const SSLID &toId);
-	void processPGPList(const SSLID &fromId, const RsDiscPgpListItem *item);
+	void sendPGPList(const RsPeerId &toId);
+	void processPGPList(const RsPeerId &fromId, const RsDiscPgpListItem *item);
 
-	void processContactInfo(const SSLID &fromId, const RsDiscContactItem *info);
+	void processContactInfo(const RsPeerId &fromId, const RsDiscContactItem *info);
 
-	void requestPGPCertificate(const PGPID &aboutId, const SSLID &toId);
+    // send/recv information
 
-	void recvPGPCertificateRequest(
-	        const RsPeerId& fromId, const RsDiscPgpListItem* item );
-
+	void requestPGPCertificate(const RsPgpId &aboutId, const RsPeerId &toId);
+	void recvPGPCertificateRequest(const RsPeerId& fromId, const RsDiscPgpListItem* item );
 	void sendPGPCertificate(const RsPgpId &aboutId, const RsPeerId &toId);
-	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);	// deprecated
-	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpKeyItem *item);
+	void recvPGPCertificate(const RsPeerId &fromId, RsDiscPgpKeyItem *item);
 	void recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids);
 
-	bool setPeerVersion(const SSLID &peerId, const std::string &version);
-
-	void recvInvite(std::unique_ptr<RsGossipDiscoveryInviteItem> inviteItem);
+	bool setPeerVersion(const RsPeerId &peerId, const std::string &version);
 
 	void rsEventsHandler(const RsEvent& event);
 	RsEventsHandlerId_t mRsEventsHandle;
@@ -152,16 +133,18 @@ private:
 	/* data */
 	RsMutex mDiscMtx;
 
-	void updatePeers_locked(const SSLID &aboutId);
-	void sendContactInfo_locked(const PGPID &aboutId, const SSLID &toId);
+	void updatePeers_locked(const RsPeerId &aboutId);
+	void sendContactInfo_locked(const RsPgpId &aboutId, const RsPeerId &toId);
 
 	rstime_t mLastPgpUpdate;
 
-	std::map<PGPID, DiscPgpInfo> mFriendList;
-	std::map<SSLID, DiscPeerInfo> mLocationMap;
+	std::map<RsPgpId, DiscPgpInfo> mFriendList;
+	std::map<RsPeerId, DiscPeerInfo> mLocationMap;
 
-	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
-	//std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertOutList;
+// This was used to async the receiving of PGP keys, mainly because PGPHandler cross-checks all signatures, so receiving these keys in large loads can be costly
+// Because discovery is not running in the main thread, there's no reason to re-async this into another process (e.g. AuthGPG)
+//
+//	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
 
 protected:
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)

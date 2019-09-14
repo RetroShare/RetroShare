@@ -1792,7 +1792,7 @@ int RsServer::StartupRetroShare()
 	/* Add AuthGPG services */
 	/**************************************************************************/
 
-	AuthGPG::getAuthGPG()->addService(mDisc);
+	//AuthGPG::getAuthGPG()->addService(mDisc);
 
 	/**************************************************************************/
 	/* Force Any Last Configuration Options */

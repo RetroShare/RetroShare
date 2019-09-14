@@ -38,8 +38,8 @@ enum class RsGossipDiscoveryItemType : uint8_t
 	PGP_CERT           = 0x2,		// deprecated
 	CONTACT            = 0x5,
 	IDENTITY_LIST      = 0x6,
-	INVITE             = 0x7,
-	INVITE_REQUEST     = 0x8,
+	INVITE             = 0x7,		// deprecated
+	INVITE_REQUEST     = 0x8,		// deprecated
 	PGP_CERT_BINARY    = 0x9,
 };
 
@@ -80,22 +80,6 @@ public:
 
 	RsGossipDiscoveryPgpListMode mode;
 	RsTlvPgpIdSet pgpIdSet;
-};
-
-class RsDiscPgpCertItem: public RsDiscItem
-{
-public:
-
-	RsDiscPgpCertItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT)
-	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
-
-	void clear() override;
-	void serial_process(
-	        RsGenericSerializer::SerializeJob j,
-	        RsGenericSerializer::SerializeContext& ctx) override;
-
-	RsPgpId pgpId;
-	std::string pgpCert;
 };
 
 class RsDiscPgpKeyItem: public RsDiscItem
@@ -172,30 +156,6 @@ public:
 	        RsGenericSerializer::SerializeContext& ctx) override;
 
 	std::list<RsGxsId> ownIdentityList;
-};
-
-struct RsGossipDiscoveryInviteItem : RsDiscItem
-{
-	RsGossipDiscoveryInviteItem();
-
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx ) override
-	{ RS_SERIAL_PROCESS(mInvite); }
-	void clear() override { mInvite.clear(); }
-
-	std::string mInvite;
-};
-
-struct RsGossipDiscoveryInviteRequestItem : RsDiscItem
-{
-	RsGossipDiscoveryInviteRequestItem();
-
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx ) override
-	{ RS_SERIAL_PROCESS(mInviteId); }
-	void clear() override { mInviteId.clear(); }
-
-	RsPeerId mInviteId;
 };
 
 class RsDiscSerialiser: public RsServiceSerializer

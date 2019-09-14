@@ -36,15 +36,11 @@ RsItem *RsDiscSerialiser::create_item(
 	switch(static_cast<RsGossipDiscoveryItemType>(item_subtype))
 	{
 	case RsGossipDiscoveryItemType::PGP_LIST: return new RsDiscPgpListItem();
-//	case RsGossipDiscoveryItemType::PGP_CERT: return new RsDiscPgpCertItem();
 	case RsGossipDiscoveryItemType::PGP_CERT_BINARY: return new RsDiscPgpKeyItem();
 	case RsGossipDiscoveryItemType::CONTACT:  return new RsDiscContactItem();
-	case RsGossipDiscoveryItemType::IDENTITY_LIST:
-		return new RsDiscIdentityListItem();
-	case RsGossipDiscoveryItemType::INVITE:
-		return new RsGossipDiscoveryInviteItem();
-	case RsGossipDiscoveryItemType::INVITE_REQUEST:
-		return  new RsGossipDiscoveryInviteRequestItem();
+	case RsGossipDiscoveryItemType::IDENTITY_LIST: return new RsDiscIdentityListItem();
+    default:
+        return NULL;
 	}
 
 	return nullptr;
@@ -64,19 +60,6 @@ void RsDiscPgpListItem::serial_process(
 {
 	RS_SERIAL_PROCESS(mode);
 	RS_SERIAL_PROCESS(pgpIdSet);
-}
-
-void 	RsDiscPgpCertItem::clear()
-{
-	pgpId.clear();
-	pgpCert.clear();
-}
-
-
-void RsDiscPgpCertItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-    RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
-    RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PGPCERT,pgpCert,"pgpCert") ;
 }
 
 void RsDiscPgpKeyItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -159,17 +142,9 @@ void RsDiscIdentityListItem::serial_process(RsGenericSerializer::SerializeJob j,
     RS_SERIAL_PROCESS(ownIdentityList);
 }
 
-
-RsGossipDiscoveryInviteItem::RsGossipDiscoveryInviteItem() :
-    RsDiscItem(RsGossipDiscoveryItemType::INVITE)
-{ setPriorityLevel(QOS_PRIORITY_RS_DISC_ASK_INFO); }
-
-RsGossipDiscoveryInviteRequestItem::RsGossipDiscoveryInviteRequestItem() :
-    RsDiscItem(RsGossipDiscoveryItemType::INVITE_REQUEST)
-{ setPriorityLevel(QOS_PRIORITY_RS_DISC_REPLY); }
-
-RsDiscItem::RsDiscItem(RsGossipDiscoveryItemType subtype) :
-    RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC,
-            static_cast<uint8_t>(subtype) ) {}
+RsDiscItem::RsDiscItem(RsGossipDiscoveryItemType subtype)
+    : RsItem( RS_PKT_VERSION_SERVICE, RS_SERVICE_TYPE_DISC, static_cast<uint8_t>(subtype) )
+{
+}
 
 RsDiscItem::~RsDiscItem() {}
