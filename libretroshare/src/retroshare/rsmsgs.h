@@ -522,6 +522,7 @@ public:
 	 * @return true on success
 	 */
 	virtual bool getMessage(const std::string &msgId, Rs::Msgs::MessageInfo &msg)  = 0;
+
 	/**
 	 * @brief getMessageCount
 	 * @jsonapi{development}
