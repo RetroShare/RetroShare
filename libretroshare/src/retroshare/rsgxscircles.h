@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -32,6 +32,7 @@
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsidentity.h"
 #include "serialiser/rsserializable.h"
+#include "util/rsmemory.h"
 
 
 class RsGxsCircles;
@@ -74,8 +75,6 @@ static const uint32_t GXS_EXTERNAL_CIRCLE_FLAGS_ALLOWED       = 0x0007 ;// user 
 
 struct RsGxsCircleGroup : RsSerializable
 {
-	virtual ~RsGxsCircleGroup() {}
-
 	RsGroupMetaData mMeta;
 
 	std::set<RsPgpId> mLocalFriends;
@@ -95,17 +94,17 @@ struct RsGxsCircleGroup : RsSerializable
 		RS_SERIAL_PROCESS(mInvitedMembers);
 		RS_SERIAL_PROCESS(mSubCircles);
 	}
+
+	~RsGxsCircleGroup() override;
 };
 
 struct RsGxsCircleMsg : RsSerializable
 {
-	virtual ~RsGxsCircleMsg() {}
-
 	RsMsgMetaData mMeta;
 
 #ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 	/* This is horrible and should be changed into yet to be defined something
-	 * reasonable in next non retrocompatible version */
+	 * reasonable in next non-retrocompatible version */
 	std::string stuff;
 #endif
 
@@ -116,6 +115,8 @@ struct RsGxsCircleMsg : RsSerializable
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(stuff);
 	}
+
+	~RsGxsCircleMsg() override;
 };
 
 struct RsGxsCircleDetails : RsSerializable
@@ -123,7 +124,7 @@ struct RsGxsCircleDetails : RsSerializable
 	RsGxsCircleDetails() :
 	    mCircleType(static_cast<uint32_t>(RsGxsCircleType::EXTERNAL)),
 	    mAmIAllowed(false) {}
-	~RsGxsCircleDetails() override {}
+	~RsGxsCircleDetails() override;
 
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
@@ -162,16 +163,29 @@ class RsGxsCircles: public RsGxsIfaceHelper
 public:
 
 	RsGxsCircles(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsGxsCircles() {}
+	virtual ~RsGxsCircles();
 
 	/**
 	 * @brief Create new circle
 	 * @jsonapi{development}
-	 * @param[inout] cData input name and flags of the circle, storage for
-	 *	generated circle data id etc.
+	 * @param[in] circleName String containing cirlce name
+	 * @param[in] circleType Circle type
+	 * @param[out] circleId Optional storage to output created circle id
+	 * @param[in] restrictedId Optional id of a pre-existent circle that see the
+	 *	created circle. Meaningful only if circleType == EXTERNAL, must be null
+	 *	in all other cases.
+	 * @param[in] authorId Optional author of the circle.
+	 * @param[in] gxsIdMembers GXS ids of the members of the circle.
+	 * @param[in] localMembers PGP ids of the members if the circle.
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool createCircle(RsGxsCircleGroup& cData) = 0;
+	virtual bool createCircle(
+	        const std::string& circleName, RsGxsCircleType circleType,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        const RsGxsCircleId& restrictedId = RsGxsCircleId(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& gxsIdMembers = std::set<RsGxsId>(),
+	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>() ) = 0;
 
 	/**
 	 * @brief Edit own existing circle
