@@ -698,7 +698,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 			contextMenu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
 
 			//this is a SSL key
-			contextMenu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
+			contextMenu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removeNode()));
 
 		}
 		}
