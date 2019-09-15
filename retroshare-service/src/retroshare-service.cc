@@ -120,7 +120,9 @@ int main(int argc, char* argv[])
 	std::string prefUserString;
 	RsConfigOptions conf;
 
+#ifdef RS_JSONAPI
 	conf.jsonApiPort = JsonApiServer::DEFAULT_PORT;	// enable JSonAPI by default
+#endif
 
 	argstream as(argc,argv);
 	as >> option( 's', "stderr", conf.outStderr,
