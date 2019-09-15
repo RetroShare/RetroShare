@@ -120,10 +120,10 @@ RsConfigOptions::RsConfigOptions()
           udpListenerOnly(false),
           forcedPort(0),
           outStderr(false),
-          debugLevel(5),
+          debugLevel(5)
 #ifdef RS_JSONAPI
-          jsonApiPort(0),					// JSonAPI server is enabled in each main()
-          jsonApiBindAddress("127.0.0.1")
+          ,jsonApiPort(0)					// JSonAPI server is enabled in each main()
+          ,jsonApiBindAddress("127.0.0.1")
 #endif
 {
 }
