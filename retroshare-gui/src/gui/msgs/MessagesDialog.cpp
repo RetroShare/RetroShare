@@ -231,6 +231,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // fill quick view
     fillQuickView();
 
+	sortColumn(RsMessageModel::COLUMN_THREAD_DATE,Qt::DescendingOrder);
+
     // load settings
     processSettings(true);
 
