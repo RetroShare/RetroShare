@@ -312,9 +312,13 @@ void p3discovery2::sendOwnContactInfo(const RsPeerId &sslid)
 	if (mPeerMgr->getOwnNetStatus(detail))
 	{
 		RsDiscContactItem *pkt = new RsDiscContactItem();
+
 		/* Cyril: we dont send our own IP to an hidden node. It will not use it
-		 *   anyway. */
+		 * anyway. Furthermore, a Tor node is not supposed to have any mean to send the IPs of his friend nodes
+ 		 * to other nodes. This would be a very serious security risk.    */
+
 		populateContactInfo(detail, pkt, !rsPeers->isHiddenNode(sslid));
+
 		/* G10h4ck: sending IP information also to hidden nodes has proven very
 		 *   helpful in the usecase of non hidden nodes, that share a common
 		 *   hidden trusted node, to discover each other IP.
@@ -323,7 +327,6 @@ void p3discovery2::sendOwnContactInfo(const RsPeerId &sslid)
 		 *   permission matrix. Disabling this instead will make life more
 		 *   difficult for average user, that moreover whould have no way to
 		 *   revert an hardcoded policy. */
-		//populateContactInfo(detail, pkt, true);
 
 		pkt->version = RS_HUMAN_READABLE_VERSION;
 		pkt->PeerId(sslid);
@@ -406,8 +409,13 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 	// It is important that PGPList is received after the OwnContactItem.
 	// This should happen, but is not enforced by the protocol.
 
-	// start peer list exchange.
-	sendPGPList(fromId);
+	// Start peer list exchange, if discovery is enabled
+
+    peerState ps;
+    mPeerMgr->getOwnNetStatus(ps);
+
+    if(ps.vs_disc != RS_VS_DISC_OFF)
+		sendPGPList(fromId);
 
 	// Update mDiscStatus.
 	RS_STACK_MUTEX(mDiscMtx);
@@ -520,10 +528,17 @@ void p3discovery2::sendPGPList(const RsPeerId &toId)
 
 	pkt->mode = RsGossipDiscoveryPgpListMode::FRIENDS;
 
-	std::map<RsPgpId, DiscPgpInfo>::const_iterator it;
-	for(it = mFriendList.begin(); it != mFriendList.end(); ++it)
+	for(auto it = mFriendList.begin(); it != mFriendList.end(); ++it)
 	{
-        pkt->pgpIdSet.ids.insert(it->first);
+        // Check every friend, and only send his PGP key if the friend tells that he wants discovery. Because this info is done on the level of locations,
+        // we check each location and only send the key if at least one location allows it.
+
+        for(auto it2(it->second.mSslIds.begin());it2!=it->second.mSslIds.end();++it2)
+            if(it2->second.mDiscStatus != RS_VS_DISC_OFF)
+            {
+				pkt->pgpIdSet.ids.insert(it->first);
+                break;
+            }
 	}
 
 	pkt->PeerId(toId);

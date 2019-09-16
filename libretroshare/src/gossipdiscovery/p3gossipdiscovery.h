@@ -22,6 +22,57 @@
  *******************************************************************************/
 #pragma once
 
+//
+// p3GossipDiscovery is reponsible for facilitating the circulation of public keys between friend nodes.
+//
+// The service locally holds a cache that stores:
+//     * the list of friend profiles, in each of which the list of locations with their own discovery flag (which means whether they allow discovery or not)
+//     * the list of friend nodes, with their version number
+//
+// Data flow
+// =========
+//
+//  statusChange(std::list<pqiServicePeer>&)         // called by pqiMonitor when peers are added,removed, or recently connected
+//       |
+//       +---- sendOwnContactInfo(RsPeerId)          // [On connection]      sends own PgpId, discovery flag, list of own signed GxsIds
+//       |               |
+//       |               +---->[to friend]
+//       |
+//       +---- addFriend() / removeFriend()          // [New/Removed friend] updates the list of friends, along with their own discovery flag
+//
+//  tick()
+//   |
+//   +------ handleIncoming()
+//                  |
+//                  +-- recvOwnContactInfo(RsPeerId)   // update location, IP addresses of a peer.
+//                  |            |
+//                  |            +------(if the peer has short_invite flag)
+//                  |            |                      |
+//                  |            |                      +---------requestPGPKey()->[to friend]      // requests the full PGP public key, so as to be
+//                  |            |                                                                  // able to validate connections.
+//                  |            |
+//                  |            +------(if disc != RS_VS_DISC_OFF)
+//                  |                                   |
+//                  |                                   +---------sendPgpList()->[to friend]        // sends own list of friend profiles for which at least one location
+//                  |                                                                               // accepts discovery
+//                  +-- processContactInfo(item->PeerId(), contact);
+//                  |
+//                  +-- recvIdentityList(Gxs Identity List)
+//                  |
+//                  +-- recvPGPCertificate(item->PeerId(), pgpkey);
+//                  |
+//                  +-- processPGPList(pgplist->PeerId(), pgplist);
+//                  |
+//                  +-- recvPGPCertificateRequest(pgplist->PeerId(), pgplist);
+//
+// Notes:
+//    * Tor nodes never send their own IP, and normal nodes never send their IP to Tor nodes either.
+//      A Tor node may accidentally know the IP of a normal node when it adds its certificate. However, the IP is dropped and not saved in this case.
+//      Generally speaking, no IP information should leave or transit through a Tor node.
+//
+//    * the decision to call recvOwnContactInfo() or processContactInfo() depends on whether the item's peer id is the one the info is about. This is
+//      a bit unsafe. We should probably have to different items here especially if the information is not exactly the same.
+//
 #include <memory>
 
 #include "retroshare/rsgossipdiscovery.h"
@@ -38,7 +89,7 @@ class p3ServiceControl;
 
 struct DiscSslInfo
 {
-	DiscSslInfo() : mDiscStatus(0) {}
+	DiscSslInfo() : mDiscStatus(RS_VS_DISC_OFF) {}	// default is to not allow discovery, until the peer tells about it
 	uint16_t mDiscStatus;
 };
 
@@ -122,7 +173,6 @@ private:
 
 	void rsEventsHandler(const RsEvent& event);
 	RsEventsHandlerId_t mRsEventsHandle;
-
 
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
