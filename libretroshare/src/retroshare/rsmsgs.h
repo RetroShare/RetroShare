@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_MSG_GUI_INTERFACE_H
-#define RS_MSG_GUI_INTERFACE_H
+#pragma once
 
 #include <list>
 #include <iostream>
@@ -28,8 +27,11 @@
 #include <set>
 #include <assert.h>
 
-#include "rstypes.h"
-#include "rsgxsifacetypes.h"
+#include "retroshare/rstypes.h"
+#include "retroshare/rsgxsifacetypes.h"
+#include "retroshare/rsevents.h"
+#include "util/rsdeprecate.h"
+#include "util/rsmemory.h"
 
 /********************** For Messages and Channels *****************/
 
@@ -93,9 +95,31 @@ const ChatLobbyFlags RS_CHAT_LOBBY_FLAGS_PGP_SIGNED    ( 0x00000010 ) ; // requi
 typedef uint64_t	ChatLobbyId ;
 typedef uint64_t	ChatLobbyMsgId ;
 typedef std::string ChatLobbyNickName ;
-typedef std::string RsMailMessageId;			// should be uint32_t !!
-typedef uint64_t    MessageId ;
+typedef std::string RsMailMessageId; // TODO: rebase on t_RsGenericIdType
 
+/**
+ * Used to return a tracker id so the API user can keep track of sent mail
+ * status
+ */
+struct RsMailTrackId : RsSerializable
+{
+	RsMailTrackId(RsMailMessageId mailId, RsGxsId recipientId):
+	    mMailId(mailId), mRecipientId(recipientId) {}
+
+	RsMailMessageId mMailId;
+	RsGxsId mRecipientId;
+
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext &ctx ) override;
+
+	bool operator<(const RsMailTrackId& other) const;
+	bool operator==(const RsMailTrackId& other) const;
+
+	RsMailTrackId() = default;
+	~RsMailTrackId() override = default;
+};
 
 namespace Rs
 {
@@ -168,7 +192,6 @@ class MessageInfo_v2
 struct MessageInfo : RsSerializable
 {
 	MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
-	virtual ~MessageInfo() = default;
 
 	std::string msgId;
 
@@ -202,7 +225,10 @@ struct MessageInfo : RsSerializable
     int ts;
 
 	// RsSerializable interface
-	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext &ctx ) override
+	{
 		RS_SERIAL_PROCESS(msgId);
 
 		RS_SERIAL_PROCESS(rspeerid_srcId);
@@ -230,12 +256,13 @@ struct MessageInfo : RsSerializable
 
 		RS_SERIAL_PROCESS(ts);
 	}
+
+	~MessageInfo() override;
 };
 
 struct MsgInfoSummary : RsSerializable
 {
 	MsgInfoSummary() : msgflags(0), count(0), ts(0) {}
-	virtual ~MsgInfoSummary() = default;
 
     RsMailMessageId msgId;
 	RsPeerId srcId;
@@ -260,6 +287,8 @@ struct MsgInfoSummary : RsSerializable
 		RS_SERIAL_PROCESS(count);
 		RS_SERIAL_PROCESS(ts);
 	}
+
+	~MsgInfoSummary() override;
 };
 
 struct MsgTagInfo : RsSerializable
@@ -291,6 +320,22 @@ struct MsgTagType : RsSerializable
 } //namespace Rs
 } //namespace Msgs
 
+struct RsMailStatusEvent : RsEvent
+{
+	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS_CHANGE) {}
+
+	std::set<RsMailMessageId> mChangedMsgIds;
+
+	/// @see RsEvent
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mChangedMsgIds);
+	}
+
+	~RsMailStatusEvent() override;
+};
 
 #define RS_CHAT_PUBLIC 			0x0001
 #define RS_CHAT_PRIVATE 		0x0002
@@ -426,11 +471,10 @@ public:
 	}
 };
 
-class VisibleChatLobbyRecord : RsSerializable
+struct VisibleChatLobbyRecord : RsSerializable
 {
-public:
-	VisibleChatLobbyRecord(): lobby_id(0), total_number_of_peers(0), last_report_time(0){}
-	virtual ~VisibleChatLobbyRecord() = default;
+	VisibleChatLobbyRecord():
+	    lobby_id(0), total_number_of_peers(0), last_report_time(0) {}
 
 	ChatLobbyId lobby_id ;						// unique id of the lobby
 	std::string lobby_name ;					// name to use for this lobby
@@ -441,9 +485,11 @@ public:
 	rstime_t last_report_time ; 					// last time the lobby was reported.
 	ChatLobbyFlags lobby_flags ;				// see RS_CHAT_LOBBY_PRIVACY_LEVEL_PUBLIC / RS_CHAT_LOBBY_PRIVACY_LEVEL_PRIVATE
 
-	// RsSerializable interface
-public:
-	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext &ctx) override
+	{
 		RS_SERIAL_PROCESS(lobby_id);
 		RS_SERIAL_PROCESS(lobby_name);
 		RS_SERIAL_PROCESS(lobby_topic);
@@ -453,6 +499,8 @@ public:
 		RS_SERIAL_PROCESS(last_report_time);
 		RS_SERIAL_PROCESS(lobby_flags);
 	}
+
+	~VisibleChatLobbyRecord() override;
 };
 
 class ChatLobbyInfo : RsSerializable
@@ -499,13 +547,6 @@ class RsMsgs
 {
 public:
 
-	RsMsgs() {}
-	virtual ~RsMsgs() = default;
-
-	/****************************************/
-	/*             Message Items            */
-	/****************************************/
-
 	/**
 	 * @brief getMessageSummaries
 	 * @jsonapi{development}
@@ -524,6 +565,33 @@ public:
 	virtual bool getMessage(const std::string &msgId, Rs::Msgs::MessageInfo &msg)  = 0;
 
 	/**
+	 * @brief sendMail
+	 * @jsonapi{development}
+	 * @param[in] from GXS id of the author
+	 * @param[in] subject Mail subject
+	 * @param[in] mailBody Mail body
+	 * @param[in] to list of To: recipients
+	 * @param[in] cc list of CC: recipients
+	 * @param[in] bcc list of BCC: recipients
+	 * @param[in] attachments list of suggested files
+	 * @param[out] trackingIds storage for tracking ids for each sent mail
+	 * @param[out] errorMsg error message if errors occurred, empty otherwise
+	 * @return number of successfully sent mails
+	 */
+	virtual uint32_t sendMail(
+	        const RsGxsId from,
+	        const std::string& subject,
+	        const std::string& mailBody,
+	        const std::set<RsGxsId>& to = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
+	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
+	        std::set<RsMailTrackId>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailTrackId>),
+	        std::string& errorMsg =
+	            RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
 	 * @brief getMessageCount
 	 * @jsonapi{development}
 	 * @param[out] nInbox
@@ -534,14 +602,6 @@ public:
 	 * @param[out] nTrashbox
 	 */
 	virtual void getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox) = 0;
-
-	/**
-	 * @brief MessageSend
-	 * @jsonapi{development}
-	 * @param[in] info
-	 * @return always true
-	 */
-	virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
 
 	/**
 	 * @brief SystemMessage
@@ -916,7 +976,14 @@ virtual bool initiateDistantChatConnexion(
 virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
+	/**
+	 * @brief MessageSend
+	 * @jsonapi{development}
+	 * @param[in] info
+	 * @return always true
+	 */
+	RS_DEPRECATED_FOR(sendMail)
+	virtual bool MessageSend(Rs::Msgs::MessageInfo &info) = 0;
+
+	virtual ~RsMsgs();
 };
-
-#endif
-

@@ -20,6 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 #include <iostream>
+#include <tuple>
 
 #include "util/rsdir.h"
 #include "util/rsdebug.h"
@@ -300,6 +301,22 @@ bool p3Msgs::MessageSend(MessageInfo &info)
 	return mMsgSrv->MessageSend(info);
 }
 
+uint32_t p3Msgs::sendMail(
+        const RsGxsId from,
+        const std::string& subject,
+        const std::string& body,
+        const std::set<RsGxsId>& to,
+        const std::set<RsGxsId>& cc,
+        const std::set<RsGxsId>& bcc,
+        const std::vector<FileInfo>& attachments,
+        std::set<RsMailTrackId>& trackingIds,
+        std::string& errorMsg )
+{
+	return mMsgSrv->sendMail(
+	            from, subject, body, to, cc, bcc, attachments,
+	            trackingIds, errorMsg );
+}
+
 bool p3Msgs::SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag)
 {
 	return mMsgSrv->SystemMessage(title, message, systemFlag);
@@ -541,3 +558,28 @@ uint32_t p3Msgs::getDistantChatPermissionFlags()
 	return mChatSrv->getDistantChatPermissionFlags() ;
 }
 
+RsMsgs::~RsMsgs() = default;
+RsMailStatusEvent::~RsMailStatusEvent() = default;
+Rs::Msgs::MessageInfo::~MessageInfo() = default;
+MsgInfoSummary::~MsgInfoSummary() = default;
+VisibleChatLobbyRecord::~VisibleChatLobbyRecord() = default;
+
+void RsMailTrackId::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mMailId);
+	RS_SERIAL_PROCESS(mRecipientId);
+}
+
+bool RsMailTrackId::operator<(const RsMailTrackId& o) const
+{
+	return std::tie(  mMailId,   mRecipientId) <
+	       std::tie(o.mMailId, o.mRecipientId);
+}
+
+bool RsMailTrackId::operator==(const RsMailTrackId& o) const
+{
+	return std::tie(  mMailId,   mRecipientId) ==
+	       std::tie(o.mMailId, o.mRecipientId);
+}

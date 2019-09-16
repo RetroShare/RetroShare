@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_P3MSG_INTERFACE_H
-#define RS_P3MSG_INTERFACE_H
+#pragma once
 
 #include "retroshare/rsmsgs.h"
 #include "retroshare/rsgxsifacetypes.h"
@@ -38,11 +37,25 @@ class RsChatMsgItem;
  */
 class p3Msgs: public RsMsgs 
 {
-   public:
+public:
 
-          p3Msgs(p3MsgService *p3m, p3ChatService *p3c)
-                 :mMsgSrv(p3m), mChatSrv(p3c) { return; }
-	  virtual ~p3Msgs() { return; }
+	p3Msgs(p3MsgService *p3m, p3ChatService *p3c) :
+	    mMsgSrv(p3m), mChatSrv(p3c) {}
+	~p3Msgs() override = default;
+
+	/// @see RsMsgs
+	uint32_t sendMail(
+	        const RsGxsId from,
+	        const std::string& subject,
+	        const std::string& body,
+	        const std::set<RsGxsId>& to = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
+	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
+	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
+	        std::set<RsMailTrackId>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailTrackId>),
+	        std::string& errorMsg =
+	            RS_DEFAULT_STORAGE_PARAM(std::string) ) override;
 
 	  /****************************************/
 	  /* Message Items */
@@ -54,6 +67,7 @@ class p3Msgs: public RsMsgs
 	  virtual bool getMessage(const std::string &mId, Rs::Msgs::MessageInfo &msg);
 	  virtual void getMessageCount(uint32_t &nInbox, uint32_t &nInboxNew, uint32_t &nOutbox, uint32_t &nDraftbox, uint32_t &nSentbox, uint32_t &nTrashbox);
 
+	RS_DEPRECATED_FOR(sendMail)
 	  virtual bool MessageSend(Rs::Msgs::MessageInfo &info);
 	  virtual bool SystemMessage(const std::string &title, const std::string &message, uint32_t systemFlag);
 	  virtual bool MessageToDraft(Rs::Msgs::MessageInfo &info, const std::string &msgParentId);
@@ -172,6 +186,3 @@ class p3Msgs: public RsMsgs
 	  p3MsgService  *mMsgSrv;
 	  p3ChatService *mChatSrv;
 };
-
-
-#endif
