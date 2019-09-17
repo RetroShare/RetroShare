@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2004-2008 Robert Fernie <retroshare@lunamutt.com>             *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -158,7 +159,7 @@ void p3MsgService::cleanListOfReceivedMessageHashes()
 {
 	RS_STACK_MUTEX(recentlyReceivedMutex);
 
-	rstime_t now = time(NULL);
+	rstime_t now = time(nullptr);
 
 	for( auto it = mRecentlyReceivedMessageHashes.begin();
 	     it != mRecentlyReceivedMessageHashes.end(); )
@@ -173,21 +174,13 @@ void p3MsgService::cleanListOfReceivedMessageHashes()
 		else ++it;
 }
 
-int	p3MsgService::status()
-{
-	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-		"p3MsgService::status()");
-
-	return 1;
-}
-
 void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 {
-	mi -> recvTime = time(NULL);
+	mi -> recvTime = static_cast<uint32_t>(time(nullptr));
 	mi -> msgId = getNewUniqueMsgId();
 
 	{
-		RsStackMutex stack(mMsgMtx); /*** STACK LOCKED MTX ***/
+		RS_STACK_MUTEX(mMsgMtx);
 
 		/* from a peer */
 
@@ -226,6 +219,13 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
+
+	if(rsEvents)
+	{
+		std::shared_ptr<RsMailStatusEvent> pEvent(new RsMailStatusEvent());
+		pEvent->mChangedMsgIds.insert(std::to_string(mi->msgId));
+		rsEvents->postEvent(pEvent);
+	}
 }
 
 bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
@@ -289,7 +289,8 @@ void p3MsgService::handleIncomingItem(RsMsgItem *mi)
 {
 	bool changed = false ;
 
-	if(checkAndRebuildPartialMessage(mi))	// only returns true when a msg is complete.
+	// only returns true when a msg is complete.
+	if(checkAndRebuildPartialMessage(mi))
 	{
 		processIncomingMsg(mi);
 		changed = true ;
@@ -2123,8 +2124,8 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
                                 const RsGxsId& recipientId,
                                 const uint8_t* data, uint32_t dataSize )
 {
-	std::cout << __PRETTY_FUNCTION__ << " " << authorId << ", " << recipientId
-	          << ",, " << dataSize << std::endl;
+	Dbg2() << __PRETTY_FUNCTION__ << " " << authorId << ", " << recipientId
+	       << ",, " << dataSize << std::endl;
 
 	Sha1CheckSum hash = RsDirUtil::sha1sum(data, dataSize);
 
@@ -2133,29 +2134,31 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 		if( mRecentlyReceivedMessageHashes.find(hash) !=
 		        mRecentlyReceivedMessageHashes.end() )
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " (II) receiving "
+			RsInfo() << __PRETTY_FUNCTION__ << " (II) receiving "
 			          << "message of hash " << hash << " more than once. "
 			          << "Probably it has arrived  before by other means."
 			          << std::endl;
 			return true;
 		}
-		mRecentlyReceivedMessageHashes[hash] = time(NULL);
+		mRecentlyReceivedMessageHashes[hash] =
+		        static_cast<uint32_t>(time(nullptr));
 	}
 
 	IndicateConfigChanged();
 
-	RsItem *item = _serialiser->deserialise(const_cast<uint8_t*>(data), &dataSize);
+	RsItem *item = _serialiser->deserialise(
+	            const_cast<uint8_t*>(data), &dataSize );
 	RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item);
 
 	if(msg_item)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Encrypted item correctly "
-		          << "deserialised. Passing on to incoming list."
-		          << std::endl;
+		Dbg3() << __PRETTY_FUNCTION__ << " Encrypted item correctly "
+		       << "deserialised. Passing on to incoming list."
+		       << std::endl;
 
 		msg_item->msgFlags |= RS_MSG_FLAGS_DISTANT;
 		/* we expect complete msgs - remove partial flag just in case
-			 * someone has funny ideas */
+		 * someone has funny ideas */
 		msg_item->msgFlags &= ~RS_MSG_FLAGS_PARTIAL;
 
 		// hack to pass on GXS id.
@@ -2164,8 +2167,8 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 	}
 	else
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " Item could not be "
-		          << "deserialised. Format error??" << std::endl;
+		RsWarn() << __PRETTY_FUNCTION__ << " Item could not be "
+		         << "deserialised. Format error?" << std::endl;
 		return false;
 	}
 

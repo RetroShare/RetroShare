@@ -108,7 +108,6 @@ public:
     //std::list<RsMsgItem *> &getMsgOutList();
 
     int	tick();
-    int	status();
 
     /*** Overloaded from p3Config ****/
     virtual RsSerialiser *setupSerialiser();
