@@ -1198,6 +1198,20 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	std::string sslCn = RsX509Cert::getCertIssuerString(*x509Cert);
 	RsPgpId pgpId(sslCn);
 
+    RsPeerDetails det;
+    if(!rsPeers->getPeerDetails(sslId,det))
+    {
+        std::cerr << "Nothing known about peer " << sslId << " trying to connect! Refusing connection." << std::endl;
+        return verificationFailed;
+    }
+
+	bool isSslOnlyFriend = det.skip_signature_validation;
+
+    if(det.gpg_id != pgpId)
+    {
+        std::cerr << "(EE) peer " << sslId << " trying to connect with issuer ID " << pgpId << " whereas key ID " << det.gpg_id << " was expected! Refusing connection." << std::endl;
+        return verificationFailed;
+    }
 
 	if(sslId.isNull())
 	{
@@ -1234,8 +1248,6 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	bool isSslOnlyFriend = rsPeers->isSslOnlyFriend(sslId);
-
 	uint32_t auth_diagnostic;
 	if(!isSslOnlyFriend && !AuthX509WithGPG(x509Cert, auth_diagnostic))
 	{
@@ -1260,8 +1272,9 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
-	     !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
+    if(isSslOnlyFriend && pgpId !=
+
+	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
 		        pgpId.toStdString() + " not accepted because it is not"
