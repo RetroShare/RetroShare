@@ -128,10 +128,25 @@ public:
 
     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
     {
-        if(!m_showOfflineNodes && !sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::OnlineRole).toBool())
+        // do not show empty groups
+
+        QModelIndex index = sourceModel()->index(source_row,0,source_parent);
+
+        if(index.data(RsFriendListModel::TypeRole) == RsFriendListModel::ENTRY_TYPE_GROUP)
+        {
+            RsGroupInfo group_info ;
+            static_cast<RsFriendListModel*>(sourceModel())->getGroupData(index,group_info);
+
+            if(group_info.peerIds.empty())
+				return false;
+        }
+
+        // Filter offline friends
+
+        if(!m_showOfflineNodes && !index.data(RsFriendListModel::OnlineRole).toBool())
             return false;
 
-        return sourceModel()->index(source_row,0,source_parent).data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
+        return index.data(RsFriendListModel::FilterRole).toString() == RsFriendListModel::FilterString ;
     }
 
 	void sort( int column, Qt::SortOrder order = Qt::AscendingOrder ) override
@@ -683,7 +698,7 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 			contextMenu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy certificate link"), this, SLOT(copyFullCertificate()));
 
 			//this is a SSL key
-			contextMenu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removefriend()));
+			contextMenu.addAction(QIcon(IMAGE_REMOVEFRIEND), tr("Remove Friend Node"), this, SLOT(removeNode()));
 
 		}
 		}
