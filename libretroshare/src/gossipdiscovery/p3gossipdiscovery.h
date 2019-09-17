@@ -38,7 +38,7 @@
 //       |               |
 //       |               +---->[to friend]
 //       |
-//       +---- addFriend() / removeFriend()          // [New/Removed friend] updates the list of friends, along with their own discovery flag
+//       +---- locally add/remove cache info         // [New/Removed friend] updates the list of friends, along with their own discovery flag
 //
 //  tick()
 //   |
@@ -56,14 +56,35 @@
 //                  |                                   +---------sendPgpList()->[to friend]        // sends own list of friend profiles for which at least one location
 //                  |                                                                               // accepts discovery
 //                  +-- processContactInfo(item->PeerId(), contact);
+//                  |            |
+//                  |            +------ addFriend()                                                // called on nodes signed by the PGP key mentionned in the disc info
+//                  |            |
+//                  |            +------ update local discovery info
 //                  |
 //                  +-- recvIdentityList(Gxs Identity List)
+//                  |            |
+//                  |            +------ mGixs->requestKey(*it,peers,use_info) ;					// requestKey() takes care of requesting the GxsIds that are missing
 //                  |
 //                  +-- recvPGPCertificate(item->PeerId(), pgpkey);
+//                  |            |
+//                  |            +------(if peer has short invite flag)
+//                  |                                    |
+//                  |                                    +--------- add key to keyring, accept connections and notify peerMgr
 //                  |
-//                  +-- processPGPList(pgplist->PeerId(), pgplist);
+//                  +-- processPGPList(pgplist->PeerId(), pgplist);                                  // list of PGP keys of a friend, received from himself
+//                  |            |
+//                  |            +------ requestPgpCertificate()                                     // request missing keys only
+//                  |            |
+//                  |            +------ updatePeers_locked(fromId)
+//                  |                                    |
+//                  |                                    +--------- sendContactInfo_locked(from,to)  // sends IP information about mutual friends to the origin of the info
+//                  |                                    |
+//                  |                                    +--------- sendContactInfo_locked(to,from)  // sends IP information origin to online mutual friends
 //                  |
 //                  +-- recvPGPCertificateRequest(pgplist->PeerId(), pgplist);
+//                               |
+//                               +------ sendPGPCertificate()                                        // only sends the ones we are friend with, and only send own cert
+//                                                                                                   // if discovery is off
 //
 // Notes:
 //    * Tor nodes never send their own IP, and normal nodes never send their IP to Tor nodes either.
