@@ -118,6 +118,7 @@ RsConfigOptions::RsConfigOptions()
         :
           autoLogin(false),
           udpListenerOnly(false),
+          forcedInetAddress("127.0.0.1"), 	 /* inet address to use.*/
           forcedPort(0),
           outStderr(false),
           debugLevel(5)
