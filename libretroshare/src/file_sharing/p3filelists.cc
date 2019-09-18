@@ -65,6 +65,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mRemoteDirectories.clear() ;	// we should load them!
     mOwnId = mpeers->getOwnId() ;
 
+    mBannedFileListNeedsUpdate = false;
     mLocalSharedDirs = new LocalDirectoryStorage(mFileSharingDir + "/" + LOCAL_SHARED_DIRS_FILE_NAME,mOwnId);
     mHashCache = new HashStorage(mFileSharingDir + "/" + HASH_CACHE_FILE_NAME) ;
 

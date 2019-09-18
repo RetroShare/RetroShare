@@ -80,6 +80,7 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   ui.setupUi(this);
 
   manager = NULL ;
+  mOngoingConnectivityCheck = -1;
 
   if(RsAccounts::isHiddenNode())
   {
