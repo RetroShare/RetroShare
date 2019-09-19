@@ -64,7 +64,7 @@ struct RsGossipDiscoveryFriendInviteReceivedEvent : RsEvent
 class RsGossipDiscovery
 {
 public:
-    virtual ~RsGossipDiscovery() {}
+    virtual ~RsGossipDiscovery() = default;
 
 	/**
 	 * @brief getDiscFriends get a list of all friends of a given friend

@@ -374,12 +374,12 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 	RsPeerDetails det ;
 	if(!rsPeers->getPeerDetails(fromId,det))
 	{
-		std::cerr << "(EE) Cannot obtain details from " << fromId << " who is supposed to be a friend! Dropping the info." << std::endl;
+		RsErr() << "(EE) Cannot obtain details from " << fromId << " who is supposed to be a friend! Dropping the info." << std::endl;
 		return;
 	}
 	if(det.gpg_id != item->pgpId)
 	{
-		std::cerr << "(EE) peer " << fromId << " sent own details with PGP key ID " << item->pgpId << " which does not match the known key id " << det.gpg_id << ". Dropping the info." << std::endl;
+		RsErr() << "(EE) peer " << fromId << " sent own details with PGP key ID " << item->pgpId << " which does not match the known key id " << det.gpg_id << ". Dropping the info." << std::endl;
 		return;
 	}
 
@@ -748,7 +748,6 @@ void p3discovery2::updatePeers_locked(const RsPeerId &aboutId)
 
 	std::set<RsPgpId> mutualFriends;
 	std::set<RsPeerId> onlineFriends;
-	std::set<RsPeerId>::const_iterator sit;
 	
 	const std::set<RsPgpId> &friendSet = ait->second.mFriendSet;
 
@@ -803,17 +802,15 @@ void p3discovery2::updatePeers_locked(const RsPeerId &aboutId)
 	std::cerr  << std::endl;
 #endif
 	// update aboutId about Other Peers.
-	for(fit = mutualFriends.begin(); fit != mutualFriends.end(); ++fit)
-	{
+	for(auto fit = mutualFriends.begin(); fit != mutualFriends.end(); ++fit)
 		sendContactInfo_locked(*fit, aboutId);
-	}
 
 #ifdef P3DISC_DEBUG
 	std::cerr << "p3discovery2::updatePeer_locked() Updating Online Peers about " << aboutId;
 	std::cerr  << std::endl;
 #endif
 	// update Other Peers about aboutPgpId.
-	for(sit = onlineFriends.begin(); sit != onlineFriends.end(); ++sit)
+	for(auto sit = onlineFriends.begin(); sit != onlineFriends.end(); ++sit)
 	{
 		// This could be more efficient, and only be specific about aboutId.
 		// but we'll leave it like this for the moment.
@@ -951,12 +948,12 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
     // The peer the discovery info is about is a friend. We gather the nodes for that profile into the local structure and notify p3peerMgr.
 
     if(!rsPeers->isGPGAccepted(item->pgpId))  // this is an additional check, because the friendship previously depends on the local cache. We need
-        return ;                              // fresh information here.
+		return ;                              // fresh information here.
 
 	bool should_notify_discovery = false;
 	auto sit= it->second.mSslIds.find(item->sslId);
 
-	DiscSslInfo sslInfo& (it->second.mSslIds[item->sslId]);	// This line inserts the entry while not removing already existing data
+	DiscSslInfo& sslInfo(it->second.mSslIds[item->sslId]);	// This line inserts the entry while not removing already existing data
 
 	if (!mPeerMgr->isFriend(item->sslId))
 	{
@@ -1064,8 +1061,8 @@ void p3discovery2::sendPGPCertificate(const RsPgpId &aboutId, const RsPeerId &to
 		return ;
     }
 
-    pgp_key_item->pgpKeyData.bin_data = bin_data;
-	pgp_key_item->pgpKeyData.bin_len = bin_len;
+    pgp_key_item->bin_data = bin_data;
+	pgp_key_item->bin_len = bin_len;
 
     sendItem(pgp_key_item);
 }
@@ -1078,7 +1075,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 	std::string cert_name;
 	std::list<RsPgpId> cert_signers;
 
-	if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock( (unsigned char*)item->pgpKeyData.bin_data,item->pgpKeyData.bin_len, cert_pgp_id, cert_name, cert_signers ))
+	if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock( (unsigned char*)item->bin_data,item->bin_len, cert_pgp_id, cert_name, cert_signers ))
 	{
 		std::cerr << "(EE) cannot parse own PGP key sent by " << fromId << std::endl;
 		return;
@@ -1121,7 +1118,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 	std::cerr << __PRETTY_FUNCTION__ << "Received PGP key " << cert_pgp_id << " from from friend " << fromId << ". Adding to keyring." << std::endl;
 #endif
 	// now that will add the key *and* set the skip_signature_validation flag at once
-	rsPeers->loadPgpKeyFromBinaryData((unsigned char*)item->pgpKeyData.bin_data,item->pgpKeyData.bin_len, tmp_pgp_id,error_string);	// no error should occur at this point because we called loadDetailsFromStringCert() already
+	rsPeers->loadPgpKeyFromBinaryData((unsigned char*)item->bin_data,item->bin_len, tmp_pgp_id,error_string);	// no error should occur at this point because we called loadDetailsFromStringCert() already
 	delete item;
 
     // Make sure we allow connections after the key is added. This is not the case otherwise. We only do that if the peer is non validated peer, since

@@ -582,7 +582,7 @@ bool p3Peers::isSslOnlyFriend(const RsPeerId& sslId)
     {
         if(isPgpFriend(getGPGId(sslId)))
         {
-            RsErr() << "Peer " << sslId << " has SSL-friend-only flag but his PGP id is in the list of friends. This is inconsistent (Bug in the code). Returning false for security reasons." << std::endl;
+            RsErr() << __PRETTY_FUNCTION__ << ": Peer " << sslId << " has SSL-friend-only flag but his PGP id is in the list of friends. This is inconsistent (Bug in the code). Returning false for security reasons." << std::endl;
 			return false;
         }
         return true;

@@ -40,7 +40,7 @@ RsItem *RsDiscSerialiser::create_item(
 	case RsGossipDiscoveryItemType::CONTACT:  return new RsDiscContactItem();
 	case RsGossipDiscoveryItemType::IDENTITY_LIST: return new RsDiscIdentityListItem();
     default:
-        return NULL;
+        return nullptr;
 	}
 
 	return nullptr;
@@ -65,13 +65,17 @@ void RsDiscPgpListItem::serial_process(
 void RsDiscPgpKeyItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,pgpKeyId,"pgpKeyId") ;
-    RsTypeSerializer::serial_process(j,ctx,pgpKeyData,"pgpKeyData") ;
+
+    RsTypeSerializer::TlvMemBlock_proxy prox(bin_data,bin_len) ;
+    RsTypeSerializer::serial_process(j,ctx,prox,"keyData") ;
 }
 
 void RsDiscPgpKeyItem::clear()
 {
 	pgpKeyId.clear();
-	pgpKeyData.TlvClear();
+	free(bin_data);
+    bin_data = nullptr;
+    bin_len=0;
 }
 
 void 	RsDiscContactItem::clear()

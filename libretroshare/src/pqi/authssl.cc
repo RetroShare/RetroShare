@@ -1272,8 +1272,6 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-    if(isSslOnlyFriend && pgpId !=
-
 	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +

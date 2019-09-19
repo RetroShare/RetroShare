@@ -38,8 +38,6 @@ enum class RsGossipDiscoveryItemType : uint8_t
 	PGP_CERT           = 0x2,		// deprecated
 	CONTACT            = 0x5,
 	IDENTITY_LIST      = 0x6,
-	INVITE             = 0x7,		// deprecated
-	INVITE_REQUEST     = 0x8,		// deprecated
 	PGP_CERT_BINARY    = 0x9,
 };
 
@@ -89,11 +87,14 @@ public:
 	RsDiscPgpKeyItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT_BINARY)
 	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
 
+    virtual ~RsDiscPgpKeyItem() { delete[](bin_data);bin_data=nullptr;bin_len=0;}
+
 	void clear() override;
 	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx) override;
 
 	RsPgpId pgpKeyId;				// duplicate information for practical reasons
-	RsTlvBinaryData pgpKeyData;
+    unsigned char *bin_data;					// binry key data allocated with new unsigned char[]
+    uint32_t bin_len;
 };
 
 class RsDiscContactItem: public RsDiscItem
