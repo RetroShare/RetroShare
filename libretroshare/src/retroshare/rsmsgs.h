@@ -161,34 +161,6 @@ class MsgAddress
 		std::string _addr_string ;
 };
 
-class MessageInfo_v2
-{
-	public:
-		//MessageInfo_v2() {}
-
-		unsigned int msgflags;
-
-		//RsMessageId msgId;
-		MsgAddress from ;
-
-		std::list<MsgAddress> rcpt ;
-
-		// Headers
-		//
-		std::string subject;
-		std::string msg;
-		rstime_t time_stamp ;
-
-		//std::list<MessageHeader> headers ;
-
-		std::string attach_title;
-		std::string attach_comment;
-		std::list<FileInfo> files;
-
-		int size;  /* total of files */
-		int count; /* file count     */
-};
-
 struct MessageInfo : RsSerializable
 {
 	MessageInfo(): msgflags(0), size(0), count(0), ts(0) {}
