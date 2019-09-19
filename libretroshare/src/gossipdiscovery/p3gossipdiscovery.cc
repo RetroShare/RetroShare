@@ -396,7 +396,7 @@ void p3discovery2::recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContac
 
     // if the peer is not validated, we stop the exchange here
 
-    if(det.skip_signature_validation)
+    if(det.skip_pgp_signature_validation)
     {
 #ifdef P3DISC_DEBUG
 		std::cerr << "p3discovery2::recvOwnContactInfo() missing PGP key  " << item->pgpId << " from short invite friend " << fromId << ". Requesting it." << std::endl;
@@ -954,6 +954,7 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 	auto sit= it->second.mSslIds.find(item->sslId);
 
 	DiscSslInfo& sslInfo(it->second.mSslIds[item->sslId]);	// This line inserts the entry while not removing already existing data
+    														// do not remove it!
 
 	if (!mPeerMgr->isFriend(item->sslId))
 	{
@@ -1098,7 +1099,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
 
     // We treat own pgp keys right away when they are sent by a friend for which we dont have it. This way we can keep the skip_pgg_signature_validation consistent
 
-    if(det.skip_signature_validation)
+    if(det.skip_pgp_signature_validation)
     {
 #ifdef P3DISC_DEBUG
 		std::cerr << __PRETTY_FUNCTION__ << " Received own full certificate from short-invite friend " << fromId << std::endl;
@@ -1124,7 +1125,7 @@ void p3discovery2::recvPGPCertificate(const RsPeerId& fromId, RsDiscPgpKeyItem* 
     // Make sure we allow connections after the key is added. This is not the case otherwise. We only do that if the peer is non validated peer, since
     // otherwise the connection should already be accepted. This only happens when the short invite peer sends its own PGP key.
 
-    if(det.skip_signature_validation)
+    if(det.skip_pgp_signature_validation)
 		AuthGPG::getAuthGPG()->AllowConnection(det.gpg_id,true);
 }
 

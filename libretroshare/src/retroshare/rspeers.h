@@ -238,7 +238,7 @@ struct RsPeerDetails : RsSerializable
 	uint32_t trustLvl;
 	uint32_t validLvl;
 
-    bool skip_signature_validation;
+    bool skip_pgp_signature_validation;
 	bool ownsign; /* we have signed the remote peer GPG key */
 	bool hasSignedMe; /* the remote peer has signed my GPG key */
 

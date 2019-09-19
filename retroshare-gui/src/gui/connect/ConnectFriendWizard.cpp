@@ -702,7 +702,7 @@ void ConnectFriendWizard::accept()
 	{
 		std::cerr << "ConclusionPage::validatePage() accepting GPG key for connection." << std::endl;
 
-        if(peerDetails.skip_signature_validation)
+        if(peerDetails.skip_pgp_signature_validation)
 			rsPeers->addSslOnlyFriend(peerDetails.id, peerDetails.gpg_id,peerDetails);
 		else
 			rsPeers->addFriend(peerDetails.id, peerDetails.gpg_id,serviceFlags()) ;

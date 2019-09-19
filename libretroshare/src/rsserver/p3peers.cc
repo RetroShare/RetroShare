@@ -295,10 +295,10 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
             return false;
 
         d.gpg_id = ps.gpg_id ;
-        d.skip_signature_validation = true;
+        d.skip_pgp_signature_validation = true;
     }
     else
-        d.skip_signature_validation = false;
+        d.skip_pgp_signature_validation = false;
 
 	d.isOnlyGPGdetail = false;
 
@@ -1386,7 +1386,7 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
         details.accept_connection = pgp_det.accept_connection;
     }
     else
-        details.skip_signature_validation = true;
+        details.skip_pgp_signature_validation = true;
 
     if(details.gpg_id.isNull())
     {
@@ -1795,7 +1795,7 @@ RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
           name(""),email(""),location(""),
           org(""),authcode(""),
-          trustLvl(0), validLvl(0),skip_signature_validation(false),ownsign(false),
+          trustLvl(0), validLvl(0),skip_pgp_signature_validation(false),ownsign(false),
           hasSignedMe(false),accept_connection(false),
           state(0),actAsServer(false),
           connectPort(0),
