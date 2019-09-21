@@ -534,7 +534,7 @@ bool	AuthSSLimpl::validateOwnCertificate(X509 *x509, EVP_PKEY *pkey)
 	uint32_t diagnostic ;
 
 	/* standard authentication */
-	if (!AuthX509WithGPG(x509,diagnostic))
+	if (!AuthX509WithGPG(x509,true,diagnostic))
 	{
 		std::cerr << "Validate Own certificate ERROR: diagnostic = " << diagnostic << std::endl;
 		return false;
@@ -970,7 +970,7 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
 }
 
 
-bool AuthSSLimpl::AuthX509WithGPG(X509 *x509, uint32_t& diagnostic)
+bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,bool verbose, uint32_t& diagnostic)
 {
 	RsPgpId issuer = RsX509Cert::getCertIssuer(*x509);
 	RsPeerDetails pd;
@@ -1127,11 +1127,12 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509, uint32_t& diagnostic)
 			goto err;
 		}
 
-		RsInfo() << __PRETTY_FUNCTION__ << " Verified: " << sigtypestring
-		         << " signature of certificate sslId: "
-		         << RsX509Cert::getCertSslId(*x509)
-		         << ", Version " << std::hex << certificate_version << std::dec
-		         << " using PGP key " << pd.fpr << " " << pd.name << std::endl;
+        if(verbose)
+			std::cerr<< " Verified: " << sigtypestring
+			         << " signature of certificate sslId: "
+			         << RsX509Cert::getCertSslId(*x509)
+			         << ", Version " << std::hex << certificate_version << std::dec
+			         << " using PGP key " << pd.fpr << " " << pd.name << std::endl;
 	}
 
 	EVP_MD_CTX_destroy(ctx);
@@ -1196,7 +1197,16 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 	RsPeerId sslId = RsX509Cert::getCertSslId(*x509Cert);
 	std::string sslCn = RsX509Cert::getCertIssuerString(*x509Cert);
+
 	RsPgpId pgpId(sslCn);
+
+    if(sslCn.length() == 40)
+	{
+		RsPgpFingerprint pgpFpr(sslCn);	// we also accept fingerprint format, so that in the future we can switch to fingerprints without backward compatibility issues
+
+		if(!pgpFpr.isNull())
+			pgpId = PGPHandler::pgpIdFromFingerprint(pgpFpr);	// in the future, we drop PGP ids and keep the fingerprint all along
+	}
 
     RsPeerDetails det;
     if(!rsPeers->getPeerDetails(sslId,det))
@@ -1249,7 +1259,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	}
 
 	uint32_t auth_diagnostic;
-	if(!isSslOnlyFriend && !AuthX509WithGPG(x509Cert, auth_diagnostic))
+	if(!isSslOnlyFriend && !AuthX509WithGPG(x509Cert,true, auth_diagnostic))
 	{
 		std::string errMsg = "Certificate was rejected because PGP "
 		                     "signature verification failed with diagnostic: "
@@ -1334,7 +1344,7 @@ bool AuthSSLimpl::parseX509DetailsFromFile(
 	}
 
 	uint32_t diagnostic = 0;
-	if(!AuthX509WithGPG(x509, diagnostic))
+	if(!AuthX509WithGPG(x509,false, diagnostic))
 	{
 		RsErr() << __PRETTY_FUNCTION__ << " AuthX509WithGPG failed with "
 		        << "diagnostic: " << diagnostic << std::endl;
@@ -1748,7 +1758,7 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
                             X509 *peer = loadX509FromPEM(kit->value);
 			    /* authenticate it */
 				uint32_t diagnos ;
-			    if (AuthX509WithGPG(peer,diagnos))
+			    if (AuthX509WithGPG(peer,false,diagnos))
 			    {
 				LocalStoreCert(peer);
 			    }

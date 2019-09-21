@@ -790,7 +790,7 @@ int pqissllistener::completeConnection(int fd, IncomingSSLInfo& info)
 
 	uint32_t authErrCode = 0;
 	if( !isSslOnlyFriend &&
-	        !AuthSSL::instance().AuthX509WithGPG(peercert, authErrCode) )
+	        !AuthSSL::instance().AuthX509WithGPG(peercert,false, authErrCode) )
 	{
 		RsFatal() << __PRETTY_FUNCTION__ << " failure verifying peer "
 		          << "certificate signature. This should never happen at this "
