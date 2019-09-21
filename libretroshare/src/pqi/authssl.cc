@@ -1200,28 +1200,13 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 	RsPgpId pgpId(sslCn);
 
-    if(sslCn.length() == 40)
+    if(sslCn.length() == RsPgpFingerprint::SIZE_IN_BYTES*2)
 	{
 		RsPgpFingerprint pgpFpr(sslCn);	// we also accept fingerprint format, so that in the future we can switch to fingerprints without backward compatibility issues
 
 		if(!pgpFpr.isNull())
 			pgpId = PGPHandler::pgpIdFromFingerprint(pgpFpr);	// in the future, we drop PGP ids and keep the fingerprint all along
 	}
-
-    RsPeerDetails det;
-    if(!rsPeers->getPeerDetails(sslId,det))
-    {
-        std::cerr << "Nothing known about peer " << sslId << " trying to connect! Refusing connection." << std::endl;
-        return verificationFailed;
-    }
-
-	bool isSslOnlyFriend = det.skip_pgp_signature_validation;
-
-    if(det.gpg_id != pgpId)
-    {
-        std::cerr << "(EE) peer " << sslId << " trying to connect with issuer ID " << pgpId << " whereas key ID " << det.gpg_id << " was expected! Refusing connection." << std::endl;
-        return verificationFailed;
-    }
 
 	if(sslId.isNull())
 	{
@@ -1256,6 +1241,36 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		}
 
 		return verificationFailed;
+	}
+
+	bool isSslOnlyFriend = false;
+
+    // For SSL only friends (ones added through short invites) we check that the fingerprint
+    // in the key (det.gpg_id) matches the one of the handshake.
+	{
+		RsPeerDetails det;
+
+		if(rsPeers->getPeerDetails(sslId,det))
+			bool isSslOnlyFriend = det.skip_pgp_signature_validation;
+
+		if(det.skip_pgp_signature_validation && det.gpg_id != pgpId)// in the future, we should compare fingerprints instead
+		{
+			std::string errorMsg = "Peer " + sslId.toStdString() + " trying to connect with issuer ID " + pgpId.toStdString()
+                    + " whereas key ID " + det.gpg_id.toStdString() + " was expected! Refusing connection." ;
+
+			RsErr() << __PRETTY_FUNCTION__ << errorMsg << std::endl;
+
+			if(rsEvents)
+			{
+				ev->mSslId = sslId;
+				ev->mSslCn = sslCn;
+				ev->mPgpId = pgpId;
+				ev->mErrorMsg = errorMsg;
+				rsEvents->postEvent(std::move(ev));
+			}
+
+			return verificationFailed;
+		}
 	}
 
 	uint32_t auth_diagnostic;
