@@ -1028,7 +1028,7 @@ void p3discovery2::recvPGPCertificateRequest( const RsPeerId& fromId, const RsDi
     peerState ps;
     mPeerMgr->getOwnNetStatus(ps);
 
-    if(ps.vs_disc != RS_VS_DISC_OFF)
+    if(ps.vs_disc == RS_VS_DISC_OFF)
     {
         std::cerr << "(WW) refusing PGP certificate request from " << fromId << " because discovery is OFF" << std::endl;
 		return;
