@@ -37,6 +37,7 @@
 #include "retroshare/rsmsgs.h"
 
 #define DEBUG_MODEL
+//#define DEBUG_MODEL_INDEX
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
@@ -292,7 +293,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
 
     EntryIndex parent_index ;
     convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
 #endif
 
@@ -300,7 +301,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     EntryIndex new_index = parent_index.child(row,mTopLevel);
     convertIndexToInternalId<sizeof(uintptr_t)>(new_index,ref);
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
 #endif
 
@@ -588,7 +589,7 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int col) const
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 {
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
 
@@ -613,7 +614,7 @@ public:
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
     AutoEndel x;
 #endif
@@ -640,7 +641,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
               	std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
@@ -663,7 +664,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
  	       if(!profile)
  	           return QVariant();
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 		   std::cerr << profile->profile_info.name.c_str() ;
 #endif
 			switch(col)
@@ -683,7 +684,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         if(!node)
             return QVariant();
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 		   std::cerr << node->node_info.location.c_str() ;
 #endif
 		switch(col)

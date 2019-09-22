@@ -130,11 +130,12 @@ bool p3Peers::hasExportMinimal()
 }
 
 	/* Updates ... */
-bool p3Peers::FriendsChanged()
+bool p3Peers::FriendsChanged(bool add)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::FriendsChanged()" << std::endl;
 #endif
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_FRIENDS, add? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
 
 	/* TODO */
 	return false;
@@ -289,16 +290,16 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't return now, we've got fill in the ssl and connection info */
 
-    if(!getGPGDetails(ps.gpg_id, d))
-    {
-        if(!ps.skip_pgp_signature_validation)
-            return false;
+	if(!getGPGDetails(ps.gpg_id, d))
+	{
+		if(!ps.skip_pgp_signature_validation)
+			return false;
 
-        d.gpg_id = ps.gpg_id ;
-        d.skip_pgp_signature_validation = true;
-    }
-    else
-        d.skip_pgp_signature_validation = false;
+		d.gpg_id = ps.gpg_id ;
+		d.skip_pgp_signature_validation = true;
+	}
+	else
+		d.skip_pgp_signature_validation = false;
 
 	d.isOnlyGPGdetail = false;
 
@@ -766,7 +767,9 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 		return true;
 	} 
 
-	/* otherwise - we install as ssl_id..... 
+	FriendsChanged(true);
+
+	/* otherwise - we install as ssl_id.....
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
@@ -776,7 +779,13 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 
 bool p3Peers::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,const RsPeerDetails& details )
 {
-    return mPeerMgr->addSslOnlyFriend(sslId, pgp_id,details);
+    if( mPeerMgr->addSslOnlyFriend(sslId, pgp_id,details))
+    {
+		FriendsChanged(true);
+        return true;
+    }
+    else
+		return false;
 }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
@@ -1534,7 +1543,10 @@ bool p3Peers::loadCertificateFromString(
     // now get all friends who declare this key ID to be the one needed to check connections, and clear their "skip_pgp_signature_validation" flag
 
     if(res)
+    {
 		mPeerMgr->notifyPgpKeyReceived(gpgid);
+        FriendsChanged(true);
+    }
 
 	return res;
 }
