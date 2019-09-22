@@ -59,8 +59,7 @@
 static FriendsDialog *instance = NULL;
 
 /** Constructor */
-FriendsDialog::FriendsDialog(QWidget *parent)
-            : RsAutoUpdatePage(1500,parent)
+FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -192,11 +191,6 @@ void FriendsDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-void FriendsDialog::showEvent(QShowEvent *event)
-{
-    RsAutoUpdatePage::showEvent(event);
-}
-
 void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 {
     if(msg.chat_id.isBroadcast())
@@ -224,10 +218,6 @@ void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &sta
         QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
         ui.chatWidget->updateStatusString(name + " %1", status_string);
     }
-}
-
-void FriendsDialog::updateDisplay()
-{
 }
 
 void FriendsDialog::addFriend()
