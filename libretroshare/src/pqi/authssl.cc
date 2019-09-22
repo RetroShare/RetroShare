@@ -1251,7 +1251,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		RsPeerDetails det;
 
 		if(rsPeers->getPeerDetails(sslId,det))
-			bool isSslOnlyFriend = det.skip_pgp_signature_validation;
+			isSslOnlyFriend = det.skip_pgp_signature_validation;
 
 		if(det.skip_pgp_signature_validation && det.gpg_id != pgpId)// in the future, we should compare fingerprints instead
 		{
