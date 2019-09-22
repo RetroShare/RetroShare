@@ -1128,7 +1128,7 @@ bool AuthSSLimpl::AuthX509WithGPG(X509 *x509,bool verbose, uint32_t& diagnostic)
 		}
 
         if(verbose)
-			std::cerr<< " Verified: " << sigtypestring
+			RsInfo() << " Verified: " << sigtypestring
 			         << " signature of certificate sslId: "
 			         << RsX509Cert::getCertSslId(*x509)
 			         << ", Version " << std::hex << certificate_version << std::dec

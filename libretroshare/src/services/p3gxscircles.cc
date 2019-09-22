@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -27,7 +28,7 @@
 #include "util/rsdir.h"
 #include "util/radix64.h"
 #include "util/rsstring.h"
-
+#include "util/rsdebug.h"
 #include "pgp/pgpauxutils.h"
 #include "retroshare/rsgxscircles.h"
 #include "retroshare/rspeers.h"
@@ -153,8 +154,76 @@ RsServiceInfo p3GxsCircles::getServiceInfo()
                 GXS_CIRCLES_MIN_MINOR_VERSION);
 }
 
-bool p3GxsCircles::createCircle(RsGxsCircleGroup& cData)
+bool p3GxsCircles::createCircle(
+        const std::string& circleName, RsGxsCircleType circleType,
+        RsGxsCircleId& circleId, const RsGxsCircleId& restrictedId,
+        const RsGxsId& authorId, const std::set<RsGxsId>& gxsIdMembers,
+        const std::set<RsPgpId>& localMembers )
 {
+	if(circleName.empty())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Circle name is empty" << std::endl;
+		return false;
+	}
+
+	switch(circleType)
+	{
+	case RsGxsCircleType::PUBLIC:
+		if(!restrictedId.isNull())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
+			        << " must be null with RsGxsCircleType::PUBLIC"
+			        << std::endl;
+			return false;
+		}
+		break;
+	case RsGxsCircleType::EXTERNAL:
+		if(restrictedId.isNull())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " restrictedId can't be null "
+			        << "with RsGxsCircleType::EXTERNAL" << std::endl;
+			return false;
+		}
+		break;
+	case RsGxsCircleType::NODES_GROUP:
+		if(localMembers.empty())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " localMembers can't be empty "
+			        << "with RsGxsCircleType::NODES_GROUP" << std::endl;
+			return false;
+		}
+		break;
+	case RsGxsCircleType::LOCAL:
+		break;
+	case RsGxsCircleType::EXT_SELF:
+		if(!restrictedId.isNull())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " restrictedId: " << restrictedId
+			        << " must be null with RsGxsCircleType::EXT_SELF"
+			        << std::endl;
+			return false;
+		}
+		if(gxsIdMembers.empty())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " gxsIdMembers can't be empty "
+			        << "with RsGxsCircleType::EXT_SELF" << std::endl;
+			return false;
+		}
+		break;
+	case RsGxsCircleType::YOUR_EYES_ONLY:
+		break;
+	default:
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid circle type: "
+		        << static_cast<uint32_t>(circleType) << std::endl;
+		return false;
+	}
+
+	RsGxsCircleGroup cData;
+	cData.mMeta.mGroupName = circleName;
+	cData.mMeta.mAuthorId = authorId;
+	cData.mMeta.mCircleType = static_cast<uint32_t>(circleType);
+	cData.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
 	uint32_t token;
 	createGroup(token, cData);
 
@@ -172,8 +241,9 @@ bool p3GxsCircles::createCircle(RsGxsCircleGroup& cData)
 		return false;
 	}
 
+	circleId = static_cast<RsGxsCircleId>(cData.mMeta.mGroupId);
 	return true;
-}
+};
 
 bool p3GxsCircles::editCircle(RsGxsCircleGroup& cData)
 {
@@ -2157,3 +2227,8 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     
     return true ;
 }
+
+RsGxsCircles::~RsGxsCircles() = default;
+RsGxsCircleMsg::~RsGxsCircleMsg() = default;
+RsGxsCircleDetails::~RsGxsCircleDetails() = default;
+RsGxsCircleGroup::~RsGxsCircleGroup() = default;

@@ -30,6 +30,7 @@
 #define RS_INIT_AUTH_FAILED    -1 // AuthGPG::InitAuth failed
 #define RS_INIT_BASE_DIR_ERROR -2 // AuthGPG::InitAuth failed
 #define RS_INIT_NO_KEYRING     -3 // Keyring is empty. Need to import it.
+#define RS_INIT_NO_EXECUTABLE  -4 // executable path hasn't been set in config options
 
 #include <stdint.h>
 #include <list>
@@ -37,13 +38,45 @@
 #include <vector>
 #include <retroshare/rstypes.h>
 
-struct RsLoginHelper;
+class RsLoginHelper;
 
 /**
  * Pointer to global instance of RsLoginHelper
  * @jsonapi{development}
  */
 extern RsLoginHelper* rsLoginHelper;
+
+/**
+ * @brief The RsInitConfig struct
+ * This class contains common configuration options, that executables using libretroshare may want to
+ * set using e.g. commandline options. To be passed to RsInit::InitRetroShare().
+ */
+struct RsConfigOptions
+{
+	RsConfigOptions();
+
+    // required
+
+	std::string main_executable_path;/* this should be set to argv[0] */
+
+    // Optional. Only change if needed.
+
+	bool autoLogin;                  /* try auto-login */
+
+	bool udpListenerOnly;			 /* only listen to udp */
+    std::string forcedInetAddress; 	 /* inet address to use.*/
+    uint16_t    forcedPort; 	     /* port to listen to */
+
+	bool outStderr;
+	int  debugLevel;
+    std::string logfname;			/* output filename for log */
+
+	std::string opModeStr;          /* operating mode. Acceptable values: "Full", "NoTurtle", "Gaming", "Minimal" */
+	std::string optBaseDir;			/* base directory where to find profiles, etc */
+
+	uint16_t    jsonApiPort;		/* port to use fo Json API */
+	std::string jsonApiBindAddress; /* bind address for Json API */
+};
 
 
 /*!
@@ -57,7 +90,7 @@ public:
 		OK,                     /// Everything go as expected, no error occurred
 		ERR_ALREADY_RUNNING,    /// Another istance is running already
 		ERR_CANT_ACQUIRE_LOCK,  /// Another istance is already running?
-		ERR_UNKOWN              /// Unkown error, maybe password is wrong?
+		ERR_UNKNOWN              /// Unkown error, maybe password is wrong?
 	};
 
 	/* reorganised RsInit system */
@@ -77,11 +110,18 @@ public:
 	 *	invalid argument passed and vice versa
 	 * @return RS_INIT_...
 	 */
-	static int InitRetroShare(int argc, char **argv, bool strictCheck=true);
+	static int InitRetroShare(const RsConfigOptions&);
 
 	static bool isPortable();
 	static bool isWindowsXP();
 	static bool collectEntropy(uint32_t bytes) ;
+
+    /*!
+     * \brief lockFilePath
+     * \return
+     * 		full path for the lock file. Can be used to warn the user about a non deleted lock that would prevent to start.
+     */
+	static std::string lockFilePath();
 
 	/*
 	 * Setup Hidden Location;
@@ -270,8 +310,10 @@ extern RsAccounts* rsAccounts;
  * This helper class have been implemented because there was not reasonable way
  * to login in the API that could be exposed via JSON API
  */
-struct RsLoginHelper
+class RsLoginHelper
 {
+public:
+    RsLoginHelper() {}
 	/**
 	 * @brief Normal way to attempt login
 	 * @jsonapi{development,manualwrapper}
@@ -295,7 +337,7 @@ struct RsLoginHelper
 		RsPeerId mLocationId;
 		RsPgpId mPgpId;
 		std::string mLocationName;
-		std::string mPpgName;
+		std::string mPgpName;
 
 		/// @see RsSerializable::serial_process
 		void serial_process( RsGenericSerializer::SerializeJob j,

@@ -968,6 +968,11 @@ bool p3IdService::createIdentity(
 
 	id = RsGxsId(meta.mGroupId);
 
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		mOwnIds.push_back(id);
+		if(!pseudonimous) mOwnSignedIds.push_back(id);
+	}
 
 LabelCreateIdentityCleanup:
 	if(!pseudonimous && !pgpPassword.empty())
@@ -3036,7 +3041,7 @@ bool p3IdService::cache_request_ownids()
 	
 	RsGenExchange::getTokenService()->requestGroupInfo(token, ansType, opts);
 	GxsTokenQueue::queueRequest(token, GXSIDREQ_CACHEOWNIDS);	
-	return 1;
+	return true;
 }
 
 
