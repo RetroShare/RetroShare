@@ -713,9 +713,8 @@ RsPgpId p3Peers::getGPGId(const RsPeerId& sslid)
 		return AuthGPG::getAuthGPG()->getGPGOwnId();
 	}
 	peerState pcs;
-	if (mPeerMgr->getFriendNetStatus(sslid, pcs) || mPeerMgr->getOthersNetStatus(sslid, pcs)) {
+	if (mPeerMgr->getFriendNetStatus(sslid, pcs))
 		return pcs.gpg_id;
-	}
 
 	return RsPgpId();
 }

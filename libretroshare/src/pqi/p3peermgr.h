@@ -208,7 +208,6 @@ virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, cons
 
 virtual bool	getOwnNetStatus(peerState &state) = 0;
 virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state) = 0;
-virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state) = 0;
 
 virtual bool    getPeerName(const RsPeerId &ssl_id, std::string &name) = 0;
 virtual bool	getGpgId(const RsPeerId &sslId, RsPgpId &gpgId) = 0;
@@ -329,7 +328,6 @@ public:
 
     virtual bool	getOwnNetStatus(peerState &state);
     virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state);
-    virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state);
 
     virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
     virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
@@ -417,7 +415,6 @@ private:
     peerState mOwnState;
 
     std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
-    std::map<RsPeerId, peerState> mOthersList;
 
     std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
 

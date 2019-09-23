@@ -840,19 +840,6 @@ bool p3PeerMgrIMPL::getFriendNetStatus(const RsPeerId &id, peerState &state)
 }
 
 
-bool p3PeerMgrIMPL::getOthersNetStatus(const RsPeerId &id, peerState &state)
-{
-	RS_STACK_MUTEX(mPeerMtx);
-
-	/* check for existing */
-	std::map<RsPeerId, peerState>::iterator it;
-	it = mOthersList.find(id);
-	if (it == mOthersList.end()) return false;
-
-	state = it->second;
-	return true;
-}
-
 int p3PeerMgrIMPL::getConnectAddresses(
         const RsPeerId &id, sockaddr_storage &lAddr, sockaddr_storage &eAddr,
                     pqiIpAddrSet &histAddrs, std::string &dyndns )
@@ -978,6 +965,14 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 				return true; /* (1) already exists */
 		}
 
+        // check that the PGP key is known
+
+        if(!AuthGPG::getAuthGPG()->isGPGId(gpg_id))
+        {
+			RsErr() << "Trying to add SSL id (" << id << ") to be validated with unknown PGP key (" << gpg_id << ". This is a bug!" << std::endl;
+			return false;
+        }
+
 		//Authentication is now tested at connection time, we don't store the ssl cert anymore
 		//
 		if (!AuthGPG::getAuthGPG()->isGPGAccepted(gpg_id) &&  gpg_id != AuthGPG::getAuthGPG()->getGPGOwnId())
@@ -992,71 +987,67 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
         // after that, we know that we have the key, because AuthGPG wouldn't answer yes for a key it doesn't know.
 
 		/* check if it is in others */
-		if (mOthersList.end() != (it = mOthersList.find(id)))
-		{
-			/* (2) in mOthersList -> move over */
+//		if (mOthersList.end() != (it = mOthersList.find(id)))
+//		{
+//			/* (2) in mOthersList -> move over */
+//#ifdef PEER_DEBUG
+//			std::cerr << "p3PeerMgrIMPL::addFriend() Move from Others" << std::endl;
+//#endif
+//			if(!it->second.gpg_id.isNull() && it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
+//                RsErr() << "Trying to add SSL id (" << id << ") that is already known (but not friend) with existing PGP key (" << it->second.gpg_id
+//                        << ") but using a different PGP key (" << input_gpg_id << "). This looks like a bug! The friend will be added again with the new PGP key ID." << std::endl;
+//
+//			mFriendList[id] = it->second;
+//			mOthersList.erase(it);
+//
+//			it = mFriendList.find(id);
+//
+//			/* setup connectivity parameters */
+//			it->second.vs_disc = vs_disc;
+//			it->second.vs_dht = vs_dht;
+//
+//			it->second.netMode  = netMode;
+//			it->second.lastcontact = lastContact;
+//
+//			it->second.gpg_id = input_gpg_id;
+//			it->second.skip_pgp_signature_validation = false;
+//
+//			mStatusChanged = true;
+//
+//			notifyLinkMgr = true;
+//
+//			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
+//		}
+//		else
+
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::addFriend() Move from Others" << std::endl;
+		std::cerr << "p3PeerMgrIMPL::addFriend() Creating New Entry" << std::endl;
 #endif
 
-			mFriendList[id] = it->second;
-			mOthersList.erase(it);
+		/* create a new entry */
+		peerState pstate;
 
-			it = mFriendList.find(id);
+		pstate.id = id;
+		pstate.gpg_id = gpg_id;
+		pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
 
-			/* setup connectivity parameters */
-			it->second.vs_disc = vs_disc;
-			it->second.vs_dht = vs_dht;
+		pstate.vs_disc = vs_disc;
+		pstate.vs_dht = vs_dht;
+		pstate.netMode = netMode;
+		pstate.lastcontact = lastContact;
 
-			it->second.netMode  = netMode;
-			it->second.lastcontact = lastContact;
+		pstate.gpg_id = input_gpg_id;
+		pstate.skip_pgp_signature_validation = false;
 
-			if(!it->second.gpg_id.isNull() && it->second.gpg_id != input_gpg_id)// already exists as a friend with a different PGP id!!
-            {
-                RsErr() << "Trying to add SSL id (" << id << ") that is already known (but not friend) with existing PGP key (" << it->second.gpg_id << ") but using a different PGP key (" << input_gpg_id << "). This is a bug!" << std::endl;
-                return false;
-            }
+		/* addr & timestamps -> auto cleared */
 
-			it->second.gpg_id = input_gpg_id;
-			it->second.skip_pgp_signature_validation = false;
+		mFriendList[id] = pstate;
 
-			mStatusChanged = true;
+		mStatusChanged = true;
 
-			notifyLinkMgr = true;
+		notifyLinkMgr = true;
 
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		}
-		else
-		{
-#ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::addFriend() Creating New Entry" << std::endl;
-#endif
-
-			/* create a new entry */
-			peerState pstate;
-
-			pstate.id = id;
-			pstate.gpg_id = gpg_id;
-			pstate.name = AuthGPG::getAuthGPG()->getGPGName(gpg_id);
-
-			pstate.vs_disc = vs_disc;
-			pstate.vs_dht = vs_dht;
-			pstate.netMode = netMode;
-			pstate.lastcontact = lastContact;
-
-			pstate.gpg_id = input_gpg_id;
-			pstate.skip_pgp_signature_validation = false;
-
-			/* addr & timestamps -> auto cleared */
-
-			mFriendList[id] = pstate;
-
-			mStatusChanged = true;
-
-			notifyLinkMgr = true;
-
-			IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
-		}
+		IndicateConfigChanged(); /**** INDICATE MSG CONFIG CHANGED! *****/
 	}
 
 	if (notifyLinkMgr)
@@ -1090,19 +1081,19 @@ bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_
 
 	peerState pstate;
 
-	{
-        RS_STACK_MUTEX(mPeerMtx);
-
-		/* If in mOthersList -> move over */
-		auto it = mOthersList.find(sslId);
-		if (it != mOthersList.end())
-		{
-			pstate = it->second;
-			mOthersList.erase(it);
-		}
-
-
-	} // RS_STACK_MUTEX(mPeerMtx);
+//	{
+//        RS_STACK_MUTEX(mPeerMtx);
+//
+//		/* If in mOthersList -> move over */
+//		auto it = mOthersList.find(sslId);
+//		if (it != mOthersList.end())
+//		{
+//			pstate = it->second;
+//			mOthersList.erase(it);
+//		}
+//
+//
+//	} // RS_STACK_MUTEX(mPeerMtx);
 
 	if(!pstate.gpg_id.isNull() && AuthGPG::getAuthGPG()->isGPGAccepted(pstate.gpg_id))
 	{
@@ -1196,7 +1187,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPgpId &id)
 
 				sslid_toRemove.push_back(it->second.id);
 
-				mOthersList[it->second.id] = peer;
+				//mOthersList[it->second.id] = peer;
 				mStatusChanged = true;
 
 				//success = true;
@@ -1271,7 +1262,7 @@ bool p3PeerMgrIMPL::removeFriend(const RsPeerId &id, bool removePgpId)
 				if(removePgpId)
 					pgpid_toRemove.push_back(it->second.gpg_id);
 
-				mOthersList[id] = peer;
+				//mOthersList[id] = peer;
 				mStatusChanged = true;
 
 				//success = true;
@@ -1331,14 +1322,14 @@ void p3PeerMgrIMPL::printPeerLists(std::ostream &out)
 			out << std::endl;
 		}
 
-		out << "p3PeerMgrIMPL::printPeerLists() Others List";
-		out << std::endl;
-		for(it = mOthersList.begin(); it != mOthersList.end(); ++it)
-		{
-			out << "\t SSL ID: " << it->second.id;
-			out << "\t GPG ID: " << it->second.gpg_id;
-			out << std::endl;
-		}
+//		out << "p3PeerMgrIMPL::printPeerLists() Others List";
+//		out << std::endl;
+//		for(it = mOthersList.begin(); it != mOthersList.end(); ++it)
+//		{
+//			out << "\t SSL ID: " << it->second.id;
+//			out << "\t GPG ID: " << it->second.gpg_id;
+//			out << std::endl;
+//		}
 	}
 
 	return;
@@ -1520,16 +1511,10 @@ bool p3PeerMgrIMPL::addPeerLocator(const RsPeerId &sslId, const RsUrl& locator)
 		auto it =  mFriendList.find(sslId);
 		if (it == mFriendList.end())
 		{
-			it = mOthersList.find(sslId);
-			if (it == mOthersList.end())
-			{
 #ifdef PEER_DEBUG
-				std::cerr << __PRETTY_FUNCTION__ << "cannot add address "
-				          << "info, peer id: " << sslId << " not found in list"
-				          << std::endl;
+				std::cerr << __PRETTY_FUNCTION__ << "cannot add address " << "info, peer id: " << sslId << " not found in list" << std::endl;
 #endif
 				return false;
-			}
 		}
 
 		changed = it->second.ipAddrs.updateLocalAddrs(ip);
@@ -1577,15 +1562,10 @@ bool p3PeerMgrIMPL::setLocalAddress( const RsPeerId &id,
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres "
-			          << "info : peer id not found in friend list  id: "
-			          << id << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
 #endif
 			return false;
-		}
 	}
 
 	/* "it" points to peer */
@@ -1643,15 +1623,10 @@ bool p3PeerMgrIMPL::setExtAddress( const RsPeerId &id,
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
 #ifdef PEER_DEBUG
-			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres "
-			          << "info : peer id not found in friend list  id: " << id
-			          << std::endl;
+			std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres " << "info : peer id not found in friend list  id: " << id << std::endl;
 #endif
 			return false;
-		}
 	}
 
 	/* "it" points to peer */
@@ -1698,13 +1673,10 @@ bool p3PeerMgrIMPL::setDynDNS(const RsPeerId &id, const std::string &dyndns)
     std::map<RsPeerId, peerState>::iterator it;
     if (mFriendList.end() == (it = mFriendList.find(id)))
     {
-            if (mOthersList.end() == (it = mOthersList.find(id)))
-            {
 #ifdef PEER_DEBUG
-                                    std::cerr << "p3PeerMgrIMPL::setDynDNS() cannot add dyn dns info : peer id not found in friend list  id: " << id << std::endl;
+		std::cerr << "p3PeerMgrIMPL::setDynDNS() cannot add dyn dns info : peer id not found in friend list  id: " << id << std::endl;
 #endif
-                    return false;
-            }
+		return false;
     }
 
     /* "it" points to peer */
@@ -1913,13 +1885,10 @@ bool    p3PeerMgrIMPL::updateAddressList(const RsPeerId& id, const pqiIpAddrSet 
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-            if (mOthersList.end() == (it = mOthersList.find(id)))
-            {
 #ifdef PEER_DEBUG
-				std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
+		std::cerr << "p3PeerMgrIMPL::setLocalAddress() cannot add addres info : peer id not found in friend list. id: " << id << std::endl;
 #endif
-                    return false;
-            }
+		return false;
 	}
 
 	/* "it" points to peer */
@@ -1958,11 +1927,8 @@ bool    p3PeerMgrIMPL::updateCurrentAddress(const RsPeerId& id, const pqiIpAddre
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
 			std::cerr << "p3PeerMgrIMPL::updateCurrentAddress() ERROR peer id not found: " << id << std::endl;
 			return false;
-		}
 	}
 
 	if (sockaddr_storage_isPrivateNet(addr.mAddr))
@@ -2005,11 +1971,8 @@ bool    p3PeerMgrIMPL::updateLastContact(const RsPeerId& id)
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
 			std::cerr << "p3PeerMgrIMPL::updateLastContact() ERROR peer id not found: " << id << std::endl;
 			return false;
-		}
 	}
 
 	it->second.lastcontact = time(NULL);
@@ -2031,10 +1994,7 @@ bool    p3PeerMgrIMPL::setNetworkMode(const RsPeerId &id, uint32_t netMode)
 	std::map<RsPeerId, peerState>::iterator it;
 	if (mFriendList.end() == (it = mFriendList.find(id)))
 	{
-		if (mOthersList.end() == (it = mOthersList.find(id)))
-		{
 			return false;
-		}
 	}
 
 	bool changed = false;
@@ -2101,10 +2061,7 @@ bool    p3PeerMgrIMPL::setVisState(const RsPeerId &id, uint16_t vs_disc, uint16_
 		std::map<RsPeerId, peerState>::iterator it;
 		if (mFriendList.end() == (it = mFriendList.find(id)))
 		{
-			if (mOthersList.end() == (it = mOthersList.find(id)))
-			{
 				return false;
-			}
 		}
 		else
 		{
