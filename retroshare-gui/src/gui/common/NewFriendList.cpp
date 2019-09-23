@@ -441,7 +441,7 @@ void NewFriendList::processSettings(bool load)
     if (load) // load settings
     {
         // states
-        setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
+        setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
         setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 

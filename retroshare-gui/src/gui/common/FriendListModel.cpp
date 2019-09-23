@@ -36,7 +36,7 @@
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
 
-#define DEBUG_MODEL
+//#define DEBUG_MODEL
 //#define DEBUG_MODEL_INDEX
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
