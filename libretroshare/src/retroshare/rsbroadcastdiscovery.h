@@ -41,11 +41,12 @@ class RsBroadcastDiscovery;
  * TODO: this should become std::weak_ptr once we have a reasonable services
  * management.
  */
-extern std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery;
+extern RsBroadcastDiscovery* rsBroadcastDiscovery;
 
 
 struct RsBroadcastDiscoveryResult : RsSerializable
 {
+	RsPgpFingerprint mPgpFingerprint;
 	RsPeerId mSslId;
 	std::string mProfileName;
 	RsUrl mLocator;
@@ -54,6 +55,7 @@ struct RsBroadcastDiscoveryResult : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
+		RS_SERIAL_PROCESS(mPgpFingerprint);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mProfileName);
 		RS_SERIAL_PROCESS(mLocator);
