@@ -108,17 +108,22 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 //	std::cout << "maxW: " << maxwidth << " minW: " << minwidth << std::endl;
 	int region = 500;
 	bool success = false;
+	int latestgood = 0;
 	do {
 		double m = (maxsize - minsize) / ((double)maxwidth * (double)maxwidth / whratio - (double)minwidth * (double)minwidth / whratio);
 		double b = maxsize - m * ((double)maxwidth * (double)maxwidth / whratio);
 		double a = ((double)(maxBytes - region/2) - b) / m; //maxBytes - region/2 target the center of the accepted region
 		int nextwidth = (int)sqrt(a * whratio);
-		double nextsize = (double)checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
+		int nextsize = checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
 		if(nextsize <= maxBytes) {
 			minsize = nextsize;
 			minwidth = nextwidth;
-			if(nextsize >= (maxBytes - region)) //the file size is close anough to the limit
+			if(nextsize >= (maxBytes - region) || //the file size is close enough to the limit
+			latestgood >= nextsize) { //The algorithm does not converge anymore
 				success = true;
+			} else {
+				latestgood = nextsize;
+			}
 		} else {
 			maxsize = nextsize;
 			maxwidth = nextwidth;

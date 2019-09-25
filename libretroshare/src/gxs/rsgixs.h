@@ -92,8 +92,6 @@
  * as these will be used very frequently.
  *****/
 
-typedef PGPIdType RsPgpId;
-
 /* Identity Interface for GXS Message Verification.
  */
 class RsGixs

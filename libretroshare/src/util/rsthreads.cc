@@ -25,6 +25,7 @@
 #include <errno.h>    // for errno
 #include <iostream>
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #include "util/rstime.h"
 
@@ -66,8 +67,8 @@ void RsThread::go()
 
     runloop();
 
-    mHasStoppedSemaphore.set(1);
     mShouldStopSemaphore.set(0);
+    mHasStoppedSemaphore.set(1);	// last value that we modify because this is interpreted as a signal that the object can be deleted.
 }
 void *RsThread::rsthread_init(void* p)
 {
@@ -101,6 +102,21 @@ RsThread::RsThread()
 #endif
     mHasStoppedSemaphore.set(1) ;
     mShouldStopSemaphore.set(0) ;
+}
+
+RsThread::~RsThread()
+{
+	if(isRunning())
+    {
+		RsErr() << "Deleting a thread that is still running! Something is very wrong here and Retroshare is likely to crash because of this." << std::endl;
+        print_stacktrace();
+
+        while(isRunning())
+        {
+            std::cerr << "." << std::endl;
+            rstime::rs_usleep(1000*1000);
+        }
+    }
 }
 
 bool RsThread::isRunning()
@@ -226,6 +242,10 @@ RsTickingThread::RsTickingThread()
 #endif
 }
 
+RsTickingThread::~RsTickingThread()
+{
+    fullstop();
+}
 void RsSingleJobThread::runloop()
 {
     run() ;

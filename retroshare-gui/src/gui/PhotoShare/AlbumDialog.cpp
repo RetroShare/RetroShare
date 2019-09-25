@@ -21,6 +21,7 @@
 #include <QPixmap>
 
 #include "AlbumDialog.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "ui_AlbumDialog.h"
 #include "retroshare/rsgxsflags.h"
 
@@ -60,7 +61,7 @@ void AlbumDialog::setUp()
 
 
     QPixmap qtn;
-    qtn.loadFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str());
+    GxsIdDetails::loadPixmapFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str(),qtn);
 
     if(mAlbum.mThumbnail.size != 0)
     {

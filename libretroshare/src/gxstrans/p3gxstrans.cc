@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2016-2017  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -22,12 +22,13 @@
 #include "util/rsdir.h"
 #include "gxstrans/p3gxstrans.h"
 #include "util/stacktrace.h"
+#include "util/rsdebug.h"
 
 //#define DEBUG_GXSTRANS 1
 
 typedef unsigned int uint;
 
-RsGxsTrans *rsGxsTrans = NULL ;
+/*extern*/ RsGxsTrans* rsGxsTrans = nullptr;
 
 const uint32_t p3GxsTrans::MAX_DELAY_BETWEEN_CLEANUPS = 900; // every 15 mins. Could be less.
 
@@ -240,10 +241,7 @@ void p3GxsTrans::handleResponse(uint32_t token, uint32_t req_type)
 		if(!have_preferred_group)
 		{
 			/* This is true only at first run when we haven't received mail
-			 * distribuition groups from friends
-			 * TODO: We should check if we have some connected friend too, to
-			 * avoid to create yet another never used mail distribution group.
-			 */
+			 * distribuition groups from friends */
 
 #ifdef DEBUG_GXSTRANS
 			std::cerr << "p3GxsTrans::handleResponse(...) preferredGroupId.isNu"
@@ -533,6 +531,14 @@ void p3GxsTrans::service_tick()
 		for(std::map<RsGxsId,MsgSizeCount>::const_iterator it(per_user_statistics.begin());it!=per_user_statistics.end();++it)
 			std::cerr << "  " << it->first << ": " << it->second.count << " " << it->second.size << std::endl;
 #endif
+        // Waiting here is very important because the thread may still be updating its semaphores after setting isDone() to true
+        // If we delete it during this operation it will corrupt the stack and cause unpredictable errors.
+
+        while(mCleanupThread->isRunning())
+        {
+            std::cerr << "Waiting for mCleanupThread to terminate..." << std::endl;
+            rstime::rs_usleep(500*1000);
+        }
 
 		delete mCleanupThread;
 		mCleanupThread=NULL ;
@@ -613,9 +619,10 @@ void p3GxsTrans::service_tick()
 				}
 				else
 				{
-					/* TODO: It is a receipt for a message sent by someone else
+					/* It is a receipt for a message sent by someone else
 					 * we can delete original mail from our GXS DB without
-					 * waiting for GXS_STORAGE_PERIOD */
+					 * waiting for GXS_STORAGE_PERIOD, this has been implemented
+					 * already by Cyril into GxsTransIntegrityCleanupThread */
 				}
 				break;
 			}
@@ -956,9 +963,9 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 		{
 		case RsGxsTransEncryptionMode::CLEAR_TEXT:
 		{
-			std::cerr << "p3GxsTrans::sendMail(...) you are sending a mail "
-			          << "without encryption, everyone can read it!"
-			          << std::endl;
+			RsWarn() << __PRETTY_FUNCTION__ << " you are sending a mail "
+			         << "without encryption, everyone can read it!"
+			         << std::endl;
 			break;
 		}
 		case RsGxsTransEncryptionMode::RSA:
@@ -978,15 +985,15 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 			}
 			else
 			{
-				std::cerr << "p3GxsTrans::sendMail(...) RSA encryption failed! "
-				          << "error_status: " << encryptError << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " RSA encryption failed! "
+				        << "error_status: " << encryptError << std::endl;
 				pr.status = GxsTransSendStatus::FAILED_ENCRYPTION;
 				goto processingFailed;
 			}
 		}
 		case RsGxsTransEncryptionMode::UNDEFINED_ENCRYPTION:
 		default:
-			std::cerr << "p3GxsTrans::sendMail(...) attempt to send mail with "
+			RsErr() << __PRETTY_FUNCTION__ << " attempt to send mail with "
 			          << "wrong EncryptionMode: "
 			          << static_cast<uint>(pr.mailItem.cryptoType)
 			          << " dropping mail!" << std::endl;
@@ -1032,7 +1039,8 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 	{
 		RS_STACK_MUTEX(mIngoingMutex);
 		auto range = mIncomingQueue.equal_range(pr.mailItem.mailId);
-		bool changed = false ;
+		bool changed = false;
+		bool received = false;
 
 		for( auto it = range.first; it != range.second; ++it)
 		{
@@ -1043,14 +1051,21 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 				mIncomingQueue.erase(it); delete rt;
 				pr.status = GxsTransSendStatus::RECEIPT_RECEIVED;
 
-				changed = true ;
+				changed = true;
+				received = true;
 				break;
 			}
 		}
+
+		if(!received && time(nullptr) - pr.sent_ts > GXS_STORAGE_PERIOD)
+		{
+			changed = true;
+			pr.status = GxsTransSendStatus::FAILED_TIMED_OUT;
+		}
+
 		if(changed)
 			IndicateConfigChanged();
 
-		// TODO: Resend message if older then treshold
 		break;
 	}
 	case GxsTransSendStatus::RECEIPT_RECEIVED:
@@ -1059,13 +1074,12 @@ void p3GxsTrans::locked_processOutgoingRecord(OutgoingRecord& pr)
 processingFailed:
 	case GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE:
 	case GxsTransSendStatus::FAILED_ENCRYPTION:
+	case GxsTransSendStatus::FAILED_TIMED_OUT:
 	default:
-	{
-		std::cout << "p3GxsTrans::processRecord(" << pr.mailItem.mailId
-		          << ") failed with: " << static_cast<uint>(pr.status)
+		RsErr() << __PRETTY_FUNCTION__ << " processing:" << pr.mailItem.mailId
+		          << " failed with: " << static_cast<uint>(pr.status)
 		          << std::endl;
 		break;
-	}
 	}
 }
 

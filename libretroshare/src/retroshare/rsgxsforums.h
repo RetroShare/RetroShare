@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2012 by Robert Fernie <retroshare@lunamutt.com>               *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -30,9 +30,9 @@
 #include "retroshare/rsgxsifacehelper.h"
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rsserializable.h"
+#include "retroshare/rsgxscircles.h"
 
 
-/* The Main Interface Class - for information about your Peers */
 class RsGxsForums;
 
 /**
@@ -43,8 +43,10 @@ extern RsGxsForums* rsGxsForums;
 
 
 /** Forum Service message flags, to be used in RsMsgMetaData::mMsgFlags
- *  Gxs imposes to use the first two bytes (lower bytes) of mMsgFlags for
+ * Gxs imposes to use the first two bytes (lower bytes) of mMsgFlags for
  * private forum flags, the upper bytes being used for internal GXS stuff.
+ * @todo mixing service level flags and GXS level flag into the same member is
+ * prone to confusion, use separated members for those things
  */
 static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MASK      = 0x0000000f;
 static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
@@ -54,46 +56,52 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
 
 struct RsGxsForumGroup : RsSerializable
 {
-    virtual ~RsGxsForumGroup() {}
-
+	/** Forum GXS metadata */
 	RsGroupMetaData mMeta;
+
+	/** @brief Forum desciption */
 	std::string mDescription;
 
-	/* What's below is optional, and handled by the serialiser
-	 * TODO: run away from TLV old serializables as those types are opaque to
-	 *	JSON API! */
+	/** @brief List of forum moderators ids
+	 * @todo run away from TLV old serializables as those types are opaque to
+	 * JSON API! */
 	RsTlvGxsIdSet mAdminList;
+
+	/** @brief List of forum pinned posts, those are usually displayed on top
+	 * @todo run away from TLV old serializables as those types are opaque to
+	 * JSON API! */
 	RsTlvGxsMsgIdSet mPinnedPosts;
 
 	/// @see RsSerializable
-	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
-	{
-		RS_SERIAL_PROCESS(mMeta);
-		RS_SERIAL_PROCESS(mDescription);
-		RS_SERIAL_PROCESS(mAdminList);
-		RS_SERIAL_PROCESS(mPinnedPosts);
-	}
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override;
 
-    // utility functions
+	~RsGxsForumGroup() override;
 
-    bool canEditPosts(const RsGxsId& id) const { return mAdminList.ids.find(id) != mAdminList.ids.end() || id == mMeta.mAuthorId; }
+	/* G10h4ck: We should avoid actual methods in this contexts as they are
+	 * invisible to JSON API */
+	bool canEditPosts(const RsGxsId& id) const;
 };
 
 struct RsGxsForumMsg : RsSerializable
 {
-    virtual ~RsGxsForumMsg() {}
-
+	/** @brief Forum post GXS metadata */
 	RsMsgMetaData mMeta;
+
+	/** @brief Forum post content */
 	std::string mMsg; 
 
 	/// @see RsSerializable
-	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(mMsg);
 	}
+
+	~RsGxsForumMsg() override;
 };
 
 
@@ -101,23 +109,67 @@ class RsGxsForums: public RsGxsIfaceHelper
 {
 public:
 	explicit RsGxsForums(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsGxsForums() {}
+	virtual ~RsGxsForums();
 
 	/**
-	 * @brief Create forum. Blocking API.
+	 * @brief Create forum.
 	 * @jsonapi{development}
-	 * @param[inout] forum Forum data (name, description...)
-	 * @return false on error, true otherwise
+	 * @param[in]  name          Name of the forum
+	 * @param[in]  description   Optional description of the forum
+	 * @param[in]  authorId      Optional id of the froum owner author
+	 * @param[in]  moderatorsIds Optional list of forum moderators
+	 * @param[in]  circleType    Optional visibility rule, default public.
+	 * @param[in]  circleId      If the forum is not public specify the id of
+	 *                           the circle who can see the forum. Depending on
+	 *                           the value you pass for circleType this should
+	 *                           be a circle if EXTERNAL is passed, a local
+	 *                           friends group id if NODES_GROUP is passed,
+	 *                           empty otherwise.
+	 * @param[out] forumId       Optional storage for the id of the created
+	 *                           forum, meaningful only if creations succeeds.
+	 * @param[out] errorMessage  Optional storage for error messsage, meaningful
+	 *                           only if creation fail.
+	 * @return False on error, true otherwise.
 	 */
-	virtual bool createForum(RsGxsForumGroup& forum) = 0;
+	virtual bool createForumV2(
+	        const std::string& name, const std::string& description,
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& moderatorsIds = std::set<RsGxsId>(),
+	        RsGxsCircleType circleType = RsGxsCircleType::PUBLIC,
+	        const RsGxsCircleId& circleId = RsGxsCircleId(),
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	/**
-	 * @brief Create forum message. Blocking API.
+	 * @brief Create a post on the given forum.
 	 * @jsonapi{development}
-	 * @param[inout] message
+	 * @param[in]  forumId   Id of the forum in which the post is to be
+	 *                       submitted
+	 * @param[in]  title     UTF-8 string containing the title of the post
+	 * @param[in]  mBody     UTF-8 string containing the text of the post
+	 * @param[in]  authorId  Id of the author of the comment
+	 * @param[in]  parentId  Optional Id of the parent post if this post is a
+	 *                       reply to another post, empty otherwise.
+	 * @param[in]  origPostId  If this is supposed to replace an already
+	 *                         existent post, the id of the old post.
+	 *                         If left blank a new post will be created.
+	 * @param[out] postMsgId Optional storage for the id of the created,
+	 *                       meaningful only on success.
+	 * @param[out] errorMessage Optional storage for error message, meaningful
+	 *                          only on failure.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool createMessage(RsGxsForumMsg& message) = 0;
+	virtual bool createPost(
+	        const RsGxsGroupId&   forumId,
+	        const std::string&    title,
+	        const std::string&    mBody,
+	        const RsGxsId&        authorId,
+	        const RsGxsMessageId& parentId = RsGxsMessageId(),
+	        const RsGxsMessageId& origPostId = RsGxsMessageId(),
+	        RsGxsMessageId&       postMsgId = RS_DEFAULT_STORAGE_PARAM(RsGxsMessageId),
+	        std::string&          errorMessage     = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) = 0;
 
 	/**
 	 * @brief Edit forum details.
@@ -167,7 +219,7 @@ public:
 	 */
 	virtual bool getForumContent(
 	        const RsGxsGroupId& forumId,
-	        std::set<RsGxsMessageId>& msgsIds,
+	        const std::set<RsGxsMessageId>& msgsIds,
 	        std::vector<RsGxsForumMsg>& msgs) = 0;
 
 	/**
@@ -189,6 +241,26 @@ public:
 	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
 	                               bool subscribe ) = 0;
 
+	/**
+	 * @brief Create forum. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] forum Forum data (name, description...)
+	 * @return false on error, true otherwise
+	 * @deprecated @see createForumV2
+	 */
+	RS_DEPRECATED_FOR(createForumV2)
+	virtual bool createForum(RsGxsForumGroup& forum) = 0;
+
+	/**
+	 * @brief Create forum message. Blocking API.
+	 * @jsonapi{development}
+	 * @param[inout] message
+	 * @return false on error, true otherwise
+	 * @deprecated @see createPost
+	 */
+	RS_DEPRECATED_FOR(createPost)
+	virtual bool createMessage(RsGxsForumMsg& message) = 0;
+
 	/* Specific Service Data */
 	RS_DEPRECATED_FOR("getForumsSummaries, getForumsInfo")
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) = 0;
@@ -203,4 +275,3 @@ public:
 	RS_DEPRECATED_FOR(editForum)
 	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
 };
-

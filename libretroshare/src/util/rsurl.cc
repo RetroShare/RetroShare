@@ -201,6 +201,13 @@ RsUrl& RsUrl::delQueryK(const std::string& key)
 	mQuery.erase(key);
 	return *this;
 }
+bool RsUrl::hasQueryK(const std::string& key)
+{ return (mQuery.find(key) != mQuery.end()); }
+const std::string* RsUrl::getQueryV(const std::string& key)
+{
+	if(hasQueryK(key)) return &(mQuery.find(key)->second);
+	return nullptr;
+}
 
 const std::string& RsUrl::fragment() const { return mFragment; }
 RsUrl& RsUrl::setFragment(const std::string& fragment)

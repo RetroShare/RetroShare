@@ -41,22 +41,25 @@
 CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
     : ConfigPage(parent, flags)
 {
-  /* Invoke the Qt Designer generated object setup routine */
-  ui.setupUi(this);
+	/* Invoke the Qt Designer generated object setup routine */
+	ui.setupUi(this);
 
-//  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
-  connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
-  connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
-  connect(ui._includeAllIPs_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
-  connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
-  connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
+	ui._shortFormat_CB->setChecked(true);
 
-  // hide profile manager as it causes bugs when generating a new profile.
-  //ui.profile_Button->hide() ;
+	//  connect(ui.copykeyButton, SIGNAL(clicked()), this, SLOT(copyPublicKey()));
+	connect(ui.saveButton, SIGNAL(clicked()), this, SLOT(fileSaveAs()));
+	connect(ui._includeSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+	connect(ui._shortFormat_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+	connect(ui._includeAllIPs_CB, SIGNAL(toggled(bool)), this, SLOT(load()));
+	connect(ui._copyLink_PB, SIGNAL(clicked()), this, SLOT(copyRSLink()));
+	connect(ui.showStats_PB, SIGNAL(clicked()), this, SLOT(showStats()));
 
-  connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
+	// hide profile manager as it causes bugs when generating a new profile.
+	//ui.profile_Button->hide() ;
 
-    ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
+	connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
+
+	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
 
 void CryptoPage::profilemanager()
@@ -97,16 +100,21 @@ CryptoPage::~CryptoPage()
 void
 CryptoPage::load()
 {
-	ui.certplainTextEdit->setPlainText(
-	            QString::fromUtf8(
-	                rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ).c_str()
-                    ) );
+    std::string cert ;
+
+    if(ui._shortFormat_CB->isChecked())
+        rsPeers->getShortInvite(cert,rsPeers->getOwnId(), true, !ui._includeAllIPs_CB->isChecked());
+	else
+		cert = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(), ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() );
+
+	ui.certplainTextEdit->setPlainText( QString::fromUtf8( cert.c_str() ) );
 
     RsPeerDetails detail;
     rsPeers->getPeerDetails(rsPeers->getOwnId(),detail);
 
-    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
+    ui.certplainTextEdit->setToolTip(ConfCertDialog::getCertificateDescription(detail, ui._includeSignatures_CB->isChecked(), ui._shortFormat_CB->isChecked(), ui._includeAllIPs_CB->isChecked() ));
 }
+
 void
 CryptoPage::copyRSLink()
 {

@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -21,8 +22,8 @@
  *******************************************************************************/
 #include "services/p3gxsforums.h"
 #include "rsitems/rsgxsforumitems.h"
-
-#include <retroshare/rsidentity.h>
+#include "retroshare/rspeers.h"
+#include "retroshare/rsidentity.h"
 
 #include "rsserver/p3face.h"
 #include "retroshare/rsnotify.h"
@@ -384,6 +385,165 @@ bool p3GxsForums::getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &
 
 /********************************************************************************************/
 
+bool p3GxsForums::createForumV2(
+        const std::string& name, const std::string& description,
+        const RsGxsId& authorId, const std::set<RsGxsId>& moderatorsIds,
+        RsGxsCircleType circleType, const RsGxsCircleId& circleId,
+        RsGxsGroupId& forumId, std::string& errorMessage )
+{
+	auto createFail = [&](std::string mErr)
+	{
+		errorMessage = mErr;
+		RsErr() << __PRETTY_FUNCTION__ << " " << errorMessage << std::endl;
+		return false;
+	};
+
+	if(name.empty()) return createFail("Forum name is required");
+
+	if(!authorId.isNull() && !rsIdentity->isOwnId(authorId))
+		return createFail("Author must be iether null or and identity owned by "
+		                  "this node");
+
+	switch(circleType)
+	{
+	case RsGxsCircleType::PUBLIC: // fallthrough
+	case RsGxsCircleType::LOCAL: // fallthrough
+	case RsGxsCircleType::YOUR_EYES_ONLY:
+		break;
+	case RsGxsCircleType::EXTERNAL:
+		if(circleId.isNull())
+			return createFail("circleType is EXTERNAL but circleId is null");
+		break;
+	case RsGxsCircleType::NODES_GROUP:
+	{
+		RsGroupInfo ginfo;
+		if(!rsPeers->getGroupInfo(RsNodeGroupId(circleId), ginfo))
+			return createFail("circleType is NODES_GROUP but circleId does not "
+			                  "correspond to an actual group of friends");
+		break;
+	}
+	default: return createFail("circleType has invalid value");
+	}
+
+	// Create a consistent channel group meta from the information supplied
+	RsGxsForumGroup forum;
+
+	forum.mMeta.mGroupName = name;
+	forum.mMeta.mAuthorId = authorId;
+	forum.mMeta.mCircleType = static_cast<uint32_t>(circleType);
+
+	forum.mMeta.mSignFlags = GXS_SERV::FLAG_GROUP_SIGN_PUBLISH_NONEREQ
+	        | GXS_SERV::FLAG_AUTHOR_AUTHENTICATION_REQUIRED;
+
+	forum.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+
+	forum.mMeta.mCircleId.clear();
+	forum.mMeta.mInternalCircle.clear();
+
+	switch(circleType)
+	{
+	case RsGxsCircleType::NODES_GROUP:
+		forum.mMeta.mInternalCircle = circleId; break;
+	case RsGxsCircleType::EXTERNAL:
+		forum.mMeta.mCircleId = circleId; break;
+	default: break;
+	}
+
+	forum.mDescription = description;
+	forum.mAdminList.ids = moderatorsIds;
+
+	uint32_t token;
+	if(!createGroup(token, forum))
+		return createFail("Failed creating GXS group.");
+
+	// wait for the group creation to complete.
+	RsTokenService::GxsRequestStatus wSt =
+	        waitToken( token, std::chrono::milliseconds(5000),
+	                   std::chrono::milliseconds(20) );
+	if(wSt != RsTokenService::COMPLETE)
+		return createFail( "GXS operation waitToken failed with: "
+		                   + std::to_string(wSt) );
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, forum.mMeta))
+		return createFail("Failure getting updated group data.");
+
+	forumId = forum.mMeta.mGroupId;
+
+	return true;
+}
+
+bool p3GxsForums::createPost(
+        const RsGxsGroupId& forumId, const std::string& title,
+        const std::string& mBody,
+        const RsGxsId& authorId, const RsGxsMessageId& parentId,
+        const RsGxsMessageId& origPostId, RsGxsMessageId& postMsgId,
+        std::string& errorMessage )
+{
+	RsGxsForumMsg post;
+
+	auto failure = [&](std::string errMsg)
+	{
+		errorMessage = errMsg;
+		RsErr() << __PRETTY_FUNCTION__ << " " << errorMessage << std::endl;
+		return false;
+	};
+
+	if(title.empty()) return failure("Title is required");
+
+	if(authorId.isNull()) return failure("Author id is needed");
+
+	if(!rsIdentity->isOwnId(authorId))
+		return failure( "Author id: " + authorId.toStdString() + " is not of"
+		                "own identity" );
+
+	if(!parentId.isNull())
+	{
+		std::vector<RsGxsForumMsg> msgs;
+		if( getForumContent(forumId, std::set<RsGxsMessageId>({parentId}), msgs)
+		        && msgs.size() == 1 )
+		{
+			post.mMeta.mParentId = parentId;
+			post.mMeta.mThreadId = msgs[0].mMeta.mThreadId;
+		}
+		else return failure("Parent post " + parentId.toStdString()
+		                    + " doesn't exists locally");
+	}
+
+	std::vector<RsGxsForumGroup> forumInfo;
+	if(!getForumsInfo(std::list<RsGxsGroupId>({forumId}), forumInfo))
+		return failure( "Forum with Id " + forumId.toStdString()
+		                + " does not exist locally." );
+
+	if(!origPostId.isNull())
+	{
+		std::vector<RsGxsForumMsg> msgs;
+		if( getForumContent( forumId,
+		                     std::set<RsGxsMessageId>({origPostId}), msgs)
+		        && msgs.size() == 1 )
+			post.mMeta.mOrigMsgId = origPostId;
+		else return failure("Original post " + origPostId.toStdString()
+		                    + " doesn't exists locally");
+	}
+
+	post.mMeta.mGroupId  = forumId;
+	post.mMeta.mMsgName = title;
+	post.mMeta.mAuthorId = authorId;
+	post.mMsg = mBody;
+
+	uint32_t token;
+	if( !createMsg(token, post)
+	        || waitToken(
+	            token,
+	            std::chrono::milliseconds(5000) ) != RsTokenService::COMPLETE )
+		return failure("Failure creating GXS message");
+
+	if(!RsGenExchange::getPublishedMsgMeta(token, post.mMeta))
+		return failure("Failure getting created GXS message metadata");
+
+	postMsgId = post.mMeta.mMsgId;
+	return true;
+}
+
 bool p3GxsForums::createForum(RsGxsForumGroup& forum)
 {
 	uint32_t token;
@@ -461,8 +621,9 @@ bool p3GxsForums::getForumsInfo(
 }
 
 bool p3GxsForums::getForumContent(
-        const RsGxsGroupId& forumId, std::set<RsGxsMessageId>& msgs_to_request,
-        std::vector<RsGxsForumMsg>& msgs )
+                    const RsGxsGroupId& forumId,
+                    const std::set<RsGxsMessageId>& msgs_to_request,
+                    std::vector<RsGxsForumMsg>& msgs )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
@@ -813,3 +974,37 @@ void p3GxsForums::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 	}
 }
+
+void RsGxsForumGroup::serial_process(
+        RsGenericSerializer::SerializeJob j,
+        RsGenericSerializer::SerializeContext& ctx )
+{
+	RS_SERIAL_PROCESS(mMeta);
+	RS_SERIAL_PROCESS(mDescription);
+
+	/* Work around to have usable JSON API, without breaking binary
+	 * serialization retrocompatibility */
+	switch (j)
+	{
+	case RsGenericSerializer::TO_JSON: // fallthrough
+	case RsGenericSerializer::FROM_JSON:
+		RsTypeSerializer::serial_process( j, ctx,
+		                                  mAdminList.ids, "mAdminList" );
+		RsTypeSerializer::serial_process( j, ctx,
+		                                  mPinnedPosts.ids, "mPinnedPosts" );
+		break;
+	default:
+		RS_SERIAL_PROCESS(mAdminList);
+		RS_SERIAL_PROCESS(mPinnedPosts);
+	}
+}
+
+bool RsGxsForumGroup::canEditPosts(const RsGxsId& id) const
+{
+	return mAdminList.ids.find(id) != mAdminList.ids.end() ||
+	        id == mMeta.mAuthorId;
+}
+
+RsGxsForumGroup::~RsGxsForumGroup() = default;
+RsGxsForumMsg::~RsGxsForumMsg() = default;
+RsGxsForums::~RsGxsForums() = default;

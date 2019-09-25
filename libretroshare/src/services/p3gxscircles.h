@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2012-2014  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef P3_CIRCLES_SERVICE_HEADER
-#define P3_CIRCLES_SERVICE_HEADER
+#pragma once
 
 
 #include "retroshare/rsgxscircles.h"	// External Interfaces.
@@ -180,7 +180,14 @@ virtual RsServiceInfo getServiceInfo();
 	/*********** External Interface ***************/
 
 	/// @see RsGxsCircles
-	bool createCircle(RsGxsCircleGroup& cData) override;
+	bool createCircle(
+	        const std::string& circleName, RsGxsCircleType circleType,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        const RsGxsCircleId& restrictedId = RsGxsCircleId(),
+	        const RsGxsId& authorId = RsGxsId(),
+	        const std::set<RsGxsId>& gxsIdMembers = std::set<RsGxsId>(),
+	        const std::set<RsPgpId>& localMembers = std::set<RsPgpId>()
+	        ) override;
 
 	/// @see RsGxsCircles
 	bool editCircle(RsGxsCircleGroup& cData) override;
@@ -315,5 +322,3 @@ virtual RsServiceInfo getServiceInfo();
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
 };
-
-#endif // P3_CIRCLES_SERVICE_HEADER

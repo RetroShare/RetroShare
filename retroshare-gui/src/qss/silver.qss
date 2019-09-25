@@ -22,18 +22,18 @@ HeaderFrame {
 
 /* Customize the toolbar. */
 QToolBar#toolBarAction {
-    border-image: url(qss/silver/silver.png);
+    border-image: url(%THISPATH%/silver/silver.png);
 
 }
 
 /* Customize the toolbar. */
 QToolBar#toolBarPage {
-    border-image: url(qss/silver/silver.png);
+    border-image: url(%THISPATH%/silver/silver.png);
 
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/silver/silver.png);
+    border-image: url(%THISPATH%/silver/silver.png);
 
 }
 
@@ -92,7 +92,7 @@ QStatusBar{
 
 QFrame#messengerframetop{
          
-        border-image: url(qss/silver/silver.png);
+        border-image: url(%THISPATH%/silver/silver.png);
 
          
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -101,7 +101,7 @@ QFrame#messengerframetop{
 
 QFrame#Chatbuttonframe{
          
-        border-image: url(qss/silver/silver.png);
+        border-image: url(%THISPATH%/silver/silver.png);
 
 }
 

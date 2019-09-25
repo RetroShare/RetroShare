@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2017  Cyril Soler <csoler@users.sourceforge.net>              *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2017       Cyril Soler <csoler@users.sourceforge.net>         *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -39,8 +39,7 @@
 #include <rapid_json/prettywriter.h>
 #endif // HAS_RAPIDJSON
 
-//static const uint32_t MAX_SERIALIZED_ARRAY_SIZE = 500 ;
-static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
+static constexpr uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
 #ifdef RSSERIAL_DEBUG
 #	define SAFE_GET_JSON_V() \
@@ -62,6 +61,61 @@ static const uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 	rapidjson::Value& v = jDoc[mName]
 #endif // ifdef RSSERIAL_DEBUG
 
+
+//============================================================================//
+//                             std::string                                    //
+//============================================================================//
+
+template<> uint32_t RsTypeSerializer::serial_size(const std::string& str)
+{
+	return getRawStringSize(str);
+}
+template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
+                                             uint32_t& offset,
+                                             const std::string& str )
+{
+	return setRawString(data, size, &offset, str);
+}
+template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
+                                               uint32_t size, uint32_t &offset,
+                                               std::string& str )
+{
+	return getRawString(data, size, &offset, str);
+}
+template<> void RsTypeSerializer::print_data( const std::string& n,
+                                              const std::string& str )
+{
+	std::cerr << "  [std::string] " << n << ": " << str << std::endl;
+}
+template<>  /*static*/
+bool RsTypeSerializer::to_JSON( const std::string& membername,
+                                const std::string& member, RsJson& jDoc )
+{
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
+
+	rapidjson::Value key;
+	key.SetString( membername.c_str(),
+	               static_cast<rapidjson::SizeType>(membername.length()),
+	               allocator );
+
+	rapidjson::Value value;
+	value.SetString( member.c_str(),
+	                 static_cast<rapidjson::SizeType>(member.length()),
+	                 allocator );
+
+	jDoc.AddMember(key, value, allocator);
+
+	return true;
+}
+template<> /*static*/
+bool RsTypeSerializer::from_JSON( const std::string& memberName,
+                                  std::string& member, RsJson& jDoc )
+{
+	SAFE_GET_JSON_V();
+	ret = ret && v.IsString();
+	if(ret) member = v.GetString();
+	return ret;
+}
 
 //============================================================================//
 //                             Integer types                                  //
@@ -199,7 +253,9 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
 	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator(); \
 	\
 	rapidjson::Value key; \
-	key.SetString(memberName.c_str(), memberName.length(), allocator); \
+	key.SetString( memberName.c_str(), \
+	               static_cast<rapidjson::SizeType>(memberName.length()), \
+	               allocator ); \
  \
 	rapidjson::Value value(member); \
  \
@@ -210,12 +266,39 @@ template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
 
 SIMPLE_TO_JSON_DEF(bool)
 SIMPLE_TO_JSON_DEF(int32_t)
-SIMPLE_TO_JSON_DEF(rstime_t)
 
 SIMPLE_TO_JSON_DEF(uint8_t)
 SIMPLE_TO_JSON_DEF(uint16_t)
 SIMPLE_TO_JSON_DEF(uint32_t)
-SIMPLE_TO_JSON_DEF(uint64_t)
+
+/** Be very careful in changing this constant as it would break 64 bit integers
+ * members JSON string representation retrocompatibility */
+static constexpr char strReprSuffix[] = "_sixtyfour_str";
+
+/** While JSON doesn't have problems representing 64 bit integers JavaScript
+ * standard represents numbers in a double-like format thus it is not capable to
+ * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we add
+ * to JSON also the string representation for this types as a workaround for the
+ * sake of JavaScript clients @see https://stackoverflow.com/a/34989371
+ */
+#define SIXTYFOUR_INTEGERS_TO_JSON_DEF(T) \
+template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
+	                                       const T& member, RsJson& jDoc ) \
+{ \
+	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator(); \
+ \
+	rapidjson::Value key; \
+	key.SetString( memberName.c_str(), \
+	               static_cast<rapidjson::SizeType>(memberName.length()), \
+	               allocator ); \
+	rapidjson::Value value(member); \
+	jDoc.AddMember(key, value, allocator); \
+ \
+	return to_JSON(memberName + strReprSuffix, std::to_string(member), jDoc); \
+}
+
+SIXTYFOUR_INTEGERS_TO_JSON_DEF(int64_t);
+SIXTYFOUR_INTEGERS_TO_JSON_DEF(uint64_t);
 
 template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName, bool& member,
@@ -238,22 +321,12 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 }
 
 template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName, rstime_t& member,
-                                  RsJson& jDoc )
-{
-	SAFE_GET_JSON_V();
-	ret = ret && v.IsInt64();
-	if(ret) member = v.GetInt64();
-	return ret;
-}
-
-template<> /*static*/
 bool RsTypeSerializer::from_JSON( const std::string& memberName,
                                   uint8_t& member, RsJson& jDoc )
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
-	if(ret) member = v.GetUint();
+	if(ret) member = static_cast<uint8_t>(v.GetUint());
 	return ret;
 }
 
@@ -263,7 +336,7 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 {
 	SAFE_GET_JSON_V();
 	ret = ret && v.IsUint();
-	if(ret) member = v.GetUint();
+	if(ret) member = static_cast<uint16_t>(v.GetUint());
 	return ret;
 }
 
@@ -277,14 +350,98 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	return ret;
 }
 
+/** While JSON doesn't have problems representing 64 bit integers JavaScript
+ * standard represents numbers in a double-like format thus it is not capable to
+ * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we look
+ * for the string representation in the JSON for this types as a workaround for
+ * the sake of JavaScript clients @see https://stackoverflow.com/a/34989371
+ */
 template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  uint64_t& member, RsJson& jDoc )
+bool RsTypeSerializer::from_JSON(
+        const std::string& memberName, int64_t& member, RsJson& jDoc )
 {
-	SAFE_GET_JSON_V();
-	ret = ret && v.IsUint64();
-	if(ret) member = v.GetUint64();
-	return ret;
+	const char* mName = memberName.c_str();
+	if(jDoc.HasMember(mName))
+	{
+		rapidjson::Value& v = jDoc[mName];
+		if(v.IsInt64())
+		{
+			member = v.GetInt64();
+			return true;
+		}
+	}
+
+	Dbg4() << __PRETTY_FUNCTION__ << " int64_t " << memberName << " not found "
+	       << "in JSON then attempt to look for string representation"
+	       << std::endl;
+
+	const std::string str_key = memberName + strReprSuffix;
+	std::string str_value;
+	if(from_JSON(str_key, str_value, jDoc))
+	{
+		try { member = std::stoll(str_value); }
+		catch (...)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " cannot convert "
+			        << str_value << " to int64_t" << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	Dbg3() << __PRETTY_FUNCTION__ << " neither " << memberName << " nor its "
+	       << "string representation " << str_key << " has been found "
+	       << "in JSON" << std::endl;
+
+	return false;
+}
+
+/** While JSON doesn't have problems representing 64 bit integers JavaScript
+ * standard represents numbers in a double-like format thus it is not capable to
+ * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we look
+ * for the string representation in the JSON for this types as a workaround for
+ * the sake of JavaScript clients @see https://stackoverflow.com/a/34989371
+ */
+template<> /*static*/
+bool RsTypeSerializer::from_JSON(
+        const std::string& memberName, uint64_t& member, RsJson& jDoc )
+{
+	const char* mName = memberName.c_str();
+	if(jDoc.HasMember(mName))
+	{
+		rapidjson::Value& v = jDoc[mName];
+		if(v.IsUint64())
+		{
+			member = v.GetUint64();
+			return true;
+		}
+	}
+
+	Dbg4() << __PRETTY_FUNCTION__ << " uint64_t " << memberName << " not found "
+	       << "in JSON then attempt to look for string representation"
+	       << std::endl;
+
+	const std::string str_key = memberName + strReprSuffix;
+	std::string str_value;
+	if(from_JSON(str_key, str_value, jDoc))
+	{
+		try { member = std::stoull(str_value); }
+		catch (...)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " cannot convert "
+			        << str_value << " to uint64_t" << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	Dbg3() << __PRETTY_FUNCTION__ << " neither " << memberName << " nor its "
+	       << "string representation " << str_key << " has been found "
+	       << "in JSON" << std::endl;
+
+	return false;
 }
 
 
@@ -361,59 +518,6 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	if(ret) member = v.GetDouble();
 	return ret;
 }
-
-
-//============================================================================//
-//                             std::string                                    //
-//============================================================================//
-
-template<> uint32_t RsTypeSerializer::serial_size(const std::string& str)
-{
-	return getRawStringSize(str);
-}
-template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
-                                             uint32_t& offset,
-                                             const std::string& str )
-{
-	return setRawString(data, size, &offset, str);
-}
-template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
-                                               uint32_t size, uint32_t &offset,
-                                               std::string& str )
-{
-	return getRawString(data, size, &offset, str);
-}
-template<> void RsTypeSerializer::print_data( const std::string& n,
-                                              const std::string& str )
-{
-	std::cerr << "  [std::string] " << n << ": " << str << std::endl;
-}
-template<>  /*static*/
-bool RsTypeSerializer::to_JSON( const std::string& membername,
-                                const std::string& member, RsJson& jDoc )
-{
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
-
-	rapidjson::Value key;
-	key.SetString(membername.c_str(), membername.length(), allocator);
-
-	rapidjson::Value value;;
-	value.SetString(member.c_str(), member.length(), allocator);
-
-	jDoc.AddMember(key, value, allocator);
-
-	return true;
-}
-template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  std::string& member, RsJson& jDoc )
-{
-	SAFE_GET_JSON_V();
-	ret = ret && v.IsString();
-	if(ret) member = v.GetString();
-	return ret;
-}
-
 
 
 //============================================================================//
@@ -628,11 +732,13 @@ bool RsTypeSerializer::to_JSON(
 	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
 
 	rapidjson::Value key;
-	key.SetString(memberName.c_str(), memberName.length(), allocator);
+	key.SetString( memberName.c_str(),
+	               static_cast<rapidjson::SizeType>(memberName.length()),
+	               allocator );
 
 	std::string encodedValue;
 	Radix64::encode( reinterpret_cast<uint8_t*>(member.first),
-	                 member.second, encodedValue );
+	                 static_cast<int>(member.second), encodedValue );
 
 	rapidjson::Value value;
 	value.SetString(encodedValue.data(), allocator);

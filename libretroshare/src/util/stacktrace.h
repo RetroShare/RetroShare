@@ -23,12 +23,10 @@
 #include <cstdio>
 #include <csignal>
 #include <cstdlib>
-#include <stdio.h>
 
-#if defined(__linux__) && defined(__GLIBC__)
-
-#include <execinfo.h>
-#include <cxxabi.h>
+#ifdef __ANDROID__
+#	include "util/rsdebug.h"
+#endif
 
 /**
  * @brief Print a backtrace to FILE* out.
@@ -40,7 +38,16 @@
  * @param[in] maxFrames maximum number of stack frames you want to bu printed
  */
 static inline void print_stacktrace(
-        bool demangle = true, FILE *out = stderr, unsigned int maxFrames = 63 )
+        bool demangle = true, FILE *out = stderr, unsigned int maxFrames = 63 );
+
+
+#if defined(__linux__) && defined(__GLIBC__)
+
+#include <execinfo.h>
+#include <cxxabi.h>
+
+static inline void print_stacktrace(
+        bool demangle, FILE* out, unsigned int maxFrames )
 {
 	if(!out)
 	{
@@ -140,15 +147,111 @@ static inline void print_stacktrace(
 	free(funcname);
 	free(symbollist);
 }
+#elif defined(__ANDROID__) // defined(__linux__) && defined(__GLIBC__)
+
+/* Inspired by the solution proposed by Louis Semprini  on this thread
+ * https://stackoverflow.com/questions/8115192/android-ndk-getting-the-backtrace/35586148
+ */
+
+#include <unwind.h>
+#include <dlfcn.h>
+#include <cxxabi.h>
+
+struct RsAndroidBacktraceState
+{
+	void** current;
+	void** end;
+};
+
+static inline _Unwind_Reason_Code android_unwind_callback(
+        struct _Unwind_Context* context, void* arg )
+{
+	RsAndroidBacktraceState* state = static_cast<RsAndroidBacktraceState*>(arg);
+	uintptr_t pc = _Unwind_GetIP(context);
+	if(pc)
+	{
+		if (state->current == state->end) return _URC_END_OF_STACK;
+
+		*state->current++ = reinterpret_cast<void*>(pc);
+	}
+	return _URC_NO_REASON;
+}
+
+static inline void print_stacktrace(
+        bool demangle, FILE* /*out*/, unsigned int /*maxFrames*/)
+{
+	constexpr int max = 5000;
+	void* buffer[max];
+
+	RsAndroidBacktraceState state;
+	state.current = buffer;
+	state.end = buffer + max;
+
+	_Unwind_Backtrace(android_unwind_callback, &state);
+
+	RsDbg() << std::endl << std::endl
+	        << 0 << " " << buffer[0] << " " << __PRETTY_FUNCTION__ << std::endl;
+
+	// Skip first frame which is print_stacktrace
+	int count = static_cast<int>(state.current - buffer);
+	for(int idx = 1; idx < count; ++idx)
+	{
+		const void* addr = buffer[idx];
+
+		/* Ignore null addresses.
+		 * They sometimes happen when using _Unwind_Backtrace()
+		 * with compiler optimizations, when the Link Register is overwritten by
+		 * the inner stack frames. */
+		if(!addr) continue;
+
+		/* Ignore duplicate addresses.
+		 * They sometimes happen when using _Unwind_Backtrace() with compiler
+		 * optimizations. */
+		if(addr == buffer[idx-1]) continue;
+
+		Dl_info info;
+		if( !(dladdr(addr, &info) && info.dli_sname) )
+		{
+			RsDbg() << idx << " " << addr << " " << info.dli_fname
+			        << " symbol not found" << std::endl;
+			continue;
+		}
+
+		if(demangle)
+		{
+			int status = 0;
+			char* demangled = __cxxabiv1::__cxa_demangle(
+			            info.dli_sname, nullptr, nullptr, &status );
+
+			if(demangled && (status == 0))
+				RsDbg() << idx << " " << addr << " " << demangled << std::endl;
+			else
+				RsDbg() << idx << " " << addr << " "
+				        << (info.dli_sname ? info.dli_sname : info.dli_fname)
+				        << " __cxa_demangle failed with: " << status
+				        << std::endl;
+
+			free(demangled);
+		}
+		else RsDbg() << idx << " " << addr << " "
+		             << (info.dli_sname ? info.dli_sname : info.dli_fname)
+		             << std::endl;
+	}
+
+	RsDbg() << std::endl << std::endl;
+}
 
 #else // defined(__linux__) && defined(__GLIBC__)
-static inline void print_stacktrace(
-        bool demangle = true, FILE *out = stderr, unsigned int max_frames = 63 )
-{
-	(void) demangle;
-	(void) max_frames;
 
-	fprintf(out, "TODO: 2016/01/01 print_stacktrace not implemented yet for WINDOWS_SYS and ANDROID\n");
+static inline void print_stacktrace(
+        bool /*demangle*/, FILE* out, unsigned int /*max_frames*/ )
+{
+	/** Notify the user which signal was caught. We use printf, because this
+	 * is the most basic output function. Once you get a crash, it is
+	 * possible that more complex output systems like streams and the like
+	 * may be corrupted. So we make the most basic call possible to the
+	 * lowest level, most standard print function. */
+	fprintf(out, "print_stacktrace Not implemented yet for this platform\n");
 }
 #endif // defined(__linux__) && defined(__GLIBC__)
 
@@ -169,6 +272,7 @@ struct CrashStackTrace
 #endif
 	}
 
+	[[ noreturn ]]
 	static void abortHandler(int signum)
 	{
 		// associate each signal with a signal name string.
@@ -184,6 +288,7 @@ struct CrashStackTrace
 #endif
 		}
 
+#ifndef __ANDROID__
 		/** Notify the user which signal was caught. We use printf, because this
 		 * is the most basic output function. Once you get a crash, it is
 		 * possible that more complex output systems like streams and the like
@@ -193,6 +298,11 @@ struct CrashStackTrace
 			fprintf(stderr, "Caught signal %d (%s)\n", signum, name);
 		else
 			fprintf(stderr, "Caught signal %d\n", signum);
+#else // ndef __ANDROID__
+		/** On Android the best we can to is to rely on RS debug utils */
+		RsFatal() << __PRETTY_FUNCTION__ << " Caught signal " << signum << " "
+		          << (name ? name : "") << std::endl;
+#endif
 
 		print_stacktrace(false);
 

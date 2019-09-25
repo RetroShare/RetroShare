@@ -126,8 +126,7 @@ FriendList::FriendList(QWidget *parent) :
 #ifdef RS_DIRECT_CHAT
 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatfriend(QTreeWidgetItem *)));
 #else
-	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)),
-	         this, SLOT(expandItem(QTreeWidgetItem *)) );
+	connect( ui->peerTreeWidget, SIGNAL(itemClicked(QTreeWidgetItem *, int)), this, SLOT(expandItem(QTreeWidgetItem *)) );
 #endif
 
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged()));
@@ -1014,6 +1013,7 @@ void FriendList::insertPeers()
                     if (rsState == 0) {
                         sslFont.setBold(true);
                         sslColor = mTextColorStatus[RS_STATUS_ONLINE];
+
                     } else {
                         sslFont = StatusDefs::font(rsState);
                         sslColor = mTextColorStatus[rsState];
@@ -1965,7 +1965,7 @@ bool FriendList::exportFriendlist(QString &fileName)
 /**
  * @brief helper function to show a message box
  */
-void showXMLParsingError()
+static void showXMLParsingError()
 {
     // show error to user
     QMessageBox mbox;

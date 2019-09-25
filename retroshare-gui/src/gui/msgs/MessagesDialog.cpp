@@ -187,9 +187,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     //setting default filter by column as subject
     ui.filterLineEdit->setCurrentFilter(RsMessageModel::COLUMN_THREAD_SUBJECT);
 
-    // load settings
-    processSettings(true);
-
     ///////////////////////////////////////////////////////////////////////////////////////
     // Post "load settings" actions (which makes sure they are not affected by settings) //
     ///////////////////////////////////////////////////////////////////////////////////////
@@ -233,6 +230,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     // fill quick view
     fillQuickView();
+
+	sortColumn(RsMessageModel::COLUMN_THREAD_DATE,Qt::DescendingOrder);
+
+    // load settings
+    processSettings(true);
 
     //ui.messageTreeWidget->installEventFilter(this);
 
@@ -345,9 +347,8 @@ void MessagesDialog::processSettings(bool load)
         ui.filterLineEdit->setCurrentFilter(Settings->value("filterColumn", RsMessageModel::COLUMN_THREAD_SUBJECT).toInt());
 
         // state of message tree
-        if (Settings->value("MessageTreeVersion").toInt() == messageTreeVersion) {
+        if (Settings->value("MessageTreeVersion").toInt() == messageTreeVersion)
             msgwheader->restoreState(Settings->value("MessageTree").toByteArray());
-        }
 
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("SplitterMsg").toByteArray());

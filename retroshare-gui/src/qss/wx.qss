@@ -1,13 +1,13 @@
 
 /* Customize the toolbar. */
 QToolBar {
-    border-image: url(qss/wx/wx.png);
+    border-image: url(%THISPATH%/wx/wx.png);
 
 }
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
        
-    border-image: url(qss/wx/wx.png);
+    border-image: url(%THISPATH%/wx/wx.png);
 }
 
 
@@ -43,7 +43,7 @@ QPushButton#applyButton {
 
 QFrame#messengerframetop{
          
-        border-image: url(qss/wx/wx.png);
+        border-image: url(%THISPATH%/wx/wx.png);
          
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
@@ -51,7 +51,7 @@ QFrame#messengerframetop{
 
 QFrame#Chatbuttonframe{
          
-        border-image: url(qss/wx/wx.png);
+        border-image: url(%THISPATH%/wx/wx.png);
 
 }
 

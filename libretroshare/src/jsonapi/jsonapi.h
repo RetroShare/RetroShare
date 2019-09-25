@@ -1,24 +1,22 @@
 /*******************************************************************************
- * libretroshare/src/gxs: jsonapi.h                                            *
- *                                                                             *
  * RetroShare JSON API                                                         *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ *                                                                             *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Lesser General Public License as              *
+ * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
- * GNU Lesser General Public License for more details.                         *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+ * GNU Affero General Public License for more details.                         *
  *                                                                             *
- * You should have received a copy of the GNU Lesser General Public License    *
+ * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
 #pragma once
 
 #include <string>
@@ -54,6 +52,8 @@ extern JsonApiServer* jsonApiServer;
  */
 struct JsonApiServer : RsSingleJobThread, p3Config
 {
+	static const uint16_t DEFAULT_PORT = 9092 ;
+
 	/**
 	 * @brief construct a JsonApiServer instance with given parameters
 	 * @param[in] port listening port fpt the JSON API socket
@@ -64,7 +64,7 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	 *	false otherwise, this usually requires user interacion to confirm access
 	 */
 	JsonApiServer(
-	        uint16_t port = 9092,
+	        uint16_t port = DEFAULT_PORT,
 	        const std::string& bindAddress = "127.0.0.1",
 	        const std::function<bool(const std::string&)> newAccessRequestCallback = [](const std::string&){return false;} );
 
@@ -199,8 +199,18 @@ private:
 	static void handleCorsOptions(const std::shared_ptr<rb::Session> session);
 
 	static bool checkRsServicePtrReady(
-	        void* serviceInstance, const std::string& serviceName,
+	        const void* serviceInstance, const std::string& serviceName,
 	        RsGenericSerializer::SerializeContext& ctx,
 	        const std::shared_ptr<restbed::Session> session );
+
+	static inline bool checkRsServicePtrReady(
+	        const std::shared_ptr<const void> serviceInstance,
+	        const std::string& serviceName,
+	        RsGenericSerializer::SerializeContext& ctx,
+	        const std::shared_ptr<restbed::Session> session )
+	{
+		return checkRsServicePtrReady(
+		            serviceInstance.get(), serviceName, ctx, session );
+	}
 };
 

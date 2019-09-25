@@ -7,6 +7,10 @@ Files: openpgpsdk/*
 Copyright: 2005-2008 Ben Laurie, Rachel Willmer, Retroshare Team <retroshare.team@gmail.com>
 License: Apache-2.0
 
+Files: jsonapi-generator/* libretroshare/src/jsonapi/*
+Copyright: 2018-2019 Gioacchino Mazzurco <gio@eigenlab.org>
+License: AGPL-3+
+
 Files: libretroshare/*
 Copyright: 2007-2018, Retroshare Team <retroshare.team@gmail.com>
 License: LGPL-3+

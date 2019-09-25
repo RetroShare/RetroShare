@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include "util/stacktrace.h"
+#include "util/argstream.h"
 
 CrashStackTrace gCrashStackTrace;
 
@@ -32,7 +33,6 @@ CrashStackTrace gCrashStackTrace;
 #include "gui/FriendsDialog.h"
 #include "gui/GenCertDialog.h"
 #include "gui/MainWindow.h"
-#include "gui/MessengerWindow.h"
 #include "gui/NetworkDialog.h"
 #include "gui/NetworkView.h"
 #include "gui/QuickStartWizard.h"
@@ -51,7 +51,11 @@ CrashStackTrace gCrashStackTrace;
 #include "util/RsGxsUpdateBroadcast.h"
 #include "util/rsdir.h"
 #include "util/rstime.h"
+#include "retroshare/rsinit.h"
 
+#ifdef MESSENGER_WINDOW
+#include "gui/MessengerWindow.h"
+#endif
 #ifdef ENABLE_WEBUI
 #	include "gui/settings/WebuiPage.h"
 #endif
@@ -226,7 +230,36 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	/* RetroShare Core Objects */
 	RsInit::InitRsConfig();
-	int initResult = RsInit::InitRetroShare(argc, argv);
+
+    RsConfigOptions conf;
+
+    conf.jsonApiPort = 0 ; // disable JSon API at start. The JSonAPI preference UI will enable it according to saved parameters.
+
+	argstream as(argc,argv);
+	as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file."    )
+	        >> option('u',"udp"              ,conf.udpListenerOnly,"Only listen to UDP."                      )
+	        >> parameter('c',"base-dir"      ,conf.optBaseDir     ,"directory", "Set base directory."                                         ,false)
+	        >> parameter('l',"log-file"      ,conf.logfname       ,"logfile"   ,"Set Log filename."                                           ,false)
+	        >> parameter('d',"debug-level"   ,conf.debugLevel     ,"level"     ,"Set debug level."                                            ,false)
+	        >> parameter('i',"ip-address"    ,conf.forcedInetAddress,"nnn.nnn.nnn.nnn", "Force IP address to use (if cannot be detected)."    ,false)
+	        >> parameter('p',"port"          ,conf.forcedPort     ,"port"      ,"Set listenning port to use."                                 ,false)
+	        >> parameter('o',"opmode"        ,conf.opModeStr      ,"opmode"    ,"Set Operating mode (Full, NoTurtle, Gaming, Minimal)."       ,false);
+#ifdef RS_JSONAPI
+	as      >> parameter('J', "jsonApiPort", conf.jsonApiPort, "jsonApiPort", "Enable JSON API on the specified port", false )
+	        >> parameter('P', "jsonApiBindAddress", conf.jsonApiBindAddress, "jsonApiBindAddress", "JSON API Bind Address.", false);
+#endif // ifdef RS_JSONAPI
+
+#ifdef LOCALNET_TESTING
+	as      >> parameter('R',"restrict-port" ,portRestrictions             ,"port1-port2","Apply port restriction"                   ,false);
+#endif // ifdef LOCALNET_TESTING
+
+#ifdef RS_AUTOLOGIN
+	as      >> option('a',"auto-login"       ,conf.autoLogin      ,"AutoLogin (Windows Only) + StartMinimised");
+#endif // ifdef RS_AUTOLOGIN
+
+    conf.main_executable_path = argv[0];
+
+	int initResult = RsInit::InitRetroShare(conf);
 
 	if(initResult == RS_INIT_NO_KEYRING)	// happens when we already have accounts, but no pgp key. This is when switching to the openpgp-sdk version.
 	{
@@ -250,7 +283,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 			if(!RsAccounts::CopyGnuPGKeyrings())
 				return 0 ; 
 
-			initResult = RsInit::InitRetroShare(argc, argv);
+			initResult = RsInit::InitRetroShare(conf);
 
 			displayWarningAboutDSAKeys() ;
 

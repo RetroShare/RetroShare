@@ -678,14 +678,13 @@ bool  ftServer::ExtraFileAdd(std::string fname, const RsFileHash& hash, uint64_t
 }
 
 bool ftServer::ExtraFileRemove(const RsFileHash& hash)
-{
-	mFileDatabase->removeExtraFile(hash);
-    return true;
-}
+{ return mFileDatabase->removeExtraFile(hash); }
 
-bool ftServer::ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags)
+bool ftServer::ExtraFileHash(
+        std::string localpath, rstime_t period, TransferRequestFlags flags )
 {
-	return mFtExtra->hashExtraFile(localpath, period, flags);
+	return mFtExtra->hashExtraFile(
+	            localpath, static_cast<uint32_t>(period), flags );
 }
 
 bool ftServer::ExtraFileStatus(std::string localpath, FileInfo &info)
@@ -1227,6 +1226,7 @@ void ftServer::deriveEncryptionKey(const RsFileHash& hash, uint8_t *key)
 	SHA256_Final (key, &sha_ctx);
 }
 
+#ifdef USE_NEW_METHOD
 static const uint32_t ENCRYPTED_FT_INITIALIZATION_VECTOR_SIZE = 12 ;
 static const uint32_t ENCRYPTED_FT_AUTHENTICATION_TAG_SIZE    = 16 ;
 static const uint32_t ENCRYPTED_FT_HEADER_SIZE                =  4 ;
@@ -1234,7 +1234,7 @@ static const uint32_t ENCRYPTED_FT_EDATA_SIZE                 =  4 ;
 
 static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_POLY1305 = 0x01 ;
 static const uint8_t  ENCRYPTED_FT_FORMAT_AEAD_CHACHA20_SHA256   = 0x02 ;
-
+#endif //USE_NEW_METHOD
 
 bool ftServer::encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item)
 {

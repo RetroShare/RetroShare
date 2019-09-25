@@ -108,7 +108,7 @@ SOURCES +=	tcponudp/udppeer.cc \
 		tcponudp/tcppacket.cc \
 		tcponudp/tcpstream.cc \
 		tcponudp/tou.cc \
-		tcponudp/bss_tou.c \
+                tcponudp/bss_tou.cc \
 		tcponudp/udprelay.cc \
 		pqi/pqissludp.cc \
 
@@ -134,6 +134,8 @@ SOURCES +=	tcponudp/udppeer.cc \
 
 
 PUBLIC_HEADERS =	retroshare/rsdisc.h \
+    retroshare/rsgossipdiscovery \
+    retroshare/rsevents.h \
 					retroshare/rsexpr.h \
 					retroshare/rsfiles.h \
 					retroshare/rshistory.h \
@@ -193,13 +195,13 @@ linux-* {
 		}
 	}
 
-	# Check if the systems libupnp has been Debian-patched
-	system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
-		# Normal libupnp
-	} else {
-		# Patched libupnp or new unreleased version
-		DEFINES *= PATCHED_LIBUPNP
-	}
+    contains(RS_UPNP_LIB, threadutil) { # ensure we don't break libpnp-1.8.x
+        # Check if the systems libupnp-1.6.x has been Debian-patched
+        !system(grep -E 'char[[:space:]]+PublisherUrl' /usr/include/upnp/upnp.h >/dev/null 2>&1) {
+            # Patched libupnp or new unreleased version
+            DEFINES *= PATCHED_LIBUPNP
+        }
+    }
 
     PKGCONFIG *= libssl
     equals(RS_UPNP_LIB, "upnp ixml threadutil"):PKGCONFIG *= libupnp
@@ -451,7 +453,7 @@ HEADERS +=	rsitems/rsitem.h \
 			serialiser/rstlvbanlist.h \
 			rsitems/rsbanlistitems.h \
 			rsitems/rsbwctrlitems.h \
-			rsitems/rsdiscovery2items.h \
+    gossipdiscovery/gossipdiscoveryitems.h \
 			rsitems/rsheartbeatitems.h \
 			rsitems/rsrttitems.h \
 			rsitems/rsgxsrecognitems.h \
@@ -459,13 +461,14 @@ HEADERS +=	rsitems/rsitem.h \
 			rsitems/rsserviceinfoitems.h \
 
 HEADERS +=  services/autoproxy/p3i2pbob.h \
+            services/rseventsservice.h \
             services/autoproxy/rsautoproxymonitor.h \
             services/p3msgservice.h \
 			services/p3service.h \
 			services/p3statusservice.h \
 			services/p3banlist.h \
-			services/p3bwctrl.h \
-			services/p3discovery2.h \
+    services/p3bwctrl.h \
+    gossipdiscovery/p3gossipdiscovery.h \
 			services/p3heartbeat.h \
 			services/p3rtt.h \
 			services/p3serviceinfo.h  \
@@ -477,6 +480,7 @@ HEADERS +=	turtle/p3turtle.h \
 
 HEADERS +=	util/folderiterator.h \
 			util/rsdebug.h \
+			util/rskbdinput.h \
 			util/rsmemory.h \
 			util/smallobject.h \
 			util/rsdir.h \
@@ -557,9 +561,7 @@ SOURCES +=	pqi/authgpg.cc \
 			pqi/pqiqosstreamer.cc \
 			pqi/sslfns.cc \
 			pqi/pqinetstatebox.cc \
-			pqi/p3servicecontrol.cc \
-
-#			pqi/p3dhtmgr.cc \
+                        pqi/p3servicecontrol.cc
 
 SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/p3face-server.cc \
@@ -571,7 +573,6 @@ SOURCES += 		rsserver/p3face-config.cc \
 			rsserver/rsinit.cc \
 			rsserver/rsaccounts.cc \
 			rsserver/rsloginhandler.cc \
-			rsserver/rstypes.cc \
 			rsserver/p3serverconfig.cc
 
 SOURCES +=  grouter/p3grouter.cc \
@@ -601,7 +602,7 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 			serialiser/rstlvbanlist.cc \
 			rsitems/rsbanlistitems.cc \
 			rsitems/rsbwctrlitems.cc \
-			rsitems/rsdiscovery2items.cc \
+    gossipdiscovery/gossipdiscoveryitems.cc \
 			rsitems/rsrttitems.cc \
 			rsitems/rsgxsrecognitems.cc \
 			rsitems/rsgxsupdateitems.cc \
@@ -609,26 +610,24 @@ SOURCES +=	serialiser/rsbaseserial.cc \
 
 
 SOURCES +=  services/autoproxy/rsautoproxymonitor.cc \
+    services/rseventsservice.cc \
             services/autoproxy/p3i2pbob.cc \
             services/p3msgservice.cc \
 			services/p3service.cc \
 			services/p3statusservice.cc \
 			services/p3banlist.cc \
 			services/p3bwctrl.cc \
-			services/p3discovery2.cc \
+    gossipdiscovery/p3gossipdiscovery.cc \
 			services/p3heartbeat.cc \
 			services/p3rtt.cc \
 			services/p3serviceinfo.cc \
 
 SOURCES +=	turtle/p3turtle.cc \
-				turtle/rsturtleitem.cc 
-#				turtle/turtlerouting.cc \
-#				turtle/turtlesearch.cc \
-#				turtle/turtletunnels.cc
-
+                                turtle/rsturtleitem.cc
 
 SOURCES +=	util/folderiterator.cc \
 			util/rsdebug.cc \
+			util/rskbdinput.cc \
 			util/rsexpr.cc \
 			util/smallobject.cc \
 			util/rsdir.cc \
@@ -648,37 +647,14 @@ SOURCES +=	util/folderiterator.cc \
             util/rsurl.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
-	HEADERS += upnp/upnputil.h upnp/upnphandler_miniupnp.h
-	SOURCES += upnp/upnputil.c upnp/upnphandler_miniupnp.cc
-} else {
-	HEADERS += upnp/UPnPBase.h  upnp/upnphandler_linux.h
-	SOURCES += upnp/UPnPBase.cpp upnp/upnphandler_linux.cc
-	DEFINES *= RS_USE_LIBUPNP
+        HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
+        SOURCES += rs_upnp/upnputil.c rs_upnp/upnphandler_miniupnp.cc
 }
 
-zeroconf {
-
-HEADERS +=	zeroconf/p3zeroconf.h \
-
-SOURCES +=	zeroconf/p3zeroconf.cc  \
-
-# Disable Zeroconf (we still need the code for zcnatassist
-#	DEFINES *= RS_ENABLE_ZEROCONF
-
-}
-
-# This is seperated from the above for windows/linux platforms.
-# It is acceptable to build in zeroconf and have it not work, 
-# but unacceptable to rely on Apple's libraries for Upnp when we have alternatives. '
-
-zcnatassist {
-
-HEADERS +=	zeroconf/p3zcnatassist.h \
-
-SOURCES +=	zeroconf/p3zcnatassist.cc \
-
-	DEFINES *= RS_ENABLE_ZCNATASSIST
-
+contains(RS_UPNP_LIB, upnp) {
+        HEADERS += rs_upnp/upnp18_retrocompat.h
+        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_linux.h
+        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_linux.cc
 }
 
 # new gxs cache system
@@ -865,22 +841,26 @@ rs_jsonapi {
         DUMMYRESTBEDINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
         win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
-        genrestbedlib.name = Generating libresbed.
+        genrestbedlib.name = Generating librestbed.
         genrestbedlib.input = DUMMYRESTBEDINPUT
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
         genrestbedlib.commands = \
-            cd $${RS_SRC_PATH} && \
-            git submodule update --init --recommend-shallow supportlibs/restbed && \
-            cd $${RESTBED_SRC_PATH} && \
-            git submodule update --init --recommend-shallow dependency/asio && \
-            git submodule update --init --recommend-shallow dependency/catch && \
-            git submodule update --init --recommend-shallow dependency/kashmir && \
-            mkdir -p $${RESTBED_BUILD_PATH}; cd $${RESTBED_BUILD_PATH} && \
-            cmake -DCMAKE_CXX_COMPILER=$$QMAKE_CXX $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
-                -DCMAKE_INSTALL_PREFIX=. -B. -H$$shell_path($${RESTBED_SRC_PATH}) && \
-            make
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init supportlibs/restbed ; \
+            cd $${RESTBED_SRC_PATH} ; \
+            git submodule update --init dependency/asio ; \
+            git submodule update --init dependency/catch ; \
+            git submodule update --init dependency/kashmir ; \
+            true ) && \
+            mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
+            cmake \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                $${CMAKE_GENERATOR_OVERRIDE} -DBUILD_SSL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. \
+                -H$$shell_path($${RESTBED_SRC_PATH}) && \
+            $(MAKE)
         QMAKE_EXTRA_COMPILERS += genrestbedlib
 
         RESTBED_HEADER_FILE=$$clean_path($${RESTBED_BUILD_PATH}/include/restbed)
@@ -889,7 +869,7 @@ rs_jsonapi {
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
         genrestbedheader.CONFIG += target_predeps combine no_link
         genrestbedheader.variable_out = HEADERS
-        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && make install
+        genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader
     }
 
@@ -923,6 +903,37 @@ rs_jsonapi {
 
 rs_deep_search {
     HEADERS += deep_search/deep_search.h
+}
+
+rs_broadcast_discovery {
+    HEADERS += retroshare/rsbroadcastdiscovery.h \
+        services/broadcastdiscoveryservice.h
+    SOURCES += services/broadcastdiscoveryservice.cc
+
+    no_rs_cross_compiling {
+        DUMMYQMAKECOMPILERINPUT = FORCE
+        CMAKE_GENERATOR_OVERRIDE=""
+        win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        udpdiscoverycpplib.name = Generating libudp-discovery.a.
+        udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
+        udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
+        udpdiscoverycpplib.CONFIG += target_predeps combine
+        udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
+        udpdiscoverycpplib.commands = \
+            cd $${RS_SRC_PATH} && ( \
+            git submodule update --init supportlibs/udp-discovery-cpp || \
+            true ) && \
+            mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
+            cd $${UDP_DISCOVERY_BUILD_PATH} && \
+            cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
+                -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                $${CMAKE_GENERATOR_OVERRIDE} \
+                -DBUILD_EXAMPLE=OFF -DBUILD_TOOL=OFF \
+                -DCMAKE_INSTALL_PREFIX=. -B. \
+                -H$$shell_path($${UDP_DISCOVERY_SRC_PATH}) && \
+            $(MAKE)
+        QMAKE_EXTRA_COMPILERS += udpdiscoverycpplib
+    }
 }
 
 ###########################################################################################################

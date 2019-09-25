@@ -1,23 +1,25 @@
-/*
- * RetroShare JSON API
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * RetroShare JSON API                                                         *
+ *                                                                             *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
-registerHandler("$%apiPath%$",
-		[$%captureVars%$](const std::shared_ptr<rb::Session> session)
+registerHandler( "$%apiPath%$",
+                 [this](const std::shared_ptr<rb::Session> session)
 {
 	const std::multimap<std::string, std::string> headers
 	{
@@ -27,7 +29,7 @@ registerHandler("$%apiPath%$",
 	session->yield(rb::OK, headers);
 
 	size_t reqSize = session->get_request()->get_header("Content-Length", 0);
-	session->fetch( reqSize, [$%captureVars%$](
+	session->fetch( reqSize, [this](
 					const std::shared_ptr<rb::Session> session,
 					const rb::Bytes& body )
 	{
@@ -41,14 +43,25 @@ $%paramsDeclaration%$
 
 $%inputParamsDeserialization%$
 
-		$%callbackName%$ = [session]($%callbackParams%$)
+		const std::weak_ptr<rb::Session> weakSession(session);
+		$%callbackName%$ = [this, weakSession]($%callbackParams%$)
 		{
+			auto session = weakSession.lock();
+			if(!session || session->is_closed()) return;
+
 $%callbackParamsSerialization%$
 
-			std::stringstream message;
-			message << "data: " << compactJSON << ctx.mJson << "\n\n";
-			session->yield(message.str());
-			$%sessionEarlyClose%$
+			std::stringstream sStream;
+			sStream << "data: " << compactJSON << ctx.mJson << "\n\n";
+			const std::string message = sStream.str();
+
+			mService.schedule( [weakSession, message]()
+			{
+				auto session = weakSession.lock();
+				if(!session || session->is_closed()) return;
+				session->yield(message);
+				$%sessionEarlyClose%$
+			} );
 		};
 
 $%functionCall%$
@@ -61,5 +74,4 @@ $%outputParamsSerialization%$
 		session->yield(message.str());
 		$%sessionDelayedClose%$
 	} );
-}, $%requiresAuth%$);
-
+}, $%requiresAuth%$ );

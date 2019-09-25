@@ -1,20 +1,22 @@
-/*
- * RetroShare JSON API
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+/*******************************************************************************
+ * RetroShare JSON API                                                         *
+ *                                                                             *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDebug>
@@ -90,7 +92,7 @@ int main(int argc, char *argv[])
 	{
 		QDomDocument hDoc;
 		QString hFilePath(it.next());
-		QString parseError; int line, column;
+		QString parseError; int line = -1, column = -1;
 		QFile hFile(hFilePath);
 		if (!hFile.open(QIODevice::ReadOnly) ||
 		        !hDoc.setContent(&hFile, &parseError, &line, &column))
@@ -318,18 +320,13 @@ int main(int argc, char *argv[])
 					        "\t\t\tRS_SERIAL_PROCESS(retval);\n";
 				if(hasOutput) outputParamsSerialization += "\t\t}\n";
 
-				QString captureVars;
-
 				QString sessionEarlyClose;
 				if(hasSingleCallback)
 					sessionEarlyClose = "session->close();";
 
 				QString sessionDelayedClose;
 				if(hasMultiCallback)
-				{
-					sessionDelayedClose = "mService.schedule( [session](){session->close();}, std::chrono::seconds(maxWait+120) );";
-					captureVars = "this";
-				}
+					sessionDelayedClose = "RsThread::async( [=](){ std::this_thread::sleep_for(std::chrono::seconds(maxWait+120)); mService.schedule( [=](){ auto session = weakSession.lock(); if(session && session->is_open()) session->close(); } ); } );";
 
 				QString callbackParamsSerialization;
 
@@ -379,7 +376,6 @@ int main(int argc, char *argv[])
 				substitutionsMap.insert("apiPath", apiPath);
 				substitutionsMap.insert("sessionEarlyClose", sessionEarlyClose);
 				substitutionsMap.insert("sessionDelayedClose", sessionDelayedClose);
-				substitutionsMap.insert("captureVars", captureVars);
 				substitutionsMap.insert("callbackName", callbackName);
 				substitutionsMap.insert("callbackParams", callbackParams);
 				substitutionsMap.insert("callbackParamsSerialization", callbackParamsSerialization);

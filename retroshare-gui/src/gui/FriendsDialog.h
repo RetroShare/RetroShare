@@ -21,8 +21,6 @@
 #ifndef _FRIENDSDIALOG_H
 #define _FRIENDSDIALOG_H
 
-#include "retroshare-gui/RsAutoUpdatePage.h"
-
 #include "ui_FriendsDialog.h"
 
 #define IMAGE_NETWORK         	":/icons/png/network.png"
@@ -33,7 +31,7 @@ class NetworkView;
 class IdDialog;
 class CirclesDialog;
 
-class FriendsDialog : public RsAutoUpdatePage
+class FriendsDialog : public MainPage
 {
     Q_OBJECT
 
@@ -41,9 +39,7 @@ public:
 		 enum Page {
 						 /* Fixed numbers for load and save the last page */
 			 				IdTab              = 0,  /** Identities page. */
-#ifdef RS_USE_CIRCLES
-							CirclesTab         = 1,  /** Circles page. */
-#endif
+							// CirclesTab         = 1,  /** Circles page - DEPRECATED - please keep the numbering. */
 							NetworkTab         = 2,  /** Network page. */
 							NetworkViewTab     = 3,  /** Network new graph. */
 							BroadcastTab       = 4   /** Old group chat page. */
@@ -61,8 +57,6 @@ public:
 
     virtual UserNotify *getUserNotify(QObject *parent);
 
-    virtual void updateDisplay() ;	// overloaded from RsAutoUpdatePage
-
     static bool isGroupChatActive();
     static void groupChatActivate();
 
@@ -71,14 +65,8 @@ public:
 	 NetworkDialog *networkDialog ;
 	 NetworkView *networkView ;
 	 
-#ifdef RS_USE_CIRCLES
-	 CirclesDialog *circlesDialog;
-#endif
 	 IdDialog *idDialog;
 	 
-protected:
-    void showEvent (QShowEvent *event);
-
 private slots:
     void chatMessageReceived(const ChatMessage& msg);
     void chatStatusReceived(const ChatId& chat_id, const QString& status_string);

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/retroshare: rsdht.h                                       *
+ * RetroShare gossip discovery - discovery2 retro-compatibility include        *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,66 +19,14 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_DISC_GUI_INTERFACE_H
-#define RETROSHARE_DISC_GUI_INTERFACE_H
+#pragma once
 
-#include <inttypes.h>
-#include <string>
-#include <list>
-#include <map>
-#include <retroshare/rstypes.h>
+#include "retroshare/rsgossipdiscovery.h"
+#include "util/rsdeprecate.h"
 
-/* The Main Interface Class - for information about your Peers */
-class RsDisc;
+#warning "Including retroshare/rsdisc.h is deprecated, \
+use retroshare/rsgossipdiscovery.h instead"
 
-/**
- * Pointer to global instance of RsDisc service implementation
- * @jsonapi{development}
- */
-extern RsDisc   *rsDisc;
+using RsDisc RS_DEPRECATED_FOR("RsGossipDiscovery") = RsGossipDiscovery;
 
-class RsDisc
-{
-	public:
-
-	RsDisc() {}
-	virtual ~RsDisc() {}
-
-	/**
-	 * @brief getDiscFriends get a list with all friends (ssl id) to a given friend (ssl id)
-	 * @jsonapi{development}
-	 * @param[in] id peer to get the friends of
-	 * @param[out] friends list of friends (ssl id)
-	 * @return true on success false otherwise
-	 */
-	virtual bool	getDiscFriends(const RsPeerId &id, std::list<RsPeerId>& friends) = 0;
-
-	/**
-	 * @brief getDiscPgpFriends get a list with all friends (pgp id) to a given friend (pgp id)
-	 * @jsonapi{development}
-	 * @param[in] pgpid peer to get the friends of
-	 * @param[out] gpg_friends list of friends (gpg id)
-	 * @return true on success false otherwise
-	 */
-	virtual bool	getDiscPgpFriends(const RsPgpId &pgpid, std::list<RsPgpId>& gpg_friends) = 0;
-
-	/**
-	 * @brief getPeerVersion get the version string of a peer.
-	 * @jsonapi{development}
-	 * @param[in] id peer to get the version string of
-	 * @param[out] versions version string sent by the peer
-	 * @return true on success false otherwise
-	 */
-	virtual bool 	getPeerVersion(const RsPeerId &id, std::string &versions) = 0;
-
-	/**
-	 * @brief getWaitingDiscCount get the number of queued discovery packets.
-	 * @jsonapi{development}
-	 * @param[out] sendCount number of queued outgoing packets
-	 * @param[out] recvCount number of queued incoming packets
-	 * @return true on success false otherwise
-	 */
-	virtual bool 	getWaitingDiscCount(size_t &sendCount, size_t &recvCount) = 0;
-};
-
-#endif
+#define rsDisc rsGossipDiscovery.get()

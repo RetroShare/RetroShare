@@ -101,14 +101,20 @@ peerAddrInfo::peerAddrInfo()
 }
 
 peerConnectState::peerConnectState()
-	: connecttype(0),
-	 lastavailable(0),
-         lastattempt(0),
-         name(""),
-         state(0), actions(0),
-	 source(0), 
-	 inConnAttempt(0), 
-	 wasDeniedConnection(false), deniedTS(false), deniedInConnAttempt(false)
+	: dhtVisible(false),
+      connecttype(0),
+      actAsServer(false),
+      lastavailable(0),
+      lastattempt(0),
+      name(""),
+      state(0),
+      actions(0),
+      linkType(0),
+      source(0),
+      inConnAttempt(false),
+      wasDeniedConnection(false),
+      deniedTS(0),
+      deniedInConnAttempt(false)
 {
 }
 
@@ -471,12 +477,24 @@ void p3LinkMgrIMPL::tickMonitors()
 				if (peer.actions & RS_PEER_CONNECTED)
 				{
 					p3Notify *notify = RsServer::notify();
+
 					if (notify)
 					{
+                        // normally these two below should disappear: there's no notion of popup in libretroshare.
+                        // all GUI-type display features should be chosen in NotifyQt.
 						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id.toStdString(),"", "Online: ");
 						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString());
+
+						notify->notifyPeerConnected(peer.id.toStdString());
 					}
 				}
+				if (peer.actions & RS_PEER_DISCONNECTED)
+				{
+					p3Notify *notify = RsServer::notify();
+
+					if (notify)
+						notify->notifyPeerDisconnected(peer.id.toStdString());
+                }
 			}
 		}
 
@@ -1031,47 +1049,6 @@ bool p3LinkMgrIMPL::connectResult(const RsPeerId &id, bool success, bool isIncom
 /******************************** Feedback ......  *********************************
  * From various sources
  */
-
-// from pqissl, when a connection failed due to security
-void 	p3LinkMgrIMPL::notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &/*addr*/, bool incoming)
-{
-	std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection()";
-	std::cerr << " pgpid: " << gpgid;
-	std::cerr << " sslid: " << sslid;
-	std::cerr << " sslcn: " << sslcn;
-	std::cerr << std::endl;
-
-	RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-        std::map<RsPeerId, peerConnectState>::iterator it;
-	it = mFriendList.find(sslid);
-	if (it == mFriendList.end())
-	{
-		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() of NON-FRIEND: " << sslid;
-		std::cerr << std::endl;
-		return;
-	}
-
-	it->second.wasDeniedConnection = true;
-	it->second.deniedTS = time(NULL);
-
-	if ((!incoming) && it->second.inConnAttempt)
-	{
-		it->second.deniedInConnAttempt = true;
-		it->second.deniedConnectionAttempt = it->second.currentConnAddrAttempt;
-
-		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() Denied In Connection Attempt";
-		std::cerr << std::endl;
-	}
-	else
-	{
-		it->second.deniedInConnAttempt = false;
-		std::cerr << "p3LinkMgrIMPL::notifyDeniedConnection() Denied NOT In Connection Attempt";
-		std::cerr << std::endl;
-	}
-	return;
-}
-	
 
 void    p3LinkMgrIMPL::peerStatus(const RsPeerId& id, const pqiIpAddrSet &addrs,
                        uint32_t type, uint32_t flags, uint32_t source)
@@ -1656,30 +1633,8 @@ bool p3LinkMgrIMPL::retryConnectTCP(const RsPeerId &id)
 	return false;
 }
 
-
-#define MAX_TCP_ADDR_AGE	(3600 * 24 * 14) // two weeks in seconds.
-
-bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)
+bool p3LinkMgrIMPL::locked_CheckPotentialAddr(const sockaddr_storage& addr)
 {
-#ifdef LINKMGR_DEBUG
-	std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr("; 
-	std::cerr << sockaddr_storage_tostring(addr);
-	std::cerr << ", " << age << ")";
-	std::cerr << std::endl;
-#endif
-
-	/*
-	 * if it is old - quick rejection 
-	 */
-	if (age > MAX_TCP_ADDR_AGE)
-	{
-#ifdef LINKMGR_DEBUG
-		std::cerr << "p3LinkMgrIMPL::locked_CheckPotentialAddr() REJECTING - TOO OLD"; 
-		std::cerr << std::endl;
-#endif
-		return false;
-	}
-
 	/* if invalid - quick rejection */
 	if ( ! sockaddr_storage_isValidNet(addr) )
 	{
@@ -1726,7 +1681,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddress(peerConnectState *pee
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses()";
 	std::cerr << std::endl;
 #endif
-	if (locked_CheckPotentialAddr(remoteAddr, 0))
+	if(locked_CheckPotentialAddr(remoteAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_SpecificAddresses() ";
@@ -1757,7 +1712,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pe
 #endif
 	// Just push all the addresses onto the stack.
 	/* try "current addresses" first */
-	if (locked_CheckPotentialAddr(localAddr, 0))
+	if (locked_CheckPotentialAddr(localAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
@@ -1778,7 +1733,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses(peerConnectState *pe
 		addAddressIfUnique(peer->connAddrs, pca, false);
 	}
 
-	if (locked_CheckPotentialAddr(serverAddr, 0))
+	if (locked_CheckPotentialAddr(serverAddr))
 	{
 #ifdef LINKMGR_DEBUG
 		std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_CurrentAddresses() ";
@@ -1806,7 +1761,6 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	/* now try historical addresses */
 	/* try local addresses first */
 	std::list<pqiIpAddress>::const_iterator ait;
-	rstime_t now = time(NULL);
 
 #ifdef LINKMGR_DEBUG
 	std::cerr << "p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses()";
@@ -1814,7 +1768,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 #endif
     for(ait = ipAddrs.mLocal.mAddrs.begin();  ait != ipAddrs.mLocal.mAddrs.end(); ++ait)
 	{
-		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr))
 		{
 
 #ifdef LINKMGR_DEBUG
@@ -1841,7 +1795,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_HistoricalAddresses(peerConnectState 
 	for(ait = ipAddrs.mExt.mAddrs.begin(); 
 		ait != ipAddrs.mExt.mAddrs.end(); ++ait)
 	{
-		if (locked_CheckPotentialAddr(ait->mAddr, now - ait->mSeenTime))
+		if (locked_CheckPotentialAddr(ait->mAddr))
 		{
 	
 #ifdef LINKMGR_DEBUG
@@ -1898,7 +1852,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_AddDynDNS(peerConnectState *peer, std
 			pca.bandwidth = 0;
 			
 			/* check address validity */
-			if (locked_CheckPotentialAddr(pca.addr, 0))
+			if (locked_CheckPotentialAddr(pca.addr))
 			{
 				addAddressIfUnique(peer->connAddrs, pca, true);
 			}
@@ -1959,7 +1913,7 @@ void  p3LinkMgrIMPL::locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, 
 	pca.domain_port = domain_port;
 			
 	/* check address validity */
-	if (locked_CheckPotentialAddr(pca.addr, 0))
+	if (locked_CheckPotentialAddr(pca.addr))
 	{
 		addAddressIfUnique(peer->connAddrs, pca, true);
 	}
@@ -2207,11 +2161,10 @@ void p3LinkMgrIMPL::printPeerLists(std::ostream &out)
     return;
 }
 
-bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage &addr, rstime_t age)
+bool p3LinkMgrIMPL::checkPotentialAddr(const sockaddr_storage& addr)
 {
-    RsStackMutex stack(mLinkMtx); /****** STACK LOCK MUTEX *******/
-
-    return locked_CheckPotentialAddr(addr,age) ;
+	RS_STACK_MUTEX(mLinkMtx);
+	return locked_CheckPotentialAddr(addr);
 }
 
 

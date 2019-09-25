@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_NOTIFY_GUI_INTERFACE_H
-#define RS_NOTIFY_GUI_INTERFACE_H
+#pragma once
 
 #include <map>
 #include <list>
@@ -30,6 +29,7 @@
 
 #include "rsturtle.h"
 #include "rsgxsifacetypes.h"
+#include "util/rsdeprecate.h"
 
 class ChatId;
 class ChatMessage;
@@ -148,7 +148,7 @@ const uint32_t NOTIFY_HASHTYPE_FINISH          = 2; /* Finish */
 const uint32_t NOTIFY_HASHTYPE_HASH_FILE       = 3; /* Hashing file */
 const uint32_t NOTIFY_HASHTYPE_SAVE_FILE_INDEX = 4; /* Hashing file */
 
-class RsFeedItem
+class RS_DEPRECATED RsFeedItem
 {
 	public:
 		RsFeedItem(uint32_t type, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, uint32_t result1)
@@ -181,9 +181,9 @@ class RsFeedItem
 // This mechanism can be used in plugins, new services, etc.
 //	
 
-class NotifyClient;
+class RS_DEPRECATED NotifyClient;
 
-class RsNotify 
+class RS_DEPRECATED_FOR(RsEvents) RsNotify
 {
 	public:
 		/* registration of notifies clients */
@@ -206,12 +206,14 @@ class RsNotify
 		virtual bool setDisableAskPassword (const bool /*bValue*/) { return false ; }
 };
 
-class NotifyClient
+class RS_DEPRECATED NotifyClient
 {
 public:
 	NotifyClient() {}
 	virtual ~NotifyClient() {}
 
+    virtual void notifyPeerConnected              (const std::string& /* peer_id */) {}
+    virtual void notifyPeerDisconnected           (const std::string& /* peer_id */) {}
 	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
 	virtual void notifyListChange                 (int /* list */, int /* type */) {}
 	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
@@ -223,8 +225,6 @@ public:
 	virtual void notifyCustomState                (const std::string& /* peer_id   */, const std::string&               /* status_string */) {}
 	virtual void notifyHashingInfo                (uint32_t           /* type      */, const std::string&               /* fileinfo      */) {}
 	virtual void notifyTurtleSearchResult         (const RsPeerId&    /* pid       */, uint32_t                         /* search_id     */, const std::list<TurtleFileInfo>& /* files         */) {}
-#warning MISSING CODE HERE
-	// virtual void notifyTurtleSearchResult         (uint32_t           /* search_id */, const std::list<TurtleGxsInfo >& /* groups        */) {}
 	virtual void notifyPeerHasNewAvatar           (std::string        /* peer_id   */) {}
 	virtual void notifyOwnAvatarChanged           () {}
 	virtual void notifyOwnStatusMessageChanged    () {}
@@ -245,4 +245,3 @@ public:
 	virtual bool askForPassword                   (const std::string& /* title     */, const std::string& /* key_details     */, bool               /* prev_is_bad */, std::string& /* password */,bool& /* cancelled */ ) { return false ;}
 	virtual bool askForPluginConfirmation         (const std::string& /* plugin_filename */, const std::string& /* plugin_file_hash */,bool /* first_time */) { return false ;}
 };
-#endif

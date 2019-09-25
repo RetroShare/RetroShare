@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * libretroshare/src/pqi: sslfns.h                                             *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_PQI_SSL_HELPER_H
-#define RS_PQI_SSL_HELPER_H 
+#pragma once
 
 /* Functions in this file are SSL only, 
  * and have no dependence on SSLRoot() etc.
@@ -32,9 +31,12 @@
 #include <openssl/evp.h>
 #include <openssl/x509.h>
 
-#include <inttypes.h>
-#include <retroshare/rstypes.h>
 #include <string>
+#include <inttypes.h>
+
+#include "util/rsdeprecate.h"
+#include "retroshare/rstypes.h"
+
 
 /****
  * #define AUTHSSL_DEBUG 1
@@ -113,11 +115,6 @@ bool getX509id(X509 *x509, RsPeerId &xid);
 
 int pem_passwd_cb(char *buf, int size, int rwflag, void *password);
 
-bool CheckX509Certificate(X509 *x509);
-// Not dependent on sslroot. load, and detroys the X509 memory.
-int	LoadCheckX509(const char *cert_file, RsPgpId& issuer, std::string &location, RsPeerId& userId);
-
-
 std::string getX509NameString(X509_NAME *name);
 std::string getX509CNString(X509_NAME *name);
 std::string getX509TypeString(X509_NAME *name, const char *type, int len);
@@ -131,7 +128,8 @@ uint32_t getX509RetroshareCertificateVersion(X509 *cert) ;
 
 /********** SSL ERROR STUFF ******************************************/
 
-int printSSLError(SSL *ssl, int retval, int err, unsigned long err2, std::string &out);
+RS_DEPRECATED_FOR(sslErrorToString)
+int printSSLError(
+        SSL* unused, int retval, int err, unsigned long err2, std::string& out);
 
-#endif /* RS_PQI_SSL_HELPER_H */
-
+std::string sslErrorToString(int retval, int err, unsigned long err2);

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/retroshare: rsbanlist.h                                   *
+ * IPv4 address filtering interface                                            *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2015  Cyril Soler <retroshare.team@gmail.com>                 *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -21,12 +21,21 @@
  *******************************************************************************/
 #pragma once
 
+#include <list>
+
 #include "util/rsnet.h"
 #include "util/rstime.h"
+#include "util/rsmemory.h"
 
 class RsBanList;
-extern RsBanList *rsBanList ;
 
+/**
+ * Pointer to global instance of RsBanList service implementation
+ * @jsonapi{development}
+ */
+extern RsBanList* rsBanList;
+
+// TODO: use enum class instead of defines
 #define RSBANLIST_ORIGIN_UNKNOWN	0
 #define RSBANLIST_ORIGIN_SELF		1
 #define RSBANLIST_ORIGIN_FRIEND		2
@@ -55,7 +64,7 @@ extern RsBanList *rsBanList ;
 #define RSBANLIST_TYPE_BLACKLIST		2
 #define RSBANLIST_TYPE_WHITELIST		3
 
-class RsTlvBanListEntry ;
+class RsTlvBanListEntry;
 
 class BanListPeer
 {
@@ -78,42 +87,71 @@ public:
 class RsBanList
 {
 public:
-    virtual void enableIPFiltering(bool b) =0;
-    virtual bool ipFilteringEnabled() =0;
+	/**
+	 * @brief Enable or disable IP filtering service
+	 * @jsonapi{development}
+	 * @param[in] enable pass true to enable, false to disable
+	 */
+	virtual void enableIPFiltering(bool enable) = 0;
 
-    // addIpRange()/removeIpRange()
-    // 	addr: 		full IPv4 address. Port is ignored.
-    // 	masked_bytes: 	0=full IP, 1="/24", 2="/16"
-    // 	list_type: 	RSBANLIST_TYPE_WHITELIST or RSBANLIST_TYPE_BLACKLIST
-    // 	comment: 	anything, user-based.
+	/**
+	 * @brief Get ip filtering service status
+	 * @jsonapi{development}
+	 * @return true if enabled, false if disabled
+	 */
+	virtual bool ipFilteringEnabled() = 0;
 
-    virtual bool addIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type,const std::string& comment) =0;
-    virtual bool removeIpRange(const struct sockaddr_storage& addr,int masked_bytes,uint32_t list_type) =0;
+	/**
+	 * @brief addIpRange
+	 * @param addr full IPv4 address. Port is ignored.
+	 * @param masked_bytes 0=full IP, 1="/24", 2="/16"
+	 * @param list_type RSBANLIST_TYPE_WHITELIST or RSBANLIST_TYPE_BLACKLIST
+	 * @param comment anything, user-based
+	 * @return
+	 */
+	virtual bool addIpRange(
+	        const sockaddr_storage& addr, int masked_bytes, uint32_t list_type,
+	        const std::string& comment ) = 0;
 
-    // isAddressAccepted()
-    // 	addr: 		full IPv4 address. Port is ignored.
-    // 	checking flags: any combination of  RSBANLIST_CHECKING_FLAGS_BLACKLIST and RSBANLIST_CHECKING_FLAGS_WHITELIST
-    // 	check_result: 	returned result of the check in RSBANLIST_CHECK_RESULT_*
-    // 	returned value: true=address is accepted, false=address is rejected.
+	/**
+	 * @brief removeIpRange
+	 * @param addr full IPv4 address. Port is ignored.
+	 * @param masked_bytes 0=full IP, 1="/24", 2="/16"
+	 * @param list_type RSBANLIST_TYPE_WHITELIST or RSBANLIST_TYPE_BLACKLIST
+	 * @return
+	 */
+	virtual bool removeIpRange(
+	        const sockaddr_storage& addr, int masked_bytes, uint32_t list_type
+	        ) = 0;
 
-    virtual bool isAddressAccepted(const struct sockaddr_storage& addr,uint32_t checking_flags,uint32_t *check_result=NULL) =0;
+	/**
+	 * @brief isAddressAccepted
+	 * @param addr full IPv4 address. Port is ignored.
+	 * @param checking_flags any combination of
+	 * 	RSBANLIST_CHECKING_FLAGS_BLACKLIST and
+	 * 	RSBANLIST_CHECKING_FLAGS_WHITELIST
+	 * @param check_result returned result of the check in
+	 *	RSBANLIST_CHECK_RESULT_*
+	 * @return true if address is accepted, false false if address is rejected.
+	 */
+	virtual bool isAddressAccepted(
+	        const sockaddr_storage& addr, uint32_t checking_flags,
+	        uint32_t& check_result = RS_DEFAULT_STORAGE_PARAM(uint32_t) ) = 0;
 
-    virtual void getBannedIps(std::list<BanListPeer>& list) =0;
-    virtual void getWhiteListedIps(std::list<BanListPeer>& list) =0;
+	virtual void getBannedIps(std::list<BanListPeer>& list) = 0;
+	virtual void getWhiteListedIps(std::list<BanListPeer>& list) = 0;
 
-    virtual bool autoRangeEnabled() =0;
-    virtual void enableAutoRange(bool b) =0 ;
+	virtual bool autoRangeEnabled() = 0;
+	virtual void enableAutoRange(bool b) = 0;
 
-    virtual int  autoRangeLimit() =0;
-    virtual void setAutoRangeLimit(int n)=0;
+	virtual int autoRangeLimit() = 0;
+	virtual void setAutoRangeLimit(int n) = 0;
 
-    virtual void enableIPsFromFriends(bool b) =0;
-    virtual bool IPsFromFriendsEnabled() =0;
+	virtual void enableIPsFromFriends(bool b) = 0;
+	virtual bool IPsFromFriendsEnabled() = 0;
 
-    virtual void enableIPsFromDHT(bool b) =0;
-    virtual bool iPsFromDHTEnabled() =0;
+	virtual void enableIPsFromDHT(bool b) = 0;
+	virtual bool iPsFromDHTEnabled() = 0;
 
+	virtual ~RsBanList();
 };
-
-
-

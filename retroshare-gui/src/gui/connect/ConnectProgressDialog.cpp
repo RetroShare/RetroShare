@@ -183,6 +183,14 @@ void ConnectProgressDialog::initDialog()
 		ui->UdpResult->hide();
 		ui->UdpProgressBar->hide();
 		ui->UdpLabel->hide();
+
+        ui->DhtLabel->hide();
+        ui->DhtProgressBar->hide();
+        ui->DhtResult->hide();
+
+        ui->LookupLabel->hide();
+        ui->LookupProgressBar->hide();
+        ui->LookupResult->hide();
 	}
 	else
 	{

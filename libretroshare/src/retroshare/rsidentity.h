@@ -151,11 +151,9 @@ struct RsGxsIdGroup : RsSerializable
 	                     RsGenericSerializer::SerializeContext& ctx ) override;
 };
 
-std::ostream &operator<<(std::ostream &out, const RsGxsIdGroup &group);
-
 // DATA TYPE FOR EXTERNAL INTERFACE.
 
-struct RsRecognTag
+struct RS_DEPRECATED RsRecognTag
 {
 	RsRecognTag(uint16_t tc, uint16_t tt, bool v) :
 	    tag_class(tc), tag_type(tt), valid(v) {}
@@ -166,7 +164,7 @@ struct RsRecognTag
 };
 
 
-struct RsRecognTagDetails
+struct RS_DEPRECATED RsRecognTagDetails
 {
 	RsRecognTagDetails() :
 	    valid_from(0), valid_to(0), tag_class(0), tag_type(0), is_valid(false),
@@ -246,14 +244,22 @@ struct RsIdentityUsage : RsSerializable
 		CIRCLE_MEMBERSHIP_CHECK              = 0x13
 	} ;
 
+	RS_DEPRECATED
 	RsIdentityUsage( uint16_t service, const RsIdentityUsage::UsageCode& code,
 	                 const RsGxsGroupId& gid = RsGxsGroupId(),
 	                 const RsGxsMessageId& mid = RsGxsMessageId(),
 	                 uint64_t additional_id=0,
 	                 const std::string& comment = std::string() );
 
+	RsIdentityUsage( RsServiceType service,
+	                 RsIdentityUsage::UsageCode code,
+	                 const RsGxsGroupId& gid = RsGxsGroupId(),
+	                 const RsGxsMessageId& mid = RsGxsMessageId(),
+	                 uint64_t additional_id=0,
+	                 const std::string& comment = std::string() );
+
 	/// Id of the service using that identity, as understood by rsServiceControl
-	uint16_t mServiceId;
+	RsServiceType mServiceId;
 
 	/** Specific code to use. Will allow forming the correct translated message
 	 * in the GUI if necessary. */
@@ -382,6 +388,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
 	/**
 	 * @brief Get identity details, from the cache
+	 * @jsonapi{development}
 	 * @param[in] id Id of the identity
 	 * @param[out] details Storage for the identity details
 	 * @return false on error, true otherwise
@@ -402,7 +409,7 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[out] ids storage for the ids
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getOwnSignedIds(std::vector<RsGxsId> ids) = 0;
+	virtual bool getOwnSignedIds(std::vector<RsGxsId>& ids) = 0;
 
 	/**
 	 * @brief Get own pseudonimous (unsigned) ids
@@ -410,7 +417,7 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[out] ids storage for the ids
 	 * @return false on error, true otherwise
 	 */
-	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId> ids) = 0;
+	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) = 0;
 
 	/**
 	 * @brief Check if an id is own
@@ -470,6 +477,7 @@ struct RsIdentity : RsGxsIfaceHelper
 
 	/**
 	 * @brief Set/unset identity as contact
+	 * @jsonapi{development}
 	 * @param[in] id Id of the identity
 	 * @param[in] isContact true to set, false to unset
 	 * @return false on error, true otherwise
@@ -504,6 +512,14 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @param[in] days number of days
 	 */
 	virtual void setDeleteBannedNodesThreshold(uint32_t days) = 0;
+
+	/**
+	 * @brief request details of a not yet known identity to the network
+	 * @jsonapi{development}
+	 * @param[in] id id of the identity to request
+	 * @return false on error, true otherwise
+	 */
+	virtual bool requestIdentity(const RsGxsId& id) = 0;
 
 
 	RS_DEPRECATED

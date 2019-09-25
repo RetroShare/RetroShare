@@ -8,7 +8,7 @@
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
        
-    border-image: url(qss/uus/uus.png);
+    border-image: url(%THISPATH%/uus/uus.png);
 }
 
 FriendsDialog QFrame#headFrame {
@@ -31,16 +31,16 @@ QDialog{
 
 /* Customize the toolbar. */
 QToolBar#toolBarAction {
-    border-image: url(qss/uus/uus.png);
+    border-image: url(%THISPATH%/uus/uus.png);
 
 }
 QToolBar#toolBarPage {
-    border-image: url(qss/uus/uus.png);
+    border-image: url(%THISPATH%/uus/uus.png);
 
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/uus/uus.png);
+    border-image: url(%THISPATH%/uus/uus.png);
 
 
 }
@@ -161,7 +161,7 @@ color: white;
 }
 
 QStatusBar{
-    border-image: url(qss/uus/uus.png);
+    border-image: url(%THISPATH%/uus/uus.png);
 
 }
 
@@ -214,7 +214,7 @@ QToolTip{
 
 QFrame#messengerframetop{
          
-        border-image: url(qss/uus/uus.png);
+        border-image: url(%THISPATH%/uus/uus.png);
          
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/

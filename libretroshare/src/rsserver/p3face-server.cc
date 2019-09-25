@@ -35,9 +35,10 @@
 #include "pqi/p3linkmgr.h"
 #include "pqi/p3netmgr.h"
 
-int rsserverzone = 101;
-
 #include "util/rsdebug.h"
+
+#include "retroshare/rsevents.h"
+#include "services/rseventsservice.h"
 
 
 /****
@@ -81,6 +82,12 @@ RsServer::RsServer() :
     coreMutex("RsServer"), mShutdownCallback([](int){}),
     coreReady(false)
 {
+	{
+		RsEventsService* tmpRsEvtPtr = new RsEventsService();
+		rsEvents = tmpRsEvtPtr;
+		startServiceThread(tmpRsEvtPtr, "RsEventsService");
+	}
+
 	// This is needed asap.
 	//
 	mNotify = new p3Notify() ;
@@ -262,8 +269,6 @@ void 	RsServer::data_tick()
         std::string out;
         rs_sprintf(out, "RsServer::run() WARNING Excessively Long Cycle Time: %g secs => Please DEBUG", cycleTime);
         std::cerr << out << std::endl;
-
-        rslog(RSL_ALERT, rsserverzone, out);
     }
 #endif
 }

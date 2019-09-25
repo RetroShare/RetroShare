@@ -90,7 +90,7 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core
+  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core mingw-w64-i686-cmark
   #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
   #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
@@ -104,6 +104,15 @@ install:
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ar.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ar.exe
   - copy C:\msys64\mingw64\x86_64-w64-mingw32\bin\ranlib.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-ranlib.exe
   - copy C:\msys64\mingw64\bin\windres.exe C:\msys64\mingw64\bin\x86_64-w64-mingw32-windres.exe
+
+  # Work-around linker looking for Qt dll in wrong place
+  - copy C:\msys64\mingw32\bin\Qt5PrintSupport.dll C:\msys64\mingw32\lib\Qt5PrintSupport.dll
+  - copy C:\msys64\mingw32\bin\Qt5Widgets.dll C:\msys64\mingw32\lib\Qt5Widgets.dll
+  - copy C:\msys64\mingw32\bin\Qt5Multimedia.dll C:\msys64\mingw32\lib\Qt5Multimedia.dll
+  - copy C:\msys64\mingw32\bin\Qt5Gui.dll C:\msys64\mingw32\lib\Qt5Gui.dll
+  - copy C:\msys64\mingw32\bin\Qt5Network.dll C:\msys64\mingw32\lib\Qt5Network.dll
+  - copy C:\msys64\mingw32\bin\Qt5Xml.dll C:\msys64\mingw32\lib\Qt5Xml.dll
+  - copy C:\msys64\mingw32\bin\Qt5Core.dll C:\msys64\mingw32\lib\Qt5Core.dll
 
 
 #---------------------------------#
@@ -136,13 +145,15 @@ before_package:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
+  - env
+  - git submodule update --init
   - qmake -Wall -spec win32-g++ "CONFIG=debug"
   - mingw32-make -j3
 
 # scripts to run after build
 after_build:
   - mkdir %RS_DEPLOY%
-  - copy retroshare-nogui\src\retroshare-nogui.exe %RS_DEPLOY%\
+  - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
   - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
@@ -235,6 +246,10 @@ after_build:
   - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
 
+## Needed for cmark
+  - copy C:\msys64\mingw32\bin\libcmark*.dll %RS_DEPLOY%\
+  - copy C:\msys64\mingw32\bin\libdouble-conversion*.dll %RS_DEPLOY%\
+
   - find C:\projects\RetroShare >> filelist.txt
 
 # to disable automatic builds
@@ -244,10 +259,11 @@ after_build:
 #      artifacts configuration    #
 #---------------------------------#
 
-artifacts:
-  - path: $(RS_DEPLOY)
-  - path: '**\*.exe'
-  - path: filelist.txt
+#artifacts:
+#  - path: '**\*.exe'
+#  - path: filelist.txt
+# - path: $(RS_DEPLOY)
+
 #
 #  # pushing a single file
 #  - path: test.zip

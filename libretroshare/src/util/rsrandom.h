@@ -21,34 +21,43 @@
  *******************************************************************************/
 #pragma once
 
-// RSRandom contains a random number generator that is
-// - thread safe
-// - system independant
-// - fast
-// - CRYPTOGRAPHICALLY SAFE, because it is based on openssl random number generator
 
 #include <vector>
-#include <util/rsthreads.h>
+#include <cstdint>
 
-class RSRandom
+#include "util/rsthreads.h"
+#include "util/rsdeprecate.h"
+
+/**
+ * RsRandom provide a random number generator that is
+ * - thread safe
+ * - platform independent
+ * - fast
+ * - CRYPTOGRAPHICALLY SAFE, because it is based on openssl random number
+ *   generator
+ */
+class RsRandom
 {
-	public:
-		static uint32_t random_u32() ;
-		static uint64_t random_u64() ;
-		static float 	random_f32() ;
-		static double	random_f64() ;
+public:
+	static uint32_t random_u32();
+	static uint64_t random_u64();
+	static float    random_f32();
+	static double   random_f64();
 
-		static bool     seed(uint32_t s) ;
+	static bool     seed(uint32_t s);
 
-		static std::string random_alphaNumericString(uint32_t length) ; 
-		static void random_bytes(unsigned char *data,uint32_t length) ; 
+	static std::string random_alphaNumericString(uint32_t length);
+	static void        random_bytes(uint8_t* data, uint32_t length);
 
-	private:
-		static RsMutex rndMtx ;
+private:
+	static RsMutex rndMtx;
 
-		static const uint32_t N = 1024;
+	static const uint32_t N = 1024;
 
-		static void locked_next_state() ;
-		static uint32_t index ;
-		static std::vector<uint32_t> MT ;
+	static void locked_next_state();
+	static uint32_t index;
+	static std::vector<uint32_t> MT;
 };
+
+/// @deprecated this alias is provided only for code retro-compatibility
+using RSRandom RS_DEPRECATED_FOR(RsRandom) = RsRandom;

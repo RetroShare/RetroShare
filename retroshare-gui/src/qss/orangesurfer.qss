@@ -7,7 +7,7 @@
 
 QFrame#titleBarFrame, QFrame#toolBarFrame {
        
-    border-image: url(qss/orangesurfer/main.png);
+    border-image: url(%THISPATH%/orangesurfer/main.png);
 }
 
 HeaderFrame {
@@ -27,25 +27,25 @@ QWidget#chatcentralwidget{
 }
 
 QToolBar#chattoolBar{
-    border-image: url(qss/orangesurfer/main.png);
+    border-image: url(%THISPATH%/orangesurfer/main.png);
 
 
 }
 
 /* Customize the toolbar. */
 QToolBar#toolBarPage {
-    border-image: url(qss/orangesurfer/main.png);
+    border-image: url(%THISPATH%/orangesurfer/main.png);
 
 }
 
 QToolBar#toolBarAction {
-    border-image: url(qss/orangesurfer/main.png);
+    border-image: url(%THISPATH%/orangesurfer/main.png);
 
 }
 
 
 QTabBar::tab {
-         border-image: url(qss/orangesurfer/tab_normal.png);
+         border-image: url(%THISPATH%/orangesurfer/tab_normal.png);
          border-top-left-radius: 4px;
          border-top-right-radius: 4px;
          min-width: 8ex;
@@ -61,13 +61,13 @@ QTabBar::tab:!selected {
      
 QTabBar::tab:selected, QTabBar::tab:hover {
 
-         border-image: url(qss/orangesurfer/tab_hover.png);
+         border-image: url(%THISPATH%/orangesurfer/tab_hover.png);
 
 
 }
 
 QTabBar::tab:selected {
-		border-image: url(qss/orangesurfer/tab_pressed.png);
+		border-image: url(%THISPATH%/orangesurfer/tab_pressed.png);
 }
 
 
@@ -105,7 +105,7 @@ QStatusBar{
 }
 
 QSizeGrip {
-    image: url(qss/orangesurfer/sizegrip.png);
+    image: url(%THISPATH%/orangesurfer/sizegrip.png);
     width: 16px;
     height: 16px;
 }
@@ -140,7 +140,7 @@ QTreeWidget::item:selected { /* when user selects item using mouse or keyboard *
 
 
                                      
-     border-image: url(qss/gofast/border.png);
+     border-image: url(%THISPATH%/orangesurfer/border.png);
 
 }
 
@@ -157,13 +157,13 @@ QTreeView::item:selected { /* when user selects item using mouse or keyboard */
      /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
                                      
-      border-image: url(qss/orangesurfer/border.png);
+      border-image: url(%THISPATH%/orangesurfer/border.png);
 
 }
 
 QFrame#messengerframetop{
          
-        border-image: url(qss/orangesurfer/main.png);
+        border-image: url(%THISPATH%/orangesurfer/main.png);
          
         /*background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                      stop: 0 #F7B552, stop: 1 #FF5E07);*/
@@ -171,7 +171,7 @@ QFrame#messengerframetop{
 
 QFrame#Chatbuttonframe{
          
-        border-image: url(qss/orangesurfer/main.png);
+        border-image: url(%THISPATH%/orangesurfer/main.png);
 
 }
 

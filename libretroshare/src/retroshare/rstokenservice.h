@@ -107,9 +107,6 @@ struct RsTokReqOptions
 	rstime_t   mAfter;
 };
 
-std::ostream &operator<<(std::ostream &out, const RsGroupMetaData &meta);
-std::ostream &operator<<(std::ostream &out, const RsMsgMetaData &meta);
-
 /*!
  * A proxy class for requesting generic service data for GXS
  * This seperates the request mechanism from the actual retrieval of data

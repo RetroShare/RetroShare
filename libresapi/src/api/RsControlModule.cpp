@@ -145,7 +145,8 @@ void RsControlModule::run()
 #endif
 
     RsInit::InitRsConfig();
-    int initResult = RsInit::InitRetroShare(argc, argv, true);
+    RsConfigOptions opt;
+    int initResult = RsInit::InitRetroShare(opt);
 
     if (initResult < 0) {
         std::cerr << "RsControlModule: FATAL ERROR, initialising libretroshare FAILED." << std::endl;

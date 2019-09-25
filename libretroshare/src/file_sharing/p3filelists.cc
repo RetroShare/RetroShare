@@ -65,6 +65,7 @@ p3FileDatabase::p3FileDatabase(p3ServiceControl *mpeers)
     mRemoteDirectories.clear() ;	// we should load them!
     mOwnId = mpeers->getOwnId() ;
 
+    mBannedFileListNeedsUpdate = false;
     mLocalSharedDirs = new LocalDirectoryStorage(mFileSharingDir + "/" + LOCAL_SHARED_DIRS_FILE_NAME,mOwnId);
     mHashCache = new HashStorage(mFileSharingDir + "/" + HASH_CACHE_FILE_NAME) ;
 
@@ -968,16 +969,18 @@ int p3FileDatabase::getSharedDirStatistics(const RsPeerId& pid,SharedDirStats& s
     }
 }
 
-void p3FileDatabase::removeExtraFile(const RsFileHash& hash)
+bool p3FileDatabase::removeExtraFile(const RsFileHash& hash)
 {
+	bool ret = false;
     {
     RS_STACK_MUTEX(mFLSMtx) ;
 
-    mExtraFiles->removeExtraFile(hash);
+	ret = mExtraFiles->removeExtraFile(hash);
     mLastExtraFilesCacheUpdate = 0 ; // forced cache reload
     }
 
     RsServer::notify()->notifyListChange(NOTIFY_LIST_DIRLIST_LOCAL, 0);
+	return ret;
 }
 
 void p3FileDatabase::getExtraFilesDirDetails(void *ref,DirectoryStorage::EntryIndex e,DirDetails& d) const
@@ -1945,7 +1948,10 @@ p3FileDatabase::DirSyncRequestId p3FileDatabase::makeDirSyncReqId(const RsPeerId
     // This is kind of arbitrary. The important thing is that the same ID needs to be generated every time for a given (peer_id,entry index) pair, in a way
     // that cannot be brute-forced or reverse-engineered, which explains the random bias and the usage of the hash, that is itself random.
 
-    uint64_t r = random_bias ^ *((uint64_t*)tmp.toByteArray()) ;
+    uint64_t tmp2 ;
+    memcpy(&tmp2,tmp.toByteArray(),sizeof(uint64_t));
+
+    uint64_t r = random_bias ^ tmp2;
 
 #ifdef DEBUG_P3FILELISTS
     std::cerr << "Creating ID " << std::hex << r << std::dec << " from peer id " << peer_id << " and hash " << hash << std::endl;

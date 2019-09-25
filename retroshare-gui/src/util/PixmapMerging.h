@@ -21,6 +21,7 @@
 #ifndef PIXMAPMERGING_H
 #define PIXMAPMERGING_H
 
+#ifdef UNUSED_CODE
 #include <util/rsqtutildll.h>
 
 #include <util/NonCopyable.h>
@@ -49,4 +50,6 @@ public:
 	RSQTUTIL_API static QPixmap merge(const std::string & foregroundPixmapData, const std::string & backgroundPixmapFilename);
 };
 
+
+#endif
 #endif	//PIXMAPMERGING_H

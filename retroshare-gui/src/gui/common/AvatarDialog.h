@@ -35,6 +35,9 @@ class AvatarDialog : public QDialog
 	Q_OBJECT
 
 public:
+    static const int RS_AVATAR_DEFAULT_IMAGE_W ;
+    static const int RS_AVATAR_DEFAULT_IMAGE_H ;
+
 	AvatarDialog(QWidget *parent = 0);
 	~AvatarDialog();
 

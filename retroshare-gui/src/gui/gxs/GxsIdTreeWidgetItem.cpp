@@ -154,25 +154,21 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 		if (role == Qt::ToolTipRole)
 		{
 			QString t = RSTreeWidgetItem::data(column, role).toString();
-			QImage pix;
+			QPixmap pix;
 
-			if(mId.isNull()) return RSTreeWidgetItem::data(column, role);
-			else if( rsReputations->overallReputationLevel(mId) ==
-			         RsReputationLevel::LOCALLY_NEGATIVE )
-				pix = QImage(BANNED_IMAGE);
-			else if ( mAvatar.mSize == 0 ||
-			          !pix.loadFromData(mAvatar.mData, mAvatar.mSize, "PNG") )
-				pix = GxsIdDetails::makeDefaultIcon(mId);
+			if(mId.isNull())
+                return RSTreeWidgetItem::data(column, role);
+			else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
+				pix = QPixmap(BANNED_IMAGE);
+			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
+				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 
 			int S = QFontMetricsF(font(column)).height();
 
 			QString embeddedImage;
-			if ( RsHtml::makeEmbeddedImage(
-			         pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio,
-			                    Qt::SmoothTransformation ),
-			         embeddedImage, 8*S * 8*S ) )
-				t = "<table><tr><td>" + embeddedImage + "</td><td>" + t
-				        + "</td></table>";
+
+			if ( RsHtml::makeEmbeddedImage( pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation ).toImage(), embeddedImage, 8*S * 8*S ) )
+				t = "<table><tr><td>" + embeddedImage + "</td><td>" + t + "</td></table>";
 
 			return t;
 		}

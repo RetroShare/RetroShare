@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -208,7 +209,7 @@ public:
 	virtual ~RsFiles() {}
 
 	/**
-	 * Provides file data for the gui, media streaming or rpc clients.
+	 * @brief Provides file data for the gui, media streaming or rpc clients.
 	 * It may return unverified chunks. This allows streaming without having to
 	 * wait for hashes or completion of the file.
 	 * This function returns an unspecified amount of bytes. Either as much data
@@ -224,7 +225,7 @@ public:
 	 * @param[in] offset where the desired block starts
 	 * @param[inout] requested_size size of pre-allocated data. Will be updated
 	 * 	by the function.
-	 * @param data pre-allocated memory chunk of size 'requested_size' by the
+	 * @param[out] data pre-allocated memory chunk of size 'requested_size' by the
 	 * 	client
 	 * @return Returns false in case
 	 * 	- the files is not available on the local node
@@ -422,22 +423,47 @@ public:
 	 * @brief Get details about the upload with given hash
 	 * @jsonapi{development}
 	 * @param[in] hash file identifier
-	 * @param[in] peer_id peer identifier
+	 * @param[in] peerId peer identifier
 	 * @param[out] map storage for chunk info
 	 * @return true if file found, false otherwise
 	 */
 	virtual bool FileUploadChunksDetails(
-	        const RsFileHash& hash, const RsPeerId& peer_id,
+	        const RsFileHash& hash, const RsPeerId& peerId,
 	        CompressedChunkMap& map ) = 0;
 
-		/***
-		 * Extra List Access
-		 ***/
-		//virtual bool ExtraFileAdd(std::string fname, std::string hash, uint64_t size, uint32_t period, TransferRequestFlags flags) = 0;
-		virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
-		virtual bool ExtraFileHash(std::string localpath, uint32_t period, TransferRequestFlags flags) = 0;
-		virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
-		virtual bool ExtraFileMove(std::string fname, const RsFileHash& hash, uint64_t size, std::string destpath) = 0;
+	/**
+	 * @brief Remove file from extra fila shared list
+	 * @jsonapi{development}
+	 * @param[in] hash hash of the file to remove
+	 * @return return false on error, true otherwise
+	 */
+	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
+
+	/**
+	 * @brief Add file to extra shared file list
+	 * @jsonapi{development}
+	 * @param[in] localpath path of the file
+	 * @param[in] period how much time the file will be kept in extra list in
+	 *                   seconds
+	 * @param[in] flags sharing policy flags ex: RS_FILE_REQ_ANONYMOUS_ROUTING
+	 * @return false on error, true otherwise
+	 */
+	virtual bool ExtraFileHash(
+	        std::string localpath, rstime_t period, TransferRequestFlags flags
+	        ) = 0;
+
+	/**
+	 * @brief Get extra file information
+	 * @jsonapi{development}
+	 * @param[in] localpath path of the file
+	 * @param[out] info storage for the file information
+	 * @return false on error, true otherwise
+	 */
+	virtual bool ExtraFileStatus(std::string localpath, FileInfo &info) = 0;
+
+	virtual bool ExtraFileMove(
+	        std::string fname, const RsFileHash& hash, uint64_t size,
+	        std::string destpath ) = 0;
 
 	/**
 	 * @brief Request directory details, subsequent multiple call may be used to

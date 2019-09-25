@@ -41,14 +41,7 @@
 #include <iostream>
 #include <fstream>
 
-const std::string CERT_SSL_ID = "--SSLID--";
-const std::string CERT_LOCATION = "--LOCATION--";
-const std::string CERT_LOCAL_IP = "--LOCAL--";
-const std::string CERT_EXT_IP = "--EXT--";
-const std::string CERT_DYNDNS = "--DYNDNS--";
-
 //static const int MAX_TIME_KEEP_LOCATION_WITHOUT_CONTACT = 30*24*3600 ; // 30 days.
-
 
 #include "pqi/authssl.h"
 
@@ -137,11 +130,12 @@ bool p3Peers::hasExportMinimal()
 }
 
 	/* Updates ... */
-bool p3Peers::FriendsChanged()
+bool p3Peers::FriendsChanged(bool add)
 {
 #ifdef P3PEERS_DEBUG
         std::cerr << "p3Peers::FriendsChanged()" << std::endl;
 #endif
+	RsServer::notify()->notifyListChange(NOTIFY_LIST_FRIENDS, add? NOTIFY_TYPE_ADD : NOTIFY_TYPE_DEL);
 
 	/* TODO */
 	return false;
@@ -295,7 +289,18 @@ bool p3Peers::getPeerDetails(const RsPeerId& id, RsPeerDetails &d)
 
 	/* get from gpg (first), to fill in the sign and trust details */
 	/* don't return now, we've got fill in the ssl and connection info */
-	getGPGDetails(ps.gpg_id, d);
+
+	if(!getGPGDetails(ps.gpg_id, d))
+	{
+		if(!ps.skip_pgp_signature_validation)
+			return false;
+
+		d.gpg_id = ps.gpg_id ;
+		d.skip_pgp_signature_validation = true;
+	}
+	else
+		d.skip_pgp_signature_validation = false;
+
 	d.isOnlyGPGdetail = false;
 
 	//get the ssl details
@@ -570,6 +575,22 @@ std::string p3Peers::getGPGName(const RsPgpId &gpg_id)
 bool p3Peers::isPgpFriend(const RsPgpId& pgpId)
 { return AuthGPG::getAuthGPG()->isGPGAccepted(pgpId); }
 
+bool p3Peers::isSslOnlyFriend(const RsPeerId& sslId)
+{
+    bool has_ssl_only_flag = mPeerMgr->isSslOnlyFriend(sslId) ;
+
+    if(has_ssl_only_flag)
+    {
+        if(isPgpFriend(getGPGId(sslId)))
+        {
+            RsErr() << __PRETTY_FUNCTION__ << ": Peer " << sslId << " has SSL-friend-only flag but his PGP id is in the list of friends. This is inconsistent (Bug in the code). Returning false for security reasons." << std::endl;
+			return false;
+        }
+        return true;
+	}
+    return false;
+}
+
 bool p3Peers::isGPGAccepted(const RsPgpId &gpg_id_is_friend)
 { return isPgpFriend(gpg_id_is_friend); }
 
@@ -650,6 +671,11 @@ bool    p3Peers::gpgSignData(const void *data, const uint32_t len, unsigned char
 	return AuthGPG::getAuthGPG()->SignDataBin(data,len,sign,signlen, reason);
 }
 
+RsPgpId p3Peers::pgpIdFromFingerprint(const RsPgpFingerprint& fpr)
+{
+	return PGPHandler::pgpIdFromFingerprint(fpr);
+}
+
 bool	p3Peers::getGPGDetails(const RsPgpId &pgp_id, RsPeerDetails &d)
 {
 #ifdef P3PEERS_DEBUG
@@ -687,9 +713,8 @@ RsPgpId p3Peers::getGPGId(const RsPeerId& sslid)
 		return AuthGPG::getAuthGPG()->getGPGOwnId();
 	}
 	peerState pcs;
-	if (mPeerMgr->getFriendNetStatus(sslid, pcs) || mPeerMgr->getOthersNetStatus(sslid, pcs)) {
+	if (mPeerMgr->getFriendNetStatus(sslid, pcs))
 		return pcs.gpg_id;
-	}
 
 	return RsPgpId();
 }
@@ -741,12 +766,25 @@ bool 	p3Peers::addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePe
 		return true;
 	} 
 
-	/* otherwise - we install as ssl_id..... 
+	FriendsChanged(true);
+
+	/* otherwise - we install as ssl_id.....
 	 * If we are adding an SSL certificate. we flag lastcontact as now. 
 	 * This will cause the SSL certificate to be retained for 30 days... and give the person a chance to connect!
 	 *  */
 	rstime_t now = time(NULL);
 	return mPeerMgr->addFriend(ssl_id, gpg_id, RS_NET_MODE_UDP, RS_VS_DISC_FULL, RS_VS_DHT_FULL, now, perm_flags);
+}
+
+bool p3Peers::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,const RsPeerDetails& details )
+{
+    if( mPeerMgr->addSslOnlyFriend(sslId, pgp_id,details))
+    {
+		FriendsChanged(true);
+        return true;
+    }
+    else
+		return false;
 }
 
 bool 	p3Peers::removeKeysFromPGPKeyring(const std::set<RsPgpId>& pgp_ids,std::string& backup_file,uint32_t& error_code)
@@ -1104,6 +1142,274 @@ bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
 	return true ;
 }
 
+enum class RsShortInviteFieldType : uint8_t
+{
+	SSL_ID          = 0x00,
+	PEER_NAME       = 0x01,
+	LOCATOR         = 0x02,
+	PGP_FINGERPRINT = 0x03,
+
+	/* The following will be deprecated, and ported to LOCATOR when generic
+	 * trasport layer will be implemented */
+	HIDDEN_LOCATOR  = 0x90,
+	DNS_LOCATOR     = 0x91,
+	EXT4_LOCATOR    = 0x92
+};
+
+static void addPacketHeader(RsShortInviteFieldType ptag, size_t size, unsigned char *& buf, uint32_t& offset, uint32_t& buf_size)
+{
+	// Check that the buffer has sufficient size. If not, increase it.
+
+	while(offset + size + 6 >= buf_size)
+	{
+		unsigned char *newbuf = new unsigned char[2*buf_size] ;
+
+		memcpy(newbuf, buf, buf_size) ;
+		buf_size *= 2 ;
+		delete[] buf ;
+		buf = newbuf ;
+	}
+
+	// Write ptag and size
+
+	buf[offset] = static_cast<uint8_t>(ptag) ;
+	offset += 1 ;
+
+	offset += PGPKeyParser::write_125Size(&buf[offset],size) ;
+}
+
+bool p3Peers::getShortInvite(
+        std::string& invite, const RsPeerId& _sslId, bool formatRadix,
+        bool bareBones, const std::string& baseUrl )
+{
+	RsPeerId sslId = _sslId;
+	if(sslId.isNull()) sslId = getOwnId();
+
+	RsPeerDetails tDetails;
+	if(!getPeerDetails(sslId, tDetails)) return false;
+
+    uint32_t buf_size = 100;
+    uint32_t offset = 0;
+    unsigned char *buf = (unsigned char*)malloc(buf_size);
+
+    addPacketHeader(RsShortInviteFieldType::SSL_ID,RsPeerId::SIZE_IN_BYTES,buf,offset,buf_size);
+	sslId.serialise(buf,buf_size,offset);
+
+    addPacketHeader(RsShortInviteFieldType::PGP_FINGERPRINT,RsPgpFingerprint::SIZE_IN_BYTES,buf,offset,buf_size);
+	tDetails.fpr.serialise(buf,buf_size,offset);
+
+    addPacketHeader(RsShortInviteFieldType::PEER_NAME,tDetails.name.size(),buf,offset,buf_size);
+	memcpy(&buf[offset],tDetails.name.c_str(),tDetails.name.size());
+    offset += tDetails.name.size();
+
+	if(!bareBones)
+	{
+		/* If is hidden use hidden address and port as locator, else if we have
+		 * a valid dyndns and extPort use that as locator, else if we have a
+		 * valid extAddr and extPort use that as locator, otherwise use most
+		 * recently known locator */
+		sockaddr_storage tExt;
+		if(tDetails.isHiddenNode)
+		{
+			addPacketHeader(RsShortInviteFieldType::HIDDEN_LOCATOR,4 + 2 + tDetails.hiddenNodeAddress.size(),buf,offset,buf_size);
+
+			buf[offset+0] = (uint8_t)((tDetails.hiddenType >> 24) & 0xff);
+			buf[offset+1] = (uint8_t)((tDetails.hiddenType >> 16) & 0xff);
+			buf[offset+2] = (uint8_t)((tDetails.hiddenType >>  8) & 0xff);
+			buf[offset+3] = (uint8_t)((tDetails.hiddenType      ) & 0xff);
+
+			buf[offset+4] = (uint8_t)((tDetails.hiddenNodePort >> 8) & 0xff);
+			buf[offset+5] = (uint8_t)((tDetails.hiddenNodePort     ) & 0xff);
+
+            memcpy(&buf[offset+6],tDetails.hiddenNodeAddress.c_str(),tDetails.hiddenNodeAddress.size());
+            offset += 4 + 2 + tDetails.hiddenNodeAddress.size();
+		}
+		else if( !tDetails.dyndns.empty() && (tDetails.extPort || tDetails.localPort) )
+		{
+			uint16_t tPort = tDetails.extPort ? tDetails.extPort : tDetails.localPort;
+
+			addPacketHeader(RsShortInviteFieldType::DNS_LOCATOR, 2 + tDetails.dyndns.size(),buf,offset,buf_size);
+
+            buf[offset+0] = (uint8_t)((tPort >> 8) & 0xff);
+            buf[offset+1] = (uint8_t)((tPort     ) & 0xff);
+
+            memcpy(&buf[offset+2],tDetails.dyndns.c_str(),tDetails.dyndns.size());
+            offset += 2 + tDetails.dyndns.size();
+		}
+		else if( sockaddr_storage_inet_pton(tExt, tDetails.extAddr) &&
+		         sockaddr_storage_isValidNet(tExt) &&
+		         sockaddr_storage_ipv6_to_ipv4(tExt) &&
+		         tDetails.extPort )
+		{
+			uint32_t t4Addr = reinterpret_cast<sockaddr_in&>(tExt).sin_addr.s_addr;
+
+			addPacketHeader(RsShortInviteFieldType::EXT4_LOCATOR, 4 + 2,buf,offset,buf_size);
+
+			buf[offset+0] = (uint8_t)((t4Addr >> 24) & 0xff);
+			buf[offset+1] = (uint8_t)((t4Addr >> 16) & 0xff);
+			buf[offset+2] = (uint8_t)((t4Addr >>  8) & 0xff);
+			buf[offset+3] = (uint8_t)((t4Addr      ) & 0xff);
+
+			buf[offset+4] = (uint8_t)((tDetails.extPort >> 8) & 0xff);
+			buf[offset+5] = (uint8_t)((tDetails.extPort     ) & 0xff);
+
+            offset += 4+2;
+		}
+		else if(!tDetails.ipAddressList.empty())
+		{
+			const std::string& tLc = tDetails.ipAddressList.front();
+			std::string tLocator = tLc.substr(0, tLc.find_first_of(" ")-1);
+
+			addPacketHeader(RsShortInviteFieldType::LOCATOR, tLocator.size(),buf,offset,buf_size);
+            memcpy(&buf[offset],tLocator.c_str(),tLocator.size());
+
+            offset += tLocator.size();
+		}
+	}
+
+	Radix64::encode(buf, static_cast<int>(offset), invite);
+
+	if(!formatRadix)
+	{
+		RsUrl inviteUrl(baseUrl);
+		inviteUrl.setQueryKV("rsInvite", invite);
+		invite = inviteUrl.toString();
+	}
+
+	return true;
+}
+
+bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& details, uint32_t &err_code )
+{
+	if(inviteStrUrl.empty())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " can't parse empty invite"
+		        << std::endl;
+		return false;
+	}
+	std::string rsInvite = inviteStrUrl;
+
+	RsUrl inviteUrl(inviteStrUrl);
+
+	if(inviteUrl.hasQueryK("rsInvite"))
+		rsInvite = *inviteUrl.getQueryV("rsInvite");
+
+    std::vector<uint8_t> bf = Radix64::decode(rsInvite);
+	size_t size = bf.size();
+
+	unsigned char* buf = bf.data();
+	size_t total_s = 0;
+
+	while(total_s < size)
+	{
+		RsShortInviteFieldType ptag = RsShortInviteFieldType(buf[0]);
+		buf = &buf[1];
+
+		unsigned char *buf2 = buf;
+		uint32_t s = 0;
+
+		try { s = PGPKeyParser::read_125Size(buf); }
+		catch (...)
+		{
+			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+			return false;
+		}
+
+		total_s += 1 + ( reinterpret_cast<size_t>(buf) - reinterpret_cast<size_t>(buf2) );
+
+		if(total_s > size)
+		{
+			err_code = CERTIFICATE_PARSING_ERROR_SIZE_ERROR;
+			return false;
+		}
+
+		Dbg3() << __PRETTY_FUNCTION__ << " Read ptag: "
+		       << static_cast<uint32_t>(ptag)
+		       << ", size " << s << ", total_s = " << total_s
+		       << ", expected total = " << size << std::endl;
+
+		switch(ptag)
+		{
+        case RsShortInviteFieldType::SSL_ID:
+			details.id = RsPeerId::fromBufferUnsafe(buf) ;
+			break;
+
+		case RsShortInviteFieldType::PEER_NAME:
+			details.name = std::string((char*)buf,s);
+			break;
+
+		case RsShortInviteFieldType::PGP_FINGERPRINT:
+			details.fpr = RsPgpFingerprint::fromBufferUnsafe(buf);
+            details.gpg_id = PGPHandler::pgpIdFromFingerprint(details.fpr);
+            break;
+
+		case RsShortInviteFieldType::LOCATOR:
+        {
+			std::string locatorStr((char*)buf,s);
+			details.ipAddressList.push_back(locatorStr);
+        }
+            break;
+
+		case RsShortInviteFieldType::DNS_LOCATOR:
+			details.extPort = (((int)buf[0]) << 8) + buf[1];
+			details.dyndns = std::string((char*)&buf[2],s-2);
+            break;
+
+		case RsShortInviteFieldType::EXT4_LOCATOR:
+		{
+			uint32_t t4Addr = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+			sockaddr_in tExtAddr;
+			tExtAddr.sin_addr.s_addr = t4Addr;
+
+			details.extAddr = rs_inet_ntoa(tExtAddr.sin_addr);
+			details.extPort = (((uint32_t)buf[4])<<8) + (uint32_t)buf[5];
+        }
+            break;
+
+  		case RsShortInviteFieldType::HIDDEN_LOCATOR:
+			details.hiddenType = (((uint32_t)buf[0]) << 24)+(((uint32_t)buf[1])<<16)+(((uint32_t)buf[2])<<8) + (uint32_t)buf[3];
+			details.hiddenNodePort = (((uint32_t)buf[4]) << 8)+ (uint32_t)buf[5];
+
+			details.hiddenNodeAddress = std::string((char*)&buf[6],s-6);
+			break;
+
+		}
+
+		buf = &buf[s];
+		total_s += s;
+	}
+
+    // now check if the PGP key is available. If so, add it in the PeerDetails:
+
+    RsPeerDetails pgp_det ;
+    if(getGPGDetails(PGPHandler::pgpIdFromFingerprint(details.fpr),pgp_det) && pgp_det.fpr == details.fpr)
+    {
+        details.issuer      = pgp_det.issuer;
+        details.gpg_id      = pgp_det.gpg_id;
+        details.gpgSigners  = pgp_det.gpgSigners;
+        details.trustLvl    = pgp_det.trustLvl;
+        details.validLvl    = pgp_det.validLvl;
+        details.ownsign     = pgp_det.ownsign;
+        details.hasSignedMe = pgp_det.hasSignedMe;
+        details.accept_connection = pgp_det.accept_connection;
+    }
+    else
+        details.skip_pgp_signature_validation = true;
+
+    if(details.gpg_id.isNull())
+    {
+		err_code = CERTIFICATE_PARSING_ERROR_MISSING_PGP_FINGERPRINT;
+        return false;
+    }
+    if(details.id.isNull())
+    {
+		err_code = CERTIFICATE_PARSING_ERROR_MISSING_LOCATION_ID;
+        return false;
+    }
+	err_code = CERTIFICATE_PARSING_ERROR_NO_ERROR;
+	return true;
+}
+
 bool p3Peers::acceptInvite( const std::string& invite,
                             ServicePermissionFlags flags )
 {
@@ -1217,9 +1523,10 @@ bool p3Peers::loadCertificateFromString(
         const std::string& cert, RsPeerId& ssl_id,
         RsPgpId& gpg_id, std::string& error_string )
 {
-	RsCertificate crt;
 	uint32_t errNum = 0;
-	if(!crt.initializeFromString(cert,errNum))
+	auto crt = RsCertificate::fromString(cert, errNum);
+
+	if(!crt)
 	{
 		error_string = "RsCertificate failed with errno: "
 		        + std::to_string(errNum) + " parsing: " + cert;
@@ -1227,11 +1534,27 @@ bool p3Peers::loadCertificateFromString(
 	}
 
 	RsPgpId gpgid;
-	bool res = AuthGPG::getAuthGPG()->
-	        LoadCertificateFromString(crt.armouredPGPKey(), gpgid,error_string);
+	bool res = AuthGPG::getAuthGPG()->LoadCertificateFromString( crt->armouredPGPKey(), gpgid, error_string );
 
 	gpg_id = gpgid;
-	ssl_id = crt.sslid();
+	ssl_id = crt->sslid();
+
+    // now get all friends who declare this key ID to be the one needed to check connections, and clear their "skip_pgp_signature_validation" flag
+
+    if(res)
+    {
+		mPeerMgr->notifyPgpKeyReceived(gpgid);
+        FriendsChanged(true);
+    }
+
+	return res;
+}
+bool p3Peers::loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,uint32_t bin_key_len, RsPgpId& gpg_id, std::string& error_string )
+{
+	bool res = AuthGPG::getAuthGPG()->LoadPGPKeyFromBinaryData( bin_key_data,bin_key_len, gpg_id, error_string );
+
+    if(res)
+		mPeerMgr->notifyPgpKeyReceived(gpg_id);
 
 	return res;
 }
@@ -1240,70 +1563,69 @@ bool p3Peers::loadDetailsFromStringCert( const std::string &certstr,
                                          RsPeerDetails &pd,
                                          uint32_t& error_code )
 {
-#ifdef P3PEERS_DEBUG
-	std::cerr << "p3Peers::LoadCertificateFromString() " << std::endl;
-#endif
-	//parse the text to get ip address
-	try 
-	{
-		RsCertificate cert(certstr) ;
+	Dbg3() << __PRETTY_FUNCTION__ << std::endl;
 
-		if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(cert.pgp_key(),cert.pgp_key_size(), pd.gpg_id,pd.name,pd.gpgSigners))
-			return false;
+	auto certPtr = RsCertificate::fromString(certstr, error_code);
+	if(!certPtr) return false;
 
-#ifdef P3PEERS_DEBUG
-		std::cerr << "Parsing cert for sslid, location, ext and local address details. : " << certstr << std::endl;
-#endif
+	RsCertificate& cert = *certPtr;
 
-		pd.id = cert.sslid() ;
-		pd.location = cert.location_name_string();
-
-		pd.isOnlyGPGdetail = pd.id.isNull();
-        pd.service_perm_flags = RS_NODE_PERM_DEFAULT ;
-
-		if (!cert.hidden_node_string().empty())
-		{
-			pd.isHiddenNode = true;
-
-			std::string domain;
-			uint16_t port;
-			if (splitAddressString(cert.hidden_node_string(), domain, port))
-			{
-				pd.hiddenNodeAddress = domain;
-				pd.hiddenNodePort = port;
-				pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
-			}
-		}
-		else
-		{
-			pd.isHiddenNode = false;
-			pd.localAddr = cert.loc_ip_string();
-			pd.localPort = cert.loc_port_us();
-			pd.extAddr = cert.ext_ip_string();
-			pd.extPort = cert.ext_port_us();
-			pd.dyndns = cert.dns_string();
-			for(const RsUrl& locator : cert.locators())
-				pd.ipAddressList.push_back(locator.toString());
-		}
-	}
-	catch(uint32_t e) 
-	{
-		std::cerr << "ConnectFriendWizard : Parse ip address error :" << e << std::endl;
-		error_code = e;
-		return false ;
-	}
-
-	if (pd.gpg_id.isNull())
+	if(!AuthGPG::getAuthGPG()->getGPGDetailsFromBinaryBlock(
+	            cert.pgp_key(), cert.pgp_key_size(),
+	            pd.gpg_id, pd.name, pd.gpgSigners ))
 		return false;
-	else 
-		return true;
+
+	Dbg4() << __PRETTY_FUNCTION__ << " Parsing cert for sslid, location, ext "
+	       << " and local address details. : " << certstr << std::endl;
+
+	pd.id = cert.sslid();
+	pd.location = cert.location_name_string();
+
+	pd.isOnlyGPGdetail = pd.id.isNull();
+	pd.service_perm_flags = RS_NODE_PERM_DEFAULT;
+
+	if (!cert.hidden_node_string().empty())
+	{
+		pd.isHiddenNode = true;
+
+		std::string domain;
+		uint16_t port;
+		if (splitAddressString(cert.hidden_node_string(), domain, port))
+		{
+			pd.hiddenNodeAddress = domain;
+			pd.hiddenNodePort = port;
+			pd.hiddenType = mPeerMgr->hiddenDomainToHiddenType(domain);
+		}
+	}
+	else
+	{
+		pd.isHiddenNode = false;
+		pd.localAddr = cert.loc_ip_string();
+		pd.localPort = cert.loc_port_us();
+		pd.extAddr = cert.ext_ip_string();
+		pd.extPort = cert.ext_port_us();
+		pd.dyndns = cert.dns_string();
+		for(const RsUrl& locator : cert.locators())
+			pd.ipAddressList.push_back(locator.toString());
+	}
+
+	return true;
 }
 
-bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code)
+bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code)
 {
 	RsCertificate::Format format ;
 
-	return RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
+	bool res = RsCertificate::cleanCertificate(certstr,cleanCert,format,error_code,true) ;
+
+    if(format == RsCertificate::RS_CERTIFICATE_RADIX)
+        is_short_format = false;
+    else if(format == RsCertificate::RS_CERTIFICATE_SHORT_RADIX)
+        is_short_format = true;
+    else
+        return false ;
+
+    return res;
 }
 
 bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)
@@ -1484,7 +1806,7 @@ RsPeerDetails::RsPeerDetails()
         :isOnlyGPGdetail(false),
           name(""),email(""),location(""),
           org(""),authcode(""),
-          trustLvl(0), validLvl(0),ownsign(false), 
+          trustLvl(0), validLvl(0),skip_pgp_signature_validation(false),ownsign(false),
           hasSignedMe(false),accept_connection(false),
           state(0),actAsServer(false),
           connectPort(0),
@@ -1495,63 +1817,9 @@ RsPeerDetails::RsPeerDetails()
           lastConnect(0),lastUsed(0),connectState(0),connectStateString(""),
           connectPeriod(0),
           foundDHT(false), wasDeniedConnection(false), deniedTS(0),
-          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN)
-{
-}
+          linkType ( RS_NET_CONN_TRANS_TCP_UNKNOWN) {}
 
-std::ostream &operator<<(std::ostream &out, const RsPeerDetails &detail)
-{
-	out << "RsPeerDetail: " << detail.name << "  <" << detail.id << ">";
-	out << std::endl;
-
-	out << " email:   " << detail.email;
-	out << " location:" << detail.location;
-	out << " org:     " << detail.org;
-	out << std::endl;
-
-	out << " fpr:     " << detail.fpr;
-	out << " authcode:" << detail.authcode;
-	out << std::endl;
-
-	out << " signers:";
-	out << std::endl;
-
-	std::list<RsPgpId>::const_iterator it;
-        for(it = detail.gpgSigners.begin();
-                it != detail.gpgSigners.end(); ++it)
-	{
-		out << "\t" << *it;
-		out << std::endl;
-	}
-	out << std::endl;
-
-	out << " trustLvl:    " << detail.trustLvl;
-        out << " ownSign:     " << detail.ownsign;
-	out << std::endl;
-
-	out << " state:       " << detail.state;
-	out << " netMode:     " << detail.netMode;
-	out << std::endl;
-
-	out << " localAddr:   " << detail.localAddr;
-	out << ":" << detail.localPort;
-	out << std::endl;
-	out << " extAddr:   " << detail.extAddr;
-	out << ":" << detail.extPort;
-	out << std::endl;
-
-
-	out << " lastConnect:       " << detail.lastConnect;
-	out << " connectPeriod:     " << detail.connectPeriod;
-	out << std::endl;
-
-	return out;
-}
-
-RsGroupInfo::RsGroupInfo()
-{
-	flag = 0;
-}
+RsGroupInfo::RsGroupInfo() : flag(0) {}
 
 ServicePermissionFlags p3Peers::servicePermissionFlags(const RsPeerId& ssl_id) 
 {
@@ -1566,4 +1834,5 @@ void p3Peers::setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermi
 	mPeerMgr->setServicePermissionFlags(gpg_id,flags) ;
 }
 
-
+RsPeerStateChangedEvent::RsPeerStateChangedEvent(RsPeerId sslId) :
+    RsEvent(RsEventType::PEER_STATE_CHANGED), mSslId(sslId) {}

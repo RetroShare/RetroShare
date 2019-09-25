@@ -22,7 +22,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install ccach; export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc libmicrohttpd sqlcipher xapian cmark; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
 
@@ -47,8 +47,9 @@ addons:
     branch_pattern: coverity_scan
 
 before_script:
-  - if [ $TRAVIS_OS_NAME == linux ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX; fi
-  - if [ $TRAVIS_OS_NAME == osx ]; then qmake QMAKE_CC=$CC QMAKE_CXX=$CXX CONFIG+=rs_macos10.14 CONFIG+=no_retroshare_plugins INCLUDEPATH+=/usr/local/opt/openssl/include/ INCLUDEPATH+=/usr/local/Cellar/sqlcipher/4.0.1/include INCLUDEPATH+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/include QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/ QMAKE_LIBDIR+=/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib QMAKE_LIBDIR+=/usr/local/Cellar/sqlcipher/4.0.1/lib; fi
+  - env
+  - if [ $TRAVIS_OS_NAME == linux ]; then qmake; fi
+  - if [ $TRAVIS_OS_NAME == osx ]; then qmake CONFIG+=rs_macos10.14 INCLUDEPATH+=/usr/local/opt/openssl/include/ INCLUDEPATH+=$(find /usr/local/Cellar/sqlcipher/*/include | headn -n 1) INCLUDEPATH+=$(find /usr/local/Cellar/libmicrohttpd/*/include | head -n 1) QMAKE_LIBDIR+=/usr/local/opt/openssl/lib/ QMAKE_LIBDIR+=$(find /usr/local/Cellar/libmicrohttpd/*/lib | head -n 1) QMAKE_LIBDIR+=$(find /usr/local/Cellar/sqlcipher/*/lib | head -n 1); fi
 
 script:
   - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j4; fi

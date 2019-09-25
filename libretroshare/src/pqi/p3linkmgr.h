@@ -171,8 +171,6 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address) = 0;
 virtual bool	retryConnect(const RsPeerId &id) = 0;
 
-virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming) = 0;
-
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr) = 0;
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
@@ -182,7 +180,7 @@ virtual bool 	getLocalAddress(struct sockaddr_storage &addr) = 0;
 virtual void	getFriendList(std::list<RsPeerId> &ssl_peers) = 0; // ONLY used by p3peers.cc USE p3PeerMgr instead.
 virtual bool	getFriendNetStatus(const RsPeerId &id, peerConnectState &state) = 0; // ONLY used by p3peers.cc
 
-virtual bool 	checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age)=0;
+	virtual bool checkPotentialAddr(const sockaddr_storage& addr) = 0;
 
 	/************* DEPRECIATED FUNCTIONS (TO REMOVE) ********/
 virtual int 	addFriend(const RsPeerId &ssl_id, bool isVisible) = 0;
@@ -230,8 +228,6 @@ virtual bool	connectAttempt(const RsPeerId &id, struct sockaddr_storage &raddr,
 virtual bool 	connectResult(const RsPeerId &id, bool success, bool isIncomingConnection, uint32_t flags, const struct sockaddr_storage &remote_peer_address);
 virtual bool	retryConnect(const RsPeerId &id);
 
-virtual void 	notifyDeniedConnection(const RsPgpId& gpgid,const RsPeerId& sslid,const std::string& sslcn,const struct sockaddr_storage &addr, bool incoming);
-
 	/* Network Addresses */
 virtual bool 	setLocalAddress(const struct sockaddr_storage &addr);
 virtual bool 	getLocalAddress(struct sockaddr_storage &addr);
@@ -269,7 +265,8 @@ int 	removeFriend(const RsPeerId &ssl_id);
 
 void 	printPeerLists(std::ostream &out);
 
-virtual bool checkPotentialAddr(const struct sockaddr_storage &addr, rstime_t age);
+    virtual bool checkPotentialAddr(const sockaddr_storage& addr);
+
 protected:
 	/* THESE CAN PROBABLY BE REMOVED */
 //bool	shutdown(); /* blocking shutdown call */
@@ -302,7 +299,8 @@ void  	locked_ConnectAttempt_ProxyAddress(peerConnectState *peer, const uint32_t
 
 bool  	locked_ConnectAttempt_Complete(peerConnectState *peer);
 
-bool  	locked_CheckPotentialAddr(const struct sockaddr_storage &addr, rstime_t age);
+    bool locked_CheckPotentialAddr(const sockaddr_storage& addr);
+
 bool 	addAddressIfUnique(std::list<peerConnectAddress> &addrList, peerConnectAddress &pca, bool pushFront);
 
 

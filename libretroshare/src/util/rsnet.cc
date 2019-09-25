@@ -162,6 +162,9 @@ std::ostream &operator<<(std::ostream &out, const struct sockaddr_in &addr)
 	return out;
 }
 
+std::ostream& operator<<(std::ostream& o, const sockaddr_storage& addr)
+{ return o << sockaddr_storage_tostring(addr); }
+
 /* thread-safe version of inet_ntoa */
 
 std::string rs_inet_ntoa(struct in_addr in)

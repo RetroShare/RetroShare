@@ -750,6 +750,26 @@ void NotifyQt::notifyListChange(int list, int type)
 	return;
 }
 
+void NotifyQt::notifyPeerConnected(const std::string& peer_id)
+{
+    {
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+    emit peerConnected(QString::fromStdString(peer_id));
+}
+void NotifyQt::notifyPeerDisconnected(const std::string& peer_id)
+{
+    	{
+		QMutexLocker m(&_mutex) ;
+		if(!_enabled)
+			return ;
+	}
+
+    emit peerDisconnected(QString::fromStdString(peer_id));
+}
 
 void NotifyQt::notifyListPreChange(int list, int /*type*/)
 {

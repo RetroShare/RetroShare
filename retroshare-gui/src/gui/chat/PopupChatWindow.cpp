@@ -22,6 +22,7 @@
 
 #include <QPixmap>
 #include <QCloseEvent>
+#include <QMenu>
 
 #include "PopupChatWindow.h"
 #include "ChatDialog.h"
@@ -75,21 +76,30 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 
 	ui.tabWidget->setVisible(tabbedWindow);
 
-	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW) {
-		ui.actionDockTab->setVisible(tabbedWindow == false);
-		ui.actionUndockTab->setVisible(tabbedWindow);
-	} else {
-		ui.actionDockTab->setVisible(false);
-		ui.actionUndockTab->setVisible(false);
-	}
+//	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW) {
+//		ui.actionDockTab->setVisible(tabbedWindow == false);
+//		ui.actionUndockTab->setVisible(tabbedWindow);
+//	} else {
+//		ui.actionDockTab->setVisible(false);
+//		ui.actionUndockTab->setVisible(false);
+//
+//	}
+
+//    ui.actionAvatar->setVisible(false);	// removed because it is already handled by clicking on your own avatar.
+//    ui.actionSetOnTop->setVisible(false);// removed, because the window manager should handle this already.
+//    ui.actionColor->setVisible(false);// moved to the context menu
+
+	ui.chattoolBar->hide();	// no widgets left!
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
-	connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
-	connect(ui.actionColor, SIGNAL(triggered()), this, SLOT(setStyle()));
-	connect(ui.actionDockTab, SIGNAL(triggered()), this, SLOT(dockTab()));
-	connect(ui.actionUndockTab, SIGNAL(triggered()), this, SLOT(undockTab()));
-	connect(ui.actionSetOnTop, SIGNAL(toggled(bool)), this, SLOT(setOnTop()));
+	// connect(ui.actionAvatar, SIGNAL(triggered()),this, SLOT(getAvatar()));
+	// connect(ui.actionColor, SIGNAL(triggered()), this, SLOT(setStyle()));
+	// connect(ui.actionDockTab, SIGNAL(triggered()), this, SLOT(dockTab()));
+	// connect(ui.actionUndockTab, SIGNAL(triggered()), this, SLOT(undockTab()));
+	// connect(ui.actionSetOnTop, SIGNAL(toggled(bool)), this, SLOT(setOnTop()));
+
+	connect(this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
 
 	connect(ui.tabWidget, SIGNAL(tabChanged(ChatDialog*)), this, SLOT(tabChanged(ChatDialog*)));
 	connect(ui.tabWidget, SIGNAL(tabClosed(ChatDialog*)), this, SLOT(tabClosed(ChatDialog*)));
@@ -100,6 +110,21 @@ PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags f
 		/* signal toggled is called */
 		ui.actionSetOnTop->setChecked(Settings->valueFromGroup("ChatWindow", "OnTop", false).toBool());
 	}
+}
+
+void PopupChatWindow::showContextMenu(QPoint)
+{
+	QMenu contextMnu(this);
+    contextMnu.addAction(QIcon(":/images/highlight.png"),tr("Choose window color..."),this,SLOT(setStyle()));
+
+	if (Settings->getChatFlags() & RS_CHAT_TABBED_WINDOW)
+    {
+        if(tabbedWindow)
+			contextMnu.addAction(QIcon(":/images/tab-dock.png"),tr("Dock window"),this,SLOT(docTab()));
+
+		contextMnu.addAction(QIcon(":/images/tab-undock.png"),tr("Dock window"),this,SLOT(undockTab()));
+    }
+    contextMnu.exec(QCursor::pos());
 }
 
 /** Destructor. */

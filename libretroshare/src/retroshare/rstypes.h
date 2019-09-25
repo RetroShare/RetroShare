@@ -37,15 +37,6 @@
 
 #define USE_NEW_CHUNK_CHECKING_CODE
 
-// This adds a level of indirection to types, so we can easily change them if needed
-//
-//typedef std::string   RsCertId;	// unused
-//typedef std::string   RsChanId;
-//typedef std::string   RsMsgId;
-//typedef std::string   RsAuthId;
-
-typedef SSLIdType     RsPeerId ;
-typedef PGPIdType     RsPgpId ;
 typedef Sha1CheckSum  RsFileHash ;
 typedef Sha1CheckSum  RsMessageId ;
 
@@ -257,8 +248,6 @@ struct FileInfo : RsSerializable
 	}
 };
 
-std::ostream &operator<<(std::ostream &out, const FileInfo& info);
-
 /**
  * Pointers in this class have no real meaning as pointers, they are used as
  * indexes, internally by retroshare.
@@ -378,8 +367,6 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(parent_groups);
 	}
 };
-
-std::ostream &operator<<(std::ostream &out, const DirDetails& details);
 
 class FileDetail
 {
