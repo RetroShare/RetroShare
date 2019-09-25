@@ -1240,6 +1240,8 @@ uint32_t p3MsgService::sendMail(
 	};
 
 	if(!pCheck(!from.isNull(), "from can't be null")) return false;
+	if(!pCheck( rsIdentity->isOwnId(from),
+	            "from must be own identity") ) return false;
 	if(!pCheck(!(to.empty() && cc.empty() && bcc.empty()),
 	            "You must specify at least one recipient" )) return false;
 
