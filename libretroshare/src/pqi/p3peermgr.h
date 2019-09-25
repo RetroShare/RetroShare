@@ -76,6 +76,13 @@ class peerState
 	RsPeerId id;
 	RsPgpId gpg_id;
 
+    // This flag is used when adding a single SSL cert as friend without adding its PGP key in the friend list. This allows to
+    // have short invites. However, because this represent a significant security risk, we perform multiple consistency checks
+    // whenever we use this flag, in particular:
+    //    flat is true  <==>   friend SSL cert is in the friend list, but PGP id is not in the friend list
+
+    bool skip_pgp_signature_validation;
+
 	uint32_t netMode; /* EXT / UPNP / UDP / HIDDEN / INVALID */
 	/* visState */
 	uint16_t vs_disc;
@@ -127,8 +134,17 @@ public:
 	                        rstime_t lastContact = 0,
 	                        ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT) ) = 0;
 
+	virtual bool addSslOnlyFriend(
+	        const RsPeerId& sslId,
+	        const RsPgpId& pgpId,
+	        const RsPeerDetails& details = RsPeerDetails() ) = 0;
+
+    // Calling this removed the skip_pgp_signature_validation flag on all peers which PGP key is the one supplied.
+    virtual bool notifyPgpKeyReceived(const RsPgpId& pgp_key_id) = 0;
+
 	virtual bool removeFriend(const RsPeerId &ssl_id, bool removePgpId) = 0;
 	virtual bool isFriend(const RsPeerId& ssl_id) = 0;
+    virtual bool isSslOnlyFriend(const RsPeerId &ssl_id)=0;
 
 virtual bool 	getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids) = 0;
 virtual bool 	removeAllFriendLocations(const RsPgpId &gpgid) = 0;
@@ -192,7 +208,6 @@ virtual bool    UpdateOwnAddress(const struct sockaddr_storage &local_addr, cons
 
 virtual bool	getOwnNetStatus(peerState &state) = 0;
 virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state) = 0;
-virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state) = 0;
 
 virtual bool    getPeerName(const RsPeerId &ssl_id, std::string &name) = 0;
 virtual bool	getGpgId(const RsPeerId &sslId, RsPgpId &gpgId) = 0;
@@ -242,10 +257,16 @@ public:
     virtual bool addFriend(const RsPeerId&ssl_id, const RsPgpId&gpg_id, uint32_t netMode = RS_NET_MODE_UDP,
                               uint16_t vsDisc = RS_VS_DISC_FULL, uint16_t vsDht = RS_VS_DHT_FULL,
                               rstime_t lastContact = 0,ServicePermissionFlags = ServicePermissionFlags(RS_NODE_PERM_DEFAULT));
+
+	bool addSslOnlyFriend(const RsPeerId& sslId, const RsPgpId &pgp_id, const RsPeerDetails& details = RsPeerDetails() ) override;
+
+    virtual bool notifyPgpKeyReceived(const RsPgpId& pgp_key_id) override;
+
     virtual bool	removeFriend(const RsPeerId &ssl_id, bool removePgpId);
     virtual bool	removeFriend(const RsPgpId &pgp_id);
 
     virtual bool	isFriend(const RsPeerId &ssl_id);
+    virtual bool	isSslOnlyFriend(const RsPeerId &ssl_id);
 
     virtual bool    getAssociatedPeers(const RsPgpId &gpg_id, std::list<RsPeerId> &ids);
     virtual bool    removeAllFriendLocations(const RsPgpId &gpgid);
@@ -307,7 +328,6 @@ public:
 
     virtual bool	getOwnNetStatus(peerState &state);
     virtual bool	getFriendNetStatus(const RsPeerId &id, peerState &state);
-    virtual bool	getOthersNetStatus(const RsPeerId &id, peerState &state);
 
     virtual bool    getPeerName(const RsPeerId& ssl_id, std::string& name);
     virtual bool	getGpgId(const RsPeerId& sslId, RsPgpId& gpgId);
@@ -395,7 +415,6 @@ private:
     peerState mOwnState;
 
     std::map<RsPeerId, peerState> mFriendList;	// <SSLid , peerState>
-    std::map<RsPeerId, peerState> mOthersList;
 
     std::map<RsPeerId,sockaddr_storage> mReportedOwnAddresses ;
 

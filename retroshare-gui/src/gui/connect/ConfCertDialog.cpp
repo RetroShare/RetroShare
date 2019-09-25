@@ -89,11 +89,13 @@ ConfCertDialog::ConfCertDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidge
     //ui._chat_CB->hide() ;
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
+    ui._shortFormat_CB->setChecked(true);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(applyDialog()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(close()));
     connect(ui._shouldAddSignatures_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
     connect(ui._includeIPHistory_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
+    connect(ui._shortFormat_CB, SIGNAL(toggled(bool)), this, SLOT(loadInvitePage()));
 
     ui.avatar->setFrameType(AvatarWidget::NORMAL_FRAME);
 
@@ -270,14 +272,14 @@ void ConfCertDialog::loadInvitePage()
 //	ui.userCertificateText_2->setFont(font);
 //	ui.userCertificateText_2->setText(QString::fromUtf8(pgp_key.c_str()));
 
-	std::string invite = rsPeers->GetRetroshareInvite(detail.id,
-                                                      ui._shouldAddSignatures_CB->isChecked(),
-                                                      ui._includeIPHistory_CB->isChecked()
-                                                      ) ;
+	std::string invite ;
 
-    QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),
-                                                      ui._includeIPHistory_CB->isChecked()
-                                                 );
+    if(ui._shortFormat_CB->isChecked())
+        rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+	else
+		invite = rsPeers->GetRetroshareInvite(detail.id, ui._shouldAddSignatures_CB->isChecked(), ui._includeIPHistory_CB->isChecked() ) ;
+
+	QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),ui._shortFormat_CB->isChecked(), ui._includeIPHistory_CB->isChecked() );
 
     ui.userCertificateText->setToolTip(infotext) ;
 
@@ -291,15 +293,20 @@ void ConfCertDialog::loadInvitePage()
         ui.userCertificateText->setText(QString::fromUtf8(invite.c_str()));
 }
 
-QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool include_additional_locators)
+QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bool signatures_included,bool use_short_format,bool include_additional_locators)
 {
     //infotext += tr("<p>Use this certificate to make new friends. Send it by email, or give it hand to hand.</p>") ;
     QString infotext = QObject::tr("<p>This certificate contains:") ;
     infotext += "<UL>" ;
-    infotext += "<li> a <b>Profile key</b>";
+
+    if(use_short_format)
+		infotext += "<li> a <b>Profile fingerprint</b>";
+	else
+		infotext += "<li> a <b>Profile key</b>";
+
     infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
 
-    if(signatures_included)
+    if(signatures_included && !use_short_format)
         infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
     else
         infotext += "</li>" ;

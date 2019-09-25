@@ -45,16 +45,12 @@
 #include "NetworkDialog.h"
 #include "gui/common/NewFriendList.h"
 #include "gui/Identity/IdDialog.h"
-#ifdef RS_USE_CIRCLES
-#include "gui/Circles/CirclesDialog.h"
-#endif
 /* Images for Newsfeed icons */
 //#define IMAGE_NEWSFEED           ""
 //#define IMAGE_NEWSFEED_NEW       ":/images/message-state-new.png"
 #define IMAGE_NETWORK2          ":/icons/png/netgraph.png"
 #define IMAGE_PEERS         	":/icons/png/keyring.png"
 #define IMAGE_IDENTITY          ":/images/identity/identities_32.png"
-//#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 /******
  * #define FRIENDS_DEBUG 1
@@ -63,8 +59,7 @@
 static FriendsDialog *instance = NULL;
 
 /** Constructor */
-FriendsDialog::FriendsDialog(QWidget *parent)
-            : RsAutoUpdatePage(1500,parent)
+FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
 {
     /* Invoke the Qt Designer generated object setup routine */
     ui.setupUi(this);
@@ -159,10 +154,6 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 	{
 		case FriendsDialog::IdTab: ui.tabWidget->setCurrentWidget(idDialog) ;
 											  break ;
-#ifdef RS_USE_CIRCLES
-		case FriendsDialog::CirclesTab: ui.tabWidget->setCurrentWidget(circlesDialog) ;
-											  break ;
-#endif
 		case FriendsDialog::NetworkTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
 											  break ;
 		case FriendsDialog::BroadcastTab: ui.tabWidget->setCurrentWidget(networkDialog) ;
@@ -200,11 +191,6 @@ void FriendsDialog::processSettings(bool bLoad)
     Settings->endGroup();
 }
 
-void FriendsDialog::showEvent(QShowEvent *event)
-{
-    RsAutoUpdatePage::showEvent(event);
-}
-
 void FriendsDialog::chatMessageReceived(const ChatMessage &msg)
 {
     if(msg.chat_id.isBroadcast())
@@ -232,10 +218,6 @@ void FriendsDialog::chatStatusReceived(const ChatId &chat_id, const QString &sta
         QString name = QString::fromUtf8(rsPeers->getPeerName(chat_id.broadcast_status_peer_id).c_str());
         ui.chatWidget->updateStatusString(name + " %1", status_string);
     }
-}
-
-void FriendsDialog::updateDisplay()
-{
 }
 
 void FriendsDialog::addFriend()

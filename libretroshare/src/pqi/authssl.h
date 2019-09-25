@@ -140,10 +140,12 @@ public:
 	 * @param[in] x509 pointer ti the X509 certificate to check
 	 * @param[out] diagnostic one of RS_SSL_HANDSHAKE_DIAGNOSTIC_* diagnostic
 	 *	codes
+	 * @param[in] verbose if true, prints the authentication result to screen.
 	 * @return true if correctly signed, false otherwise
 	 */
 	virtual bool AuthX509WithGPG(
 	        X509* x509,
+            bool verbose,
 	        uint32_t& diagnostic = RS_DEFAULT_STORAGE_PARAM(uint32_t)
 	        ) = 0;
 
@@ -233,7 +235,7 @@ public:
 	virtual X509* SignX509ReqWithGPG(X509_REQ *req, long days) override;
 
 	/// @see AuthSSL
-	bool AuthX509WithGPG(X509 *x509, uint32_t& auth_diagnostic) override;
+	bool AuthX509WithGPG(X509 *x509, bool verbose, uint32_t& auth_diagnostic) override;
 
 	/// @see AuthSSL
 	int VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) override;

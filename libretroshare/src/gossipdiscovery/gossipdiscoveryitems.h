@@ -25,6 +25,7 @@
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvidset.h"
 #include "serialiser/rstlvaddrs.h"
+#include "serialiser/rstlvbinary.h"
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsitem.h"
 #include "rsitems/itempriorities.h"
@@ -34,11 +35,10 @@
 enum class RsGossipDiscoveryItemType : uint8_t
 {
 	PGP_LIST           = 0x1,
-	PGP_CERT           = 0x2,
+	PGP_CERT           = 0x2,		// deprecated
 	CONTACT            = 0x5,
 	IDENTITY_LIST      = 0x6,
-	INVITE             = 0x7,
-	INVITE_REQUEST     = 0x8
+	PGP_CERT_BINARY    = 0x9,
 };
 
 class RsDiscItem: public RsItem
@@ -80,20 +80,21 @@ public:
 	RsTlvPgpIdSet pgpIdSet;
 };
 
-class RsDiscPgpCertItem: public RsDiscItem
+class RsDiscPgpKeyItem: public RsDiscItem
 {
 public:
 
-	RsDiscPgpCertItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT)
+	RsDiscPgpKeyItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT_BINARY)
 	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
 
-	void clear() override;
-	void serial_process(
-	        RsGenericSerializer::SerializeJob j,
-	        RsGenericSerializer::SerializeContext& ctx) override;
+    virtual ~RsDiscPgpKeyItem() { delete[](bin_data);bin_data=nullptr;bin_len=0;}
 
-	RsPgpId pgpId;
-	std::string pgpCert;
+	void clear() override;
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx) override;
+
+	RsPgpId pgpKeyId;				// duplicate information for practical reasons
+    unsigned char *bin_data;					// binry key data allocated with new unsigned char[]
+    uint32_t bin_len;
 };
 
 class RsDiscContactItem: public RsDiscItem
@@ -156,30 +157,6 @@ public:
 	        RsGenericSerializer::SerializeContext& ctx) override;
 
 	std::list<RsGxsId> ownIdentityList;
-};
-
-struct RsGossipDiscoveryInviteItem : RsDiscItem
-{
-	RsGossipDiscoveryInviteItem();
-
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx ) override
-	{ RS_SERIAL_PROCESS(mInvite); }
-	void clear() override { mInvite.clear(); }
-
-	std::string mInvite;
-};
-
-struct RsGossipDiscoveryInviteRequestItem : RsDiscItem
-{
-	RsGossipDiscoveryInviteRequestItem();
-
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx ) override
-	{ RS_SERIAL_PROCESS(mInviteId); }
-	void clear() override { mInviteId.clear(); }
-
-	RsPeerId mInviteId;
 };
 
 class RsDiscSerialiser: public RsServiceSerializer

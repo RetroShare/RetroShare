@@ -441,7 +441,7 @@ void NewFriendList::processSettings(bool load)
     if (load) // load settings
     {
         // states
-        setShowUnconnected(!Settings->value("hideUnconnected", mProxyModel->showOfflineNodes()).toBool());
+        setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
         setShowGroups(Settings->value("showGroups", mModel->getDisplayGroups()).toBool());
 
@@ -458,15 +458,6 @@ void NewFriendList::processSettings(bool load)
             Settings->setArrayIndex(index);
 
             std::string gids = Settings->value("open").toString().toStdString();
-
-//            RsGroupInfo ginfo ;
-//
-//            if(rsPeers->getGroupInfoByName(gids,ginfo)) // backward compatibility
-//                addGroupToExpand(ginfo.id) ;
-//            else if(rsPeers->getGroupInfo(RsNodeGroupId(gids),ginfo)) // backward compatibility
-//                addGroupToExpand(ginfo.id) ;
-//            else
-//                std::cerr << "(EE) Cannot find group info for openned group \"" << gids << "\"" << std::endl;
         }
         Settings->endArray();
     }
@@ -486,15 +477,6 @@ void NewFriendList::processSettings(bool load)
         // sort
         Settings->setValue("sortByState", mProxyModel->sortByState());
 
-//        // open groups
-//        Settings->beginWriteArray("Groups");
-//        int arrayIndex = 0;
-//        std::set<RsNodeGroupId> expandedPeers;
-//        getExpandedGroups(expandedPeers);
-//        foreach (RsNodeGroupId groupId, expandedPeers) {
-//            Settings->setArrayIndex(arrayIndex++);
-//            Settings->setValue("open", QString::fromStdString(groupId.toStdString()));
-//        }
         Settings->endArray();
     }
 }
@@ -718,8 +700,6 @@ void NewFriendList::peerTreeWidgetCustomPopupMenu()
 
     contextMenu.addAction(ui->actionExportFriendlist);
     contextMenu.addAction(ui->actionImportFriendlist);
-
-    // contextMenu = ui->peerTreeWidget->createStandardContextMenu(contextMenu);
 
     contextMenu.exec(QCursor::pos());
 }

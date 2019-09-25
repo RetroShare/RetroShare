@@ -48,7 +48,7 @@ public:
 	virtual ~p3Peers() {}
 
 	/* Updates ... */
-	virtual bool FriendsChanged();
+	virtual bool FriendsChanged(bool add);
 	virtual bool OthersChanged();
 
 	/* Peer Details (Net & Auth) */
@@ -69,6 +69,9 @@ public:
 	virtual bool isFriend(const RsPeerId &id);
 	virtual bool isPgpFriend(const RsPgpId& pgpId);
 
+	/// @see RsPeers
+	bool isSslOnlyFriend(const RsPeerId& sslId) override;
+
 	RS_DEPRECATED_FOR(isPgpFriend)
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend);
 
@@ -88,8 +91,17 @@ public:
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId> &ids);
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") ;
 
+	virtual RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& fpr) override;
+
 	/* Add/Remove Friends */
 	virtual	bool addFriend(const RsPeerId &ssl_id, const RsPgpId &gpg_id,ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT);
+
+	/// @see RsPeers
+	bool addSslOnlyFriend(
+	            const RsPeerId& sslId,
+	            const RsPgpId& pgp_id,
+	            const RsPeerDetails& details = RsPeerDetails() ) override;
+
 	virtual	bool removeFriend(const RsPgpId& gpgid);
 	virtual bool removeFriendLocation(const RsPeerId& sslId);
 
@@ -128,6 +140,15 @@ public:
 
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
 
+	/// @see RsPeers
+	bool getShortInvite(
+	        std::string& invite, const RsPeerId& sslId = RsPeerId(),
+	        bool formatRadix = false, bool bareBones = false,
+	        const std::string& baseUrl = "https://retroshare.me/" ) override;
+
+	/// @see RsPeers
+	bool parseShortInvite(const std::string& invite, RsPeerDetails& details, uint32_t &err_code ) override;
+
 	/// @see RsPeers::acceptInvite
 	virtual bool acceptInvite(
 	        const std::string& invite,
@@ -136,9 +157,10 @@ public:
 	virtual bool hasExportMinimal();
 
 	virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,RsPgpId& pgp_id, std::string& error_string);
+	virtual bool loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,uint32_t bin_key_len, RsPgpId& gpg_id, std::string& error_string );
 	virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, uint32_t& error_code);
 
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,int& error_code);
+	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, uint32_t& error_code) override;
 	virtual	bool saveCertificateToFile(const RsPeerId &id, const std::string &fname);
 	virtual	std::string saveCertificateToString(const RsPeerId &id);
 

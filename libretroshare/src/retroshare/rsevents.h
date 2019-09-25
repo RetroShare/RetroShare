@@ -63,6 +63,9 @@ enum class RsEventType : uint32_t
 	/// @see RsGxsChanges
 	GXS_CHANGES                                             = 5,
 
+	/// Emitted when a peer state changes, @see RsPeers
+	PEER_STATE_CHANGED                                      = 6,
+
 	MAX       /// Used to detect invalid event type passed
 };
 

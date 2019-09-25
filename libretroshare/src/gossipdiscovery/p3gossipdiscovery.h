@@ -22,6 +22,78 @@
  *******************************************************************************/
 #pragma once
 
+//
+// p3GossipDiscovery is reponsible for facilitating the circulation of public keys between friend nodes.
+//
+// The service locally holds a cache that stores:
+//     * the list of friend profiles, in each of which the list of locations with their own discovery flag (which means whether they allow discovery or not)
+//     * the list of friend nodes, with their version number
+//
+// Data flow
+// =========
+//
+//  statusChange(std::list<pqiServicePeer>&)         // called by pqiMonitor when peers are added,removed, or recently connected
+//       |
+//       +---- sendOwnContactInfo(RsPeerId)          // [On connection]      sends own PgpId, discovery flag, list of own signed GxsIds
+//       |               |
+//       |               +---->[to friend]
+//       |
+//       +---- locally add/remove cache info         // [New/Removed friend] updates the list of friends, along with their own discovery flag
+//
+//  tick()
+//   |
+//   +------ handleIncoming()
+//                  |
+//                  +-- recvOwnContactInfo(RsPeerId)   // update location, IP addresses of a peer.
+//                  |            |
+//                  |            +------(if the peer has short_invite flag)
+//                  |            |                      |
+//                  |            |                      +---------requestPGPKey()->[to friend]      // requests the full PGP public key, so as to be
+//                  |            |                                                                  // able to validate connections.
+//                  |            |
+//                  |            +------(if disc != RS_VS_DISC_OFF)
+//                  |                                   |
+//                  |                                   +---------sendPgpList()->[to friend]        // sends own list of friend profiles for which at least one location
+//                  |                                                                               // accepts discovery
+//                  +-- processContactInfo(item->PeerId(), contact);
+//                  |            |
+//                  |            +------ addFriend()                                                // called on nodes signed by the PGP key mentionned in the disc info
+//                  |            |
+//                  |            +------ update local discovery info
+//                  |
+//                  +-- recvIdentityList(Gxs Identity List)
+//                  |            |
+//                  |            +------ mGixs->requestKey(*it,peers,use_info) ;					// requestKey() takes care of requesting the GxsIds that are missing
+//                  |
+//                  +-- recvPGPCertificate(item->PeerId(), pgpkey);
+//                  |            |
+//                  |            +------(if peer has short invite flag)
+//                  |                                    |
+//                  |                                    +--------- add key to keyring, accept connections and notify peerMgr
+//                  |
+//                  +-- processPGPList(pgplist->PeerId(), pgplist);                                  // list of PGP keys of a friend, received from himself
+//                  |            |
+//                  |            +------ requestPgpCertificate()                                     // request missing keys only
+//                  |            |
+//                  |            +------ updatePeers_locked(fromId)
+//                  |                                    |
+//                  |                                    +--------- sendContactInfo_locked(from,to)  // sends IP information about mutual friends to the origin of the info
+//                  |                                    |
+//                  |                                    +--------- sendContactInfo_locked(to,from)  // sends IP information origin to online mutual friends
+//                  |
+//                  +-- recvPGPCertificateRequest(pgplist->PeerId(), pgplist);
+//                               |
+//                               +------ sendPGPCertificate()                                        // only sends the ones we are friend with, and only send own cert
+//                                                                                                   // if discovery is off
+//
+// Notes:
+//    * Tor nodes never send their own IP, and normal nodes never send their IP to Tor nodes either.
+//      A Tor node may accidentally know the IP of a normal node when it adds its certificate. However, the IP is dropped and not saved in this case.
+//      Generally speaking, no IP information should leave or transit through a Tor node.
+//
+//    * the decision to call recvOwnContactInfo() or processContactInfo() depends on whether the item's peer id is the one the info is about. This is
+//      a bit unsafe. We should probably have to different items here especially if the information is not exactly the same.
+//
 #include <memory>
 
 #include "retroshare/rsgossipdiscovery.h"
@@ -36,12 +108,9 @@
 
 class p3ServiceControl;
 
-using PGPID RS_DEPRECATED_FOR(RsPgpId)  = RsPgpId;
-using SSLID RS_DEPRECATED_FOR(RsPeerId) = RsPeerId;
-
 struct DiscSslInfo
 {
-	DiscSslInfo() : mDiscStatus(0) {}
+	DiscSslInfo() : mDiscStatus(RS_VS_DISC_OFF) {}	// default is to not allow discovery, until the peer tells about it
 	uint16_t mDiscStatus;
 };
 
@@ -56,16 +125,16 @@ struct DiscPgpInfo
 {
 	DiscPgpInfo() {}
 
-	void mergeFriendList(const std::set<PGPID> &friends);
+	void mergeFriendList(const std::set<RsPgpId> &friends);
 
-	std::set<PGPID> mFriendSet;
-	std::map<SSLID, DiscSslInfo> mSslIds;
+	std::set<RsPgpId> mFriendSet;
+	std::map<RsPeerId, DiscSslInfo> mSslIds;
 };
 
 
 class p3discovery2 :
-        public RsGossipDiscovery, public p3Service, public pqiServiceMonitor,
-        public AuthGPGService
+        public RsGossipDiscovery, public p3Service, public pqiServiceMonitor
+        //public AuthGPGService
 {
 public:
 
@@ -87,60 +156,44 @@ virtual RsServiceInfo getServiceInfo();
 	bool getPeerVersion(const RsPeerId &id, std::string &version);
 	bool getWaitingDiscCount(size_t &sendCount, size_t &recvCount);
 
-	/// @see RsGossipDiscovery
-	bool sendInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
-
-	/// @see RsGossipDiscovery
-	bool requestInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
-
-        /************* from AuthGPService ****************/
-virtual AuthGPGOperation *getGPGOperation();
-virtual void setGPGOperation(AuthGPGOperation *operation);
+    /************* from AuthGPService ****************/
+	// virtual AuthGPGOperation *getGPGOperation();
+	// virtual void setGPGOperation(AuthGPGOperation *operation);
 
 
 private:
 
-	PGPID getPGPId(const SSLID &id);
+	RsPgpId getPGPId(const RsPeerId &id);
 
 	int  handleIncoming();
 	void updatePgpFriendList();
 
-	void addFriend(const SSLID &sslId);
-	void removeFriend(const SSLID &sslId);
+	void addFriend(const RsPeerId &sslId);
+	void removeFriend(const RsPeerId &sslId);
 
 	void updatePeerAddresses(const RsDiscContactItem *item);
 	void updatePeerAddressList(const RsDiscContactItem *item);
 
-	void sendOwnContactInfo(const SSLID &sslid);
-	void recvOwnContactInfo(const SSLID &fromId, const RsDiscContactItem *item);
+	void sendOwnContactInfo(const RsPeerId &sslid);
+	void recvOwnContactInfo(const RsPeerId &fromId, const RsDiscContactItem *item);
 
-	void sendPGPList(const SSLID &toId);
-	void processPGPList(const SSLID &fromId, const RsDiscPgpListItem *item);
+	void sendPGPList(const RsPeerId &toId);
+	void processPGPList(const RsPeerId &fromId, const RsDiscPgpListItem *item);
 
-	void processContactInfo(const SSLID &fromId, const RsDiscContactItem *info);
+	void processContactInfo(const RsPeerId &fromId, const RsDiscContactItem *info);
 
-	void requestPGPCertificate(const PGPID &aboutId, const SSLID &toId);
+    // send/recv information
 
-	void recvPGPCertificateRequest(
-	        const RsPeerId& fromId, const RsDiscPgpListItem* item );
-
-	void sendPGPCertificate(const PGPID &aboutId, const SSLID &toId);
-	void recvPGPCertificate(const SSLID &fromId, RsDiscPgpCertItem *item);
+	void requestPGPCertificate(const RsPgpId &aboutId, const RsPeerId &toId);
+	void recvPGPCertificateRequest(const RsPeerId& fromId, const RsDiscPgpListItem* item );
+	void sendPGPCertificate(const RsPgpId &aboutId, const RsPeerId &toId);
+	void recvPGPCertificate(const RsPeerId &fromId, RsDiscPgpKeyItem *item);
 	void recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>& ids);
 
-	bool setPeerVersion(const SSLID &peerId, const std::string &version);
-
-	void recvInvite(std::unique_ptr<RsGossipDiscoveryInviteItem> inviteItem);
+	bool setPeerVersion(const RsPeerId &peerId, const std::string &version);
 
 	void rsEventsHandler(const RsEvent& event);
 	RsEventsHandlerId_t mRsEventsHandle;
-
 
 	p3PeerMgr *mPeerMgr;
 	p3LinkMgr *mLinkMgr;
@@ -151,16 +204,18 @@ private:
 	/* data */
 	RsMutex mDiscMtx;
 
-	void updatePeers_locked(const SSLID &aboutId);
-	void sendContactInfo_locked(const PGPID &aboutId, const SSLID &toId);
+	void updatePeers_locked(const RsPeerId &aboutId);
+	void sendContactInfo_locked(const RsPgpId &aboutId, const RsPeerId &toId);
 
 	rstime_t mLastPgpUpdate;
 
-	std::map<PGPID, DiscPgpInfo> mFriendList;
-	std::map<SSLID, DiscPeerInfo> mLocationMap;
+	std::map<RsPgpId, DiscPgpInfo> mFriendList;
+	std::map<RsPeerId, DiscPeerInfo> mLocationMap;
 
-	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
-	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertOutList;
+// This was used to async the receiving of PGP keys, mainly because PGPHandler cross-checks all signatures, so receiving these keys in large loads can be costly
+// Because discovery is not running in the main thread, there's no reason to re-async this into another process (e.g. AuthGPG)
+//
+//	std::list<RsDiscPgpCertItem *> mPendingDiscPgpCertInList;
 
 protected:
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)

@@ -36,7 +36,8 @@
 #include "retroshare/rsexpr.h"
 #include "retroshare/rsmsgs.h"
 
-//#define DEBUG_MESSAGE_MODEL
+//#define DEBUG_MODEL
+//#define DEBUG_MODEL_INDEX
 
 #define IS_MESSAGE_UNREAD(flags) (flags &  (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
 
@@ -292,7 +293,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
 
     EntryIndex parent_index ;
     convertInternalIdToIndex<sizeof(uintptr_t)>(parent.internalId(),parent_index);
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     RsDbg() << "Index row=" << row << " col=" << column << " parent=" << parent << std::endl;
 #endif
 
@@ -300,7 +301,7 @@ QModelIndex RsFriendListModel::index(int row, int column, const QModelIndex& par
     EntryIndex new_index = parent_index.child(row,mTopLevel);
     convertIndexToInternalId<sizeof(uintptr_t)>(new_index,ref);
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     RsDbg() << "  returning " << createIndex(row,column,ref) << std::endl;
 #endif
 
@@ -588,7 +589,7 @@ QVariant RsFriendListModel::onlineRole(const EntryIndex& e, int col) const
 
 QVariant RsFriendListModel::fontRole(const EntryIndex& e, int col) const
 {
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 	std::cerr << "  font role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": " << std::endl;
 #endif
 
@@ -613,7 +614,7 @@ public:
 
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
     std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
     AutoEndel x;
 #endif
@@ -640,7 +641,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 			switch(col)
 			{
 			case COLUMN_THREAD_NAME:
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
               	std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
@@ -663,7 +664,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
  	       if(!profile)
  	           return QVariant();
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 		   std::cerr << profile->profile_info.name.c_str() ;
 #endif
 			switch(col)
@@ -683,7 +684,7 @@ QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
         if(!node)
             return QVariant();
 
-#ifdef DEBUG_MODEL
+#ifdef DEBUG_MODEL_INDEX
 		   std::cerr << node->node_info.location.c_str() ;
 #endif
 		switch(col)
@@ -728,7 +729,7 @@ void RsFriendListModel::checkInternalData(bool force)
 			if(mLocations[i].last_update_ts + NODE_DETAILS_UPDATE_DELAY < now)
 			{
 #ifdef DEBUG_MODEL
-				std::cerr << "Updating ID " << node.node_info.id << std::endl;
+				std::cerr << "Updating ID " << mLocations[i].node_info.id << std::endl;
 #endif
 				RsPeerId id(mLocations[i].node_info.id);				// this avoids zeroing the id field when writing the node data
 				rsPeers->getPeerDetails(id,mLocations[i].node_info);
@@ -973,6 +974,55 @@ RsFriendListModel::EntryType RsFriendListModel::getType(const QModelIndex& i) co
     return e.type;
 }
 
+std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::createInvalidatedProfile(const RsPgpId& _pgp_id,const RsPgpFingerprint& fpr,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles)
+{
+    // This is necessary by the time the full fingerprint is used in PeerNetItem.
+
+    RsPgpId pgp_id;
+
+    if(!fpr.isNull())
+		pgp_id = rsPeers->pgpIdFromFingerprint(fpr);
+    else
+        pgp_id = _pgp_id;
+
+    auto it2 = pgp_indices.find(pgp_id);
+
+    if(it2 != pgp_indices.end())
+    {
+        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        return it2;
+    }
+
+	HierarchicalProfileInformation hprof ;
+
+    if(rsPeers->getGPGDetails(pgp_id,hprof.profile_info))
+    {
+        std::cerr << "(EE) asked to create an invalidated profile that already exists!" << std::endl;
+        return it2;
+    }
+
+    hprof.profile_info.isOnlyGPGdetail = true;
+	hprof.profile_info.gpg_id = pgp_id;
+
+	hprof.profile_info.name = tr("Profile ID ").toStdString() + pgp_id.toStdString() + tr(" (Not yet validated)").toStdString();
+	hprof.profile_info.issuer = pgp_id;
+
+	hprof.profile_info.fpr = fpr; /* pgp fingerprint */
+
+	hprof.profile_info.trustLvl = 0;
+	hprof.profile_info.validLvl = 0;
+
+	pgp_indices[pgp_id] = mProfiles.size();
+	mProfiles.push_back(hprof);
+
+	it2 = pgp_indices.find(pgp_id);
+
+#ifdef DEBUG_MODEL
+		RsDbg() << "  Creating invalidated profile pgp id = " << pgp_id <<  " (" << hprof.profile_info.name << ") and fingerprint " << fpr << std::endl;
+#endif
+	return it2;
+}
+
 std::map<RsPgpId,uint32_t>::const_iterator RsFriendListModel::checkProfileIndex(const RsPgpId& pgp_id,std::map<RsPgpId,uint32_t>& pgp_indices,std::vector<HierarchicalProfileInformation>& mProfiles,bool create)
 {
 	auto it2 = pgp_indices.find(pgp_id);
@@ -1042,7 +1092,11 @@ void RsFriendListModel::updateInternalData()
         auto it2 = checkProfileIndex(hnode.node_info.gpg_id,pgp_indices,mProfiles,hnode.node_info.gpg_id == rsPeers->getGPGOwnId());
 
         if(it2 == pgp_indices.end())
-            continue;
+        {
+            // This peer's pgp key hasn't been validated yet. We list such peers at the end.
+
+            it2 = createInvalidatedProfile(hnode.node_info.gpg_id,hnode.node_info.fpr,pgp_indices,mProfiles);
+        }
 
 		mProfiles[it2->second].child_node_indices.push_back(mLocations.size());
         mLocations.push_back(hnode);

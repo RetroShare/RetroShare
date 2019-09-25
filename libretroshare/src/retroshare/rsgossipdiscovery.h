@@ -64,6 +64,8 @@ struct RsGossipDiscoveryFriendInviteReceivedEvent : RsEvent
 class RsGossipDiscovery
 {
 public:
+    virtual ~RsGossipDiscovery() = default;
+
 	/**
 	 * @brief getDiscFriends get a list of all friends of a given friend
 	 * @jsonapi{development}
@@ -101,34 +103,4 @@ public:
 	 * @return true on success false otherwise
 	 */
 	virtual bool getWaitingDiscCount(size_t& sendCount, size_t& recvCount) = 0;
-
-	/**
-	 * @brief Send RetroShare invite to given peer
-	 * @jsonapi{development}
-	 * @param[in] inviteId id of peer of which send the invite
-	 * @param[in] toSslId ssl id of the destination peer
-	 * @param[out] errorMessage Optional storage for the error message,
-	 *	meaningful only on failure.
-	 * @return true on success false otherwise
-	 */
-	virtual bool sendInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) = 0;
-
-	/**
-	 * @brief Request RetroShare certificate to given peer
-	 * @jsonapi{development}
-	 * @param[in] inviteId id of the peer of which request the invite
-	 * @param[in] toSslId id of the destination of the request
-	 * @param[out] errorMessage Optional storage for the error message,
-	 *	meaningful only on failure.
-	 * @return true on success false otherwise
-	 */
-	virtual bool requestInvite(
-	        const RsPeerId& inviteId, const RsPeerId& toSslId,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) = 0;
-
-	virtual ~RsGossipDiscovery();
 };

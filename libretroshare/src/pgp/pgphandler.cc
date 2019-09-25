@@ -1037,7 +1037,17 @@ void PGPHandler::addNewKeyToOPSKeyring(ops_keyring_t *kr,const ops_keydata_t& ke
 	kr->nkeys++ ;
 }
 
+bool PGPHandler::LoadCertificateFromBinaryData(const unsigned char *data,uint32_t data_len,RsPgpId& id,std::string& error_string)
+{
+    return LoadCertificate(data,data_len,ops_false,id,error_string);
+}
+
 bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& id,std::string& error_string)
+{
+    return LoadCertificate((unsigned char*)(pgp_cert.c_str()),pgp_cert.length(),ops_true,id,error_string);
+}
+
+bool PGPHandler::LoadCertificate(const unsigned char *data,uint32_t data_len,bool armoured,RsPgpId& id,std::string& error_string)
 {
 	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
 #ifdef DEBUG_PGPHANDLER
@@ -1046,9 +1056,9 @@ bool PGPHandler::LoadCertificateFromString(const std::string& pgp_cert,RsPgpId& 
 
 	ops_keyring_t *tmp_keyring = allocateOPSKeyring();
 	ops_memory_t *mem = ops_memory_new() ;
-	ops_memory_add(mem,(unsigned char *)pgp_cert.c_str(),pgp_cert.length()) ;
+	ops_memory_add(mem,data,data_len) ;
 
-	if(!ops_keyring_read_from_mem(tmp_keyring,ops_true,mem))
+	if(!ops_keyring_read_from_mem(tmp_keyring,armoured,mem))
 	{
 		ops_keyring_free(tmp_keyring) ;
 		free(tmp_keyring) ;
@@ -1569,6 +1579,11 @@ void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const Rs
 		cert._flags |= PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
 	else
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
+}
+
+RsPgpId PGPHandler::pgpIdFromFingerprint(const PGPFingerprintType& f)
+{
+    return RsPgpId(f.toByteArray() + _RsIdSize::PGP_FINGERPRINT - _RsIdSize::PGP_ID);
 }
 
 bool PGPHandler::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
