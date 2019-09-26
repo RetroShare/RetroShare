@@ -1246,15 +1246,32 @@ uint32_t p3MsgService::sendMail(
 	            "You must specify at least one recipient" )) return false;
 
 	auto dstCheck =
-	        [&](const std::set<RsGxsId>& dstSet)
+	        [&](const std::set<RsGxsId>& dstSet, const std::string& setName)
 	{
-		for(const RsGxsId& dst: dstSet) if(dst.isNull()) return false;
+		for(const RsGxsId& dst: dstSet)
+		{
+			if(dst.isNull())
+			{
+				errorMsg = setName + " contains a null recipient";
+				RsErr() << fname << " " << errorMsg << std::endl;
+				return false;
+			}
+
+			if(!rsIdentity->isKnownId(dst))
+			{
+				rsIdentity->requestIdentity(dst);
+				errorMsg = setName + " contains an unknown recipient: " +
+				        dst.toStdString();
+				RsErr() << fname << " " << errorMsg << std::endl;
+				return false;
+			}
+		}
 		return true;
 	};
 
-	if(!pCheck(dstCheck(to),  "to contains a null recipient" )) return false;
-	if(!pCheck(dstCheck(cc),  "cc contains a null recipient" )) return false;
-	if(!pCheck(dstCheck(bcc), "bcc contains a null recipient")) return false;
+	if(!dstCheck(to, "to"))   return false;
+	if(!dstCheck(cc, "cc"))   return false;
+	if(!dstCheck(bcc, "bcc")) return false;
 
 	MessageInfo msgInfo;
 

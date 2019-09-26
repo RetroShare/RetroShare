@@ -298,7 +298,9 @@ public:
 	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
 	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
 
-	virtual bool isOwnId(const RsGxsId& key_id) ;
+	inline bool isKnownId(const RsGxsId& id) override { return haveKey(id); }
+
+	bool isOwnId(const RsGxsId& key_id) override;
 
 	virtual bool signData( const uint8_t* data,
 	                       uint32_t data_size,
@@ -619,7 +621,7 @@ private:
 	bool ownIdsAreLoaded() { RS_STACK_MUTEX(mIdMtx); return mOwnIdsLoaded; }
 
 	bool mAutoAddFriendsIdentitiesAsContacts;
-    uint32_t mMaxKeepKeysBanned ;
+	uint32_t mMaxKeepKeysBanned;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

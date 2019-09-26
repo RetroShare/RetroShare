@@ -4788,3 +4788,7 @@ RsIdentityUsage::RsIdentityUsage(
 RsIdentityUsage::RsIdentityUsage() :
     mServiceId(RsServiceType::NONE), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0)
 {}
+
+RsIdentity::~RsIdentity() = default;
+RsReputationInfo::~RsReputationInfo() = default;
+RsGixs::~RsGixs() = default;

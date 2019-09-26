@@ -338,7 +338,7 @@ struct RsIdentityDetails : RsSerializable
 		RS_SERIAL_PROCESS(mNickname);
 		RS_SERIAL_PROCESS(mFlags);
 		RS_SERIAL_PROCESS(mPgpId);
-		//RS_SERIAL_PROCESS(mReputation);
+		RS_SERIAL_PROCESS(mReputation);
 		RS_SERIAL_PROCESS(mAvatar);
 		RS_SERIAL_PROCESS(mPublishTS);
 		RS_SERIAL_PROCESS(mLastUsageTS);
@@ -352,7 +352,6 @@ struct RsIdentityDetails : RsSerializable
 struct RsIdentity : RsGxsIfaceHelper
 {
 	explicit RsIdentity(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsIdentity() {}
 
 	/**
 	 * @brief Create a new identity
@@ -418,6 +417,14 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @return false on error, true otherwise
 	 */
 	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) = 0;
+
+	/**
+	 * @brief Check if an id is known
+	 * @jsonapi{development}
+	 * @param[in] id Id to check
+	 * @return true if the id is known, false otherwise
+	 */
+	virtual bool isKnownId(const RsGxsId& id) = 0;
 
 	/**
 	 * @brief Check if an id is own
@@ -568,4 +575,6 @@ struct RsIdentity : RsGxsIfaceHelper
 	RS_DEPRECATED_FOR("getIdentitiesSummaries getIdentitiesInfo")
 	virtual bool getGroupData( const uint32_t& token,
 	                           std::vector<RsGxsIdGroup>& groups) = 0;
+
+	virtual ~RsIdentity();
 };
