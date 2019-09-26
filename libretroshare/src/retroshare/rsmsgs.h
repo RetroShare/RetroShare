@@ -236,19 +236,22 @@ struct MsgInfoSummary : RsSerializable
 {
 	MsgInfoSummary() : msgflags(0), count(0), ts(0) {}
 
-    RsMailMessageId msgId;
+	RsMailMessageId msgId;
 	RsPeerId srcId;
 
 	uint32_t msgflags;
-    std::list<uint32_t> msgtags;	// that leaves 25 bits for user-defined tags.
+	std::list<uint32_t> msgtags; /// that leaves 25 bits for user-defined tags.
 
 	std::string title;
-	int count; /* file count     */
+	int count; /** file count     */
 	rstime_t ts;
 
 
-	// RsSerializable interface
-	void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext &ctx) {
+	/// @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext &ctx) override
+	{
 		RS_SERIAL_PROCESS(msgId);
 		RS_SERIAL_PROCESS(srcId);
 
