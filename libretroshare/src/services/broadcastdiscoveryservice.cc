@@ -31,15 +31,13 @@
 #include "serialiser/rsserializer.h"
 #include "retroshare/rsevents.h"
 
-/*extern*/ std::shared_ptr<RsBroadcastDiscovery> rsBroadcastDiscovery(nullptr);
-RsBroadcastDiscovery::~RsBroadcastDiscovery() { /* Beware of Rs prefix! */ }
-RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() {}
-RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() {}
+/*extern*/ RsBroadcastDiscovery* rsBroadcastDiscovery = nullptr;
 
 struct BroadcastDiscoveryPack : RsSerializable
 {
 	BroadcastDiscoveryPack() : mLocalPort(0) {}
 
+	RsPgpFingerprint mPgpFingerprint;
 	RsPeerId mSslId;
 	uint16_t mLocalPort;
 	std::string mProfileName;
@@ -47,6 +45,7 @@ struct BroadcastDiscoveryPack : RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
+		RS_SERIAL_PROCESS(mPgpFingerprint);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mLocalPort);
 		RS_SERIAL_PROCESS(mProfileName);
@@ -55,6 +54,7 @@ struct BroadcastDiscoveryPack : RsSerializable
 	static BroadcastDiscoveryPack fromPeerDetails(const RsPeerDetails& pd)
 	{
 		BroadcastDiscoveryPack bdp;
+		bdp.mPgpFingerprint = pd.fpr;
 		bdp.mSslId = pd.id;
 		bdp.mLocalPort = pd.localPort;
 		bdp.mProfileName = pd.name;
@@ -86,7 +86,6 @@ struct BroadcastDiscoveryPack : RsSerializable
 	~BroadcastDiscoveryPack() override;
 };
 
-BroadcastDiscoveryPack::~BroadcastDiscoveryPack() {};
 
 BroadcastDiscoveryService::BroadcastDiscoveryService(
         RsPeers& pRsPeers ) :
@@ -202,3 +201,8 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 
 	return rbdr;
 }
+
+RsBroadcastDiscovery::~RsBroadcastDiscovery() = default;
+RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() = default;
+RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() = default;
+BroadcastDiscoveryPack::~BroadcastDiscoveryPack() = default;
