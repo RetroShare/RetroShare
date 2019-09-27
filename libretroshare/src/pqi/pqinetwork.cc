@@ -26,6 +26,10 @@
 #	include <ws2tcpip.h>
 #endif // WINDOWS_SYS
 
+#ifdef __ANDROID__
+#	include <android/api-level.h>
+#endif // def __ANDROID__
+
 #include "pqi/pqinetwork.h"
 #include "util/rsnet.h"
 
@@ -272,7 +276,7 @@ int inet_aton(const char *name, struct in_addr *addr)
 #	include <winsock2.h>
 #	include <iphlpapi.h>
 #	pragma comment(lib, "IPHLPAPI.lib")
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24
 #	include <string>
 #	include <QString>
 #	include <QHostAddress>
@@ -320,7 +324,7 @@ bool getLocalAddresses(std::vector<sockaddr_storage>& addrs)
 		}
 	}
 	free(adapter_addresses);
-#elif defined(__ANDROID__)
+#elif defined(__ANDROID__) && __ANDROID_API__ < 24
 	foreach(QHostAddress qAddr, QNetworkInterface::allAddresses())
 	{
 		sockaddr_storage tmpAddr;

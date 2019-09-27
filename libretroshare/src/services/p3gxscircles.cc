@@ -223,6 +223,9 @@ bool p3GxsCircles::createCircle(
 	cData.mMeta.mAuthorId = authorId;
 	cData.mMeta.mCircleType = static_cast<uint32_t>(circleType);
 	cData.mMeta.mGroupFlags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
+	cData.mMeta.mCircleId = restrictedId;
+	cData.mLocalFriends = localMembers;
+	cData.mInvitedMembers = gxsIdMembers;
 
 	uint32_t token;
 	createGroup(token, cData);

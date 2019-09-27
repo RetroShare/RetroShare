@@ -120,7 +120,7 @@ bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
 void RsEventsService::data_tick()
 {
 	auto nextRunAt = std::chrono::system_clock::now() +
-	        std::chrono::milliseconds(1);
+	        std::chrono::milliseconds(200);
 
 	std::shared_ptr<const RsEvent> eventPtr(nullptr);
 	size_t futureEventsCounter = 0;
