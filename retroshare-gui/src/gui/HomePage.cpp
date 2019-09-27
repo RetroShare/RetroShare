@@ -49,14 +49,15 @@ HomePage::HomePage(QWidget *parent) :
 	MainPage(parent),
 	ui(new Ui::HomePage),
     mIncludeAllIPs(false),
-    mUseShortFormat(true)
+    mUseShortFormat(false)
 {
     ui->setupUi(this);
 
 	updateOwnCert();
+	updateOwnId();
 		
 	connect(ui->addButton, SIGNAL(clicked()), this, SLOT(addFriend()));
-	//connect(ui->LoadCertFileButton, SIGNAL(clicked()), this, SLOT(loadCert()));
+	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT(doExpand()));
 	
     QAction *WebMailAction = new QAction(QIcon(),tr("Invite via WebMail"), this);
     connect(WebMailAction, SIGNAL(triggered()), this, SLOT(webMail()));
@@ -66,9 +67,24 @@ HomePage::HomePage(QWidget *parent) :
 
     QAction *SendAction = new QAction(QIcon(),tr("Send via Email"), this);
     connect(SendAction, SIGNAL(triggered()), this, SLOT(runEmailClient()));
+	
+	QAction *CopyIdAction = new QAction(QIcon(),tr("Copy your Retroshare ID to Clipboard"), this);
+    connect(CopyIdAction, SIGNAL(triggered()), this, SLOT(copyId()));
 
 		QMenu *menu = new QMenu();
-    menu->addAction(SendAction);
+	menu->addAction(CopyIdAction);
+	
+	if(!RsAccounts::isHiddenNode())
+	{
+		QAction *includeIPsAct = new QAction(QIcon(), tr("Include all your known IPs"),this);
+		connect(includeIPsAct, SIGNAL(triggered()), this, SLOT(toggleIncludeAllIPs()));
+		includeIPsAct->setCheckable(true);
+		includeIPsAct->setChecked(mIncludeAllIPs);
+
+		menu->addAction(includeIPsAct);
+	}
+	menu->addSeparator();
+	menu->addAction(SendAction);
 	menu->addAction(WebMailAction);
     menu->addAction(RecAction);
 
@@ -78,7 +94,7 @@ HomePage::HomePage(QWidget *parent) :
 
 	connect(ui->openwebhelp,SIGNAL(clicked()), this,SLOT(openWebHelp())) ;
 
-	//ui->LoadCertFileButton->hide(); // duplicates functionality => not good.
+	ui->userCertEdit->hide();
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
@@ -137,6 +153,7 @@ void HomePage::toggleIncludeAllIPs()
 {
     mIncludeAllIPs = !mIncludeAllIPs;
     updateOwnCert();
+	updateOwnId();	
 }
 
 HomePage::~HomePage()
@@ -170,6 +187,28 @@ void HomePage::updateOwnCert()
 	ui->userCertEdit->setToolTip(description);
 }
 
+void HomePage::updateOwnId()
+{
+    bool include_extra_locators = mIncludeAllIPs;
+
+    RsPeerDetails detail;
+
+    if (!rsPeers->getPeerDetails(rsPeers->getOwnId(), detail))
+    {
+        std::cerr << "(EE) Cannot retrieve information about own certificate. That is a real problem!!" << std::endl;
+        return ;
+    }
+
+	std::string invite ;
+
+	rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
+
+	ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
+
+    QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
+
+	ui->retroshareid->setToolTip(description);
+}
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
 {
 #ifdef Q_OS_WIN
@@ -212,7 +251,14 @@ void HomePage::copyCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
 	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
+	QMessageBox::information(this, "RetroShare", tr("Your Retroshare certificate is copied to Clipboard, paste and send it to your friend via email or some other way"));
+}
+
+void HomePage::copyId()
+{
+	QClipboard *clipboard = QApplication::clipboard();
+	clipboard->setText(ui->retroshareid->text());
+	QMessageBox::information(this, "RetroShare", tr("Your Retroshare ID is copied to Clipboard, paste and send it to your friend via email or some other way"));
 }
 
 void HomePage::saveCert()
@@ -260,4 +306,20 @@ void HomePage::webMail()
 void HomePage::openWebHelp()
 {
     QDesktopServices::openUrl(QUrl(QString("https://retroshare.readthedocs.io")));
+}
+
+void HomePage::doExpand()
+{
+
+	if (ui->expandButton->isChecked())
+	{
+		ui->userCertEdit->show();
+		ui->expandButton->setToolTip(tr("Hide"));
+	}
+	else
+	{
+		ui->userCertEdit->hide();
+		ui->expandButton->setToolTip(tr("Show Certificate"));
+	}
+
 }
