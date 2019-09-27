@@ -1015,7 +1015,7 @@ bool p3GxsChannels::getChannelsInfo(
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	if( !requestGroupInfo(token, opts, chanIds)
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
-	return getGroupData(token, channelsInfo);
+	return getGroupData(token, channelsInfo) && !channelsInfo.empty();
 }
 
 bool p3GxsChannels::getContentSummaries(
@@ -2532,3 +2532,5 @@ void p3GxsChannels::cleanTimedOutCallbacks()
 			else ++cbpt;
 	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
 }
+
+RsGxsChannels::~RsGxsChannels() = default;
