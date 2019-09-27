@@ -1071,45 +1071,81 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 }
 
 
-bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_id,const RsPeerDetails& dt )
+bool p3PeerMgrIMPL::addSslOnlyFriend(
+        const RsPeerId& sslId, const RsPgpId& pgp_id, const RsPeerDetails& dt )
 {
-	if(sslId.isNull() || sslId == getOwnId())
-    {
-        RsErr() <<"Attempt to add yourself or a null ID as SSL-only friend (id=" << sslId << ")" << std::endl;
-        return false;
-    }
-
-	peerState pstate;
-
-//	{
-//        RS_STACK_MUTEX(mPeerMtx);
-//
-//		/* If in mOthersList -> move over */
-//		auto it = mOthersList.find(sslId);
-//		if (it != mOthersList.end())
-//		{
-//			pstate = it->second;
-//			mOthersList.erase(it);
-//		}
-//
-//
-//	} // RS_STACK_MUTEX(mPeerMtx);
-
-	if(!pstate.gpg_id.isNull() && AuthGPG::getAuthGPG()->isGPGAccepted(pstate.gpg_id))
+	if(sslId.isNull())
 	{
-		RsErr() << "Trying to add as SSL-only friend a peer which PGP id is already a friend. This means the code is inconsistent. Not doing this!" << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot add a null "
+		        << "ID as SSL-only friend " << std::endl;
 		return false;
 	}
 
-    if(pgp_id.isNull())
-    {
-        RsErr() << "Null pgp id for friend added with skip_pgp_signature_validaiton flag. This is not allowed." << std::endl;
-        return false;
-    }
+	if(pgp_id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot add as SSL-only friend a "
+		        << "peer with null PGP" << std::endl;
+		return false;
+	}
+
+	if(sslId == getOwnId())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot add yourself as SSL-only "
+		        << "friend (id=" << sslId << ")" << std::endl;
+		   return false;
+	}
+
+	bool alreadySslFriend = false;
+	peerState pstate;
+
+	{ RS_STACK_MUTEX(mPeerMtx);
+		auto it = mFriendList.find(sslId);
+		if( it != mFriendList.end() )
+		{
+			alreadySslFriend = true;
+
+			/* If it is already friend override pstate so we don't loose already
+			 * known information about the peer, in particular overriding
+			 * pstate.skip_pgp_signature_validation is important for security.
+			 */
+			pstate = it->second;
+		}
+	} // RS_STACK_MUTEX(mPeerMtx);
+
+	/* If it is already friend check if PGP id of the invite matches with the
+	 * PGP id we already know, to avoid nasty tricks with malevolently forged
+	 * short invites.*/
+	if(alreadySslFriend && pstate.gpg_id != pgp_id)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot SSL-only friend for "
+		        << "a pre-existing friend with mismatching PGP-id "
+		        << "known: " << pstate.gpg_id << " new: " << pgp_id
+		        << std::endl;
+		return false;
+	}
+
+	/* It is very important to be expecially carefull setting
+	 * pstate.skip_pgp_signature_validation to true because this effectively
+	 * disables PGP signature verification on connection attempt.
+	 * This check in particular avoid someone attempting to trick the user into
+	 * accepting as SSL-only friend a malevolently forged short invite, with the
+	 * PGP id of an already known friend but the SSL-id of a location generated
+	 * by the attacker which doesn't have access to the legitimate PGP
+	 * certificate.
+	 * In that case being pstate.skip_pgp_signature_validation false on
+	 * connection attempt the PGP signaure verification would fail and the
+	 * connection closed.
+	 * Instead if pstate.skip_pgp_signature_validation would have been
+	 * superficially set to true the PGP signature verification would have been
+	 * skipped and the attacker connection would be accepted. */
+	if(!AuthGPG::getAuthGPG()->isGPGAccepted(pgp_id))
+		pstate.skip_pgp_signature_validation = true;
 
 	pstate.gpg_id = pgp_id;
 	pstate.id = sslId;
 
+	/* At this point if we got info about the peer just update with the new
+	 * values. */
 	if(!dt.name.empty())     pstate.name = dt.name;
 	if(!dt.dyndns.empty())   pstate.dyndns = dt.dyndns;
 	pstate.hiddenNode = dt.isHiddenNode;
@@ -1119,19 +1155,17 @@ bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_
 	if(dt.hiddenType)        pstate.hiddenType = dt.hiddenType;
 	if(!dt.location.empty()) pstate.location = dt.location;
 
-    pstate.skip_pgp_signature_validation = true;
-
 	{ RS_STACK_MUTEX(mPeerMtx);
-
 		mFriendList[sslId] = pstate;
 		mStatusChanged = true;
-
 	} // RS_STACK_MUTEX(mPeerMtx);
 
 	IndicateConfigChanged();
 	mLinkMgr->addFriend(sslId, dt.vs_dht != RS_VS_DHT_OFF);
 
-	// To update IP addresses is much more confortable to use locators
+	/* To update IP addresses is much more confortable to use locators, beside
+	 * of the easy to use another benefit is that this way we don't loose
+	 * previously known IP addresses */
 	if(!dt.isHiddenNode)
 	{
 		for(const std::string& locator : dt.ipAddressList)
