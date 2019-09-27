@@ -2061,29 +2061,41 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 //                    |             |   Grp Subscribed: NO         |   Grp Subscribed: NO        |         
 //                    +-------------+------------------------------+-----------------------------+
 
-bool p3GxsCircles::pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) 
+bool p3GxsCircles::pushCircleMembershipRequest(
+        const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id,
+        uint32_t request_type )
 {
-#ifdef DEBUG_CIRCLES
-    std::cerr << "Circle membership request: own_gxsid = " << own_gxsid << ", circle=" << circle_id << ", req type=" << request_type << std::endl;
-#endif
-    
-    // check for some consistency
-    
-    if(request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE &&  request_type != RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
-        return false ;
-    
-    std::list<RsGxsId> own_ids ;
-    if(!rsIdentity->getOwnIds(own_ids))
-        return false ;
-    
-    bool found = false ;
-    for(std::list<RsGxsId>::const_iterator it(own_ids.begin());it!=own_ids.end() && !found;++it)
-        found = ( (*it) == own_gxsid) ;
+	Dbg3() << __PRETTY_FUNCTION__ << "own_gxsid = " << own_gxsid
+	       << ", circle=" << circle_id << ", req type=" << request_type
+	       << std::endl;
 
-    if(!found)
-        return false ;
-    
-    // Create a subscribe item
+	if( request_type !=
+	        RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE &&
+	    request_type !=
+	        RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE )
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown request type: "
+		        << request_type << std::endl;
+		return false;
+	}
+
+	if(!rsIdentity->isOwnId(own_gxsid))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot generate membership request "
+		        << "from not-own id: " << own_gxsid << std::endl;
+		return false;
+	}
+
+	if(!getCirclesInfo(
+	            std::list<RsGxsGroupId>{static_cast<RsGxsGroupId>(circle_id)},
+	            RS_DEFAULT_STORAGE_PARAM(std::vector<RsGxsCircleGroup>) ))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot generate membership request "
+		        << "from unknown circle: " << circle_id << std::endl;
+		return false;
+	}
+
+	// Create a subscribe item
 
     RsGxsCircleSubscriptionRequestItem *s = new RsGxsCircleSubscriptionRequestItem ;
 
