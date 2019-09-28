@@ -296,6 +296,9 @@ private and secure decentralized communication platform.
      </item>
      <item row="1" column="3">
       <widget class="QToolButton" name="expandButton">
+       <property name="toolTip">
+        <string>Show full certificate (old format)</string>
+       </property>
        <property name="text">
         <string>...</string>
        </property>

@@ -204,10 +204,6 @@ void HomePage::updateOwnId()
 	rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,!mIncludeAllIPs);
 
 	ui->retroshareid->setText(QString::fromUtf8(invite.c_str()));
-
-    QString description = ConfCertDialog::getCertificateDescription(detail,false,mUseShortFormat,include_extra_locators);
-
-	ui->retroshareid->setToolTip(description);
 }
 static void sendMail(QString sAddress, QString sSubject, QString sBody)
 {
@@ -319,7 +315,7 @@ void HomePage::doExpand()
 	else
 	{
 		ui->userCertEdit->hide();
-		ui->expandButton->setToolTip(tr("Show Certificate"));
+		ui->expandButton->setToolTip(tr("Show full certificate (old format)"));
 	}
 
 }
