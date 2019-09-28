@@ -1429,9 +1429,9 @@ int RsServer::StartupRetroShare()
 	mStatusSrv = new p3StatusService(serviceCtrl);
 
 #ifdef RS_BROADCAST_DISCOVERY
-	rsBroadcastDiscovery.reset(new BroadcastDiscoveryService(*rsPeers));
-	BroadcastDiscoveryService& tBroadcastDiscoveryService =
-	        static_cast<BroadcastDiscoveryService&>(*rsBroadcastDiscovery);
+	BroadcastDiscoveryService* broadcastDiscoveryService =
+	        new BroadcastDiscoveryService(*rsPeers);
+	rsBroadcastDiscovery = broadcastDiscoveryService;
 #endif // def RS_BROADCAST_DISCOVERY
 
 #ifdef ENABLE_GROUTER
@@ -1828,7 +1828,7 @@ int RsServer::StartupRetroShare()
 #endif // RS_ENABLE_GXS
 
 #ifdef RS_BROADCAST_DISCOVERY
-	startServiceThread(&tBroadcastDiscoveryService, "Broadcast Discovery");
+	startServiceThread(broadcastDiscoveryService, "Broadcast Discovery");
 #endif // def RS_BROADCAST_DISCOVERY
 
 	ftserver->StartupThreads();
