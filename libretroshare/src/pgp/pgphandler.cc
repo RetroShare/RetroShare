@@ -1667,6 +1667,9 @@ bool PGPHandler::getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(cons
 	return true ;
 }
 
+bool PGPHandler::isPgpPubKeyAvailable(const RsPgpId &id)
+{ return _public_keyring_map.find(id) != _public_keyring_map.end(); }
+
 bool PGPHandler::isGPGId(const RsPgpId &id)
 {
 	return _public_keyring_map.find(id) != _public_keyring_map.end() ;

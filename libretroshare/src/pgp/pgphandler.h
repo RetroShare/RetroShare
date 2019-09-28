@@ -148,6 +148,15 @@ class PGPHandler
 
 		const PGPCertificateInfo *getCertificateInfo(const RsPgpId& id) const ;
 
+		/**
+		 * @brief Check if a PGP publick key is available
+		 * @param id id of the key to check
+		 * @return true if the public key for the given id is available,
+		 *	false otherwise
+		 */
+		bool isPgpPubKeyAvailable(const RsPgpId& id);
+
+		RS_DEPRECATED_FOR(isPgpPubKeyAvailable)
 		bool isGPGId(const RsPgpId &id);
 		bool isGPGSigned(const RsPgpId &id);
 		bool isGPGAccepted(const RsPgpId &id);

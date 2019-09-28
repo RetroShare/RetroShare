@@ -1138,7 +1138,7 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * Instead if pstate.skip_pgp_signature_validation would have been
 	 * superficially set to true the PGP signature verification would have been
 	 * skipped and the attacker connection would be accepted. */
-	if(!AuthGPG::getAuthGPG()->isGPGAccepted(pgp_id))
+	if(!AuthGPG::getAuthGPG()->isPgpPubKeyAvailable(pgp_id))
 		pstate.skip_pgp_signature_validation = true;
 
 	pstate.gpg_id = pgp_id;
