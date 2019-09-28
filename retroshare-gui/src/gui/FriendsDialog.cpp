@@ -113,6 +113,27 @@ FriendsDialog::FriendsDialog(QWidget *parent) : MainPage(parent)
     ui.friendList->setShowGroups(true);
     processSettings(true);
     RsAutoUpdatePage::unlockAllEvents();
+		
+	QAction *addfriendAction = new QAction(QIcon(""),tr("Add Friend"), this);
+	connect(addfriendAction, SIGNAL(triggered()), this, SLOT(addFriend()));
+	
+	QAction *importAction = new QAction(QIcon(""),tr("Import Friends list"), this);
+	connect(importAction, SIGNAL(triggered()), ui.friendList, SLOT(importFriendlistClicked()));
+	
+	QAction *exportAction = new QAction(QIcon(""),tr("Export Friends list"), this);
+	connect(exportAction, SIGNAL(triggered()), ui.friendList, SLOT(exportFriendlistClicked()));
+	
+	QToolButton *button = new QToolButton(this);
+    button->setIcon(QIcon(":/icons/png/add.png"));
+    button->setToolTip(tr("Add"));
+	button->setPopupMode(QToolButton::InstantPopup);
+    ui.friendList->addToolButton(button);
+	
+	QMenu *menu = new QMenu();
+	menu->addAction(addfriendAction);
+	menu->addAction(importAction);
+	menu->addAction(exportAction);
+	button->setMenu(menu);
 
 
     // add self nick and Avatar to Friends.
