@@ -26,12 +26,11 @@
 #include "retroshare/rsgxscircles.h"	// External Interfaces.
 #include "gxs/rsgenexchange.h"		// GXS service.
 #include "gxs/rsgixs.h"			// Internal Interfaces.
-
 #include "services/p3idservice.h"	// For constructing Caches
-
 #include "gxs/gxstokenqueue.h"
 #include "util/rstickevent.h"
 #include "util/rsmemcache.h"
+#include "util/rsdebug.h"
 
 #include <map>
 #include <string>
@@ -321,4 +320,6 @@ virtual RsServiceInfo getServiceInfo();
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
