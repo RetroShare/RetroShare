@@ -210,7 +210,7 @@ void GroupTreeWidget::addToolButton(QToolButton *toolButton)
 	toolButton->setIconSize(ui->displayButton->iconSize());
 	toolButton->setFocusPolicy(ui->displayButton->focusPolicy());
 
-	ui->titleBarFrame->layout()->addWidget(toolButton);
+	ui->toolBarFrame->layout()->addWidget(toolButton);
 }
 
 // Load and save settings (group must be started from the caller)

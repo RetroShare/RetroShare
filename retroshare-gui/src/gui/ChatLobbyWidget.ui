@@ -32,7 +32,7 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
@@ -116,6 +116,9 @@
      </property>
      <widget class="QWidget" name="layoutWidget">
       <layout class="QVBoxLayout" name="lobbyTreeVLayout">
+       <property name="spacing">
+        <number>1</number>
+       </property>
        <item>
         <widget class="QFrame" name="toolBarFrame">
          <property name="styleSheet">
