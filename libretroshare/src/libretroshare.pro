@@ -648,7 +648,7 @@ SOURCES +=	util/folderiterator.cc \
 
 equals(RS_UPNP_LIB, miniupnpc) {
         HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
-        SOURCES += rs_upnp/upnputil.c rs_upnp/upnphandler_miniupnp.cc
+        SOURCES += rs_upnp/upnputil.cc rs_upnp/upnphandler_miniupnp.cc
 }
 
 contains(RS_UPNP_LIB, upnp) {

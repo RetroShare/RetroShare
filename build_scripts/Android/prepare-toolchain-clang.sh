@@ -49,6 +49,9 @@ define_default_value XAPIAN_SOURCE_SHA256 13f08a0b649c7afa804fa0e85678d693fd6069
 define_default_value RAPIDJSON_SOURCE_VERSION "1.1.0"
 define_default_value RAPIDJSON_SOURCE_SHA256 bf7ced29704a1e696fbccf2a2b4ea068e7774fa37f6d7dd4039d0787f8bed98e
 
+define_default_value MINIUPNPC_SOURCE_VERSION "2.1.20190625"
+define_default_value MINIUPNPC_SOURCE_SHA256 8723f5d7fd7970de23635547700878cd29a5c2bb708b5e5475b2d1d2510317fb
+
 
 ## $1 filename, $2 sha256 hash
 function check_sha256()
@@ -482,6 +485,33 @@ build_xapian()
 	make install
 }
 
+build_miniupnpc()
+{
+	echo "build_miniupnpc()
+################################################################################
+################################################################################
+################################################################################
+"
+	S_dir="miniupnpc-${MINIUPNPC_SOURCE_VERSION}"
+	B_dir="miniupnpc-${MINIUPNPC_SOURCE_VERSION}-build"
+	D_file="$S_dir.tar.gz"
+	verified_download $D_file $MINIUPNPC_SOURCE_SHA256 \
+		http://miniupnp.free.fr/files/${D_file}
+	rm -rf $S_dir $B_dir
+	tar -xf $D_file
+	mkdir $B_dir
+	cd $B_dir
+	cmake \
+		-DUPNPC_BUILD_STATIC=TRUE \
+		-DUPNPC_BUILD_SHARED=FALSE \
+		-DUPNPC_BUILD_TESTS=FALSE \
+		-DUPNPC_BUILD_SAMPLE=FALSE \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -S../$S_dir
+	make -j${HOST_NUM_CPU}
+	make install
+}
+
 build_toolchain
 [ "${INSTALL_QT_ANDROID}X" != "trueX" ] || install_qt_android
 build_bzlib
@@ -493,6 +523,7 @@ build_rapidjson
 build_restbed
 build_udp-discovery-cpp
 build_xapian
+build_miniupnpc
 delete_copied_includes
 
 echo NATIVE_LIBS_TOOLCHAIN_PATH=${NATIVE_LIBS_TOOLCHAIN_PATH}
