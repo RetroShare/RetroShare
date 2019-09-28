@@ -56,6 +56,7 @@ public:
 
 protected:
 	/* GxsMessageFramePostWidget */
+	virtual void groupNameChanged(const QString &name);
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
 	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertPosts(const uint32_t &token);

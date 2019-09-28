@@ -33,6 +33,8 @@
 #include <retroshare/rsposted.h>
 #include "retroshare/rsgxscircles.h"
 
+#define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
+
 #define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
 
@@ -48,8 +50,11 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	mStateHelper->addWidget(mTokenTypeAllPosts, ui->comboBox);
 
 	mStateHelper->addWidget(mTokenTypePosts, ui->comboBox);
+	
+	mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
 
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->submitPostButton);
+	mStateHelper->addWidget(mTokenTypeGroupData, ui->logoLabel);
 	mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
 	connect(ui->nextButton, SIGNAL(clicked()), this, SLOT(showNext()));
@@ -109,6 +114,17 @@ void PostedListWidget::processSettings(bool /*load*/)
 //	}
 //
 //	Settings->endGroup();
+}
+
+void PostedListWidget::groupNameChanged(const QString &name)
+{
+	if (groupId().isNull()) {
+		ui->nameLabel->setText(tr("No Topic Selected"));
+		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
+		ui->headFrame->setStyleSheet(QString("QFrame#headFrame{background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #F2F2F2, stop:1 #E6E6E6);border: 1px solid #CCCCCC; };"));
+	} else {
+		ui->nameLabel->setText(name);
+	}
 }
 
 QIcon PostedListWidget::groupIcon()
@@ -305,6 +321,15 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) ;
 	
+	/* IMAGE */
+	QPixmap topicImage;
+	if (group.mGroupImage.mData != NULL) {
+		topicImage.loadFromData(group.mGroupImage.mData, group.mGroupImage.mSize, "PNG");
+	} else {
+		topicImage = QPixmap(TOPIC_DEFAULT_IMAGE);
+	}
+	ui->logoLabel->setPixmap(topicImage);
+		
 	RetroShareLink link;
 	
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
@@ -520,8 +545,15 @@ void PostedListWidget::applyRanking()
 
 void PostedListWidget::blank()
 {
+	mStateHelper->setWidgetEnabled(ui->submitPostButton, false);
+
     clearPosts();
+	
+	groupNameChanged(QString());
+	
+	ui->infoframe->hide();										
 }
+
 void PostedListWidget::clearPosts()
 {
 	/* clear all messages */
