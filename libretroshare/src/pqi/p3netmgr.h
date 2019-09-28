@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2007-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2007-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,21 +20,15 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_NET_MANAGER_HEADER
-#define MRK_PQI_NET_MANAGER_HEADER
+#pragma once
 
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiipset.h"
-
-//#include "pqi/p3dhtmgr.h"
-//#include "pqi/p3upnpmgr.h"
 #include "pqi/pqiassist.h"
-
 #include "pqi/pqinetstatebox.h"
-
 #include "pqi/p3cfgmgr.h"
-
 #include "util/rsthreads.h"
+#include "util/rsdebug.h"
 
 class ExtAddrFinder ;
 class DNSResolver ;
@@ -101,11 +96,7 @@ class UdpRelayReceiver;
 
 class p3NetMgr
 {
-	public:
-
-        p3NetMgr() { return; }
-virtual ~p3NetMgr() { return; }
-
+public:
 
 	/*************** External Control ****************/
 
@@ -144,18 +135,13 @@ virtual bool    getUPnPState() = 0;
 virtual bool	getUPnPEnabled() = 0;
 virtual bool	getDHTEnabled() = 0;
 
-
-/************************************************************************************************/
-/************************************************************************************************/
-/************************************************************************************************/
-/************************************************************************************************/
-
+	virtual ~p3NetMgr();
 };
 
 
 class p3NetMgrIMPL: public p3NetMgr
 {
-	public:
+public:
 
         p3NetMgrIMPL();
 
@@ -228,20 +214,6 @@ bool	checkNetAddress(); /* check our address is sensible */
 protected:
 
 void 	slowTick();
-
-	/* THESE FUNCTIONS ARE ON_LONGER EXTERNAL - CAN THEY BE REMOVED? */
-//bool    getDHTStats(uint32_t &netsize, uint32_t &localnetsize);
-
-//bool	getNetStatusLocalOk();
-//bool	getNetStatusUpnpOk();
-//bool	getNetStatusDhtOk();
-//bool	getNetStatusStunOk();
-//bool	getNetStatusExtraAddressCheckOk();
-
-//bool 	getUpnpExtAddress(struct sockaddr_in &addr);
-//bool 	getExtFinderAddress(struct sockaddr_in &addr);
-
-//void 	setOwnNetConfig(uint32_t netMode, uint32_t visState);
 
 
 protected:
@@ -367,6 +339,5 @@ void 	netStatusReset_locked();
 	uint32_t mOldNatType;
 	uint32_t mOldNatHole;
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-#endif // MRK_PQI_NET_MANAGER_HEADER

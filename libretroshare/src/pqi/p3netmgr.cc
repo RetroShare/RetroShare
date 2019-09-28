@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2007-2011 by Robert Fernie.                                       *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2007-2011  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -1037,15 +1037,10 @@ bool p3NetMgrIMPL::checkNetAddress()
 		}
 	}
 
-
-	/* if we don't have a valid address - reset */
 	if (!validAddr)
 	{
-#ifdef NETMGR_DEBUG_RESET
-		std::cerr << "p3NetMgrIMPL::checkNetAddress() no Valid Network Address, resetting network." << std::endl;
-#endif
-		rslog(RSL_WARNING, p3netmgrzone, "p3NetMgr::checkNetAddress() No Valid Network Address, resetting network");
-		netReset();
+		Dbg3() << __PRETTY_FUNCTION__ << " no valid local network address found"
+		       << std::endl;
 		return false;
 	}
 	
@@ -2055,4 +2050,4 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 	}
 }
 
-	
+p3NetMgr::~p3NetMgr() = default;
