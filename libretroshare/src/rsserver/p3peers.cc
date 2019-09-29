@@ -1148,6 +1148,7 @@ enum class RsShortInviteFieldType : uint8_t
 	PEER_NAME       = 0x01,
 	LOCATOR         = 0x02,
 	PGP_FINGERPRINT = 0x03,
+	CHECKSUM        = 0x04,
 
 	/* The following will be deprecated, and ported to LOCATOR when generic
 	 * trasport layer will be implemented */
@@ -1266,6 +1267,17 @@ bool p3Peers::getShortInvite(
             offset += tLocator.size();
 		}
 	}
+	uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(buf,offset) ;
+
+	// handle endian issues.
+	unsigned char mem[3] ;
+	mem[0] =  computed_crc        & 0xff ;
+	mem[1] = (computed_crc >> 8 ) & 0xff ;
+	mem[2] = (computed_crc >> 16) & 0xff ;
+
+	addPacketHeader( RsShortInviteFieldType::CHECKSUM,3,buf,offset,buf_size);
+	memcpy(&buf[offset],mem,3);
+    offset += 3;
 
 	Radix64::encode(buf, static_cast<int>(offset), invite);
 
@@ -1299,6 +1311,7 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 
 	unsigned char* buf = bf.data();
 	size_t total_s = 0;
+    bool CRC_ok = false ; // not checked yet
 
 	while(total_s < size)
 	{
@@ -1373,6 +1386,25 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
 			details.hiddenNodeAddress = std::string((char*)&buf[6],s-6);
 			break;
 
+		case RsShortInviteFieldType::CHECKSUM:
+		{
+			if(s != 3 || total_s+3 != size)	// make sure the checksum is the last section
+			{
+				err_code = CERTIFICATE_PARSING_ERROR_INVALID_CHECKSUM_SECTION;
+				return false;
+			}
+			uint32_t computed_crc = PGPKeyManagement::compute24bitsCRC(bf.data(),size-5);
+			uint32_t certificate_crc = static_cast<uint32_t>( buf[0] + (buf[1] << 8) + (buf[2] << 16) );
+
+			if(computed_crc != certificate_crc)
+			{
+				err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
+				return false;
+			}
+            CRC_ok = true;
+			break;
+		}
+
 		}
 
 		buf = &buf[s];
@@ -1396,6 +1428,11 @@ bool p3Peers::parseShortInvite(const std::string& inviteStrUrl, RsPeerDetails& d
     else
         details.skip_pgp_signature_validation = true;
 
+    if(!CRC_ok)
+    {
+        err_code = CERTIFICATE_PARSING_ERROR_CHECKSUM_ERROR;
+        return false;
+    }
     if(details.gpg_id.isNull())
     {
 		err_code = CERTIFICATE_PARSING_ERROR_MISSING_PGP_FINGERPRINT;
