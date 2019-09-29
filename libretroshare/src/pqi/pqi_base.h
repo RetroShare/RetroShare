@@ -37,12 +37,6 @@ struct RSTrafficClue;
 #include "serialiser/rsserial.h"
 #include "retroshare/rstypes.h"
 
-
-#define PQI_MIN_PORT 10 // TO ALLOW USERS TO HAVE PORT 80! - was 1024
-#define PQI_MIN_PORT_RNG 1024
-#define PQI_MAX_PORT 65535
-#define PQI_DEFAULT_PORT 7812
-
 int getPQIsearchId();
 int fixme(char *str, int n);
 

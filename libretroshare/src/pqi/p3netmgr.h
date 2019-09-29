@@ -44,13 +44,10 @@ class DNSResolver ;
 
 
 
-class pqiNetStatus
+struct pqiNetStatus
 {
-	public:
-
 	pqiNetStatus();
 
-        bool mLocalAddrOk;     // Local address is not loopback.
         bool mExtAddrOk;       // have external address.
         bool mExtAddrStableOk; // stable external address.
         bool mUpnpOk;          // upnp is ok.
@@ -65,11 +62,6 @@ class pqiNetStatus
 	bool mResetReq; // Not Used yet!.
 
 	void print(std::ostream &out);
-
-	bool NetOk() // minimum to believe network is okay.`
-	{
-		return (mLocalAddrOk && mExtAddrOk);
-	}
 };
 
 class p3PeerMgr;
@@ -212,11 +204,6 @@ void    addNetListener(pqiNetListener *listener);
 bool	checkNetAddress(); /* check our address is sensible */
 
 protected:
-
-void 	slowTick();
-
-
-protected:
 	/****************** Internal Interface *******************/
 bool enableNetAssistFirewall(bool on);
 bool netAssistFirewallEnabled();
@@ -248,7 +235,7 @@ bool netAssistAttach(bool on);
 void 	netReset();
 
 void 	statusTick();
-void 	netTick();
+void 	netStatusTick();
 void 	netStartup();
 
 	/* startup the bits */
@@ -335,7 +322,7 @@ void 	netStatusReset_locked();
 	// Improved NetStatusBox, which uses the Stunners!
 	pqiNetStateBox mNetStateBox;
 
-	rstime_t mLastSlowTickTime;
+	rstime_t mDoNotNetCheckUntilTs;
 	uint32_t mOldNatType;
 	uint32_t mOldNatHole;
 

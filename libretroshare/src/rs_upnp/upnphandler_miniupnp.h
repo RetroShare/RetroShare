@@ -19,12 +19,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-//windows/osx (miniupnpc) implementation
-#ifndef _RS_UPNP_IFACE_H
-#define _RS_UPNP_IFACE_H
+#pragma once
 
 #include <string.h>
-
 #include <string>
 #include <map>
 
@@ -127,5 +124,3 @@ bool checkUPnPActive();
 	std::list<upnpforward> activeForwards;
 
 };
-
-#endif /* _RS_UPNP_IFACE_H */
