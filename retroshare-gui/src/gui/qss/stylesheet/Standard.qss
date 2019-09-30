@@ -740,9 +740,8 @@ ConnectFriendWizard QPlainTextEdit#friendCertEdit {
 }
 
 HomePage QPlainTextEdit#userCertEdit {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
+
+	background: transparent;
 }
 
 HomePage QFrame#addframe{
