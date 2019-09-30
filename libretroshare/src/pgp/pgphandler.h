@@ -79,7 +79,7 @@ class PGPCertificateInfo
 /// This class offer an abstract pgp handler to be used in RetroShare.
 class PGPHandler
 {
-	public:
+public:
 		PGPHandler(	const std::string& path_to_public_keyring, 
 						const std::string& path_to_secret_keyring, 
 						const std::string& path_to_trust_database, 
@@ -124,7 +124,6 @@ class PGPHandler
 		bool encryptTextToFile(const RsPgpId& key_id,const std::string& text,const std::string& outfile) ;
 		bool decryptTextFromFile(const RsPgpId& key_id,std::string& text,const std::string& encrypted_inputfile) ;
 
-		bool getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const ;
 		void setAcceptConnexion(const RsPgpId&,bool) ;
 
 		void updateOwnSignatureFlag(const RsPgpId& ownId) ;
@@ -148,13 +147,37 @@ class PGPHandler
 
 		const PGPCertificateInfo *getCertificateInfo(const RsPgpId& id) const ;
 
+		RS_DEPRECATED_FOR(isPgpPubKeyAvailable)
 		bool isGPGId(const RsPgpId &id);
 		bool isGPGSigned(const RsPgpId &id);
 		bool isGPGAccepted(const RsPgpId &id);
 
 		static void setPassphraseCallback(PassphraseCallback cb) ;
 		static PassphraseCallback passphraseCallback() { return _passphrase_callback ; }
-        static RsPgpId pgpIdFromFingerprint(const PGPFingerprintType& f) ;
+
+	/**
+	 * @brief Check if a PGP publick key is available
+	 * @param id id of the key to check
+	 * @return true if the public key for the given id is available,
+	 *	false otherwise
+	 */
+	bool isPgpPubKeyAvailable(const RsPgpId& id);
+
+	/**
+	 * @brief Convert PGP fingerprint to PGP 64bit id
+	 * @param f PGP fingerprint to convert
+	 * @return PGP 64bit id extracted from fingerprint
+	 */
+	static RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& f);
+
+	/**
+	 * @brief Get PGP fingerprint for the given key
+	 * @param id PGP 64bit key id
+	 * @param fp storage for the retrived key fingerpring, the contained value
+	 *	is meaningfull only if true is returned
+	 * @return true if the key was found, false if not
+	 */
+	bool getKeyFingerprint(const RsPgpId& id, RsPgpFingerprint& fp) const;
 
 		// Gets info about the key. Who are the signers, what's the owner's name, etc.
 		//
