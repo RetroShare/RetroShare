@@ -341,7 +341,7 @@ void GenCertDialog::setupState()
 
 		ui.genButton->setVisible(false) ;
 		ui.generate_label->setVisible(false) ;
-		ui.info_label->setText("Please fill your profile name and password...") ;
+		ui.info_label->setText("Please choose a profile name and password...") ;
 		ui.info_label->setVisible(true) ;
 	}
 	else if(!mEntropyOk)
