@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QFrame" name="toolBarFrame">
+    <widget class="QFrame" name="titleBarFrame">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -40,11 +40,11 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>36</height>
+       <height>28</height>
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
@@ -96,7 +96,7 @@
          <string>Compose</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
         </property>
         <property name="iconSize">
@@ -137,7 +137,7 @@
          <string>Delete</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/deletemail24.png</normaloff>:/images/deletemail24.png</iconset>
         </property>
         <property name="iconSize">
@@ -201,7 +201,7 @@
          <string>Foward</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -248,7 +248,7 @@
          <string>Print</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/print24.png</normaloff>:/images/print24.png</iconset>
         </property>
         <property name="iconSize">
@@ -283,7 +283,7 @@
          <string>Display</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/looknfeel.png</normaloff>:/images/looknfeel.png</iconset>
         </property>
         <property name="iconSize">
@@ -324,7 +324,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/png/messages.png</pixmap>
+         <pixmap resource="../icons.qrc">:/icons/png/messages.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
@@ -343,7 +343,7 @@
          <string>Tags</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
         </property>
         <property name="iconSize">
@@ -390,7 +390,7 @@
          <string>Reply</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/replymail-pressed.png</normaloff>:/images/replymail-pressed.png</iconset>
         </property>
         <property name="iconSize">
@@ -431,7 +431,7 @@
          <string>Reply all</string>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
         </property>
         <property name="iconSize">
@@ -454,7 +454,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="images.qrc">
+         <iconset resource="../images.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -570,7 +570,7 @@
                <string>Inbox</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset resource="../images.qrc">
                 <normaloff>:/images/folder-inbox.png</normaloff>:/images/folder-inbox.png</iconset>
               </property>
              </item>
@@ -579,7 +579,7 @@
                <string>Outbox</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset resource="../images.qrc">
                 <normaloff>:/images/folder-outbox.png</normaloff>:/images/folder-outbox.png</iconset>
               </property>
              </item>
@@ -588,7 +588,7 @@
                <string>Draft</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset resource="../images.qrc">
                 <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
               </property>
              </item>
@@ -597,7 +597,7 @@
                <string>Sent</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset resource="../images.qrc">
                 <normaloff>:/images/folder-sent.png</normaloff>:/images/folder-sent.png</iconset>
               </property>
              </item>
@@ -606,7 +606,7 @@
                <string>Trash</string>
               </property>
               <property name="icon">
-               <iconset resource="images.qrc">
+               <iconset resource="../images.qrc">
                 <normaloff>:/images/folder-trash.png</normaloff>:/images/folder-trash.png</iconset>
               </property>
              </item>
@@ -662,7 +662,7 @@
                  </size>
                 </property>
                 <property name="pixmap">
-                 <pixmap resource="images.qrc">:/images/foldermail.png</pixmap>
+                 <pixmap resource="../images.qrc">:/images/foldermail.png</pixmap>
                 </property>
                </widget>
               </item>
@@ -703,7 +703,7 @@
                  </size>
                 </property>
                 <property name="pixmap">
-                 <pixmap resource="images.qrc">:/images/tag24.png</pixmap>
+                 <pixmap resource="../images.qrc">:/images/tag24.png</pixmap>
                 </property>
                 <property name="scaledContents">
                  <bool>true</bool>
@@ -804,7 +804,7 @@
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
    </property>
    <property name="text">
@@ -813,7 +813,7 @@
   </action>
   <action name="actionReplyAll">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/mail_replyall.png</normaloff>:/images/mail_replyall.png</iconset>
    </property>
    <property name="text">
@@ -822,7 +822,7 @@
   </action>
   <action name="actionForward">
    <property name="icon">
-    <iconset resource="images.qrc">
+    <iconset resource="../images.qrc">
      <normaloff>:/images/mail_forward.png</normaloff>:/images/mail_forward.png</iconset>
    </property>
    <property name="text">
@@ -832,14 +832,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
    <class>RSTabWidget</class>
@@ -853,8 +853,8 @@
   <tabstop>listWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="images.qrc"/>
-  <include location="icons.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
