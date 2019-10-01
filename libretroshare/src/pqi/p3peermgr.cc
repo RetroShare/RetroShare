@@ -1111,7 +1111,18 @@ bool p3PeerMgrIMPL::addSslOnlyFriend( const RsPeerId& sslId, const RsPgpId& pgp_
 	pstate.id = sslId;
 
 	if(!dt.name.empty())     pstate.name = dt.name;
-	if(!dt.dyndns.empty())   pstate.dyndns = dt.dyndns;
+	if(!dt.dyndns.empty())
+	{
+		pstate.dyndns = dt.dyndns;
+		if(dt.extPort)
+		{
+			/* If there is no IPv4 address available yet add a placeholder to
+			 * not loose the port, because the address is invalid. */
+			if(!sockaddr_storage_isValidNet(pstate.serveraddr))
+				sockaddr_storage_inet_pton(pstate.serveraddr, "192.0.2.0");
+			sockaddr_storage_setport(pstate.serveraddr, dt.extPort);
+		}
+	}
 	pstate.hiddenNode = dt.isHiddenNode;
 	if(!dt.hiddenNodeAddress.empty())
 		pstate.hiddenDomain = dt.hiddenNodeAddress;
