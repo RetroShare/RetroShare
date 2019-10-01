@@ -810,9 +810,15 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
     return true ;
 }
 
+bool p3IdService::isKnownId(const RsGxsId& id)
+{
+	RS_STACK_MUTEX(mIdMtx);
+	return mKeyCache.is_cached(id) ||
+	        std::find(mOwnIds.begin(), mOwnIds.end(),id) != mOwnIds.end();
+}
 
 bool p3IdService::identityToBase64( const RsGxsId& id,
-                       std::string& base64String )
+                                    std::string& base64String )
 { return serialiseIdentityToMemory(id, base64String); }
 
 bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,

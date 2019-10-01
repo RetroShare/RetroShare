@@ -293,12 +293,10 @@ public:
 	/// @see RsIdentity
 	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
-	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
+	bool getOwnIds(
+	        std::list<RsGxsId> &ownIds, bool signed_only = false ) override;
 
-	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
-	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
-
-	inline bool isKnownId(const RsGxsId& id) override { return haveKey(id); }
+	bool isKnownId(const RsGxsId& id) override;
 
 	bool isOwnId(const RsGxsId& key_id) override;
 
