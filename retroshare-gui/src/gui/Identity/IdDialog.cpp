@@ -104,10 +104,10 @@
 
 #define IMAGE_EDIT                 ":/images/edit_16.png"
 #define IMAGE_CREATE               ":/icons/circle_new_128.png"
-#define IMAGE_INVITED              ":/icons/bullet_yellow_128.png"
-#define IMAGE_MEMBER               ":/icons/bullet_green_128.png"
-#define IMAGE_UNKNOWN              ":/icons/bullet_grey_128.png"
-#define IMAGE_ADMIN                ":/icons/bullet_blue_128.png"
+#define IMAGE_INVITED              ":/icons/png/circles-notify.png"
+#define IMAGE_MEMBER               ":/icons/png/circles-green.png"
+#define IMAGE_UNKNOWN              ":/icons/png/circles-gray.png"
+#define IMAGE_ADMIN                ":/icons/png/circles.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
@@ -511,19 +511,18 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	//ui->treeWidget_membership->addTopLevelItem(personalCirclesItem);
 
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
+	if(!mExternalBelongingCircleItem )
+	{
+		mExternalBelongingCircleItem = new QTreeWidgetItem();
+		mExternalBelongingCircleItem->setText(0, tr("My circles"));
+		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
+	}
 	if(!mExternalOtherCircleItem)
 	{
 		mExternalOtherCircleItem = new QTreeWidgetItem();
 		mExternalOtherCircleItem->setText(0, tr("Other circles"));
 
 		ui->treeWidget_membership->addTopLevelItem(mExternalOtherCircleItem);
-	}
-
-	if(!mExternalBelongingCircleItem )
-	{
-		mExternalBelongingCircleItem = new QTreeWidgetItem();
-		mExternalBelongingCircleItem->setText(0, tr("Circles I belong to"));
-		ui->treeWidget_membership->addTopLevelItem(mExternalBelongingCircleItem);
 	}
 #endif
 
@@ -581,6 +580,14 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 				delete item ;
 				item = NULL ;
 			}
+			else if(am_I_admin && item->parent() != mExternalBelongingCircleItem)
+			{
+#ifdef ID_DEBUG
+				std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
+#endif
+				delete item ;
+				item = NULL ;
+			}
 			else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
 			{
 #ifdef ID_DEBUG
@@ -606,6 +613,13 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 			if(am_I_in_circle)
+			{
+#ifdef ID_DEBUG
+				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
+#endif
+				mExternalBelongingCircleItem->addChild(item);
+			}
+			else if(am_I_admin)
 			{
 #ifdef ID_DEBUG
 				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
@@ -816,6 +830,8 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
         
 		if(am_I_in_circle)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
+		else if(am_I_admin)
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMIN)) ;
 		else if(am_I_invited || am_I_pending)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
 		else
