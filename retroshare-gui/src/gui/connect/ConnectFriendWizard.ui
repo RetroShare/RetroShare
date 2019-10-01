@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1139</width>
-    <height>1171</height>
+    <width>600</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,10 @@
   </property>
   <widget class="ConnectFriendPage" name="TextPage">
    <property name="title">
-    <string>RetroShare certificate</string>
+    <string>RetroShare ID</string>
    </property>
    <property name="subTitle">
-    <string>Please paste below your friend's Retroshare certificate</string>
+    <string>Please paste below your friend's Retroshare ID</string>
    </property>
    <attribute name="pageId">
     <string notr="true">ConnectFriendWizard::Page_Text</string>
@@ -207,7 +207,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="userCertLabel">
          <property name="text">
-          <string>The text below is your Retroshare certificate. You have to provide it to your friend</string>
+          <string>The text below is your Retroshare ID. You have to provide it to your friend</string>
          </property>
         </widget>
        </item>
@@ -229,10 +229,10 @@
           <enum>Qt::NoFocus</enum>
          </property>
          <property name="toolTip">
-          <string>Paste Cert of your friend from Clipboard</string>
+          <string>Paste ID of your friend from Clipboard</string>
          </property>
          <property name="text">
-          <string>Paste certificate</string>
+          <string>Paste</string>
          </property>
          <property name="icon">
           <iconset resource="../icons.qrc">
@@ -267,7 +267,7 @@
           <string>Open Cert of your friend from File</string>
          </property>
          <property name="text">
-          <string>Open certificate</string>
+          <string>Open</string>
          </property>
          <property name="icon">
           <iconset resource="../icons.qrc">
@@ -314,7 +314,7 @@
           <enum>QPlainTextEdit::NoWrap</enum>
          </property>
          <property name="placeholderText">
-          <string>Please, paste your friend's Retroshare certificate into the box below</string>
+          <string>Please, paste your friend's Retroshare ID into the box below</string>
          </property>
         </widget>
        </item>

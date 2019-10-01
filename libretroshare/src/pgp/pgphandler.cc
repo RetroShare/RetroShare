@@ -1581,24 +1581,25 @@ void PGPHandler::locked_updateOwnSignatureFlag(PGPCertificateInfo& cert,const Rs
 		cert._flags &= ~PGPCertificateInfo::PGP_CERTIFICATE_FLAG_HAS_SIGNED_ME ;
 }
 
-RsPgpId PGPHandler::pgpIdFromFingerprint(const PGPFingerprintType& f)
+/*static*/ RsPgpId PGPHandler::pgpIdFromFingerprint(const RsPgpFingerprint& f)
 {
-    return RsPgpId(f.toByteArray() + _RsIdSize::PGP_FINGERPRINT - _RsIdSize::PGP_ID);
+	return RsPgpId::fromBufferUnsafe(
+	            f.toByteArray() +
+	            RsPgpFingerprint::SIZE_IN_BYTES - RsPgpId::SIZE_IN_BYTES );
 }
 
-bool PGPHandler::getKeyFingerprint(const RsPgpId& id,PGPFingerprintType& fp) const
+bool PGPHandler::getKeyFingerprint(const RsPgpId& id, RsPgpFingerprint& fp) const
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
+	RS_STACK_MUTEX(pgphandlerMtx);
 
 	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
 
-	if(key == NULL)
-		return false ;
+	if(!key) return false;
 
 	ops_fingerprint_t f ;
 	ops_fingerprint(&f,&key->key.pkey) ; 
 
-	fp = PGPFingerprintType(f.fingerprint) ;
+	fp = RsPgpFingerprint::fromBufferUnsafe(f.fingerprint);
 
 	return true ;
 }
@@ -1666,6 +1667,9 @@ bool PGPHandler::getGPGFilteredList(std::list<RsPgpId>& list,bool (*filter)(cons
 
 	return true ;
 }
+
+bool PGPHandler::isPgpPubKeyAvailable(const RsPgpId &id)
+{ return _public_keyring_map.find(id) != _public_keyring_map.end(); }
 
 bool PGPHandler::isGPGId(const RsPgpId &id)
 {

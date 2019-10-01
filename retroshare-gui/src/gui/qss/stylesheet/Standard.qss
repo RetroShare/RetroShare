@@ -2,7 +2,7 @@
 
 /* Standard rules */
 
-QFrame#titleBarFrame, QFrame#toolBarFrame {
+QFrame#toolBarFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
 }
@@ -740,9 +740,8 @@ ConnectFriendWizard QPlainTextEdit#friendCertEdit {
 }
 
 HomePage QPlainTextEdit#userCertEdit {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
+
+	background: transparent;
 }
 
 HomePage QFrame#addframe{

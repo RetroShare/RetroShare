@@ -596,7 +596,7 @@ static void sendMail(QString sAddress, QString sSubject, QString sBody)
 
 bool ConnectFriendWizard::validateCurrentPage()
 {
-	error = true;
+	error = false;
 
 	switch ((Page) currentId()) {
 	case Page_WebMail:
@@ -616,14 +616,14 @@ bool ConnectFriendWizard::validateCurrentPage()
 				if(peerDetails.id == rsPeers->getOwnId())
 				{
 					setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
-					error = false;
+					error = true;
 				}
 
 				break;
 			}
 			// error message
 			setField("errorMessage", tr("Certificate Load Failed") + ": \n\n" + getErrorString(cert_load_error_code)) ;
-			error = false;
+			error = true;
 			break;
 		}
 	case Page_ErrorMessage:
@@ -638,7 +638,7 @@ bool ConnectFriendWizard::validateCurrentPage()
 int ConnectFriendWizard::nextId() const
 {
 	switch ((Page) currentId()) {
-	case Page_Text:		return Page_Conclusion;
+    case Page_Text:		return error?Page_ErrorMessage:Page_Conclusion;
 	case Page_WebMail:
 	case Page_ErrorMessage:
 	case Page_Conclusion:
