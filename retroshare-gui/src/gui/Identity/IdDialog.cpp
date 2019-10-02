@@ -108,6 +108,7 @@
 #define IMAGE_MEMBER               ":/icons/png/circles-green.png"
 #define IMAGE_UNKNOWN              ":/icons/png/circles-gray.png"
 #define IMAGE_ADMIN                ":/icons/png/circles.png"
+#define IMAGE_ADMINMEMBER          ":/icons/png/circles-blue-green.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
@@ -827,8 +828,11 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 
         	// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
         	// Admin/non admin is shows using Bold font.
-        
+
 		if(am_I_in_circle)
+		if(am_I_admin)
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMINMEMBER)) ;
+		else
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
 		else if(am_I_admin)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMIN)) ;
