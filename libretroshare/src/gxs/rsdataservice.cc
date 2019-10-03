@@ -1493,6 +1493,11 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
     std::cerr << "RsDataService::retrieveGxsGrpMetaData() " << mDbName << ", Requests: " << requestedGroups << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
+	/* Remove not found entries as stated in the documentation */
+	for(auto i = grp.begin(); i != grp.end();)
+		if(!i->second) i = grp.erase(i);
+		else ++i;
+
     return 1;
 }
 

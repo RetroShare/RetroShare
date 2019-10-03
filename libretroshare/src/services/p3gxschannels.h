@@ -111,13 +111,13 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	/// @see RsGxsChannels::turtleSearchRequest
 	virtual bool turtleSearchRequest(const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        rstime_t maxWait = 300 ) override;
 
 	/// @see RsGxsChannels::turtleChannelRequest
 	virtual bool turtleChannelRequest(
 	        const RsGxsGroupId& channelId,
 	        const std::function<void (const RsGxsChannelGroup& result)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        rstime_t maxWait = 300 ) override;
 
 	/// @see RsGxsChannels::localSearchRequest
 	virtual bool localSearchRequest(const std::string& matchString,
@@ -178,26 +178,26 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 
 	/// Implementation of @see RsGxsChannels::getChannelsSummaries
-	virtual bool getChannelsSummaries(std::list<RsGroupMetaData>& channels);
+	bool getChannelsSummaries(std::list<RsGroupMetaData>& channels) override;
 
 	/// Implementation of @see RsGxsChannels::getChannelsInfo
-	virtual bool getChannelsInfo(
+	bool getChannelsInfo(
 	        const std::list<RsGxsGroupId>& chanIds,
-	        std::vector<RsGxsChannelGroup>& channelsInfo );
+	        std::vector<RsGxsChannelGroup>& channelsInfo ) override;
 
 	/// Implementation of @see RsGxsChannels::getChannelContent
-	virtual bool getChannelContent( const RsGxsGroupId& channelId,
-	                       const std::set<RsGxsMessageId>& contentsIds,
-	                       std::vector<RsGxsChannelPost>& posts,
-	                       std::vector<RsGxsComment>& comments );
+	bool getChannelContent( const RsGxsGroupId& channelId,
+	                        const std::set<RsGxsMessageId>& contentsIds,
+	                        std::vector<RsGxsChannelPost>& posts,
+	                        std::vector<RsGxsComment>& comments ) override;
 
 	/// Implementation of @see RsGxsChannels::getContentSummaries
-	virtual bool getContentSummaries(
+	bool getContentSummaries(
 	        const RsGxsGroupId& channelId,
 	        std::vector<RsMsgMetaData>& summaries ) override;
 
 	/// Implementation of @see RsGxsChannels::createChannelV2
-	virtual bool createChannelV2(
+	bool createChannelV2(
 	        const std::string& name, const std::string& description,
 	        const RsGxsImage& thumbnail = RsGxsImage(),
 	        const RsGxsId& authorId = RsGxsId(),
@@ -207,12 +207,8 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
-	/// @deprecated Implementation of @see RsGxsChannels::createComment
-	RS_DEPRECATED_FOR(createCommentV2)
-	virtual bool createComment(RsGxsComment& comment) override;
-
 	/// Implementation of @see RsGxsChannels::createComment
-	virtual bool createCommentV2(
+	bool createCommentV2(
 	        const RsGxsGroupId&   channelId,
 	        const RsGxsMessageId& threadId,
 	        const std::string&    comment,
@@ -224,11 +220,7 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        ) override;
 
 	/// Implementation of @see RsGxsChannels::editChannel
-	virtual bool editChannel(RsGxsChannelGroup& channel) override;
-
-	/// @deprecated Implementation of @see RsGxsChannels::createPost
-	RS_DEPRECATED_FOR(createPostV2)
-	virtual bool createPost(RsGxsChannelPost& post) override;
+	bool editChannel(RsGxsChannelGroup& channel) override;
 
 	/// Implementation of @see RsGxsChannels::createPostV2
 	bool createPostV2(
@@ -241,12 +233,8 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
-	/// @deprecated Implementation of @see RsGxsChannels::createVote
-	RS_DEPRECATED_FOR(createVoteV2)
-	virtual bool createVote(RsGxsVote& vote) override;
-
 	/// Implementation of @see RsGxsChannels::createVoteV2
-	virtual bool createVoteV2(
+	bool createVoteV2(
 	        const RsGxsGroupId& channelId, const RsGxsMessageId& postId,
 	        const RsGxsMessageId& commentId, const RsGxsId& authorId,
 	        RsGxsVoteType vote,
@@ -255,8 +243,8 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        ) override;
 
 	/// Implementation of @see RsGxsChannels::subscribeToChannel
-	virtual bool subscribeToChannel( const RsGxsGroupId &groupId,
-	                                 bool subscribe );
+	bool subscribeToChannel( const RsGxsGroupId &groupId,
+	                                 bool subscribe ) override;
 
 	/// Implementation of @see RsGxsChannels::setPostRead
 	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read);
@@ -266,7 +254,20 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	/// Implementation of @see RsGxsChannels::createChannel
 	RS_DEPRECATED_FOR(createChannelV2)
-	virtual bool createChannel(RsGxsChannelGroup& channel) override;
+	bool createChannel(RsGxsChannelGroup& channel) override;
+
+	/// @deprecated Implementation of @see RsGxsChannels::createPost
+	RS_DEPRECATED_FOR(createPostV2)
+	bool createPost(RsGxsChannelPost& post) override;
+
+	/// @deprecated Implementation of @see RsGxsChannels::createComment
+	RS_DEPRECATED_FOR(createCommentV2)
+	bool createComment(RsGxsComment& comment) override;
+
+	/// @deprecated Implementation of @see RsGxsChannels::createVote
+	RS_DEPRECATED_FOR(createVoteV2)
+	bool createVote(RsGxsVote& vote) override;
+
 
 protected:
 	// Overloaded from GxsTokenQueue for Request callbacks.

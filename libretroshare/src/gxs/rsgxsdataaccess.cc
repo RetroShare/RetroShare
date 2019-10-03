@@ -1009,18 +1009,14 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 }
 
 bool RsGxsDataAccess::getGroupList(GroupIdReq* req)
-{
-    getGroupList(req->mGroupIds, req->Options, req->mGroupIdResult);
-
-    return true;
-}
+{ return getGroupList(req->mGroupIds, req->Options, req->mGroupIdResult); }
 
 bool RsGxsDataAccess::getGroupList(const std::list<RsGxsGroupId>& grpIdsIn, const RsTokReqOptions& opts, std::list<RsGxsGroupId>& grpIdsOut)
 {
 	RsGxsGrpMetaTemporaryMap grpMeta;
 
     for(auto lit = grpIdsIn.begin(); lit != grpIdsIn.end(); ++lit)
-		grpMeta[*lit] = NULL;
+		grpMeta[*lit] = nullptr;
 
     mDataStore->retrieveGxsGrpMetaData(grpMeta);
 

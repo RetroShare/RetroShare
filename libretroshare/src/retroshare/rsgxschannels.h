@@ -101,7 +101,6 @@ class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 public:
 	explicit RsGxsChannels(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsGxsChannels() {}
 
 	/**
 	 * @brief Create channel. Blocking API.
@@ -544,4 +543,6 @@ public:
 	RS_DEPRECATED_FOR(turtleChannelRequest)
 	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
 	//////////////////////////////////////////////////////////////////////////////
+
+	virtual ~RsGxsChannels();
 };
