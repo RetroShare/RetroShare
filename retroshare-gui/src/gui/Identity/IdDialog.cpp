@@ -109,6 +109,7 @@
 #define IMAGE_UNKNOWN              ":/icons/png/circles-gray.png"
 #define IMAGE_ADMIN                ":/icons/png/circles.png"
 #define IMAGE_ADMINMEMBER          ":/icons/png/circles-blue-green.png"
+#define IMAGE_PENDING              ":/icons/png/circles-yellow.png"
 #define IMAGE_INFO                 ":/images/info16.png"
 
 // comment this out in order to remove the sorting of circles into "belong to" and "other visible circles"
@@ -836,8 +837,10 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
 		else if(am_I_admin)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_ADMIN)) ;
-		else if(am_I_invited || am_I_pending)
+		else if(am_I_invited)
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
+		else if(am_I_pending)
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_PENDING)) ;
 		else
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_UNKNOWN)) ;
 	}
