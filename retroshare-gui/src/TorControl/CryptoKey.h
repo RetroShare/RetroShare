@@ -50,15 +50,16 @@ public:
         DER
     };
 
-    CryptoKey();
+    CryptoKey() = default;
     CryptoKey(const CryptoKey &other) : d(other.d) { }
+    CryptoKey& operator = (const CryptoKey &t);
     ~CryptoKey();
 
     bool loadFromData(const QByteArray &data, KeyType type, KeyFormat format = PEM);
     bool loadFromFile(const QString &path, KeyType type, KeyFormat format = PEM);
     void clear();
 
-    bool isLoaded() const { return d.data() && d->key != 0; }
+    bool isLoaded() const { return d.data() && d->key != nullptr; }
     bool isPrivate() const;
 
     QByteArray publicKeyDigest() const;
@@ -83,7 +84,7 @@ private:
         typedef struct rsa_st RSA;
         RSA *key;
 
-        Data(RSA *k = 0) : key(k) { }
+        Data(RSA *k = nullptr) : key(k) { }
         ~Data();
     };
 
