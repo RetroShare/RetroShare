@@ -48,13 +48,12 @@ public:
  * This allows modification of local
  * meta data items of a message
  */
-class MsgLocMetaData {
+struct MsgLocMetaData {
+	MsgLocMetaData() = default;
+	MsgLocMetaData(const MsgLocMetaData& meta): msgId(meta.msgId), val(meta.val) {}
 
-public:
-    MsgLocMetaData(const MsgLocMetaData& meta){ msgId = meta.msgId; val = meta.val;}
-    MsgLocMetaData() {}
-    RsGxsGrpMsgIdPair msgId;
-    ContentValue val;
+	RsGxsGrpMsgIdPair msgId;
+	ContentValue val;
 };
 
 typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
@@ -63,14 +62,12 @@ typedef std::map<RsGxsGroupId,RsGxsGrpMetaData*> RsGxsGrpMetaTemporaryMap;
  * This allows modification of local
  * meta data items of a group
  */
-class GrpLocMetaData {
+struct GrpLocMetaData {
+	GrpLocMetaData() = default;
+	GrpLocMetaData(const GrpLocMetaData& meta): grpId(meta.grpId), val(meta.val) {}
 
-public:
-    GrpLocMetaData(const GrpLocMetaData& meta){ grpId = meta.grpId; val = meta.val;}
-    GrpLocMetaData(){}
-    RsGxsGroupId grpId;
-    ContentValue val;
-
+	RsGxsGroupId grpId;
+	ContentValue val;
 };
 
 /*!
