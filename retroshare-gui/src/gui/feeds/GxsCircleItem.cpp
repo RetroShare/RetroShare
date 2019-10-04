@@ -68,9 +68,13 @@ void GxsCircleItem::setup()
 	RsIdentityDetails idDetails ;
 	QString idName ;
 	if(rsIdentity->getIdDetails(mGxsId, idDetails))
-		idName = tr("for identity ")+QString::fromUtf8(idDetails.mNickname.c_str()) + " (ID=" + QString::fromStdString(mGxsId.toStdString()) + ")" ;
+		idName = QString::fromUtf8(idDetails.mNickname.c_str()) + " (ID=" + QString::fromStdString(mGxsId.toStdString()) + ")" ;
 	else
-		idName = tr("for identity ")+QString::fromStdString(mGxsId.toStdString()) ;
+		idName = QString::fromStdString(mGxsId.toStdString()) ;
+	
+	QPixmap pixmap ;
+	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+		pixmap = GxsIdDetails::makeDefaultIcon(mGxsId,GxsIdDetails::SMALL);
 
 
 	/* update circle information */
@@ -84,6 +88,10 @@ void GxsCircleItem::setup()
 			ui->titleLabel->setText(tr("You received a membership request for circle:"));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
+
+
 
 			ui->acceptButton->setToolTip(tr("Grant membership request"));
 			ui->revokeButton->setToolTip(tr("Revoke membership request"));
@@ -95,6 +103,8 @@ void GxsCircleItem::setup()
 			ui->titleLabel->setText(tr("You received an invitation for circle:"));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
 
 			ui->acceptButton->setToolTip(tr("Accept invitation"));
 			connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(acceptCircleSubscription()));
@@ -107,6 +117,7 @@ void GxsCircleItem::setup()
 		ui->titleLabel->setText(tr("Received event from unknown Circle:"));
 		ui->nameLabel->setText(QString::fromStdString(mCircleId.toStdString()));
 		ui->gxsIdLabel->setText(idName);
+		ui->gxsIdLabel->setId(mGxsId);
 	}
 
 	/* Setup TokenQueue */
