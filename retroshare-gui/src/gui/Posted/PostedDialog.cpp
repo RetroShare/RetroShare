@@ -109,7 +109,7 @@ QString PostedDialog::icon(IconType type)
 	case ICON_POPULAR_GROUP:
 		return "";
 	case ICON_OTHER_GROUP:
-		return ":/icons/png/feed-other.png";
+		return "";
 	case ICON_SEARCH:
 		return ":/images/find.png";
 	case ICON_DEFAULT:
