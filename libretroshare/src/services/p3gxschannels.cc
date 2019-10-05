@@ -1063,49 +1063,44 @@ bool p3GxsChannels::createChannelV2(
         RsGxsCircleType circleType, const RsGxsCircleId& circleId,
         RsGxsGroupId& channelId, std::string& errorMessage )
 {
-	// do some checks
+	const auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errorMessage = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(!authorId.isNull() && !rsIdentity->isOwnId(authorId))
+		return failure("authorId must be either null, or of an owned identity");
 
 	if(        circleType != RsGxsCircleType::PUBLIC
 	        && circleType != RsGxsCircleType::EXTERNAL
 	        && circleType != RsGxsCircleType::NODES_GROUP
 	        && circleType != RsGxsCircleType::LOCAL
 	        && circleType != RsGxsCircleType::YOUR_EYES_ONLY)
-	{
-		errorMessage = "circleType has invalid value";
-		return false;
-	}
+		return failure("circleType has invalid value");
 
 	switch(circleType)
 	{
 	case RsGxsCircleType::EXTERNAL:
 		if(circleId.isNull())
-		{
-			errorMessage = "circleType is EXTERNAL but circleId is null";
-			return false;
-		}
+			return failure("circleType is EXTERNAL but circleId is null");
 		break;
-
 	case RsGxsCircleType::NODES_GROUP:
 	{
 		RsGroupInfo ginfo;
 
 		if(!rsPeers->getGroupInfo(RsNodeGroupId(circleId), ginfo))
-		{
-			errorMessage = "circleType is NODES_GROUP but circleId does not "
-			               "correspond to an actual group of friends";
-			return false;
-		}
+			return failure( "circleType is NODES_GROUP but circleId does not "
+			                "correspond to an actual group of friends" );
 		break;
 	}
 	default:
 		if(!circleId.isNull())
-		{
-			errorMessage = "circleType requires a null circleId, but a non "
-			               "null circleId (";
-			errorMessage += circleId.toStdString();
-			errorMessage += ") was supplied";
-			return false;
-		}
+			return failure( "circleType requires a null circleId, but a non "
+			                "null circleId (" + circleId.toStdString() +
+			                ") was supplied" );
 		break;
 	}
 
@@ -1139,33 +1134,18 @@ bool p3GxsChannels::createChannelV2(
 
 	uint32_t token;
 	if(!createGroup(token, channel))
-	{
-		errorMessage = "Failed creating GXS group.";
-		std::cerr << __PRETTY_FUNCTION__ << " Error! " << errorMessage
-		          << std::endl;
-		return false;
-	}
+		return failure("Failure creating GXS group");
 
 	// wait for the group creation to complete.
 	RsTokenService::GxsRequestStatus wSt =
-	        waitToken( token, std::chrono::milliseconds(5000),
-	                   std::chrono::milliseconds(20) );
+	        waitToken( token, std::chrono::seconds(5),
+	                   std::chrono::milliseconds(50) );
 	if(wSt != RsTokenService::COMPLETE)
-	{
-		errorMessage = "GXS operation waitToken failed with: "
-		        + std::to_string(wSt);
-		std::cerr << __PRETTY_FUNCTION__ << " Error! " << errorMessage
-		          << std::endl;
-		return false;
-	}
+		return failure( "GXS operation waitToken failed with: " +
+		                std::to_string(wSt) );
 
 	if(!RsGenExchange::getPublishedGroupMeta(token, channel.mMeta))
-	{
-		errorMessage = "Failure getting updated group data.";
-		std::cerr << __PRETTY_FUNCTION__ << " Error! " << errorMessage
-		          << std::endl;
-		return false;
-	}
+		return failure("Failure getting updated group data.");
 
 	channelId = channel.mMeta.mGroupId;
 
