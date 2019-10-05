@@ -356,7 +356,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/new.png</normaloff>:/icons/png/new.png</iconset>
+               <normaloff>:/icons/png/addstickers.png</normaloff>:/icons/png/addstickers.png</iconset>
              </property>
              <property name="iconSize">
               <size>
