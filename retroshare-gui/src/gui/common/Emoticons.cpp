@@ -306,6 +306,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
 	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
 	smWidget->setWindowTitle("Stickers") ;
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 
 	if(StickerGroups.count() == 0) {
 		QMessageBox::warning(parent, "Stickers", "No stickers installed");
@@ -444,10 +445,12 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 	smWidget->move(x, y);
 	smWidget->show();
+	QApplication::restoreOverrideCursor();
 }
 
 void Emoticons::loadToolTips(QWidget *container)
 {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QList<QPushButton *> children = container->findChildren<QPushButton *>();
 	for(int i = 0; i < children.length(); ++i) {
 		if(!children[i]->toolTip().contains('<')) {
@@ -464,4 +467,5 @@ void Emoticons::loadToolTips(QWidget *container)
 
 		}
 	}
+	QApplication::restoreOverrideCursor();
 }
