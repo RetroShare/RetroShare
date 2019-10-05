@@ -249,7 +249,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     are always encrypted and signed, and are relayed by intermediate nodes until they reach their final destination. </p>\
     <p>Distant messages stay into your Outbox until an acknowledgement of receipt has been received.</p>\
  <p>Generally, you may use messages to recommend files to your friends by pasting file links, \
- or recommend friend nodes to other friend nodes, in order to strenghten your network, or send feedback \
+ or recommend friend nodes to other friend nodes, in order to strengthen your network, or send feedback \
  to a channel's owner.</p>                   \
  ").arg(QString::number(2*S)).arg(QString::number(S)) ;
 
