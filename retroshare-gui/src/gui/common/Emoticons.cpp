@@ -309,17 +309,19 @@ void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs, QString folder
 
 void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QVector<QString> stickerTabs;
 	refreshStickerTabs(stickerTabs);
+	if(stickerTabs.count() == 0) {
+		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" + stickerFolders.join('\n');
+		QMessageBox::warning(parent, "Stickers", message);
+		return;
+	}
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
 	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
 	smWidget->setWindowTitle("Stickers") ;
 
-	if(stickerTabs.count() == 0) {
-		QMessageBox::warning(parent, "Stickers", "No stickers installed");
-		return;
-	}
 	bool bOnlyOneGroup = (stickerTabs.count() == 1);
 
 	QTabWidget *smTab = nullptr;
