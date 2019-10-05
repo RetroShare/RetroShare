@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>157</height>
+    <height>161</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -179,6 +179,25 @@
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
+           <widget class="QPushButton" name="subscribeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Subscribe to Channel</string>
+            </property>
+            <property name="text">
+             <string>Subscribe</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -202,26 +221,6 @@
             <property name="icon">
              <iconset resource="../images.qrc">
               <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="subscribeButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Subscribe to Channel</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
             </property>
            </widget>
           </item>

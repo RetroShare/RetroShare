@@ -51,9 +51,15 @@
        <layout class="QHBoxLayout" name="mainTopHLayout">
         <item>
          <widget class="QLabel" name="logoLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="minimumSize">
            <size>
-            <width>158</width>
+            <width>82</width>
             <height>108</height>
            </size>
           </property>
