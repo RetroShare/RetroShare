@@ -29,6 +29,7 @@
 #include <QTabWidget>
 #include <QWidget>
 #include <QMessageBox>
+#include <QDir>
 
 #include <iostream>
 #include <math.h>
@@ -49,9 +50,12 @@ void Emoticons::load()
 {
 	loadSmiley();
 	filters << "*.png" << "*.jpg" << "*.gif";
-	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
 	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
+	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
 	stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
+
+	QDir dir(QString::fromStdString(RsAccounts::AccountDirectory()));
+	dir.mkpath("stickers/imported");
 }
 
 void Emoticons::loadSmiley()
@@ -456,6 +460,12 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	smWidget->move(x, y);
 	smWidget->show();
 	QApplication::restoreOverrideCursor();
+}
+
+QString Emoticons::importedStickerPath()
+{
+	QDir dir(stickerFolders[0]);
+	return dir.absoluteFilePath("imported");
 }
 
 void Emoticons::loadToolTips(QWidget *container)

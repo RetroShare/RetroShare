@@ -918,6 +918,15 @@ border-image: url(:/images/closepressed.png)
     <string>Save image</string>
    </property>
   </action>
+  <action name="actionImport_sticker">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/icons/png/addstickers.png</normaloff>:/icons/png/addstickers.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import sticker</string>
+   </property>
+  </action>
   <action name="actionSendAsPlainText">
    <property name="checkable">
     <bool>true</bool>
