@@ -647,6 +647,18 @@ bool	p3Peers::getGPGSignedList(std::list<RsPgpId> &ids)
         return true;
 }
 
+bool p3Peers::getPgpFriendList(std::vector<RsPgpId>& pgpIds)
+{
+	std::list<RsPgpId> ids;
+	if(AuthGPG::getAuthGPG()->getGPGAcceptedList(ids))
+	{
+		pgpIds.clear();
+		std::copy(ids.begin(), ids.end(), std::back_inserter(pgpIds));
+		return true;
+	}
+	return false;
+}
+
 bool	p3Peers::getGPGAcceptedList(std::list<RsPgpId> &ids)
 {
 #ifdef P3PEERS_DEBUG
@@ -1873,3 +1885,5 @@ void p3Peers::setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermi
 
 RsPeerStateChangedEvent::RsPeerStateChangedEvent(RsPeerId sslId) :
     RsEvent(RsEventType::PEER_STATE_CHANGED), mSslId(sslId) {}
+
+RsPeers::~RsPeers() = default;

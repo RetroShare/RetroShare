@@ -83,6 +83,11 @@ public:
 	virtual const RsPgpId& getGPGOwnId();
 	virtual RsPgpId getGPGId(const RsPeerId &ssl_id);
 	virtual bool isKeySupported(const RsPgpId& ids);
+
+	/// @see RsPeers
+	bool getPgpFriendList(std::vector<RsPgpId>& pgpIds) override;
+
+	RS_DEPRECATED_FOR(getPgpFriendList)
 	virtual bool getGPGAcceptedList(std::list<RsPgpId> &ids);
 	virtual bool getGPGSignedList(std::list<RsPgpId> &ids);
 	virtual bool getGPGValidList(std::list<RsPgpId> &ids);
