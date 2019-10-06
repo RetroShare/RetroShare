@@ -712,7 +712,6 @@ public:
 	/* Auth Stuff */
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
-	virtual  bool hasExportMinimal() = 0;
 
 	/**
 	 * @brief Import certificate into the keyring
@@ -746,8 +745,9 @@ public:
                                            std::string& error_string )=0;
 
 	// Certificate utils
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code) = 0;
-	virtual	bool saveCertificateToFile(const RsPeerId& id, const std::string &fname) = 0;
+	virtual	bool cleanCertificate(
+	        const std::string& certstr, std::string& cleanCert,
+	        bool& is_short_format, uint32_t& error_code ) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 
 	virtual	bool signGPGCertificate(const RsPgpId &gpg_id) = 0;

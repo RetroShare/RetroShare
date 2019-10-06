@@ -115,19 +115,7 @@ std::string RsPeerNetModeString(uint32_t netModel)
 
 
 p3Peers::p3Peers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm)
-        :mLinkMgr(lm), mPeerMgr(pm), mNetMgr(nm)
-{
-	return;
-}
-
-bool p3Peers::hasExportMinimal()
-{
-#ifdef GPGME_EXPORT_MODE_MINIMAL
-	return true ;
-#else
-	return false ;
-#endif
-}
+        :mLinkMgr(lm), mPeerMgr(pm), mNetMgr(nm) {}
 
 	/* Updates ... */
 bool p3Peers::FriendsChanged(bool add)
@@ -1675,22 +1663,6 @@ bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCer
         return false ;
 
     return res;
-}
-
-bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)
-{
-	/* remove unused parameter warnings */
-	(void) id;
-
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::SaveCertificateToFile() not implemented yet " << id;
-	std::cerr << std::endl;
-#endif
-
-//	ensureExtension(fname, "pqi");
-//
-//        return AuthSSL::getAuthSSL()->SaveCertificateToFile(id, fname);
-        return false;
 }
 
 std::string p3Peers::saveCertificateToString(const RsPeerId &id)
