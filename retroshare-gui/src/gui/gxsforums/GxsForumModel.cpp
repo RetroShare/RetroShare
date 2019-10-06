@@ -744,7 +744,7 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 
         forumIds.push_back(group_id);
 
-		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+		if(!rsGxsForums->getForumsInfo(forumIds,groups) || groups.size() != 1)
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
 			return;
