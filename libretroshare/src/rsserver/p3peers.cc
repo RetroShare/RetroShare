@@ -115,19 +115,7 @@ std::string RsPeerNetModeString(uint32_t netModel)
 
 
 p3Peers::p3Peers(p3LinkMgr *lm, p3PeerMgr *pm, p3NetMgr *nm)
-        :mLinkMgr(lm), mPeerMgr(pm), mNetMgr(nm)
-{
-	return;
-}
-
-bool p3Peers::hasExportMinimal()
-{
-#ifdef GPGME_EXPORT_MODE_MINIMAL
-	return true ;
-#else
-	return false ;
-#endif
-}
+        :mLinkMgr(lm), mPeerMgr(pm), mNetMgr(nm) {}
 
 	/* Updates ... */
 bool p3Peers::FriendsChanged(bool add)
@@ -645,6 +633,18 @@ bool	p3Peers::getGPGSignedList(std::list<RsPgpId> &ids)
         /* get from mAuthMgr */
         AuthGPG::getAuthGPG()->getGPGSignedList(ids);
         return true;
+}
+
+bool p3Peers::getPgpFriendList(std::vector<RsPgpId>& pgpIds)
+{
+	std::list<RsPgpId> ids;
+	if(AuthGPG::getAuthGPG()->getGPGAcceptedList(ids))
+	{
+		pgpIds.clear();
+		std::copy(ids.begin(), ids.end(), std::back_inserter(pgpIds));
+		return true;
+	}
+	return false;
 }
 
 bool	p3Peers::getGPGAcceptedList(std::list<RsPgpId> &ids)
@@ -1665,22 +1665,6 @@ bool p3Peers::cleanCertificate(const std::string &certstr, std::string &cleanCer
     return res;
 }
 
-bool 	p3Peers::saveCertificateToFile(const RsPeerId &id, const std::string &/*fname*/)
-{
-	/* remove unused parameter warnings */
-	(void) id;
-
-#ifdef P3PEERS_DEBUG
-        std::cerr << "p3Peers::SaveCertificateToFile() not implemented yet " << id;
-	std::cerr << std::endl;
-#endif
-
-//	ensureExtension(fname, "pqi");
-//
-//        return AuthSSL::getAuthSSL()->SaveCertificateToFile(id, fname);
-        return false;
-}
-
 std::string p3Peers::saveCertificateToString(const RsPeerId &id)
 {
 #ifdef P3PEERS_DEBUG
@@ -1873,3 +1857,5 @@ void p3Peers::setServicePermissionFlags(const RsPgpId& gpg_id,const ServicePermi
 
 RsPeerStateChangedEvent::RsPeerStateChangedEvent(RsPeerId sslId) :
     RsEvent(RsEventType::PEER_STATE_CHANGED), mSslId(sslId) {}
+
+RsPeers::~RsPeers() = default;
