@@ -83,8 +83,8 @@
            <string>Cancel Download</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/delete.png</normaloff>:/images/delete.png</iconset>
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/cancel.png</normaloff>:/icons/png/cancel.png</iconset>
           </property>
          </widget>
         </item>
@@ -112,8 +112,8 @@
            <string>Download</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/download.png</normaloff>:/images/download.png</iconset>
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
           </property>
          </widget>
         </item>
@@ -141,8 +141,8 @@
            <string>Play</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/play.png</normaloff>:/icons/png/play.png</iconset>
           </property>
          </widget>
         </item>
@@ -167,8 +167,8 @@
            <string>Copy RetroShare Link</string>
           </property>
           <property name="icon">
-           <iconset resource="../images.qrc">
-            <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
           </property>
          </widget>
         </item>
@@ -242,6 +242,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

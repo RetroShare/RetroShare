@@ -699,7 +699,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		readToggled(false);
@@ -707,7 +707,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

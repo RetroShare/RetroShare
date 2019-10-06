@@ -309,8 +309,8 @@
                <string>Download</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/download16.png</normaloff>:/images/download16.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
               </property>
               <property name="autoExclusive">
                <bool>false</bool>
@@ -326,8 +326,8 @@
                <string>Play</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/player_play.png</normaloff>:/images/player_play.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/play.png</normaloff>:/icons/png/play.png</iconset>
               </property>
              </widget>
             </item>
@@ -335,6 +335,10 @@
              <widget class="QPushButton" name="commentButton">
               <property name="text">
                <string>Comments</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
               </property>
              </widget>
             </item>
@@ -373,8 +377,8 @@
                <string>Copy RetroShare Link</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
               </property>
              </widget>
             </item>
@@ -392,9 +396,8 @@
               <property name="toolTip">
                <string>Unsubscribe From Channel</string>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
+              <property name="text">
+               <string>Unsubscribe</string>
               </property>
              </widget>
             </item>
@@ -413,8 +416,8 @@
                <string>Expand</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
               </property>
              </widget>
             </item>
@@ -433,8 +436,8 @@
                <string>Set as read and remove item</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
               </property>
              </widget>
             </item>
@@ -453,8 +456,8 @@
                <string>Remove Item</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
               </property>
              </widget>
             </item>
@@ -564,6 +567,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
