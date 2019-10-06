@@ -32,13 +32,13 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 # Enable GXS distant syncronization
 CONFIG *= gxsdistsync
 
-# To disable RetroShare-nogui append the following
-# assignation to qmake command line "CONFIG+=no_retroshare_nogui"
+# To enable RetroShare-nogui append the following
+# assignation to qmake command line "CONFIG+=retroshare_nogui"
 CONFIG *= no_retroshare_nogui
 retroshare_nogui:CONFIG -= no_retroshare_nogui
 
-# To disable cmark append the following 
-# assignation to qmake command line "CONFIG+=no_cmark"
+# To enable cmark append the following
+# assignation to qmake command line "CONFIG+=rs_gui_cmark"
 CONFIG *= no_rs_gui_cmark
 rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 
@@ -63,18 +63,19 @@ retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
 CONFIG *= no_retroshare_qml_app
 retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 
-# To enable RetroShare service append the following assignation to
-# qmake command line "CONFIG+=retroshare_service"
+# To disable RetroShare service append the following assignation to
+# qmake command line "CONFIG+=no_retroshare_service"
 CONFIG *= retroshare_service
-retroshare_service:CONFIG -= no_retroshare_service
+no_retroshare_service:CONFIG -= retroshare_service
 
 # To enable libresapi (deprecated) append the following assignation to qmake command line
+# "CONFIG+=libresapi"
 CONFIG+=no_libresapi
 libresapi:CONFIG -= no_libresapi
 
 # To enable libresapi via local socket (unix domain socket or windows named
 # pipes) append the following assignation to qmake command line
-#"CONFIG+=libresapilocalserver"
+# "CONFIG+=libresapilocalserver"
 CONFIG *= no_libresapilocalserver
 libresapilocalserver:CONFIG -= no_libresapilocalserver
 
@@ -83,8 +84,8 @@ libresapilocalserver:CONFIG -= no_libresapilocalserver
 CONFIG *= no_libresapi_settings
 libresapi_settings:CONFIG -= no_libresapi_settings
 
-# To disable libresapi via HTTP (based on libmicrohttpd) append the following
-# assignation to qmake command line "CONFIG+=no_libresapihttpserver"
+# To enable libresapi via HTTP (based on libmicrohttpd) append the following
+# assignation to qmake command line "CONFIG+=libresapihttpserver"
 CONFIG *= no_libresapihttpserver
 libresapihttpserver:CONFIG -= no_libresapihttpserver
 
@@ -164,7 +165,8 @@ rs_macos10.14:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# To disable deep search append the following assignation to qmake command line
+# To enable deep search append the following assignation to qmake command line
+# CONFIG *= rs_deep_search
 CONFIG *= no_rs_deep_search
 rs_deep_search:CONFIG -= no_rs_deep_search
 
