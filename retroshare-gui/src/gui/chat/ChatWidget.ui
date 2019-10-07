@@ -303,7 +303,7 @@ border-image: url(:/images/closepressed.png)
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="toolBarFrame">
+         <widget class="QFrame" name="toolBarFrameTop">
           <property name="frameShape">
            <enum>QFrame::Box</enum>
           </property>
