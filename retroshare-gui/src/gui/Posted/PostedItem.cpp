@@ -306,7 +306,7 @@ void PostedItem::fill()
 		urlstr += messageName();
 		urlstr += QString(" </span></a>");
 
-		QString siteurl = url.scheme() + "://" + url.host();
+		QString siteurl = url.toEncoded();
 		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
 		
 		ui->titleLabel->setText(urlstr);

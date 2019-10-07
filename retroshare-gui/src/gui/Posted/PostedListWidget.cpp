@@ -124,6 +124,13 @@ QIcon PostedListWidget::groupIcon()
 	return QIcon();
 }
 
+void PostedListWidget::groupIdChanged()
+{
+	mPostIndex = 0;
+	GxsMessageFramePostWidget::groupIdChanged();
+	updateShowText();
+}
+
 /*****************************************************************************************/
 // Overloaded from FeedHolder.
 QScrollArea *PostedListWidget::getScrollArea()
