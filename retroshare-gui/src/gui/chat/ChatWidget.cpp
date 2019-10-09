@@ -439,6 +439,7 @@ void ChatWidget::blockSending(QString msg)
 #ifndef RS_ASYNC_CHAT
 	sendingBlocked = true;
 	ui->sendButton->setEnabled(false);
+	ui->stickerButton->setEnabled(false);
 #endif
 	ui->sendButton->setToolTip(msg);
 }
@@ -446,6 +447,7 @@ void ChatWidget::blockSending(QString msg)
 void ChatWidget::unblockSending()
 {
     sendingBlocked = false;
+	ui->stickerButton->setEnabled(true);
     updateLenOfChatTextEdit();
 }
 
@@ -1559,6 +1561,7 @@ void ChatWidget::stickerWidget()
 
 void ChatWidget::sendSticker()
 {
+	if(sendingBlocked) return;
 	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
 	QString encodedImage;
 	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
