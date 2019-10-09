@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -50,38 +51,21 @@ static const uint32_t PQI_SSLUDP_DEF_CONN_PERIOD = 300;  /* 5  minutes? */
 /********** PQI SSL UDP STUFF **************************************/
 
 pqissludp::pqissludp(PQInterface *parent, p3LinkMgr *lm) :
-	pqissl(NULL, parent, lm), tou_bio(NULL),// listen_checktime(0),
-	mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
-	mConnectBandwidth(0)
-{
-	RS_STACK_MUTEX(mSslMtx);
+    pqissl(nullptr, parent, lm), tou_bio(nullptr),
+    mConnectPeriod(PQI_SSLUDP_DEF_CONN_PERIOD), mConnectFlags(0),
+    mConnectBandwidth(0), mConnectProxyAddr(), mConnectSrcAddr() {}
 
-	sockaddr_storage_clear(remote_addr);
-	sockaddr_storage_clear(mConnectProxyAddr);
-	sockaddr_storage_clear(mConnectSrcAddr);
-}
+/*
+ * No need to call reset() here as it will be called in the upper class,
+ * pqissludp::reset_locked() just reset a few members to 0 that (that will be
+ * deleted anyway when this destructor ends), so pqissl::reset_locked() that is
+ * called by in parent class destructor will do just fine.
+ *
+ * DISCLAIMER: do not double free tou_bio here, as it is implicitely freed
+ * by SSL_free(...) in pqissl::reset()
+ */
+pqissludp::~pqissludp() = default;
 
-
-pqissludp::~pqissludp()
-{ 
-	rslog(RSL_ALERT, pqissludpzone,
-            "pqissludp::~pqissludp -> destroying pqissludp");
-
-	/* must call reset from here, so that the
-	 * virtual functions will still work.
-	 * -> as they stop working in base class destructor.
-	 *
-	 *  This means that reset() will be called twice, but this should
-	 *  be harmless.
-	 */
-	stoplistening(); /* remove from p3proxy listenqueue */
-	reset();
-
-	RS_STACK_MUTEX(mSslMtx);
-
-	if (tou_bio) // this should be in the reset?
-		BIO_free(tou_bio);
-}
 
 int pqissludp::reset_locked()
 {
@@ -429,30 +413,6 @@ int pqissludp::net_internal_SSL_set_fd(SSL *ssl, int fd)
         SSL_set_bio(ssl, tou_bio, tou_bio);
 	return 1;
 }
-
-int pqissludp::net_internal_fcntl_nonblock(int /*fd*/)
-{
-  	rslog(RSL_DEBUG_BASIC, pqissludpzone, 
-	  	  "pqissludp::net_internal_fcntl_nonblock()");
-	return 0;
-}
-
-
-        // listen fns call the udpproxy.
-int pqissludp::listen()
-{
-	rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::listen() (NULLOP)");
-
-	return 1; //udpproxy->listen();
-}
-
-int pqissludp::stoplistening()
-{
-	rslog(RSL_DEBUG_BASIC, pqissludpzone, "pqissludp::stoplistening() (NULLOP)");
-
-	return 1; //udpproxy->stoplistening();
-}
-
 
 bool 	pqissludp::connect_parameter(uint32_t type, uint32_t value)
 {

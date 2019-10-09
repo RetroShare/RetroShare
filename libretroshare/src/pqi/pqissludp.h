@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie.                                       *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@altermundi.net>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,42 +20,31 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_SSL_UDP_HEADER
-#define MRK_PQI_SSL_UDP_HEADER
-
-// operating system specific network header.
-#include "pqi/pqinetwork.h"
+#pragma once
 
 #include <string>
 #include <map>
 
 #include "pqi/pqissl.h"
+#include "pqi/pqinetwork.h"
+#include "util/rsdebug.h"
 
- /* So pqissludp is the special firewall breaking protocol.
-  * This class will implement the basics of streaming
-  * ssl over udp using a tcponudp library....
-  * and a small extension to ssl.
-  */
 
-class pqissludp;
-class cert;
-
-/* This provides a NetBinInterface, which is
- * primarily inherited from pqissl.
- * fns declared here are different -> all others are identical.
+/**
+ * @brief pqissludp is the special NAT traversal protocol.
+ * This class will implement the basics of streaming ssl over udp using a
+ * tcponudp library.
+ * It provides a NetBinInterface, which is primarily inherited from pqissl.
+ * Some methods are override all others are identical.
  */
-
 class pqissludp: public pqissl
 {
 public:
 	pqissludp(PQInterface *parent, p3LinkMgr *lm);
+	~pqissludp() override;
 
-	virtual ~pqissludp();
-
-	// NetInterface.
-	// listen fns call the udpproxy.
-	virtual int listen();
-	virtual int stoplistening();
+	int listen() override { return 1; }
+	int stoplistening() override { return 1; }
 
 	virtual bool connect_parameter(uint32_t type, uint32_t value);
 	virtual bool connect_additional_address(uint32_t type, const struct sockaddr_storage &addr);
@@ -83,13 +73,11 @@ protected:
 	 */
 	virtual int net_internal_close(int fd);
 	virtual int net_internal_SSL_set_fd(SSL *ssl, int fd);
-	virtual int net_internal_fcntl_nonblock(int fd);
+	virtual int net_internal_fcntl_nonblock(int /*fd*/) { return 0; }
 
 private:
 
 	BIO *tou_bio;  // specific to ssludp.
-
-	//long listen_checktime;
 
 	uint32_t mConnectPeriod;
 	uint32_t mConnectFlags;
@@ -97,6 +85,6 @@ private:
 
 	struct sockaddr_storage mConnectProxyAddr;
 	struct sockaddr_storage mConnectSrcAddr;
-};
 
-#endif // MRK_PQI_SSL_UDP_HEADER
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+};
