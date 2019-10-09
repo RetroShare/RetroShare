@@ -99,11 +99,11 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		return QPixmap(":/icons/png/channels.png");
+		return QPixmap(":/icons/png/channel.png");
 	case MODE_SHOW:
-		return QPixmap(":/icons/png/channels.png");
+		return QPixmap(":/icons/png/channel.png");
 	case MODE_EDIT:
-		return QPixmap(":/icons/png/channels.png");
+		return QPixmap(":/icons/png/channel.png");
 	}
 
 	return QPixmap();

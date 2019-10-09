@@ -28,8 +28,11 @@
 
 #include "FeedHolder.h"
 #include "gui/RetroShareLink.h"
+#include "gui/gxs/GxsIdDetails.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+
+#include <retroshare/rsidentity.h>
 
 #include <iostream>
 
@@ -279,9 +282,9 @@ void GxsForumMsgItem::fill()
 	}
 
 	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-		ui->iconLabel->setPixmap(QPixmap(":/images/konv_message64.png"));
+		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums.png"));
 	} else {
-		ui->iconLabel->setPixmap(QPixmap(":/images/konversation64.png"));
+		ui->iconLabel->setPixmap(QPixmap(":/icons/png/forums-default.png"));
 	}
 
 	if (!mIsHome) {
@@ -289,6 +292,16 @@ void GxsForumMsgItem::fill()
 			mCloseOnRead = true;
 		}
 	}
+	
+	RsIdentityDetails idDetails ;
+	rsIdentity->getIdDetails(mMessage.mMeta.mAuthorId,idDetails);
+		
+	QPixmap pixmap ;
+
+	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(mMessage.mMeta.mAuthorId,GxsIdDetails::SMALL);
+			
+	ui->avatar->setPixmap(pixmap);
 
 	ui->nameLabel->setId(mMessage.mMeta.mAuthorId);
 
@@ -322,6 +335,16 @@ void GxsForumMsgItem::fill()
 		ui->parentMsgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mParentMessage.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 		ui->parentNameLabel->setId(mParentMessage.mMeta.mAuthorId);
+		
+		RsIdentityDetails idDetails ;
+		rsIdentity->getIdDetails(mParentMessage.mMeta.mAuthorId,idDetails);
+		
+		QPixmap pixmap ;
+
+		if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(mParentMessage.mMeta.mAuthorId,GxsIdDetails::SMALL);
+			
+		ui->parentAvatar->setPixmap(pixmap);
 
 //		if (rsPeers->getPeerName(msgParent.srcId) !="")
 //		{
@@ -369,7 +392,7 @@ void GxsForumMsgItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		if (!mParentMessage.mMeta.mMsgId.isNull()) {
@@ -382,7 +405,7 @@ void GxsForumMsgItem::doExpand(bool open)
 	{
 		ui->expandFrame->hide();
 		ui->parentFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

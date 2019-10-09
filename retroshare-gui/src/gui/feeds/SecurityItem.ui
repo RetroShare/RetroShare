@@ -7,11 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>763</width>
-    <height>241</height>
+    <height>246</height>
    </rect>
   </property>
   <layout class="QGridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>1</number>
+   </property>
+   <property name="topMargin">
+    <number>1</number>
+   </property>
+   <property name="rightMargin">
+    <number>1</number>
+   </property>
+   <property name="bottomMargin">
     <number>1</number>
    </property>
    <item row="0" column="0">
@@ -102,10 +111,19 @@
       <item row="0" column="0">
        <widget class="QFrame" name="headFrame">
         <layout class="QGridLayout">
-         <property name="verticalSpacing">
+         <property name="leftMargin">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="verticalSpacing">
           <number>0</number>
          </property>
          <item row="0" column="0" rowspan="2">
@@ -362,8 +380,8 @@
               <string>Expand</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
              </property>
             </widget>
            </item>
@@ -382,8 +400,8 @@
               <string>Remove Item</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
              </property>
             </widget>
            </item>
@@ -625,6 +643,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

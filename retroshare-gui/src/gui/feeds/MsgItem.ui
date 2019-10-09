@@ -31,70 +31,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>52</red>
-           <green>177</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>51</red>
-           <green>174</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>52</red>
-           <green>177</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>51</red>
-           <green>174</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>51</red>
-           <green>174</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
      <property name="autoFillBackground">
       <bool>true</bool>
      </property>
@@ -215,7 +151,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="replyButton">
+            <widget class="QPushButton" name="replyButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
              </property>
@@ -228,12 +164,6 @@
              <property name="icon">
               <iconset resource="../images.qrc">
                <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
-             </property>
-             <property name="toolButtonStyle">
-              <enum>Qt::ToolButtonTextBesideIcon</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>false</bool>
              </property>
             </widget>
            </item>
@@ -265,8 +195,8 @@
               <string>Delete Message</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/mail_delete.png</normaloff>:/images/mail_delete.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/cancel.png</normaloff>:/icons/png/cancel.png</iconset>
              </property>
             </widget>
            </item>
@@ -285,8 +215,8 @@
               <string>Play Media</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/startall.png</normaloff>:/images/startall.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/play.png</normaloff>:/icons/png/play.png</iconset>
              </property>
             </widget>
            </item>
@@ -305,8 +235,8 @@
               <string>Expand</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
              </property>
             </widget>
            </item>
@@ -325,8 +255,8 @@
               <string>Remove Item</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
              </property>
             </widget>
            </item>
@@ -493,7 +423,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
-  <include location="../../../../RetroShare/RetroShare/retroshare-gui/src/gui/images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

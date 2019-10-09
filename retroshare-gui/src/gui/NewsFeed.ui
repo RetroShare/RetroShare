@@ -59,7 +59,7 @@
          </size>
         </property>
         <property name="pixmap">
-         <pixmap resource="icons.qrc">:/icons/png/newsfeed.png</pixmap>
+         <pixmap resource="icons.qrc">:/icons/png/newsfeed2.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
