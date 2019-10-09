@@ -44,6 +44,7 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
+	virtual void groupIdChanged();
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
