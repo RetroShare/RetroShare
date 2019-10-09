@@ -187,7 +187,7 @@ int pqissludp::Initiate_Connection()
 		out += sockaddr_storage_tostring(remote_addr);
 		out += " ";
 
-		if (sslmode)
+		if (sslmode == PQISSL_ACTIVE)
 		{
 			out += "ACTIVE Connect (SSL_Connect)";
 		}
