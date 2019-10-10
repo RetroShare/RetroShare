@@ -55,6 +55,8 @@
 #define COL_RECEIVED			7
 #define COL_SEND				8
 #define COL_DUPLICATION_FACTOR  9
+#define COL_RECEIVEDTIME	    10
+#define COL_SENDTIME			11
 
 static const int PARTIAL_VIEW_SIZE           = 9 ;
 //static const int MAX_TUNNEL_REQUESTS_DISPLAY = 10 ;
@@ -200,9 +202,11 @@ void GlobalRouterStatistics::updateContent()
         item -> setData(COL_TUNNELSTATUS, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
         item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
         item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-		item -> setData(COL_RECEIVED, Qt::DisplayRole, DateTime::formatDateTime(routingtime));
-        item -> setData(COL_SEND,     Qt::DisplayRole, DateTime::formatDateTime(senttime));
+		item -> setData(COL_RECEIVED, 	  Qt::DisplayRole, DateTime::formatDateTime(routingtime));
+        item -> setData(COL_SEND,         Qt::DisplayRole, DateTime::formatDateTime(senttime));
 		item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
+		item -> setData(COL_RECEIVEDTIME,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
+        item -> setData(COL_SENDTIME,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
     }
 }
 

@@ -106,6 +106,16 @@
           <string>Branching factor</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>Receive time (secs ago)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Sending time (secs ago)</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
