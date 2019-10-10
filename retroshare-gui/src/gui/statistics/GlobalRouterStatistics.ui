@@ -93,12 +93,12 @@
         </column>
         <column>
          <property name="text">
-          <string>Receive time (secs ago)</string>
+          <string>Receive time</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Sending time (secs ago)</string>
+          <string>Sending time</string>
          </property>
         </column>
         <column>

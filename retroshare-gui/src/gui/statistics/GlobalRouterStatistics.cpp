@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <QDateTime>
 #include <iostream>
 #include <QTimer>
 #include <QObject>
@@ -39,6 +40,8 @@
 
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "util/DateTime.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
 
@@ -49,8 +52,8 @@
 #define COL_TUNNELSTATUS        4
 #define COL_DATASIZE            5
 #define COL_DATAHASH            6
-#define COL_RECEIVED            7
-#define COL_SEND                8
+#define COL_RECEIVED			7
+#define COL_SEND				8
 #define COL_DUPLICATION_FACTOR  9
 
 static const int PARTIAL_VIEW_SIZE           = 9 ;
@@ -65,7 +68,7 @@ static QColor colorScale(float f)
 }
 
 GlobalRouterStatistics::GlobalRouterStatistics(QWidget *parent)
-    : RsAutoUpdatePage(2000,parent)
+    : RsAutoUpdatePage(4000,parent)
 {
 	setupUi(this) ;
 	
@@ -177,6 +180,18 @@ void GlobalRouterStatistics::updateContent()
         
         if(nicknames.isEmpty())
           nicknames = tr("Unknown");
+	  
+	    QDateTime routingtime;
+		routingtime.setTime_t(cache_infos[i].routing_time);
+		QDateTime senttime;
+		senttime.setTime_t(cache_infos[i].last_sent_time);
+	  
+	  	QPixmap pixmap ;
+
+		if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(cache_infos[i].destination,GxsIdDetails::SMALL);
+				  
+		item ->setIcon(COL_NICKNAME, QIcon(pixmap));
 
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
         item -> setData(COL_NICKNAME,     Qt::DisplayRole, nicknames ) ;
@@ -185,9 +200,9 @@ void GlobalRouterStatistics::updateContent()
         item -> setData(COL_TUNNELSTATUS, Qt::DisplayRole, tunnel_status_string[cache_infos[i].tunnel_status % 3]);
         item -> setData(COL_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(cache_infos[i].data_size));
         item -> setData(COL_DATAHASH,     Qt::DisplayRole, QString::fromStdString(cache_infos[i].item_hash.toStdString()));
-        item -> setData(COL_RECEIVED,     Qt::DisplayRole, QString::number(now - cache_infos[i].routing_time));
-        item -> setData(COL_SEND,         Qt::DisplayRole, QString::number(now - cache_infos[i].last_sent_time));
-        item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
+		item -> setData(COL_RECEIVED, Qt::DisplayRole, DateTime::formatDateTime(routingtime));
+        item -> setData(COL_SEND,     Qt::DisplayRole, DateTime::formatDateTime(senttime));
+		item -> setData(COL_DUPLICATION_FACTOR, Qt::DisplayRole, QString::number(cache_infos[i].duplication_factor));
     }
 }
 

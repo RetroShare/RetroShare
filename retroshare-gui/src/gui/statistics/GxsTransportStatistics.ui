@@ -78,6 +78,11 @@
           <string>Group ID</string>
          </property>
         </column>
+        <column>
+         <property name="text">
+          <string>Destination ID</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
@@ -95,6 +100,9 @@
          <enum>Qt::Vertical</enum>
         </property>
         <widget class="QTreeWidget" name="groupTreeWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <column>
           <property name="text">
            <string>Group ID / Author</string>
