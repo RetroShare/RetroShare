@@ -41,6 +41,7 @@
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "util/DateTime.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
@@ -173,7 +174,8 @@ void GlobalRouterStatistics::updateContent()
 
     for(uint32_t i=0;i<cache_infos.size();++i)
     {
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        //QTreeWidgetItem *item = new QTreeWidgetItem();
+		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
         treeWidget->addTopLevelItem(item);
         
         RsIdentityDetails details ;
@@ -188,13 +190,7 @@ void GlobalRouterStatistics::updateContent()
 		QDateTime senttime;
 		senttime.setTime_t(cache_infos[i].last_sent_time);
 	  
-	  	QPixmap pixmap ;
-
-		if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-				pixmap = GxsIdDetails::makeDefaultIcon(cache_infos[i].destination,GxsIdDetails::SMALL);
-				  
-		item ->setIcon(COL_NICKNAME, QIcon(pixmap));
-
+		item -> setId(cache_infos[i].destination,COL_NICKNAME, false) ;
         item -> setData(COL_ID,           Qt::DisplayRole, QString::number(cache_infos[i].mid,16).rightJustified(16,'0'));
         item -> setData(COL_NICKNAME,     Qt::DisplayRole, nicknames ) ;
         item -> setData(COL_DESTINATION,  Qt::DisplayRole, QString::fromStdString(cache_infos[i].destination.toStdString()));

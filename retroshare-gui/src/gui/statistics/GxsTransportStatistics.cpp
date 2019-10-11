@@ -47,6 +47,7 @@
 #include "util/misc.h"
 #include "gui/gxs/GxsIdLabel.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 
 #define COL_PENDING_ID                  0
 #define COL_PENDING_DESTINATION         1
@@ -55,7 +56,8 @@
 #define COL_PENDING_DATAHASH            4
 #define COL_PENDING_SEND                5
 #define COL_PENDING_GROUP_ID            6
-#define COL_PENDING_DESTINATION_ID      7
+#define COL_PENDING_SENDTIME			7
+#define COL_PENDING_DESTINATION_ID      8
 
 #define COL_GROUP_GRP_ID                  0
 #define COL_GROUP_NUM_MSGS                1
@@ -207,6 +209,8 @@ void GxsTransportStatistics::updateContent()
     //time_t now = time(NULL) ;
     
     // 1 - fill the table for pending packets
+	
+	time_t now = time(NULL) ;
 
     groupBox->setTitle(tr("Pending data items")+": " + QString::number(transinfo.outgoing_records.size()) );
 
@@ -214,23 +218,18 @@ void GxsTransportStatistics::updateContent()
     {
         const RsGxsTransOutgoingRecord& rec(transinfo.outgoing_records[i]) ;
 
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+        //QTreeWidgetItem *item = new QTreeWidgetItem();
+		GxsIdRSTreeWidgetItem *item = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR) ;
         treeWidget->addTopLevelItem(item);
         
         RsIdentityDetails details ;
         rsIdentity->getIdDetails(rec.recipient,details);
         QString nickname = QString::fromUtf8(details.mNickname.c_str());
-		
-		QPixmap pixmap ;
-
-		if(details.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(details.mAvatar.mData, details.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-				pixmap = GxsIdDetails::makeDefaultIcon(rec.recipient,GxsIdDetails::SMALL);
-				  
-		item ->setIcon(COL_PENDING_DESTINATION, QIcon(pixmap));
         
         if(nickname.isEmpty())
           nickname = tr("Unknown");
 
+	    item -> setId(rec.recipient,COL_PENDING_DESTINATION, false) ;
         item -> setData(COL_PENDING_ID,           Qt::DisplayRole, QString::number(rec.trans_id,16).rightJustified(8,'0'));
         item -> setData(COL_PENDING_DATASTATUS,   Qt::DisplayRole, getStatusString(rec.status));
         item -> setData(COL_PENDING_DATASIZE,     Qt::DisplayRole, misc::friendlyUnit(rec.data_size));
@@ -238,12 +237,11 @@ void GxsTransportStatistics::updateContent()
 		item -> setData(COL_PENDING_SEND,         Qt::DisplayRole, QDateTime::fromTime_t(rec.send_TS).toString());
         item -> setData(COL_PENDING_GROUP_ID,     Qt::DisplayRole, QString::fromStdString(rec.group_id.toStdString()));
 		item -> setData(COL_PENDING_DESTINATION_ID,  Qt::DisplayRole, QString::fromStdString(rec.recipient.toStdString()));
+		item -> setData(COL_PENDING_SENDTIME,        Qt::DisplayRole, QString::number(now - rec.send_TS));
 
+		item->setTextAlignment(COL_PENDING_DATASIZE, Qt::AlignRight	);
+		item->setTextAlignment(COL_PENDING_SEND, Qt::AlignRight	);
 
-        GxsIdLabel *label = new GxsIdLabel() ;
-        label->setId(rec.recipient) ;
-
-        treeWidget -> setItemWidget(item,COL_PENDING_DESTINATION, label) ;
     }
 
     // 2 - fill the table for pending group data

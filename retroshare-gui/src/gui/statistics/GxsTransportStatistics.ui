@@ -70,12 +70,17 @@
         </column>
         <column>
          <property name="text">
-          <string>Sending time (secs ago)</string>
+          <string>Sending time</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Group ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Sending time (secs ago)</string>
          </property>
         </column>
         <column>
