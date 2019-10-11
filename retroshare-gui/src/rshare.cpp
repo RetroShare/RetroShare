@@ -241,6 +241,11 @@ Rshare::Rshare(QStringList args, int &argc, char **argv, const QString &dir)
         localServer= new QLocalServer();
         QObject::connect(localServer, SIGNAL(newConnection()), this, SLOT(slotConnectionEstablished()));
         updateLocalServer();
+		// clear out any old arguments (race condition?)
+		QSharedMemory newArgs;
+		newArgs.setKey(QString(TARGET) + "_newArgs");
+		if(newArgs.attach(QSharedMemory::ReadWrite))
+			newArgs.detach();
     }
   }
 
@@ -325,19 +330,26 @@ Rshare::~Rshare()
  */
 void Rshare::slotConnectionEstablished()
 {
-	QLocalSocket *socket = localServer->nextPendingConnection();
-	socket->close();
-	delete socket;
-
 	QSharedMemory newArgs;
 	newArgs.setKey(QString(TARGET) + "_newArgs");
 
+	QLocalSocket *socket = localServer->nextPendingConnection();
+
 	if (!newArgs.attach())
 	{
-		std::cerr << "(EE) Rshare::slotConnectionEstablished() Unable to attach to shared memory segment."
-		          << newArgs.errorString().toStdString() << std::endl;
+		/* this is not an error. It just means we were notified to check
+		   newArgs, but none had been set yet.
+		   TODO: implement separate ping/take messages
+		   std::cerr << "(EE) Rshare::slotConnectionEstablished() Unable to attach to shared memory segment."
+		   << newArgs.errorString().toStdString() << std::endl;
+		   */
+		socket->close();
+		delete socket;
 		return;
 	}
+
+	socket->close();
+	delete socket;
 
 	QBuffer buffer;
 	QDataStream in(&buffer);
