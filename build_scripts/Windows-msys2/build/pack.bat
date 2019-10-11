@@ -99,6 +99,7 @@ copy nul "%RsDeployPath%\portable" %Quite%
 echo copy binaries
 copy "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\RetroShare*.exe" "%RsDeployPath%" %Quite%
 copy "%RsBuildPath%\retroshare-nogui\src\%RsBuildConfig%\retroshare*-nogui.exe" "%RsDeployPath%" %Quite%
+copy "%RsBuildPath%\retroshare-service\src\%RsBuildConfig%\retroshare*-service.exe" "%RsDeployPath%" %Quite%
 
 echo copy extensions
 for /D %%D in ("%RsBuildPath%\plugins\*") do (
@@ -127,6 +128,9 @@ if exist "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" (
 
 copy "%QtSharePath%\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
+for %%D in ("%RsDeployPath%\imageformats\*.dll") do (
+	call :copy_dependencies "%%D" "%RsDeployPath%"
+)
 
 echo copy qss
 xcopy /S "%SourcePath%\retroshare-gui\src\qss" "%RsDeployPath%\qss" %Quite%
