@@ -70,12 +70,22 @@
         </column>
         <column>
          <property name="text">
-          <string>Sending time (secs ago)</string>
+          <string>Sending time</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>Group ID</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Sending time (secs ago)</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Destination ID</string>
          </property>
         </column>
        </widget>
@@ -95,6 +105,9 @@
          <enum>Qt::Vertical</enum>
         </property>
         <widget class="QTreeWidget" name="groupTreeWidget">
+         <property name="contextMenuPolicy">
+          <enum>Qt::CustomContextMenu</enum>
+         </property>
          <column>
           <property name="text">
            <string>Group ID / Author</string>
