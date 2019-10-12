@@ -341,7 +341,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     message.incoming = false;
     message.online = true;
 
-	if(!isOnline(vpid))
+	if(!isOnline(vpid)  && !destination.isDistantChatId())
 	{
 		message.online = false;
 		RsServer::notify()->notifyChatMessage(message);
@@ -352,11 +352,15 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
 		RsGxsTransId tId = RSRandom::random_u64();
 
+#ifdef SUSPENDED_CODE
+        // this part of the code was formerly used to send the traffic over GxsTransport. The problem is that
+        // gxstunnel takes care of reaching the peer already, so GxsTransport would only be needed when the
+        // current peer is offline. So we need to fin a way to quickly push the items to friends when quitting RS.
+
 		if(destination.isDistantChatId())
 		{
 			RS_STACK_MUTEX(mDGMutex);
-			DIDEMap::const_iterator it =
-			        mDistantGxsMap.find(destination.toDistantChatId());
+			DIDEMap::const_iterator it = mDistantGxsMap.find(destination.toDistantChatId());
 			if(it != mDistantGxsMap.end())
 			{
 				const DistantEndpoints& de(it->second);
@@ -371,6 +375,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 				          << "chat id in mDistantGxsMap this is unxpected!"
 				          << std::endl;
 		}
+#endif
 
 		// peer is offline, add to outgoing list
 		{

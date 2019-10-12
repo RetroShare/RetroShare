@@ -112,6 +112,8 @@ int p3GxsTunnelService::tick()
 #endif
     
     flush() ;
+
+    rstime::rs_usleep(1000*200);
     
     return 0 ;
 }
@@ -1294,8 +1296,7 @@ bool p3GxsTunnelService::locked_sendEncryptedTunnelData(RsGxsTunnelItem *item)
 	}
 	if(it->second.status != RS_GXS_TUNNEL_STATUS_CAN_TALK)
 	{
-		std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id
-		          << ". Tunnel status is: " << it->second.status << std::endl;
+		std::cerr << "(EE) Cannot talk to tunnel id " << tunnel_id << ". Tunnel status is: " << it->second.status << std::endl;
 		return false;
 	}
 
