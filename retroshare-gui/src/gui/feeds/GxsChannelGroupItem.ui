@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>157</height>
+    <height>161</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -125,7 +125,10 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../images.qrc">:/images/channels.png</pixmap>
+           <pixmap resource="../icons.qrc">:/icons/png/channel.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -153,6 +156,12 @@
           </item>
           <item>
            <widget class="QLabel" name="nameLabel">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string notr="true">name</string>
             </property>
@@ -179,6 +188,25 @@
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
+           <widget class="QPushButton" name="subscribeButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="toolTip">
+             <string>Subscribe to Channel</string>
+            </property>
+            <property name="text">
+             <string>Subscribe</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -200,28 +228,8 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/copyrslink.png</normaloff>:/images/copyrslink.png</iconset>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="subscribeButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="focusPolicy">
-             <enum>Qt::NoFocus</enum>
-            </property>
-            <property name="toolTip">
-             <string>Subscribe to Channel</string>
-            </property>
-            <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/directoryadd_24x24_shadow.png</normaloff>:/images/directoryadd_24x24_shadow.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
             </property>
            </widget>
           </item>
@@ -240,8 +248,8 @@
              <string>Expand</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
             </property>
            </widget>
           </item>
@@ -260,8 +268,8 @@
              <string>Remove Item</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
             </property>
            </widget>
           </item>
@@ -329,6 +337,7 @@
   </layout>
  </widget>
  <resources>
+  <include location="../icons.qrc"/>
   <include location="../images.qrc"/>
  </resources>
  <connections/>

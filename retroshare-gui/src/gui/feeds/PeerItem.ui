@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>476</width>
-    <height>250</height>
+    <height>262</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="PeerItemGLayout">
@@ -294,8 +294,8 @@
               <string>Expand</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
              </property>
             </widget>
            </item>
@@ -314,8 +314,8 @@
               <string>Remove Item</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
              </property>
             </widget>
            </item>
@@ -581,6 +581,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
