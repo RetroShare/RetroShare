@@ -417,10 +417,10 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
     RsServer::notify()->notifyChatMessage(message);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
+    // cyril: history is temporarily disabled for distant chat, since we need to store the full tunnel ID, but then
     // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
     
-    if(!message.chat_id.isDistantChatId())
+    //if(!message.chat_id.isDistantChatId())
 	    mHistoryMgr->addMessage(message);
 
     checkSizeAndSendMessage(ci);
@@ -876,10 +876,6 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
     cm.online = true;
     RsServer::notify()->notifyChatMessage(cm);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
-    // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
-    
-    if(!cm.chat_id.isDistantChatId())
 	mHistoryMgr->addMessage(cm);
     
     return true ;
