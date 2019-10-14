@@ -728,6 +728,16 @@ void RshareSettings::setPrivateChatHistoryCount(int value)
 	setValueToGroup("Chat", "PrivateChatHistoryCount", value);
 }
 
+int RshareSettings::getDistantChatHistoryCount()
+{
+	return valueFromGroup("Chat", "DistantChatHistoryCount", 20).toInt();
+}
+
+void RshareSettings::setDistantChatHistoryCount(int value)
+{
+	setValueToGroup("Chat", "DistantChatHistoryCount", value);
+}
+
 /** Returns true if RetroShare is set to run on system boot. */
 bool
 RshareSettings::runRetroshareOnBoot(bool &minimized)
