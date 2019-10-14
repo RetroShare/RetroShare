@@ -84,20 +84,6 @@
 
 // We need consts for that!! Defined in multiple places.
 
-#ifdef TO_REMOVE
-#define ROLE_THREAD_MSGID           Qt::UserRole
-#define ROLE_THREAD_STATUS          Qt::UserRole + 1
-#define ROLE_THREAD_MISSING         Qt::UserRole + 2
-#define ROLE_THREAD_AUTHOR          Qt::UserRole + 3
-// no need to copy, don't count in ROLE_THREAD_COUNT
-#define ROLE_THREAD_READCHILDREN    Qt::UserRole + 4
-#define ROLE_THREAD_UNREADCHILDREN  Qt::UserRole + 5
-#define ROLE_THREAD_SORT            Qt::UserRole + 6
-#define ROLE_THREAD_PINNED          Qt::UserRole + 7
-
-#define ROLE_THREAD_COUNT           4
-#endif
-
 #ifdef DEBUG_FORUMS
 static std::ostream& operator<<(std::ostream& o,const QModelIndex& q)
 {

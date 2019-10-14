@@ -281,11 +281,21 @@ void *RsGxsForumModel::getParentRef(void *ref,int& row) const
 {
     ForumModelIndex ref_entry;
 
-    if(mTreeMode == TREE_MODE_FLAT)
-        return NULL;
-
     if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mPosts.size())
         return NULL ;
+
+    if(mTreeMode == TREE_MODE_FLAT)
+    {
+        if(ref_entry == 0)
+        {
+            RsErr() << "getParentRef() shouldn't be asked for the parent of NULL" << std::endl;
+            row = 0;
+        }
+        else
+			row = ref_entry-1;
+
+        return NULL;
+    }
 
     ForumModelIndex parent_entry = mPosts[ref_entry].mParent;
 
@@ -726,7 +736,11 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 {
     preMods();
 
-    beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    if(mTreeMode == TREE_MODE_FLAT)
+		beginRemoveRows(QModelIndex(),0,mPosts.size()-1);
+	else
+		beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+
     endRemoveRows();
 
     mForumGroup = group;
@@ -750,7 +764,10 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 #endif
 
-    beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    if(mTreeMode == TREE_MODE_FLAT)
+		beginInsertRows(QModelIndex(),0,mPosts.size()-1);
+    else
+		beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
     endInsertRows();
 	postMods();
 	emit forumLoaded();
@@ -1274,18 +1291,24 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 
     // First look into msg versions, in case the msg is a version of an existing message
 
-    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    for(auto it(mPostVersions.begin());it!=mPostVersions.end() && postId==mid;++it)
     	for(uint32_t i=0;i<it->second.size();++i)
             if(it->second[i].second == mid)
+            {
                 postId = it->first;
+                break;
+            }
 
-    for(uint32_t i=0;i<mPosts.size();++i)
+    for(uint32_t i=1;i<mPosts.size();++i)
         if(mPosts[i].mMsgId == postId)
         {
             void *ref ;
-            convertTabEntryToRefPointer(i,ref);
+            convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-            return createIndex(mPosts[i].prow,0,ref);
+            if(mTreeMode == TREE_MODE_FLAT)
+				return createIndex(i-1,0,ref);
+            else
+				return createIndex(mPosts[i].prow,0,ref);
         }
 
     return QModelIndex();
