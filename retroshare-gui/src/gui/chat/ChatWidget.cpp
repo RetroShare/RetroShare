@@ -363,8 +363,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
         updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
-        hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
-        messageCount = Settings->getPrivateChatHistoryCount();
+        hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
+        messageCount = Settings->getDistantChatHistoryCount();
     } else if(chatId.isBroadcast()){
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
