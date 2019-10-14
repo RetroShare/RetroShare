@@ -56,7 +56,10 @@ void RsGxsForumModel::preMods()
 }
 void RsGxsForumModel::postMods()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    if(mTreeMode == TREE_MODE_FLAT)
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    else
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::setTreeMode(TreeMode mode)
@@ -65,7 +68,21 @@ void RsGxsForumModel::setTreeMode(TreeMode mode)
         return;
 
     preMods();
+
+    if(mode == TREE_MODE_TREE)	// means we were in FLAT mode, so the last rows are removed.
+    {
+		beginRemoveRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
+		endRemoveRows();
+    }
+
 	mTreeMode = mode;
+
+    if(mode == TREE_MODE_FLAT)	// means we were in tree mode, so the last rows are added.
+	{
+		beginInsertRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
+		endInsertRows();
+	}
+
     postMods();
 }
 
@@ -296,11 +313,21 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
 
     if(mTreeMode == TREE_MODE_FLAT)
         if(entry == 0)
+        {
+#ifdef DEBUG_FORUMMODEL
+            std::cerr << "Children count (flat mode): " << mPosts.size()-1 << std::endl;
+#endif
 			return ((int)mPosts.size())-1;
+        }
 		else
             return 0;
     else
+    {
+#ifdef DEBUG_FORUMMODEL
+		std::cerr << "Children count (tree mode): " << mPosts[entry].mChildren.size() << std::endl;
+#endif
 		return mPosts[entry].mChildren.size();
+    }
 }
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
