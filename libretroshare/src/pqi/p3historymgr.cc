@@ -103,7 +103,21 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 		{
 			DistantChatPeerInfo dcpinfo;
 			if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
-				peerName = cm.chat_id.toPeerId().toStdString();
+            {
+                RsIdentityDetails det;
+                RsGxsId writer_id = cm.incoming?(dcpinfo.to_id):(dcpinfo.own_id);
+
+                if(rsIdentity->getIdDetails(writer_id,det))
+					peerName = det.mNickname;
+                else
+					peerName = writer_id.toStdString();
+            }
+            else
+            {
+                RsErr() << "Cannot retrieve friend name for distant chat " << cm.chat_id.toDistantChatId() << std::endl;
+				peerName = "";
+            }
+
 			enabled = true;
 		}
 
