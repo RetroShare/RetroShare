@@ -271,6 +271,7 @@
         <file>icons/png/correct.png</file>
         <file>icons/png/comment.png</file>
         <file>icons/png/chats.png</file>
+		<file>icons/png/chats-private.png</file>
         <file>icons/png/fileshare.png</file>
         <file>icons/png/forum.png</file>
         <file>icons/png/message.png</file>
