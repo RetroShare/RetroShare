@@ -1078,7 +1078,7 @@ int pqissl::SSL_Connection_Complete()
 	/* if we are passive - then accept! */
 	int err;
 
-	if (sslmode)
+	if (sslmode == PQISSL_ACTIVE)
 	{
 #ifdef PQISSL_LOG_DEBUG 
         rslog(RSL_DEBUG_BASIC, pqisslzone, "--------> Active Connect! Client side.");
