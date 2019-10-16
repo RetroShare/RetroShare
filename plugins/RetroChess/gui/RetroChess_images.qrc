@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/bishop_black.svg</file>
+        <file>images/bishop_white.svg</file>
+        <file>images/king_black.svg</file>
+        <file>images/king_white.svg</file>
+        <file>images/knight_black.svg</file>
+        <file>images/knight_white.svg</file>
+        <file>images/pawn_black.svg</file>
+        <file>images/pawn_white.svg</file>
+        <file>images/queen_black.svg</file>
+        <file>images/queen_white.svg</file>
+        <file>images/rook_black.svg</file>
+        <file>images/rook_white.svg</file>
+        <file>images/chess-icon.png</file>
+        <file>images/chess-icon-32.png</file>
+        <file>images/chess.png</file>
+		<file>images/profile.png</file>
+		<file>images/retrochess.png</file>
+    </qresource>
+</RCC>
