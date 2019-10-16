@@ -224,6 +224,9 @@
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
             </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy RetroShare Link&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
               <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
