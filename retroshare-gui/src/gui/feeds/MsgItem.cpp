@@ -236,7 +236,7 @@ void MsgItem::doExpand(bool open)
 	if (open)
 	{
 		expandFrame->show();
-		expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		expandButton->setToolTip(tr("Hide"));
 
 		mCloseOnRead = false;
@@ -246,7 +246,7 @@ void MsgItem::doExpand(bool open)
 	else
 	{
 		expandFrame->hide();
-		expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		expandButton->setToolTip(tr("Expand"));
 	}
 

@@ -71,7 +71,7 @@
         <file>icons/png/add.png</file>
         <file>icons/png/attach-image.png</file>
         <file>icons/png/attach.png</file>
-		<file>icons/png/cert.png</file>
+        <file>icons/png/cert.png</file>
         <file>icons/png/channels-notify.png</file>
         <file>icons/png/channels.png</file>
         <file>icons/png/chat-bubble-notify.png</file>
@@ -105,6 +105,7 @@
         <file>icons/png/netgraph.png</file>
         <file>icons/png/network-notify.png</file>
         <file>icons/png/network.png</file>
+		<file>icons/png/network2.png</file>
         <file>icons/png/network-puplic.png</file>
         <file>icons/png/newsfeed-notify.png</file>
         <file>icons/png/newsfeed.png</file>
@@ -261,5 +262,20 @@
         <file>icons/png/flame.png</file>
         <file>icons/png/new.png</file>
         <file>icons/png/top.png</file>
+        <file>icons/png/copy.png</file>
+        <file>icons/png/down-arrow.png</file>
+        <file>icons/png/download.png</file>
+        <file>icons/png/up-arrow.png</file>
+        <file>icons/png/play.png</file>
+        <file>icons/png/cancel.png</file>
+        <file>icons/png/correct.png</file>
+        <file>icons/png/comment.png</file>
+        <file>icons/png/chats.png</file>
+        <file>icons/png/fileshare.png</file>
+        <file>icons/png/forum.png</file>
+        <file>icons/png/message.png</file>
+        <file>icons/png/newsfeed2.png</file>
+        <file>icons/png/postedlinks.png</file>
+        <file>icons/png/people2.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "gui/gxs/GxsCommentDialog.h"
+#include "gui/gxs/GxsCommentTreeWidget.h"
 #include "ui_GxsCommentDialog.h"
 
 #include <iostream>
@@ -50,6 +51,7 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	connect(ui->idChooser, SIGNAL(currentIndexChanged( int )), this, SLOT(voterSelectionChanged( int )));
     connect(ui->idChooser, SIGNAL(idsLoaded()), this, SLOT(idChooserReady()));
 	
+	connect(ui->commentButton, SIGNAL(clicked()), ui->treeWidget, SLOT(makeComment()));
 	connect(ui->sortBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortComments(int)));
 	
 	// default sort method "HOT".

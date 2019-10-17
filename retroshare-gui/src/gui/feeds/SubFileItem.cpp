@@ -718,6 +718,7 @@ void SubFileItem::mediatype()
 	/* check if the file is not a media file and change text */
 	playButton->setText(tr("Open"));
 	playButton->setToolTip(tr("Open File"));
+	playButton->setIcon(QIcon());
 }
 
 void SubFileItem::copyLink()
