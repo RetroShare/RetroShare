@@ -1159,7 +1159,13 @@ err: // TODO: this label is very short and might collide every easly
 /********************************************************************************/
 
 static int verify_x509_callback(int preverify_ok, X509_STORE_CTX *ctx)
-{ return AuthSSL::instance().VerifyX509Callback(preverify_ok, ctx); }
+{
+#ifdef RS_TOFU_AUTHENTICATION
+	return AuthSSL::instance().tofuVerifyX509Cb(preverify_ok, ctx);
+#else // def RS_TOFU_AUTHENTICATION
+	return AuthSSL::instance().VerifyX509Callback(preverify_ok, ctx);
+#endif // def RS_TOFU_AUTHENTICATION
+}
 
 int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 {
@@ -1335,6 +1341,141 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 	return verificationSuccess;
 }
+
+#ifdef RS_TOFU_AUTHENTICATION
+int AuthSSLimpl::tofuVerifyX509Cb(int /*preverify_ok*/, X509_STORE_CTX* ctx)
+{
+	/* According to OpenSSL documentation must return 0 if verification failed
+	 * and 1 if succeded (aka can continue connection).
+	 * About preverify_ok OpenSSL documentation doesn't tell which value is
+	 * passed to the first callback in the authentication chain, it just says
+	 * that the result of previous step is passed down, so I have tested it
+	 * and we get passed 0 always so in our case as there is no other
+	 * verifications step vefore we ignore it completely */
+
+	constexpr int verificationFailed = 0;
+	constexpr int verificationSuccess = 1;
+
+	using Evt_t = RsAuthSslConnectionAutenticationEvent;
+	std::unique_ptr<Evt_t> ev = std::unique_ptr<Evt_t>(new Evt_t);
+
+	X509* x509Cert = X509_STORE_CTX_get_current_cert(ctx);
+	if(!x509Cert)
+	{
+		std::string errMsg = "Cannot get certificate! OpenSSL error: " +
+		        std::to_string(X509_STORE_CTX_get_error(ctx)) + " depth: " +
+		        std::to_string(X509_STORE_CTX_get_error_depth(ctx));
+
+		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		ev->mErrorMsg = errMsg;
+		rsEvents->postEvent(std::move(ev));
+		return verificationFailed;
+	}
+
+	RsPeerId sslId = RsX509Cert::getCertSslId(*x509Cert);
+	ev->mSslId = sslId;
+	std::string sslCn = RsX509Cert::getCertIssuerString(*x509Cert);
+	ev->mSslCn = sslCn;
+
+
+	RsPgpId pgpId(sslCn);
+	if(sslCn.length() == RsPgpFingerprint::SIZE_IN_BYTES*2)
+	{
+		/* we also accept fingerprint format, so that in the future we can
+		 * switch to fingerprints without backward compatibility issues */
+		RsPgpFingerprint pgpFpr(sslCn);
+		if(!pgpFpr.isNull())
+			pgpId = PGPHandler::pgpIdFromFingerprint(pgpFpr);
+	}
+	ev->mPgpId = pgpId;
+
+	if(sslId.isNull())
+	{
+		std::string errMsg = "x509Cert has invalid sslId!";
+		RsInfo() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		ev->mErrorMsg = errMsg;
+		rsEvents->postEvent(std::move(ev));
+		return verificationFailed;
+	}
+
+	if(pgpId.isNull())
+	{
+		std::string errMsg = "x509Cert has invalid pgpId! sslCn >>>" + sslCn +
+		        "<<<";
+		RsInfo() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		ev->mErrorMsg = errMsg;
+		rsEvents->postEvent(std::move(ev));
+		return verificationFailed;
+	}
+
+	bool isSslOnlyFriend = false;
+	bool isTofu = !rsPeers->isFriend(sslId) &&
+	        pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() &&
+	        !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId);
+	bool pgpKeyAvailable = AuthGPG::getAuthGPG()->isPgpPubKeyAvailable(pgpId);
+
+	/* For SSL only friends (ones added through short invites) we check that
+	 * the fingerprint in the key (det.gpg_id) matches the one of the handshake
+	 */
+	{
+		RsPeerDetails det;
+
+		if(rsPeers->getPeerDetails(sslId,det))
+			isSslOnlyFriend = det.skip_pgp_signature_validation;
+
+		// in the future, we should compare fingerprints instead
+		if(det.skip_pgp_signature_validation && det.gpg_id != pgpId)
+		{
+			std::string errorMsg = "Peer " + sslId.toStdString() +
+			        " trying to connect with issuer ID " + pgpId.toStdString()
+			        + " whereas key ID " + det.gpg_id.toStdString() +
+			        " was expected! Refusing connection.";
+			RsErr() << __PRETTY_FUNCTION__ << errorMsg << std::endl;
+			ev->mErrorMsg = errorMsg;
+			rsEvents->postEvent(std::move(ev));
+			return verificationFailed;
+		}
+	}
+
+	uint32_t auth_diagnostic;
+	if(pgpKeyAvailable && !AuthX509WithGPG(x509Cert,true, auth_diagnostic))
+	{
+		std::string errMsg = "Certificate was rejected because PGP "
+		                     "signature verification failed with diagnostic: "
+		        + std::to_string(auth_diagnostic) + " certName: " +
+		        RsX509Cert::getCertName(*x509Cert) + " sslId: " +
+		        RsX509Cert::getCertSslId(*x509Cert).toStdString() +
+		        " issuerString: " + RsX509Cert::getCertIssuerString(*x509Cert);
+		RsInfo() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		ev->mErrorMsg = errMsg;
+		rsEvents->postEvent(std::move(ev));
+		return verificationFailed;
+	}
+
+	if(isTofu && !rsPeers->addSslOnlyFriend(sslId, pgpId))
+	{
+		std::string errMsg = "Connection attempt from SSL: " +
+		        sslId.toStdString() + " sslCn: " + sslCn + " refused, because "
+		        + "TOFU failed.";
+		ev->mErrorMsg = errMsg;
+		rsEvents->postEvent(std::move(ev));
+		return verificationFailed;
+	}
+
+	setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
+	LocalStoreCert(x509Cert);
+
+	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for pgpId: "
+	         << pgpId << " sslId: " << sslId << " pgpKeyAvailable: "
+	         << pgpKeyAvailable << " isSslOnlyFriend: " << isSslOnlyFriend
+	         << " isTofu: " << isTofu << std::endl;
+
+	ev->mSuccess = true;
+	rsEvents->postEvent(std::move(ev));
+
+	return verificationSuccess;
+}
+#endif // RS_TOFU_AUTHENTICATION
 
 bool AuthSSLimpl::parseX509DetailsFromFile(
         const std::string& certFilePath, RsPeerId& certId,

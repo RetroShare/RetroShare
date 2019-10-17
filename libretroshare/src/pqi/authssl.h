@@ -162,6 +162,11 @@ public:
 	 */
 	virtual int VerifyX509Callback(int preverify_ok, X509_STORE_CTX* ctx) = 0;
 
+#ifdef RS_TOFU_AUTHENTICATION
+	/// Same as VerifyX509Callback but with TOFU authentication policy
+	virtual int tofuVerifyX509Cb(int preverify_ok, X509_STORE_CTX* ctx) = 0;
+#endif // RS_TOFU_AUTHENTICATION
+
 	/// SSL specific functions used in pqissl/pqissllistener
 	virtual SSL_CTX* getCTX() = 0;
 
@@ -239,6 +244,11 @@ public:
 
 	/// @see AuthSSL
 	int VerifyX509Callback(int preverify_ok, X509_STORE_CTX *ctx) override;
+
+#ifdef RS_TOFU_AUTHENTICATION
+	/// @see AuthSSL
+	int tofuVerifyX509Cb(int preverify_ok, X509_STORE_CTX* ctx) override;
+#endif // RS_TOFU_AUTHENTICATION
 
 	/// @see AuthSSL
 	bool parseX509DetailsFromFile(

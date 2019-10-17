@@ -195,6 +195,15 @@ rs_service_webui_terminal_password:CONFIG -= no_rs_service_webui_terminal_passwo
 CONFIG *= no_rs_service_terminal_login
 rs_service_terminal_login:CONFIG -= no_rs_service_terminal_login
 
+# To enable TOFU authentication append the following assignation to qmake
+# command line "CONFIG+=rs_tofu_authentication". This is not intended for end
+# users as it radically changes RetroShare security model, making it much more
+# insecure. Still it might be useful in specific corner cases such as
+# chat-servers, where accepting everyone at first connection attempt is the
+# normal behaviour.
+CONFIG *= no_rs_tofu_authentication
+rs_tofu_authentication:CONFIG -= no_rs_tofu_authentication
+
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
 # 'JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator'. Required for JSON API
@@ -453,6 +462,7 @@ rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
 rs_webui:DEFINES *= RS_WEBUI
 rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
 rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
+rs_tofu_authentication:DEFINES *= RS_TOFU_AUTHENTICATION
 
 sqlcipher {
     DEFINES -= NO_SQLCIPHER
