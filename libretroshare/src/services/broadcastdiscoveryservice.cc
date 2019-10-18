@@ -192,6 +192,7 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	        BroadcastDiscoveryPack::fromSerializedString(uData);
 
 	RsBroadcastDiscoveryResult rbdr;
+	rbdr.mPgpFingerprint = bdp.mPgpFingerprint;
 	rbdr.mSslId = bdp.mSslId;
 	rbdr.mProfileName = bdp.mProfileName;
 	rbdr.mLocator.
