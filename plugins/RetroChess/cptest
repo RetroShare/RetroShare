@@ -1,3 +1,0 @@
-kdesudo -u retrotester cp lib*.so* /home/retrotester/.retroshare/extensions6/
-kdesudo -u retrotester /home/chozabu/git/RetroShare/retroshare-gui/src/RetroShare
-
