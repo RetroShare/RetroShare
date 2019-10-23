@@ -158,8 +158,7 @@ int main(int argc, char* argv[])
 	                                     "127.0.0.1.", false );
 #endif // def RS_JSONAPI
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	bool askWebUiPassword = false;
 	as >> option( 'W', "webui-password", askWebUiPassword,
 	                   "Ask WebUI password on the console." );
