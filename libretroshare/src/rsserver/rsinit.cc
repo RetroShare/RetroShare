@@ -306,7 +306,7 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 	if( rsInitConfig->outStderr)           rsInitConfig->haveLogFile    = false ;
 	if(!rsInitConfig->logfname.empty())    rsInitConfig->haveLogFile    = true;
 	if( rsInitConfig->inet != "127.0.0.1") rsInitConfig->forceLocalAddr = true;
-	if( rsInitConfig->port != 0)           rsInitConfig->forceExtAddr   = true;
+	if( rsInitConfig->port != 0)           rsInitConfig->forceLocalAddr = true; // previously forceExtPort, which means nothing in this case
 #ifdef LOCALNET_TESTING
 	if(!portRestrictions.empty())       doPortRestrictions           = true;
 #endif
