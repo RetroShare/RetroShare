@@ -179,8 +179,7 @@ int main(int argc, char* argv[])
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	std::string webui_pass1 = "Y";
 	if(askWebUiPassword)
 	{
@@ -301,8 +300,7 @@ int main(int argc, char* argv[])
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	if(jsonApiServer && !webui_pass1.empty())
 		jsonApiServer->authorizeToken("webui:"+webui_pass1);
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI) \
