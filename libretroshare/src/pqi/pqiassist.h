@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef MRK_PQI_ASSIST_H
-#define MRK_PQI_ASSIST_H
+#pragma once
 
 #include <string>
 #include <map>
@@ -28,25 +27,15 @@
 #include "pqi/pqinetwork.h"
 #include "pqi/pqimonitor.h"
 
-/**********
- * This header file provides two interfaces for assisting 
- * the connections to friends.
- *
- * pqiNetAssistFirewall - which will provides interfaces
- * to functionality like upnp and apple's equivalent.
- *
- * pqiNetAssistConnect - which will provides interfaces
- * to other networks (DHT) etc that can provide information.
- * These classes would be expected to use the pqiMonitor
- * callback system to notify the connectionMgr.
- *
- ***/
+/**
+ * @file
+ * This header file provides interfaces for assisting the connections to
+ * friends.
+ */
 
 class pqiNetAssist
 {
-	public:
-
-virtual	~pqiNetAssist() { return; }
+public:
 
 		/* External Interface */
 virtual void    enable(bool on) = 0;  
@@ -58,28 +47,24 @@ virtual bool    getActive() = 0;
 
 virtual int	tick() { return 0; } /* for internal accounting */
 
+	virtual ~pqiNetAssist();
 };
 
-
-#define PFP_TYPE_UDP	0x0001
-#define PFP_TYPE_TCP	0x0002
-
-class PortForwardParams
+struct PortForwardParams
 {
-	public:
 	uint32_t fwdId;
 	uint32_t status;
 	uint32_t typeFlags;
-	struct sockaddr_storage intAddr;
-	struct sockaddr_storage extaddr;
+	sockaddr_storage intAddr;
+	sockaddr_storage extaddr;
 };
 
+/**
+ * Provides interfaces to functionality like upnp and apple's equivalent.
+ */
 class pqiNetAssistFirewall: public pqiNetAssist
 {
-	public:
-
-virtual	~pqiNetAssistFirewall() { return; }
-
+public:
 		/* the address that the listening port is on */
 virtual void    setInternalPort(unsigned short iport_in) = 0;
 virtual void    setExternalPort(unsigned short eport_in) = 0;
@@ -102,11 +87,13 @@ virtual bool    statusPortForward(const uint32_t fwdId, PortForwardParams &param
 
 class pqiNetAssistPeerShare
 {
-	public:
+public:
+	/** share Addresses for various reasons (bad peers, etc) */
+	virtual void updatePeer(
+	        const RsPeerId& id, const struct sockaddr_storage &addr,
+	        int type, int reason, int age ) = 0;
 
-	/* share Addresses for various reasons (bad peers, etc) */
-virtual void 	updatePeer(const RsPeerId& id, const struct sockaddr_storage &addr, int type, int reason, int age) = 0;
-
+	virtual ~pqiNetAssistPeerShare();
 };
 
 
@@ -141,19 +128,21 @@ virtual int	tick() = 0; /* for internal accounting */
 
 #define NETASSIST_KNOWN_PEER_TYPE_MASK      0xff00
 
+/**
+ * Provides interfaces to other networks like DHT that can provide information.
+ * These classes would be expected to use the pqiMonitor callback system to
+ * notify the connectionMgr.
+ */
 class pqiNetAssistConnect: public pqiNetAssist
 {
-	/* 
-	 */
-	public:
-	pqiNetAssistConnect(const RsPeerId& id, pqiConnectCb *cb)
-	:mPeerId(id), mConnCb(cb) { return; }
+public:
+	pqiNetAssistConnect(const RsPeerId& id, pqiConnectCb *cb) :
+	    mPeerId(id), mConnCb(cb) {}
 
 	/********** External DHT Interface ************************
 	 * These Functions are the external interface
 	 * for the DHT, and must be non-blocking and return quickly
 	 */
-
 
 	/* add / remove peers */
 virtual bool 	findPeer(const RsPeerId& id) = 0;
@@ -175,11 +164,9 @@ virtual bool    setAttachMode(bool on) = 0;		// FIXUP.
 	/***** Stats for Network / DHT *****/
 virtual bool    getNetworkStats(uint32_t &netsize, uint32_t &localnetsize) = 0; // DEPRECIATE.
 
-	protected:
+	~pqiNetAssistConnect() override;
+
+protected:
 	RsPeerId  mPeerId;
 	pqiConnectCb *mConnCb;
 };
-
-
-#endif /* MRK_PQI_ASSIST_H */
-

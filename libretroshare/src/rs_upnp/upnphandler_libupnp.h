@@ -1,5 +1,5 @@
 /*******************************************************************************
- * libretroshare/src/upnp: upnphandler_linux.h                                 *
+ * libretroshare/src/upnp: upnphandler_libupnp.h                                 *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef _RS_UPNP_IFACE_H
-#define _RS_UPNP_IFACE_H
+#pragma once
 
 #include <string.h>
 
@@ -99,5 +98,3 @@ class upnphandler: public pqiNetAssistFirewall
 
 /* info from upnp */
 int CtrlPointCallbackEventHandler(Upnp_EventType ,void* , void*);
-
-#endif /* _RS_UPNP_IFACE_H */

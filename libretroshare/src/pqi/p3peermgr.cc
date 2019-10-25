@@ -34,11 +34,6 @@
 #include "pqi/p3historymgr.h"
 #include "pqi/pqinetwork.h"        // for getLocalAddresses
 
-//#include "pqi/p3dhtmgr.h" // Only need it for constants.
-//#include "tcponudp/tou.h"
-//#include "util/extaddrfinder.h"
-//#include "util/dnsresolver.h"
-
 #include "util/rsprint.h"
 #include "util/rsstring.h"
 #include "util/rsdebug.h"

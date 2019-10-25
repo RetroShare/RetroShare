@@ -404,9 +404,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
 			pqi/pqinetstatebox.h \
-			pqi/p3servicecontrol.h \
-
-#			pqi/p3dhtmgr.h \
+                        pqi/p3servicecontrol.h
 
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
@@ -653,8 +651,8 @@ equals(RS_UPNP_LIB, miniupnpc) {
 
 contains(RS_UPNP_LIB, upnp) {
         HEADERS += rs_upnp/upnp18_retrocompat.h
-        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_linux.h
-        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_linux.cc
+        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_libupnp.h
+        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_libupnp.cc
 }
 
 # new gxs cache system
