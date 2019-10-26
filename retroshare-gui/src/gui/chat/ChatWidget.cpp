@@ -113,6 +113,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->searchButton->setIconSize(iconSize);
 	ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
+	ui->typingLabel->setMaximumHeight(QFontMetricsF(font()).height()*1.2);
 
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();

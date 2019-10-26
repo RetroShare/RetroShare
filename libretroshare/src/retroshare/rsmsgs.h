@@ -322,10 +322,13 @@ struct MsgTagType : RsSerializable
 
 struct DistantChatPeerInfo
 {
+    DistantChatPeerInfo() : status(0),pending_items(0) {}
+
 	RsGxsId to_id ;
 	RsGxsId own_id ;
 	DistantChatPeerId peer_id ;	// this is the tunnel id actually
-	uint32_t status ;		// see the values in rsmsgs.h
+	uint32_t status ;			// see the values in rsmsgs.h
+    uint32_t pending_items;		// items not sent, waiting for a tunnel
 };
 
 // Identifier for an chat endpoint like

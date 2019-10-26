@@ -111,7 +111,7 @@ void PopupDistantChatDialog::updateDisplay()
 	switch(tinfo.status)
 	{
 	case RS_DISTANT_CHAT_STATUS_UNKNOWN:
-		//std::cerr << "Unknown hash. Error!" << std::endl;
+
 		_status_label->setIcon(QIcon(IMAGE_GRY_LED));
 		msg = tr("Remote status unknown.");
 		_status_label->setToolTip(msg);
@@ -124,31 +124,31 @@ void PopupDistantChatDialog::updateDisplay()
 	case RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED:
 		std::cerr << "Chat remotely closed. " << std::endl;
 		_status_label->setIcon(QIcon(IMAGE_RED_LED));
-		_status_label->setToolTip(
-		            QObject::tr("Distant peer has closed the chat") );
-		getChatWidget()->updateStatusString(
-		            "%1", tr( "The person you are talking to has deleted the"
-		                      " secured chat tunnel." ), true );
-		getChatWidget()->blockSending(tr( "The chat partner deleted the secure"
-		                                  " tunnel, messages will be delivered"
-		                                  " as soon as possible"));
+		_status_label->setToolTip( QObject::tr("Distant peer has closed the chat") );
+
+		getChatWidget()->updateStatusString("%1", tr( "Your partner closed the conversation." ), true );
+		getChatWidget()->blockSending(tr( "Your partner closed the conversation."));
+
 		setPeerStatus(RS_STATUS_OFFLINE) ;
 		break ;
+
 	case RS_DISTANT_CHAT_STATUS_TUNNEL_DN:
-		//std::cerr << "Tunnel asked. Waiting for reponse. " << std::endl;
+
 		_status_label->setIcon(QIcon(IMAGE_YEL_LED));
-		msg = QObject::tr( "Tunnel is pending... Messages will be delivered as"
-		                   " soon as possible" );
+		msg = QObject::tr( "Tunnel is pending");
+
+        if(tinfo.pending_items > 0)
+            msg += QObject::tr("(some undelivered messages)") ;	// we cannot use the pending_items count because it accounts for ACKS and keep alive packets as well.
+
 		_status_label->setToolTip(msg);
 		getChatWidget()->updateStatusString("%1", msg, true);
 		getChatWidget()->blockSending(msg);
 		setPeerStatus(RS_STATUS_OFFLINE);
 		break;
 	case RS_DISTANT_CHAT_STATUS_CAN_TALK:
-		//std::cerr << "Tunnel is ok and data is transmitted." << std::endl;
+
 		_status_label->setIcon(QIcon(IMAGE_GRN_LED));
-		msg = QObject::tr( "Secured tunnel is working. "
-		                   "Messages are delivered immediately!" );
+		msg = QObject::tr( "End-to-end encrypted conversation established");
 		_status_label->setToolTip(msg);
 		getChatWidget()->unblockSending();
 		setPeerStatus(RS_STATUS_ONLINE);
@@ -158,17 +158,15 @@ void PopupDistantChatDialog::updateDisplay()
 
 void PopupDistantChatDialog::closeEvent(QCloseEvent *e)
 {
-	//std::cerr << "Closing window => closing distant chat for hash " << _pid << std::endl;
-
     DistantChatPeerInfo tinfo ;
     
 	rsMsgs->getDistantChatStatus(_tunnel_id,tinfo) ;
 
 	if(tinfo.status != RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED)
 	{
-		QString msg = tr("Closing this window will end the conversation, notify the peer and remove the encrypted tunnel.") ;
+		QString msg = tr("Closing this window will end the conversation. Unsent messages will be dropped.") ;
 
-		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Kill the tunnel?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
+		if(QMessageBox::Ok == QMessageBox::critical(NULL,tr("Close conversation?"),msg, QMessageBox::Ok | QMessageBox::Cancel))
 			rsMsgs->closeDistantChatConnexion(_tunnel_id) ;
 		else
 		{
