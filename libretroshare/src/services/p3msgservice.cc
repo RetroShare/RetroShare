@@ -56,19 +56,10 @@
 #include <map>
 #include <sstream>
 
-//#define MSG_DEBUG 1
-//#define DEBUG_DISTANT_MSG
-//#define DISABLE_DISTANT_MESSAGES 
-//#define DEBUG_DISTANT_MSG
-
-typedef unsigned int uint;
-
 using namespace Rs::Msgs;
 
-static struct RsLog::logInfo msgservicezoneInfo = {RsLog::Default, "msgservice"};
-#define msgservicezone &msgservicezoneInfo
-
-static const uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400 ; // keep msg hashes for 2 months to avoid re-sent msgs
+/// keep msg hashes for 2 months to avoid re-sent msgs
+static constexpr uint32_t RS_MSG_DISTANT_MESSAGE_HASH_KEEP_TIME = 2*30*86400;
 
 /* Another little hack ..... unique message Ids
  * will be handled in this class.....
@@ -129,11 +120,8 @@ uint32_t p3MsgService::getNewUniqueMsgId()
 	return mMsgUniqueId++;
 }
 
-int	p3MsgService::tick()
+int p3MsgService::tick()
 {
-	pqioutput(PQL_DEBUG_BASIC, msgservicezone, 
-		"p3MsgService::tick()");
-
 	/* don't worry about increasing tick rate! 
 	 * (handled by p3service)
 	 */
@@ -390,9 +378,8 @@ int p3MsgService::checkOutgoingMessages()
 
 			if(should_send)
 			{
-				/* send msg */
-				pqioutput( PQL_DEBUG_BASIC, msgservicezone,
-				           "p3MsgService::checkOutGoingMessages() Sending out message");
+				Dbg3() << __PRETTY_FUNCTION__ << " Sending out message"
+				       << std::endl;
 				/* remove the pending flag */
 
 				output_queue.push_back(mit->second);
@@ -419,8 +406,8 @@ int p3MsgService::checkOutgoingMessages()
 			}
 			else
 			{
-				pqioutput( PQL_DEBUG_BASIC, msgservicezone,
-				           "p3MsgService::checkOutGoingMessages() Delaying until available...");
+				Dbg3() << __PRETTY_FUNCTION__ << " Delaying until available..."
+				       << std::endl;
 			}
 		}
 
@@ -1111,12 +1098,14 @@ bool    p3MsgService::setMsgParentId(uint32_t msgId, uint32_t msgParentId)
 /****************************************/
 /****************************************/
 	/* Message Items */
-uint32_t     p3MsgService::sendMessage(RsMsgItem *item)	// no from field because it's implicitly our own PeerId
+// no from field because it's implicitly our own PeerId
+uint32_t p3MsgService::sendMessage(RsMsgItem* item)
 {
-    if(!item)
-	    return 0 ;
-
-    pqioutput(PQL_DEBUG_BASIC, msgservicezone,  "p3MsgService::sendMessage()");
+	if(!item)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " item can't be null" << std::endl;
+		return 0;
+	}
 
     item->msgId     = getNewUniqueMsgId(); /* grabs Mtx as well */
     item->msgFlags |= (RS_MSG_FLAGS_OUTGOING | RS_MSG_FLAGS_PENDING); /* add pending flag */
