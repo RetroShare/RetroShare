@@ -100,11 +100,11 @@ typedef std::string RsMailMessageId; // TODO: rebase on t_RsGenericIdType
 
 /**
  * Used to return a tracker id so the API user can keep track of sent mail
- * status
+ * status, it contains mail id, and recipient id
  */
-struct RsMailTrackId : RsSerializable
+struct RsMailIdRecipientIdPair : RsSerializable
 {
-	RsMailTrackId(RsMailMessageId mailId, RsGxsId recipientId):
+	RsMailIdRecipientIdPair(RsMailMessageId mailId, RsGxsId recipientId):
 	    mMailId(mailId), mRecipientId(recipientId) {}
 
 	RsMailMessageId mMailId;
@@ -115,11 +115,11 @@ struct RsMailTrackId : RsSerializable
 	        RsGenericSerializer::SerializeJob j,
 	        RsGenericSerializer::SerializeContext &ctx ) override;
 
-	bool operator<(const RsMailTrackId& other) const;
-	bool operator==(const RsMailTrackId& other) const;
+	bool operator<(const RsMailIdRecipientIdPair& other) const;
+	bool operator==(const RsMailIdRecipientIdPair& other) const;
 
-	RsMailTrackId() = default;
-	~RsMailTrackId() override = default;
+	RsMailIdRecipientIdPair() = default;
+	~RsMailIdRecipientIdPair() override = default;
 };
 
 namespace Rs
@@ -562,8 +562,8 @@ public:
 	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
 	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
 	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
-	        std::set<RsMailTrackId>& trackingIds =
-	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailTrackId>),
+	        std::set<RsMailIdRecipientIdPair>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailIdRecipientIdPair>),
 	        std::string& errorMsg =
 	            RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 

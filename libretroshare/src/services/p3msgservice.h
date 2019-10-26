@@ -67,8 +67,8 @@ public:
 	        const std::set<RsGxsId>& cc = std::set<RsGxsId>(),
 	        const std::set<RsGxsId>& bcc = std::set<RsGxsId>(),
 	        const std::vector<FileInfo>& attachments = std::vector<FileInfo>(),
-	        std::set<RsMailTrackId>& trackingIds =
-	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailTrackId>),
+	        std::set<RsMailIdRecipientIdPair>& trackingIds =
+	            RS_DEFAULT_STORAGE_PARAM(std::set<RsMailIdRecipientIdPair>),
 	        std::string& errorMsg =
 	            RS_DEFAULT_STORAGE_PARAM(std::string) );
 

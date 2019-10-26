@@ -309,7 +309,7 @@ uint32_t p3Msgs::sendMail(
         const std::set<RsGxsId>& cc,
         const std::set<RsGxsId>& bcc,
         const std::vector<FileInfo>& attachments,
-        std::set<RsMailTrackId>& trackingIds,
+        std::set<RsMailIdRecipientIdPair>& trackingIds,
         std::string& errorMsg )
 {
 	return mMsgSrv->sendMail(
@@ -564,7 +564,7 @@ Rs::Msgs::MessageInfo::~MessageInfo() = default;
 MsgInfoSummary::~MsgInfoSummary() = default;
 VisibleChatLobbyRecord::~VisibleChatLobbyRecord() = default;
 
-void RsMailTrackId::serial_process(
+void RsMailIdRecipientIdPair::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
 {
@@ -572,13 +572,13 @@ void RsMailTrackId::serial_process(
 	RS_SERIAL_PROCESS(mRecipientId);
 }
 
-bool RsMailTrackId::operator<(const RsMailTrackId& o) const
+bool RsMailIdRecipientIdPair::operator<(const RsMailIdRecipientIdPair& o) const
 {
 	return std::tie(  mMailId,   mRecipientId) <
 	       std::tie(o.mMailId, o.mRecipientId);
 }
 
-bool RsMailTrackId::operator==(const RsMailTrackId& o) const
+bool RsMailIdRecipientIdPair::operator==(const RsMailIdRecipientIdPair& o) const
 {
 	return std::tie(  mMailId,   mRecipientId) ==
 	       std::tie(o.mMailId, o.mRecipientId);

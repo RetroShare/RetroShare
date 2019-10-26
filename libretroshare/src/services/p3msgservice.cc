@@ -1213,7 +1213,7 @@ uint32_t p3MsgService::sendMail(
         const std::set<RsGxsId>& cc,
         const std::set<RsGxsId>& bcc,
         const std::vector<FileInfo>& attachments,
-        std::set<RsMailTrackId>& trackingIds,
+        std::set<RsMailIdRecipientIdPair>& trackingIds,
         std::string& errorMsg )
 {
 	errorMsg.clear();
@@ -1306,7 +1306,7 @@ uint32_t p3MsgService::sendMail(
 
 			const RsMailMessageId mailId = std::to_string(msgId);
 			pEvent->mChangedMsgIds.insert(mailId);
-			trackingIds.insert(RsMailTrackId(mailId, dst));
+			trackingIds.insert(RsMailIdRecipientIdPair(mailId, dst));
 			++ret;
 		}
 	};
@@ -2187,7 +2187,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
                                              GxsTransSendStatus status )
 {
 	Dbg2() << __PRETTY_FUNCTION__ << " " << mailId << ", "
-	       << static_cast<uint>(status) << std::endl;
+	       << static_cast<uint32_t>(status) << std::endl;
 
 	using Evt_t = RsMailStatusEvent;
 	std::shared_ptr<Evt_t> pEvent(new Evt_t());
@@ -2203,7 +2203,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 			if(it == gxsOngoingMessages.end())
 			{
 				RsErr() << __PRETTY_FUNCTION__<< " " << mailId << ", "
-				        << static_cast<uint>(status)
+				        << static_cast<uint32_t>(status)
 				        << " cannot find pending message to acknowledge!"
 				        << std::endl;
 				return false;
@@ -2221,7 +2221,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 			if(it2 == msgOutgoing.end())
 			{
 				RsInfo() << __PRETTY_FUNCTION__ << " " << mailId
-				         << ", " << static_cast<uint>(status)
+				         << ", " << static_cast<uint32_t>(status)
 				         << " received receipt for message that is not in "
 				         << "outgoing list, probably it has been acknoweldged "
 				         << "before by other means." << std::endl;
