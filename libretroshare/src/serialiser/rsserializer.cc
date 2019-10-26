@@ -27,6 +27,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
 #include "util/stacktrace.h"
+#include "util/rsdebug.h"
 
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
 const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
@@ -36,6 +37,16 @@ const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_YIELDING    ( 0
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
+	if(!data || !size || !*size)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Called with null paramethers data: "
+		        << data << " size: " << static_cast<void*>(size) << " *size: "
+		        << (size ? *size : 0) << " this should never happen!"
+		        << std::endl;
+		print_stacktrace();
+		return nullptr;
+	}
+
     if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
     {
         std::cerr << "(EE) Cannot deserialise item with flags SERIALIZATION_FLAG_SKIP_HEADER. Check your code!" << std::endl;

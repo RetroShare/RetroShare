@@ -1,19 +1,23 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: retroshare
-Upstream-Contact: retroshare.team@gmail.com
+Upstream-Contact: contact@retroshare.cc
 Source: https://github.com/retroshare/retroshare
 
 Files: openpgpsdk/*
-Copyright: 2005-2008 Ben Laurie, Rachel Willmer, Retroshare Team <retroshare.team@gmail.com>
+Copyright: 2005-2008 Ben Laurie, Rachel Willmer, Retroshare Team <contact@retroshare.cc>
 License: Apache-2.0
 
 Files: jsonapi-generator/* libretroshare/src/jsonapi/*
 Copyright: 2018-2019 Gioacchino Mazzurco <gio@eigenlab.org>
-License: AGPL-3+
+License: AGPL-3.0-or-later
+
+Files: libretroshare/src/deep_search/*
+Copyright: 2018-2019 Gioacchino Mazzurco <gio@eigenlab.org>
+License: AGPL-3.0-only
 
 Files: libretroshare/*
-Copyright: 2007-2018, Retroshare Team <retroshare.team@gmail.com>
-License: LGPL-3+
+Copyright: 2007-2019, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
 
 Files: src/retroshare-gui/src/TorControl/
 Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
@@ -28,8 +32,8 @@ Copyright: 2013 Jeff Weinstein <jeff.weinstein@gmail.com>
 License: MIT
 
 Files: *
-Copyright: 2007-2018, Retroshare Team <retroshare.team@gmail.com>
-License: AGPL-3+
+Copyright: 2007-2019, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-only
 
 #######
 # TODO
@@ -56,7 +60,7 @@ License: Apache-2.0
   See the License for the specific language governing permissions and
   limitations under the License.
 
-License: LGPL-3+
+License: LGPL-3.0-or-later
   This program is free software: you can redistribute it and/or modify        
   it under the terms of the GNU Lesser General Public License as              
   published by the Free Software Foundation, either version 3 of the          
@@ -75,7 +79,7 @@ License: LGPL-3+
   OpenSSL that use the same license as OpenSSL), and distribute linked
   combinations including the two.
 
-License: AGPL-3+
+License: AGPL-3.0-or-later
   This program is free software: you can redistribute it and/or modify         
   it under the terms of the GNU Affero General Public License as               
   published by the Free Software Foundation, either version 3 of the           
@@ -86,11 +90,36 @@ License: AGPL-3+
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                
   GNU Lesser General Public License for more details.                          
   .
-  You should have received a copy of the GNU Lesser General Public License     
-  along with this program. If not, see <https://www.gnu.org/licenses/>.       
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
   .
   As a special exception, the copyright holders give permission to link the
-  code of portions of this program with the OpenSSL library under certain
+  code or portions of this program with the OpenSSL library under certain
+  conditions as described in each individual source file and distribute
+  linked combinations including the program with the OpenSSL library. You
+  must comply with the GNU Affero General Public License in all respects for
+  all of the code used other than as permitted herein. If you modify file(s)
+  with this exception, you may extend this exception to your version of the
+  file(s), but you are not obligated to do so. If you do not wish to do so,
+  delete this exception statement from your version. If you delete this
+  exception statement from all source files in the program, then also delete
+  it in the license file.
+
+License: AGPL-3.0-only
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Affero General Public License version 3 as
+  published by the Free Software Foundation.
+  .
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU Lesser General Public License for more details.
+  .
+  You should have received a copy of the GNU Affero General Public License
+  along with this program. If not, see <https://www.gnu.org/licenses/>.
+  .
+  As a special exception, the copyright holders give permission to link the
+  code or portions of this program with the OpenSSL library under certain
   conditions as described in each individual source file and distribute
   linked combinations including the program with the OpenSSL library. You
   must comply with the GNU Affero General Public License in all respects for

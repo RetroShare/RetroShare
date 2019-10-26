@@ -213,7 +213,7 @@ private:
 
 	RsGeneralDataService* const mDs;
 	RsGenExchange *mGenExchangeClient;
-#ifdef RS_DEEP_SEARCH
+#ifdef RS_DEEP_CHANNEL_INDEX
 	RsSerialType& mSerializer;
 #endif
 	bool mDone;
