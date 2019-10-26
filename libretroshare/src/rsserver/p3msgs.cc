@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2006 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -39,8 +40,7 @@
 
 using namespace Rs::Msgs;
 
-/* external reference point */
-RsMsgs *rsMsgs = NULL;
+/*extern*/ RsMsgs* rsMsgs = nullptr;
 
 /****************************************/
 /****************************************/
