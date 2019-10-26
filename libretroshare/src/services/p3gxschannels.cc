@@ -2466,4 +2466,6 @@ void p3GxsChannels::cleanTimedOutCallbacks()
 	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
 }
 
+RsGxsChannelGroup::~RsGxsChannelGroup() = default;
+RsGxsChannelPost::~RsGxsChannelPost() = default;
 RsGxsChannels::~RsGxsChannels() = default;

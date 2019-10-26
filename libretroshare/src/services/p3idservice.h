@@ -293,12 +293,12 @@ public:
 	/// @see RsIdentity
 	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
-	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
+	bool getOwnIds(
+	        std::list<RsGxsId> &ownIds, bool signed_only = false ) override;
 
-	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
-	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
+	bool isKnownId(const RsGxsId& id) override;
 
-	virtual bool isOwnId(const RsGxsId& key_id) ;
+	bool isOwnId(const RsGxsId& key_id) override;
 
 	virtual bool signData( const uint8_t* data,
 	                       uint32_t data_size,
@@ -619,7 +619,7 @@ private:
 	bool ownIdsAreLoaded() { RS_STACK_MUTEX(mIdMtx); return mOwnIdsLoaded; }
 
 	bool mAutoAddFriendsIdentitiesAsContacts;
-    uint32_t mMaxKeepKeysBanned ;
+	uint32_t mMaxKeepKeysBanned;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

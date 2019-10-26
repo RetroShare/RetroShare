@@ -399,11 +399,20 @@ struct FileChunksInfo : RsSerializable
 		CHUNK_STRATEGY_PROGRESSIVE
 	};
 
-	struct SliceInfo
+	struct SliceInfo : RsSerializable
 	{
 		uint32_t start;
 		uint32_t size;
 		RsPeerId peer_id;
+
+		/// @see RsSerializable
+		void serial_process(RsGenericSerializer::SerializeJob j,
+		                    RsGenericSerializer::SerializeContext& ctx) override
+		{
+			RS_SERIAL_PROCESS(start);
+			RS_SERIAL_PROCESS(size);
+			RS_SERIAL_PROCESS(peer_id);
+		}
 	};
 
 	uint64_t file_size; /// real size of the file
@@ -432,7 +441,7 @@ struct FileChunksInfo : RsSerializable
 		RS_SERIAL_PROCESS(chunks);
 		RS_SERIAL_PROCESS(compressed_peer_availability_maps);
 		RS_SERIAL_PROCESS(active_chunks);
-		//RS_SERIAL_PROCESS(pending_slices);
+		RS_SERIAL_PROCESS(pending_slices);
 	}
 };
 
