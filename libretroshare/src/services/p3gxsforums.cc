@@ -676,6 +676,72 @@ bool p3GxsForums::subscribeToForum(
 	return true;
 }
 
+bool p3GxsForums::exportForumLink(
+        std::string& link, const RsGxsGroupId& forumId, bool includeGxsData,
+        const std::string& baseUrl, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(forumId.isNull()) return failure("forumId cannot be null");
+
+	const bool outputRadix = baseUrl.empty();
+	if(outputRadix && !includeGxsData) return
+	        failure("includeGxsData must be true if format requested is base64");
+
+	if( includeGxsData &&
+	        !RsGenExchange::exportGroupBase64(link, forumId, errMsg) )
+		return failure(errMsg);
+
+	if(outputRadix) return true;
+
+	std::vector<RsGxsForumGroup> forumsInfo;
+	if( !getForumsInfo(std::list<RsGxsGroupId>({forumId}), forumsInfo)
+	        || forumsInfo.empty() )
+		return failure("failure retrieving forum information");
+
+	RsUrl inviteUrl(baseUrl);
+	inviteUrl.setQueryKV(FORUM_URL_ID_FIELD, forumId.toStdString());
+	inviteUrl.setQueryKV(FORUM_URL_NAME_FIELD, forumsInfo[0].mMeta.mGroupName);
+	if(includeGxsData) inviteUrl.setQueryKV(FORUM_URL_DATA_FIELD, link);
+
+	link = inviteUrl.toString();
+	return true;
+}
+
+bool p3GxsForums::importForumLink(
+        const std::string& link, RsGxsGroupId& forumId, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(link.empty()) return failure("link is empty");
+
+	const std::string* radixPtr(&link);
+
+	RsUrl url(link);
+	const auto& query = url.query();
+	const auto qIt = query.find(FORUM_URL_DATA_FIELD);
+	if(qIt != query.end()) radixPtr = &qIt->second;
+
+	if(radixPtr->empty()) return failure(FORUM_URL_DATA_FIELD + " is empty");
+
+	if(!RsGenExchange::importGroupBase64(*radixPtr, forumId, errMsg))
+		return failure(errMsg);
+
+	return true;
+}
+
 bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::createGroup()" << std::endl;
@@ -1004,6 +1070,19 @@ bool RsGxsForumGroup::canEditPosts(const RsGxsId& id) const
 	return mAdminList.ids.find(id) != mAdminList.ids.end() ||
 	        id == mMeta.mAuthorId;
 }
+
+/*static*/ const std::string RsGxsForums::DEFAULT_FORUM_BASE_URL =
+        "retroshare:///forums";
+/*static*/ const std::string RsGxsForums::FORUM_URL_NAME_FIELD =
+        "forumName";
+/*static*/ const std::string RsGxsForums::FORUM_URL_ID_FIELD =
+        "forumId";
+/*static*/ const std::string RsGxsForums::FORUM_URL_DATA_FIELD =
+        "forumData";
+/*static*/ const std::string RsGxsForums::FORUM_URL_MSG_TITLE_FIELD =
+        "forumMsgTitle";
+/*static*/ const std::string RsGxsForums::FORUM_URL_MSG_ID_FIELD =
+        "forumMsgId";
 
 RsGxsForumGroup::~RsGxsForumGroup() = default;
 RsGxsForumMsg::~RsGxsForumMsg() = default;
