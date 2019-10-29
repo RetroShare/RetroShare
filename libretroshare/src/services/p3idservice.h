@@ -293,12 +293,31 @@ public:
 	/// @see RsIdentity
 	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
+	/// @see RsIdentity
 	bool getOwnIds(
 	        std::list<RsGxsId> &ownIds, bool signed_only = false ) override;
 
+	/// @see RsIdentity
 	bool isKnownId(const RsGxsId& id) override;
 
+	/// @see RsIdentity
 	bool isOwnId(const RsGxsId& key_id) override;
+
+	/// @see RsIdentity
+	bool exportIdentityLink(
+	        std::string& link, const RsGxsId& id,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_IDENTITY_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsIdentity
+	bool importIdentityLink(
+	        const std::string& link,
+	        RsGxsId& id = RS_DEFAULT_STORAGE_PARAM(RsGxsId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
 
 	virtual bool signData( const uint8_t* data,
 	                       uint32_t data_size,
@@ -354,17 +373,10 @@ public:
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
-
-	/// @see RsIdentity
-	bool identityToBase64( const RsGxsId& id,
-	                       std::string& base64String ) override;
-
-	/// @see RsIdentity
-	bool identityFromBase64( const std::string& base64String,
-	                         RsGxsId& id ) override;
-
+	RS_DEPRECATED_FOR(exportIdentityLink)
 	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
 	                                       std::string& radix_string);
+	RS_DEPRECATED_FOR(importIdentityLink)
 	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
 	                                           RsGxsId* id = nullptr);
 
