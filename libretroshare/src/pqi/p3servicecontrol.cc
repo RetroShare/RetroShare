@@ -431,72 +431,45 @@ bool p3ServiceControl::updateServicePermissions(uint32_t serviceId, const RsServ
 // to the pqiStreamer, (when items have been sorted by peers already!).
 // but we will do this later.
 
-bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
+bool p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId& peerId)
 {
-	RsStackMutex stack(mCtrlMtx); /***** LOCK STACK MUTEX ****/
+	Dbg4() << __PRETTY_FUNCTION__ << " serviceId: " << serviceId << " peerId: "
+	       << peerId << std::endl;
 
-#ifdef SERVICECONTROL_DEBUG
-	std::cerr << "p3ServiceControl::checkFilter() ";
-	std::cerr << " ServiceId: " << serviceId;
-#endif
+	RS_STACK_MUTEX(mCtrlMtx);
 
 	std::map<uint32_t, RsServiceInfo>::iterator it;
 	it = mOwnServices.find(serviceId);
 	if (it != mOwnServices.end())
-	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << " ServiceName: " << it->second.mServiceName;
-#endif
-	}
+		Dbg3() << __PRETTY_FUNCTION__ << " serviceId: " << serviceId
+		       << " peerId: " << peerId<< " ServiceName: "
+		       << it->second.mServiceName << std::endl;
 	else
-	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << " ServiceName: Unknown! ";
-#endif
-	}
-
-#ifdef SERVICECONTROL_DEBUG
-	std::cerr << " PeerId: " << peerId.toStdString();
-	std::cerr << std::endl;
-#endif
+		Dbg2() << __PRETTY_FUNCTION__ << " serviceId: " << serviceId
+		       << " peerId: " << peerId << " ServiceName: Unknown!"
+		       << std::endl;
 
 	// must allow ServiceInfo through, or we have nothing!
-	if (serviceId == RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(RS_SERVICE_TYPE_SERVICEINFO))
-	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << "p3ServiceControl::checkFilter() Allowed SERVICEINFO";
-		std::cerr << std::endl;
-#endif
-		return true;
-	}
-
+	if(serviceId == RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(
+	            RS_SERVICE_TYPE_SERVICEINFO )) return true;
 
 	std::map<RsPeerId, ServicePeerFilter>::const_iterator pit;
 	pit = mPeerFilterMap.find(peerId);
 	if (pit == mPeerFilterMap.end())
 	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << "p3ServiceControl::checkFilter() Denied No PeerId";
-		std::cerr << std::endl;
-#endif
+		Dbg2() << __PRETTY_FUNCTION__ << " Denied No PeerId" << std::endl;
 		return false;
 	}
 
 	if (pit->second.mDenyAll)
 	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << "p3ServiceControl::checkFilter() Denied Peer.DenyAll";
-		std::cerr << std::endl;
-#endif
+		Dbg2() << __PRETTY_FUNCTION__ << " Denied Peer.DenyAll" << std::endl;
 		return false;
 	}
 
 	if (pit->second.mAllowAll)
 	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << "p3ServiceControl::checkFilter() Allowed Peer.AllowAll";
-		std::cerr << std::endl;
-#endif
+		Dbg3() << __PRETTY_FUNCTION__ << " Allowed Peer.AllowAll" << std::endl;
 		return true;
 	}
 
@@ -504,16 +477,14 @@ bool	p3ServiceControl::checkFilter(uint32_t serviceId, const RsPeerId &peerId)
 	sit = pit->second.mAllowedServices.find(serviceId);
 	if (sit == pit->second.mAllowedServices.end())
 	{
-#ifdef SERVICECONTROL_DEBUG
-		std::cerr << "p3ServiceControl::checkFilter() Denied !Peer.find(serviceId)";
-		std::cerr << std::endl;
-#endif
+		Dbg2() << __PRETTY_FUNCTION__ << " Denied !Peer.find(serviceId)"
+		       << std::endl;
 		return false;
 	}
-#ifdef SERVICECONTROL_DEBUG
-	std::cerr << "p3ServiceControl::checkFilter() Allowed Peer.find(serviceId)";
-	std::cerr << std::endl;
-#endif
+
+	Dbg3() << __PRETTY_FUNCTION__ << " Allowed Peer.find(serviceId)"
+	       << std::endl;
+
 	return true;
 }
 

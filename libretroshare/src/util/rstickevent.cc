@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@altermundi.net>                *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -23,6 +24,7 @@
 
 #include <iostream>
 #include <list>
+#include <algorithm>
 
 //#define DEBUG_EVENTS	1
 
@@ -130,41 +132,31 @@ void RsTickEvent::schedule_in(uint32_t event_type, uint32_t in_secs, const std::
 }
 
 
-void RsTickEvent::handle_event(uint32_t event_type, const std::string &elabel)
+void RsTickEvent::handle_event(uint32_t event_type, const std::string& elabel)
 {
-	std::cerr << "RsTickEvent::handle_event(" << event_type << ", " << elabel;
-	std::cerr << ") ERROR Not Handled";
-	std::cerr << std::endl;
+	RsErr() << __PRETTY_FUNCTION__ << " event_type: " << event_type
+	        << " elabel: " << elabel << " Not Handled!" << std::endl;
+	print_stacktrace();
 }
 
 
 int32_t RsTickEvent::event_count(uint32_t event_type)
 {
-	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
-	std::map<uint32_t, int32_t>::iterator it;
-
-	it = mEventCount.find(event_type);
-	if (it == mEventCount.end())
-	{
-		return 0;
-	}
-
+	RS_STACK_MUTEX(mEventMtx);
+	std::map<uint32_t, int32_t>::iterator it = mEventCount.find(event_type);
+	if (it == mEventCount.end()) return 0;
 	return it->second;
 }
 
 
-bool RsTickEvent::prev_event_ago(uint32_t event_type, int32_t &age)
+bool RsTickEvent::prev_event_ago(uint32_t event_type, uint32_t& age)
 {
-	RsStackMutex stack(mEventMtx); /********** STACK LOCKED MTX ******/
-	std::map<uint32_t, rstime_t>::iterator it;
+	RS_STACK_MUTEX(mEventMtx);
+	const auto it = mPreviousEvent.find(event_type);
+	if (it == mPreviousEvent.end()) return false;
 
-	it = mPreviousEvent.find(event_type);
-	if (it == mPreviousEvent.end())
-	{
-		return false;
-	}
-
-	age = time(NULL) - it->second;
+	age = static_cast<uint32_t>(
+	            std::max(time_t(0), time_t(time(nullptr) - it->second)) );
 	return true;
 }
 

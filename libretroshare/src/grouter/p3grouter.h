@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2013 by Cyril Soler <csoler@users.sourceforge.net>                *
+ * Copyright (C) 2013  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -22,8 +23,8 @@
 #pragma once
 
 #include <map>
-#include <queue>
 #include <fstream>
+#include <list>
 
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rstypes.h"
@@ -33,15 +34,13 @@
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-
+#include "util/rsdebug.h"
 #include "groutertypes.h"
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
 // To be put in pqi/p3cfgmgr.h
-//
 static const uint32_t CONFIG_TYPE_GROUTER = 0x0016 ;
-static const uint32_t RS_GROUTER_DATA_FLAGS_ENCRYPTED = 0x0001 ;
 
 class p3LinkMgr ;
 class p3turtle ;
@@ -352,4 +351,22 @@ private:
     rstime_t _last_config_changed ;
 
     uint64_t _random_salt ;
+
+	/** Temporarly store items that could not have been verified yet due to
+	 * missing author key, attempt to handle them once in a while.
+	 * The items are discarded if after mMissingKeyQueueEntryTimeout the key
+	 * hasn't been received yet, and are not saved on RetroShare stopping. */
+	std::list< std::pair<
+	    std::unique_ptr<RsGRouterGenericDataItem>, rstime_t > > mMissingKeyQueue;
+
+	/// @see mMissingKeyQueue
+	static constexpr rstime_t mMissingKeyQueueEntryTimeout = 600;
+
+	/// @see mMissingKeyQueue
+	static constexpr rstime_t mMissingKeyQueueCheckEvery = 30;
+
+	/// @see mMissingKeyQueue
+	rstime_t mMissingKeyQueueCheckLastCheck = 0;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

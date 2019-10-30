@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2013 by Cyril Soler <retroshare.project@gmail.com>                *
+ * Copyright (C) 2013  Cyril Soler <retroshare.project@gmail.com>              *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,19 +20,28 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
 #pragma once
 
 #include "util/rsdir.h"
+#include "util/rsdeprecate.h"
 #include "retroshare/rsids.h"
 #include "retroshare/rsgxsifacetypes.h"
 
-typedef RsGxsId  GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
-typedef uint32_t GRouterServiceId ;
-typedef uint64_t GRouterMsgPropagationId ;
+RS_DEPRECATED_FOR(RsGxsId)
+typedef RsGxsId GRouterKeyId;
+
+/**
+ * @note Some items use this type, when migrating to RsServiceType (2 bytes),
+ * special care should be taken to do it in a way which doesn't break
+ * retrocompatibility
+ */
+RS_DEPRECATED_FOR(RsServiceType)
+typedef uint32_t GRouterServiceId;
+
+typedef uint64_t GRouterMsgPropagationId;
 
 class GRouterClientService ;
-class RsGRouterGenericDataItem ;
+struct RsGRouterGenericDataItem;
 
 class RsGRouter
 {

@@ -108,7 +108,7 @@ void RsGRouterGenericDataItem::serial_process(RsGenericSerializer::SerializeJob 
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,duplication_factor,"duplication_factor") ;
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,flags,"flags") ;
+	RS_SERIAL_PROCESS(flags);
 
     if(j == RsGenericSerializer::DESERIALIZE) // make sure the duplication factor is not altered by friends. In the worst case, the item will duplicate a bit more.
     {
@@ -128,7 +128,7 @@ void RsGRouterGenericDataItem::serial_process(RsGenericSerializer::SerializeJob 
 void RsGRouterSignedReceiptItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint64_t> (j,ctx,routing_id,"routing_id") ;
-    RsTypeSerializer::serial_process<uint32_t> (j,ctx,flags,"flags") ;
+    RS_SERIAL_PROCESS(flags);
     RsTypeSerializer::serial_process           (j,ctx,destination_key,"destination_key") ;
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,service_id,"service_id") ;
     RsTypeSerializer::serial_process           (j,ctx,data_hash,"data_hash") ;

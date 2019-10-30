@@ -524,9 +524,13 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @brief request details of a not yet known identity to the network
 	 * @jsonapi{development}
 	 * @param[in] id id of the identity to request
+	 * @param[in] peers optional list of the peers to ask for the key, if empty
+	 *	all online peers are asked.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool requestIdentity(const RsGxsId& id) = 0;
+	virtual bool requestIdentity(
+	        const RsGxsId& id,
+	        const std::vector<RsPeerId>& peers = std::vector<RsPeerId>() ) = 0;
 
 
 	RS_DEPRECATED

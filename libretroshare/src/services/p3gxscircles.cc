@@ -1118,7 +1118,7 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 		return true;
 	}
 
-	int32_t age = 0;
+	uint32_t age = 0;
 	if (RsTickEvent::prev_event_ago(CIRCLE_EVENT_CACHELOAD, age))
 	{
 		if (age < MIN_CIRCLE_LOAD_GAP)

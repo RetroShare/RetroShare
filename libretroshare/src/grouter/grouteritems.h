@@ -27,7 +27,7 @@
 #include "serialiser/rstlvkeys.h"
 #include "rsitems/rsserviceids.h"
 #include "retroshare/rstypes.h"
-
+#include "retroshare/rsflags.h"
 #include "retroshare/rsgrouter.h"
 #include "groutermatrix.h"
 
@@ -83,40 +83,52 @@ class RsGRouterNonCopyableObject
 // and routing ID. Sub-items are responsible for providing the serialised data to be signed for
 // both signing and checking.
 
-class RsGRouterAbstractMsgItem: public RsGRouterItem
+enum class RsGrouterItemFlags : uint32_t
 {
-public:
-    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype) : RsGRouterItem(pkt_subtype), flags(0) {}
-    virtual ~RsGRouterAbstractMsgItem() {}
+	NONE               = 0x0,
+	ENCRYPTED          = 0x1,
+	SERVICE_UNKNOWN    = 0x2
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsGrouterItemFlags)
+
+struct RsGRouterAbstractMsgItem: RsGRouterItem
+{
+    explicit RsGRouterAbstractMsgItem(uint8_t pkt_subtype):
+        RsGRouterItem(pkt_subtype), flags(RsGrouterItemFlags::NONE) {}
 
     GRouterMsgPropagationId routing_id ;
     GRouterKeyId destination_key ;
     GRouterServiceId service_id ;
     RsTlvKeySignature signature ;		// signs mid+destination_key+state
-	uint32_t flags ; 					// packet was delivered, not delivered, bounced, etc
+
+	/// packet was delivered, not delivered, bounced, etc
+	RsGrouterItemFlags flags;
 };
 
-class RsGRouterGenericDataItem: public RsGRouterAbstractMsgItem, public RsGRouterNonCopyableObject
+struct RsGRouterGenericDataItem:
+        RsGRouterAbstractMsgItem, RsGRouterNonCopyableObject
 {
-    public:
-        RsGRouterGenericDataItem() : RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA), data_size(0), data_bytes(NULL), duplication_factor(0) { setPriorityLevel(QOS_PRIORITY_RS_GROUTER) ; }
-        virtual ~RsGRouterGenericDataItem() { clear() ; }
+	RsGRouterGenericDataItem():
+	    RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA),
+	    data_size(0), data_bytes(nullptr), duplication_factor(0)
+	{ setPriorityLevel(QOS_PRIORITY_RS_GROUTER); }
 
-        virtual void clear()
-        {
-            free(data_bytes);
-            data_bytes=NULL;
-        }
+	virtual ~RsGRouterGenericDataItem() { clear(); }
+	virtual void clear() { free(data_bytes); }
 
-		virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx );
 
-        RsGRouterGenericDataItem *duplicate() const ;
+	RsGRouterGenericDataItem *duplicate() const;
 
-        // packet data
-        //
-        uint32_t data_size ;
-        uint8_t *data_bytes;
-        uint32_t duplication_factor ;	// number of duplicates allowed. Should be capped at each de-serialise operation!
+	/// packet data
+	uint32_t data_size;
+	uint8_t* data_bytes;
+
+	/** number of duplicates allowed. Should be capped at each de-serialise
+	 * operation! */
+	uint32_t duplication_factor;
 };
 
 class RsGRouterSignedReceiptItem: public RsGRouterAbstractMsgItem

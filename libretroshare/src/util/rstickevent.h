@@ -29,14 +29,15 @@
  */
 
 #include <map>
-#include "util/rstime.h"
 
+#include "util/rstime.h"
+#include "util/rsdebug.h"
 #include "util/rsthreads.h"
 
 class RsTickEvent
 {
-	public:
-	RsTickEvent():mEventMtx("TickEventMtx") { return; }
+public:
+	RsTickEvent(): mEventMtx("TickEventMtx") {}
 
 void	tick_events();
 
@@ -48,8 +49,8 @@ void    schedule_event(uint32_t event_type, rstime_t when, const std::string &el
 void    schedule_in(uint32_t event_type, uint32_t in_secs);
 void    schedule_in(uint32_t event_type, uint32_t in_secs, const std::string &elabel);
 
-int32_t event_count(uint32_t event_type);
-bool 	prev_event_ago(uint32_t event_type, int32_t &age);
+    int32_t event_count(uint32_t event_type);
+	bool prev_event_ago(uint32_t event_type, uint32_t& age);
 
 	protected:
 
@@ -76,6 +77,8 @@ void 	note_event_locked(uint32_t event_type);
 	std::map<uint32_t, int32_t>    mEventCount;
 	std::map<uint32_t, rstime_t>      mPreviousEvent;
 	std::multimap<rstime_t, EventData> mEvents;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
 
 #endif // RS_UTIL_TICK_EVENT

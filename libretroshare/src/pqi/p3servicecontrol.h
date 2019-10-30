@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef P3_SERVICE_CONTROL_HEADER
-#define P3_SERVICE_CONTROL_HEADER
+#pragma once
 
 #include <string>
 #include <map>
@@ -30,6 +29,7 @@
 #include "pqi/pqimonitor.h"
 #include "pqi/pqiservicemonitor.h"
 #include "pqi/p3linkmgr.h"
+#include "util/rsdebug.h"
 
 class p3ServiceServer ;
 
@@ -199,7 +199,6 @@ bool peerHasPermissionForService_locked(const RsPeerId &peerId, uint32_t service
     std::map<uint32_t, RsServicePermissions> mServicePermissionMap;
 
     p3ServiceServer *mServiceServer ;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
-
-
-#endif // P3_SERVICE_CONTROL_HEADER

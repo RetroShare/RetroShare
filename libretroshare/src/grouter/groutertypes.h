@@ -21,14 +21,15 @@
  *******************************************************************************/
 #pragma once
 
-#include <stdint.h>
-#include "util/rstime.h"
+#include <cstdint>
 #include <list>
+
+#include "util/rstime.h"
 #include "pgp/rscertificate.h"
 #include "turtle/p3turtle.h"
 #include "retroshare/rsgrouter.h"
 
-class RsGRouterGenericDataItem ;
+struct RsGRouterGenericDataItem;
 class RsGRouterSignedReceiptItem ;
 
 static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;

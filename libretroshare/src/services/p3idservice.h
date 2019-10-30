@@ -369,7 +369,10 @@ public:
 	                                           RsGxsId* id = nullptr);
 
 	/// @see RsIdentity
-	bool requestIdentity(const RsGxsId& id) override;
+	bool requestIdentity(
+	            const RsGxsId& id,
+	            const std::vector<RsPeerId>& peers = std::vector<RsPeerId>()
+	        ) override;
 
 	/**************** RsGixsReputation Implementation ****************/
 
@@ -482,7 +485,7 @@ private:
 
 	/* MUTEX PROTECTED DATA (mIdMtx - maybe should use a 2nd?) */
 
-	std::map<RsPgpId, PGPFingerprintType> mPgpFingerprintMap;
+	std::map<RsPgpId, RsPgpFingerprint> mPgpFingerprintMap;
 	std::list<RsGxsIdGroup> mGroupsToProcess;
 
 	/************************************************************************
@@ -621,5 +624,5 @@ private:
 	bool mAutoAddFriendsIdentitiesAsContacts;
 	uint32_t mMaxKeepKeysBanned;
 
-	RS_SET_CONTEXT_DEBUG_LEVEL(1)
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };
