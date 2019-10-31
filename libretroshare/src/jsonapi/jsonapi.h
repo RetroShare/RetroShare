@@ -140,6 +140,9 @@ public:
 	        callback );
 
 private:
+	/// @see RsThread
+	void run() override;
+
 	/// @see p3Config::setupSerialiser
 	RsSerialiser* setupSerialiser() override;
 

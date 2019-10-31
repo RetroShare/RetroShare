@@ -23,10 +23,13 @@
 
 #include <memory>
 #include <cstdint>
+#include <chrono>
+#include <functional>
 
 #include "util/rsmemory.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
+#include "util/rstime.h"
 
 class RsEvents;
 

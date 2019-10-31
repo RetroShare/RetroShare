@@ -108,7 +108,7 @@ public:
 	Status stat;
 };
 
-class ftTransferModule 
+class ftTransferModule
 {
 public:
   ftTransferModule(ftFileCreator *fc, ftDataMultiplex *dm, ftController *c);

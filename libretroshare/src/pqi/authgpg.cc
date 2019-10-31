@@ -116,11 +116,11 @@ void AuthGPG::init(
 
 void AuthGPG::exit()
 {
-	if(_instance != NULL)
+	if(_instance)
 	{
-		_instance->join();
-		delete _instance ;
-		_instance = NULL;
+		_instance->fullstop();
+		delete _instance;
+		_instance = nullptr;
 	}
 }
 
@@ -188,7 +188,7 @@ int AuthGPG::GPGInit(const RsPgpId &ownId)
 {
 }
 
-void AuthGPG::data_tick()
+void AuthGPG::threadTick()
 {
     rstime::rs_usleep(100 * 1000); //100 msec
 

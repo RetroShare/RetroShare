@@ -544,7 +544,7 @@ bool ftTransferModule::isCheckingHash()
 	return mFlag == FT_TM_FLAG_CHECKING || mFlag == FT_TM_FLAG_CHUNK_CRC;
 }
 
-class HashThread: public RsSingleJobThread
+class HashThread: public RsThread
 {
 	public:
 		explicit HashThread(ftFileCreator *m)

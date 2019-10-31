@@ -209,7 +209,7 @@ void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::data_tick()
+void ftController::threadTick()
 {
 	/* check the queues */
 

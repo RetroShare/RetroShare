@@ -34,6 +34,7 @@
 
 #include "util/rsstring.h"
 #include "rs_upnp/upnp18_retrocompat.h"
+#include "util/rstime.h"
 
 #ifdef __GNUC__
 	#if __GNUC__ >= 4
