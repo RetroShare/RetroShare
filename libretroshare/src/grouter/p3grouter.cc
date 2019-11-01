@@ -1927,7 +1927,7 @@ bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientSe
 
 bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key)
 {
-	assert(!(item->flags & RsGrouterItemFlags::ENCRYPTED)) ;
+	assert(!(item->flags & RsGrouterItemFlags::ENCRYPTED));
 
 #ifdef GROUTER_DEBUG
     std::cerr << "  Encrypting data for key " << destination_key << std::endl;
@@ -1963,7 +1963,7 @@ return true ;
 }
 bool p3GRouter::decryptDataItem(RsGRouterGenericDataItem *item)
 {
-	assert(item->flags & RsGrouterItemFlags::ENCRYPTED);
+	assert(!!(item->flags & RsGrouterItemFlags::ENCRYPTED));
 
 #ifdef GROUTER_DEBUG
     std::cerr << "  decrypting data for key " << item->destination_key << std::endl;
