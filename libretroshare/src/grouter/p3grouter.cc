@@ -201,25 +201,18 @@
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
-p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is)
-    : p3Service(), p3Config(), mServiceControl(sc), mTurtle(NULL), mGixs(is), grMtx("GRouter")
-{
-	addSerialType(new RsGRouterSerialiser()) ;
-
-	_last_autowash_time = 0 ;
-	_last_debug_output_time = 0 ;
-	_last_config_changed = 0 ;
-	_last_matrix_update_time = 0 ;
-	_debug_enabled = true ;
-
-	_random_salt = RSRandom::random_u64() ;
-
-	_changed = false ;
-}
+p3GRouter::p3GRouter(p3ServiceControl *sc, RsGixs *is) :
+    p3Service(), p3Config(), mServiceControl(sc), mTurtle(nullptr), mGixs(is),
+    grMtx("GRouter"), _changed(false), _debug_enabled(true),
+    _last_autowash_time(0), _last_matrix_update_time(0),
+    _last_debug_output_time(0),  _last_config_changed(0),
+    _random_salt(RsRandom::random_u64()),
+    mMissingKeyQueueMtx("GRouterMissingKeyQueue")
+{ addSerialType(new RsGRouterSerialiser()); }
 
 int p3GRouter::tick()
 {
-    rstime_t now = time(NULL) ;
+	rstime_t now = time(nullptr);
 
     // Sort incoming service data
     //
@@ -246,10 +239,9 @@ int p3GRouter::tick()
 	/* Handle items in mMissingKeyQueue */
 	if(now > mMissingKeyQueueCheckLastCheck + mMissingKeyQueueCheckEvery)
 	{
-		RS_STACK_MUTEX(grMtx);
-
 		mMissingKeyQueueCheckLastCheck = now;
 
+		RS_STACK_MUTEX(mMissingKeyQueueMtx);
 		for(auto it = mMissingKeyQueue.begin(); it != mMissingKeyQueue.end();)
 		{
 			const RsGxsId& senderId = it->first->signature.keyId;
@@ -1437,6 +1429,7 @@ void p3GRouter::autoWash()
                 ++it ;
 
 		/* Cleanup timed out items in mMissingKeyQueue */
+		mMissingKeyQueueMtx.lock();
 		while( mMissingKeyQueue.begin() != mMissingKeyQueue.end() &&
 		       mMissingKeyQueue.front().second <= now )
 		{
@@ -1446,6 +1439,7 @@ void p3GRouter::autoWash()
 			         << std::endl;
 			mMissingKeyQueue.pop_front();
 		}
+		mMissingKeyQueueMtx.unlock();
     }
     // Look into pending items.
 
@@ -1736,10 +1730,13 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 			case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
 			{
 				rstime_t timeout = time(nullptr) + mMissingKeyQueueEntryTimeout;
-				mMissingKeyQueue.push_back(std::make_pair(
-				     std::unique_ptr<RsGRouterGenericDataItem>(
-				                                   data_item->duplicate() ),
-				     timeout ));
+				mMissingKeyQueueMtx.lock();
+				mMissingKeyQueue.push_back(
+				            std::make_pair(
+				                std::unique_ptr<RsGRouterGenericDataItem>(
+				                    data_item->duplicate() ), timeout ) );
+				mMissingKeyQueueMtx.unlock();
+
 				/* Do not request the missing key here to the peer which
 				 * forwarded the item as verifySignedDataItem(...) does it
 				 * already */

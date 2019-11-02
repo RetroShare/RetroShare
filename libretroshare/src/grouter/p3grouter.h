@@ -358,6 +358,7 @@ private:
 	 * hasn't been received yet, and are not saved on RetroShare stopping. */
 	std::list< std::pair<
 	    std::unique_ptr<RsGRouterGenericDataItem>, rstime_t > > mMissingKeyQueue;
+	RsMutex mMissingKeyQueueMtx; /// protect mMissingKeyQueue
 
 	/// @see mMissingKeyQueue
 	static constexpr rstime_t mMissingKeyQueueEntryTimeout = 600;
