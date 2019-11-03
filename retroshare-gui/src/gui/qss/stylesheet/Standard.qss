@@ -176,8 +176,9 @@ ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 
 ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox 
 {
-  padding: 4 12px;
-	background: transparent; 
+    padding: 4 12px;
+    background: #039bd5;
+    color: white;
 }
 
 ChatLobbyWidget QLabel#lobbyInfoLabel {

@@ -69,8 +69,8 @@
 #define TYPE_LOBBY        1
 
 #define IMAGE_CREATE          ""
-#define IMAGE_PUBLIC          ":/images/chat_x24.png"
-#define IMAGE_PRIVATE         ":/images/chat_red24.png"
+#define IMAGE_PUBLIC          ":/icons/png/chats.png"
+#define IMAGE_PRIVATE         ":/icons/png/chats-private.png"
 #define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
 #define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
@@ -211,6 +211,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
+		
+	ui.lobbyTreeWidget->setIconSize(QSize(S*1.5,S*1.5));	
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()
