@@ -40,7 +40,6 @@ enum class RsServiceType : uint16_t
 	FILE_DATABASE              = 0x0019,
 	SERVICEINFO                = 0x0020,
 	BANDWIDTH_CONTROL          = 0x0021,
-	MAIL                       = 0x0022,
 	DIRECT_MAIL                = 0x0023,
 	DISTANT_MAIL               = 0x0024,
 	GWEMAIL_MAIL               = 0x0025,
@@ -98,8 +97,6 @@ RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GROUTER        =
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_FILE_DATABASE  = 0x0019;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_SERVICEINFO    = 0x0020;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_BWCTRL         = 0x0021; /// Bandwidth Control
-/// New Mail Service (replace old Msg Service)
-RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_MAIL           = 0x0022;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DIRECT_MAIL    = 0x0023;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_DISTANT_MAIL   = 0x0024;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GWEMAIL_MAIL   = 0x0025;

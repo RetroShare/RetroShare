@@ -20,10 +20,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include <unistd.h>
+#include <iomanip>
+#include <map>
+#include <sstream>
+
 #include "retroshare/rsiface.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsidentity.h"
-
+#include "util/cxx17retrocompat.h"
 #include "pqi/pqibin.h"
 #include "pqi/p3linkmgr.h"
 #include "pqi/authgpg.h"
@@ -50,11 +56,6 @@
 #include "util/rsmemory.h"
 #include "util/rsprint.h"
 #include "util/rsthreads.h"
-
-#include <unistd.h>
-#include <iomanip>
-#include <map>
-#include <sstream>
 
 using namespace Rs::Msgs;
 
@@ -1951,8 +1952,16 @@ RsMsgItem *p3MsgService::initMIRsMsg(const MessageInfo &info, const RsPeerId& to
 
 void p3MsgService::connectToGlobalRouter(p3GRouter *gr)
 {
-	mGRouter = gr ;
-	gr->registerClientService(GROUTER_CLIENT_ID_MESSAGES,this) ;
+	mGRouter = gr;
+
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+	// Keep for RetroShare < 0.6.6 retro-compatibility
+	gr->registerClientService(
+	            static_cast<RsServiceType>(GROUTER_CLIENT_ID_MESSAGES), this );
+#endif
+
+	// RetroShare >= 0.6.6
+	gr->registerClientService(RsServiceType::MSG, this);
 }
 
 void p3MsgService::enableDistantMessaging(bool b)
@@ -1988,13 +1997,38 @@ void p3MsgService::manageDistantPeers()
             std::cerr << (mShouldEnableDistantMessaging?"Enabling":"Disabling") << " distant messaging, with peer id = " << *it << std::endl;
 #endif
 
-        for(std::list<RsGxsId>::const_iterator it(own_id_list.begin());it!=own_id_list.end();++it)
-        {
-            if(mShouldEnableDistantMessaging)
-                mGRouter->registerKey(*it,GROUTER_CLIENT_ID_MESSAGES,"Messaging contact") ;
-            else
-                mGRouter->unregisterKey(*it,GROUTER_CLIENT_ID_MESSAGES) ;
-        }
+		for( auto it = std::as_const(own_id_list).begin();
+		     it != own_id_list.end(); ++it )
+		{
+			if(mShouldEnableDistantMessaging)
+			{
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+				// Keep for RetroShare < 0.6.6 retro-compatibility
+				mGRouter->registerKey(
+				            *it,
+				            static_cast<RsServiceType>(GROUTER_CLIENT_ID_MESSAGES),
+				            "Messaging contact" );
+#endif // ndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+
+				// RetroShare >= 0.6.6
+				mGRouter->registerKey(
+				            *it, RsServiceType::MSG, "Messaging contact" );
+			}
+			else
+			{
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+				// Keep for RetroShare < 0.6.6 retro-compatibility
+				mGRouter->unregisterKey(
+				            *it,
+				            static_cast<RsServiceType>(GROUTER_CLIENT_ID_MESSAGES)
+				            );
+#endif // ndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+
+				// RetroShare >= 0.6.6
+				mGRouter->registerKey(
+				            *it, RsServiceType::MSG, "Messaging contact" );
+			}
+		}
 
         RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
         mDistantMessagingEnabled = mShouldEnableDistantMessaging ;
@@ -2405,23 +2439,37 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	std::cerr << "  serialised size : " << msg_serialized_rssize << std::endl;
 #endif
 
-	GRouterMsgPropagationId grouter_message_id;
-	mGRouter->sendData( destination_key_id, GROUTER_CLIENT_ID_MESSAGES,
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+	GRouterMsgPropagationId grouter_message_id_old;
+	mGRouter->sendData( destination_key_id,
+	                    static_cast<RsServiceType>(GROUTER_CLIENT_ID_MESSAGES),
 	                    msg_serialized_data, msg_serialized_rssize,
-	                    signing_key_id, grouter_message_id );
-	RsGxsTransId gxsMailId;
-	mGxsTransServ.sendData( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
-	                         signing_key_id, destination_key_id,
-	                         msg_serialized_data, msg_serialized_rssize );
-
+	                    signing_key_id, grouter_message_id_old );
 	/* now store the grouter id along with the message id, so that we can keep
 	 * track of received messages */
+	{
+		RS_STACK_MUTEX(mMsgMtx);
+		_ongoing_messages[grouter_message_id_old] = msgitem->msgId;
+	}
+#endif // ndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
 
+	GRouterMsgPropagationId grouter_message_id;
+	mGRouter->sendData( destination_key_id, RsServiceType::MSG,
+	                    msg_serialized_data, msg_serialized_rssize,
+	                    signing_key_id, grouter_message_id );
+	/* now store the grouter id along with the message id, so that we can keep
+	 * track of received messages */
 	{
 		RS_STACK_MUTEX(mMsgMtx);
 		_ongoing_messages[grouter_message_id] = msgitem->msgId;
 	}
 
+	RsGxsTransId gxsMailId;
+	mGxsTransServ.sendData( gxsMailId, GxsTransSubServices::P3_MSG_SERVICE,
+	                         signing_key_id, destination_key_id,
+	                         msg_serialized_data, msg_serialized_rssize );
+	/* Store RsGxsTransId along with along with the message id, so that we can
+	 * keep track of received messages*/
 	{
 		RS_STACK_MUTEX(gxsOngoingMutex);
 		gxsOngoingMessages[gxsMailId] = msgitem->msgId;

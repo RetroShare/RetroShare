@@ -102,8 +102,8 @@ public:
     // from GRouterClientService. The various services are responsible for regstering themselves to the
     // global router, with consistent ids. The services are stored in a map, and arriving objects are
     // passed on the correct service depending on the client id of the key they are reaching.
-    //
-    virtual bool registerClientService(const GRouterServiceId& id,GRouterClientService *service) ;
+	virtual bool registerClientService(
+	        RsServiceType serivceType, GRouterClientService* service );
 
     // Use this method to register/unregister a key that the global router will
     // forward in the network, so that is can be a possible destination for
@@ -117,15 +117,18 @@ public:
     //
     // Unregistering a key might not have an instantaneous effect, so the client is responsible for
     // discarding traffic that might later come for this key.
-    //
-    virtual bool   registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string) ;
-    virtual bool unregisterKey(const RsGxsId &key_id, const GRouterServiceId &sid) ;
+	//
+	bool registerKey(
+	        const RsGxsId& authentication_id, RsServiceType clientServiceType,
+	        const std::string& description_string ) override;
+	bool unregisterKey(const RsGxsId& key_id, RsServiceType sid) override;
 
     //===================================================//
     //         Routing clue collection methods           //
     //===================================================//
 
-    virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
+	virtual void addRoutingClue(
+	        const RsGxsId& id, const RsPeerId& peer_id) override;
 
     //===================================================//
     //         Client/server request services            //
@@ -135,9 +138,11 @@ public:
     // the memory. That means item_data will be erase on return. The returned id should be
     // remembered by the client, so that he knows when the data has been received.
     // The client id is supplied so that the client can be notified when the data has been received.
-    // Data is not modified by the global router.
-    //
-    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, const uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) ;
+	// Data is not modified by the global router.
+	virtual bool sendData(
+	        const RsGxsId& destination, RsServiceType client_id,
+	        const uint8_t* data, uint32_t data_size, const RsGxsId& signing_id,
+	        GRouterMsgPropagationId& id ) override;
 
     // Cancels a given sending order. If called too late, the message might already have left. But this will remove the item from the
     // re-try list.
@@ -219,7 +224,7 @@ private:
     void handleLowLevelTransactionChunkItem(RsGRouterTransactionChunkItem *chunk_item);
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
-    static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
+	static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
 
     std::ostream& grouter_debug() const
     {
@@ -235,12 +240,17 @@ private:
     //             High level item sorting               //
     //===================================================//
 
-    void handleIncoming() ;
+	void handleIncoming();
+	bool handleIncomingItem(std::unique_ptr<RsGRouterAbstractMsgItem> item);
 
-    void handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_item) ;
-    void handleIncomingDataItem(RsGRouterGenericDataItem *data_item) ;
+	void handleIncomingReceiptItem(
+	        std::unique_ptr<RsGRouterSignedReceiptItem> receiptItem );
+	void handleIncomingDataItem(
+	        std::unique_ptr<RsGRouterGenericDataItem> dataItem );
 
-    bool locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client);
+	bool locked_getLocallyRegisteredClientFromServiceId(
+	        RsServiceType serviceType,
+	        GRouterClientService*& clientServiceInstance );
 
     // utility functions
     //
@@ -305,7 +315,7 @@ private:
     // so it's important to keep consistency here. This map is volatile, and re-created at each startup of
     // the software, when newly created services register themselves.
 
-    std::map<GRouterServiceId,GRouterClientService *> _registered_services ;
+	std::map<RsServiceType, GRouterClientService*> _registered_services;
 
     // Stores the routing events.
     // 	- ongoing requests, waiting for return ACK
@@ -357,7 +367,7 @@ private:
 	 * The items are discarded if after mMissingKeyQueueEntryTimeout the key
 	 * hasn't been received yet, and are not saved on RetroShare stopping. */
 	std::list< std::pair<
-	    std::unique_ptr<RsGRouterGenericDataItem>, rstime_t > > mMissingKeyQueue;
+	    std::unique_ptr<RsGRouterAbstractMsgItem>, rstime_t > > mMissingKeyQueue;
 	RsMutex mMissingKeyQueueMtx; /// protect mMissingKeyQueue
 
 	/// @see mMissingKeyQueue

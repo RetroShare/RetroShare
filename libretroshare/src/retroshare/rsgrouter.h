@@ -26,6 +26,7 @@
 #include "util/rsdeprecate.h"
 #include "retroshare/rsids.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "rsitems/rsserviceids.h"
 
 RS_DEPRECATED_FOR(RsGxsId)
 typedef RsGxsId GRouterKeyId;
@@ -64,12 +65,12 @@ public:
         Sha1CheckSum            item_hash ;
     };
 
-    struct GRouterPublishedKeyInfo
-    {
-        std::string  	description_string ;
-        RsGxsId 	authentication_key ;
-        uint32_t     	service_id ;
-    };
+	struct GRouterPublishedKeyInfo
+	{
+		std::string description_string;
+		RsGxsId authentication_key;
+		uint32_t service_id; // TODO: use RsServiceType instead
+	};
 
     struct GRouterRoutingMatrixInfo
     {
@@ -100,10 +101,16 @@ public:
     //         Communication to other services.          //
     //===================================================//
 
-    virtual bool sendData(const RsGxsId& destination, const GRouterServiceId& client_id, const uint8_t *data, uint32_t data_size, const RsGxsId& signing_id, GRouterMsgPropagationId& id) =0;
-    virtual bool cancel(GRouterMsgPropagationId mid) =0;
+	virtual bool sendData(
+	        const RsGxsId& destination, RsServiceType client_id,
+	        const uint8_t* data, uint32_t data_size, const RsGxsId& signing_id,
+	        GRouterMsgPropagationId& id ) = 0;
+	virtual bool cancel(GRouterMsgPropagationId mid) =0;
 
-    virtual bool registerKey(const RsGxsId& authentication_id, const GRouterServiceId& client_id,const std::string& description_string)=0 ;
+	virtual bool registerKey(
+	        const RsGxsId& authentication_id, RsServiceType client_id,
+	        const std::string& description_string ) = 0;
+	virtual bool unregisterKey(const RsGxsId& key_id, RsServiceType sid) = 0;
 
     //===================================================//
     //         Routage feedback from other services      //

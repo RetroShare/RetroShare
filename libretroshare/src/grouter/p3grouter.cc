@@ -251,7 +251,7 @@ int p3GRouter::tick()
 				       << " for item pending validation, calling item handler"
 				       << std::endl;
 
-				handleIncomingDataItem(it->first.get());
+				handleIncomingItem(std::move(it->first));
 				it = mMissingKeyQueue.erase(it);
 			}
 			else
@@ -320,22 +320,29 @@ RsSerialiser *p3GRouter::setupSerialiser()
 	return rss ;
 }
 
-bool p3GRouter::registerKey(const RsGxsId& authentication_key,const GRouterServiceId& client_id,const std::string& description)
+bool p3GRouter::registerKey(
+        const RsGxsId& authentication_key,
+        RsServiceType clientServiceType, const std::string& description )
 {
-    RS_STACK_MUTEX(grMtx) ;
+	RS_STACK_MUTEX(grMtx);
 
-    if(_registered_services.find(client_id) == _registered_services.end())
-    {
-        std::cerr << __PRETTY_FUNCTION__ << ": unable to register key " << authentication_key << " for client id " << client_id << ": client id  is not known." << std::endl;
-        return false ;
-    }
+	uint32_t clientService = static_cast<uint32_t>(clientServiceType);
 
-    GRouterPublishedKeyInfo info ;
-    info.service_id = client_id ;
+	if( _registered_services.find(clientServiceType) ==
+	        _registered_services.end() )
+	{
+		RsErr() << __PRETTY_FUNCTION__ << ": unable to register key "
+		        << authentication_key << " for client id: "
+		        << clientService  << " client id  is not known." << std::endl;
+		return false;
+	}
+
+	GRouterPublishedKeyInfo info;
+	info.service_id = clientService;
     info.authentication_key = authentication_key ;
     info.description_string = description.substr(0,20);
 
-    Sha1CheckSum hash = makeTunnelHash(authentication_key,client_id) ;
+	Sha1CheckSum hash = makeTunnelHash(authentication_key, clientService);
 
     _owned_key_ids[hash] = info ;
 #ifdef GROUTER_DEBUG
@@ -348,20 +355,20 @@ bool p3GRouter::registerKey(const RsGxsId& authentication_key,const GRouterServi
 
     return true ;
 }
-bool p3GRouter::unregisterKey(const RsGxsId& key_id,const GRouterServiceId& sid)
+bool p3GRouter::unregisterKey(
+        const RsGxsId& key_id, RsServiceType sid )
 {
-        RS_STACK_MUTEX(grMtx) ;
+	RS_STACK_MUTEX(grMtx);
 
-    Sha1CheckSum hash = makeTunnelHash(key_id,sid) ;
+	uint32_t clientService = static_cast<uint32_t>(sid);
+	Sha1CheckSum hash = makeTunnelHash(key_id, clientService);
 
-    std::map<Sha1CheckSum,GRouterPublishedKeyInfo>::iterator it = _owned_key_ids.find(hash) ;
-
+	const auto it = _owned_key_ids.find(hash);
 	if(it == _owned_key_ids.end())
 	{
-#ifdef GROUTER_DEBUG
-        std::cerr << "p3GRouter::unregisterKey(): key " << key_id << " not found." << std::endl;
-#endif
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << " key " << key_id << " not found."
+		        << std::endl;
+		return false;
 	}
 
 #ifdef GROUTER_DEBUG
@@ -1370,7 +1377,9 @@ void p3GRouter::autoWash()
 		{
                     GRouterClientService *client = NULL;
                     
-			if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client))
+			if(locked_getLocallyRegisteredClientFromServiceId(
+			            static_cast<RsServiceType>(it->second.client_id),
+			            client ))
 				failed_msgs[it->first] = std::make_pair(client,it->second.data_item->signature.keyId) ;
 			else
 				std::cerr << "  ERROR: client id " << it->second.client_id << " not registered. Consistency error." << std::endl;
@@ -1527,135 +1536,204 @@ bool p3GRouter::sliceDataItem(RsGRouterAbstractMsgItem *item,std::list<RsGRouter
     }
 }
 
-void p3GRouter::handleIncoming()
+bool p3GRouter::handleIncomingItem(
+        std::unique_ptr<RsGRouterAbstractMsgItem> item )
 {
-	while(!_incoming_items.empty())
+	if(!item)
 	{
-        RsGRouterAbstractMsgItem *item = _incoming_items.front() ;
-        _incoming_items.pop_front() ;
+		RsErr() << __PRETTY_FUNCTION__ << " item cannot be null" << std::endl;
+		print_stacktrace();
+		return false;
+	}
 
-        RsGRouterGenericDataItem *generic_data_item ;
-        RsGRouterSignedReceiptItem *receipt_item ;
-
-        if(NULL != (generic_data_item  = dynamic_cast<RsGRouterGenericDataItem*>(item)))
-            handleIncomingDataItem(generic_data_item) ;
-        else if(NULL != (receipt_item = dynamic_cast<RsGRouterSignedReceiptItem*>(item)))
-            handleIncomingReceiptItem(receipt_item) ;
-		else
-			RsWarn() << __PRETTY_FUNCTION__ << " Item has unknown type (not "
-			         << "data nor signed receipt) "
-			         << "item->PeerId(): " << item->PeerId()
-			         << "item->PacketId(): " << item->PacketId() << std::endl;
-
-        delete item ;
-    }
+	switch(item->PacketSubType())
+	{
+	case RS_PKT_SUBTYPE_GROUTER_DATA:
+	{
+		std::unique_ptr<RsGRouterGenericDataItem> dataItem;
+		if(!rs_unique_cast(item, dataItem))
+		{
+			RsWarn() << __PRETTY_FUNCTION__ << " item has recognized subtype: "
+			         << item->PacketSubType() << " but casting failed"
+			         << std::endl;
+			return false;
+		}
+		handleIncomingDataItem(std::move(dataItem));
+		return true;
+	}
+	case RS_PKT_SUBTYPE_GROUTER_SIGNED_RECEIPT:
+	{
+		std::unique_ptr<RsGRouterSignedReceiptItem> receiptItem;
+		if(!rs_unique_cast(item, receiptItem))
+		{
+			RsWarn() << __PRETTY_FUNCTION__ << " receipt has recognized "
+			         << "subtype: " << item->PacketSubType()
+			         << " but casting failed" << std::endl;
+			return false;
+		}
+		handleIncomingReceiptItem(std::move(receiptItem));
+		return true;
+	}
+	default:
+		RsWarn() << __PRETTY_FUNCTION__ << " Item has unknown type: "
+		         << item->PacketSubType()
+		         << " item->PeerId(): " << item->PeerId()
+		         << " item->PacketId(): " << item->PacketId() << std::endl;
+		return false;
+	}
 }
 
-void p3GRouter::handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_item)
+void p3GRouter::handleIncoming()
 {
-    bool changed = false ;
-#ifdef GROUTER_DEBUG
-    std::cerr << "Handling incoming signed receipt item." << std::endl;
-    std::cerr << "Item content:" << std::endl;
-    receipt_item->print(std::cerr,2) ;
-#endif
-    RsGxsId signer_id ;
+	bool keepGoing = true;
+	while(keepGoing)
+	{
+		std::unique_ptr<RsGRouterAbstractMsgItem> item;
 
-    // Because we don't do proxy-transmission yet, the client needs to be notified. Otherwise, we will need to
-    // first check if we're a proxy or not. We also remove the message from the global router sending list.
-    // in the proxy case, we should only store the receipt.
+		{
+			RS_STACK_MUTEX(grMtx);
+			if( (keepGoing = !_incoming_items.empty()) )
+			{
+				item.reset(_incoming_items.front());
+				_incoming_items.pop_front();
+			}
+		}
 
-    GRouterClientService *client_service = NULL;
-    GRouterMsgPropagationId mid = 0 ;
+		if(item) handleIncomingItem(std::move(item));
+	}
+}
 
-    {
-        RS_STACK_MUTEX (grMtx) ;
+void p3GRouter::handleIncomingReceiptItem(
+        std::unique_ptr<RsGRouterSignedReceiptItem> receiptItem )
+{
+	/* First check if the recepit signature is valid, if we miss the key
+	 * temporarly queue the receipt for key request and later checking.
+	 * If the signature is not valid drop the receipt. */
+	uint32_t error_status;
+	if(!verifySignedDataItem(
+	            receiptItem.get(),
+	            RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK,
+	            error_status ))
+	{
+		switch(error_status)
+		{
+		case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
+		{
+			rstime_t timeout = time(nullptr) + mMissingKeyQueueEntryTimeout;
+			mMissingKeyQueueMtx.lock();
+			mMissingKeyQueue.push_back(
+			            std::make_pair(std::move(receiptItem), timeout) );
+			mMissingKeyQueueMtx.unlock();
 
-        std::map<GRouterMsgPropagationId, GRouterRoutingInfo>::iterator it=_pending_messages.find(receipt_item->routing_id) ;
-        if(it == _pending_messages.end())
-        {
-            std::cerr << "  ERROR: no routing ID corresponds to this message. Inconsistency!" << std::endl;
-            return ;
-        }
-        signer_id = it->second.data_item->signature.keyId ;
+			/* Do not request the missing key here to the peer which
+			 * forwarded the item as verifySignedDataItem(...) does it
+			 * already */
 
-        // check hash.
+			RsInfo() << __PRETTY_FUNCTION__ << " Received a receipt from "
+			         << "unknown RsGxsId: " << receiptItem->signature.keyId
+			         << " Cannot verify signature yet, storing in "
+			         << "mMissingKeyQueue for later processing. "
+			         << "timeout: " << timeout << std::endl;
+			return;
+		}
+		default:
+			RsWarn() << __PRETTY_FUNCTION__ << " receipt signature "
+			         << "verification FAILED with: " << error_status
+			         << ", Dropping!" << std::endl;
+			return;
+		}
+	}
 
-        if(receipt_item->data_hash != it->second.item_hash)
-        {
-            std::cerr << "  checking receipt hash : FAILED. Receipt is dropped." << std::endl;
-            return ;
-        }
-#ifdef GROUTER_DEBUG
-        else
-            std::cerr << "  checking receipt hash : OK" << std::endl;
-#endif
-        // check signature. The policy if the following:
-        // 	if we're the destination: 
-        //		signature should check and signing key should be available	// always ensures the receipt is valid
-        //	else
-        //		if key is available, signature should check 			// early protects against frodulent receipts that we can check
-        
-        uint32_t error_status ;
+	/* Now that the signature is validated we have a valid routing clue for the
+	 * receipt signer, take note the incoming route in the routing matrix */
+	if(!mTurtle->isTurtlePeer(receiptItem->PeerId()))
+	{
+		Dbg3() << __PRETTY_FUNCTION__ << " receipt item comes from a direct "
+		       << "friend. Marking route in routing matrix." << std::endl;
 
-        if(! verifySignedDataItem(receipt_item,RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK,error_status))
-            if( (it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN) || (error_status !=  RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE))
-	    {
-		    std::cerr << "  checking receipt signature : FAILED. Receipt is dropped. Error status=" << error_status << std::endl;
-		    return ;
-	    }
-#ifdef GROUTER_DEBUG
-        std::cerr << "  checking receipt signature : OK. " << std::endl;
-        std::cerr << "  removing messsage from cache." << std::endl;
-#endif
+		addRoutingClue(receiptItem->signature.keyId, receiptItem->PeerId());
+	}
 
-        if(it->second.routing_flags & GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN)
-        {
-#ifdef GROUTER_DEBUG
-            std::cerr << "  message is at origin. Setting message transmission to DONE" << std::endl;
-#endif
-            it->second.data_status  = RS_GROUTER_DATA_STATUS_DONE;
+	/* At this point check it the receipt is of a message this node know, if not
+	 * the receipt is dropped (TODO: is this a goor practice? GRouter receipt
+	 * have been quite unreliable historically, this might be part of the cause)
+	 */
+	bool changed = false;
+	RsGxsId originMsgSignerId;
+	GRouterMsgPropagationId propagationId = 0;
+	GRouterClientService* client_service = nullptr;
+	RsServiceType clientServiceType = RsServiceType::NONE;
+	{
+		RS_STACK_MUTEX(grMtx);
 
-            if(locked_getLocallyRegisteredClientFromServiceId(it->second.client_id,client_service))
-                mid = it->first ;
-            else
-            {
-                mid = 0 ;
-                std::cerr << " ERROR: cannot retrieve service ID for message " << std::hex << it->first << std::dec << std::endl;
-            }
-        }
-        else
-        {
-#ifdef GROUTER_DEBUG
-            std::cerr << "  message is not at origin. Setting message transmission to RECEIPT_OK" << std::endl;
-#endif
-            it->second.data_status  = RS_GROUTER_DATA_STATUS_RECEIPT_OK;
-            it->second.receipt_item = receipt_item->duplicate() ;
-        }
+		const auto it = _pending_messages.find(receiptItem->routing_id);
+		if(it == _pending_messages.end())
+		{
+			RsWarn() << __PRETTY_FUNCTION__ << " no routing ID corresponds to "
+			         << "this receipt" << std::endl;
+			return;
+		}
+		propagationId = it->first;
+		originMsgSignerId = it->second.data_item->signature.keyId;
+		clientServiceType = static_cast<RsServiceType>(it->second.client_id);
 
-        changed = true ;
-    }
+		// check hash.
+		if(receiptItem->data_hash != it->second.item_hash)
+		{
+			RsWarn() << __PRETTY_FUNCTION__ << " receipt hash doesn't match "
+			         << " dropping" << std::endl;
+			return;
+		}
 
-    if(mid != 0)
-    {
-#ifdef GROUTER_DEBUG
-        std::cerr << "  notifying client " << (void*)client_service << " that msg " << std::hex << mid << std::dec << " was received." << std::endl;
-#endif
-        client_service->notifyDataStatus(mid, signer_id, GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED) ;
-    }
+		/* If the receipt is of a message we sent, look for the service who sent
+		 * the original message and prepare pointer to notify message has been
+		 * received, if we can't find the service print an error as something
+		 * fishy is happening.*/
+		if( it->second.routing_flags &
+		        GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN )
+		{
 
-    // also note the incoming route in the routing matrix
+			it->second.data_status  = RS_GROUTER_DATA_STATUS_DONE;
 
-    if(!mTurtle->isTurtlePeer(receipt_item->PeerId()))
-    {
-#ifdef GROUTER_DEBUG
-        std::cerr << "  receipt item comes from a direct friend. Marking route in routing matrix." << std::endl;
-#endif
-        addRoutingClue(receipt_item->signature.keyId,receipt_item->PeerId()) ;
-    }
+			if(!locked_getLocallyRegisteredClientFromServiceId(
+			            clientServiceType, client_service ))
+				RsErr() << __PRETTY_FUNCTION__ << " cannot retrieve client "
+				        << "service: " << it->second.client_id
+				        << " instance for receipt to own message "
+				        << std::hex << it->first << std::dec << std::endl;
+		}
+		/* If the receipt is for a known message that is not from us mark the
+		 * message as received and, associate the receipt to it
+		 * TODO: is this enough to ensure the receipt is forwarded to
+		 * potentially interested peers? */
+		else
+		{
+			Dbg2() << __PRETTY_FUNCTION__ << "  message is not at origin. "
+			       << "Setting message transmission to RECEIPT_OK" << std::endl;
 
-    if(changed)
-        IndicateConfigChanged() ;
+			it->second.data_status  = RS_GROUTER_DATA_STATUS_RECEIPT_OK;
+			it->second.receipt_item = receiptItem.release();
+			// no need of dluplicate() just release unique_ptr
+		}
+
+		changed = true;
+	}
+
+	// If receipt was for an own message and service notify the client service
+	if(client_service)
+	{
+		Dbg2() << __PRETTY_FUNCTION__ << " notifying client service: "
+		       << static_cast<uint16_t>(clientServiceType) << " instance: "
+		       << static_cast<void*>(client_service) << " that msg "
+		       << std::hex << propagationId << std::dec << " has been received."
+		       << std::endl;
+
+		client_service->notifyDataStatus(
+		            propagationId, originMsgSignerId,
+		            GROUTER_CLIENT_SERVICE_DATA_STATUS_RECEIVED );
+	}
+
+	if(changed) IndicateConfigChanged();
 }
 
 Sha1CheckSum p3GRouter::computeDataItemHash(RsGRouterGenericDataItem *data_item)
@@ -1682,7 +1760,8 @@ Sha1CheckSum p3GRouter::computeDataItemHash(RsGRouterGenericDataItem *data_item)
     return RsDirUtil::sha1sum(mem,total_size) ;
 }
 
-void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
+void p3GRouter::handleIncomingDataItem(
+        std::unique_ptr<RsGRouterGenericDataItem> data_item)
 {
 	Dbg4() << __PRETTY_FUNCTION__ << " Handling incoming data item.\n\t"
 	       << *data_item << std::endl;
@@ -1696,7 +1775,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 	// Send a receipt?           if     A && B && !C
 	// Notify client service?    if     A && B && !C
 
-	Sha1CheckSum item_hash = computeDataItemHash(data_item);
+	Sha1CheckSum item_hash = computeDataItemHash(data_item.get());
 	RsGRouterSignedReceiptItem* receipt_item = nullptr;
 	bool item_is_already_known = false;
 	{
@@ -1722,7 +1801,8 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 	{
 		uint32_t error_status;
 		if(!verifySignedDataItem(
-		            data_item, RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK,
+		            data_item.get(),
+		            RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK,
 		            error_status ))
 		{
 			switch (error_status)
@@ -1730,11 +1810,10 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 			case RsGixs::RS_GIXS_ERROR_KEY_NOT_AVAILABLE:
 			{
 				rstime_t timeout = time(nullptr) + mMissingKeyQueueEntryTimeout;
+				RsGxsId authorId = data_item->signature.keyId;
 				mMissingKeyQueueMtx.lock();
 				mMissingKeyQueue.push_back(
-				            std::make_pair(
-				                std::unique_ptr<RsGRouterGenericDataItem>(
-				                    data_item->duplicate() ), timeout ) );
+				            std::make_pair(std::move(data_item), timeout) );
 				mMissingKeyQueueMtx.unlock();
 
 				/* Do not request the missing key here to the peer which
@@ -1742,7 +1821,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 				 * already */
 
 				RsInfo() << __PRETTY_FUNCTION__ << " Received a message from "
-				         << "unknown RsGxsId: " << data_item->signature.keyId
+				         << "unknown RsGxsId: " << authorId
 				         << " Cannot verify signature yet, storing in "
 				         << "mMissingKeyQueue for later processing. "
 				         << "timeout: " << timeout << std::endl;
@@ -1767,7 +1846,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 		{
 			RS_STACK_MUTEX(grMtx);
 			const auto its = std::as_const(_registered_services).
-			        find(data_item->service_id);
+			        find(static_cast<RsServiceType>(data_item->service_id));
 			if(its != _registered_services.end()) clientService = its->second;
 		}
 
@@ -1821,7 +1900,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 			info.sending_attempts = 0;
 			info.received_time_TS = time(nullptr);
 			info.tunnel_hash = makeTunnelHash(
-			            data_item->destination_key,data_item->service_id );
+			            data_item->destination_key, data_item->service_id );
 
 			/* Do not store the whole item if it was for us. No need to take
 			 * that much memory. Store only the bits we need to check that
@@ -1864,7 +1943,7 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 		       << "decrypting and notifying client." << std::endl;
 
 		RsGRouterGenericDataItem& decrypted_item = *data_item;
-		if(!decryptDataItem(data_item))
+		if(!decryptDataItem(data_item.get()))
 		{
 			RsWarn() << __PRETTY_FUNCTION__ << " decrypting item: "
 			         << data_item->routing_id << " for service: "
@@ -1888,24 +1967,22 @@ void p3GRouter::handleIncomingDataItem(RsGRouterGenericDataItem* data_item)
 	}
 }
 
-bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client)
+bool p3GRouter::locked_getLocallyRegisteredClientFromServiceId(
+        RsServiceType serviceType,
+        GRouterClientService*& clientServiceInstance )
 {
-    client = NULL ;
-    
-    std::map<GRouterServiceId,GRouterClientService*>::const_iterator its = _registered_services.find(service_id) ;
+	const auto it = std::as_const(_registered_services).find(serviceType);
+	if(it == _registered_services.end())
+	{
+		clientServiceInstance = nullptr;
+		return false;
+	}
 
-    if(its == _registered_services.end())
-    {
-        std::cerr << "  ERROR: client id " << service_id << " not registered. Consistency error." << std::endl;
-        return false;
-    }
-
-    client = its->second ;
-
-    return true ;
+	clientServiceInstance = it->second;
+	return true;
 }
 
-void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
+void p3GRouter::addRoutingClue(const RsGxsId& id, const RsPeerId& peer_id)
 {
     RS_STACK_MUTEX(grMtx) ;
 #ifdef GROUTER_DEBUG
@@ -1915,11 +1992,12 @@ void p3GRouter::addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id)
     _changed = true ;
 }
 
-bool p3GRouter::registerClientService(const GRouterServiceId& id,GRouterClientService *service)
+bool p3GRouter::registerClientService(
+        RsServiceType serivceType, GRouterClientService* service )
 {
-    RS_STACK_MUTEX(grMtx) ;
-	_registered_services[id] = service ;
-	return true ;
+	RS_STACK_MUTEX(grMtx) ;
+	_registered_services[serivceType] = service;
+	return true;
 }
 
 bool p3GRouter::encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key)
@@ -2145,7 +2223,7 @@ bool p3GRouter::cancel(GRouterMsgPropagationId mid)
 }
 
 bool p3GRouter::sendData(
-        const RsGxsId& destination, const GRouterServiceId& client_id,
+        const RsGxsId& destination, RsServiceType client_id,
         const uint8_t* data, uint32_t data_size, const RsGxsId& signing_id,
         GRouterMsgPropagationId&propagation_id )
 {
@@ -2179,7 +2257,7 @@ bool p3GRouter::sendData(
     data_item->data_size = data_size ;
     data_item->routing_id = propagation_id  ;
     data_item->duplication_factor = GROUTER_MAX_DUPLICATION_FACTOR ;
-    data_item->service_id = client_id ;
+	data_item->service_id = static_cast<GRouterServiceId>(client_id);
     data_item->destination_key = destination  ;
 
     // First, encrypt.
@@ -2220,13 +2298,14 @@ bool p3GRouter::sendData(
     info.data_status = RS_GROUTER_DATA_STATUS_PENDING ;
     info.tunnel_status = RS_GROUTER_TUNNEL_STATUS_UNMANAGED ;
     info.last_sent_TS = 0 ;
-    info.client_id = client_id ;
+	info.client_id = static_cast<GRouterServiceId>(client_id);
     info.last_tunnel_request_TS = 0 ;
     info.item_hash = computeDataItemHash(data_item) ;
     info.sending_attempts = 0 ;
     info.routing_flags =  GRouterRoutingInfo::ROUTING_FLAGS_IS_ORIGIN | GRouterRoutingInfo::ROUTING_FLAGS_ALLOW_FRIENDS ;// don't allow tunnels just yet
     info.received_time_TS = now ;
-    info.tunnel_hash = makeTunnelHash(destination,client_id) ;
+	info.tunnel_hash = makeTunnelHash(
+	            destination, static_cast<GRouterServiceId>(client_id) );
 
 #ifdef GROUTER_DEBUG
     grouter_debug() << "p3GRouter::sendGRouterData(): pushing the following item in the msg pending list:" << std::endl;
@@ -2443,8 +2522,11 @@ void p3GRouter::debugDump()
 
 	grouter_debug() << "  Registered services: " << std::endl;
 
-	for(std::map<GRouterServiceId,GRouterClientService *>::const_iterator it(_registered_services.begin() );it!=_registered_services.end();++it)
-		grouter_debug() << "    " << std::hex << it->first << "   " << std::dec << (void*)it->second << std::endl;
+	for( auto it = std::as_const(_registered_services).begin();
+	     it!=_registered_services.end(); ++it )
+		grouter_debug() << "    " << std::hex
+		                << static_cast<uint16_t>(it->first) << "   " << std::dec
+		                << static_cast<void*>(it->second) << std::endl;
 
 	grouter_debug() << "  Data items: " << std::endl;
 

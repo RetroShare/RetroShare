@@ -253,6 +253,15 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #    Why:  Avoids sending probe packets
 #    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
 #
+#
+#
+#  V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID:
+#    RetroShare 0.6.x uses custom numeric service ids instead of RsServiceId
+#   Since RetroShare 0.6.6 it is capable to recognize meessages that uses
+#      proper RsServiceId
+#   When this change is enabled the duplicate work necessary to be
+#      retro-compatible with RetroShare < 0.6.6 will be disabled
+#
 ###########################################################################################################################################################
 
 #CONFIG += rs_v07_changes
@@ -262,6 +271,7 @@ rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_004
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
+    DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
 }
 
 ################################################################################

@@ -32,7 +32,11 @@
 struct RsGRouterGenericDataItem;
 class RsGRouterSignedReceiptItem ;
 
-static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001 ;
+#ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
+/// Pay special attention fixing this, as may break retrocompatibility!
+RS_DEPRECATED_FOR(RsServiceType::MSG)
+static const uint16_t GROUTER_CLIENT_ID_MESSAGES     = 0x1001;
+#endif // V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID
 
 static const uint32_t RS_GROUTER_MATRIX_MAX_HIT_ENTRIES       =        10 ; // max number of clues to store
 static const uint32_t RS_GROUTER_MATRIX_MIN_TIME_BETWEEN_HITS =        60 ; // can be set to up to half the publish time interval. Prevents flooding routes.
