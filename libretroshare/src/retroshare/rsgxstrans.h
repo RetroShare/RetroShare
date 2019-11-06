@@ -23,9 +23,12 @@
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
 #include "retroshare/rsgxscommon.h"
+#include "rsitems/rsserviceids.h"
 
-/// Subservices identifiers (like port for TCP)
-enum class GxsTransSubServices : uint16_t
+/** Subservices identifiers (like port for TCP)
+ * @deprecated pay special attention fixing this as it may break
+ * retro-compatibility */
+enum  class RS_DEPRECATED_FOR(RsServiceType) GxsTransSubServices : uint16_t
 {
 	UNKNOWN         = 0x00,
 	TEST_SERVICE    = 0x01,
