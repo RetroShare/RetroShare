@@ -83,7 +83,11 @@ template<int MIME_TYPE_INDEX> class handler
         static std::string _base_directory ;
 };
 
-template<int MIME_TYPE_INDEX> std::string handler<MIME_TYPE_INDEX>::_base_directory = "/home/csoler/Desktop/Code/retroshare/RSNewWebUI/webui/";
+#ifdef WINDOWS_SYS
+template<int MIME_TYPE_INDEX> std::string handler<MIME_TYPE_INDEX>::_base_directory = "data/webui";
+#else
+template<int MIME_TYPE_INDEX> std::string handler<MIME_TYPE_INDEX>::_base_directory = "/usr/share/retroshare/webui/";
+#endif
 
 static void service_ready_handler( restbed::Service& )
 {
