@@ -47,6 +47,13 @@ static constexpr char *mime_types[3] = {
 	"image/svg+xml"
 };
 
+#ifdef WINDOWS_SYS
+static std::string _base_directory = "data/webui";
+#else
+static std::string _base_directory = "/usr/share/retroshare/webui/";
+#endif
+
+
 template<int MIME_TYPE_INDEX> class handler
 {
 	public:
@@ -79,15 +86,7 @@ template<int MIME_TYPE_INDEX> class handler
 				session->close( restbed::NOT_FOUND );
 			}
 		}
-
-        static std::string _base_directory ;
 };
-
-#ifdef WINDOWS_SYS
-template<int MIME_TYPE_INDEX> std::string handler<MIME_TYPE_INDEX>::_base_directory = "data/webui";
-#else
-template<int MIME_TYPE_INDEX> std::string handler<MIME_TYPE_INDEX>::_base_directory = "/usr/share/retroshare/webui/";
-#endif
 
 static void service_ready_handler( restbed::Service& )
 {
@@ -100,7 +99,7 @@ public:
     WebUIThread()
     {
 		_service = std::make_shared<restbed::Service>();
-
+		_listening_port = 1984;
     }
 
     void runloop() override
@@ -128,7 +127,7 @@ public:
 		resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
 
 		auto settings = std::make_shared< restbed::Settings >( );
-		settings->set_port( 1984 );
+		settings->set_port( _listening_port );
 		settings->set_default_header( "Connection", "close" );
 
 		_service->publish( resource1 );
@@ -136,7 +135,16 @@ public:
 		_service->publish( resource3 );
 
 		_service->set_ready_handler( service_ready_handler );
-		_service->start( settings );
+
+        try
+        {
+			_service->start( settings );
+        }
+        catch(std::exception& e)
+        {
+            RsErr() << "Could  not start web interface: " << e.what() << std::endl;
+            return;
+        }
 	}
     void stop()
     {
@@ -148,8 +156,12 @@ public:
             sleep(1);
     }
 
+    void setListeningPort(uint16_t p) { _listening_port = p ; }
+    uint16_t listeningPort() const { return _listening_port;}
+
 private:
     std::shared_ptr<restbed::Service> _service;
+    uint16_t _listening_port;
 };
 
 p3WebUI::p3WebUI()
@@ -169,7 +181,7 @@ p3WebUI::~p3WebUI()
 
 bool p3WebUI::restart()
 {
-    RsDbg() << "Restarting web interface listening on port " << _listening_port << std::endl;
+    RsDbg() << "Restarting web interface listening on port " << _webui_thread->listeningPort() << std::endl;
 
     if(_webui_thread->isRunning())
         _webui_thread->stop();
@@ -186,11 +198,11 @@ bool p3WebUI::stop()
 
 void p3WebUI::setHtmlFilesDirectory(const std::string& html_dir)
 {
-    _html_files_directory = html_dir;
+    _base_directory = html_dir;
 }
 void p3WebUI::setListeningPort(uint16_t port)
 {
-    _listening_port = port;
+    _webui_thread->setListeningPort(port);
 
     if(_webui_thread->isRunning())
 		restart();

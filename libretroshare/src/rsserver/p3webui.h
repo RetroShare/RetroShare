@@ -41,9 +41,6 @@ public:
 
 private:
     WebUIThread *_webui_thread;
-
-    std::string _html_files_directory;
-    uint16_t _listening_port;
 };
 
 

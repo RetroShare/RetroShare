@@ -47,7 +47,7 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
     connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
     connect(ui.applyStartBrowser_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
-    connect(ui.webInterfaceFiles_LE, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
+    connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
 }
 
 WebuiPage::~WebuiPage()
@@ -58,6 +58,11 @@ WebuiPage::~WebuiPage()
 void WebuiPage::selectWebInterfaceDirectory()
 {
     QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Please select the directory were to find retroshare webinterface files"),ui.webInterfaceFiles_LE->text());
+
+    if(dirname.isNull())
+        return;
+
+	whileBlocking(ui.webInterfaceFiles_LE)->setText(dirname);
 }
 
 bool WebuiPage::updateParams(QString &errmsg)
@@ -71,12 +76,16 @@ bool WebuiPage::updateParams(QString &errmsg)
         changed = true;
     if(ui.allIp_CB->isChecked() != Settings->getWebinterfaceAllowAllIps())
         changed = true;
+    if(ui.webInterfaceFiles_LE->text() != Settings->getWebinterfaceFilesDirectory())
+        changed = true;
+
     if(changed)
     {
         // store config
         Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
         Settings->setWebinterfacePort(ui.port_SB->value());
         Settings->setWebinterfaceAllowAllIps(ui.allIp_CB->isChecked());
+        Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
 
         // apply config
         checkShutdownWebui();

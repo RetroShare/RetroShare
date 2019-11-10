@@ -1150,17 +1150,23 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
     setValueToGroup("Webinterface", "enabled", enabled);
 }
 
-uint16_t RshareSettings::getWebinterfacePort()
-{
-    return valueFromGroup("Webinterface", "port", 1984).toUInt();
-}
-
 QString RshareSettings::getWebinterfaceFilesDirectory()
 {
 #ifdef WINDOWS_SYS
     return valueFromGroup("Webinterface","directory","data/webui/").toString().toStdString();
 #endif
     return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
+}
+
+void RshareSettings::setWebinterfaceFilesDirectory(const QString& s)
+{
+    setValueToGroup("Webinterface","directory",s);
+}
+
+
+uint16_t RshareSettings::getWebinterfacePort()
+{
+    return valueFromGroup("Webinterface", "port", 1984).toUInt();
 }
 
 void RshareSettings::setWebinterfacePort(uint16_t port)
