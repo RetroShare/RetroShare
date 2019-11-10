@@ -130,11 +130,21 @@ public:
 		settings->set_port( _listening_port );
 		settings->set_default_header( "Connection", "close" );
 
+         if(_service->is_up())
+        {
+            std::cerr << "WebUI is already running. Killing it." << std::endl;
+            _service->stop();
+        }
+
+		_service = std::make_shared<restbed::Service>();
+
 		_service->publish( resource1 );
 		_service->publish( resource2 );
 		_service->publish( resource3 );
 
-		_service->set_ready_handler( service_ready_handler );
+        std::cerr << "Starting web service on port " << std::dec << _listening_port << std::endl;
+		//_service->set_ready_handler( service_ready_handler );
+
 
         try
         {
@@ -145,6 +155,8 @@ public:
             RsErr() << "Could  not start web interface: " << e.what() << std::endl;
             return;
         }
+
+        std::cerr << "(II) Shutting down webui service." << std::endl;
 	}
     void stop()
     {

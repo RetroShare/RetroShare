@@ -86,16 +86,17 @@ bool WebuiPage::updateParams(QString &errmsg)
         Settings->setWebinterfacePort(ui.port_SB->value());
         Settings->setWebinterfaceAllowAllIps(ui.allIp_CB->isChecked());
         Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
-
-        // apply config
-        checkShutdownWebui();
-        ok = checkStartWebui();
     }
-    if(!ok)
-        errmsg = "Could not start webinterface.";
     return ok;
 }
 
+bool WebuiPage::restart()
+{
+	// apply config
+	checkShutdownWebui();
+
+	return checkStartWebui();
+}
 void WebuiPage::load()
 {
 	std::cerr << "WebuiPage::load()" << std::endl;
@@ -166,8 +167,8 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 void WebuiPage::onApplyClicked()
 {
     QString errmsg;
-    bool ok = updateParams(errmsg);
-    if(!ok)
+
+    if(!restart())
     {
         QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
         return;

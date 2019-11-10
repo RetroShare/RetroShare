@@ -68,6 +68,7 @@ private:
   /** Qt Designer generated object */
   Ui::WebuiPage ui;
 
+  bool restart();
   bool updateParams(QString &errmsg);
 
   static resource_api::ApiServer* apiServer;
