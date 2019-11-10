@@ -46,7 +46,9 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.enableWebUI_CB, SIGNAL(clicked(bool)), this, SLOT(onEnableCBClicked(bool)));
     connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
     connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
-    connect(ui.applyStartBrowser_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
+    connect(ui.apply_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
+    connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
+    connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
     connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
 }
 
@@ -55,6 +57,10 @@ WebuiPage::~WebuiPage()
 
 }
 
+void WebuiPage::onPasswordValueChanged(QString password)
+{
+    std::cerr << "Setting new password to \"" << password.toStdString() << "\"" << std::endl;
+}
 void WebuiPage::selectWebInterfaceDirectory()
 {
     QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Please select the directory were to find retroshare webinterface files"),ui.webInterfaceFiles_LE->text());
@@ -147,7 +153,8 @@ QString WebuiPage::helpText() const
 void WebuiPage::onEnableCBClicked(bool checked)
 {
 	ui.params_GB->setEnabled(checked);
-	ui.applyStartBrowser_PB->setEnabled(checked);
+	ui.apply_PB->setEnabled(checked);
+	ui.startWebBrowser_PB->setEnabled(checked);
 	QString S;
 	updateParams(S);
 }
@@ -163,7 +170,6 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 	QString S;
 	updateParams(S);
 }
-
 void WebuiPage::onApplyClicked()
 {
     QString errmsg;
@@ -173,5 +179,9 @@ void WebuiPage::onApplyClicked()
         QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
         return;
     }
+}
+
+void WebuiPage::onStartWebBrowserClicked()
+{
     QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(ui.port_SB->value())));
 }

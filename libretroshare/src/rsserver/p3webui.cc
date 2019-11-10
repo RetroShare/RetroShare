@@ -98,7 +98,7 @@ class WebUIThread: public RsThread
 public:
     WebUIThread()
     {
-		_service = std::make_shared<restbed::Service>();
+		_service = std::make_shared<restbed::Service>();	// this is a place holder, in case we request some internal values.
 		_listening_port = 1984;
     }
 
@@ -142,12 +142,9 @@ public:
 		_service->publish( resource2 );
 		_service->publish( resource3 );
 
-        std::cerr << "Starting web service on port " << std::dec << _listening_port << std::endl;
-		//_service->set_ready_handler( service_ready_handler );
-
-
         try
         {
+			std::cerr << "Starting web service on port " << std::dec << _listening_port << std::endl;
 			_service->start( settings );
         }
         catch(std::exception& e)
