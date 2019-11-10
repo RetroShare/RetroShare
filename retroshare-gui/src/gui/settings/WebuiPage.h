@@ -58,6 +58,7 @@ public:
   static void showWebui();
 
 public slots:
+	void selectWebInterfaceDirectory();
   void onEnableCBClicked(bool checked);
   void onPortValueChanged(int value);
   void onAllIPCBClicked(bool checked);

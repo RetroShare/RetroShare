@@ -334,6 +334,9 @@ public:
     uint16_t getWebinterfacePort();
     void setWebinterfacePort(uint16_t port);
 
+	QString getWebinterfaceFilesDirectory();
+	void setWebinterfaceFilesDirectory(const QString& dirname);
+
     bool getWebinterfaceAllowAllIps();
     void setWebinterfaceAllowAllIps(bool allow_all);
     

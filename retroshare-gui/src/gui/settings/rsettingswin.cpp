@@ -44,7 +44,7 @@
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 #	include "WebuiPage.h"
 #endif
 
@@ -164,9 +164,9 @@ SettingsPage::initStackedWidget()
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
     addPage(new WebuiPage() );
-#endif // ENABLE_WEBUI
+#endif
 
 #ifdef RS_JSONAPI
 	addPage(new JsonApiPage());

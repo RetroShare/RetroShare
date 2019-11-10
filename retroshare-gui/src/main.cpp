@@ -56,7 +56,7 @@ CrashStackTrace gCrashStackTrace;
 #ifdef MESSENGER_WINDOW
 #include "gui/MessengerWindow.h"
 #endif
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 #	include "gui/settings/WebuiPage.h"
 #endif
 
@@ -574,7 +574,7 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
     WebuiPage::checkStartWebui();
 #endif // ENABLE_WEBUI
 
@@ -595,9 +595,9 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	JsonApiPage::checkShutdownJsonApi();
 #endif // RS_JSONAPI
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 	WebuiPage::checkShutdownWebui();
-#endif // ENABLE_WEBUI
+#endif
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

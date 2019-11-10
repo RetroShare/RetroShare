@@ -37,14 +37,6 @@
 #include "introserver.h"
 #endif
 
-#ifdef ENABLE_WEBUI
-#include <stdarg.h>
-#include <csignal>
-#include "api/ApiServerMHD.h"
-#include "api/RsControlModule.h"
-#include "TerminalApiClient.h"
-#endif
-
 /* Basic instructions for running libretroshare as background thread.
  * ******************************************************************* *
  * This allows your program to communicate with authenticated peers. 
@@ -60,7 +52,7 @@ int main(int argc, char **argv)
 	RsConfigOptions conf;
 	conf.main_executable_path = argv[0];
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
     std::string docroot = resource_api::getDefaultDocroot();
     uint16_t httpPort = 0;
 	std::string listenAddress;

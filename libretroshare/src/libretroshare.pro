@@ -159,6 +159,12 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsservicecontrol.h \
 					retroshare/rsgxsdistsync.h 
 
+rs_webui {
+					PUBLIC_HEADERS += retroshare/rswebui.h
+					SOURCES += rsserver/p3webui.cc
+					HEADERS += rsserver/p3webui.h
+}
+
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \

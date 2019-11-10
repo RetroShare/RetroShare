@@ -28,7 +28,7 @@ DEFINES += TARGET=\\\"$${TARGET}\\\"
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
 INCLUDEPATH *= $${PWD} retroshare-gui
 
-libresapihttpserver {
+rs_webui {
     !include("../../libresapi/src/use_libresapi.pri"):error("Including")
     HEADERS *= gui/settings/WebuiPage.h
     SOURCES *= gui/settings/WebuiPage.cpp

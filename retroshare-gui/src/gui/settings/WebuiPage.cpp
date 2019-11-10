@@ -27,11 +27,7 @@
 #include <QSpinBox>
 
 #include "util/misc.h"
-#include "api/ApiServer.h"
-#include "api/ApiServerMHD.h"
-#include "api/ApiServerLocal.h"
-#include "api/RsControlModule.h"
-#include "api/GetPluginInterfaces.h"
+#include "retroshare/rswebui.h"
 
 #include "rsharesettings.h"
 
@@ -51,11 +47,17 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
     connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
     connect(ui.applyStartBrowser_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
+    connect(ui.webInterfaceFiles_LE, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
 }
 
 WebuiPage::~WebuiPage()
 {
 
+}
+
+void WebuiPage::selectWebInterfaceDirectory()
+{
+    QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Please select the directory were to find retroshare webinterface files"),ui.webInterfaceFiles_LE->text());
 }
 
 bool WebuiPage::updateParams(QString &errmsg)
@@ -90,6 +92,7 @@ void WebuiPage::load()
 	std::cerr << "WebuiPage::load()" << std::endl;
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
 	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
+	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
 	onEnableCBClicked(Settings->getWebinterfaceEnabled());
 }
@@ -105,49 +108,18 @@ QString WebuiPage::helpText() const
 {
     if(!Settings->getWebinterfaceEnabled())
         return true;
-    if(apiServer || apiServerMHD || controlModule)
-        return true;
 
-    apiServer = new resource_api::ApiServer();
-    controlModule = new resource_api::RsControlModule(0, 0, apiServer->getStateTokenServer(), apiServer, false);
-    apiServer->addResourceHandler("control", dynamic_cast<resource_api::ResourceRouter*>(controlModule), &resource_api::RsControlModule::handleRequest);
+    rsWebUI->setListeningPort(Settings->getWebinterfacePort());
+    rsWebUI->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
 
-    RsPlugInInterfaces ifaces;
-    resource_api::getPluginInterfaces(ifaces);
-    apiServer->loadMainModules(ifaces);
+    rsWebUI->restart();
 
-    apiServerMHD = new resource_api::ApiServerMHD(apiServer);
-    bool ok = apiServerMHD->configure(resource_api::getDefaultDocroot(),
-                                      Settings->getWebinterfacePort(),
-                                      "",
-                                      Settings->getWebinterfaceAllowAllIps());
-    apiServerMHD->start();
-
-// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
-#ifdef LIBRESAPI_LOCAL_SERVER
-	apiServerLocal = new resource_api::ApiServerLocal(apiServer, resource_api::ApiServerLocal::serverPath());
-#endif
-
-    return ok;
+    return true;
 }
 
 /*static*/ void WebuiPage::checkShutdownWebui()
 {
-    if(apiServer || apiServerMHD)
-    {
-        apiServerMHD->stop();
-        delete apiServerMHD;
-        apiServerMHD = 0;
-// TODO: LIBRESAPI_LOCAL_SERVER Move in appropriate place
-#ifdef LIBRESAPI_LOCAL_SERVER
-		delete apiServerLocal;
-		apiServerLocal = 0;
-#endif
-        delete apiServer;
-        apiServer = 0;
-        delete controlModule;
-        controlModule = 0;
-    }
+    rsWebUI->stop();
 }
 
 /*static*/ void WebuiPage::showWebui()
