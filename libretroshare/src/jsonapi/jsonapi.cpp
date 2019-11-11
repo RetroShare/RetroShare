@@ -432,9 +432,52 @@ bool JsonApiServer::requestNewTokenAutorization(const std::string& token)
 	return false;
 }
 
+static bool is_alphanumeric(char c) { return (c>='0' && c<'9') || (c>='a' && c<='z') || (c>='A' && c<='Z') ;}
+static bool is_alphanumeric(const std::string& s)
+{
+    for(uint32_t i=0;i<s.size();++i)
+        if(!is_alphanumeric(s[i]))
+            return false;
+    return true;
+}
+
+static bool parseToken(const std::string& clear_token,std::string& user,std::string& passwd)
+{
+	uint32_t last_index=0;
+	uint32_t nb_colons=0;
+
+	for(uint32_t i=0;i<clear_token.length();++i)
+		if(clear_token[i]==':')
+		{
+			++nb_colons;
+			last_index = i;
+		}
+		else if(!is_alphanumeric(clear_token[i]))
+			return false;
+
+	if(nb_colons != 1)
+		return false;
+
+	user   = clear_token.substr(0,last_index);
+	passwd = clear_token.substr(last_index+1,(int)clear_token.size()-(int)last_index-2);
+
+	return true;
+}
+
+
 bool JsonApiServer::isAuthTokenValid(const std::string& token)
 {
 	RS_STACK_MUTEX(configMutex);
+
+    std::string user,passwd;
+
+    if(!parseToken(token,user,passwd))
+    	return false;
+
+    auto it = mAuthTokenStorage.mAuthorizedTokens.find(user);
+
+    if(it == mAuthTokenStorage.mAuthorizedTokens.end())
+        return false;
 
 	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
 	int noOptimiz = 1;
@@ -442,21 +485,18 @@ bool JsonApiServer::isAuthTokenValid(const std::string& token)
 	/* Do not use mAuthTokenStorage.mAuthorizedTokens.count(token), because
 	 * std::string comparison is usually not constant time on content to be
 	 * faster, so an attacker may use timings to guess authorized tokens */
-	for(const std::string& vTok : mAuthTokenStorage.mAuthorizedTokens)
-	{
-		if( token.size() == vTok.size() &&
-		        ( noOptimiz = CRYPTO_memcmp( token.data(), vTok.data(),
-		                                     vTok.size() ) ) == 0 )
+
+	if( passwd.size() == it->second.size() && ( noOptimiz = CRYPTO_memcmp( passwd.data(), it->second.data(), it->second.size() ) ) == 0 )
 			return true;
 		// Make token size guessing harder
-		else noOptimiz = CRYPTO_memcmp(token.data(), token.data(), token.size());
-	}
+	else
+		noOptimiz = CRYPTO_memcmp(passwd.data(), passwd.data(), passwd.size());
 
 	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
 	return static_cast<uint32_t>(noOptimiz) + 1 == 0;
 }
 
-std::set<std::string> JsonApiServer::getAuthorizedTokens()
+std::map<std::string, std::string> JsonApiServer::getAuthorizedTokens()
 {
 	RS_STACK_MUTEX(configMutex);
 	return mAuthTokenStorage.mAuthorizedTokens;
@@ -473,33 +513,57 @@ bool JsonApiServer::revokeAuthToken(const std::string& token)
 	return false;
 }
 
-bool JsonApiServer::authorizeToken(const std::string& token)
+bool JsonApiServer::authorizeUser(const std::string& user,const std::string& passwd)
 {
-	if(token.empty()) return false;
+	if(!is_alphanumeric(user) || !is_alphanumeric(passwd))
+        return false;
 
 	RS_STACK_MUTEX(configMutex);
-	if(mAuthTokenStorage.mAuthorizedTokens.insert(token).second)
+
+    std::string& p(mAuthTokenStorage.mAuthorizedTokens[user]);
+
+    if(p != passwd)
 	{
+        p = passwd;
 		IndicateConfigChanged();
-		return true;
 	}
-	return false;
+	return true;
 }
 
-/*static*/ std::string JsonApiServer::decodeToken(const std::string& token)
+
+bool JsonApiServer::authorizeToken(const std::string& token)
 {
-	std::vector<uint8_t> decodedVect(Radix64::decode(token));
+    std::string user,password;
+
+	if(!parseToken(token,user,password))
+        return false;
+
+	RS_STACK_MUTEX(configMutex);
+
+	std::string& p(mAuthTokenStorage.mAuthorizedTokens[user]);
+
+    if(p != password)
+	{
+        p = password;
+		IndicateConfigChanged();
+	}
+	return true;
+}
+
+/*static*/ std::string JsonApiServer::decodeToken(const std::string& radix64_token)
+{
+	std::vector<uint8_t> decodedVect(Radix64::decode(radix64_token));
 	std::string decodedToken(
 	            reinterpret_cast<const char*>(&decodedVect[0]),
 	            decodedVect.size() );
 	return decodedToken;
 }
 
-/*static*/ std::string JsonApiServer::encondeToken(const std::string& token)
+/*static*/ std::string JsonApiServer::encodeToken(const std::string& clear_token)
 {
 	std::string encoded;
-	Radix64::encode( reinterpret_cast<const uint8_t*>(token.c_str()),
-	                 token.length(), encoded );
+	Radix64::encode( reinterpret_cast<const uint8_t*>(clear_token.c_str()),
+	                 clear_token.length(), encoded );
 	return encoded;
 }
 

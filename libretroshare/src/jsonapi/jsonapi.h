@@ -120,40 +120,48 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	 * @jsonapi{development}
 	 * @return the set of authorized encoded tokens
 	 */
-	std::set<std::string> getAuthorizedTokens();
+	std::map<std::string,std::string> getAuthorizedTokens();
 
 	/**
 	 * @brief Revoke given auth token
 	 * @jsonapi{development}
-	 * @param[in] token decoded
+	 * @param[in] user par of the decoded token
 	 * @return true if the token has been revoked, false otherwise
 	 */
-	bool revokeAuthToken(const std::string& token);
+	bool revokeAuthToken(const std::string& user);
 
 	/**
 	 * @brief Add new auth token to the authorized set
 	 * @jsonapi{development}
-	 * @param[in] token toke to autorize decoded
-	 * @return true if the token has been added to authorized, false if error
-	 *	occurred or if the token was already authorized
+	 * @param[in] token token to autorize decoded, in format user:passwd where user and passwd are alphanumeric strings
+	 * @return true if the token has been added to authorized, false if error occurred (e.g. token format is invalid)
 	 */
 	bool authorizeToken(const std::string& token);
 
 	/**
+	 * @brief Add new auth (user,passwd) token to the authorized set, creating the token user:passwd internally.
+	 * @jsonapi{development}
+	 * @param[in] alphanumeric_user username to autorize decoded
+	 * @param[in] alphanumeric_passwd passwd to autorize decoded
+	 * @return true if the token has been added to authorized, false if error occurred
+	 */
+	bool authorizeUser(const std::string& alphanumeric_user,const std::string& alphanumeric_passwd);
+
+	/**
 	 * @brief Get decoded version of the given encoded token
 	 * @jsonapi{development,unauthenticated}
-	 * @param[in] token encoded
+	 * @param[in] radix64_token encoded
 	 * @return token decoded
 	 */
-	static std::string decodeToken(const std::string& token);
+	static std::string decodeToken(const std::string& radix64_token);
 
 	/**
 	 * @brief Get encoded version of the given decoded token
 	 * @jsonapi{development,unauthenticated}
-	 * @param[in] token decoded
+	 * @param[in] clear_token decoded
 	 * @return token encoded
 	 */
-	static std::string encondeToken(const std::string& token);
+	static std::string encodeToken(const std::string& clear_token);
 
 	/**
 	 * @brief Write version information to given paramethers
