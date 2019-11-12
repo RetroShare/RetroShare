@@ -83,7 +83,13 @@ void JsonApiPage::load()
 	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
 	whileBlocking(ui.portSpinBox)->setValue(Settings->getJsonApiPort());
 	whileBlocking(ui.listenAddressLineEdit)->setText(Settings->getJsonApiListenAddress());
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()));
+
+    QStringList newTk;
+
+    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+
+	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
 
 QString JsonApiPage::helpText() const { return ""; }
@@ -93,52 +99,38 @@ QString JsonApiPage::helpText() const { return ""; }
 	checkShutdownJsonApi();
 
 	if(Settings->getJsonApiEnabled())
-	{
-		jsonApiServer = new JsonApiServer(
-		            Settings->getJsonApiPort(),
-		            Settings->getJsonApiListenAddress().toStdString() );
-		jsonApiServer->start("jsonApiServer");
-
-		for(const QString& token : Settings->getJsonApiAuthTokens())
-			jsonApiServer->authorizeToken(token.toStdString());
-	}
+		JsonApiServer::instance().start( Settings->getJsonApiPort(), Settings->getJsonApiListenAddress().toStdString() );
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-	if(jsonApiServer)
-	{
-		/* It is important to make a copy of +jsonApiServer+ pointer so the old
+	JsonApiServer::instance().shutdown();
+
+	/* It is important to make a copy of +jsonApiServer+ pointer so the old
 		 * object can be deleted later, while the original pointer is
 		 * reassigned */
-		JsonApiServer* oldJsonApiServer = jsonApiServer;
-		jsonApiServer = nullptr;
 
-		oldJsonApiServer->shutdown();
+	QProgressDialog* pd = new QProgressDialog(
+	            "Stopping JSON API Server", QString(), 0, 3000);
+	QTimer* prtm = new QTimer;
+	prtm->setInterval(16); // 60 FPS
+	connect( prtm, &QTimer::timeout,
+	         pd, [=](){pd->setValue(pd->value()+16);} );
+	pd->show();
+	prtm->start();
 
-		QProgressDialog* pd = new QProgressDialog(
-		            "Stopping JSON API Server", QString(), 0, 3000);
-		QTimer* prtm = new QTimer;
-		prtm->setInterval(16); // 60 FPS
-		connect( prtm, &QTimer::timeout,
-		         pd, [=](){pd->setValue(pd->value()+16);} );
-		pd->show();
-		prtm->start();
-
-		/* Must wait for deletion because stopping of the server is async.
+	/* Must wait for deletion because stopping of the server is async.
 		 * It is important to capture a copy so it "survive" after
 		 * safeStopJsonApiServer returns */
-		QTimer::singleShot(3*1000, [=]()
-		{
-			delete oldJsonApiServer;
-			prtm->stop();
-			pd->close();
-			prtm->deleteLater();
-			pd->deleteLater();
-		});
-	}
+	QTimer::singleShot(3*1000, [=]()
+	{
+		prtm->stop();
+		pd->close();
+		prtm->deleteLater();
+		pd->deleteLater();
+	});
 }
 
 void JsonApiPage::onApplyClicked(bool)
@@ -150,23 +142,27 @@ void JsonApiPage::onApplyClicked(bool)
 void JsonApiPage::addTokenClicked(bool)
 {
 	QString token(ui.tokenLineEdit->text());
-	if(jsonApiServer) jsonApiServer->authorizeToken(token.toStdString());
-	QStringList newTk(Settings->getJsonApiAuthTokens());
-	newTk.removeAll(token);
-	newTk.append(token);
-	Settings->setJsonApiAuthTokens(newTk);
+	JsonApiServer::instance().authorizeToken(token.toStdString());
+
+    QStringList newTk;
+
+    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
 
 void JsonApiPage::removeTokenClicked(bool)
 {
 	QString token(ui.tokenLineEdit->text());
-	if(jsonApiServer) jsonApiServer->revokeAuthToken(token.toStdString());
-	QStringList newTk(Settings->getJsonApiAuthTokens());
-	newTk.removeAll(token);
-	Settings->setJsonApiAuthTokens(newTk);
-	whileBlocking(ui.tokensListView)->setModel(
-	            new QStringListModel(Settings->getJsonApiAuthTokens()) );
+	JsonApiServer::instance().revokeAuthToken(token.toStdString());
+
+    QStringList newTk;
+
+    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+
+	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
 }
 
 void JsonApiPage::tokenClicked(const QModelIndex& index)

@@ -44,6 +44,9 @@
 
 /*extern*/ JsonApiServer* jsonApiServer = nullptr;
 
+const std::string JsonApiServer::DEFAULT_LISTENING_ADDRESS = "127.0.0.1";
+p3ConfigMgr *JsonApiServer::_config_mgr = nullptr;
+
 /*static*/ const std::multimap<std::string, std::string>
 JsonApiServer::corsHeaders =
 {
@@ -115,11 +118,33 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
-JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
-        const std::function<bool(const std::string&)> newAccessRequestCallback ) :
-    mPort(port), mBindAddress(bindAddress),
-    mNewAccessRequestCallback(newAccessRequestCallback),
-    configMutex("JsonApiServer config")
+JsonApiServer& JsonApiServer::instance()
+{
+    static JsonApiServer *_instance = nullptr;
+
+    if(_instance == NULL)
+    {
+        _instance = new JsonApiServer();
+
+        if(_config_mgr == nullptr)
+            RsErr() << "JsonApiServer::instance() called before JsonApiServer::setConfigManager(). This is a bug!" << std::endl;
+
+		_config_mgr->addConfiguration("jsonapi.cfg",_instance);
+    }
+
+    return *_instance;
+}
+
+void JsonApiServer::start(uint16_t port, const std::string& bindAddress, const std::function<bool(const std::string&)> callback)
+{
+    mPort = port;
+    mBindAddress = bindAddress;
+    mNewAccessRequestCallback = callback;
+
+    RsThread::start("JsonApiServer");
+}
+
+JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 {
 	registerHandler("/rsLoginHelper/createLocation",
 	                [this](const std::shared_ptr<rb::Session> session)
@@ -341,6 +366,10 @@ JsonApiServer::JsonApiServer(uint16_t port, const std::string& bindAddress,
 			session->yield(message.str());
 		} );
 	}, true);
+
+    RsFileHash dummyHash;
+	setFilename("jsonapi.cfg");	// hack
+	loadConfiguration(dummyHash);
 
 // Generated at compile time
 #include "jsonapi-wrappers.inl"

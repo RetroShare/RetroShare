@@ -35,11 +35,11 @@ namespace rb = restbed;
 
 struct JsonApiServer;
 
-/**
- * Pointer to global instance of JsonApiServer
- * @jsonapi{development}
- */
-extern JsonApiServer* jsonApiServer;
+// /**
+//  * Pointer to global instance of JsonApiServer
+//  * @jsonapi{development}
+//  */
+// extern JsonApiServer* jsonApiServer;
 
 /**
  * Simple usage
@@ -53,20 +53,9 @@ extern JsonApiServer* jsonApiServer;
 struct JsonApiServer : RsSingleJobThread, p3Config
 {
 	static const uint16_t DEFAULT_PORT = 9092 ;
+	static const std::string DEFAULT_LISTENING_ADDRESS ;
 
-	/**
-	 * @brief construct a JsonApiServer instance with given parameters
-	 * @param[in] port listening port fpt the JSON API socket
-	 * @param[in] bindAddress binding address for the JSON API socket
-	 * @param newAccessRequestCallback called when a new auth token is asked to
-	 *	be authorized via JSON API, the auth token is passed as parameter, and
-	 *	the callback should return true if the new token get access granted and
-	 *	false otherwise, this usually requires user interacion to confirm access
-	 */
-	JsonApiServer(
-	        uint16_t port = DEFAULT_PORT,
-	        const std::string& bindAddress = "127.0.0.1",
-	        const std::function<bool(const std::string&)> newAccessRequestCallback = [](const std::string&){return false;} );
+    static JsonApiServer& instance() ;
 
 	/**
 	 * @param[in] path Path itno which publish the API call
@@ -95,6 +84,17 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	 * Beware that this method shout down only the JSON API server instance not
 	 */
 	void shutdown();
+
+    /**
+     * @brief start
+     * 					Starts the json Api server.
+     *
+     * @param port				port to listen to
+     * @param listen_address	bind address to listen to
+     */
+	void start(	uint16_t port = DEFAULT_PORT,
+	        	const std::string& bindAddress = "127.0.0.1",
+	            const std::function<bool(const std::string&)> newAccessRequestCallback = [](const std::string&){return false;});
 
 	/**
 	 * @brief This function should be used by JSON API clients that aren't
@@ -175,10 +175,25 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
 	                     std::string& extra, std::string&human );
 
+
+    static void setConfigMgr(p3ConfigMgr *cfg) { _config_mgr = cfg; }
+protected:
 	/// @see RsSingleJobThread
 	virtual void run();
 
 private:
+	/**
+	 * @brief construct a JsonApiServer instance with given parameters
+	 * @param[in] port listening port fpt the JSON API socket
+	 * @param[in] bindAddress binding address for the JSON API socket
+	 * @param newAccessRequestCallback called when a new auth token is asked to
+	 *	be authorized via JSON API, the auth token is passed as parameter, and
+	 *	the callback should return true if the new token get access granted and
+	 *	false otherwise, this usually requires user interacion to confirm access
+	 */
+	JsonApiServer( );
+
+
 	/// @see p3Config::setupSerialiser
 	virtual RsSerialiser* setupSerialiser();
 
@@ -191,8 +206,8 @@ private:
 	/// @see p3Config::saveDone
 	virtual void saveDone();
 
-	const uint16_t mPort;
-	const std::string mBindAddress;
+	uint16_t mPort;
+	std::string mBindAddress;
 	rb::Service mService;
 
 	/// Called when new JSON API auth token is requested to be authorized
@@ -220,5 +235,7 @@ private:
 		return checkRsServicePtrReady(
 		            serviceInstance.get(), serviceName, ctx, session );
 	}
+
+    static p3ConfigMgr *_config_mgr;
 };
 

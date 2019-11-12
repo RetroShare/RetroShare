@@ -30,6 +30,9 @@
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
 
+// for this one, we'd rather use a file in retroshare/*h list.
+#include <jsonapi/jsonapi.h>
+
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
@@ -1208,7 +1211,7 @@ void RshareSettings::setJsonApiEnabled(bool enabled)
 
 uint16_t RshareSettings::getJsonApiPort()
 {
-	return valueFromGroup("JsonApi", "port", 9092).toUInt();
+	return valueFromGroup("JsonApi", "port", JsonApiServer::DEFAULT_PORT).toUInt();
 }
 
 void RshareSettings::setJsonApiPort(uint16_t port)

@@ -410,10 +410,8 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 
 #ifdef RS_JSONAPI
 	if(rsInitConfig->jsonApiPort)
-	{
-		jsonApiServer = new JsonApiServer( rsInitConfig->jsonApiPort, rsInitConfig->jsonApiBindAddress );
-		jsonApiServer->start("JSON API Server");
-	}
+		JsonApiServer::instance().start(rsInitConfig->jsonApiPort, rsInitConfig->jsonApiBindAddress);
+
 #endif // ifdef RS_JSONAPI
 
 	return RS_INIT_OK;
@@ -1214,14 +1212,7 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
-#ifdef RS_JSONAPI
-	if(jsonApiServer) // JsonApiServer may be disabled at runtime
-	{
-		mConfigMgr->addConfiguration("jsonApi.cfg", jsonApiServer);
-		RsFileHash dummyHash;
-		jsonApiServer->loadConfiguration(dummyHash);
-	}
-#endif
+	JsonApiServer::setConfigMgr(mConfigMgr);
 
     	/**** Reputation system ****/
 
@@ -1230,7 +1221,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-	std::string currGxsDir = RsAccounts::AccountDirectory() + "/gxs";
+		std::string currGxsDir = RsAccounts::AccountDirectory() + "/gxs";
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);

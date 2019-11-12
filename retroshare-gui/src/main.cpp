@@ -233,8 +233,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
     RsConfigOptions conf;
 
-    conf.jsonApiPort = 0 ; // disable JSon API at start. The JSonAPI preference UI will enable it according to saved parameters.
-
 	argstream as(argc,argv);
 	as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file."    )
 	        >> option('u',"udp"              ,conf.udpListenerOnly,"Only listen to UDP."                      )
