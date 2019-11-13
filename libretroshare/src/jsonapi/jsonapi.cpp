@@ -141,7 +141,7 @@ void JsonApiServer::start(uint16_t port, const std::string& bindAddress, const s
     mBindAddress = bindAddress;
     mNewAccessRequestCallback = callback;
 
-    std::cerr << "(II) Srtating Json API on port " << port << ", address " << bindAddress << std::endl;
+    std::cerr << "(II) Starting Json API on port " << port << ", address " << bindAddress << std::endl;
     RsThread::start("JsonApiServer");
 }
 
