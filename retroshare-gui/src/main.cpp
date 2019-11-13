@@ -572,10 +572,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef RS_WEBUI
-    WebuiPage::checkStartWebui();
-#endif // ENABLE_WEBUI
-
 #ifdef RS_JSONAPI
 	JsonApiPage::checkStartJsonApi();
 #endif // RS_JSONAPI

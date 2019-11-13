@@ -452,7 +452,22 @@ void JsonApiServer::setNewAccessRequestCallback(
         const std::function<bool (const std::string&)>& callback )
 { mNewAccessRequestCallback = callback; }
 
-void JsonApiServer::shutdown() { mService.stop(); }
+void JsonApiServer::shutdown()
+{
+    mService.stop();
+
+	RsThread::ask_for_stop();
+
+	std::cerr << "Stopping JsonApiServer" ;
+
+	while(isRunning())
+    {
+		sleep(1);
+        std::cerr << "." ;
+        std::cerr.flush();
+    }
+	std::cerr << std::endl;
+}
 
 bool JsonApiServer::requestNewTokenAutorization(const std::string& token)
 {

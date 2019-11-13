@@ -48,6 +48,7 @@ bool JsonApiPage::updateParams(QString &errmsg)
 	bool changed = false;
 
 	bool enabled = ui.enableCheckBox->isChecked();
+
 	if( enabled != Settings->getJsonApiEnabled())
 	{
 		Settings->setJsonApiEnabled(enabled);
@@ -55,6 +56,7 @@ bool JsonApiPage::updateParams(QString &errmsg)
 	}
 
 	uint16_t port = static_cast<uint16_t>(ui.portSpinBox->value());
+
 	if(port != Settings->getJsonApiPort())
 	{
 		Settings->setJsonApiPort(port);
@@ -106,14 +108,17 @@ QString JsonApiPage::helpText() const { return ""; }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-	JsonApiServer::instance().shutdown();
+    if(!JsonApiServer::instance().isRunning())
+        return;
 
+	JsonApiServer::instance().shutdown();	// this is a blocking call until the thread is terminated.
+
+#ifdef SUSPENDED_CODE
 	/* It is important to make a copy of +jsonApiServer+ pointer so the old
 		 * object can be deleted later, while the original pointer is
 		 * reassigned */
 
-	QProgressDialog* pd = new QProgressDialog(
-	            "Stopping JSON API Server", QString(), 0, 3000);
+	QProgressDialog* pd = new QProgressDialog("Stopping JSON API Server", QString(), 0, 3000);
 	QTimer* prtm = new QTimer;
 	prtm->setInterval(16); // 60 FPS
 	connect( prtm, &QTimer::timeout,
@@ -131,6 +136,7 @@ QString JsonApiPage::helpText() const { return ""; }
 		prtm->deleteLater();
 		pd->deleteLater();
 	});
+#endif
 }
 
 void JsonApiPage::onApplyClicked(bool)

@@ -50,6 +50,8 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
     connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
     connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
+
+    checkStartWebui();
 }
 
 WebuiPage::~WebuiPage()
@@ -110,8 +112,8 @@ void WebuiPage::load()
 	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
-	onEnableCBClicked(Settings->getWebinterfaceEnabled());
 }
+
 
 QString WebuiPage::helpText() const
 {
@@ -123,7 +125,7 @@ QString WebuiPage::helpText() const
 /*static*/ bool WebuiPage::checkStartWebui()
 {
     if(!Settings->getWebinterfaceEnabled())
-        return true;
+        return false;
 
     rsWebUI->setListeningPort(Settings->getWebinterfacePort());
     rsWebUI->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
@@ -156,7 +158,11 @@ void WebuiPage::onEnableCBClicked(bool checked)
 	ui.apply_PB->setEnabled(checked);
 	ui.startWebBrowser_PB->setEnabled(checked);
 	QString S;
-	updateParams(S);
+
+    if(checked)
+        checkStartWebui();
+    else
+        checkShutdownWebui();
 }
 
 void WebuiPage::onPortValueChanged(int /*value*/)

@@ -144,7 +144,7 @@ public:
 
         try
         {
-			std::cerr << "Starting web service on port " << std::dec << _listening_port << std::endl;
+			std::cerr << "(II) Starting web service on port " << std::dec << _listening_port << std::endl;
 			_service->start( settings );
         }
         catch(std::exception& e)
@@ -153,7 +153,7 @@ public:
             return;
         }
 
-        std::cerr << "(II) Shutting down webui service." << std::endl;
+        std::cerr << "(II) webui service stopped." << std::endl;
 	}
     void stop()
     {
@@ -162,7 +162,10 @@ public:
         RsThread::ask_for_stop();
 
         while(isRunning())
-            sleep(1);
+        {
+			std::cerr << "(II) shutting down webui service." << std::endl;
+            rstime::rs_usleep(1000*1000);
+        }
     }
 
     void setListeningPort(uint16_t p) { _listening_port = p ; }
