@@ -53,6 +53,7 @@ public slots:
 	void addTokenClicked(bool);
 	void removeTokenClicked(bool);
 	void tokenClicked(const QModelIndex& index);
+	void enableJsonApi(bool checked);
 
 private:
 	Ui::JsonApiPage ui; /// Qt Designer generated object

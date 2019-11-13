@@ -50,8 +50,6 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
     connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
     connect(ui.startWebBrowser_PB, SIGNAL(clicked()), this, SLOT(onStartWebBrowserClicked()));
     connect(ui.webInterfaceFilesDirectory_PB, SIGNAL(clicked()), this, SLOT(selectWebInterfaceDirectory()));
-
-    checkStartWebui();
 }
 
 WebuiPage::~WebuiPage()
@@ -158,6 +156,8 @@ void WebuiPage::onEnableCBClicked(bool checked)
 	ui.apply_PB->setEnabled(checked);
 	ui.startWebBrowser_PB->setEnabled(checked);
 	QString S;
+
+    Settings->setWebinterfaceEnabled(checked);
 
     if(checked)
         checkStartWebui();

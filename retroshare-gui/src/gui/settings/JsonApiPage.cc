@@ -32,14 +32,26 @@
 JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
 	ui.setupUi(this);
-	connect( ui.addTokenPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::addTokenClicked);
-	connect( ui.removeTokenPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::removeTokenClicked );
-	connect( ui.tokensListView, &QListView::clicked,
-	         this, &JsonApiPage::tokenClicked );
-	connect( ui.applyConfigPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::onApplyClicked );
+	connect( ui.enableCheckBox,        SIGNAL(toggled(bool)), this, SLOT(enableJsonApi(bool)));
+	connect( ui.addTokenPushButton,    SIGNAL(clicked()), this, SLOT(addTokenClicked()));
+	connect( ui.removeTokenPushButton, SIGNAL(clicked()), this, SLOT(removeTokenClicked() ));
+	connect( ui.tokensListView,        SIGNAL(clicked()), this, SLOT(tokenClicked() ));
+	connect( ui.applyConfigPushButton, SIGNAL(clicked()), this, SLOT(onApplyClicked() ));
+}
+
+void JsonApiPage::enableJsonApi(bool checked)
+{
+	ui.addTokenPushButton->setEnabled(checked);
+	ui.applyConfigPushButton->setEnabled(checked);
+	ui.removeTokenPushButton->setEnabled(checked);
+	ui.tokensListView->setEnabled(checked);
+
+    Settings->setJsonApiEnabled(checked);
+
+    if(checked)
+        checkStartJsonApi();
+    else
+        checkShutdownJsonApi();
 }
 
 bool JsonApiPage::updateParams(QString &errmsg)
@@ -64,19 +76,13 @@ bool JsonApiPage::updateParams(QString &errmsg)
 	}
 
 	QString listenAddress = ui.listenAddressLineEdit->text();
+
 	if(listenAddress != Settings->getJsonApiListenAddress())
 	{
 		Settings->setJsonApiListenAddress(listenAddress);
 		changed = true;
 	}
 
-	if(changed)
-	{
-		checkShutdownJsonApi();
-		ok = checkStartJsonApi();
-	}
-
-	if(!ok) errmsg = "Could not start JSON API Server!";
 	return ok;
 }
 
@@ -98,8 +104,6 @@ QString JsonApiPage::helpText() const { return ""; }
 
 /*static*/ bool JsonApiPage::checkStartJsonApi()
 {
-	checkShutdownJsonApi();
-
 	if(Settings->getJsonApiEnabled())
 		JsonApiServer::instance().start( Settings->getJsonApiPort(), Settings->getJsonApiListenAddress().toStdString() );
 
@@ -141,8 +145,10 @@ QString JsonApiPage::helpText() const { return ""; }
 
 void JsonApiPage::onApplyClicked(bool)
 {
-	QString errmsg;
-	updateParams(errmsg);
+    // restart
+
+    checkShutdownJsonApi();
+    checkStartJsonApi();
 }
 
 void JsonApiPage::addTokenClicked(bool)
