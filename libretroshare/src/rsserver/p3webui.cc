@@ -28,7 +28,6 @@
 #include <memory>
 #include <chrono>
 #include <cstdlib>
-#include <restbed>
 #include "util/rsthreads.h"
 #include "util/rsdebug.h"
 #include "retroshare/rswebui.h"
@@ -93,136 +92,48 @@ static void service_ready_handler( restbed::Service& )
     fprintf( stderr, "Hey! The service is up and running." );
 }
 
-class WebUIThread: public RsThread
+std::vector<std::shared_ptr<restbed::Resource> > p3WebUI::getResources() const
 {
-public:
-    WebUIThread()
-    {
-		_service = std::make_shared<restbed::Service>();	// this is a place holder, in case we request some internal values.
-		_listening_port = 1984;
-    }
+    std::vector<std::shared_ptr<restbed::Resource> > rtab;
 
-    void runloop() override
-	{
-		auto resource1 = std::make_shared< restbed::Resource >( );
-		resource1->set_paths( {
-		                          "/{filename: index.html}",
-		                          "/{filename: app.js}",
-		                      }
-		                      );
-		resource1->set_method_handler( "GET", handler<TEXT_HTML>::get_handler );
+	auto resource1 = std::make_shared< restbed::Resource >( );
+	resource1->set_paths( {
+	                          "/{filename: index.html}",
+	                          "/{filename: app.js}",
+	                      }
+	                      );
+	resource1->set_method_handler( "GET", handler<TEXT_HTML>::get_handler );
 
-		auto resource2 = std::make_shared< restbed::Resource >();
-		resource2->set_paths( {
-		                          "/{dir: css]/{filename: fontawesome.css}",
-		                          "/{dir: css}/{filename: solid.css}",
-		                          "/{filename: app.css}",
-		                      } );
-		resource2->set_method_handler( "GET", handler<TEXT_CSS>::get_handler );
+	auto resource2 = std::make_shared< restbed::Resource >();
+	resource2->set_paths( {
+	                          "/{dir: css]/{filename: fontawesome.css}",
+	                          "/{dir: css}/{filename: solid.css}",
+	                          "/{filename: app.css}",
+	                      } );
+	resource2->set_method_handler( "GET", handler<TEXT_CSS>::get_handler );
 
-		auto resource3 = std::make_shared< restbed::Resource >();
-		resource3->set_paths( {
-		                          "/{filename: retroshare.svg}",
-		                      } );
-		resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
+	auto resource3 = std::make_shared< restbed::Resource >();
+	resource3->set_paths( {
+	                          "/{filename: retroshare.svg}",
+	                      } );
+	resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
 
-		auto settings = std::make_shared< restbed::Settings >( );
-		settings->set_port( _listening_port );
-		settings->set_default_header( "Connection", "close" );
+	rtab.push_back(resource1);
+	rtab.push_back(resource2);
+	rtab.push_back(resource3);
 
-         if(_service->is_up())
-        {
-            std::cerr << "WebUI is already running. Killing it." << std::endl;
-            _service->stop();
-        }
-
-		_service = std::make_shared<restbed::Service>();
-
-		_service->publish( resource1 );
-		_service->publish( resource2 );
-		_service->publish( resource3 );
-
-        try
-        {
-			std::cerr << "(II) Starting web service on port " << std::dec << _listening_port << std::endl;
-			_service->start( settings );
-        }
-        catch(std::exception& e)
-        {
-            RsErr() << "Could  not start web interface: " << e.what() << std::endl;
-            return;
-        }
-
-        std::cerr << "(II) webui service stopped." << std::endl;
-	}
-    void stop()
-    {
-        _service->stop();
-
-        RsThread::ask_for_stop();
-
-        while(isRunning())
-        {
-			std::cerr << "(II) shutting down webui service." << std::endl;
-            rstime::rs_usleep(1000*1000);
-        }
-    }
-
-    void setListeningPort(uint16_t p) { _listening_port = p ; }
-    uint16_t listeningPort() const { return _listening_port;}
-
-private:
-    std::shared_ptr<restbed::Service> _service;
-    uint16_t _listening_port;
-};
-
-p3WebUI::p3WebUI()
-{
-    _webui_thread = new WebUIThread;
-}
-p3WebUI::~p3WebUI()
-{
-    while(_webui_thread->isRunning())
-    {
-        stop();
-        std::cerr << "Deleting webUI object while webUI thread is still running. Trying shutdown...." << std::endl;
-		rstime::rs_usleep(1000*1000);
-    }
-    delete _webui_thread;
+    return rtab;
 }
 
-bool p3WebUI::restart()
-{
-    RsDbg() << "Restarting web interface listening on port " << _webui_thread->listeningPort() << std::endl;
-
-    if(_webui_thread->isRunning())
-        _webui_thread->stop();
-
-    _webui_thread->start();
-    return true;
-}
-
-bool p3WebUI::stop()
-{
-	_webui_thread->stop();
-	return true;
-}
 
 void p3WebUI::setHtmlFilesDirectory(const std::string& html_dir)
 {
     _base_directory = html_dir;
 }
-void p3WebUI::setListeningPort(uint16_t port)
-{
-    _webui_thread->setListeningPort(port);
-
-    if(_webui_thread->isRunning())
-		restart();
-}
 
 int p3WebUI::status() const
 {
-    if(_webui_thread->isRunning())
+    if(isRunning())
         return WEBUI_STATUS_RUNNING;
     else
         return WEBUI_STATUS_NOT_RUNNING;

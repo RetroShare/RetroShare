@@ -35,11 +35,11 @@ namespace rb = restbed;
 
 struct JsonApiServer;
 
-// /**
-//  * Pointer to global instance of JsonApiServer
-//  * @jsonapi{development}
-//  */
-// extern JsonApiServer* jsonApiServer;
+/**
+ * Pointer to global instance of JsonApiServer
+ * @jsonapi{development}
+ */
+extern JsonApiServer* jsonApiServer;
 
 /**
  * Simple usage
@@ -236,6 +236,7 @@ private:
 		            serviceInstance.get(), serviceName, ctx, session );
 	}
 
+    JsonApiServer *_instance;
     static p3ConfigMgr *_config_mgr;
 };
 

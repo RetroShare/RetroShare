@@ -1,9 +1,7 @@
 /*******************************************************************************
- * libretroshare/src/rsserver: p3webui.h                                       *
+ * libretroshare/src/retroshare: rsjsonapi.h                                   *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright 2019-2019 Cyril Soler                                             *
+ * Copyright (C) 2019-2019  Cyril Soler <csoler@users.sourceforge.net>         *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -17,29 +15,24 @@
  *                                                                             *
  * You should have received a copy of the GNU Lesser General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
+          *
  *******************************************************************************/
+#pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include "retroshare/rswebui.h"
-#include "jsonapi/restbedservice.h"
-
-class p3WebUI: public RsWebUI, public RestbedService
+class RsJsonAPI
 {
 public:
-    p3WebUI(){}
-    virtual ~p3WebUI(){}
+	static const uint16_t    DEFAULT_PORT = 9092 ;
+	static const std::string DEFAULT_BINDING_ADDRESS ;	// 127.0.0.1
 
-    virtual void setHtmlFilesDirectory(const std::string& html_dir) override;
+	virtual bool restart() =0;
+	virtual bool stop()  =0;
 
-    virtual bool restart() override { return RestbedService::restart();}
-    virtual bool stop() override { return RestbedService::stop();}
-    virtual void setListeningPort(uint16_t port) override { RestbedService::setListeningPort(port) ;}
+	virtual void setHtmlFilesDirectory(const std::string& html_dir) =0;
+	virtual void setListeningPort(uint16_t port) =0;
 
-    virtual int status() const override;
-    virtual std::vector<std::shared_ptr<restbed::Resource> > getResources() const override;
+	virtual int status() const=0;
 };
 
+extern RsJsonAPI *rsJsonAPI;
 

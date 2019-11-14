@@ -1,5 +1,5 @@
 /*******************************************************************************
- * libretroshare/src/rsserver: p3webui.h                                       *
+ * libretroshare/src/jsonapi/: restbedservice.h                                *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
@@ -20,26 +20,28 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <string>
-#include <vector>
-#include <memory>
-#include "retroshare/rswebui.h"
-#include "jsonapi/restbedservice.h"
+#pragma once
 
-class p3WebUI: public RsWebUI, public RestbedService
+#include <restbed>
+
+class RestbedThread;
+
+class RestbedService
 {
 public:
-    p3WebUI(){}
-    virtual ~p3WebUI(){}
+    RestbedService() ;
+	virtual ~RestbedService();
 
-    virtual void setHtmlFilesDirectory(const std::string& html_dir) override;
+    bool isRunning() const ;
 
-    virtual bool restart() override { return RestbedService::restart();}
-    virtual bool stop() override { return RestbedService::stop();}
-    virtual void setListeningPort(uint16_t port) override { RestbedService::setListeningPort(port) ;}
+    virtual bool restart();
+    virtual bool stop();
 
-    virtual int status() const override;
-    virtual std::vector<std::shared_ptr<restbed::Resource> > getResources() const override;
+    virtual void setListeningPort(uint16_t port) ;
+
+    virtual std::vector<std::shared_ptr<restbed::Resource> > getResources()const =0;
+
+private:
+    RestbedThread *_restbed_thread;
 };
-
 
