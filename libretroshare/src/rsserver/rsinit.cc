@@ -410,7 +410,11 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 
 #ifdef RS_JSONAPI
 	if(rsInitConfig->jsonApiPort)
-		JsonApiServer::instance().start(rsInitConfig->jsonApiPort, rsInitConfig->jsonApiBindAddress);
+    {
+        rsJsonAPI->setListeningPort(rsInitConfig->jsonApiPort);
+        rsJsonAPI->setBindingAddress(rsInitConfig->jsonApiBindAddress);
+		rsJsonAPI->restart();
+    }
 
 #endif // ifdef RS_JSONAPI
 
@@ -1212,7 +1216,15 @@ int RsServer::StartupRetroShare()
 	//
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
-	JsonApiServer::setConfigMgr(mConfigMgr);
+#ifdef RS_JSONAPI
+    mJsonAPIServer = new JsonApiServer;
+    rsJsonAPI = mJsonAPIServer;
+
+    mConfigMgr->addConfiguration("jsonapi.cfg",mJsonAPIServer);
+
+    RsFileHash dummyHash;
+    mJsonAPIServer->loadConfiguration(dummyHash);
+#endif
 
     	/**** Reputation system ****/
 

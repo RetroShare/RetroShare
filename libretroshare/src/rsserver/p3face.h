@@ -34,6 +34,7 @@
 #include "retroshare/rsiface.h"
 #include "retroshare/rstypes.h"
 #include "util/rsthreads.h"
+#include "jsonapi/jsonapi.h"
 
 #include "chat/p3chatservice.h"
 #include "gxstunnel/p3gxstunnel.h"
@@ -157,6 +158,7 @@ public:
 		RsPluginManager *mPluginsManager;
 
 		//sslroot *sslr;
+		JsonApiServer *mJsonAPIServer;
 
 		/* services */
 		p3heartbeat *mHeart;

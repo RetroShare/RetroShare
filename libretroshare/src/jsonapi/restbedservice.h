@@ -38,6 +38,7 @@ public:
     virtual bool stop();
 
     virtual void setListeningPort(uint16_t port) ;
+	virtual void setBindAddress(const std::string& bind_address);
 
     virtual std::vector<std::shared_ptr<restbed::Resource> > getResources()const =0;
 

@@ -42,6 +42,7 @@ public:
         }
 		auto settings = std::make_shared< restbed::Settings >( );
 		settings->set_port( _listening_port );
+		settings->set_bind_address( _binding_address );
 		settings->set_default_header( "Connection", "close" );
 
 		if(_service->is_up())
@@ -82,13 +83,16 @@ public:
     }
 
     void setListeningPort(uint16_t p) { _listening_port = p ; }
+    void setBindAddress(const std::string& bindAddress) { _binding_address = bindAddress ; }
     void setResources(const std::vector<std::shared_ptr<restbed::Resource> >& r) { _resources = r ; }
     uint16_t listeningPort() const { return _listening_port;}
 
 private:
     std::shared_ptr<restbed::Service> _service;
-    uint16_t _listening_port;
 	std::vector<std::shared_ptr<restbed::Resource> > _resources;
+
+    uint16_t _listening_port;
+    std::string _binding_address;
 };
 
 RestbedService::RestbedService()
@@ -130,6 +134,14 @@ bool RestbedService::isRunning() const
 void RestbedService::setListeningPort(uint16_t port)
 {
     _restbed_thread->setListeningPort(port);
+
+    if(_restbed_thread->isRunning())
+		restart();
+}
+
+void RestbedService::setBindAddress(const std::string& bind_address)
+{
+    _restbed_thread->setBindAddress(bind_address);
 
     if(_restbed_thread->isRunning())
 		restart();

@@ -42,10 +42,9 @@
 // Generated at compile time
 #include "jsonapi-includes.inl"
 
-/*extern*/ JsonApiServer* jsonApiServer = nullptr;
+/*extern*/ RsJsonAPI* rsJsonAPI = nullptr;
 
-const std::string JsonApiServer::DEFAULT_LISTENING_ADDRESS = "127.0.0.1";
-p3ConfigMgr *JsonApiServer::_config_mgr = nullptr;
+const std::string RsJsonAPI::DEFAULT_BINDING_ADDRESS = "127.0.0.1";
 
 /*static*/ const std::multimap<std::string, std::string>
 JsonApiServer::corsHeaders =
@@ -118,33 +117,6 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
-JsonApiServer& JsonApiServer::instance()
-{
-    static JsonApiServer *_instance = nullptr;
-
-    if(_instance == NULL)
-    {
-        _instance = new JsonApiServer();
-
-        if(_config_mgr == nullptr)
-            RsErr() << "JsonApiServer::instance() called before JsonApiServer::setConfigManager(). This is a bug!" << std::endl;
-
-		_config_mgr->addConfiguration("jsonapi.cfg",_instance);
-    }
-
-    return *_instance;
-}
-
-void JsonApiServer::start(uint16_t port, const std::string& bindAddress, const std::function<bool(const std::string&)> callback)
-{
-    mPort = port;
-    mBindAddress = bindAddress;
-    mNewAccessRequestCallback = callback;
-
-    std::cerr << "(II) Starting Json API on port " << port << ", address " << bindAddress << std::endl;
-    RsThread::start("JsonApiServer");
-}
-
 JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 {
 	registerHandler("/rsLoginHelper/createLocation",
@@ -179,7 +151,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 			            makeAutoTor );
 
 			if(retval)
-				authorizeToken(location.mLocationId.toStdString()+":"+password);
+				authorizeUser(location.mLocationId.toStdString(),password);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -221,7 +193,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 			        rsLoginHelper->attemptLogin(account, password);
 
 			if( retval == RsInit::OK )
-				authorizeToken(account.toStdString()+":"+password);
+				authorizeUser(account.toStdString(),password);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -367,11 +339,6 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 			session->yield(message.str());
 		} );
 	}, true);
-
-    RsFileHash dummyHash;
-	setFilename("jsonapi.cfg");	// hack
-	loadConfiguration(dummyHash);
-
 // Generated at compile time
 #include "jsonapi-wrappers.inl"
 }
@@ -396,6 +363,11 @@ void JsonApiServer::run()
 	}
 
 	mService.start(settings);
+}
+
+std::vector<std::shared_ptr<restbed::Resource> > JsonApiServer::getResources() const
+{
+    return _resources;
 }
 
 void JsonApiServer::registerHandler(
@@ -446,34 +418,21 @@ void JsonApiServer::registerHandler(
 			else session->close(rb::UNAUTHORIZED);
 		} );
 
-	mService.publish(resource);
+    _resources.push_back(resource);
 }
 
-void JsonApiServer::setNewAccessRequestCallback(
-        const std::function<bool (const std::string&)>& callback )
-{ mNewAccessRequestCallback = callback; }
-
-void JsonApiServer::shutdown()
+void JsonApiServer::setNewAccessRequestCallback( const std::function<bool (const std::string&,std::string&)>& callback )
 {
-    mService.stop();
-
-	RsThread::ask_for_stop();
-
-	std::cerr << "Stopping JsonApiServer" ;
-
-	while(isRunning())
-    {
-		sleep(1);
-        std::cerr << "." ;
-        std::cerr.flush();
-    }
-	std::cerr << std::endl;
+    mNewAccessRequestCallback = callback;
 }
 
-bool JsonApiServer::requestNewTokenAutorization(const std::string& token)
+bool JsonApiServer::requestNewTokenAutorization(const std::string& user)
 {
-	if(rsLoginHelper->isLoggedIn() && mNewAccessRequestCallback(token))
-		return authorizeToken(token);
+    std::string passwd;
+
+	if(rsLoginHelper->isLoggedIn() && mNewAccessRequestCallback(user,passwd))
+		return authorizeUser(user,passwd);
+
 	return false;
 }
 
@@ -576,24 +535,24 @@ bool JsonApiServer::authorizeUser(const std::string& user,const std::string& pas
 }
 
 
-bool JsonApiServer::authorizeToken(const std::string& token)
-{
-    std::string user,password;
-
-	if(!parseToken(token,user,password))
-        return false;
-
-	RS_STACK_MUTEX(configMutex);
-
-	std::string& p(mAuthTokenStorage.mAuthorizedTokens[user]);
-
-    if(p != password)
-	{
-        p = password;
-		IndicateConfigChanged();
-	}
-	return true;
-}
+// bool JsonApiServer::authorizeToken(const std::string& token)
+// {
+//     std::string user,password;
+//
+// 	if(!parseToken(token,user,password))
+//         return false;
+//
+// 	RS_STACK_MUTEX(configMutex);
+//
+// 	std::string& p(mAuthTokenStorage.mAuthorizedTokens[user]);
+//
+//     if(p != password)
+// 	{
+//         p = password;
+// 		IndicateConfigChanged();
+// 	}
+// 	return true;
+// }
 
 /*static*/ std::string JsonApiServer::decodeToken(const std::string& radix64_token)
 {
@@ -660,3 +619,10 @@ void JsonApiServer::handleCorsOptions(
         const std::shared_ptr<restbed::Session> session )
 { session->close(rb::NO_CONTENT, corsOptionsHeaders); }
 
+int JsonApiServer::status() const
+{
+    if(isRunning())
+        return JSONAPI_STATUS_RUNNING;
+    else
+        return JSONAPI_STATUS_NOT_RUNNING;
+}

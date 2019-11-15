@@ -94,7 +94,7 @@ void JsonApiPage::load()
 
     QStringList newTk;
 
-    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
 	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
@@ -105,17 +105,17 @@ QString JsonApiPage::helpText() const { return ""; }
 /*static*/ bool JsonApiPage::checkStartJsonApi()
 {
 	if(Settings->getJsonApiEnabled())
-		JsonApiServer::instance().start( Settings->getJsonApiPort(), Settings->getJsonApiListenAddress().toStdString() );
+		rsJsonAPI->restart();
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-    if(!JsonApiServer::instance().isRunning())
+    rsJsonAPI->isRunning())
         return;
 
-	JsonApiServer::instance().shutdown();	// this is a blocking call until the thread is terminated.
+	rsJsonAPI->stop();	// this is a blocking call until the thread is terminated.
 
 #ifdef SUSPENDED_CODE
 	/* It is important to make a copy of +jsonApiServer+ pointer so the old
@@ -148,17 +148,21 @@ void JsonApiPage::onApplyClicked(bool)
     // restart
 
     checkShutdownJsonApi();
+
+    rsJsonAPI->setListeningPort(ui.portSpinBox->value());
+    rsJsonAPI->setBindingAddress(ui.listenAddressLineEdit->text().toStdString());
+
     checkStartJsonApi();
 }
 
 void JsonApiPage::addTokenClicked(bool)
 {
 	QString token(ui.tokenLineEdit->text());
-	JsonApiServer::instance().authorizeToken(token.toStdString());
+	rsJsonAPI->authorizeUser(token.toStdString());
 
     QStringList newTk;
 
-    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
 	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
@@ -167,11 +171,11 @@ void JsonApiPage::addTokenClicked(bool)
 void JsonApiPage::removeTokenClicked(bool)
 {
 	QString token(ui.tokenLineEdit->text());
-	JsonApiServer::instance().revokeAuthToken(token.toStdString());
+	rsJsonAPI->revokeAuthToken(token.toStdString());
 
     QStringList newTk;
 
-    for(const auto& it : JsonApiServer::instance().getAuthorizedTokens())
+    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
 	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );

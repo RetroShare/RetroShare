@@ -91,7 +91,7 @@ void RsServer::rsGlobalShutDown()
 	mNetMgr->shutdown(); /* Handles UPnP */
 
 #ifdef RS_JSONAPI
-	JsonApiServer::instance().shutdown();
+	rsJsonAPI->stop();
 #endif
 
 	rsAutoProxyMonitor::instance()->stopAllRSShutdown();
