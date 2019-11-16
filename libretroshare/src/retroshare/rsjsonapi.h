@@ -20,6 +20,8 @@
  *******************************************************************************/
 #pragma once
 
+#include <string>
+
 class RsJsonAPI
 {
 public:
@@ -60,6 +62,12 @@ public:
 	virtual bool requestNewTokenAutorization(const std::string& token)=0;
 
     //=============================================================================================//
+    //                                    Utility methods                                          //
+    //=============================================================================================//
+
+    static bool parseToken(const std::string& clear_token,std::string& user,std::string& passwd);
+
+    //=============================================================================================//
     //                      API methods that SHOULD NOT be accessible through http                 //
     //=============================================================================================//
 
@@ -91,7 +99,7 @@ public:
 	 * @param[in] token decoded
 	 * @return tru if authorized, false otherwise
 	 */
-	virtual bool isAuthTokenValid(const std::string& token);
+	virtual bool isAuthTokenValid(const std::string& token)=0;
 
 
 };

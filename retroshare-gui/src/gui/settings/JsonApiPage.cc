@@ -37,6 +37,26 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 	connect( ui.removeTokenPushButton, SIGNAL(clicked()), this, SLOT(removeTokenClicked() ));
 	connect( ui.tokensListView,        SIGNAL(clicked()), this, SLOT(tokenClicked() ));
 	connect( ui.applyConfigPushButton, SIGNAL(clicked()), this, SLOT(onApplyClicked() ));
+	connect( ui.portSpinBox, 		   SIGNAL(valueChanged(int)), this, SLOT(updateParams() ));
+	connect( ui.listenAddressLineEdit, SIGNAL(textChanged(QString)), this, SLOT(updateParams() ));
+
+    // This limits the possible tokens to alphanumeric
+
+    QString anRange = "{[a-z]|[A-Z]|[0-9]}+";
+    QRegExp anRegex ("^" + anRange + ":" + anRange + "$");
+    QRegExpValidator *anValidator = new QRegExpValidator(anRegex, this);
+
+    ui.tokenLineEdit->setValidator(anValidator);
+
+    // This limits the possible tokens to alphanumeric
+
+    QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    // You may want to use QRegularExpression for new code with Qt 5 (not mandatory).
+    QRegExp ipRegex ("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
+    QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
+
+    ui.listenAddressLineEdit->setValidator(ipValidator);
+
 }
 
 void JsonApiPage::enableJsonApi(bool checked)
@@ -45,6 +65,8 @@ void JsonApiPage::enableJsonApi(bool checked)
 	ui.applyConfigPushButton->setEnabled(checked);
 	ui.removeTokenPushButton->setEnabled(checked);
 	ui.tokensListView->setEnabled(checked);
+	ui.portSpinBox->setEnabled(checked);
+	ui.listenAddressLineEdit->setEnabled(checked);
 
     Settings->setJsonApiEnabled(checked);
 
@@ -54,43 +76,26 @@ void JsonApiPage::enableJsonApi(bool checked)
         checkShutdownJsonApi();
 }
 
-bool JsonApiPage::updateParams(QString &errmsg)
+bool JsonApiPage::updateParams()
 {
 	bool ok = true;
 	bool changed = false;
 
-	bool enabled = ui.enableCheckBox->isChecked();
-
-	if( enabled != Settings->getJsonApiEnabled())
-	{
-		Settings->setJsonApiEnabled(enabled);
-		changed = true;
-	}
-
 	uint16_t port = static_cast<uint16_t>(ui.portSpinBox->value());
-
-	if(port != Settings->getJsonApiPort())
-	{
-		Settings->setJsonApiPort(port);
-		changed = true;
-	}
-
 	QString listenAddress = ui.listenAddressLineEdit->text();
 
-	if(listenAddress != Settings->getJsonApiListenAddress())
-	{
-		Settings->setJsonApiListenAddress(listenAddress);
-		changed = true;
-	}
+	Settings->setJsonApiEnabled(ui.enableCheckBox->isChecked());
+	Settings->setJsonApiPort(port);
+	Settings->setJsonApiListenAddress(listenAddress);
 
 	return ok;
 }
 
 void JsonApiPage::load()
 {
-	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
 	whileBlocking(ui.portSpinBox)->setValue(Settings->getJsonApiPort());
 	whileBlocking(ui.listenAddressLineEdit)->setText(Settings->getJsonApiListenAddress());
+	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
 
     QStringList newTk;
 
@@ -102,17 +107,21 @@ void JsonApiPage::load()
 
 QString JsonApiPage::helpText() const { return ""; }
 
-/*static*/ bool JsonApiPage::checkStartJsonApi()
+bool JsonApiPage::checkStartJsonApi()
 {
-	if(Settings->getJsonApiEnabled())
-		rsJsonAPI->restart();
+	if(!Settings->getJsonApiEnabled())
+        return false;
+
+	rsJsonAPI->setListeningPort(Settings->getJsonApiPort());
+	rsJsonAPI->setBindingAddress(Settings->getJsonApiListenAddress().toStdString());
+	rsJsonAPI->restart();
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-    rsJsonAPI->isRunning())
+    if(RsJsonAPI::JSONAPI_STATUS_RUNNING != rsJsonAPI->status())
         return;
 
 	rsJsonAPI->stop();	// this is a blocking call until the thread is terminated.
@@ -148,17 +157,18 @@ void JsonApiPage::onApplyClicked(bool)
     // restart
 
     checkShutdownJsonApi();
-
-    rsJsonAPI->setListeningPort(ui.portSpinBox->value());
-    rsJsonAPI->setBindingAddress(ui.listenAddressLineEdit->text().toStdString());
-
     checkStartJsonApi();
 }
 
 void JsonApiPage::addTokenClicked(bool)
 {
 	QString token(ui.tokenLineEdit->text());
-	rsJsonAPI->authorizeUser(token.toStdString());
+    std::string user,passwd;
+
+    if(!RsJsonAPI::parseToken(token.toStdString(),user,passwd))
+        return;
+
+	rsJsonAPI->authorizeUser(user,passwd);
 
     QStringList newTk;
 

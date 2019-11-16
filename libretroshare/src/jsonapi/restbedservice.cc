@@ -58,7 +58,7 @@ public:
 
         try
         {
-			std::cerr << "(II) Starting web service on port " << std::dec << _listening_port << std::endl;
+			std::cerr << "(II) Starting restbed service on port " << std::dec << _listening_port << std::endl;
 			_service->start( settings );
         }
         catch(std::exception& e)
@@ -67,7 +67,7 @@ public:
             return;
         }
 
-        std::cerr << "(II) webui service stopped." << std::endl;
+        std::cerr << "(II) restbed service stopped." << std::endl;
 	}
     void stop()
     {
@@ -77,7 +77,7 @@ public:
 
         while(isRunning())
         {
-			std::cerr << "(II) shutting down webui service." << std::endl;
+			std::cerr << "(II) shutting down restbed service." << std::endl;
             rstime::rs_usleep(1000*1000);
         }
     }
@@ -112,7 +112,7 @@ RestbedService::~RestbedService()
 
 bool RestbedService::restart()
 {
-    RsDbg() << "Restarting web interface listening on port " << _restbed_thread->listeningPort() << std::endl;
+    RsDbg() << "Restarting restbed service listening on port " << _restbed_thread->listeningPort() << std::endl;
 
     if(_restbed_thread->isRunning())
         _restbed_thread->stop();

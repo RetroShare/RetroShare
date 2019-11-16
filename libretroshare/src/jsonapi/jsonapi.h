@@ -64,7 +64,7 @@ public:
 	bool isAuthTokenValid(const std::string& token) override;
 	bool requestNewTokenAutorization(const std::string& user) override;
 
-    // private API
+    // private API. These methods may be moved to RsJsonAPI so as to be visible in http mode, if needed.
 
 	/**
 	 * @brief Get decoded version of the given encoded token

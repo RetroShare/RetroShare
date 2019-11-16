@@ -117,6 +117,39 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
+static bool is_alphanumeric(char c) { return (c>='0' && c<'9') || (c>='a' && c<='z') || (c>='A' && c<='Z') ;}
+static bool is_alphanumeric(const std::string& s)
+{
+    for(uint32_t i=0;i<s.size();++i)
+        if(!is_alphanumeric(s[i]))
+            return false;
+    return true;
+}
+
+bool RsJsonAPI::parseToken(const std::string& clear_token,std::string& user,std::string& passwd)
+{
+	uint32_t last_index=0;
+	uint32_t nb_colons=0;
+
+	for(uint32_t i=0;i<clear_token.length();++i)
+		if(clear_token[i]==':')
+		{
+			++nb_colons;
+			last_index = i;
+		}
+		else if(!is_alphanumeric(clear_token[i]))
+			return false;
+
+	if(nb_colons != 1)
+		return false;
+
+	user   = clear_token.substr(0,last_index);
+	passwd = clear_token.substr(last_index+1,(int)clear_token.size()-(int)last_index-2);
+
+	return true;
+}
+
+
 JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 {
 	registerHandler("/rsLoginHelper/createLocation",
@@ -434,38 +467,6 @@ bool JsonApiServer::requestNewTokenAutorization(const std::string& user)
 		return authorizeUser(user,passwd);
 
 	return false;
-}
-
-static bool is_alphanumeric(char c) { return (c>='0' && c<'9') || (c>='a' && c<='z') || (c>='A' && c<='Z') ;}
-static bool is_alphanumeric(const std::string& s)
-{
-    for(uint32_t i=0;i<s.size();++i)
-        if(!is_alphanumeric(s[i]))
-            return false;
-    return true;
-}
-
-static bool parseToken(const std::string& clear_token,std::string& user,std::string& passwd)
-{
-	uint32_t last_index=0;
-	uint32_t nb_colons=0;
-
-	for(uint32_t i=0;i<clear_token.length();++i)
-		if(clear_token[i]==':')
-		{
-			++nb_colons;
-			last_index = i;
-		}
-		else if(!is_alphanumeric(clear_token[i]))
-			return false;
-
-	if(nb_colons != 1)
-		return false;
-
-	user   = clear_token.substr(0,last_index);
-	passwd = clear_token.substr(last_index+1,(int)clear_token.size()-(int)last_index-2);
-
-	return true;
 }
 
 
