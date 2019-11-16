@@ -38,6 +38,7 @@ public:
     virtual bool stop() override { return RestbedService::stop();}
     virtual void setListeningPort(uint16_t port) override { RestbedService::setListeningPort(port) ;}
     virtual void setBindingAddress(const std::string& address) override { RestbedService::setBindAddress(address) ;}
+    virtual void setUserPassword(const std::string& passwd) override;
 
     virtual int status() const override;
     virtual std::vector<std::shared_ptr<restbed::Resource> > getResources() const override;

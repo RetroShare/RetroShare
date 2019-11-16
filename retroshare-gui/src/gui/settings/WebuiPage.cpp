@@ -28,6 +28,7 @@
 
 #include "util/misc.h"
 #include "retroshare/rswebui.h"
+#include "retroshare/rsjsonapi.h"
 
 #include "rsharesettings.h"
 
@@ -57,10 +58,6 @@ WebuiPage::~WebuiPage()
 
 }
 
-void WebuiPage::onPasswordValueChanged(QString password)
-{
-    std::cerr << "Setting new password to \"" << password.toStdString() << "\"" << std::endl;
-}
 void WebuiPage::selectWebInterfaceDirectory()
 {
     QString dirname = QFileDialog::getExistingDirectory(NULL,tr("Please select the directory were to find retroshare webinterface files"),ui.webInterfaceFiles_LE->text());
@@ -96,6 +93,25 @@ bool WebuiPage::updateParams(QString &errmsg)
     return ok;
 }
 
+void WebuiPage::onPasswordValueChanged(QString password)
+{
+    QColor color;
+
+    bool valid = password.length() >= 1;
+
+	if(!valid)
+		color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+	else
+		color = QApplication::palette().color(QPalette::Active, QPalette::Base);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	//ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
+
+	QPalette palette = ui.password_LE->palette();
+	palette.setColor(ui.password_LE->backgroundRole(), color);
+	ui.password_LE->setPalette(palette);
+}
+
 bool WebuiPage::restart()
 {
 	// apply config
@@ -110,6 +126,14 @@ void WebuiPage::load()
 	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
+
+#ifdef RS_JSONAPI
+    auto smap = rsJsonAPI->getAuthorizedTokens();
+    auto it = smap.find("webui");
+
+    if(it != smap.end())
+		whileBlocking(ui.password_LE)->setText(QString::fromStdString(it->second));
+#endif
 }
 
 
@@ -180,11 +204,15 @@ void WebuiPage::onApplyClicked()
 {
     QString errmsg;
 
+    rsWebUI->setUserPassword(ui.password_LE->text().toStdString());
+
     if(!restart())
     {
         QMessageBox::warning(0, tr("failed to start Webinterface"), "Failed to start the webinterface.");
         return;
     }
+
+    emit passwordChanged();
 }
 
 void WebuiPage::onStartWebBrowserClicked()

@@ -35,14 +35,15 @@ JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 	connect( ui.enableCheckBox,        SIGNAL(toggled(bool)), this, SLOT(enableJsonApi(bool)));
 	connect( ui.addTokenPushButton,    SIGNAL(clicked()), this, SLOT(addTokenClicked()));
 	connect( ui.removeTokenPushButton, SIGNAL(clicked()), this, SLOT(removeTokenClicked() ));
-	connect( ui.tokensListView,        SIGNAL(clicked()), this, SLOT(tokenClicked() ));
+	connect( ui.tokensListView,        SIGNAL(clicked(const QModelIndex&)), this, SLOT(tokenClicked(const QModelIndex&) ));
 	connect( ui.applyConfigPushButton, SIGNAL(clicked()), this, SLOT(onApplyClicked() ));
 	connect( ui.portSpinBox, 		   SIGNAL(valueChanged(int)), this, SLOT(updateParams() ));
 	connect( ui.listenAddressLineEdit, SIGNAL(textChanged(QString)), this, SLOT(updateParams() ));
+	connect( ui.tokenLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkToken(QString) ));
 
     // This limits the possible tokens to alphanumeric
 
-    QString anRange = "{[a-z]|[A-Z]|[0-9]}+";
+    QString anRange = "[a-zA-Z0-9]+";
     QRegExp anRegex ("^" + anRange + ":" + anRange + "$");
     QRegExpValidator *anValidator = new QRegExpValidator(anRegex, this);
 
@@ -152,7 +153,7 @@ bool JsonApiPage::checkStartJsonApi()
 #endif
 }
 
-void JsonApiPage::onApplyClicked(bool)
+void JsonApiPage::onApplyClicked()
 {
     // restart
 
@@ -160,7 +161,26 @@ void JsonApiPage::onApplyClicked(bool)
     checkStartJsonApi();
 }
 
-void JsonApiPage::addTokenClicked(bool)
+void JsonApiPage::checkToken(QString s)
+{
+    std::string user,passwd;
+
+    bool valid = RsJsonAPI::parseToken(s.toStdString(),user,passwd) && !user.empty() && !passwd.empty();
+    QColor color;
+
+	if(!valid)
+		color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+	else
+		color = QApplication::palette().color(QPalette::Active, QPalette::Base);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	//ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
+
+	QPalette palette = ui.tokenLineEdit->palette();
+	palette.setColor(ui.tokenLineEdit->backgroundRole(), color);
+	ui.tokenLineEdit->setPalette(palette);
+}
+void JsonApiPage::addTokenClicked()
 {
 	QString token(ui.tokenLineEdit->text());
     std::string user,passwd;
@@ -178,7 +198,7 @@ void JsonApiPage::addTokenClicked(bool)
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
 
-void JsonApiPage::removeTokenClicked(bool)
+void JsonApiPage::removeTokenClicked()
 {
 	QString token(ui.tokenLineEdit->text());
 	rsJsonAPI->revokeAuthToken(token.toStdString());

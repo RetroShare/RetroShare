@@ -66,6 +66,9 @@ public slots:
   void onApplyClicked();
   void onStartWebBrowserClicked();
 
+signals:
+  void passwordChanged();
+
 private:
   /** Qt Designer generated object */
   Ui::WebuiPage ui;

@@ -572,13 +572,13 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef RS_WEBUI
-    WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
-#endif
-
 #ifdef RS_JSONAPI
 	JsonApiPage::checkStartJsonApi();
 #endif // RS_JSONAPI
+
+#ifdef RS_WEBUI
+    WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
+#endif
 
 	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
 	// passphrase here makes it request for a passphrase when creating the default chat identity.
@@ -589,13 +589,13 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	int ti = rshare.exec();
 	delete w ;
 
-#ifdef RS_JSONAPI
-	JsonApiPage::checkShutdownJsonApi();
-#endif // RS_JSONAPI
-
 #ifdef RS_WEBUI
 	WebuiPage::checkShutdownWebui();
 #endif
+
+#ifdef RS_JSONAPI
+	JsonApiPage::checkShutdownJsonApi();
+#endif // RS_JSONAPI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

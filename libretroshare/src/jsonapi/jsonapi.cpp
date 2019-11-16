@@ -144,7 +144,7 @@ bool RsJsonAPI::parseToken(const std::string& clear_token,std::string& user,std:
 		return false;
 
 	user   = clear_token.substr(0,last_index);
-	passwd = clear_token.substr(last_index+1,(int)clear_token.size()-(int)last_index-2);
+	passwd = clear_token.substr(last_index+1,(int)clear_token.size()-(int)last_index-1);
 
 	return true;
 }

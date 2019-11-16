@@ -31,6 +31,7 @@
 #include "util/rsthreads.h"
 #include "util/rsdebug.h"
 #include "retroshare/rswebui.h"
+#include "retroshare/rsjsonapi.h"
 
 #define TEXT_HTML   0
 #define TEXT_CSS    1
@@ -139,3 +140,12 @@ int p3WebUI::status() const
         return WEBUI_STATUS_NOT_RUNNING;
 }
 
+void p3WebUI::setUserPassword(const std::string& passwd)
+{
+#ifdef RS_JSONAPI
+    if(!rsJsonAPI->authorizeUser("webui",passwd))
+        std::cerr << "(EE) Cannot register webui token. Some error occurred when calling authorizeUser()" << std::endl;
+#else
+	std::cerr << "(EE) JsonAPI is not available in this buildof Retroshare! Cannot register a user password for the WebUI" << std::endl;
+#endif
+}

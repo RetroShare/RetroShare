@@ -87,7 +87,7 @@
         <item>
          <widget class="QLineEdit" name="tokenLineEdit">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ApiUser:ApiPassword&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tokens should spell as &amp;quot;user:password&amp;quot; where both user and password are alphanumeric strings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>

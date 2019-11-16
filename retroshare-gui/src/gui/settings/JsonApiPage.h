@@ -33,7 +33,6 @@ public:
 	~JsonApiPage() {}
 
 	/** Loads the settings for this page */
-	virtual void load();
 
 	virtual QPixmap iconPixmap() const
 	{ return QPixmap(":/icons/svg/empty-circle.svg"); }
@@ -49,12 +48,15 @@ public:
 	static void checkShutdownJsonApi();
 
 public slots:
-	void onApplyClicked(bool);
-	void addTokenClicked(bool);
-	void removeTokenClicked(bool);
+	void load() override;
+
+	void onApplyClicked();
+	void addTokenClicked();
+	void removeTokenClicked();
 	void tokenClicked(const QModelIndex& index);
 	void enableJsonApi(bool checked);
 	bool updateParams();
+	void checkToken(QString);
 
 private:
 	Ui::JsonApiPage ui; /// Qt Designer generated object
