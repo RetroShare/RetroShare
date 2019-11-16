@@ -143,6 +143,8 @@ int p3WebUI::status() const
 void p3WebUI::setUserPassword(const std::string& passwd)
 {
 #ifdef RS_JSONAPI
+    std::cerr << "Updating webui token with new passwd \"" << passwd << "\"" << std::endl;
+
     if(!rsJsonAPI->authorizeUser("webui",passwd))
         std::cerr << "(EE) Cannot register webui token. Some error occurred when calling authorizeUser()" << std::endl;
 #else
