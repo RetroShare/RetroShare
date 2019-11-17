@@ -207,13 +207,13 @@ rs_no_webui:CONFIG -= rs_webui
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_service_webui_terminal_password"
-CONFIG *= no_rs_service_webui_terminal_password
-rs_service_webui_terminal_password:CONFIG -= no_rs_service_webui_terminal_password
+CONFIG *= rs_service_webui_terminal_password
+no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
 
 # To enable retroshare-service terminal login append the following assignation
 # to qmake command line "CONFIG+=rs_service_terminal_login"
-CONFIG *= no_rs_service_terminal_login
-rs_service_terminal_login:CONFIG -= no_rs_service_terminal_login
+CONFIG *= rs_service_terminal_login
+no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -652,6 +652,10 @@ android-* {
     }
     CONFIG *= no_libresapihttpserver
     CONFIG -= libresapihttpserver
+
+	CONFIG += no_rs_service_terminal_login
+	CONFIG += no_rs_service_webui_terminal_password
+
     QT *= androidextras
     INCLUDEPATH *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"
