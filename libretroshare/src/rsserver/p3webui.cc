@@ -48,10 +48,12 @@ static constexpr char *mime_types[3] = {
 };
 
 #ifdef WINDOWS_SYS
-static std::string _base_directory = "data/webui";
+const std::string RsWebUI::DEFAULT_BASE_DIRECTORY = "data/webui";
 #else
-static std::string _base_directory = "/usr/share/retroshare/webui/";
+const std::string RsWebUI::DEFAULT_BASE_DIRECTORY = "/usr/share/retroshare/webui/";
 #endif
+
+static std::string _base_directory = RsWebUI::DEFAULT_BASE_DIRECTORY;
 
 
 template<int MIME_TYPE_INDEX> class handler

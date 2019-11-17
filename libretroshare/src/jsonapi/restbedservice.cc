@@ -31,6 +31,7 @@ public:
     {
 		_service = std::make_shared<restbed::Service>();	// this is a place holder, in case we request some internal values.
 		_listening_port = 1984;
+		_binding_address = "127.0.0.1";
     }
 
     void runloop() override
@@ -58,7 +59,7 @@ public:
 
         try
         {
-			std::cerr << "(II) Starting restbed service on port " << std::dec << _listening_port << std::endl;
+			std::cerr << "(II) Starting restbed service on port " << std::dec << _listening_port << " and binding address \"" << _binding_address << "\"" << std::endl;
 			_service->start( settings );
         }
         catch(std::exception& e)

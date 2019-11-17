@@ -61,6 +61,7 @@
 #include "gxstunnel/p3gxstunnel.h"
 #include "retroshare/rsgxsdistsync.h"
 #include "file_sharing/p3filelists.h"
+#include "jsonapi/jsonapi.h"
 
 #define ENABLE_GROUTER
 
@@ -391,6 +392,22 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 	if(!RsAccounts::init(rsInitConfig->optBaseDir,error_code))
 		return error_code ;
 
+#ifdef RS_JSONAPI
+    // We create the JsonApiServer this early, because it is needed *before* login
+
+    RsInfo() << "Allocating jsonAPI server (not launched yet) " << std::endl;
+    JsonApiServer *jas = new JsonApiServer();
+    jas->setListeningPort(conf.jsonApiPort);
+    jas->setBindingAddress(conf.jsonApiBindAddress);
+
+    if(conf.jsonApiPort != NULL)
+    {
+		RsInfo() << "Launching jsonAPI server on port " << conf.jsonApiPort << std::endl;
+        jas->restart();
+    }
+
+    rsJsonAPI = jas;
+#endif
 
 #ifdef RS_AUTOLOGIN
 	/* check that we have selected someone */
@@ -407,16 +424,6 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 		}
 	}
 #endif
-
-#ifdef RS_JSONAPI
-	if(rsInitConfig->jsonApiPort)
-    {
-        rsJsonAPI->setListeningPort(rsInitConfig->jsonApiPort);
-        rsJsonAPI->setBindingAddress(rsInitConfig->jsonApiBindAddress);
-		rsJsonAPI->restart();
-    }
-
-#endif // ifdef RS_JSONAPI
 
 	return RS_INIT_OK;
 }
@@ -1217,13 +1224,10 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
 #ifdef RS_JSONAPI
-    mJsonAPIServer = new JsonApiServer;
-    rsJsonAPI = mJsonAPIServer;
+    // add jsonapi server to config manager so that it can save/load its tokens
 
-    mConfigMgr->addConfiguration("jsonapi.cfg",mJsonAPIServer);
-
-    RsFileHash dummyHash;
-    mJsonAPIServer->loadConfiguration(dummyHash);
+    if(rsJsonAPI)
+        rsJsonAPI->connectToConfigManager(mConfigMgr);
 #endif
 
     	/**** Reputation system ****/

@@ -202,8 +202,6 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 }
 void WebuiPage::onApplyClicked()
 {
-    QString errmsg;
-
     rsWebUI->setUserPassword(ui.password_LE->text().toStdString());
 
     if(!restart())

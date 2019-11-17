@@ -58,6 +58,8 @@ public:
     virtual void setBindingAddress(const std::string& address) override { RestbedService::setBindAddress(address); }
     virtual int  status() const                  override;
 
+    virtual void connectToConfigManager(p3ConfigMgr *cfgmgr);
+
 	virtual bool authorizeUser(const std::string& alphanumeric_user,const std::string& alphanumeric_passwd) override;
 	virtual std::map<std::string,std::string> getAuthorizedTokens() override;
 	bool revokeAuthToken(const std::string& user) override;

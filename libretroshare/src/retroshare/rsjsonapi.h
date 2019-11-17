@@ -22,6 +22,8 @@
 
 #include <string>
 
+class p3ConfigMgr;
+
 class RsJsonAPI
 {
 public:
@@ -39,6 +41,8 @@ public:
 
 	virtual void setBindingAddress(const std::string& address) =0;
 	virtual void setListeningPort(uint16_t port) =0;
+
+    virtual void connectToConfigManager(p3ConfigMgr *cfgmgr)=0;
 
 	/**
 	 * @brief Get status of the json api server

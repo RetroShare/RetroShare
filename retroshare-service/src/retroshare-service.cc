@@ -22,7 +22,11 @@
 #include "retroshare/rsinit.h"
 
 #ifdef RS_JSONAPI
-#include "jsonapi/jsonapi.h"
+#include "retroshare/rsjsonapi.h"
+#endif
+
+#ifdef RS_WEBUI
+#include "retroshare/rswebui.h"
 #endif
 
 static CrashStackTrace gCrashStackTrace;
@@ -120,8 +124,10 @@ int main(int argc, char* argv[])
 	std::string prefUserString;
 	RsConfigOptions conf;
 
+    std::string webui_base_directory = RsWebUI::DEFAULT_BASE_DIRECTORY;
+
 #ifdef RS_JSONAPI
-	conf.jsonApiPort = JsonApiServer::DEFAULT_PORT;	// enable JSonAPI by default
+	conf.jsonApiPort = RsJsonAPI::DEFAULT_PORT;	// enable JSonAPI by default
 #endif
 
 	argstream as(argc,argv);
@@ -148,7 +154,7 @@ int main(int argc, char* argv[])
 	                 "[node Id] Selected account to use and asks for passphrase"
 	                 ". Use \"-U list\" in order to list available accounts.",
 	                 false );
-#endif // RS_SERVICE_TERMINAL_LOGIN
+#endif
 
 #ifdef RS_JSONAPI
 	as >> parameter( 'J', "jsonApiPort", conf.jsonApiPort, "TCP Port",
@@ -156,12 +162,12 @@ int main(int argc, char* argv[])
 	   >> parameter( 'P', "jsonApiBindAddress", conf.jsonApiBindAddress,
 	                 "TCP bind address", "JSON API Bind Address default "
 	                                     "127.0.0.1.", false );
-#endif // def RS_JSONAPI
+#endif
 
 #if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	bool askWebUiPassword = false;
-	as >> option( 'W', "webui-password", askWebUiPassword,
-	                   "Ask WebUI password on the console." );
+	as >> parameter( 'B', "webui-directory", webui_base_directory, "Place where to find the html/js files for the webui.",false );
+	as >> option( 'W', "webui-password", askWebUiPassword, "Ask WebUI password on the console." );
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI) \
 	        && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
 
@@ -169,12 +175,12 @@ int main(int argc, char* argv[])
 #ifdef LOCALNET_TESTING
 	as >> parameter( 'R', "restrict-port" , portRestrictions, "port1-port2",
 	                 "Apply port restriction", false);
-#endif // ifdef LOCALNET_TESTING
+#endif
 
 #ifdef RS_AUTOLOGIN
 	as >> option( 'a', "auto-login", conf.autoLogin,
 	              "enable auto-login." );
-#endif // ifdef RS_AUTOLOGIN
+#endif
 
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
@@ -212,6 +218,7 @@ int main(int argc, char* argv[])
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
+
 	if(initResult != RS_INIT_OK)
 	{
 		RsErr() << "Retroshare core initalization failed with: " << initResult
@@ -274,8 +281,7 @@ int main(int argc, char* argv[])
 		rsNotify->registerNotifyClient(notify);
 
 		// supply empty passwd so that it is properly asked 3 times on console
-		RsInit::LoadCertificateStatus result =
-		        rsLoginHelper->attemptLogin(ssl_id, "");
+		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id, "");
 
 		switch(result)
 		{
@@ -297,14 +303,20 @@ int main(int argc, char* argv[])
 			        << std::endl;
 			return -result;
 		}
+
+		/* Start-up libretroshare server threads */
+		RsControl::instance()->StartupRetroShare();
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
 #if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	if(jsonApiServer && !webui_pass1.empty())
-		jsonApiServer->authorizeToken("webui:"+webui_pass1);
-#endif /* defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
+	if(rsJsonAPI && !webui_pass1.empty())
+    {
+		rsWebUI->setHtmlFilesDirectory(webui_base_directory);
+		rsWebUI->setUserPassword(webui_pass1);
+		rsWebUI->restart();
+    }
+#endif
 
 #ifdef __ANDROID__
 	rsControl->setShutdownCallback(QCoreApplication::exit);

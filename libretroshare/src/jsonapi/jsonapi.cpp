@@ -518,6 +518,14 @@ bool JsonApiServer::revokeAuthToken(const std::string& token)
 	return false;
 }
 
+void JsonApiServer::connectToConfigManager(p3ConfigMgr *cfgmgr)
+{
+    cfgmgr->addConfiguration("jsonapi.cfg",this);
+
+    RsFileHash hash;
+    loadConfiguration(hash);
+}
+
 bool JsonApiServer::authorizeUser(const std::string& user,const std::string& passwd)
 {
 	if(!is_alphanumeric(user) || !is_alphanumeric(passwd))
