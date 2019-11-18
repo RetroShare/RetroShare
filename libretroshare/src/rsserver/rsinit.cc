@@ -702,7 +702,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "util/rsrandom.h"
 
 #ifdef RS_USE_LIBUPNP
-#	include "rs_upnp/upnphandler_linux.h"
+#	include "rs_upnp/upnphandler_libupnp.h"
 #else // def RS_USE_LIBUPNP
 #	include "rs_upnp/upnphandler_miniupnp.h"
 #endif // def RS_USE_LIBUPNP

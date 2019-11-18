@@ -1596,7 +1596,13 @@ bool p3GxsTunnelService::getTunnelInfo(const RsGxsTunnelId& tunnel_id,GxsTunnelI
 
     // Data packets
 
-    info.pending_data_packets = 0;     
+    info.pending_data_packets = 0;
+    RsPeerId p(tunnel_id);
+
+    for(auto it(pendingGxsTunnelDataItems.begin());it!=pendingGxsTunnelDataItems.end();++it)
+        if(it->second.data_item->PeerId() == p)
+            ++info.pending_data_packets ;
+
     info.total_data_packets_sent=0 ;     
     info.total_data_packets_received=0 ;
 
@@ -1704,7 +1710,16 @@ bool p3GxsTunnelService::getTunnelsInfo(std::vector<RsGxsTunnelService::GxsTunne
         ti.tunnel_status = it->second.status ;
         ti.total_size_sent = it->second.total_sent ;
         ti.total_size_received = it->second.total_received ;
-        
+
+		ti.pending_data_packets = 0;
+        RsPeerId p(it->first);
+		for(auto it(pendingGxsTunnelDataItems.begin());it!=pendingGxsTunnelDataItems.end();++it)
+			if(it->second.data_item->PeerId() == p)
+				++ti.pending_data_packets ;
+
+	    ti.total_data_packets_sent =0;     // not accounted for yet.
+	    ti.total_data_packets_received=0 ; // not accounted for yet.
+
         infos.push_back(ti) ;
     }
     

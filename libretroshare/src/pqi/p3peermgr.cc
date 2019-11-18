@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2007-2011  Robert Fernie                                      *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2007-2011  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -33,11 +33,6 @@
 #include "pqi/p3netmgr.h"
 #include "pqi/p3historymgr.h"
 #include "pqi/pqinetwork.h"        // for getLocalAddresses
-
-//#include "pqi/p3dhtmgr.h" // Only need it for constants.
-//#include "tcponudp/tou.h"
-//#include "util/extaddrfinder.h"
-//#include "util/dnsresolver.h"
 
 #include "util/rsprint.h"
 #include "util/rsstring.h"
@@ -1175,8 +1170,8 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * previously known IP addresses */
 	if(!dt.isHiddenNode)
 	{
-		for(const std::string& locator : dt.ipAddressList)
-			addPeerLocator(sslId, locator);
+		for(const std::string& ipStr : dt.ipAddressList)
+			addPeerLocator(sslId, RsUrl(ipStr));
 
 		if(dt.extPort && !dt.extAddr.empty())
 		{
@@ -3159,4 +3154,4 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	return true;
 }
 
-
+p3PeerMgr::~p3PeerMgr() = default;

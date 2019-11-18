@@ -1,5 +1,5 @@
 /*******************************************************************************
- * libretroshare/src/upnp: upnphandler_linux.cc                                *
+ * libretroshare/src/upnp: upnphandler_libupnp.cc                                *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
@@ -28,7 +28,7 @@ extern "C" {
 #endif
 /* This stuff is actually C */
 
-#include "rs_upnp/upnphandler_linux.h"
+#include "rs_upnp/upnphandler_libupnp.h"
 
 #include "util/rsnet.h"
 

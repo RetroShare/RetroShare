@@ -46,7 +46,8 @@
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "retroshare/rsfiles.h"
-
+#include "rsitems/rsitem.h"
+#include "serialiser/rsserial.h"
 #include "pqi/pqi.h"
 #include "pqi/p3cfgmgr.h"
 
@@ -67,7 +68,53 @@ class p3PeerMgr;
 class p3ServiceControl;
 class p3FileDatabase;
 
-class ftServer: public p3Service, public RsFiles, public ftDataSend, public RsTurtleClientService, public RsServiceSerializer
+enum class RsFileItemType : uint8_t
+{
+	NONE =                     0x00, /// Only to detect ununitialized
+	FILE_SEARCH_REQUEST =      0x57,
+	FILE_SEARCH_RESULT =       0x58
+};
+
+struct RsFileItem : RsItem
+{
+	~RsFileItem() override;
+
+protected:
+	RsFileItem(RsFileItemType subtype);
+};
+
+struct RsFileSearchRequestItem : RsFileItem
+{
+	RsFileSearchRequestItem() : RsFileItem(RsFileItemType::FILE_SEARCH_REQUEST)
+	{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_REQUEST); }
+
+	std::string queryString;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(queryString); }
+
+	void clear() override;
+};
+
+struct RsFileSearchResultItem : RsFileItem
+{
+	RsFileSearchResultItem() : RsFileItem(RsFileItemType::FILE_SEARCH_RESULT)
+	{ setPriorityLevel(QOS_PRIORITY_RS_TURTLE_SEARCH_RESULT); }
+
+	std::vector<TurtleFileInfoV2> mResults;
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{ RS_SERIAL_PROCESS(mResults); }
+
+	void clear() override;
+};
+
+
+class ftServer :
+        public p3Service, public RsFiles, public ftDataSend,
+        public RsTurtleClientService, public RsServiceSerializer
 {
 
 public:
@@ -98,7 +145,21 @@ public:
     uint16_t serviceId() const { return RS_SERVICE_TYPE_FILE_TRANSFER ; }
     virtual bool handleTunnelRequest(const RsFileHash& hash,const RsPeerId& peer_id) ;
     virtual void receiveTurtleData(const RsTurtleGenericTunnelItem *item,const RsFileHash& hash,const RsPeerId& virtual_peer_id,RsTurtleGenericTunnelItem::Direction direction) ;
-	virtual void ftReceiveSearchResult(RsTurtleFTSearchResultItem *item);	// We dont use TurtleClientService::receiveSearchResult() because of backward compatibility.
+
+	/// We keep this for retro-compatibility @see RsTurtleClientService
+	virtual void ftReceiveSearchResult(RsTurtleFTSearchResultItem *item);
+
+	/// @see RsTurtleClientService
+	bool receiveSearchRequest(
+	        unsigned char* searchRequestData, uint32_t searchRequestDataLen,
+	        unsigned char*& search_result_data, uint32_t& searchResultDataLen,
+	        uint32_t& maxAllowsHits ) override;
+
+	/// @see RsTurtleClientService
+	void receiveSearchResult(
+	        TurtleSearchRequestId requestId, unsigned char* searchResultData,
+	        uint32_t  searchResultDataLen ) override;
+
     virtual RsItem *create_item(uint16_t service,uint8_t item_type) const ;
 	virtual RsServiceSerializer *serializer() { return this ; }
 
@@ -148,7 +209,7 @@ public:
 	/// @see RsFiles
 	virtual bool turtleSearchRequest(
 	        const std::string& matchString,
-	        const std::function<void (const std::list<TurtleFileInfo>& results)>& multiCallback,
+	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
 	        rstime_t maxWait = 300 );
 
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
@@ -337,13 +398,15 @@ private:
 	std::map<
 	    TurtleRequestId,
 	    std::pair<
-	        std::function<void (const std::list<TurtleFileInfo>& results)>,
+	        std::function<void (const std::vector<TurtleFileInfoV2>& results)>,
 	        std::chrono::system_clock::time_point >
 	 > mSearchCallbacksMap;
 	RsMutex mSearchCallbacksMapMutex;
 
 	/// Cleanup mSearchCallbacksMap
 	void cleanTimedOutSearches();
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
 
 

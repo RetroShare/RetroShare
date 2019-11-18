@@ -404,9 +404,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
 			pqi/pqinetstatebox.h \
-			pqi/p3servicecontrol.h \
-
-#			pqi/p3dhtmgr.h \
+                        pqi/p3servicecontrol.h
 
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
@@ -653,8 +651,8 @@ equals(RS_UPNP_LIB, miniupnpc) {
 
 contains(RS_UPNP_LIB, upnp) {
         HEADERS += rs_upnp/upnp18_retrocompat.h
-        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_linux.h
-        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_linux.cc
+        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_libupnp.h
+        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_libupnp.cc
 }
 
 # new gxs cache system
@@ -901,8 +899,32 @@ rs_jsonapi {
     SOURCES += jsonapi/jsonapi.cpp
 }
 
-rs_deep_search {
-    HEADERS += deep_search/deep_search.h
+rs_deep_channels_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/channelsindex.hpp
+    SOURCES += deep_search/channelsindex.cpp
+}
+
+rs_deep_files_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/filesindex.hpp
+    SOURCES += deep_search/filesindex.cpp
+}
+
+rs_deep_files_index_ogg {
+    HEADERS += deep_search/filesoggindexer.hpp
+}
+
+rs_deep_files_index_flac {
+    HEADERS += deep_search/filesflacindexer.hpp
+}
+
+rs_deep_files_index_taglib {
+    HEADERS += deep_search/filestaglibindexer.hpp
 }
 
 rs_broadcast_discovery {

@@ -159,16 +159,37 @@ rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 rs_macos10.13:CONFIG -= rs_macos10.11
 rs_macos10.14:CONFIG -= rs_macos10.11
+rs_macos10.15:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# To enable deep search append the following assignation to qmake command line
-# CONFIG *= rs_deep_search
-CONFIG *= no_rs_deep_search
-rs_deep_search:CONFIG -= no_rs_deep_search
+# To enable channel indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_channel_index"
+CONFIG *= no_rs_deep_channel_index
+rs_deep_channel_index:CONFIG -= no_rs_deep_channel_index
+
+# To enable deep files indexing append the following assignation to qmake
+# command line "CONFIG+=rs_files_index"
+CONFIG *= no_rs_deep_files_index
+rs_deep_files_index:CONFIG -= no_rs_deep_files_index
+
+# To enable Ogg files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_ogg"
+CONFIG *= no_rs_deep_files_index_ogg
+rs_deep_files_index_ogg:CONFIG -= no_rs_deep_files_index_ogg
+
+# To enable FLAC files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_flac"
+CONFIG *= no_rs_deep_files_index_flac
+rs_deep_files_index_flac:CONFIG -= no_rs_deep_files_index_flac
+
+# To enable taglib files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_taglib"
+CONFIG *= no_rs_deep_files_index_taglib
+rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 
 # To enable native dialogs append the following assignation to qmake command
 # line "CONFIG+=rs_use_native_dialogs"
@@ -564,15 +585,12 @@ retroshare_qml_app {
     warning("QMAKE: you have enabled retroshare_qml_app which is deprecated")
 }
 
-rs_deep_search {
-    DEFINES *= RS_DEEP_SEARCH
+rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
-	linux {
-	 exists("/usr/include/xapian-1.3") {
-	 	INCLUDEPATH += /usr/include/xapian-1.3
-	 }
-	}
-}
+rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
+rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
+rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
+rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
@@ -740,6 +758,13 @@ macx-* {
 		message(***retroshare.pri: Set Target and SDK to MacOS 10.14 )
 		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.14
 		QMAKE_MAC_SDK = macosx10.14
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
+	rs_macos10.15 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.15 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.15
+		QMAKE_MAC_SDK = macosx10.15
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}

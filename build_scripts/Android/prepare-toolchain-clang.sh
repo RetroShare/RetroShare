@@ -424,7 +424,7 @@ build_restbed()
 
 	rm -rf restbed-build; mkdir restbed-build ; cd restbed-build
 	cmake \
-		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON BUILD_TESTS=OFF \
 		-DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
 	make -j${HOST_NUM_CPU}
 	make install

@@ -47,7 +47,7 @@ extern RsGxsChannels* rsGxsChannels;
 
 struct RsGxsChannelGroup : RsSerializable
 {
-    RsGxsChannelGroup() : mAutoDownload(false) {}
+	RsGxsChannelGroup() : mAutoDownload(false) {}
 
 	RsGroupMetaData mMeta;
 	std::string mDescription;
@@ -56,14 +56,17 @@ struct RsGxsChannelGroup : RsSerializable
 	bool mAutoDownload;
 
 	/// @see RsSerializable
-	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(mDescription);
 		RS_SERIAL_PROCESS(mImage);
 		RS_SERIAL_PROCESS(mAutoDownload);
 	}
+
+	~RsGxsChannelGroup() override;
 };
 
 struct RsGxsChannelPost : RsSerializable
@@ -82,8 +85,9 @@ struct RsGxsChannelPost : RsSerializable
 	RsGxsImage mThumbnail;
 
 	/// @see RsSerializable
-	virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mMeta);
 		RS_SERIAL_PROCESS(mOlderVersions);
@@ -94,6 +98,8 @@ struct RsGxsChannelPost : RsSerializable
 		RS_SERIAL_PROCESS(mSize);
 		RS_SERIAL_PROCESS(mThumbnail);
 	}
+
+	~RsGxsChannelPost() override;
 };
 
 
@@ -544,5 +550,5 @@ public:
 	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
 	//////////////////////////////////////////////////////////////////////////////
 
-	virtual ~RsGxsChannels();
+	~RsGxsChannels() override;
 };
