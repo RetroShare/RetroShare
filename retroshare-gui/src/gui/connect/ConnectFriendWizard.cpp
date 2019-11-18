@@ -80,9 +80,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 
 	mTitleFontSize = 0; // Standard
 	mTitleFontWeight = 0; // Standard
-
-    // (csoler) I'm hiding this, since it is not needed anymore with the new Home page.
-    ui->userFrame->hide();
 	
 //	ui->userFileFrame->hide(); // in homepage dropmenu now
 
@@ -138,7 +135,6 @@ ConnectFriendWizard::ConnectFriendWizard(QWidget *parent) :
 	}
 	else
 	{
-		ui->userFrame->hide(); // certificates page - top half with own cert and it's functions
 		ui->cp_Frame->hide(); // Advanced options - key sign, whitelist, direct source ...
 		AdvancedVisible=false;
 		ui->trustLabel->hide();
@@ -302,6 +298,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 				ui->requestinfolabel->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+				setButtonText(QWizard::FinishButton	, tr("Accept"));
 			}
 		}
     }
@@ -326,6 +323,7 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 				ui->requestinfolabel->show();
 				setTitleText(ui->ConclusionPage, tr("Friend request"));
 				ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+				setButtonText(QWizard::FinishButton	, tr("Accept"));
 			}
 		}
 	}
@@ -351,10 +349,11 @@ void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, 
     //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
     setStartId(Page_Conclusion);
     if (friendRequest){
-    ui->cp_Label->show();
-    ui->requestinfolabel->show();
-    setTitleText(ui->ConclusionPage,tr("Friend request"));
-    ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+		ui->cp_Label->show();
+		ui->requestinfolabel->show();
+		setTitleText(ui->ConclusionPage,tr("Friend request"));
+		ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+		setButtonText(QWizard::FinishButton	, tr("Accept"));
     }
 }
 
@@ -383,27 +382,15 @@ void ConnectFriendWizard::initializePage(int id)
 {
 	switch ((Page) id) {
 	case Page_Text:
-		connect(ui->userCertHelpButton, SIGNAL( clicked()), this, SLOT(showHelpUserCert()));
-		connect(ui->userCertIncludeSignaturesButton, SIGNAL(clicked()), this, SLOT(toggleSignatureState()));
-		connect(ui->userCertOldFormatButton, SIGNAL(clicked()), this, SLOT(toggleFormatState()));
-		connect(ui->userCertCopyButton, SIGNAL(clicked()), this, SLOT(copyCert()));
+
 		connect(ui->userCertPasteButton, SIGNAL(clicked()), this, SLOT(pasteCert()));
 		connect(ui->userCertOpenButton, SIGNAL(clicked()), this, SLOT(openCert()));
-		connect(ui->userCertSaveButton, SIGNAL(clicked()), this, SLOT(saveCert()));
-		connect(ui->userCertMailButton, SIGNAL(clicked()), this, SLOT(runEmailClient()));
 		connect(ui->friendCertEdit, SIGNAL(textChanged()), this, SLOT(friendCertChanged()));
 
 		cleanfriendCertTimer = new QTimer(this);
 		cleanfriendCertTimer->setSingleShot(true);
 		cleanfriendCertTimer->setInterval(1000); // 1 second
 		connect(cleanfriendCertTimer, SIGNAL(timeout()), this, SLOT(cleanFriendCert()));
-
-		ui->userCertOldFormatButton->setChecked(false); 
-		ui->userCertOldFormatButton->hide() ;
-
-		toggleFormatState(true);
-		toggleSignatureState(false);
-		updateOwnCert();
 
 		cleanFriendCert();
 
@@ -780,52 +767,6 @@ void ConnectFriendWizard::accept()
 
 //============================= TextPage =====================================
 
-void ConnectFriendWizard::updateOwnCert()
-{
-	std::string invite = rsPeers->GetRetroshareInvite( rsPeers->getOwnId(),
-	            ui->userCertIncludeSignaturesButton->isChecked() );
-
-	std::cerr << "TextPage() getting Invite: " << invite << std::endl;
-
-	ui->userCertEdit->setPlainText(QString::fromUtf8(invite.c_str()));
-}
-
-void ConnectFriendWizard::toggleFormatState(bool doUpdate)
-{
-	if (ui->userCertOldFormatButton->isChecked()) 
-	{
-		ui->userCertOldFormatButton->setToolTip(tr("Use new certificate format (safer, more robust)"));
-		ui->userCertOldFormatButton->setIcon(QIcon(":/images/ledoff1.png")) ;
-	}
-	else 
-	{
-		ui->userCertOldFormatButton->setToolTip(tr("Use old (backward compatible) certificate format"));
-		ui->userCertOldFormatButton->setIcon(QIcon(":/images/ledon1.png")) ;
-	}
-
-	if (doUpdate) {
-		updateOwnCert();
-	}
-}
-
-void ConnectFriendWizard::toggleSignatureState(bool doUpdate)
-{
-	if (ui->userCertIncludeSignaturesButton->isChecked()) {
-		ui->userCertIncludeSignaturesButton->setToolTip(tr("Remove signatures"));
-	} else {
-		ui->userCertIncludeSignaturesButton->setToolTip(tr("Include signatures"));
-	}
-
-	if (doUpdate) {
-		updateOwnCert();
-	}
-}
-
-void ConnectFriendWizard::runEmailClient()
-{
-	sendMail("", tr("RetroShare Invite"), ui->userCertEdit->toPlainText());
-}
-
 void ConnectFriendWizard::friendCertChanged()
 {
 	ui->TextPage->setComplete(false);
@@ -893,18 +834,6 @@ void ConnectFriendWizard::cleanFriendCert()
 	ui->TextPage->setComplete(certValid);
 }
 
-void ConnectFriendWizard::showHelpUserCert()
-{
-	QMessageBox::information(this, tr("Connect Friend Help"), tr("You can copy this text and send it to your friend via email or some other way"));
-}
-
-void ConnectFriendWizard::copyCert()
-{
-	QClipboard *clipboard = QApplication::clipboard();
-	clipboard->setText(ui->userCertEdit->toPlainText());
-	QMessageBox::information(this, "RetroShare", tr("Your Cert is copied to Clipboard, paste and send it to your friend via email or some other way"));
-}
-
 void ConnectFriendWizard::pasteCert()
 {
 	QClipboard *clipboard = QApplication::clipboard();
@@ -925,23 +854,6 @@ void ConnectFriendWizard::openCert()
 			fileCert.close();
 		}
 	}
-}
-
-void ConnectFriendWizard::saveCert()
-{
-	QString fileName = QFileDialog::getSaveFileName(this, tr("Save as..."), "", tr("RetroShare Certificate (*.rsc );;All Files (*)"));
-	if (fileName.isEmpty())
-		return;
-
-	QFile file(fileName);
-	if (!file.open(QFile::WriteOnly))
-		return;
-
-	//Todo: move save to file to p3Peers::SaveCertificateToFile
-
-	QTextStream ts(&file);
-	ts.setCodec(QTextCodec::codecForName("UTF-8"));
-	ts << ui->userCertEdit->document()->toPlainText();
 }
 
 #ifdef TO_BE_REMOVED
