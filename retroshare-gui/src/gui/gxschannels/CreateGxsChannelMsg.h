@@ -69,6 +69,8 @@ private slots:
 	void contextMenu(QPoint) ;
 
 	void addThumbnail();
+	void addPicture();
+	void checkLength();
 	void allowAutoMediaThumbNail(bool);
 
 private:
