@@ -320,18 +320,27 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 /* ConnectFriendWizard */
 
 ConnectFriendWizard QWizardPage#ConclusionPage > QGroupBox#peerDetailsFrame {
-	border: 2px solid #CCCCCC;
+	border: 2px solid #039bd5;
 	border-radius:6px;
 	background: white;
 	padding: 12 12px;
 }
 
-ConnectFriendWizard QLabel#fr_label, QLabel#requestinfolabel
+ConnectFriendWizard QLabel#fr_label, QLabel#requestinfolabel, QLabel#cp_Label
 {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ConnectFriendWizard QGroupBox::title#peerDetailsFrame
+{
+	padding: 4 12px;
+	background: transparent; 
+    padding: 4 12px;
+    background: #039bd5;
+    color: white;
 }
 
 /* Toaster */
