@@ -332,6 +332,9 @@ border-image: url(:/images/closepressed.png)
            <enum>QFrame::Sunken</enum>
           </property>
           <layout class="QHBoxLayout" name="toolBarFrameHLayout">
+           <property name="spacing">
+            <number>3</number>
+           </property>
            <property name="leftMargin">
             <number>2</number>
            </property>
