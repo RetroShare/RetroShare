@@ -503,6 +503,7 @@ HEADERS +=	util/folderiterator.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
             util/cxx11retrocompat.h \
+    util/cxx17retrocompat.h \
             util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
