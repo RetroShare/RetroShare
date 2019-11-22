@@ -136,7 +136,7 @@ void p3WebUI::setHtmlFilesDirectory(const std::string& html_dir)
 
 int p3WebUI::status() const
 {
-    if(isRunning())
+    if(rsJsonAPI->status()==RsJsonAPI::JSONAPI_STATUS_RUNNING && rsJsonAPI->hasResourceProvider(this))
         return WEBUI_STATUS_RUNNING;
     else
         return WEBUI_STATUS_NOT_RUNNING;
@@ -153,3 +153,22 @@ void p3WebUI::setUserPassword(const std::string& passwd)
 	std::cerr << "(EE) JsonAPI is not available in this buildof Retroshare! Cannot register a user password for the WebUI" << std::endl;
 #endif
 }
+
+bool p3WebUI::restart()
+{
+    rsJsonAPI->registerResourceProvider(this);
+
+    return rsJsonAPI->restart();
+}
+
+bool p3WebUI::stop()
+{
+    rsJsonAPI->unregisterResourceProvider(this);
+
+    if(rsJsonAPI->status()==RsJsonAPI::JSONAPI_STATUS_RUNNING)
+		return rsJsonAPI->restart();
+    else
+        return true;
+}
+
+

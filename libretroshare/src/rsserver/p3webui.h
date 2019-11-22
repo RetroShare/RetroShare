@@ -24,23 +24,26 @@
 #include <vector>
 #include <memory>
 #include "retroshare/rswebui.h"
-#include "jsonapi/restbedservice.h"
+#include "jsonapi/jsonapi.h"
 
-class p3WebUI: public RsWebUI, public RestbedService
+class p3WebUI: public RsWebUI, public JsonApiResourceProvider
 {
 public:
     p3WebUI(){}
     virtual ~p3WebUI(){}
 
-    virtual void setHtmlFilesDirectory(const std::string& html_dir) override;
+    // implements RsWebUI
 
-    virtual bool restart() override { return RestbedService::restart();}
-    virtual bool stop() override { return RestbedService::stop();}
-    virtual void setListeningPort(uint16_t port) override { RestbedService::setListeningPort(port) ;}
-    virtual void setBindingAddress(const std::string& address) override { RestbedService::setBindAddress(address) ;}
+    virtual void setHtmlFilesDirectory(const std::string& html_dir) override;
     virtual void setUserPassword(const std::string& passwd) override;
 
-    virtual int status() const override;
+    virtual bool restart() override ;
+    virtual bool stop() override ;
+    virtual int  status() const override;
+
+    // implements JsonApiResourceProvider
+
+    virtual std::string getName() const override { return "Web Interface" ;}
     virtual std::vector<std::shared_ptr<restbed::Resource> > getResources() const override;
 };
 

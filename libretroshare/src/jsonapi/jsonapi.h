@@ -24,6 +24,7 @@
 #include <restbed>
 #include <cstdint>
 #include <map>
+#include <set>
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
@@ -34,6 +35,16 @@
 #include "util/rsthreads.h"
 
 namespace rb = restbed;
+
+class JsonApiResourceProvider
+{
+public:
+    JsonApiResourceProvider() {}
+    virtual ~JsonApiResourceProvider() = default;
+
+    virtual std::string getName() const =0;
+    virtual std::vector<std::shared_ptr<rb::Resource> > getResources() const =0;
+};
 
 /**
  * Simple usage
@@ -50,13 +61,18 @@ public:
     JsonApiServer() ;
     virtual ~JsonApiServer() = default;
 
-    // public API
+    // implements RestbedService
 
-	virtual bool restart()                       override { return RestbedService::restart();}
-    virtual bool stop()                          override { return RestbedService::stop();}
-    virtual void setListeningPort(uint16_t port) override { RestbedService::setListeningPort(port) ;}
-    virtual void setBindingAddress(const std::string& address) override { RestbedService::setBindAddress(address); }
-    virtual int  status() const                  override;
+    virtual std::vector<std::shared_ptr<rb::Resource> > getResources() const override ;
+
+     // RsJsonAPI public API
+
+    bool restart()   override { return RestbedService::restart(); }
+    bool stop()      override { return RestbedService::stop();}
+    int  status() const override;
+
+    void setListeningPort(uint16_t port) override { return RestbedService::setListeningPort(port); }
+    void setBindingAddress(const std::string& bind_address) override { return RestbedService::setBindAddress(bind_address); }
 
     virtual void connectToConfigManager(p3ConfigMgr *cfgmgr);
 
@@ -65,6 +81,10 @@ public:
 	bool revokeAuthToken(const std::string& user) override;
 	bool isAuthTokenValid(const std::string& token) override;
 	bool requestNewTokenAutorization(const std::string& user) override;
+
+    void registerResourceProvider(const JsonApiResourceProvider *);
+    void unregisterResourceProvider(const JsonApiResourceProvider *);
+    bool hasResourceProvider(const JsonApiResourceProvider *);
 
     // private API. These methods may be moved to RsJsonAPI so as to be visible in http mode, if needed.
 
@@ -123,7 +143,6 @@ public:
 protected:
 	/// @see RsSingleJobThread
 	virtual void run();
-    virtual std::vector<std::shared_ptr<rb::Resource> > getResources() const;
 
 private:
 
@@ -141,7 +160,6 @@ private:
 
 	uint16_t mPort;
 	std::string mBindAddress;
-	rb::Service mService;
 
 	/// Called when new JSON API auth token is requested to be authorized
 	/// The callback supplies the password to be used to make the token
@@ -167,10 +185,10 @@ private:
 	        RsGenericSerializer::SerializeContext& ctx,
 	        const std::shared_ptr<rb::Session> session )
 	{
-		return checkRsServicePtrReady(
-		            serviceInstance.get(), serviceName, ctx, session );
+		return checkRsServicePtrReady( serviceInstance.get(), serviceName, ctx, session );
 	}
 
 	std::vector<std::shared_ptr<rb::Resource> > _resources;
+	std::set<JsonApiResourceProvider *> _resource_providers;
 };
 

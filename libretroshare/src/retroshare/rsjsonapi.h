@@ -23,6 +23,7 @@
 #include <string>
 
 class p3ConfigMgr;
+class JsonApiResourceProvider;
 
 class RsJsonAPI
 {
@@ -43,6 +44,10 @@ public:
 	virtual void setListeningPort(uint16_t port) =0;
 
     virtual void connectToConfigManager(p3ConfigMgr *cfgmgr)=0;
+
+    virtual void registerResourceProvider(const JsonApiResourceProvider *)=0;
+    virtual void unregisterResourceProvider(const JsonApiResourceProvider *)=0;
+    virtual bool hasResourceProvider(const JsonApiResourceProvider *)=0;
 
 	/**
 	 * @brief Get status of the json api server

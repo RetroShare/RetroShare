@@ -23,26 +23,34 @@
 #pragma once
 
 #include <restbed>
+#include "util/rsthreads.h"
 
 class RestbedThread;
 
-class RestbedService
+class RestbedService: public RsThread
 {
 public:
     RestbedService() ;
 	virtual ~RestbedService();
 
-    bool isRunning() const ;
+    bool restart();
+    bool stop();
+    bool isRunning();
 
-    virtual bool restart();
-    virtual bool stop();
+    void setListeningPort(uint16_t port) ;
+	void setBindAddress(const std::string& bind_address);
 
-    virtual void setListeningPort(uint16_t port) ;
-	virtual void setBindAddress(const std::string& bind_address);
+    // should be overloaded by sub-class in order to provide resources to the restbed Service.
 
-    virtual std::vector<std::shared_ptr<restbed::Resource> > getResources()const =0;
+    virtual std::vector<std::shared_ptr<restbed::Resource> > getResources() const = 0;
+
+protected:
+	void runloop() override;
 
 private:
-    RestbedThread *_restbed_thread;
+    std::shared_ptr<restbed::Service> mService;	// managed by RestbedService because it needs to be properly deleted when restarted.
+
+    uint16_t mListeningPort;
+    std::string mBindingAddress;
 };
 

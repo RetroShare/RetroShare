@@ -398,9 +398,9 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
     RsInfo() << "Allocating jsonAPI server (not launched yet) " << std::endl;
     JsonApiServer *jas = new JsonApiServer();
     jas->setListeningPort(conf.jsonApiPort);
-    jas->setBindingAddress(conf.jsonApiBindAddress);
+    jas->setBindAddress(conf.jsonApiBindAddress);
 
-    if(conf.jsonApiPort != NULL)
+    if(conf.jsonApiPort != 0)
     {
 		RsInfo() << "Launching jsonAPI server on port " << conf.jsonApiPort << std::endl;
         jas->restart();

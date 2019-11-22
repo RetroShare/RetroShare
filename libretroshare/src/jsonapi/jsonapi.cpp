@@ -376,33 +376,6 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 #include "jsonapi-wrappers.inl"
 }
 
-void JsonApiServer::run()
-{
-	std::shared_ptr<rb::Settings> settings(new rb::Settings);
-	settings->set_port(mPort);
-	settings->set_bind_address(mBindAddress);
-	settings->set_default_header("Cache-Control", "no-cache");
-
-	{
-		sockaddr_storage tmp;
-		sockaddr_storage_inet_pton(tmp, mBindAddress);
-		sockaddr_storage_setport(tmp, mPort);
-		sockaddr_storage_ipv6_to_ipv4(tmp);
-		RsUrl tmpUrl(sockaddr_storage_tostring(tmp));
-		tmpUrl.setScheme("http");
-
-		std::cerr << "JSON API listening on " << tmpUrl.toString()
-		          << std::endl;
-	}
-
-	mService.start(settings);
-}
-
-std::vector<std::shared_ptr<restbed::Resource> > JsonApiServer::getResources() const
-{
-    return _resources;
-}
-
 void JsonApiServer::registerHandler(
         const std::string& path,
         const std::function<void (const std::shared_ptr<restbed::Session>)>& handler,
@@ -630,8 +603,32 @@ void JsonApiServer::handleCorsOptions(
 
 int JsonApiServer::status() const
 {
-    if(isRunning())
+	if(RestbedService::isRunning() && RestbedService::isClient(this))
         return JSONAPI_STATUS_RUNNING;
     else
         return JSONAPI_STATUS_NOT_RUNNING;
+}
+
+void JsonApiServer::registerResourceProvider(const JsonApiResourceProvider *rp)
+{
+    _resource_providers.insert(rp);
+}
+void JsonApiServer::unregisterResourceProvider(const JsonApiResourceProvider *rp)
+{
+    _resource_providers.erase(rp);
+}
+bool JsonApiServer::hasResourceProvider(const JsonApiResourceProvider *rp)
+{
+    return _resource_providers.find(rp) != _resource_providers.end();
+}
+
+std::vector<std::shared_ptr<rb::Resource> > JsonApiServer::getResources() const
+{
+    auto tab = _resources;
+
+    for(auto& rp: _resource_providers)
+        for(auto r: rp->getResources())
+            tab.push_back(r);
+
+    return tab;
 }
