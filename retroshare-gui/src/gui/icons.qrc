@@ -103,9 +103,10 @@
         <file>icons/png/microphone_mute.png</file>
         <file>icons/png/microphone.png</file>
         <file>icons/png/netgraph.png</file>
+		<file>icons/png/netgraph2.png</file>
         <file>icons/png/network-notify.png</file>
         <file>icons/png/network.png</file>
-		<file>icons/png/network2.png</file>
+        <file>icons/png/network2.png</file>
         <file>icons/png/network-puplic.png</file>
         <file>icons/png/newsfeed-notify.png</file>
         <file>icons/png/newsfeed.png</file>
@@ -271,12 +272,16 @@
         <file>icons/png/correct.png</file>
         <file>icons/png/comment.png</file>
         <file>icons/png/chats.png</file>
-		<file>icons/png/chats-private.png</file>
+        <file>icons/png/chats-private.png</file>
         <file>icons/png/fileshare.png</file>
         <file>icons/png/forum.png</file>
         <file>icons/png/message.png</file>
         <file>icons/png/newsfeed2.png</file>
         <file>icons/png/postedlinks.png</file>
         <file>icons/png/people2.png</file>
+        <file>icons/png/bandwidth.png</file>
+        <file>icons/png/netgraph2.png</file>
+        <file>icons/png/options2.png</file>
+        <file>icons/png/exit2.png</file>
     </qresource>
 </RCC>
