@@ -71,14 +71,14 @@
 #define IMAGE_CREATE          ""
 #define IMAGE_PUBLIC          ":/icons/png/chats.png"
 #define IMAGE_PRIVATE         ":/icons/png/chats-private.png"
-#define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
-#define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
+#define IMAGE_SUBSCRIBE       ":/icons/png/enter.png"  
+#define IMAGE_UNSUBSCRIBE     ":/icons/png/leave2.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
 #define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING		      ":images/typing.png" 
+#define IMAGE_TYPING		  ":images/typing.png" 
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
-#define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
+#define IMAGE_COPYRSLINK      ":/icons/png/copy.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)

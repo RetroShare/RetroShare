@@ -121,8 +121,11 @@
 #include <unistd.h>
 
 #define IMAGE_QUIT              ":/icons/png/exit.png"
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_PREFERENCES       ":/icons/png/options2.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
+#define IMAGE_STATS             ":/icons/png/netgraph2.png"
+#define IMAGE_CLOSE             ":/icons/png/exit2.png"
+
 #define IMAGE_ADDFRIEND         ":/icons/png/invite.png"
 #define IMAGE_RETROSHARE        ":/icons/logo_128.png"
 #define IMAGE_NOONLINE          ":/icons/logo_0_connected_128.png"
@@ -130,9 +133,8 @@
 #define IMAGE_TWOONLINE         ":/icons/logo_2_connected_128.png"
 #define IMAGE_OVERLAY           ":/icons/star_overlay_128.png"
 
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
+#define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
 #define IMAGE_GAMES             ":/images/kgames.png"
@@ -146,7 +148,6 @@
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_BLOGS             ":/images/kblogger.png"
-#define IMAGE_DHT               ":/images/dht16.png"
 
 /*static*/ bool MainWindow::hiddenmode = false;
 
@@ -609,7 +610,7 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
 #endif // ENABLE_WEBUI
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
-    trayMenu->addAction(QIcon(IMAGE_DHT), tr("Statistics"), this, SLOT(showStatisticsWindow()));
+    trayMenu->addAction(QIcon(IMAGE_STATS), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
 
 #ifdef UNFINISHED
