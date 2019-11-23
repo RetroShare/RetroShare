@@ -31,7 +31,7 @@ RestbedService::RestbedService()
 	mBindingAddress = "127.0.0.1";
 }
 
-void RestbedService::stop()
+bool RestbedService::stop()
 {
 	mService->stop();
 
@@ -42,19 +42,15 @@ void RestbedService::stop()
 		std::cerr << "(II) shutting down restbed service." << std::endl;
 		rstime::rs_usleep(1000*1000);
 	}
+    return true;
 }
 
+uint16_t RestbedService::listeningPort() const { return mListeningPort ; }
 void RestbedService::setListeningPort(uint16_t p) { mListeningPort = p ; }
 void RestbedService::setBindAddress(const std::string& bindAddress) { mBindingAddress = bindAddress ; }
-uint16_t RestbedService::listeningPort() const { return mListeningPort;}
 
-void RestbedService::runloop() override
+void RestbedService::runloop()
 {
-	if(_resources.empty())
-	{
-		RsErr() << "(EE) please call RestbedService::setResources() before launching the service!" << std::endl;
-		return;
-	}
 	auto settings = std::make_shared< restbed::Settings >( );
 	settings->set_port( mListeningPort );
 	settings->set_bind_address( mBindingAddress );

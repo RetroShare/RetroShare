@@ -45,7 +45,6 @@ WebuiPage::WebuiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
     ui.setupUi(this);
     connect(ui.enableWebUI_CB, SIGNAL(clicked(bool)), this, SLOT(onEnableCBClicked(bool)));
-    connect(ui.port_SB, SIGNAL(valueChanged(int)), this, SLOT(onPortValueChanged(int)));
     connect(ui.allIp_CB, SIGNAL(clicked(bool)), this, SLOT(onAllIPCBClicked(bool)));
     connect(ui.apply_PB, SIGNAL(clicked()), this, SLOT(onApplyClicked()));
     connect(ui.password_LE, SIGNAL(textChanged(QString)), this, SLOT(onPasswordValueChanged(QString)));
@@ -75,8 +74,6 @@ bool WebuiPage::updateParams(QString &errmsg)
     bool changed = false;
     if(ui.enableWebUI_CB->isChecked() != Settings->getWebinterfaceEnabled())
         changed = true;
-    if(ui.port_SB->value() != Settings->getWebinterfacePort())
-        changed = true;
     if(ui.allIp_CB->isChecked() != Settings->getWebinterfaceAllowAllIps())
         changed = true;
     if(ui.webInterfaceFiles_LE->text() != Settings->getWebinterfaceFilesDirectory())
@@ -86,7 +83,6 @@ bool WebuiPage::updateParams(QString &errmsg)
     {
         // store config
         Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
-        Settings->setWebinterfacePort(ui.port_SB->value());
         Settings->setWebinterfaceAllowAllIps(ui.allIp_CB->isChecked());
         Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
     }
@@ -123,7 +119,6 @@ void WebuiPage::load()
 {
 	std::cerr << "WebuiPage::load()" << std::endl;
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
-	whileBlocking(ui.port_SB)->setValue(Settings->getWebinterfacePort());
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
 
@@ -149,9 +144,7 @@ QString WebuiPage::helpText() const
     if(!Settings->getWebinterfaceEnabled())
         return false;
 
-    rsWebUI->setListeningPort(Settings->getWebinterfacePort());
     rsWebUI->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
-
     rsWebUI->restart();
 
     return true;
@@ -215,5 +208,6 @@ void WebuiPage::onApplyClicked()
 
 void WebuiPage::onStartWebBrowserClicked()
 {
-    QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(ui.port_SB->value())));
+    QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(rsJsonAPI->listeningPort())));
 }
+

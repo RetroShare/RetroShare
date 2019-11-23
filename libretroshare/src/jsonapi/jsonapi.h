@@ -69,10 +69,11 @@ public:
 
     bool restart()   override { return RestbedService::restart(); }
     bool stop()      override { return RestbedService::stop();}
-    int  status() const override;
+    int  status() override;
 
     void setListeningPort(uint16_t port) override { return RestbedService::setListeningPort(port); }
     void setBindingAddress(const std::string& bind_address) override { return RestbedService::setBindAddress(bind_address); }
+    uint16_t listeningPort() const override { return RestbedService::listeningPort() ; }
 
     virtual void connectToConfigManager(p3ConfigMgr *cfgmgr);
 
@@ -189,6 +190,6 @@ private:
 	}
 
 	std::vector<std::shared_ptr<rb::Resource> > _resources;
-	std::set<JsonApiResourceProvider *> _resource_providers;
+	std::set<const JsonApiResourceProvider *> _resource_providers;
 };
 

@@ -42,6 +42,7 @@ public:
 
 	virtual void setBindingAddress(const std::string& address) =0;
 	virtual void setListeningPort(uint16_t port) =0;
+	virtual uint16_t listeningPort() const =0;
 
     virtual void connectToConfigManager(p3ConfigMgr *cfgmgr)=0;
 
@@ -54,7 +55,7 @@ public:
 	 * @jsonapi{development}
 	 * @return the status picked in the enum JSONAPI_STATUS_UNKNOWN/RUNNING/NOT_RUNNING
 	 */
-	virtual int status() const=0;
+	virtual int status() =0;
 
     //=============================================================================================//
     //                        API methods that are also accessible through http                    //

@@ -337,7 +337,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config")
 			std::function<void(std::shared_ptr<const RsEvent>)> multiCallback =
 			        [this, weakSession, hId](std::shared_ptr<const RsEvent> event)
 			{
-				mService.schedule( [weakSession, hId, event]()
+				mService->schedule( [weakSession, hId, event]()
 				{
 					auto session = weakSession.lock();
 					if(!session || session->is_closed())
@@ -601,9 +601,9 @@ void JsonApiServer::handleCorsOptions(
         const std::shared_ptr<restbed::Session> session )
 { session->close(rb::NO_CONTENT, corsOptionsHeaders); }
 
-int JsonApiServer::status() const
+int JsonApiServer::status()
 {
-	if(RestbedService::isRunning() && RestbedService::isClient(this))
+	if(RestbedService::isRunning())
         return JSONAPI_STATUS_RUNNING;
     else
         return JSONAPI_STATUS_NOT_RUNNING;

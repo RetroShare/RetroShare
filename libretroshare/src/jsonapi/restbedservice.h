@@ -35,10 +35,11 @@ public:
 
     bool restart();
     bool stop();
-    bool isRunning();
+    bool isRunning() const;
 
     void setListeningPort(uint16_t port) ;
 	void setBindAddress(const std::string& bind_address);
+	uint16_t listeningPort() const ;
 
     // should be overloaded by sub-class in order to provide resources to the restbed Service.
 
@@ -47,9 +48,9 @@ public:
 protected:
 	void runloop() override;
 
-private:
     std::shared_ptr<restbed::Service> mService;	// managed by RestbedService because it needs to be properly deleted when restarted.
 
+private:
     uint16_t mListeningPort;
     std::string mBindingAddress;
 };

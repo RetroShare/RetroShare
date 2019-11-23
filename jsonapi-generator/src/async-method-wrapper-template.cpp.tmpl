@@ -55,7 +55,7 @@ $%callbackParamsSerialization%$
 			sStream << "data: " << compactJSON << ctx.mJson << "\n\n";
 			const std::string message = sStream.str();
 
-			mService.schedule( [weakSession, message]()
+			mService->schedule( [weakSession, message]()
 			{
 				auto session = weakSession.lock();
 				if(!session || session->is_closed()) return;
