@@ -31,11 +31,10 @@ class RestbedService: public RsThread
 {
 public:
     RestbedService() ;
-	virtual ~RestbedService();
+	virtual ~RestbedService() = default;
 
     bool restart();
     bool stop();
-    bool isRunning() const;
 
     void setListeningPort(uint16_t port) ;
 	void setBindAddress(const std::string& bind_address);

@@ -31,6 +31,14 @@ RestbedService::RestbedService()
 	mBindingAddress = "127.0.0.1";
 }
 
+bool RestbedService::restart()
+{
+    stop();
+    start("Restbed Service");
+
+    return true;
+}
+
 bool RestbedService::stop()
 {
 	mService->stop();

@@ -63,9 +63,12 @@ template<int MIME_TYPE_INDEX> class handler
 		{
 			const auto request = session->get_request( );
 			const std::string filename = request->get_path_parameter( "filename" );
-			const std::string directory = request->get_path_parameter( "dir" );
+			std::string directory = request->get_path_parameter( "dir" );
 
-			std::string resource_filename = _base_directory + directory + "/" + filename;
+            if(!directory.empty())
+                directory += "/";
+
+			std::string resource_filename = _base_directory + "/" + directory + filename;
 			std::cerr << "Reading file: \"" << resource_filename << "\"" << std::endl;
 			std::ifstream stream( resource_filename, std::ifstream::in );
 
@@ -109,7 +112,7 @@ std::vector<std::shared_ptr<restbed::Resource> > p3WebUI::getResources() const
 
 	auto resource2 = std::make_shared< restbed::Resource >();
 	resource2->set_paths( {
-	                          "/{dir: css]/{filename: fontawesome.css}",
+	                          "/{dir: css}/{filename: fontawesome.css}",
 	                          "/{dir: css}/{filename: solid.css}",
 	                          "/{filename: app.css}",
 	                      } );

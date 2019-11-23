@@ -141,10 +141,6 @@ public:
 	 */
 	void setNewAccessRequestCallback(const std::function<bool(const std::string&,std::string&)>& callback );
 
-protected:
-	/// @see RsSingleJobThread
-	virtual void run();
-
 private:
 
 	/// @see p3Config::setupSerialiser

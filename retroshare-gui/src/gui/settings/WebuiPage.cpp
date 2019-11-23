@@ -110,11 +110,9 @@ void WebuiPage::onPasswordValueChanged(QString password)
 
 bool WebuiPage::restart()
 {
-	// apply config
-	checkShutdownWebui();
-
 	return checkStartWebui();
 }
+
 void WebuiPage::load()
 {
 	std::cerr << "WebuiPage::load()" << std::endl;
