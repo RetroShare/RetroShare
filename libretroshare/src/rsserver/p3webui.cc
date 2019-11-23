@@ -36,15 +36,21 @@
 #define TEXT_HTML   0
 #define TEXT_CSS    1
 #define TEXT_SVG    2
+#define TEXT_TTF    3
+#define TEXT_WOFF   4
+#define APPLICATION_OCTET_STREAM   5
 
 #define DEBUG_RS_WEBUI 1
 
 RsWebUI *rsWebUI = new p3WebUI;
 
-static constexpr char *mime_types[3] = {
+static constexpr char *mime_types[6] = {
 	"text/html",
 	"text/css",
-	"image/svg+xml"
+	"image/svg+xml",
+	"font/ttf",
+	"font/woff",
+	"application/octet-stream",
 };
 
 #ifdef WINDOWS_SYS
@@ -120,9 +126,29 @@ std::vector<std::shared_ptr<restbed::Resource> > p3WebUI::getResources() const
 
 	auto resource3 = std::make_shared< restbed::Resource >();
 	resource3->set_paths( {
-	                          "/{filename: retroshare.svg}",
+	                          "/{dir: data}/{filename: retroshare.svg}",
+	                          "/{dir: webfonts}/{filename: fa-solid-900.svg}",
 	                      } );
 	resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
+
+	auto resource4 = std::make_shared< restbed::Resource >();
+	resource4->set_paths( {
+	                          "/{dir: webfonts}/{filename: fa-solid-900.ttf}",
+	                      } );
+	resource4->set_method_handler( "GET", handler<TEXT_TTF>::get_handler );
+
+	auto resource5 = std::make_shared< restbed::Resource >();
+	resource5->set_paths( {
+	                          "/{dir: webfonts}/{filename: fa-solid-900.woff}",
+	                          "/{dir: webfonts}/{filename: fa-solid-900.woff2}",
+	                      } );
+	resource5->set_method_handler( "GET", handler<TEXT_WOFF>::get_handler );
+
+	auto resource6 = std::make_shared< restbed::Resource >();
+	resource6->set_paths( {
+	                          "/{dir: webfonts}/{filename: fa-solid-900.eot}",
+	                      } );
+	resource6->set_method_handler( "GET", handler<APPLICATION_OCTET_STREAM>::get_handler );
 
 	rtab.push_back(resource1);
 	rtab.push_back(resource2);
