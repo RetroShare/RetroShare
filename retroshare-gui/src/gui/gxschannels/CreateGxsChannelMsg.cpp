@@ -24,6 +24,7 @@
 #include <QMenu>
 #include <QDir>
 #include <QMimeData>
+#include <QTextDocumentFragment>
 
 #include "CreateGxsChannelMsg.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -72,7 +73,8 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	connect(thumbNailCb, SIGNAL(toggled(bool)), this, SLOT(allowAutoMediaThumbNail(bool)));
 	connect(tabWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenu(QPoint)));
 	connect(generateCheckBox, SIGNAL(toggled(bool)), generateSpinBox, SLOT(setEnabled(bool)));
-
+	connect(addPictureButton, SIGNAL(clicked()), this, SLOT(addPicture()));
+	connect(msgEdit, SIGNAL(textChanged()), this, SLOT(checkLength()));
 	generateSpinBox->setEnabled(false);
 
 	thumbNailCb->setVisible(false);
@@ -92,6 +94,26 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 	generateCheckBox->hide();
 	generateSpinBox->hide();
 #endif
+}
+
+static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
+
+void CreateGxsChannelMsg::checkLength()
+{
+	QString text;
+	RsHtml::optimizeHtml(msgEdit, text);
+	std::wstring msg = text.toStdWString();
+	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
+	if(charRemains >= 0) {
+		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
+		infoLabel->setStyleSheet("QLabel#infoLabel { }");
+	}else{
+		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+	    infoLabel->setStyleSheet("QLabel#infoLabel {color: red; font: bold; }");
+	}
+	buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
+	buttonBox->button(QDialogButtonBox::Ok)->setEnabled(charRemains>=0);
+	infoLabel->setText(text);
 }
 
 CreateGxsChannelMsg::~CreateGxsChannelMsg()
@@ -739,6 +761,18 @@ void CreateGxsChannelMsg::addThumbnail()
 
 	// to show the selected
 	thumbnail_label->setPixmap(picture);
+}
+
+void CreateGxsChannelMsg::addPicture()
+{
+	QString file;
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
+		QString encodedImage;
+		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
+			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);
+			msgEdit->textCursor().insertFragment(fragment);
+		}
+	}
 }
 
 void CreateGxsChannelMsg::loadChannelPostInfo(const uint32_t &token)
