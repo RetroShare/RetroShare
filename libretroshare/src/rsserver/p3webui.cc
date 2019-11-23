@@ -153,6 +153,9 @@ std::vector<std::shared_ptr<restbed::Resource> > p3WebUI::getResources() const
 	rtab.push_back(resource1);
 	rtab.push_back(resource2);
 	rtab.push_back(resource3);
+	rtab.push_back(resource4);
+	rtab.push_back(resource5);
+	rtab.push_back(resource6);
 
     return rtab;
 }
