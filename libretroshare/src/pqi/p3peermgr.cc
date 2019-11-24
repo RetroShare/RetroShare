@@ -1170,8 +1170,8 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * previously known IP addresses */
 	if(!dt.isHiddenNode)
 	{
-		for(const std::string& locator : dt.ipAddressList)
-			addPeerLocator(sslId, locator);
+		for(const std::string& ipStr : dt.ipAddressList)
+			addPeerLocator(sslId, RsUrl(ipStr));
 
 		if(dt.extPort && !dt.extAddr.empty())
 		{
