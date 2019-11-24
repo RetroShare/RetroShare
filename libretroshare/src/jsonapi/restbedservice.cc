@@ -41,6 +41,9 @@ bool RestbedService::restart()
 
 bool RestbedService::stop()
 {
+    if(!mService->is_up())
+        return true;
+
 	mService->stop();
 
 	RsThread::ask_for_stop();
