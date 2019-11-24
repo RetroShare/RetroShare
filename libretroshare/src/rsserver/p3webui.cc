@@ -192,12 +192,14 @@ void p3WebUI::setUserPassword(const std::string& passwd)
 bool p3WebUI::restart()
 {
     rsJsonAPI->registerResourceProvider(this);
+    rsJsonAPI->restart();
 	return true;
 }
 
 bool p3WebUI::stop()
 {
     rsJsonAPI->unregisterResourceProvider(this);
+    rsJsonAPI->restart();
 	return true;
 }
 
