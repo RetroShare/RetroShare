@@ -79,6 +79,7 @@
         <file>icons/png/chat-lobbies-notify.png</file>
         <file>icons/png/chat-lobbies.png</file>
         <file>icons/png/circles.png</file>
+		<file>icons/png/digital-key.png</file>
         <file>icons/png/empty-circle.png</file>
 		<file>icons/png/enter.png</file>
         <file>icons/png/exit.png</file>
@@ -94,6 +95,7 @@
         <file>icons/png/forums.png</file>
         <file>icons/png/fullscreen_arrows.png</file>
         <file>icons/png/highlight.png</file>
+		<file>icons/png/help.png</file>
         <file>icons/png/home.png</file>
         <file>icons/png/info.png</file>
         <file>icons/png/invite.png</file>
