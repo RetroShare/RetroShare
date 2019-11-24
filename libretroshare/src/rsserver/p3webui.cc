@@ -106,56 +106,59 @@ static void service_ready_handler( restbed::Service& )
 
 std::vector<std::shared_ptr<restbed::Resource> > p3WebUI::getResources() const
 {
-    std::vector<std::shared_ptr<restbed::Resource> > rtab;
+    static std::vector<std::shared_ptr<restbed::Resource> > rtab;
 
-	auto resource1 = std::make_shared< restbed::Resource >( );
-	resource1->set_paths( {
-	                          "/{filename: index.html}",
-	                          "/{filename: app.js}",
-	                      }
-	                      );
-	resource1->set_method_handler( "GET", handler<TEXT_HTML>::get_handler );
+    if(rtab.empty())
+	{
+		auto resource1 = std::make_shared< restbed::Resource >( );
+		resource1->set_paths( {
+		                          "/{filename: index.html}",
+		                          "/{filename: app.js}",
+		                      }
+		                      );
+		resource1->set_method_handler( "GET", handler<TEXT_HTML>::get_handler );
 
-	auto resource2 = std::make_shared< restbed::Resource >();
-	resource2->set_paths( {
-	                          "/{dir: css}/{filename: fontawesome.css}",
-	                          "/{dir: css}/{filename: solid.css}",
-	                          "/{filename: app.css}",
-	                      } );
-	resource2->set_method_handler( "GET", handler<TEXT_CSS>::get_handler );
+		auto resource2 = std::make_shared< restbed::Resource >();
+		resource2->set_paths( {
+		                          "/{dir: css}/{filename: fontawesome.css}",
+		                          "/{dir: css}/{filename: solid.css}",
+		                          "/{filename: app.css}",
+		                      } );
+		resource2->set_method_handler( "GET", handler<TEXT_CSS>::get_handler );
 
-	auto resource3 = std::make_shared< restbed::Resource >();
-	resource3->set_paths( {
-	                          "/{dir: data}/{filename: retroshare.svg}",
-	                          "/{dir: webfonts}/{filename: fa-solid-900.svg}",
-	                      } );
-	resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
+		auto resource3 = std::make_shared< restbed::Resource >();
+		resource3->set_paths( {
+		                          "/{dir: data}/{filename: retroshare.svg}",
+		                          "/{dir: webfonts}/{filename: fa-solid-900.svg}",
+		                      } );
+		resource3->set_method_handler( "GET", handler<TEXT_SVG>::get_handler );
 
-	auto resource4 = std::make_shared< restbed::Resource >();
-	resource4->set_paths( {
-	                          "/{dir: webfonts}/{filename: fa-solid-900.ttf}",
-	                      } );
-	resource4->set_method_handler( "GET", handler<TEXT_TTF>::get_handler );
+		auto resource4 = std::make_shared< restbed::Resource >();
+		resource4->set_paths( {
+		                          "/{dir: webfonts}/{filename: fa-solid-900.ttf}",
+		                      } );
+		resource4->set_method_handler( "GET", handler<TEXT_TTF>::get_handler );
 
-	auto resource5 = std::make_shared< restbed::Resource >();
-	resource5->set_paths( {
-	                          "/{dir: webfonts}/{filename: fa-solid-900.woff}",
-	                          "/{dir: webfonts}/{filename: fa-solid-900.woff2}",
-	                      } );
-	resource5->set_method_handler( "GET", handler<TEXT_WOFF>::get_handler );
+		auto resource5 = std::make_shared< restbed::Resource >();
+		resource5->set_paths( {
+		                          "/{dir: webfonts}/{filename: fa-solid-900.woff}",
+		                          "/{dir: webfonts}/{filename: fa-solid-900.woff2}",
+		                      } );
+		resource5->set_method_handler( "GET", handler<TEXT_WOFF>::get_handler );
 
-	auto resource6 = std::make_shared< restbed::Resource >();
-	resource6->set_paths( {
-	                          "/{dir: webfonts}/{filename: fa-solid-900.eot}",
-	                      } );
-	resource6->set_method_handler( "GET", handler<APPLICATION_OCTET_STREAM>::get_handler );
+		auto resource6 = std::make_shared< restbed::Resource >();
+		resource6->set_paths( {
+		                          "/{dir: webfonts}/{filename: fa-solid-900.eot}",
+		                      } );
+		resource6->set_method_handler( "GET", handler<APPLICATION_OCTET_STREAM>::get_handler );
 
-	rtab.push_back(resource1);
-	rtab.push_back(resource2);
-	rtab.push_back(resource3);
-	rtab.push_back(resource4);
-	rtab.push_back(resource5);
-	rtab.push_back(resource6);
+		rtab.push_back(resource1);
+		rtab.push_back(resource2);
+		rtab.push_back(resource3);
+		rtab.push_back(resource4);
+		rtab.push_back(resource5);
+		rtab.push_back(resource6);
+	}
 
     return rtab;
 }
@@ -189,18 +192,13 @@ void p3WebUI::setUserPassword(const std::string& passwd)
 bool p3WebUI::restart()
 {
     rsJsonAPI->registerResourceProvider(this);
-
-    return rsJsonAPI->restart();
+	return true;
 }
 
 bool p3WebUI::stop()
 {
     rsJsonAPI->unregisterResourceProvider(this);
-
-    if(rsJsonAPI->status()==RsJsonAPI::JSONAPI_STATUS_RUNNING)
-		return rsJsonAPI->restart();
-    else
-        return true;
+	return true;
 }
 
 

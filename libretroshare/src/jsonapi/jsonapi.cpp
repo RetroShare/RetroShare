@@ -454,8 +454,8 @@ bool JsonApiServer::isAuthTokenValid(const std::string& token)
 
     auto it = mAuthTokenStorage.mAuthorizedTokens.find(user);
 
-    if(it == mAuthTokenStorage.mAuthorizedTokens.end())
-        return false;
+	if(it == mAuthTokenStorage.mAuthorizedTokens.end())
+		return false;
 
 	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
 	int noOptimiz = 1;
