@@ -589,10 +589,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	int ti = rshare.exec();
 	delete w ;
 
-#ifdef RS_WEBUI
-	WebuiPage::checkShutdownWebui();
-#endif
-
 #ifdef RS_JSONAPI
 	JsonApiPage::checkShutdownJsonApi();
 #endif // RS_JSONAPI
