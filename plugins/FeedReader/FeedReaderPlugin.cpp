@@ -55,7 +55,7 @@ extern "C" {
 #ifdef WIN32
 	__declspec(dllexport)
 #endif
-	uint32_t RETROSHARE_PLUGIN_revision = abs(atoi(RS_EXTRA_VERSION)) ;
+	uint32_t RETROSHARE_PLUGIN_revision = (uint32_t)atoi(RS_EXTRA_VERSION);
 
 	// This symbol contains the svn revision number grabbed from the executable.
 	// It will be tested by RS to load the plugin automatically, since it is safe to load plugins
