@@ -30,7 +30,7 @@ class p3WebUI: public RsWebUI, public JsonApiResourceProvider
 {
 public:
     p3WebUI(){}
-    virtual ~p3WebUI(){}
+    virtual ~p3WebUI() = default;
 
     // implements RsWebUI
 

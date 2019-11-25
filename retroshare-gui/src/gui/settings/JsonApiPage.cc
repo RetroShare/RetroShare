@@ -122,35 +122,10 @@ bool JsonApiPage::checkStartJsonApi()
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-    if(RsJsonAPI::JSONAPI_STATUS_RUNNING != rsJsonAPI->status())
+    if(!rsJsonAPI->isRunning())
         return;
 
 	rsJsonAPI->stop();	// this is a blocking call until the thread is terminated.
-
-#ifdef SUSPENDED_CODE
-	/* It is important to make a copy of +jsonApiServer+ pointer so the old
-		 * object can be deleted later, while the original pointer is
-		 * reassigned */
-
-	QProgressDialog* pd = new QProgressDialog("Stopping JSON API Server", QString(), 0, 3000);
-	QTimer* prtm = new QTimer;
-	prtm->setInterval(16); // 60 FPS
-	connect( prtm, &QTimer::timeout,
-	         pd, [=](){pd->setValue(pd->value()+16);} );
-	pd->show();
-	prtm->start();
-
-	/* Must wait for deletion because stopping of the server is async.
-		 * It is important to capture a copy so it "survive" after
-		 * safeStopJsonApiServer returns */
-	QTimer::singleShot(3*1000, [=]()
-	{
-		prtm->stop();
-		pd->close();
-		prtm->deleteLater();
-		pd->deleteLater();
-	});
-#endif
 }
 
 void JsonApiPage::onApplyClicked()

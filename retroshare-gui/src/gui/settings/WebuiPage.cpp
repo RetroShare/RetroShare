@@ -74,8 +74,6 @@ bool WebuiPage::updateParams(QString &errmsg)
     bool changed = false;
     if(ui.enableWebUI_CB->isChecked() != Settings->getWebinterfaceEnabled())
         changed = true;
-    if(ui.allIp_CB->isChecked() != Settings->getWebinterfaceAllowAllIps())
-        changed = true;
     if(ui.webInterfaceFiles_LE->text() != Settings->getWebinterfaceFilesDirectory())
         changed = true;
 
@@ -83,7 +81,6 @@ bool WebuiPage::updateParams(QString &errmsg)
     {
         // store config
         Settings->setWebinterfaceEnabled(ui.enableWebUI_CB->isChecked());
-        Settings->setWebinterfaceAllowAllIps(ui.allIp_CB->isChecked());
         Settings->setWebinterfaceFilesDirectory(ui.webInterfaceFiles_LE->text());
     }
     return ok;
@@ -118,7 +115,6 @@ void WebuiPage::load()
 	std::cerr << "WebuiPage::load()" << std::endl;
 	whileBlocking(ui.enableWebUI_CB)->setChecked(Settings->getWebinterfaceEnabled());
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
-	whileBlocking(ui.allIp_CB)->setChecked(Settings->getWebinterfaceAllowAllIps());
 
 #ifdef RS_JSONAPI
     auto smap = rsJsonAPI->getAuthorizedTokens();
@@ -157,7 +153,7 @@ QString WebuiPage::helpText() const
 {
     if(Settings->getWebinterfaceEnabled())
     {
-        QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(Settings->getWebinterfacePort())));
+        QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(rsJsonAPI->listeningPort())));
     }
     else
     {

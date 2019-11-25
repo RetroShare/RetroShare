@@ -31,6 +31,7 @@
 #include "util/rsthreads.h"
 #include "util/rsdebug.h"
 #include "retroshare/rswebui.h"
+#include "rsserver/rsaccounts.h"
 #include "retroshare/rsjsonapi.h"
 
 #define TEXT_HTML   0
@@ -53,12 +54,7 @@ static constexpr char *mime_types[6] = {
 	"application/octet-stream",
 };
 
-#ifdef WINDOWS_SYS
-const std::string RsWebUI::DEFAULT_BASE_DIRECTORY = "data/webui";
-#else
-const std::string RsWebUI::DEFAULT_BASE_DIRECTORY = "/usr/share/retroshare/webui/";
-#endif
-
+const std::string RsWebUI::DEFAULT_BASE_DIRECTORY = RsAccountsDetail::PathDataDirectory(false); //"/usr/share/retroshare/webui/";
 static std::string _base_directory = RsWebUI::DEFAULT_BASE_DIRECTORY;
 
 
@@ -75,14 +71,14 @@ template<int MIME_TYPE_INDEX> class handler
                 directory += "/";
 
 			std::string resource_filename = _base_directory + "/" + directory + filename;
-			std::cerr << "Reading file: \"" << resource_filename << "\"" << std::endl;
+			RsDbg() << "Reading file: \"" << resource_filename << "\"" << std::endl;
 			std::ifstream stream( resource_filename, std::ifstream::in );
 
 			if ( stream.is_open( ) )
 			{
 				const std::string body = std::string( std::istreambuf_iterator< char >( stream ), std::istreambuf_iterator< char >( ) );
 
-				std::cerr << "  body length=" << body.length() << std::endl;
+				RsDbg() << "  body length=" << body.length() << std::endl;
 				const std::multimap< std::string, std::string > headers
 				{
 					{ "Content-Type", mime_types[MIME_TYPE_INDEX] },
@@ -93,7 +89,7 @@ template<int MIME_TYPE_INDEX> class handler
 			}
 			else
 			{
-				std::cerr << "Could not open file " << resource_filename << std::endl;
+				RsErr() << "Could not open file " << resource_filename << std::endl;
 				session->close( restbed::NOT_FOUND );
 			}
 		}
@@ -171,7 +167,7 @@ void p3WebUI::setHtmlFilesDirectory(const std::string& html_dir)
 
 int p3WebUI::status() const
 {
-    if(rsJsonAPI->status()==RsJsonAPI::JSONAPI_STATUS_RUNNING && rsJsonAPI->hasResourceProvider(this))
+    if(rsJsonAPI->isRunning() && rsJsonAPI->hasResourceProvider(this))
         return WEBUI_STATUS_RUNNING;
     else
         return WEBUI_STATUS_NOT_RUNNING;

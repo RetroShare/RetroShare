@@ -117,15 +117,6 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
-static bool is_alphanumeric(char c) { return (c>='0' && c<'9') || (c>='a' && c<='z') || (c>='A' && c<='Z') ;}
-static bool is_alphanumeric(const std::string& s)
-{
-    for(uint32_t i=0;i<s.size();++i)
-        if(!is_alphanumeric(s[i]))
-            return false;
-    return true;
-}
-
 bool RsJsonAPI::parseToken(const std::string& clear_token,std::string& user,std::string& passwd)
 {
 	uint32_t last_index=0;
@@ -137,7 +128,7 @@ bool RsJsonAPI::parseToken(const std::string& clear_token,std::string& user,std:
 			++nb_colons;
 			last_index = i;
 		}
-		else if(!is_alphanumeric(clear_token[i]))
+		else if(!librs::util::is_alphanumeric(clear_token[i]))
 			return false;
 
 	if(nb_colons != 1)
@@ -424,7 +415,7 @@ void JsonApiServer::registerHandler(
 			else session->close(rb::UNAUTHORIZED);
 		} );
 
-    _resources.push_back(resource);
+    mResources.push_back(resource);
 }
 
 void JsonApiServer::setNewAccessRequestCallback( const std::function<bool (const std::string&,std::string&)>& callback )
@@ -501,8 +492,11 @@ void JsonApiServer::connectToConfigManager(p3ConfigMgr *cfgmgr)
 
 bool JsonApiServer::authorizeUser(const std::string& user,const std::string& passwd)
 {
-	if(!is_alphanumeric(user) || !is_alphanumeric(passwd))
+	if(!librs::util::is_alphanumeric(user) || !librs::util::is_alphanumeric(passwd))
+    {
+        RsErr() << "Password or username for jsonapi token is not alphanumeric." << std::endl;
         return false;
+    }
 
 	RS_STACK_MUTEX(configMutex);
 
@@ -515,26 +509,6 @@ bool JsonApiServer::authorizeUser(const std::string& user,const std::string& pas
 	}
 	return true;
 }
-
-
-// bool JsonApiServer::authorizeToken(const std::string& token)
-// {
-//     std::string user,password;
-//
-// 	if(!parseToken(token,user,password))
-//         return false;
-//
-// 	RS_STACK_MUTEX(configMutex);
-//
-// 	std::string& p(mAuthTokenStorage.mAuthorizedTokens[user]);
-//
-//     if(p != password)
-// 	{
-//         p = password;
-// 		IndicateConfigChanged();
-// 	}
-// 	return true;
-// }
 
 /*static*/ std::string JsonApiServer::decodeToken(const std::string& radix64_token)
 {
@@ -601,32 +575,24 @@ void JsonApiServer::handleCorsOptions(
         const std::shared_ptr<restbed::Session> session )
 { session->close(rb::NO_CONTENT, corsOptionsHeaders); }
 
-int JsonApiServer::status()
-{
-	if(RestbedService::isRunning())
-        return JSONAPI_STATUS_RUNNING;
-    else
-        return JSONAPI_STATUS_NOT_RUNNING;
-}
-
 void JsonApiServer::registerResourceProvider(const JsonApiResourceProvider *rp)
 {
-    _resource_providers.insert(rp);
+    mResourceProviders.insert(rp);
 }
 void JsonApiServer::unregisterResourceProvider(const JsonApiResourceProvider *rp)
 {
-    _resource_providers.erase(rp);
+    mResourceProviders.erase(rp);
 }
 bool JsonApiServer::hasResourceProvider(const JsonApiResourceProvider *rp)
 {
-    return _resource_providers.find(rp) != _resource_providers.end();
+    return mResourceProviders.find(rp) != mResourceProviders.end();
 }
 
 std::vector<std::shared_ptr<rb::Resource> > JsonApiServer::getResources() const
 {
-    auto tab = _resources;
+    auto tab = mResources;
 
-    for(auto& rp: _resource_providers)
+    for(auto& rp: mResourceProviders)
         for(auto r: rp->getResources())
             tab.push_back(r);
 

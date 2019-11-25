@@ -68,8 +68,8 @@ public:
      // RsJsonAPI public API
 
     bool restart()   override { return RestbedService::restart(); }
-    bool stop()      override { return RestbedService::stop();}
-    int  status() override;
+    bool stop()      override { return RestbedService::fullstop();}
+    bool isRunning() override { return RestbedService::isRunning(); }
 
     void setListeningPort(uint16_t port) override { return RestbedService::setListeningPort(port); }
     void setBindingAddress(const std::string& bind_address) override { return RestbedService::setBindAddress(bind_address); }
@@ -185,7 +185,7 @@ private:
 		return checkRsServicePtrReady( serviceInstance.get(), serviceName, ctx, session );
 	}
 
-	std::vector<std::shared_ptr<rb::Resource> > _resources;
-	std::set<const JsonApiResourceProvider *> _resource_providers;
+	std::vector<std::shared_ptr<rb::Resource> > mResources;
+	std::set<const JsonApiResourceProvider *> mResourceProviders;
 };
 

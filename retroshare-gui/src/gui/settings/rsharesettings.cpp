@@ -1167,26 +1167,6 @@ void RshareSettings::setWebinterfaceFilesDirectory(const QString& s)
 }
 
 
-uint16_t RshareSettings::getWebinterfacePort()
-{
-    return valueFromGroup("Webinterface", "port", 1984).toUInt();
-}
-
-void RshareSettings::setWebinterfacePort(uint16_t port)
-{
-    setValueToGroup("Webinterface", "port", port);
-}
-
-bool RshareSettings::getWebinterfaceAllowAllIps()
-{
-    return valueFromGroup("Webinterface", "allowAllIps", false).toBool();
-}
-
-void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
-{
-    setValueToGroup("Webinterface", "allowAllIps", allow_all);
-}
-
 bool RshareSettings::getPageAlreadyDisplayed(const QString& page_name)
 {
 	return valueFromGroup("PageAlreadyDisplayed",page_name,false).toBool();

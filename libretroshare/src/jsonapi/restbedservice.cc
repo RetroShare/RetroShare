@@ -6,7 +6,7 @@
  * Copyright 2019-2019 Cyril Soler                                             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Lesser General Public License as              *
+ * it under the terms of the GNU Affero General Public License as              *
  * published by the Free Software Foundation, either version 3 of the          *
  * License, or (at your option) any later version.                             *
  *                                                                             *
@@ -15,31 +15,32 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Lesser General Public License for more details.                         *
  *                                                                             *
- * You should have received a copy of the GNU Lesser General Public License    *
+ * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsjsonapi.h"
 #include "util/rsthreads.h"
 #include "util/rsdebug.h"
 #include "restbedservice.h"
 
 RestbedService::RestbedService()
+	: mService(std::make_shared<restbed::Service>()), // this is a place holder, in case we request some internal values.
+      mListeningPort(RsJsonAPI::DEFAULT_PORT),
+      mBindingAddress(RsJsonAPI::DEFAULT_BINDING_ADDRESS)
 {
-	mService = std::make_shared<restbed::Service>();	// this is a place holder, in case we request some internal values.
-	mListeningPort = 9092;
-	mBindingAddress = "127.0.0.1";
 }
 
 bool RestbedService::restart()
 {
-    stop();
+    fullstop();
     start("Restbed Service");
 
     return true;
 }
 
-bool RestbedService::stop()
+bool RestbedService::fullstop()
 {
     if(!mService->is_up())
         return true;
@@ -69,7 +70,7 @@ void RestbedService::runloop()
 
 	if(mService->is_up())
 	{
-		std::cerr << "(II) WebUI is already running. Killing it." << std::endl;
+		RsWarn() << "(II) WebUI is already running. Killing it." << std::endl;
 		mService->stop();
 	}
 

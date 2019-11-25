@@ -25,10 +25,14 @@
 #include <string>
 #include <stdarg.h>
 
-namespace librs { namespace util {
+namespace librs {
+	namespace util {
 
-bool ConvertUtf8ToUtf16(const std::string& source, std::wstring& dest);
-bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
+		bool ConvertUtf8ToUtf16(const std::string& source, std::wstring& dest);
+		bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
+
+		bool is_alphanumeric(char c) ;
+		bool is_alphanumeric(const std::string& s);
 
 } } // librs::util
 
