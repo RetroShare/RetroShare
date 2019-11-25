@@ -27,7 +27,7 @@
 
 #include <QTimer>
 
-#define IMG_HELP                ":/icons/help_128.png"
+#define IMG_HELP                ":/icons/png/help.png"
 
 class GetStartedDialog : public MainPage
 {
