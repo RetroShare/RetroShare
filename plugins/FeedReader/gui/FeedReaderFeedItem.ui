@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>629</width>
-    <height>121</height>
+    <height>123</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
@@ -195,8 +195,8 @@ p, li { white-space: pre-wrap; }
                <string>Expand</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
-                <normaloff>:/images/edit_add24.png</normaloff>:/images/edit_add24.png</iconset>
+               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
               </property>
              </widget>
             </item>
@@ -221,8 +221,8 @@ p, li { white-space: pre-wrap; }
                <string>Set as read and remove item</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
-                <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+                <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
               </property>
              </widget>
             </item>
@@ -247,8 +247,8 @@ p, li { white-space: pre-wrap; }
                <string>Remove Item</string>
               </property>
               <property name="icon">
-               <iconset resource="../../../retroshare-gui/src/gui/images.qrc">
-                <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+               <iconset resource="../../../retroshare-gui/src/gui/icons.qrc">
+                <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
               </property>
              </widget>
             </item>
@@ -345,7 +345,7 @@ p, li { white-space: pre-wrap; }
  </customwidgets>
  <resources>
   <include location="FeedReader_images.qrc"/>
-  <include location="../../../retroshare-gui/src/gui/images.qrc"/>
+  <include location="../../../retroshare-gui/src/gui/icons.qrc"/>
  </resources>
  <connections/>
 </ui>
