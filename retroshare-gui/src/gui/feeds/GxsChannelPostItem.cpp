@@ -396,19 +396,21 @@ void GxsChannelPostItem::fill()
 	{
 		QPixmap thumbnail;	
 		
+        ui->logoLabel->setScaledContents(true);
+
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
-		if( thumbnail.width() < 90 ){
-			ui->logoLabel->setMaximumSize(82*f,108*f);
-		}
-		else if( thumbnail.width() < 109 ){
-			ui->logoLabel->setMinimumSize(108*f,108*f);
-			ui->logoLabel->setMaximumSize(108*f,108*f);
-		}
-		else{
-			ui->logoLabel->setMinimumSize(156*f,108*f);
-			ui->logoLabel->setMaximumSize(156*f,108*f);
-		}
+//		if( thumbnail.width() < 90 ){
+//			ui->logoLabel->setMaximumSize(82*f,108*f);
+//		}
+//		else if( thumbnail.width() < 109 ){
+//			ui->logoLabel->setMinimumSize(108*f,108*f);
+//			ui->logoLabel->setMaximumSize(108*f,108*f);
+//		}
+//		else{
+//			ui->logoLabel->setMinimumSize(156*f,108*f);
+//			ui->logoLabel->setMaximumSize(156*f,108*f);
+//		}
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
