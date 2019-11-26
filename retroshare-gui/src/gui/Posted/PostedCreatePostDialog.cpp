@@ -23,6 +23,7 @@
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
+#include "util/HandleRichText.h"
 #include "util/misc.h"
 #include "util/TokenQueue.h"
 
@@ -78,7 +79,10 @@ void PostedCreatePostDialog::createPost()
 	RsPostedPost post;
 	post.mMeta.mGroupId = mGrpId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
-	post.mNotes = std::string(ui->notesTextEdit->toPlainText().toUtf8());
+	
+	QString text;
+	RsHtml::optimizeHtml(ui->notesTextEdit, text);
+	post.mNotes = std::string(text.toUtf8());
 	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
 	post.mMeta.mAuthorId = authorId;
 	

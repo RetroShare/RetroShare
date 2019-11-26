@@ -26,6 +26,7 @@
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/HandleRichText.h"
 #include "util/misc.h"
 
 #include "ui_PostedItem.h"
@@ -327,7 +328,7 @@ void PostedItem::fill()
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
+	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 	if(ui->notes->text().isEmpty())
 		ui->notesButton->hide();
 	// differences between Feed or Top of Comment.
