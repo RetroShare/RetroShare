@@ -227,6 +227,9 @@
             <property name="focusPolicy">
              <enum>Qt::NoFocus</enum>
             </property>
+            <property name="toolTip">
+             <string>Copy RetroShare link</string>
+            </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
               <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
@@ -269,7 +272,7 @@
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
+              <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
             </property>
            </widget>
           </item>
