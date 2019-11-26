@@ -457,7 +457,7 @@
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
-                <normaloff>:/icons/svg/exit-red.svg</normaloff>:/icons/svg/exit-red.svg</iconset>
+                <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
               </property>
              </widget>
             </item>
