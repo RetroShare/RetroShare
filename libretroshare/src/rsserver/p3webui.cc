@@ -34,18 +34,20 @@
 #include "rsserver/rsaccounts.h"
 #include "retroshare/rsjsonapi.h"
 
-#define TEXT_HTML   0
-#define TEXT_CSS    1
-#define TEXT_SVG    2
-#define TEXT_TTF    3
-#define TEXT_WOFF   4
-#define APPLICATION_OCTET_STREAM   5
+enum {
+	TEXT_HTML    = 0,
+	TEXT_CSS     = 1,
+	TEXT_SVG     = 2,
+	TEXT_TTF     = 3,
+	TEXT_WOFF    = 4,
+	APPLICATION_OCTET_STREAM    = 5
+};
 
 #define DEBUG_RS_WEBUI 1
 
 RsWebUI *rsWebUI = new p3WebUI;
 
-static constexpr char *mime_types[6] = {
+static const std::string mime_types[6] = {
 	"text/html",
 	"text/css",
 	"image/svg+xml",
