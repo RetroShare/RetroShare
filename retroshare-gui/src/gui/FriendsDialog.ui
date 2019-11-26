@@ -229,7 +229,7 @@
       <widget class="QWidget" name="groupChatTab">
        <attribute name="icon">
         <iconset resource="icons.qrc">
-         <normaloff>:/icons/png/chat-lobbies.png</normaloff>:/icons/png/chat-lobbies.png</iconset>
+         <normaloff>:/icons/png/chats.png</normaloff>:/icons/png/chats.png</iconset>
        </attribute>
        <attribute name="title">
         <string>Broadcast</string>

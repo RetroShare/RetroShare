@@ -79,8 +79,9 @@
         <file>icons/png/chat-lobbies-notify.png</file>
         <file>icons/png/chat-lobbies.png</file>
         <file>icons/png/circles.png</file>
+        <file>icons/png/digital-key.png</file>
         <file>icons/png/empty-circle.png</file>
-		<file>icons/png/enter.png</file>
+        <file>icons/png/enter.png</file>
         <file>icons/png/exit.png</file>
         <file>icons/png/feedreader-notify.png</file>
         <file>icons/png/feedreader.png</file>
@@ -94,18 +95,19 @@
         <file>icons/png/forums.png</file>
         <file>icons/png/fullscreen_arrows.png</file>
         <file>icons/png/highlight.png</file>
+        <file>icons/png/help.png</file>
         <file>icons/png/home.png</file>
         <file>icons/png/info.png</file>
         <file>icons/png/invite.png</file>
         <file>icons/png/keyring.png</file>
         <file>icons/png/leave.png</file>
-		<file>icons/png/leave2.png</file>
+        <file>icons/png/leave2.png</file>
         <file>icons/png/messages-notify.png</file>
         <file>icons/png/messages.png</file>
         <file>icons/png/microphone_mute.png</file>
         <file>icons/png/microphone.png</file>
         <file>icons/png/netgraph.png</file>
-		<file>icons/png/netgraph2.png</file>
+        <file>icons/png/netgraph2.png</file>
         <file>icons/png/network-notify.png</file>
         <file>icons/png/network.png</file>
         <file>icons/png/network2.png</file>
