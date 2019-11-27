@@ -32,11 +32,6 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 # Enable GXS distant syncronization
 CONFIG *= gxsdistsync
 
-# To enable RetroShare-nogui append the following
-# assignation to qmake command line "CONFIG+=retroshare_nogui"
-CONFIG *= no_retroshare_nogui
-retroshare_nogui:CONFIG -= no_retroshare_nogui
-
 # To enable cmark append the following
 # assignation to qmake command line "CONFIG+=rs_gui_cmark"
 CONFIG *= no_rs_gui_cmark
@@ -46,22 +41,6 @@ rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 # assignation to qmake command line "CONFIG+=retroshare_plugins"
 CONFIG *= no_retroshare_plugins
 retroshare_plugins:CONFIG -= no_retroshare_plugins
-
-# To enable RetroShare-android-service append the following assignation to
-# qmake command line "CONFIG+=retroshare_android_service"
-CONFIG *= no_retroshare_android_service
-retroshare_android_service:CONFIG -= no_retroshare_android_service
-
-# To enable RetroShare-android-notify-service append the following
-# assignation to qmake command line
-# "CONFIG+=retroshare_android_notify_service"
-CONFIG *= no_retroshare_android_notify_service
-retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
-
-# To enable RetroShare-QML-app append the following assignation to
-# qmake command line "CONFIG+=retroshare_qml_app"
-CONFIG *= no_retroshare_qml_app
-retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 
 # To disable RetroShare service append the following assignation to
 # qmake command line "CONFIG+=no_retroshare_service"
@@ -450,7 +429,6 @@ gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
-rs_webui:DEFINES *= RS_WEBUI
 rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
 rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
@@ -533,20 +511,9 @@ to contain the path to an host executable jsonapi-generator")
     DEFINES *= RS_JSONAPI
 }
 
-retroshare_nogui {
-    warning("QMAKE: you have enabled retroshare_nogui which is deprecated")
-}
-
-retroshare_android_service {
-    warning("QMAKE: you have enabled retroshare_android_service which is deprecated")
-}
-
-retroshare_android_notify_service {
-    warning("QMAKE: you have enabled retroshare_android_notify_service which is deprecated")
-}
-
-retroshare_qml_app {
-    warning("QMAKE: you have enabled retroshare_qml_app which is deprecated")
+rs_webui {
+    !rs_jsonapi: error("Cannot enable rs_webui without rs_jsonapi")
+    DEFINES *= RS_WEBUI
 }
 
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX

@@ -26,9 +26,10 @@ class RsWebUi;
 
 /**
  * Pointer to global instance of RsWebUi service implementation
- * @jsonapi{development}
+ * jsonapi_temporarly_disabled{development} because it breaks compilation when
+ * webui is disabled
  */
-extern RsWebUi* rsWebUI;
+extern RsWebUi* rsWebUi;
 
 class RsWebUi
 {

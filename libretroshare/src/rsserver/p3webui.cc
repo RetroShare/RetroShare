@@ -36,7 +36,7 @@
 
 #define DEBUG_RS_WEBUI 1
 
-RsWebUi *rsWebUI = new p3WebUI;
+/*extern*/ RsWebUi* rsWebUi = new p3WebUI;
 
 enum MimeTypeIndex
 {

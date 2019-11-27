@@ -1192,7 +1192,9 @@ void RshareSettings::setJsonApiEnabled(bool enabled)
 
 uint16_t RshareSettings::getJsonApiPort()
 {
-	return valueFromGroup("JsonApi", "port", JsonApiServer::DEFAULT_PORT).toUInt();
+	return static_cast<uint16_t>(
+	            valueFromGroup(
+	                "JsonApi", "port", RsJsonApi::DEFAULT_PORT ).toUInt() );
 }
 
 void RshareSettings::setJsonApiPort(uint16_t port)

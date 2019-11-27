@@ -23,10 +23,7 @@ Files: src/retroshare-gui/src/TorControl/
 Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
 License: BSD-New
 
-Files: src/libresapi/src/api/json.h                \
-		 libresapi/src/webui-src/app/mithril.min.js  \
-		 src/rapidjson-1.1.0/*                       \
-		 retroshare-gui/src/gui/common/PictureFlow.* \
+Files: retroshare-gui/src/gui/common/PictureFlow.* \
 		 src/retroshare-gui/src/qss/qdarkstyle.qss
 Copyright: 2013 Jeff Weinstein <jeff.weinstein@gmail.com>
 License: MIT
