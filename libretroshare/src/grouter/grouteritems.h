@@ -103,11 +103,14 @@ struct RsGRouterAbstractMsgItem: RsGRouterItem
 
 	/// packet was delivered, not delivered, bounced, etc
 	RsGrouterItemFlags flags;
+
+	~RsGRouterAbstractMsgItem();
 };
 
-struct RsGRouterGenericDataItem:
-        RsGRouterAbstractMsgItem, RsGRouterNonCopyableObject
+class RsGRouterGenericDataItem:
+        public RsGRouterAbstractMsgItem, public  RsGRouterNonCopyableObject
 {
+public:
 	RsGRouterGenericDataItem():
 	    RsGRouterAbstractMsgItem(RS_PKT_SUBTYPE_GROUTER_DATA),
 	    data_size(0), data_bytes(nullptr), duplication_factor(0)

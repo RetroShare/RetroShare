@@ -269,3 +269,4 @@ RsGRouterSignedReceiptItem *RsGRouterSignedReceiptItem::duplicate() const
     return item ;
 }
 
+RsGRouterAbstractMsgItem::~RsGRouterAbstractMsgItem() = default;

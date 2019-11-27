@@ -29,7 +29,7 @@
 #include "turtle/p3turtle.h"
 #include "retroshare/rsgrouter.h"
 
-struct RsGRouterGenericDataItem;
+class RsGRouterGenericDataItem;
 class RsGRouterSignedReceiptItem ;
 
 #ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_GROUTER_SERVICE_ID

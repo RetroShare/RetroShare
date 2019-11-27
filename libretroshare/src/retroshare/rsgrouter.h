@@ -42,7 +42,7 @@ typedef uint32_t GRouterServiceId;
 typedef uint64_t GRouterMsgPropagationId;
 
 class GRouterClientService ;
-struct RsGRouterGenericDataItem;
+class RsGRouterGenericDataItem;
 
 class RsGRouter
 {
