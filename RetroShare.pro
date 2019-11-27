@@ -29,6 +29,12 @@ rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
     libretroshare.depends += jsonapi-generator
 }
 
+rs_webui {
+	!rs_jsonapi {
+		error("rs_webui requires rs_jsonapi")
+	}
+}
+
 SUBDIRS += libbitdht
 libbitdht.file = libbitdht/src/libbitdht.pro
 libretroshare.depends += openpgpsdk libbitdht

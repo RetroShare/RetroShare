@@ -180,10 +180,10 @@ rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 CONFIG *= rs_broadcast_discovery
 no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
-# To disable webui append the following assignation to qmake
-# command line "CONFIG+=rs_no_webui"
-CONFIG *= rs_webui
-rs_no_webui:CONFIG -= rs_webui
+# To enable webui append the following assignation to qmake
+# command line "CONFIG+=rs_webui"
+CONFIG *= rs_no_webui
+rs_webui:CONFIG -= rs_no_webui
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_service_webui_terminal_password"
