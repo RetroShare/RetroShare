@@ -44,7 +44,7 @@
 #include "gui/common/FloatingHelpBrowser.h"
 #include "gui/common/RSElidedItemDelegate.h"
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 #	include "WebuiPage.h"
 #endif
 
@@ -164,12 +164,15 @@ SettingsPage::initStackedWidget()
     addPage(new AppearancePage()); // APPEARENCE
     addPage(new SoundPage() ); // SOUND
     addPage(new ServicePermissionsPage() ); // PERMISSIONS
-#ifdef ENABLE_WEBUI
-    addPage(new WebuiPage() );
-#endif // ENABLE_WEBUI
-
 #ifdef RS_JSONAPI
+    JsonApiPage *jsonapi_p = new JsonApiPage() ;
 	addPage(new JsonApiPage());
+#ifdef RS_WEBUI
+    WebuiPage *webui_p = new WebuiPage() ;
+    addPage(new WebuiPage() );
+
+    QObject::connect(webui_p,SIGNAL(passwordChanged()),jsonapi_p,SLOT(load()));
+#endif
 #endif
 
 	 // add widgets from plugins

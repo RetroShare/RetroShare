@@ -159,6 +159,12 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsservicecontrol.h \
 					retroshare/rsgxsdistsync.h 
 
+rs_webui {
+					PUBLIC_HEADERS += retroshare/rswebui.h
+					SOURCES += rsserver/p3webui.cc
+					HEADERS += rsserver/p3webui.h
+}
+
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
@@ -166,6 +172,7 @@ HEADERS += plugins/pluginmanager.h \
 
 HEADERS += $$PUBLIC_HEADERS
 
+SOURCES *= services/rsversion.cxx
 
 ################################# Linux ##########################################
 linux-* {
@@ -896,7 +903,7 @@ rs_jsonapi {
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
 
-    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h retroshare/rsjsonapi.h
     SOURCES += jsonapi/jsonapi.cpp
 }
 

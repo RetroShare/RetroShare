@@ -4,9 +4,8 @@
  * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Affero General Public License as              *
- * published by the Free Software Foundation, either version 3 of the          *
- * License, or (at your option) any later version.                             *
+ * it under the terms of the GNU Affero General Public License version 3 as    *
+ * published by the Free Software Foundation.                                  *
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
@@ -43,11 +42,15 @@ $%paramsDeclaration%$
 
 $%inputParamsDeserialization%$
 
+		const std::weak_ptr<rb::Service> weakService(mService);
 		const std::weak_ptr<rb::Session> weakSession(session);
-		$%callbackName%$ = [this, weakSession]($%callbackParams%$)
+		$%callbackName%$ = [this, weakService, weakSession]($%callbackParams%$)
 		{
 			auto session = weakSession.lock();
 			if(!session || session->is_closed()) return;
+
+			auto lService = weakService.lock();
+			if(!lService || lService->is_down()) return;
 
 $%callbackParamsSerialization%$
 
@@ -55,7 +58,7 @@ $%callbackParamsSerialization%$
 			sStream << "data: " << compactJSON << ctx.mJson << "\n\n";
 			const std::string message = sStream.str();
 
-			mService.schedule( [weakSession, message]()
+			lService->schedule( [weakSession, message]()
 			{
 				auto session = weakSession.lock();
 				if(!session || session->is_closed()) return;

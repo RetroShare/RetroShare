@@ -29,7 +29,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 
-enum class JsonApiItemsType : uint8_t { AuthTokenItem = 0 };
+enum class JsonApiItemsType : uint8_t { AuthTokenItem_deprecated = 0, AuthTokenItem = 1  };
 
 struct JsonApiServerAuthTokenStorage : RsItem
 {
@@ -47,7 +47,7 @@ struct JsonApiServerAuthTokenStorage : RsItem
 	/// @see RsItem
 	virtual void clear() { mAuthorizedTokens.clear(); }
 
-	std::set<std::string> mAuthorizedTokens;
+	std::map<std::string,std::string> mAuthorizedTokens;
 };
 
 

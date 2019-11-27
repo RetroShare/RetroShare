@@ -113,7 +113,7 @@
 #include "common/StatusDefs.h"
 #include "gui/notifyqt.h"
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 #	include "settings/WebuiPage.h"
 #endif
 
@@ -606,9 +606,9 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
-#endif // ENABLE_WEBUI
+#endif
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_STATS), tr("Statistics"), this, SLOT(showStatisticsWindow()));
 
@@ -1117,7 +1117,7 @@ void MainWindow::showStatisticsWindow()
     StatisticsWindow::showYourself();
 }
 
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 void MainWindow::showWebinterface()
 {
     WebuiPage::showWebui();

@@ -30,6 +30,9 @@
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
 
+// for this one, we'd rather use a file in retroshare/*h list.
+#include <jsonapi/jsonapi.h>
+
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>
 
@@ -1150,25 +1153,19 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
     setValueToGroup("Webinterface", "enabled", enabled);
 }
 
-uint16_t RshareSettings::getWebinterfacePort()
+QString RshareSettings::getWebinterfaceFilesDirectory()
 {
-    return valueFromGroup("Webinterface", "port", 9090).toUInt();
+#ifdef WINDOWS_SYS
+    return valueFromGroup("Webinterface","directory","data/webui/").toString().toStdString();
+#endif
+    return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
 }
 
-void RshareSettings::setWebinterfacePort(uint16_t port)
+void RshareSettings::setWebinterfaceFilesDirectory(const QString& s)
 {
-    setValueToGroup("Webinterface", "port", port);
+    setValueToGroup("Webinterface","directory",s);
 }
 
-bool RshareSettings::getWebinterfaceAllowAllIps()
-{
-    return valueFromGroup("Webinterface", "allowAllIps", false).toBool();
-}
-
-void RshareSettings::setWebinterfaceAllowAllIps(bool allow_all)
-{
-    setValueToGroup("Webinterface", "allowAllIps", allow_all);
-}
 
 bool RshareSettings::getPageAlreadyDisplayed(const QString& page_name)
 {
@@ -1194,7 +1191,7 @@ void RshareSettings::setJsonApiEnabled(bool enabled)
 
 uint16_t RshareSettings::getJsonApiPort()
 {
-	return valueFromGroup("JsonApi", "port", 9092).toUInt();
+	return valueFromGroup("JsonApi", "port", JsonApiServer::DEFAULT_PORT).toUInt();
 }
 
 void RshareSettings::setJsonApiPort(uint16_t port)

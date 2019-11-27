@@ -1,9 +1,8 @@
 /*******************************************************************************
- * libretroshare/src/util: rsstd.h                                             *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (c) 2010, Thomas Kister                                           *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,39 +18,18 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSSTRING_H_
-#define RSSTRING_H_
 
-#include <string>
-#include <stdarg.h>
+#include "retroshare/rsversion.h"
 
-namespace librs {
-	namespace util {
+/*extern*/ RsVersion* rsVersion = new RsVersion;
 
-		bool ConvertUtf8ToUtf16(const std::string& source, std::wstring& dest);
-		bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
-
-		bool is_alphanumeric(char c) ;
-		bool is_alphanumeric(const std::string& s);
-
-} } // librs::util
-
-#ifdef WIN32
-#define INT64FMT "%I64d"
-#define UINT64FMT "%I64u"
-#else
-#define INT64FMT "%lld"
-#define UINT64FMT "%llu"
-#endif
-
-int rs_sprintf_args(std::string &str, const char *fmt, va_list ap);
-int rs_sprintf(std::string &str, const char *fmt, ...);
-int rs_sprintf_append_args(std::string &str, const char *fmt, va_list ap);
-int rs_sprintf_append(std::string &str, const char *fmt, ...);
-
-void stringToUpperCase(const std::string& s, std::string &upper);
-void stringToLowerCase(const std::string& s, std::string &lower);
-
-bool isHexaString(const std::string& s);
-
-#endif // RSSTRING_H_
+/*static*/ void RsVersion::version(
+        uint32_t& major, uint32_t& minor, uint32_t& mini, std::string& extra,
+        std::string& human )
+{
+	major = RS_MAJOR_VERSION;
+	minor = RS_MINOR_VERSION;
+	mini = RS_MINI_VERSION;
+	extra = RS_EXTRA_VERSION;
+	human = RS_HUMAN_READABLE_VERSION;
+}
