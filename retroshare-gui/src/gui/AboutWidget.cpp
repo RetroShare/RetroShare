@@ -23,7 +23,9 @@
 #include "HelpDialog.h"
 #include "rshare.h"
 
+#ifdef RS_JSONAPI
 #include "restbed"
+#endif
 
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
@@ -970,13 +972,13 @@ void AboutWidget::on_copy_button_clicked()
     RsControl::instance()->getLibraries(libraries);
     verInfo+=addLibraries("libretroshare", libraries);
 
-// #ifdef RS_WEBUI
-//     /* Add version numbers of RetroShare */
-//     // Add versions here. Find a better place.
-//     libraries.clear();
-//     libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
-//     verInfo+=addLibraries("RetroShare", libraries);
-// #endif
+#ifdef RS_JSONAPI
+    /* Add version numbers of RetroShare */
+    // Add versions here. Find a better place.
+    libraries.clear();
+    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
+    verInfo+=addLibraries("RetroShare", libraries);
+#endif
 
     /* Add version numbers of plugins */
     if (rsPlugins) {

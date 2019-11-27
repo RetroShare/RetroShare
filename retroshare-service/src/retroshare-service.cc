@@ -23,10 +23,10 @@
 
 #ifdef RS_JSONAPI
 #include "retroshare/rsjsonapi.h"
-#endif
 
 #ifdef RS_WEBUI
 #include "retroshare/rswebui.h"
+#endif
 #endif
 
 static CrashStackTrace gCrashStackTrace;
@@ -124,10 +124,11 @@ int main(int argc, char* argv[])
 	std::string prefUserString;
 	RsConfigOptions conf;
 
-	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
-
 #ifdef RS_JSONAPI
 	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSonAPI by default
+#ifdef RS_WEBUI
+	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
+#endif
 #endif
 
 	argstream as(argc,argv);
@@ -164,7 +165,7 @@ int main(int argc, char* argv[])
 	                                     "127.0.0.1.", false );
 #endif // def RS_JSONAPI
 
-#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	bool askWebUiPassword = false;
 	as >> parameter( 'B', "webui-directory", webui_base_directory, "Place where to find the html/js files for the webui.",false );
 	as >> option( 'W', "webui-password", askWebUiPassword, "Ask WebUI password on the console." );
@@ -185,7 +186,7 @@ int main(int argc, char* argv[])
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
 
-#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	std::string webui_pass1 = "Y";
 	if(askWebUiPassword)
 	{
@@ -308,7 +309,7 @@ int main(int argc, char* argv[])
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	if(rsJsonAPI && !webui_pass1.empty())
     {
 		rsWebUI->setHtmlFilesDirectory(webui_base_directory);
