@@ -326,7 +326,20 @@ int main(int argc, char *argv[])
 
 				QString sessionDelayedClose;
 				if(hasMultiCallback)
-					sessionDelayedClose = "RsThread::async( [=](){ std::this_thread::sleep_for(std::chrono::seconds(maxWait+120)); mService->schedule( [=](){ auto session = weakSession.lock(); if(session && session->is_open()) session->close(); } ); } );";
+					sessionDelayedClose =
+					        "RsThread::async( [=]()"
+					        "{"
+					            "std::this_thread::sleep_for("
+					                "std::chrono::seconds(maxWait+120) );"
+					            "auto lService = weakService.lock();"
+					            "if(!lService || lService->is_down()) return;"
+					            "lService->schedule( [=]()"
+					            "{"
+					                "auto session = weakSession.lock();"
+					                "if(session && session->is_open())"
+					                    "session->close();"
+					            "} );"
+					        "} );";
 
 				QString callbackParamsSerialization;
 

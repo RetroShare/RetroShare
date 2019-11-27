@@ -124,10 +124,10 @@ int main(int argc, char* argv[])
 	std::string prefUserString;
 	RsConfigOptions conf;
 
-    std::string webui_base_directory = RsWebUI::DEFAULT_BASE_DIRECTORY;
+	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
 
 #ifdef RS_JSONAPI
-	conf.jsonApiPort = RsJsonAPI::DEFAULT_PORT;	// enable JSonAPI by default
+	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSonAPI by default
 #endif
 
 	argstream as(argc,argv);
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	                 "[node Id] Selected account to use and asks for passphrase"
 	                 ". Use \"-U list\" in order to list available accounts.",
 	                 false );
-#endif
+#endif // def RS_SERVICE_TERMINAL_LOGIN
 
 #ifdef RS_JSONAPI
 	as >> parameter( 'J', "jsonApiPort", conf.jsonApiPort, "TCP Port",
@@ -162,7 +162,7 @@ int main(int argc, char* argv[])
 	   >> parameter( 'P', "jsonApiBindAddress", conf.jsonApiBindAddress,
 	                 "TCP bind address", "JSON API Bind Address default "
 	                                     "127.0.0.1.", false );
-#endif
+#endif // def RS_JSONAPI
 
 #if (defined(RS_JSONAPI) || defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	bool askWebUiPassword = false;
@@ -218,7 +218,6 @@ int main(int argc, char* argv[])
 	conf.main_executable_path = argv[0];
 
 	int initResult = RsInit::InitRetroShare(conf);
-
 	if(initResult != RS_INIT_OK)
 	{
 		RsErr() << "Retroshare core initalization failed with: " << initResult

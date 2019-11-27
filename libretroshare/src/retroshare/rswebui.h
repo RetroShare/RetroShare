@@ -6,39 +6,67 @@
  * Copyright 2019-2019 Cyril Soler <csoler@users.sourceforge.net>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Lesser General Public License as              *
- * published by the Free Software Foundation, either version 3 of the          *
- * License, or (at your option) any later version.                             *
+ * it under the terms of the GNU Affero General Public License version 3 as    *
+ * published by the Free Software Foundation.                                  *
  *                                                                             *
  * This program is distributed in the hope that it will be useful,             *
  * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
  * GNU Lesser General Public License for more details.                         *
  *                                                                             *
- * You should have received a copy of the GNU Lesser General Public License    *
+ * You should have received a copy of the GNU Affero General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
 #pragma once
 
-class RsWebUI
+#include <string>
+
+class RsWebUi;
+
+/**
+ * Pointer to global instance of RsWebUi service implementation
+ * @jsonapi{development}
+ */
+extern RsWebUi* rsWebUI;
+
+class RsWebUi
 {
 public:
-    enum {
-        WEBUI_STATUS_UNKNOWN     = 0x00,
-        WEBUI_STATUS_NOT_RUNNING = 0x01,
-        WEBUI_STATUS_RUNNING     = 0x02
-    };
-    static const std::string DEFAULT_BASE_DIRECTORY ;
+	static const std::string DEFAULT_BASE_DIRECTORY;
 
-    virtual bool restart() =0;
-    virtual bool stop()  =0;
+	/**
+	 * @brief Restart WebUI
+	 * @jsonapi{development}
+	 */
+	virtual bool restart() = 0;
 
-    virtual void setHtmlFilesDirectory(const std::string& html_dir) =0;
-    virtual void setUserPassword(const std::string& passwd) =0;
+	/**
+	 * @brief Stop WebUI
+	 * @jsonapi{development}
+	 */
+	virtual bool stop() = 0;
 
-    virtual int status() const=0;
+	/**
+	 * @brief Set WebUI static files directory, need restart to apply
+	 * @param[in] htmlDir directory path
+	 * @jsonapi{development}
+	 */
+	virtual void setHtmlFilesDirectory(const std::string& htmlDir) = 0;
+
+	/**
+	 * @brief Set WebUI user password
+	 * @param[in] password new password for WebUI
+	 * @jsonapi{development}
+	 */
+	virtual void setUserPassword(const std::string& password) =0;
+
+	/**
+	 * @brief check if WebUI is running
+	 * @jsonapi{development}
+	 * @return true if running, false otherwise
+	 */
+	virtual bool isRunning() const = 0;
+
+	virtual ~RsWebUi() = default;
 };
-
-extern RsWebUI *rsWebUI;

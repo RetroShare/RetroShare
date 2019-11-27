@@ -393,20 +393,16 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 		return error_code ;
 
 #ifdef RS_JSONAPI
-    // We create the JsonApiServer this early, because it is needed *before* login
+	// We create the JsonApiServer this early, because it is needed *before* login
+	RsInfo() << __PRETTY_FUNCTION__
+	         << "Allocating jsonAPI server (not launched yet)" << std::endl;
+	JsonApiServer* jas = new JsonApiServer();
+	jas->setListeningPort(conf.jsonApiPort);
+	jas->setBindingAddress(conf.jsonApiBindAddress);
 
-    RsInfo() << "Allocating jsonAPI server (not launched yet) " << std::endl;
-    JsonApiServer *jas = new JsonApiServer();
-    jas->setListeningPort(conf.jsonApiPort);
-    jas->setBindAddress(conf.jsonApiBindAddress);
+	if(conf.jsonApiPort != 0) jas->restart();
 
-    if(conf.jsonApiPort != 0)
-    {
-		RsInfo() << "Launching jsonAPI server on port " << conf.jsonApiPort << std::endl;
-        jas->restart();
-    }
-
-    rsJsonAPI = jas;
+	rsJsonApi = jas;
 #endif
 
 #ifdef RS_AUTOLOGIN
@@ -1224,10 +1220,8 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
 #ifdef RS_JSONAPI
-    // add jsonapi server to config manager so that it can save/load its tokens
-
-    if(rsJsonAPI)
-        rsJsonAPI->connectToConfigManager(mConfigMgr);
+	// add jsonapi server to config manager so that it can save/load its tokens
+	if(rsJsonApi) rsJsonApi->connectToConfigManager(*mConfigMgr);
 #endif
 
     	/**** Reputation system ****/

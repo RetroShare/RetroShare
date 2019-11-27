@@ -28,8 +28,8 @@
 
 class Radix64
 {
-    public:
-        static std::vector<uint8_t> decode(const std::string& buffer)
+public:
+	static std::vector<uint8_t> decode(const std::string& buffer)
 		{
 			char val;
 			int c = 0, c2;/* init c because gcc is not clever
@@ -122,13 +122,14 @@ again:
 		/****************
 		 * create a radix64 encoded string.
 		 */
-		static void encode(const unsigned char *data,int len,std::string& out_string)
+	static void encode(
+	        const unsigned char* data, size_t len, std::string& out_string )
 		{
 			char *buffer, *p;
 
 			radix64_init();
 
-			int size = (len + 2) / 3 * 4 +1;
+			size_t size = (len + 2) / 3 * 4 +1;
 			buffer = p = new char[size] ;
 
 			for (; len >= 3; len -= 3, data += 3)

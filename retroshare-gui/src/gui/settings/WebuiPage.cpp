@@ -117,7 +117,7 @@ void WebuiPage::load()
 	whileBlocking(ui.webInterfaceFiles_LE)->setText(Settings->getWebinterfaceFilesDirectory());
 
 #ifdef RS_JSONAPI
-    auto smap = rsJsonAPI->getAuthorizedTokens();
+	auto smap = rsJsonApi->getAuthorizedTokens();
     auto it = smap.find("webui");
 
     if(it != smap.end())
@@ -151,10 +151,14 @@ QString WebuiPage::helpText() const
 
 /*static*/ void WebuiPage::showWebui()
 {
-    if(Settings->getWebinterfaceEnabled())
-    {
-        QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(rsJsonAPI->listeningPort())));
-    }
+	if(Settings->getWebinterfaceEnabled())
+	{
+		QUrl webuiUrl;
+		webuiUrl.setScheme("http");
+		webuiUrl.setHost(QString::fromStdString(rsJsonApi->getBindingAddress()));
+		webuiUrl.setPort(rsJsonApi->listeningPort());
+		QDesktopServices::openUrl(webuiUrl);
+	}
     else
     {
         QMessageBox::warning(0, tr("Webinterface not enabled"), tr("The webinterface is not enabled. Enable it in Settings -> Webinterface."));
@@ -200,8 +204,4 @@ void WebuiPage::onApplyClicked()
     emit passwordChanged();
 }
 
-void WebuiPage::onStartWebBrowserClicked()
-{
-    QDesktopServices::openUrl(QUrl(QString("http://localhost:")+QString::number(rsJsonAPI->listeningPort())));
-}
-
+void WebuiPage::onStartWebBrowserClicked() { showWebui(); }

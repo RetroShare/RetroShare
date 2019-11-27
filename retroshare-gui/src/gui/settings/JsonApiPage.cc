@@ -100,8 +100,10 @@ void JsonApiPage::load()
 
     QStringList newTk;
 
-    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
-	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
@@ -113,19 +115,17 @@ bool JsonApiPage::checkStartJsonApi()
 	if(!Settings->getJsonApiEnabled())
         return false;
 
-	rsJsonAPI->setListeningPort(Settings->getJsonApiPort());
-	rsJsonAPI->setBindingAddress(Settings->getJsonApiListenAddress().toStdString());
-	rsJsonAPI->restart();
+	rsJsonApi->setListeningPort(Settings->getJsonApiPort());
+	rsJsonApi->setBindingAddress(Settings->getJsonApiListenAddress().toStdString());
+	rsJsonApi->restart();
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-    if(!rsJsonAPI->isRunning())
-        return;
-
-	rsJsonAPI->stop();	// this is a blocking call until the thread is terminated.
+	if(!rsJsonApi->isRunning()) return;
+	rsJsonApi->fullstop(); // this is a blocks until the thread is terminated.
 }
 
 void JsonApiPage::onApplyClicked()
@@ -138,9 +138,10 @@ void JsonApiPage::onApplyClicked()
 
 void JsonApiPage::checkToken(QString s)
 {
-    std::string user,passwd;
+	std::string user,passwd;
+	bool valid = RsJsonApi::parseToken(s.toStdString(), user, passwd) &&
+	        !user.empty() && !passwd.empty();
 
-    bool valid = RsJsonAPI::parseToken(s.toStdString(),user,passwd) && !user.empty() && !passwd.empty();
     QColor color;
 
 	if(!valid)
@@ -160,15 +161,16 @@ void JsonApiPage::addTokenClicked()
 	QString token(ui.tokenLineEdit->text());
     std::string user,passwd;
 
-    if(!RsJsonAPI::parseToken(token.toStdString(),user,passwd))
-        return;
+	if(!RsJsonApi::parseToken(token.toStdString(),user,passwd)) return;
 
-	rsJsonAPI->authorizeUser(user,passwd);
+	rsJsonApi->authorizeUser(user,passwd);
 
     QStringList newTk;
 
-    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
-	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
@@ -176,12 +178,14 @@ void JsonApiPage::addTokenClicked()
 void JsonApiPage::removeTokenClicked()
 {
 	QString token(ui.tokenLineEdit->text());
-	rsJsonAPI->revokeAuthToken(token.toStdString());
+	rsJsonApi->revokeAuthToken(token.toStdString());
 
     QStringList newTk;
 
-    for(const auto& it : rsJsonAPI->getAuthorizedTokens())
-	        newTk.push_back(QString::fromStdString(it.first)+":"+QString::fromStdString(it.second)) ;
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
 
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
 }

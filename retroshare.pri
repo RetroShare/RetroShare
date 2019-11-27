@@ -68,27 +68,6 @@ retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
-# To enable libresapi (deprecated) append the following assignation to qmake command line
-# "CONFIG+=libresapi"
-CONFIG+=no_libresapi
-libresapi:CONFIG -= no_libresapi
-
-# To enable libresapi via local socket (unix domain socket or windows named
-# pipes) append the following assignation to qmake command line
-# "CONFIG+=libresapilocalserver"
-CONFIG *= no_libresapilocalserver
-libresapilocalserver:CONFIG -= no_libresapilocalserver
-
-# To enable libresapi settings handler in libresapi append the following
-# assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG *= no_libresapi_settings
-libresapi_settings:CONFIG -= no_libresapi_settings
-
-# To enable libresapi via HTTP (based on libmicrohttpd) append the following
-# assignation to qmake command line "CONFIG+=libresapihttpserver"
-CONFIG *= no_libresapihttpserver
-libresapihttpserver:CONFIG -= no_libresapihttpserver
-
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
 CONFIG *= sqlcipher
@@ -552,21 +531,6 @@ build configuration, cross-compiling JSON API requires JSONAPI_GENERATOR_EXE \
 to contain the path to an host executable jsonapi-generator")
 
     DEFINES *= RS_JSONAPI
-}
-
-libresapilocalserver {
-    warning("QMAKE: you have enabled libresapilocalserver which is deprecated")
-    DEFINES *= LIBRESAPI_LOCAL_SERVER
-}
-
-libresapi_settings {
-    warning("QMAKE: you have enabled libresapi_settings which is deprecated")
-    DEFINES *= LIBRESAPI_SETTINGS
-}
-
-libresapihttpserver {
-    warning("QMAKE: you have enabled libresapihttpserver which is deprecated")
-    DEFINES *= ENABLE_WEBUI
 }
 
 retroshare_nogui {

@@ -172,6 +172,7 @@ HEADERS += plugins/pluginmanager.h \
 
 HEADERS += $$PUBLIC_HEADERS
 
+SOURCES *= services/rsversion.cxx
 
 ################################# Linux ##########################################
 linux-* {
@@ -902,8 +903,8 @@ rs_jsonapi {
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
 
-    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h jsonapi/restbedservice.h retroshare/rsjsonapi.h
-    SOURCES += jsonapi/jsonapi.cpp jsonapi/restbedservice.cc
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h retroshare/rsjsonapi.h
+    SOURCES += jsonapi/jsonapi.cpp
 }
 
 rs_deep_channels_index {

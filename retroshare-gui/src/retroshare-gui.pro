@@ -28,13 +28,12 @@ DEFINES += TARGET=\\\"$${TARGET}\\\"
 DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
 INCLUDEPATH *= $${PWD} retroshare-gui
 
+!include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
+
 rs_webui {
-    !include("../../libresapi/src/use_libresapi.pri"):error("Including")
     HEADERS *= gui/settings/WebuiPage.h
     SOURCES *= gui/settings/WebuiPage.cpp
     FORMS *= gui/settings/WebuiPage.ui
-} else {
-    !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 }
 
 rs_jsonapi {
@@ -273,9 +272,9 @@ macx {
 	mac_icon.files = $$files($$PWD/rsMacIcon.icns)
 	mac_icon.path = Contents/Resources
 	QMAKE_BUNDLE_DATA += mac_icon
-	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
-	mac_webui.path = Contents/Resources
-	QMAKE_BUNDLE_DATA += mac_webui
+#	mac_webui.files = $$files($$PWD/../../libresapi/src/webui)
+#	mac_webui.path = Contents/Resources
+#	QMAKE_BUNDLE_DATA += mac_webui
 
 	CONFIG += version_detail_bash_script
         LIBS += -lssl -lcrypto -lz 
