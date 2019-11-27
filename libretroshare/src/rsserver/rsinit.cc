@@ -61,7 +61,6 @@
 #include "gxstunnel/p3gxstunnel.h"
 #include "retroshare/rsgxsdistsync.h"
 #include "file_sharing/p3filelists.h"
-#include "jsonapi/jsonapi.h"
 
 #define ENABLE_GROUTER
 
@@ -97,6 +96,10 @@ RsDht *rsDht = NULL ;
 
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
+#ifdef RS_WEBUI
+#include "jsonapi/jsonapi.h"
+#endif
+
 #endif
 
 #ifdef RS_BROADCAST_DISCOVERY

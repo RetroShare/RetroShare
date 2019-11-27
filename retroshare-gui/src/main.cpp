@@ -574,11 +574,11 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 #ifdef RS_JSONAPI
 	JsonApiPage::checkStartJsonApi();
-#endif // RS_JSONAPI
 
 #ifdef RS_WEBUI
     WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
 #endif
+#endif // RS_JSONAPI
 
 	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
 	// passphrase here makes it request for a passphrase when creating the default chat identity.

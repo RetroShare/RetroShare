@@ -30,8 +30,9 @@
 #include "rsharesettings.h"
 #include "gui/MainWindow.h"
 
-// for this one, we'd rather use a file in retroshare/*h list.
-#include <jsonapi/jsonapi.h>
+#ifdef RS_JSONAPI
+#include <retroshare/rsjsonapi.h>
+#endif
 
 #include <retroshare/rsnotify.h>
 #include <retroshare/rspeers.h>

@@ -606,8 +606,10 @@ void MainWindow::createTrayIcon()
     trayMenu->addAction(QIcon(IMAGE_MESSENGER), tr("Open Messenger"), this, SLOT(showMessengerWindow()));
 #endif
     trayMenu->addAction(QIcon(IMAGE_MESSAGES), tr("Open Messages"), this, SLOT(showMess()));
+#ifdef RS_JSONAPI
 #ifdef RS_WEBUI
     trayMenu->addAction(QIcon(":/images/emblem-web.png"), tr("Show web interface"), this, SLOT(showWebinterface()));
+#endif
 #endif
     trayMenu->addAction(QIcon(IMAGE_BWGRAPH), tr("Bandwidth Graph"), this, SLOT(showBandwidthGraph()));
     trayMenu->addAction(QIcon(IMAGE_STATS), tr("Statistics"), this, SLOT(showStatisticsWindow()));
@@ -1117,12 +1119,14 @@ void MainWindow::showStatisticsWindow()
     StatisticsWindow::showYourself();
 }
 
+#ifdef RS_JSONAPI
 #ifdef RS_WEBUI
 void MainWindow::showWebinterface()
 {
     WebuiPage::showWebui();
 }
 #endif // ENABLE_WEBUI
+#endif 
 
 /** Shows Application window */
 #ifdef UNFINISHED

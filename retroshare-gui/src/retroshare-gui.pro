@@ -31,9 +31,11 @@ INCLUDEPATH *= $${PWD} retroshare-gui
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 
 rs_webui {
+rs_jsonapi {
     HEADERS *= gui/settings/WebuiPage.h
     SOURCES *= gui/settings/WebuiPage.cpp
     FORMS *= gui/settings/WebuiPage.ui
+}
 }
 
 rs_jsonapi {
