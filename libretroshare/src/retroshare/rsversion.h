@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2018 by Retroshare Team <retroshare.project@gmail.com>       *
+ * Copyright (C) 2012-2018  Retroshare Team <contact@retroshare.cc>            *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,7 +21,6 @@
  *                                                                             *
  *******************************************************************************/
 #pragma once
-
 
 /**
  * @def RS_MINI_VERSION
@@ -69,13 +69,45 @@
 	(RS_MINOR_VERSION == (B) && RS_MINI_VERSION >= (C)))))
 
 
-#define __RS_PRIVATE_STRINGIFY2(X) #X
-#define __RS_PRIVATE_STRINGIFY(X) __RS_PRIVATE_STRINGIFY2(X)
+#define RS_PRIVATE_STRINGIFY2(X) #X
+#define RS_PRIVATE_STRINGIFY(X) RS_PRIVATE_STRINGIFY2(X)
 
 /**
  * Human readable string describing RetroShare version
  */
 constexpr auto RS_HUMAN_READABLE_VERSION =
-        __RS_PRIVATE_STRINGIFY(RS_MAJOR_VERSION) "." \
-        __RS_PRIVATE_STRINGIFY(RS_MINOR_VERSION) "." \
-        __RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
+        RS_PRIVATE_STRINGIFY(RS_MAJOR_VERSION) "." \
+        RS_PRIVATE_STRINGIFY(RS_MINOR_VERSION) "." \
+        RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
+
+
+#include <cstdint>
+#include <string>
+
+/**
+ * Helper to expose version information to JSON API.
+ * From C++ you should use directly the macro and constants defined upstair
+ * @jsonapi{development}
+ */
+class RsVersion
+{
+public:
+	/**
+	 * @brief Write version information to given paramethers
+	 * @jsonapi{development,unauthenticated}
+	 * @param[out] major storage
+	 * @param[out] minor storage
+	 * @param[out] mini storage
+	 * @param[out] extra storage
+	 * @param[out] human storage
+	 */
+	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
+	                     std::string& extra, std::string& human );
+};
+
+/**
+ * Pointer to global instance of RsVersion, for the sake of JSON API, from C++
+ * you can use directly the macro and constants defined upstair
+ * @jsonapi{development}
+ */
+extern RsVersion* rsVersion;

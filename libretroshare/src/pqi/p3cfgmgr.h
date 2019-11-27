@@ -106,13 +106,12 @@ void	setHash(const RsFileHash& h);
 
 	RsMutex cfgMtx;
 
-	private:
-
 	/**
 	 * This sets the name of the pqi configuation file
 	 */
 	void    setFilename(const std::string& name);
 
+private:
 	/**
 	 * @param an index for the Confind which contains list of configuarations that can be tracked
 	 */

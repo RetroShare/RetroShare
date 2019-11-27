@@ -140,7 +140,7 @@ public:
 
 	private: 
 
-		std::string getSQLCipherVersion();
+		std::string getSQLCipherVersion(); // TODO: move to rsversion.h
 
 		// The real Server Parts.
 
@@ -155,8 +155,6 @@ public:
 		pqipersongrp *pqih;
 
 		RsPluginManager *mPluginsManager;
-
-		//sslroot *sslr;
 
 		/* services */
 		p3heartbeat *mHeart;

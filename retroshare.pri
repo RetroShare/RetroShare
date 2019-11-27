@@ -68,27 +68,6 @@ retroshare_qml_app:CONFIG -= no_retroshare_qml_app
 CONFIG *= retroshare_service
 no_retroshare_service:CONFIG -= retroshare_service
 
-# To enable libresapi (deprecated) append the following assignation to qmake command line
-# "CONFIG+=libresapi"
-CONFIG+=no_libresapi
-libresapi:CONFIG -= no_libresapi
-
-# To enable libresapi via local socket (unix domain socket or windows named
-# pipes) append the following assignation to qmake command line
-# "CONFIG+=libresapilocalserver"
-CONFIG *= no_libresapilocalserver
-libresapilocalserver:CONFIG -= no_libresapilocalserver
-
-# To enable libresapi settings handler in libresapi append the following
-# assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG *= no_libresapi_settings
-libresapi_settings:CONFIG -= no_libresapi_settings
-
-# To enable libresapi via HTTP (based on libmicrohttpd) append the following
-# assignation to qmake command line "CONFIG+=libresapihttpserver"
-CONFIG *= no_libresapihttpserver
-libresapihttpserver:CONFIG -= no_libresapihttpserver
-
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
 CONFIG *= sqlcipher
@@ -201,20 +180,20 @@ rs_use_native_dialogs:CONFIG -= no_rs_use_native_dialogs
 CONFIG *= rs_broadcast_discovery
 no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
-# To enable webui append the following assignation to qmake
-# command line "CONFIG+=rs_webui"
-CONFIG *= no_rs_webui
-rs_webui:CONFIG -= no_rs_webui
+# To disable webui append the following assignation to qmake
+# command line "CONFIG+=rs_no_webui"
+CONFIG *= rs_webui
+rs_no_webui:CONFIG -= rs_webui
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_service_webui_terminal_password"
-CONFIG *= no_rs_service_webui_terminal_password
-rs_service_webui_terminal_password:CONFIG -= no_rs_service_webui_terminal_password
+CONFIG *= rs_service_webui_terminal_password
+no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
 
 # To enable retroshare-service terminal login append the following assignation
 # to qmake command line "CONFIG+=rs_service_terminal_login"
-CONFIG *= no_rs_service_terminal_login
-rs_service_terminal_login:CONFIG -= no_rs_service_terminal_login
+CONFIG *= rs_service_terminal_login
+no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -554,21 +533,6 @@ to contain the path to an host executable jsonapi-generator")
     DEFINES *= RS_JSONAPI
 }
 
-libresapilocalserver {
-    warning("QMAKE: you have enabled libresapilocalserver which is deprecated")
-    DEFINES *= LIBRESAPI_LOCAL_SERVER
-}
-
-libresapi_settings {
-    warning("QMAKE: you have enabled libresapi_settings which is deprecated")
-    DEFINES *= LIBRESAPI_SETTINGS
-}
-
-libresapihttpserver {
-    warning("QMAKE: you have enabled libresapihttpserver which is deprecated")
-    DEFINES *= ENABLE_WEBUI
-}
-
 retroshare_nogui {
     warning("QMAKE: you have enabled retroshare_nogui which is deprecated")
 }
@@ -653,6 +617,10 @@ android-* {
     }
     CONFIG *= no_libresapihttpserver
     CONFIG -= libresapihttpserver
+
+	CONFIG += no_rs_service_terminal_login
+	CONFIG += no_rs_service_webui_terminal_password
+
     QT *= androidextras
     INCLUDEPATH *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"

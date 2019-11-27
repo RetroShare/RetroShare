@@ -23,15 +23,13 @@
 #include "HelpDialog.h"
 #include "rshare.h"
 
+#include "restbed"
+
 #include <retroshare/rsiface.h>
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsdisc.h>
 #include <retroshare/rspeers.h>
 #include "settings/rsharesettings.h"
-
-#ifdef ENABLE_WEBUI
-#include <microhttpd.h>
-#endif
 
 #include <QClipboard>
 #include <QSysInfo>
@@ -972,13 +970,13 @@ void AboutWidget::on_copy_button_clicked()
     RsControl::instance()->getLibraries(libraries);
     verInfo+=addLibraries("libretroshare", libraries);
 
-#ifdef ENABLE_WEBUI
-    /* Add version numbers of RetroShare */
-    // Add versions here. Find a better place.
-    libraries.clear();
-    libraries.push_back(RsLibraryInfo("Libmicrohttpd", MHD_get_version()));
-    verInfo+=addLibraries("RetroShare", libraries);
-#endif // ENABLE_WEBUI
+// #ifdef RS_WEBUI
+//     /* Add version numbers of RetroShare */
+//     // Add versions here. Find a better place.
+//     libraries.clear();
+//     libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
+//     verInfo+=addLibraries("RetroShare", libraries);
+// #endif
 
     /* Add version numbers of plugins */
     if (rsPlugins) {

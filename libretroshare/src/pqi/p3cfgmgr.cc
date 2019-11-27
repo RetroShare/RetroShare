@@ -173,15 +173,16 @@ void	p3ConfigMgr::addConfiguration(std::string file, pqiConfig *conf)
 	}
 	// Also check that the filename is not already registered for another config
 
-	for(std::list<pqiConfig*>::const_iterator it = mConfigs.begin(); it!= mConfigs.end(); ++it)
+	for(std::list<pqiConfig*>::iterator it = mConfigs.begin(); it!= mConfigs.end();)
 		if((*it)->filename == filename)
 		{
-			std::cerr << "!!!!!!!!!! Trying to register a config for file \"" << filename << "\" that is already registered" << std::endl;
-			std::cerr << "!!!!!!!!!! Please correct the code !" << std::endl;
-			return;
+			std::cerr << "(WW) Registering a config for file \"" << filename << "\" that is already registered. Replacing previous component." << std::endl;
+			it = mConfigs.erase(it);
 		}
+		else
+			++it;
 
-	conf->setFilename(filename);
+	conf->setFilename(filename);// (cyril) this is quite terrible. The constructor of pqiConfig should take the filename as parameter and hold the information.
 	mConfigs.push_back(conf);
 }
 

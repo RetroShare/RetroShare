@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>521</width>
-    <height>393</height>
+    <width>545</width>
+    <height>569</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,7 +87,7 @@
         <item>
          <widget class="QLineEdit" name="tokenLineEdit">
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ApiUser:ApiPassword&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Tokens should spell as &amp;quot;user:password&amp;quot; where both user and password are alphanumeric strings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -123,7 +123,7 @@
    <item>
     <widget class="QPushButton" name="applyConfigPushButton">
      <property name="text">
-      <string>Restart JSON API Server to apply settings</string>
+      <string>Apply settings</string>
      </property>
     </widget>
    </item>

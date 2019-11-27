@@ -230,7 +230,7 @@ private slots:
     void showMessengerWindow();
 #endif
     void showStatisticsWindow();
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
     void showWebinterface();
 #endif
     //void servicePermission();

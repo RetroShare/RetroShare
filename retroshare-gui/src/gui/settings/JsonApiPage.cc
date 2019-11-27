@@ -32,141 +32,162 @@
 JsonApiPage::JsonApiPage(QWidget */*parent*/, Qt::WindowFlags /*flags*/)
 {
 	ui.setupUi(this);
-	connect( ui.addTokenPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::addTokenClicked);
-	connect( ui.removeTokenPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::removeTokenClicked );
-	connect( ui.tokensListView, &QListView::clicked,
-	         this, &JsonApiPage::tokenClicked );
-	connect( ui.applyConfigPushButton, &QPushButton::clicked,
-	         this, &JsonApiPage::onApplyClicked );
+	connect( ui.enableCheckBox,        SIGNAL(toggled(bool)), this, SLOT(enableJsonApi(bool)));
+	connect( ui.addTokenPushButton,    SIGNAL(clicked()), this, SLOT(addTokenClicked()));
+	connect( ui.removeTokenPushButton, SIGNAL(clicked()), this, SLOT(removeTokenClicked() ));
+	connect( ui.tokensListView,        SIGNAL(clicked(const QModelIndex&)), this, SLOT(tokenClicked(const QModelIndex&) ));
+	connect( ui.applyConfigPushButton, SIGNAL(clicked()), this, SLOT(onApplyClicked() ));
+	connect( ui.portSpinBox, 		   SIGNAL(valueChanged(int)), this, SLOT(updateParams() ));
+	connect( ui.listenAddressLineEdit, SIGNAL(textChanged(QString)), this, SLOT(updateParams() ));
+	connect( ui.tokenLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkToken(QString) ));
+
+    // This limits the possible tokens to alphanumeric
+
+    QString anRange = "[a-zA-Z0-9]+";
+    QRegExp anRegex ("^" + anRange + ":" + anRange + "$");
+    QRegExpValidator *anValidator = new QRegExpValidator(anRegex, this);
+
+    ui.tokenLineEdit->setValidator(anValidator);
+
+    // This limits the possible tokens to alphanumeric
+
+    QString ipRange = "(?:[0-1]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])";
+    // You may want to use QRegularExpression for new code with Qt 5 (not mandatory).
+    QRegExp ipRegex ("^" + ipRange + "\\." + ipRange + "\\." + ipRange + "\\." + ipRange + "$");
+    QRegExpValidator *ipValidator = new QRegExpValidator(ipRegex, this);
+
+    ui.listenAddressLineEdit->setValidator(ipValidator);
+
 }
 
-bool JsonApiPage::updateParams(QString &errmsg)
+void JsonApiPage::enableJsonApi(bool checked)
+{
+	ui.addTokenPushButton->setEnabled(checked);
+	ui.applyConfigPushButton->setEnabled(checked);
+	ui.removeTokenPushButton->setEnabled(checked);
+	ui.tokensListView->setEnabled(checked);
+	ui.portSpinBox->setEnabled(checked);
+	ui.listenAddressLineEdit->setEnabled(checked);
+
+    Settings->setJsonApiEnabled(checked);
+
+    if(checked)
+        checkStartJsonApi();
+    else
+        checkShutdownJsonApi();
+}
+
+bool JsonApiPage::updateParams()
 {
 	bool ok = true;
 	bool changed = false;
 
-	bool enabled = ui.enableCheckBox->isChecked();
-	if( enabled != Settings->getJsonApiEnabled())
-	{
-		Settings->setJsonApiEnabled(enabled);
-		changed = true;
-	}
-
 	uint16_t port = static_cast<uint16_t>(ui.portSpinBox->value());
-	if(port != Settings->getJsonApiPort())
-	{
-		Settings->setJsonApiPort(port);
-		changed = true;
-	}
-
 	QString listenAddress = ui.listenAddressLineEdit->text();
-	if(listenAddress != Settings->getJsonApiListenAddress())
-	{
-		Settings->setJsonApiListenAddress(listenAddress);
-		changed = true;
-	}
 
-	if(changed)
-	{
-		checkShutdownJsonApi();
-		ok = checkStartJsonApi();
-	}
+	Settings->setJsonApiEnabled(ui.enableCheckBox->isChecked());
+	Settings->setJsonApiPort(port);
+	Settings->setJsonApiListenAddress(listenAddress);
 
-	if(!ok) errmsg = "Could not start JSON API Server!";
 	return ok;
 }
 
 void JsonApiPage::load()
 {
-	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
 	whileBlocking(ui.portSpinBox)->setValue(Settings->getJsonApiPort());
 	whileBlocking(ui.listenAddressLineEdit)->setText(Settings->getJsonApiListenAddress());
-	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()));
+	whileBlocking(ui.enableCheckBox)->setChecked(Settings->getJsonApiEnabled());
+
+    QStringList newTk;
+
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
+
+	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
 
 QString JsonApiPage::helpText() const { return ""; }
 
-/*static*/ bool JsonApiPage::checkStartJsonApi()
+bool JsonApiPage::checkStartJsonApi()
 {
-	checkShutdownJsonApi();
+	if(!Settings->getJsonApiEnabled())
+        return false;
 
-	if(Settings->getJsonApiEnabled())
-	{
-		jsonApiServer = new JsonApiServer(
-		            Settings->getJsonApiPort(),
-		            Settings->getJsonApiListenAddress().toStdString() );
-		jsonApiServer->start("jsonApiServer");
-
-		for(const QString& token : Settings->getJsonApiAuthTokens())
-			jsonApiServer->authorizeToken(token.toStdString());
-	}
+	rsJsonApi->setListeningPort(Settings->getJsonApiPort());
+	rsJsonApi->setBindingAddress(Settings->getJsonApiListenAddress().toStdString());
+	rsJsonApi->restart();
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-	if(jsonApiServer)
-	{
-		/* It is important to make a copy of +jsonApiServer+ pointer so the old
-		 * object can be deleted later, while the original pointer is
-		 * reassigned */
-		JsonApiServer* oldJsonApiServer = jsonApiServer;
-		jsonApiServer = nullptr;
-
-		oldJsonApiServer->shutdown();
-
-		QProgressDialog* pd = new QProgressDialog(
-		            "Stopping JSON API Server", QString(), 0, 3000);
-		QTimer* prtm = new QTimer;
-		prtm->setInterval(16); // 60 FPS
-		connect( prtm, &QTimer::timeout,
-		         pd, [=](){pd->setValue(pd->value()+16);} );
-		pd->show();
-		prtm->start();
-
-		/* Must wait for deletion because stopping of the server is async.
-		 * It is important to capture a copy so it "survive" after
-		 * safeStopJsonApiServer returns */
-		QTimer::singleShot(3*1000, [=]()
-		{
-			delete oldJsonApiServer;
-			prtm->stop();
-			pd->close();
-			prtm->deleteLater();
-			pd->deleteLater();
-		});
-	}
+	if(!rsJsonApi->isRunning()) return;
+	rsJsonApi->fullstop(); // this is a blocks until the thread is terminated.
 }
 
-void JsonApiPage::onApplyClicked(bool)
+void JsonApiPage::onApplyClicked()
 {
-	QString errmsg;
-	updateParams(errmsg);
+    // restart
+
+    checkShutdownJsonApi();
+    checkStartJsonApi();
 }
 
-void JsonApiPage::addTokenClicked(bool)
+void JsonApiPage::checkToken(QString s)
+{
+	std::string user,passwd;
+	bool valid = RsJsonApi::parseToken(s.toStdString(), user, passwd) &&
+	        !user.empty() && !passwd.empty();
+
+    QColor color;
+
+	if(!valid)
+		color = QApplication::palette().color(QPalette::Disabled, QPalette::Base);
+	else
+		color = QApplication::palette().color(QPalette::Active, QPalette::Base);
+
+	/* unpolish widget to clear the stylesheet's palette cache */
+	//ui.searchLineFrame->style()->unpolish(ui.searchLineFrame);
+
+	QPalette palette = ui.tokenLineEdit->palette();
+	palette.setColor(ui.tokenLineEdit->backgroundRole(), color);
+	ui.tokenLineEdit->setPalette(palette);
+}
+void JsonApiPage::addTokenClicked()
 {
 	QString token(ui.tokenLineEdit->text());
-	if(jsonApiServer) jsonApiServer->authorizeToken(token.toStdString());
-	QStringList newTk(Settings->getJsonApiAuthTokens());
-	newTk.removeAll(token);
-	newTk.append(token);
-	Settings->setJsonApiAuthTokens(newTk);
+    std::string user,passwd;
+
+	if(!RsJsonApi::parseToken(token.toStdString(),user,passwd)) return;
+
+	rsJsonApi->authorizeUser(user,passwd);
+
+    QStringList newTk;
+
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
+
 	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(newTk));
 }
 
-void JsonApiPage::removeTokenClicked(bool)
+void JsonApiPage::removeTokenClicked()
 {
 	QString token(ui.tokenLineEdit->text());
-	if(jsonApiServer) jsonApiServer->revokeAuthToken(token.toStdString());
-	QStringList newTk(Settings->getJsonApiAuthTokens());
-	newTk.removeAll(token);
-	Settings->setJsonApiAuthTokens(newTk);
-	whileBlocking(ui.tokensListView)->setModel(
-	            new QStringListModel(Settings->getJsonApiAuthTokens()) );
+	rsJsonApi->revokeAuthToken(token.toStdString());
+
+    QStringList newTk;
+
+	for(const auto& it : rsJsonApi->getAuthorizedTokens())
+		newTk.push_back(
+		            QString::fromStdString(it.first) + ":" +
+		            QString::fromStdString(it.second) );
+
+	whileBlocking(ui.tokensListView)->setModel(new QStringListModel(Settings->getJsonApiAuthTokens()) );
 }
 
 void JsonApiPage::tokenClicked(const QModelIndex& index)
