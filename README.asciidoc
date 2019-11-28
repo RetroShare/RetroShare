@@ -19,6 +19,10 @@ updated documentation on how to build retroshare, instead we provide scripts and
 receipts that are used to create the packages for the supported platforms and
 more in the `build_scripts` directory of this repository.
 
+Those packaging receipts toghether with the continuous integration files
+`.travis.yml` and `appveyor.yml` are a good source of knoweldge on how to
+compile retroshare on different platforms.
+
 
 == Using RetroShare on a headless computer with WebUI
 

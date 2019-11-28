@@ -16,6 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
+CONFIG += c++11
+
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs

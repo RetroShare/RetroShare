@@ -18,7 +18,6 @@
 RS_SRC_PATH=$$clean_path($${PWD}/../../)
 RS_BUILD_PATH=$$clean_path($${OUT_PWD}/../../)
 
-CONFIG += c++11
 DEPENDPATH *= $$clean_path($${RS_SRC_PATH}/libretroshare/src/)
 INCLUDEPATH  *= $$clean_path($${RS_SRC_PATH}/libretroshare/src)
 LIBS *= -L$$clean_path($${RS_BUILD_PATH}/libretroshare/src/lib/) -lretroshare
