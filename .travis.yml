@@ -16,7 +16,7 @@ matrix:
 
 before_install:
   - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get update; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y build-essential libssl-dev libsqlcipher-dev libbz2-dev libsqlite3-dev libupnp-dev pkg-config qt5-default libxss-dev qtmultimedia5-dev libqt5x11extras5-dev libqt5designer5 libxapian-dev qttools5-dev; fi
+  - if [ $TRAVIS_OS_NAME == linux ]; then sudo apt-get install -y build-essential libssl-dev libsqlcipher-dev libbz2-dev libsqlite3-dev libupnp-dev pkg-config qt5-default libxss-dev qtmultimedia5-dev libqt5x11extras5-dev libqt5designer5 libxapian-dev qttools5-dev rapidjson-dev ; fi
 
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install ccache; export PATH="/usr/local/opt/ccache/libexec:$PATH" ; fi
@@ -25,10 +25,6 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install openssl miniupnpc rapidjson sqlcipher xapian cmark; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
-
-  - if [ $TRAVIS_OS_NAME == linux ]; then wget https://github.com/Tencent/rapidjson/archive/v1.1.0.tar.gz ; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then tar -xf v1.1.0.tar.gz ; fi
-  - if [ $TRAVIS_OS_NAME == linux ]; then sudo cp -r rapidjson-1.1.0/include/rapidjson/ /usr/include/rapidjson ; fi
 
 env:
   global:
