@@ -172,8 +172,6 @@ HEADERS += plugins/pluginmanager.h \
 
 HEADERS += $$PUBLIC_HEADERS
 
-SOURCES *= services/rsversion.cxx
-
 ################################# Linux ##########################################
 linux-* {
     CONFIG += link_pkgconfig

@@ -158,5 +158,17 @@ public:
 	 */
 	virtual bool isAuthTokenValid(const std::string& token) = 0;
 
+	/**
+	 * @brief Write version information to given paramethers
+	 * @jsonapi{development,unauthenticated}
+	 * @param[out] major storage
+	 * @param[out] minor storage
+	 * @param[out] mini storage
+	 * @param[out] extra storage
+	 * @param[out] human storage
+	 */
+	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
+	                     std::string& extra, std::string& human );
+
 	virtual ~RsJsonApi() = default;
 };

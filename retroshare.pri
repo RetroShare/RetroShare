@@ -164,13 +164,14 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 CONFIG *= rs_no_webui
 rs_webui:CONFIG -= rs_no_webui
 
-# To enable webui append the following assignation to qmake
-# command line "CONFIG+=rs_service_webui_terminal_password"
+# To disable retroshare-service option to set webui password from the terminal
+# append the following assignation to qmake command line
+# "CONFIG+=no_rs_service_webui_terminal_password"
 CONFIG *= rs_service_webui_terminal_password
 no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
 
-# To enable retroshare-service terminal login append the following assignation
-# to qmake command line "CONFIG+=rs_service_terminal_login"
+# To disable retroshare-service terminal login append the following assignation
+# to qmake command line "CONFIG+=no_rs_service_terminal_login"
 CONFIG *= rs_service_terminal_login
 no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 
@@ -479,11 +480,6 @@ no_rs_cppwarning {
 
 rs_gxs_trans {
     DEFINES *= RS_GXS_TRANS
-    greaterThan(QT_MAJOR_VERSION, 4) {
-        CONFIG += c++11
-    } else {
-        QMAKE_CXXFLAGS += -std=c++0x
-    }
 }
 
 bitdht {
@@ -707,21 +703,7 @@ macx-* {
 
 
 	message(***retroshare.pri:MacOSX)
-	# BIN_DIR += "/usr/bin"
-	# INC_DIR += "/usr/include"
-	# INC_DIR += "/usr/local/include"
-	# INC_DIR += "/opt/local/include"
-	# LIB_DIR += "/usr/local/lib"
-	# LIB_DIR += "/opt/local/lib"
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
-	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
-	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/include"
-	INC_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/include"
-	LIB_DIR += "/usr/local/opt/openssl/lib/"
-	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib"
-	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/lib"
-	LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
-	CONFIG += c++11
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
 	QT += macextras
