@@ -160,8 +160,10 @@ after_build:
   - find .
 
   - mkdir %RS_DEPLOY%
-  - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
-  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-gui\src\debug\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-service\src\debug\retroshare-service.exe %RS_DEPLOY%\
+#  - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
+#  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
   - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
