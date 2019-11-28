@@ -140,6 +140,10 @@ configuration: Release
 # scripts to run before build
 before_build:
   - cd C:\projects\RetroShare
+  - git submodule update --init
+  - cd C:\projects\
+  - mkdir RetroShare-build
+  - cd RetroShare-build
 #  - find C:\ > filelist.txt
 
 # scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
@@ -148,14 +152,12 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - env
-  - git submodule update --init
-  - qmake -spec win32-g++ "CONFIG+=debug"
+  - qmake ../RetroShare -spec win32-g++ "CONFIG+=debug"
   - mingw32-make -j3
 
 # scripts to run after build
 after_build:
-  - find C:\projects\RetroShare >> filelist.txt
-  - cat filelist.txt
+  - find .
 
   - mkdir %RS_DEPLOY%
   - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
