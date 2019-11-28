@@ -21,12 +21,7 @@
 #pragma once
 
 #include <iostream>
-
-#ifdef HAS_RAPIDJSON
-#	include <rapidjson/document.h>
-#else
-#	include <rapid_json/document.h>
-#endif // HAS_RAPIDJSON
+#include <rapidjson/document.h>
 
 /**
  * Use this type for JSON documents representations in RetroShare code

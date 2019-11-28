@@ -38,11 +38,10 @@ bitdht {
 # always possible to find them
 RAPIDJSON_AVAILABLE = $$system(pkg-config --atleast-version 1.1 RapidJSON && echo yes)
 isEmpty(RAPIDJSON_AVAILABLE) {
-    message("using built-in rapidjson")
+    message("using rapidjson from submodule")
     INCLUDEPATH *= $$clean_path($${PWD}/../../supportlibs/rapidjson/include)
 } else {
     message("using system rapidjson")
-    DEFINES *= HAS_RAPIDJSON
 }
 
 
