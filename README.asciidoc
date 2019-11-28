@@ -2,8 +2,7 @@
 
 RetroShare is a decentralized, private, secure, cross-platform, communication
 toolkit.
-RetroShare provides filesharing, chat, messages, forums, channels and
-more.
+RetroShare provides filesharing, chat, messages, forums, channels and more.
 
 .Build Status
 |===============================================================================
@@ -15,13 +14,13 @@ more.
 == Compilation
 
 It is very difficult to keep a comprehensive (we support many platforms) and
-updated documentation on how to build retroshare, instead we provide scripts and
-receipts that are used to create the packages for the supported platforms and
+updated documentation on how to build RetroShare, instead we provide scripts and
+recipes that are used to create the packages for the supported platforms and
 more in the `build_scripts` directory of this repository.
 
-Those packaging receipts toghether with the continuous integration files
-`.travis.yml` and `appveyor.yml` are a good source of knoweldge on how to
-compile retroshare on different platforms.
+Those packaging receipts together with the continuous integration files
+`.travis.yml` and `appveyor.yml` are a good source of knowledge on how to
+compile RetroShare on different platforms.
 
 
 == Using RetroShare on a headless computer with WebUI

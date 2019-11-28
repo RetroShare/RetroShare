@@ -90,8 +90,10 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-rapidjson mingw-w64-i686-sqlcipher mingw-w64-i686-xapian-core mingw-w64-i686-cmark
-  #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  - >
+    pacman --noconfirm -S
+    mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-rapidjson
+    mingw-w64-i686-sqlcipher mingw-w64-i686-xapian-core mingw-w64-i686-cmark
   #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
   # Configuring Qt

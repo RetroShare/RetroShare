@@ -17,14 +17,15 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "jsonapi.h"
-
 #include <string>
 #include <sstream>
 #include <memory>
 #include <restbed>
 #include <vector>
 #include <openssl/crypto.h>
+
+
+#include "jsonapi.h"
 
 #include "util/rsjson.h"
 #include "retroshare/rsfiles.h"
@@ -36,6 +37,7 @@
 #include "util/rsurl.h"
 #include "util/rstime.h"
 #include "retroshare/rsevents.h"
+#include "retroshare/rsversion.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
@@ -643,4 +645,15 @@ void JsonApiServer::runloop()
 	}
 
 	RsInfo() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
+}
+
+/*static*/ void RsJsonApi::version(
+        uint32_t& major, uint32_t& minor, uint32_t& mini, std::string& extra,
+        std::string& human )
+{
+	major = RS_MAJOR_VERSION;
+	minor = RS_MINOR_VERSION;
+	mini = RS_MINI_VERSION;
+	extra = RS_EXTRA_VERSION;
+	human = RS_HUMAN_READABLE_VERSION;
 }
