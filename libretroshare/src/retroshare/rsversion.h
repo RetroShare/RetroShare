@@ -81,7 +81,7 @@ constexpr auto RS_HUMAN_READABLE_VERSION =
         RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
 
 
-#include <cstdint>
+#include <stdint.h>
 #include <string>
 
 /**

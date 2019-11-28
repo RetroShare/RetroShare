@@ -147,7 +147,7 @@ before_package:
 build_script:
   - env
   - git submodule update --init
-  - qmake -Wall -spec win32-g++ "CONFIG=debug"
+  - qmake -Wall -spec win32-g++ "CONFIG+=debug" "CONFIG+=c++11"
   - mingw32-make -j3
 
 # scripts to run after build
