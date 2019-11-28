@@ -79,3 +79,7 @@ constexpr auto RS_HUMAN_READABLE_VERSION =
         RS_PRIVATE_STRINGIFY(RS_MAJOR_VERSION) "." \
         RS_PRIVATE_STRINGIFY(RS_MINOR_VERSION) "." \
         RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
+
+/* Because RetroShare-gui include this file in gui/images/retroshare_win.rc
+ * including any C++ things like `#include <string>` will break compilation of
+ * RetroShare-gui on Windows. Therefore this file must be kept minimal. */
