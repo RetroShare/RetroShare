@@ -6,7 +6,7 @@ language: cpp
 matrix:
   include:
     - os: linux
-      dist: trusty
+      dist: bionic
       sudo: required
       compiler: gcc
     - os: osx
@@ -51,7 +51,7 @@ before_script:
   - if [ $TRAVIS_OS_NAME == osx ]; then qmake CONFIG+=rs_macos10.14 INCLUDEPATH+=$(find /usr/local/Cellar/openssl*/*/include/ | head -n 1) INCLUDEPATH+=$(find /usr/local/Cellar/rapidjson/*/include | head -n 1) INCLUDEPATH+=$(find /usr/local/Cellar/sqlcipher/*/include | head -n 1) QMAKE_LIBDIR+=$(find /usr/local/Cellar/openssl*/*/lib/ | head -n 1) QMAKE_LIBDIR+=$(find /usr/local/Cellar/sqlcipher/*/lib | head -n 1); fi
 
 script:
-  - if [ $TRAVIS_OS_NAME == osx ] && [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j4; fi
+  - if [ "${COVERITY_SCAN_BRANCH}" != 1 ]; then make -j4; fi
 
 after_success:
   - if [ $TRAVIS_OS_NAME == osx ]; then build_scripts/OSX/travis_makeOSXPackage.sh ; fi
