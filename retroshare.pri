@@ -164,13 +164,14 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 CONFIG *= rs_no_webui
 rs_webui:CONFIG -= rs_no_webui
 
-# To enable webui append the following assignation to qmake
-# command line "CONFIG+=rs_service_webui_terminal_password"
+# To disable retroshare-service option to set webui password from the terminal
+# append the following assignation to qmake command line
+# "CONFIG+=no_rs_service_webui_terminal_password"
 CONFIG *= rs_service_webui_terminal_password
 no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
 
-# To enable retroshare-service terminal login append the following assignation
-# to qmake command line "CONFIG+=rs_service_terminal_login"
+# To disable retroshare-service terminal login append the following assignation
+# to qmake command line "CONFIG+=no_rs_service_terminal_login"
 CONFIG *= rs_service_terminal_login
 no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 

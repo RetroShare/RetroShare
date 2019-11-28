@@ -149,11 +149,14 @@ before_package:
 build_script:
   - env
   - git submodule update --init
-  - qmake -Wall -spec win32-g++ "CONFIG+=debug" "CONFIG+=c++11"
+  - qmake -spec win32-g++ "CONFIG+=debug"
   - mingw32-make -j3
 
 # scripts to run after build
 after_build:
+  - find C:\projects\RetroShare >> filelist.txt
+  - cat filelist.txt
+
   - mkdir %RS_DEPLOY%
   - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
   - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
@@ -251,8 +254,6 @@ after_build:
 ## Needed for cmark
   - copy C:\msys64\mingw32\bin\libcmark*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libdouble-conversion*.dll %RS_DEPLOY%\
-
-  - find C:\projects\RetroShare >> filelist.txt
 
 # to disable automatic builds
 #build: off
