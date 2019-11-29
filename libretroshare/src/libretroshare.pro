@@ -161,8 +161,8 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 
 rs_webui {
     PUBLIC_HEADERS += retroshare/rswebui.h
-    SOURCES += rsserver/p3webui.cc
-    HEADERS += rsserver/p3webui.h
+    SOURCES += jsonapi/p3webui.cc
+    HEADERS += jsonapi/p3webui.h
 }
 
 HEADERS += plugins/pluginmanager.h \
