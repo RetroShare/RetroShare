@@ -11,3 +11,6 @@
 	path = supportlibs/udp-discovery-cpp
 	url = https://github.com/truvorskameikin/udp-discovery-cpp.git
 	branch = develop
+[submodule "supportlibs/rapidjson"]
+	path = supportlibs/rapidjson
+	url = https://github.com/Tencent/rapidjson.git

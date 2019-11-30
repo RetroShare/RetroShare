@@ -138,15 +138,15 @@ QString WebuiPage::helpText() const
     if(!Settings->getWebinterfaceEnabled())
         return false;
 
-    rsWebUI->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
-    rsWebUI->restart();
+	rsWebUi->setHtmlFilesDirectory(Settings->getWebinterfaceFilesDirectory().toStdString());
+	rsWebUi->restart();
 
     return true;
 }
 
 /*static*/ void WebuiPage::checkShutdownWebui()
 {
-    rsWebUI->stop();
+	rsWebUi->stop();
 }
 
 /*static*/ void WebuiPage::showWebui()
@@ -193,7 +193,7 @@ void WebuiPage::onAllIPCBClicked(bool /*checked*/)
 }
 void WebuiPage::onApplyClicked()
 {
-    rsWebUI->setUserPassword(ui.password_LE->text().toStdString());
+	rsWebUi->setUserPassword(ui.password_LE->text().toStdString());
 
     if(!restart())
     {

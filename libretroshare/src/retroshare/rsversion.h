@@ -80,34 +80,6 @@ constexpr auto RS_HUMAN_READABLE_VERSION =
         RS_PRIVATE_STRINGIFY(RS_MINOR_VERSION) "." \
         RS_PRIVATE_STRINGIFY(RS_MINI_VERSION) RS_EXTRA_VERSION;
 
-
-#include <cstdint>
-#include <string>
-
-/**
- * Helper to expose version information to JSON API.
- * From C++ you should use directly the macro and constants defined upstair
- * @jsonapi{development}
- */
-class RsVersion
-{
-public:
-	/**
-	 * @brief Write version information to given paramethers
-	 * @jsonapi{development,unauthenticated}
-	 * @param[out] major storage
-	 * @param[out] minor storage
-	 * @param[out] mini storage
-	 * @param[out] extra storage
-	 * @param[out] human storage
-	 */
-	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
-	                     std::string& extra, std::string& human );
-};
-
-/**
- * Pointer to global instance of RsVersion, for the sake of JSON API, from C++
- * you can use directly the macro and constants defined upstair
- * @jsonapi{development}
- */
-extern RsVersion* rsVersion;
+/* Because RetroShare-gui include this file in gui/images/retroshare_win.rc
+ * including any C++ things like `#include <string>` will break compilation of
+ * RetroShare-gui on Windows. Therefore this file must be kept minimal. */

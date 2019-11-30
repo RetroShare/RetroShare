@@ -1157,9 +1157,10 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
 QString RshareSettings::getWebinterfaceFilesDirectory()
 {
 #ifdef WINDOWS_SYS
-    return valueFromGroup("Webinterface","directory","data/webui/").toString().toStdString();
-#endif
+    return valueFromGroup("Webinterface","directory","data/webui/").toString();
+#else
     return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
+#endif
 }
 
 void RshareSettings::setWebinterfaceFilesDirectory(const QString& s)
@@ -1192,7 +1193,9 @@ void RshareSettings::setJsonApiEnabled(bool enabled)
 
 uint16_t RshareSettings::getJsonApiPort()
 {
-	return valueFromGroup("JsonApi", "port", JsonApiServer::DEFAULT_PORT).toUInt();
+	return static_cast<uint16_t>(
+	            valueFromGroup(
+	                "JsonApi", "port", RsJsonApi::DEFAULT_PORT ).toUInt() );
 }
 
 void RshareSettings::setJsonApiPort(uint16_t port)
