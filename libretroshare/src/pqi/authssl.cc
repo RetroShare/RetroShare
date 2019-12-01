@@ -1189,6 +1189,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		if(rsEvents)
 		{
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED;
+
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1218,7 +1220,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		{
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
-			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1237,6 +1240,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1266,6 +1271,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 				ev->mSslCn = sslCn;
 				ev->mPgpId = pgpId;
 				ev->mErrorMsg = errorMsg;
+				ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISMATCHED_PGP_ID;
 				rsEvents->postEvent(std::move(ev));
 			}
 
@@ -1290,6 +1296,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED;
 			ev->mErrorMsg = errMsg;
 			rsEvents->postEvent(std::move(ev));
 		}
@@ -1311,6 +1318,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND;
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1330,6 +1338,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		ev->mSslId = sslId;
 		ev->mSslCn = sslCn;
 		ev->mPgpId = pgpId;
+		ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_ERROR;
+
 		rsEvents->postEvent(std::move(ev));
 	}
 

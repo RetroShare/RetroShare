@@ -486,6 +486,20 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			break;
 		}
 
+		if(rsEvents)
+		{
+			auto ev = std::unique_ptr<RsAuthSslConnectionAutenticationEvent>(new RsAuthSslConnectionAutenticationEvent);
+
+			ev->mSslId = incoming_connexion_info.sslid;
+			ev->mPgpId = incoming_connexion_info.gpgid;
+			ev->mSslCn = incoming_connexion_info.sslcn;
+			ev->mLocator = RsUrl(sockaddr_storage_iptostring(incoming_connexion_info.addr));
+			ev->mSuccess = false;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+
+			rsEvents->postEvent(std::move(ev));
+		}
+
 		closeConnection(fd, incoming_connexion_info.ssl) ;
 
 		pqioutput(PQL_WARNING, pqissllistenzone, "Read Error on the SSL Socket\nShutting it down!");

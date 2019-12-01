@@ -33,6 +33,7 @@
 #include <retroshare/rsplugin.h>
 #include <retroshare/rsposted.h>
 
+#include "util/qtthreadsutils.h"
 #include "feeds/ChatMsgItem.h"
 #include "feeds/GxsCircleItem.h"
 #include "feeds/GxsChannelGroupItem.h"
@@ -74,6 +75,8 @@ NewsFeed::NewsFeed(QWidget *parent) :
     RsAutoUpdatePage(1000,parent),
     ui(new Ui::NewsFeed)
 {
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
@@ -123,6 +126,8 @@ QString hlp_str = tr(
 
 NewsFeed::~NewsFeed()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+
 	// save settings
 	processSettings(false);
 
@@ -174,6 +179,88 @@ void NewsFeed::sortChanged(int index)
 {
 	Qt::SortOrder sortOrder = (Qt::SortOrder) ui->sortComboBox->itemData(index).toInt();
 	ui->feedWidget->setSortRole(ROLE_RECEIVED, sortOrder);
+}
+
+// handler for the new notification system in libretroshare.
+
+void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
+{
+	uint flags = Settings->getNewsFeedFlags();
+
+ 	const RsAuthSslConnectionAutenticationEvent *pssl_e = dynamic_cast<const RsAuthSslConnectionAutenticationEvent*>(event.get());
+
+    if(pssl_e != nullptr && (flags & (RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_PEER)))
+    {
+        RsAuthSslConnectionAutenticationEvent e = *pssl_e;	// make a copy because we lose memory ownership here
+
+		RsQThreadUtils::postToObject( [=]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+			handleSecurityEvent(e);
+
+		}, this );
+    }
+}
+
+void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& e)
+{
+	std::cerr << "NotifyQt: handling connection security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << e.mErrorCode << std::endl;
+	uint flags = Settings->getNewsFeedFlags();
+
+    if(e.mSuccess)
+        if(flags & RS_FEED_TYPE_PEER)
+		{
+			addFeedItem(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false));
+			return;
+		}
+		else
+			return;
+
+    uint32_t FeedItemType=0;
+
+	switch(e.mErrorCode)
+	{
+        case RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED:
+        case RsAuthSslConnectionAutenticationEvent::MISMATCHED_PGP_ID:            // fallthrough
+        case RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO:  FeedItemType = RS_FEED_ITEM_SEC_BAD_CERTIFICATE;
+        break;
+
+        case RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED: FeedItemType = RS_FEED_ITEM_SEC_WRONG_SIGNATURE;
+        break;
+
+        case RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND:	 FeedItemType =  RS_FEED_ITEM_SEC_AUTH_DENIED;
+        break;
+
+        case RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED:	 FeedItemType =  RS_FEED_ITEM_SEC_IP_BLACKLISTED;
+        break;
+
+		case RsAuthSslConnectionAutenticationEvent::MISSING_CERTIFICATE: FeedItemType = RS_FEED_ITEM_SEC_MISSING_CERTIFICATE;
+        break;
+
+    default:
+        return; // display nothing
+    }
+
+    RsPeerDetails det;
+	rsPeers->getPeerDetails(e.mSslId,det) || rsPeers->getGPGDetails(e.mPgpId,det);
+
+	addFeedItemIfUnique(new SecurityItem(this,
+	                                     NEWSFEED_SECLIST,
+	                                     det.gpg_id, det.id,
+	                                     det.location,
+	                                     e.mLocator.toString(),
+	                                     FeedItemType,
+	                                     false),
+	                    RS_FEED_ITEM_SEC_BAD_CERTIFICATE,
+	                    det.gpg_id.toStdString(),
+	                    std::string(),
+	                    std::string(),
+	                    std::string(),
+	                    true );
 }
 
 void NewsFeed::updateDisplay()

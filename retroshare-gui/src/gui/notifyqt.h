@@ -56,7 +56,7 @@ class NotifyQt: public QObject, public NotifyClient
 		static bool isAllDisable();
 		void enable() ;
 
-		virtual ~NotifyQt() { return; }
+		virtual ~NotifyQt() ;
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
@@ -76,7 +76,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
-		void notifyConnectionWithoutCert();
 
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;

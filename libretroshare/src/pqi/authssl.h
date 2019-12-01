@@ -53,34 +53,6 @@ const EVP_PKEY* getPubKey(const X509& x509);
 };
 
 /**
- * Event triggered by AuthSSL when authentication of a connection attempt either
- * fail or success
- */
-struct RsAuthSslConnectionAutenticationEvent : RsEvent
-{
-	RsAuthSslConnectionAutenticationEvent();
-
-	bool mSuccess;
-	RsPeerId mSslId;
-	std::string mSslCn;
-	RsPgpId mPgpId;
-	std::string mErrorMsg;
-
-	///* @see RsEvent @see RsSerializable
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx) override
-	{
-		RsEvent::serial_process(j, ctx);
-		RS_SERIAL_PROCESS(mSuccess);
-		RS_SERIAL_PROCESS(mSslId);
-		RS_SERIAL_PROCESS(mSslCn);
-		RS_SERIAL_PROCESS(mPgpId);
-		RS_SERIAL_PROCESS(mErrorMsg);
-	}
-};
-
-
-/**
  * This is an implementation of SSL certificate authentication with PGP
  * signatures, instead of centralized certification authority.
  */

@@ -89,6 +89,10 @@ void NotifyQt::SetDisableAll(bool bValue)
 	}
 }
 
+NotifyQt::~NotifyQt()
+{
+}
+
 NotifyQt::NotifyQt() : cDialog(NULL)
 {
 	runningToasterTimer = new QTimer(this);
@@ -490,20 +494,6 @@ void NotifyQt::notifyChatLobbyTimeShift(int shift)
 	std::cerr << "notifyQt: Received chat lobby time shift message: shift = " << shift << std::endl;
 #endif
 	emit chatLobbyTimeShift(shift) ;
-}
-
-void NotifyQt::notifyConnectionWithoutCert()
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "notifyQt: Received notifyConnectionWithoutCert" << std::endl;
-#endif
-	emit connectionWithoutCert();
 }
 
 void NotifyQt::handleChatLobbyTimeShift(int /*shift*/)

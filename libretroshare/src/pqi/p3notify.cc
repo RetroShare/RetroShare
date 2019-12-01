@@ -236,7 +236,6 @@ void p3Notify::notifyOwnStatusMessageChanged()                                  
 void p3Notify::notifyDiskFull               (uint32_t           location  , uint32_t                         size_limit_in_MB ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiskFull          (location,size_limit_in_MB) ; }
 void p3Notify::notifyPeerStatusChanged      (const std::string& peer_id   , uint32_t                         status           ) { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChanged (peer_id,status) ; }
 void p3Notify::notifyGxsChange              (const RsGxsChanges& changes) {FOR_ALL_NOTIFY_CLIENTS (*it)->notifyGxsChange(changes) ;}
-void p3Notify::notifyConnectionWithoutCert  ()                                                                                  { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyConnectionWithoutCert(); }
 
 void p3Notify::notifyPeerStatusChangedSummary   ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyPeerStatusChangedSummary() ; }
 void p3Notify::notifyDiscInfoChanged            ()                                                                              { FOR_ALL_NOTIFY_CLIENTS (*it)->notifyDiscInfoChanged         () ; } 

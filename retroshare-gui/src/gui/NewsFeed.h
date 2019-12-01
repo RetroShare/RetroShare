@@ -83,6 +83,8 @@ public:
 
 	virtual void updateDisplay();
 
+	void handleEvent(std::shared_ptr<const RsEvent> event);	// get events from libretroshare
+
 signals:
 	void newsFeedChanged(int count);
 
@@ -100,6 +102,8 @@ private slots:
 	void sendNewsFeedChanged();
 
 private:
+	void handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& e);
+
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace);
 	void remUniqueFeedItem(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4);
@@ -165,6 +169,8 @@ private:
 
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

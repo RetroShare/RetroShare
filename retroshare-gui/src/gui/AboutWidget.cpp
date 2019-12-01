@@ -973,11 +973,13 @@ void AboutWidget::on_copy_button_clicked()
     verInfo+=addLibraries("libretroshare", libraries);
 
 #ifdef RS_JSONAPI
-    /* Add version numbers of RetroShare */
-    // Add versions here. Find a better place.
-    libraries.clear();
-    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
-    verInfo+=addLibraries("RetroShare", libraries);
+// No version number available for restbed apparently.
+//
+//    /* Add version numbers of RetroShare */
+//    // Add versions here. Find a better place.
+//    libraries.clear();
+//    libraries.push_back(RsLibraryInfo("RestBed", restbed::get_version()));
+//    verInfo+=addLibraries("RetroShare", libraries);
 #endif
 
     /* Add version numbers of plugins */

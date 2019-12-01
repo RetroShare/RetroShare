@@ -25,6 +25,7 @@
 #include <cstdint>
 
 #include "util/rsmemory.h"
+#include "util/rsurl.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
 
@@ -170,3 +171,51 @@ public:
 
 	virtual ~RsEvents();
 };
+
+//===================================================================================================//
+//                                            Connexion events                                       //
+//===================================================================================================//
+
+/**
+ * Event triggered by AuthSSL when authentication of a connection attempt either
+ * fail or success
+ */
+struct RsAuthSslConnectionAutenticationEvent : RsEvent
+{
+	RsAuthSslConnectionAutenticationEvent();
+
+    enum ConnextionErrorCode: uint8_t {
+        UNKNOWN_ERROR                   = 0x00,
+        MISSING_AUTHENTICATION_INFO     = 0x01,
+        PGP_SIGNATURE_VALIDATION_FAILED = 0x02,
+        MISMATCHED_PGP_ID               = 0x03,
+        NO_CERTIFICATE_SUPPLIED         = 0x04,
+        NOT_A_FRIEND                    = 0x05,
+        MISSING_CERTIFICATE             = 0x06,
+        IP_IS_BLACKLISTED               = 0x07,
+        NO_ERROR                        = 0x08,
+    };
+
+	bool mSuccess;
+	RsPeerId mSslId;
+	std::string mSslCn;
+	RsPgpId mPgpId;
+    RsUrl mLocator;
+	std::string mErrorMsg;
+	ConnextionErrorCode mErrorCode;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mSuccess);
+		RS_SERIAL_PROCESS(mSslId);
+		RS_SERIAL_PROCESS(mSslCn);
+		RS_SERIAL_PROCESS(mPgpId);
+		RS_SERIAL_PROCESS(mLocator);
+		RS_SERIAL_PROCESS(mErrorMsg);
+		RS_SERIAL_PROCESS(mErrorCode);
+	}
+};
+
