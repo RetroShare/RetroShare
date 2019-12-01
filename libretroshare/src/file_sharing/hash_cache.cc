@@ -69,7 +69,7 @@ bool HashStorage::hashingProcessPaused()
 
 static std::string friendlyUnit(uint64_t val)
 {
-    const std::string units[5] = {"B","KB","MB","GB","TB"};
+    const std::string units[6] = {"B","KB","MB","GB","TB","PB"};
     char buf[50] ;
 
     double fact = 1.0 ;
