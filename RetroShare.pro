@@ -16,6 +16,8 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
 ################################################################################
 
+CONFIG += c++11
+
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
 TEMPLATE = subdirs
@@ -27,12 +29,6 @@ rs_jsonapi:isEmpty(JSONAPI_GENERATOR_EXE) {
     SUBDIRS += jsonapi-generator
     jsonapi-generator.file = jsonapi-generator/src/jsonapi-generator.pro
     libretroshare.depends += jsonapi-generator
-}
-
-rs_webui {
-	!rs_jsonapi {
-		error("rs_webui requires rs_jsonapi")
-	}
 }
 
 SUBDIRS += libbitdht

@@ -1,23 +1,23 @@
-/*******************************************************************************
- * RetroShare JSON API                                                         *
- *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
- *                                                                             *
- * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Affero General Public License version 3 as    *
- * published by the Free Software Foundation.                                  *
- *                                                                             *
- * This program is distributed in the hope that it will be useful,             *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
- * GNU Lesser General Public License for more details.                         *
- *                                                                             *
- * You should have received a copy of the GNU Affero General Public License    *
- * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
- *******************************************************************************/
-
-#include "jsonapi.h"
+/*
+ * RetroShare JSON API
+ *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the
+ * Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
+ *
+ * SPDX-FileCopyrightText: 2004-2019 RetroShare Team <contact@retroshare.cc>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
 
 #include <string>
 #include <sstream>
@@ -25,6 +25,9 @@
 #include <restbed>
 #include <vector>
 #include <openssl/crypto.h>
+
+
+#include "jsonapi.h"
 
 #include "util/rsjson.h"
 #include "retroshare/rsfiles.h"
@@ -36,6 +39,7 @@
 #include "util/rsurl.h"
 #include "util/rstime.h"
 #include "retroshare/rsevents.h"
+#include "retroshare/rsversion.h"
 
 // Generated at compile time
 #include "jsonapi-includes.inl"
@@ -643,4 +647,15 @@ void JsonApiServer::runloop()
 	}
 
 	RsInfo() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
+}
+
+/*static*/ void RsJsonApi::version(
+        uint32_t& major, uint32_t& minor, uint32_t& mini, std::string& extra,
+        std::string& human )
+{
+	major = RS_MAJOR_VERSION;
+	minor = RS_MINOR_VERSION;
+	mini = RS_MINI_VERSION;
+	extra = RS_EXTRA_VERSION;
+	human = RS_HUMAN_READABLE_VERSION;
 }

@@ -310,11 +310,11 @@ int main(int argc, char* argv[])
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
 #if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	if(rsJsonAPI && !webui_pass1.empty())
+	if(rsJsonApi && !webui_pass1.empty())
     {
-		rsWebUI->setHtmlFilesDirectory(webui_base_directory);
-		rsWebUI->setUserPassword(webui_pass1);
-		rsWebUI->restart();
+		rsWebUi->setHtmlFilesDirectory(webui_base_directory);
+		rsWebUi->setUserPassword(webui_pass1);
+		rsWebUi->restart();
     }
 #endif
 

@@ -19,18 +19,11 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <rapidjson/writer.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
+
 #include "util/rsjson.h"
-
-#ifdef HAS_RAPIDJSON
-#	include <rapidjson/writer.h>
-#	include <rapidjson/stringbuffer.h>
-#	include <rapidjson/prettywriter.h>
-#else
-#	include <rapid_json/writer.h>
-#	include <rapid_json/stringbuffer.h>
-#	include <rapid_json/prettywriter.h>
-#endif // HAS_RAPIDJSON
-
 
 inline int getJsonManipulatorStatePosition()
 {
