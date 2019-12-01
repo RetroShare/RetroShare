@@ -74,7 +74,7 @@ static std::string friendlyUnit(uint64_t val)
 
     double fact = 1.0 ;
 
-    for(unsigned int i=0; i<5; ++i)
+    for(unsigned int i=0; i<6; ++i)
         if(double(val)/fact < 1024.0)
         {
             sprintf(buf,"%2.2f",double(val)/fact) ;
