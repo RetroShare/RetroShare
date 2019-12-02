@@ -103,6 +103,7 @@ private slots:
 
 private:
 	void handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& e);
+	void handleConnectionEvent(const RsConnectionEvent& e);
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace);

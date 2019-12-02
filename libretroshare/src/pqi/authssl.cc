@@ -1220,6 +1220,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		{
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
+			ev->mErrorMsg = errMsg;
 			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
@@ -1331,17 +1332,6 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for "
 	         << "sslId: " << sslId << " isSslOnlyFriend: " << isSslOnlyFriend
 	         << std::endl;
-
-	if(rsEvents)
-	{
-		ev->mSuccess = true;
-		ev->mSslId = sslId;
-		ev->mSslCn = sslCn;
-		ev->mPgpId = pgpId;
-		ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_ERROR;
-
-		rsEvents->postEvent(std::move(ev));
-	}
 
 	return verificationSuccess;
 }
@@ -1794,9 +1784,6 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
         load.clear() ;
         return true;
 }
-
-RsAuthSslConnectionAutenticationEvent::RsAuthSslConnectionAutenticationEvent() :
-    RsEvent(RsEventType::AUTHSSL_CONNECTION_AUTENTICATION), mSuccess(false) {}
 
 const EVP_PKEY*RsX509Cert::getPubKey(const X509& x509)
 {

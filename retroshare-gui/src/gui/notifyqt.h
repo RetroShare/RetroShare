@@ -56,12 +56,10 @@ class NotifyQt: public QObject, public NotifyClient
 		static bool isAllDisable();
 		void enable() ;
 
-		virtual ~NotifyQt() ;
+		virtual ~NotifyQt() = default;
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
-		virtual void notifyPeerConnected(const std::string& /* peer_id */);
-		virtual void notifyPeerDisconnected(const std::string& /* peer_id */);
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
@@ -122,8 +120,6 @@ class NotifyQt: public QObject, public NotifyClient
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void peerConnected(const QString&) const ;
-		void peerDisconnected(const QString&) const ;
 		void hashingInfoChanged(const QString&) const ;
 		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;

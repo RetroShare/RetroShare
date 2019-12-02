@@ -493,8 +493,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			ev->mSslId = incoming_connexion_info.sslid;
 			ev->mPgpId = incoming_connexion_info.gpgid;
 			ev->mSslCn = incoming_connexion_info.sslcn;
-			ev->mLocator = RsUrl(sockaddr_storage_iptostring(incoming_connexion_info.addr));
-			ev->mSuccess = false;
+			ev->mLocator = RsUrl(incoming_connexion_info.addr);
 			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));

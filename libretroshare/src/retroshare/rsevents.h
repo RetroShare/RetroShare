@@ -59,7 +59,7 @@ enum class RsEventType : uint32_t
 	AUTHSSL_CONNECTION_AUTENTICATION                        = 3,
 
 	/// @see pqissl
-	REMOTE_PEER_REFUSED_CONNECTION                          = 4,
+	PEER_CONNECTION                                         = 4,
 
 	/// @see RsGxsChanges
 	GXS_CHANGES                                             = 5,
@@ -173,7 +173,7 @@ public:
 };
 
 //===================================================================================================//
-//                                            Connexion events                                       //
+//                               Connexion and security events                                       //
 //===================================================================================================//
 
 /**
@@ -182,10 +182,10 @@ public:
  */
 struct RsAuthSslConnectionAutenticationEvent : RsEvent
 {
-	RsAuthSslConnectionAutenticationEvent();
+	RsAuthSslConnectionAutenticationEvent() : RsEvent(RsEventType::AUTHSSL_CONNECTION_AUTENTICATION) {}
 
-    enum ConnextionErrorCode: uint8_t {
-        UNKNOWN_ERROR                   = 0x00,
+    enum ConnectionErrorCode: uint8_t {
+        NO_ERROR                        = 0x00,
         MISSING_AUTHENTICATION_INFO     = 0x01,
         PGP_SIGNATURE_VALIDATION_FAILED = 0x02,
         MISMATCHED_PGP_ID               = 0x03,
@@ -193,29 +193,52 @@ struct RsAuthSslConnectionAutenticationEvent : RsEvent
         NOT_A_FRIEND                    = 0x05,
         MISSING_CERTIFICATE             = 0x06,
         IP_IS_BLACKLISTED               = 0x07,
-        NO_ERROR                        = 0x08,
+        UNKNOWN_ERROR                   = 0x08,
     };
 
-	bool mSuccess;
 	RsPeerId mSslId;
 	std::string mSslCn;
 	RsPgpId mPgpId;
     RsUrl mLocator;
 	std::string mErrorMsg;
-	ConnextionErrorCode mErrorCode;
+	ConnectionErrorCode mErrorCode;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RsEvent::serial_process(j, ctx);
-		RS_SERIAL_PROCESS(mSuccess);
 		RS_SERIAL_PROCESS(mSslId);
 		RS_SERIAL_PROCESS(mSslCn);
 		RS_SERIAL_PROCESS(mPgpId);
 		RS_SERIAL_PROCESS(mLocator);
 		RS_SERIAL_PROCESS(mErrorMsg);
 		RS_SERIAL_PROCESS(mErrorCode);
+	}
+};
+
+struct RsConnectionEvent : RsEvent
+{
+	RsConnectionEvent()
+	    : RsEvent(RsEventType::PEER_CONNECTION),
+	      mType(UNKNOWN) {}
+
+	enum ConnectionType: uint8_t {
+        UNKNOWN                 = 0x00,
+        PEER_CONNECTED          = 0x01,
+        PEER_DISCONNECTED       = 0x02,
+        PEER_REFUSED_CONNECTION = 0x03,
+    };
+
+    ConnectionType mType;
+	RsPeerId mSslId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mType);
+		RS_SERIAL_PROCESS(mSslId);
 	}
 };
 

@@ -89,10 +89,6 @@ void NotifyQt::SetDisableAll(bool bValue)
 	}
 }
 
-NotifyQt::~NotifyQt()
-{
-}
-
 NotifyQt::NotifyQt() : cDialog(NULL)
 {
 	runningToasterTimer = new QTimer(this);
@@ -738,27 +734,6 @@ void NotifyQt::notifyListChange(int list, int type)
 			break;
 	}
 	return;
-}
-
-void NotifyQt::notifyPeerConnected(const std::string& peer_id)
-{
-    {
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-    emit peerConnected(QString::fromStdString(peer_id));
-}
-void NotifyQt::notifyPeerDisconnected(const std::string& peer_id)
-{
-    	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-    emit peerDisconnected(QString::fromStdString(peer_id));
 }
 
 void NotifyQt::notifyListPreChange(int list, int /*type*/)

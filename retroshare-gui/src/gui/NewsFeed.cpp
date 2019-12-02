@@ -189,36 +189,71 @@ void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
 
  	const RsAuthSslConnectionAutenticationEvent *pssl_e = dynamic_cast<const RsAuthSslConnectionAutenticationEvent*>(event.get());
 
-    if(pssl_e != nullptr && (flags & (RS_FEED_TYPE_SECURITY | RS_FEED_TYPE_PEER)))
+    if(pssl_e != nullptr && (flags & RS_FEED_TYPE_SECURITY))
     {
-        RsAuthSslConnectionAutenticationEvent e = *pssl_e;	// make a copy because we lose memory ownership here
+        auto e = *pssl_e;	// make a copy because we lose memory ownership here
 
-		RsQThreadUtils::postToObject( [=]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
-			handleSecurityEvent(e);
+		RsQThreadUtils::postToObject( [=]() { handleSecurityEvent(e); }, this );
+        return;
+    }
 
-		}, this );
+ 	const RsConnectionEvent *conn_e = dynamic_cast<const RsConnectionEvent*>(event.get());
+
+    if(conn_e != nullptr && (flags & RS_FEED_TYPE_PEER))
+    {
+        auto e = *conn_e;
+
+		RsQThreadUtils::postToObject( [=]() { handleConnectionEvent(e); }, this );
+        return;
+    }
+}
+
+void NewsFeed::handleConnectionEvent(const RsConnectionEvent& e)
+{
+	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
+
+    switch(e.mType)
+    {
+    case RsConnectionEvent::PEER_CONNECTED:
+        addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false),
+                            PEER_TYPE_CONNECT,
+                            e.mSslId.toStdString(),
+		                    std::string(),
+		                    std::string(),
+		                    std::string(),
+                            true);
+        break;
+
+    case RsConnectionEvent::PEER_DISCONNECTED:       break;// not handled yet
+	case RsConnectionEvent::PEER_REFUSED_CONNECTION:
+	{
+		RsPeerDetails det;
+		if(!rsPeers->getPeerDetails(e.mSslId,det))
+            return;
+
+		addFeedItemIfUnique(new SecurityItem(this,
+	                                     NEWSFEED_SECLIST,
+	                                     det.gpg_id, det.id,
+	                                     det.location,
+	                                     std::string(),
+	                                     RS_FEED_ITEM_SEC_AUTH_DENIED,
+	                                     false),
+	                    RS_FEED_ITEM_SEC_AUTH_DENIED,
+	                    det.gpg_id.toStdString(),
+	                    std::string(),
+	                    std::string(),
+	                    std::string(),
+	                    true );
+    } break;
+
+    default: break;
     }
 }
 
 void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& e)
 {
-	std::cerr << "NotifyQt: handling connection security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << e.mErrorCode << std::endl;
+	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << e.mErrorCode << std::endl;
 	uint flags = Settings->getNewsFeedFlags();
-
-    if(e.mSuccess)
-        if(flags & RS_FEED_TYPE_PEER)
-		{
-			addFeedItem(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false));
-			return;
-		}
-		else
-			return;
 
     uint32_t FeedItemType=0;
 
@@ -226,20 +261,11 @@ void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& 
 	{
         case RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED:
         case RsAuthSslConnectionAutenticationEvent::MISMATCHED_PGP_ID:            // fallthrough
-        case RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO:  FeedItemType = RS_FEED_ITEM_SEC_BAD_CERTIFICATE;
-        break;
-
-        case RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED: FeedItemType = RS_FEED_ITEM_SEC_WRONG_SIGNATURE;
-        break;
-
-        case RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND:	 FeedItemType =  RS_FEED_ITEM_SEC_AUTH_DENIED;
-        break;
-
-        case RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED:	 FeedItemType =  RS_FEED_ITEM_SEC_IP_BLACKLISTED;
-        break;
-
-		case RsAuthSslConnectionAutenticationEvent::MISSING_CERTIFICATE: FeedItemType = RS_FEED_ITEM_SEC_MISSING_CERTIFICATE;
-        break;
+        case RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO:     FeedItemType = RS_FEED_ITEM_SEC_BAD_CERTIFICATE; break;
+        case RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED: FeedItemType = RS_FEED_ITEM_SEC_WRONG_SIGNATURE; break;
+        case RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND:	                 FeedItemType = RS_FEED_ITEM_SEC_AUTH_DENIED; break;
+        case RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED:	             FeedItemType = RS_FEED_ITEM_SEC_IP_BLACKLISTED; break;
+		case RsAuthSslConnectionAutenticationEvent::MISSING_CERTIFICATE:             FeedItemType = RS_FEED_ITEM_SEC_MISSING_CERTIFICATE; break;
 
     default:
         return; // display nothing
@@ -255,12 +281,15 @@ void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& 
 	                                     e.mLocator.toString(),
 	                                     FeedItemType,
 	                                     false),
-	                    RS_FEED_ITEM_SEC_BAD_CERTIFICATE,
+	                    FeedItemType,
 	                    det.gpg_id.toStdString(),
 	                    std::string(),
 	                    std::string(),
 	                    std::string(),
 	                    true );
+
+	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
+		MessageComposer::sendConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
 void NewsFeed::updateDisplay()
@@ -276,14 +305,6 @@ void NewsFeed::updateDisplay()
 	{
 		switch(fi.mType)
 		{
-			case RS_FEED_ITEM_PEER_CONNECT:
-				if (flags & RS_FEED_TYPE_PEER)
-					addFeedItemPeerConnect(fi);
-				break;
-			case RS_FEED_ITEM_PEER_DISCONNECT:
-				if (flags & RS_FEED_TYPE_PEER)
-					addFeedItemPeerDisconnect(fi);
-				break;
 			case RS_FEED_ITEM_PEER_HELLO:
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerHello(fi);
@@ -297,20 +318,8 @@ void NewsFeed::updateDisplay()
 					addFeedItemPeerOffset(fi);
 				break;
 
-			case RS_FEED_ITEM_SEC_CONNECT_ATTEMPT:
-			case RS_FEED_ITEM_SEC_WRONG_SIGNATURE:
-			case RS_FEED_ITEM_SEC_BAD_CERTIFICATE:
-			case RS_FEED_ITEM_SEC_MISSING_CERTIFICATE:
-			case RS_FEED_ITEM_SEC_INTERNAL_ERROR:
-				if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT) {
-					MessageComposer::sendConnectAttemptMsg(RsPgpId(fi.mId1), RsPeerId(fi.mId2), QString::fromUtf8(fi.mId3.c_str()));
-				}
 				if (flags & RS_FEED_TYPE_SECURITY)
 					addFeedItemSecurityConnectAttempt(fi);
-				break;
-			case RS_FEED_ITEM_SEC_AUTH_DENIED:
-				if (flags & RS_FEED_TYPE_SECURITY)
-					addFeedItemSecurityAuthDenied(fi);
 				break;
 			case RS_FEED_ITEM_SEC_UNKNOWN_IN:
 				if (flags & RS_FEED_TYPE_SECURITY)
@@ -319,11 +328,6 @@ void NewsFeed::updateDisplay()
 			case RS_FEED_ITEM_SEC_UNKNOWN_OUT:
 				if (flags & RS_FEED_TYPE_SECURITY)
 					addFeedItemSecurityUnknownOut(fi);
-				break;
-
-			case RS_FEED_ITEM_SEC_IP_BLACKLISTED:
-				if (flags & RS_FEED_TYPE_SECURITY_IP)
-					addFeedItemSecurityIpBlacklisted(fi, false);
 				break;
 
 			case RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED:

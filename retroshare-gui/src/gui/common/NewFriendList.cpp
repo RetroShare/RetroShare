@@ -176,6 +176,8 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
+
     mModel = new RsFriendListModel();
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
 
@@ -236,8 +238,6 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 
 	connect(NotifyQt::getInstance(), SIGNAL(friendsChanged())                , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
     connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int))              , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
-	connect(NotifyQt::getInstance(), SIGNAL(peerConnected(const QString&))   , this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
-	connect(NotifyQt::getInstance(), SIGNAL(peerDisconnected(const QString&)), this, SLOT(forceUpdateDisplay()),Qt::QueuedConnection);
 
     connect(ui->actionShowOfflineFriends, SIGNAL(triggered(bool)), this, SLOT(setShowUnconnected(bool)));
     connect(ui->actionShowState,          SIGNAL(triggered(bool)), this, SLOT(setShowState(bool))      );
@@ -252,6 +252,12 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 // 	connect(ui->peerTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int)), this, SLOT(chatNode()));
 // #endif
 
+}
+
+void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> e)
+{
+    if(dynamic_cast<const RsConnectionEvent*>(e.get()) != nullptr)
+		forceUpdateDisplay();
 }
 
 NewFriendList::~NewFriendList()
