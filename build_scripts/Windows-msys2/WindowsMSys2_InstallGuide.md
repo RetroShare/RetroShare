@@ -47,6 +47,7 @@ Install all needed dependencies:
 	pacman -S mingw-w64-i686-sqlcipher
 	pacman -S mingw-w64-i686-qt5
 	pacman -S mingw32/mingw-w64-i686-cmake
+	pacman -S mingw-w64-i686-rapidjson
 
 We're done installing MSYS2, close the shell terminal.
 
