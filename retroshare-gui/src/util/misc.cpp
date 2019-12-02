@@ -39,7 +39,7 @@ QString misc::friendlyUnit(float val)
         return tr("Unknown", "Unknown (size)");
     }
     const QString units[6] = {tr(" B", "bytes"), tr(" KB", "kilobytes (1024 bytes)"), tr(" MB", "megabytes (1024 kilobytes)"), tr(" GB", "gigabytes (1024 megabytes)"), tr(" TB", "terabytes (1024 gigabytes)"), tr(" PB", "petabytes (1024 terabytes)") };
-    for(unsigned int i=0; i<5; ++i) {
+    for(unsigned int i=0; i<6; ++i) {
         if (val < 1024.) {
             return QString(QByteArray::number(val, 'f', 1)) + units[i];
         }
