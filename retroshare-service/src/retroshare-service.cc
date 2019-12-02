@@ -303,9 +303,6 @@ int main(int argc, char* argv[])
 			        << std::endl;
 			return -result;
 		}
-
-		/* Start-up libretroshare server threads */
-		RsControl::instance()->StartupRetroShare();
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
