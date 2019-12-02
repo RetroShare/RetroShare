@@ -233,13 +233,13 @@ void NewsFeed::handleConnectionEvent(const RsConnectionEvent& e)
 
 		addFeedItemIfUnique(new SecurityItem(this,
 	                                     NEWSFEED_SECLIST,
-	                                     det.gpg_id, det.id,
+	                                     det.gpg_id, e.mSslId,
 	                                     det.location,
 	                                     std::string(),
 	                                     RS_FEED_ITEM_SEC_AUTH_DENIED,
 	                                     false),
 	                    RS_FEED_ITEM_SEC_AUTH_DENIED,
-	                    det.gpg_id.toStdString(),
+	                    e.mSslId.toStdString(),
 	                    std::string(),
 	                    std::string(),
 	                    std::string(),
@@ -282,14 +282,14 @@ void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& 
 	                                     FeedItemType,
 	                                     false),
 	                    FeedItemType,
-	                    det.gpg_id.toStdString(),
+	                    e.mSslId.toStdString(),
 	                    std::string(),
 	                    std::string(),
 	                    std::string(),
 	                    true );
 
 	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
-		MessageComposer::sendConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
+		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
 void NewsFeed::updateDisplay()

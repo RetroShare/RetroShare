@@ -135,15 +135,16 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
-		statusLabel->setText(tr("Unknown Peer"));
-		titleLabel->setText(tr("Unknown Peer"));
-		trustLabel->setText(tr("Unknown Peer"));
-		nameLabel->setText(tr("Unknown Peer"));
-		idLabel->setText(tr("Unknown Peer"));
-		locLabel->setText(tr("Unknown Peer"));
-		ipLabel->setText(tr("Unknown Peer"));
-		connLabel->setText(tr("Unknown Peer"));
-		lastLabel->setText(tr("Unknown Peer"));
+		peerNameLabel->setText(tr("Unknown peer"));
+		statusLabel->setText(tr("Unknown"));
+		titleLabel->setText(tr("Unknown peer"));
+		trustLabel->setText(tr("Unknown"));
+		nameLabel->setText(tr("Unknown"));
+		idLabel->setText(tr("Unknown"));
+		locLabel->setText(tr("Unknown"));
+		ipLabel->setText(tr("Unknown"));
+		connLabel->setText(tr("Unknown"));
+		lastLabel->setText(tr("Unknown"));
 
 		chatButton->setEnabled(false);
 	}

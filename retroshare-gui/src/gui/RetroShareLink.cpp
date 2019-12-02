@@ -578,7 +578,7 @@ RetroShareLink RetroShareLink::createCertificate(const RsPeerId& ssl_id)
 
 	return link;
 }
-RetroShareLink RetroShareLink::createUnknwonSslCertificate(const RsPeerId& sslId, const RsPgpId& gpgId)
+RetroShareLink RetroShareLink::createUnknownSslCertificate(const RsPeerId& sslId, const RsPgpId& gpgId)
 {
 	RetroShareLink link;
 	link.clear();
