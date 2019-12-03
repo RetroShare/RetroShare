@@ -106,8 +106,8 @@ private:
 	void handleConnectionEvent(std::shared_ptr<const RsEvent> event);
 
 	void addFeedItem(FeedItem *item);
-	void addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace);
-	void remUniqueFeedItem(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4);
+	void addFeedItemIfUnique(FeedItem *item, bool replace);
+	void remUniqueFeedItem(FeedItem *item);
 
 	void addFeedItemPeerConnect(const RsFeedItem &fi);
 	void addFeedItemPeerDisconnect(const RsFeedItem &fi);

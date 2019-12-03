@@ -476,14 +476,13 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 	}
 }
 
-FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, void *data)
+FeedItem *RSFeedWidget::findFeedItem(const QString& identifier)
 {
-	if (!callback) {
-		return NULL;
-	}
-
 	QTreeWidgetItemIterator it(ui->treeWidget);
 	QTreeWidgetItem *treeItem;
+
+    // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
+#warning TODO
 	while ((treeItem = *it) != NULL) {
 		++it;
 
@@ -492,9 +491,8 @@ FeedItem *RSFeedWidget::findFeedItem(RSFeedWidgetFindCallbackFunction callback, 
 			continue;
 		}
 
-		if (callback(feedItem, data)) {
+		if (feedItem->uniqueIdentifier() == identifier)
 			return feedItem;
-		}
 	}
 
 	return NULL;

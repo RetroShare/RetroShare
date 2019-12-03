@@ -42,6 +42,8 @@ public:
 
 	bool setGroup(const RsPostedGroup &group);
 
+    virtual QString uniqueIdentifier() const override { return "PostedGroupItem " + QString::fromStdString(mGroup.mMeta.mGroupId.toStdString()) ; }
+
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

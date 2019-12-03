@@ -42,6 +42,7 @@ public:
 
 	bool setGroup(const RsGxsForumGroup &group);
 
+    virtual QString uniqueIdentifier() const override { return "GxsForumGroupItem " + QString::fromStdString(mGroup.mMeta.mGroupId.toStdString()) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

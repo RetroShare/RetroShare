@@ -213,15 +213,8 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 
     switch(e.mConnectionType)
     {
-    case RsConnectionEvent::PEER_CONNECTED:
-        addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false),
-                            PEER_TYPE_CONNECT,
-                            e.mSslId.toStdString(),
-		                    std::string(),
-		                    std::string(),
-		                    std::string(),
-                            true);
-        break;
+    case RsConnectionEvent::PEER_CONNECTED: addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
+											break;
 
     case RsConnectionEvent::PEER_DISCONNECTED:       break;// not handled yet
 	case RsConnectionEvent::PEER_REFUSED_CONNECTION:
@@ -230,20 +223,9 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 		if(!rsPeers->getPeerDetails(e.mSslId,det))
             return;
 
-		addFeedItemIfUnique(new SecurityItem(this,
-	                                     NEWSFEED_SECLIST,
-	                                     det.gpg_id, e.mSslId,
-	                                     det.location,
-	                                     std::string(),
-	                                     RS_FEED_ITEM_SEC_AUTH_DENIED,
-	                                     false),
-	                    RS_FEED_ITEM_SEC_AUTH_DENIED,
-	                    e.mSslId.toStdString(),
-	                    std::string(),
-	                    std::string(),
-	                    std::string(),
-	                    true );
-    } break;
+		addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, det.gpg_id, e.mSslId, det.location, std::string(), RS_FEED_ITEM_SEC_AUTH_DENIED, false), true );
+    }
+	break;
 
     default: break;
     }
@@ -280,19 +262,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
     RsPeerDetails det;
 	rsPeers->getPeerDetails(e.mSslId,det) || rsPeers->getGPGDetails(e.mPgpId,det);
 
-	addFeedItemIfUnique(new SecurityItem(this,
-	                                     NEWSFEED_SECLIST,
-	                                     det.gpg_id, det.id,
-	                                     det.location,
-	                                     e.mLocator.toString(),
-	                                     FeedItemType,
-	                                     true),
-	                    FeedItemType,
-	                    e.mSslId.toStdString(),
-	                    std::string(),
-	                    std::string(),
-	                    std::string(),
-	                    true );
+	addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, det.gpg_id, det.id, det.location, e.mLocator.toString(), FeedItemType, true), true );
 
 	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
@@ -1146,80 +1116,14 @@ void NewsFeed::addFeedItem(FeedItem *item)
 	ui->feedWidget->addFeedItem(item, ROLE_RECEIVED, QDateTime::currentDateTime());
 }
 
-struct AddFeedItemIfUniqueData
+void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 {
-	AddFeedItemIfUniqueData(FeedItem *feedItem, int type
-	                        , const std::string& id1, const std::string& id2
-	                        , const std::string& id3, const std::string& id4)
-	  : mType(type), mId1(id1), mId2(id2), mId3(id3), mId4(id4)
-	{
-		mGxsCircleItem = dynamic_cast<GxsCircleItem*>(feedItem);
-		mPeerItem = dynamic_cast<PeerItem*>(feedItem);
-		mSecItem = dynamic_cast<SecurityItem*>(feedItem);
-		mSecurityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-	}
+	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
-	int mType;
-	const std::string& mId1;
-	const std::string& mId2;
-	const std::string& mId3;
-	const std::string& mId4;
-
-	GxsCircleItem *mGxsCircleItem;
-	PeerItem *mPeerItem;
-	SecurityItem *mSecItem;
-	SecurityIpItem *mSecurityIpItem;
-};
-
-static bool addFeedItemIfUniqueCallback(FeedItem *feedItem, void *data)
-{
-	AddFeedItemIfUniqueData *findData = (AddFeedItemIfUniqueData*) data;
-	if (!findData || findData->mId1.empty()) {
-		return false;
-	}
-
-	if (findData->mGxsCircleItem) {
-		GxsCircleItem *gxsCircleItem = dynamic_cast<GxsCircleItem*>(feedItem);
-		if (gxsCircleItem && gxsCircleItem->isSame(RsGxsCircleId(findData->mId1), RsGxsId(findData->mId2), findData->mType)) {
-			return true;
-		}
-		return false;
-	}
-
-	if (findData->mPeerItem) {
-		PeerItem *peerItem = dynamic_cast<PeerItem*>(feedItem);
-		if (peerItem && peerItem->isSame(RsPeerId(findData->mId1), findData->mType)) {
-			return true;
-		}
-		return false;
-	}
-
-	if (findData->mSecItem) {
-		SecurityItem *secitem = dynamic_cast<SecurityItem*>(feedItem);
-		if (secitem && secitem->isSame(RsPeerId(findData->mId1), findData->mType)) {
-			return true;
-		}
-		return false;
-	}
-
-	if (findData->mSecurityIpItem) {
-		SecurityIpItem *securityIpItem = dynamic_cast<SecurityIpItem*>(feedItem);
-		if (securityIpItem && securityIpItem->isSame(RsPeerId(findData->mId1), findData->mId2, findData->mId3, findData->mType)) {
-			return true;
-		}
-		return false;
-	}
-
-	return false;
-}
-
-void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const std::string& id1, const std::string& id2, const std::string& id3, const std::string& id4, bool replace)
-{
-	AddFeedItemIfUniqueData data(item, itemType, id1, id2, id3, id4);
-	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
-
-	if (feedItem) {
-		if (!replace) {
+	if (feedItem)
+    {
+		if (!replace)
+        {
 			delete item;
 			return;
 		}
@@ -1230,12 +1134,12 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, int itemType, const std::stri
 	addFeedItem(item);
 }
 
-void NewsFeed::remUniqueFeedItem(FeedItem *item, int itemType, const std::string &id1, const std::string &id2, const std::string &id3, const std::string &id4)
+void NewsFeed::remUniqueFeedItem(FeedItem *item)
 {
-	AddFeedItemIfUniqueData data(item, itemType, id1, id2, id3, id4);
-	FeedItem *feedItem = ui->feedWidget->findFeedItem(addFeedItemIfUniqueCallback, &data);
+	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
-	if (feedItem) {
+	if (feedItem)
+    {
 		delete item;
 
 		ui->feedWidget->removeFeedItem(feedItem);
@@ -1304,7 +1208,7 @@ void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
 	PeerItem *pi = new PeerItem(this, NEWSFEED_PEERLIST, RsPeerId(fi.mId1), PEER_TYPE_OFFSET, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, PEER_TYPE_OFFSET, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemPeerOffset()";
@@ -1318,7 +1222,7 @@ void NewsFeed::addFeedItemSecurityConnectAttempt(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, fi.mType, fi.mId2, "", "", "", false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityConnectAttempt()";
@@ -1332,7 +1236,7 @@ void NewsFeed::addFeedItemSecurityAuthDenied(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, fi.mType, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_AUTH_DENIED, fi.mId2, "", "", "", false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityAuthDenied()";
@@ -1346,7 +1250,7 @@ void NewsFeed::addFeedItemSecurityUnknownIn(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_IN, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_IN, fi.mId2, "", "", "", false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownIn()";
@@ -1360,7 +1264,7 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 	SecurityItem *pi = new SecurityItem(this, NEWSFEED_SECLIST, RsPgpId(fi.mId1), RsPeerId(fi.mId2), fi.mId3, fi.mId4, RS_FEED_ITEM_SEC_UNKNOWN_OUT, false);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_UNKNOWN_OUT, fi.mId2, "", "", "", false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityUnknownOut()";
@@ -1374,7 +1278,7 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mResult1, RS_FEED_ITEM_SEC_IP_BLACKLISTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_BLACKLISTED, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityIpBlacklisted()";
@@ -1388,7 +1292,7 @@ void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, 
 	SecurityIpItem *pi = new SecurityIpItem(this, RsPeerId(fi.mId1), fi.mId2, fi.mId3, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, isTest);
 
 	/* add to layout */
-	addFeedItemIfUnique(pi, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
+	addFeedItemIfUnique(pi, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemSecurityWrongExternalIpReported()";
@@ -1656,7 +1560,7 @@ void NewsFeed::addFeedItemCircleMembReq(const RsFeedItem &fi)
 	GxsCircleItem *item = new GxsCircleItem(this, NEWSFEED_CIRCLELIST, circleId, gxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ);
 
 	/* add to layout */
-	addFeedItemIfUnique(item, RS_FEED_ITEM_CIRCLE_MEMB_REQ, fi.mId1, fi.mId2, fi.mId3, fi.mId4, false);
+	addFeedItemIfUnique(item, false);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::addFeedItemCircleMembReq()" << std::endl;
@@ -1676,7 +1580,7 @@ void NewsFeed::remFeedItemCircleMembReq(const RsFeedItem &fi)
 	GxsCircleItem *item = new GxsCircleItem(this, NEWSFEED_CIRCLELIST, circleId, gxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ);
 
 	/* add to layout */
-	remUniqueFeedItem(item, RS_FEED_ITEM_CIRCLE_MEMB_REQ, fi.mId1, fi.mId2, fi.mId3, fi.mId4);
+	remUniqueFeedItem(item);
 
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::remFeedItemCircleMembReq()" << std::endl;

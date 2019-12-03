@@ -37,6 +37,7 @@ public:
 
 	void updateItemStatic();
 
+    virtual QString uniqueIdentifier() const override { return "ChatMsgItem " + QString::fromStdString(mPeerId.toStdString()) ;}
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool /*open*/) {}

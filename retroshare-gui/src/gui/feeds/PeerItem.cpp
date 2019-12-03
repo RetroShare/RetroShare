@@ -67,16 +67,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
-
-bool PeerItem::isSame(const RsPeerId &peerId, uint32_t type)
+QString PeerItem::uniqueIdentifier() const
 {
-	if ((mPeerId == peerId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return "PeerItem " + QString::fromStdString(mPeerId.toStdString()) + " " + QString::number(mType) ;
 }
-
 
 void PeerItem::updateItemStatic()
 {

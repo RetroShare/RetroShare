@@ -43,7 +43,7 @@ public:
 
 	void updateItemStatic();
 
-	bool isSame(const RsPeerId &peerId, uint32_t type);
+    virtual QString uniqueIdentifier() const;
 
 protected:
 	/* FeedItem */

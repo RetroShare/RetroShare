@@ -81,16 +81,10 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
-
-bool SecurityItem::isSame(const RsPeerId &sslId, uint32_t type)
+QString SecurityItem::uniqueIdentifier() const
 {
-	if ((mSslId == sslId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return "SecurityItem " + QString::number(mType) + " " + QString::fromStdString(mSslId.toStdString());
 }
-
 
 void SecurityItem::updateItemStatic()
 {

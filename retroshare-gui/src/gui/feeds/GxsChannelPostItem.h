@@ -53,6 +53,8 @@ public:
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
+    virtual QString uniqueIdentifier() const override { "GxsChannelPostItem " + QString::fromStdString(mPost.mMeta.mMsgId.toStdString()) ; }
+
 	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost &post, bool doFill = true);
 

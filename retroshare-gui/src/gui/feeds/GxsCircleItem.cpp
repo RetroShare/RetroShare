@@ -125,14 +125,9 @@ void GxsCircleItem::setup()
 
 }
 
-bool GxsCircleItem::isSame(const RsGxsCircleId &circleId, const RsGxsId &gxsId, uint32_t type)
+QString GxsCircleItem::uniqueIdentifier() const
 {
-	if ((mCircleId == circleId) && (mGxsId == gxsId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
-
+    return "GxsCircle " + QString::fromStdString(mCircleId.toStdString()) + " " + QString::fromStdString(mGxsId.toStdString()) + " " + QString::number(mType);
 }
 
 void GxsCircleItem::removeItem()

@@ -49,6 +49,7 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 
+	QString uniqueIdentifier() const override { return "PostedItem " + QString::fromStdString(mMessageId.toStdString()); }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
