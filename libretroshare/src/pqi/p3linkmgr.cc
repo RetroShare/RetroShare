@@ -481,7 +481,7 @@ void p3LinkMgrIMPL::tickMonitors()
 					{
 						auto e = std::make_shared<RsConnectionEvent>() ;
 
-                        e->mType = RsConnectionEvent::PEER_CONNECTED;
+                        e->mConnectionType = RsConnectionEvent::PEER_CONNECTED;
                         e->mSslId = peer.id;
 
                         rsEvents->postEvent(e);
@@ -494,11 +494,9 @@ void p3LinkMgrIMPL::tickMonitors()
 				}
 				if (peer.actions & RS_PEER_DISCONNECTED)
 				{
-					p3Notify *notify = RsServer::notify();
-
 					auto e = std::make_shared<RsConnectionEvent>() ;
 
-					e->mType = RsConnectionEvent::PEER_DISCONNECTED;
+					e->mConnectionType = RsConnectionEvent::PEER_DISCONNECTED;
 					e->mSslId = peer.id;
 
                     rsEvents->postEvent(e);

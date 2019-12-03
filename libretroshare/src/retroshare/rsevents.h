@@ -221,7 +221,7 @@ struct RsConnectionEvent : RsEvent
 {
 	RsConnectionEvent()
 	    : RsEvent(RsEventType::PEER_CONNECTION),
-	      mType(UNKNOWN) {}
+	      mConnectionType(UNKNOWN) {}
 
 	enum ConnectionType: uint8_t {
         UNKNOWN                 = 0x00,
@@ -230,14 +230,14 @@ struct RsConnectionEvent : RsEvent
         PEER_REFUSED_CONNECTION = 0x03,
     };
 
-    ConnectionType mType;
+    ConnectionType mConnectionType;
 	RsPeerId mSslId;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RsEvent::serial_process(j, ctx);
-		RS_SERIAL_PROCESS(mType);
+		RS_SERIAL_PROCESS(mConnectionType);
 		RS_SERIAL_PROCESS(mSslId);
 	}
 };

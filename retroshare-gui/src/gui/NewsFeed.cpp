@@ -75,6 +75,7 @@ NewsFeed::NewsFeed(QWidget *parent) :
     RsAutoUpdatePage(1000,parent),
     ui(new Ui::NewsFeed)
 {
+    mEventHandlerId =0; // needed to force intialization by registerEventsHandler()
 	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
 
 	/* Invoke the Qt Designer generated object setup routine */
@@ -187,32 +188,30 @@ void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
 {
 	uint flags = Settings->getNewsFeedFlags();
 
- 	const RsAuthSslConnectionAutenticationEvent *pssl_e = dynamic_cast<const RsAuthSslConnectionAutenticationEvent*>(event.get());
-
-    if(pssl_e != nullptr && (flags & RS_FEED_TYPE_SECURITY))
+    if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (flags & RS_FEED_TYPE_SECURITY))
     {
-        auto e = *pssl_e;	// make a copy because we lose memory ownership here
-
-		RsQThreadUtils::postToObject( [=]() { handleSecurityEvent(e); }, this );
+		RsQThreadUtils::postToObject( [=]() { handleSecurityEvent(event); }, this );
         return;
     }
 
- 	const RsConnectionEvent *conn_e = dynamic_cast<const RsConnectionEvent*>(event.get());
-
-    if(conn_e != nullptr && (flags & RS_FEED_TYPE_PEER))
+    if(event->mType == RsEventType::PEER_STATE_CHANGED && (flags & RS_FEED_TYPE_PEER))
     {
-        auto e = *conn_e;
-
-		RsQThreadUtils::postToObject( [=]() { handleConnectionEvent(e); }, this );
+		RsQThreadUtils::postToObject( [=]() { handleConnectionEvent(event); }, this );
         return;
     }
 }
 
-void NewsFeed::handleConnectionEvent(const RsConnectionEvent& e)
+void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 {
+ 	const RsConnectionEvent *pe = dynamic_cast<const RsConnectionEvent*>(event.get());
+    if(!pe)
+        return;
+
+    auto& e(*pe);
+
 	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
 
-    switch(e.mType)
+    switch(e.mConnectionType)
     {
     case RsConnectionEvent::PEER_CONNECTED:
         addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false),
@@ -250,8 +249,15 @@ void NewsFeed::handleConnectionEvent(const RsConnectionEvent& e)
     }
 }
 
-void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& e)
+void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 {
+ 	const RsAuthSslConnectionAutenticationEvent *pe = dynamic_cast<const RsAuthSslConnectionAutenticationEvent*>(event.get());
+
+    if(!pe)
+        return;
+
+    auto& e(*pe);
+
 	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << e.mErrorCode << std::endl;
 	uint flags = Settings->getNewsFeedFlags();
 
@@ -280,7 +286,7 @@ void NewsFeed::handleSecurityEvent(const RsAuthSslConnectionAutenticationEvent& 
 	                                     det.location,
 	                                     e.mLocator.toString(),
 	                                     FeedItemType,
-	                                     false),
+	                                     true),
 	                    FeedItemType,
 	                    e.mSslId.toStdString(),
 	                    std::string(),
