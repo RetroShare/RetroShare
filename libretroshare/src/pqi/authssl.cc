@@ -1186,13 +1186,13 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
 
-		if(rsEvents)
-		{
-			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED;
-
-			rsEvents->postEvent(std::move(ev));
-		}
+//		if(rsEvents)
+//		{
+//			ev->mErrorMsg = errMsg;
+//			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED;
+//
+//			rsEvents->postEvent(std::move(ev));
+//		}
 
 		return verificationFailed;
 	}

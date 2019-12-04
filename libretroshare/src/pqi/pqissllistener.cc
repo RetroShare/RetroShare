@@ -486,22 +486,23 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			break;
 		}
 
-		if(rsEvents)
+		pqioutput(PQL_WARNING, pqissllistenzone, "Read Error on the SSL Socket\nShutting it down!");
+
+        // We use SSL_get_verify_result() in order to differentiate two cases:
+        //   case 1: the incoming connection is closed because the peer is not a friend. This is already handled in authssl.
+        //   case 2: the incoming connection is closed because no authentication info is available, in which case it returns X509_V_OK
+        auto vres = SSL_get_verify_result(incoming_connexion_info.ssl);
+
+		if(vres == X509_V_OK && nullptr != rsEvents)
 		{
 			auto ev = std::unique_ptr<RsAuthSslConnectionAutenticationEvent>(new RsAuthSslConnectionAutenticationEvent);
 
-			ev->mSslId = incoming_connexion_info.sslid;
-			ev->mPgpId = incoming_connexion_info.gpgid;
-			ev->mSslCn = incoming_connexion_info.sslcn;
 			ev->mLocator = RsUrl(incoming_connexion_info.addr);
 			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}
-
 		closeConnection(fd, incoming_connexion_info.ssl) ;
-
-		pqioutput(PQL_WARNING, pqissllistenzone, "Read Error on the SSL Socket\nShutting it down!");
 
 		// failure -1, pending 0, sucess 1.
 		return -1;
@@ -524,17 +525,15 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
         std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
 #endif
     }
+
 #ifdef DEBUG_LISTENNER
     else
         std::cerr << "  no info." << std::endl;
 #endif
 
-
 	// if it succeeds
 	if (0 < completeConnection(fd, incoming_connexion_info))
-	{
 		return 1;
-	}
 
 	/* else we shut it down! */
   	pqioutput(PQL_WARNING, pqissllistenzone, 
