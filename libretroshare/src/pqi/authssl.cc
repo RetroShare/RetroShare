@@ -1298,7 +1298,15 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED;
+
+            switch(auth_diagnostic)
+            {
+            case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND; break;
+            case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED;break;
+			default:
+                ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;break;
+            }
+
 			ev->mErrorMsg = errMsg;
 			rsEvents->postEvent(std::move(ev));
 		}

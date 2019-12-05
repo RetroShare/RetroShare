@@ -193,7 +193,8 @@ struct RsAuthSslConnectionAutenticationEvent : RsEvent
         NOT_A_FRIEND                    = 0x05,
         MISSING_CERTIFICATE             = 0x06,
         IP_IS_BLACKLISTED               = 0x07,
-        UNKNOWN_ERROR                   = 0x08,
+        PEER_REFUSED_CONNECTION         = 0x08,
+        UNKNOWN_ERROR                   = 0x09,
     };
 
 	RsPeerId mSslId;
@@ -227,7 +228,6 @@ struct RsConnectionEvent : RsEvent
         UNKNOWN                 = 0x00,
         PEER_CONNECTED          = 0x01,
         PEER_DISCONNECTED       = 0x02,
-        PEER_REFUSED_CONNECTION = 0x03,
     };
 
     ConnectionType mConnectionType;

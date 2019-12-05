@@ -194,7 +194,7 @@ void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
         return;
     }
 
-    if(event->mType == RsEventType::PEER_STATE_CHANGED && (flags & RS_FEED_TYPE_PEER))
+    if(event->mType == RsEventType::PEER_CONNECTION    && (flags & RS_FEED_TYPE_PEER))
     {
 		RsQThreadUtils::postToObject( [=]() { handleConnectionEvent(event); }, this );
         return;
@@ -217,16 +217,6 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 											break;
 
     case RsConnectionEvent::PEER_DISCONNECTED:       break;// not handled yet
-	case RsConnectionEvent::PEER_REFUSED_CONNECTION:
-	{
-		RsPeerDetails det;
-		if(!rsPeers->getPeerDetails(e.mSslId,det))
-            return;
-
-		addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, det.gpg_id, e.mSslId, det.location, std::string(), RS_FEED_ITEM_SEC_AUTH_DENIED, false), true );
-    }
-	break;
-
     default: break;
     }
 }
@@ -243,6 +233,12 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << e.mErrorCode << std::endl;
 	uint flags = Settings->getNewsFeedFlags();
 
+    if(e.mErrorCode == RsAuthSslConnectionAutenticationEvent::PEER_REFUSED_CONNECTION)
+    {
+		addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_HELLO, false), true );
+        return;
+    }
+
     uint32_t FeedItemType=0;
 
 	switch(e.mErrorCode)
@@ -251,7 +247,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         case RsAuthSslConnectionAutenticationEvent::MISMATCHED_PGP_ID:            // fallthrough
         case RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO:     FeedItemType = RS_FEED_ITEM_SEC_BAD_CERTIFICATE; break;
         case RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED: FeedItemType = RS_FEED_ITEM_SEC_WRONG_SIGNATURE; break;
-        case RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND:	                 FeedItemType = RS_FEED_ITEM_SEC_AUTH_DENIED; break;
+        case RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND:	                 FeedItemType = RS_FEED_ITEM_SEC_CONNECT_ATTEMPT; break;
         case RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED:	             FeedItemType = RS_FEED_ITEM_SEC_IP_BLACKLISTED; break;
 		case RsAuthSslConnectionAutenticationEvent::MISSING_CERTIFICATE:             FeedItemType = RS_FEED_ITEM_SEC_MISSING_CERTIFICATE; break;
 

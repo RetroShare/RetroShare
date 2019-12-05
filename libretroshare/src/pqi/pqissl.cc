@@ -1108,6 +1108,16 @@ int pqissl::SSL_Connection_Complete()
 			return 0;
 		}
 
+        if(rsEvents)
+        {
+			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
+
+			X509 *x509 = SSL_get_peer_certificate(ssl_connection) ;
+
+			ev->mSslId = RsX509Cert::getCertSslId(*x509);
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PEER_REFUSED_CONNECTION;
+			rsEvents->postEvent(ev);
+        }
 
 		std::string out;
 		rs_sprintf(out, "pqissl::SSL_Connection_Complete()\nIssues with SSL Connect(%d)!\n", err);
