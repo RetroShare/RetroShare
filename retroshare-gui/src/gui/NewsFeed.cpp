@@ -262,7 +262,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
     RsPeerDetails det;
 	rsPeers->getPeerDetails(e.mSslId,det) || rsPeers->getGPGDetails(e.mPgpId,det);
 
-	addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, det.gpg_id, det.id, det.location, e.mLocator.toString(), FeedItemType, false), true );
+	addFeedItemIfUnique(new SecurityItem(this, NEWSFEED_SECLIST, e.mPgpId, e.mSslId, det.location, e.mLocator.toString(), FeedItemType, false), true );
 
 	if (Settings->getMessageFlags() & RS_MESSAGE_CONNECT_ATTEMPT)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));

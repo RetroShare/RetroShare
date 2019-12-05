@@ -424,22 +424,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 {
 	// attempt the accept again.
     int fd =  SSL_get_fd(incoming_connexion_info.ssl);
-
-    AuthSSL::getAuthSSL()->setCurrentConnectionAttemptInfo(RsPgpId(),RsPeerId(),std::string()) ;
     int err = SSL_accept(incoming_connexion_info.ssl);
-
-    // Now grab the connection info that was filled in by the callback.
-    // In the case the callback did not succeed the SSL certificate will not be accessible
-    // from SSL_get_peer_certificate, so we need to get it from the callback system.
-    //
-    AuthSSL::getAuthSSL()->getCurrentConnectionAttemptInfo(incoming_connexion_info.gpgid,incoming_connexion_info.sslid,incoming_connexion_info.sslcn) ;
-
-#ifdef DEBUG_LISTENNER
-    std::cerr << "Info from callback: " << std::endl;
-        std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
-        std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
-        std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;
-#endif
 
     if (err <= 0)
 	{
@@ -519,7 +504,8 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 		incoming_connexion_info.sslcn = RsX509Cert::getCertName(*x509);
 		incoming_connexion_info.sslid = RsX509Cert::getCertSslId(*x509);
 
-#ifdef DEBUG_LISTENNER
+#ifndef DEBUG_LISTENNER
+        std::cerr << "ContinueSSL:" << std::endl;
         std::cerr << "  Got PGP Id = " << incoming_connexion_info.gpgid << std::endl;
         std::cerr << "  Got SSL Id = " << incoming_connexion_info.sslid << std::endl;
         std::cerr << "  Got SSL CN = " << incoming_connexion_info.sslcn << std::endl;

@@ -1219,6 +1219,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		if(rsEvents)
 		{
 			ev->mSslCn = sslCn;
+			ev->mSslId = sslId;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
 			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
@@ -1305,6 +1306,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
+    std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
+
 	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
 		std::string errMsg = "Connection attempt signed by PGP key id: " +
@@ -1326,7 +1329,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		return verificationFailed;
 	}
 
-	setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
+	//setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
 	LocalStoreCert(x509Cert);
 
 	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for "
@@ -1590,24 +1593,24 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 /********************************************************************************/
 /********************************************************************************/
 
-void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
-	std::cerr << "    GPG id: " << gpg_id << std::endl;
-	std::cerr << "    SSL id: " << ssl_id << std::endl;
-	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
-#endif
-	_last_gpgid_to_connect = gpg_id ;
-	_last_sslid_to_connect = ssl_id ;
-	_last_sslcn_to_connect = ssl_cn ;
-}
-void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
-{
-	gpg_id = _last_gpgid_to_connect ;
-	ssl_id = _last_sslid_to_connect ;
-	ssl_cn = _last_sslcn_to_connect ;
-}
+// void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
+// {
+// #ifdef AUTHSSL_DEBUG
+// 	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
+// 	std::cerr << "    GPG id: " << gpg_id << std::endl;
+// 	std::cerr << "    SSL id: " << ssl_id << std::endl;
+// 	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
+// #endif
+// 	_last_gpgid_to_connect = gpg_id ;
+// 	_last_sslid_to_connect = ssl_id ;
+// 	_last_sslcn_to_connect = ssl_cn ;
+// }
+// void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
+// {
+// 	gpg_id = _last_gpgid_to_connect ;
+// 	ssl_id = _last_sslid_to_connect ;
+// 	ssl_cn = _last_sslcn_to_connect ;
+// }
 
 /* Locked search -> internal help function */
 bool AuthSSLimpl::locked_FindCert(const RsPeerId& id, X509** cert)
