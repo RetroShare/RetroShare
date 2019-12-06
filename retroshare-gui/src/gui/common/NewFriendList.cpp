@@ -47,6 +47,7 @@
 #include "RSTreeWidgetItem.h"
 #include "StatusDefs.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "vmessagebox.h"
 #include "util/QtVersion.h"
 #include "gui/chat/ChatUserNotify.h"
@@ -257,7 +258,12 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> e)
 {
     if(dynamic_cast<const RsConnectionEvent*>(e.get()) != nullptr)
-		forceUpdateDisplay();
+    {
+        // /!\ The function we're in is called from a different thread. It's very important
+        //     to use this trick in order to avoid data races.
+
+		RsQThreadUtils::postToObject( [=]() { forceUpdateDisplay() ; }, this ) ;
+    }
 }
 
 NewFriendList::~NewFriendList()
