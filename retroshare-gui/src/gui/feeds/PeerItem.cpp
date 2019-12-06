@@ -94,7 +94,7 @@ void PeerItem::updateItemStatic()
 			title = tr("Friend Connected");
 			break;
 		case PEER_TYPE_HELLO:
-			title = tr("Connect Attempt");
+			title = tr("Connection refused by peer");
 			break;
 		case PEER_TYPE_NEW_FOF:
 			title = tr("Friend of Friend");

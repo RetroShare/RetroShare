@@ -1096,8 +1096,7 @@ int pqissl::SSL_Connection_Complete()
 	if (err != 1)
 	{
 		int serr = SSL_get_error(ssl_connection, err);
-		if ((serr == SSL_ERROR_WANT_READ) 
-				|| (serr == SSL_ERROR_WANT_WRITE))
+		if ((serr == SSL_ERROR_WANT_READ)  || (serr == SSL_ERROR_WANT_WRITE))
 		{
 #ifdef PQISSL_LOG_DEBUG 
   			rslog(RSL_DEBUG_BASIC, pqisslzone, 
