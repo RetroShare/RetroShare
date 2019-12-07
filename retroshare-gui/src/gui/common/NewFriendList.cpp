@@ -177,6 +177,7 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
+    mEventHandlerId=0; // forces initialization
     rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
 
     mModel = new RsFriendListModel();
@@ -257,7 +258,7 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 
 void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> e)
 {
-    if(dynamic_cast<const RsConnectionEvent*>(e.get()) != nullptr)
+    if(e->mType == RsEventType::PEER_CONNECTION)
     {
         // /!\ The function we're in is called from a different thread. It's very important
         //     to use this trick in order to avoid data races.

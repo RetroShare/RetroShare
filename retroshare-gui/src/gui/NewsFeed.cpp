@@ -186,19 +186,20 @@ void NewsFeed::sortChanged(int index)
 
 void NewsFeed::handleEvent(std::shared_ptr<const RsEvent> event)
 {
+	// /!\ Absolutely no access to Qt structures (such as Settings) should happen here!!!
+
+	RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this );
+}
+
+void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
 	uint flags = Settings->getNewsFeedFlags();
 
     if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (flags & RS_FEED_TYPE_SECURITY))
-    {
-		RsQThreadUtils::postToObject( [=]() { handleSecurityEvent(event); }, this );
-        return;
-    }
+		handleSecurityEvent(event);
 
     if(event->mType == RsEventType::PEER_CONNECTION    && (flags & RS_FEED_TYPE_PEER))
-    {
-		RsQThreadUtils::postToObject( [=]() { handleConnectionEvent(event); }, this );
-        return;
-    }
+		handleConnectionEvent(event);
 }
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)

@@ -104,6 +104,7 @@ private slots:
 private:
 	void handleSecurityEvent(std::shared_ptr<const RsEvent> event);
 	void handleConnectionEvent(std::shared_ptr<const RsEvent> event);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, bool replace);

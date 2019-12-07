@@ -243,6 +243,8 @@ struct RsConnectionEvent : RsEvent
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mConnectionInfoCode);
 		RS_SERIAL_PROCESS(mSslId);
+		RS_SERIAL_PROCESS(mStrInfo1);
+		RS_SERIAL_PROCESS(mStrInfo2);
 	}
 };
 
