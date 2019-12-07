@@ -1808,7 +1808,16 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
     {
         std::cerr << "  Peer " << from << " reports a connection address (" << sockaddr_storage_iptostring(addr_filtered) <<") that is not your current external address (" << sockaddr_storage_iptostring(own_addr) << "). This is weird." << std::endl;
 
-        RsServer::notify()->AddFeedItem(RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, from.toStdString(), sockaddr_storage_iptostring(own_addr), sockaddr_storage_iptostring(addr));
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsConnectionEvent>();
+            ev->mSslId = from;
+            ev->mStrInfo1 = sockaddr_storage_iptostring(addr);
+            ev->mStrInfo2 = sockaddr_storage_iptostring(own_addr);
+			ev->mConnectionInfoCode = RsConnectionEvent::PEER_REPORTS_WRONG_IP;
+
+            rsEvents->postEvent(ev);
+        }
     }
 
     // we could also sweep over all connected friends and see if some report a different address.

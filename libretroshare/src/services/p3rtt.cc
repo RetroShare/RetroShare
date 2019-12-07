@@ -367,12 +367,16 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 		peerInfo->mCurrentMeanOffset = mean / peerInfo->mPongResults.size();
 		if(fabs(peerInfo->mCurrentMeanOffset) > 120)
 		{
-			p3Notify *notify = RsServer::notify();
-			if (notify)
-			{
-				//notify->AddPopupMessage(RS_POPUP_OFFSET, eerInfo->mId.toStdString(),"", "Time Offset: ");
-				notify->AddFeedItem(RS_FEED_ITEM_PEER_OFFSET, peerInfo->mId.toStdString());
-			}
+            if(rsEvents)
+            {
+				auto ev = std::make_shared<RsConnectionEvent>();
+
+				ev->mSslId = peerInfo->mId;
+                ev->mStrInfo1 = RsUtil::NumberToString(peerInfo->mCurrentMeanOffset,false);
+				ev->mConnectionInfoCode = RsConnectionEvent::PEER_TIME_SHIFT;
+
+				rsEvents->postEvent(ev);
+            }
 			std::cerr << "(WW) Peer:" << peerInfo->mId << " get time offset more than two minutes with you!!!" << std::endl;
 		}
 	}

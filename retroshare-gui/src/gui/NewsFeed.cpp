@@ -211,12 +211,17 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 
 	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
 
-    switch(e.mConnectionType)
+    switch(e.mConnectionInfoCode)
     {
     case RsConnectionEvent::PEER_CONNECTED: addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_CONNECT, false), true);
-											break;
+		break;
+    case RsConnectionEvent::PEER_DISCONNECTED: // not handled yet
+        break;
+    case RsConnectionEvent::PEER_TIME_SHIFT:addFeedItemIfUnique(new PeerItem(this, NEWSFEED_PEERLIST, e.mSslId, PEER_TYPE_OFFSET, false),false);
+        break;
+    case RsConnectionEvent::PEER_REPORTS_WRONG_IP: addFeedItemIfUnique(new SecurityIpItem(this, e.mSslId, e.mStrInfo2, e.mStrInfo1, RS_FEED_ITEM_SEC_IP_WRONG_EXTERNAL_IP_REPORTED, false), false);
+        break;
 
-    case RsConnectionEvent::PEER_DISCONNECTED:       break;// not handled yet
     default: break;
     }
 }
@@ -277,6 +282,7 @@ void NewsFeed::updateDisplay()
 	{
 		switch(fi.mType)
 		{
+#ifdef TO_REMOVE
 			case RS_FEED_ITEM_PEER_HELLO:
 				if (flags & RS_FEED_TYPE_PEER)
 					addFeedItemPeerHello(fi);
@@ -306,6 +312,7 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_SECURITY_IP)
 					addFeedItemSecurityWrongExternalIpReported(fi, false);
 				break;
+#endif
 
 			case RS_FEED_ITEM_CHANNEL_NEW:
 				if (flags & RS_FEED_TYPE_CHANNEL)
@@ -484,6 +491,7 @@ void NewsFeed::updateDisplay()
 
 void NewsFeed::testFeeds(uint notifyFlags)
 {
+#ifdef TODO
 	if (!instance) {
 		return;
 	}
@@ -507,7 +515,6 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			instance->addFeedItemPeerDisconnect(fi);
 			instance->addFeedItemPeerHello(fi);
 			instance->addFeedItemPeerNew(fi);
-			instance->addFeedItemPeerOffset(fi);
 			break;
 
 		case RS_FEED_TYPE_SECURITY:
@@ -647,6 +654,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 	instance->ui->feedWidget->enableCountChangedSignal(true);
 
 	instance->sendNewsFeedChanged();
+#endif
 }
 
 void NewsFeed::loadCircleGroup(const uint32_t &token)
@@ -1142,6 +1150,7 @@ void NewsFeed::remUniqueFeedItem(FeedItem *item)
 	}
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::addFeedItemPeerConnect(const RsFeedItem &fi)
 {
 	/* make new widget */
@@ -1183,6 +1192,7 @@ void NewsFeed::addFeedItemPeerHello(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
+#endif
 
 void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 {
@@ -1198,6 +1208,7 @@ void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 #endif
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
 {
 	/* make new widget */
@@ -1211,6 +1222,7 @@ void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
+
 
 void NewsFeed::addFeedItemSecurityConnectAttempt(const RsFeedItem &fi)
 {
@@ -1267,6 +1279,7 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
+#endif
 
 void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest)
 {
@@ -1282,6 +1295,7 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 #endif
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, bool isTest)
 {
 	/* make new widget */
@@ -1295,6 +1309,7 @@ void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, 
 	std::cerr << std::endl;
 #endif
 }
+#endif
 
 void NewsFeed::addFeedItemChannelNew(const RsFeedItem &fi)
 {

@@ -222,22 +222,26 @@ struct RsConnectionEvent : RsEvent
 {
 	RsConnectionEvent()
 	    : RsEvent(RsEventType::PEER_CONNECTION),
-	      mConnectionType(UNKNOWN) {}
+	      mConnectionInfoCode(UNKNOWN) {}
 
 	enum ConnectionType: uint8_t {
         UNKNOWN                 = 0x00,
         PEER_CONNECTED          = 0x01,
         PEER_DISCONNECTED       = 0x02,
+        PEER_TIME_SHIFT         = 0x03,	// mStrInfo1 = time shift in seconds
+        PEER_REPORTS_WRONG_IP   = 0x04, // mStrInfo1 = address reported, mStrInfo2 = own address
     };
 
-    ConnectionType mConnectionType;
+    ConnectionType mConnectionInfoCode;
 	RsPeerId mSslId;
+    std::string mStrInfo1;
+    std::string mStrInfo2;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RsEvent::serial_process(j, ctx);
-		RS_SERIAL_PROCESS(mConnectionType);
+		RS_SERIAL_PROCESS(mConnectionInfoCode);
 		RS_SERIAL_PROCESS(mSslId);
 	}
 };
