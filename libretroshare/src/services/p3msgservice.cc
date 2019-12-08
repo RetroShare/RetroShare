@@ -404,11 +404,10 @@ int p3MsgService::checkOutgoingMessages()
 					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED;
 				}
 			}
+#ifdef DEBUG_DISTANT_MSG
 			else
-			{
-				Dbg3() << __PRETTY_FUNCTION__ << " Delaying until available..."
-				       << std::endl;
-			}
+				Dbg3() << __PRETTY_FUNCTION__ << " Delaying until available..." << std::endl;
+#endif
 		}
 
 		/* clean up */

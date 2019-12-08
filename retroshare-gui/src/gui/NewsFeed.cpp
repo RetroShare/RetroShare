@@ -1103,6 +1103,7 @@ void NewsFeed::addFeedItem(FeedItem *item)
 {
 	static const int MAX_FEEDITEM_COUNT = 500 ;
 
+    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
 	// costly, but not really a problem here
@@ -1125,6 +1126,7 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 {
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
+    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	if (feedItem)
     {
 		if (!replace)
@@ -1143,6 +1145,7 @@ void NewsFeed::remUniqueFeedItem(FeedItem *item)
 {
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
+    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	if (feedItem)
     {
 		delete item;
