@@ -422,6 +422,7 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 	emit peerStatusChangedSummary();
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
 {
     {
@@ -436,6 +437,7 @@ void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
 
     emit gxsChange(changes);
 }
+#endif
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {

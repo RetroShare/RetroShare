@@ -1118,38 +1118,25 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 		if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != nullptr)
         {
             if (mc->metaChange())
-            {
                 addMessageChanged(out.mMsgsMeta, mc->msgChangeMap);
-            }
             else
-            {
                 addMessageChanged(out.mMsgs, mc->msgChangeMap);
-            }
         }
 		else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != nullptr)
         {
             if(gc->metaChange())
-            {
                 out.mGrpsMeta.splice(out.mGrpsMeta.end(), gc->mGrpIdList);
-            }
             else
-            {
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
-            }
         }
-		else if(( gt =
-		          dynamic_cast<RsGxsDistantSearchResultChange*>(n) ) != nullptr)
-        {
+		else if(( gt = dynamic_cast<RsGxsDistantSearchResultChange*>(n) ) != nullptr)
             out.mDistantSearchReqs.push_back(gt->mRequestId);
-        }
         else
-			RsErr() << __PRETTY_FUNCTION__ << " Unknown changes type!"
-			        << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Unknown changes type!" << std::endl;
         delete n;
     }
     changes.clear() ;
 
-	RsServer::notify()->notifyGxsChange(out);
 	if(rsEvents) rsEvents->postEvent(std::move(evt));
 }
 

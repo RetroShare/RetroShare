@@ -82,8 +82,6 @@ class NotifyQt: public QObject, public NotifyClient
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
 
-        virtual void notifyGxsChange(const RsGxsChanges& change);
-
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;
