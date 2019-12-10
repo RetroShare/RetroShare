@@ -339,6 +339,76 @@ bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	return editCircle(circleGrp);
 }
 
+bool p3GxsCircles::exportCircleLink(
+        std::string& link, const RsGxsCircleId& circleId,
+        bool includeGxsData, const std::string& baseUrl, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(circleId.isNull()) return failure("circleId cannot be null");
+
+	const bool outputRadix = baseUrl.empty();
+	if(outputRadix && !includeGxsData) return
+	        failure("includeGxsData must be true if format requested is base64");
+
+	RsGxsGroupId&& groupId = static_cast<RsGxsGroupId>(circleId);
+	if( includeGxsData &&
+	        !RsGenExchange::exportGroupBase64(link, groupId, errMsg) )
+		return failure(errMsg);
+
+	if(outputRadix) return true;
+
+	std::vector<RsGxsCircleGroup> circlesInfo;
+	if( !getCirclesInfo(
+	            std::list<RsGxsGroupId>({groupId}), circlesInfo )
+	        || circlesInfo.empty() )
+		return failure("failure retrieving circle information");
+
+	RsUrl inviteUrl(baseUrl);
+	inviteUrl.setQueryKV(CIRCLE_URL_ID_FIELD, circleId.toStdString());
+	inviteUrl.setQueryKV(CIRCLE_URL_NAME_FIELD, circlesInfo[0].mMeta.mGroupName);
+	if(includeGxsData) inviteUrl.setQueryKV(CIRCLE_URL_DATA_FIELD, link);
+
+	link = inviteUrl.toString();
+	return true;
+}
+
+bool p3GxsCircles::importCircleLink(
+        const std::string& link, RsGxsCircleId& circleId,
+        std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(link.empty()) return failure("link is empty");
+
+	const std::string* radixPtr(&link);
+
+	RsUrl url(link);
+	const auto& query = url.query();
+	const auto qIt = query.find(CIRCLE_URL_DATA_FIELD);
+	if(qIt != query.end()) radixPtr = &qIt->second;
+
+	if(radixPtr->empty()) return failure(CIRCLE_URL_DATA_FIELD + " is empty");
+
+	if(!RsGenExchange::importGroupBase64(
+	            *radixPtr, reinterpret_cast<RsGxsGroupId&>(circleId), errMsg) )
+		return failure(errMsg);
+
+	return true;
+}
+
 uint32_t p3GxsCircles::circleAuthenPolicy()
 {
 	uint32_t policy = 0;
@@ -454,7 +524,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 /******************* RsCircles Interface  ***************************************/
 /********************************************************************************/
 
-bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details)
+bool p3GxsCircles::getCircleDetails(
+        const RsGxsCircleId& id, RsGxsCircleDetails& details)
 {
 
 #ifdef DEBUG_CIRCLES
@@ -2242,6 +2313,12 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
     
     return true ;
 }
+
+/*static*/ const std::string RsGxsCircles::DEFAULT_CIRCLE_BASE_URL =
+        "retroshare:///circles";
+/*static*/ const std::string RsGxsCircles::CIRCLE_URL_NAME_FIELD = "circleName";
+/*static*/ const std::string RsGxsCircles::CIRCLE_URL_ID_FIELD = "circleId";
+/*static*/ const std::string RsGxsCircles::CIRCLE_URL_DATA_FIELD = "circleData";
 
 RsGxsCircles::~RsGxsCircles() = default;
 RsGxsCircleMsg::~RsGxsCircleMsg() = default;

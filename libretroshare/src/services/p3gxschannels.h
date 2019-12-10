@@ -246,8 +246,23 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	bool subscribeToChannel( const RsGxsGroupId &groupId,
 	                                 bool subscribe ) override;
 
-	/// Implementation of @see RsGxsChannels::setPostRead
+	/// @see RsGxsChannels
 	virtual bool markRead(const RsGxsGrpMsgIdPair& msgId, bool read);
+
+	/// @see RsGxsChannels
+	bool exportChannelLink(
+	        std::string& link, const RsGxsGroupId& chanId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_CHANNEL_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsChannels
+	bool importChannelLink(
+	        const std::string& link,
+	        RsGxsGroupId& chanId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 	virtual bool shareChannelKeys(
 	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers );
