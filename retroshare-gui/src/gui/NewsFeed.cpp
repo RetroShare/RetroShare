@@ -82,7 +82,6 @@ NewsFeed::NewsFeed(QWidget *parent) :
 	ui->setupUi(this);
 
 	mTokenQueueChannel = NULL;
-	mTokenQueueCircle = NULL;
 	mTokenQueueForum = NULL;
 	mTokenQueuePosted = NULL;
 
@@ -138,9 +137,6 @@ NewsFeed::~NewsFeed()
 
 	if (mTokenQueueChannel) {
 		delete(mTokenQueueChannel);
-	}
-	if (mTokenQueueCircle) {
-		delete(mTokenQueueCircle);
 	}
 	if (mTokenQueueForum) {
 		delete(mTokenQueueForum);
@@ -198,9 +194,60 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::AUTHSSL_CONNECTION_AUTENTICATION && (flags & RS_FEED_TYPE_SECURITY))
 		handleSecurityEvent(event);
 
-    if(event->mType == RsEventType::PEER_CONNECTION    && (flags & RS_FEED_TYPE_PEER))
+    if(event->mType == RsEventType::PEER_CONNECTION && (flags & RS_FEED_TYPE_PEER))
 		handleConnectionEvent(event);
+
+    if(event->mType == RsEventType::GXS_CIRCLES && (flags & RS_FEED_TYPE_CIRCLE))
+		handleCircleEvent(event);
 }
+
+void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
+{
+ 	const RsGxsCircleEvent *pe = dynamic_cast<const RsGxsCircleEvent*>(event.get());
+    if(!pe)
+        return;
+
+	RsGxsCircleDetails details;
+
+	if(!rsGxsCircles->getCircleDetails(pe->mCircleId,details))
+    {
+        std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
+    	return;
+    }
+
+    // Check if the circle is one of which we belong to. If so, then notify in the GUI about other members leaving/subscribing
+
+    if(details.mAmIAllowed || details.mAmIAdmin)
+	{
+        switch(pe->mCircleEventType)
+        {
+		case RsGxsCircleEvent::CIRCLE_MEMBERSHIP_REQUEST:  	// only show membership requests if we're an admin of that circle
+            if(details.mAmIAdmin)
+                addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
+            break;
+
+		case RsGxsCircleEvent::CIRCLE_MEMBERSHIP_JOIN:
+            addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
+            break;
+
+		case RsGxsCircleEvent::CIRCLE_MEMBERSHIP_LEAVE:
+            addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
+            break;
+
+		case RsGxsCircleEvent::CIRCLE_MEMBERSHIP_INVITE:
+            addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVIT_REC),true);
+            break;
+
+		case RsGxsCircleEvent::CIRCLE_MEMBERSHIP_REVOQUED:
+            addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED),true);
+            break;
+
+        default:
+            break;
+        }
+	}
+}
+
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 {
@@ -422,51 +469,6 @@ void NewsFeed::updateDisplay()
 					addFeedItemFilesNew(fi);
 				break;
 
-			case RS_FEED_ITEM_CIRCLE_MEMB_REQ:
-				if (flags & RS_FEED_TYPE_CIRCLE)
-				{
-					if (!mTokenQueueCircle) {
-						mTokenQueueCircle = new TokenQueue(rsGxsCircles->getTokenService(), instance);
-					}
-
-					RsGxsGroupId grpId(fi.mId1);
-					RsGxsMessageId msgId(fi.mId2);
-					if (!grpId.isNull() && !msgId.isNull()) {
-						RsTokReqOptions opts;
-						opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-						GxsMsgReq msgIds;
-						std::set<RsGxsMessageId> &vect_msgIds = msgIds[grpId];
-						vect_msgIds.insert(msgId);
-
-						uint32_t token;
-						mTokenQueueCircle->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, TOKEN_TYPE_MESSAGE);
-					}
-				}
-				//	addFeedItemCircleMembReq(fi);
-				break;
-			case RS_FEED_ITEM_CIRCLE_INVIT_REC:
-				if (flags & RS_FEED_TYPE_CIRCLE)
-				{
-					if (!mTokenQueueCircle) {
-						mTokenQueueCircle = new TokenQueue(rsGxsCircles->getTokenService(), instance);
-					}
-
-					RsGxsGroupId grpId(fi.mId1);
-					if (!grpId.isNull()) {
-						RsTokReqOptions opts;
-						opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-						std::list<RsGxsGroupId> grpIds;
-						grpIds.push_back(grpId);
-
-						uint32_t token;
-						mTokenQueueCircle->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, grpIds, TOKEN_TYPE_GROUP);
-					}
-				}
-				//	addFeedItemCircleInvitRec(fi);
-				break;
-
 			default:
 				std::cerr << "(EE) Unknown type " << std::hex << fi.mType << std::dec << " in news feed." << std::endl;
 				break;
@@ -658,6 +660,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 #endif
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::loadCircleGroup(const uint32_t &token)
 {
 	std::vector<RsGxsCircleGroup> groups;
@@ -694,41 +697,7 @@ void NewsFeed::loadCircleGroup(const uint32_t &token)
 		}
 	}
 }
-
-void NewsFeed::loadCircleMessage(const uint32_t &token)
-{
-	std::vector<RsGxsCircleMsg> msgs;
-	if (!rsGxsCircles->getMsgData(token, msgs)) {
-		std::cerr << "NewsFeed::loadCircleMessage() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
-
-	std::list<RsGxsId> own_identities;
-	rsIdentity->getOwnIds(own_identities);
-
-	std::vector<RsGxsCircleMsg>::iterator msgIt;
-	for (msgIt = msgs.begin(); msgIt != msgs.end(); ++msgIt) {
-		RsGxsCircleMsg msg = *(msgIt);
-		RsGxsCircleDetails details;
-		if(rsGxsCircles->getCircleDetails(RsGxsCircleId(msg.mMeta.mGroupId),details)) {
-			//for(std::list<RsGxsId>::const_iterator it(own_identities.begin());it!=own_identities.end();++it) {
-			//	std::map<RsGxsId,uint32_t>::const_iterator vit = details.mSubscriptionFlags.find(*it);
-			//	if (vit != details.mSubscriptionFlags.end()) {
-					RsFeedItem fi;
-					fi.mId1 = msgIt->mMeta.mGroupId.toStdString();
-					fi.mId2 = msgIt->mMeta.mAuthorId.toStdString();
-
-					if (msgIt->stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
-						instance->remFeedItemCircleMembReq(fi);
-					else
-						instance->addFeedItemCircleMembReq(fi);
-
-				//}
-			//}
-		}
-	}
-}
+#endif
 
 void NewsFeed::loadChannelGroup(const uint32_t &token)
 {
@@ -1025,6 +994,7 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		}
 	}
 
+#ifdef TO_REMOVE
 	if (queue == mTokenQueueCircle) {
 		switch (req.mUserType) {
 		case TOKEN_TYPE_GROUP:
@@ -1041,6 +1011,7 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 		}
 	}
+#endif
 
 	if (queue == mTokenQueueForum) {
 		switch (req.mUserType) {
@@ -1562,6 +1533,7 @@ void NewsFeed::addFeedItemFilesNew(const RsFeedItem &/*fi*/)
 #endif
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::addFeedItemCircleMembReq(const RsFeedItem &fi)
 {
 	RsGxsCircleId circleId(fi.mId1);
@@ -1621,6 +1593,7 @@ void NewsFeed::addFeedItemCircleInvitRec(const RsFeedItem &fi)
 	std::cerr << "NewsFeed::addFeedItemCircleInvitRec()" << std::endl;
 #endif
 }
+#endif
 
 /* FeedHolder Functions (for FeedItem functionality) */
 QScrollArea *NewsFeed::getScrollArea()

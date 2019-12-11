@@ -1262,8 +1262,10 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	if (rsPeers->servicePermissionFlags(PeerId()) & RS_NODE_PERM_REQUIRE_WL)
 		checking_flags |= RSBANLIST_CHECKING_FLAGS_WHITELIST;
 
-	if(rsBanList && !rsBanList->isAddressAccepted(
-	            foreign_addr, checking_flags, check_result ))
+    if( RsX509Cert::getCertSslId(*SSL_get_peer_certificate(ssl)) != PeerId())
+        std::cerr << "(EE) pqissl::accept_locked(): PeerId() is " << PeerId() << " but certificate ID is " << RsX509Cert::getCertSslId(*SSL_get_peer_certificate(ssl)) << std::endl;
+
+	if(rsBanList && !rsBanList->isAddressAccepted( foreign_addr, checking_flags, check_result ))
 	{
 		RsErr() << __PRETTY_FUNCTION__
 		        << " Refusing incoming SSL connection from blacklisted "
@@ -1273,11 +1275,19 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 		        << std::endl;
 		print_stacktrace();
 
-		RsServer::notify()->AddFeedItem(
-		            RS_FEED_ITEM_SEC_IP_BLACKLISTED,
-		            PeerId().toStdString(),
-		            sockaddr_storage_iptostring(foreign_addr), "", "",
-		            check_result);
+        if(rsEvents)
+        {
+			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
+
+			X509 *x509 = SSL_get_peer_certificate(ssl) ;
+
+			ev->mSslId = RsX509Cert::getCertSslId(*x509);
+			ev->mLocator = RsUrl(foreign_addr);
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED;
+
+			rsEvents->postEvent(ev);
+        }
+
 		reset_locked();
 		return failure;
 	}

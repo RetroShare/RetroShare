@@ -305,6 +305,32 @@ bool p3GxsCircles::getCircleRequests( const RsGxsGroupId& circleId,
 	return getMsgData(token, requests);
 }
 
+bool p3GxsCircles::getCircleRequest(const RsGxsGroupId& circleId,const RsGxsMessageId& msgId,RsGxsCircleMsg& msg)
+{
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+    std::set<RsGxsMessageId> contentsIds;
+	contentsIds.insert(msgId);
+
+	GxsMsgReq msgIds;
+	msgIds[circleId] = contentsIds;
+
+	uint32_t token;
+	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
+    std::vector<RsGxsCircleMsg> msgs;
+
+	if(getMsgData(token, msgs) && msgs.size() == 1)
+    {
+        msg = msgs.front();
+        return true;
+    }
+    else
+        return false;
+}
+
 bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
                                       const RsGxsCircleId& circleId )
 {
@@ -372,6 +398,7 @@ void	p3GxsCircles::service_tick()
 	return;
 }
 
+
 void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 #ifdef DEBUG_CIRCLES
@@ -397,13 +424,35 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #ifdef DEBUG_CIRCLES
 				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
-				force_cache_reload(RsGxsCircleId(mit->first));
+                RsGxsCircleId circle_id(mit->first);
 
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
+				force_cache_reload(circle_id);
+
+                RsGxsCircleDetails details;
+				getCircleDetails(circle_id,details);
+
+				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
-						const RsGxsMessageId& msgId = *msgIdIt;
-						notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_MEMB_REQ,RsGxsCircleId(mit->first).toStdString(),msgId.toStdString());
+                        // @Gio: should this be async?
+                        RsGxsCircleMsg msg;
+						getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg);
+
+						// notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_MEMB_REQ,RsGxsCircleId(mit->first).toStdString(),msgId.toStdString());
+
+						auto ev = std::make_shared<RsGxsCircleEvent>();
+
+						ev->mCircleId = circle_id;
+						ev->mGxsId = msg.mMeta.mAuthorId;
+
+						if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
+							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_LEAVE;
+						else if(details.mAllowedGxsIds.find(msg.mMeta.mAuthorId) != details.mAllowedGxsIds.end())
+							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_JOIN;
+						else
+							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_REQUEST;
+
+						rsEvents->sendEvent(ev);
 					}
 
 			}
@@ -436,15 +485,60 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	    }
 
 		if(groupChange)
+        {
+            std::list<RsGxsId> own_ids;
+            rsIdentity->getOwnIds(own_ids);
+
 			for(std::list<RsGxsGroupId>::const_iterator git(groupChange->mGrpIdList.begin());git!=groupChange->mGrpIdList.end();++git)
 			{
 #ifdef DEBUG_CIRCLES
 				std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
 #endif
-				force_cache_reload(RsGxsCircleId(*git)) ;
-				if (notify && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
-					notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
-			}
+
+#ifdef TODO
+                // This code will not work: we would like to detect changes in the circle data that reflects the fact that one of the
+                // owned GXS ids is invited. But there's no way to compare the old circle data to the new if cache has to be updated.
+                // For this we need to add the old metadata and group data in the RsGxsGroupChange structure and account for it.
+
+                if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
+                {
+                    RsGxsCircleId circle_id(*git);
+					force_cache_reload(circle_id);
+
+					RsGxsCircleDetails details;
+					getCircleDetails(circle_id,details);
+
+                    // We check that the change corresponds to one of our own ids. Since we do not know what the change is, we notify
+                    // for whatever is different from what is currently known. Other ids, that get invited only trigger a notification when the
+                    // ID also accepts the invitation, so it becomes a member of the circle.
+
+                    for(auto own_id: own_ids)
+					{
+                        auto it = details.mSubscriptionFlags.find(own_id);
+
+                        if(it == details.mSubscriptionFlags.end())
+                            continue;
+
+						bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
+						bool subscrb ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
+
+                        if(std::find(details.mAllowedGxsIds.begin(),details.mAllowedGxsIds.end(),id) != details.mAllowedGxsIds.end() && !me_in_circle)
+						{
+							auto ev = std::make_shared<RsGxsCircleEvent>();
+
+							ev->mType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_INVITE;
+							ev->mCircleId = circle_id;
+							ev->mGxsId = ;
+
+							rsEvents->sendEvent(ev);
+						}
+					}
+
+					//notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
+				}
+#endif
+            }
+        }
 
 	}
 	RsGxsIfaceHelper::receiveChanges(changes);	// this clear up the vector and delete its elements
@@ -479,6 +573,7 @@ bool p3GxsCircles:: getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails
 		    details.mSubscriptionFlags.clear();
 		    details.mAllowedGxsIds.clear();
 		    details.mAmIAllowed = false ;
+		    details.mAmIAdmin = bool(data.mGroupSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN);
 
 		    for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it(data.mMembershipStatus.begin());it!=data.mMembershipStatus.end();++it)
 		    {
@@ -789,7 +884,7 @@ RsGxsCircleCache::RsGxsCircleCache()
 	mUpdateTime = 0;
 	mGroupStatus = 0;
 	mGroupSubscribeFlags = 0;
-    	mLastUpdatedMembershipTS = 0 ;
+	mLastUpdatedMembershipTS = 0 ;
 
 	return; 
 }

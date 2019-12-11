@@ -70,6 +70,9 @@ enum class RsEventType : uint32_t
 	/// @see RsMailStatusEvent
 	MAIL_STATUS_CHANGE                                      = 7,
 
+    /// @see RsGxsCircleEvent
+    GXS_CIRCLES                                             = 8,
+
 	MAX       /// Used to detect invalid event type passed
 };
 

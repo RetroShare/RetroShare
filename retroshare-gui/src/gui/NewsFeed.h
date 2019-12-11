@@ -102,9 +102,11 @@ private slots:
 	void sendNewsFeedChanged();
 
 private:
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
 	void handleSecurityEvent(std::shared_ptr<const RsEvent> event);
 	void handleConnectionEvent(std::shared_ptr<const RsEvent> event);
-	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	void handleCircleEvent(std::shared_ptr<const RsEvent> event);
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, bool replace);
@@ -159,9 +161,6 @@ private:
 
 	virtual void loadPostedGroup(const uint32_t &token);
 	virtual void loadPostedMessage(const uint32_t &token);
-
-	virtual void loadCircleGroup(const uint32_t &token);
-	virtual void loadCircleMessage(const uint32_t &token);
 
 private:
 	TokenQueue *mTokenQueueChannel;

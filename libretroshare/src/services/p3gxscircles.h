@@ -207,6 +207,11 @@ virtual RsServiceInfo getServiceInfo();
 	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	                        const RsGxsCircleId& circleId ) override;
 
+    /// @see RsGxsCircles
+	bool getCircleRequest(const RsGxsGroupId& circleId,
+                          const RsGxsMessageId& msgId,
+                          RsGxsCircleMsg& msg) override;
+
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
 	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds);
 
