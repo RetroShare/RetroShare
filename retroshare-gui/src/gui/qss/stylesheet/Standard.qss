@@ -861,3 +861,8 @@ GxsCommentDialog QComboBox#sortBox {
 	font: bold;
 	color: #0099cc;
 }
+
+PostedListWidget QTextBrowser#infoDescription {
+	background: transparent;
+	border: none;
+}

@@ -323,6 +323,8 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 		topicImage = QPixmap(TOPIC_DEFAULT_IMAGE);
 	}
 	ui->logoLabel->setPixmap(topicImage);
+	ui->namelabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->poplabel->setText(QString::number( group.mMeta.mPop));
 	
 	RetroShareLink link;
 	
