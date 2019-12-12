@@ -102,6 +102,34 @@ struct RsGxsChannelPost : RsSerializable
 	~RsGxsChannelPost() override;
 };
 
+struct RsGxsChannelEvent: RsEvent
+{
+    RsGxsChannelEvent()
+	    : RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(UNKNOWN) {}
+
+	enum ChannelEventCode: uint8_t {
+        UNKNOWN                 = 0x00,
+        NEW_CHANNEL             = 0x01, // emitted when new channel is received
+        UPDATED_CHANNEL         = 0x02,	// emitted when existing channel is updated
+        NEW_MESSAGE             = 0x03, // new message reeived in a particular channel (group and msg id)
+        UPDATED_MESSAGE         = 0x04, // existing message has been updated in a particular channel (group and msg id)
+        RECEIVED_PUBLISH_KEY    = 0x05, // publish key for this channel has been received.
+    };
+
+    ChannelEventCode mChannelEventCode;
+    RsGxsGroupId mChannelGroupId;
+	RsGxsMessageId mChannelMsgId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChannelEventCode);
+		RS_SERIAL_PROCESS(mChannelGroupId);
+		RS_SERIAL_PROCESS(mChannelMsgId);
+    }
+};
 
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {

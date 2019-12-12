@@ -107,37 +107,13 @@ private:
 	void handleSecurityEvent(std::shared_ptr<const RsEvent> event);
 	void handleConnectionEvent(std::shared_ptr<const RsEvent> event);
 	void handleCircleEvent(std::shared_ptr<const RsEvent> event);
+	void handleForumEvent(std::shared_ptr<const RsEvent> event);
+	void handlePostedEvent(std::shared_ptr<const RsEvent> event);
+	void handleChannelEvent(std::shared_ptr<const RsEvent> event);
 
 	void addFeedItem(FeedItem *item);
 	void addFeedItemIfUnique(FeedItem *item, bool replace);
 	void remUniqueFeedItem(FeedItem *item);
-
-	void addFeedItemPeerConnect(const RsFeedItem &fi);
-	void addFeedItemPeerDisconnect(const RsFeedItem &fi);
-	void addFeedItemPeerHello(const RsFeedItem &fi);
-	void addFeedItemPeerNew(const RsFeedItem &fi);
-	void addFeedItemPeerOffset(const RsFeedItem &fi);
-
-	void addFeedItemSecurityConnectAttempt(const RsFeedItem &fi);
-	void addFeedItemSecurityAuthDenied(const RsFeedItem &fi);
-	void addFeedItemSecurityUnknownIn(const RsFeedItem &fi);
-	void addFeedItemSecurityUnknownOut(const RsFeedItem &fi);
-	void addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest);
-	void addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, bool isTest);
-
-	void addFeedItemChannelNew(const RsFeedItem &fi);
-//	void addFeedItemChannelUpdate(const RsFeedItem &fi);
-	void addFeedItemChannelMsg(const RsFeedItem &fi);
-	void addFeedItemChannelPublishKey(const RsFeedItem &fi);
-
-	void addFeedItemForumNew(const RsFeedItem &fi);
-//	void addFeedItemForumUpdate(const RsFeedItem &fi);
-	void addFeedItemForumMsg(const RsFeedItem &fi);
-
-	void addFeedItemPostedNew(const RsFeedItem &fi);
-//	void addFeedItemPostedUpdate(const RsFeedItem &fi);
-	void addFeedItemPostedMsg(const RsFeedItem &fi);
-
 #if 0
 	void addFeedItemBlogNew(const RsFeedItem &fi);
 	void addFeedItemBlogMsg(const RsFeedItem &fi);
@@ -147,27 +123,7 @@ private:
 	void addFeedItemMessage(const RsFeedItem &fi);
 	void addFeedItemFilesNew(const RsFeedItem &fi);
 
-	void addFeedItemCircleMembReq(const RsFeedItem &fi);
-	void remFeedItemCircleMembReq(const RsFeedItem &fi);
-	void addFeedItemCircleInvitRec(const RsFeedItem &fi);
-
-	virtual void loadChannelGroup(const uint32_t &token);
-	virtual void loadChannelPost(const uint32_t &token);
-	virtual void loadChannelPublishKey(const uint32_t &token);
-
-	virtual void loadForumGroup(const uint32_t &token);
-	virtual void loadForumMessage(const uint32_t &token);
-	virtual void loadForumPublishKey(const uint32_t &token);
-
-	virtual void loadPostedGroup(const uint32_t &token);
-	virtual void loadPostedMessage(const uint32_t &token);
-
 private:
-	TokenQueue *mTokenQueueChannel;
-	TokenQueue *mTokenQueueCircle;
-	TokenQueue *mTokenQueueForum;
-	TokenQueue *mTokenQueuePosted;
-
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;
 

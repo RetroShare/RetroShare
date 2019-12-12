@@ -68,6 +68,32 @@ class RsPostedGroup
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
 
+struct RsGxsPostedEvent: RsEvent
+{
+	RsGxsPostedEvent()
+	    : RsEvent(RsEventType::GXS_POSTED), mPostedEventCode(UNKNOWN) {}
+
+	enum PostedEventCode: uint8_t {
+		UNKNOWN                 = 0x00,
+		NEW_POSTED_GROUP        = 0x01,
+		NEW_MESSAGE             = 0x02
+	};
+
+	PostedEventCode mPostedEventCode;
+	RsPeerId mAuthorId;
+	RsGxsGroupId mPostedGroupId;
+	RsGxsMessageId mPostedMsgId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mPostedEventCode);
+		RS_SERIAL_PROCESS(mAuthorId);
+		RS_SERIAL_PROCESS(mPostedGroupId);
+		RS_SERIAL_PROCESS(mPostedMsgId);
+	}
+};
 
 class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 {

@@ -61,7 +61,7 @@ enum class RsEventType : uint32_t
 	/// @see pqissl
 	PEER_CONNECTION                                         = 4,
 
-	/// @see RsGxsChanges
+	/// @see RsGxsChanges												// this one should probably be removed because it's not used anywhere
 	GXS_CHANGES                                             = 5,
 
 	/// Emitted when a peer state changes, @see RsPeers
@@ -72,6 +72,15 @@ enum class RsEventType : uint32_t
 
     /// @see RsGxsCircleEvent
     GXS_CIRCLES                                             = 8,
+
+    /// @see RsGxsChannelEvent
+    GXS_CHANNELS                                            = 9,
+
+    /// @see RsGxsForumEvent
+    GXS_FORUMS                                              = 10,
+
+    /// @see RsGxsPostedEvent
+    GXS_POSTED                                              = 11,
 
 	MAX       /// Used to detect invalid event type passed
 };

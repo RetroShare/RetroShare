@@ -81,10 +81,6 @@ NewsFeed::NewsFeed(QWidget *parent) :
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	mTokenQueueChannel = NULL;
-	mTokenQueueForum = NULL;
-	mTokenQueuePosted = NULL;
-
 	setUpdateWhenInvisible(true);
 
 	if (!instance) {
@@ -133,16 +129,6 @@ NewsFeed::~NewsFeed()
 
 	if (instance == this) {
 		instance = NULL;
-	}
-
-	if (mTokenQueueChannel) {
-		delete(mTokenQueueChannel);
-	}
-	if (mTokenQueueForum) {
-		delete(mTokenQueueForum);
-	}
-	if (mTokenQueuePosted) {
-		delete(mTokenQueuePosted);
 	}
 }
 
@@ -199,6 +185,79 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
     if(event->mType == RsEventType::GXS_CIRCLES && (flags & RS_FEED_TYPE_CIRCLE))
 		handleCircleEvent(event);
+
+    if(event->mType == RsEventType::GXS_CHANNELS && (flags & RS_FEED_TYPE_CHANNEL))
+		handleChannelEvent(event);
+
+    if(event->mType == RsEventType::GXS_FORUMS && (flags & RS_FEED_TYPE_FORUM))
+		handleForumEvent(event);
+
+    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
+		handlePostedEvent(event);
+}
+
+void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
+{
+ 	const RsGxsPostedEvent *pe = dynamic_cast<const RsGxsPostedEvent*>(event.get());
+    if(!pe)
+        return;
+
+    switch(pe->mPostedEventCode)
+    {
+		case RsGxsPostedEvent::NEW_POSTED_GROUP:   addFeedItem( new PostedGroupItem(this, NEWSFEED_POSTEDNEWLIST, pe->mPostedGroupId, false, true));
+        break;
+
+		case RsGxsPostedEvent::NEW_MESSAGE:        addFeedItem( new PostedItem(this, NEWSFEED_POSTEDMSGLIST, pe->mPostedGroupId, pe->mPostedMsgId, false, true));
+        break;
+
+    default:
+        break;
+    }
+}
+
+void NewsFeed::handleForumEvent(std::shared_ptr<const RsEvent> event)
+{
+ 	const RsGxsForumEvent *pe = dynamic_cast<const RsGxsForumEvent*>(event.get());
+    if(!pe)
+        return;
+
+    switch(pe->mForumEventCode)
+    {
+		case RsGxsForumEvent::UPDATED_FORUM:
+		case RsGxsForumEvent::NEW_FORUM:          addFeedItem(new GxsForumGroupItem(this, NEWSFEED_FORUMNEWLIST, pe->mForumGroupId, false, true));
+        break;
+
+		case RsGxsForumEvent::UPDATED_MESSAGE:
+		case RsGxsForumEvent::NEW_MESSAGE:        addFeedItem(new GxsForumMsgItem(this, NEWSFEED_FORUMNEWLIST, pe->mForumGroupId, pe->mForumMsgId, false, true));
+        break;
+
+    default:
+        break;
+    }
+}
+
+void NewsFeed::handleChannelEvent(std::shared_ptr<const RsEvent> event)
+{
+ 	const RsGxsChannelEvent *pe = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+    if(!pe)
+        return;
+
+    switch(pe->mChannelEventCode)
+    {
+		case RsGxsChannelEvent::UPDATED_CHANNEL:
+		case RsGxsChannelEvent::NEW_CHANNEL:          addFeedItem(new GxsChannelGroupItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, false, true));
+        break;
+
+		case RsGxsChannelEvent::UPDATED_MESSAGE:
+		case RsGxsChannelEvent::NEW_MESSAGE:          addFeedItem(new GxsChannelPostItem(this, NEWSFEED_CHANNELNEWLIST, pe->mChannelGroupId, pe->mChannelMsgId, false, true));
+        break;
+
+		case RsGxsChannelEvent::RECEIVED_PUBLISH_KEY: addFeedItem(new GxsChannelGroupItem(this, NEWSFEED_CHANNELPUBKEYLIST, pe->mChannelGroupId, false, true));
+        break;
+
+    default:
+        break;
+    }
 }
 
 void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
@@ -247,7 +306,6 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
         }
 	}
 }
-
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 {
@@ -360,7 +418,6 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_SECURITY_IP)
 					addFeedItemSecurityWrongExternalIpReported(fi, false);
 				break;
-#endif
 
 			case RS_FEED_ITEM_CHANNEL_NEW:
 				if (flags & RS_FEED_TYPE_CHANNEL)
@@ -442,6 +499,7 @@ void NewsFeed::updateDisplay()
 				if (flags & RS_FEED_TYPE_POSTED)
 					addFeedItemPostedMsg(fi);
 				break;
+#endif
 
 #if 0
 			case RS_FEED_ITEM_BLOG_NEW:
@@ -494,7 +552,6 @@ void NewsFeed::updateDisplay()
 
 void NewsFeed::testFeeds(uint notifyFlags)
 {
-#ifdef TODO
 	if (!instance) {
 		return;
 	}
@@ -510,6 +567,7 @@ void NewsFeed::testFeeds(uint notifyFlags)
 
 		RsFeedItem fi;
 
+#ifdef TODO
 		switch(type) {
 		case RS_FEED_TYPE_PEER:
 			fi.mId1 = rsPeers->getOwnId().toStdString();
@@ -652,12 +710,12 @@ void NewsFeed::testFeeds(uint notifyFlags)
 			break;
 
 		}
+#endif
 	}
 
 	instance->ui->feedWidget->enableCountChangedSignal(true);
 
 	instance->sendNewsFeedChanged();
-#endif
 }
 
 #ifdef TO_REMOVE
@@ -697,7 +755,6 @@ void NewsFeed::loadCircleGroup(const uint32_t &token)
 		}
 	}
 }
-#endif
 
 void NewsFeed::loadChannelGroup(const uint32_t &token)
 {
@@ -970,9 +1027,11 @@ void NewsFeed::loadPostedMessage(const uint32_t &token)
 		instance->addFeedItemPostedMsg(fi);
 	}
 }
+#endif
 
 void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef TO_REMOVE
 	if (queue == mTokenQueueChannel) {
 		switch (req.mUserType) {
 		case TOKEN_TYPE_GROUP:
@@ -994,7 +1053,6 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 		}
 	}
 
-#ifdef TO_REMOVE
 	if (queue == mTokenQueueCircle) {
 		switch (req.mUserType) {
 		case TOKEN_TYPE_GROUP:
@@ -1011,7 +1069,6 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 		}
 	}
-#endif
 
 	if (queue == mTokenQueueForum) {
 		switch (req.mUserType) {
@@ -1050,6 +1107,7 @@ void NewsFeed::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			break;
 		}
 	}
+#endif
 }
 
 void NewsFeed::testFeed(FeedNotify *feedNotify)
@@ -1167,7 +1225,6 @@ void NewsFeed::addFeedItemPeerHello(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-#endif
 
 void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 {
@@ -1183,7 +1240,6 @@ void NewsFeed::addFeedItemPeerNew(const RsFeedItem &fi)
 #endif
 }
 
-#ifdef TO_REMOVE
 void NewsFeed::addFeedItemPeerOffset(const RsFeedItem &fi)
 {
 	/* make new widget */
@@ -1254,7 +1310,6 @@ void NewsFeed::addFeedItemSecurityUnknownOut(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
-#endif
 
 void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTest)
 {
@@ -1270,7 +1325,6 @@ void NewsFeed::addFeedItemSecurityIpBlacklisted(const RsFeedItem &fi, bool isTes
 #endif
 }
 
-#ifdef TO_REMOVE
 void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, bool isTest)
 {
 	/* make new widget */
@@ -1284,7 +1338,6 @@ void NewsFeed::addFeedItemSecurityWrongExternalIpReported(const RsFeedItem &fi, 
 	std::cerr << std::endl;
 #endif
 }
-#endif
 
 void NewsFeed::addFeedItemChannelNew(const RsFeedItem &fi)
 {
@@ -1468,6 +1521,7 @@ void NewsFeed::addFeedItemPostedMsg(const RsFeedItem &fi)
 	std::cerr << std::endl;
 #endif
 }
+#endif
 
 #if 0
 void NewsFeed::addFeedItemBlogNew(const RsFeedItem &fi)
