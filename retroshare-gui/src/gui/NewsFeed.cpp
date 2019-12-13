@@ -192,8 +192,28 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::GXS_FORUMS && (flags & RS_FEED_TYPE_FORUM))
 		handleForumEvent(event);
 
-    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
+    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_MSG))
+		handleMailEvent(event);
+
+    if(event->mType == RsEventType::MAIL_STATUS_CHANGE && (flags & RS_FEED_TYPE_MAIL))
 		handlePostedEvent(event);
+}
+
+void NewsFeed::handleMailEvent(std::shared_ptr<const RsEvent> event)
+{
+ 	const RsMailStatusEvent *pe = dynamic_cast<const RsMailStatusEvent*>(event.get());
+    if(!pe)
+        return;
+
+    switch(pe->mMailStatusEventCode)
+    {
+		case RsMailStatusEvent::NEW_MESSAGE:
+        for(auto msgid: pe->mChangedMsgIds)
+            addFeedItem( new MsgItem(this, NEWSFEED_MESSAGELIST, msgid, false));
+        break;
+    default:
+        break;
+    }
 }
 
 void NewsFeed::handlePostedEvent(std::shared_ptr<const RsEvent> event)
@@ -517,10 +537,12 @@ void NewsFeed::updateDisplay()
 					addFeedItemChatNew(fi, false);
 				break;
 
+#ifdef TO_REMOVE
 			case RS_FEED_ITEM_MESSAGE:
 				if (flags & RS_FEED_TYPE_MSG)
 					addFeedItemMessage(fi);
 				break;
+#endif
 
 			case RS_FEED_ITEM_FILES_NEW:
 				if (flags & RS_FEED_TYPE_FILES)
@@ -1565,6 +1587,7 @@ void NewsFeed::addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck)
 	addFeedItem(cm);
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::addFeedItemMessage(const RsFeedItem &fi)
 {
 	/* make new widget */
@@ -1587,7 +1610,6 @@ void NewsFeed::addFeedItemFilesNew(const RsFeedItem &/*fi*/)
 #endif
 }
 
-#ifdef TO_REMOVE
 void NewsFeed::addFeedItemCircleMembReq(const RsFeedItem &fi)
 {
 	RsGxsCircleId circleId(fi.mId1);
@@ -1667,6 +1689,7 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 	}
 }
 
+#ifdef TO_REMOVE
 void NewsFeed::openChat(const RsPeerId &peerId)
 {
 #ifdef NEWS_DEBUG
@@ -1682,6 +1705,7 @@ void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, 
 	std::cerr << "NewsFeed::openComments() Not Handled Yet";
 	std::cerr << std::endl;
 }
+#endif
 
 static void sendNewsFeedChangedCallback(FeedItem *feedItem, void *data)
 {

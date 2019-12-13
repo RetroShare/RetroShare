@@ -438,8 +438,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
                         RsGxsCircleMsg msg;
 						getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg);
 
-						// notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_MEMB_REQ,RsGxsCircleId(mit->first).toStdString(),msgId.toStdString());
-
 						auto ev = std::make_shared<RsGxsCircleEvent>();
 
 						ev->mCircleId = circle_id;
@@ -534,7 +532,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						}
 					}
 
-					//notify->AddFeedItem(RS_FEED_ITEM_CIRCLE_INVIT_REC,RsGxsCircleId(*git).toStdString(),"");
 				}
 #endif
             }

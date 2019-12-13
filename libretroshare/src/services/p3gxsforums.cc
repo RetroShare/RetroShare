@@ -183,9 +183,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
 	if (!changes.empty())
 	{
-		p3Notify *notify = RsServer::notify();
-
-		if (notify)
+		if (rsEvents)
 		{
 			std::vector<RsGxsNotify*>::iterator it;
 			for(it = changes.begin(); it != changes.end(); ++it)
@@ -207,10 +205,17 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 
 							for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-							{
 								for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-									notify->AddFeedItem(RS_FEED_ITEM_FORUM_MSG, mit->first.toStdString(), mit1->toStdString());
-							}
+                                {
+                                    auto ev = std::make_shared<RsGxsForumEvent>();
+
+                                    ev->mForumGroupId = mit->first;
+                                    ev->mForumMsgId = *mit1;
+                                    ev->mForumEventCode = RsGxsForumEvent::NEW_MESSAGE;
+
+                                    rsEvents->sendEvent(ev);
+                                }
+
 							break;
 						}
 
@@ -225,9 +230,13 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
                                 if(mKnownForums.find(*git) == mKnownForums.end())
                                 {
-									notify->AddFeedItem(RS_FEED_ITEM_FORUM_NEW, git->toStdString());
-                                    mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
+									auto ev = std::make_shared<RsGxsForumEvent>();
 
+                                    ev->mForumGroupId = *git;
+                                    ev->mForumEventCode = RsGxsForumEvent::NEW_FORUM;
+                                    rsEvents->sendEvent(ev);
+
+                                    mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
 									IndicateConfigChanged();
                                 }
                                 else
@@ -237,6 +246,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						}
 						break;
 					}
+#ifdef UNUSED
+                    // (Cyril) There's no publish key system for forums now. As a GXS group, it is possible to add one, just like channels
+                    // but the possibility is not offered by the API yet.
 
 					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 					{
@@ -254,6 +266,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						}
 						break;
 					}
+#endif
 				}
 			}
 		}

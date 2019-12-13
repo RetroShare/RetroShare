@@ -80,7 +80,6 @@ struct RsGxsPostedEvent: RsEvent
 	};
 
 	PostedEventCode mPostedEventCode;
-	RsPeerId mAuthorId;
 	RsGxsGroupId mPostedGroupId;
 	RsGxsMessageId mPostedMsgId;
 
@@ -89,7 +88,6 @@ struct RsGxsPostedEvent: RsEvent
 	{
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mPostedEventCode);
-		RS_SERIAL_PROCESS(mAuthorId);
 		RS_SERIAL_PROCESS(mPostedGroupId);
 		RS_SERIAL_PROCESS(mPostedMsgId);
 	}

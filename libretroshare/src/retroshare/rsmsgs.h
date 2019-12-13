@@ -300,6 +300,15 @@ struct RsMailStatusEvent : RsEvent
 {
 	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS_CHANGE) {}
 
+    enum MailStatusEventCode: uint8_t {
+        NEW_MESSAGE                     = 0x00,
+        MESSAGE_REMOVED                 = 0x01,
+        MESSAGE_SENT                    = 0x02,
+        MESSAGE_RECEIVED_ACK            = 0x03,	// means the peer received the message
+        FAILED_SIGNATURE                = 0x04,	// means the signature of the message cannot be verified
+	};
+
+    MailStatusEventCode mMailStatusEventCode;
 	std::set<RsMailMessageId> mChangedMsgIds;
 
 	/// @see RsEvent
@@ -308,6 +317,7 @@ struct RsMailStatusEvent : RsEvent
 	{
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mChangedMsgIds);
+		RS_SERIAL_PROCESS(mMailStatusEventCode);
 	}
 
 	~RsMailStatusEvent() override;

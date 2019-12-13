@@ -238,12 +238,6 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << "p3GxsChannels::notifyChanges() : " << changes.size() << "changes to notify" << std::endl;
 #endif
 
-	p3Notify* notify = nullptr;
-	if (!changes.empty())
-	{
-		notify = RsServer::notify();
-	}
-
 	/* iterate through and grab any new messages */
 	std::list<RsGxsGroupId> unprocessedGroups;
 
@@ -256,13 +250,19 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 			{
 				/* message received */
-				if (notify)
+				if (rsEvents)
 				{
 					std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
 					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
 						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 						{
-							notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_MSG, mit->first.toStdString(), mit1->toStdString());
+                            auto ev = std::make_shared<RsGxsChannelEvent>();
+
+                            ev->mChannelMsgId = *mit1;
+                            ev->mChannelGroupId = mit->first;
+                            ev->mChannelEventCode = RsGxsChannelEvent::NEW_MESSAGE;
+
+                            rsEvents->sendEvent(ev);
 						}
 				}
 			}
@@ -298,7 +298,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 		else
 		{
-			if (notify)
+			if (rsEvents)
 			{
 				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
 				if (grpChange)
@@ -320,8 +320,15 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							{
                                 if(mKnownChannels.find(*git) == mKnownChannels.end())
                                 {
-									notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_NEW, git->toStdString());
                                     mKnownChannels.insert(std::make_pair(*git,time(NULL))) ;
+                                    IndicateConfigChanged();
+
+									auto ev = std::make_shared<RsGxsChannelEvent>();
+
+									ev->mChannelGroupId = *git;
+									ev->mChannelEventCode = RsGxsChannelEvent::NEW_CHANNEL;
+
+									rsEvents->sendEvent(ev);
                                 }
                                 else
                                     std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
@@ -336,7 +343,12 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							std::list<RsGxsGroupId>::iterator git;
 							for (git = grpList.begin(); git != grpList.end(); ++git)
 							{
-								notify->AddFeedItem(RS_FEED_ITEM_CHANNEL_PUBLISHKEY, git->toStdString());
+								auto ev = std::make_shared<RsGxsChannelEvent>();
+
+								ev->mChannelGroupId = *git;
+								ev->mChannelEventCode = RsGxsChannelEvent::RECEIVED_PUBLISH_KEY;
+
+								rsEvents->sendEvent(ev);
 							}
 							break;
 						}

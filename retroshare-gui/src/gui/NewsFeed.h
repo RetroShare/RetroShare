@@ -75,8 +75,8 @@ public:
 	/* FeedHolder Functions (for FeedItem functionality) */
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(QWidget *item, uint32_t type);
-	virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title);
+//	virtual void openChat(const RsPeerId& peerId);
+//	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title);
 
 	static void testFeeds(uint notifyFlags);
 	static void testFeed(FeedNotify *feedNotify);
@@ -95,7 +95,6 @@ protected:
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
-//	void toggleChanMsgItems(bool on);
 	void feedoptions();
 	void sortChanged(int index);
 
@@ -119,9 +118,9 @@ private:
 	void addFeedItemBlogMsg(const RsFeedItem &fi);
 #endif
 
-	void addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck);
-	void addFeedItemMessage(const RsFeedItem &fi);
-	void addFeedItemFilesNew(const RsFeedItem &fi);
+//	void addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck);
+//	void addFeedItemMessage(const RsFeedItem &fi);
+//	void addFeedItemFilesNew(const RsFeedItem &fi);
 
 private:
 	/* UI - from Designer */

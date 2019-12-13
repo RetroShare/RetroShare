@@ -175,15 +175,14 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		mi->msgFlags &= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_SYSTEM); // remove flags except those
 		mi->msgFlags |= RS_MSG_FLAGS_NEW;
 
-		p3Notify *notify = RsServer::notify();
-		if (notify)
+		if (rsEvents)
 		{
-			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
+            auto ev = std::make_shared<RsMailStatusEvent>();
+            ev->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
+			ev->mChangedMsgIds.insert(std::to_string(mi->msgId));
 
-			std::string out;
-			rs_sprintf(out, "%lu", mi->msgId);
-			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
-		}
+            rsEvents->sendEvent(ev);
+        }
 
 		imsg[mi->msgId] = mi;
 		RsMsgSrcId* msi = new RsMsgSrcId();
@@ -207,13 +206,6 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-
-	if(rsEvents)
-	{
-		std::shared_ptr<RsMailStatusEvent> pEvent(new RsMailStatusEvent());
-		pEvent->mChangedMsgIds.insert(std::to_string(mi->msgId));
-		rsEvents->postEvent(pEvent);
-	}
 }
 
 bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
@@ -345,8 +337,8 @@ int p3MsgService::checkOutgoingMessages()
 	bool changed = false;
 	std::list<RsMsgItem*> output_queue;
 
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_SENT;
 
 	{
 		RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -905,8 +897,10 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 	}
 
 	bool changed = false;
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+
+    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_REMOVED;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1273,8 +1267,9 @@ uint32_t p3MsgService::sendMail(
 	           std::back_inserter(msgInfo.files) );
 
 	uint32_t ret = 0;
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
+    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_SENT;
 
 	auto pSend = [&](const std::set<RsGxsId>& sDest)
 	{
@@ -2088,9 +2083,11 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 		                                      NOTIFY_TYPE_ADD );
 		IndicateConfigChanged();
 
-		using Evt_t = RsMailStatusEvent;
-		std::shared_ptr<Evt_t> pEvent(new Evt_t());
+        auto pEvent = std::make_shared<RsMailStatusEvent>();
+
+        pEvent->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
 		pEvent->mChangedMsgIds.insert(std::to_string(msg_id));
+
 		if(rsEvents) rsEvents->postEvent(pEvent);
 
 		return;
@@ -2188,11 +2185,11 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 	Dbg2() << __PRETTY_FUNCTION__ << " " << mailId << ", "
 	       << static_cast<uint32_t>(status) << std::endl;
 
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+    auto pEvent = std::make_shared<RsMailStatusEvent>();
 
 	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
+        pEvent->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
 		uint32_t msg_id;
 
 		{
@@ -2247,6 +2244,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 	else if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )
 	{
 		uint32_t msg_id;
+        pEvent->mMailStatusEventCode = RsMailStatusEvent::FAILED_SIGNATURE;
 
 		{
 			RS_STACK_MUTEX(gxsOngoingMutex);
