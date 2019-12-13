@@ -34,9 +34,9 @@
 
 #define COLUMN_FILENAME  0
 #define COLUMN_SIZE      1
-#define COLUMN_TITLE     2
-#define COLUMN_PUBLISHED 3
-#define COLUMN_STATUS    4
+#define COLUMN_STATUS    2
+#define COLUMN_TITLE     3
+#define COLUMN_PUBLISHED 4
 #define COLUMN_COUNT     5
 #define COLUMN_DATA      0
 
@@ -107,9 +107,10 @@ void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
 		treeItem->setData(COLUMN_DATA, ROLE_MESSAGE_ID, qVariantFromValue(post.mMeta.mMsgId));
 		treeItem->setData(COLUMN_DATA, ROLE_FILE_HASH, qVariantFromValue(file.mHash));
 		treeItem->setData(COLUMN_DATA, ROLE_MSG, QString::fromUtf8(post.mMsg.c_str()));
+		treeItem->setTextAlignment(COLUMN_SIZE, Qt::AlignRight) ;
 
 		ui->treeWidget->addTopLevelItem(treeItem);
-
+		
 		QWidget *statusWidget = new GxsChannelFilesStatusWidget(post.mMeta.mGroupId, post.mMeta.mMsgId, file);
 		ui->treeWidget->setItemWidget(treeItem, COLUMN_STATUS, statusWidget);
 

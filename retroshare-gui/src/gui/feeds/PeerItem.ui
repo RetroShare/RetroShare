@@ -151,22 +151,6 @@
          <item row="1" column="1" colspan="2">
           <layout class="QHBoxLayout" name="buttonHLayout">
            <item>
-            <spacer name="buttonHSpacer">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType">
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>388</width>
-               <height>21</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
             <widget class="QToolButton" name="sendmsgButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
@@ -214,6 +198,22 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item>
+            <spacer name="buttonHSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>388</width>
+               <height>21</height>
+              </size>
+             </property>
+            </spacer>
            </item>
            <item>
             <widget class="QPushButton" name="expandButton">

@@ -347,6 +347,10 @@
               <property name="text">
                <string>Edit</string>
               </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/pencil-edit-button.png</normaloff>:/icons/png/pencil-edit-button.png</iconset>
+              </property>
              </widget>
             </item>
             <item>
