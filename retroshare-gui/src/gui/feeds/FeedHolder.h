@@ -35,8 +35,8 @@ public:
 
 	virtual QScrollArea *getScrollArea() = 0;
 	virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
-//    virtual	void openChat(const RsPeerId& peerId) = 0;
-//	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title)=0;
+    virtual	void openChat(const RsPeerId& peerId) = 0;
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title)=0;
 
 	// Workaround for QTBUG-3372
 	void lockLayout(QWidget *feedItem, bool lock);

@@ -192,10 +192,10 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::GXS_FORUMS && (flags & RS_FEED_TYPE_FORUM))
 		handleForumEvent(event);
 
-    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_MSG))
+    if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
 		handleMailEvent(event);
 
-    if(event->mType == RsEventType::MAIL_STATUS_CHANGE && (flags & RS_FEED_TYPE_MAIL))
+    if(event->mType == RsEventType::MAIL_STATUS_CHANGE && (flags & RS_FEED_TYPE_MSG))
 		handlePostedEvent(event);
 }
 
@@ -532,22 +532,22 @@ void NewsFeed::updateDisplay()
 				break;
 #endif
 
+#ifdef TO_REMOVE
 			case RS_FEED_ITEM_CHAT_NEW:
 				if (flags & RS_FEED_TYPE_CHAT)
 					addFeedItemChatNew(fi, false);
 				break;
 
-#ifdef TO_REMOVE
 			case RS_FEED_ITEM_MESSAGE:
 				if (flags & RS_FEED_TYPE_MSG)
 					addFeedItemMessage(fi);
 				break;
-#endif
 
 			case RS_FEED_ITEM_FILES_NEW:
 				if (flags & RS_FEED_TYPE_FILES)
 					addFeedItemFilesNew(fi);
 				break;
+#endif
 
 			default:
 				std::cerr << "(EE) Unknown type " << std::hex << fi.mType << std::dec << " in news feed." << std::endl;
@@ -1566,7 +1566,6 @@ void NewsFeed::addFeedItemBlogMsg(const RsFeedItem &fi)
 #endif
 }
 
-#endif
 
 void NewsFeed::addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck)
 {
@@ -1587,7 +1586,6 @@ void NewsFeed::addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck)
 	addFeedItem(cm);
 }
 
-#ifdef TO_REMOVE
 void NewsFeed::addFeedItemMessage(const RsFeedItem &fi)
 {
 	/* make new widget */
@@ -1689,7 +1687,6 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 	}
 }
 
-#ifdef TO_REMOVE
 void NewsFeed::openChat(const RsPeerId &peerId)
 {
 #ifdef NEWS_DEBUG
@@ -1705,7 +1702,6 @@ void NewsFeed::openComments(uint32_t /*type*/, const RsGxsGroupId &/*groupId*/, 
 	std::cerr << "NewsFeed::openComments() Not Handled Yet";
 	std::cerr << std::endl;
 }
-#endif
 
 static void sendNewsFeedChangedCallback(FeedItem *feedItem, void *data)
 {
