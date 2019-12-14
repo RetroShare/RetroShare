@@ -56,7 +56,7 @@ class RsFeedItem;
 class FeedNotify;
 class FeedItem;
 
-class NewsFeed : public RsAutoUpdatePage, public FeedHolder
+class NewsFeed :  public MainPage,public FeedHolder
 {
 	Q_OBJECT
 
@@ -81,8 +81,6 @@ public:
 	static void testFeeds(uint notifyFlags);
 	static void testFeed(FeedNotify *feedNotify);
 
-	virtual void updateDisplay();
-
 	void handleEvent(std::shared_ptr<const RsEvent> event);	// get events from libretroshare
 
 signals:
@@ -90,9 +88,6 @@ signals:
 
 protected:
 	void processSettings(bool load);
-
-	/* TokenResponse */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void feedoptions();
@@ -118,10 +113,6 @@ private:
 	void addFeedItemBlogNew(const RsFeedItem &fi);
 	void addFeedItemBlogMsg(const RsFeedItem &fi);
 #endif
-
-//	void addFeedItemChatNew(const RsFeedItem &fi, bool addWithoutCheck);
-//	void addFeedItemMessage(const RsFeedItem &fi);
-//	void addFeedItemFilesNew(const RsFeedItem &fi);
 
 private:
 	/* UI - from Designer */
