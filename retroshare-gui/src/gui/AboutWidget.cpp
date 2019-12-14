@@ -973,8 +973,7 @@ void AboutWidget::on_copy_button_clicked()
     verInfo+=addLibraries("libretroshare", libraries);
 
 #ifdef RS_JSONAPI
-// No version number available for restbed apparently.
-//
+// Disabled because I could not find how to get restbed version number
 //    /* Add version numbers of RetroShare */
 //    // Add versions here. Find a better place.
 //    libraries.clear();

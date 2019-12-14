@@ -2478,6 +2478,85 @@ void p3GxsChannels::cleanTimedOutCallbacks()
 	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
 }
 
+bool p3GxsChannels::exportChannelLink(
+        std::string& link, const RsGxsGroupId& chanId, bool includeGxsData,
+        const std::string& baseUrl, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(chanId.isNull()) return failure("chanId cannot be null");
+
+	const bool outputRadix = baseUrl.empty();
+	if(outputRadix && !includeGxsData) return
+	        failure("includeGxsData must be true if format requested is base64");
+
+	if( includeGxsData &&
+	        !RsGenExchange::exportGroupBase64(link, chanId, errMsg) )
+		return failure(errMsg);
+
+	if(outputRadix) return true;
+
+	std::vector<RsGxsChannelGroup> chansInfo;
+	if( !getChannelsInfo(std::list<RsGxsGroupId>({chanId}), chansInfo)
+	        || chansInfo.empty() )
+		return failure("failure retrieving channel information");
+
+	RsUrl inviteUrl(baseUrl);
+	inviteUrl.setQueryKV(CHANNEL_URL_ID_FIELD, chanId.toStdString());
+	inviteUrl.setQueryKV(CHANNEL_URL_NAME_FIELD, chansInfo[0].mMeta.mGroupName);
+	if(includeGxsData) inviteUrl.setQueryKV(CHANNEL_URL_DATA_FIELD, link);
+
+	link = inviteUrl.toString();
+	return true;
+}
+
+bool p3GxsChannels::importChannelLink(
+        const std::string& link, RsGxsGroupId& chanId, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(link.empty()) return failure("link is empty");
+
+	const std::string* radixPtr(&link);
+
+	RsUrl url(link);
+	const auto& query = url.query();
+	const auto qIt = query.find(CHANNEL_URL_DATA_FIELD);
+	if(qIt != query.end()) radixPtr = &qIt->second;
+
+	if(radixPtr->empty()) return failure(CHANNEL_URL_DATA_FIELD + " is empty");
+
+	if(!RsGenExchange::importGroupBase64(*radixPtr, chanId, errMsg))
+		return failure(errMsg);
+
+	return true;
+}
+
+/*static*/ const std::string RsGxsChannels::DEFAULT_CHANNEL_BASE_URL =
+        "retroshare:///channels";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_NAME_FIELD =
+        "chanName";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_ID_FIELD =
+        "chanId";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_DATA_FIELD =
+        "chanData";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_TITLE_FIELD =
+        "chanMsgTitle";
+/*static*/ const std::string RsGxsChannels::CHANNEL_URL_MSG_ID_FIELD =
+        "chanMsgId";
+
 RsGxsChannelGroup::~RsGxsChannelGroup() = default;
 RsGxsChannelPost::~RsGxsChannelPost() = default;
 RsGxsChannels::~RsGxsChannels() = default;

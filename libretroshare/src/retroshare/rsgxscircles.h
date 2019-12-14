@@ -317,6 +317,54 @@ public:
 	virtual bool cancelCircleMembership(
 	        const RsGxsId& ownGxsId, const RsGxsCircleId& circleId ) = 0;
 
+	/// default base URL used for circle links @see exportCircleLink
+	static const std::string DEFAULT_CIRCLE_BASE_URL;
+
+	/// Circle link query field used to store circle name @see exportCircleLink
+	static const std::string CIRCLE_URL_NAME_FIELD;
+
+	/// Circle link query field used to store circle id @see exportCircleLink
+	static const std::string CIRCLE_URL_ID_FIELD;
+
+	/// Circle link query field used to store circle data @see exportCircleLink
+	static const std::string CIRCLE_URL_DATA_FIELD;
+
+	/**
+	 * @brief Get link to a circle
+	 * @jsonapi{development}
+	 * @param[out] link storage for the generated link
+	 * @param[in] circleId Id of the circle of which we want to generate a link
+	 * @param[in] includeGxsData if true include the circle GXS group data so
+	 *	the receiver can request circle membership even if the circle hasn't
+	 *	propagated through GXS to her yet
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare circle link
+	 *	radix, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare circle link into a
+	 *	"normal" looking web link. If empty the circle data link will be
+	 *	outputted in plain base64 format.
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool exportCircleLink(
+	        std::string& link, const RsGxsCircleId& circleId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = RsGxsCircles::DEFAULT_CIRCLE_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
+	 * @brief Import circle from full link
+	 * @param[in] link circle link either in radix or link format
+	 * @param[out] circleId optional storage for parsed circle id
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool importCircleLink(
+	        const std::string& link,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
 	RS_DEPRECATED_FOR("getCirclesSummaries getCirclesInfo")
 	virtual bool getGroupData(
 	        const uint32_t& token, std::vector<RsGxsCircleGroup>& groups ) = 0;

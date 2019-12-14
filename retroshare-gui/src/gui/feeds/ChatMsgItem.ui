@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>208</height>
+    <width>565</width>
+    <height>209</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_1">
@@ -41,10 +41,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="spacing">
-       <number>6</number>
-      </property>
-      <item row="0" column="0" rowspan="2">
+      <item row="0" column="0" rowspan="3">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="AvatarWidget" name="avatar">
@@ -122,7 +119,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="4">
+      <item row="1" column="1" colspan="3">
        <widget class="QLabel" name="chatTextlabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -150,7 +147,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="5">
+      <item row="2" column="1" colspan="3">
        <widget class="QFrame" name="buttonFrame">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="leftMargin">
@@ -308,7 +305,7 @@
         </layout>
        </widget>
       </item>
-      <item row="2" column="0" colspan="5">
+      <item row="3" column="0" colspan="4">
        <widget class="QFrame" name="messageFrame">
         <layout class="QGridLayout" name="gridLayout_3">
          <property name="leftMargin">

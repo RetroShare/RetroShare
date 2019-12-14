@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie, Chris Evi-Parker                      *
+ * Copyright (C) 2012  Chris Evi-Parker                                        *
+ * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RSTOKENSERVICE_H
-#define RSTOKENSERVICE_H
+#pragma once
 
 #include <inttypes.h>
 #include <string>
@@ -28,6 +29,7 @@
 
 #include "retroshare/rsgxsifacetypes.h"
 #include "util/rsdeprecate.h"
+#include "util/rsdebug.h"
 
 // TODO CLEANUP: GXS_REQUEST_TYPE_* should be an inner enum of RsTokReqOptions
 #define GXS_REQUEST_TYPE_GROUP_DATA			0x00010000
@@ -113,7 +115,6 @@ struct RsTokReqOptions
  */
 class RsTokenService
 {
-
 public:
 
 	enum GxsRequestStatus : uint8_t
@@ -220,6 +221,59 @@ public:
 	 * @return false if unusuccessful in cancelling request, true if successful
 	 */
 	virtual bool cancelRequest(const uint32_t &token) = 0;
-};
 
-#endif // RSTOKENSERVICE_H
+	/**
+	 * Block caller while request is being processed.
+	 * Useful for blocking API implementation.
+	 * @param[in] token token associated to the request caller is waiting for
+	 * @param[in] maxWait maximum waiting time in milliseconds
+	 * @param[in] checkEvery time in millisecond between status checks
+	 */
+	RsTokenService::GxsRequestStatus waitToken(
+	        uint32_t token,
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2))
+	{
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		auto wkStartime = std::chrono::steady_clock::now();
+		int maxWorkAroundCnt = 10;
+LLwaitTokenBeginLabel:
+#endif
+		auto timeout = std::chrono::steady_clock::now() + maxWait;
+		auto st = requestStatus(token);
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
+		       && std::chrono::steady_clock::now() < timeout )
+		{
+			std::this_thread::sleep_for(checkEvery);
+			st = requestStatus(token);
+		}
+
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		/* Work around for very slow/old android devices, we don't expect this
+		 * to be necessary on newer devices. If it take unreasonably long
+		 * something worser is already happening elsewere and we return anyway.
+		 */
+		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
+		        && maxWorkAroundCnt-- > 0 )
+		{
+			maxWait *= 10;
+			checkEvery *= 3;
+			Dbg3() << __PRETTY_FUNCTION__ << " Slow Android device "
+			       << " workaround st: " << st
+			       << " maxWorkAroundCnt: " << maxWorkAroundCnt
+			       << " maxWait: " << maxWait.count()
+			       << " checkEvery: " << checkEvery.count() << std::endl;
+			goto LLwaitTokenBeginLabel;
+		}
+		Dbg3() << __PRETTY_FUNCTION__ << " lasted: "
+		       << std::chrono::duration_cast<std::chrono::milliseconds>(
+		              std::chrono::steady_clock::now() - wkStartime ).count()
+		       << "ms" << std::endl;
+
+#endif
+
+		return st;
+	}
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
+};

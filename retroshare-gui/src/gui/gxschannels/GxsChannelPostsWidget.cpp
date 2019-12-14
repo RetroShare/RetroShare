@@ -300,6 +300,8 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
 			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 			ui->infoAdministrator->setText(link.toHtml());
         
+			ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+
         	QString distrib_string ( "[unknown]" );
             
         	switch(group.mMeta.mCircleType)

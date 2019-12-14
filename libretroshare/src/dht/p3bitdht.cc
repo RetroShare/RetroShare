@@ -79,6 +79,12 @@ virtual int dhtInfoCallback(const bdId *id, uint32_t type, uint32_t flags, std::
 
 	virtual int dhtIsBannedCallback(const sockaddr_in *addr, bool *isBanned)
 	{
+		if(!rsBanList)
+		{
+			*isBanned = true;	// rsBanList is not enabled yet. For security, default to banned.
+			return 0;
+		}
+
 		// check whether ip filtering is enabled
 		// if not return 0 to signal that no filter is available
 		if(!rsBanList->ipFilteringEnabled())

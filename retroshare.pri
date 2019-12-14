@@ -581,9 +581,6 @@ android-* {
     CONFIG *= no_libresapihttpserver
     CONFIG -= libresapihttpserver
 
-	CONFIG += no_rs_service_terminal_login
-	CONFIG += no_rs_service_webui_terminal_password
-
     QT *= androidextras
     INCLUDEPATH *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"

@@ -21,6 +21,7 @@
  *                                                                             *
  *******************************************************************************/
 #include <unistd.h>
+#include <algorithm>
 
 #include "pqi/pqihash.h"
 #include "rsgenexchange.h"
@@ -38,8 +39,7 @@
 #include "rsgxsutil.h"
 #include "rsserver/p3face.h"
 #include "retroshare/rsevents.h"
-
-#include <algorithm>
+#include "util/radix64.h"
 
 #define PUB_GRP_MASK     0x000f
 #define RESTR_GRP_MASK   0x00f0
@@ -3432,6 +3432,71 @@ bool RsGenExchange::localSearch( const std::string& matchString,
 	return mNetService->search(matchString, results);
 }
 
+bool RsGenExchange::exportGroupBase64(
+        std::string& radix, const RsGxsGroupId& groupId, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(groupId.isNull()) return failure("groupId cannot be null");
+
+	const std::list<RsGxsGroupId> groupIds({groupId});
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	uint32_t token;
+	mDataAccess->requestGroupInfo(
+	            token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+	RsTokenService::GxsRequestStatus wtStatus = mDataAccess->waitToken(token);
+	if(wtStatus != RsTokenService::COMPLETE)
+		return failure( "waitToken(...) failed with: " +
+		                std::to_string(wtStatus) );
+
+	uint8_t* buf = nullptr;
+	uint32_t size;
+	RsGxsGroupId grpId;
+	if(!getSerializedGroupData(token, grpId, buf, size))
+		return failure("failed retrieving GXS data");
+
+	Radix64::encode(buf, static_cast<int>(size), radix);
+	free(buf);
+
+	return true;
+}
+
+bool RsGenExchange::importGroupBase64(
+        const std::string& radix, RsGxsGroupId& groupId,
+        std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(radix.empty()) return failure("radix is empty");
+
+	std::vector<uint8_t> mem = Radix64::decode(radix);
+	if(mem.empty()) return failure("radix seems corrupted");
+
+	// On success this also import the group as pending validation
+	if(!deserializeGroupData(
+	            mem.data(), static_cast<uint32_t>(mem.size()),
+	            reinterpret_cast<RsGxsGroupId*>(&groupId) ))
+		return failure("failed deserializing group");
+
+	return true;
+}
+
 RsGxsChanges::RsGxsChanges() :
     RsEvent(RsEventType::GXS_CHANGES), mServiceType(RsServiceType::NONE),
     mService(nullptr) {}
+
+RsGxsIface::~RsGxsIface() = default;
+RsGxsGroupSummary::~RsGxsGroupSummary() = default;

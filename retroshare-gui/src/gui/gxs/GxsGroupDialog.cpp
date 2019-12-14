@@ -468,6 +468,8 @@ void GxsGroupDialog::updateFromExistingMeta(const QString &description)
     else
         ui.lastpostline->setText(DateTime::formatLongDateTime(mGrpMeta.mLastPost));
     ui.authorLabel->setId(mGrpMeta.mAuthorId);
+	
+    ui.createdline->setText(DateTime::formatLongDateTime(mGrpMeta.mPublishTs));
 
 	link = RetroShareLink::createMessage(mGrpMeta.mAuthorId, "");
 	ui.authorLabel->setText(link.toHtml());

@@ -169,14 +169,15 @@ class RsGxsCircleCache
 
 class PgpAuxUtils;
 
-class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles, public GxsTokenQueue, public RsTickEvent
+class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
+        public GxsTokenQueue, public RsTickEvent
 {
-	public:
-	p3GxsCircles(RsGeneralDataService* gds, RsNetworkExchangeService* nes,  p3IdService *identities, PgpAuxUtils *pgpUtils);
+public:
+	p3GxsCircles(
+	        RsGeneralDataService* gds, RsNetworkExchangeService* nes,
+	        p3IdService* identities, PgpAuxUtils* pgpUtils );
 
-virtual RsServiceInfo getServiceInfo();
-
-	/*********** External Interface ***************/
+	RsServiceInfo getServiceInfo() override;
 
 	/// @see RsGxsCircles
 	bool createCircle(
@@ -211,6 +212,21 @@ virtual RsServiceInfo getServiceInfo();
 	bool getCircleRequest(const RsGxsGroupId& circleId,
                           const RsGxsMessageId& msgId,
                           RsGxsCircleMsg& msg) override;
+
+	/// @see RsGxsCircles
+	bool exportCircleLink(
+	        std::string& link, const RsGxsCircleId& circleId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_CIRCLE_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsCircles
+	bool importCircleLink(
+	        const std::string& link,
+	        RsGxsCircleId& circleId = RS_DEFAULT_STORAGE_PARAM(RsGxsCircleId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
 
 	virtual bool getCircleDetails(const RsGxsCircleId &id, RsGxsCircleDetails &details);
 	virtual bool getCircleExternalIdList(std::list<RsGxsCircleId> &circleIds);
