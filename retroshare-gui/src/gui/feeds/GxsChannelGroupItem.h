@@ -42,7 +42,7 @@ public:
 
 	bool setGroup(const RsGxsChannelGroup &group);
 
-    QString uniqueIdentifier() const override { return "GxsChannelGroupItem " + QString::fromStdString(mGroup.mMeta.mGroupId.toStdString()) ; }
+    std::string uniqueIdentifier() const override { return "GxsChannelGroupItem " + mGroup.mMeta.mGroupId.toStdString() ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

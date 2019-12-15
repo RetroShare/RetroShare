@@ -38,7 +38,7 @@ public:
 
 	void updateItemStatic();
 
-    virtual QString uniqueIdentifier() const override { return "MsgItem " + QString::fromStdString(mMsgId) ; }
+    virtual std::string uniqueIdentifier() const override { return "MsgItem " + mMsgId ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

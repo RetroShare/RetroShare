@@ -442,6 +442,7 @@ bool RttPeerInfo::initialisePeerInfo(const RsPeerId& id)
 	mCurrentPingTS = 0;
 	mCurrentPingCounter = 0;
 	mCurrentPongRecvd = true;
+	mCurrentMeanOffset = 0;
 
 	mSentPings = 0;
 	mLostPongs = 0;

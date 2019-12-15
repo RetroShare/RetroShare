@@ -52,7 +52,7 @@ public:
 	GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, const uint32_t type);
 	virtual ~GxsCircleItem();
 
-    QString uniqueIdentifier() const override;
+    std::string uniqueIdentifier() const override;
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 

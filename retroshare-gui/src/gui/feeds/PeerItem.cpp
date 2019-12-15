@@ -67,9 +67,9 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
-QString PeerItem::uniqueIdentifier() const
+std::string PeerItem::uniqueIdentifier() const
 {
-    return "PeerItem " + QString::fromStdString(mPeerId.toStdString()) + " " + QString::number(mType) ;
+    return "PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString() ;
 }
 
 void PeerItem::updateItemStatic()

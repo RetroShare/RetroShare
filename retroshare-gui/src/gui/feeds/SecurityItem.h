@@ -42,7 +42,7 @@ public:
 
 	void updateItemStatic();
 
-    QString uniqueIdentifier() const override;
+    std::string uniqueIdentifier() const override;
 
 protected:
 	/* FeedItem */

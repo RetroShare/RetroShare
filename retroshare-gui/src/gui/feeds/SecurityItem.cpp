@@ -81,9 +81,9 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
-QString SecurityItem::uniqueIdentifier() const
+std::string SecurityItem::uniqueIdentifier() const
 {
-    return "SecurityItem " + QString::number(mType) + " " + QString::fromStdString(mSslId.toStdString());
+    return "SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString();
 }
 
 void SecurityItem::updateItemStatic()

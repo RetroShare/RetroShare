@@ -43,7 +43,7 @@ public:
 
 	void updateItemStatic();
 
-    virtual QString uniqueIdentifier() const;
+    std::string uniqueIdentifier() const override;
 
 protected:
 	/* FeedItem */

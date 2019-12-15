@@ -78,10 +78,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-QString SecurityIpItem::uniqueIdentifier() const
+std::string SecurityIpItem::uniqueIdentifier() const
 {
-    return "SecurityItem " + QString::number(mType) + " " + QString::fromStdString(mSslId.toStdString())
-            + " " + QString::fromStdString(mIpAddr) + " " + QString::fromStdString(mIpAddrReported) ;
+    return "SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported ;
 }
 
 void SecurityIpItem::updateItemStatic()

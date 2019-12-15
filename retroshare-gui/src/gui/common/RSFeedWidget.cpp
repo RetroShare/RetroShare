@@ -476,10 +476,10 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 	}
 }
 
-FeedItem *RSFeedWidget::findFeedItem(const QString& identifier)
+FeedItem *RSFeedWidget::findFeedItem(const std::string& identifier)
 {
 	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem;
+	QTreeWidgetItem *treeItem=NULL;
 
     // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
 #warning TODO

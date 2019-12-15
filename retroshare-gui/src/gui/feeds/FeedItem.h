@@ -41,7 +41,7 @@ public:
      * \return returns a string that is unique to this specific item. The string will be used to search for an existing item that
      * 			would contain the same information. It should therefore sumarise the data represented by the item.
      */
-    virtual QString uniqueIdentifier() const =0;
+    virtual std::string uniqueIdentifier() const =0;
 protected:
 	virtual void doExpand(bool open) = 0;
 	virtual void expandFill(bool /*first*/) {}

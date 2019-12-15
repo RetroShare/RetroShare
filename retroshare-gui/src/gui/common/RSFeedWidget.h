@@ -71,7 +71,7 @@ public:
 	bool scrollTo(FeedItem *feedItem, bool focus);
 
 	void withAll(RSFeedWidgetCallbackFunction callback, void *data);
-	FeedItem *findFeedItem(const QString &identifier);
+	FeedItem *findFeedItem(const std::string &identifier);
 
 	void selectedFeedItems(QList<FeedItem*> &feedItems);
 
