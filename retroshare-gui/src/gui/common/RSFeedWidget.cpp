@@ -491,7 +491,14 @@ FeedItem *RSFeedWidget::findFeedItem(const std::string& identifier)
 			continue;
 		}
 
-		if (feedItem->uniqueIdentifier() == identifier)
+        // (cyril) It seems that a local variable must be used to store this identifier.
+        // Directly comparing identifier such as in:
+        //    if(feedItem->uniqueIdentifier() == identifier)
+        // causes a crash. I dont know why! If someone ever finds why, please tell me.
+
+        std::string id = feedItem->uniqueIdentifier();
+
+		if (id == identifier)
 			return feedItem;
 	}
 
