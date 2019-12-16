@@ -53,7 +53,7 @@ p3GxsForums::p3GxsForums( RsGeneralDataService *gds,
     RsGenExchange( gds, nes, new RsGxsForumSerialiser(),
                    RS_SERVICE_GXS_TYPE_FORUMS, gixs, forumsAuthenPolicy()),
     RsGxsForums(static_cast<RsGxsIface&>(*this)), mGenToken(0),
-    mGenActive(false), mGenCount(0)
+    mGenActive(false), mGenCount(0), mKnownForumsMutex("GXS forums known forums timestamp cache")
 {
 	// Test Data disabled in Repo.
 	//RsTickEvent::schedule_in(FORUM_TESTEVENT_DUMMYDATA, DUMMYDATA_PERIOD);
@@ -181,95 +181,143 @@ RsSerialiser* p3GxsForums::setupSerialiser()
 
 void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 {
-	if (!changes.empty())
-	{
-		if (rsEvents)
-		{
-			std::vector<RsGxsNotify*>::iterator it;
-			for(it = changes.begin(); it != changes.end(); ++it)
-			{
-				RsGxsNotify *c = *it;
-
-				switch (c->getType())
-				{
-                default:
-					case RsGxsNotify::TYPE_PROCESSED:
-					case RsGxsNotify::TYPE_PUBLISHED:
-						break;
-
-					case RsGxsNotify::TYPE_RECEIVED_NEW:
-					{
-						RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange*>(c);
-						if (msgChange)
-						{
-							std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-
-							for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-								for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-                                {
-                                    auto ev = std::make_shared<RsGxsForumEvent>();
-
-                                    ev->mForumGroupId = mit->first;
-                                    ev->mForumMsgId = *mit1;
-                                    ev->mForumEventCode = RsGxsForumEvent::NEW_MESSAGE;
-
-                                    rsEvents->sendEvent(ev);
-                                }
-
-							break;
-						}
-
-						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
-						if (grpChange)
-						{
-							/* group received */
-							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-							std::list<RsGxsGroupId>::iterator git;
-
-							for (git = grpList.begin(); git != grpList.end(); ++git)
-							{
-                                if(mKnownForums.find(*git) == mKnownForums.end())
-                                {
-									auto ev = std::make_shared<RsGxsForumEvent>();
-
-                                    ev->mForumGroupId = *git;
-                                    ev->mForumEventCode = RsGxsForumEvent::NEW_FORUM;
-                                    rsEvents->sendEvent(ev);
-
-                                    mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
-									IndicateConfigChanged();
-                                }
-                                else
-                                    std::cerr << "(II) Not notifying already known forum " << *git << std::endl;
-							}
-							break;
-						}
-						break;
-					}
-#ifdef UNUSED
-                    // (Cyril) There's no publish key system for forums now. As a GXS group, it is possible to add one, just like channels
-                    // but the possibility is not offered by the API yet.
-
-					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
-					{
-						RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
-						if (grpChange)
-						{
-							/* group received */
-							std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-							std::list<RsGxsGroupId>::iterator git;
-							for (git = grpList.begin(); git != grpList.end(); ++git)
-							{
-								notify->AddFeedItem(RS_FEED_ITEM_FORUM_PUBLISHKEY, git->toStdString());
-							}
-							break;
-						}
-						break;
-					}
+#ifdef GXSFORUMS_DEBUG
+	std::cerr << "p3GxsForums::notifyChanges() : " << changes.size() << "changes to notify" << std::endl;
 #endif
+
+	std::vector<RsGxsNotify *>::iterator it;
+	for(it = changes.begin(); it != changes.end(); ++it)
+	{
+		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+		if (msgChange)
+		{
+			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) /* message received */
+				if (rsEvents)
+				{
+					std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgChangeMap = msgChange->msgChangeMap;
+					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
+						{
+							auto ev = std::make_shared<RsGxsForumEvent>();
+
+							ev->mForumMsgId = *mit1;
+							ev->mForumGroupId = mit->first;
+							ev->mForumEventCode = RsGxsForumEvent::NEW_MESSAGE;
+
+							rsEvents->sendEvent(ev);
+						}
+				}
+
+#ifdef NOT_USED_YET
+			if (!msgChange->metaChange())
+			{
+#ifdef GXSCHANNELS_DEBUG
+				std::cerr << "p3GxsForums::notifyChanges() Found Message Change Notification";
+				std::cerr << std::endl;
+#endif
+
+				std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
+				for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+				{
+#ifdef GXSCHANNELS_DEBUG
+					std::cerr << "p3GxsForums::notifyChanges() Msgs for Group: " << mit->first;
+					std::cerr << std::endl;
+#endif
+					bool enabled = false;
+					if (autoDownloadEnabled(mit->first, enabled) && enabled)
+					{
+#ifdef GXSCHANNELS_DEBUG
+						std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
+						std::cerr << std::endl;
+#endif
+
+						/* problem is most of these will be comments and votes,
+						 * should make it occasional - every 5mins / 10minutes TODO */
+						unprocessedGroups.push_back(mit->first);
+					}
 				}
 			}
+#endif
 		}
+		else
+		{
+			if (rsEvents)
+			{
+				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
+				if (grpChange)
+				{
+					switch (grpChange->getType())
+					{
+					default:
+					case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
+					{
+						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+						std::list<RsGxsGroupId>::iterator git;
+						for (git = grpList.begin(); git != grpList.end(); ++git)
+						{
+							auto ev = std::make_shared<RsGxsForumEvent>();
+
+							ev->mForumGroupId = *git;
+							ev->mForumEventCode = RsGxsForumEvent::SUBSCRIBE_STATUS_CHANGED;
+
+							rsEvents->sendEvent(ev);
+						}
+
+					}
+						break;
+
+					case RsGxsNotify::TYPE_PUBLISHED:
+					case RsGxsNotify::TYPE_RECEIVED_NEW:
+					{
+						/* group received */
+						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+						std::list<RsGxsGroupId>::iterator git;
+
+						RS_STACK_MUTEX(mKnownForumsMutex);
+						for (git = grpList.begin(); git != grpList.end(); ++git)
+						{
+							if(mKnownForums.find(*git) == mKnownForums.end())
+							{
+								mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
+								IndicateConfigChanged();
+
+								auto ev = std::make_shared<RsGxsForumEvent>();
+
+								ev->mForumGroupId = *git;
+								ev->mForumEventCode = RsGxsForumEvent::NEW_FORUM;
+
+								rsEvents->sendEvent(ev);
+							}
+							else
+								std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
+						}
+						break;
+					}
+
+#ifdef NOT_USED_YET
+					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
+					{
+						/* group received */
+						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+						std::list<RsGxsGroupId>::iterator git;
+						for (git = grpList.begin(); git != grpList.end(); ++git)
+						{
+							auto ev = std::make_shared<RsGxsChannelEvent>();
+
+							ev->mChannelGroupId = *git;
+							ev->mChannelEventCode = RsGxsChannelEvent::RECEIVED_PUBLISH_KEY;
+
+							rsEvents->sendEvent(ev);
+						}
+					}
+					break;
+#endif
+					}
+                }
+			}
+		}
+
+		/* shouldn't need to worry about groups - as they need to be subscribed to */
 	}
 
 	RsGxsIfaceHelper::receiveChanges(changes);

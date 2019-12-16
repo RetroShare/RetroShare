@@ -108,12 +108,13 @@ struct RsGxsChannelEvent: RsEvent
 	    : RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(UNKNOWN) {}
 
 	enum ChannelEventCode: uint8_t {
-        UNKNOWN                 = 0x00,
-        NEW_CHANNEL             = 0x01, // emitted when new channel is received
-        UPDATED_CHANNEL         = 0x02,	// emitted when existing channel is updated
-        NEW_MESSAGE             = 0x03, // new message reeived in a particular channel (group and msg id)
-        UPDATED_MESSAGE         = 0x04, // existing message has been updated in a particular channel (group and msg id)
-        RECEIVED_PUBLISH_KEY    = 0x05, // publish key for this channel has been received.
+        UNKNOWN                  = 0x00,
+        NEW_CHANNEL              = 0x01, // emitted when new channel is received
+        UPDATED_CHANNEL          = 0x02,	// emitted when existing channel is updated
+        NEW_MESSAGE              = 0x03, // new message reeived in a particular channel (group and msg id)
+        UPDATED_MESSAGE          = 0x04, // existing message has been updated in a particular channel (group and msg id)
+        RECEIVED_PUBLISH_KEY     = 0x05, // publish key for this channel has been received.
+        SUBSCRIBE_STATUS_CHANGED = 0x06, // subscription for channel mChannelGroupId changed.
     };
 
     ChannelEventCode mChannelEventCode;
