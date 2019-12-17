@@ -197,7 +197,7 @@ struct RsAuthSslConnectionAutenticationEvent : RsEvent
 	RsAuthSslConnectionAutenticationEvent() : RsEvent(RsEventType::AUTHSSL_CONNECTION_AUTENTICATION) {}
 
     enum ConnectionErrorCode: uint8_t {
-        NO_ERROR                        = 0x00,
+        NO_CONNECTION_ERROR             = 0x00,
         MISSING_AUTHENTICATION_INFO     = 0x01,
         PGP_SIGNATURE_VALIDATION_FAILED = 0x02,
         MISMATCHED_PGP_ID               = 0x03,
