@@ -456,6 +456,7 @@ void NewsFeed::addFeedItem(FeedItem *item)
 	}
 
 	ui->feedWidget->addFeedItem(item, ROLE_RECEIVED, QDateTime::currentDateTime());
+	sendNewsFeedChanged();
 }
 
 void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
@@ -475,6 +476,7 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 	}
 
 	addFeedItem(item);
+	sendNewsFeedChanged();
 }
 
 void NewsFeed::remUniqueFeedItem(FeedItem *item)
