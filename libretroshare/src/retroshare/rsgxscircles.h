@@ -165,9 +165,9 @@ struct RsGxsCircleDetails : RsSerializable
 struct RsGxsCircleEvent: RsEvent
 {
 	RsGxsCircleEvent()
-	    : RsEvent(RsEventType::GXS_CIRCLES), mCircleEventType(UNKNOWN) {}
+	    : RsEvent(RsEventType::GXS_CIRCLES), mCircleEventType(CircleEventCode::UNKNOWN) {}
 
-	enum CircleEventType: uint8_t {
+	enum class CircleEventCode: uint8_t {
         UNKNOWN                   = 0x00,
         CIRCLE_MEMBERSHIP_REQUEST = 0x01,	// mCircleId contains the circle id and mGxsId is the id requesting membership
         CIRCLE_MEMBERSHIP_INVITE  = 0x02,	// mCircleId is the circle that invites me, and mGxsId is my own Id that is invited
@@ -176,7 +176,7 @@ struct RsGxsCircleEvent: RsEvent
         CIRCLE_MEMBERSHIP_REVOQUED= 0x05,	// mCircleId contains the circle id and mGxsId is the id that was revoqued by admin
     };
 
-    CircleEventType mCircleEventType;
+    CircleEventCode mCircleEventType;
     RsGxsCircleId mCircleId;
     RsGxsId mGxsId;
 

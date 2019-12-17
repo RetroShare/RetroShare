@@ -1114,7 +1114,7 @@ int pqissl::SSL_Connection_Complete()
 			X509 *x509 = SSL_get_peer_certificate(ssl_connection) ;
 
 			ev->mSslId = RsX509Cert::getCertSslId(*x509);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PEER_REFUSED_CONNECTION;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::PEER_REFUSED_CONNECTION;
 			rsEvents->postEvent(ev);
         }
 
@@ -1283,7 +1283,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 
 			ev->mSslId = RsX509Cert::getCertSslId(*x509);
 			ev->mLocator = RsUrl(foreign_addr);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::IP_IS_BLACKLISTED;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::IP_IS_BLACKLISTED;
 
 			rsEvents->postEvent(ev);
         }

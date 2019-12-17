@@ -260,7 +260,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 							ev->mChannelMsgId = *mit1;
 							ev->mChannelGroupId = mit->first;
-							ev->mChannelEventCode = RsGxsChannelEvent::NEW_MESSAGE;
+							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE;
 
 							rsEvents->sendEvent(ev);
 						}
@@ -315,7 +315,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							auto ev = std::make_shared<RsGxsChannelEvent>();
 
 							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::SUBSCRIBE_STATUS_CHANGED;
+							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
 
 							rsEvents->sendEvent(ev);
 						}
@@ -340,7 +340,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 								auto ev = std::make_shared<RsGxsChannelEvent>();
 
 								ev->mChannelGroupId = *git;
-								ev->mChannelEventCode = RsGxsChannelEvent::NEW_CHANNEL;
+								ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL;
 
 								rsEvents->sendEvent(ev);
 							}
@@ -360,7 +360,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							auto ev = std::make_shared<RsGxsChannelEvent>();
 
 							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::RECEIVED_PUBLISH_KEY;
+							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::RECEIVED_PUBLISH_KEY;
 
 							rsEvents->sendEvent(ev);
 						}

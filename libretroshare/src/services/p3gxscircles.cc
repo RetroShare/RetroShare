@@ -514,11 +514,11 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						ev->mGxsId = msg.mMeta.mAuthorId;
 
 						if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
-							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_LEAVE;
+							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
 						else if(details.mAllowedGxsIds.find(msg.mMeta.mAuthorId) != details.mAllowedGxsIds.end())
-							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_JOIN;
+							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_JOIN;
 						else
-							ev->mCircleEventType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_REQUEST;
+							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
 
 						rsEvents->sendEvent(ev);
 					}

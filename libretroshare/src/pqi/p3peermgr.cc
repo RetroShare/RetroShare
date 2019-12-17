@@ -1814,7 +1814,7 @@ bool p3PeerMgrIMPL::addCandidateForOwnExternalAddress(const RsPeerId &from, cons
             ev->mSslId = from;
             ev->mStrInfo1 = sockaddr_storage_iptostring(addr);
             ev->mStrInfo2 = sockaddr_storage_iptostring(own_addr);
-			ev->mConnectionInfoCode = RsConnectionEvent::PEER_REPORTS_WRONG_IP;
+			ev->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_REPORTS_WRONG_IP;
 
             rsEvents->postEvent(ev);
         }

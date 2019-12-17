@@ -71,9 +71,9 @@ std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
 struct RsGxsPostedEvent: RsEvent
 {
 	RsGxsPostedEvent()
-	    : RsEvent(RsEventType::GXS_POSTED), mPostedEventCode(UNKNOWN) {}
+	    : RsEvent(RsEventType::GXS_POSTED), mPostedEventCode(PostedEventCode::UNKNOWN) {}
 
-	enum PostedEventCode: uint8_t {
+	enum class PostedEventCode: uint8_t {
 		UNKNOWN                 = 0x00,
 		NEW_POSTED_GROUP        = 0x01,
 		NEW_MESSAGE             = 0x02

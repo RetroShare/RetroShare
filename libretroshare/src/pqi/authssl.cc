@@ -1222,7 +1222,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}
@@ -1242,7 +1242,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}
@@ -1273,7 +1273,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 				ev->mSslCn = sslCn;
 				ev->mPgpId = pgpId;
 				ev->mErrorMsg = errorMsg;
-				ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISMATCHED_PGP_ID;
+				ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISMATCHED_PGP_ID;
 				rsEvents->postEvent(std::move(ev));
 			}
 
@@ -1301,10 +1301,10 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
             switch(auth_diagnostic)
             {
-            case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND; break;
-            case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::PGP_SIGNATURE_VALIDATION_FAILED;break;
+            case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::NOT_A_FRIEND; break;
+            case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::PGP_SIGNATURE_VALIDATION_FAILED;break;
 			default:
-                ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;break;
+                ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;break;
             }
 
 			ev->mErrorMsg = errMsg;
@@ -1331,7 +1331,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NOT_A_FRIEND;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::NOT_A_FRIEND;
 			rsEvents->postEvent(std::move(ev));
 		}
 

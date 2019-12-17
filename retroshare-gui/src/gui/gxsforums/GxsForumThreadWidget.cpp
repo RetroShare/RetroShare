@@ -450,10 +450,10 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 
         switch(e->mForumEventCode)
         {
-        case RsGxsForumEvent::UPDATED_FORUM:
-        case RsGxsForumEvent::NEW_FORUM:
-        case RsGxsForumEvent::UPDATED_MESSAGE:
-        case RsGxsForumEvent::NEW_MESSAGE:
+        case RsGxsForumEvent::ForumEventCode::UPDATED_FORUM:
+        case RsGxsForumEvent::ForumEventCode::NEW_FORUM:
+        case RsGxsForumEvent::ForumEventCode::UPDATED_MESSAGE:
+        case RsGxsForumEvent::ForumEventCode::NEW_MESSAGE:
             if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
 				updateDisplay(true);
             break;

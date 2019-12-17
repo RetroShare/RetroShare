@@ -119,7 +119,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                         ev->mPostedMsgId = *mit1;
                         ev->mPostedGroupId = mit->first;
-                        ev->mPostedEventCode = RsGxsPostedEvent::NEW_MESSAGE;
+                        ev->mPostedEventCode = RsGxsPostedEvent::PostedEventCode::NEW_MESSAGE;
 
                         rsEvents->sendEvent(ev);
 					}
@@ -148,7 +148,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					auto ev = std::make_shared<RsGxsPostedEvent>();
 
 					ev->mPostedGroupId = *git;
-					ev->mPostedEventCode = RsGxsPostedEvent::NEW_POSTED_GROUP;
+					ev->mPostedEventCode = RsGxsPostedEvent::PostedEventCode::NEW_POSTED_GROUP;
 
 					rsEvents->sendEvent(ev);
 				}

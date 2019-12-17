@@ -202,7 +202,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 							ev->mForumMsgId = *mit1;
 							ev->mForumGroupId = mit->first;
-							ev->mForumEventCode = RsGxsForumEvent::NEW_MESSAGE;
+							ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::NEW_MESSAGE;
 
 							rsEvents->sendEvent(ev);
 						}
@@ -258,7 +258,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 							auto ev = std::make_shared<RsGxsForumEvent>();
 
 							ev->mForumGroupId = *git;
-							ev->mForumEventCode = RsGxsForumEvent::SUBSCRIBE_STATUS_CHANGED;
+							ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::SUBSCRIBE_STATUS_CHANGED;
 
 							rsEvents->sendEvent(ev);
 						}
@@ -284,7 +284,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 								auto ev = std::make_shared<RsGxsForumEvent>();
 
 								ev->mForumGroupId = *git;
-								ev->mForumEventCode = RsGxsForumEvent::NEW_FORUM;
+								ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::NEW_FORUM;
 
 								rsEvents->sendEvent(ev);
 							}

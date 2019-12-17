@@ -477,7 +477,7 @@ void p3LinkMgrIMPL::tickMonitors()
 				{
 					auto e = std::make_shared<RsConnectionEvent>() ;
 
-					e->mConnectionInfoCode = RsConnectionEvent::PEER_CONNECTED;
+					e->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_CONNECTED;
 					e->mSslId = peer.id;
 
 					rsEvents->postEvent(e);
@@ -486,7 +486,7 @@ void p3LinkMgrIMPL::tickMonitors()
 				{
 					auto e = std::make_shared<RsConnectionEvent>() ;
 
-					e->mConnectionInfoCode = RsConnectionEvent::PEER_DISCONNECTED;
+					e->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_DISCONNECTED;
 					e->mSslId = peer.id;
 
                     rsEvents->postEvent(e);

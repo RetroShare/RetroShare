@@ -59,7 +59,7 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 
         switch(e->mForumEventCode)
         {
-        case RsGxsForumEvent::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+        case RsGxsForumEvent::ForumEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
             break;
         default:
             break;

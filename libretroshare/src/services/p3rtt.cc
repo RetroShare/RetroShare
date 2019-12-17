@@ -23,6 +23,7 @@
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
@@ -373,7 +374,7 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 
 				ev->mSslId = peerInfo->mId;
                 ev->mStrInfo1 = RsUtil::NumberToString(peerInfo->mCurrentMeanOffset,false);
-				ev->mConnectionInfoCode = RsConnectionEvent::PEER_TIME_SHIFT;
+				ev->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_TIME_SHIFT;
 
 				rsEvents->postEvent(ev);
             }

@@ -483,7 +483,7 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 			auto ev = std::unique_ptr<RsAuthSslConnectionAutenticationEvent>(new RsAuthSslConnectionAutenticationEvent);
 
 			ev->mLocator = RsUrl(incoming_connexion_info.addr);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::MISSING_AUTHENTICATION_INFO;
+			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}

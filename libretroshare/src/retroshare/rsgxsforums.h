@@ -107,9 +107,9 @@ struct RsGxsForumMsg : RsSerializable
 struct RsGxsForumEvent: RsEvent
 {
     RsGxsForumEvent()
-	    : RsEvent(RsEventType::GXS_FORUMS), mForumEventCode(UNKNOWN) {}
+	    : RsEvent(RsEventType::GXS_FORUMS), mForumEventCode(ForumEventCode::UNKNOWN) {}
 
-	enum ForumEventCode: uint8_t {
+	enum class ForumEventCode: uint8_t {
         UNKNOWN                  = 0x00,
         NEW_FORUM                = 0x01, // emitted when new forum is received
         UPDATED_FORUM            = 0x02,	// emitted when existing forum is updated
