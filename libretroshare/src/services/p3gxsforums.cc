@@ -96,14 +96,14 @@ uint32_t p3GxsForums::forumsAuthenPolicy()
 static const uint32_t GXS_FORUMS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
 static const uint8_t  GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
 
-struct RsGxsForumNotifyRecordsItem: public RsItem
+struct RsGxsGroupNotifyRecordsItem: public RsItem
 {
 
-	RsGxsForumNotifyRecordsItem()
+	RsGxsGroupNotifyRecordsItem()
 	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_FORUMS_CONFIG,GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD)
 	{}
 
-    virtual ~RsGxsForumNotifyRecordsItem() {}
+    virtual ~RsGxsGroupNotifyRecordsItem() {}
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
@@ -127,7 +127,7 @@ public:
 
 		switch(item_sub_id)
 		{
-		case GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsForumNotifyRecordsItem();
+		case GXS_FORUMS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsGroupNotifyRecordsItem();
 		default:
 			return NULL;
 		}
@@ -138,7 +138,7 @@ bool p3GxsForums::saveList(bool &cleanup, std::list<RsItem *>&saveList)
 {
 	cleanup = true ;
 
-	RsGxsForumNotifyRecordsItem *item = new RsGxsForumNotifyRecordsItem ;
+	RsGxsGroupNotifyRecordsItem *item = new RsGxsGroupNotifyRecordsItem ;
 
 	item->records = mKnownForums ;
 
@@ -155,7 +155,7 @@ bool p3GxsForums::loadList(std::list<RsItem *>& loadList)
 
 		rstime_t now = time(NULL);
 
-		RsGxsForumNotifyRecordsItem *fnr = dynamic_cast<RsGxsForumNotifyRecordsItem*>(item) ;
+		RsGxsGroupNotifyRecordsItem *fnr = dynamic_cast<RsGxsGroupNotifyRecordsItem*>(item) ;
 
 		if(fnr != NULL)
 		{
