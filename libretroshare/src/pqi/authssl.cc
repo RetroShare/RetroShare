@@ -1313,8 +1313,9 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 		return verificationFailed;
 	}
-
+#ifdef AUTHSSL_DEBUG
     std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
+#endif
 
 	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
