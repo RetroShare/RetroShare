@@ -16,12 +16,12 @@ Copyright: 2018-2019 Gioacchino Mazzurco <gio@eigenlab.org>
 License: AGPL-3.0-only
 
 Files: libretroshare/*
-Copyright: 2007-2019, Retroshare Team <contact@retroshare.cc>
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
 License: LGPL-3.0-or-later
 
 Files: src/retroshare-gui/src/TorControl/
 Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
-License: BSD-New
+License: BSD-3-Clause
 
 Files: retroshare-gui/src/gui/common/PictureFlow.* \
 		 src/retroshare-gui/src/qss/qdarkstyle.qss
@@ -146,7 +146,7 @@ License: MIT
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
   THE SOFTWARE.
 
-License: BSD-New
+License: BSD-3-Clause
   You may use this file under the terms of the BSD license as follows:
   .
   "Redistribution and use in source and binary forms, with or without
