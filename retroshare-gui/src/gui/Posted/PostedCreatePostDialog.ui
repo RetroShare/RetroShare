@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>575</width>
-    <height>467</height>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Submit Post</string>
+   <string>Create a Post</string>
   </property>
   <layout class="QGridLayout" name="PostedCreatePostDialogGLayout">
    <property name="leftMargin">
@@ -121,24 +121,186 @@
          <enum>QFrame::Box</enum>
         </property>
         <property name="text">
-         <string>You are submitting a link. The key to a successful submission is interesting content and a descriptive title.</string>
+         <string>You are submitting a post. The key to a successful submission is interesting content and a descriptive title.</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
         </property>
        </widget>
       </item>
+      <item row="1" column="0" colspan="3">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="postButton">
+          <property name="text">
+           <string>Post</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Posted_images.qrc">
+            <normaloff>:/images/post.png</normaloff>:/images/post.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="imageButton">
+          <property name="text">
+           <string>Image</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Posted_images.qrc">
+            <normaloff>:/images/photo.png</normaloff>:/images/photo.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="linkButton">
+          <property name="text">
+           <string>Link</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Posted_images.qrc">
+            <normaloff>:/images/link.png</normaloff>:/images/link.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_4">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>298</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0" colspan="3">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="signedLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Post as</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="GxsIdChooser" name="idChooser">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="0">
+       <spacer name="buttonHSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="4" column="2">
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel</set>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="0" colspan="3">
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QStackedWidget" name="stackedWidget">
         <property name="currentIndex">
          <number>0</number>
         </property>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Picture</string>
-         </attribute>
+        <widget class="QWidget" name="stackedWidgetPage1">
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="MRichTextEdit" name="MRichTextEditWidget" native="true"/>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLineEdit" name="titleEdit">
+            <property name="placeholderText">
+             <string>Title</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="stackedWidgetPage2">
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="1">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item row="0" column="2">
            <spacer name="horizontalSpacer">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -151,14 +313,7 @@
             </property>
            </spacer>
           </item>
-          <item row="0" column="0">
-           <widget class="QPushButton" name="pushButton">
-            <property name="text">
-             <string>Add Picture</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" colspan="2">
+          <item row="1" column="0" colspan="3">
            <widget class="QGroupBox" name="groupBox">
             <property name="title">
              <string>Preview</string>
@@ -186,8 +341,8 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
-              <spacer name="horizontalSpacer_2">
+             <item row="0" column="2">
+              <spacer name="horizontalSpacer_3">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -199,8 +354,8 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="2">
-              <spacer name="horizontalSpacer_3">
+             <item row="0" column="0">
+              <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -215,34 +370,65 @@
             </layout>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QPushButton" name="pushButton">
+            <property name="text">
+             <string>Add Picture</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Picture size is limited to 34 KB</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>Notes</string>
-         </attribute>
+        <widget class="QWidget" name="stackedWidgetPage3">
          <layout class="QGridLayout" name="gridLayout_3">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>6</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="linkEdit">
+            <property name="placeholderText">
+             <string>Url</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>248</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="0" column="0">
-           <widget class="MimeTextEdit" name="notesTextEdit"/>
+           <widget class="QLineEdit" name="titleEditLink">
+            <property name="placeholderText">
+             <string>Title</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
        </widget>
       </item>
-      <item row="3" column="0">
-       <spacer name="buttonHSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="3" column="1">
+      <item row="4" column="1">
        <widget class="QPushButton" name="submitButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -250,60 +436,13 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
         <property name="text">
-         <string>Submit</string>
+         <string>Post</string>
         </property>
        </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::Cancel</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="3">
-       <layout class="QGridLayout" name="titleGLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="titleLabel">
-          <property name="text">
-           <string>Title</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QLineEdit" name="titleEdit"/>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="linkLabel">
-          <property name="text">
-           <string>Link</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="linkEdit"/>
-        </item>
-        <item row="2" column="1">
-         <widget class="GxsIdChooser" name="idChooser"/>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="signedLabel">
-          <property name="text">
-           <string>Post as</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </item>
      </layout>
     </widget>
@@ -323,17 +462,22 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>MimeTextEdit</class>
-   <extends>QTextEdit</extends>
-   <header location="global">gui/common/MimeTextEdit.h</header>
-  </customwidget>
-  <customwidget>
    <class>GxsIdChooser</class>
    <extends>QComboBox</extends>
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
+  <customwidget>
+   <class>MRichTextEdit</class>
+   <extends>QWidget</extends>
+   <header>util/MRichTextEdit.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

@@ -18,13 +18,16 @@
  *                                                                             *
  *******************************************************************************/
 
- #include <QBuffer>
+#include <QBuffer>
 #include <QMessageBox>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
 #include "util/TokenQueue.h"
+#include "util/MRichTextEdit.h"
+#include "gui/feeds/SubFileItem.h"
+#include "util/rsdir.h"
 
 #include "gui/settings/rsharesettings.h"
 #include <QBuffer>
@@ -32,21 +35,24 @@
 #include <iostream>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
-	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
+	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
 	Settings->loadWidgetInformation(this);
+
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
 	connect(ui->pushButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));
-	ui->headerFrame->setHeaderText(tr("Submit a new Post"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/postedlinks.png"));
+	ui->headerFrame->setHeaderText(tr("Create a new Post"));
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
+	ui->MRichTextEditWidget->setPlaceHolderTextPosted();
+	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
 }
@@ -78,10 +84,21 @@ void PostedCreatePostDialog::createPost()
 	RsPostedPost post;
 	post.mMeta.mGroupId = mGrpId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
-	post.mNotes = std::string(ui->notesTextEdit->toPlainText().toUtf8());
-	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-	post.mMeta.mAuthorId = authorId;
 	
+	QString text;
+	text = ui->MRichTextEditWidget->toHtml();
+	post.mNotes = std::string(text.toUtf8());
+
+	post.mMeta.mAuthorId = authorId;
+
+	if(!ui->titleEdit->text().isEmpty())
+	{ 
+		post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
+	}else
+	{
+		post.mMeta.mMsgName = std::string(ui->titleEditLink->text().toUtf8());
+	}
+
 	QByteArray ba;
 	QBuffer buffer(&ba);
 	
@@ -94,7 +111,7 @@ void PostedCreatePostDialog::createPost()
 		post.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}
 	
-	if(ui->titleEdit->text().isEmpty()) {
+	if(ui->titleEdit->text().isEmpty()&& ui->titleEditLink->text().isEmpty()) {
 		/* error message */
 		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty title!!
@@ -118,4 +135,19 @@ void PostedCreatePostDialog::addPicture()
 
 	// to show the selected
 	ui->imageLabel->setPixmap(picture);
+}
+
+void PostedCreatePostDialog::on_postButton_clicked()
+{
+	ui->stackedWidget->setCurrentIndex(0);
+}
+
+void PostedCreatePostDialog::on_imageButton_clicked()
+{
+	ui->stackedWidget->setCurrentIndex(1);
+}
+
+void PostedCreatePostDialog::on_linkButton_clicked()
+{
+	ui->stackedWidget->setCurrentIndex(2);
 }

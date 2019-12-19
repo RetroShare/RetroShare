@@ -27,12 +27,14 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "util/HandleRichText.h"
 
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
-
 #include <iostream>
+
+#define LINK_IMAGE ":/images/thumb-link.png"
 
 /** Constructor */
 
@@ -235,7 +237,7 @@ void PostedItem::loadComment(const uint32_t &token)
 	if (comNb == 1) {
 		sComButText = sComButText.append("(1)");
 	} else if (comNb > 1) {
-		sComButText = tr("Comments").append(" (%1)").arg(comNb);
+		sComButText = " " + tr("Comments").append(" (%1)").arg(comNb);
 	}
 	ui->commentButton->setText(sComButText);
 }
@@ -252,22 +254,6 @@ void PostedItem::fill()
 	mInFill = true;
 	int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
 	int desired_width =  sqpixmap2.width()*desired_height/(float)sqpixmap2.height();
-
-	if(mPost.mImage.mData != NULL)
-	{
-		QPixmap pixmap;
-		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-		// Wiping data - as its been passed to thumbnail.
-		
-		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-		ui->thumbnailLabel->setPixmap(sqpixmap);
-		ui->pictureLabel->setPixmap(pixmap);
-	}
-	else
-	{
-		//ui->thumbnailLabel->setFixedSize(desired_width,desired_height);
-		ui->expandButton->setDisabled(true);
-	}
 
 	QDateTime qtime;
 	qtime.setTime_t(mPost.mMeta.mPublishTs);
@@ -317,6 +303,28 @@ void PostedItem::fill()
 	}
 
 	ui->siteLabel->setText(sitestr);
+	
+	if(mPost.mImage.mData != NULL)
+	{
+		QPixmap pixmap;
+		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+		// Wiping data - as its been passed to thumbnail.
+		
+		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+		ui->thumbnailLabel->setPixmap(sqpixmap);
+		ui->pictureLabel->setPixmap(pixmap);
+	}
+	else if (urlOkay && (mPost.mImage.mData == NULL))
+	{
+		ui->expandButton->setDisabled(true);
+		ui->thumbnailLabel->setPixmap(QPixmap(LINK_IMAGE));
+	}
+	else
+	{
+		ui->expandButton->setDisabled(true);
+		ui->thumbnailLabel->setPixmap(sqpixmap2);
+	}
+
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
 	//score += " Top" + QString::number(post.mTopScore); 
@@ -327,7 +335,8 @@ void PostedItem::fill()
 	ui->scoreLabel->setText(score);
 
 	// FIX THIS UP LATER.
-	ui->notes->setText(QString::fromUtf8(mPost.mNotes.c_str()));
+	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
 	if(ui->notes->text().isEmpty())
 		ui->notesButton->hide();
 	// differences between Feed or Top of Comment.
