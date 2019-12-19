@@ -102,8 +102,8 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 CONFIG *= direct_chat
 no_direct_chat:CONFIG -= direct_chat
 
-# To enable messemger window which has been deprecated since RetroShare 0.6.6 append
-# the following assignation to qmake command line "CONFIG+=messenger"
+# To enable messemger window which has been deprecated since RetroShare 0.6.6
+# append the following assignation to qmake command line "CONFIG+=messenger"
 # CONFIG *= messenger
 
 # To disable bitdht append the following assignation to qmake command line
@@ -164,8 +164,8 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_webui"
-CONFIG *= rs_no_webui
-rs_webui:CONFIG -= rs_no_webui
+CONFIG *= no_rs_webui
+rs_webui:CONFIG -= no_rs_webui
 
 # To disable retroshare-service option to set webui password from the terminal
 # append the following assignation to qmake command line
