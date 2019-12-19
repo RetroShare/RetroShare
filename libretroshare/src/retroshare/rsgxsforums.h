@@ -241,6 +241,62 @@ public:
 	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
 	                               bool subscribe ) = 0;
 
+	/// default base URL used for forums links @see exportForumLink
+	static const std::string DEFAULT_FORUM_BASE_URL;
+
+	/// Link query field used to store forum name @see exportForumLink
+	static const std::string FORUM_URL_NAME_FIELD;
+
+	/// Link query field used to store forum id @see exportForumLink
+	static const std::string FORUM_URL_ID_FIELD;
+
+	/// Link query field used to store forum data @see exportForumLink
+	static const std::string FORUM_URL_DATA_FIELD;
+
+	/** Link query field used to store forum message title
+	 * @see exportChannelLink */
+	static const std::string FORUM_URL_MSG_TITLE_FIELD;
+
+	/// Link query field used to store forum message id @see exportChannelLink
+	static const std::string FORUM_URL_MSG_ID_FIELD;
+
+	/**
+	 * @brief Get link to a forum
+	 * @jsonapi{development}
+	 * @param[out] link storage for the generated link
+	 * @param[in] forumId Id of the forum of which we want to generate a link
+	 * @param[in] includeGxsData if true include the forum GXS group data so
+	 *	the receiver can subscribe to the forum even if she hasn't received it
+	 *	through GXS yet
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare link
+	 *	radix, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare link into a
+	 *	"normal" looking web link. If empty the GXS data link will be outputted
+	 *	in plain base64 format.
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool exportForumLink(
+	        std::string& link, const RsGxsGroupId& forumId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = RsGxsForums::DEFAULT_FORUM_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
+	 * @brief Import forum from full link
+	 * @param[in] link forum link either in radix or URL format
+	 * @param[out] forumId optional storage for parsed forum id
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool importForumLink(
+	        const std::string& link,
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+
 	/**
 	 * @brief Create forum. Blocking API.
 	 * @jsonapi{development}

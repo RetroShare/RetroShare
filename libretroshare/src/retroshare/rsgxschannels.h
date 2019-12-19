@@ -404,6 +404,61 @@ public:
 	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
 	        rstime_t maxWait = 30 ) = 0;
 
+	/// default base URL used for channels links @see exportChannelLink
+	static const std::string DEFAULT_CHANNEL_BASE_URL;
+
+	/// Link query field used to store channel name @see exportChannelLink
+	static const std::string CHANNEL_URL_NAME_FIELD;
+
+	/// Link query field used to store channel id @see exportChannelLink
+	static const std::string CHANNEL_URL_ID_FIELD;
+
+	/// Link query field used to store channel data @see exportChannelLink
+	static const std::string CHANNEL_URL_DATA_FIELD;
+
+	/** Link query field used to store channel message title
+	 * @see exportChannelLink */
+	static const std::string CHANNEL_URL_MSG_TITLE_FIELD;
+
+	/// Link query field used to store channel message id @see exportChannelLink
+	static const std::string CHANNEL_URL_MSG_ID_FIELD;
+
+	/**
+	 * @brief Get link to a channel
+	 * @jsonapi{development}
+	 * @param[out] link storage for the generated link
+	 * @param[in] chanId Id of the channel of which we want to generate a link
+	 * @param[in] includeGxsData if true include the channel GXS group data so
+	 *	the receiver can subscribe to the channel even if she hasn't received it
+	 *	through GXS yet
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare link
+	 *	radix, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare link into a
+	 *	"normal" looking web link. If empty the GXS data link will be outputted
+	 *	in plain base64 format.
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool exportChannelLink(
+	        std::string& link, const RsGxsGroupId& chanId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = RsGxsChannels::DEFAULT_CHANNEL_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
+	 * @brief Import channel from full link
+	 * @param[in] link channel link either in radix or link format
+	 * @param[out] chanId optional storage for parsed channel id
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool importChannelLink(
+	        const std::string& link,
+	        RsGxsGroupId& chanId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
 
 	/* Following functions are deprecated as they expose internal functioning
 	 * semantic, instead of a safe to use API */

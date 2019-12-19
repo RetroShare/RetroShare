@@ -152,9 +152,6 @@ private:
 	/// @see p3Config::saveDone
 	void saveDone() override;
 
-	uint16_t mPort;
-	std::string mBindAddress;
-
 	/// Called when new JSON API auth token is requested to be authorized
 	std::function<bool(const std::string&, const std::string& passwd)>
 	    mNewAccessRequestCallback;

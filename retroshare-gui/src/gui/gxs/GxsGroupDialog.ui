@@ -621,27 +621,10 @@
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QGridLayout" name="gridLayout_2">
-            <item row="6" column="0">
-             <widget class="QLabel" name="distributionLabel">
+            <item row="10" column="0">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Distribution:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="2">
-             <widget class="GxsIdLabel" name="moderatorsLabel">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="label_3">
-              <property name="text">
-               <string>Name</string>
+               <string>Author</string>
               </property>
              </widget>
             </item>
@@ -652,10 +635,86 @@
               </property>
              </widget>
             </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>Name</string>
+              </property>
+             </widget>
+            </item>
             <item row="1" column="0">
              <widget class="QLabel" name="label_10">
               <property name="text">
                <string>Popularity</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="2">
+             <widget class="QLabel" name="antiSpamValueLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+             </widget>
+            </item>
+            <item row="8" column="0">
+             <widget class="QLabel" name="antiSpamLabel">
+              <property name="text">
+               <string>Anti Spam:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLineEdit" name="lastpostline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="2">
+             <widget class="QLabel" name="commentsValueLabel">
+              <property name="text">
+               <string>TextLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="6" column="0">
+             <widget class="QLabel" name="commentsLabel">
+              <property name="text">
+               <string>Comments:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="10" column="2">
+             <widget class="GxsIdLabel" name="authorLabel">
+              <property name="text">
+               <string>GxsIdLabel</string>
+              </property>
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>ID</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QLineEdit" name="IDline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>Posts</string>
               </property>
              </widget>
             </item>
@@ -669,63 +728,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QLineEdit" name="nameline">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="label_6">
-              <property name="text">
-               <string>Posts</string>
-              </property>
-             </widget>
-            </item>
-            <item row="10" column="0">
-             <widget class="QLabel" name="label_8">
-              <property name="text">
-               <string>Moderators:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLineEdit" name="popline">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLineEdit" name="lastpostline">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <widget class="QLabel" name="label_4">
-              <property name="text">
-               <string>ID</string>
-              </property>
-             </widget>
-            </item>
-            <item row="5" column="0">
-             <widget class="QLabel" name="commentsLabel">
-              <property name="text">
-               <string>Comments:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="7" column="0">
-             <widget class="QLabel" name="antiSpamLabel">
-              <property name="text">
-               <string>Anti Spam:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="6" column="2">
+            <item row="7" column="2">
              <layout class="QHBoxLayout" name="horizontalLayout_10">
               <item>
                <widget class="QLabel" name="distributionValueLabel">
@@ -746,29 +749,36 @@
               </item>
              </layout>
             </item>
-            <item row="9" column="0">
-             <widget class="QLabel" name="label_7">
+            <item row="7" column="0">
+             <widget class="QLabel" name="distributionLabel">
               <property name="text">
-               <string>Author</string>
+               <string>Distribution:</string>
               </property>
              </widget>
             </item>
-            <item row="7" column="2">
-             <widget class="QLabel" name="antiSpamValueLabel">
-              <property name="text">
-               <string>TextLabel</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="2">
-             <widget class="QLineEdit" name="IDline">
+            <item row="0" column="2">
+             <widget class="QLineEdit" name="nameline">
               <property name="readOnly">
                <bool>true</bool>
               </property>
              </widget>
             </item>
-            <item row="5" column="2">
-             <widget class="QLabel" name="commentsValueLabel">
+            <item row="1" column="2">
+             <widget class="QLineEdit" name="popline">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="0">
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>Moderators:</string>
+              </property>
+             </widget>
+            </item>
+            <item row="11" column="2">
+             <widget class="GxsIdLabel" name="moderatorsLabel">
               <property name="text">
                <string>TextLabel</string>
               </property>
@@ -777,13 +787,13 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="2">
-             <widget class="GxsIdLabel" name="authorLabel">
+            <item row="4" column="2">
+             <widget class="QLineEdit" name="createdline"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_9">
               <property name="text">
-               <string>GxsIdLabel</string>
-              </property>
-              <property name="openExternalLinks">
-               <bool>true</bool>
+               <string>Created</string>
               </property>
              </widget>
             </item>

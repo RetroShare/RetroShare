@@ -67,6 +67,7 @@
         <file>icons/mail_red_128.png</file>
         <file>icons/newsfeed128.png</file>
         <file>icons/outlook.png</file>
+        <file>icons/question.png</file>
         <file>icons/plugins_128.png</file>
         <file>icons/png/add.png</file>
         <file>icons/png/attach-image.png</file>
@@ -115,6 +116,7 @@
         <file>icons/png/newsfeed-notify.png</file>
         <file>icons/png/newsfeed.png</file>
         <file>icons/png/options.png</file>
+		<file>icons/png/pencil-edit-button.png</file>
         <file>icons/png/people-notify.png</file>
         <file>icons/png/people.png</file>
         <file>icons/png/person.png</file>
@@ -132,6 +134,7 @@
         <file>icons/png/thumbs-down.png</file>
         <file>icons/png/thumbs-neutral.png</file>
         <file>icons/png/thumbs-up.png</file>
+		<file>icons/png/typing.png</file>
         <file>icons/png/video.png</file>
         <file>icons/posted_128.png</file>
         <file>icons/posted_red_128.png</file>
@@ -277,6 +280,7 @@
         <file>icons/png/comment.png</file>
         <file>icons/png/chats.png</file>
         <file>icons/png/chats-private.png</file>
+        <file>icons/png/chats-signed.png</file>
         <file>icons/png/fileshare.png</file>
         <file>icons/png/forum.png</file>
         <file>icons/png/message.png</file>
@@ -284,7 +288,6 @@
         <file>icons/png/postedlinks.png</file>
         <file>icons/png/people2.png</file>
         <file>icons/png/bandwidth.png</file>
-        <file>icons/png/netgraph2.png</file>
         <file>icons/png/options2.png</file>
         <file>icons/png/exit2.png</file>
     </qresource>

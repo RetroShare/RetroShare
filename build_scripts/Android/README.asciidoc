@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: RetroShare Team <contact@retroshare.cc>
+// SPDX-License-Identifier: CC-BY-SA-4.0
+
 Compile Retroshare for Android
 ==============================
 
@@ -37,7 +40,7 @@ export NATIVE_LIBS_TOOLCHAIN_PATH="${HOME}/Builds/android-toolchains/retroshare-
 export ANDROID_NDK_ARCH="arm"
 
 ## The Android API level the Android device you want to target
-export ANDROID_PLATFORM_VER="19"
+export ANDROID_PLATFORM_VER="16"
 
 ## The number of core that yout host CPU have (just to speed up compilation) set
 ## it to 1 if unsure
@@ -60,30 +63,28 @@ project and in the Projects left menu add the newly created kit if not already
 present, so you can select it on the build type selection button down on the
 left.
 
-As we use a custom toolchain one more step is needed +
+Now you need to set properly a few options like `JSONAPI_GENERATOR_EXE` and
+disable some of RetroShare modules like `retroshare-gui` that are not available
+on Android so you will have to go to
 
 _Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit ->
-Build Environement -> Add
+Build Steps -> qmake -> Additional arguments_  +
 
-Variable: +NATIVE_LIBS_TOOLCHAIN_PATH+
-Value: +Same value as NATIVE_LIBS_TOOLCHAIN_PATH in Preparing The Environement step+
-
-Some of RetroShare modules like +retroshare-gui+ and +WebUI+ are not available
-on Android so to be able to compile RetroShare without errors you will have to
-go to +
-
-_Qt Creator left pane -> Projects -> Build and Run -> Android SOMESTUFF kit ->
-Build Steps -> qmake -> Additional arguments_
-
-and add the following configurations
+and add the following configurations (change `Your_Path` according to your
+deployment)
 
 [source,makefile]
 -------------------------------------------------------------------------------
-CONFIG+=no_retroshare_gui CONFIG+=no_retroshare_nogui CONFIG+=no_retroshare_plugins CONFIG+=retroshare_android_service CONFIG+=libresapilocalserver CONFIG+=no_libresapihttpserver CONFIG+=retroshare_qml_app
+CONFIG+=retroshare_service CONFIG+=rs_jsonapi CONFIG+=rs_deep_search
+RS_UPNP_LIB=miniupnpc
+JSONAPI_GENERATOR_EXE=Your_Path/jsonapi-generator/src/jsonapi-generator
+NATIVE_LIBS_TOOLCHAIN_PATH=Your_Path/retroshare-android-16-arm/
+CONFIG+=no_retroshare_gui CONFIG+=no_rs_service_webui_terminal_password
+CONFIG+=no_rs_service_terminal_login
 -------------------------------------------------------------------------------
 
 TIP: Some versions of QtCreator try to find the Android SDK in
-+/opt/android/sdk+. A workaround to this is to make a symbolic link there
+`/opt/android/sdk`. A workaround to this is to make a symbolic link there
 pointing to your SDK installation path, like
 +mkdir -p /opt/android/sdk && ln -s /home/user/android-sdk-linux
 /opt/android/sdk+
@@ -117,7 +118,7 @@ only solution is to uninstall the app and then install the new APK but if you do
 it also the application data and your precious cryptographic keys, friend list
 etc. will be lost forever.
 To avoid that you can attempt to manually backup and then restore from the
-command-line (+adb backup+ seems not working either) to change the app source
+command-line (`adb backup` seems not working either) to change the app source
 without erasing the appliation data.
 
 CAUTION: Following steps require root access on your Android device
