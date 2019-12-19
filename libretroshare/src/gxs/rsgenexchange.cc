@@ -163,10 +163,25 @@ void RsGenExchange::tick()
 
 	processRoutingClues() ;
 
-	if(!mNotifications.empty())
 	{
-		notifyChanges(mNotifications);
-		mNotifications.clear();
+		std::vector<RsGxsNotify*> mNotifications_copy;
+
+        // make a non-deep copy of mNotifications so that it can be passed off-mutex to notifyChanged()
+        // that will delete it. The potential high cost of notifyChanges() makes it preferable to call off-mutex.
+		{
+			RS_STACK_MUTEX(mGenMtx);
+			if(!mNotifications.empty())
+			{
+				mNotifications_copy = mNotifications;
+				mNotifications.clear();
+			}
+		}
+
+        // Calling notifyChanges() calls back RsGxsIfaceHelper::receiveChanges() that deletes the pointers in the array
+        // and the array itself.  This is pretty bad and we should normally delete the changes here.
+
+		if(!mNotifications_copy.empty())
+			notifyChanges(mNotifications_copy);
 	}
 
 	// implemented service tick function

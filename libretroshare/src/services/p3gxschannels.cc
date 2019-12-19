@@ -377,6 +377,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	if(!unprocessedGroups.empty())
 		request_SpecificSubscribedGroups(unprocessedGroups);
 
+    // the call below deletes changes and its content.
 	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
