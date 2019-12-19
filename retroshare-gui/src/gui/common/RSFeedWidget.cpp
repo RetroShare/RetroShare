@@ -28,7 +28,8 @@
 
 #include <iostream>
 
-#define COLUMN_FEED 0
+#define COLUMN_FEED       0
+#define COLUMN_IDENTIFIER 1
 
 #define SINGLE_STEP  15
 
@@ -74,6 +75,8 @@ RSFeedWidget::RSFeedWidget(QWidget *parent)
 	ui->treeWidget->installEventFilter(this);
 
 	ui->treeWidget->setVerticalScrollBar(new RSFeedWidgetScrollBar);
+	ui->treeWidget->setColumnCount(2);
+	ui->treeWidget->setColumnHidden(COLUMN_IDENTIFIER,true);
 }
 
 RSFeedWidget::~RSFeedWidget()
@@ -130,17 +133,14 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 
 void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
 {
-	mItems.insert(feedItem, treeItem);
 }
 
 void RSFeedWidget::feedRemoved(FeedItem *feedItem)
 {
-	mItems.remove(feedItem);
 }
 
 void RSFeedWidget::feedsCleared()
 {
-	mItems.clear();
 }
 
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
@@ -179,6 +179,7 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, co
 	QTreeWidgetItem *treeItem = new RSTreeWidgetItem(mFeedCompareRole);
 
 	treeItem->setData(COLUMN_FEED, sortRole, value);
+	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString::fromStdString(feedItem->uniqueIdentifier()));
 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
@@ -208,6 +209,7 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 	}
 
 	ui->treeWidget->addTopLevelItem(treeItem);
+	treeItem->setData(COLUMN_FEED, Qt::DisplayRole, QString::fromStdString(feedItem->uniqueIdentifier()));
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
 
 	feedAdded(feedItem, treeItem);
@@ -223,14 +225,13 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 
 void RSFeedWidget::setSort(FeedItem *feedItem, Qt::ItemDataRole sortRole, const QVariant &value)
 {
-	if (!feedItem) {
+	if (!feedItem)
 		return;
-	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	if (!treeItem) {
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+
+	if (!treeItem)
 		return;
-	}
 
 	treeItem->setData(COLUMN_FEED, sortRole, value);
 }
@@ -241,10 +242,9 @@ void RSFeedWidget::setSort(FeedItem *feedItem, const QMap<Qt::ItemDataRole, QVar
 		return;
 	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	if (!treeItem) {
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	if (!treeItem)
 		return;
-	}
 
 	QMap<Qt::ItemDataRole, QVariant>::const_iterator it;
 	for (it = sort.begin(); it != sort.end(); ++it) {
@@ -388,10 +388,7 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 		return;
 	}
 
-	disconnectSignals(feedItem);
-
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	feedRemoved(feedItem);
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
 
 	if (treeItem)
     {
@@ -403,8 +400,10 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
             return ;
 		}
 
-        ui->treeWidget->takeTopLevelItem(treeItem_index);
-		delete(treeItem);
+		feedRemoved(feedItem);
+		disconnectSignals(feedItem);
+
+		delete ui->treeWidget->takeTopLevelItem(treeItem_index);
     }
 
 	if (!mCountChangedDisabled) {
@@ -429,40 +428,49 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 {
 	/* No need to disconnect when object will be destroyed */
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
-	feedRemoved(feedItem);
-	if (treeItem) {
-		delete(treeItem);
-	}
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
 
-	if (!mCountChangedDisabled) {
+	feedRemoved(feedItem);
+	if (treeItem)
+		delete(treeItem);
+
+	if (!mCountChangedDisabled)
 		emit feedCountChanged();
-	}
 }
 
-QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(FeedItem *feedItem)
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const std::string& identifier)
 {
-	QMap<FeedItem*, QTreeWidgetItem*>::iterator it = mItems.find(feedItem);
-	if (it == mItems.end()) {
-		return NULL;
-	}
+    std::cerr << "FindTreeWidgetItem: looking for \"" << identifier << "\"" << std::endl;
+    QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString::fromStdString(identifier),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
-	return it.value();
+    if(list.empty())
+    {
+        std::cerr << "not found!"<< std::endl;
+        return nullptr;
+	}
+    else if(list.size() == 1)
+    {
+        std::cerr << "found!"<< std::endl;
+        return list.front();
+    }
+    else
+    {
+        std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
+        return nullptr;
+    }
 }
 
 bool RSFeedWidget::scrollTo(FeedItem *feedItem, bool focus)
 {
-	QTreeWidgetItem *item = findTreeWidgetItem(feedItem);
-	if (!feedItem) {
+	QTreeWidgetItem *item = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	if (!feedItem)
 		return false;
-	}
 
 	ui->treeWidget->scrollToItem(item);
 	ui->treeWidget->setCurrentItem(item);
 
-	if (focus) {
+	if (focus)
 		ui->treeWidget->setFocus();
-	}
 
 	return true;
 }

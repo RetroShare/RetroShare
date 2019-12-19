@@ -98,7 +98,7 @@ private:
 	void connectSignals(FeedItem *feedItem);
 	void disconnectSignals(FeedItem *feedItem);
 	FeedItem *feedItemFromTreeItem(QTreeWidgetItem *treeItem);
-	QTreeWidgetItem *findTreeWidgetItem(FeedItem *feedItem);
+	QTreeWidgetItem *findTreeWidgetItem(const std::string &identifier);
 	void filterItems();
 	void filterItem(QTreeWidgetItem *treeItem, FeedItem *feedItem);
 
@@ -116,9 +116,6 @@ private:
 
 	/* Options */
 	int mCountChangedDisabled;
-
-	/* Items */
-	QMap<FeedItem*, QTreeWidgetItem*> mItems;
 
 	Ui::RSFeedWidget *ui;
 };
