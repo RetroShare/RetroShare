@@ -183,6 +183,7 @@ void GxsChannelPostItem::setup()
 
 	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
 	// HACK FOR NOW.
+    ui->commentButton->hide();// hidden until properly enabled.
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));

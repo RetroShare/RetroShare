@@ -392,9 +392,20 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 
 	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);
 	feedRemoved(feedItem);
-	if (treeItem) {
+
+	if (treeItem)
+    {
+        int treeItem_index = ui->treeWidget->indexOfTopLevelItem(treeItem);
+
+        if(treeItem_index < 0)
+        {
+            std::cerr << "(EE) Cannot remove designated item \"" << feedItem->uniqueIdentifier() << "\": not found!" << std::endl;
+            return ;
+		}
+
+        ui->treeWidget->takeTopLevelItem(treeItem_index);
 		delete(treeItem);
-	}
+    }
 
 	if (!mCountChangedDisabled) {
 		emit feedCountChanged();
@@ -497,6 +508,9 @@ FeedItem *RSFeedWidget::findFeedItem(const std::string& identifier)
         // causes a crash. I dont know why! If someone ever finds why, please tell me.
 
         std::string id = feedItem->uniqueIdentifier();
+
+        std::cerr << "Comparing \"" << id << "\"";
+        std::cerr << " to " << identifier << "\"" << " pthread_t = " << pthread_self() << std::endl;
 
 		if (id == identifier)
 			return feedItem;

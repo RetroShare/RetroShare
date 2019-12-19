@@ -18,7 +18,6 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QTimer>
 #include <QDateTime>
 
 #include "NewsFeed.h"
@@ -91,7 +90,7 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed)
 	connect(ui->sortComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(sortChanged(int)));
 
 	connect(ui->removeAllButton, SIGNAL(clicked()), ui->feedWidget, SLOT(clear()));
-	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()));
+	connect(ui->feedWidget, SIGNAL(feedCountChanged()), this, SLOT(sendNewsFeedChanged()),Qt::QueuedConnection);
 
 	connect(ui->feedOptionsButton, SIGNAL(clicked()), this, SLOT(feedoptions()));
     ui->feedOptionsButton->hide();	// (csoler) Hidden until we repare the system to display a specific settings page.
