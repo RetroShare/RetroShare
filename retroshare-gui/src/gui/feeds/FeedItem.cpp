@@ -53,8 +53,6 @@ uint64_t FeedItem::hash_64bits(const std::string& s) const
 
 		for(uint32_t i=0;i<s.size();++i)
 			mHash = ~(((mHash << 31) ^ (mHash >> 3)) + s[i]*0x217898fbba7 + 0x0294379);
-
-        std::cerr << "Producing hash " << std::hex << mHash << std::dec << " from string \"" << s << "\"" << std::endl;
 	}
 
 	return mHash;

@@ -440,19 +440,12 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(uint64_t identifier)
 {
-    std::cerr << "FindTreeWidgetItem: looking for \"" << identifier << "\"" << std::endl;
     QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
     if(list.empty())
-    {
-        std::cerr << "not found!"<< std::endl;
         return nullptr;
-	}
     else if(list.size() == 1)
-    {
-        std::cerr << "found!"<< std::endl;
         return list.front();
-    }
     else
     {
         std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
@@ -506,19 +499,10 @@ FeedItem *RSFeedWidget::findFeedItem(uint64_t identifier)
 		++it;
 
 		FeedItem *feedItem = feedItemFromTreeItem(treeItem);
-		if (!feedItem) {
+		if (!feedItem)
 			continue;
-		}
-
-        // (cyril) It seems that a local variable must be used to store this identifier.
-        // Directly comparing identifier such as in:
-        //    if(feedItem->uniqueIdentifier() == identifier)
-        // causes a crash. I dont know why! If someone ever finds why, please tell me.
 
         uint64_t id = feedItem->uniqueIdentifier();
-
-        std::cerr << "Comparing \"" << id << "\"";
-        std::cerr << " to " << identifier << "\"" << " pthread_t = " << pthread_self() << std::endl;
 
 		if (id == identifier)
 			return feedItem;
