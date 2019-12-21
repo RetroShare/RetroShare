@@ -78,9 +78,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-std::string SecurityIpItem::uniqueIdentifier() const
+uint64_t SecurityIpItem::uniqueIdentifier() const
 {
-    return "SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported ;
+    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported) ;
 }
 
 void SecurityIpItem::updateItemStatic()

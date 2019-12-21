@@ -37,7 +37,7 @@ public:
 
 	void updateItemStatic();
 
-    virtual std::string uniqueIdentifier() const override { return "ChatMsgItem " + mPeerId.toStdString(); }
+    virtual uint64_t uniqueIdentifier() const override { return hash_64bits("ChatMsgItem " + mPeerId.toStdString()); }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool /*open*/) {}

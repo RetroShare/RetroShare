@@ -71,6 +71,7 @@ void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsG
 
 	setup();
 
+    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
 	mLoaded = false ;
 }
 

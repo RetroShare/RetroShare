@@ -53,7 +53,7 @@ public:
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
-    virtual std::string uniqueIdentifier() const override { "GxsChannelPostItem " + mPost.mMeta.mMsgId.toStdString() ; }
+    uint64_t uniqueIdentifier() const override { hash_64bits("GxsChannelPostItem " + mPost.mMeta.mMsgId.toStdString()) ; }
 
 	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost &post, bool doFill = true);

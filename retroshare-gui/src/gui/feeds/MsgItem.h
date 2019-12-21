@@ -38,7 +38,7 @@ public:
 
 	void updateItemStatic();
 
-    virtual std::string uniqueIdentifier() const override { return "MsgItem " + mMsgId ; }
+    uint64_t uniqueIdentifier() const override { return hash_64bits("MsgItem " + mMsgId) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

@@ -167,9 +167,9 @@ void GxsCircleItem::setup()
 
 }
 
-std::string GxsCircleItem::uniqueIdentifier() const
+uint64_t GxsCircleItem::uniqueIdentifier() const
 {
-    return "GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString();
+    return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString());
 }
 
 void GxsCircleItem::removeItem()

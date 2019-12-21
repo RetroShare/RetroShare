@@ -179,7 +179,7 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, Qt::ItemDataRole sortRole, co
 	QTreeWidgetItem *treeItem = new RSTreeWidgetItem(mFeedCompareRole);
 
 	treeItem->setData(COLUMN_FEED, sortRole, value);
-	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString::fromStdString(feedItem->uniqueIdentifier()));
+	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString("%1").arg(feedItem->uniqueIdentifier(),8,16,QChar('0')));
 
 	ui->treeWidget->addTopLevelItem(treeItem);
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
@@ -207,9 +207,9 @@ void RSFeedWidget::addFeedItem(FeedItem *feedItem, const QMap<Qt::ItemDataRole, 
 	for (it = sort.begin(); it != sort.end(); ++it) {
 		treeItem->setData(COLUMN_FEED, it.key(), it.value());
 	}
+	treeItem->setData(COLUMN_IDENTIFIER, Qt::DisplayRole, QString("%1").arg(feedItem->uniqueIdentifier(),8,16,QChar('0')));
 
 	ui->treeWidget->addTopLevelItem(treeItem);
-	treeItem->setData(COLUMN_FEED, Qt::DisplayRole, QString::fromStdString(feedItem->uniqueIdentifier()));
 	ui->treeWidget->setItemWidget(treeItem, 0, feedItem);
 
 	feedAdded(feedItem, treeItem);
@@ -438,10 +438,10 @@ void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
 		emit feedCountChanged();
 }
 
-QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const std::string& identifier)
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(uint64_t identifier)
 {
     std::cerr << "FindTreeWidgetItem: looking for \"" << identifier << "\"" << std::endl;
-    QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString::fromStdString(identifier),Qt::MatchExactly,COLUMN_IDENTIFIER);
+    QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
     if(list.empty())
     {
@@ -495,7 +495,7 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 	}
 }
 
-FeedItem *RSFeedWidget::findFeedItem(const std::string& identifier)
+FeedItem *RSFeedWidget::findFeedItem(uint64_t identifier)
 {
 	QTreeWidgetItemIterator it(ui->treeWidget);
 	QTreeWidgetItem *treeItem=NULL;
@@ -515,7 +515,7 @@ FeedItem *RSFeedWidget::findFeedItem(const std::string& identifier)
         //    if(feedItem->uniqueIdentifier() == identifier)
         // causes a crash. I dont know why! If someone ever finds why, please tell me.
 
-        std::string id = feedItem->uniqueIdentifier();
+        uint64_t id = feedItem->uniqueIdentifier();
 
         std::cerr << "Comparing \"" << id << "\"";
         std::cerr << " to " << identifier << "\"" << " pthread_t = " << pthread_self() << std::endl;

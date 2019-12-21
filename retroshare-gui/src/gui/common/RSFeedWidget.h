@@ -71,7 +71,7 @@ public:
 	bool scrollTo(FeedItem *feedItem, bool focus);
 
 	void withAll(RSFeedWidgetCallbackFunction callback, void *data);
-	FeedItem *findFeedItem(const std::string &identifier);
+	FeedItem *findFeedItem(uint64_t identifier);
 
 	void selectedFeedItems(QList<FeedItem*> &feedItems);
 
@@ -98,7 +98,7 @@ private:
 	void connectSignals(FeedItem *feedItem);
 	void disconnectSignals(FeedItem *feedItem);
 	FeedItem *feedItemFromTreeItem(QTreeWidgetItem *treeItem);
-	QTreeWidgetItem *findTreeWidgetItem(const std::string &identifier);
+	QTreeWidgetItem *findTreeWidgetItem(uint64_t identifier);
 	void filterItems();
 	void filterItem(QTreeWidgetItem *treeItem, FeedItem *feedItem);
 

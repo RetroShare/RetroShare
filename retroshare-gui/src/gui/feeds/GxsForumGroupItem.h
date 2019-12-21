@@ -42,7 +42,7 @@ public:
 
 	bool setGroup(const RsGxsForumGroup &group);
 
-    virtual std::string uniqueIdentifier() const override { return "GxsForumGroupItem " + mGroup.mMeta.mGroupId.toStdString() ; }
+    uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumGroupItem " + groupId().toStdString()) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

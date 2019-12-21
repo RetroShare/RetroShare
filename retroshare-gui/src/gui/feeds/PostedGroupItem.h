@@ -42,7 +42,7 @@ public:
 
 	bool setGroup(const RsPostedGroup &group);
 
-    virtual std::string uniqueIdentifier() const override { return "PostedGroupItem " + mGroup.mMeta.mGroupId.toStdString() ; }
+    uint64_t uniqueIdentifier() const override { return hash_64bits("PostedGroupItem " + groupId().toStdString()) ; }
 
 protected:
 	/* FeedItem */

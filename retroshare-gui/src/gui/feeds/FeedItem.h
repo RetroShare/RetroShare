@@ -41,17 +41,19 @@ public:
      * \return returns a string that is unique to this specific item. The string will be used to search for an existing item that
      * 			would contain the same information. It should therefore sumarise the data represented by the item.
      */
-    virtual std::string uniqueIdentifier() const =0;
+    virtual uint64_t uniqueIdentifier() const =0;
 protected:
 	virtual void doExpand(bool open) = 0;
 	virtual void expandFill(bool /*first*/) {}
 
+    uint64_t hash_64bits(const std::string& s) const;
 signals:
 	void sizeChanged(FeedItem *feedItem);
 	void feedItemDestroyed(FeedItem *feedItem);
 
 private:
 	bool mWasExpanded;
+    mutable uint64_t mHash;
 };
 
 #endif
