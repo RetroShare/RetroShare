@@ -330,7 +330,9 @@ void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
 
     auto& e(*pe);
 
+#ifdef NEWS_DEBUG
 	std::cerr << "NotifyQt: handling connection event from peer " << e.mSslId << std::endl;
+#endif
 
     switch(e.mConnectionInfoCode)
     {
@@ -355,8 +357,9 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
         return;
 
     auto& e(*pe);
-
+#ifdef NEWS_DEBUG
 	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << (int)e.mErrorCode << std::endl;
+#endif
 	uint flags = Settings->getNewsFeedFlags();
 
     if(e.mErrorCode == RsAuthSslConnectionAutenticationEvent::AuthenticationCode::PEER_REFUSED_CONNECTION)
@@ -438,7 +441,6 @@ void NewsFeed::addFeedItem(FeedItem *item)
 {
 	static const int MAX_FEEDITEM_COUNT = 500 ;
 
-    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	item->setAttribute(Qt::WA_DeleteOnClose, true);
 
 	// costly, but not really a problem here
@@ -462,7 +464,6 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 {
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
-    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	if (feedItem)
     {
 		if (!replace)
@@ -482,7 +483,6 @@ void NewsFeed::remUniqueFeedItem(FeedItem *item)
 {
 	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
-    std::cerr << "Adding feed item thread " << pthread_self() << std::endl;
 	if (feedItem)
     {
 		delete item;

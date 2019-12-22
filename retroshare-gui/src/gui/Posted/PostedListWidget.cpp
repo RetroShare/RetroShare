@@ -37,6 +37,8 @@
 #define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
 
+#define DEBUG_POSTED_LIST_WIDGET
+
 #define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
 
 /** Constructor */
@@ -143,15 +145,19 @@ QScrollArea *PostedListWidget::getScrollArea()
 
 void PostedListWidget::deleteFeedItem(QWidget */*item*/, uint32_t /*type*/)
 {
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::deleteFeedItem() Nah";
 	std::cerr << std::endl;
+#endif
 	return;
 }
 
 void PostedListWidget::openChat(const RsPeerId & /*peerId*/)
 {
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::openChat() Nah";
 	std::cerr << std::endl;
+#endif
 	return;
 }
 
@@ -207,8 +213,10 @@ void PostedListWidget::getRankings(int i)
 	if (groupId().isNull())
 		return;
 
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::getRankings()";
 	std::cerr << std::endl;
+#endif
 
 	int oldSortMethod = mSortMethod;
 	
@@ -268,6 +276,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 		vote.mVoteType = GXS_VOTE_DOWN;
 	}//if (up)
 
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::submitVote()";
 	std::cerr << std::endl;
 
@@ -275,6 +284,7 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	std::cerr << "ThreadId : " << vote.mMeta.mThreadId << std::endl;
 	std::cerr << "ParentId : " << vote.mMeta.mParentId << std::endl;
 	std::cerr << "AuthorId : " << vote.mMeta.mAuthorId << std::endl;
+#endif
 
 	uint32_t token;
 	rsPosted->createNewVote(token, vote);
@@ -464,8 +474,10 @@ static bool CmpPINew(const GxsFeedItem *a, const GxsFeedItem *b)
 void PostedListWidget::applyRanking()
 {
 	/* uses current settings to sort posts, then add to layout */
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::applyRanking()";
 	std::cerr << std::endl;
+#endif
 
 	shallowClearPosts();
 
@@ -474,25 +486,33 @@ void PostedListWidget::applyRanking()
 	{
 		default:
 		case RsPosted::HotRankType:
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::applyRanking() HOT";
 			std::cerr << std::endl;
+#endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPIHot);
 			break;
 		case RsPosted::NewRankType:
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::applyRanking() NEW";
 			std::cerr << std::endl;
+#endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPINew);
 			break;
 		case RsPosted::TopRankType:
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::applyRanking() TOP";
 			std::cerr << std::endl;
+#endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPITop);
 			break;
 	}
 	mLastSortMethod = mSortMethod;
 
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::applyRanking() Sorted mPostList";
 	std::cerr << std::endl;
+#endif
 
 	/* go through list (skipping out-of-date items) to get */
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
@@ -500,42 +520,54 @@ void PostedListWidget::applyRanking()
 	time_t min_ts = 0;
 	foreach (PostedItem *item, mPostItems)
 	{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 		std::cerr << "PostedListWidget::applyRanking() Item: " << item;
 		std::cerr << std::endl;
+#endif
 		
 		if (item->getPost().mMeta.mPublishTs < min_ts)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Skipping OLD";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 			continue;
 		}
 
 		if (counter >= mPostIndex + mPostShow)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t END - Counter too high";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 		}
 		else if (counter >= mPostIndex)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Adding to Layout";
 			std::cerr << std::endl;
+#endif
 			/* add it in! */
 			alayout->addWidget(item);
 			item->show();
 		}
 		else
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Skipping to Low";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 		}
 		++counter;
 	}
 
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::applyRanking() Loaded New Order";
 	std::cerr << std::endl;
+#endif
 
 	// trigger a redraw.
 	ui->scrollAreaWidgetContents->update();
@@ -564,7 +596,9 @@ bool PostedListWidget::navigatePostItem(const RsGxsMessageId & /*msgId*/)
 
 void PostedListWidget::shallowClearPosts()
 {
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::shallowClearPosts()" << std::endl;
+#endif
 
 	std::list<PostedItem *> postedItems;
 	std::list<PostedItem *>::iterator pit;
@@ -576,24 +610,30 @@ void PostedListWidget::shallowClearPosts()
 		QLayoutItem *litem = alayout->itemAt(i);
 		if (!litem)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::shallowClearPosts() missing litem";
 			std::cerr << std::endl;
+#endif
 			continue;
 		}
 
 		PostedItem *item = dynamic_cast<PostedItem *>(litem->widget());
 		if (item)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::shallowClearPosts() item: " << item;
 			std::cerr << std::endl;
+#endif
 
 			postedItems.push_back(item);
 		}
+#ifdef DEBUG_POSTED_LIST_WIDGET
 		else
 		{
 			std::cerr << "PostedListWidget::shallowClearPosts() Found Child, which is not a PostedItem???";
 			std::cerr << std::endl;
 		}
+#endif
 	}
 
 	for(pit = postedItems.begin(); pit != postedItems.end(); ++pit)
@@ -646,15 +686,19 @@ void PostedListWidget::insertPosts(const uint32_t &token)
 		// modify post content
 		if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::updateCurrentDisplayComplete() updating MsgId: " << p.mMeta.mMsgId;
 			std::cerr << std::endl;
+#endif
 
 			mPosts[p.mMeta.mMsgId]->setPost(p);
 		}
 		else
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "PostedListWidget::updateCurrentDisplayComplete() loading New MsgId: " << p.mMeta.mMsgId;
 			std::cerr << std::endl;
+#endif
 			/* insert new entry */
 			loadPost(p);
 		}
@@ -689,8 +733,10 @@ void PostedListWidget::setAllMessagesReadDo(bool read, uint32_t &token)
 
 void PostedListWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
+#ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::loadRequest() UserType: " << req.mUserType;
 	std::cerr << std::endl;
+#endif
 
 	if (queue == mTokenQueue)
 	{
