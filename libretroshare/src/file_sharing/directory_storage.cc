@@ -20,6 +20,7 @@
  *                                                                             *
  ******************************************************************************/
 #include <set>
+
 #include "util/rstime.h"
 #include "serialiser/rstlvbinary.h"
 #include "retroshare/rspeers.h"
@@ -29,6 +30,10 @@
 #include "directory_storage.h"
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
+
+#ifdef RS_DEEP_FILES_INDEX
+#	include "deep_search/filesindex.hpp"
+#endif // def RS_DEEP_FILES_INDEX
 
 //#define DEBUG_REMOTE_DIRECTORY_STORAGE 1
 
@@ -180,7 +185,9 @@ void DirectoryStorage::print()
     mFileHierarchy->print();
 }
 
-int DirectoryStorage::searchTerms(const std::list<std::string>& terms, std::list<EntryIndex> &results) const
+int DirectoryStorage::searchTerms(
+        const std::list<std::string>& terms,
+        std::list<EntryIndex>& results ) const
 {
     RS_STACK_MUTEX(mDirStorageMtx) ;
     return mFileHierarchy->searchTerms(terms,results);
@@ -501,18 +508,39 @@ void LocalDirectoryStorage::updateTimeStamps()
 #endif
     }
 }
-bool LocalDirectoryStorage::updateHash(const EntryIndex& index, const RsFileHash& hash, bool update_internal_hierarchy)
-{
-	RS_STACK_MUTEX(mDirStorageMtx) ;
 
-	mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
-	mChanged = true ;
+bool LocalDirectoryStorage::updateHash(
+        const EntryIndex& index, const RsFileHash& hash,
+        bool update_internal_hierarchy )
+{
+	bool ret = false;
+
+	{
+		RS_STACK_MUTEX(mDirStorageMtx);
+
+		mEncryptedHashes[makeEncryptedHash(hash)] = hash ;
+		mChanged = true ;
 
 #ifdef DEBUG_LOCAL_DIRECTORY_STORAGE
-    std::cerr << "Updating index of hash " << hash << " update_internal=" << update_internal_hierarchy << std::endl;
+		std::cerr << "Updating index of hash " << hash << " update_internal="
+		          << update_internal_hierarchy << std::endl;
 #endif
 
-	return (!update_internal_hierarchy)|| mFileHierarchy->updateHash(index,hash);
+		ret = (!update_internal_hierarchy) ||
+		        mFileHierarchy->updateHash(index,hash);
+	} // RS_STACK_MUTEX(mDirStorageMtx);
+
+#ifdef RS_DEEP_FILES_INDEX
+	FileInfo fInfo;
+	if( ret && getFileInfo(index, fInfo) &&
+	        fInfo.storage_permission_flags & DIR_FLAGS_ANONYMOUS_SEARCH )
+	{
+		DeepFilesIndex dfi(DeepFilesIndex::dbDefaultPath());
+		ret &= dfi.indexFile(fInfo.path, fInfo.fname, hash);
+	}
+#endif // def RS_DEEP_FILES_INDEX
+
+	return ret;
 }
 std::string LocalDirectoryStorage::locked_findRealRootFromVirtualFilename(const std::string& virtual_rootdir) const
 {

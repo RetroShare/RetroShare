@@ -83,6 +83,11 @@ public:
 	virtual const RsPgpId& getGPGOwnId();
 	virtual RsPgpId getGPGId(const RsPeerId &ssl_id);
 	virtual bool isKeySupported(const RsPgpId& ids);
+
+	/// @see RsPeers
+	bool getPgpFriendList(std::vector<RsPgpId>& pgpIds) override;
+
+	RS_DEPRECATED_FOR(getPgpFriendList)
 	virtual bool getGPGAcceptedList(std::list<RsPgpId> &ids);
 	virtual bool getGPGSignedList(std::list<RsPgpId> &ids);
 	virtual bool getGPGValidList(std::list<RsPgpId> &ids);
@@ -154,14 +159,11 @@ public:
 	        const std::string& invite,
 	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT );
 
-	virtual bool hasExportMinimal();
-
 	virtual	bool loadCertificateFromString(const std::string& cert, RsPeerId& ssl_id,RsPgpId& pgp_id, std::string& error_string);
 	virtual bool loadPgpKeyFromBinaryData( const unsigned char *bin_key_data,uint32_t bin_key_len, RsPgpId& gpg_id, std::string& error_string );
 	virtual	bool loadDetailsFromStringCert(const std::string &cert, RsPeerDetails &pd, uint32_t& error_code);
 
 	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert, bool &is_short_format, uint32_t& error_code) override;
-	virtual	bool saveCertificateToFile(const RsPeerId &id, const std::string &fname);
 	virtual	std::string saveCertificateToString(const RsPeerId &id);
 
 	virtual	bool signGPGCertificate(const RsPgpId &id);

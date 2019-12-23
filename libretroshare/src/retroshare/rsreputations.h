@@ -72,7 +72,6 @@ struct RsReputationInfo : RsSerializable
 	    mFriendsNegativeVotes(0),
 	    mFriendAverageScore(RS_REPUTATION_THRESHOLD_DEFAULT),
 	    mOverallReputationLevel(RsReputationLevel::NEUTRAL) {}
-	virtual ~RsReputationInfo() {}
 
 	RsOpinion mOwnOpinion;
 
@@ -94,6 +93,8 @@ struct RsReputationInfo : RsSerializable
 		RS_SERIAL_PROCESS(mFriendAverageScore);
 		RS_SERIAL_PROCESS(mOverallReputationLevel);
 	}
+
+	virtual ~RsReputationInfo();
 };
 
 

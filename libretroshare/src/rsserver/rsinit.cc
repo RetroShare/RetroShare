@@ -96,6 +96,10 @@ RsDht *rsDht = NULL ;
 
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
+#ifdef RS_WEBUI
+#include "jsonapi/jsonapi.h"
+#endif
+
 #endif
 
 #ifdef RS_BROADCAST_DISCOVERY
@@ -306,7 +310,7 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 	if( rsInitConfig->outStderr)           rsInitConfig->haveLogFile    = false ;
 	if(!rsInitConfig->logfname.empty())    rsInitConfig->haveLogFile    = true;
 	if( rsInitConfig->inet != "127.0.0.1") rsInitConfig->forceLocalAddr = true;
-	if( rsInitConfig->port != 0)           rsInitConfig->forceExtPort   = true;
+	if( rsInitConfig->port != 0)           rsInitConfig->forceLocalAddr = true; // previously forceExtPort, which means nothing in this case
 #ifdef LOCALNET_TESTING
 	if(!portRestrictions.empty())       doPortRestrictions           = true;
 #endif
@@ -391,6 +395,18 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 	if(!RsAccounts::init(rsInitConfig->optBaseDir,error_code))
 		return error_code ;
 
+#ifdef RS_JSONAPI
+	// We create the JsonApiServer this early, because it is needed *before* login
+	RsInfo() << __PRETTY_FUNCTION__
+	         << "Allocating jsonAPI server (not launched yet)" << std::endl;
+	JsonApiServer* jas = new JsonApiServer();
+	jas->setListeningPort(conf.jsonApiPort);
+	jas->setBindingAddress(conf.jsonApiBindAddress);
+
+	if(conf.jsonApiPort != 0) jas->restart();
+
+	rsJsonApi = jas;
+#endif
 
 #ifdef RS_AUTOLOGIN
 	/* check that we have selected someone */
@@ -407,14 +423,6 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
 		}
 	}
 #endif
-
-#ifdef RS_JSONAPI
-	if(rsInitConfig->jsonApiPort)
-	{
-		jsonApiServer = new JsonApiServer( rsInitConfig->jsonApiPort, rsInitConfig->jsonApiBindAddress );
-		jsonApiServer->start("JSON API Server");
-	}
-#endif // ifdef RS_JSONAPI
 
 	return RS_INIT_OK;
 }
@@ -702,7 +710,7 @@ RsGRouter *rsGRouter = NULL ;
 #include "util/rsrandom.h"
 
 #ifdef RS_USE_LIBUPNP
-#	include "rs_upnp/upnphandler_linux.h"
+#	include "rs_upnp/upnphandler_libupnp.h"
 #else // def RS_USE_LIBUPNP
 #	include "rs_upnp/upnphandler_miniupnp.h"
 #endif // def RS_USE_LIBUPNP
@@ -1215,12 +1223,8 @@ int RsServer::StartupRetroShare()
 	mPluginsManager->loadPlugins(programatically_inserted_plugins) ;
 
 #ifdef RS_JSONAPI
-	if(jsonApiServer) // JsonApiServer may be disabled at runtime
-	{
-		mConfigMgr->addConfiguration("jsonApi.cfg", jsonApiServer);
-		RsFileHash dummyHash;
-		jsonApiServer->loadConfiguration(dummyHash);
-	}
+	// add jsonapi server to config manager so that it can save/load its tokens
+	if(rsJsonApi) rsJsonApi->connectToConfigManager(*mConfigMgr);
 #endif
 
     	/**** Reputation system ****/
@@ -1230,7 +1234,7 @@ int RsServer::StartupRetroShare()
 
 #ifdef RS_ENABLE_GXS
 
-	std::string currGxsDir = RsAccounts::AccountDirectory() + "/gxs";
+		std::string currGxsDir = RsAccounts::AccountDirectory() + "/gxs";
         RsDirUtil::checkCreateDirectory(currGxsDir);
 
         RsNxsNetMgr* nxsMgr =  new RsNxsNetMgrImpl(serviceCtrl);

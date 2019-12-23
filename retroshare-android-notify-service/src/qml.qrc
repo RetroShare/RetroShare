@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>main.qml</file>
-        <file>TokensManager.qml</file>
-        <file>AutologinManager.qml</file>
-        <file>qmldir</file>
-    </qresource>
-</RCC>

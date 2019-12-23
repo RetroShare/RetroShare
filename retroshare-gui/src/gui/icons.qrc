@@ -67,6 +67,7 @@
         <file>icons/mail_red_128.png</file>
         <file>icons/newsfeed128.png</file>
         <file>icons/outlook.png</file>
+        <file>icons/question.png</file>
         <file>icons/plugins_128.png</file>
         <file>icons/png/add.png</file>
         <file>icons/png/attach-image.png</file>
@@ -79,7 +80,9 @@
         <file>icons/png/chat-lobbies-notify.png</file>
         <file>icons/png/chat-lobbies.png</file>
         <file>icons/png/circles.png</file>
+        <file>icons/png/digital-key.png</file>
         <file>icons/png/empty-circle.png</file>
+        <file>icons/png/enter.png</file>
         <file>icons/png/exit.png</file>
         <file>icons/png/feedreader-notify.png</file>
         <file>icons/png/feedreader.png</file>
@@ -93,22 +96,27 @@
         <file>icons/png/forums.png</file>
         <file>icons/png/fullscreen_arrows.png</file>
         <file>icons/png/highlight.png</file>
+        <file>icons/png/help.png</file>
         <file>icons/png/home.png</file>
         <file>icons/png/info.png</file>
         <file>icons/png/invite.png</file>
         <file>icons/png/keyring.png</file>
         <file>icons/png/leave.png</file>
+        <file>icons/png/leave2.png</file>
         <file>icons/png/messages-notify.png</file>
         <file>icons/png/messages.png</file>
         <file>icons/png/microphone_mute.png</file>
         <file>icons/png/microphone.png</file>
         <file>icons/png/netgraph.png</file>
+        <file>icons/png/netgraph2.png</file>
         <file>icons/png/network-notify.png</file>
         <file>icons/png/network.png</file>
+        <file>icons/png/network2.png</file>
         <file>icons/png/network-puplic.png</file>
         <file>icons/png/newsfeed-notify.png</file>
         <file>icons/png/newsfeed.png</file>
         <file>icons/png/options.png</file>
+		<file>icons/png/pencil-edit-button.png</file>
         <file>icons/png/people-notify.png</file>
         <file>icons/png/people.png</file>
         <file>icons/png/person.png</file>
@@ -126,6 +134,7 @@
         <file>icons/png/thumbs-down.png</file>
         <file>icons/png/thumbs-neutral.png</file>
         <file>icons/png/thumbs-up.png</file>
+		<file>icons/png/typing.png</file>
         <file>icons/png/video.png</file>
         <file>icons/posted_128.png</file>
         <file>icons/posted_red_128.png</file>
@@ -261,6 +270,26 @@
         <file>icons/png/flame.png</file>
         <file>icons/png/new.png</file>
         <file>icons/png/top.png</file>
+        <file>icons/png/copy.png</file>
+        <file>icons/png/down-arrow.png</file>
+        <file>icons/png/download.png</file>
+        <file>icons/png/up-arrow.png</file>
+        <file>icons/png/play.png</file>
+        <file>icons/png/cancel.png</file>
+        <file>icons/png/correct.png</file>
+        <file>icons/png/comment.png</file>
+        <file>icons/png/chats.png</file>
+        <file>icons/png/chats-private.png</file>
+        <file>icons/png/chats-signed.png</file>
+        <file>icons/png/fileshare.png</file>
+        <file>icons/png/forum.png</file>
+        <file>icons/png/message.png</file>
+        <file>icons/png/newsfeed2.png</file>
+        <file>icons/png/postedlinks.png</file>
+        <file>icons/png/people2.png</file>
+        <file>icons/png/bandwidth.png</file>
+        <file>icons/png/options2.png</file>
+        <file>icons/png/exit2.png</file>
         <file>icons/svg/addstickers.svg</file>
         <file>icons/png/addstickers.png</file>
     </qresource>

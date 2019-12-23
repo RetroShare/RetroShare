@@ -178,8 +178,7 @@ bool DistantChatService::acceptDataFromPeer(const RsGxsId& gxs_id,const RsGxsTun
     return res ;
 }
 
-void DistantChatService::notifyTunnelStatus(
-        const RsGxsTunnelId& tunnel_id, uint32_t tunnel_status )
+void DistantChatService::notifyTunnelStatus( const RsGxsTunnelId& tunnel_id, uint32_t tunnel_status )
 {
 #ifdef DEBUG_DISTANT_CHAT    
     DISTANT_CHAT_DEBUG() << "DistantChatService::notifyTunnelStatus(): got notification " << std::hex << tunnel_status << std::dec << " for tunnel " << tunnel_id << std::endl;
@@ -195,18 +194,17 @@ void DistantChatService::notifyTunnelStatus(
         								RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_ONLINE) ;
                             						break ;
                             
-    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:    	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"tunnel is down...") ;
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:    	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"Tunnel is down...") ;
 			        					RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_OFFLINE) ;
         								break ;
         
-    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED:	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"tunnel is down...") ;
+    case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED:	RsServer::notify()->notifyChatStatus(ChatId(DistantChatPeerId(tunnel_id)),"Tunnel is down...") ;
         								RsServer::notify()->notifyPeerStatusChanged(tunnel_id.toStdString(),RS_STATUS_OFFLINE) ;
                             						break ;
     }
 }
 
-void DistantChatService::receiveData(
-        const RsGxsTunnelId& tunnel_id, unsigned char* data, uint32_t data_size)
+void DistantChatService::receiveData( const RsGxsTunnelId& tunnel_id, unsigned char* data, uint32_t data_size)
 {
 #ifdef DEBUG_DISTANT_CHAT    
     DISTANT_CHAT_DEBUG() << "DistantChatService::receiveData(): got data of size " << std::dec << data_size << " for tunnel " << tunnel_id << std::endl;
@@ -303,16 +301,14 @@ bool DistantChatService::getDistantChatStatus(const DistantChatPeerId& tunnel_id
 
 	cinfo.to_id  = tinfo.destination_gxs_id;
 	cinfo.own_id = tinfo.source_gxs_id;
+    cinfo.pending_items = tinfo.pending_data_packets;
 	cinfo.peer_id = tunnel_id;
 
 	switch(tinfo.tunnel_status)
 	{
-	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK :
-		cinfo.status = RS_DISTANT_CHAT_STATUS_CAN_TALK; break;
-	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:
-		cinfo.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN; break;
-	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED:
-		cinfo.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_CAN_TALK :       cinfo.status = RS_DISTANT_CHAT_STATUS_CAN_TALK; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_TUNNEL_DN:       cinfo.status = RS_DISTANT_CHAT_STATUS_TUNNEL_DN; break;
+	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_REMOTELY_CLOSED: cinfo.status = RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED; break;
 	case RsGxsTunnelService::RS_GXS_TUNNEL_STATUS_UNKNOWN:
 	default:
 		cinfo.status = RS_DISTANT_CHAT_STATUS_UNKNOWN; break;

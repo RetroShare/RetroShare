@@ -865,6 +865,8 @@ int p3turtle::handleIncoming()
 //
 void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 {
+	Dbg3() << __PRETTY_FUNCTION__ << " " << *item << std::endl;
+
 	// take a look at the item and test against inconsistent values
 	// 	- If the item destimation is
 
@@ -877,11 +879,12 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 	if(item_size > TURTLE_MAX_SEARCH_REQ_ACCEPTED_SERIAL_SIZE)
 	{
-#ifdef P3TURTLE_DEBUG
-		std::cerr << "  Dropping, because the serial size exceeds the accepted limit." << std::endl ;
-#endif
-		std::cerr << "  Caught a turtle search item with arbitrary large size from " << item->PeerId() << " of size " << item_size << " and depth " << item->depth << ". This is not allowed => dropping." << std::endl;
-		return ;
+		RsWarn() << __PRETTY_FUNCTION__
+		         << " Got a turtle search item with arbitrary large size from "
+		         << item->PeerId() << " of size " << item_size << " and depth "
+		         << item->depth << ". This is not allowed => dropping."
+		         << std::endl;
+		return;
 	}
 
 	{
@@ -889,22 +892,20 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 		if(_search_requests_origins.size() > MAX_ALLOWED_SR_IN_CACHE)
 		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "  Dropping, because the search request cache is full." << std::endl ;
-#endif
-			std::cerr << "  More than " << MAX_ALLOWED_SR_IN_CACHE << " search request in cache. A peer is probably trying to flood your network See the depth charts to find him." << std::endl;
-			return ;
+			RsWarn() << __PRETTY_FUNCTION__ << " More than "
+			         << MAX_ALLOWED_SR_IN_CACHE << " search request in cache. "
+			         << "A peer is probably trying to flood your network See "
+			            "the depth charts to find him." << std::endl;
+			return;
 		}
 
-		// If the item contains an already handled search request, give up.  This
-		// happens when the same search request gets relayed by different peers
-		//
-		if(_search_requests_origins.find(item->request_id) != _search_requests_origins.end())
+		if( _search_requests_origins.find(item->request_id) !=
+		        _search_requests_origins.end() )
 		{
-#ifdef P3TURTLE_DEBUG
-			std::cerr << "  This is a bouncing request. Ignoring and deleting it." << std::endl ;
-#endif
-			return ;
+			/* If the item contains an already handled search request, give up.
+			 * This happens when the same search request gets relayed by
+			 * different peers */
+			return;
 		}
 	}
 
@@ -1013,13 +1014,21 @@ void p3turtle::handleSearchRequest(RsTurtleSearchRequestItem *item)
 
 // This function should be removed in the future, when file search will also use generic search items.
 
-void p3turtle::performLocalSearch(RsTurtleSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& search_results,uint32_t& max_allowed_hits)
+void p3turtle::performLocalSearch(
+        RsTurtleSearchRequestItem *item, uint32_t& req_result_count,
+        std::list<RsTurtleSearchResultItem*>& search_results,
+        uint32_t& max_allowed_hits )
 {
-    RsTurtleFileSearchRequestItem *ftsearch = dynamic_cast<RsTurtleFileSearchRequestItem*>(item) ;
+	Dbg3() << __PRETTY_FUNCTION__ << " " << item << std::endl;
+
+	RsTurtleFileSearchRequestItem* ftsearch =
+	        dynamic_cast<RsTurtleFileSearchRequestItem*>(item);
 
     if(ftsearch != NULL)
     {
-        performLocalSearch_files(ftsearch,req_result_count,search_results,max_allowed_hits) ;
+		performLocalSearch_files(
+		            ftsearch, req_result_count, search_results,
+		            max_allowed_hits );
         return ;
     }
 
@@ -1060,12 +1069,13 @@ void p3turtle::performLocalSearch_generic(RsTurtleGenericSearchRequestItem *item
     }
 }
 
-void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint32_t& req_result_count,std::list<RsTurtleSearchResultItem*>& result,uint32_t& max_allowed_hits)
+void p3turtle::performLocalSearch_files(
+        RsTurtleFileSearchRequestItem *item, uint32_t& req_result_count,
+        std::list<RsTurtleSearchResultItem*>& result,
+        uint32_t& max_allowed_hits )
 {
-#ifdef P3TURTLE_DEBUG
-	std::cerr << "Performing rsFiles->search()" << std::endl ;
-#endif
-	// now, search!
+	Dbg3() << __PRETTY_FUNCTION__ << " " << *item << std::endl;
+
     std::list<TurtleFileInfo> initialResults ;
     item->search(initialResults) ;
 
@@ -1104,6 +1114,9 @@ void p3turtle::performLocalSearch_files(RsTurtleFileSearchRequestItem *item,uint
 			res_item = NULL ;	// forces creation of a new item.
 		}
 	}
+
+	Dbg3() << __PRETTY_FUNCTION__ << " found " << req_result_count << " results"
+	       << std::endl;
 }
 
 void p3turtle::handleSearchResult(RsTurtleSearchResultItem *item)

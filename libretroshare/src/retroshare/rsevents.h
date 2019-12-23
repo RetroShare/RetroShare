@@ -66,6 +66,9 @@ enum class RsEventType : uint32_t
 	/// Emitted when a peer state changes, @see RsPeers
 	PEER_STATE_CHANGED                                      = 6,
 
+	/// @see RsMailStatusEvent
+	MAIL_STATUS_CHANGE                                      = 7,
+
 	MAX       /// Used to detect invalid event type passed
 };
 

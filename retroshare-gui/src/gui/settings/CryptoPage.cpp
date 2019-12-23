@@ -57,7 +57,8 @@ CryptoPage::CryptoPage(QWidget * parent, Qt::WindowFlags flags)
 	// hide profile manager as it causes bugs when generating a new profile.
 	//ui.profile_Button->hide() ;
 
-	connect(ui.createNewNode_PB,SIGNAL(clicked()), this, SLOT(profilemanager()));
+	connect(ui.exportprofile,SIGNAL(clicked()), this, SLOT(profilemanager()));
+
 
 	ui.onlinesince->setText(DateTime::formatLongDateTime(Rshare::startupTime()));
 }
@@ -78,6 +79,10 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         ui.pgpid->setText(QString::fromStdString(detail.gpg_id.toStdString()));
         ui.pgpfingerprint->setText(misc::fingerPrintStyleSplit(QString::fromStdString(detail.fpr.toStdString())));
 
+        std::string invite ;
+        rsPeers->getShortInvite(invite,rsPeers->getOwnId(),true,false);
+        ui.retroshareid->setText(QString::fromUtf8(invite.c_str()));
+		
         /* set retroshare version */
         ui.version->setText(Rshare::retroshareVersion(true));
 
@@ -87,6 +92,16 @@ void CryptoPage::showEvent ( QShowEvent * /*event*/ )
         int friends = ids.size();
 
         ui.friendsEdit->setText(QString::number(friends));
+		
+		
+		QString string ;
+		string = rsFiles->getPartialsDirectory().c_str();
+		QString datadir = string;
+			if(datadir.contains("Partials"))
+			{
+				datadir.replace("Partials","");
+			}
+				ui.labelpath->setText(datadir);
     }
 	 load() ;
 }

@@ -160,7 +160,6 @@ int 	p3ServerConfig::getConfigNetStatus(RsConfigNetStatus &status)
 	pqiNetStatus nstatus;
 	mNetMgr->getNetStatus(nstatus);
 
-	status.netLocalOk = nstatus.mLocalAddrOk;
 	status.netUpnpOk  = nstatus.mUpnpOk;
 	status.netStunOk  = false;
 	status.netExtAddressOk = nstatus.mExtAddrOk;

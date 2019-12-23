@@ -32,12 +32,7 @@
 #include <iomanip>
 #include <string>
 #include <typeinfo> // for typeid
-
-#ifdef HAS_RAPIDJSON
 #include <rapidjson/prettywriter.h>
-#else
-#include <rapid_json/prettywriter.h>
-#endif // HAS_RAPIDJSON
 
 static constexpr uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 

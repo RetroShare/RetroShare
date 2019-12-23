@@ -2,7 +2,7 @@
 
 /* Standard rules */
 
-QFrame#toolBarFrame {
+QFrame#toolBarFrame, QFrame#toolBarFrameTop {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
 	border: 1px solid #CCCCCC;
 }
@@ -176,8 +176,9 @@ ChatLobbyWidget QGroupBox#lobbyinfo_groupBox
 
 ChatLobbyWidget QGroupBox::title#lobbyinfo_groupBox 
 {
-  padding: 4 12px;
-	background: transparent; 
+    padding: 4 12px;
+    background: #039bd5;
+    color: white;
 }
 
 ChatLobbyWidget QLabel#lobbyInfoLabel {
@@ -222,6 +223,11 @@ ChatWidget QFrame#infoFrame {
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ChatWidget QFrame#titleBarFrame {
+	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
+	border: 1px solid #CCCCCC;
 }
 
 PopupChatWindow QToolBar#chattoolBar{
@@ -319,18 +325,27 @@ GenCertDialog > QFrame#headerFrame > QLabel#headerLabel {
 /* ConnectFriendWizard */
 
 ConnectFriendWizard QWizardPage#ConclusionPage > QGroupBox#peerDetailsFrame {
-	border: 2px solid #CCCCCC;
+	border: 2px solid #039bd5;
 	border-radius:6px;
 	background: white;
 	padding: 12 12px;
 }
 
-ConnectFriendWizard QLabel#fr_label, QLabel#requestinfolabel
+ConnectFriendWizard QLabel#fr_label, QLabel#requestinfolabel, QLabel#cp_Label
 {
 	border: 1px solid #DCDC41;
 	border-radius: 6px;
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
+}
+
+ConnectFriendWizard QGroupBox::title#peerDetailsFrame
+{
+	padding: 4 12px;
+	background: transparent; 
+    padding: 4 12px;
+    background: #039bd5;
+    color: white;
 }
 
 /* Toaster */
@@ -394,20 +409,6 @@ GxsChannelPostItem QLabel#logoLabel {
   background-color: black;
 }
 
-ChatMsgItem > QFrame#frame {
-	border: 2px solid black;
-	background-color: #FEF6DE;
-	border-radius: 10px;
-}
-
-ChatMsgItem QWidget#avatar {
-	border: 2px solid black;
-}
-
-ChatMsgItem QLabel#peerNameLabel {
-	color: #990033;
-}
-
 ForumNewItem > QFrame#frame, ForumMsgItem > QFrame#frame {
 	border: 2px solid #CCCCCC;
 	background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);
@@ -426,54 +427,6 @@ ForumMsgItem QLabel#iconLabel {
 
 ForumMsgItem QFrame#prevFrame {
 	border: 2px solid black;
-	border-radius: 10px;
-}
-
-PeerItem > QFrame#frame {
-	border: 2px solid green;
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #BDDF7D, stop: 1 #649C35);
-	border-radius: 10px;
-}
-
-PeerItem QWidget#avatar {
-	border: 2px solid green;
-	background-color: #BDDF7D;
-}
-
-PeerItem QLabel#peerNameLabel {
-	color: #990033
-}
-
-MsgItem QFrame#frame {
-	border: 2px solid #0099cc;
-	border-radius: 6px;
-	background: white;
-}
-
-MsgItem QFrame#inviteFrame {
-	border: 1px solid #DCDC41;
-	border-radius: 6px;
-	background: #FFFFD7;
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
-}
-
-MsgItem QWidget#avatar {
-	background-color: #2291E0;
-}
-
-SecurityItem > QFrame#frame {
-	border: 2px solid #FF9412; 
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
-	border-radius: 10px;
-}
-
-SecurityItem QLabel#peerNameLabel, SecurityItem QLabel#requestLabel {
-	color: black;
-}
-
-SecurityIpItem > QFrame#frame {
-	border: 2px solid #FF9412; 
-	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FFE8A4, stop: 1 #FFB252);
 	border-radius: 10px;
 }
 
@@ -907,4 +860,9 @@ PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#site
 GxsCommentDialog QComboBox#sortBox {
 	font: bold;
 	color: #0099cc;
+}
+
+PostedListWidget QTextBrowser#infoDescription {
+	background: transparent;
+	border: none;
 }

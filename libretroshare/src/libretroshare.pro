@@ -1,20 +1,6 @@
-################################################################################
-# libretroshare.pro                                                            #
-# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
-#                                                                              #
-# This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Lesser General Public License as               #
-# published by the Free Software Foundation, either version 3 of the           #
-# License, or (at your option) any later version.                              #
-#                                                                              #
-# This program is distributed in the hope that it will be useful,              #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
-# GNU Lesser General Public License for more details.                          #
-#                                                                              #
-# You should have received a copy of the GNU Lesser General Public License     #
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
-################################################################################
+# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: CC0-1.0
+
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = lib
@@ -159,13 +145,18 @@ PUBLIC_HEADERS =	retroshare/rsdisc.h \
 					retroshare/rsservicecontrol.h \
 					retroshare/rsgxsdistsync.h 
 
+rs_webui {
+    PUBLIC_HEADERS += retroshare/rswebui.h
+    SOURCES += jsonapi/p3webui.cc
+    HEADERS += jsonapi/p3webui.h
+}
+
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
-
 
 ################################# Linux ##########################################
 linux-* {
@@ -404,9 +395,7 @@ HEADERS +=	pqi/authssl.h \
 			pqi/pqiqosstreamer.h \
 			pqi/sslfns.h \
 			pqi/pqinetstatebox.h \
-			pqi/p3servicecontrol.h \
-
-#			pqi/p3dhtmgr.h \
+                        pqi/p3servicecontrol.h
 
 HEADERS +=	rsserver/p3face.h \
 			rsserver/p3history.h \
@@ -505,6 +494,7 @@ HEADERS +=	util/folderiterator.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
             util/cxx11retrocompat.h \
+    util/cxx17retrocompat.h \
             util/rsurl.h
 
 SOURCES +=	ft/ftchunkmap.cc \
@@ -653,8 +643,8 @@ equals(RS_UPNP_LIB, miniupnpc) {
 
 contains(RS_UPNP_LIB, upnp) {
         HEADERS += rs_upnp/upnp18_retrocompat.h
-        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_linux.h
-        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_linux.cc
+        HEADERS += rs_upnp/UPnPBase.h   rs_upnp/upnphandler_libupnp.h
+        SOURCES += rs_upnp/UPnPBase.cpp rs_upnp/upnphandler_libupnp.cc
 }
 
 # new gxs cache system
@@ -897,12 +887,36 @@ rs_jsonapi {
     # Force recalculation of libretroshare dependencies see https://stackoverflow.com/a/47884045
     QMAKE_EXTRA_TARGETS += libretroshare
 
-    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h
+    HEADERS += jsonapi/jsonapi.h jsonapi/jsonapiitems.h retroshare/rsjsonapi.h
     SOURCES += jsonapi/jsonapi.cpp
 }
 
-rs_deep_search {
-    HEADERS += deep_search/deep_search.h
+rs_deep_channels_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/channelsindex.hpp
+    SOURCES += deep_search/channelsindex.cpp
+}
+
+rs_deep_files_index {
+    HEADERS *= deep_search/commonutils.hpp
+    SOURCES *= deep_search/commonutils.cpp
+
+    HEADERS += deep_search/filesindex.hpp
+    SOURCES += deep_search/filesindex.cpp
+}
+
+rs_deep_files_index_ogg {
+    HEADERS += deep_search/filesoggindexer.hpp
+}
+
+rs_deep_files_index_flac {
+    HEADERS += deep_search/filesflacindexer.hpp
+}
+
+rs_deep_files_index_taglib {
+    HEADERS += deep_search/filestaglibindexer.hpp
 }
 
 rs_broadcast_discovery {

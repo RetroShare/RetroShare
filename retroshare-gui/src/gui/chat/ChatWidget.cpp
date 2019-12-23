@@ -93,27 +93,28 @@ ChatWidget::ChatWidget(QWidget *parent)
 	lastMsgDate = QDate::currentDate();
 
 	//Resize Tool buttons
-	ui->emoteiconButton->setFixedSize(buttonSize);
+	//ui->emoteiconButton->setFixedSize(buttonSize);
 	ui->emoteiconButton->setIconSize(iconSize);
-	ui->stickerButton->setFixedSize(buttonSize);
+	//ui->stickerButton->setFixedSize(buttonSize);
 	ui->stickerButton->setIconSize(iconSize);
-	ui->attachPictureButton->setFixedSize(buttonSize);
+	//ui->attachPictureButton->setFixedSize(buttonSize);
 	ui->attachPictureButton->setIconSize(iconSize);
-	ui->addFileButton->setFixedSize(buttonSize);
+	//ui->addFileButton->setFixedSize(buttonSize);
 	ui->addFileButton->setIconSize(iconSize);
-	ui->pushtoolsButton->setFixedSize(buttonSize);
+	//ui->pushtoolsButton->setFixedSize(buttonSize);
 	ui->pushtoolsButton->setIconSize(iconSize);
-	ui->notifyButton->setFixedSize(buttonSize);
+	//ui->notifyButton->setFixedSize(buttonSize);
 	ui->notifyButton->setIconSize(iconSize);
-	ui->markButton->setFixedSize(buttonSize);
+	//ui->markButton->setFixedSize(buttonSize);
 	ui->markButton->setIconSize(iconSize);
 	ui->leSearch->setFixedHeight(iconHeight);
 	ui->searchBefore->setFixedHeight(iconHeight);
 	ui->searchAfter->setFixedHeight(iconHeight);
-	ui->searchButton->setFixedSize(buttonSize);
+	//ui->searchButton->setFixedSize(buttonSize);
 	ui->searchButton->setIconSize(iconSize);
-	ui->sendButton->setFixedHeight(iconHeight);
+	//ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
+	ui->typingLabel->setMaximumHeight(QFontMetricsF(font()).height()*1.2);
 
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
@@ -365,8 +366,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
         QString customStateString = QString::fromUtf8(rsMsgs->getCustomStateString(chatId.toPeerId()).c_str());
         updatePeersCustomStateString(QString::fromStdString(chatId.toPeerId().toStdString()), customStateString);
     } else if (chatType() == CHATTYPE_DISTANT){
-        hist_chat_type = RS_HISTORY_TYPE_PRIVATE ;
-        messageCount = Settings->getPrivateChatHistoryCount();
+        hist_chat_type = RS_HISTORY_TYPE_DISTANT ;
+        messageCount = Settings->getDistantChatHistoryCount();
     } else if(chatId.isBroadcast()){
         hist_chat_type = RS_HISTORY_TYPE_PUBLIC;
         messageCount = Settings->getPublicChatHistoryCount();
@@ -437,8 +438,8 @@ ChatWidget::ChatType ChatWidget::chatType()
 void ChatWidget::blockSending(QString msg)
 {
 #ifndef RS_ASYNC_CHAT
-	sendingBlocked = true;
-	ui->sendButton->setEnabled(false);
+//	sendingBlocked = true;
+//	ui->sendButton->setEnabled(false);
 	ui->stickerButton->setEnabled(false);
 #endif
 	ui->sendButton->setToolTip(msg);

@@ -1,21 +1,24 @@
-################################################################################
-# retroshare.pri                                                               #
-# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>             #
-# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>              #
-#                                                                              #
-# This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Lesser General Public License as               #
-# published by the Free Software Foundation, either version 3 of the           #
-# License, or (at your option) any later version.                              #
-#                                                                              #
-# This program is distributed in the hope that it will be useful,              #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
-# GNU Lesser General Public License for more details.                          #
-#                                                                              #
-# You should have received a copy of the GNU Lesser General Public License     #
-# along with this program. If not, see <https://www.gnu.org/licenses/>.        #
-################################################################################
+# RetroShare common qmake build script
+#
+# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License along
+# with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 
 ################################################################################
 ## Documented build options (CONFIG) goes here as all the rest depend on them ##
@@ -32,13 +35,8 @@ no_retroshare_gui:CONFIG -= retroshare_gui
 # Enable GXS distant syncronization
 CONFIG *= gxsdistsync
 
-# To disable RetroShare-nogui append the following
-# assignation to qmake command line "CONFIG+=no_retroshare_nogui"
-CONFIG *= no_retroshare_nogui
-retroshare_nogui:CONFIG -= no_retroshare_nogui
-
-# To disable cmark append the following 
-# assignation to qmake command line "CONFIG+=no_cmark"
+# To enable cmark append the following
+# assignation to qmake command line "CONFIG+=rs_gui_cmark"
 CONFIG *= no_rs_gui_cmark
 rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 
@@ -47,46 +45,10 @@ rs_gui_cmark:CONFIG -= no_rs_gui_cmark
 CONFIG *= no_retroshare_plugins
 retroshare_plugins:CONFIG -= no_retroshare_plugins
 
-# To enable RetroShare-android-service append the following assignation to
-# qmake command line "CONFIG+=retroshare_android_service"
-CONFIG *= no_retroshare_android_service
-retroshare_android_service:CONFIG -= no_retroshare_android_service
-
-# To enable RetroShare-android-notify-service append the following
-# assignation to qmake command line
-# "CONFIG+=retroshare_android_notify_service"
-CONFIG *= no_retroshare_android_notify_service
-retroshare_android_notify_service:CONFIG -= no_retroshare_android_notify_service
-
-# To enable RetroShare-QML-app append the following assignation to
-# qmake command line "CONFIG+=retroshare_qml_app"
-CONFIG *= no_retroshare_qml_app
-retroshare_qml_app:CONFIG -= no_retroshare_qml_app
-
-# To enable RetroShare service append the following assignation to
-# qmake command line "CONFIG+=retroshare_service"
+# To disable RetroShare service append the following assignation to
+# qmake command line "CONFIG+=no_retroshare_service"
 CONFIG *= retroshare_service
-retroshare_service:CONFIG -= no_retroshare_service
-
-# To enable libresapi (deprecated) append the following assignation to qmake command line
-CONFIG+=no_libresapi
-libresapi:CONFIG -= no_libresapi
-
-# To enable libresapi via local socket (unix domain socket or windows named
-# pipes) append the following assignation to qmake command line
-#"CONFIG+=libresapilocalserver"
-CONFIG *= no_libresapilocalserver
-libresapilocalserver:CONFIG -= no_libresapilocalserver
-
-# To enable libresapi settings handler in libresapi append the following
-# assignation to qmake command line "CONFIG+=libresapi_settings"
-CONFIG *= no_libresapi_settings
-libresapi_settings:CONFIG -= no_libresapi_settings
-
-# To disable libresapi via HTTP (based on libmicrohttpd) append the following
-# assignation to qmake command line "CONFIG+=no_libresapihttpserver"
-CONFIG *= no_libresapihttpserver
-libresapihttpserver:CONFIG -= no_libresapihttpserver
+no_retroshare_service:CONFIG -= retroshare_service
 
 # To disable SQLCipher support append the following assignation to qmake
 # command line "CONFIG+=no_sqlcipher"
@@ -140,8 +102,8 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 CONFIG *= direct_chat
 no_direct_chat:CONFIG -= direct_chat
 
-# To enable messemger window which has been deprecated since RetroShare 0.6.6 append
-# the following assignation to qmake command line "CONFIG+=messenger"
+# To enable messemger window which has been deprecated since RetroShare 0.6.6
+# append the following assignation to qmake command line "CONFIG+=messenger"
 # CONFIG *= messenger
 
 # To disable bitdht append the following assignation to qmake command line
@@ -158,15 +120,37 @@ rs_macos10.10:CONFIG -= rs_macos10.11
 rs_macos10.12:CONFIG -= rs_macos10.11
 rs_macos10.13:CONFIG -= rs_macos10.11
 rs_macos10.14:CONFIG -= rs_macos10.11
+rs_macos10.15:CONFIG -= rs_macos10.11
 
 # To enable JSON API append the following assignation to qmake command line
 # "CONFIG+=rs_jsonapi"
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
-# To disable deep search append the following assignation to qmake command line
-CONFIG *= no_rs_deep_search
-rs_deep_search:CONFIG -= no_rs_deep_search
+# To enable channel indexing append the following assignation to qmake command
+# line "CONFIG+=rs_deep_channel_index"
+CONFIG *= no_rs_deep_channel_index
+rs_deep_channel_index:CONFIG -= no_rs_deep_channel_index
+
+# To enable deep files indexing append the following assignation to qmake
+# command line "CONFIG+=rs_files_index"
+CONFIG *= no_rs_deep_files_index
+rs_deep_files_index:CONFIG -= no_rs_deep_files_index
+
+# To enable Ogg files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_ogg"
+CONFIG *= no_rs_deep_files_index_ogg
+rs_deep_files_index_ogg:CONFIG -= no_rs_deep_files_index_ogg
+
+# To enable FLAC files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_flac"
+CONFIG *= no_rs_deep_files_index_flac
+rs_deep_files_index_flac:CONFIG -= no_rs_deep_files_index_flac
+
+# To enable taglib files deep indexing append the following assignation to qmake
+# command line "CONFIG+=rs_deep_files_index_taglib"
+CONFIG *= no_rs_deep_files_index_taglib
+rs_deep_files_index_taglib:CONFIG -= no_rs_deep_files_index_taglib
 
 # To enable native dialogs append the following assignation to qmake command
 # line "CONFIG+=rs_use_native_dialogs"
@@ -183,15 +167,16 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 CONFIG *= no_rs_webui
 rs_webui:CONFIG -= no_rs_webui
 
-# To enable webui append the following assignation to qmake
-# command line "CONFIG+=rs_service_webui_terminal_password"
-CONFIG *= no_rs_service_webui_terminal_password
-rs_service_webui_terminal_password:CONFIG -= no_rs_service_webui_terminal_password
+# To disable retroshare-service option to set webui password from the terminal
+# append the following assignation to qmake command line
+# "CONFIG+=no_rs_service_webui_terminal_password"
+CONFIG *= rs_service_webui_terminal_password
+no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_password
 
-# To enable retroshare-service terminal login append the following assignation
-# to qmake command line "CONFIG+=rs_service_terminal_login"
-CONFIG *= no_rs_service_terminal_login
-rs_service_terminal_login:CONFIG -= no_rs_service_terminal_login
+# To disable retroshare-service terminal login append the following assignation
+# to qmake command line "CONFIG+=no_rs_service_terminal_login"
+CONFIG *= rs_service_terminal_login
+no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -448,7 +433,6 @@ gxsdistsync:DEFINES *= RS_USE_GXS_DISTANT_SYNC
 wikipoos:DEFINES *= RS_USE_WIKI
 rs_gxs:DEFINES *= RS_ENABLE_GXS
 rs_gxs_send_all:DEFINES *= RS_GXS_SEND_ALL
-rs_webui:DEFINES *= RS_WEBUI
 rs_service_webui_terminal_password:DEFINES *= RS_SERVICE_TERMINAL_WEBUI_PASSWORD
 rs_service_terminal_login:DEFINES *= RS_SERVICE_TERMINAL_LOGIN
 
@@ -499,11 +483,6 @@ no_rs_cppwarning {
 
 rs_gxs_trans {
     DEFINES *= RS_GXS_TRANS
-    greaterThan(QT_MAJOR_VERSION, 4) {
-        CONFIG += c++11
-    } else {
-        QMAKE_CXXFLAGS += -std=c++0x
-    }
 }
 
 bitdht {
@@ -531,46 +510,17 @@ to contain the path to an host executable jsonapi-generator")
     DEFINES *= RS_JSONAPI
 }
 
-libresapilocalserver {
-    warning("QMAKE: you have enabled libresapilocalserver which is deprecated")
-    DEFINES *= LIBRESAPI_LOCAL_SERVER
+rs_webui {
+    !rs_jsonapi: error("Cannot enable rs_webui without rs_jsonapi")
+    DEFINES *= RS_WEBUI
 }
 
-libresapi_settings {
-    warning("QMAKE: you have enabled libresapi_settings which is deprecated")
-    DEFINES *= LIBRESAPI_SETTINGS
-}
+rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX
 
-libresapihttpserver {
-    warning("QMAKE: you have enabled libresapihttpserver which is deprecated")
-    DEFINES *= ENABLE_WEBUI
-}
-
-retroshare_nogui {
-    warning("QMAKE: you have enabled retroshare_nogui which is deprecated")
-}
-
-retroshare_android_service {
-    warning("QMAKE: you have enabled retroshare_android_service which is deprecated")
-}
-
-retroshare_android_notify_service {
-    warning("QMAKE: you have enabled retroshare_android_notify_service which is deprecated")
-}
-
-retroshare_qml_app {
-    warning("QMAKE: you have enabled retroshare_qml_app which is deprecated")
-}
-
-rs_deep_search {
-    DEFINES *= RS_DEEP_SEARCH
-
-	linux {
-	 exists("/usr/include/xapian-1.3") {
-	 	INCLUDEPATH += /usr/include/xapian-1.3
-	 }
-	}
-}
+rs_deep_files_index:DEFINES *= RS_DEEP_FILES_INDEX
+rs_deep_files_index_ogg:DEFINES *= RS_DEEP_FILES_INDEX_OGG
+rs_deep_files_index_flac:DEFINES *= RS_DEEP_FILES_INDEX_FLAC
+rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
 
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
@@ -633,6 +583,7 @@ android-* {
     }
     CONFIG *= no_libresapihttpserver
     CONFIG -= libresapihttpserver
+
     QT *= androidextras
     INCLUDEPATH *= $$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/include
     QMAKE_LIBDIR *= "$$NATIVE_LIBS_TOOLCHAIN_PATH/sysroot/usr/lib/"
@@ -741,25 +692,18 @@ macx-* {
 		QMAKE_CXXFLAGS += -Wno-nullability-completeness
 		QMAKE_CFLAGS += -Wno-nullability-completeness
 	}
+	rs_macos10.15 {
+		message(***retroshare.pri: Set Target and SDK to MacOS 10.15 )
+		QMAKE_MACOSX_DEPLOYMENT_TARGET=10.15
+		QMAKE_MAC_SDK = macosx10.15
+		QMAKE_CXXFLAGS += -Wno-nullability-completeness
+		QMAKE_CFLAGS += -Wno-nullability-completeness
+	}
 
 
 
 	message(***retroshare.pri:MacOSX)
-	# BIN_DIR += "/usr/bin"
-	# INC_DIR += "/usr/include"
-	# INC_DIR += "/usr/local/include"
-	# INC_DIR += "/opt/local/include"
-	# LIB_DIR += "/usr/local/lib"
-	# LIB_DIR += "/opt/local/lib"
 	BIN_DIR += "/Applications/Xcode.app/Contents/Developer/usr/bin"
-	INC_DIR += "/usr/local/Cellar/miniupnpc/2.1/include"
-	INC_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/include"
-	INC_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/include"
-	LIB_DIR += "/usr/local/opt/openssl/lib/"
-	LIB_DIR += "/usr/local/Cellar/libmicrohttpd/0.9.62_1/lib"
-	LIB_DIR += "/usr/local/Cellar/sqlcipher/4.1.0/lib"
-	LIB_DIR += "/usr/local/Cellar/miniupnpc/2.1/lib"
-	CONFIG += c++11
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
 	QT += macextras

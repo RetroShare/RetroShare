@@ -75,9 +75,6 @@ const int WINDOWS_TCP_BUFFER_SIZE = 512 * 1024; // 512 KB
  *
  */
 
-class pqissl;
-class cert;
-
 class pqissllistener;
 class p3LinkMgr;
 struct RsPeerCryptoParams;

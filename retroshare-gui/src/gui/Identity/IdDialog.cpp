@@ -2019,7 +2019,9 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
 		ChatId id = ChatId(ChatLobbyId(u.mAdditionalId));
-		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromStdString(id.toStdString()));
+		ChatLobbyInfo linfo ;
+		rsMsgs->getChatLobbyInfo(ChatLobbyId(u.mAdditionalId),linfo);
+		RetroShareLink l = RetroShareLink::createChatRoom(id, QString::fromUtf8(linfo.lobby_name.c_str()));
 		return tr("Message in chat room %1").arg(l.toHtml()) ;
     }
     case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK:         // Global router message validation

@@ -396,10 +396,6 @@ struct RsPeerStateChangedEvent : RsEvent
 class RsPeers
 {
 public:
-
-	RsPeers() {}
-	virtual ~RsPeers() {}
-
 	/**
 	 * @brief Get own SSL peer id
 	 * @return own peer id
@@ -415,6 +411,14 @@ public:
 	 * @return false if error occurred, true otherwise
 	 */
 	virtual bool getFriendList(std::list<RsPeerId>& sslIds) = 0;
+
+	/**
+	 * @brief Get trusted PGP ids list
+	 * @jsonapi{development}
+	 * @param[out] pgpIds storage for the trusted PGP ids
+	 * @return false if error occurred, true otherwise
+	 */
+	virtual bool getPgpFriendList(std::vector<RsPgpId>& pgpIds) = 0;
 
 	/**
 	 * @brief Get connected peers list
@@ -498,6 +502,8 @@ public:
 	 */
 	virtual RsPgpId getGPGId(const RsPeerId& sslId) = 0;
 	virtual bool isKeySupported(const RsPgpId& gpg_ids) = 0;
+
+	RS_DEPRECATED_FOR(getPgpFriendList)
 	virtual bool getGPGAcceptedList(std::list<RsPgpId> &gpg_ids) = 0;
 	virtual bool getGPGSignedList(std::list<RsPgpId> &gpg_ids) = 0;// keys signed by our own PGP key.
 	virtual bool getGPGValidList(std::list<RsPgpId> &gpg_ids) = 0;// all PGP keys without filtering
@@ -706,7 +712,6 @@ public:
 	/* Auth Stuff */
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
-	virtual  bool hasExportMinimal() = 0;
 
 	/**
 	 * @brief Import certificate into the keyring
@@ -740,8 +745,9 @@ public:
                                            std::string& error_string )=0;
 
 	// Certificate utils
-	virtual	bool cleanCertificate(const std::string &certstr, std::string &cleanCert,bool& is_short_format,uint32_t& error_code) = 0;
-	virtual	bool saveCertificateToFile(const RsPeerId& id, const std::string &fname) = 0;
+	virtual	bool cleanCertificate(
+	        const std::string& certstr, std::string& cleanCert,
+	        bool& is_short_format, uint32_t& error_code ) = 0;
 	virtual	std::string saveCertificateToString(const RsPeerId &id) = 0;
 
 	virtual	bool signGPGCertificate(const RsPgpId &gpg_id) = 0;
@@ -847,4 +853,6 @@ public:
 
 	RS_DEPRECATED_FOR(isPgpFriend)
 	virtual bool isGPGAccepted(const RsPgpId &gpg_id_is_friend) = 0;
+
+	virtual ~RsPeers();
 };

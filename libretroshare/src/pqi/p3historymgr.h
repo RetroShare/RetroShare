@@ -82,10 +82,12 @@ private:
 	bool mPublicEnable;
 	bool mLobbyEnable;
 	bool mPrivateEnable;
+	bool mDistantEnable;
 
 	uint32_t mPublicSaveCount;
 	uint32_t mLobbySaveCount;
 	uint32_t mPrivateSaveCount;
+	uint32_t mDistantSaveCount;
 
 	uint32_t mMaxStorageDurationSeconds ;
 	rstime_t mLastCleanTime ;

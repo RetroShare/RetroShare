@@ -810,10 +810,12 @@ bool p3IdService::getOwnIds(std::list<RsGxsId> &ownIds,bool signed_only)
     return true ;
 }
 
-
-bool p3IdService::identityToBase64( const RsGxsId& id,
-                       std::string& base64String )
-{ return serialiseIdentityToMemory(id, base64String); }
+bool p3IdService::isKnownId(const RsGxsId& id)
+{
+	RS_STACK_MUTEX(mIdMtx);
+	return mKeyCache.is_cached(id) ||
+	        std::find(mOwnIds.begin(), mOwnIds.end(),id) != mOwnIds.end();
+}
 
 bool p3IdService::serialiseIdentityToMemory( const RsGxsId& id,
                                              std::string& radix_string )
@@ -875,10 +877,6 @@ void p3IdService::handle_get_serialized_grp(uint32_t token)
 
     mSerialisedIdentities[RsGxsId(id)] = s ;
 }
-
-bool p3IdService::identityFromBase64(
-        const std::string& base64String, RsGxsId& id )
-{ return deserialiseIdentityFromMemory(base64String, &id); }
 
 bool p3IdService::deserialiseIdentityFromMemory(const std::string& radix_string,
                                                 RsGxsId* id /* = nullptr */)
@@ -4711,15 +4709,89 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 	}
 }
 
+/*static*/ const std::string RsIdentity::DEFAULT_IDENTITY_BASE_URL =
+        "retroshare:///identities";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_NAME_FIELD = "identityName";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_ID_FIELD = "identityId";
+/*static*/ const std::string RsIdentity::IDENTITY_URL_DATA_FIELD = "identityData";
+
+bool p3IdService::exportIdentityLink(
+        std::string& link, const RsGxsId& id, bool includeGxsData,
+        const std::string& baseUrl, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(id.isNull()) return failure("id cannot be null");
+
+	const bool outputRadix = baseUrl.empty();
+	if(outputRadix && !includeGxsData) return
+	        failure("includeGxsData must be true if format requested is base64");
+
+	if( includeGxsData &&
+	        !RsGenExchange::exportGroupBase64(
+	            link, reinterpret_cast<const RsGxsGroupId&>(id), errMsg ) )
+		return failure(errMsg);
+
+	if(outputRadix) return true;
+
+	 std::vector<RsGxsIdGroup> idsInfo;
+	if( !getIdentitiesInfo(std::set<RsGxsId>({id}), idsInfo )
+	        || idsInfo.empty() )
+		return failure("failure retrieving identity information");
+
+	RsUrl inviteUrl(baseUrl);
+	inviteUrl.setQueryKV(IDENTITY_URL_ID_FIELD, id.toStdString());
+	inviteUrl.setQueryKV(IDENTITY_URL_NAME_FIELD, idsInfo[0].mMeta.mGroupName);
+	if(includeGxsData) inviteUrl.setQueryKV(IDENTITY_URL_DATA_FIELD, link);
+
+	link = inviteUrl.toString();
+	return true;
+}
+
+bool p3IdService::importIdentityLink(
+        const std::string& link, RsGxsId& id, std::string& errMsg )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		errMsg = err;
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(link.empty()) return failure("link is empty");
+
+	const std::string* radixPtr(&link);
+
+	RsUrl url(link);
+	const auto& query = url.query();
+	const auto qIt = query.find(IDENTITY_URL_DATA_FIELD);
+	if(qIt != query.end()) radixPtr = &qIt->second;
+
+	if(radixPtr->empty()) return failure(IDENTITY_URL_DATA_FIELD + " is empty");
+
+	if(!RsGenExchange::importGroupBase64(
+	            *radixPtr, reinterpret_cast<RsGxsGroupId&>(id), errMsg ))
+		return failure(errMsg);
+
+	return true;
+}
+
+
 void RsGxsIdGroup::serial_process(
         RsGenericSerializer::SerializeJob j,
         RsGenericSerializer::SerializeContext& ctx )
 {
 	RS_SERIAL_PROCESS(mMeta);
 	RS_SERIAL_PROCESS(mPgpIdHash);
-	//RS_SERIAL_PROCESS(mPgpIdSign);
-	RS_SERIAL_PROCESS(mRecognTags);
-	//RS_SERIAL_PROCESS(mImage);
+	RS_SERIAL_PROCESS(mPgpIdSign);
+	RS_SERIAL_PROCESS(mImage);
 	RS_SERIAL_PROCESS(mLastUsageTS);
 	RS_SERIAL_PROCESS(mPgpKnown);
 	RS_SERIAL_PROCESS(mIsAContact);
@@ -4788,3 +4860,10 @@ RsIdentityUsage::RsIdentityUsage(
 RsIdentityUsage::RsIdentityUsage() :
     mServiceId(RsServiceType::NONE), mUsageCode(UNKNOWN_USAGE), mAdditionalId(0)
 {}
+
+RsIdentity::~RsIdentity() = default;
+RsReputationInfo::~RsReputationInfo() = default;
+RsGixs::~RsGixs() = default;
+RsIdentityDetails::~RsIdentityDetails() = default;
+GxsReputation::~GxsReputation() = default;
+RsGxsIdGroup::~RsGxsIdGroup() = default;

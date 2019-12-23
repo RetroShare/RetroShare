@@ -85,4 +85,8 @@
     <!-- Added by G10h4ck: Needed permission for network usage -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Added by G10h4ck: Needed to listen for multicast packets, needed for
+     !   broadcast discovery -->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
 </manifest>

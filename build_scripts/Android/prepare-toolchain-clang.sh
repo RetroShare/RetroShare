@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Script to prepare RetroShare Android package building toolchain
+#
+# Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License as published by the
+# Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.
+# See the GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License along
+# with this program. If not, see <https://www.gnu.org/licenses/>
+#
+# SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: AGPL-3.0-only
+
+
 ## Define default value for variable, take two arguments, $1 variable name,
 ## $2 default variable value, if the variable is not already define define it
 ## with default value.
@@ -424,7 +444,7 @@ build_restbed()
 
 	rm -rf restbed-build; mkdir restbed-build ; cd restbed-build
 	cmake \
-		-DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+		-DCMAKE_POSITION_INDEPENDENT_CODE=ON BUILD_TESTS=OFF \
 		-DBUILD_SSL=OFF -DCMAKE_INSTALL_PREFIX="${PREFIX}" -B. -H../restbed
 	make -j${HOST_NUM_CPU}
 	make install

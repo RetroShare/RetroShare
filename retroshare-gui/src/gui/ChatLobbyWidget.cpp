@@ -69,16 +69,17 @@
 #define TYPE_LOBBY        1
 
 #define IMAGE_CREATE          ""
-#define IMAGE_PUBLIC          ":/images/chat_x24.png"
-#define IMAGE_PRIVATE         ":/images/chat_red24.png"
-#define IMAGE_SUBSCRIBE       ":/images/edit_add24.png"  
-#define IMAGE_UNSUBSCRIBE     ":/images/cancel.png"
+#define IMAGE_PUBLIC          ":/icons/png/chats.png"
+#define IMAGE_PRIVATE         ":/icons/png/chats-private.png"
+#define IMAGE_SIGNED          ":/icons/png/chats-signed.png"
+#define IMAGE_SUBSCRIBE       ":/icons/png/enter.png"  
+#define IMAGE_UNSUBSCRIBE     ":/icons/png/leave2.png"
 #define IMAGE_PEER_ENTERING   ":images/user/add_user24.png"
 #define IMAGE_PEER_LEAVING    ":images/user/remove_user24.png"
-#define IMAGE_TYPING		      ":images/typing.png" 
+#define IMAGE_TYPING          ":icons/png/typing.png" 
 #define IMAGE_MESSAGE	      ":images/chat.png" 
 #define IMAGE_AUTOSUBSCRIBE   ":images/accepted16.png"
-#define IMAGE_COPYRSLINK      ":/images/copyrslink.png"
+#define IMAGE_COPYRSLINK      ":/icons/png/copy.png"
 
 ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
   : RsAutoUpdatePage(5000, parent, flags)
@@ -211,6 +212,8 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
                           ).arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 	    registerHelpButton(ui.helpButton,help_str,"ChatLobbyDialog") ;
+		
+	ui.lobbyTreeWidget->setIconSize(QSize(S*1.5,S*1.5));	
 }
 
 ChatLobbyWidget::~ChatLobbyWidget()

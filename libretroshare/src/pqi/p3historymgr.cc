@@ -48,10 +48,13 @@ p3HistoryMgr::p3HistoryMgr()
 	mPublicEnable = false;
 	mPrivateEnable = true;
 	mLobbyEnable = true;
+	mDistantEnable = true;
 
 	mPublicSaveCount  = 0;
 	mLobbySaveCount   = 0;
 	mPrivateSaveCount = 0;
+	mDistantSaveCount = 0;
+
 	mLastCleanTime = 0 ;
 
 	mMaxStorageDurationSeconds = 10*86400 ; // store for 10 days at most.
@@ -99,11 +102,25 @@ void p3HistoryMgr::addMessage(const ChatMessage& cm)
 			enabled = true;
 		}
 
-		if(cm.chat_id.isDistantChatId())
+		if(cm.chat_id.isDistantChatId()&& mDistantEnable == true)
 		{
 			DistantChatPeerInfo dcpinfo;
 			if (rsMsgs->getDistantChatStatus(cm.chat_id.toDistantChatId(), dcpinfo))
-				peerName = cm.chat_id.toPeerId().toStdString();
+            {
+                RsIdentityDetails det;
+                RsGxsId writer_id = cm.incoming?(dcpinfo.to_id):(dcpinfo.own_id);
+
+                if(rsIdentity->getIdDetails(writer_id,det))
+					peerName = det.mNickname;
+                else
+					peerName = writer_id.toStdString();
+            }
+            else
+            {
+                RsErr() << "Cannot retrieve friend name for distant chat " << cm.chat_id.toDistantChatId() << std::endl;
+				peerName = "";
+            }
+
 			enabled = true;
 		}
 
@@ -258,6 +275,10 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 	kv.key = "LOBBY_ENABLE";
 	kv.value = mLobbyEnable ? "TRUE" : "FALSE";
 	vitem->tlvkvs.pairs.push_back(kv);
+	
+	kv.key = "DISTANT_ENABLE";
+	kv.value = mDistantEnable ? "TRUE" : "FALSE";
+	vitem->tlvkvs.pairs.push_back(kv);
 
 	kv.key = "MAX_STORAGE_TIME";
 	rs_sprintf(kv.value,"%d",mMaxStorageDurationSeconds) ;
@@ -273,6 +294,10 @@ bool p3HistoryMgr::saveList(bool& cleanup, std::list<RsItem*>& saveData)
 
 	kv.key = "PRIVATE_SAVECOUNT";
 	rs_sprintf(kv.value, "%lu", mPrivateSaveCount);
+	vitem->tlvkvs.pairs.push_back(kv);
+	
+	kv.key = "DISTANT_SAVECOUNT";
+	rs_sprintf(kv.value, "%lu", mDistantSaveCount);
 	vitem->tlvkvs.pairs.push_back(kv);
 
 	saveData.push_back(vitem);
@@ -343,6 +368,11 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 					mLobbyEnable = (kit->value == "TRUE") ? true : false;
 					continue;
 				}
+				
+				if (kit->key == "DISTANT_ENABLE") {
+					mDistantEnable = (kit->value == "TRUE") ? true : false;
+					continue;
+				}
 
 				if (kit->key == "MAX_STORAGE_TIME") {
 					uint32_t val ;
@@ -365,6 +395,10 @@ bool p3HistoryMgr::loadList(std::list<RsItem*>& load)
 				}
 				if (kit->key == "LOBBY_SAVECOUNT") {
 					mLobbySaveCount = atoi(kit->value.c_str());
+					continue;
+				}
+				if (kit->key == "DISTANT_SAVECOUNT") {
+					mDistantSaveCount = atoi(kit->value.c_str());
 					continue;
 				}
 			}
@@ -444,7 +478,7 @@ bool p3HistoryMgr::getMessages(const ChatId &chatId, std::list<HistoryMsg> &msgs
     if (chatId.isLobbyId() && mLobbyEnable == true) {
         enabled = true;
     }
-    if (chatId.isDistantChatId() && mPrivateEnable == true) {
+    if (chatId.isDistantChatId() && mDistantEnable == true) {
         enabled = true;
     }
 
@@ -586,6 +620,7 @@ bool p3HistoryMgr::getEnable(uint32_t chat_type)
 		case RS_HISTORY_TYPE_PUBLIC : return mPublicEnable ;
 		case RS_HISTORY_TYPE_LOBBY  : return mLobbyEnable ;
 		case RS_HISTORY_TYPE_PRIVATE: return mPrivateEnable ;
+		case RS_HISTORY_TYPE_DISTANT: return mDistantEnable ;
 		default:
 											  std::cerr << "Unexpected value " << chat_type<< " in p3HistoryMgr::getEnable(): this is a bug." << std::endl;
 											  return 0 ;
@@ -622,6 +657,9 @@ void p3HistoryMgr::setEnable(uint32_t chat_type, bool enable)
 
 		case RS_HISTORY_TYPE_PRIVATE: oldValue = mPrivateEnable ;
 											  mPrivateEnable = enable ;
+											  break ;
+		case RS_HISTORY_TYPE_DISTANT: oldValue = mDistantEnable ;
+											  mDistantEnable = enable ;
 											  break ;
 		default:
 			return;

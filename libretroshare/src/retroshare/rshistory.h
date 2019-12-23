@@ -39,6 +39,7 @@ extern RsHistory *rsHistory;
 static const uint32_t RS_HISTORY_TYPE_PUBLIC  = 0 ;
 static const uint32_t RS_HISTORY_TYPE_PRIVATE = 1 ;
 static const uint32_t RS_HISTORY_TYPE_LOBBY   = 2 ;
+static const uint32_t RS_HISTORY_TYPE_DISTANT = 3 ;
 
 class HistoryMsg
 {

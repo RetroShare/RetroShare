@@ -44,12 +44,10 @@ extern RsTurtle* rsTurtle;
 typedef uint32_t TurtleRequestId ;
 typedef RsPeerId TurtleVirtualPeerId;
 
-/**
- * This is the structure used to send back results of the turtle search,
- * to other peers, to the notifyBase class, to the search caller or to the GUI.
- */
 struct TurtleFileInfo : RsSerializable
 {
+	TurtleFileInfo() : size(0) {}
+
 	uint64_t size;    /// File size
 	RsFileHash hash;  /// File hash
 	std::string name; /// File name
@@ -65,7 +63,7 @@ struct TurtleFileInfo : RsSerializable
 		RsTypeSerializer::serial_process(
 		            j, ctx, TLV_TYPE_STR_NAME, name, "name" );
 	}
-};
+} RS_DEPRECATED_FOR(TurtleFileInfoV2);
 
 struct TurtleTunnelRequestDisplayInfo
 {
@@ -120,10 +118,9 @@ public:
 		virtual void setSessionEnabled(bool) = 0 ;
 		virtual bool sessionEnabled() const = 0 ;
 
-		// Lauches a search request through the pipes, and immediately returns
-		// the request id, which will be further used by the gui to store results
-		// as they come back.
-		//
+		/** Lauches a search request through the pipes, and immediately returns
+		 * the request id, which will be further used by client services to
+		 * handle results as they come back. */
 		virtual TurtleRequestId turtleSearch(
 		        unsigned char *search_bin_data, uint32_t search_bin_data_len,
 		        RsTurtleClientService* client_service ) = 0;

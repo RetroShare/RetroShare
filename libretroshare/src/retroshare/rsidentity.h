@@ -95,14 +95,17 @@ struct GxsReputation : RsSerializable
 	int32_t mPeerOpinion;
 
 	/// @see RsSerializable
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx )
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mOverallScore);
 		RS_SERIAL_PROCESS(mIdScore);
 		RS_SERIAL_PROCESS(mOwnOpinion);
 		RS_SERIAL_PROCESS(mPeerOpinion);
 	}
+
+	~GxsReputation() override;
 };
 
 
@@ -110,7 +113,6 @@ struct RsGxsIdGroup : RsSerializable
 {
 	RsGxsIdGroup() :
 	    mLastUsageTS(0), mPgpKnown(false), mIsAContact(false) {}
-	virtual ~RsGxsIdGroup() {}
 
 	RsGroupMetaData mMeta;
 
@@ -149,6 +151,8 @@ struct RsGxsIdGroup : RsSerializable
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx ) override;
+
+	~RsGxsIdGroup() override;
 };
 
 // DATA TYPE FOR EXTERNAL INTERFACE.
@@ -331,19 +335,22 @@ struct RsIdentityDetails : RsSerializable
 	std::map<RsIdentityUsage,rstime_t> mUseCases;
 
 	/// @see RsSerializable
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,
-	                            RsGenericSerializer::SerializeContext& ctx)
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mId);
 		RS_SERIAL_PROCESS(mNickname);
 		RS_SERIAL_PROCESS(mFlags);
 		RS_SERIAL_PROCESS(mPgpId);
-		//RS_SERIAL_PROCESS(mReputation);
+		RS_SERIAL_PROCESS(mReputation);
 		RS_SERIAL_PROCESS(mAvatar);
 		RS_SERIAL_PROCESS(mPublishTS);
 		RS_SERIAL_PROCESS(mLastUsageTS);
 		RS_SERIAL_PROCESS(mUseCases);
 	}
+
+	~RsIdentityDetails() override;
 };
 
 
@@ -352,7 +359,6 @@ struct RsIdentityDetails : RsSerializable
 struct RsIdentity : RsGxsIfaceHelper
 {
 	explicit RsIdentity(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsIdentity() {}
 
 	/**
 	 * @brief Create a new identity
@@ -420,32 +426,20 @@ struct RsIdentity : RsGxsIfaceHelper
 	virtual bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) = 0;
 
 	/**
+	 * @brief Check if an id is known
+	 * @jsonapi{development}
+	 * @param[in] id Id to check
+	 * @return true if the id is known, false otherwise
+	 */
+	virtual bool isKnownId(const RsGxsId& id) = 0;
+
+	/**
 	 * @brief Check if an id is own
 	 * @jsonapi{development}
 	 * @param[in] id Id to check
 	 * @return true if the id is own, false otherwise
 	 */
 	virtual bool isOwnId(const RsGxsId& id) = 0;
-
-	/**
-	 * @brief Get base64 representation of an identity
-	 * @jsonapi{development}
-	 * @param[in] id Id of the identity
-	 * @param[out] base64String storage for the identity base64
-	 * @return false on error, true otherwise
-	 */
-	virtual bool identityToBase64( const RsGxsId& id,
-	                               std::string& base64String ) = 0;
-
-	/**
-	 * @brief Import identity from base64 representation
-	 * @jsonapi{development}
-	 * @param[in] base64String base64 representation of the identity to import
-	 * @param[out] id storage for the identity id
-	 * @return false on error, true otherwise
-	 */
-	virtual bool identityFromBase64( const std::string& base64String,
-	                                 RsGxsId& id ) = 0;
 
 	/**
 	 * @brief Get identities summaries list.
@@ -521,8 +515,55 @@ struct RsIdentity : RsGxsIfaceHelper
 	 */
 	virtual bool requestIdentity(const RsGxsId& id) = 0;
 
+	/// default base URL used for indentity links @see exportIdentityLink
+	static const std::string DEFAULT_IDENTITY_BASE_URL;
 
-	RS_DEPRECATED
+	/// Link query field used to store indentity name @see exportIdentityLink
+	static const std::string IDENTITY_URL_NAME_FIELD;
+
+	/// Link query field used to store indentity id @see exportIdentityLink
+	static const std::string IDENTITY_URL_ID_FIELD;
+
+	/// Link query field used to store indentity data @see exportIdentityLink
+	static const std::string IDENTITY_URL_DATA_FIELD;
+
+	/**
+	 * @brief Get link to a identity
+	 * @jsonapi{development}
+	 * @param[out] link storage for the generated link
+	 * @param[in] id Id of the identity of which you want to generate a link
+	 * @param[in] includeGxsData if true include the identity GXS group data so
+	 *	the receiver can make use of the identity even if she hasn't received it
+	 *	through GXS yet
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare link
+	 *	radix, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare link into a
+	 *	"normal" looking web link. If empty the GXS data link will be outputted
+	 *	in plain base64 format.
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool exportIdentityLink(
+	        std::string& link, const RsGxsId& id,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = RsIdentity::DEFAULT_IDENTITY_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
+	 * @brief Import identity from full link
+	 * @param[in] link identity link either in radix or link format
+	 * @param[out] id optional storage for parsed identity
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool importIdentityLink(
+	        const std::string& link,
+	        RsGxsId& id = RS_DEFAULT_STORAGE_PARAM(RsGxsId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	RS_DEPRECATED_FOR(exportIdentityLink)
 	virtual bool getGroupSerializedData(
 	        const uint32_t& token,
 	        std::map<RsGxsId,std::string>& serialized_groups ) = 0;
@@ -540,10 +581,10 @@ struct RsIdentity : RsGxsIfaceHelper
 	RS_DEPRECATED
 	virtual uint32_t nbRegularContacts() =0;
 
-	RS_DEPRECATED_FOR(identityToBase64)
+	RS_DEPRECATED_FOR(exportIdentityLink)
 	virtual bool serialiseIdentityToMemory( const RsGxsId& id,
 	                                        std::string& radix_string ) = 0;
-	RS_DEPRECATED_FOR(identityFromBase64)
+	RS_DEPRECATED_FOR(importIdentityLink)
 	virtual bool deserialiseIdentityFromMemory( const std::string& radix_string,
 	                                            RsGxsId* id = nullptr ) = 0;
 
@@ -568,4 +609,6 @@ struct RsIdentity : RsGxsIfaceHelper
 	RS_DEPRECATED_FOR("getIdentitiesSummaries getIdentitiesInfo")
 	virtual bool getGroupData( const uint32_t& token,
 	                           std::vector<RsGxsIdGroup>& groups) = 0;
+
+	virtual ~RsIdentity();
 };

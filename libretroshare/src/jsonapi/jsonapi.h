@@ -1,22 +1,24 @@
-/*******************************************************************************
- * RetroShare JSON API                                                         *
- *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
- *                                                                             *
- * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Affero General Public License as              *
- * published by the Free Software Foundation, either version 3 of the          *
- * License, or (at your option) any later version.                             *
- *                                                                             *
- * This program is distributed in the hope that it will be useful,             *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
- * GNU Affero General Public License for more details.                         *
- *                                                                             *
- * You should have received a copy of the GNU Affero General Public License    *
- * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
- *******************************************************************************/
+/*
+ * RetroShare JSON API
+ *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the
+ * Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
+ *
+ * SPDX-FileCopyrightText: 2004-2019 RetroShare Team <contact@retroshare.cc>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 #pragma once
 
 #include <string>
@@ -24,59 +26,105 @@
 #include <restbed>
 #include <cstdint>
 #include <map>
+#include <set>
+#include <functional>
+#include <vector>
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
 #include "rsitems/rsitem.h"
 #include "jsonapi/jsonapiitems.h"
+#include "retroshare/rsjsonapi.h"
 #include "util/rsthreads.h"
 
 namespace rb = restbed;
 
-struct JsonApiServer;
+class JsonApiResourceProvider
+{
+public:
+	virtual ~JsonApiResourceProvider() = default;
+
+	virtual std::vector<std::shared_ptr<rb::Resource>> getResources() const = 0;
+
+	inline bool operator< (const JsonApiResourceProvider& rp) const
+	{ return this < &rp; }
+};
 
 /**
- * Pointer to global instance of JsonApiServer
- * @jsonapi{development}
- */
-extern JsonApiServer* jsonApiServer;
-
-/**
- * Simple usage
- *  \code{.cpp}
- *    JsonApiServer jas(9092);
- *    jsonApiServer = &jas;
- *    jas.start("JsonApiServer");
- *  \endcode
  * Uses p3Config to securely store persistent JSON API authorization tokens
  */
-struct JsonApiServer : RsSingleJobThread, p3Config
+class JsonApiServer : public p3Config, public RsThread, public RsJsonApi
 {
-	static const uint16_t DEFAULT_PORT = 9092 ;
+public:
+	JsonApiServer();
+	~JsonApiServer() override = default;
+
+	std::vector<std::shared_ptr<rb::Resource>> getResources() const;
+
+	/// @see RsJsonApi
+	bool restart() override;
+
+	/// @see RsJsonApi
+	bool fullstop() override;
+
+	/// @see RsJsonApi
+	inline bool isRunning() override { return RsThread::isRunning(); }
+
+	/// @see RsJsonApi
+	void setListeningPort(uint16_t port) override;
+
+	/// @see RsJsonApi
+	void setBindingAddress(const std::string& bindAddress) override;
+
+	/// @see RsJsonApi
+	std::string getBindingAddress() const override;
+
+	/// @see RsJsonApi
+	uint16_t listeningPort() const override;
+
+	/// @see RsJsonApi
+	void connectToConfigManager(p3ConfigMgr& cfgmgr) override;
+
+	/// @see RsJsonApi
+	virtual bool authorizeUser(
+	        const std::string& alphanumeric_user,
+	        const std::string& alphanumeric_passwd ) override;
+
+	/// @see RsJsonApi
+	std::map<std::string,std::string> getAuthorizedTokens() override;
+
+	/// @see RsJsonApi
+	bool revokeAuthToken(const std::string& user) override;
+
+	/// @see RsJsonApi
+	bool isAuthTokenValid(const std::string& token) override;
+
+	/// @see RsJsonAPI
+	bool requestNewTokenAutorization(
+	        const std::string& user, const std::string& password ) override;
+
+	/// @see RsJsonApi
+	void registerResourceProvider(const JsonApiResourceProvider&) override;
+
+	/// @see RsJsonApi
+	void unregisterResourceProvider(const JsonApiResourceProvider&) override;
+
+	/// @see RsJsonApi
+	bool hasResourceProvider(const JsonApiResourceProvider&) override;
 
 	/**
-	 * @brief construct a JsonApiServer instance with given parameters
-	 * @param[in] port listening port fpt the JSON API socket
-	 * @param[in] bindAddress binding address for the JSON API socket
-	 * @param newAccessRequestCallback called when a new auth token is asked to
-	 *	be authorized via JSON API, the auth token is passed as parameter, and
-	 *	the callback should return true if the new token get access granted and
-	 *	false otherwise, this usually requires user interacion to confirm access
+	 * @brief Get decoded version of the given encoded token
+	 * @param[in] radix64_token encoded
+	 * @return token decoded
 	 */
-	JsonApiServer(
-	        uint16_t port = DEFAULT_PORT,
-	        const std::string& bindAddress = "127.0.0.1",
-	        const std::function<bool(const std::string&)> newAccessRequestCallback = [](const std::string&){return false;} );
+	static std::string decodeToken(const std::string& radix64_token);
 
 	/**
-	 * @param[in] path Path itno which publish the API call
+	 * Register an unique handler for a resource path
+	 * @param[in] path Path into which publish the API call
 	 * @param[in] handler function which will be called to handle the requested
 	 * @param[in] requiresAutentication specify if the API call must be
-	 *	autenticated or not
-	 *   path, the function must be declared like:
-	 *   \code{.cpp}
-	 *     void functionName(const shared_ptr<restbed::Session> session)
-	 *   \endcode
+	 *	autenticated or not.
 	 */
 	void registerHandler(
 	        const std::string& path,
@@ -88,107 +136,25 @@ struct JsonApiServer : RsSingleJobThread, p3Config
 	 * @param callback function to call when a new JSON API access is requested
 	 */
 	void setNewAccessRequestCallback(
-	        const std::function<bool(const std::string&)>& callback );
-
-	/**
-	 * @brief Shutdown the JSON API server
-	 * Beware that this method shout down only the JSON API server instance not
-	 */
-	void shutdown();
-
-	/**
-	 * @brief This function should be used by JSON API clients that aren't
-	 * authenticated yet, to ask their token to be authorized, the success or
-	 * failure will depend on mNewAccessRequestCallback return value, and it
-	 * will likely need human user interaction in the process.
-	 * @jsonapi{development,unauthenticated}
-	 * @param[in] token token to autorize
-	 * @return true if authorization succeded, false otherwise.
-	 */
-	bool requestNewTokenAutorization(const std::string& token);
-
-	/**
-	 * @brief Check if given JSON API auth token is authorized
-	 * @jsonapi{development}
-	 * @param[in] token decoded
-	 * @return tru if authorized, false otherwise
-	 */
-	bool isAuthTokenValid(const std::string& token);
-
-	/**
-	 * @brief Get uthorized tokens
-	 * @jsonapi{development}
-	 * @return the set of authorized encoded tokens
-	 */
-	std::set<std::string> getAuthorizedTokens();
-
-	/**
-	 * @brief Revoke given auth token
-	 * @jsonapi{development}
-	 * @param[in] token decoded
-	 * @return true if the token has been revoked, false otherwise
-	 */
-	bool revokeAuthToken(const std::string& token);
-
-	/**
-	 * @brief Add new auth token to the authorized set
-	 * @jsonapi{development}
-	 * @param[in] token toke to autorize decoded
-	 * @return true if the token has been added to authorized, false if error
-	 *	occurred or if the token was already authorized
-	 */
-	bool authorizeToken(const std::string& token);
-
-	/**
-	 * @brief Get decoded version of the given encoded token
-	 * @jsonapi{development,unauthenticated}
-	 * @param[in] token encoded
-	 * @return token decoded
-	 */
-	static std::string decodeToken(const std::string& token);
-
-	/**
-	 * @brief Get encoded version of the given decoded token
-	 * @jsonapi{development,unauthenticated}
-	 * @param[in] token decoded
-	 * @return token encoded
-	 */
-	static std::string encondeToken(const std::string& token);
-
-	/**
-	 * @brief Write version information to given paramethers
-	 * @jsonapi{development,unauthenticated}
-	 * @param[out] major storage
-	 * @param[out] minor storage
-	 * @param[out] mini storage
-	 * @param[out] extra storage
-	 * @param[out] human storage
-	 */
-	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
-	                     std::string& extra, std::string&human );
-
-	/// @see RsSingleJobThread
-	virtual void run();
+	        const std::function<bool(const std::string&, const std::string&)>&
+	        callback );
 
 private:
 	/// @see p3Config::setupSerialiser
-	virtual RsSerialiser* setupSerialiser();
+	RsSerialiser* setupSerialiser() override;
 
 	/// @see p3Config::saveList
-	virtual bool saveList(bool &cleanup, std::list<RsItem *>& saveItems);
+	bool saveList(bool &cleanup, std::list<RsItem *>& saveItems) override;
 
 	/// @see p3Config::loadList
-	virtual bool loadList(std::list<RsItem *>& loadList);
+	bool loadList(std::list<RsItem *>& loadList) override;
 
 	/// @see p3Config::saveDone
-	virtual void saveDone();
-
-	const uint16_t mPort;
-	const std::string mBindAddress;
-	rb::Service mService;
+	void saveDone() override;
 
 	/// Called when new JSON API auth token is requested to be authorized
-	std::function<bool(const std::string&)> mNewAccessRequestCallback;
+	std::function<bool(const std::string&, const std::string& passwd)>
+	    mNewAccessRequestCallback;
 
 	/// Encrypted persistent storage for authorized JSON API tokens
 	JsonApiServerAuthTokenStorage mAuthTokenStorage;
@@ -201,16 +167,29 @@ private:
 	static bool checkRsServicePtrReady(
 	        const void* serviceInstance, const std::string& serviceName,
 	        RsGenericSerializer::SerializeContext& ctx,
-	        const std::shared_ptr<restbed::Session> session );
+	        const std::shared_ptr<rb::Session> session );
 
 	static inline bool checkRsServicePtrReady(
 	        const std::shared_ptr<const void> serviceInstance,
 	        const std::string& serviceName,
 	        RsGenericSerializer::SerializeContext& ctx,
-	        const std::shared_ptr<restbed::Session> session )
+	        const std::shared_ptr<rb::Session> session )
 	{
 		return checkRsServicePtrReady(
 		            serviceInstance.get(), serviceName, ctx, session );
 	}
+
+	std::vector<std::shared_ptr<rb::Resource>> mResources;
+	std::set<
+	    std::reference_wrapper<const JsonApiResourceProvider>,
+	    std::less<const JsonApiResourceProvider> > mResourceProviders;
+
+	/// @see RsThread
+	void runloop() override;
+
+	std::shared_ptr<restbed::Service> mService;
+
+	uint16_t mListeningPort;
+	std::string mBindingAddress;
 };
 

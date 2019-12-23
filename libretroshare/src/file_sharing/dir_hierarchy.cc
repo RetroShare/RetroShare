@@ -21,14 +21,18 @@
  ******************************************************************************/
 #include <sstream>
 #include <algorithm>
+
 #include "util/rstime.h"
 #include "util/rsdir.h"
 #include "util/rsprint.h"
 #include "retroshare/rsexpr.h"
-
 #include "dir_hierarchy.h"
 #include "filelist_io.h"
 #include "file_sharing_defaults.h"
+
+#ifdef RS_DEEP_FILES_INDEX
+#	include "deep_search/filesindex.hpp"
+#endif // def RS_DEEP_FILES_INDEX
 
 //#define DEBUG_DIRECTORY_STORAGE 1
 
@@ -390,6 +394,11 @@ void InternalFileHierarchyStorage::deleteFileNode(uint32_t index)
 	if(mNodes[index] != NULL)
 	{
 		FileEntry& fe(*static_cast<FileEntry*>(mNodes[index])) ;
+
+#ifdef RS_DEEP_FILES_INDEX
+		DeepFilesIndex tfi(DeepFilesIndex::dbDefaultPath());
+		tfi.removeFileFromIndex(fe.file_hash);
+#endif
 
         if(mTotalSize >= fe.file_size)
 			mTotalSize -= fe.file_size ;
@@ -753,7 +762,9 @@ int InternalFileHierarchyStorage::searchBoolExp(RsRegularExpression::Expression 
     return 0;
 }
 
-int InternalFileHierarchyStorage::searchTerms(const std::list<std::string>& terms, std::list<DirectoryStorage::EntryIndex> &results) const
+int InternalFileHierarchyStorage::searchTerms(
+        const std::list<std::string>& terms,
+        std::list<DirectoryStorage::EntryIndex>& results ) const
 {
     // most entries are likely to be files, so we could do a linear search over the entries tab.
     // instead we go through the table of hashes.

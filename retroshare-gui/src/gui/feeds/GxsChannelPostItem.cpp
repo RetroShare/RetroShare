@@ -389,12 +389,28 @@ void GxsChannelPostItem::fill()
 	mInFill = true;
 
 	QString title;
+	
+	float f = QFontMetricsF(font()).height()/14.0 ;
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
-		QPixmap thumbnail;
+		QPixmap thumbnail;	
+		
+        ui->logoLabel->setScaledContents(true);
+
 		GxsIdDetails::loadPixmapFromData(mPost.mThumbnail.mData, mPost.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
+//		if( thumbnail.width() < 90 ){
+//			ui->logoLabel->setMaximumSize(82*f,108*f);
+//		}
+//		else if( thumbnail.width() < 109 ){
+//			ui->logoLabel->setMinimumSize(108*f,108*f);
+//			ui->logoLabel->setMaximumSize(108*f,108*f);
+//		}
+//		else{
+//			ui->logoLabel->setMinimumSize(156*f,108*f);
+//			ui->logoLabel->setMaximumSize(156*f,108*f);
+//		}
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
@@ -687,7 +703,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		readToggled(false);
@@ -695,7 +711,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

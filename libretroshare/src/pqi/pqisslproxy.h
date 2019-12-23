@@ -34,9 +34,6 @@
   * It uses the Domain Name interface of SOCKS5, as opposed to an IP address.
   */
 
-class pqisslproxy;
-class cert;
-
 /* This provides a NetBinInterface, which is 
  * primarily inherited from pqissl.
  * fns declared here are different -> all others are identical.

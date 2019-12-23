@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>201</height>
+    <width>565</width>
+    <height>209</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout_1">
@@ -31,70 +31,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>254</red>
-           <green>246</green>
-           <blue>222</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>254</red>
-           <green>246</green>
-           <blue>222</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>254</red>
-           <green>246</green>
-           <blue>222</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>254</red>
-           <green>246</green>
-           <blue>222</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>254</red>
-           <green>246</green>
-           <blue>222</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
      <property name="autoFillBackground">
       <bool>true</bool>
      </property>
@@ -105,10 +41,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <property name="spacing">
-       <number>6</number>
-      </property>
-      <item row="0" column="0" rowspan="2">
+      <item row="0" column="0" rowspan="3">
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
          <widget class="AvatarWidget" name="avatar">
@@ -186,27 +119,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="clearButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="toolTip">
-         <string>Remove Item</string>
-        </property>
-        <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1" colspan="4">
+      <item row="1" column="1" colspan="3">
        <widget class="QLabel" name="chatTextlabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -234,7 +147,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0" colspan="5">
+      <item row="2" column="1" colspan="3">
        <widget class="QFrame" name="buttonFrame">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <property name="leftMargin">
@@ -369,10 +282,30 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="clearButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="toolTip">
+            <string>Remove Item</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
-      <item row="2" column="0" colspan="5">
+      <item row="3" column="0" colspan="4">
        <widget class="QFrame" name="messageFrame">
         <layout class="QGridLayout" name="gridLayout_3">
          <property name="leftMargin">
@@ -420,6 +353,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

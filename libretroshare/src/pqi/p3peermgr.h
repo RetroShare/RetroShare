@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2007-2011 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2007-2011  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -112,8 +113,6 @@ class peerState
 class RsNodeGroupItem;
 struct RsGroupInfo;
 
-std::string textPeerState(peerState &state);
-
 class p3LinkMgr;
 class p3NetMgr;
 
@@ -123,10 +122,6 @@ class p3NetMgrIMPL;
 class p3PeerMgr
 {
 public:
-
-	p3PeerMgr() {}
-	virtual ~p3PeerMgr() {}
-
 	virtual bool addFriend( const RsPeerId &ssl_id, const RsPgpId &gpg_id,
 	                        uint32_t netMode = RS_NET_MODE_UDP,
 	                        uint16_t vsDisc = RS_VS_DISC_FULL,
@@ -242,7 +237,7 @@ virtual bool   locked_computeCurrentBestOwnExtAddressCandidate(sockaddr_storage 
 /*************************************************************************************************/
 /*************************************************************************************************/
 
-
+	virtual ~p3PeerMgr();
 };
 
 

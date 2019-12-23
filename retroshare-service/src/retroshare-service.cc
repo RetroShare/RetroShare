@@ -14,6 +14,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 #include "util/stacktrace.h"
@@ -22,7 +25,11 @@
 #include "retroshare/rsinit.h"
 
 #ifdef RS_JSONAPI
-#include "jsonapi/jsonapi.h"
+#include "retroshare/rsjsonapi.h"
+
+#ifdef RS_WEBUI
+#include "retroshare/rswebui.h"
+#endif
 #endif
 
 static CrashStackTrace gCrashStackTrace;
@@ -99,7 +106,7 @@ int main(int argc, char* argv[])
 	RsInfo() << "\n" <<
 	    "+================================================================+\n"
 	    "|     o---o                                             o        |\n"
-	    "|     \\ /           - Retroshare Service -            / \\      |\n"
+        "|      \\ /           - Retroshare Service -            / \\       |\n"
 	    "|       o                                             o---o      |\n"
 	    "+================================================================+"
 	         << std::endl << std::endl;
@@ -121,7 +128,10 @@ int main(int argc, char* argv[])
 	RsConfigOptions conf;
 
 #ifdef RS_JSONAPI
-	conf.jsonApiPort = JsonApiServer::DEFAULT_PORT;	// enable JSonAPI by default
+	conf.jsonApiPort = RsJsonApi::DEFAULT_PORT;	// enable JSonAPI by default
+#ifdef RS_WEBUI
+	std::string webui_base_directory = RsWebUi::DEFAULT_BASE_DIRECTORY;
+#endif
 #endif
 
 	argstream as(argc,argv);
@@ -148,7 +158,7 @@ int main(int argc, char* argv[])
 	                 "[node Id] Selected account to use and asks for passphrase"
 	                 ". Use \"-U list\" in order to list available accounts.",
 	                 false );
-#endif // RS_SERVICE_TERMINAL_LOGIN
+#endif // def RS_SERVICE_TERMINAL_LOGIN
 
 #ifdef RS_JSONAPI
 	as >> parameter( 'J', "jsonApiPort", conf.jsonApiPort, "TCP Port",
@@ -158,11 +168,10 @@ int main(int argc, char* argv[])
 	                                     "127.0.0.1.", false );
 #endif // def RS_JSONAPI
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	bool askWebUiPassword = false;
-	as >> option( 'W', "webui-password", askWebUiPassword,
-	                   "Ask WebUI password on the console." );
+	as >> parameter( 'B', "webui-directory", webui_base_directory, "Place where to find the html/js files for the webui.",false );
+	as >> option( 'W', "webui-password", askWebUiPassword, "Ask WebUI password on the console." );
 #endif /* defined(RS_JSONAPI) && defined(RS_WEBUI) \
 	        && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
 
@@ -170,18 +179,17 @@ int main(int argc, char* argv[])
 #ifdef LOCALNET_TESTING
 	as >> parameter( 'R', "restrict-port" , portRestrictions, "port1-port2",
 	                 "Apply port restriction", false);
-#endif // ifdef LOCALNET_TESTING
+#endif
 
 #ifdef RS_AUTOLOGIN
 	as >> option( 'a', "auto-login", conf.autoLogin,
 	              "enable auto-login." );
-#endif // ifdef RS_AUTOLOGIN
+#endif
 
 	as >> help( 'h', "help", "Display this Help" );
 	as.defaultErrorHandling(true, true);
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
 	std::string webui_pass1 = "Y";
 	if(askWebUiPassword)
 	{
@@ -276,8 +284,7 @@ int main(int argc, char* argv[])
 		rsNotify->registerNotifyClient(notify);
 
 		// supply empty passwd so that it is properly asked 3 times on console
-		RsInit::LoadCertificateStatus result =
-		        rsLoginHelper->attemptLogin(ssl_id, "");
+		RsInit::LoadCertificateStatus result = rsLoginHelper->attemptLogin(ssl_id, "");
 
 		switch(result)
 		{
@@ -302,12 +309,14 @@ int main(int argc, char* argv[])
 	}
 #endif // def RS_SERVICE_TERMINAL_LOGIN
 
-#if defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
-	if(jsonApiServer && !webui_pass1.empty())
-		jsonApiServer->authorizeToken("webui:"+webui_pass1);
-#endif /* defined(RS_JSONAPI) && defined(RS_WEBUI) \
-	&& defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD) */
+#if (defined(RS_JSONAPI) && defined(RS_WEBUI)) && defined(RS_SERVICE_TERMINAL_WEBUI_PASSWORD)
+	if(rsJsonApi && !webui_pass1.empty())
+    {
+		rsWebUi->setHtmlFilesDirectory(webui_base_directory);
+		rsWebUi->setUserPassword(webui_pass1);
+		rsWebUi->restart();
+    }
+#endif
 
 #ifdef __ANDROID__
 	rsControl->setShutdownCallback(QCoreApplication::exit);

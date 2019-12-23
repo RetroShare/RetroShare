@@ -23,6 +23,7 @@
 #include "PostedListWidget.h"
 #include "ui_PostedListWidget.h"
 
+#include "gui/gxs/GxsIdDetails.h"
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
 #include "gui/common/UIStateHelper.h"
@@ -35,6 +36,8 @@
 
 #define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
+
+#define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
 
 /** Constructor */
 PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent)
@@ -81,7 +84,7 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	                                        available posts from your subscribed friends, and make the \
 	                                        links visible to all other friends.</p><p>Afterwards you can unsubscribe from the context menu of the links list at left.</p>"));
 											
-	ui->infoframe->hide();										
+	ui->infoframe->hide();
 
 	/* load settings */
 	processSettings(true);
@@ -122,6 +125,13 @@ QIcon PostedListWidget::groupIcon()
 //	}
 
 	return QIcon();
+}
+
+void PostedListWidget::groupIdChanged()
+{
+	mPostIndex = 0;
+	GxsMessageFramePostWidget::groupIdChanged();
+	updateShowText();
 }
 
 /*****************************************************************************************/
@@ -304,6 +314,17 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 	mStateHelper->setWidgetEnabled(ui->submitPostButton, IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) ;
+
+	/* IMAGE */
+	QPixmap topicImage;
+	if (group.mGroupImage.mData != NULL) {
+		GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, topicImage,GxsIdDetails::ORIGINAL);
+	} else {
+		topicImage = QPixmap(TOPIC_DEFAULT_IMAGE);
+	}
+	ui->logoLabel->setPixmap(topicImage);
+	ui->namelabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->poplabel->setText(QString::number( group.mMeta.mPop));
 	
 	RetroShareLink link;
 	
@@ -334,6 +355,8 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
 			ui->infoAdministrator->setText(link.toHtml());
 		
+		    ui->createdinfolabel->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+
 			QString distrib_string ( "[unknown]" );
             
         	switch(group.mMeta.mCircleType)
@@ -520,7 +543,8 @@ void PostedListWidget::applyRanking()
 
 void PostedListWidget::blank()
 {
-    clearPosts();
+	clearPosts();
+	ui->infoframe->hide();
 }
 void PostedListWidget::clearPosts()
 {

@@ -178,12 +178,13 @@ int RsFriendListModel::rowCount(const QModelIndex& parent) const
         return mGroups[index.group_index].child_profile_indices.size();
 
     if(index.type == ENTRY_TYPE_PROFILE)
+	{
 		if(index.group_index < UNDEFINED_GROUP_INDEX_VALUE)
 			return mProfiles[mGroups[index.group_index].child_profile_indices[index.profile_index]].child_node_indices.size();
         else
             return mProfiles[index.profile_index].child_node_indices.size();
-
-    if(index.type == ENTRY_TYPE_NODE)
+	}
+	else //if(index.type == ENTRY_TYPE_NODE)
         return 0;
 }
 

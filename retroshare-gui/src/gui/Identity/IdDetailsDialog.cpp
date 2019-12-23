@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+#include <QDateTime>
 
 #include "IdDetailsDialog.h"
 #include "ui_IdDetailsDialog.h"
@@ -53,6 +54,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->ownOpinion_CB);
 	mStateHelper->addWidget(IDDETAILSDIALOG_IDDETAILS, ui->overallOpinion_TF);
@@ -63,6 +65,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addLoadPlaceholder(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 
@@ -70,6 +73,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_KeyId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgId);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Type);
+	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_Created);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_LastUsed);
 	mStateHelper->addClear(IDDETAILSDIALOG_IDDETAILS, ui->lineEdit_GpgName);
 
@@ -80,7 +84,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 
 	Settings->loadWidgetInformation(this);
 
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/identity/identity_64.png"));
+	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Person Details"));
 
 	//connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(changeGroup()));
@@ -178,8 +182,10 @@ void IdDetailsDialog::insertIdDetails(uint32_t token)
     ui->autoBanIdentities_CB->setVisible(!data.mPgpId.isNull()) ;
     ui->banoption_label->setVisible(!data.mPgpId.isNull()) ;
 	
-  time_t now = time(NULL) ;
-  ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
+	ui->lineEdit_Created->setText(QDateTime::fromMSecsSinceEpoch(qint64(1000)*data.mMeta.mPublishTs).toString(Qt::SystemLocaleShortDate));
+	
+	time_t now = time(NULL) ;
+	ui->lineEdit_LastUsed->setText(getHumanReadableDuration(now - data.mLastUsageTS)) ;
 	
 	QPixmap pixmap;
 	

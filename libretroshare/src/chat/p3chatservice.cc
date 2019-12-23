@@ -47,7 +47,7 @@
  * #define CHAT_DEBUG 1
  ****/
 
-static const uint32_t MAX_MESSAGE_SECURITY_SIZE         = 6000 ; // Max message size to forward other friends
+static const uint32_t MAX_MESSAGE_SECURITY_SIZE         = 31000 ; // Max message size to forward other friends
 static const uint32_t MAX_AVATAR_JPEG_SIZE              = 32767; // Maximum size in bytes for an avatar. Too large packets 
                                                                  // don't transfer correctly and can kill the system.
 																					  // Images are 96x96, which makes approx. 27000 bytes uncompressed.
@@ -341,7 +341,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
     message.incoming = false;
     message.online = true;
 
-	if(!isOnline(vpid))
+	if(!isOnline(vpid)  && !destination.isDistantChatId())
 	{
 		message.online = false;
 		RsServer::notify()->notifyChatMessage(message);
@@ -352,11 +352,15 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
 		RsGxsTransId tId = RSRandom::random_u64();
 
+#ifdef SUSPENDED_CODE
+        // this part of the code was formerly used to send the traffic over GxsTransport. The problem is that
+        // gxstunnel takes care of reaching the peer already, so GxsTransport would only be needed when the
+        // current peer is offline. So we need to fin a way to quickly push the items to friends when quitting RS.
+
 		if(destination.isDistantChatId())
 		{
 			RS_STACK_MUTEX(mDGMutex);
-			DIDEMap::const_iterator it =
-			        mDistantGxsMap.find(destination.toDistantChatId());
+			DIDEMap::const_iterator it = mDistantGxsMap.find(destination.toDistantChatId());
 			if(it != mDistantGxsMap.end())
 			{
 				const DistantEndpoints& de(it->second);
@@ -371,6 +375,7 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 				          << "chat id in mDistantGxsMap this is unxpected!"
 				          << std::endl;
 		}
+#endif
 
 		// peer is offline, add to outgoing list
 		{
@@ -412,10 +417,10 @@ bool p3ChatService::sendChat(ChatId destination, std::string msg)
 
     RsServer::notify()->notifyChatMessage(message);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
+    // cyril: history is temporarily disabled for distant chat, since we need to store the full tunnel ID, but then
     // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
     
-    if(!message.chat_id.isDistantChatId())
+    //if(!message.chat_id.isDistantChatId())
 	    mHistoryMgr->addMessage(message);
 
     checkSizeAndSendMessage(ci);
@@ -871,10 +876,6 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
     cm.online = true;
     RsServer::notify()->notifyChatMessage(cm);
     
-    // cyril: history is temporarily diabled for distant chat, since we need to store the full tunnel ID, but then
-    // at loading time, the ID is not known so that chat window shows 00000000 as a peer.
-    
-    if(!cm.chat_id.isDistantChatId())
 	mHistoryMgr->addMessage(cm);
     
     return true ;

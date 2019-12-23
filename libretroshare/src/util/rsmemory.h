@@ -62,6 +62,35 @@ bool myFunnyFunction(
  */
 #define RS_DEFAULT_STORAGE_PARAM(Type,...) *std::unique_ptr<Type>(new Type(__VA_ARGS__))
 
+
+/** @brief Safely dynamic cast between std::unique_ptr of different types
+ * std::unique_ptr semantic rely on the invariant that only one instance own
+ * the object, when casting between differents types one would be tempted to do
+ * it in a one liner that easly end up breaking that condition ending up in a
+ * double delete and crash or in a silent memleak.
+ * With this function one can do that with same comfort of a plain dynamic_cast,
+ * plus the std::unique_ptr safety.
+ * @param[inout] src reference to source pointer. If the cast is successfull it
+ *	is released, otherwise it is left untouched.
+ * @param[out] dst reference to destination pointer. If the cast is successful
+ *	it get reseated to the object address, otherwise it is left untouched.
+ * @return true on success, false otherwise
+ */
+template <class T_SRC, class T_DST>
+bool rs_unique_cast(
+        std::unique_ptr<T_SRC>& src, std::unique_ptr<T_DST>& dst )
+{
+	T_DST* dstPtr = dynamic_cast<T_DST*>(src.get());
+	if(dstPtr)
+	{
+		src.release();
+		dst.reset(dstPtr);
+		return true;
+	}
+	return false;
+}
+
+
 void *rs_malloc(size_t size) ;
 
 // This is a scope guard to release the memory block when going of of the current scope.

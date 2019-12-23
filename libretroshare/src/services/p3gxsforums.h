@@ -110,6 +110,21 @@ public:
 	virtual bool subscribeToForum( const RsGxsGroupId& forumId,
 	                               bool subscribe );
 
+	/// @see RsGxsForums
+	bool exportForumLink(
+	        std::string& link, const RsGxsGroupId& forumId,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_FORUM_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsGxsForums
+	bool importForumLink(
+	        const std::string& link,
+	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups);
 	virtual bool getMsgData(const uint32_t &token, std::vector<RsGxsForumMsg> &msgs);
 	virtual bool getMsgMetaData(const uint32_t &token, GxsMsgMetaMap& msg_metas);

@@ -1,22 +1,24 @@
-/*******************************************************************************
- * RetroShare JSON API                                                         *
- *                                                                             *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
- *                                                                             *
- * This program is free software: you can redistribute it and/or modify        *
- * it under the terms of the GNU Affero General Public License as              *
- * published by the Free Software Foundation, either version 3 of the          *
- * License, or (at your option) any later version.                             *
- *                                                                             *
- * This program is distributed in the hope that it will be useful,             *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               *
- * GNU Affero General Public License for more details.                         *
- *                                                                             *
- * You should have received a copy of the GNU Affero General Public License    *
- * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
- *                                                                             *
- *******************************************************************************/
+/*
+ * RetroShare JSON API
+ *
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the
+ * Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.
+ * See the GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>
+ *
+ * SPDX-FileCopyrightText: 2004-2019 RetroShare Team <contact@retroshare.cc>
+ * SPDX-License-Identifier: AGPL-3.0-only
+ */
+
 #pragma once
 
 #include <string>
@@ -29,7 +31,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 
-enum class JsonApiItemsType : uint8_t { AuthTokenItem = 0 };
+enum class JsonApiItemsType : uint8_t { AuthTokenItem_deprecated = 0, AuthTokenItem = 1  };
 
 struct JsonApiServerAuthTokenStorage : RsItem
 {
@@ -47,7 +49,7 @@ struct JsonApiServerAuthTokenStorage : RsItem
 	/// @see RsItem
 	virtual void clear() { mAuthorizedTokens.clear(); }
 
-	std::set<std::string> mAuthorizedTokens;
+	std::map<std::string,std::string> mAuthorizedTokens;
 };
 
 

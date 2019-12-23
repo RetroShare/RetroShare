@@ -56,7 +56,10 @@ void RsGxsForumModel::preMods()
 }
 void RsGxsForumModel::postMods()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    if(mTreeMode == TREE_MODE_FLAT)
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    else
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsForumModel::setTreeMode(TreeMode mode)
@@ -65,7 +68,21 @@ void RsGxsForumModel::setTreeMode(TreeMode mode)
         return;
 
     preMods();
+
+    if(mode == TREE_MODE_TREE)	// means we were in FLAT mode, so the last rows are removed.
+    {
+		beginRemoveRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
+		endRemoveRows();
+    }
+
 	mTreeMode = mode;
+
+    if(mode == TREE_MODE_FLAT)	// means we were in tree mode, so the last rows are added.
+	{
+		beginInsertRows(QModelIndex(),mPosts[0].mChildren.size(),mPosts.size()-1);
+		endInsertRows();
+	}
+
     postMods();
 }
 
@@ -264,11 +281,21 @@ void *RsGxsForumModel::getParentRef(void *ref,int& row) const
 {
     ForumModelIndex ref_entry;
 
-    if(mTreeMode == TREE_MODE_FLAT)
-        return NULL;
-
     if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mPosts.size())
         return NULL ;
+
+    if(mTreeMode == TREE_MODE_FLAT)
+    {
+        if(ref_entry == 0)
+        {
+            RsErr() << "getParentRef() shouldn't be asked for the parent of NULL" << std::endl;
+            row = 0;
+        }
+        else
+			row = ref_entry-1;
+
+        return NULL;
+    }
 
     ForumModelIndex parent_entry = mPosts[ref_entry].mParent;
 
@@ -296,11 +323,21 @@ int RsGxsForumModel::getChildrenCount(void *ref) const
 
     if(mTreeMode == TREE_MODE_FLAT)
         if(entry == 0)
+        {
+#ifdef DEBUG_FORUMMODEL
+            std::cerr << "Children count (flat mode): " << mPosts.size()-1 << std::endl;
+#endif
 			return ((int)mPosts.size())-1;
+        }
 		else
             return 0;
     else
+    {
+#ifdef DEBUG_FORUMMODEL
+		std::cerr << "Children count (tree mode): " << mPosts[entry].mChildren.size() << std::endl;
+#endif
 		return mPosts[entry].mChildren.size();
+    }
 }
 
 QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*/, int role) const
@@ -699,7 +736,11 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 {
     preMods();
 
-    beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    if(mTreeMode == TREE_MODE_FLAT)
+		beginRemoveRows(QModelIndex(),0,mPosts.size()-1);
+	else
+		beginRemoveRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+
     endRemoveRows();
 
     mForumGroup = group;
@@ -723,7 +764,10 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
     debug_dump();
 #endif
 
-    beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
+    if(mTreeMode == TREE_MODE_FLAT)
+		beginInsertRows(QModelIndex(),0,mPosts.size()-1);
+    else
+		beginInsertRows(QModelIndex(),0,mPosts[0].mChildren.size()-1);
     endInsertRows();
 	postMods();
 	emit forumLoaded();
@@ -744,7 +788,7 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 
         forumIds.push_back(group_id);
 
-		if(!rsGxsForums->getForumsInfo(forumIds,groups))
+		if(!rsGxsForums->getForumsInfo(forumIds,groups) || groups.size() != 1)
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
 			return;
@@ -1247,18 +1291,24 @@ QModelIndex RsGxsForumModel::getIndexOfMessage(const RsGxsMessageId& mid) const
 
     // First look into msg versions, in case the msg is a version of an existing message
 
-    for(auto it(mPostVersions.begin());it!=mPostVersions.end();++it)
+    for(auto it(mPostVersions.begin());it!=mPostVersions.end() && postId==mid;++it)
     	for(uint32_t i=0;i<it->second.size();++i)
             if(it->second[i].second == mid)
+            {
                 postId = it->first;
+                break;
+            }
 
-    for(uint32_t i=0;i<mPosts.size();++i)
+    for(uint32_t i=1;i<mPosts.size();++i)
         if(mPosts[i].mMsgId == postId)
         {
             void *ref ;
-            convertTabEntryToRefPointer(i,ref);
+            convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-            return createIndex(mPosts[i].prow,0,ref);
+            if(mTreeMode == TREE_MODE_FLAT)
+				return createIndex(i-1,0,ref);
+            else
+				return createIndex(mPosts[i].prow,0,ref);
         }
 
     return QModelIndex();

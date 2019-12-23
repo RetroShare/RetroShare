@@ -28,7 +28,6 @@
 
 #include "rsserver/p3face.h"
 #include "pqi/authssl.h"
-#include "pqi/p3dhtmgr.h" // Only need it for constants.
 #include "tcponudp/tou.h"
 #include "util/extaddrfinder.h"
 #include "util/dnsresolver.h"

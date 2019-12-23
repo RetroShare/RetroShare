@@ -166,14 +166,18 @@ void ChatPage::updateHistoryParams()
 	Settings->setPublicChatHistoryCount(ui.publicChatLoadCount->value());
 	Settings->setPrivateChatHistoryCount(ui.privateChatLoadCount->value());
 	Settings->setLobbyChatHistoryCount(ui.lobbyChatLoadCount->value());
+	Settings->setDistantChatHistoryCount(ui.distantChatLoadCount->value());
 
 	rsHistory->setEnable(RS_HISTORY_TYPE_PUBLIC , ui.publicChatEnable->isChecked());
 	rsHistory->setEnable(RS_HISTORY_TYPE_PRIVATE, ui.privateChatEnable->isChecked());
 	rsHistory->setEnable(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatEnable->isChecked());
+	rsHistory->setEnable(RS_HISTORY_TYPE_DISTANT, ui.distantChatEnable->isChecked());
 
 	rsHistory->setSaveCount(RS_HISTORY_TYPE_PUBLIC , ui.publicChatSaveCount->value());
     rsHistory->setSaveCount(RS_HISTORY_TYPE_PRIVATE, ui.privateChatSaveCount->value());
     rsHistory->setSaveCount(RS_HISTORY_TYPE_LOBBY  , ui.lobbyChatSaveCount->value());
+	rsHistory->setSaveCount(RS_HISTORY_TYPE_DISTANT, ui.distantChatSaveCount->value());
+
 }
 
 void ChatPage::updatePublicStyle()
@@ -247,13 +251,19 @@ ChatPage::ChatPage(QWidget * parent, Qt::WindowFlags flags)
 
 	connect(ui.publicChatLoadCount,        SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.privateChatLoadCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.distantChatLoadCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatLoadCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	
 	connect(ui.publicChatEnable,           SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
 	connect(ui.privateChatEnable,          SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
+	connect(ui.distantChatEnable,          SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatEnable,            SIGNAL(toggled(bool)),            this, SLOT(updateHistoryParams()));
+	
 	connect(ui.publicChatSaveCount,        SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.privateChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
 	connect(ui.lobbyChatSaveCount,         SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+	connect(ui.distantChatSaveCount,       SIGNAL(valueChanged(int)),        this, SLOT(updateHistoryParams()));
+
 
     connect(ui.publicStyle,                SIGNAL(currentIndexChanged(int)),   this, SLOT(updatePublicStyle())) ;
     connect(ui.publicComboBoxVariant,      SIGNAL(currentIndexChanged(int)), this, SLOT(updatePublicStyle())) ;
@@ -349,14 +359,18 @@ ChatPage::load()
     whileBlocking(ui.publicChatLoadCount)->setValue(Settings->getPublicChatHistoryCount());
     whileBlocking(ui.privateChatLoadCount)->setValue(Settings->getPrivateChatHistoryCount());
     whileBlocking(ui.lobbyChatLoadCount)->setValue(Settings->getLobbyChatHistoryCount());
+	whileBlocking(ui.distantChatLoadCount)->setValue(Settings->getDistantChatHistoryCount());
 
     whileBlocking(ui.publicChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PUBLIC));
     whileBlocking(ui.privateChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_PRIVATE));
     whileBlocking(ui.lobbyChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_LOBBY));
+	whileBlocking(ui.distantChatEnable)->setChecked(rsHistory->getEnable(RS_HISTORY_TYPE_DISTANT));
 
     whileBlocking(ui.publicChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PUBLIC));
     whileBlocking(ui.privateChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_PRIVATE));
     whileBlocking(ui.lobbyChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_LOBBY));
+	whileBlocking(ui.distantChatSaveCount)->setValue(rsHistory->getSaveCount(RS_HISTORY_TYPE_DISTANT));
+
     
     // using fontTempChat.rawname() does not always work!
     // see http://doc.qt.digia.com/qt-maemo/qfont.html#rawName

@@ -139,14 +139,17 @@
             <enum>QFrame::Sunken</enum>
            </property>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
             <property name="leftMargin">
-             <number>1</number>
+             <number>6</number>
             </property>
             <property name="topMargin">
              <number>1</number>
             </property>
             <property name="rightMargin">
-             <number>1</number>
+             <number>6</number>
             </property>
             <property name="bottomMargin">
              <number>1</number>
@@ -163,8 +166,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/add-share24.png</normaloff>:/images/add-share24.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/attach.png</normaloff>:/icons/png/attach.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -186,8 +189,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../emojione.qrc">
-                <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/smiley.png</normaloff>:/icons/png/smiley.png</iconset>
               </property>
               <property name="iconSize">
                <size>

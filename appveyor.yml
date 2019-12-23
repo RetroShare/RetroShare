@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: CC0-1.0
+
 # Notes:
 #   - Minimal appveyor.yml file is an empty file. All sections are optional.
 #   - Indent each level of configuration with 2 spaces. Do not use tabs!
@@ -90,8 +93,10 @@ install:
   # Configuring MSys2
   - set PATH=C:\msys64\usr\bin;%PATH%
   - set PATH=C:\msys64\mingw32\bin;%PATH%
-  - pacman --noconfirm -S mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd mingw-w64-i686-xapian-core mingw-w64-i686-cmark
-  #- pacman --noconfirm -S mingw-w64-i686-qt5-static mingw-w64-i686-miniupnpc mingw-w64-i686-sqlcipher mingw-w64-i686-libmicrohttpd
+  - >
+    pacman --noconfirm -S
+    mingw-w64-i686-qt5 mingw-w64-i686-miniupnpc mingw-w64-i686-rapidjson
+    mingw-w64-i686-sqlcipher mingw-w64-i686-xapian-core mingw-w64-i686-cmark
   #- set PATH=C:\msys64\mingw32\qt5-static\bin\;%PATH%
 
   # Configuring Qt
@@ -138,6 +143,10 @@ configuration: Release
 # scripts to run before build
 before_build:
   - cd C:\projects\RetroShare
+  - git submodule update --init
+  - cd C:\projects\
+  - mkdir RetroShare-build
+  - cd RetroShare-build
 #  - find C:\ > filelist.txt
 
 # scripts to run *after* solution is built and *before* automatic packaging occurs (web apps, NuGet packages, Azure Cloud Services)
@@ -146,15 +155,18 @@ before_package:
 # to run your custom scripts instead of automatic MSBuild
 build_script:
   - env
-  - git submodule update --init
-  - qmake -Wall -spec win32-g++ "CONFIG=debug"
+  - qmake ../RetroShare -spec win32-g++ "CONFIG+=debug"
   - mingw32-make -j3
 
 # scripts to run after build
 after_build:
+  - find .
+
   - mkdir %RS_DEPLOY%
-  - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
-  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-gui\src\debug\retroshare.exe %RS_DEPLOY%\
+  - copy retroshare-service\src\debug\retroshare-service.exe %RS_DEPLOY%\
+#  - copy retroshare-service\src\retroshare-service.exe %RS_DEPLOY%\
+#  - copy retroshare-gui\src\retroshare.exe %RS_DEPLOY%\
 
 ## In Debug build winedeplyqt forget the non debug Qt libs
   - copy C:\msys64\mingw32\bin\Qt5Svg.dll %RS_DEPLOY%\
@@ -234,23 +246,9 @@ after_build:
   - copy C:\msys64\mingw32\bin\libwebpdemux*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\liblzma*.dll %RS_DEPLOY%\
 
-## Needed for libresapi http
-  - copy C:\msys64\mingw32\bin\libmicrohttpd*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgnutls*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libgmp*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libhogweed*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libidn2*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libnettle*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libp11-kit*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libtasn1*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libunistring*.dll %RS_DEPLOY%\
-  - copy C:\msys64\mingw32\bin\libffi*.dll %RS_DEPLOY%\
-
 ## Needed for cmark
   - copy C:\msys64\mingw32\bin\libcmark*.dll %RS_DEPLOY%\
   - copy C:\msys64\mingw32\bin\libdouble-conversion*.dll %RS_DEPLOY%\
-
-  - find C:\projects\RetroShare >> filelist.txt
 
 # to disable automatic builds
 #build: off

@@ -63,10 +63,6 @@ const uint32_t RS_STUN_FRIEND 		= 0x0020;
 const uint32_t RS_STUN_FRIEND_OF_FRIEND	= 0x0040;
 
 
-// for the old p3dhtmgr - amazed it still compiles ;)
-#define RS_CONNECT_PASSIVE 	1
-#define RS_CONNECT_ACTIVE 	2
-
 #define RS_CB_DHT 		0x0001   /* from dht */
 #define RS_CB_DISC 		0x0002   /* from peers */
 #define RS_CB_PERSON 		0x0003   /* from connection */

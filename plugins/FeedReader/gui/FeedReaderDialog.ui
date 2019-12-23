@@ -39,14 +39,23 @@
        </size>
       </property>
       <layout class="QGridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
         <number>0</number>
        </property>
        <property name="spacing">
         <number>0</number>
        </property>
        <item row="0" column="0">
-        <widget class="QFrame" name="titleBarFrame">
+        <widget class="QFrame" name="toolBarFrame">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -54,7 +63,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -161,6 +179,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>StyledLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
    <class>RSTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>gui/common/RSTreeWidget.h</header>
@@ -170,11 +193,6 @@
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
    <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>StyledLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/common/StyledLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

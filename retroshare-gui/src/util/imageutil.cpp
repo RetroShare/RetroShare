@@ -99,9 +99,9 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	}
 
 	//Use binary search to find a suitable image size + linear regression to guess the file size
-	double maxsize = (double)checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
+	double maxsize = (double)checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
 	if(maxsize <= maxBytes) return true;	//success
-	double minsize = (double)checkSize(html, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
+	double minsize = (double)checkSize(html, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
 	if(minsize > maxBytes) return false; //impossible
 
 //	std::cout << "maxS: " << maxsize << " minS: " << minsize << std::endl;
@@ -114,7 +114,7 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 		double b = maxsize - m * ((double)maxwidth * (double)maxwidth / whratio);
 		double a = ((double)(maxBytes - region/2) - b) / m; //maxBytes - region/2 target the center of the accepted region
 		int nextwidth = (int)sqrt(a * whratio);
-		int nextsize = checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct), maxBytes);
+		int nextsize = checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
 		if(nextsize <= maxBytes) {
 			minsize = nextsize;
 			minwidth = nextwidth;
@@ -188,7 +188,7 @@ bool blueLessThan(const QRgb &c1, const QRgb &c2)
 //median cut algoritmh
 void ImageUtil::quantization(const QImage &img, QVector<QRgb> &palette)
 {
-	int bits = 4;	// bits/pixel
+	int bits = 8;	// bits/pixel
 	int samplesize = 100000;	//only take this many color samples
 
 	rstime::RsScopeTimer st("Quantization");

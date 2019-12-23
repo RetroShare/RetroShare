@@ -1,6 +1,6 @@
 /*
  * RetroShare
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -17,14 +17,15 @@
  */
 
 
-#include "rsurl.h"
-#include "serialiser/rstypeserializer.h"
-
 #include <cstdio>
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+
+#include "rsurl.h"
+#include "serialiser/rstypeserializer.h"
+#include "util/rsnet.h"
 
 using namespace std;
 
@@ -32,6 +33,26 @@ RsUrl::RsUrl() : mPort(0), mHasPort(false) {}
 
 RsUrl::RsUrl(const std::string& urlStr) : mPort(0), mHasPort(false)
 { fromString(urlStr); }
+
+RsUrl::RsUrl(const sockaddr_storage& addr): mPort(0), mHasPort(false)
+{
+	switch(addr.ss_family)
+	{
+	case AF_INET:  setScheme("ipv4"); break;
+	case AF_INET6: setScheme("ipv6"); break;
+	default:
+	{
+		std::string addrDump;
+		sockaddr_storage_dump(addr, &addrDump);
+		RsErr() << __PRETTY_FUNCTION__ << " got invalid addr: " << addrDump
+		        << std::endl;
+		return;
+	}
+	}
+
+	setHost(sockaddr_storage_iptostring(addr));
+	setPort(sockaddr_storage_port(addr));
+}
 
 RsUrl& RsUrl::fromString(const std::string& urlStr)
 {
@@ -55,7 +76,7 @@ RsUrl& RsUrl::fromString(const std::string& urlStr)
 	{
 		if(++hostBeginI >= endI) return *this;
 		hostEndI = urlStr.find(ipv6WrapClose, hostBeginI);
-		mHost = urlStr.substr(hostBeginI, hostEndI - hostBeginI - 1);
+		mHost = urlStr.substr(hostBeginI, hostEndI - hostBeginI);
 		++hostEndI;
 	}
 	else
@@ -250,10 +271,10 @@ RsUrl& RsUrl::setFragment(const std::string& fragment)
 	size_t boundary = len-2; // % Encoded char must be at least 2 hex char
 	for (size_t i = 0; i < len; ++i)
 	{
-
 		if(str[i] == '%' && i < boundary)
 		{
-			decoded << static_cast<char>(std::stoi(str.substr(++i, 2), 0, 16));
+			decoded << static_cast<char>(std::stoi(
+			                                 str.substr(++i, 2), nullptr, 16 ));
 			++i;
 		}
 		else decoded << str[i];

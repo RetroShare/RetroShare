@@ -117,6 +117,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 	mForumCircleLoaded = false;
 
 	newMsg();
+	
+	ui.hashGroupBox->hide();
 
 #ifndef ENABLE_GENERATE
 	ui.generateCheckBox->hide();
@@ -348,10 +350,13 @@ void CreateGxsForumMsg::checkLength()
 	RsHtml::optimizeHtml(ui.forumMessage, text);
 	std::wstring msg = text.toStdWString();
 	int charRemains = MAX_ALLOWED_GXS_MESSAGE_SIZE - msg.length();
-	if(charRemains >= 0)
+	if(charRemains >= 0) {
 		text = tr("It remains %1 characters after HTML conversion.").arg(charRemains);
-	else
+		ui.infoLabel->setStyleSheet("QLabel#infoLabel { }");
+	}else{
 		text = tr("Warning: This message is too big of %1 characters after HTML conversion.").arg((0-charRemains));
+	    ui.infoLabel->setStyleSheet("QLabel#infoLabel {color: red; font: bold; }");
+	}
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setToolTip(text);
 	ui.buttonBox->button(QDialogButtonBox::Ok)->setEnabled(charRemains>=0);
 	ui.infoLabel->setText(text);
@@ -506,6 +511,7 @@ void CreateGxsForumMsg::addFile()
 	QStringList files;
 	if (misc::getOpenFileNames(this, RshareSettings::LASTDIR_EXTRAFILE, tr("Add Extra File"), "", files)) {
 		ui.hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
+		ui.hashGroupBox->show();
 	}
 }
 
@@ -542,6 +548,7 @@ void CreateGxsForumMsg::fileHashingFinished(QList<HashedFile> hashedFiles)
 	}
 
 	ui.forumMessage->setFocus( Qt::OtherFocusReason );
+	ui.hashGroupBox->hide();
 }
 
 void CreateGxsForumMsg::loadForumInfo(const uint32_t &token)

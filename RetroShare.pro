@@ -1,20 +1,25 @@
-################################################################################
-# Retroshare.pro                                                               #
-# Copyright (C) 2018, Retroshare team <retroshare.team@gmailcom>               #
-#                                                                              #
-# This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Affero General Public License as               #
-# published by the Free Software Foundation, either version 3 of the           #
-# License, or (at your option) any later version.                              #
-#                                                                              #
-# This program is distributed in the hope that it will be useful,              #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                #
-# GNU Affero General Public License for more details.                          #
-#                                                                              #
-# You should have received a copy of the GNU Affero General Public License     #
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.       #
-################################################################################
+# RetroShare main qmake build script
+#
+# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License along
+# with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+CONFIG += c++11
 
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 
@@ -36,59 +41,11 @@ libretroshare.depends += openpgpsdk libbitdht
 SUBDIRS += libretroshare
 libretroshare.file = libretroshare/src/libretroshare.pro
 
-libresapi {
-    SUBDIRS += libresapi
-    libresapi.file = libresapi/src/libresapi.pro
-    libresapi.depends += libretroshare
-}
-
 retroshare_gui {
     SUBDIRS += retroshare_gui
     retroshare_gui.file = retroshare-gui/src/retroshare-gui.pro
     retroshare_gui.target = retroshare_gui
-
-    libresapi {
-        retroshare_gui.depends = libresapi
-    } else {
-        retroshare_gui.depends = libretroshare
-    }
-}
-
-retroshare_nogui {
-    SUBDIRS += retroshare_nogui
-    retroshare_nogui.file = retroshare-nogui/src/retroshare-nogui.pro
-    retroshare_nogui.target = retroshare_nogui
-
-    libresapi {
-        retroshare_nogui.depends = libresapi
-    } else {
-        retroshare_nogui.depends = libretroshare
-    }
-}
-
-retroshare_android_service {
-    SUBDIRS += retroshare_android_service
-    retroshare_android_service.file = retroshare-android-service/src/retroshare-android-service.pro
-    retroshare_android_service.depends = libresapi
-    retroshare_android_service.target = retroshare_android_service
-}
-
-retroshare_android_notify_service {
-    SUBDIRS += retroshare_android_notify_service
-    retroshare_android_notify_service.file = retroshare-android-notify-service/src/retroshare-android-notify-service.pro
-    retroshare_android_notify_service.depends = retroshare_android_service
-    retroshare_android_notify_service.target = retroshare_android_notify_service
-}
-
-retroshare_qml_app {
-    SUBDIRS += retroshare_qml_app
-    retroshare_qml_app.file = retroshare-qml-app/src/retroshare-qml-app.pro
-    retroshare_qml_app.depends = retroshare_android_service
-    retroshare_qml_app.target = retroshare_qml_app
-
-    android-g++ {
-        retroshare_qml_app.depends += retroshare_android_notify_service
-    }
+    retroshare_gui.depends = libretroshare
 }
 
 retroshare_service {

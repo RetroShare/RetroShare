@@ -18,16 +18,16 @@
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
-    <number>6</number>
+    <number>1</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="rightMargin">
-    <number>6</number>
+    <number>1</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>1</number>
    </property>
    <property name="spacing">
     <number>0</number>
@@ -407,6 +407,9 @@
           <property name="leftMargin">
            <number>0</number>
           </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
           <property name="bottomMargin">
            <number>3</number>
           </property>
@@ -539,8 +542,8 @@
              <string>Set as read and remove item</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/cancel.png</normaloff>:/images/cancel.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
             </property>
            </widget>
           </item>
@@ -559,8 +562,8 @@
              <string>Remove Item</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/close_normal.png</normaloff>:/images/close_normal.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
             </property>
            </widget>
           </item>
@@ -685,6 +688,7 @@
  <resources>
   <include location="Posted_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

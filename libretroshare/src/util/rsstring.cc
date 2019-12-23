@@ -205,6 +205,19 @@ bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest)
 	return true;
 }
 
+bool is_alphanumeric(char c)
+{
+    return (c>='0' && c<'9') || (c>='a' && c<='z') || (c>='A' && c<='Z') ;
+}
+
+bool is_alphanumeric(const std::string& s)
+{
+    for(uint32_t i=0;i<s.size();++i)
+        if(!is_alphanumeric(s[i]))
+            return false;
+    return true;
+}
+
 } } // librs::util
 
 #ifdef WINDOWS_SYS

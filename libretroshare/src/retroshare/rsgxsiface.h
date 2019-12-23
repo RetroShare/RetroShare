@@ -68,6 +68,8 @@ struct RsGxsGroupSummary : RsSerializable
 		RS_SERIAL_PROCESS(mPopularity);
 		RS_SERIAL_PROCESS(mSearchContext);
 	}
+
+	~RsGxsGroupSummary();
 };
 
 
@@ -108,8 +110,6 @@ struct RsGxsChanges : RsEvent
  */
 struct RsGxsIface
 {
-	virtual ~RsGxsIface() {}
-
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
@@ -238,4 +238,32 @@ struct RsGxsIface
 
 	virtual RsReputationLevel minReputationForForwardingMessages(
 	        uint32_t group_sign_flags,uint32_t identity_flags ) = 0;
+
+	/**
+	 * @brief Export group public data in base64 format
+	 * @jsonapi{development}
+	 * @param[out] radix storage for the generated base64 data
+	 * @param[in] groupId Id of the group of which to output the data
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool exportGroupBase64(
+	        std::string& radix, const RsGxsGroupId& groupId,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	/**
+	 * @brief Import group public data from base64 string
+	 * @param[in] radix group invite in radix format
+	 * @param[out] groupId optional storage for imported group id
+	 * @param[out] errMsg optional storage for error message, meaningful only in
+	 *	case of failure
+	 * @return false if some error occurred, true otherwise
+	 */
+	virtual bool importGroupBase64(
+	        const std::string& radix,
+	        RsGxsGroupId& groupId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
+
+	virtual ~RsGxsIface();
 };

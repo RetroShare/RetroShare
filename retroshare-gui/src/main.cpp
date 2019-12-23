@@ -56,7 +56,7 @@ CrashStackTrace gCrashStackTrace;
 #ifdef MESSENGER_WINDOW
 #include "gui/MessengerWindow.h"
 #endif
-#ifdef ENABLE_WEBUI
+#ifdef RS_WEBUI
 #	include "gui/settings/WebuiPage.h"
 #endif
 
@@ -232,8 +232,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 	RsInit::InitRsConfig();
 
     RsConfigOptions conf;
-
-    conf.jsonApiPort = 0 ; // disable JSon API at start. The JSonAPI preference UI will enable it according to saved parameters.
 
 	argstream as(argc,argv);
 	as      >> option('s',"stderr"           ,conf.outStderr      ,"output to stderr instead of log file."    )
@@ -574,12 +572,12 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 
 	notify->enable() ;	// enable notification system after GUI creation, to avoid data races in Qt.
 
-#ifdef ENABLE_WEBUI
-    WebuiPage::checkStartWebui();
-#endif // ENABLE_WEBUI
-
 #ifdef RS_JSONAPI
 	JsonApiPage::checkStartJsonApi();
+
+#ifdef RS_WEBUI
+    WebuiPage::checkStartWebui();	// normally we should rather save the UI flags internally to p3webui
+#endif
 #endif // RS_JSONAPI
 
 	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
@@ -594,10 +592,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #ifdef RS_JSONAPI
 	JsonApiPage::checkShutdownJsonApi();
 #endif // RS_JSONAPI
-
-#ifdef ENABLE_WEBUI
-	WebuiPage::checkShutdownWebui();
-#endif // ENABLE_WEBUI
 
 	/* cleanup */
 	ChatDialog::cleanupChat();

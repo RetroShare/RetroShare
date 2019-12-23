@@ -293,12 +293,31 @@ public:
 	/// @see RsIdentity
 	bool getOwnPseudonimousIds(std::vector<RsGxsId>& ids) override;
 
-	virtual bool getOwnIds(std::list<RsGxsId> &ownIds, bool signed_only = false);
+	/// @see RsIdentity
+	bool getOwnIds(
+	        std::list<RsGxsId> &ownIds, bool signed_only = false ) override;
 
-	//virtual bool getPublicKey(const RsGxsId &id, RsTlvSecurityKey &key) ;
-	//virtual void networkRequestPublicKey(const RsGxsId& key_id,const std::list<RsPeerId>& peer_ids) ;
+	/// @see RsIdentity
+	bool isKnownId(const RsGxsId& id) override;
 
-	virtual bool isOwnId(const RsGxsId& key_id) ;
+	/// @see RsIdentity
+	bool isOwnId(const RsGxsId& key_id) override;
+
+	/// @see RsIdentity
+	bool exportIdentityLink(
+	        std::string& link, const RsGxsId& id,
+	        bool includeGxsData = true,
+	        const std::string& baseUrl = DEFAULT_IDENTITY_BASE_URL,
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
+	/// @see RsIdentity
+	bool importIdentityLink(
+	        const std::string& link,
+	        RsGxsId& id = RS_DEFAULT_STORAGE_PARAM(RsGxsId),
+	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
+	        ) override;
+
 
 	virtual bool signData( const uint8_t* data,
 	                       uint32_t data_size,
@@ -354,17 +373,10 @@ public:
 	                         const RsIdentityUsage &use_info );
 	virtual bool requestPrivateKey(const RsGxsId &id);
 
-
-	/// @see RsIdentity
-	bool identityToBase64( const RsGxsId& id,
-	                       std::string& base64String ) override;
-
-	/// @see RsIdentity
-	bool identityFromBase64( const std::string& base64String,
-	                         RsGxsId& id ) override;
-
+	RS_DEPRECATED_FOR(exportIdentityLink)
 	virtual bool serialiseIdentityToMemory(const RsGxsId& id,
 	                                       std::string& radix_string);
+	RS_DEPRECATED_FOR(importIdentityLink)
 	virtual bool deserialiseIdentityFromMemory(const std::string& radix_string,
 	                                           RsGxsId* id = nullptr);
 
@@ -619,7 +631,7 @@ private:
 	bool ownIdsAreLoaded() { RS_STACK_MUTEX(mIdMtx); return mOwnIdsLoaded; }
 
 	bool mAutoAddFriendsIdentitiesAsContacts;
-    uint32_t mMaxKeepKeysBanned ;
+	uint32_t mMaxKeepKeysBanned;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2007-2011  Robert Fernie                                      *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2007-2011  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -33,11 +33,6 @@
 #include "pqi/p3netmgr.h"
 #include "pqi/p3historymgr.h"
 #include "pqi/pqinetwork.h"        // for getLocalAddresses
-
-//#include "pqi/p3dhtmgr.h" // Only need it for constants.
-//#include "tcponudp/tou.h"
-//#include "util/extaddrfinder.h"
-//#include "util/dnsresolver.h"
 
 #include "util/rsprint.h"
 #include "util/rsstring.h"
@@ -1074,26 +1069,22 @@ bool p3PeerMgrIMPL::addFriend(const RsPeerId& input_id, const RsPgpId& input_gpg
 bool p3PeerMgrIMPL::addSslOnlyFriend(
         const RsPeerId& sslId, const RsPgpId& pgp_id, const RsPeerDetails& dt )
 {
-	if(sslId.isNull())
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Cannot add a null "
-		        << "ID as SSL-only friend " << std::endl;
+		RsErr() << fname << " " << err << std::endl;
 		return false;
-	}
+	};
+
+	if(sslId.isNull())
+		return failure("Cannot add a null ID as SSL-only friend");
 
 	if(pgp_id.isNull())
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Cannot add as SSL-only friend a "
-		        << "peer with null PGP" << std::endl;
-		return false;
-	}
+		return failure( " Cannot add as SSL-only friend a peer with null PGP");
 
 	if(sslId == getOwnId())
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Cannot add yourself as SSL-only "
-		        << "friend (id=" << sslId << ")" << std::endl;
-		   return false;
-	}
+		return failure( "Cannot add yourself as SSL-only friend id:" +
+		                sslId.toStdString() );
 
 	bool alreadySslFriend = false;
 	peerState pstate;
@@ -1116,13 +1107,10 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * PGP id we already know, to avoid nasty tricks with malevolently forged
 	 * short invites.*/
 	if(alreadySslFriend && pstate.gpg_id != pgp_id)
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Cannot SSL-only friend for "
-		        << "a pre-existing friend with mismatching PGP-id "
-		        << "known: " << pstate.gpg_id << " new: " << pgp_id
-		        << std::endl;
-		return false;
-	}
+		return failure( "Cannot SSL-only friend for a pre-existing friend with "
+		                "mismatching PGP-id known: " +
+		                pstate.gpg_id.toStdString() + " new: " +
+		                pgp_id.toStdString() );
 
 	/* It is very important to be expecially carefull setting
 	 * pstate.skip_pgp_signature_validation to true because this effectively
@@ -1137,8 +1125,11 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * connection closed.
 	 * Instead if pstate.skip_pgp_signature_validation would have been
 	 * superficially set to true the PGP signature verification would have been
-	 * skipped and the attacker connection would be accepted. */
-	if(!AuthGPG::getAuthGPG()->isPgpPubKeyAvailable(pgp_id))
+	 * skipped and the attacker connection would be accepted.
+	 * If the PGP key is available add it as full friend. */
+	if(AuthGPG::getAuthGPG()->isPgpPubKeyAvailable(pgp_id))
+		AuthGPG::getAuthGPG()->AllowConnection(pgp_id, true);
+	else
 		pstate.skip_pgp_signature_validation = true;
 
 	pstate.gpg_id = pgp_id;
@@ -1179,8 +1170,8 @@ bool p3PeerMgrIMPL::addSslOnlyFriend(
 	 * previously known IP addresses */
 	if(!dt.isHiddenNode)
 	{
-		for(const std::string& locator : dt.ipAddressList)
-			addPeerLocator(sslId, locator);
+		for(const std::string& ipStr : dt.ipAddressList)
+			addPeerLocator(sslId, RsUrl(ipStr));
 
 		if(dt.extPort && !dt.extAddr.empty())
 		{
@@ -3163,4 +3154,4 @@ bool p3PeerMgrIMPL::removeUnusedLocations()
 	return true;
 }
 
-
+p3PeerMgr::~p3PeerMgr() = default;

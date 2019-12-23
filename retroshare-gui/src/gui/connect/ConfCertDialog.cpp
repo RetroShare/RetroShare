@@ -275,10 +275,16 @@ void ConfCertDialog::loadInvitePage()
 	std::string invite ;
 
     if(ui._shortFormat_CB->isChecked())
-        rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+	{
+		rsPeers->getShortInvite(invite,detail.id,true,!ui._includeIPHistory_CB->isChecked() );
+		ui.stabWidget->setTabText(1, tr("Retroshare ID"));
+	}
 	else
+	{
 		invite = rsPeers->GetRetroshareInvite(detail.id, ui._shouldAddSignatures_CB->isChecked(), ui._includeIPHistory_CB->isChecked() ) ;
-
+		ui.stabWidget->setTabText(1, tr("Retroshare Certificate"));
+	}
+	
 	QString infotext = getCertificateDescription(detail,ui._shouldAddSignatures_CB->isChecked(),ui._shortFormat_CB->isChecked(), ui._includeIPHistory_CB->isChecked() );
 
     ui.userCertificateText->setToolTip(infotext) ;

@@ -25,6 +25,10 @@
 #include <vector>
 #include <iostream>
 
+#ifdef __ANDROID__
+#	include <QtAndroid>
+#endif // def __ANDROID__
+
 #include "services/broadcastdiscoveryservice.h"
 #include "retroshare/rspeers.h"
 #include "serialiser/rsserializable.h"
@@ -94,6 +98,12 @@ BroadcastDiscoveryService::BroadcastDiscoveryService(
 {
 	if(mRsPeers.isHiddenNode(mRsPeers.getOwnId())) return;
 
+#ifdef __ANDROID__
+	createMulticastLock();
+#endif // def __ANDROID__
+
+	enableMulticastListening();
+
 	mUdcParameters.set_can_discover(true);
 	mUdcParameters.set_can_be_discovered(true);
 	mUdcParameters.set_port(port);
@@ -104,7 +114,10 @@ BroadcastDiscoveryService::BroadcastDiscoveryService(
 }
 
 BroadcastDiscoveryService::~BroadcastDiscoveryService()
-{ mUdcPeer.Stop(true); }
+{
+	mUdcPeer.Stop(true);
+	disableMulticastListening();
+}
 
 std::vector<RsBroadcastDiscoveryResult>
 BroadcastDiscoveryService::getDiscoveredPeers()
@@ -192,6 +205,7 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 	        BroadcastDiscoveryPack::fromSerializedString(uData);
 
 	RsBroadcastDiscoveryResult rbdr;
+	rbdr.mPgpFingerprint = bdp.mPgpFingerprint;
 	rbdr.mSslId = bdp.mSslId;
 	rbdr.mProfileName = bdp.mProfileName;
 	rbdr.mLocator.
@@ -201,6 +215,95 @@ RsBroadcastDiscoveryResult BroadcastDiscoveryService::createResult(
 
 	return rbdr;
 }
+
+bool BroadcastDiscoveryService::isMulticastListeningEnabled()
+{
+#ifdef __ANDROID__
+	return assertMulticastLockIsvalid() &&
+	        mWifiMulticastLock.callMethod<jboolean>("isHeld");
+#endif // def __ANDROID__
+
+	return true;
+}
+
+bool BroadcastDiscoveryService::enableMulticastListening()
+{
+#ifdef __ANDROID__
+	if(assertMulticastLockIsvalid() && !isMulticastListeningEnabled())
+	{
+		mWifiMulticastLock.callMethod<void>("acquire");
+		return true;
+	}
+#endif // def __ANDROID__
+
+	return false;
+}
+
+bool BroadcastDiscoveryService::disableMulticastListening()
+{
+#ifdef __ANDROID__
+	if(assertMulticastLockIsvalid() && isMulticastListeningEnabled())
+	{
+		mWifiMulticastLock.callMethod<void>("release");
+		return true;
+	}
+#endif // def __ANDROID__
+
+	return false;
+}
+
+#ifdef __ANDROID__
+bool BroadcastDiscoveryService::createMulticastLock()
+{
+	Dbg2() << __PRETTY_FUNCTION__ << std::endl;
+
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto failure = [&](const std::string& err)
+	{
+		RsErr() << fname << " " << err << std::endl;
+		return false;
+	};
+
+	if(mWifiMulticastLock.isValid())
+		return failure("mWifiMulticastLock is already initialized");
+
+	QAndroidJniObject context = QtAndroid::androidContext();
+	if(!context.isValid())
+		return failure("Cannot retrieve Android context");
+
+	QAndroidJniObject WIFI_SERVICE = QAndroidJniObject::getStaticObjectField(
+	            "android.content.Context", "WIFI_SERVICE", "Ljava/lang/String;");
+	if(!WIFI_SERVICE.isValid())
+		return failure("Cannot retrieve Context.WIFI_SERVICE value");
+
+	QAndroidJniObject wifiManager = context.callObjectMethod(
+	            "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;",
+	            WIFI_SERVICE.object<jstring>() );
+	if(!wifiManager.isValid())
+		return failure("Cannot retrieve Android Wifi Manager");
+
+	mWifiMulticastLock = wifiManager.callObjectMethod(
+	            "createMulticastLock",
+	            "(Ljava/lang/String;)Landroid/net/wifi/WifiManager$MulticastLock;",
+	            QAndroidJniObject::fromString(fname).object<jstring>() );
+	if(!mWifiMulticastLock.isValid())
+		return failure("Cannot create WifiManager.MulticastLock");
+
+	return true;
+}
+
+bool BroadcastDiscoveryService::assertMulticastLockIsvalid()
+{
+	if(!mWifiMulticastLock.isValid())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " mWifiMulticastLock is invalid!"
+		        << std::endl;
+		print_stacktrace();
+		return false;
+	}
+	return true;
+}
+#endif // def __ANDROID__
 
 RsBroadcastDiscovery::~RsBroadcastDiscovery() = default;
 RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() = default;
