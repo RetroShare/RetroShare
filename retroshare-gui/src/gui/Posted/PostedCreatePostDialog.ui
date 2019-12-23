@@ -278,7 +278,7 @@
            <number>0</number>
           </property>
           <item row="1" column="0">
-           <widget class="MRichTextEdit" name="MRichTextEditWidget" native="true"/>
+           <widget class="RichTextEdit" name="RichTextEditWidget" native="true"/>
           </item>
           <item row="0" column="0">
            <widget class="QLineEdit" name="titleEdit">
@@ -467,9 +467,9 @@
    <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
   <customwidget>
-   <class>MRichTextEdit</class>
+   <class>RichTextEdit</class>
    <extends>QWidget</extends>
-   <header>util/MRichTextEdit.h</header>
+   <header>util/RichTextEdit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

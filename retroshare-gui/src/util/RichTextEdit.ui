@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MRichTextEdit</class>
- <widget class="QWidget" name="MRichTextEdit">
+ <class>RichTextEdit</class>
+ <widget class="QWidget" name="RichTextEdit">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>699</width>
+    <width>703</width>
     <height>312</height>
    </rect>
   </property>
@@ -62,6 +62,12 @@
       </item>
       <item>
        <widget class="QComboBox" name="f_fontsize">
+        <property name="font">
+         <font>
+          <family>MS Sans Serif</family>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
         <property name="focusPolicy">
          <enum>Qt::ClickFocus</enum>
         </property>
@@ -557,6 +563,12 @@
    </item>
    <item>
     <widget class="MimeTextEdit" name="f_textedit">
+     <property name="font">
+      <font>
+       <family>MS Sans Serif</family>
+       <pointsize>9</pointsize>
+      </font>
+     </property>
      <property name="autoFormatting">
       <set>QTextEdit::AutoNone</set>
      </property>

@@ -25,7 +25,7 @@
 
 #include "util/misc.h"
 #include "util/TokenQueue.h"
-#include "util/MRichTextEdit.h"
+#include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
 
@@ -51,7 +51,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
-	ui->MRichTextEditWidget->setPlaceHolderTextPosted();
+	ui->RichTextEditWidget->setPlaceHolderTextPosted();
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
@@ -86,7 +86,7 @@ void PostedCreatePostDialog::createPost()
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
 	
 	QString text;
-	text = ui->MRichTextEditWidget->toHtml();
+	text = ui->RichTextEditWidget->toHtml();
 	post.mNotes = std::string(text.toUtf8());
 
 	post.mMeta.mAuthorId = authorId;

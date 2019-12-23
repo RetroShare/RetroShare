@@ -626,7 +626,7 @@ HEADERS +=  rshare.h \
             gui/statistics/BWGraph.h \
             util/RsSyntaxHighlighter.h \
             util/imageutil.h \
-            util/MRichTextEdit.h \
+            util/RichTextEdit.h \
             gui/NetworkDialog/pgpid_item_model.h \
             gui/NetworkDialog/pgpid_item_proxy.h \
             gui/common/RsCollection.h \
@@ -749,7 +749,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
             gui/GetStartedDialog.ui \
-            util/MRichTextEdit.ui
+            util/RichTextEdit.ui
 
 
 #            gui/ForumsDialog.ui \
@@ -827,7 +827,7 @@ SOURCES +=  main.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
-            util/MRichTextEdit.cpp \
+            util/RichTextEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \

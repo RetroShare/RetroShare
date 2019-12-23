@@ -23,7 +23,7 @@
 
 #include <QDialog>
 #include "retroshare/rsposted.h"
-#include "util/MRichTextEdit.h"
+#include "util/RichTextEdit.h"
 
 class TokenQueue;
 

@@ -1,29 +1,24 @@
-/*
-** Copyright (C) 2019 by defnax    <retroshare.project@gmail.com>
-**
-** Copyright (C) 2013 Jiří Procházka (Hobrasoft)
-** Contact: http://www.hobrasoft.cz/
-**
-** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
-** Contact: http://www.qt-project.org/legal
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** GNU Lesser General Public License Usage
-** This file is under the terms of the GNU Lesser General Public License
-** version 2.1 as published by the Free Software Foundation and appearing
-** in the file LICENSE.LGPL included in the packaging of this file.
-** Please review the following information to ensure the
-** GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** In addition, as a special exception, Digia gives you certain additional
-** rights.  These rights are described in the Digia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** $QT_END_LICENSE$
-*/
+/*******************************************************************************
+ * util/RichTextEdit.cpp                                                       *
+ *                                                                             *
+ * Copyright (c) 2019 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
 
-#include "MRichTextEdit.h"
+#include "RichTextEdit.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
@@ -47,7 +42,7 @@
 
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE = 199000;
 
-MRichTextEdit::MRichTextEdit(QWidget *parent) : QWidget(parent) {
+RichTextEdit::RichTextEdit(QWidget *parent) : QWidget(parent) {
     setupUi(this);
     m_lastBlockList = 0;
     f_textedit->setTabStopWidth(40);
@@ -196,14 +191,14 @@ MRichTextEdit::MRichTextEdit(QWidget *parent) : QWidget(parent) {
 
     // images
     connect(f_image, SIGNAL(clicked()), this, SLOT(insertImage()));
-	
+
 	// check message length
 	connect(f_textedit, SIGNAL(textChanged()), this, SLOT(checkLength()));
 
 }
 
 
-void MRichTextEdit::textSource() {
+void RichTextEdit::textSource() {
     QDialog *dialog = new QDialog(this);
     QPlainTextEdit *pte = new QPlainTextEdit(dialog);
     pte->setPlainText( f_textedit->toHtml() );
@@ -220,7 +215,7 @@ void MRichTextEdit::textSource() {
 }
 
 
-void MRichTextEdit::textRemoveFormat() {
+void RichTextEdit::textRemoveFormat() {
     QTextCharFormat fmt;
     fmt.setFontWeight(QFont::Normal);
     fmt.setFontUnderline  (false);
@@ -246,7 +241,7 @@ void MRichTextEdit::textRemoveFormat() {
 }
 
 
-void MRichTextEdit::textRemoveAllFormat() {
+void RichTextEdit::textRemoveAllFormat() {
     f_bold      ->setChecked(false);
     f_underline ->setChecked(false);
     f_italic    ->setChecked(false);
@@ -257,37 +252,37 @@ void MRichTextEdit::textRemoveAllFormat() {
 }
 
 
-void MRichTextEdit::textBold() {
+void RichTextEdit::textBold() {
     QTextCharFormat fmt;
     fmt.setFontWeight(f_bold->isChecked() ? QFont::Bold : QFont::Normal);
     mergeFormatOnWordOrSelection(fmt);
 }
 
 
-void MRichTextEdit::focusInEvent(QFocusEvent *) {
+void RichTextEdit::focusInEvent(QFocusEvent *) {
     f_textedit->setFocus(Qt::TabFocusReason);
 }
 
 
-void MRichTextEdit::textUnderline() {
+void RichTextEdit::textUnderline() {
     QTextCharFormat fmt;
     fmt.setFontUnderline(f_underline->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void MRichTextEdit::textItalic() {
+void RichTextEdit::textItalic() {
     QTextCharFormat fmt;
     fmt.setFontItalic(f_italic->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void MRichTextEdit::textStrikeout() {
+void RichTextEdit::textStrikeout() {
     QTextCharFormat fmt;
     fmt.setFontStrikeOut(f_strikeout->isChecked());
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void MRichTextEdit::textSize(const QString &p) {
+void RichTextEdit::textSize(const QString &p) {
     qreal pointSize = p.toFloat();
     if (p.toFloat() > 0) {
         QTextCharFormat fmt;
@@ -296,7 +291,7 @@ void MRichTextEdit::textSize(const QString &p) {
     }
 }
 
-void MRichTextEdit::textLink(bool checked) {
+void RichTextEdit::textLink(bool checked) {
     bool unlink = false;
     QTextCharFormat fmt;
     if (checked) {
@@ -325,7 +320,7 @@ void MRichTextEdit::textLink(bool checked) {
     mergeFormatOnWordOrSelection(fmt);
 }
 
-void MRichTextEdit::textStyle(int index) {
+void RichTextEdit::textStyle(int index) {
     QTextCursor cursor = f_textedit->textCursor();
     cursor.beginEditBlock();
 
@@ -371,7 +366,7 @@ void MRichTextEdit::textStyle(int index) {
     cursor.endEditBlock();
 }
 
-void MRichTextEdit::textFgColor() {
+void RichTextEdit::textFgColor() {
     QColor col = QColorDialog::getColor(f_textedit->textColor(), this);
     QTextCursor cursor = f_textedit->textCursor();
     if (!cursor.hasSelection()) {
@@ -388,7 +383,7 @@ void MRichTextEdit::textFgColor() {
     fgColorChanged(col);
 }
 
-void MRichTextEdit::textBgColor() {
+void RichTextEdit::textBgColor() {
     QColor col = QColorDialog::getColor(f_textedit->textBackgroundColor(), this);
     QTextCursor cursor = f_textedit->textCursor();
     if (!cursor.hasSelection()) {
@@ -405,21 +400,21 @@ void MRichTextEdit::textBgColor() {
     bgColorChanged(col);
 }
 
-void MRichTextEdit::listBullet(bool checked) {
+void RichTextEdit::listBullet(bool checked) {
     if (checked) {
         f_list_ordered->setChecked(false);
         }
     list(checked, QTextListFormat::ListDisc);
 }
 
-void MRichTextEdit::listOrdered(bool checked) {
+void RichTextEdit::listOrdered(bool checked) {
     if (checked) {
         f_list_bullet->setChecked(false);
         }
     list(checked, QTextListFormat::ListDecimal);
 }
 
-void MRichTextEdit::list(bool checked, QTextListFormat::Style style) {
+void RichTextEdit::list(bool checked, QTextListFormat::Style style) {
     QTextCursor cursor = f_textedit->textCursor();
     cursor.beginEditBlock();
     if (!checked) {
@@ -438,7 +433,7 @@ void MRichTextEdit::list(bool checked, QTextListFormat::Style style) {
     cursor.endEditBlock();
 }
 
-void MRichTextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format) {
+void RichTextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format) {
     QTextCursor cursor = f_textedit->textCursor();
     if (!cursor.hasSelection()) {
         cursor.select(QTextCursor::WordUnderCursor);
@@ -448,7 +443,7 @@ void MRichTextEdit::mergeFormatOnWordOrSelection(const QTextCharFormat &format) 
     f_textedit->setFocus(Qt::TabFocusReason);
 }
 
-void MRichTextEdit::slotCursorPositionChanged() {
+void RichTextEdit::slotCursorPositionChanged() {
     QTextList *l = f_textedit->textCursor().currentList();
     if (m_lastBlockList && (l == m_lastBlockList || (l != 0 && m_lastBlockList != 0
                                  && l->format().style() == m_lastBlockList->format().style()))) {
@@ -473,7 +468,7 @@ void MRichTextEdit::slotCursorPositionChanged() {
         }
 }
 
-void MRichTextEdit::fontChanged(const QFont &f) {
+void RichTextEdit::fontChanged(const QFont &f) {
     f_fontsize->setCurrentIndex(f_fontsize->findText(QString::number(f.pointSize())));
     f_bold->setChecked(f.bold());
     f_italic->setChecked(f.italic());
@@ -512,7 +507,7 @@ void MRichTextEdit::fontChanged(const QFont &f) {
       }
 }
 
-void MRichTextEdit::fgColorChanged(const QColor &c) {
+void RichTextEdit::fgColorChanged(const QColor &c) {
     QPixmap pix(16, 16);
     if (c.isValid()) {
         pix.fill(c);
@@ -522,7 +517,7 @@ void MRichTextEdit::fgColorChanged(const QColor &c) {
     f_fgcolor->setIcon(pix);
 }
 
-void MRichTextEdit::bgColorChanged(const QColor &c) {
+void RichTextEdit::bgColorChanged(const QColor &c) {
     QPixmap pix(16, 16);
     if (c.isValid()) {
         pix.fill(c);
@@ -532,21 +527,21 @@ void MRichTextEdit::bgColorChanged(const QColor &c) {
     f_bgcolor->setIcon(pix);
 }
 
-void MRichTextEdit::slotCurrentCharFormatChanged(const QTextCharFormat &format) {
+void RichTextEdit::slotCurrentCharFormatChanged(const QTextCharFormat &format) {
     fontChanged(format.font());
     bgColorChanged((format.background().isOpaque()) ? format.background().color() : QColor());
     fgColorChanged((format.foreground().isOpaque()) ? format.foreground().color() : QColor());
     f_link->setChecked(format.isAnchor());
 }
 
-void MRichTextEdit::slotClipboardDataChanged() {
+void RichTextEdit::slotClipboardDataChanged() {
 #ifndef QT_NO_CLIPBOARD
     if (const QMimeData *md = QApplication::clipboard()->mimeData())
         f_paste->setEnabled(md->hasText());
 #endif
 }
 
-QString MRichTextEdit::toHtml() const {
+QString RichTextEdit::toHtml() const {
     QString s = f_textedit->toHtml();
     // convert emails to links
     s = s.replace(QRegExp("(<[^a][^>]+>(?:<span[^>]+>)?|\\s)([a-zA-Z\\d]+@[a-zA-Z\\d]+\\.[a-zA-Z]+)"), "\\1<a href=\"mailto:\\2\">\\2</a>");
@@ -556,15 +551,15 @@ QString MRichTextEdit::toHtml() const {
     return s;
 }
 
-void MRichTextEdit::increaseIndentation() {
+void RichTextEdit::increaseIndentation() {
     indent(+1);
 }
 
-void MRichTextEdit::decreaseIndentation() {
+void RichTextEdit::decreaseIndentation() {
     indent(-1);
 }
 
-void MRichTextEdit::indent(int delta) {
+void RichTextEdit::indent(int delta) {
     QTextCursor cursor = f_textedit->textCursor();
     cursor.beginEditBlock();
     QTextBlockFormat bfmt = cursor.blockFormat();
@@ -576,7 +571,7 @@ void MRichTextEdit::indent(int delta) {
     cursor.endEditBlock();
 }
 
-void MRichTextEdit::setText(const QString& text) {
+void RichTextEdit::setText(const QString& text) {
     if (text.isEmpty()) {
         setPlainText(text);
         return;
@@ -588,7 +583,7 @@ void MRichTextEdit::setText(const QString& text) {
         }
 }
 
-void MRichTextEdit::insertImage() {
+void RichTextEdit::insertImage() {
 	QString file;
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
 		QString encodedImage;
@@ -599,7 +594,7 @@ void MRichTextEdit::insertImage() {
 	}
 }
 
-void MRichTextEdit::checkLength(){
+void RichTextEdit::checkLength(){
 	QString text;
 	RsHtml::optimizeHtml(f_textedit, text);
 	std::wstring msg = text.toStdWString();
@@ -615,6 +610,7 @@ void MRichTextEdit::checkLength(){
 	f_info->setText(text);
 }
 
-void MRichTextEdit::setPlaceHolderTextPosted() {
+
+void RichTextEdit::setPlaceHolderTextPosted() {
 	f_textedit->setPlaceholderText(tr("Text (optional)"));
 }
