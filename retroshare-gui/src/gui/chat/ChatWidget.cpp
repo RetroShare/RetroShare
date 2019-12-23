@@ -440,7 +440,7 @@ void ChatWidget::blockSending(QString msg)
 #ifndef RS_ASYNC_CHAT
 //	sendingBlocked = true;
 //	ui->sendButton->setEnabled(false);
-	ui->stickerButton->setEnabled(false);
+//	ui->stickerButton->setEnabled(false);
 #endif
 	ui->sendButton->setToolTip(msg);
 }
