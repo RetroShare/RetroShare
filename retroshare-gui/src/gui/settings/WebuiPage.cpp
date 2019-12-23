@@ -157,6 +157,7 @@ QString WebuiPage::helpText() const
 		webuiUrl.setScheme("http");
 		webuiUrl.setHost(QString::fromStdString(rsJsonApi->getBindingAddress()));
 		webuiUrl.setPort(rsJsonApi->listeningPort());
+		webuiUrl.setPath("/index.html");
 		QDesktopServices::openUrl(webuiUrl);
 	}
     else
