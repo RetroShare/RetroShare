@@ -401,11 +401,11 @@ public:
 
 	/**
 	 * @brief Request remote files search
-	 * @jsonapi{development}
+     * //jsonapi{development} // how to define a function callback in json?
 	 * @param[in] matchString string to look for in the search. If files deep
 	 *	indexing is enabled at compile time support advanced features described
 	 *	at https://xapian.org/docs/queryparser.html
-	 * @param multiCallback function that will be called each time a search
+     * @param[in] multiCallback function that will be called each time a search
 	 * result is received
 	 * @param[in] maxWait maximum wait time in seconds for search results
 	 * @return false on error, true otherwise
