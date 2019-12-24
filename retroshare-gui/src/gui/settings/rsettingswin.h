@@ -28,7 +28,7 @@
 
 class FloatingHelpBrowser;
 
-#define IMAGE_PREFERENCES       ":/icons/png/options.png"
+#define IMAGE_PREFERENCES       ":/icons/png/options2.png"
 
 class SettingsPage: public MainPage
 {

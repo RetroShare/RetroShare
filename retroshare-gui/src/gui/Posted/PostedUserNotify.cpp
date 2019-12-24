@@ -36,12 +36,12 @@ bool PostedUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon PostedUserNotify::getIcon()
 {
-    return QIcon(":/icons/png/posted.png");
+    return QIcon(":/icons/png/postedlinks.png");
 }
 
 QIcon PostedUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/posted-notify.png") : QIcon(":/icons/png/posted.png");
+    return hasNew ? QIcon(":/icons/png/posted-notify.png") : QIcon(":/icons/png/postedlinks.png");
 }
 
 void PostedUserNotify::iconClicked()

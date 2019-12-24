@@ -23,7 +23,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_GXSFORUMS         ":/icons/png/forums.png"
+#define IMAGE_GXSFORUMS         ":/icons/png/forum.png"
 
 class GxsForumsDialog : public GxsGroupFrameDialog
 {

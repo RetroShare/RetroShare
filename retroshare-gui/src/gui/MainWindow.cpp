@@ -120,7 +120,7 @@
 #include <iomanip>
 #include <unistd.h>
 
-#define IMAGE_QUIT              ":/icons/png/exit.png"
+#define IMAGE_QUIT              ":/icons/png/exit2.png"
 #define IMAGE_PREFERENCES       ":/icons/png/options2.png"
 #define IMAGE_ABOUT             ":/icons/png/info.png"
 #define IMAGE_STATS             ":/icons/png/netgraph2.png"

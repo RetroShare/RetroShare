@@ -882,5 +882,14 @@ PostedCreatePostDialog QPushButton#submitButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
+}
+
+MainWindow QListView::item:selected { 
+	background: #EDEDED;
+	color: black;
+}
+
+MainWindow QListView::item:selected:hover { 
+	background: #F0F0F0 ;
 }
