@@ -69,10 +69,10 @@ private slots:
 	void contextMenu(QPoint) ;
 
 	void addThumbnail();
-	void addPicture();
-	void checkLength();
 	void allowAutoMediaThumbNail(bool);
 
+	void on_channelpostButton_clicked();
+	void on_attachmentsButton_clicked();
 private:
 	void loadChannelInfo(const uint32_t &token);
 	void loadChannelPostInfo(const uint32_t &token);
