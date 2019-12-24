@@ -17,7 +17,11 @@
 		<file>images/up-arrow.png</file>
 		<file>images/comments.png</file>
 		<file>images/thumb-default.png</file>
+		<file>images/thumb-link.png</file>
 		<file>images/share.png</file>
 		<file>images/notes.png</file>
+		<file>images/link.png</file>
+		<file>images/post.png</file>
+		<file>images/photo.png</file>
 	</qresource>
 </RCC>

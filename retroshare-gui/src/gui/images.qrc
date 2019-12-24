@@ -487,12 +487,17 @@
     <file>images/textedit/editpaste.png</file>
     <file>images/textedit/editredo.png</file>
     <file>images/textedit/editundo.png</file>
+    <file>images/textedit/edit-image-face-add.png</file>
     <file>images/textedit/exportpdf.png</file>
     <file>images/textedit/filenew.png</file>
     <file>images/textedit/fileopen.png</file>
     <file>images/textedit/fileprint.png</file>
     <file>images/textedit/filesave.png</file>
     <file>images/textedit/format-text-color.png</file>
+    <file>images/textedit/format-text-strikethrough.png</file>
+    <file>images/textedit/format-indent-less.png</file>
+    <file>images/textedit/format-indent-more.png</file>
+    <file>images/textedit/insert-link.png</file>
     <file>images/textedit/format-list-ordered.png</file>
     <file>images/textedit/format-list-unordered.png</file>
     <file>images/textedit/zoomin.png</file>
