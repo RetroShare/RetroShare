@@ -306,11 +306,15 @@ QString ConfCertDialog::getCertificateDescription(const RsPeerDetails& detail,bo
     infotext += "<UL>" ;
 
     if(use_short_format)
+    {
 		infotext += "<li> a <b>Profile fingerprint</b>";
+    	infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.fpr.toStdString().c_str()+") " ;
+    }
 	else
-		infotext += "<li> a <b>Profile key</b>";
-
-    infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
+    {
+		infotext += "<li> a <b>Profile public key</b>";
+    	infotext += " (" + QString::fromUtf8(detail.name.c_str())  + "@" + detail.gpg_id.toStdString().c_str()+") " ;
+    }
 
     if(signatures_included && !use_short_format)
         infotext += tr("with")+" "+QString::number(detail.gpgSigners.size()-1)+" "+tr("external signatures</li>") ;
