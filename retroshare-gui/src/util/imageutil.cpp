@@ -73,13 +73,11 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	//nothing to do if it fits into the limits
 	optimized = original;
 	if ((maxPixels <= 0) || (optimized.width()*optimized.height() <= maxPixels)) {
-		if(checkSize(html, optimized, maxBytes) <= maxBytes) {
+		int s = checkSize(html, optimized, maxBytes);
+		if((maxBytes <= 0) || (s <= maxBytes)) {
 			return true;
 		}
 	}
-
-	QVector<QRgb> ct;
-	quantization(original, ct);
 
 	//Downscale the image to fit into maxPixels
 	double whratio = (qreal)original.width() / (qreal)original.height();
@@ -97,6 +95,9 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 		checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation), maxBytes);
 		return true;
 	}
+
+	QVector<QRgb> ct;
+	quantization(original, ct);
 
 	//Use binary search to find a suitable image size + linear regression to guess the file size
 	double maxsize = (double)checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
