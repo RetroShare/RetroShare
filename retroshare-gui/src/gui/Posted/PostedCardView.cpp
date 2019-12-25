@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/PostedItem.cpp                                *
+ * retroshare-gui/src/gui/Posted/PostedCardView.cpp                            *
  *                                                                             *
- * Copyright (C) 2013 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (C) 2019  Retroshare Team       <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -23,13 +23,13 @@
 #include <QStyle>
 
 #include "rshare.h"
-#include "PostedItem.h"
+#include "PostedCardView.h"
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
 
-#include "ui_PostedItem.h"
+#include "ui_PostedCardView.h"
 
 #include <retroshare/rsposted.h>
 #include <iostream>
@@ -38,7 +38,7 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
 {
 	setup();
@@ -48,7 +48,7 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroup
 	requestComment();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
@@ -61,7 +61,7 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGr
 	requestComment();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
 {
 	setup();
@@ -71,15 +71,15 @@ PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPo
 	requestComment();
 }
 
-PostedItem::~PostedItem()
+PostedCardView::~PostedCardView()
 {
 	delete(ui);
 }
 
-void PostedItem::setup()
+void PostedCardView::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */
-	ui = new Ui::PostedItem;
+	ui = new Ui::PostedCardView;
 	ui->setupUi(this);
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
@@ -91,10 +91,6 @@ void PostedItem::setup()
 	ui->dateLabel->clear();
 	ui->fromLabel->clear();
 	ui->siteLabel->clear();
-	ui->newCommentLabel->hide();
-	ui->frame_picture->hide();
-	ui->commLabel->hide();
-	ui->frame_notes->hide();
 
 	/* general ones */
 	connect(ui->clearButton, SIGNAL(clicked()), this, SLOT(removeItem()));
@@ -105,9 +101,6 @@ void PostedItem::setup()
 	connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
 	connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
 	connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
-	connect(ui->expandButton, SIGNAL(clicked()), this, SLOT( toggle()));
-	connect(ui->notesButton, SIGNAL(clicked()), this, SLOT( toggleNotes()));
-
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 	
 	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
@@ -119,8 +112,6 @@ void PostedItem::setup()
 	ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->voteDownButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
-	ui->expandButton->setIconSize(QSize(S*1.5,S*1.5));
-	ui->notesButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->readButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->shareButton->setIconSize(QSize(S*1.5,S*1.5));
 	
@@ -132,10 +123,10 @@ void PostedItem::setup()
 	ui->readAndClearButton->hide();
 }
 
-bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
+bool PostedCardView::setGroup(const RsPostedGroup &group, bool doFill)
 {
 	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedItem::setGroup() - Wrong id, cannot set post";
+		std::cerr << "PostedCardView::setGroup() - Wrong id, cannot set post";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -149,10 +140,10 @@ bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
 	return true;
 }
 
-bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
+bool PostedCardView::setPost(const RsPostedPost &post, bool doFill)
 {
 	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
-		std::cerr << "PostedItem::setPost() - Wrong id, cannot set post";
+		std::cerr << "PostedCardView::setPost() - Wrong id, cannot set post";
 		std::cerr << std::endl;
 		return false;
 	}
@@ -166,19 +157,19 @@ bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
 	return true;
 }
 
-void PostedItem::loadGroup(const uint32_t &token)
+void PostedCardView::loadGroup(const uint32_t &token)
 {
 	std::vector<RsPostedGroup> groups;
 	if (!rsPosted->getGroupData(token, groups))
 	{
-		std::cerr << "PostedItem::loadGroup() ERROR getting data";
+		std::cerr << "PostedCardView::loadGroup() ERROR getting data";
 		std::cerr << std::endl;
 		return;
 	}
 
 	if (groups.size() != 1)
 	{
-		std::cerr << "PostedItem::loadGroup() Wrong number of Items";
+		std::cerr << "PostedCardView::loadGroup() Wrong number of Items";
 		std::cerr << std::endl;
 		return;
 	}
@@ -186,7 +177,7 @@ void PostedItem::loadGroup(const uint32_t &token)
 	setGroup(groups[0]);
 }
 
-void PostedItem::loadMessage(const uint32_t &token)
+void PostedCardView::loadMessage(const uint32_t &token)
 {
 	std::vector<RsPostedPost> posts;
 	std::vector<RsGxsComment> cmts;
@@ -205,9 +196,9 @@ void PostedItem::loadMessage(const uint32_t &token)
 	{
 		RsGxsComment cmt = cmts[0];
 
-		ui->newCommentLabel->show();
-		ui->commLabel->show();
-		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+		//ui->newCommentLabel->show();
+		//ui->commLabel->show();
+		//ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
 
 		//Change this item to be uploaded with thread element.
 		setMessageId(cmt.mMeta.mThreadId);
@@ -222,7 +213,7 @@ void PostedItem::loadMessage(const uint32_t &token)
 	}
 }
 
-void PostedItem::loadComment(const uint32_t &token)
+void PostedCardView::loadComment(const uint32_t &token)
 {
 	std::vector<RsGxsComment> cmts;
 	if (!rsPosted->getRelatedComments(token, cmts))
@@ -242,7 +233,7 @@ void PostedItem::loadComment(const uint32_t &token)
 	ui->commentButton->setText(sComButText);
 }
 
-void PostedItem::fill()
+void PostedCardView::fill()
 {
 	if (isLoading()) {
 		/* Wait for all requests */
@@ -270,6 +261,7 @@ void PostedItem::fill()
     QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 	QString urlstr = "Invalid Link";
 	QString sitestr = "Invalid Link";
+
 	bool urlOkay = url.isValid();
 	if (urlOkay)
 	{
@@ -301,7 +293,7 @@ void PostedItem::fill()
 		ui->titleLabel->setText(messageName());
 
 	}
-
+	
 	if (urlarray.isEmpty())
 	{
 		ui->siteLabel->hide();
@@ -316,18 +308,16 @@ void PostedItem::fill()
 		// Wiping data - as its been passed to thumbnail.
 		
 		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-		ui->thumbnailLabel->setPixmap(sqpixmap);
+
 		ui->pictureLabel->setPixmap(pixmap);
 	}
-	else if (urlOkay && (mPost.mImage.mData == NULL))
+	else if (mPost.mImage.mData == NULL)
 	{
-		ui->expandButton->setDisabled(true);
-		ui->thumbnailLabel->setPixmap(QPixmap(LINK_IMAGE));
+		ui->picture_frame->hide();
 	}
 	else
 	{
-		ui->expandButton->setDisabled(true);
-		ui->thumbnailLabel->setPixmap(sqpixmap2);
+		ui->picture_frame->show();
 	}
 
 
@@ -343,7 +333,7 @@ void PostedItem::fill()
 	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
 	if(ui->notes->text().isEmpty())
-		ui->notesButton->hide();
+		ui->notes->hide();
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
 	{
@@ -416,27 +406,27 @@ void PostedItem::fill()
 	emit sizeChanged(this);
 }
 
-const RsPostedPost &PostedItem::getPost() const
+const RsPostedPost &PostedCardView::getPost() const
 {
 	return mPost;
 }
 
-RsPostedPost &PostedItem::post()
+RsPostedPost &PostedCardView::post()
 {
 	return mPost;
 }
 
-QString PostedItem::groupName()
+QString PostedCardView::groupName()
 {
 	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
 }
 
-QString PostedItem::messageName()
+QString PostedCardView::messageName()
 {
 	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 }
 
-void PostedItem::makeDownVote()
+void PostedCardView::makeDownVote()
 {
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
@@ -448,7 +438,7 @@ void PostedItem::makeDownVote()
 	emit vote(msgId, false);
 }
 
-void PostedItem::makeUpVote()
+void PostedCardView::makeUpVote()
 {
 	RsGxsGrpMsgIdPair msgId;
 	msgId.first = mPost.mMeta.mGroupId;
@@ -460,9 +450,9 @@ void PostedItem::makeUpVote()
 	emit vote(msgId, true);
 }
 
-void PostedItem::loadComments()
+void PostedCardView::loadComments()
 {
-	std::cerr << "PostedItem::loadComments()";
+	std::cerr << "PostedCardView::loadComments()";
 	std::cerr << std::endl;
 
 	if (mFeedHolder)
@@ -478,7 +468,7 @@ void PostedItem::loadComments()
 	}
 }
 
-void PostedItem::setReadStatus(bool isNew, bool isUnread)
+void PostedCardView::setReadStatus(bool isNew, bool isUnread)
 {
 	if (isUnread)
 	{
@@ -498,7 +488,7 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
-void PostedItem::readToggled(bool checked)
+void PostedCardView::readToggled(bool checked)
 {
 	if (mInFill) {
 		return;
@@ -512,10 +502,10 @@ void PostedItem::readToggled(bool checked)
 	setReadStatus(false, checked);
 }
 
-void PostedItem::readAndClearItem()
+void PostedCardView::readAndClearItem()
 {
 #ifdef DEBUG_ITEM
-	std::cerr << "PostedItem::readAndClearItem()";
+	std::cerr << "PostedCardView::readAndClearItem()";
 	std::cerr << std::endl;
 #endif
 
@@ -523,31 +513,23 @@ void PostedItem::readAndClearItem()
 	removeItem();
 }
 
-void PostedItem::toggle()
-{
-	expand(ui->frame_picture->isHidden());
-}
 
-void PostedItem::doExpand(bool open)
+void PostedCardView::doExpand(bool open)
 {
-	if (open)
+	/*if (open)
 	{
-		ui->frame_picture->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/decrease.png")));
-		ui->expandButton->setToolTip(tr("Hide"));
+		
 	}
 	else
-	{
-		ui->frame_picture->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/expand.png")));
-		ui->expandButton->setToolTip(tr("Expand"));
+	{		
+
 	}
 
-	emit sizeChanged(this);
+	emit sizeChanged(this);*/
 
 }
 
-void PostedItem::copyMessageLink()
+void PostedCardView::copyMessageLink()
 {
 	if (groupId().isNull() || mMessageId.isNull()) {
 		return;
@@ -560,17 +542,4 @@ void PostedItem::copyMessageLink()
 		urls.push_back(link);
 		RSLinkClipboard::copyLinks(urls);
 	}
-}
-
-void PostedItem::toggleNotes()
-{
-	if (ui->notesButton->isChecked())
-	{
-		ui->frame_notes->show();
-	}
-	else
-	{		
-		ui->frame_notes->hide();
-	}
-
 }

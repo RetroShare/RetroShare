@@ -1344,6 +1344,7 @@ posted {
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListWidget.h \
 		gui/Posted/PostedItem.h \
+		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
 		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
@@ -1355,6 +1356,7 @@ posted {
 	FORMS += gui/Posted/PostedListWidget.ui \
 		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
+		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
 
 		#gui/Posted/PostedDialog.ui \
@@ -1365,6 +1367,7 @@ posted {
 		gui/Posted/PostedListWidget.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
+		gui/Posted/PostedCardView.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
 		gui/Posted/PostedUserNotify.cpp

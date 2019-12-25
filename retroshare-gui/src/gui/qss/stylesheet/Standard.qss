@@ -857,6 +857,10 @@ PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#site
 	color: #787c7e;
 }
 
+PostedCardView QFrame#voteFrame {
+	background: #f8f9fa;
+}
+
 GxsCommentDialog QComboBox#sortBox {
 	font: bold;
 	color: #0099cc;

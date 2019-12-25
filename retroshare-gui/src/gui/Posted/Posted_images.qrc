@@ -1,6 +1,6 @@
 <RCC>
 	<qresource prefix="/" >
-    <file>images/posted_16.png</file>
+		<file>images/posted_16.png</file>
 		<file>images/posted_24.png</file>
 		<file>images/posted_32.png</file>
 		<file>images/posted_48.png</file>
@@ -23,5 +23,9 @@
 		<file>images/link.png</file>
 		<file>images/post.png</file>
 		<file>images/photo.png</file>
+		<file>images/classic.png</file>
+		<file>images/card.png</file>
+		<file>images/down-hover.png</file>
+		<file>images/up-hover.png</file>
 	</qresource>
 </RCC>
