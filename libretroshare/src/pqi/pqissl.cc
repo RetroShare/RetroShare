@@ -1267,7 +1267,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 
 	if(rsBanList && !rsBanList->isAddressAccepted( foreign_addr, checking_flags, check_result ))
 	{
-		RsErr() << __PRETTY_FUNCTION__
+		RsInfo() << __PRETTY_FUNCTION__
 		        << " Refusing incoming SSL connection from blacklisted "
 		        << "foreign address " << foreign_addr
 		        << ". Reason: " << check_result << ". This should never happen "
@@ -1343,7 +1343,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	/* shutdown existing - in all cases use the new one */
 	if ((ssl_connection) && (ssl_connection != ssl))
 	{
-		std::cerr << __PRETTY_FUNCTION__
+		RsInfo() << __PRETTY_FUNCTION__
 		          << " closing Previous/Existing ssl_connection" << std::endl;
 		SSL_shutdown(ssl_connection);
 		SSL_free (ssl_connection);
@@ -1351,7 +1351,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 
 	if ((sockfd > -1) && (sockfd != fd))
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " closing Previous/Existing sockfd"
+		RsInfo() << __PRETTY_FUNCTION__ << " closing Previous/Existing sockfd"
 		          << std::endl;
 		net_internal_close(sockfd);
 	}
@@ -1367,7 +1367,7 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 	 */
 	sockaddr_storage_copy(foreign_addr, remote_addr);
 
-	std::cerr << __PRETTY_FUNCTION__ << " SUCCESSFUL connection to: "
+	RsInfo() << __PRETTY_FUNCTION__ << " SUCCESSFUL connection to: "
 	          << PeerId().toStdString() << " remoteaddr: "
 	          << sockaddr_storage_iptostring(remote_addr) << std::endl;
 
