@@ -45,6 +45,7 @@ static QVector<QString> grpOrdered;
 static QStringList filters;
 static QStringList stickerFolders;
 static QHash<QString, QString> tooltipcache;
+static QHash<QString, QPixmap> iconcache;
 
 void Emoticons::load()
 {
@@ -398,7 +399,11 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 			QPushButton *button = new QPushButton("", tabGrpWidget);
 			button->setIconSize(QSize(buttonWidth, buttonHeight));
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-			button->setIcon(QPixmap(fi.absoluteFilePath()));
+			if(!iconcache.contains(fi.absoluteFilePath()))
+			{
+				iconcache.insert(fi.absoluteFilePath(), QPixmap(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
+			}
+			button->setIcon(iconcache[fi.absoluteFilePath()]);
 			button->setToolTip(fi.fileName());
 			button->setStatusTip(fi.absoluteFilePath());
 			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
