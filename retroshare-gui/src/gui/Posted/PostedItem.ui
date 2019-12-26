@@ -652,13 +652,19 @@
       <property name="spacing">
        <number>1</number>
       </property>
-      <item row="0" column="0">
+      <item row="0" column="0" colspan="2">
        <widget class="QLabel" name="notes">
         <property name="text">
          <string/>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+        <property name="openExternalLinks">
+         <bool>true</bool>
+        </property>
+        <property name="textInteractionFlags">
+         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
         </property>
        </widget>
       </item>
@@ -674,15 +680,15 @@
    <header>gui/common/StyledLabel.h</header>
   </customwidget>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header location="global">gui/common/ElidedLabel.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

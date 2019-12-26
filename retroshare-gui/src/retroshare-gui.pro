@@ -623,13 +623,14 @@ HEADERS +=  rshare.h \
             gui/connect/ConnectProgressDialog.h \
             gui/groups/CreateGroup.h \
             gui/GetStartedDialog.h \
-        gui/statistics/BWGraph.h \
-    util/RsSyntaxHighlighter.h \
-    util/imageutil.h \
-    gui/NetworkDialog/pgpid_item_model.h \
-    gui/NetworkDialog/pgpid_item_proxy.h \
-    gui/common/RsCollection.h \
-    util/retroshareWin32.h
+            gui/statistics/BWGraph.h \
+            util/RsSyntaxHighlighter.h \
+            util/imageutil.h \
+            util/RichTextEdit.h \
+            gui/NetworkDialog/pgpid_item_model.h \
+            gui/NetworkDialog/pgpid_item_proxy.h \
+            gui/common/RsCollection.h \
+            util/retroshareWin32.h
 #            gui/ForumsDialog.h \
 #            gui/forums/ForumDetails.h \
 #            gui/forums/EditForumDetails.h \
@@ -747,7 +748,8 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/StatisticsWindow.ui \
             gui/statistics/BwCtrlWindow.ui \
             gui/statistics/RttStatistics.ui \
-            gui/GetStartedDialog.ui
+            gui/GetStartedDialog.ui \
+            util/RichTextEdit.ui
 
 
 #            gui/ForumsDialog.ui \
@@ -825,6 +827,7 @@ SOURCES +=  main.cpp \
             util/HandleRichText.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
+            util/RichTextEdit.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \

@@ -292,5 +292,24 @@
         <file>icons/png/exit2.png</file>
         <file>icons/svg/addstickers.svg</file>
         <file>icons/png/addstickers.png</file>
+        <file>icons/textedit/bold.png</file>
+        <file>icons/textedit/bullet-list.png</file>
+        <file>icons/textedit/italic.png</file>
+        <file>icons/textedit/left-indent.png</file>
+        <file>icons/textedit/link.png</file>
+        <file>icons/textedit/numberd-list.png</file>
+        <file>icons/textedit/photo-of-a-landscape.png</file>
+        <file>icons/textedit/right-indent.png</file>
+        <file>icons/textedit/strikethrough.png</file>
+        <file>icons/textedit/underline.png</file>
+        <file>icons/textedit/copy.png</file>
+        <file>icons/textedit/cut.png</file>
+        <file>icons/textedit/paste.png</file>
+        <file>icons/textedit/redo.png</file>
+        <file>icons/textedit/undo.png</file>
+        <file>icons/textedit/settings.png</file>
+        <file>icons/png/add-file.png</file>
+        <file>icons/png/add-image.png</file>
+        <file>icons/png/attachements.png</file>
     </qresource>
 </RCC>
