@@ -242,7 +242,7 @@ void GenCertDialog::initKeyList()
 			RsAccounts::GetPGPLoginDetails(*it, name, email);
 			std::cerr << "Adding PGPUser: " << name << " id: " << *it << std::endl;
 			QString gid = QString::fromStdString( (*it).toStdString()).right(8) ;
-			ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " <" + QString::fromUtf8(email.c_str()) + "> (" + gid + ")", userData);
+			ui.genPGPuser->addItem(QString::fromUtf8(name.c_str()) + " (" + gid + ")", userData);
 			haveGPGKeys = true;
 		}
 	}
@@ -294,7 +294,8 @@ void GenCertDialog::setupState()
 
     ui.reuse_existing_node_CB->setEnabled(adv_state) ;
     ui.importIdentity_PB->setVisible(adv_state && !generate_new) ;
-    ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
+    //ui.exportIdentity_PB->setVisible(adv_state && !generate_new) ;
+    ui.exportIdentity_PB->setVisible(false); // not useful, and probably confusing
 
     ui.genPGPuser->setVisible(adv_state && haveGPGKeys && !generate_new) ;
 
@@ -316,6 +317,11 @@ void GenCertDialog::setupState()
 
 	ui.password_input->setVisible(true);
 	ui.password_label->setVisible(true);
+
+    if(generate_new)
+        ui.password_input->setToolTip(tr("<html><p>Put a strong password here. This password will be required to start your Retroshare node and protects all your data.</p></html>"));
+	else
+        ui.password_input->setToolTip(tr("<html><p>Please supply the existing password for the selected profile above.</p></html>"));
 
 	ui.password2_check_LB->setVisible(generate_new);
 	ui.password2_input->setVisible(generate_new);
@@ -468,7 +474,10 @@ bool GenCertDialog::importIdentity()
 		RsAccounts::GetPGPLoginDetails(gpg_id, name, email);
 		std::cerr << "Adding PGPUser: " << name << " id: " << gpg_id << std::endl;
 
-		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nemail: " + QString::fromStdString(email)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
+		QMessageBox::information(this,tr("New profile imported"),tr("Your profile was imported successfully:")+" \n"+"\nName :"+QString::fromStdString(name)+"\nKey ID: "+QString::fromStdString(gpg_id.toStdString())+"\n\n"+tr("You can use it now to create a new node.")) ;
+
+		initKeyList();
+		setupState();
 
         return true ;
 	}

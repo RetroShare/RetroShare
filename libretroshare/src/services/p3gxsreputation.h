@@ -65,12 +65,14 @@ class Reputation
 {
 public:
 	Reputation() :
-	    mOwnOpinion(static_cast<int32_t>(RsOpinion::NEUTRAL)), mOwnOpinionTs(0),
+	    mOwnOpinion(static_cast<int32_t>(RsOpinion::NEUTRAL)),
+        mOwnOpinionTs(0),
 	    mFriendAverage(1.0f),
-	    /* G10h4ck: TODO shouln't this be initialized with
-		 * RsReputation::NEUTRAL or UNKOWN? */
-	    mReputationScore(static_cast<float>(RsOpinion::NEUTRAL)),
-	    mIdentityFlags(0) {}
+        mFriendsPositive(0),
+        mFriendsNegative(0),
+	    mReputationScore(1.0f),
+	    mIdentityFlags(0),
+        mLastUsedTS(0) {}
 
 	void updateReputation();
 
