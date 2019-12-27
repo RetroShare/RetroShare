@@ -37,7 +37,7 @@
 #include <retroshare/rsposted.h>
 #include "retroshare/rsgxscircles.h"
 
-#define POSTED_DEFAULT_LISTING_LENGTH 10
+#define POSTED_DEFAULT_LISTING_LENGTH 30
 #define POSTED_MAX_INDEX	      10000
 
 #define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
@@ -841,6 +841,7 @@ void PostedListWidget::insertPosts(const uint32_t &token)
 			std::cerr << std::endl;
 			/* insert new entry */
 			loadPost(p);
+			loadPostCardView(p);
 		}
 	}
 
