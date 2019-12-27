@@ -32,8 +32,29 @@ void RsSyntaxHighlighter::highlightBlock(const QString &text)
 	int index = 0;
 	QStringList lines = text.split(endl);
 	foreach (const QString &line, lines) {
-		if(line.trimmed().startsWith('>')) {
-			setFormat(index, line.length(), quotationFormat);
+		if(line.trimmed().startsWith(">>>>>>>>") || line.trimmed().startsWith("> > > > > > > >")) {
+			setFormat(index, line.length(), quotationFormatOlive);
+		}
+		else if(line.trimmed().startsWith(">>>>>>>") || line.trimmed().startsWith("> > > > > > >")) {
+			setFormat(index, line.length(), quotationFormatMaroon);
+		}
+		else if(line.trimmed().startsWith(">>>>>>") || line.trimmed().startsWith("> > > > > >")) {
+			setFormat(index, line.length(), quotationFormatPurple);
+		}
+		else if(line.trimmed().startsWith(">>>>>") || line.trimmed().startsWith("> > > > >")) {
+			setFormat(index, line.length(), quotationFormatTurquoise);
+		}
+		else if(line.trimmed().startsWith(">>>>") || line.trimmed().startsWith("> > > >")) {
+			setFormat(index, line.length(), quotationFormatMagenta);
+		}
+		else if(line.trimmed().startsWith(">>>") || line.trimmed().startsWith("> > >")) {
+			setFormat(index, line.length(), quotationFormatRed);
+		}
+		else if(line.trimmed().startsWith(">>") || line.trimmed().startsWith("> >")) {
+			setFormat(index, line.length(), quotationFormatBlue);
+		}
+		else if(line.trimmed().startsWith('>')) {
+			setFormat(index, line.length(), quotationFormatGreen);
 		}
 		index += line.length() + 1;
 	}
@@ -41,14 +62,56 @@ void RsSyntaxHighlighter::highlightBlock(const QString &text)
 	if(lines.length() > 0){
 		int i = lines[0].indexOf(": >");
 		if(i != -1) {
-			setFormat(i+2, lines[0].length()-i-2, quotationFormat);
+			setFormat(i+2, lines[0].length()-i-2, quotationFormatGreen);
 		}
 	}
 }
 
-void RsSyntaxHighlighter::setTextColorQuote(QColor textColorQuote)
+void RsSyntaxHighlighter::setTextColorQuoteGreen(QColor textColorQuoteGreen)
 {
-	quotationFormat.setForeground(textColorQuote);
+	quotationFormatGreen.setForeground(textColorQuoteGreen);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteBlue(QColor textColorQuoteBlue)
+{
+	quotationFormatBlue.setForeground(textColorQuoteBlue);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteRed(QColor textColorQuoteRed)
+{
+	quotationFormatRed.setForeground(textColorQuoteRed);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteMagenta(QColor textColorQuoteMagenta)
+{
+	quotationFormatMagenta.setForeground(textColorQuoteMagenta);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteTurquoise(QColor textColorQuoteTurquoise)
+{
+	quotationFormatTurquoise.setForeground(textColorQuoteTurquoise);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuotePurple(QColor textColorQuotePurple)
+{
+	quotationFormatPurple.setForeground(textColorQuotePurple);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteMaroon(QColor textColorQuoteMaroon)
+{
+	quotationFormatMaroon.setForeground(textColorQuoteMaroon);
+	this->rehighlight();
+}
+
+void RsSyntaxHighlighter::setTextColorQuoteOlive(QColor textColorQuoteOlive)
+{
+	quotationFormatOlive.setForeground(textColorQuoteOlive);
 	this->rehighlight();
 }
 
