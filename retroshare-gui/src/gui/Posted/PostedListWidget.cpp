@@ -37,7 +37,7 @@
 #include <retroshare/rsposted.h>
 #include "retroshare/rsgxscircles.h"
 
-#define POSTED_DEFAULT_LISTING_LENGTH 30
+#define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
 
 #define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
@@ -631,6 +631,7 @@ void PostedListWidget::applyRanking()
 	}
 
 	// Card View  
+	counter = 0;
 	QLayout *cviewlayout = ui->scrollAreaWidgetContentsCardView->layout();
 
 	foreach (PostedCardView *item, mPostCardView)
