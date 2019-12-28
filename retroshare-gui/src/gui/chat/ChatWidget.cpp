@@ -32,6 +32,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QToolTip>
+#include <QInputDialog>
 
 #include "ChatWidget.h"
 #include "ui_ChatWidget.h"
@@ -163,6 +164,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	connect(ui->actionQuote, SIGNAL(triggered()), this, SLOT(quote()));
 	connect(ui->actionDropPlacemark, SIGNAL(triggered()), this, SLOT(dropPlacemark()));
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
+	connect(ui->actionImport_sticker, SIGNAL(triggered()), this, SLOT(saveSticker()));
 	connect(ui->actionShow_Hidden_Images, SIGNAL(triggered()), ui->textBrowser, SLOT(showImages()));
 	ui->actionShow_Hidden_Images->setIcon(ui->textBrowser->getBlockedImage());
 
@@ -438,6 +440,7 @@ void ChatWidget::blockSending(QString msg)
 #ifndef RS_ASYNC_CHAT
 //	sendingBlocked = true;
 //	ui->sendButton->setEnabled(false);
+//	ui->stickerButton->setEnabled(false);
 #endif
 	ui->sendButton->setToolTip(msg);
 }
@@ -445,6 +448,7 @@ void ChatWidget::blockSending(QString msg)
 void ChatWidget::unblockSending()
 {
     sendingBlocked = false;
+	ui->stickerButton->setEnabled(true);
     updateLenOfChatTextEdit();
 }
 
@@ -1128,7 +1132,9 @@ void ChatWidget::contextMenuTextBrowser(QPoint point)
 			contextMnu->addAction(ui->actionShow_Hidden_Images);
 
 		ui->actionSave_image->setData(point);
+		ui->actionImport_sticker->setData(point);
 		contextMnu->addAction(ui->actionSave_image);
+		contextMnu->addAction(ui->actionImport_sticker);
 	}
 
 	QString anchor = ui->textBrowser->anchorForPosition(point);
@@ -1556,6 +1562,7 @@ void ChatWidget::stickerWidget()
 
 void ChatWidget::sendSticker()
 {
+	if(sendingBlocked) return;
 	QString sticker = qobject_cast<QPushButton*>(sender())->statusTip();
 	QString encodedImage;
 	if (RsHtml::makeEmbeddedImage(sticker, encodedImage, 640*480, maxMessageSize() - 200)) {		//-200 for the html stuff
@@ -1909,4 +1916,14 @@ void ChatWidget::saveImage()
 	QPoint point = ui->actionSave_image->data().toPoint();
 	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
 	ImageUtil::extractImage(window(), cursor);
+}
+
+void ChatWidget::saveSticker()
+{
+	QPoint point = ui->actionImport_sticker->data().toPoint();
+	QTextCursor cursor = ui->textBrowser->cursorForPosition(point);
+	QString filename = QInputDialog::getText(window(), "Import sticker", "Sticker name");
+	if(filename.isEmpty()) return;
+	filename = Emoticons::importedStickerPath() + "/" + filename + ".png";
+	ImageUtil::extractImage(window(), cursor, filename);
 }

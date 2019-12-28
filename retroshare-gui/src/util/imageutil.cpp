@@ -37,7 +37,7 @@
 
 ImageUtil::ImageUtil() {}
 
-void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
+void ImageUtil::extractImage(QWidget *window, QTextCursor cursor, QString file)
 {
 	cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor, 1);
 	cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
@@ -52,13 +52,13 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
 		QImage image = QImage::fromData(ba);
 		if(!image.isNull())
 		{
-			QString file;
 			success = true;
-			if(misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, "Save Picture File", "Pictures (*.png *.xpm *.jpg)", file))
+			if(!file.isEmpty() || misc::getSaveFileName(window, RshareSettings::LASTDIR_IMAGES, "Save Picture File", "Pictures (*.png *.xpm *.jpg)", file))
 			{
-				if(!image.save(file, 0, 100))
-					if(!image.save(file + ".png", 0, 100))
-						QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename"));
+				if(!image.save(file, nullptr, 100))
+					if(!image.save(file + ".png", nullptr, 100))
+						QMessageBox::warning(window, QApplication::translate("ImageUtil", "Save image"), QApplication::translate("ImageUtil", "Cannot save the image, invalid filename")
+											 + "\n" + file);
 			}
 		}
 	}
@@ -73,13 +73,11 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 	//nothing to do if it fits into the limits
 	optimized = original;
 	if ((maxPixels <= 0) || (optimized.width()*optimized.height() <= maxPixels)) {
-		if(checkSize(bytearray, optimized) <= maxBytes) {
+		int s = checkSize(bytearray, optimized);
+		if((maxBytes <= 0) || (s <= maxBytes)) {
 			return true;
 		}
 	}
-
-	QVector<QRgb> ct;
-	quantization(original, ct);
 
 	//Downscale the image to fit into maxPixels
 	double whratio = (qreal)original.width() / (qreal)original.height();
@@ -97,6 +95,9 @@ bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original,
 		checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation));
 		return true;
 	}
+
+	QVector<QRgb> ct;
+	quantization(original, ct);
 
 	//Use binary search to find a suitable image size + linear regression to guess the file size
 	double maxsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
@@ -169,7 +170,7 @@ int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img)
 		} else {
 			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;
 		}
-		buffer.close();		
+		buffer.close();
 	} else {
 		std::cerr << "ImageUtil: buffer can't be opened" << std::endl;
 	}
