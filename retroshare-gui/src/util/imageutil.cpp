@@ -68,12 +68,12 @@ void ImageUtil::extractImage(QWidget *window, QTextCursor cursor)
 	}
 }
 
-bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
+bool ImageUtil::optimizeSizeBytes(QByteArray &bytearray, const QImage &original, QImage &optimized, int maxPixels, int maxBytes)
 {
 	//nothing to do if it fits into the limits
 	optimized = original;
 	if ((maxPixels <= 0) || (optimized.width()*optimized.height() <= maxPixels)) {
-		if(checkSize(html, optimized, maxBytes) <= maxBytes) {
+		if(checkSize(bytearray, optimized) <= maxBytes) {
 			return true;
 		}
 	}
@@ -94,14 +94,14 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 
 	//if maxBytes not defined, do not reduce color space, just downscale
 	if(maxBytes <= 0) {
-		checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation), maxBytes);
+		checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation));
 		return true;
 	}
 
 	//Use binary search to find a suitable image size + linear regression to guess the file size
-	double maxsize = (double)checkSize(html, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
+	double maxsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(maxwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
 	if(maxsize <= maxBytes) return true;	//success
-	double minsize = (double)checkSize(html, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
+	double minsize = (double)checkSize(bytearray, optimized = original.scaledToWidth(minwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
 	if(minsize > maxBytes) return false; //impossible
 
 //	std::cout << "maxS: " << maxsize << " minS: " << minsize << std::endl;
@@ -114,7 +114,7 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 		double b = maxsize - m * ((double)maxwidth * (double)maxwidth / whratio);
 		double a = ((double)(maxBytes - region/2) - b) / m; //maxBytes - region/2 target the center of the accepted region
 		int nextwidth = (int)sqrt(a * whratio);
-		int nextsize = checkSize(html, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither), maxBytes);
+		int nextsize = checkSize(bytearray, optimized = original.scaledToWidth(nextwidth, Qt::SmoothTransformation).convertToFormat(QImage::Format_Indexed8, ct, Qt::ThresholdDither));
 		if(nextsize <= maxBytes) {
 			minsize = nextsize;
 			minwidth = nextwidth;
@@ -136,34 +136,40 @@ bool ImageUtil::optimizeSize(QString &html, const QImage& original, QImage &opti
 	//std::cout << html.toStdString() << std::endl;
 }
 
-int ImageUtil::checkSize(QString &embeddedImage, const QImage &img, int maxBytes)
+bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels, int maxBytes)
+{
+	QByteArray bytearray;
+	if(maxBytes > 0){
+		maxBytes = maxBytes * 3/4 - 50; //base64 and html stuff
+	}
+
+	if(optimizeSizeBytes(bytearray, original, optimized, maxPixels, maxBytes))
+	{
+		QByteArray encodedByteArray = bytearray.toBase64();
+		html = "<img src=\"data:image/png;base64,";
+		html.append(encodedByteArray);
+		html.append("\">");
+		return true;
+	}
+	return false;
+}
+
+int ImageUtil::checkSize(QByteArray &bytearray, const QImage &img)
 {
 	rstime::RsScopeTimer st("Check size");
 
-	QByteArray bytearray;
+	bytearray.clear();
 	QBuffer buffer(&bytearray);
 	int size = 0;
 
 	//std::cout << QString("Trying image: format PNG, size %1x%2, colors %3\n").arg(img.width()).arg(img.height()).arg(img.colorCount()).toStdString();
 	if (buffer.open(QIODevice::WriteOnly)) {
 		if (img.save(&buffer, "PNG", 0)) {
-			size = bytearray.length() * 4/3;
-			if((maxBytes > 0) && (size > maxBytes))	// *4/3 for base64
-			{
-				//std::cout << QString("\tToo large, size: %1, limit: %2 bytes\n").arg(bytearray.length() * 4/3).arg(maxBytes).toStdString();
-			}else{
-				//std::cout << QString("\tOK, size: %1, limit: %2 bytes\n").arg(bytearray.length() * 4/3).arg(maxBytes).toStdString();
-				QByteArray encodedByteArray = bytearray.toBase64();
-				//embeddedImage = "<img width=\"%1\" src=\"data:image/png;base64,";
-				embeddedImage = "<img src=\"data:image/png;base64,";
-				embeddedImage.append(encodedByteArray);
-				embeddedImage.append("\">");
-			}
+			size = bytearray.length();
 		} else {
 			std::cerr << "ImageUtil: image can't be saved to buffer" << std::endl;
 		}
-		buffer.close();
-		bytearray.clear();
+		buffer.close();		
 	} else {
 		std::cerr << "ImageUtil: buffer can't be opened" << std::endl;
 	}
