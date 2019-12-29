@@ -90,14 +90,7 @@ void PostedCreatePostDialog::createPost()
 	post.mNotes = std::string(text.toUtf8());
 
 	post.mMeta.mAuthorId = authorId;
-
-	if(!ui->titleEdit->text().isEmpty())
-	{ 
-		post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-	}else
-	{
-		post.mMeta.mMsgName = std::string(ui->titleEditLink->text().toUtf8());
-	}
+	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
 
 	QByteArray ba;
 	QBuffer buffer(&ba);
@@ -111,7 +104,7 @@ void PostedCreatePostDialog::createPost()
 		post.mImage.copy((uint8_t *) ba.data(), ba.size());
 	}
 	
-	if(ui->titleEdit->text().isEmpty()&& ui->titleEditLink->text().isEmpty()) {
+	if(ui->titleEdit->text().isEmpty()) {
 		/* error message */
 		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty title!!
