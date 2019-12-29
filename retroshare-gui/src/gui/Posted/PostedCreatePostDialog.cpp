@@ -20,6 +20,7 @@
 
 #include <QBuffer>
 #include <QMessageBox>
+#include <QByteArray>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
@@ -33,6 +34,8 @@
 #include <QBuffer>
 
 #include <iostream>
+
+#include <util/imageutil.h>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -91,17 +94,11 @@ void PostedCreatePostDialog::createPost()
 
 	post.mMeta.mAuthorId = authorId;
 	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-
-	QByteArray ba;
-	QBuffer buffer(&ba);
 	
-	if(!picture.isNull())
+	if(imagebytes.size() > 0)
 	{
 		// send posted image
-
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-		post.mImage.copy((uint8_t *) ba.data(), ba.size());
+		post.mImage.copy((uint8_t *) imagebytes.data(), imagebytes.size());
 	}
 	
 	if(ui->titleEdit->text().isEmpty()) {
@@ -119,15 +116,27 @@ void PostedCreatePostDialog::createPost()
 
 void PostedCreatePostDialog::addPicture()
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 800, 600);
+	imagefilename = "";
+	imagebytes.clear();
 
-	if (img.isNull())
-		return;
+	// select a picture file
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
+		QString encodedImage;
+		int maxMessageSize = 34000; //34 kB
+		QImage image;
+		if (image.load (imagefilename) == false) {
+			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
+			return;
+		}
 
-	picture = img;
-
-	// to show the selected
-	ui->imageLabel->setPixmap(picture);
+		QImage opt;
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, maxMessageSize)) {
+			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+		} else {
+			imagefilename = "";
+			imagebytes.clear();
+		}
+	}
 }
 
 void PostedCreatePostDialog::on_postButton_clicked()
