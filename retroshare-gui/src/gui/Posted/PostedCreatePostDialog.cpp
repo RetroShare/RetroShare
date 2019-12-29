@@ -21,6 +21,7 @@
 #include <QBuffer>
 #include <QMessageBox>
 #include <QByteArray>
+#include <QStringList>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
@@ -36,6 +37,8 @@
 #include <iostream>
 
 #include <util/imageutil.h>
+
+#include <gui/RetroShareLink.h>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -55,6 +58,10 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	ui->RichTextEditWidget->setPlaceHolderTextPosted();
+
+	ui->hashBox->setAutoHide(true);
+	ui->hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
+	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
@@ -88,9 +95,11 @@ void PostedCreatePostDialog::createPost()
 	post.mMeta.mGroupId = mGrpId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
 	
-	QString text;
-	text = ui->RichTextEditWidget->toHtml();
-	post.mNotes = std::string(text.toUtf8());
+	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
+		QString text;
+		text = ui->RichTextEditWidget->toHtml();
+		post.mNotes = std::string(text.toUtf8());
+	}
 
 	post.mMeta.mAuthorId = authorId;
 	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
@@ -114,18 +123,33 @@ void PostedCreatePostDialog::createPost()
 	accept();
 }
 
-void PostedCreatePostDialog::addPicture()
+void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
+	if(hashedFiles.length() > 0) { //It seems like it returns 0 if hashing cancelled
+		HashedFile hashedFile = hashedFiles[0]; //Should be exactly one file
+		RetroShareLink link;
+		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
+		ui->linkEdit->setText(link.toString());
+	}
+	ui->submitButton->setEnabled(true);
+	ui->pushButton->setEnabled(true);
+}
+
+void PostedCreatePostDialog::addPicture()
+{	
 	imagefilename = "";
 	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
 
 	// select a picture file
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
 		QString encodedImage;
 		int maxMessageSize = 34000; //34 kB
 		QImage image;
-		if (image.load (imagefilename) == false) {
+		if (image.load(imagefilename) == false) {
 			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
+			imagefilename = "";
 			return;
 		}
 
@@ -135,7 +159,26 @@ void PostedCreatePostDialog::addPicture()
 		} else {
 			imagefilename = "";
 			imagebytes.clear();
+			return;
 		}
+	}
+
+	//Do we need to hash the image?
+	QMessageBox::StandardButton answer;
+	answer = QMessageBox::question(this, tr("Post image"), tr("Do you want to share and link the original image?"), QMessageBox::Yes|QMessageBox::No);
+	if (answer == QMessageBox::Yes) {
+		if(!ui->linkEdit->text().trimmed().isEmpty()) {
+			answer = QMessageBox::question(this, tr("Post image"), tr("You already added a link.<br />Do you want to replace it?"), QMessageBox::Yes|QMessageBox::No);
+		}
+	}
+
+	//If still yes then link it
+	if(answer == QMessageBox::Yes) {
+		ui->submitButton->setEnabled(false);
+		ui->pushButton->setEnabled(false);
+		QStringList files;
+		files.append(imagefilename);
+		ui->hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
 	}
 }
 

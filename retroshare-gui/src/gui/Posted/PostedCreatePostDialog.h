@@ -22,6 +22,7 @@
 #define POSTEDCREATEPOSTDIALOG_H
 
 #include <QDialog>
+#include <gui/common/HashBox.h>
 #include "retroshare/rsposted.h"
 #include "util/RichTextEdit.h"
 
@@ -53,6 +54,7 @@ private slots:
 	void on_postButton_clicked();
 	void on_imageButton_clicked();
 	void on_linkButton_clicked();
+	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
 private:
 	QString mLink;
