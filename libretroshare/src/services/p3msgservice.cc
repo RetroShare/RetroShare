@@ -178,7 +178,7 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		if (rsEvents)
 		{
             auto ev = std::make_shared<RsMailStatusEvent>();
-            ev->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
+            ev->mMailStatusEventCode = RsMailStatusEventType::NEW_MESSAGE;
 			ev->mChangedMsgIds.insert(std::to_string(mi->msgId));
 
             rsEvents->sendEvent(ev);
@@ -338,7 +338,7 @@ int p3MsgService::checkOutgoingMessages()
 	std::list<RsMsgItem*> output_queue;
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
-    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_SENT;
+    pEvent->mMailStatusEventCode = RsMailStatusEventType::MESSAGE_SENT;
 
 	{
 		RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -900,7 +900,7 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
 
-    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_REMOVED;
+    pEvent->mMailStatusEventCode = RsMailStatusEventType::MESSAGE_REMOVED;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1269,7 +1269,7 @@ uint32_t p3MsgService::sendMail(
 	uint32_t ret = 0;
 
     auto pEvent = std::make_shared<RsMailStatusEvent>();
-    pEvent->mMailStatusEventCode = RsMailStatusEvent::MESSAGE_SENT;
+    pEvent->mMailStatusEventCode = RsMailStatusEventType::MESSAGE_SENT;
 
 	auto pSend = [&](const std::set<RsGxsId>& sDest)
 	{
@@ -2085,7 +2085,7 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 
         auto pEvent = std::make_shared<RsMailStatusEvent>();
 
-        pEvent->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
+        pEvent->mMailStatusEventCode = RsMailStatusEventType::NEW_MESSAGE;
 		pEvent->mChangedMsgIds.insert(std::to_string(msg_id));
 
 		if(rsEvents) rsEvents->postEvent(pEvent);
@@ -2189,7 +2189,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 
 	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
-        pEvent->mMailStatusEventCode = RsMailStatusEvent::NEW_MESSAGE;
+        pEvent->mMailStatusEventCode = RsMailStatusEventType::NEW_MESSAGE;
 		uint32_t msg_id;
 
 		{
@@ -2244,7 +2244,7 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 	else if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )
 	{
 		uint32_t msg_id;
-        pEvent->mMailStatusEventCode = RsMailStatusEvent::FAILED_SIGNATURE;
+        pEvent->mMailStatusEventCode = RsMailStatusEventType::FAILED_SIGNATURE;
 
 		{
 			RS_STACK_MUTEX(gxsOngoingMutex);

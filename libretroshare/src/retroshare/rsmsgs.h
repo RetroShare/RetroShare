@@ -296,19 +296,19 @@ struct MsgTagType : RsSerializable
 } //namespace Rs
 } //namespace Msgs
 
-struct RsMailStatusEvent : RsEvent
-{
-	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS_CHANGE) {}
-
-    enum MailStatusEventCode: uint8_t {
+enum class RsMailStatusEventType: uint8_t {
         NEW_MESSAGE                     = 0x00,
         MESSAGE_REMOVED                 = 0x01,
         MESSAGE_SENT                    = 0x02,
         MESSAGE_RECEIVED_ACK            = 0x03,	// means the peer received the message
         FAILED_SIGNATURE                = 0x04,	// means the signature of the message cannot be verified
-	};
+};
 
-    MailStatusEventCode mMailStatusEventCode;
+struct RsMailStatusEvent : RsEvent
+{
+	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS) {}
+
+    RsMailStatusEventType mMailStatusEventCode;
 	std::set<RsMailMessageId> mChangedMsgIds;
 
 	/// @see RsEvent
@@ -320,7 +320,7 @@ struct RsMailStatusEvent : RsEvent
 		RS_SERIAL_PROCESS(mMailStatusEventCode);
 	}
 
-	~RsMailStatusEvent() override;
+	~RsMailStatusEvent() override = default;
 };
 
 #define RS_CHAT_PUBLIC 			0x0001
@@ -329,7 +329,7 @@ struct RsMailStatusEvent : RsEvent
 
 #define RS_DISTANT_CHAT_STATUS_UNKNOWN			0x0000
 #define RS_DISTANT_CHAT_STATUS_TUNNEL_DN   		0x0001
-#define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0002
+#define RS_DISTANT_CHAT_STATUS_CAN_TALK			0x0002
 #define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0003
 
 #define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 

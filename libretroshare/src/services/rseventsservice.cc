@@ -99,22 +99,42 @@ RsEventsHandlerId_t RsEventsService::generateUniqueHandlerId_unlocked()
 }
 
 bool RsEventsService::registerEventsHandler(
+        RsEventType eventType,
         std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
         RsEventsHandlerId_t& hId )
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
-	if(!hId) hId = generateUniqueHandlerId_unlocked();
-	mHandlerMap[hId] = multiCallback;
+
+    if( (int)eventType > mHandlerMaps.size() + 10)
+    {
+        RsErr() << "Cannot register an event handler for an event type larger than 10 plus the max pre-defined event (value passed was " << (int)eventType << " whereas max is " << (int)RsEventType::MAX << ")" << std::endl;
+        return false;
+    }
+
+    if( (int)eventType >= mHandlerMaps.size())
+        mHandlerMaps.resize( (int)eventType +1 );
+
+	if(!hId)
+        hId = generateUniqueHandlerId_unlocked();
+
+	mHandlerMaps[(int)eventType][hId] = multiCallback;
 	return true;
 }
 
 bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
-	auto it = mHandlerMap.find(hId);
-	if(it == mHandlerMap.end()) return false;
-	mHandlerMap.erase(it);
-	return true;
+
+    for(uint32_t i=0;i<mHandlerMaps.size();++i)
+	{
+		auto it = mHandlerMaps[i].find(hId);
+		if(it != mHandlerMaps[i].end())
+        {
+			mHandlerMaps[i].erase(it);
+            return true;
+        }
+	}
+	return false;
 }
 
 void RsEventsService::data_tick()
@@ -155,13 +175,20 @@ void RsEventsService::handleEvent(std::shared_ptr<const RsEvent> event)
 {
 	std::function<void(std::shared_ptr<const RsEvent>)> mCallback;
 
+    uint32_t event_type_index = (uint32_t)event->mType;
+
 	mHandlerMapMtx.lock();
-	auto cbpt = mHandlerMap.begin();
+    if(event_type_index >= mHandlerMaps.size() || event_type_index < 1)
+    {
+        RsErr() << "Cannot handle an event of type " << event_type_index << ": out of scope!" << std::endl;
+        return;
+    }
+	auto cbpt = mHandlerMaps[event_type_index].begin();
 	mHandlerMapMtx.unlock();
 
 getHandlerFromMapLock:
 	mHandlerMapMtx.lock();
-	if(cbpt != mHandlerMap.end())
+	if(cbpt != mHandlerMaps[event_type_index].end())
 	{
 		mCallback = cbpt->second;
 		++cbpt;

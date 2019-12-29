@@ -132,31 +132,28 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	mEventHandlerId = 0;
     // Needs to be asynced because this function is likely to be called by another thread!
 
-	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
 }
 
 void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType == RsEventType::GXS_CHANNELS)
-    {
-        const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
 
-        if(!e)
-            return;
+	if(!e)
+		return;
 
-        switch(e->mChannelEventCode)
-        {
-        case RsGxsChannelEvent::ChannelEventCode::UPDATED_CHANNEL:
-        case RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL:
-        case RsGxsChannelEvent::ChannelEventCode::UPDATED_MESSAGE:
-        case RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE:
-            if(e->mChannelGroupId == mChannelGroupId)
-				updateDisplay(true);
-            break;
-        default:
-            break;
-        }
-    }
+	switch(e->mChannelEventCode)
+	{
+	case RsGxsChannelEvent::ChannelEventCode::UPDATED_CHANNEL:
+	case RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL:
+	case RsGxsChannelEvent::ChannelEventCode::UPDATED_MESSAGE:
+	case RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE:
+		if(e->mChannelGroupId == mChannelGroupId)
+			updateDisplay(true);
+		break;
+	default:
+		break;
+	}
 }
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()
