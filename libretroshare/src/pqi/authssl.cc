@@ -70,6 +70,13 @@ struct CRYPTO_dynlock_value
 	pthread_mutex_t mutex;
 };
 
+// This instructs the compiler to use pre-defined openssl version of SSL_CTX_set_security_level() if it already exists.
+
+void __attribute__((weak)) SSL_CTX_set_security_level(SSL_CTX *ctx,int level)
+{
+	std::cerr << "(II) SSL_CTX_set_security_level() not found. Using default." << std::endl;
+}
+
 # if OPENSSL_VERSION_NUMBER < 0x10100000L
 /**
  * OpenSSL locking function.
@@ -356,8 +363,7 @@ int AuthSSLimpl::InitAuth(
 	//https://www.openssl.org/docs/manmaster/ssl/SSL_CTX_set_options.html
 	//If "strong" primes were used, it is not strictly necessary to generate a new DH key during each handshake but it is also recommended. SSL_OP_SINGLE_DH_USE should therefore be enabled whenever temporary/ephemeral DH parameters are used.
 	//SSL_CTX_set_options() adds the options set via bitmask in options to ctx. Options already set before are not cleared!
-        SSL_CTX_set_options(sslctx,SSL_OP_SINGLE_DH_USE) ;
-
+	SSL_CTX_set_options(sslctx,SSL_OP_SINGLE_DH_USE) ;
 
 	// Setup cipher lists:
 	//
@@ -452,6 +458,8 @@ int AuthSSLimpl::InitAuth(
 		return -1;
 	}
         SSL_CTX_use_PrivateKey(sslctx, mOwnPrivateKey);
+
+        SSL_CTX_set_security_level(sslctx,1);
 
 	if (1 != SSL_CTX_check_private_key(sslctx))
 	{
