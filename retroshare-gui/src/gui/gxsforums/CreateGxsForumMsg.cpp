@@ -86,6 +86,8 @@ CreateGxsForumMsg::CreateGxsForumMsg(const RsGxsGroupId &fId, const RsGxsMessage
 
 	QString text = mOId.isNull()?(pId.isNull() ? tr("Start New Thread") : tr("Post Forum Message")):tr("Edit Message");
 	setWindowTitle(text);
+	
+	ui.forumMessage->setPlaceholderText(tr ("Text"));
 
 	ui.headerFrame->setHeaderImage(QPixmap(":/icons/png/forums.png"));
 	ui.headerFrame->setHeaderText(text);
@@ -318,7 +320,10 @@ void  CreateGxsForumMsg::loadFormInformation()
 		ui.forumSubject->setText(misc::removeNewLine(subj));
 
 	if (ui.forumSubject->text().isEmpty())
+	{
 		ui.forumSubject->setFocus();
+		ui.forumSubject->setPlaceholderText(tr ("Title"));
+	}
 	else
 		ui.forumMessage->setFocus();
 
