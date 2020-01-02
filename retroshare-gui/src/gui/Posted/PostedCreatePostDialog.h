@@ -47,6 +47,7 @@ public:
 private:
 	QString imagefilename;
 	QByteArray imagebytes;
+	const int MAXMESSAGESIZE = 32000;
 
 private slots:
 	void createPost();

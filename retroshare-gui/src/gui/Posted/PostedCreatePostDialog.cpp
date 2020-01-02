@@ -75,6 +75,12 @@ PostedCreatePostDialog::~PostedCreatePostDialog()
 
 void PostedCreatePostDialog::createPost()
 {
+	if(ui->titleEdit->text().isEmpty()) {
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty title!!
+	}
+
 	RsGxsId authorId;
 	switch (ui->idChooser->getChosenId(authorId)) {
 		case GxsIdChooser::KnowId:
@@ -108,13 +114,14 @@ void PostedCreatePostDialog::createPost()
 	{
 		// send posted image
 		post.mImage.copy((uint8_t *) imagebytes.data(), imagebytes.size());
+	}	
+
+	int msgsize = post.mLink.length() + post.mMeta.mMsgName.length() + post.mNotes.length() + imagebytes.size();
+	if(msgsize > MAXMESSAGESIZE) {
+		QString errormessage = QString(tr("Message is too large.<br />actual size: %1 bytes, maximum size: %2 bytes.")).arg(msgsize).arg(MAXMESSAGESIZE);
+		QMessageBox::warning(this, "RetroShare", errormessage, QMessageBox::Ok, QMessageBox::Ok);
+		return;
 	}
-	
-	if(ui->titleEdit->text().isEmpty()) {
-		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
-		return; //Don't add  a empty title!!
-	}//if(ui->titleEdit->text().isEmpty())
 
 	uint32_t token;
 	mPosted->createPost(token, post);
@@ -145,7 +152,6 @@ void PostedCreatePostDialog::addPicture()
 	// select a picture file
 	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
 		QString encodedImage;
-		int maxMessageSize = 34000; //34 kB
 		QImage image;
 		if (image.load(imagefilename) == false) {
 			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
@@ -154,7 +160,7 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, maxMessageSize)) {
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, MAXMESSAGESIZE - 1000)) { //Leave space for other stuff
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 		} else {
 			imagefilename = "";
