@@ -630,7 +630,7 @@ void PostedListWidget::applyRanking()
 		++counter;
 	}
 
-	// Card View  
+	// Card View
 	counter = 0;
 	QLayout *cviewlayout = ui->scrollAreaWidgetContentsCardView->layout();
 
