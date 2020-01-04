@@ -22,6 +22,7 @@
 #define POSTEDCREATEPOSTDIALOG_H
 
 #include <QDialog>
+#include <gui/common/HashBox.h>
 #include "retroshare/rsposted.h"
 #include "util/RichTextEdit.h"
 
@@ -43,7 +44,10 @@ public:
 	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
-	QPixmap picture;
+private:
+	QString imagefilename;
+	QByteArray imagebytes;
+	const int MAXMESSAGESIZE = 32000;
 
 private slots:
 	void createPost();
@@ -51,8 +55,12 @@ private slots:
 	void on_postButton_clicked();
 	void on_imageButton_clicked();
 	void on_linkButton_clicked();
+	void on_removeButton_clicked();
+	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
 private:
+	void processSettings(bool load);
+
 	QString mLink;
 	QString mNotes;
 	TokenQueue* mTokenQueue;

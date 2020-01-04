@@ -20,6 +20,8 @@
 
 #include <QBuffer>
 #include <QMessageBox>
+#include <QByteArray>
+#include <QStringList>
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
@@ -33,6 +35,10 @@
 #include <QBuffer>
 
 #include <iostream>
+
+#include <util/imageutil.h>
+
+#include <gui/RetroShareLink.h>
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
@@ -52,19 +58,58 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 
 	ui->RichTextEditWidget->setPlaceHolderTextPosted();
+
+	ui->hashBox->setAutoHide(true);
+	ui->hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
+	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	ui->removeButton->hide();
+
+	/* load settings */
+	processSettings(true);
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()
 {
 	Settings->saveWidgetInformation(this);
+	
+	// save settings
+	processSettings(false);
+
 	delete ui;
+}
+
+void PostedCreatePostDialog::processSettings(bool load)
+{
+	Settings->beginGroup(QString("PostedCreatePostDialog"));
+
+	if (load) {
+		// load settings
+		
+		// state of ID Chooser combobox
+		int index = Settings->value("IDChooser", 0).toInt();
+		ui->idChooser->setCurrentIndex(index);
+	} else {
+		// save settings
+
+		// state of ID Chooser combobox
+		Settings->setValue("IDChooser", ui->idChooser->currentIndex());
+	}
+
+	Settings->endGroup();
 }
 
 void PostedCreatePostDialog::createPost()
 {
+	if(ui->titleEdit->text().isEmpty()) {
+		/* error message */
+		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
+		return; //Don't add  a empty title!!
+	}
+
 	RsGxsId authorId;
 	switch (ui->idChooser->getChosenId(authorId)) {
 		case GxsIdChooser::KnowId:
@@ -85,37 +130,27 @@ void PostedCreatePostDialog::createPost()
 	post.mMeta.mGroupId = mGrpId;
 	post.mLink = std::string(ui->linkEdit->text().toUtf8());
 	
-	QString text;
-	text = ui->RichTextEditWidget->toHtml();
-	post.mNotes = std::string(text.toUtf8());
+	if(!ui->RichTextEditWidget->toPlainText().trimmed().isEmpty()) {
+		QString text;
+		text = ui->RichTextEditWidget->toHtml();
+		post.mNotes = std::string(text.toUtf8());
+	}
 
 	post.mMeta.mAuthorId = authorId;
-
-	if(!ui->titleEdit->text().isEmpty())
-	{ 
-		post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
-	}else
-	{
-		post.mMeta.mMsgName = std::string(ui->titleEditLink->text().toUtf8());
-	}
-
-	QByteArray ba;
-	QBuffer buffer(&ba);
+	post.mMeta.mMsgName = std::string(ui->titleEdit->text().toUtf8());
 	
-	if(!picture.isNull())
+	if(imagebytes.size() > 0)
 	{
 		// send posted image
+		post.mImage.copy((uint8_t *) imagebytes.data(), imagebytes.size());
+	}	
 
-		buffer.open(QIODevice::WriteOnly);
-		picture.save(&buffer, "PNG"); // writes image into ba in PNG format
-		post.mImage.copy((uint8_t *) ba.data(), ba.size());
+	int msgsize = post.mLink.length() + post.mMeta.mMsgName.length() + post.mNotes.length() + imagebytes.size();
+	if(msgsize > MAXMESSAGESIZE) {
+		QString errormessage = QString(tr("Message is too large.<br />actual size: %1 bytes, maximum size: %2 bytes.")).arg(msgsize).arg(MAXMESSAGESIZE);
+		QMessageBox::warning(this, "RetroShare", errormessage, QMessageBox::Ok, QMessageBox::Ok);
+		return;
 	}
-	
-	if(ui->titleEdit->text().isEmpty()&& ui->titleEditLink->text().isEmpty()) {
-		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Please add a Title"), QMessageBox::Ok, QMessageBox::Ok);
-		return; //Don't add  a empty title!!
-	}//if(ui->titleEdit->text().isEmpty())
 
 	uint32_t token;
 	mPosted->createPost(token, post);
@@ -124,17 +159,64 @@ void PostedCreatePostDialog::createPost()
 	accept();
 }
 
-void PostedCreatePostDialog::addPicture()
+void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 {
-	QPixmap img = misc::getOpenThumbnailedPicture(this, tr("Load thumbnail picture"), 800, 600);
+	if(hashedFiles.length() > 0) { //It seems like it returns 0 if hashing cancelled
+		HashedFile hashedFile = hashedFiles[0]; //Should be exactly one file
+		RetroShareLink link;
+		link = RetroShareLink::createFile(hashedFile.filename, hashedFile.size, QString::fromStdString(hashedFile.hash.toStdString()));
+		ui->linkEdit->setText(link.toString());
+	}
+	ui->submitButton->setEnabled(true);
+	ui->pushButton->setEnabled(true);
+}
 
-	if (img.isNull())
-		return;
+void PostedCreatePostDialog::addPicture()
+{	
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
 
-	picture = img;
+	// select a picture file
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp )", imagefilename)) {
+		QString encodedImage;
+		QImage image;
+		if (image.load(imagefilename) == false) {
+			fprintf (stderr, "RsHtml::makeEmbeddedImage() - image \"%s\" can't be load\n", imagefilename.toLatin1().constData());
+			imagefilename = "";
+			return;
+		}
 
-	// to show the selected
-	ui->imageLabel->setPixmap(picture);
+		QImage opt;
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, MAXMESSAGESIZE - 1000)) { //Leave space for other stuff
+			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+		} else {
+			imagefilename = "";
+			imagebytes.clear();
+			return;
+		}
+	}
+
+	//Do we need to hash the image?
+	QMessageBox::StandardButton answer;
+	answer = QMessageBox::question(this, tr("Post image"), tr("Do you want to share and link the original image?"), QMessageBox::Yes|QMessageBox::No);
+	if (answer == QMessageBox::Yes) {
+		if(!ui->linkEdit->text().trimmed().isEmpty()) {
+			answer = QMessageBox::question(this, tr("Post image"), tr("You already added a link.<br />Do you want to replace it?"), QMessageBox::Yes|QMessageBox::No);
+		}
+	}
+
+	//If still yes then link it
+	if(answer == QMessageBox::Yes) {
+		ui->submitButton->setEnabled(false);
+		ui->pushButton->setEnabled(false);
+		QStringList files;
+		files.append(imagefilename);
+		ui->hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
+	}
+	
+	ui->removeButton->show();
 }
 
 void PostedCreatePostDialog::on_postButton_clicked()
@@ -150,4 +232,13 @@ void PostedCreatePostDialog::on_imageButton_clicked()
 void PostedCreatePostDialog::on_linkButton_clicked()
 {
 	ui->stackedWidget->setCurrentIndex(2);
+}
+
+void PostedCreatePostDialog::on_removeButton_clicked()
+{
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
+	ui->removeButton->hide();
 }

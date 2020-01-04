@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QMenu>
 #include <QStyle>
+#include <QTextDocument>
 
 #include "rshare.h"
 #include "PostedItem.h"
@@ -342,7 +343,10 @@ void PostedItem::fill()
 	// FIX THIS UP LATER.
 	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	if(ui->notes->text().isEmpty())
+	QTextDocument doc;
+	doc.setHtml(ui->notes->text());
+	
+	if(doc.toPlainText().trimmed().isEmpty())
 		ui->notesButton->hide();
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
