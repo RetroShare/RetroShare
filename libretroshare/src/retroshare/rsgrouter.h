@@ -19,12 +19,13 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-
 #pragma once
 
 #include "util/rsdir.h"
+#include "util/rsdeprecate.h"
 #include "retroshare/rsids.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "rsitems/rsserviceids.h"
 
 typedef RsGxsId  GRouterKeyId ;	// we use SSLIds, so that it's easier in the GUI to mix up peer ids with grouter ids.
 typedef uint32_t GRouterServiceId ;
