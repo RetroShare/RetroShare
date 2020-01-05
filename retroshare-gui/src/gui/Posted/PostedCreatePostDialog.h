@@ -55,9 +55,12 @@ private slots:
 	void on_postButton_clicked();
 	void on_imageButton_clicked();
 	void on_linkButton_clicked();
+	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
 private:
+	void processSettings(bool load);
+
 	QString mLink;
 	QString mNotes;
 	TokenQueue* mTokenQueue;

@@ -65,12 +65,41 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	ui->removeButton->hide();
+
+	/* load settings */
+	processSettings(true);
 }
 
 PostedCreatePostDialog::~PostedCreatePostDialog()
 {
 	Settings->saveWidgetInformation(this);
+	
+	// save settings
+	processSettings(false);
+
 	delete ui;
+}
+
+void PostedCreatePostDialog::processSettings(bool load)
+{
+	Settings->beginGroup(QString("PostedCreatePostDialog"));
+
+	if (load) {
+		// load settings
+		
+		// state of ID Chooser combobox
+		int index = Settings->value("IDChooser", 0).toInt();
+		ui->idChooser->setCurrentIndex(index);
+	} else {
+		// save settings
+
+		// state of ID Chooser combobox
+		Settings->setValue("IDChooser", ui->idChooser->currentIndex());
+	}
+
+	Settings->endGroup();
 }
 
 void PostedCreatePostDialog::createPost()
@@ -186,6 +215,8 @@ void PostedCreatePostDialog::addPicture()
 		files.append(imagefilename);
 		ui->hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
 	}
+	
+	ui->removeButton->show();
 }
 
 void PostedCreatePostDialog::on_postButton_clicked()
@@ -201,4 +232,13 @@ void PostedCreatePostDialog::on_imageButton_clicked()
 void PostedCreatePostDialog::on_linkButton_clicked()
 {
 	ui->stackedWidget->setCurrentIndex(2);
+}
+
+void PostedCreatePostDialog::on_removeButton_clicked()
+{
+	imagefilename = "";
+	imagebytes.clear();
+	QPixmap empty;
+	ui->imageLabel->setPixmap(empty);
+	ui->removeButton->hide();
 }
