@@ -142,6 +142,7 @@ bool ImageUtil::optimizeSizeHtml(QString &html, const QImage& original, QImage &
 	QByteArray bytearray;
 	if(maxBytes > 0){
 		maxBytes = maxBytes * 3/4 - 50; //base64 and html stuff
+		if(maxBytes < 1) maxBytes = 1;
 	}
 
 	if(optimizeSizeBytes(bytearray, original, optimized, maxPixels, maxBytes))
