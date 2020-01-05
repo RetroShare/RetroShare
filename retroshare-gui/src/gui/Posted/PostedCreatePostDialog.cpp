@@ -62,6 +62,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	ui->hashBox->setAutoHide(true);
 	ui->hashBox->setDefaultTransferRequestFlags(RS_FILE_REQ_ANONYMOUS_ROUTING);
 	connect(ui->hashBox, SIGNAL(fileHashingFinished(QList<HashedFile>)), this, SLOT(fileHashingFinished(QList<HashedFile>)));
+	ui->sizeWarningLabel->setText(QString("Post size is limited to %1 KB, pictures will be downscaled.").arg(MAXMESSAGESIZE / 1024));
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
@@ -189,7 +190,7 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, MAXMESSAGESIZE - 1000)) { //Leave space for other stuff
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 		} else {
 			imagefilename = "";
