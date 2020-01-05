@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>614</width>
-    <height>160</height>
+    <height>182</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -462,19 +462,9 @@
       <item row="4" column="1">
        <widget class="QFrame" name="picture_frame">
         <layout class="QHBoxLayout" name="horizontalPictureLayout">
-         <item>
-          <spacer name="horizontalSpacer_2">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>219</width>
-             <height>18</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="pictureLabel">
            <property name="text">
@@ -508,14 +498,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>GxsIdLabel</class>
-   <extends>QLabel</extends>
-   <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
