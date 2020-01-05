@@ -31,7 +31,7 @@ class ImageUtil
 public:
 	ImageUtil();
 
-	static void extractImage(QWidget *window, QTextCursor cursor);
+	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
 	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
 	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
 

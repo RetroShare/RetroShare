@@ -389,7 +389,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/new.png</normaloff>:/icons/png/new.png</iconset>
+               <normaloff>:/icons/png/addstickers.png</normaloff>:/icons/png/addstickers.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -979,6 +979,15 @@ border-image: url(:/images/closepressed.png)
    </property>
    <property name="text">
     <string>Save image</string>
+   </property>
+  </action>
+  <action name="actionImport_sticker">
+   <property name="icon">
+    <iconset resource="../images.qrc">
+     <normaloff>:/icons/png/addstickers.png</normaloff>:/icons/png/addstickers.png</iconset>
+   </property>
+   <property name="text">
+    <string>Import sticker</string>
    </property>
   </action>
   <action name="actionSendAsPlainText">

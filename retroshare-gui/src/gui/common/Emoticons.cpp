@@ -29,6 +29,7 @@
 #include <QTabWidget>
 #include <QWidget>
 #include <QMessageBox>
+#include <QDir>
 
 #include <iostream>
 #include <math.h>
@@ -41,17 +42,21 @@
 
 static QHash<QString, QPair<QVector<QString>, QHash<QString, QString> > > Smileys;
 static QVector<QString> grpOrdered;
-static QVector<QString > StickerGroups;
 static QStringList filters;
+static QStringList stickerFolders;
 static QHash<QString, QString> tooltipcache;
+static QHash<QString, QPixmap> iconcache;
 
 void Emoticons::load()
 {
 	loadSmiley();
 	filters << "*.png" << "*.jpg" << "*.gif";
-	loadSticker(QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
-	loadSticker(QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
-	loadSticker(QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
+	stickerFolders << (QString::fromStdString(RsAccounts::AccountDirectory()) + "/stickers");		//under account, unique for user
+	stickerFolders << (QString::fromStdString(RsAccounts::ConfigDirectory()) + "/stickers");		//under .retroshare, shared between users
+	stickerFolders << (QString::fromStdString(RsAccounts::systemDataDirectory()) + "/stickers");	//exe's folder, shipped with RS
+
+	QDir dir(QString::fromStdString(RsAccounts::AccountDirectory()));
+	dir.mkpath("stickers/imported");
 }
 
 void Emoticons::loadSmiley()
@@ -285,7 +290,13 @@ void Emoticons::showSmileyWidget(QWidget *parent, QWidget *button, const char *s
 	smWidget->show() ;
 }
 
-void Emoticons::loadSticker(QString foldername)
+void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs)
+{
+	for(int i = 0; i < stickerFolders.count(); ++i)
+		refreshStickerTabs(stickerTabs, stickerFolders[i]);
+}
+
+void Emoticons::refreshStickerTabs(QVector<QString>& stickerTabs, QString foldername)
 {
 	QDir dir(foldername);
 	if(!dir.exists()) return;
@@ -293,25 +304,30 @@ void Emoticons::loadSticker(QString foldername)
 	//If it contains at a least one png then add it as a group
 	QStringList files = dir.entryList(filters, QDir::Files);
 	if(files.count() > 0)
-		StickerGroups.append(foldername);
+		stickerTabs.append(foldername);
 
 	//Check subfolders
 	QFileInfoList subfolders = dir.entryInfoList(QDir::AllDirs | QDir::NoDotAndDotDot);
 	for(int i = 0; i<subfolders.length(); i++)
-		loadSticker(subfolders[i].filePath());
+		refreshStickerTabs(stickerTabs, subfolders[i].filePath());
 }
 
 void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *slotAddMethod, bool above)
 {
+	QVector<QString> stickerTabs;
+	refreshStickerTabs(stickerTabs);
+	if(stickerTabs.count() == 0) {
+		QString message = "No stickers installed.\nYou can install them by putting images into one of these folders:\n" + stickerFolders.join('\n');
+		QMessageBox::warning(parent, "Stickers", message);
+		return;
+	}
+
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QWidget *smWidget = new QWidget(parent, Qt::Popup) ;
 	smWidget->setAttribute(Qt::WA_DeleteOnClose) ;
 	smWidget->setWindowTitle("Stickers") ;
 
-	if(StickerGroups.count() == 0) {
-		QMessageBox::warning(parent, "Stickers", "No stickers installed");
-		return;
-	}
-	bool bOnlyOneGroup = (StickerGroups.count() == 1);
+	bool bOnlyOneGroup = (stickerTabs.count() == 1);
 
 	QTabWidget *smTab = nullptr;
 	if (! bOnlyOneGroup)
@@ -327,7 +343,7 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 	int maxRowCount = 0;
 	int maxCountPerLine = 0;
 
-	QVectorIterator<QString> grp(StickerGroups);
+	QVectorIterator<QString> grp(stickerTabs);
 	while(grp.hasNext())
 	{
 		QDir groupDir = QDir(grp.next());
@@ -383,7 +399,11 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 			QPushButton *button = new QPushButton("", tabGrpWidget);
 			button->setIconSize(QSize(buttonWidth, buttonHeight));
 			button->setFixedSize(QSize(buttonWidth, buttonHeight));
-			button->setIcon(QPixmap(fi.absoluteFilePath()));
+			if(!iconcache.contains(fi.absoluteFilePath()))
+			{
+				iconcache.insert(fi.absoluteFilePath(), QPixmap(fi.absoluteFilePath()).scaled(buttonWidth, buttonHeight, Qt::KeepAspectRatio));
+			}
+			button->setIcon(iconcache[fi.absoluteFilePath()]);
 			button->setToolTip(fi.fileName());
 			button->setStatusTip(fi.absoluteFilePath());
 			button->setStyleSheet("QPushButton:hover {border: 3px solid #0099cc; border-radius: 3px;}");
@@ -444,10 +464,18 @@ void Emoticons::showStickerWidget(QWidget *parent, QWidget *button, const char *
 
 	smWidget->move(x, y);
 	smWidget->show();
+	QApplication::restoreOverrideCursor();
+}
+
+QString Emoticons::importedStickerPath()
+{
+	QDir dir(stickerFolders[0]);
+	return dir.absoluteFilePath("imported");
 }
 
 void Emoticons::loadToolTips(QWidget *container)
 {
+	QApplication::setOverrideCursor(Qt::WaitCursor);
 	QList<QPushButton *> children = container->findChildren<QPushButton *>();
 	for(int i = 0; i < children.length(); ++i) {
 		if(!children[i]->toolTip().contains('<')) {
@@ -464,4 +492,5 @@ void Emoticons::loadToolTips(QWidget *container)
 
 		}
 	}
+	QApplication::restoreOverrideCursor();
 }
