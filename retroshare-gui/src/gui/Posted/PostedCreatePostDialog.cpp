@@ -190,7 +190,7 @@ void PostedCreatePostDialog::addPicture()
 		}
 
 		QImage opt;
-		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 800*600, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
+		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
 		} else {
 			imagefilename = "";
