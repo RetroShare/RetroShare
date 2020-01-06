@@ -1,7 +1,8 @@
 /*
  * RetroShare JSON API
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the
@@ -588,19 +589,12 @@ bool JsonApiServer::restart()
 	return true;
 }
 
+void JsonApiServer::onStopRequested()
+{ if(mService->is_up()) mService->stop(); }
+
 bool JsonApiServer::fullstop()
 {
-	if(!mService->is_up()) return true;
-
-	mService->stop();
-	RsThread::ask_for_stop();
-
-	while(isRunning())
-	{
-		RsDbg() << __PRETTY_FUNCTION__ << " shutting down JSON API service."
-		        << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}
+	RsThread::fullstop();
 	return true;
 }
 
@@ -610,7 +604,7 @@ void JsonApiServer::setBindingAddress(const std::string& bindAddress)
 { mBindingAddress = bindAddress; }
 std::string JsonApiServer::getBindingAddress() const { return mBindingAddress; }
 
-void JsonApiServer::runloop()
+void JsonApiServer::run()
 {
 	auto settings = std::make_shared<restbed::Settings>();
 	settings->set_port(mListeningPort);

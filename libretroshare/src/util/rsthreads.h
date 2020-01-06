@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2006  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -182,8 +183,9 @@ public:
 	/**
 	 * @brief start the thread and call run() on it.
 	 * @param threadName string containing the name of the thread used for
-	 *                   debugging purposes, it is truncated to 16 characters
-	 *                   including \0 at the end of the string.
+	 *                   debugging purposes, @note inside PThread  it is
+	 *                   truncated to 16 characters including \0 at the end of
+	 *                   the string.
 	 * @return false on error, true otherwise
 	 */
 	bool start(const std::string& threadName = "");
@@ -228,6 +230,9 @@ public:
 	static void async(const std::function<void()>& fn)
 	{ std::thread(fn).detach(); }
 
+	/** @return RsThread full name */
+	const std::string& threadName() { return mFullName; }
+
 protected:
 	/**
 	 * This method must be implemented by sublasses, will be called once the
@@ -259,6 +264,9 @@ private:
 
 	/// Store the id of the corresponding pthread
 	pthread_t mTid;
+
+	/// Store thread full name
+	std::string mFullName;
 };
 
 /**

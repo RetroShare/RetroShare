@@ -5,6 +5,7 @@
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
  * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -126,7 +127,17 @@ void RsThread::fullstop()
 		return;
 	}
 
-	while(!mHasStopped); // Wait for the thread being stopped
+	// Wait for the thread being stopped
+	auto i = 1;
+	while(!mHasStopped)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		++i;
+		if(!(i%5))
+			RsInfo() << __PRETTY_FUNCTION__ << " " << i*0.2 << " seconds passed"
+			         << " waiting for thread: " << mTid << " " << mFullName
+			         << " to stop" << std::endl;
+	}
 }
 
 bool RsThread::start(const std::string& threadName)
@@ -140,14 +151,18 @@ bool RsThread::start(const std::string& threadName)
 		if(pError)
 		{
 			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
-			        << " a new thread. pError: " << pError << std::endl;
+			        << " new thread: " << threadName << " pError: " << pError
+			        << std::endl;
 			mHasStopped = true;
 			print_stacktrace();
 			return false;
 		}
 
-		/* Set thread name which is restricted to 16 characters including the
-		 * terminating null byte */
+		/* Store thread full name as PThread is not able to keep it entirely */
+		mFullName = threadName;
+
+		/* Set PThread thread name which is restricted to 16 characters
+		 * including the terminating null byte */
 		if(pthread_setname_np && !threadName.empty())
 			RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
 
@@ -253,19 +268,13 @@ RsThread::~RsThread()
 {
 	if(isRunning())
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " deleting a thread that is still "
+		RsErr() << __PRETTY_FUNCTION__ << " deleting thread: " << mTid << " "
+		        << mFullName << " that is still "
 		        << "running! Something seems very wrong here and RetroShare is "
 		        << "likely to crash because of this." << std::endl;
 		print_stacktrace();
 
-		askForStop();
-
-		while(isRunning())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << "waiting 1s for stop..."
-			        << std::endl;
-			std::this_thread::sleep_for(std::chrono::seconds(1));
-		}
+		fullstop();
 	}
 }
 
