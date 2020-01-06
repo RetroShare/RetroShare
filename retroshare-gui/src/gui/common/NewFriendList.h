@@ -95,6 +95,7 @@ private slots:
 
 protected:
 	void changeEvent(QEvent *e);
+	void handleEvent(std::shared_ptr<const RsEvent> e);
 
 private:
 	Ui::NewFriendList *ui;
@@ -117,6 +118,7 @@ private:
 
 	// Settings for peer list display
 	bool mShowState;
+    RsEventsHandlerId_t mEventHandlerId;
 
 	std::set<RsNodeGroupId> openGroups;
 	std::set<RsPgpId>   openPeers;

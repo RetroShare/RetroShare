@@ -43,7 +43,7 @@ public:
 
 	void updateItemStatic();
 
-	bool isSame(const RsPeerId &peerId, uint32_t type);
+    uint64_t uniqueIdentifier() const override;
 
 protected:
 	/* FeedItem */

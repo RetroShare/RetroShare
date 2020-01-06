@@ -81,16 +81,10 @@ SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &g
 	updateItem();
 }
 
-
-bool SecurityItem::isSame(const RsPeerId &sslId, uint32_t type)
+uint64_t SecurityItem::uniqueIdentifier() const
 {
-	if ((mSslId == sslId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString());
 }
-
 
 void SecurityItem::updateItemStatic()
 {
@@ -180,40 +174,47 @@ void SecurityItem::updateItem()
 	std::cerr << std::endl;
 #endif
 
-	if(!RsAutoUpdatePage::eventsLocked()) {
+	if(!RsAutoUpdatePage::eventsLocked())
+    {
 		RsPeerDetails details;
-		/* first try sslid */
-		if (!rsPeers->getPeerDetails(mSslId, details))
+		/* first try sslid */;
+		if (!rsPeers->getPeerDetails(mSslId, details) && !rsPeers->getGPGDetails(mGpgId, details))
 		{
-			/* then gpgid */
-            if(!rsPeers->getGPGDetails(mGpgId, details))
-			{
-				/* it is very likely that we will end up here for some of the
+			/* it is very likely that we will end up here for some of the
 				 * Unknown peer cases.... so allow them here
 				 */
 
-				/* set peer name */
-				peerNameLabel->setText(QString("%1 (%2)").arg(tr("Unknown Peer"), QString::fromUtf8(mSslCn.c_str())));
+			/* set peer name */
+			peerNameLabel->setText(tr("A unknown peer"));
 
-                nameLabel->setText(QString::fromUtf8(mSslCn.c_str()) + " (" + QString::fromStdString(mGpgId.toStdString()) + ")");
-                idLabel->setText(QString::fromStdString(mSslId.toStdString()));
+			nameLabel->setText(tr("Unknown") + " (" + tr("Profile ID: ") + QString::fromStdString(mGpgId.toStdString()) + ")");
+			idLabel->setText(QString::fromStdString(mSslId.toStdString()));
 
-				statusLabel->setText(tr("Unknown Peer"));
-				trustLabel->setText(tr("Unknown Peer"));
-				locLabel->setText(tr("Unknown Peer"));
-				ipLabel->setText(QString::fromStdString(mIP)) ; //tr("Unknown Peer"));
-				connLabel->setText(tr("Unknown Peer"));
+			statusLabel->hide();
+			typeLabel->hide();
 
-				chatButton->hide();
-				//quickmsgButton->hide();
-				requestLabel->hide();
+			trustLabel->hide();
+			trustLeftLabel->hide();
 
-				removeFriendButton->setEnabled(false);
-				removeFriendButton->hide();
-				peerDetailsButton->setEnabled(false);
+			locLabel->hide();
+			locLeftLabel->hide();
 
-				return;
-			}
+			ipLabel->setText(QString::fromStdString(mIP)) ;
+			connLabel->hide();
+			connLeftLabel->hide();
+
+			chatButton->hide();
+			//quickmsgButton->hide();
+			requestLabel->hide();
+
+			removeFriendButton->setEnabled(false);
+			removeFriendButton->hide();
+			peerDetailsButton->setEnabled(false);
+
+			friendRequesttoolButton->show();
+			requestLabel->show();
+
+			return;
 		}
 
 		/* set peer name */
@@ -350,6 +351,7 @@ void SecurityItem::friendRequest()
 #endif
 
 	ConnectFriendWizard *connectFriendWizard = new ConnectFriendWizard;
+
 	connectFriendWizard->setAttribute(Qt::WA_DeleteOnClose, true);
 	connectFriendWizard->setGpgId(mGpgId, mSslId, true);
 	connectFriendWizard->show();

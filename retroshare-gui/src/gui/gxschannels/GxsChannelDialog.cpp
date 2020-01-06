@@ -50,6 +50,28 @@ public:
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+}
+
+void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType == RsEventType::GXS_CHANNELS)
+    {
+        const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+
+        if(!e)
+            return;
+
+        switch(e->mChannelEventCode)
+        {
+        case RsGxsChannelEvent::ChannelEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 GxsChannelDialog::~GxsChannelDialog()

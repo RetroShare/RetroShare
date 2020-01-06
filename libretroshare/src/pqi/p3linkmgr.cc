@@ -473,26 +473,23 @@ void p3LinkMgrIMPL::tickMonitors()
 #endif
 
 				/* notify GUI */
-				if (peer.actions & RS_PEER_CONNECTED)
+				if (rsEvents && (peer.actions & RS_PEER_CONNECTED))
 				{
-					p3Notify *notify = RsServer::notify();
+					auto e = std::make_shared<RsConnectionEvent>() ;
 
-					if (notify)
-					{
-                        // normally these two below should disappear: there's no notion of popup in libretroshare.
-                        // all GUI-type display features should be chosen in NotifyQt.
-						notify->AddPopupMessage(RS_POPUP_CONNECT, peer.id.toStdString(),"", "Online: ");
-						notify->AddFeedItem(RS_FEED_ITEM_PEER_CONNECT, peer.id.toStdString());
+					e->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_CONNECTED;
+					e->mSslId = peer.id;
 
-						notify->notifyPeerConnected(peer.id.toStdString());
-					}
+					rsEvents->postEvent(e);
 				}
-				if (peer.actions & RS_PEER_DISCONNECTED)
+				if (rsEvents && (peer.actions & RS_PEER_DISCONNECTED))
 				{
-					p3Notify *notify = RsServer::notify();
+					auto e = std::make_shared<RsConnectionEvent>() ;
 
-					if (notify)
-						notify->notifyPeerDisconnected(peer.id.toStdString());
+					e->mConnectionInfoCode = RsConnectionEvent::ConnectionEventCode::PEER_DISCONNECTED;
+					e->mSslId = peer.id;
+
+                    rsEvents->postEvent(e);
                 }
 			}
 		}

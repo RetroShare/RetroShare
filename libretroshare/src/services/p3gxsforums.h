@@ -166,4 +166,5 @@ bool generateGroup(uint32_t &token, std::string groupName);
 	RsGxsMessageId mGenThreadId;
     std::map<RsGxsGroupId,rstime_t> mKnownForums ;
 	
+	RsMutex mKnownForumsMutex;
 };

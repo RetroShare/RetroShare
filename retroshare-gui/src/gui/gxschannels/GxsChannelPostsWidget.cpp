@@ -128,6 +128,35 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	setAutoDownload(false);
 	settingsChanged();
 	setGroupId(channelId);
+
+	mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+}
+
+void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType == RsEventType::GXS_CHANNELS)
+    {
+        const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+
+        if(!e)
+            return;
+
+        switch(e->mChannelEventCode)
+        {
+        case RsGxsChannelEvent::ChannelEventCode::UPDATED_CHANNEL:
+        case RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL:
+        case RsGxsChannelEvent::ChannelEventCode::UPDATED_MESSAGE:
+        case RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE:
+            if(e->mChannelGroupId == mChannelGroupId)
+				updateDisplay(true);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()
@@ -712,6 +741,7 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	{
 		insertChannelDetails(groups[0]);
 		metaData = groups[0].mMeta;
+        mChannelGroupId = groups[0].mMeta.mGroupId;
 		return true;
 	}
     else
@@ -721,6 +751,7 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
         {
 			insertChannelDetails(distant_group);
 			metaData = distant_group.mMeta;
+			mChannelGroupId = distant_group.mMeta.mGroupId;
             return true ;
         }
     }

@@ -34,7 +34,7 @@ TokenQueue::TokenQueue(RsTokenService *service, TokenResponse *resp)
 {
 	mTrigger = new RsProtectedTimer(this);
 	mTrigger->setSingleShot(true);
-	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()));
+	connect(mTrigger, SIGNAL(timeout()), this, SLOT(pollRequests()),Qt::QueuedConnection);
 }
 
 bool TokenQueue::requestGroupInfo(uint32_t &token, uint32_t anstype, const RsTokReqOptions &opts, std::list<RsGxsGroupId>& ids, uint32_t usertype)

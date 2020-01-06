@@ -172,6 +172,8 @@ private:
 	void updateMessageData(const RsGxsMessageId& msgId);
 	void updateForumDescription();
 
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
 private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
@@ -201,6 +203,7 @@ private:
     QList<RsGxsMessageId> mSavedExpandedMessages;
 
     Ui::GxsForumThreadWidget *ui;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H

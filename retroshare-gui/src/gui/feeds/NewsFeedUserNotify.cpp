@@ -26,7 +26,7 @@ NewsFeedUserNotify::NewsFeedUserNotify(NewsFeed *newsFeed, QObject *parent) :
 {
 	mNewFeedCount = 0;
 
-	connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)));
+	connect(newsFeed, SIGNAL(newsFeedChanged(int)), this, SLOT(newsFeedChanged(int)),Qt::QueuedConnection);
 }
 
 void NewsFeedUserNotify::newsFeedChanged(int count)

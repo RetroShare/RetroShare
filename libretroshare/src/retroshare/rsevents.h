@@ -25,6 +25,7 @@
 #include <cstdint>
 
 #include "util/rsmemory.h"
+#include "util/rsurl.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
 
@@ -58,9 +59,9 @@ enum class RsEventType : uint32_t
 	AUTHSSL_CONNECTION_AUTENTICATION                        = 3,
 
 	/// @see pqissl
-	REMOTE_PEER_REFUSED_CONNECTION                          = 4,
+	PEER_CONNECTION                                         = 4,
 
-	/// @see RsGxsChanges
+	/// @see RsGxsChanges												// this one should probably be removed because it's not used anywhere
 	GXS_CHANGES                                             = 5,
 
 	/// Emitted when a peer state changes, @see RsPeers
@@ -68,6 +69,18 @@ enum class RsEventType : uint32_t
 
 	/// @see RsMailStatusEvent
 	MAIL_STATUS_CHANGE                                      = 7,
+
+    /// @see RsGxsCircleEvent
+    GXS_CIRCLES                                             = 8,
+
+    /// @see RsGxsChannelEvent
+    GXS_CHANNELS                                            = 9,
+
+    /// @see RsGxsForumEvent
+    GXS_FORUMS                                              = 10,
+
+    /// @see RsGxsPostedEvent
+    GXS_POSTED                                              = 11,
 
 	MAX       /// Used to detect invalid event type passed
 };
@@ -170,3 +183,4 @@ public:
 
 	virtual ~RsEvents();
 };
+
