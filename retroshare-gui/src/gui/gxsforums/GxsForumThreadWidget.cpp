@@ -441,26 +441,23 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType == RsEventType::GXS_FORUMS)
-    {
-        const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+	if(event->mType == RsEventType::GXS_FORUMS)
+	{
+		const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+		if(!e) return;
 
-        if(!e)
-            return;
-
-        switch(e->mForumEventCode)
-        {
-        case RsGxsForumEvent::ForumEventCode::UPDATED_FORUM:
-        case RsGxsForumEvent::ForumEventCode::NEW_FORUM:
-        case RsGxsForumEvent::ForumEventCode::UPDATED_MESSAGE:
-        case RsGxsForumEvent::ForumEventCode::NEW_MESSAGE:
-            if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
+		switch(e->mForumEventCode)
+		{
+		case RsForumEventCode::UPDATED_FORUM:   // [[fallthrough]];
+		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
+		case RsForumEventCode::UPDATED_MESSAGE: // [[fallthrough]];
+		case RsForumEventCode::NEW_MESSAGE:
+			if(e->mForumGroupId == mForumGroup.mMeta.mGroupId)
 				updateDisplay(true);
-            break;
-        default:
-            break;
-        }
-    }
+			break;
+		default: break;
+		}
+	}
 }
 
 void GxsForumThreadWidget::blank()

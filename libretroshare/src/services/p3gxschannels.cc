@@ -257,12 +257,10 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 						{
 							auto ev = std::make_shared<RsGxsChannelEvent>();
-
 							ev->mChannelMsgId = *mit1;
 							ev->mChannelGroupId = mit->first;
-							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE;
-
-							rsEvents->sendEvent(ev);
+							ev->mChannelEventCode = RsChannelEventCode::NEW_MESSAGE;
+							rsEvents->postEvent(ev);
 						}
 				}
 			}
@@ -313,11 +311,9 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						for (git = grpList.begin(); git != grpList.end(); ++git)
 						{
 							auto ev = std::make_shared<RsGxsChannelEvent>();
-
 							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
-
-							rsEvents->sendEvent(ev);
+							ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
+							rsEvents->postEvent(ev);
 						}
 
 					}
@@ -338,11 +334,9 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 								IndicateConfigChanged();
 
 								auto ev = std::make_shared<RsGxsChannelEvent>();
-
 								ev->mChannelGroupId = *git;
-								ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL;
-
-								rsEvents->sendEvent(ev);
+								ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
+								rsEvents->postEvent(ev);
 							}
 							else
 								std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
@@ -358,11 +352,9 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						for (git = grpList.begin(); git != grpList.end(); ++git)
 						{
 							auto ev = std::make_shared<RsGxsChannelEvent>();
-
 							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::ChannelEventCode::RECEIVED_PUBLISH_KEY;
-
-							rsEvents->sendEvent(ev);
+							ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
+							rsEvents->postEvent(ev);
 						}
 						break;
 					}

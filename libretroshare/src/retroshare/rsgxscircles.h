@@ -162,32 +162,54 @@ struct RsGxsCircleDetails : RsSerializable
 	}
 };
 
+
+enum class RsGxsCircleEventCode: uint8_t
+{
+	UNKNOWN                   = 0x00,
+
+	/** mCircleId contains the circle id and mGxsId is the id requesting
+	 * membership */
+	CIRCLE_MEMBERSHIP_REQUEST = 0x01,
+
+	/** mCircleId is the circle that invites me, and mGxsId is my own Id that is
+	 * invited */
+	CIRCLE_MEMBERSHIP_INVITE  = 0x02,
+
+	/** mCircleId contains the circle id and mGxsId is the id dropping
+	 * membership */
+	CIRCLE_MEMBERSHIP_LEAVE   = 0x03,
+
+	/// mCircleId contains the circle id and mGxsId is the id of the new member
+	CIRCLE_MEMBERSHIP_JOIN    = 0x04,
+
+	/** mCircleId contains the circle id and mGxsId is the id that was revoqued
+	 * by admin */
+	CIRCLE_MEMBERSHIP_REVOQUED= 0x05,
+};
+
 struct RsGxsCircleEvent: RsEvent
 {
 	RsGxsCircleEvent()
-	    : RsEvent(RsEventType::GXS_CIRCLES), mCircleEventType(CircleEventCode::UNKNOWN) {}
+	    : RsEvent(RsEventType::GXS_CIRCLES),
+	      mCircleEventType(RsGxsCircleEventCode::UNKNOWN) {}
 
-	enum class CircleEventCode: uint8_t {
-        UNKNOWN                   = 0x00,
-        CIRCLE_MEMBERSHIP_REQUEST = 0x01,	// mCircleId contains the circle id and mGxsId is the id requesting membership
-        CIRCLE_MEMBERSHIP_INVITE  = 0x02,	// mCircleId is the circle that invites me, and mGxsId is my own Id that is invited
-        CIRCLE_MEMBERSHIP_LEAVE   = 0x03,	// mCircleId contains the circle id and mGxsId is the id dropping membership
-        CIRCLE_MEMBERSHIP_JOIN    = 0x04,	// mCircleId contains the circle id and mGxsId is the id of the new member
-        CIRCLE_MEMBERSHIP_REVOQUED= 0x05,	// mCircleId contains the circle id and mGxsId is the id that was revoqued by admin
-    };
 
-    CircleEventCode mCircleEventType;
-    RsGxsCircleId mCircleId;
-    RsGxsId mGxsId;
+	RsGxsCircleEventCode mCircleEventType;
+	RsGxsCircleId mCircleId;
+	RsGxsId mGxsId;
 
 	///* @see RsEvent @see RsSerializable
-	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mCircleEventType);
 		RS_SERIAL_PROCESS(mCircleId);
 		RS_SERIAL_PROCESS(mGxsId);
 	}
+
+	~RsGxsCircleEvent() override;
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper

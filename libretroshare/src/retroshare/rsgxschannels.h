@@ -102,23 +102,36 @@ struct RsGxsChannelPost : RsSerializable
 	~RsGxsChannelPost() override;
 };
 
+
+enum class RsChannelEventCode: uint8_t
+{
+	UNKNOWN                  = 0x00,
+	NEW_CHANNEL              = 0x01, /// emitted when new channel is received
+
+	/// emitted when existing channel is updated
+	UPDATED_CHANNEL          = 0x02,
+
+	/// new message reeived in a particular channel (group and msg id)
+	NEW_MESSAGE              = 0x03,
+
+	/// existing message has been updated in a particular channel
+	UPDATED_MESSAGE          = 0x04,
+
+	/// publish key for this channel has been received
+	RECEIVED_PUBLISH_KEY     = 0x05,
+
+	/// subscription for channel mChannelGroupId changed.
+	SUBSCRIBE_STATUS_CHANGED = 0x06,
+};
+
 struct RsGxsChannelEvent: RsEvent
 {
-    RsGxsChannelEvent()
-	    : RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(ChannelEventCode::UNKNOWN) {}
+	RsGxsChannelEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
 
-	enum class ChannelEventCode: uint8_t {
-        UNKNOWN                  = 0x00,
-        NEW_CHANNEL              = 0x01, // emitted when new channel is received
-        UPDATED_CHANNEL          = 0x02, // emitted when existing channel is updated
-        NEW_MESSAGE              = 0x03, // new message reeived in a particular channel (group and msg id)
-        UPDATED_MESSAGE          = 0x04, // existing message has been updated in a particular channel (group and msg id)
-        RECEIVED_PUBLISH_KEY     = 0x05, // publish key for this channel has been received.
-        SUBSCRIBE_STATUS_CHANGED = 0x06, // subscription for channel mChannelGroupId changed.
-    };
-
-    ChannelEventCode mChannelEventCode;
-    RsGxsGroupId mChannelGroupId;
+	RsChannelEventCode mChannelEventCode;
+	RsGxsGroupId mChannelGroupId;
 	RsGxsMessageId mChannelMsgId;
 
 	///* @see RsEvent @see RsSerializable

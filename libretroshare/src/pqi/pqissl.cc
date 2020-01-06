@@ -1107,16 +1107,14 @@ int pqissl::SSL_Connection_Complete()
 			return 0;
 		}
 
-        if(rsEvents)
-        {
+		if(rsEvents)
+		{
+			X509 *x509 = SSL_get_peer_certificate(ssl_connection);
 			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
-
-			X509 *x509 = SSL_get_peer_certificate(ssl_connection) ;
-
 			ev->mSslId = RsX509Cert::getCertSslId(*x509);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::PEER_REFUSED_CONNECTION;
+			ev->mErrorCode = RsAuthSslError::PEER_REFUSED_CONNECTION;
 			rsEvents->postEvent(ev);
-        }
+		}
 
 		std::string out;
 		rs_sprintf(out, "pqissl::SSL_Connection_Complete()\nIssues with SSL Connect(%d)!\n", err);
@@ -1275,18 +1273,15 @@ int pqissl::accept_locked( SSL *ssl, int fd,
 		        << std::endl;
 		print_stacktrace();
 
-        if(rsEvents)
-        {
+		if(rsEvents)
+		{
+			X509 *x509 = SSL_get_peer_certificate(ssl);
 			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
-
-			X509 *x509 = SSL_get_peer_certificate(ssl) ;
-
 			ev->mSslId = RsX509Cert::getCertSslId(*x509);
 			ev->mLocator = RsUrl(foreign_addr);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::IP_IS_BLACKLISTED;
-
+			ev->mErrorCode = RsAuthSslError::IP_IS_BLACKLISTED;
 			rsEvents->postEvent(ev);
-        }
+		}
 
 		reset_locked();
 		return failure;

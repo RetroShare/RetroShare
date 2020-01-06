@@ -115,13 +115,11 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				if (rsEvents && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 					{
-                        auto ev = std::make_shared<RsGxsPostedEvent>();
-
-                        ev->mPostedMsgId = *mit1;
-                        ev->mPostedGroupId = mit->first;
-                        ev->mPostedEventCode = RsGxsPostedEvent::PostedEventCode::NEW_MESSAGE;
-
-                        rsEvents->sendEvent(ev);
+						auto ev = std::make_shared<RsGxsPostedEvent>();
+						ev->mPostedMsgId = *mit1;
+						ev->mPostedGroupId = mit->first;
+						ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+						rsEvents->postEvent(ev);
 					}
 			}
 		}
@@ -146,11 +144,9 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				if (rsEvents && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
 					auto ev = std::make_shared<RsGxsPostedEvent>();
-
 					ev->mPostedGroupId = *git;
-					ev->mPostedEventCode = RsGxsPostedEvent::PostedEventCode::NEW_POSTED_GROUP;
-
-					rsEvents->sendEvent(ev);
+					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
+					rsEvents->postEvent(ev);
 				}
 			}
 		}

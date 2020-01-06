@@ -1222,7 +1222,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
+			ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}
@@ -1242,7 +1242,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
+			ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
 
 			rsEvents->postEvent(std::move(ev));
 		}
@@ -1273,7 +1273,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 				ev->mSslCn = sslCn;
 				ev->mPgpId = pgpId;
 				ev->mErrorMsg = errorMsg;
-				ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISMATCHED_PGP_ID;
+				ev->mErrorCode = RsAuthSslError::MISMATCHED_PGP_ID;
 				rsEvents->postEvent(std::move(ev));
 			}
 
@@ -1299,13 +1299,18 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
 
-            switch(auth_diagnostic)
-            {
-            case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::NOT_A_FRIEND; break;
-            case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE: ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::PGP_SIGNATURE_VALIDATION_FAILED;break;
+			switch(auth_diagnostic)
+			{
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN:
+				ev->mErrorCode = RsAuthSslError::NOT_A_FRIEND;
+				break;
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE:
+				ev->mErrorCode = RsAuthSslError::PGP_SIGNATURE_VALIDATION_FAILED;
+				break;
 			default:
-                ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;break;
-            }
+				ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
+				break;
+			}
 
 			ev->mErrorMsg = errMsg;
 			rsEvents->postEvent(std::move(ev));
@@ -1331,7 +1336,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::NOT_A_FRIEND;
+			ev->mErrorCode = RsAuthSslError::NOT_A_FRIEND;
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1594,32 +1599,6 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
 
         return true;
 }
-
-
-/********************************************************************************/
-/********************************************************************************/
-/*********************   Cert Search / Add / Remove    **************************/
-/********************************************************************************/
-/********************************************************************************/
-
-// void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
-// {
-// #ifdef AUTHSSL_DEBUG
-// 	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
-// 	std::cerr << "    GPG id: " << gpg_id << std::endl;
-// 	std::cerr << "    SSL id: " << ssl_id << std::endl;
-// 	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
-// #endif
-// 	_last_gpgid_to_connect = gpg_id ;
-// 	_last_sslid_to_connect = ssl_id ;
-// 	_last_sslcn_to_connect = ssl_cn ;
-// }
-// void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
-// {
-// 	gpg_id = _last_gpgid_to_connect ;
-// 	ssl_id = _last_sslid_to_connect ;
-// 	ssl_cn = _last_sslcn_to_connect ;
-// }
 
 /* Locked search -> internal help function */
 bool AuthSSLimpl::locked_FindCert(const RsPeerId& id, X509** cert)

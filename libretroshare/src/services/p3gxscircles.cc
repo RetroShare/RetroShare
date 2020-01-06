@@ -504,23 +504,21 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
-                        // @Gio: should this be async?
-                        RsGxsCircleMsg msg;
+						RsGxsCircleMsg msg;
 						getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg);
 
 						auto ev = std::make_shared<RsGxsCircleEvent>();
-
 						ev->mCircleId = circle_id;
 						ev->mGxsId = msg.mMeta.mAuthorId;
 
 						if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
-							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
 						else if(details.mAllowedGxsIds.find(msg.mMeta.mAuthorId) != details.mAllowedGxsIds.end())
-							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_JOIN;
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN;
 						else
-							ev->mCircleEventType = RsGxsCircleEvent::CircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
 
-						rsEvents->sendEvent(ev);
+						rsEvents->postEvent(ev);
 					}
 
 			}
@@ -2416,3 +2414,4 @@ RsGxsCircles::~RsGxsCircles() = default;
 RsGxsCircleMsg::~RsGxsCircleMsg() = default;
 RsGxsCircleDetails::~RsGxsCircleDetails() = default;
 RsGxsCircleGroup::~RsGxsCircleGroup() = default;
+RsGxsCircleEvent::~RsGxsCircleEvent() = default;
