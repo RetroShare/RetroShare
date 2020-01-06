@@ -50,7 +50,7 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 
 	connect(ui->submitButton, SIGNAL(clicked()), this, SLOT(createPost()));
 	connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(close()));
-	connect(ui->pushButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
+	connect(ui->addPicButton, SIGNAL(clicked() ), this , SLOT(addPicture()));
 	
 	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/postedlinks.png"));
 	ui->headerFrame->setHeaderText(tr("Create a new Post"));
@@ -169,7 +169,7 @@ void PostedCreatePostDialog::fileHashingFinished(QList<HashedFile> hashedFiles)
 		ui->linkEdit->setText(link.toString());
 	}
 	ui->submitButton->setEnabled(true);
-	ui->pushButton->setEnabled(true);
+	ui->addPicButton->setEnabled(true);
 }
 
 void PostedCreatePostDialog::addPicture()
@@ -192,6 +192,8 @@ void PostedCreatePostDialog::addPicture()
 		QImage opt;
 		if(ImageUtil::optimizeSizeBytes(imagebytes, image, opt, 640*480, MAXMESSAGESIZE - 2000)) { //Leave space for other stuff
 			ui->imageLabel->setPixmap(QPixmap::fromImage(opt));
+			ui->stackedWidgetPicture->setCurrentIndex(1);
+			ui->removeButton->show();
 		} else {
 			imagefilename = "";
 			imagebytes.clear();
@@ -211,13 +213,13 @@ void PostedCreatePostDialog::addPicture()
 	//If still yes then link it
 	if(answer == QMessageBox::Yes) {
 		ui->submitButton->setEnabled(false);
-		ui->pushButton->setEnabled(false);
+		ui->addPicButton->setEnabled(false);
 		QStringList files;
 		files.append(imagefilename);
 		ui->hashBox->addAttachments(files,RS_FILE_REQ_ANONYMOUS_ROUTING);
 	}
 	
-	ui->removeButton->show();
+
 }
 
 void PostedCreatePostDialog::on_postButton_clicked()
@@ -242,4 +244,5 @@ void PostedCreatePostDialog::on_removeButton_clicked()
 	QPixmap empty;
 	ui->imageLabel->setPixmap(empty);
 	ui->removeButton->hide();
+	ui->stackedWidgetPicture->setCurrentIndex(0);
 }
