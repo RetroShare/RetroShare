@@ -21,6 +21,7 @@
 #include <QDateTime>
 #include <QMenu>
 #include <QStyle>
+#include <QTextDocument>
 
 #include "rshare.h"
 #include "PostedCardView.h"
@@ -332,7 +333,10 @@ void PostedCardView::fill()
 	// FIX THIS UP LATER.
 	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	if(ui->notes->text().isEmpty())
+	QTextDocument doc;
+	doc.setHtml(ui->notes->text());
+	
+	if(doc.toPlainText().trimmed().isEmpty())
 		ui->notes->hide();
 	// differences between Feed or Top of Comment.
 	if (mFeedHolder)
