@@ -32,7 +32,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
   - >
     if [ $TRAVIS_OS_NAME == osx ]; then
-    brew install openssl miniupnpc rapidjson sqlcipher xapian;
+    brew install openssl miniupnpc rapidjson sqlcipher;
     fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
