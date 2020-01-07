@@ -32,7 +32,6 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
   - >
     if [ $TRAVIS_OS_NAME == osx ]; then
-	 # add cmark in the list below if we later enable cmark during compilation
     brew install openssl miniupnpc rapidjson sqlcipher xapian;
     fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
