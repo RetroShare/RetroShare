@@ -96,10 +96,6 @@ RsDht *rsDht = NULL ;
 
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
-#ifdef RS_WEBUI
-#include "jsonapi/jsonapi.h"
-#endif
-
 #endif
 
 #ifdef RS_BROADCAST_DISCOVERY
