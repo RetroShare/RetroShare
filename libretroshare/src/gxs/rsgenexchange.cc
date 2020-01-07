@@ -163,10 +163,25 @@ void RsGenExchange::tick()
 
 	processRoutingClues() ;
 
-	if(!mNotifications.empty())
 	{
-		notifyChanges(mNotifications);
-		mNotifications.clear();
+		std::vector<RsGxsNotify*> mNotifications_copy;
+
+        // make a non-deep copy of mNotifications so that it can be passed off-mutex to notifyChanged()
+        // that will delete it. The potential high cost of notifyChanges() makes it preferable to call off-mutex.
+		{
+			RS_STACK_MUTEX(mGenMtx);
+			if(!mNotifications.empty())
+			{
+				mNotifications_copy = mNotifications;
+				mNotifications.clear();
+			}
+		}
+
+        // Calling notifyChanges() calls back RsGxsIfaceHelper::receiveChanges() that deletes the pointers in the array
+        // and the array itself.  This is pretty bad and we should normally delete the changes here.
+
+		if(!mNotifications_copy.empty())
+			notifyChanges(mNotifications_copy);
 	}
 
 	// implemented service tick function
@@ -1118,38 +1133,25 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 		if((mc = dynamic_cast<RsGxsMsgChange*>(n)) != nullptr)
         {
             if (mc->metaChange())
-            {
                 addMessageChanged(out.mMsgsMeta, mc->msgChangeMap);
-            }
             else
-            {
                 addMessageChanged(out.mMsgs, mc->msgChangeMap);
-            }
         }
 		else if((gc = dynamic_cast<RsGxsGroupChange*>(n)) != nullptr)
         {
             if(gc->metaChange())
-            {
                 out.mGrpsMeta.splice(out.mGrpsMeta.end(), gc->mGrpIdList);
-            }
             else
-            {
                 out.mGrps.splice(out.mGrps.end(), gc->mGrpIdList);
-            }
         }
-		else if(( gt =
-		          dynamic_cast<RsGxsDistantSearchResultChange*>(n) ) != nullptr)
-        {
+		else if(( gt = dynamic_cast<RsGxsDistantSearchResultChange*>(n) ) != nullptr)
             out.mDistantSearchReqs.push_back(gt->mRequestId);
-        }
         else
-			RsErr() << __PRETTY_FUNCTION__ << " Unknown changes type!"
-			        << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Unknown changes type!" << std::endl;
         delete n;
     }
     changes.clear() ;
 
-	RsServer::notify()->notifyGxsChange(out);
 	if(rsEvents) rsEvents->postEvent(std::move(evt));
 }
 

@@ -37,7 +37,14 @@ QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
 RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
 	QObject(NULL), mIfaceImpl(ifaceImpl)
 {
-    connect(NotifyQt::getInstance(), SIGNAL(gxsChange(RsGxsChanges)), this, SLOT(onChangesReceived(RsGxsChanges)));
+    mEventHandlerId = 0;	// forces initialization in registerEventsHandler()
+
+    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+   		{
+        	if(event->mType == RsEventType::GXS_CHANGES)
+                onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get()));
+
+		}, mEventHandlerId );
 }
 
 void RsGxsUpdateBroadcast::cleanup()

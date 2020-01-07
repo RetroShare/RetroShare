@@ -67,16 +67,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
-
-bool PeerItem::isSame(const RsPeerId &peerId, uint32_t type)
+uint64_t PeerItem::uniqueIdentifier() const
 {
-	if ((mPeerId == peerId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return hash_64bits("PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString()) ;
 }
-
 
 void PeerItem::updateItemStatic()
 {
@@ -100,7 +94,7 @@ void PeerItem::updateItemStatic()
 			title = tr("Friend Connected");
 			break;
 		case PEER_TYPE_HELLO:
-			title = tr("Connect Attempt");
+			title = tr("Connection refused by peer");
 			break;
 		case PEER_TYPE_NEW_FOF:
 			title = tr("Friend of Friend");
@@ -135,15 +129,16 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
-		statusLabel->setText(tr("Unknown Peer"));
-		titleLabel->setText(tr("Unknown Peer"));
-		trustLabel->setText(tr("Unknown Peer"));
-		nameLabel->setText(tr("Unknown Peer"));
-		idLabel->setText(tr("Unknown Peer"));
-		locLabel->setText(tr("Unknown Peer"));
-		ipLabel->setText(tr("Unknown Peer"));
-		connLabel->setText(tr("Unknown Peer"));
-		lastLabel->setText(tr("Unknown Peer"));
+		peerNameLabel->setText(tr("Unknown peer"));
+		statusLabel->setText(tr("Unknown"));
+		titleLabel->setText(tr("Unknown peer"));
+		trustLabel->setText(tr("Unknown"));
+		nameLabel->setText(tr("Unknown"));
+		idLabel->setText(tr("Unknown"));
+		locLabel->setText(tr("Unknown"));
+		ipLabel->setText(tr("Unknown"));
+		connLabel->setText(tr("Unknown"));
+		lastLabel->setText(tr("Unknown"));
 
 		chatButton->setEnabled(false);
 	}
@@ -192,7 +187,19 @@ void PeerItem::updateItem()
 		statusLabel->setText(status);
 		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
-		ipLabel->setText(QString("%1:%2/%3:%4").arg(QString::fromStdString(details.localAddr)).arg(details.localPort).arg(QString::fromStdString(details.extAddr)).arg(details.extPort));
+        QString ip_string;
+
+        if(details.localPort != 0)
+            ip_string += QString("%1:%2").arg(QString::fromStdString(details.localAddr)).arg(details.localPort);
+
+        if(details.extPort != 0)
+        {
+            if(!ip_string.isNull())
+                ip_string += "/" ;
+
+            ip_string += ip_string += QString("%1:%2").arg(QString::fromStdString(details.extAddr)).arg(details.extPort);
+        }
+		ipLabel->setText(ip_string);
 
 		connLabel->setText(StatusDefs::connectStateString(details));
 

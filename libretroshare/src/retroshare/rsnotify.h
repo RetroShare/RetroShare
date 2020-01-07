@@ -79,9 +79,10 @@ const uint32_t RS_FEED_ITEM_PEER_DISCONNECT         = RS_FEED_TYPE_PEER  | 0x000
 const uint32_t RS_FEED_ITEM_PEER_HELLO              = RS_FEED_TYPE_PEER  | 0x0003;
 const uint32_t RS_FEED_ITEM_PEER_NEW                = RS_FEED_TYPE_PEER  | 0x0004;
 const uint32_t RS_FEED_ITEM_PEER_OFFSET             = RS_FEED_TYPE_PEER  | 0x0005;
+const uint32_t RS_FEED_ITEM_PEER_DENIES_CONNEXION   = RS_FEED_TYPE_PEER  | 0x0006;
 
 const uint32_t RS_FEED_ITEM_SEC_CONNECT_ATTEMPT     = RS_FEED_TYPE_SECURITY  | 0x0001;
-const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED         = RS_FEED_TYPE_SECURITY  | 0x0002;
+const uint32_t RS_FEED_ITEM_SEC_AUTH_DENIED         = RS_FEED_TYPE_SECURITY  | 0x0002;	// locally denied connection
 const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_IN          = RS_FEED_TYPE_SECURITY  | 0x0003;
 const uint32_t RS_FEED_ITEM_SEC_UNKNOWN_OUT         = RS_FEED_TYPE_SECURITY  | 0x0004;
 const uint32_t RS_FEED_ITEM_SEC_WRONG_SIGNATURE     = RS_FEED_TYPE_SECURITY  | 0x0005;
@@ -114,8 +115,11 @@ const uint32_t RS_FEED_ITEM_CHAT_NEW         = RS_FEED_TYPE_CHAT  | 0x0001;
 const uint32_t RS_FEED_ITEM_MESSAGE          = RS_FEED_TYPE_MSG   | 0x0001;
 const uint32_t RS_FEED_ITEM_FILES_NEW        = RS_FEED_TYPE_FILES | 0x0001;
 
-const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ  = RS_FEED_TYPE_CIRCLE  | 0x0001;
-const uint32_t RS_FEED_ITEM_CIRCLE_INVIT_REC = RS_FEED_TYPE_CIRCLE  | 0x0002;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REQ      = RS_FEED_TYPE_CIRCLE  | 0x0001;
+const uint32_t RS_FEED_ITEM_CIRCLE_INVIT_REC     = RS_FEED_TYPE_CIRCLE  | 0x0002;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_LEAVE    = RS_FEED_TYPE_CIRCLE  | 0x0003;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_JOIN     = RS_FEED_TYPE_CIRCLE  | 0x0004;
+const uint32_t RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED = RS_FEED_TYPE_CIRCLE  | 0x0005;
 
 const uint32_t RS_MESSAGE_CONNECT_ATTEMPT    = 0x0001;
 
@@ -212,8 +216,6 @@ public:
 	NotifyClient() {}
 	virtual ~NotifyClient() {}
 
-    virtual void notifyPeerConnected              (const std::string& /* peer_id */) {}
-    virtual void notifyPeerDisconnected           (const std::string& /* peer_id */) {}
 	virtual void notifyListPreChange              (int /* list */, int /* type */) {}
 	virtual void notifyListChange                 (int /* list */, int /* type */) {}
 	virtual void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) {}
@@ -230,8 +232,6 @@ public:
 	virtual void notifyOwnStatusMessageChanged    () {}
 	virtual void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) {}
 	virtual void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) {}
-	virtual void notifyGxsChange                  (const RsGxsChanges& /* changes  */) {}
-	virtual void notifyConnectionWithoutCert      () {}
 
 	/* one or more peers has changed the states */
 	virtual void notifyPeerStatusChangedSummary   () {}

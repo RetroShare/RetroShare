@@ -71,6 +71,7 @@ void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsG
 
 	setup();
 
+    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
 	mLoaded = false ;
 }
 
@@ -183,6 +184,7 @@ void GxsChannelPostItem::setup()
 
 	connect(ui->downloadButton, SIGNAL(clicked()), this, SLOT(download()));
 	// HACK FOR NOW.
+    ui->commentButton->hide();// hidden until properly enabled.
 	connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
 
 	connect(ui->playButton, SIGNAL(clicked()), this, SLOT(play(void)));

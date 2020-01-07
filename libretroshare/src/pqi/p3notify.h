@@ -91,8 +91,6 @@ class p3Notify: public RsNotify
 
 		// Notifications of clients. Can be called from anywhere inside libretroshare.
 		//
-		void notifyPeerConnected              (const std::string& /* peer_id */);
-		void notifyPeerDisconnected           (const std::string& /* peer_id */);
 		void notifyListPreChange              (int /* list */, int /* type */) ;
 		void notifyListChange                 (int /* list */, int /* type */) ;
 		void notifyErrorMsg                   (int /* list */, int /* sev  */, std::string /* msg */) ;
@@ -111,7 +109,6 @@ class p3Notify: public RsNotify
 		void notifyOwnStatusMessageChanged    () ;
 		void notifyDiskFull                   (uint32_t           /* location  */, uint32_t                         /* size limit in MB */) ;
 		void notifyPeerStatusChanged          (const std::string& /* peer_id   */, uint32_t                         /* status           */) ;
-        void notifyGxsChange                  (const RsGxsChanges& /* changes  */);
 		void notifyConnectionWithoutCert      ();
 
 		void notifyPeerStatusChangedSummary   () ;

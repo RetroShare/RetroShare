@@ -91,12 +91,18 @@ void GxsCircleItem::setup()
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-
-
-			ui->acceptButton->setToolTip(tr("Grant membership request"));
-			ui->revokeButton->setToolTip(tr("Revoke membership request"));
-			connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(grantCircleMembership()));
-			connect(ui->revokeButton, SIGNAL(clicked()), this, SLOT(revokeCircleMembership()));
+			if(circleDetails.mAmIAdmin)
+			{
+				ui->acceptButton->setToolTip(tr("Grant membership request"));
+				ui->revokeButton->setToolTip(tr("Revoke membership request"));
+				connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(grantCircleMembership()));
+				connect(ui->revokeButton, SIGNAL(clicked()), this, SLOT(revokeCircleMembership()));
+			}
+            else
+            {
+				ui->acceptButton->setEnabled(false);
+				ui->revokeButton->setEnabled(false);
+            }
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_INVIT_REC)
 		{
@@ -110,7 +116,43 @@ void GxsCircleItem::setup()
 			connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(acceptCircleSubscription()));
 			ui->revokeButton->setHidden(true);
 		}
+		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
+		{
+			ui->titleLabel->setText(idName + tr(" has left this circle you belong to."));
+			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
+			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
 
+			ui->acceptButton->setHidden(true);
+			ui->revokeButton->setHidden(true);
+		}
+		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
+		{
+			ui->titleLabel->setText(idName + tr(" has join this circle you also belong to."));
+			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
+			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
+
+			ui->acceptButton->setHidden(true);
+			ui->revokeButton->setHidden(true);
+		}
+		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED)
+		{
+            if(rsIdentity->isOwnId(mGxsId))
+				ui->titleLabel->setText(tr("Your identity %1 has been revoqued from this circle.").arg(idName));
+            else
+				ui->titleLabel->setText(tr("Identity %1 has been revoqued from this circle you belong to.").arg(idName));
+
+			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
+			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
+
+			ui->acceptButton->setHidden(true);
+			ui->revokeButton->setHidden(true);
+		}
 	}
 	else
 	{
@@ -125,14 +167,9 @@ void GxsCircleItem::setup()
 
 }
 
-bool GxsCircleItem::isSame(const RsGxsCircleId &circleId, const RsGxsId &gxsId, uint32_t type)
+uint64_t GxsCircleItem::uniqueIdentifier() const
 {
-	if ((mCircleId == circleId) && (mGxsId == gxsId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
-
+    return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString());
 }
 
 void GxsCircleItem::removeItem()
