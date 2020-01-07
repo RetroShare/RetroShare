@@ -212,7 +212,7 @@ std::string RsPeerLastConnectString(uint32_t lastConnect);
 
 enum class RsAuthSslError: uint8_t
 {
-	NO_ERROR                        = 0x00,
+//	NO_ERROR                        = 0x00, // enabling break windows build
 	MISSING_AUTHENTICATION_INFO     = 0x01,
 	PGP_SIGNATURE_VALIDATION_FAILED = 0x02,
 	MISMATCHED_PGP_ID               = 0x03,
