@@ -51,18 +51,13 @@ bool LocalDirectoryUpdater::isEnabled() const
 }
 void LocalDirectoryUpdater::setEnabled(bool b)
 {
-    if(mIsEnabled == b)
-        return ;
-
-    if(!b)
-        shutdown();
-    else if(!isRunning())
-        start("fs dir updater") ;
-
-    mIsEnabled = b ;
+	if(mIsEnabled == b) return;
+	if(!b) RsThread::askForStop();
+	else if(!RsThread::isRunning()) start("fs dir updater");
+	mIsEnabled = b ;
 }
 
-void LocalDirectoryUpdater::data_tick()
+void LocalDirectoryUpdater::threadTick()
 {
     rstime_t now = time(NULL) ;
 

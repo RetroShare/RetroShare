@@ -62,7 +62,7 @@ public:
 
     static QString recommendMessage();
     static void recommendFriend(const std::set <RsPeerId> &sslIds, const RsPeerId &to = RsPeerId(), const QString &msg = "", bool autoSend = false);
-    static void sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
+    static void addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &sslName);
     static void sendInvite(const RsGxsId &to, bool autoSend);
 #ifdef UNUSED_CODE
     static void sendChannelPublishKey(RsGxsChannelGroup &group);

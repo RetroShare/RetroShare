@@ -1,7 +1,8 @@
 /*
  * RetroShare JSON API
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the
@@ -139,7 +140,14 @@ public:
 	        const std::function<bool(const std::string&, const std::string&)>&
 	        callback );
 
+protected:
+	/// @see RsThread
+	void onStopRequested() override;
+
 private:
+	/// @see RsThread
+	void run() override;
+
 	/// @see p3Config::setupSerialiser
 	RsSerialiser* setupSerialiser() override;
 
@@ -183,9 +191,6 @@ private:
 	std::set<
 	    std::reference_wrapper<const JsonApiResourceProvider>,
 	    std::less<const JsonApiResourceProvider> > mResourceProviders;
-
-	/// @see RsThread
-	void runloop() override;
 
 	std::shared_ptr<restbed::Service> mService;
 

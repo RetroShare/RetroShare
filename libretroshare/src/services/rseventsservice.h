@@ -71,8 +71,7 @@ protected:
 	RsMutex mEventQueueMtx;
 	std::deque< std::shared_ptr<const RsEvent> > mEventQueue;
 
-	/// @see RsTickingThread
-	void data_tick() override;
+	void threadTick() override; /// @see RsTickingThread
 
 	void handleEvent(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t generateUniqueHandlerId_unlocked();

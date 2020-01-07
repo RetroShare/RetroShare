@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>825</width>
-    <height>337</height>
+    <height>339</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -529,10 +529,22 @@
           </item>
           <item>
            <widget class="QPushButton" name="readAndClearButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>44</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>24</width>
-              <height>16777215</height>
+              <width>50</width>
+              <height>44</height>
              </size>
             </property>
             <property name="focusPolicy">
@@ -549,10 +561,22 @@
           </item>
           <item>
            <widget class="QPushButton" name="clearButton">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>50</width>
+              <height>44</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>24</width>
-              <height>16777215</height>
+              <width>50</width>
+              <height>44</height>
              </size>
             </property>
             <property name="focusPolicy">
@@ -692,9 +716,9 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="Posted_images.qrc"/>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
+  <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
 </ui>

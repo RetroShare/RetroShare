@@ -57,8 +57,7 @@ public:
 	/// @see RsBroadcastDiscovery
 	bool disableMulticastListening() override;
 
-	/// @see RsTickingThread
-	void data_tick() override;
+	void threadTick() override; /// @see RsTickingThread
 
 protected:
 	constexpr static uint16_t port = 36405;

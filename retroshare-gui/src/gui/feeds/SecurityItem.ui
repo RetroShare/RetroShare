@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>763</width>
-    <height>246</height>
+    <width>1196</width>
+    <height>491</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -354,7 +354,7 @@
            <item>
             <layout class="QVBoxLayout" name="verticalLayout">
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="nameLeftLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -367,7 +367,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="idLeftLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -380,7 +380,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="trustLeftLabel">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                  <horstretch>0</horstretch>
@@ -399,7 +399,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="locLeftLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -412,7 +412,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_8">
+              <widget class="QLabel" name="ipLeftLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -425,7 +425,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="connLeftLabel">
                <property name="font">
                 <font>
                  <weight>75</weight>
@@ -578,8 +578,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

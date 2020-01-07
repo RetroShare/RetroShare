@@ -53,34 +53,6 @@ const EVP_PKEY* getPubKey(const X509& x509);
 };
 
 /**
- * Event triggered by AuthSSL when authentication of a connection attempt either
- * fail or success
- */
-struct RsAuthSslConnectionAutenticationEvent : RsEvent
-{
-	RsAuthSslConnectionAutenticationEvent();
-
-	bool mSuccess;
-	RsPeerId mSslId;
-	std::string mSslCn;
-	RsPgpId mPgpId;
-	std::string mErrorMsg;
-
-	///* @see RsEvent @see RsSerializable
-	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx) override
-	{
-		RsEvent::serial_process(j, ctx);
-		RS_SERIAL_PROCESS(mSuccess);
-		RS_SERIAL_PROCESS(mSslId);
-		RS_SERIAL_PROCESS(mSslCn);
-		RS_SERIAL_PROCESS(mPgpId);
-		RS_SERIAL_PROCESS(mErrorMsg);
-	}
-};
-
-
-/**
  * This is an implementation of SSL certificate authentication with PGP
  * signatures, instead of centralized certification authority.
  */
@@ -164,13 +136,6 @@ public:
 
 	/// SSL specific functions used in pqissl/pqissllistener
 	virtual SSL_CTX* getCTX() = 0;
-
-	virtual void setCurrentConnectionAttemptInfo(
-	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
-	        const std::string& ssl_cn ) = 0;
-	virtual void getCurrentConnectionAttemptInfo(
-	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) = 0;
-
 
 	/**
 	 * This function parse X509 certificate from the file and return some
@@ -257,14 +222,6 @@ public:
 public:
 	/* SSL specific functions used in pqissl/pqissllistener */
 	SSL_CTX* getCTX() override;
-
-	/* Restored these functions: */
-	void setCurrentConnectionAttemptInfo(
-	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
-	        const std::string& ssl_cn ) override;
-	void getCurrentConnectionAttemptInfo(
-	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) override;
-
 
 private:
 

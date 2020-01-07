@@ -29,7 +29,7 @@
 #include "rsitems/rsgxscommentitems.h"
 
 #include "rsserver/p3face.h"
-#include "retroshare/rsnotify.h"
+#include "retroshare/rsposted.h"
 
 // For Dummy Msgs.
 #include "util/rsrandom.h"
@@ -87,12 +87,6 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << std::endl;
 #endif
 
-	p3Notify *notify = NULL;
-	if (!changes.empty())
-	{
-		notify = RsServer::notify();
-	}
-
 	std::vector<RsGxsNotify *>::iterator it;
 
 	for(it = changes.begin(); it != changes.end(); ++it)
@@ -118,13 +112,15 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
 
-				if (notify && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
-				{
+				if (rsEvents && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 					{
-						notify->AddFeedItem(RS_FEED_ITEM_POSTED_MSG, mit->first.toStdString(), mit1->toStdString());
+						auto ev = std::make_shared<RsGxsPostedEvent>();
+						ev->mPostedMsgId = *mit1;
+						ev->mPostedGroupId = mit->first;
+						ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+						rsEvents->postEvent(ev);
 					}
-				}
 			}
 		}
 
@@ -137,17 +133,20 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-			std::list<RsGxsGroupId>::iterator git;
-			for(git = groupList.begin(); git != groupList.end(); ++git)
+
+			for(auto git = groupList.begin(); git != groupList.end(); ++git)
 			{
 #ifdef POSTBASE_DEBUG
 				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
 				std::cerr << std::endl;
 #endif
 
-				if (notify && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
+				if (rsEvents && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
 				{
-					notify->AddFeedItem(RS_FEED_ITEM_POSTED_NEW, git->toStdString());
+					auto ev = std::make_shared<RsGxsPostedEvent>();
+					ev->mPostedGroupId = *git;
+					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
+					rsEvents->postEvent(ev);
 				}
 			}
 		}

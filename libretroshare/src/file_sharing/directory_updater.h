@@ -62,7 +62,7 @@ public:
 	bool ignoreDuplicates() const;
 
 protected:
-    virtual void data_tick() ;
+	void threadTick() override; /// @see RsTickingThread
 
     virtual void hash_callback(uint32_t client_param, const std::string& name, const RsFileHash& hash, uint64_t size);
     virtual bool hash_confirm(uint32_t client_param) ;
