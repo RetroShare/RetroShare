@@ -88,9 +88,7 @@ public:
 	void setShutdownCallback(const std::function<void(int)>& callback)
 	{ mShutdownCallback = callback; }
 
-
-		/* Thread Fn: Run the Core */
-        virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
 		/* locking stuff */
 		void    lockRsCore() 

@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/util: dnsresolver.h                                       *
+ * libretroshare/src/util: rserrno.cc                                          *
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2017 Retroshare Team <retroshare.project@gmail.com>           *
+ * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,45 +19,36 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#pragma once
 
-#include "pqi/pqinetwork.h"
+#include <cerrno>
 
-#ifndef WIN32
-#include <netdb.h>
-#endif
+#define RS_INTERNAL_ERRNO_CASE(e) case e: return #e
 
-#include <map>
-#include <string>
-
-#include "util/rsthreads.h"
-#include "util/rstime.h"
-
-struct sockaddr ;
-
-class DNSResolver
+const char* rsErrnoName(int err)
 {
-	public:
-		DNSResolver() ;
-		~DNSResolver() ;
+	switch (err)
+	{
+	RS_INTERNAL_ERRNO_CASE(EINVAL);
+	RS_INTERNAL_ERRNO_CASE(EBUSY);
+	RS_INTERNAL_ERRNO_CASE(EAGAIN);
+	RS_INTERNAL_ERRNO_CASE(EDEADLK);
+	RS_INTERNAL_ERRNO_CASE(EPERM);
+	RS_INTERNAL_ERRNO_CASE(EBADF);
+	RS_INTERNAL_ERRNO_CASE(EFAULT);
+	RS_INTERNAL_ERRNO_CASE(ENOTSOCK);
+	RS_INTERNAL_ERRNO_CASE(EISCONN);
+	RS_INTERNAL_ERRNO_CASE(ECONNREFUSED);
+	RS_INTERNAL_ERRNO_CASE(ETIMEDOUT);
+	RS_INTERNAL_ERRNO_CASE(ENETUNREACH);
+	RS_INTERNAL_ERRNO_CASE(EADDRINUSE);
+	RS_INTERNAL_ERRNO_CASE(EINPROGRESS);
+	RS_INTERNAL_ERRNO_CASE(EALREADY);
+	RS_INTERNAL_ERRNO_CASE(ENOTCONN);
+	RS_INTERNAL_ERRNO_CASE(EPIPE);
+	RS_INTERNAL_ERRNO_CASE(ECONNRESET);
+	RS_INTERNAL_ERRNO_CASE(EHOSTUNREACH);
+	RS_INTERNAL_ERRNO_CASE(EADDRNOTAVAIL);
+	}
 
-		bool getIPAddressFromString(const std::string& server_name,struct sockaddr_storage &addr) ;
-
-		void start_request() ;
-		void reset() ;
-
-	private:
-		enum { DNS_DONT_HAVE,DNS_SEARCHING, DNS_HAVE, DNS_LOOKUP_ERROR } ;
-
-		struct AddrInfo
-		{
-			uint32_t state ; 				// state: Looked-up, not found, have
-			rstime_t last_lookup_time ;	// last lookup time
-			struct sockaddr_storage addr ;
-		};
-		friend void *solveDNSEntries(void *p) ;
-
-		RsMutex _rdnsMtx ;
-		bool *_thread_running ;
-		std::map<std::string, AddrInfo> *_addr_map ;
-};
+	return "rsErrnoName UNKNOWN ERROR CODE";
+}

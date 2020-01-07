@@ -45,7 +45,7 @@
 #include "retroshare/rsnotify.h"
 #include "retroshare/rsiface.h"
 #include "plugins/pluginmanager.h"
-
+#include "retroshare/rsversion.h"
 #include "rsserver/rsloginhandler.h"
 #include "rsserver/rsaccounts.h"
 
@@ -96,10 +96,6 @@ RsDht *rsDht = NULL ;
 
 #ifdef RS_JSONAPI
 #	include "jsonapi/jsonapi.h"
-#ifdef RS_WEBUI
-#include "jsonapi/jsonapi.h"
-#endif
-
 #endif
 
 #ifdef RS_BROADCAST_DISCOVERY
@@ -195,6 +191,9 @@ static const int SSLPWD_LEN = 64;
 
 void RsInit::InitRsConfig()
 {
+	RsInfo() << " libretroshare version: " << RS_HUMAN_READABLE_VERSION
+	         << std::endl;
+
 	rsInitConfig = new RsInitConfig;
 
 

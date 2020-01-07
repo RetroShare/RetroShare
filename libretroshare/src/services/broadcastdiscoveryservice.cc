@@ -139,7 +139,7 @@ void BroadcastDiscoveryService::updatePublishedData()
 	            BroadcastDiscoveryPack::fromPeerDetails(od).serializeToString());
 }
 
-void BroadcastDiscoveryService::data_tick()
+void BroadcastDiscoveryService::threadTick()
 {
 	auto nextRunAt = std::chrono::system_clock::now() + std::chrono::seconds(5);
 

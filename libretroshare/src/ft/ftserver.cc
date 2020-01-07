@@ -234,28 +234,28 @@ void    ftServer::StartupThreads()
 void ftServer::StopThreads()
 {
 	/* stop Dataplex */
-	mFtDataplex->join();
+	mFtDataplex->fullstop();
 
 	/* stop Controller thread */
-	mFtController->join();
+	mFtController->fullstop();
 
 	/* self contained threads */
 	/* stop ExtraList Thread */
-	mFtExtra->join();
+	mFtExtra->fullstop();
 
 	delete (mFtDataplex);
-	mFtDataplex = NULL;
+	mFtDataplex = nullptr;
 
 	delete (mFtController);
-	mFtController = NULL;
+	mFtController = nullptr;
 
 	delete (mFtExtra);
-	mFtExtra = NULL;
+	mFtExtra = nullptr;
 
 	/* stop Monitor Thread */
 	mFileDatabase->stopThreads();
 	delete mFileDatabase;
-	mFileDatabase = NULL ;
+	mFileDatabase = nullptr;
 }
 
 /***************************************************************/

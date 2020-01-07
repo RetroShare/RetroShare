@@ -18,10 +18,11 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <iostream>
 #include "FeedItem.h"
 
 /** Constructor */
-FeedItem::FeedItem(QWidget *parent) : QWidget(parent)
+FeedItem::FeedItem(QWidget *parent) : QWidget(parent), mHash(0)
 {
 	mWasExpanded = false;
 }
@@ -42,4 +43,17 @@ void FeedItem::expand(bool open)
 	if (open) {
 		mWasExpanded = true;
 	}
+}
+
+uint64_t FeedItem::hash_64bits(const std::string& s) const
+{
+    if(mHash == 0)
+	{
+		mHash = 0x01110bbfa09;
+
+		for(uint32_t i=0;i<s.size();++i)
+			mHash = ~(((mHash << 31) ^ (mHash >> 3)) + s[i]*0x217898fbba7 + 0x0294379);
+	}
+
+	return mHash;
 }

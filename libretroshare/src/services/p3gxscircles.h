@@ -208,6 +208,11 @@ public:
 	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	                        const RsGxsCircleId& circleId ) override;
 
+    /// @see RsGxsCircles
+	bool getCircleRequest(const RsGxsGroupId& circleId,
+                          const RsGxsMessageId& msgId,
+                          RsGxsCircleMsg& msg) override;
+
 	/// @see RsGxsCircles
 	bool exportCircleLink(
 	        std::string& link, const RsGxsCircleId& circleId,

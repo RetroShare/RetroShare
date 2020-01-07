@@ -288,15 +288,15 @@ private:
 
 	void notifyClientService(const OutgoingRecord& pr);
 
-	/*!
-	 * Checks the integrity message and groups
-	 */
-	class GxsTransIntegrityCleanupThread : public RsSingleJobThread
+	/// Checks the integrity message and groups
+	class GxsTransIntegrityCleanupThread : public RsThread
 	{
 		enum CheckState { CheckStart, CheckChecking };
 
 	public:
-        explicit GxsTransIntegrityCleanupThread(RsGeneralDataService *const dataService): mDs(dataService),mMtx("GxsTransIntegrityCheck") { mDone=false;}
+		explicit GxsTransIntegrityCleanupThread(
+		        RsGeneralDataService* const dataService ):
+		    mDs(dataService), mMtx("GxsTransIntegrityCheck"), mDone(false) {}
 
 		bool isDone();
 		void run();
@@ -312,7 +312,7 @@ private:
 
 		GxsMsgReq mMsgToDel ;
 		std::map<RsGxsId,MsgSizeCount> total_message_size_and_count;
-        bool mDone ;
+		bool mDone;
 	};
 
 	// Overloaded from RsGenExchange.

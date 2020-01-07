@@ -296,10 +296,25 @@ struct MsgTagType : RsSerializable
 } //namespace Rs
 } //namespace Msgs
 
+
+enum class RsMailStatusEventCode: uint8_t
+{
+	NEW_MESSAGE                     = 0x00,
+	MESSAGE_REMOVED                 = 0x01,
+	MESSAGE_SENT                    = 0x02,
+
+	/// means the peer received the message
+	MESSAGE_RECEIVED_ACK            = 0x03,
+
+	/// An error occurred attempting to sign the message
+	SIGNATURE_FAILED   = 0x04,
+};
+
 struct RsMailStatusEvent : RsEvent
 {
 	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS_CHANGE) {}
 
+	RsMailStatusEventCode mMailStatusEventCode;
 	std::set<RsMailMessageId> mChangedMsgIds;
 
 	/// @see RsEvent
@@ -308,6 +323,7 @@ struct RsMailStatusEvent : RsEvent
 	{
 		RsEvent::serial_process(j, ctx);
 		RS_SERIAL_PROCESS(mChangedMsgIds);
+		RS_SERIAL_PROCESS(mMailStatusEventCode);
 	}
 
 	~RsMailStatusEvent() override;
