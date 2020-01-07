@@ -258,6 +258,11 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #
 ###########################################################################################################################################################
 
+
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
+
 #CONFIG += rs_v07_changes
 rs_v07_changes {
     DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
