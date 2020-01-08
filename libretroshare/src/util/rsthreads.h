@@ -264,9 +264,19 @@ private:
 
 	/// Store the id of the corresponding pthread
 	pthread_t mTid;
+	void resetTid();
 
-	/// Store thread full name
+	/** Store thread full name for debugging because PThread is limited to 15
+	 * char thread names */
 	std::string mFullName;
+
+	/** Store a copy of thread id which is never reset to 0 after initialization
+	 * due to RsThread functioning. After RsThread initialization this member is
+	 * only re-written with a new tread id in start(...).
+	 * This is useful for debugging because mTid is reset at the end of wrapRun
+	 * and that might happens concurrently (or just before) a debug message
+	 * being printed, thus causing the debug message to print a mangled value.*/
+	pthread_t mLastTid;
 };
 
 /**

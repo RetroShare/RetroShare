@@ -43,18 +43,25 @@ public:
 	static const std::string DEFAULT_BINDING_ADDRESS; // 127.0.0.1
 
 	/**
-	 * @brief Restart RsJsonApi server
+	 * @brief Restart RsJsonApi server asynchronously.
 	 * @jsonapi{development}
 	 */
-	virtual bool restart() = 0;
+	virtual void restart() = 0;
+
+	/** @brief Request RsJsonApi to stop and wait until it has stopped.
+	 * Do not expose this method to JSON API as fullstop must not be called from
+	 * the same thread of service execution.
+	 */
+	virtual void fullstop() = 0;
 
 	/**
-	 * @brief Request RsJsonApi to stop and wait until ti has stopped.
+	 * @brief Request RsJsonApi to stop asynchronously.
+	 * @jsonapi{development}
 	 * Be expecially carefull to call this from JSON API because you will loose
 	 * access to the API.
-	 * @jsonapi{development}
+	 * If you need to wait until stopping has completed @see isRunning().
 	 */
-	virtual bool fullstop() = 0;
+	virtual void askForStop() = 0;
 
 	/**
 	 * @brief Get status of the json api server
@@ -128,8 +135,7 @@ public:
 	        std::string& user, std::string& passwd );
 
 	/**
-	 * Add new auth (user,passwd) token to the authorized set, creating the
-	 * token user:passwd internally.
+	 * Add new API auth (user,passwd) token to the authorized set.
 	 * @jsonapi{development}
 	 * @param[in] user user name to autorize, must be alphanumerinc
 	 * @param[in] password password for the user, must be alphanumerinc
