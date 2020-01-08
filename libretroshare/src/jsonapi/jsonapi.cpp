@@ -605,7 +605,7 @@ void JsonApiServer::restart()
 void JsonApiServer::onStopRequested()
 {
 	RS_STACK_MUTEX(mServiceMutex);
-	if(mService->is_up()) mService->stop();
+	mService->stop();
 }
 
 uint16_t JsonApiServer::listeningPort() const { return mListeningPort; }
