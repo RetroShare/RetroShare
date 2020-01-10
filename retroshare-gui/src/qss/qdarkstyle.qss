@@ -996,7 +996,7 @@ QToolButton::menu-arrow:open {
 QPushButton::menu-indicator  {
     subcontrol-origin: padding;
     subcontrol-position: bottom right;
-    left: 8px;
+
 }
 
 QTableView
@@ -1208,4 +1208,81 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
 GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
     image: none;
 
+}
+
+QTabBar#smTab::tab{
+ height: 32px; 
+ width: 32px;
+}
+
+PostedCreatePostDialog QPushButton#submitButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	min-width: 2em;
+
+}
+
+PostedCreatePostDialog QPushButton#submitButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 2em;
+
+}
+
+GxsForumThreadWidget QLabel#forumName
+{
+	qproperty-fontSizeFactor: 140;
+	color: #0099cc;
+	font-size: 15px;
+	font: bold;
+}
+
+PostedItem QPushButton#shareButton
+{
+    background-color: transparent;
+	border: none;
+	min-width: 75px;
+	max-height: 22px;
+}
+
+PostedCardView QPushButton#shareButton
+{
+    background-color: transparent;
+	border: none;
+	min-width: 75px;
+}
+
+PostedItem QFrame#voteFrame {
+	background: #141415;
+}
+
+PostedCardView QFrame#voteFrame {
+	background: #141415;
+}
+
+QPushButton#shareButton:hover, QPushButton#shareButton::menu-button:hover {
+    background-color: #4A4949;
+    border: 1px solid gray;
+}
+
+PostedItem QToolButton#voteDownButton, QToolButton#voteUpButton, QToolButton#expandButton, QToolButton#readButton,
+QToolButton#commentButton, QToolButton#notesButton
+{
+	border: none;
+}
+
+PostedCardView QToolButton#voteDownButton, QToolButton#voteUpButton
+{
+	border: none;
+}
+
+PostedCardView QFrame#mainFrame [new=false]{
+	background: #302F2F;
+}
+
+PostedCardView > QFrame#mainFrame[new=true] {
+	background-color: #005000;
 }
