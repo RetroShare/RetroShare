@@ -76,7 +76,8 @@ struct GroupRequestRecord
  * Incoming transaction are in 3 different states
  *   1. START 2. RECEIVING 3. END
  */
-class RsGxsNetService : public RsNetworkExchangeService, public p3ThreadedService, public p3Config
+class RsGxsNetService :
+        public RsNetworkExchangeService, public p3ThreadedService, public p3Config
 {
 public:
 
@@ -207,10 +208,8 @@ public:
      */
     int tick();
 
-    /*!
-     * Processes transactions and job queue
-     */
-    virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
+
 private:
 
     /*!

@@ -480,14 +480,12 @@ int	pqissllistenbase::continueSSL(IncomingSSLInfo& incoming_connexion_info, bool
 
 		if(vres == X509_V_OK && nullptr != rsEvents)
 		{
-			auto ev = std::unique_ptr<RsAuthSslConnectionAutenticationEvent>(new RsAuthSslConnectionAutenticationEvent);
-
+			auto ev = std::make_shared<RsAuthSslConnectionAutenticationEvent>();
 			ev->mLocator = RsUrl(incoming_connexion_info.addr);
-			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::AuthenticationCode::MISSING_AUTHENTICATION_INFO;
-
-			rsEvents->postEvent(std::move(ev));
+			ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
+			rsEvents->postEvent(ev);
 		}
-		closeConnection(fd, incoming_connexion_info.ssl) ;
+		closeConnection(fd, incoming_connexion_info.ssl);
 
 		// failure -1, pending 0, sucess 1.
 		return -1;

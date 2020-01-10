@@ -21,6 +21,7 @@
  *******************************************************************************/
 
 #include <string>
+#include <thread>
 
 #include "services/rseventsservice.h"
 
@@ -137,7 +138,7 @@ bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
 	return false;
 }
 
-void RsEventsService::data_tick()
+void RsEventsService::threadTick()
 {
 	auto nextRunAt = std::chrono::system_clock::now() +
 	        std::chrono::milliseconds(200);

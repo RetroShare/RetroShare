@@ -146,10 +146,7 @@ public:
      */
     void getExtraFileList(std::vector<FileInfo>& files) const ;
 
-	/***
-		 * Thread Main Loop
-		 **/
-	virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
 	/***
 		 * Configuration - store extra files.

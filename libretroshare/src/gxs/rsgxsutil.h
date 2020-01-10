@@ -183,7 +183,7 @@ private:
  * Checks the integrity message and groups
  * in rsDataService using computed hash
  */
-class RsGxsIntegrityCheck : public RsSingleJobThread
+class RsGxsIntegrityCheck : public RsThread
 {
 
 	enum CheckState { CheckStart, CheckChecking };

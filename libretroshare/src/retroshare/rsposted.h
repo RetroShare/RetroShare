@@ -68,18 +68,21 @@ class RsPostedGroup
 std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
 std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
 
+enum class RsPostedEventCode: uint8_t
+{
+	UNKNOWN                 = 0x00,
+	NEW_POSTED_GROUP        = 0x01,
+	NEW_MESSAGE             = 0x02
+};
+
+
 struct RsGxsPostedEvent: RsEvent
 {
-	RsGxsPostedEvent()
-	    : RsEvent(RsEventType::GXS_POSTED), mPostedEventCode(PostedEventCode::UNKNOWN) {}
+	RsGxsPostedEvent():
+	    RsEvent(RsEventType::GXS_POSTED),
+	    mPostedEventCode(RsPostedEventCode::UNKNOWN) {}
 
-	enum class PostedEventCode: uint8_t {
-		UNKNOWN                 = 0x00,
-		NEW_POSTED_GROUP        = 0x01,
-		NEW_MESSAGE             = 0x02
-	};
-
-	PostedEventCode mPostedEventCode;
+	RsPostedEventCode mPostedEventCode;
 	RsGxsGroupId mPostedGroupId;
 	RsGxsMessageId mPostedMsgId;
 

@@ -199,12 +199,10 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 						{
 							auto ev = std::make_shared<RsGxsForumEvent>();
-
 							ev->mForumMsgId = *mit1;
 							ev->mForumGroupId = mit->first;
-							ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::NEW_MESSAGE;
-
-							rsEvents->sendEvent(ev);
+							ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+							rsEvents->postEvent(ev);
 						}
 				}
 
@@ -256,11 +254,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						for (git = grpList.begin(); git != grpList.end(); ++git)
 						{
 							auto ev = std::make_shared<RsGxsForumEvent>();
-
 							ev->mForumGroupId = *git;
-							ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::SUBSCRIBE_STATUS_CHANGED;
-
-							rsEvents->sendEvent(ev);
+							ev->mForumEventCode = RsForumEventCode::SUBSCRIBE_STATUS_CHANGED;
+							rsEvents->postEvent(ev);
 						}
 
 					}
@@ -278,18 +274,19 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						{
 							if(mKnownForums.find(*git) == mKnownForums.end())
 							{
-								mKnownForums.insert(std::make_pair(*git,time(NULL))) ;
+								mKnownForums.insert(
+								            std::make_pair(*git, time(nullptr)));
 								IndicateConfigChanged();
 
 								auto ev = std::make_shared<RsGxsForumEvent>();
-
 								ev->mForumGroupId = *git;
-								ev->mForumEventCode = RsGxsForumEvent::ForumEventCode::NEW_FORUM;
-
-								rsEvents->sendEvent(ev);
+								ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
+								rsEvents->postEvent(ev);
 							}
 							else
-								std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
+								RsInfo() << __PRETTY_FUNCTION__
+								         << " Not notifying already known forum "
+								         << *git << std::endl;
 						}
 						break;
 					}
@@ -1148,3 +1145,4 @@ bool RsGxsForumGroup::canEditPosts(const RsGxsId& id) const
 RsGxsForumGroup::~RsGxsForumGroup() = default;
 RsGxsForumMsg::~RsGxsForumMsg() = default;
 RsGxsForums::~RsGxsForums() = default;
+RsGxsForumEvent::~RsGxsForumEvent() = default;

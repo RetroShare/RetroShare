@@ -132,7 +132,7 @@ bool RsGenExchange::getGroupServerUpdateTS(const RsGxsGroupId& gid, rstime_t& gr
     return mNetService->getGroupServerUpdateTS(gid,grp_server_update_TS,msg_server_update_TS) ;
 }
 
-void RsGenExchange::data_tick()
+void RsGenExchange::threadTick()
 {
 	static const double timeDelta = 0.1; // slow tick in sec
 

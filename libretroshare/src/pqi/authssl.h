@@ -137,13 +137,6 @@ public:
 	/// SSL specific functions used in pqissl/pqissllistener
 	virtual SSL_CTX* getCTX() = 0;
 
-//	virtual void setCurrentConnectionAttemptInfo(
-//	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
-//	        const std::string& ssl_cn ) = 0;
-//	virtual void getCurrentConnectionAttemptInfo(
-//	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) = 0;
-
-
 	/**
 	 * This function parse X509 certificate from the file and return some
 	 * verified informations, like ID and signer
@@ -229,14 +222,6 @@ public:
 public:
 	/* SSL specific functions used in pqissl/pqissllistener */
 	SSL_CTX* getCTX() override;
-
-	/* Restored these functions: */
-//	void setCurrentConnectionAttemptInfo(
-//	        const RsPgpId& gpg_id, const RsPeerId& ssl_id,
-//	        const std::string& ssl_cn ) override;
-//	void getCurrentConnectionAttemptInfo(
-//	        RsPgpId& gpg_id, RsPeerId& ssl_id, std::string& ssl_cn ) override;
-
 
 private:
 

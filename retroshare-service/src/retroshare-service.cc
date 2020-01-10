@@ -14,6 +14,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+ * SPDX-License-Identifier: AGPL-3.0-or-later
  */
 
 #include "util/stacktrace.h"
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
 	RsInfo() << "\n" <<
 	    "+================================================================+\n"
 	    "|     o---o                                             o        |\n"
-        "|      \\ /           - Retroshare Service -            / \\       |\n"
+	    "|      \\ /           - Retroshare Service -            / \\       |\n"
 	    "|       o                                             o---o      |\n"
 	    "+================================================================+"
 	         << std::endl << std::endl;

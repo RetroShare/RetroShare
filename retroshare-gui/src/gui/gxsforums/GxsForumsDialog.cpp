@@ -50,18 +50,21 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-	const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+    if(event->mType == RsEventType::GXS_FORUMS)
+    {
+        const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
 
-	if(!e)
-		return;
+        if(!e)
+            return;
 
-	switch(e->mForumEventCode)
-	{
-	case RsGxsForumEvent::ForumEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
-		break;
-	default:
-		break;
-	}
+        switch(e->mForumEventCode)
+        {
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 GxsForumsDialog::~GxsForumsDialog()

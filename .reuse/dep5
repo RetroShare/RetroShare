@@ -1,0 +1,43 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: RetroShare
+Upstream-Contact: RetroShare Team <contact@retroshare.cc>
+
+Files: *
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+License: AGPL-3.0-only
+
+Files: libbitdht/*
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
+
+Files: openpgpsdk/*
+Copyright: 2005-2008, Ben Laurie
+           2005-2008, Rachel Willmer
+           2008-2019, Retroshare Team <contact@retroshare.cc>
+License: Apache-2.0
+
+Files: libretroshare/*
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+License: LGPL-3.0-or-later
+
+Files: libretroshare/src/deep_search/*
+Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+License: AGPL-3.0-only
+
+Files: jsonapi-generator/*
+       libretroshare/src/jsonapi/*
+Copyright: 2018-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+License: AGPL-3.0-or-later
+
+Files: retroshare-gui/*
+Copyright: 2004-2019, Retroshare Team <contact@retroshare.cc>
+License: GPL-3.0-or-later
+
+Files: retroshare-gui/src/TorControl/
+Copyright: 2014, John Brooks <john.brooks@dereferenced.net>
+License: BSD-3-Clause
+
+Files: retroshare-gui/src/gui/common/PictureFlow.*
+       retroshare-gui/src/qss/qdarkstyle.qss
+Copyright: 2013, Jeff Weinstein <jeff.weinstein@gmail.com>
+License: MIT

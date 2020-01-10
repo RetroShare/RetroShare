@@ -32,7 +32,6 @@
 /****
  * #define P3DISC_DEBUG	1
  ****/
-#define P3DISC_DEBUG	1
 
 /*extern*/ std::shared_ptr<RsGossipDiscovery> rsGossipDiscovery(nullptr);
 
@@ -952,11 +951,9 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 		return ;                              // fresh information here.
 
 	bool should_notify_discovery = false;
-	auto sit= it->second.mSslIds.find(item->sslId);
 
 	DiscSslInfo& sslInfo(it->second.mSslIds[item->sslId]);	// This line inserts the entry while not removing already existing data
     														// do not remove it!
-
 	if (!mPeerMgr->isFriend(item->sslId))
 	{
 		should_notify_discovery = true;

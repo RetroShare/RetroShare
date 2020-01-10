@@ -726,7 +726,7 @@ void RsGxsNetTunnelService::generateEncryptionKey(const RsGxsGroupId& group_id,c
 //                                                               Service parts                                                               //
 //===========================================================================================================================================//
 
-void RsGxsNetTunnelService::data_tick()
+void RsGxsNetTunnelService::threadTick()
 {
 	while(!mPendingTurtleItems.empty())
 	{

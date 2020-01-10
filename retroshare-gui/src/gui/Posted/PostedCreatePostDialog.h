@@ -23,6 +23,7 @@
 
 #include <QDialog>
 #include "retroshare/rsposted.h"
+#include "util/RichTextEdit.h"
 
 class TokenQueue;
 
@@ -41,13 +42,15 @@ public:
 	 */
 	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
 	~PostedCreatePostDialog();
-	
+
 	QPixmap picture;
 
 private slots:
 	void createPost();
 	void addPicture();
-
+	void on_postButton_clicked();
+	void on_imageButton_clicked();
+	void on_linkButton_clicked();
 
 private:
 	QString mLink;

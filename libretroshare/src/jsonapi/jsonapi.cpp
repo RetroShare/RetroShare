@@ -1,7 +1,8 @@
 /*
  * RetroShare JSON API
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the
@@ -145,6 +146,7 @@ bool RsJsonApi::parseToken(
 
 JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
     mService(std::make_shared<restbed::Service>()),
+    mServiceMutex("JsonApiServer restbed ptr"),
     mListeningPort(RsJsonApi::DEFAULT_PORT),
     mBindingAddress(RsJsonApi::DEFAULT_BINDING_ADDRESS)
 {
@@ -222,7 +224,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			        rsLoginHelper->attemptLogin(account, password);
 
 			if( retval == RsInit::OK )
-				authorizeUser(account.toStdString(),password);
+				authorizeUser(account.toStdString(), password);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -309,6 +311,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 	registerHandler("/rsEvents/registerEventsHandler",
 	        [this](const std::shared_ptr<rb::Session> session)
 	{
+		const std::weak_ptr<rb::Service> weakService(mService);
 		const std::multimap<std::string, std::string> headers
 		{
 			{ "Connection", "keep-alive" },
@@ -318,7 +321,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 
 		size_t reqSize = static_cast<size_t>(
 		            session->get_request()->get_header("Content-Length", 0) );
-		session->fetch( reqSize, [this](
+		session->fetch( reqSize, [weakService](
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{
@@ -331,9 +334,17 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			const std::weak_ptr<rb::Session> weakSession(session);
 			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
 			std::function<void(std::shared_ptr<const RsEvent>)> multiCallback =
-			        [this, weakSession, hId](std::shared_ptr<const RsEvent> event)
+			        [weakSession, weakService, hId](
+			        std::shared_ptr<const RsEvent> event )
 			{
-				mService->schedule( [weakSession, hId, event]()
+				auto lService = weakService.lock();
+				if(!lService || lService->is_down())
+				{
+					if(rsEvents) rsEvents->unregisterEventsHandler(hId);
+					return;
+				}
+
+				lService->schedule( [weakSession, hId, event]()
 				{
 					auto session = weakSession.lock();
 					if(!session || session->is_closed())
@@ -499,10 +510,10 @@ bool JsonApiServer::authorizeUser(
 		return false;
 	}
 
-	if(!librs::util::is_alphanumeric(passwd))
+	if(passwd.empty())
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Password is not alphanumeric"
-		        << std::endl;
+		RsWarn() << __PRETTY_FUNCTION__ << " Password is empty, are you sure "
+		         << "this what you wanted?" << std::endl;
 		return false;
 	}
 
@@ -580,28 +591,21 @@ std::vector<std::shared_ptr<rb::Resource> > JsonApiServer::getResources() const
 	return tab;
 }
 
-bool JsonApiServer::restart()
+void JsonApiServer::restart()
 {
-	fullstop();
-	RsThread::start("JSON API Server");
-
-	return true;
+	/* It is important to wrap into async(...) because fullstop() method can't
+	 * be called from same thread of execution hence from JSON API thread! */
+	RsThread::async([this]()
+	{
+		fullstop();
+		RsThread::start("JSON API Server");
+	});
 }
 
-bool JsonApiServer::fullstop()
+void JsonApiServer::onStopRequested()
 {
-	if(!mService->is_up()) return true;
-
+	RS_STACK_MUTEX(mServiceMutex);
 	mService->stop();
-	RsThread::ask_for_stop();
-
-	while(isRunning())
-	{
-		RsDbg() << __PRETTY_FUNCTION__ << " shutting down JSON API service."
-		        << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}
-	return true;
 }
 
 uint16_t JsonApiServer::listeningPort() const { return mListeningPort; }
@@ -610,23 +614,19 @@ void JsonApiServer::setBindingAddress(const std::string& bindAddress)
 { mBindingAddress = bindAddress; }
 std::string JsonApiServer::getBindingAddress() const { return mBindingAddress; }
 
-void JsonApiServer::runloop()
+void JsonApiServer::run()
 {
 	auto settings = std::make_shared<restbed::Settings>();
 	settings->set_port(mListeningPort);
 	settings->set_bind_address(mBindingAddress);
 	settings->set_default_header("Connection", "close");
 
-	if(mService->is_up())
-	{
-		RsWarn() << __PRETTY_FUNCTION__ << " restbed is already running. "
-		         << " stopping it before starting again!" << std::endl;
-		mService->stop();
-	}
-
 	/* re-allocating mService is important because it deletes the existing
 	 * service and therefore leaves the listening port open */
-	mService = std::make_shared<restbed::Service>();
+	{
+		RS_STACK_MUTEX(mServiceMutex);
+		mService = std::make_shared<restbed::Service>();
+	}
 
 	for(auto& r: getResources()) mService->publish(r);
 
@@ -634,8 +634,8 @@ void JsonApiServer::runloop()
 	{
 		RsUrl apiUrl; apiUrl.setScheme("http").setHost(mBindingAddress)
 		        .setPort(mListeningPort);
-		RsDbg() << __PRETTY_FUNCTION__ << " JSON API server listening on "
-		        << apiUrl.toString() << std::endl;
+		RsInfo() << __PRETTY_FUNCTION__ << " JSON API server listening on "
+		         << apiUrl.toString() << std::endl;
 		mService->start(settings);
 	}
 	catch(std::exception& e)
@@ -646,7 +646,7 @@ void JsonApiServer::runloop()
 		return;
 	}
 
-	RsInfo() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
 }
 
 /*static*/ void RsJsonApi::version(

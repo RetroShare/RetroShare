@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: (C) 2004-2019 Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: CC0-1.0
+
 git:
   depth: 2000
 
@@ -29,7 +32,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME == osx ]; then brew link --force qt5 ; fi
   - >
     if [ $TRAVIS_OS_NAME == osx ]; then
-    brew install openssl miniupnpc rapidjson sqlcipher xapian cmark;
+    brew install openssl miniupnpc rapidjson sqlcipher;
     fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install p7zip; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then npm install -g appdmg; fi
@@ -95,4 +98,3 @@ deploy:
   on:
     repo: retroshare/RetroShare
     branch: v0.6-OSX-Deploy
-

@@ -1859,3 +1859,5 @@ RsPeerStateChangedEvent::RsPeerStateChangedEvent(RsPeerId sslId) :
     RsEvent(RsEventType::PEER_STATE_CHANGED), mSslId(sslId) {}
 
 RsPeers::~RsPeers() = default;
+RsAuthSslConnectionAutenticationEvent::~RsAuthSslConnectionAutenticationEvent() = default;
+RsConnectionEvent::~RsConnectionEvent() = default;

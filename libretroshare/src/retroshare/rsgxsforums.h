@@ -104,33 +104,45 @@ struct RsGxsForumMsg : RsSerializable
 	~RsGxsForumMsg() override;
 };
 
+
+enum class RsForumEventCode: uint8_t
+{
+	UNKNOWN                  = 0x00,
+	NEW_FORUM                = 0x01, /// emitted when new forum is received
+	UPDATED_FORUM            = 0x02, /// emitted when existing forum is updated
+
+	/// new message reeived in a particular forum
+	NEW_MESSAGE              = 0x03,
+
+	/// existing message has been updated in a particular forum
+	UPDATED_MESSAGE          = 0x04,
+
+	/// forum was subscribed or unsubscribed
+	SUBSCRIBE_STATUS_CHANGED = 0x05,
+};
+
 struct RsGxsForumEvent: RsEvent
 {
-    RsGxsForumEvent()
-	    : RsEvent(RsEventType::GXS_FORUMS), mForumEventCode(ForumEventCode::UNKNOWN) {}
+	RsGxsForumEvent()
+	    : RsEvent(RsEventType::GXS_FORUMS),
+	      mForumEventCode(RsForumEventCode::UNKNOWN) {}
 
-	enum class ForumEventCode: uint8_t {
-        UNKNOWN                  = 0x00,
-        NEW_FORUM                = 0x01, // emitted when new forum is received
-        UPDATED_FORUM            = 0x02,	// emitted when existing forum is updated
-        NEW_MESSAGE              = 0x03, // new message reeived in a particular forum (group and msg id)
-        UPDATED_MESSAGE          = 0x04, // existing message has been updated in a particular forum (group and msg id)
-        SUBSCRIBE_STATUS_CHANGED = 0x05, // forum was subscribed or unsubscribed
-    };
-
-    ForumEventCode mForumEventCode;
-    RsGxsGroupId mForumGroupId;
+	RsForumEventCode mForumEventCode;
+	RsGxsGroupId mForumGroupId;
 	RsGxsMessageId mForumMsgId;
 
 	///* @see RsEvent @see RsSerializable
-	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RsEvent::serial_process(j, ctx);
-
 		RS_SERIAL_PROCESS(mForumEventCode);
 		RS_SERIAL_PROCESS(mForumGroupId);
 		RS_SERIAL_PROCESS(mForumMsgId);
-    }
+	}
+
+	~RsGxsForumEvent() override;
 };
 
 class RsGxsForums: public RsGxsIfaceHelper

@@ -62,13 +62,13 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 	if(!e)
 		return;
 
-	switch(e->mChannelEventCode)
-	{
-	case RsGxsChannelEvent::ChannelEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
-		break;
-	default:
-		break;
-	}
+        switch(e->mChannelEventCode)
+        {
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+            break;
+        default:
+            break;
+        }
 }
 
 GxsChannelDialog::~GxsChannelDialog()

@@ -142,18 +142,18 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
 	if(!e)
 		return;
 
-	switch(e->mChannelEventCode)
-	{
-	case RsGxsChannelEvent::ChannelEventCode::UPDATED_CHANNEL:
-	case RsGxsChannelEvent::ChannelEventCode::NEW_CHANNEL:
-	case RsGxsChannelEvent::ChannelEventCode::UPDATED_MESSAGE:
-	case RsGxsChannelEvent::ChannelEventCode::NEW_MESSAGE:
-		if(e->mChannelGroupId == mChannelGroupId)
-			updateDisplay(true);
-		break;
-	default:
-		break;
-	}
+        switch(e->mChannelEventCode)
+        {
+        case RsChannelEventCode::UPDATED_CHANNEL:
+        case RsChannelEventCode::NEW_CHANNEL:
+        case RsChannelEventCode::UPDATED_MESSAGE:
+        case RsChannelEventCode::NEW_MESSAGE:
+            if(e->mChannelGroupId == mChannelGroupId)
+				updateDisplay(true);
+            break;
+        default:
+            break;
+        }
 }
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()

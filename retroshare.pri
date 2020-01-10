@@ -1,21 +1,24 @@
-################################################################################
-# retroshare.pri                                                               #
-# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>             #
-# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>              #
-#                                                                              #
-# This program is free software: you can redistribute it and/or modify         #
-# it under the terms of the GNU Lesser General Public License as               #
-# published by the Free Software Foundation, either version 3 of the           #
-# License, or (at your option) any later version.                              #
-#                                                                              #
-# This program is distributed in the hope that it will be useful,              #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of               #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                 #
-# GNU Lesser General Public License for more details.                          #
-#                                                                              #
-# You should have received a copy of the GNU Lesser General Public License     #
-# along with this program. If not, see <https://www.gnu.org/licenses/>.        #
-################################################################################
+# RetroShare common qmake build script
+#
+# Copyright (C) 2004-2019, Retroshare Team <contact@retroshare.cc>
+# Copyright (C) 2016-2019, Gioacchino Mazzurco <gio@eigenlab.org>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Lesser General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.
+# See the GNU Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License along
+# with this program. If not, see <https://www.gnu.org/licenses/>.
+#
+# SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
 
 ################################################################################
 ## Documented build options (CONFIG) goes here as all the rest depend on them ##
@@ -99,8 +102,8 @@ rs_async_chat:CONFIG -= no_rs_async_chat
 CONFIG *= direct_chat
 no_direct_chat:CONFIG -= direct_chat
 
-# To enable messemger window which has been deprecated since RetroShare 0.6.6 append
-# the following assignation to qmake command line "CONFIG+=messenger"
+# To enable messemger window which has been deprecated since RetroShare 0.6.6
+# append the following assignation to qmake command line "CONFIG+=messenger"
 # CONFIG *= messenger
 
 # To disable bitdht append the following assignation to qmake command line
@@ -161,8 +164,8 @@ no_rs_broadcast_discovery:CONFIG -= rs_broadcast_discovery
 
 # To enable webui append the following assignation to qmake
 # command line "CONFIG+=rs_webui"
-CONFIG *= rs_no_webui
-rs_webui:CONFIG -= rs_no_webui
+CONFIG *= no_rs_webui
+rs_webui:CONFIG -= no_rs_webui
 
 # To disable retroshare-service option to set webui password from the terminal
 # append the following assignation to qmake command line
@@ -254,6 +257,11 @@ isEmpty(RS_THREAD_LIB):RS_THREAD_LIB = pthread
 #    BackwardCompat: old RS before Mai 2019 will not be able to distant chat.
 #
 ###########################################################################################################################################################
+
+
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_001
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_002
+DEFINES += V07_NON_BACKWARD_COMPATIBLE_CHANGE_003
 
 #CONFIG += rs_v07_changes
 rs_v07_changes {
