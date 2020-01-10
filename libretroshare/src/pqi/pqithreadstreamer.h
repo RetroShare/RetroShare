@@ -35,7 +35,7 @@ public:
     virtual int  tick();
 
 protected:
-    virtual void  data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
     PQInterface *mParent;
     uint32_t mTimeout;

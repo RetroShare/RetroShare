@@ -42,6 +42,8 @@ public:
 
 	bool setGroup(const RsPostedGroup &group);
 
+    uint64_t uniqueIdentifier() const override { return hash_64bits("PostedGroupItem " + groupId().toStdString()) ; }
+
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

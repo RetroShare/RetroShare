@@ -87,7 +87,7 @@ static std::string friendlyUnit(uint64_t val)
     return  std::string(buf) + " TB";
 }
 
-void HashStorage::data_tick()
+void HashStorage::threadTick()
 {
     FileHashJob job;
     RsFileHash hash;
@@ -318,14 +318,15 @@ void HashStorage::startHashThread()
 
 void HashStorage::stopHashThread()
 {
-    if (mRunning)
-    {
-        std::cerr << "Stopping hashing thread." << std::endl;
-        shutdown();
+	if(mRunning)
+	{
+		RsInfo() << __PRETTY_FUNCTION__ << "Stopping hashing thread."
+		         << std::endl;
+
+		RsThread::askForStop();
         mRunning = false ;
         mTotalSizeToHash = 0;
         mTotalFilesToHash = 0;
-        std::cerr << "done." << std::endl;
     }
 }
 

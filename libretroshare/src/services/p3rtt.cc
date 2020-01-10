@@ -20,19 +20,20 @@
  *                                                                             *
  *******************************************************************************/
 #include <iomanip>
+#include <sys/time.h>
+#include <cmath>
 
 #include "util/rsdir.h"
 #include "retroshare/rsiface.h"
+#include "retroshare/rspeers.h"
 #include "pqi/pqibin.h"
 #include "pqi/pqistore.h"
 #include "pqi/p3linkmgr.h"
 #include "rsserver/p3face.h"
-
+#include "util/cxx17retrocompat.h"
 #include "services/p3rtt.h"
 #include "rsitems/rsrttitems.h"
 
-#include <sys/time.h>
-#include <math.h>
 
 /****
  * #define DEBUG_RTT		1
@@ -352,28 +353,29 @@ int	p3rtt::storePongResult(const RsPeerId& id, uint32_t counter, double recv_ts,
 
 
 	while(peerInfo->mPongResults.size() > MAX_PONG_RESULTS)
-	{
 		peerInfo->mPongResults.pop_front();
-	}
 
 	//Wait at least 20 pongs before compute mean time offset
 	if(peerInfo->mPongResults.size() > 20)
 	{
 		double mean = 0;
-		for(std::list<RsRttPongResult>::const_iterator prIt = peerInfo->mPongResults.begin(), end = peerInfo->mPongResults.end(); prIt != end; ++ prIt)
-		{
-			mean += prIt->mOffset;
-		}
+		for(auto prIt : std::as_const(peerInfo->mPongResults))
+			mean += prIt.mOffset;
 		peerInfo->mCurrentMeanOffset = mean / peerInfo->mPongResults.size();
+
 		if(fabs(peerInfo->mCurrentMeanOffset) > 120)
 		{
-			p3Notify *notify = RsServer::notify();
-			if (notify)
+			if(rsEvents)
 			{
-				//notify->AddPopupMessage(RS_POPUP_OFFSET, eerInfo->mId.toStdString(),"", "Time Offset: ");
-				notify->AddFeedItem(RS_FEED_ITEM_PEER_OFFSET, peerInfo->mId.toStdString());
+				auto ev = std::make_shared<RsConnectionEvent>();
+				ev->mSslId = peerInfo->mId;
+				ev->mTimeShift = static_cast<rstime_t>(peerInfo->mCurrentMeanOffset);
+				ev->mConnectionInfoCode = RsConnectionEventCode::PEER_TIME_SHIFT;
+				rsEvents->postEvent(ev);
 			}
-			std::cerr << "(WW) Peer:" << peerInfo->mId << " get time offset more than two minutes with you!!!" << std::endl;
+			RsWarn() << __PRETTY_FUNCTION__ << " Peer: " << peerInfo->mId
+			         << " have a time offset of more than two minutes with you"
+			         << std::endl;
 		}
 	}
 	return 1;
@@ -438,6 +440,7 @@ bool RttPeerInfo::initialisePeerInfo(const RsPeerId& id)
 	mCurrentPingTS = 0;
 	mCurrentPingCounter = 0;
 	mCurrentPongRecvd = true;
+	mCurrentMeanOffset = 0;
 
 	mSentPings = 0;
 	mLostPongs = 0;

@@ -434,8 +434,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 			totalMessageSizeAndCount[msg->metaData->mAuthorId].count++;
 		    delete msg;
 
-			if(item != NULL)
-				delete item ;
+			delete item;
 	    }
     }
 

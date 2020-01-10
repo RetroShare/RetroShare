@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012-2018  Retroshare Team <contact@retroshare.cc>            *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -55,7 +56,7 @@
  * Customize it trough qmake command line @see retroshare.pri
  */
 #ifndef RS_EXTRA_VERSION
-#	define RS_EXTRA_VERSION "alpha"
+#	define RS_EXTRA_VERSION "-alpha"
 #endif
 
 

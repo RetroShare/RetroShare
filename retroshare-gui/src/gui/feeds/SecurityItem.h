@@ -42,7 +42,7 @@ public:
 
 	void updateItemStatic();
 
-	bool isSame(const RsPeerId &sslId, uint32_t type);
+    uint64_t uniqueIdentifier() const override;
 
 protected:
 	/* FeedItem */

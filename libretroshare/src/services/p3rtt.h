@@ -34,6 +34,8 @@ class p3ServiceControl;
 class RttPeerInfo
 {
 	public:
+    RttPeerInfo()
+        : mCurrentPingTS(0.0),mCurrentPingCounter(0.0),mCurrentPongRecvd(false),mCurrentMeanOffset(0.0),mLostPongs(0),mSentPings(0){}
 
 	bool initialisePeerInfo(const RsPeerId& id);
 

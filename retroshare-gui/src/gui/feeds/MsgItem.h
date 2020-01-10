@@ -38,6 +38,7 @@ public:
 
 	void updateItemStatic();
 
+    uint64_t uniqueIdentifier() const override { return hash_64bits("MsgItem " + mMsgId) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

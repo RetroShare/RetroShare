@@ -176,7 +176,7 @@ public:
      */
     RsTokenService* getTokenService();
 
-    virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
     /*!
      * Policy bit pattern portion

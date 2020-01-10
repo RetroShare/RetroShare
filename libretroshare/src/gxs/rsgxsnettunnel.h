@@ -103,7 +103,9 @@
 class RsGxsNetTunnelItem ;
 class RsNetworkExchangeService ;
 
-class RsGxsNetTunnelService: public RsTurtleClientService, public RsTickingThread, public p3Config, public RsGxsDistSync
+class RsGxsNetTunnelService:
+        public RsTurtleClientService, public RsTickingThread, public p3Config,
+        public RsGxsDistSync
 {
 public:
 	  RsGxsNetTunnelService() ;
@@ -196,9 +198,7 @@ public:
 	  virtual bool receiveSearchRequest(unsigned char *search_request_data, uint32_t search_request_data_len, unsigned char *& search_result_data, uint32_t& search_result_data_len, uint32_t &max_allowed_hits);
 	  virtual void receiveSearchResult(TurtleSearchRequestId request_id,unsigned char *search_result_data,uint32_t search_result_data_len);
 
-	  // Overloaded from RsTickingThread
-
-	  void data_tick() ;
+	void threadTick() override; /// @see RsTickingThread
 
 	  // Overloads p3Config
 

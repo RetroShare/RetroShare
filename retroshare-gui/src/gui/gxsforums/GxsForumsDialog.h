@@ -58,6 +58,10 @@ private:
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
+
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif
