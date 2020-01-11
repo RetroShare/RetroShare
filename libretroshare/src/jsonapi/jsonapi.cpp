@@ -331,13 +331,13 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
-			uint32_t event_type;
+			RsEventType eventType = RsEventType::NONE;
 
 			// deserialize input parameters from JSON
 			{
 				RsGenericSerializer::SerializeContext& ctx(cReq);
 				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
-				RS_SERIAL_PROCESS(event_type);
+				RS_SERIAL_PROCESS(eventType);
 			}
 
 			const std::weak_ptr<rb::Session> weakSession(session);
@@ -374,7 +374,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(static_cast<RsEventType>(event_type),multiCallback, hId);
+			bool retval = rsEvents->registerEventsHandler(eventType,multiCallback, hId);
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);

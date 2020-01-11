@@ -176,30 +176,25 @@ void RsEventsService::handleEvent(std::shared_ptr<const RsEvent> event)
 {
 	std::function<void(std::shared_ptr<const RsEvent>)> mCallback;
 
-    uint32_t event_type_index = (uint32_t)event->mType;
+    uint32_t event_type_index = static_cast<uint32_t>(event->mType);
 
-	mHandlerMapMtx.lock();
-    if(event_type_index >= mHandlerMaps.size() || event_type_index < 1)
-    {
-        RsErr() << "Cannot handle an event of type " << event_type_index << ": out of scope!" << std::endl;
-        return;
-    }
-	auto cbpt = mHandlerMaps[event_type_index].begin();
-	mHandlerMapMtx.unlock();
-
-getHandlerFromMapLock:
-	mHandlerMapMtx.lock();
-	if(cbpt != mHandlerMaps[event_type_index].end())
 	{
-		mCallback = cbpt->second;
-		++cbpt;
-	}
-	mHandlerMapMtx.unlock();
+		RS_STACK_MUTEX(mHandlerMapMtx); /*  LOCKED AREA */
 
-	if(mCallback)
-	{
-		mCallback(event); // It is relevant that this happens outside mutex
-		mCallback = std::function<void(std::shared_ptr<const RsEvent>)>(nullptr);
-		goto getHandlerFromMapLock;
+		if(event_type_index >= mHandlerMaps.size() || event_type_index < 1)
+		{
+			RsErr() << "Cannot handle an event of type " << event_type_index << ": out of scope!" << std::endl;
+			return;
+		}
+
+        // Call all clients that registered a callback for this event type
+
+        for(auto cbit: mHandlerMaps[event_type_index])
+            cbit.second(event);
+
+        // Also call all clients that registered with NONE, meaning that they expect all events
+
+        for(auto cbit: mHandlerMaps[static_cast<uint32_t>(RsEventType::NONE)])
+            cbit.second(event);
 	}
 }
