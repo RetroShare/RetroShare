@@ -331,6 +331,15 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
+			uint32_t event_type;
+
+			// deserialize input parameters from JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cReq);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
+				RS_SERIAL_PROCESS(event_type);
+			}
+
 			const std::weak_ptr<rb::Session> weakSession(session);
 			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
 			std::function<void(std::shared_ptr<const RsEvent>)> multiCallback =
@@ -365,7 +374,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(multiCallback, hId);
+			bool retval = rsEvents->registerEventsHandler(static_cast<RsEventType>(event_type),multiCallback, hId);
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
