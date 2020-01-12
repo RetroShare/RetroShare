@@ -712,8 +712,9 @@ macx-* {
 	INCLUDEPATH += "/usr/local/include"
 	RS_UPNP_LIB = miniupnpc
 	QT += macextras
-	LIBS+= -Wl,-dead_strip
-    	LIBS+= -Wl,-dead_strip_dylibs
+    LIBS+= -Wl,-dead_strip
+    LIBS+= -Wl,-dead_strip_dylibs
+    LIBS+= -Wl,-bind_at_load
 }
 
 # If not yet defined attempt UPnP library autodetection should works at least
