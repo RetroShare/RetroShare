@@ -35,6 +35,8 @@ PhotoView::PhotoView(QWidget *parent)
   /* Invoke the Qt Designer generated object setup routine */
   ui->setupUi(this);
 
+  setAttribute(Qt::WA_DeleteOnClose, true);
+
   ui->shareButton->hide();
 }
 
