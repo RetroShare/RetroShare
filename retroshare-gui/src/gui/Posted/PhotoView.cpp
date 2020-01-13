@@ -48,7 +48,7 @@ PhotoView::~PhotoView()
 
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
-	QPixmap sqpixmap = pixmap.scaled(600,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QPixmap sqpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
 	ui->photoLabel->setPixmap(sqpixmap);
 }
