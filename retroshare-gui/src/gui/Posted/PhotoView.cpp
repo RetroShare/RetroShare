@@ -48,7 +48,9 @@ PhotoView::~PhotoView()
 
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
-	ui->photoLabel->setPixmap(pixmap);
+	QPixmap sqpixmap = pixmap.scaled(600,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+	ui->photoLabel->setPixmap(sqpixmap);
 }
 
 void PhotoView::setTitle(const QString& text) 
