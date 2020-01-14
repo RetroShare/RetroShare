@@ -60,7 +60,7 @@ private slots:
 	void makeDownVote();
 	void readToggled(bool checked);
 	void readAndClearItem();
-	void toggle();
+	void toggle() override;
 	void copyMessageLink();
 	void toggleNotes();
 

@@ -67,7 +67,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle();
+	void toggle() override;
 	void readAndClearItem();
 
 	void unsubscribeForum();

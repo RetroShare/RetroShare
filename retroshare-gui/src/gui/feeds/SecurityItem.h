@@ -50,8 +50,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void removeItem();
-	void toggle();
+	void toggle() override;
 
 	void friendRequest();
 	void removeFriend();
@@ -62,9 +61,6 @@ private slots:
 	void updateItem();
 
 private:
-	FeedHolder *mParent;
-	uint32_t mFeedId;
-
 	RsPgpId  mGpgId;
 	RsPeerId mSslId;
 	std::string mSslCn;

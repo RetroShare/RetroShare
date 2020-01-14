@@ -41,7 +41,7 @@
 
 /** Constructor */
 PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    FeedItem(parent,feedId,NULL),
     mPeerId(peerId), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -50,12 +50,12 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     sendmsgButton->setEnabled(false);
 
     /* general ones */
-    connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-    connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+    connect( expandButton, SIGNAL( clicked() ), this, SLOT( toggle() ) );
+    connect( clearButton, SIGNAL( clicked() ), this, SLOT( removeItem() ) );
 
     /* specific ones */
-    connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+    connect( chatButton, SIGNAL( clicked() ), this, SLOT( openChat() ) );
+    connect( sendmsgButton, SIGNAL( clicked() ), this, SLOT( sendMsg() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
@@ -225,7 +225,7 @@ void PeerItem::updateItem()
 	/* slow Tick  */
 	int msec_rate = 10129;
 	
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
+	QTimer::singleShot( msec_rate, this, SLOT(updateItem() ));
 	return;
 }
 
@@ -236,8 +236,8 @@ void PeerItem::toggle()
 
 void PeerItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
@@ -255,25 +255,8 @@ void PeerItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void PeerItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -321,9 +304,9 @@ void PeerItem::openChat()
 	std::cerr << "PeerItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->openChat(mPeerId);
+		mFeedHolder->openChat(mPeerId);
 	}
 }
 

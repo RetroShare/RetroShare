@@ -111,7 +111,6 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 						FeedItem *feedItem = feedItemFromTreeItem(treeItem);
 						if (feedItem) {
 							disconnectSignals(feedItem);
-							feedRemoved(feedItem);
 							delete(feedItem);
 						}
 						delete(treeItem);
@@ -135,23 +134,19 @@ void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
 {
 }
 
-void RSFeedWidget::feedRemoved(FeedItem *feedItem)
-{
-}
-
 void RSFeedWidget::feedsCleared()
 {
 }
 
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
 {
-	connect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	connect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	connect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
 void RSFeedWidget::disconnectSignals(FeedItem *feedItem)
 {
-	disconnect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	disconnect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	disconnect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
@@ -400,7 +395,6 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
             return ;
 		}
 
-		feedRemoved(feedItem);
 		disconnectSignals(feedItem);
 
 		delete ui->treeWidget->takeTopLevelItem(treeItem_index);
@@ -424,14 +418,13 @@ void RSFeedWidget::feedItemSizeChanged(FeedItem */*feedItem*/)
 	ui->treeWidget->doItemsLayout();
 }
 
-void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
+void RSFeedWidget::feedItemDestroyed(qulonglong id)
 {
 	/* No need to disconnect when object will be destroyed */
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(id);
 
-	feedRemoved(feedItem);
-	if (treeItem)
+	if(treeItem)
 		delete(treeItem);
 
 	if (!mCountChangedDisabled)

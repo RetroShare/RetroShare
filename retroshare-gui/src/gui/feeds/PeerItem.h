@@ -51,8 +51,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void removeItem();
-	void toggle();
+	void toggle() override;
 
 	void addFriend();
 	void removeFriend();
@@ -63,8 +62,6 @@ private slots:
 	
 
 private:
-	FeedHolder *mParent;
-	uint32_t mFeedId;
 
     RsPeerId mPeerId;
 	uint32_t mType;

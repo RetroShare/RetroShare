@@ -58,7 +58,7 @@ public:
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
+	virtual void deleteFeedItem(FeedItem *feedItem, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 

@@ -480,14 +480,10 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 
 void NewsFeed::remUniqueFeedItem(FeedItem *item)
 {
-	FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
+	//FeedItem *feedItem = ui->feedWidget->findFeedItem(item->uniqueIdentifier());
 
-	if (feedItem)
-    {
+		ui->feedWidget->removeFeedItem(item);
 		delete item;
-
-		ui->feedWidget->removeFeedItem(feedItem);
-	}
 }
 
 /* FeedHolder Functions (for FeedItem functionality) */
@@ -496,7 +492,7 @@ QScrollArea *NewsFeed::getScrollArea()
 	return NULL;
 }
 
-void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
+void NewsFeed::deleteFeedItem(FeedItem *item, uint32_t /*type*/)
 {
 #ifdef NEWS_DEBUG
 	std::cerr << "NewsFeed::deleteFeedItem()";
@@ -504,6 +500,7 @@ void NewsFeed::deleteFeedItem(QWidget *item, uint32_t /*type*/)
 #endif
 
 	if (item) {
+		ui->feedWidget->removeFeedItem(item);
 		item->close ();
 	}
 }

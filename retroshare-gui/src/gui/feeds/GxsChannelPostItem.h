@@ -66,6 +66,7 @@ public:
 
     bool isUnread() const ;
 
+    static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:
 	void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
@@ -90,7 +91,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle();
+	void toggle() override;
 	void readAndClearItem();
 	void download();
 	void play();
