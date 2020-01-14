@@ -146,6 +146,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QLabel" name="agoLabel">
+       <property name="font">
+        <font>
+         <family>MS Sans Serif</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>ago</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -160,6 +173,9 @@
      </item>
      <item>
       <widget class="QToolButton" name="shareButton">
+       <property name="toolTip">
+        <string>Copy RetroShare link</string>
+       </property>
        <property name="text">
         <string>Share</string>
        </property>

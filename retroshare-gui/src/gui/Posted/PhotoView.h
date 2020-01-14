@@ -46,12 +46,15 @@ public slots:
 	void setTitle (const QString &text);
 	void setName(const RsGxsId& authorID);
 	void setTime(const QString& text);
+	void setGroupId(const RsGxsGroupId &groupId);
+	void setMessageId(const RsGxsMessageId& messageId);
 
 private slots:
-
+	void copyMessageLink();
 
 private:
-
+	RsGxsMessageId mMessageId;
+	RsGxsGroupId mGroupId;
 
   /** Qt Designer generated object */
   Ui::PhotoView  *ui;

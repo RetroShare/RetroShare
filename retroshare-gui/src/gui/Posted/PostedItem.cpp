@@ -605,6 +605,8 @@ void PostedItem::viewPicture()
 	PView->setTitle(messageName());
 	PView->setName(authorID);
 	PView->setTime(timestamp);
+	PView->setGroupId(groupId());
+	PView->setMessageId(mMessageId);
 
 	PView->show();
 

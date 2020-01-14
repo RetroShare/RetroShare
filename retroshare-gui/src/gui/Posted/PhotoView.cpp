@@ -25,7 +25,10 @@
 #include <QMessageBox>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/RetroShareLink.h"
+
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsposted.h>
 
 /** Constructor */
 PhotoView::PhotoView(QWidget *parent)
@@ -36,8 +39,8 @@ PhotoView::PhotoView(QWidget *parent)
   ui->setupUi(this);
 
   setAttribute(Qt::WA_DeleteOnClose, true);
-
-  ui->shareButton->hide();
+  
+  connect(ui->shareButton, SIGNAL(clicked()), this, SLOT(copyMessageLink()));
 }
 
 /** Destructor */
@@ -78,3 +81,23 @@ void PhotoView::setTime(const QString& text)
 	ui->timeLabel->setText(text);
 }
 
+void PhotoView::setGroupId(const RsGxsGroupId &groupId) 
+{
+	mGroupId = groupId;
+}
+
+void PhotoView::setMessageId(const RsGxsMessageId& messageId) 
+{
+	mMessageId = messageId ;
+}
+
+void PhotoView::copyMessageLink()
+{
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, mGroupId, mMessageId, ui->titleLabel->text());
+
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
+}
