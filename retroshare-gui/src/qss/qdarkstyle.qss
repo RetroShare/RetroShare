@@ -1274,6 +1274,11 @@ QToolButton#commentButton, QToolButton#notesButton
 	border: none;
 }
 
+PostedItem QLabel#thumbnailLabel{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
+}
+
 PostedCardView QToolButton#voteDownButton, QToolButton#voteUpButton
 {
 	border: none;

@@ -2109,6 +2109,11 @@ PostedItem QToolButton#voteDownButton, QToolButton#voteUpButton
 
 }
 
+PostedItem QLabel#thumbnailLabel{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
+}
+
 PostedCardView QPushButton#shareButton
 {
     background-color: transparent;
@@ -2134,4 +2139,3 @@ PostedCardView QFrame#mainFrame [new=false]{
 PostedCardView > QFrame#mainFrame[new=true] {
 	background-color: #005000;
 }
-

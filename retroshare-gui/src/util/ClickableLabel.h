@@ -40,7 +40,7 @@ protected:
 
 	void enterEvent(QEvent *ev) override { setStyleSheet("QLabel { border: 1px solid #3A3939; }");}
 
-    void leaveEvent(QEvent *ev) override { setStyleSheet("QLabel { border: none; }");}
+    void leaveEvent(QEvent *ev) override { setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");}
 
 };
 
