@@ -49,7 +49,7 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 
-	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + mMessageId.toStdString()); }
+	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + messageId().toStdString()); }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);

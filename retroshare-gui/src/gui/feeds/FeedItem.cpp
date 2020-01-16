@@ -69,13 +69,5 @@ void FeedItem::removeItem()
 #endif
 
 	mFeedHolder->deleteFeedItem(this,0);
-
-//	mFeedHolder->lockLayout(this, true);
-//	hide();
-//
-//	if (mFeedHolder)
-//		mFeedHolder->deleteFeedItem(this, mFeedId);
-//
-//	mFeedHolder->lockLayout(this, false);
 }
 

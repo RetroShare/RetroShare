@@ -46,12 +46,14 @@
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
 {
+    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
 	init(messageId,older_versions) ;
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
 {
+    mPost.mMeta.mMsgId.clear(); // security
 	init(post.mMeta.mMsgId,older_versions) ;
 	mPost = post ;
 }
@@ -71,7 +73,6 @@ void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsG
 
 	setup();
 
-    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
 	mLoaded = false ;
 }
 
@@ -326,12 +327,14 @@ void GxsChannelPostItem::loadMessage(const uint32_t &token)
 
 	if (posts.size() == 1)
 	{
+        std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 		setPost(posts[0]);
 	}
 	else if (cmts.size() == 1)
 	{
 		RsGxsComment cmt = cmts[0];
 
+        std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
 		ui->newCommentLabel->show();
 		ui->commLabel->show();
 		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));

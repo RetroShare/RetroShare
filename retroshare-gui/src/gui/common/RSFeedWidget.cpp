@@ -379,11 +379,10 @@ FeedItem *RSFeedWidget::feedItem(int index)
 
 void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 {
-	if (!feedItem) {
+	if (!feedItem)
 		return;
-	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);// WARNING: do not use the other function based on identifier here, because some items change their identifier when loading.
 
 	if (treeItem)
     {
@@ -391,7 +390,7 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 
         if(treeItem_index < 0)
         {
-            std::cerr << "(EE) Cannot remove designated item \"" << feedItem->uniqueIdentifier() << "\": not found!" << std::endl;
+            std::cerr << "(EE) Cannot remove designated item \"" << (void*)feedItem << "\": not found!" << std::endl;
             return ;
 		}
 
@@ -429,6 +428,26 @@ void RSFeedWidget::feedItemDestroyed(qulonglong id)
 
 	if (!mCountChangedDisabled)
 		emit feedCountChanged();
+}
+
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const FeedItem *w)
+{
+ 	QTreeWidgetItemIterator it(ui->treeWidget);
+ 	QTreeWidgetItem *treeItem=NULL;
+
+     // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
+ #warning TODO
+ 	while (*it)
+    {
+ 		FeedItem *feedItem = feedItemFromTreeItem(*it);
+
+ 		if (feedItem == w)
+            return *it;
+
+ 		++it;
+ 	}
+
+ 	return NULL;
 }
 
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(uint64_t identifier)
@@ -483,26 +502,20 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 
 FeedItem *RSFeedWidget::findFeedItem(uint64_t identifier)
 {
-	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem=NULL;
+	QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
-    // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
-#warning TODO
-	while ((treeItem = *it) != NULL) {
-		++it;
-
-		FeedItem *feedItem = feedItemFromTreeItem(treeItem);
-		if (!feedItem)
-			continue;
-
-        uint64_t id = feedItem->uniqueIdentifier();
-
-		if (id == identifier)
-			return feedItem;
-	}
-
-	return NULL;
+    if(list.empty())
+        return nullptr;
+    else if(list.size() == 1)
+        return feedItemFromTreeItem(list.front());
+    else
+    {
+        std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
+        return nullptr;
+    }
 }
+
+
 
 void RSFeedWidget::selectedFeedItems(QList<FeedItem*> &feedItems)
 {

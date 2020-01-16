@@ -98,6 +98,7 @@ private:
 	void disconnectSignals(FeedItem *feedItem);
 	FeedItem *feedItemFromTreeItem(QTreeWidgetItem *treeItem);
 	QTreeWidgetItem *findTreeWidgetItem(uint64_t identifier);
+	QTreeWidgetItem *findTreeWidgetItem(const FeedItem *w);
 	void filterItems();
 	void filterItem(QTreeWidgetItem *treeItem, FeedItem *feedItem);
 

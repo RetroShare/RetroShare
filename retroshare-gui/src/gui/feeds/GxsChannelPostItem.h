@@ -53,7 +53,7 @@ public:
 	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
 	virtual ~GxsChannelPostItem();
 
-    uint64_t uniqueIdentifier() const override { hash_64bits("GxsChannelPostItem " + mPost.mMeta.mMsgId.toStdString()) ; }
+    uint64_t uniqueIdentifier() const override { hash_64bits("GxsChannelPostItem " + messageId().toStdString()) ; }
 
 	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
 	bool setPost(const RsGxsChannelPost &post, bool doFill = true);
@@ -66,7 +66,7 @@ public:
 
     bool isUnread() const ;
 
-    static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
+    static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:
 	void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
