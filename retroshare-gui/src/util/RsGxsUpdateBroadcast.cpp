@@ -39,11 +39,9 @@ RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
 {
     mEventHandlerId = 0;	// forces initialization in registerEventsHandler()
 
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    rsEvents->registerEventsHandler(RsEventType::GXS_CHANGES, [this](std::shared_ptr<const RsEvent> event)
    		{
-        	if(event->mType == RsEventType::GXS_CHANGES)
-                onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get()));
-
+			onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get()));
 		}, mEventHandlerId );
 }
 

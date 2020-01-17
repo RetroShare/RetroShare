@@ -247,7 +247,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		if (msgChange)
 		{
-			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
+			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED)
 			{
 				/* message received */
 				if (rsEvents)

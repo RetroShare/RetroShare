@@ -46,8 +46,6 @@ void GxsFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
 
 void GxsFeedWidget::feedRemoved(FeedItem *feedItem)
 {
-	RSFeedWidget::feedRemoved(feedItem);
-
 	GxsFeedItem *gxsFeedItem = dynamic_cast<GxsFeedItem*>(feedItem);
 	if (!gxsFeedItem) {
 		return;

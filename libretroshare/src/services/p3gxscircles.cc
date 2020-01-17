@@ -501,7 +501,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 RsGxsCircleDetails details;
 				getCircleDetails(circle_id,details);
 
-				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
+				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED) )
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						RsGxsCircleMsg msg;

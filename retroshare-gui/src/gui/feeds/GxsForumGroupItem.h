@@ -46,6 +46,7 @@ public:
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
+	void toggle() override;
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
@@ -53,9 +54,6 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 
 private slots:
-	/* default stuff */
-	void toggle();
-
 	void subscribeForum();
 
 private:
