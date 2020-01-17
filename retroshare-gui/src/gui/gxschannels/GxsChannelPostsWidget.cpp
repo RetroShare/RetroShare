@@ -132,17 +132,15 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	mEventHandlerId = 0;
     // Needs to be asynced because this function is likely to be called by another thread!
 
-	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
 }
 
 void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType == RsEventType::GXS_CHANNELS)
-    {
-        const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
 
-        if(!e)
-            return;
+	if(!e)
+		return;
 
         switch(e->mChannelEventCode)
         {
@@ -156,7 +154,6 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
         default:
             break;
         }
-    }
 }
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()

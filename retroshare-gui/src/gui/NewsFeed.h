@@ -118,7 +118,8 @@ private:
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;
 
-    RsEventsHandlerId_t mEventHandlerId;
+    std::vector<RsEventsHandlerId_t> mEventHandlerIds;
+    std::vector<RsEventType> mEventTypes;
 };
 
 #endif

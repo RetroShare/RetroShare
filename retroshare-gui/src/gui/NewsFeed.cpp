@@ -72,8 +72,21 @@ static NewsFeed *instance = NULL;
 /** Constructor */
 NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed)
 {
-    mEventHandlerId =0; // needed to force intialization by registerEventsHandler()
-	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+    mEventTypes = {
+        RsEventType::AUTHSSL_CONNECTION_AUTENTICATION,
+        RsEventType::PEER_CONNECTION                 ,
+        RsEventType::GXS_CIRCLES                     ,
+        RsEventType::GXS_CHANNELS                    ,
+        RsEventType::GXS_FORUMS                      ,
+        RsEventType::GXS_POSTED                      ,
+        RsEventType::MAIL_STATUS
+    };
+
+    for(uint32_t i=0;i<mEventTypes.size();++i)
+	{
+		mEventHandlerIds.push_back(0); // needed to force intialization by registerEventsHandler()
+		rsEvents->registerEventsHandler(mEventTypes[i], [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerIds.back() );
+	}
 
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -117,7 +130,8 @@ QString hlp_str = tr(
 
 NewsFeed::~NewsFeed()
 {
-    rsEvents->unregisterEventsHandler(mEventHandlerId);
+    for(uint32_t i=0;i<mEventHandlerIds.size();++i)
+		rsEvents->unregisterEventsHandler(mEventHandlerIds[i]);
 
 	// save settings
 	processSettings(false);
@@ -190,7 +204,7 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
     if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
 		handlePostedEvent(event);
 
-    if(event->mType == RsEventType::MAIL_STATUS_CHANGE && (flags & RS_FEED_TYPE_MSG))
+    if(event->mType == RsEventType::MAIL_STATUS && (flags & RS_FEED_TYPE_MSG))
 		handleMailEvent(event);
 }
 
@@ -199,6 +213,7 @@ void NewsFeed::handleMailEvent(std::shared_ptr<const RsEvent> event)
 	const RsMailStatusEvent *pe =
 	        dynamic_cast<const RsMailStatusEvent*>(event.get());
 	if(!pe) return;
+
 
 	switch(pe->mMailStatusEventCode)
 	{
