@@ -54,16 +54,12 @@ private:
 
 private slots:
 	/* default stuff */
-	void removeItem();
-	void toggle();
+	void toggle() override;
 	void peerDetails();
 	void updateItem();
 	void banIpListChanged(const QString &ipAddress);
 
 private:
-	FeedHolder *mParent;
-	uint32_t mFeedId;
-
 	uint32_t mType;
 	RsPeerId mSslId;
 	std::string mIpAddr;

@@ -53,7 +53,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle();
+	void toggle() override;
 
 	void subscribeChannel();
 

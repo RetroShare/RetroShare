@@ -230,8 +230,12 @@ QScrollArea *GxsChannelPostsWidget::getScrollArea()
 	return NULL;
 }
 
-void GxsChannelPostsWidget::deleteFeedItem(QWidget * /*item*/, uint32_t /*type*/)
+void GxsChannelPostsWidget::deleteFeedItem(FeedItem *feedItem, uint32_t /*type*/)
 {
+	if (!feedItem)
+		return;
+
+	ui->feedWidget->removeFeedItem(feedItem);
 }
 
 void GxsChannelPostsWidget::openChat(const RsPeerId & /*peerId*/)
@@ -457,7 +461,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
     if(!post.mMeta.mOrigMsgId.isNull())
     {
-		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mOrigMsgId);
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mOrigMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 
         if(item)
@@ -473,7 +477,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
 	if (related)
     {
-		FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(post.mMeta.mGroupId, post.mMeta.mMsgId);
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
 	if (item) {
@@ -666,7 +670,7 @@ void GxsChannelPostsWidget::blank()
 
 bool GxsChannelPostsWidget::navigatePostItem(const RsGxsMessageId &msgId)
 {
-	FeedItem *feedItem = ui->feedWidget->findGxsFeedItem(groupId(), msgId);
+	FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(msgId));
 	if (!feedItem) {
 		return false;
 	}
@@ -715,17 +719,17 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 			return;
 		}
 
-		RsQThreadUtils::postToObject( [=]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete, note that
-			 * Qt::QueuedConnection is important!
-			 */
-
-			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
-			          << "thread but was scheduled by async thread" << std::endl;
-		}, this );
+//		RsQThreadUtils::postToObject( [=]()
+//		{
+//			/* Here it goes any code you want to be executed on the Qt Gui
+//			 * thread, for example to update the data model with new information
+//			 * after a blocking call to RetroShare API complete, note that
+//			 * Qt::QueuedConnection is important!
+//			 */
+//
+//			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
+//			          << "thread but was scheduled by async thread" << std::endl;
+//		}, this );
 	});
 }
 

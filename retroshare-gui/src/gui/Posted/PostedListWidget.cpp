@@ -143,7 +143,7 @@ QScrollArea *PostedListWidget::getScrollArea()
 	return ui->scrollArea;
 }
 
-void PostedListWidget::deleteFeedItem(QWidget */*item*/, uint32_t /*type*/)
+void PostedListWidget::deleteFeedItem(FeedItem *, uint32_t /*type*/)
 {
 #ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::deleteFeedItem() Nah";
