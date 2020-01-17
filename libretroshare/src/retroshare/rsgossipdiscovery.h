@@ -45,11 +45,18 @@ extern std::shared_ptr<RsGossipDiscovery> rsGossipDiscovery;
 /**
  * @brief Emitted when a pending PGP certificate is received
  */
-struct RsGossipDiscoveryFriendInviteReceivedEvent : RsEvent
-{
-	RsGossipDiscoveryFriendInviteReceivedEvent(
-	        const std::string& invite );
 
+enum class RsGossipDiscoveryEventType: uint32_t {
+    UNKNOWN              = 0x00,
+    PEER_INVITE_RECEIVED = 0x01
+};
+
+struct RsGossipDiscoveryEvent : RsEvent
+{
+	RsGossipDiscoveryEvent(): RsEvent(RsEventType::GOSSIP_DISCOVERY) {}
+	virtual ~RsGossipDiscoveryEvent() override {}
+
+	RsGossipDiscoveryEventType mGossipDiscoveryEventType;
 	std::string mInvite;
 
 	/// @see RsSerializable
@@ -57,6 +64,7 @@ struct RsGossipDiscoveryFriendInviteReceivedEvent : RsEvent
 	                             RsGenericSerializer::SerializeContext& ctx )
 	{
 		RsEvent::serial_process(j,ctx);
+		RS_SERIAL_PROCESS(mGossipDiscoveryEventType);
 		RS_SERIAL_PROCESS(mInvite);
 	}
 };
