@@ -2134,8 +2134,7 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 
 	{
 		RS_STACK_MUTEX(recentlyReceivedMutex);
-		if( mRecentlyReceivedMessageHashes.find(hash) !=
-		        mRecentlyReceivedMessageHashes.end() )
+		if( mRecentlyReceivedMessageHashes.find(hash) != mRecentlyReceivedMessageHashes.end() )
 		{
 			RsInfo() << __PRETTY_FUNCTION__ << " (II) receiving "
 			          << "message of hash " << hash << " more than once. "
@@ -2143,14 +2142,12 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 			          << std::endl;
 			return true;
 		}
-		mRecentlyReceivedMessageHashes[hash] =
-		        static_cast<uint32_t>(time(nullptr));
+		mRecentlyReceivedMessageHashes[hash] = static_cast<uint32_t>(time(nullptr));
 	}
 
 	IndicateConfigChanged();
 
-	RsItem *item = _serialiser->deserialise(
-	            const_cast<uint8_t*>(data), &dataSize );
+	RsItem *item = _serialiser->deserialise( const_cast<uint8_t*>(data), &dataSize );
 	RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item);
 
 	if(msg_item)

@@ -188,10 +188,10 @@ void NewsFeed::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		handleForumEvent(event);
 
     if(event->mType == RsEventType::GXS_POSTED && (flags & RS_FEED_TYPE_POSTED))
-		handleMailEvent(event);
+		handlePostedEvent(event);
 
     if(event->mType == RsEventType::MAIL_STATUS_CHANGE && (flags & RS_FEED_TYPE_MSG))
-		handlePostedEvent(event);
+		handleMailEvent(event);
 }
 
 void NewsFeed::handleMailEvent(std::shared_ptr<const RsEvent> event)
