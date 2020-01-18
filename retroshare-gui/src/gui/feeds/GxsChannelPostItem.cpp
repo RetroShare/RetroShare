@@ -524,6 +524,7 @@ void GxsChannelPostItem::fill()
 void GxsChannelPostItem::fillExpandFrame()
 {
 	ui->msgLabel->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->msgFrame->setVisible(!mPost.mMsg.empty());
 }
 
 QString GxsChannelPostItem::messageName()

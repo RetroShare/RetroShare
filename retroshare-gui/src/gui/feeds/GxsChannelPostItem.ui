@@ -118,6 +118,13 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QLabel" name="newLabel">
+              <property name="text">
+               <string>New</string>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item>
@@ -209,13 +216,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="newLabel">
-              <property name="text">
-               <string>New</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <widget class="QLabel" name="scoreLabel">
               <property name="font">
                <font>
@@ -253,16 +253,6 @@
               <property name="icon">
                <iconset resource="../images.qrc">
                 <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="filelabel">
-              <property name="text">
-               <string notr="true">fileLabel</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
@@ -336,6 +326,16 @@
               <property name="icon">
                <iconset resource="../icons.qrc">
                 <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="filelabel">
+              <property name="text">
+               <string notr="true">fileLabel</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
