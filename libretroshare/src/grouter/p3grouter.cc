@@ -197,7 +197,6 @@
 /**********************/
 //#define GROUTER_DEBUG
 /**********************/
-#define GROUTER_DEBUG
 
 const std::string p3GRouter::SERVICE_INFO_APP_NAME = "Global Router" ;
 
