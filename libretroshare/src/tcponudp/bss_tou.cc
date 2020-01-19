@@ -137,18 +137,18 @@ static int tou_socket_read(BIO *b, char *out, int outl)
 
 	int ret=0;
 
-	if (!out)
-		{
+	if (out)
+	{
 		clear_tou_socket_error(BIO_get_fd(b,NULL));
 		/* call tou library */
 		ret=tou_read(BIO_get_fd(b,NULL),out,outl);
 		BIO_clear_retry_flags(b);
 		if (ret <= 0)
-			{
+		{
 			if (BIO_tou_socket_should_retry(BIO_get_fd(b,NULL), ret))
 				BIO_set_retry_read(b);
-			}
 		}
+	}
 #ifdef DEBUG_TOU_BIO
 	fprintf(stderr, "tou_socket_read() = %d\n", ret);
 #endif
