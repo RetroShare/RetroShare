@@ -53,7 +53,10 @@ void PhotoView::setPixmap(const QPixmap& pixmap)
 {
 	QPixmap sqpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-	ui->photoLabel->setPixmap(sqpixmap);
+	if(pixmap.width() > 800 || pixmap.height() > 700)
+		ui->photoLabel->setPixmap(sqpixmap);
+	else
+		ui->photoLabel->setPixmap(pixmap);
 }
 
 void PhotoView::setTitle(const QString& text) 
@@ -67,7 +70,7 @@ void PhotoView::setName(const RsGxsId& authorID)
 	
 	RsIdentityDetails idDetails ;
 	rsIdentity->getIdDetails(authorID,idDetails);
-		
+
 	QPixmap pixmap ;
 
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
