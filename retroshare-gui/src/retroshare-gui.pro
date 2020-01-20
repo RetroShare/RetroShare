@@ -469,6 +469,7 @@ HEADERS +=  rshare.h \
             util/QtVersion.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
+            util/ClickableLabel.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -828,6 +829,7 @@ SOURCES +=  main.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
+            util/ClickableLabel.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
@@ -1348,6 +1350,7 @@ posted {
 		gui/Posted/PostedGroupDialog.h \
 		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
+		gui/Posted/PhotoView.h \
 		gui/Posted/PostedUserNotify.h
 
 		#gui/Posted/PostedCreateCommentDialog.h \
@@ -1358,7 +1361,7 @@ posted {
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-
+		gui/Posted/PhotoView.ui 
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
@@ -1370,6 +1373,7 @@ posted {
 		gui/Posted/PostedCardView.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
+		gui/Posted/PhotoView.cpp \
 		gui/Posted/PostedUserNotify.cpp
 
 		#gui/Posted/PostedDialog.cpp \

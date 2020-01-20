@@ -29,7 +29,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
-
+#include "PhotoView.h"
 #include "ui_PostedItem.h"
 
 #include <retroshare/rsposted.h>
@@ -110,11 +110,12 @@ void PostedItem::setup()
 	connect(ui->notesButton, SIGNAL(clicked()), this, SLOT( toggleNotes()));
 
 	connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
-	
+	connect(ui->thumbnailLabel, SIGNAL(clicked()), this, SLOT(viewPicture()));
+
 	QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
 	connect(CopyLinkAction, SIGNAL(triggered()), this, SLOT(copyMessageLink()));
-	
-	
+
+
 	int S = QFontMetricsF(font()).height() ;
 	
 	ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
@@ -318,7 +319,15 @@ void PostedItem::fill()
 		
 		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 		ui->thumbnailLabel->setPixmap(sqpixmap);
-		ui->pictureLabel->setPixmap(pixmap);
+		ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
+
+		QPixmap squaledpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+		if(pixmap.width() > 800) 
+			ui->pictureLabel->setPixmap(squaledpixmap);
+		else 
+			ui->pictureLabel->setPixmap(pixmap);
+
 	}
 	else if (urlOkay && (mPost.mImage.mData == NULL))
 	{
@@ -577,4 +586,29 @@ void PostedItem::toggleNotes()
 		ui->frame_notes->hide();
 	}
 
+}
+
+void PostedItem::viewPicture()
+{
+	if(mPost.mImage.mData == NULL) {
+		return;
+	}
+
+	QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+	QPixmap pixmap;
+	GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+	RsGxsId authorID = mPost.mMeta.mAuthorId;
+	
+ 	PhotoView *PView = new PhotoView(this);
+	
+	PView->setPixmap(pixmap);
+	PView->setTitle(messageName());
+	PView->setName(authorID);
+	PView->setTime(timestamp);
+	PView->setGroupId(groupId());
+	PView->setMessageId(mMessageId);
+
+	PView->show();
+
+	/* window will destroy itself! */
 }
