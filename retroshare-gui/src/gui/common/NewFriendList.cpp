@@ -178,7 +178,7 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
     ui->filterLineEdit->showFilterIcon();
 
     mEventHandlerId=0; // forces initialization
-    rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
+    rsEvents->registerEventsHandler( RsEventType::PEER_CONNECTION, [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
 
     mModel = new RsFriendListModel();
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
@@ -258,13 +258,10 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
 
 void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> e)
 {
-    if(e->mType == RsEventType::PEER_CONNECTION)
-    {
-        // /!\ The function we're in is called from a different thread. It's very important
-        //     to use this trick in order to avoid data races.
+	// /!\ The function we're in is called from a different thread. It's very important
+	//     to use this trick in order to avoid data races.
 
-		RsQThreadUtils::postToObject( [=]() { forceUpdateDisplay() ; }, this ) ;
-    }
+	RsQThreadUtils::postToObject( [=]() { forceUpdateDisplay() ; }, this ) ;
 }
 
 NewFriendList::~NewFriendList()

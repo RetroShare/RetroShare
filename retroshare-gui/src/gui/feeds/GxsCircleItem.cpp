@@ -40,7 +40,7 @@
 
 
 GxsCircleItem::GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, const uint32_t type)
-  :FeedItem(NULL), mFeedHolder(feedHolder), mFeedId(feedId), mType(type), mCircleId(circleId), mGxsId(gxsId)
+    :FeedItem(feedHolder,feedId,NULL), mType(type), mCircleId(circleId), mGxsId(gxsId)
 {
 	setup();
 }
@@ -170,22 +170,6 @@ void GxsCircleItem::setup()
 uint64_t GxsCircleItem::uniqueIdentifier() const
 {
     return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString());
-}
-
-void GxsCircleItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsCircleItem::removeItem()" << std::endl;
-#endif
-
-	if (mFeedHolder)
-	{
-		mFeedHolder->lockLayout(this, true);
-		hide();
-		mFeedHolder->lockLayout(this, false);
-
-		mFeedHolder->deleteFeedItem(this, mFeedId);
-	}
 }
 
 void GxsCircleItem::loadRequest(const TokenQueue * queue, const TokenRequest &req)

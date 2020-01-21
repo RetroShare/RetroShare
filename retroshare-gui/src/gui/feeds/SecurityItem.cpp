@@ -44,7 +44,7 @@
 
 /** Constructor */
 SecurityItem::SecurityItem(FeedHolder *parent, uint32_t feedId, const RsPgpId &gpgId, const RsPeerId &sslId, const std::string &sslCn, const std::string& ip_address,uint32_t type, bool isHome) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    FeedItem(parent,feedId,NULL),
     mGpgId(gpgId), mSslId(sslId), mSslCn(sslCn), mIP(ip_address), mType(type), mIsHome(isHome)
 {
 	/* Invoke the Qt Designer generated object setup routine */
@@ -288,8 +288,8 @@ void SecurityItem::toggle()
 
 void SecurityItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
@@ -307,25 +307,8 @@ void SecurityItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void SecurityItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -413,8 +396,8 @@ void SecurityItem::openChat()
 	std::cerr << "SecurityItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-        mParent->openChat(mSslId);
+        mFeedHolder->openChat(mSslId);
 	}
 }

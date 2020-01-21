@@ -32,7 +32,7 @@
  **/
 
 GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, bool isHome, RsGxsIfaceHelper *iface, bool autoUpdate) :
-    FeedItem(NULL)
+    FeedItem(feedHolder,feedId,NULL)
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsGroupFeedItem::GxsGroupFeedItem()";
@@ -40,8 +40,6 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 #endif
 
 	/* this are just generally useful for all children */
-	mFeedHolder = feedHolder;
-	mFeedId = feedId;
 	mIsHome = isHome;
 
 	/* load data if we can */
@@ -91,27 +89,6 @@ bool GxsGroupFeedItem::initLoadQueue()
 
 	mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
 	return (mLoadQueue != NULL);
-}
-
-void GxsGroupFeedItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsGroupFeedItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	if (mFeedHolder)
-	{
-		mFeedHolder->lockLayout(this, true);
-	}
-
-	hide();
-
-	if (mFeedHolder)
-	{
-		mFeedHolder->lockLayout(this, false);
-		mFeedHolder->deleteFeedItem(this, mFeedId);
-	}
 }
 
 void GxsGroupFeedItem::unsubscribe()

@@ -65,9 +65,6 @@ protected:
 
 
 private slots:
-	/* default stuff */
-	void removeItem();
-
 	void showCircleDetails();
 	void acceptCircleSubscription();
 	void grantCircleMembership() ;
@@ -76,8 +73,6 @@ private slots:
 private:
 	void setup();
 
-	FeedHolder *mFeedHolder;
-	uint32_t mFeedId;
 	uint32_t mType;
 
 	RsGxsCircleId mCircleId;

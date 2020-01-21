@@ -111,7 +111,6 @@ bool RSFeedWidget::eventFilter(QObject *object, QEvent *event)
 						FeedItem *feedItem = feedItemFromTreeItem(treeItem);
 						if (feedItem) {
 							disconnectSignals(feedItem);
-							feedRemoved(feedItem);
 							delete(feedItem);
 						}
 						delete(treeItem);
@@ -135,23 +134,19 @@ void RSFeedWidget::feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem)
 {
 }
 
-void RSFeedWidget::feedRemoved(FeedItem *feedItem)
-{
-}
-
 void RSFeedWidget::feedsCleared()
 {
 }
 
 void RSFeedWidget::connectSignals(FeedItem *feedItem)
 {
-	connect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	connect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	connect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
 void RSFeedWidget::disconnectSignals(FeedItem *feedItem)
 {
-	disconnect(feedItem, SIGNAL(feedItemDestroyed(FeedItem*)), this, SLOT(feedItemDestroyed(FeedItem*)));
+	disconnect(feedItem, SIGNAL(feedItemNeedsClosing(qulonglong)), this, SLOT(feedItemDestroyed(qulonglong)));
 	disconnect(feedItem, SIGNAL(sizeChanged(FeedItem*)), this, SLOT(feedItemSizeChanged(FeedItem*)));
 }
 
@@ -384,11 +379,10 @@ FeedItem *RSFeedWidget::feedItem(int index)
 
 void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 {
-	if (!feedItem) {
+	if (!feedItem)
 		return;
-	}
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem);// WARNING: do not use the other function based on identifier here, because some items change their identifier when loading.
 
 	if (treeItem)
     {
@@ -396,11 +390,10 @@ void RSFeedWidget::removeFeedItem(FeedItem *feedItem)
 
         if(treeItem_index < 0)
         {
-            std::cerr << "(EE) Cannot remove designated item \"" << feedItem->uniqueIdentifier() << "\": not found!" << std::endl;
+            std::cerr << "(EE) Cannot remove designated item \"" << (void*)feedItem << "\": not found!" << std::endl;
             return ;
 		}
 
-		feedRemoved(feedItem);
 		disconnectSignals(feedItem);
 
 		delete ui->treeWidget->takeTopLevelItem(treeItem_index);
@@ -424,18 +417,37 @@ void RSFeedWidget::feedItemSizeChanged(FeedItem */*feedItem*/)
 	ui->treeWidget->doItemsLayout();
 }
 
-void RSFeedWidget::feedItemDestroyed(FeedItem *feedItem)
+void RSFeedWidget::feedItemDestroyed(qulonglong id)
 {
 	/* No need to disconnect when object will be destroyed */
 
-	QTreeWidgetItem *treeItem = findTreeWidgetItem(feedItem->uniqueIdentifier());
+	QTreeWidgetItem *treeItem = findTreeWidgetItem(id);
 
-	feedRemoved(feedItem);
-	if (treeItem)
+	if(treeItem)
 		delete(treeItem);
 
 	if (!mCountChangedDisabled)
 		emit feedCountChanged();
+}
+
+QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(const FeedItem *w)
+{
+ 	QTreeWidgetItemIterator it(ui->treeWidget);
+ 	QTreeWidgetItem *treeItem=NULL;
+
+     // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
+ #warning TODO
+ 	while (*it)
+    {
+ 		FeedItem *feedItem = feedItemFromTreeItem(*it);
+
+ 		if (feedItem == w)
+            return *it;
+
+ 		++it;
+ 	}
+
+ 	return NULL;
 }
 
 QTreeWidgetItem *RSFeedWidget::findTreeWidgetItem(uint64_t identifier)
@@ -490,26 +502,20 @@ void RSFeedWidget::withAll(RSFeedWidgetCallbackFunction callback, void *data)
 
 FeedItem *RSFeedWidget::findFeedItem(uint64_t identifier)
 {
-	QTreeWidgetItemIterator it(ui->treeWidget);
-	QTreeWidgetItem *treeItem=NULL;
+	QList<QTreeWidgetItem*> list = ui->treeWidget->findItems(QString("%1").arg(identifier,8,16,QChar('0')),Qt::MatchExactly,COLUMN_IDENTIFIER);
 
-    // this search could probably be automatised by giving the tree items the identifier as data for some specific role, then calling QTreeWidget::findItems()
-#warning TODO
-	while ((treeItem = *it) != NULL) {
-		++it;
-
-		FeedItem *feedItem = feedItemFromTreeItem(treeItem);
-		if (!feedItem)
-			continue;
-
-        uint64_t id = feedItem->uniqueIdentifier();
-
-		if (id == identifier)
-			return feedItem;
-	}
-
-	return NULL;
+    if(list.empty())
+        return nullptr;
+    else if(list.size() == 1)
+        return feedItemFromTreeItem(list.front());
+    else
+    {
+        std::cerr << "(EE) More than a single item with identifier \"" << identifier << "\" in the feed tree widget. This shouldn't happen!" << std::endl;
+        return nullptr;
+    }
 }
+
+
 
 void RSFeedWidget::selectedFeedItems(QList<FeedItem*> &feedItems)
 {

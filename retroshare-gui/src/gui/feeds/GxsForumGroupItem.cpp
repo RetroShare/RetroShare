@@ -158,7 +158,6 @@ void GxsForumGroupItem::fill()
 		ui->clearButton->setEnabled(false);
 	}
 }
-
 void GxsForumGroupItem::toggle()
 {
 	expand(ui->expandFrame->isHidden());
