@@ -32,6 +32,7 @@ void AspectRatioPixmapLabel::setPixmap ( const QPixmap & p)
 {
     pix = p;
 	QLabel::setPixmap(pix);
+	//std::cout << "Information size: " << pix.width() << 'x' << pix.height() << std::endl;
 }
 
 int AspectRatioPixmapLabel::heightForWidth( int width ) const

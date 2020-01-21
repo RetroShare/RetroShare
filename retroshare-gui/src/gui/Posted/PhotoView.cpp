@@ -51,17 +51,7 @@ PhotoView::~PhotoView()
 
 void PhotoView::setPixmap(const QPixmap& pixmap) 
 {
-	QPixmap sqpixmap;
-	if(pixmap.width() > 800 ){
-		QPixmap sqpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		ui->photoLabel->setPixmap(sqpixmap);
-	}else if (pixmap.height() > 600){
-		QPixmap sqpixmap = pixmap.scaled(480,640, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-		ui->photoLabel->setPixmap(sqpixmap);
-	}
-	else{
-		ui->photoLabel->setPixmap(pixmap);
-	}
+	ui->photoLabel->setPixmap(pixmap);
 	this->adjustSize();
 }
 
