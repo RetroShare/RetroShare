@@ -62,6 +62,7 @@ void PhotoView::setPixmap(const QPixmap& pixmap)
 	else{
 		ui->photoLabel->setPixmap(pixmap);
 	}
+	this->adjustSize();
 }
 
 void PhotoView::setTitle(const QString& text) 
