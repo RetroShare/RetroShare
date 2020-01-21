@@ -321,13 +321,13 @@ void PostedItem::fill()
 		ui->thumbnailLabel->setPixmap(sqpixmap);
 		ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
 
-		QPixmap squaledpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-		if(pixmap.width() > 800) 
-			ui->pictureLabel->setPixmap(squaledpixmap);
-		else 
+		QPixmap scaledpixmap;
+		if(pixmap.width() > 800){
+			QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+			ui->pictureLabel->setPixmap(scaledpixmap);
+		}else{ 
 			ui->pictureLabel->setPixmap(pixmap);
-
+		}
 	}
 	else if (urlOkay && (mPost.mImage.mData == NULL))
 	{

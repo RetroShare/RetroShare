@@ -308,15 +308,13 @@ void PostedCardView::fill()
 		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
 		
-		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-		
-		QPixmap squaledpixmap = pixmap.scaled(640,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-		if(pixmap.width() > 800) 
-			ui->pictureLabel->setPixmap(squaledpixmap);
-		else 
+		QPixmap scaledpixmap;
+		if(pixmap.width() > 800){
+			QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
+			ui->pictureLabel->setPixmap(scaledpixmap);
+		}else{
 			ui->pictureLabel->setPixmap(pixmap);
-
+		}
 	}
 	else if (mPost.mImage.mData == NULL)
 	{
