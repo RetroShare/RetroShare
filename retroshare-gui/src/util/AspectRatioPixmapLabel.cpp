@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "AspectRatioPixmapLabel.h"
+#include <iostream>
 
 AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
     QLabel(parent)
@@ -53,4 +54,6 @@ void AspectRatioPixmapLabel::resizeEvent(QResizeEvent * e)
 {
     if(!pix.isNull())
         QLabel::setPixmap(scaledPixmap());
+	QLabel::resizeEvent(e);
+	//std::cout << "Information resized: " << e->oldSize().width() << 'x' << e->oldSize().height() << " to " << e->size().width() << 'x' << e->size().height() << std::endl;
 }

@@ -51,37 +51,14 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="photoLabel">
+       <widget class="AspectRatioPixmapLabel" name="photoLabel">
         <property name="text">
          <string/>
         </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
        </widget>
-      </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
@@ -207,9 +184,13 @@
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>AspectRatioPixmapLabel</class>
+   <extends>QLabel</extends>
+   <header>util/aspectratiopixmaplabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
  </resources>
  <connections/>
