@@ -470,6 +470,7 @@ HEADERS +=  rshare.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
             util/ClickableLabel.h \
+            util/AspectRatioPixmapLabel.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -830,6 +831,7 @@ SOURCES +=  main.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
             util/ClickableLabel.cpp \
+            util/AspectRatioPixmapLabel.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
