@@ -417,7 +417,7 @@ void JsonApiServer::registerHandler(
 
 			if(!rsLoginHelper->isLoggedIn())
 			{
-				session->close(rb::CONFLICT);
+				session->close(rb::CONFLICT, corsOptionsHeaders);
 				return;
 			}
 
@@ -429,7 +429,7 @@ void JsonApiServer::registerHandler(
 
 			if(authToken != "Basic")
 			{
-				session->close(rb::UNAUTHORIZED);
+				session->close(rb::UNAUTHORIZED, corsOptionsHeaders);
 				return;
 			}
 
@@ -437,7 +437,7 @@ void JsonApiServer::registerHandler(
 			authToken = decodeToken(authToken);
 
 			if(isAuthTokenValid(authToken)) callback(session);
-			else session->close(rb::UNAUTHORIZED);
+			else session->close(rb::UNAUTHORIZED, corsOptionsHeaders);
 		} );
 
 	mResources.push_back(resource);
