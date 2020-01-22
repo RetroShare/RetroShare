@@ -45,7 +45,6 @@ protected:
 private slots:
 	/* default stuff */
 	void gotoHome();
-	void removeItem();
 
 	void sendMsg();
 	void openChat();
@@ -59,9 +58,6 @@ private slots:
 
 private:
 	void insertChat(const std::string &message);
-
-	FeedHolder *mParent;
-	uint32_t mFeedId;
 
 	RsPeerId mPeerId;
 };

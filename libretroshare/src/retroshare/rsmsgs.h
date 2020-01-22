@@ -296,7 +296,6 @@ struct MsgTagType : RsSerializable
 } //namespace Rs
 } //namespace Msgs
 
-
 enum class RsMailStatusEventCode: uint8_t
 {
 	NEW_MESSAGE                     = 0x00,
@@ -312,9 +311,9 @@ enum class RsMailStatusEventCode: uint8_t
 
 struct RsMailStatusEvent : RsEvent
 {
-	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS_CHANGE) {}
+	RsMailStatusEvent() : RsEvent(RsEventType::MAIL_STATUS) {}
 
-	RsMailStatusEventCode mMailStatusEventCode;
+    RsMailStatusEventCode mMailStatusEventCode;
 	std::set<RsMailMessageId> mChangedMsgIds;
 
 	/// @see RsEvent
@@ -326,7 +325,7 @@ struct RsMailStatusEvent : RsEvent
 		RS_SERIAL_PROCESS(mMailStatusEventCode);
 	}
 
-	~RsMailStatusEvent() override;
+	~RsMailStatusEvent() override = default;
 };
 
 #define RS_CHAT_PUBLIC 			0x0001
@@ -335,7 +334,7 @@ struct RsMailStatusEvent : RsEvent
 
 #define RS_DISTANT_CHAT_STATUS_UNKNOWN			0x0000
 #define RS_DISTANT_CHAT_STATUS_TUNNEL_DN   		0x0001
-#define RS_DISTANT_CHAT_STATUS_CAN_TALK		0x0002
+#define RS_DISTANT_CHAT_STATUS_CAN_TALK			0x0002
 #define RS_DISTANT_CHAT_STATUS_REMOTELY_CLOSED 	0x0003
 
 #define RS_DISTANT_CHAT_ERROR_NO_ERROR            0x0000 

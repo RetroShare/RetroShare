@@ -297,6 +297,7 @@ int RsInit::InitRetroShare(const RsConfigOptions& conf)
     rsInitConfig->inet               = conf.forcedInetAddress ;
     rsInitConfig->port               = conf.forcedPort ;
     rsInitConfig->debugLevel         = conf.debugLevel;
+    rsInitConfig->udpListenerOnly    = conf.udpListenerOnly;
     rsInitConfig->optBaseDir         = conf.optBaseDir;
     rsInitConfig->jsonApiPort        = conf.jsonApiPort;
     rsInitConfig->jsonApiBindAddress = conf.jsonApiBindAddress;

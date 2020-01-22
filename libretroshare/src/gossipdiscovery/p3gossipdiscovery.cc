@@ -111,6 +111,7 @@ p3discovery2::p3discovery2(
 
 	if(rsEvents)
 		rsEvents->registerEventsHandler(
+                    RsEventType::GOSSIP_DISCOVERY,
 		            [this](std::shared_ptr<const RsEvent> event)
 		{
 			rsEventsHandler(*event);
@@ -1345,8 +1346,3 @@ void p3discovery2::rsEventsHandler(const RsEvent& event)
 //
 // 	/* ignore other operations */
 // }
-
-// (cyril) do we still need this??
-RsGossipDiscoveryFriendInviteReceivedEvent::RsGossipDiscoveryFriendInviteReceivedEvent(const std::string& invite) :
-    RsEvent(RsEventType::GOSSIP_DISCOVERY_INVITE_RECEIVED),
-    mInvite(invite) {}

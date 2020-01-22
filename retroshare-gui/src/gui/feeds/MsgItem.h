@@ -50,7 +50,6 @@ private:
 private slots:
 	/* default stuff */
 	void gotoHome();
-	void removeItem();
 	void toggle();
 
 	void playMedia();
@@ -62,9 +61,6 @@ private slots:
 	void updateItem();
 
 private:
-	FeedHolder *mParent;
-	uint32_t mFeedId;
-
 	std::string mMsgId;
 	QString mMsg;
 

@@ -85,7 +85,7 @@ int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 	return nullptr;
 }
 
-RsThread::RsThread() : mHasStopped(true), mShouldStop(false)
+void RsThread::resetTid()
 {
 #ifdef WINDOWS_SYS
 	memset (&mTid, 0, sizeof(mTid));
@@ -93,6 +93,9 @@ RsThread::RsThread() : mHasStopped(true), mShouldStop(false)
 	mTid = 0;
 #endif
 }
+
+RsThread::RsThread() : mHasStopped(true), mShouldStop(false), mLastTid()
+{ resetTid(); }
 
 bool RsThread::isRunning() { return !mHasStopped; }
 
@@ -102,13 +105,13 @@ void RsThread::askForStop()
 {
 	/* Call onStopRequested() only once even if askForStop() is called multiple
 	 * times */
-	if(!mShouldStop.exchange(true))
-		RsThread::async([&](){ onStopRequested(); });
+	if(!mShouldStop.exchange(true)) onStopRequested();
 }
 
 void RsThread::wrapRun()
 {
 	run();
+	resetTid();
 	mHasStopped = true;
 }
 
@@ -122,7 +125,8 @@ void RsThread::fullstop()
 		RsErr() << __PRETTY_FUNCTION__ << " called by same thread. This should "
 		        << "never happen! this: " << static_cast<void*>(this)
 		        << std::hex << ", callerTid: " << callerTid
-		        << ", mTid: " << mTid << std::dec << std::endl;
+		        << ", mTid: " << mTid << std::dec
+		        << ", mFullName: " << mFullName << std::endl;
 		print_stacktrace();
 		return;
 	}
@@ -134,9 +138,9 @@ void RsThread::fullstop()
 		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		++i;
 		if(!(i%5))
-			RsInfo() << __PRETTY_FUNCTION__ << " " << i*0.2 << " seconds passed"
-			         << " waiting for thread: " << mTid << " " << mFullName
-			         << " to stop" << std::endl;
+			RsDbg() << __PRETTY_FUNCTION__ << " " << i*0.2 << " seconds passed"
+			        << " waiting for thread: " << std::hex << mLastTid
+			        << std::dec << " " << mFullName << " to stop" << std::endl;
 	}
 }
 
@@ -157,6 +161,9 @@ bool RsThread::start(const std::string& threadName)
 			print_stacktrace();
 			return false;
 		}
+
+		/* Store an extra copy of thread id for debugging */
+		mLastTid = mTid;
 
 		/* Store thread full name as PThread is not able to keep it entirely */
 		mFullName = threadName;
@@ -266,10 +273,10 @@ double RsStackMutex::getCurrentTS()
 
 RsThread::~RsThread()
 {
-	if(isRunning())
+	if(!mHasStopped)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " deleting thread: " << mTid << " "
-		        << mFullName << " that is still "
+		RsErr() << __PRETTY_FUNCTION__ << " deleting thread: " << mLastTid
+		        << " " << mFullName << " that is still "
 		        << "running! Something seems very wrong here and RetroShare is "
 		        << "likely to crash because of this." << std::endl;
 		print_stacktrace();

@@ -47,8 +47,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void removeItem();
-	void toggle();
+	void toggle() override;
 
 	void readAndClearItem();
 	void copyLink();
@@ -61,9 +60,7 @@ private:
 
 	RsFeedReader *mFeedReader;
 	FeedReaderNotify *mNotify;
-	FeedHolder *mParent;
 
-	std::string mFeedId;
 	std::string mMsgId;
 	QString mLink;
 

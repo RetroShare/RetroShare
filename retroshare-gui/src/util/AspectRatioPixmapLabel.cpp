@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include "AspectRatioPixmapLabel.h"
+#include <iostream>
 
 AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
     QLabel(parent)
@@ -30,7 +31,8 @@ AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
 void AspectRatioPixmapLabel::setPixmap ( const QPixmap & p)
 {
     pix = p;
-    QLabel::setPixmap(scaledPixmap());
+	QLabel::setPixmap(pix);
+	//std::cout << "Information size: " << pix.width() << 'x' << pix.height() << std::endl;
 }
 
 int AspectRatioPixmapLabel::heightForWidth( int width ) const
@@ -40,8 +42,7 @@ int AspectRatioPixmapLabel::heightForWidth( int width ) const
 
 QSize AspectRatioPixmapLabel::sizeHint() const
 {
-    int w = this->width();
-    return QSize( w, heightForWidth(w) );
+	return QSize(pix.width(), pix.height());
 }
 
 QPixmap AspectRatioPixmapLabel::scaledPixmap() const
@@ -53,4 +54,6 @@ void AspectRatioPixmapLabel::resizeEvent(QResizeEvent * e)
 {
     if(!pix.isNull())
         QLabel::setPixmap(scaledPixmap());
+	QLabel::resizeEvent(e);
+	//std::cout << "Information resized: " << e->oldSize().width() << 'x' << e->oldSize().height() << " to " << e->size().width() << 'x' << e->size().height() << std::endl;
 }

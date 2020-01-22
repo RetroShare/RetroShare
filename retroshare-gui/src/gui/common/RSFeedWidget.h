@@ -87,11 +87,10 @@ public slots:
 protected:
 	bool eventFilter(QObject *object, QEvent *event);
 	virtual void feedAdded(FeedItem *feedItem, QTreeWidgetItem *treeItem);
-	virtual void feedRemoved(FeedItem *feedItem);
 	virtual void feedsCleared();
 
 private slots:
-	void feedItemDestroyed(FeedItem *feedItem);
+	void feedItemDestroyed(qulonglong id);
 	void feedItemSizeChanged(FeedItem *feedItem);
 
 private:
@@ -99,6 +98,7 @@ private:
 	void disconnectSignals(FeedItem *feedItem);
 	FeedItem *feedItemFromTreeItem(QTreeWidgetItem *treeItem);
 	QTreeWidgetItem *findTreeWidgetItem(uint64_t identifier);
+	QTreeWidgetItem *findTreeWidgetItem(const FeedItem *w);
 	void filterItems();
 	void filterItem(QTreeWidgetItem *treeItem, FeedItem *feedItem);
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
-    <height>464</height>
+    <width>346</width>
+    <height>107</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -51,37 +51,11 @@
        <number>0</number>
       </property>
       <item row="0" column="0">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="photoLabel">
+       <widget class="AspectRatioPixmapLabel" name="photoLabel">
         <property name="text">
          <string/>
         </property>
        </widget>
-      </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
@@ -165,7 +139,7 @@
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>398</width>
+         <width>0</width>
          <height>20</height>
         </size>
        </property>
@@ -207,9 +181,13 @@
    <header>gui/common/AvatarWidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>AspectRatioPixmapLabel</class>
+   <extends>QLabel</extends>
+   <header>util/aspectratiopixmaplabel.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
  </resources>
  <connections/>

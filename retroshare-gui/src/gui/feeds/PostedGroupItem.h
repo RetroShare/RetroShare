@@ -54,9 +54,7 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
 private slots:
-	/* default stuff */
-	void toggle();
-
+	void toggle() override;
 	void subscribePosted();
 
 private:

@@ -112,7 +112,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				// It could be taken a step further and directly request these msgs for an update.
 				addGroupForProcessing(mit->first);
 
-				if (rsEvents && msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
+				if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
 					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
 					{
 						auto ev = std::make_shared<RsGxsPostedEvent>();

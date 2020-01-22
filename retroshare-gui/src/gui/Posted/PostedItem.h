@@ -49,7 +49,7 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 
-	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + mMessageId.toStdString()); }
+	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + messageId().toStdString()); }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -60,7 +60,7 @@ private slots:
 	void makeDownVote();
 	void readToggled(bool checked);
 	void readAndClearItem();
-	void toggle();
+	void toggle() override;
 	void copyMessageLink();
 	void toggleNotes();
 	void viewPicture();
