@@ -103,6 +103,7 @@ class misc : public QObject
     static QString friendlyUnit(float val);
 
     static bool isPreviewable(QString extension);
+	static bool isPicture(QString extension);
 
 	 static QString fingerPrintStyleSplit(const QString& in) ;
 

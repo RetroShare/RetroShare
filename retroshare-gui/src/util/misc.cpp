@@ -108,6 +108,18 @@ bool misc::isPreviewable(QString extension)
     return false;
 }
 
+bool misc::isPicture(QString extension)
+{
+    extension = extension.toUpper();
+    if(extension == "PNG") return true;
+    if(extension == "GIF") return true;
+    if(extension == "JPG") return true;
+    if(extension == "JPEG") return true;
+    if(extension == "TIFF") return true;
+    if(extension == "WEBP") return true;
+    return false;
+}
+
 // return qBittorrent config path
 QString misc::qBittorrentPath()
 {

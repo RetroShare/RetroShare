@@ -82,6 +82,9 @@ public slots:
 	void play();
 	void mediatype();
 	void copyLink();
+	void loadpicture();
+	void picturetype();
+	void nomediatype();
 
 private slots:
 	void toggle();
@@ -104,6 +107,7 @@ private:
 	uint64_t    mFileSize;
 	RsPeerId    mSrcId;
 	std::string mChannelId;
+    QMovie *movie;
 
 	uint32_t    mMode;
 	uint32_t    mType;
