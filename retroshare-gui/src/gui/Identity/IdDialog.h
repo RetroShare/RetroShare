@@ -92,6 +92,7 @@ private slots:
 	void chatIdentityItem(QTreeWidgetItem* item);
 	void sendMsg();
 	void copyRetroshareLink();
+	void copyMailtoLink();
   void on_closeInfoFrameButton_clicked();
 
 	void updateSelection();

@@ -1099,6 +1099,9 @@ QString RetroShareLink::niceName() const
 	if(type() == TYPE_IDENTITY)
 		return QObject::tr("Identity link (name=%1, ID=%2)").arg(_name).arg(_hash) ;
 
+	if(type() == TYPE_MESSAGE)
+		return QObject::tr("Send a new mail to %1 (%2)").arg(_name).arg(_hash) ;
+
 	if(type() == TYPE_FILE_TREE)
 		return QObject::tr("%1 (%2 files, %3)").arg(_name).arg(_count).arg(misc::friendlyUnit(_size));
 

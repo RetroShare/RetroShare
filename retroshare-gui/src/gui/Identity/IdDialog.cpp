@@ -2482,7 +2482,10 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			}
 
 			if (n_selected_items==1)
+			{
 				contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+				contextMenu->addAction(QIcon(":/images/mail_send24.png"),tr("Create mailto link"),this,SLOT(copyMailtoLink())) ;
+			}
 
 			// always allow to send messages
 			contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
@@ -2514,6 +2517,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(ui->editIdentity);
 			contextMenu->addAction(ui->removeIdentity);
+			contextMenu->addAction(QIcon(":/images/mail_send24.png"),tr("Create mailto link"),this,SLOT(copyMailtoLink())) ;
 		}
 
 	}
@@ -2564,6 +2568,34 @@ void IdDialog::copyRetroshareLink()
 	uint32_t token;
 
 	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, IDDIALOG_SERIALIZED_GROUP);
+}
+
+void IdDialog::copyMailtoLink()
+{
+	QTreeWidgetItem *item = ui->idTreeWidget->currentItem();
+
+	if (!item)
+	{
+		std::cerr << "IdDialog::editIdentity() Invalid item";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsGxsId gxs_id(item->text(RSID_COL_KEYID).toStdString());
+
+	if(gxs_id.isNull())
+	{
+		std::cerr << "Null GXS id. Something went wrong." << std::endl;
+		return ;
+	}
+
+	QList<RetroShareLink> urls;
+	RetroShareLink link = RetroShareLink::createMessage(gxs_id, QString());
+	urls.push_back(link);
+
+	RSLinkClipboard::copyLinks(urls) ;
+
+	QMessageBox::information(NULL,tr("information"),tr("A mailto link was copied to your clipboard. Paste it in a regular mail, or embed it into a webpage.")) ;
 }
 
 void IdDialog::chatIdentity()
