@@ -32,7 +32,7 @@
 
 /** Constructor */
 PhotoView::PhotoView(QWidget *parent)
-: QDialog(parent),
+: QDialog(parent, Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
 	ui(new Ui::PhotoView)
 {
   /* Invoke the Qt Designer generated object setup routine */
