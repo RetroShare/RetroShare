@@ -422,6 +422,7 @@ int AuthSSLimpl::InitAuth(
 
 	// get xPGP certificate.
 	X509 *x509 = PEM_read_X509(ownfp, NULL, NULL, NULL);
+
 	fclose(ownfp);
 
 	if (x509 == NULL)
@@ -430,8 +431,38 @@ int AuthSSLimpl::InitAuth(
 		std::cerr << std::endl;
 		return -1;
 	}
-	SSL_CTX_use_certificate(sslctx, x509);
-        mOwnPublicKey = X509_get_pubkey(x509);
+
+	int result = SSL_CTX_use_certificate(sslctx, x509);
+
+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+	if(result != 1)
+	{
+		// In debian Buster, openssl security level is set to 2 which preclude the use of SHA1, originally used to sign RS certificates.
+		// As a consequence, on these systems, locations created with RS previously to Jan.2020 will not start unless we revert the
+		// security level to a value of 1.
+
+		int save_sec = SSL_CTX_get_security_level(sslctx);
+		SSL_CTX_set_security_level(sslctx,1);
+		result = SSL_CTX_use_certificate(sslctx, x509);
+
+		if(result == 1)
+		{
+			std::cerr << std::endl;
+			std::cerr << "     Your Retroshare certificate uses low security settings that are incompatible " << std::endl;
+			std::cerr << "(WW) with current security level " << save_sec << " of the OpenSSL library. Retroshare will still start " << std::endl;
+			std::cerr << "     (with security level set to 1), but you should probably create a new location." << std::endl;
+			std::cerr << std::endl;
+		}
+	}
+#endif
+
+    if(result != 1)
+    {
+        std::cerr << "(EE) Cannot use your Retroshare certificate. Some error occured in SSL_CTX_use_certificate()" << std::endl;
+        return -1;
+    }
+
+	mOwnPublicKey = X509_get_pubkey(x509);
 
 	// get private key
 	FILE *pkfp = RsDirUtil::rs_fopen(priv_key_file, "rb");
