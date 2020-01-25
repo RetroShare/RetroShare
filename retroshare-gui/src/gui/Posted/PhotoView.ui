@@ -219,7 +219,7 @@
   <customwidget>
    <class>AspectRatioPixmapLabel</class>
    <extends>QLabel</extends>
-   <header>util/aspectratiopixmaplabel.h</header>
+   <header>util/AspectRatioPixmapLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>
