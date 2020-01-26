@@ -512,6 +512,10 @@ void GxsChannelPostItem::fill()
 		if (!misc::isPicture(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
 			fi->picturetype();
 		
+		/* check if the file is a video file */
+		if (!misc::isVideo(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
+			fi->videotype();
+		
 		/* check if the file is a media file */
 		if (!misc::isPreviewable(QFileInfo(QString::fromUtf8(it->mName.c_str())).suffix()))
 		{ 

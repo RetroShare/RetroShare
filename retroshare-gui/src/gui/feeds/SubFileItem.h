@@ -24,6 +24,15 @@
 #include "ui_SubFileItem.h"
 #include <stdint.h>
 #include <retroshare/rstypes.h>
+
+#include <QMediaPlayer>
+#include <QWidget>
+
+class QAbstractButton;
+class QSlider;
+class QLabel;
+class QUrl;
+
 const uint32_t SFI_MASK_STATE		= 0x000f;
 const uint32_t SFI_MASK_TYPE		= 0x00f0;
 //const uint32_t SFI_MASK_FT		= 0x0f00;
@@ -77,6 +86,8 @@ public:
 
 	void setChannelId(const std::string &channelId) { mChannelId = channelId; }
 
+	void setUrl(const QUrl &url);
+
 public slots:
 	void download();
 	void play();
@@ -85,6 +96,11 @@ public slots:
 	void loadpicture();
 	void picturetype();
 	void nomediatype();
+	void videotype();
+
+	void loadVideo();
+	void playVideo();
+	void stopVideo();
 
 private slots:
 	void toggle();
@@ -95,11 +111,20 @@ private slots:
 
 	void updateItem();
 
+	void mediaStateChanged(QMediaPlayer::State state);
+	void positionChanged(qint64 position);
+	void durationChanged(qint64 duration);
+	void handleError();
+	void videoAvailableChanged(bool available);
+	void seek(int seconds);
+
 signals:
     void wantsToBeDeleted();
 
 private:
 	void Setup();
+	void videoPlayer();
+	void updateDurationInfo(qint64 currentInfo);
 
 	std::string mPath;
     RsFileHash  mFileHash;
@@ -116,6 +141,16 @@ private:
 
 	/* for display purposes */
 	float amountDone;
+	
+	QMediaPlayer* m_mediaPlayer;
+	QVideoWidget *videoWidget; 
+	QPushButton *m_playButton;
+	QPushButton *fullScreenButton;
+	QPushButton *stopButton;
+	QSlider *m_positionSlider;
+	QLabel *m_errorLabel;
+	QLabel *m_labelDuration;
+	qint64 m_duration;
 
 signals:
 	void fileFinished(SubFileItem * subFileItem);

@@ -23,6 +23,8 @@
 #include <QFileDialog>
 #include <QUrl>
 #include <QMovie>
+#include <QtWidgets>
+#include <QVideoWidget>
 
 #include "SubFileItem.h"
 
@@ -90,7 +92,8 @@ SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const 
 	{
 		mMode = SFI_STATE_ERROR;
 	}
-
+	
+	videoPlayer();
 	Setup();
 }
 
@@ -274,6 +277,7 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
+			m_playButton->setEnabled(true);
 
 			progressBar->setValue(mFileSize / mDivisor);
 			filename = "[" + tr("LOCAL") + "] " + filename + " (" + misc::friendlyUnit(mFileSize) + ")";
@@ -284,6 +288,7 @@ void SubFileItem::updateItemStatic()
 			playButton->setEnabled(true);
 			downloadButton->setEnabled(false);
 			cancelButton->setEnabled(false);
+			m_playButton->setEnabled(true);
 			filename = "[" + tr("UPLOAD") + "] " + filename;
 
 			break;
@@ -590,6 +595,7 @@ void SubFileItem::play()
 		if (qinfo.exists()) {
 			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
 				std::cerr << "openTransfer(): can't open file " << info.path << std::endl;
+
 			}
 		}else{
 			QMessageBox::information(this, tr("Play File"),
@@ -711,6 +717,7 @@ bool SubFileItem::isPlayable(bool &startable)
 	bool visible = playButton->isVisibleTo(this);
 	startable = visible && playButton->isEnabled();
 	loadpicture();
+	loadVideo();
 	
 	return visible;
 }
@@ -735,6 +742,12 @@ void SubFileItem::picturetype()
 {
 	/* check if the file is not a picture & hide it */
 	imageFrame->hide();
+}
+
+void SubFileItem::videotype()
+{
+	/* check if the file is not a video & hide it */
+	Videowidget->hide();
 }
 
 void SubFileItem::copyLink()
@@ -784,4 +797,205 @@ void SubFileItem::loadpicture()
 			}
 		}
 	}
+}
+
+void SubFileItem::videoPlayer()
+{
+	m_mediaPlayer = new QMediaPlayer(this, QMediaPlayer::VideoSurface);
+	videoWidget = new QVideoWidget;
+
+	videoWidget->show();
+	videoWidget->setStyleSheet("background-color: #1f1f1f;");
+
+	m_playButton = new QPushButton;
+	m_playButton->setEnabled(false);
+	m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+			
+	stopButton = new QPushButton;
+	stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
+	stopButton->setEnabled(false);
+			
+	fullScreenButton = new QPushButton(tr("FullScreen"));
+	fullScreenButton->setCheckable(true);
+	fullScreenButton->setEnabled(false);
+
+	m_positionSlider = new QSlider(Qt::Horizontal);
+	m_positionSlider->setRange(0, m_mediaPlayer->duration() / 1000);
+
+	m_labelDuration = new QLabel;
+	
+	m_errorLabel = new QLabel;
+	m_errorLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Maximum);
+
+	QBoxLayout *controlLayout = new QHBoxLayout;
+	controlLayout->setMargin(0);
+	controlLayout->addWidget(m_playButton);
+	controlLayout->addWidget(stopButton);
+	controlLayout->addWidget(m_positionSlider);
+	controlLayout->addWidget(m_labelDuration);
+	controlLayout->addWidget(fullScreenButton);
+
+	QBoxLayout *layout = new QVBoxLayout;
+	layout->addWidget(videoWidget);
+	layout->addLayout(controlLayout);
+	layout->addWidget(m_errorLabel);
+
+	Videowidget->setLayout(layout);
+
+	m_mediaPlayer->setVideoOutput(videoWidget);
+	
+	connect(m_playButton, &QAbstractButton::clicked,this, &SubFileItem::playVideo);
+	connect(stopButton, &QAbstractButton::clicked,this, &SubFileItem::stopVideo);
+	connect(m_mediaPlayer, &QMediaPlayer::stateChanged,this, &SubFileItem::mediaStateChanged);
+	connect(m_mediaPlayer, &QMediaPlayer::positionChanged, this, &SubFileItem::positionChanged);
+	connect(m_mediaPlayer, &QMediaPlayer::durationChanged, this, &SubFileItem::durationChanged);
+	connect(m_mediaPlayer, QOverload<QMediaPlayer::Error>::of(&QMediaPlayer::error),this, &SubFileItem::handleError);
+	connect(m_mediaPlayer, SIGNAL(videoAvailableChanged(bool)), this, SLOT(videoAvailableChanged(bool)));
+	//connect(m_positionSlider, &QAbstractSlider::sliderMoved, this, &SubFileItem::setPosition);
+	connect(m_positionSlider, &QSlider::sliderMoved, this, &SubFileItem::seek);
+}
+
+void SubFileItem::loadVideo()
+{
+	FileInfo info;
+	FileSearchFlags flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
+
+
+	if (!rsFiles->FileDetails( mFileHash, flags, info))
+		return;
+
+	if (done()) {
+
+		/* open file with a suitable application */
+		QFileInfo qinfo;
+		qinfo.setFile(info.path.c_str());
+		if (qinfo.exists()) {
+				setUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
+		}else{
+			QMessageBox::information(this, tr("Play File"),
+					tr("File %1 does not exist at location.").arg(info.path.c_str()));
+			return;
+		}
+	} else {
+		/* rise a message box for incompleted download file */
+		QMessageBox::information(this, tr("Play File"),
+				tr("File %1 is not completed.").arg(info.fname.c_str()));
+		return;
+	}
+
+}
+
+void SubFileItem::setUrl(const QUrl &url)
+{
+	m_errorLabel->setText(QString());
+	m_mediaPlayer->setMedia(url);
+}
+
+void SubFileItem::playVideo()
+{
+	videoWidget->show();
+	
+	switch (m_mediaPlayer->state()) {
+	//case QMediaPlayer::StoppedState:
+	case QMediaPlayer::PlayingState:
+		m_mediaPlayer->pause();
+		break;
+	default:
+		m_mediaPlayer->play();
+		break;
+	}
+}
+
+void SubFileItem::stopVideo()
+{
+	
+	m_mediaPlayer->stop();
+	//videoWidget->hide();
+
+}
+
+void SubFileItem::mediaStateChanged(QMediaPlayer::State state)
+{
+    switch (state) {
+        case QMediaPlayer::StoppedState:
+            stopButton->setEnabled(false);
+            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+            break;
+        case QMediaPlayer::PlayingState:
+            stopButton->setEnabled(true);
+            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
+			videoWidget->show();
+            break;
+        case QMediaPlayer::PausedState:
+            stopButton->setEnabled(true);
+            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+            break;
+        }
+}
+
+void SubFileItem::positionChanged(qint64 progress)
+{	
+	 if (!m_positionSlider->isSliderDown())
+		m_positionSlider->setValue(progress / 1000);
+
+	updateDurationInfo(progress / 1000);
+}
+
+void SubFileItem::durationChanged(qint64 duration)
+{	
+	m_duration = duration / 1000;
+	m_positionSlider->setMaximum(m_duration);
+}
+
+void SubFileItem::seek(int seconds)
+{
+	m_mediaPlayer->setPosition(seconds * 1000);
+}
+
+void SubFileItem::handleError()
+{
+    m_playButton->setEnabled(false);
+    const QString errorString = m_mediaPlayer->errorString();
+    QString message = "Error: ";
+    if (errorString.isEmpty())
+        message += " #" + QString::number(int(m_mediaPlayer->error()));
+    else
+        message += errorString;
+    m_errorLabel->setText(message);
+}
+
+void SubFileItem::videoAvailableChanged(bool available)
+{
+    if (!available) {
+        disconnect(fullScreenButton, SIGNAL(clicked(bool)),
+                    videoWidget, SLOT(setFullScreen(bool)));
+        disconnect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+        videoWidget->setFullScreen(false);
+    } else {
+        connect(fullScreenButton, SIGNAL(clicked(bool)),
+                videoWidget, SLOT(setFullScreen(bool)));
+        connect(videoWidget, SIGNAL(fullScreenChanged(bool)),
+                fullScreenButton, SLOT(setChecked(bool)));
+
+        if (fullScreenButton->isChecked())
+            videoWidget->setFullScreen(true);
+    }
+
+}
+
+void SubFileItem::updateDurationInfo(qint64 currentInfo)
+{
+    QString tStr;
+    if (currentInfo || m_duration) {
+        QTime currentTime((currentInfo / 3600) % 60, (currentInfo / 60) % 60,
+            currentInfo % 60, (currentInfo * 1000) % 1000);
+        QTime totalTime((m_duration / 3600) % 60, (m_duration / 60) % 60,
+            m_duration % 60, (m_duration * 1000) % 1000);
+        QString format = "mm:ss";
+        if (m_duration > 3600)
+            format = "hh:mm:ss";
+        tStr = currentTime.toString(format) + " / " + totalTime.toString(format);
+    }
+    m_labelDuration->setText(tStr);
 }

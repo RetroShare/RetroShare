@@ -104,6 +104,7 @@ class misc : public QObject
 
     static bool isPreviewable(QString extension);
 	static bool isPicture(QString extension);
+	static bool isVideo(QString extension);
 
 	 static QString fingerPrintStyleSplit(const QString& in) ;
 

@@ -120,6 +120,13 @@ bool misc::isPicture(QString extension)
     return false;
 }
 
+bool misc::isVideo(QString extension)
+{
+    extension = extension.toUpper();
+    if(extension == "MP4") return true;
+    return false;
+}
+
 // return qBittorrent config path
 QString misc::qBittorrentPath()
 {
