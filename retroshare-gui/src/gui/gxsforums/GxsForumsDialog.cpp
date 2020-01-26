@@ -102,7 +102,7 @@ void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<Re
 	msgDialog->show();
 }
 
-UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
 {
 	return new GxsForumUserNotify(rsGxsForums, parent);
 }

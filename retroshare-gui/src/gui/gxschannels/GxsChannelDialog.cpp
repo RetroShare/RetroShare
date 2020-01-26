@@ -64,7 +64,11 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
         switch(e->mChannelEventCode)
         {
-        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+        case RsChannelEventCode::READ_STATUS_CHANGED:
+			updateMessageSummaryList(e->mChannelGroupId);
+            break;
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
             break;
         default:
             break;
@@ -92,7 +96,7 @@ QString GxsChannelDialog::getHelpString() const
 	return hlp_str ;
 }
 
-UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
+UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
 	return new GxsChannelUserNotify(rsGxsChannels, parent);
 }

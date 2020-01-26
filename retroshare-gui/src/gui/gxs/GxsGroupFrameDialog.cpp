@@ -1173,6 +1173,8 @@ void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 	}
 
     ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+    getUserNotify()->updateIcon();
 }
 
 /*********************** **** **** **** ***********************/

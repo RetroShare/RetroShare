@@ -26,6 +26,7 @@
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/GroupTreeWidget.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsposted.h>
 
@@ -43,13 +44,41 @@ public:
 PostedDialog::PostedDialog(QWidget *parent)
     : GxsGroupFrameDialog(rsPosted, parent)
 {
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+
+	rsEvents->registerEventsHandler(RsEventType::GXS_POSTED, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
 }
+
+void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType == RsEventType::GXS_POSTED)
+	{
+		const RsGxsPostedEvent *e = dynamic_cast<const RsGxsPostedEvent*>(event.get());
+		if(!e) return;
+
+		switch(e->mPostedEventCode)
+		{
+		case RsPostedEventCode::NEW_MESSAGE:
+		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
+		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+			updateDisplay(false);
+            break;
+
+		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
+			updateDisplay(true);
+			break;
+		default: break;
+		}
+	}
+}
+
 
 PostedDialog::~PostedDialog()
 {
 }
 
-UserNotify *PostedDialog::getUserNotify(QObject *parent)
+UserNotify *PostedDialog::createUserNotify(QObject *parent)
 {
 	return new PostedUserNotify(rsPosted, parent);
 }

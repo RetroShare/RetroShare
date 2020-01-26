@@ -1114,7 +1114,7 @@ void TransfersDialog::activatePage(TransfersDialog::Page page)
 	}
 }
 
-UserNotify *TransfersDialog::getUserNotify(QObject *parent)
+UserNotify *TransfersDialog::createUserNotify(QObject *parent)
 {
     return new TransferUserNotify(parent);
 }

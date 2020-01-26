@@ -91,8 +91,8 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
-		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 		if (msgChange)
 		{
 #ifdef POSTBASE_DEBUG
@@ -124,31 +124,54 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			}
 		}
 
+		RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
+
 		/* pass on Group Changes to GUI */
-		if (groupChange)
+		if (grpChange && rsEvents)
 		{
 #ifdef POSTBASE_DEBUG
 			std::cerr << "p3PostBase::notifyChanges() Found Group Change Notification";
 			std::cerr << std::endl;
 #endif
 
-			std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-
-			for(auto git = groupList.begin(); git != groupList.end(); ++git)
+            switch(grpChange->getType())
+            {
+            default:
+			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 			{
-#ifdef POSTBASE_DEBUG
-				std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
-				std::cerr << std::endl;
-#endif
-
-				if (rsEvents && groupChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW)
+				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+				std::list<RsGxsGroupId>::iterator git;
+				for (git = grpList.begin(); git != grpList.end(); ++git)
 				{
+					auto ev = std::make_shared<RsGxsPostedEvent>();
+					ev->mPostedGroupId = *git;
+					ev->mPostedEventCode = RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED;
+					rsEvents->postEvent(ev);
+				}
+
+			}
+                break;
+
+            case RsGxsNotify::TYPE_PUBLISHED:
+            case RsGxsNotify::TYPE_RECEIVED_NEW:
+            {
+                /* group received */
+                const std::list<RsGxsGroupId>& grpList = grpChange->mGrpIdList;
+
+                for (auto git = grpList.begin(); git != grpList.end(); ++git)
+                {
+#ifdef POSTBASE_DEBUG
+					std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
+					std::cerr << std::endl;
+#endif
 					auto ev = std::make_shared<RsGxsPostedEvent>();
 					ev->mPostedGroupId = *git;
 					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
 					rsEvents->postEvent(ev);
 				}
-			}
+            }
+				break;
+            }
 		}
 	}
 	receiveHelperChanges(changes);
