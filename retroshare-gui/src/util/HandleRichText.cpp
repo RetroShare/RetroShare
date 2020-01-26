@@ -1217,13 +1217,7 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	text = sl.join("\n> ");
 	text.replace(QChar(-4)," ");//Char used when image on text.
 	
-	QString quotedtext = text;
-	if(quotedtext.contains("> "))
-		{
-			quotedtext.replace("> ",">");
-		}
-	
-	return QString("> ") + quotedtext;
+	return QString(">") + text
 }
 
 void RsHtml::insertSpoilerText(QTextCursor cursor)
