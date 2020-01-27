@@ -90,9 +90,8 @@ public:
 	void connectToConfigManager(p3ConfigMgr& cfgmgr) override;
 
 	/// @see RsJsonApi
-	virtual bool authorizeUser(
-	        const std::string& alphanumeric_user,
-	        const std::string& alphanumeric_passwd ) override;
+	virtual std::error_condition authorizeUser(
+	        const std::string& user, const std::string& passwd ) override;
 
 	/// @see RsJsonApi
 	std::map<std::string,std::string> getAuthorizedTokens() override;
@@ -101,10 +100,13 @@ public:
 	bool revokeAuthToken(const std::string& user) override;
 
 	/// @see RsJsonApi
-	bool isAuthTokenValid(const std::string& token) override;
+	bool isAuthTokenValid(
+	        const std::string& token,
+	        std::error_condition& error = RS_DEFAULT_STORAGE_PARAM(std::error_condition)
+	        ) override;
 
 	/// @see RsJsonAPI
-	bool requestNewTokenAutorization(
+	std::error_condition requestNewTokenAutorization(
 	        const std::string& user, const std::string& password ) override;
 
 	/// @see RsJsonApi
@@ -143,9 +145,18 @@ public:
 	        const std::function<bool(const std::string&, const std::string&)>&
 	        callback );
 
+	/// @see RsJsonApi
+	const std::error_category& errorCategory() override
+	{ return sErrorCategory; }
+
 protected:
 	/// @see RsThread
 	void onStopRequested() override;
+
+	static const RsJsonApiErrorCategory sErrorCategory;
+
+	static std::error_condition badApiCredientalsFormat(
+	        const std::string& user, const std::string& passwd );
 
 private:
 	/// @see RsThread

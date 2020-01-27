@@ -73,6 +73,8 @@ JsonApiServer::corsOptionsHeaders =
     { "Content-Length", "0" }
 };
 
+/* static */const RsJsonApiErrorCategory JsonApiServer::sErrorCategory;
+
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
@@ -127,18 +129,16 @@ JsonApiServer::corsOptionsHeaders =
 bool RsJsonApi::parseToken(
         const std::string& clear_token, std::string& user,std::string& passwd )
 {
-	uint32_t colonIndex = 0;
-	uint32_t colonCounter = 0;
+	auto colonIndex = std::string::npos;
 	const auto tkLen = clear_token.length();
 
-	for(uint32_t i=0; i < tkLen && colonCounter < 2; ++i)
-		if(clear_token[i] == ':') { ++colonCounter; colonIndex = i; }
-		else if(!librs::util::is_alphanumeric(clear_token[i])) return false;
+	for(uint32_t i=0; i < tkLen; ++i)
+		if(clear_token[i] == ':') colonIndex = i;
 
-	if(colonCounter != 1) return false;
+	user = clear_token.substr(0, colonIndex);
 
-	user   = clear_token.substr(0, colonIndex);
-	passwd = clear_token.substr(colonIndex + 1);
+	if(colonIndex < tkLen)
+		passwd = clear_token.substr(colonIndex + 1);
 
 	return true;
 }
@@ -405,10 +405,22 @@ void JsonApiServer::registerHandler(
 
 	if(requiresAutentication)
 		resource->set_authentication_handler(
-		            [this](
+		            [this, path](
 		                const std::shared_ptr<rb::Session> session,
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
+			const auto authFail =
+			        [&path, &session](int status) -> RsWarn::stream_type&
+			{
+				/* Capture session by reference as it is cheaper then copying
+				 * shared_ptr by value which is not needed in this case */
+
+				session->close(status, corsOptionsHeaders);
+				return RsWarn() << "JsonApiServer authentication handler "
+				                   "blocked an attempt to call JSON API "
+				                   "authenticated method: " << path;
+			};
+
 			if(session->get_request()->get_method() == "OPTIONS")
 			{
 				callback(session);
@@ -417,7 +429,8 @@ void JsonApiServer::registerHandler(
 
 			if(!rsLoginHelper->isLoggedIn())
 			{
-				session->close(rb::CONFLICT, corsOptionsHeaders);
+				authFail(rb::CONFLICT) << " before RetroShare login"
+				                       << std::endl;
 				return;
 			}
 
@@ -429,15 +442,26 @@ void JsonApiServer::registerHandler(
 
 			if(authToken != "Basic")
 			{
-				session->close(rb::UNAUTHORIZED, corsOptionsHeaders);
+				authFail(rb::UNAUTHORIZED)
+				        << " with wrong Authorization header: "
+				        << authHeader.str() << std::endl;
 				return;
 			}
 
 			std::getline(authHeader, authToken, ' ');
 			authToken = decodeToken(authToken);
 
-			if(isAuthTokenValid(authToken)) callback(session);
-			else session->close(rb::UNAUTHORIZED, corsOptionsHeaders);
+			std::error_condition ec;
+			if(isAuthTokenValid(authToken, ec)) callback(session);
+			else
+			{
+				std::string tUser;
+				parseToken(authToken, tUser, RS_DEFAULT_STORAGE_PARAM(std::string));
+				authFail(rb::UNAUTHORIZED)
+				        << " user: " << tUser
+				        << " error: " << ec.value() << " " << ec.message()
+				        << std::endl;
+			}
 		} );
 
 	mResources.push_back(resource);
@@ -447,24 +471,62 @@ void JsonApiServer::setNewAccessRequestCallback(
         const std::function<bool (const std::string&, const std::string&)>& callback )
 { mNewAccessRequestCallback = callback; }
 
-bool JsonApiServer::requestNewTokenAutorization(
+/*static*/ std::error_condition JsonApiServer::badApiCredientalsFormat(
         const std::string& user, const std::string& passwd )
 {
-	if(rsLoginHelper->isLoggedIn() && mNewAccessRequestCallback(user, passwd))
-		return authorizeUser(user, passwd);
+	if(user.find(':') < std::string::npos)
+		return RsJsonApiErrorNum::API_USER_CONTAIN_COLON;
 
-	return false;
+	if(user.empty())
+		RsWarn() << __PRETTY_FUNCTION__ << " User is empty, are you sure "
+		         << "this what you wanted?" << std::endl;
+
+	if(passwd.empty())
+		RsWarn() << __PRETTY_FUNCTION__ << " Password is empty, are you sure "
+		         << "this what you wanted?" << std::endl;
+
+	return std::error_condition();
 }
 
-bool JsonApiServer::isAuthTokenValid(const std::string& token)
+std::error_condition JsonApiServer::requestNewTokenAutorization(
+        const std::string& user, const std::string& passwd )
+{
+	auto ec = badApiCredientalsFormat(user, passwd);
+	if(ec) return ec;
+
+	if(!rsLoginHelper->isLoggedIn())
+		return RsJsonApiErrorNum::CANNOT_EXECUTE_BEFORE_RS_LOGIN;
+
+	if(mNewAccessRequestCallback(user, passwd))
+		return authorizeUser(user, passwd);
+
+	return RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED;
+}
+
+bool JsonApiServer::isAuthTokenValid(
+        const std::string& token, std::error_condition& error )
 {
 	RS_STACK_MUTEX(configMutex);
 
+	const auto failure = [&error](RsJsonApiErrorNum e) -> bool
+	{
+		error = e;
+		return false;
+	};
+
+	const auto success = [&error]()
+	{
+		error.clear();
+		return true;
+	};
+
 	std::string user,passwd;
-	if(!parseToken(token,user,passwd)) return false;
+	if(!parseToken(token, user, passwd))
+		return failure(RsJsonApiErrorNum::TOKEN_FORMAT_INVALID);
 
 	auto it = mAuthTokenStorage.mAuthorizedTokens.find(user);
-	if(it == mAuthTokenStorage.mAuthorizedTokens.end()) return false;
+	if(it == mAuthTokenStorage.mAuthorizedTokens.end())
+		return failure(RsJsonApiErrorNum::UNKNOWN_API_USER);
 
 	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
 	int noOptimiz = 1;
@@ -476,12 +538,16 @@ bool JsonApiServer::isAuthTokenValid(const std::string& token)
 	if( passwd.size() == it->second.size() &&
 	        ( noOptimiz = CRYPTO_memcmp(
 	              passwd.data(), it->second.data(), it->second.size() ) ) == 0 )
-		return true;
+		return success();
 	// Make token size guessing harder
 	else noOptimiz = CRYPTO_memcmp(passwd.data(), passwd.data(), passwd.size());
 
-	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
-	return static_cast<uint32_t>(noOptimiz) + 1 == 0;
+	/* At this point we are sure password is wrong, and one could think to
+	 * plainly `return false` still this ugly and apparently unuseful extra
+	 * calculation is here to avoid `else CRYPTO_memcmp` being optimized away,
+	 * so a pontential attacker cannot guess password size based  on timing */
+	return static_cast<uint32_t>(noOptimiz) + 1 == 0 ?
+	                success() : failure(RsJsonApiErrorNum::WRONG_API_PASSWORD);
 }
 
 std::map<std::string, std::string> JsonApiServer::getAuthorizedTokens()
@@ -509,22 +575,11 @@ void JsonApiServer::connectToConfigManager(p3ConfigMgr& cfgmgr)
 	loadConfiguration(hash);
 }
 
-bool JsonApiServer::authorizeUser(
+std::error_condition JsonApiServer::authorizeUser(
         const std::string& user, const std::string& passwd )
 {
-	if(!librs::util::is_alphanumeric(user))
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " User name is not alphanumeric"
-		        << std::endl;
-		return false;
-	}
-
-	if(passwd.empty())
-	{
-		RsWarn() << __PRETTY_FUNCTION__ << " Password is empty, are you sure "
-		         << "this what you wanted?" << std::endl;
-		return false;
-	}
+	auto ec = badApiCredientalsFormat(user, passwd);
+	if(ec) return ec;
 
 	RS_STACK_MUTEX(configMutex);
 
@@ -534,7 +589,7 @@ bool JsonApiServer::authorizeUser(
 		p = passwd;
 		IndicateConfigChanged();
 	}
-	return true;
+	return ec;
 }
 
 /*static*/ std::string JsonApiServer::decodeToken(const std::string& radix64_token)
@@ -667,4 +722,30 @@ void JsonApiServer::run()
 	mini = RS_MINI_VERSION;
 	extra = RS_EXTRA_VERSION;
 	human = RS_HUMAN_READABLE_VERSION;
+}
+
+
+//std::error_code make_error_code(RsJsonApiErrorCode e)
+//{ return std::error_code(static_cast<int>(e), rsJsonApi->errorCategory()); }
+
+std::error_condition make_error_condition(RsJsonApiErrorNum e)
+{
+return std::error_condition(static_cast<int>(e), rsJsonApi->errorCategory());
+}
+
+
+std::error_condition RsJsonApiErrorCategory::default_error_condition(int ev) const noexcept
+{
+	switch(static_cast<RsJsonApiErrorNum>(ev))
+	{
+	case RsJsonApiErrorNum::TOKEN_FORMAT_INVALID: // fallthrough
+	case RsJsonApiErrorNum::UNKNOWN_API_USER: // fallthrough
+	case RsJsonApiErrorNum::WRONG_API_PASSWORD: // fallthrough
+	case RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED:
+		return std::errc::permission_denied;
+	case RsJsonApiErrorNum::API_USER_CONTAIN_COLON:
+		return std::errc::invalid_argument;
+	default:
+		return std::error_condition(ev, *this);
+	}
 }

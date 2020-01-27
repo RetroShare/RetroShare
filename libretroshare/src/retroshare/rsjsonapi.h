@@ -25,9 +25,11 @@
 
 #include <map>
 #include <string>
+#include <cstdint>
+#include <system_error>
 
-class p3ConfigMgr;
-class JsonApiResourceProvider;
+#include "util/rsmemory.h"
+
 class RsJsonApi;
 
 /**
@@ -35,6 +37,55 @@ class RsJsonApi;
  * @jsonapi{development}
  */
 extern RsJsonApi* rsJsonApi;
+
+enum class RsJsonApiErrorNum : int32_t
+{
+	TOKEN_FORMAT_INVALID             = 2004,
+	UNKNOWN_API_USER                 = 2005,
+	WRONG_API_PASSWORD               = 2006,
+	API_USER_CONTAIN_COLON           = 2007,
+	AUTHORIZATION_REQUEST_DENIED     = 2008,
+	CANNOT_EXECUTE_BEFORE_RS_LOGIN   = 2009
+};
+
+struct RsJsonApiErrorCategory: std::error_category
+{
+	const char* name() const noexcept override
+	{ return "RetroShare JSON API"; }
+
+	std::string message(int ev) const override
+	{
+		switch (static_cast<RsJsonApiErrorNum>(ev))
+		{
+		case RsJsonApiErrorNum::TOKEN_FORMAT_INVALID:
+			return "Invalid token format, must be alphanumeric_user:password";
+		case RsJsonApiErrorNum::UNKNOWN_API_USER:
+			return "Unknown API user";
+		case RsJsonApiErrorNum::WRONG_API_PASSWORD:
+			return "Wrong API password";
+		case RsJsonApiErrorNum::API_USER_CONTAIN_COLON:
+			return "API user cannot contain colon character";
+		case RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED:
+			return "User denied new token autorization";
+		case RsJsonApiErrorNum::CANNOT_EXECUTE_BEFORE_RS_LOGIN:
+			return "This operation cannot be executed bedore RetroShare login";
+		default:
+			return "Error message for error:" + std::to_string(ev) +
+			        " not available";
+		}
+	}
+
+	std::error_condition default_error_condition(int ev) const noexcept override;
+};
+
+namespace std
+{
+template<> struct is_error_condition_enum<RsJsonApiErrorNum>: true_type {};
+error_condition make_error_condition(RsJsonApiErrorNum e);
+}
+
+class p3ConfigMgr;
+class JsonApiResourceProvider;
 
 class RsJsonApi
 {
@@ -124,9 +175,9 @@ public:
 	 * @jsonapi{development,unauthenticated}
 	 * @param[in] user user name to authorize
 	 * @param[in] password password for the new user
-	 * @return true if authorization succeded, false otherwise.
+	 * @return if an error occurred details about it.
 	 */
-	virtual bool requestNewTokenAutorization(
+	virtual std::error_condition requestNewTokenAutorization(
 	        const std::string& user, const std::string& password) = 0;
 
 	/** Split a token in USER:PASSWORD format into user and password */
@@ -135,14 +186,13 @@ public:
 	        std::string& user, std::string& passwd );
 
 	/**
-	 * Add new API auth (user,passwd) token to the authorized set.
+	 * Add new API auth user, passwd to the authorized set.
 	 * @jsonapi{development}
-	 * @param[in] user user name to autorize, must be alphanumerinc
-	 * @param[in] password password for the user, must be alphanumerinc
-	 * @return true if the token has been added to authorized, false if error
-	 * occurred
+	 * @param[in] user user name to autorize, must not contain ':'
+	 * @param[in] password password for the user
+	 * @return if some error occurred return details about it
 	 */
-	virtual bool authorizeUser(
+	virtual std::error_condition authorizeUser(
 	        const std::string& user, const std::string& password ) = 0;
 
 	/**
@@ -164,9 +214,13 @@ public:
 	 * @brief Check if given JSON API auth token is authorized
 	 * @jsonapi{development,unauthenticated}
 	 * @param[in] token decoded
-	 * @return tru if authorized, false otherwise
+	 * @param[out] error optional storage for error details
+	 * @return true if authorized, false otherwise
 	 */
-	virtual bool isAuthTokenValid(const std::string& token) = 0;
+	virtual bool isAuthTokenValid(
+	        const std::string& token,
+	        std::error_condition& error = RS_DEFAULT_STORAGE_PARAM(std::error_condition)
+	        ) = 0;
 
 	/**
 	 * @brief Write version information to given paramethers
@@ -180,5 +234,9 @@ public:
 	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
 	                     std::string& extra, std::string& human );
 
+	/** @brief Return a reference to service error category */
+	virtual const std::error_category& errorCategory() = 0;
+
 	virtual ~RsJsonApi() = default;
 };
+

@@ -41,12 +41,14 @@ struct t_RsLogger
 {
 	inline t_RsLogger() = default;
 
+	typedef t_RsLogger stream_type;
+
 	template<typename T>
-	inline t_RsLogger& operator<<(const T& val)
+	inline stream_type& operator<<(const T& val)
 	{ ostr << val; return *this; }
 
 	/// needed for manipulators and things like std::endl
-	t_RsLogger& operator<<(std::ostream& (*pf)(std::ostream&))
+	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
 	{
 		if(pf == static_cast<std::ostream& (*)(std::ostream&)>(
 		            &std::endl< char, std::char_traits<char> > ))
@@ -84,8 +86,10 @@ struct t_RsLogger
 {
 	inline t_RsLogger() = default;
 
+	typedef decltype(std::cerr) stream_type;
+
 	template<typename T>
-	inline std::ostream& operator<<(const T& val)
+	inline stream_type& operator<<(const T& val)
 	{
 		return std::cerr << static_cast<char>(CATEGORY) << " " << time(nullptr)
 		                 << " " << val;
