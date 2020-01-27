@@ -248,7 +248,13 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 		{
 			INITIALIZE_API_CALL_JSON_CONTEXT;
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
-			rsControl->rsGlobalShutDown();
+
+			/* Wrap inside RsThread::async because this call
+			 * RsThread::fullstop() also on JSON API server thread.
+			 * Calling RsThread::fullstop() from it's own thread should never
+			 * happen and if it happens an error message is printed
+			 * accordingly by RsThread::fullstop() */
+			RsThread::async([](){ rsControl->rsGlobalShutDown(); });
 		} );
 	}, true);
 
