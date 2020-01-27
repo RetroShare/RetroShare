@@ -32,6 +32,7 @@
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/UserNotify.h"
 #include "GxsCommentDialog.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG

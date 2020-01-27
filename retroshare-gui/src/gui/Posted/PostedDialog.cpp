@@ -60,14 +60,21 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		switch(e->mPostedEventCode)
 		{
 		case RsPostedEventCode::NEW_MESSAGE:
-		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
+			updateMessageSummaryList(e->mPostedGroupId);
+            break;
+
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 			updateDisplay(false);
             break;
 
+		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
+			updateMessageSummaryList(e->mPostedGroupId);
+            break;
+
+		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
 		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
-			updateDisplay(true);
-			break;
+            updateDisplay(true);
+            break;
 		default: break;
 		}
 	}

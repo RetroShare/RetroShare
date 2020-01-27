@@ -315,9 +315,9 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 
 		/* shouldn't need to worry about groups - as they need to be subscribed to */
-	}
 
-	RsGxsIfaceHelper::receiveChanges(changes);
+        delete *it;
+	}
 }
 
 void	p3GxsForums::service_tick()
@@ -861,12 +861,19 @@ void p3GxsForums::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair&
 	uint32_t mask = GXS_SERV::GXS_MSG_STATUS_GUI_NEW | GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 	uint32_t status = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
 	if (read)
-	{
 		status = 0;
-	}
 
 	setMsgStatusFlags(token, msgId, status, mask);
 
+	if (rsEvents)
+	{
+		auto ev = std::make_shared<RsGxsForumEvent>();
+
+		ev->mForumMsgId = msgId.second;
+		ev->mForumGroupId = msgId.first;
+		ev->mForumEventCode = RsForumEventCode::READ_STATUS_CHANGED;
+		rsEvents->postEvent(ev);
+	}
 }
 
 /********************************************************************************************/

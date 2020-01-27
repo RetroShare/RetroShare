@@ -477,8 +477,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 	p3Notify *notify = RsServer::notify();
-	std::vector<RsGxsNotify *>::iterator it;
-	for(it = changes.begin(); it != changes.end(); ++it)
+
+	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -605,8 +605,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
         }
 
+        delete *it;
 	}
-	RsGxsIfaceHelper::receiveChanges(changes);	// this clear up the vector and delete its elements
 }
 
 /********************************************************************************/

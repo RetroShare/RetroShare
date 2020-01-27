@@ -87,9 +87,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	std::cerr << std::endl;
 #endif
 
-	std::vector<RsGxsNotify *>::iterator it;
-
-	for(it = changes.begin(); it != changes.end(); ++it)
+	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 
@@ -173,8 +171,9 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				break;
             }
 		}
+
+        delete *it;
 	}
-	receiveHelperChanges(changes);
 
 #ifdef POSTBASE_DEBUG
 	std::cerr << "p3PostBase::notifyChanges() -> receiveChanges()";
@@ -206,6 +205,15 @@ void p3PostBase::setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& 
 
 	setMsgStatusFlags(token, msgId, status, mask);
 
+	if (rsEvents)
+	{
+		auto ev = std::make_shared<RsGxsPostedEvent>();
+
+		ev->mPostedMsgId = msgId.second;
+		ev->mPostedGroupId = msgId.first;
+		ev->mPostedEventCode = RsPostedEventCode::READ_STATUS_CHANGED;
+		rsEvents->postEvent(ev);
+	}
 }
 
 

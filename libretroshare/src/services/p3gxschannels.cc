@@ -364,13 +364,11 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		}
 
 		/* shouldn't need to worry about groups - as they need to be subscribed to */
+        delete *it;
 	}
 
 	if(!unprocessedGroups.empty())
 		request_SpecificSubscribedGroups(unprocessedGroups);
-
-//  // the call below deletes changes and its content.
-//	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 void	p3GxsChannels::service_tick()

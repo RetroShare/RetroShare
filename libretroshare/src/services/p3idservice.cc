@@ -661,9 +661,9 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 changes[i] = NULL ;
             }
         }
-    }
 
-    RsGxsIfaceHelper::receiveChanges(changes);
+        delete changes[i];
+    }
 }
 
 /********************************************************************************/
