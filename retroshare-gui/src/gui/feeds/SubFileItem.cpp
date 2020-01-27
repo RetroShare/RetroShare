@@ -24,6 +24,8 @@
 #include <QUrl>
 
 #include "SubFileItem.h"
+#include "gui/PlayerPage.h"
+#include "gui/MainWindow.h"
 
 #include <gui/common/RsUrlHandler.h>
 #include <retroshare/rsfiles.h>
@@ -587,9 +589,9 @@ void SubFileItem::play()
 		QFileInfo qinfo;
 		qinfo.setFile(info.path.c_str());
 		if (qinfo.exists()) {
-			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
-				std::cerr << "openTransfer(): can't open file " << info.path << std::endl;
-			}
+				MainWindow::showWindow(MainWindow::Player);
+				PlayerPage *Player = dynamic_cast<PlayerPage*>(MainWindow::getPage(MainWindow::Player));
+				Player->setUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
 		}else{
 			QMessageBox::information(this, tr("Play File"),
 					tr("File %1 does not exist at location.").arg(info.path.c_str()));

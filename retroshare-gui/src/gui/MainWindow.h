@@ -61,7 +61,7 @@ class TransfersDialog;
 class MessagesDialog;
 class PluginsPage;
 class HomePage;
-//class ChannelFeed;
+class PlayerPage;
 class BandwidthGraph;
 class MainPage;
 class NewsFeed;
@@ -92,8 +92,9 @@ public:
         Forums             = 7,  /** Forums page. */
         Search             = 8,  /** Search page. */
         Posted             = 11,  /** Posted links */
-        People             = 12,   /** People page. */
-        Options            = 13   /** People page. */
+        People             = 12,  /** People page. */
+        Options            = 13,  /** People page. */
+        Player             = 14   /** Player page. */
     };
 
 
@@ -153,6 +154,7 @@ public:
 	 GxsChannelDialog  *gxschannelDialog ;
 	 GxsForumsDialog   *gxsforumDialog ;
 	 PostedDialog      *postedDialog;
+	 PlayerPage        *playerDialog;
 
 //    ForumsDialog      *forumsDialog;
 //    ChannelFeed       *channelFeed;

@@ -19,7 +19,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml 
+QT     += network xml multimedia multimediawidgets
 CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
@@ -415,6 +415,7 @@ HEADERS +=  rshare.h \
             gui/SoundManager.h \
             gui/HelpDialog.h \
             gui/LogoBar.h \
+            gui/PlayerPage.h \
             gui/common/AvatarDialog.h \
             gui/FileTransfer/SearchDialog.h \
             gui/FileTransfer/SharedFilesDialog.h \
@@ -668,6 +669,7 @@ FORMS +=    gui/StartDialog.ui \
 #            gui/ShareDialog.ui \
             gui/help/browser/helpbrowser.ui \
             gui/HelpDialog.ui \
+            gui/PlayerPage.ui \
             gui/ServicePermissionDialog.ui \
             gui/profile/ProfileWidget.ui \
             gui/profile/StatusMessage.ui \
@@ -790,6 +792,7 @@ SOURCES +=  main.cpp \
 #            gui/ShareDialog.cpp \
 #            gui/SFListDelegate.cpp \
             gui/SoundManager.cpp \
+            gui/PlayerPage.cpp \
             gui/im_history/ImHistoryBrowser.cpp \
             gui/im_history/IMHistoryItemDelegate.cpp \
             gui/im_history/IMHistoryItemPainter.cpp \
