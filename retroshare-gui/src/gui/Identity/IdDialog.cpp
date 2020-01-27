@@ -35,10 +35,12 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/qtthreadsutils.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "util/misc.h"
 #include "util/QtVersion.h"
@@ -148,6 +150,9 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	mIdQueue = NULL;
     
+    mEventHandlerId = 0;
+	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+
     	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
@@ -396,6 +401,29 @@ IdDialog::IdDialog(QWidget *parent) :
     connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
     
     tmer->start(10000) ;	// update every 10 secs. 
+}
+
+void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType != RsEventType::GXS_IDENTITY)
+		return;
+
+	const RsGxsIdentityEvent *e = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+
+	if(!e)
+		return;
+
+	switch(e->mIdentityEventCode)
+	{
+	case RsGxsIdentityEventCode::DELETED_IDENTITY:
+	case RsGxsIdentityEventCode::NEW_IDENTITY:
+
+		requestIdList();
+        getUserNotify()->updateIcon();
+
+	default:
+		break;
+	}
 }
 
 void IdDialog::clearPerson()

@@ -603,7 +603,6 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
     for(uint32_t i = 0;i<changes.size();++i)
     {
-        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
         RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
 
         if (msgChange && !msgChange->metaChange())
@@ -614,8 +613,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
             std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-            std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator mit;
-            for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+
+            for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
             {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
@@ -624,7 +623,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
         }
 
-        /* shouldn't need to worry about groups - as they need to be subscribed to */
+        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
+
         if (groupChange && !groupChange->metaChange())
         {
 #ifdef DEBUG_IDS
@@ -632,9 +632,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << std::endl;
 #endif
             std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-            std::list<RsGxsGroupId>::iterator git;
 
-            for(git = groupList.begin(); git != groupList.end();)
+            for(auto git = groupList.begin(); git != groupList.end();++git)
             {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
@@ -649,16 +648,24 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
 
-                    ++git;
-                }
-                else
-                    git = groupList.erase(git) ;
-            }
+                    // notify that a new identity is received, if needed
 
-            if(groupList.empty())
-            {
-                delete changes[i] ;
-                changes[i] = NULL ;
+                    switch(groupChange->getType())
+                    {
+                    case RsGxsNotify::TYPE_PUBLISHED:
+                    case RsGxsNotify::TYPE_RECEIVED_NEW:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = *git;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
+                        rsEvents->postEvent(ev);
+                    }
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
             }
         }
 
@@ -1068,6 +1075,14 @@ bool p3IdService::deleteIdentity(RsGxsId& id)
 		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed."
 		          << std::endl;
 		return false;
+	}
+
+    if(rsEvents)
+	{
+		auto ev = std::make_shared<RsGxsIdentityEvent>();
+		ev->mIdentityId = grouId;
+		ev->mIdentityEventCode = RsGxsIdentityEventCode::DELETED_IDENTITY;
+		rsEvents->postEvent(ev);
 	}
 
 	return true;
