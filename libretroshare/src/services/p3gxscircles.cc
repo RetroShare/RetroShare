@@ -611,6 +611,12 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					rsEvents->postEvent(ev);
                 }
 
+                // reset circle from cache since the number of invitee may have changed.
+				{
+				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+				    mCircleCache.erase(RsGxsCircleId(*git));
+			    }
+
             }
         }
 
