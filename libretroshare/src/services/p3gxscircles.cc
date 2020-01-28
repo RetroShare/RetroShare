@@ -547,14 +547,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 				    mCircleCache.erase(RsGxsCircleId(*git));
 			    }
-
-				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED) )
-                {
-					auto ev = std::make_shared<RsGxsCircleEvent>();
-					ev->mCircleId = RsGxsCircleId(*git);
-					ev->mCircleEventType = RsGxsCircleEventCode::NEW_CIRCLE;
-					rsEvents->postEvent(ev);
-                }
 		    }
 	    }
 
@@ -610,6 +602,15 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 				}
 #endif
+
+				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED) )
+                {
+					auto ev = std::make_shared<RsGxsCircleEvent>();
+					ev->mCircleId = RsGxsCircleId(*git);
+					ev->mCircleEventType = RsGxsCircleEventCode::NEW_CIRCLE;
+					rsEvents->postEvent(ev);
+                }
+
             }
         }
 

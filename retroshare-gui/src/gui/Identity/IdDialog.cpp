@@ -57,6 +57,7 @@
 /******
  * #define ID_DEBUG 1
  *****/
+#define ID_DEBUG 1
 
 // Data Requests.
 #define IDDIALOG_IDLIST           1
@@ -441,7 +442,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
 
-			requestIdList();
+			requestCircleGroupMeta();
 		default:
 			break;
 		}
@@ -752,7 +753,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
 #ifdef ID_DEBUG
-			std::cerr << "    ID " << *it << ": " ;
+			std::cerr << "    ID " << it->first << ": " ;
 #endif
 			bool is_own_id = rsIdentity->isOwnId(it->first) ;
 			bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
@@ -2146,7 +2147,7 @@ void IdDialog::modifyReputation()
 	rsReputations->setOwnOpinion(id,op);
 
 #ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
+	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << static_cast<int>(op);
 	std::cerr << std::endl;
 #endif
 
