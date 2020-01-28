@@ -150,8 +150,11 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	mIdQueue = NULL;
     
-    mEventHandlerId = 0;
-	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+    mEventHandlerId_identity = 0;
+	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_identity );
+
+    mEventHandlerId_circles = 0;
+	rsEvents->registerEventsHandler(RsEventType::GXS_CIRCLES,  [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_circles );
 
     	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
@@ -405,25 +408,45 @@ IdDialog::IdDialog(QWidget *parent) :
 
 void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 {
-	if(event->mType != RsEventType::GXS_IDENTITY)
-		return;
-
-	const RsGxsIdentityEvent *e = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
-
-	if(!e)
-		return;
-
-	switch(e->mIdentityEventCode)
+	if(event->mType == RsEventType::GXS_IDENTITY)
 	{
-	case RsGxsIdentityEventCode::DELETED_IDENTITY:
-	case RsGxsIdentityEventCode::NEW_IDENTITY:
+		const RsGxsIdentityEvent *e = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
 
-		requestIdList();
-        getUserNotify()->updateIcon();
+		if(!e)
+			return;
 
-	default:
-		break;
+		switch(e->mIdentityEventCode)
+		{
+		case RsGxsIdentityEventCode::DELETED_IDENTITY:
+		case RsGxsIdentityEventCode::NEW_IDENTITY:
+
+			requestIdList();
+		default:
+			break;
+		}
 	}
+    else if(event->mType == RsEventType::GXS_CIRCLES)
+    {
+		const RsGxsCircleEvent *e = dynamic_cast<const RsGxsCircleEvent*>(event.get());
+
+		if(!e)
+			return;
+
+		switch(e->mCircleEventType)
+		{
+		case RsGxsCircleEventCode::NEW_CIRCLE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
+
+			requestIdList();
+		default:
+			break;
+		}
+
+    }
 }
 
 void IdDialog::clearPerson()
