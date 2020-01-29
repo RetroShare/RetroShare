@@ -791,9 +791,9 @@ void    ftServer::updateSinceGroupPermissionsChanged()
 {
 	mFileDatabase->forceSyncWithPeers();
 }
-void    ftServer::ForceDirectoryCheck()
+void    ftServer::ForceDirectoryCheck(bool add_safe_delay)
 {
-	mFileDatabase->forceDirectoryCheck();
+	mFileDatabase->forceDirectoryCheck(add_safe_delay);
 	return;
 }
 
