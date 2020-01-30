@@ -52,7 +52,37 @@ HashingStatus::HashingStatus(QWidget *parent)
     hashloader->hide();
     statusHashing->hide();
 
-    connect(NotifyQt::getInstance(), SIGNAL(hashingInfoChanged(const QString&)), SLOT(updateHashingInfo(const QString&)));
+    mEventHandlerId=0;
+    rsEvents->registerEventsHandler(RsEventType::SHARED_DIRECTORIES, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+}
+
+void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::SHARED_DIRECTORIES)
+        return;
+
+	const RsSharedDirectoriesEvent *fe = dynamic_cast<const RsSharedDirectoriesEvent*>(event.get());
+	if(!fe)
+        return;
+
+    QString info;
+
+ 	switch (fe->mEventCode)
+    {
+	case RsSharedDirectoriesEventCode::STARTING_DIRECTORY_SWEEP:
+		info = tr("Examining shared files...");
+		break;
+    case RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED:
+		break;
+	case RsSharedDirectoriesEventCode::HASHING_FILE:
+		info = tr("Hashing file") + " " + QString::fromUtf8(fe->mMessage.c_str());
+		break;
+	case RsSharedDirectoriesEventCode::SAVING_FILE_INDEX:
+		info = tr("Saving file index...");
+		break;
+	}
+
+	updateHashingInfo(info);
 }
 
 HashingStatus::~HashingStatus()

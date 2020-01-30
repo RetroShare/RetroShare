@@ -349,6 +349,7 @@ void NotifyQt::notifyDiscInfoChanged()
 	emit discInfoChanged() ;
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
 {
 	{
@@ -376,6 +377,7 @@ void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
 
 	emit downloadCompleteCountChanged(count);
 }
+#endif
 
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {

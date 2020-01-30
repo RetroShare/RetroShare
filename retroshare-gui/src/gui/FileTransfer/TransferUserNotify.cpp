@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsfiles.h"
 #include "TransferUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
@@ -27,7 +28,7 @@ TransferUserNotify::TransferUserNotify(QObject *parent) :
 {
 	newTransferCount = 0;
 
-	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
+//	connect(NotifyQt::getInstance(), SIGNAL(downloadCompleteCountChanged(int)), this, SLOT(downloadCountChanged(int)));
 }
 
 bool TransferUserNotify::hasSetting(QString *name, QString *group)
@@ -50,7 +51,17 @@ QIcon TransferUserNotify::getMainIcon(bool hasNew)
 
 unsigned int TransferUserNotify::getNewCount()
 {
-	return newTransferCount;
+    std::list<RsFileHash> hashs;
+    rsFiles->FileDownloads(hashs);
+    FileInfo info;
+
+    newTransferCount = 0;
+
+    for(auto hash: hashs)
+		if(rsFiles->FileDetails(hash, RS_FILE_HINTS_DOWNLOAD, info) && info.downloadStatus==FT_STATE_COMPLETE)
+            ++newTransferCount;
+
+    return newTransferCount;
 }
 
 QString TransferUserNotify::getTrayMessage(bool plural)
@@ -68,8 +79,3 @@ void TransferUserNotify::iconClicked()
 	MainWindow::showWindow(MainWindow::Transfers);
 }
 
-void TransferUserNotify::downloadCountChanged(int count)
-{
-	newTransferCount = count;
-	updateIcon();
-}
