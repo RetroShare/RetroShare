@@ -730,15 +730,10 @@ void JsonApiServer::run()
 	human = RS_HUMAN_READABLE_VERSION;
 }
 
-
-//std::error_code make_error_code(RsJsonApiErrorCode e)
-//{ return std::error_code(static_cast<int>(e), rsJsonApi->errorCategory()); }
-
 std::error_condition make_error_condition(RsJsonApiErrorNum e)
 {
 return std::error_condition(static_cast<int>(e), rsJsonApi->errorCategory());
 }
-
 
 std::error_condition RsJsonApiErrorCategory::default_error_condition(int ev) const noexcept
 {
