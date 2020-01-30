@@ -584,6 +584,7 @@ void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,c
 	}
 }
 
+#ifdef TO_REMOVE
 void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 {
 	QString info;
@@ -610,6 +611,7 @@ void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
 
 	emit hashingInfoChanged(info);
 }
+#endif
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {
