@@ -87,6 +87,7 @@ void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
 
 HashingStatus::~HashingStatus()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete(movie);
 }
 

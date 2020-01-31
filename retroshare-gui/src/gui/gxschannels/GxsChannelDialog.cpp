@@ -88,6 +88,7 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
 GxsChannelDialog::~GxsChannelDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 QString GxsChannelDialog::getHelpString() const

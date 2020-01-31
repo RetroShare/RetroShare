@@ -490,6 +490,7 @@ void GxsForumThreadWidget::blank()
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 	// save settings
 	processSettings(false);
 

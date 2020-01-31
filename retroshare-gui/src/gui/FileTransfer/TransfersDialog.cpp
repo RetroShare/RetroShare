@@ -1117,6 +1117,8 @@ void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
 
 TransfersDialog::~TransfersDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
+
     // save settings
     processSettings(false);
 }

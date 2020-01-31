@@ -1377,6 +1377,9 @@ void IdDialog::circle_selected()
     
 IdDialog::~IdDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
+	rsEvents->unregisterEventsHandler(mEventHandlerId_circles);
+
 	// save settings
 	processSettings(false);
 
