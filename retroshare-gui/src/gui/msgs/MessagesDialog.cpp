@@ -325,7 +325,7 @@ MessagesDialog::~MessagesDialog()
     processSettings(false);
 }
 
-UserNotify *MessagesDialog::getUserNotify(QObject *parent)
+UserNotify *MessagesDialog::createUserNotify(QObject *parent)
 {
     return new MessageUserNotify(parent);
 }

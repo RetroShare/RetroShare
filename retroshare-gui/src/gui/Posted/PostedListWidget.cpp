@@ -23,6 +23,7 @@
 #include "PostedListWidget.h"
 #include "ui_PostedListWidget.h"
 
+#include "util/qtthreadsutils.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
@@ -94,7 +95,6 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	/* Initialize GUI */
 	setGroupId(postedId);
 }
-
 PostedListWidget::~PostedListWidget()
 {
 	// save settings

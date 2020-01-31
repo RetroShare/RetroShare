@@ -110,15 +110,10 @@ enum class RsForumEventCode: uint8_t
 	UNKNOWN                  = 0x00,
 	NEW_FORUM                = 0x01, /// emitted when new forum is received
 	UPDATED_FORUM            = 0x02, /// emitted when existing forum is updated
-
-	/// new message reeived in a particular forum
-	NEW_MESSAGE              = 0x03,
-
-	/// existing message has been updated in a particular forum
-	UPDATED_MESSAGE          = 0x04,
-
-	/// forum was subscribed or unsubscribed
-	SUBSCRIBE_STATUS_CHANGED = 0x05,
+	NEW_MESSAGE              = 0x03, /// new message reeived in a particular forum
+	UPDATED_MESSAGE          = 0x04, /// existing message has been updated in a particular forum
+	SUBSCRIBE_STATUS_CHANGED = 0x05, /// forum was subscribed or unsubscribed
+	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
 };
 
 struct RsGxsForumEvent: RsEvent

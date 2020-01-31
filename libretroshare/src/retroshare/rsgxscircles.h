@@ -182,9 +182,11 @@ enum class RsGxsCircleEventCode: uint8_t
 	/// mCircleId contains the circle id and mGxsId is the id of the new member
 	CIRCLE_MEMBERSHIP_JOIN    = 0x04,
 
-	/** mCircleId contains the circle id and mGxsId is the id that was revoqued
-	 * by admin */
+	/** mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
 	CIRCLE_MEMBERSHIP_REVOQUED= 0x05,
+
+	/** mCircleId contains the circle id */
+	NEW_CIRCLE                = 0x06,
 };
 
 struct RsGxsCircleEvent: RsEvent
