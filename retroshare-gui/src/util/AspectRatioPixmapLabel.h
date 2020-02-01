@@ -1,7 +1,7 @@
 /*******************************************************************************
- * util/imageutil.h                                                            *
+ * retroshare-gui/src/util/AspectRatioPixmapLabel.h                             *
  *                                                                             *
- * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
+ * Copyright (C) 2019  Retroshare Team       <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,28 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef IMAGEUTIL_H
-#define IMAGEUTIL_H
+#ifndef ASPECTRATIOPIXMAPLABEL_H
+#define ASPECTRATIOPIXMAPLABEL_H
 
-#include <QTextCursor>
-#include <QWidget>
-#include <QByteArray>
-#include <qiterator.h>
+#include <QLabel>
+#include <QPixmap>
+#include <QResizeEvent>
 
-class ImageUtil
+class AspectRatioPixmapLabel : public QLabel
 {
+    Q_OBJECT
 public:
-	ImageUtil();
-
-	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
-	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
-	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
-
-	private:
-		static int checkSize(QByteArray& embeddedImage, const QImage& img);
-		static void quantization(const QImage& img, QVector<QRgb>& palette);
-		static void quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb>& palette);
-		static void avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb>& palette);
+	explicit AspectRatioPixmapLabel(QWidget *parent = nullptr);
+	virtual int heightForWidth( int width ) const override;
+	virtual QSize sizeHint() const override;
+    QPixmap scaledPixmap() const;
+public slots:
+    void setPixmap ( const QPixmap & );
+protected:
+	void resizeEvent(QResizeEvent *event) override;
+private:
+    QPixmap pix;
 };
 
-#endif // IMAGEUTIL_H
+#endif // ASPECTRATIOPIXMAPLABEL_H
