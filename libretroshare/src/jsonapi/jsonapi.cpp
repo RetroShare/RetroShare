@@ -133,7 +133,7 @@ bool RsJsonApi::parseToken(
 	const auto tkLen = clear_token.length();
 
 	for(uint32_t i=0; i < tkLen; ++i)
-		if(clear_token[i] == ':') colonIndex = i;
+		if(clear_token[i] == ':') { colonIndex = i; break; }
 
 	user = clear_token.substr(0, colonIndex);
 
