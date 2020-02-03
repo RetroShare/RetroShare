@@ -76,6 +76,11 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 			updateMessageSummaryList(e->mChannelGroupId);
             break;
 
+        case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
+            mSearchResults.insert(e->mDistantSearchRequestId);
+            updateSearchResults();
+            break;
+
 		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
