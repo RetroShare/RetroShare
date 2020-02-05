@@ -47,6 +47,12 @@ const uint32_t TOU_STUN_MAX_RECV_RATE = 25; /* every 25 seconds */
 const int32_t TOU_STUN_DEFAULT_TARGET_RATE  = 15; /* 20 secs is minimum to keep a NAT UDP port open */
 const double  TOU_SUCCESS_LPF_FACTOR = 0.90;
 
+/*
+ * based on RFC 3489
+ */
+const uint16_t STUN_BINDING_REQUEST  = 0x0001;
+const uint16_t STUN_BINDING_RESPONSE = 0x0101;
+
 #define EXCLUSIVE_MODE_TIMEOUT	300
 
 UdpStunner::UdpStunner(UdpPublisher *pub)
@@ -187,7 +193,6 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 		return 0;
 	}
 
-	rstime_t now = time(NULL);
 	mExclusiveMode = false;
 	if (forceStun)
 	{
@@ -217,6 +222,7 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 	}
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
+	rstime_t now = time(NULL);
 	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
 	std::cerr << " secs";
 	std::cerr << std::endl;
@@ -326,7 +332,7 @@ bool UdpStunner::locked_handleStunPkt(void *data, int size, struct sockaddr_in &
 #endif
 		/* generate a response */
 		int len;
-		void *pkt = UdpStun_generate_stun_reply(&from, &len);
+		void *pkt = UdpStun_generate_stun_reply(&from, &len, data);
 		if (!pkt)
 			return false;
 
@@ -485,7 +491,7 @@ bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr)
 		return false;
 	}
 
-	if (htons(((uint16_t *) stun_pkt)[0]) != 0x0101)
+	if (htons(((uint16_t *) stun_pkt)[0]) != STUN_BINDING_RESPONSE)
 	{
 		/* not a response */
 		return false;
@@ -517,33 +523,41 @@ bool UdpStun_generate_stun_pkt(void *stun_pkt, int *len)
 	}
 
 	/* just the header */
-	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(0x0001);
+	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(STUN_BINDING_REQUEST);
 	((uint16_t *) stun_pkt)[1] = (uint16_t) htons(20); /* only header */
-	/* transaction id - should be random */
-	((uint32_t *) stun_pkt)[1] = (uint32_t) htonl(0x0020); 
-	((uint32_t *) stun_pkt)[2] = (uint32_t) htonl(0x0121); 
-	((uint32_t *) stun_pkt)[3] = (uint32_t) htonl(0x0111); 
-	((uint32_t *) stun_pkt)[4] = (uint32_t) htonl(0x1010); 
+	/* RFC 3489
+	 *	The transaction ID is used to correlate requests and responses.
+	 *
+	 * RFC 5389 introduces a mmgic cokie at the location where preciously the transaction ID was located:
+	 *	In RFC 3489 [RFC3489], this field was part of
+	 *	the transaction ID; placing the magic cookie in this location allows
+	 *	a server to detect if the client will understand certain attributes
+	 *	that were added in this revised specification.
+	 */
+	((uint32_t *) stun_pkt)[1] = htonl(RsRandom::random_u32());
+	((uint32_t *) stun_pkt)[2] = htonl(RsRandom::random_u32());
+	((uint32_t *) stun_pkt)[3] = htonl(RsRandom::random_u32());
+	((uint32_t *) stun_pkt)[4] = htonl(RsRandom::random_u32());
 	*len = 20;
 	return true;
 }
 
 
-void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len)
+void *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len, const void *data)
 {
 	/* just the header */
 	void *stun_pkt = rs_malloc(28);
     
-    	if(!stun_pkt)
-            return NULL ;
+	if(!stun_pkt)
+		return NULL ;
         
-	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(0x0101);
+	((uint16_t *) stun_pkt)[0] = (uint16_t) htons(STUN_BINDING_RESPONSE);
 	((uint16_t *) stun_pkt)[1] = (uint16_t) htons(28); /* only header + 8 byte addr */
-	/* transaction id - should be random */
-	((uint32_t *) stun_pkt)[1] = (uint32_t) htonl(0x0f20); 
-	((uint32_t *) stun_pkt)[2] = (uint32_t) htonl(0x0f21); 
-	((uint32_t *) stun_pkt)[3] = (uint32_t) htonl(0x0f11); 
-	((uint32_t *) stun_pkt)[4] = (uint32_t) htonl(0x1010); 
+	/* RFC 3489
+	 *	The Binding Response MUST contain the same transaction ID contained in the Binding Request.
+	 */
+	memcpy(&((uint32_t *) stun_pkt)[1], &((uint32_t *) data)[1], 4 * sizeof (uint32_t));
+
 	/* now add address
 	 *  0  1    2  3
 	 * <INET>  <port>
@@ -586,20 +600,20 @@ bool UdpStun_isStunPacket(void *data, int size)
 		return false;
 	}
 
-	if ((size == 20) && (0x0001 == ntohs(((uint16_t *) data)[0])))
+	if ((size == 20) && (STUN_BINDING_REQUEST == ntohs(((uint16_t *) data)[0])))
 	{
 #ifdef DEBUG_UDP_STUNNER_FILTER
-		std::cerr << "UdpStunner::isStunPacket() (size=20 & data[0]=0x0001) -> true";
+		std::cerr << "UdpStunner::isStunPacket() (size=20 & data[0]=STUN_BINDING_REQUEST) -> true";
 		std::cerr << std::endl;
 #endif
 		/* request */
 		return true;
 	}
 
-	if ((size == 28) && (0x0101 == ntohs(((uint16_t *) data)[0])))
+	if ((size == 28) && (STUN_BINDING_RESPONSE == ntohs(((uint16_t *) data)[0])))
 	{
 #ifdef DEBUG_UDP_STUNNER_FILTER
-		std::cerr << "UdpStunner::isStunPacket() (size=28 & data[0]=0x0101) -> true";
+		std::cerr << "UdpStunner::isStunPacket() (size=28 & data[0]=STUN_BINDING_RESPONSE) -> true";
 		std::cerr << std::endl;
 #endif
 		/* response */

@@ -170,7 +170,7 @@ bool    locked_checkExternalAddress();
 
 bool	UdpStun_isStunPacket(void *data, int size);
 bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr);
-void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len);
+void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len, const void* data);
 bool    UdpStun_generate_stun_pkt(void *stun_pkt, int *len);
 
 #endif
