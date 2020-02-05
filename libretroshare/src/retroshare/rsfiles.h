@@ -591,9 +591,10 @@ public:
 
 	/**
 	 * @brief Force shared directories check
+	 * @param[in] add_safe_delay Schedule the check 20 seconds from now, to ensure to capture files written just now.
 	 * @jsonapi{development}
 	 */
-	virtual void ForceDirectoryCheck() = 0;
+	virtual void ForceDirectoryCheck(bool add_safe_delay=false) = 0;
 
 	virtual void updateSinceGroupPermissionsChanged() = 0;
 		virtual bool InDirectoryCheck() = 0;

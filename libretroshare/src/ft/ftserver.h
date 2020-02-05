@@ -275,7 +275,7 @@ public:
          * Utility Functions
          ***/
     virtual bool ConvertSharedFilePath(std::string path, std::string &fullpath);
-    virtual void ForceDirectoryCheck();
+    virtual void ForceDirectoryCheck(bool add_safe_delay);
     virtual void updateSinceGroupPermissionsChanged() ;
     virtual bool InDirectoryCheck();
     virtual bool copyFile(const std::string& source, const std::string& dest);

@@ -168,7 +168,7 @@ class p3FileDatabase: public p3Service, public p3Config, public ftSearch //, pub
 
         // interfact for directory parsing
 
-		void forceDirectoryCheck();              // Force re-sweep the directories and see what's changed
+		void forceDirectoryCheck(bool add_safe_delay);              // Force re-sweep the directories and see what's changed
 		bool inDirectoryCheck();
 		void togglePauseHashingProcess();
 		bool hashingProcessPaused();

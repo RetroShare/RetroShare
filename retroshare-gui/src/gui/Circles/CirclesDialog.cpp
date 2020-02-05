@@ -62,9 +62,6 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.pushButton_editCircle);
 
 	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_membership, UISTATE_ACTIVE_ENABLED);
-//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_friends, UISTATE_ACTIVE_ENABLED);
-//	mStateHelper->addWidget(CIRCLESDIALOG_GROUPMETA, ui.treeWidget_category, UISTATE_ACTIVE_ENABLED);
-
 	mStateHelper->setWidgetEnabled(ui.pushButton_editCircle, false);
 
 	/* Connect signals */
@@ -74,19 +71,13 @@ CirclesDialog::CirclesDialog(QWidget *parent)
 	connect(ui.todoPushButton, SIGNAL(clicked()), this, SLOT(todo()));
 
 	connect(ui.treeWidget_membership, SIGNAL(itemSelectionChanged()), this, SLOT(circle_selected()));
-//	connect(ui.treeWidget_friends, SIGNAL(itemSelectionChanged()), this, SLOT(friend_selected()));
-//	connect(ui.treeWidget_category, SIGNAL(itemSelectionChanged()), this, SLOT(category_selected()));
 
 	/* Setup TokenQueue */
 	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	
 	/* Set header resize modes and initial section sizes */
-  QHeaderView * membership_header = ui.treeWidget_membership->header () ;
-  membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
-
-//  QHeaderView * friends_header = ui.treeWidget_friends->header () ;
-//  friends_header->resizeSection ( CIRCLEGROUP_FRIEND_COL_NAME, 200 );
-  
+	QHeaderView * membership_header = ui.treeWidget_membership->header () ;
+	membership_header->resizeSection ( CIRCLEGROUP_CIRCLE_COL_GROUPNAME, 200 );
 }
 
 CirclesDialog::~CirclesDialog()

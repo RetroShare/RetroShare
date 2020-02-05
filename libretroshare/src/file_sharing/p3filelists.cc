@@ -114,7 +114,7 @@ void p3FileDatabase::setSharedDirectories(const std::list<SharedDirInfo>& shared
         RS_STACK_MUTEX(mFLSMtx) ;
 
         mLocalSharedDirs->setSharedDirectoryList(shared_dirs) ;
-        mLocalDirWatcher->forceUpdate();
+        mLocalDirWatcher->forceUpdate(false);
 
     }
 
@@ -1231,9 +1231,9 @@ uint32_t p3FileDatabase::getType(void *ref,FileSearchFlags flags) const
     }
 }
 
-void p3FileDatabase::forceDirectoryCheck()              // Force re-sweep the directories and see what's changed
+void p3FileDatabase::forceDirectoryCheck(bool add_safe_delay)              // Force re-sweep the directories and see what's changed
 {
-    mLocalDirWatcher->forceUpdate();
+    mLocalDirWatcher->forceUpdate(add_safe_delay);
 }
 void p3FileDatabase::togglePauseHashingProcess()
 {

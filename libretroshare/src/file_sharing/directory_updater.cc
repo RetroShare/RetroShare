@@ -107,10 +107,13 @@ void LocalDirectoryUpdater::threadTick()
 	}
 }
 
-void LocalDirectoryUpdater::forceUpdate()
+void LocalDirectoryUpdater::forceUpdate(bool add_safe_delay)
 {
     mForceUpdate = true ;
-	mLastSweepTime = 0 ;
+	mLastSweepTime = rstime_t(time(NULL)) - rstime_t(mDelayBetweenDirectoryUpdates) ;
+
+    if(add_safe_delay)
+        mLastSweepTime += rstime_t(MIN_TIME_AFTER_LAST_MODIFICATION);
 
 	if(mHashCache != NULL && mHashCache->hashingProcessPaused())
 		mHashCache->togglePauseHashingProcess();
@@ -363,7 +366,7 @@ void LocalDirectoryUpdater::setFollowSymLinks(bool b)
 
     mFollowSymLinks = b ;
 
-    forceUpdate();
+    forceUpdate(false);
 }
 
 bool LocalDirectoryUpdater::followSymLinks() const

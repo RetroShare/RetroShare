@@ -85,6 +85,9 @@ enum class RsEventType : uint32_t
     /// @see RsGxsPostedEvent
     GXS_POSTED                                              = 11,
 
+    /// @see RsGxsPostedEvent
+    GXS_IDENTITY                                            = 12,
+
 	MAX       /// Used to detect invalid event type passed
 };
 

@@ -133,7 +133,7 @@ FeedReaderDialog::~FeedReaderDialog()
 	}
 }
 
-UserNotify *FeedReaderDialog::getUserNotify(QObject *parent)
+UserNotify *FeedReaderDialog::createUserNotify(QObject *parent)
 {
 	return new FeedReaderUserNotify(this, mFeedReader, mNotify, parent);
 }

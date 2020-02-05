@@ -226,12 +226,11 @@ ChatLobbyWidget::~ChatLobbyWidget()
 	}
 }
 
-UserNotify *ChatLobbyWidget::getUserNotify(QObject *parent)
+UserNotify *ChatLobbyWidget::createUserNotify(QObject *parent)
 {
-	if (!myChatLobbyUserNotify){
-		myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
-		connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, unsigned int)), this, SLOT(updateNotify(ChatLobbyId, unsigned int)));
-	}
+	myChatLobbyUserNotify = new ChatLobbyUserNotify(parent);
+	connect(myChatLobbyUserNotify, SIGNAL(countChanged(ChatLobbyId, unsigned int)), this, SLOT(updateNotify(ChatLobbyId, unsigned int)));
+
 	return myChatLobbyUserNotify;
 }
 

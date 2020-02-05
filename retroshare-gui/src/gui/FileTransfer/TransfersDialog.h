@@ -67,7 +67,7 @@ public:
     virtual QString pageName() const { return tr("Files") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
-    virtual UserNotify *getUserNotify(QObject *parent);
+    virtual UserNotify *createUserNotify(QObject *parent) override;
 
 	 void activatePage(TransfersDialog::Page page) ;
 
