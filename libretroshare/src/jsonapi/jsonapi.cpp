@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  *
- * SPDX-FileCopyrightText: 2004-2019 RetroShare Team <contact@retroshare.cc>
+ * SPDX-FileCopyrightText: 2004-2020 RetroShare Team <contact@retroshare.cc>
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
@@ -73,7 +73,7 @@ JsonApiServer::corsOptionsHeaders =
     { "Content-Length", "0" }
 };
 
-/* static */const RsJsonApiErrorCategory JsonApiServer::sErrorCategory;
+/* static */ const RsJsonApiErrorCategory RsJsonApiErrorCategory::instance;
 
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
@@ -126,6 +126,15 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
+void JsonApiServer::unProtectedRestart()
+{
+	/* Extremely sensitive stuff!
+	 * Make sure you read documentation in header before changing or use!! */
+
+	fullstop();
+	RsThread::start("JSON API Server");
+}
+
 bool RsJsonApi::parseToken(
         const std::string& clear_token, std::string& user,std::string& passwd )
 {
@@ -143,13 +152,19 @@ bool RsJsonApi::parseToken(
 	return true;
 }
 
-
 JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
-    mService(std::make_shared<restbed::Service>()),
-    mServiceMutex("JsonApiServer restbed ptr"),
+    mService(nullptr),
     mListeningPort(RsJsonApi::DEFAULT_PORT),
-    mBindingAddress(RsJsonApi::DEFAULT_BINDING_ADDRESS)
+    mBindingAddress(RsJsonApi::DEFAULT_BINDING_ADDRESS),
+    mRestartReqTS(0)
 {
+#if defined(RS_THREAD_FORCE_STOP) && defined(RS_JSONAPI_DEBUG_SERVICE_STOP)
+	/* When called in bursts it seems that Restbed::Service::stop() doesn't
+	 * always does the job, to debug those cases it has been useful to ask
+	 * RsThread to force it to stop for us. */
+	RsThread::setStopTimeout(10);
+#endif
+
 	registerHandler("/rsLoginHelper/createLocation",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
@@ -394,6 +409,41 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			session->yield(message.str());
 		} );
 	}, true);
+
+	registerHandler("/rsJsonApi/restart",
+	                [this](const std::shared_ptr<rb::Session> session)
+	{
+		auto reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( static_cast<size_t>(reqSize), [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			std::error_condition retval;
+
+			const auto now = time(nullptr);
+			if(mRestartReqTS.exchange(now) + RESTART_BURST_PROTECTION > now)
+				retval = RsJsonApiErrorNum::NOT_A_MACHINE_GUN;
+
+			// serialize out parameters and return value to JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(retval);
+			}
+
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+
+			/* Wrap inside RsThread::async because this call fullstop() on
+			 * JSON API server thread.
+			 * Calling RsThread::fullstop() from it's own thread should never
+			 * happen and if it happens an error message is printed
+			 * accordingly by RsThread::fullstop() */
+			if(!retval) RsThread::async([this](){ unProtectedRestart(); });
+		} );
+	}, true);
+
 // Generated at compile time
 #include "jsonapi-wrappers.inl"
 }
@@ -464,9 +514,7 @@ void JsonApiServer::registerHandler(
 				std::string tUser;
 				parseToken(authToken, tUser, RS_DEFAULT_STORAGE_PARAM(std::string));
 				authFail(rb::UNAUTHORIZED)
-				        << " user: " << tUser
-				        << " error: " << ec.value() << " " << ec.message()
-				        << std::endl;
+				        << " user: " << tUser << ec << std::endl;
 			}
 		} );
 
@@ -661,21 +709,21 @@ std::vector<std::shared_ptr<rb::Resource> > JsonApiServer::getResources() const
 	return tab;
 }
 
-void JsonApiServer::restart()
+std::error_condition JsonApiServer::restart()
 {
-	/* It is important to wrap into async(...) because fullstop() method can't
-	 * be called from same thread of execution hence from JSON API thread! */
-	RsThread::async([this]()
-	{
-		fullstop();
-		RsThread::start("JSON API Server");
-	});
+	const auto now = time(nullptr);
+	if(mRestartReqTS.exchange(now) + RESTART_BURST_PROTECTION > now)
+		return RsJsonApiErrorNum::NOT_A_MACHINE_GUN;
+
+	unProtectedRestart();
+	return std::error_condition();
 }
 
 void JsonApiServer::onStopRequested()
 {
-	RS_STACK_MUTEX(mServiceMutex);
-	mService->stop();
+	auto tService = std::atomic_exchange(
+	            &mService, std::shared_ptr<rb::Service>(nullptr) );
+	if(tService) tService->stop();
 }
 
 uint16_t JsonApiServer::listeningPort() const { return mListeningPort; }
@@ -691,14 +739,9 @@ void JsonApiServer::run()
 	settings->set_bind_address(mBindingAddress);
 	settings->set_default_header("Connection", "close");
 
-	/* re-allocating mService is important because it deletes the existing
-	 * service and therefore leaves the listening port open */
-	{
-		RS_STACK_MUTEX(mServiceMutex);
-		mService = std::make_shared<restbed::Service>();
-	}
+	auto tService = std::make_shared<restbed::Service>();
 
-	for(auto& r: getResources()) mService->publish(r);
+	for(auto& r: getResources()) tService->publish(r);
 
 	try
 	{
@@ -706,7 +749,20 @@ void JsonApiServer::run()
 		        .setPort(mListeningPort);
 		RsInfo() << __PRETTY_FUNCTION__ << " JSON API server listening on "
 		         << apiUrl.toString() << std::endl;
-		mService->start(settings);
+
+		/* re-allocating mService is important because it deletes the existing
+		 * service and therefore leaves the listening port open */
+		auto tExpected = std::shared_ptr<rb::Service>(nullptr);
+		if(atomic_compare_exchange_strong(&mService, &tExpected, tService))
+			tService->start(settings);
+		else
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " mService was expected to be "
+			        << " null, instead we got: " << tExpected
+			        << " something wrong happened JsonApiServer won't start"
+			        << std::endl;
+			print_stacktrace();
+		}
 	}
 	catch(std::exception& e)
 	{
@@ -728,11 +784,6 @@ void JsonApiServer::run()
 	mini = RS_MINI_VERSION;
 	extra = RS_EXTRA_VERSION;
 	human = RS_HUMAN_READABLE_VERSION;
-}
-
-std::error_condition make_error_condition(RsJsonApiErrorNum e)
-{
-return std::error_condition(static_cast<int>(e), rsJsonApi->errorCategory());
 }
 
 std::error_condition RsJsonApiErrorCategory::default_error_condition(int ev) const noexcept

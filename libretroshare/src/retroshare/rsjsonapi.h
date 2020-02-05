@@ -1,8 +1,9 @@
 /*
  * RetroShare JSON API public header
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio.eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio.eigenlab.org>
  * Copyright (C) 2019  Cyril Soler <csoler@users.sourceforge.net>
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -45,7 +46,8 @@ enum class RsJsonApiErrorNum : int32_t
 	WRONG_API_PASSWORD               = 2006,
 	API_USER_CONTAIN_COLON           = 2007,
 	AUTHORIZATION_REQUEST_DENIED     = 2008,
-	CANNOT_EXECUTE_BEFORE_RS_LOGIN   = 2009
+	CANNOT_EXECUTE_BEFORE_RS_LOGIN   = 2009,
+	NOT_A_MACHINE_GUN                = 2010
 };
 
 struct RsJsonApiErrorCategory: std::error_category
@@ -69,20 +71,35 @@ struct RsJsonApiErrorCategory: std::error_category
 			return "User denied new token autorization";
 		case RsJsonApiErrorNum::CANNOT_EXECUTE_BEFORE_RS_LOGIN:
 			return "This operation cannot be executed bedore RetroShare login";
+		case RsJsonApiErrorNum::NOT_A_MACHINE_GUN:
+			return "Method must not be called in burst";
 		default:
-			return "Error message for error:" + std::to_string(ev) +
-			        " not available";
+			return "Error message for error: " + std::to_string(ev) +
+			        " not available in category: " + name();
 		}
 	}
 
 	std::error_condition default_error_condition(int ev) const noexcept override;
+
+	const static RsJsonApiErrorCategory instance;
 };
+
 
 namespace std
 {
-template<> struct is_error_condition_enum<RsJsonApiErrorNum>: true_type {};
-error_condition make_error_condition(RsJsonApiErrorNum e);
+/** Register RsJsonApiErrorNum as an error condition enum, must be in std
+ * namespace */
+template<> struct is_error_condition_enum<RsJsonApiErrorNum> : true_type {};
 }
+
+/** Provide RsJsonApiErrorNum conversion to std::error_condition, must be in
+ * same namespace of RsJsonApiErrorNum */
+inline std::error_condition make_error_condition(RsJsonApiErrorNum e) noexcept
+{
+	return std::error_condition(
+	            static_cast<int>(e), RsJsonApiErrorCategory::instance );
+};
+
 
 class p3ConfigMgr;
 class JsonApiResourceProvider;
@@ -94,10 +111,12 @@ public:
 	static const std::string DEFAULT_BINDING_ADDRESS; // 127.0.0.1
 
 	/**
-	 * @brief Restart RsJsonApi server asynchronously.
-	 * @jsonapi{development}
+	 * @brief Restart RsJsonApi server.
+	 * This method is asyncronous when called from JSON API.
+	 * @jsonapi{development,manualwrapper}
+	 * @return Success or error details
 	 */
-	virtual void restart() = 0;
+	virtual std::error_condition restart() = 0;
 
 	/** @brief Request RsJsonApi to stop and wait until it has stopped.
 	 * Do not expose this method to JSON API as fullstop must not be called from
@@ -233,9 +252,6 @@ public:
 	 */
 	static void version( uint32_t& major, uint32_t& minor, uint32_t& mini,
 	                     std::string& extra, std::string& human );
-
-	/** @brief Return a reference to service error category */
-	virtual const std::error_category& errorCategory() = 0;
 
 	virtual ~RsJsonApi() = default;
 };

@@ -30,6 +30,7 @@
 #include <set>
 #include <functional>
 #include <vector>
+#include <atomic>
 
 #include "util/rsthreads.h"
 #include "pqi/p3cfgmgr.h"
@@ -40,6 +41,7 @@
 
 namespace rb = restbed;
 
+/** Interface to provide addotional resources to JsonApiServer */
 class JsonApiResourceProvider
 {
 public:
@@ -66,7 +68,7 @@ public:
 	void fullstop() override { RsThread::fullstop(); }
 
 	/// @see RsJsonApi
-	void restart() override;
+	 std::error_condition restart() override;
 
 	/// @see RsJsonApi
 	void askForStop() override { RsThread::askForStop(); }
@@ -145,10 +147,6 @@ public:
 	        const std::function<bool(const std::string&, const std::string&)>&
 	        callback );
 
-	/// @see RsJsonApi
-	const std::error_category& errorCategory() override
-	{ return sErrorCategory; }
-
 protected:
 	/// @see RsThread
 	void onStopRequested() override;
@@ -206,13 +204,33 @@ private:
 	    std::reference_wrapper<const JsonApiResourceProvider>,
 	    std::less<const JsonApiResourceProvider> > mResourceProviders;
 
+	/**
+	 * This pointer should be accessed via std::atomic_* operations, up until
+	 * now only very critical operations like reallocation, are done that way,
+	 * but this is not still 100% thread safe, but seems to handle all of the
+	 * test cases (no crash, no deadlock), once we switch to C++20 we shoud
+	 * change this into std::atomic<std::shared_ptr<restbed::Service>> which
+	 * will automatically handle atomic access properly all the times
+	 */
 	std::shared_ptr<restbed::Service> mService;
-	/** Protect service only during very critical operation like resetting the
-	 *  pointer, still not 100% thread safe, but hopefully we can avoid
-	 *  crashes/freeze with this */
-	RsMutex mServiceMutex;
 
 	uint16_t mListeningPort;
 	std::string mBindingAddress;
+
+	/// @see unProtectedRestart()
+	std::atomic<rstime_t> mRestartReqTS;
+
+	/// @see unProtectedRestart()
+	constexpr static rstime_t RESTART_BURST_PROTECTION = 7;
+
+	/** It is very important to protect this method from being called in bursts,
+	 * because Restbed::Service::stop() together with
+	 * Restbed::Service::start(...), which are called internally, silently fails
+	 * if combined in bursts, probably because they have to deal with
+	 * listening/releasing TCP port.
+	 * @see JsonApiServer::restart() and @see JsonApiServer::JsonApiServer()
+	 * implementation to understand how correctly use this.
+	 */
+	void unProtectedRestart();
 };
 
