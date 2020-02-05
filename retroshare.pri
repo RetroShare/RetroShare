@@ -111,6 +111,12 @@ no_direct_chat:CONFIG -= direct_chat
 CONFIG *= bitdht
 no_bitdht:CONFIG -= bitdht
 
+# The DHT stunner is used to determine the NAT type using other RS DHT peers and the STUN (Session Traversal Utilities for NAT) protocol.
+# To disable DHT stunner append the following assignation to qmake command line
+# "CONFIG+=no_useDhtStunner"
+CONFIG *= useDhtStunner
+no_useDhtStunner:CONFIG -= useDhtStunner
+
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
 macx:CONFIG *= rs_macos10.11
