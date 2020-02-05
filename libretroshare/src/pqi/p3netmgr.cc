@@ -712,8 +712,10 @@ void p3NetMgrIMPL::netExtCheck()
 		}
 
 #ifdef ALLOW_DHT_STUNNER
-        // (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
-        // if the other DHT peers are not collaborating.
+		// (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
+		// if the other DHT peers are not collaborating.
+		// (sehraf) For the record: The udp stunner uses multiple (as for now: two) peers to ensure that the IP recieved is the correct one, see UdpStunner::locked_checkExternalAddress()
+		// Nevertheless this stays a more risky method to determine the external ip address.
         
 		/* Next ask the DhtStunner */
 		{

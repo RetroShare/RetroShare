@@ -113,9 +113,16 @@ no_bitdht:CONFIG -= bitdht
 
 # The DHT stunner is used to determine the NAT type using other RS DHT peers and the STUN (Session Traversal Utilities for NAT) protocol.
 # To disable DHT stunner append the following assignation to qmake command line
-# "CONFIG+=no_useDhtStunner"
-CONFIG *= useDhtStunner
-no_useDhtStunner:CONFIG -= useDhtStunner
+# "CONFIG+=no_use_dht_stunner"
+CONFIG *= use_dht_stunner
+no_use_dht_stunner:CONFIG -= use_dht_stunner
+
+# The DHT stunner can be used to figure out our external IP. As this purely relying on random DHT peers that answer our request, it can easily be abused
+# Therefore, it is turned off by default.
+# To enable external ip determination (additionally) based on the dht stunner append the following assignation to qmake
+# command line "CONFIG+=rs_async_chat"
+CONFIG *= no_use_dht_stunner_ext_ip
+use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
@@ -498,6 +505,14 @@ rs_gxs_trans {
 
 bitdht {
     DEFINES *= RS_USE_BITDHT
+
+    use_dht_stunner {
+        CONFIG *= useDhtStunner
+
+        use_dht_stunner_ext_ip {
+            DEFINES *= ALLOW_DHT_STUNNER
+        }
+    }
 }
 
 direct_chat {
