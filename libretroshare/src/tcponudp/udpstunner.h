@@ -30,10 +30,10 @@
 #include "util/rsthreads.h"
 #include <string>
 
-/* UdpStun.
+/**
+ * @brief The TouStunPeer class
  * Stuns peers to determine external addresses.
  */
-
 class TouStunPeer
 {
 	public:
@@ -53,10 +53,15 @@ class TouStunPeer
 		return; 
 	}
 	
+	/// id for identification
 	std::string id;
+	/// remote address
 	struct sockaddr_in remote, eaddr;
+	/// true when a response was received in the past
 	bool response;
+	/// used to rate limit STUN requests
 	rstime_t lastsend;
+	/// fail counter for dead/bad peer detection (0 = good)
 	uint32_t failCount;
 };
 
@@ -65,6 +70,13 @@ class TouStunPeer
  * #define UDPSTUN_ALLOW_LOCALNET	1	
  */
 
+/**
+ * @brief The UdpStunner class
+ * The UDP stunner implements the STUN protocol to determin the NAT type (behind that RS is usually running).
+ * It maintains a list of DHT peers that are regulary contacted.
+ *
+ * The actual NAT type determination logic is located in void pqiNetStateBox::determineNetworkState()
+ */
 class UdpStunner: public UdpSubReceiver
 {
 	public:
@@ -123,7 +135,7 @@ bool    locked_checkExternalAddress();
 
 	struct sockaddr_in eaddr; /* external addr */
 
-        bool eaddrKnown;
+	bool eaddrKnown;
 	bool eaddrStable; /* if true then usable. if false -> Symmettric NAT */
 	rstime_t eaddrTime;
 
@@ -144,7 +156,7 @@ bool    locked_checkExternalAddress();
 #endif
 
 	bool mPassiveStunMode;
-        uint32_t mTargetStunPeriod;
+	uint32_t mTargetStunPeriod;
 	double mSuccessRate;
 
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
