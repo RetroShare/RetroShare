@@ -164,12 +164,12 @@ int	UdpStunner::grabExclusiveMode(std::string holder)  /* returns seconds since 
 		commsage = 1;
 	}
 #ifdef DEBUG_UDP_STUNNER_FILTER
-#endif
 	std::cerr << "UdpStunner::grabExclusiveMode() SUCCESS. last comms: " << commsage;
 	std::cerr << " ago";
 	std::cerr << std::endl;
 	std::cerr << "UdpStunner::grabExclusiveMode() Exclusive held by: " << mExclusiveHolder;
 	std::cerr << std::endl;
+#endif
 
 	return commsage;
 }
@@ -181,9 +181,9 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 	if (!mExclusiveMode)
 	{
 #ifdef DEBUG_UDP_STUNNER_FILTER
-#endif
 		std::cerr << "UdpStunner::cancelExclusiveMode() ERROR, not in exclusive Mode";
 		std::cerr << std::endl;
+#endif
 		return 0;
 	}
 
@@ -217,10 +217,10 @@ int	UdpStunner::releaseExclusiveMode(std::string holder, bool forceStun)
 	}
 
 #ifdef DEBUG_UDP_STUNNER_FILTER
-#endif
 	std::cerr << "UdpStunner::cancelExclusiveMode() Canceled. Was in ExclusiveMode for: " << now - mExclusiveModeTS;
 	std::cerr << " secs";
 	std::cerr << std::endl;
+#endif
 
 	return 1;
 }
@@ -947,15 +947,15 @@ bool    UdpStunner::locked_recvdStun(const struct sockaddr_in &remote, const str
 	if (remote.sin_addr.s_addr == extaddr.sin_addr.s_addr)
 	{
 #ifdef DEBUG_UDP_STUNNER
-#endif
 		std::cerr << "UdpStunner::locked_recvdStun() WARNING, BAD PEER: ";
 		std::cerr << "Stun Peer Returned its own address: " << rs_inet_ntoa(remote.sin_addr);
 		std::cerr << std::endl;
+#endif
 		return false;
 	}
 #endif
 
-	bool found = true;
+	bool found = false;
 	std::list<TouStunPeer>::iterator it;
 	for(it = mStunList.begin(); it != mStunList.end(); ++it)
 	{
