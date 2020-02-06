@@ -64,8 +64,23 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
         switch(e->mChannelEventCode)
         {
-        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+		case RsChannelEventCode::NEW_MESSAGE:
+			updateMessageSummaryList(e->mChannelGroupId);
             break;
+
+		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+			updateDisplay(false);
+            break;
+
+		case RsChannelEventCode::READ_STATUS_CHANGED:
+			updateMessageSummaryList(e->mChannelGroupId);
+            break;
+
+		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
+            break;
+
         default:
             break;
         }
@@ -92,7 +107,7 @@ QString GxsChannelDialog::getHelpString() const
 	return hlp_str ;
 }
 
-UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
+UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
 	return new GxsChannelUserNotify(rsGxsChannels, parent);
 }

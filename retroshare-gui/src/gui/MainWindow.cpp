@@ -472,7 +472,7 @@ void MainWindow::initStackedPage()
   //List All notify before Setting was created
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      UserNotify *userNotify = notifyIt->first->getUserNotify();
       if (userNotify) {
           userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));

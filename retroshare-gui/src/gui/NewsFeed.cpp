@@ -141,7 +141,7 @@ NewsFeed::~NewsFeed()
 	}
 }
 
-UserNotify *NewsFeed::getUserNotify(QObject *parent)
+UserNotify *NewsFeed::createUserNotify(QObject *parent)
 {
 	return new NewsFeedUserNotify(this, parent);
 }

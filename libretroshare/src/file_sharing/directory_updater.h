@@ -35,7 +35,7 @@ public:
     LocalDirectoryUpdater(HashStorage *hash_cache,LocalDirectoryStorage *lds) ;
     virtual ~LocalDirectoryUpdater() {}
 
-    void forceUpdate();
+    void forceUpdate(bool add_safe_delay);
     bool inDirectoryCheck() const ;
 	void togglePauseHashingProcess();
 	bool hashingProcessPaused();
