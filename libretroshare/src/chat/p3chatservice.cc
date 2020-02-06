@@ -156,9 +156,17 @@ class p3ChatService::AvatarInfo
 
 	  void init(const unsigned char *jpeg_data,int size)
 	  {
-		  _image_size = size ;
-		  _image_data = (unsigned char*)rs_malloc(size) ;
-		  memcpy(_image_data,jpeg_data,size) ;
+          if(size == 0)
+          {
+              _image_size = 0;
+              _image_data = nullptr;
+          }
+          else
+		  {
+			  _image_size = size ;
+			  _image_data = (unsigned char*)rs_malloc(size) ;
+			  memcpy(_image_data,jpeg_data,size) ;
+		  }
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {

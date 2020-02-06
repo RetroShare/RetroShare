@@ -122,6 +122,10 @@ enum class RsChannelEventCode: uint8_t
 
 	/// subscription for channel mChannelGroupId changed.
 	SUBSCRIBE_STATUS_CHANGED = 0x06,
+
+	/// existing message has been read or set to unread
+	READ_STATUS_CHANGED      = 0x07,
+
 };
 
 struct RsGxsChannelEvent: RsEvent

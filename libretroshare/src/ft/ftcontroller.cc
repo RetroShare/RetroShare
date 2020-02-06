@@ -821,7 +821,7 @@ bool ftController::completeFile(const RsFileHash& hash)
     RsServer::notify()->notifyDownloadComplete(hash.toStdString());
     RsServer::notify()->notifyDownloadCompleteCount(completeCount);
 
-    rsFiles->ForceDirectoryCheck() ;
+    rsFiles->ForceDirectoryCheck(true) ;
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;

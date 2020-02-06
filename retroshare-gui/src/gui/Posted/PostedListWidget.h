@@ -29,6 +29,7 @@
 class RsPostedGroup;
 class RsPostedPost;
 class PostedItem;
+class PostedCardView;
 
 namespace Ui {
 class PostedListWidget;
@@ -79,9 +80,13 @@ private slots:
 	void showNext();
 	void showPrev();
 
+	void setViewMode(int viewMode);
+
 private:
 	void processSettings(bool load);
 	void updateShowText();
+
+	int viewMode();
 
 	/*!
 	 * Only removes it from layout
@@ -89,6 +94,7 @@ private:
 	void shallowClearPosts();
 
 	void loadPost(const RsPostedPost &post);
+	void loadPostCardView(const RsPostedPost &post);
 
 	void insertPostedDetails(const RsPostedGroup &group);
 
@@ -115,6 +121,9 @@ private:
 	QMap<RsGxsMessageId, PostedItem*> mPosts;
 	QList<PostedItem*> mPostItems;
 
+	QMap<RsGxsMessageId, PostedCardView*> mCVPosts;
+	QList<PostedCardView*> mPostCardView;
+	
 	/* UI - from Designer */
 	Ui::PostedListWidget *ui;
 };

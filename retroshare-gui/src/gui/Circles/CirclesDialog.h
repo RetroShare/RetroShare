@@ -58,34 +58,8 @@ private slots:
 	void friend_selected();
 	void category_selected();
 
-#if 0
-	void OpenOrShowAddPageDialog();
-	void OpenOrShowAddGroupDialog();
-	void OpenOrShowEditDialog();
-	void OpenOrShowRepublishDialog();
-
-	void groupTreeChanged();
-
-	void newGroup();
-	void showGroupDetails();
-	void editGroupDetails();
-
-	void insertWikiGroups();
-#endif
-
 private:
 	void reloadAll();
-
-#if 0
-	voidclearWikiPage();
-	void clearGroupTree();
-
-	void updateWikiPage(const RsWikiSnapshot &page);
-
-	bool getSelectedPage(std::string &groupId, std::string &pageId, std::string &origPageId);
-	std::string getSelectedPage();
-	std::string getSelectedGroup();
-#endif
 
 	void requestGroupMeta();
 	void loadGroupMeta(const uint32_t &token);

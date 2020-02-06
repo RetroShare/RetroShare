@@ -40,9 +40,8 @@ public:
 	virtual QString pageName() const { return tr("Links") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent);
-
 protected:
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 	virtual QString getHelpString() const ;
     virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_POSTED; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Posted; }
@@ -61,6 +60,9 @@ private:
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
+
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

@@ -585,7 +585,7 @@ void RichTextEdit::setText(const QString& text) {
 
 void RichTextEdit::insertImage() {
 	QString file;
-	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg)", file)) {
+	if (misc::getOpenFileName(window(), RshareSettings::LASTDIR_IMAGES, tr("Load Picture File"), "Pictures (*.png *.xpm *.jpg *.jpeg *.gif *.webp)", file)) {
 		QString encodedImage;
 		if (RsHtml::makeEmbeddedImage(file, encodedImage, 640*480, MAX_ALLOWED_GXS_MESSAGE_SIZE - 200)) {
 			QTextDocumentFragment fragment = QTextDocumentFragment::fromHtml(encodedImage);

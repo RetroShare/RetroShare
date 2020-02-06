@@ -48,7 +48,7 @@ static const std::string LOCAL_SHARED_DIRS_FILE_NAME = "local_dir_hierarchy.bin"
 
 static const uint32_t MIN_INTERVAL_BETWEEN_HASH_CACHE_SAVE         = 20 ;    // never save hash cache more often than every 20 secs.
 static const uint32_t MIN_INTERVAL_BETWEEN_REMOTE_DIRECTORY_SAVE   = 23 ;    // never save remote directories more often than this
-static const uint32_t MIN_TIME_AFTER_LAST_MODIFICATION             = 20 ;    // never hash a file that is just being modified, otherwise we end up with a corrupted hash
+static const uint32_t MIN_TIME_AFTER_LAST_MODIFICATION             = 10 ;    // never hash a file that is just being modified, otherwise we end up with a corrupted hash
 
 static const uint32_t MAX_DIR_SYNC_RESPONSE_DATA_SIZE              = 20000 ; // Maximum RsItem data size in bytes for serialised directory transmission
 static const uint32_t DEFAULT_HASH_STORAGE_DURATION_DAYS           = 30 ;    // remember deleted/inaccessible files for 30 days
