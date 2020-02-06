@@ -45,7 +45,7 @@ struct CircleUpdateOrder
     uint32_t action ;
 };
 
-class IdDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class IdDialog : public MainPage, public TokenResponse
 {
 	Q_OBJECT
 

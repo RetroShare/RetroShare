@@ -31,7 +31,7 @@
 
 class UIStateHelper;
 
-class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class CirclesDialog : public MainPage, public TokenResponse
 {
 	Q_OBJECT
 

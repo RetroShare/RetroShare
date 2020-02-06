@@ -44,7 +44,7 @@ class UIStateHelper;
 struct RsGxsCommentService;
 class GxsCommentDialog;
 
-class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class GxsGroupFrameDialog : public MainPage, public TokenResponse
 {
 	Q_OBJECT
 
@@ -98,6 +98,7 @@ protected:
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
 
+    virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
 private slots:
 	void todo();
 

@@ -51,8 +51,8 @@
 GxsIdChooser::GxsIdChooser(QWidget *parent)
     : QComboBox(parent), mFlags(IDCHOOSER_ANON_DEFAULT)
 {
-	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
+//	mBase = new RsGxsUpdateBroadcastBase(rsIdentity, this);
+//	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplay(bool)));
 
 	/* Initialize ui */
 	setSizeAdjustPolicy(QComboBox::AdjustToContents);
@@ -94,7 +94,8 @@ void GxsIdChooser::fillDisplay(bool complete)
 
 void GxsIdChooser::showEvent(QShowEvent *event)
 {
-	mBase->showEvent(event);
+//	mBase->showEvent(event);
+    updateDisplay(true);
 	QComboBox::showEvent(event);
 }
 

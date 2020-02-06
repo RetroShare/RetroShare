@@ -25,7 +25,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+//#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
@@ -53,7 +53,7 @@ const uint32_t PeopleDialog::PD_CIRCLES   = 0x0004 ;
 
 /** Constructor */
 PeopleDialog::PeopleDialog(QWidget *parent)
-	: RsGxsUpdateBroadcastPage(rsIdentity, parent)
+	: MainPage(parent)
 {
 	setupUi(this);
 
@@ -61,8 +61,8 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	mIdentityQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
-	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
-	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
+	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
+	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
 	
 	tabWidget->removeTab(1);

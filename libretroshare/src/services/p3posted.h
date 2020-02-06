@@ -53,11 +53,6 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes)
 
 	public:
 
-virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
-{
-	return RsGxsIfaceHelper::receiveChanges(changes);
-}
-
 	// Posted Specific DataTypes.
 virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts);

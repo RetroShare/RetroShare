@@ -37,7 +37,7 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+//#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/qtthreadsutils.h"
@@ -142,9 +142,7 @@ class TreeWidgetItem : public QTreeWidgetItem
 };
 
 /** Constructor */
-IdDialog::IdDialog(QWidget *parent) :
-    RsGxsUpdateBroadcastPage(rsIdentity, parent),
-    ui(new Ui::IdDialog)
+IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
 
@@ -156,9 +154,9 @@ IdDialog::IdDialog(QWidget *parent) :
     mEventHandlerId_circles = 0;
 	rsEvents->registerEventsHandler(RsEventType::GXS_CIRCLES,  [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_circles );
 
-    	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
-	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
-	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
+	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
+	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
+	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
     
 	ownItem = new QTreeWidgetItem();
 	ownItem->setText(0, tr("My own identities"));
@@ -419,8 +417,14 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		{
 		case RsGxsIdentityEventCode::DELETED_IDENTITY:
 		case RsGxsIdentityEventCode::NEW_IDENTITY:
+		case RsGxsIdentityEventCode::UPDATED_IDENTITY:
 
 			requestIdList();
+
+    		if(!mId.isNull() && mId == e->mIdentityId)
+				requestIdDetails();
+
+			break;
 		default:
 			break;
 		}
@@ -2205,16 +2209,16 @@ void IdDialog::updateDisplay(bool complete)
 	}
 	requestCircleGroupMeta();
 
-	std::set<RsGxsGroupId> grpIds;
-	getAllGrpIds(grpIds);
-	if (!getGrpIds().empty()) {
-		requestIdList();
-
-        if (!mId.isNull() && grpIds.find(mId)!=grpIds.end()) {
-			requestIdDetails();
-			requestRepList();
-		}
-	}
+//	std::set<RsGxsGroupId> grpIds;
+//	getAllGrpIds(grpIds);
+//	if (!getGrpIds().empty()) {
+//		requestIdList();
+//
+//        if (!mId.isNull() && grpIds.find(mId)!=grpIds.end()) {
+//			requestIdDetails();
+//			requestRepList();
+//		}
+//	}
 }
 
 void IdDialog::addIdentity()

@@ -80,7 +80,7 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 }
 
 FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
-	: RsGxsUpdateBroadcastPage(rsIdentity,parent), ui(new Ui::FriendSelectionWidget)
+	: QWidget(parent), ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
 

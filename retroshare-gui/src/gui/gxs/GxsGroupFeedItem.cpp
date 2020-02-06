@@ -51,6 +51,7 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 
 	mLoadQueue = NULL;
 
+#ifdef TO_REMOVE
 	if (mGxsIface && autoUpdate) {
 		/* Connect to update broadcast */
 		mUpdateBroadcastBase = new RsGxsUpdateBroadcastBase(mGxsIface);
@@ -58,6 +59,7 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 	} else {
 		mUpdateBroadcastBase = NULL;
 	}
+#endif
 }
 
 GxsGroupFeedItem::~GxsGroupFeedItem()
@@ -71,10 +73,12 @@ GxsGroupFeedItem::~GxsGroupFeedItem()
 		delete mLoadQueue;
 	}
 
+#ifdef TO_REMOVE
 	if (mUpdateBroadcastBase)
 	{
 		delete(mUpdateBroadcastBase);
 	}
+#endif
 }
 
 bool GxsGroupFeedItem::initLoadQueue()
@@ -139,9 +143,11 @@ void GxsGroupFeedItem::copyGroupLink()
 
 void GxsGroupFeedItem::fillDisplaySlot(bool complete)
 {
-	fillDisplay(mUpdateBroadcastBase, complete);
+		requestGroup();
+//	fillDisplay(mUpdateBroadcastBase, complete);
 }
 
+#ifdef TO_REMOVE
 void GxsGroupFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool /*complete*/)
 {
 	std::set<RsGxsGroupId> grpIds;
@@ -150,6 +156,7 @@ void GxsGroupFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase
 	if (grpIds.find(groupId()) != grpIds.end())
 		requestGroup();
 }
+#endif
 
 /***********************************************************/
 

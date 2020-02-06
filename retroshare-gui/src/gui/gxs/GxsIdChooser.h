@@ -86,7 +86,7 @@ private:
     uint32_t mAllowedCount ;
 
     std::set<RsGxsId> mConstraintIdsSet ; // leave empty if all allowed
-    RsGxsUpdateBroadcastBase *mBase;
+//    RsGxsUpdateBroadcastBase *mBase;
 };
 
 #endif

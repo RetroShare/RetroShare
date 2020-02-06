@@ -88,8 +88,6 @@ void p3Wire::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
 	std::cerr << "p3Wire::notifyChanges() New stuff";
 	std::cerr << std::endl;
-
-	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
         /* Specific Service Data */
