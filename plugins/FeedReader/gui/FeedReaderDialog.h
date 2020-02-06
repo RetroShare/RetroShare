@@ -42,11 +42,10 @@ public:
 	FeedReaderDialog(RsFeedReader *feedReader, FeedReaderNotify *notify, QWidget *parent = 0);
 	~FeedReaderDialog();
 
-	virtual UserNotify *getUserNotify(QObject *parent);
-
 	static QIcon iconFromFeed(const FeedInfo &feedInfo);
 
 protected:
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 	virtual void showEvent(QShowEvent *event);
 	bool eventFilter(QObject *obj, QEvent *ev);
 

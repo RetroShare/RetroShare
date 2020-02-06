@@ -59,7 +59,21 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 
         switch(e->mForumEventCode)
         {
-        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED: updateDisplay(true);
+		case RsForumEventCode::NEW_MESSAGE:
+			updateMessageSummaryList(e->mForumGroupId);
+            break;
+
+		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+			updateDisplay(false);
+            break;
+
+		case RsForumEventCode::READ_STATUS_CHANGED:
+			updateMessageSummaryList(e->mForumGroupId);
+            break;
+
+		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
             break;
         default:
             break;
@@ -102,7 +116,7 @@ void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<Re
 	msgDialog->show();
 }
 
-UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
 {
 	return new GxsForumUserNotify(rsGxsForums, parent);
 }

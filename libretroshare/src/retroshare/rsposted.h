@@ -70,9 +70,13 @@ std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
 
 enum class RsPostedEventCode: uint8_t
 {
-	UNKNOWN                 = 0x00,
-	NEW_POSTED_GROUP        = 0x01,
-	NEW_MESSAGE             = 0x02
+	UNKNOWN                  = 0x00,
+	NEW_POSTED_GROUP         = 0x01,
+	NEW_MESSAGE              = 0x02,
+	SUBSCRIBE_STATUS_CHANGED = 0x03,
+	UPDATED_POSTED_GROUP     = 0x04,
+	UPDATED_MESSAGE          = 0x05,
+	READ_STATUS_CHANGED      = 0x06,
 };
 
 

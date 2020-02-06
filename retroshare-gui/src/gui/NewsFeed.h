@@ -70,7 +70,7 @@ public:
 	virtual QString pageName() const { return tr("Log") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent);
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 
 	/* FeedHolder Functions (for FeedItem functionality) */
 	virtual QScrollArea *getScrollArea();

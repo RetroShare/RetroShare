@@ -23,6 +23,7 @@
 
 #include <QTextCursor>
 #include <QWidget>
+#include <QByteArray>
 #include <qiterator.h>
 
 class ImageUtil
@@ -31,10 +32,11 @@ public:
 	ImageUtil();
 
 	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
-	static bool optimizeSize(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
 
 	private:
-		static int checkSize(QString& embeddedImage, const QImage& img, int maxBytes = -1);
+		static int checkSize(QByteArray& embeddedImage, const QImage& img);
 		static void quantization(const QImage& img, QVector<QRgb>& palette);
 		static void quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb>& palette);
 		static void avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb>& palette);

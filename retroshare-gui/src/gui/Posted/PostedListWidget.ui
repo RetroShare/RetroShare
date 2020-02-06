@@ -7,16 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>616</width>
-    <height>428</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
-   <property name="spacing">
-    <number>3</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_5">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -29,7 +26,10 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
     <widget class="QFrame" name="headerFrame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -37,12 +37,9 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>6</number>
-      </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
       <property name="leftMargin">
-       <number>4</number>
+       <number>6</number>
       </property>
       <property name="topMargin">
        <number>2</number>
@@ -165,6 +162,59 @@
        </spacer>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="classicViewButton">
+          <property name="toolTip">
+           <string>Classic view</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Posted_images.qrc">
+            <normaloff>:/images/classic.png</normaloff>:/images/classic.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cardViewButton">
+          <property name="toolTip">
+           <string>Card View</string>
+          </property>
+          <property name="icon">
+           <iconset resource="Posted_images.qrc">
+            <normaloff>:/images/card.png</normaloff>:/images/card.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>24</width>
+            <height>24</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="flat">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <widget class="QPushButton" name="prevButton">
         <property name="toolTip">
          <string>Previous</string>
@@ -205,7 +255,7 @@
      </layout>
     </widget>
    </item>
-   <item>
+   <item row="1" column="0">
     <widget class="QFrame" name="infoframe">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
@@ -478,30 +528,13 @@ p, li { white-space: pre-wrap; }
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="widgetResizable">
-      <bool>true</bool>
+   <item row="2" column="0">
+    <widget class="QStackedWidget" name="stackedWidget">
+     <property name="currentIndex">
+      <number>1</number>
      </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>614</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <property name="spacing">
-        <number>0</number>
-       </property>
+     <widget class="QWidget" name="page">
+      <layout class="QGridLayout" name="gridLayout_2">
        <property name="leftMargin">
         <number>0</number>
        </property>
@@ -514,6 +547,102 @@ p, li { white-space: pre-wrap; }
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <item row="0" column="0">
+        <widget class="QScrollArea" name="scrollArea">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContents">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>614</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="page_2">
+      <layout class="QGridLayout" name="gridLayout_4">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QScrollArea" name="scrollAreaCardView">
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="scrollAreaWidgetContentsCardView">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>614</width>
+            <height>16</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+          </layout>
+         </widget>
+        </widget>
+       </item>
       </layout>
      </widget>
     </widget>
