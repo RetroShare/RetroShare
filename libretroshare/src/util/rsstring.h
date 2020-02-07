@@ -30,10 +30,10 @@ namespace librs {
 
 		bool ConvertUtf8ToUtf16(const std::string& source, std::wstring& dest);
 		bool ConvertUtf16ToUtf8(const std::wstring& source, std::string& dest);
-
+#if 0
 		bool is_alphanumeric(char c) ;
 		bool is_alphanumeric(const std::string& s);
-
+#endif
 } } // librs::util
 
 #ifdef WIN32

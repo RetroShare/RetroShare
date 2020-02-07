@@ -22,6 +22,12 @@
  *******************************************************************************/
 #pragma once
 
+#include <typeinfo> // for typeid
+#include <type_traits>
+#include <errno.h>
+#include <system_error>
+
+
 #include "serialiser/rsserial.h"
 #include "serialiser/rstlvbase.h"
 #include "serialiser/rstlvlist.h"
@@ -33,11 +39,6 @@
 #include "serialiser/rsserializable.h"
 #include "util/rsjson.h"
 #include "util/rsdebug.h"
-
-#include <typeinfo> // for typeid
-#include <type_traits>
-#include <errno.h>
-
 
 /* INTERNAL ONLY helper to avoid copy paste code for std::{vector,list,set}<T>
  * Can't use a template function because T is needed for const_cast */
@@ -132,7 +133,12 @@ struct RsTypeSerializer
 
 	/// Generic types
 	template<typename T>
-	typename std::enable_if<std::is_same<RsTlvItem,T>::value || !(std::is_base_of<RsSerializable,T>::value || std::is_enum<T>::value || std::is_base_of<RsTlvItem,T>::value  )>::type
+	typename
+	std::enable_if< std::is_same<RsTlvItem,T>::value || !(
+	        std::is_base_of<RsSerializable,T>::value ||
+	        std::is_enum<T>::value ||
+	        std::is_base_of<RsTlvItem,T>::value ||
+	        std::is_same<std::error_condition,T>::value ) >::type
 	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
 	                                RsGenericSerializer::SerializeContext& ctx,
 	                                T& member, const std::string& member_name )
@@ -160,11 +166,7 @@ struct RsTypeSerializer
 			ctx.mOk &= (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
 			        && from_JSON(member_name, member, ctx.mJson);
 			break;
-		default:
-			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
-			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
-			          << std::endl;
-			exit(EINVAL);
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -200,11 +202,7 @@ struct RsTypeSerializer
 			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
 			        && from_JSON(member_name, type_id, member, ctx.mJson);
 			break;
-		default:
-			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
-			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
-			          << std::endl;
-			exit(EINVAL);
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -362,11 +360,7 @@ struct RsTypeSerializer
 			}
 			break;
 		}
-		default:
-			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
-			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
-			          << std::endl;
-			exit(EINVAL);
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -441,12 +435,7 @@ struct RsTypeSerializer
 
 			break;
 		}
-		default:
-			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
-			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
-			          << std::endl;
-			exit(EINVAL);
-			break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -505,7 +494,7 @@ struct RsTypeSerializer
 		case RsGenericSerializer::FROM_JSON:
 			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(push_back);
 			break;
-		default: break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -564,7 +553,7 @@ struct RsTypeSerializer
 		case RsGenericSerializer::FROM_JSON:
 			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(insert);
 			break;
-		default: break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -620,7 +609,7 @@ struct RsTypeSerializer
 		case RsGenericSerializer::FROM_JSON:
 			RsTypeSerializer_PRIVATE_FROM_JSON_ARRAY(push_back);
 			break;
-		default: break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -663,7 +652,7 @@ struct RsTypeSerializer
 			        && (v = t_RsFlags32<N>(f), true);
 			break;
 		}
-		default: break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
@@ -772,24 +761,36 @@ struct RsTypeSerializer
 
 			break;
 		}
-		default:
-			std::cerr << __PRETTY_FUNCTION__ << " Unknown serial job: "
-			          << static_cast<std::underlying_type<decltype(j)>::type>(j)
-			          << std::endl;
-			exit(EINVAL);
-			break;
+		default: fatalUnknownSerialJob(j);
 		}
 	}
 
 	/// RsTlvItem derivatives only
 	template<typename T>
-	typename std::enable_if<std::is_base_of<RsTlvItem,T>::value && !std::is_same<RsTlvItem,T>::value>::type
+	typename std::enable_if<
+	    std::is_base_of<RsTlvItem,T>::value && !std::is_same<RsTlvItem,T>::value
+	>::type
 	static /*void*/ serial_process( RsGenericSerializer::SerializeJob j,
 	                                RsGenericSerializer::SerializeContext& ctx,
 	                                T& member,
 	                                const std::string& memberName )
 	{
 		serial_process(j, ctx, static_cast<RsTlvItem&>(member), memberName);
+	}
+
+	/** std::error_condition
+	 * supports only TO_JSON ErrConditionWrapper::serial_process will explode
+	 * at runtime if a different SerializeJob is passed down */
+	template<typename T>
+	typename std::enable_if< std::is_base_of<std::error_condition,T>::value >::type
+	static /*void*/ serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx,
+	        const T& cond,
+	        const std::string& member_name )
+	{
+		ErrConditionWrapper ew(cond);
+		serial_process(j, ctx, ew, member_name);
 	}
 
 protected:
@@ -908,6 +909,27 @@ protected:
 	static bool from_JSON( const std::string& memberName,
 	                       t_RsTlvList<TLV_CLASS,TLV_TYPE>& member,
 	                       RsJson& jDoc );
+
+	[[noreturn]] static void fatalUnknownSerialJob(int j)
+	{
+		RsFatal() << " Unknown serial job: " << j << std::endl;
+		print_stacktrace();
+		exit(EINVAL);
+	}
+
+	struct ErrConditionWrapper : RsSerializable
+	{
+		ErrConditionWrapper(const std::error_condition& ec): mec(ec) {}
+
+		/** supports only TO_JSON if a different SerializeJob is passed it will
+		 * explode at runtime */
+		void serial_process(
+		        RsGenericSerializer::SerializeJob j,
+		        RsGenericSerializer::SerializeContext& ctx ) override;
+
+	private:
+		const std::error_condition& mec;
+	};
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
