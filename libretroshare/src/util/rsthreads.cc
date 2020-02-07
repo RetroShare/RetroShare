@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2007 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,14 +22,20 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "rsthreads.h"
-#include <unistd.h>    // for usleep()
-#include <errno.h>    // for errno
 #include <iostream>
-#include "util/rstime.h"
-#include "util/rsdebug.h"
+#include <time.h>
+#include <thread>
+#include <chrono>
 
-#include "util/rstime.h"
+#ifdef RSMUTEX_DEBUG
+#include <cstdio>
+#include <sys/time.h>
+#endif
+
+#include "rsthreads.h"
+#include "util/rsdebug.h"
+#include "util/rserrno.h"
+
 
 #ifdef __APPLE__
 int __attribute__((weak)) pthread_setname_np(const char *__buf) ;
@@ -41,16 +49,14 @@ int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 }
 #endif
 
-#ifdef RSMUTEX_DEBUG
-#include <stdio.h>
-#include <sys/time.h>
-#endif
 
 /*******
  * #define DEBUG_THREADS 1
  * #define RSMUTEX_ABORT 1  // Catch wrong pthreads mode.
  *******/
-#define THREAD_DEBUG std::cerr << "[this=" << (void*)this << ", caller thread ID: " << std::hex << pthread_self() << ", thread ID: " << mTid << std::dec << "] "
+#define THREAD_DEBUG RsDbg() << "[this=" << static_cast<void*>(this) \
+	<< ", caller thread ID: " << std::hex << pthread_self() << ", thread ID: " \
+	<< mTid << std::dec << "] "
 
 #ifdef RSMUTEX_ABORT
 	#include <stdlib.h>
@@ -60,215 +66,120 @@ int RS_pthread_setname_np(pthread_t __target_thread, const char *__buf) {
 	#include <iostream>
 #endif
 
-void RsThread::go()
+/*static*/ void* RsThread::rsthread_init(void* p)
 {
-    mShouldStopSemaphore.set(0) ;
-    mHasStoppedSemaphore.set(0) ;
+	RsThread* thread = reinterpret_cast<RsThread *>(p);
+	if(!thread) return nullptr;
 
-    runloop();
-
-    mShouldStopSemaphore.set(0);
-    mHasStoppedSemaphore.set(1);	// last value that we modify because this is interpreted as a signal that the object can be deleted.
-}
-void *RsThread::rsthread_init(void* p)
-{
-  RsThread *thread = (RsThread *) p;
-  if (!thread)
-  {
-    return NULL;
-  }
-    // tell the OS to free the thread resources when this function exits
-    // it is a replacement for pthread_join()
-    pthread_detach(pthread_self());
+	/* Using pthread_detach(...) the thread resources will be automatically
+	 * freed when this function return, so there is no need for pthread_join()
+	 * later. */
+	pthread_detach(pthread_self());
 
 #ifdef DEBUG_THREADS
-    std::cerr << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread is started. Calling runloop()..." << std::endl;
+	std::cerr << "[Thread ID:" << std::hex << pthread_self() << std::dec
+	          << "] thread is started. Calling wrapRun()..." << std::endl;
 #endif
-    
-  thread->go();
-  return NULL;
+
+	thread->wrapRun();
+	return nullptr;
 }
-RsThread::RsThread() 
+
+void RsThread::resetTid()
 {
 #ifdef WINDOWS_SYS
-    memset (&mTid, 0, sizeof(mTid));
+	memset (&mTid, 0, sizeof(mTid));
 #else
-    mTid = 0;
-#endif
-    // The thread is certainly not running. This avoids to lock down when calling shutdown on a thread that has never started.
-
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "[Thread ID:" << std::hex << pthread_self() << std::dec << "] thread object created. Initing stopped=1, should_stop=0" << std::endl;
-#endif
-    mHasStoppedSemaphore.set(1) ;
-    mShouldStopSemaphore.set(0) ;
-}
-
-RsThread::~RsThread()
-{
-	if(isRunning())
-    {
-		RsErr() << "Deleting a thread that is still running! Something is very wrong here and Retroshare is likely to crash because of this." << std::endl;
-        print_stacktrace();
-
-        while(isRunning())
-        {
-            std::cerr << "." << std::endl;
-            rstime::rs_usleep(1000*1000);
-        }
-    }
-}
-
-bool RsThread::isRunning()
-{
-    // do we need a mutex for this ?
-    int sval = mHasStoppedSemaphore.value() ;
-
-    return !sval ;
-}
-
-bool RsThread::shouldStop()
-{
-        int sval = mShouldStopSemaphore.value() ;
-        return sval > 0;
-}
-
-void RsTickingThread::shutdown()
-{
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "pqithreadstreamer::shutdown()" << std::endl;
-#endif
-
-    int sval = mHasStoppedSemaphore.value() ;
-
-    if(sval > 0)
-    {
-#ifdef DEBUG_THREADS
-        THREAD_DEBUG << "  thread not running. Quit." << std::endl;
-#endif
-        return ;
-    }
-
-    ask_for_stop() ;
-}
-
-void RsThread::ask_for_stop()
-{
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  calling stop" << std::endl;
-#endif
-    mShouldStopSemaphore.set(1);
-}
-
-void RsTickingThread::fullstop()
-{
-    shutdown() ;
-
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  waiting stop" << std::endl;
-#endif
-    if(pthread_equal(mTid,pthread_self()))
-    {
-        THREAD_DEBUG << "(WW) RsTickingThread::fullstop() called by same thread. This is unexpected." << std::endl;
-        return ;
-    }
-    
-    mHasStoppedSemaphore.wait_no_relock(); // Wait for semaphore value to become 1, but does not decrement it when obtained.
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "  finished!" << std::endl;
+	mTid = 0;
 #endif
 }
 
-void RsThread::start(const std::string &threadName)
+RsThread::RsThread() : mHasStopped(true), mShouldStop(false), mLastTid()
+{ resetTid(); }
+
+bool RsThread::isRunning() { return !mHasStopped; }
+
+bool RsThread::shouldStop() { return mShouldStop; }
+
+void RsThread::askForStop()
 {
-	if(isRunning())
+	/* Call onStopRequested() only once even if askForStop() is called multiple
+	 * times */
+	if(!mShouldStop.exchange(true)) onStopRequested();
+}
+
+void RsThread::wrapRun()
+{
+	run();
+	resetTid();
+	mHasStopped = true;
+}
+
+void RsThread::fullstop()
+{
+	askForStop();
+
+	const pthread_t callerTid = pthread_self();
+	if(pthread_equal(mTid, callerTid))
 	{
-		std::cerr << "(EE) RsThread \"" << threadName
-		          << "\" is already running. Will not start twice!"
-		          << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " called by same thread. This should "
+		        << "never happen! this: " << static_cast<void*>(this)
+		        << std::hex << ", callerTid: " << callerTid
+		        << ", mTid: " << mTid << std::dec
+		        << ", mFullName: " << mFullName << std::endl;
 		print_stacktrace();
 		return;
 	}
-    pthread_t tid;
-    void  *data = (void *)this ;
 
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "pqithreadstreamer::start() initing should_stop=0" << std::endl;
-#endif
-    mShouldStopSemaphore.set(0) ;
-	mHasStoppedSemaphore.set(0) ;
-
-    int err ;
-
-    // pthread_create is a memory barrier
-    // -> the new thread will see mIsRunning() = true
-
-    if( 0 == (err=pthread_create(&tid, 0, &rsthread_init, data)))
-    {
-        mTid = tid;
-
-        // set name
-
-        if(pthread_setname_np)
-        {
-            if(!threadName.empty())
-            {
-                // thread names are restricted to 16 characters including the terminating null byte
-                if(threadName.length() > 15)
-                {
-#ifdef DEBUG_THREADS
-                    THREAD_DEBUG << "RsThread::start called with to long name '" << threadName << "' truncating..." << std::endl;
-#endif
-                    RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
-                } else {
-                    RS_pthread_setname_np(mTid, threadName.c_str());
-                }
-            }
-        }
-    }
-    else
-    {
-        THREAD_DEBUG << "Fatal error: pthread_create could not create a thread. Error returned: " << err << " !!!!!!!" << std::endl;
-        mHasStoppedSemaphore.set(1) ;
-    }
+	// Wait for the thread being stopped
+	auto i = 1;
+	while(!mHasStopped)
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		++i;
+		if(!(i%5))
+			RsDbg() << __PRETTY_FUNCTION__ << " " << i*0.2 << " seconds passed"
+			        << " waiting for thread: " << std::hex << mLastTid
+			        << std::dec << " " << mFullName << " to stop" << std::endl;
+	}
 }
 
-
-
-RsTickingThread::RsTickingThread()
+bool RsThread::start(const std::string& threadName)
 {
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "RsTickingThread::RsTickingThread()" << std::endl;
-#endif
-}
+	// Atomically check if the thread was already started and set it as running
+	if(mHasStopped.exchange(false))
+	{
+		mShouldStop = false;
+		int pError = pthread_create(
+		            &mTid, nullptr, &rsthread_init, static_cast<void*>(this) );
+		if(pError)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
+			        << " new thread: " << threadName << " pError: " << pError
+			        << std::endl;
+			mHasStopped = true;
+			print_stacktrace();
+			return false;
+		}
 
-RsTickingThread::~RsTickingThread()
-{
-    fullstop();
-}
-void RsSingleJobThread::runloop()
-{
-    run() ;
-}
+		/* Store an extra copy of thread id for debugging */
+		mLastTid = mTid;
 
-void RsTickingThread::runloop()
-{
-#ifdef DEBUG_THREADS
-    THREAD_DEBUG << "RsTickingThread::runloop(). Setting stopped=0" << std::endl;
-#endif
+		/* Store thread full name as PThread is not able to keep it entirely */
+		mFullName = threadName;
 
-    while(1)
-    {
-        if(shouldStop())
-        {
-#ifdef DEBUG_THREADS
-            THREAD_DEBUG << "pqithreadstreamer::runloop(): asked to stop. setting hasStopped=1, and returning. Thread ends." << std::endl;
-#endif
-            return ;
-        }
+		/* Set PThread thread name which is restricted to 16 characters
+		 * including the terminating null byte */
+		if(pthread_setname_np && !threadName.empty())
+			RS_pthread_setname_np(mTid, threadName.substr(0, 15).c_str());
 
-        data_tick();
-    }
+		return true;
+	}
+
+	RsErr() << __PRETTY_FUNCTION__ << " attempt to start already running thread"
+	        << std::endl;
+	print_stacktrace();
+	return false;
 }
 
 RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
@@ -278,14 +189,14 @@ RsQueueThread::RsQueueThread(uint32_t min, uint32_t max, double relaxFactor )
     mLastWork = time(NULL) ;
 }
 
-void RsQueueThread::data_tick()
+void RsQueueThread::threadTick()
 {
     bool doneWork = false;
     while(workQueued() && doWork())
     {
         doneWork = true;
     }
-    rstime_t now = time(NULL);
+    time_t now = time(NULL);
     if (doneWork)
     {
         mLastWork = now;
@@ -310,94 +221,38 @@ void RsQueueThread::data_tick()
         THREAD_DEBUG << "RsQueueThread::data_tick() no work: sleeping for: " << mLastSleep << " ms" << std::endl;
 #endif
     }
-    rstime::rs_usleep(mLastSleep * 1000); // mLastSleep msec
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(mLastSleep));
 }
 
 void RsMutex::unlock()
-{ 
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	if(--_cnt == 0)
-	{
-#endif
-		_thread_id = 0 ;
-		pthread_mutex_unlock(&realMutex); 
-
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	}
-#endif
+{
+	_thread_id = 0;
+	pthread_mutex_unlock(&realMutex);
 }
 
 void RsMutex::lock()
 {
-#ifdef RSMUTEX_DEBUG
-	pthread_t owner = _thread_id ;
-#endif
-
-	int retval = 0;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	if(!trylock())
-		if(!pthread_equal(_thread_id,pthread_self()))
-#endif
-			retval = pthread_mutex_lock(&realMutex);
-
-	switch(retval)
+	int err = pthread_mutex_lock(&realMutex);
+	if( err != 0)
 	{
-		case 0:
-			break;
+		RsErr() << __PRETTY_FUNCTION__ << "pthread_mutex_lock returned: "
+		        << rsErrnoName(err)
+#ifdef RSMUTEX_DEBUG
+		        << " name: " << name
+#endif
+		       << std::endl;
 
-		case EINVAL:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EINVAL";
-			std::cerr << std::endl;
-			break;
- 
-		case EBUSY:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EBUSY";
-			std::cerr << std::endl;
-			break;
- 
-		case EAGAIN:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EAGAIN";
-			std::cerr << std::endl;
-			break;
- 
-		case EDEADLK:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EDEADLK";
-			std::cerr << std::endl;
-			break;
- 
-		case EPERM:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned EPERM";
-			std::cerr << std::endl;
-			break;
+		print_stacktrace();
 
-		default:
-			std::cerr << "RsMutex::lock() pthread_mutex_lock returned UNKNOWN ERROR";
-			std::cerr << std::endl;
-			break;
-	}
-
-	/* Here is some debugging code - to catch failed locking attempts.
-	 * Major bug is it is ever triggered.
-	 */
 #ifdef RSMUTEX_ABORT
-
-	if (retval != 0)
-	{
-#ifdef RSMUTEX_DEBUG
-		std::cerr << "RsMutex::lock() name: " << name << std::endl;
-#endif
-		std::cerr << "RsMutex::lock() pthread_mutex_lock returned an Error. Aborting()";
-		std::cerr << std::endl;
 		abort();
+#endif
 	}
-#endif
-
  
-	_thread_id = pthread_self() ;
-#ifdef RSTHREAD_SELF_LOCKING_GUARD
-	++_cnt ;
-#endif
+	_thread_id = pthread_self();
 }
+
 #ifdef RSMUTEX_DEBUG
 double RsStackMutex::getCurrentTS()
 {
@@ -416,3 +271,18 @@ double RsStackMutex::getCurrentTS()
 #endif
 
 
+RsThread::~RsThread()
+{
+	if(!mHasStopped)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " deleting thread: " << mLastTid
+		        << " " << mFullName << " that is still "
+		        << "running! Something seems very wrong here and RetroShare is "
+		        << "likely to crash because of this." << std::endl;
+		print_stacktrace();
+
+		fullstop();
+	}
+}
+
+RsQueueThread::~RsQueueThread() = default;

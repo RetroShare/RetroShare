@@ -24,6 +24,7 @@
 #include <QObject>
 
 #include <retroshare/rsgxsifacetypes.h>
+#include <retroshare/rsevents.h>
 
 struct RsGxsIfaceHelper;
 struct RsGxsChanges;
@@ -53,6 +54,7 @@ private:
 
 private:
 	RsGxsIfaceHelper* mIfaceImpl;
+	RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif // RSGXSUPDATEBROADCAST_H

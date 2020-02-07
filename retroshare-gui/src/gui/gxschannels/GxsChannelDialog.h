@@ -39,8 +39,6 @@ public:
 	virtual QString pageName() const { return tr("Channels") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent);
-
 	void shareOnChannel(const RsGxsGroupId& channel_id, const QList<RetroShareLink>& file_link) ;
 
 protected:
@@ -54,6 +52,7 @@ protected:
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
 
+	virtual UserNotify *createUserNotify(QObject *parent) override;
 private slots:
 	void toggleAutoDownload();
         void setDefaultDirectory();
@@ -74,6 +73,10 @@ private:
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
+
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

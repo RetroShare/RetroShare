@@ -43,6 +43,7 @@ public:
 	bool setGroup(const RsGxsForumGroup &group, bool doFill = true);
 	bool setMessage(const RsGxsForumMsg &msg, bool doFill = true);
 
+    uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumMsgItem " + messageId().toStdString()) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -66,7 +67,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle();
+	void toggle() override;
 	void readAndClearItem();
 
 	void unsubscribeForum();

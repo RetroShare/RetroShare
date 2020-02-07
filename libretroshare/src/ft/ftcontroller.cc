@@ -209,7 +209,7 @@ void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::data_tick()
+void ftController::threadTick()
 {
 	/* check the queues */
 
@@ -821,7 +821,7 @@ bool ftController::completeFile(const RsFileHash& hash)
     RsServer::notify()->notifyDownloadComplete(hash.toStdString());
     RsServer::notify()->notifyDownloadCompleteCount(completeCount);
 
-    rsFiles->ForceDirectoryCheck() ;
+    rsFiles->ForceDirectoryCheck(true) ;
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;

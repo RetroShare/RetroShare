@@ -22,8 +22,8 @@
 #pragma once
 
 #include <map>
-#include <queue>
 #include <fstream>
+#include <list>
 
 #include "retroshare/rsgrouter.h"
 #include "retroshare/rstypes.h"
@@ -33,15 +33,13 @@
 #include "turtle/turtleclientservice.h"
 #include "services/p3service.h"
 #include "pqi/p3cfgmgr.h"
-
+#include "util/rsdebug.h"
 #include "groutertypes.h"
 #include "groutermatrix.h"
 #include "grouteritems.h"
 
 // To be put in pqi/p3cfgmgr.h
-//
 static const uint32_t CONFIG_TYPE_GROUTER = 0x0016 ;
-static const uint32_t RS_GROUTER_DATA_FLAGS_ENCRYPTED = 0x0001 ;
 
 class p3LinkMgr ;
 class p3turtle ;
@@ -126,7 +124,8 @@ public:
     //         Routing clue collection methods           //
     //===================================================//
 
-    virtual void addRoutingClue(const GRouterKeyId& id,const RsPeerId& peer_id) ;
+	virtual void addRoutingClue(
+	        const RsGxsId& id, const RsPeerId& peer_id) override;
 
     //===================================================//
     //         Client/server request services            //
@@ -220,7 +219,7 @@ private:
     void handleLowLevelTransactionChunkItem(RsGRouterTransactionChunkItem *chunk_item);
     void handleLowLevelTransactionAckItem(RsGRouterTransactionAcknItem*) ;
 
-    static Sha1CheckSum computeDataItemHash(RsGRouterGenericDataItem *data_item);
+    static Sha1CheckSum computeDataItemHash(const RsGRouterGenericDataItem *data_item);
 
     std::ostream& grouter_debug() const
     {
@@ -238,8 +237,9 @@ private:
 
     void handleIncoming() ;
 
-    void handleIncomingReceiptItem(RsGRouterSignedReceiptItem *receipt_item) ;
-    void handleIncomingDataItem(RsGRouterGenericDataItem *data_item) ;
+	void handleIncomingItem(const RsGRouterAbstractMsgItem *item);
+    void handleIncomingReceiptItem(const RsGRouterSignedReceiptItem *receipt_item) ;
+    void handleIncomingDataItem(const RsGRouterGenericDataItem *data_item) ;
 
     bool locked_getLocallyRegisteredClientFromServiceId(const GRouterServiceId& service_id,GRouterClientService *& client);
 
@@ -252,7 +252,7 @@ private:
 
     // signs an item with the given key.
     bool signDataItem(RsGRouterAbstractMsgItem *item,const RsGxsId& id) ;
-    bool verifySignedDataItem(RsGRouterAbstractMsgItem *item, const RsIdentityUsage::UsageCode &info, uint32_t &error_status) ;
+    bool verifySignedDataItem(const RsGRouterAbstractMsgItem *item, const RsIdentityUsage::UsageCode &info, uint32_t &error_status) ;
     bool encryptDataItem(RsGRouterGenericDataItem *item,const RsGxsId& destination_key) ;
     bool decryptDataItem(RsGRouterGenericDataItem *item) ;
 
@@ -352,4 +352,23 @@ private:
     rstime_t _last_config_changed ;
 
     uint64_t _random_salt ;
+
+	/** Temporarly store items that could not have been verified yet due to
+	 * missing author key, attempt to handle them once in a while.
+	 * The items are discarded if after mMissingKeyQueueEntryTimeout the key
+	 * hasn't been received yet, and are not saved on RetroShare stopping. */
+	std::list< std::pair<
+	    std::unique_ptr<RsGRouterAbstractMsgItem>, rstime_t > > mMissingKeyQueue;
+	RsMutex mMissingKeyQueueMtx; /// protect mMissingKeyQueue
+
+	/// @see mMissingKeyQueue
+	static constexpr rstime_t mMissingKeyQueueEntryTimeout = 600;
+
+	/// @see mMissingKeyQueue
+	static constexpr rstime_t mMissingKeyQueueCheckEvery = 30;
+
+	/// @see mMissingKeyQueue
+	rstime_t mMissingKeyQueueCheckLastCheck = 0;
+
+	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

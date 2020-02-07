@@ -158,6 +158,10 @@ private:
 	RsGxsGroupId mIdToNavigate;
 	int filter;
 
+    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+    RsEventsHandlerId_t mEventHandlerId_identity;
+    RsEventsHandlerId_t mEventHandlerId_circles;
+
 	/* UI -  Designer */
 	Ui::IdDialog *ui;
 };

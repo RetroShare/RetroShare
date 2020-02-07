@@ -156,9 +156,17 @@ class p3ChatService::AvatarInfo
 
 	  void init(const unsigned char *jpeg_data,int size)
 	  {
-		  _image_size = size ;
-		  _image_data = (unsigned char*)rs_malloc(size) ;
-		  memcpy(_image_data,jpeg_data,size) ;
+          if(size == 0)
+          {
+              _image_size = 0;
+              _image_data = nullptr;
+          }
+          else
+		  {
+			  _image_size = size ;
+			  _image_data = (unsigned char*)rs_malloc(size) ;
+			  memcpy(_image_data,jpeg_data,size) ;
+		  }
 	  }
 	  AvatarInfo(const unsigned char *jpeg_data,int size)
 	  {
@@ -855,12 +863,8 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
         {
 #ifdef RS_DIRECT_CHAT
 			/* notify public chat message */
-			RsServer::notify()->AddPopupMessage(
-			            RS_POPUP_GROUPCHAT,
-			            ci->PeerId().toStdString(), "", message );
-			RsServer::notify()->AddFeedItem(
-			            RS_FEED_ITEM_CHAT_NEW,
-			            ci->PeerId().toStdString(), message, "" );
+			RsServer::notify()->AddPopupMessage( RS_POPUP_GROUPCHAT, ci->PeerId().toStdString(), "", message );
+			//RsServer::notify()->AddFeedItem( RS_FEED_ITEM_CHAT_NEW, ci->PeerId().toStdString(), message, "" );
 #else // def RS_DIRECT_CHAT
 			/* Ignore deprecated direct node broadcast chat messages */
 			return false;

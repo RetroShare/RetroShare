@@ -33,8 +33,8 @@ void RsGxsPostedPostItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 	// and do not expect to deserialize mImage member if the data block has been consummed entirely (keeps compatibility
 	// of new RS with older posts.
 
-    if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
-        return ;
+	if(j == RsGenericSerializer::DESERIALIZE && ctx.mOffset == ctx.mSize)
+		return ;
 
 	if((j == RsGenericSerializer::SIZE_ESTIMATE || j == RsGenericSerializer::SERIALIZE) && mImage.empty())
 		return ;

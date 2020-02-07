@@ -422,6 +422,7 @@ int AuthSSLimpl::InitAuth(
 
 	// get xPGP certificate.
 	X509 *x509 = PEM_read_X509(ownfp, NULL, NULL, NULL);
+
 	fclose(ownfp);
 
 	if (x509 == NULL)
@@ -430,8 +431,38 @@ int AuthSSLimpl::InitAuth(
 		std::cerr << std::endl;
 		return -1;
 	}
-	SSL_CTX_use_certificate(sslctx, x509);
-        mOwnPublicKey = X509_get_pubkey(x509);
+
+	int result = SSL_CTX_use_certificate(sslctx, x509);
+
+#if OPENSSL_VERSION_NUMBER >= 0x10101000L
+	if(result != 1)
+	{
+		// In debian Buster, openssl security level is set to 2 which preclude the use of SHA1, originally used to sign RS certificates.
+		// As a consequence, on these systems, locations created with RS previously to Jan.2020 will not start unless we revert the
+		// security level to a value of 1.
+
+		int save_sec = SSL_CTX_get_security_level(sslctx);
+		SSL_CTX_set_security_level(sslctx,1);
+		result = SSL_CTX_use_certificate(sslctx, x509);
+
+		if(result == 1)
+		{
+			std::cerr << std::endl;
+			std::cerr << "     Your Retroshare certificate uses low security settings that are incompatible " << std::endl;
+			std::cerr << "(WW) with current security level " << save_sec << " of the OpenSSL library. Retroshare will still start " << std::endl;
+			std::cerr << "     (with security level set to 1), but you should probably create a new location." << std::endl;
+			std::cerr << std::endl;
+		}
+	}
+#endif
+
+    if(result != 1)
+    {
+        std::cerr << "(EE) Cannot use your Retroshare certificate. Some error occured in SSL_CTX_use_certificate()" << std::endl;
+        return -1;
+    }
+
+	mOwnPublicKey = X509_get_pubkey(x509);
 
 	// get private key
 	FILE *pkfp = RsDirUtil::rs_fopen(priv_key_file, "rb");
@@ -1186,11 +1217,13 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 
 		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
 
-		if(rsEvents)
-		{
-			ev->mErrorMsg = errMsg;
-			rsEvents->postEvent(std::move(ev));
-		}
+//		if(rsEvents)
+//		{
+//			ev->mErrorMsg = errMsg;
+//			ev->mErrorCode = RsAuthSslConnectionAutenticationEvent::NO_CERTIFICATE_SUPPLIED;
+//
+//			rsEvents->postEvent(std::move(ev));
+//		}
 
 		return verificationFailed;
 	}
@@ -1217,8 +1250,11 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 		if(rsEvents)
 		{
 			ev->mSslCn = sslCn;
+			ev->mSslId = sslId;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
+
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1237,6 +1273,8 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
+
 			rsEvents->postEvent(std::move(ev));
 		}
 
@@ -1266,6 +1304,7 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 				ev->mSslCn = sslCn;
 				ev->mPgpId = pgpId;
 				ev->mErrorMsg = errorMsg;
+				ev->mErrorCode = RsAuthSslError::MISMATCHED_PGP_ID;
 				rsEvents->postEvent(std::move(ev));
 			}
 
@@ -1290,12 +1329,29 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslId = sslId;
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
+
+			switch(auth_diagnostic)
+			{
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_ISSUER_UNKNOWN:
+				ev->mErrorCode = RsAuthSslError::NOT_A_FRIEND;
+				break;
+			case RS_SSL_HANDSHAKE_DIAGNOSTIC_WRONG_SIGNATURE:
+				ev->mErrorCode = RsAuthSslError::PGP_SIGNATURE_VALIDATION_FAILED;
+				break;
+			default:
+				ev->mErrorCode = RsAuthSslError::MISSING_AUTHENTICATION_INFO;
+				break;
+			}
+
 			ev->mErrorMsg = errMsg;
 			rsEvents->postEvent(std::move(ev));
 		}
 
 		return verificationFailed;
 	}
+#ifdef AUTHSSL_DEBUG
+    std::cerr << "******* VerifyX509Callback cert: " << std::hex << ctx->cert <<std::dec << std::endl;
+#endif
 
 	if ( !isSslOnlyFriend && pgpId != AuthGPG::getAuthGPG()->getGPGOwnId() && !AuthGPG::getAuthGPG()->isGPGAccepted(pgpId) )
 	{
@@ -1311,27 +1367,19 @@ int AuthSSLimpl::VerifyX509Callback(int /*preverify_ok*/, X509_STORE_CTX* ctx)
 			ev->mSslCn = sslCn;
 			ev->mPgpId = pgpId;
 			ev->mErrorMsg = errMsg;
+			ev->mErrorCode = RsAuthSslError::NOT_A_FRIEND;
 			rsEvents->postEvent(std::move(ev));
 		}
 
 		return verificationFailed;
 	}
 
-	setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
+	//setCurrentConnectionAttemptInfo(pgpId, sslId, sslCn);
 	LocalStoreCert(x509Cert);
 
 	RsInfo() << __PRETTY_FUNCTION__ << " authentication successfull for "
 	         << "sslId: " << sslId << " isSslOnlyFriend: " << isSslOnlyFriend
 	         << std::endl;
-
-	if(rsEvents)
-	{
-		ev->mSuccess = true;
-		ev->mSslId = sslId;
-		ev->mSslCn = sslCn;
-		ev->mPgpId = pgpId;
-		rsEvents->postEvent(std::move(ev));
-	}
 
 	return verificationSuccess;
 }
@@ -1583,32 +1631,6 @@ bool    AuthSSLimpl::decrypt(void *&out, int &outlen, const void *in, int inlen)
         return true;
 }
 
-
-/********************************************************************************/
-/********************************************************************************/
-/*********************   Cert Search / Add / Remove    **************************/
-/********************************************************************************/
-/********************************************************************************/
-
-void AuthSSLimpl::setCurrentConnectionAttemptInfo(const RsPgpId& gpg_id,const RsPeerId& ssl_id,const std::string& ssl_cn)
-{
-#ifdef AUTHSSL_DEBUG
-	std::cerr << "AuthSSL: registering connection attempt from:" << std::endl;
-	std::cerr << "    GPG id: " << gpg_id << std::endl;
-	std::cerr << "    SSL id: " << ssl_id << std::endl;
-	std::cerr << "    SSL cn: " << ssl_cn << std::endl;
-#endif
-	_last_gpgid_to_connect = gpg_id ;
-	_last_sslid_to_connect = ssl_id ;
-	_last_sslcn_to_connect = ssl_cn ;
-}
-void AuthSSLimpl::getCurrentConnectionAttemptInfo(RsPgpId& gpg_id,RsPeerId& ssl_id,std::string& ssl_cn)
-{
-	gpg_id = _last_gpgid_to_connect ;
-	ssl_id = _last_sslid_to_connect ;
-	ssl_cn = _last_sslcn_to_connect ;
-}
-
 /* Locked search -> internal help function */
 bool AuthSSLimpl::locked_FindCert(const RsPeerId& id, X509** cert)
 {
@@ -1784,9 +1806,6 @@ bool AuthSSLimpl::loadList(std::list<RsItem*>& load)
         load.clear() ;
         return true;
 }
-
-RsAuthSslConnectionAutenticationEvent::RsAuthSslConnectionAutenticationEvent() :
-    RsEvent(RsEventType::AUTHSSL_CONNECTION_AUTENTICATION), mSuccess(false) {}
 
 const EVP_PKEY*RsX509Cert::getPubKey(const X509& x509)
 {

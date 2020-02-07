@@ -56,12 +56,10 @@ class NotifyQt: public QObject, public NotifyClient
 		static bool isAllDisable();
 		void enable() ;
 
-		virtual ~NotifyQt() { return; }
+		virtual ~NotifyQt() = default;
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
-		virtual void notifyPeerConnected(const std::string& /* peer_id */);
-		virtual void notifyPeerDisconnected(const std::string& /* peer_id */);
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
@@ -76,7 +74,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
-		void notifyConnectionWithoutCert();
 
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
@@ -84,8 +81,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyPeerStatusChanged(const std::string& peer_id, uint32_t state);
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
-
-        virtual void notifyGxsChange(const RsGxsChanges& change);
 
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
@@ -123,8 +118,6 @@ class NotifyQt: public QObject, public NotifyClient
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void peerConnected(const QString&) const ;
-		void peerDisconnected(const QString&) const ;
 		void hashingInfoChanged(const QString&) const ;
 		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;

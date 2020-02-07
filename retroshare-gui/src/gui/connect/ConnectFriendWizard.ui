@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>437</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -480,14 +480,14 @@
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QLabel" name="emailLabel">
+        <widget class="QLabel" name="profileIdLabel">
          <property name="text">
-          <string>Email:</string>
+          <string>Profile ID:</string>
          </property>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLabel" name="emailEdit">
+        <widget class="QLabel" name="profileIdEdit">
          <property name="text">
           <string notr="true">Email</string>
          </property>
@@ -794,8 +794,8 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

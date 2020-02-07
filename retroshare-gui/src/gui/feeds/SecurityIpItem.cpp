@@ -40,14 +40,14 @@
 
 /** Constructor */
 SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string &ipAddr, uint32_t result, uint32_t type, bool isTest) :
-    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
+    FeedItem(parent,0,NULL), mType(type), mSslId(sslId), mIpAddr(ipAddr), mResult(result), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
 }
 
 SecurityIpItem::SecurityIpItem(FeedHolder *parent, const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type, bool isTest) :
-    FeedItem(NULL), mParent(parent), mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
+    FeedItem(parent,0,NULL),  mType(type), mSslId(sslId), mIpAddr(ipAddr), mIpAddrReported(ipAddrReported), mResult(0), mIsTest(isTest),
     ui(new(Ui::SecurityIpItem))
 {
 	setup();
@@ -78,13 +78,9 @@ void SecurityIpItem::setup()
 	updateItem();
 }
 
-bool SecurityIpItem::isSame(const RsPeerId &sslId, const std::string& ipAddr, const std::string& ipAddrReported, uint32_t type)
+uint64_t SecurityIpItem::uniqueIdentifier() const
 {
-	if (mType == type && mSslId==sslId && mIpAddr == ipAddr && mIpAddrReported == ipAddrReported) {
-		return true;
-	}
-
-	return false;
+    return hash_64bits("SecurityItem " + QString::number(mType).toStdString() + " " + mSslId.toStdString() + " " + mIpAddr + " " + mIpAddrReported) ;
 }
 
 void SecurityIpItem::updateItemStatic()
@@ -196,8 +192,8 @@ void SecurityIpItem::toggle()
 
 void SecurityIpItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
@@ -215,25 +211,8 @@ void SecurityIpItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void SecurityIpItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "SecurityIpItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 

@@ -469,6 +469,8 @@ HEADERS +=  rshare.h \
             util/QtVersion.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
+            util/ClickableLabel.h \
+            util/AspectRatioPixmapLabel.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -828,6 +830,8 @@ SOURCES +=  main.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
+            util/ClickableLabel.cpp \
+            util/AspectRatioPixmapLabel.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
@@ -1344,9 +1348,11 @@ posted {
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListWidget.h \
 		gui/Posted/PostedItem.h \
+		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
 		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
+		gui/Posted/PhotoView.h \
 		gui/Posted/PostedUserNotify.h
 
 		#gui/Posted/PostedCreateCommentDialog.h \
@@ -1355,8 +1361,9 @@ posted {
 	FORMS += gui/Posted/PostedListWidget.ui \
 		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
+		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-
+		gui/Posted/PhotoView.ui 
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
@@ -1365,8 +1372,10 @@ posted {
 		gui/Posted/PostedListWidget.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
+		gui/Posted/PostedCardView.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
+		gui/Posted/PhotoView.cpp \
 		gui/Posted/PostedUserNotify.cpp
 
 		#gui/Posted/PostedDialog.cpp \

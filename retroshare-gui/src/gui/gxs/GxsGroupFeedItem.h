@@ -64,12 +64,9 @@ protected:
 protected slots:
 	void subscribe();
 	void unsubscribe();
-	void removeItem();
 	void copyGroupLink();
 
 protected:
-	FeedHolder *mFeedHolder;
-	uint32_t mFeedId;
 	bool mIsHome;
 	RsGxsIfaceHelper *mGxsIface;
 	TokenQueue *mLoadQueue;

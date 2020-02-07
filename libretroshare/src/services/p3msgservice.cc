@@ -175,14 +175,12 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		mi->msgFlags &= (RS_MSG_FLAGS_DISTANT | RS_MSG_FLAGS_SYSTEM); // remove flags except those
 		mi->msgFlags |= RS_MSG_FLAGS_NEW;
 
-		p3Notify *notify = RsServer::notify();
-		if (notify)
+		if (rsEvents)
 		{
-			notify->AddPopupMessage(RS_POPUP_MSG, mi->PeerId().toStdString(), mi->subject, mi->message);
-
-			std::string out;
-			rs_sprintf(out, "%lu", mi->msgId);
-			notify->AddFeedItem(RS_FEED_ITEM_MESSAGE, out, "", "");
+			auto ev = std::make_shared<RsMailStatusEvent>();
+			ev->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
+			ev->mChangedMsgIds.insert(std::to_string(mi->msgId));
+			rsEvents->postEvent(ev);
 		}
 
 		imsg[mi->msgId] = mi;
@@ -207,13 +205,6 @@ void p3MsgService::processIncomingMsg(RsMsgItem *mi)
 		}
 
 	RsServer::notify()->notifyListChange(NOTIFY_LIST_MESSAGELIST,NOTIFY_TYPE_ADD);
-
-	if(rsEvents)
-	{
-		std::shared_ptr<RsMailStatusEvent> pEvent(new RsMailStatusEvent());
-		pEvent->mChangedMsgIds.insert(std::to_string(mi->msgId));
-		rsEvents->postEvent(pEvent);
-	}
 }
 
 bool p3MsgService::checkAndRebuildPartialMessage(RsMsgItem *ci)
@@ -345,8 +336,8 @@ int p3MsgService::checkOutgoingMessages()
 	bool changed = false;
 	std::list<RsMsgItem*> output_queue;
 
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
+	pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
 
 	{
 		RS_STACK_MUTEX(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -404,11 +395,10 @@ int p3MsgService::checkOutgoingMessages()
 					mit->second->msgFlags |= RS_MSG_FLAGS_ROUTED;
 				}
 			}
+#ifdef DEBUG_DISTANT_MSG
 			else
-			{
-				Dbg3() << __PRETTY_FUNCTION__ << " Delaying until available..."
-				       << std::endl;
-			}
+				Dbg3() << __PRETTY_FUNCTION__ << " Delaying until available..." << std::endl;
+#endif
 		}
 
 		/* clean up */
@@ -906,8 +896,9 @@ bool    p3MsgService::removeMsgId(const std::string &mid)
 	}
 
 	bool changed = false;
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
+	pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_REMOVED;
 
 	{
 		RsStackMutex stack(mMsgMtx); /********** STACK LOCKED MTX ******/
@@ -1274,8 +1265,9 @@ uint32_t p3MsgService::sendMail(
 	           std::back_inserter(msgInfo.files) );
 
 	uint32_t ret = 0;
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
+	pEvent->mMailStatusEventCode = RsMailStatusEventCode::MESSAGE_SENT;
 
 	auto pSend = [&](const std::set<RsGxsId>& sDest)
 	{
@@ -2089,10 +2081,13 @@ void p3MsgService::notifyDataStatus( const GRouterMsgPropagationId& id,
 		                                      NOTIFY_TYPE_ADD );
 		IndicateConfigChanged();
 
-		using Evt_t = RsMailStatusEvent;
-		std::shared_ptr<Evt_t> pEvent(new Evt_t());
-		pEvent->mChangedMsgIds.insert(std::to_string(msg_id));
-		if(rsEvents) rsEvents->postEvent(pEvent);
+		if(rsEvents)
+		{
+			auto pEvent = std::make_shared<RsMailStatusEvent>();
+			pEvent->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
+			pEvent->mChangedMsgIds.insert(std::to_string(msg_id));
+			rsEvents->postEvent(pEvent);
+		}
 
 		return;
 	}
@@ -2139,8 +2134,7 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 
 	{
 		RS_STACK_MUTEX(recentlyReceivedMutex);
-		if( mRecentlyReceivedMessageHashes.find(hash) !=
-		        mRecentlyReceivedMessageHashes.end() )
+		if( mRecentlyReceivedMessageHashes.find(hash) != mRecentlyReceivedMessageHashes.end() )
 		{
 			RsInfo() << __PRETTY_FUNCTION__ << " (II) receiving "
 			          << "message of hash " << hash << " more than once. "
@@ -2148,14 +2142,12 @@ bool p3MsgService::receiveGxsTransMail( const RsGxsId& authorId,
 			          << std::endl;
 			return true;
 		}
-		mRecentlyReceivedMessageHashes[hash] =
-		        static_cast<uint32_t>(time(nullptr));
+		mRecentlyReceivedMessageHashes[hash] = static_cast<uint32_t>(time(nullptr));
 	}
 
 	IndicateConfigChanged();
 
-	RsItem *item = _serialiser->deserialise(
-	            const_cast<uint8_t*>(data), &dataSize );
+	RsItem *item = _serialiser->deserialise( const_cast<uint8_t*>(data), &dataSize );
 	RsMsgItem *msg_item = dynamic_cast<RsMsgItem*>(item);
 
 	if(msg_item)
@@ -2189,11 +2181,11 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 	Dbg2() << __PRETTY_FUNCTION__ << " " << mailId << ", "
 	       << static_cast<uint32_t>(status) << std::endl;
 
-	using Evt_t = RsMailStatusEvent;
-	std::shared_ptr<Evt_t> pEvent(new Evt_t());
+	auto pEvent = std::make_shared<RsMailStatusEvent>();
 
 	if( status == GxsTransSendStatus::RECEIPT_RECEIVED )
 	{
+		pEvent->mMailStatusEventCode = RsMailStatusEventCode::NEW_MESSAGE;
 		uint32_t msg_id;
 
 		{
@@ -2248,19 +2240,20 @@ bool p3MsgService::notifyGxsTransSendStatus( RsGxsTransId mailId,
 	else if( status >= GxsTransSendStatus::FAILED_RECEIPT_SIGNATURE )
 	{
 		uint32_t msg_id;
+		pEvent->mMailStatusEventCode = RsMailStatusEventCode::SIGNATURE_FAILED;
 
 		{
 			RS_STACK_MUTEX(gxsOngoingMutex);
-
-			std::cerr << __PRETTY_FUNCTION__ << " mail delivery "
-			          << "mailId: " << mailId
-			          << " failed with " << static_cast<uint32_t>(status);
+			RsErr() << __PRETTY_FUNCTION__ << " mail delivery "
+			        << "mailId: " << mailId
+			        << " failed with " << static_cast<uint32_t>(status);
 
 			auto it = gxsOngoingMessages.find(mailId);
 			if(it == gxsOngoingMessages.end())
 			{
-				std::cerr << " cannot find pending message to notify"
-				          << std::endl;
+				RsErr() << __PRETTY_FUNCTION__
+				        << " cannot find pending message to notify"
+				        << std::endl;
 				return false;
 			}
 
