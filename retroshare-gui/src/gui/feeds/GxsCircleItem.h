@@ -52,8 +52,7 @@ public:
 	GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsCircleId &circleId, const RsGxsId &gxsId, const uint32_t type);
 	virtual ~GxsCircleItem();
 
-	bool isSame(const RsGxsCircleId &circleId, const RsGxsId &gxsId, uint32_t type);
-
+    uint64_t uniqueIdentifier() const override;
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 
@@ -66,9 +65,6 @@ protected:
 
 
 private slots:
-	/* default stuff */
-	void removeItem();
-
 	void showCircleDetails();
 	void acceptCircleSubscription();
 	void grantCircleMembership() ;
@@ -77,8 +73,6 @@ private slots:
 private:
 	void setup();
 
-	FeedHolder *mFeedHolder;
-	uint32_t mFeedId;
 	uint32_t mType;
 
 	RsGxsCircleId mCircleId;

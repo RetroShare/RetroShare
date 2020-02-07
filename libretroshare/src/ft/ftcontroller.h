@@ -109,9 +109,10 @@ class ftPendingRequest
 };
 
 
-class ftController: public RsTickingThread, public pqiServiceMonitor, public p3Config
+class ftController:
+        public RsTickingThread, public pqiServiceMonitor, public p3Config
 {
-	public:
+public:
 
 		/* Setup */
         ftController(ftDataMultiplex *dm, p3ServiceControl *sc, uint32_t ftServiceId);
@@ -122,7 +123,7 @@ class ftController: public RsTickingThread, public pqiServiceMonitor, public p3C
 		bool    activate();
 		bool 	isActiveAndNoPending();
 
-        virtual void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
 		/***************************************************************/
 		/********************** Controller Access **********************/

@@ -25,6 +25,7 @@
 #include "GxsForumUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/GroupTreeWidget.h"
 
 class GxsForumGroupInfoData : public RsUserdata
@@ -41,6 +42,43 @@ GxsForumsDialog::GxsForumsDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsForums, parent)
 {
 	mCountChildMsgs = true;
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+
+	rsEvents->registerEventsHandler(RsEventType::GXS_FORUMS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+}
+
+void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType == RsEventType::GXS_FORUMS)
+    {
+        const RsGxsForumEvent *e = dynamic_cast<const RsGxsForumEvent*>(event.get());
+
+        if(!e)
+            return;
+
+        switch(e->mForumEventCode)
+        {
+		case RsForumEventCode::NEW_MESSAGE:
+			updateMessageSummaryList(e->mForumGroupId);
+            break;
+
+		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+			updateDisplay(false);
+            break;
+
+		case RsForumEventCode::READ_STATUS_CHANGED:
+			updateMessageSummaryList(e->mForumGroupId);
+            break;
+
+		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
+        case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 GxsForumsDialog::~GxsForumsDialog()
@@ -78,7 +116,7 @@ void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<Re
 	msgDialog->show();
 }
 
-UserNotify *GxsForumsDialog::getUserNotify(QObject *parent)
+UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
 {
 	return new GxsForumUserNotify(rsGxsForums, parent);
 }

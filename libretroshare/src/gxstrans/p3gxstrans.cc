@@ -434,8 +434,7 @@ void p3GxsTrans::GxsTransIntegrityCleanupThread::run()
 			totalMessageSizeAndCount[msg->metaData->mAuthorId].count++;
 		    delete msg;
 
-			if(item != NULL)
-				delete item ;
+			delete item;
 	    }
     }
 
@@ -657,8 +656,7 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 #ifdef DEBUG_GXSTRANS
 	std::cout << "p3GxsTrans::notifyChanges(...)" << std::endl;
 #endif
-	for( std::vector<RsGxsNotify*>::const_iterator it = changes.begin();
-	     it != changes.end(); ++it )
+	for( auto it = changes.begin(); it != changes.end(); ++it )
 	{
 		RsGxsGroupChange* grpChange = dynamic_cast<RsGxsGroupChange *>(*it);
 		RsGxsMsgChange* msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
@@ -698,8 +696,8 @@ void p3GxsTrans::notifyChanges(std::vector<RsGxsNotify*>& changes)
 			}
 #endif
 		}
+        delete *it;
 	}
-	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
 uint32_t p3GxsTrans::AuthenPolicy()

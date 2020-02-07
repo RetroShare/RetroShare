@@ -47,7 +47,7 @@ ftExtraList::ftExtraList()
 }
 
 
-void ftExtraList::data_tick()
+void ftExtraList::threadTick()
 {
     bool todo = false;
     rstime_t now = time(NULL);

@@ -58,7 +58,7 @@ public:
 
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
-	virtual void deleteFeedItem(QWidget *item, uint32_t type);
+	virtual void deleteFeedItem(FeedItem *feedItem, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 
@@ -97,11 +97,14 @@ private:
 	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
 
 	void createPostItem(const RsGxsChannelPost &post, bool related);
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
 	QAction *mAutoDownloadAction;
 
 	bool mUseThread;
+    RsGxsGroupId mChannelGroupId;
+    RsEventsHandlerId_t mEventHandlerId ;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidget *ui;

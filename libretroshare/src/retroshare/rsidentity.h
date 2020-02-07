@@ -304,6 +304,32 @@ private:
 	RsIdentityUsage();
 };
 
+enum class RsGxsIdentityEventCode: uint8_t
+{
+    UNKNOWN                    = 0x00,
+    NEW_IDENTITY               = 0x01,
+    DELETED_IDENTITY           = 0x02,
+};
+
+struct RsGxsIdentityEvent: public RsEvent
+{
+	RsGxsIdentityEvent()
+	    : RsEvent(RsEventType::GXS_IDENTITY),
+	      mIdentityEventCode(RsGxsIdentityEventCode::UNKNOWN) {}
+
+	RsGxsIdentityEventCode mIdentityEventCode;
+	RsGxsGroupId mIdentityId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mIdentityEventCode);
+		RS_SERIAL_PROCESS(mIdentityId);
+	}
+
+	~RsGxsIdentityEvent() override = default;
+};
 
 struct RsIdentityDetails : RsSerializable
 {
@@ -511,9 +537,13 @@ struct RsIdentity : RsGxsIfaceHelper
 	 * @brief request details of a not yet known identity to the network
 	 * @jsonapi{development}
 	 * @param[in] id id of the identity to request
+	 * @param[in] peers optional list of the peers to ask for the key, if empty
+	 *	all online peers are asked.
 	 * @return false on error, true otherwise
 	 */
-	virtual bool requestIdentity(const RsGxsId& id) = 0;
+	virtual bool requestIdentity(
+	        const RsGxsId& id,
+	        const std::vector<RsPeerId>& peers = std::vector<RsPeerId>() ) = 0;
 
 	/// default base URL used for indentity links @see exportIdentityLink
 	static const std::string DEFAULT_IDENTITY_BASE_URL;

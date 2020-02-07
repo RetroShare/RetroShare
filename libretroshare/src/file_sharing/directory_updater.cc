@@ -51,18 +51,13 @@ bool LocalDirectoryUpdater::isEnabled() const
 }
 void LocalDirectoryUpdater::setEnabled(bool b)
 {
-    if(mIsEnabled == b)
-        return ;
-
-    if(!b)
-        shutdown();
-    else if(!isRunning())
-        start("fs dir updater") ;
-
-    mIsEnabled = b ;
+	if(mIsEnabled == b) return;
+	if(!b) RsThread::askForStop();
+	else if(!RsThread::isRunning()) start("fs dir updater");
+	mIsEnabled = b ;
 }
 
-void LocalDirectoryUpdater::data_tick()
+void LocalDirectoryUpdater::threadTick()
 {
     rstime_t now = time(NULL) ;
 
@@ -112,10 +107,13 @@ void LocalDirectoryUpdater::data_tick()
 	}
 }
 
-void LocalDirectoryUpdater::forceUpdate()
+void LocalDirectoryUpdater::forceUpdate(bool add_safe_delay)
 {
     mForceUpdate = true ;
-	mLastSweepTime = 0 ;
+	mLastSweepTime = rstime_t(time(NULL)) - rstime_t(mDelayBetweenDirectoryUpdates) ;
+
+    if(add_safe_delay)
+        mLastSweepTime += rstime_t(MIN_TIME_AFTER_LAST_MODIFICATION);
 
 	if(mHashCache != NULL && mHashCache->hashingProcessPaused())
 		mHashCache->togglePauseHashingProcess();
@@ -368,7 +366,7 @@ void LocalDirectoryUpdater::setFollowSymLinks(bool b)
 
     mFollowSymLinks = b ;
 
-    forceUpdate();
+    forceUpdate(false);
 }
 
 bool LocalDirectoryUpdater::followSymLinks() const

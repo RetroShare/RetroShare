@@ -123,7 +123,7 @@ struct RsGxsCircleDetails : RsSerializable
 {
 	RsGxsCircleDetails() :
 	    mCircleType(static_cast<uint32_t>(RsGxsCircleType::EXTERNAL)),
-	    mAmIAllowed(false) {}
+	    mAmIAllowed(false),mAmIAdmin(false) {}
 	~RsGxsCircleDetails() override;
 
 	RsGxsCircleId mCircleId;
@@ -135,6 +135,9 @@ struct RsGxsCircleDetails : RsSerializable
 	/** true when one of load GXS ids belong to the circle allowed list (admin
 	 * list & subscribed list). */
 	bool mAmIAllowed;
+
+    /// true when we're an administrator of the circle group, meaning that we can add/remove members from the invitee list.
+	bool mAmIAdmin;
 
 	/// This crosses admin list and subscribed list
 	std::set<RsGxsId> mAllowedGxsIds;
@@ -152,10 +155,63 @@ struct RsGxsCircleDetails : RsSerializable
 		RS_SERIAL_PROCESS(mCircleType);
 		RS_SERIAL_PROCESS(mRestrictedCircleId);
 		RS_SERIAL_PROCESS(mAmIAllowed);
+		RS_SERIAL_PROCESS(mAmIAdmin);
 		RS_SERIAL_PROCESS(mAllowedGxsIds);
 		RS_SERIAL_PROCESS(mAllowedNodes);
 		RS_SERIAL_PROCESS(mSubscriptionFlags);
 	}
+};
+
+
+enum class RsGxsCircleEventCode: uint8_t
+{
+	UNKNOWN                   = 0x00,
+
+	/** mCircleId contains the circle id and mGxsId is the id requesting
+	 * membership */
+	CIRCLE_MEMBERSHIP_REQUEST = 0x01,
+
+	/** mCircleId is the circle that invites me, and mGxsId is my own Id that is
+	 * invited */
+	CIRCLE_MEMBERSHIP_INVITE  = 0x02,
+
+	/** mCircleId contains the circle id and mGxsId is the id dropping
+	 * membership */
+	CIRCLE_MEMBERSHIP_LEAVE   = 0x03,
+
+	/// mCircleId contains the circle id and mGxsId is the id of the new member
+	CIRCLE_MEMBERSHIP_JOIN    = 0x04,
+
+	/** mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
+	CIRCLE_MEMBERSHIP_REVOQUED= 0x05,
+
+	/** mCircleId contains the circle id */
+	NEW_CIRCLE                = 0x06,
+};
+
+struct RsGxsCircleEvent: RsEvent
+{
+	RsGxsCircleEvent()
+	    : RsEvent(RsEventType::GXS_CIRCLES),
+	      mCircleEventType(RsGxsCircleEventCode::UNKNOWN) {}
+
+
+	RsGxsCircleEventCode mCircleEventType;
+	RsGxsCircleId mCircleId;
+	RsGxsId mGxsId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+		RS_SERIAL_PROCESS(mCircleEventType);
+		RS_SERIAL_PROCESS(mCircleId);
+		RS_SERIAL_PROCESS(mGxsId);
+	}
+
+	~RsGxsCircleEvent() override;
 };
 
 class RsGxsCircles: public RsGxsIfaceHelper
@@ -243,6 +299,17 @@ public:
 	 */
 	virtual bool getCircleRequests( const RsGxsGroupId& circleId,
 	                                std::vector<RsGxsCircleMsg>& requests ) = 0;
+	/**
+	 * @brief Get specific circle request
+	 * @jsonapi{development}
+	 * @param[in] circleId id of the circle of which the requests are requested
+	 * @param[in] msgId id of the request
+	 * @param[out] msg storage for the circle request
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getCircleRequest(const RsGxsGroupId& circleId,
+	                              const RsGxsMessageId& msgId,
+	                              RsGxsCircleMsg& msg) =0;
 
 	/**
 	 * @brief Invite identities to circle

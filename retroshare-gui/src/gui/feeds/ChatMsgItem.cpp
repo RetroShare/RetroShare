@@ -43,7 +43,7 @@
 
 /** Constructor */
 ChatMsgItem::ChatMsgItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, const std::string &message) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId), mPeerId(peerId)
+    FeedItem(parent,feedId,NULL), mPeerId(peerId)
 {
     /* Invoke the Qt Designer generated object setup routine */
     setupUi(this);
@@ -153,26 +153,6 @@ void ChatMsgItem::insertChat(const std::string &message)
     chatTextlabel->setText(formatMsg);
 }
 
-void ChatMsgItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "ChatMsgItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	if (mParent) {
-		mParent->lockLayout(this, true);
-	}
-
-	hide();
-
-	if (mParent) {
-		mParent->lockLayout(this, false);
-
-		mParent->deleteFeedItem(this, mFeedId);
-	}
-}
-
 void ChatMsgItem::gotoHome()
 {
 #ifdef DEBUG_ITEM
@@ -191,7 +171,7 @@ void ChatMsgItem::sendMsg()
 	std::cerr << std::endl;
 #endif
 
-	if (mParent)
+	if (mFeedHolder)
 	{
 
     MessageComposer *nMsgDialog = MessageComposer::newMsg();
@@ -214,15 +194,15 @@ void ChatMsgItem::openChat()
 	std::cerr << "ChatMsgItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->openChat(mPeerId);
+		mFeedHolder->openChat(mPeerId);
 	}
 }
 
 void ChatMsgItem::togglequickmessage()
 {
-	mParent->lockLayout(this, true);
+	mFeedHolder->lockLayout(this, true);
 
 	if (messageFrame->isHidden())
 	{
@@ -239,7 +219,7 @@ void ChatMsgItem::togglequickmessage()
 
     emit sizeChanged(this);
 
-    mParent->lockLayout(this, false);
+    mFeedHolder->lockLayout(this, false);
 }
 
 void ChatMsgItem::sendMessage()

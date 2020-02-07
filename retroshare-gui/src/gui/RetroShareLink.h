@@ -90,7 +90,7 @@ class RetroShareLink
 		static RetroShareLink createMessage(const RsPeerId &peerId, const QString& subject);
 		static RetroShareLink createMessage(const RsGxsId &peerId, const QString& subject);
 		static RetroShareLink createCertificate(const RsPeerId &ssl_id) ;
-		static RetroShareLink createUnknwonSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
+		static RetroShareLink createUnknownSslCertificate(const RsPeerId &sslId, const RsPgpId &gpgId = RsPgpId()) ;
 		static RetroShareLink createExtraFile(const QString& name, uint64_t size, const QString& hash, const QString& ssl_id);
 		static RetroShareLink createPublicMsgInvite(time_t time_stamp,const QString& pgp_id,const QString& hash) ;
 		static RetroShareLink createIdentity(const RsGxsId& gxs_id,const QString& name,const QString& radix_data) ;

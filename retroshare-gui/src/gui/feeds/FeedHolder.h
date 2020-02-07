@@ -27,6 +27,7 @@
 #include <retroshare/rsgxschannels.h> // WRONG ONE - BUT IT'LL DO FOR NOW.
 
 class QScrollArea;
+class FeedItem;
 
 class FeedHolder
 {
@@ -34,7 +35,7 @@ public:
 	FeedHolder();
 
 	virtual QScrollArea *getScrollArea() = 0;
-	virtual void deleteFeedItem(QWidget *item, uint32_t type) = 0;
+	virtual void deleteFeedItem(FeedItem *item, uint32_t type) = 0;
     virtual	void openChat(const RsPeerId& peerId) = 0;
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title)=0;
 

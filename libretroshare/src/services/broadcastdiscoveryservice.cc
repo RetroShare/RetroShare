@@ -139,7 +139,7 @@ void BroadcastDiscoveryService::updatePublishedData()
 	            BroadcastDiscoveryPack::fromPeerDetails(od).serializeToString());
 }
 
-void BroadcastDiscoveryService::data_tick()
+void BroadcastDiscoveryService::threadTick()
 {
 	auto nextRunAt = std::chrono::system_clock::now() + std::chrono::seconds(5);
 
@@ -182,10 +182,15 @@ void BroadcastDiscoveryService::data_tick()
 				}
 				else if(!isFriend)
 				{
-					typedef RsBroadcastDiscoveryPeerFoundEvent Evt_t;
 					if(rsEvents)
-						rsEvents->postEvent(
-						            std::shared_ptr<Evt_t>(new Evt_t(rbdr)) );
+                    {
+						auto ev = std::make_shared<RsBroadcastDiscoveryEvent>();
+
+                        ev->mDiscoveryEventType = RsBroadcastDiscoveryEventType::PEER_FOUND;
+                        ev->mData = rbdr;
+
+						rsEvents->postEvent(ev);
+                    }
 				}
 			}
 		}
@@ -307,5 +312,4 @@ bool BroadcastDiscoveryService::assertMulticastLockIsvalid()
 
 RsBroadcastDiscovery::~RsBroadcastDiscovery() = default;
 RsBroadcastDiscoveryResult::~RsBroadcastDiscoveryResult() = default;
-RsBroadcastDiscoveryPeerFoundEvent::~RsBroadcastDiscoveryPeerFoundEvent() = default;
 BroadcastDiscoveryPack::~BroadcastDiscoveryPack() = default;

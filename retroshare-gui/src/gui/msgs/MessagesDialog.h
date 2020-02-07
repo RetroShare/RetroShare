@@ -50,8 +50,6 @@ public:
   virtual QString pageName() const { return tr("Mail") ; } //MainPage
   virtual QString helpText() const { return ""; } //MainPage
 
-  virtual UserNotify *getUserNotify(QObject *parent);
-
 // replaced by shortcut
 //  virtual void keyPressEvent(QKeyEvent *) ;
 
@@ -64,6 +62,7 @@ signals:
   void messagesLoaded();
 
 protected:
+  virtual UserNotify *createUserNotify(QObject *parent) override;
   bool eventFilter(QObject *obj, QEvent *ev);
   int getSelectedMessages(QList<QString>& mid);
 

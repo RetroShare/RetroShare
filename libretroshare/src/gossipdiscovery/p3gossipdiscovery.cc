@@ -32,7 +32,6 @@
 /****
  * #define P3DISC_DEBUG	1
  ****/
-#define P3DISC_DEBUG	1
 
 /*extern*/ std::shared_ptr<RsGossipDiscovery> rsGossipDiscovery(nullptr);
 
@@ -112,6 +111,7 @@ p3discovery2::p3discovery2(
 
 	if(rsEvents)
 		rsEvents->registerEventsHandler(
+                    RsEventType::GOSSIP_DISCOVERY,
 		            [this](std::shared_ptr<const RsEvent> event)
 		{
 			rsEventsHandler(*event);
@@ -951,11 +951,9 @@ void p3discovery2::processContactInfo(const RsPeerId &fromId, const RsDiscContac
 		return ;                              // fresh information here.
 
 	bool should_notify_discovery = false;
-	auto sit= it->second.mSslIds.find(item->sslId);
 
 	DiscSslInfo& sslInfo(it->second.mSslIds[item->sslId]);	// This line inserts the entry while not removing already existing data
     														// do not remove it!
-
 	if (!mPeerMgr->isFriend(item->sslId))
 	{
 		should_notify_discovery = true;
@@ -1348,8 +1346,3 @@ void p3discovery2::rsEventsHandler(const RsEvent& event)
 //
 // 	/* ignore other operations */
 // }
-
-// (cyril) do we still need this??
-RsGossipDiscoveryFriendInviteReceivedEvent::RsGossipDiscoveryFriendInviteReceivedEvent(const std::string& invite) :
-    RsEvent(RsEventType::GOSSIP_DISCOVERY_INVITE_RECEIVED),
-    mInvite(invite) {}

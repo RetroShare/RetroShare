@@ -42,6 +42,8 @@ public:
 
 	bool setGroup(const RsPostedGroup &group);
 
+    uint64_t uniqueIdentifier() const override { return hash_64bits("PostedGroupItem " + groupId().toStdString()) ; }
+
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -52,9 +54,7 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
 private slots:
-	/* default stuff */
-	void toggle();
-
+	void toggle() override;
 	void subscribePosted();
 
 private:

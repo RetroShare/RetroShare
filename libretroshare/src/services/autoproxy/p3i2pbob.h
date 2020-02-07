@@ -205,9 +205,7 @@ public:
 
 	static std::string keyToBase32Addr(const std::string &key);
 
-	// RsTickingThread interface
-public:
-	void data_tick();
+	void threadTick() override; /// @see RsTickingThread
 
 private:
 	int stateMachineBOB();

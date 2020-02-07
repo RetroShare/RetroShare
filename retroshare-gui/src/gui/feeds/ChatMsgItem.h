@@ -37,6 +37,7 @@ public:
 
 	void updateItemStatic();
 
+    virtual uint64_t uniqueIdentifier() const override { return hash_64bits("ChatMsgItem " + mPeerId.toStdString()); }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool /*open*/) {}
@@ -44,7 +45,6 @@ protected:
 private slots:
 	/* default stuff */
 	void gotoHome();
-	void removeItem();
 
 	void sendMsg();
 	void openChat();
@@ -58,9 +58,6 @@ private slots:
 
 private:
 	void insertChat(const std::string &message);
-
-	FeedHolder *mParent;
-	uint32_t mFeedId;
 
 	RsPeerId mPeerId;
 };

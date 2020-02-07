@@ -337,24 +337,49 @@ void ConnectFriendWizard::setCertificate(const QString &certificate, bool friend
 
 void ConnectFriendWizard::setGpgId(const RsPgpId &gpgId, const RsPeerId &sslId, bool friendRequest)
 {
-	if (!rsPeers->getGPGDetails(gpgId, peerDetails)) {
-		setField("errorMessage", tr("Cannot get peer details of PGP key %1").arg(QString::fromStdString(gpgId.toStdString())));
+	if(sslId == rsPeers->getOwnId())
+	{
+		setField("errorMessage", tr("This is your own certificate! You would not want to make friend with yourself. Wouldn't you?") ) ;
 		setStartId(Page_ErrorMessage);
-		return;
+		error = false;
 	}
 
-	/* Set ssl id when available */
-	peerDetails.id = sslId;
+	if (!rsPeers->getGPGDetails(gpgId, peerDetails))
+    {
+		mIsShortInvite = true;
 
-    //setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
-    setStartId(Page_Conclusion);
-    if (friendRequest){
-		ui->cp_Label->show();
-		ui->requestinfolabel->show();
-		setTitleText(ui->ConclusionPage,tr("Friend request"));
-		ui->ConclusionPage->setSubTitle(tr("Details about the request"));
-		setButtonText(QWizard::FinishButton	, tr("Accept"));
-    }
+        peerDetails.id = sslId;
+        peerDetails.gpg_id = gpgId;
+        peerDetails.skip_pgp_signature_validation = true;
+
+		mCertificate.clear();
+
+		setStartId(Page_Conclusion);
+
+		if (friendRequest){
+			ui->cp_Label->show();
+			ui->requestinfolabel->show();
+			setTitleText(ui->ConclusionPage, tr("Friend request"));
+			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+			setButtonText(QWizard::FinishButton	, tr("Accept"));
+		}
+	}
+    else
+	{
+		/* Set ssl id when available */
+		peerDetails.id = sslId;
+		mIsShortInvite = false;
+
+		//setStartId(friendRequest ? Page_FriendRequest : Page_Conclusion);
+		setStartId(Page_Conclusion);
+		if (friendRequest){
+			ui->cp_Label->show();
+			ui->requestinfolabel->show();
+			setTitleText(ui->ConclusionPage,tr("Friend request"));
+			ui->ConclusionPage->setSubTitle(tr("Details about the request"));
+			setButtonText(QWizard::FinishButton	, tr("Accept"));
+		}
+	}
 }
 
 ConnectFriendWizard::~ConnectFriendWizard()
@@ -507,7 +532,7 @@ void ConnectFriendWizard::initializePage(int id)
 			ui->cp_Label->setText(tr("You have a friend request from") + " " + QString::fromUtf8(peerDetails.name.c_str()));
 			ui->nameEdit->setText(QString::fromUtf8(peerDetails.name.c_str()));
 			ui->trustEdit->setText(trustString);
-			ui->emailEdit->setText(QString::fromUtf8(peerDetails.email.c_str()));
+			ui->profileIdEdit->setText(QString::fromStdString(peerDetails.gpg_id.toStdString()));
 			QString loc = QString::fromUtf8(peerDetails.location.c_str());
 			if (!loc.isEmpty())
 			{
@@ -540,12 +565,19 @@ void ConnectFriendWizard::initializePage(int id)
 				ui->ipLabel->setPixmap(QPixmap(":/images/anonymous_128_blue.png").scaledToHeight(S*2,Qt::SmoothTransformation));
 				ui->ipLabel->setToolTip("This is a Hidden node - you need tor/i2p proxy to connect");
 			}
-
-			if(peerDetails.email.empty())
+			if(mIsShortInvite)
 			{
-				ui->emailLabel->hide(); // is it ever used?
-				ui->emailEdit->hide();
+                ui->nameEdit->setText(tr("[Unknown]"));
+                ui->addKeyToKeyring_CB->setChecked(false);
+                ui->addKeyToKeyring_CB->setEnabled(false);
+				ui->signersEdit->hide();
+				ui->signersLabel->hide();
+                ui->signGPGCheckBox->setChecked(false);
+                ui->signGPGCheckBox->setEnabled(false);
+                ui->acceptNoSignGPGCheckBox->setChecked(true);
+                ui->acceptNoSignGPGCheckBox->setEnabled(false);
 			}
+
 			ui->ipEdit->setTextInteractionFlags(Qt::TextSelectableByMouse);
 
 		}

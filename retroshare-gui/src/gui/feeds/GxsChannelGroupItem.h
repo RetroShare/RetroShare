@@ -41,7 +41,7 @@ public:
 	~GxsChannelGroupItem();
 
 	bool setGroup(const RsGxsChannelGroup &group);
-
+    uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelGroupItem " + groupId().toStdString()) ; }
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -53,7 +53,7 @@ protected:
 
 private slots:
 	/* default stuff */
-	void toggle();
+	void toggle() override;
 
 	void subscribeChannel();
 

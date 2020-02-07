@@ -538,8 +538,7 @@ bool p3Msgs::initiateDistantChatConnexion(
         const RsGxsId& to_gxs_id, const RsGxsId& from_gxs_id,
         DistantChatPeerId& pid, uint32_t& error_code, bool notify )
 {
-	return mChatSrv->initiateDistantChatConnexion( to_gxs_id, from_gxs_id,
-	                                               pid, error_code, notify );
+	return mChatSrv->initiateDistantChatConnexion( to_gxs_id, from_gxs_id, pid, error_code, notify );
 }
 bool p3Msgs::getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)
 {
@@ -559,7 +558,6 @@ uint32_t p3Msgs::getDistantChatPermissionFlags()
 }
 
 RsMsgs::~RsMsgs() = default;
-RsMailStatusEvent::~RsMailStatusEvent() = default;
 Rs::Msgs::MessageInfo::~MessageInfo() = default;
 MsgInfoSummary::~MsgInfoSummary() = default;
 VisibleChatLobbyRecord::~VisibleChatLobbyRecord() = default;

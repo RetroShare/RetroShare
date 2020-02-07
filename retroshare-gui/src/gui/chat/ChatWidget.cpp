@@ -382,31 +382,42 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 		if (messageCount > 0)
 		{
-            rsHistory->getMessages(chatId, historyMsgs, messageCount);
+			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			std::list<HistoryMsg>::iterator historyIt;
 			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
-            {
-                // it can happen that a message is first added to the message history
-                // and later the gui receives the message through notify
-                // avoid this by not adding history entries if their age is < 2secs
-                if ((time(NULL)-2) <= historyIt->recvTime)
-                    continue;
+			{
+				// it can happen that a message is first added to the message history
+				// and later the gui receives the message through notify
+				// avoid this by not adding history entries if their age is < 2secs
+				if (time(nullptr) <= historyIt->recvTime+2)
+					continue;
 
-                QString name;
-                if (chatId.isLobbyId() || chatId.isDistantChatId())
-                {
-                    RsIdentityDetails details;
-                    if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
-                        name = QString::fromUtf8(details.mNickname.c_str());
-                    else
-                        name = QString::fromUtf8(historyIt->peerName.c_str());
-                } else {
-                    name = QString::fromUtf8(historyIt->peerName.c_str());
-                }
+				QString name;
+				if (chatId.isLobbyId() || chatId.isDistantChatId())
+				{
+					RsIdentityDetails details;
+					time_t start = time(nullptr);
+					while (!rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+					{
+						std::this_thread::sleep_for(std::chrono::milliseconds(10));
+						if (time(nullptr)>start+2)
+						{
+							std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it." << std::endl;
+							break;
+						}
+					}
 
-                addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
-            }
+					if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
+						name = QString::fromUtf8(details.mNickname.c_str());
+					else
+						name = QString::fromUtf8(historyIt->peerName.c_str());
+				} else {
+					name = QString::fromUtf8(historyIt->peerName.c_str());
+				}
+
+				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+			}
 		}
 	}
 

@@ -55,14 +55,19 @@ public:
 	void setHelpText(QString help) { mHelp = help; }
 
 	virtual void retranslateUi() {}
-	virtual UserNotify *getUserNotify(QObject */*parent*/) { return NULL; }
+
+    // Override this if needed.
+	virtual UserNotify *createUserNotify(QObject */*parent*/) { return NULL; }
 
 	// Call this to add some help info  to the page. The way the info is
 	// shown is handled by showHelp() below;
 	//
 	void registerHelpButton(QToolButton *button, const QString& help_html_text, const QString &code_name) ;
 
+    UserNotify *getUserNotify() ;
+
 protected:
+
 	virtual void showEvent(QShowEvent *);
 
 private:
@@ -71,6 +76,8 @@ private:
 	QString mName;
 	QString mHelp;
     QString mHelpCodeName;
+
+    UserNotify *mUserNotify;
 };
 
 #endif

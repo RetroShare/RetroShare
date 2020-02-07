@@ -934,6 +934,7 @@ QPushButton::menu-indicator {
     subcontrol-origin: padding;
     subcontrol-position: bottom right;
     bottom: 4px;
+
 }
 
 QPushButton:pressed {
@@ -1836,6 +1837,7 @@ QToolBox QScrollArea QWidget QWidget {
 QFrame {
     border-radius: 4px;
     border: 1px solid #32414B;
+
 }
 
 QFrame[frameShape="0"] {
@@ -2045,4 +2047,95 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
 GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
     image: none;
 
+}
+
+QTabBar#smTab::tab{
+	height: 32px; 
+	width: 32px;
+}
+
+PostedCreatePostDialog QPushButton#submitButton {
+	font: bold;
+	font-size: 15px;
+	color: white;
+	background: #0099cc;
+	border-radius: 4px;
+	min-width: 2em;
+
+}
+
+PostedCreatePostDialog QPushButton#submitButton:hover {
+	background: #03b1f3;
+	border-radius: 4px;
+	min-width: 2em;
+
+}
+
+PostedItem QFrame#mainFrame {
+    border-radius: 4px;
+    border: 1px solid #32414B;
+    background-color: #19232D;
+
+}
+
+GxsChannelPostItem QFrame#mainFrame {
+    border-radius: 4px;
+    border: 1px solid #32414B;
+    background-color: #19232D;
+
+}
+
+PostedItem QPushButton#shareButton
+{
+    background-color: transparent;
+	min-width: 80px;
+	max-height: 22px;
+
+}
+
+PostedItem QLabel#scoreLabel
+{
+    background-color: transparent;
+
+}
+
+PostedItem QFrame#voteFrame {
+	background: #141415;
+}
+
+PostedItem QToolButton#voteDownButton, QToolButton#voteUpButton
+{
+	border: none;
+
+}
+
+PostedItem QLabel#thumbnailLabel{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
+}
+
+PostedCardView QPushButton#shareButton
+{
+    background-color: transparent;
+	min-width: 80px;
+	max-height: 22px;
+
+}
+
+PostedCardView QFrame#voteFrame {
+	background: #141415;
+}
+
+PostedCardView QFrame#mainFrame {
+
+    background-color: #19232D;
+
+}
+
+PostedCardView QFrame#mainFrame [new=false]{
+	background: #19232D;
+}
+
+PostedCardView > QFrame#mainFrame[new=true] {
+	background-color: #005000;
 }

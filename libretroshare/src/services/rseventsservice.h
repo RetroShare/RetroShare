@@ -35,6 +35,7 @@ class RsEventsService :
 public:
 	RsEventsService():
 	    mHandlerMapMtx("RsEventsService::mHandlerMapMtx"), mLastHandlerId(1),
+        mHandlerMaps(static_cast<int>(RsEventType::MAX)),
 	    mEventQueueMtx("RsEventsService::mEventQueueMtx") {}
 
 	/// @see RsEvents
@@ -54,6 +55,7 @@ public:
 
 	/// @see RsEvents
 	bool registerEventsHandler(
+            RsEventType eventType,
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
 	        ) override;
@@ -64,15 +66,16 @@ public:
 protected:
 	RsMutex mHandlerMapMtx;
 	RsEventsHandlerId_t mLastHandlerId;
-	std::map<
-	    RsEventsHandlerId_t,
-	    std::function<void(std::shared_ptr<const RsEvent>)> > mHandlerMap;
+
+    std::vector<
+		std::map<
+		    RsEventsHandlerId_t,
+		    std::function<void(std::shared_ptr<const RsEvent>)> > > mHandlerMaps;
 
 	RsMutex mEventQueueMtx;
 	std::deque< std::shared_ptr<const RsEvent> > mEventQueue;
 
-	/// @see RsTickingThread
-	void data_tick() override;
+	void threadTick() override; /// @see RsTickingThread
 
 	void handleEvent(std::shared_ptr<const RsEvent> event);
 	RsEventsHandlerId_t generateUniqueHandlerId_unlocked();
