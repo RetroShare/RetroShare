@@ -45,6 +45,11 @@ RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
 		}, mEventHandlerId );
 }
 
+RsGxsUpdateBroadcast::~RsGxsUpdateBroadcast()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
 void RsGxsUpdateBroadcast::cleanup()
 {
 	QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*>::iterator it;

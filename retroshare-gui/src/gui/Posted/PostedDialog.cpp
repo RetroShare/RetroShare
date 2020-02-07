@@ -83,6 +83,7 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
 PostedDialog::~PostedDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 UserNotify *PostedDialog::createUserNotify(QObject *parent)

@@ -245,6 +245,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 		if (msgChange)
 		{
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED)
@@ -294,74 +295,83 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				}
 			}
 		}
-		else
+
+		RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
+
+		if (grpChange && rsEvents)
 		{
-			if (rsEvents)
+			switch (grpChange->getType())
 			{
-				RsGxsGroupChange *grpChange = dynamic_cast<RsGxsGroupChange*>(*it);
-				if (grpChange)
+			default:
+			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
+			{
+				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+				std::list<RsGxsGroupId>::iterator git;
+				for (git = grpList.begin(); git != grpList.end(); ++git)
 				{
-					switch (grpChange->getType())
-					{
-					default:
-					case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
-					{
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							auto ev = std::make_shared<RsGxsChannelEvent>();
-							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
-							rsEvents->postEvent(ev);
-						}
-
-					}
-						break;
-
-					case RsGxsNotify::TYPE_PUBLISHED:
-					case RsGxsNotify::TYPE_RECEIVED_NEW:
-					{
-						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						RS_STACK_MUTEX(mKnownChannelsMutex);
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							if(mKnownChannels.find(*git) == mKnownChannels.end())
-							{
-								mKnownChannels.insert(std::make_pair(*git,time(NULL))) ;
-								IndicateConfigChanged();
-
-								auto ev = std::make_shared<RsGxsChannelEvent>();
-								ev->mChannelGroupId = *git;
-								ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
-								rsEvents->postEvent(ev);
-							}
-							else
-								std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
-						}
-						break;
-					}
-
-					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
-					{
-						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							auto ev = std::make_shared<RsGxsChannelEvent>();
-							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
-							rsEvents->postEvent(ev);
-						}
-						break;
-					}
-					}
+					auto ev = std::make_shared<RsGxsChannelEvent>();
+					ev->mChannelGroupId = *git;
+					ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
+					rsEvents->postEvent(ev);
 				}
+
+			}
+				break;
+
+			case RsGxsNotify::TYPE_PUBLISHED:
+			case RsGxsNotify::TYPE_RECEIVED_NEW:
+			{
+				/* group received */
+				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+				std::list<RsGxsGroupId>::iterator git;
+				RS_STACK_MUTEX(mKnownChannelsMutex);
+				for (git = grpList.begin(); git != grpList.end(); ++git)
+				{
+					if(mKnownChannels.find(*git) == mKnownChannels.end())
+					{
+						mKnownChannels.insert(std::make_pair(*git,time(NULL))) ;
+						IndicateConfigChanged();
+
+						auto ev = std::make_shared<RsGxsChannelEvent>();
+						ev->mChannelGroupId = *git;
+						ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
+						rsEvents->postEvent(ev);
+					}
+					else
+						std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
+				}
+				break;
+			}
+
+			case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
+			{
+				/* group received */
+				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+				std::list<RsGxsGroupId>::iterator git;
+				for (git = grpList.begin(); git != grpList.end(); ++git)
+				{
+					auto ev = std::make_shared<RsGxsChannelEvent>();
+					ev->mChannelGroupId = *git;
+					ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
+
+					rsEvents->postEvent(ev);
+				}
+				break;
+			}
 			}
 		}
+
+        RsGxsDistantSearchResultChange *dsrChange = dynamic_cast<RsGxsDistantSearchResultChange*>(*it);
+
+        if(dsrChange && rsEvents)
+        {
+			auto ev = std::make_shared<RsGxsChannelEvent>();
+			ev->mChannelGroupId = dsrChange->mGroupId;
+			ev->mChannelEventCode = RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT;
+			ev->mDistantSearchRequestId = dsrChange->mRequestId;
+
+			rsEvents->postEvent(ev);
+        }
 
 		/* shouldn't need to worry about groups - as they need to be subscribed to */
         delete *it;

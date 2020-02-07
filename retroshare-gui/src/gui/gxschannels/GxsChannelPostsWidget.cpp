@@ -158,6 +158,7 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 	// save settings
 	processSettings(false);
 
