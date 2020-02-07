@@ -99,6 +99,7 @@ SubFileItem::SubFileItem(const RsFileHash &hash, const std::string &name, const 
 void SubFileItem::Setup()
 {
   connect( playButton, SIGNAL( clicked( ) ), this, SLOT( play ( ) ) );
+  connect( mediaplayerButton, SIGNAL( clicked( ) ), this, SLOT( playmedia ( ) ) );
   connect( downloadButton, SIGNAL( clicked( ) ), this, SLOT( download ( ) ) );
   connect( cancelButton, SIGNAL( clicked( ) ), this, SLOT( cancel( ) ) );
   connect( deleteButton, SIGNAL( clicked( ) ), this, SLOT( del( ) ) );
@@ -589,9 +590,41 @@ void SubFileItem::play()
 		QFileInfo qinfo;
 		qinfo.setFile(info.path.c_str());
 		if (qinfo.exists()) {
-				MainWindow::showWindow(MainWindow::Player);
-				PlayerPage *Player = dynamic_cast<PlayerPage*>(MainWindow::getPage(MainWindow::Player));
-				Player->setUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
+			if (!RsUrlHandler::openUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()))) {
+				std::cerr << "openTransfer(): can't open file " << info.path << std::endl;
+			}
+		}else{
+			QMessageBox::information(this, tr("Play File"),
+					tr("File %1 does not exist at location.").arg(info.path.c_str()));
+			return;
+		}
+	} else {
+		/* rise a message box for incompleted download file */
+		QMessageBox::information(this, tr("Play File"),
+				tr("File %1 is not completed.").arg(info.fname.c_str()));
+		return;
+	}
+
+}
+
+void SubFileItem::playmedia()
+{
+	FileInfo info;
+	FileSearchFlags flags = RS_FILE_HINTS_DOWNLOAD | RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL | RS_FILE_HINTS_NETWORK_WIDE;
+
+
+	if (!rsFiles->FileDetails( mFileHash, flags, info))
+		return;
+
+	if (done()) {
+
+		/* Play the Video with the Qt Mediaplayer */
+		QFileInfo qinfo;
+		qinfo.setFile(info.path.c_str());
+		if (qinfo.exists()) {
+			MainWindow::showWindow(MainWindow::Player);
+			PlayerPage *Player = dynamic_cast<PlayerPage*>(MainWindow::getPage(MainWindow::Player));
+			Player->setUrl(QUrl::fromLocalFile(qinfo.absoluteFilePath()));
 		}else{
 			QMessageBox::information(this, tr("Play File"),
 					tr("File %1 does not exist at location.").arg(info.path.c_str()));
