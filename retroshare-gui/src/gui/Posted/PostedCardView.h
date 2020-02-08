@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/PostedItem.h                                  *
+ * retroshare-gui/src/gui/Posted/PostedCardView.h                              *
  *                                                                             *
- * Copyright (C) 2013 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (C) 2019 by Retroshare Team       <retroshare.project@gmail.com>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,8 +18,8 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_POSTED_POSTED_ITEM_H
-#define MRK_POSTED_POSTED_ITEM_H
+#ifndef _POSTED_CARDVIEW_H
+#define _POSTED_CARDVIEW_H
 
 #include <QMetaType>
 
@@ -27,21 +27,21 @@
 #include "gui/gxs/GxsFeedItem.h"
 
 namespace Ui {
-class PostedItem;
+class PostedCardView;
 }
 
 class FeedHolder;
 class RsPostedPost;
 
-class PostedItem : public GxsFeedItem
+class PostedCardView : public GxsFeedItem
 {
 	Q_OBJECT
 
 public:
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	PostedItem(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	virtual ~PostedItem();
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	virtual ~PostedCardView();
 
 	bool setGroup(const RsPostedGroup& group, bool doFill = true);
 	bool setPost(const RsPostedPost& post, bool doFill = true);
@@ -49,7 +49,8 @@ public:
 	const RsPostedPost &getPost() const;
 	RsPostedPost &post();
 
-	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + messageId().toStdString()); }
+	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + mMessageId.toStdString()); }
+
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -60,10 +61,7 @@ private slots:
 	void makeDownVote();
 	void readToggled(bool checked);
 	void readAndClearItem();
-	void toggle() override;
 	void copyMessageLink();
-	void toggleNotes();
-	void viewPicture();
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
@@ -92,9 +90,9 @@ private:
 	RsGxsMessageId mMessageId;
 
 	/** Qt Designer generated object */
-	Ui::PostedItem *ui;
+	Ui::PostedCardView *ui;
 };
 
-Q_DECLARE_METATYPE(RsPostedPost)
+//Q_DECLARE_METATYPE(RsPostedPost)
 
 #endif

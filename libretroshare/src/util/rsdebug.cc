@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 by Robert Fernie   <retroshare@lunamutt.com>            *
+ * Copyright (C) 2004-2008 by Robert Fernie   <retroshare@lunamutt.com>        *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -21,11 +23,25 @@
  *******************************************************************************/
 
 #include "util/rsdebug.h"
-#include "util/rsthreads.h"
-#include "util/rsdir.h"
+
+std::ostream &operator<<(std::ostream& out, const std::error_condition& err)
+{
+	return out << " error: " << err.value() << " " << err.message()
+	           << " category: " << err.category().name();
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/// All the following lines are DEPRECATED!!
 
 #include <map>
-#include <stdio.h>
+#include <cstdio>
+
+#include "util/rsthreads.h"
+#include "util/rsdir.h"
 #include "util/rstime.h"
 
 const int RS_DEBUG_STDERR 	= 1;  /* stuff goes to stderr */
@@ -186,6 +202,3 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 		lineCount++;
 	}
 }
-
-
-

@@ -396,11 +396,6 @@ GxsChannelPostItem QLabel#newLabel {
 	border-radius: 3px;
 }
 
-GxsChannelPostItem QFrame#msgFrame {
-	border: 2px solid #238;
-	border-radius: 10px;
-}
-
 GxsChannelPostItem QLabel#logoLabel {
 	border: 2px solid #D3D3D3;
 }
@@ -427,12 +422,6 @@ ForumMsgItem QLabel#iconLabel {
 
 ForumMsgItem QFrame#prevFrame {
 	border: 2px solid black;
-	border-radius: 10px;
-}
-
-SubFileItem > QFrame#frame {
-	border: 2px solid #238;
-	background: white;
 	border-radius: 10px;
 }
 
@@ -855,6 +844,22 @@ PostedItem QLabel#thumbnailLabel{
 
 PostedItem QLabel#fromBoldLabel, QLabel#fromLabel, QLabel#dateLabel, QLabel#siteBoldLabel {
 	color: #787c7e;
+}
+
+PostedItem QLabel#newLabel {
+	border: 1px solid #167BE7;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
+	border-radius: 3px;
+}
+
+PostedCardView QLabel#newLabel {
+	border: 1px solid #167BE7;
+	background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #2291E0, stop: 1 #3EB3FF);
+	border-radius: 3px;
+}
+
+PostedCardView QFrame#voteFrame {
+	background: #f8f9fa;
 }
 
 GxsCommentDialog QComboBox#sortBox {

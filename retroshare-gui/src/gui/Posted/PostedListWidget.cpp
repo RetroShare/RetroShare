@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QSignalMapper>
 
 #include "PostedListWidget.h"
 #include "ui_PostedListWidget.h"
@@ -27,10 +28,12 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "PostedCreatePostDialog.h"
 #include "PostedItem.h"
+#include "PostedCardView.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+#include "gui/settings/rsharesettings.h"
 
 #include <retroshare/rsposted.h>
 #include "retroshare/rsgxscircles.h"
@@ -41,6 +44,10 @@
 #define DEBUG_POSTED_LIST_WIDGET
 
 #define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
+
+/* View mode */
+#define VIEW_MODE_CLASSIC  1
+#define VIEW_MODE_CARD  2
 
 /** Constructor */
 PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent)
@@ -64,6 +71,12 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	
 	connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(getRankings(int)));
 
+	QSignalMapper *signalMapper = new QSignalMapper(this);
+	connect(ui->classicViewButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->cardViewButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	signalMapper->setMapping(ui->classicViewButton, VIEW_MODE_CLASSIC);
+	signalMapper->setMapping(ui->cardViewButton, VIEW_MODE_CARD);
+	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
 
 	// default sort method.
 	mSortMethod = RsPosted::HotRankType;
@@ -103,17 +116,23 @@ PostedListWidget::~PostedListWidget()
 	delete(ui);
 }
 
-void PostedListWidget::processSettings(bool /*load*/)
+void PostedListWidget::processSettings(bool load)
 {
-//	Settings->beginGroup(QString("PostedListWidget"));
-//
-//	if (load) {
-//		// load settings
-//	} else {
-//		// save settings
-//	}
-//
-//	Settings->endGroup();
+	Settings->beginGroup(QString("PostedListWidget"));
+
+	if (load) {
+		// load settings
+		
+		/* View mode */
+		setViewMode(Settings->value("viewMode", VIEW_MODE_CLASSIC).toInt());
+	} else {
+		// save settings
+
+		/* View mode */
+		Settings->setValue("viewMode", viewMode());
+	}
+
+	Settings->endGroup();
 }
 
 QIcon PostedListWidget::groupIcon()
@@ -142,6 +161,12 @@ QScrollArea *PostedListWidget::getScrollArea()
 {
 	return ui->scrollArea;
 }
+
+// Overloaded from FeedHolder.
+/*QScrollArea *PostedListWidget::getScrollArea()
+{
+	return ui->scrollAreaCardView;
+}*/
 
 void PostedListWidget::deleteFeedItem(FeedItem *, uint32_t /*type*/)
 {
@@ -414,9 +439,21 @@ void PostedListWidget::loadPost(const RsPostedPost &post)
 	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true, false);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mPosts.insert(post.mMeta.mMsgId, item);
-	//QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	//alayout->addWidget(item);
+
 	mPostItems.push_back(item);
+}
+
+void PostedListWidget::loadPostCardView(const RsPostedPost &post)
+{
+	/* Group is not always available because of the TokenQueue */
+	RsPostedGroup dummyGroup;
+	dummyGroup.mMeta.mGroupId = groupId();
+
+	PostedCardView *cvitem = new PostedCardView(this, 0, dummyGroup, post, true, false);
+	connect(cvitem, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
+	mCVPosts.insert(post.mMeta.mMsgId, cvitem);
+
+	mPostCardView.push_back(cvitem);
 }
 
 static bool CmpPIHot(const GxsFeedItem *a, const GxsFeedItem *b)
@@ -471,6 +508,58 @@ static bool CmpPINew(const GxsFeedItem *a, const GxsFeedItem *b)
 	return (aa->getPost().mNewScore > bb->getPost().mNewScore);
 }
 
+static bool CVHot(const GxsFeedItem *a, const GxsFeedItem *b)
+{
+	const PostedCardView *aa = dynamic_cast<const PostedCardView*>(a);
+	const PostedCardView *bb = dynamic_cast<const PostedCardView*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	const RsPostedPost &postA = aa->getPost();
+	const RsPostedPost &postB = bb->getPost();
+
+	if (postA.mHotScore == postB.mHotScore)
+	{
+		return (postA.mNewScore > postB.mNewScore);
+	}
+
+	return (postA.mHotScore > postB.mHotScore);
+}
+
+static bool CVTop(const GxsFeedItem *a, const GxsFeedItem *b)
+{
+	const PostedCardView *aa = dynamic_cast<const PostedCardView*>(a);
+	const PostedCardView *bb = dynamic_cast<const PostedCardView*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	const RsPostedPost &postA = aa->getPost();
+	const RsPostedPost &postB = bb->getPost();
+
+	if (postA.mTopScore == postB.mTopScore)
+	{
+		return (postA.mNewScore > postB.mNewScore);
+	}
+
+	return (postA.mTopScore > postB.mTopScore);
+}
+
+static bool CVNew(const GxsFeedItem *a, const GxsFeedItem *b)
+{
+	const PostedCardView *aa = dynamic_cast<const PostedCardView*>(a);
+	const PostedCardView *bb = dynamic_cast<const PostedCardView*>(b);
+
+	if (!aa || !bb) {
+		return true;
+	}
+
+	return (aa->getPost().mNewScore > bb->getPost().mNewScore);
+}
+
 void PostedListWidget::applyRanking()
 {
 	/* uses current settings to sort posts, then add to layout */
@@ -491,6 +580,7 @@ void PostedListWidget::applyRanking()
 			std::cerr << std::endl;
 #endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPIHot);
+			qSort(mPostCardView.begin(), mPostCardView.end(), CVHot);
 			break;
 		case RsPosted::NewRankType:
 #ifdef DEBUG_POSTED_LIST_WIDGET
@@ -498,6 +588,7 @@ void PostedListWidget::applyRanking()
 			std::cerr << std::endl;
 #endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPINew);
+			qSort(mPostCardView.begin(), mPostCardView.end(), CVNew);
 			break;
 		case RsPosted::TopRankType:
 #ifdef DEBUG_POSTED_LIST_WIDGET
@@ -505,6 +596,7 @@ void PostedListWidget::applyRanking()
 			std::cerr << std::endl;
 #endif
 			qSort(mPostItems.begin(), mPostItems.end(), CmpPITop);
+			qSort(mPostCardView.begin(), mPostCardView.end(), CVTop);
 			break;
 	}
 	mLastSortMethod = mSortMethod;
@@ -516,8 +608,11 @@ void PostedListWidget::applyRanking()
 
 	/* go through list (skipping out-of-date items) to get */
 	QLayout *alayout = ui->scrollAreaWidgetContents->layout();
+	
+	
 	int counter = 0;
 	time_t min_ts = 0;
+	
 	foreach (PostedItem *item, mPostItems)
 	{
 #ifdef DEBUG_POSTED_LIST_WIDGET
@@ -564,6 +659,46 @@ void PostedListWidget::applyRanking()
 		++counter;
 	}
 
+	// Card View
+	counter = 0;
+	QLayout *cviewlayout = ui->scrollAreaWidgetContentsCardView->layout();
+
+	foreach (PostedCardView *item, mPostCardView)
+	{
+		std::cerr << "PostedListWidget::applyRanking() Item: " << item;
+		std::cerr << std::endl;
+		
+		if (item->getPost().mMeta.mPublishTs < min_ts)
+		{
+			std::cerr << "\t Skipping OLD";
+			std::cerr << std::endl;
+			item->hide();
+			continue;
+		}
+
+		if (counter >= mPostIndex + mPostShow)
+		{
+			std::cerr << "\t END - Counter too high";
+			std::cerr << std::endl;
+			item->hide();
+		}
+		else if (counter >= mPostIndex)
+		{
+			std::cerr << "\t Adding to Layout";
+			std::cerr << std::endl;
+			/* add it in! */
+			cviewlayout->addWidget(item);
+			item->show();
+		}
+		else
+		{
+			std::cerr << "\t Skipping to Low";
+			std::cerr << std::endl;
+			item->hide();
+		}
+		++counter;
+	}
+
 #ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::applyRanking() Loaded New Order";
 	std::cerr << std::endl;
@@ -571,6 +706,8 @@ void PostedListWidget::applyRanking()
 
 	// trigger a redraw.
 	ui->scrollAreaWidgetContents->update();
+	ui->scrollAreaWidgetContentsCardView->update();
+
 }
 
 void PostedListWidget::blank()
@@ -580,10 +717,17 @@ void PostedListWidget::blank()
 }
 void PostedListWidget::clearPosts()
 {
-	/* clear all messages */
+	/* clear all classic view messages */
 	foreach (PostedItem *item, mPostItems) {
 		delete(item);
 	}
+	
+	/* clear all card view messages */
+	foreach (PostedCardView *item, mPostCardView) {
+		delete(item);
+	}
+	
+	mPostCardView.clear();
 	mPostItems.clear();
 	mPosts.clear();
 }
@@ -641,6 +785,45 @@ void PostedListWidget::shallowClearPosts()
 		PostedItem *item = *pit;
 		alayout->removeWidget(item);
 	}
+	
+	
+	//Posted Card view
+
+	std::list<PostedCardView *> postedCardViewItems;
+	std::list<PostedCardView *>::iterator pcvit;
+	
+	QLayout *cviewlayout = ui->scrollAreaWidgetContentsCardView->layout();
+	int countcv = cviewlayout->count();
+	for(int i = 0; i < countcv; ++i)
+	{
+		QLayoutItem *litem = cviewlayout->itemAt(i);
+		if (!litem)
+		{
+			std::cerr << "PostedListWidget::shallowClearPosts() missing litem";
+			std::cerr << std::endl;
+			continue;
+		}
+
+		PostedCardView *item = dynamic_cast<PostedCardView *>(litem->widget());
+		if (item)
+		{
+			std::cerr << "PostedListWidget::shallowClearPosts() item: " << item;
+			std::cerr << std::endl;
+
+			postedCardViewItems.push_back(item);
+		}
+		else
+		{
+			std::cerr << "PostedListWidget::shallowClearPosts() Found Child, which is not a PostedItem???";
+			std::cerr << std::endl;
+		}
+	}
+
+	for(pcvit = postedCardViewItems.begin(); pcvit != postedCardViewItems.end(); ++pcvit)
+	{
+		PostedCardView *item = *pcvit;
+		cviewlayout->removeWidget(item);
+	}
 }
 
 bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
@@ -668,6 +851,7 @@ void PostedListWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePost
 	{
 		RsPostedPost& p = *vit;
 		loadPost(p);
+		loadPostCardView(p);
 	}
 
 	applyRanking();
@@ -701,6 +885,7 @@ void PostedListWidget::insertPosts(const uint32_t &token)
 #endif
 			/* insert new entry */
 			loadPost(p);
+			loadPostCardView(p);
 		}
 	}
 
@@ -766,4 +951,40 @@ void PostedListWidget::loadRequest(const TokenQueue *queue, const TokenRequest &
 	}
 
 	GxsMessageFramePostWidget::loadRequest(queue, req);
+}
+
+int PostedListWidget::viewMode()
+{
+	if (ui->classicViewButton->isChecked()) {
+		return VIEW_MODE_CLASSIC;
+	} else if (ui->cardViewButton->isChecked()) {
+		return VIEW_MODE_CARD;
+	}
+
+	/* Default */
+	return VIEW_MODE_CLASSIC;
+}
+
+void PostedListWidget::setViewMode(int viewMode)
+{
+	switch (viewMode) {
+	case VIEW_MODE_CLASSIC:
+		ui->stackedWidget->setCurrentIndex(0);
+
+
+		ui->classicViewButton->setChecked(true);
+		ui->cardViewButton->setChecked(false);
+
+		break;
+	case VIEW_MODE_CARD:
+		ui->stackedWidget->setCurrentIndex(1);
+
+		ui->cardViewButton->setChecked(true);
+		ui->classicViewButton->setChecked(false);
+
+		break;
+	default:
+		setViewMode(VIEW_MODE_CLASSIC);
+		return;
+	}
 }

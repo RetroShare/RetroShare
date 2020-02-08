@@ -1,7 +1,7 @@
 /*******************************************************************************
- * util/imageutil.h                                                            *
+ * retroshare-gui/src/util/AspectRatioPixmapLabel.cpp                           *
  *                                                                             *
- * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
+ * Copyright (C) 2019  Retroshare Team       <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,28 +18,42 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef IMAGEUTIL_H
-#define IMAGEUTIL_H
+#include "AspectRatioPixmapLabel.h"
+#include <iostream>
 
-#include <QTextCursor>
-#include <QWidget>
-#include <QByteArray>
-#include <qiterator.h>
-
-class ImageUtil
+AspectRatioPixmapLabel::AspectRatioPixmapLabel(QWidget *parent) :
+    QLabel(parent)
 {
-public:
-	ImageUtil();
+    this->setMinimumSize(1,1);
+    setScaledContents(false);
+}
 
-	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
-	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
-	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+void AspectRatioPixmapLabel::setPixmap ( const QPixmap & p)
+{
+    pix = p;
+	QLabel::setPixmap(pix);
+	//std::cout << "Information size: " << pix.width() << 'x' << pix.height() << std::endl;
+}
 
-	private:
-		static int checkSize(QByteArray& embeddedImage, const QImage& img);
-		static void quantization(const QImage& img, QVector<QRgb>& palette);
-		static void quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb>& palette);
-		static void avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb>& palette);
-};
+int AspectRatioPixmapLabel::heightForWidth( int width ) const
+{
+    return pix.isNull() ? this->height() : ((qreal)pix.height()*width)/pix.width();
+}
 
-#endif // IMAGEUTIL_H
+QSize AspectRatioPixmapLabel::sizeHint() const
+{
+	return QSize(pix.width(), pix.height());
+}
+
+QPixmap AspectRatioPixmapLabel::scaledPixmap() const
+{
+    return pix.scaled(this->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+}
+
+void AspectRatioPixmapLabel::resizeEvent(QResizeEvent * e)
+{
+    if(!pix.isNull())
+        QLabel::setPixmap(scaledPixmap());
+	QLabel::resizeEvent(e);
+	//std::cout << "Information resized: " << e->oldSize().width() << 'x' << e->oldSize().height() << " to " << e->size().width() << 'x' << e->size().height() << std::endl;
+}

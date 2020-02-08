@@ -254,7 +254,13 @@ int	RsDirUtil::breakupDirList(const std::string& path,
 /**** Copied and Tweaked from ftcontroller ***/
 bool RsDirUtil::fileExists(const std::string& filename)
 {
+#ifdef WINDOWS_SYS
+	std::wstring wfilename;
+	librs::util::ConvertUtf8ToUtf16(filename, wfilename);
+	return ( _waccess( wfilename.c_str(), F_OK ) != -1 );
+#else
 	return ( access( filename.c_str(), F_OK ) != -1 );
+#endif
 }
 
 bool RsDirUtil::moveFile(const std::string& source,const std::string& dest)

@@ -1,7 +1,7 @@
 /*******************************************************************************
- * util/imageutil.h                                                            *
+ * retroshare-gui/src/util/ClickableLabel.h                                    *
  *                                                                             *
- * Copyright (c) 2010 Retroshare Team  <retroshare.project@gmail.com>          *
+ * Copyright (C) 2020 by RetroShare Team       <retroshare.project@gmail.com>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,28 +18,30 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef IMAGEUTIL_H
-#define IMAGEUTIL_H
+#ifndef CLICKABLELABEL_H
+#define CLICKABLELABEL_H
 
-#include <QTextCursor>
+#include <QLabel>
 #include <QWidget>
-#include <QByteArray>
-#include <qiterator.h>
+#include <Qt>
 
-class ImageUtil
-{
+class ClickableLabel : public QLabel { 
+    Q_OBJECT 
+
 public:
-	ImageUtil();
+    explicit ClickableLabel(QWidget* parent = Q_NULLPTR, Qt::WindowFlags f = Qt::WindowFlags());
+    ~ClickableLabel();
 
-	static void extractImage(QWidget *window, QTextCursor cursor, QString file = "");
-	static bool optimizeSizeHtml(QString &html, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
-	static bool optimizeSizeBytes(QByteArray &bytearray, const QImage& original, QImage &optimized, int maxPixels = -1, int maxBytes = -1);
+signals:
+    void clicked();
 
-	private:
-		static int checkSize(QByteArray& embeddedImage, const QImage& img);
-		static void quantization(const QImage& img, QVector<QRgb>& palette);
-		static void quantization(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, int depth, QVector<QRgb>& palette);
-		static void avgbucket(QList<QRgb>::iterator begin, QList<QRgb>::iterator end, QVector<QRgb>& palette);
+protected:
+    void mousePressEvent(QMouseEvent* event);
+
+	void enterEvent(QEvent *ev) override { setStyleSheet("QLabel { border: 1px solid #3A3939; }");}
+
+    void leaveEvent(QEvent *ev) override { setStyleSheet("QLabel { border: 2px solid #CCCCCC; border-radius: 3px; }");}
+
 };
 
-#endif // IMAGEUTIL_H
+#endif // CLICKABLELABEL_H
