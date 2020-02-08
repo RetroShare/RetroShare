@@ -24,6 +24,7 @@
 #include <set>
 
 #include <retroshare/rstypes.h>
+#include <retroshare/rsevents.h>
 #include "RsAutoUpdatePage.h"
 
 #include "ui_TransfersDialog.h"
@@ -259,6 +260,7 @@ private:
     bool controlTransferFile(uint32_t flags);
     void changePriority(int priority);
     void setChunkStrategy(FileChunksInfo::ChunkStrategy s) ;
+	void handleEvent(std::shared_ptr<const RsEvent> event);
 
     QTreeView *downloadList;
 
@@ -273,6 +275,7 @@ private:
     /** Qt Designer generated object */
     Ui::TransfersDialog ui;
 
+     RsEventsHandlerId_t mEventHandlerId;
 public slots:
     // these four functions add entries to the transfers dialog, and return the row id of the entry modified/added
 //    int addDLItem(int row, const FileInfo &fileInfo);

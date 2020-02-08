@@ -35,6 +35,9 @@
 #include "util/rsmemory.h"
 #include "util/rsdeprecate.h"
 
+#ifdef RS_THREAD_FORCE_STOP
+#	include "util/rstime.h"
+#endif
 
 //#define RSMUTEX_DEBUG
 
@@ -249,6 +252,13 @@ protected:
 	 * of this method, @see JsonApiServer for an usage example. */
 	virtual void onStopRequested() {}
 
+#ifdef RS_THREAD_FORCE_STOP
+	/** Set last resort timeout to forcefully kill thread if it didn't stop
+	 * nicely, one should never use this, still we needed to introduce this
+	 * to investigate some bugs in external libraries */
+	void setStopTimeout(rstime_t timeout) { mStopTimeout = timeout; }
+#endif
+
 private:
 	/** Call @see run() setting the appropriate flags around it*/
 	void wrapRun();
@@ -277,6 +287,11 @@ private:
 	 * and that might happens concurrently (or just before) a debug message
 	 * being printed, thus causing the debug message to print a mangled value.*/
 	pthread_t mLastTid;
+
+#ifdef RS_THREAD_FORCE_STOP
+	/// @see setStopTimeout
+	rstime_t mStopTimeout;
+#endif
 };
 
 /**

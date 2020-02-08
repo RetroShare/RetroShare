@@ -1091,10 +1091,34 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
 
 	 registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
+
+     mEventHandlerId=0;
+     rsEvents->registerEventsHandler(RsEventType::FILE_TRANSFER, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+}
+
+void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
+{
+    if(event->mType != RsEventType::FILE_TRANSFER)
+        return;
+
+	const RsFileTransferEvent *fe = dynamic_cast<const RsFileTransferEvent*>(event.get());
+	if(!fe)
+        return;
+
+ 	switch (fe->mFileTransferEventCode)
+    {
+	case RsFileTransferEventCode::DOWNLOAD_COMPLETE:
+	case RsFileTransferEventCode::COMPLETED_FILES_REMOVED:
+        getUserNotify()->updateIcon();
+    default:
+        break;
+    }
 }
 
 TransfersDialog::~TransfersDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
+
     // save settings
     processSettings(false);
 }
