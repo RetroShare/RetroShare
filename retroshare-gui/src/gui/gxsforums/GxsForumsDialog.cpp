@@ -83,6 +83,7 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 
 GxsForumsDialog::~GxsForumsDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 QString GxsForumsDialog::getHelpString() const

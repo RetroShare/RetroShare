@@ -42,11 +42,6 @@ void RsGxsUpdateBroadcastPage::setUpdateWhenInvisible(bool update)
 	mBase->setUpdateWhenInvisible(update);
 }
 
-const std::set<TurtleRequestId>& RsGxsUpdateBroadcastPage::getSearchResults()
-{
-    return mBase->getSearchResults();
-}
-
 const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastPage::getGrpIdsMeta()
 {
 	return mBase->getGrpIdsMeta();

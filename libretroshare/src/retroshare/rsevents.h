@@ -88,7 +88,13 @@ enum class RsEventType : uint32_t
     /// @see RsGxsPostedEvent
     GXS_IDENTITY                                            = 12,
 
-	MAX       /// Used to detect invalid event type passed
+    /// @see RsFiles
+    SHARED_DIRECTORIES                                      = 13,
+
+    /// @see RsFiles
+    FILE_TRANSFER                                           = 14,
+
+	 MAX       /// Used to detect invalid event type passed
 };
 
 /**

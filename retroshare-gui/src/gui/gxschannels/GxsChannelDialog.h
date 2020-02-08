@@ -48,6 +48,7 @@ protected:
 	virtual QString getHelpString() const ;
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
     virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
+    virtual const std::set<TurtleRequestId> getSearchResults() const override { return mSearchResults ; }
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
@@ -75,6 +76,8 @@ private:
 	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
+    std::set<TurtleRequestId> mSearchResults;
 
     RsEventsHandlerId_t mEventHandlerId;
 };
