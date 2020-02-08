@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
- * Copyright (C) 2016-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
@@ -23,7 +23,7 @@
  *******************************************************************************/
 
 #include <iostream>
-#include <time.h>
+#include <ctime>
 #include <thread>
 #include <chrono>
 
@@ -95,6 +95,9 @@ void RsThread::resetTid()
 }
 
 RsThread::RsThread() : mHasStopped(true), mShouldStop(false), mLastTid()
+#ifdef RS_THREAD_FORCE_STOP
+  , mStopTimeout(0)
+#endif
 { resetTid(); }
 
 bool RsThread::isRunning() { return !mHasStopped; }
@@ -117,6 +120,10 @@ void RsThread::wrapRun()
 
 void RsThread::fullstop()
 {
+#ifdef RS_THREAD_FORCE_STOP
+	const rstime_t stopRequTS = time(nullptr);
+#endif
+
 	askForStop();
 
 	const pthread_t callerTid = pthread_self();
@@ -141,6 +148,32 @@ void RsThread::fullstop()
 			RsDbg() << __PRETTY_FUNCTION__ << " " << i*0.2 << " seconds passed"
 			        << " waiting for thread: " << std::hex << mLastTid
 			        << std::dec << " " << mFullName << " to stop" << std::endl;
+
+#ifdef RS_THREAD_FORCE_STOP
+		if(mStopTimeout && time(nullptr) > stopRequTS + mStopTimeout)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " thread mLastTid: " << std::hex
+			         << mLastTid << " mTid: " << mTid << std::dec << " "
+			         << mFullName
+			         << " ignored our nice stop request for more then "
+			         << mStopTimeout
+			         << " seconds, will be forcefully stopped. "
+			         << "Please submit a report to RetroShare developers"
+			         << std::endl;
+
+			const auto terr = pthread_cancel(mTid);
+			if(terr == 0) mHasStopped = true;
+			else
+			{
+				RsErr() << __PRETTY_FUNCTION__ << " pthread_cancel("
+				        << std::hex << mTid << std::dec <<") returned "
+				        << terr << " " << rsErrnoName(terr) << std::endl;
+				print_stacktrace();
+			}
+
+			break;
+		}
+#endif // def RS_THREAD_FORCE_STOP
 	}
 }
 

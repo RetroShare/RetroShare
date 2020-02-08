@@ -112,28 +112,41 @@ QString JsonApiPage::helpText() const { return ""; }
 
 bool JsonApiPage::checkStartJsonApi()
 {
-	if(!Settings->getJsonApiEnabled())
-        return false;
+	if(!Settings->getJsonApiEnabled()) return false;
 
 	rsJsonApi->setListeningPort(Settings->getJsonApiPort());
 	rsJsonApi->setBindingAddress(Settings->getJsonApiListenAddress().toStdString());
-	rsJsonApi->restart();
+
+	const auto rErr = rsJsonApi->restart();
+	if(rErr == RsJsonApiErrorNum::NOT_A_MACHINE_GUN)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " apparently the user is attempting "
+				<< "to restart JSON API service in a burst. Re-scheduling "
+				<< "restart in a while..." << std::endl;
+		RsThread::async([]()
+		{
+			std::this_thread::sleep_for(std::chrono::seconds(10));
+			rsJsonApi->restart();
+		});
+	}
+	else if(rErr)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << rErr << std::endl;
+		return false;
+	}
 
 	return true;
 }
 
 /*static*/ void JsonApiPage::checkShutdownJsonApi()
 {
-	if(!rsJsonApi->isRunning()) return;
 	rsJsonApi->fullstop(); // this is a blocks until the thread is terminated.
 }
 
 void JsonApiPage::onApplyClicked()
 {
-    // restart
-
-    checkShutdownJsonApi();
-    checkStartJsonApi();
+	// restart
+	checkStartJsonApi();
 }
 
 void JsonApiPage::checkToken(QString s)
