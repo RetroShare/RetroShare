@@ -136,7 +136,13 @@ void HashStorage::threadTick()
                     stopHashThread();
                 }
 
-                RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
+                if(rsEvents)
+                {
+                    auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+                    ev->mEventCode = RsSharedDirectoriesEventCode::DIRECTORY_SWEEP_ENDED;
+                    rsEvents->postEvent(ev);
+                }
+                //RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_FINISH, "") ;
             }
             else
             {
@@ -181,7 +187,14 @@ void HashStorage::threadTick()
 			else
 				rs_sprintf(tmpout, "%lu/%lu (%s - %d%%) : %s", (unsigned long int)mHashCounter+1, (unsigned long int)mTotalFilesToHash, friendlyUnit(mTotalHashedSize).c_str(), int(mTotalHashedSize/double(mTotalSizeToHash)*100.0), job.full_path.c_str()) ;
 
-            RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+            //RsServer::notify()->notifyHashingInfo(NOTIFY_HASHTYPE_HASH_FILE, tmpout) ;
+            if(rsEvents)
+			{
+				auto ev = std::make_shared<RsSharedDirectoriesEvent>();
+				ev->mEventCode = RsSharedDirectoriesEventCode::HASHING_FILE;
+				ev->mMessage = tmpout;
+				rsEvents->postEvent(ev);
+			}
 
 			double seconds_origin = rstime::RsScopeTimer::currentTime() ;
 

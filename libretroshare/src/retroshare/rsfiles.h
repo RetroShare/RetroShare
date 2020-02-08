@@ -33,6 +33,7 @@
 #include "serialiser/rsserializable.h"
 #include "rsturtle.h"
 #include "util/rstime.h"
+#include "retroshare/rsevents.h"
 
 class RsFiles;
 
@@ -114,6 +115,55 @@ const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// di
 
 const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
 
+enum class RsSharedDirectoriesEventCode: uint8_t {
+    UNKNOWN                     = 0x00,
+    STARTING_DIRECTORY_SWEEP    = 0x01, // (void)
+    HASHING_FILE                = 0x02, // mMessage: full path and hashing speed of the file being hashed
+    DIRECTORY_SWEEP_ENDED       = 0x03, // (void)
+    SAVING_FILE_INDEX           = 0x04, // (void)
+};
+
+enum class RsFileTransferEventCode: uint8_t {
+    UNKNOWN                     = 0x00,
+    DOWNLOAD_COMPLETE           = 0x01,	// mHash: hash of the complete file
+    COMPLETED_FILES_REMOVED     = 0x02,	//
+};
+
+struct RsSharedDirectoriesEvent: RsEvent
+{
+	RsSharedDirectoriesEvent()  : RsEvent(RsEventType::SHARED_DIRECTORIES), mEventCode(RsSharedDirectoriesEventCode::UNKNOWN) {}
+	~RsSharedDirectoriesEvent() override = default;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mEventCode);
+		RS_SERIAL_PROCESS(mMessage);
+	}
+
+    RsSharedDirectoriesEventCode mEventCode;
+    std::string mMessage;
+};
+
+struct RsFileTransferEvent: RsEvent
+{
+	RsFileTransferEvent()  : RsEvent(RsEventType::FILE_TRANSFER), mFileTransferEventCode(RsFileTransferEventCode::UNKNOWN) {}
+	~RsFileTransferEvent() override = default;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mFileTransferEventCode);
+		RS_SERIAL_PROCESS(mHash);
+	}
+
+    RsFileTransferEventCode mFileTransferEventCode;
+    RsFileHash              mHash;
+};
 struct SharedDirInfo : RsSerializable
 {
 	static bool sameLists(const std::list<RsNodeGroupId>& l1,const std::list<RsNodeGroupId>& l2)

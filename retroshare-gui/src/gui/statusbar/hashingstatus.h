@@ -22,6 +22,7 @@
 #define HASHINGSTATUS_H
 
 #include <QWidget>
+#include "retroshare/rsevents.h"
 
 class QLabel;
 class ElidedLabel;
@@ -37,15 +38,16 @@ public:
     void setCompactMode(bool compact) {_compactMode = compact; }
 	void mousePressEvent(QMouseEvent *);
 
-public slots:
-    void updateHashingInfo(const QString&) ;
-
 private:
+	void updateHashingInfo(const QString& s);
+    void handleEvent(std::shared_ptr<const RsEvent> event);
+
     ElidedLabel *statusHashing;
     QLabel *hashloader;
 	QString mLastText ;
     QMovie *movie;
     bool _compactMode;
+    RsEventsHandlerId_t mEventHandlerId;
 };
 
 #endif

@@ -51,7 +51,8 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds();
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta();
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
-    const std::set<TurtleRequestId>& getSearchResults();
+
+    virtual const std::set<TurtleRequestId> getSearchResults() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
 
 protected:
 	virtual void showEvent(QShowEvent *event);
