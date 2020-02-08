@@ -266,6 +266,7 @@ void NewFriendList::handleEvent(std::shared_ptr<const RsEvent> e)
 
 NewFriendList::~NewFriendList()
 {
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
     delete ui;
 }
 

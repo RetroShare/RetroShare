@@ -816,10 +816,13 @@ bool ftController::completeFile(const RsFileHash& hash)
 	}
 
 	/* Notify GUI */
-    RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash.toStdString(), name, "");
-
-    RsServer::notify()->notifyDownloadComplete(hash.toStdString());
-    RsServer::notify()->notifyDownloadCompleteCount(completeCount);
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsFileTransferEvent>();
+        ev->mHash = hash;
+        ev->mFileTransferEventCode = RsFileTransferEventCode::DOWNLOAD_COMPLETE;
+        rsEvents->postEvent(ev);
+    }
 
     rsFiles->ForceDirectoryCheck(true) ;
 
@@ -1412,7 +1415,12 @@ bool ftController::FileClearCompleted()
 		IndicateConfigChanged();
 	}
 
-	RsServer::notify()->notifyDownloadCompleteCount(0);
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsFileTransferEvent>();
+        ev->mFileTransferEventCode = RsFileTransferEventCode::COMPLETED_FILES_REMOVED;
+        rsEvents->postEvent(ev);
+    }
 
 	return true;
 }
