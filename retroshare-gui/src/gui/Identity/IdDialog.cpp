@@ -1377,6 +1377,9 @@ void IdDialog::circle_selected()
     
 IdDialog::~IdDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
+	rsEvents->unregisterEventsHandler(mEventHandlerId_circles);
+
 	// save settings
 	processSettings(false);
 
@@ -2057,9 +2060,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
         	return tr("Admin signature verification in service %1").arg(service_name);
     case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION:      // not typically used, since most services do not require group author signatures
         	return tr("Creation of author signature in service %1").arg(service_name);
-    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION:    // most common use case. Messages are signed by authors in e.g. forums.
+        	return tr("Message signature creation in group %1 of service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
     case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE:               // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
+        	return tr("Group author for group %1 in service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
         break ;
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
@@ -2103,18 +2108,9 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		return tr("Generic signature.");
     }
-	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION:
-    {
-		return tr("Generic encryption.");
-    }
-	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION:
-    {
-		return tr("Generic decryption.");
-    }
-	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:
-    {
-		return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
-    }
+	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION: return tr("Generic encryption.");
+	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION: return tr("Generic decryption.");
+	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:     return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:

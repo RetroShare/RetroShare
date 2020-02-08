@@ -155,8 +155,6 @@ private:
 
 	void initUi();
 
-	void updateSearchResults();
-
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
 
@@ -185,6 +183,8 @@ private:
 //	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
 protected:
+	void updateSearchResults();
+
 	bool mCountChildMsgs; // Count unread child messages?
 
 private:
