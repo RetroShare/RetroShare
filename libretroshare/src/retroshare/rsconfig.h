@@ -47,7 +47,6 @@ enum class RsNetworkMode : uint8_t
 	EXTERNALIP	= 6
 };
 
-
 enum class RsNatTypeMode : uint8_t
 {
 	NONE		= 1,
@@ -59,12 +58,14 @@ enum class RsNatTypeMode : uint8_t
 	OTHER		= 7
 };
 
-// WHAT TYPE OF HOLE?
-#define RSNET_NATHOLE_UNKNOWN		0		
-#define RSNET_NATHOLE_NONE		1		
-#define RSNET_NATHOLE_UPNP		2	
-#define RSNET_NATHOLE_NATPMP		3
-#define RSNET_NATHOLE_FORWARDED		4
+enum class RsNatHoleMode : uint8_t
+{
+	UNKNOWN		= 0,
+	NONE		= 1,
+	UPNP		= 2,
+	NATPMP		= 3,
+	FORWARDED	= 4
+};
 
 // Types of Connections.
 #define RSNET_CONNECT_NONE		0x0000
@@ -359,7 +360,7 @@ public:
     virtual uint32_t getNetState() = 0;
 	virtual RsNetworkMode getNetworkMode() = 0;
 	virtual RsNatTypeMode getNatTypeMode() = 0;
-    virtual uint32_t getNatHoleMode() = 0;
+	virtual RsNatHoleMode getNatHoleMode() = 0;
     virtual uint32_t getConnectModes() = 0;
 
     virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;

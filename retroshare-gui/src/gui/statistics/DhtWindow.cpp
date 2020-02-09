@@ -164,28 +164,28 @@ void DhtWindow::updateNetStatus()
 
 	label = ui.natTypeLabel;
 
-	uint32_t natType = rsConfig->getNatTypeMode();
+	RsNatTypeMode natType = rsConfig->getNatTypeMode();
 	switch(natType)
 	{
-		case RSNET_NATTYPE_UNKNOWN:
+	    case RsNatTypeMode::UNKNOWN:
 			label->setText(tr("UNKNOWN NAT STATE"));
 			break;
-		case RSNET_NATTYPE_SYMMETRIC:
+	    case RsNatTypeMode::SYMMETRIC:
 			label->setText(tr("SYMMETRIC NAT"));
 			break;
-		case RSNET_NATTYPE_DETERM_SYM:
+	    case RsNatTypeMode::DETERM_SYM:
 			label->setText(tr("DETERMINISTIC SYM NAT"));
 			break;
-		case RSNET_NATTYPE_RESTRICTED_CONE:
+	    case RsNatTypeMode::RESTRICTED_CONE:
 			label->setText(tr("RESTRICTED CONE NAT"));
 			break;
-		case RSNET_NATTYPE_FULL_CONE:
+	    case RsNatTypeMode::FULL_CONE:
 			label->setText(tr("FULL CONE NAT"));
 			break;
-		case RSNET_NATTYPE_OTHER:
+	    case RsNatTypeMode::OTHER:
 			label->setText(tr("OTHER NAT"));
 			break;
-		case RSNET_NATTYPE_NONE:
+	    case RsNatTypeMode::NONE:
 			label->setText(tr("NO NAT"));
 			break;
 	}
@@ -193,23 +193,23 @@ void DhtWindow::updateNetStatus()
 
 
 	label = ui.natHoleLabel;
-	uint32_t natHole = rsConfig->getNatHoleMode();
+	RsNatHoleMode natHole = rsConfig->getNatHoleMode();
 
 	switch(natHole)
 	{
-		case RSNET_NATHOLE_UNKNOWN:
+	    case RsNatHoleMode::UNKNOWN:
 			label->setText(tr("UNKNOWN NAT HOLE STATUS"));
 			break;
-		case RSNET_NATHOLE_NONE:
+	    case RsNatHoleMode::NONE:
 			label->setText(tr("NO NAT HOLE"));
 			break;
-		case RSNET_NATHOLE_UPNP:
+	    case RsNatHoleMode::UPNP:
 			label->setText(tr("UPNP FORWARD"));
 			break;
-		case RSNET_NATHOLE_NATPMP:
+	    case RsNatHoleMode::NATPMP:
 			label->setText(tr("NATPMP FORWARD"));
 			break;
-		case RSNET_NATHOLE_FORWARDED:
+	    case RsNatHoleMode::FORWARDED:
 			label->setText(tr("MANUAL FORWARD"));
 			break;
 	}

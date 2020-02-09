@@ -125,7 +125,7 @@ p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
 		mOldNetFlags = pqiNetStatus();
 
 		mOldNatType = RsNatTypeMode::UNKNOWN;
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
 		sockaddr_storage_clear(mLocalAddr);
 		sockaddr_storage_clear(mExtAddr);
 
@@ -1645,7 +1645,7 @@ RsNatTypeMode p3NetMgrIMPL::getNatTypeMode()
 	return mNetStateBox.getNatTypeMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatHoleMode()
+RsNatHoleMode p3NetMgrIMPL::getNatHoleMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatHoleMode();
@@ -1767,7 +1767,7 @@ void p3NetMgrIMPL::updateNatSetting()
 {
 	bool updateRefreshRate = false;
 	RsNatTypeMode natType = RsNatTypeMode::UNKNOWN;
-	uint32_t natHole = RSNET_NATHOLE_UNKNOWN;
+	RsNatHoleMode natHole = RsNatHoleMode::UNKNOWN;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 
@@ -1805,7 +1805,7 @@ void p3NetMgrIMPL::updateNatSetting()
 		{
 		    case RsNatTypeMode::RESTRICTED_CONE:
 			{
-				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+			    if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_FAST);
 				}
@@ -1832,7 +1832,7 @@ void p3NetMgrIMPL::updateNatSetting()
 		 * So that messages can get through.
 		 * We only want to be attached - if we don't have a stable DHT port.
 		 */
-		if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
+		if ((natHole == RsNatHoleMode::NONE) || (natHole == RsNatHoleMode::UNKNOWN))
 		{
 			switch(natType)
 			{
@@ -1966,7 +1966,7 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 
 		mNetStateBox.reset();
 
-		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
+		mOldNatHole = RsNatHoleMode::UNKNOWN;
 		mOldNatType = RsNatTypeMode::UNKNOWN;
 
 	}

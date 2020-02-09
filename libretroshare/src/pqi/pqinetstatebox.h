@@ -57,7 +57,7 @@ class pqiNetStateBox
 	uint32_t getNetStateMode();
 	RsNetworkMode getNetworkMode();
 	RsNatTypeMode getNatTypeMode();
-	uint32_t getNatHoleMode();
+	RsNatHoleMode getNatHoleMode();
 	uint32_t getConnectModes();
 
 	private:
@@ -76,7 +76,7 @@ class pqiNetStateBox
 
 	RsNetworkMode mNetworkMode;
 	RsNatTypeMode mNatTypeMode;
-	uint32_t mNatHoleMode;
+	RsNatHoleMode mNatHoleMode;
 	uint32_t mConnectModes;
 	uint32_t mNetStateMode;
 
@@ -121,7 +121,6 @@ class pqiNetStateBox
 
 std::string NetStateNetStateString(uint32_t netstate);
 std::string NetStateConnectModesString(uint32_t connect);
-std::string NetStateNatHoleString(uint32_t natHole);
 
 
 #endif
