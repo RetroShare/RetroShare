@@ -155,13 +155,19 @@ bool    locked_checkExternalAddress();
 
 #endif
 
+	/// The UDP stunner will only (actively) contact it's peers when mPassiveStunMode is false. (has priority over mForceRestun
 	bool mPassiveStunMode;
+	/// Time between STUNs
 	uint32_t mTargetStunPeriod;
+	/// Rate that determines how often STUN attempts are successfull
 	double mSuccessRate;
 
+	/// Some variables used for tracking who and when exclusive mode is enabled
 	bool mExclusiveMode; /* when this is switched on, the stunner stays silent (and extAddr is maintained) */
 	rstime_t mExclusiveModeTS;
 	std::string mExclusiveHolder;
+
+	/// force a STUN immediately
 	bool mForceRestun;
 
 };
