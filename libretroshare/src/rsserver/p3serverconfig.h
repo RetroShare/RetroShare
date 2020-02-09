@@ -72,7 +72,7 @@ virtual std::string getRetroshareDataDirectory();
 
 	/* New Stuff */
 
-virtual uint32_t getUserLevel();
+virtual RsConfigUserLvl getUserLevel();
 
 virtual RsNetState getNetState();
 virtual RsNetworkMode getNetworkMode();
@@ -108,7 +108,7 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	p3GeneralConfig *mGeneralConfig;
 
 	RsMutex configMtx;
-	uint32_t mUserLevel; // store last one... will later be a config Item too.
+        RsConfigUserLvl mUserLevel; // store last one... will later be a config Item too.
 	float mRateDownload;
 	float mRateUpload;
 

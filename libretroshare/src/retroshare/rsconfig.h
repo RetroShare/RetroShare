@@ -101,24 +101,18 @@ enum class RsNetState : uint8_t
     ADV_DARK_FORWARD= 10
 };
 
-/* matched to the uPnP states */
-#define UPNP_STATE_UNINITIALISED  0
-#define UPNP_STATE_UNAVAILABILE   1
-#define UPNP_STATE_READY          2
-#define UPNP_STATE_FAILED_TCP     3
-#define UPNP_STATE_FAILED_UDP     4
-#define UPNP_STATE_ACTIVE         5
-
-
 
 
 /************************** Indicate How experienced the RsUser is... based on Friends / Firewall status ******/
 
-#define RSCONFIG_USER_LEVEL_NEW		0x0001		/* no friends */
-#define RSCONFIG_USER_LEVEL_BASIC	0x0002		/* no connections */
-#define RSCONFIG_USER_LEVEL_CASUAL	0x0003		/* firewalled */
-#define RSCONFIG_USER_LEVEL_POWER	0x0004		/* good! */
-#define RSCONFIG_USER_LEVEL_OVERRIDE	0x0005		/* forced to POWER level */
+enum class RsConfigUserLvl : uint8_t
+{
+	NEW		= 1,	/* no friends */
+	BASIC	= 2,	/* no connections */
+	CASUAL	= 3,	/* firewalled */
+	POWER	= 4,	/* good! */
+	OVERRIDE= 5		/* forced to POWER level */
+};
 
 
 
@@ -359,7 +353,7 @@ public:
 
     /* New Stuff */
 
-    virtual uint32_t getUserLevel() = 0;
+	virtual RsConfigUserLvl getUserLevel() = 0;
 
 	virtual RsNetState getNetState() = 0;
 	virtual RsNetworkMode getNetworkMode() = 0;

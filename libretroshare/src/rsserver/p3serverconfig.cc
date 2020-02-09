@@ -48,7 +48,7 @@ p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr 
 
 	RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
 
-	mUserLevel = RSCONFIG_USER_LEVEL_NEW; /* START LEVEL */
+	mUserLevel = RsConfigUserLvl::NEW; /* START LEVEL */
 	mRateDownload =  DEFAULT_DOWNLOAD_KB_RATE;
 	mRateUpload = DEFAULT_UPLOAD_KB_RATE;
 
@@ -264,9 +264,9 @@ std::string p3ServerConfig::getRetroshareDataDirectory()
 
 	/* New Stuff */
 
-uint32_t p3ServerConfig::getUserLevel()
+RsConfigUserLvl p3ServerConfig::getUserLevel()
 {
-	uint32_t userLevel = RSCONFIG_USER_LEVEL_NEW;
+	RsConfigUserLvl userLevel = RsConfigUserLvl::NEW;
 	{
 		RsStackMutex stack(configMtx); /******* LOCKED MUTEX *****/
 		userLevel = mUserLevel;
@@ -274,33 +274,33 @@ uint32_t p3ServerConfig::getUserLevel()
 
 	switch(userLevel)
 	{
-                case RSCONFIG_USER_LEVEL_OVERRIDE:
+	            case RsConfigUserLvl::OVERRIDE:
 			break;
 
 #define MIN_BASIC_FRIENDS 2
 			
 		// FALL THROUGH EVERYTHING.
 		default:
-		case RSCONFIG_USER_LEVEL_NEW:
+	    case RsConfigUserLvl::NEW:
 		{
 
 			if (mPeerMgr->getFriendCount(true, false) > MIN_BASIC_FRIENDS)
 			{
-				userLevel = RSCONFIG_USER_LEVEL_BASIC;
+				userLevel = RsConfigUserLvl::BASIC;
 			}
 		}
 		/* fallthrough */
-		case RSCONFIG_USER_LEVEL_BASIC:
+	    case RsConfigUserLvl::BASIC:
 		{
 			/* check that we have some lastConnect > 0 */
 			if (mPeerMgr->haveOnceConnected())
 			{
-				userLevel = RSCONFIG_USER_LEVEL_CASUAL;
+				userLevel = RsConfigUserLvl::CASUAL;
 			}
 		}
 		/* fallthrough */
-		case RSCONFIG_USER_LEVEL_CASUAL:
-		case RSCONFIG_USER_LEVEL_POWER:
+	    case RsConfigUserLvl::CASUAL:
+	    case RsConfigUserLvl::POWER:
 
 		{
 			/* check that the firewall is open */
@@ -314,7 +314,7 @@ uint32_t p3ServerConfig::getUserLevel()
 			        (RsNatHoleMode::NATPMP == firewallMode) ||
 			        (RsNatHoleMode::FORWARDED == firewallMode))))
 			{
-				userLevel = RSCONFIG_USER_LEVEL_POWER;
+				userLevel = RsConfigUserLvl::POWER;
 			}
 		}
 			break; /* for all */
