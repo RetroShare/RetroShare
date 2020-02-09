@@ -105,7 +105,7 @@ virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 	/* Get Network State */
 virtual uint32_t getNetStateMode() = 0;
 virtual RsNetworkMode getNetworkMode() = 0;
-virtual uint32_t getNatTypeMode() = 0;
+virtual RsNatTypeMode getNatTypeMode() = 0;
 virtual uint32_t getNatHoleMode() = 0;
 virtual uint32_t getConnectModes() = 0;
 
@@ -156,7 +156,7 @@ virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 	/* Get Network State */
 virtual uint32_t getNetStateMode();
 virtual RsNetworkMode getNetworkMode();
-virtual uint32_t getNatTypeMode();
+virtual RsNatTypeMode getNatTypeMode();
 virtual uint32_t getNatHoleMode();
 virtual uint32_t getConnectModes();
 
@@ -323,7 +323,7 @@ void 	netStatusReset_locked();
 	pqiNetStateBox mNetStateBox;
 
 	rstime_t mDoNotNetCheckUntilTs;
-	uint32_t mOldNatType;
+	RsNatTypeMode mOldNatType;
 	uint32_t mOldNatHole;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)

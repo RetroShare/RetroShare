@@ -259,7 +259,7 @@ std::string PeerConnectStateBox::connectState() const
 }
 
 
-uint32_t convertNetStateToInternal(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
+uint32_t convertNetStateToInternal(RsNetworkMode netmode, uint32_t nathole, RsNatTypeMode nattype)
 {
 	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
 		
@@ -273,12 +273,12 @@ uint32_t convertNetStateToInternal(RsNetworkMode netmode, uint32_t nathole, uint
 	}
 	else if (netmode == RsNetworkMode::BEHINDNAT)
 	{
-		if ((nattype == RSNET_NATTYPE_RESTRICTED_CONE) ||
-			(nattype == RSNET_NATTYPE_FULL_CONE))
+		if ((nattype == RsNatTypeMode::RESTRICTED_CONE) ||
+		    (nattype == RsNatTypeMode::FULL_CONE))
 		{
 			connNet = CSB_NETSTATE_STABLENAT;
 		}
-		else if (nattype == RSNET_NATTYPE_DETERM_SYM)
+		else if (nattype == RsNatTypeMode::DETERM_SYM)
 		{
 			connNet = CSB_NETSTATE_EXCLUSIVENAT; 
 		}
@@ -299,20 +299,20 @@ bool shouldUseProxyPortInternal(uint32_t netstate)
 	return true;
 }
 
-bool PeerConnectStateBox::shouldUseProxyPort(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
+bool PeerConnectStateBox::shouldUseProxyPort(RsNetworkMode netmode, uint32_t nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return shouldUseProxyPortInternal(netstate);
 }
 
-uint32_t PeerConnectStateBox::calcNetState(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::calcNetState(RsNetworkMode netmode, uint32_t nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return netstate;
 }
 
 
-uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, RsNetworkMode netmode, uint32_t nathole, RsNatTypeMode nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 

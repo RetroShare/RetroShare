@@ -48,14 +48,16 @@ enum class RsNetworkMode : uint8_t
 };
 
 
-// WHAT TYPE OF FIREWALL?
-#define RSNET_NATTYPE_NONE		1
-#define RSNET_NATTYPE_UNKNOWN		2
-#define RSNET_NATTYPE_SYMMETRIC 	3
-#define RSNET_NATTYPE_DETERM_SYM 	4
-#define RSNET_NATTYPE_RESTRICTED_CONE	5
-#define RSNET_NATTYPE_FULL_CONE		6
-#define RSNET_NATTYPE_OTHER		7
+enum class RsNatTypeMode : uint8_t
+{
+	NONE		= 1,
+	UNKNOWN		= 2,
+	SYMMETRIC	= 3,
+	DETERM_SYM	= 4,
+	RESTRICTED_CONE	= 5,
+	FULL_CONE	= 6,
+	OTHER		= 7
+};
 
 // WHAT TYPE OF HOLE?
 #define RSNET_NATHOLE_UNKNOWN		0		
@@ -356,7 +358,7 @@ public:
 
     virtual uint32_t getNetState() = 0;
 	virtual RsNetworkMode getNetworkMode() = 0;
-    virtual uint32_t getNatTypeMode() = 0;
+	virtual RsNatTypeMode getNatTypeMode() = 0;
     virtual uint32_t getNatHoleMode() = 0;
     virtual uint32_t getConnectModes() = 0;
 

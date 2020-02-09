@@ -124,7 +124,7 @@ p3NetMgrIMPL::p3NetMgrIMPL() : mPeerMgr(nullptr), mLinkMgr(nullptr),
 		mNetFlags = pqiNetStatus();
 		mOldNetFlags = pqiNetStatus();
 
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
 		sockaddr_storage_clear(mLocalAddr);
 		sockaddr_storage_clear(mExtAddr);
@@ -1639,7 +1639,7 @@ RsNetworkMode p3NetMgrIMPL::getNetworkMode()
 	return mNetStateBox.getNetworkMode();
 }
 
-uint32_t p3NetMgrIMPL::getNatTypeMode()
+RsNatTypeMode p3NetMgrIMPL::getNatTypeMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNatTypeMode();
@@ -1766,7 +1766,7 @@ void p3NetMgrIMPL::updateNetStateBox_temporal()
 void p3NetMgrIMPL::updateNatSetting()
 {
 	bool updateRefreshRate = false;
-	uint32_t natType = RSNET_NATTYPE_UNKNOWN;
+	RsNatTypeMode natType = RsNatTypeMode::UNKNOWN;
 	uint32_t natHole = RSNET_NATHOLE_UNKNOWN;
 	{
 		RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
@@ -1803,7 +1803,7 @@ void p3NetMgrIMPL::updateNatSetting()
 #ifdef RS_USE_DHT_STUNNER
 		switch(natType)
 		{
-			case RSNET_NATTYPE_RESTRICTED_CONE: 
+		    case RsNatTypeMode::RESTRICTED_CONE:
 			{
 				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
 				{
@@ -1815,12 +1815,12 @@ void p3NetMgrIMPL::updateNatSetting()
 				}
 				break;
 			}
-			case RSNET_NATTYPE_NONE:
-			case RSNET_NATTYPE_UNKNOWN:
-			case RSNET_NATTYPE_SYMMETRIC:
-			case RSNET_NATTYPE_DETERM_SYM:
-			case RSNET_NATTYPE_FULL_CONE:
-			case RSNET_NATTYPE_OTHER:
+		    case RsNatTypeMode::NONE:
+		    case RsNatTypeMode::UNKNOWN:
+		    case RsNatTypeMode::SYMMETRIC:
+		    case RsNatTypeMode::DETERM_SYM:
+		    case RsNatTypeMode::FULL_CONE:
+		    case RsNatTypeMode::OTHER:
 
 				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				break;
@@ -1837,17 +1837,17 @@ void p3NetMgrIMPL::updateNatSetting()
 			switch(natType)
 			{
 				/* switch to attach mode if we have a bad firewall */
-				case RSNET_NATTYPE_UNKNOWN:
-				case RSNET_NATTYPE_SYMMETRIC:
-				case RSNET_NATTYPE_RESTRICTED_CONE: 
-				case RSNET_NATTYPE_DETERM_SYM:
-				case RSNET_NATTYPE_OTHER:
+			    case RsNatTypeMode::UNKNOWN:
+			    case RsNatTypeMode::SYMMETRIC:
+			    case RsNatTypeMode::RESTRICTED_CONE:
+			    case RsNatTypeMode::DETERM_SYM:
+			    case RsNatTypeMode::OTHER:
 					netAssistAttach(true);
 
 				break;
 				/* switch off attach mode if we have a nice firewall */
-				case RSNET_NATTYPE_NONE:
-				case RSNET_NATTYPE_FULL_CONE:
+			    case RsNatTypeMode::NONE:
+			    case RsNatTypeMode::FULL_CONE:
 					netAssistAttach(false);
 				break;
 			}
@@ -1967,7 +1967,7 @@ void p3NetMgrIMPL::updateNetStateBox_reset()
 		mNetStateBox.reset();
 
 		mOldNatHole = RSNET_NATHOLE_UNKNOWN;
-		mOldNatType = RSNET_NATTYPE_UNKNOWN;
+		mOldNatType = RsNatTypeMode::UNKNOWN;
 
 	}
 }

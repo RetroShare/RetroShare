@@ -76,7 +76,7 @@ virtual uint32_t getUserLevel();
 
 virtual uint32_t getNetState();
 virtual RsNetworkMode getNetworkMode();
-virtual uint32_t getNatTypeMode();
+virtual RsNatTypeMode getNatTypeMode();
 virtual uint32_t getNatHoleMode();
 virtual uint32_t getConnectModes();
 

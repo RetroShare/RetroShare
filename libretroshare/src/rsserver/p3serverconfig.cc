@@ -339,7 +339,7 @@ RsNetworkMode p3ServerConfig::getNetworkMode()
 	return mNetMgr->getNetworkMode();
 }
 
-uint32_t p3ServerConfig::getNatTypeMode()
+RsNatTypeMode p3ServerConfig::getNatTypeMode()
 {
 	return mNetMgr->getNatTypeMode();
 }
