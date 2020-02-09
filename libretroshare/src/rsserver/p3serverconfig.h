@@ -84,8 +84,8 @@ virtual bool getConfigurationOption(uint32_t key, std::string &opt);
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt);
 
 	/* Operating Mode */
-virtual uint32_t getOperatingMode();
-virtual bool     setOperatingMode(uint32_t opMode);
+virtual RsOpMode getOperatingMode();
+virtual bool     setOperatingMode(RsOpMode opMode);
 virtual bool     setOperatingMode(const std::string &opModeStr);
 
 virtual int SetMaxDataRates( int downKb, int upKb );
@@ -97,7 +97,7 @@ virtual int GetTrafficSum( uint64_t &inb, uint64_t &outb );
 
 	private:
 
-bool switchToOperatingMode(uint32_t opMode);
+bool switchToOperatingMode(RsOpMode opMode);
 
 bool findConfigurationOption(uint32_t key, std::string &keystr);
 
@@ -112,7 +112,7 @@ bool findConfigurationOption(uint32_t key, std::string &keystr);
 	float mRateDownload;
 	float mRateUpload;
 
-	uint32_t mOpMode;
+        RsOpMode mOpMode;
 };
 
 #endif

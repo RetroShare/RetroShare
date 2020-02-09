@@ -52,7 +52,7 @@ p3ServerConfig::p3ServerConfig(p3PeerMgr *peerMgr, p3LinkMgr *linkMgr, p3NetMgr 
 	mRateDownload =  DEFAULT_DOWNLOAD_KB_RATE;
 	mRateUpload = DEFAULT_UPLOAD_KB_RATE;
 
-	mOpMode = RS_OPMODE_FULL;
+	mOpMode = RsOpMode::FULL;
 
 	rsConfig = this;
 }
@@ -86,7 +86,7 @@ void p3ServerConfig::load_config()
         }
 
 	/* enable operating mode */
-	uint32_t opMode = getOperatingMode();
+	RsOpMode opMode = getOperatingMode();
 	switchToOperatingMode(opMode);
 }
 
@@ -357,27 +357,27 @@ RsConnectModes p3ServerConfig::getConnectModes()
         /* Operating Mode */
 #define RS_CONFIG_OPERATING_STRING 	"OperatingMode"
 
-uint32_t p3ServerConfig::getOperatingMode()
+RsOpMode p3ServerConfig::getOperatingMode()
 {
 #ifdef SAVE_OPERATING_MODE
 	std::string modestr = mGeneralConfig->getSetting(RS_CONFIG_OPERATING_STRING);
-	uint32_t mode = RS_OPMODE_FULL;
+	uint32_t mode = RsOpMode::FULL;
 
 	if (modestr == "FULL")
 	{
-		mode = RS_OPMODE_FULL;
+		mode = RsOpMode::FULL;
 	}
 	else if (modestr == "NOTURTLE")
 	{
-		mode = RS_OPMODE_NOTURTLE;
+		mode = RsOpMode::NOTURTLE;
 	}
 	else if (modestr == "GAMING")
 	{
-		mode = RS_OPMODE_GAMING;
+		mode = RsOpMode::GAMING;
 	}
 	else if (modestr == "MINIMAL")
 	{
-		mode = RS_OPMODE_MINIMAL;
+		mode = RsOpMode::MINIMAL;
 	}
 	return mode;
 #else
@@ -387,24 +387,24 @@ uint32_t p3ServerConfig::getOperatingMode()
 }
 
 
-bool p3ServerConfig::setOperatingMode(uint32_t opMode)
+bool p3ServerConfig::setOperatingMode(RsOpMode opMode)
 {
 #ifdef SAVE_OPERATING_MODE
 	std::string modestr = "FULL";
 	switch(opMode)
 	{
-		case RS_OPMODE_FULL:
+	    case RsOpMode::FULL:
 			modestr = "FULL";
 		break;
-		case RS_OPMODE_NOTURTLE:
+	    case RsOpMode::NOTURTLE:
 			modestr = "NOTURTLE";
 
 		break;
-		case RS_OPMODE_GAMING:
+	    case RsOpMode::GAMING:
 			modestr = "GAMING";
 
 		break;
-		case RS_OPMODE_MINIMAL:
+	    case RsOpMode::MINIMAL:
 			modestr = "MINIMAL";
 		break;
 	}
@@ -420,31 +420,31 @@ bool p3ServerConfig::setOperatingMode(uint32_t opMode)
 
 bool p3ServerConfig::setOperatingMode(const std::string &opModeStr)
 {
-	uint32_t opMode = RS_OPMODE_FULL;
+	RsOpMode opMode = RsOpMode::FULL;
 	std::string upper;
 	stringToUpperCase(opModeStr, upper);
 
 	if (upper == "NOTURTLE")
 	{
-		opMode = RS_OPMODE_NOTURTLE;
+		opMode = RsOpMode::NOTURTLE;
 	}
 	else if (upper == "GAMING")
 	{
-		opMode = RS_OPMODE_GAMING;
+		opMode = RsOpMode::GAMING;
 	}
 	else if (upper == "MINIMAL")
 	{
-		opMode = RS_OPMODE_MINIMAL;
+		opMode = RsOpMode::MINIMAL;
 	}
 	else	// "FULL" by default
 	{
-		opMode = RS_OPMODE_FULL;
+		opMode = RsOpMode::FULL;
 	}
 
 	return setOperatingMode(opMode);
 }
 
-bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
+bool p3ServerConfig::switchToOperatingMode(RsOpMode opMode)
 {
 	float dl_rate = 0;
 	float ul_rate = 0;
@@ -456,13 +456,13 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 		ul_rate = mRateUpload;
 	}
 
-	std::cerr << "p3ServerConfig::switchToOperatingMode(" << opMode << ")";
+	std::cerr << "p3ServerConfig::switchToOperatingMode(" << static_cast<typename std::underlying_type<RsOpMode>::type>(opMode) << ")";
 	std::cerr << std::endl;
 
 	switch (opMode)
 	{
 		default:
-		case RS_OPMODE_FULL:
+	    case RsOpMode::FULL:
 			/* switch on all transfers */
 			/* 100% bandwidth */
 			/* switch on popups, enable hashing */
@@ -470,14 +470,14 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
                 	//setMaxRate(false, mro); // Out / Upload.
 			turtle_enabled = true;
 		break;
-		case RS_OPMODE_NOTURTLE:
+	    case RsOpMode::NOTURTLE:
 			/* switch on all transfers - except turtle, enable hashing */
 			/* 100% bandwidth */
 			/* switch on popups, enable hashing */
 			turtle_enabled = false;
 
 		break;
-		case RS_OPMODE_GAMING:
+	    case RsOpMode::GAMING:
 			/* switch on all transfers */
 			/* reduce bandwidth to 25% */
 			/* switch off popups, enable hashing */
@@ -486,7 +486,7 @@ bool p3ServerConfig::switchToOperatingMode(uint32_t opMode)
 			dl_rate *= 0.25;
 			ul_rate *= 0.25;
 		break;
-		case RS_OPMODE_MINIMAL:
+	    case RsOpMode::MINIMAL:
 			/* switch off all transfers */
 			/* reduce bandwidth to 10%, but make sure there is enough for VoIP */
 			/* switch on popups, enable hashing */

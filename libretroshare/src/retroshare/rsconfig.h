@@ -120,10 +120,13 @@ enum class RsConfigUserLvl : uint8_t
 #define RS_CONFIG_ADVANCED		0x0101
 
 
-#define RS_OPMODE_FULL		0x0001
-#define RS_OPMODE_NOTURTLE	0x0002
-#define RS_OPMODE_GAMING	0x0003
-#define RS_OPMODE_MINIMAL	0x0004
+enum class RsOpMode : uint8_t
+{
+	FULL	= 1,
+	NOTURTLE= 2,
+	GAMING	= 3,
+	MINIMAL	= 4
+};
 
 
 class RsConfigStartup
@@ -371,7 +374,7 @@ public:
 	 * @jsonapi{development}
 	 * @return return the current operating mode
 	 */
-    virtual uint32_t getOperatingMode() = 0;
+	virtual RsOpMode getOperatingMode() = 0;
 
 	/**
 	 * @brief setOperatingMode set the current oprating mode
@@ -379,7 +382,7 @@ public:
 	 * @param[in] opMode new opearting mode
 	 * @return
 	 */
-    virtual bool     setOperatingMode(uint32_t opMode) = 0;
+	virtual bool     setOperatingMode(RsOpMode opMode) = 0;
 
 	/**
 	 * @brief setOperatingMode set the current operating mode from string

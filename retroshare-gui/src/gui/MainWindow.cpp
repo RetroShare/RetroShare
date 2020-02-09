@@ -1548,13 +1548,13 @@ void MainWindow::processLastArgs()
 	if (opModeStatus) {
 		QString opmode = Rshare::opmode().toLower();
 		if (opmode == "noturtle") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_NOTURTLE - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::NOTURTLE) - 1);
 		} else if (opmode == "gaming") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_GAMING - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::GAMING) - 1);
 		} else if (opmode == "minimal") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_MINIMAL - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::MINIMAL) - 1);
 		} else if (opmode != "") {
-			opModeStatus->setCurrentIndex(RS_OPMODE_FULL - 1);
+			opModeStatus->setCurrentIndex(static_cast<typename std::underlying_type<RsOpMode>::type>(RsOpMode::FULL) - 1);
 		}
 		opModeStatus->setOpMode();
 	} else {
