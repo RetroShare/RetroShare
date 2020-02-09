@@ -164,7 +164,7 @@ RsNatHoleMode pqiNetStateBox::getNatHoleMode()
 	return mNatHoleMode;
 }
 
-uint32_t pqiNetStateBox::getConnectModes()
+RsConnectModes pqiNetStateBox::getConnectModes()
 {
 	updateNetState();
 	return mConnectModes;
@@ -195,7 +195,7 @@ void pqiNetStateBox::reset()
 	mNetworkMode = RsNetworkMode::UNKNOWN;
 	mNatTypeMode = RsNatTypeMode::UNKNOWN;
 	mNatHoleMode = RsNatHoleMode::UNKNOWN;
-	mConnectModes = RSNET_CONNECT_NONE;
+	mConnectModes = RsConnectModes::NONE;
 	mNetStateMode = RSNET_NETSTATE_BAD_UNKNOWN;
 	
 	/* Parameters set externally */
@@ -552,7 +552,7 @@ void pqiNetStateBox::determineNetworkState()
 void pqiNetStateBox::workoutNetworkMode()
 {
 	/* connectModes are dependent on the other modes */
-	mConnectModes = RSNET_CONNECT_NONE;
+	mConnectModes = RsConnectModes::NONE;
 	switch(mNetworkMode)
 	{
 	    case RsNetworkMode::UNKNOWN:
@@ -562,33 +562,33 @@ void pqiNetStateBox::workoutNetworkMode()
 			/* nothing here */
 			break;
 	    case RsNetworkMode::EXTERNALIP:
-			mConnectModes = RSNET_CONNECT_OUTGOING_TCP;
-			mConnectModes |= RSNET_CONNECT_ACCEPT_TCP;
+			mConnectModes = RsConnectModes::OUTGOING_TCP;
+			mConnectModes |= RsConnectModes::ACCEPT_TCP;
 
 			if (mDhtActive)
 			{
-				mConnectModes |= RSNET_CONNECT_DIRECT_UDP;
+				mConnectModes |= RsConnectModes::DIRECT_UDP;
 				/* if open port. don't want PROXY or RELAY connect 
 				 * because we should be able to do direct with EVERYONE.
 				 * Ability to do Proxy is dependent on FIREWALL status.
 				 * Technically could do RELAY, but disable both.
 				 */
-				//mConnectModes |= RSNET_CONNECT_PROXY_UDP;
-				//mConnectModes |= RSNET_CONNECT_RELAY_UDP;
+				//mConnectModes |= RsConnectModes::PROXY_UDP;
+				//mConnectModes |= RsConnectModes::RELAY_UDP;
 			}
 			break;
 	    case RsNetworkMode::BEHINDNAT:
-			mConnectModes = RSNET_CONNECT_OUTGOING_TCP;
+			mConnectModes = RsConnectModes::OUTGOING_TCP;
 
 			/* we're okay if there's a NAT HOLE */
 			if ((mNatHoleMode == RsNatHoleMode::UPNP) ||
 			    (mNatHoleMode == RsNatHoleMode::NATPMP) ||
 			    (mNatHoleMode == RsNatHoleMode::FORWARDED))
 			{
-				mConnectModes |= RSNET_CONNECT_ACCEPT_TCP;
+				mConnectModes |= RsConnectModes::ACCEPT_TCP;
 				if (mDhtActive)
 				{
-					mConnectModes |= RSNET_CONNECT_DIRECT_UDP;
+					mConnectModes |= RsConnectModes::DIRECT_UDP;
 					/* dont want PROXY | RELAY with open ports */
 				}
 			}
@@ -600,48 +600,20 @@ void pqiNetStateBox::workoutNetworkMode()
 			    */
 			   if (mDhtActive)
 			   {
-				mConnectModes |= RSNET_CONNECT_DIRECT_UDP;
-				mConnectModes |= RSNET_CONNECT_RELAY_UDP;
+				mConnectModes |= RsConnectModes::DIRECT_UDP;
+				mConnectModes |= RsConnectModes::RELAY_UDP;
 
 				if ((mNatTypeMode == RsNatTypeMode::RESTRICTED_CONE) ||
 				    (mNatTypeMode == RsNatTypeMode::FULL_CONE) ||
 				    (mNatTypeMode == RsNatTypeMode::DETERM_SYM))
 				{
-					mConnectModes |= RSNET_CONNECT_PROXY_UDP;
+					mConnectModes |= RsConnectModes::PROXY_UDP;
 				}
 			   }
 			}
 			break;
 	}
 }
-
-
-std::string NetStateConnectModesString(uint32_t connect)
-{
-	std::string	connOut;
-	if (connect & RSNET_CONNECT_OUTGOING_TCP)
-	{
-		connOut += "TCP_OUT ";
-	}
-	if (connect & RSNET_CONNECT_ACCEPT_TCP)
-	{
-		connOut += "TCP_IN ";
-	}
-	if (connect & RSNET_CONNECT_DIRECT_UDP)
-	{
-		connOut += "DIRECT_UDP ";
-	}
-	if (connect & RSNET_CONNECT_PROXY_UDP)
-	{
-		connOut += "PROXY_UDP ";
-	}
-	if (connect & RSNET_CONNECT_RELAY_UDP)
-	{
-		connOut += "RELAY_UDP ";
-	}
-	return connOut;
-}
-
 
 
 std::string NetStateNetStateString(uint32_t netstate)

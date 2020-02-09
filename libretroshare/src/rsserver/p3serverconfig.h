@@ -78,7 +78,7 @@ virtual uint32_t getNetState();
 virtual RsNetworkMode getNetworkMode();
 virtual RsNatTypeMode getNatTypeMode();
 virtual RsNatHoleMode getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsConnectModes getConnectModes();
 
 virtual bool getConfigurationOption(uint32_t key, std::string &opt);
 virtual bool setConfigurationOption(uint32_t key, const std::string &opt);

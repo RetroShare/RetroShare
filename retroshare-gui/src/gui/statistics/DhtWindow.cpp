@@ -214,27 +214,27 @@ void DhtWindow::updateNetStatus()
 			break;
 	}
 
-	uint32_t connect = rsConfig->getConnectModes();
+	RsConnectModes connect = rsConfig->getConnectModes();
 
 	label = ui.connectLabel;
 	QString connOut;
-	if (connect & RSNET_CONNECT_OUTGOING_TCP)
+	if (!!(connect & RsConnectModes::OUTGOING_TCP))
 	{
 		connOut += "TCP_OUT ";
 	}
-	if (connect & RSNET_CONNECT_ACCEPT_TCP)
+	if (!!(connect & RsConnectModes::ACCEPT_TCP))
 	{
 		connOut += "TCP_IN ";
 	}
-	if (connect & RSNET_CONNECT_DIRECT_UDP)
+	if (!!(connect & RsConnectModes::DIRECT_UDP))
 	{
 		connOut += "DIRECT_UDP ";
 	}
-	if (connect & RSNET_CONNECT_PROXY_UDP)
+	if (!!(connect & RsConnectModes::PROXY_UDP))
 	{
 		connOut += "PROXY_UDP ";
 	}
-	if (connect & RSNET_CONNECT_RELAY_UDP)
+	if (!!(connect & RsConnectModes::RELAY_UDP))
 	{
 		connOut += "RELAY_UDP ";
 	}

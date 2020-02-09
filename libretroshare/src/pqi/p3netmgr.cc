@@ -1651,7 +1651,7 @@ RsNatHoleMode p3NetMgrIMPL::getNatHoleMode()
 	return mNetStateBox.getNatHoleMode();
 }
 
-uint32_t p3NetMgrIMPL::getConnectModes()
+RsConnectModes p3NetMgrIMPL::getConnectModes()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getConnectModes();

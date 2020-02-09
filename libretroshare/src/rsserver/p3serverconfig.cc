@@ -349,7 +349,7 @@ RsNatHoleMode p3ServerConfig::getNatHoleMode()
 	return mNetMgr->getNatHoleMode();
 }
 
-uint32_t p3ServerConfig::getConnectModes()
+RsConnectModes p3ServerConfig::getConnectModes()
 {
 	return mNetMgr->getConnectModes();
 }

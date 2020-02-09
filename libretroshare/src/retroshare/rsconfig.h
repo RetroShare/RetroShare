@@ -67,13 +67,16 @@ enum class RsNatHoleMode : uint8_t
 	FORWARDED	= 4
 };
 
-// Types of Connections.
-#define RSNET_CONNECT_NONE		0x0000
-#define RSNET_CONNECT_ACCEPT_TCP	0x0001
-#define RSNET_CONNECT_OUTGOING_TCP	0x0002
-#define RSNET_CONNECT_DIRECT_UDP	0x0100
-#define RSNET_CONNECT_PROXY_UDP		0x0200
-#define RSNET_CONNECT_RELAY_UDP		0x0400
+enum class RsConnectModes : uint16_t
+{
+	NONE		= 0x0000,
+	ACCEPT_TCP	= 0x0001,
+	OUTGOING_TCP= 0x0002,
+	DIRECT_UDP	= 0x0100,
+	PROXY_UDP	= 0x0200,
+	RELAY_UDP	= 0x0400
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsConnectModes)
 
 // net state (good, okay, bad)
 // BAD. (RED)
@@ -361,7 +364,7 @@ public:
 	virtual RsNetworkMode getNetworkMode() = 0;
 	virtual RsNatTypeMode getNatTypeMode() = 0;
 	virtual RsNatHoleMode getNatHoleMode() = 0;
-    virtual uint32_t getConnectModes() = 0;
+	virtual RsConnectModes getConnectModes() = 0;
 
     virtual bool getConfigurationOption(uint32_t key, std::string &opt) = 0;
     virtual bool setConfigurationOption(uint32_t key, const std::string &opt) = 0;

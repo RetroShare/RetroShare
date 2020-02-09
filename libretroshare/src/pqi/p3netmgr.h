@@ -107,7 +107,7 @@ virtual uint32_t getNetStateMode() = 0;
 virtual RsNetworkMode getNetworkMode() = 0;
 virtual RsNatTypeMode getNatTypeMode() = 0;
 virtual RsNatHoleMode getNatHoleMode() = 0;
-virtual uint32_t getConnectModes() = 0;
+virtual RsConnectModes getConnectModes() = 0;
 
 	/* Shut It Down! */
 virtual bool	shutdown() = 0; /* blocking shutdown call */
@@ -158,7 +158,7 @@ virtual uint32_t getNetStateMode();
 virtual RsNetworkMode getNetworkMode();
 virtual RsNatTypeMode getNatTypeMode();
 virtual RsNatHoleMode getNatHoleMode();
-virtual uint32_t getConnectModes();
+virtual RsConnectModes getConnectModes();
 
 	/* Shut It Down! */
 virtual bool	shutdown(); /* blocking shutdown call */
