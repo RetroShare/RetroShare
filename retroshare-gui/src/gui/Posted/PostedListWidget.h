@@ -57,6 +57,8 @@ public:
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected:
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+
 	/* GxsMessageFramePostWidget */
 	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
 	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
@@ -126,6 +128,7 @@ private:
 	
 	/* UI - from Designer */
 	Ui::PostedListWidget *ui;
+    RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif

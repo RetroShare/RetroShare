@@ -44,13 +44,6 @@ class p3Posted: public p3PostBase, public RsPosted
 	p3Posted(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
 virtual RsServiceInfo getServiceInfo();
 
-	protected:
-
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes)
-{
-	return p3PostBase::notifyChanges(changes);
-}
-
 	public:
 
 	// Posted Specific DataTypes.

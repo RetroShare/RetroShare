@@ -105,6 +105,11 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	/* load settings */
 	processSettings(true);
 
+	mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+
+	rsEvents->registerEventsHandler(RsEventType::GXS_POSTED, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+
 	/* Initialize GUI */
 	setGroupId(postedId);
 }
@@ -115,6 +120,28 @@ PostedListWidget::~PostedListWidget()
 
 	delete(ui);
 }
+
+void PostedListWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	const RsGxsPostedEvent *e = dynamic_cast<const RsGxsPostedEvent*>(event.get());
+
+	if(!e)
+		return;
+
+        switch(e->mPostedEventCode)
+        {
+        case RsPostedEventCode::UPDATED_POSTED_GROUP:
+        case RsPostedEventCode::NEW_POSTED_GROUP:
+        case RsPostedEventCode::UPDATED_MESSAGE:
+        case RsPostedEventCode::NEW_MESSAGE:
+            if(e->mPostedGroupId == groupId())
+				updateDisplay(true);
+            break;
+        default:
+            break;
+        }
+}
+
 
 void PostedListWidget::processSettings(bool load)
 {
