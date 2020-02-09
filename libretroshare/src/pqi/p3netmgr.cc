@@ -1633,7 +1633,7 @@ uint32_t p3NetMgrIMPL::getNetStateMode()
 	return mNetStateBox.getNetStateMode();
 }
 
-uint32_t p3NetMgrIMPL::getNetworkMode()
+RsNetworkMode p3NetMgrIMPL::getNetworkMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetworkMode();

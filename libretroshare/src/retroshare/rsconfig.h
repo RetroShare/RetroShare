@@ -37,12 +37,16 @@ class RsServerConfig;
  */
 extern RsServerConfig *rsConfig;
 
-#define RSNET_NETWORK_UNKNOWN		1
-#define RSNET_NETWORK_RESTARTING	2
-#define RSNET_NETWORK_OFFLINE		3
-#define RSNET_NETWORK_LOCALNET		4
-#define RSNET_NETWORK_BEHINDNAT		5
-#define RSNET_NETWORK_EXTERNALIP	6
+enum class RsNetworkMode : uint8_t
+{
+	UNKNOWN		= 1,
+	RESTARTING	= 2,
+	OFFLINE		= 3,
+	LOCALNET	= 4,
+	BEHINDNAT	= 5,
+	EXTERNALIP	= 6
+};
+
 
 // WHAT TYPE OF FIREWALL?
 #define RSNET_NATTYPE_NONE		1
@@ -351,7 +355,7 @@ public:
     virtual uint32_t getUserLevel() = 0;
 
     virtual uint32_t getNetState() = 0;
-    virtual uint32_t getNetworkMode() = 0;
+	virtual RsNetworkMode getNetworkMode() = 0;
     virtual uint32_t getNatTypeMode() = 0;
     virtual uint32_t getNatHoleMode() = 0;
     virtual uint32_t getConnectModes() = 0;

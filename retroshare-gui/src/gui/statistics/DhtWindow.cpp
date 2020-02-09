@@ -137,24 +137,27 @@ void DhtWindow::updateNetStatus()
 		ui.peerAddressLabel->setText(status);
 	}
 
-	uint32_t netMode = rsConfig->getNetworkMode();
+	RsNetworkMode netMode = rsConfig->getNetworkMode();
 
 	QLabel *label = ui.networkLabel;
 	switch(netMode)
 	{
-		case RSNET_NETWORK_UNKNOWN:
+	    case RsNetworkMode::UNKNOWN:
 			label->setText(tr("Unknown NetState"));
 			break;
-		case RSNET_NETWORK_OFFLINE:
+	    case RsNetworkMode::RESTARTING:
+		    label->setText(tr("Restarting"));
+		    break;
+	    case RsNetworkMode::OFFLINE:
 			label->setText(tr("Offline"));
 			break;
-		case RSNET_NETWORK_LOCALNET:
+	    case RsNetworkMode::LOCALNET:
 			label->setText(tr("Local Net"));
 			break;
-		case RSNET_NETWORK_BEHINDNAT:
+	    case RsNetworkMode::BEHINDNAT:
 			label->setText(tr("Behind NAT"));
 			break;
-		case RSNET_NETWORK_EXTERNALIP:
+	    case RsNetworkMode::EXTERNALIP:
 			label->setText(tr("External IP"));
 			break;
 	}

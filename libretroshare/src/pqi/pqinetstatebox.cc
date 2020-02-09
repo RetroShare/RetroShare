@@ -20,7 +20,6 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "retroshare/rsconfig.h"
 #include "util/rsnet.h"
 #include "pqi/pqinetstatebox.h"
 #include "util/rstime.h"
@@ -147,7 +146,7 @@ void pqiNetStateBox::setDhtState(bool on, bool active)
 
 
 /* Extract Net State */
-uint32_t pqiNetStateBox::getNetworkMode()
+RsNetworkMode pqiNetStateBox::getNetworkMode()
 {
 	updateNetState();
 	return mNetworkMode;
@@ -193,7 +192,7 @@ void pqiNetStateBox::reset()
 	mStatusOkay = false;
 	//rstime_t mStatusTS;
 	
-	mNetworkMode = RSNET_NETWORK_UNKNOWN;
+	mNetworkMode = RsNetworkMode::UNKNOWN;
 	mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 	mNatHoleMode = RSNET_NATHOLE_UNKNOWN;
 	mConnectModes = RSNET_CONNECT_NONE;
@@ -302,7 +301,7 @@ void pqiNetStateBox::determineNetworkState()
 	   /* firstly lets try to identify OFFLINE / UNKNOWN */
 	   if ((!mStunProxySet) || (!mStunDhtSet))
 	   {
-		mNetworkMode = RSNET_NETWORK_UNKNOWN;
+		mNetworkMode = RsNetworkMode::UNKNOWN;
 		// Assume these.
 		mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 		mNatHoleMode = RSNET_NATHOLE_NONE;
@@ -335,7 +334,7 @@ void pqiNetStateBox::determineNetworkState()
 				 *
 				 */
 
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_DETERM_SYM;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 				mNetStateMode = RSNET_NETSTATE_WARNING_NATTED;
@@ -344,7 +343,7 @@ void pqiNetStateBox::determineNetworkState()
 			else if (!mStunProxyStable)
 			{
 				/* both unstable, Symmetric NAT, Firewalled, No UDP Hole */
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_SYMMETRIC;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 				mNetStateMode = RSNET_NETSTATE_BAD_NATSYM;
@@ -366,7 +365,7 @@ void pqiNetStateBox::determineNetworkState()
 				 * but that label is really fully accurate. (gray area).
 				 */
 
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_RESTRICTED_CONE;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 				mNetStateMode = RSNET_NETSTATE_WARNING_NATTED;
@@ -392,7 +391,7 @@ void pqiNetStateBox::determineNetworkState()
 			if (mStunProxySemiStable)
 			{
 				/* must be a forwarded port/ext or something similar */
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_DETERM_SYM;
 				mNatHoleMode = RSNET_NATHOLE_FORWARDED;
 				mNetStateMode = RSNET_NETSTATE_GOOD;
@@ -400,7 +399,7 @@ void pqiNetStateBox::determineNetworkState()
 			else if (!mStunProxyStable)
 			{
 				/* must be a forwarded port/ext or something similar */
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_SYMMETRIC;
 				mNatHoleMode = RSNET_NATHOLE_FORWARDED;
 				mNetStateMode = RSNET_NETSTATE_GOOD;
@@ -408,7 +407,7 @@ void pqiNetStateBox::determineNetworkState()
 			else
 			{
 				/* fallback is FULL CONE NAT */
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_FULL_CONE;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 				mNetStateMode = RSNET_NETSTATE_WARNING_NATTED;
@@ -417,7 +416,7 @@ void pqiNetStateBox::determineNetworkState()
 			if (mUPnPActive)
 			{
 				// This Mode is OKAY.
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				// Use Fallback Guess.
 				//mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 				mNatHoleMode = RSNET_NATHOLE_UPNP;
@@ -428,7 +427,7 @@ void pqiNetStateBox::determineNetworkState()
 			else if (mNatPMPActive)
 			{
 				// This Mode is OKAY.
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				// Use Fallback Guess.
 				//mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 				mNatHoleMode = RSNET_NATHOLE_NATPMP;
@@ -442,7 +441,7 @@ void pqiNetStateBox::determineNetworkState()
 	
 				if (isExtAddress)
 				{
-					mNetworkMode = RSNET_NETWORK_EXTERNALIP;
+					mNetworkMode = RsNetworkMode::EXTERNALIP;
 					mNatTypeMode = RSNET_NATTYPE_NONE;
 					mNatHoleMode = RSNET_NATHOLE_NONE;
 					mNetStateMode = RSNET_NETSTATE_GOOD;
@@ -451,7 +450,7 @@ void pqiNetStateBox::determineNetworkState()
 				}
 				else if (mPortForwardSet)
 				{
-					mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+					mNetworkMode = RsNetworkMode::BEHINDNAT;
 					// Use Fallback Guess.
 					//mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 					mNatHoleMode = RSNET_NATHOLE_FORWARDED;
@@ -479,7 +478,7 @@ void pqiNetStateBox::determineNetworkState()
 		if (mUPnPActive)
 		{
 			// This Mode is OKAY.
-			mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+			mNetworkMode = RsNetworkMode::BEHINDNAT;
 			mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 			mNatHoleMode = RSNET_NATHOLE_UPNP;
 			//mExtAddress = ... from UPnP.
@@ -489,7 +488,7 @@ void pqiNetStateBox::determineNetworkState()
 		else if (mNatPMPActive)
 		{
 			// This Mode is OKAY.
-			mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+			mNetworkMode = RsNetworkMode::BEHINDNAT;
 			mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 			mNatHoleMode = RSNET_NATHOLE_NATPMP;
 			//mExtAddress = ... from NatPMP.
@@ -506,7 +505,7 @@ void pqiNetStateBox::determineNetworkState()
 
 			if (isExtAddress)
 			{
-				mNetworkMode = RSNET_NETWORK_EXTERNALIP;
+				mNetworkMode = RsNetworkMode::EXTERNALIP;
 				mNatTypeMode = RSNET_NATTYPE_NONE;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 
@@ -515,7 +514,7 @@ void pqiNetStateBox::determineNetworkState()
 			}
 			else if (mPortForwardSet)
 			{
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 				mNatHoleMode = RSNET_NATHOLE_FORWARDED;
 
@@ -528,7 +527,7 @@ void pqiNetStateBox::determineNetworkState()
 				 * These people have destroyed the possibility of making connections ;(
 				 * Should WARN about this.
 				 */ 
-				mNetworkMode = RSNET_NETWORK_BEHINDNAT;
+				mNetworkMode = RsNetworkMode::BEHINDNAT;
 				mNatTypeMode = RSNET_NATTYPE_UNKNOWN;
 				mNatHoleMode = RSNET_NATHOLE_NONE;
 				mNetStateMode = RSNET_NETSTATE_BAD_NODHT_NAT;
@@ -556,12 +555,13 @@ void pqiNetStateBox::workoutNetworkMode()
 	mConnectModes = RSNET_CONNECT_NONE;
 	switch(mNetworkMode)
 	{
-		case RSNET_NETWORK_UNKNOWN:
-		case RSNET_NETWORK_OFFLINE:
-		case RSNET_NETWORK_LOCALNET:
+	    case RsNetworkMode::UNKNOWN:
+	    case RsNetworkMode::OFFLINE:
+	    case RsNetworkMode::LOCALNET:
+	    case RsNetworkMode::RESTARTING:
 			/* nothing here */
 			break;
-		case RSNET_NETWORK_EXTERNALIP:
+	    case RsNetworkMode::EXTERNALIP:
 			mConnectModes = RSNET_CONNECT_OUTGOING_TCP;
 			mConnectModes |= RSNET_CONNECT_ACCEPT_TCP;
 
@@ -577,7 +577,7 @@ void pqiNetStateBox::workoutNetworkMode()
 				//mConnectModes |= RSNET_CONNECT_RELAY_UDP;
 			}
 			break;
-		case RSNET_NETWORK_BEHINDNAT:
+	    case RsNetworkMode::BEHINDNAT:
 			mConnectModes = RSNET_CONNECT_OUTGOING_TCP;
 
 			/* we're okay if there's a NAT HOLE */
@@ -615,33 +615,6 @@ void pqiNetStateBox::workoutNetworkMode()
 	}
 }
 
-
-
-
-std::string NetStateNetworkModeString(uint32_t netMode)
-{
-	std::string str;
-	switch(netMode)
-	{
-		default:
-		case RSNET_NETWORK_UNKNOWN:
-			str = "Unknown NetState";
-		break;
-		case RSNET_NETWORK_OFFLINE:
-			str = "Offline";
-		break;
-		case RSNET_NETWORK_LOCALNET:
-			str = "Local Net";
-		break;
-		case RSNET_NETWORK_BEHINDNAT:
-			str = "Behind NAT";
-		break;
-		case RSNET_NETWORK_EXTERNALIP:
-			str = "External IP";
-		break;
-	}
-	return str;
-}
 
 std::string NetStateNatTypeString(uint32_t natType)
 {

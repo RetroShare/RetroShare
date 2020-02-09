@@ -305,11 +305,11 @@ uint32_t p3ServerConfig::getUserLevel()
 		{
 			/* check that the firewall is open */
 
-			uint32_t netMode = mNetMgr->getNetworkMode();
+		    RsNetworkMode netMode = mNetMgr->getNetworkMode();
 			uint32_t firewallMode = mNetMgr->getNatHoleMode();
 
-			if ((RSNET_NETWORK_EXTERNALIP == netMode) ||
-			   ((RSNET_NETWORK_BEHINDNAT == netMode) &&
+			if ((RsNetworkMode::EXTERNALIP == netMode) ||
+			   ((RsNetworkMode::BEHINDNAT == netMode) &&
 			  	 	((RSNET_NATHOLE_UPNP == firewallMode) ||
 			   		(RSNET_NATHOLE_NATPMP == firewallMode) ||
 			   		(RSNET_NATHOLE_FORWARDED == firewallMode))))
@@ -334,7 +334,7 @@ uint32_t p3ServerConfig::getNetState()
 	return mNetMgr->getNetStateMode();
 }
 
-uint32_t p3ServerConfig::getNetworkMode()
+RsNetworkMode p3ServerConfig::getNetworkMode()
 {
 	return mNetMgr->getNetworkMode();
 }

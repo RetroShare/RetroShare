@@ -104,7 +104,7 @@ virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode() = 0;
-virtual uint32_t getNetworkMode() = 0;
+virtual RsNetworkMode getNetworkMode() = 0;
 virtual uint32_t getNatTypeMode() = 0;
 virtual uint32_t getNatHoleMode() = 0;
 virtual uint32_t getConnectModes() = 0;
@@ -155,7 +155,7 @@ virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 
 	/* Get Network State */
 virtual uint32_t getNetStateMode();
-virtual uint32_t getNetworkMode();
+virtual RsNetworkMode getNetworkMode();
 virtual uint32_t getNatTypeMode();
 virtual uint32_t getNatHoleMode();
 virtual uint32_t getConnectModes();

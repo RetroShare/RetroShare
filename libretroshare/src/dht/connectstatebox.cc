@@ -21,7 +21,6 @@
  *******************************************************************************/
 
 #include "dht/connectstatebox.h"
-#include "retroshare/rsconfig.h"
 
 #include "util/rsrandom.h"
 #include "util/rsstring.h"
@@ -260,11 +259,11 @@ std::string PeerConnectStateBox::connectState() const
 }
 
 
-uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t convertNetStateToInternal(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
 {
 	uint32_t connNet = CSB_NETSTATE_UNKNOWN;
 		
-	if (netmode == RSNET_NETWORK_EXTERNALIP)
+	if (netmode == RsNetworkMode::EXTERNALIP)
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
@@ -272,7 +271,7 @@ uint32_t convertNetStateToInternal(uint32_t netmode, uint32_t nathole, uint32_t 
 	{
 		connNet = CSB_NETSTATE_FORWARD;
 	}
-	else if (netmode == RSNET_NETWORK_BEHINDNAT)
+	else if (netmode == RsNetworkMode::BEHINDNAT)
 	{
 		if ((nattype == RSNET_NATTYPE_RESTRICTED_CONE) ||
 			(nattype == RSNET_NATTYPE_FULL_CONE))
@@ -300,20 +299,20 @@ bool shouldUseProxyPortInternal(uint32_t netstate)
 	return true;
 }
 
-bool PeerConnectStateBox::shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+bool PeerConnectStateBox::shouldUseProxyPort(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return shouldUseProxyPortInternal(netstate);
 }
 
-uint32_t PeerConnectStateBox::calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::calcNetState(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 	return netstate;
 }
 
 
-uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype)
+uint32_t PeerConnectStateBox::connectCb(uint32_t cbtype, RsNetworkMode netmode, uint32_t nathole, uint32_t nattype)
 {
 	uint32_t netstate = convertNetStateToInternal(netmode, nathole, nattype);
 

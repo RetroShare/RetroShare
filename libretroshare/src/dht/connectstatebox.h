@@ -75,17 +75,19 @@
 #include "util/rstime.h"
 #include <inttypes.h>
 
+#include <retroshare/rsconfig.h>
+
 class PeerConnectStateBox
 {
 	public:
 	PeerConnectStateBox();
 
-	uint32_t connectCb(uint32_t cbtype, uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	uint32_t connectCb(uint32_t cbtype, RsNetworkMode netmode, uint32_t nathole, uint32_t nattype);
 	uint32_t updateCb(uint32_t updateType);
 
-	bool shouldUseProxyPort(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	bool shouldUseProxyPort(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype);
 
-	uint32_t calcNetState(uint32_t netmode, uint32_t nathole, uint32_t nattype);
+	uint32_t calcNetState(RsNetworkMode netmode, uint32_t nathole, uint32_t nattype);
 	std::string connectState() const;
 
 	std::string mPeerId;
