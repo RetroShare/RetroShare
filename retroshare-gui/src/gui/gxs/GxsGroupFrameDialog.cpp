@@ -440,7 +440,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 
 	if (shareKeyType()) {
-		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
+		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
 		action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 
