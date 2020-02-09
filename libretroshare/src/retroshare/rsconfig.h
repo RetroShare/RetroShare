@@ -78,27 +78,28 @@ enum class RsConnectModes : uint16_t
 };
 RS_REGISTER_ENUM_FLAGS_TYPE(RsConnectModes)
 
-// net state (good, okay, bad)
-// BAD. (RED)
-#define RSNET_NETSTATE_BAD_UNKNOWN	1
-#define RSNET_NETSTATE_BAD_OFFLINE	2
-#define RSNET_NETSTATE_BAD_NATSYM	3
-#define RSNET_NETSTATE_BAD_NODHT_NAT	4
+enum class RsNetState : uint8_t
+{
+    // BAD. (RED)
+    BAD_UNKNOWN		= 1,
+    BAD_OFFLINE		= 2,
+    BAD_NATSYM		= 3,
+    BAD_NODHT_NAT	= 4,
 
-// CAUTION. (ORANGE)
-#define RSNET_NETSTATE_WARNING_RESTART	5
-#define RSNET_NETSTATE_WARNING_NATTED	6
-#define RSNET_NETSTATE_WARNING_NODHT	7
+    // CAUTION. (ORANGE)
+    WARNING_RESTART	= 5,
+    WARNING_NATTED	= 6,
+    WARNING_NODHT	= 7,
 
-// GOOD (GREEN)
-// NAT with forwarded port, or EXT port.
-#define RSNET_NETSTATE_GOOD		8
+    // GOOD (GREEN)
+    // NAT with forwarded port, or EXT port.
+    GOOD			= 8,
 
-// ADVANCED MODE (BLUE)
-// If the user knows what they are doing... we cannot confirm this.
-#define RSNET_NETSTATE_ADV_FORWARD	9
-#define RSNET_NETSTATE_ADV_DARK_FORWARD	10
-
+    // ADVANCED MODE (BLUE)
+    // If the user knows what they are doing... we cannot confirm this.
+    ADV_FORWARD		= 9,
+    ADV_DARK_FORWARD= 10
+};
 
 /* matched to the uPnP states */
 #define UPNP_STATE_UNINITIALISED  0
@@ -360,7 +361,7 @@ public:
 
     virtual uint32_t getUserLevel() = 0;
 
-    virtual uint32_t getNetState() = 0;
+	virtual RsNetState getNetState() = 0;
 	virtual RsNetworkMode getNetworkMode() = 0;
 	virtual RsNatTypeMode getNatTypeMode() = 0;
 	virtual RsNatHoleMode getNatHoleMode() = 0;

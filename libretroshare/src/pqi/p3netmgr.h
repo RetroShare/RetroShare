@@ -103,7 +103,7 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode) = 0;
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode() = 0;
+virtual RsNetState getNetStateMode() = 0;
 virtual RsNetworkMode getNetworkMode() = 0;
 virtual RsNatTypeMode getNatTypeMode() = 0;
 virtual RsNatHoleMode getNatHoleMode() = 0;
@@ -154,7 +154,7 @@ virtual bool netAssistBadPeer(const struct sockaddr_storage &addr, uint32_t reas
 virtual bool netAssistStatusUpdate(const RsPeerId &id, int mode);
 
 	/* Get Network State */
-virtual uint32_t getNetStateMode();
+virtual RsNetState getNetStateMode();
 virtual RsNetworkMode getNetworkMode();
 virtual RsNatTypeMode getNatTypeMode();
 virtual RsNatHoleMode getNatHoleMode();

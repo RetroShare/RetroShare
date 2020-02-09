@@ -74,7 +74,7 @@ virtual std::string getRetroshareDataDirectory();
 
 virtual uint32_t getUserLevel();
 
-virtual uint32_t getNetState();
+virtual RsNetState getNetState();
 virtual RsNetworkMode getNetworkMode();
 virtual RsNatTypeMode getNatTypeMode();
 virtual RsNatHoleMode getNatHoleMode();

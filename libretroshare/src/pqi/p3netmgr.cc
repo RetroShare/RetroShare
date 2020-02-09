@@ -1627,7 +1627,7 @@ void p3NetMgrIMPL::setIPServersEnabled(bool b)
  ************************************** NetStateBox  ******************************************
  **********************************************************************************************/
 
-uint32_t p3NetMgrIMPL::getNetStateMode()
+RsNetState p3NetMgrIMPL::getNetStateMode()
 {
 	RsStackMutex stack(mNetMtx); /****** STACK LOCK MUTEX *******/
 	return mNetStateBox.getNetStateMode();

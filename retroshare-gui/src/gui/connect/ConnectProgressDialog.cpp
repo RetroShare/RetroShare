@@ -281,39 +281,39 @@ void ConnectProgressDialog::stopAndClose()
 
 void ConnectProgressDialog::updateNetworkStatus()
 {
-	uint32_t netState = rsConfig->getNetState();
+	RsNetState netState = rsConfig->getNetState();
 
 	QLabel *label = ui->NetResult;
 	switch(netState)
 	{
-		case RSNET_NETSTATE_BAD_UNKNOWN:
+	    case RsNetState::BAD_UNKNOWN:
 			label->setText(tr("Unknown State"));
 			break;
-		case RSNET_NETSTATE_BAD_OFFLINE:
+	    case RsNetState::BAD_OFFLINE:
 			label->setText(tr("Offline"));
 			break;
-		case RSNET_NETSTATE_BAD_NATSYM:
+	    case RsNetState::BAD_NATSYM:
 			label->setText(tr("Behind Symmetric NAT"));
 			break;
-		case RSNET_NETSTATE_BAD_NODHT_NAT:
+	    case RsNetState::BAD_NODHT_NAT:
 			label->setText(tr("Behind NAT & No DHT"));
 			break;
-		case RSNET_NETSTATE_WARNING_RESTART:
+	    case RsNetState::WARNING_RESTART:
 			label->setText(tr("NET Restart"));
 			break;
-		case RSNET_NETSTATE_WARNING_NATTED:
+	    case RsNetState::WARNING_NATTED:
 			label->setText(tr("Behind NAT"));
 			break;
-		case RSNET_NETSTATE_WARNING_NODHT:
+	    case RsNetState::WARNING_NODHT:
 			label->setText(tr("No DHT"));
 			break;
-		case RSNET_NETSTATE_GOOD:
+	    case RsNetState::GOOD:
 			label->setText(tr("NET STATE GOOD!"));
 			break;
-		case RSNET_NETSTATE_ADV_FORWARD:
+	    case RsNetState::ADV_FORWARD:
 			label->setText(tr("UNVERIFIABLE FORWARD!"));
 			break;
-		case RSNET_NETSTATE_ADV_DARK_FORWARD:
+	    case RsNetState::ADV_DARK_FORWARD:
 			label->setText(tr("UNVERIFIABLE FORWARD & NO DHT"));
 			break;
 	}

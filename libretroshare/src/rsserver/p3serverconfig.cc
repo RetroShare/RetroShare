@@ -329,7 +329,7 @@ uint32_t p3ServerConfig::getUserLevel()
 }
 
 
-uint32_t p3ServerConfig::getNetState()
+RsNetState p3ServerConfig::getNetState()
 {
 	return mNetMgr->getNetStateMode();
 }

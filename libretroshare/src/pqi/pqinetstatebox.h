@@ -54,7 +54,7 @@ class pqiNetStateBox
 
 	void setDhtState(bool dhtOn, bool dhtActive);
 
-	uint32_t getNetStateMode();
+	RsNetState getNetStateMode();
 	RsNetworkMode getNetworkMode();
 	RsNatTypeMode getNatTypeMode();
 	RsNatHoleMode getNatHoleMode();
@@ -78,7 +78,7 @@ class pqiNetStateBox
 	RsNatTypeMode mNatTypeMode;
 	RsNatHoleMode mNatHoleMode;
 	RsConnectModes mConnectModes;
-	uint32_t mNetStateMode;
+	RsNetState mNetStateMode;
 
 	/* Parameters set externally */
 
@@ -116,9 +116,5 @@ class pqiNetStateBox
 	bool mPortForwardSet;
 	uint16_t  mPortForwarded;
 };
-
-
-
-std::string NetStateNetStateString(uint32_t netstate);
 
 #endif
