@@ -55,8 +55,10 @@ class TouStunPeer
 	
 	/// id for identification
 	std::string id;
-	/// remote address
-	struct sockaddr_in remote, eaddr;
+	/// Remote address of the peer.
+	struct sockaddr_in remote;
+	/// Our external IP address as reported by the peer.
+	struct sockaddr_in eaddr;
 	/// true when a response was received in the past
 	bool response;
 	/// used to rate limit STUN requests
@@ -113,6 +115,12 @@ virtual int status(std::ostream &out);
 
 	/* monitoring / updates */
 	int tick();
+
+	/*
+	 * based on RFC 3489
+	 */
+	static constexpr uint16_t STUN_BINDING_REQUEST  = 0x0001;
+	static constexpr uint16_t STUN_BINDING_RESPONSE = 0x0101;
 
 	private:
 
@@ -176,7 +184,14 @@ bool    locked_checkExternalAddress();
 
 bool	UdpStun_isStunPacket(void *data, int size);
 bool    UdpStun_response(void *stun_pkt, int size, struct sockaddr_in &addr);
-void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len, const void* data);
+/**
+ * @brief UdpStun_generate_stun_reply Generates a STUN reply package.
+ * @param stun_addr The address to set in the response field.
+ * @param len Lenght of the generated package (always 28).
+ * @param transId The transaction ID of the request package.
+ * @return Pointer to the generated reply package.
+ */
+void   *UdpStun_generate_stun_reply(struct sockaddr_in *stun_addr, int *len, const void* transId);
 bool    UdpStun_generate_stun_pkt(void *stun_pkt, int *len);
 
 #endif

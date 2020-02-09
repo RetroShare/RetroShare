@@ -117,10 +117,10 @@ no_bitdht:CONFIG -= bitdht
 CONFIG *= use_dht_stunner
 no_use_dht_stunner:CONFIG -= use_dht_stunner
 
-# The DHT stunner can be used to figure out our external IP. As this purely relying on random DHT peers that answer our request, it can easily be abused
+# The DHT stunner can be used to figure out our external IP. As this purely relying on random DHT peers that answer our request, it can easily be abused.
 # Therefore, it is turned off by default.
 # To enable external ip determination (additionally) based on the dht stunner append the following assignation to qmake
-# command line "CONFIG+=rs_async_chat"
+# command line "CONFIG+=use_dht_stunner_ext_ip"
 CONFIG *= no_use_dht_stunner_ext_ip
 use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
 
