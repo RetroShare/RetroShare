@@ -63,11 +63,12 @@ public:
 protected:
 	virtual void updateDisplay(bool complete);
 
-	void loadCircleGroupMeta(const uint32_t &token);
-	void loadCircleGroupData(const uint32_t &token);
-	void updateCircleGroup(const uint32_t& token);
+	void updateIdList();
+	void loadIdentities(const std::map<RsGxsGroupId, RsGxsIdGroup> &ids_set);
 
-	void requestCircleGroupMeta();
+	void updateCircles();
+	void loadCircles(const std::list<RsGroupMetaData>& circle_metas);
+
 	//void requestCircleGroupData(const RsGxsCircleId& circle_id);
 	bool getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id) ;
 
@@ -123,7 +124,6 @@ private:
 	void requestIdDetails();
 	void insertIdDetails(uint32_t token);
 
-	void requestIdList();
 	void requestIdData(std::list<RsGxsGroupId> &ids);
 	bool fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept);
 	void insertIdList(uint32_t token);

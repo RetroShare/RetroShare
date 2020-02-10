@@ -484,7 +484,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		RsGxsNotify *c = *it;
 
-		if (msgChange && !msgChange->metaChange())
+		if (msgChange)
 		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "  Found circle Message Change Notification" << std::endl;
@@ -521,6 +521,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						rsEvents->postEvent(ev);
 					}
 
+				mCircleCache.erase(circle_id);
 			}
 		}
 

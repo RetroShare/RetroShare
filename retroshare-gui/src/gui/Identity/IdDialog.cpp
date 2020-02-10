@@ -393,15 +393,8 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
     /* Setup TokenQueue */
     mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
     
-    requestCircleGroupMeta();
-    
-    // This timer shouldn't be needed, but it is now, because the update of subscribe status and appartenance to the
-    // circle doesn't trigger a proper GUI update.
-    
-    QTimer *tmer = new QTimer(this) ;
-    connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
-    
-    tmer->start(10000) ;	// update every 10 secs. 
+    updateCircles();
+    updateIdList();
 }
 
 void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -419,7 +412,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsIdentityEventCode::NEW_IDENTITY:
 		case RsGxsIdentityEventCode::UPDATED_IDENTITY:
 
-			requestIdList();
+			updateIdList();
 
     		if(!mId.isNull() && mId == e->mIdentityId)
 				requestIdDetails();
@@ -445,7 +438,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
 
-			requestCircleGroupMeta();
+			updateCircles();
 		default:
 			break;
 		}
@@ -475,7 +468,7 @@ void IdDialog::toggleAutoBanIdentities(bool b)
     if(!id.isNull())
     {
         rsReputations->banNode(id,b) ;
-        requestIdList();
+        updateIdList();
     }
 }
 
@@ -490,12 +483,13 @@ void IdDialog::updateCirclesDisplay()
 #ifdef ID_DEBUG
     std::cerr << "!!Updating circles display!" << std::endl;
 #endif
-    requestCircleGroupMeta() ;
+    updateCircles() ;
 }
 
 /************************** Request / Response *************************/
 /*** Loading Main Index ***/
 
+#ifdef TO_REMOVE
 void IdDialog::requestCircleGroupMeta()
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, true);
@@ -513,9 +507,6 @@ void IdDialog::requestCircleGroupMeta()
 	uint32_t token;
 	mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_SUMMARY, opts, CIRCLESDIALOG_GROUPMETA);
 }
-
-// should update this code to be called and modify the tree widget accordingly
-#ifdef SUSPENDED
 void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 {
 	mStateHelper->setLoading(CIRCLESDIALOG_GROUPDATA, true);
@@ -538,25 +529,43 @@ void IdDialog::requestCircleGroupData(const RsGxsCircleId& circle_id)
 }
 #endif
 
-void IdDialog::loadCircleGroupMeta(const uint32_t &token)
+void IdDialog::updateCircles()
 {
-	mStateHelper->setLoading(CIRCLESDIALOG_GROUPMETA, false);
+	RsThread::async([this]()
+	{
+        // 1 - get message data from p3GxsForums
 
+#ifdef DEBUG_FORUMS
+        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
+
+        std::list<RsGroupMetaData> circle_metas ;
+
+		if(!rsGxsCircles->getCirclesSummaries(circle_metas))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			return;
+        }
+
+        RsQThreadUtils::postToObject( [circle_metas,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            loadCircles(circle_metas);
+
+		}, this );
+
+    });
+}
+
+void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
+{
 #ifdef ID_DEBUG
 	std::cerr << "CirclesDialog::loadCircleGroupMeta()";
 	std::cerr << std::endl;
 #endif
-
-	std::list<RsGroupMetaData> groupInfo;
-	std::list<RsGroupMetaData>::iterator vit;
-
-	if (!rsGxsCircles->getGroupSummary(token,groupInfo))
-	{
-		std::cerr << "CirclesDialog::loadCircleGroupMeta() Error getting GroupMeta";
-		std::cerr << std::endl;
-		mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, false);
-		return;
-	}
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
@@ -585,7 +594,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 	std::list<RsGxsId> own_identities ;
 	rsIdentity->getOwnIds(own_identities) ;
 
-	for(vit = groupInfo.begin(); vit != groupInfo.end();++vit)
+	for(auto vit = groupInfo.begin(); vit != groupInfo.end();++vit)
 	{
 #ifdef ID_DEBUG
 		std::cerr << "CirclesDialog::loadCircleGroupMeta() GroupId: " << vit->mGroupId << " Group: " << vit->mGroupName << std::endl;
@@ -891,6 +900,7 @@ static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members,
     }
 }
 
+#ifdef TO_REMOVE
 void IdDialog::loadCircleGroupData(const uint32_t& token)
 {
 #ifdef ID_DEBUG
@@ -985,8 +995,8 @@ void IdDialog::updateCircleGroup(const uint32_t& token)
     rsGxsCircles->updateGroup(token2,cg) ;
     
     mCircleUpdates.erase(it) ;
-    requestCircleGroupMeta();
 }
+#endif
 
 bool IdDialog::getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id)
 {
@@ -1011,8 +1021,6 @@ void IdDialog::createExternalCircle()
 	CreateCircleDialog dlg;
 	dlg.editNewId(true);
 	dlg.exec();
-    
-    requestCircleGroupMeta();	// update GUI
 }
 void IdDialog::showEditExistingCircle()
 {
@@ -1027,8 +1035,6 @@ void IdDialog::showEditExistingCircle()
     
     dlg.editExistingId(RsGxsGroupId(id),true,!(subscribe_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)) ;
     dlg.exec();
-    
-    requestCircleGroupMeta();	// update GUI
 }
 
 void IdDialog::grantCircleMembership() 
@@ -1453,7 +1459,7 @@ void IdDialog::filterToggled(const bool &value)
 		QAction *source = qobject_cast<QAction *>(QObject::sender());
 		if (source) {
 			filter = source->data().toInt();
-			requestIdList();
+			updateIdList();
 		}
 	}
 }
@@ -1470,13 +1476,13 @@ void IdDialog::updateSelection()
 	if (id != mId) {
 		mId = id;
 		requestIdDetails();
-		requestRepList();
+		//updateRepList();
 	}
 }
 
 
 
-void IdDialog::requestIdList()
+void IdDialog::updateIdList()
 {
 	//Disable by default, will be enable by insertIdDetails()
 	ui->removeIdentity->setEnabled(false);
@@ -1485,16 +1491,53 @@ void IdDialog::requestIdList()
 	if (!mIdQueue)
 		return;
 
-	mStateHelper->setLoading(IDDIALOG_IDLIST, true);
+	int accept = filter;
 
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDLIST);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+ 	RsThread::async([this]()
+	{
+        // 1 - get message data from p3GxsForums
 
-	uint32_t token;
+#ifdef DEBUG_FORUMS
+        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
 
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
+        std::list<RsGroupMetaData> identity_metas ;
+
+		if (!rsIdentity->getIdentitiesSummaries(identity_metas))
+		{
+			std::cerr << "IdDialog::insertIdList() Error getting GroupData" << std::endl;
+			return;
+		}
+
+        std::set<RsGxsId> ids;
+        for(auto it(identity_metas.begin());it!=identity_metas.end();++it)
+            ids.insert(RsGxsId((*it).mGroupId));
+
+        std::vector<RsGxsIdGroup> groups;
+
+        if(!rsIdentity->getIdentitiesInfo(ids,groups))
+		{
+			std::cerr << "IdDialog::insertIdList() Error getting identities info" << std::endl;
+			return;
+		}
+
+		std::map<RsGxsGroupId,RsGxsIdGroup> ids_set;
+
+        for(auto it(groups.begin());it!=groups.end();++it)
+            ids_set[(*it).mMeta.mGroupId] = *it;
+
+        RsQThreadUtils::postToObject( [ids_set,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            loadIdentities(ids_set);
+
+		}, this );
+
+    });
 }
 
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
@@ -1656,8 +1699,10 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	return true;
 }
 
-void IdDialog::insertIdList(uint32_t token)
+void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set_const)
 {
+    auto ids_set(ids_set_const);
+
 	//First: Get current item to restore after
 	RsGxsGroupId oldCurrentId = mIdToNavigate;
 	{
@@ -1666,35 +1711,7 @@ void IdDialog::insertIdList(uint32_t token)
 			oldCurrentId = RsGxsGroupId(oldCurrent->text(RSID_COL_KEYID).toStdString());
 		}
 	}
-
-	mStateHelper->setLoading(IDDIALOG_IDLIST, false);
-
-	int accept = filter;
-		
-	//RsGxsIdGroup data;
-	std::vector<RsGxsIdGroup> datavector;
-	//std::vector<RsGxsIdGroup>::iterator vit;
-    
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::insertIdList() Error getting GroupData";
-		std::cerr << std::endl;
-#endif
-
-		mStateHelper->setActive(IDDIALOG_IDLIST, false);
-		mStateHelper->clear(IDDIALOG_IDLIST);
-		clearPerson();
-
-		return;
-	}
-    
-    	// turn that vector into a std::set, to avoid a linear search
-    
-    	std::map<RsGxsGroupId,RsGxsIdGroup> ids_set ;
-        
-        for(uint32_t i=0;i<datavector.size();++i)
-            ids_set[datavector[i].mMeta.mGroupId] = datavector[i] ;
+    int accept = filter;
 
 	mStateHelper->setActive(IDDIALOG_IDLIST, true);
 
@@ -1709,27 +1726,27 @@ void IdDialog::insertIdList(uint32_t token)
 	while ((item = *itemIterator) != NULL) 
 	{
 		++itemIterator;
-		std::map<RsGxsGroupId,RsGxsIdGroup>::iterator it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
+		auto it = ids_set.find(RsGxsGroupId(item->text(RSID_COL_KEYID).toStdString())) ;
 
 		if(it == ids_set.end())
 		{
 			if(item != allItem && item != contactsItem && item != ownItem)
 				delete(item);
-                        
-                        continue ;
-		} 
-                
-        	QTreeWidgetItem *parent_item = item->parent() ;
-                    
-                if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
-                {
-                    delete item ;	// do not remove from the list, so that it is added again in the correct place.
-                    continue ;
-                }
-                
+
+			continue ;
+		}
+
+		QTreeWidgetItem *parent_item = item->parent() ;
+
+		if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
+		{
+			delete item ;	// do not remove from the list, so that it is added again in the correct place.
+			continue ;
+		}
+
 		if (!fillIdListItem(it->second, item, ownPgpId, accept))
 			delete(item);
-            
+
 		ids_set.erase(it);	// erase, so it is not considered to be a new item
 	}
 
@@ -2167,7 +2184,7 @@ void IdDialog::modifyReputation()
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
     requestIdDetails();
-    requestIdList();
+    updateIdList();
 
 	return;
 }
@@ -2201,13 +2218,13 @@ void IdDialog::updateDisplay(bool complete)
 
 	if (complete) {
 		/* Fill complete */
-		requestIdList();
+		updateIdList();
 		//requestIdDetails();
 		requestRepList();
 
+		updateCircles();
 		return;
 	}
-	requestCircleGroupMeta();
 
 //	std::set<RsGxsGroupId> grpIds;
 //	getAllGrpIds(grpIds);
@@ -2356,9 +2373,9 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
     {
 	    switch(req.mUserType)
 	    {
-	    case IDDIALOG_IDLIST:
-		    insertIdList(req.mToken);
-		    break;
+//	    case IDDIALOG_IDLIST:
+//		    insertIdList(req.mToken);
+//		    break;
 
 	    case IDDIALOG_IDDETAILS:
 		    insertIdDetails(req.mToken);
@@ -2383,6 +2400,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 	    }
     }
     
+#ifdef TO_REMOVE
     if(queue == mCircleQueue)
     {
 #ifdef ID_DEBUG
@@ -2393,17 +2411,17 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 	    /* now switch on req */
 	    switch(req.mUserType)
 	    {
-	    case CIRCLESDIALOG_GROUPMETA:
-		    loadCircleGroupMeta(req.mToken);
-		    break;
+//	    case CIRCLESDIALOG_GROUPMETA:
+//		    loadCircleGroupMeta(req.mToken);
+//		    break;
 
-	    case CIRCLESDIALOG_GROUPDATA:
-		    loadCircleGroupData(req.mToken);
-		    break;
-
-	    case CIRCLESDIALOG_GROUPUPDATE:
-		    updateCircleGroup(req.mToken);
-		    break;
+//	    case CIRCLESDIALOG_GROUPDATA:
+//		    loadCircleGroupData(req.mToken);
+//		    break;
+//
+//	    case CIRCLESDIALOG_GROUPUPDATE:
+//		    updateCircleGroup(req.mToken);
+//		    break;
             
 	    default:
 		    std::cerr << "CirclesDialog::loadRequest() ERROR: INVALID TYPE";
@@ -2411,6 +2429,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 		    break;
 	    }
     }
+#endif
 }
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
@@ -2744,7 +2763,7 @@ void IdDialog::negativePerson()
     }
 
 	requestIdDetails();
-	requestIdList();
+	updateIdList();
 }
 
 void IdDialog::neutralPerson()
@@ -2760,7 +2779,7 @@ void IdDialog::neutralPerson()
     }
 
 	requestIdDetails();
-	requestIdList();
+	updateIdList();
 }
 void IdDialog::positivePerson()
 {
@@ -2775,7 +2794,7 @@ void IdDialog::positivePerson()
     }
 
 	requestIdDetails();
-	requestIdList();
+	updateIdList();
 }
 
 void IdDialog::addtoContacts()
@@ -2789,7 +2808,7 @@ void IdDialog::addtoContacts()
 	rsIdentity->setAsRegularContact(RsGxsId(Id),true);
     }
 
-	requestIdList();
+	updateIdList();
 }
 
 void IdDialog::removefromContacts()
@@ -2803,7 +2822,7 @@ QList<QTreeWidgetItem *> selected_items = ui->idTreeWidget->selectedItems();
 	rsIdentity->setAsRegularContact(RsGxsId(Id),false);
     }
 
-	requestIdList();
+	updateIdList();
 }
 
 void IdDialog::on_closeInfoFrameButton_clicked()
