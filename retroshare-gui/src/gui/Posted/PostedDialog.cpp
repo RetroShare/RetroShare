@@ -94,7 +94,7 @@ UserNotify *PostedDialog::createUserNotify(QObject *parent)
 QString PostedDialog::getHelpString() const
 {
 	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>    \
-    <p>The poards service allows you to share internet links, that spread among Retroshare nodes like forums and \
+    <p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and \
 	 channels</p> \
 	 <p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to  \
 	 enlight important links.</p> \
