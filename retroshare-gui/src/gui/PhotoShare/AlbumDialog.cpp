@@ -61,7 +61,7 @@ void AlbumDialog::setUp()
 
 
     QPixmap qtn;
-    GxsIdDetails::loadPixmapFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str(),qtn);
+    GxsIdDetails::loadPixmapFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size,qtn, GxsIdDetails::ORIGINAL);
 
     if(mAlbum.mThumbnail.size != 0)
     {

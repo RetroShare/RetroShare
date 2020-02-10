@@ -51,6 +51,12 @@ void RsGxsWireGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,group.mDescription,"group.mDescription") ;
 }
 
+void RsGxsWirePulseItem::clear()
+{
+	pulse.mPulseText.clear();
+	pulse.mHashTags.clear();
+}
+
 void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mPulseText,"pulse.mPulseText") ;

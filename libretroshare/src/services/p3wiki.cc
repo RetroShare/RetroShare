@@ -40,7 +40,7 @@ RsWiki *rsWiki = NULL;
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
 	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXS_TYPE_WIKI, gixs, wikiAuthenPolicy()), 
-	 RsWiki(this)
+	RsWiki(static_cast<RsGxsIface&>(*this))
 {
 	// Setup of dummy Pages.
 	mAboutActive = false;

@@ -622,8 +622,8 @@ void WikiEditDialog::requestPage(const RsGxsGrpMsgIdPair &msgId)
         opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
         GxsMsgReq msgIds;
-        std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
-        vect_msgIds.push_back(msgId.second);
+        std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+        set_msgIds.insert(msgId.second);
 
 	uint32_t token;
         mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIEDITDIALOG_PAGE);
