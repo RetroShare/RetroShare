@@ -36,7 +36,13 @@ using rs_is_scoped_enum = std::integral_constant< bool,
  * it as flags type passing it as parameter of this macro.
  * The result will be type safe flags, that cannot be mixed up with flag of a
  * different type, but that are very comfortable to operate like plain old
- * integers.
+ * integers. All commom operation like &, | or ! can be used. To convert
+ * the result of such operation to boolean use !!:
+@code{.cpp}
+RsConnectModes connect = rsConfig->getConnectModes();
+if (!!(connect & RsConnectModes::OUTGOING_TCP))
+@endcode
+ *
  * This macro support flag fields of different lenght depending on what
  * underlining type (usually from uint8_t up to uint64_t) has been declared for
  * the enum class.
@@ -44,6 +50,7 @@ using rs_is_scoped_enum = std::integral_constant< bool,
  * underlining type of the enum otherwise different compilers may serialize a
  * flag variable with different lenght, potentially causing interoperability
  * issues between differents builds.
+ *
  * Usage example:
 @code{.cpp}
 enum class RsGrouterItemFlags : uint32_t
@@ -129,9 +136,9 @@ operator <<(std::ostream& stream, EFT flags)
 {
 	using u_t = typename std::underlying_type<EFT>::type;
 
-	for(int i = sizeof(u_t); i>=0; --i)
+	for(int i = sizeof(u_t) << 3; i>=0; --i)
 	{
-		stream << (flags & ( 1 << i ) ? "1" : "0");
+		stream << ((static_cast<u_t>(flags) & ( 1 << i )) ? "1" : "0");
 		if( i % 8 == 0 ) stream << " ";
 	}
 	return stream;
