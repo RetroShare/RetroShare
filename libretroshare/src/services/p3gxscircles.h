@@ -345,6 +345,8 @@ public:
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
+    bool mCacheUpdated ;
+    rstime_t mLastCacheUpdateEvent;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

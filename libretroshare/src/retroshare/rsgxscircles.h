@@ -187,6 +187,10 @@ enum class RsGxsCircleEventCode: uint8_t
 
 	/** mCircleId contains the circle id */
 	NEW_CIRCLE                = 0x06,
+
+	/** no additional information. Simply means that the info previously from the cache has changed. */
+	CACHE_DATA_UPDATED        = 0x07,
+
 };
 
 struct RsGxsCircleEvent: RsEvent
