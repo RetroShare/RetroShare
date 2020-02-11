@@ -41,7 +41,7 @@ class GxsIdRSTreeWidgetItem : public QObject, public RSTreeWidgetItem
 	Q_OBJECT
 
 public:
-    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent = NULL);
+    GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip=true,QTreeWidget *parent = NULL);
 
 	void setId(const RsGxsId &id, int column, bool retryWhenFailed);
 	bool getId(RsGxsId &id);
@@ -57,6 +57,7 @@ public:
     	void setBannedState(bool b) { mBannedState = b; }	// does not actually change the state, but used instead by callbacks to leave a trace
     	void updateBannedState() ;				// checks reputation, and update is needed
 
+        bool autoTooltip() const { return mAutoTooltip; }
 private slots:
 	void startProcess();
 
@@ -66,8 +67,9 @@ private:
 	RsGxsId mId;
 	int mColumn;
 	bool mIdFound;
-    	bool mBannedState ;
+	bool mBannedState ;
 	bool mRetryWhenFailed;
+    bool mAutoTooltip;
 	RsReputationLevel mReputationLevel;
 	uint32_t mIconTypeMask;
 	RsGxsImage mAvatar;

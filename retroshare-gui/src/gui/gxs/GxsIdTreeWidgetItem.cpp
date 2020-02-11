@@ -26,8 +26,8 @@
 #define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
 
 /** Constructor */
-GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,QTreeWidget *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask)
+GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip,QTreeWidget *parent)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask),mAutoTooltip(auto_tooltip)
 {
 	init();
 }
@@ -72,7 +72,9 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 	}
 
 	int column = item->idColumn();
-	item->setToolTip(column, GxsIdDetails::getComment(details));
+
+    if(item->autoTooltip())
+		item->setToolTip(column, GxsIdDetails::getComment(details));
 
 	item->setText(column, GxsIdDetails::getNameForType(type, details));
 	item->setData(column, Qt::UserRole, QString::fromStdString(details.mId.toStdString()));

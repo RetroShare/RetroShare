@@ -37,6 +37,7 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 //#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/rsharesettings.h"
@@ -767,13 +768,13 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #ifdef ID_DEBUG
 			std::cerr << "invited: " << invited << ", subscription: " << subscrb ;
 #endif
-			QTreeWidgetItem *subitem = NULL ;
+			GxsIdRSTreeWidgetItem *subitem = NULL ;
 
 			// see if the item already exists
 			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
 				{
-					subitem = item->child(k);
+					subitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item->child(k));
 #ifdef ID_DEBUG
 					std::cerr << " found existing sub item." << std::endl;
 #endif
@@ -802,20 +803,22 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #ifdef ID_DEBUG
 				std::cerr << " no existing sub item. Creating new one." << std::endl;
 #endif
-				subitem = new QTreeWidgetItem(item);
+				subitem = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR,false);
+
+                subitem->setId(it->first,CIRCLEGROUP_CIRCLE_COL_GROUPNAME,true);
 
 				RsIdentityDetails idd ;
 				bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
 
-				QPixmap pixmap ;
+				// QPixmap pixmap ;
 
-				if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
-					pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::SMALL) ;
+				// if(idd.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idd.mAvatar.mData, idd.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				// 	pixmap = GxsIdDetails::makeDefaultIcon(it->first,GxsIdDetails::SMALL) ;
 
-				if(has_id)
-					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
-				else
-					subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID:")+QString::fromStdString(it->first.toStdString())) ;
+				// if(has_id)
+				// 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(idd.mNickname.c_str())) ;
+				// else
+				// 	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, tr("Unknown ID:")+QString::fromStdString(it->first.toStdString())) ;
 
 				QString tooltip ;
 				tooltip += tr("Identity ID: ")+QString::fromStdString(it->first.toStdString()) ;
@@ -836,7 +839,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(it->second)) ;
 				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID, Qt::UserRole, QString::fromStdString(it->first.toStdString())) ;
 
-				subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
+				//subitem->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
 
 				item->addChild(subitem) ;
 			}
@@ -1565,7 +1568,9 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 		return false;
 
 	if (!item)
+    {
         item = new TreeWidgetItem();
+    }
         
 
     item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
@@ -1747,6 +1752,10 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 			else
 				allItem->addChild(item);
 		}
+        GxsIdLabel *label = new GxsIdLabel();
+		label->setId(RsGxsId(data.mMeta.mGroupId)) ;
+
+        ui->treeWidget_membership->setItemWidget(item,0,label) ;
 	}
 	
 	/* count items */
