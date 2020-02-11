@@ -146,8 +146,6 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
 
-	mIdQueue = NULL;
-    
     mEventHandlerId_identity = 0;
 	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_identity );
 
@@ -358,8 +356,6 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	QHeaderView * idheader = ui->idTreeWidget->header();
 	QHeaderView_setSectionResizeModeColumn(idheader, RSID_COL_VOTES, QHeaderView::ResizeToContents);
 
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
 	mStateHelper->setActive(IDDIALOG_REPLIST, false);
 
@@ -389,10 +385,6 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
     connect(ui->treeWidget_membership, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(CircleListCustomPopupMenu(QPoint)));
     connect(ui->autoBanIdentities_CB, SIGNAL(toggled(bool)), this, SLOT(toggleAutoBanIdentities(bool)));
 
-    
-    /* Setup TokenQueue */
-    mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
-    
     updateCircles();
     updateIdList();
 }
@@ -415,7 +407,7 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 			updateIdList();
 
     		if(!mId.isNull() && mId == e->mIdentityId)
-				requestIdDetails();
+				updateIdentity();
 
 			break;
 		default:
@@ -1039,54 +1031,36 @@ void IdDialog::showEditExistingCircle()
 
 void IdDialog::grantCircleMembership() 
 {
-    RsGxsCircleId circle_id ;
+	RsGxsCircleId circle_id ;
 
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
 	    return;
 
-    RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
+    RsGxsId gxs_id_to_grant(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	RsThread::async([circle_id,gxs_id_to_grant]()
+	{
+        // 1 - get message data from p3GxsForums
 
-    std::list<RsGxsGroupId> grps ;
-    grps.push_back(RsGxsGroupId(circle_id));
-
-    uint32_t token;
-    mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
-
-    CircleUpdateOrder c ;
-    c.token = token ;
-    c.gxs_id = gxs_id_to_revoke ;
-    c.action = CircleUpdateOrder::GRANT_MEMBERSHIP ;
-
-    mCircleUpdates[token] = c ;
+        rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { gxs_id_to_grant } ),circle_id);
+    });
 }
 
 void IdDialog::revokeCircleMembership() 
 {
-    RsGxsCircleId circle_id ;
+	RsGxsCircleId circle_id ;
 
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
 	    return;
 
     RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	RsThread::async([circle_id,gxs_id_to_revoke]()
+	{
+        // 1 - get message data from p3GxsForums
 
-    std::list<RsGxsGroupId> grps ;
-    grps.push_back(RsGxsGroupId(circle_id));
-
-    uint32_t token;
-    mCircleQueue->requestGroupInfo(token,  RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
-
-    CircleUpdateOrder c ;
-    c.token = token ;
-    c.gxs_id = gxs_id_to_revoke ;
-    c.action = CircleUpdateOrder::REVOKE_MEMBERSHIP ;
-
-    mCircleUpdates[token] = c ;
+        rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { gxs_id_to_revoke } ),circle_id);
+    });
 }
 
 void IdDialog::acceptCircleSubscription() 
@@ -1394,7 +1368,6 @@ IdDialog::~IdDialog()
 	processSettings(false);
 
 	delete(ui);
-	delete(mIdQueue);
 }
 
 static QString getHumanReadableDuration(uint32_t seconds)
@@ -1475,7 +1448,7 @@ void IdDialog::updateSelection()
 
 	if (id != mId) {
 		mId = id;
-		requestIdDetails();
+		updateIdentity();
 		//updateRepList();
 	}
 }
@@ -1488,11 +1461,7 @@ void IdDialog::updateIdList()
 	ui->removeIdentity->setEnabled(false);
 	ui->editIdentity->setEnabled(false);
 
-	if (!mIdQueue)
-		return;
-
 	int accept = filter;
-
 
  	RsThread::async([this]()
 	{
@@ -1788,10 +1757,8 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	updateSelection();
 }
 
-void IdDialog::requestIdDetails()
+void IdDialog::updateIdentity()
 {
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDDETAILS);
-
 	if (mId.isNull())
 	{
 		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
@@ -1804,52 +1771,47 @@ void IdDialog::requestIdDetails()
 
 	mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	RsThread::async([this]()
+	{
+#ifdef ID_DEBUG
+        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
+#endif
 
-	uint32_t token;
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
+        std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
+        std::vector<RsGxsIdGroup> ids_data;
 
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDIALOG_IDDETAILS);
+		if(!rsIdentity->getIdentitiesInfo(ids,ids_data))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			return;
+        }
+
+        if(ids_data.size() != 1)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			return;
+        }
+        RsGxsIdGroup group(ids_data[0]);
+
+        RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            loadIdentity(group);
+
+		}, this );
+	});
 }
 
-void IdDialog::insertIdDetails(uint32_t token)
+void IdDialog::loadIdentity(RsGxsIdGroup data)
 {
 	mStateHelper->setLoading(IDDIALOG_IDDETAILS, false);
 
 	/* get details from libretroshare */
-	RsGxsIdGroup data;
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDIALOG_REPLIST);
-		clearPerson();
-
-		ui->lineEdit_KeyId->setText("ERROR GETTING KEY!");
-
-		return;
-	}
-
-	if (datavector.size() != 1)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
-#endif
-
-		mStateHelper->setActive(IDDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDIALOG_IDDETAILS);
-		clearPerson();
-
-		ui->lineEdit_KeyId->setText("INVALID DV SIZE");
-
-		return;
-	}
 
 	mStateHelper->setActive(IDDIALOG_IDDETAILS, true);
-
-	data = datavector[0];
 
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
@@ -2183,7 +2145,7 @@ void IdDialog::modifyReputation()
 
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-    requestIdDetails();
+    updateIdentity();
     updateIdList();
 
 	return;
@@ -2220,7 +2182,7 @@ void IdDialog::updateDisplay(bool complete)
 		/* Fill complete */
 		updateIdList();
 		//requestIdDetails();
-		requestRepList();
+		//requestRepList();
 
 		updateCircles();
 		return;
@@ -2298,6 +2260,7 @@ void IdDialog::filterIds()
 	ui->idTreeWidget->filterItems(filterColumn, text);
 }
 
+#ifdef TO_REMOVE
 void IdDialog::requestRepList()
 {
 	// Removing this for the moment.
@@ -2373,9 +2336,10 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
     {
 	    switch(req.mUserType)
 	    {
-//	    case IDDIALOG_IDLIST:
-//		    insertIdList(req.mToken);
-//		    break;
+#ifdef TO_REMOVE
+	    case IDDIALOG_IDLIST:
+		    insertIdList(req.mToken);
+		    break;
 
 	    case IDDIALOG_IDDETAILS:
 		    insertIdDetails(req.mToken);
@@ -2397,6 +2361,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
 		    std::cerr << "IdDialog::loadRequest() ERROR";
 		    std::cerr << std::endl;
 		    break;
+#endif
 	    }
     }
     
@@ -2431,6 +2396,7 @@ void IdDialog::loadRequest(const TokenQueue * queue, const TokenRequest &req)
     }
 #endif
 }
+#endif
 
 void IdDialog::IdListCustomPopupMenu( QPoint )
 {
@@ -2618,22 +2584,36 @@ void IdDialog::copyRetroshareLink()
 	if(! rsIdentity->getIdDetails(gxs_id,details))
 		return ;
 
-	if (!mIdQueue)
-		return;
+	RsThread::async([gxs_id,details,this]()
+	{
+#ifdef ID_DEBUG
+        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
+#endif
+        std::string radix,errMsg;
 
-	mStateHelper->setLoading(IDDIALOG_SERIALIZED_GROUP, true);
+		if(!rsIdentity->exportIdentityLink( radix, gxs_id, true, std::string(), errMsg))
+		{
+			std::cerr << "Cannot retrieve identity data " << mId << " to create a link. Error:" << errMsg << std::endl;
+            return ;
+		}
 
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_SERIALIZED_GROUP);
+        RsQThreadUtils::postToObject( [radix,details,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
 
-    std::list<RsGxsGroupId> ids ;
-    ids.push_back(RsGxsGroupId(gxs_id)) ;
+			QList<RetroShareLink> urls ;
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_SERIALIZED_DATA;
+			RetroShareLink link = RetroShareLink::createIdentity(details.mId,QString::fromUtf8(details.mNickname.c_str()),QString::fromStdString(radix)) ;
+			urls.push_back(link);
 
-	uint32_t token;
+			RSLinkClipboard::copyLinks(urls) ;
 
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, ids, IDDIALOG_SERIALIZED_GROUP);
+			QMessageBox::information(NULL,tr("information"),tr("This identity link was copied to your clipboard. Paste it in a mail, or a message to transmit the identity to someone.")) ;
+
+		}, this );
+	});
 }
 
 void IdDialog::chatIdentity()
@@ -2762,7 +2742,7 @@ void IdDialog::negativePerson()
 	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEGATIVE);
     }
 
-	requestIdDetails();
+	updateIdentity();
 	updateIdList();
 }
 
@@ -2778,7 +2758,7 @@ void IdDialog::neutralPerson()
 	    rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::NEUTRAL);
     }
 
-	requestIdDetails();
+	updateIdentity();
 	updateIdList();
 }
 void IdDialog::positivePerson()
@@ -2793,7 +2773,7 @@ void IdDialog::positivePerson()
 		rsReputations->setOwnOpinion(RsGxsId(Id), RsOpinion::POSITIVE);
     }
 
-	requestIdDetails();
+	updateIdentity();
 	updateIdList();
 }
 

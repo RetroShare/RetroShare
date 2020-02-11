@@ -365,6 +365,36 @@ bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	return editCircle(circleGrp);
 }
 
+bool p3GxsCircles::revokeIdsFromCircle( const std::set<RsGxsId>& identities, const RsGxsCircleId& circleId )
+{
+	const std::list<RsGxsGroupId> circlesIds{ RsGxsGroupId(circleId) };
+	std::vector<RsGxsCircleGroup> circlesInfo;
+
+	if(!getCirclesInfo(circlesIds, circlesInfo))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting group data." << std::endl;
+		return false;
+	}
+
+	if(circlesInfo.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Circle: " << circleId.toStdString() << " not found!" << std::endl;
+		return false;
+	}
+
+	RsGxsCircleGroup& circleGrp = circlesInfo[0];
+
+	if(!(circleGrp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Attempt to edit non-own " << "circle: " << circleId.toStdString() << std::endl;
+		return false;
+	}
+
+	circleGrp.mInvitedMembers.erase(identities.begin(), identities.end());
+
+	return editCircle(circleGrp);
+}
+
 bool p3GxsCircles::exportCircleLink(
         std::string& link, const RsGxsCircleId& circleId,
         bool includeGxsData, const std::string& baseUrl, std::string& errMsg )
