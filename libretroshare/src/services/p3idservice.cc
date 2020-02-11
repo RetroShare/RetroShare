@@ -4732,6 +4732,8 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 		case GXSID_EVENT_REQUEST_IDS:
 			requestIdsFromNet();
 		    break;
+	    case GXSID_EVENT_REPUTATION:
+		    break;
 	default:
 		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: "
 		        << event_type << std::endl;
