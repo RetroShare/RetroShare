@@ -436,8 +436,8 @@ void WikiDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
 	uint32_t token;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
-	vect_msgIds.push_back(msgId.second);
+	std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+	set_msgIds.insert(msgId.second);
 
 	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
 }
@@ -698,10 +698,10 @@ void WikiDialog::updateDisplay(bool complete)
 		requestGroupMeta();
 	} else {
 		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator msgIt;
 		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
 			wikiGroupChanged(QString::fromStdString(msgIt->first.toStdString()));
 		}
