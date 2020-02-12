@@ -17,7 +17,16 @@
    <bool>true</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
     <number>0</number>
    </property>
    <property name="spacing">
@@ -46,7 +55,16 @@
           <enum>QFrame::NoFrame</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
            <number>0</number>
           </property>
           <property name="spacing">
@@ -54,7 +72,16 @@
           </property>
           <item row="0" column="0">
            <layout class="QGridLayout" name="gridLayout_2">
-            <property name="margin">
+            <property name="leftMargin">
+             <number>3</number>
+            </property>
+            <property name="topMargin">
+             <number>3</number>
+            </property>
+            <property name="rightMargin">
+             <number>3</number>
+            </property>
+            <property name="bottomMargin">
              <number>3</number>
             </property>
             <item row="0" column="0">
@@ -65,7 +92,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QLineEdit" name="lineEdit_Title_2"/>
+             <widget class="QLineEdit" name="lineEdit_Title"/>
             </item>
             <item row="0" column="2" rowspan="2">
              <widget class="QToolButton" name="AlbumThumbNail">
@@ -110,7 +137,7 @@ border-radius: 10px;
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QComboBox" name="comboBox_Category_2">
+             <widget class="QComboBox" name="comboBox_Category">
               <item>
                <property name="text">
                 <string>Animals</string>
@@ -354,18 +381,13 @@ border-radius: 10px;
                 </widget>
                </item>
                <item>
-                <widget class="QComboBox" name="comboBox">
+                <widget class="GxsIdChooser" name="IdChooser">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
-                 <item>
-                  <property name="text">
-                   <string>Publish with Identity</string>
-                  </property>
-                 </item>
                 </widget>
                </item>
               </layout>
@@ -431,8 +453,8 @@ p, li { white-space: pre-wrap; }
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>621</width>
-              <height>458</height>
+              <width>61</width>
+              <height>18</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -451,7 +473,16 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="0">
     <widget class="QFrame" name="frame">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>9</number>
+      </property>
+      <property name="topMargin">
+       <number>9</number>
+      </property>
+      <property name="rightMargin">
+       <number>9</number>
+      </property>
+      <property name="bottomMargin">
        <number>9</number>
       </property>
       <item>
@@ -512,6 +543,11 @@ p, li { white-space: pre-wrap; }
    <extends>QWidget</extends>
    <header>gui/PhotoShare/PhotoDrop.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>GxsIdChooser</class>
+   <extends>QComboBox</extends>
+   <header>gui/gxs/GxsIdChooser.h</header>
   </customwidget>
  </customwidgets>
  <resources>

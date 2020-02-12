@@ -287,9 +287,11 @@
         <file>icons/png/newsfeed2.png</file>
         <file>icons/png/postedlinks.png</file>
         <file>icons/png/people2.png</file>
+        <file>icons/png/photo.png</file>
         <file>icons/png/bandwidth.png</file>
         <file>icons/png/options2.png</file>
         <file>icons/png/exit2.png</file>
+        <file>icons/png/wiki.png</file>
         <file>icons/svg/addstickers.svg</file>
         <file>icons/png/addstickers.png</file>
         <file>icons/textedit/bold.png</file>
