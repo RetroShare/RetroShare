@@ -52,14 +52,13 @@ private:
 private slots:
 	void createPost();
 	void addPicture();
-	void on_postButton_clicked();
-	void on_imageButton_clicked();
-	void on_linkButton_clicked();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
+	void setPage(int viewMode);
 private:
 	void processSettings(bool load);
+	int viewMode();
 
 	QString mLink;
 	QString mNotes;
