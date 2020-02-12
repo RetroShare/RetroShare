@@ -27,6 +27,7 @@
 #include "util/qtthreadsutils.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "PostedCreatePostDialog.h"
+#include "gui/settings/rsharesettings.h"
 #include "PostedItem.h"
 #include "PostedCardView.h"
 #include "gui/common/UIStateHelper.h"
@@ -113,6 +114,7 @@ PostedListWidget::PostedListWidget(const RsGxsGroupId &postedId, QWidget *parent
 	/* Initialize GUI */
 	setGroupId(postedId);
 }
+
 PostedListWidget::~PostedListWidget()
 {
 	// save settings
@@ -147,16 +149,37 @@ void PostedListWidget::processSettings(bool load)
 {
 	Settings->beginGroup(QString("PostedListWidget"));
 
-	if (load) {
+	if (load)
+    {
 		// load settings
 		
-		/* View mode */
 		setViewMode(Settings->value("viewMode", VIEW_MODE_CLASSIC).toInt());
-	} else {
+
+        RsGxsId voteId(Settings->value("defaultIdentity",QString()).toString().toStdString());
+
+        if(!voteId.isNull())
+			ui->idChooser->setChosenId(voteId);
+
+	}
+    else
+    {
 		// save settings
 
 		/* View mode */
 		Settings->setValue("viewMode", viewMode());
+
+		RsGxsId voteId;
+
+		switch (ui->idChooser->getChosenId(voteId))
+        {
+		case GxsIdChooser::KnowId:
+		case GxsIdChooser::UnKnowId: Settings->setValue("defaultIdentity",QString::fromStdString(voteId.toStdString()));
+		break;
+		default:
+		case GxsIdChooser::NoId:
+		case GxsIdChooser::None:
+            break;
+        }
 	}
 
 	Settings->endGroup();
@@ -310,10 +333,10 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 		std::cerr << "PostedListWidget::createPost() ERROR GETTING AuthorId!, Vote Failed";
 		std::cerr << std::endl;
 
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id before Voting"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a default identity to use for voting"), QMessageBox::Ok, QMessageBox::Ok);
 
 		return;
-	}//switch (ui.idChooser->getChosenId(authorId))
+	}
 
 	RsGxsVote vote;
 
@@ -322,11 +345,10 @@ void PostedListWidget::submitVote(const RsGxsGrpMsgIdPair &msgId, bool up)
 	vote.mMeta.mParentId = msgId.second;
 	vote.mMeta.mAuthorId = authorId;
 
-	if (up) {
+	if (up)
 		vote.mVoteType = GXS_VOTE_UP;
-	} else { //if (up)
+	else
 		vote.mVoteType = GXS_VOTE_DOWN;
-	}//if (up)
 
 #ifdef DEBUG_POSTED_LIST_WIDGET
 	std::cerr << "PostedListWidget::submitVote()";
