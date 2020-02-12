@@ -285,7 +285,7 @@
          <string notr="true"/>
         </property>
         <property name="title">
-         <string>Topic Details</string>
+         <string>Board Details</string>
         </property>
         <property name="flat">
          <bool>false</bool>
