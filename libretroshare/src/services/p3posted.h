@@ -39,12 +39,12 @@
 
 class p3Posted: public p3PostBase, public RsPosted
 {
-	public:
+public:
 
 	p3Posted(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs* gixs);
-virtual RsServiceInfo getServiceInfo();
+	virtual RsServiceInfo getServiceInfo();
 
-	protected:
+protected:
 
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
@@ -58,8 +58,17 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	return RsGxsIfaceHelper::receiveChanges(changes);
 }
 
-	// Posted Specific DataTypes.
-virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
+	bool getBoardsInfo(
+	        const std::list<RsGxsGroupId>& boardsIds,
+	        std::vector<RsPostedGroup>& channelsInfo ) override;
+
+	bool getBoardContent(
+	            const RsGxsGroupId& boardId,
+	            const std::set<RsGxsMessageId>& contentsIds,
+	            std::vector<RsPostedPost>& posts,
+	            std::vector<RsGxsComment>& comments ) override;
+
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
 //Not currently used
