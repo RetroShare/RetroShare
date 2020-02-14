@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <QMessageBox>
 
-#include "AlbumCreateDialog.h"
+#include "AlbumGroupDialog.h"
 #include "AlbumItem.h"
 #include "PhotoItem.h"
 
@@ -215,7 +215,7 @@ void PhotoShare::OpenSlideShow()
 
 void PhotoShare::createAlbum()
 {
-    AlbumCreateDialog albumCreate(mPhotoQueue, rsPhoto, this);
+    AlbumGroupDialog albumCreate(mPhotoQueue, this);
     albumCreate.exec();
 }
 

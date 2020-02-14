@@ -37,8 +37,8 @@ RsItem *RsGxsPhotoSerialiser::create_item(uint16_t service, uint8_t item_sub_id)
     switch(item_sub_id)
     {
     case RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM: return new RsGxsPhotoCommentItem() ;
-    case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM: return new RsGxsPhotoAlbumItem() ;
-    case RS_PKT_SUBTYPE_PHOTO_ITEM: return new RsGxsPhotoPhotoItem() ;
+    case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM: return new RsGxsPhotoPhotoItem() ;
+    case RS_PKT_SUBTYPE_PHOTO_ITEM: return new RsGxsPhotoAlbumItem() ;
     default:
         return NULL ;
     }
@@ -55,25 +55,23 @@ void RsGxsPhotoAlbumItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
      RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,     album.mPhotographer,  "mPhotographer");
      RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DATE,     album.mWhen,          "mWhen");
      RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION, album.mWhere,         "mWhere");
-     RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PIC_TYPE, album.mThumbnail.type,"mThumbnail.type");
 
-	 RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, album.mThumbnail.data, album.mThumbnail.size);
-	 RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "thumbnail binary data") ;
+    RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, album.mThumbnail.mData, album.mThumbnail.mSize);
+    RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "mThumbnail") ;
 }
 void RsGxsPhotoPhotoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CAPTION,  photo.mCaption,        "mCaption");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory,       "mCategory");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DESCR,    photo.mDescription,    "mDescription");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags,       "mHashTags");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_MSG,      photo.mOther,          "mOther");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer,   "mPhotographer");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DATE,     photo.mWhen,           "mWhen");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_LOCATION, photo.mWhere,          "mWhere");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_TYPE, photo.mThumbnail.type, "mThumbnail.type");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CAPTION,  photo.mCaption,        "mCaption");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory,       "mCategory");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DESCR,    photo.mDescription,    "mDescription");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags,       "mHashTags");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_MSG,      photo.mOther,          "mOther");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer,   "mPhotographer");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DATE,     photo.mWhen,           "mWhen");
+    RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_LOCATION, photo.mWhere,          "mWhere");
 
-	RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, photo.mThumbnail.data, photo.mThumbnail.size);
-	RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "mThumbnail") ;
+    RsTlvBinaryDataRef b(RS_SERVICE_GXS_TYPE_PHOTO, photo.mThumbnail.mData, photo.mThumbnail.mSize);
+    RsTypeSerializer::serial_process<RsTlvItem>(j, ctx, b, "mThumbnail") ;
 }
 void RsGxsPhotoCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
@@ -83,16 +81,16 @@ void RsGxsPhotoCommentItem::serial_process(RsGenericSerializer::SerializeJob j,R
 
 void RsGxsPhotoAlbumItem::clear()
 {
-	album.mCaption.clear();
-	album.mCategory.clear();
-	album.mDescription.clear();
-	album.mHashTags.clear();
-	album.mOther.clear();
-	album.mPhotoPath.clear();
-	album.mPhotographer.clear();
-	album.mWhen.clear();
-	album.mWhere.clear();
-	album.mThumbnail.deleteImage();
+    album.mCaption.clear();
+    album.mCategory.clear();
+    album.mDescription.clear();
+    album.mHashTags.clear();
+    album.mOther.clear();
+    album.mPhotoPath.clear();
+    album.mPhotographer.clear();
+    album.mWhen.clear();
+    album.mWhere.clear();
+    album.mThumbnail.clear();
 }
 
 void RsGxsPhotoCommentItem::clear()
@@ -103,13 +101,13 @@ void RsGxsPhotoCommentItem::clear()
 
 void RsGxsPhotoPhotoItem::clear()
 {
-	photo.mCaption.clear();
-	photo.mCategory.clear();
-	photo.mDescription.clear();
-	photo.mHashTags.clear();
-	photo.mOther.clear();
-	photo.mPhotographer.clear();
-	photo.mWhen.clear();
-	photo.mWhere.clear();
-	photo.mThumbnail.deleteImage();
+    photo.mCaption.clear();
+    photo.mCategory.clear();
+    photo.mDescription.clear();
+    photo.mHashTags.clear();
+    photo.mOther.clear();
+    photo.mPhotographer.clear();
+    photo.mWhen.clear();
+    photo.mWhere.clear();
+    photo.mThumbnail.clear();
 }

@@ -28,7 +28,6 @@
 #include "retroshare/rsphoto.h"
 #include "retroshare-gui/mainpage.h"
 
-#include "AlbumCreateDialog.h"
 #include "AlbumDialog.h"
 #include "PhotoDialog.h"
 
