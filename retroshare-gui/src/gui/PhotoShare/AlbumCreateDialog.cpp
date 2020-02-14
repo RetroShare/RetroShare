@@ -19,7 +19,6 @@
  *******************************************************************************/
 
 #include <QBuffer>
-#include <QMessageBox>
 
 #include "AlbumCreateDialog.h"
 #include "ui_AlbumCreateDialog.h"
@@ -38,7 +37,7 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, 
     
 
 #if QT_VERSION >= 0x040700
-    ui->lineEdit_Title->setPlaceholderText(tr("Untitle Album"));
+    ui->lineEdit_Title_2->setPlaceholderText(tr("Untitle Album"));
     ui->lineEdit_Caption_2->setPlaceholderText(tr("Say something about this album..."));
     //ui->textEdit_Description->setPlaceholderText(tr("Say something about this album...")) ;
     ui->lineEdit_Where->setPlaceholderText(tr("Where were these taken?"));
@@ -56,8 +55,7 @@ AlbumCreateDialog::AlbumCreateDialog(TokenQueue *photoQueue, RsPhoto *rs_photo, 
     mPhotoDrop = ui->scrollAreaWidgetContents;
     mPhotoDrop->setPhotoItemHolder(this);
 
-    /* fill in the available OwnIds for sharing */
-	ui->IdChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+    
 }
 
 AlbumCreateDialog::~AlbumCreateDialog()
@@ -74,30 +72,12 @@ void AlbumCreateDialog::publishAlbum()
     // get fields for album to publish, publish and then exit dialog
     RsPhotoAlbum album;
 
-	RsGxsId authorId;
-	switch (ui->IdChooser->getChosenId(authorId)) {
-		case GxsIdChooser::KnowId:
-		case GxsIdChooser::UnKnowId:
-		break;
-		case GxsIdChooser::NoId:
-		case GxsIdChooser::None:
-		default:
-		std::cerr << "AlbumCreateDialog::publishAlbum() ERROR GETTING AuthorId!, Post Failed";
-		std::cerr << std::endl;
-
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose a Signing Id first"), QMessageBox::Ok, QMessageBox::Ok);
-
-		return;
-	}
-
-    album.mMeta.mGroupName = ui->lineEdit_Title->text().toStdString();
-    album.mCategory = ui->comboBox_Category->currentText().toStdString();
     album.mCaption = ui->lineEdit_Caption_2->text().toStdString();
     album.mPhotographer = ui->lineEdit_Photographer->text().toStdString();
+    album.mMeta.mGroupName = ui->lineEdit_Title_2->text().toStdString();
     album.mDescription = ui->textEdit_Description->toPlainText().toStdString();
     album.mWhere = ui->lineEdit_Where->text().toStdString();
     album.mPhotographer = ui->lineEdit_Photographer->text().toStdString();
-    album.mMeta.mAuthorId = authorId;
     getAlbumThumbnail(album.mThumbnail);
 
 
