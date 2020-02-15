@@ -1,23 +1,23 @@
 /*******************************************************************************
- * libretroshare/src/services: p3photoservice.cc							   *
- *																			 *
- * libretroshare: retroshare core library									  *
- *																			 *
+ * libretroshare/src/services: p3photoservice.cc                               *
+ *                                                                             *
+ * libretroshare: retroshare core library                                      *
+ *                                                                             *
  * Copyright 2008-2012 Robert Fernie,Chris Evi-Parker <retroshare@lunamutt.com>*
- *																			 *
- * This program is free software: you can redistribute it and/or modify		*
- * it under the terms of the GNU Lesser General Public License as			  *
- * published by the Free Software Foundation, either version 3 of the		  *
- * License, or (at your option) any later version.							 *
- *																			 *
- * This program is distributed in the hope that it will be useful,			 *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of			  *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the				*
- * GNU Lesser General Public License for more details.						 *
- *																			 *
- * You should have received a copy of the GNU Lesser General Public License	*
- * along with this program. If not, see <https://www.gnu.org/licenses/>.	   *
- *																			 *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Lesser General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Lesser General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Lesser General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
  *******************************************************************************/
 #include "p3photoservice.h"
 #include "rsitems/rsphotoitems.h"
@@ -26,8 +26,8 @@
 RsPhoto *rsPhoto = NULL;
 
 
-const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK		  = 0x000f;
-const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST	= 0x0001;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK	        = 0x000f;
+const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST    = 0x0001;
 const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT = 0x0002;
 
 RsPhotoPhoto::RsPhotoPhoto()
@@ -78,10 +78,10 @@ p3PhotoService::p3PhotoService(RsGeneralDataService* gds, RsNetworkExchangeServi
 }
 
 const std::string GXS_PHOTO_APP_NAME = "gxsphoto";
-const uint16_t GXS_PHOTO_APP_MAJOR_VERSION  =	   1;
-const uint16_t GXS_PHOTO_APP_MINOR_VERSION  =	   0;
-const uint16_t GXS_PHOTO_MIN_MAJOR_VERSION  =	   1;
-const uint16_t GXS_PHOTO_MIN_MINOR_VERSION  =	   0;
+const uint16_t GXS_PHOTO_APP_MAJOR_VERSION  =   1;
+const uint16_t GXS_PHOTO_APP_MINOR_VERSION  =   0;
+const uint16_t GXS_PHOTO_MIN_MAJOR_VERSION  =   1;
+const uint16_t GXS_PHOTO_MIN_MINOR_VERSION  =   0;
 
 RsServiceInfo p3PhotoService::getServiceInfo()
 {
