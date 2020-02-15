@@ -39,7 +39,7 @@ public:
 	virtual void load();
 
 	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/posted.svg") ; }
-	virtual QString pageName() const { return tr("Links") ; }
+	virtual QString pageName() const { return tr("Boards") ; }
 	virtual QString helpText() const { return ""; }
 
 private:

@@ -89,7 +89,7 @@
         </property>
         <property name="icon">
          <iconset resource="Posted_images.qrc">
-          <normaloff>:/images/posted_24.png</normaloff>:/images/posted_24.png</iconset>
+          <normaloff>:/images/write.png</normaloff>:/images/write.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -285,7 +285,7 @@
          <string notr="true"/>
         </property>
         <property name="title">
-         <string>Topic Details</string>
+         <string>Board Details</string>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -557,7 +557,7 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>614</width>
+            <width>98</width>
             <height>16</height>
            </rect>
           </property>

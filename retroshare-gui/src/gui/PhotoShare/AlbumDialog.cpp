@@ -60,17 +60,17 @@ void AlbumDialog::setUp()
     ui->textEdit_description->setText(QString::fromStdString(mAlbum.mDescription));
 
 
-    QPixmap qtn;
-    GxsIdDetails::loadPixmapFromData(mAlbum.mThumbnail.data, mAlbum.mThumbnail.size, mAlbum.mThumbnail.type.c_str(),qtn);
 
-    if(mAlbum.mThumbnail.size != 0)
+    if(mAlbum.mThumbnail.mSize != 0)
     {
-		ui->label_thumbNail->setPixmap(qtn);
+        QPixmap qtn;
+        GxsIdDetails::loadPixmapFromData(mAlbum.mThumbnail.mData, mAlbum.mThumbnail.mSize,qtn, GxsIdDetails::ORIGINAL);
+        ui->label_thumbNail->setPixmap(qtn);
     }
     else
     {
-		// display a default Album icon when album has no Thumbnail
-		ui->label_thumbNail->setPixmap(QPixmap(":/images/album_default_128.png"));
+        // display a default Album icon when album has no Thumbnail
+        ui->label_thumbNail->setPixmap(QPixmap(":/images/album_default_128.png"));
     }
 }
 

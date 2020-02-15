@@ -512,10 +512,10 @@ public:
 	RS_DEPRECATED_FOR(getChannelsInfo)
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
 	/**

@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2008-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -26,6 +26,7 @@
 #include <string>
 #include <list>
 #include "rsgxsservice.h"
+#include "rsgxscommon.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhoto;
@@ -36,21 +37,6 @@ extern RsPhoto *rsPhoto;
 #define RSPHOTO_MODE_NEW	1
 #define RSPHOTO_MODE_OWN	2
 #define RSPHOTO_MODE_REMOTE	3
-
-class RsPhotoThumbnail
-{
-        public:
-                RsPhotoThumbnail()
-                :data(NULL), size(0), type("N/A") { return; }
-
-        bool deleteImage();
-        bool copyFrom(const RsPhotoThumbnail &nail);
-
-        // Holds Thumbnail image.
-        uint8_t *data;
-        uint32_t size;
-        std::string type;
-};
 
 /* If these flags are no set - the Photo inherits values from the Album
  */
@@ -96,7 +82,7 @@ class RsPhotoPhoto
 
         int mOrder;
 
-        RsPhotoThumbnail mThumbnail;
+        RsGxsImage mThumbnail;
 
         int mMode;
 
@@ -137,7 +123,7 @@ class RsPhotoAlbum
 
         std::string mHashTags;
 
-        RsPhotoThumbnail mThumbnail;
+        RsGxsImage mThumbnail;
 
         int mMode;
 

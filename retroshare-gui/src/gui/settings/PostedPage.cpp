@@ -30,7 +30,7 @@ PostedPage::PostedPage(QWidget * parent, Qt::WindowFlags flags)
 	setAttribute(Qt::WA_QuitOnClose, false);
 
 	/* Initialize GroupFrameSettingsWidget */
-	ui->groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each topic in a new tab"));
+	ui->groupFrameSettingsWidget->setOpenAllInNewTabText(tr("Open each board in a new tab"));
 	ui->groupFrameSettingsWidget->setType(GroupFrameSettings::Posted);
 }
 

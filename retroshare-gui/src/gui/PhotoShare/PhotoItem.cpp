@@ -60,7 +60,7 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
     ui->label_Thumbnail->setPixmap(mThumbNail.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setSelected(false);
 
-    getPhotoThumbnail(mPhotoDetails.mThumbnail);
+    getThumbnail(mPhotoDetails.mThumbnail);
 
     connect(ui->lineEdit_Title, SIGNAL(editingFinished()), this, SLOT(setTitle()));
     connect(ui->lineEdit_PhotoGrapher, SIGNAL(editingFinished()), this, SLOT(setPhotoGrapher()));
@@ -83,7 +83,7 @@ void PhotoItem::setSelected(bool selected)
     update();
 }
 
-bool PhotoItem::getPhotoThumbnail(RsPhotoThumbnail &nail)
+bool PhotoItem::getThumbnail(RsGxsImage &image)
 {
         const QPixmap *tmppix = &mThumbNail;
 
@@ -96,18 +96,11 @@ bool PhotoItem::getPhotoThumbnail(RsPhotoThumbnail &nail)
 
                 buffer.open(QIODevice::WriteOnly);
                 tmppix->save(&buffer, "PNG"); // writes image into ba in PNG format
-
-                RsPhotoThumbnail tmpnail;
-                tmpnail.data = (uint8_t *) ba.data();
-                tmpnail.size = ba.size();
-
-                nail.copyFrom(tmpnail);
-
+                image.copy((uint8_t *) ba.data(), ba.size());
                 return true;
         }
 
-        nail.data = NULL;
-        nail.size = 0;
+        image.clear();
         return false;
 }
 
@@ -166,12 +159,12 @@ void PhotoItem::setUp()
     updateImage(mPhotoDetails.mThumbnail);
 }
 
-void PhotoItem::updateImage(const RsPhotoThumbnail &thumbnail)
+void PhotoItem::updateImage(const RsGxsImage &image)
 {
-    if (thumbnail.data != NULL)
+    if (image.mData != NULL)
     {
             QPixmap qtn;
-            qtn.loadFromData(thumbnail.data, thumbnail.size, thumbnail.type.c_str());
+            qtn.loadFromData(image.mData, image.mSize, "PNG");
             ui->label_Thumbnail->setPixmap(qtn.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
             mThumbNail = qtn;
     }
