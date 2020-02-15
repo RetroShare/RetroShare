@@ -20,6 +20,7 @@
 
 #include "gui/PhotoShare/PhotoSlideShow.h"
 #include "gui/PhotoShare/PhotoDrop.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include <iostream>
 
@@ -175,16 +176,10 @@ void PhotoSlideShow::loadImage()
 	if (ptr)
 	{
 		/* load into the slot */
-        	if (ptr->mThumbnail.data != NULL)
+		if (ptr->mThumbnail.mData != NULL)
         	{
                 	QPixmap qtn;
-
-			// copy the data for Qpixmap to use.
-			RsPhotoThumbnail tn;
-			tn.copyFrom(ptr->mThumbnail);
-                	qtn.loadFromData(tn.data, tn.size, tn.type.c_str());
-			tn.data = 0;
-
+                        GxsIdDetails::loadPixmapFromData(ptr->mThumbnail.mData, ptr->mThumbnail.mSize,qtn, GxsIdDetails::ORIGINAL);
                         QPixmap sqtn = qtn.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         		ui.imgLabel->setPixmap(sqtn);
 
@@ -249,8 +244,8 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
                 RsPhotoPhoto& photo = *vit;
                 RsPhotoPhoto *ptr = new RsPhotoPhoto;
                 *ptr = photo;
-                ptr->mThumbnail.data = 0;
-                ptr->mThumbnail.copyFrom(photo.mThumbnail);
+
+                ptr->mThumbnail = photo.mThumbnail; // copies data.
                 ptr->mOrder = i++;
                 mPhotos[photo.mMeta.mMsgId] = ptr;
                 mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;

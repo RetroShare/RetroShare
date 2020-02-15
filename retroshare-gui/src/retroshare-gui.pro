@@ -1154,6 +1154,8 @@ gxsphotoshare {
 	DEFINES += RS_USE_PHOTO # enable in MainWindow
 
 	HEADERS += \
+		gui/PhotoShare/AlbumGroupDialog.h \
+		gui/PhotoShare/AlbumExtra.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
@@ -1167,6 +1169,7 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.h
 	
 	FORMS += \
+		gui/PhotoShare/AlbumExtra.ui \
 		gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
@@ -1178,6 +1181,8 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.ui
 	
 	SOURCES += \
+		gui/PhotoShare/AlbumGroupDialog.cpp \
+		gui/PhotoShare/AlbumExtra.cpp \
 		gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
