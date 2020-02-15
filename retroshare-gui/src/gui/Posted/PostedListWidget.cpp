@@ -43,7 +43,7 @@
 
 #define DEBUG_POSTED_LIST_WIDGET
 
-#define TOPIC_DEFAULT_IMAGE ":/icons/png/posted.png"
+#define BOARD_DEFAULT_IMAGE ":/icons/png/posted.png"
 
 /* View mode */
 #define VIEW_MODE_CLASSIC  1
@@ -351,13 +351,13 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 	ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) ;
 
 	/* IMAGE */
-	QPixmap topicImage;
+	QPixmap boardImage;
 	if (group.mGroupImage.mData != NULL) {
-		GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, topicImage,GxsIdDetails::ORIGINAL);
+		GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, boardImage,GxsIdDetails::ORIGINAL);
 	} else {
-		topicImage = QPixmap(TOPIC_DEFAULT_IMAGE);
+		boardImage = QPixmap(BOARD_DEFAULT_IMAGE);
 	}
-	ui->logoLabel->setPixmap(topicImage);
+	ui->logoLabel->setPixmap(boardImage);
 	ui->namelabel->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
 	ui->poplabel->setText(QString::number( group.mMeta.mPop));
 	

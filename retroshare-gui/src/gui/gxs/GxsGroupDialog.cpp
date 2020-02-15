@@ -160,6 +160,15 @@ void GxsGroupDialog::init()
 	Settings->loadWidgetInformation(this);
 }
 
+void GxsGroupDialog::injectExtraWidget(QWidget *widget)
+{
+    // add extra widget into layout.
+    QVBoxLayout *vbox = new QVBoxLayout();
+    vbox->addWidget(widget);
+    vbox->addStretch(1);
+    ui.extraFrame->setLayout(vbox);
+}
+
 QIcon GxsGroupDialog::serviceWindowIcon()
 {
 	return qApp->windowIcon();

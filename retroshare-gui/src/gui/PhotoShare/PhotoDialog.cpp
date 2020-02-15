@@ -53,7 +53,7 @@ PhotoDialog::~PhotoDialog()
 void PhotoDialog::setUp()
 {
     QPixmap qtn;
-    qtn.loadFromData(mPhotoDetails.mThumbnail.data, mPhotoDetails.mThumbnail.size, mPhotoDetails.mThumbnail.type.c_str());
+    qtn.loadFromData(mPhotoDetails.mThumbnail.mData, mPhotoDetails.mThumbnail.mSize, "PNG");
     ui->label_Photo->setPixmap(qtn);
     ui->lineEdit_Title->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
 

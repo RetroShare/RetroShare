@@ -104,6 +104,12 @@
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
+#ifdef RS_USE_WIRE
+#include "gui/TheWire/WireDialog.h"
+#endif
+#ifdef RS_USE_PHOTO
+#include "gui/PhotoShare/PhotoShare.h"
+#endif
 #include "gui/Posted/PostedDialog.h"
 #include "gui/statistics/StatisticsWindow.h"
 
@@ -425,6 +431,17 @@ void MainWindow::initStackedPage()
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
+
+#ifdef RS_USE_WIRE
+  WireDialog *wireDialog = NULL;
+  addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
+#endif
+
+#ifdef RS_USE_PHOTO
+  PhotoShare *photoDialog = NULL;
+  addPage(photoDialog = new PhotoShare(ui->stackPages), grp, &notify);
+#endif
+
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)

@@ -93,13 +93,13 @@ UserNotify *PostedDialog::createUserNotify(QObject *parent)
 
 QString PostedDialog::getHelpString() const
 {
-	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Posted</h1>    \
-    <p>The posted service allows you to share internet links, that spread among Retroshare nodes like forums and \
+	QString hlp_str = tr("<h1><img width=\"32\" src=\":/icons/help_64.png\">&nbsp;&nbsp;Boards</h1>    \
+    <p>The Boards service allows you to share images, blog posts & internet links, that spread among Retroshare nodes like forums and \
 	 channels</p> \
-	 <p>Links can be commented by subscribed users. A promotion system also gives the opportunity to  \
+	 <p>Posts can be commented by subscribed users. A promotion system also gives the opportunity to  \
 	 enlight important links.</p> \
      <p>There is no restriction on which links are shared. Be careful when clicking on them.</p>\
-    <p>Posted links are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
+    <p>Boards are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
                 ").arg(QString::number(rsPosted->getDefaultStoragePeriod()/86400)).arg(QString::number(rsPosted->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
@@ -109,9 +109,9 @@ QString PostedDialog::text(TextType type)
 {
 	switch (type) {
 	case TEXT_NAME:
-		return tr("Posted Links");
+		return tr("Boards");
 	case TEXT_NEW:
-		return tr("Create Topic");
+		return tr("Create Board");
 	case TEXT_TODO:
 		return "<b>Open points:</b><ul>"
 		       "<li>Subreddits/tag to posts support"
@@ -120,13 +120,13 @@ QString PostedDialog::text(TextType type)
 		       "</ul>";
 
 	case TEXT_YOUR_GROUP:
-		return tr("My Topics");
+		return tr("My Boards");
 	case TEXT_SUBSCRIBED_GROUP:
-		return tr("Subscribed Topics");
+		return tr("Subscribed Boards");
 	case TEXT_POPULAR_GROUP:
-		return tr("Popular Topics");
+		return tr("Popular Boards");
 	case TEXT_OTHER_GROUP:
-		return tr("Other Topics");
+		return tr("Other Boards");
 	}
 
 	return "";
