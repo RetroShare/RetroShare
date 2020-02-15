@@ -31,12 +31,18 @@
 #include "gui/TheWire/PulseItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
+#define IMAGE_WIRE              ":/images/kgames.png"
+
 class WireDialog : public MainPage, public PulseHolder 
 {
   Q_OBJECT
 
 public:
 	WireDialog(QWidget *parent = 0);
+
+        virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
+        virtual QString pageName() const { return tr("The Wire") ; }
+        virtual QString helpText() const { return ""; }
 
 virtual void deletePulseItem(PulseItem *, uint32_t type);
 virtual void notifySelection(PulseItem *item, int ptype);

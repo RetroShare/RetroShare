@@ -114,6 +114,11 @@ CONFIG += gxscircles
 #CONFIG += framecatcher
 #CONFIG += blogs
 
+## To enable unfinished services
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
+
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -342,6 +347,7 @@ openbsd-* {
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= -lglib-2.0
 }
 
 # Tor controller
@@ -1144,9 +1150,12 @@ unfinished_services {
 	
 	
 gxsphotoshare {
-	#DEFINES += RS_USE_PHOTOSHARE
+	#DEFINES += RS_USE_PHOTOSHARE # to enable in unfinished.
+	DEFINES += RS_USE_PHOTO # enable in MainWindow
 
 	HEADERS += \
+		gui/PhotoShare/AlbumGroupDialog.h \
+		gui/PhotoShare/AlbumExtra.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
@@ -1160,6 +1169,7 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.h
 	
 	FORMS += \
+		gui/PhotoShare/AlbumExtra.ui \
 		gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
@@ -1171,6 +1181,8 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.ui
 	
 	SOURCES += \
+		gui/PhotoShare/AlbumGroupDialog.cpp \
+		gui/PhotoShare/AlbumExtra.cpp \
 		gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
@@ -1189,6 +1201,7 @@ gxsphotoshare {
 	
 	
 wikipoos {
+	DEFINES += RS_USE_WIKI
 	
 	DEPENDPATH += ../../supportlibs/pegmarkdown
 	INCLUDEPATH += ../../supportlibs/pegmarkdown
@@ -1215,6 +1228,8 @@ wikipoos {
 	
 gxsthewire {
 	
+	DEFINES += RS_USE_WIRE
+
 	HEADERS += gui/TheWire/PulseItem.h \
 		gui/TheWire/WireDialog.h \
 		gui/TheWire/PulseAddDialog.h \

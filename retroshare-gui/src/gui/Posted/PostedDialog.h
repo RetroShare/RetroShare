@@ -37,7 +37,7 @@ public:
 	~PostedDialog();
 
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_POSTED) ; } //MainPage
-	virtual QString pageName() const { return tr("Links") ; } //MainPage
+	virtual QString pageName() const { return tr("Boards") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
 protected:

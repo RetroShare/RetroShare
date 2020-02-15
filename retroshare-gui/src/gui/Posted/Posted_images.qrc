@@ -1,16 +1,5 @@
 <RCC>
 	<qresource prefix="/" >
-		<file>images/posted_16.png</file>
-		<file>images/posted_24.png</file>
-		<file>images/posted_32.png</file>
-		<file>images/posted_48.png</file>
-		<file>images/posted_64.png</file>
-		<file>images/posted_add_24.png</file>
-		<file>images/posted_add_32.png</file>
-		<file>images/posted_add_64.png</file>
-		<file>images/hot_24.png</file>
-		<file>images/new_24.png</file>
-		<file>images/posted_32_new.png</file>
 		<file>images/expand.png</file>
 		<file>images/decrease.png</file>
 		<file>images/down-arrow.png</file>
@@ -29,5 +18,6 @@
 		<file>images/down-hover.png</file>
 		<file>images/up-hover.png</file>
 		<file>images/trashcan.png</file>
+		<file>images/write.png</file>
 	</qresource>
 </RCC>

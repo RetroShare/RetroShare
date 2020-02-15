@@ -128,7 +128,7 @@ void AlbumCreateDialog::publishPhotos()
     
 }
 
-bool AlbumCreateDialog::getAlbumThumbnail(RsPhotoThumbnail &nail)
+bool AlbumCreateDialog::getAlbumThumbnail(RsGxsImage &image)
 {
         const QPixmap *tmppix = &mThumbNail;
 
@@ -142,17 +142,11 @@ bool AlbumCreateDialog::getAlbumThumbnail(RsPhotoThumbnail &nail)
                 buffer.open(QIODevice::WriteOnly);
                 tmppix->save(&buffer, "PNG"); // writes image into ba in PNG format
 
-                RsPhotoThumbnail tmpnail;
-                tmpnail.data = (uint8_t *) ba.data();
-                tmpnail.size = ba.size();
-
-                nail.copyFrom(tmpnail);
-
+                image.copy((uint8_t *) ba.data(), ba.size());
                 return true;
         }
 
-        nail.data = NULL;
-        nail.size = 0;
+        image.clear();
         return false;
 }
 
