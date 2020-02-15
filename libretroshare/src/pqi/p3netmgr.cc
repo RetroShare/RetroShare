@@ -711,47 +711,6 @@ void p3NetMgrIMPL::netExtCheck()
 			}
 		}
 
-#ifdef ALLOW_DHT_STUNNER
-        // (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
-        // if the other DHT peers are not collaborating.
-        
-		/* Next ask the DhtStunner */
-		{
-#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
-			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
-#endif
-			uint8_t isstable = 0;
-			struct sockaddr_storage tmpaddr;
-			sockaddr_storage_clear(tmpaddr);
-
-			if (mDhtStunner)
-			{
-				/* input network bits */
-				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
-				{
-					if((rsBanList == NULL) || rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
-					{
-						// must be stable???
-						isStable = (isstable == 1);
-						//mNetFlags.mExtAddr = tmpaddr;
-						mNetFlags.mExtAddrOk = true;
-						mNetFlags.mExtAddrStableOk = isStable;
-
-						address_votes[tmpaddr].n++ ;
-#ifdef	NETMGR_DEBUG_STATEBOX
-						std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
-						std::cerr << sockaddr_storage_tostring(tmpaddr);
-						std::cerr << " Stable: " << (uint32_t) isstable;
-						std::cerr << std::endl;
-#endif
-					}
-					else
-						std::cerr << "(SS) DHTStunner returned wrong own IP " << sockaddr_storage_iptostring(tmpaddr) << " (banned). Rejecting." << std::endl;
-				}
-			}
-		}
-#endif
-
 		/* ask ExtAddrFinder */
 		{
 			/* ExtAddrFinder */
@@ -828,6 +787,49 @@ void p3NetMgrIMPL::netExtCheck()
 				std::cerr << "  No reliable address returned." << std::endl;
 #endif
 		}
+
+#ifdef ALLOW_DHT_STUNNER
+		// (cyril) I disabled this because it's pretty dangerous. The DHT can report a wrong address quite easily
+		// if the other DHT peers are not collaborating.
+		// (sehraf) For the record: The udp stunner uses multiple (as for now: two) peers to ensure that the IP recieved is the correct one, see UdpStunner::locked_checkExternalAddress()
+		// Nevertheless this stays a more risky method to determine the external ip address.
+
+		/* lastly ask the DhtStunner as fallback */
+		if (address_votes.empty()) {
+#if defined(NETMGR_DEBUG_TICK) || defined(NETMGR_DEBUG_RESET)
+			std::cerr << "p3NetMgrIMPL::netExtCheck() Ext Not Ok, Checking DhtStunner" << std::endl;
+#endif
+			uint8_t isstable = 0;
+			struct sockaddr_storage tmpaddr;
+			sockaddr_storage_clear(tmpaddr);
+
+			if (mDhtStunner)
+			{
+				/* input network bits */
+				if (mDhtStunner->getExternalAddr(tmpaddr, isstable))
+				{
+					if((rsBanList == NULL) || rsBanList->isAddressAccepted(tmpaddr,RSBANLIST_CHECKING_FLAGS_BLACKLIST))
+					{
+						// must be stable???
+						isStable = (isstable == 1);
+						//mNetFlags.mExtAddr = tmpaddr;
+						mNetFlags.mExtAddrOk = true;
+						mNetFlags.mExtAddrStableOk = isStable;
+
+						address_votes[tmpaddr].n++ ;
+#ifdef	NETMGR_DEBUG_STATEBOX
+						std::cerr << "p3NetMgrIMPL::netExtCheck() From DhtStunner: ";
+						std::cerr << sockaddr_storage_tostring(tmpaddr);
+						std::cerr << " Stable: " << (uint32_t) isstable;
+						std::cerr << std::endl;
+#endif
+					}
+					else
+						std::cerr << "(SS) DHTStunner returned wrong own IP " << sockaddr_storage_iptostring(tmpaddr) << " (banned). Rejecting." << std::endl;
+				}
+			}
+		}
+#endif
 
 		/* any other sources ??? */
 
