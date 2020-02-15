@@ -1,7 +1,7 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/PostedCreatePostDialog.h                      *
+ * retroshare-gui/src/gui/PhotoShare/AlbumExtra.cpp                            *
  *                                                                             *
- * Copyright (C) 2013 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (C) 2018 by Robert Fernie  <retroshare.project@gmail.com>         *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,55 +18,24 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef POSTEDCREATEPOSTDIALOG_H
-#define POSTEDCREATEPOSTDIALOG_H
+#include "AlbumExtra.h"
+#include "ui_AlbumExtra.h"
 
-#include <QDialog>
-#include <gui/common/HashBox.h>
-#include "retroshare/rsposted.h"
-#include "util/RichTextEdit.h"
-
-class TokenQueue;
-
-namespace Ui {
-	class PostedCreatePostDialog;
+AlbumExtra::AlbumExtra(QWidget *parent) :
+    QWidget(NULL),
+    ui(new Ui::AlbumExtra)
+{
+    ui->setupUi(this);
+    setUp();
 }
 
-class PostedCreatePostDialog : public QDialog
+AlbumExtra::~AlbumExtra()
 {
-    Q_OBJECT
+    delete ui;
+}
 
-public:
-	/*!
-	 * @param tokenQ parent callee token
-	 * @param posted
-	 */
-	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
-	~PostedCreatePostDialog();
+void AlbumExtra::setUp()
+{
 
-private:
-	QString imagefilename;
-	QByteArray imagebytes;
-	const int MAXMESSAGESIZE = 199000;
+}
 
-private slots:
-	void createPost();
-	void addPicture();
-	void on_removeButton_clicked();
-	void fileHashingFinished(QList<HashedFile> hashedFiles);
-
-	void setPage(int viewMode);
-private:
-	void processSettings(bool load);
-	int viewMode();
-
-	QString mLink;
-	QString mNotes;
-	TokenQueue* mTokenQueue;
-	RsPosted* mPosted;
-	RsGxsGroupId mGrpId;
-
-	Ui::PostedCreatePostDialog *ui;
-};
-
-#endif // POSTEDCREATEPOSTDIALOG_H

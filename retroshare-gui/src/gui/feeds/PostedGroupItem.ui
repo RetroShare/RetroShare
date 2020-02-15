@@ -125,7 +125,10 @@
            <string/>
           </property>
           <property name="pixmap">
-           <pixmap resource="../Posted/Posted_images.qrc">:/images/posted_64.png</pixmap>
+           <pixmap resource="../icons.qrc">:/icons/png/posted.png</pixmap>
+          </property>
+          <property name="scaledContents">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -147,7 +150,7 @@
              </font>
             </property>
             <property name="text">
-             <string notr="true">Posted</string>
+             <string notr="true">Board</string>
             </property>
            </widget>
           </item>
@@ -298,7 +301,7 @@
          <item>
           <widget class="QGroupBox" name="groupBox">
            <property name="title">
-            <string>Posted Description</string>
+            <string>Board Description</string>
            </property>
            <layout class="QHBoxLayout">
             <item>
@@ -321,7 +324,7 @@
               </property>
               <property name="text">
                <string notr="true">Description 
- of Posted</string>
+ of Board</string>
               </property>
              </widget>
             </item>
