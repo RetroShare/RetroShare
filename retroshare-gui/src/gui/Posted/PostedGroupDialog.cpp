@@ -71,20 +71,20 @@ void PostedGroupDialog::initUi()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Board"));
 		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
 		break;
 	case MODE_SHOW:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Posted Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Board"));
 		break;
 	case MODE_EDIT:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Topic"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Board"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Board"));
 		break;
 	}
 
-	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Topic Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
+	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Board Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Board Admins"));
 }
 
 QPixmap PostedGroupDialog::serviceImage()

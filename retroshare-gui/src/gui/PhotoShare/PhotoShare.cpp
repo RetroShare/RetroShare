@@ -31,7 +31,7 @@
 #include <QTimer>
 #include <QMessageBox>
 
-#include "AlbumCreateDialog.h"
+#include "AlbumGroupDialog.h"
 #include "AlbumItem.h"
 #include "PhotoItem.h"
 
@@ -76,7 +76,7 @@ PhotoShare::PhotoShare(QWidget *parent)
         connect( ui.toolButton_ViewAlbum, SIGNAL(clicked()), this, SLOT(OpenAlbumDialog()));
         connect( ui.toolButton_SlideShow, SIGNAL(clicked()), this, SLOT(OpenSlideShow()));
         connect( ui.toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribeToAlbum()));
-        connect(ui.toolButton_ViewPhoto, SIGNAL(clicked()), this, SLOT(OpenPhotoDialog()));
+        connect( ui.toolButton_ViewPhoto, SIGNAL(clicked()), this, SLOT(OpenPhotoDialog()));
 
         connect( ui.pushButton_YourAlbums, SIGNAL(clicked()), this, SLOT(updateAlbums()));
         connect( ui.pushButton_SharedAlbums, SIGNAL(clicked()), this, SLOT(updateAlbums()));
@@ -215,7 +215,7 @@ void PhotoShare::OpenSlideShow()
 
 void PhotoShare::createAlbum()
 {
-    AlbumCreateDialog albumCreate(mPhotoQueue, rsPhoto, this);
+    AlbumGroupDialog albumCreate(mPhotoQueue, this);
     albumCreate.exec();
 }
 

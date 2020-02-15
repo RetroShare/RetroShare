@@ -93,9 +93,9 @@ void GroupShareKey::setTyp()
         if (!rsPosted)
             return;
         
-        ui->headerFrame->setHeaderImage(QPixmap(":/images/posted_64.png"));    
-        ui->headerFrame->setHeaderText(tr("Share topic admin permissions"));
-        ui->sharekeyinfo_label->setText(tr("You can allow your friends to edit the topic. Select them in the list below. Note: it is not possible to revoke Posted admin permissions."));
+        ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/posted.png"));    
+        ui->headerFrame->setHeaderText(tr("Share board admin permissions"));
+        ui->sharekeyinfo_label->setText(tr("You can allow your friends to edit the board. Select them in the list below. Note: it is not possible to revoke Board admin permissions."));
 
     }
     else
