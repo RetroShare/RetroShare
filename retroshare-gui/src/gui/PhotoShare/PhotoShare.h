@@ -39,7 +39,7 @@
 #include "util/TokenQueue.h"
 #include "PhotoShareItemHolder.h"
 
-#define IMAGE_PHOTO              ":/images/lphoto.png"
+#define IMAGE_PHOTO              ":/icons/png/photo.png"
 
 namespace Ui {
     class PhotoShare;
