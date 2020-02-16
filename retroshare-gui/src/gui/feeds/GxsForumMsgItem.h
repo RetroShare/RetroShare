@@ -50,20 +50,18 @@ protected:
 	virtual void expandFill(bool first);
 
 	/* load message data */
-	void requestParentMessage(const RsGxsMessageId &msgId);
-	virtual void loadParentMessage(const uint32_t &token);
+	virtual void loadParentMessage(const RsGxsMessageId &parent_msg);
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
-	virtual void loadGroup(const uint32_t &token);
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	virtual void loadGroup() override;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
-	virtual bool isLoading();
+	//virtual bool isLoading();
 
 	/* GxsFeedItem */
 	virtual QString messageName();
-	virtual void loadMessage(const uint32_t &token);
-	virtual void loadComment(const uint32_t &/*token*/){ return;}
+	virtual void loadMessage() override;
+	virtual void loadComment() override { return; }
 
 private slots:
 	/* default stuff */
@@ -90,7 +88,6 @@ private:
 	RsGxsForumGroup mGroup;
 	RsGxsForumMsg mMessage;
 	RsGxsForumMsg mParentMessage;
-	uint32_t mTokenTypeParentMessage;
 
 	/** Qt Designer generated object */
 	Ui::GxsForumMsgItem *ui;
