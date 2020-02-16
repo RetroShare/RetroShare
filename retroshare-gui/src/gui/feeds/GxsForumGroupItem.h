@@ -50,7 +50,7 @@ protected:
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
-	virtual void loadGroup(const uint32_t &token);
+	virtual void loadGroup() override;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 
 private slots:

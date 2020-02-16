@@ -69,13 +69,13 @@ signals:
 protected:
 	/* GxsGroupFeedItem */
 	virtual QString groupName();
-	virtual void loadGroup(const uint32_t &token);
+	virtual void loadGroup() override;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
 	/* GxsFeedItem */
 	virtual QString messageName();
-	virtual void loadMessage(const uint32_t &token);
-	virtual void loadComment(const uint32_t &token);
+	virtual void loadMessage();
+	virtual void loadComment();
 
 private:
 	void setup();
