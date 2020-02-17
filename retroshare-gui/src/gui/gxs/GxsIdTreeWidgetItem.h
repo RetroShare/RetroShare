@@ -90,14 +90,17 @@ public:
 
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
     {
+        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+
+        if(id.isNull())
+            return QStyledItemDelegate::sizeHint(option,index);
+
 		QStyleOptionViewItemV4 opt = option;
 		initStyleOption(&opt, index);
 
 		// disable default icon
 		opt.icon = QIcon();
 		const QRect r = option.rect;
-
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
         QString str;
         QList<QIcon> icons;
         QString comment;
@@ -128,6 +131,11 @@ public:
             return ;
         }
 
+        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+
+        if(id.isNull())
+            return QStyledItemDelegate::paint(painter,option,index);
+
 		QStyleOptionViewItemV4 opt = option;
 		initStyleOption(&opt, index);
 
@@ -138,7 +146,6 @@ public:
 
 		const QRect r = option.rect;
 
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
         QString str;
         QString comment;
 
