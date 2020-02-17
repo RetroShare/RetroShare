@@ -12,10 +12,6 @@ DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
 
-# the dht stunner is used to obtain RS external ip addr. when it is natted
-# this system is unreliable and rs supports a newer and better one (asking connected peers)
-# CONFIG += useDhtStunner
-
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
