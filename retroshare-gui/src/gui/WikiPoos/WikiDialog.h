@@ -32,7 +32,7 @@
 
 #include <map>
 
-#define IMAGE_WIKI              ":/images/wikibook_32.png"
+#define IMAGE_WIKI              ":/icons/png/wiki.png"
 
 class WikiAddDialog;
 class WikiEditDialog;

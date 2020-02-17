@@ -246,36 +246,7 @@
                  <property name="verticalSpacing">
                   <number>2</number>
                  </property>
-                 <item row="0" column="0" colspan="2">
-                  <widget class="QLabel" name="imageLabel">
-                   <property name="maximumSize">
-                    <size>
-                     <width>800</width>
-                     <height>200</height>
-                    </size>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="scaledContents">
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0">
-                  <spacer name="horizontalSpacer_5">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>188</width>
-                     <height>17</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item row="1" column="1">
+                 <item row="1" column="2">
                   <widget class="QToolButton" name="removeButton">
                    <property name="toolTip">
                     <string>Remove image</string>
@@ -291,6 +262,42 @@
                     </size>
                    </property>
                    <property name="autoRaise">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <spacer name="horizontalSpacer_5">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>188</width>
+                     <height>17</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QCheckBox" name="shareimagecheckBox">
+                   <property name="text">
+                    <string>Share Orginal Image</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="0" colspan="3">
+                  <widget class="QLabel" name="imageLabel">
+                   <property name="maximumSize">
+                    <size>
+                     <width>800</width>
+                     <height>200</height>
+                    </size>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="scaledContents">
                     <bool>true</bool>
                    </property>
                   </widget>
@@ -418,6 +425,9 @@
             <height>24</height>
            </size>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -435,6 +445,15 @@
             <height>24</height>
            </size>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRepeat">
+           <bool>false</bool>
+          </property>
+          <property name="default">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -451,6 +470,12 @@
             <width>24</width>
             <height>24</height>
            </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoDefault">
+           <bool>true</bool>
           </property>
          </widget>
         </item>

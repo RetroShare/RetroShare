@@ -172,6 +172,13 @@ protected:
 	virtual QPixmap serviceImage() = 0;
 	virtual QIcon serviceWindowIcon();
 
+	/*!
+	 * Inject Extra Widget for additional Group configuration options.
+	 * NB: These are only inserted for createMode currently.
+	 * @param widget Addtional widget which is added to extraFrame.
+	 */
+        void injectExtraWidget(QWidget *widget);
+
     /*!
      * \brief setUiToolTip/setUiText
      * 		Sets the text and tooltip of some parts of the UI

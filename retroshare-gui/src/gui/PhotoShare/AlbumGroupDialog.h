@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.cpp                                                   *
+ * retroshare-gui/src/gui/Posted/PostedGroupDialog.h                           *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,63 +18,30 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QDateTime>
-#include <QMessageBox>
-#include <QMouseEvent>
-#include <QBuffer>
 
-#include "PulseItem.h"
+#ifndef _ALBUM_GROUP_DIALOG_H
+#define _ALBUM_GROUP_DIALOG_H
 
-#include <algorithm>
-#include <iostream>
+#include "gui/gxs/GxsGroupDialog.h"
+#include <retroshare/rsphoto.h>
 
-/****
- * #define DEBUG_ITEM 1
- ****/
-
-/** Constructor */
-
-PulseItem::PulseItem(PulseHolder *parent, std::string path)
-:QWidget(NULL), mParent(parent), mType(0)
+class AlbumGroupDialog : public GxsGroupDialog
 {
-    setupUi(this);
-    setAttribute ( Qt::WA_DeleteOnClose, true );
+	Q_OBJECT
 
-}
+public:
+	AlbumGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
+	AlbumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
-void PulseItem::removeItem()
-{
-}
+protected:
+	virtual void initUi();
+	virtual QPixmap serviceImage();
+	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
+	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
 
-void PulseItem::setSelected(bool on)
-{
-}
+private:
+	void prepareAlbumGroup(RsPhotoAlbum &group, const RsGroupMetaData &meta);
+};
 
-bool PulseItem::isSelected()
-{
-    return mSelected;
-}
-
-void PulseItem::mousePressEvent(QMouseEvent *event)
-{
-    /* We can be very cunning here?
-     * grab out position.
-     * flag ourselves as selected.
-     * then pass the mousePressEvent up for handling by the parent
-     */
-
-    QPoint pos = event->pos();
-
-    std::cerr << "PulseItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
-    std::cerr << std::endl;
-
-    setSelected(true);
-
-    QWidget::mousePressEvent(event);
-}
-
-const QPixmap *PulseItem::getPixmap()
-{
-    return NULL;
-}
-
+#endif
