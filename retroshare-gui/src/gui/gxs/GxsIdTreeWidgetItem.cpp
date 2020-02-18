@@ -263,7 +263,10 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 			launchAsyncLoading();
 		}
 
-	QPixmap pix = icon.pixmap(r.size());
+    QRect pixmaprect(r);
+    pixmaprect.adjust(r.height(),0,0,0);
+
+	QPixmap pix = icon.pixmap(pixmaprect.size());
 	const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
 
 	// draw pixmap at center of item
