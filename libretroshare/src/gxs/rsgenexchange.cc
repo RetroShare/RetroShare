@@ -1112,6 +1112,7 @@ static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > 
 
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
+    std::cerr << "***********************************  RsGenExchange::receiveChanges()" << std::endl;
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
 #endif

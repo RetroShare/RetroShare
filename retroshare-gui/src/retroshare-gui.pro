@@ -1418,9 +1418,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.h \
 		gui/gxs/GxsGroupFeedItem.h \
 		gui/gxs/GxsFeedItem.h \
-		gui/gxs/RsGxsUpdateBroadcastBase.h \
-		gui/gxs/RsGxsUpdateBroadcastWidget.h \
-		gui/gxs/RsGxsUpdateBroadcastPage.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
 		gui/gxs/GxsFeedWidget.h \
@@ -1455,9 +1452,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.cpp \
 		gui/gxs/GxsGroupFeedItem.cpp \
 		gui/gxs/GxsFeedItem.cpp \
-		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
-		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
-		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		gui/gxs/GxsUserNotify.cpp \
 		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
@@ -1466,4 +1460,17 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+
+wikipoos {
+	HEADERS += \
+		gui/gxs/RsGxsUpdateBroadcastBase.h \
+		gui/gxs/RsGxsUpdateBroadcastWidget.h \
+		gui/gxs/RsGxsUpdateBroadcastPage.h 
+
+	SOURCES += \
+		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
+		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
+		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }

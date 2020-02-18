@@ -48,6 +48,8 @@ public:
 	QColor textColor() const { return mTextColor; }
 	void setTextColor(const QColor &color);
 
+	static bool paintElidedLine(QPainter& painter, QString plainText, const QRect &cr, Qt::Alignment alignment, bool wordWrap, bool drawRoundRect, QRect &rectElision);
+
 public slots:
 	void setText(const QString &text);
 	void setOnlyPlainText(const bool &value);

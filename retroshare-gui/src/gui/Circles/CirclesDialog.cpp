@@ -50,7 +50,7 @@
 
 /** Constructor */
 CirclesDialog::CirclesDialog(QWidget *parent)
-	: RsGxsUpdateBroadcastPage(rsGxsCircles, parent)
+	: MainPage(parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);

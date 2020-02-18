@@ -311,7 +311,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
 	ui->setupUi(this);
 
-	setUpdateWhenInvisible(true);
+	//setUpdateWhenInvisible(true);
 
     //mUpdating = false;
 	mUnreadCount = 0;
@@ -680,6 +680,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 		complete = true;
     }
 
+#ifdef TO_REMOVE
 	if(!complete)
 	{
 #ifdef DEBUG_FORUMS
@@ -725,6 +726,7 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
             }
 		}
 	}
+#endif
 
 	if(complete) 	// need to update the group data, reload the messages etc.
 	{
