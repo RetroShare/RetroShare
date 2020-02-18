@@ -60,7 +60,7 @@ public:
     std::map<RsGxsMessageId,RsMsgMetaData> messages_metas ;
 };
 
-class GxsTransportStatistics: public RsGxsUpdateBroadcastPage, public TokenResponse, public Ui::GxsTransportStatistics
+class GxsTransportStatistics: public MainPage, public TokenResponse, public Ui::GxsTransportStatistics
 {
 	Q_OBJECT
 

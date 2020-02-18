@@ -86,6 +86,7 @@ void GxsFeedItem::copyMessageLink()
 	}
 }
 
+#ifdef TO_REMOVE
 void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete)
 {
 	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
@@ -101,6 +102,7 @@ void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, boo
 				requestMessage();
 	}
 }
+#endif
 
 void GxsFeedItem::requestMessage()
 {

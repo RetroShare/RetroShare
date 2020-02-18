@@ -625,7 +625,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
         RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
 
-        if (groupChange && !groupChange->metaChange())
+        if (groupChange)
         {
 #ifdef DEBUG_IDS
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
@@ -653,6 +653,14 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     switch(groupChange->getType())
                     {
                     case RsGxsNotify::TYPE_PUBLISHED:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = *git;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::UPDATED_IDENTITY;
+                        rsEvents->postEvent(ev);
+                    }
+						break;
+
                     case RsGxsNotify::TYPE_RECEIVED_NEW:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
@@ -4723,6 +4731,8 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 		case GXSID_EVENT_REQUEST_IDS:
 			requestIdsFromNet();
+		    break;
+	    case GXSID_EVENT_REPUTATION:
 		    break;
 	default:
 		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: "
