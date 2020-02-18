@@ -271,14 +271,9 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
 	// draw pixmap at center of item
 	painter->drawPixmap(r.topLeft() + p, pix);
-	//painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
-
-	//cr.adjust(margin(), margin(), -margin(), -margin());
 
 	QRect mRectElision;
-
     r.adjust(pix.height()+f,(r.height()-f)/2.0,0,0);
 
 	bool didElide = ElidedLabel::paintElidedLine(*painter,str,r,Qt::AlignLeft,false,false,mRectElision);
-
 }
