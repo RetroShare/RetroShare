@@ -159,15 +159,15 @@ void PostedGroupItem::fill()
 		GxsIdDetails::loadPixmapFromData(mGroup.mGroupImage.mData, mGroup.mGroupImage.mSize, postedImage,GxsIdDetails::ORIGINAL);
 		ui->logoLabel->setPixmap(QPixmap(postedImage));
 	} else {
-		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
 	}
 
 
 	//TODO - nice icon for subscribed group
 //	if (IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags)) {
-//		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
 //	} else {
-//		ui->logoLabel->setPixmap(QPixmap(":/images/posted_64.png"));
+//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/posted.png"));
 //	}
 
 	if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
@@ -178,11 +178,11 @@ void PostedGroupItem::fill()
 
 //	if (mIsNew)
 //	{
-		ui->titleLabel->setText(tr("New Posted"));
+		ui->titleLabel->setText(tr("New Board"));
 //	}
 //	else
 //	{
-//		ui->titleLabel->setText(tr("Updated Posted"));
+//		ui->titleLabel->setText(tr("Updated Board"));
 //	}
 
 	if (mIsHome)

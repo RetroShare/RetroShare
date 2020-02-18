@@ -89,7 +89,7 @@
         </property>
         <property name="icon">
          <iconset resource="Posted_images.qrc">
-          <normaloff>:/images/posted_24.png</normaloff>:/images/posted_24.png</iconset>
+          <normaloff>:/images/write.png</normaloff>:/images/write.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -289,7 +289,7 @@
          <string notr="true"/>
         </property>
         <property name="title">
-         <string>Topic Details</string>
+         <string>Board Details</string>
         </property>
         <property name="flat">
          <bool>false</bool>

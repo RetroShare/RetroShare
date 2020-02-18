@@ -178,3 +178,104 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 
 	return RSTreeWidgetItem::data(column, role);
 }
+
+QSize GxsIdTreeItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+
+	if(id.isNull())
+		return QStyledItemDelegate::sizeHint(option,index);
+
+	QStyleOptionViewItemV4 opt = option;
+	initStyleOption(&opt, index);
+
+	// disable default icon
+	opt.icon = QIcon();
+	const QRect r = option.rect;
+	QString str;
+	QList<QIcon> icons;
+	QString comment;
+
+	QFontMetricsF fm(option.font);
+	float f = fm.height();
+
+	QIcon icon ;
+
+	if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+	{
+		icon = GxsIdDetails::getLoadingIcon(id);
+		launchAsyncLoading();
+	}
+	else
+		icon = *icons.begin();
+
+	QPixmap pix = icon.pixmap(r.size());
+
+	return QSize(1.2*(pix.width() + fm.width(str)),std::max(1.1*pix.height(),1.4*fm.height()));
+}
+
+
+void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
+{
+	if(!index.isValid())
+	{
+		std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+		return ;
+	}
+
+	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
+
+	if(id.isNull())
+		return QStyledItemDelegate::paint(painter,option,index);
+
+	QStyleOptionViewItemV4 opt = option;
+	initStyleOption(&opt, index);
+
+	// disable default icon
+	opt.icon = QIcon();
+	// draw default item
+	QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
+
+	QRect r = option.rect;
+
+	QString str;
+	QString comment;
+
+	QFontMetricsF fm(painter->font());
+	float f = fm.height();
+
+	QIcon icon ;
+
+	if(id.isNull())
+	{
+		str = tr("[Notification]");
+		icon = QIcon(":/icons/logo_128.png");
+	}
+	else if(! computeNameIconAndComment(id,str,icon,comment))
+		if(mReloadPeriod > 3)
+		{
+			str = tr("[Unknown]");
+			icon = QIcon();
+		}
+		else
+		{
+			icon = GxsIdDetails::getLoadingIcon(id);
+			launchAsyncLoading();
+		}
+
+	QPixmap pix = icon.pixmap(r.size());
+	const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
+
+	// draw pixmap at center of item
+	painter->drawPixmap(r.topLeft() + p, pix);
+	//painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
+
+	//cr.adjust(margin(), margin(), -margin(), -margin());
+
+	QRect mRectElision;
+
+    r.adjust(pix.height()+f,(r.height()-f)/2.0,0,0);
+
+	bool didElide = ElidedLabel::paintElidedLine(*painter,str,r,Qt::AlignLeft,false,false,mRectElision);
+
+}

@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.cpp                                                   *
+ * retroshare-gui/src/gui/PhotoShare/AlbumExtra.h                              *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (C) 2020 by Robert Fernie <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,63 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QDateTime>
-#include <QMessageBox>
-#include <QMouseEvent>
-#include <QBuffer>
+#ifndef ALBUMEXTRA_H
+#define ALBUMEXTRA_H
 
-#include "PulseItem.h"
+#include <QWidget>
 
-#include <algorithm>
-#include <iostream>
-
-/****
- * #define DEBUG_ITEM 1
- ****/
-
-/** Constructor */
-
-PulseItem::PulseItem(PulseHolder *parent, std::string path)
-:QWidget(NULL), mParent(parent), mType(0)
-{
-    setupUi(this);
-    setAttribute ( Qt::WA_DeleteOnClose, true );
-
+namespace Ui {
+    class AlbumExtra;
 }
 
-void PulseItem::removeItem()
+class AlbumExtra : public QWidget
 {
-}
+    Q_OBJECT
 
-void PulseItem::setSelected(bool on)
-{
-}
+public:
+    explicit AlbumExtra(QWidget *parent = 0);
+    virtual ~AlbumExtra();
 
-bool PulseItem::isSelected()
-{
-    return mSelected;
-}
+private:
+    void setUp();
+private:
+    Ui::AlbumExtra *ui;
+};
 
-void PulseItem::mousePressEvent(QMouseEvent *event)
-{
-    /* We can be very cunning here?
-     * grab out position.
-     * flag ourselves as selected.
-     * then pass the mousePressEvent up for handling by the parent
-     */
-
-    QPoint pos = event->pos();
-
-    std::cerr << "PulseItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
-    std::cerr << std::endl;
-
-    setSelected(true);
-
-    QWidget::mousePressEvent(event);
-}
-
-const QPixmap *PulseItem::getPixmap()
-{
-    return NULL;
-}
-
+#endif // ALBUMEXTRA_H

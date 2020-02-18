@@ -30,7 +30,7 @@
  * #define POSTED_DEBUG 1
  ****/
 
-RsPosted *rsPosted = NULL;
+/*extern*/ RsPosted* rsPosted = nullptr;
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -300,4 +300,35 @@ bool p3Posted::createPost(uint32_t &token, RsPostedPost &msg)
 	return true;
 }
 
-/********************************************************************************************/
+bool p3Posted::getBoardsInfo(
+        const std::list<RsGxsGroupId>& boardsIds,
+        std::vector<RsPostedGroup>& channelsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+	if( !requestGroupInfo(token, opts, boardsIds)
+	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	return getGroupData(token, channelsInfo) && !channelsInfo.empty();
+}
+
+bool p3Posted::getBoardContent( const RsGxsGroupId& channelId,
+                       const std::set<RsGxsMessageId>& contentsIds,
+                       std::vector<RsPostedPost>& posts,
+                       std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	GxsMsgReq msgIds;
+	msgIds[channelId] = contentsIds;
+
+	if( !requestMsgInfo(token, opts, msgIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getPostData(token, posts, comments);
+}
+
+RsPosted::~RsPosted() = default;
+RsGxsPostedEvent::~RsGxsPostedEvent() = default;

@@ -170,7 +170,8 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	contactsItem->setData(RSID_COL_VOTES, Qt::DecorationRole,0xff);
 
 	ui->treeWidget_membership->clear();
-    
+	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
+
     	mExternalOtherCircleItem = NULL ;
     	mExternalBelongingCircleItem = NULL ;
 
@@ -768,13 +769,13 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #ifdef ID_DEBUG
 			std::cerr << "invited: " << invited << ", subscription: " << subscrb ;
 #endif
-			GxsIdRSTreeWidgetItem *subitem = NULL ;
+			RSTreeWidgetItem *subitem = NULL ;
 
 			// see if the item already exists
 			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
 				{
-					subitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(item->child(k));
+					subitem = dynamic_cast<RSTreeWidgetItem*>(item->child(k));
 #ifdef ID_DEBUG
 					std::cerr << " found existing sub item." << std::endl;
 #endif
@@ -803,9 +804,8 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #ifdef ID_DEBUG
 				std::cerr << " no existing sub item. Creating new one." << std::endl;
 #endif
-				subitem = new GxsIdRSTreeWidgetItem(NULL,GxsIdDetails::ICON_TYPE_AVATAR,false);
-
-                subitem->setId(it->first,CIRCLEGROUP_CIRCLE_COL_GROUPNAME,true);
+				subitem = new RSTreeWidgetItem(NULL);
+                subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,Qt::UserRole,QString::fromStdString(it->first.toStdString()));
 
 				RsIdentityDetails idd ;
 				bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
