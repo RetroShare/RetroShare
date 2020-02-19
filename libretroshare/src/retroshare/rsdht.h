@@ -27,6 +27,7 @@
 #include <list>
 #include <retroshare/rstypes.h>
 #include "util/rsnet.h"
+#include "retroshare/rsflags.h"
 
 /* The Main Interface Class - for information about your Peers */
 class RsDht;
@@ -75,15 +76,16 @@ extern RsDht *rsDht;
 #define RSDHT_RELAY_CLASS_FOF             2
 #define RSDHT_RELAY_CLASS_FRIENDS         3
 
+enum class RsDhtRelayMode : uint16_t
+{
+	ENABLED	= 0x0001,
 
-#define RSDHT_RELAY_MODE_MASK		0x00f0
-
-#define RSDHT_RELAY_ENABLED		0x0001
-
-#define RSDHT_RELAY_MODE_OFF		0x0010
-#define RSDHT_RELAY_MODE_ON		0x0020
-#define RSDHT_RELAY_MODE_SERVER		0x0040
-
+	MASK	= 0x00f0,
+	OFF		= 0x0010,
+	ON		= 0x0020,
+	SERVER	= 0x0040
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsDhtRelayMode)
 
 class RsDhtPeer
 {
@@ -188,8 +190,8 @@ virtual int 	getRelayServerList(std::list<std::string> &ids) = 0;
 virtual int 	addRelayServer(std::string ids) = 0;
 virtual int 	removeRelayServer(std::string ids) = 0;
 
-virtual	uint32_t getRelayMode() = 0;
-virtual	int	 setRelayMode(uint32_t mode) = 0;
+virtual	RsDhtRelayMode getRelayMode() = 0;
+virtual	int	 setRelayMode(RsDhtRelayMode mode) = 0;
 
 virtual int	getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
 virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth) = 0;

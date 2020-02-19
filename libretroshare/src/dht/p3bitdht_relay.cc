@@ -35,7 +35,7 @@
 
 int p3BitDht::setupRelayDefaults()
 {
-	uint32_t mode = RSDHT_RELAY_ENABLED | RSDHT_RELAY_MODE_OFF;
+	RsDhtRelayMode mode = RsDhtRelayMode::ENABLED | RsDhtRelayMode::OFF;
 	setRelayMode(mode);
 	
 	return 1;
@@ -111,19 +111,19 @@ int p3BitDht::pushRelayServers()
 }
 
 
-uint32_t p3BitDht::getRelayMode()
+RsDhtRelayMode p3BitDht::getRelayMode()
 {
 	RsStackMutex stack(dhtMtx); /*********** LOCKED **********/
 
 	return mRelayMode;
 }
 
-int p3BitDht::setRelayMode(uint32_t mode)
+int p3BitDht::setRelayMode(RsDhtRelayMode mode)
 {
 	std::cerr << "p3BitDht::setRelayMode(" << mode << ")";
 	std::cerr << std::endl;
 
-	if (mode & RSDHT_RELAY_ENABLED)
+	if (!!(mode & RsDhtRelayMode::ENABLED))
 	{
 		mUdpBitDht->ConnectionOptions(
 			BITDHT_CONNECT_MODE_DIRECT | BITDHT_CONNECT_MODE_PROXY | BITDHT_CONNECT_MODE_RELAY,
@@ -136,18 +136,18 @@ int p3BitDht::setRelayMode(uint32_t mode)
 			BITDHT_CONNECT_OPTION_AUTOPROXY);
 	}
 
-	int relaymode = mode & RSDHT_RELAY_MODE_MASK;
+	RsDhtRelayMode relaymode = mode & RsDhtRelayMode::MASK;
 
 	switch(relaymode)
 	{
-		case RSDHT_RELAY_MODE_OFF:
+	    case RsDhtRelayMode::OFF:
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_IGNORED);
 			break;
-		case RSDHT_RELAY_MODE_ON:
+	    case RsDhtRelayMode::ON:
 			pushRelayServers();
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_FLAGGED);
 			break;
-		case RSDHT_RELAY_MODE_SERVER:
+	    case RsDhtRelayMode::SERVER:
 			pushRelayServers();
 			mUdpBitDht->setDhtMode(BITDHT_MODE_RELAYSERVERS_SERVER);
 			break;
@@ -306,7 +306,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 	int bandwidth[RSDHT_RELAY_NUM_CLASS] = {0};
 
 	bool haveMode = false;
-	int mode = 0;
+	RsDhtRelayMode mode = static_cast<RsDhtRelayMode>(0);
 
 	std::list<RsTlvKeyValue>::iterator it;
 	for(it = config->tlvkvs.pairs.begin(); it != config->tlvkvs.pairs.end(); ++it)
@@ -322,7 +322,7 @@ bool    p3BitDht::loadList(std::list<RsItem *>& load)
 		}
 		else if (0 == strncmp(key.c_str(), "RELAY_MODE", 10))
 		{
-			mode = atoi(value.c_str());
+			mode = static_cast<RsDhtRelayMode>(atoi(value.c_str()));
 			haveMode = true;
 
 			//std::cerr << "p3BitDht::loadList() Found Mode: " << mode;

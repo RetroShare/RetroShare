@@ -294,8 +294,8 @@ public:
     virtual int     addRelayServer(std::string ids);
     virtual int     removeRelayServer(std::string ids);
 
-    virtual uint32_t getRelayMode();
-    virtual int      setRelayMode(uint32_t mode);
+	virtual RsDhtRelayMode getRelayMode();
+	virtual int      setRelayMode(RsDhtRelayMode mode);
 
     virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
     virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
@@ -307,7 +307,7 @@ private:
     int     pushRelayServers();
 
     std::list<std::string> mRelayServerList;
-    uint32_t mRelayMode;
+	RsDhtRelayMode mRelayMode;
 
 protected:
     /*****************************************************************/
