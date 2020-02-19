@@ -36,14 +36,6 @@ extern RsDht *rsDht;
 //std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
 //std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
 
-#define RSDHT_NETSTART_NETWORKMODE	0x0001
-#define RSDHT_NETSTART_NATTYPE		0x0002
-#define RSDHT_NETSTART_NATHOLE		0x0003
-#define RSDHT_NETSTART_CONNECTMODES	0x0004
-#define RSDHT_NETSTART_NETSTATE		0x0005
-
-
-
 #define RSDHT_PEERTYPE_ANY		0x0000
 #define RSDHT_PEERTYPE_OTHER		0x0001
 #define RSDHT_PEERTYPE_FOF		0x0002
