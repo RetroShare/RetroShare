@@ -263,7 +263,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 	(void) id;
 
 	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
-			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
+	        (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING))
 	{
 
 #ifdef DEBUG_PEERNET
@@ -368,7 +368,7 @@ int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t /*status*/
 {
 
 	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
-			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
+	        (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING))
 	{
 
 #ifdef DEBUG_PEERNET
@@ -989,7 +989,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 					dpd->mPeerReqStatusMsg = "STOPPED: ";
 					dpd->mPeerReqStatusMsg += decodeConnectionError(errcode);
-					dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
+					dpd->mPeerReqState = RsDhtPeerRequest::STOPPED;
 					dpd->mPeerReqTS = now;
 
 					int updatecode = CSB_UPDATE_FAILED_ATTEMPT;
@@ -1048,7 +1048,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				else // a new connection attempt.
 				{
 					dpd->mPeerReqStatusMsg = "Connect Attempt";
-					dpd->mPeerReqState = RSDHT_PEERREQ_RUNNING;
+					dpd->mPeerReqState = RsDhtPeerRequest::RUNNING;
 					dpd->mPeerReqMode = mode;
 					dpd->mPeerReqProxyId = *proxyId;
 					dpd->mPeerReqTS = now;
@@ -1391,7 +1391,7 @@ int p3BitDht::doActions()
 						if (dpd)
 						{
 							dpd->mPeerReqStatusMsg = "Connect Request";
-							dpd->mPeerReqState = RSDHT_PEERREQ_RUNNING;
+							dpd->mPeerReqState = RsDhtPeerRequest::RUNNING;
 							dpd->mPeerReqMode = action.mMode;
 							dpd->mPeerReqTS = now;
 
@@ -1434,7 +1434,7 @@ int p3BitDht::doActions()
 						dpd->mConnectLogic.updateCb(failReason);
 
 						dpd->mPeerReqStatusMsg = "Req Mode Unavailable";
-						dpd->mPeerReqState = RSDHT_PEERREQ_STOPPED;
+						dpd->mPeerReqState = RsDhtPeerRequest::STOPPED;
 						dpd->mPeerReqMode = action.mMode;
 						dpd->mPeerReqTS = now;
 
@@ -1756,7 +1756,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 		it->second.mPeerCbMsg = "Denied Non-Friend";
 
 		it->second.mPeerReqStatusMsg = "Denied Non-Friend";
-		it->second.mPeerReqState = RSDHT_PEERREQ_STOPPED;
+		it->second.mPeerReqState = RsDhtPeerRequest::STOPPED;
 		it->second.mPeerReqTS = now;
 		it->second.mPeerReqMode = 0;
 		//it->second.mPeerProxyId;
@@ -2250,7 +2250,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 	rs_sprintf(dpd->mPeerConnectMsg, "Connected in %ld secs", dpd->mPeerConnectTS - dpd->mPeerConnectUdpTS);
 			
 	// Remove the Connection Request.
-	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+	if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::monitorConnections() Request Active, Stopping Request";
@@ -2345,7 +2345,7 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 		/* shut it down */
 
 		/* ONLY need to update ConnectLogic - if it was our Attempt Running */
-		if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+		if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 		{
 			dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
 		}
@@ -2370,7 +2370,7 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 
 
 
-	if (dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING)
+	if (dpd->mPeerReqState == RsDhtPeerRequest::RUNNING)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() ";

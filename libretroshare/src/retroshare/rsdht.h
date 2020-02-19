@@ -61,8 +61,11 @@ enum class RsDhtPeerConnectState : uint8_t
 	CONNECTED		= 3
 };
 
-#define RSDHT_PEERREQ_STOPPED                     1
-#define RSDHT_PEERREQ_RUNNING                     2
+enum class RsDhtPeerRequest : uint8_t
+{
+	STOPPED	= 1,
+	RUNNING = 2
+};
 
 #define RSDHT_TOU_MODE_NONE		0
 #define RSDHT_TOU_MODE_DIRECT		1
@@ -122,7 +125,7 @@ class RsDhtNetPeer
 
 	std::string mPeerConnectProxyId;
 
-	uint32_t mPeerReqState; 	// Req Status.
+	RsDhtPeerRequest mPeerReqState;
 	std::string mCbPeerMsg; 	// Peer Cb Mgs.
 
 };

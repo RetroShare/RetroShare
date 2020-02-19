@@ -77,7 +77,7 @@ class DhtPeerDetails
 
         /* Connection Request Status */
 	std::string		mPeerReqStatusMsg;
-	uint32_t		mPeerReqState;
+	RsDhtPeerRequest	mPeerReqState;
 	uint32_t		mPeerReqMode;
 	bdId			mPeerReqProxyId;
 	rstime_t			mPeerReqTS;

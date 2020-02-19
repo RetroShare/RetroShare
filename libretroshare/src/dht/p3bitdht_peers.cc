@@ -723,7 +723,7 @@ DhtPeerDetails::DhtPeerDetails()
 	mDhtUpdateTS = time(NULL);
 		
 	mPeerReqStatusMsg = "Just Added";
-	mPeerReqState = RSDHT_PEERREQ_STOPPED;
+	mPeerReqState = RsDhtPeerRequest::STOPPED;
 	mPeerReqMode = 0;
 	//mPeerReqProxyId;
 	mPeerReqTS = time(NULL);

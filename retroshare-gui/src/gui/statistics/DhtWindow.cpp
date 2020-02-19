@@ -477,10 +477,10 @@ void DhtWindow::updateNetPeers()
 		}
 		switch(status.mPeerReqState)
 		{
-			case RSDHT_PEERREQ_RUNNING:
+		    case RsDhtPeerRequest::RUNNING:
 				reqstr += tr("Request Active");
 				break;
-			case RSDHT_PEERREQ_STOPPED:
+		    case RsDhtPeerRequest::STOPPED:
 				reqstr += tr("No Request");
 				break;
 			default:
