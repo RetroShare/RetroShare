@@ -737,7 +737,7 @@ DhtPeerDetails::DhtPeerDetails()
 	//mPeerCbDestId = 0;
 	mPeerCbTS = 0;
 		
-	mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+	mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 	mPeerConnectMsg = "Disconnected";
 	mPeerConnectMode = 0;
 	//dpd->mPeerConnectProxyId;

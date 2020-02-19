@@ -58,7 +58,7 @@ class DhtPeerDetails
 	PeerConnectStateBox mConnectLogic;
 	
 	/* Actual Connection Status */
-	uint32_t  		mPeerConnectState; // One of RSDHT_PEERCONN_
+	RsDhtPeerConnectState	mPeerConnectState;
 	std::string 		mPeerConnectMsg;
 	uint32_t 		mPeerConnectMode;
 	bdId 			mPeerConnectPeerId;

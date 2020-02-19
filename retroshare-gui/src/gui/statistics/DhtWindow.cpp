@@ -430,14 +430,14 @@ void DhtWindow::updateNetPeers()
 		switch(status.mPeerConnectState)
 		{
 			default:
-			case RSDHT_PEERCONN_DISCONNECTED:
+		    case RsDhtPeerConnectState::DISCONNECTED:
 				cpsstr = tr("Disconnected");
 				++nDisconnPeers;
 				break;
-			case RSDHT_PEERCONN_UDP_STARTED:
+		    case RsDhtPeerConnectState::UDP_STARTED:
 				cpsstr = tr("Udp Started");
 				break;
-			case RSDHT_PEERCONN_CONNECTED:
+		    case RsDhtPeerConnectState::CONNECTED:
 			{
 				cpsstr = tr("Connected");
 
@@ -460,7 +460,7 @@ void DhtWindow::updateNetPeers()
 
 		peer_item -> setData(PTW_COL_PEER_CONNECT_STATUS, Qt::DisplayRole, cpsstr);
 		
-		if (status.mPeerConnectState == RSDHT_PEERCONN_DISCONNECTED)
+		if (status.mPeerConnectState == RsDhtPeerConnectState::DISCONNECTED)
 		{
 			peer_item -> setData(PTW_COL_PEER_CONNECT_MODE, Qt::DisplayRole, "");
 		}

@@ -262,7 +262,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 	/* remove unused parameter warnings */
 	(void) id;
 
-	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
+	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
 			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
@@ -367,7 +367,7 @@ int p3BitDht::OnlinePeerCallback_locked(const bdId *id, uint32_t /*status*/, Dht
 int p3BitDht::UnreachablePeerCallback_locked(const bdId *id, uint32_t /*status*/, DhtPeerDetails *dpd)
 {
 
-	if ((dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED) ||
+	if ((dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED) ||
 			(dpd->mPeerReqState == RSDHT_PEERREQ_RUNNING))
 	{
 
@@ -1765,7 +1765,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 		it->second.mPeerCbMsg = "Denied Non-Friend";
 
 		it->second.mPeerConnectMsg = "Denied Non-Friend";
-		it->second.mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		it->second.mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 
 		
 		return 0;
@@ -1774,7 +1774,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 
 	/* are a friend */
 
-	if (dpd->mPeerConnectState == RSDHT_PEERCONN_CONNECTED)
+	if (dpd->mPeerConnectState == RsDhtPeerConnectState::CONNECTED)
 	{
 		std::cerr << "p3BitDht::checkConnectionAllowed() ERROR Peer Already Connected, DENIED";
 		std::cerr << std::endl;
@@ -1988,7 +1988,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 			return;
 		}
 
-		if (dpd->mPeerConnectState != RSDHT_PEERCONN_DISCONNECTED)
+		if (dpd->mPeerConnectState != RsDhtPeerConnectState::DISCONNECTED)
 		{
 			std::cerr << "p3BitDht::initiateConnection() ERROR Peer is not Disconnected";
 			std::cerr << std::endl;
@@ -2047,7 +2047,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 
 		/* store results in Status */
 		dpd->mPeerConnectMsg = "UDP started";
-		dpd->mPeerConnectState = RSDHT_PEERCONN_UDP_STARTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::UDP_STARTED;
 		dpd->mPeerConnectUdpTS = time(NULL);
 		dpd->mPeerConnectMode = mode;
 		dpd->mPeerConnectPoint = loc;
@@ -2183,7 +2183,7 @@ void p3BitDht::monitorConnections()
 			continue;
 		}
 		
-		if (it->second.mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
+		if (it->second.mPeerConnectState == RsDhtPeerConnectState::UDP_STARTED)
 		{
 #ifdef DEBUG_PEERNET
 			std::cerr << "p3BitDht::monitorConnections() Connection in progress to: ";
@@ -2225,7 +2225,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 	}
 	
 	/* sanity checking */
-	if (dpd->mPeerConnectState != RSDHT_PEERCONN_UDP_STARTED)
+	if (dpd->mPeerConnectState != RsDhtPeerConnectState::UDP_STARTED)
 	{
 		/* ERROR */
 		std::cerr << "p3BitDht::Feedback_Connected() ERROR not in UDP_STARTED mode for: ";
@@ -2242,7 +2242,7 @@ void p3BitDht::Feedback_Connected(const RsPeerId& pid)
 #endif
 			
 			/* switch state! */
-	dpd->mPeerConnectState = RSDHT_PEERCONN_CONNECTED;
+	dpd->mPeerConnectState = RsDhtPeerConnectState::CONNECTED;
 	dpd->mPeerConnectTS = time(NULL);
 			
 	dpd->mConnectLogic.updateCb(CSB_UPDATE_CONNECTED);
@@ -2334,7 +2334,7 @@ void p3BitDht::Feedback_ConnectionClosed(const RsPeerId& pid)
 
 void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 {
-	if (dpd->mPeerConnectState == RSDHT_PEERCONN_UDP_STARTED)
+	if (dpd->mPeerConnectState == RsDhtPeerConnectState::UDP_STARTED)
 	{
 #ifdef DEBUG_PEERNET
 		std::cerr << "p3BitDht::UdpConnectionFailed_locked() UDP Connection Failed: ";
@@ -2349,7 +2349,7 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 		{
 			dpd->mConnectLogic.updateCb(CSB_UPDATE_FAILED_ATTEMPT);
 		}
-		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 		dpd->mPeerConnectMsg = "UDP Failed";
 
 	}
@@ -2363,7 +2363,7 @@ void p3BitDht::UdpConnectionFailed_locked(DhtPeerDetails *dpd)
 
 		dpd->mConnectLogic.updateCb(CSB_UPDATE_DISCONNECTED);
 
-		dpd->mPeerConnectState = RSDHT_PEERCONN_DISCONNECTED;
+		dpd->mPeerConnectState = RsDhtPeerConnectState::DISCONNECTED;
 		dpd->mPeerConnectClosedTS = time(NULL);
 		rs_sprintf(dpd->mPeerConnectMsg, "Closed, Alive for: %ld secs", dpd->mPeerConnectClosedTS - dpd->mPeerConnectTS);
 	}

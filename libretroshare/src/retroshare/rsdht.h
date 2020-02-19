@@ -54,9 +54,12 @@ enum class RsDhtPeerDht : uint8_t
 	ONLINE		= 5
 };
 
-#define RSDHT_PEERCONN_DISCONNECTED               1
-#define RSDHT_PEERCONN_UDP_STARTED                2
-#define RSDHT_PEERCONN_CONNECTED                  3
+enum class RsDhtPeerConnectState : uint8_t
+{
+	DISCONNECTED	= 1,
+	UDP_STARTED		= 2,
+	CONNECTED		= 3
+};
 
 #define RSDHT_PEERREQ_STOPPED                     1
 #define RSDHT_PEERREQ_RUNNING                     2
@@ -113,7 +116,7 @@ class RsDhtNetPeer
 
 	std::string mConnectState; 	// connectLogic.
 
-	uint32_t mPeerConnectState; 	// connect Status
+	RsDhtPeerConnectState mPeerConnectState; 	// connect Status
 	uint32_t mPeerConnectMode; 	// connect mode
 	bool  mExclusiveProxyLock;
 
