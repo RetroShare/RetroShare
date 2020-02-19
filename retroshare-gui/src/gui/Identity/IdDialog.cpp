@@ -627,6 +627,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				std::cerr << "  more than 1 item correspond to this ID. Removing!" << std::endl;
 #endif
 				delete clist.front() ;
+                clist.pop_front();
 			}
 
 			item = clist.front() ;

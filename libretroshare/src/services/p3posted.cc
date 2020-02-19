@@ -302,17 +302,17 @@ bool p3Posted::createPost(uint32_t &token, RsPostedPost &msg)
 
 bool p3Posted::getBoardsInfo(
         const std::list<RsGxsGroupId>& boardsIds,
-        std::vector<RsPostedGroup>& channelsInfo )
+        std::vector<RsPostedGroup>& groupsInfo )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	if( !requestGroupInfo(token, opts, boardsIds)
 	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
-	return getGroupData(token, channelsInfo) && !channelsInfo.empty();
+	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
 }
 
-bool p3Posted::getBoardContent( const RsGxsGroupId& channelId,
+bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
                        const std::set<RsGxsMessageId>& contentsIds,
                        std::vector<RsPostedPost>& posts,
                        std::vector<RsGxsComment>& comments )
@@ -322,7 +322,7 @@ bool p3Posted::getBoardContent( const RsGxsGroupId& channelId,
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	GxsMsgReq msgIds;
-	msgIds[channelId] = contentsIds;
+	msgIds[groupId] = contentsIds;
 
 	if( !requestMsgInfo(token, opts, msgIds) ||
 	        waitToken(token) != RsTokenService::COMPLETE ) return false;

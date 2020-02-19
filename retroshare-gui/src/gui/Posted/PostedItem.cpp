@@ -182,10 +182,7 @@ void PostedItem::loadGroup()
 		std::vector<RsPostedGroup> groups;
 		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-#warning Code needed in rsPosted
-#ifdef TODO
-		if(!rsPosted->getPostedGroupInfo(groupIds,groups))
-#endif
+		if(!rsPosted->getBoardsInfo(groupIds,groups))
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
@@ -220,10 +217,7 @@ void PostedItem::loadMessage()
 		std::vector<RsPostedPost> posts;
 		std::vector<RsGxsComment> comments;
 
-#warning Code needed in rsPosted
-#ifdef TODO
-		if(! rsPosted->getPostedContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
-#endif
+		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
 		{
 			RsErr() << "PostedItem::loadMessage() ERROR getting data" << std::endl;
 			return;
@@ -283,12 +277,9 @@ void PostedItem::loadComment()
 		std::vector<RsPostedPost> posts;
 		std::vector<RsGxsComment> comments;
 
-#warning Code needed in rsPosted
-#ifdef TODO
-		if(! rsPosted->getPostedContent( groupId(),msgIds,posts,comments))
-#endif
+		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
 		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
 			return;
 		}
 

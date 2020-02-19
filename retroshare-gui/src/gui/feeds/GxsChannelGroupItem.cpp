@@ -101,7 +101,7 @@ void GxsChannelGroupItem::loadGroup()
 
 		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
 		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
 			return;
 		}
 
