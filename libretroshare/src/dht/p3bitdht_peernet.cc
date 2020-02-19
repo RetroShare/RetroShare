@@ -2003,7 +2003,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 		{
 			default:
 			case BITDHT_CONNECT_MODE_DIRECT:
-//				touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//				touConnectMode = RsDhtTouMode::DIRECT;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				delay = delayOrBandwidth;
 				break;
@@ -2021,12 +2021,12 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				delay = delayOrBandwidth;
 				if (useProxyPort)
 				{
-//					touConnectMode = RSDHT_TOU_MODE_PROXY;
+//					touConnectMode = RsDhtTouMode::PROXY;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_PROXY;
 				}
 				else
 				{
-//					touConnectMode = RSDHT_TOU_MODE_DIRECT;
+//					touConnectMode = RsDhtTouMode::DIRECT;
 					connectFlags |= RS_CB_FLAG_MODE_UDP_DIRECT;
 				}
 
@@ -2034,7 +2034,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 				break;
 	
 			case BITDHT_CONNECT_MODE_RELAY:
-//				touConnectMode = RSDHT_TOU_MODE_RELAY;
+//				touConnectMode = RsDhtTouMode::RELAY;
 				connectFlags |= RS_CB_FLAG_MODE_UDP_RELAY;
 				bandwidth = delayOrBandwidth;
 				break;

@@ -67,11 +67,13 @@ enum class RsDhtPeerRequest : uint8_t
 	RUNNING = 2
 };
 
-#define RSDHT_TOU_MODE_NONE		0
-#define RSDHT_TOU_MODE_DIRECT		1
-#define RSDHT_TOU_MODE_PROXY		2
-#define RSDHT_TOU_MODE_RELAY		3
-
+enum class RsDhtTouMode : uint8_t
+{
+	NONE	= 0,
+	DIRECT	= 1,
+	PROXY	= 2,
+	RELAY	= 3
+};
 
 #define RSDHT_RELAY_NUM_CLASS             4
 
@@ -119,8 +121,8 @@ class RsDhtNetPeer
 
 	std::string mConnectState; 	// connectLogic.
 
-	RsDhtPeerConnectState mPeerConnectState; 	// connect Status
-	uint32_t mPeerConnectMode; 	// connect mode
+	RsDhtPeerConnectState mPeerConnectState;
+	RsDhtTouMode mPeerConnectMode;
 	bool  mExclusiveProxyLock;
 
 	std::string mPeerConnectProxyId;

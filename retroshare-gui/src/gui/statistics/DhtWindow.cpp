@@ -410,17 +410,17 @@ void DhtWindow::updateNetPeers()
 		QString cpmstr;
 		switch(status.mPeerConnectMode)
 		{
-			case RSDHT_TOU_MODE_DIRECT:
+		    case RsDhtTouMode::DIRECT:
 				cpmstr = tr("Direct");
 				break;
-			case RSDHT_TOU_MODE_PROXY:
+		    case RsDhtTouMode::PROXY:
 				cpmstr = tr("Proxy VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
-			case RSDHT_TOU_MODE_RELAY:
+		    case RsDhtTouMode::RELAY:
 				cpmstr = tr("Relay VIA")+" " + QString::fromStdString(status.mPeerConnectProxyId);
 				break;
 			default:
-			case RSDHT_TOU_MODE_NONE:
+		    case RsDhtTouMode::NONE:
 				cpmstr = tr("None");
 				break;
 		}
@@ -444,13 +444,13 @@ void DhtWindow::updateNetPeers()
 				switch(status.mPeerConnectMode)
 				{
 					default:
-					case RSDHT_TOU_MODE_DIRECT:
+				    case RsDhtTouMode::DIRECT:
 						++nDirectPeers;
 						break;
-					case RSDHT_TOU_MODE_PROXY:
+				    case RsDhtTouMode::PROXY:
 						++nProxyPeers;
 						break;
-					case RSDHT_TOU_MODE_RELAY:
+				    case RsDhtTouMode::RELAY:
 						++nRelayPeers;
 						break;
 				}
