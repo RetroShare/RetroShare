@@ -222,26 +222,26 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 	switch(status)
 	{
 		default:
-			dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		    dpd->mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 			break;
 
 		case BITDHT_MGR_QUERY_FAILURE:
-			dpd->mDhtState = RSDHT_PEERDHT_FAILURE;
+		    dpd->mDhtState = RsDhtPeerDht::FAILURE;
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_OFFLINE:
-			dpd->mDhtState = RSDHT_PEERDHT_OFFLINE;
+		    dpd->mDhtState = RsDhtPeerDht::OFFLINE;
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_UNREACHABLE:
-			dpd->mDhtState = RSDHT_PEERDHT_UNREACHABLE;
+		    dpd->mDhtState = RsDhtPeerDht::UNREACHABLE;
 			dpd->mDhtId = *id; // set the IP:Port of the unreachable peer.
 			UnreachablePeerCallback_locked(id, status, dpd);
 
 			break;
 
 		case BITDHT_MGR_QUERY_PEER_ONLINE:
-			dpd->mDhtState = RSDHT_PEERDHT_ONLINE;
+		    dpd->mDhtState = RsDhtPeerDht::ONLINE;
 			dpd->mDhtId = *id; // set the IP:Port of the Online peer.
 			OnlinePeerCallback_locked(id, status, dpd);
 
@@ -1749,7 +1749,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 
 		/* flag as failed */
 		it->second.mDhtId = *peerId;
-		it->second.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		it->second.mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 		it->second.mDhtUpdateTS = now;
 
 		it->second.mPeerType = RsDhtPeerType::OTHER;

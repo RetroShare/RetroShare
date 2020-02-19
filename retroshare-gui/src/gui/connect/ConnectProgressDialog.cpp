@@ -521,30 +521,30 @@ void ConnectProgressDialog::updateLookupStatus()
 	switch(status.mDhtState)
 	{
 		default:
-		case RSDHT_PEERDHT_NOT_ACTIVE:
+	    case RsDhtPeerDht::NOT_ACTIVE:
 			ui->LookupProgressBar->setValue(0);
 			ui->LookupResult->setText(tr("Peer DHT NOT ACTIVE"));
 			mLookupStatus = CONNECT_LOOKUP_NODHTCONFIG;
 			break;
-		case RSDHT_PEERDHT_SEARCHING:
+	    case RsDhtPeerDht::SEARCHING:
 			ui->LookupResult->setText(tr("Searching"));
 			break;
-		case RSDHT_PEERDHT_FAILURE:
+	    case RsDhtPeerDht::FAILURE:
 			ui->LookupProgressBar->setValue(0);
 			ui->LookupResult->setText(tr("Lookup Failure"));
 			mLookupStatus = CONNECT_LOOKUP_FAIL;
 			break;
-		case RSDHT_PEERDHT_OFFLINE:
+	    case RsDhtPeerDht::OFFLINE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Offline"));
 			mLookupStatus = CONNECT_LOOKUP_OFFLINE;
 			break;
-		case RSDHT_PEERDHT_UNREACHABLE:
+	    case RsDhtPeerDht::UNREACHABLE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Firewalled"));
 			mLookupStatus = CONNECT_LOOKUP_UNREACHABLE;
 			break;
-		case RSDHT_PEERDHT_ONLINE:
+	    case RsDhtPeerDht::ONLINE:
 			ui->LookupProgressBar->setValue(100);
 			ui->LookupResult->setText(tr("Peer Online"));
 			mLookupStatus = CONNECT_LOOKUP_ONLINE;

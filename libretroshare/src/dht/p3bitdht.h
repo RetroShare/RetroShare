@@ -51,7 +51,7 @@ class DhtPeerDetails
 	RsPeerId mRsId;
 
 	/* direct from the DHT! */
-	uint32_t mDhtState; // One of RSDHT_PEERDHT_[...]
+	RsDhtPeerDht mDhtState;
 	rstime_t   mDhtUpdateTS;
 
 	/* internal state */

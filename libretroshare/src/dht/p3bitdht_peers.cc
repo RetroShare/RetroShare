@@ -76,7 +76,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			}
 	
 			/* new entry... what do we need to set? */
-			dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+			dpd->mDhtState = RsDhtPeerDht::SEARCHING;
 	
 #ifdef DEBUG_BITDHT
 			std::cerr << "p3BitDht::findPeer() Installed new DhtPeer with pid => NodeId: ";
@@ -93,7 +93,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			std::cerr << std::endl;
 #endif
 	
-			if (dpd->mDhtState != RSDHT_PEERDHT_NOT_ACTIVE)
+			if (dpd->mDhtState != RsDhtPeerDht::NOT_ACTIVE)
 			{
 #ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::findPeer() WARNING DhtState is Already Active!";
@@ -104,7 +104,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 			else
 			{
 				/* flag as searching */
-				dpd->mDhtState = RSDHT_PEERDHT_SEARCHING;
+				dpd->mDhtState = RsDhtPeerDht::SEARCHING;
 #ifdef DEBUG_BITDHT
 				std::cerr << "p3BitDht::findPeer() Marking Old Peer as SEARCHING";
 				std::cerr << std::endl;
@@ -156,7 +156,7 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
 		}
 	
 		/* flag as searching */
-		dpd->mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		dpd->mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 	
 		nid = dpd->mDhtId.id;
 	
@@ -418,7 +418,7 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerT
 
         newdpd.mDhtId.id = id;
         newdpd.mRsId = pid;
-            newdpd.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+		    newdpd.mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 			newdpd.mPeerType = RsDhtPeerType::ANY;
 
         mPeers[id] = newdpd;
@@ -717,9 +717,9 @@ int p3BitDht::calculateNodeId(const RsPeerId& pid, bdNodeId *id)
 
 DhtPeerDetails::DhtPeerDetails()
 {
-	mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
+	mDhtState = RsDhtPeerDht::NOT_ACTIVE;
 
-	mDhtState = RSDHT_PEERDHT_SEARCHING;
+	mDhtState = RsDhtPeerDht::SEARCHING;
 	mDhtUpdateTS = time(NULL);
 		
 	mPeerReqStatusMsg = "Just Added";

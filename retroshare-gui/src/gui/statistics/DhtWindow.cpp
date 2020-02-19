@@ -381,24 +381,24 @@ void DhtWindow::updateNetPeers()
 		switch(status.mDhtState)
 		{
 			default:
-			case RSDHT_PEERDHT_NOT_ACTIVE:
+		    case RsDhtPeerDht::NOT_ACTIVE:
 				dhtstate = tr("Not Active (Maybe Connected!)");
 				break;
-			case RSDHT_PEERDHT_SEARCHING:
+		    case RsDhtPeerDht::SEARCHING:
 				dhtstate = tr("Searching");
 				break;
-			case RSDHT_PEERDHT_FAILURE:
+		    case RsDhtPeerDht::FAILURE:
 				dhtstate = tr("Failed");
 				break;
-			case RSDHT_PEERDHT_OFFLINE:
+		    case RsDhtPeerDht::OFFLINE:
 				dhtstate = tr("offline");
 				++nOfflinePeers;
 				break;
-			case RSDHT_PEERDHT_UNREACHABLE:
+		    case RsDhtPeerDht::UNREACHABLE:
 				dhtstate = tr("Unreachable");
 				++nUnreachablePeers;
 				break;
-			case RSDHT_PEERDHT_ONLINE:
+		    case RsDhtPeerDht::ONLINE:
 				dhtstate = tr("ONLINE");
 				++nOnlinePeers;
 				break;

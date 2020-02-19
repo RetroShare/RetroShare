@@ -44,12 +44,15 @@ enum class RsDhtPeerType : uint8_t
 	FRIEND	= 3
 };
 
-#define RSDHT_PEERDHT_NOT_ACTIVE	0x0000
-#define RSDHT_PEERDHT_SEARCHING		0x0001
-#define RSDHT_PEERDHT_FAILURE		0x0002
-#define RSDHT_PEERDHT_OFFLINE		0x0003
-#define RSDHT_PEERDHT_UNREACHABLE	0x0004
-#define RSDHT_PEERDHT_ONLINE		0x0005
+enum class RsDhtPeerDht : uint8_t
+{
+	NOT_ACTIVE	= 0,
+	SEARCHING	= 1,
+	FAILURE		= 2,
+	OFFLINE		= 3,
+	UNREACHABLE	= 4,
+	ONLINE		= 5
+};
 
 #define RSDHT_PEERCONN_DISCONNECTED               1
 #define RSDHT_PEERCONN_UDP_STARTED                2
@@ -106,7 +109,7 @@ class RsDhtNetPeer
         RsPeerId mRsId;
 
 	RsDhtPeerType mPeerType;
-	uint32_t mDhtState;
+	RsDhtPeerDht mDhtState;
 
 	std::string mConnectState; 	// connectLogic.
 
