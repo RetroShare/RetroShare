@@ -297,8 +297,8 @@ public:
 	virtual RsDhtRelayMode getRelayMode();
 	virtual int      setRelayMode(RsDhtRelayMode mode);
 
-    virtual int     getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth);
-    virtual int     setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth);
+	virtual int     getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth);
+	virtual int     setRelayAllowance(RsDhtRelayClass classIdx, uint32_t  count, uint32_t  bandwidth);
 
 private:
 

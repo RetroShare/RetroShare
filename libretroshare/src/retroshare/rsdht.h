@@ -75,12 +75,15 @@ enum class RsDhtTouMode : uint8_t
 	RELAY	= 3
 };
 
-#define RSDHT_RELAY_NUM_CLASS             4
+enum class RsDhtRelayClass : uint8_t
+{
+	ALL			= 0,
+	GENERAL		= 1,
+	FOF			= 2,
+	FRIENDS		= 3,
 
-#define RSDHT_RELAY_CLASS_ALL             0
-#define RSDHT_RELAY_CLASS_GENERAL         1
-#define RSDHT_RELAY_CLASS_FOF             2
-#define RSDHT_RELAY_CLASS_FRIENDS         3
+	NUM_CLASS	= 4
+};
 
 enum class RsDhtRelayMode : uint16_t
 {
@@ -199,8 +202,8 @@ virtual int 	removeRelayServer(std::string ids) = 0;
 virtual	RsDhtRelayMode getRelayMode() = 0;
 virtual	int	 setRelayMode(RsDhtRelayMode mode) = 0;
 
-virtual int	getRelayAllowance(int  classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
-virtual int	setRelayAllowance(int classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
+virtual int	getRelayAllowance(RsDhtRelayClass classIdx, uint32_t &count, uint32_t &bandwidth) = 0;
+virtual int	setRelayAllowance(RsDhtRelayClass classIdx, uint32_t  count, uint32_t  bandwidth) = 0;
 
 	// So we can provide to clients.
 virtual bool    getOwnDhtId(std::string &ownDhtId) = 0;

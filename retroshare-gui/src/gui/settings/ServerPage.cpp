@@ -446,15 +446,15 @@ void ServerPage::load()
 	//Relay Tab
 	uint32_t count;
 	uint32_t bandwidth;
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::FRIENDS, count, bandwidth);
 	whileBlocking(ui.noFriendSpinBox)->setValue(count);
 	whileBlocking(ui.bandFriendSpinBox)->setValue(bandwidth / 1024);
 
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_FOF, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::FOF, count, bandwidth);
 	whileBlocking(ui.noFOFSpinBox)->setValue(count);
 	whileBlocking(ui.bandFOFSpinBox)->setValue(bandwidth / 1024);
 
-	rsDht->getRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, count, bandwidth);
+	rsDht->getRelayAllowance(RsDhtRelayClass::GENERAL, count, bandwidth);
 	whileBlocking(ui.noGeneralSpinBox)->setValue(count);
 	whileBlocking(ui.bandGeneralSpinBox)->setValue(bandwidth / 1024);
 
@@ -1884,10 +1884,10 @@ void ServerPage::updateTotals()
 
 	int total = nFriends + nFOF + nGeneral;
 
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_ALL, total, 0);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FRIENDS, nFriends, 1024 * friendBandwidth);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_FOF, nFOF, 1024 * fofBandwidth);
-	rsDht->setRelayAllowance(RSDHT_RELAY_CLASS_GENERAL, nGeneral, 1024 * genBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::ALL, total, 0);
+	rsDht->setRelayAllowance(RsDhtRelayClass::FRIENDS, nFriends, 1024 * friendBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::FOF, nFOF, 1024 * fofBandwidth);
+	rsDht->setRelayAllowance(RsDhtRelayClass::GENERAL, nGeneral, 1024 * genBandwidth);
 }
 
 /** Saves the changes on this page */
