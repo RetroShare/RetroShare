@@ -83,7 +83,7 @@ int p3BitDht::InfoCallback(const bdId *id, uint32_t /*type*/, uint32_t /*flags*/
 	{
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RSDHT_PEERTYPE_ANY);
+		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RsDhtPeerType::ANY);
 
 		if (dpd)
 		{
@@ -204,7 +204,7 @@ int p3BitDht::PeerCallback(const bdId *id, uint32_t status)
 
 	RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RSDHT_PEERTYPE_FRIEND);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(id->id), RsDhtPeerType::FRIEND);
 
 	if (!dpd)
 	{
@@ -717,7 +717,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 				std::cerr << std::endl;
 #endif
 	
-				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+				DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 				if (dpd)
 				{
 					proxyPort = dpd->mConnectLogic.shouldUseProxyPort(
@@ -811,7 +811,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 								std::cerr << std::endl;
 #endif
 
-								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+								DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 								if (dpd)
 								{
 									dpd->mExclusiveProxyLock = true;
@@ -939,7 +939,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 			
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 			if (dpd)
 			{
 				dpd->mPeerCbMsg = "ERROR : ";
@@ -980,7 +980,7 @@ int p3BitDht::ConnectCallback(const bdId *srcId, const bdId *proxyId, const bdId
 
 			RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RSDHT_PEERTYPE_FRIEND);
+			DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId.id), RsDhtPeerType::FRIEND);
 			if (dpd)
 			{
 				if (errcode)
@@ -1232,7 +1232,7 @@ int p3BitDht::doActions()
 					{
 						RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 	
-						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 						if (dpd)
 						{
 							connectOk = true;
@@ -1387,7 +1387,7 @@ int p3BitDht::doActions()
 #endif
 	
 	
-						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+						DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 						if (dpd)
 						{
 							dpd->mPeerReqStatusMsg = "Connect Request";
@@ -1428,7 +1428,7 @@ int p3BitDht::doActions()
 					//}
 
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_FRIEND);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::FRIEND);
 					if (dpd)
 					{
 						dpd->mConnectLogic.updateCb(failReason);
@@ -1496,7 +1496,7 @@ int p3BitDht::doActions()
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mSrcId.id), RSDHT_PEERTYPE_ANY);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mSrcId.id), RsDhtPeerType::ANY);
 					if (dpd)
 					{	
 						if (action.mAnswer)
@@ -1604,7 +1604,7 @@ int p3BitDht::doActions()
 				{
 					RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RSDHT_PEERTYPE_ANY);
+					DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(action.mDestId.id), RsDhtPeerType::ANY);
 					if (dpd)
 					{
 						peerRsId = dpd->mRsId;
@@ -1730,7 +1730,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 	rstime_t now = time(NULL);
 
 	/* check if they are in our friend list */
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RSDHT_PEERTYPE_FRIEND);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerId->id), RsDhtPeerType::FRIEND);
 	if (!dpd)
 	{
 #ifdef DEBUG_PEERNET
@@ -1752,7 +1752,7 @@ int p3BitDht::checkConnectionAllowed(const bdId *peerId, int mode)
 		it->second.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
 		it->second.mDhtUpdateTS = now;
 
-		it->second.mPeerType = RSDHT_PEERTYPE_OTHER;
+		it->second.mPeerType = RsDhtPeerType::OTHER;
 		it->second.mPeerCbMsg = "Denied Non-Friend";
 
 		it->second.mPeerReqStatusMsg = "Denied Non-Friend";
@@ -1979,7 +1979,7 @@ void p3BitDht::initiateConnection(const bdId *srcId, const bdId *proxyId, const 
 	{
 		RsStackMutex stack(dhtMtx); /********** LOCKED MUTEX ***************/	
 
-		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerConnectId.id), RSDHT_PEERTYPE_FRIEND);
+		DhtPeerDetails *dpd = findInternalDhtPeer_locked(&(peerConnectId.id), RsDhtPeerType::FRIEND);
 		/* grab a socket */
 		if (!dpd)
 		{
@@ -2092,22 +2092,22 @@ int p3BitDht::installRelayConnection(const bdId *srcId, const bdId *destId, uint
 #endif
 
         /* grab a socket */
-	DhtPeerDetails *dpd_src = findInternalDhtPeer_locked(&(srcId->id), RSDHT_PEERTYPE_ANY);
-	DhtPeerDetails *dpd_dest = findInternalDhtPeer_locked(&(destId->id), RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd_src = findInternalDhtPeer_locked(&(srcId->id), RsDhtPeerType::ANY);
+	DhtPeerDetails *dpd_dest = findInternalDhtPeer_locked(&(destId->id), RsDhtPeerType::ANY);
 
-	if ((dpd_src) && (dpd_src->mPeerType == RSDHT_PEERTYPE_FRIEND))
+	if ((dpd_src) && (dpd_src->mPeerType == RsDhtPeerType::FRIEND))
 	{
 		relayClass = UDP_RELAY_CLASS_FRIENDS;
 	}
-	else if ((dpd_dest) && (dpd_dest->mPeerType == RSDHT_PEERTYPE_FRIEND))
+	else if ((dpd_dest) && (dpd_dest->mPeerType == RsDhtPeerType::FRIEND))
 	{
 		relayClass = UDP_RELAY_CLASS_FRIENDS;
 	}
-	else if ((dpd_src) && (dpd_src->mPeerType == RSDHT_PEERTYPE_FOF))
+	else if ((dpd_src) && (dpd_src->mPeerType == RsDhtPeerType::FOF))
 	{
 		relayClass = UDP_RELAY_CLASS_FOF;
 	}
-	else if ((dpd_dest) && (dpd_dest->mPeerType == RSDHT_PEERTYPE_FOF))
+	else if ((dpd_dest) && (dpd_dest->mPeerType == RsDhtPeerType::FOF))
 	{
 		relayClass = UDP_RELAY_CLASS_FOF;
 	}
@@ -2178,7 +2178,7 @@ void p3BitDht::monitorConnections()
 	for(it = mPeers.begin(); it != mPeers.end(); ++it)
 	{
 		/* ignore ones which aren't friends */
-		if (it->second.mPeerType != RSDHT_PEERTYPE_FRIEND)
+		if (it->second.mPeerType != RsDhtPeerType::FRIEND)
 		{
 			continue;
 		}

@@ -64,7 +64,7 @@ bool 	p3BitDht::findPeer(const RsPeerId& pid)
 		DhtPeerDetails *dpd = findInternalRsPeer_locked(pid);
 		if (!dpd)
 		{
-			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND);
+			dpd = addInternalPeer_locked(pid, RsDhtPeerType::FRIEND);
 			if (!dpd)
 			{
 				/* ERROR */
@@ -150,7 +150,7 @@ bool 	p3BitDht::dropPeer(const RsPeerId& pid)
 #endif
 	
 			//addFriend(pid);
-			dpd = addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF);
+			dpd = addInternalPeer_locked(pid, RsDhtPeerType::FOF);
 			
 			return false;
 		}
@@ -242,7 +242,7 @@ int p3BitDht::addKnownPeer( const RsPeerId &pid,
 	addrv4.sin_addr = ap->sin_addr;
 	addrv4.sin_port = ap->sin_port;
 
-	int p3type = 0;
+	RsDhtPeerType p3type = static_cast<RsDhtPeerType>(0);
 	int bdflags = 0;
 	bdId id;
 	bool isOwnId = false;
@@ -253,27 +253,27 @@ int p3BitDht::addKnownPeer( const RsPeerId &pid,
 			return 0;
 			break;
 		case NETASSIST_KNOWN_PEER_WHITELIST:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_WHITELIST;
 
 			break;
 		case NETASSIST_KNOWN_PEER_FOF:
-			p3type = RSDHT_PEERTYPE_FOF;
+		    p3type = RsDhtPeerType::FOF;
 			bdflags = BITDHT_PEER_STATUS_DHT_FOF;
 
 			break;
 		case NETASSIST_KNOWN_PEER_FRIEND:
-			p3type = RSDHT_PEERTYPE_FRIEND;
+		    p3type = RsDhtPeerType::FRIEND;
 			bdflags = BITDHT_PEER_STATUS_DHT_FRIEND;
 
 			break;
 		case NETASSIST_KNOWN_PEER_RELAY:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_RELAY_SERVER;
 
 			break;
 		case NETASSIST_KNOWN_PEER_SELF:
-			p3type = RSDHT_PEERTYPE_OTHER;
+		    p3type = RsDhtPeerType::OTHER;
 			bdflags = BITDHT_PEER_STATUS_DHT_SELF;
 			isOwnId = true;
 
@@ -364,7 +364,7 @@ int p3BitDht::addFriend(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_FRIEND));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::FRIEND));
 }
 
 
@@ -372,7 +372,7 @@ int p3BitDht::addFriendOfFriend(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_FOF));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::FOF));
 }
 
 
@@ -380,7 +380,7 @@ int p3BitDht::addOther(const std::string pid)
 {
 	RsStackMutex stack(dhtMtx);    /********* LOCKED *********/
 
-	return (NULL != addInternalPeer_locked(pid, RSDHT_PEERTYPE_OTHER));
+	return (NULL != addInternalPeer_locked(pid, RsDhtPeerType::OTHER));
 }
 #endif
 
@@ -397,7 +397,7 @@ int p3BitDht::removePeer(const RsPeerId& pid)
  ********************************* Basic Peer Details *************************************
  ******************************************************************************************/
 
-DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t type)
+DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerType type)
 {
 	/* create the data structure */
 	if (!havePeerTranslation_locked(pid))
@@ -411,7 +411,7 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
 		return 0;
 	}
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id, RsDhtPeerType::ANY);
 	if (!dpd)
 	{
         DhtPeerDetails newdpd;
@@ -419,10 +419,10 @@ DhtPeerDetails *p3BitDht::addInternalPeer_locked(const RsPeerId& pid, uint32_t t
         newdpd.mDhtId.id = id;
         newdpd.mRsId = pid;
             newdpd.mDhtState = RSDHT_PEERDHT_NOT_ACTIVE;
-            newdpd.mPeerType = RSDHT_PEERTYPE_ANY;
+			newdpd.mPeerType = RsDhtPeerType::ANY;
 
         mPeers[id] = newdpd;
-        dpd = findInternalDhtPeer_locked(&id, RSDHT_PEERTYPE_ANY);
+		dpd = findInternalDhtPeer_locked(&id, RsDhtPeerType::ANY);
 
         if(dpd == NULL)
         {
@@ -462,14 +462,14 @@ int p3BitDht::removeInternalPeer_locked(const RsPeerId& pid)
 
 
 /* indexed by bdNodeId, as this is the more used call interface */
-DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type)
+DhtPeerDetails *p3BitDht::findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPeerType type)
 {
 	std::map<bdNodeId, DhtPeerDetails>::iterator it = mPeers.find(*id);
 	if (it == mPeers.end())
 	{
 		return NULL;
 	}
-	if (type)
+	if (type != static_cast<RsDhtPeerType>(0))
 	{
 		if (it->second.mPeerType != type)
 		{
@@ -495,7 +495,7 @@ DhtPeerDetails *p3BitDht::findInternalRsPeer_locked(const RsPeerId &pid)
 		return NULL;
 	}
 
-	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id,RSDHT_PEERTYPE_ANY);
+	DhtPeerDetails *dpd = findInternalDhtPeer_locked(&id,RsDhtPeerType::ANY);
 
 	return dpd;
 }

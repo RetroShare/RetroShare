@@ -45,7 +45,7 @@ class DhtPeerDetails
 
 	DhtPeerDetails();
 
-	uint32_t mPeerType;
+	RsDhtPeerType mPeerType;
 
 	bdId    mDhtId;
 	RsPeerId mRsId;
@@ -348,9 +348,9 @@ public:
 
 private:
 
-    DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, uint32_t type);
+	DhtPeerDetails *addInternalPeer_locked(const RsPeerId& pid, RsDhtPeerType type);
     int 	removeInternalPeer_locked(const RsPeerId& pid);
-    DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, uint32_t type);
+	DhtPeerDetails *findInternalDhtPeer_locked(const bdNodeId *id, RsDhtPeerType type);
     DhtPeerDetails *findInternalRsPeer_locked(const RsPeerId &pid);
 
     bool 	havePeerTranslation_locked(const RsPeerId &pid);

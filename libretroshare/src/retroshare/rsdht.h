@@ -36,10 +36,13 @@ extern RsDht *rsDht;
 //std::ostream &operator<<(std::ostream &out, const RsPhotoShowDetails &detail);
 //std::ostream &operator<<(std::ostream &out, const RsPhotoDetails &detail);
 
-#define RSDHT_PEERTYPE_ANY		0x0000
-#define RSDHT_PEERTYPE_OTHER		0x0001
-#define RSDHT_PEERTYPE_FOF		0x0002
-#define RSDHT_PEERTYPE_FRIEND		0x0003
+enum class RsDhtPeerType : uint8_t
+{
+	ANY		= 0,
+	OTHER	= 1,
+	FOF		= 2,
+	FRIEND	= 3
+};
 
 #define RSDHT_PEERDHT_NOT_ACTIVE	0x0000
 #define RSDHT_PEERDHT_SEARCHING		0x0001
@@ -102,7 +105,7 @@ class RsDhtNetPeer
         std::string mDhtId;
         RsPeerId mRsId;
 
-        uint32_t mPeerType;
+	RsDhtPeerType mPeerType;
 	uint32_t mDhtState;
 
 	std::string mConnectState; 	// connectLogic.
