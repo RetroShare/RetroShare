@@ -26,6 +26,7 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "util/HandleRichText.h"
@@ -132,6 +133,7 @@ void PostedItem::setup()
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
+	ui->nameLabel->hide();
 }
 
 bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
@@ -250,6 +252,9 @@ void PostedItem::fill()
 		/* Wait for all requests */
 		return;
 	}
+	
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
+	ui->nameLabel->setText(link.toHtml());
 
 	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
 
@@ -392,11 +397,13 @@ void PostedItem::fill()
 	{
 		ui->clearButton->hide();
 		ui->readAndClearButton->hide();
+		ui->nameLabel->hide();
 	}
 	else
 	{
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
+		ui->nameLabel->show();
 	}
 
 	// disable voting buttons - if they have already voted.
