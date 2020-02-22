@@ -25,8 +25,10 @@
 #include <inttypes.h>
 #include <string>
 #include <list>
-#include "rsgxsservice.h"
-#include "rsgxscommon.h"
+#include "retroshare/rsgxsservice.h"
+#include "retroshare/rsgxscommon.h"
+#include "retroshare/rsgxsifacehelper.h"
+
 
 /* The Main Interface Class - for information about your Peers */
 class RsPhoto;
@@ -135,30 +137,13 @@ class RsPhotoAlbum
         uint32_t mModFlags;
 };
 
-class RsGxsPhotoCommentItem;
-class RsPhotoComment
-{
-public:
-    RsPhotoComment();
-
-    explicit RsPhotoComment(const RsGxsPhotoCommentItem& comment);
-
-    RsPhotoComment& operator=(const RsGxsPhotoCommentItem& comment);
-
-    RsMsgMetaData mMeta;
-
-    std::string mComment;
-    uint32_t mCommentFlag;
-};
 
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
 
 typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
-typedef std::map<RsGxsGroupId, std::vector<RsPhotoComment> > PhotoCommentResult;
-typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsPhotoComment> > PhotoRelatedCommentResult;
 
-class RsPhoto
+class RsPhoto: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 
 public:
@@ -168,7 +153,7 @@ public:
     static const uint32_t FLAG_MSG_TYPE_MASK;
 
 
-    RsPhoto()  { return; }
+    explicit RsPhoto(RsGxsIface &gxs) : RsGxsIfaceHelper(gxs)  { return; }
 
     virtual ~RsPhoto() { return; }
 
@@ -235,7 +220,7 @@ public:
     virtual bool getMsgSummary(const uint32_t &token,
                                                        MsgMetaResult &msgInfo) = 0;
 
-                    /* Specific Service Data */
+    /* Specific Service Data */
 
     /*!
      * @param token token to be redeemed for album request
@@ -252,22 +237,6 @@ public:
     virtual bool getPhoto(const uint32_t &token,
                                               PhotoResult &photo) = 0;
 
-    /* details are updated in album - to choose Album ID, and storage path */
-
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-    virtual bool getPhotoComment(const uint32_t &token,
-                                              PhotoCommentResult& comments) = 0;
-    /*!
-     * @param token token to be redeemed for photo request
-     * @param photo the photo returned for given request token
-     * @return false if request token is invalid, check token status for error report
-     */
-    virtual bool getPhotoRelatedComment(const uint32_t &token, PhotoRelatedCommentResult &comments) = 0;
-
     /*!
      * submits album, which returns a token that needs
      * to be acknowledge to get album grp id
@@ -283,16 +252,6 @@ public:
      * @param photo photo to be submitted
      */
     virtual bool submitPhoto(uint32_t& token, RsPhotoPhoto &photo) = 0;
-
-    /*!
-     * submits photo comment, which returns a token that needs
-     * to be acknowledged to get photo msg-grp id pair
-     * The mParentId needs to be set to an existing msg for which
-     * commenting is enabled
-     * @param token token to redeem for acknowledgement
-     * @param comment comment to be submitted
-     */
-    virtual bool submitComment(uint32_t& token, RsPhotoComment &photo) = 0;
 
     /*!
      * subscribes to group, and returns token which can be used

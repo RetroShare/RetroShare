@@ -26,6 +26,7 @@
 
 #include "rsitems/rsserviceids.h"
 #include "rsitems/rsgxsitems.h"
+#include "rsitems/rsgxscommentitems.h"
 
 #include "serialiser/rsserial.h"
 #include "serialiser/rsserializer.h"
@@ -34,7 +35,6 @@
 
 const uint8_t RS_PKT_SUBTYPE_PHOTO_ITEM         = 0x02;
 const uint8_t RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM    = 0x03;
-const uint8_t RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM = 0x04;
 
 class RsGxsPhotoAlbumItem : public RsGxsGrpItem
 {
@@ -66,24 +66,11 @@ public:
 	RsPhotoPhoto photo;
 };
 
-class RsGxsPhotoCommentItem : public RsGxsMsgItem
+class RsGxsPhotoSerialiser : public RsGxsCommentSerialiser
 {
 public:
 
-    RsGxsPhotoCommentItem(): RsGxsMsgItem(RS_SERVICE_GXS_TYPE_PHOTO, RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM) {}
-    virtual ~RsGxsPhotoCommentItem() {}
-    void clear();
-
-	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
-
-    RsPhotoComment comment;
-};
-
-class RsGxsPhotoSerialiser : public RsServiceSerializer
-{
-public:
-
-	RsGxsPhotoSerialiser() :RsServiceSerializer(RS_SERVICE_GXS_TYPE_PHOTO) {}
+	RsGxsPhotoSerialiser() :RsGxsCommentSerialiser(RS_SERVICE_GXS_TYPE_PHOTO) {}
 	virtual     ~RsGxsPhotoSerialiser() {}
 
 	virtual RsItem *create_item(uint16_t service, uint8_t item_sub_id) const;

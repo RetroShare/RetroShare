@@ -39,7 +39,7 @@
 
 #include <algorithm>
 
-#define CHAN_DEFAULT_IMAGE ":/images/channels.png"
+#define CHAN_DEFAULT_IMAGE ":/icons/png/channels.png"
 
 #define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
 
