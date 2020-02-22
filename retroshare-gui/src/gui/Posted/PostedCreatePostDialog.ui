@@ -279,13 +279,6 @@
                    </property>
                   </spacer>
                  </item>
-                 <item row="1" column="0">
-                  <widget class="QCheckBox" name="shareimagecheckBox">
-                   <property name="text">
-                    <string>Share Orginal Image</string>
-                   </property>
-                  </widget>
-                 </item>
                  <item row="0" column="0" colspan="3">
                   <widget class="QLabel" name="imageLabel">
                    <property name="maximumSize">
