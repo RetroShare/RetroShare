@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QMessageBox>
+#include <QPushButton>
 
 #include "util/misc.h"
 #include "util/DateTime.h"
@@ -105,7 +106,6 @@ void GxsGroupDialog::init()
 
 
 	connect(ui.groupLogo, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
-	connect(ui.addLogoButton, SIGNAL(clicked() ), this , SLOT(addGroupLogo()));
 
 	ui.typePublic->setChecked(true);
 	ui.distributionValueLabel->setText(tr("Public"));
@@ -165,7 +165,6 @@ void GxsGroupDialog::injectExtraWidget(QWidget *widget)
     // add extra widget into layout.
     QVBoxLayout *vbox = new QVBoxLayout();
     vbox->addWidget(widget);
-    vbox->addStretch(1);
     ui.extraFrame->setLayout(vbox);
 }
 
@@ -377,7 +376,6 @@ void GxsGroupDialog::setupVisibility()
 	ui.groupName->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_NAME);
 
 	ui.groupLogo->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
-	ui.addLogoButton->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_ICON);
 
 	ui.groupDesc->setVisible(mEnabledFlags & GXS_GROUP_FLAGS_DESCRIPTION);
 
@@ -417,8 +415,6 @@ void GxsGroupDialog::setAllReadonly()
 
 void GxsGroupDialog::setupReadonly()
 {
-
-	ui.addLogoButton->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_ICON));
 
 	ui.publishGroupBox->setEnabled(!(mReadonlyFlags & GXS_GROUP_FLAGS_PUBLISHSIGN));
 

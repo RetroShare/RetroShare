@@ -22,35 +22,38 @@
 #include "GxsIdDetails.h"
 
 /** Constructor */
-GxsIdLabel::GxsIdLabel(QWidget *parent)
-    : QLabel(parent)
+GxsIdLabel::GxsIdLabel(bool show_tooltip,QWidget *parent)
+    : QLabel(parent),mShowTooltip(show_tooltip)
 {
 }
 
 static void fillLabelCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
 {
-	QLabel *label = dynamic_cast<QLabel*>(object);
+	GxsIdLabel *label = dynamic_cast<GxsIdLabel*>(object);
 	if (!label) {
 		return;
 	}
 
 	label->setText(GxsIdDetails::getNameForType(type, details));
 
-	QString toolTip;
+    if(label->showTooltip())
+	{
+		QString toolTip;
 
-	switch (type) {
-	case GXS_ID_DETAILS_TYPE_EMPTY:
-	case GXS_ID_DETAILS_TYPE_LOADING:
-	case GXS_ID_DETAILS_TYPE_FAILED:
-	case GXS_ID_DETAILS_TYPE_BANNED:
-		break;
+		switch (type) {
+		case GXS_ID_DETAILS_TYPE_EMPTY:
+		case GXS_ID_DETAILS_TYPE_LOADING:
+		case GXS_ID_DETAILS_TYPE_FAILED:
+		case GXS_ID_DETAILS_TYPE_BANNED:
+			break;
 
-	case GXS_ID_DETAILS_TYPE_DONE:
-        toolTip = GxsIdDetails::getComment(details);
-		break;
+		case GXS_ID_DETAILS_TYPE_DONE:
+			toolTip = GxsIdDetails::getComment(details);
+			break;
+		}
+
+		label->setToolTip(toolTip);
 	}
-
-	label->setToolTip(toolTip);
 }
 
 void GxsIdLabel::setId(const RsGxsId &id)

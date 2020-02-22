@@ -55,7 +55,7 @@ void GxsMessageFramePostWidget::groupIdChanged()
 
 	emit groupChanged(this);
 
-	fillComplete();
+	updateDisplay(true);
 }
 
 QString GxsMessageFramePostWidget::groupName(bool /*withUnreadCount*/)
@@ -107,6 +107,7 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 		return;
 	}
 
+#ifdef TO_REMOVE
 	bool updateGroup = false;
 	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
 
@@ -133,6 +134,7 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 	if (updateGroup) {
 		requestGroupData();
 	}
+#endif
 }
 
 void GxsMessageFramePostWidget::fillThreadAddPost(const QVariant &post, bool related, int current, int count)

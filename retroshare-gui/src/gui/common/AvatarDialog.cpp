@@ -45,8 +45,8 @@ AvatarDialog::AvatarDialog(QWidget *parent) :
 	updateInterface();
 }
 
-const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W = 64;
-const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H = 64;
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_W = 96;
+const int AvatarDialog::RS_AVATAR_DEFAULT_IMAGE_H = 96;
 
 AvatarDialog::~AvatarDialog()
 {

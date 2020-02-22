@@ -36,9 +36,9 @@
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
-#define IMAGE_PGPKNOWN    ":/images/contact.png"
+#define IMAGE_PGPKNOWN    ":/icons/png/profile.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
-#define IMAGE_ANON        ":/images/tags/anon.png"
+#define IMAGE_ANON        ":/icons/png/anonymous.png"
 #define IMAGE_BANNED      ":/icons/biohazard_red.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"

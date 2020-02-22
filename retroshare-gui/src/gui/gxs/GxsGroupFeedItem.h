@@ -56,7 +56,7 @@ protected:
 	virtual void loadGroup(const uint32_t &token) = 0;
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual QString groupName() = 0;
-	virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
+	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
 
 	/* TokenResponse */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
@@ -77,7 +77,7 @@ private slots:
 
 private:
 	RsGxsGroupId mGroupId;
-	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
+//	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
 	uint32_t mNextTokenType;
 	uint32_t mTokenTypeGroup;
 };

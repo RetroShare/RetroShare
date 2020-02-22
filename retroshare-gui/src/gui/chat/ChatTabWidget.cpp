@@ -28,7 +28,7 @@
 #include "gui/common/StatusDefs.h"
 #include "rshare.h"
 
-#define IMAGE_TYPING         ":/images/typing.png"
+#define IMAGE_TYPING         ":/icons/png/typing.png"
 #define IMAGE_CHAT           ":/images/chat.png"
 
 ChatTabWidget::ChatTabWidget(QWidget *parent) :

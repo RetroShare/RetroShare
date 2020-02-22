@@ -29,13 +29,16 @@ class GxsIdLabel : public QLabel
 	Q_OBJECT
 
 public:
-	GxsIdLabel(QWidget *parent = NULL);
+	GxsIdLabel(bool show_tooltip=true,QWidget *parent = NULL);
 
 	void setId(const RsGxsId &id);
 	bool getId(RsGxsId &id);
 
+    bool showTooltip() const { return mShowTooltip; }
+
 private:
 	RsGxsId mId;
+    bool mShowTooltip;
 };
 
 #endif

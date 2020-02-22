@@ -174,11 +174,6 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
         delete *it;
 	}
-
-#ifdef POSTBASE_DEBUG
-	std::cerr << "p3PostBase::notifyChanges() -> receiveChanges()";
-	std::cerr << std::endl;
-#endif
 }
 
 void	p3PostBase::service_tick()
@@ -615,7 +610,9 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 #endif
 
 		changes.push_back(msgChanges);
-	 	receiveHelperChanges(changes);
+	 	//receiveHelperChanges(changes);
+
+        notifyChanges(changes);
 	}
 	else
 	{
@@ -768,7 +765,8 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 #endif
 
 		changes.push_back(msgChanges);
-	 	receiveHelperChanges(changes);
+	 	//receiveHelperChanges(changes);
+        notifyChanges(changes);
 	}
 	else
 	{

@@ -50,7 +50,7 @@ protected:
 
 	/* GxsGroupFeedItem */
 	virtual bool isLoading();
-	virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
+	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
 
 	/* TokenResponse */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);

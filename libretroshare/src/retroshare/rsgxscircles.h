@@ -187,6 +187,10 @@ enum class RsGxsCircleEventCode: uint8_t
 
 	/** mCircleId contains the circle id */
 	NEW_CIRCLE                = 0x06,
+
+	/** no additional information. Simply means that the info previously from the cache has changed. */
+	CACHE_DATA_UPDATED        = 0x07,
+
 };
 
 struct RsGxsCircleEvent: RsEvent
@@ -312,13 +316,23 @@ public:
 	                              RsGxsCircleMsg& msg) =0;
 
 	/**
-	 * @brief Invite identities to circle
+	 * @brief Invite identities to circle (admin key is required)
 	 * @jsonapi{development}
 	 * @param[in] identities ids of the identities to invite
 	 * @param[in] circleId Id of the circle you own and want to invite ids in
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
+	                                const RsGxsCircleId& circleId ) = 0;
+
+	/**
+	 * @brief Remove identities from circle (admin key is required)
+	 * @jsonapi{development}
+	 * @param[in] identities ids of the identities to remove from the invite list
+	 * @param[in] circleId Id of the circle you own and want to invite ids in
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool revokeIdsFromCircle( const std::set<RsGxsId>& identities,
 	                                const RsGxsCircleId& circleId ) = 0;
 
 	/**

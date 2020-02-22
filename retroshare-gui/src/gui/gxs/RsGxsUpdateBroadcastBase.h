@@ -47,7 +47,7 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds() { return mMsgIds; }
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta() { return mMsgIdsMeta; }
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
-    const std::set<TurtleRequestId>& getSearchResults() { return mTurtleResults ; }
+    const std::set<TurtleRequestId>& getSearchRequests() { return mTurtleResults ; }
 
 protected:
 	void fillComplete();

@@ -285,48 +285,6 @@ p, li { white-space: pre-wrap; }
            <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="QLabel" name="attachmentsPixLabel">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="../images.qrc">:/images/attachment.png</pixmap>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QLabel" name="attachmentsLabel">
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>26</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>Attachments</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="2">
-           <spacer name="attachmentsHSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>334</width>
-              <height>26</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="0" column="3">
            <widget class="QPushButton" name="addFileButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -339,6 +297,9 @@ p, li { white-space: pre-wrap; }
               <width>34</width>
               <height>34</height>
              </size>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add File&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
              <string/>
@@ -355,16 +316,6 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="0" column="4">
-           <widget class="QCheckBox" name="thumbNailCb">
-            <property name="toolTip">
-             <string>Allow channels to get frame for message thumbnail from movie media attachments or not</string>
-            </property>
-            <property name="text">
-             <string>Auto Thumbnail</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0" colspan="5">
            <widget class="QScrollArea" name="attachmentsScrollArea">
             <property name="verticalScrollBarPolicy">
@@ -378,7 +329,7 @@ p, li { white-space: pre-wrap; }
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>81</width>
+               <width>632</width>
                <height>24</height>
               </rect>
              </property>
@@ -423,6 +374,29 @@ p, li { white-space: pre-wrap; }
               </item>
              </layout>
             </widget>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="attachmentsHSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>334</width>
+              <height>26</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="thumbNailCb">
+            <property name="toolTip">
+             <string>Allow channels to get frame for message thumbnail from movie media attachments or not</string>
+            </property>
+            <property name="text">
+             <string>Auto Thumbnail</string>
+            </property>
            </widget>
           </item>
          </layout>

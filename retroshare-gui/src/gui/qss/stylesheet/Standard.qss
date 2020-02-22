@@ -270,39 +270,6 @@ PluginItem > QFrame#frame {
 }
 */
 
-/* SearchDialog */
-
-SearchDialog QFrame#searchLineFrame[valid=false] {
-	border: 2px solid #079E00;
-	background-color: #DBDBDB;
-}
-
-SearchDialog QFrame#searchLineFrame[valid=true] {
-	border: 2px solid #079E00;
-	background-color: white;
-}
-
-SearchDialog QPushButton#pushButtonSearch { 
-	border-image: url(:/images/btn1.png) 4;
-	border-width: 4;
-	padding: 0px 6px;
-	font-size: 12px;
-	color: black;
-}
-
-SearchDialog QPushButton#pushButtonSearch:hover {
-	border-image: url(:/images/btn2.png) 4;
-}
-
-SearchDialog QPushButton#pushButtonSearch:pressed {
-	border-image: url(:/images/btn3.png) 4;
-}
-
-SearchDialog QFrame#searchLineFrame > QLineEdit {
-	background: transparent;
-	border: none;
-}
-
 /* GetStartedDialog */
 
 GetStartedDialog QTextEdit {
@@ -813,6 +780,11 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
 
 }
 
+GxsGroupDialog QLabel#groupLogo{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
+}
+
 PostedItem QFrame#frame_notes {
 	background: white;
 }
@@ -880,7 +852,7 @@ PostedCreatePostDialog QPushButton#submitButton {
 	border-radius: 4px;
 	max-height: 27px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton:hover {

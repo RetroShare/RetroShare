@@ -24,7 +24,7 @@
 #include <retroshare/rsgxsifacehelper.h>
 
 GxsMessageFrameWidget::GxsMessageFrameWidget(RsGxsIfaceHelper *ifaceImpl, QWidget *parent)
-    : RsGxsUpdateBroadcastWidget(ifaceImpl, parent)
+    : QWidget(parent)
 {
 	mNextTokenType = 0;
 

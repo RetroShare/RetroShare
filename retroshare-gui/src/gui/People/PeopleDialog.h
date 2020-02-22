@@ -33,7 +33,7 @@
 
 #define IMAGE_IDENTITY          ":/icons/png/people.png"
 
-class PeopleDialog : public RsGxsUpdateBroadcastPage, public Ui::PeopleDialog, public TokenResponse
+class PeopleDialog : public MainPage, public Ui::PeopleDialog, public TokenResponse
 {
 	Q_OBJECT
 
@@ -97,7 +97,7 @@ private:
 
 	TokenQueue *mIdentityQueue;
 	TokenQueue *mCirclesQueue;
-	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
+	//RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
 	FlowLayout *_flowLayoutExt;
 	std::map<RsGxsId,IdentityWidget *> _gxs_identity_widgets ;

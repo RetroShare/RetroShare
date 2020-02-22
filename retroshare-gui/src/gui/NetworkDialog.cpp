@@ -47,12 +47,10 @@
 #include <time.h>
 
 /* Images for context menu icons */
-#define IMAGE_LOADCERT       ":/images/loadcert16.png"
 #define IMAGE_PEERDETAILS    ":/images/info16.png"
-#define IMAGE_AUTH           ":/images/encrypted16.png"
 #define IMAGE_CLEAN_UNUSED   ":/images/deletemail24.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
-#define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
+#define IMAGE_EXPORT         ""
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_MESSAGE         ":/images/mail_new.png"
 
