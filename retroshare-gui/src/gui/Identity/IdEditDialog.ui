@@ -17,8 +17,8 @@
    </sizepolicy>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/identity/identities_32.png</normaloff>:/images/identity/identities_32.png</iconset>
+   <iconset resource="../icons.qrc">
+    <normaloff>:/icons/png/person.png</normaloff>:/icons/png/person.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="IdEditDialogVLayout">
    <property name="spacing">
@@ -528,6 +528,7 @@
  </tabstops>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

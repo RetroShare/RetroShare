@@ -67,7 +67,7 @@
 #define IMAGE_OPENFOLDER     ":/images/folderopen.png"
 #define IMAGE_OPENFILE       ":/images/fileopen.png"
 #define IMAGE_LIBRARY        ":/images/library.png"
-#define IMAGE_CHANNEL        ":/images/channels32.png"
+#define IMAGE_CHANNEL        ":/icons/png/channels.png"
 #define IMAGE_FORUMS         ":/icons/png/forums.png"
 #define IMAGE_COLLCREATE     ":/images/library_add.png"
 #define IMAGE_COLLMODIF      ":/images/library_edit.png"

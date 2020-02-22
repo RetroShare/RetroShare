@@ -37,7 +37,7 @@
 
 #include <time.h>
 
-#define IMAGE_EXPORT         ":/images/exportpeers_16x16.png"
+#define IMAGE_EXPORT         ""
 
 #define COLUMN_NAME			0
 #define COLUMN_EMAIL		1
