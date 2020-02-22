@@ -45,20 +45,8 @@
     <file>images/avatar_refused.png</file>
     <file>images/avatar_request_unknown.png</file>
     <file>images/buttonframe.png</file>
-    <file>images/btn1.png</file>
-    <file>images/btn2.png</file>
-    <file>images/btn3.png</file>
-    <file>images/btn4.png</file>
-    <file>images/btn_26.png</file>
-    <file>images/btn_26_hover.png</file>
-    <file>images/btn_26_pressed.png</file>
-    <file>images/btn_27.png</file>
-    <file>images/btn_27_hover.png</file>
     <file>images/btn_blue.png</file>
     <file>images/btn_blue_hover.png</file>
-    <file>images/btn_green.png</file>
-    <file>images/btn_green_hover.png</file>
-    <file>images/btn_green_pressed.png</file>
     <file>images/connect_creating.png</file>
     <file>images/dht16.png</file>
     <file>images/dht32.png</file>
@@ -98,13 +86,10 @@
     <file>images/browse-looking.gif</file>
     <file>images/back.png</file>
     <file>images/configure.png</file>
-    <file>images/turtle.png</file>
     <file>images/copyrslink.png</file>
     <file>images/contacts24.png</file>
     <file>images/contactsclosed24.png</file>
     <file>images/connection.png</file>
-    <file>images/contact_new.png</file>
-    <file>images/contact_new22.png</file>
     <file>images/contact.png</file>
     <file>images/contact22.png</file>
     <file>images/Client0.png</file>
@@ -145,9 +130,6 @@
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
     <file>images/close_normal.png</file>
-    <file>images/console-small-down.png</file>
-    <file>images/console-small-hover.png</file>
-    <file>images/console-small-up.png</file>
     <file>images/contact_new128.png</file>
     <file>images/copy.png</file>
     <file>images/delete.png</file>
@@ -382,7 +364,6 @@
     <file>images/tag24.png</file>
     <file>images/transferupdown.png</file>
     <file>images/tools_wizard.png</file>
-    <file>images/trustsettings.png</file>
     <file>images/uploads.png</file>
     <file>images/loader/indicator-16.gif</file>
     <file>images/loader/indicator-32.gif</file>
@@ -557,9 +538,6 @@
     <file>images/library_add.png</file>
     <file>images/library64.png</file>
     <file>images/library16.png</file>
-    <file>images/btn_red_pressed.png</file>
-    <file>images/btn_red_hover.png</file>
-    <file>images/btn_red.png</file>
     <file>images/view-feeds.png</file>
     <file>images/view-files.png</file>
     <file>images/emblem-web.png</file>
