@@ -197,7 +197,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	                      <p>Chat rooms work pretty much like IRC.                                      \
 	                      They allow you to talk anonymously with tons of people without the need to make friends.</p>                    \
 	                      <p>A chat room can be public (your friends see it) or private (your friends can't see it, unless you           \
-                          invite them with <img src=\":/images/add_24x24.png\" width=%2/>). \
+                          invite them with <img src=\":/icons/png/add.png\" width=%2/>). \
 	                      Once you have been invited to a private room, you will be able to see it when your friends   \
 	                      are using it.</p>                                                                                               \
 	                      <p>The list at left shows                                                                                     \
