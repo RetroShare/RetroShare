@@ -57,7 +57,6 @@
 #include "chat/ChatDialog.h"
 #include "RetroShareLink.h"
 #include "SoundManager.h"
-#include "PlayerPage.h"
 #include "notifyqt.h"
 #include "common/UserNotify.h"
 #include "gui/ServicePermissionDialog.h"
@@ -190,7 +189,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 	gxschannelDialog=NULL;
 	gxsforumDialog=NULL;
 	postedDialog=NULL;
-	playerDialog=NULL;
 
     /* Invoke the Qt Designer generated QObject setup routine */
     ui->setupUi(this);
@@ -418,7 +416,6 @@ void MainWindow::initStackedPage()
   addPage(gxschannelDialog = new GxsChannelDialog(ui->stackPages), grp, &notify);
   addPage(gxsforumDialog = new GxsForumsDialog(ui->stackPages), grp, &notify);
   addPage(postedDialog = new PostedDialog(ui->stackPages), grp, &notify);
-  addPage(playerDialog = new PlayerPage(ui->stackPages), grp, NULL);
 
   #ifdef RS_USE_NEW_PEOPLE_DIALOG
   PeopleDialog *peopleDialog = NULL;
@@ -997,9 +994,6 @@ void SetForegroundWindowInternal(HWND hWnd)
 		case Posted:
 			_instance->ui->stackPages->setCurrentPage( _instance->postedDialog );
 			return true ;
-		 case Player:
-			_instance->ui->stackPages->setCurrentPage( _instance->playerDialog );
-			return true ;
 		 default:
 			 std::cerr << "Show page called on value that is not handled yet. Please code it! (value = " << page << ")" << std::endl;
 	 }
@@ -1082,8 +1076,6 @@ void SetForegroundWindowInternal(HWND hWnd)
 			return _instance->gxsforumDialog;
 		case Posted:
 			return _instance->postedDialog;
-		case Player:
-			return _instance->playerDialog;
 	}
 
    return NULL;
