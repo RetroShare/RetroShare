@@ -87,7 +87,6 @@
     <file>images/contacts24.png</file>
     <file>images/contactsclosed24.png</file>
     <file>images/connection.png</file>
-    <file>images/contact22.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
     <file>images/Client2.png</file>
@@ -229,7 +228,6 @@
     <file>images/kalarm.png</file>
     <file>images/kbackgammon.png</file>
     <file>images/kcmsystem24.png</file>
-    <file>images/library.png</file>
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
@@ -499,7 +497,6 @@
     <file>qss/stylesheet/Standard.qss</file>
     <file>images/tags/pgp-known.png</file>
     <file>images/tags/pgp-unknown.png</file>
-    <file>images/tags/anon.png</file>
     <file>images/tags/dev-ambassador.png</file>
     <file>images/tags/dev-translator.png</file>
     <file>images/tags/dev-patcher.png</file>
@@ -507,11 +504,6 @@
     <file>images/share-icon-16.png</file>
     <file>images/toasterEnable.png</file>
     <file>images/toasterDisable.png</file>
-    <file>images/library_edit.png</file>
-    <file>images/library_view.png</file>
-    <file>images/library_add.png</file>
-    <file>images/library64.png</file>
-    <file>images/library16.png</file>
     <file>images/view-feeds.png</file>
     <file>images/view-files.png</file>
     <file>images/emblem-web.png</file>
@@ -519,5 +511,10 @@
     <file>images/SmileyText.png</file>
     <file>images/SimpleText.png</file>
     <file>images/ColoredText.png</file>
+    <file>images/update.png</file>
+    <file>images/folder_green.png</file>
+    <file>images/folder_red.png</file>
+    <file>images/folder_grey.png</file>
+    <file>images/folder_yellow.png</file>
   </qresource>
 </RCC>

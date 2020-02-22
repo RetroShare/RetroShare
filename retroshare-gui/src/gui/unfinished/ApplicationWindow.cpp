@@ -54,7 +54,7 @@
 #define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
 #define IMAGE_CALENDAR          ":/images/calendar.png"
-#define IMAGE_LIBRARY           ":/images/library.png"
+#define IMAGE_LIBRARY           ":/icons/collections.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_WIKI              ":/images/wikibook_32.png"
 #define IMAGE_POSTED            ":/images/posted_32.png"

@@ -100,9 +100,9 @@ static bool isNewerThanEpoque(uint32_t ts)
 
 void RetroshareDirModel::treeStyle()
 {
-	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
+	categoryIcon.addPixmap(QPixmap(":/icons/folder.png"),
 	                     QIcon::Normal, QIcon::Off);
-	categoryIcon.addPixmap(QPixmap(":/images/folder_video.png"),
+	categoryIcon.addPixmap(QPixmap(":/icons/folderopen.png"),
 	                     QIcon::Normal, QIcon::On);
 	peerIcon = QIcon(":/images/user/identity16.png");
 }

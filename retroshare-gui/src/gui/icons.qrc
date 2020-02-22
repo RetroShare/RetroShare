@@ -35,8 +35,11 @@
         <file>icons/bullet_grey_128.png</file>
         <file>icons/bullet_red_128.png</file>
         <file>icons/bullet_yellow_128.png</file>
+        <file>icons/collections.png</file>
         <file>icons/flag-green.png</file>
         <file>icons/friends_128.png</file>
+        <file>icons/folder.png</file>
+        <file>icons/folderopen.png</file>
         <file>icons/global_switch_off_128.png</file>
         <file>icons/global_switch_on_128.png</file>
         <file>icons/gmail.png</file>
@@ -49,14 +52,11 @@
         <file>icons/logo_128.png</file>
         <file>icons/logo_1_connected_128.png</file>
         <file>icons/logo_2_connected_128.png</file>
-        <file>icons/mail_128.png</file>
-        <file>icons/mail_old_128.png</file>
-        <file>icons/mail_red_128.png</file>
-        <file>icons/newsfeed128.png</file>
         <file>icons/outlook.png</file>
         <file>icons/question.png</file>
         <file>icons/plugins_128.png</file>
         <file>icons/png/add.png</file>
+        <file>icons/png/anonymous.png</file>
         <file>icons/png/attach-image.png</file>
         <file>icons/png/attach.png</file>
         <file>icons/png/cert.png</file>
@@ -111,6 +111,7 @@
         <file>icons/png/phone.png</file>
         <file>icons/png/posted-notify.png</file>
         <file>icons/png/posted.png</file>
+        <file>icons/png/profile.png</file>
         <file>icons/png/search.png</file>
         <file>icons/png/send-message-blocked.png</file>
         <file>icons/png/send-message.png</file>
