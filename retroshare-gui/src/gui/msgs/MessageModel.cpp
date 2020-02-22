@@ -173,7 +173,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 		{
 		case COLUMN_THREAD_STAR:         return QIcon(IMAGE_STAR_ON);
 		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-header.png");
-		case COLUMN_THREAD_ATTACHMENT:   return QIcon(":/images/attachment.png");
+		case COLUMN_THREAD_ATTACHMENT:   return QIcon(":/icons/png/attachements.png");
 		default:
 			return QVariant();
 		}

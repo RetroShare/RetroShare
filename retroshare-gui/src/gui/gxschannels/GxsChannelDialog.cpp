@@ -175,7 +175,7 @@ QString GxsChannelDialog::icon(IconType type)
     case ICON_SEARCH:
         return ":/images/find.png";
 	case ICON_DEFAULT:
-		return ":/images/channels.png";
+		return ":/icons/png/channels.png";
 	}
 
 	return "";
