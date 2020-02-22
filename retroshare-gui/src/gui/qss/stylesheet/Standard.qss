@@ -813,6 +813,11 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
 
 }
 
+GxsGroupDialog QLabel#groupLogo{
+	border: 2px solid #CCCCCC;
+	border-radius: 3px;
+}
+
 PostedItem QFrame#frame_notes {
 	background: white;
 }
@@ -880,12 +885,12 @@ PostedCreatePostDialog QPushButton#submitButton {
 	border-radius: 4px;
 	max-height: 27px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
 }
 
 PostedCreatePostDialog QPushButton#submitButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 	min-width: 4em;
-    padding: 2px;
+	padding: 2px;
 }
