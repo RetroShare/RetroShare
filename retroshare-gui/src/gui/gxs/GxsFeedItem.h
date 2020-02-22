@@ -45,15 +45,17 @@ protected:
 	void requestComment();
 
 	virtual QString messageName() = 0;
-	virtual void loadMessage(const uint32_t &token) = 0;
-	virtual void loadComment(const uint32_t &token) = 0;
+	virtual void loadMessage() = 0;
+	virtual void loadComment() = 0;
 
 	/* GxsGroupFeedItem */
-	virtual bool isLoading();
+	//virtual bool isLoading();
 	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
 
+#ifdef TO_REMOVE
 	/* TokenResponse */
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+#endif
 
 protected slots:
 	void comments(const QString &title);

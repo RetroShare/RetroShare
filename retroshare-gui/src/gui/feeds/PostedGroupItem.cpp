@@ -22,6 +22,7 @@
 #include "ui_PostedGroupItem.h"
 
 #include "FeedHolder.h"
+#include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 
@@ -90,29 +91,43 @@ bool PostedGroupItem::setGroup(const RsPostedGroup &group)
 	return true;
 }
 
-void PostedGroupItem::loadGroup(const uint32_t &token)
+void PostedGroupItem::loadGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "PostedGroupItem::loadGroup()";
-	std::cerr << std::endl;
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-	std::vector<RsPostedGroup> groups;
-	if (!rsPosted->getGroupData(token, groups))
-	{
-		std::cerr << "PostedGroupItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		std::vector<RsPostedGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "PostedGroupItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+		if(!rsPosted->getBoardsInfo(groupIds,groups))
+		{
+			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
 
-	setGroup(groups[0]);
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsPostedGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
 QString PostedGroupItem::groupName()
