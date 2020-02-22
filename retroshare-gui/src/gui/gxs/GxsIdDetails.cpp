@@ -36,7 +36,7 @@
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
-#define IMAGE_PGPKNOWN    ":/images/contact.png"
+#define IMAGE_PGPKNOWN    ":/images/contact22.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
 #define IMAGE_ANON        ":/images/tags/anon.png"
 #define IMAGE_BANNED      ":/icons/biohazard_red.png"

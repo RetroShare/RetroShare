@@ -46,7 +46,7 @@
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
 #define IMAGE_PEER               ":/images/user/identity16.png"
-#define IMAGE_PHOTOS              ":/images/image16.png"
+#define IMAGE_PHOTOS             ":/icons/png/photo.png"
 
 
 #define PHOTO_ICON_SIZE		90

@@ -30,7 +30,6 @@
     <file>images/browsable_128_blue.png</file>
     <file>images/blank_128_green.png</file>
     <file>images/blank_128_blue.png</file>
-    <file>images/door_in.png</file>
     <file>images/tor-logo.png</file>
     <file>images/help/addafriend.png</file>
     <file>images/help/addfriendkey.png</file>
@@ -38,7 +37,6 @@
     <file>icons/help_64.png</file>
     <file>images/help/natgreen.png</file>
     <file>images/help/natred.png</file>
-    <file>images/attach.png</file>
     <file>images/pgp.png</file>
     <file>images/rs_wizard.png</file>
     <file>images/avatar_request.png</file>
@@ -83,14 +81,12 @@
     <file>images/avatarstatus-bg-away-70.png</file>
     <file>images/avatarstatus-bg-busy-70.png</file>
     <file>images/avatarstatus-bg-offline-70.png</file>
-    <file>images/browse-looking.gif</file>
     <file>images/back.png</file>
     <file>images/configure.png</file>
     <file>images/copyrslink.png</file>
     <file>images/contacts24.png</file>
     <file>images/contactsclosed24.png</file>
     <file>images/connection.png</file>
-    <file>images/contact.png</file>
     <file>images/contact22.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
@@ -111,7 +107,6 @@
     <file>images/FileTypeProgram.png</file>
     <file>images/FileTypeVideo.png</file>
     <file>images/fonts.png</file>
-    <file>images/folder16.png</file>
     <file>images/foldermail.png</file>
     <file>images/folderopen.png</file>
     <file>images/fileopen.png</file>
@@ -121,7 +116,6 @@
     <file>images/graph-checking.png</file>
     <file>images/graph-blue.png</file>
     <file>images/add-share24.png</file>
-    <file>images/attachment.png</file>
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
     <file>images/calendar.png</file>
@@ -204,14 +198,6 @@
     <file>images/folder-outbox.png</file>
     <file>images/folder-sent.png</file>
     <file>images/folder-trash.png</file>
-    <file>images/folder_doments.png</file>
-    <file>images/folder_green.png</file>
-    <file>images/folder_red.png</file>
-    <file>images/folder_grey.png</file>
-    <file>images/folder_yellow.png</file>
-    <file>images/folder_open.png</file>
-    <file>images/folder_video.png</file>
-    <file>images/folder_blueshared.png</file>
     <file>images/forward.png</file>
     <file>images/kgames.png</file>
     <file>images/go-down.png</file>
@@ -220,7 +206,6 @@
     <file>images/go-bottom.png</file>
     <file>images/graph-area.png</file>
     <file>images/graph-line.png</file>
-    <file>images/groupchat.png</file>
     <file>images/gohome.png</file>
     <file>images/gpgp_key_generate.png</file>
     <file>images/hide_toolbox_frame.png</file>
@@ -232,7 +217,6 @@
     <file>images/hot_3.png</file>
     <file>images/hot_4.png</file>
     <file>images/hot_5.png</file>
-    <file>images/image16.png</file>
     <file>images/imageblocked_24.png</file>
     <file>images/info16.png</file>
     <file>images/im-user.png</file>
@@ -245,16 +229,11 @@
     <file>images/kalarm.png</file>
     <file>images/kbackgammon.png</file>
     <file>images/kcmsystem24.png</file>
-    <file>images/kdmconfig.png</file>
-    <file>images/konsole.png</file>
     <file>images/library.png</file>
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
     <file>images/looknfeel.png</file>
-    <file>images/lphoto.png</file>
-    <file>images/lphoto16.png</file>
-    <file>images/lphoto24.png</file>
     <file>images/logo/logo_16.png</file>
     <file>images/logo/logo_24.png</file>
     <file>images/logo/logo_24_0.png</file>
@@ -296,7 +275,6 @@
     <file>images/message-state-new.png</file>
     <file>images/message-news.png</file>
     <file>images/message.png</file>
-    <file>images/messenger.png</file>
     <file>images/mute-off-16.png</file>
     <file>images/mute-on-16.png</file>
     <file>images/new-mail-alert.png</file>
@@ -375,8 +353,6 @@
     <file>images/mimetypes/source_c.png</file>
     <file>images/mimetypes/source_cpp.png</file>
     <file>images/mimetypes/source_h.png</file>
-    <file>images/view-certificate-copy-32.png</file>
-    <file>images/view-certificate-export-32.png</file>
     <file>images/textedit/textbold.png</file>
     <file>images/textedit/textitalic.png</file>
     <file>images/textedit/textunder.png</file>
@@ -455,7 +431,6 @@
     <file>images/up1down0.png</file>
     <file>images/underconstruction.png</file>
     <file>images/user.png</file>
-    <file>images/view-certificate-sign-32.png</file>
     <file>images/view_calendar_day.png</file>
     <file>images/view_calendar_week.png</file>
     <file>images/view_calendar_month.png</file>
@@ -530,7 +505,6 @@
     <file>images/tags/dev-patcher.png</file>
     <file>images/tags/developer.png</file>
     <file>images/share-icon-16.png</file>
-    <file>images/view-certificate-sign-48.png</file>
     <file>images/toasterEnable.png</file>
     <file>images/toasterDisable.png</file>
     <file>images/library_edit.png</file>

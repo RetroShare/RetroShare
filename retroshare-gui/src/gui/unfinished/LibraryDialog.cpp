@@ -46,9 +46,8 @@
 #define IMAGE_PLAY           ":/images/start.png"
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_MSG            ":/images/message-mail.png"
-#define IMAGE_ATTACHMENT     ":/images/attachment.png"
+#define IMAGE_ATTACHMENT     ":/icons/png/attachements.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
-#define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_LIBRARY        ":/images/library.png"
 
 
