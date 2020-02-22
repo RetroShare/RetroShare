@@ -122,8 +122,9 @@
         <file>icons/png/thumbs-down.png</file>
         <file>icons/png/thumbs-neutral.png</file>
         <file>icons/png/thumbs-up.png</file>
-		<file>icons/png/typing.png</file>
+		   <file>icons/png/typing.png</file>
         <file>icons/png/video.png</file>
+        <file>icons/png/video-camera.png</file>
         <file>icons/quit_128.png</file>
         <file>icons/search_red_128.png</file>
         <file>icons/security_high_128.png</file>
