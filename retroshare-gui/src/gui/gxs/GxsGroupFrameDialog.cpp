@@ -32,6 +32,7 @@
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/UserNotify.h"
 #include "GxsCommentDialog.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
@@ -1173,6 +1174,8 @@ void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 	}
 
     ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+    getUserNotify()->updateIcon();
 }
 
 /*********************** **** **** **** ***********************/

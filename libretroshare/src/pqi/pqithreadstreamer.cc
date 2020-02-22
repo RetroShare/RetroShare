@@ -49,7 +49,7 @@ int	pqithreadstreamer::tick()
 	return 0;
 }
 
-void	pqithreadstreamer::data_tick()
+void	pqithreadstreamer::threadTick()
 {
     uint32_t recv_timeout = 0;
     uint32_t sleep_period = 0;

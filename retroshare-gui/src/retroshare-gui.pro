@@ -114,6 +114,11 @@ CONFIG += gxscircles
 #CONFIG += framecatcher
 #CONFIG += blogs
 
+## To enable unfinished services
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
+
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -342,6 +347,7 @@ openbsd-* {
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= -lglib-2.0
 }
 
 # Tor controller
@@ -469,6 +475,8 @@ HEADERS +=  rshare.h \
             util/QtVersion.h \
             util/RsFile.h \
             util/qtthreadsutils.h \
+            util/ClickableLabel.h \
+            util/AspectRatioPixmapLabel.h \
             gui/profile/ProfileWidget.h \
             gui/profile/ProfileManager.h \
             gui/profile/StatusMessage.h \
@@ -828,6 +836,8 @@ SOURCES +=  main.cpp \
             util/ObjectPainter.cpp \
             util/RsFile.cpp \
             util/RichTextEdit.cpp \
+            util/ClickableLabel.cpp \
+            util/AspectRatioPixmapLabel.cpp \
             gui/profile/ProfileWidget.cpp \
             gui/profile/StatusMessage.cpp \
             gui/profile/ProfileManager.cpp \
@@ -1140,9 +1150,12 @@ unfinished_services {
 	
 	
 gxsphotoshare {
-	#DEFINES += RS_USE_PHOTOSHARE
+	#DEFINES += RS_USE_PHOTOSHARE # to enable in unfinished.
+	DEFINES += RS_USE_PHOTO # enable in MainWindow
 
 	HEADERS += \
+		gui/PhotoShare/AlbumGroupDialog.h \
+		gui/PhotoShare/AlbumExtra.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
@@ -1156,6 +1169,7 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.h
 	
 	FORMS += \
+		gui/PhotoShare/AlbumExtra.ui \
 		gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
@@ -1167,6 +1181,8 @@ gxsphotoshare {
 		gui/PhotoShare/AddCommentDialog.ui
 	
 	SOURCES += \
+		gui/PhotoShare/AlbumGroupDialog.cpp \
+		gui/PhotoShare/AlbumExtra.cpp \
 		gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
@@ -1185,6 +1201,7 @@ gxsphotoshare {
 	
 	
 wikipoos {
+	DEFINES += RS_USE_WIKI
 	
 	DEPENDPATH += ../../supportlibs/pegmarkdown
 	INCLUDEPATH += ../../supportlibs/pegmarkdown
@@ -1211,6 +1228,8 @@ wikipoos {
 	
 gxsthewire {
 	
+	DEFINES += RS_USE_WIRE
+
 	HEADERS += gui/TheWire/PulseItem.h \
 		gui/TheWire/WireDialog.h \
 		gui/TheWire/PulseAddDialog.h \
@@ -1344,9 +1363,11 @@ posted {
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListWidget.h \
 		gui/Posted/PostedItem.h \
+		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
 		gui/feeds/PostedGroupItem.h \
 		gui/Posted/PostedCreatePostDialog.h \
+		gui/Posted/PhotoView.h \
 		gui/Posted/PostedUserNotify.h
 
 		#gui/Posted/PostedCreateCommentDialog.h \
@@ -1355,8 +1376,9 @@ posted {
 	FORMS += gui/Posted/PostedListWidget.ui \
 		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
+		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
-
+		gui/Posted/PhotoView.ui 
 		#gui/Posted/PostedDialog.ui \
 		#gui/Posted/PostedComments.ui \
 		#gui/Posted/PostedCreateCommentDialog.ui
@@ -1365,8 +1387,10 @@ posted {
 		gui/Posted/PostedListWidget.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
+		gui/Posted/PostedCardView.cpp \
 		gui/Posted/PostedGroupDialog.cpp \
 		gui/Posted/PostedCreatePostDialog.cpp \
+		gui/Posted/PhotoView.cpp \
 		gui/Posted/PostedUserNotify.cpp
 
 		#gui/Posted/PostedDialog.cpp \

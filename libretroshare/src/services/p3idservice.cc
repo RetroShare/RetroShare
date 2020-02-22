@@ -603,7 +603,6 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
     for(uint32_t i = 0;i<changes.size();++i)
     {
-        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
         RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
 
         if (msgChange && !msgChange->metaChange())
@@ -614,8 +613,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
             std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-            std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator mit;
-            for(mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+
+            for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
             {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
@@ -624,7 +623,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
         }
 
-        /* shouldn't need to worry about groups - as they need to be subscribed to */
+        RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
+
         if (groupChange && !groupChange->metaChange())
         {
 #ifdef DEBUG_IDS
@@ -632,9 +632,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << std::endl;
 #endif
             std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-            std::list<RsGxsGroupId>::iterator git;
 
-            for(git = groupList.begin(); git != groupList.end();)
+            for(auto git = groupList.begin(); git != groupList.end();++git)
             {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
@@ -649,21 +648,29 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
                     timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
 
-                    ++git;
-                }
-                else
-                    git = groupList.erase(git) ;
-            }
+                    // notify that a new identity is received, if needed
 
-            if(groupList.empty())
-            {
-                delete changes[i] ;
-                changes[i] = NULL ;
+                    switch(groupChange->getType())
+                    {
+                    case RsGxsNotify::TYPE_PUBLISHED:
+                    case RsGxsNotify::TYPE_RECEIVED_NEW:
+                    {
+                        auto ev = std::make_shared<RsGxsIdentityEvent>();
+                        ev->mIdentityId = *git;
+                        ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
+                        rsEvents->postEvent(ev);
+                    }
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
             }
         }
-    }
 
-    RsGxsIfaceHelper::receiveChanges(changes);
+        delete changes[i];
+    }
 }
 
 /********************************************************************************/
@@ -1070,6 +1077,14 @@ bool p3IdService::deleteIdentity(RsGxsId& id)
 		return false;
 	}
 
+    if(rsEvents)
+	{
+		auto ev = std::make_shared<RsGxsIdentityEvent>();
+		ev->mIdentityId = grouId;
+		ev->mIdentityEventCode = RsGxsIdentityEventCode::DELETED_IDENTITY;
+		rsEvents->postEvent(ev);
+	}
+
 	return true;
 }
 
@@ -1163,92 +1178,89 @@ bool p3IdService::havePrivateKey(const RsGxsId &id)
     if(! isOwnId(id))
         return false ;
 
-    RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
-    return mKeyCache.is_cached(id) ;
+	RS_STACK_MUTEX(mIdMtx);
+	return mKeyCache.is_cached(id);
 }
 
 static void mergeIds(std::map<RsGxsId,std::list<RsPeerId> >& idmap,const RsGxsId& id,const std::list<RsPeerId>& peers)
 {
-    // merge the two lists (I use a std::set to make it more efficient)
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::requestKey(): merging list with existing pending request." << std::endl;
-#endif
+	/* merge the two lists, use std::set to avoid duplicates efficiently */
 
-    std::list<RsPeerId>& old_peers(idmap[id]) ;	// create if necessary
-    std::set<RsPeerId> new_peers ;
+	std::set<RsPeerId> new_peers(std::begin(peers), std::end(peers));
 
-    for(std::list<RsPeerId>::const_iterator it(peers.begin());it!=peers.end();++it)
-        new_peers.insert(*it) ;
-
-    for(std::list<RsPeerId>::iterator it(old_peers.begin());it!=old_peers.end();++it)
-        new_peers.insert(*it) ;
-
-    old_peers.clear();
-
-    for(std::set<RsPeerId>::iterator it(new_peers.begin());it!=new_peers.end();++it)
-        old_peers.push_back(*it) ;
+	std::list<RsPeerId>& stored_peers(idmap[id]);
+	std::copy( std::begin(stored_peers), std::end(stored_peers),
+	           std::inserter(new_peers, std::begin(new_peers)) );
+	stored_peers.clear();
+	std::copy( std::begin(new_peers), std::end(new_peers),
+	           std::inserter(stored_peers, std::begin(stored_peers)) );
 }
 
-bool p3IdService::requestIdentity(const RsGxsId& id)
+bool p3IdService::requestIdentity(
+        const RsGxsId& id, const std::vector<RsPeerId>& peers )
 {
+	std::list<RsPeerId> askPeersList(peers.begin(), peers.end());
+
+	// Empty list passed? Ask to all online peers.
+	if(askPeersList.empty()) rsPeers->getOnlineList(askPeersList);
+
+	if(askPeersList.empty()) // Still empty? Fail!
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure retrieving peers list"
+		        << std::endl;
+		return false;
+	}
+
 	RsIdentityUsage usageInfo( RsServiceType::GXSID,
 	                           RsIdentityUsage::IDENTITY_DATA_UPDATE );
-	std::list<RsPeerId> onlinePeers;
 
-	return rsPeers && rsPeers->getOnlineList(onlinePeers)
-	        && requestKey(id, onlinePeers, usageInfo);
+	return requestKey(id, askPeersList, usageInfo);
 }
 
 bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers,const RsIdentityUsage& use_info)
 {
-    if(id.isNull())
-    {
-        std::cerr << "(EE) nul ID requested to p3IdService. This should not happen. Callstack:" << std::endl;
-        print_stacktrace();
-        return false ;
-    }
+	Dbg3() << __PRETTY_FUNCTION__ << " id: " <<  id << std::endl;
 
-    if (haveKey(id))
-        return true;
-    else
-    {
-        // Normally we should call getIdDetails(), but since the key is not known, we need to digg a possibly old information
-        // from the reputation system, which keeps its own list of banned keys. Of course, the owner ID is not known at this point.
+	if(id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " cannot request null id"
+		        << std::endl;
+		return false;
+	}
 
-#ifdef DEBUG_IDS
-        std::cerr << "p3IdService::requesting key " << id <<std::endl;
-#endif
+	if(peers.empty())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " cannot request id: " << id
+		        << " to empty lists of peers" << std::endl;
+		return false;
+	}
 
-		RsReputationInfo info;
-        rsReputations->getReputationInfo(id,RsPgpId(),info) ;
+	if(isKnownId(id)) return true;
 
-		if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
-        {
-            std::cerr << "(II) not requesting Key " << id << " because it has been banned." << std::endl;
+	/* Normally we should call getIdDetails(), but since the key is not known,
+	 * we need to dig a possibly old information from the reputation system,
+	 * which keeps its own list of banned keys.
+	 * Of course, the owner ID is not known at this point.c*/
 
-            {
-                RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-                mIdsNotPresent.erase(id) ;
-            }
-            return true;
-        }
+	RsReputationInfo info;
+	rsReputations->getReputationInfo(id, RsPgpId(), info);
 
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
+	{
+		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id
+		         << " because it has been banned." << std::endl;
 
-        std::map<RsGxsId,std::list<RsPeerId> >::iterator rit = mIdsNotPresent.find(id) ;
+		RS_STACK_MUTEX(mIdMtx);
+		mIdsNotPresent.erase(id);
 
-        if(rit != mIdsNotPresent.end())
-        {
-            if(!peers.empty())
-                mergeIds(mIdsNotPresent,id,peers) ;
+		return false;
+	}
 
-            return true ;
-        }
-    }
-    {
-		RS_STACK_MUTEX(mIdMtx); /********** STACK LOCKED MTX ******/
-		mKeysTS[id].usage_map[use_info] = time(NULL) ;
-    }
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		mergeIds(mIdsNotPresent, id, peers);
+		mKeysTS[id].usage_map[use_info] = time(nullptr);
+	}
 
     return cache_request_load(id, peers);
 }
@@ -2772,34 +2784,30 @@ bool p3IdService::cache_store(const RsGxsIdGroupItem *item)
 
 bool p3IdService::cache_request_load(const RsGxsId &id, const std::list<RsPeerId> &peers)
 {
-#ifdef DEBUG_IDS
-    std::cerr << "p3IdService::cache_request_load(" << id << ")" << std::endl;
-#endif // DEBUG_IDS
+	Dbg4() << __PRETTY_FUNCTION__ << " id: " << id << std::endl;
 
-    {
-        RsStackMutex stack(mIdMtx); /********** STACK LOCKED MTX ******/
+	{
+		RS_STACK_MUTEX(mIdMtx);
+		// merge, even if peers is empty
+		mergeIds(mCacheLoad_ToCache, id, peers);
+	}
 
-        mergeIds(mCacheLoad_ToCache,id,peers) ;	// merge, even if peers is empty
-    }
+	if(RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
+	{
+		Dbg3() << __PRETTY_FUNCTION__ << " cache reload already scheduled "
+		       << "skipping" << std::endl;
+		return true;
+	}
 
-    if (RsTickEvent::event_count(GXSID_EVENT_CACHELOAD) > 0)
-    {
-        /* its already scheduled */
-        return true;
-    }
+	int32_t age = 0;
+	if( RsTickEvent::prev_event_ago(GXSID_EVENT_CACHELOAD, age) && age < MIN_CYCLE_GAP )
+	{
+		RsTickEvent::schedule_in(GXSID_EVENT_CACHELOAD, MIN_CYCLE_GAP - age);
+		return true;
+	}
 
-    int32_t age = 0;
-    if (RsTickEvent::prev_event_ago(GXSID_EVENT_CACHELOAD, age))
-    {
-        if (age < MIN_CYCLE_GAP)
-        {
-            RsTickEvent::schedule_in(GXSID_EVENT_CACHELOAD, MIN_CYCLE_GAP - age);
-            return true;
-        }
-    }
-
-    RsTickEvent::schedule_now(GXSID_EVENT_CACHELOAD);
-    return true;
+	RsTickEvent::schedule_now(GXSID_EVENT_CACHELOAD);
+	return true;
 }
 
 
@@ -2923,71 +2931,88 @@ bool p3IdService::cache_load_for_token(uint32_t token)
 
 void p3IdService::requestIdsFromNet()
 {
-    RsStackMutex stack(mIdMtx);
+	RS_STACK_MUTEX(mIdMtx);
 
-    if(!mNes)
-    {
-        std::cerr << "(WW) cannot request missing GXS IDs because network service is not present." << std::endl;
-        return ;
-    }
+	if(!mNes)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot request missing GXS IDs "
+		        << "because network service is not present." << std::endl;
+		return;
+	}
 
     std::map<RsGxsId, std::list<RsPeerId> >::iterator cit;
     std::map<RsPeerId, std::list<RsGxsId> > requests;
 
-    // Transform to appropriate structure (<peer, std::list<RsGxsId> > map) to make request to nes per peer ID
-    // Only delete entries in mIdsNotPresent that can actually be performed.
+	/* Transform to appropriate structure (<RsPeerId, std::list<RsGxsId> > map)
+	 * to make request to nes per peer ID
+	 * Only delete entries in mIdsNotPresent that can actually be performed, or
+	 * that have empty peer list */
 
-    for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
-    {
-#ifdef DEBUG_IDS
-        std::cerr << "p3IdService::requestIdsFromNet() Id not found, deferring for net request: " << cit->first << std::endl;
-#endif
+	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
+	{
+		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: "
+		       << cit->first << std::endl;
 
-        const std::list<RsPeerId>& peers = cit->second;
-        std::list<RsPeerId>::const_iterator cit2;
+		const RsGxsId& gxsId = cit->first;
+		const std::list<RsPeerId>& peers = cit->second;
+		std::list<RsPeerId>::const_iterator cit2;
 
         bool request_can_proceed = false ;
 
-        for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
-            if(rsPeers->isOnline(*cit2) || mNes->isDistantPeer(*cit2)) // make sure that the peer in online, so that we know that the request has some chance to succeed.
-            {
-                requests[*cit2].push_back(cit->first);
-                request_can_proceed = true ;
-#ifdef DEBUG_IDS
-                std::cerr << "       will ask ID " << cit->first << " to peer ID " << *cit2 << std::endl;
-#endif
-            }
+		for(cit2 = peers.begin(); cit2 != peers.end(); ++cit2)
+		{
+			const RsPeerId& peer = *cit2;
 
-        if(request_can_proceed || peers.empty())
-        {
-            std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
-            ++tmp ;
-            mIdsNotPresent.erase(cit) ;
-            cit = tmp ;
-        }
-        else
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "(EE) no online peers among supply list in ID request for groupId " << cit->first << ". Keeping it until peers show up."<< std::endl;
-#endif
-            ++cit ;
-        }
-    }
+			if(rsPeers->isOnline(peer) || mNes->isDistantPeer(peer))
+			{
+				/* make sure that the peer in online, so that we know that the
+				 * request has some chance to succeed.*/
+				requests[peer].push_back(cit->first);
+				request_can_proceed = true ;
 
-    for(std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2(requests.begin()); cit2 != requests.end(); ++cit2)
-    {
-        std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
-        std::list<RsGxsGroupId> grpIds;
-        for(; gxs_id_it != cit2->second.end(); ++gxs_id_it)
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "  asking ID " << *gxs_id_it << " to peer ID " << cit2->first << std::endl;
-#endif
-            grpIds.push_back(RsGxsGroupId(*gxs_id_it));
-        }
+				Dbg2() << __PRETTY_FUNCTION__ << " Moving missing key RsGxsId:"
+				       << gxsId << " to peer: " << peer << " requests queue"
+				       << std::endl;
+			}
+		}
 
-        mNes->requestGrp(grpIds, cit2->first);
-    }
+		const bool noPeersFound = peers.empty();
+		if(noPeersFound)
+			RsWarn() << __PRETTY_FUNCTION__ << " No peers supplied to request "
+			         << "RsGxsId: " << gxsId << " dropping." << std::endl;
+
+		if(request_can_proceed || noPeersFound)
+		{
+			std::map<RsGxsId, std::list<RsPeerId> >::iterator tmp(cit);
+			++tmp;
+			mIdsNotPresent.erase(cit);
+			cit = tmp;
+		}
+		else
+		{
+			RsInfo() << __PRETTY_FUNCTION__ << " no online peers among supplied"
+			         << " list in request for RsGxsId: " << gxsId
+			         << ". Keeping it until peers show up."<< std::endl;
+			++cit;
+		}
+	}
+
+	for( std::map<RsPeerId, std::list<RsGxsId> >::const_iterator cit2(
+	         requests.begin() ); cit2 != requests.end(); ++cit2 )
+	{
+		const RsPeerId& peer = cit2->first;
+		std::list<RsGxsGroupId> grpIds;
+		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
+		     gxs_id_it != cit2->second.end(); ++gxs_id_it )
+		{
+			Dbg2() << __PRETTY_FUNCTION__ << " passing RsGxsId: " << *gxs_id_it
+			       << " request for peer: " << peer
+			       << " to RsNetworkExchangeService " << std::endl;
+			grpIds.push_back(RsGxsGroupId(*gxs_id_it));
+		}
+
+		mNes->requestGrp(grpIds, peer);
+	}
 }
 
 bool p3IdService::cache_update_if_cached(const RsGxsId &id, std::string serviceString)
@@ -4698,14 +4723,12 @@ void p3IdService::handle_event(uint32_t event_type, const std::string &/*elabel*
 			break;
 		case GXSID_EVENT_REQUEST_IDS:
 			requestIdsFromNet();
-			break;
-
-
-		default:
-			/* error */
-			std::cerr << "p3IdService::handle_event() Unknown Event Type: " << event_type;
-			std::cerr << std::endl;
-			break;
+		    break;
+	default:
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown Event Type: "
+		        << event_type << std::endl;
+		print_stacktrace();
+		break;
 	}
 }
 

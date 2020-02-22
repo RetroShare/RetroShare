@@ -56,12 +56,10 @@ class NotifyQt: public QObject, public NotifyClient
 		static bool isAllDisable();
 		void enable() ;
 
-		virtual ~NotifyQt() { return; }
+		virtual ~NotifyQt() = default;
 
 		void setNetworkDialog(NetworkDialog *c) { cDialog = c; }
 
-		virtual void notifyPeerConnected(const std::string& /* peer_id */);
-		virtual void notifyPeerDisconnected(const std::string& /* peer_id */);
 		virtual void notifyListPreChange(int list, int type);
 		virtual void notifyListChange(int list, int type);
 		virtual void notifyErrorMsg(int list, int sev, std::string msg);
@@ -69,14 +67,15 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
+#ifdef TO_REMOVE
 		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
+#endif
 		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
 		virtual void notifyOwnAvatarChanged() ;
         virtual void notifyChatLobbyEvent(uint64_t /* lobby id */, uint32_t /* event type */, const RsGxsId & /*nickname*/, const std::string& /* any string */) ;
 		virtual void notifyChatLobbyTimeShift(int time_shift) ;
-		void notifyConnectionWithoutCert();
 
 		virtual void notifyOwnStatusMessageChanged() ;
 		virtual void notifyDiskFull(uint32_t loc,uint32_t size_in_mb) ;
@@ -85,13 +84,13 @@ class NotifyQt: public QObject, public NotifyClient
 		/* one or more peers has changed the states */
 		virtual void notifyPeerStatusChangedSummary();
 
-        virtual void notifyGxsChange(const RsGxsChanges& change);
-
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;
+#ifdef TO_REMOVE
 		virtual void notifyDownloadComplete(const std::string& fileHash);
 		virtual void notifyDownloadCompleteCount(uint32_t count);
+#endif
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
@@ -123,8 +122,6 @@ class NotifyQt: public QObject, public NotifyClient
 		// It's beneficial to send info to the GUI using signals, because signals are thread-safe
 		// as they get queued by Qt.
 		//
-		void peerConnected(const QString&) const ;
-		void peerDisconnected(const QString&) const ;
 		void hashingInfoChanged(const QString&) const ;
 		void filesPreModChanged(bool) const ;
 		void filesPostModChanged(bool) const ;
@@ -160,8 +157,6 @@ class NotifyQt: public QObject, public NotifyClient
         void chatMessageReceived(ChatMessage msg);
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
-		void downloadComplete(const QString& /* fileHash */);
-		void downloadCompleteCountChanged(int /* count */);
 #ifdef REMOVE
 		void forumMsgReadSatusChanged(const QString& forumId, const QString& msgId, int status);
 		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);

@@ -50,10 +50,50 @@ public:
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
 	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
 {
+    mEventHandlerId = 0;
+    // Needs to be asynced because this function is likely to be called by another thread!
+	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+}
+
+void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+
+	if(!e)
+		return;
+
+        switch(e->mChannelEventCode)
+        {
+		case RsChannelEventCode::NEW_MESSAGE:
+			updateMessageSummaryList(e->mChannelGroupId);
+            break;
+
+		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+			updateDisplay(false);
+            break;
+
+		case RsChannelEventCode::READ_STATUS_CHANGED:
+			updateMessageSummaryList(e->mChannelGroupId);
+            break;
+
+        case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
+            mSearchResults.insert(e->mDistantSearchRequestId);
+            updateSearchResults();
+            break;
+
+		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
+        case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
+            updateDisplay(true);
+            break;
+
+        default:
+            break;
+        }
 }
 
 GxsChannelDialog::~GxsChannelDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
 QString GxsChannelDialog::getHelpString() const
@@ -73,7 +113,7 @@ QString GxsChannelDialog::getHelpString() const
 	return hlp_str ;
 }
 
-UserNotify *GxsChannelDialog::getUserNotify(QObject *parent)
+UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
 	return new GxsChannelUserNotify(rsGxsChannels, parent);
 }

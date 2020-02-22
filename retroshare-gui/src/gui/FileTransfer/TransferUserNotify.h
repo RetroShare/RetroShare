@@ -32,9 +32,6 @@ public:
 
 	virtual bool hasSetting(QString *name, QString *group);
 
-private slots:
-	void downloadCountChanged(int count);
-
 private:
 	virtual QIcon getIcon();
 	virtual QIcon getMainIcon(bool hasNew);

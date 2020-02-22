@@ -18,18 +18,17 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <iostream>
 #include "FeedItem.h"
+#include "FeedHolder.h"
 
 /** Constructor */
-FeedItem::FeedItem(QWidget *parent) : QWidget(parent)
+FeedItem::FeedItem(FeedHolder *fh, uint32_t feedId, QWidget *parent) : QWidget(parent), mHash(0),mFeedHolder(fh),mFeedId(feedId)
 {
 	mWasExpanded = false;
 }
 
-FeedItem::~FeedItem()
-{
-	emit feedItemDestroyed(this);
-}
+FeedItem::~FeedItem() { }
 
 void FeedItem::expand(bool open)
 {
@@ -43,3 +42,32 @@ void FeedItem::expand(bool open)
 		mWasExpanded = true;
 	}
 }
+
+uint64_t FeedItem::hash_64bits(const std::string& s) const
+{
+    if(mHash == 0)
+        mHash = hash64(s);
+
+	return mHash;
+}
+
+uint64_t FeedItem::hash64(const std::string& s)
+{
+	uint64_t hash = 0x01110bbfa09;
+
+	for(uint32_t i=0;i<s.size();++i)
+		hash = ~(((hash << 31) ^ (hash >> 3)) + s[i]*0x217898fbba7 + 0x0294379);
+
+    return hash;
+}
+
+void FeedItem::removeItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "MsgItem::removeItem()";
+	std::cerr << std::endl;
+#endif
+
+	mFeedHolder->deleteFeedItem(this,0);
+}
+

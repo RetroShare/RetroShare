@@ -42,13 +42,13 @@ public:
     void setSelected(bool selected);
     bool isSelected(){ return mSelected; }
     const RsPhotoPhoto& getPhotoDetails();
-    bool getPhotoThumbnail(RsPhotoThumbnail &nail);
+    bool getThumbnail(RsGxsImage &image);
 
 protected:
         void mousePressEvent(QMouseEvent *event);
 
 private:
-        void updateImage(const RsPhotoThumbnail &thumbnail);
+        void updateImage(const RsGxsImage &image);
         void setUp();
 
     private slots:

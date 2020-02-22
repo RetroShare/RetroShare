@@ -41,7 +41,7 @@
 
 /** Constructor */
 PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, uint32_t type, bool isHome) :
-    FeedItem(NULL), mParent(parent), mFeedId(feedId),
+    FeedItem(parent,feedId,NULL),
     mPeerId(peerId), mType(type), mIsHome(isHome)
 {
     /* Invoke the Qt Designer generated object setup routine */
@@ -50,12 +50,12 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     sendmsgButton->setEnabled(false);
 
     /* general ones */
-    connect( expandButton, SIGNAL( clicked( void ) ), this, SLOT( toggle ( void ) ) );
-    connect( clearButton, SIGNAL( clicked( void ) ), this, SLOT( removeItem ( void ) ) );
+    connect( expandButton, SIGNAL( clicked() ), this, SLOT( toggle() ) );
+    connect( clearButton, SIGNAL( clicked() ), this, SLOT( removeItem() ) );
 
     /* specific ones */
-    connect( chatButton, SIGNAL( clicked( void ) ), this, SLOT( openChat ( void ) ) );
-    connect( sendmsgButton, SIGNAL( clicked( ) ), this, SLOT( sendMsg() ) );
+    connect( chatButton, SIGNAL( clicked() ), this, SLOT( openChat() ) );
+    connect( sendmsgButton, SIGNAL( clicked() ), this, SLOT( sendMsg() ) );
 
     connect(NotifyQt::getInstance(), SIGNAL(friendsChanged()), this, SLOT(updateItem()));
 
@@ -67,16 +67,10 @@ PeerItem::PeerItem(FeedHolder *parent, uint32_t feedId, const RsPeerId &peerId, 
     updateItem();
 }
 
-
-bool PeerItem::isSame(const RsPeerId &peerId, uint32_t type)
+uint64_t PeerItem::uniqueIdentifier() const
 {
-	if ((mPeerId == peerId) && (mType == type))
-	{
-		return true;
-	}
-	return false;
+    return hash_64bits("PeerItem " + mPeerId.toStdString() + " " + QString::number(mType).toStdString()) ;
 }
-
 
 void PeerItem::updateItemStatic()
 {
@@ -100,7 +94,7 @@ void PeerItem::updateItemStatic()
 			title = tr("Friend Connected");
 			break;
 		case PEER_TYPE_HELLO:
-			title = tr("Connect Attempt");
+			title = tr("Connection refused by peer");
 			break;
 		case PEER_TYPE_NEW_FOF:
 			title = tr("Friend of Friend");
@@ -135,15 +129,16 @@ void PeerItem::updateItemStatic()
 	}
 	else
 	{
-		statusLabel->setText(tr("Unknown Peer"));
-		titleLabel->setText(tr("Unknown Peer"));
-		trustLabel->setText(tr("Unknown Peer"));
-		nameLabel->setText(tr("Unknown Peer"));
-		idLabel->setText(tr("Unknown Peer"));
-		locLabel->setText(tr("Unknown Peer"));
-		ipLabel->setText(tr("Unknown Peer"));
-		connLabel->setText(tr("Unknown Peer"));
-		lastLabel->setText(tr("Unknown Peer"));
+		peerNameLabel->setText(tr("Unknown peer"));
+		statusLabel->setText(tr("Unknown"));
+		titleLabel->setText(tr("Unknown peer"));
+		trustLabel->setText(tr("Unknown"));
+		nameLabel->setText(tr("Unknown"));
+		idLabel->setText(tr("Unknown"));
+		locLabel->setText(tr("Unknown"));
+		ipLabel->setText(tr("Unknown"));
+		connLabel->setText(tr("Unknown"));
+		lastLabel->setText(tr("Unknown"));
 
 		chatButton->setEnabled(false);
 	}
@@ -192,7 +187,19 @@ void PeerItem::updateItem()
 		statusLabel->setText(status);
 		trustLabel->setText(QString::fromStdString(RsPeerTrustString(details.trustLvl)));
 
-		ipLabel->setText(QString("%1:%2/%3:%4").arg(QString::fromStdString(details.localAddr)).arg(details.localPort).arg(QString::fromStdString(details.extAddr)).arg(details.extPort));
+        QString ip_string;
+
+        if(details.localPort != 0)
+            ip_string += QString("%1:%2").arg(QString::fromStdString(details.localAddr)).arg(details.localPort);
+
+        if(details.extPort != 0)
+        {
+            if(!ip_string.isNull())
+                ip_string += "/" ;
+
+            ip_string += ip_string += QString("%1:%2").arg(QString::fromStdString(details.extAddr)).arg(details.extPort);
+        }
+		ipLabel->setText(ip_string);
 
 		connLabel->setText(StatusDefs::connectStateString(details));
 
@@ -218,7 +225,7 @@ void PeerItem::updateItem()
 	/* slow Tick  */
 	int msec_rate = 10129;
 	
-	QTimer::singleShot( msec_rate, this, SLOT(updateItem( void ) ));
+	QTimer::singleShot( msec_rate, this, SLOT(updateItem() ));
 	return;
 }
 
@@ -229,8 +236,8 @@ void PeerItem::toggle()
 
 void PeerItem::doExpand(bool open)
 {
-	if (mParent) {
-		mParent->lockLayout(this, true);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, true);
 	}
 
 	if (open)
@@ -248,25 +255,8 @@ void PeerItem::doExpand(bool open)
 
 	emit sizeChanged(this);
 
-	if (mParent) {
-		mParent->lockLayout(this, false);
-	}
-}
-
-void PeerItem::removeItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PeerItem::removeItem()";
-	std::cerr << std::endl;
-#endif
-
-	mParent->lockLayout(this, true);
-	hide();
-	mParent->lockLayout(this, false);
-
-	if (mParent)
-	{
-		mParent->deleteFeedItem(this, mFeedId);
+	if (mFeedHolder) {
+		mFeedHolder->lockLayout(this, false);
 	}
 }
 
@@ -314,9 +304,9 @@ void PeerItem::openChat()
 	std::cerr << "PeerItem::openChat()";
 	std::cerr << std::endl;
 #endif
-	if (mParent)
+	if (mFeedHolder)
 	{
-		mParent->openChat(mPeerId);
+		mFeedHolder->openChat(mPeerId);
 	}
 }
 

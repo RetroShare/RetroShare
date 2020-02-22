@@ -163,7 +163,7 @@ void FriendsDialog::activatePage(FriendsDialog::Page page)
 	}
 }
 
-UserNotify *FriendsDialog::getUserNotify(QObject *parent)
+UserNotify *FriendsDialog::createUserNotify(QObject *parent)
 {
     return new ChatUserNotify(parent);
 }

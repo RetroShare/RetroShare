@@ -23,10 +23,14 @@
 
 #include <memory>
 #include <cstdint>
+#include <chrono>
+#include <functional>
 
 #include "util/rsmemory.h"
+#include "util/rsurl.h"
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
+#include "util/rstime.h"
 
 class RsEvents;
 
@@ -49,27 +53,48 @@ enum class RsEventType : uint32_t
 	NONE = 0, /// Used to detect uninitialized event
 
 	/// @see RsBroadcastDiscovery
-	BROADCAST_DISCOVERY_PEER_FOUND                          = 1,
+	BROADCAST_DISCOVERY                                     = 1,
 
 	/// @see RsDiscPendingPgpReceivedEvent
-	GOSSIP_DISCOVERY_INVITE_RECEIVED                        = 2,
+	GOSSIP_DISCOVERY                                        = 2,
 
 	/// @see AuthSSL
 	AUTHSSL_CONNECTION_AUTENTICATION                        = 3,
 
 	/// @see pqissl
-	REMOTE_PEER_REFUSED_CONNECTION                          = 4,
+	PEER_CONNECTION                                         = 4,
 
-	/// @see RsGxsChanges
+	/// @see RsGxsChanges												// this one is used in RsGxsBroadcast
 	GXS_CHANGES                                             = 5,
 
 	/// Emitted when a peer state changes, @see RsPeers
 	PEER_STATE_CHANGED                                      = 6,
 
 	/// @see RsMailStatusEvent
-	MAIL_STATUS_CHANGE                                      = 7,
+	MAIL_STATUS                                             = 7,
 
-	MAX       /// Used to detect invalid event type passed
+    /// @see RsGxsCircleEvent
+    GXS_CIRCLES                                             = 8,
+
+    /// @see RsGxsChannelEvent
+    GXS_CHANNELS                                            = 9,
+
+    /// @see RsGxsForumEvent
+    GXS_FORUMS                                              = 10,
+
+    /// @see RsGxsPostedEvent
+    GXS_POSTED                                              = 11,
+
+    /// @see RsGxsPostedEvent
+    GXS_IDENTITY                                            = 12,
+
+    /// @see RsFiles
+    SHARED_DIRECTORIES                                      = 13,
+
+    /// @see RsFiles
+    FILE_TRANSFER                                           = 14,
+
+	 MAX       /// Used to detect invalid event type passed
 };
 
 /**
@@ -147,6 +172,7 @@ public:
 	 * Every time an event is dispatced the registered events handlers will get
 	 * their method handleEvent called with the event passed as paramether.
 	 * @jsonapi{development,manualwrapper}
+	 * @param eventType         Type of event for which the callback is called
 	 * @param multiCallback     Function that will be called each time an event
 	 *                          is dispatched.
 	 * @param[inout] hId        Optional storage for handler id, useful to
@@ -157,6 +183,7 @@ public:
 	 * @return False on error, true otherwise.
 	 */
 	virtual bool registerEventsHandler(
+            RsEventType eventType,
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
 	        ) = 0;
@@ -170,3 +197,4 @@ public:
 
 	virtual ~RsEvents();
 };
+

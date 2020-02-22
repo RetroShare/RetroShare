@@ -139,7 +139,7 @@ RsServer::~RsServer()
 
 
         /* Thread Fn: Run the Core */
-void 	RsServer::data_tick()
+void RsServer::threadTick()
 {
 	rstime::rs_usleep(mTimeDelta * 1000000);
 

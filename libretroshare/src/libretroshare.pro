@@ -20,6 +20,11 @@ DESTDIR = lib
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
 
+## Uncomment to enable Unfinished Services.
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
+
 debug {
 #	DEFINES *= DEBUG
 #	DEFINES *= OPENDHT_DEBUG DHT_DEBUG CONN_DEBUG DEBUG_UDP_SORTER P3DISC_DEBUG DEBUG_UDP_LAYER FT_DEBUG EXTADDRSEARCH_DEBUG
@@ -495,7 +500,8 @@ HEADERS +=	util/folderiterator.h \
             util/rsdeprecate.h \
             util/cxx11retrocompat.h \
     util/cxx17retrocompat.h \
-            util/rsurl.h
+            util/rsurl.h \
+    util/rserrno.h
 
 SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftcontroller.cc \
@@ -634,7 +640,8 @@ SOURCES +=	util/folderiterator.cc \
 			util/rstickevent.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
-            util/rsurl.cc
+            util/rsurl.cc \
+    util/rserrno.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
         HEADERS += rs_upnp/upnputil.h rs_upnp/upnphandler_miniupnp.h
@@ -761,6 +768,8 @@ SOURCES += services/p3gxschannels.cc \
 	rsitems/rsgxschannelitems.cc \
 
 wikipoos {
+	DEFINES *= RS_USE_WIKI
+
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -771,6 +780,8 @@ wikipoos {
 }
 
 gxsthewire {
+	DEFINES *= RS_USE_WIRE
+
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
@@ -791,6 +802,8 @@ SOURCES +=  services/p3postbase.cc \
 	rsitems/rsposteditems.cc
 
 gxsphotoshare {
+	DEFINES *= RS_USE_PHOTO
+
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \

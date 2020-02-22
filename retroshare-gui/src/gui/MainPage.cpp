@@ -31,6 +31,15 @@ MainPage::MainPage(QWidget *parent , Qt::WindowFlags flags ) : QWidget(parent, f
 	mIcon = QIcon();
 	mName = "";
 	mHelp = "";
+    mUserNotify = nullptr;
+}
+
+UserNotify *MainPage::getUserNotify()
+{
+    if(!mUserNotify)
+        mUserNotify = createUserNotify(this);
+
+    return mUserNotify;
 }
 
 void MainPage::registerHelpButton(QToolButton *button, const QString& help_html_text, const QString &code_name)

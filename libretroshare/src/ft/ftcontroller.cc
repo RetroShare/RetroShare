@@ -209,7 +209,7 @@ void ftController::removeFileSource(const RsFileHash& hash,const RsPeerId& peer_
 	std::cerr << "... not added: hash not found." << std::endl ;
 #endif
 }
-void ftController::data_tick()
+void ftController::threadTick()
 {
 	/* check the queues */
 
@@ -816,12 +816,15 @@ bool ftController::completeFile(const RsFileHash& hash)
 	}
 
 	/* Notify GUI */
-    RsServer::notify()->AddPopupMessage(RS_POPUP_DOWNLOAD, hash.toStdString(), name, "");
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsFileTransferEvent>();
+        ev->mHash = hash;
+        ev->mFileTransferEventCode = RsFileTransferEventCode::DOWNLOAD_COMPLETE;
+        rsEvents->postEvent(ev);
+    }
 
-    RsServer::notify()->notifyDownloadComplete(hash.toStdString());
-    RsServer::notify()->notifyDownloadCompleteCount(completeCount);
-
-    rsFiles->ForceDirectoryCheck() ;
+    rsFiles->ForceDirectoryCheck(true) ;
 
 	IndicateConfigChanged(); /* completed transfer -> save */
 	return true;
@@ -1412,7 +1415,12 @@ bool ftController::FileClearCompleted()
 		IndicateConfigChanged();
 	}
 
-	RsServer::notify()->notifyDownloadCompleteCount(0);
+    if(rsEvents)
+    {
+        auto ev = std::make_shared<RsFileTransferEvent>();
+        ev->mFileTransferEventCode = RsFileTransferEventCode::COMPLETED_FILES_REMOVED;
+        rsEvents->postEvent(ev);
+    }
 
 	return true;
 }

@@ -71,23 +71,32 @@ struct RsBroadcastDiscoveryResult : RsSerializable
  * @brief Event emitted when a non friend new peer is found in the local network
  * @see RsEvents
  */
-struct RsBroadcastDiscoveryPeerFoundEvent : RsEvent
-{
-	RsBroadcastDiscoveryPeerFoundEvent(
-	        const RsBroadcastDiscoveryResult& eventData ) :
-	    RsEvent(RsEventType::BROADCAST_DISCOVERY_PEER_FOUND), mData(eventData) {}
+enum class RsBroadcastDiscoveryEventType: uint32_t {
+    UNKNOWN               = 0x00,
+    PEER_FOUND            = 0x01
+};
 
-	RsBroadcastDiscoveryResult mData;
+struct RsBroadcastDiscoveryEvent : RsEvent
+{
+	RsBroadcastDiscoveryEvent()
+      : RsEvent(RsEventType::BROADCAST_DISCOVERY),
+        mDiscoveryEventType(RsBroadcastDiscoveryEventType::UNKNOWN)
+    {}
+
+    virtual ~RsBroadcastDiscoveryEvent() override = default;
+
+    RsBroadcastDiscoveryEventType  mDiscoveryEventType;
+	RsBroadcastDiscoveryResult     mData;
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mDiscoveryEventType);
 		RS_SERIAL_PROCESS(mData);
 	}
-
-	~RsBroadcastDiscoveryPeerFoundEvent() override;
 };
 
 

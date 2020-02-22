@@ -55,7 +55,7 @@ public:
 	virtual QString pageName() const { return tr("Network") ; } //MainPage
     virtual QString helpText() const { return ""; } //MainPage
 
-    virtual UserNotify *getUserNotify(QObject *parent);
+    virtual UserNotify *createUserNotify(QObject *parent) override;
 
     static bool isGroupChatActive();
     static void groupChatActivate();

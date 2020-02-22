@@ -55,7 +55,7 @@ private slots:
 
 private:
 
-    bool getAlbumThumbnail(RsPhotoThumbnail &nail);
+    bool getAlbumThumbnail(RsGxsImage &image);
 private:
     Ui::AlbumCreateDialog *ui;
 

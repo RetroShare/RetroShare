@@ -1,8 +1,9 @@
 /*
  * RetroShare JSON API public header
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio.eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio.eigenlab.org>
  * Copyright (C) 2019  Cyril Soler <csoler@users.sourceforge.net>
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Lesser General Public License as published by the Free
@@ -25,9 +26,11 @@
 
 #include <map>
 #include <string>
+#include <cstdint>
+#include <system_error>
 
-class p3ConfigMgr;
-class JsonApiResourceProvider;
+#include "util/rsmemory.h"
+
 class RsJsonApi;
 
 /**
@@ -36,6 +39,71 @@ class RsJsonApi;
  */
 extern RsJsonApi* rsJsonApi;
 
+enum class RsJsonApiErrorNum : int32_t
+{
+	TOKEN_FORMAT_INVALID             = 2004,
+	UNKNOWN_API_USER                 = 2005,
+	WRONG_API_PASSWORD               = 2006,
+	API_USER_CONTAIN_COLON           = 2007,
+	AUTHORIZATION_REQUEST_DENIED     = 2008,
+	CANNOT_EXECUTE_BEFORE_RS_LOGIN   = 2009,
+	NOT_A_MACHINE_GUN                = 2010
+};
+
+struct RsJsonApiErrorCategory: std::error_category
+{
+	const char* name() const noexcept override
+	{ return "RetroShare JSON API"; }
+
+	std::string message(int ev) const override
+	{
+		switch (static_cast<RsJsonApiErrorNum>(ev))
+		{
+		case RsJsonApiErrorNum::TOKEN_FORMAT_INVALID:
+			return "Invalid token format, must be alphanumeric_user:password";
+		case RsJsonApiErrorNum::UNKNOWN_API_USER:
+			return "Unknown API user";
+		case RsJsonApiErrorNum::WRONG_API_PASSWORD:
+			return "Wrong API password";
+		case RsJsonApiErrorNum::API_USER_CONTAIN_COLON:
+			return "API user cannot contain colon character";
+		case RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED:
+			return "User denied new token autorization";
+		case RsJsonApiErrorNum::CANNOT_EXECUTE_BEFORE_RS_LOGIN:
+			return "This operation cannot be executed bedore RetroShare login";
+		case RsJsonApiErrorNum::NOT_A_MACHINE_GUN:
+			return "Method must not be called in burst";
+		default:
+			return "Error message for error: " + std::to_string(ev) +
+			        " not available in category: " + name();
+		}
+	}
+
+	std::error_condition default_error_condition(int ev) const noexcept override;
+
+	const static RsJsonApiErrorCategory instance;
+};
+
+
+namespace std
+{
+/** Register RsJsonApiErrorNum as an error condition enum, must be in std
+ * namespace */
+template<> struct is_error_condition_enum<RsJsonApiErrorNum> : true_type {};
+}
+
+/** Provide RsJsonApiErrorNum conversion to std::error_condition, must be in
+ * same namespace of RsJsonApiErrorNum */
+inline std::error_condition make_error_condition(RsJsonApiErrorNum e) noexcept
+{
+	return std::error_condition(
+	            static_cast<int>(e), RsJsonApiErrorCategory::instance );
+};
+
+
+class p3ConfigMgr;
+class JsonApiResourceProvider;
+
 class RsJsonApi
 {
 public:
@@ -43,18 +111,27 @@ public:
 	static const std::string DEFAULT_BINDING_ADDRESS; // 127.0.0.1
 
 	/**
-	 * @brief Restart RsJsonApi server
-	 * @jsonapi{development}
+	 * @brief Restart RsJsonApi server.
+	 * This method is asyncronous when called from JSON API.
+	 * @jsonapi{development,manualwrapper}
+	 * @return Success or error details
 	 */
-	virtual bool restart() = 0;
+	virtual std::error_condition restart() = 0;
+
+	/** @brief Request RsJsonApi to stop and wait until it has stopped.
+	 * Do not expose this method to JSON API as fullstop must not be called from
+	 * the same thread of service execution.
+	 */
+	virtual void fullstop() = 0;
 
 	/**
-	 * @brief Request RsJsonApi to stop and wait until ti has stopped.
+	 * @brief Request RsJsonApi to stop asynchronously.
+	 * @jsonapi{development}
 	 * Be expecially carefull to call this from JSON API because you will loose
 	 * access to the API.
-	 * @jsonapi{development}
+	 * If you need to wait until stopping has completed @see isRunning().
 	 */
-	virtual bool fullstop() = 0;
+	virtual void askForStop() = 0;
 
 	/**
 	 * @brief Get status of the json api server
@@ -117,9 +194,9 @@ public:
 	 * @jsonapi{development,unauthenticated}
 	 * @param[in] user user name to authorize
 	 * @param[in] password password for the new user
-	 * @return true if authorization succeded, false otherwise.
+	 * @return if an error occurred details about it.
 	 */
-	virtual bool requestNewTokenAutorization(
+	virtual std::error_condition requestNewTokenAutorization(
 	        const std::string& user, const std::string& password) = 0;
 
 	/** Split a token in USER:PASSWORD format into user and password */
@@ -128,15 +205,13 @@ public:
 	        std::string& user, std::string& passwd );
 
 	/**
-	 * Add new auth (user,passwd) token to the authorized set, creating the
-	 * token user:passwd internally.
+	 * Add new API auth user, passwd to the authorized set.
 	 * @jsonapi{development}
-	 * @param[in] user user name to autorize, must be alphanumerinc
-	 * @param[in] password password for the user, must be alphanumerinc
-	 * @return true if the token has been added to authorized, false if error
-	 * occurred
+	 * @param[in] user user name to autorize, must not contain ':'
+	 * @param[in] password password for the user
+	 * @return if some error occurred return details about it
 	 */
-	virtual bool authorizeUser(
+	virtual std::error_condition authorizeUser(
 	        const std::string& user, const std::string& password ) = 0;
 
 	/**
@@ -158,9 +233,13 @@ public:
 	 * @brief Check if given JSON API auth token is authorized
 	 * @jsonapi{development,unauthenticated}
 	 * @param[in] token decoded
-	 * @return tru if authorized, false otherwise
+	 * @param[out] error optional storage for error details
+	 * @return true if authorized, false otherwise
 	 */
-	virtual bool isAuthTokenValid(const std::string& token) = 0;
+	virtual bool isAuthTokenValid(
+	        const std::string& token,
+	        std::error_condition& error = RS_DEFAULT_STORAGE_PARAM(std::error_condition)
+	        ) = 0;
 
 	/**
 	 * @brief Write version information to given paramethers
@@ -176,3 +255,4 @@ public:
 
 	virtual ~RsJsonApi() = default;
 };
+

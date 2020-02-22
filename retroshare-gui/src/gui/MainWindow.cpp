@@ -103,6 +103,12 @@
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
+#ifdef RS_USE_WIRE
+#include "gui/TheWire/WireDialog.h"
+#endif
+#ifdef RS_USE_PHOTO
+#include "gui/PhotoShare/PhotoShare.h"
+#endif
 #include "gui/Posted/PostedDialog.h"
 #include "gui/statistics/StatisticsWindow.h"
 
@@ -423,6 +429,17 @@ void MainWindow::initStackedPage()
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
 
+#ifdef RS_USE_WIRE
+  WireDialog *wireDialog = NULL;
+  addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
+#endif
+
+#ifdef RS_USE_PHOTO
+  PhotoShare *photoDialog = NULL;
+  addPage(photoDialog = new PhotoShare(ui->stackPages), grp, &notify);
+#endif
+
+
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
  {
@@ -469,7 +486,7 @@ void MainWindow::initStackedPage()
   //List All notify before Setting was created
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
-      UserNotify *userNotify = notifyIt->first->getUserNotify(this);
+      UserNotify *userNotify = notifyIt->first->getUserNotify();
       if (userNotify) {
           userNotify->initialize(ui->toolBarPage, notifyIt->second.first, notifyIt->second.second);
           connect(userNotify, SIGNAL(countChanged()), this, SLOT(updateTrayCombine()));

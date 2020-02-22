@@ -63,7 +63,7 @@ public:
 	virtual QString pageName() const { return tr("Chats") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
 
-	virtual UserNotify *getUserNotify(QObject *parent); //MainPage
+	virtual UserNotify *createUserNotify(QObject *parent) override; //MainPage
 
 	virtual void updateDisplay();
 
@@ -137,7 +137,7 @@ private:
 	QAction* showTopicAct;
 	int getNumColVisible();
 
-	ChatLobbyUserNotify* myChatLobbyUserNotify;
+	ChatLobbyUserNotify* myChatLobbyUserNotify; // local copy that avoids dynamic casts
 
 	QAbstractButton* myInviteYesButton;
 	GxsIdChooser* myInviteIdChooser;

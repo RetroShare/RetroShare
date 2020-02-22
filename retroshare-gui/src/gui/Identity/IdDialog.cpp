@@ -35,10 +35,12 @@
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
 #include "gui/common/UIStateHelper.h"
+#include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/msgs/MessageComposer.h"
 #include "gui/settings/rsharesettings.h"
+#include "util/qtthreadsutils.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 #include "util/misc.h"
 #include "util/QtVersion.h"
@@ -148,6 +150,12 @@ IdDialog::IdDialog(QWidget *parent) :
 
 	mIdQueue = NULL;
     
+    mEventHandlerId_identity = 0;
+	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_identity );
+
+    mEventHandlerId_circles = 0;
+	rsEvents->registerEventsHandler(RsEventType::GXS_CIRCLES,  [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_circles );
+
     	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
 	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
@@ -396,6 +404,49 @@ IdDialog::IdDialog(QWidget *parent) :
     connect(tmer,SIGNAL(timeout()),this,SLOT(updateCirclesDisplay())) ;
     
     tmer->start(10000) ;	// update every 10 secs. 
+}
+
+void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	if(event->mType == RsEventType::GXS_IDENTITY)
+	{
+		const RsGxsIdentityEvent *e = dynamic_cast<const RsGxsIdentityEvent*>(event.get());
+
+		if(!e)
+			return;
+
+		switch(e->mIdentityEventCode)
+		{
+		case RsGxsIdentityEventCode::DELETED_IDENTITY:
+		case RsGxsIdentityEventCode::NEW_IDENTITY:
+
+			requestIdList();
+		default:
+			break;
+		}
+	}
+    else if(event->mType == RsEventType::GXS_CIRCLES)
+    {
+		const RsGxsCircleEvent *e = dynamic_cast<const RsGxsCircleEvent*>(event.get());
+
+		if(!e)
+			return;
+
+		switch(e->mCircleEventType)
+		{
+		case RsGxsCircleEventCode::NEW_CIRCLE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
+
+			requestCircleGroupMeta();
+		default:
+			break;
+		}
+
+    }
 }
 
 void IdDialog::clearPerson()
@@ -701,7 +752,7 @@ void IdDialog::loadCircleGroupMeta(const uint32_t &token)
 		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
 #ifdef ID_DEBUG
-			std::cerr << "    ID " << *it << ": " ;
+			std::cerr << "    ID " << it->first << ": " ;
 #endif
 			bool is_own_id = rsIdentity->isOwnId(it->first) ;
 			bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
@@ -1326,6 +1377,9 @@ void IdDialog::circle_selected()
     
 IdDialog::~IdDialog()
 {
+	rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
+	rsEvents->unregisterEventsHandler(mEventHandlerId_circles);
+
 	// save settings
 	processSettings(false);
 
@@ -2006,9 +2060,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
         	return tr("Admin signature verification in service %1").arg(service_name);
     case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION:      // not typically used, since most services do not require group author signatures
         	return tr("Creation of author signature in service %1").arg(service_name);
-    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION:    // most common use case. Messages are signed by authors in e.g. forums.
+        	return tr("Message signature creation in group %1 of service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
     case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE:               // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+    case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION:
+        	return tr("Group author for group %1 in service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
         break ;
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
@@ -2052,18 +2108,9 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		return tr("Generic signature.");
     }
-	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION:
-    {
-		return tr("Generic encryption.");
-    }
-	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION:
-    {
-		return tr("Generic decryption.");
-    }
-	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:
-    {
-		return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
-    }
+	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION: return tr("Generic encryption.");
+	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION: return tr("Generic decryption.");
+	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:     return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:
@@ -2095,7 +2142,7 @@ void IdDialog::modifyReputation()
 	rsReputations->setOwnOpinion(id,op);
 
 #ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << op;
+	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << static_cast<int>(op);
 	std::cerr << std::endl;
 #endif
 

@@ -584,16 +584,18 @@ void MessageComposer::recommendFriend(const std::set <RsPeerId> &sslIds, const R
     /* window will destroy itself! */
 }
 
-void MessageComposer::sendConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &/*sslName*/)
+void MessageComposer::addConnectAttemptMsg(const RsPgpId &gpgId, const RsPeerId &sslId, const QString &/*sslName*/)
 {
-    if (gpgId.isNull()) {
+    if (gpgId.isNull())
         return;
-    }
 
-    RetroShareLink link = RetroShareLink::createUnknwonSslCertificate(sslId, gpgId);
-    if (link.valid() == false) {
+    // PGPId+SslId are always here.  But if the peer is not a friend the SSL id cannot be used.
+    // (todo) If the PGP id doesn't get us a PGP key from the keyring, we need to create a short invite
+
+	RetroShareLink link = RetroShareLink::createUnknownSslCertificate(sslId);
+
+    if (!link.valid())
         return;
-    }
 
     QString title = QString("%1 %2").arg(link.name(), tr("wants to be friends with you on RetroShare"));
 

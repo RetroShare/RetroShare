@@ -103,6 +103,42 @@ struct RsGxsChannelPost : RsSerializable
 };
 
 
+enum class RsChannelEventCode: uint8_t
+{
+	UNKNOWN                         = 0x00,
+	NEW_CHANNEL                     = 0x01, // emitted when new channel is received
+	UPDATED_CHANNEL                 = 0x02, // emitted when existing channel is updated
+	NEW_MESSAGE                     = 0x03, // new message reeived in a particular channel (group and msg id)
+	UPDATED_MESSAGE                 = 0x04, // existing message has been updated in a particular channel
+	RECEIVED_PUBLISH_KEY            = 0x05, // publish key for this channel has been received
+	SUBSCRIBE_STATUS_CHANGED        = 0x06, // subscription for channel mChannelGroupId changed.
+	READ_STATUS_CHANGED             = 0x07, // existing message has been read or set to unread
+	RECEIVED_DISTANT_SEARCH_RESULT  = 0x08, // result for the given group id available for the given turtle request id
+};
+
+struct RsGxsChannelEvent: RsEvent
+{
+	RsGxsChannelEvent():
+	    RsEvent(RsEventType::GXS_CHANNELS),
+	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
+
+	RsChannelEventCode mChannelEventCode;
+	RsGxsGroupId mChannelGroupId;
+	RsGxsMessageId mChannelMsgId;
+	TurtleRequestId mDistantSearchRequestId;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChannelEventCode);
+		RS_SERIAL_PROCESS(mChannelGroupId);
+		RS_SERIAL_PROCESS(mChannelMsgId);
+		RS_SERIAL_PROCESS(mDistantSearchRequestId);
+    }
+};
+
 class RsGxsChannels: public RsGxsIfaceHelper, public RsGxsCommentService
 {
 public:
@@ -476,10 +512,10 @@ public:
 	RS_DEPRECATED_FOR(getChannelsInfo)
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
 
-	RS_DEPRECATED_FOR(getChannelsContent)
+	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) = 0;
 
 	/**

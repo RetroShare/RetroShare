@@ -24,6 +24,7 @@
 #include <QObject>
 
 #include <retroshare/rsgxsifacetypes.h>
+#include <retroshare/rsevents.h>
 
 struct RsGxsIfaceHelper;
 struct RsGxsChanges;
@@ -39,6 +40,9 @@ public:
 
 	static RsGxsUpdateBroadcast *get(RsGxsIfaceHelper* ifaceImpl);
 
+protected:
+	virtual ~RsGxsUpdateBroadcast();
+
 signals:
 	void changed();
 	void msgsChanged(const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIds, const std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgIdsMeta);
@@ -53,6 +57,7 @@ private:
 
 private:
 	RsGxsIfaceHelper* mIfaceImpl;
+	RsEventsHandlerId_t mEventHandlerId ;
 };
 
 #endif // RSGXSUPDATEBROADCAST_H

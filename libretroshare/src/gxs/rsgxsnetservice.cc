@@ -1981,7 +1981,7 @@ bool RsGxsNetService::locked_processTransac(RsNxsTransacItem *item)
         return false;
 }
 
-void RsGxsNetService::data_tick()
+void RsGxsNetService::threadTick()
 {
     static const double timeDelta = 0.5;
 

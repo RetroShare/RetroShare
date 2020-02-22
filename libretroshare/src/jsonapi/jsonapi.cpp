@@ -1,7 +1,8 @@
 /*
  * RetroShare JSON API
  *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>
  *
  * This program is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the
@@ -15,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <https://www.gnu.org/licenses/>
  *
- * SPDX-FileCopyrightText: 2004-2019 RetroShare Team <contact@retroshare.cc>
+ * SPDX-FileCopyrightText: 2004-2020 RetroShare Team <contact@retroshare.cc>
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
@@ -72,6 +73,8 @@ JsonApiServer::corsOptionsHeaders =
     { "Content-Length", "0" }
 };
 
+/* static */ const RsJsonApiErrorCategory RsJsonApiErrorCategory::instance;
+
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
@@ -123,31 +126,45 @@ JsonApiServer::corsOptionsHeaders =
 	return false;
 }
 
+void JsonApiServer::unProtectedRestart()
+{
+	/* Extremely sensitive stuff!
+	 * Make sure you read documentation in header before changing or use!! */
+
+	fullstop();
+	RsThread::start("JSON API Server");
+}
+
 bool RsJsonApi::parseToken(
         const std::string& clear_token, std::string& user,std::string& passwd )
 {
-	uint32_t colonIndex = 0;
-	uint32_t colonCounter = 0;
+	auto colonIndex = std::string::npos;
 	const auto tkLen = clear_token.length();
 
-	for(uint32_t i=0; i < tkLen && colonCounter < 2; ++i)
-		if(clear_token[i] == ':') { ++colonCounter; colonIndex = i; }
-		else if(!librs::util::is_alphanumeric(clear_token[i])) return false;
+	for(uint32_t i=0; i < tkLen; ++i)
+		if(clear_token[i] == ':') { colonIndex = i; break; }
 
-	if(colonCounter != 1) return false;
+	user = clear_token.substr(0, colonIndex);
 
-	user   = clear_token.substr(0, colonIndex);
-	passwd = clear_token.substr(colonIndex + 1);
+	if(colonIndex < tkLen)
+		passwd = clear_token.substr(colonIndex + 1);
 
 	return true;
 }
 
-
 JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
-    mService(std::make_shared<restbed::Service>()),
+    mService(nullptr),
     mListeningPort(RsJsonApi::DEFAULT_PORT),
-    mBindingAddress(RsJsonApi::DEFAULT_BINDING_ADDRESS)
+    mBindingAddress(RsJsonApi::DEFAULT_BINDING_ADDRESS),
+    mRestartReqTS(0)
 {
+#if defined(RS_THREAD_FORCE_STOP) && defined(RS_JSONAPI_DEBUG_SERVICE_STOP)
+	/* When called in bursts it seems that Restbed::Service::stop() doesn't
+	 * always does the job, to debug those cases it has been useful to ask
+	 * RsThread to force it to stop for us. */
+	RsThread::setStopTimeout(10);
+#endif
+
 	registerHandler("/rsLoginHelper/createLocation",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
@@ -222,7 +239,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			        rsLoginHelper->attemptLogin(account, password);
 
 			if( retval == RsInit::OK )
-				authorizeUser(account.toStdString(),password);
+				authorizeUser(account.toStdString(), password);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -246,7 +263,13 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 		{
 			INITIALIZE_API_CALL_JSON_CONTEXT;
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
-			rsControl->rsGlobalShutDown();
+
+			/* Wrap inside RsThread::async because this call
+			 * RsThread::fullstop() also on JSON API server thread.
+			 * Calling RsThread::fullstop() from it's own thread should never
+			 * happen and if it happens an error message is printed
+			 * accordingly by RsThread::fullstop() */
+			RsThread::async([](){ rsControl->rsGlobalShutDown(); });
 		} );
 	}, true);
 
@@ -309,6 +332,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 	registerHandler("/rsEvents/registerEventsHandler",
 	        [this](const std::shared_ptr<rb::Session> session)
 	{
+		const std::weak_ptr<rb::Service> weakService(mService);
 		const std::multimap<std::string, std::string> headers
 		{
 			{ "Connection", "keep-alive" },
@@ -318,7 +342,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 
 		size_t reqSize = static_cast<size_t>(
 		            session->get_request()->get_header("Content-Length", 0) );
-		session->fetch( reqSize, [this](
+		session->fetch( reqSize, [weakService](
 		                const std::shared_ptr<rb::Session> session,
 		                const rb::Bytes& body )
 		{
@@ -328,12 +352,29 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
+			RsEventType eventType = RsEventType::NONE;
+
+			// deserialize input parameters from JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cReq);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
+				RS_SERIAL_PROCESS(eventType);
+			}
+
 			const std::weak_ptr<rb::Session> weakSession(session);
 			RsEventsHandlerId_t hId = rsEvents->generateUniqueHandlerId();
 			std::function<void(std::shared_ptr<const RsEvent>)> multiCallback =
-			        [this, weakSession, hId](std::shared_ptr<const RsEvent> event)
+			        [weakSession, weakService, hId](
+			        std::shared_ptr<const RsEvent> event )
 			{
-				mService->schedule( [weakSession, hId, event]()
+				auto lService = weakService.lock();
+				if(!lService || lService->is_down())
+				{
+					if(rsEvents) rsEvents->unregisterEventsHandler(hId);
+					return;
+				}
+
+				lService->schedule( [weakSession, hId, event]()
 				{
 					auto session = weakSession.lock();
 					if(!session || session->is_closed())
@@ -354,7 +395,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(multiCallback, hId);
+			bool retval = rsEvents->registerEventsHandler(eventType,multiCallback, hId);
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
@@ -368,6 +409,41 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			session->yield(message.str());
 		} );
 	}, true);
+
+	registerHandler("/rsJsonApi/restart",
+	                [this](const std::shared_ptr<rb::Session> session)
+	{
+		auto reqSize = session->get_request()->get_header("Content-Length", 0);
+		session->fetch( static_cast<size_t>(reqSize), [this](
+		                const std::shared_ptr<rb::Session> session,
+		                const rb::Bytes& body )
+		{
+			INITIALIZE_API_CALL_JSON_CONTEXT;
+
+			std::error_condition retval;
+
+			const auto now = time(nullptr);
+			if(mRestartReqTS.exchange(now) + RESTART_BURST_PROTECTION > now)
+				retval = RsJsonApiErrorNum::NOT_A_MACHINE_GUN;
+
+			// serialize out parameters and return value to JSON
+			{
+				RsGenericSerializer::SerializeContext& ctx(cAns);
+				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(retval);
+			}
+
+			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
+
+			/* Wrap inside RsThread::async because this call fullstop() on
+			 * JSON API server thread.
+			 * Calling RsThread::fullstop() from it's own thread should never
+			 * happen and if it happens an error message is printed
+			 * accordingly by RsThread::fullstop() */
+			if(!retval) RsThread::async([this](){ unProtectedRestart(); });
+		} );
+	}, true);
+
 // Generated at compile time
 #include "jsonapi-wrappers.inl"
 }
@@ -385,10 +461,22 @@ void JsonApiServer::registerHandler(
 
 	if(requiresAutentication)
 		resource->set_authentication_handler(
-		            [this](
+		            [this, path](
 		                const std::shared_ptr<rb::Session> session,
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
+			const auto authFail =
+			        [&path, &session](int status) -> RsWarn::stream_type&
+			{
+				/* Capture session by reference as it is cheaper then copying
+				 * shared_ptr by value which is not needed in this case */
+
+				session->close(status, corsOptionsHeaders);
+				return RsWarn() << "JsonApiServer authentication handler "
+				                   "blocked an attempt to call JSON API "
+				                   "authenticated method: " << path;
+			};
+
 			if(session->get_request()->get_method() == "OPTIONS")
 			{
 				callback(session);
@@ -397,7 +485,8 @@ void JsonApiServer::registerHandler(
 
 			if(!rsLoginHelper->isLoggedIn())
 			{
-				session->close(rb::CONFLICT);
+				authFail(rb::CONFLICT) << " before RetroShare login"
+				                       << std::endl;
 				return;
 			}
 
@@ -409,15 +498,24 @@ void JsonApiServer::registerHandler(
 
 			if(authToken != "Basic")
 			{
-				session->close(rb::UNAUTHORIZED);
+				authFail(rb::UNAUTHORIZED)
+				        << " with wrong Authorization header: "
+				        << authHeader.str() << std::endl;
 				return;
 			}
 
 			std::getline(authHeader, authToken, ' ');
 			authToken = decodeToken(authToken);
 
-			if(isAuthTokenValid(authToken)) callback(session);
-			else session->close(rb::UNAUTHORIZED);
+			std::error_condition ec;
+			if(isAuthTokenValid(authToken, ec)) callback(session);
+			else
+			{
+				std::string tUser;
+				parseToken(authToken, tUser, RS_DEFAULT_STORAGE_PARAM(std::string));
+				authFail(rb::UNAUTHORIZED)
+				        << " user: " << tUser << ec << std::endl;
+			}
 		} );
 
 	mResources.push_back(resource);
@@ -427,24 +525,62 @@ void JsonApiServer::setNewAccessRequestCallback(
         const std::function<bool (const std::string&, const std::string&)>& callback )
 { mNewAccessRequestCallback = callback; }
 
-bool JsonApiServer::requestNewTokenAutorization(
+/*static*/ std::error_condition JsonApiServer::badApiCredientalsFormat(
         const std::string& user, const std::string& passwd )
 {
-	if(rsLoginHelper->isLoggedIn() && mNewAccessRequestCallback(user, passwd))
-		return authorizeUser(user, passwd);
+	if(user.find(':') < std::string::npos)
+		return RsJsonApiErrorNum::API_USER_CONTAIN_COLON;
 
-	return false;
+	if(user.empty())
+		RsWarn() << __PRETTY_FUNCTION__ << " User is empty, are you sure "
+		         << "this what you wanted?" << std::endl;
+
+	if(passwd.empty())
+		RsWarn() << __PRETTY_FUNCTION__ << " Password is empty, are you sure "
+		         << "this what you wanted?" << std::endl;
+
+	return std::error_condition();
 }
 
-bool JsonApiServer::isAuthTokenValid(const std::string& token)
+std::error_condition JsonApiServer::requestNewTokenAutorization(
+        const std::string& user, const std::string& passwd )
+{
+	auto ec = badApiCredientalsFormat(user, passwd);
+	if(ec) return ec;
+
+	if(!rsLoginHelper->isLoggedIn())
+		return RsJsonApiErrorNum::CANNOT_EXECUTE_BEFORE_RS_LOGIN;
+
+	if(mNewAccessRequestCallback(user, passwd))
+		return authorizeUser(user, passwd);
+
+	return RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED;
+}
+
+bool JsonApiServer::isAuthTokenValid(
+        const std::string& token, std::error_condition& error )
 {
 	RS_STACK_MUTEX(configMutex);
 
+	const auto failure = [&error](RsJsonApiErrorNum e) -> bool
+	{
+		error = e;
+		return false;
+	};
+
+	const auto success = [&error]()
+	{
+		error.clear();
+		return true;
+	};
+
 	std::string user,passwd;
-	if(!parseToken(token,user,passwd)) return false;
+	if(!parseToken(token, user, passwd))
+		return failure(RsJsonApiErrorNum::TOKEN_FORMAT_INVALID);
 
 	auto it = mAuthTokenStorage.mAuthorizedTokens.find(user);
-	if(it == mAuthTokenStorage.mAuthorizedTokens.end()) return false;
+	if(it == mAuthTokenStorage.mAuthorizedTokens.end())
+		return failure(RsJsonApiErrorNum::UNKNOWN_API_USER);
 
 	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
 	int noOptimiz = 1;
@@ -456,12 +592,16 @@ bool JsonApiServer::isAuthTokenValid(const std::string& token)
 	if( passwd.size() == it->second.size() &&
 	        ( noOptimiz = CRYPTO_memcmp(
 	              passwd.data(), it->second.data(), it->second.size() ) ) == 0 )
-		return true;
+		return success();
 	// Make token size guessing harder
 	else noOptimiz = CRYPTO_memcmp(passwd.data(), passwd.data(), passwd.size());
 
-	// attempt avoiding +else CRYPTO_memcmp+ being optimized away
-	return static_cast<uint32_t>(noOptimiz) + 1 == 0;
+	/* At this point we are sure password is wrong, and one could think to
+	 * plainly `return false` still this ugly and apparently unuseful extra
+	 * calculation is here to avoid `else CRYPTO_memcmp` being optimized away,
+	 * so a pontential attacker cannot guess password size based  on timing */
+	return static_cast<uint32_t>(noOptimiz) + 1 == 0 ?
+	                success() : failure(RsJsonApiErrorNum::WRONG_API_PASSWORD);
 }
 
 std::map<std::string, std::string> JsonApiServer::getAuthorizedTokens()
@@ -489,22 +629,11 @@ void JsonApiServer::connectToConfigManager(p3ConfigMgr& cfgmgr)
 	loadConfiguration(hash);
 }
 
-bool JsonApiServer::authorizeUser(
+std::error_condition JsonApiServer::authorizeUser(
         const std::string& user, const std::string& passwd )
 {
-	if(!librs::util::is_alphanumeric(user))
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " User name is not alphanumeric"
-		        << std::endl;
-		return false;
-	}
-
-	if(!librs::util::is_alphanumeric(passwd))
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Password is not alphanumeric"
-		        << std::endl;
-		return false;
-	}
+	auto ec = badApiCredientalsFormat(user, passwd);
+	if(ec) return ec;
 
 	RS_STACK_MUTEX(configMutex);
 
@@ -514,7 +643,7 @@ bool JsonApiServer::authorizeUser(
 		p = passwd;
 		IndicateConfigChanged();
 	}
-	return true;
+	return ec;
 }
 
 /*static*/ std::string JsonApiServer::decodeToken(const std::string& radix64_token)
@@ -580,28 +709,21 @@ std::vector<std::shared_ptr<rb::Resource> > JsonApiServer::getResources() const
 	return tab;
 }
 
-bool JsonApiServer::restart()
+std::error_condition JsonApiServer::restart()
 {
-	fullstop();
-	RsThread::start("JSON API Server");
+	const auto now = time(nullptr);
+	if(mRestartReqTS.exchange(now) + RESTART_BURST_PROTECTION > now)
+		return RsJsonApiErrorNum::NOT_A_MACHINE_GUN;
 
-	return true;
+	unProtectedRestart();
+	return std::error_condition();
 }
 
-bool JsonApiServer::fullstop()
+void JsonApiServer::onStopRequested()
 {
-	if(!mService->is_up()) return true;
-
-	mService->stop();
-	RsThread::ask_for_stop();
-
-	while(isRunning())
-	{
-		RsDbg() << __PRETTY_FUNCTION__ << " shutting down JSON API service."
-		        << std::endl;
-		std::this_thread::sleep_for(std::chrono::milliseconds(200));
-	}
-	return true;
+	auto tService = std::atomic_exchange(
+	            &mService, std::shared_ptr<rb::Service>(nullptr) );
+	if(tService) tService->stop();
 }
 
 uint16_t JsonApiServer::listeningPort() const { return mListeningPort; }
@@ -610,33 +732,37 @@ void JsonApiServer::setBindingAddress(const std::string& bindAddress)
 { mBindingAddress = bindAddress; }
 std::string JsonApiServer::getBindingAddress() const { return mBindingAddress; }
 
-void JsonApiServer::runloop()
+void JsonApiServer::run()
 {
 	auto settings = std::make_shared<restbed::Settings>();
 	settings->set_port(mListeningPort);
 	settings->set_bind_address(mBindingAddress);
 	settings->set_default_header("Connection", "close");
 
-	if(mService->is_up())
-	{
-		RsWarn() << __PRETTY_FUNCTION__ << " restbed is already running. "
-		         << " stopping it before starting again!" << std::endl;
-		mService->stop();
-	}
+	auto tService = std::make_shared<restbed::Service>();
 
-	/* re-allocating mService is important because it deletes the existing
-	 * service and therefore leaves the listening port open */
-	mService = std::make_shared<restbed::Service>();
-
-	for(auto& r: getResources()) mService->publish(r);
+	for(auto& r: getResources()) tService->publish(r);
 
 	try
 	{
 		RsUrl apiUrl; apiUrl.setScheme("http").setHost(mBindingAddress)
 		        .setPort(mListeningPort);
-		RsDbg() << __PRETTY_FUNCTION__ << " JSON API server listening on "
-		        << apiUrl.toString() << std::endl;
-		mService->start(settings);
+		RsInfo() << __PRETTY_FUNCTION__ << " JSON API server listening on "
+		         << apiUrl.toString() << std::endl;
+
+		/* re-allocating mService is important because it deletes the existing
+		 * service and therefore leaves the listening port open */
+		auto tExpected = std::shared_ptr<rb::Service>(nullptr);
+		if(atomic_compare_exchange_strong(&mService, &tExpected, tService))
+			tService->start(settings);
+		else
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " mService was expected to be "
+			        << " null, instead we got: " << tExpected
+			        << " something wrong happened JsonApiServer won't start"
+			        << std::endl;
+			print_stacktrace();
+		}
 	}
 	catch(std::exception& e)
 	{
@@ -646,7 +772,7 @@ void JsonApiServer::runloop()
 		return;
 	}
 
-	RsInfo() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << " finished!" << std::endl;
 }
 
 /*static*/ void RsJsonApi::version(
@@ -658,4 +784,20 @@ void JsonApiServer::runloop()
 	mini = RS_MINI_VERSION;
 	extra = RS_EXTRA_VERSION;
 	human = RS_HUMAN_READABLE_VERSION;
+}
+
+std::error_condition RsJsonApiErrorCategory::default_error_condition(int ev) const noexcept
+{
+	switch(static_cast<RsJsonApiErrorNum>(ev))
+	{
+	case RsJsonApiErrorNum::TOKEN_FORMAT_INVALID: // fallthrough
+	case RsJsonApiErrorNum::UNKNOWN_API_USER: // fallthrough
+	case RsJsonApiErrorNum::WRONG_API_PASSWORD: // fallthrough
+	case RsJsonApiErrorNum::AUTHORIZATION_REQUEST_DENIED:
+		return std::errc::permission_denied;
+	case RsJsonApiErrorNum::API_USER_CONTAIN_COLON:
+		return std::errc::invalid_argument;
+	default:
+		return std::error_condition(ev, *this);
+	}
 }

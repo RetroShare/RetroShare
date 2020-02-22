@@ -96,6 +96,8 @@ protected:
 	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
     virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
+	void updateMessageSummaryList(RsGxsGroupId groupId);
+
 private slots:
 	void todo();
 
@@ -153,9 +155,6 @@ private:
 
 	void initUi();
 
-	void updateMessageSummaryList(RsGxsGroupId groupId);
-	void updateSearchResults();
-
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
 
@@ -184,6 +183,8 @@ private:
 //	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
 protected:
+	void updateSearchResults();
+
 	bool mCountChildMsgs; // Count unread child messages?
 
 private:
