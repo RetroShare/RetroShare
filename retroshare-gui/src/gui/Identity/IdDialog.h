@@ -25,9 +25,7 @@
 
 #include <retroshare/rsidentity.h>
 
-#include "util/TokenQueue.h"
-
-#define IMAGE_IDDIALOG          ":/icons/png/people2.png"
+#define IMAGE_IDDIALOG          ":/icons/png/people.png"
 
 namespace Ui {
 class IdDialog;
