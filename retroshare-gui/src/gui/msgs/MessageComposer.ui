@@ -475,7 +475,7 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
+                 <iconset>
                   <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
                 </property>
                 <property name="iconSize">
@@ -1199,8 +1199,8 @@ border-image: url(:/images/closepressed.png)
   </action>
   <action name="actionAttach">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/attach.png</normaloff>:/images/attach.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/png/attachements.png</normaloff>:/icons/png/attachements.png</iconset>
    </property>
    <property name="text">
     <string>Attach</string>
@@ -1263,6 +1263,7 @@ border-image: url(:/images/closepressed.png)
  <resources>
   <include location="../emojione.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

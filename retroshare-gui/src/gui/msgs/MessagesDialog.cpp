@@ -117,10 +117,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inChange = false;
     lockUpdate = 0;
 
-    ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
-    ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
-    ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
-
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
 
@@ -158,19 +154,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
-
-    ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
-    ui.replyallmessageButton->setToolTip(tr("Reply to All"));
-
-    QMenu *printmenu = new QMenu();
-    printmenu->addAction(ui.actionPrint);
-    printmenu->addAction(ui.actionPrintPreview);
-    ui.printButton->setMenu(printmenu);
-
-    QMenu *viewmenu = new QMenu();
-    viewmenu->addAction(ui.actionTextBesideIcon);
-    viewmenu->addAction(ui.actionIconOnly);
-    ui.viewtoolButton->setMenu(viewmenu);
 
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
@@ -271,10 +254,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.tabWidget,            SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton,     SIGNAL(clicked()), this, SLOT(newmessage()));
 
-    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionIconOnly,       SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionTextUnderIcon,  SIGNAL(triggered()), this, SLOT(buttonStyle()));
-
     connect(ui.messageTreeWidget,    SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
     connect(ui.messageTreeWidget,    SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
     connect(ui.messageTreeWidget,    SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
@@ -353,10 +332,6 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("SplitterMsg").toByteArray());
         ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
-
-        /* toolbar button style */
-        Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonIconOnly).toInt();
-        setToolbarButtonStyle(style);
     } else {
         // save settings
 
@@ -367,9 +342,6 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         Settings->setValue("SplitterMsg", ui.msgSplitter->saveState());
         Settings->setValue("SplitterList", ui.listSplitter->saveState());
-
-        /* toolbar button style */
-        Settings->setValue("ToolButon_Style", ui.newmessageButton->toolButtonStyle());
     }
 
     Settings->endGroup();
@@ -1015,25 +987,6 @@ void MessagesDialog::undeletemessage()
     updateMessageSummaryList();
 }
 
-void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
-{
-    ui.newmessageButton->setToolButtonStyle(style);
-    ui.removemessageButton->setToolButtonStyle(style);
-    ui.replymessageButton->setToolButtonStyle(style);
-    ui.replyallmessageButton->setToolButtonStyle(style);
-    ui.forwardmessageButton->setToolButtonStyle(style);
-    ui.tagButton->setToolButtonStyle(style);
-    ui.printButton->setToolButtonStyle(style);
-    ui.viewtoolButton->setToolButtonStyle(style);
-}
-
-void MessagesDialog::buttonStyle()
-{
-    setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
-}
-
-
-
 void MessagesDialog::filterChanged(const QString& text)
 {
     QStringList items = text.split(' ',QString::SkipEmptyParts);
@@ -1386,14 +1339,9 @@ void MessagesDialog::connectActions()
 		msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
 	}
 
-	ui.replymessageButton->disconnect();
-	ui.replyallmessageButton->disconnect();
-	ui.forwardmessageButton->disconnect();
-	ui.printButton->disconnect();
 	ui.actionPrint->disconnect();
 	ui.actionPrintPreview->disconnect();
 	ui.actionSaveAs->disconnect();
-	ui.removemessageButton->disconnect();
 
 	ui.actionReply->disconnect();
 	ui.actionReplyAll->disconnect();
@@ -1409,18 +1357,15 @@ void MessagesDialog::connectActions()
 	if (msg) {
 		if (tab == 0) {
 			// connect with own slot to remove multiple messages
-			connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+			//connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
 		} else {
-			msg->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
+			//msg->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
 		}
-		msg->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
-		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
-		msg->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
-		msg->connectAction(MessageWidget::ACTION_PRINT, ui.printButton);
 		msg->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
 		msg->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrintPreview);
 		msg->connectAction(MessageWidget::ACTION_SAVE_AS, ui.actionSaveAs);
 	}
+
 }
 
 void MessagesDialog::updateInterface()
@@ -1441,13 +1386,8 @@ void MessagesDialog::updateInterface()
 			count = 1;
 	}
 
-	ui.replymessageButton->setEnabled(count == 1);
-	ui.replyallmessageButton->setEnabled(count == 1);
-	ui.forwardmessageButton->setEnabled(count == 1);
-	ui.printButton->setEnabled(count == 1);
 	ui.actionPrint->setEnabled(count == 1);
 	ui.actionPrintPreview->setEnabled(count == 1);
 	ui.actionSaveAs->setEnabled(count == 1);
-	ui.removemessageButton->setEnabled(count >= 1);
 	ui.tagButton->setEnabled(count >= 1);
 }

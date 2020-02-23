@@ -136,6 +136,11 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	
+	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
+	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
+	connect(ui.forwardButton, SIGNAL(clicked()), this, SLOT(forward()));
+	connect(ui.deleteButton, SIGNAL(clicked()), this, SLOT(remove()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
