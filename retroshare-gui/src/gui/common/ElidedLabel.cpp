@@ -200,7 +200,8 @@ bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRec
 				iTransX = 0;
 		}
 
-		painter.drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
+        if(width+iTransX+cr.left() <= cr.right())
+			painter.drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
 		//Draw button to get ToolTip
 
         if(drawRoundRect)

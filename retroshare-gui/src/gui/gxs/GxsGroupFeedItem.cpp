@@ -45,21 +45,6 @@ GxsGroupFeedItem::GxsGroupFeedItem(FeedHolder *feedHolder, uint32_t feedId, cons
 	/* load data if we can */
 	mGroupId = groupId;
 	mGxsIface = iface;
-
-	mNextTokenType = 0;
-	mTokenTypeGroup = nextTokenType();
-
-	mLoadQueue = NULL;
-
-#ifdef TO_REMOVE
-	if (mGxsIface && autoUpdate) {
-		/* Connect to update broadcast */
-		mUpdateBroadcastBase = new RsGxsUpdateBroadcastBase(mGxsIface);
-		connect(mUpdateBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(fillDisplaySlot(bool)));
-	} else {
-		mUpdateBroadcastBase = NULL;
-	}
-#endif
 }
 
 GxsGroupFeedItem::~GxsGroupFeedItem()
@@ -69,30 +54,6 @@ GxsGroupFeedItem::~GxsGroupFeedItem()
 	std::cerr << std::endl;
 #endif
 
-	if (mLoadQueue) {
-		delete mLoadQueue;
-	}
-
-#ifdef TO_REMOVE
-	if (mUpdateBroadcastBase)
-	{
-		delete(mUpdateBroadcastBase);
-	}
-#endif
-}
-
-bool GxsGroupFeedItem::initLoadQueue()
-{
-	if (mLoadQueue) {
-		return true;
-	}
-
-	if (!mGxsIface) {
-		return false;
-	}
-
-	mLoadQueue = new TokenQueue(mGxsIface->getTokenService(), this);
-	return (mLoadQueue != NULL);
 }
 
 void GxsGroupFeedItem::unsubscribe()
@@ -144,69 +105,12 @@ void GxsGroupFeedItem::copyGroupLink()
 void GxsGroupFeedItem::fillDisplaySlot(bool complete)
 {
 		requestGroup();
-//	fillDisplay(mUpdateBroadcastBase, complete);
 }
-
-#ifdef TO_REMOVE
-void GxsGroupFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool /*complete*/)
-{
-	std::set<RsGxsGroupId> grpIds;
-	updateBroadcastBase->getAllGrpIds(grpIds);
-
-	if (grpIds.find(groupId()) != grpIds.end())
-		requestGroup();
-}
-#endif
 
 /***********************************************************/
 
 void GxsGroupFeedItem::requestGroup()
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsGroupFeedItem::requestGroup()";
-	std::cerr << std::endl;
-#endif
-
-	if (!initLoadQueue()) {
-		return;
-	}
-
-	if (mLoadQueue->activeRequestExist(mTokenTypeGroup)) {
-		/* Request already running */
-		return;
-	}
-
-	std::list<RsGxsGroupId> ids;
-	ids.push_back(mGroupId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	uint32_t token;
-	mLoadQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_SUMMARY, opts, ids, mTokenTypeGroup);
+    loadGroup();
 }
 
-void GxsGroupFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsGroupFeedItem::loadRequest()";
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mLoadQueue) {
-		if (req.mUserType == mTokenTypeGroup) {
-			loadGroup(req.mToken);
-		} else {
-			std::cerr << "GxsGroupFeedItem::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
-		}
-	}
-}
-
-bool GxsGroupFeedItem::isLoading()
-{
-	if (mLoadQueue && mLoadQueue->activeRequestExist(mTokenTypeGroup)) {
-		return true;
-	}
-
-	return false;
-}
