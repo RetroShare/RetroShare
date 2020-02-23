@@ -78,8 +78,7 @@
 
 
 /** Constructor */
-WikiDialog::WikiDialog(QWidget *parent)
-: RsGxsUpdateBroadcastPage(rsWiki, parent)
+WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);

@@ -25,7 +25,6 @@
 
 #include <retroshare/rsgxsifacehelper.h>
 #include "gui/feeds/FeedItem.h"
-#include "util/TokenQueue.h"
 #include "gui/RetroShareLink.h"
 
 #include <stdint.h>
@@ -33,7 +32,7 @@
 class FeedHolder;
 class RsGxsUpdateBroadcastBase;
 
-class GxsGroupFeedItem : public FeedItem, public TokenResponse
+class GxsGroupFeedItem : public FeedItem
 {
 	Q_OBJECT
 
@@ -46,20 +45,12 @@ public:
 	uint32_t feedId() const { return mFeedId; }
 
 protected:
-	uint32_t nextTokenType() { return ++mNextTokenType; }
-	bool initLoadQueue();
-
 	/* load group data */
 	void requestGroup();
 
-	virtual bool isLoading();
-	virtual void loadGroup(const uint32_t &token) = 0;
+	virtual void loadGroup() = 0;
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual QString groupName() = 0;
-	//virtual void fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete);
-
-	/* TokenResponse */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 protected slots:
 	void subscribe();
@@ -69,7 +60,6 @@ protected slots:
 protected:
 	bool mIsHome;
 	RsGxsIfaceHelper *mGxsIface;
-	TokenQueue *mLoadQueue;
 
 private slots:
 	/* RsGxsUpdateBroadcastBase */
@@ -77,9 +67,6 @@ private slots:
 
 private:
 	RsGxsGroupId mGroupId;
-//	RsGxsUpdateBroadcastBase *mUpdateBroadcastBase;
-	uint32_t mNextTokenType;
-	uint32_t mTokenTypeGroup;
 };
 
 Q_DECLARE_METATYPE(RsGxsGroupId)

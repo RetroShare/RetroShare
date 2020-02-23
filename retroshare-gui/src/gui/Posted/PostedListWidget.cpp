@@ -42,7 +42,7 @@
 #define POSTED_DEFAULT_LISTING_LENGTH 10
 #define POSTED_MAX_INDEX	      10000
 
-#define DEBUG_POSTED_LIST_WIDGET
+//#define DEBUG_POSTED_LIST_WIDGET
 
 #define BOARD_DEFAULT_IMAGE ":/icons/png/posted.png"
 
@@ -714,35 +714,45 @@ void PostedListWidget::applyRanking()
 
 	foreach (PostedCardView *item, mPostCardView)
 	{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 		std::cerr << "PostedListWidget::applyRanking() Item: " << item;
 		std::cerr << std::endl;
+#endif
 		
 		if (item->getPost().mMeta.mPublishTs < min_ts)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Skipping OLD";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 			continue;
 		}
 
 		if (counter >= mPostIndex + mPostShow)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t END - Counter too high";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 		}
 		else if (counter >= mPostIndex)
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Adding to Layout";
 			std::cerr << std::endl;
+#endif
 			/* add it in! */
 			cviewlayout->addWidget(item);
 			item->show();
 		}
 		else
 		{
+#ifdef DEBUG_POSTED_LIST_WIDGET
 			std::cerr << "\t Skipping to Low";
 			std::cerr << std::endl;
+#endif
 			item->hide();
 		}
 		++counter;
