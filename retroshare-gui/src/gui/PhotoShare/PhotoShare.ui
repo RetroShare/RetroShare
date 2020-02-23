@@ -20,7 +20,16 @@
    <item>
     <widget class="QFrame" name="toolBarFrame">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -29,8 +38,8 @@
          <string>Create Album</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/album_create_64.png</normaloff>:/images/album_create_64.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -140,7 +149,16 @@
       <property name="spacing">
        <number>6</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
