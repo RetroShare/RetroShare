@@ -64,6 +64,7 @@ struct RsGxsImage  : RsSerializable
 	void copy(uint8_t *data, uint32_t size); // Allocates and Copies.
 	void clear(); 				// Frees.
 	void shallowClear(); 			// Clears Pointer.
+	bool empty() const;
 
 	uint32_t mSize;
 	uint8_t* mData;

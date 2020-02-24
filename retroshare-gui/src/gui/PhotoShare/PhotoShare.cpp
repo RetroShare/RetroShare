@@ -60,7 +60,7 @@
 
 #define IS_ALBUM_ADMIN(subscribeFlags) (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 #define IS_ALBUM_SUBSCRIBED(subscribeFlags) (subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
-#define IS_ALBUM_N_SUBSCR_OR_ADMIN(subscribeFlags) ((subscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_MASK) == 0)
+#define IS_ALBUM_N_SUBSCR_OR_ADMIN(subscribeFlags) (!IS_ALBUM_ADMIN(subscribeFlags) && !IS_ALBUM_SUBSCRIBED(subscribeFlags))
 
 
 /** Constructor */
@@ -73,7 +73,8 @@ PhotoShare::PhotoShare(QWidget *parent)
         mPhotoSelected = NULL;
 
         connect( ui.toolButton_NewAlbum, SIGNAL(clicked()), this, SLOT(createAlbum()));
-        connect( ui.toolButton_ViewAlbum, SIGNAL(clicked()), this, SLOT(OpenAlbumDialog()));
+        connect( ui.toolButton_ViewEditAlbum, SIGNAL(clicked()), this, SLOT(OpenViewEditAlbumDialog()));
+        connect( ui.toolButton_EditAlbumPhotos, SIGNAL(clicked()), this, SLOT(OpenEditAlbumPhotosDialog()));
         connect( ui.toolButton_SlideShow, SIGNAL(clicked()), this, SLOT(OpenSlideShow()));
         connect( ui.toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribeToAlbum()));
         connect( ui.toolButton_ViewPhoto, SIGNAL(clicked()), this, SLOT(OpenPhotoDialog()));
@@ -133,16 +134,33 @@ void PhotoShare::notifySelection(PhotoShareItem *selection)
             grpIds.push_back(mAlbumSelected->getAlbum().mMeta.mGroupId);
             requestPhotoData(grpIds);
         }
+
+        /* update button status */
+        /* if own album - Enable Edit Photos */
+        if (IS_ALBUM_ADMIN(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        {
+            ui.toolButton_EditAlbumPhotos->setEnabled(true);
+        }
+
+        /* is subscribed enable slideshow (includes own) */
+        if (IS_ALBUM_SUBSCRIBED(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        {
+            ui.toolButton_SlideShow->setEnabled(true);
+        }
+
+        /* enable view / subscribe - as all can use this (sub/unsub/delete) */
+        ui.toolButton_ViewEditAlbum->setEnabled(true);
+        ui.toolButton_subscribe->setEnabled(true);
     }
-    else if((pItem = dynamic_cast<PhotoItem*>(selection)) != NULL)
+    else if ((pItem = dynamic_cast<PhotoItem*>(selection)) != NULL)
     {
-        if(mPhotoSelected == pItem)
+        if (mPhotoSelected == pItem)
         {
             mPhotoSelected->setSelected(true);
         }
         else
         {
-            if(mPhotoSelected  == NULL)
+            if (mPhotoSelected  == NULL)
             {
                 mPhotoSelected = pItem;
             }
@@ -174,7 +192,7 @@ void PhotoShare::checkUpdate()
                 //insertAlbums();
             std::list<RsGxsGroupId> grpIds;
             rsPhoto->groupsChanged(grpIds);
-            if(!grpIds.empty())
+            if (!grpIds.empty())
             {
                 RsTokReqOptions opts;
                 uint32_t token;
@@ -184,7 +202,7 @@ void PhotoShare::checkUpdate()
 
             GxsMsgIdResult res;
             rsPhoto->msgsChanged(res);
-            if(!res.empty())
+            if (!res.empty())
                 requestPhotoList(res);
         }
 
@@ -219,7 +237,21 @@ void PhotoShare::createAlbum()
     albumCreate.exec();
 }
 
-void PhotoShare::OpenAlbumDialog()
+void PhotoShare::OpenViewEditAlbumDialog()
+{
+    if (mAlbumSelected) {
+        const RsPhotoAlbum &album = mAlbumSelected->getAlbum();
+        GxsGroupDialog::Mode mode = GxsGroupDialog::MODE_SHOW;
+        bool canEdit = IS_ALBUM_ADMIN(album.mMeta.mSubscribeFlags);
+        if (canEdit) {
+            mode = GxsGroupDialog::MODE_EDIT;
+        }
+        AlbumGroupDialog agDialog(mPhotoQueue, rsPhoto->getTokenService(), mode, album.mMeta.mGroupId, this);
+        agDialog.exec();
+    }
+}
+
+void PhotoShare::OpenEditAlbumPhotosDialog()
 {
     if (mAlbumSelected) {
         AlbumDialog dlg(mAlbumSelected->getAlbum(), mPhotoQueue, rsPhoto);
@@ -305,62 +337,64 @@ void PhotoShare::clearPhotos()
 
 void PhotoShare::updateAlbums()
 {
-
     clearAlbums();
+
+    // disable all buttons - as nothing is selected.
+    ui.toolButton_ViewEditAlbum->setEnabled(false);
+    ui.toolButton_EditAlbumPhotos->setEnabled(false);
+    ui.toolButton_subscribe->setEnabled(false);
+    ui.toolButton_SlideShow->setEnabled(false);
 
     QLayout *alayout = ui.scrollAreaWidgetContents->layout();
     QSetIterator<AlbumItem*> sit(mAlbumItems);
 
-    if(ui.pushButton_YourAlbums->isChecked())
+    if (ui.pushButton_YourAlbums->isChecked())
     {
+        ui.toolButton_ViewEditAlbum->setText("Edit Album Details");
+        ui.toolButton_subscribe->setText("Delete Album");
+        ui.toolButton_subscribe->setIcon(QIcon(":/images/album_unsubscribe.png"));
 
-        ui.toolButton_subscribe->setEnabled(false);
-        ui.toolButton_NewAlbum->setEnabled(true);
-        ui.toolButton_SlideShow->setEnabled(true);
-
-        while(sit.hasNext()){
+        while (sit.hasNext()) {
 
             AlbumItem* item = sit.next();
             uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
 
             if(IS_ALBUM_ADMIN(flags))
+            {
                 alayout->addWidget(item);
+            }
         }
-    }else if(ui.pushButton_SubscribedAlbums->isChecked())
+    } else if (ui.pushButton_SubscribedAlbums->isChecked())
     {
 
-        ui.toolButton_subscribe->setEnabled(true);
+        ui.toolButton_ViewEditAlbum->setText("View Album Details");
         ui.toolButton_subscribe->setText("Unsubscribe From Album");
         ui.toolButton_subscribe->setIcon(QIcon(":/images/album_unsubscribe.png"));
-        //ui.toolButton_NewAlbum->setEnabled(false);
-        ui.toolButton_SlideShow->setEnabled(true);
 
-        while(sit.hasNext()){
+        while (sit.hasNext()) {
 
             AlbumItem* item = sit.next();
             uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
 
-            if(IS_ALBUM_SUBSCRIBED(flags))
+            if(!IS_ALBUM_ADMIN(flags) && IS_ALBUM_SUBSCRIBED(flags)) {
                 alayout->addWidget(item);
+            }
         }
 
-    }else if(ui.pushButton_SharedAlbums->isChecked())
+    } else if (ui.pushButton_SharedAlbums->isChecked())
     {
-
-        ui.toolButton_subscribe->setEnabled(true);
+        ui.toolButton_ViewEditAlbum->setText("View Album Details");
         ui.toolButton_subscribe->setText("Subscribe To Album");
         ui.toolButton_subscribe->setIcon(QIcon(":/images/album_subscribe.png"));
-        //ui.toolButton_NewAlbum->setEnabled(false);
-        ui.toolButton_SlideShow->setEnabled(false);
 
-        while(sit.hasNext()){
+        while (sit.hasNext()){
 
             AlbumItem* item = sit.next();
             uint32_t flags = item->getAlbum().mMeta.mSubscribeFlags;
 
-            if(IS_ALBUM_N_SUBSCR_OR_ADMIN(flags))
+            if (IS_ALBUM_N_SUBSCR_OR_ADMIN(flags)) {
                 alayout->addWidget(item);
-
+            }
         }
     }
 }
@@ -370,13 +404,13 @@ void PhotoShare::deleteAlbum(const RsGxsGroupId &grpId)
 
     QSetIterator<AlbumItem*> sit(mAlbumItems);
 
-    while(sit.hasNext())
+    while (sit.hasNext())
     {
         AlbumItem* item = sit.next();
 
-        if(item->getAlbum().mMeta.mGroupId == grpId){
+        if (item->getAlbum().mMeta.mGroupId == grpId){
 
-            if(mAlbumSelected == item)
+            if (mAlbumSelected == item)
             {
                 item->setSelected(false);
                 mAlbumSelected = NULL;
@@ -394,8 +428,6 @@ void PhotoShare::deleteAlbum(const RsGxsGroupId &grpId)
 
 void PhotoShare::addAlbum(const RsPhotoAlbum &album)
 {
-    std::cerr << " PhotoShare::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
-
     deleteAlbum(album.mMeta.mGroupId); // remove from ui
     AlbumItem *item = new AlbumItem(album, this, this);
     mAlbumItems.insert(item);
@@ -404,29 +436,36 @@ void PhotoShare::addAlbum(const RsPhotoAlbum &album)
 
 void PhotoShare::addPhoto(const RsPhotoPhoto &photo)
 {
-    std::cerr << "PhotoShare::addPhoto() AlbumId: " << photo.mMeta.mGroupId;
-    std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
-    std::cerr << std::endl;
-
-    PhotoItem* item = new PhotoItem(this, photo, this);
-    mPhotoItems.insert(item);
+    if (!photo.mThumbnail.empty())
+    {
+        PhotoItem* item = new PhotoItem(this, photo, this);
+        mPhotoItems.insert(item);
+    }
 }
 
 void PhotoShare::subscribeToAlbum()
 {
-    if(mAlbumSelected){
+    if (mAlbumSelected){
         RsGxsGroupId id = mAlbumSelected->getAlbum().mMeta.mGroupId;
         uint32_t token;
 
-        if(IS_ALBUM_SUBSCRIBED(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        if (IS_ALBUM_ADMIN(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags)) 
+        {
+            // TODO support delete.
+            return;
+        }
+        else if (IS_ALBUM_SUBSCRIBED(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        {
             rsPhoto->subscribeToAlbum(token, id, false);
-        else if(IS_ALBUM_ADMIN(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
-            return;
-        else if(IS_ALBUM_N_SUBSCR_OR_ADMIN(
-                mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        }
+        else if (IS_ALBUM_N_SUBSCR_OR_ADMIN(mAlbumSelected->getAlbum().mMeta.mSubscribeFlags))
+        {
             rsPhoto->subscribeToAlbum(token, id, true);
+        }
         else
+        {
             return;
+        }
 
         mPhotoQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
     }
@@ -435,11 +474,11 @@ void PhotoShare::subscribeToAlbum()
 void PhotoShare::updatePhotos()
 {
 
-    if(mAlbumSelected)
+    if (mAlbumSelected)
     {
         QSetIterator<PhotoItem*> sit(mPhotoItems);
 
-        while(sit.hasNext())
+        while (sit.hasNext())
         {
             QLayout *layout = ui.scrollAreaWidgetContents_2->layout();
             layout->addWidget(sit.next());
@@ -449,42 +488,15 @@ void PhotoShare::updatePhotos()
 
 /**************************** Request / Response Filling of Data ************************/
 
-
-void PhotoShare::requestAlbumList(std::list<RsGxsGroupId>& ids)
-{
-        RsTokReqOptions opts;
-        opts.mReqType = GXS_REQUEST_TYPE_GROUP_IDS;
-        uint32_t token;
-        mPhotoQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, ids, 0);
-}
-
 void PhotoShare::requestPhotoList(GxsMsgReq& req)
 {
     RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_IDS;
+    opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
     uint32_t token;
     mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_LIST, opts, req, 0);
     return;
 }
-
-
-void PhotoShare::loadAlbumList(const uint32_t &token)
-{
-        std::cerr << "PhotoShare::loadAlbumList()";
-        std::cerr << std::endl;
-
-        std::list<RsGxsGroupId> albumIds;
-        rsPhoto->getGroupList(token, albumIds);
-
-        requestAlbumData(albumIds);
-
-        std::list<RsGxsGroupId>::iterator it;
-        for(it = albumIds.begin(); it != albumIds.end(); ++it)
-        {
-                requestPhotoList(*it);
-        }
-}
-
 
 void PhotoShare::requestAlbumData(std::list<RsGxsGroupId> &ids)
 {
@@ -504,20 +516,14 @@ void PhotoShare::requestAlbumData()
 
 bool PhotoShare::loadAlbumData(const uint32_t &token)
 {
-    std::cerr << "PhotoShare::loadAlbumData()";
-    std::cerr << std::endl;
-
     std::vector<RsPhotoAlbum> albums;
     rsPhoto->getAlbum(token, albums);
 
     std::vector<RsPhotoAlbum>::iterator vit = albums.begin();
 
-    for(; vit != albums.end(); ++vit)
+    for (; vit != albums.end(); ++vit)
     {
         RsPhotoAlbum& album = *vit;
-
-        std::cerr << " PhotoShare::addAlbum() AlbumId: " << album.mMeta.mGroupId << std::endl;
-
         addAlbum(album);
     }
 
@@ -528,7 +534,6 @@ bool PhotoShare::loadAlbumData(const uint32_t &token)
 
 void PhotoShare::requestPhotoList(const RsGxsGroupId &albumId)
 {
-
     std::list<RsGxsGroupId> grpIds;
     grpIds.push_back(albumId);
     RsTokReqOptions opts;
@@ -544,7 +549,7 @@ void PhotoShare::acknowledgeGroup(const uint32_t &token)
     RsGxsGroupId grpId;
     rsPhoto->acknowledgeGrp(token, grpId);
 
-    if(!grpId.isNull())
+    if (!grpId.isNull())
     {
         std::list<RsGxsGroupId> grpIds;
         grpIds.push_back(grpId);
@@ -560,29 +565,10 @@ void PhotoShare::acknowledgeMessage(const uint32_t &token)
 {
     std::pair<RsGxsGroupId, RsGxsMessageId> p;
     rsPhoto->acknowledgeMsg(token, p);
-
-    // just acknowledge don't load it
-    // loading is only instigated by clicking an album (i.e. requesting photo data)
-    // but load it if the album is selected
-//    if(!p.first.empty())
-//    {
-//        if(mAlbumSelected)
-//        {
-//            if(mAlbumSelected->getAlbum().mMeta.mGroupId == p.first)
-//            {
-//                std::list<RsGxsGroupId> grpIds;
-//                grpIds.push_back(p.first);
-//                requestPhotoData(grpIds);
-//            }
-//        }
-//    }
 }
 
 void PhotoShare::loadPhotoList(const uint32_t &token)
 {
-        std::cerr << "PhotoShare::loadPhotoList()";
-        std::cerr << std::endl;
-
         GxsMsgIdResult res;
 
         rsPhoto->getMsgList(token, res);
@@ -602,6 +588,7 @@ void PhotoShare::requestPhotoData(const std::list<RsGxsGroupId>& grpIds)
 {
         RsTokReqOptions opts;
         opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
         uint32_t token;
         mPhotoQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
 }
@@ -609,9 +596,6 @@ void PhotoShare::requestPhotoData(const std::list<RsGxsGroupId>& grpIds)
 
 void PhotoShare::loadPhotoData(const uint32_t &token)
 {
-        std::cerr << "PhotoShare::loadPhotoData()";
-        std::cerr << std::endl;
-
         clearPhotos();
 
         PhotoResult res;
@@ -619,18 +603,15 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
         PhotoResult::iterator mit = res.begin();
 
 
-        for(; mit != res.end(); ++mit)
+        for (; mit != res.end(); ++mit)
         {
             std::vector<RsPhotoPhoto>& photoV = mit->second;
             std::vector<RsPhotoPhoto>::iterator vit = photoV.begin();
 
-            for(; vit != photoV.end(); ++vit)
+            for (; vit != photoV.end(); ++vit)
             {
                 RsPhotoPhoto& photo = *vit;
                 addPhoto(photo);
-                std::cerr << "PhotoShare::loadPhotoData() AlbumId: " << photo.mMeta.mGroupId;
-                std::cerr << " PhotoId: " << photo.mMeta.mMsgId;
-                std::cerr << std::endl;
             }
         }
         updatePhotos();
@@ -641,9 +622,6 @@ void PhotoShare::loadPhotoData(const uint32_t &token)
 
 void PhotoShare::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 {
-        std::cerr << "PhotoShare::loadRequest()";
-        std::cerr << std::endl;
-
         if (queue == mPhotoQueue)
         {
                 /* now switch on req */
@@ -652,9 +630,6 @@ void PhotoShare::loadRequest(const TokenQueue *queue, const TokenRequest &req)
                         case TOKENREQ_GROUPINFO:
                                 switch(req.mAnsType)
                                 {
-                                        case RS_TOKREQ_ANSTYPE_LIST:
-                                                loadAlbumList(req.mToken);
-                                                break;
                                         case RS_TOKREQ_ANSTYPE_DATA:
                                                 loadAlbumData(req.mToken);
                                                 break;
