@@ -79,6 +79,11 @@ RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 }
 
 
+bool RsGxsImage::empty() const
+{
+	return ((mData == NULL) || (mSize == 0));
+}
+
 void RsGxsImage::take(uint8_t *data, uint32_t size)
 {
 #ifdef DEBUG_GXSCOMMON
