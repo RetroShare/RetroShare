@@ -421,7 +421,6 @@ void MainWindow::initStackedPage()
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
@@ -492,6 +491,7 @@ void MainWindow::initStackedPage()
       }
   }
 
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   addPage(settingsDialog = new SettingsPage(ui->stackPages),grp,&notify);
 
   /* Create the toolbar */
