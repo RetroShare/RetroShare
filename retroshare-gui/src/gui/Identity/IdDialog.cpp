@@ -709,14 +709,14 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		std::cerr << "  updating status of all identities for this circle:" << std::endl;
 #endif
 		// remove any identity that has an item, but no subscription flag entry
-		std::vector<QTreeWidgetItem*> to_delete ;
+		std::list<int> to_delete ;
 
 		for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 			if(details.mSubscriptionFlags.find(RsGxsId(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString())) == details.mSubscriptionFlags.end())
-				to_delete.push_back(item->child(k));
+				to_delete.push_front(k);	// front, so that we delete starting from the last one
 
-		for(uint32_t k=0;k<to_delete.size();++k)
-			delete to_delete[k] ;
+		for(auto index:to_delete)
+			delete item->takeChild(index);	// delete items starting from the largest index, because otherwise the count changes while deleting...
 
 		for(std::map<RsGxsId,uint32_t>::const_iterator it(details.mSubscriptionFlags.begin());it!=details.mSubscriptionFlags.end();++it)
 		{
@@ -730,13 +730,13 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #ifdef ID_DEBUG
 			std::cerr << "invited: " << invited << ", subscription: " << subscrb ;
 #endif
-			RSTreeWidgetItem *subitem = NULL ;
+            int subitem_index = -1;
 
 			// see if the item already exists
 			for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
 				if(item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString() == it->first.toStdString())
 				{
-					subitem = dynamic_cast<RSTreeWidgetItem*>(item->child(k));
+                    subitem_index = k;
 #ifdef ID_DEBUG
 					std::cerr << " found existing sub item." << std::endl;
 #endif
@@ -745,8 +745,8 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 			if(!(invited || subscrb))
 			{
-				if(subitem != NULL)
-					delete subitem ;
+				if(subitem_index >= 0)
+					delete item->takeChild(subitem_index) ;
 #ifdef ID_DEBUG
 				std::cerr << ". not relevant. Skipping." << std::endl;
 #endif
@@ -754,13 +754,15 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 			}
 			// remove item if flags are not ok.
 
-			if(subitem && subitem->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it->second)
+			if(subitem_index >= 0 && item->child(subitem_index)->data(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole).toUInt() != it->second)
 			{
-				delete subitem ; 
-				subitem = NULL ;
+				delete item->takeChild(subitem_index) ;
+				subitem_index = -1 ;
 			}
 
-			if(!subitem)
+			QTreeWidgetItem *subitem(NULL);
+
+			if(subitem_index == -1)
 			{
 #ifdef ID_DEBUG
 				std::cerr << " no existing sub item. Creating new one." << std::endl;
@@ -804,6 +806,8 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 				item->addChild(subitem) ;
 			}
+            else
+                subitem = item->child(subitem_index);
 
 			if(invited && !subscrb)
 			{
@@ -1140,92 +1144,6 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
     contextMnu.exec(QCursor::pos());
 }
 
-#ifdef SUSPENDED
-static void set_item_background(QTreeWidgetItem *item, uint32_t type)
-{
-	QBrush brush;
-	switch(type)
-	{
-		default:
-		case CLEAR_BACKGROUND:
-			brush = QBrush(Qt::white);
-			break;
-		case GREEN_BACKGROUND:
-			brush = QBrush(Qt::green);
-			break;
-		case BLUE_BACKGROUND:
-			brush = QBrush(Qt::blue);
-			break;
-		case RED_BACKGROUND:
-			brush = QBrush(Qt::red);
-			break;
-		case GRAY_BACKGROUND:
-			brush = QBrush(Qt::gray);
-			break;
-	}
-	item->setBackground (0, brush);
-}
-
-static void update_children_background(QTreeWidgetItem *item, uint32_t type)
-{
-	int count = item->childCount();
-	for(int i = 0; i < count; ++i)
-	{
-		QTreeWidgetItem *child = item->child(i);
-
-		if (child->childCount() > 0)
-		{
-			update_children_background(child, type);
-		}
-		set_item_background(child, type);
-	}
-}
-
-static void set_tree_background(QTreeWidget *tree, uint32_t type)
-{
-	std::cerr << "CirclesDialog set_tree_background()";
-	std::cerr << std::endl;
-
-	/* grab all toplevel */
-	int count = tree->topLevelItemCount();
-	for(int i = 0; i < count; ++i)
-	{
-		QTreeWidgetItem *item = tree->topLevelItem(i);
-		/* resursively clear child backgrounds */
-		update_children_background(item, type);
-		set_item_background(item, type);
-	}
-}
-
-static void check_mark_item(QTreeWidgetItem *item, const std::set<RsPgpId> &names, uint32_t col, uint32_t type)
-{
-	QString coltext = item->text(col);
-    RsPgpId colstr ( coltext.toStdString());
-	if (names.end() != names.find(colstr))
-	{
-		set_item_background(item, type);
-		std::cerr << "CirclesDialog check_mark_item: found match: " << colstr;
-		std::cerr << std::endl;
-	}
-}
-
-void IdDialog::circle_selected()
-{
-	QTreeWidgetItem *item = ui->treeWidget_membership->currentItem();
-
-#ifdef ID_DEBUG
-	std::cerr << "CirclesDialog::circle_selected() valid circle chosen";
-	std::cerr << std::endl;
-#endif
-	//set_item_background(item, BLUE_BACKGROUND);
-
-	QString coltext = (item->parent()->parent())? (item->parent()->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString()) : (item->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString());
-	RsGxsCircleId id ( coltext.toStdString()) ;
-
-    	requestCircleGroupData(id) ;
-}
-#endif
-    
 IdDialog::~IdDialog()
 {
 	rsEvents->unregisterEventsHandler(mEventHandlerId_identity);
