@@ -30,6 +30,7 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto &photo, QW
     QWidget(parent),
     ui(new Ui::PhotoItem), mHolder(holder), mPhotoDetails(photo)
 {
+    mState = State::Existing;
 
     ui->setupUi(this);
     setSelected(false);
@@ -52,12 +53,20 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
     QWidget(parent),
     ui(new Ui::PhotoItem), mHolder(holder)
 {
+    mState = State::New;
+
     ui->setupUi(this);
 
 
     QPixmap qtn = QPixmap(path);
-    mThumbNail = qtn;
-    ui->label_Thumbnail->setPixmap(mThumbNail.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    // TODO need to scale qtn to something reasonable.
+    // shouldn't be call thumbnail... we can do a lowRes version.
+    // do we need to to workout what type of file to convert to?
+    // jpg, png etc.
+    // seperate fn should handle all of this.
+    mThumbNail = qtn.scaled(480,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    ui->label_Thumbnail->setPixmap(qtn.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setSelected(false);
 
     getThumbnail(mPhotoDetails.mThumbnail);
@@ -69,16 +78,38 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
 
 }
 
+void PhotoItem::markForDeletion()
+{
+    mState = State::Deleted;
+    setSelected(true); // to repaint with deleted scheme.
+}
+
 void PhotoItem::setSelected(bool selected)
 {
     mSelected = selected;
+
+	QString bottomColor;
+	switch(mState)
+	{
+		case State::New:
+			bottomColor = "#FFFFFF";
+			break;
+		case State::Existing:
+			bottomColor = "#888888";
+			break;
+		default:
+		case State::Deleted:
+			bottomColor = "#EE5555";
+			break;
+	}
+
     if (mSelected)
     {
-            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #9562B8;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #55EE55, stop: 1 #CCCCCC);\nborder-radius: 10px}");
+            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #9562B8;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #55EE55, stop: 1 " + bottomColor + ");\nborder-radius: 10px}");
     }
     else
     {
-            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 #CCCCCC);\nborder-radius: 10px}");
+            ui->photoFrame->setStyleSheet("QFrame#photoFrame{border: 2px solid #CCCCCC;\nbackground: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #EEEEEE, stop: 1 " + bottomColor + ");\nborder-radius: 10px}");
     }
     update();
 }

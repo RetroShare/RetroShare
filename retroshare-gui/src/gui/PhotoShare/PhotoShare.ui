@@ -20,7 +20,16 @@
    <item>
     <widget class="QFrame" name="toolBarFrame">
      <layout class="QHBoxLayout" name="horizontalLayout_5">
-      <property name="margin">
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
        <number>2</number>
       </property>
       <item>
@@ -47,9 +56,29 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="toolButton_ViewAlbum">
+       <widget class="QToolButton" name="toolButton_ViewEditAlbum">
         <property name="text">
-         <string>View Album</string>
+         <string>Edit Album Details</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="toolButton_EditAlbumPhotos">
+        <property name="text">
+         <string>Edit Album Photos</string>
         </property>
         <property name="icon">
          <iconset resource="Photo_images.qrc">
@@ -140,7 +169,16 @@
       <property name="spacing">
        <number>6</number>
       </property>
-      <property name="margin">
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
        <number>0</number>
       </property>
       <item>
@@ -245,7 +283,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>208</height>
+         <height>197</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -281,13 +319,13 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>208</height>
+         <height>196</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true">QWidget#scrollAreaWidgetContents{border: none;}</string>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
         <item>
          <spacer name="horizontalSpacer_2">
           <property name="orientation">
