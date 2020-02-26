@@ -61,6 +61,13 @@
 #define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
 #define IMAGE_AUTHOR_INFO      ":/images/info16.png"
 
+#define IMAGE_INBOX             ":/images/folder-inbox.png"
+#define IMAGE_OUTBOX            ":/images/folder-outbox.png"
+#define IMAGE_SENT              ":/images/folder-sent.png"
+#define IMAGE_DRAFTS            ":/images/folder-draft.png"
+#define IMAGE_TRASH             ":/images/folder-trash.png"
+#define IMAGE_FOLDER            ":/images/foldermail.png"
+
 #define ROLE_QUICKVIEW_TYPE Qt::UserRole
 #define ROLE_QUICKVIEW_ID   Qt::UserRole + 1
 #define ROLE_QUICKVIEW_TEXT Qt::UserRole + 2
@@ -158,6 +165,10 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
     ui.listSplitter->setStretchFactor(1, 1);
+	
+    // Set initial size of the splitter
+    ui.boxSplitter->setStretchFactor(0, 0);
+    ui.boxSplitter->setStretchFactor(1, 1);
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT,   tr("Search Subject"));
@@ -332,6 +343,8 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("SplitterMsg").toByteArray());
         ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
+        ui.boxSplitter->restoreState(Settings->value("SplitterBox").toByteArray());
+
     } else {
         // save settings
 
@@ -342,6 +355,7 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         Settings->setValue("SplitterMsg", ui.msgSplitter->saveState());
         Settings->setValue("SplitterList", ui.listSplitter->saveState());
+        Settings->setValue("SplitterBox", ui.boxSplitter->saveState());
     }
 
     Settings->endGroup();
@@ -736,15 +750,31 @@ void MessagesDialog::changeBox(int box_row)
 
     switch(box_row)
     {
-    	case 0: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX ); break;
-    	case 1: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX); break;
-    	case 2: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS); break;
-    	case 3: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  ); break;
-    	case 4: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH ); break;
+		case 0: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX );
+				ui.tabWidget->setTabText(0, tr("Inbox"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_INBOX));
+				break;
+		case 1: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX); 
+				ui.tabWidget->setTabText(0, tr("Outbox"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_OUTBOX));
+				break;
+		case 2: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS); 
+				ui.tabWidget->setTabText(0, tr("Drafts"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_DRAFTS));
+				break;
+		case 3: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  );
+				ui.tabWidget->setTabText(0, tr("Sent"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SENT));
+				break;
+		case 4: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH ); 
+				ui.tabWidget->setTabText(0, tr("Trash"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_TRASH));
+				break;
     default:
         mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE); break;
     }
     inChange = false;
+    insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
 void MessagesDialog::changeQuickView(int newrow)
@@ -759,13 +789,34 @@ void MessagesDialog::changeQuickView(int newrow)
     if(newrow >= 0)   // -1 means that nothing is selected
 		switch(newrow)
 		{
-		case   0x00:      f = RsMessageModel::QUICK_VIEW_STARRED   ; break;
-		case   0x01:      f = RsMessageModel::QUICK_VIEW_SYSTEM   ; break;
-		case   0x02:      f = RsMessageModel::QUICK_VIEW_IMPORTANT; break;
-		case   0x03:      f = RsMessageModel::QUICK_VIEW_WORK     ; break;
-		case   0x04:      f = RsMessageModel::QUICK_VIEW_PERSONAL ; break;
-		case   0x05:      f = RsMessageModel::QUICK_VIEW_TODO     ; break;
-		case   0x06:      f = RsMessageModel::QUICK_VIEW_LATER    ; break;
+		case   0x00:	f = RsMessageModel::QUICK_VIEW_STARRED   ; 
+						ui.tabWidget->setTabText(0, tr("Starred"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_STAR_ON));
+						break;
+		case   0x01:	f = RsMessageModel::QUICK_VIEW_SYSTEM   ; 
+						ui.tabWidget->setTabText(0, tr("System"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SYSTEM));
+						break;
+		case   0x02:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
+						ui.tabWidget->setTabText(0, tr("Important"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x03:	f = RsMessageModel::QUICK_VIEW_WORK     ;
+						ui.tabWidget->setTabText(0, tr("Work"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x04:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
+						ui.tabWidget->setTabText(0, tr("Personal"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x05:	f = RsMessageModel::QUICK_VIEW_TODO     ;
+						ui.tabWidget->setTabText(0, tr("Todo"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x06:	f = RsMessageModel::QUICK_VIEW_LATER    ;
+						ui.tabWidget->setTabText(0, tr("Later"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
 		default:
 			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x07);
 		}
