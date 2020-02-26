@@ -113,8 +113,14 @@
                  <string>Compose</string>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/folder-draft24.png</normaloff>:/images/folder-draft24.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
+                </property>
+                <property name="iconSize">
+                 <size>
+                  <width>24</width>
+                  <height>24</height>
+                 </size>
                 </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -297,8 +303,14 @@
                 <string>Tags</string>
                </property>
                <property name="icon">
-                <iconset resource="../images.qrc">
-                 <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+                <iconset resource="../icons.qrc">
+                 <normaloff>:/icons/mail/tags.png</normaloff>:/icons/mail/tags.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>24</width>
+                 <height>24</height>
+                </size>
                </property>
                <property name="popupMode">
                 <enum>QToolButton::InstantPopup</enum>

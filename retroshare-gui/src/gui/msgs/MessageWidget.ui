@@ -176,8 +176,14 @@
                <string>Reply</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/replymail-pressed.png</normaloff>:/images/replymail-pressed.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/mail/reply-mail.png</normaloff>:/icons/mail/reply-mail.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -193,8 +199,14 @@
                <string>Reply all</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/mail/replayall-mail.png</normaloff>:/icons/mail/replayall-mail.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -210,8 +222,14 @@
                <string>Forward</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/mail/forward-mail .png</normaloff>:/icons/mail/forward-mail .png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -224,8 +242,14 @@
                <string>Delete</string>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/deletemail-pressed.png</normaloff>:/images/deletemail-pressed.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/mail/delete.png</normaloff>:/icons/mail/delete.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
               </property>
               <property name="toolButtonStyle">
                <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -599,8 +623,8 @@
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/edit_remove24.png</normaloff>:/images/edit_remove24.png</iconset>
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -651,8 +675,8 @@
              <string>Download all</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/down.png</normaloff>:/images/down.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
             </property>
            </widget>
           </item>
@@ -721,6 +745,7 @@
  </customwidgets>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections>
   <connection>

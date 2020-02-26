@@ -297,10 +297,10 @@ void MessageWidget::togglefileview()
 	*/
 
 	if (ui.expandFilesButton->isChecked()) {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
 }

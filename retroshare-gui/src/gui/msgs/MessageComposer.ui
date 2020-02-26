@@ -475,8 +475,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset>
-                  <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/png/add-image.png</normaloff>:/icons/png/add-image.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
