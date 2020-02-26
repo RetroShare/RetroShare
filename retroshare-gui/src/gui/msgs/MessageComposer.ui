@@ -1154,8 +1154,8 @@ border-image: url(:/images/closepressed.png)
   </widget>
   <action name="actionSend">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/send24.png</normaloff>:/images/send24.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/send.png</normaloff>:/icons/mail/send.png</iconset>
    </property>
    <property name="text">
     <string>Send</string>
@@ -1175,8 +1175,8 @@ border-image: url(:/images/closepressed.png)
   </action>
   <action name="actionContactsView">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/contacts24.png</normaloff>:/images/contacts24.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/contacts.png</normaloff>:/icons/mail/contacts.png</iconset>
    </property>
    <property name="text">
     <string>Contacts</string>
@@ -1187,8 +1187,8 @@ border-image: url(:/images/closepressed.png)
   </action>
   <action name="actionSaveas">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/save24.png</normaloff>:/images/save24.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/save.png</normaloff>:/icons/mail/save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -1214,8 +1214,8 @@ border-image: url(:/images/closepressed.png)
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/quote_24.png</normaloff>:/images/quote_24.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/quote.png</normaloff>:/icons/mail/quote.png</iconset>
    </property>
    <property name="text">
     <string>Quote</string>

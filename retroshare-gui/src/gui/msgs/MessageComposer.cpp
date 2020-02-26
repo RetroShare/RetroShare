@@ -2431,9 +2431,9 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 void MessageComposer::updatecontactsviewicons()
 {
     if(!ui.contactsdockWidget->isVisible()){
-      ui.actionContactsView->setIcon(QIcon(":/images/contactsclosed24.png"));
+      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
     }else{
-      ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
     } 
 }
 
