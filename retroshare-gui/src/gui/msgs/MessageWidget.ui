@@ -256,6 +256,38 @@
               </property>
              </widget>
             </item>
+            <item>
+             <widget class="QToolButton" name="moreButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;More actions&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>More</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../icons.qrc">
+                <normaloff>:/icons/png/options2.png</normaloff>:/icons/png/options2.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>22</width>
+                <height>22</height>
+               </size>
+              </property>
+              <property name="popupMode">
+               <enum>QToolButton::InstantPopup</enum>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonTextBesideIcon</enum>
+              </property>
+             </widget>
+            </item>
            </layout>
           </item>
           <item row="1" column="1" colspan="3">
@@ -719,7 +751,7 @@
     <string>Print</string>
    </property>
   </action>
-  <action name="actionPrint_Preview">
+  <action name="actionPrintPreview">
    <property name="text">
     <string>Print Preview</string>
    </property>
@@ -727,6 +759,19 @@
   <action name="actionSaveAs">
    <property name="text">
     <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionTextBesideIcon">
+   <property name="text">
+    <string>Buttons Text Beside Icon</string>
+   </property>
+   <property name="toolTip">
+    <string>Buttons Text Beside Icon</string>
+   </property>
+  </action>
+  <action name="actionIconOnly">
+   <property name="text">
+    <string>Buttons Icon only</string>
    </property>
   </action>
  </widget>
