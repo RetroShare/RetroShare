@@ -309,14 +309,19 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 
 
 struct lookup_state {
-	bool hasName;
-	std::string name;
-	bool isDirect;
-	bool hasGxs;
+	enum state {
+		LOOKUP_INITIAL,
+		HAS_GXS,
+		IS_DIRECT,
+		HAS_LOBBY,
+		HAS_NAME
+	} state;
 	union peerthing {
 		RsGxsId gxs;
 		RsPeerId peer;
+		std::string name;
 	} id;
+	~lookup_state() {}
 };
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
@@ -459,7 +464,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						HAVE_GXS:
 							// we need the RsGxsId name still though
 							RsIdentityDetails details;
-							if(rsIdentity->getIdDetails(id, details)) {
+							if(rsIdentity->getIdDetails(state.gxs, details)) {
 								state.name = details.mNickname;
 								state.hasName = true;
 								break;
@@ -471,8 +476,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
 							const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
 							ChatLobbyInfo info;
-							state.hasLobby = rsMsgs->getChatLobbyInfo(lobby_id,  info);
-							if(state.hasLobby) {
+							if(rsMsgs->getChatLobbyInfo(lobby_id,  info) {
 								if(historyIt->incoming) {
 									// we need our own name
 									state.id.gxs= info.gxs_id;
