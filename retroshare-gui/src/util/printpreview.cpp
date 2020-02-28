@@ -207,7 +207,7 @@ PrintPreview::PrintPreview(const QTextDocument *document, QWidget *parent)
     tb->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
 
     QAction *a;
-    a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
+    a = new QAction(QIcon(""), tr("&Print..."), this);
     a->setShortcut(Qt::CTRL + Qt::Key_P);
     connect(a, SIGNAL(triggered()), this, SLOT(print()));
     tb->addAction(a);
@@ -219,11 +219,11 @@ PrintPreview::PrintPreview(const QTextDocument *document, QWidget *parent)
 
     tb->addSeparator();
 
-    a = new QAction(QIcon(":/images/textedit/zoomin.png"), tr("Zoom In"), this);
+    a = new QAction(QIcon("), tr("Zoom In"), this);
     connect(a, SIGNAL(triggered()), view, SLOT(zoomIn()));
     tb->addAction(a);
 
-    a = new QAction(QIcon(":/images/textedit/zoomout.png"), tr("Zoom Out"), this);
+    a = new QAction(QIcon(""), tr("Zoom Out"), this);
     connect(a, SIGNAL(triggered()), view, SLOT(zoomOut()));
     tb->addAction(a);
 

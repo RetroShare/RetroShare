@@ -311,5 +311,10 @@
         <file>icons/mail/reply.png</file>
         <file>icons/mail/reply-all.png</file>
         <file>icons/mail/attach24.png</file>
+        <file>icons/textedit/align.png</file>
+        <file>icons/textedit/font-decrease.png</file>
+        <file>icons/textedit/smile.png</file>
+        <file>icons/textedit/font-increase.png</file>
+        <file>icons/textedit/code.png</file>
     </qresource>
 </RCC>

@@ -14,8 +14,8 @@
    <string>Compose</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/folder-draft.png</normaloff>:/images/folder-draft.png</iconset>
+   <iconset resource="../icons.qrc">
+    <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="centralwidgetGLayout">
@@ -323,8 +323,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_more.png</normaloff>:/images/textedit/format_font_size_more.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/font-increase.png</normaloff>:/icons/textedit/font-increase.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -355,8 +355,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format_font_size_less.png</normaloff>:/images/textedit/format_font_size_less.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/font-decrease.png</normaloff>:/icons/textedit/font-decrease.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -393,8 +393,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/textbold.png</normaloff>:/images/textedit/textbold.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/bold.png</normaloff>:/icons/textedit/bold.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -434,8 +434,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/textitalic.png</normaloff>:/images/textedit/textitalic.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/italic.png</normaloff>:/icons/textedit/italic.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -476,7 +476,7 @@
                 </property>
                 <property name="icon">
                  <iconset resource="../icons.qrc">
-                  <normaloff>:/icons/png/add-image.png</normaloff>:/icons/png/add-image.png</iconset>
+                  <normaloff>:/icons/textedit/photo-of-a-landscape.png</normaloff>:/icons/textedit/photo-of-a-landscape.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -512,6 +512,10 @@
                 <property name="text">
                  <string/>
                 </property>
+                <property name="icon">
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/align.png</normaloff>:/icons/textedit/align.png</iconset>
+                </property>
                 <property name="iconSize">
                  <size>
                   <width>24</width>
@@ -519,7 +523,7 @@
                  </size>
                 </property>
                 <property name="popupMode">
-                 <enum>QToolButton::MenuButtonPopup</enum>
+                 <enum>QToolButton::InstantPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -538,13 +542,13 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/hi22-action-format-text-code.png</normaloff>:/images/textedit/hi22-action-format-text-code.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/code.png</normaloff>:/icons/textedit/code.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>22</width>
-                  <height>22</height>
+                  <width>24</width>
+                  <height>24</height>
                  </size>
                 </property>
                 <property name="autoRaise">
@@ -589,8 +593,8 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/textunder.png</normaloff>:/images/textedit/textunder.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/underline.png</normaloff>:/icons/textedit/underline.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -612,8 +616,8 @@
                  <enum>Qt::NoFocus</enum>
                 </property>
                 <property name="icon">
-                 <iconset resource="../emojione.qrc">
-                  <normaloff>:/emojione/1F603.png</normaloff>:/emojione/1F603.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/smile.png</normaloff>:/icons/textedit/smile.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
@@ -676,20 +680,20 @@
                  <string/>
                 </property>
                 <property name="icon">
-                 <iconset resource="../images.qrc">
-                  <normaloff>:/images/textedit/format-list-unordered.png</normaloff>:/images/textedit/format-list-unordered.png</iconset>
+                 <iconset resource="../icons.qrc">
+                  <normaloff>:/icons/textedit/numberd-list.png</normaloff>:/icons/textedit/numberd-list.png</iconset>
                 </property>
                 <property name="iconSize">
                  <size>
-                  <width>22</width>
-                  <height>22</height>
+                  <width>24</width>
+                  <height>24</height>
                  </size>
                 </property>
                 <property name="checkable">
                  <bool>false</bool>
                 </property>
                 <property name="popupMode">
-                 <enum>QToolButton::MenuButtonPopup</enum>
+                 <enum>QToolButton::InstantPopup</enum>
                 </property>
                 <property name="autoRaise">
                  <bool>true</bool>
@@ -1165,10 +1169,6 @@ border-image: url(:/images/closepressed.png)
    </property>
   </action>
   <action name="actionReply">
-   <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/replymail24.png</normaloff>:/images/replymail24.png</iconset>
-   </property>
    <property name="text">
     <string>Reply</string>
    </property>
