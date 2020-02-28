@@ -430,8 +430,8 @@
   </action>
   <action name="actionForward">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/mailforward24-hover.png</normaloff>:/images/mailforward24-hover.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/foward.png</normaloff>:/icons/mail/foward.png</iconset>
    </property>
    <property name="text">
     <string>Forward Message</string>
@@ -439,8 +439,8 @@
   </action>
   <action name="actionReplyAll">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/reply-all.png</normaloff>:/icons/mail/reply-all.png</iconset>
    </property>
    <property name="text">
     <string>Reply to All</string>
@@ -448,8 +448,8 @@
   </action>
   <action name="actionReply">
    <property name="icon">
-    <iconset resource="../images.qrc">
-     <normaloff>:/images/replymail-pressed.png</normaloff>:/images/replymail-pressed.png</iconset>
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/reply.png</normaloff>:/icons/mail/reply.png</iconset>
    </property>
    <property name="text">
     <string>Reply to Message</string>

@@ -177,7 +177,7 @@
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
-                <normaloff>:/icons/mail/reply-mail.png</normaloff>:/icons/mail/reply-mail.png</iconset>
+                <normaloff>:/icons/mail/reply.png</normaloff>:/icons/mail/reply.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -200,7 +200,7 @@
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
-                <normaloff>:/icons/mail/replayall-mail.png</normaloff>:/icons/mail/replayall-mail.png</iconset>
+                <normaloff>:/icons/mail/reply-all.png</normaloff>:/icons/mail/reply-all.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -223,7 +223,7 @@
               </property>
               <property name="icon">
                <iconset resource="../icons.qrc">
-                <normaloff>:/icons/mail/forward-mail .png</normaloff>:/icons/mail/forward-mail .png</iconset>
+                <normaloff>:/icons/mail/foward.png</normaloff>:/icons/mail/foward.png</iconset>
               </property>
               <property name="iconSize">
                <size>
@@ -635,7 +635,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap>:/images/attachment.png</pixmap>
+               <pixmap resource="../icons.qrc">:/icons/mail/attach24.png</pixmap>
               </property>
              </widget>
             </item>

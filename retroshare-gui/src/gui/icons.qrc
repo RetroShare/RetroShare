@@ -301,14 +301,15 @@
         <file>icons/png/attachements.png</file>
         <file>icons/mail/compose.png</file>
         <file>icons/mail/delete.png</file>
-        <file>icons/mail/forward-mail .png</file>
-        <file>icons/mail/replayall-mail.png</file>
-        <file>icons/mail/reply-mail.png</file>
         <file>icons/mail/tags.png</file>
         <file>icons/mail/quote.png</file>
         <file>icons/mail/send.png</file>
         <file>icons/mail/contacts.png</file>
         <file>icons/mail/save.png</file>
         <file>icons/mail/filter24.png</file>
+        <file>icons/mail/foward.png</file>
+        <file>icons/mail/reply.png</file>
+        <file>icons/mail/reply-all.png</file>
+        <file>icons/mail/attach24.png</file>
     </qresource>
 </RCC>

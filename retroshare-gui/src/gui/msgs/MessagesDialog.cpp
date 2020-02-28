@@ -53,8 +53,8 @@
 #include <algorithm>
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE          ":/images/folder-draft.png"
-#define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
+#define IMAGE_MESSAGE          ":/icons/mail/compose.png"
+#define IMAGE_MESSAGEREMOVE    ":/icons/mail/delete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
