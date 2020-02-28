@@ -396,8 +396,15 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
-			std::unordered_map<std::string, std::string> names;
-			std::unordered_set<std::string> isGxs;
+			struct lookup_state {
+				bool hasName;
+				std::string name;
+				bool hasGxs;
+				RsGxsId gxs;
+				bool hasPeerDetails;
+				RsPeerDetails peer;
+			};
+			std::unordered_map<std::string, struct lookup_state> statecache;
 
 			/*
 			 * We need a name for whoever wrote this message in the history.
@@ -434,21 +441,18 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
 				RsGxsId hack = RsGxsId();
 
-				std::string name;
+				const std::string
+					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
+				struct lookup_state& state = statecache[notbeinghashableisagoodidea];
+				int tries;
+				for(tries=0;tries<4;++tries) {
+					if(state.hasPeerDetails) {
+						assert(state.hasName);
+						assert(!state.hasGxsId);
+					
 				if (chatId.isLobbyId() || chatId.isDistantChatId())
 				{
-					bool ok = false;
-					const std::string
-						notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
-					if(names.find(notbeinghashableisagoodidea) != names.end()) {
-						ok = true;
-						name = names[notbeinghashableisagoodidea];
-						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
-							hack = RsGxsId(historyIt->chatPeerId);
-						}
-					} else {
-						int tries;
-						for(tries=0;tries<2;++tries) {
+							
 							if(chatId.isLobbyId()) {
 								// XXX:
 								// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
@@ -479,7 +483,20 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								int delay = 10 * (tries << 2);
 								std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 							}
-						}
+						} else {
+					// direct chat, with no RxGxsId, only an RsPeerId
+					const RsPeerId peer = historyIt->chatPeerId;
+					RsPeerDetails info;
+					ok = rsPeers->getPeerDetails(peer, info);
+					if(ok) {
+						// the node is not the person chatting, the profile is.
+						// XXX: both of these have to respond immediately, or it'll fail
+						RsPgpDetails pgp;
+						ok = rsPeers->getPgpDetails(info.gpg_id, pgp);
+						if(ok) {
+							
+					
+
 					}
 					if(!ok) {
 						name = historyIt->peerName;
@@ -490,8 +507,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					}
 					names[notbeinghashableisagoodidea] = name;
 				} else {
-					// direct chat, with no RxGxsId, only an RsPeerId
-					// TODO: name = lookup the peer in chatPeerId
 					name = historyIt->peerName;
 				}
 
