@@ -413,7 +413,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			 * the time the message was said. Their name may have changed since then though.
 			 * peerName can always be used as a fallback. The rest of this is just an attempt to
 			 * get whatever the current name of this chatter is.
-			 * 
+			 *
 			 * chatPeerId has 1 of four things:
 			 *   - if this is a direct private chat, it has an RsPeerId, which we don't look up yet
 			 *   - if a distant private chat, it has a tunnel ID, with no info as to who was chatting
@@ -428,7 +428,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			 *     XXX: TODO: jury rig history's addMessage to set chatPeerId to the
 			 *     cm.broadcast_peer_id hack, so we can actually show the sender of broadcasts.
 			 */
-			
+
 			std::list<HistoryMsg>::iterator historyIt;
 			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
 			{
@@ -438,81 +438,78 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				if (time(nullptr) <= historyIt->recvTime+2)
 					continue;
 
-				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
-				RsGxsId hack = RsGxsId();
-
 				const std::string
 					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
 				struct lookup_state& state = statecache[notbeinghashableisagoodidea];
 				int tries;
 				for(tries=0;tries<4;++tries) {
-					if(state.hasPeerDetails) {
-						assert(state.hasName);
+					if(state.hasName) {
+						break;
+					} else if(state.hasPeerDetails) {
+HasPeerDetails:						
+						assert(!state.hasName);
 						assert(!state.hasGxsId);
-					
-				if (chatId.isLobbyId() || chatId.isDistantChatId())
-				{
-							
-							if(chatId.isLobbyId()) {
-								// XXX:
-								// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
-								// does this.
-								const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
-								const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
-								
-								ChatLobbyInfo info;
-								ok = rsMsgs->getChatLobbyInfo(lobby_id, info);
-								if(ok) {
-									name = info.lobby_name;
-								}
-							} else if(chatId.isDistantChatId()) {
-								const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
-								DistantChatPeerInfo info;
-								ok = rsMsgs->getDistantChatStatus(tunnel_id, info);
-								if(ok) {
-									ok = nameForGxsId(info.to_id, &name);
-									if(ok) {
-										hack = RsGxsId(info.to_id);
-										isGxs.insert(notbeinghashableisagoodidea);
-									}
-								}
-							}
-							if(ok) {
-								break;
-							} else {
-								int delay = 10 * (tries << 2);
-								std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-							}
-						} else {
-					// direct chat, with no RxGxsId, only an RsPeerId
-					const RsPeerId peer = historyIt->chatPeerId;
-					RsPeerDetails info;
-					ok = rsPeers->getPeerDetails(peer, info);
-					if(ok) {
-						// the node is not the person chatting, the profile is.
+											// the node is not the person chatting, the profile is.
 						// XXX: both of these have to respond immediately, or it'll fail
 						RsPgpDetails pgp;
-						ok = rsPeers->getPgpDetails(info.gpg_id, pgp);
+						std::string unused_email;
+						bool ok = (bool)rsAccounts->getPgpLoginDetails(
+							info.gpg_id,
+							state.name,
+							unused_email);
 						if(ok) {
-							
-					
-
-					}
-					if(!ok) {
-						name = historyIt->peerName;
-						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
-							hack = RsGxsId(historyIt->chatPeerId);
+							state.hasName = true;
+							break;
 						}
-						ok = true;						
+					} else if(chatId.isLobbyId()) {
+						// XXX:
+						// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
+						// does this.
+						const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
+						const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
+
+						ChatLobbyInfo info;
+						state.hasName = rsMsgs->getChatLobbyInfo(lobby_id, info);
+						if(state.hasName) {
+							state.name = info.lobby_name;
+						}
+					} else if(chatId.isDistantChatId()) {
+						const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
+						DistantChatPeerInfo info;
+						bool ok = rsMsgs->getDistantChatStatus(tunnel_id, info);
+						if(ok) {
+							if(!state.hasGxs) {
+								state.hasGxs = true;
+								state.gxs = RsGxsId(info.to_id);
+							}
+							state.hasName = nameForGxsId(info.to_id, &state.name);
+						}
+					} else {
+						// direct chat, with no RxGxsId, only an RsPeerId
+						const RsPeerId peer = historyIt->chatPeerId;
+
+						// assignment operator inside condition is deliberate
+						if((state.hasPeerDetails = rsPeers->getPeerDetails(peer, state.peerDetails))) {
+							goto HasPeerDetails; // just to not bother with the for loop increment
+						}
 					}
-					names[notbeinghashableisagoodidea] = name;
-				} else {
-					name = historyIt->peerName;
+					
+					if(state.hasName) {
+						break;
+					} else {
+						int delay = 10 * (tries << 2);
+						std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+					}
 				}
-
-				QString qname = QString::fromUtf8(name.c_str());
-				//  this however is just a hack, and should not work at all
-
+				if(!state.hasName) {
+					// all lookup attempts failed
+					state.hasName = true;
+					state.name = historyId->peerName;
+				}
+				
+				const QString qname = QString::fromUtf8(state.name.c_str());
+				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
+				const RsGxsId hack = state.hasGxs ? state.gxs : RsGxsId();
 				addChatMsg(historyIt->incoming, qname, hack,
 						   QDateTime::fromTime_t(historyIt->sendTime),
 						   QDateTime::fromTime_t(historyIt->recvTime),
