@@ -432,7 +432,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					continue;
 
 				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
-				const RsGxsId hack = RsGxsId();
+				RsGxsId hack = RsGxsId();
 
 				std::string name;
 				if (chatId.isLobbyId() || chatId.isDistantChatId())
@@ -444,12 +444,11 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						ok = true;
 						name = names[notbeinghashableisagoodidea];
 						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
-							hack = RsGxsId(historyIt->chatPeerId.toByteArray());
+							hack = RsGxsId(historyIt->chatPeerId);
 						}
 					} else {
 						int tries;
 						for(tries=0;tries<2;++tries) {
-							time_t start = time(nullptr);
 							if(chatId.isLobbyId()) {
 								// XXX:
 								// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
@@ -469,7 +468,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								if(ok) {
 									ok = nameForGxsId(info.to_id, &name);
 									if(ok) {
-										hack = RsGxsId(info.to_id.toByteArray());
+										hack = RsGxsId(info.to_id);
 										isGxs.insert(notbeinghashableisagoodidea);
 									}
 								}
@@ -489,13 +488,14 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						}
 						ok = true;						
 					}
+					names[notbeinghashableisagoodidea] = name;
 				} else {
 					// direct chat, with no RxGxsId, only an RsPeerId
 					// TODO: name = lookup the peer in chatPeerId
 					name = historyIt->peerName;
 				}
 
-				QString qname = QString::fromUtf8(name);
+				QString qname = QString::fromUtf8(name.c_str());
 				//  this however is just a hack, and should not work at all
 
 				addChatMsg(historyIt->incoming, qname, hack,
