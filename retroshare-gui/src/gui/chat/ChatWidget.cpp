@@ -307,6 +307,13 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 }
 
 
+static bool nameForGxsId(const RsGxsId id, QString* name) {
+	RsIdentityDetails details;
+	if(!rsIdentity->getIdDetails(id, details)) return false;
+	*name = details.mNickname;
+	return true;
+}
+
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
     this->chatId = chat_id;
@@ -387,7 +394,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
-			std::unordered_map<std::string, QString> names;
+			std::unordered_map<std::string, std::string> names;
 
 			/*
 			 * We need a name for whoever wrote this message in the history.
@@ -409,7 +416,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			 *     so broadcast chats only have a destination, which is actually the sender, because
 			 *     reasons. Thus the chatPeerId will be empty.
 			 *     XXX: TODO: jury rig history's addMessage to set chatPeerId to the
-			 *     cm.broadcast_peer_id hack, so we can actually show the sender of broadcasts
+			 *     cm.broadcast_peer_id hack, so we can actually show the sender of broadcasts.
 			 */
 			
 			std::list<HistoryMsg>::iterator historyIt;
@@ -421,45 +428,62 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				if (time(nullptr) <= historyIt->recvTime+2)
 					continue;
 
-				QString name;
+				std::string name;
+				bool ok = false;
 				if (chatId.isLobbyId() || chatId.isDistantChatId())
 				{
 					const std::string
 						notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
 					if(names.find(notbeinghashableisagoodidea) != names.end()) {
+						ok = true;
 						name = names[notbeinghashableisagoodidea];
 					} else {
-						RsIdentityDetails details;
-						time_t start = time(nullptr);
-						// since there are no direct chat lobbies, only distant ones, all history entries
-						// will be a RsGxsId, which semi-coincidentally fits into the bytes of an RsPeerId
-						// until someone decides that chat lobbies can leave messages in the history.
-						const RsGxsId hack = RsGxsId(historyIt->chatPeerId);
-						while (!rsIdentity->getIdDetails(hack, details))
-						{
-							/* Note: this is the GUI thread. Sleeping here hangs retroshare making the
-							   interface entirely unresponsive. */
-							std::this_thread::sleep_for(std::chrono::milliseconds(100));
-							if (time(nullptr)>start+2)
-							{
-								std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it: " << hack << std::endl;
+						int tries;
+						for(tries=0;tries<2;++tries) {
+							time_t start = time(nullptr);
+							if(chatId.isLobbyId()) {
+								const ChatLobbyId lobby_id = chatId.toLobbyId();
+								ChatLobbyInfo info;
+								if(chatId.incoming) {
+									ok = rsMsgs->getChatLobbyInfo(lobby_id, &info);
+									if(ok) {
+										name = info.lobby_name;
+									}
+								} else {
+									RsGxsId self;
+									ok = rsMsgs->getIdentityForChatLobby(lobby_id, &self);
+									if(ok) {
+										ok = nameForGxsId(self, &name);
+									}
+								}
+							} else if(chatId.isDistantChatId()) {
+								const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
+								DistantChatPeerInfo info;
+								ok = rsMsgs->getDistantChatStatus(tunnel_id, &info);
+								if(ok) {
+									ok = nameForGxsId(info.to_id, &name);
+								}
+							}
+							if(ok) {
 								break;
+							} else {
+								int delay = 10 * (tries << 2);
+								std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 							}
 						}
-
-						if (rsIdentity->getIdDetails(hack, details)) {
-							name = QString::fromUtf8(details.mNickname.c_str());
-						} else { 
-							name = QString::fromUtf8(historyIt->peerName.c_str());
-						}
-						names[notbeinghashableisagoodidea] = name;
 					}
-				} else {
-					name = QString::fromUtf8(historyIt->peerName.c_str());
 				}
+				if(!ok) {
+					name = historyIt->peerName;
+				}
+				QString qname = QString::fromUtf8(name);
 				//  this however is just a hack, and should not work at all
 				const RsGxsId hack = RsGxsId(historyIt->chatPeerId);
-				addChatMsg(historyIt->incoming, name, hack, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+				addChatMsg(historyIt->incoming, name, hack,
+						   QDateTime::fromTime_t(historyIt->sendTime),
+						   QDateTime::fromTime_t(historyIt->recvTime),
+						   QString::fromUtf8(historyIt->message.c_str()),
+						   MSGTYPE_HISTORY);
 			}
 		}
 	}
