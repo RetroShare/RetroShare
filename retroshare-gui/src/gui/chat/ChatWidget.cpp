@@ -307,16 +307,9 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 	return new RSButtonOnText(text, ui->textBrowser);
 }
 
-
-enum lookup_state {
-	HAVE_NOTHING,
-	HAVE_DIRECT,
-	HAVE_GXS,
-	HAVE_NAME
-};
 struct lookup_info {
 	bool isDirect;
-	bool hasGxs;
+	bool hasGxs; 				// can't use an enum because hasGxs and hasName are independent
 	bool hasName;
 	RsGxsId gxs;
 	RsPeerId peer;
@@ -496,7 +489,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							DistantChatPeerInfo info;
 							if(rsMsgs->getDistantChatStatus(tunnel_id, info)) {
 								if(historyIt->incoming) {
-									state.gxs = RsGxsId(info.our_id);
+									state.gxs = RsGxsId(info.own_id);
 								} else {
 									state.gxs = RsGxsId(info.to_id);
 								}
