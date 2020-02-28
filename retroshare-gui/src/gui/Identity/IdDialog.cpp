@@ -771,7 +771,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
                 subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,Qt::UserRole,QString::fromStdString(it->first.toStdString()));
 
 				RsIdentityDetails idd ;
-				bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
+				// bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
 
 				// QPixmap pixmap ;
 
@@ -1246,7 +1246,7 @@ void IdDialog::updateIdList()
 	ui->removeIdentity->setEnabled(false);
 	ui->editIdentity->setEnabled(false);
 
-	int accept = filter;
+	//int accept = filter;
 
  	RsThread::async([this]()
 	{

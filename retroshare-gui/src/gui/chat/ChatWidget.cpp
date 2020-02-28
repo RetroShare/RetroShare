@@ -61,6 +61,7 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
+#include <unordered_set> // std::unordered_set
 #include <unordered_map> // std::unordered_map
 
 #include <time.h>
@@ -89,8 +90,8 @@ ChatWidget::ChatWidget(QWidget *parent)
 	double fmm = iconHeight > FMM_THRESHOLD ? FMM : FMM_SMALLER;
 	iconHeight *= fmm;
 	QSize iconSize = QSize(iconHeight, iconHeight);
-	int butt_size(iconSize.height() + fmm);
-	QSize buttonSize = QSize(butt_size, butt_size);
+	//int butt_size(iconSize.height() + fmm);
+	//QSize buttonSize = QSize(butt_size, butt_size);
 
 	lastMsgDate = QDate::currentDate();
 
@@ -396,7 +397,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
 			std::unordered_map<std::string, std::string> names;
-			std::unordered_set<std::string> isGxsId;
+			std::unordered_set<std::string> isGxs;
 
 			/*
 			 * We need a name for whoever wrote this message in the history.
@@ -443,7 +444,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						ok = true;
 						name = names[notbeinghashableisagoodidea];
 						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
-							hack = RsGxsId(historyIt->chatPeerId);
+							hack = RsGxsId(historyIt->chatPeerId.toByteArray());
 						}
 					} else {
 						int tries;
@@ -453,22 +454,22 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								// XXX:
 								// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
 								// does this.
-								uint8_t* bytes = historyIt->chatPeerId.toByteArray();
-								const ChatLobbyId lobby_id = *((ChatLobbyId*)bytes);
+								const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
+								const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
 								
 								ChatLobbyInfo info;
-								ok = rsMsgs->getChatLobbyInfo(lobby_id, &info);
+								ok = rsMsgs->getChatLobbyInfo(lobby_id, info);
 								if(ok) {
 									name = info.lobby_name;
 								}
 							} else if(chatId.isDistantChatId()) {
 								const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
 								DistantChatPeerInfo info;
-								ok = rsMsgs->getDistantChatStatus(tunnel_id, &info);
+								ok = rsMsgs->getDistantChatStatus(tunnel_id, info);
 								if(ok) {
 									ok = nameForGxsId(info.to_id, &name);
 									if(ok) {
-										hack = info.to_id;
+										hack = RsGxsId(info.to_id.toByteArray());
 										isGxs.insert(notbeinghashableisagoodidea);
 									}
 								}
