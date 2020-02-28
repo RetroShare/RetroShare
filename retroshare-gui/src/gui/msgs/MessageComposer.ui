@@ -885,8 +885,8 @@ border-image: url(:/images/closepressed.png)
                 <string>Tags</string>
                </property>
                <property name="icon">
-                <iconset resource="../images.qrc">
-                 <normaloff>:/images/tag24.png</normaloff>:/images/tag24.png</iconset>
+                <iconset resource="../icons.qrc">
+                 <normaloff>:/icons/mail/tags.png</normaloff>:/icons/mail/tags.png</iconset>
                </property>
                <property name="flat">
                 <bool>true</bool>

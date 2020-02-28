@@ -219,7 +219,7 @@ PrintPreview::PrintPreview(const QTextDocument *document, QWidget *parent)
 
     tb->addSeparator();
 
-    a = new QAction(QIcon("), tr("Zoom In"), this);
+    a = new QAction(QIcon(""), tr("Zoom In"), this);
     connect(a, SIGNAL(triggered()), view, SLOT(zoomIn()));
     tb->addAction(a);
 
