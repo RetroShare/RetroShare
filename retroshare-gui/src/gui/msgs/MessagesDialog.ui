@@ -226,7 +226,7 @@
                      </size>
                     </property>
                     <property name="pixmap">
-                     <pixmap resource="../images.qrc">:/images/tag24.png</pixmap>
+                     <pixmap resource="../icons.qrc">:/icons/mail/filter24.png</pixmap>
                     </property>
                     <property name="scaledContents">
                      <bool>true</bool>

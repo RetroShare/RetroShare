@@ -309,5 +309,6 @@
         <file>icons/mail/send.png</file>
         <file>icons/mail/contacts.png</file>
         <file>icons/mail/save.png</file>
+        <file>icons/mail/filter24.png</file>
     </qresource>
 </RCC>
