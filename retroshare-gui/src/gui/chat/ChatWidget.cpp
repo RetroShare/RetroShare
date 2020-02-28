@@ -308,14 +308,14 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 }
 
 
-enum lookup_state_state {
+enum lookup_state {
 	HAVE_NOTHING,
 	HAVE_DIRECT,
 	HAVE_GXS,
 	HAVE_NAME
-} 
-struct lookup_state {
-	lookup_state_state state;
+};
+struct lookup_info {
+	lookup_state state;
 	union peerthing {
 		RsGxsId gxs;
 		RsPeerId peer;
@@ -404,7 +404,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
 			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
-			std::unordered_map<std::string, struct lookup_state> statecache;
+			std::unordered_map<std::string, struct lookup_info> statecache;
 
 			/*
 			 * We need a name for whoever wrote this message in the history.
@@ -440,16 +440,16 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 				const std::string
 					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
-				struct lookup_state& state = statecache[notbeinghashableisagoodidea];
+				struct lookup_info& state = statecache[notbeinghashableisagoodidea];
 				if(state.state != HAVE_NAME) {
 					int tries;
 					for(tries=0;tries<4;++tries) {
 						assert(state.state != HAVE_NAME);
 						switch(state.state) {
-						case HAVE_DIRECT:
-						HAVE_DIRECT:
+						case HAVE_DIRECT: {
 							// direct chat, with no RxGxsId, only an RsPeerId
 							RsPeerDetails info;
+							GOT_DIRECT:
 							if(rsPeers->getPeerDetails(state.id.peer, info)) {
 								/*
 								 * info.name is the profile name NOT the node name
@@ -461,12 +461,13 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								state.state = HAVE_NAME;
 								break;
 							}
-							break;
-						case HAVE_GXS: {
+						} break;
+						case HAVE_GXS:
+						GOT_GXS:
+						{
 							// we need the RsGxsId name still though
 							RsIdentityDetails details;
-							HAVE_GXS:
-							if(rsIdentity->getIdDetails(state.gxs, details)) {
+							if(rsIdentity->getIdDetails(state.id.gxs, details)) {
 								state.name = details.mNickname;
 								state.state = HAVE_NAME;
 								break;
@@ -485,7 +486,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 											// we need our own name
 											state.id.gxs= info.gxs_id;
 											state.state = HAVE_GXS;
-											goto HAVE_GXS;
+											goto GOT_GXS;
 										} else {
 											state.name = info.lobby_name;
 											state.state = HAVE_NAME;
@@ -503,7 +504,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 										state.id.gxs = RsGxsId(info.to_id);
 									}
 									state.state = HAVE_GXS;
-									goto HAVE_GXS;
+									goto GOT_GXS;
 								}
 							} else {
 								if(historyIt->incoming) {
@@ -512,7 +513,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 									state.id.peer = historyIt->chatPeerId;
 								}
 								state.state = HAVE_DIRECT;
-								goto HAVE_DIRECT;
+								goto GOT_DIRECT;
 							}
 						}
 						};
