@@ -401,8 +401,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				std::string name;
 				bool hasGxs;
 				RsGxsId gxs;
-				bool hasPeerDetails;
-				RsPeerDetails peer;
 			};
 			std::unordered_map<std::string, struct lookup_state> statecache;
 
@@ -445,22 +443,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				for(tries=0;tries<4;++tries) {
 					if(state.hasName) {
 						break;
-					} else if(state.hasPeerDetails) {
-HasPeerDetails:						
-						assert(!state.hasName);
-						assert(!state.hasGxsId);
-											// the node is not the person chatting, the profile is.
-						// XXX: both of these have to respond immediately, or it'll fail
-						RsPgpDetails pgp;
-						std::string unused_email;
-						bool ok = (bool)rsAccounts->getPgpLoginDetails(
-							info.gpg_id,
-							state.name,
-							unused_email);
-						if(ok) {
-							state.hasName = true;
-							break;
-						}
 					} else if(chatId.isLobbyId()) {
 						// XXX:
 						// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
@@ -469,9 +451,11 @@ HasPeerDetails:
 						const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
 
 						ChatLobbyInfo info;
-						state.hasName = rsMsgs->getChatLobbyInfo(lobby_id, info);
-						if(state.hasName) {
+						bool ok = rsMsgs->getChatLobbyInfo(lobby_id, info);
+						if(ok) {
 							state.name = info.lobby_name;
+							state.hasName = true;
+							break;
 						}
 					} else if(chatId.isDistantChatId()) {
 						const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
@@ -483,28 +467,32 @@ HasPeerDetails:
 								state.gxs = RsGxsId(info.to_id);
 							}
 							state.hasName = nameForGxsId(info.to_id, &state.name);
+							if(state.hasName) {
+								break;
+							}
 						}
 					} else {
 						// direct chat, with no RxGxsId, only an RsPeerId
 						const RsPeerId peer = historyIt->chatPeerId;
-
-						// assignment operator inside condition is deliberate
-						if((state.hasPeerDetails = rsPeers->getPeerDetails(peer, state.peerDetails))) {
-							goto HasPeerDetails; // just to not bother with the for loop increment
+						RsPeerDetails info;
+						bool ok = rsPeers->getPeerDetails(peer, info);
+						if(ok) {
+							// info.name is the profile name NOT the node name
+							// info.location is the node name
+							state.name = info.name;
+							state.hasName = true;
+							break;
 						}
 					}
-					
-					if(state.hasName) {
-						break;
-					} else {
-						int delay = 10 * (tries << 2);
-						std::this_thread::sleep_for(std::chrono::milliseconds(delay));
-					}
+
+					assert(!state.hasName);
+					int delay = 10 * (tries << 2);
+					std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 				}
 				if(!state.hasName) {
 					// all lookup attempts failed
 					state.hasName = true;
-					state.name = historyId->peerName;
+					state.name = historyIt->peerName;
 				}
 				
 				const QString qname = QString::fromUtf8(state.name.c_str());
