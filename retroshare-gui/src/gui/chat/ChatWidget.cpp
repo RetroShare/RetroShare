@@ -307,7 +307,8 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 }
 
 
-static bool nameForGxsId(const RsGxsId id, QString* name) {
+static
+bool nameForGxsId(const RsGxsId id, std::string* name) {
 	RsIdentityDetails details;
 	if(!rsIdentity->getIdDetails(id, details)) return false;
 	*name = details.mNickname;
@@ -395,6 +396,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
 			std::unordered_map<std::string, std::string> names;
+			std::unordered_set<std::string> isGxsId;
 
 			/*
 			 * We need a name for whoever wrote this message in the history.
@@ -428,33 +430,36 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				if (time(nullptr) <= historyIt->recvTime+2)
 					continue;
 
+				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
+				const RsGxsId hack = RsGxsId();
+
 				std::string name;
-				bool ok = false;
 				if (chatId.isLobbyId() || chatId.isDistantChatId())
 				{
+					bool ok = false;
 					const std::string
 						notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
 					if(names.find(notbeinghashableisagoodidea) != names.end()) {
 						ok = true;
 						name = names[notbeinghashableisagoodidea];
+						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
+							hack = RsGxsId(historyIt->chatPeerId);
+						}
 					} else {
 						int tries;
 						for(tries=0;tries<2;++tries) {
 							time_t start = time(nullptr);
 							if(chatId.isLobbyId()) {
-								const ChatLobbyId lobby_id = chatId.toLobbyId();
+								// XXX:
+								// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
+								// does this.
+								uint8_t* bytes = historyIt->chatPeerId.toByteArray();
+								const ChatLobbyId lobby_id = *((ChatLobbyId*)bytes);
+								
 								ChatLobbyInfo info;
-								if(chatId.incoming) {
-									ok = rsMsgs->getChatLobbyInfo(lobby_id, &info);
-									if(ok) {
-										name = info.lobby_name;
-									}
-								} else {
-									RsGxsId self;
-									ok = rsMsgs->getIdentityForChatLobby(lobby_id, &self);
-									if(ok) {
-										ok = nameForGxsId(self, &name);
-									}
+								ok = rsMsgs->getChatLobbyInfo(lobby_id, &info);
+								if(ok) {
+									name = info.lobby_name;
 								}
 							} else if(chatId.isDistantChatId()) {
 								const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
@@ -462,6 +467,10 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								ok = rsMsgs->getDistantChatStatus(tunnel_id, &info);
 								if(ok) {
 									ok = nameForGxsId(info.to_id, &name);
+									if(ok) {
+										hack = info.to_id;
+										isGxs.insert(notbeinghashableisagoodidea);
+									}
 								}
 							}
 							if(ok) {
@@ -472,14 +481,23 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							}
 						}
 					}
-				}
-				if(!ok) {
+					if(!ok) {
+						name = historyIt->peerName;
+						if(isGxs.count(notbeinghashableisagoodidea) != 0) {
+							hack = RsGxsId(historyIt->chatPeerId);
+						}
+						ok = true;						
+					}
+				} else {
+					// direct chat, with no RxGxsId, only an RsPeerId
+					// TODO: name = lookup the peer in chatPeerId
 					name = historyIt->peerName;
 				}
+
 				QString qname = QString::fromUtf8(name);
 				//  this however is just a hack, and should not work at all
-				const RsGxsId hack = RsGxsId(historyIt->chatPeerId);
-				addChatMsg(historyIt->incoming, name, hack,
+
+				addChatMsg(historyIt->incoming, qname, hack,
 						   QDateTime::fromTime_t(historyIt->sendTime),
 						   QDateTime::fromTime_t(historyIt->recvTime),
 						   QString::fromUtf8(historyIt->message.c_str()),
