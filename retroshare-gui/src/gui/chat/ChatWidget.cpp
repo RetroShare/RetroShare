@@ -311,18 +311,13 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 struct lookup_state {
 	bool hasName;
 	std::string name;
+	bool isDirect;
 	bool hasGxs;
-	RsGxsId gxs;
+	union peerthing {
+		RsGxsId gxs;
+		RsPeerId peer;
+	} id;
 };
-
-static
-bool nameForGxsId(const RsGxsId id, struct lookup_state& state) {
-	RsIdentityDetails details;
-	if(!rsIdentity->getIdDetails(id, details)) return false;
-	state.name = details.mNickname;
-	state.hasName = true;
-	return true;
-}
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
@@ -449,7 +444,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						IS_DIRECT:
 							// direct chat, with no RxGxsId, only an RsPeerId
 							RsPeerDetails info;
-							if(rsPeers->getPeerDetails(state.peerId, info)) {
+							if(rsPeers->getPeerDetails(state.id.peer, info)) {
 								/*
 								 * info.name is the profile name NOT the node name
 								 * 
@@ -463,7 +458,10 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						} else if(state.hasGxs) {
 						HAVE_GXS:
 							// we need the RsGxsId name still though
-							if(nameForGxsId(state.gxs, &state)) {
+							RsIdentityDetails details;
+							if(rsIdentity->getIdDetails(id, details)) {
+								state.name = details.mNickname;
+								state.hasName = true;
 								break;
 							}
 						} else if(chatId.isLobbyId()) {
@@ -477,7 +475,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							if(state.hasLobby) {
 								if(historyIt->incoming) {
 									// we need our own name
-									state.gxs= info.gxs_id;
+									state.id.gxs= info.gxs_id;
 									state.hasGxs = true;
 									goto HAVE_GXS;
 								} else {
@@ -492,18 +490,18 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							if(rsMsgs->getDistantChatStatus(tunnel_id, info)) {
 								state.hasGxs = true;
 								if(historyIt.incoming) {
-									state.gxs = RsGxsId(info.our_id);
+									state.id.gxs = RsGxsId(info.our_id);
 								} else {
-									state.gxs = RsGxsId(info.to_id);
+									state.id.gxs = RsGxsId(info.to_id);
 								}
 								goto HAVE_GXS;
 							}
 						} else {
 							state.isDirect = true;
 							if(historyIt->incoming) {
-								state.peerId = rsPeers->getOwnId();
+								state.id.peer = rsPeers->getOwnId();
 							} else {
-								state.peerId = historyIt->chatPeerId;
+								state.id.peer = historyIt->chatPeerId;
 							}
 							goto IS_DIRECT;
 						}
@@ -519,7 +517,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				}
 				const QString qname = QString::fromUtf8(state.name.c_str());
 				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
-				const RsGxsId hack = state.hasGxs ? state.gxs : RsGxsId();
+				const RsGxsId hack = state.hasGxs ? state.id.gxs : RsGxsId();
 				addChatMsg(historyIt->incoming, qname, hack,
 						   QDateTime::fromTime_t(historyIt->sendTime),
 						   QDateTime::fromTime_t(historyIt->recvTime),
