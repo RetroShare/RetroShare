@@ -308,19 +308,20 @@ RSButtonOnText* ChatWidget::getNewButtonOnTextBrowser(QString text)
 }
 
 
+enum lookup_state_state {
+	HAVE_NOTHING,
+	HAVE_DIRECT,
+	HAVE_GXS,
+	HAVE_NAME
+} 
 struct lookup_state {
-	enum state {
-		HAVE_NOTHING,
-		HAVE_DIRECT,
-		HAVE_GXS,
-		HAVE_NAME
-	} state;
+	lookup_state_state state;
 	union peerthing {
 		RsGxsId gxs;
 		RsPeerId peer;
-		std::string name;
+		~peerthing() {}
 	} id;
-	~lookup_state() {}
+	std::string name;
 };
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
@@ -440,10 +441,10 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				const std::string
 					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
 				struct lookup_state& state = statecache[notbeinghashableisagoodidea];
-				if(!state.hasName) {
+				if(state.state != HAVE_NAME) {
 					int tries;
 					for(tries=0;tries<4;++tries) {
-						assert(!state.hasName);
+						assert(state.state != HAVE_NAME);
 						switch(state.state) {
 						case HAVE_DIRECT:
 						HAVE_DIRECT:
@@ -456,7 +457,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								 * info.location is the node name,  as set in checkAccount, in
 								 * libretroshare/src/rsserver/rsaccounts.cc
 								 */
-								state.id.name = info.name;
+								state.name = info.name;
 								state.state = HAVE_NAME;
 								break;
 							}
@@ -466,7 +467,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							RsIdentityDetails details;
 							HAVE_GXS:
 							if(rsIdentity->getIdDetails(state.gxs, details)) {
-								state.id.name = details.mNickname;
+								state.name = details.mNickname;
 								state.state = HAVE_NAME;
 								break;
 							}
@@ -486,7 +487,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 											state.state = HAVE_GXS;
 											goto HAVE_GXS;
 										} else {
-											state.id.name = info.lobby_name;
+											state.name = info.lobby_name;
 											state.state = HAVE_NAME;
 											break;
 										}
@@ -521,11 +522,11 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					}
 					if(!state.hasName) {
 						// all lookup attempts failed
-						state.id.name = historyIt->peerName;
+						state.name = historyIt->peerName;
 						state.state = HAVE_NAME;
 					}
 				}
-				const QString qname = QString::fromUtf8(state.id.name.c_str());
+				const QString qname = QString::fromUtf8(state.name.c_str());
 				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
 				const RsGxsId hack = state.hasGxs ? state.id.gxs : RsGxsId();
 				addChatMsg(historyIt->incoming, qname, hack,
