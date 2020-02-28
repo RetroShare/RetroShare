@@ -61,6 +61,8 @@
 #include <retroshare/rsmsgs.h>
 #include <retroshare/rsplugin.h>
 
+#include <unordered_map> // std::unordered_map
+
 #include <time.h>
 
 #define FMM 2.5//fontMetricsMultiplicator
@@ -384,6 +386,32 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 		{
 			rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
+			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
+			std::unordered_map<std::string, QString> names;
+
+			/*
+			 * We need a name for whoever wrote this message in the history.
+			 * There are two pieces of information useful here, chatPeerId and peerName
+			 * peerName is a name. The name of whoever or whatever said that message at
+			 * the time the message was said. Their name may have changed since then though.
+			 * peerName can always be used as a fallback. The rest of this is just an attempt to
+			 * get whatever the current name of this chatter is.
+			 * 
+			 * chatPeerId has 1 of four things:
+			 *   - if this is a direct private chat, it has an RsPeerId, which we don't look up yet
+			 *   - if a distant private chat, it has a tunnel ID, with no info as to who was chatting
+			 *     but this widget is only allowed for active conversations, which are indexed by
+			 *     tunnel ID, and they have the RsGxsId who was chatting.
+			 *   - if a distant public chat (i.e. to a chatroom) then it has a lobby ID, which can
+			 *     be looked up in a similar fashion to the tunnel ID
+			 *   - if a broadcast chat, then it has no destination, only a sender, so we intelligently
+			 *     throw away the sender, and arbitrarily use the destination to store the sender.
+			 *     so broadcast chats only have a destination, which is actually the sender, because
+			 *     reasons. Thus the chatPeerId will be empty.
+			 *     XXX: TODO: jury rig history's addMessage to set chatPeerId to the
+			 *     cm.broadcast_peer_id hack, so we can actually show the sender of broadcasts
+			 */
+			
 			std::list<HistoryMsg>::iterator historyIt;
 			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
 			{
@@ -396,27 +424,42 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				QString name;
 				if (chatId.isLobbyId() || chatId.isDistantChatId())
 				{
-					RsIdentityDetails details;
-					time_t start = time(nullptr);
-					while (!rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
-					{
-						std::this_thread::sleep_for(std::chrono::milliseconds(10));
-						if (time(nullptr)>start+2)
+					const std::string
+						notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
+					if(names.find(notbeinghashableisagoodidea) != names.end()) {
+						name = names[notbeinghashableisagoodidea];
+					} else {
+						RsIdentityDetails details;
+						time_t start = time(nullptr);
+						// since there are no direct chat lobbies, only distant ones, all history entries
+						// will be a RsGxsId, which semi-coincidentally fits into the bytes of an RsPeerId
+						// until someone decides that chat lobbies can leave messages in the history.
+						const RsGxsId hack = RsGxsId(historyIt->chatPeerId);
+						while (!rsIdentity->getIdDetails(hack, details))
 						{
-							std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it." << std::endl;
-							break;
+							/* Note: this is the GUI thread. Sleeping here hangs retroshare making the
+							   interface entirely unresponsive. */
+							std::this_thread::sleep_for(std::chrono::milliseconds(100));
+							if (time(nullptr)>start+2)
+							{
+								std::cerr << "ChatWidget History haven't found Id Details and have wait 1 sec for it: " << hack << std::endl;
+								break;
+							}
 						}
-					}
 
-					if (rsIdentity->getIdDetails(RsGxsId(historyIt->peerName), details))
-						name = QString::fromUtf8(details.mNickname.c_str());
-					else
-						name = QString::fromUtf8(historyIt->peerName.c_str());
+						if (rsIdentity->getIdDetails(hack, details)) {
+							name = QString::fromUtf8(details.mNickname.c_str());
+						} else { 
+							name = QString::fromUtf8(historyIt->peerName.c_str());
+						}
+						names[notbeinghashableisagoodidea] = name;
+					}
 				} else {
 					name = QString::fromUtf8(historyIt->peerName.c_str());
 				}
-
-				addChatMsg(historyIt->incoming, name, RsGxsId(historyIt->peerName.c_str()), QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
+				//  this however is just a hack, and should not work at all
+				const RsGxsId hack = RsGxsId(historyIt->chatPeerId);
+				addChatMsg(historyIt->incoming, name, hack, QDateTime::fromTime_t(historyIt->sendTime), QDateTime::fromTime_t(historyIt->recvTime), QString::fromUtf8(historyIt->message.c_str()), MSGTYPE_HISTORY);
 			}
 		}
 	}
@@ -1064,14 +1107,8 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		rsIdentity->getIdDetails(gxsId, details);
 		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
 		if(isUnsigned && ui->textBrowser->getShowImages()) {
-			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
 			int height = ui->textBrowser->fontMetrics().height()*0.8;
-			QImage image(icon.pixmap(height,height).toImage());
-			QByteArray byteArray;
-			QBuffer buffer(&byteArray);
-			image.save(&buffer, "PNG"); // writes the image in PNG format inside the buffer
-			QString iconBase64 = QString::fromLatin1(byteArray.toBase64().data());
-			strPreName = QString("<img src=\"data:image/png;base64,%1\" alt=\"[unsigned]\" />").arg(iconBase64);
+			strPreName = QString("<img height=\"%1\" src=\":/icons/anonymous_blue_128.png\" alt=\"[unsigned]\" />").arg(height);
 		}
 
 		formatMsg.replace(QString("<a name=\"name\">")
