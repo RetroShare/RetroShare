@@ -439,62 +439,65 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 				const std::string
 					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
 				struct lookup_state& state = statecache[notbeinghashableisagoodidea];
-				int tries;
-				for(tries=0;tries<4;++tries) {
-					if(state.hasName) {
-						break;
-					} else if(chatId.isLobbyId()) {
-						// XXX:
-						// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
-						// does this.
-						const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
-						const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
+				if(!state.hasName) {
+					int tries;
+					for(tries=0;tries<4;++tries) {
+						if(chatId.isLobbyId()) {
+							// XXX:
+							// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
+							// does this.
+							const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
+							const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
 
-						ChatLobbyInfo info;
-						bool ok = rsMsgs->getChatLobbyInfo(lobby_id, info);
-						if(ok) {
-							state.name = info.lobby_name;
-							state.hasName = true;
-							break;
-						}
-					} else if(chatId.isDistantChatId()) {
-						const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
-						DistantChatPeerInfo info;
-						bool ok = rsMsgs->getDistantChatStatus(tunnel_id, info);
-						if(ok) {
-							if(!state.hasGxs) {
-								state.hasGxs = true;
-								state.gxs = RsGxsId(info.to_id);
+							ChatLobbyInfo info;
+							bool ok = rsMsgs->getChatLobbyInfo(lobby_id, info);
+							if(ok) {
+								state.name = info.lobby_name;
+								state.hasName = true;
+								break;
 							}
-							state.hasName = nameForGxsId(info.to_id, &state.name);
-							if(state.hasName) {
+						} else if(chatId.isDistantChatId()) {
+							const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
+							DistantChatPeerInfo info;
+							bool ok = rsMsgs->getDistantChatStatus(tunnel_id, info);
+							if(ok) {
+								if(!state.hasGxs) {
+									state.hasGxs = true;
+									state.gxs = RsGxsId(info.to_id);
+								}
+								state.hasName = nameForGxsId(info.to_id, &state.name);
+								if(state.hasName) {
+									break;
+								}
+							}
+						} else {
+							// direct chat, with no RxGxsId, only an RsPeerId
+							const RsPeerId peer = historyIt->chatPeerId;
+							RsPeerDetails info;
+							bool ok = rsPeers->getPeerDetails(peer, info);
+							if(ok) {
+								/*
+								 * info.name is the profile name NOT the node name
+								 * 
+								 * info.location is the node name,  as set in checkAccount, in
+								 * libretroshare/src/rsserver/rsaccounts.cc
+								 */
+								state.name = info.name;
+								state.hasName = true;
 								break;
 							}
 						}
-					} else {
-						// direct chat, with no RxGxsId, only an RsPeerId
-						const RsPeerId peer = historyIt->chatPeerId;
-						RsPeerDetails info;
-						bool ok = rsPeers->getPeerDetails(peer, info);
-						if(ok) {
-							// info.name is the profile name NOT the node name
-							// info.location is the node name
-							state.name = info.name;
-							state.hasName = true;
-							break;
-						}
-					}
 
-					assert(!state.hasName);
-					int delay = 10 * (tries << 2);
-					std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+						assert(!state.hasName);
+						int delay = 10 * (tries << 2);
+						std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+					}
+					if(!state.hasName) {
+						// all lookup attempts failed
+						state.hasName = true;
+						state.name = historyIt->peerName;
+					}
 				}
-				if(!state.hasName) {
-					// all lookup attempts failed
-					state.hasName = true;
-					state.name = historyIt->peerName;
-				}
-				
 				const QString qname = QString::fromUtf8(state.name.c_str());
 				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
 				const RsGxsId hack = state.hasGxs ? state.gxs : RsGxsId();
