@@ -60,7 +60,7 @@ FileAssociationsPage::FileAssociationsPage(QWidget * parent, Qt::WindowFlags fla
     QVBoxLayout* pageLay = new QVBoxLayout(this);
 
     toolBar = new QToolBar("actions", this);
-    newAction = new QAction(QIcon(":/images/add_24x24.png"), tr("&New"), this);
+    newAction = new QAction(QIcon(":/icons/png/add.png"), tr("&New"), this);
     //newAction->setShortcut(tr("Ctrl+N"));
     newAction->setStatusTip(tr("Add new Association"));
     connect(newAction, SIGNAL(triggered()), this, SLOT(addnew()));

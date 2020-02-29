@@ -55,7 +55,7 @@ void GxsMessageFramePostWidget::groupIdChanged()
 
 	emit groupChanged(this);
 
-	fillComplete();
+	updateDisplay(true);
 }
 
 QString GxsMessageFramePostWidget::groupName(bool /*withUnreadCount*/)
@@ -105,33 +105,6 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 
 	if (groupId().isNull()) {
 		return;
-	}
-
-	bool updateGroup = false;
-	const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-
-    if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
-		updateGroup = true;
-
-	const std::set<RsGxsGroupId> &grpIds = getGrpIds();
-	if (!groupId().isNull() && grpIds.find(groupId())!=grpIds.end())
-    {
-		updateGroup = true;
-		/* Do we need to fill all posts? */
-		requestAllPosts();
-	} else {
-		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgs;
-		getAllMsgIds(msgs);
-		if (!msgs.empty()) {
-			auto mit = msgs.find(groupId());
-			if (mit != msgs.end()) {
-				requestPosts(mit->second);
-			}
-		}
-	}
-
-	if (updateGroup) {
-		requestGroupData();
 	}
 }
 

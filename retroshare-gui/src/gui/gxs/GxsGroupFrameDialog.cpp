@@ -68,7 +68,7 @@
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
-: RsGxsUpdateBroadcastPage(ifaceImpl, parent)
+: MainPage(parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
@@ -179,7 +179,9 @@ void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 		initUi();
 	}
 
-	RsGxsUpdateBroadcastPage::showEvent(event);
+    updateDisplay(true);
+
+//	RsGxsUpdateBroadcastPage::showEvent(event);
 }
 
 void GxsGroupFrameDialog::processSettings(bool load)
@@ -239,25 +241,15 @@ void GxsGroupFrameDialog::setHideTabBarWithOneTab(bool hideTabBarWithOneTab)
 
 void GxsGroupFrameDialog::updateDisplay(bool complete)
 {
-	if (complete || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
-		/* Update group list */
-		requestGroupSummary();
-	} else {
-		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-		getAllMsgIds(msgIds);
-
-		for (auto msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
-			updateMessageSummaryList(msgIt->first);
-		}
-	}
+    if(complete)    // || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
+		requestGroupSummary(); /* Update group list */
 
     updateSearchResults() ;
 }
 
 void GxsGroupFrameDialog::updateSearchResults()
 {
-    const std::set<TurtleRequestId>& reqs = getSearchResults();
+    const std::set<TurtleRequestId>& reqs = getSearchRequests();
 
     for(auto it(reqs.begin());it!=reqs.end();++it)
     {
@@ -448,7 +440,7 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	actnn = ctxMenu2->addAction(tr(" Indefinitly"),this,SLOT(setStorePostsDelay())) ; actnn->setData(QVariant(  0)) ; if(current_store_time ==  0) { actnn->setEnabled(false);actnn->setIcon(QIcon(":/images/start.png"));}
 
 	if (shareKeyType()) {
-		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions"), this, SLOT(sharePublishKey()));
+		action = contextMnu.addAction(QIcon(IMAGE_SHARE), tr("Share publish permissions..."), this, SLOT(sharePublishKey()));
 		action->setEnabled(!mGroupId.isNull() && isPublisher);
 	}
 

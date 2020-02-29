@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>IdDetailsDialog</class>
- <widget class="QDialog" name="IdDetailsDialog">
+ <widget class="QWidget" name="IdDetailsWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -10,14 +10,7 @@
     <height>475</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Person Details</string>
-  </property>
-  <property name="windowIcon">
-   <iconset resource="../images.qrc">
-    <normaloff>:/images/logo/logo_32.png</normaloff>:/images/logo/logo_32.png</iconset>
-  </property>
-  <layout class="QGridLayout" name="gridLayout_3">
+ <layout class="QGridLayout" name="gridLayout_3">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -500,16 +493,12 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>HeaderFrame</class>
-   <extends>QFrame</extends>
-   <header>gui/common/HeaderFrame.h</header>
-   <container>1</container>
+    <customwidget>
+	   <class>HeaderFrame</class>
+      <extends>QFrame</extends>
+     <header>gui/common/HeaderFrame.h</header>
+    <container>1</container>
   </customwidget>
- </customwidgets>
- <resources>
-  <include location="../images.qrc"/>
-  <include location="../icons.qrc"/>
- </resources>
- <connections/>
+  </customwidgets>
+ 
 </ui>

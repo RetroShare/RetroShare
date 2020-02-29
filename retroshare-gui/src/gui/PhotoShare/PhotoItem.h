@@ -36,6 +36,8 @@ class PhotoItem : public QWidget, public PhotoShareItem
 
 public:
 
+    enum State { New, Existing, Modified, Deleted };
+
     PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto& photo, QWidget* parent = 0);
     PhotoItem(PhotoShareItemHolder *holder, const QString& path,  QWidget* parent = 0); // for new photos.
     ~PhotoItem();
@@ -43,6 +45,8 @@ public:
     bool isSelected(){ return mSelected; }
     const RsPhotoPhoto& getPhotoDetails();
     bool getThumbnail(RsGxsImage &image);
+    void markForDeletion();
+    State getState() { return mState; }
 
 protected:
         void mousePressEvent(QMouseEvent *event);
@@ -63,6 +67,7 @@ private:
     QPixmap getPixmap() { return mThumbNail; }
 
     bool mSelected;
+    State mState;
     PhotoShareItemHolder* mHolder;
     RsPhotoPhoto mPhotoDetails;
 

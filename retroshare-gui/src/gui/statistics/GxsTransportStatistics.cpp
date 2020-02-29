@@ -78,7 +78,7 @@
 //#define DEBUG_GXSTRANS_STATS 1
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
-    : RsGxsUpdateBroadcastPage(rsGxsTrans,parent)
+    : MainPage(parent)
 {
 	setupUi(this) ;
 	

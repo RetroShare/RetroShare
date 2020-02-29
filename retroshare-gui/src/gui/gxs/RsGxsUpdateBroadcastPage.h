@@ -52,7 +52,7 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta();
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
 
-    virtual const std::set<TurtleRequestId> getSearchResults() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
+    virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
 
 protected:
 	virtual void showEvent(QShowEvent *event);

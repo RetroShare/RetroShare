@@ -26,8 +26,10 @@
 #include "rshare.h"
 #include "PostedItem.h"
 #include "gui/feeds/FeedHolder.h"
+#include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "PhotoView.h"
 #include "ui_PostedItem.h"
@@ -132,6 +134,7 @@ void PostedItem::setup()
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
+	ui->nameLabel->hide();
 }
 
 bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
@@ -168,88 +171,140 @@ bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
 	return true;
 }
 
-void PostedItem::loadGroup(const uint32_t &token)
+void PostedItem::loadGroup()
 {
-	std::vector<RsPostedGroup> groups;
-	if (!rsPosted->getGroupData(token, groups))
+	RsThread::async([this]()
 	{
-		std::cerr << "PostedItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "PostedItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+#ifdef DEBUG_FORUMS
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
 
-	setGroup(groups[0]);
+		std::vector<RsPostedGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
+
+		if(!rsPosted->getBoardsInfo(groupIds,groups))
+		{
+			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsPostedGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
-void PostedItem::loadMessage(const uint32_t &token)
+void PostedItem::loadMessage()
 {
-	std::vector<RsPostedPost> posts;
-	std::vector<RsGxsComment> cmts;
-	if (!rsPosted->getPostData(token, posts, cmts))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (posts.size() == 1)
-	{
-		setPost(posts[0]);
-	}
-	else if (cmts.size() == 1)
-	{
-		RsGxsComment cmt = cmts[0];
+		std::vector<RsPostedPost> posts;
+		std::vector<RsGxsComment> comments;
 
-		ui->newCommentLabel->show();
-		ui->commLabel->show();
-		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		{
+			RsErr() << "PostedItem::loadMessage() ERROR getting data" << std::endl;
+			return;
+		}
 
-		//Change this item to be uploaded with thread element.
-		setMessageId(cmt.mMeta.mThreadId);
-		requestMessage();
-	}
-	else
-	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
-		std::cerr << std::endl;
-		removeItem();
-		return;
-	}
+		if (posts.size() == 1)
+		{
+			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+            const RsPostedPost& post(posts[0]);
+
+			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
+		}
+		else if(comments.size() == 1)
+		{
+			const RsGxsComment& cmt = comments[0];
+			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
+
+			RsQThreadUtils::postToObject( [cmt,this]()
+			{
+				ui->newCommentLabel->show();
+				ui->commLabel->show();
+				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+
+				//Change this item to be uploaded with thread element.
+				setMessageId(cmt.mMeta.mThreadId);
+				requestMessage();
+
+			}, this );
+
+		}
+		else
+		{
+			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
+			std::cerr << std::endl;
+
+			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
+		}
+	});
 }
 
-void PostedItem::loadComment(const uint32_t &token)
+void PostedItem::loadComment()
 {
-	std::vector<RsGxsComment> cmts;
-	if (!rsPosted->getRelatedComments(token, cmts))
-	{
-		std::cerr << "GxsChannelPostItem::loadComment() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelPostItem::loadComment()";
+	std::cerr << std::endl;
+#endif
 
-	size_t comNb = cmts.size();
-	QString sComButText = tr("Comment");
-	if (comNb == 1) {
-		sComButText = sComButText.append("(1)");
-	} else if (comNb > 1) {
-		sComButText = " " + tr("Comments").append(" (%1)").arg(comNb);
-	}
-	ui->commentButton->setText(sComButText);
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+        std::set<RsGxsMessageId> msgIds;
+
+        for(auto MsgId: messageVersions())
+            msgIds.insert(MsgId);
+
+		std::vector<RsPostedPost> posts;
+		std::vector<RsGxsComment> comments;
+
+		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
+		{
+			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+        int comNb = comments.size();
+
+		RsQThreadUtils::postToObject( [comNb,this]()
+		{
+			QString sComButText = tr("Comment");
+			if (comNb == 1)
+				sComButText = sComButText.append("(1)");
+			else if(comNb > 1)
+				sComButText = tr("Comments ").append("(%1)").arg(comNb);
+
+			ui->commentButton->setText(sComButText);
+
+		}, this );
+	});
 }
 
 void PostedItem::fill()
-{
-	if (isLoading()) {
-		/* Wait for all requests */
-		return;
-	}
+{	
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
+	ui->nameLabel->setText(link.toHtml());
 
 	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
 
@@ -392,11 +447,13 @@ void PostedItem::fill()
 	{
 		ui->clearButton->hide();
 		ui->readAndClearButton->hide();
+		ui->nameLabel->hide();
 	}
 	else
 	{
 		ui->clearButton->show();
 		ui->readAndClearButton->show();
+		ui->nameLabel->show();
 	}
 
 	// disable voting buttons - if they have already voted.

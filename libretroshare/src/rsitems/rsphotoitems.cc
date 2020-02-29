@@ -33,11 +33,10 @@ RsItem *RsGxsPhotoSerialiser::create_item(uint16_t service, uint8_t item_sub_id)
 
 	switch(item_sub_id)
 	{
-	case RS_PKT_SUBTYPE_PHOTO_COMMENT_ITEM: return new RsGxsPhotoCommentItem() ;
 	case RS_PKT_SUBTYPE_PHOTO_SHOW_ITEM: return new RsGxsPhotoPhotoItem() ;
 	case RS_PKT_SUBTYPE_PHOTO_ITEM: return new RsGxsPhotoAlbumItem() ;
 	default:
-		return NULL ;
+		return RsGxsCommentSerialiser::create_item(service,item_sub_id) ;
 	}
 }
 
@@ -68,11 +67,6 @@ void RsGxsPhotoPhotoItem::serial_process(RsGenericSerializer::SerializeJob j,RsG
 
 	photo.mThumbnail.serial_process(j, ctx);
 }
-void RsGxsPhotoCommentItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
-{
-	RsTypeSerializer::serial_process          (j,ctx,TLV_TYPE_STR_COMMENT,comment.mComment,"mComment");
-	RsTypeSerializer::serial_process<uint32_t>(j,ctx,comment.mCommentFlag,"mCommentFlag");
-}
 
 void RsGxsPhotoAlbumItem::clear()
 {
@@ -86,12 +80,6 @@ void RsGxsPhotoAlbumItem::clear()
 	album.mWhen.clear();
 	album.mWhere.clear();
 	album.mThumbnail.clear();
-}
-
-void RsGxsPhotoCommentItem::clear()
-{
-	comment.mComment.clear();
-	comment.mCommentFlag = 0;
 }
 
 void RsGxsPhotoPhotoItem::clear()

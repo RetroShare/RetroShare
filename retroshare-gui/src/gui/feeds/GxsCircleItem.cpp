@@ -45,7 +45,6 @@ GxsCircleItem::GxsCircleItem(FeedHolder *feedHolder, uint32_t feedId, const RsGx
 	setup();
 }
 
-
 GxsCircleItem::~GxsCircleItem()
 {
 	delete(ui);
@@ -75,7 +74,6 @@ void GxsCircleItem::setup()
 	QPixmap pixmap ;
 	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
 		pixmap = GxsIdDetails::makeDefaultIcon(mGxsId,GxsIdDetails::SMALL);
-
 
 	/* update circle information */
 
@@ -161,45 +159,12 @@ void GxsCircleItem::setup()
 		ui->gxsIdLabel->setText(idName);
 		ui->gxsIdLabel->setId(mGxsId);
 	}
-
-	/* Setup TokenQueue */
-	mCircleQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
-
 }
 
 uint64_t GxsCircleItem::uniqueIdentifier() const
 {
     return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString());
 }
-
-void GxsCircleItem::loadRequest(const TokenQueue * queue, const TokenRequest &req)
-{
-#ifdef ID_DEBUG
-	std::cerr << "GxsCircleItem::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-	if(queue == mCircleQueue)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "CirclesDialog::loadRequest() UserType: " << req.mUserType;
-		std::cerr << std::endl;
-#endif
-
-		/* now switch on req */
-		switch(req.mUserType)
-		{
-			case CIRCLESDIALOG_GROUPUPDATE:
-				updateCircleGroup(req.mToken);
-			break;
-
-			default:
-				std::cerr << "GxsCircleItem::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-			break;
-		}
-	}
-}
-
 
 /*********** SPECIFIC FUNCTIONS ***********************/
 
@@ -219,92 +184,17 @@ void GxsCircleItem::acceptCircleSubscription()
 
 void GxsCircleItem::grantCircleMembership()
 {
-
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-    std::list<RsGxsGroupId> grps ;
-    grps.push_back(RsGxsGroupId(mCircleId));
-
-    uint32_t token;
-    mCircleQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
-
-    CircleUpdateOrder c ;
-    c.token = token ;
-    c.gxs_id = mGxsId ;
-    c.action = CircleUpdateOrder::GRANT_MEMBERSHIP ;
-
-    mCircleUpdates[token] = c ;
+	RsThread::async([this]()
+	{
+        rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+    });
 }
 
 void GxsCircleItem::revokeCircleMembership()
 {
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	std::list<RsGxsGroupId> grps;
-	grps.push_back(RsGxsGroupId(mCircleId));
-
-	uint32_t token;
-	mCircleQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grps, CIRCLESDIALOG_GROUPUPDATE);
-
-	CircleUpdateOrder c;
-	c.token = token;
-	c.gxs_id = mGxsId;
-	c.action = CircleUpdateOrder::REVOKE_MEMBERSHIP;
-
-	mCircleUpdates[token] = c;
-}
-
-void GxsCircleItem::updateCircleGroup(const uint32_t& token)
-{
-#ifdef ID_DEBUG
-	std::cerr << "Loading circle info" << std::endl;
-#endif
-
-	std::vector<RsGxsCircleGroup> circle_grp_v ;
-	rsGxsCircles->getGroupData(token, circle_grp_v);
-
-	if (circle_grp_v.empty())
+	RsThread::async([this]()
 	{
-		std::cerr << "(EE) unexpected empty result from getGroupData. Cannot process circle now!" << std::endl;
-		return ;
-	}
-
-	if (circle_grp_v.size() != 1)
-	{
-		std::cerr << "(EE) very weird result from getGroupData. Should get exactly one circle" << std::endl;
-		return ;
-	}
-
-	RsGxsCircleGroup cg = circle_grp_v.front();
-
-	/* now mark all the members */
-
-	//std::set<RsGxsId> members = cg.mInvitedMembers;
-
-	std::map<uint32_t,CircleUpdateOrder>::iterator it = mCircleUpdates.find(token) ;
-
-	if(it == mCircleUpdates.end())
-	{
-		std::cerr << "(EE) Cannot find token " << token << " to perform group update!" << std::endl;
-		return ;
-	}
-
-	if(it->second.action == CircleUpdateOrder::GRANT_MEMBERSHIP)
-		cg.mInvitedMembers.insert(it->second.gxs_id) ;
-	else if(it->second.action == CircleUpdateOrder::REVOKE_MEMBERSHIP)
-		cg.mInvitedMembers.erase(it->second.gxs_id) ;
-	else
-	{
-		std::cerr << "(EE) unrecognised membership action to perform: " << it->second.action << "!" << std::endl;
-		return ;
-	}
-
-	uint32_t token2 ;
-	rsGxsCircles->updateGroup(token2,cg) ;
-
-	mCircleUpdates.erase(it) ;
+        rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+    });
 }
 

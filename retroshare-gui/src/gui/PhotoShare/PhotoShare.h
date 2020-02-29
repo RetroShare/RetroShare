@@ -61,7 +61,8 @@ public:
 private slots:
         void checkUpdate();
         void createAlbum();
-        void OpenAlbumDialog();
+        void OpenViewEditAlbumDialog();
+        void OpenEditAlbumPhotosDialog();
         void OpenPhotoDialog();
         void OpenSlideShow();
         void updateAlbums();
@@ -70,7 +71,6 @@ private slots:
 
 private:
         /* Request Response Functions for loading data */
-        void requestAlbumList(std::list<RsGxsGroupId> &ids);
         void requestAlbumData(std::list<RsGxsGroupId> &ids);
 
         /*!
@@ -82,7 +82,6 @@ private:
         void requestPhotoData(GxsMsgReq &photoIds);
         void requestPhotoData(const std::list<RsGxsGroupId> &grpIds);
 
-        void loadAlbumList(const uint32_t &token);
         bool loadAlbumData(const uint32_t &token);
         void loadPhotoList(const uint32_t &token);
         void loadPhotoData(const uint32_t &token);

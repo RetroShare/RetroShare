@@ -72,9 +72,6 @@ class p3PostBase: public RsGenExchange, public GxsTokenQueue, public RsTickEvent
 
 virtual void service_tick();
 
-	// This should be overloaded to call RsGxsIfaceHelper::receiveChanges().
-virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes) = 0;
-
 	protected:
 
 virtual void notifyChanges(std::vector<RsGxsNotify*>& changes);

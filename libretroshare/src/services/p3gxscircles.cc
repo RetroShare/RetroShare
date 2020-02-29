@@ -103,6 +103,7 @@
 #define MIN_CIRCLE_LOAD_GAP		5
 #define GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
 #define GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
+#define GXS_CIRCLE_DELAY_TO_SEND_CACHE_UPDATED_EVENT 10	// do not send cache update events more often than every 10 secs.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -117,11 +118,13 @@ p3GxsCircles::p3GxsCircles(
     RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
     RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
     mCircleMtx("p3GxsCircles"),
-    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" )
+    mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" ),
+    mCacheUpdated(false)
 {
 	// Kick off Cache Testing, + Others.
 	//RsTickEvent::schedule_in(CIRCLE_EVENT_CACHETEST, CACHETEST_PERIOD);
     	mLastCacheMembershipUpdateTS = 0 ;
+        mLastCacheUpdateEvent = 0;
         
 	RsTickEvent::schedule_now(CIRCLE_EVENT_LOADIDS);
 
@@ -365,6 +368,36 @@ bool p3GxsCircles::inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	return editCircle(circleGrp);
 }
 
+bool p3GxsCircles::revokeIdsFromCircle( const std::set<RsGxsId>& identities, const RsGxsCircleId& circleId )
+{
+	const std::list<RsGxsGroupId> circlesIds{ RsGxsGroupId(circleId) };
+	std::vector<RsGxsCircleGroup> circlesInfo;
+
+	if(!getCirclesInfo(circlesIds, circlesInfo))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting group data." << std::endl;
+		return false;
+	}
+
+	if(circlesInfo.empty())
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Circle: " << circleId.toStdString() << " not found!" << std::endl;
+		return false;
+	}
+
+	RsGxsCircleGroup& circleGrp = circlesInfo[0];
+
+	if(!(circleGrp.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Attempt to edit non-own " << "circle: " << circleId.toStdString() << std::endl;
+		return false;
+	}
+
+	circleGrp.mInvitedMembers.erase(identities.begin(), identities.end());
+
+	return editCircle(circleGrp);
+}
+
 bool p3GxsCircles::exportCircleLink(
         std::string& link, const RsGxsCircleId& circleId,
         bool includeGxsData, const std::string& baseUrl, std::string& errMsg )
@@ -460,7 +493,21 @@ void	p3GxsCircles::service_tick()
 	GxsTokenQueue::checkRequests(); // GxsTokenQueue handles all requests.
     
 	rstime_t now = time(NULL);
-    	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
+
+    if(mCacheUpdated && now > mLastCacheUpdateEvent + GXS_CIRCLE_DELAY_TO_SEND_CACHE_UPDATED_EVENT)
+    {
+        if(rsEvents)
+        {
+            auto ev = std::make_shared<RsGxsCircleEvent>();
+            ev->mCircleEventType = RsGxsCircleEventCode::CACHE_DATA_UPDATED;
+            rsEvents->postEvent(ev);
+        }
+
+        mLastCacheUpdateEvent = now;
+        mCacheUpdated = false;
+    }
+
+	if(now > mLastCacheMembershipUpdateTS + GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE)
 	{
 		checkCircleCache();
 		mLastCacheMembershipUpdateTS = now ;
@@ -484,7 +531,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		RsGxsNotify *c = *it;
 
-		if (msgChange && !msgChange->metaChange())
+		if (msgChange)
 		{
 #ifdef DEBUG_CIRCLES
 			std::cerr << "  Found circle Message Change Notification" << std::endl;
@@ -521,6 +568,8 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						rsEvents->postEvent(ev);
 					}
 
+				mCircleCache.erase(circle_id);
+                mCacheUpdated = true;
 			}
 		}
 
@@ -546,6 +595,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			    {
 				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 				    mCircleCache.erase(RsGxsCircleId(*git));
+					mCacheUpdated = true;
 			    }
 		    }
 	    }
@@ -615,6 +665,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				{
 				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 				    mCircleCache.erase(RsGxsCircleId(*git));
+					mCacheUpdated = true;
 			    }
 
             }
@@ -668,7 +719,6 @@ bool p3GxsCircles::getCircleDetails(
 		    				details.mAmIAllowed = true ;
                     		}
 		    }
-
 
 		    return true;
 	    }
@@ -1431,6 +1481,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 		    RsTickEvent::schedule_in(CIRCLE_EVENT_RELOADIDS, GXSID_LOAD_CYCLE, id.toStdString());
 	    }
 
+		mCacheUpdated = true;
     }
 
     return true;
@@ -1467,6 +1518,8 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				if(mIdentities->haveKey(pit->first))
 				{
 					pit->second.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_KEY_AVAILABLE;
+
+                    mCacheUpdated = true;
 #ifdef DEBUG_CIRCLES
 					std::cerr << "    Key is now available!"<< std::endl;
 #endif
@@ -1542,8 +1595,8 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 
 	// We can check for self inclusion in the circle right away, since own ids are always loaded.
 	// that allows to subscribe/unsubscribe uncomplete circles 
-    
-	locked_checkCircleCacheForAutoSubscribe(cache);
+
+    locked_checkCircleCacheForAutoSubscribe(cache);
 	locked_checkCircleCacheForMembershipUpdate(cache);
 
     	// always store in cache even if uncomplete. But do not remove the loading items so that they can be kept in loading state.
@@ -1687,8 +1740,8 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
             
             if(it2 != cache.mMembershipStatus.end())
             {
-		in_admin_list = in_admin_list || bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
-		member_request= member_request|| bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED) ;
+				in_admin_list = in_admin_list || bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST) ;
+				member_request= member_request|| bool(it2->second.subscription_flags & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED) ;
             }
         }
                                 
@@ -1717,6 +1770,8 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 		RsGenExchange::setGroupStatusFlags(token2, RsGxsGroupId(cache.mCircleId), 0, GXS_SERV::GXS_GRP_STATUS_UNPROCESSED);
         
 		cache.mGroupStatus &= ~GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
+
+        mCacheUpdated = true;
 		
 		return true;
 	}
@@ -1740,6 +1795,7 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
         
 		cache.mGroupStatus &= ~GXS_SERV::GXS_GRP_STATUS_UNPROCESSED;
         
+        mCacheUpdated = true;
 		return true ;
 	}
 }
@@ -2396,6 +2452,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
                     else
                     	std::cerr << " (EE) unknown subscription order type: " << item->subscription_type ;
                     
+					mCacheUpdated = true;
 #ifdef DEBUG_CIRCLES
                     std::cerr << " UPDATING" << std::endl;
 #endif
@@ -2410,7 +2467,8 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
             }
             
             data.mLastUpdatedMembershipTS = time(NULL) ;
-    }
+			mCacheUpdated = true;
+	}
     
     RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
     uint32_t token2;

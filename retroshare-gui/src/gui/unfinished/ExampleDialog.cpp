@@ -41,7 +41,6 @@
 
 /* Images for context menu icons */
 #define IMAGE_REMOVEFRIEND       ":/images/removefriend16.png"
-#define IMAGE_EXPIORTFRIEND      ":/images/exportpeers_16x16.png"
 #define IMAGE_CHAT               ":/images/chat.png"
 /* Images for Status icons */
 #define IMAGE_ONLINE             ":/images/im-user.png"
@@ -93,7 +92,7 @@ void ExampleDialog::peertreeWidgetCostumPopupMenu( QPoint point )
       QMenu contextMnu( this );
       QMouseEvent *mevent = new QMouseEvent( QEvent::MouseButtonPress, point, Qt::RightButton, Qt::RightButton, Qt::NoModifier );
 
-      voteupAct = new QAction(QIcon(IMAGE_EXPIORTFRIEND), tr( "Vote Up" ), this );
+      voteupAct = new QAction(QIcon(), tr( "Vote Up" ), this );
       connect( voteupAct , SIGNAL( triggered() ), this, SLOT( voteup() ) );
 
       votedownAct = new QAction(QIcon(IMAGE_REMOVEFRIEND), tr( "Vote Down" ), this );

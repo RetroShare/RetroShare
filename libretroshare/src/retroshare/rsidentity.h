@@ -309,6 +309,7 @@ enum class RsGxsIdentityEventCode: uint8_t
     UNKNOWN                    = 0x00,
     NEW_IDENTITY               = 0x01,
     DELETED_IDENTITY           = 0x02,
+    UPDATED_IDENTITY           = 0x03,
 };
 
 struct RsGxsIdentityEvent: public RsEvent

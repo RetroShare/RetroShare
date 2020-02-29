@@ -19,7 +19,7 @@
  *******************************************************************************/
 
 #include "GxsUserNotify.h"
-#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+//#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include "retroshare/rsgxsifacehelper.h"
 
@@ -36,8 +36,8 @@ GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
 	mTokenService = mInterface->getTokenService();
 	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
-	mBase = new RsGxsUpdateBroadcastBase(ifaceImpl);
-	connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateIcon()));
+	//mBase = new RsGxsUpdateBroadcastBase(ifaceImpl);
+	//connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateIcon()));
 }
 
 GxsUserNotify::~GxsUserNotify()
@@ -45,9 +45,9 @@ GxsUserNotify::~GxsUserNotify()
 	if (mTokenQueue) {
 		delete(mTokenQueue);
 	}
-	if (mBase) {
-		delete(mBase);
-	}
+	//if (mBase) {
+		//delete(mBase);
+	//}
 }
 
 void GxsUserNotify::startUpdate()
