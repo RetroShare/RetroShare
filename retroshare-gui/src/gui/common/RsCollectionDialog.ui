@@ -308,8 +308,8 @@
                       <string/>
                      </property>
                      <property name="icon">
-                      <iconset resource="../../../../plugins/FeedReader/gui/FeedReader_images.qrc">
-                       <normaloff>:/images/Update.png</normaloff>:/images/Update.png</iconset>
+                      <iconset resource="../images.qrc">
+                       <normaloff>:/images/update.png</normaloff>:/images/update.png</iconset>
                      </property>
                     </widget>
                    </item>

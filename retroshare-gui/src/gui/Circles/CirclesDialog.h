@@ -27,11 +27,11 @@
 #include "util/TokenQueue.h"
 #include "ui_CirclesDialog.h"
 
-#define IMAGE_CIRCLES           ":/images/circles/circles_32.png"
+#define IMAGE_CIRCLES           ":/icons/png/circles.png"
 
 class UIStateHelper;
 
-class CirclesDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class CirclesDialog : public MainPage, public TokenResponse
 {
 	Q_OBJECT
 

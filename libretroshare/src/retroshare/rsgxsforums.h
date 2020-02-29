@@ -245,7 +245,7 @@ public:
 	                                  std::vector<RsMsgMetaData>& msgMetas) = 0;
 
 	/**
-	 * @brief Get specific list of messages from a single forums. Blocking API
+	 * @brief Get specific list of messages from a single forum. Blocking API
 	 * @jsonapi{development}
 	 * @param[in] forumId id of the forum of which the content is requested
 	 * @param[in] msgsIds list of message ids to request

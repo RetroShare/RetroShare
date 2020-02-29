@@ -34,7 +34,7 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
-class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
+class FriendSelectionWidget : public QWidget, public TokenResponse
 {
 	Q_OBJECT
 

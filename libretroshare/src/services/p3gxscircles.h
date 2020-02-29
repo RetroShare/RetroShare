@@ -208,6 +208,10 @@ public:
 	bool inviteIdsToCircle( const std::set<RsGxsId>& identities,
 	                        const RsGxsCircleId& circleId ) override;
 
+	/// @see RsGxsCircles
+	bool revokeIdsFromCircle( const std::set<RsGxsId>& identities,
+	                        const RsGxsCircleId& circleId ) override;
+
     /// @see RsGxsCircles
 	bool getCircleRequest(const RsGxsGroupId& circleId,
                           const RsGxsMessageId& msgId,
@@ -341,6 +345,8 @@ public:
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
+    bool mCacheUpdated ;
+    rstime_t mLastCacheUpdateEvent;
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

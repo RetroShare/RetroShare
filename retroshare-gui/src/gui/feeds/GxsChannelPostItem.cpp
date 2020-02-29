@@ -30,6 +30,7 @@
 #include "FeedHolder.h"
 #include "SubFileItem.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 #include "gui/RetroShareLink.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -230,107 +231,149 @@ void GxsChannelPostItem::loadComments()
 	comments(title);
 }
 
-void GxsChannelPostItem::loadGroup(const uint32_t &token)
+void GxsChannelPostItem::loadGroup()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelGroupItem::loadGroup()";
 	std::cerr << std::endl;
 #endif
 
-	std::vector<RsGxsChannelGroup> groups;
-	if (!rsGxsChannels->getGroupData(token, groups))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "GxsChannelGroupItem::loadGroup() Wrong number of Items";
-		std::cerr << std::endl;
-		return;
-	}
+		std::vector<RsGxsChannelGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-	setGroup(groups[0]);
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		{
+			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsGxsChannelGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			setGroup(group);
+
+		}, this );
+	});
 }
 
-void GxsChannelPostItem::loadMessage(const uint32_t &token)
+void GxsChannelPostItem::loadMessage()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::loadMessage()";
 	std::cerr << std::endl;
 #endif
-
-	std::vector<RsGxsChannelPost> posts;
-	std::vector<RsGxsComment> cmts;
-	if (!rsGxsChannels->getPostData(token, posts, cmts))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelPostItem::loadMessage() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	if (posts.size() == 1)
-	{
-        std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-		setPost(posts[0]);
-	}
-	else if (cmts.size() == 1)
-	{
-		RsGxsComment cmt = cmts[0];
+		std::vector<RsGxsChannelPost> posts;
+		std::vector<RsGxsComment> comments;
 
-        std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-		ui->newCommentLabel->show();
-		ui->commLabel->show();
-		ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		{
+			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
 
-		//Change this item to be uploaded with thread element.
-		setMessageId(cmt.mMeta.mThreadId);
-		requestMessage();
-	}
-	else
-	{
-		std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
-		std::cerr << std::endl;
-		removeItem();
-		return;
-	}
+		if (posts.size() == 1)
+		{
+			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+            const RsGxsChannelPost& post(posts[0]);
+
+			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
+		}
+		else if(comments.size() == 1)
+		{
+			const RsGxsComment& cmt = comments[0];
+			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
+
+			RsQThreadUtils::postToObject( [cmt,this]()
+			{
+				ui->newCommentLabel->show();
+				ui->commLabel->show();
+				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
+
+				//Change this item to be uploaded with thread element.
+				setMessageId(cmt.mMeta.mThreadId);
+				requestMessage();
+
+			}, this );
+
+		}
+		else
+		{
+			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
+			std::cerr << std::endl;
+
+			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
+		}
+	});
 }
 
-void GxsChannelPostItem::loadComment(const uint32_t &token)
+void GxsChannelPostItem::loadComment()
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::loadComment()";
 	std::cerr << std::endl;
 #endif
 
-	std::vector<RsGxsComment> cmts;
-	if (!rsGxsChannels->getRelatedComments(token, cmts))
+	RsThread::async([this]()
 	{
-		std::cerr << "GxsChannelPostItem::loadComment() ERROR getting data";
-		std::cerr << std::endl;
-		return;
-	}
+		// 1 - get group data
 
-	size_t comNb = cmts.size();
-	QString sComButText = tr("Comment");
-	if (comNb == 1) {
-		sComButText = sComButText.append("(1)");
-	} else if (comNb > 1) {
-		sComButText = tr("Comments ").append("(%1)").arg(comNb);
-	}
-	ui->commentButton->setText(sComButText);
+        std::set<RsGxsMessageId> msgIds;
+
+        for(auto MsgId: messageVersions())
+            msgIds.insert(MsgId);
+
+		std::vector<RsGxsChannelPost> posts;
+		std::vector<RsGxsComment> comments;
+
+		if(! rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments))
+		{
+			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+        int comNb = comments.size();
+
+		RsQThreadUtils::postToObject( [comNb,this]()
+		{
+			QString sComButText = tr("Comment");
+			if (comNb == 1)
+				sComButText = sComButText.append("(1)");
+			else if(comNb > 1)
+				sComButText = tr("Comments ").append("(%1)").arg(comNb);
+
+			ui->commentButton->setText(sComButText);
+
+		}, this );
+	});
 }
 
 void GxsChannelPostItem::fill()
 {
 	/* fill in */
 
-	if (isLoading()) {
-		/* Wait for all requests */
-		return;
-	}
+//	if (isLoading()) {
+	//	/* Wait for all requests */
+		//return;
+//	}
 
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsChannelPostItem::fill()";

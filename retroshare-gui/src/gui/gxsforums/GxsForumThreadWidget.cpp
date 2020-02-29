@@ -184,95 +184,6 @@ public:
 	}
 };
 
-class AuthorItemDelegate: public QStyledItemDelegate
-{
-public:
-    AuthorItemDelegate() {}
-
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override
-    {
-		QStyleOptionViewItemV4 opt = option;
-		initStyleOption(&opt, index);
-
-		// disable default icon
-		opt.icon = QIcon();
-		const QRect r = option.rect;
-
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-        QString str;
-        QList<QIcon> icons;
-        QString comment;
-
-        QFontMetricsF fm(option.font);
-        float f = fm.height();
-
-		QIcon icon ;
-
-		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			icon = GxsIdDetails::getLoadingIcon(id);
-		else
-			icon = *icons.begin();
-
-		QPixmap pix = icon.pixmap(r.size());
-
-        return QSize(1.2*(pix.width() + fm.width(str)),std::max(1.1*pix.height(),1.4*fm.height()));
-    }
-
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override
-	{
-		if(!index.isValid())
-        {
-            std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
-            return ;
-        }
-
-		QStyleOptionViewItemV4 opt = option;
-		initStyleOption(&opt, index);
-
-		// disable default icon
-		opt.icon = QIcon();
-		// draw default item
-		QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
-
-		const QRect r = option.rect;
-
-        RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-        QString str;
-        QList<QIcon> icons;
-        QString comment;
-
-        QFontMetricsF fm(painter->font());
-        float f = fm.height();
-
-		QIcon icon ;
-
-		if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			icon = GxsIdDetails::getLoadingIcon(id);
-		else
-			icon = *icons.begin();
-
-		unsigned int warning_level = qvariant_cast<unsigned int>(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION).data(Qt::DecorationRole));
-
-        if(warning_level == 2)
-        {
-			str = tr("[Banned]");
-            icon = QIcon(IMAGE_BIOHAZARD);
-        }
-
-        if(index.data(RsGxsForumModel::MissingRole).toBool())
-			painter->drawText(r.topLeft() + QPoint(f/2.0,f*1.0), tr("[None]"));
-        else
-		{
-			QPixmap pix = icon.pixmap(r.size());
-			const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
-
-			// draw pixmap at center of item
-			painter->drawPixmap(r.topLeft() + p, pix);
-			painter->drawText(r.topLeft() + QPoint(r.height()+ f/2.0 + f/2.0,f*1.0), str);
-		}
-	}
-};
-
 class ForumPostSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
@@ -311,7 +222,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 {
 	ui->setupUi(this);
 
-	setUpdateWhenInvisible(true);
+	//setUpdateWhenInvisible(true);
 
     //mUpdating = false;
 	mUnreadCount = 0;
@@ -331,7 +242,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->setSortingEnabled(true);
 
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION,new DistributionItemDelegate()) ;
-    ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new AuthorItemDelegate()) ;
+    ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_AUTHOR,new GxsIdTreeItemDelegate()) ;
     ui->threadTreeWidget->setItemDelegateForColumn(RsGxsForumModel::COLUMN_THREAD_READ,new ReadStatusItemDelegate()) ;
 
     ui->threadTreeWidget->header()->setSortIndicatorShown(true);
@@ -570,55 +481,6 @@ QIcon GxsForumThreadWidget::groupIcon()
 	return QIcon();
 }
 
-#ifdef TO_REMOVE
-void GxsForumThreadWidget::changeEvent(QEvent *e)
-{
-	RsGxsUpdateBroadcastWidget::changeEvent(e);
-	switch (e->type()) {
-	case QEvent::StyleChange:
-		//calculateIconsAndFonts();
-		break;
-	default:
-		// remove compiler warnings
-		break;
-	}
-}
-
-static void removeMessages(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds, QList<RsGxsMessageId> &removeMsgId)
-{
-	QList<RsGxsMessageId> removedMsgId;
-
-	for (auto grpIt = msgIds.begin(); grpIt != msgIds.end(); )
-    {
-		std::set<RsGxsMessageId> &msgs = grpIt->second;
-
-		QList<RsGxsMessageId>::const_iterator removeMsgIt;
-		for (removeMsgIt = removeMsgId.begin(); removeMsgIt != removeMsgId.end(); ++removeMsgIt) {
-			if(msgs.find(*removeMsgIt) != msgs.end())
-            {
-				removedMsgId.push_back(*removeMsgIt);
-				msgs.erase(*removeMsgIt);
-			}
-		}
-
-		if (msgs.empty()) {
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator grpItErase = grpIt++;
-			msgIds.erase(grpItErase);
-		} else {
-			++grpIt;
-		}
-	}
-
-	if (!removedMsgId.isEmpty()) {
-		QList<RsGxsMessageId>::const_iterator removedMsgIt;
-		for (removedMsgIt = removedMsgId.begin(); removedMsgIt != removedMsgId.end(); ++removedMsgIt) {
-			// remove first message id
-			removeMsgId.removeOne(*removedMsgIt);
-		}
-	}
-}
-#endif
-
 void GxsForumThreadWidget::saveExpandedItems(QList<RsGxsMessageId>& expanded_items) const
 {
     expanded_items.clear();
@@ -654,16 +516,6 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #ifdef DEBUG_FORUMS
     std::cerr << "udateDisplay: groupId()=" << groupId()<< std::endl;
 #endif
-#ifdef TO_REMOVE
-	if(mUpdating)
-    {
-#ifdef DEBUG_FORUMS
-        std::cerr << "  Already updating. Return!"<< std::endl;
-#endif
-		return;
-    }
-#endif
-
 	if(groupId().isNull())
     {
 #ifdef DEBUG_FORUMS
@@ -679,53 +531,6 @@ void GxsForumThreadWidget::updateDisplay(bool complete)
 #endif
 		complete = true;
     }
-
-	if(!complete)
-	{
-#ifdef DEBUG_FORUMS
-        std::cerr << "  checking changed group data and msgs"<< std::endl;
-#endif
-
-		const std::set<RsGxsGroupId> &grpIdsMeta = getGrpIdsMeta();
-
-		if(grpIdsMeta.find(groupId())!=grpIdsMeta.end())
-        {
-#ifdef DEBUG_FORUMS
-			std::cerr << "    grpMeta change. reloading!" << std::endl;
-#endif
-			complete = true;
-        }
-
-		const std::set<RsGxsGroupId> &grpIds = getGrpIds();
-
-		if (grpIds.find(groupId())!=grpIds.end())
-        {
-#ifdef DEBUG_FORUMS
-			std::cerr << "    grp data change. reloading!" << std::endl;
-#endif
-			complete = true;
-        }
-		else
-		{
-			// retrieve the list of modified msg ids
-			// if current group is listed in the map, reload the whole hierarchy
-
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
-			getAllMsgIds(msgIds);
-
-			//			if (!mIgnoredMsgId.empty())  /* Filter ignored messages */
-			//			removeMessages(msgIds, mIgnoredMsgId);
-
-			if (msgIds.find(groupId()) != msgIds.end())
-            {
-#ifdef DEBUG_FORUMS
-				std::cerr << "    msg data change. reloading!" << std::endl;
-#endif
-				complete=true;
-            }
-		}
-	}
-
 	if(complete) 	// need to update the group data, reload the messages etc.
 	{
 		saveExpandedItems(mSavedExpandedMessages);
@@ -1301,27 +1106,6 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	bool redacted =
 	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
     
-#ifdef TO_REMOVE
-	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-	uint32_t status = msg.mMeta.mMsgStatus ;//item->data(RsGxsForumModel::COLUMN_THREAD_DATA, ROLE_THREAD_STATUS).toUInt();
-
-    QModelIndex index = getCurrentIndex();
-	if (IS_MSG_NEW(status)) {
-		if (setToReadOnActive) {
-			/* set to read */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),true,false);
-		} else {
-			/* set to unread by user */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),false,false);
-		}
-	} else {
-		if (setToReadOnActive && IS_MSG_UNREAD(status)) {
-			/* set to read */
-			mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index), true,false);
-		}
-	}
-#endif
-
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
 	ui->by_label->setId(msg.mMeta.mAuthorId);
 	ui->lineRight->show();

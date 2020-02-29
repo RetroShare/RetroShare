@@ -27,7 +27,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QSplitter" name="splitter">
+    <widget class="QSplitter" name="listSplitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -37,7 +37,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QFrame" name="titleBarFrame">
+        <widget class="QFrame" name="toolBarFrameTop">
          <property name="maximumSize">
           <size>
            <width>16777215</width>
@@ -51,7 +51,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -66,7 +75,7 @@
              <string/>
             </property>
             <property name="pixmap">
-             <pixmap resource="Wiki_images.qrc">:/images/wikibook_32.png</pixmap>
+             <pixmap resource="../icons.qrc">:/icons/png/wiki.png</pixmap>
             </property>
             <property name="scaledContents">
              <bool>true</bool>
@@ -93,8 +102,8 @@
              <string>New Group</string>
             </property>
             <property name="icon">
-             <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/resource-group-new.png</normaloff>:/images/resource-group-new.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -123,12 +132,21 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>232</width>
-            <height>462</height>
+            <width>241</width>
+            <height>480</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -186,7 +204,16 @@
           <enum>QFrame::Sunken</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout">
-          <property name="margin">
+          <property name="leftMargin">
+           <number>2</number>
+          </property>
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="rightMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
            <number>2</number>
           </property>
           <item>
@@ -261,7 +288,7 @@
             </property>
             <property name="icon">
              <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/republish.png</normaloff>:/images/republish.png</iconset>
+              <normaloff>:/images/reload.png</normaloff>:/images/reload.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -284,7 +311,7 @@
             </property>
             <property name="icon">
              <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/story-editor.png</normaloff>:/images/story-editor.png</iconset>
+              <normaloff>:/images/editpage.png</normaloff>:/images/editpage.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -314,7 +341,7 @@
             </property>
             <property name="icon">
              <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/appointment-new.png</normaloff>:/images/appointment-new.png</iconset>
+              <normaloff>:/images/addpage.png</normaloff>:/images/addpage.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -340,7 +367,7 @@
             </property>
             <property name="icon">
              <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/republish.png</normaloff>:/images/republish.png</iconset>
+              <normaloff>:/images/reload.png</normaloff>:/images/reload.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -392,8 +419,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>501</width>
-            <height>462</height>
+            <width>510</width>
+            <height>480</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -443,6 +470,7 @@
  </customwidgets>
  <resources>
   <include location="Wiki_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

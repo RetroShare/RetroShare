@@ -32,7 +32,7 @@ class IdDetailsDialog;
 
 class UIStateHelper;
 
-class IdDetailsDialog : public QDialog, public TokenResponse
+class IdDetailsDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -42,9 +42,6 @@ public:
 	/** Default destructor */
 	~IdDetailsDialog();
 
-	/* TokenResponse */
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
 private slots:
 	void modifyReputation();
 	void toggleAutoBanIdentities(bool b);
@@ -52,15 +49,11 @@ private slots:
 	static QString inviteMessage();
 	void sendInvite();
 private :
-	void requestIdDetails();
-	void insertIdDetails(uint32_t token);
-	
-  void requestRepList();
-	void insertRepList(uint32_t token);
+	void loadIdentity();
+	void loadIdentity(RsGxsIdGroup data);
 
 private:
 	RsGxsGroupId mId;
-	TokenQueue *mIdQueue;
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */

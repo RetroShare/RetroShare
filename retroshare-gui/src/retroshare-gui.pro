@@ -1164,10 +1164,8 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoShareItemHolder.h \
 		gui/PhotoShare/PhotoShare.h \
 		gui/PhotoShare/PhotoSlideShow.h \
-		gui/PhotoShare/PhotoDialog.h \
-		gui/PhotoShare/PhotoCommentItem.h \
-		gui/PhotoShare/AddCommentDialog.h
-	
+		gui/PhotoShare/PhotoDialog.h
+
 	FORMS += \
 		gui/PhotoShare/AlbumExtra.ui \
 		gui/PhotoShare/PhotoItem.ui \
@@ -1176,10 +1174,8 @@ gxsphotoshare {
 		gui/PhotoShare/AlbumDialog.ui \
 		gui/PhotoShare/AlbumCreateDialog.ui \
 		gui/PhotoShare/PhotoShare.ui \
-		gui/PhotoShare/PhotoSlideShow.ui \
-		gui/PhotoShare/PhotoCommentItem.ui \
-		gui/PhotoShare/AddCommentDialog.ui
-	
+		gui/PhotoShare/PhotoSlideShow.ui
+
 	SOURCES += \
 		gui/PhotoShare/AlbumGroupDialog.cpp \
 		gui/PhotoShare/AlbumExtra.cpp \
@@ -1191,10 +1187,8 @@ gxsphotoshare {
 		gui/PhotoShare/AlbumCreateDialog.cpp \
 		gui/PhotoShare/PhotoShareItemHolder.cpp \
 		gui/PhotoShare/PhotoShare.cpp \
-		gui/PhotoShare/PhotoSlideShow.cpp \
-		gui/PhotoShare/PhotoCommentItem.cpp \
-		gui/PhotoShare/AddCommentDialog.cpp
-	
+		gui/PhotoShare/PhotoSlideShow.cpp
+
 	RESOURCES += gui/PhotoShare/Photo_images.qrc
 
 }
@@ -1418,9 +1412,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.h \
 		gui/gxs/GxsGroupFeedItem.h \
 		gui/gxs/GxsFeedItem.h \
-		gui/gxs/RsGxsUpdateBroadcastBase.h \
-		gui/gxs/RsGxsUpdateBroadcastWidget.h \
-		gui/gxs/RsGxsUpdateBroadcastPage.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
 		gui/gxs/GxsFeedWidget.h \
@@ -1455,9 +1446,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.cpp \
 		gui/gxs/GxsGroupFeedItem.cpp \
 		gui/gxs/GxsFeedItem.cpp \
-		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
-		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
-		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		gui/gxs/GxsUserNotify.cpp \
 		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
@@ -1466,4 +1454,17 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+
+wikipoos {
+	HEADERS += \
+		gui/gxs/RsGxsUpdateBroadcastBase.h \
+		gui/gxs/RsGxsUpdateBroadcastWidget.h \
+		gui/gxs/RsGxsUpdateBroadcastPage.h 
+
+	SOURCES += \
+		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
+		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
+		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }
