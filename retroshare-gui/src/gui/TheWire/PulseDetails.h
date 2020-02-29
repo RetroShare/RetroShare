@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseDetails.h                                                  *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,53 +18,45 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#ifndef MRK_PULSE_DETAILS_H
+#define MRK_PULSE_DETAILS_H
 
-#include "ui_PulseItem.h"
+#include "ui_PulseDetails.h"
+#include "PulseItem.h"
 
 #include <retroshare/rswire.h>
 
-class PulseItem;
-
-class PulseHolder
-{
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifySelection(PulseItem *item, int ptype) = 0;
-
-	// Actions.
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+class PulseDetails : public QWidget, private Ui::PulseDetails
 {
   Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group);
+	PulseDetails(PulseHolder *actions, RsWirePulse &pulse, std::string &groupName, bool is_original);
 
-	void removeItem();
+	// when Reply parent....
+	PulseDetails(PulseHolder *actions,
+		RsGxsGroupId   &parentGroupId,
+		std::string    &parentGroupName,
+		RsGxsMessageId &parentOrigMsgId,
+		RsGxsId	       &parentAuthorId,
+		rstime_t       &parentPublishTs,
+		std::string	&parentPulseText);
 
-	void setSelected(bool on);
-	bool isSelected();
+	void setup();
 
-	const QPixmap *getPixmap();
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
+private slots:
+	void toggle();
+	void follow();
+	void rate();
+	void reply();
 
 private:
+	QString getSummary();
 
-	PulseHolder *mHolder;
+	PulseHolder *mActions;
 	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
+	std::string  mGroupName;
+	bool mIsOriginal;
 };
 
 #endif
