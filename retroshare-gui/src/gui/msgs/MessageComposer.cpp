@@ -223,16 +223,16 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
     QActionGroup *grp = new QActionGroup(this);
     connect(grp, SIGNAL(triggered(QAction *)), this, SLOT(textAlign(QAction *)));
 
-    actionAlignLeft = new QAction(QIcon(":/images/textedit/textleft.png"), tr("&Left"), grp);
+    actionAlignLeft = new QAction(QIcon(""), tr("&Left"), grp);
     actionAlignLeft->setShortcut(Qt::CTRL + Qt::Key_L);
     actionAlignLeft->setCheckable(true);
-    actionAlignCenter = new QAction(QIcon(":/images/textedit/textcenter.png"), tr("C&enter"), grp);
+    actionAlignCenter = new QAction(QIcon(""), tr("C&enter"), grp);
     actionAlignCenter->setShortcut(Qt::CTRL + Qt::Key_E);
     actionAlignCenter->setCheckable(true);
-    actionAlignRight = new QAction(QIcon(":/images/textedit/textright.png"), tr("&Right"), grp);
+    actionAlignRight = new QAction(QIcon(""), tr("&Right"), grp);
     actionAlignRight->setShortcut(Qt::CTRL + Qt::Key_R);
     actionAlignRight->setCheckable(true);
-    actionAlignJustify = new QAction(QIcon(":/images/textedit/textjustify.png"), tr("&Justify"), grp);
+    actionAlignJustify = new QAction(QIcon(""), tr("&Justify"), grp);
     actionAlignJustify->setShortcut(Qt::CTRL + Qt::Key_J);
     actionAlignJustify->setCheckable(true);
     
@@ -279,8 +279,6 @@ MessageComposer::MessageComposer(QWidget *parent, Qt::WindowFlags flags)
 
     connect(ui.comboSize, SIGNAL(activated(const QString &)),this, SLOT(textSize(const QString &)));
     ui.comboSize->setCurrentIndex(ui.comboSize->findText(QString::number(QApplication::font().pointSize())));
-
-    ui.textalignmentbtn->setIcon(QIcon(QString(":/images/textedit/textcenter.png")));
 
     QMenu * alignmentmenu = new QMenu();
     alignmentmenu->addAction(actionAlignLeft);
@@ -1892,19 +1890,19 @@ void MessageComposer::setupFileActions()
 
     QAction *a;
 
-    a = new QAction(QIcon(":/images/textedit/filenew.png"), tr("&New"), this);
+    a = new QAction(QIcon(""), tr("&New"), this);
     a->setShortcut(QKeySequence::New);
     connect(a, SIGNAL(triggered()), this, SLOT(fileNew()));
     menu->addAction(a);
 
-    a = new QAction(QIcon(":/images/textedit/fileopen.png"), tr("&Open..."), this);
+    a = new QAction(QIcon(""), tr("&Open..."), this);
     a->setShortcut(QKeySequence::Open);
     connect(a, SIGNAL(triggered()), this, SLOT(fileOpen()));
     menu->addAction(a);
 
     menu->addSeparator();
 
-    actionSave = a = new QAction(QIcon(":/images/textedit/filesave.png"), tr("&Save"), this);
+    actionSave = a = new QAction(QIcon(""), tr("&Save"), this);
     a->setShortcut(QKeySequence::Save);
     connect(a, SIGNAL(triggered()), this, SLOT(saveasDraft()));
     a->setEnabled(false);
@@ -1919,7 +1917,7 @@ void MessageComposer::setupFileActions()
     menu->addAction(a);
     menu->addSeparator();
 
-    a = new QAction(QIcon(":/images/textedit/fileprint.png"), tr("&Print..."), this);
+    a = new QAction(QIcon(""), tr("&Print..."), this);
     a->setShortcut(QKeySequence::Print);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrint()));
     menu->addAction(a);
@@ -1928,7 +1926,7 @@ void MessageComposer::setupFileActions()
     connect(a, SIGNAL(triggered()), this, SLOT(filePrintPreview()));
     menu->addAction(a);*/
 
-    a = new QAction(QIcon(":/images/textedit/exportpdf.png"), tr("&Export PDF..."), this);
+    a = new QAction(QIcon(""), tr("&Export PDF..."), this);
     a->setShortcut(Qt::CTRL + Qt::Key_D);
     connect(a, SIGNAL(triggered()), this, SLOT(filePrintPdf()));
     menu->addAction(a);
@@ -1947,20 +1945,20 @@ void MessageComposer::setupEditActions()
     menuBar()->addMenu(menu);
 
     QAction *a;
-    a = actionUndo = new QAction(QIcon(":/images/textedit/editundo.png"), tr("&Undo"), this);
+    a = actionUndo = new QAction(QIcon(""), tr("&Undo"), this);
     a->setShortcut(QKeySequence::Undo);
     menu->addAction(a);
-    a = actionRedo = new QAction(QIcon(":/images/textedit/editredo.png"), tr("&Redo"), this);
+    a = actionRedo = new QAction(QIcon(""), tr("&Redo"), this);
     a->setShortcut(QKeySequence::Redo);
     menu->addAction(a);
     menu->addSeparator();
-    a = actionCut = new QAction(QIcon(":/images/textedit/editcut.png"), tr("Cu&t"), this);
+    a = actionCut = new QAction(QIcon(""), tr("Cu&t"), this);
     a->setShortcut(QKeySequence::Cut);
     menu->addAction(a);
-    a = actionCopy = new QAction(QIcon(":/images/textedit/editcopy.png"), tr("&Copy"), this);
+    a = actionCopy = new QAction(QIcon(""), tr("&Copy"), this);
     a->setShortcut(QKeySequence::Copy);
     menu->addAction(a);
-    a = actionPaste = new QAction(QIcon(":/images/textedit/editpaste.png"), tr("&Paste"), this);
+    a = actionPaste = new QAction(QIcon(""), tr("&Paste"), this);
     a->setShortcut(QKeySequence::Paste);
     menu->addAction(a);
     actionPaste->setEnabled(!QApplication::clipboard()->text().isEmpty());
@@ -2431,9 +2429,9 @@ void MessageComposer::on_contactsdockWidget_visibilityChanged(bool visible)
 void MessageComposer::updatecontactsviewicons()
 {
     if(!ui.contactsdockWidget->isVisible()){
-      ui.actionContactsView->setIcon(QIcon(":/images/contactsclosed24.png"));
+      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
     }else{
-      ui.actionContactsView->setIcon(QIcon(":/images/contacts24.png"));
+      ui.actionContactsView->setIcon(QIcon(":/icons/mail/contacts.png"));
     } 
 }
 
