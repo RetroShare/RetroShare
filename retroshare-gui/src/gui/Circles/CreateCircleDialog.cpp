@@ -41,8 +41,8 @@
 #define CREATECIRCLEDIALOG_IDINFO     3
 
 #define RSCIRCLEID_COL_NICKNAME       0
-#define RSCIRCLEID_COL_KEYID          1
-#define RSCIRCLEID_COL_IDTYPE         2
+#define RSCIRCLEID_COL_IDTYPE         1
+#define RSCIRCLEID_COL_KEYID          2
 
 /** Constructor */
 CreateCircleDialog::CreateCircleDialog()
@@ -84,7 +84,7 @@ CreateCircleDialog::CreateCircleDialog()
 
 	QObject::connect(ui.radioButton_ListAll, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
 	QObject::connect(ui.radioButton_ListAllPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
-	QObject::connect(ui.radioButton_ListKnownPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
+	QObject::connect(ui.radioButton_ListFriendPGP, SIGNAL(toggled(bool)), this, SLOT(idTypeChanged())) ;
 
 	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
@@ -96,9 +96,11 @@ CreateCircleDialog::CreateCircleDialog()
 	mIsExternalCircle = true;
 	mClearList = true;
 #if QT_VERSION >= 0x040700
-        ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
+	ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
 #endif
         
+	ui.treeWidget_IdList->setColumnHidden(RSCIRCLEID_COL_KEYID,true); // no need to show this. the tooltip will do it.
+
     //ui.idChooser->loadIds(0,RsGxsId());
     ui.circleComboBox->loadCircles(RsGxsCircleId());
 }
@@ -263,7 +265,7 @@ void CreateCircleDialog::addMember(const RsGxsIdGroup &idGroup)
 {
 	QString  keyId = QString::fromStdString(idGroup.mMeta.mGroupId.toStdString());
 	QString  nickname = QString::fromUtf8(idGroup.mMeta.mGroupName.c_str());
-	QString  idtype = tr("Anon Id");
+	QString  idtype = tr("[Anonymous Id]");
 
 	QPixmap pixmap ;
 
@@ -324,7 +326,7 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 
 			QString  keyId = QString::fromStdString(gxs_id.toStdString());
 			QString  nickname = QString::fromUtf8(gxs_details.mNickname.c_str());
-			QString  idtype = tr("Anon Id");
+			QString  idtype = tr("[Anonymous Id]");
 
 			QPixmap pixmap ;
 
@@ -333,8 +335,8 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 
 			addMember(keyId, idtype, nickname, QIcon(pixmap));
 
-		}//if(!gxs_id.isNull() && rsIdentity->getIdDetails(gxs_id,gxs_details))
-	}//for (itUnknownPeers it = cirDetails.mUnknownPeers.begin()
+		}
+	}
 
 	typedef std::set<RsPgpId>::const_iterator itAllowedPeers;
 	for (itAllowedPeers it = cirDetails.mAllowedNodes.begin() ; it != cirDetails.mAllowedNodes.end() ; ++it ) 
@@ -352,8 +354,8 @@ void CreateCircleDialog::addCircle(const RsGxsCircleDetails &cirDetails)
 
 			addMember(keyId, idtype, nickname, QIcon(avatar));
 
-		}//if(!gpg_id.isNull() && rsPeers->getGPGDetails(gpg_id,details))
-	}//for (itAllowedPeers it = cirDetails.mAllowedPeers.begin()
+		}
+	}
 }
 
 void  CreateCircleDialog::removeMember()
@@ -385,7 +387,7 @@ void CreateCircleDialog::createCircle()
 	    QMessageBox::warning(this, tr("RetroShare"),tr("Please set a name for your Circle"), QMessageBox::Ok, QMessageBox::Ok);
 
 	    return; //Don't add  a empty Subject!!
-    }//if(name.isEmpty())
+    }
 
     RsGxsCircleGroup circle = mCircleGroup;	// init with loaded group
 
@@ -458,16 +460,6 @@ void CreateCircleDialog::createCircle()
 	    }
 
     }
-
-    //	if (mIsExistingCircle) 
-    //    {
-    //		std::cerr << "CreateCircleDialog::createCircle() Existing Circle TODO";
-    //		std::cerr << std::endl;
-    //
-    //		// cannot edit these yet.
-    //		QMessageBox::warning(this, tr("RetroShare"),tr("Cannot Edit Existing Circles Yet"), QMessageBox::Ok, QMessageBox::Ok);
-    //		return; 
-    //	}
 
     if (mIsExternalCircle) 
     {
@@ -742,22 +734,20 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 	QTreeWidget *tree = ui.treeWidget_IdList;
 	tree->clear();
 
-	bool acceptAnonymous = ui.radioButton_ListAll->isChecked();
-	bool acceptAllPGP = ui.radioButton_ListAllPGP->isChecked();
-	//bool acceptKnownPGP = ui.radioButton_ListKnownPGP->isChecked();
+	bool acceptAll = ui.radioButton_ListAll->isChecked();
+	bool acceptOnlySignedIdentities = ui.radioButton_ListAllPGP->isChecked();
+	bool acceptOnlyIdentitiesSignedByFriend = ui.radioButton_ListFriendPGP->isChecked();
 
 	for(const auto& idGroup:id_groups)
 	{
+		bool isSigned = !idGroup.mPgpId.isNull();
+		bool isSignedByFriendNode = isSigned && rsPeers->isPgpFriend(idGroup.mPgpId);
+
 		/* do filtering */
 		bool ok = false;
-		if (acceptAnonymous)
-			ok = true;
-		else if (acceptAllPGP)
-			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility ;
-		else if (idGroup.mPgpKnown)
-			ok = idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility ;
 
-		if (!ok) {
+		if(!(acceptAll ||(acceptOnlySignedIdentities && isSigned) ||(acceptOnlyIdentitiesSignedByFriend && isSignedByFriendNode)))
+		{
 #ifdef DEBUG_CREATE_CIRCLE_DIALOG 
 			std::cerr << "CreateCircleDialog::insertIdentities() Skipping ID: " << data.mMeta.mGroupId;
 			std::cerr << std::endl;
@@ -767,23 +757,21 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 
 		QString  keyId = QString::fromStdString(idGroup.mMeta.mGroupId.toStdString());
 		QString  nickname = QString::fromUtf8(idGroup.mMeta.mGroupName.c_str());
-		QString  idtype = tr("Anon Id");
+		QString  idtype ;
 
 		QPixmap pixmap ;
 
 		if(idGroup.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idGroup.mImage.mData, idGroup.mImage.mSize, pixmap, GxsIdDetails::SMALL))
 			pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(idGroup.mMeta.mGroupId),GxsIdDetails::SMALL) ;
 
-		if (idGroup.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
+		if (!idGroup.mPgpId.isNull())
 		{
-			if (idGroup.mPgpKnown) {
-				RsPeerDetails details;
-				rsPeers->getGPGDetails(idGroup.mPgpId, details);
-				idtype = QString::fromUtf8(details.name.c_str());
-			}
-			else
-				idtype = tr("PGP Linked Id");
+			RsPeerDetails details;
 
+			if(rsPeers->getGPGDetails(idGroup.mPgpId, details))
+				idtype = QString::fromUtf8(details.name.c_str());
+            else
+				idtype = tr("[Unknown]");
 		}
 
 		QTreeWidgetItem *item = new QTreeWidgetItem();
@@ -792,6 +780,11 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 		item->setText(RSCIRCLEID_COL_KEYID, keyId);
 		item->setText(RSCIRCLEID_COL_IDTYPE, idtype);
 		tree->addTopLevelItem(item);
+
+        RsIdentityDetails det;
+
+        if(rsIdentity->getIdDetails(RsGxsId(idGroup.mMeta.mGroupId),det))
+			item->setToolTip(RSCIRCLEID_COL_NICKNAME,GxsIdDetails::getComment(det));
 
 		// External Circle.
 		if (mIsExistingCircle)
