@@ -2958,8 +2958,10 @@ void p3IdService::requestIdsFromNet()
 
 	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
 	{
+#ifdef DEBUG_IDS
 		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: "
 		       << cit->first << std::endl;
+#endif
 
 		const RsGxsId& gxsId = cit->first;
 		const std::list<RsPeerId>& peers = cit->second;
@@ -2978,9 +2980,11 @@ void p3IdService::requestIdsFromNet()
 				requests[peer].push_back(cit->first);
 				request_can_proceed = true ;
 
+#ifdef DEBUG_IDS
 				Dbg2() << __PRETTY_FUNCTION__ << " Moving missing key RsGxsId:"
 				       << gxsId << " to peer: " << peer << " requests queue"
 				       << std::endl;
+#endif
 			}
 		}
 
@@ -3013,9 +3017,11 @@ void p3IdService::requestIdsFromNet()
 		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
 		     gxs_id_it != cit2->second.end(); ++gxs_id_it )
 		{
+#ifdef DEBUG_IDS
 			Dbg2() << __PRETTY_FUNCTION__ << " passing RsGxsId: " << *gxs_id_it
 			       << " request for peer: " << peer
 			       << " to RsNetworkExchangeService " << std::endl;
+#endif
 			grpIds.push_back(RsGxsGroupId(*gxs_id_it));
 		}
 
@@ -3580,7 +3586,9 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
         }
     }
 
+#ifdef DEBUG_IDS
 	Dbg2() << __PRETTY_FUNCTION__ << " returns: " << createStatus << std::endl;
+#endif
 	return createStatus;
 }
 

@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2012-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -34,37 +34,33 @@
  *
  */
 
-
 class p3Wire: public RsGenExchange, public RsWire
 {
 public:
-    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
-virtual RsServiceInfo getServiceInfo();
-static uint32_t wireAuthenPolicy();
+	p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+	virtual RsServiceInfo getServiceInfo();
+	static uint32_t wireAuthenPolicy();
 
 protected:
-
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
 
 public:
+	virtual void service_tick();
 
-virtual void service_tick();
+	virtual RsTokenService* getTokenService();
 
-        /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
-virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
+	/* Specific Service Data */
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
+	virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
 
-virtual bool createGroup(uint32_t &token, RsWireGroup &group);
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
+	virtual bool createGroup(uint32_t &token, RsWireGroup &group);
+	virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
 
-	private:
-
-virtual void generateDummyData();
-std::string genRandomId();
+private:
+	virtual void generateDummyData();
+	std::string genRandomId();
 
 	RsMutex mWireMtx;
-
-
 };
 
 #endif 

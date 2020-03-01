@@ -293,6 +293,9 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 
 	RsGxsCircleDetails details;
 
+    if(pe->mCircleId.isNull())	// probably an item for cache update
+        return ;
+
 	if(!rsGxsCircles->getCircleDetails(pe->mCircleId,details))
     {
         std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;

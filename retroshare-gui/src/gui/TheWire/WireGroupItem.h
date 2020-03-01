@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/WireGroupItem.h                                                 *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,36 +18,21 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#ifndef MRK_WIRE_GROUP_ITEM_H
+#define MRK_WIRE_GROUP_ITEM_H
 
-#include "ui_PulseItem.h"
+#include "ui_WireGroupItem.h"
 
 #include <retroshare/rswire.h>
 
-class PulseItem;
+class WireGroupItem;
 
-class PulseHolder
-{
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifySelection(PulseItem *item, int ptype) = 0;
-
-	// Actions.
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+class WireGroupItem : public QWidget, private Ui::WireGroupItem
 {
   Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group);
+	WireGroupItem(RsWireGroup grp);
 
 	void removeItem();
 
@@ -56,14 +41,17 @@ public:
 
 	const QPixmap *getPixmap();
 
+private slots:
+	void show();
+
 protected:
 	void mousePressEvent(QMouseEvent *event);
 
 private:
+	void setup();
 
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
+	RsWireGroup mGroup;
+	uint32_t	 mType;
 	bool mSelected;
 };
 

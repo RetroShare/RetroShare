@@ -99,8 +99,6 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0) { return out; }	// derived from RsItem, but should be removed
-
         virtual void clear() {}
 };
 
