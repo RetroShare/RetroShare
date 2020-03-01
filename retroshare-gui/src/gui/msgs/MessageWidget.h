@@ -82,10 +82,13 @@ private slots:
 	void anchorClicked(const QUrl &url);
 
 	void loadImagesAlways();
+	void buttonStyle();
+	void viewSource();
 
 private:
 	void clearTagLabels();
 	void showTagLabels();
+	void setToolbarButtonStyle(Qt::ToolButtonStyle style);
 
 	bool isControlled;
 	bool isWindow;

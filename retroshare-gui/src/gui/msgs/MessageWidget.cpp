@@ -28,6 +28,8 @@
 #include <QTextStream>
 #include <QTextCodec>
 #include <QDesktopServices>
+#include <QPlainTextEdit>
+#include <QDialog>
 
 #include "gui/notifyqt.h"
 #include "gui/RetroShareLink.h"
@@ -131,11 +133,29 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isWindow = false;
 	currMsgFlags = 0;
 
+	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
+	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
+
 	connect(ui.msgList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(msgfilelistWidgetCostumPopupMenu(QPoint)));
 	connect(ui.expandFilesButton, SIGNAL(clicked()), this, SLOT(togglefileview()));
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(getallrecommended()));
 	connect(ui.msgText, SIGNAL(anchorClicked(QUrl)), this, SLOT(anchorClicked(QUrl)));
 	connect(ui.sendInviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
+	
+	connect(ui.replyButton, SIGNAL(clicked()), this, SLOT(reply()));
+	connect(ui.replyallButton, SIGNAL(clicked()), this, SLOT(replyAll()));
+	connect(ui.forwardButton, SIGNAL(clicked()), this, SLOT(forward()));
+	connect(ui.deleteButton, SIGNAL(clicked()), this, SLOT(remove()));
+	
+	connect(ui.actionSaveAs, SIGNAL(triggered()), this, SLOT(saveAs()));
+	connect(ui.actionPrint, SIGNAL(triggered()), this, SLOT(print()));
+	connect(ui.actionPrintPreview, SIGNAL(triggered()), this, SLOT(printPreview()));
+	connect(ui.actionIconOnly, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+	connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
+	
+	QAction *viewsource = new QAction(tr("View source"), this);
+	viewsource->setShortcut(QKeySequence("CTRL+O"));
+	connect(viewsource, SIGNAL(triggered()), this, SLOT(viewSource()));
 
 	connect(NotifyQt::getInstance(), SIGNAL(messagesTagsChanged()), this, SLOT(messagesTagsChanged()));
 	connect(NotifyQt::getInstance(), SIGNAL(messagesChanged()), this, SLOT(messagesChanged()));
@@ -156,6 +176,16 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	msglheader->resizeSection (COLUMN_FILE_NAME, 200);
 	msglheader->resizeSection (COLUMN_FILE_SIZE, 100);
 	msglheader->resizeSection (COLUMN_FILE_HASH, 200);
+
+	QMenu *moremenu = new QMenu();
+	moremenu->addAction(viewsource);
+	moremenu->addAction(ui.actionSaveAs);
+	moremenu->addAction(ui.actionPrint);
+	moremenu->addAction(ui.actionPrintPreview);
+	moremenu->addSeparator();
+	moremenu->addAction(ui.actionTextBesideIcon);
+	moremenu->addAction(ui.actionIconOnly);
+	ui.moreButton->setMenu(moremenu);
 
 	QFont font = QFont("Arial", 10, QFont::Bold);
 	ui.subjectText->setFont(font);
@@ -255,11 +285,18 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		ui.expandFilesButton->setChecked(value);
 		ui.msgList->setVisible(value);
 		togglefileview();
+		
+		// toolbar button style
+		Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonTextBesideIcon).toInt();
+		setToolbarButtonStyle(style);
 	} else {
 		// save settings
 
 		// expandFiles
 		Settings->setValue("expandFiles", ui.expandFilesButton->isChecked());
+
+		//toolbar button style
+		Settings->setValue("ToolButon_Style", ui.replyButton->toolButtonStyle());
 	}
 
 	Settings->endGroup();
@@ -292,10 +329,10 @@ void MessageWidget::togglefileview()
 	*/
 
 	if (ui.expandFilesButton->isChecked()) {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
 }
@@ -795,4 +832,35 @@ void MessageWidget::sendInvite()
       MessageComposer::sendInvite(mi.rsgxsid_srcId,false);
 	//}
 
+}
+
+void MessageWidget::setToolbarButtonStyle(Qt::ToolButtonStyle style)
+{
+	ui.deleteButton->setToolButtonStyle(style);
+	ui.replyButton->setToolButtonStyle(style);
+	ui.replyallButton->setToolButtonStyle(style);
+	ui.forwardButton->setToolButtonStyle(style);
+	ui.moreButton->setToolButtonStyle(style);
+}
+
+void MessageWidget::buttonStyle()
+{
+	setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
+}
+
+void MessageWidget::viewSource()
+{
+	QDialog *dialog = new QDialog(this);
+	QPlainTextEdit *pte = new QPlainTextEdit(dialog);
+	pte->setPlainText( ui.msgText->toHtml() );
+	QGridLayout *gl = new QGridLayout(dialog);
+	gl->addWidget(pte,0,0,1,1);
+	dialog->setWindowTitle(tr("Document source"));
+	dialog->resize(500, 400);
+
+	dialog->exec();
+
+	ui.msgText->setHtml(pte->toPlainText());
+
+	delete dialog;
 }
