@@ -474,14 +474,14 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							ChatLobbyInfo info;
 							if(rsMsgs->getChatLobbyInfo(lobby_id,  info)) {
 								if(historyIt->incoming) {
+									state.name = info.lobby_name;
+									state.hasName = true;
+									break;
+								} else {
 									// we need our own name
 									state.gxs= info.gxs_id;
 									state.hasGxs = true;
 									goto GOT_GXS;
-								} else {
-									state.name = info.lobby_name;
-									state.hasName = true;
-									break;
 								}
 							}
 						} else if(chatId.isDistantChatId()) {
@@ -489,18 +489,18 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 							DistantChatPeerInfo info;
 							if(rsMsgs->getDistantChatStatus(tunnel_id, info)) {
 								if(historyIt->incoming) {
-									state.gxs = RsGxsId(info.own_id);
-								} else {
 									state.gxs = RsGxsId(info.to_id);
+								} else {
+									state.gxs = RsGxsId(info.own_id);
 								}
 								state.hasGxs = true;
 								goto GOT_GXS;
 							}
 						} else {
 							if(historyIt->incoming) {
-								state.peer = rsPeers->getOwnId();
-							} else {
 								state.peer = historyIt->chatPeerId;
+							} else {
+								state.peer = rsPeers->getOwnId();
 							}
 							state.isDirect = true;
 							goto GOT_DIRECT;
