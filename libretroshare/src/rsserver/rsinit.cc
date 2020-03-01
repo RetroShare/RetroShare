@@ -1381,8 +1381,7 @@ int RsServer::StartupRetroShare()
 #ifdef RS_USE_WIRE
         /**** Wire GXS service ****/
         RsGeneralDataService* wire_ds = new RsDataService(currGxsDir + "/", "wire_db",
-                        RS_SERVICE_GXS_TYPE_WIRE, 
-			NULL, rsInitConfig->gxs_passwd);
+                        RS_SERVICE_GXS_TYPE_WIRE, NULL, rsInitConfig->gxs_passwd);
 
         p3Wire *mWire = new p3Wire(wire_ds, NULL, mGxsIdService);
 
@@ -1826,7 +1825,7 @@ int RsServer::StartupRetroShare()
 	startServiceThread(mPhoto, "gxs photo");
 #endif
 #if RS_USE_WIRE
-	startServiceThread(mPhoto, "gxs wire");
+	startServiceThread(mWire, "gxs wire");
 #endif
 
 	// cores ready start up GXS net servers
@@ -1843,7 +1842,7 @@ int RsServer::StartupRetroShare()
 	startServiceThread(photo_ns, "gxs photo ns");
 #endif
 #if RS_USE_WIRE
-	startServiceThread(photo_ns, "gxs wire ns");
+	startServiceThread(wire_ns, "gxs wire ns");
 #endif
 
 #	ifdef RS_GXS_TRANS

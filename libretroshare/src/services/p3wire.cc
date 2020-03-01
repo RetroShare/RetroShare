@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2012-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -83,6 +83,10 @@ void p3Wire::service_tick()
 	return;
 }
 
+RsTokenService* p3Wire::getTokenService() {
+
+	return RsGenExchange::getTokenService();
+}
 
 void p3Wire::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
@@ -175,12 +179,12 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 	groupItem->group = group;
 	groupItem->meta = group.mMeta;
 
-        std::cerr << "p3Wire::createGroup(): ";
+	std::cerr << "p3Wire::createGroup(): ";
 	std::cerr << std::endl;
 	std::cerr << group;
 	std::cerr << std::endl;
 
-        std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
+	std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
 	std::cerr << std::endl;
 
 	RsGenExchange::publishGroup(token, groupItem);
@@ -193,11 +197,11 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse)
 	std::cerr << "p3Wire::createPulse(): " << pulse;
 	std::cerr << std::endl;
 
-        RsGxsWirePulseItem* pulseItem = new RsGxsWirePulseItem();
-        pulseItem->pulse = pulse;
-        pulseItem->meta = pulse.mMeta;
+	RsGxsWirePulseItem* pulseItem = new RsGxsWirePulseItem();
+	pulseItem->pulse = pulse;
+	pulseItem->meta = pulse.mMeta;
 
-        RsGenExchange::publishMsg(token, pulseItem);
+	RsGenExchange::publishMsg(token, pulseItem);
 	return true;
 }
 

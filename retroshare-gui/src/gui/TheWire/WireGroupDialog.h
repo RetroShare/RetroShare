@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/WireGroupDialog.h                                               *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,53 +18,29 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#ifndef _WIRE_GROUP_DIALOG_H
+#define _WIRE_GROUP_DIALOG_H
 
-#include "ui_PulseItem.h"
-
+#include "gui/gxs/GxsGroupDialog.h"
 #include <retroshare/rswire.h>
 
-class PulseItem;
-
-class PulseHolder
+class WireGroupDialog : public GxsGroupDialog
 {
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifySelection(PulseItem *item, int ptype) = 0;
-
-	// Actions.
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
-{
-  Q_OBJECT
+	Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group);
-
-	void removeItem();
-
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
+	WireGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
+	WireGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
+	virtual void initUi();
+	virtual QPixmap serviceImage();
+	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
+	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
+	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
 
 private:
-
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
+	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
 };
 
 #endif
