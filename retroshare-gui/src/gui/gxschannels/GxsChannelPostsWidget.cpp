@@ -203,7 +203,7 @@ void GxsChannelPostsWidget::groupNameChanged(const QString &name)
 {
 	if (groupId().isNull()) {
 		ui->nameLabel->setText(tr("No Channel Selected"));
-		ui->logoLabel->setPixmap(QPixmap(":/images/channels.png"));
+		ui->logoLabel->setPixmap(QPixmap(":/icons/png/channels.png"));
 	} else {
 		ui->nameLabel->setText(name);
 	}

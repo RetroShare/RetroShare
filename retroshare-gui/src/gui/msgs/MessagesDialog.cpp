@@ -53,13 +53,20 @@
 #include <algorithm>
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE          ":/images/folder-draft.png"
-#define IMAGE_MESSAGEREMOVE    ":/images/message-mail-imapdelete.png"
+#define IMAGE_MESSAGE          ":/icons/mail/compose.png"
+#define IMAGE_MESSAGEREMOVE    ":/icons/mail/delete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
 #define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
 #define IMAGE_AUTHOR_INFO      ":/images/info16.png"
+
+#define IMAGE_INBOX             ":/images/folder-inbox.png"
+#define IMAGE_OUTBOX            ":/images/folder-outbox.png"
+#define IMAGE_SENT              ":/images/folder-sent.png"
+#define IMAGE_DRAFTS            ":/images/folder-draft.png"
+#define IMAGE_TRASH             ":/images/folder-trash.png"
+#define IMAGE_FOLDER            ":/images/foldermail.png"
 
 #define ROLE_QUICKVIEW_TYPE Qt::UserRole
 #define ROLE_QUICKVIEW_ID   Qt::UserRole + 1
@@ -117,10 +124,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inChange = false;
     lockUpdate = 0;
 
-    ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
-    ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
-    ui.actionTextUnderIcon->setData(Qt::ToolButtonTextUnderIcon);
-
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
 
@@ -159,22 +162,13 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     /* Set initial section sizes */
     QHeaderView * msgwheader = ui.messageTreeWidget->header () ;
 
-    ui.forwardmessageButton->setToolTip(tr("Forward selected Message"));
-    ui.replyallmessageButton->setToolTip(tr("Reply to All"));
-
-    QMenu *printmenu = new QMenu();
-    printmenu->addAction(ui.actionPrint);
-    printmenu->addAction(ui.actionPrintPreview);
-    ui.printButton->setMenu(printmenu);
-
-    QMenu *viewmenu = new QMenu();
-    viewmenu->addAction(ui.actionTextBesideIcon);
-    viewmenu->addAction(ui.actionIconOnly);
-    ui.viewtoolButton->setMenu(viewmenu);
-
     // Set initial size of the splitter
     ui.listSplitter->setStretchFactor(0, 0);
     ui.listSplitter->setStretchFactor(1, 1);
+	
+    // Set initial size of the splitter
+    ui.boxSplitter->setStretchFactor(0, 0);
+    ui.boxSplitter->setStretchFactor(1, 1);
 
     /* add filter actions */
     ui.filterLineEdit->addFilter(QIcon(), tr("Subject"),     RsMessageModel::COLUMN_THREAD_SUBJECT,   tr("Search Subject"));
@@ -271,10 +265,6 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     connect(ui.tabWidget,            SIGNAL(tabCloseRequested(int)), this, SLOT(tabCloseRequested(int)));
     connect(ui.newmessageButton,     SIGNAL(clicked()), this, SLOT(newmessage()));
 
-    connect(ui.actionTextBesideIcon, SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionIconOnly,       SIGNAL(triggered()), this, SLOT(buttonStyle()));
-    connect(ui.actionTextUnderIcon,  SIGNAL(triggered()), this, SLOT(buttonStyle()));
-
     connect(ui.messageTreeWidget,    SIGNAL(clicked(const QModelIndex&)) , this, SLOT(clicked(const QModelIndex&)));
     connect(ui.messageTreeWidget,    SIGNAL(doubleClicked(const QModelIndex&)) , this, SLOT(doubleClicked(const QModelIndex&)));
     connect(ui.messageTreeWidget,    SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(messageTreeWidgetCustomPopupMenu(const QPoint&)));
@@ -353,10 +343,8 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         ui.msgSplitter->restoreState(Settings->value("SplitterMsg").toByteArray());
         ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
+        ui.boxSplitter->restoreState(Settings->value("SplitterBox").toByteArray());
 
-        /* toolbar button style */
-        Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonIconOnly).toInt();
-        setToolbarButtonStyle(style);
     } else {
         // save settings
 
@@ -367,9 +355,7 @@ void MessagesDialog::processSettings(bool load)
         // state of splitter
         Settings->setValue("SplitterMsg", ui.msgSplitter->saveState());
         Settings->setValue("SplitterList", ui.listSplitter->saveState());
-
-        /* toolbar button style */
-        Settings->setValue("ToolButon_Style", ui.newmessageButton->toolButtonStyle());
+        Settings->setValue("SplitterBox", ui.boxSplitter->saveState());
     }
 
     Settings->endGroup();
@@ -764,15 +750,31 @@ void MessagesDialog::changeBox(int box_row)
 
     switch(box_row)
     {
-    	case 0: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX ); break;
-    	case 1: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX); break;
-    	case 2: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS); break;
-    	case 3: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  ); break;
-    	case 4: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH ); break;
+		case 0: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX );
+				ui.tabWidget->setTabText(0, tr("Inbox"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_INBOX));
+				break;
+		case 1: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX); 
+				ui.tabWidget->setTabText(0, tr("Outbox"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_OUTBOX));
+				break;
+		case 2: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS); 
+				ui.tabWidget->setTabText(0, tr("Drafts"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_DRAFTS));
+				break;
+		case 3: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  );
+				ui.tabWidget->setTabText(0, tr("Sent"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SENT));
+				break;
+		case 4: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH ); 
+				ui.tabWidget->setTabText(0, tr("Trash"));
+				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_TRASH));
+				break;
     default:
         mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE); break;
     }
     inChange = false;
+    insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
 void MessagesDialog::changeQuickView(int newrow)
@@ -787,13 +789,34 @@ void MessagesDialog::changeQuickView(int newrow)
     if(newrow >= 0)   // -1 means that nothing is selected
 		switch(newrow)
 		{
-		case   0x00:      f = RsMessageModel::QUICK_VIEW_STARRED   ; break;
-		case   0x01:      f = RsMessageModel::QUICK_VIEW_SYSTEM   ; break;
-		case   0x02:      f = RsMessageModel::QUICK_VIEW_IMPORTANT; break;
-		case   0x03:      f = RsMessageModel::QUICK_VIEW_WORK     ; break;
-		case   0x04:      f = RsMessageModel::QUICK_VIEW_PERSONAL ; break;
-		case   0x05:      f = RsMessageModel::QUICK_VIEW_TODO     ; break;
-		case   0x06:      f = RsMessageModel::QUICK_VIEW_LATER    ; break;
+		case   0x00:	f = RsMessageModel::QUICK_VIEW_STARRED   ; 
+						ui.tabWidget->setTabText(0, tr("Starred"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_STAR_ON));
+						break;
+		case   0x01:	f = RsMessageModel::QUICK_VIEW_SYSTEM   ; 
+						ui.tabWidget->setTabText(0, tr("System"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SYSTEM));
+						break;
+		case   0x02:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
+						ui.tabWidget->setTabText(0, tr("Important"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x03:	f = RsMessageModel::QUICK_VIEW_WORK     ;
+						ui.tabWidget->setTabText(0, tr("Work"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x04:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
+						ui.tabWidget->setTabText(0, tr("Personal"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x05:	f = RsMessageModel::QUICK_VIEW_TODO     ;
+						ui.tabWidget->setTabText(0, tr("Todo"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
+		case   0x06:	f = RsMessageModel::QUICK_VIEW_LATER    ;
+						ui.tabWidget->setTabText(0, tr("Later"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
+						break;
 		default:
 			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x07);
 		}
@@ -1014,25 +1037,6 @@ void MessagesDialog::undeletemessage()
     mMessageModel->updateMessages();
     updateMessageSummaryList();
 }
-
-void MessagesDialog::setToolbarButtonStyle(Qt::ToolButtonStyle style)
-{
-    ui.newmessageButton->setToolButtonStyle(style);
-    ui.removemessageButton->setToolButtonStyle(style);
-    ui.replymessageButton->setToolButtonStyle(style);
-    ui.replyallmessageButton->setToolButtonStyle(style);
-    ui.forwardmessageButton->setToolButtonStyle(style);
-    ui.tagButton->setToolButtonStyle(style);
-    ui.printButton->setToolButtonStyle(style);
-    ui.viewtoolButton->setToolButtonStyle(style);
-}
-
-void MessagesDialog::buttonStyle()
-{
-    setToolbarButtonStyle((Qt::ToolButtonStyle) dynamic_cast<QAction*>(sender())->data().toInt());
-}
-
-
 
 void MessagesDialog::filterChanged(const QString& text)
 {
@@ -1386,14 +1390,9 @@ void MessagesDialog::connectActions()
 		msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
 	}
 
-	ui.replymessageButton->disconnect();
-	ui.replyallmessageButton->disconnect();
-	ui.forwardmessageButton->disconnect();
-	ui.printButton->disconnect();
 	ui.actionPrint->disconnect();
 	ui.actionPrintPreview->disconnect();
 	ui.actionSaveAs->disconnect();
-	ui.removemessageButton->disconnect();
 
 	ui.actionReply->disconnect();
 	ui.actionReplyAll->disconnect();
@@ -1409,18 +1408,15 @@ void MessagesDialog::connectActions()
 	if (msg) {
 		if (tab == 0) {
 			// connect with own slot to remove multiple messages
-			connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
+			//connect(ui.removemessageButton, SIGNAL(clicked()), this, SLOT(removemessage()));
 		} else {
-			msg->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
+			//msg->connectAction(MessageWidget::ACTION_REMOVE, ui.removemessageButton);
 		}
-		msg->connectAction(MessageWidget::ACTION_REPLY, ui.replymessageButton);
-		msg->connectAction(MessageWidget::ACTION_REPLY_ALL, ui.replyallmessageButton);
-		msg->connectAction(MessageWidget::ACTION_FORWARD, ui.forwardmessageButton);
-		msg->connectAction(MessageWidget::ACTION_PRINT, ui.printButton);
 		msg->connectAction(MessageWidget::ACTION_PRINT, ui.actionPrint);
 		msg->connectAction(MessageWidget::ACTION_PRINT_PREVIEW, ui.actionPrintPreview);
 		msg->connectAction(MessageWidget::ACTION_SAVE_AS, ui.actionSaveAs);
 	}
+
 }
 
 void MessagesDialog::updateInterface()
@@ -1441,13 +1437,8 @@ void MessagesDialog::updateInterface()
 			count = 1;
 	}
 
-	ui.replymessageButton->setEnabled(count == 1);
-	ui.replyallmessageButton->setEnabled(count == 1);
-	ui.forwardmessageButton->setEnabled(count == 1);
-	ui.printButton->setEnabled(count == 1);
 	ui.actionPrint->setEnabled(count == 1);
 	ui.actionPrintPreview->setEnabled(count == 1);
 	ui.actionSaveAs->setEnabled(count == 1);
-	ui.removemessageButton->setEnabled(count >= 1);
 	ui.tagButton->setEnabled(count >= 1);
 }

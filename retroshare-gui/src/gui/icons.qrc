@@ -103,7 +103,7 @@
         <file>icons/png/newsfeed-notify.png</file>
         <file>icons/png/newsfeed.png</file>
         <file>icons/png/options.png</file>
-		<file>icons/png/pencil-edit-button.png</file>
+        <file>icons/png/pencil-edit-button.png</file>
         <file>icons/png/people-notify.png</file>
         <file>icons/png/people.png</file>
         <file>icons/png/person.png</file>
@@ -122,7 +122,7 @@
         <file>icons/png/thumbs-down.png</file>
         <file>icons/png/thumbs-neutral.png</file>
         <file>icons/png/thumbs-up.png</file>
-		<file>icons/png/typing.png</file>
+        <file>icons/png/typing.png</file>
         <file>icons/png/video.png</file>
         <file>icons/quit_128.png</file>
         <file>icons/search_red_128.png</file>
@@ -299,5 +299,22 @@
         <file>icons/png/add-file.png</file>
         <file>icons/png/add-image.png</file>
         <file>icons/png/attachements.png</file>
+        <file>icons/mail/compose.png</file>
+        <file>icons/mail/delete.png</file>
+        <file>icons/mail/tags.png</file>
+        <file>icons/mail/quote.png</file>
+        <file>icons/mail/send.png</file>
+        <file>icons/mail/contacts.png</file>
+        <file>icons/mail/save.png</file>
+        <file>icons/mail/filter24.png</file>
+        <file>icons/mail/foward.png</file>
+        <file>icons/mail/reply.png</file>
+        <file>icons/mail/reply-all.png</file>
+        <file>icons/mail/attach24.png</file>
+        <file>icons/textedit/align.png</file>
+        <file>icons/textedit/font-decrease.png</file>
+        <file>icons/textedit/smile.png</file>
+        <file>icons/textedit/font-increase.png</file>
+        <file>icons/textedit/code.png</file>
     </qresource>
 </RCC>

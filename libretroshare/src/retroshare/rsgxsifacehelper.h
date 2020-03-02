@@ -294,8 +294,8 @@ protected:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2))
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(2000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20))
 	{ return mTokenService.waitToken(token, maxWait, checkEvery); }
 
 private:
