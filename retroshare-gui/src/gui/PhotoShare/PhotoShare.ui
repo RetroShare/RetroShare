@@ -61,8 +61,8 @@
          <string>Edit Album Details</string>
         </property>
         <property name="icon">
-         <iconset>
-          <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+         <iconset resource="../images.qrc">
+          <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -72,6 +72,9 @@
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
