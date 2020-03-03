@@ -37,21 +37,26 @@ const uint32_t AlbumCreateEnabledFlags = (
                           GXS_GROUP_FLAGS_EXTRA         |
                           0);
 
+// Album Requirements:
+// - All Photos require Publish signature (PUBLISH THREADS).
+// - Comments are in the threads - so these need Author signatures.
+// - Author signature required for all groups.
 uint32_t AlbumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
                            //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
                            //GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
 
-                           GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
-                           //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
+                           GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
                            //GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
                            //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
 
                            //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
-                           GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
-                           //GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                           //GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
+                           GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                           GXS_GROUP_DEFAULTS_PERSONAL_GROUP       |
 
-                           //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
-                           GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                           GXS_GROUP_DEFAULTS_COMMENTS_YES         |
+                           //GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                            0);
 
 uint32_t AlbumEditEnabledFlags = AlbumCreateEnabledFlags;

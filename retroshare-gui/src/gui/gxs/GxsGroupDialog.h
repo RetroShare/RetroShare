@@ -84,9 +84,12 @@ public:
 #define GXS_GROUP_DEFAULTS_PERSONAL_PGP               0x00000100
 #define GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED          0x00000200
 #define GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB           0x00000400
+// independent from other PERSONAL FLAGS. If Group requires a AuthorId.
+#define GXS_GROUP_DEFAULTS_PERSONAL_GROUP             0x00000800
 
 #define GXS_GROUP_DEFAULTS_COMMENTS_YES               0x00001000
 #define GXS_GROUP_DEFAULTS_COMMENTS_NO                0x00002000
+
 
 #define GXS_GROUP_DEFAULTS_ANTISPAM_FAVOR_PGP         0x00100000
 #define GXS_GROUP_DEFAULTS_ANTISPAM_TRACK             0x00200000
@@ -271,7 +274,7 @@ private:
 	void loadGroup(uint32_t token);
 	void updateFromExistingMeta(const QString &description);
 
-	bool prepareGroupMetaData(RsGroupMetaData &meta);
+	bool prepareGroupMetaData(RsGroupMetaData &meta, QString &reason);
 
 	std::list<std::string> mShareList;
 	QPixmap mPicture;
