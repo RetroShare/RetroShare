@@ -14,7 +14,7 @@
    <string>RetroShare Help</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../images.qrc">
+   <iconset>
     <normaloff>:/images/help.png</normaloff>:/images/help.png</iconset>
   </property>
   <property name="autoFillBackground">
@@ -25,7 +25,16 @@
     <property name="spacing">
      <number>6</number>
     </property>
-    <property name="margin">
+    <property name="leftMargin">
+     <number>9</number>
+    </property>
+    <property name="topMargin">
+     <number>9</number>
+    </property>
+    <property name="rightMargin">
+     <number>9</number>
+    </property>
+    <property name="bottomMargin">
      <number>9</number>
     </property>
     <item>
@@ -58,7 +67,16 @@
        <enum>QFrame::Raised</enum>
       </property>
       <layout class="QGridLayout">
-       <property name="margin">
+       <property name="leftMargin">
+        <number>9</number>
+       </property>
+       <property name="topMargin">
+        <number>9</number>
+       </property>
+       <property name="rightMargin">
+        <number>9</number>
+       </property>
+       <property name="bottomMargin">
         <number>9</number>
        </property>
        <property name="spacing">
@@ -69,7 +87,16 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -171,7 +198,16 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -238,7 +274,7 @@
          <string>RetroShare Help</string>
         </property>
         <property name="windowIcon">
-         <iconset resource="../../images.qrc">
+         <iconset>
           <normaloff>:/images/help.png</normaloff>:/images/help.png</iconset>
         </property>
         <attribute name="title">
@@ -248,7 +284,16 @@
          <property name="spacing">
           <number>6</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
           <number>6</number>
          </property>
          <item>
@@ -297,7 +342,16 @@
          <string>Search</string>
         </attribute>
         <layout class="QGridLayout">
-         <property name="margin">
+         <property name="leftMargin">
+          <number>6</number>
+         </property>
+         <property name="topMargin">
+          <number>6</number>
+         </property>
+         <property name="rightMargin">
+          <number>6</number>
+         </property>
+         <property name="bottomMargin">
           <number>6</number>
          </property>
          <property name="spacing">
@@ -308,7 +362,16 @@
            <property name="spacing">
             <number>6</number>
            </property>
-           <property name="margin">
+           <property name="leftMargin">
+            <number>0</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
             <number>0</number>
            </property>
            <item>
@@ -445,8 +508,8 @@
   </widget>
   <action name="actionBack">
    <property name="icon">
-    <iconset resource="../../images.qrc">
-     <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+    <iconset resource="../../icons.qrc">
+     <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
    </property>
    <property name="text">
     <string>Back</string>
@@ -460,8 +523,8 @@
   </action>
   <action name="actionForward">
    <property name="icon">
-    <iconset resource="../../images.qrc">
-     <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+    <iconset resource="../../icons.qrc">
+     <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
    </property>
    <property name="text">
     <string>Forward</string>
@@ -475,8 +538,8 @@
   </action>
   <action name="actionHome">
    <property name="icon">
-    <iconset resource="../../images.qrc">
-     <normaloff>:/images/gohome.png</normaloff>:/images/gohome.png</iconset>
+    <iconset resource="../../icons.qrc">
+     <normaloff>:/icons/png/home.png</normaloff>:/icons/png/home.png</iconset>
    </property>
    <property name="text">
     <string>Home</string>
@@ -514,8 +577,8 @@
   </action>
   <action name="actionClose">
    <property name="icon">
-    <iconset resource="../../images.qrc">
-     <normaloff>:/images/exit_24x24.png</normaloff>:/images/exit_24x24.png</iconset>
+    <iconset resource="../../icons.qrc">
+     <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
    </property>
    <property name="text">
     <string>Close</string>
@@ -551,6 +614,7 @@
  </tabstops>
  <resources>
   <include location="../../images.qrc"/>
+  <include location="../../icons.qrc"/>
  </resources>
  <connections>
   <connection>

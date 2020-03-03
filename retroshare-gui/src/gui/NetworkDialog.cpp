@@ -48,11 +48,11 @@
 
 /* Images for context menu icons */
 #define IMAGE_PEERDETAILS    ":/images/info16.png"
-#define IMAGE_CLEAN_UNUSED   ":/images/deletemail24.png"
+#define IMAGE_CLEAN_UNUSED   ""
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
 #define IMAGE_EXPORT         ""
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_MESSAGE         ":/images/mail_new.png"
+#define IMAGE_MESSAGE        ":/icons/mail/write-mail.png"
 
 /******
  * #define NET_DEBUG 1
