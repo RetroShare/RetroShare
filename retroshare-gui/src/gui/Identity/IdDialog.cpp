@@ -1519,11 +1519,12 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 				contactsItem->addChild(item);
 			else
 				allItem->addChild(item);
-		}
-        GxsIdLabel *label = new GxsIdLabel();
-		label->setId(RsGxsId(data.mMeta.mGroupId)) ;
 
-        ui->treeWidget_membership->setItemWidget(item,0,label) ;
+			GxsIdLabel *label = new GxsIdLabel();
+			label->setId(RsGxsId(data.mMeta.mGroupId)) ;
+
+			ui->treeWidget_membership->setItemWidget(item,0,label) ;
+		}
 	}
 	
 	/* count items */
