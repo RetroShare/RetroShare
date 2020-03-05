@@ -136,14 +136,14 @@ uint32_t p3GxsChannels::channelsAuthenPolicy()
 static const uint32_t GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
 static const uint8_t  GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
 
-struct RsGxsGroupNotifyRecordsItem: public RsItem
+struct RsGxsChannelNotifyRecordsItem: public RsItem
 {
 
-	RsGxsGroupNotifyRecordsItem()
+	RsGxsChannelNotifyRecordsItem()
 	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG,GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD)
 	{}
 
-    virtual ~RsGxsGroupNotifyRecordsItem() {}
+    virtual ~RsGxsChannelNotifyRecordsItem() {}
 
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx )
@@ -167,7 +167,7 @@ public:
 
 		switch(item_sub_id)
 		{
-		case GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsGroupNotifyRecordsItem();
+		case GXS_CHANNELS_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsChannelNotifyRecordsItem();
 		default:
 			return NULL;
 		}
@@ -178,7 +178,7 @@ bool p3GxsChannels::saveList(bool &cleanup, std::list<RsItem *>&saveList)
 {
 	cleanup = true ;
 
-	RsGxsGroupNotifyRecordsItem *item = new RsGxsGroupNotifyRecordsItem ;
+	RsGxsChannelNotifyRecordsItem *item = new RsGxsChannelNotifyRecordsItem ;
 
 	{
 		RS_STACK_MUTEX(mKnownChannelsMutex);
@@ -198,7 +198,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 
 		rstime_t now = time(NULL);
 
-		RsGxsGroupNotifyRecordsItem *fnr = dynamic_cast<RsGxsGroupNotifyRecordsItem*>(item) ;
+		RsGxsChannelNotifyRecordsItem *fnr = dynamic_cast<RsGxsChannelNotifyRecordsItem*>(item) ;
 
 		if(fnr)
 		{
@@ -206,7 +206,7 @@ bool p3GxsChannels::loadList(std::list<RsItem *>& loadList)
 			mKnownChannels.clear();
 
 			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
-				if( it->second + GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE < now)
+				if( now < it->second + GXS_CHANNELS_CONFIG_MAX_TIME_NOTIFY_STORAGE)
 					mKnownChannels.insert(*it) ;
 		}
 

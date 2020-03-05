@@ -64,6 +64,7 @@ enum class RsServiceType : uint16_t
 	GXS_TRANS                  = 0x0230,
 	JSONAPI                    = 0x0240,
 	FORUMS_CONFIG              = 0x0315,
+	POSTED_CONFIG              = 0x0316,
 	CHANNELS_CONFIG            = 0x0317,
 	RTT                        = 0x1011, /// Round Trip Time
 
@@ -123,7 +124,9 @@ RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_REPUTATION  
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_RECOGN      = 0x0220;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_GXS_TRANS       = 0x0230;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_TYPE_JSONAPI         = 0x0240;
+/// used to save notification records in GXS and possible other service-based configuration
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_FORUMS_CONFIG   = 0x0315;
+RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_POSTED_CONFIG   = 0x0316;
 RS_DEPRECATED_FOR(RsServiceType) const uint16_t RS_SERVICE_GXS_TYPE_CHANNELS_CONFIG = 0x0317;
 
 // Experimental Services.
