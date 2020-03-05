@@ -114,13 +114,11 @@
     <file>images/add-share24.png</file>
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
-    <file>images/calendar.png</file>
     <file>images/chat.png</file>
     <file>images/chat_24.png</file>
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
     <file>images/close_normal.png</file>
-    <file>images/contact_new128.png</file>
     <file>images/copy.png</file>
     <file>images/delete.png</file>
     <file>images/deleteall.png</file>
@@ -192,7 +190,6 @@
     <file>images/folder-outbox.png</file>
     <file>images/folder-sent.png</file>
     <file>images/folder-trash.png</file>
-    <file>images/kgames.png</file>
     <file>images/go-down.png</file>
     <file>images/go-top.png</file>
     <file>images/go-up.png</file>

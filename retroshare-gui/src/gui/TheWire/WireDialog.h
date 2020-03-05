@@ -33,7 +33,7 @@
 
 #include "util/TokenQueue.h"
 
-#define IMAGE_WIRE              ":/images/kgames.png"
+#define IMAGE_WIRE              ":/icons/wire.png"
 
 class WireDialog : public MainPage, public TokenResponse, public PulseHolder
 {

@@ -49,11 +49,7 @@
 /* Images for toolbar icons */
 #define IMAGE_RETROSHARE        ":/images/RetroShare16.png"
 #define IMAGE_ABOUT             ":/images/informations_24x24.png"
-#define IMAGE_GAMES             ":/images/kgames.png"
-#define IMAGE_PHOTO             ":/images/lphoto.png"
-#define IMAGE_BWGRAPH           ":/images/ksysguard.png"
 #define IMAGE_CLOSE             ":/images/close_normal.png"
-#define IMAGE_CALENDAR          ":/images/calendar.png"
 #define IMAGE_LIBRARY           ":/icons/collections.png"
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
 #define IMAGE_WIKI              ":/images/wikibook_32.png"
@@ -82,11 +78,11 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 
     //GamesDialog *gamesDialog = NULL;
     //ui.stackPages->add(gamesDialog = new GamesDialog(ui.stackPages),
-    //                   createPageAction(QIcon(IMAGE_GAMES), tr("Games Launcher"), grp));
+    //                   createPageAction(QIcon(), tr("Games Launcher"), grp));
 
     //CalDialog *calDialog = NULL;
     //ui.stackPages->add(calDialog = new CalDialog(ui.stackPages),
-    //                  createPageAction(QIcon(IMAGE_CALENDAR), tr("Shared Calendars"), grp));
+    //                  createPageAction(QIcon(), tr("Shared Calendars"), grp));
 #if 0
     IdDialog *idDialog = NULL;
     ui.stackPages->add(idDialog = new IdDialog(ui.stackPages),
@@ -103,7 +99,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #ifdef RS_USE_PHOTOSHARE
     PhotoShare *photoShare = NULL;
     ui.stackPages->add(photoShare = new PhotoShare(ui.stackPages),
-                     action = createPageAction(QIcon(IMAGE_PHOTO), tr("Photos"), grp));
+                     action = createPageAction(QIcon(), tr("Photos"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(photoShare, action));
 #endif
 
@@ -122,7 +118,7 @@ ApplicationWindow::ApplicationWindow(QWidget* parent, Qt::WindowFlags flags)
 #if USE_VEG_SERVICE
     WireDialog *wireDialog = NULL;
     ui.stackPages->add(wireDialog = new WireDialog(ui.stackPages),
-                      action = createPageAction(QIcon(IMAGE_BWGRAPH), tr("The Wire"), grp));
+                      action = createPageAction(QIcon(), tr("The Wire"), grp));
     mNotify.push_back(QPair<MainPage*, QAction*>(wireDialog, action));
 #endif
 

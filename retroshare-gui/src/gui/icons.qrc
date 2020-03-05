@@ -55,6 +55,7 @@
         <file>icons/outlook.png</file>
         <file>icons/question.png</file>
         <file>icons/plugins_128.png</file>
+        <file>icons/wire.png</file>
         <file>icons/png/add.png</file>
         <file>icons/png/anonymous.png</file>
         <file>icons/png/attach-image.png</file>
@@ -320,5 +321,6 @@
         <file>icons/png/arrow-right.png</file>
         <file>icons/png/arrow-left.png</file>
         <file>icons/png/next-unread.png</file>
+        <file>icons/notification.png</file>
     </qresource>
 </RCC>
