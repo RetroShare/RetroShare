@@ -185,7 +185,7 @@ bool RetroDb::execSQL(const std::string &query){
 
 
     uint32_t delta = 3;
-    rstime_t stamp = time(NULL), now = 0;
+    rstime_t stamp = time(NULL);
     bool timeOut = false, ok = false;
 
     while(!timeOut){
@@ -202,10 +202,8 @@ bool RetroDb::execSQL(const std::string &query){
             break;
         }
 
-        now = time(NULL);
-        delta = stamp - now;
-
-        if(delta > TIME_LIMIT){
+        if(time(NULL) > stamp + TIME_LIMIT)
+        {
             ok = false;
             timeOut = true;
         }
