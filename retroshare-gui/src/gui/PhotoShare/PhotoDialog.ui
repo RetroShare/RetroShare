@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>790</width>
-    <height>824</height>
+    <height>509</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -52,11 +52,24 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>558</width>
-               <height>551</height>
+               <width>540</width>
+               <height>318</height>
               </rect>
              </property>
              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
               <item>
                <widget class="QLabel" name="label_Photo">
                 <property name="sizePolicy">
@@ -74,7 +87,23 @@
                 <property name="text">
                  <string>TextLabel</string>
                 </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
                </widget>
+              </item>
+              <item>
+               <spacer name="horizontalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -92,8 +121,8 @@
              <string>...</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/window_fullscreen.png</normaloff>:/images/window_fullscreen.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/fullscreen.png</normaloff>:/icons/fullscreen.png</iconset>
             </property>
             <property name="autoRaise">
              <bool>true</bool>
@@ -103,7 +132,11 @@
           <item>
            <widget class="QPushButton" name="detailsButton">
             <property name="text">
-             <string>Details \/</string>
+             <string>Details</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
             </property>
            </widget>
           </item>
@@ -135,6 +168,10 @@
            <widget class="QPushButton" name="commentsButton">
             <property name="text">
              <string>&lt;N&gt; Comments &gt;&gt;</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
             </property>
            </widget>
           </item>
@@ -255,6 +292,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

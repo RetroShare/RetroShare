@@ -22,6 +22,9 @@
 #include "gui/PhotoShare/PhotoDrop.h"
 #include "gui/gxs/GxsIdDetails.h"
 
+#define IMAGE_FULLSCREEN          ":/icons/fullscreen.png"
+#define IMAGE_FULLSCREENEXIT      ":/icons/fullscreen-exit.png"
+
 #include <iostream>
 
 /** Constructor */
@@ -300,10 +303,12 @@ void PhotoSlideShow::setFullScreen()
     show();
     raise();
 #endif
+	ui.fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREENEXIT));
   } else {
 
     setWindowState( windowState() ^ Qt::WindowFullScreen );
     show();
+	ui.fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREEN));
   }
 }
 

@@ -98,8 +98,8 @@
         <string/>
        </property>
        <property name="icon">
-        <iconset resource="../images.qrc">
-         <normaloff>:/images/window_fullscreen.png</normaloff>:/images/window_fullscreen.png</iconset>
+        <iconset resource="../icons.qrc">
+         <normaloff>:/icons/fullscreen.png</normaloff>:/icons/fullscreen.png</iconset>
        </property>
        <property name="autoRaise">
         <bool>false</bool>
@@ -157,6 +157,7 @@
  <resources>
   <include location="Photo_images.qrc"/>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -316,5 +316,7 @@
         <file>icons/textedit/smile.png</file>
         <file>icons/textedit/font-increase.png</file>
         <file>icons/textedit/code.png</file>
+        <file>icons/fullscreen.png</file>
+        <file>icons/fullscreen-exit.png</file>
     </qresource>
 </RCC>
