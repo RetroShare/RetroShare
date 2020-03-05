@@ -1632,6 +1632,7 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("gxschannels_srv.cfg", mGxsChannels);
 	mConfigMgr->addConfiguration("gxscircles.cfg"  , gxscircles_ns);
 	mConfigMgr->addConfiguration("posted.cfg"      , posted_ns);
+	mConfigMgr->addConfiguration("gxsposted_srv.cfg", mPosted);
 #ifdef RS_USE_WIKI
 	mConfigMgr->addConfiguration("wiki.cfg", wiki_ns);
 #endif
