@@ -95,7 +95,7 @@
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
+              <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
             </property>
             <property name="iconSize">
              <size>
