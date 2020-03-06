@@ -351,38 +351,6 @@
     <file>images/mimetypes/source_c.png</file>
     <file>images/mimetypes/source_cpp.png</file>
     <file>images/mimetypes/source_h.png</file>
-    <file>images/textedit/textbold.png</file>
-    <file>images/textedit/textitalic.png</file>
-    <file>images/textedit/textunder.png</file>
-    <file>images/textedit/textjustify.png</file>
-    <file>images/textedit/textcenter.png</file>
-    <file>images/textedit/textleft.png</file>
-    <file>images/textedit/textright.png</file>
-    <file>images/textedit/editcopy.png</file>
-    <file>images/textedit/editcut.png</file>
-    <file>images/textedit/editpaste.png</file>
-    <file>images/textedit/editredo.png</file>
-    <file>images/textedit/editundo.png</file>
-    <file>images/textedit/edit-image-face-add.png</file>
-    <file>images/textedit/exportpdf.png</file>
-    <file>images/textedit/filenew.png</file>
-    <file>images/textedit/fileopen.png</file>
-    <file>images/textedit/fileprint.png</file>
-    <file>images/textedit/filesave.png</file>
-    <file>images/textedit/format-text-color.png</file>
-    <file>images/textedit/format-text-strikethrough.png</file>
-    <file>images/textedit/format-indent-less.png</file>
-    <file>images/textedit/format-indent-more.png</file>
-    <file>images/textedit/insert-link.png</file>
-    <file>images/textedit/format-list-ordered.png</file>
-    <file>images/textedit/format-list-unordered.png</file>
-    <file>images/textedit/zoomin.png</file>
-    <file>images/textedit/zoomout.png</file>
-    <file>images/textedit/format_font_size_more.png</file>
-    <file>images/textedit/format_font_size_less.png</file>
-    <file>images/textedit/hi22-action-format-text-blockquote.png</file>
-    <file>images/textedit/hi22-action-format-text-code.png</file>
-    <file>images/textedit/hi22-action-insert-more-mark.png</file>
     <file>images/toaster/backgroundtoaster.png</file>
     <file>images/thumb-default-video.png</file>
     <file>images/user/add_user24.png</file>

@@ -44,7 +44,7 @@ class WikiDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
 public:
 	WikiDialog(QWidget *parent = 0);
 	~WikiDialog();
-	
+
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIKI) ; } //MainPage
 	virtual QString pageName() const { return tr("Wiki Pages") ; } //MainPage
 	virtual QString helpText() const { return ""; } //MainPage
@@ -69,39 +69,38 @@ private slots:
 
 	// GroupTreeWidget stuff.
 	void groupListCustomPopupMenu(QPoint point);
-  void subscribeToGroup();
-  void unsubscribeToGroup();
+	void subscribeToGroup();
+	void unsubscribeToGroup();
 	void wikiGroupChanged(const QString &groupId);
-	
+
 	void todo();
 
 private:
 
-void 	clearWikiPage();
-void    clearGroupTree();
+	void clearWikiPage();
+	void clearGroupTree();
 
-void 	updateWikiPage(const RsWikiSnapshot &page);
+	void updateWikiPage(const RsWikiSnapshot &page);
 
-bool 	getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
-std::string getSelectedPage();
-const RsGxsGroupId &getSelectedGroup();
+	bool getSelectedPage(RsGxsGroupId &groupId, RsGxsMessageId &pageId, RsGxsMessageId &origPageId);
+	std::string getSelectedPage();
+	const RsGxsGroupId &getSelectedGroup();
 
+	// Using GroupTreeWidget.
+	void wikiSubscribe(bool subscribe);
+	void GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
+	void insertGroupsData(const std::list<RsGroupMetaData> &wikiList);
 
-      // Using GroupTreeWidget.
-void    wikiSubscribe(bool subscribe);
-void 	GroupMetaDataToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo);
-void 	insertGroupsData(const std::list<RsGroupMetaData> &wikiList);
+	void processSettings(bool load);
 
+	void requestGroupMeta();
+	void loadGroupMeta(const uint32_t &token);
 
-void 	requestGroupMeta();
-void 	loadGroupMeta(const uint32_t &token);
+	void requestPages(const std::list<RsGxsGroupId> &groupIds);
+	void loadPages(const uint32_t &token);
 
-void 	requestPages(const std::list<RsGxsGroupId> &groupIds);
-void 	loadPages(const uint32_t &token);
-
-void 	requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
-void 	loadWikiPage(const uint32_t &token);
-
+	void requestWikiPage(const  RsGxsGrpMsgIdPair &msgId);
+	void loadWikiPage(const uint32_t &token);
 
 	TokenQueue *mWikiQueue;
 
@@ -110,7 +109,7 @@ void 	loadWikiPage(const uint32_t &token);
 	WikiEditDialog *mEditDialog;
 
 	std::string mGroupSelected;
-    RsGxsMessageId mPageSelected;
+	RsGxsMessageId mPageSelected;
 	std::string mModSelected;
 
 
@@ -118,7 +117,7 @@ void 	loadWikiPage(const uint32_t &token);
 	QTreeWidgetItem *mSubscribedGroups;
 	QTreeWidgetItem *mPopularGroups;
 	QTreeWidgetItem *mOtherGroups;
-    RsGxsGroupId mGroupId; // From GroupTreeWidget
+	RsGxsGroupId mGroupId; // From GroupTreeWidget
 
 	/* UI - from Designer */
 	Ui::WikiDialog ui;

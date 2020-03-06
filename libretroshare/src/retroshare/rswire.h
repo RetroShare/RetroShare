@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2012-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -45,11 +45,7 @@ class RsWireGroup
 
 
 /***********************************************************************
- * So pulses operate in the following modes.
- *
- * => Standard, a post to your own group.
- * => @User, gets duplicated on each user's group.
- * => RT, duplicated as child of original post.
+ * RsWire - is intended to be a Twitter clone - but fully decentralised.
  *
  * From Twitter: 
  *  twitter can be: embedded, replied to, favourited, unfavourited, 
@@ -73,6 +69,36 @@ class RsWirePlace
 
 };
 
+/************************************************************************
+ * Pulse comes in three flavours.
+ *
+ *
+ * Original Msg Pulse
+ * - Spontaneous msg, on your own group.
+ * - mPulseType = WIRE_PULSE_TYPE_ORIGINAL_MSG
+ * - Ref fields are empty.
+ *
+ * Reply to a Pulse (i.e Retweet), has two parts.
+ * as we want the retweet to reference the original, and the original to know about reply.
+ * This info will be duplicated in two msgs - but allow data to spread easier.
+ *
+ * Reply Msg Pulse, will be Top-Level Msg on Publisher's Group.
+ * - mPulseMode = WIRE_PULSE_TYPE_REPLY_MSG
+ * - Ref fields refer to Parent (InReplyTo) Msg.
+ *
+ * Reply Reference, is Child Msg of Parent Msg, on Parent Publisher's Group.
+ * - mPulseMode = WIRE_PULSE_TYPE_REPLY_REFERENCE
+ * - Ref fields refer to Reply Msg.
+ * - NB: This Msg requires Parent Msg for complete info, while other two are self-contained.
+ ***********************************************************************/
+
+#define  WIRE_PULSE_TYPE_ORIGINAL_MSG        (0x0001)
+#define  WIRE_PULSE_TYPE_REPLY_MSG           (0x0002)
+#define  WIRE_PULSE_TYPE_REPLY_REFERENCE     (0x0004)
+
+#define  WIRE_PULSE_TYPE_SENTIMENT_POSITIVE  (0x0010)
+#define  WIRE_PULSE_TYPE_SENTIMENT_NEUTRAL   (0x0020)
+#define  WIRE_PULSE_TYPE_SENTIMENT_NEGATIVE  (0x0040)
 
 class RsWirePulse
 {
@@ -80,19 +106,26 @@ class RsWirePulse
 
 	RsMsgMetaData mMeta;
 
-	std::string mPulseText; // all the text is stored here.
-	std::string mHashTags; 
+	// Store actual Pulse here.
+	std::string mPulseText;
 
-// These will be added at some point.
-//	std::string mInReplyPulse;
+	uint32_t mPulseType;
 
-//	uint32_t mPulseFlags;
+	// These Ref to the related (parent or reply) if reply (MODE_REPLY_MSG set)
+	// Mode                            REPLY_MSG only    REPLY_REFERENCE
+	RsGxsGroupId   mRefGroupId;   //   PARENT_GrpId      REPLY_GrpId
+	std::string    mRefGroupName; //   PARENT_GrpName    REPLY_GrpName
+	RsGxsMessageId mRefOrigMsgId; //   PARENT_OrigMsgId  REPLY_OrigMsgId
+	RsGxsId        mRefAuthorId;  //   PARENT_AuthorId   REPLY_AuthorId
+	rstime_t       mRefPublishTs; //   PARENT_PublishTs  REPLY_PublishTs
+	std::string    mRefPulseText; //   PARENT_PulseText  REPLY_PulseText
 
-//	std::list<std::string> mMentions;
-//	std::list<std::string> mHashTags;
-//	std::list<std::string> mUrls;
-
-//	RsWirePlace mPlace;
+	// Open Question. Do we want these additional fields?
+	// These can potentially be added at some point.
+	//	std::list<std::string> mMentions;
+	//	std::list<std::string> mHashTags;
+	//	std::list<std::string> mUrls;
+	//	RsWirePlace mPlace;
 };
 
 
@@ -106,6 +139,13 @@ class RsWire: public RsGxsIfaceHelper
 
 	explicit RsWire(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
 	virtual ~RsWire() {}
+
+	/*!
+	 * To acquire a handle to token service handler
+	 * needed to make requests to the service
+	 * @return handle to token service for this gxs service
+	 */
+	virtual RsTokenService* getTokenService() = 0;
 
 	/* Specific Service Data */
 virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) = 0;

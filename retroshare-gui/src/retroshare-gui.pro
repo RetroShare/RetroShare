@@ -1225,15 +1225,23 @@ gxsthewire {
 	DEFINES += RS_USE_WIRE
 
 	HEADERS += gui/TheWire/PulseItem.h \
+		gui/TheWire/PulseDetails.h \
 		gui/TheWire/WireDialog.h \
+		gui/TheWire/WireGroupItem.h \
+		gui/TheWire/WireGroupDialog.h \
 		gui/TheWire/PulseAddDialog.h \
 	
 	FORMS += gui/TheWire/PulseItem.ui \
+		gui/TheWire/PulseDetails.ui \
+		gui/TheWire/WireGroupItem.ui \
 		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
 	
 	SOURCES += gui/TheWire/PulseItem.cpp \
+		gui/TheWire/PulseDetails.cpp \
 		gui/TheWire/WireDialog.cpp \
+		gui/TheWire/WireGroupItem.cpp \
+		gui/TheWire/WireGroupDialog.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
 	
 }
