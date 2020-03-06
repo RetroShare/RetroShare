@@ -191,6 +191,15 @@ no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_passwo
 CONFIG *= rs_service_terminal_login
 no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
 
+# To disable Diffie Hellman group check at init append the following assignation
+# to qmake command line "CONFIG+=no_rs_dh_init_check"
+# this check is not strictly needed and on some platform is very slow.
+# On Android it takes at least one minute at startup which is untolerable for
+# most phone users
+CONFIG+=rs_dh_init_check
+no_rs_dh_init_check:CONFIG -= rs_dh_init_check
+
+
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
 # 'JSONAPI_GENERATOR_EXE=/myBuildDir/jsonapi-generator'. Required for JSON API
@@ -551,6 +560,8 @@ rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
+
+no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer
