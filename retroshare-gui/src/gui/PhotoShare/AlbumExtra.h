@@ -24,21 +24,33 @@
 #include <QWidget>
 
 namespace Ui {
-    class AlbumExtra;
+	class AlbumExtra;
 }
 
 class AlbumExtra : public QWidget
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit AlbumExtra(QWidget *parent = 0);
-    virtual ~AlbumExtra();
+	explicit AlbumExtra(QWidget *parent = 0);
+	virtual ~AlbumExtra();
+
+	void setShareMode(uint32_t mode);
+	void setCaption(const std::string &str);
+	void setPhotographer(const std::string &str);
+	void setWhere(const std::string &str);
+	void setWhen(const std::string &str);
+
+	uint32_t	getShareMode();
+	std::string getCaption();
+	std::string getPhotographer();
+	std::string getWhere();
+	std::string getWhen();
 
 private:
-    void setUp();
+	void setUp();
 private:
-    Ui::AlbumExtra *ui;
+	Ui::AlbumExtra *ui;
 };
 
 #endif // ALBUMEXTRA_H

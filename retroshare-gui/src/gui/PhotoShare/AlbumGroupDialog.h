@@ -25,6 +25,8 @@
 #include "gui/gxs/GxsGroupDialog.h"
 #include <retroshare/rsphoto.h>
 
+#include "AlbumExtra.h"
+
 class AlbumGroupDialog : public GxsGroupDialog
 {
 	Q_OBJECT
@@ -42,6 +44,7 @@ protected:
 
 private:
 	void prepareAlbumGroup(RsPhotoAlbum &group, const RsGroupMetaData &meta);
+	AlbumExtra *mAlbumExtra;
 };
 
 #endif

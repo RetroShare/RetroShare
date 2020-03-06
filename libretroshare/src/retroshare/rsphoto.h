@@ -34,109 +34,56 @@
 class RsPhoto;
 extern RsPhoto *rsPhoto;
 
-/******************* NEW STUFF FOR NEW CACHE SYSTEM *********/
-
-#define RSPHOTO_MODE_NEW	1
-#define RSPHOTO_MODE_OWN	2
-#define RSPHOTO_MODE_REMOTE	3
-
-/* If these flags are no set - the Photo inherits values from the Album
- */
-
-#define RSPHOTO_FLAGS_ATTRIB_TITLE		0x0001
-#define RSPHOTO_FLAGS_ATTRIB_CAPTION		0x0002
-#define RSPHOTO_FLAGS_ATTRIB_DESC		0x0004
-#define RSPHOTO_FLAGS_ATTRIB_PHOTOGRAPHER	0x0008
-#define RSPHOTO_FLAGS_ATTRIB_WHERE		0x0010
-#define RSPHOTO_FLAGS_ATTRIB_WHEN		0x0020
-#define RSPHOTO_FLAGS_ATTRIB_OTHER		0x0040
-#define RSPHOTO_FLAGS_ATTRIB_CATEGORY		0x0080
-#define RSPHOTO_FLAGS_ATTRIB_HASHTAGS		0x0100
-#define RSPHOTO_FLAGS_ATTRIB_ORDER		0x0200
-#define RSPHOTO_FLAGS_ATTRIB_THUMBNAIL		0x0400
-#define RSPHOTO_FLAGS_ATTRIB_MODE		0x0800
-#define RSPHOTO_FLAGS_ATTRIB_AUTHOR		0x1000 // PUSH UP ORDER
-#define RSPHOTO_FLAGS_ATTRIB_PHOTO		0x2000 // PUSH UP ORDER.
-
 class RsPhotoPhoto
 {
-        public:
+public:
 
-        RsMsgMetaData mMeta;
+	RsMsgMetaData mMeta;
 
-        RsPhotoPhoto();
+	RsPhotoPhoto();
 
-        // THESE ARE IN THE META DATA.
-        //std::string mAlbumId;
-        //std::string mId;
-        //std::string mTitle; // only used by Album.
-        std::string mCaption;
-        std::string mDescription;
-        std::string mPhotographer;
-        std::string mWhere;
-        std::string mWhen;
-        std::string mOther;
-        std::string mCategory;
+	// V2 PhotoMsg - keep it simple.
+	// mMeta.mTitle used for Photo Caption.
+	// mDescription optional field for addtional notes.
+	// mLowResImage - < 50k jpg of image.
+	// mPhotoFile   - transfer details for original photo.
+	std::string mDescription;
+	uint32_t    mOrder;
+	RsGxsImage mLowResImage;
+	RsGxsFile  mPhotoFile;
 
-        std::string mHashTags;
-
-        uint32_t mSetFlags;
-
-        int mOrder;
-
-        RsGxsImage mThumbnail;
-
-        int mMode;
-
-        // These are not saved.
-        std::string path; // if in Mode NEW.
-        uint32_t mModFlags;
+	// These are not saved.
+	std::string mPath; // if New photo
 };
 
-class RsPhotoAlbumShare
-{
-        public:
-
-        uint32_t mShareType;
-        std::string mShareGroupId;
-        std::string mPublishKey;
-        uint32_t mCommentMode;
-        uint32_t mResizeMode;
-};
+#define RSPHOTO_SHAREMODE_LOWRESONLY    (1)
+#define RSPHOTO_SHAREMODE_ORIGINAL      (2)
+#define RSPHOTO_SHAREMODE_DUP_ORIGINAL  (3)
+#define RSPHOTO_SHAREMODE_DUP_200K      (4)
+#define RSPHOTO_SHAREMODE_DUP_1M        (5)
 
 class RsPhotoAlbum
 {
-        public:
-        RsPhotoAlbum();
+public:
+	RsPhotoAlbum();
 
-        RsGroupMetaData mMeta;
+	RsGroupMetaData mMeta;
 
-        // THESE ARE IN THE META DATA.
-        //std::string mAlbumId;
-        //std::string mTitle; // only used by Album.
+	// V2 Album - keep it simple.
+	// mMeta.mTitle.
+	uint32_t mShareMode;
 
-        std::string mCaption;
-        std::string mDescription;
-        std::string mPhotographer;
-        std::string mWhere;
-        std::string mWhen;
-        std::string mOther;
-        std::string mCategory;
+	std::string mCaption;
+	std::string mDescription;
+	std::string mPhotographer;
+	std::string mWhere;
+	std::string mWhen;
 
-        std::string mHashTags;
+	RsGxsImage mThumbnail;
 
-        RsGxsImage mThumbnail;
-
-        int mMode;
-
-        std::string mPhotoPath;
-        RsPhotoAlbumShare mShareOptions;
-
-        // These aren't saved.
-        uint32_t mSetFlags;
-        uint32_t mModFlags;
+	// Below is not saved.
+	bool mAutoDownload;
 };
-
 
 std::ostream &operator<<(std::ostream &out, const RsPhotoPhoto &photo);
 std::ostream &operator<<(std::ostream &out, const RsPhotoAlbum &album);
@@ -145,14 +92,7 @@ typedef std::map<RsGxsGroupId, std::vector<RsPhotoPhoto> > PhotoResult;
 
 class RsPhoto: public RsGxsIfaceHelper, public RsGxsCommentService
 {
-
 public:
-
-    static const uint32_t FLAG_MSG_TYPE_PHOTO_POST;
-    static const uint32_t FLAG_MSG_TYPE_PHOTO_COMMENT;
-    static const uint32_t FLAG_MSG_TYPE_MASK;
-
-
     explicit RsPhoto(RsGxsIface &gxs) : RsGxsIfaceHelper(gxs)  { return; }
 
     virtual ~RsPhoto() { return; }

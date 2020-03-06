@@ -39,12 +39,12 @@ public:
     enum State { New, Existing, Modified, Deleted };
 
     PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto& photo, QWidget* parent = 0);
-    PhotoItem(PhotoShareItemHolder *holder, const QString& path,  QWidget* parent = 0); // for new photos.
+    PhotoItem(PhotoShareItemHolder *holder, const QString& path,  uint32_t order, QWidget* parent = 0); // for new photos.
     ~PhotoItem();
     void setSelected(bool selected);
     bool isSelected(){ return mSelected; }
     const RsPhotoPhoto& getPhotoDetails();
-    bool getThumbnail(RsGxsImage &image);
+    bool getLowResImage(RsGxsImage &image);
     void markForDeletion();
     State getState() { return mState; }
 
@@ -62,9 +62,9 @@ private:
 private:
     Ui::PhotoItem *ui;
 
-    QPixmap mThumbNail;
+    QPixmap mLowResImage;
 
-    QPixmap getPixmap() { return mThumbNail; }
+    QPixmap getPixmap() { return mLowResImage; }
 
     bool mSelected;
     State mState;

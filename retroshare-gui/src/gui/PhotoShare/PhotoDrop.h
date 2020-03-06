@@ -55,7 +55,7 @@ public:
     PhotoItem *getPhotoIdx(int idx);
     void getPhotos(QSet<PhotoItem*>& photos);
 
-    void 	addPhotoItem(PhotoItem *item);
+    void addPhotoItem(PhotoItem *item);
     void setPhotoItemHolder(PhotoShareItemHolder* holder);
 
     /*!
@@ -91,8 +91,9 @@ private:
 
 	PhotoItem *mSelected;
 	int mColumns;
-        PhotoShareItemHolder* mHolder;
-        QSet<PhotoItem*> mPhotos;
+	PhotoShareItemHolder* mHolder;
+	QSet<PhotoItem*> mPhotos;
+	uint32_t mLastOrder;
 };
 
 #endif

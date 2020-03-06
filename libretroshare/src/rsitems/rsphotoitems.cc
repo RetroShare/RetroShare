@@ -42,55 +42,44 @@ RsItem *RsGxsPhotoSerialiser::create_item(uint16_t service, uint8_t item_sub_id)
 
 void RsGxsPhotoAlbumItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,TLV_TYPE_UINT32_PARAM,album.mShareMode,"mShareMode");
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_CAPTION,  album.mCaption,       "mCaption");
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_CATEGORY, album.mCategory,      "mCategory");
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,    album.mDescription,   "mDescription");
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_HASH_TAG, album.mHashTags,      "mHashTags");
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,      album.mOther,         "mOther");
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PATH,     album.mPhotoPath,     "mPhotoPath");
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,     album.mPhotographer,  "mPhotographer");
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DATE,     album.mWhen,          "mWhen");
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_LOCATION, album.mWhere,         "mWhere");
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DATE,     album.mWhen,          "mWhen");
 
 	album.mThumbnail.serial_process(j, ctx);
 }
 void RsGxsPhotoPhotoItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CAPTION,  photo.mCaption,        "mCaption");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_CATEGORY, photo.mCategory,       "mCategory");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DESCR,    photo.mDescription,    "mDescription");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_HASH_TAG, photo.mHashTags,       "mHashTags");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_MSG,      photo.mOther,          "mOther");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_PIC_AUTH, photo.mPhotographer,   "mPhotographer");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_DATE,     photo.mWhen,           "mWhen");
-	RsTypeSerializer::serial_process(j, ctx, TLV_TYPE_STR_LOCATION, photo.mWhere,          "mWhere");
-
-	photo.mThumbnail.serial_process(j, ctx);
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,    photo.mDescription,   "mDescription");
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,TLV_TYPE_UINT32_PARAM,photo.mOrder,"mOrder");
+	photo.mLowResImage.serial_process(j, ctx);
+	photo.mPhotoFile.serial_process(j, ctx);
 }
 
 void RsGxsPhotoAlbumItem::clear()
 {
+	album.mShareMode = RSPHOTO_SHAREMODE_LOWRESONLY;
 	album.mCaption.clear();
-	album.mCategory.clear();
 	album.mDescription.clear();
-	album.mHashTags.clear();
-	album.mOther.clear();
-	album.mPhotoPath.clear();
 	album.mPhotographer.clear();
-	album.mWhen.clear();
 	album.mWhere.clear();
+	album.mWhen.clear();
 	album.mThumbnail.clear();
+
+	// not saved
+	album.mAutoDownload = false;
 }
 
 void RsGxsPhotoPhotoItem::clear()
 {
-	photo.mCaption.clear();
-	photo.mCategory.clear();
 	photo.mDescription.clear();
-	photo.mHashTags.clear();
-	photo.mOther.clear();
-	photo.mPhotographer.clear();
-	photo.mWhen.clear();
-	photo.mWhere.clear();
-	photo.mThumbnail.clear();
+	photo.mOrder = 0;
+	photo.mLowResImage.clear();
+	photo.mPhotoFile.clear();
+
+	// not saved
+	photo.mPath.clear();
 }
