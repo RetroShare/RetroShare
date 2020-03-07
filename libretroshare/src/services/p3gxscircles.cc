@@ -278,8 +278,9 @@ bool p3GxsCircles::getCirclesSummaries(std::list<RsGroupMetaData>& circles)
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
-	if( !requestGroupInfo(token, opts)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+        cancelRequest(token);
+
 	return getGroupSummary(token, circles);
 }
 
@@ -289,8 +290,9 @@ bool p3GxsCircles::getCirclesInfo( const std::list<RsGxsGroupId>& circlesIds,
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, circlesIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !requestGroupInfo(token, opts, circlesIds) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
 	return getGroupData(token, circlesInfo);
 }
 
