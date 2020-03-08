@@ -28,7 +28,7 @@
 /* platform independent networking... */
 #include "pqi/pqinetwork.h"
 #include "pqi/pqiassist.h"
-
+#include "util/rsdebug.h"
 #include "util/rsthreads.h"
 
 class upnpentry
@@ -97,7 +97,7 @@ bool	shutdown_upnp();
 bool initUPnPState();
 bool printUPnPState();
 
-	private:
+private:
 
 bool background_setup_upnp(bool, bool);
 bool checkUPnPActive();
@@ -123,4 +123,5 @@ bool checkUPnPActive();
 	/* active port forwarding */
 	std::list<upnpforward> activeForwards;
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };
