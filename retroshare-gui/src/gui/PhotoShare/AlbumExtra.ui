@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
-    <height>198</height>
+    <width>516</width>
+    <height>199</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -21,80 +21,14 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="QLabel" name="label_19">
-     <property name="text">
-      <string>Category:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="comboBox_Category_2">
-     <item>
-      <property name="text">
-       <string>Animals</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Family</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Friends</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Flowers</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Holiday</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Landscapes</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Pets</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Portraits</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Travel</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Work</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Random</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Quality:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QComboBox" name="comboBox_5">
+   <item row="0" column="1">
+    <widget class="QComboBox" name="comboBox_shareMode">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -103,37 +37,57 @@
      </property>
      <item>
       <property name="text">
+       <string>Embedded Only (&lt;50Kb)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Share Original Images</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Copy Original Images (extra disk space)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Resize Images (&lt; 200Kb)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>Resize Images (&lt; 1Mb)</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Resize Images (&lt; 10Mb)</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Send Original Images</string>
       </property>
      </item>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="1" column="0" colspan="2">
     <widget class="Line" name="line">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="captionLabel">
      <property name="text">
       <string>Caption:</string>
      </property>
     </widget>
    </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEdit_Caption"/>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_12">
+     <property name="text">
+      <string>Photographer:</string>
+     </property>
+    </widget>
+   </item>
    <item row="3" column="1">
-    <widget class="QLineEdit" name="lineEdit_Caption_2"/>
+    <widget class="QLineEdit" name="lineEdit_Photographer"/>
    </item>
    <item row="4" column="0">
     <widget class="QLabel" name="label_14">
@@ -146,14 +100,14 @@
     <widget class="QLineEdit" name="lineEdit_Where"/>
    </item>
    <item row="5" column="0">
-    <widget class="QLabel" name="label_12">
+    <widget class="QLabel" name="label">
      <property name="text">
-      <string>Photographer:</string>
+      <string>When:</string>
      </property>
     </widget>
    </item>
    <item row="5" column="1">
-    <widget class="QLineEdit" name="lineEdit_Photographer"/>
+    <widget class="QLineEdit" name="lineEdit_When"/>
    </item>
   </layout>
  </widget>

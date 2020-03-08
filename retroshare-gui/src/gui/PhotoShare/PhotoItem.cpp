@@ -49,7 +49,7 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const RsPhotoPhoto &photo, QW
     ui->idChooser->setVisible(false);
 }
 
-PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget *parent) :
+PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, uint32_t order, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PhotoItem), mHolder(holder)
 {
@@ -57,25 +57,20 @@ PhotoItem::PhotoItem(PhotoShareItemHolder *holder, const QString& path, QWidget 
 
     ui->setupUi(this);
 
+    mPhotoDetails.mOrder = order;
 
     QPixmap qtn = QPixmap(path);
-    // TODO need to scale qtn to something reasonable.
-    // shouldn't be call thumbnail... we can do a lowRes version.
-    // do we need to to workout what type of file to convert to?
-    // jpg, png etc.
-    // seperate fn should handle all of this.
-    mThumbNail = qtn.scaled(480,480, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    mLowResImage = qtn.scaled(512,512, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-    ui->label_Thumbnail->setPixmap(qtn.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->label_Thumbnail->setPixmap(qtn.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     setSelected(false);
 
-    getThumbnail(mPhotoDetails.mThumbnail);
+    getLowResImage(mPhotoDetails.mLowResImage);
 
     connect(ui->lineEdit_Title, SIGNAL(editingFinished()), this, SLOT(setTitle()));
     connect(ui->lineEdit_PhotoGrapher, SIGNAL(editingFinished()), this, SLOT(setPhotoGrapher()));
 
     ui->idChooser->loadIds(0, RsGxsId());
-
 }
 
 void PhotoItem::markForDeletion()
@@ -114,29 +109,6 @@ void PhotoItem::setSelected(bool selected)
     update();
 }
 
-bool PhotoItem::getThumbnail(RsGxsImage &image)
-{
-        const QPixmap *tmppix = &mThumbNail;
-
-        QByteArray ba;
-        QBuffer buffer(&ba);
-
-        if(!tmppix->isNull())
-        {
-                // send chan image
-
-                buffer.open(QIODevice::WriteOnly);
-                tmppix->save(&buffer, "PNG"); // writes image into ba in PNG format
-                image.copy((uint8_t *) ba.data(), ba.size());
-                return true;
-        }
-
-        image.clear();
-        return false;
-}
-
-
-
 void PhotoItem::setTitle(){
 
     mPhotoDetails.mMeta.mMsgName = ui->lineEdit_Title->text().toStdString();
@@ -144,13 +116,11 @@ void PhotoItem::setTitle(){
 
 void PhotoItem::setPhotoGrapher()
 {
-    mPhotoDetails.mPhotographer = ui->lineEdit_PhotoGrapher->text().toStdString();
+    // mPhotoDetails.mPhotographer = ui->lineEdit_PhotoGrapher->text().toStdString();
 }
 
 const RsPhotoPhoto& PhotoItem::getPhotoDetails()
 {
-
-
 	if (ui->idChooser->isVisible()) {
         RsGxsId id;
 		switch (ui->idChooser->getChosenId(id)) {
@@ -176,18 +146,34 @@ PhotoItem::~PhotoItem()
 
 void PhotoItem::setUp()
 {
-
     mTitleLabel = new QLabel();
     mPhotoGrapherLabel = new QLabel();
 
     mTitleLabel->setText(QString::fromStdString(mPhotoDetails.mMeta.mMsgName));
-    mPhotoGrapherLabel->setText(QString::fromStdString(mPhotoDetails.mPhotographer));
-
 
     ui->editLayOut->addWidget(mPhotoGrapherLabel);
     ui->editLayOut->addWidget(mTitleLabel);
 
-    updateImage(mPhotoDetails.mThumbnail);
+    updateImage(mPhotoDetails.mLowResImage);
+}
+
+bool PhotoItem::getLowResImage(RsGxsImage &image)
+{
+        const QPixmap *tmppix = &mLowResImage;
+
+        QByteArray ba;
+        QBuffer buffer(&ba);
+
+        if(!tmppix->isNull())
+        {
+                buffer.open(QIODevice::WriteOnly);
+                tmppix->save(&buffer, "JPG");
+                image.copy((uint8_t *) ba.data(), ba.size());
+                return true;
+        }
+
+        image.clear();
+        return false;
 }
 
 void PhotoItem::updateImage(const RsGxsImage &image)
@@ -195,9 +181,9 @@ void PhotoItem::updateImage(const RsGxsImage &image)
     if (image.mData != NULL)
     {
             QPixmap qtn;
-            qtn.loadFromData(image.mData, image.mSize, "PNG");
-            ui->label_Thumbnail->setPixmap(qtn.scaled(120, 120, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-            mThumbNail = qtn;
+            qtn.loadFromData(image.mData, image.mSize);
+            ui->label_Thumbnail->setPixmap(qtn.scaled(128, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+            mLowResImage = qtn;
     }
 }
 

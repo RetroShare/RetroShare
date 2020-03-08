@@ -55,7 +55,7 @@ PhotoDialog::~PhotoDialog()
 void PhotoDialog::setUp()
 {
 	QPixmap qtn;
-	qtn.loadFromData(mPhotoDetails.mThumbnail.mData, mPhotoDetails.mThumbnail.mSize, "PNG");
+	qtn.loadFromData(mPhotoDetails.mLowResImage.mData, mPhotoDetails.mLowResImage.mSize);
 	ui->label_Photo->setPixmap(qtn);
 	ui->label_Photo->setVisible(true);
 
