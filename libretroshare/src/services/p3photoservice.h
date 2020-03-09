@@ -85,7 +85,7 @@ public:
 		return mCommentService->getGxsRelatedComments(token, msgs);
 	}
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg) override
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override
 	{
 		return mCommentService->createGxsComment(token, msg);
 	}

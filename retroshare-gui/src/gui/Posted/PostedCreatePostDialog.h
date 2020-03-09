@@ -62,7 +62,6 @@ private:
 
 	QString mLink;
 	QString mNotes;
-	TokenQueue* mTokenQueue;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
 

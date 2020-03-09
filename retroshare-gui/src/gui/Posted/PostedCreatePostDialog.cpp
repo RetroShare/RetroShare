@@ -47,7 +47,7 @@
 
 PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
+	mPosted(posted), mGrpId(grpId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -176,7 +176,6 @@ void PostedCreatePostDialog::createPost()
 
 	uint32_t token;
 	mPosted->createPost(token, post);
-//	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
 }
