@@ -404,10 +404,16 @@ int AuthSSLimpl::InitAuth(
 
 		std::cout.flush() ;
 
+#ifndef RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 		if(DH_check(dh, &codes) && codes == 0)
-			SSL_CTX_set_tmp_dh(sslctx, dh);	
+			SSL_CTX_set_tmp_dh(sslctx, dh);
 		else
-			pfs_enabled = false ;
+			pfs_enabled = false;
+#else // ndef RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
+		/* DH_check(...) is not strictly necessary and on Android devices it
+		 * takes at least one minute which is untolerable there */
+		SSL_CTX_set_tmp_dh(sslctx, dh);
+#endif // ndef RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 	}
 	else
 		pfs_enabled = false ;

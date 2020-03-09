@@ -26,8 +26,8 @@
 #include <iostream>
 
 const uint32_t AlbumCreateEnabledFlags = ( 
-              GXS_GROUP_FLAGS_NAME        |
-               GXS_GROUP_FLAGS_ICON        |
+                          GXS_GROUP_FLAGS_NAME        |
+                          GXS_GROUP_FLAGS_ICON        |
                           GXS_GROUP_FLAGS_DESCRIPTION   |
                           GXS_GROUP_FLAGS_DISTRIBUTION  |
                           // GXS_GROUP_FLAGS_PUBLISHSIGN   |
@@ -37,21 +37,26 @@ const uint32_t AlbumCreateEnabledFlags = (
                           GXS_GROUP_FLAGS_EXTRA         |
                           0);
 
+// Album Requirements:
+// - All Photos require Publish signature (PUBLISH THREADS).
+// - Comments are in the threads - so these need Author signatures.
+// - Author signature required for all groups.
 uint32_t AlbumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
                            //GXS_GROUP_DEFAULTS_DISTRIB_GROUP        |
                            //GXS_GROUP_DEFAULTS_DISTRIB_LOCAL        |
 
-                           GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
-                           //GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
+                           //GXS_GROUP_DEFAULTS_PUBLISH_OPEN         |
+                           GXS_GROUP_DEFAULTS_PUBLISH_THREADS      |
                            //GXS_GROUP_DEFAULTS_PUBLISH_REQUIRED     |
                            //GXS_GROUP_DEFAULTS_PUBLISH_ENCRYPTED    |
 
                            //GXS_GROUP_DEFAULTS_PERSONAL_GPG         |
-                           GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
-                           //GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                           //GXS_GROUP_DEFAULTS_PERSONAL_REQUIRED    |
+                           GXS_GROUP_DEFAULTS_PERSONAL_IFNOPUB     |
+                           GXS_GROUP_DEFAULTS_PERSONAL_GROUP       |
 
-                           //GXS_GROUP_DEFAULTS_COMMENTS_YES         |
-                           GXS_GROUP_DEFAULTS_COMMENTS_NO          |
+                           GXS_GROUP_DEFAULTS_COMMENTS_YES         |
+                           //GXS_GROUP_DEFAULTS_COMMENTS_NO          |
                            0);
 
 uint32_t AlbumEditEnabledFlags = AlbumCreateEnabledFlags;
@@ -88,7 +93,8 @@ void AlbumGroupDialog::initUi()
     setUiText(UITYPE_CONTACTS_DOCK, tr("Select Album Admins"));
 
     // Inject Extra Widgets.
-    injectExtraWidget(new AlbumExtra(this));
+    mAlbumExtra = new AlbumExtra(this);
+    injectExtraWidget(mAlbumExtra);
 }
 
 QPixmap AlbumGroupDialog::serviceImage()
@@ -115,11 +121,12 @@ void AlbumGroupDialog::prepareAlbumGroup(RsPhotoAlbum &group, const RsGroupMetaD
         group.mThumbnail.clear();
     }
 
-    // Additional Fields that we need to fill in.
-    group.mCaption = "Caption goes here";
-    group.mPhotographer = "photographer";
-    group.mWhere = "Where?";
-
+    // Additional Fields.
+    group.mShareMode = mAlbumExtra->getShareMode();
+    group.mCaption = mAlbumExtra->getCaption();
+    group.mPhotographer = mAlbumExtra->getPhotographer();
+    group.mWhere = mAlbumExtra->getWhere();
+    group.mWhen = mAlbumExtra->getWhen();
 }
 
 bool AlbumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
@@ -181,6 +188,12 @@ bool AlbumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupM
             setLogo(QPixmap(":/images/album_create_64.png"));
     }
 
-    // NEED TO Load additional data....
+    // Load additional data....
+    mAlbumExtra->setShareMode(group.mShareMode);
+    mAlbumExtra->setCaption(group.mCaption);
+    mAlbumExtra->setPhotographer(group.mPhotographer);
+    mAlbumExtra->setWhere(group.mWhere);
+    mAlbumExtra->setWhen(group.mWhen);
+
     return true;
 }
