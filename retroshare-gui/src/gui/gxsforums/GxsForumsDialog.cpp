@@ -151,13 +151,13 @@ QString GxsForumsDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/icons/png/feedreader.png";
+		return "";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/icons/png/feed-subscribed.png";
+		return "";
 	case ICON_POPULAR_GROUP:
-		return ":/icons/png/feed-popular.png";
+		return "";
 	case ICON_OTHER_GROUP:
-		return ":/icons/png/feed-other.png";
+		return "";
 	case ICON_SEARCH:
 		return ":/images/find.png";
 	case ICON_DEFAULT:

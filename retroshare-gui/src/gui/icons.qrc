@@ -74,9 +74,6 @@
         <file>icons/png/exit.png</file>
         <file>icons/png/feedreader-notify.png</file>
         <file>icons/png/feedreader.png</file>
-        <file>icons/png/feed-other.png</file>
-        <file>icons/png/feed-popular.png</file>
-        <file>icons/png/feed-subscribed.png</file>
         <file>icons/png/filesharing-notify.png</file>
         <file>icons/png/filesharing.png</file>
         <file>icons/png/font.png</file>
@@ -244,9 +241,6 @@
         <file>icons/yandex.png</file>
         <file>icons/png/markdown-mark.png</file>
         <file>icons/png/channel.png</file>
-        <file>icons/png/channel-other.png</file>
-        <file>icons/png/channel-popular.png</file>
-        <file>icons/png/channel-subscribed.png</file>
         <file>icons/png/circles-black.png</file>
         <file>icons/png/circles-gray.png</file>
         <file>icons/png/circles-notify.png</file>

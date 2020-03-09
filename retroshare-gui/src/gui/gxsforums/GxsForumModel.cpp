@@ -348,7 +348,6 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 		case COLUMN_THREAD_TITLE:        return tr("Title");
 		case COLUMN_THREAD_DATE:         return tr("Date");
 		case COLUMN_THREAD_AUTHOR:       return tr("Author");
-		case COLUMN_THREAD_DISTRIBUTION: return tr("Distribution");
 		default:
 			return QVariant();
 		}
@@ -356,7 +355,7 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
-		case COLUMN_THREAD_DISTRIBUTION: return QIcon(":/icons/flag_green.png");
+		case COLUMN_THREAD_DISTRIBUTION: return QIcon(":/icons/flag-green.png");
 		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
 		default:
 			return QVariant();
