@@ -984,6 +984,7 @@ void GxsGroupFrameDialog::insertGroupsData(const std::map<RsGxsGroupId,RsGroupMe
 
 	/* now we can add them in as a tree! */
 	ui->groupTreeWidget->fillGroupItems(mYourGroups, adminList);
+	mYourGroups->setText(2, QString::number(mYourGroups->childCount())); 
 	ui->groupTreeWidget->fillGroupItems(mSubscribedGroups, subList);
 	mSubscribedGroups->setText(2, QString::number(mSubscribedGroups->childCount())); // 1 COLUMN_UNREAD 2 COLUMN_POPULARITY
 	ui->groupTreeWidget->fillGroupItems(mPopularGroups, popList);
