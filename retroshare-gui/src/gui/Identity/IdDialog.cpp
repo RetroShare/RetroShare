@@ -2106,7 +2106,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			{
 				if(own_identities.size() <= 1)
 				{
-					QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+					QAction *action = contextMenu->addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 					if(own_identities.empty())
 						action->setEnabled(false) ;
@@ -2115,7 +2115,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 				else
 				{
-					QMenu *mnu = contextMenu->addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+					QMenu *mnu = contextMenu->addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 					for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 					{
@@ -2132,17 +2132,16 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 					}
 				}
 			}
-
-			if (n_selected_items==1)
-				contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-
 			// always allow to send messages
-			contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
 			contextMenu->addSeparator();
 
 			if(n_is_a_contact == 0)
 				contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+
+			if (n_selected_items==1)
+				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
 				contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
@@ -2163,7 +2162,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		{
 			contextMenu->addSeparator();
 
-			contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(ui->editIdentity);
 			contextMenu->addAction(ui->removeIdentity);
 		}

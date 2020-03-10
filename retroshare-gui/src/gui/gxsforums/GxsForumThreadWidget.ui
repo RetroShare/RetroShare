@@ -95,7 +95,7 @@
             </property>
             <property name="icon">
              <iconset resource="../icons.qrc">
-              <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
+              <normaloff>:/icons/mail/compose.png</normaloff>:/icons/mail/compose.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -264,7 +264,7 @@
            </property>
            <property name="icon">
             <iconset resource="../icons.qrc">
-             <normaloff>:/icons/global_switch_on_128.png</normaloff>:/icons/global_switch_on_128.png</iconset>
+             <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -289,8 +289,8 @@
             <string notr="true"/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/replymailall24-hover.png</normaloff>:/images/replymailall24-hover.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/mail/reply.png</normaloff>:/icons/mail/reply.png</iconset>
            </property>
            <property name="toolButtonStyle">
             <enum>Qt::ToolButtonIconOnly</enum>
@@ -376,8 +376,8 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -417,8 +417,8 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
            </property>
            <property name="autoRaise">
             <bool>true</bool>
@@ -471,8 +471,11 @@
             <string notr="true"/>
            </property>
            <property name="icon">
-            <iconset resource="../images.qrc">
-             <normaloff>:/images/start.png</normaloff>:/images/start.png</iconset>
+            <iconset resource="../icons.qrc">
+             <normaloff>:/icons/png/next-unread.png</normaloff>:/icons/png/next-unread.png</iconset>
+           </property>
+           <property name="autoRaise">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -525,6 +528,16 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
+  <customwidget>
    <class>SubscribeToolButton</class>
    <extends>QToolButton</extends>
    <header>gui/common/SubscribeToolButton.h</header>
@@ -533,16 +546,6 @@
    <class>GxsIdLabel</class>
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>LineEditClear</class>
-   <extends>QLineEdit</extends>
-   <header location="global">gui/common/LineEditClear.h</header>
-  </customwidget>
-  <customwidget>
-   <class>RSTextBrowser</class>
-   <extends>QTextBrowser</extends>
-   <header>gui/common/RSTextBrowser.h</header>
   </customwidget>
   <customwidget>
    <class>ElidedLabel</class>

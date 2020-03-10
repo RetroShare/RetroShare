@@ -56,6 +56,7 @@
         <file>icons/question.png</file>
         <file>icons/plugins_128.png</file>
         <file>icons/png/add.png</file>
+        <file>icons/png/add-identity.png</file>
         <file>icons/png/anonymous.png</file>
         <file>icons/png/attach-image.png</file>
         <file>icons/png/attach.png</file>
@@ -73,9 +74,6 @@
         <file>icons/png/exit.png</file>
         <file>icons/png/feedreader-notify.png</file>
         <file>icons/png/feedreader.png</file>
-        <file>icons/png/feed-other.png</file>
-        <file>icons/png/feed-popular.png</file>
-        <file>icons/png/feed-subscribed.png</file>
         <file>icons/png/filesharing-notify.png</file>
         <file>icons/png/filesharing.png</file>
         <file>icons/png/font.png</file>
@@ -243,9 +241,6 @@
         <file>icons/yandex.png</file>
         <file>icons/png/markdown-mark.png</file>
         <file>icons/png/channel.png</file>
-        <file>icons/png/channel-other.png</file>
-        <file>icons/png/channel-popular.png</file>
-        <file>icons/png/channel-subscribed.png</file>
         <file>icons/png/circles-black.png</file>
         <file>icons/png/circles-gray.png</file>
         <file>icons/png/circles-notify.png</file>
@@ -299,6 +294,9 @@
         <file>icons/png/add-file.png</file>
         <file>icons/png/add-image.png</file>
         <file>icons/png/attachements.png</file>
+        <file>icons/png/arrow-right.png</file>
+        <file>icons/png/arrow-left.png</file>
+        <file>icons/png/next-unread.png</file>
         <file>icons/mail/compose.png</file>
         <file>icons/mail/delete.png</file>
         <file>icons/mail/tags.png</file>
@@ -311,6 +309,7 @@
         <file>icons/mail/reply.png</file>
         <file>icons/mail/reply-all.png</file>
         <file>icons/mail/attach24.png</file>
+        <file>icons/mail/write-mail.png</file>
         <file>icons/textedit/align.png</file>
         <file>icons/textedit/font-decrease.png</file>
         <file>icons/textedit/smile.png</file>
@@ -318,5 +317,8 @@
         <file>icons/textedit/code.png</file>
         <file>icons/fullscreen.png</file>
         <file>icons/fullscreen-exit.png</file>
+        <file>icons/notification.png</file>
+        <file>icons/wire.png</file>
+        <file>icons/wire-circle.png</file>
     </qresource>
 </RCC>

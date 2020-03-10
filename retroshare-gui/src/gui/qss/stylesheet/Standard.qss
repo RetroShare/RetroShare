@@ -860,3 +860,8 @@ PostedCreatePostDialog QPushButton#submitButton:hover {
 	min-width: 4em;
 	padding: 2px;
 }
+
+MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
+	background: transparent;
+	border: none;
+}
