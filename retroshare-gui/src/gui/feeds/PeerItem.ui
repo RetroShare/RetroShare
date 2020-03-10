@@ -159,8 +159,8 @@
               <string>Send Message</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/mail_new.png</normaloff>:/images/mail_new.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/mail/write-mail.png</normaloff>:/icons/mail/write-mail.png</iconset>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -188,8 +188,8 @@
               <string>Start Chat</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
-               <normaloff>:/images/chat_24.png</normaloff>:/images/chat_24.png</iconset>
+              <iconset resource="../icons.qrc">
+               <normaloff>:/icons/png/chats.png</normaloff>:/icons/png/chats.png</iconset>
              </property>
              <property name="toolButtonStyle">
               <enum>Qt::ToolButtonTextBesideIcon</enum>

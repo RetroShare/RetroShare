@@ -142,8 +142,6 @@
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
-#define IMAGE_GAMES             ":/images/kgames.png"
-#define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
