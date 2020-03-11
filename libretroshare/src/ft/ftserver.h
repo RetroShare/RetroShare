@@ -207,13 +207,23 @@ public:
 	virtual uint32_t filePermDirectDL() ;
 
 	/// @see RsFiles
-	virtual bool turtleSearchRequest(
+	bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
-	        rstime_t maxWait = 300 );
+	        rstime_t maxWait = 300 ) override;
 
 	virtual TurtleSearchRequestId turtleSearch(const std::string& string_to_match) ;
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
+
+	/// @see RsFiles
+	std::error_condition exportFilesLink(
+	        std::string& link, std::uintptr_t handle,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
+	        ) override;
+
+	/// @see RsFiles
+	std::error_condition parseFilesLink(
+	        const std::string& link, RsFileTree& collection ) override;
 
     /***
          * Control of Downloads Priority.

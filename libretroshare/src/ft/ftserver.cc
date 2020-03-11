@@ -43,10 +43,10 @@
 
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
-
+#include "util/rsmemory.h"
 #include "rsserver/p3face.h"
 #include "turtle/p3turtle.h"
-
+#include "util/rsurl.h"
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsprint.h"
@@ -65,6 +65,16 @@
 
 #define FTSERVER_DEBUG() std::cerr << time(NULL) << " : FILE_SERVER : " << __FUNCTION__ << " : "
 #define FTSERVER_ERROR() std::cerr << "(EE) FILE_SERVER ERROR : "
+
+/*static*/ const RsFilesErrorCategory RsFilesErrorCategory::instance;
+
+/*static*/ const std::string RsFiles::DEFAULT_FILES_BASE_URL =
+        "retroshare:///files";
+/*static*/ const std::string RsFiles::FILES_URL_COUNT_FIELD = "filesCount";
+/*static*/ const std::string RsFiles::FILES_URL_DATA_FIELD = "filesData";
+/*static*/ const std::string RsFiles::FILES_URL_NAME_FIELD = "filesName";
+/*static*/ const std::string RsFiles::FILES_URL_SIZE_FIELD = "filesSize";
+
 
 static const rstime_t FILE_TRANSFER_LOW_PRIORITY_TASKS_PERIOD = 5 ;           // low priority tasks handling every 5 seconds
 static const rstime_t FILE_TRANSFER_MAX_DELAY_BEFORE_DROP_USAGE_RECORD = 10 ; // keep usage records for 10 secs at most.
@@ -2101,3 +2111,62 @@ RsFileItem::RsFileItem(RsFileItemType subtype) :
 void RsFileSearchRequestItem::clear() { queryString.clear(); }
 
 void RsFileSearchResultItem::clear() { mResults.clear(); }
+
+
+std::error_condition RsFilesErrorCategory::default_error_condition(int ev)
+const noexcept
+{
+	switch(static_cast<RsFilesErrorNum>(ev))
+	{
+	case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND: // [[fallthrough]];
+	case RsFilesErrorNum::INVALID_FILES_URL:
+		return std::errc::invalid_argument;
+	default:
+		return std::error_condition(ev, *this);
+	}
+}
+
+std::error_condition ftServer::exportFilesLink(
+        std::string& link, std::uintptr_t handle, const std::string& baseUrl )
+{
+	DirDetails tDirDet;
+	if(!requestDirDetails(tDirDet, handle))
+		return RsFilesErrorNum::FILES_HANDLE_NOT_FOUND;
+
+	std::unique_ptr<RsFileTree> tFileTree =
+	        RsFileTree::fromDirDetails(tDirDet, false);
+	link = tFileTree->toBase64();
+
+	if(!baseUrl.empty())
+	{
+		RsUrl tUrl(baseUrl);
+		tUrl.setQueryKV(FILES_URL_COUNT_FIELD,
+		                std::to_string(tFileTree->mTotalFiles) )
+		    .setQueryKV(FILES_URL_DATA_FIELD, link)
+		    .setQueryKV(FILES_URL_NAME_FIELD, tDirDet.name)
+		    .setQueryKV( FILES_URL_SIZE_FIELD,
+		                 std::to_string(tFileTree->mTotalSize) );
+		link = tUrl.toString();
+	}
+
+	return std::error_condition();
+}
+
+std::error_condition ftServer::parseFilesLink(
+        const std::string& link, RsFileTree& collection )
+{
+	RsUrl tUrl(link);
+	rs_view_ptr<const std::string> radixPtr =
+	        tUrl.getQueryV(FILES_URL_DATA_FIELD);
+	if(!radixPtr) radixPtr = &link;
+
+	std::unique_ptr<RsFileTree> tft =
+	        RsFileTree::fromBase64(*radixPtr);
+	if(tft)
+	{
+		collection = *tft;
+		return std::error_condition();
+	}
+
+	return RsFilesErrorNum::INVALID_FILES_URL;
+}

@@ -20,6 +20,7 @@
 #include <string>
 #include <map>
 
+#include "util/rsmemory.h"
 #include "serialiser/rsserializable.h"
 
 struct sockaddr_storage;
@@ -63,7 +64,7 @@ struct RsUrl : RsSerializable
 	RsUrl& setQueryKV(const std::string& key, const std::string& value);
 	RsUrl& delQueryK(const std::string& key);
 	bool hasQueryK(const std::string& key);
-	const std::string* getQueryV(const std::string& key);
+	rs_view_ptr<const std::string> getQueryV(const std::string& key);
 
 	const std::string& fragment() const;
 	RsUrl& setFragment(const std::string& fragment);

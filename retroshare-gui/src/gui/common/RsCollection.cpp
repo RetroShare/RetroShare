@@ -44,7 +44,7 @@ RsCollection::RsCollection(QObject *parent)
 	_xml_doc.appendChild(_root);
 }
 
-RsCollection::RsCollection(const FileTree& fr)
+RsCollection::RsCollection(const RsFileTree& fr)
 	: _xml_doc("RsCollection")
 {
 	_root = _xml_doc.createElement("RsCollection");
@@ -153,7 +153,7 @@ void RsCollection::merge_in(const QString& fname,uint64_t size,const RsFileHash&
 
 	recursAddElements(_xml_doc,info,_root) ;
 }
-void RsCollection::merge_in(const FileTree& tree)
+void RsCollection::merge_in(const RsFileTree& tree)
 {
 	recursAddElements(_xml_doc,tree,0,_root) ;
 }
@@ -273,14 +273,14 @@ void RsCollection::recursAddElements(QDomDocument& doc,const ColFileInfo& colFil
 	}
 }
 
-void RsCollection::recursAddElements(QDomDocument& doc,const FileTree& ft,uint32_t index,QDomElement& e) const
+void RsCollection::recursAddElements(
+        QDomDocument& doc, const RsFileTree& ft, uint32_t index,
+        QDomElement& e ) const
 {
-	std::vector<uint32_t> subdirs ;
-	std::vector<FileTree::FileData> subfiles ;
+	std::vector<std::uintptr_t> subdirs;
+	std::vector<RsFileTree::FileData> subfiles ;
 	std::string name;
-
-	if(!ft.getDirectoryContent(index,name,subdirs,subfiles))
-		return ;
+	if(!ft.getDirectoryContent(name, subdirs, subfiles, index)) return;
 
 	QDomElement d = doc.createElement("Directory") ;
 	d.setAttribute(QString("name"),QString::fromUtf8(name.c_str())) ;
