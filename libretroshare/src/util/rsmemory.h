@@ -62,7 +62,6 @@ bool myFunnyFunction(
  */
 #define RS_DEFAULT_STORAGE_PARAM(Type,...) *std::unique_ptr<Type>(new Type(__VA_ARGS__))
 
-
 /** @brief Safely dynamic cast between std::unique_ptr of different types
  * std::unique_ptr semantic rely on the invariant that only one instance own
  * the object, when casting between differents types one would be tempted to do
@@ -89,6 +88,16 @@ bool rs_unique_cast(
 	}
 	return false;
 }
+
+/** Mark a pointer as non-owned aka you are not in charge of deleting it and
+ * must not delete it.
+ * @see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1408r0.pdf */
+template<typename T> using rs_view_ptr = T*;
+
+/** Mark a pointer as owned aka you are in charge of deletingonce finished
+ * dealing with it.
+ * @see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1408r0.pdf */
+template<typename T> using rs_owner_ptr = T*;
 
 
 void *rs_malloc(size_t size) ;

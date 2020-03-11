@@ -28,12 +28,14 @@
 #include <functional>
 #include <chrono>
 #include <cstdint>
+#include <system_error>
 
 #include "rstypes.h"
 #include "serialiser/rsserializable.h"
 #include "rsturtle.h"
 #include "util/rstime.h"
 #include "retroshare/rsevents.h"
+#include "util/rsmemory.h"
 
 class RsFiles;
 
@@ -42,6 +44,53 @@ class RsFiles;
  * @jsonapi{development}
  */
 extern RsFiles* rsFiles;
+
+enum class RsFilesErrorNum : int32_t
+{
+	FILES_HANDLE_NOT_FOUND                = 2004,
+	INVALID_FILES_URL                     = 2005
+};
+
+struct RsFilesErrorCategory: std::error_category
+{
+	const char* name() const noexcept override
+	{ return "RetroShare Files"; }
+
+	std::string message(int ev) const override
+	{
+		switch (static_cast<RsFilesErrorNum>(ev))
+		{
+		case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND:
+			return "Files handle not found";
+		case RsFilesErrorNum::INVALID_FILES_URL:
+			return "Invalid files url";
+		default:
+			return "Error message for error: " + std::to_string(ev) +
+			        " not available in category: " + name();
+		}
+	}
+
+	std::error_condition default_error_condition(int ev) const noexcept override;
+
+	const static RsFilesErrorCategory instance;
+};
+
+
+namespace std
+{
+/** Register RsFilesErrorNum as an error condition enum, must be in std
+ * namespace */
+template<> struct is_error_condition_enum<RsFilesErrorNum> : true_type {};
+}
+
+/** Provide RsJsonApiErrorNum conversion to std::error_condition, must be in
+ * same namespace of RsJsonApiErrorNum */
+inline std::error_condition make_error_condition(RsFilesErrorNum e) noexcept
+{
+	return std::error_condition(
+	            static_cast<int>(e), RsFilesErrorCategory::instance );
+};
+
 
 namespace RsRegularExpression { class Expression; }
 
@@ -96,8 +145,28 @@ const FileSearchFlags RS_FILE_HINTS_BROWSABLE              ( 0x00000100 );// bro
 const FileSearchFlags RS_FILE_HINTS_SEARCHABLE             ( 0x00000200 );// can be searched anonymously
 const FileSearchFlags RS_FILE_HINTS_PERMISSION_MASK        ( 0x00000380 );// OR of the last tree flags. Used to filter out.
 
-// Flags used when requesting a transfer
-//
+/** Flags used when requesting a new file transfer */
+enum class FileRequestFlags: uint32_t
+{
+	/// Enable requesting file via turtle routing.
+	ANONYMOUS_ROUTING = 0x00000040,
+
+	/// Asks (TODO: or enforce?) for end-to-end encryption of file trasfer
+	ENCRYPTED = 0x00000080,
+
+	/// Asks (TODO: or enforce?) no end-to-end encryption of file trasfer
+	UNENCRYPTED = 0x00000100,
+
+	/// Start trasfer very slow
+	SLOW = 0x00002000,
+
+	/// Disable searching for potential direct sources
+	NO_DIRECT_SEARCH = 0x02000000
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(FileRequestFlags)
+
+/// @deprecated Flags used when requesting a transfer
+/// @see FileRequestFlags instead
 const TransferRequestFlags RS_FILE_REQ_ANONYMOUS_ROUTING   ( 0x00000040 ); // Use to ask turtle router to download the file.
 const TransferRequestFlags RS_FILE_REQ_ENCRYPTED           ( 0x00000080 ); // Asks for end-to-end encryption of file at the level of ftServer
 const TransferRequestFlags RS_FILE_REQ_UNENCRYPTED         ( 0x00000100 ); // Asks for no end-to-end encryption of file at the level of ftServer
@@ -202,36 +271,119 @@ struct SharedDirStats
     uint64_t total_shared_size ;
 };
 
-// This class represents a tree of directories and files, only with their names size and hash. It is used to create collection links in the GUI
-// and to transmit directory information between services. This class is independent from the existing FileHierarchy classes used in storage because
-// we need a very copact serialization and storage size since we create links with it. Besides, we cannot afford to risk the leak of other local information
-// by using the orignal classes.
-
-class FileTree
+/** This class represents a tree of directories and files, only with their names
+ * size and hash. It is used to create collection links in the GUI and to
+ * transmit directory information between services. This class is independent
+ * from the existing FileHierarchy classes used in storage because we need a
+ * very copact serialization and storage size since we create links with it.
+ * Besides, we cannot afford to risk the leak of other local information
+ *  by using the orignal classes.
+ */
+struct RsFileTree : RsSerializable
 {
 public:
-	virtual ~FileTree() {}
+	RsFileTree() : mTotalFiles(0), mTotalSize(0) {}
 
-	static FileTree *create(const DirDetails& dd, bool remote, bool remove_top_dirs = true) ;
-	static FileTree *create(const std::string& radix64_string) ;
+	/**
+	 * @brief Create a RsFileTree from directory details
+	 * @param dd
+	 * @param remote
+	 * @param remove_top_dirs
+	 * @return
+	 */
+	static std::unique_ptr<RsFileTree> fromDirDetails(
+	        const DirDetails& dd, bool remote, bool remove_top_dirs = true );
 
-	virtual std::string toRadix64() const =0 ;
+	/**
+	 * @brief Create a RsFileTree from Radix64 representation
+	 * @param base64
+	 * @return nullptr if on failure, pointer to the created FileTree on success
+	 */
+	static std::unique_ptr<RsFileTree> fromBase64(
+	        const std::string& base64 );
 
-	// These methods allow the user to browse the hierarchy
+	/** @brief Convert to base64 representetion */
+	std::string toBase64() const;
 
-	struct FileData {
-		std::string name ;
-		uint64_t    size ;
-		RsFileHash  hash ;
+	/// @see RsSerializable
+	virtual void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx )
+	{
+		/* TODO: most of the time handles are smaller then 64bit use VLQ for
+		 * binary serialization of those
+		 * https://en.wikipedia.org/wiki/Variable-length_quantity#Zigzag_encoding
+		 */
+		RS_SERIAL_PROCESS(mFiles);
+		RS_SERIAL_PROCESS(mDirs);
+		RS_SERIAL_PROCESS(mTotalFiles);
+		RS_SERIAL_PROCESS(mTotalSize);
+	}
+
+	struct FileData: RsSerializable
+	{
+		std::string name;
+		uint64_t    size;
+		RsFileHash  hash;
+
+		void serial_process(
+		        RsGenericSerializer::SerializeJob j,
+		        RsGenericSerializer::SerializeContext& ctx ) override;
 	};
 
-	virtual uint32_t root() const { return 0;}
-	virtual bool getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const = 0;
+	/// Allow browsing the hierarchy
+	bool getDirectoryContent(
+	        std::string& name, std::vector<std::uintptr_t>& subdirs,
+	        std::vector<FileData>& subfiles, std::uintptr_t handle = 0 ) const;
 
-	virtual void print() const=0;
+	struct DirData: RsSerializable
+	{
+		std::string name;
+		std::vector<std::uintptr_t> subdirs;
+		std::vector<std::uintptr_t> subfiles;
 
-	uint32_t mTotalFiles ;
-	uint64_t mTotalSize ;
+		void serial_process(
+		        RsGenericSerializer::SerializeJob j,
+		        RsGenericSerializer::SerializeContext& ctx ) override;
+	};
+
+	static void recurs_buildFileTree(
+	        RsFileTree& ft, uint32_t index, const DirDetails& dd, bool remote,
+	        bool remove_top_dirs );
+
+	std::vector<FileData> mFiles;
+	std::vector<DirData> mDirs;
+
+	uint32_t mTotalFiles;
+	uint64_t mTotalSize;
+
+	~RsFileTree() = default;
+
+	/**
+	 * @brief Create a RsFileTree from Radix64 representation
+	 * @deprecated kept for retrocompatibility with RetroShare-gui
+	 * The format is not guardanted to be compatible with the new methods
+	 * @param radix64_string
+	 * @return nullptr if on failure, pointer to the created FileTree on success
+	 */
+	RS_DEPRECATED
+	static std::unique_ptr<RsFileTree> fromRadix64(
+	        const std::string& radix64_string );
+
+	/** @brief Convert to radix64 representetion
+	 * @deprecated kept for retrocompatibility with RetroShare-gui
+	 * The format is not guardanted to be compatible with the new methods
+	 */
+	RS_DEPRECATED std::string toRadix64() const;
+
+private:
+	/** @deprecated kept for retrocompatibility with RetroShare-gui */
+	RS_DEPRECATED_FOR(serial_process)
+	bool serialise(unsigned char *& data,uint32_t& data_size) const;
+
+	/** @deprecated kept for retrocompatibility with RetroShare-gui */
+	RS_DEPRECATED_FOR(serial_process)
+	bool deserialise(unsigned char* data, uint32_t data_size);
 };
 
 struct BannedFileEntry : RsSerializable
@@ -301,9 +453,6 @@ struct TurtleFileInfoV2 : RsSerializable
 class RsFiles
 {
 public:
-	RsFiles() {}
-	virtual ~RsFiles() {}
-
 	/**
 	 * @brief Provides file data for the GUI, media streaming or API clients.
 	 * It may return unverified chunks. This allows streaming without having to
@@ -726,6 +875,50 @@ public:
 	 */
 	virtual bool removeSharedDirectory(std::string dir) = 0;
 
+	/// Default base URL used for files links @see exportFilesLink
+	static const std::string DEFAULT_FILES_BASE_URL;
+
+	/** Link query field used to store collection files count
+	 * @see exportFilesLink */
+	static const std::string FILES_URL_COUNT_FIELD;
+
+	/// Link query field used to store collection data @see exportFilesLink
+	static const std::string FILES_URL_DATA_FIELD;
+
+	/// Link query field used to store collection name @see exportFilesLink
+	static const std::string FILES_URL_NAME_FIELD;
+
+	/// Link query field used to store collection size @see exportFilesLink
+	static const std::string FILES_URL_SIZE_FIELD;
+
+	/**
+	 * @brief Get link to a forum
+	 * @jsonapi{development}
+	 * @param[out] link storage for the generated link
+	 * @param[in] handle file/directory RetroShare handle
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare link
+	 *	radix, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare link into a
+	 *	"normal" looking web link. If empty the collection data link will be
+	 *	outputted in plain base64 format.
+	 * @return error information if some error occurred, 0/SUCCESS otherwise
+	 */
+	virtual std::error_condition exportFilesLink(
+	        std::string& link, std::uintptr_t handle,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL ) = 0;
+
+	/**
+	 * @brief Parse RetroShare files link
+	 * @jsonapi{development}
+	 * @param[in] link files link either in radix or URL format
+	 * @param[out] collection optional storage for parsed files link
+	 * @return error information if some error occurred, 0/SUCCESS otherwise
+	 */
+	virtual std::error_condition parseFilesLink(
+	        const std::string& link, RsFileTree& collection ) = 0;
+
+	// virtual std::error_condition downloadFilesLink(FileRequestFlags)
+
 	/**
 	 * @brief Get list of ignored file name prefixes and suffixes
 	 * @param[out] ignoredPrefixes storage for ingored prefixes
@@ -757,4 +950,6 @@ public:
 
 		virtual bool	ignoreDuplicates() = 0;
 		virtual void 	setIgnoreDuplicates(bool ignore) = 0;
+
+	virtual ~RsFiles() = default;
 };
