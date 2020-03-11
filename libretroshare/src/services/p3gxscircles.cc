@@ -279,9 +279,12 @@ bool p3GxsCircles::getCirclesSummaries(std::list<RsGroupMetaData>& circles)
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
 	if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
-        cancelRequest(token);
-
-	return getGroupSummary(token, circles);
+    {
+        std::cerr << "Cannot get circles summary. Token queue is overloaded?" << std::endl;
+        return false;
+    }
+    else
+		return getGroupSummary(token, circles);
 }
 
 bool p3GxsCircles::getCirclesInfo( const std::list<RsGxsGroupId>& circlesIds,
@@ -291,9 +294,12 @@ bool p3GxsCircles::getCirclesInfo( const std::list<RsGxsGroupId>& circlesIds,
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	if( !requestGroupInfo(token, opts, circlesIds) || waitToken(token) != RsTokenService::COMPLETE )
+    {
+        std::cerr << "Cannot get circle info. Token queue is overloaded?" << std::endl;
         return false;
-
-	return getGroupData(token, circlesInfo);
+    }
+	else
+		return getGroupData(token, circlesInfo);
 }
 
 bool p3GxsCircles::getCircleRequests( const RsGxsGroupId& circleId,
