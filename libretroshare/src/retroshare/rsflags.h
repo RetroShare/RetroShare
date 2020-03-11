@@ -210,9 +210,9 @@ template<int n> class RS_DEPRECATED_FOR(RS_REGISTER_ENUM_FLAGS_TYPE) t_RsFlags32
 #define FLAGS_TAG_SERVICE_CHAT 	0x839042
 #define FLAGS_TAG_SERIALIZER   	0xa0338d
 
-// Flags for requesting transfers, ask for turtle, cache, speed, etc.
-//
-typedef t_RsFlags32<FLAGS_TAG_TRANSFER_REQS> TransferRequestFlags ;
+/// @deprecated Flags for requesting transfers, ask for turtle, cache, speed, etc.
+RS_DEPRECATED_FOR(FileRequestFlags)
+typedef t_RsFlags32<FLAGS_TAG_TRANSFER_REQS> TransferRequestFlags;
 
 // Flags for file storage. Mainly permissions like BROWSABLE/NETWORK_WIDE for groups and peers.
 //

@@ -2225,9 +2225,8 @@ void TransfersDialog::pasteLink()
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
 	{
-		FileTree *ft = FileTree::create((*it).radix().toStdString()) ;
-
-		col.merge_in(*ft) ;
+		auto ft = RsFileTree::fromRadix64((*it).radix().toStdString());
+		col.merge_in(*ft);
 	}
 	links.clear();
 	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE);
