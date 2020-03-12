@@ -217,7 +217,7 @@ public:
 
 	/// @see RsFiles
 	std::error_condition exportFilesLink(
-	        std::string& link, std::uintptr_t handle,
+	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
 	        ) override;
 

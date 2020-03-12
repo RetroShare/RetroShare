@@ -480,6 +480,7 @@ HEADERS +=	util/folderiterator.h \
 			util/dnsresolver.h \
                         util/radix32.h \
                         util/radix64.h \
+                        util/rsbase64.h \
                         util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
@@ -636,6 +637,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
+            util/rsbase64.cc \
     util/rserrno.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {

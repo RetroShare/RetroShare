@@ -22,10 +22,12 @@
 #include <iomanip>
 
 #include "util/radix64.h"
+#include "util/rsbase64.h"
 #include "util/rsdir.h"
 #include "retroshare/rsfiles.h"
 #include "file_sharing_defaults.h"
 #include "filelist_io.h"
+#include "serialiser/rstypeserializer.h"
 
 void RsFileTree::DirData::serial_process(
             RsGenericSerializer::SerializeJob j,
@@ -45,17 +47,24 @@ void RsFileTree::FileData::serial_process(
 	RS_SERIAL_PROCESS(hash);
 }
 
-/*static*/ std::unique_ptr<RsFileTree> RsFileTree::fromBase64(
-        const std::string& base64 )
+/*static*/ std::tuple<std::unique_ptr<RsFileTree>, std::error_condition>
+RsFileTree::fromBase64(const std::string& base64)
 {
-	std::unique_ptr<RsFileTree> ft(new RsFileTree);
-	std::vector<uint8_t> mem = Radix64::decode(base64);
+	const auto failure = [](std::error_condition ec)
+	{ return std::make_tuple(nullptr, ec); };
+
+	std::error_condition ec;
+	std::vector<uint8_t> mem;
+	if( (ec = RsBase64::decode(base64, mem)) ) return failure(ec);
+
 	RsGenericSerializer::SerializeContext ctx(
 	            mem.data(), static_cast<uint32_t>(mem.size()) );
+	std::unique_ptr<RsFileTree> ft(new RsFileTree);
 	ft->serial_process(
 	            RsGenericSerializer::SerializeJob::DESERIALIZE, ctx);
-	if(ctx.mOk) return ft;
-	return nullptr;
+	if(ctx.mOk) return std::make_tuple(std::move(ft), std::error_condition());
+
+	return failure(std::errc::invalid_argument);
 }
 
 std::string RsFileTree::toBase64() const
@@ -64,8 +73,6 @@ std::string RsFileTree::toBase64() const
 	RsFileTree* ncThis = const_cast<RsFileTree*>(this);
 	ncThis->serial_process(
 	            RsGenericSerializer::SerializeJob::SIZE_ESTIMATE, ctx );
-	RsDbg() << __PRETTY_FUNCTION__ << " ctx.mOffset: " << ctx.mOffset
-	        << std::endl;
 
 	std::vector<uint8_t> buf(ctx.mOffset);
 	ctx.mSize = ctx.mOffset; ctx.mOffset = 0; ctx.mData = buf.data();
@@ -73,7 +80,7 @@ std::string RsFileTree::toBase64() const
 	ncThis->serial_process(
 	            RsGenericSerializer::SerializeJob::SERIALIZE, ctx );
 	std::string result;
-	Radix64::encode(ctx.mData, ctx.mSize, result);
+	RsBase64::encode(ctx.mData, ctx.mSize, result, false, true);
 	return result;
 }
 
@@ -94,7 +101,7 @@ std::unique_ptr<RsFileTree> RsFileTree::fromRadix64(
 	std::unique_ptr<RsFileTree> ft(new RsFileTree);
 	std::vector<uint8_t> mem = Radix64::decode(radix64_string);
 	if(ft->deserialise(mem.data(), static_cast<uint32_t>(mem.size())))
-		return std::move(ft);
+		return ft;
 	return nullptr;
 }
 
@@ -353,3 +360,5 @@ bool RsFileTree::serialise(unsigned char *& buffer,uint32_t& buffer_size) const
         return false;
     }
 }
+
+RsFileTree::~RsFileTree() = default;

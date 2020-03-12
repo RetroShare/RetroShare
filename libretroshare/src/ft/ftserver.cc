@@ -72,6 +72,8 @@
         "retroshare:///files";
 /*static*/ const std::string RsFiles::FILES_URL_COUNT_FIELD = "filesCount";
 /*static*/ const std::string RsFiles::FILES_URL_DATA_FIELD = "filesData";
+// Use a 5 character word so there is no mistake it isn't base64 as 5%4=1
+/*static*/ const std::string RsFiles::FILES_URL_FAGMENT_FORWARD = "fragm";
 /*static*/ const std::string RsFiles::FILES_URL_NAME_FIELD = "filesName";
 /*static*/ const std::string RsFiles::FILES_URL_SIZE_FIELD = "filesSize";
 
@@ -2118,8 +2120,7 @@ const noexcept
 {
 	switch(static_cast<RsFilesErrorNum>(ev))
 	{
-	case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND: // [[fallthrough]];
-	case RsFilesErrorNum::INVALID_FILES_URL:
+	case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND:
 		return std::errc::invalid_argument;
 	default:
 		return std::error_condition(ev, *this);
@@ -2127,7 +2128,8 @@ const noexcept
 }
 
 std::error_condition ftServer::exportFilesLink(
-        std::string& link, std::uintptr_t handle, const std::string& baseUrl )
+        std::string& link, std::uintptr_t handle, bool fragSneak,
+        const std::string& baseUrl )
 {
 	DirDetails tDirDet;
 	if(!requestDirDetails(tDirDet, handle))
@@ -2142,10 +2144,13 @@ std::error_condition ftServer::exportFilesLink(
 		RsUrl tUrl(baseUrl);
 		tUrl.setQueryKV(FILES_URL_COUNT_FIELD,
 		                std::to_string(tFileTree->mTotalFiles) )
-		    .setQueryKV(FILES_URL_DATA_FIELD, link)
 		    .setQueryKV(FILES_URL_NAME_FIELD, tDirDet.name)
 		    .setQueryKV( FILES_URL_SIZE_FIELD,
 		                 std::to_string(tFileTree->mTotalSize) );
+		if(fragSneak)
+			tUrl.setQueryKV(FILES_URL_DATA_FIELD, FILES_URL_FAGMENT_FORWARD)
+			        .setFragment(link);
+		else tUrl.setQueryKV(FILES_URL_DATA_FIELD, link);
 		link = tUrl.toString();
 	}
 
@@ -2159,14 +2164,10 @@ std::error_condition ftServer::parseFilesLink(
 	rs_view_ptr<const std::string> radixPtr =
 	        tUrl.getQueryV(FILES_URL_DATA_FIELD);
 	if(!radixPtr) radixPtr = &link;
+	else if(*radixPtr == FILES_URL_FAGMENT_FORWARD) radixPtr = &tUrl.fragment();
 
-	std::unique_ptr<RsFileTree> tft =
-	        RsFileTree::fromBase64(*radixPtr);
-	if(tft)
-	{
-		collection = *tft;
-		return std::error_condition();
-	}
-
-	return RsFilesErrorNum::INVALID_FILES_URL;
+	std::unique_ptr<RsFileTree> tft; std::error_condition ec;
+	std::tie(tft, ec) = RsFileTree::fromBase64(*radixPtr);
+	if(tft) collection = *tft;
+	return ec;
 }
