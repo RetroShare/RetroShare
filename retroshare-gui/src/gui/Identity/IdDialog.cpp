@@ -59,6 +59,8 @@
  * #define ID_DEBUG 1
  *****/
 
+#define QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND 1
+
 // Data Requests.
 #define IDDIALOG_IDLIST           1
 #define IDDIALOG_IDDETAILS        2
@@ -585,6 +587,17 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #endif
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+#ifdef QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND
+    // These 3 lines are normally not needed. But apparently a bug (in Qt ??) causes Qt to crash when takeChild() is called. If we remove everything from the
+    // tree widget before updating it, takeChild() is never called, but the all tree is filled again from scratch. This is less efficient obviously, and
+    // also collapses the tree. Because it is a *temporary* fix, I dont take the effort to save open/collapsed items yet. If we cannot find a proper way to fix
+    // this, then we'll need to implement the two missing functions to save open/collapsed items.
+
+	ui->treeWidget_membership->clear();
+	mExternalOtherCircleItem = NULL ;
+	mExternalBelongingCircleItem = NULL ;
+#endif
 
 	/* add the top level item */
 	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
