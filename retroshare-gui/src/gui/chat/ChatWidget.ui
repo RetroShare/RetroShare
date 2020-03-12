@@ -324,12 +324,12 @@ border-image: url(:/images/closepressed.png)
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="toolBarFrameTop">
+         <widget class="QFrame" name="toolBar">
           <property name="frameShape">
-           <enum>QFrame::Box</enum>
+           <enum>QFrame::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
+           <enum>QFrame::Plain</enum>
           </property>
           <layout class="QHBoxLayout" name="toolBarFrameHLayout">
            <property name="spacing">
@@ -553,7 +553,7 @@ border-image: url(:/images/closepressed.png)
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="icon">
-              <iconset resource="../WikiPoos/Wiki_images.qrc">
+              <iconset>
                <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
              </property>
              <property name="autoRaise">
@@ -579,7 +579,7 @@ border-image: url(:/images/closepressed.png)
               <enum>Qt::NoFocus</enum>
              </property>
              <property name="icon">
-              <iconset resource="../WikiPoos/Wiki_images.qrc">
+              <iconset>
                <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
              </property>
              <property name="autoRaise">
@@ -711,10 +711,10 @@ border-image: url(:/images/closepressed.png)
         </size>
        </property>
        <property name="frameShape">
-        <enum>QFrame::Box</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
+        <enum>QFrame::Plain</enum>
        </property>
        <layout class="QHBoxLayout" name="titleBarFrameHLayout">
         <property name="leftMargin">
@@ -983,7 +983,7 @@ border-image: url(:/images/closepressed.png)
   </action>
   <action name="actionImport_sticker">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset resource="../icons.qrc">
      <normaloff>:/icons/png/addstickers.png</normaloff>:/icons/png/addstickers.png</iconset>
    </property>
    <property name="text">
