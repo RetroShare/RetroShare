@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -48,7 +49,6 @@ extern RsFiles* rsFiles;
 enum class RsFilesErrorNum : int32_t
 {
 	FILES_HANDLE_NOT_FOUND                = 2004,
-	INVALID_FILES_URL                     = 2005
 };
 
 struct RsFilesErrorCategory: std::error_category
@@ -62,8 +62,6 @@ struct RsFilesErrorCategory: std::error_category
 		{
 		case RsFilesErrorNum::FILES_HANDLE_NOT_FOUND:
 			return "Files handle not found";
-		case RsFilesErrorNum::INVALID_FILES_URL:
-			return "Invalid files url";
 		default:
 			return "Error message for error: " + std::to_string(ev) +
 			        " not available in category: " + name();
@@ -286,21 +284,22 @@ public:
 
 	/**
 	 * @brief Create a RsFileTree from directory details
-	 * @param dd
+	 * @param dd directory or file details
 	 * @param remote
 	 * @param remove_top_dirs
-	 * @return
+	 * @return pointer to the created file-tree
 	 */
 	static std::unique_ptr<RsFileTree> fromDirDetails(
 	        const DirDetails& dd, bool remote, bool remove_top_dirs = true );
 
 	/**
-	 * @brief Create a RsFileTree from Radix64 representation
-	 * @param base64
-	 * @return nullptr if on failure, pointer to the created FileTree on success
+	 * @brief Create a RsFileTree from Base64 representation
+	 * @param base64 base64 or base64url string representation of the file-tree
+	 * @return pointer to the parsed file-tree on success, nullptr plus error
+	 *	details on failure
 	 */
-	static std::unique_ptr<RsFileTree> fromBase64(
-	        const std::string& base64 );
+	static std::tuple<std::unique_ptr<RsFileTree>, std::error_condition>
+	fromBase64(const std::string& base64);
 
 	/** @brief Convert to base64 representetion */
 	std::string toBase64() const;
@@ -357,24 +356,25 @@ public:
 	uint32_t mTotalFiles;
 	uint64_t mTotalSize;
 
-	~RsFileTree() = default;
+	virtual ~RsFileTree();
 
 	/**
 	 * @brief Create a RsFileTree from Radix64 representation
 	 * @deprecated kept for retrocompatibility with RetroShare-gui
-	 * The format is not guardanted to be compatible with the new methods
+	 * The format is not compatible with the new methods
 	 * @param radix64_string
 	 * @return nullptr if on failure, pointer to the created FileTree on success
 	 */
-	RS_DEPRECATED
+	RS_DEPRECATED_FOR(fromBase64)
 	static std::unique_ptr<RsFileTree> fromRadix64(
 	        const std::string& radix64_string );
 
 	/** @brief Convert to radix64 representetion
 	 * @deprecated kept for retrocompatibility with RetroShare-gui
-	 * The format is not guardanted to be compatible with the new methods
+	 * The format is not compatible with the new methods
 	 */
-	RS_DEPRECATED std::string toRadix64() const;
+	RS_DEPRECATED_FOR(toBase64)
+	std::string toRadix64() const;
 
 private:
 	/** @deprecated kept for retrocompatibility with RetroShare-gui */
@@ -885,6 +885,11 @@ public:
 	/// Link query field used to store collection data @see exportFilesLink
 	static const std::string FILES_URL_DATA_FIELD;
 
+	/** Link query FILES_URL_DATA_FIELD field value used to instruct the parser
+	 * to look for the data into the link fragment
+	 * @see exportFilesLink and parseFilesLink */
+	static const std::string FILES_URL_FAGMENT_FORWARD;
+
 	/// Link query field used to store collection name @see exportFilesLink
 	static const std::string FILES_URL_NAME_FIELD;
 
@@ -896,15 +901,21 @@ public:
 	 * @jsonapi{development}
 	 * @param[out] link storage for the generated link
 	 * @param[in] handle file/directory RetroShare handle
-	 * @param[in] baseUrl URL into which to sneak in the RetroShare link
-	 *	radix, this is primarly useful to induce applications into making the
-	 *	link clickable, or to disguise the RetroShare link into a
-	 *	"normal" looking web link. If empty the collection data link will be
-	 *	outputted in plain base64 format.
+	 * @param[in] fragSneak when true the file data is sneaked into fragment
+	 *	instead of FILES_URL_DATA_FIELD query field, this way if using an
+	 *	http[s] link to pass around a disguised file link a misconfigured host
+	 *	attempting to visit that link with a web browser will not send the file
+	 *	data to the server thus protecting at least some of the privacy of the
+	 *	user even in a misconfiguration scenario.
+	 * @param[in] baseUrl URL into which to sneak in the RetroShare file link
+	 *	base64, this is primarly useful to induce applications into making the
+	 *	link clickable, or to disguise the RetroShare link into a "normal"
+	 *	looking web link. If empty the collection data link will be outputted in
+	 *	plain base64 format.
 	 * @return error information if some error occurred, 0/SUCCESS otherwise
 	 */
 	virtual std::error_condition exportFilesLink(
-	        std::string& link, std::uintptr_t handle,
+	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL ) = 0;
 
 	/**
