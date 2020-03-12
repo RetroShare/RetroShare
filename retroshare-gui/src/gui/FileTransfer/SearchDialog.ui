@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1531</width>
-    <height>889</height>
+    <width>793</width>
+    <height>511</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,28 +26,28 @@
       </sizepolicy>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Sunken</enum>
+      <enum>QFrame::Plain</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <property name="leftMargin">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="topMargin">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="rightMargin">
-       <number>2</number>
+       <number>3</number>
       </property>
       <property name="bottomMargin">
-       <number>2</number>
+       <number>3</number>
       </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <property name="spacing">
-         <number>0</number>
+         <number>2</number>
         </property>
         <item>
          <widget class="QFrame" name="searchLineFrame">
@@ -414,7 +414,7 @@
              <string>Directory</string>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
+             <iconset>
               <normaloff>:/images/folder16.png</normaloff>:/images/folder16.png</iconset>
             </property>
            </item>
