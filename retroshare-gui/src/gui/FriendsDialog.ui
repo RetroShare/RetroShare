@@ -94,6 +94,12 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximumSize">
+             <size>
+              <width>80</width>
+              <height>80</height>
+             </size>
+            </property>
             <property name="scaledContents">
              <bool>false</bool>
             </property>
