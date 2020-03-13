@@ -274,8 +274,7 @@ struct RsGxsIfaceHelper
 	{ mTokenService.requestGroupStatistic(token, grpId); }
 
 	/// @see RsTokenService::cancelRequest
-	bool cancelRequest(uint32_t token)
-	{ return mTokenService.cancelRequest(token); }
+	bool cancelRequest(uint32_t token) { return mTokenService.cancelRequest(token); }
 
 	/**
 	 * @deprecated
@@ -291,12 +290,21 @@ protected:
 	 * @param[in] token token associated to the request caller is waiting for
 	 * @param[in] maxWait maximum waiting time in milliseconds
 	 * @param[in] checkEvery time in millisecond between status checks
+	 * @param[in] auto_delete_if_unsuccessful delete the request when it fails. This avoid leaving useless pending requests in the queue that would slow down additional calls.
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
 	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(2000),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20))
-	{ return mTokenService.waitToken(token, maxWait, checkEvery); }
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
+            bool auto_delete_if_unsuccessful=true)
+	{
+        RsTokenService::GxsRequestStatus res = mTokenService.waitToken(token, maxWait, checkEvery);
+
+        if(res != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+            cancelRequest(token);
+
+        return res;
+    }
 
 private:
 	RsGxsIface& mGxs;
