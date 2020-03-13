@@ -30,8 +30,8 @@
 
 /** Constructor */
 
-WireGroupItem::WireGroupItem(RsWireGroup grp)
-:QWidget(NULL), mGroup(grp), mType(0)
+WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
+:QWidget(NULL), mHolder(holder), mGroup(grp)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
@@ -42,10 +42,31 @@ WireGroupItem::WireGroupItem(RsWireGroup grp)
 void WireGroupItem::setup()
 {
 	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
-	// label_authorId->setText(mGroup.mMeta.mAuthorId);
+	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
 
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));
+	connect(toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
+	setGroupSet();
+}
+
+void WireGroupItem::setGroupSet()
+{
+	if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) {
+		toolButton_type->setText("Own");
+		toolButton_subscribe->setText("N/A");
+		toolButton_subscribe->setEnabled(false);
+	}
+	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+	{
+		toolButton_type->setText("Subcribed");
+		toolButton_subscribe->setText("Unsubcribe");
+	}
+	else
+	{
+		toolButton_type->setText("Other");
+		toolButton_subscribe->setText("Subcribe");
+	}
 }
 
 void WireGroupItem::show()
@@ -53,12 +74,24 @@ void WireGroupItem::show()
 	frame_details->setVisible(!frame_details->isVisible());
 }
 
+void WireGroupItem::subscribe()
+{
+	if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
+	{
+		mHolder->unsubscribe(mGroup.mMeta.mGroupId);
+	}
+	else
+	{
+		mHolder->subscribe(mGroup.mMeta.mGroupId);
+	}
+}
+
 
 void WireGroupItem::removeItem()
 {
 }
 
-void WireGroupItem::setSelected(bool on)
+void WireGroupItem::setSelected(bool /* on */)
 {
 }
 

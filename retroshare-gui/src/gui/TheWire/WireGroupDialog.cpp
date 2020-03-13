@@ -125,7 +125,7 @@ bool WireGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData
 	return true;
 }
 
-bool WireGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
+bool WireGroupDialog::service_EditGroup(uint32_t & /* token */, RsGroupMetaData &editedMeta)
 {
 	RsWireGroup grp;
 	prepareWireGroup(grp, editedMeta);

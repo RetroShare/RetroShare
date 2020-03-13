@@ -46,7 +46,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QToolButton" name="toolButton_2">
+         <widget class="QToolButton" name="toolButton_type">
           <property name="text">
            <string>Type</string>
           </property>
@@ -71,7 +71,7 @@
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QLabel" name="label_authorId">
+          <widget class="GxsIdLabel" name="label_authorId">
            <property name="text">
             <string> GxsIdLabel</string>
            </property>
@@ -91,7 +91,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton">
+          <widget class="QToolButton" name="toolButton_subscribe">
            <property name="text">
             <string>Sub/Un</string>
            </property>
@@ -105,6 +105,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GxsIdLabel</class>
+   <extends>QLabel</extends>
+   <header>gui/gxs/GxsIdLabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

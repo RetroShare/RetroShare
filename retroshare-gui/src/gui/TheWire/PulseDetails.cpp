@@ -31,12 +31,14 @@
 #include <iostream>
 
 /** Constructor */
-PulseDetails::PulseDetails(PulseHolder *actions, RsWirePulse &pulse, std::string &groupName, bool is_original)
-:QWidget(NULL), mActions(actions), mPulse(pulse), mGroupName(groupName), mIsOriginal(is_original)
+PulseDetails::PulseDetails(PulseHolder *actions, RsWirePulse *pulse, std::string &groupName,
+		std::map<rstime_t, RsWirePulse *> replies)
+:QWidget(NULL), mActions(actions), mPulse(*pulse), mGroupName(groupName)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	setup();
+	addReplies(replies);
 }
 
 PulseDetails::PulseDetails(PulseHolder *actions,
@@ -46,7 +48,7 @@ PulseDetails::PulseDetails(PulseHolder *actions,
 	RsGxsId		&parentAuthorId,
 	rstime_t	   &parentPublishTs,
 	std::string	&parentPulseText)
-:QWidget(NULL), mActions(actions), mPulse(), mGroupName(parentGroupName), mIsOriginal(false)
+:QWidget(NULL), mActions(actions), mPulse(), mGroupName(parentGroupName)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
@@ -58,6 +60,15 @@ PulseDetails::PulseDetails(PulseHolder *actions,
 	mPulse.mMeta.mPublishTs = parentPublishTs;
 	mPulse.mPulseText = parentPulseText;
 	setup();
+}
+
+void PulseDetails::setBackground(QString color)
+{
+	QWidget *tocolor = this;
+	QPalette p = tocolor->palette();
+	p.setColor(tocolor->backgroundRole(), QColor(color));
+	tocolor->setPalette(p);
+	tocolor->setAutoFillBackground(true);
 }
 
 void PulseDetails::setup()
@@ -77,6 +88,47 @@ void PulseDetails::setup()
 	// label_icon->setText();
 	textBrowser->setPlainText(QString::fromStdString(mPulse.mPulseText));
 	frame_expand->setVisible(false);
+
+	label_replies->setText("");
+	frame_replies->setVisible(false);
+	mHasReplies = false;
+}
+
+void PulseDetails::addReplies(std::map<rstime_t, RsWirePulse *> replies)
+{
+	if (replies.size() == 0)
+	{
+		// do nothing.
+		return;
+	}
+	else if (replies.size() == 1)
+	{
+		label_replies->setText("1 reply");
+	}
+	else if (replies.size() > 1)
+	{
+		label_replies->setText(QString("%1 replies").arg(replies.size()));
+	}
+
+	// add extra widgets into layout.
+	QLayout *vbox = frame_replies->layout();
+	mHasReplies = true;
+
+	std::map<rstime_t, RsWirePulse *> emptyReplies;
+	std::map<rstime_t, RsWirePulse *>::reverse_iterator it;
+	for (it = replies.rbegin(); it != replies.rend(); it++)
+	{
+		// add Ref as child reply.
+		PulseDetails *pd = new PulseDetails(mActions,
+            it->second->mRefGroupId,
+            it->second->mRefGroupName,
+            it->second->mRefOrigMsgId,
+            it->second->mRefAuthorId,
+            it->second->mRefPublishTs,
+            it->second->mRefPulseText);
+		pd->setBackground("goldenrod");
+		vbox->addWidget(pd);
+	}
 }
 
 
@@ -86,10 +138,14 @@ void PulseDetails::toggle()
 		// switch to minimal view.
 		label_summary->setVisible(true);
 		frame_expand->setVisible(false);
+		frame_replies->setVisible(false);
 	} else {
 		// switch to expanded view.
 		label_summary->setVisible(false);
 		frame_expand->setVisible(true);
+		if (mHasReplies) {
+			frame_replies->setVisible(true);
+		}
 	}
 }
 

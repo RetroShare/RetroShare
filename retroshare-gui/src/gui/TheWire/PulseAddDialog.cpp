@@ -54,7 +54,8 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 	mReplyGroupName = groupName;
 
 	{
-		PulseDetails *details = new PulseDetails(NULL, pulse, groupName, true);
+		std::map<rstime_t, RsWirePulse *> replies;
+		PulseDetails *details = new PulseDetails(NULL, &pulse, groupName, replies);
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
 		vbox->addWidget(details);

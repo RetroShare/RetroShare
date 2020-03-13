@@ -1376,6 +1376,8 @@ int RsServer::StartupRetroShare()
 			mPhoto, mPhoto->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
+
+		mPhoto->setNetworkExchangeService(photo_ns);
 #endif
 
 #ifdef RS_USE_WIRE
@@ -1391,6 +1393,8 @@ int RsServer::StartupRetroShare()
 			mWire, mWire->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
+
+		mWire->setNetworkExchangeService(wire_ns);
 #endif
         // now add to p3service
         pqih->addService(gxsid_ns, true);

@@ -27,12 +27,22 @@
 
 class WireGroupItem;
 
+class WireGroupHolder
+{
+public:
+	virtual ~WireGroupHolder() {}
+	virtual void subscribe(RsGxsGroupId &groupId) = 0;
+	virtual void unsubscribe(RsGxsGroupId &groupId) = 0;
+
+	virtual void notifyGroupSelection(WireGroupItem *item) = 0;
+};
+
 class WireGroupItem : public QWidget, private Ui::WireGroupItem
 {
   Q_OBJECT
 
 public:
-	WireGroupItem(RsWireGroup grp);
+	WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp);
 
 	void removeItem();
 
@@ -43,15 +53,17 @@ public:
 
 private slots:
 	void show();
+	void subscribe();
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
 
 private:
 	void setup();
+	void setGroupSet();
 
+	WireGroupHolder *mHolder;
 	RsWireGroup mGroup;
-	uint32_t	 mType;
 	bool mSelected;
 };
 

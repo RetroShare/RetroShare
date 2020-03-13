@@ -29,13 +29,14 @@
 #include <map>
 
 #include "gui/TheWire/PulseItem.h"
+#include "gui/TheWire/WireGroupItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
 #include "util/TokenQueue.h"
 
 #define IMAGE_WIRE              ":/images/kgames.png"
 
-class WireDialog : public MainPage, public TokenResponse, public PulseHolder
+class WireDialog : public MainPage, public TokenResponse, public PulseHolder, public WireGroupHolder
 {
   Q_OBJECT
 
@@ -48,13 +49,17 @@ public:
 
 	// PulseHolder interface.
 	virtual void deletePulseItem(PulseItem *, uint32_t type);
-	virtual void notifySelection(PulseItem *item, int ptype);
+	virtual void notifyPulseSelection(PulseItem *item);
 
 	virtual void follow(RsGxsGroupId &groupId);
 	virtual void rate(RsGxsId &authorId);
 	virtual void reply(RsWirePulse &pulse, std::string &groupName);
 
-	void notifyPulseSelection(PulseItem *item);
+
+	// WireGroupHolder interface.
+	virtual void subscribe(RsGxsGroupId &groupId);
+	virtual void unsubscribe(RsGxsGroupId &groupId);
+	virtual void notifyGroupSelection(WireGroupItem *item);
 
 private slots:
 
@@ -62,31 +67,38 @@ private slots:
 	void createPulse();
 	void checkUpdate();
 	void refreshGroups();
+	void selectGroupSet(int index);
 
 private:
 
-	void addItem(QWidget *item);
 	void addGroup(QWidget *item);
 
-	void addPulse(RsWirePulse &pulse, RsWireGroup &group);
-	void addGroup(RsWireGroup &group);
+	void addPulse(RsWirePulse *pulse, RsWireGroup *group,
+						std::map<rstime_t, RsWirePulse *> replies);
+
+	void addGroup(const RsWireGroup &group);
 
 	void deletePulses();
 	void deleteGroups();
+	void showGroups();
 	void updateGroups(std::vector<RsWireGroup> &groups);
 
 	// Loading Data.
 	void requestGroupData();
 	bool loadGroupData(const uint32_t &token);
+	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
 	void requestPulseData(const std::list<RsGxsGroupId>& grpIds);
 	bool loadPulseData(const uint32_t &token);
 
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
+	int mGroupSet;
+
 	PulseAddDialog *mAddDialog;
 
 	PulseItem *mPulseSelected;
+	WireGroupItem *mGroupSelected;
 
 	TokenQueue *mWireQueue;
 
