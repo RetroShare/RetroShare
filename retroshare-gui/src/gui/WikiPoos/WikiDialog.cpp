@@ -87,7 +87,6 @@ WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, paren
 	mAddGroupDialog = NULL;
 	mEditDialog = NULL;
 
-	connect( ui.toolButton_NewGroup, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
 	connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
 	connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
 	connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
@@ -105,15 +104,22 @@ WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, paren
 	/* setup TokenQueue */
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
-    // Set initial size of the splitter
-    ui.listSplitter->setStretchFactor(0, 0);
-    ui.listSplitter->setStretchFactor(1, 1);
+	// Set initial size of the splitter
+	ui.listSplitter->setStretchFactor(0, 0);
+	ui.listSplitter->setStretchFactor(1, 1);
 
 	/* Setup Group Tree */
 	mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(), true);
 	mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(), true);
 	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(), false);
 	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(), false);
+	
+	/* Add the New Group button */
+	QToolButton *newGroupButton = new QToolButton(this);
+	newGroupButton->setIcon(QIcon(":/icons/png/add.png"));
+	newGroupButton->setToolTip(tr("Create Group"));
+	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
+	ui.groupTreeWidget->addToolButton(newGroupButton);
 
 	// load settings
 	processSettings(true);
