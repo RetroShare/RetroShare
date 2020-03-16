@@ -192,6 +192,39 @@ class RsRawSerialiser: public RsSerialType
 		virtual	RsItem *    deserialise(void *data, uint32_t *size);
 };
 
+/** These are convenience flags to be used by the items when processing the
+ * data. The names of the flags are not very important. What matters is that
+ * the serial_process() method of each item correctly deals with the data
+ * when it sees the flags, if the serialiser sets them.
+ * By default the flags are not set and shouldn't be handled.
+ * When deriving a new serializer, the user can set his own flags, using
+ * compatible values
+ */
+enum class RsSerializationFlags
+{
+	NONE               =  0,
+	CONFIG             =  1,
+	SIGNATURE          =  2,
+	SKIP_HEADER        =  4,
+
+	/** Used for JSON deserialization in JSON API, it causes the deserialization
+	 * to continue even if some field is missing (or incorrect), this way the
+	 * API is more user friendly as some methods need just part of the structs
+	 * they take as parameters. */
+	YIELDING           =  8,
+
+	/** When set integers typer are serialized/deserialized in Variable Length
+	 * Quantity mode
+	 * @see https://en.wikipedia.org/wiki/Variable-length_quantity
+	 * This type of encoding is efficent when absoulte value is usually much
+	 * smaller then the maximum representable with the original type.
+	 * This encoding is also capable of representing big values at expences of a
+	 * one more byte used.
+	 */
+	INTEGER_VLQ        = 16
+};
+RS_REGISTER_ENUM_FLAGS_TYPE(RsSerializationFlags);
+
 /// Top class for all services and config serializers.
 struct RsGenericSerializer : RsSerialType
 {
@@ -200,7 +233,7 @@ struct RsGenericSerializer : RsSerialType
 		SIZE_ESTIMATE = 0x01,
 		SERIALIZE     = 0x02,
 		DESERIALIZE   = 0x03,
-		PRINT         = 0x04,
+		PRINT         = 0x04, /// @deprecated use rsdebug.h << operator instead
 		TO_JSON,
 		FROM_JSON
 	} SerializeJob;
@@ -227,7 +260,7 @@ struct RsGenericSerializer : RsSerialType
 		        SerializationFlags flags,
 		        RsJson::AllocatorType* allocator = nullptr) :
 		    mData(data), mSize(size), mOffset(0), mOk(true), mFormat(format),
-		    mFlags(flags), mJson(rapidjson::kObjectType, allocator) {}
+		    mFlags{flags}, mJson(rapidjson::kObjectType, allocator) {}
 
 		unsigned char *mData;
 		uint32_t mSize;

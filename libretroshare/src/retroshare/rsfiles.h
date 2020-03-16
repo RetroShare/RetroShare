@@ -309,10 +309,6 @@ public:
 	        RsGenericSerializer::SerializeJob j,
 	        RsGenericSerializer::SerializeContext& ctx )
 	{
-		/* TODO: most of the time handles are smaller then 64bit use VLQ for
-		 * binary serialization of those
-		 * https://en.wikipedia.org/wiki/Variable-length_quantity#Zigzag_encoding
-		 */
 		RS_SERIAL_PROCESS(mFiles);
 		RS_SERIAL_PROCESS(mDirs);
 		RS_SERIAL_PROCESS(mTotalFiles);
