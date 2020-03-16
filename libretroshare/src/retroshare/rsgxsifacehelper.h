@@ -38,14 +38,25 @@
  * To properly fix the API design many changes with the implied chain reactions
  * are necessary, so at this point this workaround seems acceptable.
  */
-struct RsGxsIfaceHelper
+
+enum class TokenRequestType: uint8_t
 {
+    GROUP_INFO          = 0x01,
+    MSG_INFO            = 0x02,
+    MSG_RELATED_INFO    = 0x03,
+    GROUP_STATISTICS    = 0x04,
+    SERVICE_STATISTICS  = 0x05,
+};
+
+class RsGxsIfaceHelper
+{
+public:
 	/*!
 	 * @param gxs handle to RsGenExchange instance of service (Usually the
 	 *   service class itself)
 	 */
 	RsGxsIfaceHelper(RsGxsIface& gxs) :
-	    mGxs(gxs), mTokenService(*gxs.getTokenService()) {}
+	    mGxs(gxs), mTokenService(*gxs.getTokenService()),mMtx("GxsIfaceHelper") {}
 
     ~RsGxsIfaceHelper(){}
 
@@ -235,28 +246,80 @@ struct RsGxsIfaceHelper
 	/// @see RsTokenService::requestGroupInfo
 	bool requestGroupInfo( uint32_t& token, const RsTokReqOptions& opts,
 	                       const std::list<RsGxsGroupId> &groupIds )
-	{ return mTokenService.requestGroupInfo(token, 0, opts, groupIds); }
+	{
+        cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+
+		if( mTokenService.requestGroupInfo(token, 0, opts, groupIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::GROUP_INFO;
+            locked_dumpTokens();
+            return true;
+        }
+        else
+            return false;
+    }
 
 	/// @see RsTokenService::requestGroupInfo
 	bool requestGroupInfo(uint32_t& token, const RsTokReqOptions& opts)
-	{ return mTokenService.requestGroupInfo(token, 0, opts); }
+	{
+        cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+
+		if(  mTokenService.requestGroupInfo(token, 0, opts))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::GROUP_INFO;
+            locked_dumpTokens();
+            return true;
+        }
+        else
+            return false;
+    }
 
 	/// @see RsTokenService::requestMsgInfo
 	bool requestMsgInfo( uint32_t& token,
 	                     const RsTokReqOptions& opts, const GxsMsgReq& msgIds )
-	{ return mTokenService.requestMsgInfo(token, 0, opts, msgIds); }
+	{
+        if(mTokenService.requestMsgInfo(token, 0, opts, msgIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::MSG_INFO;
+			locked_dumpTokens();
+			return true;
+        }
+        else
+            return false;
+    }
 
 	/// @see RsTokenService::requestMsgInfo
-	bool requestMsgInfo(
-	        uint32_t& token, const RsTokReqOptions& opts,
-	        const std::list<RsGxsGroupId>& grpIds )
-	{ return mTokenService.requestMsgInfo(token, 0, opts, grpIds); }
+	bool requestMsgInfo( uint32_t& token, const RsTokReqOptions& opts, const std::list<RsGxsGroupId>& grpIds )
+    {
+        if(mTokenService.requestMsgInfo(token, 0, opts, grpIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::MSG_INFO;
+			locked_dumpTokens();
+            return true;
+        }
+        else
+            return false;
+    }
 
 	/// @see RsTokenService::requestMsgRelatedInfo
 	bool requestMsgRelatedInfo(
 	        uint32_t& token, const RsTokReqOptions& opts,
 	        const std::vector<RsGxsGrpMsgIdPair>& msgIds )
-	{ return mTokenService.requestMsgRelatedInfo(token, 0, opts, msgIds); }
+	{
+        if( mTokenService.requestMsgRelatedInfo(token, 0, opts, msgIds))
+        {
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens[token]=TokenRequestType::MSG_RELATED_INFO;
+            locked_dumpTokens();
+            return true;
+        }
+        else
+            return false;
+    }
 
 	/**
 	 * @jsonapi{development}
@@ -267,14 +330,46 @@ struct RsGxsIfaceHelper
 
 	/// @see RsTokenService::requestServiceStatistic
 	void requestServiceStatistic(uint32_t& token)
-	{ mTokenService.requestServiceStatistic(token); }
+	{
+        mTokenService.requestServiceStatistic(token);
+
+		RS_STACK_MUTEX(mMtx);
+		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
+
+		locked_dumpTokens();
+    }
 
 	/// @see RsTokenService::requestGroupStatistic
 	void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
-	{ mTokenService.requestGroupStatistic(token, grpId); }
+	{
+		mTokenService.requestGroupStatistic(token, grpId);
+
+		RS_STACK_MUTEX(mMtx);
+		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;
+		locked_dumpTokens();
+    }
+
+    bool cancelActiveRequestTokens(TokenRequestType type)
+    {
+		RS_STACK_MUTEX(mMtx);
+        for(auto it = mActiveTokens.begin();it!=mActiveTokens.end();)
+            if(it->second == type)
+			{
+                mTokenService.cancelRequest(it->first);
+                it = mActiveTokens.erase(it);
+			}
+        return true;
+    }
 
 	/// @see RsTokenService::cancelRequest
-	bool cancelRequest(uint32_t token) { return mTokenService.cancelRequest(token); }
+	bool cancelRequest(uint32_t token)
+    {
+		{
+			RS_STACK_MUTEX(mMtx);
+			mActiveTokens.erase(token);
+		}
+        return mTokenService.cancelRequest(token);
+    }
 
 	/**
 	 * @deprecated
@@ -294,7 +389,7 @@ protected:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(2000),
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
 	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
             bool auto_delete_if_unsuccessful=true)
 	{
@@ -302,6 +397,11 @@ protected:
 
         if(res != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
             cancelRequest(token);
+        else
+        {
+            RS_STACK_MUTEX(mMtx);
+			mActiveTokens.erase(token);
+        }
 
         return res;
     }
@@ -309,4 +409,15 @@ protected:
 private:
 	RsGxsIface& mGxs;
 	RsTokenService& mTokenService;
+    RsMutex mMtx;
+
+    std::map<uint32_t,TokenRequestType> mActiveTokens;
+
+    void locked_dumpTokens()
+    {
+        std::cerr << "Active tokens (this=" << (void*)this << "): " ;
+        for(auto it: mActiveTokens)
+            std::cerr << std::dec << it.first << " (" << static_cast<int>(it.second) << ") " ;
+        std::cerr << std::endl;
+    }
 };

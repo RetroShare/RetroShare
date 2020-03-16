@@ -1444,7 +1444,7 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
 			return;
         }
 
@@ -1719,7 +1719,7 @@ void GxsForumThreadWidget::updateGroupData()
 
         // 2 - sort the messages into a proper hierarchy
 
-        RsGxsForumGroup *group = new RsGxsForumGroup(groups[0]);	// we use a pointer in order to avoid group deletion while we're in the thread.
+        RsGxsForumGroup group(groups[0]);	// we use a copy to share the object in order to avoid group deletion while we're in the thread.
 
         // 3 - update the model in the UI thread.
 
@@ -1729,8 +1729,7 @@ void GxsForumThreadWidget::updateGroupData()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			mForumGroup = *group;
-            delete group;
+			mForumGroup = group;
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
@@ -1759,7 +1758,7 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
 			return;
         }
 
@@ -1778,7 +1777,7 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 
         // 2 - sort the messages into a proper hierarchy
 
-        RsGxsForumMsg *msg = new RsGxsForumMsg(msgs[0]);
+        RsGxsForumMsg msg(msgs[0]);
 
         // 3 - update the model in the UI thread.
 
@@ -1788,9 +1787,8 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			insertMessageData(*msg);
+			insertMessageData(msg);
 
-            delete msg;
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 		}, this );
