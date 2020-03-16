@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ * Copyright (C) 2018  Retroshare Team <contact@retroshare.cc>                 *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -58,7 +60,8 @@ RsFileTree::fromBase64(const std::string& base64)
 	if( (ec = RsBase64::decode(base64, mem)) ) return failure(ec);
 
 	RsGenericSerializer::SerializeContext ctx(
-	            mem.data(), static_cast<uint32_t>(mem.size()) );
+	            mem.data(), static_cast<uint32_t>(mem.size()),
+	            SerializationFlags::fromEFT(RsSerializationFlags::INTEGER_VLQ) );
 	std::unique_ptr<RsFileTree> ft(new RsFileTree);
 	ft->serial_process(
 	            RsGenericSerializer::SerializeJob::DESERIALIZE, ctx);
@@ -70,6 +73,7 @@ RsFileTree::fromBase64(const std::string& base64)
 std::string RsFileTree::toBase64() const
 {
 	RsGenericSerializer::SerializeContext ctx;
+	ctx.mFlags = SerializationFlags::fromEFT(RsSerializationFlags::INTEGER_VLQ);
 	RsFileTree* ncThis = const_cast<RsFileTree*>(this);
 	ncThis->serial_process(
 	            RsGenericSerializer::SerializeJob::SIZE_ESTIMATE, ctx );

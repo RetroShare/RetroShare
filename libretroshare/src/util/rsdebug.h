@@ -107,6 +107,10 @@ struct t_RsLogger
 		                 << std::setfill('0') << std::setw(3) << msec.count()
 		                 << std::setfill(tFill) << " " << val;
 	}
+
+	/// needed for manipulators and things like std::endl
+	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
+	{ return std::cerr << pf; }
 };
 #endif // def __ANDROID__
 
