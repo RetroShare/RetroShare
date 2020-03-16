@@ -99,6 +99,10 @@ struct t_RsLogger
 		return std::cerr << static_cast<char>(CATEGORY) << " " << time(nullptr)
 		                 << " " << val;
 	}
+
+	/// needed for manipulators and things like std::endl
+	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
+	{ return std::cerr << pf; }
 };
 #endif // def __ANDROID__
 

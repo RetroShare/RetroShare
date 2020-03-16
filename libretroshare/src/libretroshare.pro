@@ -481,6 +481,7 @@ HEADERS +=	util/folderiterator.h \
                         util/radix32.h \
                         util/radix64.h \
                         util/rsbase64.h \
+                        util/rsendian.h \
                         util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
