@@ -390,20 +390,55 @@ protected:
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
 	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100),
             bool auto_delete_if_unsuccessful=true)
 	{
-        RsTokenService::GxsRequestStatus res = mTokenService.waitToken(token, maxWait, checkEvery);
+        #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		auto wkStartime = std::chrono::steady_clock::now();
+		int maxWorkAroundCnt = 10;
+LLwaitTokenBeginLabel:
+#endif
+		auto timeout = std::chrono::steady_clock::now() + maxWait;
+		auto st = requestStatus(token);
 
-        if(res != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+		{
+			std::this_thread::sleep_for(checkEvery);
+			st = requestStatus(token);
+		}
+        if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
             cancelRequest(token);
-        else
-        {
+
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+		/* Work around for very slow/old android devices, we don't expect this
+		 * to be necessary on newer devices. If it take unreasonably long
+		 * something worser is already happening elsewere and we return anyway.
+		 */
+		if( st > RsTokenService::FAILED && st < RsTokenService::COMPLETE
+		        && maxWorkAroundCnt-- > 0 )
+		{
+			maxWait *= 10;
+			checkEvery *= 3;
+			Dbg3() << __PRETTY_FUNCTION__ << " Slow Android device "
+			       << " workaround st: " << st
+			       << " maxWorkAroundCnt: " << maxWorkAroundCnt
+			       << " maxWait: " << maxWait.count()
+			       << " checkEvery: " << checkEvery.count() << std::endl;
+			goto LLwaitTokenBeginLabel;
+		}
+		Dbg3() << __PRETTY_FUNCTION__ << " lasted: "
+		       << std::chrono::duration_cast<std::chrono::milliseconds>(
+		              std::chrono::steady_clock::now() - wkStartime ).count()
+		       << "ms" << std::endl;
+
+#endif
+
+		{
             RS_STACK_MUTEX(mMtx);
 			mActiveTokens.erase(token);
         }
 
-        return res;
+        return st;
     }
 
 private:
