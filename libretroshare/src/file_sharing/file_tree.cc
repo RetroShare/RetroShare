@@ -61,7 +61,7 @@ RsFileTree::fromBase64(const std::string& base64)
 
 	RsGenericSerializer::SerializeContext ctx(
 	            mem.data(), static_cast<uint32_t>(mem.size()),
-	            SerializationFlags::fromEFT(RsSerializationFlags::INTEGER_VLQ) );
+	            RsSerializationFlags::INTEGER_VLQ );
 	std::unique_ptr<RsFileTree> ft(new RsFileTree);
 	ft->serial_process(
 	            RsGenericSerializer::SerializeJob::DESERIALIZE, ctx);
@@ -73,7 +73,7 @@ RsFileTree::fromBase64(const std::string& base64)
 std::string RsFileTree::toBase64() const
 {
 	RsGenericSerializer::SerializeContext ctx;
-	ctx.mFlags = SerializationFlags::fromEFT(RsSerializationFlags::INTEGER_VLQ);
+	ctx.mFlags = RsSerializationFlags::INTEGER_VLQ;
 	RsFileTree* ncThis = const_cast<RsFileTree*>(this);
 	ncThis->serial_process(
 	            RsGenericSerializer::SerializeJob::SIZE_ESTIMATE, ctx );

@@ -82,8 +82,7 @@ struct RsTypeSerializer
 	        INTT& member, const std::string& member_name )
 	{
 		const bool VLQ_ENCODING = !!(
-		            RsSerializationFlags::INTEGER_VLQ &
-		             ctx.mFlags.toEFT<RsSerializationFlags>() );
+		            RsSerializationFlags::INTEGER_VLQ & ctx.mFlags );
 
 		switch(j)
 		{
@@ -149,8 +148,7 @@ struct RsTypeSerializer
 			break;
 		case RsGenericSerializer::FROM_JSON:
 			ctx.mOk &= ( ctx.mOk ||
-			             !!( RsSerializationFlags::YIELDING &
-			                 ctx.mFlags.toEFT<RsSerializationFlags>() ) )
+			             !!(RsSerializationFlags::YIELDING & ctx.mFlags) )
 			        && from_JSON(member_name, member, ctx.mJson);
 			break;
 		default: fatalUnknownSerialJob(j);
@@ -198,7 +196,8 @@ struct RsTypeSerializer
 			ctx.mOk = ctx.mOk && to_JSON(member_name, member, ctx.mJson);
 			break;
 		case RsGenericSerializer::FROM_JSON:
-			ctx.mOk &= (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
+			ctx.mOk &= ( ctx.mOk ||
+			             !!(ctx.mFlags & RsSerializationFlags::YIELDING) )
 			        && from_JSON(member_name, member, ctx.mJson);
 			break;
 		default: fatalUnknownSerialJob(j);
@@ -236,7 +235,7 @@ struct RsTypeSerializer
 			break;
 		case RsGenericSerializer::FROM_JSON:
 			ctx.mOk &=
-			        (ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING)
+			        (ctx.mOk || !!(ctx.mFlags & RsSerializationFlags::YIELDING))
 			        && from_JSON(member_name, type_id, member, ctx.mJson);
 			break;
 		default: fatalUnknownSerialJob(j);
@@ -324,7 +323,7 @@ struct RsTypeSerializer
 		{
 			using namespace rapidjson;
 
-			bool ok = ctx.mOk || ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+			bool ok = ctx.mOk || !!(ctx.mFlags & RsSerializationFlags::YIELDING);
 			Document& jDoc(ctx.mJson);
 			Document::AllocatorType& allocator = jDoc.GetAllocator();
 
@@ -424,8 +423,7 @@ struct RsTypeSerializer
 			RsJson& jDoc(ctx.mJson);
 			const char* mName = memberName.c_str();
 			bool hasMember = jDoc.HasMember(mName);
-			bool yielding = ctx.mFlags &
-			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+			bool yielding = !!(ctx.mFlags & RsSerializationFlags::YIELDING);
 
 			if(!hasMember)
 			{
@@ -560,8 +558,7 @@ struct RsTypeSerializer
 		{
 			using namespace rapidjson;
 
-			bool ok = ctx.mOk || ctx.mFlags &
-			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+			bool ok = ctx.mOk || !!(ctx.mFlags & RsSerializationFlags::YIELDING);
 			Document& jDoc(ctx.mJson);
 			Document::AllocatorType& allocator = jDoc.GetAllocator();
 
@@ -669,8 +666,8 @@ struct RsTypeSerializer
 			break;
 		case RsGenericSerializer::FROM_JSON:
 		{
-			bool ok = ctx.mOk || !!( ctx.mFlags.toEFT<RsSerializationFlags>()
-			                          & RsSerializationFlags::YIELDING );
+			bool ok = ctx.mOk || !!(
+			            ctx.mFlags & RsSerializationFlags::YIELDING );
 			ctx.mOk = ok && from_JSON(memberName, member, ctx.mJson) && ctx.mOk;
 			break;
 		}
@@ -760,8 +757,7 @@ struct RsTypeSerializer
 			RsJson& jDoc(ctx.mJson);
 			const char* mName = memberName.c_str();
 			bool hasMember = jDoc.HasMember(mName);
-			bool yielding = ctx.mFlags &
-			        RsGenericSerializer::SERIALIZATION_FLAG_YIELDING;
+			bool yielding = !!(ctx.mFlags & RsSerializationFlags::YIELDING);
 
 			if(!hasMember)
 			{

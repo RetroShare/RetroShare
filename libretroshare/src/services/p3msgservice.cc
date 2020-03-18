@@ -80,7 +80,9 @@ p3MsgService::p3MsgService( p3ServiceControl *sc, p3IdService *id_serv,
       recentlyReceivedMutex("p3MsgService recently received hash mutex"),
       mGxsTransServ(gxsMS)
 {
-	_serialiser = new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE);	// this serialiser is used for services. It's not the same than the one returned by setupSerialiser(). We need both!!
+	/* this serialiser is used for services. It's not the same than the one
+	 * returned by setupSerialiser(). We need both!! */
+	_serialiser = new RsMsgSerialiser();
 	addSerialType(_serialiser);
 
 	/* MsgIds are not transmitted, but only used locally as a storage index.
@@ -509,7 +511,7 @@ RsSerialiser* p3MsgService::setupSerialiser()	// this serialiser is used for con
 {
 	RsSerialiser *rss = new RsSerialiser ;
 
-	rss->addSerialType(new RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_CONFIG));
+	rss->addSerialType(new RsMsgSerialiser(RsSerializationFlags::CONFIG));
 	rss->addSerialType(new RsGeneralConfigSerialiser());
 
 	return rss;
@@ -2386,10 +2388,11 @@ void p3MsgService::sendDistantMsgItem(RsMsgItem *msgitem)
 	/* The item is serialized and turned into a generic turtle item. Use use the
 	 * explicit serialiser to make sure that the msgId is not included */
 
-    uint32_t msg_serialized_rssize = RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).size(msgitem) ;
+    uint32_t msg_serialized_rssize = RsMsgSerialiser().size(msgitem);
     RsTemporaryMemory msg_serialized_data(msg_serialized_rssize) ;
 
-    if(!RsMsgSerialiser(RsServiceSerializer::SERIALIZATION_FLAG_NONE).serialise(msgitem,msg_serialized_data,&msg_serialized_rssize))
+	if( !RsMsgSerialiser().
+	        serialise(msgitem,msg_serialized_data,&msg_serialized_rssize) )
     {
         std::cerr << "(EE) p3MsgService::sendTurtleData(): Serialization error." << std::endl;
         return ;

@@ -630,50 +630,61 @@ std::string PGPHandler::SaveCertificateToString(const RsPgpId& id,bool include_s
 	return makeRadixEncodedPGPKey(key,include_signatures) ;
 }
 
-bool PGPHandler::exportPublicKey(const RsPgpId& id,unsigned char *& mem_block,size_t& mem_size,bool armoured,bool include_signatures) const
+bool PGPHandler::exportPublicKey(
+        const RsPgpId& id,
+        rs_view_ptr<unsigned char>& mem_block, size_t& mem_size,
+        bool armoured, bool include_signatures ) const
 {
-	RsStackMutex mtx(pgphandlerMtx) ;				// lock access to PGP memory structures.
-	const ops_keydata_t *key = locked_getPublicKey(id,false) ;
-	mem_block = NULL ;
+	mem_block = nullptr; mem_size = 0; // clear just in case
 
 	if(armoured)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << ": should not be used with armoured=true, because there's a bug in the armoured export of OPS" << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << " should not be used with "
+		        << "armoured=true, because there's a bug in the armoured export"
+		        << " of OPS" << std::endl;
+		print_stacktrace();
+		return false;
 	}
 
-	if(key == NULL)
+	RS_STACK_MUTEX(pgphandlerMtx);
+	const ops_keydata_t* key = locked_getPublicKey(id,false);
+
+	if(!key)
 	{
-		std::cerr << "Cannot output key " << id.toStdString() << ": not found in keyring." << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << " key id: " << id
+		        << " not found in keyring." << std::endl;
+		return false;
 	}
 
-   ops_create_info_t* cinfo;
-	ops_memory_t *buf = NULL ;
-   ops_setup_memory_write(&cinfo, &buf, 0);
+	ops_create_info_t* cinfo;
+	ops_memory_t *buf = nullptr;
+	ops_setup_memory_write(&cinfo, &buf, 0);
 
-	if(ops_write_transferable_public_key_from_packet_data(key,armoured,cinfo) != ops_true)
+	if(ops_write_transferable_public_key_from_packet_data(
+	            key, armoured, cinfo ) != ops_true)
 	{
-		std::cerr << "ERROR: This key cannot be processed by RetroShare because\nDSA certificates are not yet handled." << std::endl;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__ << "  This key id " << id
+		        << " cannot be processed by RetroShare because DSA certificates"
+		        << " support is not implemented yet." << std::endl;
+		return false;
 	}
 
-	ops_writer_close(cinfo) ;
+	ops_writer_close(cinfo);
 
-	mem_block = new unsigned char[ops_memory_get_length(buf)] ;
-	mem_size = ops_memory_get_length(buf) ;
-	memcpy(mem_block,ops_memory_get_data(buf),mem_size) ;
+	mem_size = ops_memory_get_length(buf);
+	mem_block = reinterpret_cast<unsigned char*>(malloc(mem_size));
+	memcpy(mem_block,ops_memory_get_data(buf),mem_size);
 
-   ops_teardown_memory_write(cinfo,buf);
+	ops_teardown_memory_write(cinfo,buf);
 
 	if(!include_signatures)
 	{
-		size_t new_size ;
-		PGPKeyManagement::findLengthOfMinimalKey(mem_block,mem_size,new_size) ;
-		mem_size = new_size ;
+		size_t new_size;
+		PGPKeyManagement::findLengthOfMinimalKey(mem_block, mem_size, new_size);
+		mem_size = new_size;
 	}
 
-	return true ;
+	return true;
 }
 
 bool PGPHandler::exportGPGKeyPair(const std::string& filename,const RsPgpId& exported_key_id) const

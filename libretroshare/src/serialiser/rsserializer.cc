@@ -4,6 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2016  Cyril Soler <csoler@users.sourceforge.net>              *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -18,22 +20,16 @@
  * You should have received a copy of the GNU Lesser General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
- *******************************************************************************/
+ ******************************************************************************/
+
 #include <typeinfo>
 
 #include "rsitems/rsitem.h"
-
 #include "util/rsprint.h"
 #include "serialiser/rsserializer.h"
 #include "serialiser/rstypeserializer.h"
 #include "util/stacktrace.h"
 #include "util/rsdebug.h"
-
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_NONE        ( 0x0000 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_CONFIG      ( 0x0001 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE   ( 0x0002 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_SKIP_HEADER ( 0x0004 );
-const SerializationFlags RsGenericSerializer::SERIALIZATION_FLAG_YIELDING    ( 0x0008 );
 
 RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 {
@@ -47,11 +43,13 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 		return nullptr;
 	}
 
-    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
-    {
-        std::cerr << "(EE) Cannot deserialise item with flags SERIALIZATION_FLAG_SKIP_HEADER. Check your code!" << std::endl;
-        return NULL ;
-    }
+	if(!!(mFlags & RsSerializationFlags::SKIP_HEADER))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot deserialise item with flag "
+		        << "SKIP_HEADER. Check your code!" << std::endl;
+		print_stacktrace();
+		return nullptr;
+	}
 
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
@@ -64,7 +62,9 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 		return NULL ;
 	}
 
-	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size,mFormat,mFlags);
+	SerializeContext ctx(
+	            const_cast<uint8_t*>(static_cast<uint8_t*>(data)), *size,
+	            mFlags );
 	ctx.mOffset = 8 ;
 
 	item->serial_process(RsGenericSerializer::DESERIALIZE, ctx) ;
@@ -85,11 +85,13 @@ RsItem *RsServiceSerializer::deserialise(void *data, uint32_t *size)
 }
 RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 {
-    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
-    {
-        std::cerr << "(EE) Cannot deserialise item with flags SERIALIZATION_FLAG_SKIP_HEADER. Check your code!" << std::endl;
-        return NULL ;
-    }
+	if(!!(mFlags & RsSerializationFlags::SKIP_HEADER))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Cannot deserialise item with flag "
+		        << "SKIP_HEADER. Check your code!" << std::endl;
+		print_stacktrace();
+		return nullptr;
+	}
 
 	uint32_t rstype = getRsItemId(const_cast<void*>((const void*)data)) ;
 
@@ -102,7 +104,9 @@ RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 		return NULL ;
 	}
 
-	SerializeContext ctx(const_cast<uint8_t*>(static_cast<uint8_t*>(data)),*size,mFormat,mFlags);
+	SerializeContext ctx(
+	            const_cast<uint8_t*>(static_cast<uint8_t*>(data)), *size,
+	            mFlags );
 	ctx.mOffset = 8 ;
 
 	item->serial_process(DESERIALIZE, ctx) ;
@@ -121,50 +125,44 @@ RsItem *RsConfigSerializer::deserialise(void *data, uint32_t *size)
 	delete item ;
 	return NULL ;
 }
-bool RsGenericSerializer::serialise(RsItem *item,void *data,uint32_t *size)
+
+bool RsGenericSerializer::serialise(RsItem* item, void* data, uint32_t* size)
 {
-	SerializeContext ctx(static_cast<uint8_t*>(data),0,mFormat,mFlags);
+	uint32_t tlvsize = this->size(item);
 
-	uint32_t tlvsize = this->size(item) ;
+	constexpr auto fName = __PRETTY_FUNCTION__;
+	const auto failure = [=](std::error_condition ec)
+	{
+		RsErr() << fName << " " << ec << std::endl;
+		print_stacktrace();
+		return false;
+	};
 
-	if(tlvsize > *size)
-		throw std::runtime_error("Cannot serialise: not enough room.") ;
+	if(tlvsize > *size) return failure(std::errc::no_buffer_space);
 
+	SerializeContext ctx(static_cast<uint8_t*>(data), tlvsize, mFlags);
 
-    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
-		ctx.mOffset = 0;
-	else
+	if(!(mFlags & RsSerializationFlags::SKIP_HEADER))
 	{
 		if(!setRsItemHeader(data, tlvsize, item->PacketId(), tlvsize))
-		{
-			std::cerr << "RsSerializer::serialise_item(): ERROR. Not enough size!" << std::endl;
-			return false ;
-		}
+			return failure(std::errc::no_buffer_space);
 		ctx.mOffset = 8;
 	}
 
-	ctx.mSize = tlvsize;
+	item->serial_process(RsGenericSerializer::SERIALIZE,ctx);
 
-	item->serial_process(RsGenericSerializer::SERIALIZE,ctx) ;
+	if(ctx.mSize != ctx.mOffset) return failure(std::errc::message_size);
 
-	if(ctx.mSize != ctx.mOffset)
-	{
-		std::cerr << "RsSerializer::serialise(): ERROR. offset does not match expected size!" << std::endl;
-		return false ;
-	}
-    *size = ctx.mOffset ;
-
-	return true ;
+	*size = ctx.mOffset;
+	return true;
 }
 
 uint32_t RsGenericSerializer::size(RsItem *item)
 {
-	SerializeContext ctx(NULL,0,mFormat,mFlags);
+	SerializeContext ctx(nullptr, 0, mFlags);
 
-    if(mFlags & SERIALIZATION_FLAG_SKIP_HEADER)
-		ctx.mOffset = 0;
-	else
-		ctx.mOffset = 8 ;	// header size
+	if(!!(mFlags & RsSerializationFlags::SKIP_HEADER)) ctx.mOffset = 0;
+	else ctx.mOffset = 8; // header size
 	item->serial_process(SIZE_ESTIMATE, ctx) ;
 
 	return ctx.mOffset ;
@@ -172,7 +170,7 @@ uint32_t RsGenericSerializer::size(RsItem *item)
 
 void RsGenericSerializer::print(RsItem *item)
 {
-	SerializeContext ctx(NULL,0,mFormat,mFlags);
+	SerializeContext ctx(nullptr, 0, mFlags);
 
     std::cerr << "***** RsItem class: \"" << typeid(*item).name() << "\" *****" << std::endl;
 	item->serial_process(PRINT, ctx) ;
@@ -255,7 +253,7 @@ RsItem *RsRawSerialiser::deserialise(void *data, uint32_t *pktsize)
 
 
 RsGenericSerializer::SerializeContext::SerializeContext(
-        uint8_t* data, uint32_t size, SerializationFlags flags,
+        uint8_t* data, uint32_t size, RsSerializationFlags flags,
         RsJson::AllocatorType* allocator ) :
     mData(data), mSize(size), mOffset(0), mOk(true), mFlags(flags),
     mJson(rapidjson::kObjectType, allocator)
@@ -264,20 +262,23 @@ RsGenericSerializer::SerializeContext::SerializeContext(
 	{
 		if(size == 0)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " data passed without "
-			          << "size! This make no sense report to developers!"
-			          << std::endl;
+			RsFatal() << __PRETTY_FUNCTION__ << " data passed without "
+			        << "size! This make no sense report to developers!"
+			        << std::endl;
 			print_stacktrace();
+			exit(-EINVAL);
 		}
 
-		if(flags & SERIALIZATION_FLAG_YIELDING)
+		if(!!(flags & RsSerializationFlags::YIELDING))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " Attempt to create a "
+			RsFatal() << __PRETTY_FUNCTION__
+			          << " Attempt to create a "
 			          << "binary serialization context with "
 			          << "SERIALIZATION_FLAG_YIELDING! "
 			          << "This make no sense report to developers!"
 			          << std::endl;
 			print_stacktrace();
+			exit(-EINVAL);
 		}
 	}
 }

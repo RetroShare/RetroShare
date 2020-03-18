@@ -369,9 +369,8 @@ struct PrivateOugoingMapItem : RsChatItem
 
 struct RsChatSerialiser : RsServiceSerializer
 {
-	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
-	    RsServiceSerializer( RS_SERVICE_TYPE_CHAT,
-	                         RsGenericSerializer::FORMAT_BINARY, flags ) {}
+	RsChatSerialiser(RsSerializationFlags flags = RsSerializationFlags::NONE):
+	    RsServiceSerializer(RS_SERVICE_TYPE_CHAT, flags) {}
 
 	virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const;
 };
