@@ -803,7 +803,7 @@ public:
 	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
 
 
-	/* Auth Stuff */
+	RS_DEPRECATED /// This function doesn't provide meaningful error reporting
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
 

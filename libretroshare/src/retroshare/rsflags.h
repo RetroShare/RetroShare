@@ -241,7 +241,3 @@ typedef t_RsFlags32<FLAGS_TAG_SERVICE_PERM > ServicePermissionFlags ;
 //
 typedef t_RsFlags32<FLAGS_TAG_SERVICE_CHAT > ChatLobbyFlags ;			
 
-/// @deprecated Flags for serializer
-RS_DEPRECATED_FOR(RsSerializationFlags)
-typedef t_RsFlags32<FLAGS_TAG_SERIALIZER > SerializationFlags ;
-
