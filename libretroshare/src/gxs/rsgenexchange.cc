@@ -3461,7 +3461,7 @@ bool RsGenExchange::exportGroupBase64(
 
 	if(groupId.isNull()) return failure("groupId cannot be null");
 
-    // We have no blocking API here, so we need to
+    // We have no blocking API here, so we need to make a blocking request manually.
 	const std::list<RsGxsGroupId> groupIds({groupId});
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
