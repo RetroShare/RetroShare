@@ -74,8 +74,8 @@ void RsDiscPgpKeyItem::clear()
 {
 	pgpKeyId.clear();
 	free(bin_data);
-    bin_data = nullptr;
-    bin_len=0;
+	bin_data = nullptr;
+	bin_len = 0;
 }
 
 void 	RsDiscContactItem::clear()

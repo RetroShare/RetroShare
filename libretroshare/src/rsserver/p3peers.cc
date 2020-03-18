@@ -3,8 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
- * Copyright (C) 2015-2018  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2004-2008  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2015-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020       Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,7 +21,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include "util/radix64.h"
+
 #include "pgp/pgpkeyutil.h"
 
 #include "rsserver/p3peers.h"
@@ -35,7 +36,8 @@
 #include "retroshare/rsinit.h"
 #include "retroshare/rsfiles.h"
 #include "util/rsurl.h"
-
+#include "util/radix64.h"
+#include "util/rsbase64.h"
 #include "pgp/rscertificate.h"
 
 #include <iostream>
@@ -1095,51 +1097,59 @@ bool p3Peers::setProxyServer(const uint32_t type, const std::string &addr_str, c
 
 std::string p3Peers::getPGPKey(const RsPgpId& pgp_id,bool include_signatures)
 {
-	unsigned char *mem_block = NULL;
+	rs_owner_ptr<unsigned char> mem_block = nullptr;
 	size_t mem_block_size = 0;
 
 	if( !AuthGPG::getAuthGPG()->exportPublicKey(
 	             RsPgpId(pgp_id), mem_block, mem_block_size,
 	             false, include_signatures ) )
 	{
-		std::cerr << "Cannot output certificate for id \"" << pgp_id
-		          << "\". Sorry." << std::endl;
-		return "" ;
+		RsErr() << __PRETTY_FUNCTION__
+		        << " Failure retriving certificate for id " << pgp_id
+		        << std::endl;
+		return "";
 	}
 
-	RsPeerDetails Detail;
-	if(!getGPGDetails(pgp_id,Detail)) return "";
+	RsPeerDetails details;
+	if(!getGPGDetails(pgp_id, details)) return "";
 
-	RsCertificate cert( Detail,mem_block,mem_block_size );
-	delete[] mem_block ;
+	auto certPtr =
+	        RsCertificate::fromMemoryBlock(details, mem_block, mem_block_size);
 
-	return cert.armouredPGPKey();
+	free(mem_block);
+
+	if(certPtr) return certPtr->armouredPGPKey();
+
+	return "";
 }
 
 
-bool p3Peers::GetPGPBase64StringAndCheckSum(	const RsPgpId& gpg_id,
-															std::string& gpg_base64_string,
-															std::string& gpg_base64_checksum) 
+bool p3Peers::GetPGPBase64StringAndCheckSum(
+        const RsPgpId& gpg_id,
+        std::string& gpg_base64_string, std::string& gpg_base64_checksum )
 {
 	gpg_base64_string = "" ;
 	gpg_base64_checksum = "" ;
 
-	unsigned char *mem_block ;
-	size_t mem_block_size ;
+	rs_owner_ptr<unsigned char> mem_block = nullptr;
+	size_t mem_block_size = 0;
+	if(!AuthGPG::getAuthGPG()->exportPublicKey(
+	            gpg_id,mem_block,mem_block_size,false,false ))
+		return false;
 
-	if(!AuthGPG::getAuthGPG()->exportPublicKey(gpg_id,mem_block,mem_block_size,false,false))
-		return false ;
+	RsBase64::encode(mem_block, mem_block_size, gpg_base64_string, true, false);
 
-	Radix64::encode(mem_block,mem_block_size,gpg_base64_string) ;
+	uint32_t crc = PGPKeyManagement::compute24bitsCRC(mem_block,mem_block_size);
 
-	uint32_t crc = PGPKeyManagement::compute24bitsCRC((unsigned char *)mem_block,mem_block_size) ;
+	free(mem_block);
 
-	unsigned char tmp[3] = { uint8_t((crc >> 16) & 0xff), uint8_t((crc >> 8) & 0xff), uint8_t(crc & 0xff) } ;
-	Radix64::encode(tmp,3,gpg_base64_checksum) ;
+	unsigned char tmp[3] = {
+	    uint8_t((crc >> 16) & 0xff),
+	    uint8_t((crc >> 8) & 0xff),
+	    uint8_t(crc & 0xff) } ;
+	RsBase64::encode(tmp, 3, gpg_base64_checksum, true, false);
 
-	delete[] mem_block ;
-
-	return true ;
+	return true;
 }
 
 enum class RsShortInviteFieldType : uint8_t

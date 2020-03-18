@@ -99,12 +99,10 @@ void RsGRouterGenericDataItem::serial_process(RsGenericSerializer::SerializeJob 
     RsTypeSerializer::serial_process          (j,ctx,destination_key,"destination_key") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,service_id,"service_id") ;
 
-    RsTypeSerializer::TlvMemBlock_proxy prox(data_bytes,data_size) ;
+	RsTypeSerializer::RawMemoryWrapper prox(data_bytes, data_size);
+	RsTypeSerializer::serial_process(j, ctx, prox, "data");
 
-    RsTypeSerializer::serial_process(j,ctx,prox,"data") ;
-
-    if(ctx.mFlags & RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE)
-        return ;
+	if(!!(ctx.mFlags & RsSerializationFlags::SIGNATURE)) return;
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,duplication_factor,"duplication_factor") ;
@@ -133,8 +131,7 @@ void RsGRouterSignedReceiptItem::serial_process(RsGenericSerializer::SerializeJo
     RsTypeSerializer::serial_process<uint32_t> (j,ctx,service_id,"service_id") ;
     RsTypeSerializer::serial_process           (j,ctx,data_hash,"data_hash") ;
 
-    if(ctx.mFlags &  RsGenericSerializer::SERIALIZATION_FLAG_SIGNATURE)
-        return ;
+	if(!!(ctx.mFlags & RsSerializationFlags::SIGNATURE)) return;
 
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,signature,"signature") ;
 }

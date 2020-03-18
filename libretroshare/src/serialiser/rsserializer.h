@@ -238,57 +238,22 @@ struct RsGenericSerializer : RsSerialType
 		FROM_JSON
 	} SerializeJob;
 
-
-	/** @deprecated use SerializeJob instead */
-	RS_DEPRECATED typedef enum
-	{
-		FORMAT_BINARY = 0x01,
-		FORMAT_JSON = 0x02
-	} SerializationFormat;
-
 	struct SerializeContext
 	{
 		/** Allow shared allocator usage to avoid costly JSON deepcopy for
 		 *  nested RsSerializable */
 		SerializeContext(
 		        uint8_t* data = nullptr, uint32_t size = 0,
-		        SerializationFlags flags = SERIALIZATION_FLAG_NONE,
+		        RsSerializationFlags flags = RsSerializationFlags::NONE,
 		        RsJson::AllocatorType* allocator = nullptr);
-
-		RS_DEPRECATED SerializeContext(
-		        uint8_t *data, uint32_t size, SerializationFormat format,
-		        SerializationFlags flags,
-		        RsJson::AllocatorType* allocator = nullptr) :
-		    mData(data), mSize(size), mOffset(0), mOk(true), mFormat(format),
-		    mFlags{flags}, mJson(rapidjson::kObjectType, allocator) {}
 
 		unsigned char *mData;
 		uint32_t mSize;
 		uint32_t mOffset;
 		bool mOk;
-		RS_DEPRECATED SerializationFormat mFormat;
-		SerializationFlags mFlags;
+		RsSerializationFlags mFlags;
 		RsJson mJson;
 	};
-
-	/** These are convenience flags to be used by the items when processing the
-	 * data. The names of the flags are not very important. What matters is that
-	 * the serial_process() method of each item correctly deals with the data
-	 * when it sees the flags, if the serialiser sets them.
-	 * By default the flags are not set and shouldn't be handled.
-	 * When deriving a new serializer, the user can set his own flags, using
-	 * compatible values
-	 */
-	static const SerializationFlags SERIALIZATION_FLAG_NONE;           // 0x0000
-	static const SerializationFlags SERIALIZATION_FLAG_CONFIG;         // 0x0001
-	static const SerializationFlags SERIALIZATION_FLAG_SIGNATURE;      // 0x0002
-	static const SerializationFlags SERIALIZATION_FLAG_SKIP_HEADER;    // 0x0004
-
-	/** Used for JSON deserialization in JSON API, it causes the deserialization
-	 * to continue even if some field is missing (or incorrect), this way the
-	 * API is more user friendly as some methods need just part of the structs
-	 * they take as parameters. */
-	static const SerializationFlags SERIALIZATION_FLAG_YIELDING;       // 0x0008
 
 	/**
 	 * The following functions overload RsSerialType.
@@ -302,18 +267,15 @@ struct RsGenericSerializer : RsSerialType
 protected:
 	RsGenericSerializer(
 	        uint8_t serial_class, uint8_t serial_type,
-	        SerializationFormat format, SerializationFlags flags ) :
+	        RsSerializationFlags flags ):
 	    RsSerialType( RS_PKT_VERSION1, serial_class, serial_type),
-	    mFormat(format), mFlags(flags) {}
-
-	RsGenericSerializer(
-	        uint16_t service, SerializationFormat format,
-	        SerializationFlags flags ) :
-	    RsSerialType( RS_PKT_VERSION_SERVICE, service ), mFormat(format),
 	    mFlags(flags) {}
 
-	SerializationFormat mFormat;
-	SerializationFlags mFlags;
+	RsGenericSerializer(
+	        uint16_t service, RsSerializationFlags flags ):
+	    RsSerialType( RS_PKT_VERSION_SERVICE, service ), mFlags(flags) {}
+
+	RsSerializationFlags mFlags;
 };
 
 
@@ -323,9 +285,9 @@ protected:
 struct RsServiceSerializer : RsGenericSerializer
 {
 	RsServiceSerializer(
-	        uint16_t service_id, SerializationFormat format = FORMAT_BINARY,
-	        SerializationFlags flags = SERIALIZATION_FLAG_NONE ) :
-	    RsGenericSerializer(service_id, format, flags) {}
+	        uint16_t service_id,
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ) :
+	    RsGenericSerializer(service_id, flags) {}
 
 	/*! should be overloaded to create the correct type of item depending on the
 	 * data */
@@ -342,11 +304,10 @@ struct RsServiceSerializer : RsGenericSerializer
  */
 struct RsConfigSerializer : RsGenericSerializer
 {
-	RsConfigSerializer(uint8_t config_class,
-	                   uint8_t config_type,
-	                   SerializationFormat format = FORMAT_BINARY,
-	                   SerializationFlags  flags  = SERIALIZATION_FLAG_NONE) :
-	    RsGenericSerializer(config_class,config_type,format,flags) {}
+	RsConfigSerializer(
+	        uint8_t config_class, uint8_t config_type,
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ) :
+	    RsGenericSerializer(config_class, config_type, flags) {}
 
 	/*! should be overloaded to create the correct type of item depending on the
 	 * data */

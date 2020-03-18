@@ -78,10 +78,10 @@ JsonApiServer::corsOptionsHeaders =
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
-	            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING ); \
+	            RsSerializationFlags::YIELDING ); \
 	RsJson& jReq(cReq.mJson); \
 	if(session->get_request()->get_method() == "GET") \
-    { \
+	{ \
 	    const std::string jrqp(session->get_request()->get_query_parameter("jsonData")); \
 	    jReq.Parse(jrqp.c_str(), jrqp.size()); \
 	} \

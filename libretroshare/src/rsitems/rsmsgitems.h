@@ -19,8 +19,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_MSG_ITEMS_H
-#define RS_MSG_ITEMS_H
+#pragma once
 
 #include <map>
 
@@ -33,10 +32,6 @@
 #include "serialiser/rstlvfileitem.h"
 #include "grouter/grouteritems.h"
 
-#if 0
-#include "serialiser/rstlvtypes.h"
-#include "serialiser/rstlvfileitem.h"
-#endif
 
 /**************************************************************************/
 
@@ -218,17 +213,12 @@ class RsMsgParentId : public RsMessageItem
 
 class RsMsgSerialiser: public RsServiceSerializer
 {
-	public:
-		RsMsgSerialiser(SerializationFlags flags = RsServiceSerializer::SERIALIZATION_FLAG_NONE)
-			:RsServiceSerializer(RS_SERVICE_TYPE_MSG,RsGenericSerializer::FORMAT_BINARY,flags){}
+public:
+	RsMsgSerialiser(
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ):
+	    RsServiceSerializer(RS_SERVICE_TYPE_MSG, flags){}
 
-		virtual     ~RsMsgSerialiser() {}
+	RsItem* create_item(uint16_t service,uint8_t type) const override;
 
-        virtual RsItem *create_item(uint16_t service,uint8_t type) const ;
+	~RsMsgSerialiser() override = default;
 };
-
-/**************************************************************************/
-
-#endif /* RS_MSG_ITEMS_H */
-
-

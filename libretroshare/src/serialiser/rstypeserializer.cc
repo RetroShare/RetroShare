@@ -542,7 +542,7 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		uint32_t serialSize = 0;
 		RS_SERIAL_PROCESS(serialSize);
 		if(!ctx.mOk) break;
-		ctx.mOk =  serialSize <= MAX_SERIALIZED_CHUNK_SIZE;
+		ctx.mOk = serialSize <= MAX_SERIALIZED_CHUNK_SIZE;
 		if(!ctx.mOk)
 		{
 			RsErr() << __PRETTY_FUNCTION__
@@ -555,6 +555,8 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 
 		if(!serialSize)
 		{
+			Dbg3() << __PRETTY_FUNCTION__ << " Deserialized empty memory chunk"
+			       << std::endl;
 			clear();
 			break;
 		}
@@ -573,7 +575,7 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		if(serialSize != second)
 		{
 			first = reinterpret_cast<uint8_t*>(realloc(first, serialSize));
-			second = static_cast<uint32_t>(serialSize);
+			second = serialSize;
 		}
 
 		memcpy(first, ctx.mData + ctx.mOffset, second);
@@ -593,8 +595,8 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 	}
 	case RsGenericSerializer::FROM_JSON:
 	{
-		const bool yelding = !!( RsSerializationFlags::YIELDING &
-		                         ctx.mFlags.toEFT<RsSerializationFlags>() );
+		const bool yelding = !!(
+		            RsSerializationFlags::YIELDING & ctx.mFlags );
 		if(!(ctx.mOk || yelding))
 		{
 			clear();
