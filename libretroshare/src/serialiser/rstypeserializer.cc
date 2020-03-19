@@ -503,6 +503,10 @@ bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
 //                              Binary blocks                                 //
 //============================================================================//
 
+/*static*/ /* without this Android compilation breaks */
+constexpr uint32_t RsTypeSerializer::RawMemoryWrapper::MAX_SERIALIZED_CHUNK_SIZE;
+
+/*static*/
 void RsTypeSerializer::RawMemoryWrapper::serial_process(
                 RsGenericSerializer::SerializeJob j,
                 RsGenericSerializer::SerializeContext& ctx )
