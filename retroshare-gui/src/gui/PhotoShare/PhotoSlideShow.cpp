@@ -179,10 +179,10 @@ void PhotoSlideShow::loadImage()
 	if (ptr)
 	{
 		/* load into the slot */
-		if (ptr->mThumbnail.mData != NULL)
+		if (ptr->mLowResImage.mData != NULL)
         	{
                 	QPixmap qtn;
-                        GxsIdDetails::loadPixmapFromData(ptr->mThumbnail.mData, ptr->mThumbnail.mSize,qtn, GxsIdDetails::ORIGINAL);
+                        GxsIdDetails::loadPixmapFromData(ptr->mLowResImage.mData, ptr->mLowResImage.mSize,qtn, GxsIdDetails::ORIGINAL);
                         QPixmap sqtn = qtn.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         		ui.imgLabel->setPixmap(sqtn);
 
@@ -221,6 +221,7 @@ void PhotoSlideShow::requestPhotos()
 {
     RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
     uint32_t token;
     std::list<RsGxsGroupId> grpIds;
     grpIds.push_back(mAlbum.mMeta.mGroupId);
@@ -248,8 +249,7 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
                 RsPhotoPhoto *ptr = new RsPhotoPhoto;
                 *ptr = photo;
 
-                ptr->mThumbnail = photo.mThumbnail; // copies data.
-                ptr->mOrder = i++;
+                ptr->mLowResImage = photo.mLowResImage; // copies data.
                 mPhotos[photo.mMeta.mMsgId] = ptr;
                 mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;
 

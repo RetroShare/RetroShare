@@ -43,6 +43,13 @@ struct RsGxsFile : RsSerializable
 		RS_SERIAL_PROCESS(mHash);
 		RS_SERIAL_PROCESS(mSize);
 	}
+
+	void clear()
+	{
+		mName.clear();
+		mHash.clear();
+		mSize = 0;
+	}
 };
 
 struct RsGxsImage  : RsSerializable

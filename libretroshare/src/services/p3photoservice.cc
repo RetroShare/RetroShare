@@ -25,19 +25,14 @@
 
 RsPhoto *rsPhoto = NULL;
 
-
-const uint32_t RsPhoto::FLAG_MSG_TYPE_MASK	        = 0x000f;
-const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_POST    = 0x0001;
-const uint32_t RsPhoto::FLAG_MSG_TYPE_PHOTO_COMMENT = 0x0002;
-
 RsPhotoPhoto::RsPhotoPhoto()
-	:mSetFlags(0), mOrder(0), mMode(0), mModFlags(0)
+	:mOrder(0)
 {
 	return;
 }
 
 RsPhotoAlbum::RsPhotoAlbum()
-	:mMode(0), mSetFlags(0), mModFlags(0)
+	:mShareMode(RSPHOTO_SHAREMODE_LOWRESONLY), mAutoDownload(false)
 {
 	return;
 }

@@ -59,8 +59,9 @@
 //#define DEBUG_FORUMS
 
 /* Images for context menu icons */
-#define IMAGE_MESSAGE          ":/images/mail_new.png"
-#define IMAGE_MESSAGEREPLY     ":/images/mail_reply.png"
+#define IMAGE_MESSAGE          ":/icons/mail/compose.png"
+#define IMAGE_REPLY            ":/icons/mail/reply.png"
+#define IMAGE_MESSAGEREPLY     ":/icons/mail/write-mail.png"
 #define IMAGE_MESSAGEEDIT      ":/images/edit_16.png"
 #define IMAGE_MESSAGEREMOVE    ":/images/mail_delete.png"
 #define IMAGE_DOWNLOAD         ":/images/start.png"
@@ -580,7 +581,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
-	QAction *replyAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply"), &contextMnu);
+	QAction *replyAct = new QAction(QIcon(IMAGE_REPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
     QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);

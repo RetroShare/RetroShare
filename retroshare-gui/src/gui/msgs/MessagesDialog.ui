@@ -25,12 +25,6 @@
    </property>
    <item>
     <widget class="RSTabWidget" name="tabWidget">
-     <property name="iconSize">
-      <size>
-       <width>24</width>
-       <height>24</height>
-      </size>
-     </property>
      <property name="tabsClosable">
       <bool>true</bool>
      </property>
