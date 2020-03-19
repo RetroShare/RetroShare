@@ -40,6 +40,8 @@
 #include "serialiser/rsserializable.h"
 #include "util/rsjson.h"
 #include "util/rsdebug.h"
+#include "util/cxx14retrocompat.h"
+
 
 struct RsTypeSerializer
 {
