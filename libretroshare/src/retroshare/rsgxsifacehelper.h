@@ -358,6 +358,9 @@ public:
                 mTokenService.cancelRequest(it->first);
                 it = mActiveTokens.erase(it);
 			}
+        	else
+                ++it;
+
         return true;
     }
 
