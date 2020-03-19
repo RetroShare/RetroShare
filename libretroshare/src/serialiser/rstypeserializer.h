@@ -430,8 +430,7 @@ struct RsTypeSerializer
 				if(!yielding)
 				{
 					RsErr() << __PRETTY_FUNCTION__ << " \"" << memberName
-					         << "\" not found in JSON:" << std::endl
-					         << jDoc << std::endl << std::endl;
+					         << "\" not found in JSON" << std::endl;
 					print_stacktrace();
 				}
 				ctx.mOk = false;
