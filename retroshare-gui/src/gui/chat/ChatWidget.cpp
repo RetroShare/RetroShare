@@ -323,19 +323,19 @@ struct AddMessage {
 	const QString message;
 	const QDateTime sendTime;
 	const QDateTime recvTime;
-	struct lookup_info state;
+	const struct lookup_info state;
 	// I love boilerplate, don't you?
 	AddMessage(
 		bool incoming,
-		const QString message,
-		const QDateTime sendTime,
-		const QDateTime recvTime,
-		struct lookup_info state) :
-		this->incoming(incoming),
-		this->message(message),
-		this->sendTime(sendTime),
-		this->recvTime(recvTime),
-		this->state(state)
+		const QString& message,
+		const QDateTime& sendTime,
+		const QDateTime& recvTime,
+		const struct lookup_info& state) :
+		incoming(incoming),
+		message(message),
+		sendTime(sendTime),
+		recvTime(recvTime),
+		state(state)
 		{}
 };	
 
