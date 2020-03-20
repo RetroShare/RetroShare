@@ -320,9 +320,9 @@ struct lookup_info {
 
 struct AddMessage {
 	bool incoming;
-	const QString message;
-	const QDateTime sendTime;
-	const QDateTime recvTime;
+ QString message;
+ QDateTime sendTime;
+ QDateTime recvTime;
 	const struct lookup_info state;
 	// I love boilerplate, don't you?
 	AddMessage(
@@ -337,6 +337,13 @@ struct AddMessage {
 		recvTime(recvTime),
 		state(state)
 		{}
+	AddMessage& operator=(AddMessage&& other) {
+		this->incoming = std::move(other.incoming);
+		this->message = std::move(other.message);
+		this->sendTime = std::move(other.sendTime);
+		this->recvTime = std::move(other.recvTime);
+		return *this;
+	}
 };	
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
