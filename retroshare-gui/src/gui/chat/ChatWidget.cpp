@@ -53,6 +53,8 @@
 #include "gui/chat/ChatUserNotify.h"//For BradCast
 #include "util/DateTime.h"
 #include "util/imageutil.h"
+#include "util/qtthreadsutils.h"
+#include "util/rsthreads.h"
 
 #include <retroshare/rsstatus.h>
 #include <retroshare/rsidentity.h>
@@ -316,6 +318,14 @@ struct lookup_info {
 	std::string name;
 };
 
+struct AddMessage {
+	bool incoming
+	const QString message
+	const QDateTime sendTime
+	const QDateTime recvTime
+	struct lookup_info state;
+};	
+
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
 {
     this->chatId = chat_id;
@@ -388,16 +398,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 
 	if (rsHistory->getEnable(hist_chat_type))
 	{
-		// get chat messages from history
-		std::list<HistoryMsg> historyMsgs;
-
 		if (messageCount > 0)
 		{
-			rsHistory->getMessages(chatId, historyMsgs, messageCount);
-
-			// temporarily caching these so we don't hang failing lookup for an ID for 9001 messages
-			std::unordered_map<std::string, struct lookup_info> statecache;
-
 			/*
 			 * We need a name for whoever wrote this message in the history.
 			 * There are two pieces of information useful here, chatPeerId and peerName
@@ -406,124 +408,136 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 			 * peerName can always be used as a fallback. The rest of this is just an attempt to
 			 * get whatever the current name of this chatter is.
 			 *
-			 * chatPeerId has 1 of four things:
-			 *   - if this is a direct private chat, it has an RsPeerId, which we don't look up yet
-			 *   - if a distant private chat, it has a tunnel ID, with no info as to who was chatting
-			 *     but this widget is only allowed for active conversations, which are indexed by
-			 *     tunnel ID, and they have the RsGxsId who was chatting.
-			 *   - if a distant public chat (i.e. to a chatroom) then it has a lobby ID, which can
-			 *     be looked up in a similar fashion to the tunnel ID
-			 *   - if a broadcast chat, then it has no destination, only a sender, so we intelligently
-			 *     throw away the sender, and arbitrarily use the destination to store the sender.
-			 *     so broadcast chats only have a destination, which is actually the sender, because
-			 *     reasons. Thus the chatPeerId will be empty.
-			 *     XXX: TODO: jury rig history's addMessage to set chatPeerId to the
-			 *     cm.broadcast_peer_id hack, so we can actually show the sender of broadcasts.
+			 * see pqi/p3historymgr.cc in addMessage and chatIdToVirtualPeerId
+			 *
+			 * 4 kinds of messages:
+			 * 1) broadcast chat (not GXS):
+			 *   - chatPeerId is empty
+			 *   - peerId is the ID of the peer broadcasting
+			 *   - peerName is their name at the time of broadcast
+			 * 2) direct chat (not GXS):
+			 *   - chatPeerId is the message author, but maybe screwed up for !incoming?
+			 *   - peerId is the message author
+			 * 3) distributed (lobby/chatroom) chat (GXS)
+			 *  - chatPeerId is pretty much garbage
+			 *  - peerId is the message author
+			 * 4) distant (private) chat (GXS):
+			 *  - chatPeerId is pretty much garbage is hash(ourGXSId, theirGXSId) the chat "ID"
+			 *  - peerId is the message author
+			 *
+			 *  in all cases, if(incoming) the message author is them, otherwise it's us.  
 			 */
 
-			std::list<HistoryMsg>::iterator historyIt;
-			for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
-			{
-				// it can happen that a message is first added to the message history
-				// and later the gui receives the message through notify
-				// avoid this by not adding history entries if their age is < 2secs
-				if (time(nullptr) <= historyIt->recvTime+2)
-					continue;
+			// need to load history in the background because it all gets loaded on startup
+			// and rsIdentity, rsPeer, etc finish loading after an unpredictable amount of time
+			RsThread::async(
+				[messageCount, this]() {
+					// get chat messages from history
+					std::list<HistoryMsg> historyMsgs;
+					rsHistory->getMessages(chatId, historyMsgs, messageCount);
 
-				const std::string
-					notbeinghashableisagoodidea((const char*)historyIt->chatPeerId.toByteArray());
-				struct lookup_info& state = statecache[notbeinghashableisagoodidea];
-				if(!state.hasName) {
-					int tries;
-					for(tries=0;tries<4;++tries) {
-						assert(!state.hasName);
-						if(state.isDirect) {
-						GOT_DIRECT:
-							{
-								// direct chat, with no RxGxsId, only an RsPeerId
-								RsPeerDetails info;
-								if(rsPeers->getPeerDetails(state.peer, info)) {
-									/*
-									 * info.name is the profile name NOT the node name
-									 * 
-									 * info.location is the node name,  as set in checkAccount, in
-									 * libretroshare/src/rsserver/rsaccounts.cc
-									 */
-									state.name = info.name;
-									state.hasName = true;
-									break;
-								}
-							}
-						} else if(state.hasGxs) {
-						GOT_GXS:
-							{
-								// we need the RsGxsId name still though
-								RsIdentityDetails details;
-								if(rsIdentity->getIdDetails(state.gxs, details)) {
-									state.name = details.mNickname;
-									state.hasName = true;
-									break;
-								}
-							}
-						} else if(chatId.isLobbyId()) {
-							// XXX:
-							// no joke, this is how libretroshare/src/pqi/p3historymgr.c ACTUALLY
-							// does this.
-							const uint8_t* bytes = historyIt->chatPeerId.toByteArray();
-							const ChatLobbyId lobby_id = *((const ChatLobbyId*)bytes);
-							ChatLobbyInfo info;
-							if(rsMsgs->getChatLobbyInfo(lobby_id,  info)) {
-								if(historyIt->incoming) {
-									state.name = info.lobby_name;
-									state.hasName = true;
-									break;
-								} else {
-									// we need our own name
-									state.gxs= info.gxs_id;
+					// temporarily caching these so we don't lookup an ID for 9001 messages
+					std::unordered_map<std::string, struct lookup_info> statecache;
+
+					std::vector<AddMessage> addmessages;
+					std::list<HistoryMsg>::iterator historyIt;
+					for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
+					{
+						// it can happen that a message is first added to the message history
+						// and later the gui receives the message through notify
+						// avoid this by not adding history entries if their age is < 2secs
+						if (time(nullptr) <= historyIt->recvTime+2)
+							continue;
+
+						std::string
+							notbeinghashableisagoodidea((const char*)
+														historyIt->chatPeerId.toByteArray());
+						notbeinghashableisagoodidea += (const char*)historyIt->peerId.toByteArray();
+						struct lookup_info& state = statecache[notbeinghashableisagoodidea];
+						if(!state.hasName) {
+							int tries;
+							for(tries=0;tries<14;++tries) {
+								assert(!state.hasName);
+								if(state.isDirect) {
+								GOT_DIRECT:
+									{
+										// direct chat, with no RxGxsId, only an RsPeerId
+										RsPeerDetails info;
+										if(rsPeers->getPeerDetails(state.peer, info)) {
+											/*
+											 * info.name is the profile name NOT the node name
+											 * 
+											 * info.location is the node name,  as set in checkAccount, in
+											 * libretroshare/src/rsserver/rsaccounts.cc
+											 */
+											state.name = info.name;
+											state.hasName = true;
+											break;
+										}
+										// otherwise, sleep longer for each try as below
+									}
+								} else if(state.hasGxs) {
+								GOT_GXS:
+									{
+										// we need the RsGxsId name still though
+										RsIdentityDetails details;
+										if(rsIdentity->getIdDetails(state.gxs, details)) {
+											state.name = details.mNickname;
+											state.hasName = true;
+											break;
+										}
+										// otherwise, sleep longer for each try as below
+									}
+								} else if(chatId.isLobbyId() || chatId.isDistantChatId()) {
+									// peerId is ours if !incoming, theirs if incoming, either way correct
+									// secretly a GXS ID
+									state.gxs = RsGxsId(historyIt->peerId);
 									state.hasGxs = true;
 									goto GOT_GXS;
-								}
-							}
-						} else if(chatId.isDistantChatId()) {
-							const DistantChatPeerId tunnel_id(chatId.toDistantChatId());
-							DistantChatPeerInfo info;
-							if(rsMsgs->getDistantChatStatus(tunnel_id, info)) {
-								if(historyIt->incoming) {
-									state.gxs = RsGxsId(info.to_id);
 								} else {
-									state.gxs = RsGxsId(info.own_id);
+									// direct private/broadcast chat
+									// peerId will be ours, or theirs, as appropriate
+									state.peer = historyIt->peerId;
+									state.isDirect = true;
+									goto GOT_DIRECT;
 								}
-								state.hasGxs = true;
-								goto GOT_GXS;
+								assert(!state.hasName);
+								int delay = 2 << tries;
+								std::cerr << "Try load history after " << delay << std::endl;
+								std::this_thread::sleep_for(std::chrono::milliseconds(delay));
 							}
-						} else {
-							if(historyIt->incoming) {
-								state.peer = historyIt->chatPeerId;
-							} else {
-								state.peer = rsPeers->getOwnId();
+							if(!state.hasName) {
+								// all lookup attempts failed
+								// historyIt has a fallback peer name (the old name when history was created)
+								state.name = historyIt->peerName;
+								state.hasName = true;
 							}
-							state.isDirect = true;
-							goto GOT_DIRECT;
 						}
-						assert(!state.hasName);
-						int delay = 10 * (tries << 2);
-						std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+						addmessages.emplace(addmessages.end(),
+											historyIt->incoming,
+											QString::fromUtf8(historyIt->message.c_str()),
+											QDateTime::fromTime_t(historyIt->sendTime),
+											QDateTime::fromTime_t(historyIt->recvTime),
+											state);
 					}
-					if(!state.hasName) {
-						// all lookup attempts failed
-						state.name = historyIt->peerName;
-						state.hasName = true;
+					RsQThreadUtils::postToObject(
+						[addmessages, this] {
+							for(auto it = addmessages.begin(); it != addmessages.end(); it++) {
+								const QString qname = QString::fromUtf8(it->state.name.c_str());
+								// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
+								const RsGxsId hack = it->state.hasGxs ? it->state.gxs : RsGxsId();
+								
+								// XXX: this may add history messages after new messages!
+								// would need to lock addChatMsg somehow if we want to prevent that
+								addChatMsg(incoming, qname, hack,
+										   it->sendTime,
+										   it->recvTime,
+										   it->message,
+										   MSGTYPE_HISTORY);
+							},
+							this);
 					}
-				}
-				const QString qname = QString::fromUtf8(state.name.c_str());
-				// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
-				const RsGxsId hack = state.hasGxs ? state.gxs : RsGxsId();
-				addChatMsg(historyIt->incoming, qname, hack,
-						   QDateTime::fromTime_t(historyIt->sendTime),
-						   QDateTime::fromTime_t(historyIt->recvTime),
-						   QString::fromUtf8(historyIt->message.c_str()),
-						   MSGTYPE_HISTORY);
-			}
+				});
 		}
 	}
 
@@ -1082,12 +1096,13 @@ void ChatWidget::setWelcomeMessage(QString &text)
 	ui->textBrowser->setText(text);
 }
 
-void ChatWidget::addChatMsg(bool incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
+void ChatWidget::addChatMsg(const bool& incoming, const QString &name, const QDateTime &sendTime, const QDateTime &recvTime, const QString &message, MsgType chatType)
 {
 	addChatMsg(incoming, name, RsGxsId(), sendTime, recvTime, message, chatType);
 }
 
-void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gxsId
+void ChatWidget::addChatMsg(const bool& incoming,
+							const QString &name, const RsGxsId& gxsId
                             , const QDateTime &sendTime, const QDateTime &recvTime
                             , const QString &message, MsgType chatType)
 {
