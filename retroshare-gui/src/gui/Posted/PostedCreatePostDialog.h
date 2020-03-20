@@ -26,8 +26,6 @@
 #include "retroshare/rsposted.h"
 #include "util/RichTextEdit.h"
 
-class TokenQueue;
-
 namespace Ui {
 	class PostedCreatePostDialog;
 }
@@ -41,7 +39,7 @@ public:
 	 * @param tokenQ parent callee token
 	 * @param posted
 	 */
-	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
+	explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 private:
@@ -62,7 +60,6 @@ private:
 
 	QString mLink;
 	QString mNotes;
-	TokenQueue* mTokenQueue;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
 
