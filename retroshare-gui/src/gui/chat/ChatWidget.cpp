@@ -319,11 +319,24 @@ struct lookup_info {
 };
 
 struct AddMessage {
-	bool incoming
-	const QString message
-	const QDateTime sendTime
-	const QDateTime recvTime
+	bool incoming;
+	const QString message;
+	const QDateTime sendTime;
+	const QDateTime recvTime;
 	struct lookup_info state;
+	// I love boilerplate, don't you?
+	AddMessage(
+		bool incoming,
+		const QString message,
+		const QDateTime sendTime,
+		const QDateTime recvTime,
+		struct lookup_info state) :
+		this->incoming(incoming),
+		this->message(message),
+		this->sendTime(sendTime),
+		this->recvTime(recvTime),
+		this->state(state)
+		{}
 };	
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
@@ -529,14 +542,19 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 								
 								// XXX: this may add history messages after new messages!
 								// would need to lock addChatMsg somehow if we want to prevent that
-								addChatMsg(incoming, qname, hack,
-										   it->sendTime,
-										   it->recvTime,
-										   it->message,
-										   MSGTYPE_HISTORY);
-							},
-							this);
-					}
+								addChatMsg(
+									it->incoming,
+									qname,
+									hack,
+									it->sendTime,
+									it->recvTime,
+									it->message,
+									MSGTYPE_HISTORY);
+							}
+							// end RSQThreadUtils::postToObject
+						},
+						this);
+					// end RsThreads::async
 				});
 		}
 	}
