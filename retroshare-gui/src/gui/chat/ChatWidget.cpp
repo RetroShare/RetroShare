@@ -337,6 +337,13 @@ struct AddMessage {
 		recvTime(recvTime),
 		state(state)
 		{}
+	AddMessage(AddMessage&& other) :
+		incoming(std::move(other.incoming)),
+		message(std::move(other.message)),
+		sendTime(std::move(other.sendTime)),
+		recvTime(std::move(other.recvTime)),
+		state(std::move(other.state)) {}
+	// isn't C++ wonderful?
 	AddMessage& operator=(AddMessage&& other) {
 		this->incoming = std::move(other.incoming);
 		this->message = std::move(other.message);
@@ -344,6 +351,7 @@ struct AddMessage {
 		this->recvTime = std::move(other.recvTime);
 		return *this;
 	}
+
 };	
 
 void ChatWidget::init(const ChatId &chat_id, const QString &title)
@@ -459,7 +467,8 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 					// temporarily caching these so we don't lookup an ID for 9001 messages
 					std::unordered_map<std::string, struct lookup_info> statecache;
 
-					std::vector<AddMessage> addmessages;
+					std::vector<AddMessage>* addmessagesderp = new std::vector<AddMessage>;
+					std::vector<AddMessage>& addmessages = *addmessagesderp;
 					std::list<HistoryMsg>::iterator historyIt;
 					for (historyIt = historyMsgs.begin(); historyIt != historyMsgs.end(); ++historyIt)
 					{
@@ -541,7 +550,9 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 											state);
 					}
 					RsQThreadUtils::postToObject(
-						[addmessages, this] {
+						[addmessagesderp, this] {
+							std::vector<AddMessage>& addmessages =
+								*addmessagesderp;							
 							for(auto it = addmessages.begin(); it != addmessages.end(); it++) {
 								const QString qname = QString::fromUtf8(it->state.name.c_str());
 								// chat lobbies and direct chats have no RsGxsId, so addChatMsg expects an empty one
@@ -558,6 +569,7 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 									it->message,
 									MSGTYPE_HISTORY);
 							}
+							delete addmessagesderp;
 							// end RSQThreadUtils::postToObject
 						},
 						this);
