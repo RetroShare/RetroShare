@@ -567,31 +567,29 @@ struct RsTypeSerializer
 			arrKey.SetString( memberName.c_str(),
 			                  static_cast<SizeType>(memberName.length()) );
 
-			ok = ok && jDoc.IsObject();
-			ok = ok && jDoc.HasMember(arrKey);
+			ok = ok && jDoc.IsObject() && jDoc.HasMember(arrKey)
+			        && jDoc[arrKey].IsArray();
+			if(!ok) { ctx.mOk = false; break; }
 
-			if(ok && jDoc[arrKey].IsArray())
+			for (auto&& arrEl : jDoc[arrKey].GetArray())
 			{
-				for (auto&& arrEl : jDoc[arrKey].GetArray())
-				{
-					Value arrKeyT;
-					arrKeyT.SetString(
-					            memberName.c_str(),
-					            static_cast<SizeType>(memberName.length()) );
+				Value arrKeyT;
+				arrKeyT.SetString(
+				            memberName.c_str(),
+				            static_cast<SizeType>(memberName.length()) );
 
-					RsGenericSerializer::SerializeContext elCtx(
-					            nullptr, 0, ctx.mFlags, &allocator );
-					elCtx.mJson.AddMember(arrKeyT, arrEl, allocator);
+				RsGenericSerializer::SerializeContext elCtx(
+				            nullptr, 0, ctx.mFlags, &allocator );
+				elCtx.mJson.AddMember(arrKeyT, arrEl, allocator);
 
-					el_t el;
-					serial_process(j, elCtx, el, "");
-					ok = ok && elCtx.mOk;
-					ctx.mOk &= ok;
-					if(ok) member.insert(member.end(), el);
-					else break;
-				}
+				el_t el;
+				serial_process(j, elCtx, el, memberName);
+				ok = ok && elCtx.mOk;
+				ctx.mOk &= ok;
+				if(ok) member.insert(member.end(), el);
+				else break;
 			}
-			else ctx.mOk = false;
+
 			break;
 		}
 		default: fatalUnknownSerialJob(j);
