@@ -1159,7 +1159,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
-		gui/PhotoShare/AlbumCreateDialog.h \
 		gui/PhotoShare/PhotoItem.h \
 		gui/PhotoShare/PhotoShareItemHolder.h \
 		gui/PhotoShare/PhotoShare.h \
@@ -1172,7 +1171,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
 		gui/PhotoShare/AlbumDialog.ui \
-		gui/PhotoShare/AlbumCreateDialog.ui \
 		gui/PhotoShare/PhotoShare.ui \
 		gui/PhotoShare/PhotoSlideShow.ui
 
@@ -1184,7 +1182,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDrop.cpp \
 		gui/PhotoShare/AlbumItem.cpp \
 		gui/PhotoShare/AlbumDialog.cpp \
-		gui/PhotoShare/AlbumCreateDialog.cpp \
 		gui/PhotoShare/PhotoShareItemHolder.cpp \
 		gui/PhotoShare/PhotoShare.cpp \
 		gui/PhotoShare/PhotoSlideShow.cpp

@@ -3002,9 +3002,11 @@ void p3IdService::requestIdsFromNet()
 		}
 		else
 		{
+#ifdef DEBUG_IDS
 			RsInfo() << __PRETTY_FUNCTION__ << " no online peers among supplied"
 			         << " list in request for RsGxsId: " << gxsId
 			         << ". Keeping it until peers show up."<< std::endl;
+#endif
 			++cit;
 		}
 	}

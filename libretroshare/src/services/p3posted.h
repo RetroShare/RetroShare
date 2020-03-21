@@ -96,9 +96,15 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 	                                 std::vector<RsGxsComment> &msgs )
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg)
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override
 	{
 		return mCommentService->createGxsComment(token, msg);
+	}
+	virtual bool createComment(RsGxsComment& msg) override
+	{
+        uint32_t token;
+
+		return mCommentService->createGxsComment(token, msg) && waitToken(token) == RsTokenService::COMPLETE ;
 	}
 
 	virtual bool createNewVote(uint32_t &token, RsGxsVote &msg)

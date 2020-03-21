@@ -60,6 +60,7 @@
 #define IMAGE_SYSTEM           ":/images/user/user_request16.png"
 #define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
 #define IMAGE_AUTHOR_INFO      ":/images/info16.png"
+#define IMAGE_NOTFICATION      ":/icons/notification.png"
 
 #define IMAGE_INBOX             ":/images/folder-inbox.png"
 #define IMAGE_OUTBOX            ":/images/folder-outbox.png"
@@ -420,7 +421,7 @@ void MessagesDialog::fillQuickView()
 	}
 
 	item = new QListWidgetItem(tr("System"), ui.quickViewWidget);
-	item->setIcon(QIcon(IMAGE_SYSTEM));
+	item->setIcon(QIcon(IMAGE_NOTFICATION));
 	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
 	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_SYSTEM);
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList

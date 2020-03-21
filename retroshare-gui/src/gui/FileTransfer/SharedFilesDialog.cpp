@@ -74,7 +74,6 @@
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
-#define IMAGE_REMOVE         ":/images/deletemail24.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -228,7 +227,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-  removeExtraFileAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Stop sharing this file" ), this );
+  removeExtraFileAct = new QAction(QIcon(), tr( "Stop sharing this file" ), this );
   connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;

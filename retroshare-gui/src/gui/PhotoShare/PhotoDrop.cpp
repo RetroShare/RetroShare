@@ -48,16 +48,15 @@ class gridIndex
 };
 
 
-
-
+#define DEFAULT_ORDER_INCREMENT (100)
 
 PhotoDrop::PhotoDrop(QWidget *parent)
-    : QWidget(parent)
+	:QWidget(parent), mLastOrder(0)
 {
 	setAcceptDrops(true);
 
 	mSelected = NULL;
-        checkMoveButtons();
+	checkMoveButtons();
 	reorderPhotos();
 }
 
@@ -80,7 +79,7 @@ void PhotoDrop::resizeEvent ( QResizeEvent * event )
 	reorderPhotos();
 }
 
-int     PhotoDrop::getPhotoCount()
+int	PhotoDrop::getPhotoCount()
 {
 	std::cerr << "PhotoDrop::getPhotoCount()";
 	std::cerr << std::endl;
@@ -147,7 +146,7 @@ PhotoItem *PhotoDrop::getPhotoIdx(int idx)
 
 void PhotoDrop::getPhotos(QSet<PhotoItem *> &photos)
 {
-    photos = mPhotos;
+	photos = mPhotos;
 }
 
 
@@ -453,7 +452,7 @@ void PhotoDrop::checkMoveButtons()
 	int count = alayout->count();
 	if ((!mSelected) || (count < 2))
 	{
-    		buttonStatus(PHOTO_SHIFT_NO_BUTTONS);
+		buttonStatus(PHOTO_SHIFT_NO_BUTTONS);
 		return;
 	}
 
@@ -462,7 +461,7 @@ void PhotoDrop::checkMoveButtons()
 	{
 		std::cerr << "PhotoDrop::checkMoveButtons() not GridLayout... not much we can do!";
 		std::cerr << std::endl;
-    		buttonStatus(PHOTO_SHIFT_NO_BUTTONS);
+		buttonStatus(PHOTO_SHIFT_NO_BUTTONS);
 		return;
 	}
 
@@ -477,15 +476,15 @@ void PhotoDrop::checkMoveButtons()
 	int maxCol = (count - 1) % mColumns;
 	if ((selectedRow == 0) && (selectedColumn == 0))
 	{
-    		buttonStatus(PHOTO_SHIFT_RIGHT_ONLY);
+		buttonStatus(PHOTO_SHIFT_RIGHT_ONLY);
 	}
 	else if ((selectedRow == maxRow) && (selectedColumn == maxCol))
 	{
-    		buttonStatus(PHOTO_SHIFT_LEFT_ONLY);
+		buttonStatus(PHOTO_SHIFT_LEFT_ONLY);
 	}
 	else
 	{
-    		buttonStatus(PHOTO_SHIFT_BOTH);
+		buttonStatus(PHOTO_SHIFT_BOTH);
 	}
 }
 
@@ -547,17 +546,6 @@ void PhotoDrop::dragEnterEvent(QDragEnterEvent *event)
 	std::cerr << "PhotoDrop::dragEnterEvent()";
 	std::cerr << std::endl;
 
-
-#if 0
-	const QStringList& formats = event->mimeData()->formats();
-        std::cerr << "dragEnterEvent() Formats" << std::endl;
-        QStringList::const_iterator it;
-        for (it = formats.begin(); it != formats.end(); ++it) {
-                std::cerr << "Format: " << (*it).toStdString();
-                std::cerr << std::endl;
-        }
-#endif
-
 	if (event->mimeData()->hasUrls())
 	{
 		std::cerr << "PhotoDrop::dragEnterEvent() Accepting";
@@ -589,8 +577,8 @@ void PhotoDrop::dragMoveEvent(QDragMoveEvent *event)
 	std::cerr << "PhotoDrop::dragMoveEvent()";
 	std::cerr << std::endl;
 
-        event->accept();
-        //event->ignore();
+	event->accept();
+	//event->ignore();
 }
 
 void PhotoDrop::dropEvent(QDropEvent *event)
@@ -611,11 +599,11 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
 			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
 
-                        PhotoItem* item = new PhotoItem(mHolder, localpath);
-                        addPhotoItem(item);
+			PhotoItem* item = new PhotoItem(mHolder, localpath, mLastOrder+DEFAULT_ORDER_INCREMENT);
+			addPhotoItem(item);
 		}
-        	event->setDropAction(Qt::CopyAction);
-        	event->accept();
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
 
 		// Notify Listeners. (only happens for drop - not programmatically added).
 		photosChanged();
@@ -624,17 +612,17 @@ void PhotoDrop::dropEvent(QDropEvent *event)
 	{
 		std::cerr << "PhotoDrop::dropEvent Ignoring";
 		std::cerr << std::endl;
-        	event->ignore();
+		event->ignore();
 	}
 
-        checkMoveButtons();
+	checkMoveButtons();
 
 }
 
 void PhotoDrop::mousePressEvent(QMouseEvent *event)
 {
 	/* see if this is in the space of one of our children */
-    	QPoint pos = event->pos();
+	QPoint pos = event->pos();
 
 	std::cerr << "PhotoDrop::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
 	std::cerr << std::endl;
@@ -644,7 +632,7 @@ void PhotoDrop::mousePressEvent(QMouseEvent *event)
 
 void PhotoDrop::setPhotoItemHolder(PhotoShareItemHolder *holder)
 {
-    mHolder = holder;
+	mHolder = holder;
 }
 
 void PhotoDrop::addPhotoItem(PhotoItem *item)
@@ -652,20 +640,25 @@ void PhotoDrop::addPhotoItem(PhotoItem *item)
 	std::cerr << "PhotoDrop::addPhotoItem()";
 	std::cerr << std::endl;
 
-        mPhotos.insert(item);
+	// record lastOrder number
+	// so any new photos can be added after this.
+	if (item->getPhotoDetails().mOrder > mLastOrder) {
+		mLastOrder = item->getPhotoDetails().mOrder;
+	}
+
+	mPhotos.insert(item);
 	layout()->addWidget(item);
 	
-        //checkMoveButtons();
-
+	//checkMoveButtons();
 }
 
 bool PhotoDrop::deletePhoto(PhotoItem *item)
 {
-    if(mPhotos.contains(item)){
-        mPhotos.remove(item);
-        layout()->removeWidget(item);
-        delete item;
-    }
-    else
-        return false;
+	if (mPhotos.contains(item)) {
+		mPhotos.remove(item);
+		layout()->removeWidget(item);
+		delete item;
+	}
+	else
+		return false;
 }

@@ -585,11 +585,11 @@ void GxsGroupDialog::editGroup()
 
 	RsGroupMetaData newMeta;
 	newMeta.mGroupId = mGrpMeta.mGroupId;
-
-	if(!prepareGroupMetaData(newMeta))
+	QString reason;
+	if(!prepareGroupMetaData(newMeta, reason))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData: ") + reason, QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add  a empty name!!
 	}
 
@@ -612,14 +612,22 @@ void GxsGroupDialog::editGroup()
 	close();
 }
 
-bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
+bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta, QString &reason)
 {
 	std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 	std::cerr << std::endl;
 
     // here would be the place to check for empty author id
     // but GXS_SERV::GRP_OPTION_AUTHEN_AUTHOR_SIGN is currently not used by any service
+
     ui.idChooser->getChosenId(meta.mAuthorId);
+    if ((mDefaultsFlags & GXS_GROUP_DEFAULTS_PERSONAL_GROUP) && (meta.mAuthorId.isNull())) {
+		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
+		std::cerr << " Group needs a Personal Signature";
+		std::cerr << std::endl;
+		reason = "Missing AuthorId";
+		return false;
+	}
 
 	QString name = getName();
 	uint32_t flags = GXS_SERV::FLAG_PRIVACY_PUBLIC;
@@ -628,6 +636,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid GroupName";
 		std::cerr << std::endl;
+		reason = "Missing GroupName";
 		return false;
 	}
 
@@ -641,6 +650,7 @@ bool GxsGroupDialog::prepareGroupMetaData(RsGroupMetaData &meta)
 		std::cerr << "GxsGroupDialog::prepareGroupMetaData()";
 		std::cerr << " Invalid Circles";
 		std::cerr << std::endl;
+		reason = "Invalid Circle Parameters";
 		return false;
 	}
 
@@ -668,10 +678,11 @@ void GxsGroupDialog::createGroup()
 
 	uint32_t token;
 	RsGroupMetaData meta;
-	if (!prepareGroupMetaData(meta))
+	QString reason;
+	if (!prepareGroupMetaData(meta, reason))
 	{
 		/* error message */
-		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData - please Review"), QMessageBox::Ok, QMessageBox::Ok);
+		QMessageBox::warning(this, "RetroShare", tr("Failed to Prepare Group MetaData: ") + reason, QMessageBox::Ok, QMessageBox::Ok);
 		return; //Don't add with invalid circle.
 	}
 

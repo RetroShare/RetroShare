@@ -425,7 +425,7 @@ double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 
 /********************************************************************************************/
 
-bool p3GxsCommentService::createGxsComment(uint32_t &token, RsGxsComment &msg)
+bool p3GxsCommentService::createGxsComment(uint32_t &token, const RsGxsComment &msg)
 {
 #ifdef DEBUG_GXSCOMMON
     std::cerr << "p3GxsCommentService::createGxsComment() GroupId: " << msg.mMeta.mGroupId;

@@ -436,7 +436,7 @@ void PhotoShare::addAlbum(const RsPhotoAlbum &album)
 
 void PhotoShare::addPhoto(const RsPhotoPhoto &photo)
 {
-    if (!photo.mThumbnail.empty())
+    if (!photo.mLowResImage.empty())
     {
         PhotoItem* item = new PhotoItem(this, photo, this);
         mPhotoItems.insert(item);

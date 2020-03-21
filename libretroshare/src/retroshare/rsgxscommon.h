@@ -43,6 +43,13 @@ struct RsGxsFile : RsSerializable
 		RS_SERIAL_PROCESS(mHash);
 		RS_SERIAL_PROCESS(mSize);
 	}
+
+	void clear()
+	{
+		mName.clear();
+		mHash.clear();
+		mSize = 0;
+	}
 };
 
 struct RsGxsImage  : RsSerializable
@@ -157,7 +164,9 @@ struct RsGxsCommentService
 	virtual bool getRelatedComments( uint32_t token,
 	                                 std::vector<RsGxsComment> &comments ) = 0;
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &comment) = 0;
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &comment) = 0;  // async API
+	virtual bool createComment(RsGxsComment& comment) = 0;				// blocking API. Updates comment with new metadata.
+
 	virtual bool createNewVote(uint32_t &token, RsGxsVote &vote) = 0;
 
 	virtual bool acknowledgeComment(

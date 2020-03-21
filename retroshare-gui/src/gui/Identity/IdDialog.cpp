@@ -59,6 +59,8 @@
  * #define ID_DEBUG 1
  *****/
 
+#define QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND 1
+
 // Data Requests.
 #define IDDIALOG_IDLIST           1
 #define IDDIALOG_IDDETAILS        2
@@ -515,6 +517,68 @@ void IdDialog::updateCircles()
     });
 }
 
+static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaData& circle_group)
+{
+    QString test_str = QString::fromStdString(circle_group.mGroupId.toStdString());
+
+    // 1 - check if the item already exists and remove possible duplicates
+
+    std::vector<uint32_t> found_indices;
+
+	for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
+		if( item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString() == test_str)
+            found_indices.push_back(k);
+
+    while(found_indices.size() > 1)							// delete duplicates, starting from the end in order that deletion preserves indices
+    {
+        delete item->takeChild(found_indices.back());
+        found_indices.pop_back();
+    }
+
+    if(!found_indices.empty())
+    {
+		QTreeWidgetItem *subitem = item->child(found_indices[0]);
+
+        if(subitem->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(circle_group.mGroupName.c_str()))
+		{
+#ifdef ID_DEBUG
+			std::cerr << "  Existing circle has a new name. Updating it in the tree." << std::endl;
+#endif
+			subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(circle_group.mGroupName.c_str()));
+		}
+
+        return subitem;
+    }
+
+    // 2 - if not, create
+
+	QTreeWidgetItem *subitem = new QTreeWidgetItem();
+
+	subitem->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(circle_group.mGroupName.c_str()));
+	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(circle_group.mGroupId.toStdString()));
+	subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(circle_group.mSubscribeFlags));
+
+	item->addChild(subitem);
+
+    return subitem;
+}
+
+static void removeChildItem(QTreeWidgetItem *item, const RsGroupMetaData& circle_group)
+{
+    QString test_str = QString::fromStdString(circle_group.mGroupId.toStdString());
+
+    // 1 - check if the item already exists and remove possible duplicates
+
+    std::list<uint32_t> found_indices;
+
+	for(uint32_t k=0; k < (uint32_t)item->childCount(); ++k)
+		if( item->child(k)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString() == test_str)
+            found_indices.push_front(k);
+
+    for(auto k:found_indices)
+        delete item->takeChild(k);	// delete items in the reverse order (because of the push_front()), so that indices are preserved
+}
+
 void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 {
 #ifdef ID_DEBUG
@@ -523,6 +587,17 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #endif
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+#ifdef QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND
+    // These 3 lines are normally not needed. But apparently a bug (in Qt ??) causes Qt to crash when takeChild() is called. If we remove everything from the
+    // tree widget before updating it, takeChild() is never called, but the all tree is filled again from scratch. This is less efficient obviously, and
+    // also collapses the tree. Because it is a *temporary* fix, I dont take the effort to save open/collapsed items yet. If we cannot find a proper way to fix
+    // this, then we'll need to implement the two missing functions to save open/collapsed items.
+
+	ui->treeWidget_membership->clear();
+	mExternalOtherCircleItem = NULL ;
+	mExternalBelongingCircleItem = NULL ;
+#endif
 
 	/* add the top level item */
 	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
@@ -561,102 +636,27 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		bool am_I_in_circle = details.mAmIAllowed ;
 		bool am_I_admin (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
 		bool am_I_subscribed (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) ;
-		QTreeWidgetItem *item = NULL ;
-
 #ifdef ID_DEBUG
 		std::cerr << "Loaded info for circle " << vit->mGroupId << ". am_I_in_circle=" << am_I_in_circle << std::endl;
 #endif
 
-		// find already existing items for this circle
+		// Find already existing items for this circle, or create one.
+		QTreeWidgetItem *item = NULL ;
 
-		// implement the search manually, because there's no find based on user role.
-		//QList<QTreeWidgetItem*> clist = ui->treeWidget_membership->findItems( QString::fromStdString(vit->mGroupId.toStdString()), Qt::MatchExactly|Qt::MatchRecursive, CIRCLEGROUP_CIRCLE_COL_GROUPID);
-		QList<QTreeWidgetItem*> clist ;
-		QString test_str = QString::fromStdString(vit->mGroupId.toStdString()) ;
-		for(QTreeWidgetItemIterator itt(ui->treeWidget_membership);*itt;++itt)
-			if( (*itt)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString() == test_str)
-				clist.push_back(*itt) ;
-
-		if(!clist.empty())
-		{
-			// delete all duplicate items. This should not happen, but just in case it does.
-
-			while(clist.size() > 1)	
-			{
-#ifdef ID_DEBUG
-				std::cerr << "  more than 1 item correspond to this ID. Removing!" << std::endl;
-#endif
-				delete clist.front() ;
-                clist.pop_front();
-			}
-
-			item = clist.front() ;
-
-#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
-			if(am_I_in_circle && item->parent() != mExternalBelongingCircleItem)
-			{
-#ifdef ID_DEBUG
-				std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
-#endif
-				delete item ;
-				item = NULL ;
-			}
-			else if(!am_I_in_circle && item->parent() != mExternalOtherCircleItem)
-			{
-#ifdef ID_DEBUG
-				std::cerr << "  Existing circle is not in subscribed items although it is subscribed. Removing." << std::endl;
-#endif
-				delete item ;
-				item = NULL ;
-			}
-			else
-#endif
-				should_re_add = false ;	// item already exists
-		}
-
-		/* Add Widget, and request Pages */
-
-		if(should_re_add)
-		{
-			item = new QTreeWidgetItem();
-
-			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole, QString::fromStdString(vit->mGroupId.toStdString()));
-			item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
-
-#ifdef CIRCLE_MEMBERSHIP_CATEGORIES
-			if(am_I_in_circle)
-			{
-#ifdef ID_DEBUG
-				std::cerr << "  adding item for circle " << vit->mGroupId << " to own circles"<< std::endl;
-#endif
-				mExternalBelongingCircleItem->addChild(item);
-			}
-			else
-			{
-#ifdef ID_DEBUG
-				std::cerr << "  adding item for circle " << vit->mGroupId << " to others"<< std::endl;
-#endif
-				mExternalOtherCircleItem->addChild(item);
-			}
-#else
-			ui->treeWidget_membership->addTopLevelItem(item) ;
-#endif
-		}
-		else  if(item->text(CIRCLEGROUP_CIRCLE_COL_GROUPNAME) != QString::fromUtf8(vit->mGroupName.c_str()))
-		{
-#ifdef ID_DEBUG
-			std::cerr << "  Existing circle has a new name. Updating it in the tree." << std::endl;
-#endif
-			item->setText(CIRCLEGROUP_CIRCLE_COL_GROUPNAME, QString::fromUtf8(vit->mGroupName.c_str()));
-		}
-		// just in case.
-
+        if(am_I_in_circle)
+        {
+            item = setChildItem(mExternalBelongingCircleItem,*vit);
+            removeChildItem(mExternalOtherCircleItem,*vit);
+        }
+        else
+        {
+            item = setChildItem(mExternalOtherCircleItem,*vit);
+            removeChildItem(mExternalBelongingCircleItem,*vit);
+        }
 		item->setData(CIRCLEGROUP_CIRCLE_COL_GROUPFLAGS, Qt::UserRole, QVariant(vit->mSubscribeFlags));
 
 		QString tooltip ;
 		tooltip += tr("Circle ID: ")+QString::fromStdString(vit->mGroupId.toStdString()) ;
-
 		tooltip += "\n"+tr("Visibility: ");
 
 		if(details.mRestrictedCircleId == details.mCircleId)
@@ -1532,11 +1532,12 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 				contactsItem->addChild(item);
 			else
 				allItem->addChild(item);
-		}
-        GxsIdLabel *label = new GxsIdLabel();
-		label->setId(RsGxsId(data.mMeta.mGroupId)) ;
 
-        ui->treeWidget_membership->setItemWidget(item,0,label) ;
+			GxsIdLabel *label = new GxsIdLabel();
+			label->setId(RsGxsId(data.mMeta.mGroupId)) ;
+
+			ui->treeWidget_membership->setItemWidget(item,0,label) ;
+		}
 	}
 	
 	/* count items */
@@ -2118,7 +2119,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			{
 				if(own_identities.size() <= 1)
 				{
-					QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+					QAction *action = contextMenu->addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 					if(own_identities.empty())
 						action->setEnabled(false) ;
@@ -2127,7 +2128,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 				else
 				{
-					QMenu *mnu = contextMenu->addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+					QMenu *mnu = contextMenu->addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 					for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 					{
@@ -2144,17 +2145,16 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 					}
 				}
 			}
-
-			if (n_selected_items==1)
-				contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-
 			// always allow to send messages
-			contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
 			contextMenu->addSeparator();
 
 			if(n_is_a_contact == 0)
 				contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+
+			if (n_selected_items==1)
+				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
 				contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
@@ -2175,7 +2175,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		{
 			contextMenu->addSeparator();
 
-			contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(ui->editIdentity);
 			contextMenu->addAction(ui->removeIdentity);
 		}
