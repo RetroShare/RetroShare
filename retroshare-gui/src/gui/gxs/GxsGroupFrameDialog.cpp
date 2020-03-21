@@ -951,7 +951,9 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 				subList.push_back(groupItemInfo); /* subscribed group */
 		}
 		else
+        {
 			popMap.insert(std::make_pair(g->mMeta.mLastPost, groupItemInfo)); /* rate the others by time of last post */
+        }
 	}
 
 	/* iterate backwards through popMap - take the top 5 or 10% of list */

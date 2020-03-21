@@ -237,9 +237,14 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 		return;
 	}
 
+    if(postedGroupData->mGroupImage.mSize > 0)
+    {
 	QPixmap image;
 	GxsIdDetails::loadPixmapFromData(postedGroupData->mGroupImage.mData, postedGroupData->mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
+	groupItemInfo.icon        = image;
+    }
+    else
+	groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
-	groupItemInfo.icon        = image;
 }

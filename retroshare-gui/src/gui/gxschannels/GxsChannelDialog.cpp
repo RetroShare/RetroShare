@@ -401,11 +401,16 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 		return;
 	}
 
-	QPixmap image;
-	GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
+	if(channelGroupData->mImage.mSize > 0)
+	{
+		QPixmap image;
+		GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
+		groupItemInfo.icon = image;
+	}
+	else
+		groupItemInfo.icon = QIcon(":icons/png/channel.png");
 
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
-	groupItemInfo.icon        = image;
 }
 
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
