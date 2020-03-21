@@ -307,8 +307,18 @@ bool p3Posted::getBoardsInfo(
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, boardsIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    if(boardsIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+    else
+    {
+		if( !requestGroupInfo(token, opts, boardsIds) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+
 	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
 }
 

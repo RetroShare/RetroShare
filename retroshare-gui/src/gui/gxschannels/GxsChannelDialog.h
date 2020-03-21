@@ -46,14 +46,16 @@ protected:
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Channel; }
 	virtual QString getHelpString() const ;
-	virtual void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo);
     virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
-    virtual const std::set<TurtleRequestId> getSearchRequests() const override { return mSearchResults ; }
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
 
-	virtual UserNotify *createUserNotify(QObject *parent) override;
+    const std::set<TurtleRequestId> getSearchRequests() const override { return mSearchResults ; }
+	UserNotify *createUserNotify(QObject *parent) override;
+	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
+
 private slots:
 	void toggleAutoDownload();
         void setDefaultDirectory();
@@ -73,8 +75,6 @@ private:
 	virtual RsGxsCommentService *getCommentService();
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
-
-	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 

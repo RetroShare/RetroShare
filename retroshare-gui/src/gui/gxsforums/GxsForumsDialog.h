@@ -40,14 +40,13 @@ public:
 	void shareInMessage(const RsGxsGroupId& forum_id, const QList<RetroShareLink>& file_link) ;
 	
 protected:
-	virtual UserNotify *createUserNotify(QObject *parent) override;
-
 	virtual QString getHelpString() const ;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Forum; }
 
-	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
+	UserNotify *createUserNotify(QObject *parent) override;
 	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
 
 private:
 	/* GxsGroupFrameDialog */
@@ -59,7 +58,6 @@ private:
 	virtual int shareKeyType();
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 

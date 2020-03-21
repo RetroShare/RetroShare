@@ -163,6 +163,8 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
 	for (auto& group: groups)
        groupInfo.push_back(new RsPostedGroup(group));
+
+	return true;
 }
 
 GxsGroupDialog *PostedDialog::createNewGroupDialog(TokenQueue *tokenQueue)

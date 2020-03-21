@@ -358,16 +358,6 @@ bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo
 	for (auto& group: groups)
        groupInfo.push_back(new RsGxsChannelGroup(group));
 
-//		if (group.mImage.mData != NULL) {
-//			QPixmap image;
-//			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
-//			channelData->mIcon[group.mMeta.mGroupId] = image;
-//		}
-//
-//		if (!group.mDescription.empty()) {
-//			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-//		}
-
     return true;
 }
 

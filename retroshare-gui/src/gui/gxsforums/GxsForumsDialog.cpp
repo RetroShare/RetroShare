@@ -89,6 +89,8 @@ bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 
 	for (auto& group: groups)
 		groupInfo.push_back(new RsGxsForumGroup(group));
+
+    return true;
 }
 
 
@@ -199,6 +201,7 @@ GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGrou
 	return new GxsForumThreadWidget(groupId);
 }
 
+#ifdef TO_REMOVE
 void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
 {
 	std::vector<RsGxsForumGroup> groups;
@@ -218,6 +221,7 @@ void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsG
 		}
 	}
 }
+#endif
 
 void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
