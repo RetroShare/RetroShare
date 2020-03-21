@@ -25,6 +25,9 @@
  * #define RS_DATA_SERVICE_DEBUG_TIME  1
  * #define RS_DATA_SERVICE_DEBUG_CACHE 1
  ****/
+#define RS_DATA_SERVICE_DEBUG       1
+#define RS_DATA_SERVICE_DEBUG_TIME  1
+#define RS_DATA_SERVICE_DEBUG_CACHE 1
 
 #include <fstream>
 #include <util/rsdir.h>
@@ -1343,6 +1346,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
+    if(mDbName==std::string("gxsforums_db"))
     std::cerr << "RsDataService::retrieveGxsMsgMetaData() " << mDbName << ", Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 

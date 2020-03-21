@@ -45,7 +45,9 @@ protected:
 	virtual QString getHelpString() const ;
     virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_POSTED; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Posted; }
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
+	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
 
 private:
 	/* GxsGroupFrameDialog */
@@ -59,7 +61,6 @@ private:
 	virtual RsGxsCommentService *getCommentService();
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
     RsEventsHandlerId_t mEventHandlerId;

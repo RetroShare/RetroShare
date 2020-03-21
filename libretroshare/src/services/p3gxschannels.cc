@@ -1033,15 +1033,23 @@ bool p3GxsChannels::getChannelsSummaries(
 	return getGroupSummary(token, channels);
 }
 
-bool p3GxsChannels::getChannelsInfo(
-        const std::list<RsGxsGroupId>& chanIds,
-        std::vector<RsGxsChannelGroup>& channelsInfo )
+bool p3GxsChannels::getChannelsInfo( const std::list<RsGxsGroupId>& chanIds, std::vector<RsGxsChannelGroup>& channelsInfo )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, chanIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    if(chanIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+    }
+    else
+    {
+		if( !requestGroupInfo(token, opts, chanIds) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+    }
+
 	return getGroupData(token, channelsInfo) && !channelsInfo.empty();
 }
 

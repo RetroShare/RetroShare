@@ -45,7 +45,9 @@ protected:
 	virtual QString getHelpString() const ;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Forum; }
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
+	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
 
 private:
 	/* GxsGroupFrameDialog */

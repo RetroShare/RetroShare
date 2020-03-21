@@ -666,15 +666,22 @@ bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
 	return getGroupSummary(token, forums);
 }
 
-bool p3GxsForums::getForumsInfo(
-        const std::list<RsGxsGroupId>& forumIds,
-        std::vector<RsGxsForumGroup>& forumsInfo )
+bool p3GxsForums::getForumsInfo( const std::list<RsGxsGroupId>& forumIds, std::vector<RsGxsForumGroup>& forumsInfo )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, forumIds)
-	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+    if(forumIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
+	else
+    {
+		if( !requestGroupInfo(token, opts, forumIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
 	return getGroupData(token, forumsInfo);
 }
 

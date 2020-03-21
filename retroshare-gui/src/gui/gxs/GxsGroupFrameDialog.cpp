@@ -33,6 +33,8 @@
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
+#include "util/qtthreadsutils.h"
+#include "retroshare/rsgxsifacetypes.h"
 #include "GxsCommentDialog.h"
 
 //#define DEBUG_GROUPFRAMEDIALOG
@@ -134,7 +136,7 @@ void GxsGroupFrameDialog::getGroupList(std::map<RsGxsGroupId, RsGroupMetaData> &
 	group_list = mCachedGroupMetas ;
 
 	if(group_list.empty())
-		requestGroupSummary();
+		updateGroupSummary();
 }
 void GxsGroupFrameDialog::initUi()
 {
@@ -242,7 +244,7 @@ void GxsGroupFrameDialog::setHideTabBarWithOneTab(bool hideTabBarWithOneTab)
 void GxsGroupFrameDialog::updateDisplay(bool complete)
 {
     if(complete)    // || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
-		requestGroupSummary(); /* Update group list */
+		updateGroupSummary(); /* Update group list */
 
     updateSearchResults() ;
 }
@@ -896,16 +898,16 @@ void GxsGroupFrameDialog::messageTabWaitingChanged(QWidget *widget)
 }
 
 ///***** INSERT GROUP LISTS *****/
-void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata */*userdata*/)
+void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupInfo, GroupItemInfo &groupItemInfo)
 {
-	groupItemInfo.id = QString::fromStdString(groupInfo.mGroupId.toStdString());
-	groupItemInfo.name = QString::fromUtf8(groupInfo.mGroupName.c_str());
-	groupItemInfo.popularity = groupInfo.mPop;
-	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo.mLastPost);
-	groupItemInfo.subscribeFlags = groupInfo.mSubscribeFlags;
-	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags) ;
-	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo.mSubscribeFlags) ;
-	groupItemInfo.max_visible_posts = groupInfo.mVisibleMsgCount ;
+	groupItemInfo.id = QString::fromStdString(groupInfo->mMeta.mGroupId.toStdString());
+	groupItemInfo.name = QString::fromUtf8(groupInfo->mMeta.mGroupName.c_str());
+	groupItemInfo.popularity = groupInfo->mMeta.mPop;
+	groupItemInfo.lastpost = QDateTime::fromTime_t(groupInfo->mMeta.mLastPost);
+	groupItemInfo.subscribeFlags = groupInfo->mMeta.mSubscribeFlags;
+	groupItemInfo.publishKey = IS_GROUP_PUBLISHER(groupInfo->mMeta.mSubscribeFlags) ;
+	groupItemInfo.adminKey = IS_GROUP_ADMIN(groupInfo->mMeta.mSubscribeFlags) ;
+	groupItemInfo.max_visible_posts = groupInfo->mMeta.mVisibleMsgCount ;
 
 #if TOGXS
 	if (groupInfo.mGroupFlags & RS_DISTRIB_AUTHEN_REQ) {
@@ -919,7 +921,7 @@ void GxsGroupFrameDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupI
 	}
 }
 
-void GxsGroupFrameDialog::insertGroupsData(const std::map<RsGxsGroupId,RsGroupMetaData> &groupList, const RsUserdata *userdata)
+void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData*>& groupList)
 {
 	if (!mInitialized) {
 		return;
@@ -933,54 +935,38 @@ void GxsGroupFrameDialog::insertGroupsData(const std::map<RsGxsGroupId,RsGroupMe
 	QList<GroupItemInfo> otherList;
 	std::multimap<uint32_t, GroupItemInfo> popMap;
 
-	for (auto it = groupList.begin(); it != groupList.end(); ++it) {
+	for (auto& g:groupList)
+    {
 		/* sort it into Publish (Own), Subscribed, Popular and Other */
-		uint32_t flags = it->second.mSubscribeFlags;
+		uint32_t flags = g->mMeta.mSubscribeFlags;
 
 		GroupItemInfo groupItemInfo;
-		groupInfoToGroupItemInfo(it->second, groupItemInfo, userdata);
+		groupInfoToGroupItemInfo(g, groupItemInfo);
 
 		if (IS_GROUP_SUBSCRIBED(flags))
 		{
 			if (IS_GROUP_ADMIN(flags))
-			{
 				adminList.push_back(groupItemInfo);
-			}
 			else
-			{
-				/* subscribed group */
-				subList.push_back(groupItemInfo);
-			}
+				subList.push_back(groupItemInfo); /* subscribed group */
 		}
 		else
-		{
-			//popMap.insert(std::make_pair(it->mPop, groupItemInfo)); /* rate the others by popularity */
-			popMap.insert(std::make_pair(it->second.mLastPost, groupItemInfo)); /* rate the others by time of last post */
-		}
+			popMap.insert(std::make_pair(g->mMeta.mLastPost, groupItemInfo)); /* rate the others by time of last post */
 	}
 
 	/* iterate backwards through popMap - take the top 5 or 10% of list */
 	uint32_t popCount = 5;
 	if (popCount < popMap.size() / 10)
-	{
 		popCount = popMap.size() / 10;
-	}
 
 	uint32_t i = 0;
 	std::multimap<uint32_t, GroupItemInfo>::reverse_iterator rit;
-	//uint32_t popLimit = 0;
-	//for(rit = popMap.rbegin(); ((rit != popMap.rend()) && (i < popCount)); ++rit, ++i) ;
-	//if (rit != popMap.rend()) {
-	//	popLimit = rit->first;
-	//}
 
-	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit,++i) {
-		//if (rit->second.popularity > (int) popLimit) {
+	for (rit = popMap.rbegin(); rit != popMap.rend(); ++rit,++i)
 		if(i < popCount)
 			popList.append(rit->second);
 		else
 			otherList.append(rit->second);
-	}
 
 	/* now we can add them in as a tree! */
 	ui->groupTreeWidget->fillGroupItems(mYourGroups, adminList);
@@ -995,9 +981,8 @@ void GxsGroupFrameDialog::insertGroupsData(const std::map<RsGxsGroupId,RsGroupMe
 	mInFill = false;
 
 	/* Re-fill group */
-	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true)) {
+	if (!ui->groupTreeWidget->activateId(QString::fromStdString(mGroupId.toStdString()), true))
 		mGroupId.clear();
-	}
 
 	updateMessageSummaryList(RsGxsGroupId());
 }
@@ -1032,6 +1017,48 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 /** Request / Response of Data ********************************/
 /*********************** **** **** **** ***********************/
 
+void GxsGroupFrameDialog::updateGroupSummary()
+{
+	RsThread::async([this]()
+	{
+		std::list<RsGxsGenericGroupData*> groupInfo;
+
+		if(!getGroupData(groupInfo))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [this,groupInfo]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			insertGroupsData(groupInfo);
+			updateSearchResults();
+
+			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
+
+			if (!mNavigatePendingGroupId.isNull()) {
+				/* Navigate pending */
+				navigate(mNavigatePendingGroupId, mNavigatePendingMsgId);
+
+				mNavigatePendingGroupId.clear();
+				mNavigatePendingMsgId.clear();
+			}
+			// now delete the data that is not used anymore
+
+            for(auto& g:groupInfo)
+                delete g;
+
+		}, this );
+	});
+}
+
+#ifdef TO_REMOVE
 void GxsGroupFrameDialog::requestGroupSummary()
 {
 	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, true);
@@ -1056,37 +1083,14 @@ void GxsGroupFrameDialog::loadGroupSummaryToken(const uint32_t &token, std::list
 	mInterface->getGroupSummary(token, groupInfo);
 }
 
-void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
+void GxsGroupFrameDialog::loadGroupSummary(const std::list<RsGxsGenericGroupData*>& groupInfo)
 {
 #ifdef DEBUG_GROUPFRAMEDIALOG
 	std::cerr << "GxsGroupFrameDialog::loadGroupSummary()";
 	std::cerr << std::endl;
 #endif
 
-	std::list<RsGroupMetaData> groupInfo;
-	RsUserdata *userdata = NULL;
-	loadGroupSummaryToken(token, groupInfo, userdata);
 
-	mCachedGroupMetas.clear();
-	for(auto it(groupInfo.begin());it!=groupInfo.end();++it)
-		mCachedGroupMetas[(*it).mGroupId] = *it;
-
-	insertGroupsData(mCachedGroupMetas, userdata);
-    updateSearchResults();
-
-	mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
-
-	if (userdata) {
-		delete(userdata);
-	}
-
-	if (!mNavigatePendingGroupId.isNull()) {
-		/* Navigate pending */
-		navigate(mNavigatePendingGroupId, mNavigatePendingMsgId);
-
-		mNavigatePendingGroupId.clear();
-		mNavigatePendingMsgId.clear();
-	}
 }
 
 /*********************** **** **** **** ***********************/
@@ -1145,6 +1149,7 @@ void GxsGroupFrameDialog::loadGroupSummary(const uint32_t &token)
 
 //	setValid(true);
 //}
+#endif
 
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
@@ -1186,9 +1191,9 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 		/* now switch on req */
 		switch(req.mUserType)
 		{
-		case TOKEN_TYPE_GROUP_SUMMARY:
-			loadGroupSummary(req.mToken);
-			break;
+//		case TOKEN_TYPE_GROUP_SUMMARY:
+//			loadGroupSummary(req.mToken);
+//			break;
 
 //		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
 //			acknowledgeSubscribeChange(req.mToken);

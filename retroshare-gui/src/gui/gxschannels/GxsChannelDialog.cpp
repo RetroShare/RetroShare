@@ -36,15 +36,15 @@
 #include "gui/common/GroupTreeWidget.h"
 #include "util/qtthreadsutils.h"
 
-class GxsChannelGroupInfoData : public RsUserdata
-{
-public:
-	GxsChannelGroupInfoData() : RsUserdata() {}
-
-public:
-	QMap<RsGxsGroupId, QIcon> mIcon;
-	QMap<RsGxsGroupId, QString> mDescription;
-};
+// class GxsChannelGroupInfoData : public RsUserdata
+// {
+// public:
+// 	GxsChannelGroupInfoData() : RsUserdata() {}
+//
+// public:
+// 	QMap<RsGxsGroupId, QIcon> mIcon;
+// 	QMap<RsGxsGroupId, QString> mDescription;
+// };
 
 /** Constructor */
 GxsChannelDialog::GxsChannelDialog(QWidget *parent)
@@ -344,6 +344,34 @@ void GxsChannelDialog::toggleAutoDownload()
 	});
 }
 
+bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
+{
+	std::vector<RsGxsChannelGroup> groups;
+
+    // request all group infos at once
+
+    if(! rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>(),groups))
+        return false;
+
+ 	/* Save groups to fill icons and description */
+
+	for (auto& group: groups)
+       groupInfo.push_back(new RsGxsChannelGroup(group));
+
+//		if (group.mImage.mData != NULL) {
+//			QPixmap image;
+//			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
+//			channelData->mIcon[group.mMeta.mGroupId] = image;
+//		}
+//
+//		if (!group.mDescription.empty()) {
+//			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
+//		}
+
+    return true;
+}
+
+#ifdef TO_REMOVE
 void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
 {
 	std::vector<RsGxsChannelGroup> groups;
@@ -369,27 +397,25 @@ void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<Rs
 		}
 	}
 }
+#endif
 
-void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
 
-	const GxsChannelGroupInfoData *channelData = dynamic_cast<const GxsChannelGroupInfoData*>(userdata);
-	if (!channelData) {
-		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData";
-		std::cerr << std::endl;
+	const RsGxsChannelGroup *channelGroupData = dynamic_cast<const RsGxsChannelGroup*>(groupData);
+
+	if (!channelGroupData)
+    {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
 		return;
 	}
 
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = channelData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != channelData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
-	}
+	QPixmap image;
+	GxsIdDetails::loadPixmapFromData(channelGroupData->mImage.mData, channelGroupData->mImage.mSize, image,GxsIdDetails::ORIGINAL);
 
-	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = channelData->mIcon.find(groupInfo.mGroupId);
-	if (iconIt != channelData->mIcon.end()) {
-		groupItemInfo.icon = iconIt.value();
-	}
+	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
+	groupItemInfo.icon        = image;
 }
 
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)

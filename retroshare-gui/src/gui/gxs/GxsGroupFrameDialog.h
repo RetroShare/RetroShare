@@ -93,12 +93,14 @@ protected:
 	bool getCurrentGroupName(QString& name);
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+	virtual void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupInfo, GroupItemInfo &groupItemInfo);
     virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
 
     virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
+
+	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
 private slots:
 	void todo();
 
@@ -162,12 +164,13 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::map<RsGxsGroupId, RsGroupMetaData> &groupList, const RsUserdata *userdata);
+	void insertGroupsData(const std::list<RsGxsGenericGroupData *> &groupList);
 
-	void requestGroupSummary();
-	void loadGroupSummary(const uint32_t &token);
+	//void requestGroupSummary();
+	void updateGroupSummary();
+	void loadGroupSummary(const std::list<RsGxsGenericGroupData *> &groupInfo);
+
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata); // use with requestGroupSummaryType
 
 	void requestGroupStatistics(const RsGxsGroupId &groupId);
 	void loadGroupStatistics(const uint32_t &token);

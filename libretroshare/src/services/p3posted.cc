@@ -330,5 +330,15 @@ bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
 	return getPostData(token, posts, comments);
 }
 
+bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getGroupSummary(token, boards);
+}
+
 RsPosted::~RsPosted() = default;
 RsGxsPostedEvent::~RsGxsPostedEvent() = default;

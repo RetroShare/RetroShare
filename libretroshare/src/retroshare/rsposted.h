@@ -40,9 +40,8 @@ class RsPosted;
  */
 extern RsPosted* rsPosted;
 
-struct RsPostedGroup
+struct RsPostedGroup: RsGxsGenericGroupData
 {
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mGroupImage;
 };
@@ -149,6 +148,8 @@ public:
 	virtual bool getBoardsInfo(
 	        const std::list<RsGxsGroupId>& boardsIds,
 	        std::vector<RsPostedGroup>& boardsInfo ) = 0;
+
+	virtual bool getBoardsSummaries(std::list<RsGroupMetaData>& groupInfo) =0;
 
 	virtual bool getBoardContent(
 	        const RsGxsGroupId& boardId,

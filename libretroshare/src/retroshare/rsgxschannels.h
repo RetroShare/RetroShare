@@ -45,11 +45,10 @@ class RsGxsChannels;
 extern RsGxsChannels* rsGxsChannels;
 
 
-struct RsGxsChannelGroup : RsSerializable
+struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 {
 	RsGxsChannelGroup() : mAutoDownload(false) {}
 
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
 

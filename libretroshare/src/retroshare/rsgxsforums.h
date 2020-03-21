@@ -54,11 +54,8 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
 #define IS_FORUM_MSG_MODERATION(flags) (flags & RS_GXS_FORUM_MSG_FLAGS_MODERATED)
 
 
-struct RsGxsForumGroup : RsSerializable
+struct RsGxsForumGroup : RsSerializable, RsGxsGenericGroupData
 {
-	/** Forum GXS metadata */
-	RsGroupMetaData mMeta;
-
 	/** @brief Forum desciption */
 	std::string mDescription;
 
