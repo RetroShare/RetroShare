@@ -486,7 +486,6 @@ void ChatWidget::init(const ChatId &chat_id, const QString &title)
 						if(!state.hasName) {
 							int tries;
 							for(tries=0;tries<14;++tries) {
-								assert(!state.hasName);
 								if(state.isDirect) {
 								GOT_DIRECT:
 									{
