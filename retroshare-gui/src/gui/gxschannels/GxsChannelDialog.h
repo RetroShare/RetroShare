@@ -23,7 +23,7 @@
 
 #include "gui/gxs/GxsGroupFrameDialog.h"
 
-#define IMAGE_GXSCHANNELS       ":/icons/png/channel.png"
+#define IMAGE_GXSCHANNELS       ":/icons/png/channels.png"
 
 class GxsChannelDialog : public GxsGroupFrameDialog
 {

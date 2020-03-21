@@ -80,7 +80,7 @@ QIcon ChatUserNotify::getIcon()
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/network-notify.png") : QIcon(":/icons/png/network.png");
+    return hasNew ? QIcon(":/icons/png/network-notify.png") : QIcon(":/icons/png/network2.png");
 }
 
 unsigned int ChatUserNotify::getNewCount()
