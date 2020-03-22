@@ -224,8 +224,15 @@ public:
 	virtual TurtleSearchRequestId turtleSearch(const RsRegularExpression::LinearizedExpression& expr) ;
 
 	/// @see RsFiles
-	std::error_condition exportFilesLink(
+	std::error_condition exportCollectionLink(
 	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
+	        ) override;
+
+	/// @see RsFiles
+	std::error_condition exportFileLink(
+	        std::string& link, const RsFileHash& fileHash, uint64_t fileSize,
+	        const std::string& fileName, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
 	        ) override;
 
@@ -383,11 +390,11 @@ protected:
     bool findEncryptedHash(const RsPeerId& virtual_peer_id, RsFileHash& encrypted_hash);
 
 	bool checkUploadLimit(const RsPeerId& pid,const RsFileHash& hash);
-private:
 
-    /**** INTERNAL FUNCTIONS ***/
-    //virtual int 	reScanDirs();
-    //virtual int 	check_dBUpdate();
+	std::error_condition dirDetailsToLink(
+	        std::string& link,
+	        const DirDetails& dirDetails, bool fragSneak,
+	        const std::string& baseUrl );
 
 private:
 
