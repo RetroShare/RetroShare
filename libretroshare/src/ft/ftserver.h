@@ -207,6 +207,14 @@ public:
 	virtual uint32_t filePermDirectDL() ;
 
 	/// @see RsFiles
+	std::error_condition requestFiles(
+	        const RsFileTree& collection,
+	        const std::string& destPath = "",
+	        const std::vector<RsPeerId>& srcIds = std::vector<RsPeerId>(),
+	        FileRequestFlags flags = FileRequestFlags::ANONYMOUS_ROUTING
+	        ) override;
+
+	/// @see RsFiles
 	bool turtleSearchRequest(
 	        const std::string& matchString,
 	        const std::function<void (const std::vector<TurtleFileInfoV2>& results)>& multiCallback,
