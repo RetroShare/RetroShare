@@ -819,7 +819,16 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 	return true;
 }
 
-bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
+bool p3GxsForums::getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat)
+{
+	uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, ForumId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
+bool p3GxsForums::updateGroup(uint32_t &token, const RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 

@@ -157,6 +157,12 @@ public:
 	        std::vector<RsPostedPost>& posts,
 	        std::vector<RsGxsComment>& comments ) = 0;
 
+	virtual bool editBoard(RsPostedGroup& board) =0;
+
+	virtual bool createBoard(RsPostedGroup& board) =0;
+
+	virtual bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) =0;
+
 	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
 
 	RS_DEPRECATED_FOR(getBoardsInfo)

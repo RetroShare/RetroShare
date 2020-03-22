@@ -340,13 +340,14 @@ public:
     }
 
 	/// @see RsTokenService::requestGroupStatistic
-	void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
+	bool requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
 	{
 		mTokenService.requestGroupStatistic(token, grpId);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;
 		locked_dumpTokens();
+        return true;
     }
 
     bool cancelActiveRequestTokens(TokenRequestType type)

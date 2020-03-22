@@ -1053,6 +1053,15 @@ bool p3GxsChannels::getChannelsInfo( const std::list<RsGxsGroupId>& chanIds, std
 	return getGroupData(token, channelsInfo) && !channelsInfo.empty();
 }
 
+bool p3GxsChannels::getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, channelId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
 bool p3GxsChannels::getContentSummaries(
         const RsGxsGroupId& channelId, std::vector<RsMsgMetaData>& summaries )
 {

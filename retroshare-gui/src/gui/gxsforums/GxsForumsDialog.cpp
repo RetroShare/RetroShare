@@ -93,6 +93,12 @@ bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
     return true;
 }
 
+bool GxsForumsDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    return rsGxsForums->getForumStatistics(groupId,stat);
+}
+
+
 
 QString GxsForumsDialog::getHelpString() const
 {
@@ -181,14 +187,14 @@ QString GxsForumsDialog::icon(IconType type)
 	return "";
 }
 
-GxsGroupDialog *GxsForumsDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+GxsGroupDialog *GxsForumsDialog::createNewGroupDialog()
 {
-	return new GxsForumGroupDialog(tokenQueue, this);
+	return new GxsForumGroupDialog(this);
 }
 
-GxsGroupDialog *GxsForumsDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *GxsForumsDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
 {
-	return new GxsForumGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new GxsForumGroupDialog(mode, groupId, this);
 }
 
 int GxsForumsDialog::shareKeyType()

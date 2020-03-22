@@ -167,14 +167,19 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 	return true;
 }
 
-GxsGroupDialog *PostedDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+bool PostedDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-	return new PostedGroupDialog(tokenQueue, this);
+    return rsPosted->getBoardStatistics(groupId,stat);
 }
 
-GxsGroupDialog *PostedDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *PostedDialog::createNewGroupDialog()
 {
-	return new PostedGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new PostedGroupDialog(this);
+}
+
+GxsGroupDialog *PostedDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+{
+	return new PostedGroupDialog(mode, groupId, this);
 }
 
 int PostedDialog::shareKeyType()

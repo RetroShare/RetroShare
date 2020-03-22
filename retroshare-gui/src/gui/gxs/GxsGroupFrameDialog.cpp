@@ -88,8 +88,6 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 
 	/* Setup Queue */
 	mInterface = ifaceImpl;
-	mTokenService = mInterface->getTokenService();
-	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -127,7 +125,6 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 	// save settings
 	processSettings(false);
 
-	delete(mTokenQueue);
 	delete(ui);
 }
 
@@ -548,7 +545,8 @@ void GxsGroupFrameDialog::restoreGroupKeys(void)
 
 void GxsGroupFrameDialog::newGroup()
 {
-	GxsGroupDialog *dialog = createNewGroupDialog(mTokenQueue);
+	GxsGroupDialog *dialog = createNewGroupDialog();
+
 	if (!dialog) {
 		return;
 	}
@@ -575,8 +573,6 @@ void GxsGroupFrameDialog::groupSubscribe(bool subscribe)
 
 	uint32_t token;
 	mInterface->subscribeToGroup(token, mGroupId, subscribe);
-// Replaced by meta data changed
-//	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void GxsGroupFrameDialog::showGroupDetails()
@@ -585,7 +581,7 @@ void GxsGroupFrameDialog::showGroupDetails()
 		return;
 	}
 
-	GxsGroupDialog *dialog = createGroupDialog(mTokenQueue, mInterface->getTokenService(), GxsGroupDialog::MODE_SHOW, mGroupId);
+	GxsGroupDialog *dialog = createGroupDialog(GxsGroupDialog::MODE_SHOW, mGroupId);
 	if (!dialog) {
 		return;
 	}
@@ -600,7 +596,7 @@ void GxsGroupFrameDialog::editGroupDetails()
 		return;
 	}
 
-	GxsGroupDialog *dialog = createGroupDialog(mTokenQueue, mInterface->getTokenService(), GxsGroupDialog::MODE_EDIT, mGroupId);
+	GxsGroupDialog *dialog = createGroupDialog(GxsGroupDialog::MODE_EDIT, mGroupId);
 	if (!dialog) {
 		return;
 	}
@@ -995,7 +991,8 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 		return;
 	}
 
-	if (groupId.isNull()) {
+	if (groupId.isNull())
+    {
 		QTreeWidgetItem *items[2] = { mYourGroups, mSubscribedGroups };
 		for (int item = 0; item < 2; ++item) {
 			int child;
@@ -1003,16 +1000,15 @@ void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 			for (child = 0; child < childCount; ++child) {
 				QTreeWidgetItem *childItem = items[item]->child(child);
 				QString childId = ui->groupTreeWidget->itemId(childItem);
-				if (childId.isEmpty()) {
+				if (childId.isEmpty())
 					continue;
-				}
 
-				requestGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
+				updateGroupStatistics(RsGxsGroupId(childId.toLatin1().constData()));
 			}
 		}
-	} else {
-		requestGroupStatistics(groupId);
 	}
+    else
+		updateGroupStatistics(groupId);
 }
 
 /*********************** **** **** **** ***********************/
@@ -1163,13 +1159,39 @@ void GxsGroupFrameDialog::loadGroupSummary(const std::list<RsGxsGenericGroupData
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void GxsGroupFrameDialog::requestGroupStatistics(const RsGxsGroupId &groupId)
+void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 {
-	uint32_t token;
-	mTokenService->requestGroupStatistic(token, groupId);
-	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
+    RsThread::async([this,groupId]()
+	{
+		GxsGroupStatistic stats;
+
+        if(! getGroupStatistics(groupId, stats))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [this,stats]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+			QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
+			if (!item)
+				return;
+
+			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+
+			getUserNotify()->updateIcon();
+
+		}, this );
+	});
 }
 
+#ifdef TO_REMOVE
 void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
 {
 	GxsGroupStatistic stats;
@@ -1222,6 +1244,7 @@ void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenReques
 		}
 	}
 }
+#endif
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
 {

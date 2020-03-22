@@ -48,14 +48,15 @@ protected:
 
 	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
 	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
+	bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
 
 private:
 	/* GxsGroupFrameDialog */
 	virtual QString text(TextType type);
 	virtual QString icon(IconType type);
 	virtual QString settingsGroupName() { return "PostedDialog"; }
-	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
-	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
+	virtual GxsGroupDialog *createNewGroupDialog();
+	virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
 	virtual int shareKeyType();
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual RsGxsCommentService *getCommentService();

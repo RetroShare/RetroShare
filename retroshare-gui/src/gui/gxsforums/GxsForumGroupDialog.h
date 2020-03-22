@@ -29,15 +29,16 @@ class GxsForumGroupDialog : public GxsGroupDialog
 	Q_OBJECT
 
 public:
-	GxsForumGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	GxsForumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	GxsForumGroupDialog(QWidget *parent);
+	GxsForumGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
 protected:
-	virtual void initUi();
-	virtual QPixmap serviceImage();
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
+	void initUi() override;
+	QPixmap serviceImage() override;
+	bool service_createGroup(RsGroupMetaData& meta) override;
+	bool service_loadGroup(const RsGxsGenericGroupData *data,Mode mode, QString &description) override;
+	bool service_updateGroup(const RsGroupMetaData& editedMeta) override;
+    bool service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data) override;
 
 private:
     RsGxsForumGroup mGroupData;

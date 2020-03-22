@@ -181,14 +181,14 @@ QString GxsChannelDialog::icon(IconType type)
 	return "";
 }
 
-GxsGroupDialog *GxsChannelDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+GxsGroupDialog *GxsChannelDialog::createNewGroupDialog()
 {
-	return new GxsChannelGroupDialog(tokenQueue, this);
+	return new GxsChannelGroupDialog(this);
 }
 
-GxsGroupDialog *GxsChannelDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *GxsChannelDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
 {
-	return new GxsChannelGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new GxsChannelGroupDialog(mode, groupId, this);
 }
 
 int GxsChannelDialog::shareKeyType()
@@ -342,6 +342,11 @@ void GxsChannelDialog::toggleAutoDownload()
 			          << "thread but was scheduled by async thread" << std::endl;
 		}, this );
 	});
+}
+
+bool GxsChannelDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    return rsGxsChannels->getChannelStatistics(groupId,stat);
 }
 
 bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
