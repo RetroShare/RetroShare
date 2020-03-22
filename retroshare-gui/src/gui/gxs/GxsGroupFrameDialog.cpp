@@ -137,6 +137,8 @@ void GxsGroupFrameDialog::getGroupList(std::map<RsGxsGroupId, RsGroupMetaData> &
 
 	if(group_list.empty())
 		updateGroupSummary();
+    else
+        std::cerr << "************** Using cached GroupMetaData" << std::endl;
 }
 void GxsGroupFrameDialog::initUi()
 {
@@ -181,9 +183,7 @@ void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 		initUi();
 	}
 
-    updateDisplay(true);
-
-//	RsGxsUpdateBroadcastPage::showEvent(event);
+    updateDisplay( mCachedGroupMetas.empty() );
 }
 
 void GxsGroupFrameDialog::processSettings(bool load)
@@ -1051,10 +1051,17 @@ void GxsGroupFrameDialog::updateGroupSummary()
 				mNavigatePendingGroupId.clear();
 				mNavigatePendingMsgId.clear();
 			}
+            // update the local cache in order to avoid re-asking the data when the UI wants it (this happens on ::show() for instance)
+
+            mCachedGroupMetas.clear();
+
 			// now delete the data that is not used anymore
 
             for(auto& g:groupInfo)
+            {
+                mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
                 delete g;
+            }
 
 		}, this );
 	});
