@@ -185,6 +185,11 @@ std::unique_ptr<RsFileTree> RsFileTree::fromDirDetails(
 		ft->mFiles.push_back(fd);
 		ft->mTotalFiles = 1;
 		ft->mTotalSize = fd.size;
+
+		DirData dd;
+		dd.name = "/";
+		dd.subfiles.push_back(0);
+		ft->mDirs.push_back(dd);
 	}
 	else recurs_buildFileTree(*ft, 0, dd, remote, remove_top_dirs );
 	return ft;

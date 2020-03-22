@@ -489,10 +489,10 @@ public:
 	/**
 	 * @brief Initiate downloading of a file
 	 * @jsonapi{development}
-	 * @param[in] fileName
-	 * @param[in] hash
-	 * @param[in] size
-	 * @param[in] destPath in not empty specify a destination path
+	 * @param[in] fileName file name
+	 * @param[in] hash file hash
+	 * @param[in] size file size
+	 * @param[in] destPath optional specify the destination directory
 	 * @param[in] flags you usually want RS_FILE_REQ_ANONYMOUS_ROUTING
 	 * @param[in] srcIds eventually specify known sources
 	 * @return false if we already have the file, true otherwhise
@@ -501,6 +501,25 @@ public:
 	        const std::string& fileName, const RsFileHash& hash, uint64_t size,
 	        const std::string& destPath, TransferRequestFlags flags,
 	        const std::list<RsPeerId>& srcIds ) = 0;
+
+	/**
+	 * @brief Initiate download of a files collection
+	 * @jsonapi{development}
+	 * An usually useful companion method of this is @see parseFilesLink()
+	 * @param[in] collection collection of files to download
+	 * @param[in] destPath optional base path on which to download the
+	 *	collection, if left empty the default download directory will be used
+	 * @param[in] srcIds optional peers id known as direct source of the
+	 *	collection
+	 * @param[in] flags optional flags to fine tune search and download
+	 *	algorithm
+	 * @return success or error details.
+	 */
+	virtual std::error_condition requestFiles(
+	        const RsFileTree& collection,
+	        const std::string& destPath = "",
+	        const std::vector<RsPeerId>& srcIds = std::vector<RsPeerId>(),
+	        FileRequestFlags flags = FileRequestFlags::ANONYMOUS_ROUTING ) = 0;
 
 	/**
 	 * @brief Cancel file downloading
@@ -923,8 +942,6 @@ public:
 	 */
 	virtual std::error_condition parseFilesLink(
 	        const std::string& link, RsFileTree& collection ) = 0;
-
-	// virtual std::error_condition downloadFilesLink(FileRequestFlags)
 
 	/**
 	 * @brief Get list of ignored file name prefixes and suffixes

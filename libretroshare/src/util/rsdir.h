@@ -84,7 +84,10 @@ int     	breakupDirList(const std::string& path, std::list<std::string> &subdirs
 bool        splitDirFromFile(const std::string& full_path,std::string& dir, std::string& file);
 
 bool 		copyFile(const std::string& source,const std::string& dest);
-bool 		moveFile(const std::string& source,const std::string& dest);
+
+/** Move file. If destination directory doesn't exists create it. */
+bool moveFile(const std::string& source, const std::string& dest);
+
 bool 		removeFile(const std::string& file);
 bool 		fileExists(const std::string& file);
 bool    	checkFile(const std::string& filename,uint64_t& file_size,bool disallow_empty_file = false);
@@ -141,8 +144,23 @@ bool 		getWideFileHash(std::wstring filepath,                RsFileHash &hash, u
 FILE		*rs_fopen(const char* filename, const char* mode);
 
 std::string convertPathToUnix(std::string path);
+
+/** Concatenate two path pieces putting '/' separator between them only if
+ * needed */
 std::string makePath(const std::string &path1, const std::string &path2);
+
+RS_SET_CONTEXT_DEBUG_LEVEL(1);
 }
 
-	
+#if __cplusplus < 201703L
+namespace std
+{
+namespace filesystem
+{
+bool create_directories(const std::string& path);
+}
+}
+#endif // __cplusplus < 201703L
+
+
 #endif

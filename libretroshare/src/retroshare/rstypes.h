@@ -366,6 +366,8 @@ struct DirDetails : RsSerializable
 		RS_SERIAL_PROCESS(children);
 		RS_SERIAL_PROCESS(parent_groups);
 	}
+
+	~DirDetails() override = default;
 };
 
 class FileDetail
