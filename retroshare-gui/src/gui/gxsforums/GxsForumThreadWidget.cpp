@@ -872,6 +872,7 @@ static QString getDurationString(uint32_t days)
 
 void GxsForumThreadWidget::updateForumDescription()
 {
+    std::cerr << "Updating forum description" << std::endl;
     if (!mThreadId.isNull())
         return;
 
@@ -1731,6 +1732,7 @@ void GxsForumThreadWidget::updateGroupData()
 			 * after a blocking call to RetroShare API complete */
 
 			mForumGroup = group;
+            mThreadId.clear();
 
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;

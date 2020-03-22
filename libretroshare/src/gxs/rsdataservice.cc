@@ -25,9 +25,6 @@
  * #define RS_DATA_SERVICE_DEBUG_TIME  1
  * #define RS_DATA_SERVICE_DEBUG_CACHE 1
  ****/
-#define RS_DATA_SERVICE_DEBUG       1
-#define RS_DATA_SERVICE_DEBUG_TIME  1
-#define RS_DATA_SERVICE_DEBUG_CACHE 1
 
 #include <fstream>
 #include <util/rsdir.h>
