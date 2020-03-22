@@ -2217,16 +2217,14 @@ const noexcept
 	}
 }
 
-std::error_condition ftServer::exportFilesLink(
-        std::string& link, std::uintptr_t handle, bool fragSneak,
-        const std::string& baseUrl )
+std::error_condition ftServer::dirDetailsToLink(
+        std::string& link,
+        const DirDetails& dirDetails, bool fragSneak, const std::string& baseUrl )
 {
-	DirDetails tDirDet;
-	if(!requestDirDetails(tDirDet, handle))
-		return RsFilesErrorNum::FILES_HANDLE_NOT_FOUND;
-
 	std::unique_ptr<RsFileTree> tFileTree =
-	        RsFileTree::fromDirDetails(tDirDet, false);
+	        RsFileTree::fromDirDetails(dirDetails, false);
+	if(!tFileTree) return std::errc::invalid_argument;
+
 	link = tFileTree->toBase64();
 
 	if(!baseUrl.empty())
@@ -2234,7 +2232,7 @@ std::error_condition ftServer::exportFilesLink(
 		RsUrl tUrl(baseUrl);
 		tUrl.setQueryKV(FILES_URL_COUNT_FIELD,
 		                std::to_string(tFileTree->mTotalFiles) )
-		    .setQueryKV(FILES_URL_NAME_FIELD, tDirDet.name)
+		    .setQueryKV(FILES_URL_NAME_FIELD, dirDetails.name)
 		    .setQueryKV( FILES_URL_SIZE_FIELD,
 		                 std::to_string(tFileTree->mTotalSize) );
 		if(fragSneak)
@@ -2245,6 +2243,34 @@ std::error_condition ftServer::exportFilesLink(
 	}
 
 	return std::error_condition();
+}
+
+std::error_condition ftServer::exportCollectionLink(
+        std::string& link, std::uintptr_t handle, bool fragSneak,
+        const std::string& baseUrl )
+{
+	DirDetails tDirDet;
+	if(!requestDirDetails(tDirDet, handle))
+		return RsFilesErrorNum::FILES_HANDLE_NOT_FOUND;
+
+	return dirDetailsToLink(link, tDirDet, fragSneak, baseUrl);
+}
+
+/// @see RsFiles
+std::error_condition ftServer::exportFileLink(
+        std::string& link, const RsFileHash& fileHash, uint64_t fileSize,
+        const std::string& fileName, bool fragSneak, const std::string& baseUrl )
+{
+	if(fileHash.isNull() || !fileSize || fileName.empty())
+		return std::errc::invalid_argument;
+
+	DirDetails tDirDet;
+	tDirDet.type = DIR_TYPE_FILE;
+	tDirDet.name = fileName;
+	tDirDet.hash = fileHash;
+	tDirDet.count = fileSize;
+
+	return dirDetailsToLink(link, tDirDet, fragSneak, baseUrl);
 }
 
 std::error_condition ftServer::parseFilesLink(

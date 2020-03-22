@@ -912,10 +912,10 @@ public:
 	static const std::string FILES_URL_SIZE_FIELD;
 
 	/**
-	 * @brief Get link to a forum
+	 * @brief Export link to a collection of files
 	 * @jsonapi{development}
 	 * @param[out] link storage for the generated link
-	 * @param[in] handle file/directory RetroShare handle
+	 * @param[in] handle directory RetroShare handle
 	 * @param[in] fragSneak when true the file data is sneaked into fragment
 	 *	instead of FILES_URL_DATA_FIELD query field, this way if using an
 	 *	http[s] link to pass around a disguised file link a misconfigured host
@@ -929,8 +929,24 @@ public:
 	 *	plain base64 format.
 	 * @return error information if some error occurred, 0/SUCCESS otherwise
 	 */
-	virtual std::error_condition exportFilesLink(
+	virtual std::error_condition exportCollectionLink(
 	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
+	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL ) = 0;
+
+	/**
+	 * @brief Export link to a file
+	 * @jsonapi{development}
+	 * @param[out] link @see exportCollectionLink
+	 * @param[in] fileHash hash of the file
+	 * @param[in] fileSize size of the file
+	 * @param[in] fileName name of the file
+	 * @param[in] fragSneak @see exportCollectionLink
+	 * @param[in] baseUrl @see exportCollectionLink
+	 * @return error @see exportCollectionLink
+	 */
+	virtual std::error_condition exportFileLink(
+	        std::string& link, const RsFileHash& fileHash, uint64_t fileSize,
+	        const std::string& fileName, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL ) = 0;
 
 	/**
