@@ -295,7 +295,10 @@ bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 	return mFileDatabase->search(hash, RS_FILE_HINTS_LOCAL, info);
 }
 
-bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uint64_t size, const std::string& dest, TransferRequestFlags flags, const std::list<RsPeerId>& srcIds)
+bool ftServer::FileRequest(
+        const std::string& fname, const RsFileHash& hash, uint64_t size,
+        const std::string& dest, TransferRequestFlags flags,
+        const std::list<RsPeerId>& srcIds )
 {
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "Requesting " << fname << std::endl ;
@@ -305,6 +308,93 @@ bool ftServer::FileRequest(const std::string& fname, const RsFileHash& hash, uin
 		return false ;
 
 	return true ;
+}
+
+std::error_condition ftServer::requestFiles(
+        const RsFileTree& collection, const std::string& destPath,
+        const std::vector<RsPeerId>& srcIds, FileRequestFlags flags )
+{
+	constexpr auto fname = __PRETTY_FUNCTION__;
+	const auto dirsCount = collection.mDirs.size();
+	const auto filesCount = collection.mFiles.size();
+
+	Dbg2() << fname << " dirsCount: " << dirsCount
+	       << " filesCount: " << filesCount << std::endl;
+
+	if(!dirsCount)
+	{
+		RsErr() << fname << " Directories list empty in collection "
+		        << std::endl;
+		return std::errc::not_a_directory;
+	}
+
+	if(!filesCount)
+	{
+		RsErr() << fname << " Files list empty in collection " << std::endl;
+		return std::errc::invalid_argument;
+	}
+
+	if(filesCount != collection.mTotalFiles)
+	{
+		RsErr() << fname << " Files count mismatch" << std::endl;
+		return std::errc::invalid_argument;
+	}
+
+	std::string basePath = destPath.empty() ? getDownloadDirectory() : destPath;
+	// Track how many time a directory have been explored
+	std::vector<uint32_t> dirsSeenCnt(dirsCount, 0);
+	//                          <directory handle, parent path>
+	using StackEntry = std::tuple<std::uintptr_t, std::string>;
+	std::deque<StackEntry> dStack = { std::make_tuple(0, basePath) };
+
+	const auto exploreDir = [&](const StackEntry& se)-> std::error_condition
+	{
+		std::uintptr_t dirHandle; std::string parentPath;
+		std::tie(dirHandle, parentPath) = se;
+
+		const auto& dirData = collection.mDirs[dirHandle];
+		auto& seenTimes = dirsSeenCnt[dirHandle];
+		std::string dirPath = RsDirUtil::makePath(parentPath, dirData.name);
+
+		/* This check is not perfect but is cheap and interrupt loop exploration
+		 * before it becomes pathological */
+		if(seenTimes++ > dirsCount)
+		{
+			RsErr() << fname << " loop detected! dir: "
+			        << dirHandle << " \"" << dirPath
+			        << "\" explored too many times" << std::endl;
+			return std::errc::too_many_symbolic_link_levels;
+		}
+
+		for(auto fHandle: dirData.subfiles)
+		{
+			if(fHandle >= filesCount) return std::errc::argument_out_of_domain;
+
+			const RsFileTree::FileData& fData = collection.mFiles[fHandle];
+
+			bool fr =
+			FileRequest( fData.name, fData.hash, fData.size,
+			             dirPath,
+			             TransferRequestFlags::fromEFT<FileRequestFlags>(flags),
+			             std::list<RsPeerId>(srcIds.begin(), srcIds.end()) );
+
+			Dbg2() << fname << " requested: " << fr << " "
+			       << fData.hash << " -> " << dirPath << std::endl;
+		}
+
+		for(auto dHandle: dirData.subdirs)
+			dStack.push_back(std::make_tuple(dHandle, dirPath));
+
+		return std::error_condition();
+	};
+
+	while(!dStack.empty())
+	{
+		if(std::error_condition ec = exploreDir(dStack.front())) return ec;
+		dStack.pop_front();
+	}
+
+	return std::error_condition();
 }
 
 bool ftServer::activateTunnels(const RsFileHash& hash,uint32_t encryption_policy,TransferRequestFlags flags,bool onoff)
