@@ -679,7 +679,7 @@ bool p3GxsForums::getForumsInfo( const std::list<RsGxsGroupId>& forumIds, std::v
     }
 	else
     {
-		if( !requestGroupInfo(token, opts, forumIds) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+		if( !requestGroupInfo(token, opts, forumIds, forumIds.size()==1) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
             return false;
     }
 	return getGroupData(token, forumsInfo);

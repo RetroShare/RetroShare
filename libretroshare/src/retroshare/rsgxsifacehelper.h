@@ -46,6 +46,7 @@ enum class TokenRequestType: uint8_t
     MSG_RELATED_INFO    = 0x03,
     GROUP_STATISTICS    = 0x04,
     SERVICE_STATISTICS  = 0x05,
+    NO_KILL_TYPE        = 0x06,
 };
 
 class RsGxsIfaceHelper
@@ -244,15 +245,14 @@ public:
     }
 
 	/// @see RsTokenService::requestGroupInfo
-	bool requestGroupInfo( uint32_t& token, const RsTokReqOptions& opts,
-	                       const std::list<RsGxsGroupId> &groupIds )
+	bool requestGroupInfo( uint32_t& token, const RsTokReqOptions& opts, const std::list<RsGxsGroupId> &groupIds, bool high_priority_request = false )
 	{
-        cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+		cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
 
 		if( mTokenService.requestGroupInfo(token, 0, opts, groupIds))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=TokenRequestType::GROUP_INFO;
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : (TokenRequestType::GROUP_INFO);
             locked_dumpTokens();
             return true;
         }
@@ -261,14 +261,14 @@ public:
     }
 
 	/// @see RsTokenService::requestGroupInfo
-	bool requestGroupInfo(uint32_t& token, const RsTokReqOptions& opts)
+	bool requestGroupInfo(uint32_t& token, const RsTokReqOptions& opts, bool high_priority_request = false)
 	{
-        cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+		cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
 
 		if(  mTokenService.requestGroupInfo(token, 0, opts))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=TokenRequestType::GROUP_INFO;
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : (TokenRequestType::GROUP_INFO);
             locked_dumpTokens();
             return true;
         }
