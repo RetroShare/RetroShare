@@ -44,7 +44,7 @@ $%inputParamsDeserialization%$
 
 		const std::weak_ptr<rb::Service> weakService(mService);
 		const std::weak_ptr<rb::Session> weakSession(session);
-		$%callbackName%$ = [this, weakService, weakSession]($%callbackParams%$)
+		$%callbackName%$ = [weakService, weakSession]($%callbackParams%$)
 		{
 			auto session = weakSession.lock();
 			if(!session || session->is_closed()) return;
