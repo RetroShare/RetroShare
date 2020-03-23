@@ -412,7 +412,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/attach-image.png</normaloff>:/icons/png/attach-image.png</iconset>
+               <normaloff>:/icons/png/add-image.png</normaloff>:/icons/png/add-image.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -435,7 +435,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/attach.png</normaloff>:/icons/png/attach.png</iconset>
+               <normaloff>:/icons/png/attachements.png</normaloff>:/icons/png/attachements.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -455,7 +455,7 @@ border-image: url(:/images/closepressed.png)
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/settings.png</normaloff>:/icons/png/settings.png</iconset>
+               <normaloff>:/icons/png/options2.png</normaloff>:/icons/png/options2.png</iconset>
              </property>
              <property name="iconSize">
               <size>
