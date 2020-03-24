@@ -55,6 +55,8 @@ RsFileTree::fromBase64(const std::string& base64)
 	const auto failure = [](std::error_condition ec)
 	{ return std::make_tuple(nullptr, ec); };
 
+	if(base64.empty()) return failure(std::errc::invalid_argument);
+
 	std::error_condition ec;
 	std::vector<uint8_t> mem;
 	if( (ec = RsBase64::decode(base64, mem)) ) return failure(ec);
