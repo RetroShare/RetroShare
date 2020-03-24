@@ -178,10 +178,6 @@ const TransferRequestFlags RS_FILE_REQ_NO_SEARCH           ( 0x02000000 );	// di
 // const uint32_t RS_FILE_HINTS_SHARE_FLAGS_MASK	 = 	RS_FILE_HINTS_NETWORK_WIDE_OTHERS | RS_FILE_HINTS_BROWSABLE_OTHERS
 // 																	 | RS_FILE_HINTS_NETWORK_WIDE_GROUPS | RS_FILE_HINTS_BROWSABLE_GROUPS ;
 
-/* Callback Codes */
-
-const uint32_t RS_FILE_EXTRA_DELETE	 = 0x0010;
-
 enum class RsSharedDirectoriesEventCode: uint8_t {
     UNKNOWN                     = 0x00,
     STARTING_DIRECTORY_SWEEP    = 0x01, // (void)
