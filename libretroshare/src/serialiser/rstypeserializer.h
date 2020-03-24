@@ -1037,8 +1037,6 @@ protected:
 	VLQ_deserialize(
 	        const uint8_t data[], uint32_t size, uint32_t& offset, T& member )
 	{
-		uint32_t backupOffset = offset;
-
 		member = 0;
 		uint32_t offsetBackup = offset;
 
@@ -1048,14 +1046,14 @@ protected:
 		for (size_t i = 0; offset < size && i <= sizeof(T); ++i)
 		{
 			member |= (data[offset] & 127) << (7 * i);
-			// If the next-byte flag is not set, ++ is after on purpose
+			// If the next-byte flag is not set. ++ is after on purpose
 			if(!(data[offset++] & 128))
 			{
-				RsDbg() << __PRETTY_FUNCTION__
-				        << " size: " << size
-				        << " backupOffset " << backupOffset
-				        << " offset: " << offset
-				        << " member " << member << std::endl;
+				Dbg2() << __PRETTY_FUNCTION__
+				       << " size: " << size
+				       << " backupOffset " << offsetBackup
+				       << " offset: " << offset
+				       << " member " << member << std::endl;
 				return true;
 			}
 		}
@@ -1064,13 +1062,14 @@ protected:
 		 * ended before we encountered the end of the number, or the number
 		 * is VLQ encoded improperly */
 		RsErr() << __PRETTY_FUNCTION__ << std::errc::illegal_byte_sequence
+		        << " size: " << size
 		        << " offsetBackup: " << offsetBackup
 		        << " offset: " << offset << " bytes: ";
 		for(; offsetBackup < offset; ++offsetBackup)
-			std::cerr << " " << std::bitset<8>(data[offsetBackup]);
-		std::cerr << std::endl;
-
+			RsErr().uStream() << " " << std::bitset<8>(data[offsetBackup]);
+		RsErr().uStream() << std::endl;
 		print_stacktrace();
+
 		return false;
 	}
 
