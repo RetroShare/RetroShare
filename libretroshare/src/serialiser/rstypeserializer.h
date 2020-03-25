@@ -966,8 +966,8 @@ protected:
 #pragma GCC diagnostic ignored "-Wbool-compare"
 		while(member > 127) { ++ret; member >>= 7; }
 #pragma GCC diagnostic pop
-		RsDbg() << __PRETTY_FUNCTION__ << " memberBackup: " << memberBackup
-		        << " return: " << ret << std::endl;
+		Dbg2() << __PRETTY_FUNCTION__ << " memberBackup: " << memberBackup
+		       << " return: " << ret << std::endl;
 		return ret;
 	}
 
@@ -1007,6 +1007,7 @@ protected:
 			        << " member " << member
 			        << " size: " << size
 			        << " offset: " << offset
+			        << " backupMember: " << backupMember
 			        << std::error_condition(std::errc::no_buffer_space)
 			        << std::endl;
 			print_stacktrace();
@@ -1015,12 +1016,12 @@ protected:
 
 		data[offset++] = static_cast<uint8_t>(member & 127);
 
-		RsDbg() << __PRETTY_FUNCTION__ << " backupMember: " << backupMember
-		        << " offsetBackup: " << offsetBackup << " offeset: " << offset
-		        << " serialized as: ";
+		Dbg3() << __PRETTY_FUNCTION__ << " backupMember: " << backupMember
+		       << " offsetBackup: " << offsetBackup << " offeset: " << offset
+		       << " serialized as: ";
 		for(; offsetBackup < offset; ++offsetBackup)
-			std::cerr << " " << std::bitset<8>(data[offsetBackup]);
-		std::cerr << std::endl;
+			Dbg3().uStream() << " " << std::bitset<8>(data[offsetBackup]);
+		Dbg3().uStream() << std::endl;
 
 		return ok;
 	}
