@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2007 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,8 +22,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef RSUTIL_DIRFNS_H
-#define RSUTIL_DIRFNS_H
+#pragma once
 
 #include <string>
 #include <list>
@@ -161,6 +162,3 @@ bool create_directories(const std::string& path);
 }
 }
 #endif // __cplusplus < 201703L
-
-
-#endif
