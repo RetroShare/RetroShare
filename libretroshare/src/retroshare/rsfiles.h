@@ -948,8 +948,9 @@ public:
 	/**
 	 * @brief Parse RetroShare files link
 	 * @jsonapi{development}
-	 * @param[in] link files link either in radix or URL format
-	 * @param[out] collection optional storage for parsed files link
+	 * Support also old RetroShare-gui file and collections links format.
+	 * @param[in] link files link either in base64 or URL format
+	 * @param[out] collection storage for parsed files link
 	 * @return error information if some error occurred, 0/SUCCESS otherwise
 	 */
 	virtual std::error_condition parseFilesLink(

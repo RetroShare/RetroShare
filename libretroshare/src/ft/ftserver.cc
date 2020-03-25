@@ -2277,6 +2277,63 @@ std::error_condition ftServer::parseFilesLink(
         const std::string& link, RsFileTree& collection )
 {
 	RsUrl tUrl(link);
+
+	{
+		/* Handle retrocompatibility with old stile single file links
+		 * retroshare://file?name=$FILE_NAME&size=$FILE_SIZE&hash=$FILE_HASH
+		 */
+		if( tUrl.scheme() == "retroshare" && tUrl.host() == "file"
+		        && tUrl.hasQueryK("name") && !tUrl.getQueryV("name")->empty()
+		        && tUrl.hasQueryK("size") && !tUrl.getQueryV("size")->empty()
+		        && tUrl.hasQueryK("hash") && !tUrl.getQueryV("hash")->empty() )
+		{
+			DirDetails dt;
+			dt.type = DIR_TYPE_FILE;
+			dt.hash = RsFileHash(*tUrl.getQueryV("hash"));
+			dt.name = *tUrl.getQueryV("name");
+			try
+			{
+				dt.count = std::stoull(*tUrl.getQueryV("size"));
+				std::unique_ptr<RsFileTree> ft;
+				if( !dt.hash.isNull() &&
+				        (ft = RsFileTree::fromDirDetails(dt, true)) )
+				{
+					collection = *ft;
+					return std::error_condition();
+				}
+			}
+			catch (...) {}
+		}
+	}
+
+	{
+		/* Handle retrocompatibility with old stile collection links
+		 * retroshare://collection?name=$NAME&size=$SIZE&radix=$RADIX&files=$COUNT
+		 */
+		if( tUrl.scheme() == "retroshare" && tUrl.host() == "collection"
+		        && tUrl.hasQueryK("name") && !tUrl.getQueryV("name")->empty()
+		        && tUrl.hasQueryK("size") && !tUrl.getQueryV("size")->empty()
+		        && tUrl.hasQueryK("radix") && !tUrl.getQueryV("radix")->empty()
+		        && tUrl.hasQueryK("files") && !tUrl.getQueryV("files")->empty() )
+		{
+			try
+			{
+				// Don't need the values just check they are valid numbers
+				std::stoull(*tUrl.getQueryV("size"));
+				std::stoull(*tUrl.getQueryV("files"));
+
+				auto ft = RsFileTree::fromRadix64(*tUrl.getQueryV("radix"));
+				if(ft)
+				{
+					collection = *ft;
+					return std::error_condition();
+				}
+			}
+			catch (...) {}
+		}
+	}
+
+	// Finaly handle the new files link format
 	rs_view_ptr<const std::string> radixPtr =
 	        tUrl.getQueryV(FILES_URL_DATA_FIELD);
 	if(!radixPtr) radixPtr = &link;
