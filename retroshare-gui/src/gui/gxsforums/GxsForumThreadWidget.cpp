@@ -869,8 +869,27 @@ static QString getDurationString(uint32_t days)
     }
 }
 
-void GxsForumThreadWidget::updateForumDescription()
+void GxsForumThreadWidget::setForumDescriptionLoading()
 {
+    ui->postText->setText(tr("<b>Loading...<b>"));
+}
+
+void GxsForumThreadWidget::clearForumDescription()
+{
+    ui->postText->clear();
+}
+
+void GxsForumThreadWidget::updateForumDescription(bool success)
+{
+    if(!success)
+    {
+		QString forum_description = QString("<b>ERROR:</b> Forum could not be loaded. Database might be in heavy use. Please try later.");
+		ui->postText->setText(forum_description);
+		mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
+
+        return;
+    }
+
     std::cerr << "Updating forum description" << std::endl;
     if (!mThreadId.isNull())
         return;
@@ -1697,6 +1716,8 @@ void GxsForumThreadWidget::updateGroupData()
     // ui->threadTreeWidget->selectionModel()->reset();
     // mThreadProxyModel->clear();
 
+	setForumDescriptionLoading();
+
 	RsThread::async([this]()
 	{
         // 1 - get message data from p3GxsForums
@@ -1705,18 +1726,14 @@ void GxsForumThreadWidget::updateGroupData()
 		std::vector<RsGxsForumGroup> groups;
 
         forumIds.push_back(groupId());
+        bool success = false;
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
-		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
-			return;
-        }
-
-        if(groups.size() != 1)
-        {
+		else if(groups.size() != 1)
 			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
-			return;
-        }
+        else
+            success = true;
 
         // 2 - sort the messages into a proper hierarchy
 
@@ -1724,7 +1741,7 @@ void GxsForumThreadWidget::updateGroupData()
 
         // 3 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [group,this]()
+        RsQThreadUtils::postToObject( [group,success,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -1736,7 +1753,7 @@ void GxsForumThreadWidget::updateGroupData()
 			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 
-            updateForumDescription();
+            updateForumDescription(success);
 
 		}, this );
 
