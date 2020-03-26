@@ -393,7 +393,7 @@ protected:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(20000),
 	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100),
             bool auto_delete_if_unsuccessful=true)
 	{

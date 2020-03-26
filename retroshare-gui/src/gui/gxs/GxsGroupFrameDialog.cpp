@@ -169,13 +169,15 @@ void GxsGroupFrameDialog::initUi()
 		connect(NotifyQt::getInstance(), SIGNAL(settingsChanged()), this, SLOT(settingsChanged()));
 		settingsChanged();
 	}
+
+	mInitialized = true;
 }
 
 void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 {
-	if (!mInitialized) {
+	if (!mInitialized || ui->groupTreeWidget->treeWidget()->topLevelItemCount() == 0)
+	{
 		/* Problem: virtual methods cannot be used in constructor */
-		mInitialized = true;
 
 		initUi();
 	}

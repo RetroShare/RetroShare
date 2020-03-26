@@ -392,11 +392,10 @@ void GxsForumThreadWidget::blank()
 
     //mThreadModel->clear();
 
-#ifdef SUSPENDED_CODE
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
 	mStateHelper->setWidgetEnabled(ui->previousButton, false);
 	mStateHelper->setWidgetEnabled(ui->nextButton, false);
-#endif
+
 	ui->versions_CB->hide();
 }
 
