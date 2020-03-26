@@ -26,6 +26,7 @@
 #include <thread>
 
 #include "retroshare/rsgxsiface.h"
+#include "retroshare/rsservicecontrol.h"
 #include "retroshare/rsreputations.h"
 #include "rsgxsflags.h"
 #include "util/rsdeprecate.h"
@@ -454,9 +455,19 @@ private:
 
     void locked_dumpTokens()
     {
-        std::cerr << "Active tokens (this=" << (void*)this << "): " ;
-        for(auto it: mActiveTokens)
-            std::cerr << std::dec << it.first << " (" << static_cast<int>(it.second) << ") " ;
+        uint16_t service_id =  mGxs.serviceType();
+
+        uint32_t count[7] = {0};
+
+        std::cerr << "Service 0x0" << std::hex << service_id
+                  << " (" << rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id))
+                  << ") this=0x" << (void*)this << ") Active tokens (per type): " ;
+
+        for(auto& it: mActiveTokens)				// let's count how many token of each type we've got.
+            ++count[static_cast<int>(it.second)];
+
+        for(uint32_t i=0;i<7;++i)
+            std::cerr /* << i << ":" */ << count[i] << " ";
         std::cerr << std::endl;
     }
 };

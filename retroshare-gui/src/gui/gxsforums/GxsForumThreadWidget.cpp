@@ -1102,6 +1102,19 @@ void GxsForumThreadWidget::insertMessage()
 //    markMsgAsRead();
 }
 
+void GxsForumThreadWidget::setMessageLoadingError(const QString& error)
+{
+	ui->time_label->setText(QString(""));
+	ui->by_label->setId(RsGxsId());
+	ui->lineRight->show();
+	ui->lineLeft->show();
+	ui->by_text_label->show();
+	ui->by_label->show();
+	ui->threadTreeWidget->setFocus();
+
+    ui->postText->setText(error);
+}
+
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 {
 	/* As some time has elapsed since request - check that this is still the current msg.
@@ -1735,28 +1748,32 @@ void GxsForumThreadWidget::updateGroupData()
         else
             success = true;
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumGroup group(groups[0]);	// we use a copy to share the object in order to avoid group deletion while we're in the thread.
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [group,success,this]()
+		if(success)
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumGroup group(groups[0]);	// we use a copy to share the object in order to avoid group deletion while we're in the thread.
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [group,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			mForumGroup = group;
-            mThreadId.clear();
+				mForumGroup = group;
+				mThreadId.clear();
 
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 
-            updateForumDescription(success);
+				updateForumDescription(true);
 
-		}, this );
-
+			}, this );
+		}
+		else
+			RsQThreadUtils::postToObject( [this]() { updateForumDescription(false); },this);
     });
 }
 
@@ -1774,17 +1791,18 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
         std::vector<RsGxsForumMsg> msgs;
 
         msgs_to_request.insert(msgId);
+        QString error_string;
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
-			return;
+            error_string = tr("Failed to retrieve this message. Is the database currently overloaded?");
         }
 
         if(msgs.empty())
         {
 			std::cerr << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
-            return;
+            error_string = tr("No data for this message. Is the database corrupted?");
         }
         if(msgs.size() > 1)
         {
@@ -1792,25 +1810,32 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
             std::cerr << "Messages are:" << std::endl;
             for(auto it(msgs.begin());it!=msgs.end();++it)
                 std::cerr << (*it).mMeta << std::endl;
+
+            error_string = tr("More than one entry for this message. Is the database corrupted?");
         }
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumMsg msg(msgs[0]);
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [msg,this]()
+        if(error_string.isNull())
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumMsg msg(msgs[0]);
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [msg,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			insertMessageData(msg);
+				insertMessageData(msg);
 
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
-		}, this );
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+			}, this );
+		}
+        else
+            RsQThreadUtils::postToObject( [error_string,this](){ setMessageLoadingError(error_string); } );
     });
 }
 

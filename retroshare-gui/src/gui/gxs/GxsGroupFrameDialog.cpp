@@ -175,7 +175,7 @@ void GxsGroupFrameDialog::initUi()
 
 void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 {
-	if (!mInitialized || ui->groupTreeWidget->treeWidget()->topLevelItemCount() == 0)
+	if (!mInitialized )
 	{
 		/* Problem: virtual methods cannot be used in constructor */
 
@@ -1028,6 +1028,8 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
 			return;
 		}
+        if(groupInfo.empty())
+            return;
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
@@ -1049,17 +1051,18 @@ void GxsGroupFrameDialog::updateGroupSummary()
 				mNavigatePendingGroupId.clear();
 				mNavigatePendingMsgId.clear();
 			}
-            // update the local cache in order to avoid re-asking the data when the UI wants it (this happens on ::show() for instance)
 
-            mCachedGroupMetas.clear();
+			// update the local cache in order to avoid re-asking the data when the UI wants it (this happens on ::show() for instance)
+
+			mCachedGroupMetas.clear();
 
 			// now delete the data that is not used anymore
 
-            for(auto& g:groupInfo)
-            {
-                mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
-                delete g;
-            }
+			for(auto& g:groupInfo)
+			{
+				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
+				delete g;
+			}
 
 		}, this );
 	});
