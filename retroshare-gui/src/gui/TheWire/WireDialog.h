@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/WireDialog.h                                                    *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -24,66 +24,74 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_WireDialog.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rswire.h>
 
 #include <map>
 
 #include "gui/TheWire/PulseItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
-#define IMAGE_WIRE              ":/images/kgames.png"
+#include "util/TokenQueue.h"
 
-class WireDialog : public MainPage, public PulseHolder 
+#define IMAGE_WIRE              ":/icons/wire.png"
+
+class WireDialog : public MainPage, public TokenResponse, public PulseHolder
 {
   Q_OBJECT
 
 public:
 	WireDialog(QWidget *parent = 0);
 
-        virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
-        virtual QString pageName() const { return tr("The Wire") ; }
-        virtual QString helpText() const { return ""; }
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
+	virtual QString pageName() const { return tr("The Wire") ; }
+	virtual QString helpText() const { return ""; }
 
-virtual void deletePulseItem(PulseItem *, uint32_t type);
-virtual void notifySelection(PulseItem *item, int ptype);
+	// PulseHolder interface.
+	virtual void deletePulseItem(PulseItem *, uint32_t type);
+	virtual void notifySelection(PulseItem *item, int ptype);
+
+	virtual void follow(RsGxsGroupId &groupId);
+	virtual void rate(RsGxsId &authorId);
+	virtual void reply(RsWirePulse &pulse, std::string &groupName);
 
 	void notifyPulseSelection(PulseItem *item);
 
 private slots:
 
+	void createGroup();
+	void createPulse();
 	void checkUpdate();
-	void OpenOrShowPulseAddDialog();
+	void refreshGroups();
 
 private:
 
+	void addItem(QWidget *item);
+	void addGroup(QWidget *item);
 
+	void addPulse(RsWirePulse &pulse, RsWireGroup &group);
+	void addGroup(RsWireGroup &group);
 
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
+	void deletePulses();
+	void deleteGroups();
+	void updateGroups(std::vector<RsWireGroup> &groups);
 
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
+	// Loading Data.
+	void requestGroupData();
+	bool loadGroupData(const uint32_t &token);
 
-	/* Grunt work of setting up the GUI */
+	void requestPulseData(const std::list<RsGxsGroupId>& grpIds);
+	bool loadPulseData(const uint32_t &token);
 
-	bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	void insertAlbums();
-	void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-	void insertPhotosForSelectedAlbum();
-
-	void addAlbum(const std::string &id);
-	void addPhoto(const std::string &id);
-
-	void clearAlbums();
-	void clearPhotos();
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	PulseAddDialog *mAddDialog;
 
 	PulseItem *mPulseSelected;
+
+	TokenQueue *mWireQueue;
+
+	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
+	std::vector<RsWireGroup> mOwnGroups;
 
 	/* UI - from Designer */
 	Ui::WireDialog ui;

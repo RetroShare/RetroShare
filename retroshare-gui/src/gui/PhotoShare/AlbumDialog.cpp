@@ -59,7 +59,6 @@ void AlbumDialog::setUp()
 {
     ui->lineEdit_Title->setText(QString::fromStdString(mAlbum.mMeta.mGroupName));
     ui->lineEdit_Caption->setText(QString::fromStdString(mAlbum.mCaption));
-    ui->lineEdit_Category->setText(QString::fromStdString(mAlbum.mCategory));
 
     if (mAlbum.mThumbnail.mSize != 0)
     {
@@ -121,7 +120,7 @@ void AlbumDialog::updateAlbumPhotos()
                 // flag image as Deleted.
                 // clear image.
                 // clear file URL (todo)
-                photo.mThumbnail.clear();
+                photo.mLowResImage.clear();
             }
             break;
         }
@@ -221,7 +220,6 @@ void AlbumDialog::loadPhotoData(const uint32_t &token)
     rsPhoto->getPhoto(token, res);
     PhotoResult::iterator mit = res.begin();
 
-
     for (; mit != res.end(); ++mit)
     {
         std::vector<RsPhotoPhoto>& photoV = mit->second;
@@ -230,8 +228,7 @@ void AlbumDialog::loadPhotoData(const uint32_t &token)
         for (; vit != photoV.end(); ++vit)
         {
             RsPhotoPhoto& photo = *vit;
-
-            if (!photo.mThumbnail.empty()) {
+            if (!photo.mLowResImage.empty()) {
                 addPhoto(photo);
             }
         }
@@ -287,5 +284,3 @@ void AlbumDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 }
 
 /**************************** Request / Response Filling of Data ************************/
-
-

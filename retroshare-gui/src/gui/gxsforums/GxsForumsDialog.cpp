@@ -80,6 +80,26 @@ GxsForumsDialog::~GxsForumsDialog()
 	rsEvents->unregisterEventsHandler(mEventHandlerId);
 }
 
+bool GxsForumsDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
+{
+	std::vector<RsGxsForumGroup> groups;
+
+	if(! rsGxsForums->getForumsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
+
+	for (auto& group: groups)
+		groupInfo.push_back(new RsGxsForumGroup(group));
+
+    return true;
+}
+
+bool GxsForumsDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
+{
+    return rsGxsForums->getForumStatistics(groupId,stat);
+}
+
+
+
 QString GxsForumsDialog::getHelpString() const
 {
 	QString hlp_str = tr(
@@ -151,13 +171,13 @@ QString GxsForumsDialog::icon(IconType type)
 	case ICON_NEW:
 		return ":/icons/png/add.png";
 	case ICON_YOUR_GROUP:
-		return ":/icons/png/feedreader.png";
+		return "";
 	case ICON_SUBSCRIBED_GROUP:
-		return ":/icons/png/feed-subscribed.png";
+		return "";
 	case ICON_POPULAR_GROUP:
-		return ":/icons/png/feed-popular.png";
+		return "";
 	case ICON_OTHER_GROUP:
-		return ":/icons/png/feed-other.png";
+		return "";
 	case ICON_SEARCH:
 		return ":/images/find.png";
 	case ICON_DEFAULT:
@@ -167,14 +187,14 @@ QString GxsForumsDialog::icon(IconType type)
 	return "";
 }
 
-GxsGroupDialog *GxsForumsDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+GxsGroupDialog *GxsForumsDialog::createNewGroupDialog()
 {
-	return new GxsForumGroupDialog(tokenQueue, this);
+	return new GxsForumGroupDialog(this);
 }
 
-GxsGroupDialog *GxsForumsDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+GxsGroupDialog *GxsForumsDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
 {
-	return new GxsForumGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+	return new GxsForumGroupDialog(mode, groupId, this);
 }
 
 int GxsForumsDialog::shareKeyType()
@@ -187,6 +207,7 @@ GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGrou
 	return new GxsForumThreadWidget(groupId);
 }
 
+#ifdef TO_REMOVE
 void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
 {
 	std::vector<RsGxsForumGroup> groups;
@@ -206,8 +227,30 @@ void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsG
 		}
 	}
 }
+#endif
 
-void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
+{
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
+
+	const RsGxsForumGroup *forumGroupData = dynamic_cast<const RsGxsForumGroup*>(groupData);
+
+	if (!forumGroupData)
+    {
+		std::cerr << "GxsChannelDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsChannelGroupInfoData"<< std::endl;
+		return;
+	}
+
+	groupItemInfo.description = QString::fromUtf8(forumGroupData->mDescription.c_str());
+
+	if(IS_GROUP_ADMIN(groupData->mMeta.mSubscribeFlags))
+		groupItemInfo.icon = QIcon(":icons/png/forums.png");
+	else if ((IS_GROUP_PGP_AUTHED(groupData->mMeta.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupData->mMeta.mSignFlags)) )
+		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
+}
+
+#ifdef TO_REMOVE
+void ::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
 {
 	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
 
@@ -229,3 +272,4 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo,
 		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
 
 }
+#endif

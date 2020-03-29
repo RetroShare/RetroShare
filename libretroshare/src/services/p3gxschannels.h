@@ -140,7 +140,7 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	                                 std::vector<RsGxsComment> &msgs ) override
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg) override
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override
 	{
 		return mCommentService->createGxsComment(token, msg);
 	}
@@ -195,6 +195,9 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	bool getContentSummaries(
 	        const RsGxsGroupId& channelId,
 	        std::vector<RsMsgMetaData>& summaries ) override;
+
+    /// Implementation of @see RsGxsChannels::getChannelStatistics
+    bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) override;
 
 	/// Implementation of @see RsGxsChannels::createChannelV2
 	bool createChannelV2(
@@ -277,7 +280,7 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	/// @deprecated Implementation of @see RsGxsChannels::createComment
 	RS_DEPRECATED_FOR(createCommentV2)
-	bool createComment(RsGxsComment& comment) override;
+	bool createComment(RsGxsComment &comment) override;
 
 	/// @deprecated Implementation of @see RsGxsChannels::createVote
 	RS_DEPRECATED_FOR(createVoteV2)

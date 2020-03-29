@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/arrow-left.png</file>
-        <file>images/arrow-right.png</file>
         <file>images/addpage.png</file>
         <file>images/editpage.png</file>
         <file>images/reload.png</file>

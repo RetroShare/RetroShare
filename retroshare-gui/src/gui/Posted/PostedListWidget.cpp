@@ -250,7 +250,7 @@ void PostedListWidget::newPost()
 		return;
 	}
 
- 	PostedCreatePostDialog *cp = new PostedCreatePostDialog(mTokenQueue, rsPosted, groupId(), this);
+ 	PostedCreatePostDialog *cp = new PostedCreatePostDialog(rsPosted, groupId(), this);
 	cp->show();
 
 	/* window will destroy itself! */

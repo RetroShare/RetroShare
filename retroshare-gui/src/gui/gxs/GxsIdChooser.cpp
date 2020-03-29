@@ -285,7 +285,7 @@ void GxsIdChooser::loadPrivateIds()
 			QString str = tr("Create new Identity");
 			QString id = "";
 
-			addItem(QIcon(":/images/identity/identity_create_32.png"), str, id);
+			addItem(QIcon(":/icons/png/add-identity.png"), str, id);
 			setItemData(count() - 1, QString("%1_%2").arg(TYPE_CREATE_ID).arg(str), ROLE_SORT);
 			setItemData(count() - 1, TYPE_CREATE_ID, ROLE_TYPE);
             

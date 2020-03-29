@@ -378,7 +378,6 @@ struct RsNxsMsg : RsNxsItem
 	                             RsGenericSerializer::SerializeContext& ctx );
 
 	virtual void clear();
-	virtual std::ostream &print(std::ostream& out, uint16_t indent);
 
 	uint8_t pos; /// used for splitting up msg
 	uint8_t count; /// number of split up messages

@@ -25,6 +25,11 @@
 #include "retroshare/rsidentity.h"
 #include "gui/gxs/GxsCommentDialog.h"
 
+#define IMAGE_FULLSCREEN          ":/icons/fullscreen.png"
+#define IMAGE_FULLSCREENEXIT      ":/icons/fullscreen-exit.png"
+#define IMAGE_SHOW                ":/icons/png/down-arrow.png"
+#define IMAGE_HIDE                ":/icons/png/up-arrow.png"
+
 PhotoDialog::PhotoDialog(RsPhoto *rs_photo, const RsPhotoPhoto &photo, QWidget *parent) :
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
 	ui(new Ui::PhotoDialog), mRsPhoto(rs_photo), mPhotoQueue(new TokenQueue(mRsPhoto->getTokenService(), this)),
@@ -50,7 +55,7 @@ PhotoDialog::~PhotoDialog()
 void PhotoDialog::setUp()
 {
 	QPixmap qtn;
-	qtn.loadFromData(mPhotoDetails.mThumbnail.mData, mPhotoDetails.mThumbnail.mSize, "PNG");
+	qtn.loadFromData(mPhotoDetails.mLowResImage.mData, mPhotoDetails.mLowResImage.mSize);
 	ui->label_Photo->setPixmap(qtn);
 	ui->label_Photo->setVisible(true);
 
@@ -76,8 +81,10 @@ void PhotoDialog::toggleDetails()
 {
 	if (ui->frame_details->isVisible()) {
 		ui->frame_details->setVisible(false);
+		ui->detailsButton->setIcon(QIcon(IMAGE_SHOW));
 	} else {
 		ui->frame_details->setVisible(true);
+		ui->detailsButton->setIcon(QIcon(IMAGE_HIDE));
 	}
 }
 
@@ -182,9 +189,11 @@ void PhotoDialog::setFullScreen()
 	show();
 	raise();
 #endif
+	ui->fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREENEXIT));
   } else {
 
 	setWindowState( windowState() ^ Qt::WindowFullScreen );
 	show();
+	ui->fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREEN));
   }
 }

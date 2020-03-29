@@ -50,7 +50,7 @@ GxsMessageFramePostWidget::~GxsMessageFramePostWidget()
 
 void GxsMessageFramePostWidget::groupIdChanged()
 {
-	mGroupName = groupId().isNull () ? "" : tr("Loading");
+	mGroupName = groupId().isNull () ? "" : tr("Loading...");
 	groupNameChanged(mGroupName);
 
 	emit groupChanged(this);

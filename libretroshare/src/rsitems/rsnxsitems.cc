@@ -173,9 +173,6 @@ void RsNxsMsg::clear()
     meta.TlvClear();
 }
 
-std::ostream&RsNxsMsg::print(std::ostream& out, uint16_t /*indent*/)
-{ return out; }
-
 void RsNxsGrp::clear()
 {
 	grpId.clear();

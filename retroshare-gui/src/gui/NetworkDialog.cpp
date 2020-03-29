@@ -48,11 +48,9 @@
 
 /* Images for context menu icons */
 #define IMAGE_PEERDETAILS    ":/images/info16.png"
-#define IMAGE_CLEAN_UNUSED   ":/images/deletemail24.png"
 #define IMAGE_MAKEFRIEND     ":/images/user/add_user16.png"
-#define IMAGE_EXPORT         ""
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_MESSAGE         ":/images/mail_new.png"
+#define IMAGE_MESSAGE        ":/icons/mail/write-mail.png"
 
 /******
  * #define NET_DEBUG 1
@@ -130,11 +128,11 @@ void NetworkDialog::connectTreeWidgetCostumPopupMenu( QPoint /*point*/ )
 		return ;
 
 	if(peer_id == rsPeers->getGPGOwnId())
-		contextMnu->addAction(QIcon(IMAGE_EXPORT), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
+		contextMnu->addAction(QIcon(), tr("Export/create a new node"), this, SLOT(on_actionExportKey_activated()));
 
 	contextMnu->addAction(QIcon(IMAGE_PEERDETAILS), tr("Profile details..."), this, SLOT(peerdetails()));
 	contextMnu->addSeparator() ;
-	contextMnu->addAction(QIcon(IMAGE_CLEAN_UNUSED), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
+	contextMnu->addAction(QIcon(), tr("Remove unused keys..."), this, SLOT(removeUnusedKeys()));
 
 	contextMnu->exec(QCursor::pos());
 }

@@ -231,8 +231,8 @@
              <string>&lt;&lt;</string>
             </property>
             <property name="icon">
-             <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
             </property>
             <property name="iconSize">
              <size>
@@ -260,8 +260,8 @@
              <string>&gt;&gt;</string>
             </property>
             <property name="icon">
-             <iconset resource="Wiki_images.qrc">
-              <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
             </property>
             <property name="iconSize">
              <size>

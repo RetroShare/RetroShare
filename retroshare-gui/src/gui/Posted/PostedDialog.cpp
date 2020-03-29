@@ -150,14 +150,36 @@ QString PostedDialog::icon(IconType type)
 	return "";
 }
 
-GxsGroupDialog *PostedDialog::createNewGroupDialog(TokenQueue *tokenQueue)
+bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 {
-	return new PostedGroupDialog(tokenQueue, this);
+	std::vector<RsPostedGroup> groups;
+
+    // request all group infos at once
+
+    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
+        return false;
+
+ 	/* Save groups to fill icons and description */
+
+	for (auto& group: groups)
+       groupInfo.push_back(new RsPostedGroup(group));
+
+	return true;
 }
 
-GxsGroupDialog *PostedDialog::createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+bool PostedDialog::getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat)
 {
-	return new PostedGroupDialog(tokenQueue, tokenService, mode, groupId, this);
+    return rsPosted->getBoardStatistics(groupId,stat);
+}
+
+GxsGroupDialog *PostedDialog::createNewGroupDialog()
+{
+	return new PostedGroupDialog(this);
+}
+
+GxsGroupDialog *PostedDialog::createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId)
+{
+	return new PostedGroupDialog(mode, groupId, this);
 }
 
 int PostedDialog::shareKeyType()
@@ -180,6 +202,7 @@ QWidget *PostedDialog::createCommentHeaderWidget(const RsGxsGroupId &grpId, cons
 	return new PostedItem(NULL, 0, grpId, msgId, true, false);
 }
 
+#ifdef TO_REMOVE
 void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
 {
 	std::vector<RsPostedGroup> groups;
@@ -205,25 +228,28 @@ void PostedDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGrou
 		}
 	}
 }
+#endif
 
-void PostedDialog::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
+void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
+	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
 
-	const PostedGroupInfoData *postedData = dynamic_cast<const PostedGroupInfoData*>(userdata);
-	if (!postedData) {
-		std::cerr << "PostedDialog::groupInfoToGroupItemInfo() Failed to cast data to PostedGroupInfoData";
-		std::cerr << std::endl;
+	const RsPostedGroup *postedGroupData = dynamic_cast<const RsPostedGroup*>(groupData);
+
+	if (!postedGroupData)
+    {
+		std::cerr << "PostedDialog::groupInfoToGroupItemInfo() Failed to cast data to RsPostedGroup"<< std::endl;
 		return;
 	}
 
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = postedData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != postedData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
-	}
-	
-	QMap<RsGxsGroupId, QIcon>::const_iterator iconIt = postedData->mIcon.find(groupInfo.mGroupId);
-	if (iconIt != postedData->mIcon.end()) {
-		groupItemInfo.icon = iconIt.value();
-	}
+    if(postedGroupData->mGroupImage.mSize > 0)
+    {
+	QPixmap image;
+	GxsIdDetails::loadPixmapFromData(postedGroupData->mGroupImage.mData, postedGroupData->mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
+	groupItemInfo.icon        = image;
+    }
+    else
+	groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
+
+	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }

@@ -56,8 +56,6 @@
     <file>images/list_bullet_arrow.png</file>
     <file>images/rc_combined.png</file>
     <file>images/combobox_arrow.png</file>
-    <file>images/arrow-left.png</file>
-    <file>images/arrow-right.png</file>
     <file>help/authors.html</file>
     <file>help/licence.html</file>
     <file>help/thanks.html</file>
@@ -81,7 +79,6 @@
     <file>images/avatarstatus-bg-away-70.png</file>
     <file>images/avatarstatus-bg-busy-70.png</file>
     <file>images/avatarstatus-bg-offline-70.png</file>
-    <file>images/back.png</file>
     <file>images/configure.png</file>
     <file>images/copyrslink.png</file>
     <file>images/contacts24.png</file>
@@ -117,18 +114,14 @@
     <file>images/add-share24.png</file>
     <file>images/avatar_background.png</file>
     <file>images/button_cancel.png</file>
-    <file>images/calendar.png</file>
     <file>images/chat.png</file>
     <file>images/chat_24.png</file>
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
     <file>images/close_normal.png</file>
-    <file>images/contact_new128.png</file>
     <file>images/copy.png</file>
     <file>images/delete.png</file>
     <file>images/deleteall.png</file>
-    <file>images/deletemail-pressed.png</file>
-    <file>images/deletemail24.png</file>
     <file>images/directoryadd_24x24_shadow.png</file>
     <file>images/directoryremove_24x24_shadow.png</file>
     <file>images/directoryselect_24x24_shadow.png</file>
@@ -197,15 +190,12 @@
     <file>images/folder-outbox.png</file>
     <file>images/folder-sent.png</file>
     <file>images/folder-trash.png</file>
-    <file>images/forward.png</file>
-    <file>images/kgames.png</file>
     <file>images/go-down.png</file>
     <file>images/go-top.png</file>
     <file>images/go-up.png</file>
     <file>images/go-bottom.png</file>
     <file>images/graph-area.png</file>
     <file>images/graph-line.png</file>
-    <file>images/gohome.png</file>
     <file>images/gpgp_key_generate.png</file>
     <file>images/hide_toolbox_frame.png</file>
     <file>images/hide_frame.png</file>
@@ -246,17 +236,8 @@
     <file>images/logo/logo_info.png</file>
     <file>images/logo/logo_splash.png</file>
     <file>images/logo/logo_web_nobackground.png</file>
-    <file>images/mail-message-new.png</file>
     <file>images/mail-signed.png</file>
     <file>images/mail-signature-unknown.png</file>
-    <file>images/mail_delete.png</file>
-    <file>images/mail_get.png</file>
-    <file>images/mail_reply.png</file>
-    <file>images/mail_replyall.png</file>
-    <file>images/mail_forward.png</file>
-    <file>images/mail_send.png</file>
-    <file>images/mail_new.png</file>
-    <file>images/mail_send24.png</file>
     <file>images/mailforward24-hover.png</file>
     <file>images/message-mail.png</file>
     <file>images/message-mail-read.png</file>
@@ -276,7 +257,6 @@
     <file>images/mute-off-16.png</file>
     <file>images/mute-on-16.png</file>
     <file>images/new-mail-alert.png</file>
-    <file>images/new_forum16.png</file>
     <file>images/newmsg.png</file>
     <file>images/no_avatar_70.png</file>
     <file>images/no_avatar_background.png</file>
@@ -351,38 +331,6 @@
     <file>images/mimetypes/source_c.png</file>
     <file>images/mimetypes/source_cpp.png</file>
     <file>images/mimetypes/source_h.png</file>
-    <file>images/textedit/textbold.png</file>
-    <file>images/textedit/textitalic.png</file>
-    <file>images/textedit/textunder.png</file>
-    <file>images/textedit/textjustify.png</file>
-    <file>images/textedit/textcenter.png</file>
-    <file>images/textedit/textleft.png</file>
-    <file>images/textedit/textright.png</file>
-    <file>images/textedit/editcopy.png</file>
-    <file>images/textedit/editcut.png</file>
-    <file>images/textedit/editpaste.png</file>
-    <file>images/textedit/editredo.png</file>
-    <file>images/textedit/editundo.png</file>
-    <file>images/textedit/edit-image-face-add.png</file>
-    <file>images/textedit/exportpdf.png</file>
-    <file>images/textedit/filenew.png</file>
-    <file>images/textedit/fileopen.png</file>
-    <file>images/textedit/fileprint.png</file>
-    <file>images/textedit/filesave.png</file>
-    <file>images/textedit/format-text-color.png</file>
-    <file>images/textedit/format-text-strikethrough.png</file>
-    <file>images/textedit/format-indent-less.png</file>
-    <file>images/textedit/format-indent-more.png</file>
-    <file>images/textedit/insert-link.png</file>
-    <file>images/textedit/format-list-ordered.png</file>
-    <file>images/textedit/format-list-unordered.png</file>
-    <file>images/textedit/zoomin.png</file>
-    <file>images/textedit/zoomout.png</file>
-    <file>images/textedit/format_font_size_more.png</file>
-    <file>images/textedit/format_font_size_less.png</file>
-    <file>images/textedit/hi22-action-format-text-blockquote.png</file>
-    <file>images/textedit/hi22-action-format-text-code.png</file>
-    <file>images/textedit/hi22-action-insert-more-mark.png</file>
     <file>images/toaster/backgroundtoaster.png</file>
     <file>images/thumb-default-video.png</file>
     <file>images/user/add_user24.png</file>
