@@ -238,8 +238,7 @@ PopupChatWindow QToolBar#chattoolBar{
 /* Messages */
 
 MessageComposer QToolBar#toolBar  {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #9BDBF9, stop:1 #1592CD);
-	border: 0px;
+
 }
 
 MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {
@@ -860,4 +859,9 @@ PostedCreatePostDialog QPushButton#submitButton:hover {
 	border-radius: 4px;
 	min-width: 4em;
 	padding: 2px;
+}
+
+MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
+	background: transparent;
+	border: none;
 }

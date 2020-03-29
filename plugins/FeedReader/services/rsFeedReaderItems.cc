@@ -60,11 +60,6 @@ void RsFeedReaderFeed::clear()
 	content.clear();
 }
 
-std::ostream &RsFeedReaderFeed::print(std::ostream &out, uint16_t /*indent*/)
-{
-	return out;
-}
-
 uint32_t RsFeedReaderSerialiser::sizeFeed(RsFeedReaderFeed *item)
 {
 	uint32_t s = 8; /* header */

@@ -111,6 +111,12 @@ struct RsGxsChanges : RsEvent
 struct RsGxsIface
 {
     /*!
+     * \brief serviceType
+     * \return  The 16-bits service type. See @serialiser/rsserviceids.h
+     */
+    virtual uint16_t serviceType() const =0;
+
+    /*!
      * Gxs services should call this for automatic handling of
      * changes, send
      * @param changes

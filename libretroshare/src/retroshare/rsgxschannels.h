@@ -45,11 +45,10 @@ class RsGxsChannels;
 extern RsGxsChannels* rsGxsChannels;
 
 
-struct RsGxsChannelGroup : RsSerializable
+struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 {
 	RsGxsChannelGroup() : mAutoDownload(false) {}
 
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mImage;
 
@@ -398,6 +397,15 @@ public:
 	 */
 	virtual bool subscribeToChannel( const RsGxsGroupId& channelId,
 	                                 bool subscribe ) = 0;
+
+    /**
+     * \brief Retrieve statistics about the given channel
+	 * @jsonapi{development}
+     * \param[in]  channelId  Id of the channel group
+     * \param[out] stat       Statistics structure
+     * \return
+     */
+    virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
 
 	/**
 	 * @brief Request remote channels search

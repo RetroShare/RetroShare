@@ -54,11 +54,8 @@ static const uint32_t RS_GXS_FORUM_MSG_FLAGS_MODERATED = 0x00000001;
 #define IS_FORUM_MSG_MODERATION(flags) (flags & RS_GXS_FORUM_MSG_FLAGS_MODERATED)
 
 
-struct RsGxsForumGroup : RsSerializable
+struct RsGxsForumGroup : RsSerializable, RsGxsGenericGroupData
 {
-	/** Forum GXS metadata */
-	RsGroupMetaData mMeta;
-
 	/** @brief Forum desciption */
 	std::string mDescription;
 
@@ -222,6 +219,15 @@ public:
 	 */
 	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums) = 0;
 
+    /**
+     * @brief returns statistics about a particular forum
+	 * @jsonapi{development}
+     * @param[in]  forumId  Id of the forum
+     * @param[out] stat     statistics struct
+     * @return              false when the object doesn't exist or when the timeout is reached requesting the data
+     */
+	virtual bool getForumStatistics(const RsGxsGroupId& forumId,GxsGroupStatistic& stat)=0;
+
 	/**
 	 * @brief Get forums information (description, thumbnail...).
 	 * Blocking API.
@@ -364,5 +370,5 @@ public:
 	RS_DEPRECATED_FOR(createMessage)
 	virtual bool createMsg(uint32_t &token, RsGxsForumMsg &msg) = 0;
 	RS_DEPRECATED_FOR(editForum)
-	virtual bool updateGroup(uint32_t &token, RsGxsForumGroup &group) = 0;
+	virtual bool updateGroup(uint32_t &token, const RsGxsForumGroup &group) = 0;
 };

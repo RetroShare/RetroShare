@@ -249,13 +249,13 @@ void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 	if(id.isNull())
 	{
 		str = tr("[Notification]");
-		icon = QIcon(":/icons/logo_128.png");
+		icon = QIcon(":/icons/notification.png");
 	}
 	else if(! computeNameIconAndComment(id,str,icon,comment))
 		if(mReloadPeriod > 3)
 		{
 			str = tr("[Unknown]");
-			icon = QIcon();
+			icon = QIcon(":/icons/anonymous.png");
 		}
 		else
 		{

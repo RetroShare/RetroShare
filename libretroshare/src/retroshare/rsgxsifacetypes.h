@@ -118,8 +118,15 @@ struct RsGroupMetaData : RsSerializable
 	}
 };
 
+// This is the parent class of all interface-level GXS group data. Derived classes
+// will include service-specific information, such as icon, description, etc
 
+struct RsGxsGenericGroupData
+{
+    virtual ~RsGxsGenericGroupData() = default; // making the type polymorphic
 
+	RsGroupMetaData mMeta;
+};
 
 struct RsMsgMetaData : RsSerializable
 {

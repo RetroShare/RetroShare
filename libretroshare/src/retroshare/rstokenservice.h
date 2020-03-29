@@ -222,6 +222,7 @@ public:
 	 */
 	virtual bool cancelRequest(const uint32_t &token) = 0;
 
+#ifdef TO_REMOVE
 	/**
 	 * Block caller while request is being processed.
 	 * Useful for blocking API implementation.
@@ -231,8 +232,9 @@ public:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2))
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
+            bool auto_delete_if_unsuccessful=true)
 	{
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		auto wkStartime = std::chrono::steady_clock::now();
@@ -241,12 +243,13 @@ LLwaitTokenBeginLabel:
 #endif
 		auto timeout = std::chrono::steady_clock::now() + maxWait;
 		auto st = requestStatus(token);
-		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
-		       && std::chrono::steady_clock::now() < timeout )
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
 		{
 			std::this_thread::sleep_for(checkEvery);
 			st = requestStatus(token);
 		}
+        if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+            cancelRequest(token);
 
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		/* Work around for very slow/old android devices, we don't expect this
@@ -274,6 +277,7 @@ LLwaitTokenBeginLabel:
 
 		return st;
 	}
+#endif
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

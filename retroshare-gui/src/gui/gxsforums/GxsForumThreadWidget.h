@@ -92,6 +92,7 @@ protected:
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
     
+	void setMessageLoadingError(const QString& error);
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
@@ -170,11 +171,14 @@ private:
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
 	void updateMessageData(const RsGxsMessageId& msgId);
-	void updateForumDescription();
+	void updateForumDescription(bool success);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
+	void setForumDescriptionLoading();
+	void clearForumDescription();
+
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;

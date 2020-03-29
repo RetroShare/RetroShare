@@ -28,7 +28,6 @@
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
-#include "util/TokenQueue.h"
 #include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
@@ -45,9 +44,9 @@
 #define VIEW_IMAGE  2
 #define VIEW_LINK  3
 
-PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
+	mPosted(posted), mGrpId(grpId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -176,7 +175,6 @@ void PostedCreatePostDialog::createPost()
 
 	uint32_t token;
 	mPosted->createPost(token, post);
-//	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
 }

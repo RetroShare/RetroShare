@@ -157,15 +157,26 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 const std::list<RsGxsGroupId>& grpList = grpChange->mGrpIdList;
 
                 for (auto git = grpList.begin(); git != grpList.end(); ++git)
-                {
+				{
+					if(mKnownPosted.find(*git) == mKnownPosted.end())
+					{
+						mKnownPosted.insert(std::make_pair(*git, time(nullptr)));
+						IndicateConfigChanged();
+
+						auto ev = std::make_shared<RsGxsPostedEvent>();
+						ev->mPostedGroupId = *git;
+						ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
+						rsEvents->postEvent(ev);
+
 #ifdef POSTBASE_DEBUG
-					std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
-					std::cerr << std::endl;
+						std::cerr << "p3PostBase::notifyChanges() Incoming Group: " << *git;
+						std::cerr << std::endl;
 #endif
-					auto ev = std::make_shared<RsGxsPostedEvent>();
-					ev->mPostedGroupId = *git;
-					ev->mPostedEventCode = RsPostedEventCode::NEW_POSTED_GROUP;
-					rsEvents->postEvent(ev);
+					}
+					else
+						RsInfo() << __PRETTY_FUNCTION__
+						         << " Not notifying already known forum "
+						         << *git << std::endl;
 				}
             }
 				break;
@@ -826,5 +837,91 @@ void p3PostBase::handleResponse(uint32_t token, uint32_t req_type)
 			std::cerr << std::endl;
 			break;
 	}
+}
+
+static const uint32_t GXS_POSTED_CONFIG_MAX_TIME_NOTIFY_STORAGE = 86400*30*2 ; // ignore notifications for 2 months
+static const uint8_t  GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD   = 0x01 ;
+
+struct RsGxsPostedNotifyRecordsItem: public RsItem
+{
+
+	RsGxsPostedNotifyRecordsItem()
+	    : RsItem(RS_PKT_VERSION_SERVICE,RS_SERVICE_GXS_TYPE_POSTED_CONFIG,GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD)
+	{}
+
+    virtual ~RsGxsPostedNotifyRecordsItem() {}
+
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx )
+	{ RS_SERIAL_PROCESS(records); }
+
+	void clear() {}
+
+	std::map<RsGxsGroupId,rstime_t> records;
+};
+
+class GxsPostedConfigSerializer : public RsServiceSerializer
+{
+public:
+	GxsPostedConfigSerializer() : RsServiceSerializer(RS_SERVICE_GXS_TYPE_POSTED_CONFIG) {}
+	virtual ~GxsPostedConfigSerializer() {}
+
+	RsItem* create_item(uint16_t service_id, uint8_t item_sub_id) const
+	{
+		if(service_id != RS_SERVICE_GXS_TYPE_POSTED_CONFIG)
+			return NULL;
+
+		switch(item_sub_id)
+		{
+		case GXS_POSTED_CONFIG_SUBTYPE_NOTIFY_RECORD: return new RsGxsPostedNotifyRecordsItem();
+		default:
+			return NULL;
+		}
+	}
+};
+
+bool p3PostBase::saveList(bool &cleanup, std::list<RsItem *>&saveList)
+{
+	cleanup = true ;
+
+	RsGxsPostedNotifyRecordsItem *item = new RsGxsPostedNotifyRecordsItem ;
+
+	item->records = mKnownPosted ;
+
+	saveList.push_back(item) ;
+	return true;
+}
+
+bool p3PostBase::loadList(std::list<RsItem *>& loadList)
+{
+	while(!loadList.empty())
+	{
+		RsItem *item = loadList.front();
+		loadList.pop_front();
+
+		rstime_t now = time(NULL);
+
+		RsGxsPostedNotifyRecordsItem *fnr = dynamic_cast<RsGxsPostedNotifyRecordsItem*>(item) ;
+
+		if(fnr != NULL)
+		{
+			mKnownPosted.clear();
+
+			for(auto it(fnr->records.begin());it!=fnr->records.end();++it)
+				if( now < it->second + GXS_POSTED_CONFIG_MAX_TIME_NOTIFY_STORAGE)
+					mKnownPosted.insert(*it) ;
+		}
+
+		delete item ;
+	}
+	return true;
+}
+
+RsSerialiser* p3PostBase::setupSerialiser()
+{
+	RsSerialiser* rss = new RsSerialiser;
+	rss->addSerialType(new GxsPostedConfigSerializer());
+
+	return rss;
 }
 

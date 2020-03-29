@@ -181,8 +181,6 @@ public:
 	{}
 
 	void clear() {}
-	std::ostream &print(std::ostream &out, uint16_t /*indent = 0*/)
-	{ return out; }
 };
 
 class RsGxsTransSerializer;

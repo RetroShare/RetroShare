@@ -196,7 +196,9 @@ bool p3ServiceServer::sendItem(RsRawItem *item)
 	// Packet Filtering.
 	if (!mServiceControl->checkFilter(item->PacketId() & 0xffffff00, item->PeerId()))
 	{
+#ifdef  SERVICE_DEBUG
 		std::cerr << "p3ServiceServer::sendItem() Fails Filtering for packet id=" << std::hex << item->PacketId() << std::dec << ", and peer " << item->PeerId() << std::endl;
+#endif
 		delete item;
 		return false;
 	}

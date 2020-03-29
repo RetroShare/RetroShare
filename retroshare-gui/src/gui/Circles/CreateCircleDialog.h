@@ -25,12 +25,10 @@
 
 #include "ui_CreateCircleDialog.h"
 
-#include "util/TokenQueue.h"
-
 #include <retroshare/rsgxscircles.h>
 #include <QDialog>
 
-class CreateCircleDialog : public QDialog, public TokenResponse
+class CreateCircleDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -45,8 +43,6 @@ public:
 	void addMember(const RsGxsIdGroup &idGroup);
 	void addCircle(const RsGxsCircleDetails &cirDetails);
 
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-    
 private slots:
 	void addMember();
 	void removeMember();
@@ -75,17 +71,11 @@ private:
 	bool mIsExternalCircle;
     	bool mReadOnly;
 
-	void loadCircle(uint32_t token);
-	void loadIdentities(uint32_t token);
-
-	void requestCircle(const RsGxsGroupId &groupId);
-	void requestGxsIdentities();
-	//void getPgpIdentities();
+	void loadCircle(const RsGxsGroupId& groupId);
+	void loadIdentities();
 	
 	void filterIds();
-
-	TokenQueue *mCircleQueue;
-	TokenQueue *mIdQueue;
+	void fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_groups);
 
 	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
 	bool mClearList;

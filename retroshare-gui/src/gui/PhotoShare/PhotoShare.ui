@@ -38,8 +38,8 @@
          <string>Create Album</string>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+         <iconset resource="Photo_images.qrc">
+          <normaloff>:/images/album_create_64.png</normaloff>:/images/album_create_64.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -62,7 +62,7 @@
         </property>
         <property name="icon">
          <iconset resource="../images.qrc">
-          <normaloff>:/images/add_image24.png</normaloff>:/images/add_image24.png</iconset>
+          <normaloff>:/images/edit_16.png</normaloff>:/images/edit_16.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -72,6 +72,9 @@
         </property>
         <property name="toolButtonStyle">
          <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
+        <property name="autoRaise">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -283,7 +286,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>197</height>
+         <height>208</height>
         </rect>
        </property>
        <property name="styleSheet">
@@ -319,7 +322,7 @@
          <x>0</x>
          <y>0</y>
          <width>804</width>
-         <height>196</height>
+         <height>208</height>
         </rect>
        </property>
        <property name="styleSheet">

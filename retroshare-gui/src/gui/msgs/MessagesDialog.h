@@ -100,8 +100,6 @@ private slots:
 
   void emptyTrash();
 
-  void buttonStyle();
-  
   void filterChanged(const QString &text);
   void filterColumnChanged(int column);
   
@@ -129,7 +127,6 @@ private:
 
   void processSettings(bool load);
 
-  void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillQuickView();
 
   void closeTab(const std::string &msgId);

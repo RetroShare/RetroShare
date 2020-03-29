@@ -93,8 +93,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
     voteNeutralAct = new QAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
     votePositiveAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
-    distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
-    sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
+    distantChatAct = new QAction(QIcon(":/icons/png/chats.png"), tr("Start private chat"), this);
+    sendMessageAct = new QAction(QIcon(":/icons/mail/write-mail.png"), tr("Send Message"), this);
     showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
 
     QActionGroup *sortgrp = new QActionGroup(this);

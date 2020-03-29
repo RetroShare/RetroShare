@@ -1159,7 +1159,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
-		gui/PhotoShare/AlbumCreateDialog.h \
 		gui/PhotoShare/PhotoItem.h \
 		gui/PhotoShare/PhotoShareItemHolder.h \
 		gui/PhotoShare/PhotoShare.h \
@@ -1172,7 +1171,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
 		gui/PhotoShare/AlbumDialog.ui \
-		gui/PhotoShare/AlbumCreateDialog.ui \
 		gui/PhotoShare/PhotoShare.ui \
 		gui/PhotoShare/PhotoSlideShow.ui
 
@@ -1184,7 +1182,6 @@ gxsphotoshare {
 		gui/PhotoShare/PhotoDrop.cpp \
 		gui/PhotoShare/AlbumItem.cpp \
 		gui/PhotoShare/AlbumDialog.cpp \
-		gui/PhotoShare/AlbumCreateDialog.cpp \
 		gui/PhotoShare/PhotoShareItemHolder.cpp \
 		gui/PhotoShare/PhotoShare.cpp \
 		gui/PhotoShare/PhotoSlideShow.cpp
@@ -1225,15 +1222,23 @@ gxsthewire {
 	DEFINES += RS_USE_WIRE
 
 	HEADERS += gui/TheWire/PulseItem.h \
+		gui/TheWire/PulseDetails.h \
 		gui/TheWire/WireDialog.h \
+		gui/TheWire/WireGroupItem.h \
+		gui/TheWire/WireGroupDialog.h \
 		gui/TheWire/PulseAddDialog.h \
 	
 	FORMS += gui/TheWire/PulseItem.ui \
+		gui/TheWire/PulseDetails.ui \
+		gui/TheWire/WireGroupItem.ui \
 		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
 	
 	SOURCES += gui/TheWire/PulseItem.cpp \
+		gui/TheWire/PulseDetails.cpp \
 		gui/TheWire/WireDialog.cpp \
+		gui/TheWire/WireGroupItem.cpp \
+		gui/TheWire/WireGroupDialog.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
 	
 }
