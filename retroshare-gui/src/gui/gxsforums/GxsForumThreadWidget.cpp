@@ -392,11 +392,10 @@ void GxsForumThreadWidget::blank()
 
     //mThreadModel->clear();
 
-#ifdef SUSPENDED_CODE
     mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
 	mStateHelper->setWidgetEnabled(ui->previousButton, false);
 	mStateHelper->setWidgetEnabled(ui->nextButton, false);
-#endif
+
 	ui->versions_CB->hide();
 }
 
@@ -870,8 +869,28 @@ static QString getDurationString(uint32_t days)
     }
 }
 
-void GxsForumThreadWidget::updateForumDescription()
+void GxsForumThreadWidget::setForumDescriptionLoading()
 {
+    ui->postText->setText(tr("<b>Loading...<b>"));
+}
+
+void GxsForumThreadWidget::clearForumDescription()
+{
+    ui->postText->clear();
+}
+
+void GxsForumThreadWidget::updateForumDescription(bool success)
+{
+    if(!success)
+    {
+		QString forum_description = QString("<b>ERROR:</b> Forum could not be loaded. Database might be in heavy use. Please try later.");
+		ui->postText->setText(forum_description);
+		mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
+
+        return;
+    }
+
+    std::cerr << "Updating forum description" << std::endl;
     if (!mThreadId.isNull())
         return;
 
@@ -1081,6 +1100,19 @@ void GxsForumThreadWidget::insertMessage()
 	updateMessageData(mThreadId);
 
 //    markMsgAsRead();
+}
+
+void GxsForumThreadWidget::setMessageLoadingError(const QString& error)
+{
+	ui->time_label->setText(QString(""));
+	ui->by_label->setId(RsGxsId());
+	ui->lineRight->show();
+	ui->lineLeft->show();
+	ui->by_text_label->show();
+	ui->by_label->show();
+	ui->threadTreeWidget->setFocus();
+
+    ui->postText->setText(error);
 }
 
 void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
@@ -1445,7 +1477,7 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
 			return;
         }
 
@@ -1697,6 +1729,8 @@ void GxsForumThreadWidget::updateGroupData()
     // ui->threadTreeWidget->selectionModel()->reset();
     // mThreadProxyModel->clear();
 
+	setForumDescriptionLoading();
+
 	RsThread::async([this]()
 	{
         // 1 - get message data from p3GxsForums
@@ -1705,41 +1739,41 @@ void GxsForumThreadWidget::updateGroupData()
 		std::vector<RsGxsForumGroup> groups;
 
         forumIds.push_back(groupId());
+        bool success = false;
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
-		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
-			return;
-        }
-
-        if(groups.size() != 1)
-        {
+		else if(groups.size() != 1)
 			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
-			return;
-        }
+        else
+            success = true;
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumGroup *group = new RsGxsForumGroup(groups[0]);	// we use a pointer in order to avoid group deletion while we're in the thread.
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [group,this]()
+		if(success)
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumGroup group(groups[0]);	// we use a copy to share the object in order to avoid group deletion while we're in the thread.
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [group,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			mForumGroup = *group;
-            delete group;
+				mForumGroup = group;
+				mThreadId.clear();
 
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
 
-            updateForumDescription();
+				updateForumDescription(true);
 
-		}, this );
-
+			}, this );
+		}
+		else
+			RsQThreadUtils::postToObject( [this]() { updateForumDescription(false); },this);
     });
 }
 
@@ -1757,17 +1791,18 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
         std::vector<RsGxsForumMsg> msgs;
 
         msgs_to_request.insert(msgId);
+        QString error_string;
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
-			return;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
+            error_string = tr("Failed to retrieve this message. Is the database currently overloaded?");
         }
 
         if(msgs.empty())
         {
 			std::cerr << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
-            return;
+            error_string = tr("No data for this message. Is the database corrupted?");
         }
         if(msgs.size() > 1)
         {
@@ -1775,26 +1810,32 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
             std::cerr << "Messages are:" << std::endl;
             for(auto it(msgs.begin());it!=msgs.end();++it)
                 std::cerr << (*it).mMeta << std::endl;
+
+            error_string = tr("More than one entry for this message. Is the database corrupted?");
         }
 
-        // 2 - sort the messages into a proper hierarchy
-
-        RsGxsForumMsg *msg = new RsGxsForumMsg(msgs[0]);
-
-        // 3 - update the model in the UI thread.
-
-        RsQThreadUtils::postToObject( [msg,this]()
+        if(error_string.isNull())
 		{
-			/* Here it goes any code you want to be executed on the Qt Gui
+			// 2 - sort the messages into a proper hierarchy
+
+			RsGxsForumMsg msg(msgs[0]);
+
+			// 3 - update the model in the UI thread.
+
+			RsQThreadUtils::postToObject( [msg,this]()
+			{
+				/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			insertMessageData(*msg);
+				insertMessageData(msg);
 
-            delete msg;
-			ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
-			ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
-		}, this );
+				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
+				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+			}, this );
+		}
+        else
+            RsQThreadUtils::postToObject( [error_string,this](){ setMessageLoadingError(error_string); } );
     });
 }
 

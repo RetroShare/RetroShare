@@ -639,25 +639,28 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
                 std::cerr << std::endl;
 #endif
+
                 if(!rsReputations->isIdentityBanned(RsGxsId(*git)))
                 {
-                    uint32_t token;
-                    RsGenExchange::subscribeToGroup(token, *git, true);
-
-                    // also time_stamp the key that this group represents
-
-                    timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
-
                     // notify that a new identity is received, if needed
+
+                    bool should_subscribe = false;
 
                     switch(groupChange->getType())
                     {
+					case RsGxsNotify::TYPE_PROCESSED:	break ; // Happens when the group is subscribed. This is triggered by RsGenExchange::subscribeToGroup, so better not
+                        										// call it again from here!!
+
                     case RsGxsNotify::TYPE_PUBLISHED:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
                         ev->mIdentityId = *git;
                         ev->mIdentityEventCode = RsGxsIdentityEventCode::UPDATED_IDENTITY;
                         rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+                        should_subscribe = true;
                     }
 						break;
 
@@ -667,12 +670,23 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                         ev->mIdentityId = *git;
                         ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
                         rsEvents->postEvent(ev);
+
+						// also time_stamp the key that this group represents
+						timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+                        should_subscribe = true;
                     }
                         break;
 
                     default:
                         break;
                     }
+
+                    if(should_subscribe)
+					{
+						uint32_t token;
+						RsGenExchange::subscribeToGroup(token, *git, true);
+					}
+
                 }
             }
         }

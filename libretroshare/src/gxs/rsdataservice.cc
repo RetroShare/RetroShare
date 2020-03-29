@@ -26,6 +26,10 @@
  * #define RS_DATA_SERVICE_DEBUG_CACHE 1
  ****/
 
+#define RS_DATA_SERVICE_DEBUG       1
+#define RS_DATA_SERVICE_DEBUG_TIME  1
+#define RS_DATA_SERVICE_DEBUG_CACHE 1
+
 #include <fstream>
 #include <util/rsdir.h>
 #include <algorithm>
@@ -1312,7 +1316,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
             {
                 locked_retrieveMsgMeta(c, metaSet);
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-              std::cerr << "Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
+              std::cerr << mDbName << ": Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
 #endif
             }
         }else{
@@ -1329,7 +1333,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                 {
                     locked_retrieveMsgMeta(c, metaSet);
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-              std::cerr << "Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
+              std::cerr << mDbName << ": Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
 #endif
                 }
             }
@@ -1343,6 +1347,7 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
     }
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
+    if(mDbName==std::string("gxsforums_db"))
     std::cerr << "RsDataService::retrieveGxsMsgMetaData() " << mDbName << ", Requests: " << reqIds.size() << ", Results: " << resultCount << ", Time: " << timer.duration() << std::endl;
 #endif
 
@@ -1413,7 +1418,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 					{
 						grp[g->mGroupId] = g;
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-						std::cerr << (void *)this << ": Retrieving (all) Grp metadata grpId=" << g->mGroupId << std::endl;
+						std::cerr << (void *)this << " " << mDbName << ": Retrieving (all) Grp metadata grpId=" << g->mGroupId << std::endl;
 #endif
 					}
 					valid = c->moveToNext();
@@ -1440,14 +1445,14 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
               if(itt != mGrpMetaDataCache.end())
               {
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-          std::cerr << "Retrieving Grp metadata grpId=" << mit->first << " from cache!" << std::endl;
+          std::cerr << mDbName << ": Retrieving Grp metadata grpId=" << mit->first << " from cache!" << std::endl;
 #endif
 		  			grp[mit->first] = itt->second ;
               }
               else
 			  {
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
-				  std::cerr << "Retrieving Grp metadata grpId=" << mit->first ;
+				  std::cerr << mDbName << ": Retrieving Grp metadata grpId=" << mit->first ;
 #endif
 
 				  const RsGxsGroupId& grpId = mit->first;

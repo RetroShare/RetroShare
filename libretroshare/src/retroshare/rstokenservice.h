@@ -222,6 +222,7 @@ public:
 	 */
 	virtual bool cancelRequest(const uint32_t &token) = 0;
 
+#ifdef TO_REMOVE
 	/**
 	 * Block caller while request is being processed.
 	 * Useful for blocking API implementation.
@@ -231,8 +232,8 @@ public:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2),
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
             bool auto_delete_if_unsuccessful=true)
 	{
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
@@ -276,6 +277,7 @@ LLwaitTokenBeginLabel:
 
 		return st;
 	}
+#endif
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

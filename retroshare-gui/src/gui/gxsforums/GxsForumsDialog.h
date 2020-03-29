@@ -40,24 +40,27 @@ public:
 	void shareInMessage(const RsGxsGroupId& forum_id, const QList<RetroShareLink>& file_link) ;
 	
 protected:
-	virtual UserNotify *createUserNotify(QObject *parent) override;
-
 	virtual QString getHelpString() const ;
 	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Forum; }
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+
+	UserNotify *createUserNotify(QObject *parent) override;
+	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
+	bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
 
 private:
 	/* GxsGroupFrameDialog */
-	virtual QString text(TextType type);
-	virtual QString icon(IconType type);
-	virtual QString settingsGroupName() { return "ForumsDialog"; }
-	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
-	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
-	virtual int shareKeyType();
-	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
-	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
+	QString text(TextType type)override ;
+	QString icon(IconType type)override ;
+	QString settingsGroupName() override { return "ForumsDialog"; }
+
+	GxsGroupDialog *createNewGroupDialog() override;
+	GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId) override;
+
+	int shareKeyType() override;
+	GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId) override;
+	uint32_t requestGroupSummaryType() override { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 

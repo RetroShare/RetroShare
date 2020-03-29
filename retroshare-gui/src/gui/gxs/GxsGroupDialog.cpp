@@ -23,6 +23,7 @@
 
 #include "util/misc.h"
 #include "util/DateTime.h"
+#include "util/qtthreadsutils.h"
 #include "GxsGroupDialog.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/RetroShareLink.h"
@@ -63,25 +64,21 @@
 #define GXSGROUP_INTERNAL_LOADGROUP 3
 
 /** Constructor */
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 	
-	mInternalTokenQueue = NULL;
-
 	init();
 }
 
-GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mTokenService(NULL), mExternalTokenQueue(tokenExternalQueue), mInternalTokenQueue(NULL), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+GxsGroupDialog::GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
 
-	mTokenService = tokenService;
-	mInternalTokenQueue = new TokenQueue(tokenService, this);
 	mGrpMeta.mGroupId = groupId;
 
 	init();
@@ -90,9 +87,6 @@ GxsGroupDialog::GxsGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *t
 GxsGroupDialog::~GxsGroupDialog()
 {
 	Settings->saveWidgetInformation(this);
-	if (mInternalTokenQueue) {
-		delete(mInternalTokenQueue);
-	}
 }
 
 void GxsGroupDialog::init()
@@ -179,6 +173,9 @@ void GxsGroupDialog::showEvent(QShowEvent*)
 	setWindowIcon(serviceWindowIcon());
 
 	initUi();
+
+    if(!mGrpMeta.mGroupId.isNull() && mGrpMeta.mPublishTs == 0) // group not actually loaded yet
+		loadGroup(mGrpMeta.mGroupId);
 }
 
 void GxsGroupDialog::setUiText(UiType uiType, const QString &text)
@@ -237,7 +234,6 @@ void GxsGroupDialog::initMode()
 			ui.stackedWidget->setCurrentIndex(1);
 			mReadonlyFlags = 0xffffffff; // Force all to readonly.
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Close);
-			requestGroup(mGrpMeta.mGroupId);
 		}
 		break;
 
@@ -246,7 +242,6 @@ void GxsGroupDialog::initMode()
             ui.stackedWidget->setCurrentIndex(0);
 			ui.buttonBox->setStandardButtons(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
 			ui.buttonBox->button(QDialogButtonBox::Ok)->setText(tr("Submit Group Changes"));
-			requestGroup(mGrpMeta.mGroupId);
 		}
 		break;
 	}
@@ -596,14 +591,7 @@ void GxsGroupDialog::editGroup()
 	std::cerr << "GxsGroupDialog::editGroup() calling service_EditGroup";
 	std::cerr << std::endl;
 
-	uint32_t token;
-	if (service_EditGroup(token, newMeta))
-	{
-		// get the Queue to handle response.
-		if(mExternalTokenQueue != NULL)
-			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
-	}
-	else
+	if (!service_updateGroup(newMeta))
 	{
 		std::cerr << "GxsGroupDialog::editGroup() ERROR";
 		std::cerr << std::endl;
@@ -676,7 +664,6 @@ void GxsGroupDialog::createGroup()
 		return; //Don't add  a empty name!!
 	}
 
-	uint32_t token;
 	RsGroupMetaData meta;
 	QString reason;
 	if (!prepareGroupMetaData(meta, reason))
@@ -686,11 +673,16 @@ void GxsGroupDialog::createGroup()
 		return; //Don't add with invalid circle.
 	}
 
-	if (service_CreateGroup(token, meta))
+	if (service_createGroup(meta))
 	{
-		// get the Queue to handle response.
+        // now update the UI
+#warning Missing code here!
+#ifdef TODO
+        //
+		// get the Queue to handle response. What is this for?
 		if(mExternalTokenQueue != NULL)
 			mExternalTokenQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, GXSGROUP_NEWGROUPID);
+#endif
 	}
 
 	close();
@@ -984,6 +976,40 @@ void GxsGroupDialog::filterComboBoxChanged(int i)
   Loading Group.
  ***********************************************************************************/
 
+void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
+{
+	RsThread::async([this,grpId]()
+	{
+		RsGxsGenericGroupData *groupData;
+
+		if(!service_getGroupData(grpId,groupData))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			return;
+		}
+
+		RsQThreadUtils::postToObject( [this,groupData]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
+
+            mGrpMeta = groupData->mMeta;
+
+			QString description;
+
+			if (service_loadGroup(groupData, mMode, description))
+				updateFromExistingMeta(description);
+
+            delete groupData;
+
+		}, this );
+	});
+}
+
+#ifdef TO_REMOVE
 void GxsGroupDialog::requestGroup(const RsGxsGroupId &groupId)
 {
 	RsTokReqOptions opts;
@@ -1032,3 +1058,4 @@ void GxsGroupDialog::loadRequest(const TokenQueue *queue, const TokenRequest &re
 		}
 	}
 }
+#endif

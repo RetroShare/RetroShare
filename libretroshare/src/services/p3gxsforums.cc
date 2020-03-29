@@ -666,15 +666,22 @@ bool p3GxsForums::getForumsSummaries( std::list<RsGroupMetaData>& forums )
 	return getGroupSummary(token, forums);
 }
 
-bool p3GxsForums::getForumsInfo(
-        const std::list<RsGxsGroupId>& forumIds,
-        std::vector<RsGxsForumGroup>& forumsInfo )
+bool p3GxsForums::getForumsInfo( const std::list<RsGxsGroupId>& forumIds, std::vector<RsGxsForumGroup>& forumsInfo )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, forumIds)
-	        || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE ) return false;
+
+    if(forumIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
+	else
+    {
+		if( !requestGroupInfo(token, opts, forumIds, forumIds.size()==1) || waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE )
+            return false;
+    }
 	return getGroupData(token, forumsInfo);
 }
 
@@ -812,7 +819,16 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 	return true;
 }
 
-bool p3GxsForums::updateGroup(uint32_t &token, RsGxsForumGroup &group)
+bool p3GxsForums::getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat)
+{
+	uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, ForumId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
+bool p3GxsForums::updateGroup(uint32_t &token, const RsGxsForumGroup &group)
 {
 	std::cerr << "p3GxsForums::updateGroup()" << std::endl;
 

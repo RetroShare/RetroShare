@@ -935,7 +935,7 @@ QPixmap GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 
 QString GxsIdDetails::getLoadingText(const RsGxsId &id)
 {
-	return QString("%1... %2").arg(QApplication::translate("GxsIdDetails", "Loading"), QString::fromStdString(id.toStdString().substr(0, 5)));
+	return QString("%1... %2").arg(QApplication::translate("GxsIdDetails", "Loading..."), QString::fromStdString(id.toStdString().substr(0, 5)));
 }
 
 QString GxsIdDetails::getFailedText(const RsGxsId &id)
