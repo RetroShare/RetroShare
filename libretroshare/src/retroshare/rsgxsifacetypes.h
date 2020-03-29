@@ -184,6 +184,14 @@ struct RsMsgMetaData : RsSerializable
 	}
 };
 
+struct RsGxsGenericMsgData
+{
+    virtual ~RsGxsGenericMsgData() = default; // making the type polymorphic
+
+	RsMsgMetaData mMeta;
+};
+
+
 class GxsGroupStatistic
 {
 public:

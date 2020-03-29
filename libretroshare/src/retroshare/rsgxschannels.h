@@ -68,11 +68,9 @@ struct RsGxsChannelGroup : RsSerializable, RsGxsGenericGroupData
 	~RsGxsChannelGroup() override;
 };
 
-struct RsGxsChannelPost : RsSerializable
+struct RsGxsChannelPost : RsSerializable, RsGxsGenericMsgData
 {
 	RsGxsChannelPost() : mCount(0), mSize(0) {}
-
-	RsMsgMetaData mMeta;
 
 	std::set<RsGxsMessageId> mOlderVersions;
 	std::string mMsg;  // UTF8 encoded.

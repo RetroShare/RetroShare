@@ -506,7 +506,7 @@ void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool rela
 	createPostItem(post.value<RsGxsChannelPost>(), related);
 }
 
-void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related)
+void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost>& posts, GxsMessageFramePostThread *thread, bool related)
 {
 	if (related && thread) {
 		std::cerr << "GxsChannelPostsWidget::insertChannelPosts fill only related posts as thread is not possible" << std::endl;
@@ -734,25 +734,67 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 	});
 }
 
-bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
+bool GxsChannelPostsWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
-	std::vector<RsGxsChannelGroup> groups;
-	rsGxsChannels->getGroupData(token, groups);
+	insertChannelDetails(*dynamic_cast<const RsGxsChannelGroup*>(data));
+	mChannelGroupId = data->mMeta.mGroupId;
+	return true;
 
-	if(groups.size() == 1)
-	{
-		insertChannelDetails(groups[0]);
-		metaData = groups[0].mMeta;
-        mChannelGroupId = groups[0].mMeta.mGroupId;
-		return true;
-	}
+}
+
+#ifdef TO_REMOVE
+void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
+{
+	std::vector<RsGxsChannelPost> posts;
+	rsGxsChannels->getPostData(token, posts);
+
+	insertChannelPosts(posts, thread, false);
+}
+#endif
+
+void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsGxsChannelPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsGxsChannels->getChannelContent( mChannelGroupId,msgIds,posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsGxsChannelPost(post));
+}
+
+void GxsChannelPostsWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsGxsChannelPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsGxsChannels->getChannelContent( mChannelGroupId,std::set<RsGxsMessageId>(),posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsGxsChannelPost(post));
+}
+
+bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
+{
+    std::vector<RsGxsChannelGroup> groups;
+
+    if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({groupId()}),groups) && groups.size()==1)
+    {
+        data = new RsGxsChannelGroup(groups[0]);
+        return true;
+    }
     else
     {
         RsGxsChannelGroup distant_group;
+
         if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
         {
 			insertChannelDetails(distant_group);
-			metaData = distant_group.mMeta;
+			data = new RsGxsChannelGroup(distant_group);
 			mChannelGroupId = distant_group.mMeta.mGroupId;
             return true ;
         }
@@ -761,14 +803,32 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	return false;
 }
 
-void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
+void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread)
 {
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
+    std::vector<RsGxsChannelPost> cposts;
 
-	insertChannelPosts(posts, thread, false);
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+    {
+		cposts.push_back(*dynamic_cast<RsGxsChannelPost*>(post));
+		delete post;
+    }
+
+	insertChannelPosts(cposts, thread, false);
+}
+void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& posts)
+{
+    std::vector<RsGxsChannelPost> cposts;
+
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+    {
+		cposts.push_back(*dynamic_cast<RsGxsChannelPost*>(post));
+		delete post;
+    }
+
+	insertChannelPosts(cposts, NULL, true);
 }
 
+#ifdef TO_REMOVE
 void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 {
 	std::vector<RsGxsChannelPost> posts;
@@ -776,6 +836,7 @@ void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
 
 	insertChannelPosts(posts, NULL, true);
 }
+#endif
 
 class GxsChannelPostsReadData
 {

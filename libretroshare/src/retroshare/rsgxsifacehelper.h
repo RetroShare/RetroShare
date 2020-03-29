@@ -43,11 +43,12 @@
 enum class TokenRequestType: uint8_t
 {
     GROUP_INFO          = 0x01,
-    MSG_INFO            = 0x02,
-    MSG_RELATED_INFO    = 0x03,
-    GROUP_STATISTICS    = 0x04,
-    SERVICE_STATISTICS  = 0x05,
-    NO_KILL_TYPE        = 0x06,
+    POSTS               = 0x02,
+    ALL_POSTS           = 0x03,
+    MSG_RELATED_INFO    = 0x04,
+    GROUP_STATISTICS    = 0x05,
+    SERVICE_STATISTICS  = 0x06,
+    NO_KILL_TYPE        = 0x07,
 };
 
 class RsGxsIfaceHelper
@@ -278,13 +279,12 @@ public:
     }
 
 	/// @see RsTokenService::requestMsgInfo
-	bool requestMsgInfo( uint32_t& token,
-	                     const RsTokReqOptions& opts, const GxsMsgReq& msgIds )
+	bool requestMsgInfo( uint32_t& token, const RsTokReqOptions& opts, const GxsMsgReq& msgIds )
 	{
         if(mTokenService.requestMsgInfo(token, 0, opts, msgIds))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=TokenRequestType::MSG_INFO;
+			mActiveTokens[token]= msgIds.empty()?(TokenRequestType::ALL_POSTS):(TokenRequestType::POSTS);
 			locked_dumpTokens();
 			return true;
         }
@@ -298,7 +298,7 @@ public:
         if(mTokenService.requestMsgInfo(token, 0, opts, grpIds))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=TokenRequestType::MSG_INFO;
+			mActiveTokens[token]=TokenRequestType::ALL_POSTS;
 			locked_dumpTokens();
             return true;
         }
