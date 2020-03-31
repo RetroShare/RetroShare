@@ -184,37 +184,35 @@ struct RsMsgMetaData : RsSerializable
 	}
 };
 
-struct RsGxsGenericMsgData
+struct GxsGroupStatistic : RsSerializable
 {
-    virtual ~RsGxsGenericMsgData() = default; // making the type polymorphic
+	GxsGroupStatistic() :
+	    mNumMsgs(0), mTotalSizeOfMsgs(0), mNumThreadMsgsNew(0),
+	    mNumThreadMsgsUnread(0), mNumChildMsgsNew(0), mNumChildMsgsUnread(0) {}
 
-	RsMsgMetaData mMeta;
-};
-
-
-class GxsGroupStatistic
-{
-public:
-	GxsGroupStatistic()
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
-		mNumMsgs = 0;
-		mTotalSizeOfMsgs = 0;
-		mNumThreadMsgsNew = 0;
-		mNumThreadMsgsUnread = 0;
-		mNumChildMsgsNew = 0;
-        mNumChildMsgsUnread = 0;
+		RS_SERIAL_PROCESS(mGrpId);
+		RS_SERIAL_PROCESS(mNumMsgs);
+		RS_SERIAL_PROCESS(mTotalSizeOfMsgs);
+		RS_SERIAL_PROCESS(mNumThreadMsgsNew);
+		RS_SERIAL_PROCESS(mNumThreadMsgsUnread);
+		RS_SERIAL_PROCESS(mNumChildMsgsNew);
+		RS_SERIAL_PROCESS(mNumChildMsgsUnread);
+
 	}
 
-public:
-	/// number of message
-    RsGxsGroupId mGrpId;
-
-    uint32_t mNumMsgs;			// from the database
+	RsGxsGroupId mGrpId;
+	uint32_t mNumMsgs; /// number of message, from the database
 	uint32_t mTotalSizeOfMsgs;
 	uint32_t mNumThreadMsgsNew;
 	uint32_t mNumThreadMsgsUnread;
 	uint32_t mNumChildMsgsNew;
-    uint32_t mNumChildMsgsUnread;
+	uint32_t mNumChildMsgsUnread;
+
+	~GxsGroupStatistic() override = default;
 };
 
 class GxsServiceStatistic
@@ -247,30 +245,15 @@ public:
 	uint32_t mSizeStore;
 };
 
-class UpdateItem
-{
-public:
-    virtual ~UpdateItem() { }
-};
-
-class StringUpdateItem : public UpdateItem
-{
-public:
-    StringUpdateItem(const std::string update) : mUpdate(update) {}
-    const std::string& getUpdate() const { return mUpdate; }
-
-private:
-    std::string mUpdate;
-};
-
-class RsGxsGroupUpdateMeta
+class RS_DEPRECATED RsGxsGroupUpdateMeta
 {
 public:
 
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
+	explicit RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId):
+	    mGroupId(groupId) {}
 
     typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 
