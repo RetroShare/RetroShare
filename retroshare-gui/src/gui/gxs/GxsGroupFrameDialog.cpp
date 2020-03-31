@@ -1103,60 +1103,6 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 	});
 }
 
-#ifdef TO_REMOVE
-void GxsGroupFrameDialog::loadGroupStatistics(const uint32_t &token)
-{
-	GxsGroupStatistic stats;
-	mInterface->getGroupStatistic(token, stats);
-
-	QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
-	if (!item) {
-		return;
-	}
-
-    ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-
-    getUserNotify()->updateIcon();
-}
-
-/*********************** **** **** **** ***********************/
-/*********************** **** **** **** ***********************/
-
-void GxsGroupFrameDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_GROUPFRAMEDIALOG
-	std::cerr << "GxsGroupFrameDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mTokenQueue)
-	{
-		/* now switch on req */
-		switch(req.mUserType)
-		{
-//		case TOKEN_TYPE_GROUP_SUMMARY:
-//			loadGroupSummary(req.mToken);
-//			break;
-
-//		case TOKEN_TYPE_SUBSCRIBE_CHANGE:
-//			acknowledgeSubscribeChange(req.mToken);
-//			break;
-
-//		case TOKEN_TYPE_CURRENTGROUP:
-//			loadGroupSummary_CurrentGroup(req.mToken);
-//			break;
-
-		case TOKEN_TYPE_STATISTICS:
-			loadGroupStatistics(req.mToken);
-			break;
-
-		default:
-			std::cerr << "GxsGroupFrameDialog::loadRequest() ERROR: INVALID TYPE";
-			std::cerr << std::endl;
-		}
-	}
-}
-#endif
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
 {

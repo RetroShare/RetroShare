@@ -49,7 +49,6 @@ public:
     virtual void getAllMsgData(std::vector<RsGxsGenericMsgData*>& posts) =0;
 
 	/* GXS functions */
-//	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	int subscribeFlags() { return mSubscribeFlags; }
 
