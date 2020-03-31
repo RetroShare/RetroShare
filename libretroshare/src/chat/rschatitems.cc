@@ -70,15 +70,6 @@ void RsChatMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGeneric
 
 /*************************************************************************/
 
-RsChatAvatarItem::~RsChatAvatarItem()
-{
-	if(image_data != NULL)
-	{
-		free(image_data) ;
-		image_data = NULL ;
-	}
-}
-
 void RsChatLobbyBouncingObject::serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process(j,ctx,lobby_id,"lobby_id") ;
