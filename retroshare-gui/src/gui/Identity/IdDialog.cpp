@@ -59,6 +59,8 @@
  * #define ID_DEBUG 1
  *****/
 
+#define QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND 1
+
 // Data Requests.
 #define IDDIALOG_IDLIST           1
 #define IDDIALOG_IDDETAILS        2
@@ -585,6 +587,17 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #endif
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+#ifdef QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND
+    // These 3 lines are normally not needed. But apparently a bug (in Qt ??) causes Qt to crash when takeChild() is called. If we remove everything from the
+    // tree widget before updating it, takeChild() is never called, but the all tree is filled again from scratch. This is less efficient obviously, and
+    // also collapses the tree. Because it is a *temporary* fix, I dont take the effort to save open/collapsed items yet. If we cannot find a proper way to fix
+    // this, then we'll need to implement the two missing functions to save open/collapsed items.
+
+	ui->treeWidget_membership->clear();
+	mExternalOtherCircleItem = NULL ;
+	mExternalBelongingCircleItem = NULL ;
+#endif
 
 	/* add the top level item */
 	//QTreeWidgetItem *personalCirclesItem = new QTreeWidgetItem();
@@ -2106,7 +2119,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			{
 				if(own_identities.size() <= 1)
 				{
-					QAction *action = contextMenu->addAction(QIcon(":/images/chat_24.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+					QAction *action = contextMenu->addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 					if(own_identities.empty())
 						action->setEnabled(false) ;
@@ -2115,7 +2128,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 				else
 				{
-					QMenu *mnu = contextMenu->addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+					QMenu *mnu = contextMenu->addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 					for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 					{
@@ -2132,17 +2145,16 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 					}
 				}
 			}
-
-			if (n_selected_items==1)
-				contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
-
 			// always allow to send messages
-			contextMenu->addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMsg()));
+			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
 			contextMenu->addSeparator();
 
 			if(n_is_a_contact == 0)
 				contextMenu->addAction(QIcon(), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+
+			if (n_selected_items==1)
+				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
 				contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
@@ -2163,7 +2175,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 		{
 			contextMenu->addSeparator();
 
-			contextMenu->addAction(QIcon(":/images/chat_24.png"),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
+			contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 			contextMenu->addAction(ui->editIdentity);
 			contextMenu->addAction(ui->removeIdentity);
 		}

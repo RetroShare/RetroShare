@@ -97,7 +97,7 @@ void GxsForumMsgItem::setup()
 	mCloseOnRead = false;
 
 	/* clear ui */
-	ui->titleLabel->setText(tr("Loading"));
+	ui->titleLabel->setText(tr("Loading..."));
 	ui->subjectLabel->clear();
 	ui->timestamplabel->clear();
 	ui->parentNameLabel->clear();

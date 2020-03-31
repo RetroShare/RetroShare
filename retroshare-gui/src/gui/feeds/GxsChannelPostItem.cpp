@@ -116,7 +116,7 @@ void GxsChannelPostItem::setup()
 	mCloseOnRead = false;
 
 	/* clear ui */
-	ui->titleLabel->setText(tr("Loading"));
+	ui->titleLabel->setText(tr("Loading..."));
 	ui->datetimelabel->clear();
 	ui->filelabel->clear();
 	ui->newCommentLabel->hide();

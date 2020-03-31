@@ -89,7 +89,7 @@ void WireGroupDialog::initUi()
 
 QPixmap WireGroupDialog::serviceImage()
 {
-	return QPixmap(":/images/wire_create_64.png");
+	return QPixmap(":/icons/wire-circle.png");
 }
 
 void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta)

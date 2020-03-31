@@ -60,7 +60,7 @@ void PostedGroupItem::setup()
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
 	/* clear ui */
-	ui->nameLabel->setText(tr("Loading"));
+	ui->nameLabel->setText(tr("Loading..."));
 	ui->titleLabel->clear();
 	ui->descLabel->clear();
 

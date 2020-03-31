@@ -307,8 +307,18 @@ bool p3Posted::getBoardsInfo(
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-	if( !requestGroupInfo(token, opts, boardsIds)
-	        || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+    if(boardsIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+    else
+    {
+		if( !requestGroupInfo(token, opts, boardsIds) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+
 	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
 }
 
@@ -328,6 +338,73 @@ bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
 	        waitToken(token) != RsTokenService::COMPLETE ) return false;
 
 	return getPostData(token, posts, comments);
+}
+
+bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getGroupSummary(token, boards);
+}
+
+bool p3Posted::getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat)
+{
+	uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, boardId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
+bool p3Posted::createBoard(RsPostedGroup& board)
+{
+	uint32_t token;
+	if(!createGroup(token, board))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group." << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed." << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, board.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated " << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3Posted::editBoard(RsPostedGroup& board)
+{
+	uint32_t token;
+	if(!updateGroup(token, board))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed updating group." << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, board.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failure getting updated " << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
 }
 
 RsPosted::~RsPosted() = default;

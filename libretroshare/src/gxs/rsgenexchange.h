@@ -726,7 +726,7 @@ public:
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) ;
 	virtual bool     getGroupNetworkStats(const RsGxsGroupId& grpId,RsGroupNetworkStats& stats);
 
-    uint16_t serviceType() const { return mServType ; }
+    uint16_t serviceType() const override { return mServType ; }
     uint32_t serviceFullType() const { return RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(mServType); }
 
 	virtual RsReputationLevel minReputationForForwardingMessages(

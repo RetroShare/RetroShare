@@ -66,6 +66,14 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	            std::vector<RsPostedPost>& posts,
 	            std::vector<RsGxsComment>& comments ) override;
 
+	bool getBoardsSummaries(std::list<RsGroupMetaData>& groupInfo) override;
+
+	bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) override;
+
+	bool editBoard(RsPostedGroup& board) override;
+
+	bool createBoard(RsPostedGroup& board) override;
+
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts);
 virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
@@ -96,9 +104,15 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 	                                 std::vector<RsGxsComment> &msgs )
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg)
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override
 	{
 		return mCommentService->createGxsComment(token, msg);
+	}
+	virtual bool createComment(RsGxsComment& msg) override
+	{
+        uint32_t token;
+
+		return mCommentService->createGxsComment(token, msg) && waitToken(token) == RsTokenService::COMPLETE ;
 	}
 
 	virtual bool createNewVote(uint32_t &token, RsGxsVote &msg)
