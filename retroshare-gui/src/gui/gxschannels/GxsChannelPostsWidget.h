@@ -66,8 +66,10 @@ protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
+#ifdef TO_REMOVE
 	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
 	virtual void insertPosts(const uint32_t &token);
+#endif
 	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
@@ -109,7 +111,6 @@ private:
 	QAction *mAutoDownloadAction;
 
 	bool mUseThread;
-    RsGxsGroupId mChannelGroupId;
     RsEventsHandlerId_t mEventHandlerId ;
 
 	/* UI - from Designer */

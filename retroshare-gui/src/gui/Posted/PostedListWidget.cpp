@@ -888,6 +888,7 @@ void PostedListWidget::shallowClearPosts()
 bool PostedListWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
 	insertPostedDetails(*dynamic_cast<const RsPostedGroup*>(data));
+    return true;
 }
 
 void PostedListWidget::insertAllPostedPosts(const std::vector<RsPostedPost>& posts, GxsMessageFramePostThread */*thread*/)
@@ -1048,7 +1049,7 @@ void PostedListWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& psts)
     std::vector<RsPostedPost> posts;
     std::vector<RsGxsComment> comments;
 
-    rsPosted->getBoardContent( groupId(),std::set<RsGxsMessageId>(),posts,comments );
+    rsPosted->getBoardAllContent( groupId(),posts,comments );
 
     psts.clear();
 
@@ -1073,10 +1074,7 @@ void PostedListWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& post
     std::vector<RsPostedPost> cposts;
 
     for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
-    {
 		cposts.push_back(*dynamic_cast<RsPostedPost*>(post));
-		delete post;
-    }
 
 	insertPostedPosts(cposts);
 }
@@ -1086,10 +1084,7 @@ void PostedListWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& p
 	std::vector<RsPostedPost> cposts;
 
     for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
-    {
 		cposts.push_back(*dynamic_cast<RsPostedPost*>(post));
-		delete post;
-    }
 
 	insertAllPostedPosts(cposts, NULL);
 }

@@ -150,6 +150,11 @@ public:
 
 	virtual bool getBoardsSummaries(std::list<RsGroupMetaData>& groupInfo) =0;
 
+	virtual bool getBoardAllContent(
+	        const RsGxsGroupId& boardId,
+	        std::vector<RsPostedPost>& posts,
+	        std::vector<RsGxsComment>& comments ) = 0;
+
 	virtual bool getBoardContent(
 	        const RsGxsGroupId& boardId,
 	        const std::set<RsGxsMessageId>& contentsIds,

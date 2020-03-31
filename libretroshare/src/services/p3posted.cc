@@ -322,6 +322,20 @@ bool p3Posted::getBoardsInfo(
 	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
 }
 
+bool p3Posted::getBoardAllContent( const RsGxsGroupId& groupId,
+                       std::vector<RsPostedPost>& posts,
+                       std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+    if( !requestMsgInfo(token, opts, std::list<RsGxsGroupId>({groupId})) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
+	return getPostData(token, posts, comments);
+}
+
 bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
                        const std::set<RsGxsMessageId>& contentsIds,
                        std::vector<RsPostedPost>& posts,

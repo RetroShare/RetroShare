@@ -148,7 +148,7 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
         case RsChannelEventCode::NEW_CHANNEL:
         case RsChannelEventCode::UPDATED_MESSAGE:
         case RsChannelEventCode::NEW_MESSAGE:
-            if(e->mChannelGroupId == mChannelGroupId)
+            if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
             break;
         default:
@@ -737,7 +737,6 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 bool GxsChannelPostsWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
 	insertChannelDetails(*dynamic_cast<const RsGxsChannelGroup*>(data));
-	mChannelGroupId = data->mMeta.mGroupId;
 	return true;
 
 }
@@ -757,7 +756,7 @@ void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,st
     std::vector<RsGxsChannelPost> posts;
     std::vector<RsGxsComment> comments;
 
-    rsGxsChannels->getChannelContent( mChannelGroupId,msgIds,posts,comments );
+    rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments );
 
     psts.clear();
 
@@ -770,7 +769,7 @@ void GxsChannelPostsWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& pst
     std::vector<RsGxsChannelPost> posts;
     std::vector<RsGxsComment> comments;
 
-    rsGxsChannels->getChannelContent( mChannelGroupId,std::set<RsGxsMessageId>(),posts,comments );
+    rsGxsChannels->getChannelAllContent( groupId(),posts,comments );
 
     psts.clear();
 
@@ -795,7 +794,6 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
         {
 			insertChannelDetails(distant_group);
 			data = new RsGxsChannelGroup(distant_group);
-			mChannelGroupId = distant_group.mMeta.mGroupId;
             return true ;
         }
     }
@@ -808,10 +806,7 @@ void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData
     std::vector<RsGxsChannelPost> cposts;
 
     for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
-    {
-		cposts.push_back(*dynamic_cast<RsGxsChannelPost*>(post));
-		delete post;
-    }
+		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
 
 	insertChannelPosts(cposts, thread, false);
 }
@@ -820,10 +815,7 @@ void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>&
     std::vector<RsGxsChannelPost> cposts;
 
     for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
-    {
-		cposts.push_back(*dynamic_cast<RsGxsChannelPost*>(post));
-		delete post;
-    }
+		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
 
 	insertChannelPosts(cposts, NULL, true);
 }

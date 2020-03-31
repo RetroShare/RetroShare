@@ -323,7 +323,20 @@ public:
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) = 0;
 
 	/**
-	 * @brief Get channel contents
+	 * @brief Get all channel messages and comments in a given channel
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[out] posts storage for posts
+	 * @param[out] comments storage for the comments
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getChannelAllContent(const RsGxsGroupId& channelId,
+	                                   std::vector<RsGxsChannelPost>& posts,
+	                                   std::vector<RsGxsComment>& comments ) = 0;
+
+	/**
+	 * @brief Get channel messages and comments corresponding to the given message ID list. If the list is empty, nothing is returned. Since
+	 *        comments are themselves messages, it is possible to get comments only by only supplying their message IDs.
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentsIds ids of requested contents
@@ -331,10 +344,10 @@ public:
 	 * @param[out] comments storage for the comments
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getChannelContent( const RsGxsGroupId& channelId,
-	                       const std::set<RsGxsMessageId>& contentsIds,
-	                       std::vector<RsGxsChannelPost>& posts,
-	                       std::vector<RsGxsComment>& comments ) = 0;
+	virtual bool getChannelContent(const RsGxsGroupId& channelId,
+				                    const std::set<RsGxsMessageId>& contentIds,
+	                                std::vector<RsGxsChannelPost>& posts,
+	                                std::vector<RsGxsComment>& comments ) = 0;
 
 	/**
 	 * @brief Get channel content summaries

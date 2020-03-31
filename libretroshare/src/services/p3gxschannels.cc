@@ -1083,20 +1083,34 @@ bool p3GxsChannels::getContentSummaries(
 	return res;
 }
 
+bool p3GxsChannels::getChannelAllContent( const RsGxsGroupId& channelId,
+                                        std::vector<RsGxsChannelPost>& posts,
+                                        std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+    if( !requestMsgInfo(token, opts,std::list<RsGxsGroupId>({channelId})) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
+	return getPostData(token, posts, comments);
+}
+
 bool p3GxsChannels::getChannelContent( const RsGxsGroupId& channelId,
-                       const std::set<RsGxsMessageId>& contentsIds,
-                       std::vector<RsGxsChannelPost>& posts,
-                       std::vector<RsGxsComment>& comments )
+                                        const std::set<RsGxsMessageId>& contentIds,
+                                        std::vector<RsGxsChannelPost>& posts,
+                                        std::vector<RsGxsComment>& comments )
 {
 	uint32_t token;
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
 
 	GxsMsgReq msgIds;
-	msgIds[channelId] = contentsIds;
+	msgIds[channelId] = contentIds;
 
-	if( !requestMsgInfo(token, opts, msgIds) ||
-	        waitToken(token) != RsTokenService::COMPLETE ) return false;
+	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
 
 	return getPostData(token, posts, comments);
 }

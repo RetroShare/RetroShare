@@ -40,8 +40,11 @@
  * are necessary, so at this point this workaround seems acceptable.
  */
 
+#define DEBUG_GXSIFACEHELPER 1
+
 enum class TokenRequestType: uint8_t
 {
+    UNDEFINED           = 0x00,
     GROUP_INFO          = 0x01,
     POSTS               = 0x02,
     ALL_POSTS           = 0x03,
@@ -284,7 +287,8 @@ public:
         if(mTokenService.requestMsgInfo(token, 0, opts, msgIds))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]= msgIds.empty()?(TokenRequestType::ALL_POSTS):(TokenRequestType::POSTS);
+
+			mActiveTokens[token]=  (msgIds.size()==1 && msgIds.begin()->second.size()==0) ?(TokenRequestType::ALL_POSTS):(TokenRequestType::POSTS);
 			locked_dumpTokens();
 			return true;
         }
@@ -459,15 +463,15 @@ private:
 
         uint32_t count[7] = {0};
 
-        std::cerr << "Service 0x0" << std::hex << service_id
+        std::cerr << "Service " << std::hex << service_id << std::dec
                   << " (" << rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id))
-                  << ") this=0x" << (void*)this << ") Active tokens (per type): " ;
+                  << ") this=" << std::hex << (void*)this << std::dec << ") Active tokens (per type): " ;
 
         for(auto& it: mActiveTokens)				// let's count how many token of each type we've got.
             ++count[static_cast<int>(it.second)];
 
         for(uint32_t i=0;i<7;++i)
-            std::cerr /* << i << ":" */ << count[i] << " ";
+            std::cerr << std::dec /* << i << ":" */ << count[i] << " ";
         std::cerr << std::endl;
     }
 };

@@ -510,6 +510,12 @@ void GxsMessageFramePostWidget::loadPosts(const std::set<RsGxsMessageId>& msgIds
 
 				mNavigatePendingMsgId.clear();
 			}
+
+            // don't forget to delete posts.
+
+            for(auto& post:posts)
+                delete post;
+
 		}, this );
 	});
 }

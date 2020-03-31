@@ -81,6 +81,8 @@ protected:
 	//void requestPosts(const std::set<RsGxsMessageId> &msgIds);
 	//void loadPosts(const uint32_t &token);
 #endif
+    // In the following 3 methods, the memory ownership is kept by GxsMessageFramePostWidget
+
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) =0;
 	virtual void insertPosts(const std::vector<RsGxsGenericMsgData*>& posts) =0;
 	virtual void insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread) =0;
