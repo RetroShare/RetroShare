@@ -41,13 +41,14 @@ public:
 };
 
 /** Constructor */
-PostedDialog::PostedDialog(QWidget *parent)
-    : GxsGroupFrameDialog(rsPosted, parent)
+PostedDialog::PostedDialog(QWidget *parent):
+    GxsGroupFrameDialog(rsPosted, parent), mEventHandlerId(0)
 {
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-
-	rsEvents->registerEventsHandler(RsEventType::GXS_POSTED, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	// Needs to be asynced because this function is likely to be called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_POSTED );
 }
 
 void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)

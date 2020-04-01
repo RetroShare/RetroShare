@@ -50,7 +50,7 @@ extern RsEvents* rsEvents;
  */
 enum class RsEventType : uint32_t
 {
-	NONE = 0, /// Used to detect uninitialized event
+	__NONE = 0, /// Used internally to detect invalid event type passed
 
 	/// @see RsBroadcastDiscovery
 	BROADCAST_DISCOVERY                                     = 1,
@@ -64,7 +64,7 @@ enum class RsEventType : uint32_t
 	/// @see pqissl
 	PEER_CONNECTION                                         = 4,
 
-	/// @see RsGxsChanges												// this one is used in RsGxsBroadcast
+	/// @see RsGxsChanges, used also in @see RsGxsBroadcast
 	GXS_CHANGES                                             = 5,
 
 	/// Emitted when a peer state changes, @see RsPeers
@@ -95,9 +95,9 @@ enum class RsEventType : uint32_t
     FILE_TRANSFER                                           = 14,
 
 	/// @see RsMsgs
-	CHAT_MESSAGE											= 15,
+	CHAT_MESSAGE                                            = 15,
 
-	MAX       /// Used to detect invalid event type passed
+	__MAX /// Used internally to detect invalid event type passed
 };
 
 /**
@@ -107,7 +107,7 @@ enum class RsEventType : uint32_t
 struct RsEvent : RsSerializable
 {
 protected:
-	RsEvent(RsEventType type) :
+	explicit RsEvent(RsEventType type) :
 	    mType(type), mTimePoint(std::chrono::system_clock::now()) {}
 
 	RsEvent() = delete;
@@ -174,8 +174,9 @@ public:
 	 * @brief Register events handler
 	 * Every time an event is dispatced the registered events handlers will get
 	 * their method handleEvent called with the event passed as paramether.
+	 * @attention Callbacks must not fiddle internally with methods of this
+	 * class otherwise a deadlock will happen.
 	 * @jsonapi{development,manualwrapper}
-	 * @param eventType         Type of event for which the callback is called
 	 * @param multiCallback     Function that will be called each time an event
 	 *                          is dispatched.
 	 * @param[inout] hId        Optional storage for handler id, useful to
@@ -183,13 +184,15 @@ public:
 	 *                          value may be provided to the function call but
 	 *                          must habe been generated with
 	 *                          @see generateUniqueHandlerId()
+	 * @param eventType         Optional type of event for which the callback is
+	 *                          called, if NONE is passed multiCallback is
+	 *                          called for every events without filtering.
 	 * @return False on error, true otherwise.
 	 */
 	virtual bool registerEventsHandler(
-            RsEventType eventType,
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
-	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
-	        ) = 0;
+	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0),
+	        RsEventType eventType = RsEventType::__NONE ) = 0;
 
 	/**
 	 * @brief Unregister event handler
@@ -200,4 +203,3 @@ public:
 
 	virtual ~RsEvents();
 };
-

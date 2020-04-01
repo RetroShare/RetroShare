@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -24,6 +25,7 @@
 #include <memory>
 #include <cstdint>
 #include <deque>
+#include <array>
 
 #include "retroshare/rsevents.h"
 #include "util/rsthreads.h"
@@ -35,7 +37,6 @@ class RsEventsService :
 public:
 	RsEventsService():
 	    mHandlerMapMtx("RsEventsService::mHandlerMapMtx"), mLastHandlerId(1),
-        mHandlerMaps(static_cast<int>(RsEventType::MAX)),
 	    mEventQueueMtx("RsEventsService::mEventQueueMtx") {}
 
 	/// @see RsEvents
@@ -55,10 +56,9 @@ public:
 
 	/// @see RsEvents
 	bool registerEventsHandler(
-            RsEventType eventType,
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
-	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0)
-	        ) override;
+	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0),
+	        RsEventType eventType = RsEventType::__NONE ) override;
 
 	/// @see RsEvents
 	bool unregisterEventsHandler(RsEventsHandlerId_t hId) override;
@@ -67,10 +67,12 @@ protected:
 	RsMutex mHandlerMapMtx;
 	RsEventsHandlerId_t mLastHandlerId;
 
-    std::vector<
-		std::map<
-		    RsEventsHandlerId_t,
-		    std::function<void(std::shared_ptr<const RsEvent>)> > > mHandlerMaps;
+	std::array<
+	    std::map<
+	        RsEventsHandlerId_t,
+	        std::function<void(std::shared_ptr<const RsEvent>)> >,
+	    static_cast<std::size_t>(RsEventType::__MAX)
+	> mHandlerMaps;
 
 	RsMutex mEventQueueMtx;
 	std::deque< std::shared_ptr<const RsEvent> > mEventQueue;

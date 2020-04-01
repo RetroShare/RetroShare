@@ -38,14 +38,15 @@ public:
 };
 
 /** Constructor */
-GxsForumsDialog::GxsForumsDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsForums, parent)
+GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
+    GxsGroupFrameDialog(rsGxsForums, parent), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
 
-	rsEvents->registerEventsHandler(RsEventType::GXS_FORUMS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)

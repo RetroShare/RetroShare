@@ -352,7 +352,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
-			RsEventType eventType = RsEventType::NONE;
+			RsEventType eventType = RsEventType::__NONE;
 
 			// deserialize input parameters from JSON
 			{
@@ -395,7 +395,8 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(eventType,multiCallback, hId);
+			bool retval = rsEvents->registerEventsHandler(
+			            multiCallback, hId, eventType );
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
