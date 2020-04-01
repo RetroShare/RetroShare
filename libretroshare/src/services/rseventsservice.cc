@@ -39,7 +39,7 @@ bool isEventValid(
 		return false;
 	}
 
-	if(event->mType <= RsEventType::NONE)
+	if(event->mType <= RsEventType::__NONE)
 	{
 		errorMessage = "Event has type NONE: " +
 		        std::to_string(
@@ -48,9 +48,9 @@ bool isEventValid(
 		return false;
 	}
 
-	if(event->mType >= RsEventType::MAX)
+	if(event->mType >= RsEventType::__MAX)
 	{
-		errorMessage = "Event has type >= RsEventType::MAX: " +
+		errorMessage = "Event has type >= RsEventType::__MAX: " +
 		        std::to_string(
 		            static_cast<std::underlying_type<RsEventType>::type >(
 		                event->mType ) );
@@ -100,25 +100,30 @@ RsEventsHandlerId_t RsEventsService::generateUniqueHandlerId_unlocked()
 }
 
 bool RsEventsService::registerEventsHandler(
-        RsEventType eventType,
         std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
-        RsEventsHandlerId_t& hId )
+        RsEventsHandlerId_t& hId, RsEventType eventType )
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
 
-    if( (int)eventType > mHandlerMaps.size() + 10)
-    {
-        RsErr() << "Cannot register an event handler for an event type larger than 10 plus the max pre-defined event (value passed was " << (int)eventType << " whereas max is " << (int)RsEventType::MAX << ")" << std::endl;
-        return false;
-    }
+	if( eventType >= RsEventType::__MAX)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid event type: "
+		        << static_cast<uint32_t>(eventType) << " >= RsEventType::__MAX:"
+		        << static_cast<uint32_t>(RsEventType::__MAX) << std::endl;
+		print_stacktrace();
+		return false;
+	}
 
-    if( (int)eventType >= mHandlerMaps.size())
-        mHandlerMaps.resize( (int)eventType +1 );
+	if(!hId) hId = generateUniqueHandlerId_unlocked();
+	else if (hId > mLastHandlerId)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid handler id: " << hId
+		        << " how did you generate it? " << std::endl;
+		print_stacktrace();
+		return false;
+	}
 
-	if(!hId)
-        hId = generateUniqueHandlerId_unlocked();
-
-	mHandlerMaps[(int)eventType][hId] = multiCallback;
+	mHandlerMaps[static_cast<std::size_t>(eventType)][hId] = multiCallback;
 	return true;
 }
 
@@ -126,14 +131,14 @@ bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
 
-    for(uint32_t i=0;i<mHandlerMaps.size();++i)
+	for(uint32_t i=0; i<mHandlerMaps.size(); ++i)
 	{
 		auto it = mHandlerMaps[i].find(hId);
 		if(it != mHandlerMaps[i].end())
-        {
+		{
 			mHandlerMaps[i].erase(it);
-            return true;
-        }
+			return true;
+		}
 	}
 	return false;
 }
@@ -174,27 +179,29 @@ dispatchEventFromQueueLock:
 
 void RsEventsService::handleEvent(std::shared_ptr<const RsEvent> event)
 {
-	std::function<void(std::shared_ptr<const RsEvent>)> mCallback;
+	uint32_t event_type_index = static_cast<uint32_t>(event->mType);
 
-    uint32_t event_type_index = static_cast<uint32_t>(event->mType);
+	if(RsEventType::__NONE >= event->mType || event->mType >= RsEventType::__MAX )
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid event type: "
+		        << event_type_index << std::endl;
+		print_stacktrace();
+		return;
+	}
 
 	{
-		RS_STACK_MUTEX(mHandlerMapMtx); /*  LOCKED AREA */
+		RS_STACK_MUTEX(mHandlerMapMtx);
+		/* It is important to also call the callback under mutex protection to
+		 * ensure they are not unregistered in the meanwhile.
+		 * If a callback try to fiddle with registering/unregistering it will
+		 * deadlock */
 
-		if(event_type_index >= mHandlerMaps.size() || event_type_index < 1)
-		{
-			RsErr() << "Cannot handle an event of type " << event_type_index << ": out of scope!" << std::endl;
-			return;
-		}
+		// Call all clients that registered a callback for this event type
+		for(auto cbit: mHandlerMaps[event_type_index]) cbit.second(event);
 
-        // Call all clients that registered a callback for this event type
-
-        for(auto cbit: mHandlerMaps[event_type_index])
-            cbit.second(event);
-
-        // Also call all clients that registered with NONE, meaning that they expect all events
-
-        for(auto cbit: mHandlerMaps[static_cast<uint32_t>(RsEventType::NONE)])
-            cbit.second(event);
+		/* Also call all clients that registered with NONE, meaning that they
+		 * expect all events */
+		for(auto cbit: mHandlerMaps[static_cast<uint32_t>(RsEventType::__NONE)])
+			cbit.second(event);
 	}
 }
