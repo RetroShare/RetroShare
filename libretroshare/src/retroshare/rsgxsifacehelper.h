@@ -45,13 +45,14 @@
 enum class TokenRequestType: uint8_t
 {
     UNDEFINED           = 0x00,
-    GROUP_INFO          = 0x01,
-    POSTS               = 0x02,
-    ALL_POSTS           = 0x03,
-    MSG_RELATED_INFO    = 0x04,
-    GROUP_STATISTICS    = 0x05,
-    SERVICE_STATISTICS  = 0x06,
-    NO_KILL_TYPE        = 0x07,
+    GROUP_DATA          = 0x01,
+    GROUP_META          = 0x02,
+    POSTS               = 0x03,
+    ALL_POSTS           = 0x04,
+    MSG_RELATED_INFO    = 0x05,
+    GROUP_STATISTICS    = 0x06,
+    SERVICE_STATISTICS  = 0x07,
+    NO_KILL_TYPE        = 0x08,
 };
 
 class RsGxsIfaceHelper
@@ -252,12 +253,23 @@ public:
 	/// @see RsTokenService::requestGroupInfo
 	bool requestGroupInfo( uint32_t& token, const RsTokReqOptions& opts, const std::list<RsGxsGroupId> &groupIds, bool high_priority_request = false )
 	{
-		cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+        TokenRequestType token_request_type;
+
+        switch(opts.mReqType)
+        {
+        case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
+        case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        default:
+            RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
+            return false;
+        }
+
+		cancelActiveRequestTokens(token_request_type);
 
 		if( mTokenService.requestGroupInfo(token, 0, opts, groupIds))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : (TokenRequestType::GROUP_INFO);
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
             locked_dumpTokens();
             return true;
         }
@@ -268,12 +280,24 @@ public:
 	/// @see RsTokenService::requestGroupInfo
 	bool requestGroupInfo(uint32_t& token, const RsTokReqOptions& opts, bool high_priority_request = false)
 	{
-		cancelActiveRequestTokens(TokenRequestType::GROUP_INFO);
+        TokenRequestType token_request_type;
+
+        switch(opts.mReqType)
+        {
+        case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
+        case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        default:
+            RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
+            return false;
+        }
+
+		cancelActiveRequestTokens(token_request_type);
+
 
 		if(  mTokenService.requestGroupInfo(token, 0, opts))
         {
 			RS_STACK_MUTEX(mMtx);
-			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : (TokenRequestType::GROUP_INFO);
+			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
             locked_dumpTokens();
             return true;
         }

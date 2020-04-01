@@ -34,7 +34,7 @@ namespace Ui {
 class IdEditDialog;
 }
 
-class IdEditDialog : public QDialog, public TokenResponse
+class IdEditDialog : public QDialog
 {
 	Q_OBJECT
 
@@ -43,12 +43,10 @@ public:
 	~IdEditDialog();
 
 	void setupNewId(bool pseudo, bool enable_anon = true);
-	void setupExistingId(const RsGxsGroupId &keyId);
+	void setupExistingId(const RsGxsGroupId& keyId);
     	void enforceNoAnonIds() ;
 
 	RsGxsGroupId groupId() { return mGroupId; }
-
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 private slots:
 	void idTypeToggled(bool checked);
@@ -68,7 +66,7 @@ private:
 	void createId();
 	void updateId();
 	void updateIdType(bool pseudo);
-	void loadExistingId(uint32_t token);
+	void loadExistingId(const RsGxsIdGroup& id_group);
 	void setAvatar(const QPixmap &avatar);
 	void idCreated(uint32_t token);
 
@@ -83,8 +81,6 @@ protected:
 	UIStateHelper *mStateHelper;
 
 	RsGxsIdGroup mEditGroup;
-
-	TokenQueue *mIdQueue;
 	RsGxsGroupId mGroupId;
 
 	QPixmap mAvatar; // Avatar from identity (not calculated)

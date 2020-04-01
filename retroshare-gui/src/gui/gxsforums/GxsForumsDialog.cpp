@@ -207,28 +207,6 @@ GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGrou
 	return new GxsForumThreadWidget(groupId);
 }
 
-#ifdef TO_REMOVE
-void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsGxsForumGroup> groups;
-	rsGxsForums->getGroupData(token, groups);
-
-	/* Save groups to fill description */
-	GxsForumGroupInfoData *forumData = new GxsForumGroupInfoData;
-	userdata = forumData;
-
-	std::vector<RsGxsForumGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsForumGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (!group.mDescription.empty()) {
-			forumData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
-
 void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
 	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
@@ -249,27 +227,3 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
 }
 
-#ifdef TO_REMOVE
-void ::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
-{
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
-
-	const GxsForumGroupInfoData *forumData = dynamic_cast<const GxsForumGroupInfoData*>(userdata);
-	if (!forumData) {
-		std::cerr << "GxsForumsDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsForumGroupInfoData";
-		std::cerr << std::endl;
-		return;
-	}
-
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = forumData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != forumData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
-	}
-	
-	//if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
-	//	groupItemInfo.icon = QIcon(":images/konv_message2.png");
-	if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
-		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
-
-}
-#endif
