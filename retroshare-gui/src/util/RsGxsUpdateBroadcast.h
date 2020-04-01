@@ -31,7 +31,7 @@ struct RsGxsChanges;
 
 typedef uint32_t TurtleRequestId ;
 
-class RsGxsUpdateBroadcast : public QObject
+class RS_DEPRECATED RsGxsUpdateBroadcast : public QObject
 {
 	Q_OBJECT
 

@@ -22,6 +22,7 @@
 
 #include "RsGxsUpdateBroadcast.h"
 #include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsgxsifacehelper.h>
 
@@ -37,11 +38,14 @@ static QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
 RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
     QObject(nullptr), mIfaceImpl(ifaceImpl), mEventHandlerId(0)
 {
-	/* No need of postToObject here as onChangesReceived just emit signals
-	 * internally */
 	rsEvents->registerEventsHandler(
 	            [this](std::shared_ptr<const RsEvent> event)
-	{ onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get())); },
+	{
+		RsQThreadUtils::postToObject(
+		            [=]()
+		{ onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get())); },
+		            this );
+	},
 	            mEventHandlerId, RsEventType::GXS_CHANGES );
 }
 
