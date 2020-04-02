@@ -201,7 +201,8 @@ struct FileInfo : RsSerializable
 	std::string path;
 	std::string fname;
 	RsFileHash hash;
-	std::string ext;
+
+	RS_DEPRECATED std::string ext; /// @deprecated unused
 
 	uint64_t size;
 	uint64_t avail; /// how much we have
