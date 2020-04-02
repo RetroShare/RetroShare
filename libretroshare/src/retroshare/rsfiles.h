@@ -402,12 +402,12 @@ struct TurtleFileInfoV2 : RsSerializable
 {
 	TurtleFileInfoV2() : fSize(0), fWeight(0) {}
 
-	TurtleFileInfoV2(const TurtleFileInfo& oldInfo) :
+	explicit TurtleFileInfoV2(const TurtleFileInfo& oldInfo) :
 	    fSize(oldInfo.size), fHash(oldInfo.hash), fName(oldInfo.name),
 	    fWeight(0) {}
 
 #ifdef RS_DEEP_FILES_INDEX
-	TurtleFileInfoV2(const DeepFilesSearchResult& dRes);
+	explicit TurtleFileInfoV2(const DeepFilesSearchResult& dRes);
 #endif // def RS_DEEP_FILES_INDEX
 
 	uint64_t fSize;    /// File size
@@ -746,6 +746,7 @@ public:
 	 * interaction with Qt. As soon as you can, you should prefer to use the
 	 * version of this methodn which take `std::uintptr_t handle` as paramether.
 	 */
+	RS_DEPRECATED_FOR(requestDirDetails)
 	virtual int RequestDirDetails(
 	        void* handle, DirDetails& details, FileSearchFlags flags ) = 0;
 
