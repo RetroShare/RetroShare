@@ -199,51 +199,6 @@ class SignatureEventData
 		std::string reason ;
 };
 
-bool NotifyQt::askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-
-		std::cerr << "NotifyQt:: deferred signature event requeted. " << std::endl;
-
-		// Look into the queue
-
-		Sha1CheckSum chksum = RsDirUtil::sha1sum((uint8_t*)data,len) ;
-
-        std::map<std::string,SignatureEventData*>::iterator it = _deferred_signature_queue.find(chksum.toStdString()) ;
-        signature_result = SELF_SIGNATURE_RESULT_PENDING ;
-
-		if(it != _deferred_signature_queue.end())
-        {
-            signature_result = it->second->signature_result ;
-
-            if(it->second->signature_result != SELF_SIGNATURE_RESULT_PENDING)	// found it. Copy the result, and remove from the queue.
-            {
-                // We should check for the exact data match, for the sake of being totally secure.
-                //
-                std::cerr << "Found into queue: returning it" << std::endl;
-
-                memcpy(sign,it->second->sign,*it->second->signlen) ;
-                *signlen = *(it->second->signlen) ;
-
-                delete it->second ;
-                _deferred_signature_queue.erase(it) ;
-            }
-            return true ;		// already registered, but not done yet.
-        }
-
-		// Not found. Store in the queue and emit a signal.
-		//
-		std::cerr << "NotifyQt:: deferred signature event requeted. Pushing into queue" << std::endl;
-
-		SignatureEventData *edta = new SignatureEventData(data,len,*signlen, reason) ;
-
-		_deferred_signature_queue[chksum.toStdString()] = edta ;
-	}
-	emit deferredSignatureHandlingRequested() ;
-    return true;
-}
-
 void NotifyQt::handleSignatureEvent()
 {
 	std::cerr << "NotifyQt:: performing a deferred signature in the main GUI thread." << std::endl;
@@ -778,19 +733,6 @@ void NotifyQt::notifyListPreChange(int list, int /*type*/)
 			break;
 	}
 	return;
-}
-
-	/* New Timer Based Update scheme ...
-	 * means correct thread seperation
-	 *
-	 * uses Flags, to detect changes
-	 */
-
-void NotifyQt::resetCachedPassphrases()
-{
-	std::cerr << "Clearing PGP passphrase." << std::endl;
-
-	rsNotify->clearPgpPassphrase() ;
 }
 
 void NotifyQt::enable()

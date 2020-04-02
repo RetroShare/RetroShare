@@ -164,15 +164,6 @@ bool rs_nxs_test::RsDummyPgpUtils::VerifySignBin(const void* /*data*/,
 	return true;
 }
 
-bool rs_nxs_test::RsDummyPgpUtils::askForDeferredSelfSignature(const void* /*data*/,
-                                                               const uint32_t /*len*/,
-                                                               unsigned char* /*sign*/,
-                                                               unsigned int* /*signlen*/,
-                                                               int& /*signature_result*/,
-                                                               std::string /*reason*/
-                                                               ) {
-	return true;
-}
 
 
 

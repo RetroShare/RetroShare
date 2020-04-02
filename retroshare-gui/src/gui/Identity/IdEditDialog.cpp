@@ -28,6 +28,7 @@
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
@@ -539,18 +540,40 @@ void IdEditDialog::createId()
 		params.mImage.clear();
 
     RsGxsId keyId;
+    std::string gpg_password;
 
-    if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked))
+    if(params.isPgpLinked)
+    {
+		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+        bool cancelled;
+
+        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
+		                                            false,
+		                                            gpg_password,cancelled))
+		{
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+			return;
+        }
+
+    }
+
+    if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked,gpg_password))
     {
 		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
         RsIdentityDetails det;
-        rsIdentity->getIdDetails(keyId,det);
 
-        setupExistingId((RsGxsGroupId)keyId);
+        if(rsIdentity->getIdDetails(keyId,det))
+        {
+            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created."));
+            close();
+        }
+        else
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong."));
     }
     else
-        QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong."));
+        QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong. Check your profile password."));
 }
 
 #ifdef TO_REMOVE

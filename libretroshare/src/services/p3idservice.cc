@@ -3522,25 +3522,7 @@ RsGenExchange::ServiceCreate_Return p3IdService::service_CreateGroup(
 		unsigned int sign_size = MAX_SIGN_SIZE;
         memset(signarray,0,MAX_SIGN_SIZE) ;	// just in case.
 
-		/* -10 is never returned by askForDeferredSelfSignature therefore we can
-		 * use it to properly detect and handle the case libretroshare is being
-		 * used outside retroshare-gui */
-		int result = -10;
-
-		/* This method is DEPRECATED we call it only for retrocompatibility with
-		 * retroshare-gui, when called from something different then
-		 * retroshare-gui for example retroshare-service it miserably fail! */
-		mPgpUtils->askForDeferredSelfSignature(
-		            static_cast<const void*>(hash.toByteArray()),
-		            hash.SIZE_IN_BYTES, signarray, &sign_size, result,
-		            __PRETTY_FUNCTION__ );
-
-		/* If askForDeferredSelfSignature left result untouched it means
-		 * libretroshare is being used by something different then
-		 * retroshare-gui so try calling AuthGPG::getAuthGPG()->SignDataBin
-		 * directly */
-		if( result == -10 )
-			result = AuthGPG::getAuthGPG()->SignDataBin(
+		int	result = AuthGPG::getAuthGPG()->SignDataBin(
 			            static_cast<const void*>(hash.toByteArray()),
 			            hash.SIZE_IN_BYTES, signarray, &sign_size,
 			            __PRETTY_FUNCTION__ )

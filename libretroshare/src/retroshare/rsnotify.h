@@ -237,7 +237,6 @@ public:
 	virtual void notifyPeerStatusChangedSummary   () {}
 	virtual void notifyDiscInfoChanged            () {}
 
-	virtual bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */,int& signature_result , std::string /*reason = ""*/) { signature_result = false ;return true; }
 	virtual void notifyDownloadComplete           (const std::string& /* fileHash  */) {}
 	virtual void notifyDownloadCompleteCount      (uint32_t           /* count     */) {}
 	virtual void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) {}

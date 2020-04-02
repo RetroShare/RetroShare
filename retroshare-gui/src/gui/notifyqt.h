@@ -94,20 +94,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
-		// Queues the signature event so that it canhappen in the main GUI thread (to ask for passwd).
-		// To use this function: call is multiple times as soon as it returns true.
-		//
-		// Dont' use a while, if you're in a mutexed part, otherwize it will lock. You need to call the function
-		// and periodically exit the locked code between calls to allow the signature to happen.
-		//
-		// Returns:
-		// 	false = the signature is registered, but the result is not there yet. Call again soon.
-		// 	true  = signature done. Data is ready. signature_result takes the following values:
-		// 					1: signature success
-		// 					2: signature failed. Wrong passwd, user pressed cancel, etc.
-		//
-		virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result, std::string reason = "") ;
-
 		/* Notify from GUI */
 		void notifyChatFontChanged();
 		void notifyChatStyleChanged(int /*ChatStyle::enumStyleType*/ styleType);
@@ -176,7 +162,6 @@ class NotifyQt: public QObject, public NotifyClient
 	public slots:
 		void UpdateGUI(); /* called by timer */
 		void SetDisableAll(bool bValue);
-		void resetCachedPassphrases() ;
 
 	private slots:
 		void runningTick();
