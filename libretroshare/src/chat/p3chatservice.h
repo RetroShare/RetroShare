@@ -42,6 +42,22 @@ class p3HistoryMgr;
 
 typedef RsPeerId ChatLobbyVirtualPeerId ;
 
+struct RsChatMessageEvent : RsEvent
+{
+	RsChatMessageEvent() : RsEvent(RsEventType::CHAT_MESSAGE) {}
+	~RsChatMessageEvent() override = default;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mChatMessage);
+	}
+
+	ChatMessage mChatMessage;
+};
+
 //!The basic Chat service.
  /**
   *

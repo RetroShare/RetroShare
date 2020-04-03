@@ -426,9 +426,8 @@ public:
 	}
 };
 
-class ChatMessage
+struct ChatMessage : RsSerializable
 {
-public:
     ChatId chat_id; // id of chat endpoint
     RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
     RsGxsId lobby_peer_gxs_id; // only used for lobbys: nickname of message author
@@ -441,6 +440,22 @@ public:
     bool incoming;
     bool online; // for outgoing messages: was this message send?
     //bool system_message;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(chat_id);
+		RS_SERIAL_PROCESS(broadcast_peer_id);
+		RS_SERIAL_PROCESS(lobby_peer_gxs_id);
+		RS_SERIAL_PROCESS(peer_alternate_nickname);
+
+		RS_SERIAL_PROCESS(chatflags);
+		RS_SERIAL_PROCESS(sendTime);
+		RS_SERIAL_PROCESS(recvTime);
+		RS_SERIAL_PROCESS(msg);
+		RS_SERIAL_PROCESS(incoming);
+		RS_SERIAL_PROCESS(online);
+	}
 };
 
 class ChatLobbyInvite : RsSerializable

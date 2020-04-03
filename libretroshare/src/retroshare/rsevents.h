@@ -94,7 +94,10 @@ enum class RsEventType : uint32_t
     /// @see RsFiles
     FILE_TRANSFER                                           = 14,
 
-	 MAX       /// Used to detect invalid event type passed
+	/// @see RsMsgs
+	CHAT_MESSAGE											= 15,
+
+	MAX       /// Used to detect invalid event type passed
 };
 
 /**
