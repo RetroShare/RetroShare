@@ -20,6 +20,9 @@
  *                                                                             *
  *******************************************************************************/
 
+#include <algorithm>
+#include <iostream>
+
 #include "crypto/chacha20.h"
 //const int ftserverzone = 29539;
 
@@ -50,8 +53,6 @@
 #include "util/rsdebug.h"
 #include "util/rsdir.h"
 #include "util/rsprint.h"
-
-#include <iostream>
 #include "util/rstime.h"
 
 #ifdef RS_DEEP_FILES_INDEX
@@ -1974,15 +1975,17 @@ void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 			hasCallback = true;
 
 			std::vector<TurtleFileInfoV2> cRes;
-			for( const auto& tfiold : item->result)
-				cRes.push_back(tfiold);
+			std::transform( item->result.begin(), item->result.end(),
+			                std::back_inserter(cRes),
+			                [](const auto& it){ return TurtleFileInfoV2(it); } );
 
 			cbpt->second.first(cRes);
 		}
 	} // end RS_STACK_MUTEX(mSearchCallbacksMapMutex);
 
 	if(!hasCallback)
-		RsServer::notify()->notifyTurtleSearchResult(item->PeerId(),item->request_id, item->result );
+		RsServer::notify()->notifyTurtleSearchResult(
+		            item->PeerId(), item->request_id, item->result );
 }
 
 bool ftServer::receiveSearchRequest(
