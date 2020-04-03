@@ -217,7 +217,8 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                     mmr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mmr;
-        }else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
+        }
+        else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
         {
                 MsgDataReq* mdr = new MsgDataReq();
 
@@ -225,7 +226,8 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                     mdr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mdr;
-        }else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
+        }
+        else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
         {
                 MsgIdReq* mir = new MsgIdReq();
 

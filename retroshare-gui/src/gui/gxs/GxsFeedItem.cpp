@@ -39,11 +39,6 @@ GxsFeedItem::GxsFeedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGro
 
 	/* load data if we can */
 	mMessageId = messageId;
-
-#ifdef TO_REMOVE
-	mTokenTypeMessage = nextTokenType();
-	mTokenTypeComment = nextTokenType();
-#endif
 }
 
 GxsFeedItem::~GxsFeedItem()
@@ -88,122 +83,14 @@ void GxsFeedItem::copyMessageLink()
 	}
 }
 
-#ifdef TO_REMOVE
-void GxsFeedItem::fillDisplay(RsGxsUpdateBroadcastBase *updateBroadcastBase, bool complete)
-{
-	GxsGroupFeedItem::fillDisplay(updateBroadcastBase, complete);
-
-	std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgs;
-	updateBroadcastBase->getAllMsgIds(msgs);
-
-	if (!msgs.empty())
-	{
-		std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::const_iterator mit = msgs.find(groupId());
-
-		if (mit != msgs.end() && mit->second.find(messageId()) != mit->second.end())
-				requestMessage();
-	}
-}
-#endif
-
 void GxsFeedItem::requestMessage()
 {
     loadMessage();
-#ifdef TO_REMOVE
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::requestMessage()";
-	std::cerr << std::endl;
-#endif
 
-	if (!initLoadQueue()) {
-		return;
-	}
-
-	if (mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
-		/* Request already running */
-		return;
-	}
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	GxsMsgReq msgIds;
-	std::set<RsGxsMessageId> &vect_msgIds = msgIds[groupId()];
-	vect_msgIds.insert(mMessageId);
-
-	uint32_t token;
-	mLoadQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeMessage);
-#endif
 }
 
 void GxsFeedItem::requestComment()
 {
     loadComment();
-#ifdef TO_REMOVE
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::requestComment()";
-	std::cerr << std::endl;
-#endif
-
-#ifdef TO_REMOVE
-	if (!initLoadQueue()) {
-		return;
-	}
-
-	if (mLoadQueue->activeRequestExist(mTokenTypeComment)) {
-		/* Request already running */
-		return;
-	}
-#endif
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
-
-	std::vector<RsGxsGrpMsgIdPair> msgIds;
-
-	for(int i=0;i<mmessageversions.size();++i)
-		msgids.push_back(std::make_pair(groupid(),mmessageversions[i])) ;
-
-	msgids.push_back(std::make_pair(groupid(),messageid()));
-
-	uint32_t token;
-	mLoadQueue->requestMsgRelatedInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, mTokenTypeComment);
-#endif
 }
 
-#ifdef TO_REMOVE
-void GxsFeedItem::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsFeedItem::loadRequest()";
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mLoadQueue) {
-		if (req.mUserType == mTokenTypeMessage) {
-			loadMessage(req.mToken);
-			return;
-		}
-		if (req.mUserType == mTokenTypeComment) {
-			loadComment(req.mToken);
-			return;
-		}
-	}
-
-	GxsGroupFeedItem::loadRequest(queue, req);
-}
-
-bool GxsFeedItem::isLoading()
-{
-	if (GxsGroupFeedItem::isLoading()) {
-		return true;
-	}
-
-	if (mLoadQueue && mLoadQueue->activeRequestExist(mTokenTypeMessage)) {
-		return true;
-	}
-
-	return false;
-}
-#endif

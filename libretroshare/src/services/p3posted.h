@@ -61,6 +61,10 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	bool getBoardsInfo(const std::list<RsGxsGroupId>& boardsIds,
 	        std::vector<RsPostedGroup>& groupsInfo ) override;
 
+	bool getBoardAllContent(const RsGxsGroupId& groupId,
+	            std::vector<RsPostedPost>& posts,
+	            std::vector<RsGxsComment>& comments ) override;
+
 	bool getBoardContent(const RsGxsGroupId& groupId,
 	            const std::set<RsGxsMessageId>& contentsIds,
 	            std::vector<RsPostedPost>& posts,

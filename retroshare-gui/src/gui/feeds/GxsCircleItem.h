@@ -53,7 +53,6 @@ public:
 	virtual ~GxsCircleItem();
 
     uint64_t uniqueIdentifier() const override;
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 
 protected:

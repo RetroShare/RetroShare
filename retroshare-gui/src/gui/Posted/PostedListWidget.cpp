@@ -885,30 +885,17 @@ void PostedListWidget::shallowClearPosts()
 	}
 }
 
-bool PostedListWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
+bool PostedListWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
-	std::vector<RsPostedGroup> groups;
-	rsPosted->getGroupData(token, groups);
-
-	if (groups.size() == 1)
-	{
-		insertPostedDetails(groups[0]);
-		metaData = groups[0].mMeta;
-		return true;
-	}
-
-	return false;
+	insertPostedDetails(*dynamic_cast<const RsPostedGroup*>(data));
+    return true;
 }
 
-void PostedListWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread */*thread*/)
+void PostedListWidget::insertAllPostedPosts(const std::vector<RsPostedPost>& posts, GxsMessageFramePostThread */*thread*/)
 {
-	std::vector<RsPostedPost> posts;
-	rsPosted->getPostData(token, posts);
-
-	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); ++vit)
+	for(auto vit = posts.begin(); vit != posts.end(); ++vit)
 	{
-		RsPostedPost& p = *vit;
+		const RsPostedPost& p = *vit;
 		loadPost(p);
 		loadPostCardView(p);
 	}
@@ -916,15 +903,11 @@ void PostedListWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePost
 	applyRanking();
 }
 
-void PostedListWidget::insertPosts(const uint32_t &token)
+void PostedListWidget::insertPostedPosts(const std::vector<RsPostedPost>& posts)
 {
-	std::vector<RsPostedPost> posts;
-	rsPosted->getPostData(token, posts);
-
-	std::vector<RsPostedPost>::iterator vit;
-	for(vit = posts.begin(); vit != posts.end(); ++vit)
+	for(auto vit = posts.begin(); vit != posts.end(); ++vit)
 	{
-		RsPostedPost& p = *vit;
+		const RsPostedPost& p = *vit;
 
 		// modify post content
 		if(mPosts.find(p.mMeta.mMsgId) != mPosts.end())
@@ -1047,3 +1030,62 @@ void PostedListWidget::setViewMode(int viewMode)
 		return;
 	}
 }
+
+void PostedListWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsPostedPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsPosted->getBoardContent( groupId(),msgIds,posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsPostedPost(post));
+}
+
+void PostedListWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsPostedPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsPosted->getBoardAllContent( groupId(),posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsPostedPost(post));
+}
+
+bool PostedListWidget::getGroupData(RsGxsGenericGroupData*& data)
+{
+    std::vector<RsPostedGroup> groupInfo ;
+    data = nullptr;
+
+    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({groupId()}),groupInfo) || groupInfo.size() != 1)
+        return false;
+
+    data = new RsPostedGroup(groupInfo[0]);
+    return true;
+}
+
+void PostedListWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& posts)
+{
+    std::vector<RsPostedPost> cposts;
+
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+		cposts.push_back(*dynamic_cast<RsPostedPost*>(post));
+
+	insertPostedPosts(cposts);
+}
+
+void PostedListWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread)
+{
+	std::vector<RsPostedPost> cposts;
+
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+		cposts.push_back(*dynamic_cast<RsPostedPost*>(post));
+
+	insertAllPostedPosts(cposts, NULL);
+}
+

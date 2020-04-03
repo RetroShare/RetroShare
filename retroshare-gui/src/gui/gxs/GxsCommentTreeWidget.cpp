@@ -354,6 +354,7 @@ void GxsCommentTreeWidget::requestComments(const RsGxsGroupId& group, const std:
 	service_requestComments(group,message_versions);
 }
 
+
 void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,const std::set<RsGxsMessageId> & msgIds)
 {
 	/* request comments */
