@@ -184,6 +184,14 @@ struct RsMsgMetaData : RsSerializable
 	}
 };
 
+struct RsGxsGenericMsgData
+{
+	virtual ~RsGxsGenericMsgData() = default; // making the type polymorphic
+
+	RsMsgMetaData mMeta;
+};
+
+
 struct GxsGroupStatistic : RsSerializable
 {
 	GxsGroupStatistic() :
@@ -192,7 +200,7 @@ struct GxsGroupStatistic : RsSerializable
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
-	                     RsGenericSerializer::SerializeContext& ctx) override
+	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
 		RS_SERIAL_PROCESS(mGrpId);
 		RS_SERIAL_PROCESS(mNumMsgs);
@@ -212,7 +220,7 @@ struct GxsGroupStatistic : RsSerializable
 	uint32_t mNumChildMsgsNew;
 	uint32_t mNumChildMsgsUnread;
 
-	~GxsGroupStatistic() override = default;
+	~GxsGroupStatistic() override;
 };
 
 class GxsServiceStatistic
