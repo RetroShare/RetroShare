@@ -366,34 +366,6 @@ bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo
     return true;
 }
 
-#ifdef TO_REMOVE
-void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsGxsChannelGroup> groups;
-	rsGxsChannels->getGroupData(token, groups);
-
-	/* Save groups to fill icons and description */
-	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
-	userdata = channelData;
-
-	std::vector<RsGxsChannelGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsChannelGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (group.mImage.mData != NULL) {
-			QPixmap image;
-			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
-			channelData->mIcon[group.mMeta.mGroupId] = image;
-		}
-
-		if (!group.mDescription.empty()) {
-			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
-
 void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
 	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);

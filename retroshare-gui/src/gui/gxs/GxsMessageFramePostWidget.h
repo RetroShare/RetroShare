@@ -72,14 +72,6 @@ protected:
 	void loadAllPosts();
 	void loadPosts(const std::set<RsGxsMessageId>& msgIds);
 
-#ifdef TO_REMOVE
-	void requestAllPosts();
-	void loadAllPosts();
-	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread) = 0;
-
-	//void requestPosts(const std::set<RsGxsMessageId> &msgIds);
-	//void loadPosts(const uint32_t &token);
-#endif
     // In the following 3 methods, the memory ownership is kept by GxsMessageFramePostWidget
 
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) =0;

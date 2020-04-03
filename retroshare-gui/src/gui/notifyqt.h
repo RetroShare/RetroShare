@@ -67,9 +67,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyChatStatus(const ChatId &chat_id,const std::string& status_string);
 		virtual void notifyChatCleared(const ChatId &chat_id);
 		virtual void notifyCustomState(const std::string& peer_id, const std::string& status_string);
-#ifdef TO_REMOVE
-		virtual void notifyHashingInfo(uint32_t type, const std::string& fileinfo);
-#endif
 		virtual void notifyTurtleSearchResult(const RsPeerId &pid, uint32_t search_id, const std::list<TurtleFileInfo>& found_files);
 		virtual void notifyTurtleSearchResult(uint32_t search_id,const std::list<TurtleGxsInfo>& found_groups);
 		virtual void notifyPeerHasNewAvatar(std::string peer_id) ;
@@ -87,10 +84,6 @@ class NotifyQt: public QObject, public NotifyClient
 		virtual void notifyHistoryChanged(uint32_t msgId, int type);
 
 		virtual void notifyDiscInfoChanged() ;
-#ifdef TO_REMOVE
-		virtual void notifyDownloadComplete(const std::string& fileHash);
-		virtual void notifyDownloadCompleteCount(uint32_t count);
-#endif
 		virtual bool askForPassword(const std::string& title, const std::string& key_details, bool prev_is_bad, std::string& password, bool &cancelled);
 		virtual bool askForPluginConfirmation(const std::string& plugin_filename, const std::string& plugin_file_hash,bool first_time);
 
@@ -118,10 +111,6 @@ class NotifyQt: public QObject, public NotifyClient
 		void neighboursChanged() const ;
 		void messagesChanged() const ;
 		void messagesTagsChanged() const;
-#ifdef REMOVE
-		void forumsChanged() const ; // use connect with Qt::QueuedConnection
-		void channelsChanged(int type) const ; // use connect with Qt::QueuedConnection
-#endif
 		void configChanged() const ;
 		void logInfoChanged(const QString&) const ;
 		void chatStatusChanged(const ChatId&,const QString&) const ;
@@ -136,17 +125,9 @@ class NotifyQt: public QObject, public NotifyClient
 		void peerStatusChanged(const QString& /* peer_id */, int /* status */);
 		void peerStatusChangedSummary() const;
         void gxsChange(const RsGxsChanges& /* changes  */);
-#ifdef REMOVE
-		void publicChatChanged(int type) const ;
-		void privateChatChanged(int list, int type) const ;
-#endif
         void chatMessageReceived(ChatMessage msg);
 		void groupsChanged(int type) const ;
 		void discInfoChanged() const ;
-#ifdef REMOVE
-		void forumMsgReadSatusChanged(const QString& forumId, const QString& msgId, int status);
-		void channelMsgReadSatusChanged(const QString& channelId, const QString& msgId, int status);
-#endif
 		void historyChanged(uint msgId, int type);
 		void chatLobbyInviteReceived() ;
 		void deferredSignatureHandlingRequested() ;

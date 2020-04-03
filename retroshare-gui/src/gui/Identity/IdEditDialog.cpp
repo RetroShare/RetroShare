@@ -576,21 +576,6 @@ void IdEditDialog::createId()
         QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong. Check your profile password."));
 }
 
-#ifdef TO_REMOVE
-void IdEditDialog::idCreated(uint32_t token)
-{
-	if (!rsIdentity->acknowledgeGrp(token, mGroupId)) {
-		std::cerr << "IdDialog::idCreated() acknowledgeGrp failed";
-		std::cerr << std::endl;
-
-		reject();
-		return;
-	}
-
-	accept();
-}
-#endif
-
 void IdEditDialog::updateId()
 {
 	/* submit updated details */
@@ -630,21 +615,3 @@ void IdEditDialog::updateId()
 	accept();
 }
 
-#ifdef TO_REMOVE
-void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
-{
-	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-
-	switch (req.mUserType) {
-	case IDEDITDIALOG_LOADID:
-		loadExistingId(req.mToken);
-		break;
-
-	case IDEDITDIALOG_CREATEID:
-		idCreated(req.mToken);
-		break;
-	}
-
-}
-#endif

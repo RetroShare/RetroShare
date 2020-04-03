@@ -304,36 +304,6 @@ void NotifyQt::notifyDiscInfoChanged()
 	emit discInfoChanged() ;
 }
 
-#ifdef TO_REMOVE
-void NotifyQt::notifyDownloadComplete(const std::string& fileHash)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-#ifdef NOTIFY_DEBUG
-	std::cerr << "Notifyqt::notifyDownloadComplete notified that a download is completed" << std::endl;
-#endif
-
-	emit downloadComplete(QString::fromStdString(fileHash));
-}
-
-void NotifyQt::notifyDownloadCompleteCount(uint32_t count)
-{
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	std::cerr << "Notifyqt::notifyDownloadCompleteCount " << count << std::endl;
-
-	emit downloadCompleteCountChanged(count);
-}
-#endif
-
 void NotifyQt::notifyDiskFull(uint32_t loc,uint32_t size_in_mb)
 {
 	{
@@ -378,23 +348,6 @@ void NotifyQt::notifyPeerStatusChangedSummary()
 
 	emit peerStatusChangedSummary();
 }
-
-#ifdef TO_REMOVE
-void NotifyQt::notifyGxsChange(const RsGxsChanges& changes)
-{
-    {
-        QMutexLocker m(&_mutex) ;
-        if(!_enabled)
-            return ;
-    }
-
-#ifdef NOTIFY_DEBUG
-    std::cerr << "Notifyqt:: notified that gxs has changes" << std::endl;
-#endif
-
-    emit gxsChange(changes);
-}
-#endif
 
 void NotifyQt::notifyOwnStatusMessageChanged()
 {
@@ -538,35 +491,6 @@ void NotifyQt::notifyTurtleSearchResult(const RsPeerId& pid,uint32_t search_id,c
 		emit gotTurtleSearchResult(search_id,det) ;
 	}
 }
-
-#ifdef TO_REMOVE
-void NotifyQt::notifyHashingInfo(uint32_t type, const std::string& fileinfo)
-{
-	QString info;
-
-	{
-		QMutexLocker m(&_mutex) ;
-		if(!_enabled)
-			return ;
-	}
-
-	switch (type) {
-	case NOTIFY_HASHTYPE_EXAMINING_FILES:
-		info = tr("Examining shared files...");
-		break;
-	case NOTIFY_HASHTYPE_FINISH:
-		break;
-	case NOTIFY_HASHTYPE_HASH_FILE:
-		info = tr("Hashing file") + " " + QString::fromUtf8(fileinfo.c_str());
-		break;
-	case NOTIFY_HASHTYPE_SAVE_FILE_INDEX:
-		info = tr("Saving file index...");
-		break;
-	}
-
-	emit hashingInfoChanged(info);
-}
-#endif
 
 void NotifyQt::notifyHistoryChanged(uint32_t msgId, int type)
 {

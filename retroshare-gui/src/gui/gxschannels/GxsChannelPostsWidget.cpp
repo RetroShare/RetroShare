@@ -741,16 +741,6 @@ bool GxsChannelPostsWidget::insertGroupData(const RsGxsGenericGroupData *data)
 
 }
 
-#ifdef TO_REMOVE
-void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
-{
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
-
-	insertChannelPosts(posts, thread, false);
-}
-#endif
-
 void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& psts)
 {
     std::vector<RsGxsChannelPost> posts;
@@ -819,16 +809,6 @@ void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>&
 
 	insertChannelPosts(cposts, NULL, true);
 }
-
-#ifdef TO_REMOVE
-void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
-{
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
-
-	insertChannelPosts(posts, NULL, true);
-}
-#endif
 
 class GxsChannelPostsReadData
 {
