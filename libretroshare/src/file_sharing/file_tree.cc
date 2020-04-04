@@ -160,20 +160,23 @@ void RsFileTree::recurs_buildFileTree(
 }
 
 bool RsFileTree::getDirectoryContent(
-        std::string& name, std::vector<std::uintptr_t>& subdirs,
-        std::vector<FileData>& subfiles, std::uintptr_t index ) const
+        std::string& name, std::vector<uint64_t>& subdirs,
+        std::vector<FileData>& subfiles, uint64_t index_p ) const
 {
-	if(index >= mDirs.size())
-		return false ;
+	// Avoid warnings on Android armv7
+	using sz_t = std::vector<FileData>::size_type;
+	sz_t index = static_cast<sz_t>(index_p);
+
+	if(index >= mDirs.size()) return false;
 
 	name = mDirs[index].name;
 	subdirs = mDirs[index].subdirs ;
 
 	subfiles.clear() ;
-	for(uint32_t i=0;i<mDirs[index].subfiles.size();++i)
-		subfiles.push_back(mFiles[mDirs[index].subfiles[i]]);
+	for(sz_t i=0; i < mDirs[index].subfiles.size(); ++i)
+		subfiles.push_back(mFiles[static_cast<sz_t>(mDirs[index].subfiles[i])]);
 
-	return true ;
+	return true;
 }
 
 std::unique_ptr<RsFileTree> RsFileTree::fromDirDetails(

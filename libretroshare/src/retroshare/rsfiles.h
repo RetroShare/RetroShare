@@ -324,14 +324,14 @@ public:
 
 	/// Allow browsing the hierarchy
 	bool getDirectoryContent(
-	        std::string& name, std::vector<std::uintptr_t>& subdirs,
-	        std::vector<FileData>& subfiles, std::uintptr_t handle = 0 ) const;
+	        std::string& name, std::vector<uint64_t>& subdirs,
+	        std::vector<FileData>& subfiles, uint64_t handle = 0 ) const;
 
 	struct DirData: RsSerializable
 	{
 		std::string name;
-		std::vector<std::uintptr_t> subdirs;
-		std::vector<std::uintptr_t> subfiles;
+		std::vector<uint64_t> subdirs;
+		std::vector<uint64_t> subfiles;
 
 		void serial_process(
 		        RsGenericSerializer::SerializeJob j,
@@ -735,7 +735,7 @@ public:
 	 * @return false if error occurred, true otherwise
 	 */
 	virtual bool requestDirDetails(
-	        DirDetails &details, std::uintptr_t handle = 0,
+	        DirDetails &details, uint64_t handle = 0,
 	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL ) = 0;
 
 	/***
@@ -744,7 +744,7 @@ public:
 	/**
 	 * Kept for retrocompatibility, it was originally written for easier
 	 * interaction with Qt. As soon as you can, you should prefer to use the
-	 * version of this methodn which take `std::uintptr_t handle` as paramether.
+	 * version of this method which take `uint64_t handle` as paramether.
 	 */
 	RS_DEPRECATED_FOR(requestDirDetails)
 	virtual int RequestDirDetails(
@@ -927,7 +927,7 @@ public:
 	 * @return error information if some error occurred, 0/SUCCESS otherwise
 	 */
 	virtual std::error_condition exportCollectionLink(
-	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
+	        std::string& link, uint64_t handle, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL ) = 0;
 
 	/**
