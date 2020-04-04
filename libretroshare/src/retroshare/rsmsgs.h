@@ -356,7 +356,7 @@ struct RsMailStatusEvent : RsEvent
 #define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS   0x0001 
 #define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY      0x0002 
 
-struct DistantChatPeerInfo
+struct DistantChatPeerInfo : RsSerializable
 {
     DistantChatPeerInfo() : status(0),pending_items(0) {}
 
@@ -365,6 +365,16 @@ struct DistantChatPeerInfo
 	DistantChatPeerId peer_id ;	// this is the tunnel id actually
 	uint32_t status ;			// see the values in rsmsgs.h
     uint32_t pending_items;		// items not sent, waiting for a tunnel
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(to_id);
+		RS_SERIAL_PROCESS(own_id);
+		RS_SERIAL_PROCESS(peer_id);
+		RS_SERIAL_PROCESS(status);
+		RS_SERIAL_PROCESS(pending_items);
+	}
 };
 
 // Identifier for an chat endpoint like
@@ -990,7 +1000,7 @@ virtual bool initiateDistantChatConnexion(
 	 * @param[out] info distant chat info
 	 * @return true on success
 	 */
-	virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
+	virtual bool getDistantChatStatus(const DistantChatPeerId& pid, DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 	/**
