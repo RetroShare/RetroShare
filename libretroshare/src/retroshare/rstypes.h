@@ -304,10 +304,16 @@ struct DirDetails : RsSerializable
 	    type(DIR_TYPE_UNKNOWN), count(0), mtime(0), max_mtime(0) {}
 
 
+	/* G10h4ck do we still need to keep this as void* instead of uint64_t for
+	 * retroshare-gui sake? */
 	void* parent;
+
 	int prow; /* parent row */
 
+	/* G10h4ck do we still need to keep this as void* instead of uint64_t for
+	 * retroshare-gui sake? */
 	void* ref;
+
     uint8_t type;
     RsPeerId id;
     std::string name;
@@ -323,36 +329,18 @@ struct DirDetails : RsSerializable
 
 	/// @see RsSerializable
 	void serial_process(RsGenericSerializer::SerializeJob j,
-	                    RsGenericSerializer::SerializeContext& ctx)
+	                    RsGenericSerializer::SerializeContext& ctx) override
 	{
-#if defined(__GNUC__) && !defined(__clang__)
-#	pragma GCC diagnostic ignored "-Wstrict-aliasing"
-#endif // defined(__GNUC__) && !defined(__clang__)
+		/* Enforce serialization as uint64_t because void* changes size
+		 * depending (usually 4 bytes on 32bit arch and 8 bytes on 64bit archs)
+		 */
+		uint64_t handle = reinterpret_cast<uint64_t>(ref);
+		RS_SERIAL_PROCESS(handle);
+		ref = reinterpret_cast<void*>(handle);
 
-        // (Cyril) We have to do this because on some systems (MacOS) uintptr_t is unsigned long which is not well defined. It is always
-        // preferable to force type serialization to the correct size rather than letting the compiler choose for us.
-        // /!\ This structure cannot be sent over the network. The serialization would be inconsistent.
-
-		if(sizeof(ref) == 4)
-		{
-			std::uint32_t& handle(reinterpret_cast<std::uint32_t&>(ref));
-			RS_SERIAL_PROCESS(handle);
-			std::uint32_t& parentHandle(reinterpret_cast<std::uint32_t&>(parent));
-			RS_SERIAL_PROCESS(parentHandle);
-		}
-		else if(sizeof(ref) == 8)
-		{
-			std::uint64_t& handle(reinterpret_cast<std::uint64_t&>(ref));
-			RS_SERIAL_PROCESS(handle);
-			std::uint64_t& parentHandle(reinterpret_cast<std::uint64_t&>(parent));
-			RS_SERIAL_PROCESS(parentHandle);
-		}
-		else
-			std::cerr << __PRETTY_FUNCTION__ << ": cannot serialize raw pointer of size " << sizeof(ref) << std::endl;
-
-#if defined(__GNUC__) && !defined(__clang__)
-#	pragma GCC diagnostic pop
-#endif // defined(__GNUC__) && !defined(__clang__)
+		uint64_t parentHandle = reinterpret_cast<uint64_t>(parent);
+		RS_SERIAL_PROCESS(parentHandle);
+		parent = reinterpret_cast<void*>(parentHandle);
 
 		RS_SERIAL_PROCESS(prow);
 		RS_SERIAL_PROCESS(type);

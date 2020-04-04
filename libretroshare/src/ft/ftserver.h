@@ -225,7 +225,7 @@ public:
 
 	/// @see RsFiles
 	std::error_condition exportCollectionLink(
-	        std::string& link, std::uintptr_t handle, bool fragSneak = false,
+	        std::string& link, uint64_t handle, bool fragSneak = false,
 	        const std::string& baseUrl = RsFiles::DEFAULT_FILES_BASE_URL
 	        ) override;
 
@@ -279,7 +279,7 @@ public:
 
 	/// @see RsFiles::RequestDirDetails
 	virtual bool requestDirDetails(
-	        DirDetails &details, std::uintptr_t handle = 0,
+	        DirDetails &details, uint64_t handle = 0,
 	        FileSearchFlags flags = RS_FILE_HINTS_LOCAL );
 
     virtual bool findChildPointer(void *ref, int row, void *& result, FileSearchFlags flags) ;

@@ -345,12 +345,12 @@ std::error_condition ftServer::requestFiles(
 	// Track how many time a directory have been explored
 	std::vector<uint32_t> dirsSeenCnt(dirsCount, 0);
 	//                          <directory handle, parent path>
-	using StackEntry = std::tuple<std::uintptr_t, std::string>;
+	using StackEntry = std::tuple<uint64_t, std::string>;
 	std::deque<StackEntry> dStack = { std::make_tuple(0, basePath) };
 
 	const auto exploreDir = [&](const StackEntry& se)-> std::error_condition
 	{
-		std::uintptr_t dirHandle; std::string parentPath;
+		uint64_t dirHandle; std::string parentPath;
 		std::tie(dirHandle, parentPath) = se;
 
 		const auto& dirData = collection.mDirs[dirHandle];
@@ -843,7 +843,7 @@ bool ftServer::findChildPointer(void *ref, int row, void *& result, FileSearchFl
 }
 
 bool ftServer::requestDirDetails(
-        DirDetails &details, std::uintptr_t handle, FileSearchFlags flags )
+        DirDetails &details, uint64_t handle, FileSearchFlags flags )
 { return RequestDirDetails(reinterpret_cast<void*>(handle), details, flags); }
 
 int ftServer::RequestDirDetails(void *ref, DirDetails &details, FileSearchFlags flags)
@@ -2249,7 +2249,7 @@ std::error_condition ftServer::dirDetailsToLink(
 }
 
 std::error_condition ftServer::exportCollectionLink(
-        std::string& link, std::uintptr_t handle, bool fragSneak,
+        std::string& link, uint64_t handle, bool fragSneak,
         const std::string& baseUrl )
 {
 	DirDetails tDirDet;
