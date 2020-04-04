@@ -184,8 +184,8 @@ public:
 	 *                          value may be provided to the function call but
 	 *                          must habe been generated with
 	 *                          @see generateUniqueHandlerId()
-	 * @param eventType         Optional type of event for which the callback is
-	 *                          called, if NONE is passed multiCallback is
+	 * @param[in] eventType     Optional type of event for which the callback is
+	 *                          called, if __NONE is passed multiCallback is
 	 *                          called for every events without filtering.
 	 * @return False on error, true otherwise.
 	 */
