@@ -881,6 +881,13 @@ bool p3ChatService::handleRecvChatMsgItem(RsChatMsgItem *& ci)
     RsServer::notify()->notifyChatMessage(cm);
     
 	mHistoryMgr->addMessage(cm);
+
+	if(rsEvents)
+	{
+		auto ev = std::make_shared<RsChatMessageEvent>();
+		ev->mChatMessage = cm;
+		rsEvents->postEvent(ev);
+	}
     
     return true ;
 }

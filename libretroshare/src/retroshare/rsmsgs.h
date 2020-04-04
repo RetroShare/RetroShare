@@ -426,9 +426,8 @@ public:
 	}
 };
 
-class ChatMessage
+struct ChatMessage : RsSerializable
 {
-public:
     ChatId chat_id; // id of chat endpoint
     RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
     RsGxsId lobby_peer_gxs_id; // only used for lobbys: nickname of message author
@@ -441,6 +440,22 @@ public:
     bool incoming;
     bool online; // for outgoing messages: was this message send?
     //bool system_message;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(chat_id);
+		RS_SERIAL_PROCESS(broadcast_peer_id);
+		RS_SERIAL_PROCESS(lobby_peer_gxs_id);
+		RS_SERIAL_PROCESS(peer_alternate_nickname);
+
+		RS_SERIAL_PROCESS(chatflags);
+		RS_SERIAL_PROCESS(sendTime);
+		RS_SERIAL_PROCESS(recvTime);
+		RS_SERIAL_PROCESS(msg);
+		RS_SERIAL_PROCESS(incoming);
+		RS_SERIAL_PROCESS(online);
+	}
 };
 
 class ChatLobbyInvite : RsSerializable
@@ -967,7 +982,15 @@ virtual bool initiateDistantChatConnexion(
 	        const RsGxsId& to_pid, const RsGxsId& from_pid,
 	        DistantChatPeerId& pid, uint32_t& error_code,
 	        bool notify = true ) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
+
+	/**
+	 * @brief getDistantChatStatus receives distant chat info to a given distant chat id
+	 * @jsonapi{development}
+	 * @param[in] pid distant chat id
+	 * @param[out] info distant chat info
+	 * @return true on success
+	 */
+	virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 	/**
