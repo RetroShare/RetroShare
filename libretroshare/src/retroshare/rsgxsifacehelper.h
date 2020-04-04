@@ -85,8 +85,7 @@ public:
      * @param groupIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupList(const uint32_t &token,
-            std::list<RsGxsGroupId> &groupIds)
+    bool getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
 	{
 		return mGxs.getGroupList(token, groupIds);
 	}
@@ -119,8 +118,7 @@ public:
      * @param groupInfo the ids returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupSummary(const uint32_t &token,
-            std::list<RsGroupMetaData> &groupInfo)
+    bool getGroupSummary(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 	{
 		return mGxs.getGroupMeta(token, groupInfo);
 	}
@@ -130,8 +128,7 @@ public:
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgSummary(const uint32_t &token,
-            GxsMsgMetaMap &msgInfo)
+    bool getMsgSummary(const uint32_t &token, GxsMsgMetaMap &msgInfo)
 	{
 		return mGxs.getMsgMeta(token, msgInfo);
 	}
