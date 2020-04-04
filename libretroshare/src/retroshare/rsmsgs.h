@@ -982,7 +982,15 @@ virtual bool initiateDistantChatConnexion(
 	        const RsGxsId& to_pid, const RsGxsId& from_pid,
 	        DistantChatPeerId& pid, uint32_t& error_code,
 	        bool notify = true ) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
+
+	/**
+	 * @brief getDistantChatStatus receives distant chat info to a given distant chat id
+	 * @jsonapi{development}
+	 * @param[in] pid distant chat id
+	 * @param[out] info distant chat info
+	 * @return true on success
+	 */
+	virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
 virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 	/**
