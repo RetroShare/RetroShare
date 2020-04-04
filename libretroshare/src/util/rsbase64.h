@@ -2,6 +2,7 @@
  *                                                                             *
  * libretroshare base64 encoding utilities                                     *
  *                                                                             *
+ * Copyright (C) 2015  Retroshare Team <contact@retroshare.cc>                 *
  * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
