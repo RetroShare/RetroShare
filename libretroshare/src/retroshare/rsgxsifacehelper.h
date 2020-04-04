@@ -355,7 +355,7 @@ public:
 	{ return mTokenService.requestStatus(token); }
 
 	/// @see RsTokenService::requestServiceStatistic
-	void requestServiceStatistic(uint32_t& token)
+	bool requestServiceStatistic(uint32_t& token)
 	{
         mTokenService.requestServiceStatistic(token);
 
@@ -363,6 +363,7 @@ public:
 		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
 
 		locked_dumpTokens();
+        return true;
     }
 
 	/// @see RsTokenService::requestGroupStatistic

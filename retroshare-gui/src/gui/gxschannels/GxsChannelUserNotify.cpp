@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsgxschannels.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/MainWindow.h"
 
@@ -32,6 +33,11 @@ bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 	if (group) *group = "Channel";
 
 	return true;
+}
+
+bool GxsChannelUserNotify::getServiceStatistics(GxsServiceStatistic& stat)
+{
+    return rsGxsChannels->getChannelServiceStatistics(stat);
 }
 
 QIcon GxsChannelUserNotify::getIcon()

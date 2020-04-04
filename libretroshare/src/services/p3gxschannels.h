@@ -204,6 +204,9 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
     /// Implementation of @see RsGxsChannels::getChannelStatistics
     bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) override;
 
+    /// Iplementation of @see RsGxsChannels::getChannelServiceStatistics
+    bool getChannelServiceStatistics(GxsServiceStatistic& stat) override;
+
 	/// Implementation of @see RsGxsChannels::createChannelV2
 	bool createChannelV2(
 	        const std::string& name, const std::string& description,
