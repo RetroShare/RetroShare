@@ -277,7 +277,7 @@ void RsCollection::recursAddElements(
         QDomDocument& doc, const RsFileTree& ft, uint32_t index,
         QDomElement& e ) const
 {
-	std::vector<std::uintptr_t> subdirs;
+	std::vector<uint64_t> subdirs;
 	std::vector<RsFileTree::FileData> subfiles ;
 	std::string name;
 	if(!ft.getDirectoryContent(name, subdirs, subfiles, index)) return;
