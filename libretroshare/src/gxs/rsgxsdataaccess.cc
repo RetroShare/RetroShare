@@ -771,29 +771,32 @@ void RsGxsDataAccess::processRequests()
 		clearRequest(*cit);
 	}
 
+    // We hve to make a copy of the mRequest list because it can be modified while we treat the requests.
+    // This may happen because the mutex cannot be added around the full loop since it takes too much time.
+
+    std::map<uint32_t,GxsRequest*> request_list_copy;
+
+    {
+        RS_STACK_MUTEX(mDataMutex);
+        request_list_copy = mRequests;
+    }
 	// process requests
 	while (true)
 	{
 		GxsRequest* req = NULL;
 		{
-			RsStackMutex stack(mDataMutex); /******* LOCKED *******/
-
 			// get the first pending request
-			for (it = mRequests.begin(); it != mRequests.end(); ++it)
-			{
-				GxsRequest* reqCheck = it->second;
-				if (reqCheck->status == PENDING)
+			for (auto it:request_list_copy)
+				if (it.second->status == PENDING)
 				{
-					req = reqCheck;
+					req = it.second;
 					req->status = PARTIAL;
 					break;
 				}
-			}
-		} // END OF MUTEX.
-
-		if (!req) {
-			break;
 		}
+
+		if (!req)
+			break;
 
 		GroupMetaReq* gmr;
 		GroupDataReq* gdr;
