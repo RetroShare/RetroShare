@@ -22,11 +22,11 @@
 //#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include "retroshare/rsgxsifacehelper.h"
+#include "util/qtthreadsutils.h"
 
 #define TOKEN_TYPE_STATISTICS  1
 
-GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    UserNotify(parent), TokenResponse()
+GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) : UserNotify(parent)
 {
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;
