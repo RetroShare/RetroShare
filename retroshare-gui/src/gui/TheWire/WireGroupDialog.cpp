@@ -56,13 +56,13 @@ uint32_t WireCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC	|
 uint32_t WireEditEnabledFlags = WireCreateEnabledFlags;
 uint32_t WireEditDefaultsFlags = WireCreateDefaultsFlags;
 
-WireGroupDialog::WireGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-	: GxsGroupDialog(tokenQueue, WireCreateEnabledFlags, WireCreateDefaultsFlags, parent)
+WireGroupDialog::WireGroupDialog(QWidget *parent)
+	: GxsGroupDialog(WireCreateEnabledFlags, WireCreateDefaultsFlags, parent)
 {
 }
 
-WireGroupDialog::WireGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-	: GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, WireEditEnabledFlags, WireEditDefaultsFlags, parent)
+WireGroupDialog::WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
+	: GxsGroupDialog(mode, groupId, WireEditEnabledFlags, WireEditDefaultsFlags, parent)
 {
 }
 
@@ -115,54 +115,43 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 
 }
 
-bool WireGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
+bool WireGroupDialog::service_createGroup(RsGroupMetaData &meta)
 {
-	// Specific Function.
 	RsWireGroup grp;
 	prepareWireGroup(grp, meta);
 
-	rsWire->createGroup(token, grp);
-	return true;
+	bool success = rsWire->createGroup(grp);
+	// TODO createGroup should refresh groupId or Data
+	return success;
 }
 
-bool WireGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
+bool WireGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 {
 	RsWireGroup grp;
 	prepareWireGroup(grp, editedMeta);
 
-	std::cerr << "WireGroupDialog::service_EditGroup() submitting changes";
+	std::cerr << "WireGroupDialog::service_updateGroup() submitting changes";
 	std::cerr << std::endl;
 
-	// TODO: no interface here, yet.
-	// rsWire->updateGroup(token, grp);
-	return true;
+	bool success = rsWire->updateGroup(grp);
+	// TODO updateGroup should refresh groupId or Data
+	return success;
 }
 
-bool WireGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description)
 {
-	std::cerr << "WireGroupDialog::service_loadGroup(" << token << ")";
+	std::cerr << "WireGroupDialog::service_loadGroup()";
 	std::cerr << std::endl;
 
-	std::vector<RsWireGroup> groups;
-	if (!rsWire->getGroupData(token, groups))
+	const RsWireGroup *pgroup = dynamic_cast<const RsWireGroup*>(data);
+	if (pgroup == nullptr)
 	{
-		std::cerr << "WireGroupDialog::service_loadGroup() Error getting GroupData";
+		std::cerr << "WireGroupDialog::service_loadGroup() Error not a RsWireGroup";
 		std::cerr << std::endl;
 		return false;
 	}
 
-	if (groups.size() != 1)
-	{
-		std::cerr << "WireGroupDialog::service_loadGroup() Error Group.size() != 1";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	std::cerr << "WireGroupDialog::service_loadGroup() Unfinished Loading";
-	std::cerr << std::endl;
-
-	const RsWireGroup &group = groups[0];
-	groupMetaData = group.mMeta;
+	const RsWireGroup &group = *pgroup;
 	description = QString::fromUtf8(group.mDescription.c_str());
 
 #if 0
@@ -176,5 +165,30 @@ bool WireGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMe
 	}
 #endif
 
+	return true;
+}
+
+bool WireGroupDialog::service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data)
+{
+	std::cerr << "WireGroupDialog::service_getGroupData(" << grpId << ")";
+	std::cerr << std::endl;
+
+	std::list<RsGxsGroupId> groupIds({grpId});
+	std::vector<RsWireGroup> groups;
+	if (!rsWire->getGroups(groupIds, groups))
+	{
+		std::cerr << "WireGroupDialog::service_loadGroup() Error getting GroupData";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	if (groups.size() != 1)
+	{
+		std::cerr << "WireGroupDialog::service_loadGroup() Error Group.size() != 1";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	data = new RsWireGroup(groups[0]);
 	return true;
 }

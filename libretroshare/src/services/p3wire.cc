@@ -64,11 +64,14 @@ uint32_t p3Wire::wireAuthenPolicy()
 
 	// Edits generally need an authors signature.
 
+	// Wire requires all TopLevel (Orig/Reply) msgs to be signed with both PUBLISH & AUTHOR.
+	// Reply References need to be signed by Author.
 	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 
-	flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
-	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+	// expect the requirements to be the same for RESTRICTED / PRIVATE groups too.
+	// This needs to be worked through / fully evaluated.
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
@@ -203,6 +206,38 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse)
 
 	RsGenExchange::publishMsg(token, pulseItem);
 	return true;
+}
+
+// Blocking Interfaces.
+bool p3Wire::createGroup(RsWireGroup &group)
+{
+	uint32_t token;
+	return createGroup(token, group) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3Wire::updateGroup(const RsWireGroup &group)
+{
+	// TODO
+	return false;
+}
+
+bool p3Wire::getGroups(const std::list<RsGxsGroupId> groupIds, std::vector<RsWireGroup> &groups)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	if (groupIds.empty())
+	{
+		if (!requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	else
+	{
+		if (!requestGroupInfo(token, opts, groupIds) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	return getGroupData(token, groups) && !groups.empty();
 }
 
 

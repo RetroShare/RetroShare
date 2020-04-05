@@ -32,7 +32,7 @@ class PulseHolder
 public:
 	virtual ~PulseHolder() {}
 	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifySelection(PulseItem *item, int ptype) = 0;
+	virtual void notifyPulseSelection(PulseItem *item) = 0;
 
 	// Actions.
 	virtual void follow(RsGxsGroupId &groupId) = 0;
@@ -47,8 +47,9 @@ class PulseItem : public QWidget, private Ui::PulseItem
 
 public:
 	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group);
+	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
 
+	rstime_t publishTs();
 	void removeItem();
 
 	void setSelected(bool on);

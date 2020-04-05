@@ -29,15 +29,16 @@ class WikiGroupDialog : public GxsGroupDialog
 	Q_OBJECT
 
 public:
-	WikiGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WikiGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
+	WikiGroupDialog(QWidget *parent);
+	WikiGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent = NULL);
 
 protected:
-	virtual void initUi();
-	virtual QPixmap serviceImage();
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData& groupMetaData);
+	virtual void initUi() override;
+	virtual QPixmap serviceImage() override;
+	virtual bool service_createGroup(RsGroupMetaData &meta) override;
+	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
+	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
+	virtual bool service_getGroupData(const RsGxsGroupId &groupId, RsGxsGenericGroupData *&data) override;
 
 private:
 
