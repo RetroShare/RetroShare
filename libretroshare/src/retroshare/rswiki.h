@@ -69,21 +69,16 @@ class CollectionRef
         std::string CollectionId;
 };
 
-
-class RsWikiCollection
+struct RsWikiCollection: RsGxsGenericGroupData
 {
 	public:
-
-	RsGroupMetaData mMeta;
-
 	std::string mDescription;
 	std::string mCategory;
 
 	std::string mHashTags;
 
-        //std::map<std::string, CollectionRef> linkReferences;
+	// std::map<std::string, CollectionRef> linkReferences;
 };
-
 
 class RsWikiSnapshot
 {
@@ -128,6 +123,11 @@ virtual bool submitSnapshot(uint32_t &token, RsWikiSnapshot &snapshot) = 0;
 virtual bool submitComment(uint32_t &token, RsWikiComment &comment) = 0;
 
 virtual bool updateCollection(uint32_t &token, RsWikiCollection &collection) = 0;
+
+	// Blocking Interfaces.
+virtual bool createCollection(RsWikiCollection &collection) = 0;
+virtual bool updateCollection(const RsWikiCollection &collection) = 0;
+virtual bool getCollections(const std::list<RsGxsGroupId> groupIds, std::vector<RsWikiCollection> &groups) = 0;
 
 };
 

@@ -62,13 +62,13 @@ uint32_t AlbumCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 uint32_t AlbumEditEnabledFlags = AlbumCreateEnabledFlags;
 uint32_t AlbumEditDefaultsFlags = AlbumCreateDefaultsFlags;
 
-AlbumGroupDialog::AlbumGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-    : GxsGroupDialog(tokenQueue, AlbumCreateEnabledFlags, AlbumCreateDefaultsFlags, parent)
+AlbumGroupDialog::AlbumGroupDialog(QWidget *parent)
+    : GxsGroupDialog(AlbumCreateEnabledFlags, AlbumCreateDefaultsFlags, parent)
 {
 }
 
-AlbumGroupDialog::AlbumGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, AlbumEditEnabledFlags, AlbumEditDefaultsFlags, parent)
+AlbumGroupDialog::AlbumGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
+    : GxsGroupDialog(mode, groupId, AlbumEditEnabledFlags, AlbumEditDefaultsFlags, parent)
 {
 }
 
@@ -129,54 +129,44 @@ void AlbumGroupDialog::prepareAlbumGroup(RsPhotoAlbum &group, const RsGroupMetaD
     group.mWhen = mAlbumExtra->getWhen();
 }
 
-bool AlbumGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
+bool AlbumGroupDialog::service_createGroup(RsGroupMetaData &meta)
 {
     // Specific Function.
     RsPhotoAlbum grp;
     prepareAlbumGroup(grp, meta);
 
-    rsPhoto->submitAlbumDetails(token, grp);
-    return true;
+    bool success = rsPhoto->createAlbum(grp);
+    // TODO createAlbum should refresh groupId or GroupObj.
+    return success;
 }
 
-bool AlbumGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
+bool AlbumGroupDialog::service_updateGroup(const RsGroupMetaData &editedMeta)
 {
     RsPhotoAlbum grp;
     prepareAlbumGroup(grp, editedMeta);
 
-    std::cerr << "AlbumGroupDialog::service_EditGroup() submitting changes";
+    std::cerr << "AlbumGroupDialog::service_updateGroup() submitting changes";
     std::cerr << std::endl;
 
-    // TODO: no interface here, yet.
-    // rsPhoto->updateGroup(token, grp);
-    return true;
+    bool success = rsPhoto->updateAlbum(grp);
+    // TODO updateAlbum should refresh groupId or GroupObj.
+    return success;
 }
 
-bool AlbumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool AlbumGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode /*mode*/, QString &description)
 {
-    std::cerr << "AlbumGroupDialog::service_loadGroup(" << token << ")";
+    std::cerr << "AlbumGroupDialog::service_loadGroup()";
     std::cerr << std::endl;
 
-    std::vector<RsPhotoAlbum> groups;
-    if (!rsPhoto->getAlbum(token, groups))
+    const RsPhotoAlbum *pgroup = dynamic_cast<const RsPhotoAlbum*>(data);
+
+    if(pgroup == nullptr)
     {
-        std::cerr << "AlbumGroupDialog::service_loadGroup() Error getting GroupData";
-        std::cerr << std::endl;
+        std::cerr << "AlbumGroupDialog::service_loadGroup() Error not a RsPhotoAlbum" << std::endl;
         return false;
     }
 
-    if (groups.size() != 1)
-    {
-        std::cerr << "AlbumGroupDialog::service_loadGroup() Error Group.size() != 1";
-        std::cerr << std::endl;
-        return false;
-    }
-
-    std::cerr << "AlbumGroupDialog::service_loadGroup() Unfinished Loading";
-    std::cerr << std::endl;
-
-    const RsPhotoAlbum &group = groups[0];
-    groupMetaData = group.mMeta;
+    const RsPhotoAlbum& group = *pgroup;
     description = QString::fromUtf8(group.mDescription.c_str());
     
     if (group.mThumbnail.mData) {
@@ -197,3 +187,29 @@ bool AlbumGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupM
 
     return true;
 }
+
+bool AlbumGroupDialog::service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data)
+{
+    std::cerr << "AlbumGroupDialog::service_getGroupData(" << grpId << ")";
+    std::cerr << std::endl;
+
+    std::list<RsGxsGroupId> groupIds({grpId});
+    std::vector<RsPhotoAlbum> groups;
+    if (!rsPhoto->getAlbums(groupIds, groups))
+    {
+        std::cerr << "AlbumGroupDialog::service_getGroupData() Error getting GroupData";
+        std::cerr << std::endl;
+        return false;
+    }
+
+    if (groups.size() != 1)
+    {
+        std::cerr << "AlbumGroupDialog::service_getGroupData() Error Group.size() != 1";
+        std::cerr << std::endl;
+        return false;
+    }
+
+    data = new RsPhotoAlbum(groups[0]);
+    return true;
+}
+

@@ -206,7 +206,7 @@ void WireDialog::checkUpdate()
 
 void WireDialog::createGroup()
 {
-	WireGroupDialog wireCreate(mWireQueue, this);
+	WireGroupDialog wireCreate(this);
 	wireCreate.exec();
 }
 

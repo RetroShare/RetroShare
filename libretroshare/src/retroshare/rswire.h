@@ -34,14 +34,11 @@
 class RsWire;
 extern RsWire *rsWire;
 
-class RsWireGroup
+struct RsWireGroup: RsGxsGenericGroupData
 {
 	public:
-
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 };
-
 
 
 /***********************************************************************
@@ -153,6 +150,11 @@ virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulse
 
 virtual bool createGroup(uint32_t &token, RsWireGroup &group) = 0;
 virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) = 0;
+
+	// Blocking Interfaces.
+virtual bool createGroup(RsWireGroup &group) = 0;
+virtual bool updateGroup(const RsWireGroup &group) = 0;
+virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) = 0;
 
 };
 

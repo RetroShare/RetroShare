@@ -317,3 +317,38 @@ bool p3PhotoService::subscribeToAlbum(uint32_t &token, const RsGxsGroupId &grpId
 	return true;
 }
 
+// Blocking versions =============================================================
+
+bool p3PhotoService::createAlbum(RsPhotoAlbum &album)
+{
+	uint32_t token;
+	return submitAlbumDetails(token, album) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3PhotoService::updateAlbum(const RsPhotoAlbum &album)
+{
+	// TODO
+	return false;
+}
+
+bool p3PhotoService::getAlbums(const std::list<RsGxsGroupId> &groupIds,
+			std::vector<RsPhotoAlbum> &albums)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	if (groupIds.empty())
+	{
+		if (!requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	else
+	{
+		if (!requestGroupInfo(token, opts, groupIds) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+
+	return getAlbum(token, albums) && !albums.empty();
+}
+

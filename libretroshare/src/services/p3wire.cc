@@ -208,6 +208,38 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse)
 	return true;
 }
 
+// Blocking Interfaces.
+bool p3Wire::createGroup(RsWireGroup &group)
+{
+	uint32_t token;
+	return createGroup(token, group) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3Wire::updateGroup(const RsWireGroup &group)
+{
+	// TODO
+	return false;
+}
+
+bool p3Wire::getGroups(const std::list<RsGxsGroupId> groupIds, std::vector<RsWireGroup> &groups)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	if (groupIds.empty())
+	{
+		if (!requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	else
+	{
+		if (!requestGroupInfo(token, opts, groupIds) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	return getGroupData(token, groups) && !groups.empty();
+}
+
 
 std::ostream &operator<<(std::ostream &out, const RsWireGroup &group)
 {

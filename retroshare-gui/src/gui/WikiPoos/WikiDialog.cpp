@@ -181,7 +181,7 @@ void WikiDialog::OpenOrShowAddGroupDialog()
 
 void WikiDialog::newGroup()
 {
-	WikiGroupDialog cf(mWikiQueue, this);
+	WikiGroupDialog cf(this);
 	cf.exec ();
 }
 
@@ -195,7 +195,7 @@ void WikiDialog::showGroupDetails()
 		return;
 	}
 
-	WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_SHOW, groupId, this);
+	WikiGroupDialog cf(GxsGroupDialog::MODE_SHOW, groupId, this);
 	cf.exec ();
 }
 
@@ -209,7 +209,7 @@ void WikiDialog::editGroupDetails()
 		return;
 	}
 
-	WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_EDIT, groupId, this);
+	WikiGroupDialog cf(GxsGroupDialog::MODE_EDIT, groupId, this);
 	cf.exec ();
 }
 
