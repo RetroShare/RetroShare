@@ -22,6 +22,7 @@
 #ifndef RSGXSDATAACCESS_H
 #define RSGXSDATAACCESS_H
 
+#include <queue>
 #include "retroshare/rstokenservice.h"
 #include "rsgxsrequesttypes.h"
 #include "rsgds.h"
@@ -29,6 +30,8 @@
 
 typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
 typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
+
+bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2);
 
 class RsGxsDataAccess : public RsTokenService
 {
@@ -485,6 +488,7 @@ private:
     bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
 private:
+    bool locked_clearRequest(const uint32_t &token);
 
     RsGeneralDataService* mDataStore;
 
@@ -492,10 +496,9 @@ private:
 
     uint32_t mNextToken;
 	std::map<uint32_t, GxsRequestStatus> mPublicToken;
-    std::map<uint32_t, GxsRequest*> mRequests;
 
-
-
+    std::set<std::pair<uint32_t,GxsRequest*> > mRequestQueue;
+    std::map<uint32_t, GxsRequest*> mCompletedRequests;
 };
 
 #endif // RSGXSDATAACCESS_H

@@ -26,6 +26,14 @@
 #include "gxs/rsgds.h"
 #include "util/rsdeprecate.h"
 
+enum class GxsRequestPriority {
+    VERY_HIGH      =  0x00,
+    HIGH           =  0x01,
+    NORMAL         =  0x02,
+    LOW            =  0x03,
+    VERY_LOW       =  0x04,
+};
+
 struct GxsRequest
 {
 	GxsRequest() :
@@ -38,6 +46,7 @@ struct GxsRequest
 
 	RS_DEPRECATED uint32_t ansType; /// G10h4ck: This is of no use
 	uint32_t reqType;
+    GxsRequestPriority priority;
 	RsTokReqOptions Options;
 
 	RsTokenService::GxsRequestStatus status;
