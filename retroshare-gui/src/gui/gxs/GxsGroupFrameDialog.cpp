@@ -182,7 +182,9 @@ void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 		initUi();
 	}
 
-    bool empty = mCachedGroupMetas.empty();
+    uint32_t children =  mYourGroups->childCount() + mSubscribedGroups->childCount() + mPopularGroups->childCount() + mOtherGroups->childCount();
+
+    bool empty = mCachedGroupMetas.empty() || children==0;
 
     updateDisplay( empty );
 }
