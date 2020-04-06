@@ -274,7 +274,7 @@ private:
      * @param token the value of the token for the request object handle wanted
      * @return the request associated to this token
      */
-    GxsRequest* locked_retrieveRequest(const uint32_t& token);
+    GxsRequest* locked_retrieveCompetedRequest(const uint32_t& token);
 
     /*!
      * Add a gxs request to queue
