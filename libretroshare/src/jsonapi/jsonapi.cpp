@@ -395,7 +395,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			auto retval = rsEvents->registerEventsHandler(
+			std::error_condition retval = rsEvents->registerEventsHandler(
 			            multiCallback, hId, eventType );
 
 			{
