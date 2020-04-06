@@ -64,8 +64,8 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
         switch(e->mChannelEventCode)
         {
-		case RsChannelEventCode::NEW_MESSAGE:
-		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
+		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_MESSAGE:
 		case RsChannelEventCode::READ_STATUS_CHANGED:
 			updateMessageSummaryList(e->mChannelGroupId);
             break;

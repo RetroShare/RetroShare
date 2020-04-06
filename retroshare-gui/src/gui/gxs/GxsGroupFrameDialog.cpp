@@ -182,7 +182,26 @@ void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 		initUi();
 	}
 
-    updateDisplay( mCachedGroupMetas.empty() );
+    bool empty = mCachedGroupMetas.empty();
+
+    updateDisplay( empty );
+}
+
+void GxsGroupFrameDialog::paintEvent(QPaintEvent *pe)
+{
+	if(mShouldUpdateMessageSummaryList)
+	{
+		if(!mGroupIdsSummaryToUpdate.empty())
+			for(auto& group_id: mGroupIdsSummaryToUpdate)
+				updateMessageSummaryListReal(group_id);
+		else
+			updateMessageSummaryListReal(RsGxsGroupId());
+
+		mShouldUpdateMessageSummaryList = false;
+		mGroupIdsSummaryToUpdate.clear();
+	}
+
+    MainPage::paintEvent(pe);
 }
 
 void GxsGroupFrameDialog::processSettings(bool load)
@@ -988,6 +1007,18 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 }
 
 void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
+{
+    // groupId.isNull() means that we need to update all groups so we clear up the list of groups to update.
+
+    if(!groupId.isNull())
+        mGroupIdsSummaryToUpdate.insert(groupId);
+    else
+        mGroupIdsSummaryToUpdate.clear();
+
+    mShouldUpdateMessageSummaryList = true;
+}
+
+void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 {
 	if (!mInitialized) {
 		return;

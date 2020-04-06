@@ -335,14 +335,6 @@ RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)
 	uint32_t anstype;
 	rstime_t ts;
 
-//	{
-//		RS_STACK_MUTEX(mDataMutex);
-//
-//		// first check public tokens
-//		if(mPublicToken.find(token) != mPublicToken.end())
-//			return mPublicToken[token];
-//	}
-
 	if (!checkRequestStatus(token, status, reqtype, anstype, ts))
 		return RsTokenService::FAILED;
 
@@ -724,9 +716,6 @@ GxsRequest* RsGxsDataAccess::locked_retrieveCompetedRequest(const uint32_t& toke
 void RsGxsDataAccess::processRequests()
 {
 	// process requests
-#ifdef DATA_DEBUG
-    RsDbg() << "processing requests" << std::endl;
-#endif
 
 	while (!mRequestQueue.empty())
 	{
@@ -762,6 +751,7 @@ void RsGxsDataAccess::processRequests()
                 case PENDING:
                     req = mRequestQueue.begin()->second;
 					req->status = PARTIAL;
+					mRequestQueue.erase(mRequestQueue.begin()); // remove it right away from the waiting queue.
                     break;
                 }
 
@@ -1486,7 +1476,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
 
-    std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
+    const std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
 
     req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();

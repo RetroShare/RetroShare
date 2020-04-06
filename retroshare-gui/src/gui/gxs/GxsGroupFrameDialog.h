@@ -81,7 +81,8 @@ public:
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
 protected:
-	virtual void showEvent(QShowEvent *event);
+	virtual void showEvent(QShowEvent *event) override;
+	virtual void paintEvent(QPaintEvent *pe) override;
 	virtual void updateDisplay(bool complete);
 
 	const RsGxsGroupId &groupId() { return mGroupId; }
@@ -159,6 +160,7 @@ private:
 
 	void initUi();
 
+	void updateMessageSummaryListReal(RsGxsGroupId groupId);
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
 
@@ -208,6 +210,9 @@ private:
 
 	RsGxsGroupId mNavigatePendingGroupId;
 	RsGxsMessageId mNavigatePendingMsgId;
+
+	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
+    std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
 
 	UIStateHelper *mStateHelper;
 
