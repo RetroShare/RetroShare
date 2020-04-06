@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2020  Retroshare Team <contact@retroshare.cc>            *
+ * Copyright (C) 2019-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -97,8 +99,59 @@ enum class RsEventType : uint32_t
 	/// @see RsMsgs
 	CHAT_MESSAGE                                            = 15,
 
-	__MAX /// Used internally to detect invalid event type passed
+	__MAX /// Used internally, keep last
 };
+
+enum class RsEventsErrorNum : int32_t
+{
+	EVENT_TYPE_UNDEFINED             = 3004,
+	EVENT_TYPE_OUT_OF_RANGE          = 3005,
+	INVALID_HANDLER_ID               = 3006,
+	NULL_EVENT_POINTER               = 3007
+};
+
+struct RsEventsErrorCategory: std::error_category
+{
+	const char* name() const noexcept override
+	{ return "RetroShare Events"; }
+
+	std::string message(int ev) const override
+	{
+		switch (static_cast<RsEventsErrorNum>(ev))
+		{
+		case RsEventsErrorNum::EVENT_TYPE_UNDEFINED:
+			return "Undefined event type";
+		case RsEventsErrorNum::EVENT_TYPE_OUT_OF_RANGE:
+			return "Event type out of range";
+		case RsEventsErrorNum::INVALID_HANDLER_ID:
+			return "Invalid handler id";
+		default:
+			return "Error message for error: " + std::to_string(ev) +
+			        " not available in category: " + name();
+		}
+	}
+
+	std::error_condition default_error_condition(int ev) const noexcept override;
+
+	const static RsEventsErrorCategory instance;
+};
+
+
+namespace std
+{
+/** Register RsJsonApiErrorNum as an error condition enum, must be in std
+ * namespace */
+template<> struct is_error_condition_enum<RsEventsErrorNum> : true_type {};
+}
+
+/** Provide RsEventsErrorNum conversion to std::error_condition, must be in
+ * same namespace of RsJsonApiErrorNum */
+inline std::error_condition make_error_condition(RsEventsErrorNum e) noexcept
+{
+	return std::error_condition(
+	            static_cast<int>(e), RsEventsErrorCategory::instance );
+};
+
 
 /**
  * This struct is not meant to be used directly, you should create events type
@@ -144,12 +197,10 @@ public:
 	 * @param[in] event
 	 * @param[out] errorMessage Optional storage for error messsage, meaningful
 	 *                          only on failure.
-	 * @return False on error, true otherwise.
+	 * @return Success or error details.
 	 */
-	virtual bool postEvent(
-	        std::shared_ptr<const RsEvent> event,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) = 0;
+	virtual std::error_condition postEvent(
+	        std::shared_ptr<const RsEvent> event ) = 0;
 
 	/**
 	 * @brief Send event directly to handlers. Blocking API
@@ -157,12 +208,10 @@ public:
 	 * @param[in] event
 	 * @param[out] errorMessage Optional storage for error messsage, meaningful
 	 *                          only on failure.
-	 * @return False on error, true otherwise.
+	 * @return Success or error details.
 	 */
-	virtual bool sendEvent(
-	        std::shared_ptr<const RsEvent> event,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) = 0;
+	virtual std::error_condition sendEvent(
+	        std::shared_ptr<const RsEvent> event ) = 0;
 
 	/**
 	 * @brief Generate unique handler identifier
@@ -187,9 +236,9 @@ public:
 	 * @param[in] eventType     Optional type of event for which the callback is
 	 *                          called, if __NONE is passed multiCallback is
 	 *                          called for every events without filtering.
-	 * @return False on error, true otherwise.
+	 * @return Success or error details.
 	 */
-	virtual bool registerEventsHandler(
+	virtual std::error_condition registerEventsHandler(
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0),
 	        RsEventType eventType = RsEventType::__NONE ) = 0;
@@ -197,9 +246,10 @@ public:
 	/**
 	 * @brief Unregister event handler
 	 * @param[in] hId Id of the event handler to unregister
-	 * @return True if the handler id has been found, false otherwise.
+	 * @return Success or error details.
 	 */
-	virtual bool unregisterEventsHandler(RsEventsHandlerId_t hId) = 0;
+	virtual std::error_condition unregisterEventsHandler(
+	        RsEventsHandlerId_t hId ) = 0;
 
 	virtual ~RsEvents();
 };

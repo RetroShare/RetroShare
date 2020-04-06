@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright (C) 2019  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2019-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Retroshare Team <contact@retroshare.cc>            *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -27,64 +29,62 @@
 
 
 /*extern*/ RsEvents* rsEvents = nullptr;
-RsEvent::~RsEvent() {};
-RsEvents::~RsEvents() {};
 
-bool isEventValid(
-        std::shared_ptr<const RsEvent> event, std::string& errorMessage )
+RsEvent::~RsEvent() = default;
+RsEvents::~RsEvents() = default;
+
+/*static*/ const RsEventsErrorCategory RsEventsErrorCategory::instance;
+
+std::error_condition RsEventsErrorCategory::default_error_condition(int ev)
+const noexcept
 {
-	if(!event)
+	switch(static_cast<RsEventsErrorNum>(ev))
 	{
-		errorMessage = "Event is null!";
-		return false;
+	case RsEventsErrorNum::INVALID_HANDLER_ID: // [[fallthrough]];
+	case RsEventsErrorNum::NULL_EVENT_POINTER: // [[fallthrough]];
+	case RsEventsErrorNum::EVENT_TYPE_UNDEFINED: // [[fallthrough]];
+	case RsEventsErrorNum::EVENT_TYPE_OUT_OF_RANGE:
+		return std::errc::invalid_argument;
+	default:
+		return std::error_condition(ev, *this);
 	}
-
-	if(event->mType <= RsEventType::__NONE)
-	{
-		errorMessage = "Event has type NONE: " +
-		        std::to_string(
-		            static_cast<std::underlying_type<RsEventType>::type >(
-		                event->mType ) );
-		return false;
-	}
-
-	if(event->mType >= RsEventType::__MAX)
-	{
-		errorMessage = "Event has type >= RsEventType::__MAX: " +
-		        std::to_string(
-		            static_cast<std::underlying_type<RsEventType>::type >(
-		                event->mType ) );
-	}
-
-	return true;
 }
 
-bool RsEventsService::postEvent( std::shared_ptr<const RsEvent> event,
-                                 std::string& errorMessage )
+std::error_condition RsEventsService::isEventTypeInvalid(RsEventType eventType)
 {
-	if(!isEventValid(event, errorMessage))
-	{
-		std::cerr << __PRETTY_FUNCTION__ << " Error: "<< errorMessage
-		          << std::endl;
-		return false;
-	}
+	if(eventType == RsEventType::__NONE)
+		return RsEventsErrorNum::EVENT_TYPE_UNDEFINED;
+
+	if( eventType < RsEventType::__NONE ||
+	        eventType >= static_cast<RsEventType>(mHandlerMaps.size()) )
+		return RsEventsErrorNum::EVENT_TYPE_OUT_OF_RANGE;
+
+	return std::error_condition();
+}
+
+std::error_condition RsEventsService::isEventInvalid(
+        std::shared_ptr<const RsEvent> event)
+{
+	if(!event) return RsEventsErrorNum::NULL_EVENT_POINTER;
+	return isEventTypeInvalid(event->mType);
+}
+
+std::error_condition RsEventsService::postEvent(
+        std::shared_ptr<const RsEvent> event )
+{
+	if(std::error_condition ec = isEventInvalid(event)) return ec;
 
 	RS_STACK_MUTEX(mEventQueueMtx);
 	mEventQueue.push_back(event);
-	return true;
+	return std::error_condition();
 }
 
-bool RsEventsService::sendEvent( std::shared_ptr<const RsEvent> event,
-                                 std::string& errorMessage )
+std::error_condition RsEventsService::sendEvent(
+        std::shared_ptr<const RsEvent> event )
 {
-	if(!isEventValid(event, errorMessage))
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " "<< errorMessage << std::endl;
-		return false;
-	}
-
+	if(std::error_condition ec = isEventInvalid(event)) return ec;
 	handleEvent(event);
-	return true;
+	return std::error_condition();
 }
 
 RsEventsHandlerId_t RsEventsService::generateUniqueHandlerId()
@@ -99,35 +99,29 @@ RsEventsHandlerId_t RsEventsService::generateUniqueHandlerId_unlocked()
 	return 1;
 }
 
-bool RsEventsService::registerEventsHandler(
+std::error_condition RsEventsService::registerEventsHandler(
         std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
         RsEventsHandlerId_t& hId, RsEventType eventType )
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
 
-	if( eventType >= RsEventType::__MAX)
-	{
-		RsErr() << __PRETTY_FUNCTION__ << " Invalid event type: "
-		        << static_cast<uint32_t>(eventType) << " >= RsEventType::__MAX:"
-		        << static_cast<uint32_t>(RsEventType::__MAX) << std::endl;
-		print_stacktrace();
-		return false;
-	}
+	if(eventType != RsEventType::__NONE)
+		if(std::error_condition ec = isEventTypeInvalid(eventType))
+			return ec;
 
 	if(!hId) hId = generateUniqueHandlerId_unlocked();
 	else if (hId > mLastHandlerId)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Invalid handler id: " << hId
-		        << " how did you generate it? " << std::endl;
 		print_stacktrace();
-		return false;
+		return RsEventsErrorNum::INVALID_HANDLER_ID;
 	}
 
 	mHandlerMaps[static_cast<std::size_t>(eventType)][hId] = multiCallback;
-	return true;
+	return std::error_condition();
 }
 
-bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
+std::error_condition RsEventsService::unregisterEventsHandler(
+        RsEventsHandlerId_t hId )
 {
 	RS_STACK_MUTEX(mHandlerMapMtx);
 
@@ -137,10 +131,10 @@ bool RsEventsService::unregisterEventsHandler(RsEventsHandlerId_t hId)
 		if(it != mHandlerMaps[i].end())
 		{
 			mHandlerMaps[i].erase(it);
-			return true;
+			return std::error_condition();
 		}
 	}
-	return false;
+	return RsEventsErrorNum::INVALID_HANDLER_ID;
 }
 
 void RsEventsService::threadTick()
@@ -179,29 +173,25 @@ dispatchEventFromQueueLock:
 
 void RsEventsService::handleEvent(std::shared_ptr<const RsEvent> event)
 {
-	uint32_t event_type_index = static_cast<uint32_t>(event->mType);
-
-	if(RsEventType::__NONE >= event->mType || event->mType >= RsEventType::__MAX )
+	if(std::error_condition ec = isEventInvalid(event))
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Invalid event type: "
-		        << event_type_index << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " " << ec << std::endl;
 		print_stacktrace();
 		return;
 	}
 
-	{
-		RS_STACK_MUTEX(mHandlerMapMtx);
-		/* It is important to also call the callback under mutex protection to
-		 * ensure they are not unregistered in the meanwhile.
-		 * If a callback try to fiddle with registering/unregistering it will
-		 * deadlock */
+	RS_STACK_MUTEX(mHandlerMapMtx);
+	/* It is important to also call the callback under mutex protection to
+	 * ensure they are not unregistered in the meanwhile.
+	 * If a callback try to fiddle with registering/unregistering it will
+	 * deadlock */
 
-		// Call all clients that registered a callback for this event type
-		for(auto cbit: mHandlerMaps[event_type_index]) cbit.second(event);
+	// Call all clients that registered a callback for this event type
+	for(auto cbit: mHandlerMaps[static_cast<uint32_t>(event->mType)])
+		cbit.second(event);
 
-		/* Also call all clients that registered with NONE, meaning that they
-		 * expect all events */
-		for(auto cbit: mHandlerMaps[static_cast<uint32_t>(RsEventType::__NONE)])
-			cbit.second(event);
-	}
+	/* Also call all clients that registered with NONE, meaning that they
+	 * expect all events */
+	for(auto cbit: mHandlerMaps[static_cast<uint32_t>(RsEventType::__NONE)])
+		cbit.second(event);
 }

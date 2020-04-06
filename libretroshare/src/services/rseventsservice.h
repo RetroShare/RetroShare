@@ -40,38 +40,40 @@ public:
 	    mEventQueueMtx("RsEventsService::mEventQueueMtx") {}
 
 	/// @see RsEvents
-	bool postEvent(
-	        std::shared_ptr<const RsEvent> event,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
+	std::error_condition postEvent(
+	        std::shared_ptr<const RsEvent> event ) override;
 
 	/// @see RsEvents
-	bool sendEvent(
-	        std::shared_ptr<const RsEvent> event,
-	        std::string& errorMessage = RS_DEFAULT_STORAGE_PARAM(std::string)
-	        ) override;
+	std::error_condition sendEvent(
+	        std::shared_ptr<const RsEvent> event ) override;
 
 	/// @see RsEvents
 	RsEventsHandlerId_t generateUniqueHandlerId() override;
 
 	/// @see RsEvents
-	bool registerEventsHandler(
+	std::error_condition registerEventsHandler(
 	        std::function<void(std::shared_ptr<const RsEvent>)> multiCallback,
 	        RsEventsHandlerId_t& hId = RS_DEFAULT_STORAGE_PARAM(RsEventsHandlerId_t, 0),
 	        RsEventType eventType = RsEventType::__NONE ) override;
 
 	/// @see RsEvents
-	bool unregisterEventsHandler(RsEventsHandlerId_t hId) override;
+	std::error_condition unregisterEventsHandler(
+	        RsEventsHandlerId_t hId ) override;
 
 protected:
+	std::error_condition isEventTypeInvalid(RsEventType eventType);
+	std::error_condition isEventInvalid(std::shared_ptr<const RsEvent> event);
+
 	RsMutex mHandlerMapMtx;
 	RsEventsHandlerId_t mLastHandlerId;
 
+	/** Storage for event handlers, keep 10 extra types for plugins that might
+	 * be released indipendently */
 	std::array<
 	    std::map<
 	        RsEventsHandlerId_t,
 	        std::function<void(std::shared_ptr<const RsEvent>)> >,
-	    static_cast<std::size_t>(RsEventType::__MAX)
+	    static_cast<std::size_t>(RsEventType::__MAX) + 10
 	> mHandlerMaps;
 
 	RsMutex mEventQueueMtx;
