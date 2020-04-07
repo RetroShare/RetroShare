@@ -34,7 +34,7 @@
 
 bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2)
 {
-    return p1.second->priority <= p2.second->priority ;	// <= so that new elements with same priority are inserted before
+    return p1.second->Options.mPriority <= p2.second->Options.mPriority ;	// <= so that new elements with same priority are inserted before
 }
 
 
@@ -47,9 +47,7 @@ RsGxsDataAccess::~RsGxsDataAccess()
     for(auto& it:mRequestQueue)
 		delete it.second;
 }
-bool RsGxsDataAccess::requestGroupInfo(
-        uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-        const std::list<RsGxsGroupId> &groupIds )
+bool RsGxsDataAccess::requestGroupInfo( uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds )
 {
 	if(groupIds.empty())
 	{
@@ -145,8 +143,7 @@ void RsGxsDataAccess::generateToken(uint32_t &token)
 }
 
 
-bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-		const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
+bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
 {
 
 	GxsRequest* req = NULL;
@@ -207,8 +204,7 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 	return true;
 }
 
-bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-                   const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds)
+bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds)
 {
         GxsRequest* req = NULL;
         uint32_t reqType = opts.mReqType;
@@ -262,33 +258,40 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 }
 
 
-void RsGxsDataAccess::requestServiceStatistic(uint32_t& token)
+void RsGxsDataAccess::requestServiceStatistic(uint32_t& token,const RsTokReqOptions& opts)
 {
     ServiceStatisticRequest* req = new ServiceStatisticRequest();
 
     generateToken(token);
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+    if(opts.mReqType != GXS_REQUEST_TYPE_SERVICE_STATS)
+    {
+        RsErr() << "Expected opts.mReqType to be GXS_REQUEST_TYPE_SERVICE_STATS requestServiceStatistic()" << std::endl;
+        return;
+    }
+
     setReq(req, token, 0, opts);
     storeRequest(req);
 }
 
-void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
+void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId,const RsTokReqOptions& opts)
 {
     GroupStatisticRequest* req = new GroupStatisticRequest();
     req->mGrpId = grpId;
 
+    if(opts.mReqType != GXS_REQUEST_TYPE_GROUP_STATS)
+    {
+        RsErr() << "Expected opts.mReqType to be GXS_REQUEST_TYPE_SERVICE_STATS requestServiceStatistic()" << std::endl;
+        return;
+    }
+
     generateToken(token);
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
-    setReq(req, token, 0, opts);
+    setReq(req, token,0, opts);
     storeRequest(req);
 }
 
-bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-                                            const std::vector<RsGxsGrpMsgIdPair> &msgIds)
+bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds)
 {
 
     MsgRelatedInfoReq* req = new MsgRelatedInfoReq();
@@ -320,9 +323,9 @@ void RsGxsDataAccess::storeRequest(GxsRequest* req)
     mPublicToken[req->token] = PENDING;
 
 #ifdef DATA_DEBUG
-    std::cerr << "Stored request token=" << req->token << " priority = " << static_cast<int>(req->priority) << " Current request Queue is:" ;
+    std::cerr << "Stored request token=" << req->token << " priority = " << static_cast<int>(req->Options.mPriority) << " Current request Queue is:" ;
     for(auto it(mRequestQueue.begin());it!=mRequestQueue.end();++it)
-        std::cerr << it->first << " (p=" << static_cast<int>(req->priority) << ") ";
+        std::cerr << it->first << " (p=" << static_cast<int>(req->Options.mPriority) << ") ";
     std::cerr << std::endl;
     std::cerr << "Completed requests waiting for client: " << mCompletedRequests.size() << std::endl;
 #endif

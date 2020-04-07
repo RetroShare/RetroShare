@@ -56,7 +56,10 @@ void GxsUserNotify::startUpdate()
 	mNewChildMessageCount = 0;
 
 	uint32_t token;
-	mTokenService->requestServiceStatistic(token);
+    RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+
+	mTokenService->requestServiceStatistic(token,opts);
 	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
 }
 

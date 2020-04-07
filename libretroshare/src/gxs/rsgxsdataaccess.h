@@ -59,7 +59,7 @@ public:
      * @param groupIds group id to request info for
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) override;
 
     /*!
      * Use this to request all group related info
@@ -68,7 +68,7 @@ public:
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) override;
 
     /*!
      * Use this to get msg information (id, meta, or data), store token value to poll for request completion
@@ -78,7 +78,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) override;
 
     /*!
      * Use this to get message information (id, meta, or data), store token value to poll for request completion
@@ -89,7 +89,7 @@ public:
      * all messages for all groups are retrieved
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds) override;
 
     /*!
      * For requesting msgs related to a given msg id within a group
@@ -99,7 +99,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds) override;
 
     /*!
      * This request statistics on amount of data held
@@ -110,16 +110,17 @@ public:
      * total size of messages
      * total size of groups
      * @param token
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      */
-    void requestServiceStatistic(uint32_t& token);
+    void requestServiceStatistic(uint32_t& token, const RsTokReqOptions &opts) override;
 
 	/*!
 	 * To request statistic on a group
 	 * @param token set to value to be redeemed to get statistic
 	 * @param grpId the id of the group
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
 	 */
-    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId);
-
+    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) override;
 
     /* Poll */
 	GxsRequestStatus requestStatus(const uint32_t token);

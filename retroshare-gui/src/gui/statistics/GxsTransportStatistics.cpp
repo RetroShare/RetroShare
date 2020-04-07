@@ -384,7 +384,10 @@ void GxsTransportStatistics::requestGroupMeta()
 void GxsTransportStatistics::requestGroupStat(const RsGxsGroupId &groupId)
 {
 	uint32_t token;
-	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId);
+	RsTokReqOptions opts;
+    opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+
+	rsGxsTrans->getTokenService()->requestGroupStatistic(token, groupId,opts);
 	mTransQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, GXSTRANS_GROUP_STAT);
 }
 void GxsTransportStatistics::requestMsgMeta(const RsGxsGroupId& grpId)

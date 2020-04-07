@@ -360,7 +360,10 @@ public:
 	/// @see RsTokenService::requestServiceStatistic
 	void requestServiceStatistic(uint32_t& token)
 	{
-        mTokenService.requestServiceStatistic(token);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+
+        mTokenService.requestServiceStatistic(token,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
@@ -371,7 +374,10 @@ public:
 	/// @see RsTokenService::requestGroupStatistic
 	bool requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
 	{
-		mTokenService.requestGroupStatistic(token, grpId);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+
+		mTokenService.requestGroupStatistic(token, grpId,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;

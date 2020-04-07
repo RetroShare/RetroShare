@@ -31,10 +31,15 @@ std::ostream& operator<<(std::ostream& o,const GxsRequest& g)
 
 std::ostream& GroupMetaReq::print(std::ostream& o) const
 {
-	o << "[Request type=GroupMeta groupIds (size=" << mGroupIds.size() << "): " << *mGroupIds.begin() ;
+	o << "[Request type=GroupMeta groupIds (size=" << mGroupIds.size() << "): " ;
 
-	if(mGroupIds.size() > 1)
-		o << " ..." ;
+    if(!mGroupIds.empty())
+    {
+        o << *mGroupIds.begin() ;
+
+		if(mGroupIds.size() > 1)
+			o << " ..." ;
+    }
 
 	o << "]" ;
 
@@ -52,10 +57,15 @@ std::ostream& GroupSerializedDataReq::print(std::ostream& o) const
 
 std::ostream& GroupDataReq::print(std::ostream& o) const
 {
-	o << "[Request type=GroupDataReq groupIds (size=" << mGroupIds.size() << "): " << *mGroupIds.begin() ;
+	o << "[Request type=GroupDataReq groupIds (size=" << mGroupIds.size() << "): " ;
 
-	if(mGroupIds.size() > 1)
-		o << " ..." ;
+    if(!mGroupIds.empty())
+	{
+		o << *mGroupIds.begin() ;
+
+		if(mGroupIds.size() > 1)
+			o << " ..." ;
+	}
 
 	o << "]" ;
 
@@ -69,10 +79,15 @@ std::ostream& MsgIdReq::print(std::ostream& o) const
 
 std::ostream& MsgMetaReq::print(std::ostream& o) const
 {
-	o << "[Request type=MsgMetaReq groups (size=" << mMsgIds.size() << "): " << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+	o << "[Request type=MsgMetaReq groups (size=" << mMsgIds.size() << "): " ;
 
-	if(mMsgIds.size() > 1)
-		o << " ..." ;
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
 
 	o << "]" ;
 
@@ -81,10 +96,15 @@ std::ostream& MsgMetaReq::print(std::ostream& o) const
 
 std::ostream& MsgDataReq::print(std::ostream& o) const
 {
-	o << "[Request type=MsgDataReq groups (size=" << mMsgIds.size() << "): " << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+	o << "[Request type=MsgDataReq groups (size=" << mMsgIds.size() << "): " ;
 
-	if(mMsgIds.size() > 1)
-		o << " ..." ;
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
 
 	o << "]" ;
 
@@ -93,10 +113,15 @@ std::ostream& MsgDataReq::print(std::ostream& o) const
 
 std::ostream& MsgRelatedInfoReq::print(std::ostream& o) const
 {
-	o << "[Request type=MsgRelatedInfo msgIds (size=" << mMsgIds.size() << "): " << mMsgIds.begin()->first ;
+	o << "[Request type=MsgRelatedInfo msgIds (size=" << mMsgIds.size() << "): " ;
 
-	if(mMsgIds.size() > 1)
-		o << " ..." ;
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first ;
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
 
 	o << "]" ;
 
@@ -105,7 +130,7 @@ std::ostream& MsgRelatedInfoReq::print(std::ostream& o) const
 
 std::ostream& GroupSetFlagReq::print(std::ostream& o) const
 {
-	return o << "[Request type=GroupFlagSet" << "]" ;
+	return o << "[Request type=GroupFlagSet grpId=" <<  grpId << "]" ;
 }
 
 
@@ -117,7 +142,7 @@ std::ostream& ServiceStatisticRequest::print(std::ostream& o) const
 
 std::ostream& GroupStatisticRequest::print(std::ostream& o) const
 {
-	return o << "[Request type=GroupStatistics" << "]" ;
+	return o << "[Request type=GroupStatistics grpId=" << mGrpId << "]" ;
 }
 
 GroupMetaReq::~GroupMetaReq()
