@@ -31,19 +31,15 @@ build-and-test:
           retroshare-service --jsonApiPort 9092
         - >
           docker exec retroshare
-          curl --verbose http://127.0.0.1:9092/jsonApiServer/version | jq
-        - >
-          docker exec retroshare
-          curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList  | jq
+          curl --verbose http://127.0.0.1:9092/rsJsonApi/version | jq
         - >
           docker exec retroshare
           curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations  | jq
         - >
           docker exec retroshare
           curl --verbose --data
-          '{ "location":{ "mLocationName":"Test 1", "mPpgName":"Test2",
-          "makeHidden":false, "makeAutoTor":false }, "password":"Test 3",
-          "caller_data":"Test 5" }'
+          '{ "location":{ "mLocationName":"Test 1", "mPpgName":"Test2" },
+          "password":"Test 3", "caller_data":"Test 5" }'
           http://127.0.0.1:9092/rsLoginHelper/createLocation  | jq
         - >
           docker exec retroshare
