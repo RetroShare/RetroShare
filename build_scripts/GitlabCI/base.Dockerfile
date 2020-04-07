@@ -23,7 +23,7 @@ RUN \
 	apt-get install -y build-essential libssl-dev libbz2-dev libsqlite3-dev \
 		libsqlcipher-dev libupnp-dev pkg-config libz-dev \
 		qt5-default libxapian-dev qttools5-dev doxygen rapidjson-dev \
-		git cmake curl jq
+		git cmake curl
 
 ARG FRESHCLONE=0
 ARG REPO_URL=https://gitlab.com/RetroShare/RetroShare.git
