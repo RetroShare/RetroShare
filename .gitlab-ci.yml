@@ -3,9 +3,10 @@ image: docker:stable
 services:
     - docker:stable-dind
 
-stages:
-    - build
-    - test
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH
 
 build-and-test:
     script:
