@@ -11,47 +11,47 @@ build-and-test:
     script:
         - mkdir Dockercontext
         - >
-            docker login "$CI_REGISTRY"
-              --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD"
+          docker login "$CI_REGISTRY"
+          --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD"
         - docker pull "$CI_REGISTRY_IMAGE:base"
         - >
-            if [ -n "$CI_MERGE_REQUEST_ID" ]; then
-              MR_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
-              MR_ARGS="$MR_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
-              export MR_ARGS ;
-            fi
+          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
+          MR_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
+          MR_ARGS="$MR_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
+          export MR_ARGS ;
+          fi
         - >
-            docker build -t "$CI_REGISTRY_IMAGE:testing" $MR_ARGS
-            --file /builds/RetroShare/RetroShare/build_scripts/GitlabCI/gitlabCI.Dockerfile
-            Dockercontext
+          docker build -t "$CI_REGISTRY_IMAGE:testing" $MR_ARGS
+          --file /builds/RetroShare/RetroShare/build_scripts/GitlabCI/gitlabCI.Dockerfile
+          Dockercontext
         - >
-            docker run --name retroshare --detach --tty
-              "$CI_REGISTRY_IMAGE:testing"
-              retroshare-service --jsonApiPort 9092
+          docker run --name retroshare --detach --tty
+          "$CI_REGISTRY_IMAGE:testing"
+          retroshare-service --jsonApiPort 9092
         - docker exec retroshare apt-get install -y curl
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/jsonApiServer/version
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/jsonApiServer/version
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations
         - >
-            docker exec retroshare
-            curl --verbose --data
-              '{ "location":{ "mLocationName":"Test 1", "mPpgName":"Test2",
-                 "makeHidden":false, "makeAutoTor":false }, "password":"Test 3",
-                 "caller_data":"Test 5" }'
-            http://127.0.0.1:9092/rsLoginHelper/createLocation
+          docker exec retroshare
+          curl --verbose --data
+          '{ "location":{ "mLocationName":"Test 1", "mPpgName":"Test2",
+          "makeHidden":false, "makeAutoTor":false }, "password":"Test 3",
+          "caller_data":"Test 5" }'
+          http://127.0.0.1:9092/rsLoginHelper/createLocation
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/rsLoginHelper/isLoggedIn
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/isLoggedIn
         - >
-            docker exec retroshare
-            curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList
         - docker container stop retroshare
