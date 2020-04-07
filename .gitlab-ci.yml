@@ -29,6 +29,7 @@ build-and-test:
           docker run --name retroshare --detach --tty
           "$CI_REGISTRY_IMAGE:testing"
           retroshare-service --jsonApiPort 9092
+        - docker exec retroshare which jq
         - >
           docker exec retroshare
           curl --verbose http://127.0.0.1:9092/rsJsonApi/version | jq
