@@ -10,17 +10,18 @@ workflow:
 
 build-and-test:
     script:
-        - mkdir Dockercontext
         - >
           docker login "$CI_REGISTRY"
           --username "$CI_REGISTRY_USER" --password "$CI_REGISTRY_PASSWORD"
-        - docker pull "$CI_REGISTRY_IMAGE:base"
         - >
           if [ -n "$CI_MERGE_REQUEST_ID" ]; then
           MR_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
           MR_ARGS="$MR_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
           export MR_ARGS ;
+          export CI_REGISTRY_IMAGE="retroshare" ;
           fi
+        - docker pull "$CI_REGISTRY_IMAGE:base"
+        - mkdir Dockercontext
         - >
           docker build -t "$CI_REGISTRY_IMAGE:testing" $MR_ARGS
           --file /builds/RetroShare/RetroShare/build_scripts/GitlabCI/gitlabCI.Dockerfile
@@ -29,7 +30,7 @@ build-and-test:
           docker run --name retroshare --detach --tty
           "$CI_REGISTRY_IMAGE:testing"
           retroshare-service --jsonApiPort 9092
-        - docker exec retroshare which jq
+        - apk add jq
         - >
           docker exec retroshare
           curl --verbose http://127.0.0.1:9092/rsJsonApi/version | jq
