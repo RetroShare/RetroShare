@@ -1116,7 +1116,7 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 			return;
 		}
 
-		RsQThreadUtils::postToObject( [this,stats]()
+		RsQThreadUtils::postToObject( [this,stats, groupId]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -1129,6 +1129,7 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 				return;
 
 			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+            mCachedGroupStats[groupId] = stats;
 
 			getUserNotify()->updateIcon();
 
@@ -1136,6 +1137,23 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 	});
 }
 
+void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
+{
+	stats = GxsServiceStatistic(); // clears everything
+
+   for(auto it:  mCachedGroupStats)
+   {
+       const GxsGroupStatistic& s(it.second);
+
+	   stats.mNumMsgs             += s.mNumMsgs;
+	   stats.mNumGrps             += 1;
+	   stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+	   stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+	   stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+	   stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+	   stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+   }
+}
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
 {

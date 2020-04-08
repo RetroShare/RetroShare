@@ -22,8 +22,8 @@
 #include "GxsChannelUserNotify.h"
 #include "gui/MainWindow.h"
 
-GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 }
 
@@ -33,11 +33,6 @@ bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 	if (group) *group = "Channel";
 
 	return true;
-}
-
-bool GxsChannelUserNotify::getServiceStatistics(GxsServiceStatistic& stat)
-{
-    return rsGxsChannels->getChannelServiceStatistics(stat);
 }
 
 QIcon GxsChannelUserNotify::getIcon()

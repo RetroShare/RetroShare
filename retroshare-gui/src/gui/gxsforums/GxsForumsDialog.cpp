@@ -133,7 +133,7 @@ void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<Re
 
 UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
 {
-	return new GxsForumUserNotify(rsGxsForums, parent);
+	return new GxsForumUserNotify(rsGxsForums,this, parent);
 }
 
 QString GxsForumsDialog::text(TextType type)

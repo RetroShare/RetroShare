@@ -82,7 +82,7 @@ PostedDialog::~PostedDialog()
 
 UserNotify *PostedDialog::createUserNotify(QObject *parent)
 {
-	return new PostedUserNotify(rsPosted, parent);
+	return new PostedUserNotify(rsPosted, this, parent);
 }
 
 QString PostedDialog::getHelpString() const

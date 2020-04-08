@@ -29,7 +29,6 @@
 
 #include <inttypes.h>
 
-#include "util/TokenQueue.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsGroupDialog.h"
 
@@ -79,6 +78,8 @@ public:
 	virtual QString getHelpString() const =0;
 
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
+
+    void getServiceStatistics(GxsServiceStatistic& stats) const ;
 
 protected:
 	virtual void showEvent(QShowEvent *event) override;
@@ -175,19 +176,12 @@ private:
 
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
 
-	void requestGroupStatistics(const RsGxsGroupId &groupId);
-	void loadGroupStatistics(const uint32_t &token);
-
 	// subscribe/unsubscribe ack.
-//	void acknowledgeSubscribeChange(const uint32_t &token);
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
-
-//	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
-//	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
 protected:
 	void updateSearchResults();
@@ -220,6 +214,7 @@ private:
 	Ui::GxsGroupFrameDialog *ui;
 
 	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
+	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
 
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;

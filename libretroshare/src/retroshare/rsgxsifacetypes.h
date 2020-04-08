@@ -239,7 +239,7 @@ public:
 		mNumChildMsgsNew = 0;
 		mNumChildMsgsUnread = 0;
 		mSizeStore = 0;
-	}
+    }
 
 public:
 	uint32_t mNumMsgs;

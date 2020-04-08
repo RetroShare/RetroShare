@@ -109,7 +109,7 @@ QString GxsChannelDialog::getHelpString() const
 
 UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
-	return new GxsChannelUserNotify(rsGxsChannels, parent);
+	return new GxsChannelUserNotify(rsGxsChannels,this, parent);
 }
 
 void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_links)

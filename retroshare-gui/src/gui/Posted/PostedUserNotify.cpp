@@ -22,8 +22,8 @@
 #include "PostedUserNotify.h"
 #include "gui/MainWindow.h"
 
-PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 }
 
@@ -33,10 +33,6 @@ bool PostedUserNotify::hasSetting(QString *name, QString *group)
 	if (group) *group = "Posted";
 
 	return true;
-}
-bool PostedUserNotify::getServiceStatistics(GxsServiceStatistic& stat)
-{
-    return rsPosted->getBoardsServiceStatistics(stat);
 }
 
 QIcon PostedUserNotify::getIcon()
