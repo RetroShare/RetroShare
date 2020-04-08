@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsposted.h"
 #include "PostedUserNotify.h"
 #include "gui/MainWindow.h"
 
@@ -32,6 +33,10 @@ bool PostedUserNotify::hasSetting(QString *name, QString *group)
 	if (group) *group = "Posted";
 
 	return true;
+}
+bool PostedUserNotify::getServiceStatistics(GxsServiceStatistic& stat)
+{
+    return rsPosted->getBoardsServiceStatistics(stat);
 }
 
 QIcon PostedUserNotify::getIcon()

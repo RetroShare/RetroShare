@@ -31,6 +31,7 @@ public:
 	GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
+    virtual bool getServiceStatistics(GxsServiceStatistic& stat) override;
 
 private:
 	virtual QIcon getIcon();

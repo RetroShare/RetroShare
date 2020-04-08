@@ -74,6 +74,8 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 
 	bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) override;
 
+	bool getBoardsServiceStatistics(GxsServiceStatistic& stat) override;
+
 	bool editBoard(RsPostedGroup& board) override;
 
 	bool createBoard(RsPostedGroup& board) override;

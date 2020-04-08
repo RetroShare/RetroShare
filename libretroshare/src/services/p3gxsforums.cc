@@ -819,6 +819,15 @@ bool p3GxsForums::createGroup(uint32_t &token, RsGxsForumGroup &group)
 	return true;
 }
 
+bool p3GxsForums::getForumServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
 bool p3GxsForums::getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat)
 {
 	uint32_t token;
