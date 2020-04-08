@@ -34,7 +34,7 @@ build-and-test:
         - >
           docker exec retroshare
           curl --verbose --data
-          '{ "location":{ "mLocationName":"Test 1", "mPpgName":"Test2" },
+          '{ "location":{ "mLocationName":"Test 1", "mPgpName":"Test2" },
           "password":"Test 3", "caller_data":"Test 5" }'
           http://127.0.0.1:9092/rsLoginHelper/createLocation  | jq
         - >
