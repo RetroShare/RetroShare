@@ -1062,6 +1062,15 @@ bool p3GxsChannels::getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupS
     return RsGenExchange::getGroupStatistic(token,stat);
 }
 
+bool p3GxsChannels::getChannelServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
 bool p3GxsChannels::getContentSummaries(
         const RsGxsGroupId& channelId, std::vector<RsMsgMetaData>& summaries )
 {

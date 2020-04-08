@@ -29,6 +29,7 @@ class GxsForumUserNotify : public GxsUserNotify
 
 public:
 	GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
+    virtual bool getServiceStatistics(GxsServiceStatistic& stat) override;
 
 	virtual bool hasSetting(QString *name, QString *group);
 

@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsgxsforums.h"
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
 
@@ -33,6 +34,10 @@ bool GxsForumUserNotify::hasSetting(QString *name, QString *group)
 	if (group) *group = "Forum";
 
 	return true;
+}
+bool GxsForumUserNotify::getServiceStatistics(GxsServiceStatistic& stat)
+{
+    return rsGxsForums->getForumServiceStatistics(stat);
 }
 
 QIcon GxsForumUserNotify::getIcon()

@@ -167,6 +167,8 @@ public:
 
 	virtual bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) =0;
 
+	virtual bool getBoardsServiceStatistics(GxsServiceStatistic& stat) =0;
+
 	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
 
 	RS_DEPRECATED_FOR(getBoardsInfo)

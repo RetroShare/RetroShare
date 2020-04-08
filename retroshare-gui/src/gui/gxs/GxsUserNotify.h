@@ -28,7 +28,7 @@
 struct RsGxsIfaceHelper;
 class RsGxsUpdateBroadcastBase;
 
-class GxsUserNotify : public UserNotify, public TokenResponse
+class GxsUserNotify : public UserNotify
 {
 	Q_OBJECT
 
@@ -36,11 +36,9 @@ public:
 	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
 	virtual ~GxsUserNotify();
 
-	/* TokenResponse */
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
 protected:
 	virtual void startUpdate();
+    virtual bool getServiceStatistics(GxsServiceStatistic& stat)=0;
 
 private:
 	virtual unsigned int getNewCount() { return mCountChildMsgs ? (mNewThreadMessageCount + mNewChildMessageCount) : mNewThreadMessageCount; }
@@ -49,9 +47,6 @@ protected:
 	bool mCountChildMsgs; // Count new child messages?
 
 private:
-	RsGxsIfaceHelper *mInterface;
-	RsTokenService *mTokenService;
-	TokenQueue *mTokenQueue;
 	RsGxsUpdateBroadcastBase *mBase;
 	unsigned int mNewThreadMessageCount;
 	unsigned int mNewChildMessageCount;

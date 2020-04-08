@@ -220,6 +220,14 @@ public:
 	virtual bool getForumsSummaries(std::list<RsGroupMetaData>& forums) = 0;
 
     /**
+     * @brief returns statistics for the forum service
+	 * @jsonapi{development}
+     * @param[out] stat     statistics struct
+     * @return              false if the call fails
+     */
+	virtual bool getForumServiceStatistics(GxsServiceStatistic& stat) =0;
+
+    /**
      * @brief returns statistics about a particular forum
 	 * @jsonapi{development}
      * @param[in]  forumId  Id of the forum
@@ -227,6 +235,7 @@ public:
      * @return              false when the object doesn't exist or when the timeout is reached requesting the data
      */
 	virtual bool getForumStatistics(const RsGxsGroupId& forumId,GxsGroupStatistic& stat)=0;
+
 
 	/**
 	 * @brief Get forums information (description, thumbnail...).

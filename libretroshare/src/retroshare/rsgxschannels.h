@@ -410,6 +410,14 @@ public:
 	                                 bool subscribe ) = 0;
 
     /**
+     * \brief Retrieve statistics about the channel service
+	 * @jsonapi{development}
+     * \param[out] stat       Statistics structure
+     * \return
+     */
+    virtual bool getChannelServiceStatistics(GxsServiceStatistic& stat) =0;
+
+    /**
      * \brief Retrieve statistics about the given channel
 	 * @jsonapi{development}
      * \param[in]  channelId  Id of the channel group
@@ -417,6 +425,7 @@ public:
      * \return
      */
     virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
+
 
 	/**
 	 * @brief Request remote channels search

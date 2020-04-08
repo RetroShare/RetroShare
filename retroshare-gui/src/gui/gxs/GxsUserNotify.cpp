@@ -22,60 +22,50 @@
 //#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 
 #include "retroshare/rsgxsifacehelper.h"
+#include "util/qtthreadsutils.h"
 
 #define TOKEN_TYPE_STATISTICS  1
 
-GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    UserNotify(parent), TokenResponse()
+GxsUserNotify::GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) : UserNotify(parent)
 {
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;
 	mCountChildMsgs = false;
-
-	mInterface = ifaceImpl;
-	mTokenService = mInterface->getTokenService();
-	mTokenQueue = new TokenQueue(mInterface->getTokenService(), this);
-
-	//mBase = new RsGxsUpdateBroadcastBase(ifaceImpl);
-	//connect(mBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateIcon()));
 }
 
-GxsUserNotify::~GxsUserNotify()
-{
-	if (mTokenQueue) {
-		delete(mTokenQueue);
-	}
-	//if (mBase) {
-		//delete(mBase);
-	//}
-}
+GxsUserNotify::~GxsUserNotify() {}
 
 void GxsUserNotify::startUpdate()
 {
 	mNewThreadMessageCount = 0;
 	mNewChildMessageCount = 0;
 
-	uint32_t token;
-	mTokenService->requestServiceStatistic(token);
-	mTokenQueue->queueRequest(token, 0, RS_TOKREQ_ANSTYPE_ACK, TOKEN_TYPE_STATISTICS);
-}
+	RsThread::async([this]()
+	{
+        // 1 - get message data from p3GxsForums
 
-void GxsUserNotify::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue == mTokenQueue) {
-		/* now switch on req */
-		switch(req.mUserType) {
-		case TOKEN_TYPE_STATISTICS:
-			{
-				GxsServiceStatistic stats;
-				mInterface->getServiceStatistic(req.mToken, stats);
+#ifdef DEBUG_FORUMS
+        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
+
+		GxsServiceStatistic stats;
+
+        if(!getServiceStatistics(stats))
+            return;
+
+        RsQThreadUtils::postToObject( [stats,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
 
 				mNewThreadMessageCount = stats.mNumThreadMsgsNew;
 				mNewChildMessageCount = stats.mNumChildMsgsNew;
 
 				update();
-			}
-			break;
-		}
-	}
+
+		}, this );
+
+    });
 }
+
