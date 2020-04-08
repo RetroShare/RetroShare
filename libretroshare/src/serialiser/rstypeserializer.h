@@ -480,7 +480,7 @@ struct RsTypeSerializer
 
 		switch(j)
 		{
-		case RsGenericSerializer::SIZE_ESTIMATE: // [[falltrough]]
+		case RsGenericSerializer::SIZE_ESTIMATE: // [[falltrough]];
 		case RsGenericSerializer::SERIALIZE:
 		{
 			uint32_t aSize = member.size();
@@ -499,10 +499,11 @@ struct RsTypeSerializer
 			if(!ctx.mOk) break;
 
 			/* This check is not perfect but will catch most pathological cases.
-			 * Avoid multiplying by sizeof(el_t) as it is not a good exitimation
+			 * Avoid multiplying by sizeof(el_t) as it is not a good estimation
 			 * of the actual serialized size, depending on the elements
-			 * structure and on the so it would raises many false positives. */
-			if(elCount > ctx.mSize - ctx.mOffset)
+			 * structure and on the so it would raises many false positives.
+			 * Arithmetic operations on elCount are also at risk of overflow */
+			if(elCount > RsSerialiser::MAX_SERIAL_SIZE)
 			{
 				ctx.mOk = false;
 				RsErr() << __PRETTY_FUNCTION__ << " attempt to deserialize a "
@@ -626,7 +627,7 @@ struct RsTypeSerializer
 		{
 			uint32_t len = static_cast<uint32_t>(member.length());
 			RS_SERIAL_PROCESS(len);
-			if(len > ctx.mSize - ctx.mOffset)
+			if(len + ctx.mOffset > ctx.mSize)
 			{
 				RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
 				        << std::endl;
@@ -641,19 +642,33 @@ struct RsTypeSerializer
 			uint32_t len;
 			RS_SERIAL_PROCESS(len);
 			if(!ctx.mOk) break;
-			if(len > ctx.mSize - ctx.mOffset)
+
+			if(len > RsSerialiser::MAX_SERIAL_SIZE)
 			{
 				ctx.mOk = false;
 				RsErr() << __PRETTY_FUNCTION__ << " attempt to deserialize a "
-				        << "string with apparently malformed elements count."
+				        << "string with apparently malformed length."
 				        << " len: " << len
 				        << " ctx.mSize: " << ctx.mSize
 				        << " ctx.mOffset: " << ctx.mOffset << " "
-				        << std::errc::argument_out_of_domain
-				        << std::endl;
+				        << std::errc::argument_out_of_domain << std::endl;
 				print_stacktrace();
 				break;
 			}
+
+			if(len + ctx.mOffset > ctx.mSize)
+			{
+				ctx.mOk = false;
+				RsErr() << __PRETTY_FUNCTION__ << " attempt to deserialize a "
+				        << "string with a length bigger available data."
+				        << " len: " << len
+				        << " ctx.mSize: " << ctx.mSize
+				        << " ctx.mOffset: " << ctx.mOffset << " "
+				        << std::errc::no_buffer_space << std::endl;
+				print_stacktrace();
+				break;
+			}
+
 			member.resize(len);
 			memcpy(&member[0], ctx.mData + ctx.mOffset, len);
 			ctx.mOffset += len;
