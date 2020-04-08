@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011 by Christopher Evi-Parker                                    *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2011  Christopher Evi-Parker                                  *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -66,10 +66,11 @@ public:
 	 * @param gxs handle to RsGenExchange instance of service (Usually the
 	 *   service class itself)
 	 */
-	RsGxsIfaceHelper(RsGxsIface& gxs) :
-	    mGxs(gxs), mTokenService(*gxs.getTokenService()),mMtx("GxsIfaceHelper") {}
+	explicit RsGxsIfaceHelper(RsGxsIface& gxs) :
+	    mGxs(gxs), mTokenService(*gxs.getTokenService()), mMtx("GxsIfaceHelper")
+	{}
 
-    ~RsGxsIfaceHelper(){}
+	~RsGxsIfaceHelper() = default;
 
     /*!
      * Gxs services should call this for automatic handling of
@@ -507,7 +508,7 @@ private:
 	void locked_dumpTokens()
 	{
 		const uint16_t service_id =  mGxs.serviceType();
-		const auto countSize = static_cast<const size_t>(TokenRequestType::__MAX);
+		const auto countSize = static_cast<size_t>(TokenRequestType::__MAX);
 		uint32_t count[countSize] = {0};
 
 		RsDbg() << __PRETTY_FUNCTION__ << "Service 0x" << std::hex << service_id
@@ -517,7 +518,7 @@ private:
 		        << ") Active tokens (per type): ";
 
 		// let's count how many token of each type we've got.
-		for(auto& it: mActiveTokens) ++count[static_cast<int>(it.second)];
+		for(auto& it: mActiveTokens) ++count[static_cast<size_t>(it.second)];
 
 		for(uint32_t i=0; i < countSize; ++i)
 			RsDbg().uStream() /* << i << ":" */ << count[i] << " ";
