@@ -204,7 +204,8 @@ public:
      * @param token request token to be redeemed
      * @param msgIds
      */
-    bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
+    bool getMsgIdList(const uint32_t &token, GxsMsgIdResult &msgIds);
+
 
     /*!
      * Retrieve msg list for a given token for message related info
@@ -382,8 +383,18 @@ private:
      * @param req
      * @return false if unsuccessful, true otherwise
      */
-    bool getMsgList(MsgIdReq* req);
+    bool getMsgIdList(MsgIdReq* req);
 
+    /*!
+     * Attempts to retrieve msg Meta list from data store
+     * Computationally/CPU-Bandwidth expensive
+     *
+     * @param msgIds List of message Ids for the Message Metas to retrieve
+     * @param opts   GxsRequest options
+     * @param result Map of Meta information for messages
+     *
+     */
+	bool getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgMetaResult& result );
 
     /*!
      * Attempts to retrieve group meta data from data store
@@ -449,7 +460,7 @@ private:
      * @param opts the request options set by user
      * @param meta The accompanying meta information for msg, ids
      */
-    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
+    void filterMsgIdList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
 
     /*!
      * This filter msgs based of options supplied (at the moment just status masks)
@@ -486,7 +497,7 @@ private:
      * @param opts the options used to parameterise the id filter
      * @param msgIdsOut the left overs ids after filter is applied to msgIds
      */
-    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
+    bool getMsgIdList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
 private:
     bool locked_clearRequest(const uint32_t &token);
