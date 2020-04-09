@@ -76,6 +76,7 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui = new Ui::GxsGroupFrameDialog();
 	ui->setupUi(this);
 
+	mShouldUpdateMessageSummaryList = true;
 	mInitialized = false;
 	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
