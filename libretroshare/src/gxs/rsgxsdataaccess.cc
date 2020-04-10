@@ -1038,7 +1038,6 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
     }
 
     GxsMsgMetaResult::iterator meta_it;
-    //MsgMetaFilter metaFilter;
 
     for(meta_it = result.begin(); meta_it != result.end(); ++meta_it)
     {
@@ -1048,7 +1047,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 
             std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
 
-            if (onlyLatestMsgs)
+            if (onlyLatestMsgs) // if we only consider latest messages, we need to first filter out messages with "children"
             {
                 // The strategy is the following: for each msg we only know its direct ancestor. So we build a map to be able to find for a given message
                 // which messages derive from it.
@@ -1190,7 +1189,7 @@ bool RsGxsDataAccess::getMsgIdList( const GxsMsgReq& msgIds, const RsTokReqOptio
 {
     GxsMsgMetaResult result;
 
-	getMsgMetaDataList( msgIdsOut, opts, result );
+	getMsgMetaDataList( msgIds, opts, result );
 
     // extract MessageIds
 
