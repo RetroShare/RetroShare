@@ -1048,9 +1048,46 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 
             std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
 
-            if (onlyLatestMsgs) // THIS ONE IS HARD -> LOTS OF COMP.
+            if (onlyLatestMsgs)
             {
-#ifdef TODO
+                // The strategy is the following: for each msg we only know its direct ancestor. So we build a map to be able to find for a given message
+                // which messages derive from it.
+                // Then when this map is fuly build, we follow this map and every message that has no direct follow up will be kept.
+                // Because msgs are stored in a std::vector we build a map to convert each vector to its position in metaV.
+
+               std::vector<bool> keep(metaV.size(),true);	   // this vector will tell wether we keep or not a given Meta
+               std::map<RsMessageId,uint32_t> index_in_metaV; // holds the index of each group Id in metaV
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   index_in_metaV[metaV[i]->mMsgId] = i;
+
+               // Now loop once over message Metas and see if they have a parent. If yes, then mark the parent to be discarded.
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   if(!metaV[i]->mParentId.isNull() && metaV[i]->mParentId != metaV[i]->mMsgId)	// this one is a follow up
+                   {
+                       auto it = index_in_metaV.find(metaV[i]->mParentId);
+
+                       if(it != index_in_metaV.end())
+                           keep[it->second] = false;
+                       else
+                           std::cerr << "Found a msg that has a parent that is not locally known. Not an error anyway." << std::endl;
+
+                   }
+
+               // Finally we just discard the messages for which the keep flag has been set to false.
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   if(!keep[i])
+                   {
+                       delete metaV[i];
+                       metaV[i] = nullptr;
+                   }
+			}
+
+// old version of the code. I keep it for future reference if something happens.
+
+#ifdef OLD_VERSION_OF_THE_CODE
                     // RUN THROUGH ALL MSGS... in map origId -> TS.
                     std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> > origMsgTs;
 
@@ -1099,30 +1136,28 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
 						msgIdsOut[grpId].insert(oit->second.first);
                     }
 #endif
-            }
-            else	// ALL OTHER CASES.
-            {
-                for(uint32_t i=0;i<metaV.size();++i)
-                {
-                    RsGxsMsgMetaData* msgMeta = metaV[i];
-                    bool add = false;
 
-                    /* if we are grabbing thread Head... then parentId == empty. */
-                    if (onlyThreadHeadMsgs && !msgMeta->mParentId.isNull())
-                    {
-						delete msgMeta;
-						metaV[i] = nullptr;
-						continue;
-                    }
+			for(uint32_t i=0;i<metaV.size();++i)
+                if(metaV[i] != nullptr)
+				{
+					RsGxsMsgMetaData* msgMeta = metaV[i];
+					bool add = false;
 
-                    if (onlyOrigMsgs && !msgMeta->mOrigMsgId.isNull() && msgMeta->mMsgId != msgMeta->mOrigMsgId)
+					/* if we are grabbing thread Head... then parentId == empty. */
+					if (onlyThreadHeadMsgs && !msgMeta->mParentId.isNull())
 					{
 						delete msgMeta;
 						metaV[i] = nullptr;
 						continue;
-                    }
-                }
-            }
+					}
+
+					if (onlyOrigMsgs && !msgMeta->mOrigMsgId.isNull() && msgMeta->mMsgId != msgMeta->mOrigMsgId)
+					{
+						delete msgMeta;
+						metaV[i] = nullptr;
+						continue;
+					}
+				}
     }
 
     // collapse results while keeping the order, eliminating empty slots
