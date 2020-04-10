@@ -49,6 +49,34 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 
 void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 {
+	if (mIsReply)
+	{
+		std::cerr << "PulseAddDialog::setReplyTo() cleaning up old replyto";
+		std::cerr << std::endl;
+		QLayout *layout = ui.widget_replyto->layout();
+		// completely delete layout and sublayouts
+		QLayoutItem * item;
+		QWidget * widget;
+		while ((item = layout->takeAt(0)))
+		{
+			if ((widget = item->widget()) != 0)
+			{
+				std::cerr << "PulseAddDialog::setReplyTo() removing widget";
+				std::cerr << std::endl;
+				widget->hide();
+				delete widget;
+			}
+			else
+			{
+				std::cerr << "PulseAddDialog::setReplyTo() removing item";
+				std::cerr << std::endl;
+				delete item;
+			}
+		}
+		// then finally
+		delete layout;
+	}
+
 	mIsReply = true;
 	mReplyToPulse = pulse;
 	mReplyGroupName = groupName;

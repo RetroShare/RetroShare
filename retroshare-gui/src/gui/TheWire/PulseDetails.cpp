@@ -92,6 +92,10 @@ void PulseDetails::setup()
 	label_replies->setText("");
 	frame_replies->setVisible(false);
 	mHasReplies = false;
+
+	toolButton_follow->setEnabled(mActions != NULL);
+	toolButton_rate->setEnabled(mActions != NULL);
+	toolButton_reply->setEnabled(mActions != NULL);
 }
 
 void PulseDetails::addReplies(std::map<rstime_t, RsWirePulse *> replies)
@@ -183,18 +187,28 @@ QString PulseDetails::getSummary()
 void PulseDetails::follow()
 {
 	// follow group.
-	mActions->follow(mPulse.mMeta.mGroupId);
+	if (mActions)
+	{
+		mActions->follow(mPulse.mMeta.mGroupId);
+	}
 }
 
 void PulseDetails::rate()
 {
 	// rate author
-	mActions->rate(mPulse.mMeta.mAuthorId);
+	if (mActions)
+	{
+		mActions->rate(mPulse.mMeta.mAuthorId);
+	}
 }
 
 void PulseDetails::reply()
 {
-	mActions->reply(mPulse, mGroupName);
+	// reply
+	if (mActions)
+	{
+		mActions->reply(mPulse, mGroupName);
+	}
 }
 		
 

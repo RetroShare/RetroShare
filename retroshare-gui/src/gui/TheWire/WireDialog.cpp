@@ -56,6 +56,7 @@ WireDialog::WireDialog(QWidget *parent)
 
 	mAddDialog = NULL;
 	mPulseSelected = NULL;
+	mGroupSelected = NULL;
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
@@ -177,15 +178,31 @@ void WireDialog::notifyGroupSelection(WireGroupItem *item)
 	std::cerr << "WireDialog::notifyGroupSelection() from : " << item;
 	std::cerr << std::endl;
 
+	bool doSelection = true;
 	if (mGroupSelected)
 	{
 		std::cerr << "WireDialog::notifyGroupSelection() unselecting old one : " << mGroupSelected;
 		std::cerr << std::endl;
 
 		mGroupSelected->setSelected(false);
+		if (mGroupSelected == item)
+		{
+			std::cerr << "WireDialog::notifyGroupSelection() current -> unselect";
+			std::cerr << std::endl;
+			/* de-selection of current item */
+			mGroupSelected = NULL;
+			doSelection = false;
+		}
 	}
 
-	mGroupSelected = item;
+	if (doSelection)
+	{
+		item->setSelected(true);
+		mGroupSelected = item;
+	}
+
+	/* update display */
+	showSelectedGroups();
 }
 
 
@@ -320,6 +337,8 @@ void WireDialog::deleteGroups()
 	std::cerr << "WireDialog::deleteGroups()";
 	std::cerr << std::endl;
 
+	mGroupSelected = NULL;
+
 	QLayout *alayout = ui.scrollAreaWidgetContents_groups->layout();
 	QLayoutItem *item;
 	int i = 0;
@@ -380,10 +399,28 @@ void WireDialog::selectGroupSet(int index)
 	showGroups();
 }
 
+void WireDialog::showSelectedGroups()
+{
+	if (mGroupSelected)
+	{
+		deletePulses();
+		// request data.
+		std::list<RsGxsGroupId> grpIds;
+		grpIds.push_back(mGroupSelected->groupId());
+		requestPulseData(grpIds);
+	}
+	else
+	{
+		showGroups();
+	}
+}
+
 void WireDialog::showGroups()
 {
 	deleteGroups();
 	deletePulses();
+
+
 
 	/* depends on the comboBox */
 	std::map<RsGxsGroupId, RsWireGroup>::const_iterator it;

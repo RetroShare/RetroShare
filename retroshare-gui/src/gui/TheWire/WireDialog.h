@@ -81,6 +81,7 @@ private:
 	void deletePulses();
 	void deleteGroups();
 	void showGroups();
+	void showSelectedGroups();
 	void updateGroups(std::vector<RsWireGroup> &groups);
 
 	// Loading Data.
