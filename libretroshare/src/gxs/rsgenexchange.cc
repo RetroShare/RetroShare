@@ -1692,7 +1692,7 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_STATISTICS_CHANGED, false);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }

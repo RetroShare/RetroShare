@@ -111,6 +111,7 @@ enum class RsForumEventCode: uint8_t
 	UPDATED_MESSAGE          = 0x04, /// existing message has been updated in a particular forum
 	SUBSCRIBE_STATUS_CHANGED = 0x05, /// forum was subscribed or unsubscribed
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
+	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
 };
 
 struct RsGxsForumEvent: RsEvent

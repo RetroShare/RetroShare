@@ -59,6 +59,8 @@
 
 #define MAX_COMMENT_TITLE 32
 
+static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not update group statistics more often than once every 2 mins
+
 /*
  * Transformation Notes:
  *   there are still a couple of things that the new groups differ from Old version.
@@ -77,6 +79,8 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui->setupUi(this);
 
 	mShouldUpdateMessageSummaryList = true;
+	mShouldUpdateGroupStatistics = false;
+    mLastGroupStatisticsUpdateTs=0;
 	mInitialized = false;
 	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
@@ -203,6 +207,21 @@ void GxsGroupFrameDialog::paintEvent(QPaintEvent *pe)
 		mShouldUpdateMessageSummaryList = false;
 		mGroupIdsSummaryToUpdate.clear();
 	}
+
+    rstime_t now = time(nullptr);
+
+    if(mShouldUpdateGroupStatistics &&  now > DELAY_BETWEEN_GROUP_STATISTICS_UPDATE + mLastGroupStatisticsUpdateTs)
+    {
+        // This mechanism allows to gather multiple updateGroupStatistics events at once and not send too many of them at the same time.
+        // it avoids re-loadign all the group everytime a friend sends new statistics.
+
+        for(auto& groupId: mGroupStatisticsToUpdate)
+			updateGroupStatisticsReal(groupId);
+
+        mShouldUpdateGroupStatistics = false;
+        mLastGroupStatisticsUpdateTs = time(nullptr);
+        mGroupStatisticsToUpdate.clear();
+    }
 
     MainPage::paintEvent(pe);
 }
@@ -1106,6 +1125,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 /*********************** **** **** **** ***********************/
 
 void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
+{
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 {
     RsThread::async([this,groupId]()
 	{

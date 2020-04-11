@@ -104,6 +104,11 @@ protected:
 
 	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
 	virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
+
+private:
+	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
+	void updateMessageSummaryListReal(RsGxsGroupId groupId);
+
 private slots:
 	void todo();
 
@@ -161,7 +166,6 @@ private:
 
 	void initUi();
 
-	void updateMessageSummaryListReal(RsGxsGroupId groupId);
 	void openGroupInNewTab(const RsGxsGroupId &groupId);
 	void groupSubscribe(bool subscribe);
 
@@ -205,8 +209,15 @@ private:
 	RsGxsGroupId mNavigatePendingGroupId;
 	RsGxsMessageId mNavigatePendingMsgId;
 
+    // Message summary list update
+
 	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
     std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
+
+    // GroupStatistics update
+    bool mShouldUpdateGroupStatistics;
+    rstime_t mLastGroupStatisticsUpdateTs;
+    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
 
 	UIStateHelper *mStateHelper;
 

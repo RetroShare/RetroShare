@@ -69,6 +69,11 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
             updateDisplay(true);
             break;
+
+        case RsPostedEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mPostedGroupId);
+            break;
+
 		default: break;
 		}
 	}

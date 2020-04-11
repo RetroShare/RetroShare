@@ -80,6 +80,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
             updateDisplay(true);
             break;
 
+        case RsChannelEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mChannelGroupId);
+            break;
+
         default:
             break;
         }

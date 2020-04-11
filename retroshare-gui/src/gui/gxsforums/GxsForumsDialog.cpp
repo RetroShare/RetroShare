@@ -69,6 +69,11 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
             break;
+
+        case RsForumEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mForumGroupId);
+            break;
+
         default:
             break;
         }
