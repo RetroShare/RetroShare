@@ -33,15 +33,17 @@ class PulseAddDialog : public QWidget, public TokenResponse
 public:
 	PulseAddDialog(QWidget *parent = 0);
 
+	void cleanup();
 	void setGroup(RsWireGroup &group);
 	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
 
 private slots:
 	void addURL();
-	void addTo();
+	void clearDisplayAs();
 	void postPulse();
 	void cancelPulse();
 	void clearDialog();
+	void pulseTextChanged();
 
 private:
 	void postOriginalPulse();
@@ -51,6 +53,7 @@ private:
 	void acknowledgeMessage(const uint32_t &token);
 	void loadPulseData(const uint32_t &token);
 	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	uint32_t toPulseSentiment(int index);
 
 protected:
 

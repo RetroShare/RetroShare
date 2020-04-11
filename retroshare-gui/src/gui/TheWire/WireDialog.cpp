@@ -137,6 +137,7 @@ void WireDialog::reply(RsWirePulse &pulse, std::string &groupName)
 
 	// publishing group.
 	RsWireGroup group = mOwnGroups[idx];
+	mAddDialog->cleanup();
 	mAddDialog->setGroup(group);
 
 	// establish replyTo.
@@ -246,6 +247,7 @@ void WireDialog::createPulse()
 
 	RsWireGroup group = mOwnGroups[idx];
 
+	mAddDialog->cleanup();
 	mAddDialog->setGroup(group);
 	mAddDialog->show();
 }
