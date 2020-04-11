@@ -40,9 +40,10 @@
 #define GROUP_SET_ALL           (0)
 #define GROUP_SET_OWN           (1)
 #define GROUP_SET_SUBSCRIBED    (2)
-#define GROUP_SET_AUTO          (3)
-#define GROUP_SET_RECOMMENDED   (4)
-#define GROUP_SET_OTHERS        (5)
+#define GROUP_SET_OTHERS        (3)
+// Future Extensions.
+// #define GROUP_SET_AUTO          (4)
+// #define GROUP_SET_RECOMMENDED   (5)
 
 
 #define WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE 1
@@ -60,10 +61,10 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
-	connect( ui.pushButton_Post, SIGNAL(clicked()), this, SLOT(createPulse()));
 	connect( ui.toolButton_refresh, SIGNAL(clicked()), this, SLOT(refreshGroups()));
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
+	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -401,8 +402,17 @@ void WireDialog::selectGroupSet(int index)
 	showGroups();
 }
 
+void WireDialog::selectFilterTime(int index)
+{
+	std::cerr << "WireDialog::selectFilterTime(" << index << ")";
+	std::cerr << std::endl;
+
+	showSelectedGroups();
+}
+
 void WireDialog::showSelectedGroups()
 {
+	ui.comboBox_filterTime->setEnabled(false);
 	if (mGroupSelected)
 	{
 		deletePulses();
@@ -419,6 +429,7 @@ void WireDialog::showSelectedGroups()
 
 void WireDialog::showGroups()
 {
+	ui.comboBox_filterTime->setEnabled(false);
 	deleteGroups();
 	deletePulses();
 
@@ -436,12 +447,6 @@ void WireDialog::showGroups()
 		}
 		else if (it->second.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) {
 			if (mGroupSet == GROUP_SET_SUBSCRIBED) {
-				add = true;
-			}
-			if (mGroupSet == GROUP_SET_AUTO) {
-				add = true;
-			}
-			if (mGroupSet == GROUP_SET_RECOMMENDED) {
 				add = true;
 			}
 		}
@@ -545,6 +550,32 @@ public:
 	std::map<rstime_t, RsWirePulse *> replies; // publish -> replies.
 };
 
+rstime_t WireDialog::getFilterTimestamp()
+{
+	rstime_t filterTimestamp = time(NULL);
+	switch(ui.comboBox_filterTime->currentIndex())
+	{
+		case 1: // Last 24 Hours.
+			// filterTimestamp -= (3600 * 24);
+			filterTimestamp -= (1800);
+			break;
+		case 2: // Last 7 Days.
+			//filterTimestamp -= (3600 * 24 * 7);
+			filterTimestamp -= (3600);
+			break;
+		case 3: // Last 30 Days.
+			//filterTimestamp -= (3600 * 24 * 30);
+			filterTimestamp -= (4 * 3600);
+			break;
+		case 0: // All Time.
+		case -1: // no index.
+		default:
+			filterTimestamp = 0; // back to Epoch! effectively all.
+			break;
+	}
+	return filterTimestamp;
+}
+
 bool WireDialog::loadPulseData(const uint32_t &token)
 {
 	std::cerr << "WireDialog::loadPulseData()";
@@ -555,6 +586,14 @@ bool WireDialog::loadPulseData(const uint32_t &token)
 
 	std::list<RsWirePulse *> references;
 	std::map<RsGxsMessageId, PulseReplySet> pulseGrouping;
+
+	// setup time filtering.
+	uint32_t filterTimestamp;
+	bool filterTime = (ui.comboBox_filterTime->currentIndex() > 0);
+	if (filterTime) 
+	{
+		filterTimestamp = getFilterTimestamp();
+	}
 
 	std::vector<RsWirePulse>::iterator vit = pulses.begin();
 	for(; vit != pulses.end(); vit++)
@@ -570,6 +609,15 @@ bool WireDialog::loadPulseData(const uint32_t &token)
 		}
 		else
 		{
+			// Filter timestamp now. (as soon as possible).
+			if (filterTime && (pulse.mMeta.mPublishTs < filterTimestamp))
+			{
+				std::cerr << "WireDialog::loadPulseData() SKipping OLD MSG: GroupId: " << pulse.mMeta.mGroupId;
+				std::cerr << " PulseId: " << pulse.mMeta.mMsgId;
+				std::cerr << std::endl;
+				continue;
+			}
+
 			RsGxsGroupId &gid = pulse.mMeta.mGroupId;
 			std::map<RsGxsGroupId, RsWireGroup>::iterator git = mAllGroups.find(gid);
 			if (git != mAllGroups.end())
@@ -630,6 +678,7 @@ bool WireDialog::loadPulseData(const uint32_t &token)
 	std::map<RsGxsMessageId, PulseReplySet>::iterator pgit;
 	for(pgit = pulseGrouping.begin(); pgit != pulseGrouping.end(); pgit++)
 	{
+
 		PulseOrderedReply &msg = pulseOrdering[pgit->second.msg->mMeta.mPublishTs] = 
 			PulseOrderedReply(pgit->second.msg, pgit->second.group);
 		std::map<RsGxsMessageId, RsWirePulse *>::iterator rmit;
@@ -648,6 +697,8 @@ bool WireDialog::loadPulseData(const uint32_t &token)
 		addPulse(poit->second.msg, poit->second.group, poit->second.replies);
 	}
 
+    // allow filterTime to be changed again
+	ui.comboBox_filterTime->setEnabled(true);
 	return true;
 }
 
