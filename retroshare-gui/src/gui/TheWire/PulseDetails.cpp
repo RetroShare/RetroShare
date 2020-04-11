@@ -93,8 +93,8 @@ void PulseDetails::setup()
 	frame_replies->setVisible(false);
 	mHasReplies = false;
 
-	toolButton_follow->setEnabled(mActions != NULL);
-	toolButton_rate->setEnabled(mActions != NULL);
+	toolButton_follow->setEnabled(false); // TODO
+	toolButton_rate->setEnabled(false);   // TODO
 	toolButton_reply->setEnabled(mActions != NULL);
 }
 

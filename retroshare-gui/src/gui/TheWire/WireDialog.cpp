@@ -556,16 +556,13 @@ rstime_t WireDialog::getFilterTimestamp()
 	switch(ui.comboBox_filterTime->currentIndex())
 	{
 		case 1: // Last 24 Hours.
-			// filterTimestamp -= (3600 * 24);
-			filterTimestamp -= (1800);
+			filterTimestamp -= (3600 * 24);
 			break;
 		case 2: // Last 7 Days.
-			//filterTimestamp -= (3600 * 24 * 7);
-			filterTimestamp -= (3600);
+			filterTimestamp -= (3600 * 24 * 7);
 			break;
 		case 3: // Last 30 Days.
-			//filterTimestamp -= (3600 * 24 * 30);
-			filterTimestamp -= (4 * 3600);
+			filterTimestamp -= (3600 * 24 * 30);
 			break;
 		case 0: // All Time.
 		case -1: // no index.
