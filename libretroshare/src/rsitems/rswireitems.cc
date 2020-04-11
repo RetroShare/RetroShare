@@ -44,17 +44,20 @@ RsItem *RsGxsWireSerialiser::create_item(uint16_t service,uint8_t item_subtype) 
 void RsGxsWireGroupItem::clear()
 {
 	group.mDescription.clear();
+	group.mIcon.clear();
 }
 
 void RsGxsWireGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_DESCR,group.mDescription,"group.mDescription") ;
+	group.mIcon.serial_process(j, ctx);
 }
 
 void RsGxsWirePulseItem::clear()
 {
 	pulse.mPulseText.clear();
 	pulse.mPulseType = 0;
+	pulse.mReplySentiment = 0;
 	pulse.mRefGroupId.clear();
 	pulse.mRefGroupName.clear();
 	pulse.mRefOrigMsgId.clear();
@@ -66,6 +69,7 @@ void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
 {
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mPulseText,"pulse.mPulseText") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mPulseType,"pulse.mPulseType") ;
+	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mReplySentiment,"pulse.mReplySentiment") ;
 	RsTypeSerializer::serial_process(j,ctx,pulse.mRefGroupId,"pulse.mRefGroupId") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,pulse.mRefGroupName,"pulse.mRefGroupName") ;
 	RsTypeSerializer::serial_process(j,ctx,pulse.mRefOrigMsgId,"pulse.mRefOrigMsgId") ;

@@ -39,6 +39,11 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 
 }
 
+RsGxsGroupId &WireGroupItem::groupId()
+{
+	return mGroup.mMeta.mGroupId;
+}
+
 void WireGroupItem::setup()
 {
 	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
@@ -91,8 +96,28 @@ void WireGroupItem::removeItem()
 {
 }
 
-void WireGroupItem::setSelected(bool /* on */)
+void WireGroupItem::setSelected(bool on)
 {
+	mSelected = on;
+	// set color too
+	if (mSelected) 
+	{
+		setBackground("red");
+	}
+	else
+	{
+		setBackground("gray");
+	}
+}
+
+
+void WireGroupItem::setBackground(QString color)
+{
+    QWidget *tocolor = this;
+    QPalette p = tocolor->palette();
+    p.setColor(tocolor->backgroundRole(), QColor(color));
+    tocolor->setPalette(p);
+    tocolor->setAutoFillBackground(true);
 }
 
 bool WireGroupItem::isSelected()
@@ -102,20 +127,14 @@ bool WireGroupItem::isSelected()
 
 void WireGroupItem::mousePressEvent(QMouseEvent *event)
 {
-	/* We can be very cunning here?
-	 * grab out position.
-	 * flag ourselves as selected.
-	 * then pass the mousePressEvent up for handling by the parent
-	 */
-
 	QPoint pos = event->pos();
 
 	std::cerr << "WireGroupItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
 	std::cerr << std::endl;
 
-	setSelected(true);
-
-	QWidget::mousePressEvent(event);
+	// notify of selection.
+	// Holder will setSelected() flag.
+	mHolder->notifyGroupSelection(this);
 }
 
 const QPixmap *WireGroupItem::getPixmap()

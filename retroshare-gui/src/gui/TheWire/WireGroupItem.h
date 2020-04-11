@@ -50,6 +50,7 @@ public:
 	bool isSelected();
 
 	const QPixmap *getPixmap();
+	RsGxsGroupId &groupId();
 
 private slots:
 	void show();
@@ -61,6 +62,7 @@ protected:
 private:
 	void setup();
 	void setGroupSet();
+	void setBackground(QString color);
 
 	WireGroupHolder *mHolder;
 	RsWireGroup mGroup;

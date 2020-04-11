@@ -68,6 +68,7 @@ private slots:
 	void checkUpdate();
 	void refreshGroups();
 	void selectGroupSet(int index);
+	void selectFilterTime(int index);
 
 private:
 
@@ -81,7 +82,11 @@ private:
 	void deletePulses();
 	void deleteGroups();
 	void showGroups();
+	void showSelectedGroups();
 	void updateGroups(std::vector<RsWireGroup> &groups);
+
+    // utils.
+	rstime_t getFilterTimestamp();
 
 	// Loading Data.
 	void requestGroupData();
