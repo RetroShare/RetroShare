@@ -43,7 +43,7 @@
 #include "retroshare/rstypes.h"
 #include "retroshare/rspeers.h"
 #include "retroshare/rsinit.h"
-
+#include "util/cxx17retrocompat.h"
 #include "rsitems/rsfiletransferitems.h"
 #include "rsitems/rsserviceids.h"
 #include "util/rsmemory.h"
@@ -1975,9 +1975,8 @@ void ftServer::ftReceiveSearchResult(RsTurtleFTSearchResultItem *item)
 			hasCallback = true;
 
 			std::vector<TurtleFileInfoV2> cRes;
-			std::transform( item->result.begin(), item->result.end(),
-			                std::back_inserter(cRes),
-			                [](const auto& it){ return TurtleFileInfoV2(it); } );
+			for(auto& res: std::as_const(item->result))
+				cRes.push_back(TurtleFileInfoV2(res));
 
 			cbpt->second.first(cRes);
 		}
