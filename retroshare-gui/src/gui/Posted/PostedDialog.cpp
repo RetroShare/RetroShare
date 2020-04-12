@@ -62,7 +62,7 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsPostedEventCode::NEW_MESSAGE:
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
-			updateMessageSummaryList(e->mPostedGroupId);
+			updateGroupStatisticsReal(e->mPostedGroupId); // update the list immediately
             break;
 
 		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];

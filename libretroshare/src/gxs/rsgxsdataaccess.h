@@ -123,7 +123,7 @@ public:
     void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) override;
 
     /* Poll */
-	GxsRequestStatus requestStatus(const uint32_t token);
+	GxsRequestStatus requestStatus(uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);

@@ -105,7 +105,6 @@ protected:
 	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
 	virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
 
-private:
 	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
 	void updateMessageSummaryListReal(RsGxsGroupId groupId);
 

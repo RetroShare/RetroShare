@@ -62,7 +62,7 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 		case RsForumEventCode::NEW_MESSAGE:
 		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsForumEventCode::READ_STATUS_CHANGED:
-			updateMessageSummaryList(e->mForumGroupId);
+			updateGroupStatisticsReal(e->mForumGroupId); // update the list immediately
             break;
 
 		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
@@ -71,7 +71,7 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
             break;
 
         case RsForumEventCode::STATISTICS_CHANGED:
-            updateGroupStatistics(e->mForumGroupId);
+            updateGroupStatistics(e->mForumGroupId);   // update the list when redraw less often than once every 2 mins
             break;
 
         default:
