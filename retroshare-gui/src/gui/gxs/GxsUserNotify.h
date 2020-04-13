@@ -23,6 +23,7 @@
 
 #include <QObject>
 #include "gui/common/UserNotify.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 #include "util/TokenQueue.h"
 
 struct RsGxsIfaceHelper;
@@ -33,12 +34,11 @@ class GxsUserNotify : public UserNotify
 	Q_OBJECT
 
 public:
-	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
+	GxsUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
 	virtual ~GxsUserNotify();
 
 protected:
 	virtual void startUpdate();
-    virtual bool getServiceStatistics(GxsServiceStatistic& stat)=0;
 
 private:
 	virtual unsigned int getNewCount() { return mCountChildMsgs ? (mNewThreadMessageCount + mNewChildMessageCount) : mNewThreadMessageCount; }
@@ -48,6 +48,8 @@ protected:
 
 private:
 	RsGxsUpdateBroadcastBase *mBase;
+    const GxsGroupFrameDialog      *mGroupFrameDialog;
+
 	unsigned int mNewThreadMessageCount;
 	unsigned int mNewChildMessageCount;
 };

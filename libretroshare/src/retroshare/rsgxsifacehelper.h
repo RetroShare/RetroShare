@@ -40,7 +40,9 @@
  * are necessary, so at this point this workaround seems acceptable.
  */
 
-#define DEBUG_GXSIFACEHELPER 1
+//==================================
+//  #define DEBUG_GXSIFACEHELPER 1
+//==================================
 
 enum class TokenRequestType: uint8_t
 {
@@ -267,7 +269,9 @@ public:
         {
 			RS_STACK_MUTEX(mMtx);
 			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
+#ifdef DEBUG_GXSIFACEHELPER
             locked_dumpTokens();
+#endif
             return true;
         }
         else
@@ -295,7 +299,9 @@ public:
         {
 			RS_STACK_MUTEX(mMtx);
 			mActiveTokens[token]=high_priority_request? (TokenRequestType::NO_KILL_TYPE) : token_request_type;
+#ifdef DEBUG_GXSIFACEHELPER
             locked_dumpTokens();
+#endif
             return true;
         }
         else
@@ -310,7 +316,9 @@ public:
 			RS_STACK_MUTEX(mMtx);
 
 			mActiveTokens[token]=  (msgIds.size()==1 && msgIds.begin()->second.size()==0) ?(TokenRequestType::ALL_POSTS):(TokenRequestType::POSTS);
+#ifdef DEBUG_GXSIFACEHELPER
 			locked_dumpTokens();
+#endif
 			return true;
         }
         else
@@ -324,7 +332,9 @@ public:
         {
 			RS_STACK_MUTEX(mMtx);
 			mActiveTokens[token]=TokenRequestType::ALL_POSTS;
+#ifdef DEBUG_GXSIFACEHELPER
 			locked_dumpTokens();
+#endif
             return true;
         }
         else
@@ -340,7 +350,9 @@ public:
         {
 			RS_STACK_MUTEX(mMtx);
 			mActiveTokens[token]=TokenRequestType::MSG_RELATED_INFO;
+#ifdef DEBUG_GXSIFACEHELPER
             locked_dumpTokens();
+#endif
             return true;
         }
         else
@@ -357,23 +369,33 @@ public:
 	/// @see RsTokenService::requestServiceStatistic
 	bool requestServiceStatistic(uint32_t& token)
 	{
-        mTokenService.requestServiceStatistic(token);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+
+        mTokenService.requestServiceStatistic(token,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
 
+#ifdef DEBUG_GXSIFACEHELPER
 		locked_dumpTokens();
+#endif
         return true;
     }
 
 	/// @see RsTokenService::requestGroupStatistic
 	bool requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
 	{
-		mTokenService.requestGroupStatistic(token, grpId);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+
+		mTokenService.requestGroupStatistic(token, grpId,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;
+#ifdef DEBUG_GXSIFACEHELPER
 		locked_dumpTokens();
+#endif
         return true;
     }
 
@@ -485,7 +507,7 @@ private:
 
         uint32_t count[7] = {0};
 
-        std::cerr << "Service " << std::hex << service_id << std::dec
+        RsDbg() << "Service " << std::hex << service_id << std::dec
                   << " (" << rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id))
                   << ") this=" << std::hex << (void*)this << std::dec << ") Active tokens (per type): " ;
 

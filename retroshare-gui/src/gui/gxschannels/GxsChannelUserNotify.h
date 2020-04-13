@@ -22,16 +22,16 @@
 #define GXSCHANNELUSERNOTIFY_H
 
 #include "gui/gxs/GxsUserNotify.h"
+#include "gui/gxs/GxsGroupFrameDialog.h"
 
 class GxsChannelUserNotify : public GxsUserNotify
 {
 	Q_OBJECT
 
 public:
-	GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
+	GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
-    virtual bool getServiceStatistics(GxsServiceStatistic& stat) override;
 
 private:
 	virtual QIcon getIcon();

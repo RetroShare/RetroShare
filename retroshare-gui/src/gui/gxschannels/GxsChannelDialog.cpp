@@ -64,10 +64,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
         switch(e->mChannelEventCode)
         {
-		case RsChannelEventCode::NEW_MESSAGE:
-		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
-		case RsChannelEventCode::READ_STATUS_CHANGED:
-			updateMessageSummaryList(e->mChannelGroupId);
+		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];
+		case RsChannelEventCode::READ_STATUS_CHANGED:     // [[fallthrough]];
+			updateGroupStatisticsReal(e->mChannelGroupId); // update the list immediately
             break;
 
         case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
@@ -78,6 +78,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
+            break;
+
+        case RsChannelEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mChannelGroupId);
             break;
 
         default:
@@ -109,7 +113,7 @@ QString GxsChannelDialog::getHelpString() const
 
 UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
-	return new GxsChannelUserNotify(rsGxsChannels, parent);
+	return new GxsChannelUserNotify(rsGxsChannels,this, parent);
 }
 
 void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_links)

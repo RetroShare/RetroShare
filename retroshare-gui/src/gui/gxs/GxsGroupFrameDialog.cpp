@@ -59,6 +59,8 @@
 
 #define MAX_COMMENT_TITLE 32
 
+static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not update group statistics more often than once every 2 mins
+
 /*
  * Transformation Notes:
  *   there are still a couple of things that the new groups differ from Old version.
@@ -76,6 +78,9 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	ui = new Ui::GxsGroupFrameDialog();
 	ui->setupUi(this);
 
+	mShouldUpdateMessageSummaryList = true;
+	mShouldUpdateGroupStatistics = false;
+    mLastGroupStatisticsUpdateTs=0;
 	mInitialized = false;
 	mDistSyncAllowed = allow_dist_sync;
 	mInFill = false;
@@ -182,7 +187,43 @@ void GxsGroupFrameDialog::showEvent(QShowEvent *event)
 		initUi();
 	}
 
-    updateDisplay( mCachedGroupMetas.empty() );
+    uint32_t children =  mYourGroups->childCount() + mSubscribedGroups->childCount() + mPopularGroups->childCount() + mOtherGroups->childCount();
+
+    bool empty = mCachedGroupMetas.empty() || children==0;
+
+    updateDisplay( empty );
+}
+
+void GxsGroupFrameDialog::paintEvent(QPaintEvent *pe)
+{
+	if(mShouldUpdateMessageSummaryList)
+	{
+		if(!mGroupIdsSummaryToUpdate.empty())
+			for(auto& group_id: mGroupIdsSummaryToUpdate)
+				updateMessageSummaryListReal(group_id);
+		else
+			updateMessageSummaryListReal(RsGxsGroupId());
+
+		mShouldUpdateMessageSummaryList = false;
+		mGroupIdsSummaryToUpdate.clear();
+	}
+
+    rstime_t now = time(nullptr);
+
+    if(mShouldUpdateGroupStatistics &&  now > DELAY_BETWEEN_GROUP_STATISTICS_UPDATE + mLastGroupStatisticsUpdateTs)
+    {
+        // This mechanism allows to gather multiple updateGroupStatistics events at once and not send too many of them at the same time.
+        // it avoids re-loadign all the group everytime a friend sends new statistics.
+
+        for(auto& groupId: mGroupStatisticsToUpdate)
+			updateGroupStatisticsReal(groupId);
+
+        mShouldUpdateGroupStatistics = false;
+        mLastGroupStatisticsUpdateTs = time(nullptr);
+        mGroupStatisticsToUpdate.clear();
+    }
+
+    MainPage::paintEvent(pe);
 }
 
 void GxsGroupFrameDialog::processSettings(bool load)
@@ -989,6 +1030,18 @@ void GxsGroupFrameDialog::insertGroupsData(const std::list<RsGxsGenericGroupData
 
 void GxsGroupFrameDialog::updateMessageSummaryList(RsGxsGroupId groupId)
 {
+    // groupId.isNull() means that we need to update all groups so we clear up the list of groups to update.
+
+    if(!groupId.isNull())
+        mGroupIdsSummaryToUpdate.insert(groupId);
+    else
+        mGroupIdsSummaryToUpdate.clear();
+
+    mShouldUpdateMessageSummaryList = true;
+}
+
+void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
+{
 	if (!mInitialized) {
 		return;
 	}
@@ -1073,6 +1126,12 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
 void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 {
+    mGroupStatisticsToUpdate.insert(groupId);
+    mShouldUpdateGroupStatistics = true;
+}
+
+void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
+{
     RsThread::async([this,groupId]()
 	{
 		GxsGroupStatistic stats;
@@ -1083,7 +1142,7 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 			return;
 		}
 
-		RsQThreadUtils::postToObject( [this,stats]()
+		RsQThreadUtils::postToObject( [this,stats, groupId]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -1096,6 +1155,7 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 				return;
 
 			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
+            mCachedGroupStats[groupId] = stats;
 
 			getUserNotify()->updateIcon();
 
@@ -1103,6 +1163,23 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 	});
 }
 
+void GxsGroupFrameDialog::getServiceStatistics(GxsServiceStatistic& stats) const
+{
+	stats = GxsServiceStatistic(); // clears everything
+
+   for(auto it:  mCachedGroupStats)
+   {
+       const GxsGroupStatistic& s(it.second);
+
+	   stats.mNumMsgs             += s.mNumMsgs;
+	   stats.mNumGrps             += 1;
+	   stats.mSizeOfMsgs          += s.mTotalSizeOfMsgs;
+	   stats.mNumThreadMsgsNew    += s.mNumThreadMsgsNew;
+	   stats.mNumThreadMsgsUnread += s.mNumThreadMsgsUnread;
+	   stats.mNumChildMsgsNew     += s.mNumChildMsgsNew ;
+	   stats.mNumChildMsgsUnread  += s.mNumChildMsgsUnread ;
+   }
+}
 
 TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)   // this should be overloaded in the child class
 {

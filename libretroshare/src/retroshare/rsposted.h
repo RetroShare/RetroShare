@@ -114,6 +114,7 @@ enum class RsPostedEventCode: uint8_t
 	UPDATED_POSTED_GROUP     = 0x04,
 	UPDATED_MESSAGE          = 0x05,
 	READ_STATUS_CHANGED      = 0x06,
+	STATISTICS_CHANGED       = 0x07,
 };
 
 
