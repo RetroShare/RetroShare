@@ -301,7 +301,7 @@ bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, c
 void RsGxsDataAccess::setReq(GxsRequest* req, uint32_t token, uint32_t ansType, const RsTokReqOptions& opts) const
 {
 	req->token = token;
-	req->ansType = ansType;
+	req->clientAnswerType = ansType;
 	req->Options = opts;
 	return;
 }
@@ -1724,7 +1724,7 @@ bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& stat
 
     if(req != nullptr)
 	{
-		anstype = req->ansType;
+		anstype = req->clientAnswerType;
 		reqtype = req->reqType;
 		status = COMPLETE;
 		ts = req->reqTime;
