@@ -132,6 +132,7 @@ MessageWidget::MessageWidget(bool controlled, QWidget *parent, Qt::WindowFlags f
 	isControlled = controlled;
 	isWindow = false;
 	currMsgFlags = 0;
+	expandFiles = false;
 
 	ui.actionTextBesideIcon->setData(Qt::ToolButtonTextBesideIcon);
 	ui.actionIconOnly->setData(Qt::ToolButtonIconOnly);
@@ -281,10 +282,7 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		// load settings
 
 		// expandFiles
-		bool value = Settings->value("expandFiles", false).toBool();
-		ui.expandFilesButton->setChecked(value);
-		ui.msgList->setVisible(value);
-		togglefileview();
+		expandFiles = Settings->value("expandFiles", false).toBool();
 		
 		// toolbar button style
 		Qt::ToolButtonStyle style = (Qt::ToolButtonStyle) Settings->value("ToolButon_Style", Qt::ToolButtonTextBesideIcon).toInt();
@@ -293,7 +291,7 @@ void MessageWidget::processSettings(const QString &settingsGroup, bool load)
 		// save settings
 
 		// expandFiles
-		Settings->setValue("expandFiles", ui.expandFilesButton->isChecked());
+		Settings->setValue("expandFiles", expandFiles);
 
 		//toolbar button style
 		Settings->setValue("ToolButon_Style", ui.replyButton->toolButtonStyle());
@@ -322,7 +320,7 @@ void MessageWidget::msgfilelistWidgetCostumPopupMenu( QPoint /*point*/ )
 	contextMnu.exec(QCursor::pos());
 }
 
-void MessageWidget::togglefileview()
+void MessageWidget::togglefileview(bool noUpdate/*=false*/)
 {
 	/* if msg header visible -> change icon and tooltip
 	* three widgets...
@@ -335,6 +333,10 @@ void MessageWidget::togglefileview()
 		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
+	if (!noUpdate)
+		expandFiles = ui.expandFilesButton->isChecked();
+
+	ui.msgList->setVisible(ui.expandFilesButton->isChecked());
 }
 
 /* download the recommendations... */
@@ -426,13 +428,10 @@ void MessageWidget::messagesChanged()
 void MessageWidget::clearTagLabels()
 {
 	/* clear all tags */
-	while (tagLabels.size()) {
-		delete tagLabels.front();
-		tagLabels.pop_front();
-	}
-	while (ui.tagLayout->count()) {
-		delete ui.tagLayout->takeAt(0);
-	}
+	qDeleteAll(tagLabels);
+	tagLabels.clear();
+
+	misc::clearLayout(ui.tagLayout);
 
 	ui.tagsLabel->setVisible(false);
 }
@@ -510,12 +509,29 @@ void MessageWidget::fill(const std::string &msgId)
 
 		clearTagLabels();
 
+		ui.inviteFrame->hide();
+		ui.expandFilesButton->setChecked(false);
+		togglefileview(true);
+
+		ui.replyButton->setEnabled(false);
+		ui.replyallButton->setEnabled(false);
+		ui.forwardButton->setEnabled(false);
+		ui.deleteButton->setEnabled(false);
+		ui.moreButton->setEnabled(false);
+
 		currMsgFlags = 0;
 
 		return;
 	}
 
 	clearTagLabels();
+
+
+	ui.replyButton->setEnabled(true);
+	ui.replyallButton->setEnabled(true);
+	ui.forwardButton->setEnabled(true);
+	ui.deleteButton->setEnabled(true);
+	ui.moreButton->setEnabled(true);
 
 	MessageInfo msgInfo;
 	if (rsMail->getMessage(currMsgId, msgInfo) == false) {
@@ -549,6 +565,8 @@ void MessageWidget::fill(const std::string &msgId)
 
 	/* add the items in! */
 	ui.msgList->insertTopLevelItems(0, items);
+	ui.expandFilesButton->setChecked(expandFiles && (items.count()>0) );
+	togglefileview(true);
 
 	/* iterate through the sources */
 	RetroShareLink link;
@@ -688,8 +706,15 @@ void MessageWidget::remove()
 	if (isWindow) {
 		window()->close();
 	} else {
-		deleteLater();
+		if (isControlled) {
+			currMsgId.clear();
+			fill(currMsgId);
+		} else {
+			deleteLater();
+		}
 	}
+
+	emit messageRemoved();
 }
 
 void MessageWidget::print()
