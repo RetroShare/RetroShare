@@ -65,6 +65,7 @@ public:
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
     bool isUnread() const ;
+    const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
 
     static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:

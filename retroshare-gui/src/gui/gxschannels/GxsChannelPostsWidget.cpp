@@ -456,18 +456,23 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 	return bVisible;
 }
 
-void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
+#ifdef TODO
+void GxsChannelPostsWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,bool related)
 {
 	GxsChannelPostItem *item = NULL;
+    RsGxsChannelPost post;
 
-    if(!post.mMeta.mOrigMsgId.isNull())
+    if(!meta.mOrigMsgId.isNull())
     {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mOrigMsgId)) ;
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 
         if(item)
 		{
+            post = feedItem->post();
 			ui->feedWidget->removeFeedItem(item) ;
+
+            post.mOlderVersions.insert(post.mMeta.mMsgId);
 
 			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
@@ -478,18 +483,69 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
 	if (related)
     {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mMsgId)) ;
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
-	if (item) {
+	if (item)
+    {
 		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-	} else {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+    else
+    {
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
-
+#ifdef TODO
 	ui->fileWidget->addFiles(post, related);
+#endif
+}
+#endif
+
+void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
+{
+	GxsChannelPostItem *item = NULL;
+
+    const RsMsgMetaData& meta(post.mMeta);
+
+    if(!meta.mOrigMsgId.isNull())
+    {
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+
+        if(item)
+		{
+            std::set<RsGxsMessageId> older_versions(item->olderVersions());
+			ui->feedWidget->removeFeedItem(item) ;
+
+            older_versions.insert(meta.mMsgId);
+
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, false,older_versions);
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+
+			return ;
+		}
+    }
+
+	if (related)
+    {
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	}
+	if (item)
+    {
+		item->setPost(post);
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+    else
+    {
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
+		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+
+#ifdef TODO
+	ui->fileWidget->addFiles(post, related);
+#endif
 }
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
