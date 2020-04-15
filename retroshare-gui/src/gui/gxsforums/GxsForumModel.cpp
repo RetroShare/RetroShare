@@ -53,9 +53,13 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 void RsGxsForumModel::preMods()
 {
  	emit layoutAboutToBeChanged();
+
+	beginResetModel();
 }
 void RsGxsForumModel::postMods()
 {
+	endResetModel();
+
     if(mTreeMode == TREE_MODE_FLAT)
 		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
     else
