@@ -817,7 +817,10 @@ void GxsForumThreadWidget::changedThread(QModelIndex index)
 	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
 
     if(setToReadOnActive)
+    {
+		saveExpandedItems(mSavedExpandedMessages);
 		mThreadModel->setMsgReadStatus(src_index, true,false);
+    }
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
@@ -837,6 +840,7 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
     {
+		saveExpandedItems(mSavedExpandedMessages);
         ForumModelPostEntry fmpe;
 
 		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
@@ -845,6 +849,7 @@ void GxsForumThreadWidget::clickedThread(QModelIndex index)
 #ifdef DEBUG_FORUMS
 		std::cerr << "Setting message read status to false" << std::endl;
 #endif
+
 		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
 	}
 #ifdef DEBUG_FORUMS
@@ -1266,6 +1271,7 @@ void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool f
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
+	saveExpandedItems(mSavedExpandedMessages);
 
     if(forum)
 		mThreadModel->setMsgReadStatus(mThreadModel->root(),read,children);

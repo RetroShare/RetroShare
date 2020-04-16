@@ -515,7 +515,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
         if(item)
 		{
-            std::set<RsGxsMessageId> older_versions(item->olderVersions());
+            std::set<RsGxsMessageId> older_versions(item->olderVersions()); // we make a copy because the item will be deleted
 			ui->feedWidget->removeFeedItem(item) ;
 
             older_versions.insert(meta.mMsgId);
@@ -792,9 +792,16 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 
 bool GxsChannelPostsWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
-	insertChannelDetails(*dynamic_cast<const RsGxsChannelGroup*>(data));
-	return true;
+    const RsGxsChannelGroup *d = dynamic_cast<const RsGxsChannelGroup*>(data);
 
+    if(!d)
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Cannot dynamic cast input data (" << (void*)data << " to RsGxsGenericGroupData. Something bad happenned." << std::endl;
+        return false;
+    }
+
+	insertChannelDetails(*d);
+	return true;
 }
 
 void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& psts)
@@ -825,6 +832,11 @@ void GxsChannelPostsWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& pst
 
 bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
 {
+    if(groupId().isNull())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Trying to get data about null group!!" << std::endl;
+        return false;
+    }
     std::vector<RsGxsChannelGroup> groups;
 
     if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({groupId()}),groups) && groups.size()==1)
@@ -851,7 +863,7 @@ void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData
 {
     std::vector<RsGxsChannelPost> cposts;
 
-    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some time, and the cposts list is being modified in the insert method.
 		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
 
 	insertChannelPosts(cposts, thread, false);

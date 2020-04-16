@@ -185,7 +185,7 @@ void GxsMessageFramePostWidget::loadGroupData()
 
 	RsThread::async([this]()
 	{
-		RsGxsGenericGroupData *data;
+		RsGxsGenericGroupData *data = nullptr;
 		getGroupData(data);
 
         if(!data)
