@@ -44,20 +44,54 @@
  * #define DEBUG_ITEM 1
  ****/
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, group.mMeta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate), mGroup(group)	// this one should be in GxsFeedItem
 {
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-	init(messageId,older_versions) ;
+    mPost.mMeta.mGroupId = group.mMeta.mGroupId;
+
+	QVector<RsGxsMessageId> v;
+	//bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+		v.push_back(*it) ;
+
+	if(older_versions.find(messageId) == older_versions.end())
+		v.push_back(messageId);
+
+	setMessageVersions(v) ;
+    setup();
+
+	//init(messageId,older_versions) ;
 }
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate) // this one should be in GxsFeedItem
 {
-    mPost.mMeta.mMsgId.clear(); // security
-	init(post.mMeta.mMsgId,older_versions) ;
-	mPost = post ;
+    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
+
+	QVector<RsGxsMessageId> v;
+	//bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+		v.push_back(*it) ;
+
+	if(older_versions.find(messageId) == older_versions.end())
+		v.push_back(messageId);
+
+	setMessageVersions(v) ;
+    setup();
+
+    loadGroup();
 }
+
+// GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+//     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
+// {
+//     mPost.mMeta.mMsgId.clear(); // security
+// 	init(post.mMeta.mMsgId,older_versions) ;
+// 	mPost = post ;
+// }
 
 void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
 {
@@ -86,7 +120,11 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 	{
 		mLoaded = true ;
 
-		requestGroup();
+        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
+        for(auto& m:messageVersions())
+            older_versions.insert(m);
+
+		fill();
 		requestMessage();
 		requestComment();
 	}
@@ -107,6 +145,7 @@ bool GxsChannelPostItem::isUnread() const
 void GxsChannelPostItem::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */
+
 	ui = new Ui::GxsChannelPostItem;
 	ui->setupUi(this);
 
@@ -165,29 +204,6 @@ void GxsChannelPostItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsChannelPostItem::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-
-	// If not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
-#ifdef DEBUG_ITEM
-	std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl ;
-#endif
-	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
-		ui->editButton->hide() ;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
-}
 
 bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post, bool doFill)
 {
@@ -229,46 +245,6 @@ void GxsChannelPostItem::loadComments()
 {
 	QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
 	comments(title);
-}
-
-void GxsChannelPostItem::loadGroup()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelGroupItem::loadGroup()";
-	std::cerr << std::endl;
-#endif
-
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-		std::vector<RsGxsChannelGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
-
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
-		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (groups.size() != 1)
-		{
-			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-		RsGxsChannelGroup group(groups[0]);
-
-		RsQThreadUtils::postToObject( [group,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			setGroup(group);
-
-		}, this );
-	});
 }
 
 void GxsChannelPostItem::loadMessage()
@@ -407,6 +383,9 @@ void GxsChannelPostItem::fill()
 //		}
 		ui->logoLabel->setPixmap(thumbnail);
 	}
+
+	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
+		ui->editButton->hide() ;
 
 	if (!mIsHome)
 	{
@@ -828,4 +807,44 @@ void GxsChannelPostItem::makeUpVote()
 	ui->voteDownButton->setEnabled(false);
 
 	emit vote(msgId, true);
+}
+
+void GxsChannelPostItem::loadGroup()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelGroupItem::loadGroup()";
+	std::cerr << std::endl;
+#endif
+
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+		std::vector<RsGxsChannelGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
+
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		{
+			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsGxsChannelGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			mGroup = group;
+
+		}, this );
+	});
 }

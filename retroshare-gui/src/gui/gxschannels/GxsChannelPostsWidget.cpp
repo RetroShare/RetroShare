@@ -520,7 +520,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
             older_versions.insert(meta.mMsgId);
 
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, false,older_versions);
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup,meta.mMsgId, true, false,older_versions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 
 			return ;
@@ -539,7 +539,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 	}
     else
     {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup,meta.mMsgId, true, true);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 	}
 
@@ -547,6 +547,8 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 	ui->fileWidget->addFiles(post, related);
 #endif
 }
+
+
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
 {
@@ -842,6 +844,8 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
     if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({groupId()}),groups) && groups.size()==1)
     {
         data = new RsGxsChannelGroup(groups[0]);
+
+        mGroup = groups[0];	// make a local copy to pass on to items
         return true;
     }
     else
@@ -852,6 +856,7 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
         {
 			insertChannelDetails(distant_group);
 			data = new RsGxsChannelGroup(distant_group);
+			mGroup = distant_group;	// make a local copy to pass on to items
             return true ;
         }
     }

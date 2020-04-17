@@ -67,7 +67,6 @@ protected:
 	virtual void fillThreadCreatePost(const QVariant &/*post*/, bool /*related*/, int /*current*/, int /*count*/) {}
 
 	/* GXS functions */
-	void requestGroupData();
 	void loadGroupData();
 	void loadAllPosts();
 	void loadPosts(const std::set<RsGxsMessageId>& msgIds);
