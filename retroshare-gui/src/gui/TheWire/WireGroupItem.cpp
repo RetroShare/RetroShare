@@ -64,13 +64,13 @@ void WireGroupItem::setGroupSet()
 	}
 	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
-		toolButton_type->setText("Subcribed");
-		toolButton_subscribe->setText("Unsubcribe");
+		toolButton_type->setText("Following");
+		toolButton_subscribe->setText("Unfollow");
 	}
 	else
 	{
 		toolButton_type->setText("Other");
-		toolButton_subscribe->setText("Subcribe");
+		toolButton_subscribe->setText("Follow");
 	}
 }
 
