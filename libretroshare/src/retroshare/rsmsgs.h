@@ -987,8 +987,18 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
     virtual uint32_t getDistantChatPermissionFlags()=0 ;
     virtual bool setDistantChatPermissionFlags(uint32_t flags)=0 ;
-    
-virtual bool initiateDistantChatConnexion(
+	
+    	/**
+	 * @brief initiateDistantChatConnexion initiate a connexion for a distant chat
+	 * @jsonapi{development}
+	 * @param[in] to_pid distant chat id
+	 * @param[in] from_pid distant chat id
+	 * @param[out] pid distant chat id
+	 * @param[out] error_code distant chat info
+	 * @param[in] notify distant chat info
+	 * @return true on success
+	 */
+	virtual bool initiateDistantChatConnexion(
 	        const RsGxsId& to_pid, const RsGxsId& from_pid,
 	        DistantChatPeerId& pid, uint32_t& error_code,
 	        bool notify = true ) = 0;
@@ -1001,7 +1011,14 @@ virtual bool initiateDistantChatConnexion(
 	 * @return true on success
 	 */
 	virtual bool getDistantChatStatus(const DistantChatPeerId& pid, DistantChatPeerInfo& info)=0;
-virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
+	
+	/**
+	 * @brief closeDistantChatConnexion 
+	 * @jsonapi{development}
+	 * @param[in] pid distant chat id
+	 * @return true on success
+	 */
+	virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 	/**
 	 * @brief MessageSend
