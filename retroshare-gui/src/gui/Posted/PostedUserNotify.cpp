@@ -29,8 +29,8 @@ PostedUserNotify::PostedUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFr
 
 bool PostedUserNotify::hasSetting(QString *name, QString *group)
 {
-	if (name) *name = tr("Posted");
-	if (group) *group = "Posted";
+	if (name) *name = tr("Board Post");
+	if (group) *group = "Board";
 
 	return true;
 }
