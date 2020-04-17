@@ -1722,6 +1722,7 @@ void GxsForumThreadWidget::postForumLoading()
     recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
     //mUpdating = false;
 }
+
 void GxsForumThreadWidget::updateGroupData()
 {
     if(groupId().isNull())
