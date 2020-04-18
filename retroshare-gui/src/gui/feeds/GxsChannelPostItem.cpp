@@ -44,11 +44,12 @@
  * #define DEBUG_ITEM 1
  ****/
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, group.mMeta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate), mGroup(group)	// this one should be in GxsFeedItem
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate),
+    mGroupMeta(group_meta)
 {
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-    mPost.mMeta.mGroupId = group.mMeta.mGroupId;
+    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
 	QVector<RsGxsMessageId> v;
 	//bool self = false;
@@ -62,7 +63,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 	setMessageVersions(v) ;
     setup();
 
-	//init(messageId,older_versions) ;
+    // no call to loadGroup() here because we have it already.
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
@@ -238,7 +239,7 @@ QString GxsChannelPostItem::getMsgLabel()
 
 QString GxsChannelPostItem::groupName()
 {
-	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
+	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
 }
 
 void GxsChannelPostItem::loadComments()
@@ -384,7 +385,7 @@ void GxsChannelPostItem::fill()
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
-	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
+	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
 		ui->editButton->hide() ;
 
 	if (!mIsHome)
@@ -401,7 +402,7 @@ void GxsChannelPostItem::fill()
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 		//ui->subjectLabel->setText(msgLink.toHtml());
 
-		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
 			ui->unsubscribeButton->setEnabled(true);
 		}
@@ -440,7 +441,7 @@ void GxsChannelPostItem::fill()
 		ui->unsubscribeButton->hide();
 		ui->copyLinkButton->show();
 
-		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
 			ui->readButton->setVisible(true);
 
@@ -753,7 +754,7 @@ void GxsChannelPostItem::download()
 
 void GxsChannelPostItem::edit()
 {
-	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroup.mMeta.mGroupId,mPost.mMeta.mMsgId);
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroupMeta.mGroupId,mPost.mMeta.mMsgId);
     msgDialog->show();
 }
 
@@ -823,7 +824,7 @@ void GxsChannelPostItem::loadGroup()
 		std::vector<RsGxsChannelGroup> groups;
 		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
@@ -843,7 +844,7 @@ void GxsChannelPostItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			mGroup = group;
+			mGroupMeta = group.mMeta;
 
 		}, this );
 	});

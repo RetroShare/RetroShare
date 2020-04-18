@@ -520,7 +520,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
             older_versions.insert(meta.mMsgId);
 
-			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup,meta.mMsgId, true, false,older_versions);
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, false,older_versions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 
 			return ;
@@ -539,7 +539,7 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 	}
     else
     {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup,meta.mMsgId, true, true);
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, true);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 	}
 

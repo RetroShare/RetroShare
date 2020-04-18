@@ -47,7 +47,7 @@ public:
 	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
     // GxsChannelsPostsWidget and pass it to created items.
 
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
 //	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
 //	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
@@ -124,7 +124,7 @@ private:
 	bool mCloseOnRead;
 	bool mLoaded;
 
-	RsGxsChannelGroup mGroup;
+	RsGroupMetaData mGroupMeta;
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem*> mFileItems;
