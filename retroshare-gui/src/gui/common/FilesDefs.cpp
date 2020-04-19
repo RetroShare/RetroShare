@@ -27,6 +27,8 @@
 
 #include <map>
 
+//#define DEBUG_FILESDEFS 1
+
 static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
 {
 	QString ext = QFileInfo(filename).suffix().toLower();
@@ -89,19 +91,25 @@ QPixmap FilesDefs::getPixmapFromQtResourcePath(const QString& resource_path)
 {
 	static std::map<QString,QPixmap> mPixmapCache;
 	QPixmap pixmap;
+#ifdef DEBUG_FILESDEFS
     std::cerr << "Creating Pixmap from resource path " << resource_path.toStdString() ;
+#endif
 
 	auto item = mPixmapCache.find(resource_path);
 
 	if (item == mPixmapCache.end())
 	{
+#ifdef DEBUG_FILESDEFS
         std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
 		pixmap = QPixmap(resource_path);
 		mPixmapCache[resource_path] = pixmap;
 	}
 	else
     {
+#ifdef DEBUG_FILESDEFS
         std::cerr << "  In cache. " << std::endl;
+#endif
 		pixmap = item->second;
 	}
 
@@ -112,19 +120,25 @@ QIcon FilesDefs::getIconFromQtResourcePath(const QString& resource_path)
 {
 	static std::map<QString,QIcon> mIconCache;
 	QIcon icon;
+#ifdef DEBUG_FILESDEFS
     std::cerr << "Creating Icon from resource path " << resource_path.toStdString() ;
+#endif
 
 	auto item = mIconCache.find(resource_path);
 
 	if (item == mIconCache.end())
 	{
+#ifdef DEBUG_FILESDEFS
         std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
 		icon = QIcon(resource_path);
 		mIconCache[resource_path] = icon;
 	}
 	else
     {
+#ifdef DEBUG_FILESDEFS
         std::cerr << "  In cache. " << std::endl;
+#endif
 		icon = item->second;
 	}
 

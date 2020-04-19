@@ -288,7 +288,9 @@ void GxsChannelPostItem::loadMessage()
 
 		if (posts.size() == 1)
 		{
+#ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+#endif
             const RsGxsChannelPost& post(posts[0]);
 
 			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
@@ -296,7 +298,9 @@ void GxsChannelPostItem::loadMessage()
 		else if(comments.size() == 1)
 		{
 			const RsGxsComment& cmt = comments[0];
+#ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
+#endif
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
@@ -313,8 +317,10 @@ void GxsChannelPostItem::loadMessage()
 		}
 		else
 		{
+#ifdef DEBUG_ITEM
 			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
 			std::cerr << std::endl;
+#endif
 
 			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
 		}
@@ -745,7 +751,6 @@ void GxsChannelPostItem::readAndClearItem()
 	std::cerr << "GxsChannelPostItem::readAndClearItem()";
 	std::cerr << std::endl;
 #endif
-
 	readToggled(false);
 	removeItem();
 }
