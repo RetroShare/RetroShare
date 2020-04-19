@@ -114,6 +114,7 @@ enum class RsPostedEventCode: uint8_t
 	UPDATED_POSTED_GROUP     = 0x04,
 	UPDATED_MESSAGE          = 0x05,
 	READ_STATUS_CHANGED      = 0x06,
+	STATISTICS_CHANGED       = 0x07,
 };
 
 
@@ -166,6 +167,8 @@ public:
 	virtual bool createBoard(RsPostedGroup& board) =0;
 
 	virtual bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) =0;
+
+	virtual bool getBoardsServiceStatistics(GxsServiceStatistic& stat) =0;
 
 	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
 

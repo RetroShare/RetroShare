@@ -22,6 +22,7 @@
 #ifndef RSGXSDATAACCESS_H
 #define RSGXSDATAACCESS_H
 
+#include <queue>
 #include "retroshare/rstokenservice.h"
 #include "rsgxsrequesttypes.h"
 #include "rsgds.h"
@@ -29,6 +30,8 @@
 
 typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
 typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
+
+bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2);
 
 class RsGxsDataAccess : public RsTokenService
 {
@@ -56,7 +59,7 @@ public:
      * @param groupIds group id to request info for
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds) override;
 
     /*!
      * Use this to request all group related info
@@ -65,7 +68,7 @@ public:
      * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      * @return
      */
-    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts);
+    bool requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts) override;
 
     /*!
      * Use this to get msg information (id, meta, or data), store token value to poll for request completion
@@ -75,7 +78,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq& msgIds) override;
 
     /*!
      * Use this to get message information (id, meta, or data), store token value to poll for request completion
@@ -86,7 +89,7 @@ public:
      * all messages for all groups are retrieved
      * @return true if request successful false otherwise
      */
-    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds);
+    bool requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds) override;
 
     /*!
      * For requesting msgs related to a given msg id within a group
@@ -96,7 +99,7 @@ public:
      * @param groupIds The ids of the groups to get, second entry of map empty to query for all msgs
      * @return true if request successful false otherwise
      */
-    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds);
+    bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds) override;
 
     /*!
      * This request statistics on amount of data held
@@ -107,19 +110,20 @@ public:
      * total size of messages
      * total size of groups
      * @param token
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
      */
-    void requestServiceStatistic(uint32_t& token);
+    void requestServiceStatistic(uint32_t& token, const RsTokReqOptions &opts) override;
 
 	/*!
 	 * To request statistic on a group
 	 * @param token set to value to be redeemed to get statistic
 	 * @param grpId the id of the group
+     * @param opts Additional option that affect outcome of request. Please see specific services, for valid values
 	 */
-    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId);
-
+    void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) override;
 
     /* Poll */
-	GxsRequestStatus requestStatus(const uint32_t token);
+	GxsRequestStatus requestStatus(uint32_t token);
 
     /* Cancel Request */
     bool cancelRequest(const uint32_t &token);
@@ -200,7 +204,8 @@ public:
      * @param token request token to be redeemed
      * @param msgIds
      */
-    bool getMsgList(const uint32_t &token, GxsMsgIdResult &msgIds);
+    bool getMsgIdList(const uint32_t &token, GxsMsgIdResult &msgIds);
+
 
     /*!
      * Retrieve msg list for a given token for message related info
@@ -271,7 +276,7 @@ private:
      * @param token the value of the token for the request object handle wanted
      * @return the request associated to this token
      */
-    GxsRequest* locked_retrieveRequest(const uint32_t& token);
+    GxsRequest* locked_retrieveCompetedRequest(const uint32_t& token);
 
     /*!
      * Add a gxs request to queue
@@ -378,8 +383,18 @@ private:
      * @param req
      * @return false if unsuccessful, true otherwise
      */
-    bool getMsgList(MsgIdReq* req);
+    bool getMsgIdList(MsgIdReq* req);
 
+    /*!
+     * Attempts to retrieve msg Meta list from data store
+     * Computationally/CPU-Bandwidth expensive
+     *
+     * @param msgIds List of message Ids for the Message Metas to retrieve
+     * @param opts   GxsRequest options
+     * @param result Map of Meta information for messages
+     *
+     */
+	bool getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgMetaResult& result );
 
     /*!
      * Attempts to retrieve group meta data from data store
@@ -445,7 +460,7 @@ private:
      * @param opts the request options set by user
      * @param meta The accompanying meta information for msg, ids
      */
-    void filterMsgList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
+    void filterMsgIdList(GxsMsgIdResult& msgIds, const RsTokReqOptions& opts, const MsgMetaFilter& meta) const;
 
     /*!
      * This filter msgs based of options supplied (at the moment just status masks)
@@ -482,9 +497,10 @@ private:
      * @param opts the options used to parameterise the id filter
      * @param msgIdsOut the left overs ids after filter is applied to msgIds
      */
-    bool getMsgList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
+    bool getMsgIdList(const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut);
 
 private:
+    bool locked_clearRequest(const uint32_t &token);
 
     RsGeneralDataService* mDataStore;
 
@@ -492,10 +508,9 @@ private:
 
     uint32_t mNextToken;
 	std::map<uint32_t, GxsRequestStatus> mPublicToken;
-    std::map<uint32_t, GxsRequest*> mRequests;
 
-
-
+    std::set<std::pair<uint32_t,GxsRequest*> > mRequestQueue;
+    std::map<uint32_t, GxsRequest*> mCompletedRequests;
 };
 
 #endif // RSGXSDATAACCESS_H

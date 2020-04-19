@@ -58,6 +58,8 @@ public:
 
 	QString subject(bool noEmpty);
 
+signals:
+	void messageRemoved();
 
 private slots:
 	void reply();
@@ -75,7 +77,7 @@ private slots:
 	void messagesTagsChanged();
 	void messagesChanged();
 
-	void togglefileview();
+	void togglefileview(bool noUpdate = false);
 	void getcurrentrecommended();
 	void getallrecommended();
 
@@ -94,6 +96,7 @@ private:
 	bool isWindow;
 	std::string currMsgId;
 	unsigned int currMsgFlags;
+	bool expandFiles;
 
 	QList<QLabel*> tagLabels;
 

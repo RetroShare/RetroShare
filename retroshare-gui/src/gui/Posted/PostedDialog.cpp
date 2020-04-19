@@ -62,13 +62,18 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsPostedEventCode::NEW_MESSAGE:
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
-			updateMessageSummaryList(e->mPostedGroupId);
+			updateGroupStatisticsReal(e->mPostedGroupId); // update the list immediately
             break;
 
 		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
 		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
             updateDisplay(true);
             break;
+
+        case RsPostedEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mPostedGroupId);
+            break;
+
 		default: break;
 		}
 	}
@@ -82,7 +87,7 @@ PostedDialog::~PostedDialog()
 
 UserNotify *PostedDialog::createUserNotify(QObject *parent)
 {
-	return new PostedUserNotify(rsPosted, parent);
+	return new PostedUserNotify(rsPosted, this, parent);
 }
 
 QString PostedDialog::getHelpString() const

@@ -37,6 +37,7 @@ RsItem *RsDiscSerialiser::create_item(
 	{
 	case RsGossipDiscoveryItemType::PGP_LIST: return new RsDiscPgpListItem();
 	case RsGossipDiscoveryItemType::PGP_CERT_BINARY: return new RsDiscPgpKeyItem();
+	case RsGossipDiscoveryItemType::PGP_CERT: return new RsDiscPgpCertItem();	// deprecated, hanlde to suppress "unkown item" warning
 	case RsGossipDiscoveryItemType::CONTACT:  return new RsDiscContactItem();
 	case RsGossipDiscoveryItemType::IDENTITY_LIST: return new RsDiscIdentityListItem();
     default:

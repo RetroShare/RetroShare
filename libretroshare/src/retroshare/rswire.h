@@ -28,6 +28,7 @@
 
 #include "retroshare/rstokenservice.h"
 #include "retroshare/rsgxsifacehelper.h"
+#include "retroshare/rsgxscommon.h"
 
 
 /* The Main Interface Class - for information about your Peers */
@@ -38,6 +39,7 @@ struct RsWireGroup: RsGxsGenericGroupData
 {
 	public:
 	std::string mDescription;
+	RsGxsImage  mIcon;
 };
 
 
@@ -93,9 +95,10 @@ class RsWirePlace
 #define  WIRE_PULSE_TYPE_REPLY_MSG           (0x0002)
 #define  WIRE_PULSE_TYPE_REPLY_REFERENCE     (0x0004)
 
-#define  WIRE_PULSE_TYPE_SENTIMENT_POSITIVE  (0x0010)
-#define  WIRE_PULSE_TYPE_SENTIMENT_NEUTRAL   (0x0020)
-#define  WIRE_PULSE_TYPE_SENTIMENT_NEGATIVE  (0x0040)
+#define  WIRE_PULSE_SENTIMENT_NO_SENTIMENT   (0x0000)
+#define  WIRE_PULSE_SENTIMENT_POSITIVE       (0x0001)
+#define  WIRE_PULSE_SENTIMENT_NEUTRAL        (0x0002)
+#define  WIRE_PULSE_SENTIMENT_NEGATIVE       (0x0003)
 
 class RsWirePulse
 {
@@ -107,6 +110,7 @@ class RsWirePulse
 	std::string mPulseText;
 
 	uint32_t mPulseType;
+	uint32_t mReplySentiment; // only relevant if a reply.
 
 	// These Ref to the related (parent or reply) if reply (MODE_REPLY_MSG set)
 	// Mode                            REPLY_MSG only    REPLY_REFERENCE

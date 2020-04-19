@@ -45,6 +45,13 @@ struct RsMsgMetaData;
 
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > MsgMetaResult;
 
+enum class GxsRequestPriority {
+    VERY_HIGH      =  0x00,
+    HIGH           =  0x01,
+    NORMAL         =  0x02,
+    LOW            =  0x03,
+    VERY_LOW       =  0x04,
+};
 
 class RsGxsGrpMetaData;
 class RsGxsMsgMetaData;
@@ -232,7 +239,7 @@ public:
 		mNumChildMsgsNew = 0;
 		mNumChildMsgsUnread = 0;
 		mSizeStore = 0;
-	}
+    }
 
 public:
 	uint32_t mNumMsgs;

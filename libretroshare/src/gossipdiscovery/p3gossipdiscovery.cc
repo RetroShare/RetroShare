@@ -260,6 +260,7 @@ int p3discovery2::handleIncoming()
 	{
 		RsDiscPgpListItem*      pgplist  = nullptr;
 		RsDiscPgpKeyItem*       pgpkey   = nullptr;
+		RsDiscPgpCertItem*      pgpcert	 = nullptr;	 // deprecated, hanlde for retro compability
 		RsDiscContactItem*      contact  = nullptr;
 		RsDiscIdentityListItem* gxsidlst = nullptr;
 
@@ -282,6 +283,9 @@ int p3discovery2::handleIncoming()
 		}
 		else if((pgpkey = dynamic_cast<RsDiscPgpKeyItem *>(item)) != nullptr)
 			recvPGPCertificate(item->PeerId(), pgpkey);
+		else if((pgpcert = dynamic_cast<RsDiscPgpCertItem *>(item)) != nullptr)
+			// sink
+			delete pgpcert;
 		else if((pgplist = dynamic_cast<RsDiscPgpListItem *>(item)) != nullptr)
 		{
 			if (pgplist->mode == RsGossipDiscoveryPgpListMode::FRIENDS)

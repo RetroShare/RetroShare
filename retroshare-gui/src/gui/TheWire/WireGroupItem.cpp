@@ -24,6 +24,7 @@
 #include <QBuffer>
 
 #include "WireGroupItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include <algorithm>
 #include <iostream>
@@ -39,11 +40,26 @@ WireGroupItem::WireGroupItem(WireGroupHolder *holder, const RsWireGroup &grp)
 
 }
 
+RsGxsGroupId &WireGroupItem::groupId()
+{
+	return mGroup.mMeta.mGroupId;
+}
+
 void WireGroupItem::setup()
 {
 	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
 	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
+	
+	RsIdentityDetails idDetails ;
+	rsIdentity->getIdDetails(mGroup.mMeta.mAuthorId,idDetails);
+
+	QPixmap pixmap ;
+
+	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(mGroup.mMeta.mAuthorId,GxsIdDetails::SMALL);
+
+	label_avatar->setPixmap(pixmap);
 
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));
 	connect(toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
@@ -59,13 +75,13 @@ void WireGroupItem::setGroupSet()
 	}
 	else if (mGroup.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)
 	{
-		toolButton_type->setText("Subcribed");
-		toolButton_subscribe->setText("Unsubcribe");
+		toolButton_type->setText("Following");
+		toolButton_subscribe->setText("Unfollow");
 	}
 	else
 	{
 		toolButton_type->setText("Other");
-		toolButton_subscribe->setText("Subcribe");
+		toolButton_subscribe->setText("Follow");
 	}
 }
 
@@ -91,8 +107,28 @@ void WireGroupItem::removeItem()
 {
 }
 
-void WireGroupItem::setSelected(bool /* on */)
+void WireGroupItem::setSelected(bool on)
 {
+	mSelected = on;
+	// set color too
+	if (mSelected) 
+	{
+		setBackground("red");
+	}
+	else
+	{
+		setBackground("gray");
+	}
+}
+
+
+void WireGroupItem::setBackground(QString color)
+{
+    QWidget *tocolor = this;
+    QPalette p = tocolor->palette();
+    p.setColor(tocolor->backgroundRole(), QColor(color));
+    tocolor->setPalette(p);
+    tocolor->setAutoFillBackground(true);
 }
 
 bool WireGroupItem::isSelected()
@@ -102,20 +138,14 @@ bool WireGroupItem::isSelected()
 
 void WireGroupItem::mousePressEvent(QMouseEvent *event)
 {
-	/* We can be very cunning here?
-	 * grab out position.
-	 * flag ourselves as selected.
-	 * then pass the mousePressEvent up for handling by the parent
-	 */
-
 	QPoint pos = event->pos();
 
 	std::cerr << "WireGroupItem::mousePressEvent(" << pos.x() << ", " << pos.y() << ")";
 	std::cerr << std::endl;
 
-	setSelected(true);
-
-	QWidget::mousePressEvent(event);
+	// notify of selection.
+	// Holder will setSelected() flag.
+	mHolder->notifyGroupSelection(this);
 }
 
 const QPixmap *WireGroupItem::getPixmap()

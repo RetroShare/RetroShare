@@ -64,15 +64,13 @@ static PopupChatWindow *instance = NULL;
 }
 
 /** Default constructor */
-PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags)
+PopupChatWindow::PopupChatWindow(bool tabbed, QWidget *parent, Qt::WindowFlags flags)
+  : QMainWindow(parent, flags),tabbedWindow(tabbed),firstShow(true)
+  , chatDialog(nullptr),mEmptyIcon(nullptr)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
-
-	tabbedWindow = tabbed;
-	firstShow = true;
-	chatDialog = NULL;
-	mEmptyIcon = NULL;
+	setAttribute(Qt::WA_DeleteOnClose);
 
 	ui.tabWidget->setVisible(tabbedWindow);
 
@@ -204,15 +202,16 @@ void PopupChatWindow::addDialog(ChatDialog *dialog)
 	if (tabbedWindow) {
 		ui.tabWidget->addDialog(dialog);
 	} else {
-		ui.horizontalLayout->addWidget(dialog);
+		ui.chatcentralLayout->addWidget(dialog);
 		dialog->addToParent(this);
-		ui.horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        chatId = dialog->getChatId();
+		ui.chatcentralLayout->setContentsMargins(0, 0, 0, 0);
+		chatId = dialog->getChatId();
 		chatDialog = dialog;
 		calculateStyle(dialog);
+		calculateTitle(dialog);
 
 		/* signal toggled is called */
-        ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
+		ui.actionSetOnTop->setChecked(PeerSettings->getPrivateChatOnTop(chatId));
 
 		QObject::connect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 	}
@@ -233,14 +232,15 @@ void PopupChatWindow::removeDialog(ChatDialog *dialog)
 			deleteLater();
 		}
 	} else {
-		QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 
 		if (chatDialog == dialog) {
+			QObject::disconnect(dialog, SIGNAL(dialogClose(ChatDialog*)), this, SLOT(dialogClose(ChatDialog*)));
 			saveSettings();
 			dialog->removeFromParent(this);
-			ui.horizontalLayout->removeWidget(dialog);
-			chatDialog = NULL;
-            chatId = ChatId();
+			ui.chatcentralLayout->removeWidget(dialog);
+			chatDialog = nullptr;
+			chatId = ChatId();
+			close();
 			deleteLater();
 		}
 	}

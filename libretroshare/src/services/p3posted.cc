@@ -364,6 +364,16 @@ bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
 	return getGroupSummary(token, boards);
 }
 
+bool p3Posted::getBoardsServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
+
 bool p3Posted::getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat)
 {
 	uint32_t token;

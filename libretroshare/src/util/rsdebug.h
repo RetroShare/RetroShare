@@ -75,7 +75,8 @@ private:
 #else // def __ANDROID__
 
 #include <iostream>
-#include <ctime>
+#include <chrono>
+#include <iomanip>
 
 enum class RsLoggerCategories
 {
@@ -96,8 +97,15 @@ struct t_RsLogger
 	template<typename T>
 	inline stream_type& operator<<(const T& val)
 	{
-		return std::cerr << static_cast<char>(CATEGORY) << " " << time(nullptr)
-		                 << " " << val;
+		using namespace std::chrono;
+		const auto now = system_clock::now();
+		const auto sec = time_point_cast<seconds>(now);
+		const auto msec = duration_cast<milliseconds>(now - sec);
+		const auto tFill = std::cerr.fill();
+		return std::cerr << static_cast<char>(CATEGORY) << " "
+		                 << sec.time_since_epoch().count() << "."
+		                 << std::setfill('0') << std::setw(3) << msec.count()
+		                 << std::setfill(tFill) << " " << val;
 	}
 };
 #endif // def __ANDROID__

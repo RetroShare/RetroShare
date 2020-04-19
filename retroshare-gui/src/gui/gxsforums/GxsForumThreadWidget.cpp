@@ -1054,6 +1054,8 @@ void GxsForumThreadWidget::insertMessage()
 	ui->lineLeft->hide();
 	ui->by_text_label->hide();
 	ui->by_label->hide();
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
@@ -1726,6 +1728,7 @@ void GxsForumThreadWidget::postForumLoading()
     recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
     //mUpdating = false;
 }
+
 void GxsForumThreadWidget::updateGroupData()
 {
     if(groupId().isNull())

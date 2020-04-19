@@ -18,11 +18,12 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsgxsforums.h"
 #include "GxsForumUserNotify.h"
 #include "gui/MainWindow.h"
 
-GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+GxsForumUserNotify::GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 	mCountChildMsgs = true;
 }

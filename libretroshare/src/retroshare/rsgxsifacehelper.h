@@ -40,7 +40,9 @@
  * are necessary, so at this point this workaround seems acceptable.
  */
 
-//#define DEBUG_GXSIFACEHELPER 1
+//==================================
+//  #define DEBUG_GXSIFACEHELPER 1
+//==================================
 
 enum class TokenRequestType: uint8_t
 {
@@ -85,8 +87,7 @@ public:
      * @param groupIds the ids return for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupList(const uint32_t &token,
-            std::list<RsGxsGroupId> &groupIds)
+    bool getGroupList(const uint32_t &token, std::list<RsGxsGroupId> &groupIds)
 	{
 		return mGxs.getGroupList(token, groupIds);
 	}
@@ -119,8 +120,7 @@ public:
      * @param groupInfo the ids returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getGroupSummary(const uint32_t &token,
-            std::list<RsGroupMetaData> &groupInfo)
+    bool getGroupSummary(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo)
 	{
 		return mGxs.getGroupMeta(token, groupInfo);
 	}
@@ -130,8 +130,7 @@ public:
      * @param msgInfo the message metadata returned for given request token
      * @return false if request token is invalid, check token status for error report
      */
-    bool getMsgSummary(const uint32_t &token,
-            GxsMsgMetaMap &msgInfo)
+    bool getMsgSummary(const uint32_t &token, GxsMsgMetaMap &msgInfo)
 	{
 		return mGxs.getMsgMeta(token, msgInfo);
 	}
@@ -368,9 +367,12 @@ public:
 	{ return mTokenService.requestStatus(token); }
 
 	/// @see RsTokenService::requestServiceStatistic
-	void requestServiceStatistic(uint32_t& token)
+	bool requestServiceStatistic(uint32_t& token)
 	{
-        mTokenService.requestServiceStatistic(token);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+
+        mTokenService.requestServiceStatistic(token,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::SERVICE_STATISTICS;
@@ -378,12 +380,16 @@ public:
 #ifdef DEBUG_GXSIFACEHELPER
 		locked_dumpTokens();
 #endif
+        return true;
     }
 
 	/// @see RsTokenService::requestGroupStatistic
 	bool requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
 	{
-		mTokenService.requestGroupStatistic(token, grpId);
+        RsTokReqOptions opts;
+        opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
+
+		mTokenService.requestGroupStatistic(token, grpId,opts);
 
 		RS_STACK_MUTEX(mMtx);
 		mActiveTokens[token]=TokenRequestType::GROUP_STATISTICS;
@@ -501,7 +507,7 @@ private:
 
         uint32_t count[7] = {0};
 
-        std::cerr << "Service " << std::hex << service_id << std::dec
+        RsDbg() << "Service " << std::hex << service_id << std::dec
                   << " (" << rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id))
                   << ") this=" << std::hex << (void*)this << std::dec << ") Active tokens (per type): " ;
 
