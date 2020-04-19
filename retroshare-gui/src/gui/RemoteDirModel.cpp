@@ -430,7 +430,7 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
         if(details.hash.isNull())
             return QIcon(":/images/reset.png") ; // file is being hashed
         else
-            return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
+            return FilesDefs::getIconFromFileType(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 		return QVariant();

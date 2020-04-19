@@ -85,21 +85,55 @@ QString FilesDefs::getImageFromFilename(const QString& filename, bool anyForUnkn
 	return getInfoFromFilename(filename, anyForUnknown, true);
 }
 
-QIcon FilesDefs::getIconFromFilename(const QString& filename)
+QPixmap FilesDefs::getPixmapFromQtResourcePath(const QString& resource_path)
 {
-	QString sImage = getInfoFromFilename(filename, true, true);
-	static std::map<QString,QIcon> mIconCache;
-	QIcon icon;
-	auto item = mIconCache.find(sImage);
-	if (item == mIconCache.end())
+	static std::map<QString,QPixmap> mPixmapCache;
+	QPixmap pixmap;
+    std::cerr << "Creating Pixmap from resource path " << resource_path.toStdString() ;
+
+	auto item = mPixmapCache.find(resource_path);
+
+	if (item == mPixmapCache.end())
 	{
-		icon = QIcon(sImage);
-		mIconCache[sImage] = icon;
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+		pixmap = QPixmap(resource_path);
+		mPixmapCache[resource_path] = pixmap;
 	}
 	else
+    {
+        std::cerr << "  In cache. " << std::endl;
+		pixmap = item->second;
+	}
+
+	return pixmap;
+}
+
+QIcon FilesDefs::getIconFromQtResourcePath(const QString& resource_path)
+{
+	static std::map<QString,QIcon> mIconCache;
+	QIcon icon;
+    std::cerr << "Creating Icon from resource path " << resource_path.toStdString() ;
+
+	auto item = mIconCache.find(resource_path);
+
+	if (item == mIconCache.end())
+	{
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+		icon = QIcon(resource_path);
+		mIconCache[resource_path] = icon;
+	}
+	else
+    {
+        std::cerr << "  In cache. " << std::endl;
 		icon = item->second;
+	}
 
 	return icon;
+}
+
+QIcon FilesDefs::getIconFromFileType(const QString& filename)
+{
+    return getIconFromQtResourcePath(getInfoFromFilename(filename,true,true));
 }
 
 QString FilesDefs::getNameFromFilename(const QString &filename)

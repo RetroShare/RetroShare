@@ -23,6 +23,7 @@
 #include <QStyle>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "rshare.h"
 #include "GxsChannelPostItem.h"
 #include "ui_GxsChannelPostItem.h"
@@ -149,6 +150,24 @@ void GxsChannelPostItem::setup()
 
 	ui = new Ui::GxsChannelPostItem;
 	ui->setupUi(this);
+
+    // Manually set icons to allow to use clever resource sharing that is missing in Qt for Icons loaded from Qt resource file.
+    // This is particularly important here because a channel may contain many posts, so duplicating the QImages here is deadly for the
+    // memory.
+
+    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
+    ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
+    ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+    ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
+    ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
+    ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
+    ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
+    ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/commnt.png"));
+    ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
+    ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
+    ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
+    ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
+    ui->clearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/exit2.png"));
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -566,12 +585,12 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	if (isUnread)
 	{
 		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
 		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
 	ui->newLabel->setVisible(isNew);
@@ -684,7 +703,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		readToggled(false);
@@ -692,7 +711,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
