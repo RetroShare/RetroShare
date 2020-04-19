@@ -40,12 +40,26 @@
         <property name="text">
          <string>Create Account</string>
         </property>
+        <property name="icon">
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/add.png</normaloff>:/icons/png/add.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="toolButton_createPulse">
         <property name="text">
          <string>Post Pulse</string>
+        </property>
+        <property name="icon">
+         <iconset resource="TheWire_images.qrc">
+          <normaloff>:/images/compose.png</normaloff>:/images/compose.png</iconset>
+        </property>
+        <property name="toolButtonStyle">
+         <enum>Qt::ToolButtonTextBesideIcon</enum>
         </property>
        </widget>
       </item>
@@ -143,7 +157,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Subscribed</string>
+           <string>Following</string>
           </property>
          </item>
          <item>
@@ -151,6 +165,20 @@
            <string>Others</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="followLabel">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Who to Follow</string>
+         </property>
         </widget>
        </item>
        <item>
@@ -163,8 +191,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>231</width>
-            <height>435</height>
+            <width>228</width>
+            <height>421</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -291,8 +319,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>429</width>
-            <height>435</height>
+            <width>431</width>
+            <height>443</height>
            </rect>
           </property>
           <property name="styleSheet">
@@ -339,6 +367,7 @@
  </widget>
  <resources>
   <include location="TheWire_images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
