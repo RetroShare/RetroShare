@@ -24,6 +24,7 @@
 #include <QBuffer>
 
 #include "WireGroupItem.h"
+#include "gui/gxs/GxsIdDetails.h"
 
 #include <algorithm>
 #include <iostream>
@@ -49,6 +50,16 @@ void WireGroupItem::setup()
 	label_groupName->setText(QString::fromStdString(mGroup.mMeta.mGroupName));
 	label_authorId->setId(mGroup.mMeta.mAuthorId);
 	frame_details->setVisible(false);
+	
+	RsIdentityDetails idDetails ;
+	rsIdentity->getIdDetails(mGroup.mMeta.mAuthorId,idDetails);
+
+	QPixmap pixmap ;
+
+	if(idDetails.mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(idDetails.mAvatar.mData, idDetails.mAvatar.mSize, pixmap,GxsIdDetails::SMALL))
+				pixmap = GxsIdDetails::makeDefaultIcon(mGroup.mMeta.mAuthorId,GxsIdDetails::SMALL);
+
+	label_avatar->setPixmap(pixmap);
 
 	connect(toolButton_show, SIGNAL(clicked()), this, SLOT(show()));
 	connect(toolButton_subscribe, SIGNAL(clicked()), this, SLOT(subscribe()));
