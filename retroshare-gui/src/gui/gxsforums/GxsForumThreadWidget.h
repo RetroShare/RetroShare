@@ -102,7 +102,7 @@ private slots:
 	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QModelIndex index);
-    void postForumLoading();
+	void postForumLoading();
 
 	void reply_with_private_message();
 	void replytoforummessage();
@@ -158,7 +158,7 @@ private:
 
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
-	void markMsgAsReadUnread(bool read, bool children, bool forum);
+	void markMsgAsReadUnread(bool read, bool children, bool forum, RsGxsMessageId msgId = RsGxsMessageId());
 	void calculateUnreadCount();
 
 	void togglethreadview_internal();
