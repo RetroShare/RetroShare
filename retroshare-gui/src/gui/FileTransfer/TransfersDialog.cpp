@@ -919,10 +919,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
-	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
-	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
+	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH), tr("Search")) ;
+	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDSFILES), tr("Friends files")) ;
 
-	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_MYFILES), tr("My files")) ;
 
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
@@ -933,79 +933,79 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /** Setup the actions for the context menu */
 
 	// Actions. Only need to be defined once.
-   pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
+   pauseAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PAUSE), tr("Pause"), this);
    connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
-   resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
+   resumeAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-   forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
+   forceCheckAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CANCEL), tr( "Force Check" ), this );
    connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
 
-   cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+   cancelAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
-    openFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    openFolderAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(openFolderAct, SIGNAL(triggered()), this, SLOT(dlOpenFolder()));
 
-    openFileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+    openFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFILE), tr("Open File"), this);
     connect(openFileAct, SIGNAL(triggered()), this, SLOT(dlOpenFile()));
 
-    previewFileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
+    previewFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PREVIEW), tr("Preview File"), this);
     connect(previewFileAct, SIGNAL(triggered()), this, SLOT(dlPreviewFile()));
 
-    detailsFileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
+    detailsFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("Details..."), this);
     connect(detailsFileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
 
-    clearCompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+    clearCompletedAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
     connect( clearCompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    copyLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
     connect( copyLinkAct , SIGNAL( triggered() ), this, SLOT( dlCopyLink() ) );
-    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
+    pasteLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
     connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
-	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
+	queueDownAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
-	queueUpAct = new QAction(QIcon(":/images/go-up.png"), tr("Up"), this);
+	queueUpAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-up.png"), tr("Up"), this);
 	connect(queueUpAct, SIGNAL(triggered()), this, SLOT(priorityQueueUp()));
-	queueTopAct = new QAction(QIcon(":/images/go-top.png"), tr("Top"), this);
+	queueTopAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-top.png"), tr("Top"), this);
 	connect(queueTopAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
-	queueBottomAct = new QAction(QIcon(":/images/go-bottom.png"), tr("Bottom"), this);
+	queueBottomAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-bottom.png"), tr("Bottom"), this);
 	connect(queueBottomAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
-	chunkStreamingAct = new QAction(QIcon(IMAGE_STREAMING), tr("Streaming"), this);
+	chunkStreamingAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STREAMING), tr("Streaming"), this);
 	connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
-	prioritySlowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Slower"), this);
+	prioritySlowAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYLOW), tr("Slower"), this);
 	connect(prioritySlowAct, SIGNAL(triggered()), this, SLOT(speedSlow()));
-	priorityMediumAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Average"), this);
+	priorityMediumAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYNORMAL), tr("Average"), this);
 	connect(priorityMediumAct, SIGNAL(triggered()), this, SLOT(speedAverage()));
-	priorityFastAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("Faster"), this);
+	priorityFastAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYHIGH), tr("Faster"), this);
 	connect(priorityFastAct, SIGNAL(triggered()), this, SLOT(speedFast()));
-	chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
+	chunkRandomAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYAUTO), tr("Random"), this);
 	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
-	chunkProgressiveAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Progressive"), this);
+	chunkProgressiveAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYAUTO), tr("Progressive"), this);
 	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
-	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
+	playAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( dlOpenFile() ) );
-	renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
+	renameFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RENAMEFILE), tr("Rename file..."), this);
 	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
-	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
+	specifyDestinationDirectoryAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH),tr("Specify..."),this) ;
 	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory()));
-	expandAllDLAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	expandAllDLAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND),tr("Expand all"),this);
 	connect(expandAllDLAct,SIGNAL(triggered()),this,SLOT(expandAllDL()));
-	collapseAllDLAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	collapseAllDLAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE),tr("Collapse all"),this);
 	connect(collapseAllDLAct,SIGNAL(triggered()),this,SLOT(collapseAllDL()));
-	expandAllULAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	expandAllULAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND),tr("Expand all"),this);
 	connect(expandAllULAct,SIGNAL(triggered()),this,SLOT(expandAllUL()));
-	collapseAllULAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	collapseAllULAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE),tr("Collapse all"),this);
 	connect(collapseAllULAct,SIGNAL(triggered()),this,SLOT(collapseAllUL()));
-	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
+	collCreateAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLCREATE), tr("Create Collection..."), this);
 	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
-	collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
+	collModifAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
 	connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
-	collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
+	collViewAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLVIEW), tr("View Collection..."), this);
 	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
-	collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
+	collOpenAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
 	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
 	connect(NotifyQt::getInstance(), SIGNAL(downloadComplete(QString)), this, SLOT(collAutoOpen(QString)));
 
@@ -1068,9 +1068,9 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(showULHashAct,SIGNAL(triggered(bool)),this,SLOT(setShowULHashColumn(bool))) ;
 
     /** Setup the actions for the upload context menu */
-    ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    ulOpenFolderAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(ulOpenFolderAct, SIGNAL(triggered()), this, SLOT(ulOpenFolder()));
-    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    ulCopyLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
     connect( ulCopyLinkAct , SIGNAL( triggered() ), this, SLOT( ulCopyLink() ) );
 
     // load settings
@@ -1231,26 +1231,26 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	FileInfo info;
 
 	QMenu priorityQueueMenu(tr("Move in Queue..."), this);
-	priorityQueueMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	priorityQueueMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	priorityQueueMenu.addAction(queueTopAct);
 	priorityQueueMenu.addAction(queueUpAct);
 	priorityQueueMenu.addAction(queueDownAct);
 	priorityQueueMenu.addAction(queueBottomAct);
 
 	QMenu prioritySpeedMenu(tr("Priority (Speed)..."), this);
-	prioritySpeedMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	prioritySpeedMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	prioritySpeedMenu.addAction(prioritySlowAct);
 	prioritySpeedMenu.addAction(priorityMediumAct);
 	prioritySpeedMenu.addAction(priorityFastAct);
 
 	QMenu chunkMenu(tr("Chunk strategy"), this);
-	chunkMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	chunkMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	chunkMenu.addAction(chunkStreamingAct);
 	chunkMenu.addAction(chunkProgressiveAct);
 	chunkMenu.addAction(chunkRandomAct);
 
 	QMenu collectionMenu(tr("Collection"), this);
-	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_LIBRARY));
 	collectionMenu.addAction(collCreateAct);
 	collectionMenu.addAction(collModifAct);
 	collectionMenu.addAction(collViewAct);
@@ -1331,7 +1331,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 			contextMnu.addAction( renameFileAct) ;
 		}
 
-		QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
+		QMenu *directoryMenu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
 		directoryMenu->addAction(specifyDestinationDirectoryAct) ;
 
 		// Now get the list of existing  directories.

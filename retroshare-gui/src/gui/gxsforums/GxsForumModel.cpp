@@ -23,6 +23,7 @@
 #include <QModelIndex>
 #include <QIcon>
 
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -359,8 +360,8 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
-		case COLUMN_THREAD_DISTRIBUTION: return QIcon(":/icons/flag-green.png");
-		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
+        case COLUMN_THREAD_DISTRIBUTION: return FilesDefs::getIconFromQtResourcePath(":/icons/flag-green.png");
+		case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
 		default:
 			return QVariant();
 		}
