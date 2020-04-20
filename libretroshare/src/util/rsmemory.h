@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright 2012 Cyril Soler <csoler@users.sourceforge.net>                   *
- * Copyright 2019 Gioacchino Mazzurco <gio@altermundi.net>                     *
+ * Copyright 2019-2020 Gioacchino Mazzurco <gio@altermundi.net>                *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -89,19 +89,28 @@ bool rs_unique_cast(
 	return false;
 }
 
-/** Mark a pointer as non-owned aka you are not in charge of deleting it and
- * must not delete it.
+/** Mark a pointer as non-owned aka it must not be deleted/freed in that context.
+ * If a function take an `rs_view_ptr` as paramether it means that she will not
+ * own (aka free/delete) the passed memory, instead the caller is in charge of
+ * managing it. If a function return an `rs_view_ptr` it means the memory is
+ * managed internally and the caller should not call free/delete on it.
  * @see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1408r0.pdf */
 template<typename T> using rs_view_ptr = T*;
 
-/** Mark a pointer as owned aka you are in charge of deletingonce finished
- * dealing with it.
+/** Mark a pointer as owned aka the receiving context is in charge of dealing
+ * with it by free/delete once finished.
+ * If a function take an `rs_owner_ptr` as paramether it means that she will own
+ * (aka free/delete when finished using it) the passed memory, instead the
+ * caller is NOT in charge of managing it.
+ * If a function return an `rs_owner_ptr` it means the memory is NOT managed
+ * internally and the caller should call free/delete on it once finished using
+ * it.
  * @see http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1408r0.pdf */
 template<typename T> using rs_owner_ptr = T*;
 
-
 void *rs_malloc(size_t size) ;
 
+/** @deprecated use std::unique_ptr instead
 // This is a scope guard to release the memory block when going of of the current scope.
 // Can be very useful to auto-delete some memory on quit without the need to call free each time.
 //
@@ -118,11 +127,11 @@ void *rs_malloc(size_t size) ;
 // 	[do something]
 //
 // }	// mem gets freed automatically
-//
+*/
 class RsTemporaryMemory
 {
 public:
-    RsTemporaryMemory(size_t s)
+	explicit RsTemporaryMemory(size_t s)
     {
 	    _mem = (unsigned char *)rs_malloc(s) ;
 
@@ -136,14 +145,7 @@ public:
     
     size_t size() const { return _size ; }
 
-    ~RsTemporaryMemory()
-    {
-	    if(_mem != NULL)
-	    {
-		    free(_mem) ;
-		    _mem = NULL ;
-	    }
-    }
+	~RsTemporaryMemory() { free(_mem); }
 
 private:
     unsigned char *_mem ;

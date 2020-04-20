@@ -632,7 +632,7 @@ std::string PGPHandler::SaveCertificateToString(const RsPgpId& id,bool include_s
 
 bool PGPHandler::exportPublicKey(
         const RsPgpId& id,
-        rs_view_ptr<unsigned char>& mem_block, size_t& mem_size,
+        unsigned char*& mem_block, size_t& mem_size,
         bool armoured, bool include_signatures ) const
 {
 	mem_block = nullptr; mem_size = 0; // clear just in case
