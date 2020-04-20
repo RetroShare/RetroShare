@@ -3,8 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2011 by Christopher Evi-Parker                                    *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2011  Christopher Evi-Parker                                  *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -30,6 +30,7 @@
 #include "retroshare/rsreputations.h"
 #include "rsgxsflags.h"
 #include "util/rsdeprecate.h"
+#include "util/rsdebug.h"
 
 /*!
  * This class only make method of internal members visible tu upper level to
@@ -46,7 +47,7 @@
 
 enum class TokenRequestType: uint8_t
 {
-    UNDEFINED           = 0x00,
+	__NONE              = 0x00, /// Used to detect uninitialized
     GROUP_DATA          = 0x01,
     GROUP_META          = 0x02,
     POSTS               = 0x03,
@@ -55,6 +56,7 @@ enum class TokenRequestType: uint8_t
     GROUP_STATISTICS    = 0x06,
     SERVICE_STATISTICS  = 0x07,
     NO_KILL_TYPE        = 0x08,
+	__MAX                       /// Used to detect out of range
 };
 
 class RsGxsIfaceHelper
@@ -64,10 +66,11 @@ public:
 	 * @param gxs handle to RsGenExchange instance of service (Usually the
 	 *   service class itself)
 	 */
-	RsGxsIfaceHelper(RsGxsIface& gxs) :
-	    mGxs(gxs), mTokenService(*gxs.getTokenService()),mMtx("GxsIfaceHelper") {}
+	explicit RsGxsIfaceHelper(RsGxsIface& gxs) :
+	    mGxs(gxs), mTokenService(*gxs.getTokenService()), mMtx("GxsIfaceHelper")
+	{}
 
-    ~RsGxsIfaceHelper(){}
+	~RsGxsIfaceHelper() = default;
 
     /*!
      * Gxs services should call this for automatic handling of
@@ -444,9 +447,9 @@ protected:
 	        uint32_t token,
 	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(20000),
 	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100),
-            bool auto_delete_if_unsuccessful=true)
+	        bool auto_delete_if_unsuccessful=true)
 	{
-        #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
+#if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		auto wkStartime = std::chrono::steady_clock::now();
 		int maxWorkAroundCnt = 10;
 LLwaitTokenBeginLabel:
@@ -454,13 +457,14 @@ LLwaitTokenBeginLabel:
 		auto timeout = std::chrono::steady_clock::now() + maxWait;
 		auto st = requestStatus(token);
 
-		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
+		       && std::chrono::steady_clock::now() < timeout )
 		{
 			std::this_thread::sleep_for(checkEvery);
 			st = requestStatus(token);
 		}
-        if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
-            cancelRequest(token);
+		if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+			cancelRequest(token);
 
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		/* Work around for very slow/old android devices, we don't expect this
@@ -487,35 +491,39 @@ LLwaitTokenBeginLabel:
 #endif
 
 		{
-            RS_STACK_MUTEX(mMtx);
+			RS_STACK_MUTEX(mMtx);
 			mActiveTokens.erase(token);
-        }
+		}
 
-        return st;
-    }
+		return st;
+	}
 
 private:
 	RsGxsIface& mGxs;
 	RsTokenService& mTokenService;
-    RsMutex mMtx;
+	RsMutex mMtx;
 
-    std::map<uint32_t,TokenRequestType> mActiveTokens;
+	std::map<uint32_t,TokenRequestType> mActiveTokens;
 
-    void locked_dumpTokens()
-    {
-        uint16_t service_id =  mGxs.serviceType();
+	void locked_dumpTokens()
+	{
+		const uint16_t service_id =  mGxs.serviceType();
+		const auto countSize = static_cast<size_t>(TokenRequestType::__MAX);
+		uint32_t count[countSize] = {0};
 
-        uint32_t count[7] = {0};
+		RsDbg() << __PRETTY_FUNCTION__ << "Service 0x" << std::hex << service_id
+		        << " (" << rsServiceControl->getServiceName(
+		               RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
+		        << ") this=0x" << static_cast<void*>(this)
+		        << ") Active tokens (per type): ";
 
-        RsDbg() << "Service " << std::hex << service_id << std::dec
-                  << " (" << rsServiceControl->getServiceName(RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id))
-                  << ") this=" << std::hex << (void*)this << std::dec << ") Active tokens (per type): " ;
+		// let's count how many token of each type we've got.
+		for(auto& it: mActiveTokens) ++count[static_cast<size_t>(it.second)];
 
-        for(auto& it: mActiveTokens)				// let's count how many token of each type we've got.
-            ++count[static_cast<int>(it.second)];
+		for(uint32_t i=0; i < countSize; ++i)
+			RsDbg().uStream() /* << i << ":" */ << count[i] << " ";
+		RsDbg().uStream() << std::endl;
+	}
 
-        for(uint32_t i=0;i<7;++i)
-            std::cerr << std::dec /* << i << ":" */ << count[i] << " ";
-        std::cerr << std::endl;
-    }
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

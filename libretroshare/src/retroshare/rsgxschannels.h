@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2012  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2019-2020  Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -284,26 +285,6 @@ public:
 	virtual bool ExtraFileRemove(const RsFileHash& hash) = 0;
 
 	/**
-	 * @brief Get auto-download option value for given channel
-	 * @jsonapi{development}
-	 * @param[in] channelId channel id
-	 * @param[out] enabled storage for the auto-download option value
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool getChannelAutoDownload(
-	        const RsGxsGroupId& channelId, bool& enabled ) = 0;
-
-	/**
-	 * @brief Get download directory for the given channel
-	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel
-	 * @param[out] directory reference to string where to store the path
-	 * @return false on error, true otherwise
-	 */
-	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
-	                                          std::string& directory ) = 0;
-
-	/**
 	 * @brief Get channels summaries list. Blocking API.
 	 * @jsonapi{development}
 	 * @param[out] channels list where to store the channels
@@ -331,13 +312,15 @@ public:
 	 * @param[out] comments storage for the comments
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getChannelAllContent(const RsGxsGroupId& channelId,
+	virtual bool getChannelAllContent( const RsGxsGroupId& channelId,
 	                                   std::vector<RsGxsChannelPost>& posts,
 	                                   std::vector<RsGxsComment>& comments ) = 0;
 
 	/**
-	 * @brief Get channel messages and comments corresponding to the given message ID list. If the list is empty, nothing is returned. Since
-	 *        comments are themselves messages, it is possible to get comments only by only supplying their message IDs.
+	 * @brief Get channel messages and comments corresponding to the given IDs.
+	 * If the set is empty, nothing is returned.
+	 * @note Since comments are internally themselves messages, it is possible
+	 * to get comments only by supplying their IDs.
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[in] contentsIds ids of requested contents
@@ -345,8 +328,8 @@ public:
 	 * @param[out] comments storage for the comments
 	 * @return false if something failed, true otherwhise
 	 */
-	virtual bool getChannelContent(const RsGxsGroupId& channelId,
-				                    const std::set<RsGxsMessageId>& contentIds,
+	virtual bool getChannelContent( const RsGxsGroupId& channelId,
+	                                const std::set<RsGxsMessageId>& contentsIds,
 	                                std::vector<RsGxsChannelPost>& posts,
 	                                std::vector<RsGxsComment>& comments ) = 0;
 
@@ -370,16 +353,6 @@ public:
 	virtual bool markRead(const RsGxsGrpMsgIdPair& postId, bool read) = 0;
 
 	/**
-	 * @brief Enable or disable auto-download for given channel. Blocking API
-	 * @jsonapi{development}
-	 * @param[in] channelId channel id
-	 * @param[in] enable true to enable, false to disable
-	 * @return false if something failed, true otherwhise
-	 */
-	virtual bool setChannelAutoDownload(
-	        const RsGxsGroupId& channelId, bool enable ) = 0;
-
-	/**
 	 * @brief Share channel publishing key
 	 * This can be used to authorize other peers to post on the channel
 	 * @jsonapi{development}
@@ -389,16 +362,6 @@ public:
 	 */
 	virtual bool shareChannelKeys(
 	        const RsGxsGroupId& channelId, const std::set<RsPeerId>& peers ) = 0;
-
-	/**
-	 * @brief Set download directory for the given channel. Blocking API.
-	 * @jsonapi{development}
-	 * @param[in] channelId id of the channel
-	 * @param[in] directory path
-	 * @return false on error, true otherwise
-	 */
-	virtual bool setChannelDownloadDirectory(
-	        const RsGxsGroupId& channelId, const std::string& directory) = 0;
 
 	/**
 	 * @brief Subscrbe to a channel. Blocking API
@@ -525,8 +488,62 @@ public:
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
 
-	/* Following functions are deprecated as they expose internal functioning
-	 * semantic, instead of a safe to use API */
+	/* Following functions are deprecated and should not be considered a safe to
+	 * use API */
+
+	/**
+	 * @brief Get auto-download option value for given channel
+	 * @jsonapi{development}
+	 * @deprecated This feature rely on very buggy code, the returned value is
+	 *	not reliable @see setChannelAutoDownload().
+	 * @param[in] channelId channel id
+	 * @param[out] enabled storage for the auto-download option value
+	 * @return false if something failed, true otherwhise
+	 */
+	RS_DEPRECATED
+	virtual bool getChannelAutoDownload(
+	        const RsGxsGroupId& channelId, bool& enabled ) = 0;
+
+	/**
+	 * @brief Enable or disable auto-download for given channel. Blocking API
+	 * @jsonapi{development}
+	 * @deprecated This feature rely on very buggy code, when enabled the
+	 *	channel service start flooding erratically log with error messages,
+	 *	apparently without more dangerous consequences. Still those messages
+	 *	hints that something out of control is happening under the hood, use at
+	 *	your own risk. A safe alternative to this method can easly implemented
+	 *	at API client level instead.
+	 * @param[in] channelId channel id
+	 * @param[in] enable true to enable, false to disable
+	 * @return false if something failed, true otherwhise
+	 */
+	RS_DEPRECATED
+	virtual bool setChannelAutoDownload(
+	        const RsGxsGroupId& channelId, bool enable ) = 0;
+
+	/**
+	 * @brief Get download directory for the given channel
+	 * @jsonapi{development}
+	 * @deprecated @see setChannelAutoDownload()
+	 * @param[in] channelId id of the channel
+	 * @param[out] directory reference to string where to store the path
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool getChannelDownloadDirectory( const RsGxsGroupId& channelId,
+	                                          std::string& directory ) = 0;
+
+	/**
+	 * @brief Set download directory for the given channel. Blocking API.
+	 * @jsonapi{development}
+	 * @deprecated @see setChannelAutoDownload()
+	 * @param[in] channelId id of the channel
+	 * @param[in] directory path
+	 * @return false on error, true otherwise
+	 */
+	RS_DEPRECATED
+	virtual bool setChannelDownloadDirectory(
+	        const RsGxsGroupId& channelId, const std::string& directory) = 0;
 
 	/**
 	 * @brief Create channel. Blocking API.

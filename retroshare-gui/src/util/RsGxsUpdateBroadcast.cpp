@@ -1,7 +1,7 @@
 /*******************************************************************************
  * util/RsGxsUpdateBroadcast.cpp                                               *
  *                                                                             *
- * Copyright (c) 2014 Retroshare Team <retroshare.project@gmail.com>           *
+ * Copyright (C) 2014-2020 Retroshare Team <contact@retroshare.cc>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -22,6 +22,7 @@
 
 #include "RsGxsUpdateBroadcast.h"
 #include "gui/notifyqt.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rsgxsifacehelper.h>
 
@@ -32,17 +33,20 @@
 // now the update notify works through rsnotify and notifyqt
 // so the single instance per service is not really needed anymore
 
-QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
+static QMap<RsGxsIfaceHelper*, RsGxsUpdateBroadcast*> updateBroadcastMap;
 
 RsGxsUpdateBroadcast::RsGxsUpdateBroadcast(RsGxsIfaceHelper *ifaceImpl) :
-	QObject(NULL), mIfaceImpl(ifaceImpl)
+    QObject(nullptr), mIfaceImpl(ifaceImpl), mEventHandlerId(0)
 {
-    mEventHandlerId = 0;	// forces initialization in registerEventsHandler()
-
-    rsEvents->registerEventsHandler(RsEventType::GXS_CHANGES, [this](std::shared_ptr<const RsEvent> event)
-   		{
-			onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get()));
-		}, mEventHandlerId );
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{
+		RsQThreadUtils::postToObject(
+		            [=]()
+		{ onChangesReceived(*dynamic_cast<const RsGxsChanges*>(event.get())); },
+		            this );
+	},
+	            mEventHandlerId, RsEventType::GXS_CHANGES );
 }
 
 RsGxsUpdateBroadcast::~RsGxsUpdateBroadcast()

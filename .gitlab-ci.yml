@@ -12,13 +12,17 @@ build-and-test:
     script:
         - >
           if [ -n "$CI_MERGE_REQUEST_ID" ]; then
-          MR_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
-          MR_ARGS="$MR_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
-          export MR_ARGS ;
-          fi
+          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
+          else
+          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
+          fi ;
+          export REPO_ARGS ;
+          echo REPO_ARGS=$REPO_ARGS ;
         - mkdir Dockercontext
         - >
-          docker build -t retroshare:testing $MR_ARGS
+          docker build -t retroshare:testing $REPO_ARGS
           --file $CI_PROJECT_DIR/build_scripts/GitlabCI/gitlabCI.Dockerfile
           Dockercontext
         - >

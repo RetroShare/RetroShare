@@ -1969,3 +1969,5 @@ bool RsGxsDataAccess::checkMsgFilter(
 	return true;
 }
 
+GxsGroupStatistic::~GxsGroupStatistic() = default;
+GxsServiceStatistic::~GxsServiceStatistic() = default;

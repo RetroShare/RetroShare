@@ -193,55 +193,50 @@ struct RsMsgMetaData : RsSerializable
 
 struct RsGxsGenericMsgData
 {
-    virtual ~RsGxsGenericMsgData() = default; // making the type polymorphic
+	virtual ~RsGxsGenericMsgData() = default; // making the type polymorphic
 
 	RsMsgMetaData mMeta;
 };
 
 
-class GxsGroupStatistic
+struct GxsGroupStatistic : RsSerializable
 {
-public:
-	GxsGroupStatistic()
+	GxsGroupStatistic() :
+	    mNumMsgs(0), mTotalSizeOfMsgs(0), mNumThreadMsgsNew(0),
+	    mNumThreadMsgsUnread(0), mNumChildMsgsNew(0), mNumChildMsgsUnread(0) {}
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
 	{
-		mNumMsgs = 0;
-		mTotalSizeOfMsgs = 0;
-		mNumThreadMsgsNew = 0;
-		mNumThreadMsgsUnread = 0;
-		mNumChildMsgsNew = 0;
-        mNumChildMsgsUnread = 0;
+		RS_SERIAL_PROCESS(mGrpId);
+		RS_SERIAL_PROCESS(mNumMsgs);
+		RS_SERIAL_PROCESS(mTotalSizeOfMsgs);
+		RS_SERIAL_PROCESS(mNumThreadMsgsNew);
+		RS_SERIAL_PROCESS(mNumThreadMsgsUnread);
+		RS_SERIAL_PROCESS(mNumChildMsgsNew);
+		RS_SERIAL_PROCESS(mNumChildMsgsUnread);
+
 	}
 
-public:
-	/// number of message
-    RsGxsGroupId mGrpId;
-
-    uint32_t mNumMsgs;			// from the database
+	RsGxsGroupId mGrpId;
+	uint32_t mNumMsgs; /// number of message, from the database
 	uint32_t mTotalSizeOfMsgs;
 	uint32_t mNumThreadMsgsNew;
 	uint32_t mNumThreadMsgsUnread;
 	uint32_t mNumChildMsgsNew;
-    uint32_t mNumChildMsgsUnread;
+	uint32_t mNumChildMsgsUnread;
+
+	~GxsGroupStatistic() override;
 };
 
-class GxsServiceStatistic
+struct GxsServiceStatistic : RsSerializable
 {
-public:
-	GxsServiceStatistic()
-	{
-		mNumMsgs = 0;
-		mNumGrps = 0;
-		mSizeOfMsgs = 0;
-		mSizeOfGrps = 0;
-		mNumGrpsSubscribed = 0;
-		mNumThreadMsgsNew = 0;
-		mNumThreadMsgsUnread = 0;
-		mNumChildMsgsNew = 0;
-		mNumChildMsgsUnread = 0;
-		mSizeStore = 0;
-    }
+	GxsServiceStatistic() :
+	    mNumMsgs(0), mNumGrps(0), mSizeOfMsgs(0),  mSizeOfGrps(0),
+	    mNumGrpsSubscribed(0), mNumThreadMsgsNew(0), mNumThreadMsgsUnread(0),
+	    mNumChildMsgsNew(0), mNumChildMsgsUnread(0), mSizeStore(0) {}
 
-public:
 	uint32_t mNumMsgs;
 	uint32_t mNumGrps;
 	uint32_t mSizeOfMsgs;
@@ -252,32 +247,35 @@ public:
 	uint32_t mNumChildMsgsNew;
 	uint32_t mNumChildMsgsUnread;
 	uint32_t mSizeStore;
+
+	/// @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,
+	                     RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(mNumMsgs);
+		RS_SERIAL_PROCESS(mNumGrps);
+		RS_SERIAL_PROCESS(mSizeOfMsgs);
+		RS_SERIAL_PROCESS(mSizeOfGrps);
+		RS_SERIAL_PROCESS(mNumGrpsSubscribed);
+		RS_SERIAL_PROCESS(mNumThreadMsgsNew);
+		RS_SERIAL_PROCESS(mNumThreadMsgsUnread);
+		RS_SERIAL_PROCESS(mNumChildMsgsNew);
+		RS_SERIAL_PROCESS(mNumChildMsgsUnread);
+		RS_SERIAL_PROCESS(mSizeStore);
+	}
+
+	~GxsServiceStatistic() override;
 };
 
-class UpdateItem
-{
-public:
-    virtual ~UpdateItem() { }
-};
-
-class StringUpdateItem : public UpdateItem
-{
-public:
-    StringUpdateItem(const std::string update) : mUpdate(update) {}
-    const std::string& getUpdate() const { return mUpdate; }
-
-private:
-    std::string mUpdate;
-};
-
-class RsGxsGroupUpdateMeta
+class RS_DEPRECATED RsGxsGroupUpdateMeta
 {
 public:
 
     // expand as support is added for other utypes
     enum UpdateType { DESCRIPTION, NAME };
 
-    RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId) : mGroupId(groupId) {}
+	explicit RsGxsGroupUpdateMeta(const RsGxsGroupId& groupId):
+	    mGroupId(groupId) {}
 
     typedef std::map<UpdateType, std::string> GxsMetaUpdate;
 

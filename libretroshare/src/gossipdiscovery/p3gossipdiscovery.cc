@@ -108,14 +108,6 @@ p3discovery2::p3discovery2(
 
 	// Add self into PGP FriendList.
 	mFriendList[AuthGPG::getAuthGPG()->getGPGOwnId()] = DiscPgpInfo();
-
-	if(rsEvents)
-		rsEvents->registerEventsHandler(
-                    RsEventType::GOSSIP_DISCOVERY,
-		            [this](std::shared_ptr<const RsEvent> event)
-		{
-			rsEventsHandler(*event);
-		}, mRsEventsHandle ); // mRsEventsHandle is zeroed in initializer list
 }
 
 
@@ -1282,11 +1274,6 @@ bool p3discovery2::setPeerVersion(const RsPeerId &peerId, const std::string &ver
 
 	it->second.mVersion = version;
 	return true;
-}
-
-void p3discovery2::rsEventsHandler(const RsEvent& event)
-{
-	Dbg3() << __PRETTY_FUNCTION__ << " " << static_cast<uint32_t>(event.mType) << std::endl;
 }
 
 

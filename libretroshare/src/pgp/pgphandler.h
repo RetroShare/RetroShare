@@ -107,7 +107,11 @@ public:
 		bool LoadCertificateFromBinaryData(const unsigned char *bin_data,uint32_t bin_data_len, RsPgpId& gpg_id, std::string& error_string);
 
 		std::string SaveCertificateToString(const RsPgpId& id,bool include_signatures) const ;
-		bool exportPublicKey(const RsPgpId& id,unsigned char *& mem,size_t& mem_size,bool armoured,bool include_signatures) const ;
+
+		/** The caller is in charge of freeing `mem` once finished */
+		bool exportPublicKey( const RsPgpId& id,
+		                      unsigned char*& mem, size_t& mem_size,
+		                      bool armoured, bool include_signatures) const;
 
 		bool parseSignature(unsigned char *sign, unsigned int signlen,RsPgpId& issuer_id) ;
 		bool SignDataBin(const RsPgpId& id, const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, bool make_raw_signature=false, std::string reason = "") ;

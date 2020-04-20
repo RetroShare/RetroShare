@@ -305,10 +305,10 @@ public:
 	static const std::string FORUM_URL_DATA_FIELD;
 
 	/** Link query field used to store forum message title
-	 * @see exportChannelLink */
+	 * @see exportForumLink */
 	static const std::string FORUM_URL_MSG_TITLE_FIELD;
 
-	/// Link query field used to store forum message id @see exportChannelLink
+	/// Link query field used to store forum message id @see exportForumLink
 	static const std::string FORUM_URL_MSG_ID_FIELD;
 
 	/**
