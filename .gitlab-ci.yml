@@ -15,6 +15,7 @@ build-and-test:
           MR_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
           MR_ARGS="$MR_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
           export MR_ARGS ;
+          echo MR_ARGS=$MR_ARGS ;
           fi
         - mkdir Dockercontext
         - >
