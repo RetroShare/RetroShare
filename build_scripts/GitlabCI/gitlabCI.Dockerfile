@@ -7,7 +7,8 @@ ARG REPO_BRANCH=master
 RUN \
 	cd RetroShare && git remote add testing $REPO_URL && \
 	git fetch --tags testing $REPO_BRANCH && \
-	git reset --hard testing/$REPO_BRANCH
+	git reset --hard testing/$REPO_BRANCH && \
+	git --no-pager log --max-count 1
 RUN \
 	mkdir RetroShare-build && cd RetroShare-build && \
 	qmake ../RetroShare CONFIG+=no_retroshare_gui \
