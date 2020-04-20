@@ -286,7 +286,9 @@ class RsGRouterRoutingInfoItem: public RsGRouterItem, public GRouterRoutingInfo,
 class RsGRouterSerialiser: public RsServiceSerializer
 {
 public:
-    explicit RsGRouterSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) : RsServiceSerializer(RS_SERVICE_TYPE_GROUTER,RsGenericSerializer::FORMAT_BINARY,flags) {}
+	explicit RsGRouterSerialiser(
+	        RsSerializationFlags flags = RsSerializationFlags::NONE ):
+	    RsServiceSerializer(RS_SERVICE_TYPE_GROUTER, flags) {}
 
     virtual RsItem *create_item(uint16_t service,uint8_t subtype) const ;
 };

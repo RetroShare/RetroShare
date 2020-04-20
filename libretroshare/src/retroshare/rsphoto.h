@@ -62,12 +62,9 @@ public:
 #define RSPHOTO_SHAREMODE_DUP_200K      (4)
 #define RSPHOTO_SHAREMODE_DUP_1M        (5)
 
-class RsPhotoAlbum
+struct RsPhotoAlbum: RsGxsGenericGroupData
 {
-public:
 	RsPhotoAlbum();
-
-	RsGroupMetaData mMeta;
 
 	// V2 Album - keep it simple.
 	// mMeta.mTitle.
@@ -221,7 +218,29 @@ public:
      */
     virtual bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId) = 0;
 
+    // Blocking versions.
+    /*!
+     * request to create a new album. Blocks until process completes.
+     * @param album album to be submitted
+     * @return true if created false otherwise
+     */
+    virtual bool createAlbum(RsPhotoAlbum &album) = 0;
 
+    /*!
+     * request to update an existing album. Blocks until process completes.
+     * @param album album to be submitted
+     * @return true if created false otherwise
+     */
+    virtual bool updateAlbum(const RsPhotoAlbum &album) = 0;
+
+    /*!
+     * retrieve albums based in groupIds.
+     * @param groupIds the ids to fetch.
+     * @param albums vector to be filled by request.
+     * @return true is successful, false otherwise.
+     */
+    virtual bool getAlbums(const std::list<RsGxsGroupId> &groupIds,
+			std::vector<RsPhotoAlbum> &albums) = 0;
 };
 
 

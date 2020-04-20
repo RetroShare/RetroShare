@@ -33,7 +33,6 @@ public:
 
 	virtual bool parseSignature(unsigned char *sign, unsigned int signlen, RsPgpId& issuer) const;
 	virtual bool VerifySignBin(const void *data, uint32_t len, unsigned char *sign, unsigned int signlen, const PGPFingerprintType& withfingerprint);
-	virtual bool askForDeferredSelfSignature(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, int& signature_result , std::string reason);
 
 	virtual void addPeerListToPgpList(const std::list<RsPeerId> &ids);
 	virtual void addPeerIdToPgpList(const RsPeerId &id);

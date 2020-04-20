@@ -47,12 +47,14 @@
 // };
 
 /** Constructor */
-GxsChannelDialog::GxsChannelDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsChannels, parent,true)
+GxsChannelDialog::GxsChannelDialog(QWidget *parent):
+    GxsGroupFrameDialog(rsGxsChannels, parent, true), mEventHandlerId(0)
 {
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	// Needs to be asynced because this function is called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -64,10 +66,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 
         switch(e->mChannelEventCode)
         {
-		case RsChannelEventCode::NEW_MESSAGE:
-		case RsChannelEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
-		case RsChannelEventCode::READ_STATUS_CHANGED:
-			updateMessageSummaryList(e->mChannelGroupId);
+		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];
+		case RsChannelEventCode::READ_STATUS_CHANGED:     // [[fallthrough]];
+			updateGroupStatisticsReal(e->mChannelGroupId); // update the list immediately
             break;
 
         case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
@@ -78,6 +80,10 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
         case RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
+            break;
+
+        case RsChannelEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mChannelGroupId);
             break;
 
         default:
@@ -109,7 +115,7 @@ QString GxsChannelDialog::getHelpString() const
 
 UserNotify *GxsChannelDialog::createUserNotify(QObject *parent)
 {
-	return new GxsChannelUserNotify(rsGxsChannels, parent);
+	return new GxsChannelUserNotify(rsGxsChannels,this, parent);
 }
 
 void GxsChannelDialog::shareOnChannel(const RsGxsGroupId& channel_id,const QList<RetroShareLink>& file_links)
@@ -365,34 +371,6 @@ bool GxsChannelDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo
 
     return true;
 }
-
-#ifdef TO_REMOVE
-void GxsChannelDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsGxsChannelGroup> groups;
-	rsGxsChannels->getGroupData(token, groups);
-
-	/* Save groups to fill icons and description */
-	GxsChannelGroupInfoData *channelData = new GxsChannelGroupInfoData;
-	userdata = channelData;
-
-	std::vector<RsGxsChannelGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsChannelGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (group.mImage.mData != NULL) {
-			QPixmap image;
-			GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, image,GxsIdDetails::ORIGINAL);
-			channelData->mIcon[group.mMeta.mGroupId] = image;
-		}
-
-		if (!group.mDescription.empty()) {
-			channelData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
 
 void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {

@@ -38,7 +38,7 @@
 #include "util/rsdiscspace.h"
 #include "util/rsmemory.h"
 #include "util/rstime.h"
-
+#include "util/cxx17retrocompat.h"
 #include "ft/ftcontroller.h"
 
 #include "ft/ftfilecreator.h"
@@ -923,10 +923,15 @@ bool ftController::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 	return false ;
 }
 
-bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash,
-			uint64_t size, const std::string& dest, TransferRequestFlags flags,
-                                                                const std::list<RsPeerId> &_srcIds, uint16_t state)
+bool ftController::FileRequest(
+        const std::string& fname, const RsFileHash& hash, uint64_t size,
+        const std::string& dest, TransferRequestFlags flags,
+        const std::list<RsPeerId> &_srcIds, uint16_t state )
 {
+	/* TODO: To support collections faithfully we need to be able to save
+	 * the same file to multiple locations, both if already downloaded or
+	 * incomplete */
+
     std::list<RsPeerId> srcIds(_srcIds) ;
 
 	/* check if we have the file */
@@ -965,8 +970,9 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 
 		// create void file with the target name.
 		FILE *f = RsDirUtil::rs_fopen(destination.c_str(),"w") ;
-		if(f == NULL)
-			std::cerr << "Could not open file " << destination << " for writting." << std::endl ;
+		if(!f)
+			RsErr() << __PRETTY_FUNCTION__ << " Could not write file "
+			        << destination << std::endl;
 		else
 			fclose(f) ;
 
@@ -979,12 +985,13 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	//
 	if(size >= 1024ull*1024ull*((1ull << 32) - 1))
 	{
-		std::cerr << "FileRequest Error: unexpected size. This is probably a bug." << std::endl;
-		std::cerr << "  name  = " << fname << std::endl ;
-		std::cerr << "  flags = " << flags << std::endl ;
-		std::cerr << "  dest  = " << dest << std::endl ;
-		std::cerr << "  size  = " << size << std::endl ;
-		return false ;
+		RsErr() << __PRETTY_FUNCTION__
+		        << " unexpected size. This is probably a bug."
+		        << " name  = " << fname
+		        << " flags = " << flags
+		        << " dest  = " << dest
+		        << " size  = " << size << std::endl;
+		return false;
 	}
 
 	/* If file transfer is not enabled ....
@@ -1004,8 +1011,8 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 		}
 	}
 
-	// remove the sources from the list, if they don't have clearance for direct transfer. This happens only for non cache files.
-	//
+	/* remove the sources from the list, if they don't have clearance for direct
+	 * transfer. This happens only for non cache files. */
 	for(std::list<RsPeerId>::iterator it = srcIds.begin(); it != srcIds.end(); )
 	{
 		bool bAllowDirectDL = false;
@@ -1052,11 +1059,10 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 	 * This is important as some guis request duplicate files regularly.
 	 */
 
-	{ 
-		RsStackMutex stack(ctrlMutex); /******* LOCKED ********/
+	{
+		RS_STACK_MUTEX(ctrlMutex);
 
-        std::map<RsFileHash, ftFileControl*>::const_iterator dit = mDownloads.find(hash);
-
+		auto dit = std::as_const(mDownloads).find(hash);
 		if (dit != mDownloads.end())
 		{
 			/* we already have it! */
@@ -1110,7 +1116,7 @@ bool 	ftController::FileRequest(const std::string& fname, const RsFileHash& hash
 
 			return true;
 		}
-	} /******* UNLOCKED ********/
+	} // RS_STACK_MUTEX(ctrlMutex); unlocked
 
 
 	if(mSearch && !(flags & RS_FILE_REQ_NO_SEARCH))

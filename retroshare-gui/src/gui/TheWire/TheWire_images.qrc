@@ -1,15 +1,5 @@
 <RCC>
 	<qresource prefix="/" >
-		<file>images/kuickshow.png</file>
-		<file>images/kview_24.png</file>
-		<file>images/kview_64.png</file>
-		<file>images/album_64.png</file>
-		<file>images/album_subscribe.png</file>
-		<file>images/album_unsubscribe.png</file>
-		<file>images/album_create_64.png</file>
-		<file>images/album_default_128.png</file>
-		<file>images/my_album_48.png</file>
-		<file>images/subscribed_album_48.png</file>
-		<file>images/friends_album_48.png</file>
+		<file>images/compose.png</file>
 	</qresource>
 </RCC>

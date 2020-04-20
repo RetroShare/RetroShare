@@ -45,7 +45,6 @@ file_lists {
 			file_sharing/directory_updater.h \
 			file_sharing/rsfilelistitems.h \
 			file_sharing/dir_hierarchy.h \
-			file_sharing/file_tree.h \
 			file_sharing/file_sharing_defaults.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
@@ -481,6 +480,8 @@ HEADERS +=	util/folderiterator.h \
 			util/dnsresolver.h \
                         util/radix32.h \
                         util/radix64.h \
+                        util/rsbase64.h \
+                        util/rsendian.h \
                         util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
@@ -494,7 +495,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h \
+    util/cxx11retrocompat.h \
+    util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
             util/rsurl.h \
     util/rserrno.h
@@ -637,6 +639,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
+            util/rsbase64.cc \
     util/rserrno.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {

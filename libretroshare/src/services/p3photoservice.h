@@ -109,6 +109,13 @@ public:
 		return acknowledgeMsg(token, msgId);
 	}
 
+	// Blocking versions.
+	virtual bool createComment(RsGxsComment &msg) override
+	{
+		uint32_t token;
+		return mCommentService->createGxsComment(token, msg) && waitToken(token) == RsTokenService::COMPLETE;
+	}
+
 public:
 
 	/** Modifications **/
@@ -165,6 +172,29 @@ public:
 	 */
 	bool acknowledgeGrp(const uint32_t& token, RsGxsGroupId& grpId);
 
+	// Blocking versions.
+	/*!
+	 * request to create a new album. Blocks until process completes.
+	 * @param album album to be submitted
+	 * @return true if created false otherwise
+	 */
+	virtual bool createAlbum(RsPhotoAlbum &album) override;
+
+	/*!
+	 * request to update an existing album. Blocks until process completes.
+	 * @param album album to be submitted
+	 * @return true if created false otherwise
+	 */
+	virtual bool updateAlbum(const RsPhotoAlbum &album) override;
+
+	/*!
+	 * retrieve albums based in groupIds.
+	 * @param groupIds the ids to fetch.
+	 * @param albums vector to be filled by request.
+	 * @return true is successful, false otherwise.
+	 */
+	virtual bool getAlbums(const std::list<RsGxsGroupId> &groupIds,
+			std::vector<RsPhotoAlbum> &albums) override;
 private:
 	p3GxsCommentService* mCommentService;
 

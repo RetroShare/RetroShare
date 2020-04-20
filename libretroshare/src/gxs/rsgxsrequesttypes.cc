@@ -23,6 +23,128 @@
 #include "rsgxsrequesttypes.h"
 #include "util/rsstd.h"
 
+std::ostream& operator<<(std::ostream& o,const GxsRequest& g)
+{
+    return g.print(o);
+}
+
+
+std::ostream& GroupMetaReq::print(std::ostream& o) const
+{
+	o << "[Request type=GroupMeta groupIds (size=" << mGroupIds.size() << "): " ;
+
+    if(!mGroupIds.empty())
+    {
+        o << *mGroupIds.begin() ;
+
+		if(mGroupIds.size() > 1)
+			o << " ..." ;
+    }
+
+	o << "]" ;
+
+	return o;
+}
+std::ostream& GroupIdReq::print(std::ostream& o) const
+{
+    return o << "[Request type=GroupIdReq" << "]" ;
+}
+
+std::ostream& GroupSerializedDataReq::print(std::ostream& o) const
+{
+    return o << "[Request type=GroupSerializedData" << "]" ;
+}
+
+std::ostream& GroupDataReq::print(std::ostream& o) const
+{
+	o << "[Request type=GroupDataReq groupIds (size=" << mGroupIds.size() << "): " ;
+
+    if(!mGroupIds.empty())
+	{
+		o << *mGroupIds.begin() ;
+
+		if(mGroupIds.size() > 1)
+			o << " ..." ;
+	}
+
+	o << "]" ;
+
+	return o;
+}
+
+std::ostream& MsgIdReq::print(std::ostream& o) const
+{
+    return o << "[Request type=MsgId" << "]" ;
+}
+
+std::ostream& MsgMetaReq::print(std::ostream& o) const
+{
+	o << "[Request type=MsgMetaReq groups (size=" << mMsgIds.size() << "): " ;
+
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
+
+	o << "]" ;
+
+	return o;
+}
+
+std::ostream& MsgDataReq::print(std::ostream& o) const
+{
+	o << "[Request type=MsgDataReq groups (size=" << mMsgIds.size() << "): " ;
+
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first << " (" << mMsgIds.begin()->second.size() << " messages)";
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
+
+	o << "]" ;
+
+	return o;
+}
+
+std::ostream& MsgRelatedInfoReq::print(std::ostream& o) const
+{
+	o << "[Request type=MsgRelatedInfo msgIds (size=" << mMsgIds.size() << "): " ;
+
+    if(!mMsgIds.empty())
+    {
+        o << mMsgIds.begin()->first ;
+
+		if(mMsgIds.size() > 1)
+			o << " ..." ;
+    }
+
+	o << "]" ;
+
+	return o;
+}
+
+std::ostream& GroupSetFlagReq::print(std::ostream& o) const
+{
+	return o << "[Request type=GroupFlagSet grpId=" <<  grpId << "]" ;
+}
+
+
+
+std::ostream& ServiceStatisticRequest::print(std::ostream& o) const
+{
+    return o << "[Request type=ServiceStatistics" << "]" ;
+}
+
+std::ostream& GroupStatisticRequest::print(std::ostream& o) const
+{
+	return o << "[Request type=GroupStatistics grpId=" << mGrpId << "]" ;
+}
+
 GroupMetaReq::~GroupMetaReq()
 {
 	//rsstd::delete_all(mGroupMetaData.begin(), mGroupMetaData.end());	// now memory ownership is kept by the cache.
@@ -57,3 +179,8 @@ MsgRelatedInfoReq::~MsgRelatedInfoReq()
 		rsstd::delete_all(dataIt->second.begin(), dataIt->second.end());
 	}
 }
+std::ostream& MessageSetFlagReq::print(std::ostream& o) const
+{
+	return o << "[Request type=MsgFlagSet" << "]" ;
+}
+

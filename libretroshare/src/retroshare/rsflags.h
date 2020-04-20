@@ -24,6 +24,7 @@
 
 #include <type_traits>
 #include <ostream>
+#include <bitset>
 
 /** Check if given type is a scoped enum */
 template<typename E>
@@ -128,13 +129,7 @@ typename std::enable_if<Rs__BitFlagsOps<EFT>::enabled, std::ostream>::type&
 operator <<(std::ostream& stream, EFT flags)
 {
 	using u_t = typename std::underlying_type<EFT>::type;
-
-	for(int i = sizeof(u_t); i>=0; --i)
-	{
-		stream << (flags & ( 1 << i ) ? "1" : "0");
-		if( i % 8 == 0 ) stream << " ";
-	}
-	return stream;
+	return stream << std::bitset<sizeof(u_t)>(static_cast<u_t>(flags));
 }
 
 #include <cstdint>
@@ -170,6 +165,7 @@ template<int n> class RS_DEPRECATED_FOR(RS_REGISTER_ENUM_FLAGS_TYPE) t_RsFlags32
 	    inline t_RsFlags32() : _bits(0) {}
 		inline explicit t_RsFlags32(uint32_t N) : _bits(N) {}					// allows initialization from a set of uint32_t
 
+
 		inline t_RsFlags32<n> operator| (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits | f._bits) ; }
 		inline t_RsFlags32<n> operator^ (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits ^ f._bits) ; }
 		inline t_RsFlags32<n> operator* (const t_RsFlags32<n>& f) const { return t_RsFlags32<n>(_bits & f._bits) ; }
@@ -187,6 +183,19 @@ template<int n> class RS_DEPRECATED_FOR(RS_REGISTER_ENUM_FLAGS_TYPE) t_RsFlags32
 		//inline explicit operator bool() 	const { return _bits>0; }
 		inline uint32_t toUInt32() const { return _bits ; }
 
+		/// Easier porting to new flag system
+		template<typename EFT> inline
+		typename std::enable_if<(Rs__BitFlagsOps<EFT>::enabled &&
+		                         sizeof(EFT) >= sizeof(uint32_t) ), EFT>::type
+		        toEFT() { return static_cast<EFT>(_bits); }
+
+		/// Easier porting to new flag system
+		template<typename EFT>
+		static inline typename std::enable_if<
+		        Rs__BitFlagsOps<EFT>::enabled &&
+		        sizeof(EFT) <= sizeof(uint32_t), t_RsFlags32>::type
+		        fromEFT(EFT e) { return t_RsFlags32(static_cast<uint32_t>(e)); }
+
 		void clear() { _bits = 0 ; }
 
 		friend std::ostream& operator<<(std::ostream& o,const t_RsFlags32<n>& f) 	// friendly print with 0 and I
@@ -199,8 +208,10 @@ template<int n> class RS_DEPRECATED_FOR(RS_REGISTER_ENUM_FLAGS_TYPE) t_RsFlags32
 			}
 			return o ;
 		}
-	private:
-		uint32_t _bits ;
+
+private:
+	friend struct RsTypeSerializer;
+	uint32_t _bits;
 };
 
 #define FLAGS_TAG_TRANSFER_REQS 0x4228af
@@ -210,9 +221,9 @@ template<int n> class RS_DEPRECATED_FOR(RS_REGISTER_ENUM_FLAGS_TYPE) t_RsFlags32
 #define FLAGS_TAG_SERVICE_CHAT 	0x839042
 #define FLAGS_TAG_SERIALIZER   	0xa0338d
 
-// Flags for requesting transfers, ask for turtle, cache, speed, etc.
-//
-typedef t_RsFlags32<FLAGS_TAG_TRANSFER_REQS> TransferRequestFlags ;
+/// @deprecated Flags for requesting transfers, ask for turtle, cache, speed, etc.
+RS_DEPRECATED_FOR(FileRequestFlags)
+typedef t_RsFlags32<FLAGS_TAG_TRANSFER_REQS> TransferRequestFlags;
 
 // Flags for file storage. Mainly permissions like BROWSABLE/NETWORK_WIDE for groups and peers.
 //
@@ -229,8 +240,4 @@ typedef t_RsFlags32<FLAGS_TAG_SERVICE_PERM > ServicePermissionFlags ;
 // Flags for chat lobbies
 //
 typedef t_RsFlags32<FLAGS_TAG_SERVICE_CHAT > ChatLobbyFlags ;			
-
-// Flags for serializer
-//
-typedef t_RsFlags32<FLAGS_TAG_SERIALIZER > SerializationFlags ;
 

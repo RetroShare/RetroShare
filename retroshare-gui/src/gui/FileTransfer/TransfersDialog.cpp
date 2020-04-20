@@ -1076,30 +1076,36 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     // load settings
     processSettings(true);
 
-    int S = QFontMetricsF(font()).height();
-  QString help_str = tr(
-    " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
-    <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
-    distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
-    (you can be a source while downloading)</p>                                     \
-    <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
-    These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files \
-    in their Friends Files tab</p>\
-    <p>The search tab reports files from your friends' file lists, and distant files that can be reached \
-    anonymously using the multi-hop tunnelling system.</p> \
-    ").arg(QString::number(2*S)).arg(QString::number(S)) ;
+	int S = static_cast<int>(QFontMetricsF(font()).height());
+	QString help_str = tr(
+	            "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;"
+	            "File Transfer</h1>"
+	            "<p>Retroshare brings two ways of transferring files: direct "
+	            "transfers from your friends, and distant anonymous tunnelled "
+	            "transfers. In addition, file transfer is multi-source and "
+	            "allows swarming (you can be a source while downloading)</p>"
+	            "<p>You can share files using the "
+	            "<img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 />"
+	            " icon from the left side bar. These files will be listed in "
+	            "the My Files tab. You can decide for each friend group whether"
+	            " they can or not see these files in their Friends Files tab</p>"
+	            "<p>The search tab reports files from your friends' file lists,"
+	            " and distant files that can be reached anonymously using the "
+	            "multi-hop tunnelling system.</p>")
+	        .arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 
-	 registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
+	registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
 
-     mEventHandlerId=0;
-     rsEvents->registerEventsHandler(RsEventType::FILE_TRANSFER, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+	mEventHandlerId=0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+	    mEventHandlerId, RsEventType::FILE_TRANSFER );
 }
 
 void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType != RsEventType::FILE_TRANSFER)
-        return;
+	if(event->mType != RsEventType::FILE_TRANSFER) return;
 
 	const RsFileTransferEvent *fe = dynamic_cast<const RsFileTransferEvent*>(event.get());
 	if(!fe)
@@ -2225,9 +2231,8 @@ void TransfersDialog::pasteLink()
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
 	{
-		FileTree *ft = FileTree::create((*it).radix().toStdString()) ;
-
-		col.merge_in(*ft) ;
+		auto ft = RsFileTree::fromRadix64((*it).radix().toStdString());
+		col.merge_in(*ft);
 	}
 	links.clear();
 	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE);

@@ -31,7 +31,8 @@ class PulseDetails : public QWidget, private Ui::PulseDetails
   Q_OBJECT
 
 public:
-	PulseDetails(PulseHolder *actions, RsWirePulse &pulse, std::string &groupName, bool is_original);
+	PulseDetails(PulseHolder *actions, RsWirePulse *pulse, std::string &groupName,
+		std::map<rstime_t, RsWirePulse *> replies);
 
 	// when Reply parent....
 	PulseDetails(PulseHolder *actions,
@@ -44,6 +45,8 @@ public:
 
 	void setup();
 
+	void setBackground(QString color);
+
 private slots:
 	void toggle();
 	void follow();
@@ -51,12 +54,13 @@ private slots:
 	void reply();
 
 private:
+	void addReplies(std::map<rstime_t, RsWirePulse *> replies);
 	QString getSummary();
 
 	PulseHolder *mActions;
 	RsWirePulse  mPulse;
 	std::string  mGroupName;
-	bool mIsOriginal;
+	bool mHasReplies;
 };
 
 #endif

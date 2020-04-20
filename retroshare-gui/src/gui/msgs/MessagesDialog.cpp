@@ -124,9 +124,11 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     inProcessSettings = false;
     inChange = false;
     lockUpdate = 0;
+    lastSelectedIndex = QModelIndex();
 
     msgWidget = new MessageWidget(true, this);
 	ui.msgLayout->addWidget(msgWidget);
+	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
 
     connectActions();
 
@@ -695,6 +697,7 @@ void MessagesDialog::openAsWindow()
     }
 
     msgWidget->activateWindow();
+	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
 
     /* window will destroy itself! */
 }
@@ -714,6 +717,7 @@ void MessagesDialog::openAsTab()
 
     ui.tabWidget->addTab(msgWidget, msgWidget->subject(true));
     ui.tabWidget->setCurrentWidget(msgWidget);
+	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
 
     /* window will destroy itself! */
 }
@@ -860,7 +864,8 @@ void MessagesDialog::clicked(const QModelIndex& proxy_index)
     case RsMessageModel::COLUMN_THREAD_READ:
         {
             mMessageModel->setMsgReadStatus(real_index, !isMessageRead(proxy_index));
-            insertMsgTxtAndFiles(proxy_index);
+            //Already updated by currentChanged
+            //insertMsgTxtAndFiles(proxy_index);
             updateMessageSummaryList();
             return;
         }
@@ -871,8 +876,9 @@ void MessagesDialog::clicked(const QModelIndex& proxy_index)
         }
     }
 
-    // show current message directly
-	insertMsgTxtAndFiles(proxy_index);
+	// show current message directly
+	//Already updated by currentChanged
+	//insertMsgTxtAndFiles(proxy_index);
 }
 
 // double click in messageTreeWidget
@@ -953,14 +959,20 @@ void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)
 
     QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
 
-    if(!real_index.isValid())
+	if(!real_index.isValid())
 	{
 		mCurrMsgId.clear();
 		msgWidget->fill(mCurrMsgId);
 		updateInterface();
+		lastSelectedIndex = QModelIndex();
 		return;
 	}
-    mid = real_index.data(RsMessageModel::MsgIdRole).toString().toStdString();
+
+	lastSelectedIndex = proxy_index;
+	if (!ui.messageTreeWidget->indexBelow(proxy_index).isValid())
+		lastSelectedIndex = ui.messageTreeWidget->indexAbove(proxy_index);
+
+	mid = real_index.data(RsMessageModel::MsgIdRole).toString().toStdString();
 
     /* Save the Data.... for later */
 
@@ -1025,6 +1037,12 @@ void MessagesDialog::removemessage()
 
     mMessageModel->updateMessages();
     updateMessageSummaryList();
+	messageRemoved();
+}
+
+void MessagesDialog::messageRemoved()
+{
+	ui.messageTreeWidget->setCurrentIndex(lastSelectedIndex);
 }
 
 void MessagesDialog::undeletemessage()

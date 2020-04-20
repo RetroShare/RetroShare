@@ -18,11 +18,12 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "retroshare/rsgxschannels.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/MainWindow.h"
 
-GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent) :
-    GxsUserNotify(ifaceImpl, parent)
+GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
+    GxsUserNotify(ifaceImpl, g, parent)
 {
 }
 

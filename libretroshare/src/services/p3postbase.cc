@@ -133,8 +133,7 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
             switch(grpChange->getType())
-            {
-            default:
+			{
 			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 			{
 				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
@@ -148,15 +147,30 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				}
 
 			}
-                break;
+				break;
 
-            case RsGxsNotify::TYPE_PUBLISHED:
-            case RsGxsNotify::TYPE_RECEIVED_NEW:
-            {
-                /* group received */
-                const std::list<RsGxsGroupId>& grpList = grpChange->mGrpIdList;
+			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
+			{
+				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
+				std::list<RsGxsGroupId>::iterator git;
 
-                for (auto git = grpList.begin(); git != grpList.end(); ++git)
+				for (git = grpList.begin(); git != grpList.end(); ++git)
+				{
+					auto ev = std::make_shared<RsGxsPostedEvent>();
+					ev->mPostedGroupId = *git;
+					ev->mPostedEventCode = RsPostedEventCode::STATISTICS_CHANGED;
+					rsEvents->postEvent(ev);
+				}
+			}
+				break;
+
+			case RsGxsNotify::TYPE_PUBLISHED:
+			case RsGxsNotify::TYPE_RECEIVED_NEW:
+			{
+				/* group received */
+				const std::list<RsGxsGroupId>& grpList = grpChange->mGrpIdList;
+
+				for (auto git = grpList.begin(); git != grpList.end(); ++git)
 				{
 					if(mKnownPosted.find(*git) == mKnownPosted.end())
 					{
@@ -178,9 +192,13 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						         << " Not notifying already known forum "
 						         << *git << std::endl;
 				}
-            }
+			}
 				break;
-            }
+
+			default:
+				RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
+				break;
+			}
 		}
 
         delete *it;

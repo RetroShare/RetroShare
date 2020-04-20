@@ -141,7 +141,8 @@ public:
 	virtual	std::string GetRetroshareInvite(
 	        const RsPeerId& ssl_id = RsPeerId(),
 	        bool include_signatures = false, bool includeExtraLocators = true );
-	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures);
+	RS_DEPRECATED /// @see RsPeers
+	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) override;
 
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum);
 

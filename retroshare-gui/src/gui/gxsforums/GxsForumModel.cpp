@@ -53,9 +53,13 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 void RsGxsForumModel::preMods()
 {
  	emit layoutAboutToBeChanged();
+
+	beginResetModel();
 }
 void RsGxsForumModel::postMods()
 {
+	endResetModel();
+
     if(mTreeMode == TREE_MODE_FLAT)
 		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
     else
@@ -1209,7 +1213,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!i.isValid())
 		return ;
 
-    preMods();
+    // no need to call preMods()/postMods() here because we'renot changing the model
 
 	void *ref = i.internalPointer();
 	uint32_t entry = 0;
@@ -1221,34 +1225,46 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
     recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
 
-    postMods();
+    // Normally we should only update the parents up to the top of the tree, but it's complicated and the update here doesn't really cost,
+    // so we blindly update the whole widget.
+
+	if(mTreeMode == TREE_MODE_FLAT)
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+    else
+		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+
 }
 
 void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,bool with_children)
 {
-    if(read_status)
-		mPosts[i].mMsgStatus = 0;
-    else
-		mPosts[i].mMsgStatus = GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+	int newStatus = (read_status ? mPosts[i].mMsgStatus & ~static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD)
+	                             : mPosts[i].mMsgStatus |  static_cast<int>(GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD));
+	bool bChanged = (mPosts[i].mMsgStatus != newStatus);
+	mPosts[i].mMsgStatus = newStatus;
+	//Remove Unprocessed and New flags
+	mPosts[i].mMsgStatus &= ~(GXS_SERV::GXS_MSG_STATUS_UNPROCESSED | GXS_SERV::GXS_MSG_STATUS_GUI_NEW);
 
-    uint32_t token;
+	if (bChanged)
+	{
+		//Don't recurs post versions as this should be done before, if no change.
+		uint32_t token;
+		auto s = getPostVersions(mPosts[i].mMsgId) ;
 
-    auto s = getPostVersions(mPosts[i].mMsgId) ;
+		if(!s.empty())
+			for(auto it(s.begin());it!=s.end();++it)
+			{
+				rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, it->second ), read_status);
+				std::cerr << "Setting version " << it->second << " of post " << mPosts[i].mMsgId << " as read." << std::endl;
+			}
+		else
+			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
+	}
 
-    if(!s.empty())
-        for(auto it(s.begin());it!=s.end();++it)
-        {
-			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, it->second ), read_status);
-            std::cerr << "Setting version " << it->second << " of post " << mPosts[i].mMsgId << " as read." << std::endl;
-        }
-	else
-		rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
+	if(!with_children)
+		return;
 
-    if(!with_children)
-        return;
-
-    for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
-        recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children);
+	for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
+		recursSetMsgReadStatus(mPosts[i].mChildren[j],read_status,with_children);
 }
 
 void RsGxsForumModel::recursUpdateReadStatusAndTimes(ForumModelIndex i,bool& has_unread_below,bool& has_read_below)

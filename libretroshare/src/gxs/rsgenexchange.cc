@@ -1193,7 +1193,7 @@ bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> 
 bool RsGenExchange::getMsgList(const uint32_t &token,
                                GxsMsgIdResult &msgIds)
 {
-	return mDataAccess->getMsgList(token, msgIds);
+	return mDataAccess->getMsgIdList(token, msgIds);
 }
 
 bool RsGenExchange::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
@@ -1692,7 +1692,7 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_STATISTICS_CHANGED, false);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }

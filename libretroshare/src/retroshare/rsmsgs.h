@@ -356,7 +356,7 @@ struct RsMailStatusEvent : RsEvent
 #define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_NON_CONTACTS   0x0001 
 #define RS_DISTANT_CHAT_CONTACT_PERMISSION_FLAG_FILTER_EVERYBODY      0x0002 
 
-struct DistantChatPeerInfo
+struct DistantChatPeerInfo : RsSerializable
 {
     DistantChatPeerInfo() : status(0),pending_items(0) {}
 
@@ -365,6 +365,16 @@ struct DistantChatPeerInfo
 	DistantChatPeerId peer_id ;	// this is the tunnel id actually
 	uint32_t status ;			// see the values in rsmsgs.h
     uint32_t pending_items;		// items not sent, waiting for a tunnel
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(to_id);
+		RS_SERIAL_PROCESS(own_id);
+		RS_SERIAL_PROCESS(peer_id);
+		RS_SERIAL_PROCESS(status);
+		RS_SERIAL_PROCESS(pending_items);
+	}
 };
 
 // Identifier for an chat endpoint like
@@ -426,9 +436,8 @@ public:
 	}
 };
 
-class ChatMessage
+struct ChatMessage : RsSerializable
 {
-public:
     ChatId chat_id; // id of chat endpoint
     RsPeerId broadcast_peer_id; // only used for broadcast chat: source peer id
     RsGxsId lobby_peer_gxs_id; // only used for lobbys: nickname of message author
@@ -441,6 +450,22 @@ public:
     bool incoming;
     bool online; // for outgoing messages: was this message send?
     //bool system_message;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx ) override
+	{
+		RS_SERIAL_PROCESS(chat_id);
+		RS_SERIAL_PROCESS(broadcast_peer_id);
+		RS_SERIAL_PROCESS(lobby_peer_gxs_id);
+		RS_SERIAL_PROCESS(peer_alternate_nickname);
+
+		RS_SERIAL_PROCESS(chatflags);
+		RS_SERIAL_PROCESS(sendTime);
+		RS_SERIAL_PROCESS(recvTime);
+		RS_SERIAL_PROCESS(msg);
+		RS_SERIAL_PROCESS(incoming);
+		RS_SERIAL_PROCESS(online);
+	}
 };
 
 class ChatLobbyInvite : RsSerializable
@@ -962,13 +987,38 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 
     virtual uint32_t getDistantChatPermissionFlags()=0 ;
     virtual bool setDistantChatPermissionFlags(uint32_t flags)=0 ;
-    
-virtual bool initiateDistantChatConnexion(
+	
+    	/**
+	 * @brief initiateDistantChatConnexion initiate a connexion for a distant chat
+	 * @jsonapi{development}
+	 * @param[in] to_pid RsGxsId to start the connection
+	 * @param[in] from_pid owned RsGxsId who start the connection
+	 * @param[out] pid distant chat id
+	 * @param[out] error_code if the connection can't be stablished
+	 * @param[in] notify notify remote that the connection is stablished
+	 * @return true on success
+	 */
+	virtual bool initiateDistantChatConnexion(
 	        const RsGxsId& to_pid, const RsGxsId& from_pid,
 	        DistantChatPeerId& pid, uint32_t& error_code,
 	        bool notify = true ) = 0;
-virtual bool getDistantChatStatus(const DistantChatPeerId& pid,DistantChatPeerInfo& info)=0;
-virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
+
+	/**
+	 * @brief getDistantChatStatus receives distant chat info to a given distant chat id
+	 * @jsonapi{development}
+	 * @param[in] pid distant chat id
+	 * @param[out] info distant chat info
+	 * @return true on success
+	 */
+	virtual bool getDistantChatStatus(const DistantChatPeerId& pid, DistantChatPeerInfo& info)=0;
+	
+	/**
+	 * @brief closeDistantChatConnexion 
+	 * @jsonapi{development}
+	 * @param[in] pid distant chat id to close the connection
+	 * @return true on success
+	 */
+	virtual bool closeDistantChatConnexion(const DistantChatPeerId& pid)=0;
 
 	/**
 	 * @brief MessageSend

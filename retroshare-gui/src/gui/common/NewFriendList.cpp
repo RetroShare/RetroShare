@@ -177,8 +177,10 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
-    mEventHandlerId=0; // forces initialization
-    rsEvents->registerEventsHandler( RsEventType::PEER_CONNECTION, [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
+	mEventHandlerId=0; // forces initialization
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); },
+	            mEventHandlerId, RsEventType::PEER_CONNECTION );
 
     mModel = new RsFriendListModel();
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);

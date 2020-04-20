@@ -345,10 +345,12 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->enableColumnCustomize(true);
 #endif
 
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-
-	rsEvents->registerEventsHandler(RsEventType::GXS_FORUMS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	mEventHandlerId = 0;
+	// Needs to be asynced because this function is called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
 void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -1049,6 +1051,8 @@ void GxsForumThreadWidget::insertMessage()
 	ui->lineLeft->hide();
 	ui->by_text_label->hide();
 	ui->by_label->hide();
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
@@ -1720,6 +1724,7 @@ void GxsForumThreadWidget::postForumLoading()
     recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
     //mUpdating = false;
 }
+
 void GxsForumThreadWidget::updateGroupData()
 {
     if(groupId().isNull())

@@ -114,7 +114,6 @@ class p3Notify: public RsNotify
 		void notifyPeerStatusChangedSummary   () ;
 		void notifyDiscInfoChanged            () ;
 
-		bool askForDeferredSelfSignature      (const void *       /* data      */, const uint32_t     /* len   */, unsigned char * /* sign */, unsigned int * /* signlen */, int& signature_result , std::string reason = "") ;
 		void notifyDownloadComplete           (const std::string& /* fileHash  */) ;
 		void notifyDownloadCompleteCount      (uint32_t           /* count     */) ;
 		void notifyHistoryChanged             (uint32_t           /* msgId     */, int /* type */) ;

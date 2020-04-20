@@ -37,7 +37,7 @@
 #include "serialiser/rstypeserializer.h"
 #include "util/rsdeprecate.h"
 
-struct RsIdentity;
+class RsIdentity;
 
 /**
  * Pointer to global instance of RsIdentity service implementation

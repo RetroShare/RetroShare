@@ -97,6 +97,9 @@ public:
     /// Implementation of @see RsGxsForums::getForumStatistics
     bool getForumStatistics(const RsGxsGroupId& ForumId,GxsGroupStatistic& stat) override;
 
+    /// Implementation of @see RsGxsForums::getForumServiceStatistics
+	bool getForumServiceStatistics(GxsServiceStatistic& stat) override;
+
 	/// @see RsGxsForums::getForumMsgMetaData
 	virtual bool getForumMsgMetaData(const RsGxsGroupId& forumId, std::vector<RsMsgMetaData>& msg_metas) ;
 

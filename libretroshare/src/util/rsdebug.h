@@ -46,7 +46,10 @@ struct t_RsLogger
 {
 	inline t_RsLogger() = default;
 
-	typedef t_RsLogger stream_type;
+	/** On other platforms expose the type of underlying stream.
+	 * On Android it cannot work like that so return the class type itself
+	 * just for code compatibility with other platforms */
+	using stream_type = t_RsLogger;
 
 	template<typename T>
 	inline stream_type& operator<<(const T& val)
@@ -68,6 +71,11 @@ struct t_RsLogger
 		return *this;
 	}
 
+	/** On other platforms return underlying stream to write avoiding additional
+	 * prefixes. On Android it cannot work like that so return the object itself
+	 * just for code compatibility with other platforms */
+	inline stream_type& uStream() { return *this; }
+
 private:
 	std::ostringstream ostr;
 };
@@ -75,7 +83,8 @@ private:
 #else // def __ANDROID__
 
 #include <iostream>
-#include <ctime>
+#include <chrono>
+#include <iomanip>
 
 enum class RsLoggerCategories
 {
@@ -91,14 +100,29 @@ struct t_RsLogger
 {
 	inline t_RsLogger() = default;
 
-	typedef decltype(std::cerr) stream_type;
+	/// Expose the type of underlying stream
+	using stream_type = decltype(std::cerr);
 
 	template<typename T>
 	inline stream_type& operator<<(const T& val)
 	{
-		return std::cerr << static_cast<char>(CATEGORY) << " " << time(nullptr)
-		                 << " " << val;
+		using namespace std::chrono;
+		const auto now = system_clock::now();
+		const auto sec = time_point_cast<seconds>(now);
+		const auto msec = duration_cast<milliseconds>(now - sec);
+		const auto tFill = std::cerr.fill();
+		return std::cerr << static_cast<char>(CATEGORY) << " "
+		                 << sec.time_since_epoch().count() << "."
+		                 << std::setfill('0') << std::setw(3) << msec.count()
+		                 << std::setfill(tFill) << " " << val;
 	}
+
+	/// needed for manipulators and things like std::endl
+	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
+	{ return std::cerr << pf; }
+
+	/// Return underlying stream to write avoiding additional prefixes
+	inline stream_type& uStream() const { return std::cerr; }
 };
 #endif // def __ANDROID__
 
@@ -164,16 +188,22 @@ struct RsNoDbg
 {
 	inline RsNoDbg() = default;
 
-	/**
-	 * This match most of the types, but might be not enough for templated
-	 * types
-	 */
+	/** Defined as the type itself just for code compatibility with other
+	 * logging classes */
+	using stream_type = RsNoDbg;
+
+	/** This match most of the types, but might be not enough for templated
+	 * types */
 	template<typename T>
-	inline RsNoDbg& operator<<(const T&) { return *this; }
+	inline stream_type& operator<<(const T&) { return *this; }
 
 	/// needed for manipulators and things like std::endl
-	inline RsNoDbg& operator<<(std::ostream& (*/*pf*/)(std::ostream&))
+	inline stream_type& operator<<(std::ostream& (*/*pf*/)(std::ostream&))
 	{ return *this; }
+
+	/** Return the object itself just for code compatibility with other
+	 * logging classes */
+	inline stream_type& uStream() { return *this; }
 };
 
 /**

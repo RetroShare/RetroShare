@@ -38,14 +38,15 @@ public:
 };
 
 /** Constructor */
-GxsForumsDialog::GxsForumsDialog(QWidget *parent)
-	: GxsGroupFrameDialog(rsGxsForums, parent)
+GxsForumsDialog::GxsForumsDialog(QWidget *parent) :
+    GxsGroupFrameDialog(rsGxsForums, parent), mEventHandlerId(0)
 {
 	mCountChildMsgs = true;
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
 
-	rsEvents->registerEventsHandler(RsEventType::GXS_FORUMS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_FORUMS );
 }
 
 void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -62,13 +63,18 @@ void GxsForumsDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> eve
 		case RsForumEventCode::NEW_MESSAGE:
 		case RsForumEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsForumEventCode::READ_STATUS_CHANGED:
-			updateMessageSummaryList(e->mForumGroupId);
+			updateGroupStatisticsReal(e->mForumGroupId); // update the list immediately
             break;
 
 		case RsForumEventCode::NEW_FORUM:       // [[fallthrough]];
         case RsForumEventCode::SUBSCRIBE_STATUS_CHANGED:
             updateDisplay(true);
             break;
+
+        case RsForumEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mForumGroupId);   // update the list when redraw less often than once every 2 mins
+            break;
+
         default:
             break;
         }
@@ -133,7 +139,7 @@ void GxsForumsDialog::shareInMessage(const RsGxsGroupId& forum_id,const QList<Re
 
 UserNotify *GxsForumsDialog::createUserNotify(QObject *parent)
 {
-	return new GxsForumUserNotify(rsGxsForums, parent);
+	return new GxsForumUserNotify(rsGxsForums,this, parent);
 }
 
 QString GxsForumsDialog::text(TextType type)
@@ -207,28 +213,6 @@ GxsMessageFrameWidget *GxsForumsDialog::createMessageFrameWidget(const RsGxsGrou
 	return new GxsForumThreadWidget(groupId);
 }
 
-#ifdef TO_REMOVE
-void GxsForumsDialog::loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata *&userdata)
-{
-	std::vector<RsGxsForumGroup> groups;
-	rsGxsForums->getGroupData(token, groups);
-
-	/* Save groups to fill description */
-	GxsForumGroupInfoData *forumData = new GxsForumGroupInfoData;
-	userdata = forumData;
-
-	std::vector<RsGxsForumGroup>::iterator groupIt;
-	for (groupIt = groups.begin(); groupIt != groups.end(); ++groupIt) {
-		RsGxsForumGroup &group = *groupIt;
-		groupInfo.push_back(group.mMeta);
-
-		if (!group.mDescription.empty()) {
-			forumData->mDescription[group.mMeta.mGroupId] = QString::fromUtf8(group.mDescription.c_str());
-		}
-	}
-}
-#endif
-
 void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo)
 {
 	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupData, groupItemInfo);
@@ -249,27 +233,3 @@ void GxsForumsDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *grou
 		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
 }
 
-#ifdef TO_REMOVE
-void ::groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata)
-{
-	GxsGroupFrameDialog::groupInfoToGroupItemInfo(groupInfo, groupItemInfo, userdata);
-
-	const GxsForumGroupInfoData *forumData = dynamic_cast<const GxsForumGroupInfoData*>(userdata);
-	if (!forumData) {
-		std::cerr << "GxsForumsDialog::groupInfoToGroupItemInfo() Failed to cast data to GxsForumGroupInfoData";
-		std::cerr << std::endl;
-		return;
-	}
-
-	QMap<RsGxsGroupId, QString>::const_iterator descriptionIt = forumData->mDescription.find(groupInfo.mGroupId);
-	if (descriptionIt != forumData->mDescription.end()) {
-		groupItemInfo.description = descriptionIt.value();
-	}
-	
-	//if (IS_GROUP_ADMIN(groupInfo.mSubscribeFlags)) 
-	//	groupItemInfo.icon = QIcon(":images/konv_message2.png");
-	if ((IS_GROUP_PGP_AUTHED(groupInfo.mSignFlags)) || (IS_GROUP_MESSAGE_TRACKING(groupInfo.mSignFlags)) )
-		groupItemInfo.icon = QIcon(":icons/png/forums-signed.png");
-
-}
-#endif

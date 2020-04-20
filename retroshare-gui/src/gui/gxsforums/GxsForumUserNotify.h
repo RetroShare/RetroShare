@@ -28,7 +28,7 @@ class GxsForumUserNotify : public GxsUserNotify
 	Q_OBJECT
 
 public:
-	GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, QObject *parent = 0);
+	GxsForumUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent = 0);
 
 	virtual bool hasSetting(QString *name, QString *group);
 

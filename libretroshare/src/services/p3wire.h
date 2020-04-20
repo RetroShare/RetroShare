@@ -50,11 +50,16 @@ public:
 	virtual RsTokenService* getTokenService();
 
 	/* Specific Service Data */
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
-	virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) override;
+	virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses) override;
 
-	virtual bool createGroup(uint32_t &token, RsWireGroup &group);
-	virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
+	virtual bool createGroup(uint32_t &token, RsWireGroup &group) override;
+	virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) override;
+
+	// Blocking Interfaces.
+	virtual bool createGroup(RsWireGroup &group) override;
+	virtual bool updateGroup(const RsWireGroup &group) override;
+	virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) override;
 
 private:
 	virtual void generateDummyData();

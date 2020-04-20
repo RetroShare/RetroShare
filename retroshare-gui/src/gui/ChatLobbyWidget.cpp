@@ -418,9 +418,7 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 
 	if(_lobby_infos.find(d->id()) == _lobby_infos.end())
 	{
-		ui.stackedWidget->addWidget(d) ;
-
-		connect(d,SIGNAL(lobbyLeave(ChatLobbyId)),this,SLOT(unsubscribeChatLobby(ChatLobbyId))) ;
+		connect(d,SIGNAL(dialogClose(ChatDialog*)),this,SLOT(dialogClose(ChatDialog*)));
 		connect(d,SIGNAL(typingEventReceived(ChatLobbyId)),this,SLOT(updateTypingStatus(ChatLobbyId))) ;
 		connect(d,SIGNAL(messageReceived(bool,ChatLobbyId,QDateTime,QString,QString)),this,SLOT(updateMessageChanged(bool,ChatLobbyId,QDateTime,QString,QString))) ;
 		connect(d,SIGNAL(peerJoined(ChatLobbyId)),this,SLOT(updatePeerEntering(ChatLobbyId))) ;
@@ -429,14 +427,33 @@ void ChatLobbyWidget::addChatPage(ChatLobbyDialog *d)
 		ChatLobbyId id = d->id();
 		_lobby_infos[id].dialog = d ;
 		_lobby_infos[id].default_icon = QIcon() ;
-		_lobby_infos[id].last_typing_event = time(NULL) ;
+		_lobby_infos[id].last_typing_event = time(nullptr) ;
 
-        ChatLobbyInfo linfo ;
-        if(rsMsgs->getChatLobbyInfo(id,linfo))
-            _lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
-        else
-            std::cerr << "(EE) cannot find info for room " << std::hex << id << std::dec << std::endl;
+		ChatLobbyInfo linfo ;
+		if(rsMsgs->getChatLobbyInfo(id,linfo))
+			_lobby_infos[id].default_icon = (linfo.lobby_flags & RS_CHAT_LOBBY_FLAGS_PUBLIC) ? QIcon(IMAGE_PUBLIC):QIcon(IMAGE_PRIVATE) ;
+		else
+			std::cerr << "(EE) cannot find info for room " << std::hex << id << std::dec << std::endl;
 	}
+
+	ui.stackedWidget->addWidget(d) ;
+}
+
+void ChatLobbyWidget::removeChatPage(ChatLobbyDialog *d)
+{
+	// check that the page already exist.
+
+	if(_lobby_infos.find(d->id()) != _lobby_infos.end())
+	{
+		ui.stackedWidget->removeWidget(d) ;
+	}
+}
+
+void ChatLobbyWidget::dialogClose(ChatDialog* cd)
+{
+	ChatLobbyDialog* d = dynamic_cast<ChatLobbyDialog*>(cd);
+	if(_lobby_infos.find(d->id()) != _lobby_infos.end())
+		unsubscribeChatLobby(d->id());
 }
 
 void ChatLobbyWidget::setCurrentChatPage(ChatLobbyDialog *d)
@@ -708,7 +725,7 @@ void ChatLobbyWidget::createChatLobby()
 
 void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 {
-	if (item == NULL || item->type() != TYPE_LOBBY) {
+	if (item == nullptr || item->type() != TYPE_LOBBY) {
 		showBlankPage(0) ;
 		return;
 	}
@@ -718,7 +735,11 @@ void ChatLobbyWidget::showLobby(QTreeWidgetItem *item)
 	if(_lobby_infos.find(id) == _lobby_infos.end())
 		showBlankPage(id) ;
 	else
-		ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
+	{
+		_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+		if (_lobby_infos[id].dialog->isWindowed())
+			showBlankPage(id, true);
+	}
 }
 
 // this function is for the case where we don't have any identity yet
@@ -772,17 +793,17 @@ bool ChatLobbyWidget::showLobbyAnchor(ChatLobbyId id, QString anchor)
 {
 	QTreeWidgetItem *item = getTreeWidgetItem(id) ;
 
-	if(item != NULL) {
+	if(item != nullptr) {
 		if(item->type() == TYPE_LOBBY) {
 
 			if(_lobby_infos.find(id) == _lobby_infos.end()) {
 				showBlankPage(id) ;
 			} else {
-				//ChatLobbyDialog cldChatLobby =_lobby_infos[id].dialog;
-				ui.stackedWidget->setCurrentWidget(_lobby_infos[id].dialog) ;
-				ChatLobbyDialog *cldCW=NULL ;
-				if (NULL != (cldCW = dynamic_cast<ChatLobbyDialog *>(ui.stackedWidget->currentWidget())))
-					cldCW->getChatWidget()->scrollToAnchor(anchor);
+				_lobby_infos[id].dialog->showDialog(RS_CHAT_FOCUS);
+				if (_lobby_infos[id].dialog->isWindowed())
+					showBlankPage(id, true);
+
+				_lobby_infos[id].dialog->getChatWidget()->scrollToAnchor(anchor);
 			}
 
 			ui.lobbyTreeWidget->setCurrentItem(item);
@@ -857,20 +878,20 @@ void ChatLobbyWidget::autoSubscribeLobby(QTreeWidgetItem *item)
         subscribeChatLobbyAtItem(item);
 }
 
-void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
+void ChatLobbyWidget::showBlankPage(ChatLobbyId id, bool subscribed /*= false*/)
 {
 	// show the default blank page.
 	ui.stackedWidget->setCurrentWidget(ui._lobby_blank_page) ;
 
 	// Update information
 	std::vector<VisibleChatLobbyRecord> lobbies;
-    rsMsgs->getListOfNearbyChatLobbies(lobbies);
+	rsMsgs->getListOfNearbyChatLobbies(lobbies);
 
-    std::list<RsGxsId> my_ids ;
-    rsIdentity->getOwnIds(my_ids) ;
+	std::list<RsGxsId> my_ids ;
+	rsIdentity->getOwnIds(my_ids) ;
 
-                trimAnonIds(my_ids) ;
-                
+	trimAnonIds(my_ids) ;
+
 	for(std::vector<VisibleChatLobbyRecord>::const_iterator it(lobbies.begin());it!=lobbies.end();++it)
 		if( (*it).lobby_id == id)
 		{
@@ -881,8 +902,10 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 			ui.lobbysec_lineEdit->setText( (( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)?tr("No anonymous IDs"):tr("Anonymous IDs accepted")) );
 			ui.lobbypeers_lineEdit->setText( QString::number((*it).total_number_of_peers) );
 
-            QString text = tr("You're not subscribed to this chat room; Double click-it to enter and chat.") ;
-            
+			QString text = tr("You're subscribed to this chat room; Double click to show window and chat.") ;
+			if (!subscribed)
+			{
+				text = tr("You're not subscribed to this chat room; Double click-it to enter and chat.") ;
 				if(my_ids.empty())
 				{
 					if( (*it).lobby_flags & RS_CHAT_LOBBY_FLAGS_PGP_SIGNED)
@@ -890,8 +913,9 @@ void ChatLobbyWidget::showBlankPage(ChatLobbyId id)
 					else
 						text += "\n\n"+tr("You will need to create an identity in order to join chat rooms.") ;
 				}
+			}
 
-            ui.lobbyInfoLabel->setText(text);
+			ui.lobbyInfoLabel->setText(text);
 			return ;
 		}
 
@@ -1037,6 +1061,8 @@ void ChatLobbyWidget::unsubscribeChatLobby(ChatLobbyId id)
 		}
 
 		ui.stackedWidget->removeWidget(it->second.dialog) ;
+		disconnect(it->second.dialog,SIGNAL(dialogClose(ChatDialog*)),this,SLOT(dialogClose(ChatDialog*)));
+		it->second.dialog->leaveLobby();
 		_lobby_infos.erase(it) ;
 	}
 

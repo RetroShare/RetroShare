@@ -41,13 +41,14 @@ public:
 };
 
 /** Constructor */
-PostedDialog::PostedDialog(QWidget *parent)
-    : GxsGroupFrameDialog(rsPosted, parent)
+PostedDialog::PostedDialog(QWidget *parent):
+    GxsGroupFrameDialog(rsPosted, parent), mEventHandlerId(0)
 {
-    mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-
-	rsEvents->registerEventsHandler(RsEventType::GXS_POSTED, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	// Needs to be asynced because this function is likely to be called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_POSTED );
 }
 
 void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -62,13 +63,18 @@ void PostedDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 		case RsPostedEventCode::NEW_MESSAGE:
 		case RsPostedEventCode::UPDATED_MESSAGE:        // [[fallthrough]];
 		case RsPostedEventCode::READ_STATUS_CHANGED:   // [[fallthrough]];
-			updateMessageSummaryList(e->mPostedGroupId);
+			updateGroupStatisticsReal(e->mPostedGroupId); // update the list immediately
             break;
 
 		case RsPostedEventCode::NEW_POSTED_GROUP:       // [[fallthrough]];
 		case RsPostedEventCode::SUBSCRIBE_STATUS_CHANGED:   // [[fallthrough]];
             updateDisplay(true);
             break;
+
+        case RsPostedEventCode::STATISTICS_CHANGED:
+            updateGroupStatistics(e->mPostedGroupId);
+            break;
+
 		default: break;
 		}
 	}
@@ -82,7 +88,7 @@ PostedDialog::~PostedDialog()
 
 UserNotify *PostedDialog::createUserNotify(QObject *parent)
 {
-	return new PostedUserNotify(rsPosted, parent);
+	return new PostedUserNotify(rsPosted, this, parent);
 }
 
 QString PostedDialog::getHelpString() const

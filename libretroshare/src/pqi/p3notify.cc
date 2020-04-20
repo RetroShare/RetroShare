@@ -293,14 +293,6 @@ bool p3Notify::askForPluginConfirmation         (const std::string& plugin_filen
 
 	return false ;
 }
-bool p3Notify::askForDeferredSelfSignature      (const void *       data     , const uint32_t     len  , unsigned char *sign, unsigned int *signlen,int& signature_result, std::string reason /*=""*/)
-{
-	FOR_ALL_NOTIFY_CLIENTS
-		if( (*it)->askForDeferredSelfSignature(data,len,sign,signlen,signature_result, reason))
-			return true ;
-
-	return false ;
-}
 
 void p3Notify::registerNotifyClient(NotifyClient *cl)
 {

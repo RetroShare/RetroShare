@@ -1240,7 +1240,8 @@ gxsthewire {
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
-	
+
+	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
 
 identities {

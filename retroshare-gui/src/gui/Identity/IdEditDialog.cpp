@@ -26,8 +26,9 @@
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/AvatarDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "util/TokenQueue.h"
+#include "util/qtthreadsutils.h"
 #include "util/misc.h"
+#include "gui/notifyqt.h"
 
 #include <retroshare/rsidentity.h>
 #include <retroshare/rspeers.h>
@@ -88,17 +89,13 @@ IdEditDialog::IdEditDialog(QWidget *parent) :
 	/* Initialize ui */
 	ui->lineEdit_Nickname->setMaxLength(RSID_MAXIMUM_NICKNAME_SIZE);
 
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	ui->pushButton_Tag->setEnabled(false);
 	ui->pushButton_Tag->hide(); // unfinished
 	ui->plainTextEdit_Tag->hide();
 	ui->label_TagCheck->hide();
 }
 
-IdEditDialog::~IdEditDialog()
-{
-	delete(mIdQueue);
-}
+IdEditDialog::~IdEditDialog() {}
 
 void IdEditDialog::changeAvatar()
 {
@@ -199,25 +196,52 @@ void IdEditDialog::setAvatar(const QPixmap &avatar)
 	}
 }
 
-void IdEditDialog::setupExistingId(const RsGxsGroupId &keyId)
+void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 {
 	setWindowTitle(tr("Edit identity"));
 	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
 	ui->headerFrame->setHeaderText(tr("Edit identity"));
 
+	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
+
 	mIsNew = false;
 	mGroupId.clear();
 
-	mStateHelper->setLoading(IDEDITDIALOG_LOADID, true);
+	RsThread::async([this,keyId]()
+	{
+		std::vector<RsGxsIdGroup> datavector;
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        bool res = rsIdentity->getIdentitiesInfo(std::set<RsGxsId>({(RsGxsId)keyId}),datavector);
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(keyId);
+		RsQThreadUtils::postToObject( [this,keyId,res,datavector]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete, note that
+			 * Qt::QueuedConnection is important!
+			 */
 
-	uint32_t token;
-    mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDEDITDIALOG_LOADID);
+			mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
+
+			/* get details from libretroshare */
+
+			if (!res || datavector.size() != 1)
+			{
+				std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info for identity " << keyId << std::endl;
+
+				ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
+				ui->lineEdit_Nickname->setText("");
+
+				ui->lineEdit_GpgHash->setText(tr("N/A"));
+				ui->lineEdit_GpgId->setText(tr("N/A"));
+				ui->lineEdit_GpgName->setText(tr("N/A"));
+				return;
+			}
+
+            loadExistingId(datavector[0]);
+
+		}, this );
+	});
 }
 
 void IdEditDialog::enforceNoAnonIds()
@@ -227,33 +251,9 @@ void IdEditDialog::enforceNoAnonIds()
     ui->radioButton_Pseudo->setEnabled(false);
 }
 
-void IdEditDialog::loadExistingId(uint32_t token)
+void IdEditDialog::loadExistingId(const RsGxsIdGroup& id_group)
 {
-	mStateHelper->setLoading(IDEDITDIALOG_LOADID, false);
-
-	/* get details from libretroshare */
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		ui->lineEdit_KeyId->setText(tr("Error getting key!"));
-		return;
-	}
-
-	if (datavector.size() != 1)
-	{
-		std::cerr << "IdDialog::insertIdDetails() Invalid datavector size";
-		std::cerr << std::endl;
-
-		ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
-		ui->lineEdit_Nickname->setText("");
-
-		ui->lineEdit_GpgHash->setText(tr("N/A"));
-		ui->lineEdit_GpgId->setText(tr("N/A"));
-		ui->lineEdit_GpgName->setText(tr("N/A"));
-		return;
-	}
-
-	mEditGroup = datavector[0];
+	mEditGroup = id_group;
 	mGroupId = mEditGroup.mMeta.mGroupId;
 
 	QPixmap avatar;
@@ -539,25 +539,41 @@ void IdEditDialog::createId()
 	else
 		params.mImage.clear();
 
-	uint32_t token = 0;
-	rsIdentity->createIdentity(token, params);
+    RsGxsId keyId;
+    std::string gpg_password;
 
-	ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
+    if(params.isPgpLinked)
+    {
+		std::string gpg_name = rsPeers->getGPGName(rsPeers->getGPGOwnId());
+        bool cancelled;
 
-	mIdQueue->queueRequest(token, 0, 0, IDEDITDIALOG_CREATEID);
-}
+        if(!NotifyQt::getInstance()->askForPassword(tr("Profile password needed.").toStdString(),
+		                                            gpg_name + " (" + rsPeers->getOwnId().toStdString() + ")",
+		                                            false,
+		                                            gpg_password,cancelled))
+		{
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create an identity linked to your profile without your profile password."));
+			return;
+        }
 
-void IdEditDialog::idCreated(uint32_t token)
-{
-	if (!rsIdentity->acknowledgeGrp(token, mGroupId)) {
-		std::cerr << "IdDialog::idCreated() acknowledgeGrp failed";
-		std::cerr << std::endl;
+    }
 
-		reject();
-		return;
-	}
+    if(rsIdentity->createIdentity(keyId,params.nickname,params.mImage,!params.isPgpLinked,gpg_password))
+    {
+		ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
-	accept();
+        RsIdentityDetails det;
+
+        if(rsIdentity->getIdDetails(keyId,det))
+        {
+            QMessageBox::information(NULL,tr("Identity creation success"),tr("Your new identity was successfuly created."));
+            close();
+        }
+        else
+			QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong."));
+    }
+    else
+        QMessageBox::critical(NULL,tr("Identity creation failed"),tr("Cannot create identity. Something went wrong. Check your profile password."));
 }
 
 void IdEditDialog::updateId()
@@ -594,24 +610,8 @@ void IdEditDialog::updateId()
 		mEditGroup.mImage.clear();
 
 	uint32_t dummyToken = 0;
-	rsIdentity->updateIdentity(dummyToken, mEditGroup);
+	rsIdentity->updateIdentity(mEditGroup);
 
 	accept();
 }
 
-void IdEditDialog::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
-{
-	std::cerr << "IdDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-
-	switch (req.mUserType) {
-	case IDEDITDIALOG_LOADID:
-		loadExistingId(req.mToken);
-		break;
-
-	case IDEDITDIALOG_CREATEID:
-		idCreated(req.mToken);
-		break;
-	}
-
-}

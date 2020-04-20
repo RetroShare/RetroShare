@@ -52,8 +52,10 @@ HashingStatus::HashingStatus(QWidget *parent)
     hashloader->hide();
     statusHashing->hide();
 
-    mEventHandlerId=0;
-    rsEvents->registerEventsHandler(RsEventType::SHARED_DIRECTORIES, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+	mEventHandlerId=0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+	            mEventHandlerId, RsEventType::SHARED_DIRECTORIES );
 }
 
 void HashingStatus::handleEvent(std::shared_ptr<const RsEvent> event)
