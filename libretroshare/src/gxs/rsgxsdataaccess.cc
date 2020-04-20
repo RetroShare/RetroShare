@@ -1970,3 +1970,4 @@ bool RsGxsDataAccess::checkMsgFilter(
 }
 
 GxsGroupStatistic::~GxsGroupStatistic() = default;
+GxsServiceStatistic::~GxsServiceStatistic() = default;
