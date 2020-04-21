@@ -106,6 +106,7 @@ private:
 private:
 	QAction *mAutoDownloadAction;
 
+    RsGxsChannelGroup mGroup;
 	bool mUseThread;
     RsEventsHandlerId_t mEventHandlerId ;
 

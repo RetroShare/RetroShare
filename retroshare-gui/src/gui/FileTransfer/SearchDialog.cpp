@@ -1470,7 +1470,7 @@ void SearchDialog::hideOrShowSearchResult(QTreeWidgetItem* resultItem, QString c
 
 void SearchDialog::setIconAndType(QTreeWidgetItem *item, const QString& filename)
 {
-	item->setIcon(SR_NAME_COL, FilesDefs::getIconFromFilename(filename));
+	item->setIcon(SR_NAME_COL, FilesDefs::getIconFromFileType(filename));
 	item->setText(SR_TYPE_COL, FilesDefs::getNameFromFilename(filename));
 }
 

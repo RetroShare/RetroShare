@@ -42,15 +42,18 @@ public:
 	// It can be used for all apparences of channel posts. But in rder to merge comments from the previous versions of the post, the list of
 	// previous posts should be supplied. It's optional. If not supplied only the comments of the new version will be displayed.
 
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
-	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
-	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
+	// This one is used in channel thread widget. We don't want the group data to reload at every post, so we load it in the hosting
+    // GxsChannelsPostsWidget and pass it to created items.
 
-	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
-	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelGroup &group, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
-	//GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost &post, bool isHome, bool autoUpdate);
+//	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
+//	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
+//
+//	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
+
 	virtual ~GxsChannelPostItem();
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelPostItem " + messageId().toStdString()) ; }
@@ -65,6 +68,7 @@ public:
 	const std::list<SubFileItem *> &getFileItems() {return mFileItems; }
 
     bool isUnread() const ;
+    const std::set<RsGxsMessageId>& olderVersions() const { return mPost.mOlderVersions; }
 
     static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:
@@ -120,7 +124,7 @@ private:
 	bool mCloseOnRead;
 	bool mLoaded;
 
-	RsGxsChannelGroup mGroup;
+	RsGroupMetaData mGroupMeta;
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem*> mFileItems;
