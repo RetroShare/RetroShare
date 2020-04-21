@@ -38,22 +38,21 @@ class PostedCardView : public GxsFeedItem
 	Q_OBJECT
 
 public:
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
 	virtual ~PostedCardView();
 
-	bool setGroup(const RsPostedGroup& group, bool doFill = true);
 	bool setPost(const RsPostedPost& post, bool doFill = true);
 
-	const RsPostedPost &getPost() const;
-	RsPostedPost &post();
+    const RsPostedPost &getPost() const { return mPost; }
+	//RsPostedPost& post();
 
-	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + mMessageId.toStdString()); }
+	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + messageId().toStdString()); }
 
 protected:
 	/* FeedItem */
 	virtual void doExpand(bool open);
+	void paintEvent(QPaintEvent *e) override;
 
 private slots:
 	void loadComments();
@@ -84,10 +83,10 @@ private:
 
 private:
 	bool mInFill;
+    bool mLoaded;
 
-	RsPostedGroup mGroup;
+	RsGroupMetaData mGroupMeta;
 	RsPostedPost mPost;
-	RsGxsMessageId mMessageId;
 
 	/** Qt Designer generated object */
 	Ui::PostedCardView *ui;

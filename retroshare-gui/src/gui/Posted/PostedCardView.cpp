@@ -40,42 +40,47 @@
 
 /** Constructor */
 
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId &post_id, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, post_id, isHome, rsPosted, autoUpdate),
+  	mGroupMeta(group_meta)
 {
-	setup();
+    mPost.mMeta.mMsgId = post_id;
+    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
-	requestGroup();
-	requestMessage();
-	requestComment();
+    mLoaded = false;
+	setup();
 }
 
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, groupId, post_id, isHome, rsPosted, autoUpdate)
 {
-	setup();
-	
-	mMessageId = post.mMeta.mMsgId;
+    mPost.mMeta.mMsgId = post_id;
+    mLoaded = false;
 
-
-	setGroup(group, false);
-	setPost(post);
-	requestComment();
-}
-
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
-{
 	setup();
 
-	requestGroup();
-	setPost(post);
-	requestComment();
+    loadGroup();
 }
 
 PostedCardView::~PostedCardView()
 {
 	delete(ui);
+}
+void PostedCardView::paintEvent(QPaintEvent *e)
+{
+	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
+	 * when actually displayed on the screen. */
+
+	if(!mLoaded)
+	{
+		mLoaded = true ;
+
+		fill();
+		requestMessage();
+		requestComment();
+	}
+
+	GxsFeedItem::paintEvent(e) ;
 }
 
 void PostedCardView::setup()
@@ -123,23 +128,6 @@ void PostedCardView::setup()
 
 	ui->clearButton->hide();
 	ui->readAndClearButton->hide();
-}
-
-bool PostedCardView::setGroup(const RsPostedGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedCardView::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
 }
 
 bool PostedCardView::setPost(const RsPostedPost &post, bool doFill)
@@ -192,7 +180,7 @@ void PostedCardView::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+            mGroupMeta = group.mMeta;
 
 		}, this );
 	});
@@ -218,7 +206,7 @@ void PostedCardView::loadMessage()
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
             const RsPostedPost& post(posts[0]);
 
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
+			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true);  }, this );
 		}
 		else if(comments.size() == 1)
 		{
@@ -461,19 +449,19 @@ void PostedCardView::fill()
 	emit sizeChanged(this);
 }
 
-const RsPostedPost &PostedCardView::getPost() const
-{
-	return mPost;
-}
+//const RsPostedPost &PostedCardView::getPost() const
+//{
+//	return mPost;
+//}
 
-RsPostedPost &PostedCardView::post()
-{
-	return mPost;
-}
+//RsPostedPost &PostedCardView::post()
+//{
+//	return mPost;
+//}
 
 QString PostedCardView::groupName()
 {
-	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
+	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
 }
 
 QString PostedCardView::messageName()
@@ -586,11 +574,11 @@ void PostedCardView::doExpand(bool open)
 
 void PostedCardView::copyMessageLink()
 {
-	if (groupId().isNull() || mMessageId.isNull()) {
+	if (groupId().isNull() || messageId().isNull()) {
 		return;
 	}
 
-	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), mMessageId, messageName());
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), messageId(), messageName());
 
 	if (link.valid()) {
 		QList<RetroShareLink> urls;

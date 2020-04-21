@@ -41,42 +41,49 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, post_id, isHome, rsPosted, autoUpdate),
+  	mGroupMeta(group_meta)
 {
-	setup();
+    mPost.mMeta.mMsgId = post_id;
+    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
-	requestGroup();
-	requestMessage();
-	requestComment();
+    mLoaded = false;
+
+	setup();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+    GxsFeedItem(feedHolder, feedId, groupId, post_id, isHome, rsPosted, autoUpdate)
 {
+    mPost.mMeta.mMsgId = post_id;
+
+    mLoaded = false;
+
 	setup();
-	
-	mMessageId = post.mMeta.mMsgId;
-
-
-	setGroup(group, false);
-	setPost(post);
-	requestComment();
-}
-
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
-{
-	setup();
-
-	requestGroup();
-	setPost(post);
-	requestComment();
+    loadGroup();
 }
 
 PostedItem::~PostedItem()
 {
 	delete(ui);
+}
+
+void PostedItem::paintEvent(QPaintEvent *e)
+{
+	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
+	 * when actually displayed on the screen. */
+
+	if(!mLoaded)
+	{
+		mLoaded = true ;
+
+		fill();
+		requestMessage();
+		requestComment();
+	}
+
+	GxsFeedItem::paintEvent(e) ;
 }
 
 void PostedItem::setup()
@@ -137,23 +144,6 @@ void PostedItem::setup()
 	ui->nameLabel->hide();
 }
 
-bool PostedItem::setGroup(const RsPostedGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedItem::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
-}
-
 bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
 {
 	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
@@ -204,7 +194,7 @@ void PostedItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+            mGroupMeta = group.mMeta;
 
 		}, this );
 	});
@@ -303,7 +293,7 @@ void PostedItem::loadComment()
 
 void PostedItem::fill()
 {	
-	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroup.mMeta.mGroupId, groupName());
+	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 	ui->nameLabel->setText(link.toHtml());
 
 	QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
@@ -486,19 +476,9 @@ void PostedItem::fill()
 	emit sizeChanged(this);
 }
 
-const RsPostedPost &PostedItem::getPost() const
-{
-	return mPost;
-}
-
-RsPostedPost &PostedItem::post()
-{
-	return mPost;
-}
-
 QString PostedItem::groupName()
 {
-	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
+	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
 }
 
 QString PostedItem::messageName()
@@ -619,11 +599,11 @@ void PostedItem::doExpand(bool open)
 
 void PostedItem::copyMessageLink()
 {
-	if (groupId().isNull() || mMessageId.isNull()) {
+	if (groupId().isNull() || messageId().isNull()) {
 		return;
 	}
 
-	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), mMessageId, messageName());
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), messageId(), messageName());
 
 	if (link.valid()) {
 		QList<RetroShareLink> urls;
@@ -663,7 +643,7 @@ void PostedItem::viewPicture()
 	PView->setName(authorID);
 	PView->setTime(timestamp);
 	PView->setGroupId(groupId());
-	PView->setMessageId(mMessageId);
+	PView->setMessageId(messageId());
 
 	PView->show();
 
