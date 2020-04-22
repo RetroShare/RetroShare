@@ -41,35 +41,27 @@
 
 /** Constructor */
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+//========================================================================================
+//                                     BasePostedItem                                   //
+//========================================================================================
+
+BasePostedItem::BasePostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, post_id, isHome, rsPosted, autoUpdate),
   	mGroupMeta(group_meta)
 {
     mPost.mMeta.mMsgId = post_id;
     mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
-
     mLoaded = false;
-
-	setup();
 }
 
-PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+BasePostedItem::BasePostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
     GxsFeedItem(feedHolder, feedId, groupId, post_id, isHome, rsPosted, autoUpdate)
 {
     mPost.mMeta.mMsgId = post_id;
-
     mLoaded = false;
-
-	setup();
-    loadGroup();
 }
 
-PostedItem::~PostedItem()
-{
-	delete(ui);
-}
-
-void PostedItem::paintEvent(QPaintEvent *e)
+void BasePostedItem::paintEvent(QPaintEvent *e)
 {
 	/* This method employs a trick to trigger a deferred loading. The post and group is requested only
 	 * when actually displayed on the screen. */
@@ -78,13 +70,260 @@ void PostedItem::paintEvent(QPaintEvent *e)
 	{
 		mLoaded = true ;
 
-		fill();
 		requestMessage();
 		requestComment();
 	}
 
 	GxsFeedItem::paintEvent(e) ;
 }
+
+bool BasePostedItem::setPost(const RsPostedPost &post, bool doFill)
+{
+	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
+		std::cerr << "BasePostedItem::setPost() - Wrong id, cannot set post";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	mPost = post;
+
+	if (doFill)
+		fill();
+
+	return true;
+}
+
+void BasePostedItem::loadGroup()
+{
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+#ifdef DEBUG_FORUMS
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+#endif
+
+		std::vector<RsPostedGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
+
+		if(!rsPosted->getBoardsInfo(groupIds,groups))
+		{
+			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsPostedGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            mGroupMeta = group.mMeta;
+
+		}, this );
+	});
+}
+
+void BasePostedItem::loadMessage()
+{
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+		std::vector<RsPostedPost> posts;
+		std::vector<RsGxsComment> comments;
+
+		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		{
+			RsErr() << "BasePostedItem::loadMessage() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (posts.size() == 1)
+		{
+			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+            const RsPostedPost& post(posts[0]);
+
+			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true);  }, this );
+		}
+		else if(comments.size() == 1)
+		{
+			const RsGxsComment& cmt = comments[0];
+			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
+
+			RsQThreadUtils::postToObject( [cmt,this]()
+			{
+                setComment(cmt);
+
+				//Change this item to be uploaded with thread element.
+				setMessageId(cmt.mMeta.mThreadId);
+				requestMessage();
+
+			}, this );
+
+		}
+		else
+		{
+			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
+			std::cerr << std::endl;
+
+			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
+		}
+	});
+}
+
+
+void BasePostedItem::loadComment()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelPostItem::loadComment()";
+	std::cerr << std::endl;
+#endif
+
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+        std::set<RsGxsMessageId> msgIds;
+
+        for(auto MsgId: messageVersions())
+            msgIds.insert(MsgId);
+
+		std::vector<RsPostedPost> posts;
+		std::vector<RsGxsComment> comments;
+
+		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
+		{
+			RsErr() << "BasePostedItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+        int comNb = comments.size();
+
+		RsQThreadUtils::postToObject( [comNb,this]()
+		{
+            setCommentsSize(comNb);
+
+		}, this );
+	});
+}
+
+QString BasePostedItem::groupName()
+{
+	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
+}
+
+QString BasePostedItem::messageName()
+{
+	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+}
+
+void BasePostedItem::loadComments()
+{
+	std::cerr << "BasePostedItem::loadComments()";
+	std::cerr << std::endl;
+
+	if (mFeedHolder)
+	{
+		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
+
+#warning (csoler) Posted item versions not handled yet. When it is the case, start here.
+
+        QVector<RsGxsMessageId> post_versions ;
+        post_versions.push_back(mPost.mMeta.mMsgId) ;
+
+		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId, title);
+	}
+}
+void BasePostedItem::readToggled(bool checked)
+{
+	if (mInFill) {
+		return;
+	}
+
+	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
+
+	uint32_t token;
+	rsPosted->setMessageReadStatus(token, msgPair, !checked);
+
+	setReadStatus(false, checked);
+}
+
+void BasePostedItem::readAndClearItem()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "BasePostedItem::readAndClearItem()";
+	std::cerr << std::endl;
+#endif
+
+	readToggled(false);
+	removeItem();
+}
+void BasePostedItem::copyMessageLink()
+{
+	if (groupId().isNull() || messageId().isNull()) {
+		return;
+	}
+
+	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), messageId(), messageName());
+
+	if (link.valid()) {
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
+}
+
+void BasePostedItem::viewPicture()
+{
+	if(mPost.mImage.mData == NULL) {
+		return;
+	}
+
+	QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+	QPixmap pixmap;
+	GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+	RsGxsId authorID = mPost.mMeta.mAuthorId;
+	
+ 	PhotoView *PView = new PhotoView(this);
+	
+	PView->setPixmap(pixmap);
+	PView->setTitle(messageName());
+	PView->setName(authorID);
+	PView->setTime(timestamp);
+	PView->setGroupId(groupId());
+	PView->setMessageId(messageId());
+
+	PView->show();
+
+	/* window will destroy itself! */
+}
+
+//========================================================================================
+//                                        PostedItem                                    //
+//========================================================================================
+
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+    BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
+{
+	setup();
+}
+
+PostedItem::PostedItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate) :
+    BasePostedItem(feedHolder, feedId, groupId, post_id, isHome, autoUpdate)
+{
+	setup();
+    loadGroup();
+}
+
 
 void PostedItem::setup()
 {
@@ -126,7 +365,7 @@ void PostedItem::setup()
 
 
 	int S = QFontMetricsF(font()).height() ;
-	
+
 	ui->voteUpButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->voteDownButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->commentButton->setIconSize(QSize(S*1.5,S*1.5));
@@ -134,7 +373,7 @@ void PostedItem::setup()
 	ui->notesButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->readButton->setIconSize(QSize(S*1.5,S*1.5));
 	ui->shareButton->setIconSize(QSize(S*1.5,S*1.5));
-	
+
 	QMenu *menu = new QMenu();
 	menu->addAction(CopyLinkAction);
 	ui->shareButton->setMenu(menu);
@@ -144,155 +383,51 @@ void PostedItem::setup()
 	ui->nameLabel->hide();
 }
 
-bool PostedItem::setPost(const RsPostedPost &post, bool doFill)
+void PostedItem::makeDownVote()
 {
-	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
-		std::cerr << "PostedItem::setPost() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
 
-	mPost = post;
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
-	if (doFill) {
-		fill();
-	}
-
-	return true;
+	emit vote(msgId, false);
 }
 
-void PostedItem::loadGroup()
+void PostedItem::makeUpVote()
 {
-	RsThread::async([this]()
-	{
-		// 1 - get group data
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
 
-#ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
 
-		std::vector<RsPostedGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
-
-		if(!rsPosted->getBoardsInfo(groupIds,groups))
-		{
-			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (groups.size() != 1)
-		{
-			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-		RsPostedGroup group(groups[0]);
-
-		RsQThreadUtils::postToObject( [group,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-            mGroupMeta = group.mMeta;
-
-		}, this );
-	});
+	emit vote(msgId, true);
 }
 
-void PostedItem::loadMessage()
+
+
+void PostedItem::setComment(const RsGxsComment& cmt)
 {
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-		std::vector<RsPostedPost> posts;
-		std::vector<RsGxsComment> comments;
-
-		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
-		{
-			RsErr() << "PostedItem::loadMessage() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (posts.size() == 1)
-		{
-			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-            const RsPostedPost& post(posts[0]);
-
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
-		}
-		else if(comments.size() == 1)
-		{
-			const RsGxsComment& cmt = comments[0];
-			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-
-			RsQThreadUtils::postToObject( [cmt,this]()
-			{
-				ui->newCommentLabel->show();
-				ui->commLabel->show();
-				ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
-
-				//Change this item to be uploaded with thread element.
-				setMessageId(cmt.mMeta.mThreadId);
-				requestMessage();
-
-			}, this );
-
-		}
-		else
-		{
-			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
-			std::cerr << std::endl;
-
-			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
-		}
-	});
+	ui->newCommentLabel->show();
+	ui->commLabel->show();
+	ui->commLabel->setText(QString::fromUtf8(cmt.mComment.c_str()));
 }
-
-void PostedItem::loadComment()
+void PostedItem::setCommentsSize(int comNb)
 {
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelPostItem::loadComment()";
-	std::cerr << std::endl;
-#endif
+	QString sComButText = tr("Comment");
+	if (comNb == 1)
+		sComButText = sComButText.append("(1)");
+	else if(comNb > 1)
+		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-        std::set<RsGxsMessageId> msgIds;
-
-        for(auto MsgId: messageVersions())
-            msgIds.insert(MsgId);
-
-		std::vector<RsPostedPost> posts;
-		std::vector<RsGxsComment> comments;
-
-		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
-		{
-			RsErr() << "PostedItem::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-        int comNb = comments.size();
-
-		RsQThreadUtils::postToObject( [comNb,this]()
-		{
-			QString sComButText = tr("Comment");
-			if (comNb == 1)
-				sComButText = sComButText.append("(1)");
-			else if(comNb > 1)
-				sComButText = tr("Comments ").append("(%1)").arg(comNb);
-
-			ui->commentButton->setText(sComButText);
-
-		}, this );
-	});
+	ui->commentButton->setText(sComButText);
 }
 
 void PostedItem::fill()
-{	
+{
 	RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 	ui->nameLabel->setText(link.toHtml());
 
@@ -317,20 +452,21 @@ void PostedItem::fill()
     QUrl url = QUrl::fromEncoded(urlarray.trimmed());
 	QString urlstr = "Invalid Link";
 	QString sitestr = "Invalid Link";
+
 	bool urlOkay = url.isValid();
 	if (urlOkay)
 	{
 		QString scheme = url.scheme();
-		if ((scheme != "https") 
+		if ((scheme != "https")
 			&& (scheme != "http")
-			&& (scheme != "ftp") 
-			&& (scheme != "retroshare")) 
+			&& (scheme != "ftp")
+			&& (scheme != "retroshare"))
 		{
 			urlOkay = false;
 			sitestr = "Invalid Link Scheme";
 		}
 	}
-    
+
 	if (urlOkay)
 	{
 		urlstr =  QString("<a href=\"");
@@ -341,7 +477,7 @@ void PostedItem::fill()
 
 		QString siteurl = url.toEncoded();
 		sitestr = QString("<a href=\"%1\" ><span style=\" text-decoration: underline; color:#0079d3;\"> %2 </span></a>").arg(siteurl).arg(siteurl);
-		
+
 		ui->titleLabel->setText(urlstr);
 	}else
 	{
@@ -355,13 +491,13 @@ void PostedItem::fill()
 	}
 
 	ui->siteLabel->setText(sitestr);
-	
+
 	if(mPost.mImage.mData != NULL)
 	{
 		QPixmap pixmap;
 		GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
 		// Wiping data - as its been passed to thumbnail.
-		
+
 		QPixmap sqpixmap = pixmap.scaled(desired_width,desired_height, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 		ui->thumbnailLabel->setPixmap(sqpixmap);
 		ui->thumbnailLabel->setToolTip(tr("Click to view Picture"));
@@ -370,7 +506,7 @@ void PostedItem::fill()
 		if(pixmap.width() > 800){
 			QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
 			ui->pictureLabel->setPixmap(scaledpixmap);
-		}else{ 
+		}else{
 			ui->pictureLabel->setPixmap(pixmap);
 		}
 	}
@@ -387,7 +523,7 @@ void PostedItem::fill()
 
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
-	//score += " Top" + QString::number(post.mTopScore); 
+	//score += " Top" + QString::number(post.mTopScore);
 	//score += " New" + QString::number(post.mNewScore);
 
 	QString score = QString::number(mPost.mTopScore);
@@ -399,7 +535,7 @@ void PostedItem::fill()
 
 	QTextDocument doc;
 	doc.setHtml(ui->notes->text());
-	
+
 	if(doc.toPlainText().trimmed().isEmpty())
 		ui->notesButton->hide();
 	// differences between Feed or Top of Comment.
@@ -455,7 +591,7 @@ void PostedItem::fill()
 
 #if 0
 	uint32_t up, down, nComments;
-    
+
 	bool ok = rsPosted->retrieveScores(mPost.mMeta.mServiceString, up, down, nComments);
 
 	if(ok)
@@ -476,57 +612,6 @@ void PostedItem::fill()
 	emit sizeChanged(this);
 }
 
-QString PostedItem::groupName()
-{
-	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
-}
-
-QString PostedItem::messageName()
-{
-	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-}
-
-void PostedItem::makeDownVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, false);
-}
-
-void PostedItem::makeUpVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, true);
-}
-
-void PostedItem::loadComments()
-{
-	std::cerr << "PostedItem::loadComments()";
-	std::cerr << std::endl;
-
-	if (mFeedHolder)
-	{
-		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-
-#warning (csoler) Posted item versions not handled yet. When it is the case, start here.
-
-        QVector<RsGxsMessageId> post_versions ;
-        post_versions.push_back(mPost.mMeta.mMsgId) ;
-
-		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId, title);
-	}
-}
 
 void PostedItem::setReadStatus(bool isNew, bool isUnread)
 {
@@ -548,30 +633,6 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
-void PostedItem::readToggled(bool checked)
-{
-	if (mInFill) {
-		return;
-	}
-
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
-
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, !checked);
-
-	setReadStatus(false, checked);
-}
-
-void PostedItem::readAndClearItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PostedItem::readAndClearItem()";
-	std::cerr << std::endl;
-#endif
-
-	readToggled(false);
-	removeItem();
-}
 
 void PostedItem::toggle()
 {
@@ -597,21 +658,6 @@ void PostedItem::doExpand(bool open)
 
 }
 
-void PostedItem::copyMessageLink()
-{
-	if (groupId().isNull() || messageId().isNull()) {
-		return;
-	}
-
-	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), messageId(), messageName());
-
-	if (link.valid()) {
-		QList<RetroShareLink> urls;
-		urls.push_back(link);
-		RSLinkClipboard::copyLinks(urls);
-	}
-}
-
 void PostedItem::toggleNotes()
 {
 	if (ui->notesButton->isChecked())
@@ -619,33 +665,10 @@ void PostedItem::toggleNotes()
 		ui->frame_notes->show();
 	}
 	else
-	{		
+	{
 		ui->frame_notes->hide();
 	}
 
 }
 
-void PostedItem::viewPicture()
-{
-	if(mPost.mImage.mData == NULL) {
-		return;
-	}
 
-	QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
-	QPixmap pixmap;
-	GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
-	RsGxsId authorID = mPost.mMeta.mAuthorId;
-	
- 	PhotoView *PView = new PhotoView(this);
-	
-	PView->setPixmap(pixmap);
-	PView->setTitle(messageName());
-	PView->setName(authorID);
-	PView->setTime(timestamp);
-	PView->setGroupId(groupId());
-	PView->setMessageId(messageId());
-
-	PView->show();
-
-	/* window will destroy itself! */
-}
