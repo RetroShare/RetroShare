@@ -1553,7 +1553,7 @@ std::string p3Peers::GetRetroshareInvite(
 		}
 
 		RsCertificate cert(detail, mem_block, mem_block_size);
-		delete[] mem_block;
+		free(mem_block);
 
 		return cert.toStdString();
 	}
