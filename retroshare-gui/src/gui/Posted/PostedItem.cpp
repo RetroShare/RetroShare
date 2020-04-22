@@ -29,6 +29,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "PhotoView.h"
@@ -513,7 +514,7 @@ void PostedItem::fill()
 	else if (urlOkay && (mPost.mImage.mData == NULL))
 	{
 		ui->expandButton->setDisabled(true);
-		ui->thumbnailLabel->setPixmap(QPixmap(LINK_IMAGE));
+		ui->thumbnailLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(LINK_IMAGE));
 	}
 	else
 	{
@@ -618,12 +619,12 @@ void PostedItem::setReadStatus(bool isNew, bool isUnread)
 	if (isUnread)
 	{
 		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
 		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
 	ui->newLabel->setVisible(isNew);
@@ -644,13 +645,13 @@ void PostedItem::doExpand(bool open)
 	if (open)
 	{
 		ui->frame_picture->show();
-		ui->expandButton->setIcon(QIcon(QString(":/images/decrease.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/decrease.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 	}
 	else
 	{
 		ui->frame_picture->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/images/expand.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/expand.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 

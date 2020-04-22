@@ -28,6 +28,7 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 
@@ -93,12 +94,12 @@ void PostedCardView::setReadStatus(bool isNew, bool isUnread)
 	if (isUnread)
 	{
 		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
 		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
 	ui->newLabel->setVisible(isNew);
