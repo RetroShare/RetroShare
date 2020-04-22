@@ -113,7 +113,7 @@ void WireGroupItem::setSelected(bool on)
 	// set color too
 	if (mSelected) 
 	{
-		setBackground("red");
+		setBackground(QColor (65, 159, 217));
 	}
 	else
 	{
@@ -122,7 +122,7 @@ void WireGroupItem::setSelected(bool on)
 }
 
 
-void WireGroupItem::setBackground(QString color)
+void WireGroupItem::setBackground(QColor color)
 {
     QWidget *tocolor = this;
     QPalette p = tocolor->palette();
