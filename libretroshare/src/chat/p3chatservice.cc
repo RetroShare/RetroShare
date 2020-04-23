@@ -722,6 +722,23 @@ bool p3ChatService::initiateDistantChatConnexion( const RsGxsId& to_gxs_id,
                                                   uint32_t& error_code,
                                                   bool notify )
 {
+
+    if(to_gxs_id.isNull())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Destination RsGxsId is invalid" << std::endl;
+        return false;
+    }
+    if (from_gxs_id.isNull())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Origin RsGxsId is invalid" << std::endl;
+        return false;
+    }
+    if (!rsIdentity->isOwnId(from_gxs_id))
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Origin RsGxsId id must be own" << std::endl;
+        return false;
+    }
+
 	if(DistantChatService::initiateDistantChatConnexion( to_gxs_id,
 	                                                     from_gxs_id, pid,
 	                                                     error_code, notify ))
