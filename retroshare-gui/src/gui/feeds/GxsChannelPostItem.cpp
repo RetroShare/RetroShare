@@ -95,23 +95,23 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 // 	mPost = post ;
 // }
 
-void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
-{
-	QVector<RsGxsMessageId> v;
-	//bool self = false;
-
-	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
-		v.push_back(*it) ;
-
-	if(older_versions.find(messageId) == older_versions.end())
-		v.push_back(messageId);
-
-	setMessageVersions(v) ;
-
-	setup();
-
-	mLoaded = false ;
-}
+// void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
+// {
+// 	QVector<RsGxsMessageId> v;
+// 	//bool self = false;
+//
+// 	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+// 		v.push_back(*it) ;
+//
+// 	if(older_versions.find(messageId) == older_versions.end())
+// 		v.push_back(messageId);
+//
+// 	setMessageVersions(v) ;
+//
+// 	setup();
+//
+// 	mLoaded = false ;
+// }
 
 void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 {
@@ -267,6 +267,45 @@ void GxsChannelPostItem::loadComments()
 	comments(title);
 }
 
+void GxsChannelPostItem::loadGroup()
+{
+#ifdef DEBUG_ITEM
+	std::cerr << "GxsChannelGroupItem::loadGroup()";
+	std::cerr << std::endl;
+#endif
+
+	RsThread::async([this]()
+	{
+		// 1 - get group data
+
+		std::vector<RsGxsChannelGroup> groups;
+		const std::list<RsGxsGroupId> groupIds = { groupId() };
+
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
+		{
+			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
+			return;
+		}
+
+		if (groups.size() != 1)
+		{
+			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
+			std::cerr << std::endl;
+			return;
+		}
+		RsGxsChannelGroup group(groups[0]);
+
+		RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			mGroupMeta = group.mMeta;
+
+		}, this );
+	});
+}
 void GxsChannelPostItem::loadMessage()
 {
 #ifdef DEBUG_ITEM
@@ -834,42 +873,4 @@ void GxsChannelPostItem::makeUpVote()
 	emit vote(msgId, true);
 }
 
-void GxsChannelPostItem::loadGroup()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "GxsChannelGroupItem::loadGroup()";
-	std::cerr << std::endl;
-#endif
 
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-		std::vector<RsGxsChannelGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
-
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
-		{
-			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (groups.size() != 1)
-		{
-			std::cerr << "GxsGxsChannelGroupItem::loadGroup() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-		RsGxsChannelGroup group(groups[0]);
-
-		RsQThreadUtils::postToObject( [group,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			mGroupMeta = group.mMeta;
-
-		}, this );
-	});
-}

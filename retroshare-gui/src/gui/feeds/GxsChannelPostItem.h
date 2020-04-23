@@ -49,17 +49,12 @@ public:
 
 	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
 
-//	// This method can be called when additional information is known about the post. In this case, the widget will be initialized with some
-//	// minimap information from the post and completed when the use displays it, which shouldn't cost anything more.
-//
-//	GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate, const std::set<RsGxsMessageId>& older_versions = std::set<RsGxsMessageId>());
-
 	virtual ~GxsChannelPostItem();
 
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelPostItem " + messageId().toStdString()) ; }
 
-	bool setGroup(const RsGxsChannelGroup &group, bool doFill = true);
-	bool setPost(const RsGxsChannelPost &post, bool doFill = true);
+	bool setGroup(const RsGxsChannelGroup& group, bool doFill = true);
+	bool setPost(const RsGxsChannelPost& post, bool doFill = true);
 
 	void setFileCleanUpWarning(uint32_t time_left);
 
@@ -72,7 +67,7 @@ public:
 
     static uint64_t computeIdentifier(const RsGxsMessageId& msgid) { return hash64("GxsChannelPostItem " + msgid.toStdString()) ; }
 protected:
-	void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
+	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
 	/* FeedItem */
 	virtual void doExpand(bool open);
@@ -81,7 +76,7 @@ protected:
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
 
-	virtual void paintEvent(QPaintEvent *);
+	virtual void paintEvent(QPaintEvent *) override;
 
 	/* GxsGroupFeedItem */
 	virtual QString groupName();

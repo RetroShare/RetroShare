@@ -24,7 +24,7 @@
 #include <QMetaType>
 
 #include <retroshare/rsposted.h>
-#include "gui/gxs/GxsFeedItem.h"
+#include "PostedItem.h"
 
 namespace Ui {
 class PostedCardView;
@@ -33,62 +33,30 @@ class PostedCardView;
 class FeedHolder;
 class RsPostedPost;
 
-class PostedCardView : public GxsFeedItem
+class PostedCardView : public BasePostedItem
 {
 	Q_OBJECT
 
 public:
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate);
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate);
-	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
+	PostedCardView(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
 	virtual ~PostedCardView();
-
-	bool setGroup(const RsPostedGroup& group, bool doFill = true);
-	bool setPost(const RsPostedPost& post, bool doFill = true);
-
-	const RsPostedPost &getPost() const;
-	RsPostedPost &post();
-
-	uint64_t uniqueIdentifier() const override { return hash_64bits("PostedItem " + mMessageId.toStdString()); }
-
-protected:
-	/* FeedItem */
-	virtual void doExpand(bool open);
-
-private slots:
-	void loadComments();
-	void makeUpVote();
-	void makeDownVote();
-	void readToggled(bool checked);
-	void readAndClearItem();
-	void copyMessageLink();
-
-signals:
-	void vote(const RsGxsGrpMsgIdPair& msgId, bool up);
 
 protected:
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
-	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
 
-	/* GxsFeedItem */
-	virtual QString messageName();
-	virtual void loadMessage();
-	virtual void loadComment();
-
-private:
-	void setup();
-	void fill();
-	void setReadStatus(bool isNew, bool isUnread);
+	void setup() override;
+	void fill() override;
+    void doExpand(bool open) override {}
+	void setComment(const RsGxsComment&) override;
+	void setReadStatus(bool isNew, bool isUnread) override;
+    void toggle() override {}
+	void setCommentsSize(int comNb) override;
+    void makeUpVote() override;
+    void makeDownVote() override;
+	void toggleNotes() override;
 
 private:
-	bool mInFill;
-
-	RsPostedGroup mGroup;
-	RsPostedPost mPost;
-	RsGxsMessageId mMessageId;
-
 	/** Qt Designer generated object */
 	Ui::PostedCardView *ui;
 };

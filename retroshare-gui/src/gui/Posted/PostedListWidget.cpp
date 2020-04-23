@@ -481,26 +481,22 @@ void PostedListWidget::insertPostedDetails(const RsPostedGroup &group)
 /*********************** **** **** **** ***********************/
 /*********************** **** **** **** ***********************/
 
-void PostedListWidget::loadPost(const RsPostedPost &post)
+void PostedListWidget::loadPost(const RsPostedPost& post)
 {
 	/* Group is not always available because of the TokenQueue */
-	RsPostedGroup dummyGroup;
-	dummyGroup.mMeta.mGroupId = groupId();
 
-	PostedItem *item = new PostedItem(this, 0, dummyGroup, post, true, false);
+	PostedItem *item = new PostedItem(this, 0, mGroup.mMeta, post.mMeta.mMsgId, true, false);
 	connect(item, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mPosts.insert(post.mMeta.mMsgId, item);
 
 	mPostItems.push_back(item);
 }
 
-void PostedListWidget::loadPostCardView(const RsPostedPost &post)
+void PostedListWidget::loadPostCardView(const RsPostedPost& post)
 {
 	/* Group is not always available because of the TokenQueue */
-	RsPostedGroup dummyGroup;
-	dummyGroup.mMeta.mGroupId = groupId();
 
-	PostedCardView *cvitem = new PostedCardView(this, 0, dummyGroup, post, true, false);
+	PostedCardView *cvitem = new PostedCardView(this, 0, mGroup.mMeta, post.mMeta.mMsgId, true, false);
 	connect(cvitem, SIGNAL(vote(RsGxsGrpMsgIdPair,bool)), this, SLOT(submitVote(RsGxsGrpMsgIdPair,bool)));
 	mCVPosts.insert(post.mMeta.mMsgId, cvitem);
 
@@ -928,7 +924,7 @@ void PostedListWidget::insertPostedPosts(const std::vector<RsPostedPost>& posts)
 			std::cerr << std::endl;
 #endif
 			/* insert new entry */
-			loadPost(p);
+			//loadPost(p);
 			loadPostCardView(p);
 		}
 	}
@@ -937,7 +933,7 @@ void PostedListWidget::insertPostedPosts(const std::vector<RsPostedPost>& posts)
 	QMap<RsGxsMessageId, PostedItem*>::iterator pit;
 	for(pit = mPosts.begin(); pit != mPosts.end(); ++pit)
 	{
-		(*pit)->post().calculateScores(now);
+		(*pit)->getPost().calculateScores(now);
 	}
 
 	applyRanking();
@@ -1067,7 +1063,8 @@ bool PostedListWidget::getGroupData(RsGxsGenericGroupData*& data)
     if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({groupId()}),groupInfo) || groupInfo.size() != 1)
         return false;
 
-    data = new RsPostedGroup(groupInfo[0]);
+    mGroup = groupInfo[0];
+    data = new RsPostedGroup(mGroup);
     return true;
 }
 
