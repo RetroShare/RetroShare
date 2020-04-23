@@ -996,7 +996,7 @@ virtual void getOwnAvatarData(unsigned char *& data,int& size) = 0 ;
 	 * @param[out] pid distant chat id
 	 * @param[out] error_code if the connection can't be stablished
 	 * @param[in] notify notify remote that the connection is stablished
-	 * @return true on success
+	 * @return true on success. If you try to initate a connection already started it will return the pid of it. 
 	 */
 	virtual bool initiateDistantChatConnexion(
 	        const RsGxsId& to_pid, const RsGxsId& from_pid,
