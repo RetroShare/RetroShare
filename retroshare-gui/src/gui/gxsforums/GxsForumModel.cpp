@@ -53,7 +53,7 @@ RsGxsForumModel::RsGxsForumModel(QObject *parent)
 
 void RsGxsForumModel::preMods()
 {
- 	emit layoutAboutToBeChanged();
+	//emit layoutAboutToBeChanged(); //Generate SIGSEGV when click on button move next/prev.
 
 	beginResetModel();
 }
