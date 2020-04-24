@@ -864,3 +864,9 @@ MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
 	background: transparent;
 	border: none;
 }
+
+WireGroupItem QWidget:hover
+{
+	background-color: #7ecbfb;
+}
+
