@@ -318,3 +318,47 @@ void rslog(const RsLog::logLvl lvl, RsLog::logInfo *info, const std::string &msg
 #define PQL_DEBUG_ALERT RSL_DEBUG_ALERT 
 #define PQL_DEBUG_BASIC	RSL_DEBUG_BASIC
 #define PQL_DEBUG_ALL 	RSL_DEBUG_ALL
+
+//From https://codereview.stackexchange.com/a/165162
+/**
+ * @brief hex_dump: Send Hexadecimal Dump to stream
+ * @param os: Output Stream
+ * @param buffer: Buffer to send
+ * @param bufsize: Buffer's size
+ * @param showPrintableChars: If must send printable Char too
+ * @return
+ * basic string:
+ * 61 62 63 64 65 66 31 32  | abcdef12
+ * 33 34 35 36 00 7a 79 78  | 3456.zyx
+ * 77 76 75 39 38 37 36 35  | wvu98765
+ * 34 45 64 77 61 72 64 00  | 4Edward.
+ *
+ * wide string:
+ * 41 00 00 00 20 00 00 00  | A... ...
+ * 77 00 00 00 69 00 00 00  | w...i...
+ * 64 00 00 00 65 00 00 00  | d...e...
+ * 20 00 00 00 73 00 00 00  |  ...s...
+ * 74 00 00 00 72 00 00 00  | t...r...
+ * 69 00 00 00 6e 00 00 00  | i...n...
+ * 67 00 00 00 2e 00 00 00  | g.......
+ *
+ * a double
+ * 49 92 24 49 92 24 09 40  | I.$I.$.@
+ */
+std::ostream& hex_dump(std::ostream& os, const void *buffer,
+                       std::size_t bufsize, bool showPrintableChars = true);
+
+/**
+ * @brief The hexDump struct
+ * Enable to print dump calling like that:
+ * const char test[] = "abcdef123456\0zyxwvu987654Edward";
+ * RsDbg()<<hexDump(test, sizeof(test))<<std::endl;
+ */
+struct hexDump {
+	const void *buffer;
+	std::size_t bufsize;
+	hexDump(const void *buf, std::size_t bufsz) : buffer{buf}, bufsize{bufsz} {}
+	friend std::ostream &operator<<(std::ostream &out, const hexDump &hd) {
+		return hex_dump(out, hd.buffer, hd.bufsize, true);
+	}
+};
