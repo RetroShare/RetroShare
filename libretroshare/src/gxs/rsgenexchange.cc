@@ -3230,39 +3230,41 @@ void RsGenExchange::performUpdateValidation()
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
 
-	RsGxsGrpMetaTemporaryMap grpMetas;
+	RsNxsGrpDataTemporaryMap grpDatas;
 
-	std::vector<GroupUpdate>::iterator vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); ++vit)
-		grpMetas.insert(std::make_pair(vit->newGrp->grpId, (RsGxsGrpMetaData*)NULL));
+	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
+		grpDatas.insert(std::make_pair(vit->newGrp->grpId, (RsNxsGrp*)NULL));
 
-	if(!grpMetas.empty())
-		mDataStore->retrieveGxsGrpMetaData(grpMetas);
-	else
+	if(grpDatas.empty() || !mDataStore->retrieveNxsGrps(grpDatas,true,false))
+    {
+        if(grpDatas.empty())
+			RsErr() << __PRETTY_FUNCTION__ << " Validation of multiple group updates failed: no group in list!" << std::endl;
+        else
+            RsErr() << __PRETTY_FUNCTION__ << " Validation of multiple group updates failed: cannot retrieve froup data for these groups!" << std::endl;
+
 		return;
-
-	vit = mGroupUpdates.begin();
-	for(; vit != mGroupUpdates.end(); ++vit)
-	{
-		GroupUpdate& gu = *vit;
-		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::iterator mit = grpMetas.find(gu.newGrp->grpId);
-		gu.oldGrpMeta = mit->second;
-		gu.validUpdate = updateValid(*(gu.oldGrpMeta), *(gu.newGrp));
-	}
+    }
 
 #ifdef GEN_EXCH_DEBUG
 	std::cerr << "RsGenExchange::performUpdateValidation() " << std::endl;
 #endif
 
-	vit = mGroupUpdates.begin();
-
 	RsNxsGrpDataTemporaryList grps ;
 
-	for(; vit != mGroupUpdates.end(); ++vit)
+	for(auto vit(mGroupUpdates.begin()); vit != mGroupUpdates.end(); ++vit)
 	{
 		GroupUpdate& gu = *vit;
 
-		if(gu.validUpdate)
+		auto mit = grpDatas.find(gu.newGrp->grpId);
+
+        if(mit == grpDatas.end())
+        {
+            RsErr() << __PRETTY_FUNCTION__ << " Validation of group update failed for group " << gu.newGrp->grpId << " because previous grp version cannot be found." << std::endl;
+            continue;
+        }
+        RsGxsGrpMetaData *oldGrpMeta(mit->second->metaData);
+
+		if(updateValid(*oldGrpMeta, *gu.newGrp))
 		{
 			if(gu.newGrp->metaData->mCircleType == GXS_CIRCLE_TYPE_YOUR_FRIENDS_ONLY)
 				gu.newGrp->metaData->mOriginator = gu.newGrp->PeerId();
@@ -3270,14 +3272,28 @@ void RsGenExchange::performUpdateValidation()
 			// Keep subscriptionflag to what it was. This avoids clearing off the flag when updates to group meta information
 			// is received.
 
-			gu.newGrp->metaData->mSubscribeFlags = gu.oldGrpMeta->mSubscribeFlags ;
+			gu.newGrp->metaData->mSubscribeFlags = oldGrpMeta->mSubscribeFlags ;
 
 			// Also keep private keys if present
 
 			if(!gu.newGrp->metaData->keys.private_keys.empty())
 				std::cerr << "(EE) performUpdateValidation() group " <<gu.newGrp->metaData->mGroupId << " has been received with private keys. This is very unexpected!" << std::endl;
 			else
-				gu.newGrp->metaData->keys.private_keys = gu.oldGrpMeta->keys.private_keys ;
+				gu.newGrp->metaData->keys.private_keys = oldGrpMeta->keys.private_keys ;
+
+            // Now prepare notification of the client
+
+			RsGxsGroupUpdate *c = new RsGxsGroupUpdate();
+
+			c->mGroupId  = gu.newGrp->grpId ;
+			c->mNewGroup = gu.newGrp->clone();	// make a copy because mDataStore will destroy it on update
+			c->mOldGroup = mit->second;			// do not make a copy since we own the memory
+
+            mit->second = nullptr; // prevents deletion in auto delete map
+
+			mNotifications.push_back(c);
+
+			// finally, add the group to
 
 			grps.push_back(gu.newGrp);
 		}
@@ -3286,26 +3302,9 @@ void RsGenExchange::performUpdateValidation()
 			delete gu.newGrp;
 			gu.newGrp = NULL ;
 		}
-
-		gu.oldGrpMeta = NULL ;
 	}
-	// notify the client
-
-	RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
-
-	for(uint32_t i=0;i<mGroupUpdates.size();++i)
-		if(mGroupUpdates[i].newGrp != NULL)
-		{
-			c->mGrpIdList.push_back(mGroupUpdates[i].newGrp->grpId) ;
-#ifdef GEN_EXCH_DEBUG
-			std::cerr << "    " << mGroupUpdates[i].newGrp->grpId << std::endl;
-#endif
-		}
-
-	mNotifications.push_back(c);
 
 	// Warning: updateGroup will destroy the objects in grps. Dont use it afterwards!
-
 	mDataStore->updateGroup(grps);
 
 #ifdef GEN_EXCH_DEBUG

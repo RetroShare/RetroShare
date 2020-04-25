@@ -32,6 +32,8 @@ typedef uint32_t TurtleRequestId;
 typedef std::map<RsGxsGroupId, std::vector<RsMsgMetaData> > GxsMsgMetaMap;
 typedef std::map<RsGxsGrpMsgIdPair, std::vector<RsMsgMetaData> > GxsMsgRelatedMetaMap;
 
+class RsNxsGrp;
+
 /*!
  * The aim of this class is to abstract how changes are represented so they can
  * be determined outside the client API without explcitly enumerating all
@@ -47,7 +49,8 @@ struct RsGxsNotify
         TYPE_PROCESSED                         = 0x03,
         TYPE_RECEIVED_PUBLISHKEY               = 0x04,
         TYPE_RECEIVED_DISTANT_SEARCH_RESULTS   = 0x05,
-        TYPE_STATISTICS_CHANGED                = 0x06
+        TYPE_STATISTICS_CHANGED                = 0x06,
+        TYPE_UPDATED                           = 0x07,
 	};
 
 	virtual ~RsGxsNotify() {}
@@ -60,14 +63,28 @@ struct RsGxsNotify
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
-	RsGxsGroupChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
+	RsGxsGroupChange(NotifyType type, bool metaChange) : mNotifyType(type), mMetaChange(metaChange) {}
     std::list<RsGxsGroupId> mGrpIdList;
-    NotifyType getType(){ return NOTIFY_TYPE;}
+    NotifyType getType() override { return mNotifyType;}
     bool metaChange() { return mMetaChange; }
-private:
-    const NotifyType NOTIFY_TYPE;
+
+protected:
+    NotifyType mNotifyType;
     bool mMetaChange;
 };
+
+class RsGxsGroupUpdate : public RsGxsNotify
+{
+public:
+    RsGxsGroupUpdate() : mOldGroup(nullptr),mNewGroup(nullptr) {}
+
+    RsGxsGroupId mGroupId;
+    RsNxsGrp *mOldGroup;
+    RsNxsGrp *mNewGroup;
+
+    NotifyType getType() override { return RsGxsNotify::TYPE_UPDATED;}
+};
+
 
 class RsGxsDistantSearchResultChange: public RsGxsNotify
 {
