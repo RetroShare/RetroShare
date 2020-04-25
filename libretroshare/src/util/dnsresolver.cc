@@ -41,8 +41,6 @@
 const rstime_t MAX_TIME_BEFORE_RETRY 	=	300 ; /* seconds before retrying an ip address */
 const rstime_t MAX_KEEP_DNS_ENTRY 		= 3600 ; /* seconds during which a DNS entry is considered valid */
 
-static const std::string ADDR_AGENT  = "Mozilla/5.0";
-
 void *solveDNSEntries(void *p)
 {
 	bool more_to_go = true ;
