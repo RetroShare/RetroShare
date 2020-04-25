@@ -806,22 +806,22 @@ X509 *AuthSSLimpl::SignX509ReqWithGPG(X509_REQ *req, long /*days*/)
         X509_NAME_free(issuer_name);
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L || defined(LIBRESSL_VERSION_NUMBER)
-		  // (does not leak the key creation date to the outside anymore. for more privacy)
-		  ASN1_TIME_set(X509_get_notBefore(x509), 0);
-		  ASN1_TIME_set(X509_get_notAfter(x509), 0);
+		// (does not leak the key creation date to the outside anymore. for more privacy)
+		ASN1_TIME_set(X509_get_notBefore(x509), 0);
+		ASN1_TIME_set(X509_get_notAfter(x509), 0);
 #else
-		  // NEW code, set validity time between 2010 and 2110 (remember to change it when, if OpenSSL check it by default. ;) )
-		  // (does not leak the key creation date to the outside anymore. for more privacy)
-		  if (!ASN1_TIME_set_string(X509_getm_notBefore(x509), "20100101000000Z"))
-		  {
-			  RsErr() << __PRETTY_FUNCTION__ << " Set notBefore FAIL" << std::endl;
-			  return NULL;
-		  }
-		  if (!ASN1_TIME_set_string(X509_getm_notAfter(x509), "21100101000000Z"))
-		  {
-			  RsErr() << __PRETTY_FUNCTION__ << " Set notAfter FAIL" << std::endl;
-			  return NULL;
-		  }
+		// NEW code, set validity time between 2010 and 2110 (remember to change it when, if OpenSSL check it by default. ;) )
+		// (does not leak the key creation date to the outside anymore. for more privacy)
+		if (!ASN1_TIME_set_string(X509_getm_notBefore(x509), "20100101000000Z"))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Set notBefore FAIL" << std::endl;
+			return NULL;
+		}
+		if (!ASN1_TIME_set_string(X509_getm_notAfter(x509), "21100101000000Z"))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Set notAfter FAIL" << std::endl;
+			return NULL;
+		}
 #endif
 
         if (!X509_set_subject_name(x509, X509_REQ_get_subject_name(req)))
