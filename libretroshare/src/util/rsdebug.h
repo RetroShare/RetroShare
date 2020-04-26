@@ -85,6 +85,7 @@ private:
 #include <iostream>
 #include <chrono>
 #include <iomanip>
+#include <sstream>
 
 enum class RsLoggerCategories
 {
@@ -110,11 +111,12 @@ struct t_RsLogger
 		const auto now = system_clock::now();
 		const auto sec = time_point_cast<seconds>(now);
 		const auto msec = duration_cast<milliseconds>(now - sec);
-		const auto tFill = std::cerr.fill();
-		return std::cerr << static_cast<char>(CATEGORY) << " "
-		                 << sec.time_since_epoch().count() << "."
-		                 << std::setfill('0') << std::setw(3) << msec.count()
-		                 << std::setfill(tFill) << " " << val;
+		std::stringstream tstream;
+		tstream << static_cast<char>(CATEGORY) << " "
+		        << sec.time_since_epoch().count() << "."
+		        << std::setfill('0') << std::setw(3) << msec.count()
+		        << " " << val;
+		return std::cerr << tstream.str();
 	}
 
 	/// needed for manipulators and things like std::endl

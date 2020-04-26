@@ -57,6 +57,7 @@ RSPermissionMatrixWidget::RSPermissionMatrixWidget(QWidget *parent)
   :QFrame(parent)
 {
   _painter = new QPainter();
+  _current_service_id = 0;
 
   setMouseTracking(true) ;
 

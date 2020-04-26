@@ -23,6 +23,7 @@
 #include <QModelIndex>
 #include <QIcon>
 
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -41,18 +42,14 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 const QString RsGxsForumModel::FilterString("filtered");
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
-    : QAbstractItemModel(parent)
+    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
 {
     initEmptyHierarchy(mPosts);
-
-    mUseChildTS=false;
-    mFilteringEnabled=false;
-    mTreeMode = TREE_MODE_TREE;
 }
 
 void RsGxsForumModel::preMods()
 {
- 	emit layoutAboutToBeChanged();
+	//emit layoutAboutToBeChanged(); //Generate SIGSEGV when click on button move next/prev.
 
 	beginResetModel();
 }
@@ -359,8 +356,8 @@ QVariant RsGxsForumModel::headerData(int section, Qt::Orientation /*orientation*
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
-		case COLUMN_THREAD_DISTRIBUTION: return QIcon(":/icons/flag-green.png");
-		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-read.png");
+        case COLUMN_THREAD_DISTRIBUTION: return FilesDefs::getIconFromQtResourcePath(":/icons/flag-green.png");
+		case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
 		default:
 			return QVariant();
 		}

@@ -27,6 +27,8 @@
 
 #include <map>
 
+//#define DEBUG_FILESDEFS 1
+
 static QString getInfoFromFilename(const QString& filename, bool anyForUnknown, bool image)
 {
 	QString ext = QFileInfo(filename).suffix().toLower();
@@ -85,21 +87,67 @@ QString FilesDefs::getImageFromFilename(const QString& filename, bool anyForUnkn
 	return getInfoFromFilename(filename, anyForUnknown, true);
 }
 
-QIcon FilesDefs::getIconFromFilename(const QString& filename)
+QPixmap FilesDefs::getPixmapFromQtResourcePath(const QString& resource_path)
 {
-	QString sImage = getInfoFromFilename(filename, true, true);
-	static std::map<QString,QIcon> mIconCache;
-	QIcon icon;
-	auto item = mIconCache.find(sImage);
-	if (item == mIconCache.end())
+	static std::map<QString,QPixmap> mPixmapCache;
+	QPixmap pixmap;
+#ifdef DEBUG_FILESDEFS
+    std::cerr << "Creating Pixmap from resource path " << resource_path.toStdString() ;
+#endif
+
+	auto item = mPixmapCache.find(resource_path);
+
+	if (item == mPixmapCache.end())
 	{
-		icon = QIcon(sImage);
-		mIconCache[sImage] = icon;
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
+		pixmap = QPixmap(resource_path);
+		mPixmapCache[resource_path] = pixmap;
 	}
 	else
+    {
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  In cache. " << std::endl;
+#endif
+		pixmap = item->second;
+	}
+
+	return pixmap;
+}
+
+QIcon FilesDefs::getIconFromQtResourcePath(const QString& resource_path)
+{
+	static std::map<QString,QIcon> mIconCache;
+	QIcon icon;
+#ifdef DEBUG_FILESDEFS
+    std::cerr << "Creating Icon from resource path " << resource_path.toStdString() ;
+#endif
+
+	auto item = mIconCache.find(resource_path);
+
+	if (item == mIconCache.end())
+	{
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  Not in cache. Creating new one." << std::endl;
+#endif
+		icon = QIcon(resource_path);
+		mIconCache[resource_path] = icon;
+	}
+	else
+    {
+#ifdef DEBUG_FILESDEFS
+        std::cerr << "  In cache. " << std::endl;
+#endif
 		icon = item->second;
+	}
 
 	return icon;
+}
+
+QIcon FilesDefs::getIconFromFileType(const QString& filename)
+{
+    return getIconFromQtResourcePath(getInfoFromFilename(filename,true,true));
 }
 
 QString FilesDefs::getNameFromFilename(const QString &filename)

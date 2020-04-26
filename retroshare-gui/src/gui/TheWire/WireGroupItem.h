@@ -62,7 +62,7 @@ protected:
 private:
 	void setup();
 	void setGroupSet();
-	void setBackground(QString color);
+	void setBackground(QColor color);
 
 	WireGroupHolder *mHolder;
 	RsWireGroup mGroup;

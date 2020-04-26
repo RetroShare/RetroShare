@@ -23,6 +23,7 @@
 #include <QStyle>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "rshare.h"
 #include "GxsChannelPostItem.h"
 #include "ui_GxsChannelPostItem.h"
@@ -44,23 +45,13 @@
  * #define DEBUG_ITEM 1
  ****/
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate)
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, messageId, isHome, rsGxsChannels, autoUpdate),
+    mGroupMeta(group_meta)
 {
     mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
-	init(messageId,older_versions) ;
-}
+    mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
 
-GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
-{
-    mPost.mMeta.mMsgId.clear(); // security
-	init(post.mMeta.mMsgId,older_versions) ;
-	mPost = post ;
-}
-
-void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
-{
 	QVector<RsGxsMessageId> v;
 	//bool self = false;
 
@@ -71,11 +62,56 @@ void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsG
 		v.push_back(messageId);
 
 	setMessageVersions(v) ;
+    setup();
 
-	setup();
-
-	mLoaded = false ;
+    // no call to loadGroup() here because we have it already.
 }
+
+GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsChannels, autoUpdate) // this one should be in GxsFeedItem
+{
+    mPost.mMeta.mMsgId = messageId; // useful for uniqueIdentifer() before the post is loaded
+
+	QVector<RsGxsMessageId> v;
+	//bool self = false;
+
+	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+		v.push_back(*it) ;
+
+	if(older_versions.find(messageId) == older_versions.end())
+		v.push_back(messageId);
+
+	setMessageVersions(v) ;
+    setup();
+
+    loadGroup();
+}
+
+// GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
+//     GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsChannels, autoUpdate)
+// {
+//     mPost.mMeta.mMsgId.clear(); // security
+// 	init(post.mMeta.mMsgId,older_versions) ;
+// 	mPost = post ;
+// }
+
+// void GxsChannelPostItem::init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions)
+// {
+// 	QVector<RsGxsMessageId> v;
+// 	//bool self = false;
+//
+// 	for(std::set<RsGxsMessageId>::const_iterator it(older_versions.begin());it!=older_versions.end();++it)
+// 		v.push_back(*it) ;
+//
+// 	if(older_versions.find(messageId) == older_versions.end())
+// 		v.push_back(messageId);
+//
+// 	setMessageVersions(v) ;
+//
+// 	setup();
+//
+// 	mLoaded = false ;
+// }
 
 void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 {
@@ -86,7 +122,11 @@ void GxsChannelPostItem::paintEvent(QPaintEvent *e)
 	{
 		mLoaded = true ;
 
-		requestGroup();
+        std::set<RsGxsMessageId> older_versions;	// not so nice. We need to use std::set everywhere
+        for(auto& m:messageVersions())
+            older_versions.insert(m);
+
+		fill();
 		requestMessage();
 		requestComment();
 	}
@@ -107,8 +147,27 @@ bool GxsChannelPostItem::isUnread() const
 void GxsChannelPostItem::setup()
 {
 	/* Invoke the Qt Designer generated object setup routine */
+
 	ui = new Ui::GxsChannelPostItem;
 	ui->setupUi(this);
+
+    // Manually set icons to allow to use clever resource sharing that is missing in Qt for Icons loaded from Qt resource file.
+    // This is particularly important here because a channel may contain many posts, so duplicating the QImages here is deadly for the
+    // memory.
+
+    ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default-video.png"));
+    ui->warn_image_label->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/status_unknown.png"));
+    ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+    ui->voteUpButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_up.png"));
+    ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
+    ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
+    ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
+    ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/commnt.png"));
+    ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
+    ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
+    ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
+    ui->readAndClearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/correct.png"));
+    ui->clearButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/exit2.png"));
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -165,29 +224,6 @@ void GxsChannelPostItem::setup()
 	ui->expandFrame->hide();
 }
 
-bool GxsChannelPostItem::setGroup(const RsGxsChannelGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "GxsChannelPostItem::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mGroup = group;
-
-	// If not publisher, hide the edit button. Without the publish key, there's no way to edit a message.
-#ifdef DEBUG_ITEM
-	std::cerr << "Group subscribe flags = " << std::hex << mGroup.mMeta.mSubscribeFlags << std::dec << std::endl ;
-#endif
-	if( !IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags) )
-		ui->editButton->hide() ;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
-}
 
 bool GxsChannelPostItem::setPost(const RsGxsChannelPost &post, bool doFill)
 {
@@ -222,7 +258,7 @@ QString GxsChannelPostItem::getMsgLabel()
 
 QString GxsChannelPostItem::groupName()
 {
-	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
+	return QString::fromUtf8(mGroupMeta.mGroupName.c_str());
 }
 
 void GxsChannelPostItem::loadComments()
@@ -245,7 +281,7 @@ void GxsChannelPostItem::loadGroup()
 		std::vector<RsGxsChannelGroup> groups;
 		const std::list<RsGxsGroupId> groupIds = { groupId() };
 
-		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))
+		if(!rsGxsChannels->getChannelsInfo(groupIds,groups))	// would be better to call channel Summaries for a single group
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
@@ -265,12 +301,11 @@ void GxsChannelPostItem::loadGroup()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			setGroup(group);
+			mGroupMeta = group.mMeta;
 
 		}, this );
 	});
 }
-
 void GxsChannelPostItem::loadMessage()
 {
 #ifdef DEBUG_ITEM
@@ -292,7 +327,9 @@ void GxsChannelPostItem::loadMessage()
 
 		if (posts.size() == 1)
 		{
+#ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
+#endif
             const RsGxsChannelPost& post(posts[0]);
 
 			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
@@ -300,7 +337,9 @@ void GxsChannelPostItem::loadMessage()
 		else if(comments.size() == 1)
 		{
 			const RsGxsComment& cmt = comments[0];
+#ifdef DEBUG_ITEM
 			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
+#endif
 
 			RsQThreadUtils::postToObject( [cmt,this]()
 			{
@@ -317,8 +356,10 @@ void GxsChannelPostItem::loadMessage()
 		}
 		else
 		{
+#ifdef DEBUG_ITEM
 			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
 			std::cerr << std::endl;
+#endif
 
 			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
 		}
@@ -408,6 +449,9 @@ void GxsChannelPostItem::fill()
 		ui->logoLabel->setPixmap(thumbnail);
 	}
 
+	if( !IS_GROUP_PUBLISHER(mGroupMeta.mSubscribeFlags) )
+		ui->editButton->hide() ;
+
 	if (!mIsHome)
 	{
 		if (mCloseOnRead && !IS_MSG_NEW(mPost.mMeta.mMsgStatus)) {
@@ -422,7 +466,7 @@ void GxsChannelPostItem::fill()
 		RetroShareLink msgLink = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, mPost.mMeta.mGroupId, mPost.mMeta.mMsgId, messageName());
 		//ui->subjectLabel->setText(msgLink.toHtml());
 
-		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
 			ui->unsubscribeButton->setEnabled(true);
 		}
@@ -461,7 +505,7 @@ void GxsChannelPostItem::fill()
 		ui->unsubscribeButton->hide();
 		ui->copyLinkButton->show();
 
-		if (IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroup.mMeta.mSubscribeFlags))
+		if (IS_GROUP_SUBSCRIBED(mGroupMeta.mSubscribeFlags) || IS_GROUP_ADMIN(mGroupMeta.mSubscribeFlags))
 		{
 			ui->readButton->setVisible(true);
 
@@ -591,12 +635,12 @@ void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 	if (isUnread)
 	{
 		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
 		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
 	ui->newLabel->setVisible(isNew);
@@ -709,7 +753,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	if (open)
 	{
 		ui->expandFrame->show();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 
 		readToggled(false);
@@ -717,7 +761,7 @@ void GxsChannelPostItem::doExpand(bool open)
 	else
 	{
 		ui->expandFrame->hide();
-		ui->expandButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui->expandButton->setToolTip(tr("Expand"));
 	}
 
@@ -751,7 +795,6 @@ void GxsChannelPostItem::readAndClearItem()
 	std::cerr << "GxsChannelPostItem::readAndClearItem()";
 	std::cerr << std::endl;
 #endif
-
 	readToggled(false);
 	removeItem();
 }
@@ -779,7 +822,7 @@ void GxsChannelPostItem::download()
 
 void GxsChannelPostItem::edit()
 {
-	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroup.mMeta.mGroupId,mPost.mMeta.mMsgId);
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(mGroupMeta.mGroupId,mPost.mMeta.mMsgId);
     msgDialog->show();
 }
 
@@ -834,3 +877,5 @@ void GxsChannelPostItem::makeUpVote()
 
 	emit vote(msgId, true);
 }
+
+

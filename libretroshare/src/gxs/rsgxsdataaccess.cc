@@ -35,7 +35,6 @@ bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_
     return p1.second->Options.mPriority <= p2.second->Options.mPriority ;	// <= so that new elements with same priority are inserted before
 }
 
-
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds) :
     mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0) {}
 

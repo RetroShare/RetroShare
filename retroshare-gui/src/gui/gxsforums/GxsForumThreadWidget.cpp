@@ -448,9 +448,14 @@ void GxsForumThreadWidget::processSettings(bool load)
 	Settings->endGroup();
 }
 
-void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex&)
+void GxsForumThreadWidget::changedSelection(const QModelIndex& current,const QModelIndex& last)
 {
-	changedThread(current);
+	if (current!=last
+	    && ( ( last.row()>=0 && last.column()>=0) //Double call when retrieve focus.
+	        || mThreadId.isNull() //For first click
+	       )
+	   )
+		changedThread(current);
 }
 
 void GxsForumThreadWidget::groupIdChanged()
@@ -507,7 +512,7 @@ void GxsForumThreadWidget::recursSaveExpandedItems(const QModelIndex& index, QLi
 	}
 }
 
-void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& index, const QList<RsGxsMessageId>& expanded_items)
+void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& /*index*/, const QList<RsGxsMessageId>& expanded_items)
 {
  	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
         ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
@@ -792,66 +797,63 @@ void GxsForumThreadWidget::changedVersion()
 
 void GxsForumThreadWidget::changedThread(QModelIndex index)
 {
-    //if(mUpdating)
-    //    return;
+	if(!index.isValid())
+		return;
 
-    if(!index.isValid())
-        return;
+	RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
 
-    RsGxsMessageId new_id(index.sibling(index.row(),RsGxsForumModel::COLUMN_THREAD_MSGID).data(Qt::UserRole).toString().toStdString());
-
-    if(new_id == mThreadId)
-        return;
+	if(new_id == mThreadId)
+		return;
 
 	mThreadId = mOrigThreadId = new_id;
 
 #ifdef DEBUG_FORUMS
-    std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
+	std::cerr << "Switched to new thread ID " << mThreadId << std::endl;
 #endif
-	//ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages()) ;
 
 	insertMessage();
 
-    QModelIndex src_index = mThreadProxyModel->mapToSource(index);
+	if(Settings->getForumMsgSetToReadOnActivate())
+	{
 #ifdef DEBUG_FORUMS
-    std::cerr << "Setting message read status to true" << std::endl;
+		std::cerr << "Setting message read status to true" << std::endl;
 #endif
-	bool setToReadOnActive = Settings->getForumMsgSetToReadOnActivate();
-
-    if(setToReadOnActive)
-		mThreadModel->setMsgReadStatus(src_index, true,false);
+		markMsgAsReadUnread(true, false, false);
+	}
 }
 
 void GxsForumThreadWidget::clickedThread(QModelIndex index)
 {
 #ifdef DEBUG_FORUMS
-    std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
+	std::cerr << "Clicked on message ID " << mThreadId << ", index=" << index << std::endl;
 #endif
 
-    if(!index.isValid())
-    {
+	if(!index.isValid())
+	{
 #ifdef DEBUG_FORUMS
 		std::cerr << "  early return because index is invalid" << std::endl;
 #endif
 		return;
-    }
+	}
 
 
 	if (index.column() == RsGxsForumModel::COLUMN_THREAD_READ)
-    {
-        ForumModelPostEntry fmpe;
-
+	{
 		QModelIndex src_index = mThreadProxyModel->mapToSource(index);
 
-        mThreadModel->getPostData(src_index,fmpe);
+		ForumModelPostEntry fmpe;
+		mThreadModel->getPostData(src_index,fmpe);
 #ifdef DEBUG_FORUMS
 		std::cerr << "Setting message read status to false" << std::endl;
 #endif
-		mThreadModel->setMsgReadStatus(src_index, IS_MSG_UNREAD(fmpe.mMsgStatus),false);
+		// First Load Message (may change read status) to not recall it after index change.
+		changedThread(index);
+		// Now index is invalid as model was reloaded, Selection isn't updated.
+		markMsgAsReadUnread(IS_MSG_UNREAD(static_cast<uint32_t>(fmpe.mMsgStatus)), false, false, mThreadId);
 	}
 #ifdef DEBUG_FORUMS
-    else
-        std::cerr << "  doing nothing" << std::endl;
+	else
+		std::cerr << "  doing nothing" << std::endl;
 #endif
 }
 
@@ -1189,8 +1191,8 @@ void GxsForumThreadWidget::previousMessage()
 
 		if (prevItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(prevItem);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 			ui->threadTreeWidget->setFocus();
-			changedThread(prevItem);
 		}
 	}
 	ui->previousButton->setEnabled(index-1 > 0);
@@ -1216,8 +1218,8 @@ void GxsForumThreadWidget::nextMessage()
 
 		if (nextItem.isValid()) {
 			ui->threadTreeWidget->setCurrentIndex(nextItem);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex()); //May change if model reloaded
 			ui->threadTreeWidget->setFocus();
-			changedThread(nextItem);
 		}
 	}
 	ui->previousButton->setEnabled(true);
@@ -1261,29 +1263,31 @@ void GxsForumThreadWidget::nextUnreadMessage()
 	}
 
 	ui->threadTreeWidget->setCurrentIndex(index);
-	ui->threadTreeWidget->scrollTo(index);
-	changedThread(index);
+	ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 }
 
-void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum)
+void GxsForumThreadWidget::markMsgAsReadUnread (bool read, bool children, bool forum, RsGxsMessageId msgId /*= RsGxsMessageId()*/)
 {
 	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) {
 		return;
 	}
+	saveExpandedItems(mSavedExpandedMessages);
 
-    if(forum)
-		mThreadModel->setMsgReadStatus(mThreadModel->root(),read,children);
-    else
+	QModelIndex src_index;
+	if(forum)
+		src_index = mThreadModel->root();
+	else
 	{
-		QModelIndexList selectedIndexes = ui->threadTreeWidget->selectionModel()->selectedIndexes();
-
-		if(selectedIndexes.size() != RsGxsForumModel::COLUMN_THREAD_NB_COLUMNS)	// check that a single row is selected
-			return ;
-
-		QModelIndex index = *selectedIndexes.begin();
-
-		mThreadModel->setMsgReadStatus(mThreadProxyModel->mapToSource(index),read,children);
+		if (!msgId.isNull())
+			src_index = mThreadProxyModel->mapToSource(getCurrentIndex());
+		else
+			src_index = mThreadModel->getIndexOfMessage(mThreadId);
 	}
+	mThreadModel->setMsgReadStatus(src_index,read,children);
+
+	//Restore Selection
+	whileBlocking(ui->threadTreeWidget)->setCurrentIndex(mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mThreadId)));
+	recursRestoreExpandedItems(QModelIndex(),mSavedExpandedMessages);
 }
 
 void GxsForumThreadWidget::markMsgAsRead()
@@ -1326,9 +1330,8 @@ bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
     QModelIndex indx = mThreadProxyModel->mapFromSource(source_index);
 
 	ui->threadTreeWidget->setCurrentIndex(indx);
-	ui->threadTreeWidget->scrollTo(indx);
+	ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 	ui->threadTreeWidget->setFocus();
-    changedThread(indx);
 	return true;
 }
 
@@ -1673,24 +1676,23 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 void GxsForumThreadWidget::postForumLoading()
 {
 #ifdef DEBUG_FORUMS
-    std::cerr << "Post forum loading..." << std::endl;
+	std::cerr << "Post forum loading..." << std::endl;
 #endif
-    if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
-    {
+	if(!mNavigatePendingMsgId.isNull() && mThreadModel->getIndexOfMessage(mNavigatePendingMsgId).isValid())
+	{
 #ifdef DEBUG_FORUMS
-        std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
+		std::cerr << "Pending msg navigation: " << mNavigatePendingMsgId << ". Using it as new thread Id" << std::endl;
 #endif
 
-        QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
-        QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
+		QModelIndex source_index = mThreadModel->getIndexOfMessage(mNavigatePendingMsgId);
+		QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 
 		ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-		ui->threadTreeWidget->scrollTo(index);
+		ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 
-        changedThread(index);
-        mNavigatePendingMsgId.clear();
-    }
-    else
+		mNavigatePendingMsgId.clear();
+	}
+	else
 	{
 
 		QModelIndex source_index = mThreadModel->getIndexOfMessage(mThreadId);
@@ -1699,7 +1701,7 @@ void GxsForumThreadWidget::postForumLoading()
 		{
 			QModelIndex index = mThreadProxyModel->mapFromSource(source_index);
 			ui->threadTreeWidget->selectionModel()->setCurrentIndex(index,QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
-			ui->threadTreeWidget->scrollTo(index);
+			ui->threadTreeWidget->scrollTo(ui->threadTreeWidget->currentIndex());//May change if model reloaded
 #ifdef DEBUG_FORUMS
 			std::cerr << "  re-selecting index of message " << mThreadId << " to " << source_index.row() << "," << source_index.column() << " " << (void*)source_index.internalPointer() << std::endl;
 #endif

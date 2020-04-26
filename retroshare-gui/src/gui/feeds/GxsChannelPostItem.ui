@@ -62,9 +62,6 @@
             <property name="text">
              <string/>
             </property>
-            <property name="pixmap">
-             <pixmap resource="../images.qrc">:/images/thumb-default-video.png</pixmap>
-            </property>
             <property name="scaledContents">
              <bool>false</bool>
             </property>
@@ -156,9 +153,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="pixmap">
-               <pixmap resource="../images.qrc">:/images/status_unknown.png</pixmap>
-              </property>
              </widget>
             </item>
             <item>
@@ -213,10 +207,6 @@
               <property name="toolTip">
                <string>Toggle Message Read Status</string>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/message-state-unread.png</normaloff>:/images/message-state-unread.png</iconset>
-              </property>
               <property name="checkable">
                <bool>true</bool>
               </property>
@@ -249,10 +239,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_up.png</normaloff>:/images/vote_up.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -263,10 +249,6 @@
               <property name="text">
                <string/>
               </property>
-              <property name="icon">
-               <iconset resource="../images.qrc">
-                <normaloff>:/images/vote_down.png</normaloff>:/images/vote_down.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -276,10 +258,6 @@
               </property>
               <property name="text">
                <string>Download</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/download.png</normaloff>:/icons/png/download.png</iconset>
               </property>
               <property name="autoExclusive">
                <bool>false</bool>
@@ -294,10 +272,6 @@
               <property name="text">
                <string>Play</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/play.png</normaloff>:/icons/png/play.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -305,20 +279,12 @@
               <property name="text">
                <string>Comments</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/comment.png</normaloff>:/icons/png/comment.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="editButton">
               <property name="text">
                <string>Edit</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/pencil-edit-button.png</normaloff>:/icons/png/pencil-edit-button.png</iconset>
               </property>
              </widget>
             </item>
@@ -335,10 +301,6 @@
               </property>
               <property name="toolTip">
                <string>Copy RetroShare Link</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/copy.png</normaloff>:/icons/png/copy.png</iconset>
               </property>
              </widget>
             </item>
@@ -398,10 +360,6 @@
               <property name="toolTip">
                <string>Expand</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/down-arrow.png</normaloff>:/icons/png/down-arrow.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -418,10 +376,6 @@
               <property name="toolTip">
                <string>Set as read and remove item</string>
               </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/correct.png</normaloff>:/icons/png/correct.png</iconset>
-              </property>
              </widget>
             </item>
             <item>
@@ -437,10 +391,6 @@
               </property>
               <property name="toolTip">
                <string>Remove Item</string>
-              </property>
-              <property name="icon">
-               <iconset resource="../icons.qrc">
-                <normaloff>:/icons/png/exit2.png</normaloff>:/icons/png/exit2.png</iconset>
               </property>
              </widget>
             </item>

@@ -23,6 +23,7 @@
 
 #include <QMap>
 
+#include "retroshare/rsposted.h"
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
@@ -127,6 +128,7 @@ private:
 
 	uint32_t mTokenTypeVote;
 
+    RsPostedGroup mGroup;
 	QMap<RsGxsMessageId, PostedItem*> mPosts;
 	QList<PostedItem*> mPostItems;
 

@@ -28,6 +28,7 @@
 #include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 
@@ -40,38 +41,75 @@
 
 /** Constructor */
 
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsPosted, autoUpdate)
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGroupMetaData &group_meta, const RsGxsMessageId &post_id, bool isHome, bool autoUpdate)
+    : BasePostedItem(feedHolder, feedId, group_meta, post_id, isHome, autoUpdate)
 {
-	setup();
-
-	requestGroup();
-	requestMessage();
-	requestComment();
+    setup();
 }
 
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedGroup &group, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
+PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate)
+    : BasePostedItem(feedHolder, feedId, groupId, post_id, isHome, autoUpdate)
 {
-	setup();
-	
-	mMessageId = post.mMeta.mMsgId;
-
-
-	setGroup(group, false);
-	setPost(post);
-	requestComment();
+    setup();
+    loadGroup();
 }
 
-PostedCardView::PostedCardView(FeedHolder *feedHolder, uint32_t feedId, const RsPostedPost &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsPosted, autoUpdate)
+void PostedCardView::setCommentsSize(int comNb)
 {
-	setup();
+	QString sComButText = tr("Comment");
+	if (comNb == 1)
+		sComButText = sComButText.append("(1)");
+	else if(comNb > 1)
+		sComButText = tr("Comments ").append("(%1)").arg(comNb);
 
-	requestGroup();
-	setPost(post);
-	requestComment();
+	ui->commentButton->setText(sComButText);
 }
+
+void PostedCardView::makeDownVote()
+{
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
+
+	emit vote(msgId, false);
+}
+
+void PostedCardView::makeUpVote()
+{
+	RsGxsGrpMsgIdPair msgId;
+	msgId.first = mPost.mMeta.mGroupId;
+	msgId.second = mPost.mMeta.mMsgId;
+
+	ui->voteUpButton->setEnabled(false);
+	ui->voteDownButton->setEnabled(false);
+
+	emit vote(msgId, true);
+}
+
+void PostedCardView::setReadStatus(bool isNew, bool isUnread)
+{
+	if (isUnread)
+	{
+		ui->readButton->setChecked(true);
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
+	}
+	else
+	{
+		ui->readButton->setChecked(false);
+		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
+	}
+
+	ui->newLabel->setVisible(isNew);
+
+	ui->mainFrame->setProperty("new", isNew);
+	ui->mainFrame->style()->unpolish(ui->mainFrame);
+	ui->mainFrame->style()->polish(  ui->mainFrame);
+}
+
+void PostedCardView::setComment(const RsGxsComment& cmt) {}
 
 PostedCardView::~PostedCardView()
 {
@@ -125,161 +163,7 @@ void PostedCardView::setup()
 	ui->readAndClearButton->hide();
 }
 
-bool PostedCardView::setGroup(const RsPostedGroup &group, bool doFill)
-{
-	if (groupId() != group.mMeta.mGroupId) {
-		std::cerr << "PostedCardView::setGroup() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
 
-	mGroup = group;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
-}
-
-bool PostedCardView::setPost(const RsPostedPost &post, bool doFill)
-{
-	if (groupId() != post.mMeta.mGroupId || messageId() != post.mMeta.mMsgId) {
-		std::cerr << "PostedCardView::setPost() - Wrong id, cannot set post";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	mPost = post;
-
-	if (doFill) {
-		fill();
-	}
-
-	return true;
-}
-
-void PostedCardView::loadGroup()
-{
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-#ifdef DEBUG_FORUMS
-		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
-#endif
-
-		std::vector<RsPostedGroup> groups;
-		const std::list<RsGxsGroupId> groupIds = { groupId() };
-
-		if(!rsPosted->getBoardsInfo(groupIds,groups))
-		{
-			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (groups.size() != 1)
-		{
-			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items";
-			std::cerr << std::endl;
-			return;
-		}
-		RsPostedGroup group(groups[0]);
-
-		RsQThreadUtils::postToObject( [group,this]()
-		{
-			/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
-
-			setGroup(group);
-
-		}, this );
-	});
-}
-
-void PostedCardView::loadMessage()
-{
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-		std::vector<RsPostedPost> posts;
-		std::vector<RsGxsComment> comments;
-
-		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
-		{
-			RsErr() << "PostedItem::loadMessage() ERROR getting data" << std::endl;
-			return;
-		}
-
-		if (posts.size() == 1)
-		{
-			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
-            const RsPostedPost& post(posts[0]);
-
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post);  }, this );
-		}
-		else if(comments.size() == 1)
-		{
-			const RsGxsComment& cmt = comments[0];
-			std::cerr << (void*)this << ": Obtained comment, setting messageId to threadID = " << cmt.mMeta.mThreadId << std::endl;
-
-			RsQThreadUtils::postToObject( [cmt,this]()
-			{
-				//Change this item to be uploaded with thread element.
-				setMessageId(cmt.mMeta.mThreadId);
-				requestMessage();
-
-			}, this );
-
-		}
-		else
-		{
-			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It.";
-			std::cerr << std::endl;
-
-			RsQThreadUtils::postToObject( [this]() {  removeItem(); }, this );
-		}
-	});
-
-}
-
-void PostedCardView::loadComment()
-{
-	RsThread::async([this]()
-	{
-		// 1 - get group data
-
-        std::set<RsGxsMessageId> msgIds;
-
-        for(auto MsgId: messageVersions())
-            msgIds.insert(MsgId);
-
-		std::vector<RsPostedPost> posts;
-		std::vector<RsGxsComment> comments;
-
-		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
-		{
-			RsErr() << "PostedCardView::loadGroup() ERROR getting data" << std::endl;
-			return;
-		}
-
-        int comNb = comments.size();
-
-		RsQThreadUtils::postToObject( [comNb,this]()
-		{
-			QString sComButText = tr("Comment");
-			if (comNb == 1)
-				sComButText = sComButText.append("(1)");
-			else if(comNb > 1)
-				sComButText = tr("Comments ").append("(%1)").arg(comNb);
-
-			ui->commentButton->setText(sComButText);
-
-		}, this );
-	});
-}
 
 void PostedCardView::fill()
 {
@@ -460,141 +344,4 @@ void PostedCardView::fill()
 
 	emit sizeChanged(this);
 }
-
-const RsPostedPost &PostedCardView::getPost() const
-{
-	return mPost;
-}
-
-RsPostedPost &PostedCardView::post()
-{
-	return mPost;
-}
-
-QString PostedCardView::groupName()
-{
-	return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
-}
-
-QString PostedCardView::messageName()
-{
-	return QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-}
-
-void PostedCardView::makeDownVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, false);
-}
-
-void PostedCardView::makeUpVote()
-{
-	RsGxsGrpMsgIdPair msgId;
-	msgId.first = mPost.mMeta.mGroupId;
-	msgId.second = mPost.mMeta.mMsgId;
-
-	ui->voteUpButton->setEnabled(false);
-	ui->voteDownButton->setEnabled(false);
-
-	emit vote(msgId, true);
-}
-
-void PostedCardView::loadComments()
-{
-	std::cerr << "PostedCardView::loadComments()";
-	std::cerr << std::endl;
-
-	if (mFeedHolder)
-	{
-		QString title = QString::fromUtf8(mPost.mMeta.mMsgName.c_str());
-
-#warning (csoler) Posted item versions not handled yet. When it is the case, start here.
-
-        QVector<RsGxsMessageId> post_versions ;
-        post_versions.push_back(mPost.mMeta.mMsgId) ;
-
-		mFeedHolder->openComments(0, mPost.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId, title);
-	}
-}
-
-void PostedCardView::setReadStatus(bool isNew, bool isUnread)
-{
-	if (isUnread)
-	{
-		ui->readButton->setChecked(true);
-		ui->readButton->setIcon(QIcon(":/images/message-state-unread.png"));
-	}
-	else
-	{
-		ui->readButton->setChecked(false);
-		ui->readButton->setIcon(QIcon(":/images/message-state-read.png"));
-	}
-
-	ui->newLabel->setVisible(isNew);
-
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
-}
-
-void PostedCardView::readToggled(bool checked)
-{
-	if (mInFill) {
-		return;
-	}
-
-	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
-
-	uint32_t token;
-	rsPosted->setMessageReadStatus(token, msgPair, !checked);
-
-	setReadStatus(false, checked);
-}
-
-void PostedCardView::readAndClearItem()
-{
-#ifdef DEBUG_ITEM
-	std::cerr << "PostedCardView::readAndClearItem()";
-	std::cerr << std::endl;
-#endif
-
-	readToggled(false);
-	removeItem();
-}
-
-
-void PostedCardView::doExpand(bool open)
-{
-	/*if (open)
-	{
-		
-	}
-	else
-	{		
-
-	}
-
-	emit sizeChanged(this);*/
-
-}
-
-void PostedCardView::copyMessageLink()
-{
-	if (groupId().isNull() || mMessageId.isNull()) {
-		return;
-	}
-
-	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_POSTED, groupId(), mMessageId, messageName());
-
-	if (link.valid()) {
-		QList<RetroShareLink> urls;
-		urls.push_back(link);
-		RSLinkClipboard::copyLinks(urls);
-	}
-}
+void PostedCardView::toggleNotes() {}

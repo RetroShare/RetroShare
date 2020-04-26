@@ -194,6 +194,15 @@ bool RsThread::start(const std::string& threadName)
 			print_stacktrace();
 			return false;
 		}
+		if(!mTid)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " pthread_create could not create"
+			        << " new thread: " << threadName << " mTid: " << mTid
+			        << std::endl;
+			mHasStopped = true;
+			print_stacktrace();
+			return false;
+		}
 
 		/* Store an extra copy of thread id for debugging */
 		mLastTid = mTid;

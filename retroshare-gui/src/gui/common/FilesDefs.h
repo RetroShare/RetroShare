@@ -28,7 +28,18 @@ class FilesDefs
 {
 public:
 	static QString getImageFromFilename(const QString& filename, bool anyForUnknown);
-	static QIcon getIconFromFilename(const QString& filename);
+
+    // Theses methods is here to fix a Qt design flow that makes QIcon loaded from filename (e.g. :/images/icon.png) to not use the cache.
+    // As a result, icons created by Qt in this way (mostly from GUI) do not use data sharing.
+    // The method below has its own cache.
+
+	static QIcon   getIconFromQtResourcePath(const QString& resource_path);
+	static QPixmap getPixmapFromQtResourcePath(const QString& resource_path);
+
+    // This method returns a QIcon that is suitable to represent a file of a particular type (image, movie, etc.)
+
+	static QIcon getIconFromFileType(const QString& filename);
+
 	static QString getNameFromFilename(const QString& filename);
 };
 
