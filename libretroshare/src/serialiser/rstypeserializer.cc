@@ -543,10 +543,16 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		break;
 	case RsGenericSerializer::DESERIALIZE:
 	{
+        // In case first,second is not properly initialized, we set them to nullptr,0
+        first = nullptr;
+        second = 0;
+
 		uint32_t serialSize = 0;
 		RS_SERIAL_PROCESS(serialSize);
+
 		if(!ctx.mOk) break;
-		ctx.mOk = serialSize <= MAX_SERIALIZED_CHUNK_SIZE;
+		ctx.mOk = (serialSize <= MAX_SERIALIZED_CHUNK_SIZE);
+
 		if(!ctx.mOk)
 		{
 			RsErr() << __PRETTY_FUNCTION__
@@ -565,25 +571,23 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 			break;
 		}
 
-		ctx.mOk = ctx.mSize >= ctx.mOffset + serialSize;
+		ctx.mOk = (ctx.mSize >= ctx.mOffset + serialSize);
+
 		if(!ctx.mOk)
 		{
-			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
-			        << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space << std::endl;
 			print_stacktrace();
 
 			clear();
 			break;
 		}
 
-		if(serialSize != second)
-		{
-			first = reinterpret_cast<uint8_t*>(realloc(first, serialSize));
-			second = serialSize;
-		}
+		first = reinterpret_cast<uint8_t*>(malloc(serialSize));
+		second = serialSize;
 
-		memcpy(first, ctx.mData + ctx.mOffset, second);
-		ctx.mOffset += second;
+		memcpy(first, ctx.mData + ctx.mOffset, serialSize);
+		ctx.mOffset += serialSize;
+
 		break;
 	}
 	case RsGenericSerializer::PRINT:  break;
