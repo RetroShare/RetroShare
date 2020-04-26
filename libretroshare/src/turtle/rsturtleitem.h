@@ -227,7 +227,11 @@ class RsTurtleFTSearchResultItem: public RsTurtleSearchResultItem
 class RsTurtleGenericSearchResultItem: public RsTurtleSearchResultItem
 {
 	public:
-        RsTurtleGenericSearchResultItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT){}
+        RsTurtleGenericSearchResultItem()
+            : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT),
+		      result_data(nullptr),
+		      result_data_len(0)
+        {}
         virtual ~RsTurtleGenericSearchResultItem() {}
 
         uint32_t count() const { return result_data_len/50 ; }	// This is a blind size estimate. We should probably use the actual size to limit search results.
