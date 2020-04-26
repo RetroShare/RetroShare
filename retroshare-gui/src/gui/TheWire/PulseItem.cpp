@@ -44,40 +44,42 @@ PulseItem::PulseItem(PulseHolder *holder, std::string path)
 
 }
 
-PulseItem::PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group)
-:QWidget(NULL), mHolder(holder), mType(0)
+PulseItem::PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies)
+:QWidget(NULL), mHolder(holder), mPulse(*pulse_ptr), mType(0)
 {
 	setupUi(this);
 	setAttribute ( Qt::WA_DeleteOnClose, true );
 	QWidget *pulse_widget = widget_parent; // default msg goes into widget_parent.
 
 	/* if it is a reply */
-	if (pulse.mPulseType & WIRE_PULSE_TYPE_REPLY_MSG) {
+	if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPLY_MSG) {
 
 		std::cerr << "Installing Reply Msg";
 		std::cerr << std::endl;
-		std::cerr << "GroupID: " << pulse.mRefGroupId;
+		std::cerr << "GroupID: " << mPulse.mRefGroupId;
 		std::cerr << std::endl;
-		std::cerr << "GroupName: " << pulse.mRefGroupName;
+		std::cerr << "GroupName: " << mPulse.mRefGroupName;
 		std::cerr << std::endl;
-		std::cerr << "OrigMsgId: " << pulse.mRefOrigMsgId;
+		std::cerr << "OrigMsgId: " << mPulse.mRefOrigMsgId;
 		std::cerr << std::endl;
-		std::cerr << "AuthorId: " << pulse.mRefAuthorId;
+		std::cerr << "AuthorId: " << mPulse.mRefAuthorId;
 		std::cerr << std::endl;
-		std::cerr << "PublishTs: " << pulse.mRefPublishTs;
+		std::cerr << "PublishTs: " << mPulse.mRefPublishTs;
 		std::cerr << std::endl;
-		std::cerr << "PulseText: " << pulse.mRefPulseText;
+		std::cerr << "PulseText: " << mPulse.mRefPulseText;
 		std::cerr << std::endl;
 
 		// fill in the parent.
 		PulseDetails *parent = new PulseDetails(
 			mHolder,
-			pulse.mRefGroupId,
-			pulse.mRefGroupName,
-			pulse.mRefOrigMsgId,
-			pulse.mRefAuthorId,
-			pulse.mRefPublishTs,
-			pulse.mRefPulseText);
+			mPulse.mRefGroupId,
+			mPulse.mRefGroupName,
+			mPulse.mRefOrigMsgId,
+			mPulse.mRefAuthorId,
+			mPulse.mRefPublishTs,
+			mPulse.mRefPulseText);
+
+		parent->setBackground("sienna");
 
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
@@ -88,45 +90,8 @@ PulseItem::PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group
 		// if its a reply, the real msg goes into reply slot.
 		pulse_widget = widget_reply;
 	}
-	else if (pulse.mPulseType & WIRE_PULSE_TYPE_REPLY_REFERENCE)
+	else
 	{
-		// THIS IS A FAKE ONE... LEAVE IN UNTIL ITS HANDLED ELSEWHERE.
-		// NB: PARENT PublishTS and AuthorID appear wrong...
-
-		std::cerr << "Installing Ref Msg";
-		std::cerr << std::endl;
-		std::cerr << "GroupID: " << pulse.mRefGroupId;
-		std::cerr << std::endl;
-		std::cerr << "GroupName: " << pulse.mRefGroupName;
-		std::cerr << std::endl;
-		std::cerr << "OrigMsgId: " << pulse.mRefOrigMsgId;
-		std::cerr << std::endl;
-		std::cerr << "AuthorId: " << pulse.mRefAuthorId;
-		std::cerr << std::endl;
-		std::cerr << "PublishTs: " << pulse.mRefPublishTs;
-		std::cerr << std::endl;
-		std::cerr << "PulseText: " << pulse.mRefPulseText;
-		std::cerr << std::endl;
-
-		// fill in the parent.
-		PulseDetails *parent = new PulseDetails(
-			mHolder,
-			pulse.mRefGroupId,
-			pulse.mRefGroupName,
-			pulse.mRefOrigMsgId,
-			pulse.mRefAuthorId,
-			pulse.mRefPublishTs,
-			pulse.mRefPulseText);
-
-		// add extra widget into layout.
-		QVBoxLayout *vbox = new QVBoxLayout();
-		vbox->addWidget(parent);
-		vbox->setContentsMargins(0,0,0,0);
-		widget_reply->setLayout(vbox);
-
-		// if its a REF, the real msg goes into parent slot.
-		pulse_widget = widget_parent;
-	} else {
 		// ORIGINAL PULSE.
 		// hide widget_reply, as it will be empty.
 		widget_reply->setVisible(false);
@@ -135,7 +100,7 @@ PulseItem::PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group
 	{
 		std::cerr << "Adding Main Message";
 		std::cerr << std::endl;
-		PulseDetails *details = new PulseDetails(mHolder, pulse, group.mMeta.mGroupName, true);
+		PulseDetails *details = new PulseDetails(mHolder, &mPulse, group_ptr->mMeta.mGroupName, replies);
 
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
@@ -144,10 +109,13 @@ PulseItem::PulseItem(PulseHolder *holder, RsWirePulse &pulse, RsWireGroup &group
 		vbox->setContentsMargins(0,0,0,0);
 		pulse_widget->setLayout(vbox);
 		pulse_widget->setVisible(true);
-		// details->toggle();
 	}
 }
 
+rstime_t PulseItem::publishTs()
+{
+	return mPulse.mMeta.mPublishTs;
+}
 
 void PulseItem::removeItem()
 {
@@ -178,6 +146,8 @@ void PulseItem::mousePressEvent(QMouseEvent *event)
 	setSelected(true);
 
 	QWidget::mousePressEvent(event);
+
+	mHolder->notifyPulseSelection(this);
 }
 
 const QPixmap *PulseItem::getPixmap()

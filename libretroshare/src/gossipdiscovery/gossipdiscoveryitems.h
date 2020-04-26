@@ -84,17 +84,44 @@ class RsDiscPgpKeyItem: public RsDiscItem
 {
 public:
 
-	RsDiscPgpKeyItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT_BINARY)
+	RsDiscPgpKeyItem() :
+	    RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT_BINARY),
+	    bin_data(nullptr), bin_len(0)
 	{ setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
 
-    virtual ~RsDiscPgpKeyItem() { delete[](bin_data);bin_data=nullptr;bin_len=0;}
-
+	~RsDiscPgpKeyItem() override { free(bin_data); }
 	void clear() override;
-	void serial_process( RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx) override;
 
-	RsPgpId pgpKeyId;				// duplicate information for practical reasons
-    unsigned char *bin_data;					// binry key data allocated with new unsigned char[]
-    uint32_t bin_len;
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx ) override;
+
+	/// duplicate information for practical reasons
+	RsPgpId pgpKeyId;
+
+	unsigned char* bin_data;
+	uint32_t bin_len;
+};
+
+class RS_DEPRECATED_FOR(RsDiscPgpKeyItem) RsDiscPgpCertItem: public RsDiscItem
+{
+public:
+    RsDiscPgpCertItem() : RsDiscItem(RsGossipDiscoveryItemType::PGP_CERT)
+    { setPriorityLevel(QOS_PRIORITY_RS_DISC_PGP_CERT); }
+
+    void clear() override
+    {
+        pgpId.clear();
+        pgpCert.clear();
+    }
+    void serial_process(RsGenericSerializer::SerializeJob j, RsGenericSerializer::SerializeContext& ctx) override
+    {
+        RsTypeSerializer::serial_process(j,ctx,pgpId,"pgpId") ;
+        RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_PGPCERT,pgpCert,"pgpCert") ;
+    }
+
+    RsPgpId pgpId;
+    std::string pgpCert;
 };
 
 class RsDiscContactItem: public RsDiscItem

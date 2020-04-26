@@ -67,14 +67,6 @@ bool PgpAuxUtilsImpl::parseSignature(unsigned char *sign, unsigned int signlen, 
 	return AuthGPG::getAuthGPG()->parseSignature(sign,signlen,issuer);
 }
 
-bool PgpAuxUtilsImpl::askForDeferredSelfSignature(const void *data,
-		const uint32_t len,
-		unsigned char *sign,
-		unsigned int *signlen,
-		int& signature_result , std::string reason)
-{
-	return RsServer::notify()->askForDeferredSelfSignature(data, len, sign, signlen, signature_result, reason);
-}
 
 
 

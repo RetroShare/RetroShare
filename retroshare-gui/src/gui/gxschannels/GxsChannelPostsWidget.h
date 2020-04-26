@@ -65,14 +65,18 @@ public:
 protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
-	virtual bool insertGroupData(const uint32_t &token, RsGroupMetaData &metaData);
-	virtual void insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread);
-	virtual void insertPosts(const uint32_t &token);
+	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
 	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
 	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
     virtual void blank() ;
+
+	virtual bool getGroupData(RsGxsGenericGroupData *& data) override;
+    virtual void getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& posts) override;
+    virtual void getAllMsgData(std::vector<RsGxsGenericMsgData*>& posts) override;
+	virtual void insertPosts(const std::vector<RsGxsGenericMsgData*>& posts) override;
+	virtual void insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread) override;
 
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
@@ -102,8 +106,8 @@ private:
 private:
 	QAction *mAutoDownloadAction;
 
+    RsGxsChannelGroup mGroup;
 	bool mUseThread;
-    RsGxsGroupId mChannelGroupId;
     RsEventsHandlerId_t mEventHandlerId ;
 
 	/* UI - from Designer */

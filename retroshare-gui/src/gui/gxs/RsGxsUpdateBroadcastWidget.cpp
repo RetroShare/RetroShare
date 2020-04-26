@@ -49,12 +49,6 @@ const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIds()
     return mBase->getGrpIds();
 }
 
-#ifdef TO_REMOVE
-const std::set<TurtleRequestId>& RsGxsUpdateBroadcastWidget::getSearchResults()
-{
-    return mBase->getSearchResults();
-}
-#endif
 const std::set<RsGxsGroupId> &RsGxsUpdateBroadcastWidget::getGrpIdsMeta()
 {
     return mBase->getGrpIdsMeta();

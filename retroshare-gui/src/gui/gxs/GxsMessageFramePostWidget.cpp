@@ -25,6 +25,7 @@
 #include "gui/common/UIStateHelper.h"
 
 #include "retroshare/rsgxsifacehelper.h"
+#include "util/qtthreadsutils.h"
 
 //#define ENABLE_DEBUG 1
 
@@ -98,8 +99,8 @@ void GxsMessageFramePostWidget::updateDisplay(bool complete)
 {
 	if (complete) {
 		/* Fill complete */
-		requestGroupData();
-		requestAllPosts();
+		loadGroupData();
+		loadAllPosts();
 		return;
 	}
 
@@ -162,16 +163,9 @@ void GxsMessageFramePostWidget::fillThreadFinished()
 /** Request / Response of Data ********************************/
 /**************************************************************/
 
-void GxsMessageFramePostWidget::requestGroupData()
+void GxsMessageFramePostWidget::loadGroupData()
 {
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::requestGroupData()";
-	std::cerr << std::endl;
-#endif
-
 	mSubscribeFlags = 0;
-
-	mTokenQueue->cancelActiveRequestTokens(mTokenTypeGroupData);
 
 	if (groupId().isNull()) {
 		mStateHelper->setActive(mTokenTypeGroupData, false);
@@ -189,60 +183,58 @@ void GxsMessageFramePostWidget::requestGroupData()
 	mStateHelper->setLoading(mTokenTypeGroupData, true);
 	emit groupChanged(this);
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(groupId());
+	RsThread::async([this]()
+	{
+		RsGxsGenericGroupData *data = nullptr;
+		getGroupData(data);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+        if(!data)
+        {
+            std::cerr << "Cannot get group data for group " << groupId() << ". Maybe database is busy" << std::endl;
+            return;
+        }
 
-	uint32_t token;
-	mTokenQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, mTokenTypeGroupData);
+		RsQThreadUtils::postToObject( [data,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			bool ok = insertGroupData(data);
+
+			mStateHelper->setLoading(mTokenTypeGroupData, false);
+
+			if (ok) {
+				mSubscribeFlags = data->mMeta.mSubscribeFlags;
+
+				mGroupName = QString::fromUtf8(data->mMeta.mGroupName.c_str());
+				groupNameChanged(mGroupName);
+			} else {
+				std::cerr << "GxsMessageFramePostWidget::loadGroupData() ERROR Not just one Group";
+				std::cerr << std::endl;
+
+				mStateHelper->clear(mTokenTypeGroupData);
+
+				mGroupName.clear();
+				groupNameChanged(mGroupName);
+			}
+
+			mStateHelper->setActive(mTokenTypeGroupData, ok);
+
+			emit groupChanged(this);
+
+            delete data;
+
+		}, this );
+	});
+
 }
 
-void GxsMessageFramePostWidget::loadGroupData(const uint32_t &token)
+void GxsMessageFramePostWidget::loadAllPosts()
 {
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::loadGroupData()";
-	std::cerr << std::endl;
-#endif
-
-	RsGroupMetaData metaData;
-	bool ok = insertGroupData(token, metaData);
-
-	mStateHelper->setLoading(mTokenTypeGroupData, false);
-
-	if (ok) {
-		mSubscribeFlags = metaData.mSubscribeFlags;
-
-		mGroupName = QString::fromUtf8(metaData.mGroupName.c_str());
-		groupNameChanged(mGroupName);
-	} else {
-		std::cerr << "GxsMessageFramePostWidget::loadGroupData() ERROR Not just one Group";
-		std::cerr << std::endl;
-
-		mStateHelper->clear(mTokenTypeGroupData);
-
-		mGroupName.clear();
-		groupNameChanged(mGroupName);
-	}
-
-	mStateHelper->setActive(mTokenTypeGroupData, ok);
-
-	emit groupChanged(this);
-}
-
-void GxsMessageFramePostWidget::requestAllPosts()
-{
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::requestAllPosts()";
-	std::cerr << std::endl;
-#endif
-
 	mNavigatePendingMsgId.clear();
 
 	/* Request all posts */
-
-	mTokenQueue->cancelActiveRequestTokens(mTokenTypeAllPosts);
 
 	if (mFillThread) {
 		/* Stop current fill thread */
@@ -266,66 +258,66 @@ void GxsMessageFramePostWidget::requestAllPosts()
 	mStateHelper->setLoading(mTokenTypeAllPosts, true);
 	emit groupChanged(this);
 
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(groupId());
+	RsThread::async([this]()
+	{
+        std::vector<RsGxsGenericMsgData*> posts;
+        getAllMsgData(posts);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+        RsQThreadUtils::postToObject( [posts,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
 
-	uint32_t token;
-	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, mTokenTypeAllPosts);
+			mStateHelper->setActive(mTokenTypeAllPosts, true);
+
+			if (useThread()) {
+				/* Create fill thread */
+				mFillThread = new GxsMessageFramePostThread(posts,this);
+
+				// connect thread
+				connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
+				connect(mFillThread, SIGNAL(addPost(QVariant,bool,int,int)), this, SLOT(fillThreadAddPost(QVariant,bool,int,int)), Qt::BlockingQueuedConnection);
+
+#ifdef ENABLE_DEBUG
+				std::cerr << "GxsMessageFramePostWidget::loadAllPosts() Start fill thread" << std::endl;
+#endif
+
+				/* Start thread */
+				mFillThread->start();
+			}
+			else
+			{
+				insertAllPosts(posts, NULL);
+
+				mStateHelper->setLoading(mTokenTypeAllPosts, false);
+
+				if (!mNavigatePendingMsgId.isNull())
+                {
+					navigate(mNavigatePendingMsgId);
+
+					mNavigatePendingMsgId.clear();
+				}
+
+                // don't forget to delete the posts
+
+                for(auto& ppost:posts)
+                    delete ppost;
+			}
+
+			emit groupChanged(this);
+
+		}, this );
+	});
+
 }
 
-void GxsMessageFramePostWidget::loadAllPosts(const uint32_t &token)
+void GxsMessageFramePostWidget::loadPosts(const std::set<RsGxsMessageId>& msgIds)
 {
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::loadAllPosts()";
-	std::cerr << std::endl;
-#endif
-
-	mStateHelper->setActive(mTokenTypeAllPosts, true);
-
-	if (useThread()) {
-		/* Create fill thread */
-		mFillThread = new GxsMessageFramePostThread(token, this);
-
-		// connect thread
-		connect(mFillThread, SIGNAL(finished()), this, SLOT(fillThreadFinished()), Qt::BlockingQueuedConnection);
-		connect(mFillThread, SIGNAL(addPost(QVariant,bool,int,int)), this, SLOT(fillThreadAddPost(QVariant,bool,int,int)), Qt::BlockingQueuedConnection);
-
-#ifdef ENABLE_DEBUG
-		std::cerr << "GxsMessageFramePostWidget::loadAllPosts() Start fill thread" << std::endl;
-#endif
-
-		/* Start thread */
-		mFillThread->start();
-	} else {
-		insertAllPosts(token, NULL);
-
-		mStateHelper->setLoading(mTokenTypeAllPosts, false);
-
-		if (!mNavigatePendingMsgId.isNull()) {
-			navigate(mNavigatePendingMsgId);
-
-			mNavigatePendingMsgId.clear();
-		}
-	}
-
-	emit groupChanged(this);
-}
-
-void GxsMessageFramePostWidget::requestPosts(const std::set<RsGxsMessageId> &msgIds)
-{
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::requestPosts()";
-	std::cerr << std::endl;
-#endif
-
 	mNavigatePendingMsgId.clear();
 
-	mTokenQueue->cancelActiveRequestTokens(mTokenTypePosts);
-
-	if (groupId().isNull()) {
+	if (groupId().isNull())
+    {
 		mStateHelper->setActive(mTokenTypePosts, false);
 		mStateHelper->setLoading(mTokenTypePosts, false);
 		mStateHelper->clear(mTokenTypePosts);
@@ -333,77 +325,53 @@ void GxsMessageFramePostWidget::requestPosts(const std::set<RsGxsMessageId> &msg
 		return;
 	}
 
-	if (msgIds.empty()) {
+	if (msgIds.empty())
 		return;
-	}
 
 	mStateHelper->setLoading(mTokenTypePosts, true);
 	emit groupChanged(this);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	GxsMsgReq requestMsgIds;
-	requestMsgIds[groupId()] = msgIds;
-	mTokenQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, requestMsgIds, mTokenTypePosts);
-}
-
-void GxsMessageFramePostWidget::loadPosts(const uint32_t &token)
-{
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::loadPosts()";
-	std::cerr << std::endl;
-#endif
-
-	mStateHelper->setActive(mTokenTypePosts, true);
-
-	insertPosts(token);
-
-	mStateHelper->setLoading(mTokenTypePosts, false);
-	emit groupChanged(this);
-
-	if (!mNavigatePendingMsgId.isNull()) {
-		navigate(mNavigatePendingMsgId);
-
-		mNavigatePendingMsgId.clear();
-	}
-}
-
-void GxsMessageFramePostWidget::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-#ifdef ENABLE_DEBUG
-	std::cerr << "GxsMessageFramePostWidget::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-
-	if (queue == mTokenQueue)
+	RsThread::async([this,msgIds]()
 	{
-		if (req.mUserType == mTokenTypeGroupData) {
-			loadGroupData(req.mToken);
-			return;
-		}
+        std::vector<RsGxsGenericMsgData*> posts;
 
-		if (req.mUserType == mTokenTypeAllPosts) {
-			loadAllPosts(req.mToken);
-			return;
-		}
+        getMsgData(msgIds,posts);
 
-		if (req.mUserType == mTokenTypePosts) {
-			loadPosts(req.mToken);
-			return;
-		}
-	}
+        RsQThreadUtils::postToObject( [posts,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
 
-	GxsMessageFrameWidget::loadRequest(queue, req);
+			mStateHelper->setActive(mTokenTypePosts, true);
+
+			insertPosts(posts);
+
+			mStateHelper->setLoading(mTokenTypePosts, false);
+			emit groupChanged(this);
+
+			if (!mNavigatePendingMsgId.isNull())
+            {
+				navigate(mNavigatePendingMsgId);
+
+				mNavigatePendingMsgId.clear();
+			}
+
+            // don't forget to delete posts.
+
+            for(auto& post:posts)
+                delete post;
+
+		}, this );
+	});
 }
 
 /**************************************************************/
 /** GxsMessageFramePostThread *********************************/
 /**************************************************************/
 
-GxsMessageFramePostThread::GxsMessageFramePostThread(uint32_t token, GxsMessageFramePostWidget *parent)
-    : QThread(parent), mToken(token), mParent(parent)
+GxsMessageFramePostThread::GxsMessageFramePostThread(const std::vector<RsGxsGenericMsgData*>& posts,GxsMessageFramePostWidget *parent)
+    : mPosts(posts),QThread(parent), mParent(parent)
 {
 	mStopped = false;
 }
@@ -417,9 +385,9 @@ GxsMessageFramePostThread::~GxsMessageFramePostThread()
 
 void GxsMessageFramePostThread::stop(bool waitForStop)
 {
-	if (waitForStop) {
+	if (waitForStop)
 		disconnect();
-	}
+
 
 	mStopped = true;
 	QApplication::processEvents();
@@ -435,7 +403,12 @@ void GxsMessageFramePostThread::run()
 	std::cerr << "GxsMessageFramePostThread::run()" << std::endl;
 #endif
 
-	mParent->insertAllPosts(mToken, this);
+	mParent->insertAllPosts(mPosts,this);
+
+    for(auto& ppost:mPosts)
+        delete ppost;
+
+    mPosts.clear(); // dont keep deleted pointers
 
 #ifdef ENABLE_DEBUG
 	std::cerr << "GxsMessageFramePostThread::run() stopped: " << (stopped() ? "yes" : "no") << std::endl;

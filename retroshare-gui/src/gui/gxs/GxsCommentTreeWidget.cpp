@@ -28,6 +28,7 @@
 #include <QTextDocument>
 
 #include "gui/common/RSElidedItemDelegate.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/gxs/GxsCommentTreeWidget.h"
 #include "gui/gxs/GxsCreateCommentDialog.h"
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
@@ -186,18 +187,18 @@ void GxsCommentTreeWidget::setCurrentCommentMsgId(QTreeWidgetItem *current, QTre
 void GxsCommentTreeWidget::customPopUpMenu(const QPoint& /*point*/)
 {
 	QMenu contextMnu( this );
-	QAction* action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
+	QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Reply to Comment"), this, SLOT(replyToComment()));
 	action->setDisabled(mCurrentCommentMsgId.isNull());
-	action = contextMnu.addAction(QIcon(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
+	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Submit Comment"), this, SLOT(makeComment()));
 	action->setDisabled(mMsgVersions.empty());
-	action = contextMnu.addAction(QIcon(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
+	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPY), tr("Copy Comment"), this, SLOT(copyComment()));
 	action->setDisabled(mCurrentCommentMsgId.isNull());
 
 	contextMnu.addSeparator();
 
-	action = contextMnu.addAction(QIcon(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
+	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEUP), tr("Vote Up"), this, SLOT(voteUp()));
 	action->setDisabled(mVoterId.isNull());
-	action = contextMnu.addAction(QIcon(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
+	action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_VOTEDOWN), tr("Vote Down"), this, SLOT(voteDown()));
 	action->setDisabled(mVoterId.isNull());
 
 
@@ -353,6 +354,7 @@ void GxsCommentTreeWidget::requestComments(const RsGxsGroupId& group, const std:
 
 	service_requestComments(group,message_versions);
 }
+
 
 void GxsCommentTreeWidget::service_requestComments(const RsGxsGroupId& group_id,const std::set<RsGxsMessageId> & msgIds)
 {

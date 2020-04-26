@@ -130,9 +130,11 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	setGroupId(channelId);
 
 	mEventHandlerId = 0;
-    // Needs to be asynced because this function is likely to be called by another thread!
-
-	rsEvents->registerEventsHandler(RsEventType::GXS_CHANNELS, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId );
+	// Needs to be asynced because this function is called by another thread!
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
+	            mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
 void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
@@ -148,7 +150,7 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
         case RsChannelEventCode::NEW_CHANNEL:
         case RsChannelEventCode::UPDATED_MESSAGE:
         case RsChannelEventCode::NEW_MESSAGE:
-            if(e->mChannelGroupId == mChannelGroupId)
+            if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
             break;
         default:
@@ -456,18 +458,23 @@ void GxsChannelPostsWidget::filterChanged(int filter)
 	return bVisible;
 }
 
-void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
+#ifdef TODO
+void GxsChannelPostsWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& meta,bool related)
 {
 	GxsChannelPostItem *item = NULL;
+    RsGxsChannelPost post;
 
-    if(!post.mMeta.mOrigMsgId.isNull())
+    if(!meta.mOrigMsgId.isNull())
     {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mOrigMsgId)) ;
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 
         if(item)
 		{
+            post = feedItem->post();
 			ui->feedWidget->removeFeedItem(item) ;
+
+            post.mOlderVersions.insert(post.mMeta.mMsgId);
 
 			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
 			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
@@ -478,19 +485,72 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 
 	if (related)
     {
-		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(post.mMeta.mMsgId)) ;
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
 		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
 	}
-	if (item) {
+	if (item)
+    {
 		item->setPost(post);
-		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
-	} else {
-		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, post, true, false,post.mOlderVersions);
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+    else
+    {
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, meta.mGroupId,meta.mMsgId, true, true);
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(post.mMeta.mPublishTs));
 	}
-
+#ifdef TODO
 	ui->fileWidget->addFiles(post, related);
+#endif
 }
+#endif
+
+void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
+{
+	GxsChannelPostItem *item = NULL;
+
+    const RsMsgMetaData& meta(post.mMeta);
+
+    if(!meta.mOrigMsgId.isNull())
+    {
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mOrigMsgId)) ;
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+
+        if(item)
+		{
+            std::set<RsGxsMessageId> older_versions(item->olderVersions()); // we make a copy because the item will be deleted
+			ui->feedWidget->removeFeedItem(item) ;
+
+            older_versions.insert(meta.mMsgId);
+
+			GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, false,older_versions);
+			ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+
+			return ;
+		}
+    }
+
+	if (related)
+    {
+		FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(meta.mMsgId)) ;
+		item = dynamic_cast<GxsChannelPostItem*>(feedItem);
+	}
+	if (item)
+    {
+		item->setPost(post);
+		ui->feedWidget->setSort(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+    else
+    {
+		GxsChannelPostItem *item = new GxsChannelPostItem(this, 0, mGroup.mMeta,meta.mMsgId, true, true);
+		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
+	}
+
+#ifdef TODO
+	ui->fileWidget->addFiles(post, related);
+#endif
+}
+
+
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
 {
@@ -506,7 +566,7 @@ void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool rela
 	createPostItem(post.value<RsGxsChannelPost>(), related);
 }
 
-void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related)
+void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost>& posts, GxsMessageFramePostThread *thread, bool related)
 {
 	if (related && thread) {
 		std::cerr << "GxsChannelPostsWidget::insertChannelPosts fill only related posts as thread is not possible" << std::endl;
@@ -734,26 +794,71 @@ void GxsChannelPostsWidget::toggleAutoDownload()
 	});
 }
 
-bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaData &metaData)
+bool GxsChannelPostsWidget::insertGroupData(const RsGxsGenericGroupData *data)
 {
-	std::vector<RsGxsChannelGroup> groups;
-	rsGxsChannels->getGroupData(token, groups);
+    const RsGxsChannelGroup *d = dynamic_cast<const RsGxsChannelGroup*>(data);
 
-	if(groups.size() == 1)
-	{
-		insertChannelDetails(groups[0]);
-		metaData = groups[0].mMeta;
-        mChannelGroupId = groups[0].mMeta.mGroupId;
-		return true;
-	}
+    if(!d)
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Cannot dynamic cast input data (" << (void*)data << " to RsGxsGenericGroupData. Something bad happenned." << std::endl;
+        return false;
+    }
+
+	insertChannelDetails(*d);
+	return true;
+}
+
+void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsGxsChannelPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsGxsChannelPost(post));
+}
+
+void GxsChannelPostsWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& psts)
+{
+    std::vector<RsGxsChannelPost> posts;
+    std::vector<RsGxsComment> comments;
+
+    rsGxsChannels->getChannelAllContent( groupId(),posts,comments );
+
+    psts.clear();
+
+    for(auto& post: posts)
+        psts.push_back(new RsGxsChannelPost(post));
+}
+
+bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
+{
+    if(groupId().isNull())
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Trying to get data about null group!!" << std::endl;
+        return false;
+    }
+    std::vector<RsGxsChannelGroup> groups;
+
+    if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({groupId()}),groups) && groups.size()==1)
+    {
+        data = new RsGxsChannelGroup(groups[0]);
+
+        mGroup = groups[0];	// make a local copy to pass on to items
+        return true;
+    }
     else
     {
         RsGxsChannelGroup distant_group;
+
         if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
         {
 			insertChannelDetails(distant_group);
-			metaData = distant_group.mMeta;
-			mChannelGroupId = distant_group.mMeta.mGroupId;
+			data = new RsGxsChannelGroup(distant_group);
+			mGroup = distant_group;	// make a local copy to pass on to items
             return true ;
         }
     }
@@ -761,20 +866,23 @@ bool GxsChannelPostsWidget::insertGroupData(const uint32_t &token, RsGroupMetaDa
 	return false;
 }
 
-void GxsChannelPostsWidget::insertAllPosts(const uint32_t &token, GxsMessageFramePostThread *thread)
+void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread)
 {
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
+    std::vector<RsGxsChannelPost> cposts;
 
-	insertChannelPosts(posts, thread, false);
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some time, and the cposts list is being modified in the insert method.
+		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
+
+	insertChannelPosts(cposts, thread, false);
 }
-
-void GxsChannelPostsWidget::insertPosts(const uint32_t &token)
+void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& posts)
 {
-	std::vector<RsGxsChannelPost> posts;
-	rsGxsChannels->getPostData(token, posts);
+    std::vector<RsGxsChannelPost> cposts;
 
-	insertChannelPosts(posts, NULL, true);
+    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
+		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
+
+	insertChannelPosts(cposts, NULL, true);
 }
 
 class GxsChannelPostsReadData

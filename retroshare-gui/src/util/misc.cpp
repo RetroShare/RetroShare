@@ -424,3 +424,23 @@ QString misc::getExistingDirectory(QWidget *parent, const QString &caption, cons
 		return QFileDialog::getExistingDirectory(parent, caption, dir, QFileDialog::DontUseNativeDialog | QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
 #endif
 }
+
+/*!
+ * Clear a Layout content
+ * \param layout: Layout to Clear
+ */
+void misc::clearLayout(QLayout * layout) {
+	if (! layout)
+		return;
+
+	while (auto item = layout->takeAt(0))
+	{
+		if (auto *widget = item->widget())
+			widget->deleteLater();
+		if (auto *spacer = item->spacerItem())
+			delete spacer;
+
+		clearLayout(item->layout());
+		delete item;
+	}
+}

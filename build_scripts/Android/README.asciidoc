@@ -1,8 +1,8 @@
+= RetroShare development on Android
+
 // SPDX-FileCopyrightText: RetroShare Team <contact@retroshare.cc>
 // SPDX-License-Identifier: CC-BY-SA-4.0
 
-Compile Retroshare for Android
-==============================
 
 Compiling an application for Android is not as easy as one would imagine,
 expecially one like RetroShare that has a big codebase and is not well
@@ -179,7 +179,130 @@ Opening RetroShare android app now should show your old profile.
 
 == Debugging with GDB
 
-QtCreator actually support debugging only for the foreground activity, so to
+If building RetroShare Android package seems tricky, setting up a functional
+debugging environement for it feels like black magic. This section is meant to
+help you doing it with less headache and hopefully in a reproducible way.
+
+Unfortunately at the time of the last update to this guide, Qt build system
+strips debugging symbols from the package and from the buildroot also if you
+compile with debugging enabled. Fiddling with `qmake` configurations and
+variables like `CONFIG+=debug`, `CONFIG+=force_debug_info` or `QMAKE_STRIP`
+either as commandline arguments or inside retroshare `.pro` and `.pri` files is
+uneffective. IMHO Qt should handle this on itself so it is probably worth
+reporting a bug to them. So to workaround this problem you need to fiddle a bit
+with the Android NDK. In my case I always keep +Debug+ or +Release+ suffix in
+my build directory name depending on what kind of build it is, so I use this
+information and modify `llvm-strip` in a way that it will strip only if stripped
+file path doesn't contain +Debug+.
+
+.Modify llvm-strip inside Android NDK
+--------------------------------------------------------------------------------
+## Set ANDROID_NDK_PATH to your Android NDK installation path
+export ANDROID_NDK_PATH="/opt/android-ndk/"
+
+## Define a convenience variable with llvm-strip path
+export ANDROID_NDK_LLVM_STRIP="${ANDROID_NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-strip"
+
+## If not existing yer create a backup of the original llvm-strip
+[ -f "${ANDROID_NDK_LLVM_STRIP}.back" ] ||
+	cp "${ANDROID_NDK_LLVM_STRIP}" "${ANDROID_NDK_LLVM_STRIP}.back"
+
+## Create a new llvm-strip that does nothing if the argument path contains Debug
+cat > "${ANDROID_NDK_LLVM_STRIP}" << LLVMSTRIPTRICK
+#!/bin/bash
+
+echo "\${2}" | grep -q Debug ||
+	"${ANDROID_NDK_LLVM_STRIP}.back" --strip-all "\${2}"
+
+LLVMSTRIPTRICK
+
+## Eventually you can revert back simply by running
+# `mv "${ANDROID_NDK_LLVM_STRIP}.back" "${ANDROID_NDK_LLVM_STRIP}"`
+--------------------------------------------------------------------------------
+
+
+To attach to the `retroshare-service` running on Android you need also to pull a
+debugging sysroot out of your device first, RetroShare sources provides an
+helper script to do that.
+
+.Prepare debugging sysroot with helper script
+[source,bash]
+--------------------------------------------------------------------------------
+## Set RetroShare source path
+export RS_SOURCE_DIR="${HOME}/Development/rs-develop"
+
+## Optionally set your device ID first available will be used, you can run
+## `adb devices` to list available devices.
+#export ANDROID_SERIAL="YT013PSPGK"
+
+## Optionally set a path where to save the debugging sysroot otherwise default
+## is used.
+#export DEBUG_SYSROOT="${HOME}/Builds/debug_sysroot/${ANDROID_SERIAL}/"
+
+## Run the helper script
+${RS_SOURCE_DIR}/build_scripts/Android/pull_sysroot.sh
+--------------------------------------------------------------------------------
+
+.Prepare Android NDK GDB configurations
+[source,bash]
+--------------------------------------------------------------------------------
+## Optionally set Qt version variable consistently with your installation
+export QT_VERSION="5.12.4"
+
+## Optionally set Qt architecture variable consistently with Android device
+export QT_ARCH="arm64_v8a"
+
+## Optionally set Qt path variable consistently with your installation
+export QT_DIR="/opt/Qt-${QT_VERSION}/${QT_VERSION}/"
+
+## Optionally set RetroShare buildroot path
+export RS_BUILD_DIR="${HOME}/Builds/RetroShare-Android_for_${QT_ARCH}_Clang_Qt_${QT_VERSION//./_}_android_${QT_ARCH}-Debug/"
+
+## Optionally set gdb config file path
+export GDB_CONFIGS_FILE="${HOME}/Builds/gdb_configs_${QT_ARCH}"
+
+## Generate Android NDK GDB configuration
+${RS_SOURCE_DIR}/build_scripts/Android/generate_gdb_init_commands.sh
+--------------------------------------------------------------------------------
+
+
+You will need to run the following steps everytime you want to debug
+`retroshare-service` on Android.
+
+Make sure `retroshare-service` is running on your connected Android device.
+
+.Run GDB server on your Android device from your host console
+[source,bash]
+--------------------------------------------------------------------------------
+${RS_SOURCE_DIR}/build_scripts/Android/start_gdbserver.sh
+--------------------------------------------------------------------------------
+
+
+.Run Android NDK GDB on your workstation and attach
+[source,bash]
+--------------------------------------------------------------------------------
+## Start NDK gdb
+${ANDROID_NDK_PATH}/prebuilt/linux-x86_64/bin/gdb
+
+## Instruct GDB how and where to find debugging symbols
+(gdb) source $GDB_CONFIGS_FILE
+
+## Connect to the gdbserver running on the phone
+(gdb) target remote 127.0.01:5039
+
+## Have fun debugging
+(gdb)
+--------------------------------------------------------------------------------
+
+
+== Debugging with Qt Creator
+
+WARNING: As of the last update to this guide, debugging retroshare-service
+running on Android via Qt creator doesn't wrok even with all the trickery
+explained in this section, you better learn how to debug with GDB reading
+carefully previous section.
+
+Qt Creator actually support debugging only for the foreground activity, so to
 debug what's happening in the core extra trickery is needed.
 
 - Run the App in Debug mode from QtCreator "Start Debugging" button
@@ -239,6 +362,17 @@ TIP: Some time WiFi power saving on Android mess with the GDB connection,
 to prevent that from appening open another +adb shell+ and live +ping+ toward
 your work-station running
 
+== Embedding into other Android packages
+
+As showed by https://elrepo.io/[elRepo.io] developers it is possible and quite
+easy to embed `retroshare-service` into other Android packages see description
+
+https://gitlab.com/elRepo.io/elRepo.io-android/-/blob/master/README.adoc
+
+And implementation details
+
+https://gitlab.com/elRepo.io/elRepo.io-android/-/blob/master/android/app/build.gradle
+
 
 == Furter Readings
 
@@ -254,3 +388,12 @@ your work-station running
 - link:https://fw4spl-org.github.io/fw4spl-blog/2015/07/27/Native-debugging-on-Android-with-QtCreator.html[]
 - link:https://fragglet.livejournal.com/19646.html[]
 - link:https://github.com/android-ndk/ndk/issues/773[How to build without using standalone toolchain?]
+
+== License
+
+Copyright (C) 2016-2020  Gioacchino Mazzurco <gio@eigenlab.org> +
+Copyright (C) 2020       Asociación Civil Altermundi <info@altermundi.net> +
+
+This work is licensed under a Creative Commons Attribution-Share Alike 4.0 International License.
+
+image::https://i.creativecommons.org/l/by-sa/4.0/88x31.png[Creative Commons License, link=http://creativecommons.org/licenses/by-sa/4.0/]

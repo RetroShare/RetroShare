@@ -225,9 +225,8 @@ ChatWidget QFrame#infoFrame {
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
 
-ChatWidget QFrame#titleBarFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+ChatWidget QFrame#titleBarFrame, QFrame#toolBarFrameTop {
+
 }
 
 PopupChatWindow QToolBar#chattoolBar{
@@ -242,8 +241,8 @@ MessageComposer QToolBar#toolBar  {
 }
 
 MessagesDialog QFrame#folderFrame, MessagesDialog QFrame#quickViewFrame {
-	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FEFEFE, stop:1 #E8E8E8);
-	border: 1px solid #CCCCCC;
+	background: transparent; 
+
 }
 
 /* Profile */
@@ -865,3 +864,9 @@ MessageWidget QTextBrowser#toText , QTextBrowser#ccText , QTextBrowser#bccText {
 	background: transparent;
 	border: none;
 }
+
+WireGroupItem QWidget:hover
+{
+	background-color: #7ecbfb;
+}
+

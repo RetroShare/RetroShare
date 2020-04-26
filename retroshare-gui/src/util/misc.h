@@ -27,6 +27,7 @@
 #include <QPair>
 #include <QThread>
 #include <QFileDialog>
+#include <QLayout>
 
 #include "gui/settings/rsharesettings.h"
 
@@ -184,6 +185,10 @@ class misc : public QObject
 	static QString getExistingDirectory(QWidget *parent = nullptr
 										, const QString &caption = QString()
 										, const QString &dir = QString());
+
+	//Clear QLayout
+	static void clearLayout(QLayout *layout);
+
 };
 
 //  Trick to get a portable sleep() function

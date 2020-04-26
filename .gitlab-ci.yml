@@ -1,0 +1,53 @@
+image: docker:stable
+
+services:
+    - docker:stable-dind
+
+workflow:
+  rules:
+    - if: $CI_MERGE_REQUEST_ID
+    - if: $CI_COMMIT_BRANCH
+
+build-and-test:
+    script:
+        - >
+          if [ -n "$CI_MERGE_REQUEST_ID" ]; then
+          REPO_ARGS="--build-arg REPO_URL=$CI_MERGE_REQUEST_SOURCE_PROJECT_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME" ;
+          else
+          REPO_ARGS="--build-arg REPO_URL=$CI_REPOSITORY_URL" ;
+          REPO_ARGS="$REPO_ARGS --build-arg REPO_BRANCH=$CI_COMMIT_BRANCH" ;
+          fi ;
+          export REPO_ARGS ;
+          echo REPO_ARGS=$REPO_ARGS ;
+        - mkdir Dockercontext
+        - >
+          docker build -t retroshare:testing $REPO_ARGS
+          --file $CI_PROJECT_DIR/build_scripts/GitlabCI/gitlabCI.Dockerfile
+          Dockercontext
+        - >
+          docker run --name retroshare --detach --tty retroshare:testing
+          retroshare-service --jsonApiPort 9092
+        - apk add jq
+        - >
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsJsonApi/version | jq
+        - >
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations  | jq
+        - >
+          docker exec retroshare
+          curl --verbose --data
+          '{ "location":{ "mLocationName":"Test 1", "mPgpName":"Test2" },
+          "password":"Test 3", "caller_data":"Test 5" }'
+          http://127.0.0.1:9092/rsLoginHelper/createLocation  | jq
+        - >
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/getLocations | jq
+        - >
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsLoginHelper/isLoggedIn | jq
+        - >
+          docker exec retroshare
+          curl --verbose http://127.0.0.1:9092/rsMsgs/getChatLobbyList | jq
+        - docker container stop retroshare

@@ -25,6 +25,18 @@
    <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>2</number>
+   </property>
+   <property name="topMargin">
+    <number>2</number>
+   </property>
+   <property name="rightMargin">
+    <number>2</number>
+   </property>
+   <property name="bottomMargin">
+    <number>2</number>
+   </property>
    <item>
     <widget class="QFrame" name="frame">
      <property name="sizePolicy">
@@ -52,6 +64,21 @@ border-radius: 10px}</string>
       <enum>QFrame::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
+      <property name="spacing">
+       <number>1</number>
+      </property>
+      <property name="leftMargin">
+       <number>5</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>5</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
@@ -81,7 +108,7 @@ border-radius: 10px}</string>
           <property name="sizeHint" stdset="0">
            <size>
             <width>10</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -93,8 +120,8 @@ border-radius: 10px}</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>50</width>
-            <height>20</height>
+            <width>30</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -113,8 +140,8 @@ border-radius: 10px}</string>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
-            <width>50</width>
-            <height>20</height>
+            <width>30</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -127,7 +154,7 @@ border-radius: 10px}</string>
           <property name="sizeHint" stdset="0">
            <size>
             <width>10</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>

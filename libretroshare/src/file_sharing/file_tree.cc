@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2018 by Retroshare Team <retroshare.project@gmail.com>            *
+ * Copyright (C) 2018  Retroshare Team <contact@retroshare.cc>                 *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,40 +22,100 @@
  *                                                                             *
  ******************************************************************************/
 #include <iomanip>
-#include <util/radix64.h>
-#include <util/rsdir.h>
 
+#include "util/radix64.h"
+#include "util/rsbase64.h"
+#include "util/rsdir.h"
+#include "retroshare/rsfiles.h"
 #include "file_sharing_defaults.h"
 #include "filelist_io.h"
-#include "file_tree.h"
+#include "serialiser/rstypeserializer.h"
 
-std::string FileTreeImpl::toRadix64() const
+void RsFileTree::DirData::serial_process(
+            RsGenericSerializer::SerializeJob j,
+            RsGenericSerializer::SerializeContext& ctx )
 {
-	unsigned char *buff = NULL ;
-	uint32_t size = 0 ;
-
-	serialise(buff,size) ;
-
-	std::string res ;
-
-	Radix64::encode(buff,size,res) ;
-
-	free(buff) ;
-	return res ;
+	RS_SERIAL_PROCESS(name);
+	RS_SERIAL_PROCESS(subdirs);
+	RS_SERIAL_PROCESS(subfiles);
 }
 
-FileTree *FileTree::create(const std::string& radix64_string)
+void RsFileTree::FileData::serial_process(
+            RsGenericSerializer::SerializeJob j,
+            RsGenericSerializer::SerializeContext& ctx )
 {
-	FileTreeImpl *ft = new FileTreeImpl ;
+	RS_SERIAL_PROCESS(name);
+	RS_SERIAL_PROCESS(size);
+	RS_SERIAL_PROCESS(hash);
+}
 
+/*static*/ std::tuple<std::unique_ptr<RsFileTree>, std::error_condition>
+RsFileTree::fromBase64(const std::string& base64)
+{
+	const auto failure = [](std::error_condition ec)
+	{ return std::make_tuple(nullptr, ec); };
+
+	if(base64.empty()) return failure(std::errc::invalid_argument);
+
+	std::error_condition ec;
+	std::vector<uint8_t> mem;
+	if( (ec = RsBase64::decode(base64, mem)) ) return failure(ec);
+
+	RsGenericSerializer::SerializeContext ctx(
+	            mem.data(), static_cast<uint32_t>(mem.size()),
+	            RsSerializationFlags::INTEGER_VLQ );
+	std::unique_ptr<RsFileTree> ft(new RsFileTree);
+	ft->serial_process(
+	            RsGenericSerializer::SerializeJob::DESERIALIZE, ctx);
+	if(ctx.mOk) return std::make_tuple(std::move(ft), std::error_condition());
+
+	return failure(std::errc::invalid_argument);
+}
+
+std::string RsFileTree::toBase64() const
+{
+	RsGenericSerializer::SerializeContext ctx;
+	ctx.mFlags = RsSerializationFlags::INTEGER_VLQ;
+	RsFileTree* ncThis = const_cast<RsFileTree*>(this);
+	ncThis->serial_process(
+	            RsGenericSerializer::SerializeJob::SIZE_ESTIMATE, ctx );
+
+	std::vector<uint8_t> buf(ctx.mOffset);
+	ctx.mSize = ctx.mOffset; ctx.mOffset = 0; ctx.mData = buf.data();
+
+	ncThis->serial_process(
+	            RsGenericSerializer::SerializeJob::SERIALIZE, ctx );
+	std::string result;
+	RsBase64::encode(ctx.mData, ctx.mSize, result, false, true);
+	return result;
+}
+
+std::string RsFileTree::toRadix64() const
+{
+	unsigned char* buff = nullptr;
+	uint32_t size = 0;
+	serialise(buff, size);
+	std::string res;
+	Radix64::encode(buff,size,res);
+	free(buff);
+	return res;
+}
+
+std::unique_ptr<RsFileTree> RsFileTree::fromRadix64(
+        const std::string& radix64_string )
+{
+	std::unique_ptr<RsFileTree> ft(new RsFileTree);
 	std::vector<uint8_t> mem = Radix64::decode(radix64_string);
-	ft->deserialise(mem.data(),mem.size()) ;
-
-	return ft ;
+	if(ft->deserialise(mem.data(), static_cast<uint32_t>(mem.size())))
+		return ft;
+	return nullptr;
 }
 
-void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const DirDetails& dd,bool remote,bool remove_top_dirs)
+void RsFileTree::recurs_buildFileTree(
+        RsFileTree& ft, uint32_t index, const DirDetails& dd, bool remote,
+        bool remove_top_dirs )
 {
+	RsDbg() << __PRETTY_FUNCTION__ << " index: " << index << std::endl;
 	if(ft.mDirs.size() <= index)
 		ft.mDirs.resize(index+1) ;
 
@@ -67,14 +129,14 @@ void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const Di
 
 	DirDetails dd2 ;
 
-	FileSearchFlags flags = remote?RS_FILE_HINTS_REMOTE:RS_FILE_HINTS_LOCAL ;
+	FileSearchFlags flags = remote ? RS_FILE_HINTS_REMOTE : RS_FILE_HINTS_LOCAL;
 
 	for(uint32_t i=0;i<dd.children.size();++i)
 		if(rsFiles->RequestDirDetails(dd.children[i].ref,dd2,flags))
 		{
 			if(dd.children[i].type == DIR_TYPE_FILE)
 			{
-				FileTree::FileData f ;
+				FileData f ;
 				f.name = dd2.name ;
 				f.size = dd2.count ;
 				f.hash = dd2.hash ;
@@ -97,33 +159,50 @@ void FileTreeImpl::recurs_buildFileTree(FileTreeImpl& ft,uint32_t index,const Di
 			std::cerr << "(EE) Cannot request dir details for pointer " << dd.children[i].ref << std::endl;
 }
 
-bool FileTreeImpl::getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const
+bool RsFileTree::getDirectoryContent(
+        std::string& name, std::vector<uint64_t>& subdirs,
+        std::vector<FileData>& subfiles, uint64_t index_p ) const
 {
-	if(index >= mDirs.size())
-		return false ;
+	// Avoid warnings on Android armv7
+	using sz_t = std::vector<FileData>::size_type;
+	sz_t index = static_cast<sz_t>(index_p);
+
+	if(index >= mDirs.size()) return false;
 
 	name = mDirs[index].name;
 	subdirs = mDirs[index].subdirs ;
 
 	subfiles.clear() ;
-	for(uint32_t i=0;i<mDirs[index].subfiles.size();++i)
-		subfiles.push_back(mFiles[mDirs[index].subfiles[i]]);
+	for(sz_t i=0; i < mDirs[index].subfiles.size(); ++i)
+		subfiles.push_back(mFiles[static_cast<sz_t>(mDirs[index].subfiles[i])]);
 
-	return true ;
+	return true;
 }
 
-FileTree *FileTree::create(const DirDetails& dd, bool remote,bool remove_top_dirs)
+std::unique_ptr<RsFileTree> RsFileTree::fromDirDetails(
+        const DirDetails& dd, bool remote ,bool remove_top_dirs )
 {
-	FileTreeImpl *ft = new FileTreeImpl ;
+	std::unique_ptr<RsFileTree>ft(new RsFileTree);
+	if(dd.type == DIR_TYPE_FILE)
+	{
+		FileData fd;
+		fd.name = dd.name; fd.hash = dd.hash; fd.size = dd.count;
+		ft->mFiles.push_back(fd);
+		ft->mTotalFiles = 1;
+		ft->mTotalSize = fd.size;
 
-	FileTreeImpl::recurs_buildFileTree(*ft,0,dd,remote,remove_top_dirs) ;
-
-	return ft ;
+		DirData dd;
+		dd.name = "/";
+		dd.subfiles.push_back(0);
+		ft->mDirs.push_back(dd);
+	}
+	else recurs_buildFileTree(*ft, 0, dd, remote, remove_top_dirs );
+	return ft;
 }
 
 typedef FileListIO::read_error read_error ;
 
-bool FileTreeImpl::deserialise(unsigned char *buffer,uint32_t buffer_size)
+bool RsFileTree::deserialise(unsigned char *buffer,uint32_t buffer_size)
 {
     uint32_t buffer_offset = 0 ;
 
@@ -218,7 +297,7 @@ bool FileTreeImpl::deserialise(unsigned char *buffer,uint32_t buffer_size)
 	return true ;
 }
 
-bool FileTreeImpl::serialise(unsigned char *& buffer,uint32_t& buffer_size) const
+bool RsFileTree::serialise(unsigned char *& buffer,uint32_t& buffer_size) const
 {
 	buffer = 0 ;
     uint32_t buffer_offset = 0 ;
@@ -234,7 +313,11 @@ bool FileTreeImpl::serialise(unsigned char *& buffer,uint32_t& buffer_size) cons
     {
         // Write some header
 
-        if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION,(uint32_t) FILE_LIST_IO_LOCAL_DIRECTORY_TREE_VERSION_0001)) throw std::runtime_error("Write error") ;
+		if(!FileListIO::writeField(
+		            buffer, buffer_size, buffer_offset,
+		            FILE_LIST_IO_TAG_LOCAL_DIRECTORY_VERSION,
+		            (uint32_t) FILE_LIST_IO_LOCAL_DIRECTORY_TREE_VERSION_0001 ) )
+			throw std::runtime_error("Write error") ;
         if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t) mFiles.size())) throw std::runtime_error("Write error") ;
         if(!FileListIO::writeField(buffer,buffer_size,buffer_offset,FILE_LIST_IO_TAG_RAW_NUMBER,(uint32_t) mDirs.size())) throw std::runtime_error("Write error") ;
 
@@ -292,28 +375,4 @@ bool FileTreeImpl::serialise(unsigned char *& buffer,uint32_t& buffer_size) cons
     }
 }
 
-void FileTreeImpl::print() const
-{
-	std::cerr << "File hierarchy: name=" << mDirs[0].name << " size=" << mTotalSize << std::endl;
-	recurs_print(0,"  ") ;
-}
-
-void FileTreeImpl::recurs_print(uint32_t index,const std::string& indent) const
-{
-	if(index >= mDirs.size())
-	{
-		std::cerr << "(EE) inconsistent FileTree structure" << std::endl;
-		return;
-	}
-	std::cerr << indent << mDirs[index].name << std::endl;
-
-	for(uint32_t i=0;i<mDirs[index].subdirs.size();++i)
-		recurs_print(mDirs[index].subdirs[i],indent+"  ") ;
-
-	for(uint32_t i=0;i<mDirs[index].subfiles.size();++i)
-	{
-		const FileData& fd(mFiles[mDirs[index].subfiles[i]]) ;
-
-		std::cerr << indent << "  " << fd.hash << " " << std::setprecision(8) << fd.size << " " << fd.name << std::endl;
-	}
-}
+RsFileTree::~RsFileTree() = default;

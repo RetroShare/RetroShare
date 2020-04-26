@@ -29,15 +29,16 @@ class WireGroupDialog : public GxsGroupDialog
 	Q_OBJECT
 
 public:
-	WireGroupDialog(TokenQueue *tokenQueue, QWidget *parent);
-	WireGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	WireGroupDialog(QWidget *parent);
+	WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
 protected:
-	virtual void initUi();
-	virtual QPixmap serviceImage();
-	virtual bool service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta);
-	virtual bool service_loadGroup(uint32_t token, Mode mode, RsGroupMetaData& groupMetaData, QString &description);
-	virtual bool service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta);
+	virtual void initUi() override;
+	virtual QPixmap serviceImage() override;
+	virtual bool service_createGroup(RsGroupMetaData &meta) override;
+	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
+	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
+	virtual bool service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data) override;
 
 private:
 	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);

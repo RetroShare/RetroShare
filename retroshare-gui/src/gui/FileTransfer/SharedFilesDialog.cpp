@@ -623,10 +623,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
 		if (details.type == DIR_TYPE_DIR)
 		{
-			FileTree *ft = FileTree::create(details,remote) ;
-
-			std::cerr << "Created collection file tree:" << std::endl;
-			ft->print();
+			auto ft = RsFileTree::fromDirDetails(details,remote);
 
 			QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
 
@@ -634,8 +631,6 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
 			if(link.valid())
 				urls.push_back(link) ;
-
-			delete ft ;
 		}
 		else
 		{

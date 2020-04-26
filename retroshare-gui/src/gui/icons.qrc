@@ -69,6 +69,7 @@
         <file>icons/png/chat-lobbies.png</file>
         <file>icons/png/circles.png</file>
         <file>icons/png/digital-key.png</file>
+        <file>icons/png/dock.png</file>
         <file>icons/png/empty-circle.png</file>
         <file>icons/png/enter.png</file>
         <file>icons/png/exit.png</file>
@@ -121,6 +122,7 @@
         <file>icons/png/thumbs-neutral.png</file>
         <file>icons/png/thumbs-up.png</file>
         <file>icons/png/typing.png</file>
+        <file>icons/png/undock.png</file>
         <file>icons/png/video.png</file>
         <file>icons/quit_128.png</file>
         <file>icons/search_red_128.png</file>

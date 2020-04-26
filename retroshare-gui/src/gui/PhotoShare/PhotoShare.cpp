@@ -233,7 +233,7 @@ void PhotoShare::OpenSlideShow()
 
 void PhotoShare::createAlbum()
 {
-    AlbumGroupDialog albumCreate(mPhotoQueue, this);
+    AlbumGroupDialog albumCreate(this);
     albumCreate.exec();
 }
 
@@ -246,7 +246,7 @@ void PhotoShare::OpenViewEditAlbumDialog()
         if (canEdit) {
             mode = GxsGroupDialog::MODE_EDIT;
         }
-        AlbumGroupDialog agDialog(mPhotoQueue, rsPhoto->getTokenService(), mode, album.mMeta.mGroupId, this);
+        AlbumGroupDialog agDialog(mode, album.mMeta.mGroupId, this);
         agDialog.exec();
     }
 }

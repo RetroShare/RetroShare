@@ -29,7 +29,6 @@
 
 #include <inttypes.h>
 
-#include "util/TokenQueue.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsGroupDialog.h"
 
@@ -80,8 +79,11 @@ public:
 
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
+    void getServiceStatistics(GxsServiceStatistic& stats) const ;
+
 protected:
-	virtual void showEvent(QShowEvent *event);
+	virtual void showEvent(QShowEvent *event) override;
+	virtual void paintEvent(QPaintEvent *pe) override;
 	virtual void updateDisplay(bool complete);
 
 	const RsGxsGroupId &groupId() { return mGroupId; }
@@ -102,6 +104,10 @@ protected:
 
 	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
 	virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
+
+	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
+	void updateMessageSummaryListReal(RsGxsGroupId groupId);
+
 private slots:
 	void todo();
 
@@ -173,19 +179,12 @@ private:
 
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
 
-	void requestGroupStatistics(const RsGxsGroupId &groupId);
-	void loadGroupStatistics(const uint32_t &token);
-
 	// subscribe/unsubscribe ack.
-//	void acknowledgeSubscribeChange(const uint32_t &token);
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
-
-//	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
-//	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
 protected:
 	void updateSearchResults();
@@ -209,12 +208,23 @@ private:
 	RsGxsGroupId mNavigatePendingGroupId;
 	RsGxsMessageId mNavigatePendingMsgId;
 
+    // Message summary list update
+
+	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
+    std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
+
+    // GroupStatistics update
+    bool mShouldUpdateGroupStatistics;
+    rstime_t mLastGroupStatisticsUpdateTs;
+    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
 
 	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
+	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
 
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;

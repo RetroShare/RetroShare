@@ -24,6 +24,7 @@
 
 #include "PulseAddDialog.h"
 
+const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
 
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
@@ -35,8 +36,9 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 
 	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
-	connect(ui.pushButton_AddTo, SIGNAL( clicked( void ) ), this, SLOT( addTo( void ) ) );
+	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
+	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
 }
 
 void PulseAddDialog::setGroup(RsWireGroup &group)
@@ -47,14 +49,63 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 }
 
 
+void PulseAddDialog::cleanup()
+{
+	if (mIsReply)
+	{
+		std::cerr << "PulseAddDialog::setReplyTo() cleaning up old replyto";
+		std::cerr << std::endl;
+		QLayout *layout = ui.widget_replyto->layout();
+		// completely delete layout and sublayouts
+		QLayoutItem * item;
+		QWidget * widget;
+		while ((item = layout->takeAt(0)))
+		{
+			if ((widget = item->widget()) != 0)
+			{
+				std::cerr << "PulseAddDialog::setReplyTo() removing widget";
+				std::cerr << std::endl;
+				widget->hide();
+				delete widget;
+			}
+			else
+			{
+				std::cerr << "PulseAddDialog::setReplyTo() removing item";
+				std::cerr << std::endl;
+				delete item;
+			}
+		}
+		// then finally
+		delete layout;
+	    mIsReply = false;
+	}
+	ui.frame_reply->setVisible(false);
+	ui.comboBox_sentiment->setCurrentIndex(0);
+	ui.lineEdit_URL->setText("");
+	ui.lineEdit_DisplayAs->setText("");
+	ui.textEdit_Pulse->setPlainText("");
+	ui.pushButton_Post->setEnabled(false);
+	// disable URL until functionality finished.
+	ui.frame_URL->setEnabled(false);
+}
+
+void PulseAddDialog::pulseTextChanged()
+{
+	std::string pulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	bool enable = (pulseText.size() > 0) && (pulseText.size() < PULSE_MAX_SIZE);
+	ui.pushButton_Post->setEnabled(enable);
+}
+
 void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
 	mReplyGroupName = groupName;
+	ui.frame_reply->setVisible(true);
 
 	{
-		PulseDetails *details = new PulseDetails(NULL, pulse, groupName, true);
+		std::map<rstime_t, RsWirePulse *> replies;
+		PulseDetails *details = new PulseDetails(NULL, &pulse, groupName, replies);
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
 		vbox->addWidget(details);
@@ -74,12 +125,10 @@ void PulseAddDialog::addURL()
 	return;
 }
 
-
-void PulseAddDialog::addTo()
+void PulseAddDialog::clearDisplayAs()
 {
-	std::cerr << "PulseAddDialog::addTo()";
+	std::cerr << "PulseAddDialog::clearDisplayAs()";
 	std::cerr << std::endl;
-
 	return;
 }
 
@@ -94,7 +143,6 @@ void PulseAddDialog::cancelPulse()
 
 	return;
 }
-
 
 void PulseAddDialog::postPulse()
 {
@@ -125,6 +173,7 @@ void PulseAddDialog::postOriginalPulse()
 	pulse.mMeta.mOrigMsgId.clear();
 
 	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL_MSG;
+	pulse.mReplySentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
 	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	// all mRefs should empty.
 
@@ -135,6 +184,27 @@ void PulseAddDialog::postOriginalPulse()
 	hide();
 }
 
+uint32_t PulseAddDialog::toPulseSentiment(int index)
+{
+	switch(index)
+	{
+		case 1:
+			return WIRE_PULSE_SENTIMENT_POSITIVE;
+			break;
+		case 2:
+			return WIRE_PULSE_SENTIMENT_NEUTRAL;
+			break;
+		case 3:
+			return WIRE_PULSE_SENTIMENT_NEGATIVE;
+			break;
+		case -1:
+		case 0:
+		default:
+			return WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+			break;
+	}
+	return 0;
+}
 
 void PulseAddDialog::postReplyPulse()
 {
@@ -150,6 +220,7 @@ void PulseAddDialog::postReplyPulse()
 	pulse.mMeta.mOrigMsgId.clear();
 
 	pulse.mPulseType = WIRE_PULSE_TYPE_REPLY_MSG;
+	pulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
 	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 
 	// mRefs refer to parent post.
@@ -184,6 +255,8 @@ void PulseAddDialog::postRefPulse(RsWirePulse &pulse)
 	refPulse.mMeta.mOrigMsgId.clear();
 
 	refPulse.mPulseType = WIRE_PULSE_TYPE_REPLY_REFERENCE;
+	refPulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+
 	// Dont put parent PulseText into refPulse - it is available on Thread Msg.
 	// otherwise gives impression it is correctly setup Parent / Reply...
 	// when in fact the parent PublishTS, and AuthorId are wrong.

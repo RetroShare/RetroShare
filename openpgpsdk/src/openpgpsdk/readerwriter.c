@@ -462,9 +462,9 @@ char *ops_get_passphrase(void)
     {
 #ifndef __ANDROID__
     return ops_malloc_passphrase(getpass("Passphrase: "));
-#else // __ANDROID__
-	return ops_malloc_passphrase("getpass not supported on android");
-#warning "getpass not supported on android"
+#else // __ANDROID
+    // We should never get here on Android, getpass not supported.
+    abort();
 #endif // __ANDROID__
     }
 

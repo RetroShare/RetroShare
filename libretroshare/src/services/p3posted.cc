@@ -322,6 +322,20 @@ bool p3Posted::getBoardsInfo(
 	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
 }
 
+bool p3Posted::getBoardAllContent( const RsGxsGroupId& groupId,
+                       std::vector<RsPostedPost>& posts,
+                       std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+    if( !requestMsgInfo(token, opts, std::list<RsGxsGroupId>({groupId})) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
+	return getPostData(token, posts, comments);
+}
+
 bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
                        const std::set<RsGxsMessageId>& contentsIds,
                        std::vector<RsPostedPost>& posts,
@@ -349,6 +363,16 @@ bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
 
 	return getGroupSummary(token, boards);
 }
+
+bool p3Posted::getBoardsServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
 
 bool p3Posted::getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat)
 {

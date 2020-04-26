@@ -1,9 +1,9 @@
 /*******************************************************************************
- * libretroshare/src/file_sharing: file_tree.h                                 *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
+ * libretroshare < C++14 retro-compatibility helpers                           *
  *                                                                             *
- * Copyright 2018 by Cyril Soler <csoler@users.sourceforge.net>                *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -18,37 +18,21 @@
  * You should have received a copy of the GNU Lesser General Public License    *
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
- ******************************************************************************/
-#include "retroshare/rsfiles.h"
+ *******************************************************************************/
+#pragma once
 
-class FileTreeImpl: public FileTree
+#if __cplusplus < 201402L
+
+#include <type_traits>
+
+namespace std
 {
-public:
-	FileTreeImpl()
-	{
-		mTotalFiles = 0 ;
-		mTotalSize = 0 ;
-	}
+template<class T> using decay_t = typename decay<T>::type;
 
-	virtual std::string toRadix64() const ;
-	virtual bool getDirectoryContent(uint32_t index,std::string& name,std::vector<uint32_t>& subdirs,std::vector<FileData>& subfiles) const ;
-	virtual void print() const ;
+template<bool B, class T = void>
+using enable_if_t = typename enable_if<B,T>::type;
 
-	bool serialise(unsigned char *& data,uint32_t& data_size) const ;
-	bool deserialise(unsigned char* data, uint32_t data_size) ;
-
-protected:
-	void recurs_print(uint32_t index,const std::string& indent) const;
-
-	static void recurs_buildFileTree(FileTreeImpl& ft, uint32_t index, const DirDetails& dd, bool remote, bool remove_top_dirs);
-
-	struct DirData {
-		std::string name;
-		std::vector<uint32_t> subdirs ;
-		std::vector<uint32_t> subfiles ;
-	};
-	std::vector<FileData> mFiles ;
-	std::vector<DirData> mDirs ;
-
-	friend class FileTree ;
-};
+template<class T>
+using remove_const_t = typename remove_const<T>::type;
+}
+#endif // __cplusplus < 201402L

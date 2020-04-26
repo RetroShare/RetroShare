@@ -19,7 +19,7 @@
 # SPDX-FileCopyrightText: Retroshare Team <contact@retroshare.cc>
 # SPDX-License-Identifier: LGPL-3.0-or-later
 
-CONFIG += c++11
+CONFIG += c++14
 
 !include("retroshare.pri"): error("Could not include file retroshare.pri")
 

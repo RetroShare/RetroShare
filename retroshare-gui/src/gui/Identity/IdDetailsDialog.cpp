@@ -381,60 +381,6 @@ void IdDetailsDialog::loadIdentity()
 
 }
 
-#ifdef TO_REMOVE
-void IdDetailsDialog::requestRepList()
-{
-	// Removing this for the moment.
-	return;
-
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, true);
-
-	mIdQueue->cancelActiveRequestTokens(IDDETAILSDIALOG_REPLIST);
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDETAILSDIALOG_REPLIST);
-}
-
-void IdDetailsDialog::insertRepList(uint32_t token)
-{
-	Q_UNUSED(token)
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, false);
-	mStateHelper->setActive(IDDETAILSDIALOG_REPLIST, true);
-}
-
-void IdDetailsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue != mIdQueue) {
-		return;
-	}
-
-#ifdef ID_DEBUG
-	std::cerr << "IdDetailsDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
-#endif
-
-	switch (req.mUserType)
-	{
-	case IDDETAILSDIALOG_IDDETAILS:
-		insertIdDetails(req.mToken);
-		break;
-		
-  case IDDETAILSDIALOG_REPLIST:
-			insertRepList(req.mToken);
-			break;
-			
-	default:
-		std::cerr << "IdDetailsDialog::loadRequest() ERROR";
-		std::cerr << std::endl;
-	}
-}
-#endif
 
 QString IdDetailsDialog::inviteMessage()
 {

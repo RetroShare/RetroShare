@@ -45,11 +45,12 @@ struct RsItem : RsMemoryManagement::SmallObject, RsSerializable
 	/// TODO: Do this make sense with the new serialization system?
 	virtual void clear() = 0;
 
+	/// @deprecated use << ostream operator instead
+	RS_DEPRECATED_FOR("<< ostream operator")
 	virtual std::ostream &print(std::ostream &out, uint16_t /* indent */ = 0)
 	{
 		RsGenericSerializer::SerializeContext ctx(
-		            NULL, 0, RsGenericSerializer::FORMAT_BINARY,
-		            RsGenericSerializer::SERIALIZATION_FLAG_NONE );
+		            nullptr, 0, RsSerializationFlags::NONE );
 		serial_process(RsGenericSerializer::PRINT,ctx);
 		return out;
 	}

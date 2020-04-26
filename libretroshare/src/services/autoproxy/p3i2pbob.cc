@@ -1131,6 +1131,9 @@ std::string p3I2pBob::recv()
 		// clear and resize buffer again
 		buffer.clear();
 		buffer.resize(bufferSize);
+
+		if (this->shouldStop())
+			break;
 	} while(length == bufferSize || ans.size() < 4);
 
 	return ans;

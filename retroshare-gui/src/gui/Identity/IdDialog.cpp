@@ -149,11 +149,17 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
 
-    mEventHandlerId_identity = 0;
-	rsEvents->registerEventsHandler(RsEventType::GXS_IDENTITY, [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_identity );
+	mEventHandlerId_identity = 0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
+	            mEventHandlerId_identity, RsEventType::GXS_IDENTITY );
 
-    mEventHandlerId_circles = 0;
-	rsEvents->registerEventsHandler(RsEventType::GXS_CIRCLES,  [this](std::shared_ptr<const RsEvent> event) {   RsQThreadUtils::postToObject( [=]() { handleEvent_main_thread(event); }, this ); }, mEventHandlerId_circles );
+	mEventHandlerId_circles = 0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event)
+	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this); },
+	            mEventHandlerId_circles, RsEventType::GXS_CIRCLES );
 
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
 	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
@@ -1301,8 +1307,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	RsIdentityDetails idd ;
 	rsIdentity->getIdDetails(RsGxsId(data.mMeta.mGroupId),idd) ;
 
-	bool isBanned = idd.mReputation.mOverallReputationLevel ==
-	        RsReputationLevel::LOCALLY_NEGATIVE;
+	bool isBanned = idd.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE;
 	uint32_t item_flags = 0;
 
 	/* do filtering */
@@ -1474,7 +1479,7 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
 	// Update existing and remove not existing items 
-    	// Also remove items that do not have the correct parent
+	// Also remove items that do not have the correct parent
     	
 	QTreeWidgetItemIterator itemIterator(ui->idTreeWidget);
 	QTreeWidgetItem *item = NULL;
@@ -1493,6 +1498,9 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 		}
 
 		QTreeWidgetItem *parent_item = item->parent() ;
+
+//        if(it->second.mMeta.mPublishTs > time(NULL) - 20 || it->second.mMeta.mGroupId == RsGxsGroupId("3de2172503675206b3a23c997e5ee688"))
+//            std::cerr << "Captured ID " <<it->second.mMeta.mGroupId << std::endl;
 
 		if(    (parent_item == allItem && it->second.mIsAContact) || (parent_item == contactsItem && !it->second.mIsAContact))
 		{

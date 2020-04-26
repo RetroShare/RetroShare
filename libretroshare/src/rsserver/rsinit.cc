@@ -1193,7 +1193,7 @@ int RsServer::StartupRetroShare()
 		std::cerr << "(EE) Cannot create extensions directory " << extensions_dir
                   << ". This is not mandatory, but you probably have a permission problem." << std::endl;
 
-#ifdef DEBUG_PLUGIN_SYSTEM
+#ifndef DEBUG_PLUGIN_SYSTEM
 	plugins_directories.push_back(".") ;	// this list should be saved/set to some correct value.
 	// possible entries include: /usr/lib/retroshare, ~/.retroshare/extensions/, etc.
 #endif
@@ -1376,6 +1376,8 @@ int RsServer::StartupRetroShare()
 			mPhoto, mPhoto->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
+
+		mPhoto->setNetworkExchangeService(photo_ns);
 #endif
 
 #ifdef RS_USE_WIRE
@@ -1391,6 +1393,8 @@ int RsServer::StartupRetroShare()
 			mWire, mWire->getServiceInfo(), 
 			mReputations, mGxsCircles,mGxsIdService,
 			pgpAuxUtils);
+
+		mWire->setNetworkExchangeService(wire_ns);
 #endif
         // now add to p3service
         pqih->addService(gxsid_ns, true);
