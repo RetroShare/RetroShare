@@ -672,6 +672,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	util/rsdbbind.h \
 	util/contentvalue.h \
 	gxs/rsgxsutil.h \
+	gxs/rsgxsnotify.h \
 	gxs/gxssecurity.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \

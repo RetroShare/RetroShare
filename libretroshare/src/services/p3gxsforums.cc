@@ -189,6 +189,7 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 		if (msgChange)
 		{
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED) /* message received */
@@ -328,6 +329,49 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 					}
                 }
+
+				RsGxsGroupUpdate *grpUpdate = dynamic_cast<RsGxsGroupUpdate*>(*it);
+
+				if (grpUpdate && rsEvents)
+				{
+					// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+                    RsGxsForumGroupItem *old_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpUpdate->mOldGroupItem);
+                    RsGxsForumGroupItem *new_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpUpdate->mNewGroupItem);
+
+                    if(old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
+                    {
+                        RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem. This is inconsistent!" << std::endl;
+                        delete grpUpdate;
+                        continue;
+                    }
+
+                    // First of all, we check if there is a difference between the old and new list of moderators
+
+                    std::list<RsGxsId> added_mods, removed_mods;
+
+                    for(auto& gxs_id: new_forum_grp_item->mGroup.mAdminList.ids)
+                        if(old_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == old_forum_grp_item->mGroup.mAdminList.ids.end())
+                            added_mods.push_back(gxs_id);
+
+					for(auto& gxs_id: old_forum_grp_item->mGroup.mAdminList.ids)
+                        if(new_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == new_forum_grp_item->mGroup.mAdminList.ids.end())
+                            removed_mods.push_back(gxs_id);
+
+                    if(!added_mods.empty() || !removed_mods.empty())
+					{
+						auto ev = std::make_shared<RsGxsForumEvent>();
+
+						ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+						ev->mModeratorsAdded = added_mods;
+						ev->mModeratorsRemoved = removed_mods;
+						ev->mForumEventCode = RsForumEventCode::MODERATOR_LIST_CHANGED;
+
+						rsEvents->postEvent(ev);
+					}
+
+				}
+
 			}
 		}
 

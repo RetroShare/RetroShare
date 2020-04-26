@@ -1110,6 +1110,7 @@ static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > 
     }
 }
 
+#ifdef TO_REMOVE
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
     std::cerr << "***********************************  RsGenExchange::receiveChanges()" << std::endl;
@@ -1155,6 +1156,7 @@ void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 
 	if(rsEvents) rsEvents->postEvent(std::move(evt));
 }
+#endif
 
 bool RsGenExchange::subscribeToGroup(uint32_t& token, const RsGxsGroupId& grpId, bool subscribe)
 {
@@ -3263,6 +3265,7 @@ void RsGenExchange::performUpdateValidation()
             continue;
         }
         RsGxsGrpMetaData *oldGrpMeta(mit->second->metaData);
+        RsNxsGrp *oldGrp(mit->second);
 
 		if(updateValid(*oldGrpMeta, *gu.newGrp))
 		{
@@ -3285,21 +3288,21 @@ void RsGenExchange::performUpdateValidation()
 
 			RsGxsGroupUpdate *c = new RsGxsGroupUpdate();
 
-			c->mGroupId  = gu.newGrp->grpId ;
-			c->mNewGroup = gu.newGrp->clone();	// make a copy because mDataStore will destroy it on update
-			c->mOldGroup = mit->second;			// do not make a copy since we own the memory
+            c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(gu.newGrp->grp.bin_data,&gu.newGrp->grp.bin_len));
+            c->mNewGroupItem->meta = *gu.newGrp->metaData;		// gu.newGrp will be deleted because mDataStore will destroy it on update
 
-            mit->second = nullptr; // prevents deletion in auto delete map
+            c->mOldGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(oldGrp->grp.bin_data,&oldGrp->grp.bin_len));
+            c->mOldGroupItem->meta = *oldGrpMeta;				// no need to delete mit->second, as it will be deleted automatically in the temporary map
 
 			mNotifications.push_back(c);
 
-			// finally, add the group to
+			// finally, add the group to the list to send to mDataStore
 
 			grps.push_back(gu.newGrp);
 		}
 		else
 		{
-			delete gu.newGrp;
+			delete gu.newGrp;    // delete here because mDataStore will not take care of this one.  no need to delete mit->second, as it will be deleted automatically in the temporary map
 			gu.newGrp = NULL ;
 		}
 	}
