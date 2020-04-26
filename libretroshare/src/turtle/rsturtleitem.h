@@ -166,7 +166,13 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleFileSearchRequestItem
 class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
 {
 	public:
-		RsTurtleGenericSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST) {}
+		RsTurtleGenericSearchRequestItem()
+            : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST),
+              service_id(0),
+              search_data_len(0),
+              request_type(0),
+              search_data(nullptr)
+        {}
         virtual ~RsTurtleGenericSearchRequestItem() { clear(); }
 
         uint16_t service_id ;		// service to search
