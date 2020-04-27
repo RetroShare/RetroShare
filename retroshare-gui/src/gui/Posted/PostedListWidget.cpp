@@ -1033,8 +1033,9 @@ void PostedListWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,std::ve
 {
     std::vector<RsPostedPost> posts;
     std::vector<RsGxsComment> comments;
+    std::vector<RsGxsVote> votes;
 
-    rsPosted->getBoardContent( groupId(),msgIds,posts,comments );
+    rsPosted->getBoardContent( groupId(),msgIds,posts,comments,votes );
 
     psts.clear();
 
@@ -1046,8 +1047,9 @@ void PostedListWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& psts)
 {
     std::vector<RsPostedPost> posts;
     std::vector<RsGxsComment> comments;
+    std::vector<RsGxsVote> votes;
 
-    rsPosted->getBoardAllContent( groupId(),posts,comments );
+    rsPosted->getBoardAllContent( groupId(),posts,comments,votes );
 
     psts.clear();
 

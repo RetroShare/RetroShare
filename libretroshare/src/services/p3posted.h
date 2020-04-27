@@ -62,13 +62,15 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 	        std::vector<RsPostedGroup>& groupsInfo ) override;
 
 	bool getBoardAllContent(const RsGxsGroupId& groupId,
-	            std::vector<RsPostedPost>& posts,
-	            std::vector<RsGxsComment>& comments ) override;
+	                        std::vector<RsPostedPost>& posts,
+	                        std::vector<RsGxsComment>& comments,
+	                        std::vector<RsGxsVote>& votes ) override;
 
 	bool getBoardContent(const RsGxsGroupId& groupId,
-	            const std::set<RsGxsMessageId>& contentsIds,
-	            std::vector<RsPostedPost>& posts,
-	            std::vector<RsGxsComment>& comments ) override;
+	                     const std::set<RsGxsMessageId>& contentsIds,
+	                     std::vector<RsPostedPost>& posts,
+	                     std::vector<RsGxsComment>& comments,
+	                     std::vector<RsGxsVote>& votes ) override;
 
 	bool getBoardsSummaries(std::list<RsGroupMetaData>& groupInfo) override;
 
@@ -80,9 +82,10 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 
 	bool createBoard(RsPostedGroup& board) override;
 
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups);
-virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts);
-virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) {	std::vector<RsGxsComment> cmts; return getPostData( token, posts, cmts);}
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) override;
+	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &vots) override;
+	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts) override;
+	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) override;
 //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts);
 

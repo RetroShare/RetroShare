@@ -694,7 +694,7 @@ void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost>& po
 				break;
 
 			if (thread)
-				thread->emitAddPost(qVariantFromValue(*it), related, ++pos, count);
+				thread->emitAddPost(QVariant::fromValue(*it), related, ++pos, count);
 			else
 				createPostItem(*it, related);
 		}
@@ -812,8 +812,9 @@ void GxsChannelPostsWidget::getMsgData(const std::set<RsGxsMessageId>& msgIds,st
 {
     std::vector<RsGxsChannelPost> posts;
     std::vector<RsGxsComment> comments;
+    std::vector<RsGxsVote> votes;
 
-    rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments );
+    rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments,votes );
 
     psts.clear();
 
@@ -825,8 +826,9 @@ void GxsChannelPostsWidget::getAllMsgData(std::vector<RsGxsGenericMsgData*>& pst
 {
     std::vector<RsGxsChannelPost> posts;
     std::vector<RsGxsComment> comments;
+    std::vector<RsGxsVote> votes;
 
-    rsGxsChannels->getChannelAllContent( groupId(),posts,comments );
+    rsGxsChannels->getChannelAllContent( groupId(),posts,comments,votes );
 
     psts.clear();
 
