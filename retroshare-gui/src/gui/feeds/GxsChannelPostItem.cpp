@@ -385,13 +385,13 @@ void GxsChannelPostItem::loadComment()
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
 
-		if(! rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments))
+		if(! rsGxsChannels->getChannelComments( groupId(),msgIds,comments))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
 		}
 
-        int comNb = comments.size();
+		int comNb = comments.size();
 
 		RsQThreadUtils::postToObject( [comNb,this]()
 		{
