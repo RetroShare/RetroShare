@@ -251,14 +251,20 @@ void NewsFeed::handleForumEvent(std::shared_ptr<const RsEvent> event)
 
 	switch(pe->mForumEventCode)
 	{
+	case RsForumEventCode::MODERATOR_LIST_CHANGED:
+		addFeedItem(new GxsForumGroupItem(this, NEWSFEED_UPDATED_FORUM, pe->mForumGroupId,pe->mModeratorsAdded,pe->mModeratorsRemoved, false, true));
+        break;
+
 	case RsForumEventCode::UPDATED_FORUM:
 	case RsForumEventCode::NEW_FORUM:
-		addFeedItem(new GxsForumGroupItem(this, NEWSFEED_FORUMNEWLIST, pe->mForumGroupId, false, true));
+		addFeedItem(new GxsForumGroupItem(this, NEWSFEED_NEW_FORUM, pe->mForumGroupId, false, true));
 		break;
+
 	case RsForumEventCode::UPDATED_MESSAGE:
 	case RsForumEventCode::NEW_MESSAGE:
-		addFeedItem(new GxsForumMsgItem(this, NEWSFEED_FORUMNEWLIST, pe->mForumGroupId, pe->mForumMsgId, false, true));
+		addFeedItem(new GxsForumMsgItem(this, NEWSFEED_NEW_FORUM, pe->mForumGroupId, pe->mForumMsgId, false, true));
 		break;
+
 	default: break;
 	}
 }
