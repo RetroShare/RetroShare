@@ -21,6 +21,7 @@
 #include "retroshare/rsgxschannels.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
 GxsChannelUserNotify::GxsChannelUserNotify(RsGxsIfaceHelper *ifaceImpl, const GxsGroupFrameDialog *g, QObject *parent) :
     GxsUserNotify(ifaceImpl, g, parent)
@@ -37,12 +38,12 @@ bool GxsChannelUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon GxsChannelUserNotify::getIcon()
 {
-	return QIcon(":/icons/png/channel.png");
+	return FilesDefs::getIconFromQtResourcePath(":/icons/png/channel.png");
 }
 
 QIcon GxsChannelUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/channels-notify.png") : QIcon(":/icons/png/channel.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/channels-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/channel.png");
 }
 
 void GxsChannelUserNotify::iconClicked()
