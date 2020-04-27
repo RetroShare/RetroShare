@@ -501,8 +501,16 @@ no_rs_deprecatedwarning {
 }
 
 no_rs_cppwarning {
+    QMAKE_CXXFLAGS += -Wno-unknown-warning-option
     QMAKE_CXXFLAGS += -Wno-cpp
     QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
+    QMAKE_CXXFLAGS += -Wno-misleading-indentation
+    QMAKE_CXXFLAGS += -Wno-unused-parameter
+    QMAKE_CXXFLAGS += -Wno-unused-variable
+    QMAKE_CXXFLAGS += -Wno-unused-but-set-variable
+    QMAKE_CXXFLAGS += -Wno-unused-function
+    QMAKE_CXXFLAGS += -Wno-sign-compare
+    QMAKE_CXXFLAGS += -Wno-dangling-else
 
     DEFINES *= RS_NO_WARN_CPP
     warning("QMAKE: You have disabled C preprocessor warnings.")
