@@ -870,3 +870,6 @@ WireGroupItem QWidget:hover
 	background-color: #7ecbfb;
 }
 
+WireDialog QFrame#frame{
+	background-color: white;
+}
