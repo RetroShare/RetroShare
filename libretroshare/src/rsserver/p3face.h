@@ -172,8 +172,8 @@ public:
 //		p3Posted *mPosted;
 //		p3PhotoService *mPhoto;
 //		p3GxsCircles *mGxsCircles;
-//        p3GxsNetService *mGxsNetService;
-//        p3IdService *mGxsIdService;
+//		p3GxsNetService *mGxsNetService;
+//		p3IdService *mGxsIdService;
 //		p3GxsForums *mGxsForums;
 //		p3GxsChannels *mGxsChannels;
 //		p3Wire *mWire;
@@ -188,16 +188,13 @@ public:
 
 		// Worker Data.....
 
-    int mMin ;
-    int mLoop ;
-    int mLastts ;
-    long mLastSec ;
-    double mAvgTickRate ;
-    double mTimeDelta ;
+        double mLastts;
+        double mTickInterval;
+	double mLastRunDuration;
+	double mAvgRunDuration;
 
-    static const double minTimeDelta; // 25;
-    static const double maxTimeDelta;
-    static const double kickLimit;
+	static const double minTickInterval;
+	static const double maxTickInterval;
 
 	/// @see RsControl::setShutdownCallback
 	std::function<void(int)> mShutdownCallback;
