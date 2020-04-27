@@ -542,28 +542,33 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		ctx.mOffset += second;
 		break;
 	case RsGenericSerializer::DESERIALIZE:
-	{
-        // In case first,second is not properly initialized, we set them to nullptr,0
-        first = nullptr;
-        second = 0;
+		if(first || second)
+		{
+			/* Items are created anew before deserialization so buffer pointer
+			 * must be null and size 0 at this point */
 
-		uint32_t serialSize = 0;
-		RS_SERIAL_PROCESS(serialSize);
+			RsWarn() << __PRETTY_FUNCTION__ << " DESERIALIZE got uninitialized "
+			         << " or pre-allocated buffer! Buffer pointer: " << first
+			         << " must be null and size: " << second << " must be 0 at "
+			         << "this point. Does your item costructor initialize them "
+			         << "properly?" << std::endl;
+			print_stacktrace();
+		}
 
+		RS_SERIAL_PROCESS(second);
 		if(!ctx.mOk) break;
-		ctx.mOk = (serialSize <= MAX_SERIALIZED_CHUNK_SIZE);
-
+		ctx.mOk = (second <= MAX_SERIALIZED_CHUNK_SIZE);
 		if(!ctx.mOk)
 		{
 			RsErr() << __PRETTY_FUNCTION__
 			        << std::errc::message_size << " "
-			        << serialSize << " > " << MAX_SERIALIZED_CHUNK_SIZE
+			        << second << " > " << MAX_SERIALIZED_CHUNK_SIZE
 			        << std::endl;
 			clear();
 			break;
 		}
 
-		if(!serialSize)
+		if(!second)
 		{
 			Dbg3() << __PRETTY_FUNCTION__ << " Deserialized empty memory chunk"
 			       << std::endl;
@@ -571,25 +576,21 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 			break;
 		}
 
-		ctx.mOk = (ctx.mSize >= ctx.mOffset + serialSize);
-
+		ctx.mOk = ctx.mSize >= ctx.mOffset + second;
 		if(!ctx.mOk)
 		{
-			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
+			        << std::endl;
 			print_stacktrace();
 
 			clear();
 			break;
 		}
 
-		first = reinterpret_cast<uint8_t*>(malloc(serialSize));
-		second = serialSize;
-
-		memcpy(first, ctx.mData + ctx.mOffset, serialSize);
-		ctx.mOffset += serialSize;
-
+		first = reinterpret_cast<uint8_t*>(malloc(second));
+		memcpy(first, ctx.mData + ctx.mOffset, second);
+		ctx.mOffset += second;
 		break;
-	}
 	case RsGenericSerializer::PRINT:  break;
 	case RsGenericSerializer::TO_JSON:
 	{
