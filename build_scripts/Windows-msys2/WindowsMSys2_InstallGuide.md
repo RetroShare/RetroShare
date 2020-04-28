@@ -8,7 +8,15 @@ Requirements: about 12 GB of free space
 The resulting binary is a 32-bit build of Retroshare which will also work
 fine on a 64-bit system.
 
-### MSYS2 INSTALLATION
+**If you want to make complet solution without debugging it, prefer to use \build_scripts\Windows-msys2\build.bat**
+
+This batch will install and build all for you.
+
+You only have to clone this repository (with [git for windows](https://gitforwindows.org/)) to a local folder, then start it in a terminal.
+
+At the end, you'll get at ..\\*-msys2\deploy\ the Portable 7zip file.
+
+### MSYS2 INSTALLATION (for editing or debugging)
 
 Download MSYS2 from [MSYS2](http://www.msys2.org/). Get the i686 version
 if you run a 32-bit Windows or the x86_64 if you run a 64-bit Windows.
@@ -48,6 +56,12 @@ Install all needed dependencies:
 	pacman -S mingw-w64-i686-qt5
 	pacman -S mingw32/mingw-w64-i686-cmake
 	pacman -S mingw-w64-i686-rapidjson
+
+If you want to use QtCreator as IDE, prefer using this one publish by MSYS2 as all build Kit are already setted.
+
+	pacman -S mingw-w64-i686-qt-creator
+*You can start it from MSYS2 terminal.*
+
 
 We're done installing MSYS2, close the shell terminal.
 
