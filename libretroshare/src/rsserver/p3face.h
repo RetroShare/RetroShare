@@ -188,10 +188,11 @@ public:
 
 		// Worker Data.....
 
-        double mLastts;
-        double mTickInterval;
+	double mLastts;
+	double mTickInterval;
 	double mLastRunDuration;
 	double mAvgRunDuration;
+	double mCycle1, mCycle2, mCycle3, mCycle4;
 
 	static const double minTickInterval;
 	static const double maxTickInterval;
