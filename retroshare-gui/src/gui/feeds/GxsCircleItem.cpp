@@ -136,7 +136,7 @@ void GxsCircleItem::setup()
 			ui->acceptButton->setHidden(true);
 			ui->revokeButton->setHidden(true);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED)
+		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
 		{
             if(rsIdentity->isOwnId(mGxsId))
 				ui->titleLabel->setText(tr("Your identity %1 has been revoqued from this circle.").arg(idName));

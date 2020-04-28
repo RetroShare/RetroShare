@@ -183,7 +183,7 @@ enum class RsGxsCircleEventCode: uint8_t
 	CIRCLE_MEMBERSHIP_JOIN    = 0x04,
 
 	/** mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
-	CIRCLE_MEMBERSHIP_REVOQUED= 0x05,
+	CIRCLE_MEMBERSHIP_REVOKED = 0x05,
 
 	/** mCircleId contains the circle id */
 	NEW_CIRCLE                = 0x06,

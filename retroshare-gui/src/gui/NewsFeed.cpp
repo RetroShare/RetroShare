@@ -329,8 +329,8 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
 			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVIT_REC),true);
 			break;
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
-			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOQUED),true);
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED:
+			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
 			break;
 		default: break;
 		}

@@ -679,6 +679,64 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
         }
 
+		RsGxsGroupUpdate *grpUpdate = dynamic_cast<RsGxsGroupUpdate*>(*it);
+
+		if (grpUpdate && rsEvents)
+		{
+			// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+			RsGxsCircleGroupItem *old_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(grpUpdate->mOldGroupItem);
+			RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(grpUpdate->mNewGroupItem);
+
+            const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
+
+			if(old_circle_grp_item == nullptr || new_circle_grp_item == nullptr)
+			{
+				RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsCircleGroupItem. This is inconsistent!" << std::endl;
+				delete grpUpdate;
+				continue;
+			}
+
+			// First of all, we check if there is a difference between the old and new list of invited members
+
+			std::list<RsGxsId> added_identities, removed_identities;
+            std::list<RsGxsId> own_ids_lst;
+            rsIdentity->getOwnIds(own_ids_lst,false);		// retrieve own identities
+
+            std::set<RsGxsId> own_ids;
+            for(auto& id:own_ids_lst)
+                own_ids.insert(id);		// put them in a std::set for O(log(n)) search
+
+			for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
+				if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
+					added_identities.push_back(gxs_id);
+
+			for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
+				if(new_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
+					removed_identities.push_back(gxs_id);
+
+            for(auto& gxs_id:added_identities)
+            {
+				auto ev = std::make_shared<RsGxsCircleEvent>();
+
+				ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
+				ev->mCircleId = circle_id;
+				ev->mGxsId = gxs_id;
+
+				rsEvents->sendEvent(ev);
+            }
+            for(auto& gxs_id:removed_identities)
+            {
+				auto ev = std::make_shared<RsGxsCircleEvent>();
+
+				ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED;
+				ev->mCircleId = circle_id;
+				ev->mGxsId = gxs_id;
+
+				rsEvents->sendEvent(ev);
+            }
+        }
+
         delete *it;
 	}
 }
