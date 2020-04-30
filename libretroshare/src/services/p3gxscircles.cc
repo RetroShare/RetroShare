@@ -535,7 +535,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
-		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		RsGxsNotify *c = *it;
 
@@ -581,93 +580,127 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			}
 		}
 
+		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+
 	    /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
-	    if (groupChange && !groupChange->metaChange())
-	    {
-#ifdef DEBUG_CIRCLES
-		    std::cerr << "  Found Group Change Notification" << std::endl;
-#endif
-		    for(std::list<RsGxsGroupId>::iterator git = groupChange->mGrpIdList.begin(); git != groupChange->mGrpIdList.end(); ++git)
-		    {
-#ifdef DEBUG_CIRCLES
-			    std::cerr << "    Incoming Group: " << *git << ". Forcing cache load." << std::endl;
-#endif
-
-			    // for new circles we need to add them to the list.
-			    // we don't know the type of this circle here
-			    // original behavior was to add all ids to the external ids list
-
-			    addCircleIdToList(RsGxsCircleId(*git), 0);
-
-			    // reset the cached circle data for this id
-			    {
-				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
-				    mCircleCache.erase(RsGxsCircleId(*git));
-					mCacheUpdated = true;
-			    }
-		    }
-	    }
-
-		if(groupChange)
+	    if (groupChange)
         {
-            std::list<RsGxsId> own_ids;
-            rsIdentity->getOwnIds(own_ids);
+			const RsGxsGroupId *git(&groupChange->mGroupId);
 
-			for(std::list<RsGxsGroupId>::const_iterator git(groupChange->mGrpIdList.begin());git!=groupChange->mGrpIdList.end();++git)
+            if(!groupChange->metaChange())
 			{
 #ifdef DEBUG_CIRCLES
-				std::cerr << "  forcing cache loading for circle " << *git << " in order to trigger subscribe update." << std::endl;
+				std::cerr << "  Found Group Change Notification" << std::endl;
+#endif
+				//for(std::list<RsGxsGroupId>::iterator git = groupChange->mGrpIdList.begin(); git != groupChange->mGrpIdList.end(); ++git)
+				{
+#ifdef DEBUG_CIRCLES
+					std::cerr << "    Incoming Group: " << *git << ". Forcing cache load." << std::endl;
 #endif
 
-#ifdef TODO
-                // This code will not work: we would like to detect changes in the circle data that reflects the fact that one of the
-                // owned GXS ids is invited. But there's no way to compare the old circle data to the new if cache has to be updated.
-                // For this we need to add the old metadata and group data in the RsGxsGroupChange structure and account for it.
+					// for new circles we need to add them to the list.
+					// we don't know the type of this circle here
+					// original behavior was to add all ids to the external ids list
 
-                if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW) )
-                {
-                    RsGxsCircleId circle_id(*git);
-					force_cache_reload(circle_id);
+					addCircleIdToList(RsGxsCircleId(*git), 0);
 
-					RsGxsCircleDetails details;
-					getCircleDetails(circle_id,details);
-
-                    // We check that the change corresponds to one of our own ids. Since we do not know what the change is, we notify
-                    // for whatever is different from what is currently known. Other ids, that get invited only trigger a notification when the
-                    // ID also accepts the invitation, so it becomes a member of the circle.
-
-                    for(auto own_id: own_ids)
+					// reset the cached circle data for this id
 					{
-                        auto it = details.mSubscriptionFlags.find(own_id);
-
-                        if(it == details.mSubscriptionFlags.end())
-                            continue;
-
-						bool invited ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
-						bool subscrb ( it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
-
-                        if(std::find(details.mAllowedGxsIds.begin(),details.mAllowedGxsIds.end(),id) != details.mAllowedGxsIds.end() && !me_in_circle)
-						{
-							auto ev = std::make_shared<RsGxsCircleEvent>();
-
-							ev->mType = RsGxsCircleEvent::CIRCLE_MEMBERSHIP_INVITE;
-							ev->mCircleId = circle_id;
-							ev->mGxsId = ;
-
-							rsEvents->sendEvent(ev);
-						}
+						RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
+						mCircleCache.erase(RsGxsCircleId(*git));
+						mCacheUpdated = true;
 					}
-
 				}
-#endif
+			}
 
-				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED) )
+            if(rsEvents)
+            {
+				std::list<RsGxsId> own_ids_lst;
+				rsIdentity->getOwnIds(own_ids_lst,false);		// retrieve own identities
+
+				std::set<RsGxsId> own_ids;
+				for(auto& id:own_ids_lst)
+					own_ids.insert(id);		// put them in a std::set for O(log(n)) search
+
+				if(c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED)
                 {
 					auto ev = std::make_shared<RsGxsCircleEvent>();
 					ev->mCircleId = RsGxsCircleId(*git);
 					ev->mCircleEventType = RsGxsCircleEventCode::NEW_CIRCLE;
+
 					rsEvents->postEvent(ev);
+
+                    // we also need to look into invitee list here!
+
+					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
+
+ 					std::list<RsGxsId> added_identities;
+
+					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
+						if(own_ids.find(gxs_id)!=own_ids.end())
+							added_identities.push_back(gxs_id);
+
+					for(auto& gxs_id:added_identities)
+					{
+						auto ev = std::make_shared<RsGxsCircleEvent>();
+
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
+						ev->mCircleId = RsGxsCircleId(*git);
+						ev->mGxsId = gxs_id;
+
+						rsEvents->sendEvent(ev);
+					}
                 }
+                else if(c->getType()==RsGxsNotify::TYPE_UPDATED)
+				{
+					// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+					RsGxsCircleGroupItem *old_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mOldGroupItem);
+					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
+
+					const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
+
+					if(old_circle_grp_item == nullptr || new_circle_grp_item == nullptr)
+					{
+						RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsCircleGroupItem. This is inconsistent!" << std::endl;
+						delete groupChange;
+						continue;
+					}
+
+					// First of all, we check if there is a difference between the old and new list of invited members
+
+					std::list<RsGxsId> added_identities, removed_identities;
+
+					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
+						if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
+							added_identities.push_back(gxs_id);
+
+					for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
+						if(new_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
+							removed_identities.push_back(gxs_id);
+
+					for(auto& gxs_id:added_identities)
+					{
+						auto ev = std::make_shared<RsGxsCircleEvent>();
+
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
+						ev->mCircleId = circle_id;
+						ev->mGxsId = gxs_id;
+
+						rsEvents->sendEvent(ev);
+					}
+					for(auto& gxs_id:removed_identities)
+					{
+						auto ev = std::make_shared<RsGxsCircleEvent>();
+
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED;
+						ev->mCircleId = circle_id;
+						ev->mGxsId = gxs_id;
+
+						rsEvents->sendEvent(ev);
+					}
+
+				}
 
                 // reset circle from cache since the number of invitee may have changed.
 				{
@@ -676,64 +709,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					mCacheUpdated = true;
 			    }
 
-            }
-        }
-
-		RsGxsGroupUpdate *grpUpdate = dynamic_cast<RsGxsGroupUpdate*>(*it);
-
-		if (grpUpdate && rsEvents)
-		{
-			// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
-
-			RsGxsCircleGroupItem *old_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(grpUpdate->mOldGroupItem);
-			RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(grpUpdate->mNewGroupItem);
-
-            const RsGxsCircleId circle_id ( old_circle_grp_item->meta.mGroupId );
-
-			if(old_circle_grp_item == nullptr || new_circle_grp_item == nullptr)
-			{
-				RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsCircleGroupItem. This is inconsistent!" << std::endl;
-				delete grpUpdate;
-				continue;
-			}
-
-			// First of all, we check if there is a difference between the old and new list of invited members
-
-			std::list<RsGxsId> added_identities, removed_identities;
-            std::list<RsGxsId> own_ids_lst;
-            rsIdentity->getOwnIds(own_ids_lst,false);		// retrieve own identities
-
-            std::set<RsGxsId> own_ids;
-            for(auto& id:own_ids_lst)
-                own_ids.insert(id);		// put them in a std::set for O(log(n)) search
-
-			for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
-				if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
-					added_identities.push_back(gxs_id);
-
-			for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
-				if(new_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
-					removed_identities.push_back(gxs_id);
-
-            for(auto& gxs_id:added_identities)
-            {
-				auto ev = std::make_shared<RsGxsCircleEvent>();
-
-				ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
-				ev->mCircleId = circle_id;
-				ev->mGxsId = gxs_id;
-
-				rsEvents->sendEvent(ev);
-            }
-            for(auto& gxs_id:removed_identities)
-            {
-				auto ev = std::make_shared<RsGxsCircleEvent>();
-
-				ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED;
-				ev->mCircleId = circle_id;
-				ev->mGxsId = gxs_id;
-
-				rsEvents->sendEvent(ev);
             }
         }
 

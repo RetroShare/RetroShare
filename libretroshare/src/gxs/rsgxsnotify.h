@@ -38,6 +38,8 @@ struct RsGxsNotify
         TYPE_RECEIVED_DISTANT_SEARCH_RESULTS   = 0x05,
         TYPE_STATISTICS_CHANGED                = 0x06,
         TYPE_UPDATED                           = 0x07,
+        TYPE_MESSAGES_DELETED                  = 0x08,
+        TYPE_GROUP_DELETED                     = 0x09,
 	};
 
 	virtual ~RsGxsNotify() {}
@@ -50,28 +52,21 @@ struct RsGxsNotify
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
-	RsGxsGroupChange(NotifyType type, bool metaChange) : mNotifyType(type), mMetaChange(metaChange) {}
-    std::list<RsGxsGroupId> mGrpIdList;
+	RsGxsGroupChange(NotifyType type, bool metaChange) : mNewGroupItem(nullptr),mOldGroupItem(nullptr), mNotifyType(type), mMetaChange(metaChange) {}
+    virtual ~RsGxsGroupChange() { delete mOldGroupItem; delete mNewGroupItem ; }
+
     NotifyType getType() override { return mNotifyType;}
     bool metaChange() { return mMetaChange; }
+
+    RsGxsGroupId mGroupId;			// Group id of the group we're talking about. When the group is deleted, it's useful to know which group
+    								// that was although there is no pointers to the actual group data anymore.
+    RsGxsGrpItem *mNewGroupItem;	// Valid when a group has changed, or a new group is received.
+    RsGxsGrpItem *mOldGroupItem;	// only valid when mNotifyType is TYPE_UPDATED
 
 protected:
     NotifyType mNotifyType;
     bool mMetaChange;
 };
-
-class RsGxsGroupUpdate : public RsGxsNotify
-{
-public:
-    RsGxsGroupUpdate() : mOldGroupItem(nullptr),mNewGroupItem(nullptr) {}
-    virtual ~RsGxsGroupUpdate() { delete mOldGroupItem; delete mNewGroupItem ; }
-
-    RsGxsGrpItem *mOldGroupItem;
-    RsGxsGrpItem *mNewGroupItem;
-
-    NotifyType getType() override { return RsGxsNotify::TYPE_UPDATED;}
-};
-
 
 class RsGxsDistantSearchResultChange: public RsGxsNotify
 {

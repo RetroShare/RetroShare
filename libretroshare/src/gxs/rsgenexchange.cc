@@ -236,14 +236,19 @@ void RsGenExchange::tick()
 
 			if (!grpIds.empty())
 			{
-				RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
-				gc->mGrpIdList = grpIds;
+                for(auto& groupId:grpIds)
+				{
+					RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_MESSAGES_DELETED, false);
+
+					gc->mGroupId = groupId;
+
 #ifdef GEN_EXCH_DEBUG
-				std::cerr << "  adding the following grp ids to notification: " << std::endl;
-				for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
-					std::cerr << "    " << *it << std::endl;
+					std::cerr << "  adding the following grp ids to notification: " << std::endl;
+					for(std::list<RsGxsGroupId>::const_iterator it(grpIds.begin());it!=grpIds.end();++it)
+						std::cerr << "    " << *it << std::endl;
 #endif
-				mNotifications.push_back(gc);
+					mNotifications.push_back(gc);
+				}
 
 				// also notify the network exchange service that these groups no longer exist.
 
@@ -1686,7 +1691,8 @@ void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)
 	RS_STACK_MUTEX(mGenMtx);
 
 	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY, true);
-	gc->mGrpIdList.push_back(grpId);
+	gc->mGroupId = grpId;
+
 	mNotifications.push_back(gc);
 }
 
@@ -1695,7 +1701,8 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 	RS_STACK_MUTEX(mGenMtx);
 
 	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_STATISTICS_CHANGED, false);
-	gc->mGrpIdList.push_back(grpId);
+	gc->mGroupId = grpId;
+
 	mNotifications.push_back(gc);
 }
 
@@ -2101,11 +2108,13 @@ void RsGenExchange::processGrpMetaChanges()
         }
     }
 
-    if(!grpChanged.empty())
+    for(auto& groupId:grpChanged)
     {
         RS_STACK_MUTEX(mGenMtx);
+
         RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, true);
-        gc->mGrpIdList = grpChanged;
+        gc->mGroupId = groupId;
+
         mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
                     			std::cerr << "  adding the following grp ids to notification: " << std::endl;
@@ -2496,15 +2505,17 @@ void RsGenExchange::processGroupDelete()
 			grpDeleted.push_back(note.second);
 	}
 
-	if(!grpDeleted.empty())
+    for(auto& groupId:grpDeleted)
 	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISHED, false);
-		gc->mGrpIdList = grpDeleted;
+		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_GROUP_DELETED, false);
+		gc->mGroupId = groupId;
+
 		mNotifications.push_back(gc);
 	}
 
 	mGroupDeletePublish.clear();
 }
+
 void RsGenExchange::processMessageDelete()
 {
     RS_STACK_MUTEX(mGenMtx) ;
@@ -2523,31 +2534,29 @@ void RsGenExchange::processMessageDelete()
 		mDataStore->removeMsgs( (*vit).mMsgs );
 	}
 
+//	std::list<RsGxsGroupId> grpDeleted;
+//	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
+//	for(; mit != toNotify.end(); ++mit)
+//	{
+//		GrpNote& note = mit->second;
+//		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
+//		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+//
+//		mGrpNotify.insert(std::make_pair(mit->first, note.second));
+//		mDataAccess->updatePublicRequestStatus(mit->first, status);
+//
+//		if(note.first)
+//			grpDeleted.push_back(note.second);
+//	}
 
-#warning csoler: TODO: notify for deleted messages
-#ifdef SUSPENDED
-	std::list<RsGxsGroupId> grpDeleted;
-	std::map<uint32_t, GrpNote>::iterator mit = toNotify.begin();
-	for(; mit != toNotify.end(); ++mit)
-	{
-		GrpNote& note = mit->second;
-		uint8_t status = note.first ? RsTokenService::GXS_REQUEST_V2_STATUS_COMPLETE
-		                            : RsTokenService::GXS_REQUEST_V2_STATUS_FAILED;
+    for(uint32_t i=0;i<mMsgDeletePublish.size();++i)
+        for(auto it(mMsgDeletePublish[i].mMsgs.begin());it!=mMsgDeletePublish[i].mMsgs.end();++it)
+		{
+			RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_MESSAGES_DELETED, false);
+			gc->mGroupId = it->first;
 
-		mGrpNotify.insert(std::make_pair(mit->first, note.second));
-		mDataAccess->updatePublicRequestStatus(mit->first, status);
-
-		if(note.first)
-			grpDeleted.push_back(note.second);
-	}
-
-	if(!grpDeleted.empty())
-	{
-		RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PUBLISH, false);
-		gc->mGrpIdList = grpDeleted;
-		mNotifications.push_back(gc);
-	}
-#endif
+			mNotifications.push_back(gc);
+		}
 
 	mMsgDeletePublish.clear();
 }
@@ -2807,10 +2816,12 @@ void RsGenExchange::publishGrps()
 			    grpChanged.push_back(note.second);
 	    }
 
-	    if(!grpChanged.empty())
+        for(auto& groupId:grpChanged)
 	    {
 		    RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, true);
-		    gc->mGrpIdList = grpChanged;
+
+		    gc->mGroupId = groupId;
+
 		    mNotifications.push_back(gc);
 #ifdef GEN_EXCH_DEBUG
 		    std::cerr << "  adding the following grp ids to notification: " << std::endl;
@@ -3207,11 +3218,18 @@ void RsGenExchange::processRecvdGroups()
 		vit = tmp ;
 	}
 
-	if(!grpIds.empty())
+	if(!grps_to_store.empty())
 	{
-		RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
-		c->mGrpIdList = grpIds;
-		mNotifications.push_back(c);
+        for(auto Grp:grps_to_store)
+		{
+			RsGxsGroupChange* c = new RsGxsGroupChange(RsGxsNotify::TYPE_RECEIVED_NEW, false);
+
+			c->mGroupId = Grp->grpId;
+            c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(Grp->grp.bin_data,&Grp->grp.bin_len));
+
+			mNotifications.push_back(c);
+		}
+
 		mDataStore->storeGroup(grps_to_store);
 #ifdef GEN_EXCH_DEBUG
                     			std::cerr << "  adding the following grp ids to notification: " << std::endl;
@@ -3286,7 +3304,7 @@ void RsGenExchange::performUpdateValidation()
 
             // Now prepare notification of the client
 
-			RsGxsGroupUpdate *c = new RsGxsGroupUpdate();
+			RsGxsGroupChange *c = new RsGxsGroupChange(RsGxsNotify::TYPE_UPDATED,false);
 
             c->mNewGroupItem = dynamic_cast<RsGxsGrpItem*>(mSerialiser->deserialise(gu.newGrp->grp.bin_data,&gu.newGrp->grp.bin_len));
             c->mNewGroupItem->meta = *gu.newGrp->metaData;		// gu.newGrp will be deleted because mDataStore will destroy it on update

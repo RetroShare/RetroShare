@@ -631,16 +631,13 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
             std::cerr << std::endl;
 #endif
-            std::list<RsGxsGroupId> &groupList = groupChange->mGrpIdList;
-
-            for(auto git = groupList.begin(); git != groupList.end();++git)
-            {
 #ifdef DEBUG_IDS
                 std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
                 std::cerr << std::endl;
 #endif
+                const RsGxsGroupId& gid(groupChange->mGroupId);
 
-                if(!rsReputations->isIdentityBanned(RsGxsId(*git)))
+                if(!rsReputations->isIdentityBanned(RsGxsId(gid)))
                 {
                     // notify that a new identity is received, if needed
 
@@ -654,12 +651,12 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     case RsGxsNotify::TYPE_PUBLISHED:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
-                        ev->mIdentityId = *git;
+                        ev->mIdentityId = gid;
                         ev->mIdentityEventCode = RsGxsIdentityEventCode::UPDATED_IDENTITY;
                         rsEvents->postEvent(ev);
 
 						// also time_stamp the key that this group represents
-						timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
                         should_subscribe = true;
                     }
 						break;
@@ -667,12 +664,12 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     case RsGxsNotify::TYPE_RECEIVED_NEW:
                     {
                         auto ev = std::make_shared<RsGxsIdentityEvent>();
-                        ev->mIdentityId = *git;
+                        ev->mIdentityId = gid;
                         ev->mIdentityEventCode = RsGxsIdentityEventCode::NEW_IDENTITY;
                         rsEvents->postEvent(ev);
 
 						// also time_stamp the key that this group represents
-						timeStampKey(RsGxsId(*git),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
                         should_subscribe = true;
                     }
                         break;
@@ -684,11 +681,10 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                     if(should_subscribe)
 					{
 						uint32_t token;
-						RsGenExchange::subscribeToGroup(token, *git, true);
+						RsGenExchange::subscribeToGroup(token, gid, true);
 					}
 
                 }
-            }
         }
 
         delete changes[i];

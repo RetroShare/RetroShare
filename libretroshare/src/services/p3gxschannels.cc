@@ -304,71 +304,52 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			{
 			case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 			{
-				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-				std::list<RsGxsGroupId>::iterator git;
-				for (git = grpList.begin(); git != grpList.end(); ++git)
-				{
-					auto ev = std::make_shared<RsGxsChannelEvent>();
-					ev->mChannelGroupId = *git;
-					ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
-					rsEvents->postEvent(ev);
-				}
-
+				auto ev = std::make_shared<RsGxsChannelEvent>();
+				ev->mChannelGroupId = grpChange->mGroupId;
+				ev->mChannelEventCode = RsChannelEventCode::SUBSCRIBE_STATUS_CHANGED;
+				rsEvents->postEvent(ev);
 			}
 				break;
 
 			case RsGxsNotify::TYPE_STATISTICS_CHANGED:
-            {
-				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-				std::list<RsGxsGroupId>::iterator git;
-				for (git = grpList.begin(); git != grpList.end(); ++git)
-				{
-					auto ev = std::make_shared<RsGxsChannelEvent>();
-					ev->mChannelGroupId = *git;
-					ev->mChannelEventCode = RsChannelEventCode::STATISTICS_CHANGED;
-					rsEvents->postEvent(ev);
-				}
-            }
+			{
+				auto ev = std::make_shared<RsGxsChannelEvent>();
+				ev->mChannelGroupId = grpChange->mGroupId;
+				ev->mChannelEventCode = RsChannelEventCode::STATISTICS_CHANGED;
+				rsEvents->postEvent(ev);
+			}
                 break;
 
 			case RsGxsNotify::TYPE_PUBLISHED:
 			case RsGxsNotify::TYPE_RECEIVED_NEW:
 			{
 				/* group received */
-				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-				std::list<RsGxsGroupId>::iterator git;
-				RS_STACK_MUTEX(mKnownChannelsMutex);
-				for (git = grpList.begin(); git != grpList.end(); ++git)
-				{
-					if(mKnownChannels.find(*git) == mKnownChannels.end())
-					{
-						mKnownChannels.insert(std::make_pair(*git,time(NULL))) ;
-						IndicateConfigChanged();
 
-						auto ev = std::make_shared<RsGxsChannelEvent>();
-						ev->mChannelGroupId = *git;
-						ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
-						rsEvents->postEvent(ev);
-					}
-					else
-						std::cerr << "(II) Not notifying already known channel " << *git << std::endl;
+				RS_STACK_MUTEX(mKnownChannelsMutex);
+
+				if(mKnownChannels.find(grpChange->mGroupId) == mKnownChannels.end())
+				{
+					mKnownChannels.insert(std::make_pair(grpChange->mGroupId,time(NULL))) ;
+					IndicateConfigChanged();
+
+					auto ev = std::make_shared<RsGxsChannelEvent>();
+					ev->mChannelGroupId = grpChange->mGroupId;
+					ev->mChannelEventCode = RsChannelEventCode::NEW_CHANNEL;
+					rsEvents->postEvent(ev);
 				}
-				break;
+				else
+					std::cerr << "(II) Not notifying already known channel " << grpChange->mGroupId << std::endl;
 			}
+				break;
 
 			case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
 			{
 				/* group received */
-				std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-				std::list<RsGxsGroupId>::iterator git;
-				for (git = grpList.begin(); git != grpList.end(); ++git)
-				{
-					auto ev = std::make_shared<RsGxsChannelEvent>();
-					ev->mChannelGroupId = *git;
-					ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
+				auto ev = std::make_shared<RsGxsChannelEvent>();
+				ev->mChannelGroupId = grpChange->mGroupId;
+				ev->mChannelEventCode = RsChannelEventCode::RECEIVED_PUBLISH_KEY;
 
-					rsEvents->postEvent(ev);
-				}
+				rsEvents->postEvent(ev);
 			}
 				break;
 
