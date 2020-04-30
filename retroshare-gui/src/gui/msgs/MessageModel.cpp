@@ -408,14 +408,17 @@ QVariant RsMessageModel::backgroundRole(const Rs::Msgs::MsgInfoSummary &fmpe, in
 
 QVariant RsMessageModel::sizeHintRole(int col) const
 {
-	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float x_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	float y_factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
+	
+	y_factor = std::max(y_factor, 18.0f / 14.0f ); // allows to have a minimum 21 pixels default height
 
 	switch(col)
 	{
 	default:
-	case COLUMN_THREAD_SUBJECT:      return QVariant( QSize(factor * 170, factor*14 ));
-	case COLUMN_THREAD_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
-	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
+	case COLUMN_THREAD_SUBJECT:      return QVariant( QSize(x_factor * 170 , y_factor*14*1.1f ));
+	case COLUMN_THREAD_DATE:         return QVariant( QSize(x_factor * 160 , y_factor*14*1.1f ));
+	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(x_factor * 160 , y_factor*14*1.1f ));
 	}
 }
 

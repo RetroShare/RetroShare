@@ -143,7 +143,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 	mMessageProxyModel->setFilterRole(RsMessageModel::FilterRole);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));
 
-    ui.messageTreeWidget->setModel(mMessageProxyModel);
+	ui.messageTreeWidget->setModel(mMessageProxyModel);
 
 	changeBox(0);	// set to inbox
 
@@ -196,8 +196,8 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
 
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
-    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.1);
+    //msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.5);
+    //msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_DATE,       fm.width("01/01/1970")*1.5);
 
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SUBJECT,    QHeaderView::Interactive);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_AUTHOR,     QHeaderView::Interactive);
