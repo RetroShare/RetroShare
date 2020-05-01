@@ -594,6 +594,10 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
 
+    std::vector<bool> expanded_top_level_items;
+    std::set<RsGxsCircleId> expanded_circle_items;
+    saveExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
+
 #ifdef QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND
     // These 3 lines are normally not needed. But apparently a bug (in Qt ??) causes Qt to crash when takeChild() is called. If we remove everything from the
     // tree widget before updating it, takeChild() is never called, but the all tree is filled again from scratch. This is less efficient obviously, and
@@ -852,6 +856,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		else
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_UNKNOWN)) ;
 	}
+    restoreExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
 }
 
 static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 
@@ -2445,3 +2450,53 @@ void IdDialog::on_closeInfoFrameButton_clicked()
 {
 	ui->inviteFrame->setVisible(false);
 }
+
+// We need to use indexes here because saving items is not possible since they can be re-created.
+
+void IdDialog::saveExpandedCircleItems(std::vector<bool>& expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const
+{
+    expanded_root_items.clear();
+    expanded_root_items.resize(3,false);
+    expanded_circle_items.clear();
+
+    auto saveTopLevel = [&](const QTreeWidgetItem* top_level_item,uint32_t index){
+        if(!top_level_item)
+            return;
+
+        if(top_level_item->isExpanded())
+        {
+            expanded_root_items[index] = true;
+
+            for(int row=0;row<top_level_item->childCount();++row)
+                if(top_level_item->child(row)->isExpanded())
+                    expanded_circle_items.insert(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
+		}
+    };
+
+    saveTopLevel(mExternalBelongingCircleItem,0);
+    saveTopLevel(mExternalOtherCircleItem,1);
+    saveTopLevel(mMyCircleItem,2);
+}
+
+void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items)
+{
+	auto restoreTopLevel = [=](QTreeWidgetItem* top_level_item,uint32_t index){
+		if(!top_level_item)
+			return;
+
+		top_level_item->setExpanded(expanded_root_items[index]);
+
+		for(int row=0;row<top_level_item->childCount();++row)
+        {
+            RsGxsCircleId circle_id(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
+            bool expanded = expanded_circle_items.find(circle_id) != expanded_circle_items.end();
+
+			top_level_item->child(row)->setExpanded(expanded_circle_items.find(circle_id) != expanded_circle_items.end());
+		}
+	};
+
+    restoreTopLevel(mExternalBelongingCircleItem,0);
+    restoreTopLevel(mExternalOtherCircleItem,1);
+    restoreTopLevel(mMyCircleItem,2);
+}
+
