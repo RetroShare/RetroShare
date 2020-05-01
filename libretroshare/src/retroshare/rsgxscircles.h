@@ -165,32 +165,87 @@ struct RsGxsCircleDetails : RsSerializable
 
 enum class RsGxsCircleEventCode: uint8_t
 {
+//  Notications received depending on wether you got a membership request, if you
+//  are admin of that circle, etc.
+//
+//  Message-based notifications:
+//
+//                       +---------------------------+----------------------------+
+//                       |  Membership request       |  Membership cancellation   |
+//                       +-------------+-------------+-------------+--------------+
+//                       |  Admin      |  Not admin  |    Admin    |   Not admin  |
+//  +--------------------+-------------+-------------+----------------------------+
+//  |    in invitee list |   0x04      |    0x04     |     0x03    |     0x03     |
+//  +--------------------+-------------+-------------+-------------+--------------+
+//  |not in invitee list |   0x01      |      X      |      X      |      X       |
+//  +--------------------+-------------+-------------+-------------+--------------+
+//
+//  Note: in this case, the GxsId never belongs to you, since you dont need to handle
+//        notifications for actions you took yourself (leave/join a circle)
+//
+//  Group-based notifications, the GxsId belongs to you:
+//
+//                       +---------------------------+----------------------------+
+//                       | GxsId joins invitee list  |  GxsId leaves invitee list |
+//                       +-------------+-------------+-------------+--------------+
+//                       |  Id is yours| Id is not   | Id is yours | Id is not    |
+//  +--------------------+-------------+-------------+-------------+--------------+
+//  | Has Member request |     0x06    |    0x04     |     0x05    |    0x03      |
+//  +--------------------+-------------+-------------+-------------+--------------+
+//  | No Member request  |     0x02    |     X       |     0x05    |     X        |
+//  +--------------------+-------------+-------------+-------------+--------------+
+//
+//  Note: In this case you're never an admin of the circle, since these notification
+//        would be a direct consequence of your own actions.
+
+    // Notifications be only have 4 different possibilities:
+    //
+    //           invitee list join/leave and
+    //           membership request / leave request
+    //
+    // From there, depending on what the client displays, it is possible to interpret these
+    // as "some user joined the circle", or "membership pending for that Id", etc, depending
+    // on whether the current node owns the circle, or the admin is or is not yours.
+    //
+    // These should be decided in the UI based on what the circle cache is displaying.
+    //
 	UNKNOWN                   = 0x00,
 
-	/** mCircleId contains the circle id and mGxsId is the id requesting
-	 * membership */
+	/**
+	 * Sent when we receive a membership request msg for a particular circle.
+	 *
+	 * mCircleId contains the circle id and mGxsId is the id requesting membership */
 	CIRCLE_MEMBERSHIP_REQUEST = 0x01,
 
-	/** mCircleId is the circle that invites me, and mGxsId is my own Id that is
-	 * invited */
+	/**
+	 * Sent when the ID has been added to the circle invitee list.
+	 *
+	 * mCircleId is the circle that invites me, and mGxsId is my own Id that is invited */
 	CIRCLE_MEMBERSHIP_INVITE  = 0x02,
 
-	/** mCircleId contains the circle id and mGxsId is the id dropping
-	 * membership */
+	/**
+	 * Sent when a GxsId annouces its will to not be in the circle.
+	 *
+	 * mCircleId contains the circle id and mGxsId is the id dropping membership */
 	CIRCLE_MEMBERSHIP_LEAVE   = 0x03,
 
-	/// mCircleId contains the circle id and mGxsId is the id of the new member
-	CIRCLE_MEMBERSHIP_JOIN    = 0x04,
-
-	/** mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
+	/**
+	 * Sent when the Id has been removed from the invitee list.
+	 *
+	 * mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
 	CIRCLE_MEMBERSHIP_REVOKED = 0x05,
 
-	/** mCircleId contains the circle id */
-	NEW_CIRCLE                = 0x06,
+	/**
+	 * Means a new circle has been received.
+	 *
+	 * mCircleId contains the circle id */
+	NEW_CIRCLE                = 0x07,
 
-	/** no additional information. Simply means that the info previously from the cache has changed. */
-	CACHE_DATA_UPDATED        = 0x07,
-
+	/**
+	 * Means that the circle cache has updated, and membership status that is displayed should probably be updated to.
+	 *
+	 * no additional information. Simply means that the info previously from the cache has changed. */
+	CACHE_DATA_UPDATED        = 0x08,
 };
 
 struct RsGxsCircleEvent: RsEvent

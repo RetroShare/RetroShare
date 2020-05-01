@@ -311,6 +311,39 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 
     // Check if the circle is one of which we belong to. If so, then notify in the GUI about other members leaving/subscribing
 
+	//  Notications received depending on wether you got a membership request, if you
+	//  are admin of that circle, etc.
+	//
+	//  Message-based notifications:
+	//
+	//                       +---------------------------+----------------------------+
+	//                       |  Membership request       |  Membership cancellation   |
+	//                       +-------------+-------------+-------------+--------------+
+	//                       |  Admin      |  Not admin  |    Admin    |   Not admin  |
+	//  +--------------------+-------------+-------------+----------------------------+
+	//  |    in invitee list |   0x04      |    0x04     |     0x03    |     0x03     |
+	//  +--------------------+-------------+-------------+-------------+--------------+
+	//  |not in invitee list |   0x01      |      X      |      X      |      X       |
+	//  +--------------------+-------------+-------------+-------------+--------------+
+	//
+	//  Note: in this case, the GxsId never belongs to you, since you dont need to handle
+	//        notifications for actions you took yourself (leave/join a circle)
+	//
+	//  Group-based notifications, the GxsId belongs to you:
+	//
+	//                       +---------------------------+----------------------------+
+	//                       | GxsId joins invitee list  |  GxsId leaves invitee list |
+	//                       +-------------+-------------+-------------+--------------+
+	//                       |  Id is yours| Id is not   | Id is yours | Id is not    |
+	//  +--------------------+-------------+-------------+-------------+--------------+
+	//  | Has Member request |     0x06    |    0x04     |     0x05    |    0x03      |
+	//  +--------------------+-------------+-------------+-------------+--------------+
+	//  | No Member request  |     0x02    |     X       |     0x05    |     X        |
+	//  +--------------------+-------------+-------------+-------------+--------------+
+	//
+	//  Note: In this case you're never an admin of the circle, since these notification
+	//        would be a direct consequence of your own actions.
+
 	if(details.mAmIAllowed || details.mAmIAdmin)
 	{
 		switch(pe->mCircleEventType)
@@ -320,18 +353,23 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 			if(details.mAmIAdmin)
 				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
 			break;
+
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
 			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
 			break;
+
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
 			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
 			break;
+
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
 			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVIT_REC),true);
 			break;
+
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED:
 			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
 			break;
+
 		default: break;
 		}
 	}
