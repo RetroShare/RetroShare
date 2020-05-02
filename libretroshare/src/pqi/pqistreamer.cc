@@ -288,16 +288,26 @@ int 	pqistreamer::tick_bio()
 
 int 	pqistreamer::tick_recv(uint32_t timeout)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+//	Only our thread manipulates mIncoming queue and related counters.
+//	The lock of pqistreamer mutex is thus not needed here.
+//	For the moment and for safety reasons it is still kept in 3 places:
+//	- in pqistreamer::tick_recv before calling free_pend_locked, as I dont know what this method actually does
+//	- in pqistreamer::handleincomingitem_locked, as it modifies mIncoming queue
+//	- in pqistreamer::inReadBytes_locked, as it modifies related counters
+//
+//	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 	if (mBio->moretoread(timeout))
 	{
 		handleincoming_locked();
 	}
-    if(!(mBio->isactive()))
-    {
-        free_pend_locked();
-    }
+	if(!(mBio->isactive()))
+	{
+		// lock only now, see comment above
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
+
+		free_pend_locked();
+	}
 	return 1;
 }
 
@@ -414,16 +424,20 @@ int 	pqistreamer::handleincomingitem_locked(RsItem *pqi,int len)
 
 	// Use overloaded Contact function 
 	pqi -> PeerId(PeerId());
-    mIncoming.push_back(pqi);
-    ++mIncomingSize ;
 
-            /*******************************************************************************************/
-    	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
-    	// is a full statistics chunk that can be used in the GUI
+	// lock only now, see comment in pqistreamer::tick_recv
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
-    	locked_addTrafficClue(pqi,len,mCurrentStatsChunk_In) ;
+	mIncoming.push_back(pqi);
+	++mIncomingSize ;
 
-        /*******************************************************************************************/
+	/*******************************************************************************************/
+	// keep info for stats for a while. Only keep the items for the last two seconds. sec n is ongoing and second n-1
+	// is a full statistics chunk that can be used in the GUI
+
+	locked_addTrafficClue(pqi,len,mCurrentStatsChunk_In) ;
+
+	/*******************************************************************************************/
 
 	return 1;
 }
@@ -1240,6 +1254,9 @@ void    pqistreamer::inReadBytes_locked(uint32_t inb)
 		pqioutput(PQL_DEBUG_ALL, pqistreamerzone, out);
 	}
 #endif
+
+	// lock only now, see comment in pqistreamer::tick_recv
+	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 
 	mTotalRead += inb;
 	mCurrRead += inb;
