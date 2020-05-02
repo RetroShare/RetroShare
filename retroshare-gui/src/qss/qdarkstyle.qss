@@ -833,7 +833,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
-FriendList {
+NewFriendList {
     qproperty-textColorStatusAway: lightgray;
     qproperty-textColorStatusBusy: lightgray;
     qproperty-textColorStatusOnline: green;
