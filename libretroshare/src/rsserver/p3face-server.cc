@@ -41,7 +41,9 @@
 #include "services/rseventsservice.h"
 
 
+/*******************
 #define TICK_DEBUG 1
+*******************/
 
 #define WARN_BIG_CYCLE_TIME	(0.2)
 
