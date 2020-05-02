@@ -271,21 +271,23 @@ void PeopleDialog::insertCircles(uint32_t token)
 	std::list<RsGroupMetaData> gSummaryList;
 	std::list<RsGroupMetaData>::iterator gsIt;
 
-	if (!rsGxsCircles->getGroupSummary(token,gSummaryList)) {
+	if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
+    {
 		std::cerr << "PeopleDialog::insertExtCircles() Error getting GroupSummary";
 		std::cerr << std::endl;
 
 		return;
-	}//if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
+	}
 
 	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt) {
 		RsGroupMetaData gsItem = (*gsIt);
 
 		RsGxsCircleDetails details ;
-		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details)){
+		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details))
+        {
 			std::cerr << "(EE) Cannot get details for circle id " << gsItem.mGroupId << ". Circle item is not created!" << std::endl;
 			continue ;
-		}//if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(git->mGroupId), details))
+		}
 
 		if (details.mCircleType != RsGxsCircleType::EXTERNAL)
         {

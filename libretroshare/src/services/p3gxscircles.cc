@@ -559,22 +559,25 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
 					{
 						RsGxsCircleMsg msg;
-						getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg);
+						if(getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg))
+						{
+							auto ev = std::make_shared<RsGxsCircleEvent>();
+							ev->mCircleId = circle_id;
+							ev->mGxsId = msg.mMeta.mAuthorId;
 
-						auto ev = std::make_shared<RsGxsCircleEvent>();
-						ev->mCircleId = circle_id;
-						ev->mGxsId = msg.mMeta.mAuthorId;
-
-						if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
-                        {
-							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
-							rsEvents->postEvent(ev);
-                        }
-						else if(msg.stuff == "SUBSCRIPTION_REQUEST_SUBSCRIBE")
-                        {
-							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
-							rsEvents->postEvent(ev);
-                        }
+							if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
+							{
+								ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
+								rsEvents->postEvent(ev);
+							}
+							else if(msg.stuff == "SUBSCRIPTION_REQUEST_SUBSCRIBE")
+							{
+								ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
+								rsEvents->postEvent(ev);
+							}
+						}
+                        else
+                            RsErr()<< __PRETTY_FUNCTION__<<" Cannot request CircleMsg " << *msgIdIt << ". Db not ready?" << std::endl;
 					}
 
 				mCircleCache.erase(circle_id);
