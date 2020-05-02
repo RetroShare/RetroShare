@@ -77,34 +77,31 @@ void GxsCircleItem::setup()
 
 	/* update circle information */
 
+	ui->acceptButton->setToolTip(tr("Grant membership request"));
+	ui->revokeButton->setToolTip(tr("Revoke membership request"));
+
+	connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(grantCircleMembership()));
+	connect(ui->revokeButton, SIGNAL(clicked()), this, SLOT(revokeCircleMembership()));
+
 	RsGxsCircleDetails circleDetails;
 	if (rsGxsCircles->getCircleDetails(mCircleId, circleDetails))
 	{
+        // from here we can figure out if we already have requested membership or not
 
 		if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REQ)
 		{
-			ui->titleLabel->setText(tr("You received a membership request for circle:"));
+			ui->titleLabel->setText(tr("You received a membership request a circle you're administrating:"));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			if(circleDetails.mAmIAdmin)
-			{
-				ui->acceptButton->setToolTip(tr("Grant membership request"));
-				ui->revokeButton->setToolTip(tr("Revoke membership request"));
-				connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(grantCircleMembership()));
-				connect(ui->revokeButton, SIGNAL(clicked()), this, SLOT(revokeCircleMembership()));
-			}
-            else
-            {
-				ui->acceptButton->setEnabled(false);
-				ui->revokeButton->setEnabled(false);
-            }
+			ui->revokeButton->setHidden(true);
+			ui->acceptButton->setHidden(false);
 		}
-		else if (mType == RS_FEED_ITEM_CIRCLE_INVIT_REC)
+		else if (mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
 		{
-			ui->titleLabel->setText(tr("You received an invitation for circle:"));
+			ui->titleLabel->setText(tr("You received an invitation for this circle:"));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
@@ -116,7 +113,7 @@ void GxsCircleItem::setup()
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
 		{
-			ui->titleLabel->setText(idName + tr(" has left this circle you belong to."));
+			ui->titleLabel->setText(idName + tr(" has left this circle."));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
@@ -127,21 +124,18 @@ void GxsCircleItem::setup()
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
 		{
-			ui->titleLabel->setText(idName + tr(" has join this circle you also belong to."));
+			ui->titleLabel->setText(idName + tr(" which you invited, has join this circle you're administrating."));
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
 			ui->acceptButton->setHidden(true);
-			ui->revokeButton->setHidden(true);
+			ui->revokeButton->setHidden(false);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
 		{
-            if(rsIdentity->isOwnId(mGxsId))
-				ui->titleLabel->setText(tr("Your identity %1 has been revoqued from this circle.").arg(idName));
-            else
-				ui->titleLabel->setText(tr("Identity %1 has been revoqued from this circle you belong to.").arg(idName));
+			ui->titleLabel->setText(tr("Your identity %1 has been revoked from this circle.").arg(idName));
 
 			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
 			ui->gxsIdLabel->setText(idName);
@@ -151,6 +145,19 @@ void GxsCircleItem::setup()
 			ui->acceptButton->setHidden(true);
 			ui->revokeButton->setHidden(true);
 		}
+		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED)
+		{
+			ui->titleLabel->setText(tr("Your identity %1 as been accepted in this circle.").arg(idName));
+
+			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
+			ui->gxsIdLabel->setText(idName);
+			ui->iconLabel->setPixmap(pixmap);
+			ui->gxsIdLabel->setId(mGxsId);
+
+			ui->acceptButton->setHidden(true);
+			ui->revokeButton->setHidden(true);
+		}
+
 	}
 	else
 	{

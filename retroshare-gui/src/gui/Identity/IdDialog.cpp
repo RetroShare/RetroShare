@@ -433,12 +433,11 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
 		switch(e->mCircleEventType)
 		{
-		case RsGxsCircleEventCode::NEW_CIRCLE:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
+		case RsGxsCircleEventCode::NEW_CIRCLE:
 		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			updateCircles();

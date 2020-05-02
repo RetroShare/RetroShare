@@ -45,25 +45,23 @@ extern RsGxsCircles* rsGxsCircles;
 
 enum class RsGxsCircleType : uint32_t // 32 bit overkill, just for retrocompat
 {
-	UNKNOWN           = 0, /// Used to detect uninizialized values.
-	PUBLIC            = 1, /// Public distribution
-	EXTERNAL          = 2, /// Restricted to an external circle
+	UNKNOWN            = 0,	/// Used to detect uninizialized values.
+	PUBLIC             = 1,	/// Public distribution, based on GxsIds
+	EXTERNAL           = 2,	/// Restricted to an external circle, based on GxsIds
 
-	/** Restricted to a group of friend nodes, the administrator of the circle
-	 * behave as a hub for them */
-	NODES_GROUP        = 3,
+	NODES_GROUP        = 3,	/// Restricted to a group of friend nodes, the administrator of the circle behave as a hub for them
+    						/// Based on PGP nodes ids.
 
 	LOCAL              = 4, /// not distributed at all
 
 	/** Self-restricted. Used only at creation time of self-restricted circles
 	 *  when the circle id isn't known yet. Once the circle id is known the type
 	 *  is set to EXTERNAL, and the external circle id is set to the id of the
-	 *  circle itself.
+	 *  circle itself. Based on GxsIds.
 	 */
 	EXT_SELF           = 5,
 
-	/// distributed to nodes signed by your own PGP key only.
-	YOUR_EYES_ONLY     = 6
+	YOUR_EYES_ONLY     = 6 	/// distributed to nodes signed by your own PGP key only.
 };
 
 // TODO: convert to enum class
@@ -121,15 +119,29 @@ struct RsGxsCircleMsg : RsSerializable
 
 struct RsGxsCircleDetails : RsSerializable
 {
-	RsGxsCircleDetails() :
-	    mCircleType(static_cast<uint32_t>(RsGxsCircleType::EXTERNAL)),
-	    mAmIAllowed(false),mAmIAdmin(false) {}
+	RsGxsCircleDetails() : mCircleType(RsGxsCircleType::EXTERNAL), mAmIAllowed(false),mAmIAdmin(false) {}
 	~RsGxsCircleDetails() override;
+
+    // helper functions.
+    bool isIdInCircle(const RsGxsId& id) const { return mAllowedGxsIds.find(id) != mAllowedGxsIds.end(); }
+    bool isIdInInviteeList(const RsGxsId& id) const
+    {
+        auto it = mSubscriptionFlags.find(id);
+        return (it != mSubscriptionFlags.end()) && (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST );
+    }
+    bool isIdRequestingMembership(const RsGxsId& id) const
+    {
+        auto it = mSubscriptionFlags.find(id);
+        return it != mSubscriptionFlags.end() && (it->second & GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED );
+    }
+    bool isGxsIdBased() const { return mCircleType==RsGxsCircleType::PUBLIC || mCircleType==RsGxsCircleType::EXTERNAL || mCircleType==RsGxsCircleType::EXT_SELF; }
+
+    // Members
 
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
 
-	uint32_t mCircleType;
+	RsGxsCircleType mCircleType;
 	RsGxsCircleId mRestrictedCircleId;
 
 	/** true when one of load GXS ids belong to the circle allowed list (admin
@@ -165,39 +177,6 @@ struct RsGxsCircleDetails : RsSerializable
 
 enum class RsGxsCircleEventCode: uint8_t
 {
-//  Notications received depending on wether you got a membership request, if you
-//  are admin of that circle, etc.
-//
-//  Message-based notifications:
-//
-//                       +---------------------------+----------------------------+
-//                       |  Membership request       |  Membership cancellation   |
-//                       +-------------+-------------+-------------+--------------+
-//                       |  Admin      |  Not admin  |    Admin    |   Not admin  |
-//  +--------------------+-------------+-------------+----------------------------+
-//  |    in invitee list |   0x04      |    0x04     |     0x03    |     0x03     |
-//  +--------------------+-------------+-------------+-------------+--------------+
-//  |not in invitee list |   0x01      |      X      |      X      |      X       |
-//  +--------------------+-------------+-------------+-------------+--------------+
-//
-//  Note: in this case, the GxsId never belongs to you, since you dont need to handle
-//        notifications for actions you took yourself (leave/join a circle)
-//
-//  Group-based notifications, the GxsId belongs to you:
-//
-//                       +---------------------------+----------------------------+
-//                       | GxsId joins invitee list  |  GxsId leaves invitee list |
-//                       +-------------+-------------+-------------+--------------+
-//                       |  Id is yours| Id is not   | Id is yours | Id is not    |
-//  +--------------------+-------------+-------------+-------------+--------------+
-//  | Has Member request |     0x06    |    0x04     |     0x05    |    0x03      |
-//  +--------------------+-------------+-------------+-------------+--------------+
-//  | No Member request  |     0x02    |     X       |     0x05    |     X        |
-//  +--------------------+-------------+-------------+-------------+--------------+
-//
-//  Note: In this case you're never an admin of the circle, since these notification
-//        would be a direct consequence of your own actions.
-
     // Notifications be only have 4 different possibilities:
     //
     //           invitee list join/leave and
@@ -215,37 +194,37 @@ enum class RsGxsCircleEventCode: uint8_t
 	 * Sent when we receive a membership request msg for a particular circle.
 	 *
 	 * mCircleId contains the circle id and mGxsId is the id requesting membership */
-	CIRCLE_MEMBERSHIP_REQUEST = 0x01,
+	CIRCLE_MEMBERSHIP_REQUEST                      = 0x01,
 
 	/**
 	 * Sent when the ID has been added to the circle invitee list.
 	 *
 	 * mCircleId is the circle that invites me, and mGxsId is my own Id that is invited */
-	CIRCLE_MEMBERSHIP_INVITE  = 0x02,
+	CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST     = 0x02,
 
 	/**
 	 * Sent when a GxsId annouces its will to not be in the circle.
 	 *
 	 * mCircleId contains the circle id and mGxsId is the id dropping membership */
-	CIRCLE_MEMBERSHIP_LEAVE   = 0x03,
+	CIRCLE_MEMBERSHIP_LEAVE                        = 0x03,
 
 	/**
 	 * Sent when the Id has been removed from the invitee list.
 	 *
 	 * mCircleId contains the circle id and mGxsId is the id that was revoqued * by admin */
-	CIRCLE_MEMBERSHIP_REVOKED = 0x05,
+	CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST = 0x04,
 
 	/**
 	 * Means a new circle has been received.
 	 *
 	 * mCircleId contains the circle id */
-	NEW_CIRCLE                = 0x07,
+	NEW_CIRCLE                                     = 0x05,
 
 	/**
 	 * Means that the circle cache has updated, and membership status that is displayed should probably be updated to.
 	 *
 	 * no additional information. Simply means that the info previously from the cache has changed. */
-	CACHE_DATA_UPDATED        = 0x08,
+	CACHE_DATA_UPDATED                             = 0x06,
 };
 
 struct RsGxsCircleEvent: RsEvent

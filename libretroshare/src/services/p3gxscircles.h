@@ -145,7 +145,7 @@ class RsGxsCircleCache
 	RsGxsCircleId mCircleId;
 	std::string mCircleName;
 
-	uint32_t      mCircleType;
+	RsGxsCircleType  mCircleType;
 	bool	      mIsExternal;
     	RsGxsCircleId mRestrictedCircleId ;	// circle ID that circle is restricted to.
 

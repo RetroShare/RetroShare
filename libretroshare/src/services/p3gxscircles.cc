@@ -566,13 +566,15 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						ev->mGxsId = msg.mMeta.mAuthorId;
 
 						if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
+                        {
 							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
-						else if(details.mAllowedGxsIds.find(msg.mMeta.mAuthorId) != details.mAllowedGxsIds.end())
-							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN;
-						else
+							rsEvents->postEvent(ev);
+                        }
+						else if(msg.stuff == "SUBSCRIPTION_REQUEST_SUBSCRIBE")
+                        {
 							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
-
-						rsEvents->postEvent(ev);
+							rsEvents->postEvent(ev);
+                        }
 					}
 
 				mCircleCache.erase(circle_id);
@@ -615,13 +617,6 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
             if(rsEvents)
             {
-				std::list<RsGxsId> own_ids_lst;
-				rsIdentity->getOwnIds(own_ids_lst,false);		// retrieve own identities
-
-				std::set<RsGxsId> own_ids;
-				for(auto& id:own_ids_lst)
-					own_ids.insert(id);		// put them in a std::set for O(log(n)) search
-
 				if(c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED)
                 {
 					auto ev = std::make_shared<RsGxsCircleEvent>();
@@ -634,17 +629,11 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
 
- 					std::list<RsGxsId> added_identities;
-
 					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
-						if(own_ids.find(gxs_id)!=own_ids.end())
-							added_identities.push_back(gxs_id);
-
-					for(auto& gxs_id:added_identities)
 					{
 						auto ev = std::make_shared<RsGxsCircleEvent>();
 
-						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST;
 						ev->mCircleId = RsGxsCircleId(*git);
 						ev->mGxsId = gxs_id;
 
@@ -669,36 +658,29 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 					// First of all, we check if there is a difference between the old and new list of invited members
 
-					std::list<RsGxsId> added_identities, removed_identities;
-
 					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
-						if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
-							added_identities.push_back(gxs_id);
+						if(old_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end())
+						{
+							auto ev = std::make_shared<RsGxsCircleEvent>();
+
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST;
+							ev->mCircleId = circle_id;
+							ev->mGxsId = gxs_id;
+
+							rsEvents->sendEvent(ev);
+						}
 
 					for(auto& gxs_id: old_circle_grp_item->gxsIdSet.ids)
-						if(new_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end() && own_ids.find(gxs_id)!=own_ids.end())
-							removed_identities.push_back(gxs_id);
+						if(new_circle_grp_item->gxsIdSet.ids.find(gxs_id) == old_circle_grp_item->gxsIdSet.ids.end())
+						{
+							auto ev = std::make_shared<RsGxsCircleEvent>();
 
-					for(auto& gxs_id:added_identities)
-					{
-						auto ev = std::make_shared<RsGxsCircleEvent>();
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST;
+							ev->mCircleId = circle_id;
+							ev->mGxsId = gxs_id;
 
-						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE;
-						ev->mCircleId = circle_id;
-						ev->mGxsId = gxs_id;
-
-						rsEvents->sendEvent(ev);
-					}
-					for(auto& gxs_id:removed_identities)
-					{
-						auto ev = std::make_shared<RsGxsCircleEvent>();
-
-						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOKED;
-						ev->mCircleId = circle_id;
-						ev->mGxsId = gxs_id;
-
-						rsEvents->sendEvent(ev);
-					}
+							rsEvents->sendEvent(ev);
+						}
 
 				}
 
@@ -720,8 +702,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 /******************* RsCircles Interface  ***************************************/
 /********************************************************************************/
 
-bool p3GxsCircles::getCircleDetails(
-        const RsGxsCircleId& id, RsGxsCircleDetails& details)
+bool p3GxsCircles::getCircleDetails(const RsGxsCircleId& id, RsGxsCircleDetails& details)
 {
 
 #ifdef DEBUG_CIRCLES
@@ -818,7 +799,7 @@ int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool
 	if (mCircleCache.is_cached(circleId))
 	{
 		RsGxsCircleCache &data = mCircleCache.ref(circleId);
-		should_encrypt = (data.mCircleType == GXS_CIRCLE_TYPE_EXTERNAL);
+		should_encrypt = (data.mCircleType == RsGxsCircleType::EXTERNAL);
                 
 		if (data.isAllowedPeer(id))
 			return 1;
@@ -1051,7 +1032,7 @@ RsGenExchange::ServiceCreate_Return p3GxsCircles::service_CreateGroup(RsGxsGrpIt
 
 RsGxsCircleCache::RsGxsCircleCache() 
 { 
-	mCircleType = GXS_CIRCLE_TYPE_EXTERNAL;
+	mCircleType = RsGxsCircleType::EXTERNAL;
 	mIsExternal = true;
 	mUpdateTime = 0;
 	mGroupStatus = 0;
@@ -1070,8 +1051,8 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup &circle)
 	mUpdateTime = time(NULL);
 //	mProcessedCircles.insert(mCircleId);
 
-	mCircleType = circle.mMeta.mCircleType;
-	mIsExternal = (mCircleType != GXS_CIRCLE_TYPE_LOCAL);
+	mCircleType = static_cast<RsGxsCircleType>(circle.mMeta.mCircleType);
+	mIsExternal = (mCircleType != RsGxsCircleType::LOCAL);
 	mGroupStatus = circle.mMeta.mGroupStatus;
 	mGroupSubscribeFlags = circle.mMeta.mSubscribeFlags;
 	mOriginator = circle.mMeta.mOriginator ;
