@@ -449,133 +449,6 @@ border-image: url(:/images/closepressed.png)
             </widget>
            </item>
            <item>
-            <widget class="QToolButton" name="pushtoolsButton">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/options2.png</normaloff>:/icons/png/options2.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="popupMode">
-              <enum>QToolButton::InstantPopup</enum>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="searchButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="contextMenuPolicy">
-              <enum>Qt::CustomContextMenu</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/search.png</normaloff>:/icons/png/search.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="LineEditClear" name="leSearch"/>
-           </item>
-           <item>
-            <widget class="QToolButton" name="markButton">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/highlight.png</normaloff>:/icons/png/highlight.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="searchBefore">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="searchAfter">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="icon">
-              <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>28</width>
-               <height>28</height>
-              </size>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QToolButton" name="notifyButton">
              <property name="focusPolicy">
               <enum>Qt::NoFocus</enum>
@@ -785,6 +658,133 @@ border-image: url(:/images/closepressed.png)
            </size>
           </property>
          </spacer>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/search.png</normaloff>:/icons/png/search.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="LineEditClear" name="leSearch"/>
+        </item>
+        <item>
+         <widget class="QToolButton" name="markButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/highlight.png</normaloff>:/icons/png/highlight.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchBefore">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="searchAfter">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QToolButton" name="pushtoolsButton">
+          <property name="focusPolicy">
+           <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/png/options2.png</normaloff>:/icons/png/options2.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>28</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="popupMode">
+           <enum>QToolButton::InstantPopup</enum>
+          </property>
+          <property name="autoRaise">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QFrame" name="pluginTitleFrame">

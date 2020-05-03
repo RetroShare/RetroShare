@@ -732,6 +732,10 @@ GxsForumThreadWidget QToolButton#subscribeToolButton:hover {
 	border-radius: 4px;
 }
 
+GxsForumMsgItem QFrame#frame{
+	background-color: white;
+}
+
 GxsChannelPostsWidget QFrame#infoFrame
 { 
 
@@ -787,6 +791,10 @@ PostedItem QFrame#frame_notes {
 	background: white;
 }
 
+PostedItem QFrame#mainFrame {
+	background-color: white;
+}
+
 PostedItem QLabel#notes {
 
 }
@@ -832,6 +840,11 @@ PostedCardView QFrame#voteFrame {
 	background: #f8f9fa;
 }
 
+PostedCardView QFrame#mainFrame {
+	background: white;
+}
+
+
 GxsCommentDialog QComboBox#sortBox {
 	font: bold;
 	color: #0099cc;
@@ -871,5 +884,9 @@ WireGroupItem QWidget:hover
 }
 
 WireDialog QFrame#frame{
+	background-color: white;
+}
+
+WireDialog QWidget#scrollAreaWidgetContents_groups{
 	background-color: white;
 }

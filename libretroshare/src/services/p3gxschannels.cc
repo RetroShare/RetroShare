@@ -1137,9 +1137,28 @@ bool p3GxsChannels::getChannelContent( const RsGxsGroupId& channelId,
 	msgIds[channelId] = contentIds;
 
 	if( !requestMsgInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE )
-        return false;
+		return false;
 
 	return getPostData(token, posts, comments);
+}
+
+bool p3GxsChannels::getChannelComments(const RsGxsGroupId &channelId,
+                                       const std::set<RsGxsMessageId> &contentIds,
+                                       std::vector<RsGxsComment> &comments)
+{
+	std::vector<RsGxsGrpMsgIdPair> msgIds;
+	for (auto& msg:contentIds)
+		msgIds.push_back(RsGxsGrpMsgIdPair(channelId,msg));
+
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_RELATED_DATA;
+	opts.mOptions = RS_TOKREQOPT_MSG_THREAD | RS_TOKREQOPT_MSG_LATEST;
+
+	uint32_t token;
+	if( !requestMsgRelatedInfo(token, opts, msgIds) || waitToken(token) != RsTokenService::COMPLETE )
+		return false;
+
+	return getRelatedComments(token,comments);
 }
 
 bool p3GxsChannels::createChannelV2(
