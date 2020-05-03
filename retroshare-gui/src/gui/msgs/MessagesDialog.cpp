@@ -484,10 +484,9 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
 			items->append(m);
 
 		if (m.data(RsMessageModel::UnreadRole).toBool())
-			if (itemsUnread)
-                itemsUnread->append(m);
-            else if(itemsRead)
-                itemsRead->append(m);
+		{ if (itemsUnread) itemsUnread->append(m); }
+		else
+		{ if (itemsRead) itemsRead->append(m); }
 
 		if (itemsStar && m.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR)
 			itemsStar->append(m);
