@@ -28,6 +28,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "GxsForumModel.h"
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsgxsforums.h"
@@ -669,7 +670,16 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
     							}
 
 		case COLUMN_THREAD_DISTRIBUTION:
-		case COLUMN_THREAD_AUTHOR: return QVariant();
+		case COLUMN_THREAD_AUTHOR:{
+			QString name;
+			RsGxsId id = RsGxsId(fmpe.mAuthorId.toStdString());
+
+			if(id.isNull())
+				return QVariant(tr("[Notification]"));
+			if(GxsIdTreeItemDelegate::computeName(id,name))
+				return name;
+			return QVariant(tr("[Unknown]"));
+		}
 		case COLUMN_THREAD_MSGID: return QVariant();
 #ifdef TODO
 	if (filterColumn == COLUMN_THREAD_CONTENT) {
@@ -700,12 +710,17 @@ QVariant RsGxsForumModel::userRole(const ForumModelPostEntry& fmpe,int col) cons
 
 QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col) const
 {
-    if(col == COLUMN_THREAD_DISTRIBUTION)
-        return QVariant(fmpe.mReputationWarningLevel);
-    else if(col == COLUMN_THREAD_READ)
-        return QVariant(fmpe.mMsgStatus);
-    else
-		return QVariant();
+	bool exist=false;
+	switch(col)
+	{
+		case COLUMN_THREAD_DISTRIBUTION:
+		return QVariant(fmpe.mReputationWarningLevel);
+		case COLUMN_THREAD_READ:
+		return QVariant(fmpe.mMsgStatus);
+		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
+		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.mAuthorId.toStdString()),QIcon(), exist);
+	}
+	return QVariant();
 }
 
 const RsGxsGroupId& RsGxsForumModel::currentGroupId() const
