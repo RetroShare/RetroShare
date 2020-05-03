@@ -264,7 +264,7 @@ public:
 
 	protected:
 
-	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id,uint32_t request_type) ;
+	bool pushCircleMembershipRequest(const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id, RsGxsCircleSubscriptionType request_type) ;
 	static uint32_t circleAuthenPolicy();
 
 	/** Notifications **/

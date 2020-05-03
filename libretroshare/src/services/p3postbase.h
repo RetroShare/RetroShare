@@ -125,7 +125,7 @@ private:
 
 	bool mBgProcessing;
 	bool mBgIncremental;
-	std::list<RsGxsGroupId> mBgGroupList;
+	std::set<RsGxsGroupId> mBgGroupList;
 	std::map<RsGxsMessageId, PostStats> mBgStatsMap;
 
 	std::map<RsGxsGroupId,rstime_t> mKnownPosted;

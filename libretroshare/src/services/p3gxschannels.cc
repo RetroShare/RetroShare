@@ -239,7 +239,7 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 	/* iterate through and grab any new messages */
-	std::list<RsGxsGroupId> unprocessedGroups;
+	std::set<RsGxsGroupId> unprocessedGroups;
 
 	std::vector<RsGxsNotify *>::iterator it;
 	for(it = changes.begin(); it != changes.end(); ++it)
@@ -253,16 +253,12 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				/* message received */
 				if (rsEvents)
 				{
-					std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-						{
-							auto ev = std::make_shared<RsGxsChannelEvent>();
-							ev->mChannelMsgId = *mit1;
-							ev->mChannelGroupId = mit->first;
-							ev->mChannelEventCode = RsChannelEventCode::NEW_MESSAGE;
-							rsEvents->postEvent(ev);
-						}
+					auto ev = std::make_shared<RsGxsChannelEvent>();
+
+					ev->mChannelMsgId = msgChange->mMsgId;
+					ev->mChannelGroupId = msgChange->mGroupId;
+					ev->mChannelEventCode = RsChannelEventCode::NEW_MESSAGE;
+					rsEvents->postEvent(ev);
 				}
 			}
 
@@ -273,25 +269,21 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				std::cerr << std::endl;
 #endif
 
-				std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-				for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
+#ifdef GXSCHANNELS_DEBUG
+				std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
+				std::cerr << std::endl;
+#endif
 				{
 #ifdef GXSCHANNELS_DEBUG
-					std::cerr << "p3GxsChannels::notifyChanges() Msgs for Group: " << mit->first;
+					std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
 					std::cerr << std::endl;
 #endif
-					bool enabled = false;
-					if (autoDownloadEnabled(mit->first, enabled) && enabled)
-					{
-#ifdef GXSCHANNELS_DEBUG
-						std::cerr << "p3GxsChannels::notifyChanges() AutoDownload for Group: " << mit->first;
-						std::cerr << std::endl;
-#endif
 
-						/* problem is most of these will be comments and votes,
-						 * should make it occasional - every 5mins / 10minutes TODO */
-						unprocessedGroups.push_back(mit->first);
-					}
+					/* problem is most of these will be comments and votes, should make it occasional - every 5mins / 10minutes TODO */
+                    // We do not call if(autoDownLoadEnabled()) here, because it would be too costly when
+                    // many msgs are received from the same group. We back the groupIds and then request one by one.
+
+					unprocessedGroups.insert(msgChange->mGroupId);
 				}
 			}
 		}
@@ -376,8 +368,16 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
         delete *it;
 	}
 
-	if(!unprocessedGroups.empty())
-		request_SpecificSubscribedGroups(unprocessedGroups);
+	std::list<RsGxsGroupId> grps;
+	for(auto& grp_id:unprocessedGroups)
+	{
+		bool enabled = false;
+		if (autoDownloadEnabled(grp_id, enabled) && enabled)	// costly call, that's why it's packed down here.
+			grps.push_back(grp_id);
+	}
+
+	if(!grps.empty())
+		request_SpecificSubscribedGroups(grps);
 }
 
 void	p3GxsChannels::service_tick()
@@ -705,8 +705,7 @@ void p3GxsChannels::request_AllSubscribedGroups()
 }
 
 
-void p3GxsChannels::request_SpecificSubscribedGroups(
-        const std::list<RsGxsGroupId> &groups )
+void p3GxsChannels::request_SpecificSubscribedGroups( const std::list<RsGxsGroupId> &groups )
 {
 #ifdef GXSCHANNELS_DEBUG
 	std::cerr << "p3GxsChannels::request_SpecificSubscribedGroups()";
@@ -719,8 +718,7 @@ void p3GxsChannels::request_SpecificSubscribedGroups(
 
 	uint32_t token = 0;
 
-	if(!RsGenExchange::getTokenService()->
-	        requestGroupInfo(token, ansType, opts, groups))
+	if(!RsGenExchange::getTokenService()-> requestGroupInfo(token, ansType, opts, groups))
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " Failed requesting groups info!"
 		          << std::endl;

@@ -38,7 +38,6 @@
 #define USE_NEW_CHUNK_CHECKING_CODE
 
 typedef Sha1CheckSum  RsFileHash ;
-typedef Sha1CheckSum  RsMessageId ;
 
 const uint32_t FT_STATE_FAILED			= 0x0000 ;
 const uint32_t FT_STATE_OKAY			= 0x0001 ;

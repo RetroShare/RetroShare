@@ -20,14 +20,22 @@
  *                                                                             *
  *******************************************************************************/
 
+#pragma once
+
 /*!
  * The aim of this class is to implement notifications internally to GXS, which are
  * mostly used by RsGenExchange to send information to specific services. These services
  * then interpret these changes and turn them into human-readable/processed service-specific changes.
  */
 
-struct RsGxsNotify
+#include "retroshare/rsids.h"
+
+class RsGxsNotify
 {
+public:
+    RsGxsNotify(const RsGxsGroupId& gid): mGroupId(gid){}
+    virtual ~RsGxsNotify()=default;
+
 	enum NotifyType
 	{
         TYPE_UNKNOWN                           = 0x00,
@@ -38,12 +46,14 @@ struct RsGxsNotify
         TYPE_RECEIVED_DISTANT_SEARCH_RESULTS   = 0x05,
         TYPE_STATISTICS_CHANGED                = 0x06,
         TYPE_UPDATED                           = 0x07,
-        TYPE_MESSAGES_DELETED                  = 0x08,
+        TYPE_MESSAGE_DELETED                   = 0x08,
         TYPE_GROUP_DELETED                     = 0x09,
 	};
 
-	virtual ~RsGxsNotify() {}
 	virtual NotifyType getType() = 0;
+
+    RsGxsGroupId mGroupId;			// Group id of the group we're talking about. When the group is deleted, it's useful to know which group
+    								// that was although there is no pointers to the actual group data anymore.
 };
 
 /*!
@@ -52,14 +62,12 @@ struct RsGxsNotify
 class RsGxsGroupChange : public RsGxsNotify
 {
 public:
-	RsGxsGroupChange(NotifyType type, bool metaChange) : mNewGroupItem(nullptr),mOldGroupItem(nullptr), mNotifyType(type), mMetaChange(metaChange) {}
-    virtual ~RsGxsGroupChange() { delete mOldGroupItem; delete mNewGroupItem ; }
+	RsGxsGroupChange(NotifyType type, const RsGxsGroupId& gid,bool metaChange) : RsGxsNotify(gid),mNewGroupItem(nullptr),mOldGroupItem(nullptr), mNotifyType(type), mMetaChange(metaChange) {}
+    virtual ~RsGxsGroupChange() override { delete mOldGroupItem; delete mNewGroupItem ; }
 
     NotifyType getType() override { return mNotifyType;}
     bool metaChange() { return mMetaChange; }
 
-    RsGxsGroupId mGroupId;			// Group id of the group we're talking about. When the group is deleted, it's useful to know which group
-    								// that was although there is no pointers to the actual group data anymore.
     RsGxsGrpItem *mNewGroupItem;	// Valid when a group has changed, or a new group is received.
     RsGxsGrpItem *mOldGroupItem;	// only valid when mNotifyType is TYPE_UPDATED
 
@@ -71,12 +79,11 @@ protected:
 class RsGxsDistantSearchResultChange: public RsGxsNotify
 {
 public:
-    RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& group_id) : mRequestId(id),mGroupId(group_id){}
+    RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& gid) : RsGxsNotify(gid), mRequestId(id){}
 
     NotifyType getType() { return TYPE_RECEIVED_DISTANT_SEARCH_RESULTS ; }
 
     TurtleRequestId mRequestId ;
- 	RsGxsGroupId mGroupId;
 };
 
 /*!
@@ -85,8 +92,11 @@ public:
 class RsGxsMsgChange : public RsGxsNotify
 {
 public:
-	RsGxsMsgChange(NotifyType type, bool metaChange) : NOTIFY_TYPE(type), mMetaChange(metaChange) {}
-    std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgChangeMap;
+	RsGxsMsgChange(NotifyType type, const RsGxsGroupId& gid, const RsGxsMessageId& msg_id,bool metaChange) : RsGxsNotify(gid), mNewMsgItem(nullptr),NOTIFY_TYPE(type), mMetaChange(metaChange) {}
+
+    RsGxsMessageId mMsgId;
+    RsGxsMsgItem *mNewMsgItem;
+
 	NotifyType getType(){ return NOTIFY_TYPE;}
     bool metaChange() { return mMetaChange; }
 private:

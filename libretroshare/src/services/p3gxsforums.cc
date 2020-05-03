@@ -195,16 +195,11 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED) /* message received */
 				if (rsEvents)
 				{
-					std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgChangeMap = msgChange->msgChangeMap;
-					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-						{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumMsgId = *mit1;
-							ev->mForumGroupId = mit->first;
-							ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
-							rsEvents->postEvent(ev);
-						}
+					auto ev = std::make_shared<RsGxsForumEvent>();
+					ev->mForumMsgId = msgChange->mMsgId;
+					ev->mForumGroupId = msgChange->mGroupId;
+					ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+					rsEvents->postEvent(ev);
 				}
 
 #ifdef NOT_USED_YET

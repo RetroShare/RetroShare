@@ -64,6 +64,7 @@ public:
 	RsTlvGxsCircleIdSet subCircleSet;
 };
 
+#ifdef TO_REMOVE
 class RsGxsCircleMsgItem : public RsGxsMsgItem
 {
 public:
@@ -76,6 +77,7 @@ public:
 
 	RsGxsCircleMsg mMsg;
 };
+#endif
 
 class RsGxsCircleSubscriptionRequestItem: public RsGxsMsgItem
 {
@@ -86,17 +88,11 @@ public:
     
     void clear();
     
-    enum {
-        SUBSCRIPTION_REQUEST_UNKNOWN     = 0x00, 
-        SUBSCRIPTION_REQUEST_SUBSCRIBE   = 0x01,
-        SUBSCRIPTION_REQUEST_UNSUBSCRIBE = 0x02
-    };
-    
 	virtual void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
 
     uint32_t           time_stamp ;
     uint32_t           time_out ;
-    uint8_t          subscription_type ;
+    RsGxsCircleSubscriptionType subscription_type ;
 };
 
 class RsGxsCircleSerialiser : public RsServiceSerializer

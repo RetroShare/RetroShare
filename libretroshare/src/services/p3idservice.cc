@@ -606,22 +606,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
         RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(changes[i]);
 
         if (msgChange && !msgChange->metaChange())
-        {
-#ifdef DEBUG_IDS
-            std::cerr << "p3IdService::notifyChanges() Found Message Change Notification";
-            std::cerr << std::endl;
-#endif
-
-            std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-
-            for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-            {
-#ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Msgs for Group: " << mit->first;
-                std::cerr << std::endl;
-#endif
-            }
-        }
+            RsWarn() << __PRETTY_FUNCTION__ << " Found a Msg data change in p3IdService. This is quite unexpected." << std::endl;
 
         RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(changes[i]);
 

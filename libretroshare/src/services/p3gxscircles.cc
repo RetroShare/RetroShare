@@ -535,57 +535,51 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
-		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
 		RsGxsNotify *c = *it;
+		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(c);
 
 		if (msgChange)
 		{
 #ifdef DEBUG_CIRCLES
-			std::cerr << "  Found circle Message Change Notification" << std::endl;
+			std::cerr << "  Found circle Message Change Notification for group " << msgChange->mGroupId << ", msg ID " << msgChange->mMsgId << std::endl;
 #endif
-			for(auto mit = msgChange->msgChangeMap.begin(); mit != msgChange->msgChangeMap.end(); ++mit)
-			{
 #ifdef DEBUG_CIRCLES
-				std::cerr << "    Msgs for Group: " << mit->first << std::endl;
+			std::cerr << "    Msgs for Group: " << mit->first << std::endl;
 #endif
-                RsGxsCircleId circle_id(mit->first);
+			RsGxsCircleId circle_id(msgChange->mGroupId);
 
-				force_cache_reload(circle_id);
+			if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW))
+			{
+				const RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<const RsGxsCircleSubscriptionRequestItem *>(msgChange->mNewMsgItem);
 
-                RsGxsCircleDetails details;
-				getCircleDetails(circle_id,details);
+				if(item)
+				{
+					auto ev = std::make_shared<RsGxsCircleEvent>();
+					ev->mCircleId = circle_id;
+					ev->mGxsId = msgChange->mNewMsgItem->meta.mAuthorId;
 
-				if(rsEvents && (c->getType() == RsGxsNotify::TYPE_RECEIVED_NEW|| c->getType() == RsGxsNotify::TYPE_PUBLISHED) )
-					for (auto msgIdIt(mit->second.begin()), end(mit->second.end()); msgIdIt != end; ++msgIdIt)
+					if (item->subscription_type == RsGxsCircleSubscriptionType::UNSUBSCRIBE)
 					{
-						RsGxsCircleMsg msg;
-						if(getCircleRequest(RsGxsGroupId(circle_id),*msgIdIt,msg))
-						{
-							auto ev = std::make_shared<RsGxsCircleEvent>();
-							ev->mCircleId = circle_id;
-							ev->mGxsId = msg.mMeta.mAuthorId;
-
-							if (msg.stuff == "SUBSCRIPTION_REQUEST_UNSUBSCRIBE")
-							{
-								ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
-								rsEvents->postEvent(ev);
-							}
-							else if(msg.stuff == "SUBSCRIPTION_REQUEST_SUBSCRIBE")
-							{
-								ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
-								rsEvents->postEvent(ev);
-							}
-						}
-                        else
-                            RsErr()<< __PRETTY_FUNCTION__<<" Cannot request CircleMsg " << *msgIdIt << ". Db not ready?" << std::endl;
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE;
+						rsEvents->postEvent(ev);
 					}
-
-				mCircleCache.erase(circle_id);
-                mCacheUpdated = true;
+					else if(item->subscription_type == RsGxsCircleSubscriptionType::SUBSCRIBE)
+					{
+						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST;
+						rsEvents->postEvent(ev);
+					}
+                    else
+                        RsErr() << __PRETTY_FUNCTION__ << " Unknown subscription request type " << static_cast<uint32_t>(item->subscription_type) << " in msg item" << std::endl;
+				}
+				else
+					RsErr() << __PRETTY_FUNCTION__ << ": missing SubscriptionRequestItem in msg notification for msg " << msgChange->mMsgId << std::endl;
 			}
+
+			mCircleCache.erase(circle_id);
+			mCacheUpdated = true;
 		}
 
-		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(*it);
+		RsGxsGroupChange *groupChange = dynamic_cast<RsGxsGroupChange *>(c);
 
 	    /* add groups to ExternalIdList (Might get Personal Circles here until NetChecks in place) */
 	    if (groupChange)
@@ -697,7 +691,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
             }
         }
 
-        delete *it;
+        delete c;
 	}
 }
 
@@ -930,8 +924,9 @@ bool p3GxsCircles::getMsgData(const uint32_t &token, std::vector<RsGxsCircleMsg>
 
 			for(; vit != msgItems.end(); ++vit)
 			{
+#ifdef TO_REMOVE
 				RsGxsCircleMsgItem* item = dynamic_cast<RsGxsCircleMsgItem*>(*vit);
-				RsGxsCircleSubscriptionRequestItem* rsItem = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(*vit);
+
 				if(item)
 				{
 					RsGxsCircleMsg msg = item->mMsg;
@@ -939,22 +934,16 @@ bool p3GxsCircles::getMsgData(const uint32_t &token, std::vector<RsGxsCircleMsg>
 					msgs.push_back(msg);
 					delete item;
 				}
-				else if (rsItem)
+#endif
+
+				RsGxsCircleSubscriptionRequestItem* rsItem = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(*vit);
+
+                if (rsItem)
 				{
 					RsGxsCircleMsg msg ;//= rsItem->mMsg;
 					msg.mMeta = rsItem->meta;
-					switch (rsItem->subscription_type)
-					{
-						case RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNKNOWN:
-							msg.stuff.clear();
-						break;
-						case RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE:
-							msg.stuff="SUBSCRIPTION_REQUEST_SUBSCRIBE";
-						break;
-						case RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE:
-							msg.stuff="SUBSCRIPTION_REQUEST_UNSUBSCRIBE";
-						break;
-					}
+                    msg.mSubscriptionType = rsItem->subscription_type;
+
 					msgs.push_back(msg);
 					delete rsItem;
 				}
@@ -2320,19 +2309,15 @@ void p3GxsCircles::handle_event(uint32_t event_type, const std::string &elabel)
 
 bool p3GxsCircles::pushCircleMembershipRequest(
         const RsGxsId& own_gxsid, const RsGxsCircleId& circle_id,
-        uint32_t request_type )
+        RsGxsCircleSubscriptionType request_type )
 {
 	Dbg3() << __PRETTY_FUNCTION__ << "own_gxsid = " << own_gxsid
 	       << ", circle=" << circle_id << ", req type=" << request_type
 	       << std::endl;
 
-	if( request_type !=
-	        RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE &&
-	    request_type !=
-	        RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE )
+	if( request_type != RsGxsCircleSubscriptionType::SUBSCRIBE && request_type != RsGxsCircleSubscriptionType::UNSUBSCRIBE )
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " Unknown request type: "
-		        << request_type << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Unknown request type: " << static_cast<uint32_t>(request_type) << std::endl;
 		return false;
 	}
 
@@ -2368,7 +2353,7 @@ bool p3GxsCircles::pushCircleMembershipRequest(
     
     s->meta.mGroupId = RsGxsGroupId(circle_id) ;
     s->meta.mMsgId.clear();
-    s->meta.mThreadId = RsDirUtil::sha1sum(tmpmem,tmpmem.size()); // make the ID from the hash of the cirle ID and the author ID
+    s->meta.mThreadId = RsGxsMessageId(RsDirUtil::sha1sum(tmpmem,tmpmem.size())); // make the ID from the hash of the cirle ID and the author ID
     s->meta.mAuthorId = own_gxsid;
 
     // msgItem->meta.mParentId = ; // leave these blank
@@ -2382,7 +2367,7 @@ bool p3GxsCircles::pushCircleMembershipRequest(
 #endif
     uint32_t token ;
     
-    if(request_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+    if(request_type == RsGxsCircleSubscriptionType::SUBSCRIBE)
 	    RsGenExchange::subscribeToGroup(token, RsGxsGroupId(circle_id), true);
     
     RsGenExchange::publishMsg(token, s);
@@ -2395,11 +2380,11 @@ bool p3GxsCircles::pushCircleMembershipRequest(
 
 bool p3GxsCircles::requestCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
 {
-    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE) ;
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionType::SUBSCRIBE) ;
 }
 bool p3GxsCircles::cancelCircleMembership(const RsGxsId& own_gxsid,const RsGxsCircleId& circle_id) 
 {
-    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE) ;
+    return pushCircleMembershipRequest(own_gxsid,circle_id,RsGxsCircleSubscriptionType::UNSUBSCRIBE) ;
 }
 
 
@@ -2470,12 +2455,12 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
                 {
                     info.last_subscription_TS = item->time_stamp ;
                     
-                    if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_SUBSCRIBE)
+                    if(item->subscription_type == RsGxsCircleSubscriptionType::SUBSCRIBE)
                     	info.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
-                    else if(item->subscription_type == RsGxsCircleSubscriptionRequestItem::SUBSCRIPTION_REQUEST_UNSUBSCRIBE)
+                    else if(item->subscription_type == RsGxsCircleSubscriptionType::UNSUBSCRIBE)
                     	info.subscription_flags &= ~GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED;    
                     else
-                    	std::cerr << " (EE) unknown subscription order type: " << item->subscription_type ;
+                    	std::cerr << " (EE) unknown subscription order type: " << static_cast<uint32_t>(item->subscription_type) ;
                     
 					mCacheUpdated = true;
 #ifdef DEBUG_CIRCLES

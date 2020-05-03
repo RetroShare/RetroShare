@@ -98,27 +98,22 @@ void p3PostBase::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			std::cerr << std::endl;
 #endif
 
-			std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgChangeMap = msgChange->msgChangeMap;
-			for(auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-			{
 #ifdef POSTBASE_DEBUG
-				std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
-				std::cerr << std::endl;
+			std::cerr << "p3PostBase::notifyChanges() Msgs for Group: " << mit->first;
+			std::cerr << std::endl;
 #endif
-				// To start with we are just going to trigger updates on these groups.
-				// FUTURE OPTIMISATION.
-				// It could be taken a step further and directly request these msgs for an update.
-				addGroupForProcessing(mit->first);
+			// To start with we are just going to trigger updates on these groups.
+			// FUTURE OPTIMISATION.
+			// It could be taken a step further and directly request these msgs for an update.
+			addGroupForProcessing(msgChange->mGroupId);
 
-				if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
-					for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-					{
-						auto ev = std::make_shared<RsGxsPostedEvent>();
-						ev->mPostedMsgId = *mit1;
-						ev->mPostedGroupId = mit->first;
-						ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
-						rsEvents->postEvent(ev);
-					}
+			if (rsEvents && (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED))
+			{
+				auto ev = std::make_shared<RsGxsPostedEvent>();
+				ev->mPostedMsgId = msgChange->mMsgId;
+				ev->mPostedGroupId = msgChange->mGroupId;
+				ev->mPostedEventCode = RsPostedEventCode::NEW_MESSAGE;
+				rsEvents->postEvent(ev);
 			}
 		}
 
@@ -336,11 +331,7 @@ void p3PostBase::addGroupForProcessing(RsGxsGroupId grpId)
 	{
 		RsStackMutex stack(mPostBaseMtx); /********** STACK LOCKED MTX ******/
 		// no point having multiple lookups queued.
-		if (mBgGroupList.end() == std::find(mBgGroupList.begin(), 
-						mBgGroupList.end(), grpId))
-		{
-			mBgGroupList.push_back(grpId);
-		}
+		mBgGroupList.insert(grpId);
 	}
 }
 
@@ -373,8 +364,8 @@ void p3PostBase::background_requestUnprocessedGroup()
 			return;
 		}
 
-		grpId = mBgGroupList.front();
-		mBgGroupList.pop_front();
+		grpId = *mBgGroupList.begin();
+		mBgGroupList.erase(grpId);
 		mBgProcessing = true;
 	}
 
@@ -468,8 +459,6 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
-
 
 	RsGxsGroupId groupId;
 	std::map<RsGxsGroupId, std::vector<RsGxsMsgItem*> >::iterator mit;
@@ -520,7 +509,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 #endif
 
 				/* but we need to notify GUI about them */	
-				msgChanges->msgChangeMap[mit->first].insert((*vit)->meta.mMsgId);
+				changes.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, mit->first,(*vit)->meta.mMsgId, false));
 			}
 			else if (NULL != (commentItem = dynamic_cast<RsGxsCommentItem *>(*vit)))
 			{
@@ -616,22 +605,7 @@ void p3PostBase::background_loadMsgs(const uint32_t &token, bool unprocessed)
 	}
 
 	/* push updates of new Posts */
-	if (msgChanges->msgChangeMap.size() > 0)
-	{
-#ifdef POSTBASE_DEBUG
-        std::cerr << "p3PostBase::background_processNewMessages() -> receiveChanges()";
-        std::cerr << std::endl;
-#endif
-
-		changes.push_back(msgChanges);
-	 	//receiveHelperChanges(changes);
-
-        notifyChanges(changes);
-	}
-	else
-	{
-		delete(msgChanges);
-	}
+	notifyChanges(changes);
 
 	/* request the summary info from the parents */
 	uint32_t token_b;
@@ -696,7 +670,6 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 
 	// generate vector of changes to push to the GUI.
 	std::vector<RsGxsNotify *> changes;
-	RsGxsMsgChange *msgChanges = new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED, false);
 
 	for(mit = parentMsgList.begin(); mit != parentMsgList.end(); ++mit)
 	{
@@ -739,7 +712,8 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 #endif
 
 				stats.increment(it->second);
-				msgChanges->msgChangeMap[mit->first].insert(vit->mMsgId);
+
+	            changes.push_back(new RsGxsMsgChange(RsGxsNotify::TYPE_PROCESSED,mit->first,vit->mMsgId, false));
 			}
 			else
 			{
@@ -771,21 +745,7 @@ void p3PostBase::background_updateVoteCounts(const uint32_t &token)
 		}
 	}
 
-	if (msgChanges->msgChangeMap.size() > 0)
-	{
-#ifdef POSTBASE_DEBUG
-        std::cerr << "p3PostBase::background_updateVoteCounts() -> receiveChanges()";
-        std::cerr << std::endl;
-#endif
-
-		changes.push_back(msgChanges);
-	 	//receiveHelperChanges(changes);
-        notifyChanges(changes);
-	}
-	else
-	{
-		delete(msgChanges);
-	}
+	notifyChanges(changes);
 
 	// DONE!.
 	background_cleanup();

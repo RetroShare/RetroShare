@@ -35,7 +35,9 @@ RsItem *RsGxsCircleSerialiser::create_item(uint16_t service, uint8_t item_sub_id
     switch(item_sub_id)
     {
     case RS_PKT_SUBTYPE_GXSCIRCLE_GROUP_ITEM: return new RsGxsCircleGroupItem();
+#ifdef TO_REMOVE
     case RS_PKT_SUBTYPE_GXSCIRCLE_MSG_ITEM:   return new RsGxsCircleMsgItem();
+#endif
     case RS_PKT_SUBTYPE_GXSCIRCLE_SUBSCRIPTION_REQUEST_ITEM: return new RsGxsCircleSubscriptionRequestItem();
     default:
         return NULL ;
@@ -46,20 +48,27 @@ void RsGxsCircleSubscriptionRequestItem::clear()
 {
     time_stamp = 0 ;
     time_out   = 0 ;
-    subscription_type = SUBSCRIPTION_REQUEST_UNKNOWN;
+    subscription_type = RsGxsCircleSubscriptionType::UNKNOWN;
 }
 
+#ifdef TO_REMOVE
 void RsGxsCircleMsgItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
 	//RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,mMsg.stuff,"mMsg.stuff") ;//Should be this but not retrocompatible...
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,mMsg.stuff,"msg.stuff") ;
 }
 
+void RsGxsCircleMsgItem::clear()
+{
+	mMsg.stuff.clear();
+}
+#endif
+
 void RsGxsCircleSubscriptionRequestItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,time_stamp,"time_stamp") ;
     RsTypeSerializer::serial_process<uint32_t>(j,ctx,time_out  ,"time_out") ;
-    RsTypeSerializer::serial_process<uint8_t> (j,ctx,subscription_type  ,"subscription_type") ;
+    RsTypeSerializer::serial_process<RsGxsCircleSubscriptionType> (j,ctx,subscription_type  ,"subscription_type") ;
 }
 
 void RsGxsCircleGroupItem::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
@@ -67,11 +76,6 @@ void RsGxsCircleGroupItem::serial_process(RsGenericSerializer::SerializeJob j,Rs
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,pgpIdSet,"pgpIdSet") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,gxsIdSet,"gxsIdSet") ;
     RsTypeSerializer::serial_process<RsTlvItem>(j,ctx,subCircleSet,"subCircleSet") ;
-}
-
-void RsGxsCircleMsgItem::clear()
-{
-	mMsg.stuff.clear();
 }
 
 void RsGxsCircleGroupItem::clear()

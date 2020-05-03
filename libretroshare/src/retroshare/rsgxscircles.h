@@ -96,22 +96,32 @@ struct RsGxsCircleGroup : RsSerializable
 	~RsGxsCircleGroup() override;
 };
 
+enum class RsGxsCircleSubscriptionType:uint8_t {
+	UNKNOWN     = 0x00,
+	SUBSCRIBE   = 0x01,
+	UNSUBSCRIBE = 0x02
+};
+
 struct RsGxsCircleMsg : RsSerializable
 {
 	RsMsgMetaData mMeta;
 
+#ifdef TO_REMOVE
+    // This item is actually totally unused, so we can change it no problem
 #ifndef V07_NON_BACKWARD_COMPATIBLE_CHANGE_UNNAMED
 	/* This is horrible and should be changed into yet to be defined something
 	 * reasonable in next non-retrocompatible version */
 	std::string stuff;
 #endif
+#endif
+    RsGxsCircleSubscriptionType mSubscriptionType;
 
 	/// @see RsSerializable
 	void serial_process( RsGenericSerializer::SerializeJob j,
 	                     RsGenericSerializer::SerializeContext& ctx) override
 	{
 		RS_SERIAL_PROCESS(mMeta);
-		RS_SERIAL_PROCESS(stuff);
+		RS_SERIAL_PROCESS(mSubscriptionType);
 	}
 
 	~RsGxsCircleMsg() override;
