@@ -104,12 +104,12 @@ class pqistreamer: public PQInterface
 
 	private:
 		int queue_outpqi_locked(RsItem *i,uint32_t& serialized_size);
-		int handleincomingitem_locked(RsItem *i, int len);
+		int handleincomingitem(RsItem *i, int len);
 
 		// ticked regularly (manages out queues and sending
 		// via above interfaces.
 		virtual int	handleoutgoing_locked();
-		virtual int	handleincoming_locked();
+		virtual int	handleincoming();
 
 		// Bandwidth/Streaming Management.
 		float	outTimeSlice_locked();
@@ -117,11 +117,11 @@ class pqistreamer: public PQInterface
 		int	outAllowedBytes_locked();
 		void	outSentBytes_locked(uint32_t );
 
-		int	inAllowedBytes_locked();
-		void	inReadBytes_locked(uint32_t );
+		int	inAllowedBytes();
+		void	inReadBytes(uint32_t );
 
         		// cleans up everything that's pending / half finished.
-		void free_pend_locked();
+		void free_pend();
 
 		// RsSerialiser - determines which packets can be serialised.
 		RsSerialiser *mRsSerialiser;
@@ -129,7 +129,7 @@ class pqistreamer: public PQInterface
 		void *mPkt_wpending; // storage for pending packet to write.
         	uint32_t mPkt_wpending_size; // ... and its size.
 
-        void allocate_rpend_locked(); // use these two functions to allocate/free the buffer below
+        void allocate_rpend(); // use these two functions to allocate/free the buffer below
         
 		int   mPkt_rpend_size; // size of pkt_rpending.
 		void *mPkt_rpending; // storage for read in pending packets.
@@ -177,7 +177,7 @@ class pqistreamer: public PQInterface
         bool mAcceptsPacketSlicing ;
         rstime_t mLastSentPacketSlicingProbe ;
         void locked_addTrafficClue(const RsItem *pqi, uint32_t pktsize, std::list<RSTrafficClue> &lst);
-        RsItem *addPartialPacket_locked(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
+        RsItem *addPartialPacket(const void *block, uint32_t len, uint32_t slice_packet_id,bool packet_starting,bool packet_ending,uint32_t& total_len);
         
         std::map<uint32_t,PartialPacketRecord> mPartialPackets ;
 };
