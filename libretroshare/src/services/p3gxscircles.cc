@@ -103,7 +103,7 @@
 #define MIN_CIRCLE_LOAD_GAP		5
 #define GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
 #define GXS_CIRCLE_DELAY_TO_CHECK_MEMBERSHIP_UPDATE	 60	// re-check every 1 mins. Normally this shouldn't be necessary since notifications inform abotu new messages.
-#define GXS_CIRCLE_DELAY_TO_SEND_CACHE_UPDATED_EVENT 10	// do not send cache update events more often than every 10 secs.
+#define GXS_CIRCLE_DELAY_TO_SEND_CACHE_UPDATED_EVENT  2	// do not send cache update events more often than every 2 secs.
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -532,6 +532,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 #endif
 
 	p3Notify *notify = RsServer::notify();
+    std::set<RsGxsCircleId> circles_to_reload;
 
 	for(auto it = changes.begin(); it != changes.end(); ++it)
 	{
@@ -576,6 +577,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 			}
 
 			mCircleCache.erase(circle_id);
+			circles_to_reload.insert(circle_id);
 			mCacheUpdated = true;
 		}
 
@@ -608,6 +610,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 						mCircleCache.erase(RsGxsCircleId(*git));
 						mCacheUpdated = true;
+						circles_to_reload.insert(RsGxsCircleId(*git));
 					}
 				}
 			}
@@ -686,6 +689,7 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 				    RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 				    mCircleCache.erase(RsGxsCircleId(*git));
 					mCacheUpdated = true;
+                    circles_to_reload.insert(RsGxsCircleId(*git));
 			    }
 
             }
@@ -693,6 +697,9 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
         delete c;
 	}
+
+    for(auto& circle_id:circles_to_reload)
+        force_cache_reload(circle_id);
 }
 
 /********************************************************************************/

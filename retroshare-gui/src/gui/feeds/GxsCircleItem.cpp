@@ -86,13 +86,13 @@ void GxsCircleItem::setup()
 	RsGxsCircleDetails circleDetails;
 	if (rsGxsCircles->getCircleDetails(mCircleId, circleDetails))
 	{
+		ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()) + " (ID: " + QString::fromStdString(circleDetails.mCircleId.toStdString()) + ")");
+
         // from here we can figure out if we already have requested membership or not
 
 		if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REQ)
 		{
 			ui->titleLabel->setText(tr("You received a membership request a circle you're administrating:"));
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
@@ -102,8 +102,6 @@ void GxsCircleItem::setup()
 		else if (mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
 		{
 			ui->titleLabel->setText(tr("You received an invitation for this circle:"));
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
@@ -114,8 +112,6 @@ void GxsCircleItem::setup()
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
 		{
 			ui->titleLabel->setText(idName + tr(" has left this circle."));
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
@@ -125,8 +121,6 @@ void GxsCircleItem::setup()
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
 		{
 			ui->titleLabel->setText(idName + tr(" which you invited, has join this circle you're administrating."));
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
@@ -137,8 +131,6 @@ void GxsCircleItem::setup()
 		{
 			ui->titleLabel->setText(tr("Your identity %1 has been revoked from this circle.").arg(idName));
 
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
@@ -149,8 +141,6 @@ void GxsCircleItem::setup()
 		{
 			ui->titleLabel->setText(tr("Your identity %1 as been accepted in this circle.").arg(idName));
 
-			ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()));
-			ui->gxsIdLabel->setText(idName);
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 

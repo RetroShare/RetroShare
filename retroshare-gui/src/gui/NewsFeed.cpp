@@ -294,97 +294,120 @@ void NewsFeed::handleChannelEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 {
- 	const RsGxsCircleEvent *pe = dynamic_cast<const RsGxsCircleEvent*>(event.get());
-    if(!pe)
-        return;
+    // Gives the backend a few secs to load the cache data while not blocking the UI. This is not so nice, but there's no proper
+    // other way to do that.
 
-	RsGxsCircleDetails details;
-
-    if(pe->mCircleId.isNull())	// probably an item for cache update
-        return ;
-
-	if(!rsGxsCircles->getCircleDetails(pe->mCircleId,details))
+    RsThread::async( [event,this]()
     {
-        std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
-    	return;
-    }
+		const RsGxsCircleEvent *pe = dynamic_cast<const RsGxsCircleEvent*>(event.get());
+		if(!pe)
+			return;
 
-    if(!details.isGxsIdBased())	// not handled yet.
-        return;
+		if(pe->mCircleId.isNull())	// probably an item for cache update
+			return ;
 
-    // Check if the circle is one of which we belong to or we are an admin of.
-    // If so, then notify in the GUI about other members leaving/subscribing, according
-    // to the following rules. The names correspond to the RS_FEED_CIRCLE_* variables:
-	//
-	//  Message-based notifications:
-	//
-	//                       +---------------------------+----------------------------+
-	//                       |  Membership request       |  Membership cancellation   |
-	//                       +-------------+-------------+-------------+--------------+
-	//                       |  Admin      |  Not admin  |    Admin    |   Not admin  |
-	//  +--------------------+-------------+-------------+----------------------------+
-	//  |    in invitee list |  MEMB_JOIN  |  MEMB_JOIN  |  MEMB_LEAVE |  MEMB_LEAVE  |
-	//  +--------------------+-------------+-------------+-------------+--------------+
-	//  |not in invitee list |  MEMB_REQ   |      X      |      X      |      X       |
-	//  +--------------------+-------------+-------------+-------------+--------------+
-	//
-	//  Note: in this case, the GxsId never belongs to you, since you dont need to handle
-	//        notifications for actions you took yourself (leave/join a circle)
-	//
-	//  GroupData-based notifications, the GxsId belongs to you:
-	//
-	//                       +---------------------------+----------------------------+
-	//                       | GxsId joins invitee list  |  GxsId leaves invitee list |
-	//                       +-------------+-------------+-------------+--------------+
-	//                       |  Id is yours| Id is not   | Id is yours | Id is not    |
-	//  +--------------------+-------------+-------------+-------------+--------------+
-	//  | Has Member request | MEMB_ACCEPT | (MEMB_JOIN) | MEMB_REVOKED| (MEMB_LEAVE) |
-	//  +--------------------+-------------+-------------+-------------+--------------+
-	//  | No Member request  |  INVITE_REC |     X       |  INVITE_REM |     X        |
-	//  +--------------------+-------------+-------------+-------------+--------------+
-	//
-	//  Note: In this case you're never an admin of the circle, since these notification
-	//        would be a direct consequence of your own actions.
+		RsGxsCircleDetails details;
+        bool loaded = false;
 
-	switch(pe->mCircleEventType)
-	{
-	case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
-		// only show membership requests if we're an admin of that circle
-		if(details.isIdInInviteeList(pe->mGxsId))
-			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
-        else if(details.mAmIAdmin)
-			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
-
-		break;
-
-	case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
-
-		if(details.isIdInInviteeList(pe->mGxsId))
-			addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
-		break;
-
-	case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
-        if(rsIdentity->isOwnId(pe->mGxsId))
-        {
-            if(details.isIdRequestingMembership(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
+        for(int i=0;i<5 && !loaded;++i)
+			if(rsGxsCircles->getCircleDetails(pe->mCircleId,details))
+            {
+                std::cerr << "Cache item loaded for circle " << pe->mCircleId << std::endl;
+                loaded = true;
+            }
 			else
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
-        }
-		break;
+            {
+                std::cerr << "Cache item for circle " << pe->mCircleId << " not loaded. Waiting " << i << "s" << std::endl;
+                rstime::rs_usleep(1000*1000);
+            }
 
-	case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
-        if(rsIdentity->isOwnId(pe->mGxsId))
-        {
-            if(details.isIdRequestingMembership(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
-            else
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
-        }
-		break;
+        if(!loaded)
+		{
+			std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
+			return;
+		}
 
-	default: break;
-	}
+		if(!details.isGxsIdBased())	// not handled yet.
+			return;
+
+		// Check if the circle is one of which we belong to or we are an admin of.
+		// If so, then notify in the GUI about other members leaving/subscribing, according
+		// to the following rules. The names correspond to the RS_FEED_CIRCLE_* variables:
+		//
+		//  Message-based notifications:
+		//
+		//                       +---------------------------+----------------------------+
+		//                       |  Membership request       |  Membership cancellation   |
+		//                       +-------------+-------------+-------------+--------------+
+		//                       |  Admin      |  Not admin  |    Admin    |   Not admin  |
+		//  +--------------------+-------------+-------------+----------------------------+
+		//  |    in invitee list |  MEMB_JOIN  |  MEMB_JOIN  |  MEMB_LEAVE |  MEMB_LEAVE  |
+		//  +--------------------+-------------+-------------+-------------+--------------+
+		//  |not in invitee list |  MEMB_REQ   |      X      |      X      |      X       |
+		//  +--------------------+-------------+-------------+-------------+--------------+
+		//
+		//  Note: in this case, the GxsId never belongs to you, since you dont need to handle
+		//        notifications for actions you took yourself (leave/join a circle)
+		//
+		//  GroupData-based notifications, the GxsId belongs to you:
+		//
+		//                       +---------------------------+----------------------------+
+		//                       | GxsId joins invitee list  |  GxsId leaves invitee list |
+		//                       +-------------+-------------+-------------+--------------+
+		//                       |  Id is yours| Id is not   | Id is yours | Id is not    |
+		//  +--------------------+-------------+-------------+-------------+--------------+
+		//  | Has Member request | MEMB_ACCEPT | (MEMB_JOIN) | MEMB_REVOKED| (MEMB_LEAVE) |
+		//  +--------------------+-------------+-------------+-------------+--------------+
+		//  | No Member request  |  INVITE_REC |     X       |  INVITE_REM |     X        |
+		//  +--------------------+-------------+-------------+-------------+--------------+
+		//
+		//  Note: In this case you're never an admin of the circle, since these notification
+		//        would be a direct consequence of your own actions.
+
+	RsQThreadUtils::postToObject( [event,details,this]()
+	{
+		const RsGxsCircleEvent *pe = static_cast<const RsGxsCircleEvent*>(event.get());
+
+		switch(pe->mCircleEventType)
+		{
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
+			// only show membership requests if we're an admin of that circle
+			if(details.isIdInInviteeList(pe->mGxsId))
+				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
+			else if(details.mAmIAdmin)
+				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
+
+			break;
+
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
+
+			if(details.isIdInInviteeList(pe->mGxsId))
+				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
+			break;
+
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
+			if(rsIdentity->isOwnId(pe->mGxsId))
+			{
+				if(details.isIdRequestingMembership(pe->mGxsId))
+					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
+				else
+					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
+			}
+			break;
+
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
+			if(rsIdentity->isOwnId(pe->mGxsId))
+			{
+				if(details.isIdRequestingMembership(pe->mGxsId))
+					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
+				else
+					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
+			}
+			break;
+
+		default: break;
+		}
+	}, this ); }); // damn!
 }
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
