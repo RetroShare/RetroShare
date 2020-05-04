@@ -313,17 +313,16 @@ int 	pqistreamer::tick_recv(uint32_t timeout)
 
 int 	pqistreamer::tick_send(uint32_t timeout)
 {
-	RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
-
-	/* short circuit everything is bio isn't active */
+	/* short circuit everything if bio isn't active */
 	if (!(mBio->isactive()))
 	{
-        		free_pend();
+		free_pend();
 		return 0;
 	}
 
 	if (mBio->cansend(timeout))
 	{
+		RsStackMutex stack(mStreamerMtx); /**** LOCKED MUTEX ****/
 		handleoutgoing_locked();
 	}
     
