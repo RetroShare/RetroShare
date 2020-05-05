@@ -63,7 +63,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setMessageVersions(v) ;
     setup();
-
+    mLoaded = false;
     // no call to loadGroup() here because we have it already.
 }
 
@@ -83,7 +83,7 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 
 	setMessageVersions(v) ;
     setup();
-
+    mLoaded = false;
     loadGroup();
 }
 
