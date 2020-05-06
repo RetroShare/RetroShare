@@ -890,3 +890,11 @@ WireDialog QFrame#frame{
 WireDialog QWidget#scrollAreaWidgetContents_groups{
 	background-color: white;
 }
+
+MessagesDialog QWidget#messageTreeWidget::item {
+	padding: 2px;
+}
+
+GxsForumThreadWidget QWidget#threadTreeWidget::item {
+	padding: 2px;
+}
