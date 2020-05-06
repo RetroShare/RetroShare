@@ -43,8 +43,10 @@ bool pqithreadstreamer::RecvItem(RsItem *item)
 
 int	pqithreadstreamer::tick()
 {
-        RsStackMutex stack(mThreadMutex);
-    tick_bio();
+//	pqithreadstreamer mutex lock is not needed here
+//	we are only checking if the connection is active, and if not active we will try to establish it
+//	RsStackMutex stack(mThreadMutex);
+	tick_bio();
 
 	return 0;
 }

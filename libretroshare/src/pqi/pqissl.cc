@@ -372,9 +372,11 @@ int 	pqissl::status()
 	// tick......
 int	pqissl::tick()
 {
-	RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
+	// there is no reason to lock pqissl mutex now 
+	// we will lock the mutex later if we actually need to call to ConnectAttempt
+	// RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 
-	//pqistreamer::tick();
+	// pqistreamer::tick();
 
 	// continue existing connection attempt.
 	if (!active)
@@ -385,7 +387,8 @@ int	pqissl::tick()
 #ifdef PQISSL_LOG_DEBUG 
 			rslog(RSL_DEBUG_BASIC, pqisslzone, "pqissl::tick() Continuing Connection Attempt!");
 #endif
-
+			// now lock pqissl mutex, that will take up to 10 ms
+			RsStackMutex stack(mSslMtx); /**** LOCKED MUTEX ****/
 			ConnectAttempt();
 			return 1;
 		}
