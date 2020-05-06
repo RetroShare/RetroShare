@@ -494,7 +494,7 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 	}
 
 	addFeedItem(item);
-	sendNewsFeedChanged();
+	//sendNewsFeedChanged(); //Already done by addFeedItem()
 }
 
 void NewsFeed::remUniqueFeedItem(FeedItem *item)

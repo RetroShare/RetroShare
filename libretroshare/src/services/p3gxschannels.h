@@ -196,6 +196,11 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	                        std::vector<RsGxsChannelPost>& posts,
 	                        std::vector<RsGxsComment>& comments ) override;
 
+	/// Implementation of @see RsGxsChannels::getChannelComments
+	virtual bool getChannelComments(const RsGxsGroupId &channelId,
+	                                const std::set<RsGxsMessageId> &contentIds,
+	                                std::vector<RsGxsComment> &comments) override;
+
 	/// Implementation of @see RsGxsChannels::getContentSummaries
 	bool getContentSummaries(
 	        const RsGxsGroupId& channelId,

@@ -56,6 +56,69 @@ const int PQISSL_UDP_FLAG = 0x02;
 /* TCP buffer size for Windows systems */
 const int WINDOWS_TCP_BUFFER_SIZE = 512 * 1024; // 512 KB
 
+
+//	This is a (very) simple overview of the different state machnines. The tree includes high level funtions only.
+//
+//	connect_parameter() is used to pass down settings, like address or timeout values
+//
+//	tick() or connect()
+//     |
+//     +----- ConnectAttempt()
+//                 |
+//                 +--WAITING_NOT or WAITING_DELAY
+//                 |           |
+//                 |           +----- Delay_Connection()
+//                 |                       |
+//                 |                       +--WAITING_NOT
+//                 |                       |        - set 'waiting' to WAITING_DELAY and set delay for next connection attempt
+//                 |                       |
+//                 |                       +--WAITING_DELAY
+//                 |                                   |
+//                 |                                   +----- Initiate_Connection()
+//                 |                                               |
+//                 |                                               +----- setup socket
+//                 |                                               +----- connect
+//                 |                                                        - on success: set "waiting" to WAITING_SOCK_CONNECT and "sockfd" to newly created socket
+//                 |                                                        - on failure: set "waiting" to WAITING_FAIL_INTERFACE
+//                 |
+//                 +--WAITING_SOCK_CONNECT
+//                 |           |
+//                 |           +----- Initiate_SSL_Connection()
+//                 |                       |
+//                 |                       +----- Basic_Connection_Complete()
+//                 |                       |           |
+//                 |                       |           +----- CheckConnectionTimeout()
+//                 |                       |           |
+//                 |                       |           +----- ready up socket.
+//                 |                       |                    - SOCKS, udp tou, i2p BOB intercept here
+//                 |                       |                    - on failure: set "waiting" to WAITING_FAIL_INTERFACE and "sockfd" to -1
+//                 |                       |
+//                 |                       +----- create SSL context and attach file descriptors
+//                 |                              - on success:_set "waiting" to WAITING_SSL_CONNECTION
+//                 |
+//                 +--WAITING_SSL_CONNECTION or WAITING_SSL_AUTHORISE
+//                 |           |
+//                 |           +----- Authorise_SSL_Connection()
+//                 |                       |
+//                 |                       +----- SSL_Connection_Complete()
+//                 |                       |           |
+//                 |                       |           +----- performes TSL handshake
+//                 |                       |                    - on success: set "waiting" to WAITING_SSL_AUTHORISE
+//                 |                       |                    - on failure: set "waiting" to WAITING_FAIL_INTERFACE
+//                 |                       |
+//                 |                       +----- set "waiting" to WAITING_NOT
+//                 |                       |
+//                 |                       +----- accept_locked()
+//                 |                                - add peer to the rest of RS and start pqi thread
+//                 |
+//                 |
+//                 +--WAITING_FAIL_INTERFACE
+//	                 	       |
+//                             +----- Failed_Connection()
+//                                      - set "waiting" to WAITING_NOT
+//
+
+
 /***************************** pqi Net SSL Interface *********************************
  * This provides the base SSL interface class, 
  * and handles most of the required functionality.
@@ -203,9 +266,9 @@ bool  	CheckConnectionTimeout();
 	uint32_t mConnectTimeout;
 	rstime_t   mTimeoutTS;
 
+	RS_SET_CONTEXT_DEBUG_LEVEL(1)
+
 private:
 	// ssl only fns.
 	int connectInterface(const struct sockaddr_storage &addr);
-
-	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

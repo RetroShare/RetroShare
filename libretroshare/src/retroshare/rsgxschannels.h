@@ -334,6 +334,19 @@ public:
 	                                std::vector<RsGxsComment>& comments ) = 0;
 
 	/**
+	 * @brief Get channel comments corresponding to the given IDs.
+	 * If the set is empty, nothing is returned.
+	 * @jsonapi{development}
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[in] contentIds ids of requested contents
+	 * @param[out] comments storage for the comments
+	 * @return false if something failed, true otherwhise
+	 */
+	virtual bool getChannelComments(const RsGxsGroupId &channelId,
+	                                const std::set<RsGxsMessageId> &contentIds,
+	                                std::vector<RsGxsComment> &comments) = 0;
+
+	/**
 	 * @brief Get channel content summaries
 	 * @jsonapi{development}
 	 * @param[in] channelId id of the channel of which the content is requested
