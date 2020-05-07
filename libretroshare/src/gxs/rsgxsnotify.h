@@ -92,7 +92,8 @@ public:
 class RsGxsMsgChange : public RsGxsNotify
 {
 public:
-	RsGxsMsgChange(NotifyType type, const RsGxsGroupId& gid, const RsGxsMessageId& msg_id,bool metaChange) : RsGxsNotify(gid), mNewMsgItem(nullptr),NOTIFY_TYPE(type), mMetaChange(metaChange) {}
+	RsGxsMsgChange(NotifyType type, const RsGxsGroupId& gid, const RsGxsMessageId& msg_id,bool metaChange)
+        : RsGxsNotify(gid), mMsgId(msg_id), mNewMsgItem(nullptr),NOTIFY_TYPE(type), mMetaChange(metaChange) {}
 
     RsGxsMessageId mMsgId;
     RsGxsMsgItem *mNewMsgItem;

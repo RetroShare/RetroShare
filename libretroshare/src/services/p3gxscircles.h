@@ -358,7 +358,7 @@ private:
 	uint32_t mDummyIdToken;
 	std::list<RsGxsId> mDummyPgpLinkedIds;
 	std::list<RsGxsId> mDummyOwnIds;
-    bool mCacheUpdated ;
+    bool mShouldSendCacheUpdateNotification ;
     rstime_t mLastCacheUpdateEvent;
     rstime_t mLastDebugPrintTS;
 
