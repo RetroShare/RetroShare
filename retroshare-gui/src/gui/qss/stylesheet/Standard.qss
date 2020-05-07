@@ -571,54 +571,63 @@ IdEditDialog QLabel#info_label
 	background: #FFFFD7;
 	background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #FFFFD7, stop:1 #FFFFB2);
 }
+
 GenCertDialog QComboBox#genPGPuser { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QSpinBox#hiddenport_spinBox { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#hiddenaddr_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#password2_input {
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#password_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#nickname_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#node_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QLineEdit#name_input { 
   border: 2px solid #0099cc;
   border-radius: 6px;
   background: white;
 	font: bold;
 }
+
 GenCertDialog QPushButton#genButton { 
 	border-image: url(:/images/btn_blue.png) 4;
 	border-width: 4;
