@@ -26,6 +26,7 @@
 
 #include "pqi/p3peermgr.h"
 #include "rsitems/rsconfigitems.h"
+#include "util/rsdebug.h"
 #include "util/radix32.h"
 #include "util/radix64.h"
 #include "util/rsdebug.h"
@@ -56,7 +57,7 @@ static const int sleepFactorDefault   = 10; // 0.5s
 static const int sleepFactorFast      = 1;  // 0.05s
 static const int sleepFactorSlow      = 20; // 1s
 
-static struct RsLog::logInfo i2pBobLogInfo = {RsLog::Default, "p3I2pBob"};
+RS_SET_CONTEXT_DEBUG_LEVEL(0)
 
 static const rstime_t selfCheckPeroid = 30;
 
@@ -164,7 +165,7 @@ void p3I2pBob::processTaskAsync(taskTicket *ticket)
 	}
 		break;
 	default:
-		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTaskAsync unknown task");
+		RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::processTaskAsync unknown task" << std::endl;
 		rsAutoProxyMonitor::taskError(ticket);
 		break;
 	}
@@ -179,7 +180,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::status:
 		// check if everything needed is set
 		if (!data) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::status autoProxyTask::status data is missing");
+			RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::status autoProxyTask::status data is missing" << std::endl;
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -193,7 +194,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::getSettings:
 		// check if everything needed is set
 		if (!data) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::getSettings data is missing");
+			RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::data_tick autoProxyTask::getSettings data is missing" << std::endl;
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -207,7 +208,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::setSettings:
 		// check if everything needed is set
 		if (!data) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::setSettings data is missing");
+			RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::data_tick autoProxyTask::setSettings data is missing" << std::endl;
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -227,7 +228,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 		break;
 	case autoProxyTask::getErrorInfo:
 		if (!data) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::data_tick autoProxyTask::getErrorInfo data is missing");
+			RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::data_tick autoProxyTask::getErrorInfo data is missing" << std::endl;
 			rsAutoProxyMonitor::taskError(ticket);
 		} else {
 			RS_STACK_MUTEX(mLock);
@@ -236,7 +237,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 		}
 		break;
 	default:
-		rslog(RsLog::Warning, &i2pBobLogInfo, "p3I2pBob::processTaskSync unknown task");
+		RsDbg() << __PRETTY_FUNCTION__ << " p3I2pBob::processTaskSync unknown task" << std::endl;
 		rsAutoProxyMonitor::taskError(ticket);
 		break;
 	}
@@ -257,7 +258,7 @@ void p3I2pBob::threadTick()
 		RS_STACK_MUTEX(mLock);
 		std::stringstream ss;
 		ss << "data_tick mState: " << mState << " mTask: " << mTask << " mBOBState: " << mBOBState << " mPending: " << mPending.size();
-		rslog(RsLog::Debug_All, &i2pBobLogInfo, ss.str());
+		Dbg4() << __PRETTY_FUNCTION__ << " " + ss.str() << std::endl;
 	}
 
 	sleepTime += stateMachineController();
@@ -298,13 +299,13 @@ int p3I2pBob::stateMachineBOB()
 		while (answer.find("OK Listing done") == std::string::npos) {
 			std::stringstream ss;
 			ss << "stateMachineBOB status check: read loop, counter: " << counter;
-			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, ss.str());
+			Dbg3() << __PRETTY_FUNCTION__ << " " + ss.str() << std::endl;
 			answer += recv();
 			counter++;
 		}
 
 		if (answer.find(mTunnelName) == std::string::npos) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB status check: tunnel down!");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineBOB status check: tunnel down!" << std::endl;
 			// signal error
 			*((bool *)mProcessing->data) = true;
 		}
@@ -344,8 +345,8 @@ int p3I2pBob::stateMachineBOB_locked_failure(const std::string &answer, const bo
 		return sleepFactorDefault;
 	}
 
-	rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB FAILED to run command '" + currentState.command + "'");
-	rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineBOB '" + answer + "'");
+	RsDbg() << __PRETTY_FUNCTION__ << " stateMachineBOB FAILED to run command '" + currentState.command + "'" << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << " stateMachineBOB '" + answer + "'" << std::endl;
 
 	mErrorMsg.append("FAILED to run command '" + currentState.command + "'" + '\n');
 	mErrorMsg.append("reason '" + answer + "'" + '\n');
@@ -392,14 +393,14 @@ int p3I2pBob::stateMachineController()
 		return stateMachineController_locked_idle();
 	case csDoConnect:
 		if (!connectI2P()) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController doConnect: unable to connect");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController doConnect: unable to connect" << std::endl;
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "unable to connect to BOB port";
 			return sleepFactorSlow;
 		}
 
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController doConnect: connected");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController doConnect: connected" << std::endl;
 		mState = csConnected;
 		break;
 	case csConnected:
@@ -407,7 +408,7 @@ int p3I2pBob::stateMachineController()
 	case csWaitForBob:
 		// check connection problems
 		if (mSocket == 0) {
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController waitForBob: conection lost");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController waitForBob: conection lost" << std::endl;
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "connection lost to BOB";
@@ -417,21 +418,21 @@ int p3I2pBob::stateMachineController()
 		// check for finished BOB protocol
 		if (mBOBState == bsCleared) {
 			// done
-			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController waitForBob: mBOBState == bsCleared");
+			Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController waitForBob: mBOBState == bsCleared" << std::endl;
 			mState = csDoDisconnect;
 		}
 		break;
 	case csDoDisconnect:
 		if (!disconnectI2P() || mSocket != 0) {
 			// just in case
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController doDisconnect: can't disconnect");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController doDisconnect: can't disconnect" << std::endl;
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "unable to disconnect from BOB";
 			return sleepFactorDefault;
 		}
 
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController doDisconnect: disconnected");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController doDisconnect: disconnected" << std::endl;
 		mState = csDisconnected;
 		break;
 	case csDisconnected:
@@ -462,7 +463,7 @@ int p3I2pBob::stateMachineController_locked_idle()
 		    mProcessing->task == autoProxyTask::stop ||
 		    mProcessing->task == autoProxyTask::proxyStatusCheck)) {
 			// skip since we are not enabled
-			rslog(RsLog::Debug_Alert, &i2pBobLogInfo, "stateMachineController_locked_idle: disabled -> skipping ticket");
+			Dbg1() << __PRETTY_FUNCTION__ << " stateMachineController_locked_idle: disabled -> skipping ticket" << std::endl;
 			rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::disabled);
 			mProcessing = NULL;
 		} else {
@@ -484,7 +485,7 @@ int p3I2pBob::stateMachineController_locked_idle()
 				mTask = ctRunCheck;
 				break;
 			default:
-				rslog(RsLog::Debug_Alert, &i2pBobLogInfo, "stateMachineController_locked_idle unknown async task");
+				Dbg1() << __PRETTY_FUNCTION__ << " stateMachineController_locked_idle unknown async task" << std::endl;
 				rsAutoProxyMonitor::taskError(mProcessing);
 				mProcessing = NULL;
 				break;
@@ -532,28 +533,28 @@ int p3I2pBob::stateMachineController_locked_connected()
 	case ctRunSetUp:
 		// when we have a key use it for server tunnel!
 		if(mSetting.address.privateKey.empty()) {
-			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = setnickC");
+			Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: setting mBOBState = setnickC" << std::endl;
 			mBOBState = bsSetnickC;
 		} else {
-			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = setnickS");
+			Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: setting mBOBState = setnickS" << std::endl;
 			mBOBState = bsSetnickS;
 		}
 		break;
 	case ctRunShutDown:
 		// shut down existing tunnel
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = getnick");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: setting mBOBState = getnick" << std::endl;
 		mBOBState = bsGetnick;
 		break;
 	case ctRunCheck:
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = list");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: setting mBOBState = list" << std::endl;
 		mBOBState = bsList;
 		break;
 	case ctRunGetKeys:
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = setnickN");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: setting mBOBState = setnickN" << std::endl;
 		mBOBState = bsSetnickN;
 		break;
 	case ctIdle:
-		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_connected: task is idle. This should not happen!");
+		RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_connected: task is idle. This should not happen!" << std::endl;
 		break;
 	}
 
@@ -569,7 +570,7 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 	if(errorHappened) {
 		// reset old state
 		mStateOld = csIdel;
-		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_disconnected: error during process!");
+		RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_disconnected: error during process!" << std::endl;
 	}
 
 	// answer ticket
@@ -598,12 +599,12 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 		mTask = mTaskOld;
 
 		if (!errorHappened) {
-			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_disconnected: run check result: ok");
+			Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_disconnected: run check result: ok" << std::endl;
 			break;
 		}
 		// switch to error
 		newState = csError;
-		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_disconnected: run check result: error");
+		RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_disconnected: run check result: error" << std::endl;
 		mErrorMsg = "Connection check failed. Will try to restart tunnel.";
 
 		break;
@@ -626,7 +627,7 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 		mTask = mTaskOld;
 		break;
 	case ctIdle:
-		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_disconnected: task is idle. This should not happen!");
+		RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_disconnected: task is idle. This should not happen!" << std::endl;
 		rsAutoProxyMonitor::taskError(mProcessing);
 	}
 	mProcessing = NULL;
@@ -642,14 +643,14 @@ int p3I2pBob::stateMachineController_locked_error()
 {
 	// wait for bob protocoll
 	if (mBOBState != bsCleared) {
-		rslog(RsLog::Debug_All, &i2pBobLogInfo, "stateMachineController_locked_error: waiting for BOB");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: waiting for BOB" << std::endl;
 		return sleepFactorFast;
 	}
 
 #if 0
 	std::stringstream ss;
 	ss << "stateMachineController_locked_error: mProcessing: " << (mProcessing ? "not null" : "null");
-	rslog(RsLog::Debug_All, &i2pBobLogInfo, ss.str());
+	Dbg4() << __PRETTY_FUNCTION__ << " " + ss.str() << std::endl;
 #endif
 
 	// try to finish ticket
@@ -657,7 +658,7 @@ int p3I2pBob::stateMachineController_locked_error()
 		switch (mTask) {
 		case ctRunCheck:
 			// connection check failed at some point
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_error: failed to check proxy status (it's likely dead)!");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: failed to check proxy status (it's likely dead)!" << std::endl;
 			*((bool *)mProcessing->data) = true;
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
@@ -665,7 +666,7 @@ int p3I2pBob::stateMachineController_locked_error()
 			break;
 		case ctRunShutDown:
 			// not a big deal though
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_error: failed to shut down tunnel (it's likely dead though)!");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: failed to shut down tunnel (it's likely dead though)!" << std::endl;
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
 			mErrorMsg.clear();
@@ -673,14 +674,14 @@ int p3I2pBob::stateMachineController_locked_error()
 		case ctIdle:
 			// should not happen but we need to deal with it
 			// this will produce some error messages in the log and finish the task (marked as failed)
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_error: task is idle. This should not happen!");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: task is idle. This should not happen!" << std::endl;
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
 			mErrorMsg.clear();
 			break;
 		case ctRunGetKeys:
 		case ctRunSetUp:
-			rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_error: failed to receive key / start up");
+			RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: failed to receive key / start up" << std::endl;
 			mStateOld = csError;
 			mState = csDoDisconnect;
 			// keep the error message
@@ -691,7 +692,7 @@ int p3I2pBob::stateMachineController_locked_error()
 
 	// periodically retry
 	if (mLastProxyCheck < time(NULL) - (selfCheckPeroid >> 1) && mTask == ctRunSetUp) {
-		rslog(RsLog::Warning, &i2pBobLogInfo, "stateMachineController_locked_error: retrying");
+		RsDbg() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: retrying" << std::endl;
 
 		mLastProxyCheck = time(NULL);
 		mErrorMsg.clear();
@@ -704,7 +705,7 @@ int p3I2pBob::stateMachineController_locked_error()
 
 	// check for new tickets
 	if (!mPending.empty()) {
-		rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_error: processing new ticket");
+		Dbg4() << __PRETTY_FUNCTION__ << " stateMachineController_locked_error: processing new ticket" << std::endl;
 
 		// reset and try new task
 		mTask = ctIdle;
@@ -735,7 +736,7 @@ RsSerialiser *p3I2pBob::setupSerialiser()
 
 bool p3I2pBob::saveList(bool &cleanup, std::list<RsItem *> &lst)
 {
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "saveList");
+	Dbg4() << __PRETTY_FUNCTION__ << " saveList" << std::endl;
 
 	cleanup = true;
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet;
@@ -770,7 +771,7 @@ bool p3I2pBob::saveList(bool &cleanup, std::list<RsItem *> &lst)
 
 bool p3I2pBob::loadList(std::list<RsItem *> &load)
 {
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "loadList");
+	Dbg4() << __PRETTY_FUNCTION__ << " loadList" << std::endl;
 
 	for(std::list<RsItem*>::const_iterator it = load.begin(); it!=load.end(); ++it) {
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it);
@@ -790,7 +791,7 @@ bool p3I2pBob::loadList(std::list<RsItem *> &load)
 				getKVSUInt(kit, kConfigKeyOutQuantity, mSetting.outQuantity)
 				getKVSUInt(kit, kConfigKeyOutVariance, mSetting.outVariance)
 				else
-				    rslog(RsLog::Warning, &i2pBobLogInfo, "loadList unknown key: " + kit->key);
+				    RsDbg() << __PRETTY_FUNCTION__ << " loadList unknown key: " + kit->key << std::endl;
 			}
 		}
 		delete vitem;
@@ -854,7 +855,7 @@ void p3I2pBob::getStates(bobStates *bs)
 
 std::string p3I2pBob::executeCommand(const std::string &command)
 {
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "executeCommand_locked running '" + command + "'");
+	Dbg4() << __PRETTY_FUNCTION__ << " executeCommand_locked running '" + command + "'" << std::endl;
 
 	std::string copy = command;
 	copy.push_back('\n');
@@ -866,7 +867,7 @@ std::string p3I2pBob::executeCommand(const std::string &command)
 	// receive answer (trailing new line is already removed!)
 	std::string ans = recv();
 
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "executeCommand_locked answer '" + ans + "'");
+	Dbg4() << __PRETTY_FUNCTION__ << " executeCommand_locked answer '" + ans + "'" << std::endl;
 
 	return ans;
 }
@@ -876,7 +877,7 @@ bool p3I2pBob::connectI2P()
 	// there is only one thread that touches mSocket - no need for a lock
 
 	if (mSocket != 0) {
-		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked mSocket != 0");
+		RsDbg() << __PRETTY_FUNCTION__ << " connectI2P_locked mSocket != 0" << std::endl;
 		return false;
 	}
 
@@ -884,21 +885,21 @@ bool p3I2pBob::connectI2P()
 	mSocket = unix_socket(PF_INET, SOCK_STREAM, 0);
 	if (mSocket < 0)
 	{
-		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to open socket! Socket Error: " + socket_errorType(errno));
+		RsDbg() << __PRETTY_FUNCTION__ << " connectI2P_locked Failed to open socket! Socket Error: " + socket_errorType(errno) << std::endl;
 		return false;
 	}
 
 	// connect
 	int err = unix_connect(mSocket, mI2PProxyAddr);
 	if (err != 0) {
-		rslog(RsLog::Warning, &i2pBobLogInfo, "connectI2P_locked Failed to connect to BOB! Socket Error: " + socket_errorType(errno));
+		RsDbg() << __PRETTY_FUNCTION__ << " connectI2P_locked Failed to connect to BOB! Socket Error: " + socket_errorType(errno) << std::endl;
 		return false;
 	}
 
 	// receive hello msg
 	recv();
 
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "connectI2P_locked done");
+	Dbg4() << __PRETTY_FUNCTION__ << " connectI2P_locked done" << std::endl;
 	return true;
 }
 
@@ -907,17 +908,17 @@ bool p3I2pBob::disconnectI2P()
 	// there is only one thread that touches mSocket - no need for a lock
 
 	if (mSocket == 0) {
-		rslog(RsLog::Warning, &i2pBobLogInfo, "disconnectI2P_locked mSocket == 0");
+		RsDbg() << __PRETTY_FUNCTION__ << " disconnectI2P_locked mSocket == 0" << std::endl;
 		return true;
 	}
 
 	int err = unix_close(mSocket);
 	if (err != 0) {
-		rslog(RsLog::Warning, &i2pBobLogInfo, "disconnectI2P_locked Failed to close socket! Socket Error: " + socket_errorType(errno));
+		RsDbg() << __PRETTY_FUNCTION__ << " disconnectI2P_locked Failed to close socket! Socket Error: " + socket_errorType(errno) << std::endl;
 		return false;
 	}
 
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "disconnectI2P_locked done");
+	Dbg4() << __PRETTY_FUNCTION__ << " disconnectI2P_locked done" << std::endl;
 	mSocket = 0;
 	return true;
 }
@@ -938,7 +939,7 @@ std::string toString(const std::string &a, const int8_t b) {
 
 void p3I2pBob::finalizeSettings_locked()
 {
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked");
+	Dbg4() << __PRETTY_FUNCTION__ << " finalizeSettings_locked" << std::endl;
 
 	sockaddr_storage_clear(mI2PProxyAddr);
 	// get i2p proxy addr
@@ -949,8 +950,8 @@ void p3I2pBob::finalizeSettings_locked()
 	sockaddr_storage_setipv4(mI2PProxyAddr, (sockaddr_in*)&proxy);
 	sockaddr_storage_setport(mI2PProxyAddr, 2827);
 
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using " + sockaddr_storage_tostring(mI2PProxyAddr));
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using " + mSetting.address.base32);
+	Dbg4() << __PRETTY_FUNCTION__ << " finalizeSettings_locked using " + sockaddr_storage_tostring(mI2PProxyAddr) << std::endl;
+	Dbg4() << __PRETTY_FUNCTION__ << " finalizeSettings_locked using " + mSetting.address.base32 << std::endl;
 
 	peerState ps;
 	mPeerMgr->getOwnNetStatus(ps);
@@ -965,7 +966,7 @@ void p3I2pBob::finalizeSettings_locked()
 	std::vector<uint8_t> tmp(len);
 	RSRandom::random_bytes(tmp.data(), len);
 	const std::string location = Radix32::encode(tmp.data(), len);
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using suffix " + location);
+	Dbg4() << __PRETTY_FUNCTION__ << " finalizeSettings_locked using suffix " + location << std::endl;
 	mTunnelName = "RetroShare-" + location;
 
 	const std::string setnick    = "setnick RetroShare-" + location;
@@ -1033,7 +1034,7 @@ void p3I2pBob::finalizeSettings_locked()
 
 void p3I2pBob::updateSettings_locked()
 {
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "updateSettings_locked");
+	Dbg4() << __PRETTY_FUNCTION__ << " updateSettings_locked" << std::endl;
 
 	sockaddr_storage proxy;
 	mPeerMgr->getProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy);
@@ -1095,7 +1096,7 @@ std::string p3I2pBob::recv()
 #if 0
 		std::stringstream ss;
 		ss << "recv length: " << length << " (bufferSize: " << bufferSize << ") ans: " << ans.length();
-		rslog(RsLog::Debug_All, &i2pBobLogInfo, ss.str());
+		Dbg4() << __PRETTY_FUNCTION__ << " " + ss.str() << std::endl;
 #endif
 
 		// clear and resize buffer again
