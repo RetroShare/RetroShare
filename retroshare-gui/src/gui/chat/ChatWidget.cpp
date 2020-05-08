@@ -200,12 +200,14 @@ ChatWidget::ChatWidget(QWidget *parent)
 	#endif
 
 	QMenu *menu = new QMenu();
+	menu->addAction(ui->actionMessageHistory);
+	menu->addMenu(fontmenu);
+	menu->addSeparator();
+	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
-	menu->addAction(ui->actionSaveChatHistory);
-	menu->addAction(ui->actionMessageHistory);
+
 	ui->pushtoolsButton->setMenu(menu);
-	menu->addMenu(fontmenu);
 
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());

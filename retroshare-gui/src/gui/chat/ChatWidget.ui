@@ -241,6 +241,9 @@ border-image: url(:/images/closepressed.png)
             </property>
             <item>
              <layout class="QHBoxLayout" name="typingHLayout">
+              <property name="leftMargin">
+               <number>2</number>
+              </property>
               <item>
                <widget class="QLabel" name="typingPixmapLabel">
                 <property name="minimumSize">
@@ -257,6 +260,9 @@ border-image: url(:/images/closepressed.png)
                 </property>
                 <property name="text">
                  <string notr="true">T</string>
+                </property>
+                <property name="scaledContents">
+                 <bool>true</bool>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignCenter</set>
@@ -768,9 +774,12 @@ border-image: url(:/images/closepressed.png)
           <property name="focusPolicy">
            <enum>Qt::NoFocus</enum>
           </property>
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Chat menu&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
           <property name="icon">
            <iconset resource="../icons.qrc">
-            <normaloff>:/icons/png/options2.png</normaloff>:/icons/png/options2.png</iconset>
+            <normaloff>:/icons/png/menu.png</normaloff>:/icons/png/menu.png</iconset>
           </property>
           <property name="iconSize">
            <size>

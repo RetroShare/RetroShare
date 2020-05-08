@@ -337,9 +337,9 @@ public:
 	 * @brief Get channel comments corresponding to the given IDs.
 	 * If the set is empty, nothing is returned.
 	 * @jsonapi{development}
-	 * @param channelId id of the channel of which the content is requested
-	 * @param contentIds ids of requested contents
-	 * @param comments storage for the comments
+	 * @param[in] channelId id of the channel of which the content is requested
+	 * @param[in] contentIds ids of requested contents
+	 * @param[out] comments storage for the comments
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelComments(const RsGxsGroupId &channelId,
