@@ -74,15 +74,7 @@ p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
    mProcessing(NULL), mLock("I2P-BOB")
 {
 	// set defaults
-	mSetting.enableBob   = kDefaultBOBEnable;
-	mSetting.keys        = "";
-	mSetting.addr        = "";
-	mSetting.inLength    = kDefaultLength;
-	mSetting.inQuantity  = kDefaultQuantity;
-	mSetting.inVariance  = kDefaultVariance;
-	mSetting.outLength   = kDefaultLength;
-	mSetting.outQuantity = kDefaultQuantity;
-	mSetting.outVariance = kDefaultVariance;
+	mSetting.initDefault();
 
 	mCommands.clear();
 }
@@ -90,7 +82,7 @@ p3I2pBob::p3I2pBob(p3PeerMgr *peerMgr)
 bool p3I2pBob::isEnabled()
 {
 	RS_STACK_MUTEX(mLock);
-	return mSetting.enableBob;
+	return mSetting.enable;
 }
 
 bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
@@ -151,7 +143,7 @@ bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 
 	{
 		RS_STACK_MUTEX(mLock);
-		addr = mSetting.addr;
+		addr = mSetting.address.base32;
 	}
 
 	std::cout << "p3I2pBob::initialSetup addr '" << addr << "'" << std::endl;
@@ -324,12 +316,12 @@ int p3I2pBob::stateMachineBOB()
 		switch (mBOBState) {
 		case bsNewkeysN:
 			key = answer.substr(3, answer.length()-3);
-			mSetting.addr = i2p::keyToBase32Addr(key);
+			mSetting.address.base32 = i2p::keyToBase32Addr(key);
 			IndicateConfigChanged();
 			break;
 		case bsGetkeys:
 			key = answer.substr(3, answer.length()-3);
-			mSetting.keys = key;
+			mSetting.address.privateKey = key;
 			IndicateConfigChanged();
 			break;
 		default:
@@ -465,7 +457,7 @@ int p3I2pBob::stateMachineController_locked_idle()
 		mProcessing = mPending.front();
 		mPending.pop();
 
-		if (!mSetting.enableBob && (
+		if (!mSetting.enable && (
 		    mProcessing->task == autoProxyTask::start ||
 		    mProcessing->task == autoProxyTask::stop ||
 		    mProcessing->task == autoProxyTask::proxyStatusCheck)) {
@@ -539,7 +531,7 @@ int p3I2pBob::stateMachineController_locked_connected()
 	switch (mTask) {
 	case ctRunSetUp:
 		// when we have a key use it for server tunnel!
-		if(mSetting.keys.empty()) {
+		if(mSetting.address.privateKey.empty()) {
 			rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "stateMachineController_locked_connected: setting mBOBState = setnickC");
 			mBOBState = bsSetnickC;
 		} else {
@@ -750,9 +742,9 @@ bool p3I2pBob::saveList(bool &cleanup, std::list<RsItem *> &lst)
 	RsTlvKeyValue kv;
 
 	RS_STACK_MUTEX(mLock);
-	addKVS(vitem, kv, kConfigKeyBOBEnable, mSetting.enableBob ? "TRUE" : "FALSE")
-	addKVS(vitem, kv, kConfigKeyBOBKey,    mSetting.keys)
-	addKVS(vitem, kv, kConfigKeyBOBAddr,   mSetting.addr)
+	addKVS(vitem, kv, kConfigKeyBOBEnable, mSetting.enable ? "TRUE" : "FALSE")
+	addKVS(vitem, kv, kConfigKeyBOBKey,    mSetting.address.privateKey)
+	addKVS(vitem, kv, kConfigKeyBOBAddr,   mSetting.address.base32)
 	addKVSInt(vitem, kv, kConfigKeyInLength,    mSetting.inLength)
 	addKVSInt(vitem, kv, kConfigKeyInQuantity,  mSetting.inQuantity)
 	addKVSInt(vitem, kv, kConfigKeyInVariance,  mSetting.inVariance)
@@ -786,11 +778,11 @@ bool p3I2pBob::loadList(std::list<RsItem *> &load)
 			RS_STACK_MUTEX(mLock);
 			for(std::list<RsTlvKeyValue>::const_iterator kit = vitem->tlvkvs.pairs.begin(); kit != vitem->tlvkvs.pairs.end(); ++kit) {
 				if      (kit->key == kConfigKeyBOBEnable)
-					mSetting.enableBob = kit->value == "TRUE";
+					mSetting.enable = kit->value == "TRUE";
 				else if (kit->key == kConfigKeyBOBKey)
-					mSetting.keys = kit->value;
+					mSetting.address.privateKey = kit->value;
 				else if (kit->key == kConfigKeyBOBAddr)
-					mSetting.addr = kit->value;
+					mSetting.address.base32 = kit->value;
 				getKVSUInt(kit, kConfigKeyInLength,    mSetting.inLength)
 				getKVSUInt(kit, kConfigKeyInQuantity,  mSetting.inQuantity)
 				getKVSUInt(kit, kConfigKeyInVariance,  mSetting.inVariance)
@@ -958,7 +950,7 @@ void p3I2pBob::finalizeSettings_locked()
 	sockaddr_storage_setport(mI2PProxyAddr, 2827);
 
 	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using " + sockaddr_storage_tostring(mI2PProxyAddr));
-	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using " + mSetting.addr);
+	rslog(RsLog::Debug_Basic, &i2pBobLogInfo, "finalizeSettings_locked using " + mSetting.address.base32);
 
 	peerState ps;
 	mPeerMgr->getOwnNetStatus(ps);
@@ -980,7 +972,7 @@ void p3I2pBob::finalizeSettings_locked()
 	const std::string getnick    = "getnick RetroShare-" + location;
 	const std::string newkeys    = "newkeys";
 	const std::string getkeys    = "getkeys";
-	const std::string setkeys    = "setkeys " + mSetting.keys;
+	const std::string setkeys    = "setkeys " + mSetting.address.privateKey;
 	const std::string inhost     = "inhost " + sockaddr_storage_iptostring(proxy);
 	const std::string inport     = toString("inport ", sockaddr_storage_port(proxy));
 	const std::string outhost    = "outhost " + sockaddr_storage_iptostring(ps.localaddr);
@@ -1049,7 +1041,7 @@ void p3I2pBob::updateSettings_locked()
 	peerState ps;
 	mPeerMgr->getOwnNetStatus(ps);
 
-	const std::string setkeys    = "setkeys " + mSetting.keys;
+	const std::string setkeys    = "setkeys " + mSetting.address.privateKey;
 	const std::string inhost     = "inhost " + sockaddr_storage_iptostring(proxy);
 	const std::string inport     = toString("inport ", sockaddr_storage_port(proxy));
 	const std::string outhost    = "outhost " + sockaddr_storage_iptostring(ps.localaddr);

@@ -1724,7 +1724,7 @@ int RsServer::StartupRetroShare()
 				// now enable bob
 				bobSettings bs;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &bs);
-				bs.enableBob = true;
+				bs.enable = true;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;

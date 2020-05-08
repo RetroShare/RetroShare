@@ -23,6 +23,7 @@
 #include <gui/notifyqt.h>
 #include "rshare.h"
 #include "rsharesettings.h"
+#include "util/i2pcommon.h"
 #include "util/RsNetUtil.h"
 #include "util/misc.h"
 
@@ -1352,7 +1353,7 @@ void ServerPage::updateInProxyIndicator()
     ui.iconlabel_service_incoming->setMovie(movie);
     movie->start();
 
-    if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enableBob) {
+    if (mHiddenType == RS_HIDDEN_TYPE_I2P && mBobSettings.enable) {
 
         QTcpSocket tcpSocket;
 
@@ -1439,15 +1440,16 @@ void ServerPage::getNewKey()
 
 void ServerPage::loadKey()
 {
-    mBobSettings.keys = ui.pteBobServerKey->toPlainText().toStdString();
-    mBobSettings.addr = p3I2pBob::keyToBase32Addr(mBobSettings.keys);
+	mBobSettings.address.privateKey = ui.pteBobServerKey->toPlainText().toStdString();
+	mBobSettings.address.publicKey = i2p::publicKeyFromPrivate(mBobSettings.address.privateKey);
+	mBobSettings.address.base32 = i2p::keyToBase32Addr(mBobSettings.address.publicKey);
 
     rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 }
 
 void ServerPage::enableBob(bool checked)
 {
-    mBobSettings.enableBob = checked;
+    mBobSettings.enable = checked;
 
     rsAutoProxyMonitor::taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &mBobSettings);
 
@@ -1487,7 +1489,7 @@ void ServerPage::toggleBobAdvancedSettings(bool checked)
 {
     ui.swBobAdvanced->setCurrentIndex(checked ? 1 : 0);
 
-    if (!mBobSettings.keys.empty()) {
+	if (!mBobSettings.address.privateKey.empty()) {
         if (checked) {
             ui.pbBobGenAddr->show();
         } else {
@@ -1578,9 +1580,9 @@ void ServerPage::loadCommon()
     whileBlocking(ui.hiddenpage_proxyPort_i2p_2)->setValue(proxyport); // this one is for bob tab
 
     // don't use whileBlocking here
-    ui.cb_enableBob->setChecked(mBobSettings.enableBob);
+    ui.cb_enableBob->setChecked(mBobSettings.enable);
 
-    if (!mBobSettings.keys.empty()) {
+	if (!mBobSettings.address.privateKey.empty()) {
         ui.lBobB32Addr->show();
         ui.leBobB32Addr->show();
     }
@@ -1623,13 +1625,13 @@ void ServerPage::saveBob()
 
 void ServerPage::updateStatusBob()
 {
-    QString addr = QString::fromStdString(mBobSettings.addr);
+	QString addr = QString::fromStdString(mBobSettings.address.base32);
     if (ui.leBobB32Addr->text() != addr) {
         ui.leBobB32Addr->setText(addr);
         ui.hiddenpage_serviceAddress->setText(addr);
-        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
 
-        if (!mBobSettings.keys.empty()) {
+		if (!mBobSettings.address.privateKey.empty()) {
             // we have an addr -> show fields
             ui.lBobB32Addr->show();
             ui.leBobB32Addr->show();
@@ -1655,7 +1657,7 @@ void ServerPage::updateStatusBob()
     QString bobSimpleText = QString();
     bobSimpleText.append(tr("RetroShare uses BOB to set up a %1 tunnel at %2:%3 (named %4)\n\n"
                             "When changing options (e.g. port) use the buttons at the bottom to restart BOB.\n\n").
-                         arg(mBobSettings.keys.empty() ? tr("client") : tr("server"),
+	                     arg(mBobSettings.address.privateKey.empty() ? tr("client") : tr("server"),
                              ui.hiddenpage_proxyAddress_i2p_2->text(),
                              ui.hiddenpage_proxyPort_i2p_2->text(),
                              bs.tunnelName.empty() ? tr("unknown") :
@@ -1777,15 +1779,15 @@ void ServerPage::updateStatusBob()
 
 void ServerPage::setUpBobElements()
 {
-    ui.gbBob->setEnabled(mBobSettings.enableBob);
-    if (mBobSettings.enableBob) {
+    ui.gbBob->setEnabled(mBobSettings.enable);
+    if (mBobSettings.enable) {
         ui.hiddenpage_proxyAddress_i2p->setEnabled(false);
         ui.hiddenpage_proxyAddress_i2p->setToolTip("Use I2P/BOB settings to change this value");
         ui.hiddenpage_proxyPort_i2p->setEnabled(false);
         ui.hiddenpage_proxyPort_i2p->setToolTip("Use I2P/BOB settings to change this value");
 
-        ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.addr));
-        ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.keys));
+		ui.leBobB32Addr->setText(QString::fromStdString(mBobSettings.address.base32));
+		ui.pteBobServerKey->setPlainText(QString::fromStdString(mBobSettings.address.privateKey));
 
         // cast to int to avoid problems
         int li, lo, qi, qo, vi, vo;

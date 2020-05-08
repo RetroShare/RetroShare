@@ -163,19 +163,7 @@ struct bobStateInfo {
 	bobState    nextState;
 };
 
-struct bobSettings {
-	bool enableBob;		///< This field is used by the pqi subsystem to determinine whether SOCKS proxy or BOB is used for I2P connections
-	std::string keys;	///< (optional) server keys
-	std::string addr;	///< (optional) hidden service addr. in base32 form
-
-	int8_t inLength;
-	int8_t inQuantity;
-	int8_t inVariance;
-
-	int8_t outLength;
-	int8_t outQuantity;
-	int8_t outVariance;
-};
+struct bobSettings : i2p::settings {};
 
 ///
 /// \brief The bobStates struct
