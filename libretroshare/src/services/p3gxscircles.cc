@@ -1063,7 +1063,7 @@ RsGxsCircleCache::RsGxsCircleCache()
 	mGroupStatus = 0;
 	mGroupSubscribeFlags = 0;
 	mLastUpdatedMembershipTS = 0 ;
-    mStatus = CircleEntryCacheStatus::NO_DATA;
+    mStatus = CircleEntryCacheStatus::NO_DATA_YET;
     mAllIdsHere = false;
 
 	return; 
