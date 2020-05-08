@@ -44,11 +44,6 @@ static const std::string kConfigKeyOutLength   = "OUT_LENGTH";
 static const std::string kConfigKeyOutQuantity = "OUT_QUANTITY";
 static const std::string kConfigKeyOutVariance = "OUT_VARIANCE";
 
-static const bool   kDefaultBOBEnable = false;
-static const int8_t kDefaultLength    = 3;
-static const int8_t kDefaultQuantity  = 4;
-static const int8_t kDefaultVariance  = 0;
-
 /// Sleep duration for receiving loop
 static const useconds_t sleepTimeRecv = 10; // times 1000 = 10ms
 /// Sleep duration for everything else
