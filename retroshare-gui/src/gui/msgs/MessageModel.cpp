@@ -42,6 +42,9 @@
 
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
+#define IMAGE_SPAM             ":/images/junk.png"
+#define IMAGE_SPAM_ON          ":/images/junk_on.png"
+#define IMAGE_SPAM_OFF         ":/images/junk_off.png"
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
@@ -173,6 +176,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 		switch(section)
 		{
 		case COLUMN_THREAD_STAR:         return FilesDefs::getIconFromQtResourcePath(IMAGE_STAR_ON);
+		case COLUMN_THREAD_SPAM:         return FilesDefs::getIconFromQtResourcePath(IMAGE_SPAM);
 		case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-header.png");
 		case COLUMN_THREAD_ATTACHMENT:   return FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png");
 		default:
@@ -189,6 +193,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
         case COLUMN_THREAD_DATE:       return tr("Click to sort by date");
         case COLUMN_THREAD_TAGS:       return tr("Click to sort by tags");
         case COLUMN_THREAD_STAR:       return tr("Click to sort by star");
+		case COLUMN_THREAD_SPAM:       return tr("Click to sort by junk status");
 		default:
 			return QVariant();
         }
@@ -336,7 +341,8 @@ bool RsMessageModel::passesFilter(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
             (mQuickViewFilter==QUICK_VIEW_ALL)
             || (std::find(fmpe.msgtags.begin(),fmpe.msgtags.end(),mQuickViewFilter) != fmpe.msgtags.end())
             || (mQuickViewFilter==QUICK_VIEW_STARRED && (fmpe.msgflags & RS_MSG_STAR))
-            || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM));
+            || (mQuickViewFilter==QUICK_VIEW_SYSTEM && (fmpe.msgflags & RS_MSG_SYSTEM))
+            || (mQuickViewFilter==QUICK_VIEW_SPAM && (fmpe.msgflags & RS_MSG_SPAM));
 #ifdef DEBUG_MESSAGE_MODEL
     std::cerr << "Passes filter: type=" << mFilterType << " s=\"" << s.toStdString() << "MsgFlags=" << fmpe.msgflags << " msgtags=" ;
     foreach(uint32_t i,fmpe.msgtags) std::cerr << i << " " ;
@@ -434,6 +440,8 @@ QVariant RsMessageModel::sortRole(const Rs::Msgs::MsgInfoSummary& fmpe,int colum
 
 	case COLUMN_THREAD_STAR:  return QVariant((fmpe.msgflags & RS_MSG_STAR)? 1:0);
 
+	case COLUMN_THREAD_SPAM:  return QVariant((fmpe.msgflags & RS_MSG_SPAM)? 1:0);
+
     case COLUMN_THREAD_AUTHOR:{
         						QString name;
 
@@ -453,6 +461,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 	case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
     case COLUMN_THREAD_STAR:
+	case COLUMN_THREAD_SPAM:
 	case COLUMN_THREAD_READ:return QVariant();
 	case COLUMN_THREAD_DATE:{
 		QDateTime qtime;
@@ -550,6 +559,9 @@ QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int
 
 		case COLUMN_THREAD_STAR:
 		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_STAR) ? (IMAGE_STAR_ON ): (IMAGE_STAR_OFF));
+
+		case COLUMN_THREAD_SPAM:
+		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_SPAM) ? (IMAGE_SPAM_ON ): (IMAGE_SPAM_OFF));
 
 		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
 		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.srcId.toStdString()),QIcon(), exist);
@@ -679,6 +691,15 @@ void RsMessageModel::setMsgStar(const QModelIndex& i,bool star)
 
     emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
 }
+
+void RsMessageModel::setMsgJunk(const QModelIndex& i,bool junk)
+{
+    preMods();
+    rsMsgs->MessageJunk(i.data(MsgIdRole).toString().toStdString(),junk);
+
+    emit dataChanged(i.sibling(i.row(),0),i.sibling(i.row(),COLUMN_THREAD_NB_COLUMNS-1));
+}
+
 
 QModelIndex RsMessageModel::getIndexOfMessage(const std::string& mid) const
 {

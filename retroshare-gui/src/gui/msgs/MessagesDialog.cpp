@@ -61,6 +61,8 @@
 #define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
 #define IMAGE_AUTHOR_INFO      ":/images/info16.png"
 #define IMAGE_NOTFICATION      ":/icons/notification.png"
+#define IMAGE_SPAM_ON          ":/images/junk_on.png"
+#define IMAGE_SPAM_OFF         ":/images/junk_off.png"
 
 #define IMAGE_INBOX             ":/images/folder-inbox.png"
 #define IMAGE_OUTBOX            ":/images/folder-outbox.png"
@@ -79,6 +81,7 @@
 
 #define QUICKVIEW_STATIC_ID_STARRED 1
 #define QUICKVIEW_STATIC_ID_SYSTEM  2
+#define QUICKVIEW_STATIC_ID_SPAM  3
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -194,6 +197,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_STAR,       fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_ATTACHMENT, fm.width('0')*1.5);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_READ,       fm.width('0')*1.5);
+    msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SPAM,       fm.width('0')*1.5);
 
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_SUBJECT,    fm.width("You have a message")*3.0);
     msgwheader->resizeSection (RsMessageModel::COLUMN_THREAD_AUTHOR,     fm.width("[Retroshare]")*1.1);
@@ -206,6 +210,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_STAR,       QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_ATTACHMENT, QHeaderView::Fixed);
     QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_READ,       QHeaderView::Fixed);
+    QHeaderView_setSectionResizeModeColumn(msgwheader, RsMessageModel::COLUMN_THREAD_SPAM,       QHeaderView::Fixed);
 
 	ui.messageTreeWidget->setSortingEnabled(true);
 
@@ -432,6 +437,16 @@ void MessagesDialog::fillQuickView()
 		itemToSelect = item;
 	}
 
+	item = new QListWidgetItem(tr("Spam"), ui.quickViewWidget);
+	item->setIcon(QIcon(IMAGE_SPAM_ON));
+	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
+	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_SPAM);
+	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
+
+	if (selectedType == QUICKVIEW_TYPE_STATIC && selectedId == QUICKVIEW_STATIC_ID_SPAM) {
+		itemToSelect = item;
+	}
+
 	for (tag = tags.types.begin(); tag != tags.types.end(); ++tag) {
 		text = TagDefs::name(tag->first, tag->second.first);
 
@@ -469,7 +484,7 @@ int MessagesDialog::getSelectedMessages(QList<QString>& mid)
     return mid.size();
 }
 
-int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar)
+int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar, QList<QModelIndex> *itemsJunk)
 {
 	QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
 
@@ -477,6 +492,7 @@ int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModel
     if (itemsRead) itemsRead->clear();
     if (itemsUnread) itemsUnread->clear();
     if (itemsStar) itemsStar->clear();
+    if (itemsJunk) itemsJunk->clear();
 
     foreach(const QModelIndex& m, qmil)
     {
@@ -511,6 +527,14 @@ bool MessagesDialog::hasMessageStar(const QModelIndex& real_index)
     return real_index.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_STAR;
 }
 
+bool MessagesDialog::hasMessageSpam(const QModelIndex& real_index)
+{
+    if (!real_index.isValid())
+        return false;
+
+    return real_index.data(RsMessageModel::MsgFlagsRole).toInt() & RS_MSG_SPAM;
+}
+
 void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 {
     std::string cid;
@@ -529,8 +553,9 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     QList<QModelIndex> itemsRead;
     QList<QModelIndex> itemsUnread;
     QList<QModelIndex> itemsStar;
+    QList<QModelIndex> itemsJunk;
 
-    int nCount = getSelectedMsgCount (NULL, &itemsRead, &itemsUnread, &itemsStar);
+    int nCount = getSelectedMsgCount (NULL, &itemsRead, &itemsUnread, &itemsStar, &itemsJunk);
 
     /** Defines the actions for the context menu */
 
@@ -575,6 +600,11 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
     action->setCheckable(true);
     action->setChecked(itemsStar.size());
     connect(action, SIGNAL(triggered(bool)), this, SLOT(markWithStar(bool)));
+
+    action = contextMnu.addAction(tr("Mark as Junk"));
+    action->setCheckable(true);
+    action->setChecked(itemsStar.size());
+    connect(action, SIGNAL(triggered(bool)), this, SLOT(markWithJunk(bool)));
 
     contextMnu.addSeparator();
 
@@ -801,23 +831,27 @@ void MessagesDialog::changeQuickView(int newrow)
 						ui.tabWidget->setTabText(0, tr("System"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SYSTEM));
 						break;
-		case   0x02:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
+		case   0x02:	f = RsMessageModel::QUICK_VIEW_SPAM   ; 
+						ui.tabWidget->setTabText(0, tr("Spam"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SPAM_ON));
+						break;
+		case   0x03:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
 						ui.tabWidget->setTabText(0, tr("Important"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x03:	f = RsMessageModel::QUICK_VIEW_WORK     ;
+		case   0x04:	f = RsMessageModel::QUICK_VIEW_WORK     ;
 						ui.tabWidget->setTabText(0, tr("Work"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x04:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
+		case   0x05:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
 						ui.tabWidget->setTabText(0, tr("Personal"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x05:	f = RsMessageModel::QUICK_VIEW_TODO     ;
+		case   0x06:	f = RsMessageModel::QUICK_VIEW_TODO     ;
 						ui.tabWidget->setTabText(0, tr("Todo"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x06:	f = RsMessageModel::QUICK_VIEW_LATER    ;
+		case   0x07:	f = RsMessageModel::QUICK_VIEW_LATER    ;
 						ui.tabWidget->setTabText(0, tr("Later"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
@@ -873,6 +907,11 @@ void MessagesDialog::clicked(const QModelIndex& proxy_index)
             mMessageModel->setMsgStar(real_index, !hasMessageStar(proxy_index));
             return;
         }
+    case RsMessageModel::COLUMN_THREAD_SPAM:
+        {
+            mMessageModel->setMsgJunk(real_index, !hasMessageSpam(proxy_index));
+            return;
+        }
     }
 
 	// show current message directly
@@ -921,7 +960,7 @@ void MessagesDialog::updateCurrentMessage()
 void MessagesDialog::markAsRead()
 {
     QList<QModelIndex> itemsUnread;
-    getSelectedMsgCount (NULL, NULL, &itemsUnread, NULL);
+    getSelectedMsgCount (NULL, NULL, &itemsUnread, NULL, NULL);
 
     foreach(const QModelIndex& index,itemsUnread)
         mMessageModel->setMsgReadStatus(index,true);
@@ -932,7 +971,7 @@ void MessagesDialog::markAsRead()
 void MessagesDialog::markAsUnread()
 {
     QList<QModelIndex> itemsRead;
-    getSelectedMsgCount (NULL, &itemsRead, NULL, NULL);
+    getSelectedMsgCount (NULL, &itemsRead, NULL, NULL, NULL);
 
     foreach(const QModelIndex& index,itemsRead)
         mMessageModel->setMsgReadStatus(index,false);
@@ -948,7 +987,13 @@ void MessagesDialog::markWithStar(bool checked)
 		mMessageModel->setMsgStar(index, checked);
 }
 
+void MessagesDialog::markWithJunk(bool checked)
+{
+    QModelIndexList lst = ui.messageTreeWidget->selectionModel()->selectedRows();
 
+    foreach(const QModelIndex& index,lst)
+		mMessageModel->setMsgJunk(index, checked);
+}
 
 void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)
 {
@@ -1117,6 +1162,7 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int trashboxCount = 0;
     unsigned int starredCount = 0;
     unsigned int systemCount = 0;
+    unsigned int spamCount = 0;
 
     /* calculating the new messages */
 
@@ -1143,6 +1189,10 @@ void MessagesDialog::updateMessageSummaryList()
 
         if (it->msgflags & RS_MSG_SYSTEM) {
             ++systemCount;
+        }
+
+        if (it->msgflags & RS_MSG_SPAM) {
+            ++spamCount;
         }
 
         /* calculate box */
@@ -1303,6 +1353,9 @@ void MessagesDialog::updateMessageSummaryList()
                     break;
                 case QUICKVIEW_STATIC_ID_SYSTEM:
                     text += " (" + QString::number(systemCount) + ")";
+                    break;
+                case QUICKVIEW_STATIC_ID_SPAM:
+                    text += " (" + QString::number(spamCount) + ")";
                     break;
                 }
 

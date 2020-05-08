@@ -58,11 +58,12 @@ public:
 		COLUMN_THREAD_SUBJECT      = 0x02,
 		COLUMN_THREAD_READ         = 0x03,
 		COLUMN_THREAD_AUTHOR       = 0x04,
-		COLUMN_THREAD_DATE         = 0x05,
-		COLUMN_THREAD_TAGS         = 0x06,
-		COLUMN_THREAD_MSGID        = 0x07,
-		COLUMN_THREAD_NB_COLUMNS   = 0x08,
-		COLUMN_THREAD_CONTENT      = 0x08,
+		COLUMN_THREAD_SPAM         = 0x05,
+		COLUMN_THREAD_DATE         = 0x06,
+		COLUMN_THREAD_TAGS         = 0x07,
+		COLUMN_THREAD_MSGID        = 0x08,
+		COLUMN_THREAD_NB_COLUMNS   = 0x0a,
+		COLUMN_THREAD_CONTENT      = 0x09
 	};
 
     enum QuickViewFilter {
@@ -74,6 +75,7 @@ public:
         QUICK_VIEW_LATER           = 0x05,
         QUICK_VIEW_STARRED         = 0x06,
         QUICK_VIEW_SYSTEM          = 0x07,
+        QUICK_VIEW_SPAM            = 0x08,
         QUICK_VIEW_USER            = 100
     };
 
@@ -147,6 +149,7 @@ public:
     // control over message flags and so on. This is handled by the model because it will allow it to update accordingly
 	void setMsgReadStatus(const QModelIndex& i, bool read_status);
     void setMsgStar(const QModelIndex& index,bool star) ;
+	void setMsgJunk(const QModelIndex& index,bool junk) ;
 
 public slots:
 	void updateMessages();
