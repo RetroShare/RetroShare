@@ -250,28 +250,6 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	}
 }
 
-std::string p3I2pBob::keyToBase32Addr(const std::string &key)
-{
-	std::string copy(key);
-
-	// replace I2P specific chars
-	std::replace(copy.begin(), copy.end(), '~', '/');
-	std::replace(copy.begin(), copy.end(), '-', '+');
-
-	// decode
-	std::vector<uint8_t> bin = Radix64::decode(copy);
-	// hash
-	std::vector<uint8_t> sha256 = RsUtil::BinToSha256(bin);
-	// encode
-	std::string out = Radix32::encode(sha256);
-
-	// i2p uses lowercase
-	std::transform(out.begin(), out.end(), out.begin(), ::tolower);
-	out.append(".b32.i2p");
-
-	return out;
-}
-
 bool inline isAnswerOk(const std::string &answer) {
 	return (answer.compare(0, 2, "OK") == 0);
 }
@@ -346,7 +324,7 @@ int p3I2pBob::stateMachineBOB()
 		switch (mBOBState) {
 		case bsNewkeysN:
 			key = answer.substr(3, answer.length()-3);
-			mSetting.addr = keyToBase32Addr(key);
+			mSetting.addr = i2p::keyToBase32Addr(key);
 			IndicateConfigChanged();
 			break;
 		case bsGetkeys:
