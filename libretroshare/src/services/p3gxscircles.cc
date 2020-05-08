@@ -738,10 +738,10 @@ bool p3GxsCircles::getCircleDetails(const RsGxsCircleId& id, RsGxsCircleDetails&
 		RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 		RsGxsCircleCache& data(mCircleCache[id]);
 
-		if(data.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::LOADING)
+		if(data.mStatus < CircleEntryCacheStatus::LOADING)
 			should_reload = true;
 
-		if(data.mStatus == RsGxsCircleCache::CircleEntryCacheStatus::LOADING)
+		if(data.mStatus == CircleEntryCacheStatus::LOADING)
 			return false;
 
 		// should also have meta data....
@@ -805,7 +805,7 @@ bool p3GxsCircles::isLoaded(const RsGxsCircleId &circleId)
 {
 	RsStackMutex stack(mCircleMtx); /********** STACK LOCKED MTX ******/
 
-	return mCircleCache.is_cached(circleId) && (mCircleCache[circleId].mStatus >= RsGxsCircleCache::CircleEntryCacheStatus::UPDATING);
+	return mCircleCache.is_cached(circleId) && (mCircleCache[circleId].mStatus >= CircleEntryCacheStatus::UPDATING);
 }
 
 bool p3GxsCircles::loadCircle(const RsGxsCircleId &circleId)
@@ -820,7 +820,7 @@ int p3GxsCircles::canSend(const RsGxsCircleId &circleId, const RsPgpId &id, bool
 	{
 		RsGxsCircleCache& data = mCircleCache.ref(circleId);
 
-        if(data.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+        if(data.mStatus < CircleEntryCacheStatus::UPDATING)
             return 0;
 
 		should_encrypt = (data.mCircleType == RsGxsCircleType::EXTERNAL);
@@ -840,7 +840,7 @@ int p3GxsCircles::canReceive(const RsGxsCircleId &circleId, const RsPgpId &id)
 	{
 		RsGxsCircleCache &data = mCircleCache.ref(circleId);
 
-        if(data.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+        if(data.mStatus < CircleEntryCacheStatus::UPDATING)
             return 0;
 
 		if (data.isAllowedPeer(id))
@@ -859,7 +859,7 @@ bool p3GxsCircles::recipients(const RsGxsCircleId &circleId, std::list<RsPgpId>&
 	{
 		RsGxsCircleCache &data = mCircleCache.ref(circleId);
 
-        if(data.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+        if(data.mStatus < CircleEntryCacheStatus::UPDATING)
             return 0;
 
 		data.getAllowedPeersList(friendlist);
@@ -875,7 +875,7 @@ bool p3GxsCircles::isRecipient(const RsGxsCircleId &circleId, const RsGxsGroupId
 	{
 		const RsGxsCircleCache &data = mCircleCache.ref(circleId);
 
-        if(data.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+        if(data.mStatus < CircleEntryCacheStatus::UPDATING)
             return 0;
 
 		return data.isAllowedPeer(id,destination_group);
@@ -897,7 +897,7 @@ bool p3GxsCircles::recipients(const RsGxsCircleId& circleId, const RsGxsGroupId&
 
 	const RsGxsCircleCache& cache = mCircleCache.ref(circleId);
 
-	if(cache.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+	if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
 		return 0;
 
 	for(std::map<RsGxsId,RsGxsCircleMembershipStatus>::const_iterator it(cache.mMembershipStatus.begin());it!=cache.mMembershipStatus.end();++it)
@@ -1237,18 +1237,18 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 
         RsGxsCircleCache& cache(mCircleCache[id]);
 
-        if(cache.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::LOADING)
+        if(cache.mStatus < CircleEntryCacheStatus::LOADING)
             cache.mCircleId = id;
 
-        if(cache.mStatus == RsGxsCircleCache::CircleEntryCacheStatus::LOADING || cache.mStatus == RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+        if(cache.mStatus == CircleEntryCacheStatus::LOADING || cache.mStatus == CircleEntryCacheStatus::UPDATING)
             return false;
 
 		// Put it into the Loading Cache - so we will detect it later.
 
         if(cache.mLastUpdateTime > 0)
-			cache.mStatus = RsGxsCircleCache::CircleEntryCacheStatus::UPDATING;
+			cache.mStatus = CircleEntryCacheStatus::UPDATING;
 		else
-			cache.mStatus = RsGxsCircleCache::CircleEntryCacheStatus::LOADING;
+			cache.mStatus = CircleEntryCacheStatus::LOADING;
 
         mCirclesToLoad.insert(id);
         mShouldSendCacheUpdateNotification = true;
@@ -1363,7 +1363,7 @@ bool p3GxsCircles::cache_load_for_token(uint32_t token)
 			// We can check for self inclusion in the circle right away, since own ids are always loaded.
 			// that allows to subscribe/unsubscribe uncomplete circles
 
-			cache.mStatus = RsGxsCircleCache::CircleEntryCacheStatus::CHECKING_MEMBERSHIP;
+			cache.mStatus = CircleEntryCacheStatus::CHECKING_MEMBERSHIP;
 			cache.mLastUpdatedMembershipTS = 0; // force processing of membership request
 			locked_checkCircleCacheForMembershipUpdate(cache);
 		}
@@ -1477,7 +1477,7 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 
 		locked_checkCircleCacheForAutoSubscribe(cache);
 
-		cache.mStatus = RsGxsCircleCache::CircleEntryCacheStatus::CHECKING_MEMBERSHIP;
+		cache.mStatus = CircleEntryCacheStatus::CHECKING_MEMBERSHIP;
 		locked_checkCircleCacheForMembershipUpdate(cache);
 
 		/* move straight into the cache */
@@ -1520,7 +1520,7 @@ bool p3GxsCircles::locked_checkCircleCacheForMembershipUpdate(RsGxsCircleCache& 
 {
 	rstime_t now = time(NULL) ;
 
-    if(cache.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+    if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
         return false;
 
 	if(cache.mLastUpdatedMembershipTS + GXS_CIRCLE_DELAY_TO_FORCE_MEMBERSHIP_UPDATE < now)
@@ -1572,7 +1572,7 @@ bool p3GxsCircles::locked_checkCircleCacheForAutoSubscribe(RsGxsCircleCache &cac
 		return false;
 	}
 
-    if(cache.mStatus < RsGxsCircleCache::CircleEntryCacheStatus::UPDATING)
+    if(cache.mStatus < CircleEntryCacheStatus::UPDATING)
         return false;
 
 	/* if we appear in the group - then autosubscribe, and mark as processed. This also applies if we're the group admin */
@@ -1974,7 +1974,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 		}
 
 		cache.mLastUpdatedMembershipTS = time(NULL) ;
-		cache.mStatus = RsGxsCircleCache::CircleEntryCacheStatus::UP_TO_DATE;
+		cache.mStatus = CircleEntryCacheStatus::UP_TO_DATE;
 		cache.mLastUpdateTime = time(NULL);
         mShouldSendCacheUpdateNotification = true;
 	}

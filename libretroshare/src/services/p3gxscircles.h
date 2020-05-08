@@ -128,6 +128,15 @@ public:
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
 };
 
+enum CircleEntryCacheStatus: uint8_t {
+	UNKNOWN             = 0x00, // Used to detect uninitialized memory
+	NO_DATA             = 0x01, // Used in the constuctor
+	LOADING             = 0x02, // When the token request to load cache has been sent and no data is present
+	UPDATING            = 0x03, // Starting from this level the cache entry can be used
+	CHECKING_MEMBERSHIP = 0x04, // Means we're actually looking into msgs to update membership status
+	UP_TO_DATE          = 0x05, // Everything should be loaded here.
+};
+
 class RsGxsCircleCache
 {
 public:
@@ -144,15 +153,6 @@ public:
 
     // Cache related data
 
-    enum CircleEntryCacheStatus: uint8_t	// This enum
-    {
-        UNKNOWN             = 0x00, // Used to detect uninitialized memory
-        NO_DATA             = 0x01, // Used in the constuctor
-        LOADING             = 0x02, // When the token request to load cache has been sent and no data is present
-        UPDATING            = 0x03, // Starting from this level the cache entry can be used
-        CHECKING_MEMBERSHIP = 0x04, // Means we're actually looking into msgs to update membership status
-        UP_TO_DATE          = 0x05, // Everything should be loaded here.
-    };
 	rstime_t mLastUpdatedMembershipTS ;     // Last time the subscribe messages have been requested. Should be reset when new messages arrive.
 	rstime_t mLastUpdateTime;               // Last time the cache entry was loaded
     CircleEntryCacheStatus mStatus;         // Overall state of the cache entry
