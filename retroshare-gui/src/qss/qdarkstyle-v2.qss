@@ -2143,3 +2143,10 @@ PostedCardView > QFrame#mainFrame[new=true] {
 WireGroupItem QFrame#frame{
 		background: transparent;
 }
+
+GxsChannelDialog GroupTreeWidget#groupTreeWidget{
+	background-color: #F050F0;
+	qproperty-waitingSVG_Over: false;
+	qproperty-waitingSVG: url(%THISPATH%/qdarkstyle/channel_waiting.svg);
+}
+
