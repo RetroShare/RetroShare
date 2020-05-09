@@ -126,7 +126,7 @@ p3GxsCircles::p3GxsCircles( RsGeneralDataService *gds, RsNetworkExchangeService 
       RsGxsCircles(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
       RsTickEvent(), mIdentities(identities), mPgpUtils(pgpUtils),
       mCircleMtx("p3GxsCircles"),
-      mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" ),
+//      mCircleCache(DEFAULT_MEM_CACHE_SIZE, "GxsCircleCache" ),
       mShouldSendCacheUpdateNotification(false)
 {
 	// Kick off Cache Testing, + Others.
@@ -1071,6 +1071,10 @@ RsGxsCircleCache::RsGxsCircleCache()
 
 bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup& circle)
 {
+#ifdef DEBUG_CIRCLES
+	std::cerr << "RsGxsCircleCache::loadBaseCircle(" << mCircleId << "):" << std::endl;
+#endif // DEBUG_CIRCLES
+
 	mCircleId = RsGxsCircleId(circle.mMeta.mGroupId);
 	mCircleName = circle.mMeta.mGroupName;
 	//	mProcessedCircles.insert(mCircleId);
@@ -1084,19 +1088,23 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup& circle)
 	mAllowedNodes = circle.mLocalFriends ;
 	mRestrictedCircleId = circle.mMeta.mCircleId ;
 
-	mMembershipStatus.clear() ;
+    // We do not clear mMembershipStatus because this might be an update and if we do, it will clear membership requests
+    // that are not in the invited list!
 
 	for(std::set<RsGxsId>::const_iterator it(circle.mInvitedMembers.begin());it!=circle.mInvitedMembers.end();++it)
 	{
 		RsGxsCircleMembershipStatus& s(mMembershipStatus[*it]) ;
+		s.subscription_flags |= GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST ;
+
+        // This one can be cleared because it will anyway be updated to the latest when loading subscription request messages and it wil only
+        // be used there as well.
+
 		s.last_subscription_TS = 0 ;
-		s.subscription_flags = GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST ;
-	}
 
 #ifdef DEBUG_CIRCLES
-	std::cerr << "RsGxsCircleCache::loadBaseCircle(" << mCircleId << ")";
-	std::cerr << std::endl;
+		std::cerr << "  Invited member " << *it << " Initializing/updating membership status to " << std::hex << s.subscription_flags << std::dec << std::endl;
 #endif // DEBUG_CIRCLES
+	}
 
 	return true;
 }
@@ -1251,7 +1259,6 @@ bool p3GxsCircles::cache_request_load(const RsGxsCircleId &id)
 			cache.mStatus = CircleEntryCacheStatus::LOADING;
 
         mCirclesToLoad.insert(id);
-        mShouldSendCacheUpdateNotification = true;
 	}
 
 	if (RsTickEvent::event_count(CIRCLE_EVENT_CACHELOAD) > 0) /* its already scheduled */
@@ -1479,9 +1486,6 @@ bool p3GxsCircles::cache_reloadids(const RsGxsCircleId &circleId)
 
 		cache.mStatus = CircleEntryCacheStatus::CHECKING_MEMBERSHIP;
 		locked_checkCircleCacheForMembershipUpdate(cache);
-
-		/* move straight into the cache */
-		mCircleCache.resize();
 
 		std::cerr << "  Loading complete." << std::endl;
 
@@ -1923,6 +1927,7 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 
         RsGxsCircleId circle_id(it->first);
 		RsGxsCircleCache& cache( mCircleCache[circle_id] );
+
 #ifdef DEBUG_CIRCLES
 		std::cerr << "    Circle found in cache!" << std::endl;
 		std::cerr << "    Retrieving messages..." << std::endl;
@@ -1931,24 +1936,26 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 		for(uint32_t i=0;i<it->second.size();++i)
 		{
 #ifdef DEBUG_CIRCLES
-			std::cerr << "      Group ID: " << it->second[i]->meta.mGroupId << ", Message ID: " << it->second[i]->meta.mMsgId << ": " ;
+			std::cerr << "      Group ID: " << it->second[i]->meta.mGroupId << ", Message ID: " << it->second[i]->meta.mMsgId << ", thread ID: " << it->second[i]->meta.mThreadId << ", author: " << it->second[i]->meta.mAuthorId << ": " ;
 #endif
 
 			RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
 
 			if(item == NULL)
 			{
-				std::cerr << "    (EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird." << std::endl;
+				std::cerr << "    (EE) item is not a RsGxsCircleSubscriptionRequestItem. Weird. Scheduling for deletion." << std::endl;
+
+                messages_to_delete[RsGxsGroupId(circle_id)].insert(it->second[i]->meta.mMsgId);
 				continue ;
 			}
 
 			RsGxsCircleMembershipStatus& info(cache.mMembershipStatus[item->meta.mAuthorId]) ;
 
 #ifdef DEBUG_CIRCLES
-			std::cerr << " is from id " << item->meta.mAuthorId << "  " << time(NULL) - item->time_stamp << " seconds ago, " ;
+			std::cerr << "  " << time(NULL) - item->time_stamp << " seconds ago, " ;
 #endif
 
-			if(info.last_subscription_TS < item->time_stamp)
+			if(info.last_subscription_TS <= item->time_stamp) // the <= here allows to make sure we update the flags is something happenned
 			{
 				info.last_subscription_TS = item->time_stamp ;
 
@@ -1961,15 +1968,28 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 
 				mShouldSendCacheUpdateNotification = true;
 #ifdef DEBUG_CIRCLES
-				std::cerr << " UPDATING" << std::endl;
+				std::cerr << " UPDATING status to " << std::hex << info.subscription_flags << std::dec << std::endl;
 #endif
 			}
-			else if(info.last_subscription_TS > item->time_stamp)
+            else if(info.last_subscription_TS > item->time_stamp)
+				std::cerr << " Too old: item->TS=" << item->time_stamp << ", last_subscription_TS=" << info.last_subscription_TS << ". IGNORING." << std::endl;
+        }
+
+        // now do another sweep and remove all msgs that are older than the latest
+
+		std::cerr << "    Cleaning old messages..." << std::endl;
+
+		for(uint32_t i=0;i<it->second.size();++i)
+        {
+			RsGxsCircleMembershipStatus& info(cache.mMembershipStatus[it->second[i]->meta.mAuthorId]) ;
+			RsGxsCircleSubscriptionRequestItem *item = dynamic_cast<RsGxsCircleSubscriptionRequestItem*>(it->second[i]) ;
+
+			if(item && info.last_subscription_TS > item->time_stamp)
 			{
 #ifdef DEBUG_CIRCLES
-				std::cerr << " Older than last known (" << time(NULL)-info.last_subscription_TS << " seconds ago): deleting." << std::endl;
+				std::cerr << "      " << item->meta.mMsgId << ": Older than last known (" << (long int)info.last_subscription_TS - (long int)item->time_stamp << " seconds before): deleting." << std::endl;
 #endif
-				messages_to_delete[RsGxsGroupId(circle_id)].insert(it->second[i]->meta.mMsgId) ;
+				messages_to_delete[RsGxsGroupId(circle_id)].insert(item->meta.mMsgId) ;
 			}
 		}
 
@@ -2002,7 +2022,7 @@ void p3GxsCircles::debug_dumpCache()
 {
     std::cerr << "Debug dump of CircleCache:" << std::endl;
 
-    mCircleCache.printStats(std::cerr);
+    mCircleCache.printStats();
 	mCircleCache.applyToAllCachedEntries(*this,&p3GxsCircles::debug_dumpCacheEntry);
 }
 

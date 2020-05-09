@@ -128,7 +128,7 @@ public:
     uint32_t subscription_flags ;	// combination of  GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST and  GXS_EXTERNAL_CIRCLE_FLAGS_SUBSCRIBED   
 };
 
-typedef enum CircleEntryCacheStatus: uint8_t {
+enum CircleEntryCacheStatus: uint8_t {
 	UNKNOWN             = 0x00, // Used to detect uninitialized memory
 	NO_DATA_YET         = 0x01, // Used in the constuctor
 	LOADING             = 0x02, // When the token request to load cache has been sent and no data is present
@@ -184,6 +184,28 @@ public:
 
 
 class PgpAuxUtils;
+
+class RsCirclesMemCache : public std::map<RsGxsCircleId,RsGxsCircleCache>
+{
+public:
+    RsCirclesMemCache() : std::map<RsGxsCircleId,RsGxsCircleCache>(){}
+
+    bool is_cached(const RsGxsCircleId& id) { return end() != find(id) ; }
+    RsGxsCircleCache& ref(const RsGxsCircleId& id) { return operator[](id) ; }
+
+    void printStats() { std::cerr << "CircleMemCache: " << size() << " elements." << std::endl; }
+
+	template<class ClientClass> void applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(RsGxsCircleCache&))
+    {
+        for(auto& it:*this)
+            (c.*method)(it.second);
+    }
+	template<class ClientClass> void applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(const RsGxsCircleCache&))
+    {
+        for(const auto& it:*this)
+            (c.*method)(it.second);
+    }
+};
 
 class p3GxsCircles: public RsGxsCircleExchange, public RsGxsCircles,
         public GxsTokenQueue, public RsTickEvent
@@ -341,7 +363,8 @@ public:
 	//std::map<RsGxsCircleId, std::list<RsGxsCircleId> > mCacheLoad_SubCircle; 
 
     std::set<RsGxsCircleId> mCirclesToLoad;                   // list of circles to update/load, so that we can treat them by groups.
-	RsMemCache<RsGxsCircleId, RsGxsCircleCache> mCircleCache; // actual cache data
+    RsCirclesMemCache mCircleCache;
+	//RsMemCache<RsGxsCircleId, RsGxsCircleCache> mCircleCache; // actual cache data
 
     void debug_dumpCache();	// debug method to overview what's going on
 	bool debug_dumpCacheEntry(RsGxsCircleCache &cache);
