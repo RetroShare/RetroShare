@@ -193,7 +193,7 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
         case COLUMN_THREAD_DATE:       return tr("Click to sort by date");
         case COLUMN_THREAD_TAGS:       return tr("Click to sort by tags");
         case COLUMN_THREAD_STAR:       return tr("Click to sort by star");
-		case COLUMN_THREAD_SPAM:       return tr("Click to sort by junk status");
+        case COLUMN_THREAD_SPAM:       return tr("Click to sort by junk status");
 		default:
 			return QVariant();
         }
@@ -460,7 +460,7 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
 	case COLUMN_THREAD_SUBJECT:   return QVariant(QString::fromUtf8(fmpe.title.c_str()));
 	case COLUMN_THREAD_ATTACHMENT:return QVariant(QString::number(fmpe.count));
 
-    case COLUMN_THREAD_STAR:
+	case COLUMN_THREAD_STAR:
 	case COLUMN_THREAD_SPAM:
 	case COLUMN_THREAD_READ:return QVariant();
 	case COLUMN_THREAD_DATE:{
