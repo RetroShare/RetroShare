@@ -24,8 +24,8 @@ before_install:
     sudo apt-get install -y
     build-essential libssl-dev libsqlcipher-dev libbz2-dev libsqlite3-dev
     libupnp-dev pkg-config qt5-default libxss-dev qtmultimedia5-dev
-    libqt5x11extras5-dev libqt5designer5 libxapian-dev qttools5-dev
-    rapidjson-dev ;
+    libqt5x11extras5-dev libqt5designer5  libqt5svg5-dev
+    libxapian-dev qttools5-dev rapidjson-dev ;
     fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew update ; fi
   - if [ $TRAVIS_OS_NAME == osx ]; then brew install qt5; fi
