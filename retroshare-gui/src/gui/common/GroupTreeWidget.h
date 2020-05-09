@@ -21,6 +21,8 @@
 #ifndef GROUPTREEWIDGET_H
 #define GROUPTREEWIDGET_H
 
+#include <QWidget>
+#include <QIcon>
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -66,8 +68,6 @@ class GroupTreeWidget : public QWidget
 
 	Q_PROPERTY(QColor textColorCategory READ textColorCategory WRITE setTextColorCategory)
 	Q_PROPERTY(QColor textColorPrivateKey READ textColorPrivateKey WRITE setTextColorPrivateKey)
-	Q_PROPERTY(QString waitingSVG WRITE setWaitingSVG)
-	Q_PROPERTY(bool waitingSVG_Over WRITE setWaitingSVG_Over)
 
 public:
 	GroupTreeWidget(QWidget *parent = 0);
@@ -109,11 +109,7 @@ public:
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
-
-	void setWaitingSVG(const QString &value);
-	void setWaitingSVG_Over(const bool &value);
-
-	bool getGroupName(QString id, QString& name);
+        bool getGroupName(QString id, QString& name);
 
 	int subscribeFlags(const QString &id);
 

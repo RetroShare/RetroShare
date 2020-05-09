@@ -23,18 +23,11 @@
 
 #include <gui/common/RSItemDelegate.h>
 
-#include <QSvgRenderer>
-
 class RSElidedItemDelegate : public RSStyledItemDelegate
 {
 	Q_OBJECT
-
-	// For now, these properties cannot be changed by StyleSheet
-	// If needed, you can add properties to owner widget then copy them in this delegate.
 	Q_PROPERTY(bool isOnlyPlainText READ isOnlyPlainText WRITE setOnlyPlainText)
 	Q_PROPERTY(bool paintRoundedRect READ paintRoundedRect WRITE setPaintRoundedRect)
-	Q_PROPERTY(QString waitingSVG READ waitingSVG WRITE setWaitingSVG)
-	Q_PROPERTY(bool waitingSVG_Over READ waitingSVG_Over WRITE setWaitingSVG_Over)
 
 public:
 	RSElidedItemDelegate(QObject *parent = 0);
@@ -46,10 +39,6 @@ public:
 	void setOnlyPlainText(const bool &value) { mOnlyPlainText = value; }
 	bool paintRoundedRect() const { return mPaintRoundedRect; }
 	void setPaintRoundedRect(const bool &value) { mPaintRoundedRect = value; }
-	QString waitingSVG() const {return mWaitingSVG; }
-	void setWaitingSVG(const QString &value) {mWaitingSVG = value; }
-	bool waitingSVG_Over() const {return mWaitingSVG_Over; }
-	void setWaitingSVG_Over(const bool &value) {mWaitingSVG_Over = value; }
 
 protected:
 	bool editorEvent(QEvent *event,
@@ -60,10 +49,7 @@ protected:
 private:
 	bool mOnlyPlainText;
 	bool mPaintRoundedRect;
-	QSvgRenderer* mSVG_Renderer;
-	mutable QString mLastSVG_Loaded;
-	QString mWaitingSVG;
-	bool mWaitingSVG_Over;
+
 };
 
 #endif // RSELIDEDITEMDELEGATE_H
