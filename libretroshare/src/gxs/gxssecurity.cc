@@ -419,10 +419,8 @@ bool GxsSecurity::validateNxsMsg(const RsNxsMsg& msg, const RsTlvKeySignature& s
             /* check signature timeperiod */
             if ((msgMeta.mPublishTs < key.startTS) || (key.endTS != 0 && msgMeta.mPublishTs > key.endTS))
             {
-    #ifdef GXS_SECURITY_DEBUG
-                    std::cerr << " GxsSecurity::validateNxsMsg() TS out of range";
-                    std::cerr << std::endl;
-    #endif
+                    RsWarn() << __PRETTY_FUNCTION__ << " GxsSecurity::validateNxsMsg() TS out of range for key " << msgMeta.mAuthorId
+                             << " usage is limited to TS=[" << key.startTS << "," << key.endTS << "] and msg publish time is " << msgMeta.mPublishTs << std::endl;
                     return false;
             }
 
