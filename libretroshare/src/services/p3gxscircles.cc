@@ -656,16 +656,17 @@ void p3GxsCircles::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 					RsGxsCircleGroupItem *new_circle_grp_item = dynamic_cast<RsGxsCircleGroupItem*>(groupChange->mNewGroupItem);
 
-					for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
-					{
-						auto ev = std::make_shared<RsGxsCircleEvent>();
+                    if(new_circle_grp_item)	// groups published by us do not come in the mNewGroupItem field. It's possible to add them, in rsgenexchange.cc:2806
+						for(auto& gxs_id: new_circle_grp_item->gxsIdSet.ids)
+						{
+							auto ev = std::make_shared<RsGxsCircleEvent>();
 
-						ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST;
-						ev->mCircleId = RsGxsCircleId(*git);
-						ev->mGxsId = gxs_id;
+							ev->mCircleEventType = RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST;
+							ev->mCircleId = RsGxsCircleId(*git);
+							ev->mGxsId = gxs_id;
 
-						rsEvents->sendEvent(ev);
-					}
+							rsEvents->sendEvent(ev);
+						}
                 }
                 else if(c->getType()==RsGxsNotify::TYPE_UPDATED)
 				{
