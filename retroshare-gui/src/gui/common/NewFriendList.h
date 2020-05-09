@@ -144,6 +144,7 @@ private slots:
 	void msgGroup();
 	void msgProfile();
 	void recommendNode();
+	void removeItem();
 	void removeNode();
 	void removeProfile();
 	void createNewGroup() ;

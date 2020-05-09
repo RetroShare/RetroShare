@@ -478,6 +478,9 @@ void MainWindow::initStackedPage()
   }
 #endif
 
+
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
+
   //List All notify before Setting was created
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;
   for (notifyIt = notify.begin(); notifyIt != notify.end(); ++notifyIt) {
@@ -489,7 +492,6 @@ void MainWindow::initStackedPage()
       }
   }
 
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
   addPage(settingsDialog = new SettingsPage(ui->stackPages),grp,&notify);
 
   /* Create the toolbar */

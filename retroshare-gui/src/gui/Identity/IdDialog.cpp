@@ -34,6 +34,7 @@
 #include "gui/RetroShareLink.h"
 #include "gui/chat/ChatDialog.h"
 #include "gui/Circles/CreateCircleDialog.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/common/UserNotify.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -360,6 +361,9 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	ui->idTreeWidget->setColumnWidth(RSID_COL_VOTES, 2 * fontWidth);
 	
 	ui->idTreeWidget->setItemDelegateForColumn(
+	            RSID_COL_NICKNAME,
+	            new GxsIdTreeItemDelegate());
+	ui->idTreeWidget->setItemDelegateForColumn(
 	            RSID_COL_VOTES,
 	            new ReputationItemDelegate(RsReputationLevel(0xff)));
 
@@ -642,7 +646,6 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		RsGxsCircleDetails details;
 		rsGxsCircles->getCircleDetails(RsGxsCircleId(vit->mGroupId), details) ;
 
-		bool should_re_add = true ;
 		bool am_I_in_circle = details.mAmIAllowed ;
 		bool am_I_admin (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN) ;
 		bool am_I_subscribed (vit->mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED) ;
@@ -778,10 +781,13 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 				std::cerr << " no existing sub item. Creating new one." << std::endl;
 #endif
 				subitem = new RSTreeWidgetItem(NULL);
-                subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,Qt::UserRole,QString::fromStdString(it->first.toStdString()));
+				subitem->setData(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,Qt::UserRole,QString::fromStdString(it->first.toStdString()));
+				//Icon PlaceHolder
+				subitem->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png"));
 
 				RsIdentityDetails idd ;
-				bool has_id = rsIdentity->getIdDetails(it->first,idd) ;
+				//bool has_id =
+				rsIdentity->getIdDetails(it->first,idd) ;
 
 				// QPixmap pixmap ;
 
@@ -846,31 +852,31 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 			}
 		}    
 
-        	// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
-        	// Admin/non admin is shows using Bold font.
-        
+		// The bullet colors below are for the *Membership*. This is independent from admin rights, which cannot be shown as a color.
+		// Admin/non admin is shows using Bold font.
+
 		if(am_I_in_circle)
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_MEMBER)) ;
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_MEMBER)) ;
 		else if(am_I_invited || am_I_pending)
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_INVITED)) ;
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_INVITED)) ;
 		else
-			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,QIcon(IMAGE_UNKNOWN)) ;
+			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;
 	}
     restoreExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
 }
 
-static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col) 
-{
-    w->selectionModel()->clearSelection() ;
-    
-    for(std::set<RsGxsId>::const_iterator it(members.begin());it!=members.end();++it)
-    {
-	QList<QTreeWidgetItem*> clist = w->findItems( QString::fromStdString((*it).toStdString()), Qt::MatchExactly|Qt::MatchRecursive, col);
-    
-    	foreach(QTreeWidgetItem* item, clist)
-		item->setSelected(true) ;
-    }
-}
+//static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col)
+//{
+//    w->selectionModel()->clearSelection() ;
+//
+//    for(std::set<RsGxsId>::const_iterator it(members.begin());it!=members.end();++it)
+//    {
+//	QList<QTreeWidgetItem*> clist = w->findItems( QString::fromStdString((*it).toStdString()), Qt::MatchExactly|Qt::MatchRecursive, col);
+//
+//    	foreach(QTreeWidgetItem* item, clist)
+//		item->setSelected(true) ;
+//    }
+//}
 
 bool IdDialog::getItemCircleId(QTreeWidgetItem *item,RsGxsCircleId& id)
 {
@@ -1257,7 +1263,7 @@ void IdDialog::updateIdList()
 	ui->removeIdentity->setEnabled(false);
 	ui->editIdentity->setEnabled(false);
 
-	int accept = filter;
+	//int accept = filter;
 
  	RsThread::async([this]()
 	{
@@ -1364,9 +1370,10 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
     }
         
 
-    item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
-    item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
-    
+	item->setText(RSID_COL_NICKNAME, QString::fromUtf8(data.mMeta.mGroupName.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE));
+	item->setData(RSID_COL_NICKNAME, Qt::UserRole, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
+
     if(isBanned)
     {
         item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
@@ -1416,14 +1423,16 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	    item->setToolTip(RSID_COL_IDTYPE, tooltip) ;
     }
 
-    QPixmap pixmap ;
+	//QPixmap pixmap ;
+	//
+	//if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap,GxsIdDetails::SMALL))
+	//    pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::SMALL) ;
+	//
+	//item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
+	// Icon Place Holder
+	item->setIcon(RSID_COL_NICKNAME,FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png"));
 
-    if(data.mImage.mSize == 0 || !GxsIdDetails::loadPixmapFromData(data.mImage.mData, data.mImage.mSize, pixmap,GxsIdDetails::SMALL))
-        pixmap = GxsIdDetails::makeDefaultIcon(RsGxsId(data.mMeta.mGroupId),GxsIdDetails::SMALL) ;
-
-    item->setIcon(RSID_COL_NICKNAME, QIcon(pixmap));
-
-    QString tooltip;
+	QString tooltip;
 
 	if (data.mMeta.mGroupFlags & RSGXSID_GROUPFLAG_REALID_kept_for_compatibility)
 	{
@@ -1546,10 +1555,6 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 			else
 				allItem->addChild(item);
 
-			GxsIdLabel *label = new GxsIdLabel();
-			label->setId(RsGxsId(data.mMeta.mGroupId)) ;
-
-			ui->treeWidget_membership->setItemWidget(item,0,label) ;
 		}
 	}
 	

@@ -34,6 +34,73 @@
 
 #define RS_PQISSL_AUTH_DOUBLE_CHECK 1
 
+
+//  This is a simple overview of how the listener is setup, ticked (calling accept) and peers added to it.
+//  On the highest level (RsServer) the listener lives inside the pqisslpersongrp class (variable: "pqih").
+//  Inside pqisslpersongrp the listener is stored in "pqil".
+//
+//  The listener has an internal list with incoming connections that are handled in a similar fashion to pqissl.
+//  (Mainly setting up the socket (non-blocking) and establisching the ssl handshake.)
+//  When everything went fine the connection is passed to pqissl in finaliseConnection()
+//
+//  This is how the listener is initialized during start up:
+//
+//   RsServer::StartupRetroShare()
+//      |
+//      +----- pqih = new pqisslpersongrp(serviceCtrl, flags, mPeerMgr);
+//      +----- pqih->init_listener();
+//                  |
+//                  +----- pqil = locked_createListener(laddr);
+//                              |
+//                              +----- return new pqissllistener(laddr, mPeerMgr);
+//
+//
+//  This is how the listener is ticked to call accept:
+//
+//   RsServer::StartupRetroShare()
+//      |
+//      +----- pqih->tick();
+//                  |
+//                  +----- pqil->tick();
+//                              |
+//                              +----- acceptconnection();
+//                              |           |
+//                              |           +----- accecpt()
+//                              |
+//                              +----- continueaccepts();
+//                              +----- finaliseAccepts();
+//                                          |
+//                                          +----- finaliseConnection()
+//                                                      |
+//                                                      +----- pqis->accept()
+//
+//
+//  This is how peers (their id) are registered to the listener:
+//  (This is only used to tell if a connection peer is known or a new one (which is then added))
+//
+//   pqipersongrp::addPeer()
+//      |
+//      +----- pqiperson *pqip = locked_createPerson(id, pqil);
+//      |           |
+//      |           +----- pqiperson *pqip = new pqiperson(id, this);
+//      |           +----- pqissl *pqis = new pqissl((pqissllistener *) listener, pqip, mLinkMgr);
+//      |           +----- pqiconnect *pqisc = new pqiconnect(pqip, rss, pqis);
+//      |           +----- pqip->addChildInterface(PQI_CONNECT_TCP, pqisc);
+//      |                       |
+//      |                       +-- sets kids[type] = pqisc;
+//      |
+//      +----- pqip->reset();
+//      +----- pqip->listen();
+//                  |
+//                  +-- for all kids[]
+//                              |
+//                              +----- listen() ( of class pqiconnect )
+//                                          |
+//                                          +----- listen() ( of class pqissl )
+//                                                      |
+//                                                      +----- pqil->addlistenaddr(PeerId(), this);
+
+
 /***************************** pqi Net SSL Interface *********************************
  */
 

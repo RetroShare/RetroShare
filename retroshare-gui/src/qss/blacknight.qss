@@ -23,7 +23,7 @@ FriendSelectionWidget
 	qproperty-textColorOnline: lightBlue;
 }
 
-FriendList
+NewFriendList
 {
 	qproperty-textColorStatusOffline: white;
 	qproperty-textColorStatusAway: gray;

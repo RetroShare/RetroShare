@@ -145,6 +145,48 @@ QIcon FilesDefs::getIconFromQtResourcePath(const QString& resource_path)
 	return icon;
 }
 
+QIcon FilesDefs::getIconFromGxsIdCache(const RsGxsId& id,const QIcon& setIcon, bool& exist)
+{
+	static std::map<RsGxsId,QIcon> mIconCache;
+	exist = false;
+	QIcon icon;
+#ifdef DEBUG_FILESDEFS
+	std::cerr << "Creating Icon from id " << id.toStdString() ;
+#endif
+	if (setIcon.isNull())
+	{
+		if (id.isNull())
+			return getIconFromQtResourcePath(":/icons/notification.png");
+
+		auto item = mIconCache.find(id);
+
+		if (item == mIconCache.end())
+		{
+#ifdef DEBUG_FILESDEFS
+			std::cerr << "  Not in cache. And not setted." << std::endl;
+#endif
+			icon = getIconFromQtResourcePath(":/icons/png/anonymous.png");
+		}
+		else
+		{
+#ifdef DEBUG_FILESDEFS
+			std::cerr << "  In cache. " << std::endl;
+#endif
+			icon = item->second;
+			exist = true;
+		}
+	}
+	else
+	{
+#ifdef DEBUG_FILESDEFS
+		std::cerr << "  Have to set it." << std::endl;
+#endif
+		icon = setIcon;
+		mIconCache[id] = icon;
+	}
+	return icon;
+}
+
 QIcon FilesDefs::getIconFromFileType(const QString& filename)
 {
     return getIconFromQtResourcePath(getInfoFromFilename(filename,true,true));

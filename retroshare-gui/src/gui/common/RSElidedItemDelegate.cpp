@@ -20,170 +20,229 @@
 
 #include "RSElidedItemDelegate.h"
 
+#include "gui/common/StyledElidedLabel.h"
+#include "util/rsdebug.h"
+
+#include <QApplication>
 #include <QPainter>
 #include <QTextDocument>
 #include <QTextLayout>
 #include <QToolTip>
 
 RSElidedItemDelegate::RSElidedItemDelegate(QObject *parent)
-  : RSItemDelegate(parent)
-  , mElided(false)
-  , mOnlyPlainText(false)
-  , mContent("")
+  : RSStyledItemDelegate(parent)
+  , mOnlyPlainText(false), mPaintRoundedRect(true)
 {
-	mRectElision = QRect();
+}
+
+QSize RSElidedItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+	QStyleOptionViewItem ownOption (option);
+	initStyleOption(&ownOption, index);
+
+	const QWidget* widget = option.widget;
+	QStyle* ownStyle =  widget ? widget->style() : QApplication::style();
+
+	//Only need "…" for text
+	ownOption.text = "…";
+	QRect checkRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &ownOption, widget);
+	QRect iconRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemDecoration, &ownOption, widget);
+	QRect textRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemText, &ownOption, widget);
+
+	QSize contSize = ownStyle->sizeFromContents( QStyle::CT_ItemViewItem,&ownOption
+	                                            ,QSize( checkRect.width()+iconRect.width()+textRect.width()
+	                                                   ,qMax(checkRect.height(),qMax(iconRect.height(),textRect.height()))),widget);
+
+	return contSize;
 }
 
 void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-	RSItemDelegate::paint(painter, option, index);
-}
-
-void RSElidedItemDelegate::drawDisplay(QPainter *painter, const QStyleOptionViewItem &option,
-                 const QRect &rect, const QString &text) const
-{
-	if (!text.isEmpty())
+	if(!index.isValid())
 	{
-		mContent = text;
-		QList<QPair<QTextLine,QPoint> > lLines;
-		QString elidedLastLine = "";
-		QFontMetrics fontMetrics = option.fontMetrics;
-		QRect cr = rect;
-		cr.adjust(spacing().width(), spacing().height(), -spacing().width(), -spacing().height());
-
-		bool didElide = false;
-		QChar ellipsisChar(0x2026);//= "…"
-		int lineSpacing = fontMetrics.lineSpacing();
-		int y = 0;
-
-		QString plainText = "";
-		if (mOnlyPlainText)
-		{
-			plainText = mContent;
-		} else {
-			QTextDocument td;
-			td.setHtml(mContent);
-			plainText = td.toPlainText();
-		}
-		plainText = plainText.replace("\n",QChar(QChar::LineSeparator));
-		plainText = plainText.replace("\r",QChar(QChar::LineSeparator));
-
-		if (painter) {
-			painter->setFont(option.font);
-			QPalette::ColorGroup cg = option.state & QStyle::State_Enabled
-			    ? QPalette::Normal : QPalette::Disabled;
-			if (cg == QPalette::Normal && !(option.state & QStyle::State_Active))
-				cg = QPalette::Inactive;
-			QColor textColor = option.palette.color(cg, QPalette::Text);
-			painter->setPen(textColor);
-		}
-
-		QTextLayout textLayout(plainText, option.font);
-		QTextOption to = textLayout.textOption();
-		to.setAlignment(option.displayAlignment);
-#if QT_VERSION >= 0x050000
-		bool wordWrap = option.features.testFlag(QStyleOptionViewItem::WrapText);
-#else
-		bool wordWrap = false;
-#endif
-		to.setWrapMode(wordWrap ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
-		textLayout.setTextOption(to);
-
-		textLayout.beginLayout();
-		forever {
-			//Get new line for text.
-			QTextLine line = textLayout.createLine();
-
-			if (!line.isValid())
-				break;// No more line to write
-
-			line.setLineWidth(cr.width());
-			int nextLineY = y + lineSpacing;
-
-			if ((cr.height() >= nextLineY + lineSpacing) && wordWrap) {
-				//Line written normaly, next line will too
-				lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
-				y = nextLineY;
-			} else {
-				//The next line can't be written.
-				QString lastLine = plainText.mid(line.textStart()).split(QChar(QChar::LineSeparator)).at(0);
-				QTextLine lineEnd = textLayout.createLine();
-				if (!lineEnd.isValid() && (wordWrap
-				                           || (fontMetrics.width(lastLine) < cr.width()))) {
-					//No more text for next line so this one is OK
-					lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
-					elidedLastLine="";
-					didElide = false;
-				} else {
-					//Text is left, so get elided text
-					if (lastLine == "") {
-						elidedLastLine = ellipsisChar;
-					} else {
-						elidedLastLine = fontMetrics.elidedText(lastLine, Qt::ElideRight, cr.width()-1);
-						if (elidedLastLine.right(1) != ellipsisChar)
-							elidedLastLine.append(ellipsisChar);//New line at end
-					}
-					didElide = true;
-					break;
-				}
-			}
-		}
-		textLayout.endLayout();
-
-		int iTransX, iTransY = iTransX = 0;
-		int iHeight = lLines.count() * lineSpacing;
-		if (didElide) iHeight += lineSpacing;
-
-		//Compute lines translation with alignment
-		if (option.displayAlignment & Qt::AlignTop)
-			iTransY = 0;
-		if (option.displayAlignment & Qt::AlignBottom)
-			iTransY = cr.height() - iHeight;
-		if (option.displayAlignment & Qt::AlignVCenter)
-			iTransY = (cr.height() - iHeight) / 2;
-
-		QPair<QTextLine,QPoint> pair;
-		QPoint lastPos(-1,-1);
-		//Now we know how many lines to redraw at good position
-		foreach (pair, lLines){
-			lastPos = pair.second + QPoint(0 + cr.left(), iTransY + cr.top());
-			if (painter) pair.first.draw(painter, lastPos);
-		}
-
-		//Print last elided line
-		if (didElide) {
-			int width = fontMetrics.width(elidedLastLine);
-			if (lastPos.y() == -1){
-				y = iTransY;// Only one line
-			} else {
-				y = lastPos.y() + lineSpacing;
-			}
-			if (width < cr.width()){
-				//Text don't taking all line (with line break), so align it
-				if (option.displayAlignment & Qt::AlignLeft)
-					iTransX = 0;
-				if (option.displayAlignment & Qt::AlignRight)
-					iTransX = cr.width() - width;
-				if (option.displayAlignment & Qt::AlignHCenter)
-					iTransX = (cr.width() - width) / 2;
-				if (option.displayAlignment & Qt::AlignJustify)
-					iTransX = 0;
-			}
-
-			if (painter) painter->drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
-			//Draw button to get ToolTip
-			mRectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar) + cr.left()
-			                     , y + cr.top()
-			                     , fontMetrics.width(ellipsisChar)
-			                     , fontMetrics.height() - 1);
-			if (painter) painter->drawRoundRect(mRectElision);
-
-		} else {
-			mRectElision = QRect();
-		}
-
-		mElided = didElide;
+		RsErr() << __PRETTY_FUNCTION__ << " attempt to draw an invalid index." << std::endl;
+		return ;
 	}
+	painter->save();
+	// To draw with default for debug purpose
+	//QStyledItemDelegate::paint(painter, option, index);
+
+	QStyleOptionViewItem ownOption (option);
+	initStyleOption(&ownOption, index);
+	//Prefer use icon from option
+	if (!option.icon.isNull())
+		ownOption.icon = option.icon;
+
+	const QWidget* widget = option.widget;
+	QStyle* ownStyle =  widget ? widget->style() : QApplication::style();
+
+	if (!mOnlyPlainText)
+	{
+		QTextDocument td;
+		td.setHtml(ownOption.text);
+		ownOption.text = td.toPlainText();
+	}
+	//Get Font as option.font is not accurate
+	if (index.data(Qt::FontRole).type() == QVariant::Font) {
+		QFont font = index.data(Qt::FontRole).value<QFont>();
+		ownOption.font = font;
+		ownOption.fontMetrics = QFontMetrics(font);
+	}
+	QColor textColor;
+	if (index.data(Qt::TextColorRole).canConvert(QMetaType::QColor)) {
+		textColor = QColor(index.data(Qt::TextColorRole).toString());//Needs to pass from string else loose RBG format.
+	}
+	if (index.data(Qt::BackgroundRole).canConvert(QMetaType::QBrush)) {
+		QBrush brush(index.data(Qt::BackgroundRole).convert(QMetaType::QBrush));
+		ownOption.backgroundBrush = brush;
+	}
+
+	//Code from: https://code.woboq.org/qt5/qtbase/src/widgets/styles/qcommonstyle.cpp.html#2271
+	QRect checkRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemCheckIndicator, &ownOption, widget);
+	QRect iconRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemDecoration, &ownOption, widget);
+	QRect textRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemText, &ownOption, widget);
+
+	// draw the background
+	ownStyle->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter, widget);
+	// draw the check mark
+	if (ownOption.features & QStyleOptionViewItem::HasCheckIndicator) {
+		QStyleOptionViewItem option(*&ownOption);
+		option.rect = checkRect;
+		option.state = option.state & ~QStyle::State_HasFocus;
+		switch (ownOption.checkState) {
+			case Qt::Unchecked:
+				option.state |= QStyle::State_Off;
+			break;
+			case Qt::PartiallyChecked:
+				option.state |= QStyle::State_NoChange;
+			break;
+			case Qt::Checked:
+				option.state |= QStyle::State_On;
+			break;
+		}
+		ownStyle->drawPrimitive(QStyle::PE_IndicatorItemViewItemCheck, &option, painter, widget);
+	}
+	// draw the icon
+	{
+		QIcon::Mode mode = QIcon::Normal;
+		if (!(ownOption.state & QStyle::State_Enabled))
+			mode = QIcon::Disabled;
+		else if (ownOption.state & QStyle::State_Selected)
+			mode = QIcon::Selected;
+		QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+		ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
+	}
+	// draw the text
+	if (!ownOption.text.isEmpty()) {
+		QPalette::ColorGroup cg = ownOption.state & QStyle::State_Enabled
+		        ? QPalette::Normal : QPalette::Disabled;
+		if (cg == QPalette::Normal && !(ownOption.state & QStyle::State_Active))
+			cg = QPalette::Inactive;
+		if (ownOption.state & QStyle::State_Selected) {
+			painter->setPen(ownOption.palette.color(cg, QPalette::HighlightedText));
+		} else {
+			if (ownOption.state & QStyle::State_MouseOver) {
+				//TODO: Manage to get palette with HOVER css pseudoclass
+				// For now this is hidden by Qt: https://code.woboq.org/qt5/qtbase/src/widgets/styles/qstylesheetstyle.cpp.html#6103
+				// So we print default in image and get it's color...
+				QSize moSize=sizeHint(option,index);
+				QImage moImg(moSize,QImage::Format_ARGB32);
+				QPainter moPnt;
+				moPnt.begin(&moImg);
+				moPnt.setPen(Qt::black);//Fill Image with Black
+				moPnt.setBrush(Qt::black);
+				moPnt.drawRect(moImg.rect());
+
+				QStyleOptionViewItem moOption (option);
+				// Define option to get only what we want
+				{
+					moOption.rect = QRect(QPoint(0,0),moSize);
+					moOption.state = QStyle::State_MouseOver | QStyle::State_Enabled | QStyle::State_Sibling;
+					moOption.text = "████████████████";
+					// Remove unwanted info. Yes it can draw without that all public data ...
+					moOption.backgroundBrush = QBrush();
+					moOption.checkState = Qt::Unchecked;
+					moOption.decorationAlignment = Qt::AlignLeft;
+					moOption.decorationPosition = QStyleOptionViewItem::Left;
+					moOption.decorationSize = QSize();
+					moOption.displayAlignment = Qt::AlignLeft | Qt::AlignTop;
+					moOption.features=0;
+					moOption.font = QFont();
+					moOption.icon = QIcon();
+					moOption.index = QModelIndex();
+					moOption.locale = QLocale();
+					moOption.showDecorationSelected = false;
+					moOption.textElideMode = Qt::ElideNone;
+					moOption.viewItemPosition = QStyleOptionViewItem::Middle;
+					//moOption.widget = nullptr; //Needed.
+
+					moOption.direction = Qt::LayoutDirectionAuto;
+					moOption.fontMetrics = QFontMetrics(QFont());
+					moOption.palette = QPalette();
+					moOption.styleObject = nullptr;
+				}
+				QStyledItemDelegate::paint(&moPnt, moOption, QModelIndex());
+
+				//// But these lines doesn't works.
+				{
+					//QStyleOptionViewItem moOptionsState;
+					//moOptionsState.initFrom(moOption.widget);
+					//moOptionsState.rect = QRect(QPoint(0,0),moSize);
+					//moOptionsState.state = QStyle::State_MouseOver | QStyle::State_Enabled | QStyle::State_Sibling;
+					//moOptionsState.text = "████████";
+					//moOptionsState.widget = option.widget;
+					//QStyledItemDelegate::paint(&moPnt, moOptionsState, QModelIndex());
+				}
+
+				moPnt.end();
+				// To save what it paint
+				//moImg.save("image.bmp");
+
+				// Get Color in this black rect.
+				QColor moColor;
+				QColor moColorBorder;// To avoid Border pixel
+				int moWidth = moImg.size().width(), moHeight = moImg.size().height();
+				for (int x = 0; (x<moWidth) && (moColor.spec() == QColor::Invalid); x++)
+					for (int y = 0; (y<moHeight) && (moColor.spec() == QColor::Invalid); y++)
+						if (moImg.pixelColor(x,y) != Qt::black)
+						{
+							if (moImg.pixelColor(x,y) == moColorBorder)
+								moColor = QColor(moImg.pixelColor(x,y).name());
+							else
+							{
+								if (moColorBorder.spec() == QColor::Invalid)
+								{
+									// First pixel border move inside
+									x+=5;
+									y+=5;
+								}
+								moColorBorder = QColor(moImg.pixelColor(x,y).name());
+							}
+						}
+
+				// If not found color is black too.
+				if (moColor.spec() == QColor::Invalid)
+					moColor = Qt::black;
+
+				painter->setPen(moColor);
+			}
+			else
+				if (textColor.spec()==QColor::Invalid) {
+					painter->setPen(ownOption.palette.color(cg, QPalette::Text));
+				} else { //Only get color from index for unselected(as Qt does)
+					painter->setPen(textColor);
+				}
+		}
+		if (ownOption.state & QStyle::State_Editing) {
+			painter->setPen(ownOption.palette.color(cg, QPalette::Text));
+			painter->drawRect(textRect.adjusted(0, 0, -1, -1));
+		}
+		//d->viewItemDrawText(p, &ownOption, textRect);
+		QTextLayout textLayout(ownOption.text, painter->font());
+		QTextOption to = textLayout.textOption();
+		StyledElidedLabel::paintElidedLine(painter,ownOption.text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode()&QTextOption::WordWrap,mPaintRoundedRect);
+	}
+	painter->restore();
 }
 
 bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option, const QModelIndex &index)
@@ -192,38 +251,39 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 		QMouseEvent *ev = static_cast<QMouseEvent *>(event);
 		if (ev) {
 			if (ev->buttons()==Qt::LeftButton) {
+				QVariant var = index.data();
 				if (index.data().type() == QVariant::String) {
 					QString text = index.data().toString();
 					if (!text.isEmpty()) {
-						QRect rect = option.rect;
-						//Get decoration Rect to get rect == to rect sent in drawDisplay
-						if (index.data(Qt::DecorationRole).type() == QVariant::Pixmap) {
-							QPixmap pixmap = index.data(Qt::DecorationRole).value<QPixmap>();
-							if (!pixmap.isNull()) rect.adjust(pixmap.width() + 6,0,0,0);//Don't know where come from these 6 pixels...
-						}
-						if (index.data(Qt::DecorationRole).type() == QVariant::Image) {
-							QImage image = index.data(Qt::DecorationRole).value<QImage>();
-							if (!image.isNull()) rect.adjust(image.width() + 6,0,0,0);//Don't know where come from these 6 pixels...
-						}
-						if (index.data(Qt::DecorationRole).type() == QVariant::Icon) {
-							QIcon icon = index.data(Qt::DecorationRole).value<QIcon>();
-							if (!icon.isNull()) {
-								QSize size = icon.actualSize(rect.size());
-								rect.adjust(size.width() + 6,0,0,0);//Don't know where come from these 6 pixels...
-							}
+
+						QStyleOptionViewItem ownOption (option);
+						initStyleOption(&ownOption, index);
+
+						const QWidget* widget = option.widget;
+						QStyle* ownStyle =  widget ? widget->style() : QApplication::style();
+
+						if (!mOnlyPlainText)
+						{
+							QTextDocument td;
+							td.setHtml(ownOption.text);
+							ownOption.text = td.toPlainText();
 						}
 						//Get Font as option.font is not accurate
-						QStyleOptionViewItem newOption = option;
 						if (index.data(Qt::FontRole).type() == QVariant::Font) {
 							QFont font = index.data(Qt::FontRole).value<QFont>();
-							newOption.font = font;
-							newOption.fontMetrics = QFontMetrics(font);
+							ownOption.font = font;
+							ownOption.fontMetrics = QFontMetrics(font);
 						}
+						QRect textRect = ownStyle->subElementRect(QStyle::SE_ItemViewItemText, &ownOption, widget);
+
+						QTextLayout textLayout(text, ownOption.font);
+						QTextOption to = textLayout.textOption();
 
 						//Update RSElidedItemDelegate as only one delegate for all items
-						drawDisplay(NULL, newOption, rect, text);
-						if (mElided && (mRectElision.contains(ev->pos()))){
-							QToolTip::showText(ev->globalPos(),QString("<FONT>") + mContent + QString("</FONT>"));
+						QRect rectElision;
+						bool elided = StyledElidedLabel::paintElidedLine(nullptr,text,textRect,ownOption.font,ownOption.displayAlignment,to.wrapMode()&QTextOption::WordWrap,true,&rectElision);
+						if (elided && (rectElision.contains(ev->pos()))){
+							QToolTip::showText(ev->globalPos(),QString("<FONT>") + text + QString("</FONT>"));
 							return true; // eat event
 						}
 					}
@@ -231,5 +291,5 @@ bool RSElidedItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 			}
 		}
 	}
-	return RSItemDelegate::editorEvent(event, model, option, index);
+	return RSStyledItemDelegate::editorEvent(event, model, option, index);
 }

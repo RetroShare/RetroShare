@@ -1940,7 +1940,7 @@ PlotWidget {
     padding: 0px; /* to fix cut labels in plots #134 */
 }
 
-FriendList {
+NewFriendList {
     qproperty-textColorStatusAway: lightgray;
     qproperty-textColorStatusBusy: lightgray;
     qproperty-textColorStatusOnline: green;
