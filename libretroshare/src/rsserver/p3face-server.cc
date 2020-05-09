@@ -143,13 +143,14 @@ void RsServer::threadTick()
 // if there is time left, we sleep
 	double timeToSleep = mTickInterval - mAvgRunDuration;
 
-	if (timeToSleep > 0)
-	{
+// never sleep less than 50 ms
+	if (timeToSleep < 0.050)
+		timeToSleep = 0.050;
+
 #ifdef TICK_DEBUG
-		RsDbg() << "TICK_DEBUG will sleep " << timeToSleep << " ms" << std::endl;
+	RsDbg() << "TICK_DEBUG will sleep " << (int) (1000 * timeToSleep) << " ms" << std::endl;
 #endif
-		rstime::rs_usleep(timeToSleep * 1000000);
-	}
+	rstime::rs_usleep(timeToSleep * 1000000);
 
 	double ts = getCurrentTS();
 	mLastts = ts;
@@ -229,12 +230,16 @@ void RsServer::threadTick()
 // ticking is done, now compute new values of mLastRunDuration, mAvgRunDuration and mTickInterval
 	ts = getCurrentTS();
 	mLastRunDuration = ts - mLastts;  
+
+// low-pass filter and don't let mAvgRunDuration exceeds maxTickInterval
 	mAvgRunDuration = 0.1 * mLastRunDuration + 0.9 * mAvgRunDuration;
+	if (mAvgRunDuration > maxTickInterval)
+		mAvgRunDuration = maxTickInterval;
 
 #ifdef TICK_DEBUG
 	RsDbg() << "TICK_DEBUG new mLastRunDuration " << mLastRunDuration << " mAvgRunDuration " << mAvgRunDuration << std::endl;
 	if (mLastRunDuration > WARN_BIG_CYCLE_TIME)
-		RsDbg() << "TICK_DEBUG excessively long lycle time " << mLastRunDuration << std::endl;
+		RsDbg() << "TICK_DEBUG excessively long cycle time " << mLastRunDuration << std::endl;
 #endif
 	
 // if the core has returned that there is more to tick we decrease the ticking interval, else we increse it
@@ -250,7 +255,7 @@ void RsServer::threadTick()
 	RsDbg() << "TICK_DEBUG new tick interval " << mTickInterval << std::endl;
 #endif
 
-// keep the tick interval within allowed limits
+// keep the tick interval target within allowed limits
 	if (mTickInterval < minTickInterval)
 		mTickInterval = minTickInterval;
 	else if (mTickInterval > maxTickInterval)

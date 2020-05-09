@@ -23,17 +23,17 @@
 #include "pqi/pqithreadstreamer.h"
 #include <unistd.h>
 
-#define DEFAULT_STREAMER_TIMEOUT	  10000 // 10 ms.
-#define DEFAULT_STREAMER_SLEEP		   1000 // 1 ms.
+#define DEFAULT_STREAMER_TIMEOUT	  10000 // 10 ms
+#define DEFAULT_STREAMER_SLEEP		  30000 // 30 ms
 #define DEFAULT_STREAMER_IDLE_SLEEP	1000000 // 1 sec
 
-//#define PQISTREAMER_DEBUG
+// #define PQISTREAMER_DEBUG
 
 pqithreadstreamer::pqithreadstreamer(PQInterface *parent, RsSerialiser *rss, const RsPeerId& id, BinInterface *bio_in, int bio_flags_in)
 :pqistreamer(rss, id, bio_in, bio_flags_in), mParent(parent), mTimeout(0), mThreadMutex("pqithreadstreamer")
 {
-    mTimeout = DEFAULT_STREAMER_TIMEOUT;
-    mSleepPeriod = DEFAULT_STREAMER_SLEEP;
+	mTimeout = DEFAULT_STREAMER_TIMEOUT;
+	mSleepPeriod = DEFAULT_STREAMER_SLEEP;
 }
 
 bool pqithreadstreamer::RecvItem(RsItem *item)
@@ -43,9 +43,8 @@ bool pqithreadstreamer::RecvItem(RsItem *item)
 
 int	pqithreadstreamer::tick()
 {
-//	pqithreadstreamer mutex lock is not needed here
-//	we are only checking if the connection is active, and if not active we will try to establish it
-//	RsStackMutex stack(mThreadMutex);
+	// pqithreadstreamer mutex lock is not needed here
+	// we will only check if the connection is active, and if not we will try to establish it
 	tick_bio();
 
 	return 0;
@@ -53,47 +52,50 @@ int	pqithreadstreamer::tick()
 
 void	pqithreadstreamer::threadTick()
 {
-    uint32_t recv_timeout = 0;
-    uint32_t sleep_period = 0;
-    bool isactive = false;
-    {
-        RsStackMutex stack(mStreamerMtx);
-        recv_timeout = mTimeout;
-        sleep_period = mSleepPeriod;
-        isactive = mBio->isactive();
-    }
+	uint32_t recv_timeout = 0;
+	uint32_t sleep_period = 0;
+	bool isactive = false;
+
+	{
+		RsStackMutex stack(mStreamerMtx);
+		recv_timeout = mTimeout;
+		sleep_period = mSleepPeriod;
+		isactive = mBio->isactive();
+	}
     
-    updateRates() ;
+	// update the connection rates
+	updateRates() ;
 
-    if (!isactive)
-    {
-        rstime::rs_usleep(DEFAULT_STREAMER_IDLE_SLEEP);
-        return ;
-    }
+	// if the connection est not active, long sleep then return
+	if (!isactive)
+	{
+		rstime::rs_usleep(DEFAULT_STREAMER_IDLE_SLEEP);
+		return ;
+	}
 
-    {
-        RsStackMutex stack(mThreadMutex);
-        tick_recv(recv_timeout);
-    }
+	// fill incoming queue with items from SSL
+	{
+		RsStackMutex stack(mThreadMutex);
+		tick_recv(recv_timeout);
+	}
 
-    // Push Items, Outside of Mutex.
-    RsItem *incoming = NULL;
-    while((incoming = GetItem()))
-    {
-        RecvItem(incoming);
-    }
+	// move items to appropriate service queue or shortcut  to fast service
+	RsItem *incoming = NULL;
+	while((incoming = GetItem()))
+	{
+		RecvItem(incoming);
+	}
 
-    {
-        RsStackMutex stack(mThreadMutex);
-        tick_send(0);
-    }
+	// parse the outgoing queue and send items to SSL
+	{
+		RsStackMutex stack(mThreadMutex);
+		tick_send(0);
+	}
 
-    if (sleep_period)
-    {
-        rstime::rs_usleep(sleep_period);
-    }
+	// sleep 
+	if (sleep_period)
+	{
+		rstime::rs_usleep(sleep_period);
+	}
 }
-
-
-
 
