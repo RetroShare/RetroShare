@@ -28,7 +28,7 @@
 #include "WikiDialog.h"
 #include "gui/WikiPoos/WikiAddDialog.h"
 #include "gui/WikiPoos/WikiEditDialog.h"
-
+#include "gui/settings/rsharesettings.h"
 #include "gui/gxs/WikiGroupDialog.h"
 
 #include <retroshare/rswiki.h>
@@ -73,13 +73,12 @@
 #define IMAGE_NEWFORUM       ":/images/new_forum16.png"
 #define IMAGE_FORUMAUTHD     ":/images/konv_message2.png"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
-#define IMAGE_WIKI           ":/images/wikibook_32.png"
+#define IMAGE_WIKI           ":/icons/png/wiki.png"
 #define IMAGE_EDIT           ":/images/edit_16.png"
 
 
 /** Constructor */
-WikiDialog::WikiDialog(QWidget *parent)
-: RsGxsUpdateBroadcastPage(rsWiki, parent)
+WikiDialog::WikiDialog(QWidget *parent) : RsGxsUpdateBroadcastPage(rsWiki, parent)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -88,7 +87,6 @@ WikiDialog::WikiDialog(QWidget *parent)
 	mAddGroupDialog = NULL;
 	mEditDialog = NULL;
 
-	connect( ui.toolButton_NewGroup, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
 	connect( ui.toolButton_NewPage, SIGNAL(clicked()), this, SLOT(OpenOrShowAddPageDialog()));
 	connect( ui.toolButton_Edit, SIGNAL(clicked()), this, SLOT(OpenOrShowEditDialog()));
 	connect( ui.toolButton_Republish, SIGNAL(clicked()), this, SLOT(OpenOrShowRepublishDialog()));
@@ -106,18 +104,52 @@ WikiDialog::WikiDialog(QWidget *parent)
 	/* setup TokenQueue */
 	mWikiQueue = new TokenQueue(rsWiki->getTokenService(), this);
 
+	// Set initial size of the splitter
+	ui.listSplitter->setStretchFactor(0, 0);
+	ui.listSplitter->setStretchFactor(1, 1);
 
 	/* Setup Group Tree */
-	mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(IMAGE_FOLDER), true);
-	mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(IMAGE_FOLDERRED), true);
-	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(IMAGE_FOLDERGREEN), false);
-	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(IMAGE_FOLDERYELLOW), false);
+	mYourGroups = ui.groupTreeWidget->addCategoryItem(tr("My Groups"), QIcon(), true);
+	mSubscribedGroups = ui.groupTreeWidget->addCategoryItem(tr("Subscribed Groups"), QIcon(), true);
+	mPopularGroups = ui.groupTreeWidget->addCategoryItem(tr("Popular Groups"), QIcon(), false);
+	mOtherGroups = ui.groupTreeWidget->addCategoryItem(tr("Other Groups"), QIcon(), false);
+	
+	/* Add the New Group button */
+	QToolButton *newGroupButton = new QToolButton(this);
+	newGroupButton->setIcon(QIcon(":/icons/png/add.png"));
+	newGroupButton->setToolTip(tr("Create Group"));
+	connect(newGroupButton, SIGNAL(clicked()), this, SLOT(OpenOrShowAddGroupDialog()));
+	ui.groupTreeWidget->addToolButton(newGroupButton);
 
+	// load settings
+	processSettings(true);
 }
 
 WikiDialog::~WikiDialog()
 {
+	// save settings
+	processSettings(false);
+	
 	delete(mWikiQueue);
+}
+
+void WikiDialog::processSettings(bool load)
+{
+	Settings->beginGroup("WikiDialog");
+
+	if (load) {
+		// load settings
+
+		// state of splitter
+		ui.listSplitter->restoreState(Settings->value("SplitterList").toByteArray());
+	} else {
+		// save settings
+
+		// state of splitter
+		Settings->setValue("SplitterList", ui.listSplitter->saveState());
+	}
+
+	Settings->endGroup();
 }
 
 void WikiDialog::OpenOrShowAddPageDialog()
@@ -155,7 +187,7 @@ void WikiDialog::OpenOrShowAddGroupDialog()
 
 void WikiDialog::newGroup()
 {
-	WikiGroupDialog cf(mWikiQueue, this);
+	WikiGroupDialog cf(this);
 	cf.exec ();
 }
 
@@ -169,7 +201,7 @@ void WikiDialog::showGroupDetails()
 		return;
 	}
 
-	WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_SHOW, groupId, this);
+	WikiGroupDialog cf(GxsGroupDialog::MODE_SHOW, groupId, this);
 	cf.exec ();
 }
 
@@ -183,7 +215,7 @@ void WikiDialog::editGroupDetails()
 		return;
 	}
 
-	WikiGroupDialog cf(mWikiQueue, rsWiki->getTokenService(), GxsGroupDialog::MODE_EDIT, groupId, this);
+	WikiGroupDialog cf(GxsGroupDialog::MODE_EDIT, groupId, this);
 	cf.exec ();
 }
 
@@ -436,8 +468,8 @@ void WikiDialog::requestWikiPage(const RsGxsGrpMsgIdPair &msgId)
 	uint32_t token;
 
 	GxsMsgReq msgIds;
-	std::vector<RsGxsMessageId> &vect_msgIds = msgIds[msgId.first];
-	vect_msgIds.push_back(msgId.second);
+	std::set<RsGxsMessageId> &set_msgIds = msgIds[msgId.first];
+	set_msgIds.insert(msgId.second);
 
 	mWikiQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, msgIds, WIKIDIALOG_WIKI_PAGE);
 }
@@ -698,10 +730,10 @@ void WikiDialog::updateDisplay(bool complete)
 		requestGroupMeta();
 	} else {
 		/* Update all groups of changed messages */
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> > msgIds;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> > msgIds;
 		getAllMsgIds(msgIds);
 
-		std::map<RsGxsGroupId, std::vector<RsGxsMessageId> >::iterator msgIt;
+		std::map<RsGxsGroupId, std::set<RsGxsMessageId> >::iterator msgIt;
 		for (msgIt = msgIds.begin(); msgIt != msgIds.end(); ++msgIt) {
 			wikiGroupChanged(QString::fromStdString(msgIt->first.toStdString()));
 		}

@@ -22,6 +22,7 @@
 #include "IdDetailsDialog.h"
 #include "ui_IdDetailsDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/qtthreadsutils.h"
 #include "gui/settings/rsharesettings.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/msgs/MessageComposer.h"
@@ -79,9 +80,6 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 
 	mStateHelper->setActive(IDDETAILSDIALOG_REPLIST, false);
 
-	/* Create token queue */
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
-
 	Settings->loadWidgetInformation(this);
 
 	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
@@ -94,7 +92,7 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 	
   connect(ui->inviteButton, SIGNAL(clicked()), this, SLOT(sendInvite()));
 	
-	requestIdDetails();
+	loadIdentity();
 }
 
 /** Destructor. */
@@ -103,7 +101,6 @@ IdDetailsDialog::~IdDetailsDialog()
 	Settings->saveWidgetInformation(this);
 
 	delete(ui);
-	delete(mIdQueue);
 }
 
 void IdDetailsDialog::toggleAutoBanIdentities(bool b)
@@ -135,40 +132,8 @@ static QString getHumanReadableDuration(uint32_t seconds)
         return QString(QObject::tr("%1 days ago")).arg(seconds/86400) ;
 }
 
-void IdDetailsDialog::insertIdDetails(uint32_t token)
+void IdDetailsDialog::loadIdentity(RsGxsIdGroup data)
 {
-	mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, false);
-
-	/* get details from libretroshare */
-	std::vector<RsGxsIdGroup> datavector;
-	if (!rsIdentity->getGroupData(token, datavector))
-	{
-		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDETAILSDIALOG_REPLIST);
-
-		ui->lineEdit_KeyId->setText("ERROR GETTING KEY!");
-
-		return;
-	}
-
-	if (datavector.size() != 1)
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDetailsDialog::insertIdDetails() Invalid datavector size";
-#endif
-
-		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
-		mStateHelper->clear(IDDETAILSDIALOG_IDDETAILS);
-
-		ui->lineEdit_KeyId->setText("INVALID DV SIZE");
-
-		return;
-	}
-
-	mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, true);
-
-	RsGxsIdGroup &data = datavector[0];
-
 	/* get GPG Details from rsPeers */
 	RsPgpId ownPgpId  = rsPeers->getGPGOwnId();
 
@@ -361,42 +326,16 @@ void IdDetailsDialog::modifyReputation()
 	}
 	rsReputations->setOwnOpinion(id,op);
 
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() ID: " << id << " Mod: " << mod;
-	std::cerr << std::endl;
-#endif
-
-#ifdef SUSPENDED
-    	// Cyril: apparently the old reputation system was in used here. It's based on GXS data exchange, and probably not
-    	// very efficient because of this.
-    
-	uint32_t token;
-	if (!rsIdentity->submitOpinion(token, id, false, op))
-	{
-#ifdef ID_DEBUG
-		std::cerr << "IdDialog::modifyReputation() Error submitting Opinion";
-		std::cerr << std::endl;
-#endif
-	}
-#endif
-
-#ifdef ID_DEBUG
-	std::cerr << "IdDialog::modifyReputation() queuingRequest(), token: " << token;
-	std::cerr << std::endl;
-#endif
-
 	// trigger refresh when finished.
 	// basic / anstype are not needed.
-    requestIdDetails();
+    loadIdentity();
 
 	return;
 }
 
-void IdDetailsDialog::requestIdDetails()
+void IdDetailsDialog::loadIdentity()
 {
-	mIdQueue->cancelActiveRequestTokens(IDDETAILSDIALOG_IDDETAILS);
-
-	if (mId.isNull())
+    if (mId.isNull())
 	{
 		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, false);
@@ -407,68 +346,41 @@ void IdDetailsDialog::requestIdDetails()
 
 	mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, true);
 
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
-
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDETAILSDIALOG_IDDETAILS);
-}
-
-void IdDetailsDialog::requestRepList()
-{
-	// Removing this for the moment.
-	return;
-
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, true);
-
-	mIdQueue->cancelActiveRequestTokens(IDDETAILSDIALOG_REPLIST);
-
-	std::list<RsGxsGroupId> groupIds;
-	groupIds.push_back(mId);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-
-	uint32_t token;
-	mIdQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds, IDDETAILSDIALOG_REPLIST);
-}
-
-void IdDetailsDialog::insertRepList(uint32_t token)
-{
-	Q_UNUSED(token)
-	mStateHelper->setLoading(IDDETAILSDIALOG_REPLIST, false);
-	mStateHelper->setActive(IDDETAILSDIALOG_REPLIST, true);
-}
-
-void IdDetailsDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue != mIdQueue) {
-		return;
-	}
-
+	RsThread::async([this]()
+	{
 #ifdef ID_DEBUG
-	std::cerr << "IdDetailsDialog::loadRequest() UserType: " << req.mUserType;
-	std::cerr << std::endl;
+        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
 #endif
 
-	switch (req.mUserType)
-	{
-	case IDDETAILSDIALOG_IDDETAILS:
-		insertIdDetails(req.mToken);
-		break;
-		
-  case IDDETAILSDIALOG_REPLIST:
-			insertRepList(req.mToken);
-			break;
-			
-	default:
-		std::cerr << "IdDetailsDialog::loadRequest() ERROR";
-		std::cerr << std::endl;
-	}
+        std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
+        std::vector<RsGxsIdGroup> ids_data;
+
+		if(!rsIdentity->getIdentitiesInfo(ids,ids_data))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			return;
+        }
+
+        if(ids_data.size() != 1)
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			return;
+        }
+        RsGxsIdGroup group(ids_data[0]);
+
+        RsQThreadUtils::postToObject( [group,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            loadIdentity(group);
+
+		}, this );
+	});
+
 }
+
 
 QString IdDetailsDialog::inviteMessage()
 {

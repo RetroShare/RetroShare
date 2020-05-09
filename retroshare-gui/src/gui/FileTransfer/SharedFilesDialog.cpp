@@ -60,22 +60,20 @@
 #define IMAGE_HASH_BUSY      ":/images/settings.png"
 #define IMAGE_HASH_DONE      ":/images/accepted16.png"
 #define IMAGE_MSG            ":/images/message-mail.png"
-#define IMAGE_ATTACHMENT     ":/images/attachment.png"
+#define IMAGE_ATTACHMENT     ":/icons/png/attachements.png"
 #define IMAGE_FRIEND         ":/images/peers_16x16.png"
-#define IMAGE_PROGRESS       ":/images/browse-looking.gif"
 #define IMAGE_COPYLINK       ":/images/copyrslink.png"
 #define IMAGE_OPENFOLDER     ":/images/folderopen.png"
 #define IMAGE_OPENFILE       ":/images/fileopen.png"
-#define IMAGE_LIBRARY        ":/images/library.png"
-#define IMAGE_CHANNEL        ":/images/channels32.png"
+#define IMAGE_LIBRARY        ":/icons/collections.png"
+#define IMAGE_CHANNEL        ":/icons/png/channels.png"
 #define IMAGE_FORUMS         ":/icons/png/forums.png"
-#define IMAGE_COLLCREATE     ":/images/library_add.png"
-#define IMAGE_COLLMODIF      ":/images/library_edit.png"
-#define IMAGE_COLLVIEW       ":/images/library_view.png"
-#define IMAGE_COLLOPEN       ":/images/library.png"
+#define IMAGE_COLLCREATE     ":/icons/png/add.png"
+#define IMAGE_COLLMODIF      ":/icons/png/pencil-edit-button.png"
+#define IMAGE_COLLVIEW       ":/images/find.png"
+#define IMAGE_COLLOPEN       ":/icons/collections.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
-#define IMAGE_REMOVE         ":/images/deletemail24.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -229,7 +227,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-  removeExtraFileAct = new QAction(QIcon(IMAGE_REMOVE), tr( "Stop sharing this file" ), this );
+  removeExtraFileAct = new QAction(QIcon(), tr( "Stop sharing this file" ), this );
   connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
@@ -625,10 +623,7 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
 		if (details.type == DIR_TYPE_DIR)
 		{
-			FileTree *ft = FileTree::create(details,remote) ;
-
-			std::cerr << "Created collection file tree:" << std::endl;
-			ft->print();
+			auto ft = RsFileTree::fromDirDetails(details,remote);
 
 			QString dir_name = QDir(QString::fromUtf8(details.name.c_str())).dirName();
 
@@ -636,8 +631,6 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 
 			if(link.valid())
 				urls.push_back(link) ;
-
-			delete ft ;
 		}
 		else
 		{

@@ -27,6 +27,7 @@
 #include <QIcon>
 
 #include "gui/common/TagDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -171,9 +172,9 @@ QVariant RsMessageModel::headerData(int section, Qt::Orientation orientation, in
 	if(role == Qt::DecorationRole)
 		switch(section)
 		{
-		case COLUMN_THREAD_STAR:         return QIcon(IMAGE_STAR_ON);
-		case COLUMN_THREAD_READ:         return QIcon(":/images/message-state-header.png");
-		case COLUMN_THREAD_ATTACHMENT:   return QIcon(":/images/attachment.png");
+		case COLUMN_THREAD_STAR:         return FilesDefs::getIconFromQtResourcePath(IMAGE_STAR_ON);
+		case COLUMN_THREAD_READ:         return FilesDefs::getIconFromQtResourcePath(":/images/message-state-header.png");
+		case COLUMN_THREAD_ATTACHMENT:   return FilesDefs::getIconFromQtResourcePath(":/icons/png/attachements.png");
 		default:
 			return QVariant();
 		}
@@ -486,7 +487,16 @@ QVariant RsMessageModel::displayRole(const Rs::Msgs::MsgInfoSummary& fmpe,int co
         }
         return text;
 	}
-	case COLUMN_THREAD_AUTHOR: return QVariant();
+		case COLUMN_THREAD_AUTHOR:{
+			QString name;
+			RsGxsId id = RsGxsId(fmpe.srcId.toStdString());
+
+			if(id.isNull())
+				return QVariant(tr("[Notification]"));
+			if(GxsIdTreeItemDelegate::computeName(id,name))
+				return name;
+			return QVariant(tr("[Unknown]"));
+		}
 
 	default:
 		return QVariant("[ TODO ]");
@@ -509,42 +519,41 @@ QVariant RsMessageModel::userRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) 
 
 QVariant RsMessageModel::decorationRole(const Rs::Msgs::MsgInfoSummary& fmpe,int col) const
 {
-	if(col == COLUMN_THREAD_READ)
-		if(fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
-			return QIcon(":/images/message-state-unread.png");
-		else
-			return QIcon(":/images/message-state-read.png");
+	bool exist=false;
+	switch(col)
+	{
+		case COLUMN_THREAD_READ:
+		return (fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER))
+		        ? FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png")
+		        : FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
+		case COLUMN_THREAD_SUBJECT:
+		{
+			if(fmpe.msgflags & RS_MSG_NEW         )  return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
+			if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return FilesDefs::getIconFromQtResourcePath(":/images/user/user_request16.png");
+			if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return FilesDefs::getIconFromQtResourcePath(":/images/user/friend_suggestion16.png");
+			if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return FilesDefs::getIconFromQtResourcePath(":/images/share-icon-16.png");
 
-    if(col == COLUMN_THREAD_SUBJECT)
-    {
-        if(fmpe.msgflags & RS_MSG_NEW         )  return QIcon(":/images/message-state-new.png");
-        if(fmpe.msgflags & RS_MSG_USER_REQUEST)  return QIcon(":/images/user/user_request16.png");
-        if(fmpe.msgflags & RS_MSG_FRIEND_RECOMMENDATION) return QIcon(":/images/user/friend_suggestion16.png");
-        if(fmpe.msgflags & RS_MSG_PUBLISH_KEY) return QIcon(":/images/share-icon-16.png");
+			if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)
+			{
+				if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-replied.png");
+				if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-forwarded.png");
+				if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-replied-forw.png");
 
-        if(fmpe.msgflags & RS_MSG_UNREAD_BY_USER)
-        {
-            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied.png");
-            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded.png");
-            if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw.png");
+				return FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png");
+			}
+			if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-replied-read.png");
+			if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-forwarded-read.png");
+			if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-replied-forw-read.png");
 
-            return QIcon(":/images/message-mail.png");
-        }
-		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_REPLIED)    return QIcon(":/images/message-mail-replied-read.png");
-		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == RS_MSG_FORWARDED)  return QIcon(":/images/message-mail-forwarded-read.png");
-		if((fmpe.msgflags & (RS_MSG_REPLIED | RS_MSG_FORWARDED)) == (RS_MSG_REPLIED | RS_MSG_FORWARDED)) return QIcon(":/images/message-mail-replied-forw-read.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png");
+		}
 
-		return QIcon(":/images/message-mail-read.png");
-    }
+		case COLUMN_THREAD_STAR:
+		return FilesDefs::getIconFromQtResourcePath((fmpe.msgflags & RS_MSG_STAR) ? (IMAGE_STAR_ON ): (IMAGE_STAR_OFF));
 
-    if(col == COLUMN_THREAD_STAR)
-        return QIcon((fmpe.msgflags & RS_MSG_STAR) ? (IMAGE_STAR_ON ): (IMAGE_STAR_OFF));
-
-    bool isNew = fmpe.msgflags & (RS_MSG_NEW | RS_MSG_UNREAD_BY_USER);
-
-    if(col == COLUMN_THREAD_READ)
-        return QIcon(isNew ? ":/images/message-state-unread.png": ":/images/message-state-read.png");
-
+		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
+		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.srcId.toStdString()),QIcon(), exist);
+	}
 	return QVariant();
 }
 

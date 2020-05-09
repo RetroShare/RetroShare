@@ -4,7 +4,8 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2017       Cyril Soler <csoler@users.sourceforge.net>         *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020       Asociación Civil Altermundi <info@altermundi.net>  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -25,7 +26,7 @@
 #include "serialiser/rsbaseserial.h"
 #include "serialiser/rstlvkeys.h"
 #include "serialiser/rsserializable.h"
-#include "util/radix64.h"
+#include "util/rsbase64.h"
 #include "util/rsprint.h"
 #include "util/rstime.h"
 
@@ -33,8 +34,6 @@
 #include <string>
 #include <typeinfo> // for typeid
 #include <rapidjson/prettywriter.h>
-
-static constexpr uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 
 #ifdef RSSERIAL_DEBUG
 #	define SAFE_GET_JSON_V() \
@@ -56,32 +55,10 @@ static constexpr uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024 ; // 10 MB.
 	rapidjson::Value& v = jDoc[mName]
 #endif // ifdef RSSERIAL_DEBUG
 
-
 //============================================================================//
 //                             std::string                                    //
 //============================================================================//
 
-template<> uint32_t RsTypeSerializer::serial_size(const std::string& str)
-{
-	return getRawStringSize(str);
-}
-template<> bool RsTypeSerializer::serialize( uint8_t data[], uint32_t size,
-                                             uint32_t& offset,
-                                             const std::string& str )
-{
-	return setRawString(data, size, &offset, str);
-}
-template<> bool RsTypeSerializer::deserialize( const uint8_t data[],
-                                               uint32_t size, uint32_t &offset,
-                                               std::string& str )
-{
-	return getRawString(data, size, &offset, str);
-}
-template<> void RsTypeSerializer::print_data( const std::string& n,
-                                              const std::string& str )
-{
-	std::cerr << "  [std::string] " << n << ": " << str << std::endl;
-}
 template<>  /*static*/
 bool RsTypeSerializer::to_JSON( const std::string& membername,
                                 const std::string& member, RsJson& jDoc )
@@ -112,134 +89,10 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	return ret;
 }
 
+
 //============================================================================//
-//                             Integer types                                  //
+//                            Integral types                                  //
 //============================================================================//
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const bool& member)
-{
-	return setRawUInt8(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t /*data*/[], uint32_t /*size*/, uint32_t& /*offset*/, const int32_t& /*member*/)
-{
-	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
-	print_stacktrace();
-	return false;
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint8_t& member)
-{ 
-	return setRawUInt8(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint16_t& member)
-{
-	return setRawUInt16(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint32_t& member)
-{ 
-	return setRawUInt32(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const uint64_t& member) 
-{ 
-	return setRawUInt64(data,size,&offset,member);
-}
-template<> bool RsTypeSerializer::serialize(uint8_t data[], uint32_t size, uint32_t &offset, const rstime_t& member)
-{
-	return setRawTimeT(data,size,&offset,member);
-}
-
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, bool& member)
-{
-	uint8_t m;
-	bool ok = getRawUInt8(data,size,&offset,&m);
-	member = m;
-	return ok;
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t /*data*/[], uint32_t /*size*/, uint32_t& /*offset*/, int32_t& /*member*/)
-{
-	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
-	print_stacktrace();
-	return false;
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint8_t& member)
-{ 
-	return getRawUInt8(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint16_t& member)
-{
-	return getRawUInt16(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint32_t& member)
-{ 
-	return getRawUInt32(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, uint64_t& member) 
-{ 
-	return getRawUInt64(data,size,&offset,&member);
-}
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[], uint32_t size, uint32_t &offset, rstime_t& member)
-{
-	return getRawTimeT(data,size,&offset,member);
-}
-
-template<> uint32_t RsTypeSerializer::serial_size(const bool& /* member*/)
-{
-	return 1;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const int32_t& /* member*/)
-{
-	std::cerr << __PRETTY_FUNCTION__ << " Not implemented!" << std::endl;
-	print_stacktrace();
-	return 0;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint8_t& /* member*/)
-{ 
-	return 1;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint16_t& /* member*/)
-{
-	return 2;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint32_t& /* member*/)
-{ 
-	return 4;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const uint64_t& /* member*/)
-{ 
-	return 8;
-}
-template<> uint32_t RsTypeSerializer::serial_size(const rstime_t& /* member*/)
-{
-	return 8;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const bool & V)
-{
-    std::cerr << "  [bool       ] " << n << ": " << V << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const int32_t& V)
-{
-	std::cerr << "  [int32_t   ] " << n << ": " << std::to_string(V) << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint8_t & V)
-{
-	std::cerr << "  [uint8_t    ] " << n << ": " << std::to_string(V) << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint16_t& V)
-{
-	std::cerr << "  [uint16_t   ] " << n << ": " << std::to_string(V) << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint32_t& V)
-{
-	std::cerr << "  [uint32_t   ] " << n << ": " << std::to_string(V) << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const uint64_t& V)
-{
-	std::cerr << "  [uint64_t   ] " << n << ": " << std::to_string(V) << std::endl;
-}
-template<> void RsTypeSerializer::print_data(const std::string& n, const rstime_t& V)
-{
-    std::cerr << "  [rstime_t     ] " << n << ": " << V << " (" << time(NULL)-V << " secs ago)" << std::endl;
-}
 
 #define SIMPLE_TO_JSON_DEF(T) \
 template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
@@ -268,28 +121,45 @@ SIMPLE_TO_JSON_DEF(uint32_t)
 
 /** Be very careful in changing this constant as it would break 64 bit integers
  * members JSON string representation retrocompatibility */
-static constexpr char strReprSuffix[] = "_sixtyfour_str";
+static constexpr char strReprKey[] = "xstr64";
 
-/** While JSON doesn't have problems representing 64 bit integers JavaScript
- * standard represents numbers in a double-like format thus it is not capable to
- * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we add
- * to JSON also the string representation for this types as a workaround for the
- * sake of JavaScript clients @see https://stackoverflow.com/a/34989371
+/** Be very careful in changing this constant as it would break 64 bit integers
+ * members JSON string representation retrocompatibility */
+static constexpr char intReprKey[] = "xint64";
+
+/** While JSON doesn't have problems representing 64 bits integers JavaScript,
+ * Dart and other languages represents numbers in a double-like format thus they
+ * are not capable to handle safely integers outside the range
+ * [-(2^53 - 1), 2^53 - 1].
+ * To overcome this limitation we represent 64 bit integers as an object with
+ * two keys, one as integer and one as string representation.
+ * In our case we need to wrap those into an object instead of just adding a key
+ * with a suffix so support well also containers like std::map or std::vector.
+ * More discussion on the topic at @see https://stackoverflow.com/a/34989371
  */
 #define SIXTYFOUR_INTEGERS_TO_JSON_DEF(T) \
 template<> bool RsTypeSerializer::to_JSON( const std::string& memberName, \
 	                                       const T& member, RsJson& jDoc ) \
 { \
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator(); \
+	using namespace rapidjson; \
+	Document::AllocatorType& allocator = jDoc.GetAllocator(); \
  \
-	rapidjson::Value key; \
+	Document wrapper(rapidjson::kObjectType, &allocator); \
+ \
+	Value intKey; \
+	intKey.SetString(intReprKey, allocator ); \
+	Value intValue(member); \
+	wrapper.AddMember(intKey, intValue, allocator); \
+ \
+	bool ok = to_JSON(strReprKey, std::to_string(member), wrapper); \
+ \
+	Value key; \
 	key.SetString( memberName.c_str(), \
 	               static_cast<rapidjson::SizeType>(memberName.length()), \
 	               allocator ); \
-	rapidjson::Value value(member); \
-	jDoc.AddMember(key, value, allocator); \
+	jDoc.AddMember(key, wrapper, allocator); \
  \
-	return to_JSON(memberName + strReprSuffix, std::to_string(member), jDoc); \
+	return ok; \
 }
 
 SIXTYFOUR_INTEGERS_TO_JSON_DEF(int64_t);
@@ -345,100 +215,71 @@ bool RsTypeSerializer::from_JSON( const std::string& memberName,
 	return ret;
 }
 
-/** While JSON doesn't have problems representing 64 bit integers JavaScript
- * standard represents numbers in a double-like format thus it is not capable to
- * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we look
- * for the string representation in the JSON for this types as a workaround for
- * the sake of JavaScript clients @see https://stackoverflow.com/a/34989371
- */
-template<> /*static*/
-bool RsTypeSerializer::from_JSON(
-        const std::string& memberName, int64_t& member, RsJson& jDoc )
-{
-	const char* mName = memberName.c_str();
-	if(jDoc.HasMember(mName))
-	{
-		rapidjson::Value& v = jDoc[mName];
-		if(v.IsInt64())
-		{
-			member = v.GetInt64();
-			return true;
-		}
-	}
-
-	Dbg4() << __PRETTY_FUNCTION__ << " int64_t " << memberName << " not found "
-	       << "in JSON then attempt to look for string representation"
-	       << std::endl;
-
-	const std::string str_key = memberName + strReprSuffix;
-	std::string str_value;
-	if(from_JSON(str_key, str_value, jDoc))
-	{
-		try { member = std::stoll(str_value); }
-		catch (...)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " cannot convert "
-			        << str_value << " to int64_t" << std::endl;
-			return false;
-		}
-
-		return true;
-	}
-
-	Dbg3() << __PRETTY_FUNCTION__ << " neither " << memberName << " nor its "
-	       << "string representation " << str_key << " has been found "
-	       << "in JSON" << std::endl;
-
-	return false;
+/** inverse of @see SIXTYFOUR_INTEGERS_TO_JSON_DEF */
+#define SIXTYFOUR_INTEGERS_FROM_JSON_DEF(T, PRED, GET, CONV) \
+template<> bool RsTypeSerializer::from_JSON( \
+	    const std::string& memberName, T& member, RsJson& jDoc ) \
+{ \
+	using namespace rapidjson; \
+ \
+	SAFE_GET_JSON_V(); \
+ \
+	/* For retro-compatibility take it directly if it is passed as integer */ \
+	if(v.PRED()) \
+    { \
+	    member = v.GET(); \
+	    return true; \
+	} \
+ \
+	ret = ret && v.IsObject(); \
+ \
+	if(!ret) \
+    { \
+	    Dbg3() << __PRETTY_FUNCTION__ << " " << memberName << " not found" \
+	           << std::endl; \
+	    return false; \
+	} \
+ \
+	if(v.HasMember(intReprKey)) \
+    { \
+	    Value& iVal = v[intReprKey]; \
+	    if(iVal.PRED()) \
+        { \
+	        member = iVal.GET(); \
+	        return true; \
+	    } \
+	} \
+ \
+	Dbg4() << __PRETTY_FUNCTION__ << " integer representation of " << memberName \
+	       << " not found in JSON then attempt to look for string representation" \
+	       << std::endl; \
+ \
+ \
+	if(v.HasMember(strReprKey)) \
+    { \
+	    Value& sVal = v[strReprKey]; \
+	    if(sVal.IsString()) \
+        { \
+	        try { member = CONV(sVal.GetString()); } \
+	        catch (...) \
+            { \
+	            RsErr() << __PRETTY_FUNCTION__ << " cannot convert " \
+	                    << sVal.GetString() << " to integral type" << std::endl; \
+	            return false; \
+	        } \
+ \
+	        return true; \
+	    } \
+	} \
+ \
+	Dbg3() << __PRETTY_FUNCTION__ << " neither integral representation nor " \
+	       << "string representation found for: " <<  memberName << std::endl; \
+ \
+	return false; \
 }
 
-/** While JSON doesn't have problems representing 64 bit integers JavaScript
- * standard represents numbers in a double-like format thus it is not capable to
- * handle safely integers outside the range [-(2^53 - 1), 2^53 - 1], so we look
- * for the string representation in the JSON for this types as a workaround for
- * the sake of JavaScript clients @see https://stackoverflow.com/a/34989371
- */
-template<> /*static*/
-bool RsTypeSerializer::from_JSON(
-        const std::string& memberName, uint64_t& member, RsJson& jDoc )
-{
-	const char* mName = memberName.c_str();
-	if(jDoc.HasMember(mName))
-	{
-		rapidjson::Value& v = jDoc[mName];
-		if(v.IsUint64())
-		{
-			member = v.GetUint64();
-			return true;
-		}
-	}
-
-	Dbg4() << __PRETTY_FUNCTION__ << " uint64_t " << memberName << " not found "
-	       << "in JSON then attempt to look for string representation"
-	       << std::endl;
-
-	const std::string str_key = memberName + strReprSuffix;
-	std::string str_value;
-	if(from_JSON(str_key, str_value, jDoc))
-	{
-		try { member = std::stoull(str_value); }
-		catch (...)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " cannot convert "
-			        << str_value << " to uint64_t" << std::endl;
-			return false;
-		}
-
-		return true;
-	}
-
-	Dbg3() << __PRETTY_FUNCTION__ << " neither " << memberName << " nor its "
-	       << "string representation " << str_key << " has been found "
-	       << "in JSON" << std::endl;
-
-	return false;
-}
-
+SIXTYFOUR_INTEGERS_FROM_JSON_DEF(uint64_t, IsUint64, GetUint64, std::stoull)
+SIXTYFOUR_INTEGERS_FROM_JSON_DEF( int64_t,  IsInt64,  GetInt64,  std::stoll)
 
 //============================================================================//
 //                                 Floats                                     //
@@ -662,112 +503,180 @@ bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
 //                              Binary blocks                                 //
 //============================================================================//
 
-template<> uint32_t RsTypeSerializer::serial_size(const RsTypeSerializer::TlvMemBlock_proxy& r) { return 4 + r.second ; }
+/*static*/ /* without this Android compilation breaks */
+constexpr uint32_t RsTypeSerializer::RawMemoryWrapper::MAX_SERIALIZED_CHUNK_SIZE;
 
-template<> bool RsTypeSerializer::deserialize(const uint8_t data[],uint32_t size,uint32_t& offset,RsTypeSerializer::TlvMemBlock_proxy& r)
+/*static*/
+void RsTypeSerializer::RawMemoryWrapper::serial_process(
+                RsGenericSerializer::SerializeJob j,
+                RsGenericSerializer::SerializeContext& ctx )
 {
-    uint32_t saved_offset = offset ;
-
-    bool ok = deserialize<uint32_t>(data,size,offset,r.second) ;
-
-    if(r.second == 0)
-    {
-        r.first = NULL ;
-
-        if(!ok)
-			offset = saved_offset ;
-
-        return ok ;
-    }
-    if(r.second > MAX_SERIALIZED_CHUNK_SIZE)
-    {
-        std::cerr << "(EE) RsTypeSerializer::deserialize<TlvMemBlock_proxy>(): data chunk has size larger than safety size (" << MAX_SERIALIZED_CHUNK_SIZE << "). Item will be dropped." << std::endl;
-        offset = saved_offset ;
-        return false ;
-    }
-
-    r.first = (uint8_t*)rs_malloc(r.second) ;
-
-    ok = ok && (NULL != r.first);
-
-    memcpy(r.first,&data[offset],r.second) ;
-    offset += r.second ;
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> bool RsTypeSerializer::serialize(uint8_t data[],uint32_t size,uint32_t& offset,const RsTypeSerializer::TlvMemBlock_proxy& r)
-{
-    uint32_t saved_offset = offset ;
-
-    bool ok = serialize<uint32_t>(data,size,offset,r.second) ;
-
-    memcpy(&data[offset],r.first,r.second) ;
-    offset += r.second ;
-
-    if(!ok)
-        offset = saved_offset ;
-
-    return ok;
-}
-
-template<> void RsTypeSerializer::print_data(const std::string& n, const RsTypeSerializer::TlvMemBlock_proxy& s)
-{
-    std::cerr << "  [Binary data] " << n << ", length=" << s.second << " data=" << RsUtil::BinToHex((uint8_t*)s.first,std::min(50u,s.second)) << ((s.second>50)?"...":"") << std::endl;
-}
-
-template<> /*static*/
-bool RsTypeSerializer::to_JSON(
-        const std::string& memberName,
-        const RsTypeSerializer::TlvMemBlock_proxy& member, RsJson& jDoc )
-{
-	rapidjson::Document::AllocatorType& allocator = jDoc.GetAllocator();
-
-	rapidjson::Value key;
-	key.SetString( memberName.c_str(),
-	               static_cast<rapidjson::SizeType>(memberName.length()),
-	               allocator );
-
-	std::string encodedValue;
-	Radix64::encode( reinterpret_cast<uint8_t*>(member.first),
-	                 static_cast<int>(member.second), encodedValue );
-
-	rapidjson::Value value;
-	value.SetString(encodedValue.data(), allocator);
-
-	jDoc.AddMember(key, value, allocator);
-
-	return true;
-}
-
-template<> /*static*/
-bool RsTypeSerializer::from_JSON( const std::string& memberName,
-                                  RsTypeSerializer::TlvMemBlock_proxy& member,
-                                  RsJson& jDoc)
-{
-	SAFE_GET_JSON_V();
-	ret = ret && v.IsString();
-	if(ret)
+	switch(j)
 	{
-		std::string encodedValue = v.GetString();
-		std::vector<uint8_t> decodedValue = Radix64::decode(encodedValue);
-		member.second = decodedValue.size();
-
-		if(member.second == 0)
+	case RsGenericSerializer::SIZE_ESTIMATE:
+		RS_SERIAL_PROCESS(second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::SERIALIZE:
+		if(!ctx.mOk) break;
+		if(second > MAX_SERIALIZED_CHUNK_SIZE)
 		{
-			member.first = nullptr;
-			return ret;
+			RsErr() << __PRETTY_FUNCTION__
+			        << std::errc::message_size << " "
+			        << second << " > " << MAX_SERIALIZED_CHUNK_SIZE
+			        << std::endl;
+			print_stacktrace();
+			break;
+		}
+		RS_SERIAL_PROCESS(second);
+		if(!ctx.mOk) break;
+		ctx.mOk = ctx.mSize >= ctx.mOffset + second;
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
+			        << std::endl;
+			print_stacktrace();
+			break;
+		}
+		memcpy(ctx.mData + ctx.mOffset, first, second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::DESERIALIZE:
+		if(first || second)
+		{
+			/* Items are created anew before deserialization so buffer pointer
+			 * must be null and size 0 at this point */
+
+			RsWarn() << __PRETTY_FUNCTION__ << " DESERIALIZE got uninitialized "
+			         << " or pre-allocated buffer! Buffer pointer: " << first
+			         << " must be null and size: " << second << " must be 0 at "
+			         << "this point. Does your item costructor initialize them "
+			         << "properly?" << std::endl;
+			print_stacktrace();
 		}
 
-		member.first = rs_malloc(member.second);
-		ret = ret && member.first &&
-		        memcpy(member.first, decodedValue.data(), member.second);
+		RS_SERIAL_PROCESS(second);
+		if(!ctx.mOk) break;
+		ctx.mOk = (second <= MAX_SERIALIZED_CHUNK_SIZE);
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__
+			        << std::errc::message_size << " "
+			        << second << " > " << MAX_SERIALIZED_CHUNK_SIZE
+			        << std::endl;
+			clear();
+			break;
+		}
+
+		if(!second)
+		{
+			Dbg3() << __PRETTY_FUNCTION__ << " Deserialized empty memory chunk"
+			       << std::endl;
+			clear();
+			break;
+		}
+
+		ctx.mOk = ctx.mSize >= ctx.mOffset + second;
+		if(!ctx.mOk)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << std::errc::no_buffer_space
+			        << std::endl;
+			print_stacktrace();
+
+			clear();
+			break;
+		}
+
+		first = reinterpret_cast<uint8_t*>(malloc(second));
+		memcpy(first, ctx.mData + ctx.mOffset, second);
+		ctx.mOffset += second;
+		break;
+	case RsGenericSerializer::PRINT:  break;
+	case RsGenericSerializer::TO_JSON:
+	{
+		if(!ctx.mOk) break;
+		std::string encodedValue;
+		RsBase64::encode(first, second, encodedValue, true, false);
+		ctx.mJson.SetString(
+		            encodedValue.data(),
+		            static_cast<rapidjson::SizeType>(encodedValue.length()) );
+		break;
 	}
-	return ret;
+	case RsGenericSerializer::FROM_JSON:
+	{
+		const bool yelding = !!(
+		            RsSerializationFlags::YIELDING & ctx.mFlags );
+		if(!(ctx.mOk || yelding))
+		{
+			clear();
+			break;
+		}
+		if(!ctx.mJson.IsString())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " "
+			        << std::errc::invalid_argument << std::endl;
+			print_stacktrace();
+
+			ctx.mOk = false;
+			clear();
+			break;
+		}
+		if( ctx.mJson.GetStringLength() >
+		        RsBase64::encodedSize(MAX_SERIALIZED_CHUNK_SIZE, true) )
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " "
+			        << std::errc::message_size << std::endl;
+			print_stacktrace();
+
+			ctx.mOk = false;
+			clear();
+			break;
+		}
+
+		std::string encodedValue = ctx.mJson.GetString();
+		std::vector<uint8_t> decoded;
+		auto ec = RsBase64::decode(encodedValue, decoded);
+		if(ec)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " " << ec << std::endl;
+			print_stacktrace();
+
+			ctx.mOk = false;
+			clear();
+			break;
+		}
+
+		const auto decodedSize = decoded.size();
+
+		if(!decodedSize)
+		{
+			clear();
+			break;
+		}
+
+		if(decodedSize != second)
+		{
+			first = reinterpret_cast<uint8_t*>(realloc(first, decodedSize));
+			second = static_cast<uint32_t>(decodedSize);
+		}
+
+		memcpy(first, decoded.data(), second);
+		break;
+	}
+	default: RsTypeSerializer::fatalUnknownSerialJob(j);
+	}
 }
+
+void RsTypeSerializer::RawMemoryWrapper::clear()
+{
+	free(first);
+	first = nullptr;
+	second = 0;
+}
+
+//============================================================================//
+//                         std::error_condition                               //
+//============================================================================//
 
 void RsTypeSerializer::ErrConditionWrapper::serial_process(
         RsGenericSerializer::SerializeJob j,
@@ -778,12 +687,12 @@ void RsTypeSerializer::ErrConditionWrapper::serial_process(
 	case RsGenericSerializer::SIZE_ESTIMATE: // fallthrough
 	case RsGenericSerializer::DESERIALIZE: // fallthrough
 	case RsGenericSerializer::SERIALIZE: // fallthrough
-	case RsGenericSerializer::FROM_JSON:
+	case RsGenericSerializer::FROM_JSON: // [[fallthrough]]
+	case RsGenericSerializer::PRINT:
 		RsFatal() << __PRETTY_FUNCTION__ << " SerializeJob: " << j
 		          << "is not supported on std::error_condition " << std::endl;
 		print_stacktrace();
 		exit(-2);
-	case RsGenericSerializer::PRINT: // fallthrough
 	case RsGenericSerializer::TO_JSON:
 	{
 		constexpr RsGenericSerializer::SerializeJob rj =

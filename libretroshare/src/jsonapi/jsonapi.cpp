@@ -78,10 +78,10 @@ JsonApiServer::corsOptionsHeaders =
 #define INITIALIZE_API_CALL_JSON_CONTEXT \
 	RsGenericSerializer::SerializeContext cReq( \
 	            nullptr, 0, \
-	            RsGenericSerializer::SERIALIZATION_FLAG_YIELDING ); \
+	            RsSerializationFlags::YIELDING ); \
 	RsJson& jReq(cReq.mJson); \
 	if(session->get_request()->get_method() == "GET") \
-    { \
+	{ \
 	    const std::string jrqp(session->get_request()->get_query_parameter("jsonData")); \
 	    jReq.Parse(jrqp.c_str(), jrqp.size()); \
 	} \
@@ -352,7 +352,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 						rsEvents, "rsEvents", cAns, session ) )
 				return;
 
-			RsEventType eventType = RsEventType::NONE;
+			RsEventType eventType = RsEventType::__NONE;
 
 			// deserialize input parameters from JSON
 			{
@@ -395,7 +395,8 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				} );
 			};
 
-			bool retval = rsEvents->registerEventsHandler(eventType,multiCallback, hId);
+			std::error_condition retval = rsEvents->registerEventsHandler(
+			            multiCallback, hId, eventType );
 
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
@@ -465,14 +466,17 @@ void JsonApiServer::registerHandler(
 		                const std::shared_ptr<rb::Session> session,
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
+			/* Declare outside the lambda to avoid returning a dangling
+			 * reference on Android */
+			RsWarn tWarn;
 			const auto authFail =
-			        [&path, &session](int status) -> RsWarn::stream_type&
+			        [&](int status) -> RsWarn::stream_type&
 			{
 				/* Capture session by reference as it is cheaper then copying
 				 * shared_ptr by value which is not needed in this case */
 
 				session->close(status, corsOptionsHeaders);
-				return RsWarn() << "JsonApiServer authentication handler "
+				return tWarn << "JsonApiServer authentication handler "
 				                   "blocked an attempt to call JSON API "
 				                   "authenticated method: " << path;
 			};

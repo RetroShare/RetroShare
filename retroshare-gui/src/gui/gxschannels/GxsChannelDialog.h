@@ -43,17 +43,22 @@ public:
 
 protected:
 	/* GxsGroupFrameDialog */
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
-	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Channel; }
-	virtual QString getHelpString() const ;
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
     virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
-    virtual const std::set<TurtleRequestId> getSearchResults() const override { return mSearchResults ; }
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;
 
-	virtual UserNotify *createUserNotify(QObject *parent) override;
+    // Implementation of some abstract methods in GxsGroupFrameDialog
+
+	virtual QString getHelpString() const override;
+	GroupFrameSettings::Type groupFrameSettingsType() override { return GroupFrameSettings::Channel; }
+	RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_CHANNEL; }
+	void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupData, GroupItemInfo &groupItemInfo) override;
+    const std::set<TurtleRequestId> getSearchRequests() const override { return mSearchResults ; }
+	UserNotify *createUserNotify(QObject *parent) override;
+	bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) override;
+	bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) override;
+
 private slots:
 	void toggleAutoDownload();
         void setDefaultDirectory();
@@ -65,15 +70,14 @@ private:
 	virtual QString text(TextType type);
 	virtual QString icon(IconType type);
 	virtual QString settingsGroupName() { return "ChannelDialog"; }
-	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue);
-	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
+	virtual GxsGroupDialog *createNewGroupDialog();
+	virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId);
 	virtual int shareKeyType();
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId);
 	virtual void groupTreeCustomActions(RsGxsGroupId grpId, int subscribeFlags, QList<QAction*> &actions);
 	virtual RsGxsCommentService *getCommentService();
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_DATA; } // request complete group data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 

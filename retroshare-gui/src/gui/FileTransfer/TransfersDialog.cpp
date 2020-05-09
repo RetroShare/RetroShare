@@ -81,11 +81,11 @@
 #define IMAGE_SEARCH               ":/icons/svg/magnifying-glass.svg"
 #define IMAGE_EXPAND               ":/images/edit_add24.png"
 #define IMAGE_COLLAPSE             ":/images/edit_remove24.png"
-#define IMAGE_LIBRARY              ":/images/library.png"
-#define IMAGE_COLLCREATE           ":/images/library_add.png"
-#define IMAGE_COLLMODIF            ":/images/library_edit.png"
-#define IMAGE_COLLVIEW             ":/images/library_view.png"
-#define IMAGE_COLLOPEN             ":/images/library.png"
+#define IMAGE_LIBRARY              ":/icons/collections.png"
+#define IMAGE_COLLCREATE           ":/iconss/png/add.png"
+#define IMAGE_COLLMODIF            ":/icons/png/pencil-edit-button.png"
+#define IMAGE_COLLVIEW             ":/images/find.png"
+#define IMAGE_COLLOPEN             ":/icons/collections.png"
 #define IMAGE_FRIENDSFILES         ":/icons/svg/folders.svg"
 #define IMAGE_MYFILES              ":icons/svg/folders1.svg"
 #define IMAGE_RENAMEFILE           ":images/filecomments.png"
@@ -594,7 +594,7 @@ public:
 		if(col == COLUMN_NAME)
 		{
 			if(source_id == -1)
-				return QVariant(FilesDefs::getIconFromFilename(QString::fromUtf8(fileInfo.fname.c_str())));
+				return QVariant(FilesDefs::getIconFromFileType(QString::fromUtf8(fileInfo.fname.c_str())));
 			else
 			{
 				QString iconName,tooltip;
@@ -919,10 +919,10 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 
     QObject::connect(ui.downloadList->selectionModel(),SIGNAL(selectionChanged (const QItemSelection&, const QItemSelection&)),this,SLOT(showFileDetails())) ;
 
-	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), QIcon(IMAGE_SEARCH), tr("Search")) ;
-	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), QIcon(IMAGE_FRIENDSFILES), tr("Friends files")) ;
+	 ui.tabWidget->insertTab(2,searchDialog = new SearchDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH), tr("Search")) ;
+	 ui.tabWidget->insertTab(3,remoteSharedFiles = new RemoteSharedFilesDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_FRIENDSFILES), tr("Friends files")) ;
 
-	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), QIcon(IMAGE_MYFILES), tr("My files")) ;
+	 ui.tabWidget->addTab(localSharedFiles = new LocalSharedFilesDialog(), FilesDefs::getIconFromQtResourcePath(IMAGE_MYFILES), tr("My files")) ;
 
 	 for(int i=0;i<rsPlugins->nbPlugins();++i)
 		 if(rsPlugins->plugin(i) != NULL && rsPlugins->plugin(i)->qt_transfers_tab() != NULL)
@@ -933,79 +933,79 @@ TransfersDialog::TransfersDialog(QWidget *parent)
     /** Setup the actions for the context menu */
 
 	// Actions. Only need to be defined once.
-   pauseAct = new QAction(QIcon(IMAGE_PAUSE), tr("Pause"), this);
+   pauseAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PAUSE), tr("Pause"), this);
    connect(pauseAct, SIGNAL(triggered()), this, SLOT(pauseFileTransfer()));
 
-   resumeAct = new QAction(QIcon(IMAGE_RESUME), tr("Resume"), this);
+   resumeAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RESUME), tr("Resume"), this);
    connect(resumeAct, SIGNAL(triggered()), this, SLOT(resumeFileTransfer()));
 
-   forceCheckAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Force Check" ), this );
+   forceCheckAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CANCEL), tr( "Force Check" ), this );
    connect( forceCheckAct , SIGNAL( triggered() ), this, SLOT( forceCheck() ) );
 
-   cancelAct = new QAction(QIcon(IMAGE_CANCEL), tr( "Cancel" ), this );
+   cancelAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CANCEL), tr( "Cancel" ), this );
    connect( cancelAct , SIGNAL( triggered() ), this, SLOT( cancel() ) );
 
-    openFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    openFolderAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(openFolderAct, SIGNAL(triggered()), this, SLOT(dlOpenFolder()));
 
-    openFileAct = new QAction(QIcon(IMAGE_OPENFILE), tr("Open File"), this);
+    openFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFILE), tr("Open File"), this);
     connect(openFileAct, SIGNAL(triggered()), this, SLOT(dlOpenFile()));
 
-    previewFileAct = new QAction(QIcon(IMAGE_PREVIEW), tr("Preview File"), this);
+    previewFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PREVIEW), tr("Preview File"), this);
     connect(previewFileAct, SIGNAL(triggered()), this, SLOT(dlPreviewFile()));
 
-    detailsFileAct = new QAction(QIcon(IMAGE_INFO), tr("Details..."), this);
+    detailsFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("Details..."), this);
     connect(detailsFileAct, SIGNAL(triggered()), this, SLOT(showDetailsDialog()));
 
-    clearCompletedAct = new QAction(QIcon(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
+    clearCompletedAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_CLEARCOMPLETED), tr( "Clear Completed" ), this );
     connect( clearCompletedAct , SIGNAL( triggered() ), this, SLOT( clearcompleted() ) );
 
 
-    copyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    copyLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
     connect( copyLinkAct , SIGNAL( triggered() ), this, SLOT( dlCopyLink() ) );
-    pasteLinkAct = new QAction(QIcon(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
+    pasteLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PASTELINK), tr( "Paste RetroShare Link" ), this );
     connect( pasteLinkAct , SIGNAL( triggered() ), this, SLOT( pasteLink() ) );
-	queueDownAct = new QAction(QIcon(":/images/go-down.png"), tr("Down"), this);
+	queueDownAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-down.png"), tr("Down"), this);
 	connect(queueDownAct, SIGNAL(triggered()), this, SLOT(priorityQueueDown()));
-	queueUpAct = new QAction(QIcon(":/images/go-up.png"), tr("Up"), this);
+	queueUpAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-up.png"), tr("Up"), this);
 	connect(queueUpAct, SIGNAL(triggered()), this, SLOT(priorityQueueUp()));
-	queueTopAct = new QAction(QIcon(":/images/go-top.png"), tr("Top"), this);
+	queueTopAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-top.png"), tr("Top"), this);
 	connect(queueTopAct, SIGNAL(triggered()), this, SLOT(priorityQueueTop()));
-	queueBottomAct = new QAction(QIcon(":/images/go-bottom.png"), tr("Bottom"), this);
+	queueBottomAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/go-bottom.png"), tr("Bottom"), this);
 	connect(queueBottomAct, SIGNAL(triggered()), this, SLOT(priorityQueueBottom()));
-	chunkStreamingAct = new QAction(QIcon(IMAGE_STREAMING), tr("Streaming"), this);
+	chunkStreamingAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_STREAMING), tr("Streaming"), this);
 	connect(chunkStreamingAct, SIGNAL(triggered()), this, SLOT(chunkStreaming()));
-	prioritySlowAct = new QAction(QIcon(IMAGE_PRIORITYLOW), tr("Slower"), this);
+	prioritySlowAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYLOW), tr("Slower"), this);
 	connect(prioritySlowAct, SIGNAL(triggered()), this, SLOT(speedSlow()));
-	priorityMediumAct = new QAction(QIcon(IMAGE_PRIORITYNORMAL), tr("Average"), this);
+	priorityMediumAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYNORMAL), tr("Average"), this);
 	connect(priorityMediumAct, SIGNAL(triggered()), this, SLOT(speedAverage()));
-	priorityFastAct = new QAction(QIcon(IMAGE_PRIORITYHIGH), tr("Faster"), this);
+	priorityFastAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYHIGH), tr("Faster"), this);
 	connect(priorityFastAct, SIGNAL(triggered()), this, SLOT(speedFast()));
-	chunkRandomAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Random"), this);
+	chunkRandomAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYAUTO), tr("Random"), this);
 	connect(chunkRandomAct, SIGNAL(triggered()), this, SLOT(chunkRandom()));
-	chunkProgressiveAct = new QAction(QIcon(IMAGE_PRIORITYAUTO), tr("Progressive"), this);
+	chunkProgressiveAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITYAUTO), tr("Progressive"), this);
 	connect(chunkProgressiveAct, SIGNAL(triggered()), this, SLOT(chunkProgressive()));
-	playAct = new QAction(QIcon(IMAGE_PLAY), tr( "Play" ), this );
+	playAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PLAY), tr( "Play" ), this );
 	connect( playAct , SIGNAL( triggered() ), this, SLOT( dlOpenFile() ) );
-	renameFileAct = new QAction(QIcon(IMAGE_RENAMEFILE), tr("Rename file..."), this);
+	renameFileAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_RENAMEFILE), tr("Rename file..."), this);
 	connect(renameFileAct, SIGNAL(triggered()), this, SLOT(renameFile()));
-	specifyDestinationDirectoryAct = new QAction(QIcon(IMAGE_SEARCH),tr("Specify..."),this) ;
+	specifyDestinationDirectoryAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH),tr("Specify..."),this) ;
 	connect(specifyDestinationDirectoryAct,SIGNAL(triggered()),this,SLOT(chooseDestinationDirectory()));
-	expandAllDLAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	expandAllDLAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND),tr("Expand all"),this);
 	connect(expandAllDLAct,SIGNAL(triggered()),this,SLOT(expandAllDL()));
-	collapseAllDLAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	collapseAllDLAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE),tr("Collapse all"),this);
 	connect(collapseAllDLAct,SIGNAL(triggered()),this,SLOT(collapseAllDL()));
-	expandAllULAct= new QAction(QIcon(IMAGE_EXPAND),tr("Expand all"),this);
+	expandAllULAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EXPAND),tr("Expand all"),this);
 	connect(expandAllULAct,SIGNAL(triggered()),this,SLOT(expandAllUL()));
-	collapseAllULAct= new QAction(QIcon(IMAGE_COLLAPSE),tr("Collapse all"),this);
+	collapseAllULAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLAPSE),tr("Collapse all"),this);
 	connect(collapseAllULAct,SIGNAL(triggered()),this,SLOT(collapseAllUL()));
-	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this);
+	collCreateAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLCREATE), tr("Create Collection..."), this);
 	connect(collCreateAct,SIGNAL(triggered()),this,SLOT(collCreate()));
-	collModifAct= new QAction(QIcon(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
+	collModifAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLMODIF), tr("Modify Collection..."), this);
 	connect(collModifAct,SIGNAL(triggered()),this,SLOT(collModif()));
-	collViewAct= new QAction(QIcon(IMAGE_COLLVIEW), tr("View Collection..."), this);
+	collViewAct= new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLVIEW), tr("View Collection..."), this);
 	connect(collViewAct,SIGNAL(triggered()),this,SLOT(collView()));
-	collOpenAct = new QAction(QIcon(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
+	collOpenAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COLLOPEN), tr( "Download from collection file..." ), this );
 	connect(collOpenAct, SIGNAL(triggered()), this, SLOT(collOpen()));
 	connect(NotifyQt::getInstance(), SIGNAL(downloadComplete(QString)), this, SLOT(collAutoOpen(QString)));
 
@@ -1068,38 +1068,44 @@ TransfersDialog::TransfersDialog(QWidget *parent)
 	connect(showULHashAct,SIGNAL(triggered(bool)),this,SLOT(setShowULHashColumn(bool))) ;
 
     /** Setup the actions for the upload context menu */
-    ulOpenFolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this);
+    ulOpenFolderAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Open Folder"), this);
     connect(ulOpenFolderAct, SIGNAL(triggered()), this, SLOT(ulOpenFolder()));
-    ulCopyLinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
+    ulCopyLinkAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr( "Copy RetroShare Link" ), this );
     connect( ulCopyLinkAct , SIGNAL( triggered() ), this, SLOT( ulCopyLink() ) );
 
     // load settings
     processSettings(true);
 
-    int S = QFontMetricsF(font()).height();
-  QString help_str = tr(
-    " <h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;File Transfer</h1>                                                         \
-    <p>Retroshare brings two ways of transferring files: direct transfers from your friends, and                                     \
-    distant anonymous tunnelled transfers. In addition, file transfer is multi-source and allows swarming                                      \
-    (you can be a source while downloading)</p>                                     \
-    <p>You can share files using the <img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 /> icon from the left side bar. \
-    These files will be listed in the My Files tab. You can decide for each friend group whether they can or not see these files \
-    in their Friends Files tab</p>\
-    <p>The search tab reports files from your friends' file lists, and distant files that can be reached \
-    anonymously using the multi-hop tunnelling system.</p> \
-    ").arg(QString::number(2*S)).arg(QString::number(S)) ;
+	int S = static_cast<int>(QFontMetricsF(font()).height());
+	QString help_str = tr(
+	            "<h1><img width=\"%1\" src=\":/icons/help_64.png\">&nbsp;&nbsp;"
+	            "File Transfer</h1>"
+	            "<p>Retroshare brings two ways of transferring files: direct "
+	            "transfers from your friends, and distant anonymous tunnelled "
+	            "transfers. In addition, file transfer is multi-source and "
+	            "allows swarming (you can be a source while downloading)</p>"
+	            "<p>You can share files using the "
+	            "<img src=\":/images/directoryadd_24x24_shadow.png\" width=%2 />"
+	            " icon from the left side bar. These files will be listed in "
+	            "the My Files tab. You can decide for each friend group whether"
+	            " they can or not see these files in their Friends Files tab</p>"
+	            "<p>The search tab reports files from your friends' file lists,"
+	            " and distant files that can be reached anonymously using the "
+	            "multi-hop tunnelling system.</p>")
+	        .arg(QString::number(2*S)).arg(QString::number(S)) ;
 
 
-	 registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
+	registerHelpButton(ui.helpButton,help_str,"TransfersDialog") ;
 
-     mEventHandlerId=0;
-     rsEvents->registerEventsHandler(RsEventType::FILE_TRANSFER, [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerId );
+	mEventHandlerId=0;
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+	    mEventHandlerId, RsEventType::FILE_TRANSFER );
 }
 
 void TransfersDialog::handleEvent(std::shared_ptr<const RsEvent> event)
 {
-    if(event->mType != RsEventType::FILE_TRANSFER)
-        return;
+	if(event->mType != RsEventType::FILE_TRANSFER) return;
 
 	const RsFileTransferEvent *fe = dynamic_cast<const RsFileTransferEvent*>(event.get());
 	if(!fe)
@@ -1231,26 +1237,26 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 	FileInfo info;
 
 	QMenu priorityQueueMenu(tr("Move in Queue..."), this);
-	priorityQueueMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	priorityQueueMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	priorityQueueMenu.addAction(queueTopAct);
 	priorityQueueMenu.addAction(queueUpAct);
 	priorityQueueMenu.addAction(queueDownAct);
 	priorityQueueMenu.addAction(queueBottomAct);
 
 	QMenu prioritySpeedMenu(tr("Priority (Speed)..."), this);
-	prioritySpeedMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	prioritySpeedMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	prioritySpeedMenu.addAction(prioritySlowAct);
 	prioritySpeedMenu.addAction(priorityMediumAct);
 	prioritySpeedMenu.addAction(priorityFastAct);
 
 	QMenu chunkMenu(tr("Chunk strategy"), this);
-	chunkMenu.setIcon(QIcon(IMAGE_PRIORITY));
+	chunkMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_PRIORITY));
 	chunkMenu.addAction(chunkStreamingAct);
 	chunkMenu.addAction(chunkProgressiveAct);
 	chunkMenu.addAction(chunkRandomAct);
 
 	QMenu collectionMenu(tr("Collection"), this);
-	collectionMenu.setIcon(QIcon(IMAGE_LIBRARY));
+	collectionMenu.setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_LIBRARY));
 	collectionMenu.addAction(collCreateAct);
 	collectionMenu.addAction(collModifAct);
 	collectionMenu.addAction(collViewAct);
@@ -1331,7 +1337,7 @@ void TransfersDialog::downloadListCustomPopupMenu( QPoint /*point*/ )
 			contextMnu.addAction( renameFileAct) ;
 		}
 
-		QMenu *directoryMenu = contextMnu.addMenu(QIcon(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
+		QMenu *directoryMenu = contextMnu.addMenu(FilesDefs::getIconFromQtResourcePath(IMAGE_OPENFOLDER), tr("Set destination directory")) ;
 		directoryMenu->addAction(specifyDestinationDirectoryAct) ;
 
 		// Now get the list of existing  directories.
@@ -1522,285 +1528,6 @@ void TransfersDialog::setDestinationDirectory()
 	}
 }
 
-/*
-int TransfersDialog::addDLItem(int row, const FileInfo &fileInfo)
-{
-	QString fileHash = QString::fromStdString(fileInfo.hash.toStdString());
-	double fileDlspeed = (fileInfo.downloadStatus == FT_STATE_DOWNLOADING) ? (fileInfo.tfRate * 1024.0) : 0.0;
-
-	QString status;
-	switch (fileInfo.downloadStatus) {
-		case FT_STATE_FAILED:       status = tr("Failed"); break;
-		case FT_STATE_OKAY:         status = tr("Okay"); break;
-		case FT_STATE_WAITING:      status = tr("Waiting"); break;
-		case FT_STATE_DOWNLOADING:  status = tr("Downloading"); break;
-		case FT_STATE_COMPLETE:     status = tr("Complete"); break;
-		case FT_STATE_QUEUED:       status = tr("Queued"); break;
-		case FT_STATE_PAUSED:       status = tr("Paused"); break;
-		case FT_STATE_CHECKING_HASH:status = tr("Checking..."); break;
-		default:                    status = tr("Unknown"); break;
-	}
-
-	double priority = PRIORITY_NULL;
-
-	if (fileInfo.downloadStatus == FT_STATE_QUEUED) {
-		priority = fileInfo.queue_position;
-	} else if (fileInfo.downloadStatus == FT_STATE_COMPLETE) {
-		priority = 0;
-	} else {
-		switch (fileInfo.priority) {
-			case SPEED_LOW:     priority = PRIORITY_SLOWER; break;
-			case SPEED_NORMAL:  priority = PRIORITY_AVERAGE; break;
-			case SPEED_HIGH:    priority = PRIORITY_FASTER; break;
-			default:            priority = PRIORITY_AVERAGE; break;
-		}
-	}
-
-	qlonglong completed = fileInfo.transfered;
-	qlonglong remaining = fileInfo.size - fileInfo.transfered;
-
-	qlonglong downloadtime = (fileInfo.tfRate > 0)?( (fileInfo.size - fileInfo.transfered) / (fileInfo.tfRate * 1024.0) ) : 0 ;
-	qint64 qi64LastDL = fileInfo.lastTS ; //std::numeric_limits<qint64>::max();
-
-	if (qi64LastDL == 0)	// file is complete, or any raison why the time has not been set properly
-	{
-		QFileInfo file;
-
-		if (fileInfo.downloadStatus == FT_STATE_COMPLETE) 
-			file = QFileInfo(QString::fromUtf8(fileInfo.path.c_str()), QString::fromUtf8(fileInfo.fname.c_str()));
-		else 
-            file = QFileInfo(QString::fromUtf8(rsFiles->getPartialsDirectory().c_str()), QString::fromUtf8(fileInfo.hash.toStdString().c_str()));
-		
-		//Get Last Access on File
-		if (file.exists()) 
-			qi64LastDL = file.lastModified().toTime_t();
-	}
-	QString strPath = QString::fromUtf8(fileInfo.path.c_str());
-	QString strPathAfterDL = strPath;
-	strPathAfterDL.replace(QString::fromUtf8(rsFiles->getDownloadDirectory().c_str()),"");
-
-	FileChunksInfo fcinfo;
-	if (!rsFiles->FileDownloadChunksDetails(fileInfo.hash, fcinfo)) {
-		return -1;
-	}
-
-	FileProgressInfo pinfo;
-	pinfo.cmap = fcinfo.chunks;
-	pinfo.type = FileProgressInfo::DOWNLOAD_LINE;
-	pinfo.progress = (fileInfo.size == 0) ? 0 : (completed * 100.0 / fileInfo.size);
-	pinfo.nb_chunks = pinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
-
-	for (uint32_t i = 0; i < fcinfo.chunks.size(); ++i) 
-		switch(fcinfo.chunks[i])
-		{
-			case FileChunksInfo::CHUNK_CHECKING: pinfo.chunks_in_checking.push_back(i);
-															 break ;
-			case FileChunksInfo::CHUNK_ACTIVE: 	 pinfo.chunks_in_progress.push_back(i);
-															 break ;
-			case FileChunksInfo::CHUNK_DONE:
-			case FileChunksInfo::CHUNK_OUTSTANDING:
-				break ;
-		}
-
-	QString tooltip;
-
-	if (fileInfo.downloadStatus == FT_STATE_CHECKING_HASH) {
-		tooltip = tr("If the hash of the downloaded data does\nnot correspond to the hash announced\nby the file source. The data is likely \nto be corrupted.\n\nRetroShare will ask the source a detailed \nmap of the data; it will compare and invalidate\nbad blocks, and download them again\n\nTry to be patient!") ;
-	}
-
-	if (row < 0) {
-		row = DLListModel->rowCount();
-		DLListModel->insertRow(row);
-
-		// change progress column to own class for sorting
-		DLListModel->setItem(row, COLUMN_PROGRESS, new ProgressItem(NULL));
-
-		DLListModel->setData(DLListModel->index(row, COLUMN_SIZE), QVariant((qlonglong) fileInfo.size));
-		DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash, Qt::DisplayRole);
-		DLListModel->setData(DLListModel->index(row, COLUMN_ID), fileHash, Qt::UserRole);
-	}
-	QString fileName = QString::fromUtf8(fileInfo.fname.c_str());
-
-	DLListModel->setData(DLListModel->index(row, COLUMN_NAME), fileName);
-	DLListModel->setData(DLListModel->index(row, COLUMN_NAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
-
-	DLListModel->setData(DLListModel->index(row, COLUMN_COMPLETED), QVariant((qlonglong)completed));
-	DLListModel->setData(DLListModel->index(row, COLUMN_DLSPEED), QVariant((double)fileDlspeed));
-	DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant((float)pinfo.progress));
-	DLListModel->setData(DLListModel->index(row, COLUMN_PROGRESS), QVariant::fromValue(pinfo), Qt::UserRole);
-	DLListModel->setData(DLListModel->index(row, COLUMN_STATUS), QVariant(status));
-	DLListModel->setData(DLListModel->index(row, COLUMN_PRIORITY), QVariant(priority));
-	DLListModel->setData(DLListModel->index(row, COLUMN_REMAINING), QVariant((qlonglong)remaining));
-	DLListModel->setData(DLListModel->index(row, COLUMN_DOWNLOADTIME), QVariant((qlonglong)downloadtime));
-	DLListModel->setData(DLListModel->index(row, COLUMN_LASTDL), QVariant(qi64LastDL));
-	DLListModel->setData(DLListModel->index(row, COLUMN_PATH), QVariant(strPathAfterDL));
-	DLListModel->item(row,COLUMN_PATH)->setToolTip(strPath);
-	DLListModel->item(row,COLUMN_STATUS)->setToolTip(tooltip);
-
-	QStandardItem *dlItem = DLListModel->item(row);
-
-	std::set<int> used_rows ;
-	int active = 0;
-
-	if (fileInfo.downloadStatus != FT_STATE_COMPLETE) {
-		for (std::vector<TransferInfo>::const_iterator pit = fileInfo.peers.begin() ; pit != fileInfo.peers.end(); ++pit)
-		{
-			const TransferInfo &transferInfo = *pit;
-
-			//unique combination: fileHash + peerId, variant: hash + peerName (too long)
-			QString hashFileAndPeerId = fileHash + QString::fromStdString(transferInfo.peerId.toStdString());
-
-			double peerDlspeed = 0;
-			if ((uint32_t)transferInfo.status == FT_STATE_DOWNLOADING && fileInfo.downloadStatus != FT_STATE_PAUSED && fileInfo.downloadStatus != FT_STATE_COMPLETE)
-				peerDlspeed = transferInfo.tfRate * 1024.0;
-
-			FileProgressInfo peerpinfo;
-			peerpinfo.cmap = fcinfo.compressed_peer_availability_maps[transferInfo.peerId];
-			peerpinfo.type = FileProgressInfo::DOWNLOAD_SOURCE ;
-			peerpinfo.progress = 0.0;	// we don't display completion for sources.
-			peerpinfo.nb_chunks = peerpinfo.cmap._map.empty() ? 0 : fcinfo.chunks.size();
-
-			int row_id = addPeerToDLItem(dlItem, transferInfo.peerId, hashFileAndPeerId, peerDlspeed, transferInfo.status, peerpinfo);
-
-			used_rows.insert(row_id);
-
-			// get the sources (number of online peers)
-			if (transferInfo.tfRate > 0 && fileInfo.downloadStatus == FT_STATE_DOWNLOADING)
-				++active;
-		}
-	}
-
-	float fltSources = active + (float)fileInfo.peers.size()/1000;
-	DLListModel->setData(DLListModel->index(row, COLUMN_SOURCES), fltSources);
-
-	// This is not optimal, but we deal with a small number of elements. The reverse order is really important,
-	// because rows after the deleted rows change positions !
-	//
-	for (int r = dlItem->rowCount() - 1; r >= 0; --r) {
-		if (used_rows.find(r) == used_rows.end()) {
-			dlItem->removeRow(r);
-		}
-	}
-
-	return row;
-}
-
-int TransfersDialog::addPeerToDLItem(QStandardItem *dlItem, const RsPeerId& peer_ID, const QString& coreID, double dlspeed, uint32_t status, const FileProgressInfo& peerInfo)
-{
-	// try to find the item
-	int childRow = -1;
-
-	QStandardItem *childId = NULL;
-	for (int count = 0; (childId = dlItem->child(count, COLUMN_ID)) != NULL; ++count) {
-		if (childId->data(Qt::UserRole).toString() == coreID) {
-			childRow = count;
-			break;
-		}
-	}
-
-    QStandardItem *siName = NULL;
-    QStandardItem *siStatus = NULL;
-
-	if (childRow == -1) {
-		// set this false if you want to expand on double click
-		dlItem->setEditable(false);
-
-		QHeaderView *header = ui.downloadList->header();
-
-		QStandardItem *iName  = new QStandardItem(); //COLUMN_NAME
-		QStandardItem *iSize  = new SortByNameItem(header); //COLUMN_SIZE
-		QStandardItem *iCompleted  = new SortByNameItem(header); //COLUMN_COMPLETED
-		QStandardItem *iDlSpeed  = new SortByNameItem(header); //COLUMN_DLSPEED
-		QStandardItem *iProgress  = new ProgressItem(header); //COLUMN_PROGRESS
-		QStandardItem *iSource  = new SortByNameItem(header); //COLUMN_SOURCES
-		QStandardItem *iStatus  = new SortByNameItem(header); //COLUMN_STATUS
-		QStandardItem *iPriority  = new SortByNameItem(header); //COLUMN_PRIORITY
-		QStandardItem *iRemaining  = new SortByNameItem(header); //COLUMN_REMAINING
-		QStandardItem *iDownloadTime = new SortByNameItem(header); //COLUMN_DOWNLOADTIME
-		QStandardItem *iID = new SortByNameItem(header); //COLUMN_ID
-		QStandardItem *iLastDL = new SortByNameItem(header); //COLUMN_LASTDL
-		QStandardItem *iPath = new SortByNameItem(header); //COLUMN_PATH
-
-		siName = iName;
-		siStatus = iStatus;
-
-		QList<QStandardItem*> items;
-		QString iconName;
-		QString tooltip;
-		iName->setData(QVariant(getPeerName(peer_ID, iconName, tooltip)), Qt::DisplayRole);
-		iName->setData(QIcon(iconName), Qt::DecorationRole);
-		iName->setData(QVariant(tooltip), Qt::ToolTipRole);
-		iSize->setData(QVariant(QString()), Qt::DisplayRole);
-		iCompleted->setData(QVariant(QString()), Qt::DisplayRole);
-		iDlSpeed->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		iProgress->setData(QVariant((float)peerInfo.progress), Qt::DisplayRole);
-		iProgress->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
-		iSource->setData(QVariant(QString()), Qt::DisplayRole);
-
-		iPriority->setData(QVariant((double)PRIORITY_NULL), Qt::DisplayRole);	// blank field for priority
-		iRemaining->setData(QVariant(QString()), Qt::DisplayRole);
-		iDownloadTime->setData(QVariant(QString()), Qt::DisplayRole);
-		iID->setData(QVariant()      , Qt::DisplayRole);
-		iID->setData(QVariant(coreID), Qt::UserRole);
-		iLastDL->setData(QVariant(QString()), Qt::DisplayRole);
-		iPath->setData(QVariant(QString()), Qt::DisplayRole);
-
-		items.append(iName);
-		items.append(iSize);
-		items.append(iCompleted);
-		items.append(iDlSpeed);
-		items.append(iProgress);
-		items.append(iSource);
-		items.append(iStatus);
-		items.append(iPriority);
-		items.append(iRemaining);
-		items.append(iDownloadTime);
-		items.append(iID);
-		items.append(iLastDL);
-		items.append(iPath);
-		dlItem->appendRow(items);
-
-		childRow = dlItem->rowCount() - 1;
-	} else {
-		// just update the child (peer)
-		dlItem->child(childRow, COLUMN_DLSPEED)->setData(QVariant((double)dlspeed), Qt::DisplayRole);
-		dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant((float)peerInfo.progress), Qt::DisplayRole);
-		dlItem->child(childRow, COLUMN_PROGRESS)->setData(QVariant::fromValue(peerInfo), Qt::UserRole);
-
-		siName = dlItem->child(childRow,COLUMN_NAME);
-		siStatus = dlItem->child(childRow, COLUMN_STATUS);
-	}
-
-	switch (status) {
-	case FT_STATE_FAILED:
-			siStatus->setData(QVariant(tr("Failed"))) ;
-			siName->setData(QIcon(":/images/Client1.png"), Qt::StatusTipRole);
-		break ;
-		case FT_STATE_OKAY:
-			siStatus->setData(QVariant(tr("Okay")));
-			siName->setData(QIcon(":/images/Client2.png"), Qt::StatusTipRole);
-		break ;
-		case FT_STATE_WAITING:
-			siStatus->setData(QVariant(tr("")));
-			siName->setData(QIcon(":/images/Client3.png"), Qt::StatusTipRole);
-		break ;
-		case FT_STATE_DOWNLOADING:
-			siStatus->setData(QVariant(tr("Transferring")));
-			siName->setData(QIcon(":/images/Client0.png"), Qt::StatusTipRole);
-		break ;
-		case FT_STATE_COMPLETE:
-			siStatus->setData(QVariant(tr("Complete")));
-			siName->setData(QIcon(":/images/Client0.png"), Qt::StatusTipRole);
-		break ;
-		default:
-			siStatus->setData(QVariant(tr("")));
-			siName->setData(QIcon(":/images/Client4.png"), Qt::StatusTipRole);
-	}
-
-	return childRow;
-}
-*/
-
 int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 {
 	if (fileInfo.peers.empty())
@@ -1822,7 +1549,7 @@ int TransfersDialog::addULItem(int row, const FileInfo &fileInfo)
 		//ULListModel->setItem(row, COLUMN_UPROGRESS, new ProgressItem(NULL));
 
 		ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), fileName);
-		ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), FilesDefs::getIconFromFilename(fileName), Qt::DecorationRole);
+		ULListModel->setData(ULListModel->index(row, COLUMN_UNAME), FilesDefs::getIconFromFileType(fileName), Qt::DecorationRole);
 		ULListModel->setData(ULListModel->index(row, COLUMN_UHASH), fileHash);
 		ULListModel->setData(ULListModel->index(row, COLUMN_UHASH), fileHash, Qt::UserRole);
 	}
@@ -2225,9 +1952,8 @@ void TransfersDialog::pasteLink()
 
 	for(QList<RetroShareLink>::const_iterator it(links.begin());it!=links.end();++it)
 	{
-		FileTree *ft = FileTree::create((*it).radix().toStdString()) ;
-
-		col.merge_in(*ft) ;
+		auto ft = RsFileTree::fromRadix64((*it).radix().toStdString());
+		col.merge_in(*ft);
 	}
 	links.clear();
 	RSLinkClipboard::pasteLinks(links,RetroShareLink::TYPE_FILE);

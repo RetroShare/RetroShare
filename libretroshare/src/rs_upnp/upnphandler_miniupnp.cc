@@ -642,14 +642,10 @@ void    upnphandler::setExternalPort(unsigned short eport_in)
 	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
 }
 
-	/* as determined by uPnP */
-bool    upnphandler::getInternalAddress(struct sockaddr_storage &addr)
+/* as determined by uPnP */
+bool upnphandler::getInternalAddress(struct sockaddr_storage &addr)
 {
-//	std::cerr << "UPnPHandler::getInternalAddress() pre Lock!" << std::endl;
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
-//	std::cerr << "UPnPHandler::getInternalAddress() postLock!" << std::endl;
-
-	std::cerr << "UPnPHandler::getInternalAddress()" << std::endl;
+	RS_STACK_MUTEX(dataMtx);
 
 	// copy to universal addr.
 	sockaddr_storage_clear(addr);
@@ -657,18 +653,15 @@ bool    upnphandler::getInternalAddress(struct sockaddr_storage &addr)
 
 	bool valid = (upnpState >= RS_UPNP_S_ACTIVE);
 
-	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+	Dbg2() << __PRETTY_FUNCTION__ << " valid: " << valid
+	       << " addr: " << addr << std::endl;
 
 	return valid;
 }
 
-bool    upnphandler::getExternalAddress(struct sockaddr_storage &addr)
+bool upnphandler::getExternalAddress(sockaddr_storage &addr)
 {
-//	std::cerr << "UPnPHandler::getExternalAddress() pre Lock!" << std::endl;
-	dataMtx.lock();   /***  LOCK MUTEX  ***/
-//	std::cerr << "UPnPHandler::getExternalAddress() postLock!" << std::endl;
-
-	std::cerr << "UPnPHandler::getExternalAddress()" << std::endl;
+	RS_STACK_MUTEX(dataMtx);
 
 	// copy to universal addr.
 	sockaddr_storage_clear(addr);
@@ -676,7 +669,8 @@ bool    upnphandler::getExternalAddress(struct sockaddr_storage &addr)
 
 	bool valid = (upnpState == RS_UPNP_S_ACTIVE);
 
-	dataMtx.unlock(); /*** UNLOCK MUTEX ***/
+	Dbg2() << __PRETTY_FUNCTION__ << " valid: " << valid
+	       << " addr: " << addr << std::endl;
 
 	return valid;
 }

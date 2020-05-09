@@ -113,8 +113,6 @@ int p3GxsTunnelService::tick()
     
     flush() ;
 
-    rstime::rs_usleep(1000*500);
-    
     return 0 ;
 }
 

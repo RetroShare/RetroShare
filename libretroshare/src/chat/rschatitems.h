@@ -99,8 +99,6 @@ class RsChatItem: public RsItem
 		}
 
 		virtual ~RsChatItem() {}
-		virtual std::ostream& print(std::ostream &out, uint16_t /*indent*/ = 0) { return out; }	// derived from RsItem, but should be removed
-
         virtual void clear() {}
 };
 
@@ -348,14 +346,20 @@ class RsChatStatusItem: public RsChatItem
 //
 class RsChatAvatarItem: public RsChatItem
 {
-	public:
-		RsChatAvatarItem() :RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR) {setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM) ;}
+public:
+	RsChatAvatarItem():
+	    RsChatItem(RS_PKT_SUBTYPE_CHAT_AVATAR),
+	    image_size(0), image_data(nullptr)
+	{ setPriorityLevel(QOS_PRIORITY_RS_CHAT_AVATAR_ITEM); }
 
-		virtual ~RsChatAvatarItem() ;
-		void serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx);
+	~RsChatAvatarItem() override { free(image_data); }
 
-		uint32_t image_size ;				// size of data in bytes
-		unsigned char *image_data ;		// image
+	void serial_process(
+	        RsGenericSerializer::SerializeJob j,
+	        RsGenericSerializer::SerializeContext& ctx) override;
+
+	uint32_t image_size; /// size of data in bytes
+	unsigned char* image_data ; /// image data
 };
 
 
@@ -371,9 +375,8 @@ struct PrivateOugoingMapItem : RsChatItem
 
 struct RsChatSerialiser : RsServiceSerializer
 {
-	RsChatSerialiser(SerializationFlags flags = SERIALIZATION_FLAG_NONE) :
-	    RsServiceSerializer( RS_SERVICE_TYPE_CHAT,
-	                         RsGenericSerializer::FORMAT_BINARY, flags ) {}
+	RsChatSerialiser(RsSerializationFlags flags = RsSerializationFlags::NONE):
+	    RsServiceSerializer(RS_SERVICE_TYPE_CHAT, flags) {}
 
 	virtual RsItem *create_item(uint16_t service_id,uint8_t item_sub_id) const;
 };

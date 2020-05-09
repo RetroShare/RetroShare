@@ -26,8 +26,6 @@
 #include "retroshare/rsposted.h"
 #include "util/RichTextEdit.h"
 
-class TokenQueue;
-
 namespace Ui {
 	class PostedCreatePostDialog;
 }
@@ -41,7 +39,7 @@ public:
 	 * @param tokenQ parent callee token
 	 * @param posted
 	 */
-	explicit PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
+	explicit PostedCreatePostDialog(RsPosted* posted, const RsGxsGroupId& grpId, QWidget *parent = 0);
 	~PostedCreatePostDialog();
 
 private:
@@ -52,18 +50,16 @@ private:
 private slots:
 	void createPost();
 	void addPicture();
-	void on_postButton_clicked();
-	void on_imageButton_clicked();
-	void on_linkButton_clicked();
 	void on_removeButton_clicked();
 	void fileHashingFinished(QList<HashedFile> hashedFiles);
 
+	void setPage(int viewMode);
 private:
 	void processSettings(bool load);
+	int viewMode();
 
 	QString mLink;
 	QString mNotes;
-	TokenQueue* mTokenQueue;
 	RsPosted* mPosted;
 	RsGxsGroupId mGrpId;
 

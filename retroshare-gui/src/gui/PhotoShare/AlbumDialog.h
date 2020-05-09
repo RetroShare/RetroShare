@@ -32,7 +32,7 @@ namespace Ui {
     class AlbumDialog;
 }
 
-class AlbumDialog : public QDialog, public PhotoShareItemHolder
+class AlbumDialog : public QDialog, public PhotoShareItemHolder, public TokenResponse
 {
     Q_OBJECT
 
@@ -52,8 +52,24 @@ private slots:
     void deletePhoto();
     void editPhoto();
 private:
+
+    void addPhoto(const RsPhotoPhoto &photo);
+
+    // data request / response.
+    void requestPhotoList(GxsMsgReq& req);
+    void requestPhotoList(const RsGxsGroupId &albumId);
+    void requestPhotoData(GxsMsgReq &photoIds);
+
+    void acknowledgeMessage(const uint32_t &token);
+
+    void loadPhotoList(const uint32_t &token);
+    void loadPhotoData(const uint32_t &token);
+
+    void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
     Ui::AlbumDialog *ui;
     RsPhoto* mRsPhoto;
+    TokenQueue* mPhotoShareQueue; // external PhotoShare Queue.
     TokenQueue* mPhotoQueue;
     RsPhotoAlbum mAlbum;
     PhotoDrop* mPhotoDrop;

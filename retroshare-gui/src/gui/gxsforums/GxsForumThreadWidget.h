@@ -92,6 +92,7 @@ protected:
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
     
+	void setMessageLoadingError(const QString& error);
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
@@ -101,7 +102,7 @@ private slots:
 	void changedThread(QModelIndex index);
 	void changedVersion();
 	void clickedThread (QModelIndex index);
-    void postForumLoading();
+	void postForumLoading();
 
 	void reply_with_private_message();
 	void replytoforummessage();
@@ -157,7 +158,7 @@ private:
 
 	int getSelectedMsgCount(QList<QTreeWidgetItem*> *pRows, QList<QTreeWidgetItem*> *pRowsRead, QList<QTreeWidgetItem*> *pRowsUnread);
 	void setMsgReadStatus(QList<QTreeWidgetItem*> &rows, bool read);
-	void markMsgAsReadUnread(bool read, bool children, bool forum);
+	void markMsgAsReadUnread(bool read, bool children, bool forum, RsGxsMessageId msgId = RsGxsMessageId());
 	void calculateUnreadCount();
 
 	void togglethreadview_internal();
@@ -170,11 +171,15 @@ private:
     static void loadAuthorIdCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/);
 
 	void updateMessageData(const RsGxsMessageId& msgId);
-	void updateForumDescription();
+	void updateForumDescription(bool success);
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
+	void setForumDescriptionLoading();
+	void clearForumDescription();
+	void blankPost();
+
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;

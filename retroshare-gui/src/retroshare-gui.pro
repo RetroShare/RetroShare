@@ -114,6 +114,11 @@ CONFIG += gxscircles
 #CONFIG += framecatcher
 #CONFIG += blogs
 
+## To enable unfinished services
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
+
 DEFINES += RS_RELEASE_VERSION
 RCC_DIR = temp/qrc
 UI_DIR  = temp/ui
@@ -342,6 +347,7 @@ openbsd-* {
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
+	LIBS *= -lglib-2.0
 }
 
 # Tor controller
@@ -1144,51 +1150,49 @@ unfinished_services {
 	
 	
 gxsphotoshare {
-	#DEFINES += RS_USE_PHOTOSHARE
+	#DEFINES += RS_USE_PHOTOSHARE # to enable in unfinished.
+	DEFINES += RS_USE_PHOTO # enable in MainWindow
 
 	HEADERS += \
+		gui/PhotoShare/AlbumGroupDialog.h \
+		gui/PhotoShare/AlbumExtra.h \
 		gui/PhotoShare/PhotoDrop.h \
 		gui/PhotoShare/AlbumItem.h \
 		gui/PhotoShare/AlbumDialog.h \
-		gui/PhotoShare/AlbumCreateDialog.h \
 		gui/PhotoShare/PhotoItem.h \
 		gui/PhotoShare/PhotoShareItemHolder.h \
 		gui/PhotoShare/PhotoShare.h \
 		gui/PhotoShare/PhotoSlideShow.h \
-		gui/PhotoShare/PhotoDialog.h \
-		gui/PhotoShare/PhotoCommentItem.h \
-		gui/PhotoShare/AddCommentDialog.h
-	
+		gui/PhotoShare/PhotoDialog.h
+
 	FORMS += \
+		gui/PhotoShare/AlbumExtra.ui \
 		gui/PhotoShare/PhotoItem.ui \
 		gui/PhotoShare/PhotoDialog.ui \
 		gui/PhotoShare/AlbumItem.ui \
 		gui/PhotoShare/AlbumDialog.ui \
-		gui/PhotoShare/AlbumCreateDialog.ui \
 		gui/PhotoShare/PhotoShare.ui \
-		gui/PhotoShare/PhotoSlideShow.ui \
-		gui/PhotoShare/PhotoCommentItem.ui \
-		gui/PhotoShare/AddCommentDialog.ui
-	
+		gui/PhotoShare/PhotoSlideShow.ui
+
 	SOURCES += \
+		gui/PhotoShare/AlbumGroupDialog.cpp \
+		gui/PhotoShare/AlbumExtra.cpp \
 		gui/PhotoShare/PhotoItem.cpp \
 		gui/PhotoShare/PhotoDialog.cpp \
 		gui/PhotoShare/PhotoDrop.cpp \
 		gui/PhotoShare/AlbumItem.cpp \
 		gui/PhotoShare/AlbumDialog.cpp \
-		gui/PhotoShare/AlbumCreateDialog.cpp \
 		gui/PhotoShare/PhotoShareItemHolder.cpp \
 		gui/PhotoShare/PhotoShare.cpp \
-		gui/PhotoShare/PhotoSlideShow.cpp \
-		gui/PhotoShare/PhotoCommentItem.cpp \
-		gui/PhotoShare/AddCommentDialog.cpp
-	
+		gui/PhotoShare/PhotoSlideShow.cpp
+
 	RESOURCES += gui/PhotoShare/Photo_images.qrc
 
 }
 	
 	
 wikipoos {
+	DEFINES += RS_USE_WIKI
 	
 	DEPENDPATH += ../../supportlibs/pegmarkdown
 	INCLUDEPATH += ../../supportlibs/pegmarkdown
@@ -1215,18 +1219,29 @@ wikipoos {
 	
 gxsthewire {
 	
+	DEFINES += RS_USE_WIRE
+
 	HEADERS += gui/TheWire/PulseItem.h \
+		gui/TheWire/PulseDetails.h \
 		gui/TheWire/WireDialog.h \
+		gui/TheWire/WireGroupItem.h \
+		gui/TheWire/WireGroupDialog.h \
 		gui/TheWire/PulseAddDialog.h \
 	
 	FORMS += gui/TheWire/PulseItem.ui \
+		gui/TheWire/PulseDetails.ui \
+		gui/TheWire/WireGroupItem.ui \
 		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
 	
 	SOURCES += gui/TheWire/PulseItem.cpp \
+		gui/TheWire/PulseDetails.cpp \
 		gui/TheWire/WireDialog.cpp \
+		gui/TheWire/WireGroupItem.cpp \
+		gui/TheWire/WireGroupDialog.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
-	
+
+	RESOURCES += gui/TheWire/TheWire_images.qrc
 }
 
 identities {
@@ -1403,9 +1418,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.h \
 		gui/gxs/GxsGroupFeedItem.h \
 		gui/gxs/GxsFeedItem.h \
-		gui/gxs/RsGxsUpdateBroadcastBase.h \
-		gui/gxs/RsGxsUpdateBroadcastWidget.h \
-		gui/gxs/RsGxsUpdateBroadcastPage.h \
 		gui/gxs/GxsGroupShareKey.h \
 		gui/gxs/GxsUserNotify.h \
 		gui/gxs/GxsFeedWidget.h \
@@ -1440,9 +1452,6 @@ gxsgui {
 		gui/gxs/GxsMessageFramePostWidget.cpp \
 		gui/gxs/GxsGroupFeedItem.cpp \
 		gui/gxs/GxsFeedItem.cpp \
-		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
-		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
-		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 		gui/gxs/GxsUserNotify.cpp \
 		gui/gxs/GxsFeedWidget.cpp \
 		util/TokenQueue.cpp \
@@ -1451,4 +1460,17 @@ gxsgui {
 #		gui/gxs/GxsMsgDialog.cpp \
 	
 	
+}
+
+
+wikipoos {
+	HEADERS += \
+		gui/gxs/RsGxsUpdateBroadcastBase.h \
+		gui/gxs/RsGxsUpdateBroadcastWidget.h \
+		gui/gxs/RsGxsUpdateBroadcastPage.h 
+
+	SOURCES += \
+		gui/gxs/RsGxsUpdateBroadcastBase.cpp \
+		gui/gxs/RsGxsUpdateBroadcastWidget.cpp \
+		gui/gxs/RsGxsUpdateBroadcastPage.cpp \
 }

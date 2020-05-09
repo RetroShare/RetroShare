@@ -111,6 +111,19 @@ no_direct_chat:CONFIG -= direct_chat
 CONFIG *= bitdht
 no_bitdht:CONFIG -= bitdht
 
+# The DHT stunner is used to determine the NAT type using other RS DHT peers and the STUN (Session Traversal Utilities for NAT) protocol.
+# To disable DHT stunner append the following assignation to qmake command line
+# "CONFIG+=no_use_dht_stunner"
+CONFIG *= use_dht_stunner
+no_use_dht_stunner:CONFIG -= use_dht_stunner
+
+# The DHT stunner can be used to figure out our external IP. As this purely relying on random DHT peers that answer our request, it can easily be abused.
+# Therefore, it is turned off by default.
+# To enable external ip determination (additionally) based on the dht stunner append the following assignation to qmake
+# command line "CONFIG+=use_dht_stunner_ext_ip"
+CONFIG *= no_use_dht_stunner_ext_ip
+use_dht_stunner_ext_ip:CONFIG -= no_use_dht_stunner_ext_ip
+
 # To select your MacOsX version append the following assignation to qmake
 # command line "CONFIG+=rs_macos10.11" where 10.11 depends your version
 macx:CONFIG *= rs_macos10.11
@@ -177,6 +190,15 @@ no_rs_service_webui_terminal_password:CONFIG -= rs_service_webui_terminal_passwo
 # to qmake command line "CONFIG+=no_rs_service_terminal_login"
 CONFIG *= rs_service_terminal_login
 no_rs_service_terminal_login:CONFIG -= rs_service_terminal_login
+
+# To disable Diffie Hellman group check at init append the following assignation
+# to qmake command line "CONFIG+=no_rs_dh_init_check"
+# this check is not strictly needed and on some platform is very slow.
+# On Android it takes at least one minute at startup which is untolerable for
+# most phone users
+CONFIG+=rs_dh_init_check
+no_rs_dh_init_check:CONFIG -= rs_dh_init_check
+
 
 # Specify host precompiled jsonapi-generator path, appending the following
 # assignation to qmake command line
@@ -492,6 +514,14 @@ rs_gxs_trans {
 
 bitdht {
     DEFINES *= RS_USE_BITDHT
+
+    use_dht_stunner {
+        CONFIG *= useDhtStunner
+
+        use_dht_stunner_ext_ip {
+            DEFINES *= ALLOW_DHT_STUNNER
+        }
+    }
 }
 
 direct_chat {
@@ -530,6 +560,8 @@ rs_deep_files_index_taglib:DEFINES *= RS_DEEP_FILES_INDEX_TAGLIB
 rs_use_native_dialogs:DEFINES *= RS_NATIVEDIALOGS
 
 rs_broadcast_discovery:DEFINES *= RS_BROADCAST_DISCOVERY
+
+no_rs_dh_init_check:DEFINES *= RS_DISABLE_DIFFIE_HELLMAN_INIT_CHECK
 
 debug {
     QMAKE_CXXFLAGS -= -O2 -fomit-frame-pointer

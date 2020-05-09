@@ -27,7 +27,7 @@
 struct RsGxsIfaceHelper;
 class UIStateHelper;
 
-class GxsMessageFrameWidget : public RsGxsUpdateBroadcastWidget, public TokenResponse
+class GxsMessageFrameWidget : public QWidget, public TokenResponse
 {
 	Q_OBJECT
 

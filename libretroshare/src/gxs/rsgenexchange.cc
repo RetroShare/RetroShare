@@ -1112,6 +1112,7 @@ static void addMessageChanged(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > 
 
 void RsGenExchange::receiveChanges(std::vector<RsGxsNotify*>& changes)
 {
+    std::cerr << "***********************************  RsGenExchange::receiveChanges()" << std::endl;
 #ifdef GEN_EXCH_DEBUG
     std::cerr << "RsGenExchange::receiveChanges()" << std::endl;
 #endif
@@ -1192,7 +1193,7 @@ bool RsGenExchange::getGroupList(const uint32_t &token, std::list<RsGxsGroupId> 
 bool RsGenExchange::getMsgList(const uint32_t &token,
                                GxsMsgIdResult &msgIds)
 {
-	return mDataAccess->getMsgList(token, msgIds);
+	return mDataAccess->getMsgIdList(token, msgIds);
 }
 
 bool RsGenExchange::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
@@ -1691,7 +1692,7 @@ void RsGenExchange::notifyChangedGroupStats(const RsGxsGroupId &grpId)
 {
 	RS_STACK_MUTEX(mGenMtx);
 
-	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_PROCESSED, false);
+	RsGxsGroupChange* gc = new RsGxsGroupChange(RsGxsNotify::TYPE_STATISTICS_CHANGED, false);
 	gc->mGrpIdList.push_back(grpId);
 	mNotifications.push_back(gc);
 }
@@ -3460,20 +3461,32 @@ bool RsGenExchange::exportGroupBase64(
 
 	if(groupId.isNull()) return failure("groupId cannot be null");
 
+    // We have no blocking API here, so we need to make a blocking request manually.
 	const std::list<RsGxsGroupId> groupIds({groupId});
 	RsTokReqOptions opts;
 	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
 	uint32_t token;
-	mDataAccess->requestGroupInfo(
-	            token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
-	RsTokenService::GxsRequestStatus wtStatus = mDataAccess->waitToken(token);
-	if(wtStatus != RsTokenService::COMPLETE)
-		return failure( "waitToken(...) failed with: " +
-		                std::to_string(wtStatus) );
+	mDataAccess->requestGroupInfo( token, RS_TOKREQ_ANSTYPE_DATA, opts, groupIds);
+
+    // provide a sync response: actually wait for the token.
+    std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000);
+    std::chrono::milliseconds checkEvery = std::chrono::milliseconds(100);
+
+	auto timeout = std::chrono::steady_clock::now() + maxWait;	// wait for 10 secs at most
+	auto st = mDataAccess->requestStatus(token);
+
+	while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
+	{
+		std::this_thread::sleep_for(checkEvery);
+		st = mDataAccess->requestStatus(token);
+	}
+	if(st != RsTokenService::COMPLETE)
+		return failure( "waitToken(...) failed with: " + std::to_string(st) );
 
 	uint8_t* buf = nullptr;
 	uint32_t size;
 	RsGxsGroupId grpId;
+
 	if(!getSerializedGroupData(token, grpId, buf, size))
 		return failure("failed retrieving GXS data");
 

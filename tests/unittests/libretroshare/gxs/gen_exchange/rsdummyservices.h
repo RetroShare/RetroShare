@@ -64,7 +64,6 @@ public:
 
     std::string msgData;
 
-    std::ostream &print(std::ostream &out, uint16_t /*indent*/ = 0){ return out; }
     void clear() { msgData.clear(); }
 
 };
@@ -79,7 +78,6 @@ public:
 
     std::string grpData;
     void clear() { grpData.clear(); }
-    std::ostream &print(std::ostream &out, uint16_t /*indent*/ = 0){ return out; }
 };
 
 

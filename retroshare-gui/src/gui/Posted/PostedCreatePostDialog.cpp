@@ -22,11 +22,12 @@
 #include <QMessageBox>
 #include <QByteArray>
 #include <QStringList>
+#include <QSignalMapper>
+
 #include "PostedCreatePostDialog.h"
 #include "ui_PostedCreatePostDialog.h"
 
 #include "util/misc.h"
-#include "util/TokenQueue.h"
 #include "util/RichTextEdit.h"
 #include "gui/feeds/SubFileItem.h"
 #include "util/rsdir.h"
@@ -35,14 +36,17 @@
 #include <QBuffer>
 
 #include <iostream>
-
+#include <gui/RetroShareLink.h>
 #include <util/imageutil.h>
 
-#include <gui/RetroShareLink.h>
+/* View Page */
+#define VIEW_POST  1
+#define VIEW_IMAGE  2
+#define VIEW_LINK  3
 
-PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
+PostedCreatePostDialog::PostedCreatePostDialog(RsPosted *posted, const RsGxsGroupId& grpId, QWidget *parent):
 	QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	mTokenQueue(tokenQ), mPosted(posted), mGrpId(grpId),
+	mPosted(posted), mGrpId(grpId),
 	ui(new Ui::PostedCreatePostDialog)
 {
 	ui->setupUi(this);
@@ -66,6 +70,16 @@ PostedCreatePostDialog::PostedCreatePostDialog(TokenQueue* tokenQ, RsPosted *pos
 	
 	/* fill in the available OwnIds for signing */
 	ui->idChooser->loadIds(IDCHOOSER_ID_REQUIRED, RsGxsId());
+	
+	QSignalMapper *signalMapper = new QSignalMapper(this);
+	connect(ui->postButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->imageButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	connect(ui->linkButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+
+	signalMapper->setMapping(ui->postButton, VIEW_POST);
+	signalMapper->setMapping(ui->imageButton, VIEW_IMAGE);
+	signalMapper->setMapping(ui->linkButton, VIEW_LINK);
+	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setPage(int)));
 	
 	ui->removeButton->hide();
 
@@ -93,11 +107,17 @@ void PostedCreatePostDialog::processSettings(bool load)
 		// state of ID Chooser combobox
 		int index = Settings->value("IDChooser", 0).toInt();
 		ui->idChooser->setCurrentIndex(index);
+		
+		// load last used Stacked Page
+		setPage(Settings->value("viewPage", VIEW_POST).toInt());
 	} else {
 		// save settings
 
 		// state of ID Chooser combobox
 		Settings->setValue("IDChooser", ui->idChooser->currentIndex());
+		
+		// store last used Page
+		Settings->setValue("viewPage", viewMode());
 	}
 
 	Settings->endGroup();
@@ -155,7 +175,6 @@ void PostedCreatePostDialog::createPost()
 
 	uint32_t token;
 	mPosted->createPost(token, post);
-//	mTokenQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, TOKEN_USER_TYPE_POST);
 
 	accept();
 }
@@ -222,19 +241,51 @@ void PostedCreatePostDialog::addPicture()
 
 }
 
-void PostedCreatePostDialog::on_postButton_clicked()
+int PostedCreatePostDialog::viewMode()
 {
-	ui->stackedWidget->setCurrentIndex(0);
+	if (ui->postButton->isChecked()) {
+		return VIEW_POST;
+	} else if (ui->imageButton->isChecked()) {
+		return VIEW_IMAGE;
+	} else if (ui->linkButton->isChecked()) {
+		return VIEW_LINK;
+	}
+
+	/* Default */
+	return VIEW_POST;
 }
 
-void PostedCreatePostDialog::on_imageButton_clicked()
+void PostedCreatePostDialog::setPage(int viewMode)
 {
-	ui->stackedWidget->setCurrentIndex(1);
-}
+	switch (viewMode) {
+	case VIEW_POST:
+		ui->stackedWidget->setCurrentIndex(0);
 
-void PostedCreatePostDialog::on_linkButton_clicked()
-{
-	ui->stackedWidget->setCurrentIndex(2);
+		ui->postButton->setChecked(true);
+		ui->imageButton->setChecked(false);
+		ui->linkButton->setChecked(false);
+
+		break;
+	case VIEW_IMAGE:
+		ui->stackedWidget->setCurrentIndex(1);
+
+		ui->imageButton->setChecked(true);
+		ui->postButton->setChecked(false);
+		ui->linkButton->setChecked(false);
+
+		break;
+	case VIEW_LINK:
+		ui->stackedWidget->setCurrentIndex(2);
+
+		ui->linkButton->setChecked(true);
+		ui->postButton->setChecked(false);
+		ui->imageButton->setChecked(false);
+
+		break;
+	default:
+		setPage(VIEW_POST);
+		return;
+	}
 }
 
 void PostedCreatePostDialog::on_removeButton_clicked()

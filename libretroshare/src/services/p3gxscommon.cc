@@ -79,6 +79,11 @@ RsGxsImage &RsGxsImage::operator=(const RsGxsImage &a)
 }
 
 
+bool RsGxsImage::empty() const
+{
+	return ((mData == NULL) || (mSize == 0));
+}
+
 void RsGxsImage::take(uint8_t *data, uint32_t size)
 {
 #ifdef DEBUG_GXSCOMMON
@@ -420,7 +425,7 @@ double p3GxsCommentService::calculateBestScore(int upVotes, int downVotes)
 
 /********************************************************************************************/
 
-bool p3GxsCommentService::createGxsComment(uint32_t &token, RsGxsComment &msg)
+bool p3GxsCommentService::createGxsComment(uint32_t &token, const RsGxsComment &msg)
 {
 #ifdef DEBUG_GXSCOMMON
     std::cerr << "p3GxsCommentService::createGxsComment() GroupId: " << msg.mMeta.mGroupId;

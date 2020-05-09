@@ -1706,15 +1706,13 @@ static void processList(const QStringList &list, const QString &textSingular, co
 			}
 			break;
 
-			case TYPE_FILE_TREE:
-			{
-				FileTree *ft = FileTree::create(link.radix().toStdString()) ;
-
-				RsCollection(*ft).downloadFiles() ;
-
-				delete ft;
-			}
+		case TYPE_FILE_TREE:
+		{
+			auto ft = RsFileTree::fromRadix64(
+			            link.radix().toStdString() );
+			RsCollection(*ft).downloadFiles();
 			break;
+		}
 
 			case TYPE_CHAT_ROOM:
 			{

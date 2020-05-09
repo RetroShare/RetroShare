@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/PulseAddDialog.h                                                *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -23,30 +23,49 @@
 
 #include "ui_PulseAddDialog.h"
 
-#include <inttypes.h>
+#include <retroshare/rswire.h>
+#include "util/TokenQueue.h"
 
-class PhotoDetailsDialog;
-
-class PulseAddDialog : public QWidget
+class PulseAddDialog : public QWidget, public TokenResponse
 {
   Q_OBJECT
 
 public:
 	PulseAddDialog(QWidget *parent = 0);
 
-private slots:
-	void showPhotoDetails();
-	void updateMoveButtons(uint32_t status);
+	void cleanup();
+	void setGroup(RsWireGroup &group);
+	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
 
+private slots:
 	void addURL();
-	void addTo();
+	void clearDisplayAs();
 	void postPulse();
 	void cancelPulse();
 	void clearDialog();
+	void pulseTextChanged();
+
+private:
+	void postOriginalPulse();
+	void postReplyPulse();
+	void postRefPulse(RsWirePulse &pulse);
+
+	void acknowledgeMessage(const uint32_t &token);
+	void loadPulseData(const uint32_t &token);
+	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+	uint32_t toPulseSentiment(int index);
 
 protected:
 
-	PhotoDetailsDialog *mPhotoDetails;
+	RsWireGroup mGroup; // where we want to post from.
+
+	// if this is a reply
+	bool mIsReply;
+	std::string mReplyGroupName;
+	RsWirePulse mReplyToPulse;
+	bool mWaitingRefMsg;
+
+	TokenQueue* mWireQueue;
 	Ui::PulseAddDialog ui;
 
 };

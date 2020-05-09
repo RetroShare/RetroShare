@@ -25,7 +25,7 @@
 #include "gui/msgs/MessageComposer.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
-#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
+//#include "gui/gxs/RsGxsUpdateBroadcastBase.h"
 #include "gui/Identity/IdDetailsDialog.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
@@ -53,7 +53,7 @@ const uint32_t PeopleDialog::PD_CIRCLES   = 0x0004 ;
 
 /** Constructor */
 PeopleDialog::PeopleDialog(QWidget *parent)
-	: RsGxsUpdateBroadcastPage(rsIdentity, parent)
+	: MainPage(parent)
 {
 	setupUi(this);
 
@@ -61,8 +61,8 @@ PeopleDialog::PeopleDialog(QWidget *parent)
 	mIdentityQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 	mCirclesQueue = new TokenQueue(rsGxsCircles->getTokenService(), this);
 	// This is used to grab the broadcast of changes from p3GxsCircles, which is discarded by the current dialog, since it expects data for p3Identity only.
-	mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
-	connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
+	//mCirclesBroadcastBase = new RsGxsUpdateBroadcastBase(rsGxsCircles, this);
+	//connect(mCirclesBroadcastBase, SIGNAL(fillDisplay(bool)), this, SLOT(updateCirclesDisplay(bool)));
 
 	
 	tabWidget->removeTab(1);
@@ -458,7 +458,7 @@ void PeopleDialog::iw_AddButtonClickedExt()
 			}
 			else
 			{
-				QMenu *mnu = contextMnu.addMenu(QIcon(":/images/chat_24.png"),tr("Chat with this person as...")) ;
+				QMenu *mnu = contextMnu.addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 				for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 				{
@@ -475,15 +475,15 @@ void PeopleDialog::iw_AddButtonClickedExt()
 				}
 			}
 			
-			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send message"), this, SLOT(sendMessage()));
+			QAction *actionsendmsg = contextMnu.addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMessage()));
 			actionsendmsg->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
-			QAction *actionsendinvite = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Send invite"), this, SLOT(sendInvite()));
+			QAction *actionsendinvite = contextMnu.addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send invite"), this, SLOT(sendInvite()));
 			actionsendinvite->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
 			contextMnu.addSeparator();
 			
-			QAction *actionaddcontact = contextMnu.addAction(QIcon(":/images/mail_new.png"), tr("Add to Contacts"), this, SLOT(addtoContacts()));
+			QAction *actionaddcontact = contextMnu.addAction(QIcon(""), tr("Add to Contacts"), this, SLOT(addtoContacts()));
 			actionaddcontact->setData( QString::fromStdString(dest->groupInfo().mMeta.mGroupId.toStdString()));
 			
 			contextMnu.addSeparator();

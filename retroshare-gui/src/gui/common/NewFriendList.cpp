@@ -63,8 +63,8 @@
 #define IMAGE_EXPORTFRIEND       ":/images/user/friend_suggestion16.png"
 #define IMAGE_ADDFRIEND          ":/images/user/add_user16.png"
 #define IMAGE_FRIENDINFO         ":/images/info16.png"
-#define IMAGE_CHAT               ":/images/chat_24.png"
-#define IMAGE_MSG                ":/images/mail_new.png"
+#define IMAGE_CHAT               ":/icons/png/chats.png"
+#define IMAGE_MSG                ":/icons/mail/write-mail.png"
 #define IMAGE_CONNECT            ":/images/connect_friend.png"
 #define IMAGE_COPYLINK           ":/images/copyrslink.png"
 #define IMAGE_GROUP16            ":/images/user/group16.png"
@@ -177,8 +177,10 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
     ui->filterLineEdit->setPlaceholderText(tr("Search")) ;
     ui->filterLineEdit->showFilterIcon();
 
-    mEventHandlerId=0; // forces initialization
-    rsEvents->registerEventsHandler( RsEventType::PEER_CONNECTION, [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); }, mEventHandlerId );
+	mEventHandlerId=0; // forces initialization
+	rsEvents->registerEventsHandler(
+	            [this](std::shared_ptr<const RsEvent> e) { handleEvent(e); },
+	            mEventHandlerId, RsEventType::PEER_CONNECTION );
 
     mModel = new RsFriendListModel();
 	mProxyModel = new FriendListSortFilterProxyModel(ui->peerTreeWidget->header(),this);
@@ -210,7 +212,7 @@ NewFriendList::NewFriendList(QWidget *parent) : /* RsAutoUpdatePage(5000,parent)
      // workaround for Qt bug, should be solved in next Qt release 4.7.0
     // http://bugreports.qt.nokia.com/browse/QTBUG-8270
     QShortcut *Shortcut = new QShortcut(QKeySequence(Qt::Key_Delete), ui->peerTreeWidget, 0, 0, Qt::WidgetShortcut);
-	connect(Shortcut, SIGNAL(activated()), this, SLOT(removefriend()),Qt::QueuedConnection);
+	connect(Shortcut, SIGNAL(activated()), this, SLOT(removeItem()),Qt::QueuedConnection);
 
     QFontMetricsF fontMetrics(ui->peerTreeWidget->font());
 
@@ -913,6 +915,25 @@ void FriendsDialog::viewprofile()
  *
  * All of these rely on the finding of the current Id.
  */
+
+void NewFriendList::removeItem()
+{
+	QModelIndex index = getCurrentSourceIndex();
+	RsFriendListModel::EntryType type = mModel->getType(index);
+	if(index.isValid())
+	{
+		switch (type) {
+			case RsFriendListModel::ENTRY_TYPE_GROUP:   removeGroup();
+			break;
+			case RsFriendListModel::ENTRY_TYPE_PROFILE: removeProfile();
+			break;
+			case RsFriendListModel::ENTRY_TYPE_NODE:    removeNode();
+			break;
+			case RsFriendListModel::ENTRY_TYPE_UNKNOWN: RsErr()<<__PRETTY_FUNCTION__<<" Get Item of type unknow."<<std::endl;
+		}
+	}
+}
+
 void NewFriendList::removeNode()
 {
     RsFriendListModel::RsNodeDetails det;

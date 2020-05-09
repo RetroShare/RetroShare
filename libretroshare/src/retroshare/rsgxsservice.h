@@ -46,7 +46,8 @@ struct RsGxsNotify
         TYPE_RECEIVED_NEW                      = 0x02,
         TYPE_PROCESSED                         = 0x03,
         TYPE_RECEIVED_PUBLISHKEY               = 0x04,
-        TYPE_RECEIVED_DISTANT_SEARCH_RESULTS   = 0x05
+        TYPE_RECEIVED_DISTANT_SEARCH_RESULTS   = 0x05,
+        TYPE_STATISTICS_CHANGED                = 0x06
 	};
 
 	virtual ~RsGxsNotify() {}

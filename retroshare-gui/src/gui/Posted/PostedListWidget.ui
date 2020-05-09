@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
-    <height>595</height>
+    <width>950</width>
+    <height>771</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,7 +89,7 @@
         </property>
         <property name="icon">
          <iconset resource="Posted_images.qrc">
-          <normaloff>:/images/posted_24.png</normaloff>:/images/posted_24.png</iconset>
+          <normaloff>:/images/write.png</normaloff>:/images/write.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -223,8 +223,8 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/arrow-left.png</normaloff>:/images/arrow-left.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
         </property>
        </widget>
       </item>
@@ -244,13 +244,17 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
-          <normaloff>:/images/arrow-right.png</normaloff>:/images/arrow-right.png</iconset>
+         <iconset resource="../icons.qrc">
+          <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="GxsIdChooser" name="idChooser"/>
+       <widget class="GxsIdChooser" name="idChooser">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Default identity used when voting&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -285,7 +289,7 @@
          <string notr="true"/>
         </property>
         <property name="title">
-         <string>Topic Details</string>
+         <string>Board Details</string>
         </property>
         <property name="flat">
          <bool>false</bool>
@@ -557,7 +561,7 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>614</width>
+            <width>98</width>
             <height>16</height>
            </rect>
           </property>
@@ -613,7 +617,7 @@ p, li { white-space: pre-wrap; }
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>614</width>
+            <width>948</width>
             <height>16</height>
            </rect>
           </property>
@@ -667,9 +671,9 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
   <include location="Posted_images.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

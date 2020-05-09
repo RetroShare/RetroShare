@@ -40,7 +40,7 @@ RsWiki *rsWiki = NULL;
 
 p3Wiki::p3Wiki(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
 	:RsGenExchange(gds, nes, new RsGxsWikiSerialiser(), RS_SERVICE_GXS_TYPE_WIKI, gixs, wikiAuthenPolicy()), 
-	 RsWiki(this)
+	RsWiki(static_cast<RsGxsIface&>(*this))
 {
 	// Setup of dummy Pages.
 	mAboutActive = false;
@@ -102,8 +102,6 @@ void p3Wiki::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
 	std::cerr << "p3Wiki::notifyChanges() New stuff";
 	std::cerr << std::endl;
-
-	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
         /* Specific Service Data */
@@ -325,6 +323,38 @@ bool p3Wiki::updateCollection(uint32_t &token, RsWikiCollection &group)
         return true;
 }
 
+// Blocking Interfaces.
+bool p3Wiki::createCollection(RsWikiCollection &group)
+{
+	uint32_t token;
+	return submitCollection(token, group) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3Wiki::updateCollection(const RsWikiCollection &group)
+{
+	uint32_t token;
+	RsWikiCollection update(group);
+	return updateCollection(token, update) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3Wiki::getCollections(const std::list<RsGxsGroupId> groupIds, std::vector<RsWikiCollection> &groups)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	if (groupIds.empty())
+	{
+		if (!requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	else
+	{
+		if (!requestGroupInfo(token, opts, groupIds) || waitToken(token) != RsTokenService::COMPLETE )
+		return false;
+	}
+	return getCollections(token, groups) && !groups.empty();
+}
 
 std::ostream &operator<<(std::ostream &out, const RsWikiCollection &group)
 {

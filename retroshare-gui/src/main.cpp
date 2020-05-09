@@ -580,11 +580,6 @@ feenableexcept(FE_INVALID | FE_DIVBYZERO);
 #endif
 #endif // RS_JSONAPI
 
-	// This is done using a timer, because the passphrase request from notify is asynchrouneous and therefore clearing the
-	// passphrase here makes it request for a passphrase when creating the default chat identity.
-
-	QTimer::singleShot(10000, notify, SLOT(resetCachedPassphrases())) ;
-
 	/* dive into the endless loop */
 	int ti = rshare.exec();
 	delete w ;

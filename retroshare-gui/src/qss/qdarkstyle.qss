@@ -833,7 +833,7 @@ QDockWidget::close-button:pressed, QDockWidget::float-button:pressed {
     background: rgba(255, 255, 255, 10);
 }
 
-FriendList {
+NewFriendList {
     qproperty-textColorStatusAway: lightgray;
     qproperty-textColorStatusBusy: lightgray;
     qproperty-textColorStatusOnline: green;
@@ -1290,4 +1290,8 @@ PostedCardView QFrame#mainFrame [new=false]{
 
 PostedCardView > QFrame#mainFrame[new=true] {
 	background-color: #005000;
+}
+
+WireGroupItem QFrame#frame{
+		background: transparent;
 }

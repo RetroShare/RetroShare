@@ -313,7 +313,8 @@ extern RsAccounts* rsAccounts;
 class RsLoginHelper
 {
 public:
-    RsLoginHelper() {}
+	RsLoginHelper() = default;
+
 	/**
 	 * @brief Normal way to attempt login
 	 * @jsonapi{development,manualwrapper}

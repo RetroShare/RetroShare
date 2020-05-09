@@ -30,27 +30,29 @@
  * #define DATA_DEBUG	1
  **********/
 
+bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2)
+{
+    return p1.second->Options.mPriority <= p2.second->Options.mPriority ;	// <= so that new elements with same priority are inserted before
+}
+
 RsGxsDataAccess::RsGxsDataAccess(RsGeneralDataService* ds) :
     mDataStore(ds), mDataMutex("RsGxsDataAccess"), mNextToken(0) {}
 
 
 RsGxsDataAccess::~RsGxsDataAccess()
 {
-    for(std::map<uint32_t, GxsRequest*>::const_iterator it(mRequests.begin());it!=mRequests.end();++it)
-		delete it->second ;
+    for(auto& it:mRequestQueue)
+		delete it.second;
 }
-bool RsGxsDataAccess::requestGroupInfo(
-        uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-        const std::list<RsGxsGroupId> &groupIds )
+bool RsGxsDataAccess::requestGroupInfo( uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId> &groupIds )
 {
 	if(groupIds.empty())
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!"
-		          << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " (WW) Group Id list is empty!" << std::endl;
 		return false;
 	}
 
-    GxsRequest* req = NULL;
+    GxsRequest* req = nullptr;
     uint32_t reqType = opts.mReqType;
 
     if(reqType & GXS_REQUEST_TYPE_GROUP_META)
@@ -80,16 +82,14 @@ bool RsGxsDataAccess::requestGroupInfo(
 
 	if(!req)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " request type not recognised, "
-		          << "reqType: " << reqType << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " request type not recognised, " << "reqType: " << reqType << std::endl;
 		return false;
 	}
 
 	generateToken(token);
 
 #ifdef DATA_DEBUG
-	std::cerr << "RsGxsDataAccess::requestGroupInfo() gets token: " << token
-	          << std::endl;
+	RsErr() << "RsGxsDataAccess::requestGroupInfo() gets token: " << token << std::endl;
 #endif
 
     setReq(req, token, ansType, opts);
@@ -101,7 +101,7 @@ bool RsGxsDataAccess::requestGroupInfo(
 bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts)
 {
 
-    GxsRequest* req = NULL;
+    GxsRequest* req = nullptr;
     uint32_t reqType = opts.mReqType;
 
     if(reqType & GXS_REQUEST_TYPE_GROUP_META)
@@ -114,14 +114,13 @@ bool RsGxsDataAccess::requestGroupInfo(uint32_t &token, uint32_t ansType, const 
             req = new GroupSerializedDataReq();
     else
     {
-            std::cerr << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type "
-                              << reqType << std::endl;
+            RsErr() << "RsGxsDataAccess::requestGroupInfo() request type not recognised, type " << reqType << std::endl;
             return false;
     }
 
 	generateToken(token);
 #ifdef DATA_DEBUG
-	std::cerr << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
+	RsErr() << "RsGxsDataAccess::requestGroupInfo() gets Token: " << token << std::endl;
 #endif
 
     setReq(req, token, ansType, opts);
@@ -137,11 +136,10 @@ void RsGxsDataAccess::generateToken(uint32_t &token)
 }
 
 
-bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-		const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
+bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const GxsMsgReq &msgIds)
 {
 
-	GxsRequest* req = NULL;
+	GxsRequest* req = nullptr;
 	uint32_t reqType = opts.mReqType;
 
         // remove all empty grpId entries
@@ -181,16 +179,15 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 
 	}
 
-	if(req == NULL)
+	if(req == nullptr)
 	{
-		std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
-				  << reqType << std::endl;
+		RsErr() << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type " << reqType << std::endl;
 		return false;
 	}else
 	{
 		generateToken(token);
 #ifdef DATA_DEBUG
-		std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+		RsErr() << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
 #endif
 	}
 
@@ -199,10 +196,9 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 	return true;
 }
 
-bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
-                   const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds)
+bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::list<RsGxsGroupId>& grpIds)
 {
-        GxsRequest* req = NULL;
+        GxsRequest* req = nullptr;
         uint32_t reqType = opts.mReqType;
 
         std::list<RsGxsGroupId>::const_iterator lit = grpIds.begin();
@@ -215,7 +211,8 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                     mmr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mmr;
-        }else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
+        }
+        else if(reqType & GXS_REQUEST_TYPE_MSG_DATA)
         {
                 MsgDataReq* mdr = new MsgDataReq();
 
@@ -223,7 +220,8 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                     mdr->mMsgIds[*lit] = std::set<RsGxsMessageId>();
 
                 req = mdr;
-        }else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
+        }
+        else if(reqType & GXS_REQUEST_TYPE_MSG_IDS)
         {
                 MsgIdReq* mir = new MsgIdReq();
 
@@ -233,16 +231,15 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
                 req = mir;
         }
 
-        if(req == NULL)
+        if(req == nullptr)
         {
-                std::cerr << "RsGxsDataAccess::requestMsgInfo() request type not recognised, type "
-                                  << reqType << std::endl;
+                RsErr() << __PRETTY_FUNCTION__ << " request type not recognised, type " << reqType << std::endl;
                 return false;
         }else
         {
                 generateToken(token);
 #ifdef DATA_DEBUG
-                std::cerr << "RsGxsDataAccess::requestMsgInfo() gets Token: " << token << std::endl;
+                RsErr() << __PRETTY_FUNCTION__ << " gets Token: " << token << std::endl;
 #endif
         }
 
@@ -252,33 +249,40 @@ bool RsGxsDataAccess::requestMsgInfo(uint32_t &token, uint32_t ansType,
 }
 
 
-void RsGxsDataAccess::requestServiceStatistic(uint32_t& token)
+void RsGxsDataAccess::requestServiceStatistic(uint32_t& token,const RsTokReqOptions& opts)
 {
     ServiceStatisticRequest* req = new ServiceStatisticRequest();
 
     generateToken(token);
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_SERVICE_STATS;
+    if(opts.mReqType != GXS_REQUEST_TYPE_SERVICE_STATS)
+    {
+        RsErr() << "Expected opts.mReqType to be GXS_REQUEST_TYPE_SERVICE_STATS requestServiceStatistic()" << std::endl;
+        return;
+    }
+
     setReq(req, token, 0, opts);
     storeRequest(req);
 }
 
-void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId)
+void RsGxsDataAccess::requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId,const RsTokReqOptions& opts)
 {
     GroupStatisticRequest* req = new GroupStatisticRequest();
     req->mGrpId = grpId;
 
+    if(opts.mReqType != GXS_REQUEST_TYPE_GROUP_STATS)
+    {
+        RsErr() << "Expected opts.mReqType to be GXS_REQUEST_TYPE_SERVICE_STATS requestServiceStatistic()" << std::endl;
+        return;
+    }
+
     generateToken(token);
 
-    RsTokReqOptions opts;
-    opts.mReqType = GXS_REQUEST_TYPE_GROUP_STATS;
-    setReq(req, token, 0, opts);
+    setReq(req, token,0, opts);
     storeRequest(req);
 }
 
-bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts,
-                                            const std::vector<RsGxsGrpMsgIdPair> &msgIds)
+bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair> &msgIds)
 {
 
     MsgRelatedInfoReq* req = new MsgRelatedInfoReq();
@@ -296,7 +300,7 @@ bool RsGxsDataAccess::requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, c
 void RsGxsDataAccess::setReq(GxsRequest* req, uint32_t token, uint32_t ansType, const RsTokReqOptions& opts) const
 {
 	req->token = token;
-	req->ansType = ansType;
+	req->clientAnswerType = ansType;
 	req->Options = opts;
 	return;
 }
@@ -304,8 +308,18 @@ void RsGxsDataAccess::storeRequest(GxsRequest* req)
 {
 	RS_STACK_MUTEX(mDataMutex);
 	req->status = PENDING;
-	req->reqTime = time(NULL);
-	mRequests[req->token] = req;
+	req->reqTime = time(nullptr);
+
+	mRequestQueue.insert(std::make_pair(req->token,req));
+    mPublicToken[req->token] = PENDING;
+
+#ifdef DATA_DEBUG
+    RsErr() << "Stored request token=" << req->token << " priority = " << static_cast<int>(req->Options.mPriority) << " Current request Queue is:" ;
+    for(auto it(mRequestQueue.begin());it!=mRequestQueue.end();++it)
+        RsErr() << it->first << " (p=" << static_cast<int>(req->Options.mPriority) << ") ";
+    std::cerr << std::endl;
+    RsErr() << "Completed requests waiting for client: " << mCompletedRequests.size() << std::endl;
+#endif
 }
 
 RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)
@@ -314,14 +328,6 @@ RsTokenService::GxsRequestStatus RsGxsDataAccess::requestStatus(uint32_t token)
 	uint32_t reqtype;
 	uint32_t anstype;
 	rstime_t ts;
-
-	{
-		RS_STACK_MUTEX(mDataMutex);
-
-		// first check public tokens
-		if(mPublicToken.find(token) != mPublicToken.end())
-			return mPublicToken[token];
-	}
 
 	if (!checkRequestStatus(token, status, reqtype, anstype, ts))
 		return RsTokenService::FAILED;
@@ -333,7 +339,7 @@ bool RsGxsDataAccess::cancelRequest(const uint32_t& token)
 {
 	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 	if (!req)
 	{
 		return false;
@@ -346,58 +352,52 @@ bool RsGxsDataAccess::cancelRequest(const uint32_t& token)
 
 bool RsGxsDataAccess::clearRequest(const uint32_t& token)
 {
-	RsStackMutex stack(mDataMutex); /****** LOCKED *****/
+	RS_STACK_MUTEX(mDataMutex);
+    return locked_clearRequest(token);
+}
 
-	std::map<uint32_t, GxsRequest*>::iterator it;
+bool RsGxsDataAccess::locked_clearRequest(const uint32_t& token)
+{
+    auto it = mCompletedRequests.find(token);
 
-	it = mRequests.find(token);
-	if (it == mRequests.end())
-	{
-		return false;
-	}
+    if(it == mCompletedRequests.end())
+        return false;
 
-	delete it->second;
-	mRequests.erase(it);
+    delete it->second;
+    mCompletedRequests.erase(it);
 
-	return true;
+    auto it2 = mPublicToken.find(token);
+    if(it2 != mPublicToken.end())
+        mPublicToken.erase(it2);
+
+    return true;
 }
 
 bool RsGxsDataAccess::getGroupSummary(const uint32_t& token, std::list<const RsGxsGrpMetaData*>& groupInfo)
 {
-
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL)
+	if(req == nullptr)
 	{
-		std::cerr << "RsGxsDataAccess::getGroupSummary() Unable to retrieve "
-		          << "group summary" << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve group summary" << std::endl;
 		return false;
 	}
-	else if(req->status == COMPLETE)
-	{
-		GroupMetaReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
 
-		if(gmreq)
-		{
-			groupInfo = gmreq->mGroupMetaData;
-			gmreq->mGroupMetaData.clear();
-			locked_updateRequestStatus(token, DONE);
-		}
-		else
-		{
-			std::cerr << "RsGxsDataAccess::getGroupSummary() Req found, failed"
-			          << "cast" << std::endl;
-			return false;
-		}
+	GroupMetaReq* gmreq = dynamic_cast<GroupMetaReq*>(req);
+
+	if(gmreq)
+	{
+		groupInfo = gmreq->mGroupMetaData;
+		gmreq->mGroupMetaData.clear();
 	}
 	else
 	{
-		std::cerr << "RsGxsDataAccess::getGroupSummary() Req not ready"
-		          << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed cast" << std::endl;
 		return false;
 	}
+	locked_clearRequest(token);
 
 	return true;
 }
@@ -406,44 +406,33 @@ bool RsGxsDataAccess::getGroupData(const uint32_t& token, std::list<RsNxsGrp*>& 
 {
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL)
+	if(req == nullptr)
 	{
-		std::cerr << "RsGxsDataAccess::getGroupData() Unable to retrieve group"
-		          << "data" << std::endl;
+		RsErr() << "RsGxsDataAccess::getGroupData() Unable to retrieve group data" << std::endl;
 		return false;
 	}
-	else if(req->status == COMPLETE)
+
+	GroupDataReq* gmreq = dynamic_cast<GroupDataReq*>(req);
+	GroupSerializedDataReq* gsreq = dynamic_cast<GroupSerializedDataReq*>(req);
+
+	if(gsreq)
 	{
-		GroupDataReq* gmreq = dynamic_cast<GroupDataReq*>(req);
-		GroupSerializedDataReq* gsreq = dynamic_cast<GroupSerializedDataReq*>(req);
-
-		if(gsreq)
-		{
-			grpData.swap(gsreq->mGroupData);
-			gsreq->mGroupData.clear();
-
-			locked_updateRequestStatus(token, DONE);
-		}
-        else if(gmreq)
-		{
-			grpData.swap(gmreq->mGroupData);
-			gmreq->mGroupData.clear();
-			locked_updateRequestStatus(token, DONE);
-		}
-		else
-		{
-			std::cerr << "RsGxsDataAccess::getGroupData() Req found, failed cast"
-			          << " req->reqType: " << req->reqType << std::endl;
-			return false;
-		}
+		grpData.swap(gsreq->mGroupData);
+		gsreq->mGroupData.clear();
+	}
+	else if(gmreq)
+	{
+		grpData.swap(gmreq->mGroupData);
+		gmreq->mGroupData.clear();
 	}
 	else
 	{
-		std::cerr << "RsGxsDataAccess::getGroupData() Req not ready" << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed cast req->reqType: " << req->reqType << std::endl;
 		return false;
 	}
+	locked_clearRequest(token);
 
 	return true;
 }
@@ -453,31 +442,28 @@ bool RsGxsDataAccess::getMsgData(const uint32_t& token, NxsMsgDataResult& msgDat
 
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL){
+	if(req == nullptr)
+    {
 
-		std::cerr << "RsGxsDataAccess::getMsgData() Unable to retrieve group data" << std::endl;
-		return false;
-	    }else if(req->status == COMPLETE){
-
-                MsgDataReq* mdreq = dynamic_cast<MsgDataReq*>(req);
-
-		if(mdreq)
-		{
-                     msgData.swap(mdreq->mMsgData);
-                     mdreq->mMsgData.clear();
-					 locked_updateRequestStatus(token, DONE);
-                }
-                else
-                {
-			std::cerr << "RsGxsDataAccess::getMsgData() Req found, failed caste" << std::endl;
-			return false;
-		}
-	}else{
-		std::cerr << "RsGxsDataAccess::getMsgData() Req not ready" << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve group data" << std::endl;
 		return false;
 	}
+
+	MsgDataReq* mdreq = dynamic_cast<MsgDataReq*>(req);
+
+	if(mdreq)
+	{
+		msgData.swap(mdreq->mMsgData);
+		mdreq->mMsgData.clear();
+	}
+	else
+	{
+		RsErr() << "RsGxsDataAccess::getMsgData() Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
 
 	return true;
 }
@@ -487,34 +473,30 @@ bool RsGxsDataAccess::getMsgRelatedData(const uint32_t &token, NxsMsgRelatedData
 
         RsStackMutex stack(mDataMutex);
 
-        GxsRequest* req = locked_retrieveRequest(token);
+        GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-        if(req == NULL){
+        if(req == nullptr)
+        {
+			RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve group data" << std::endl;
+			return false;
+		}
+		MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
 
-                std::cerr << "RsGxsDataAccess::getMsgRelatedData() Unable to retrieve group data" << std::endl;
-                return false;
-		}else if(req->status == COMPLETE){
+		if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_DATA)
+			return false;
 
-                MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
+		if(mrireq)
+		{
+			msgData.swap(mrireq->mMsgDataResult);
+			mrireq->mMsgDataResult.clear();
+		}
+		else
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+			return false;
+		}
 
-                if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_DATA)
-                    return false;
-
-                if(mrireq)
-                {
-                    msgData.swap(mrireq->mMsgDataResult);
-                    mrireq->mMsgDataResult.clear();
-					locked_updateRequestStatus(token, DONE);
-                }
-                else
-                {
-                        std::cerr << "RsGxsDataAccess::getMsgRelatedData() Req found, failed caste" << std::endl;
-                        return false;
-                }
-        }else{
-                std::cerr << "RsGxsDataAccess::getMsgRelatedData() Req not ready" << std::endl;
-                return false;
-        }
+		locked_clearRequest(token);
 
         return true;
 }
@@ -524,144 +506,114 @@ bool RsGxsDataAccess::getMsgSummary(const uint32_t& token, GxsMsgMetaResult& msg
 
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL){
-
-		std::cerr << "RsGxsDataAccess::getMsgSummary() Unable to retrieve group data" << std::endl;
-		return false;
-	    }else  if(req->status == COMPLETE){
-
-                MsgMetaReq* mmreq = dynamic_cast<MsgMetaReq*>(req);
-
-		if(mmreq)
-		{
-                     msgInfo.swap(mmreq->mMsgMetaData);
-                     mmreq->mMsgMetaData.clear();
-					 locked_updateRequestStatus(token, DONE);
-
-                }
-                else
-                {
-			std::cerr << "RsGxsDataAccess::getMsgSummary() Req found, failed caste" << std::endl;
-			return false;
-		}
-	}else{
-		std::cerr << "RsGxsDataAccess::getMsgSummary() Req not ready" << std::endl;
+	if(req == nullptr)
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve group data" << std::endl;
 		return false;
 	}
+	MsgMetaReq* mmreq = dynamic_cast<MsgMetaReq*>(req);
 
+	if(mmreq)
+	{
+		msgInfo.swap(mmreq->mMsgMetaData);
+		mmreq->mMsgMetaData.clear();
+	}
+	else
+	{
+		RsErr() << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
 	return true;
 }
 
 bool RsGxsDataAccess::getMsgRelatedSummary(const uint32_t &token, MsgRelatedMetaResult &msgMeta)
 {
+	RsStackMutex stack(mDataMutex);
 
-        RsStackMutex stack(mDataMutex);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-        GxsRequest* req = locked_retrieveRequest(token);
+	if(req == nullptr)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve message summary" << std::endl;
+		return false;
+	}
+	if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_META)
+		return false;
 
+	MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
 
-
-        if(req == NULL){
-
-                std::cerr << "RsGxsDataAccess::getMsgRelatedSummary() Unable to retrieve message summary" << std::endl;
-                return false;
-		}else  if(req->status == COMPLETE){
-
-            if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_META)
-                return false;
-
-            MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
-
-            if(mrireq)
-            {
-                msgMeta.swap(mrireq->mMsgMetaResult);
-                mrireq->mMsgMetaResult.clear();
-				locked_updateRequestStatus(token, DONE);
-            }
-            else
-            {
-                    std::cerr << "RsGxsDataAccess::getMsgRelatedSummary() Req found, failed caste" << std::endl;
-                    return false;
-            }
-        }
-        else
-        {
-                std::cerr << "RsGxsDataAccess::getMsgRelatedSummary() Req not ready" << std::endl;
-                return false;
-        }
-
-        return true;
+	if(mrireq)
+	{
+		msgMeta.swap(mrireq->mMsgMetaResult);
+		mrireq->mMsgMetaResult.clear();
+	}
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
+	return true;
 }
 
 
 bool RsGxsDataAccess::getMsgRelatedList(const uint32_t &token, MsgRelatedIdResult &msgIds)
 {
-        RsStackMutex stack(mDataMutex);
+	RsStackMutex stack(mDataMutex);
 
-        GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-        if(req == NULL){
+	if(req == nullptr)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve message data" << std::endl;
+		return false;
+	}
+	if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_IDS)
+		return false;
 
-                std::cerr << "RsGxsDataAccess::getMsgRelatedList() Unable to retrieve message data" << std::endl;
-                return false;
-		}else  if(req->status == COMPLETE){
+	MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
 
-            if(req->Options.mReqType != GXS_REQUEST_TYPE_MSG_RELATED_IDS)
-                return false;
-
-            MsgRelatedInfoReq* mrireq = dynamic_cast<MsgRelatedInfoReq*>(req);
-
-            if(mrireq)
-            {
-                msgIds.swap(mrireq->mMsgIdResult);
-                mrireq->mMsgIdResult.clear();
-				locked_updateRequestStatus(token, DONE);
-            }
-            else{
-                    std::cerr << "RsGxsDataAccess::getMsgRelatedList() Req found, failed caste" << std::endl;
-                    return false;
-            }
-        }
-        else
-        {
-                std::cerr << "RsGxsDataAccess::getMsgRelatedList() Req not ready" << std::endl;
-                return false;
-        }
-
-        return true;
+	if(mrireq)
+	{
+		msgIds.swap(mrireq->mMsgIdResult);
+		mrireq->mMsgIdResult.clear();
+	}
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
+	return true;
 }
 
-bool RsGxsDataAccess::getMsgList(const uint32_t& token, GxsMsgIdResult& msgIds)
+bool RsGxsDataAccess::getMsgIdList(const uint32_t& token, GxsMsgIdResult& msgIds)
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL){
-
-                std::cerr << "RsGxsDataAccess::getMsgList() Unable to retrieve msg Ids" << std::endl;
-		return false;
-	    }else  if(req->status == COMPLETE){
-
-                MsgIdReq* mireq = dynamic_cast<MsgIdReq*>(req);
-
-		if(mireq)
-                {
-                    msgIds.swap(mireq->mMsgIdResult);
-                    mireq->mMsgIdResult.clear();
-					locked_updateRequestStatus(token, DONE);
-                }
-                else{
-			std::cerr << "RsGxsDataAccess::getMsgList() Req found, failed caste" << std::endl;
-			return false;
-		}
-	}else{
-		std::cerr << "RsGxsDataAccess::getMsgList() Req not ready" << std::endl;
+	if(req == nullptr)
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve msg Ids" << std::endl;
 		return false;
 	}
+	MsgIdReq* mireq = dynamic_cast<MsgIdReq*>(req);
 
+	if(mireq)
+	{
+		msgIds.swap(mireq->mMsgIdResult);
+		mireq->mMsgIdResult.clear();
+	}
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed cast" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
 	return true;
 }
 
@@ -669,127 +621,135 @@ bool RsGxsDataAccess::getGroupList(const uint32_t& token, std::list<RsGxsGroupId
 {
 	RsStackMutex stack(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if(req == NULL){
-
-                std::cerr << "RsGxsDataAccess::getGroupList() Unable to retrieve group Ids,"
-				"\nRequest does not exist" << std::endl;
-		return false;
-	    }else if(req->status == COMPLETE){
-
-		GroupIdReq* gireq = dynamic_cast<GroupIdReq*>(req);
-
-		if(gireq)
-		{
-		 groupIds.swap(gireq->mGroupIdResult);
-			gireq->mGroupIdResult.clear();
-			     locked_updateRequestStatus(token, DONE);
-
-		}else{
-			std::cerr << "RsGxsDataAccess::getGroupList() Req found, failed caste" << std::endl;
-			return false;
-		}
-	}else{
-		std::cerr << "RsGxsDataAccess::getGroupList() Req not ready" << std::endl;
+	if(req == nullptr)
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve group Ids, Request does not exist" << std::endl;
 		return false;
 	}
+	GroupIdReq* gireq = dynamic_cast<GroupIdReq*>(req);
 
+	if(gireq)
+	{
+		groupIds.swap(gireq->mGroupIdResult);
+		gireq->mGroupIdResult.clear();
+	}
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
 	return true;
 }
 
-GxsRequest* RsGxsDataAccess::locked_retrieveRequest(const uint32_t& token)
+bool RsGxsDataAccess::getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic)
 {
+    RsStackMutex stack(mDataMutex);
 
-	if(mRequests.find(token) == mRequests.end()) return NULL;
+    GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	GxsRequest* req = mRequests[token];
+    if(req == nullptr)
+	{
+		RsErr() << "RsGxsDataAccess::getGroupStatistic() Unable to retrieve grp stats" << std::endl;
+		return false;
+	}
+	GroupStatisticRequest* gsreq = dynamic_cast<GroupStatisticRequest*>(req);
 
-	return req;
+	if(gsreq)
+		grpStatistic = gsreq->mGroupStatistic;
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
+    return true;
+}
+
+bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic)
+{
+    RsStackMutex stack(mDataMutex);
+
+    GxsRequest* req = locked_retrieveCompetedRequest(token);
+
+    if(req == nullptr)
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " Unable to retrieve service stats" << std::endl;
+		return false;
+	}
+	ServiceStatisticRequest* ssreq = dynamic_cast<ServiceStatisticRequest*>(req);
+
+	if(ssreq)
+		servStatistic = ssreq->mServiceStatistic;
+	else
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Req found, failed caste" << std::endl;
+		return false;
+	}
+	locked_clearRequest(token);
+    return true;
+}
+GxsRequest* RsGxsDataAccess::locked_retrieveCompetedRequest(const uint32_t& token)
+{
+    auto it = mCompletedRequests.find(token) ;
+
+    if(it == mCompletedRequests.end())
+        return nullptr;
+
+	return it->second;
 }
 
 #define MAX_REQUEST_AGE 120 // 2 minutes
 
 void RsGxsDataAccess::processRequests()
 {
-	std::list<uint32_t> toClear;
-	rstime_t now = time(NULL);
-	std::map<uint32_t, GxsRequest*>::iterator it;
-
-	{
-		RsStackMutex stack(mDataMutex); /******* LOCKED *******/
-
-		// process status of the requests
-		for (it = mRequests.begin(); it != mRequests.end(); ++it)
-		{
-			GxsRequest* req = it->second;
-
-			switch (req->status)
-			{
-			case PENDING:
-				// process request later
-				break;
-			case PARTIAL:
-				// should not happen
-				req->status = COMPLETE;
-				break;
-			case DONE:
-#ifdef DATA_DEBUG
-				std::cerr << "RsGxsDataAccess::processrequests() Clearing Done Request Token: " << req->token;
-				std::cerr << std::endl;
-#endif
-				toClear.push_back(req->token);
-				break;
-			case CANCELLED:
-#ifdef DATA_DEBUG
-				std::cerr << "RsGxsDataAccess::processrequests() Clearing Cancelled Request Token: " << req->token;
-				std::cerr << std::endl;
-#endif
-				toClear.push_back(req->token);
-				break;
-			default:
-				if (now - req->reqTime > MAX_REQUEST_AGE)
-				{
-#ifdef DATA_DEBUG
-					std::cerr << "RsGxsDataAccess::processrequests() Clearing Old Request Token: " << req->token;
-					std::cerr << std::endl;
-#endif
-					toClear.push_back(req->token);
-				}
-			}
-		}
-	} // END OF MUTEX.
-
-	// clear requests
-	std::list<uint32_t>::iterator cit;
-	for (cit = toClear.begin(); cit != toClear.end(); ++cit)
-	{
-		clearRequest(*cit);
-	}
-
 	// process requests
-	while (true)
+
+	while (!mRequestQueue.empty())
 	{
-		GxsRequest* req = NULL;
+        // Extract the first elements from the request queue. cleanup all other elements marked at terminated.
+
+		GxsRequest* req = nullptr;
 		{
 			RsStackMutex stack(mDataMutex); /******* LOCKED *******/
+            rstime_t now = time(nullptr); // this is ok while in the loop below
 
-			// get the first pending request
-			for (it = mRequests.begin(); it != mRequests.end(); ++it)
-			{
-				GxsRequest* reqCheck = it->second;
-				if (reqCheck->status == PENDING)
-				{
-					req = reqCheck;
+            while(!mRequestQueue.empty() && req == nullptr)
+            {
+                if(now > mRequestQueue.begin()->second->reqTime + MAX_REQUEST_AGE)
+                {
+					mRequestQueue.erase(mRequestQueue.begin());
+					continue;
+                }
+
+                switch( mRequestQueue.begin()->second->status )
+                {
+                case PARTIAL:
+                    RsErr() << "Found partial request in mRequestQueue. This is a bug." << std::endl;	// fallthrough
+                case COMPLETE:
+                case DONE:
+                case FAILED:
+                case CANCELLED:
+#ifdef DATA_DEBUG
+							RsDbg() << "  request " << mRequestQueue.begin()->second->token << ": status = " << mRequestQueue.begin()->second->status << ": removing from the RequestQueue" << std::endl;
+#endif
+                    		mRequestQueue.erase(mRequestQueue.begin());
+                    		continue;
+                    break;
+                case PENDING:
+                    req = mRequestQueue.begin()->second;
 					req->status = PARTIAL;
-					break;
-				}
-			}
-		} // END OF MUTEX.
+					mRequestQueue.erase(mRequestQueue.begin()); // remove it right away from the waiting queue.
+                    break;
+                }
 
-		if (!req) {
+            }
+        }
+
+		if (!req)
 			break;
-		}
 
 		GroupMetaReq* gmr;
 		GroupDataReq* gdr;
@@ -804,132 +764,85 @@ void RsGxsDataAccess::processRequests()
 		ServiceStatisticRequest* ssr;
 
 #ifdef DATA_DEBUG
-		std::cerr << "RsGxsDataAccess::processRequests() Processing Token: " << req->token << " Status: "
-		          << req->status << " ReqType: " << req->reqType << " Age: "
-		          << now - req->reqTime << std::endl;
+		RsDbg() << "Processing request: " << req->token << " Status: " << req->status << " ReqType: " << req->reqType << " Age: " << time(nullptr) - req->reqTime << std::endl;
 #endif
 
 		/* PROCESS REQUEST! */
 		bool ok = false;
 
-		if((gmr = dynamic_cast<GroupMetaReq*>(req)) != NULL)
+		if((gmr = dynamic_cast<GroupMetaReq*>(req)) != nullptr)
 		{
 			ok = getGroupSummary(gmr);
 		}
-		else if((gdr = dynamic_cast<GroupDataReq*>(req)) != NULL)
+		else if((gdr = dynamic_cast<GroupDataReq*>(req)) != nullptr)
 		{
 			ok = getGroupData(gdr);
 		}
-		else if((gir = dynamic_cast<GroupIdReq*>(req)) != NULL)
+		else if((gir = dynamic_cast<GroupIdReq*>(req)) != nullptr)
 		{
 			ok = getGroupList(gir);
 		}
-		else if((mmr = dynamic_cast<MsgMetaReq*>(req)) != NULL)
+		else if((mmr = dynamic_cast<MsgMetaReq*>(req)) != nullptr)
 		{
 			ok = getMsgSummary(mmr);
 		}
-		else if((mdr = dynamic_cast<MsgDataReq*>(req)) != NULL)
+		else if((mdr = dynamic_cast<MsgDataReq*>(req)) != nullptr)
 		{
 			ok = getMsgData(mdr);
 		}
-		else if((mir = dynamic_cast<MsgIdReq*>(req)) != NULL)
+		else if((mir = dynamic_cast<MsgIdReq*>(req)) != nullptr)
 		{
-			ok = getMsgList(mir);
+			ok = getMsgIdList(mir);
 		}
-		else if((mri = dynamic_cast<MsgRelatedInfoReq*>(req)) != NULL)
+		else if((mri = dynamic_cast<MsgRelatedInfoReq*>(req)) != nullptr)
 		{
 			ok = getMsgRelatedInfo(mri);
 		}
-		else if((gsr = dynamic_cast<GroupStatisticRequest*>(req)) != NULL)
+		else if((gsr = dynamic_cast<GroupStatisticRequest*>(req)) != nullptr)
 		{
 			ok = getGroupStatistic(gsr);
 		}
-		else if((ssr = dynamic_cast<ServiceStatisticRequest*>(req)) != NULL)
+		else if((ssr = dynamic_cast<ServiceStatisticRequest*>(req)) != nullptr)
 		{
 			ok = getServiceStatistic(ssr);
 		}
-		else if((grr = dynamic_cast<GroupSerializedDataReq*>(req)) != NULL)
+		else if((grr = dynamic_cast<GroupSerializedDataReq*>(req)) != nullptr)
 		{
 			ok = getGroupSerializedData(grr);
 		}
-
 		else
-		{
-			std::cerr << "RsGxsDataAccess::processRequests() Failed to process request, token: "
-			          << req->token << std::endl;
-		}
+			RsErr() << __PRETTY_FUNCTION__ << " Failed to process request, token: " << req->token << std::endl;
 
+        // We cannot easily remove the request here because the queue may have more elements now and mRequestQueue.begin() is not necessarily the same element.
+        // but we mark it as COMPLETE/FAILED so that it will be removed in the next loop.
 		{
 			RsStackMutex stack(mDataMutex); /******* LOCKED *******/
-			if (req->status == PARTIAL)
-			{
-				req->status = ok ? COMPLETE : FAILED;
-			}
-		} // END OF MUTEX.
-	}
-}
 
-bool RsGxsDataAccess::getGroupStatistic(const uint32_t &token, GxsGroupStatistic &grpStatistic)
-{
-    RsStackMutex stack(mDataMutex);
+            if(ok)
+            {
+                // When the request is complete, we move it to the complete list, so that the caller can easily retrieve the request data
 
-    GxsRequest* req = locked_retrieveRequest(token);
-
-    if(req == NULL){
-
-                std::cerr << "RsGxsDataAccess::getGroupStatistic() Unable to retrieve grp stats" << std::endl;
-        return false;
-	    }else  if(req->status == COMPLETE){
-
-                GroupStatisticRequest* gsreq = dynamic_cast<GroupStatisticRequest*>(req);
-
-        if(gsreq)
-                {
-                    grpStatistic = gsreq->mGroupStatistic;
-					locked_updateRequestStatus(token, DONE);
-                }
-                else{
-            std::cerr << "RsGxsDataAccess::getGroupStatistic() Req found, failed caste" << std::endl;
-            return false;
+#ifdef DATA_DEBUG
+                RsDbg() << "  Request completed successfully. Marking as COMPLETE." << std::endl;
+#endif
+				req->status = COMPLETE ;
+                mCompletedRequests[req->token] = req;
+                mPublicToken[req->token] = COMPLETE;
+            }
+            else
+            {
+				req->status = FAILED;
+                mPublicToken[req->token] = FAILED;
+#ifdef DATA_DEBUG
+                RsDbg() << "  Request failed. Marking as FAILED." << std::endl;
+#endif
+            }
         }
-    }else{
-        std::cerr << "RsGxsDataAccess::getGroupStatistic() Req not ready" << std::endl;
-        return false;
-    }
 
-    return true;
+	} // END OF MUTEX.
 }
 
-bool RsGxsDataAccess::getServiceStatistic(const uint32_t &token, GxsServiceStatistic &servStatistic)
-{
-    RsStackMutex stack(mDataMutex);
 
-    GxsRequest* req = locked_retrieveRequest(token);
-
-    if(req == NULL){
-
-                std::cerr << "RsGxsDataAccess::getServiceStatistic() Unable to retrieve service stats" << std::endl;
-        return false;
-	    }else  if(req->status == COMPLETE){
-
-                ServiceStatisticRequest* ssreq = dynamic_cast<ServiceStatisticRequest*>(req);
-
-        if(ssreq)
-                {
-                    servStatistic = ssreq->mServiceStatistic;
-					locked_updateRequestStatus(token, DONE);
-                }
-                else{
-            std::cerr << "RsGxsDataAccess::getServiceStatistic() Req found, failed caste" << std::endl;
-            return false;
-        }
-    }else{
-        std::cerr << "RsGxsDataAccess::getServiceStatistic() Req not ready" << std::endl;
-        return false;
-    }
-
-    return true;
-}
 
 bool RsGxsDataAccess::getGroupSerializedData(GroupSerializedDataReq* req)
 {
@@ -943,7 +856,7 @@ bool RsGxsDataAccess::getGroupSerializedData(GroupSerializedDataReq* req)
 
 
 	for(std::list<RsGxsGroupId>::iterator lit = grpIdsOut.begin();lit != grpIdsOut.end();++lit)
-		grpData[*lit] = NULL;
+		grpData[*lit] = nullptr;
 
 	bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
     req->mGroupData.clear();
@@ -970,7 +883,7 @@ bool RsGxsDataAccess::getGroupData(GroupDataReq* req)
 
         for(; lit != lit_end; ++lit)
         {
-            grpData[*lit] = NULL;
+            grpData[*lit] = nullptr;
         }
 
         bool ok = mDataStore->retrieveNxsGrps(grpData, true, true);
@@ -996,7 +909,7 @@ bool RsGxsDataAccess::getGroupSummary(GroupMetaReq* req)
 	std::list<RsGxsGroupId>::const_iterator lit = grpIdsOut.begin();
 
 	for(; lit != grpIdsOut.end(); ++lit)
-		grpMeta[*lit] = NULL;
+		grpMeta[*lit] = nullptr;
 
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -1035,7 +948,7 @@ bool RsGxsDataAccess::getMsgData(MsgDataReq* req)
 	const RsTokReqOptions& opts(req->Options);
 
 	// filter based on options
-	getMsgList(req->mMsgIds, opts, msgIdOut);
+	getMsgIdList(req->mMsgIds, opts, msgIdOut);
 
 	// If the list is empty because of filtering do not retrieve from DB
 	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
@@ -1053,24 +966,21 @@ bool RsGxsDataAccess::getMsgSummary(MsgMetaReq* req)
 	const RsTokReqOptions& opts(req->Options);
 
 	// filter based on options
-	getMsgList(req->mMsgIds, opts, msgIdOut);
+	getMsgMetaDataList(req->mMsgIds, opts, req->mMsgMetaData);
 
-	// If the list is empty because of filtering do not retrieve from DB
-	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
-		return true;
-
-	mDataStore->retrieveGxsMsgMetaData(msgIdOut, req->mMsgMetaData);
+//	// If the list is empty because of filtering do not retrieve from DB
+//	if((opts.mMsgFlagMask || opts.mStatusMask) && msgIdOut.empty())
+//		return true;
+//
+//	mDataStore->retrieveGxsMsgMetaData(msgIdOut, req->mMsgMetaData);
 
 	return true;
 }
 
-
-bool RsGxsDataAccess::getMsgList(
-        const GxsMsgReq& msgIds, const RsTokReqOptions& opts,
-        GxsMsgReq& msgIdsOut )
+bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgMetaResult& result )
 {
-    GxsMsgMetaResult result;
-
+    // First get all message metas, then filter out the ones we want to keep.
+    result.clear();
     mDataStore->retrieveGxsMsgMetaData(msgIds, result);
 
     /* CASEs this handles.
@@ -1079,8 +989,7 @@ bool RsGxsDataAccess::getMsgList(
      *
      */
 #ifdef DATA_DEBUG
-    std::cerr << "RsGxsDataAccess::getMsgList()";
-    std::cerr << std::endl;
+    RsDbg() << "RsGxsDataAccess::getMsgList()" << std::endl;
 #endif
 
     bool onlyOrigMsgs = false;
@@ -1091,16 +1000,14 @@ bool RsGxsDataAccess::getMsgList(
     if (opts.mOptions & RS_TOKREQOPT_MSG_ORIGMSG)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgList() MSG_ORIGMSG";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgList() MSG_ORIGMSG" << std::endl;
 #endif
             onlyOrigMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgList() MSG_LATEST";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgList() MSG_LATEST" << std::endl;
 #endif
             onlyLatestMsgs = true;
     }
@@ -1108,130 +1015,176 @@ bool RsGxsDataAccess::getMsgList(
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgList() MSG_THREAD";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgList() MSG_THREAD" << std::endl;
 #endif
             onlyThreadHeadMsgs = true;
     }
 
     GxsMsgMetaResult::iterator meta_it;
-    MsgMetaFilter metaFilter;
 
     for(meta_it = result.begin(); meta_it != result.end(); ++meta_it)
     {
             const RsGxsGroupId& grpId = meta_it->first;
 
-            metaFilter[grpId] = std::map<RsGxsMessageId, RsGxsMsgMetaData*>();
+            //auto& filter( metaFilter[grpId] ); // does the initialization of metaFilter[grpId] and avoids further O(log(n)) calls
 
-            const std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
-            if (onlyLatestMsgs) // THIS ONE IS HARD -> LOTS OF COMP.
+            std::vector<RsGxsMsgMetaData*>& metaV = meta_it->second;
+
+            if (onlyLatestMsgs) // if we only consider latest messages, we need to first filter out messages with "children"
             {
-                    std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
+                // The strategy is the following: for each msg we only know its direct ancestor. So we build a map to be able to find for a given message
+                // which messages derive from it.
+                // Then when this map is fuly build, we follow this map and every message that has no direct follow up will be kept.
+                // Because msgs are stored in a std::vector we build a map to convert each vector to its position in metaV.
 
+               std::vector<bool> keep(metaV.size(),true);	   // this vector will tell wether we keep or not a given Meta
+               std::map<RsMessageId,uint32_t> index_in_metaV; // holds the index of each group Id in metaV
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   index_in_metaV[metaV[i]->mMsgId] = i;
+
+               // Now loop once over message Metas and see if they have a parent. If yes, then mark the parent to be discarded.
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   if(!metaV[i]->mParentId.isNull() && metaV[i]->mParentId != metaV[i]->mMsgId)	// this one is a follow up
+                   {
+                       auto it = index_in_metaV.find(metaV[i]->mParentId);
+
+                       if(it != index_in_metaV.end())
+                           keep[it->second] = false;
+                       else
+                           std::cerr << "Found a msg that has a parent that is not locally known. Not an error anyway." << std::endl;
+
+                   }
+
+               // Finally we just discard the messages for which the keep flag has been set to false.
+
+               for(uint32_t i=0;i<metaV.size();++i)
+                   if(!keep[i])
+                   {
+                       delete metaV[i];
+                       metaV[i] = nullptr;
+                   }
+			}
+
+// old version of the code. I keep it for future reference if something happens.
+
+#ifdef OLD_VERSION_OF_THE_CODE
                     // RUN THROUGH ALL MSGS... in map origId -> TS.
                     std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> > origMsgTs;
-                    std::map<RsGxsMessageId, std::pair<RsGxsMessageId, rstime_t> >::iterator oit;
 
-                    for(; vit != metaV.end(); ++vit)
+                    for(uint32_t i=0;i<metaV.size();++i)
                     {
-                        RsGxsMsgMetaData* msgMeta = *vit;
+                        RsGxsMsgMetaData* msgMeta = metaV[i];
 
                         /* if we are grabbing thread Head... then parentId == empty. */
-                        if (onlyThreadHeadMsgs)
+                        if (onlyThreadHeadMsgs && !(msgMeta->mParentId.isNull()))
                         {
-                            if (!(msgMeta->mParentId.isNull()))
+                            delete msgMeta;
+                            metaV[i] = nullptr;
+                            continue;
+                        }
+
+                        auto oit = origMsgTs.find(msgMeta->mOrigMsgId);
+
+                        bool addMsg = false;
+                        if (oit != origMsgTs.end())
+                        {
+                            if(oit->second.second > msgMeta->mPublishTs)
                             {
-                                    continue;
+#ifdef DATA_DEBUG
+								std::cerr << "RsGxsDataAccess::getMsgList() Found New OrigMsgId: ";
+								std::cerr << msgMeta->mOrigMsgId;
+								std::cerr << " MsgId: " << msgMeta->mMsgId;
+								std::cerr << " TS: " << msgMeta->mPublishTs;
+								std::cerr << std::endl;
+#endif
+								origMsgTs[msgMeta->mOrigMsgId] = std::make_pair(msgMeta->mMsgId, msgMeta->mPublishTs); // add as latest. (overwriting if necessary)
                             }
                         }
-
-
-                        oit = origMsgTs.find(msgMeta->mOrigMsgId);
-                        bool addMsg = false;
-                        if (oit == origMsgTs.end())
+                        else
                         {
-#ifdef DATA_DEBUG
-                            std::cerr << "RsGxsDataAccess::getMsgList() Found New OrigMsgId: ";
-                            std::cerr << msgMeta->mOrigMsgId;
-                            std::cerr << " MsgId: " << msgMeta->mMsgId;
-                            std::cerr << " TS: " << msgMeta->mPublishTs;
-                            std::cerr << std::endl;
-#endif
-
-                            addMsg = true;
-                        }
-                        // check timestamps.
-                        else if (oit->second.second < msgMeta->mPublishTs)
-                        {
-#ifdef DATA_DEBUG
-                            std::cerr << "RsGxsDataAccess::getMsgList() Found Later Msg. OrigMsgId: ";
-                            std::cerr << msgMeta->mOrigMsgId;
-                            std::cerr << " MsgId: " << msgMeta->mMsgId;
-                            std::cerr << " TS: " << msgMeta->mPublishTs;
-#endif
-
-                            addMsg = true;
+                            delete msgMeta;
+                            metaV[i] = nullptr;
+                            continue;
                         }
 
-                        if (addMsg)
-                        {
-                            // add as latest. (overwriting if necessary)
-                            origMsgTs[msgMeta->mOrigMsgId] = std::make_pair(msgMeta->mMsgId, msgMeta->mPublishTs);
-                            metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
-                        }
+
                     }
 
                     // Add the discovered Latest Msgs.
-                    for(oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
+                    for(auto oit = origMsgTs.begin(); oit != origMsgTs.end(); ++oit)
                     {
-                            msgIdsOut[grpId].insert(oit->second.first);
+						msgIdsOut[grpId].insert(oit->second.first);
                     }
+#endif
 
-            }
-            else	// ALL OTHER CASES.
-            {
-                std::vector<RsGxsMsgMetaData*>::const_iterator vit = metaV.begin();
+			for(uint32_t i=0;i<metaV.size();++i)
+                if(metaV[i] != nullptr)
+				{
+					RsGxsMsgMetaData* msgMeta = metaV[i];
+					bool add = false;
 
-                for(; vit != metaV.end(); ++vit)
-                {
-                    RsGxsMsgMetaData* msgMeta = *vit;
-                    bool add = false;
+					/* if we are grabbing thread Head... then parentId == empty. */
+					if (onlyThreadHeadMsgs && !msgMeta->mParentId.isNull())
+					{
+						delete msgMeta;
+						metaV[i] = nullptr;
+						continue;
+					}
 
-                    /* if we are grabbing thread Head... then parentId == empty. */
-                    if (onlyThreadHeadMsgs)
-                    {
-                            if (!(msgMeta->mParentId.isNull()))
-                            {
-                                    continue;
-                            }
-                    }
-
-
-                    if (onlyOrigMsgs)
-                    {
-                            if (msgMeta->mMsgId == msgMeta->mOrigMsgId)
-                            {
-                                add = true;
-                            }
-                    }
-                    else
-                    {
-                        add = true;
-                    }
-
-                    if (add)
-                    {
-                        msgIdsOut[grpId].insert(msgMeta->mMsgId);
-                        metaFilter[grpId].insert(std::make_pair(msgMeta->mMsgId, msgMeta));
-                    }
-
-                }
-            }
+					if (onlyOrigMsgs && !msgMeta->mOrigMsgId.isNull() && msgMeta->mMsgId != msgMeta->mOrigMsgId)
+					{
+						delete msgMeta;
+						metaV[i] = nullptr;
+						continue;
+					}
+				}
     }
 
-    filterMsgList(msgIdsOut, opts, metaFilter);
+    // collapse results while keeping the order, eliminating empty slots
 
-    metaFilter.clear();
+    for(auto it(result.begin());it!=result.end();++it)
+    {
+        uint32_t j=0; // j is the end of the cleaned-up tab, at the first available place
+
+        for(uint32_t i=0;i<it->second.size();++i) // i is the index in the tab possibly containing nullptr's
+            if(it->second[i] != nullptr)
+            {
+				it->second[j] = it->second[i]; // move the pointer to the first available place
+                ++j;
+            }
+
+        it->second.resize(j);	// normally all pointers have been moved forward so there is nothing to delete here.
+    }
+
+    // filterMsgIdList(msgIdsOut, opts, metaFilter); // this call is absurd: we already have in metaFilter the content we want.
+
+    //metaFilter.clear();
+
+    // delete meta data
+    //cleanseMsgMetaMap(result);
+
+    return true;
+}
+
+bool RsGxsDataAccess::getMsgIdList( const GxsMsgReq& msgIds, const RsTokReqOptions& opts, GxsMsgReq& msgIdsOut )
+{
+    GxsMsgMetaResult result;
+
+	getMsgMetaDataList( msgIds, opts, result );
+
+    // extract MessageIds
+
+    msgIdsOut.clear();
+
+    for(auto it(result.begin());it!=result.end();++it)
+    {
+        auto& id_set(msgIdsOut[it->first]);
+
+        for(uint32_t i=0;i<it->second.size();++i)
+            id_set.insert(it->second[i]->mMsgId);
+    }
 
     // delete meta data
     cleanseMsgMetaMap(result);
@@ -1246,8 +1199,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
      * 1) No Flags => return nothing
      */
 #ifdef DATA_DEBUG
-    std::cerr << "RsGxsDataAccess::getMsgRelatedList()";
-    std::cerr << std::endl;
+    RsDbg() << "RsGxsDataAccess::getMsgRelatedList()" << std::endl;
 #endif
 
     const RsTokReqOptions& opts = req->Options;
@@ -1260,16 +1212,14 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_LATEST)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_LATEST";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() MSG_LATEST" << std::endl;
 #endif
             onlyLatestMsgs = true;
     }
     else if (opts.mOptions & RS_TOKREQOPT_MSG_VERSIONS)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() MSG_VERSIONS" << std::endl;
 #endif
             onlyAllVersions = true;
     }
@@ -1277,8 +1227,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_PARENT)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() MSG_PARENTS" << std::endl;
 #endif
             onlyChildMsgs = true;
     }
@@ -1286,8 +1235,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (opts.mOptions & RS_TOKREQOPT_MSG_THREAD)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() MSG_THREAD";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() MSG_THREAD" << std::endl;
 #endif
             onlyThreadMsgs = true;
     }
@@ -1295,8 +1243,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (onlyAllVersions && onlyChildMsgs)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & PARENT)" << std::endl;
 #endif
 
             return false;
@@ -1305,8 +1252,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (onlyAllVersions && onlyThreadMsgs)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (VERSIONS & THREAD)" << std::endl;
 #endif
 
             return false;
@@ -1315,8 +1261,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if ((!onlyLatestMsgs) && onlyChildMsgs)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & PARENT)" << std::endl;
 #endif
 
             return false;
@@ -1325,8 +1270,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if ((!onlyLatestMsgs) && onlyThreadMsgs)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (!LATEST & THREAD)" << std::endl;
 #endif
 
             return false;
@@ -1335,8 +1279,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if (onlyChildMsgs && onlyThreadMsgs)
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() ERROR Incompatible FLAGS (PARENT & THREAD)" << std::endl;
 #endif
 
             return false;
@@ -1347,8 +1290,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
     if ((!onlyLatestMsgs) && (!onlyAllVersions) && (!onlyChildMsgs) && (!onlyThreadMsgs))
     {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedList() FALLBACK -> NO FLAGS -> SIMPLY RETURN nothing";
-            std::cerr << std::endl;
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedList() FALLBACK -> NO FLAGS -> SIMPLY RETURN nothing" << std::endl;
 #endif
 
             return true;
@@ -1377,7 +1319,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
         std::set<RsGxsMessageId> outMsgIds;
 
-        RsGxsMsgMetaData* origMeta = NULL;
+        RsGxsMsgMetaData* origMeta = nullptr;
         for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
         {
             RsGxsMsgMetaData* meta = *vit_meta;
@@ -1392,7 +1334,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
         if(!origMeta)
         {
 #ifdef DATA_DEBUG
-            std::cerr << "RsGxsDataAccess::getMsgRelatedInfo(): Cannot find meta of msgId (to relate to)!"
+            RsDbg() << "RsGxsDataAccess::getMsgRelatedInfo(): Cannot find meta of msgId (to relate to)!"
                       << std::endl;
 #endif
             cleanseMsgMetaMap(result);
@@ -1437,11 +1379,11 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     if (oit == origMsgTs.end())
                     {
 #ifdef DATA_DEBUG
-                            std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: ";
-                            std::cerr << meta->mOrigMsgId;
-                            std::cerr << " MsgId: " << meta->mMsgId;
-                            std::cerr << " TS: " << meta->mPublishTs;
-                            std::cerr << std::endl;
+						RsDbg() << "RsGxsDataAccess::getMsgRelatedList() Found New OrigMsgId: "
+                                << meta->mOrigMsgId
+								<< " MsgId: " << meta->mMsgId
+                            	<< " TS: " << meta->mPublishTs
+                            	<< std::endl;
 #endif
 
                             addMsg = true;
@@ -1450,10 +1392,11 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                     else if (oit->second.second < meta->mPublishTs)
                     {
 #ifdef DATA_DEBUG
-                            std::cerr << "RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: ";
-                            std::cerr << meta->mOrigMsgId;
-                            std::cerr << " MsgId: " << meta->mMsgId;
-                            std::cerr << " TS: " << meta->mPublishTs;
+						RsDbg() << "RsGxsDataAccess::getMsgRelatedList() Found Later Msg. OrigMsgId: "
+                        		<< meta->mOrigMsgId
+                        		<< " MsgId: " << meta->mMsgId
+                        		<< " TS: " << meta->mPublishTs
+                        		<< std::endl;
 #endif
 
                             addMsg = true;
@@ -1479,7 +1422,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
                 /* first guess is potentially better than Orig (can't be worse!) */
                 rstime_t latestTs = 0;
                 RsGxsMessageId latestMsgId;
-                RsGxsMsgMetaData* latestMeta=NULL;
+                RsGxsMsgMetaData* latestMeta=nullptr;
 
                 for(vit_meta = metaV.begin(); vit_meta != metaV.end(); ++vit_meta)
                 {
@@ -1515,7 +1458,7 @@ bool RsGxsDataAccess::getMsgRelatedInfo(MsgRelatedInfoReq *req)
 
         GxsMsgIdResult filteredOutMsgIds;
         filteredOutMsgIds[grpId] = outMsgIds;
-        filterMsgList(filteredOutMsgIds, opts, filterMap);
+        filterMsgIdList(filteredOutMsgIds, opts, filterMap);
 
         if(!filteredOutMsgIds[grpId].empty())
         {
@@ -1553,7 +1496,7 @@ bool RsGxsDataAccess::getGroupStatistic(GroupStatisticRequest *req)
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(metaReq, metaResult);
 
-    std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
+    const std::vector<RsGxsMsgMetaData*>& msgMetaV = metaResult[req->mGrpId];
 
     req->mGroupStatistic.mGrpId = req->mGrpId;
     req->mGroupStatistic.mNumMsgs = msgMetaV.size();
@@ -1645,7 +1588,7 @@ bool RsGxsDataAccess::getServiceStatistic(ServiceStatisticRequest *req)
     return true;
 }
 
-bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
+bool RsGxsDataAccess::getMsgIdList(MsgIdReq* req)
 {
 
     GxsMsgMetaResult result;
@@ -1673,7 +1616,7 @@ bool RsGxsDataAccess::getMsgList(MsgIdReq* req)
     GxsMsgReq msgIdOut;
 
     // filter based on options
-    getMsgList(req->mMsgIdResult, req->Options, msgIdOut);
+    getMsgIdList(req->mMsgIdResult, req->Options, msgIdOut);
     req->mMsgIdResult = msgIdOut;
 
     return true;
@@ -1698,12 +1641,9 @@ void RsGxsDataAccess::cleanseMsgMetaMap(GxsMsgMetaResult& result)
 	return;
 }
 
-void RsGxsDataAccess::filterMsgList(
-        GxsMsgIdResult& resultsMap, const RsTokReqOptions& opts,
-        const MsgMetaFilter& msgMetas ) const
+void RsGxsDataAccess::filterMsgIdList( GxsMsgIdResult& resultsMap, const RsTokReqOptions& opts, const MsgMetaFilter& msgMetas ) const
 {
-	for( GxsMsgIdResult::iterator grpIt = resultsMap.begin();
-	     grpIt != resultsMap.end(); ++grpIt )
+	for( GxsMsgIdResult::iterator grpIt = resultsMap.begin(); grpIt != resultsMap.end(); ++grpIt )
 	{
 		const RsGxsGroupId& groupId(grpIt->first);
 		std::set<RsGxsMessageId>& msgsIdSet(grpIt->second);
@@ -1711,13 +1651,12 @@ void RsGxsDataAccess::filterMsgList(
 		MsgMetaFilter::const_iterator cit = msgMetas.find(groupId);
 		if(cit == msgMetas.end()) continue;
 #ifdef DATA_DEBUG
-		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+		RsDbg() << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " before filtering"
 		          << std::endl;
 #endif
 
-		for( std::set<RsGxsMessageId>::iterator msgIdIt = msgsIdSet.begin();
-		     msgIdIt != msgsIdSet.end(); )
+		for( std::set<RsGxsMessageId>::iterator msgIdIt = msgsIdSet.begin(); msgIdIt != msgsIdSet.end(); )
 		{
 			const RsGxsMessageId& msgId(*msgIdIt);
 			const std::map<RsGxsMessageId, RsGxsMsgMetaData*>& msgsMetaMap =
@@ -1731,12 +1670,14 @@ void RsGxsDataAccess::filterMsgList(
 				keep = checkMsgFilter(opts, msgsMetaMapIt->second);
 			}
 
-			if(keep) ++msgIdIt;
-			else msgIdIt = msgsIdSet.erase(msgIdIt);
+			if(keep)
+                ++msgIdIt;
+			else
+				msgIdIt = msgsIdSet.erase(msgIdIt);
 		}
 
 #ifdef DATA_DEBUG
-		std::cerr << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
+		RsDbg() << __PRETTY_FUNCTION__ << " " << msgsIdSet.size()
 		          << " for group: " << groupId << " after filtering"
 		          << std::endl;
 #endif
@@ -1770,23 +1711,44 @@ void RsGxsDataAccess::filterGrpList(std::list<RsGxsGroupId> &grpIds, const RsTok
 }
 
 
-bool RsGxsDataAccess::checkRequestStatus(
-        uint32_t token, GxsRequestStatus& status, uint32_t& reqtype,
-        uint32_t& anstype, rstime_t& ts )
+bool RsGxsDataAccess::checkRequestStatus( uint32_t token, GxsRequestStatus& status, uint32_t& reqtype, uint32_t& anstype, rstime_t& ts )
 {
 	RS_STACK_MUTEX(mDataMutex);
 
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
-	if (req == NULL || req->status == CANCELLED)
-		return false;
+#ifdef DATA_DEBUG
+    RsDbg() << "CheckRequestStatus: token=" << token ;
+#endif
 
-	anstype = req->ansType;
-	reqtype = req->reqType;
-	status = req->status;
-	ts = req->reqTime;
+    if(req != nullptr)
+	{
+		anstype = req->clientAnswerType;
+		reqtype = req->reqType;
+		status = COMPLETE;
+		ts = req->reqTime;
+#ifdef DATA_DEBUG
+        RsDbg() << __PRETTY_FUNCTION__ << " Returning status = COMPLETE" << std::endl;
+#endif
+		return true;
+	}
 
-	return true;
+    auto it = mPublicToken.find(token);
+
+    if(it != mPublicToken.end())
+    {
+		status = it->second;
+#ifdef DATA_DEBUG
+        RsDbg() << __PRETTY_FUNCTION__ << " Returning status = " << status << std::endl;
+#endif
+        return true;
+    }
+
+    status = FAILED;
+#ifdef DATA_DEBUG
+    RsDbg() << " Token not found. Returning FAILED" << std::endl;
+#endif
+    return false;
 }
 
 bool RsGxsDataAccess::addGroupData(RsNxsGrp* grp) {
@@ -1813,7 +1775,7 @@ bool RsGxsDataAccess::getGroupData(const RsGxsGroupId& grpId, RsNxsGrp *& grp_da
 
     std::map<RsGxsGroupId, RsNxsGrp*> grps ;
 
-    grps[grpId] = NULL ;
+    grps[grpId] = nullptr ;
 
     if(mDataStore->retrieveNxsGrps(grps, false, true))	// the false here is very important: it removes the private key parts.
     {
@@ -1840,18 +1802,16 @@ void RsGxsDataAccess::tokenList(std::list<uint32_t>& tokens)
 
 	RsStackMutex stack(mDataMutex);
 
-	std::map<uint32_t, GxsRequest*>::iterator mit = mRequests.begin();
+	for(auto& it:mRequestQueue)
+		tokens.push_back(it.second->token);
 
-	for(; mit != mRequests.end(); ++mit)
-	{
-		tokens.push_back(mit->first);
-	}
+	for(auto& it:mCompletedRequests)
+        tokens.push_back(it.first);
 }
 
-bool RsGxsDataAccess::locked_updateRequestStatus(
-        uint32_t token, RsTokenService::GxsRequestStatus status )
+bool RsGxsDataAccess::locked_updateRequestStatus( uint32_t token, RsTokenService::GxsRequestStatus status )
 {
-	GxsRequest* req = locked_retrieveRequest(token);
+	GxsRequest* req = locked_retrieveCompetedRequest(token);
 
 	if(req) req->status = status;
 	else return false;
@@ -1866,7 +1826,7 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 
 	{
 		RS_STACK_MUTEX(mDataMutex);
-		mPublicToken[token] = RsTokenService::PENDING;
+		mPublicToken[token] = PENDING ;
 	}
 
 	return token;
@@ -1874,15 +1834,19 @@ uint32_t RsGxsDataAccess::generatePublicToken()
 
 
 
-bool RsGxsDataAccess::updatePublicRequestStatus(
-        uint32_t token, RsTokenService::GxsRequestStatus status )
+bool RsGxsDataAccess::updatePublicRequestStatus( uint32_t token, RsTokenService::GxsRequestStatus status )
 {
 	RS_STACK_MUTEX(mDataMutex);
-	std::map<uint32_t, RsTokenService::GxsRequestStatus>::iterator mit =
-	        mPublicToken.find(token);
-	if(mit != mPublicToken.end()) mit->second = status;
-	else return false;
-	return true;
+
+	auto mit = mPublicToken.find(token);
+
+	if(mit != mPublicToken.end())
+    {
+        mit->second = status;
+		return true;
+    }
+	else
+        return false;
 }
 
 
@@ -1890,11 +1854,14 @@ bool RsGxsDataAccess::updatePublicRequestStatus(
 bool RsGxsDataAccess::disposeOfPublicToken(uint32_t token)
 {
 	RS_STACK_MUTEX(mDataMutex);
-	std::map<uint32_t, RsTokenService::GxsRequestStatus>::iterator mit =
-	        mPublicToken.find(token);
-	if(mit != mPublicToken.end()) mPublicToken.erase(mit);
-	else return false;
-	return true;
+	auto mit = mPublicToken.find(token);
+	if(mit != mPublicToken.end())
+	{
+		mPublicToken.erase(mit);
+		return true;
+	}
+	else
+        return false;
 }
 
 bool RsGxsDataAccess::checkGrpFilter(const RsTokReqOptions &opts, const RsGxsGrpMetaData *meta) const
@@ -1927,7 +1894,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 		     (opts.mStatusMask & meta->mMsgStatus) )
 		{
 #ifdef DATA_DEBUG
-			std::cerr << __PRETTY_FUNCTION__
+			RsDbg() << __PRETTY_FUNCTION__
 			          << " Continue checking Msg as StatusMatches: "
 			          << " Mask: " << opts.mStatusMask
 			          << " StatusFilter: " << opts.mStatusFilter
@@ -1938,7 +1905,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 		else
 		{
 #ifdef DATA_DEBUG
-			std::cerr << __PRETTY_FUNCTION__
+			RsDbg() << __PRETTY_FUNCTION__
 			          << " Dropping Msg due to !StatusMatch "
 			          << " Mask: " << opts.mStatusMask
 			          << " StatusFilter: " << opts.mStatusFilter
@@ -1952,7 +1919,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 	else
 	{
 #ifdef DATA_DEBUG
-		std::cerr << __PRETTY_FUNCTION__
+		RsDbg() << __PRETTY_FUNCTION__
 		          << " Status check not requested"
 		          << " mStatusMask: " << opts.mStatusMask
 		          << " MsgId: " << meta->mMsgId << std::endl;
@@ -1966,7 +1933,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 		     (opts.mMsgFlagMask & meta->mMsgFlags) )
 		{
 #ifdef DATA_DEBUG
-			std::cerr << __PRETTY_FUNCTION__
+			RsDbg() << __PRETTY_FUNCTION__
 			          << " Accepting Msg as FlagMatches: "
 			          << " Mask: " << opts.mMsgFlagMask
 			          << " FlagFilter: " << opts.mMsgFlagFilter
@@ -1977,7 +1944,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 		else
 		{
 #ifdef DATA_DEBUG
-			std::cerr << __PRETTY_FUNCTION__
+			RsDbg() << __PRETTY_FUNCTION__
 			          << " Dropping Msg due to !FlagMatch "
 			          << " Mask: " << opts.mMsgFlagMask
 			          << " FlagFilter: " << opts.mMsgFlagFilter
@@ -1991,7 +1958,7 @@ bool RsGxsDataAccess::checkMsgFilter(
 	else
 	{
 #ifdef DATA_DEBUG
-		std::cerr << __PRETTY_FUNCTION__
+		RsDbg() << __PRETTY_FUNCTION__
 		          << " Flags check not requested"
 		          << " mMsgFlagMask: " << opts.mMsgFlagMask
 		          << " MsgId: " << meta->mMsgId << std::endl;
@@ -2001,3 +1968,5 @@ bool RsGxsDataAccess::checkMsgFilter(
 	return true;
 }
 
+GxsGroupStatistic::~GxsGroupStatistic() = default;
+GxsServiceStatistic::~GxsServiceStatistic() = default;

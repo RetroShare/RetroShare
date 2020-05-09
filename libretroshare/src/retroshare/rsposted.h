@@ -3,7 +3,8 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2008-2012 by Robert Fernie, Christopher Evi-Parker                *
+ * Copyright (C) 2008-2012  Robert Fernie, Christopher Evi-Parker              *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -19,8 +20,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
-#define RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H
+#pragma once
 
 #include <inttypes.h>
 #include <string>
@@ -32,20 +32,60 @@
 #include "retroshare/rsgxscommon.h"
 #include "serialiser/rsserializable.h"
 
-/* The Main Interface Class - for information about your Posted */
 class RsPosted;
-extern RsPosted *rsPosted;
 
-class RsPostedPost;
-class RsPostedGroup
+/**
+ * Pointer to global instance of RsGxsChannels service implementation
+ * @jsonapi{development}
+ */
+extern RsPosted* rsPosted;
+
+struct RsPostedGroup: RsGxsGenericGroupData
 {
-	public:
-	RsPostedGroup() { return; }
-
-	RsGroupMetaData mMeta;
 	std::string mDescription;
 	RsGxsImage mGroupImage;
+};
 
+struct RsPostedPost: public RsGxsGenericMsgData
+{
+	RsPostedPost(): mHaveVoted(false), mUpVotes(0), mDownVotes(0), mComments(0),
+	    mHotScore(0), mTopScore(0), mNewScore(0) {}
+
+	bool calculateScores(rstime_t ref_time);
+
+	std::string mLink;
+	std::string mNotes;
+
+	bool     mHaveVoted;
+
+	// Calculated.
+	uint32_t mUpVotes;
+	uint32_t mDownVotes;
+	uint32_t mComments;
+
+
+	// and Calculated Scores:???
+	double  mHotScore;
+	double  mTopScore;
+	double  mNewScore;
+
+	RsGxsImage mImage;
+
+	/// @see RsSerializable
+	/*virtual void serial_process( RsGenericSerializer::SerializeJob j,
+								 RsGenericSerializer::SerializeContext& ctx )
+	{
+		RS_SERIAL_PROCESS(mImage);
+		RS_SERIAL_PROCESS(mMeta);
+		RS_SERIAL_PROCESS(mLink);
+		RS_SERIAL_PROCESS(mHaveVoted);
+		RS_SERIAL_PROCESS(mUpVotes);
+		RS_SERIAL_PROCESS(mDownVotes);
+		RS_SERIAL_PROCESS(mComments);
+		RS_SERIAL_PROCESS(mHotScore);
+		RS_SERIAL_PROCESS(mTopScore);
+		RS_SERIAL_PROCESS(mNewScore);
+	}*/
 };
 
 
@@ -65,9 +105,6 @@ class RsPostedGroup
 #define RSPOSTED_VIEWMODE_COMMENTS	4
 
 
-std::ostream &operator<<(std::ostream &out, const RsPostedGroup &group);
-std::ostream &operator<<(std::ostream &out, const RsPostedPost &post);
-
 enum class RsPostedEventCode: uint8_t
 {
 	UNKNOWN                  = 0x00,
@@ -77,6 +114,7 @@ enum class RsPostedEventCode: uint8_t
 	UPDATED_POSTED_GROUP     = 0x04,
 	UPDATED_MESSAGE          = 0x05,
 	READ_STATUS_CHANGED      = 0x06,
+	STATISTICS_CHANGED       = 0x07,
 };
 
 
@@ -98,25 +136,56 @@ struct RsGxsPostedEvent: RsEvent
 		RS_SERIAL_PROCESS(mPostedGroupId);
 		RS_SERIAL_PROCESS(mPostedMsgId);
 	}
+
+	~RsGxsPostedEvent() override;
 };
 
 class RsPosted : public RsGxsIfaceHelper, public RsGxsCommentService
 {
-	    public:
-
-	enum RankType {TopRankType, HotRankType, NewRankType };
-
-	//static const uint32_t FLAG_MSGTYPE_POST;
-	//static const uint32_t FLAG_MSGTYPE_MASK;
-
+public:
 	explicit RsPosted(RsGxsIface& gxs) : RsGxsIfaceHelper(gxs) {}
-	virtual ~RsPosted() {}
 
-	    /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) = 0;
-virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
-virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
-//Not currently used
+	virtual bool getBoardsInfo(
+	        const std::list<RsGxsGroupId>& boardsIds,
+	        std::vector<RsPostedGroup>& boardsInfo ) = 0;
+
+	virtual bool getBoardsSummaries(std::list<RsGroupMetaData>& groupInfo) =0;
+
+	virtual bool getBoardAllContent(
+	        const RsGxsGroupId& boardId,
+	        std::vector<RsPostedPost>& posts,
+	        std::vector<RsGxsComment>& comments ) = 0;
+
+	virtual bool getBoardContent(
+	        const RsGxsGroupId& boardId,
+	        const std::set<RsGxsMessageId>& contentsIds,
+	        std::vector<RsPostedPost>& posts,
+	        std::vector<RsGxsComment>& comments ) = 0;
+
+	virtual bool editBoard(RsPostedGroup& board) =0;
+
+	virtual bool createBoard(RsPostedGroup& board) =0;
+
+	virtual bool getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat) =0;
+
+	virtual bool getBoardsServiceStatistics(GxsServiceStatistic& stat) =0;
+
+	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
+
+	RS_DEPRECATED_FOR(getBoardsInfo)
+	virtual bool getGroupData( const uint32_t& token,
+	                           std::vector<RsPostedGroup> &groups ) = 0;
+
+	RS_DEPRECATED_FOR(getBoardsContent)
+	virtual bool getPostData(
+	        const uint32_t& token, std::vector<RsPostedPost>& posts,
+	        std::vector<RsGxsComment>& cmts) = 0;
+
+	RS_DEPRECATED_FOR(getBoardsContent)
+	virtual bool getPostData(
+	        const uint32_t& token, std::vector<RsPostedPost>& posts) = 0;
+
+	//Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsPostedPost> &posts) = 0;
 
 	    /* From RsGxsCommentService */
@@ -134,62 +203,6 @@ virtual bool createPost(uint32_t &token, RsPostedPost &post) = 0;
 virtual bool updateGroup(uint32_t &token, RsPostedGroup &group) = 0;
 
     virtual bool groupShareKeys(const RsGxsGroupId& group,const std::set<RsPeerId>& peers) = 0 ;
+
+	virtual ~RsPosted();
 };
-
-
-class RsPostedPost
-{
-	public:
-	RsPostedPost()
-	{
-		//mMeta.mMsgFlags = RsPosted::FLAG_MSGTYPE_POST;
-		mUpVotes = 0;
-		mDownVotes = 0;
-		mComments = 0;
-		mHaveVoted = false;
-
-        mHotScore = 0;
-        mTopScore = 0;
-        mNewScore = 0;
-	}
-
-	bool calculateScores(rstime_t ref_time);
-
-	RsMsgMetaData mMeta;
-	std::string mLink;
-	std::string mNotes;
-
-	bool     mHaveVoted;
-
-	// Calculated.
-	uint32_t mUpVotes;
-	uint32_t mDownVotes;
-	uint32_t mComments;
-
-
-	// and Calculated Scores:???
-	double  mHotScore;
-	double  mTopScore;
-	double  mNewScore;
-	
-	RsGxsImage mImage;
-
-	/// @see RsSerializable
-	/*virtual void serial_process( RsGenericSerializer::SerializeJob j,
-	                             RsGenericSerializer::SerializeContext& ctx )
-	{
-		RS_SERIAL_PROCESS(mImage);
-		RS_SERIAL_PROCESS(mMeta);
-		RS_SERIAL_PROCESS(mLink);
-		RS_SERIAL_PROCESS(mHaveVoted);
-		RS_SERIAL_PROCESS(mUpVotes);
-		RS_SERIAL_PROCESS(mDownVotes);
-		RS_SERIAL_PROCESS(mComments);
-		RS_SERIAL_PROCESS(mHotScore);
-		RS_SERIAL_PROCESS(mTopScore);
-		RS_SERIAL_PROCESS(mNewScore);
-	}*/
-};
-
-
-#endif // RETROSHARE_GXS_RSPOSTED_GUI_INTERFACE_H

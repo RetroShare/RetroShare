@@ -36,9 +36,9 @@
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
-#define IMAGE_PGPKNOWN    ":/images/contact.png"
+#define IMAGE_PGPKNOWN    ":/icons/png/profile.png"
 #define IMAGE_PGPUNKNOWN  ":/images/tags/pgp-unknown.png"
-#define IMAGE_ANON        ":/images/tags/anon.png"
+#define IMAGE_ANON        ":/icons/png/anonymous.png"
 #define IMAGE_BANNED      ":/icons/biohazard_red.png"
 
 #define IMAGE_DEV_AMBASSADOR     ":/images/tags/dev-ambassador.png"
@@ -935,7 +935,7 @@ QPixmap GxsIdDetails::drawIdentIcon( QString hash, quint16 width, bool rotate)
 
 QString GxsIdDetails::getLoadingText(const RsGxsId &id)
 {
-	return QString("%1... %2").arg(QApplication::translate("GxsIdDetails", "Loading"), QString::fromStdString(id.toStdString().substr(0, 5)));
+	return QString("%1... %2").arg(QApplication::translate("GxsIdDetails", "Loading..."), QString::fromStdString(id.toStdString().substr(0, 5)));
 }
 
 QString GxsIdDetails::getFailedText(const RsGxsId &id)

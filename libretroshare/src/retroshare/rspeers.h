@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2008 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2008 by Robert Fernie <retroshare@lunamutt.com>          *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -468,7 +470,7 @@ struct RsGroupInfo : RsSerializable
 struct RsPeerStateChangedEvent : RsEvent
 {
 	/// @param[in] sslId is of the peer which changed state
-	RsPeerStateChangedEvent(RsPeerId sslId);
+	explicit RsPeerStateChangedEvent(RsPeerId sslId);
 
 	/// Storage fot the id of the peer that changed state
 	RsPeerId mSslId;
@@ -605,7 +607,15 @@ public:
 	virtual bool getAssociatedSSLIds(const RsPgpId& gpg_id, std::list<RsPeerId>& ids) = 0;
 	virtual bool gpgSignData(const void *data, const uint32_t len, unsigned char *sign, unsigned int *signlen, std::string reason = "") = 0;
 
-    virtual RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& fpr) = 0;
+	/**
+	 * @brief Convert PGP fingerprint to PGP id
+	 * @jsonapi{development}
+	 * Helper method useful while we port the whole RetroShare codebase from
+	 * RsPgpId to RsPgpFingerprint
+	 * @param[in] fpr PGP fingerprint to convert
+	 * @return PGP id corresponding to the fingerprint
+	 */
+	virtual RsPgpId pgpIdFromFingerprint(const RsPgpFingerprint& fpr) = 0;
 
     // Note: the two methods below could be unified. The fact that one of them can take an optional RsPeerDetails struct as parameter
     // seems quite inconsistent.
@@ -803,7 +813,7 @@ public:
 	        ServicePermissionFlags flags = RS_NODE_PERM_DEFAULT ) = 0;
 
 
-	/* Auth Stuff */
+	RS_DEPRECATED /// This function doesn't provide meaningful error reporting
 	virtual	std::string getPGPKey(const RsPgpId& pgp_id,bool include_signatures) = 0;
 	virtual bool GetPGPBase64StringAndCheckSum(const RsPgpId& gpg_id,std::string& gpg_base64_string,std::string& gpg_base64_checksum) = 0;
 

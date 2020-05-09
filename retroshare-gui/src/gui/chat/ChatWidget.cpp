@@ -200,12 +200,14 @@ ChatWidget::ChatWidget(QWidget *parent)
 	#endif
 
 	QMenu *menu = new QMenu();
+	menu->addAction(ui->actionMessageHistory);
+	menu->addMenu(fontmenu);
+	menu->addSeparator();
+	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
-	menu->addAction(ui->actionSaveChatHistory);
-	menu->addAction(ui->actionMessageHistory);
+
 	ui->pushtoolsButton->setMenu(menu);
-	menu->addMenu(fontmenu);
 
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
@@ -1860,7 +1862,7 @@ void ChatWidget::updatePeersCustomStateString(const QString& /*peer_id*/, const 
 void ChatWidget::updateStatusString(const QString &statusMask, const QString &statusString, bool permanent)
 {
 	ui->typingLabel->setText(QString(statusMask).arg(trUtf8(statusString.toUtf8()))); // displays info for 5 secs.
-	ui->typingPixmapLabel->setPixmap(QPixmap(":images/typing.png") );
+	ui->typingPixmapLabel->setPixmap(QPixmap(":icons/png/typing.png") );
 
 	if (statusString == "is typing...") {
 		typing = true;

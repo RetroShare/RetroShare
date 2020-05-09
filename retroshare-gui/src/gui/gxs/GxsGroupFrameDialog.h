@@ -29,7 +29,6 @@
 
 #include <inttypes.h>
 
-#include "util/TokenQueue.h"
 #include "GxsIdTreeWidgetItem.h"
 #include "GxsGroupDialog.h"
 
@@ -44,7 +43,7 @@ class UIStateHelper;
 struct RsGxsCommentService;
 class GxsCommentDialog;
 
-class GxsGroupFrameDialog : public RsGxsUpdateBroadcastPage, public TokenResponse
+class GxsGroupFrameDialog : public MainPage
 {
 	Q_OBJECT
 
@@ -76,15 +75,15 @@ public:
 
 	bool navigate(const RsGxsGroupId &groupId, const RsGxsMessageId& msgId);
 
-	// Callback for all Loads.
-	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
-
 	virtual QString getHelpString() const =0;
 
 	virtual void getGroupList(std::map<RsGxsGroupId,RsGroupMetaData> &groups) ;
 
+    void getServiceStatistics(GxsServiceStatistic& stats) const ;
+
 protected:
-	virtual void showEvent(QShowEvent *event);
+	virtual void showEvent(QShowEvent *event) override;
+	virtual void paintEvent(QPaintEvent *pe) override;
 	virtual void updateDisplay(bool complete);
 
 	const RsGxsGroupId &groupId() { return mGroupId; }
@@ -93,10 +92,21 @@ protected:
 	bool getCurrentGroupName(QString& name);
 	virtual RetroShareLink::enumType getLinkType() = 0;
 	virtual GroupFrameSettings::Type groupFrameSettingsType() { return GroupFrameSettings::Nothing; }
-	virtual void groupInfoToGroupItemInfo(const RsGroupMetaData &groupInfo, GroupItemInfo &groupItemInfo, const RsUserdata *userdata);
+	virtual void groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupInfo, GroupItemInfo &groupItemInfo);
     virtual void checkRequestGroup(const RsGxsGroupId& /* grpId */) {}	// overload this one in order to retrieve full group data when the group is browsed
 
 	void updateMessageSummaryList(RsGxsGroupId groupId);
+	void updateGroupStatistics(const RsGxsGroupId &groupId);
+
+    virtual const std::set<TurtleRequestId> getSearchRequests() const { return std::set<TurtleRequestId>(); } // overload this for subclasses that provide distant search
+
+    // These two need to be overloaded by subsclasses, possibly calling the blocking API, since they are used asynchroneously.
+
+	virtual bool getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo) =0;
+	virtual bool getGroupStatistics(const RsGxsGroupId& groupId,GxsGroupStatistic& stat) =0;
+
+	void updateGroupStatisticsReal(const RsGxsGroupId &groupId);
+	void updateMessageSummaryListReal(RsGxsGroupId groupId);
 
 private slots:
 	void todo();
@@ -144,8 +154,8 @@ private:
 	virtual QString settingsGroupName() = 0;
     virtual TurtleRequestId distantSearch(const QString& search_string) ;
 
-	virtual GxsGroupDialog *createNewGroupDialog(TokenQueue *tokenQueue) = 0;
-	virtual GxsGroupDialog *createGroupDialog(TokenQueue *tokenQueue, RsTokenService *tokenService, GxsGroupDialog::Mode mode, RsGxsGroupId groupId) = 0;
+	virtual GxsGroupDialog *createNewGroupDialog() = 0;
+	virtual GxsGroupDialog *createGroupDialog(GxsGroupDialog::Mode mode, RsGxsGroupId groupId) = 0;
 	virtual int shareKeyType() = 0;
 	virtual GxsMessageFrameWidget *createMessageFrameWidget(const RsGxsGroupId &groupId) = 0;
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
@@ -161,26 +171,20 @@ private:
 	void processSettings(bool load);
 
 	// New Request/Response Loading Functions.
-	void insertGroupsData(const std::map<RsGxsGroupId, RsGroupMetaData> &groupList, const RsUserdata *userdata);
+	void insertGroupsData(const std::list<RsGxsGenericGroupData *> &groupList);
 
-	void requestGroupSummary();
-	void loadGroupSummary(const uint32_t &token);
+	//void requestGroupSummary();
+	void updateGroupSummary();
+	void loadGroupSummary(const std::list<RsGxsGenericGroupData *> &groupInfo);
+
 	virtual uint32_t requestGroupSummaryType() { return GXS_REQUEST_TYPE_GROUP_META; } // request only meta data
-	virtual void loadGroupSummaryToken(const uint32_t &token, std::list<RsGroupMetaData> &groupInfo, RsUserdata* &userdata); // use with requestGroupSummaryType
-
-	void requestGroupStatistics(const RsGxsGroupId &groupId);
-	void loadGroupStatistics(const uint32_t &token);
 
 	// subscribe/unsubscribe ack.
-//	void acknowledgeSubscribeChange(const uint32_t &token);
 
 	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
-
-//	void requestGroupSummary_CurrentGroup(const  RsGxsGroupId &groupId);
-//	void loadGroupSummary_CurrentGroup(const uint32_t &token);
 
 protected:
 	void updateSearchResults();
@@ -194,8 +198,6 @@ private:
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
-	RsTokenService *mTokenService;
-	TokenQueue *mTokenQueue;
 	GxsMessageFrameWidget *mMessageWidget;
 
 	QTreeWidgetItem *mYourGroups;
@@ -206,12 +208,23 @@ private:
 	RsGxsGroupId mNavigatePendingGroupId;
 	RsGxsMessageId mNavigatePendingMsgId;
 
+    // Message summary list update
+
+	bool mShouldUpdateMessageSummaryList ; // whether we should update the counting for groups. This takes some CPU so we only do it when needed.
+    std::set<RsGxsGroupId> mGroupIdsSummaryToUpdate;
+
+    // GroupStatistics update
+    bool mShouldUpdateGroupStatistics;
+    rstime_t mLastGroupStatisticsUpdateTs;
+    std::set<RsGxsGroupId> mGroupStatisticsToUpdate;
+
 	UIStateHelper *mStateHelper;
 
 	/** Qt Designer generated object */
 	Ui::GxsGroupFrameDialog *ui;
 
 	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
+	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
 
     std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
     std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;

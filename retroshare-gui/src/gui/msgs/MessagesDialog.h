@@ -57,10 +57,6 @@ public:
 
   void setTextColorInbox(QColor color) { mTextColorInbox = color; }
 
-signals:
-  void messagesAboutToLoad();
-  void messagesLoaded();
-
 protected:
   virtual UserNotify *createUserNotify(QObject *parent) override;
   bool eventFilter(QObject *obj, QEvent *ev);
@@ -69,6 +65,7 @@ protected:
 public slots:
   //void insertMessages();
   void messagesTagsChanged();
+  void messageRemoved();
   void preModelUpdate();
   void postModelUpdate();
 
@@ -100,8 +97,6 @@ private slots:
 
   void emptyTrash();
 
-  void buttonStyle();
-  
   void filterChanged(const QString &text);
   void filterColumnChanged(int column);
   
@@ -129,7 +124,6 @@ private:
 
   void processSettings(bool load);
 
-  void setToolbarButtonStyle(Qt::ToolButtonStyle style);
   void fillQuickView();
 
   void closeTab(const std::string &msgId);
@@ -159,6 +153,7 @@ private:
   Ui::MessagesDialog ui;
 
   QList<QString> mTmpSavedSelectedIds;
+  QModelIndex lastSelectedIndex;
 };
 
 #endif

@@ -100,11 +100,9 @@ static bool isNewerThanEpoque(uint32_t ts)
 
 void RetroshareDirModel::treeStyle()
 {
-	categoryIcon.addPixmap(QPixmap(":/images/folder16.png"),
-	                     QIcon::Normal, QIcon::Off);
-	categoryIcon.addPixmap(QPixmap(":/images/folder_video.png"),
-	                     QIcon::Normal, QIcon::On);
-	peerIcon = QIcon(":/images/user/identity16.png");
+	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folder.png"), QIcon::Normal, QIcon::Off);
+	categoryIcon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/folderopen.png"), QIcon::Normal, QIcon::On);
+	peerIcon = FilesDefs::getIconFromQtResourcePath(":/images/user/identity16.png");
 }
 void TreeStyle_RDM::update()
 {
@@ -349,19 +347,19 @@ const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
         QList<QIcon> icons ;
 
         if(flags & DIR_FLAGS_ANONYMOUS_SEARCH)
-            icons.push_back(QIcon(":icons/search_red_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/search_red_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD)
-            icons.push_back(QIcon(":icons/anonymous_blue_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/anonymous_blue_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         if(flags & DIR_FLAGS_BROWSABLE)
-            icons.push_back(QIcon(":icons/browsable_green_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/browsable_green_128.png")) ;
         else
-            icons.push_back(QIcon(":icons/void_128.png")) ;
+            icons.push_back(FilesDefs::getIconFromQtResourcePath(":icons/void_128.png")) ;
 
         QPixmap pix ;
         GxsIdDetails::GenerateCombinedPixmap(pix, icons, 128);
@@ -399,13 +397,13 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
         time_t now = time(NULL) ;
 
 		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
-			return QIcon(":/images/folder_grey.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
-			return QIcon(":/images/folder_green.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_green.png");
 		else if (ageIndicator == IND_LAST_WEEK )
-			return QIcon(":/images/folder_yellow.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_yellow.png");
 		else if (ageIndicator == IND_LAST_MONTH )
-			return QIcon(":/images/folder_red.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_red.png");
 		else
 			return (QIcon(peerIcon));
 	}
@@ -414,13 +412,13 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
         time_t now = time(NULL) ;
 
 		if(ageIndicator != IND_ALWAYS && now > details.max_mtime + ageIndicator)
-			return QIcon(":/images/folder_grey.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_grey.png");
 		else if (ageIndicator == IND_LAST_DAY )
-			return QIcon(":/images/folder_green.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_green.png");
 		else if (ageIndicator == IND_LAST_WEEK )
-			return QIcon(":/images/folder_yellow.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_yellow.png");
 		else if (ageIndicator == IND_LAST_MONTH )
-			return QIcon(":/images/folder_red.png");
+			return FilesDefs::getIconFromQtResourcePath(":/images/folder_red.png");
 		else
 			return QIcon(categoryIcon);
 	}
@@ -428,9 +426,9 @@ QVariant RetroshareDirModel::decorationRole(const DirDetails& details,int coln) 
 	{
 		// extensions predefined
         if(details.hash.isNull())
-            return QIcon(":/images/reset.png") ; // file is being hashed
+            return FilesDefs::getIconFromQtResourcePath(":/images/reset.png") ; // file is being hashed
         else
-            return FilesDefs::getIconFromFilename(QString::fromUtf8(details.name.c_str()));
+            return FilesDefs::getIconFromFileType(QString::fromUtf8(details.name.c_str()));
 	}
 	else
 		return QVariant();

@@ -27,6 +27,7 @@
 #include "gui/notifyqt.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/common/StatusDefs.h"
+#include "util/qtthreadsutils.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "rshare.h"
@@ -80,7 +81,7 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 }
 
 FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
-	: RsGxsUpdateBroadcastPage(rsIdentity,parent), ui(new Ui::FriendSelectionWidget)
+	: QWidget(parent), ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
 
@@ -91,8 +92,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	mInGpgItemChanged = false;
 	mInSslItemChanged = false;
 	mInFillList = false;
-
-	mIdQueue = new TokenQueue(rsIdentity->getTokenService(), this);
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -131,7 +130,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
-	delete(mIdQueue);
 	delete ui;
 }
 
@@ -185,6 +183,11 @@ int FriendSelectionWidget::addColumn(const QString &title)
 	return column;
 }
 
+void FriendSelectionWidget::showEvent(QShowEvent *e)
+{
+    if(gxsIds.empty())
+        loadIdentities();
+}
 void FriendSelectionWidget::start()
 {
 	mStarted = true;
@@ -237,32 +240,36 @@ void FriendSelectionWidget::fillList()
 	secured_fillList() ;
 }
 
-void FriendSelectionWidget::loadRequest(const TokenQueue */*queue*/, const TokenRequest &req)
+void FriendSelectionWidget::loadIdentities()
 {
 	// store all IDs locally, and call fillList() ;
 
-	uint32_t token = req.mToken ;
-
-	RsGxsIdGroup data;
-	std::vector<RsGxsIdGroup> datavector;
-	std::vector<RsGxsIdGroup>::iterator vit;
-
-	if (!rsIdentity->getGroupData(token, datavector))
+	RsThread::async([this]()
 	{
-		std::cerr << "FriendSelectionWidget::loadRequest() ERROR. Cannot load data from rsIdentity." << std::endl;
-		return ;
-	}
+        std::list<RsGroupMetaData> ids_meta;
 
-	gxsIds.clear() ;
+		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
+		{
+			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			return;
+        }
+        std::vector<RsGxsGroupId> ids;
 
-	for(uint32_t i=0;i<datavector.size();++i)
-	{
-		gxsIds.push_back(datavector[i].mMeta.mGroupId) ;
-		//std::cerr << "  got ID = " << datavector[i].mMeta.mGroupId << std::endl;
-	}
+		for(auto& meta:ids_meta)
+			ids.push_back(meta.mGroupId) ;
 
-	//std::cerr << "Got all " << datavector.size() << " ids from rsIdentity. Calling update of list." << std::endl;
-	fillList() ;
+        RsQThreadUtils::postToObject( [ids,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+			gxsIds = ids; // we do that is the GUI thread. Dont try it on another thread!
+
+			fillList() ;
+
+		}, this );
+	});
 }
 
 void FriendSelectionWidget::secured_fillList()
@@ -666,32 +673,13 @@ void FriendSelectionWidget::secured_fillList()
 }
 void FriendSelectionWidget::updateDisplay(bool)
 {
-	requestGXSIdList() ;
+	loadIdentities() ;
 }
-void FriendSelectionWidget::requestGXSIdList()
-{
-	if (!mIdQueue)
-		return;
-
-	//mStateHelper->setLoading(IDDIALOG_IDLIST, true);
-	//mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
-	//mStateHelper->setLoading(IDDIALOG_REPLIST, true);
-
-	mIdQueue->cancelActiveRequestTokens(IDDIALOG_IDLIST);
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
-
-	uint32_t token;
-
-	mIdQueue->requestGroupInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, IDDIALOG_IDLIST);
-}
-
 // This call is inlined so that there's no linking conflict with MinGW on Windows
 template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
 {
     mPreSelectedGxsIds = ids ;
-    requestGXSIdList();
+    loadIdentities();
 }
 
 void FriendSelectionWidget::groupsChanged(int /*type*/)

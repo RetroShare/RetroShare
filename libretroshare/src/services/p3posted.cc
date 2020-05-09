@@ -30,7 +30,7 @@
  * #define POSTED_DEBUG 1
  ****/
 
-RsPosted *rsPosted = NULL;
+/*extern*/ RsPosted* rsPosted = nullptr;
 
 /********************************************************************************/
 /******************* Startup / Tick    ******************************************/
@@ -300,4 +300,136 @@ bool p3Posted::createPost(uint32_t &token, RsPostedPost &msg)
 	return true;
 }
 
-/********************************************************************************************/
+bool p3Posted::getBoardsInfo(
+        const std::list<RsGxsGroupId>& boardsIds,
+        std::vector<RsPostedGroup>& groupsInfo )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+    if(boardsIds.empty())
+    {
+		if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+    else
+    {
+		if( !requestGroupInfo(token, opts, boardsIds) || waitToken(token) != RsTokenService::COMPLETE )
+            return false;
+    }
+
+	return getGroupData(token, groupsInfo) && !groupsInfo.empty();
+}
+
+bool p3Posted::getBoardAllContent( const RsGxsGroupId& groupId,
+                       std::vector<RsPostedPost>& posts,
+                       std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+    if( !requestMsgInfo(token, opts, std::list<RsGxsGroupId>({groupId})) || waitToken(token) != RsTokenService::COMPLETE )
+        return false;
+
+	return getPostData(token, posts, comments);
+}
+
+bool p3Posted::getBoardContent( const RsGxsGroupId& groupId,
+                       const std::set<RsGxsMessageId>& contentsIds,
+                       std::vector<RsPostedPost>& posts,
+                       std::vector<RsGxsComment>& comments )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+
+	GxsMsgReq msgIds;
+	msgIds[groupId] = contentsIds;
+
+	if( !requestMsgInfo(token, opts, msgIds) ||
+	        waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getPostData(token, posts, comments);
+}
+
+bool p3Posted::getBoardsSummaries(std::list<RsGroupMetaData>& boards )
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_META;
+	if( !requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE ) return false;
+
+	return getGroupSummary(token, boards);
+}
+
+bool p3Posted::getBoardsServiceStatistics(GxsServiceStatistic& stat)
+{
+    uint32_t token;
+	if(!RsGxsIfaceHelper::requestServiceStatistic(token) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getServiceStatistic(token,stat);
+}
+
+
+bool p3Posted::getBoardStatistics(const RsGxsGroupId& boardId,GxsGroupStatistic& stat)
+{
+	uint32_t token;
+	if(!RsGxsIfaceHelper::requestGroupStatistic(token, boardId) || waitToken(token) != RsTokenService::COMPLETE)
+        return false;
+
+    return RsGenExchange::getGroupStatistic(token,stat);
+}
+
+bool p3Posted::createBoard(RsPostedGroup& board)
+{
+	uint32_t token;
+	if(!createGroup(token, board))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failed creating group." << std::endl;
+		return false;
+	}
+
+	if(waitToken(token,std::chrono::milliseconds(5000)) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! GXS operation failed." << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, board.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << "Error! Failure getting updated " << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool p3Posted::editBoard(RsPostedGroup& board)
+{
+	uint32_t token;
+	if(!updateGroup(token, board))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failed updating group." << std::endl;
+		return false;
+	}
+
+	if(waitToken(token) != RsTokenService::COMPLETE)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! GXS operation failed." << std::endl;
+		return false;
+	}
+
+	if(!RsGenExchange::getPublishedGroupMeta(token, board.mMeta))
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " Error! Failure getting updated " << " group data." << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+RsPosted::~RsPosted() = default;
+RsGxsPostedEvent::~RsGxsPostedEvent() = default;

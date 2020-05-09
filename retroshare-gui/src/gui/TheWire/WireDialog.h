@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/WireDialog.h                                                    *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -24,60 +24,91 @@
 #include "retroshare-gui/mainpage.h"
 #include "ui_WireDialog.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rswire.h>
 
 #include <map>
 
 #include "gui/TheWire/PulseItem.h"
+#include "gui/TheWire/WireGroupItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
-class WireDialog : public MainPage, public PulseHolder 
+#include "util/TokenQueue.h"
+
+#define IMAGE_WIRE              ":/icons/wire.png"
+
+class WireDialog : public MainPage, public TokenResponse, public PulseHolder, public WireGroupHolder
 {
   Q_OBJECT
 
 public:
 	WireDialog(QWidget *parent = 0);
 
-virtual void deletePulseItem(PulseItem *, uint32_t type);
-virtual void notifySelection(PulseItem *item, int ptype);
+	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
+	virtual QString pageName() const { return tr("The Wire") ; }
+	virtual QString helpText() const { return ""; }
 
-	void notifyPulseSelection(PulseItem *item);
+	// PulseHolder interface.
+	virtual void deletePulseItem(PulseItem *, uint32_t type);
+	virtual void notifyPulseSelection(PulseItem *item);
+
+	virtual void follow(RsGxsGroupId &groupId);
+	virtual void rate(RsGxsId &authorId);
+	virtual void reply(RsWirePulse &pulse, std::string &groupName);
+
+
+	// WireGroupHolder interface.
+	virtual void subscribe(RsGxsGroupId &groupId);
+	virtual void unsubscribe(RsGxsGroupId &groupId);
+	virtual void notifyGroupSelection(WireGroupItem *item);
 
 private slots:
 
+	void createGroup();
+	void createPulse();
 	void checkUpdate();
-	void OpenOrShowPulseAddDialog();
+	void refreshGroups();
+	void selectGroupSet(int index);
+	void selectFilterTime(int index);
 
 private:
 
+	void addGroup(QWidget *item);
 
+	void addPulse(RsWirePulse *pulse, RsWireGroup *group,
+						std::map<rstime_t, RsWirePulse *> replies);
 
-	/* TODO: These functions must be filled in for proper filtering to work 
-	 * and tied to the GUI input
-	 */
+	void addGroup(const RsWireGroup &group);
 
-	bool matchesAlbumFilter(const RsPhotoAlbum &album);
-	double AlbumScore(const RsPhotoAlbum &album);
-	bool matchesPhotoFilter(const RsPhotoPhoto &photo);
-	double PhotoScore(const RsPhotoPhoto &photo);
+	void deletePulses();
+	void deleteGroups();
+	void showGroups();
+	void showSelectedGroups();
+	void updateGroups(std::vector<RsWireGroup> &groups);
 
-	/* Grunt work of setting up the GUI */
+    // utils.
+	rstime_t getFilterTimestamp();
 
-	bool FilterNSortAlbums(const std::list<std::string> &albumIds, std::list<std::string> &filteredAlbumIds, int count);
-	bool FilterNSortPhotos(const std::list<std::string> &photoIds, std::list<std::string> &filteredPhotoIds, int count);
-	void insertAlbums();
-	void insertPhotosForAlbum(const std::list<std::string> &albumIds);
-	void insertPhotosForSelectedAlbum();
+	// Loading Data.
+	void requestGroupData();
+	bool loadGroupData(const uint32_t &token);
+	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
-	void addAlbum(const std::string &id);
-	void addPhoto(const std::string &id);
+	void requestPulseData(const std::list<RsGxsGroupId>& grpIds);
+	bool loadPulseData(const uint32_t &token);
 
-	void clearAlbums();
-	void clearPhotos();
+	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
+
+	int mGroupSet;
 
 	PulseAddDialog *mAddDialog;
 
 	PulseItem *mPulseSelected;
+	WireGroupItem *mGroupSelected;
+
+	TokenQueue *mWireQueue;
+
+	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
+	std::vector<RsWireGroup> mOwnGroups;
 
 	/* UI - from Designer */
 	Ui::WireDialog ui;

@@ -19,16 +19,16 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#ifndef RS_BASE_SERIALISER_H
-#define RS_BASE_SERIALISER_H
+#pragma once
 
-#include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <map>
 #include <string>
 #include <iosfwd>
-#include <stdlib.h>
-#include <stdint.h>
+#include <cstdlib>
+#include <cstdint>
+
+#include "util/rsdeprecate.h"
 
 /*******************************************************************
  * This is the Top-Level serialiser/deserialise, 
@@ -66,7 +66,11 @@ class RsSerialType ;
 
 class RsSerialiser
 {
-	public:
+public:
+	/** Remember that every pqistreamer allocates an input buffer of this size!
+	 * So don't make it too big! */
+	static constexpr uint32_t MAX_SERIAL_SIZE = 262143; /* 2^18 -1 */
+
 	RsSerialiser();
 	~RsSerialiser();
 	bool        addSerialType(RsSerialType *type);
@@ -76,7 +80,7 @@ class RsSerialiser
 	RsItem *    deserialise(void *data, uint32_t *size);
 	
 	
-	private:
+private:
 	std::map<uint32_t, RsSerialType *> serialisers;
 };
 
@@ -95,6 +99,8 @@ uint16_t  getRsItemService(uint32_t type);
 
 /* size constants */
 uint32_t getRsPktBaseSize();
+
+RS_DEPRECATED_FOR(RsSerialiser::MAX_SERIAL_SIZE)
 uint32_t getRsPktMaxSize();
 
 
@@ -106,5 +112,3 @@ std::ostream &printRsItemEnd(std::ostream &o, std::string n, uint16_t i);
 /* defined in rstlvtypes.cc - redeclared here for ease */
 std::ostream &printIndent(std::ostream &out, uint16_t indent);
 /* Wrapper class for data that is serialised somewhere else */
-
-#endif /* RS_BASE_SERIALISER_H */

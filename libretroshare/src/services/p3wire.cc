@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2012-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -33,7 +33,7 @@ RsWire *rsWire = NULL;
 
 p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
 	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXS_TYPE_WIRE, gixs, wireAuthenPolicy()),
-	RsWire(this), mWireMtx("WireMtx")
+	RsWire(static_cast<RsGxsIface&>(*this)), mWireMtx("WireMtx")
 {
 
 }
@@ -64,11 +64,14 @@ uint32_t p3Wire::wireAuthenPolicy()
 
 	// Edits generally need an authors signature.
 
+	// Wire requires all TopLevel (Orig/Reply) msgs to be signed with both PUBLISH & AUTHOR.
+	// Reply References need to be signed by Author.
 	flag = GXS_SERV::MSG_AUTHEN_ROOT_PUBLISH_SIGN | GXS_SERV::MSG_AUTHEN_CHILD_AUTHOR_SIGN;
+	flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PUBLIC_GRP_BITS);
 
-	flag |= GXS_SERV::MSG_AUTHEN_ROOT_AUTHOR_SIGN;
-	flag |= GXS_SERV::MSG_AUTHEN_CHILD_PUBLISH_SIGN;
+	// expect the requirements to be the same for RESTRICTED / PRIVATE groups too.
+	// This needs to be worked through / fully evaluated.
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::RESTRICTED_GRP_BITS);
 	RsGenExchange::setAuthenPolicyFlag(flag, policy, RsGenExchange::PRIVATE_GRP_BITS);
 
@@ -83,13 +86,15 @@ void p3Wire::service_tick()
 	return;
 }
 
+RsTokenService* p3Wire::getTokenService() {
+
+	return RsGenExchange::getTokenService();
+}
 
 void p3Wire::notifyChanges(std::vector<RsGxsNotify*>& changes)
 {
 	std::cerr << "p3Wire::notifyChanges() New stuff";
 	std::cerr << std::endl;
-
-	RsGxsIfaceHelper::receiveChanges(changes);
 }
 
         /* Specific Service Data */
@@ -177,12 +182,12 @@ bool p3Wire::createGroup(uint32_t &token, RsWireGroup &group)
 	groupItem->group = group;
 	groupItem->meta = group.mMeta;
 
-        std::cerr << "p3Wire::createGroup(): ";
+	std::cerr << "p3Wire::createGroup(): ";
 	std::cerr << std::endl;
 	std::cerr << group;
 	std::cerr << std::endl;
 
-        std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
+	std::cerr << "p3Wire::createGroup() pushing to RsGenExchange";
 	std::cerr << std::endl;
 
 	RsGenExchange::publishGroup(token, groupItem);
@@ -195,12 +200,44 @@ bool p3Wire::createPulse(uint32_t &token, RsWirePulse &pulse)
 	std::cerr << "p3Wire::createPulse(): " << pulse;
 	std::cerr << std::endl;
 
-        RsGxsWirePulseItem* pulseItem = new RsGxsWirePulseItem();
-        pulseItem->pulse = pulse;
-        pulseItem->meta = pulse.mMeta;
+	RsGxsWirePulseItem* pulseItem = new RsGxsWirePulseItem();
+	pulseItem->pulse = pulse;
+	pulseItem->meta = pulse.mMeta;
 
-        RsGenExchange::publishMsg(token, pulseItem);
+	RsGenExchange::publishMsg(token, pulseItem);
 	return true;
+}
+
+// Blocking Interfaces.
+bool p3Wire::createGroup(RsWireGroup &group)
+{
+	uint32_t token;
+	return createGroup(token, group) && waitToken(token) == RsTokenService::COMPLETE;
+}
+
+bool p3Wire::updateGroup(const RsWireGroup &group)
+{
+	// TODO
+	return false;
+}
+
+bool p3Wire::getGroups(const std::list<RsGxsGroupId> groupIds, std::vector<RsWireGroup> &groups)
+{
+	uint32_t token;
+	RsTokReqOptions opts;
+	opts.mReqType = GXS_REQUEST_TYPE_GROUP_DATA;
+
+	if (groupIds.empty())
+	{
+		if (!requestGroupInfo(token, opts) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	else
+	{
+		if (!requestGroupInfo(token, opts, groupIds) || waitToken(token) != RsTokenService::COMPLETE )
+			return false;
+	}
+	return getGroupData(token, groups) && !groups.empty();
 }
 
 

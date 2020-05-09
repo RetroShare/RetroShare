@@ -20,6 +20,10 @@
 
 #include "gui/PhotoShare/PhotoSlideShow.h"
 #include "gui/PhotoShare/PhotoDrop.h"
+#include "gui/gxs/GxsIdDetails.h"
+
+#define IMAGE_FULLSCREEN          ":/icons/fullscreen.png"
+#define IMAGE_FULLSCREENEXIT      ":/icons/fullscreen-exit.png"
 
 #include <iostream>
 
@@ -175,16 +179,10 @@ void PhotoSlideShow::loadImage()
 	if (ptr)
 	{
 		/* load into the slot */
-        	if (ptr->mThumbnail.data != NULL)
+		if (ptr->mLowResImage.mData != NULL)
         	{
                 	QPixmap qtn;
-
-			// copy the data for Qpixmap to use.
-			RsPhotoThumbnail tn;
-			tn.copyFrom(ptr->mThumbnail);
-                	qtn.loadFromData(tn.data, tn.size, tn.type.c_str());
-			tn.data = 0;
-
+                        GxsIdDetails::loadPixmapFromData(ptr->mLowResImage.mData, ptr->mLowResImage.mSize,qtn, GxsIdDetails::ORIGINAL);
                         QPixmap sqtn = qtn.scaled(800, 600, Qt::KeepAspectRatio, Qt::SmoothTransformation);
         		ui.imgLabel->setPixmap(sqtn);
 
@@ -223,6 +221,7 @@ void PhotoSlideShow::requestPhotos()
 {
     RsTokReqOptions opts;
     opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
+    opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
     uint32_t token;
     std::list<RsGxsGroupId> grpIds;
     grpIds.push_back(mAlbum.mMeta.mGroupId);
@@ -249,9 +248,8 @@ bool PhotoSlideShow::loadPhotoData(const uint32_t &token)
                 RsPhotoPhoto& photo = *vit;
                 RsPhotoPhoto *ptr = new RsPhotoPhoto;
                 *ptr = photo;
-                ptr->mThumbnail.data = 0;
-                ptr->mThumbnail.copyFrom(photo.mThumbnail);
-                ptr->mOrder = i++;
+
+                ptr->mLowResImage = photo.mLowResImage; // copies data.
                 mPhotos[photo.mMeta.mMsgId] = ptr;
                 mPhotoOrder[ptr->mOrder] = photo.mMeta.mMsgId;
 
@@ -305,10 +303,12 @@ void PhotoSlideShow::setFullScreen()
     show();
     raise();
 #endif
+	ui.fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREENEXIT));
   } else {
 
     setWindowState( windowState() ^ Qt::WindowFullScreen );
     show();
+	ui.fullscreenButton->setIcon(QIcon(IMAGE_FULLSCREEN));
   }
 }
 

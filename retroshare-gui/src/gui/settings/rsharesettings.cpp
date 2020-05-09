@@ -113,10 +113,10 @@ void RshareSettings::initSettings()
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
-	if (styles.contains("windowsvista", Qt::CaseInsensitive))
+	if (styles.contains("Fusion", Qt::CaseInsensitive))
+		setDefault(SETTING_STYLE, "Fusion");
+	else if (styles.contains("windowsvista", Qt::CaseInsensitive))
 		setDefault(SETTING_STYLE, "windowsvista");
-	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
-		setDefault(SETTING_STYLE, "windowsxp");
 	else
 #endif
 	{

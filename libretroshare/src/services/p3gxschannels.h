@@ -140,7 +140,7 @@ virtual bool getChannelDownloadDirectory(const RsGxsGroupId &groupId, std::strin
 	                                 std::vector<RsGxsComment> &msgs ) override
 	{ return mCommentService->getGxsRelatedComments(token, msgs); }
 
-	virtual bool createNewComment(uint32_t &token, RsGxsComment &msg) override
+	virtual bool createNewComment(uint32_t &token, const RsGxsComment &msg) override
 	{
 		return mCommentService->createGxsComment(token, msg);
 	}
@@ -185,16 +185,32 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 	        const std::list<RsGxsGroupId>& chanIds,
 	        std::vector<RsGxsChannelGroup>& channelsInfo ) override;
 
-	/// Implementation of @see RsGxsChannels::getChannelContent
-	bool getChannelContent( const RsGxsGroupId& channelId,
-	                        const std::set<RsGxsMessageId>& contentsIds,
+	/// Implementation of @see RsGxsChannels::getChannelAllMessages
+	bool getChannelAllContent(const RsGxsGroupId& channelId,
 	                        std::vector<RsGxsChannelPost>& posts,
 	                        std::vector<RsGxsComment>& comments ) override;
+
+	/// Implementation of @see RsGxsChannels::getChannelMessages
+	bool getChannelContent(const RsGxsGroupId& channelId,
+	                        const std::set<RsGxsMessageId>& contentIds,
+	                        std::vector<RsGxsChannelPost>& posts,
+	                        std::vector<RsGxsComment>& comments ) override;
+
+	/// Implementation of @see RsGxsChannels::getChannelComments
+	virtual bool getChannelComments(const RsGxsGroupId &channelId,
+	                                const std::set<RsGxsMessageId> &contentIds,
+	                                std::vector<RsGxsComment> &comments) override;
 
 	/// Implementation of @see RsGxsChannels::getContentSummaries
 	bool getContentSummaries(
 	        const RsGxsGroupId& channelId,
 	        std::vector<RsMsgMetaData>& summaries ) override;
+
+    /// Implementation of @see RsGxsChannels::getChannelStatistics
+    bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) override;
+
+    /// Iplementation of @see RsGxsChannels::getChannelServiceStatistics
+    bool getChannelServiceStatistics(GxsServiceStatistic& stat) override;
 
 	/// Implementation of @see RsGxsChannels::createChannelV2
 	bool createChannelV2(
@@ -277,7 +293,7 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	/// @deprecated Implementation of @see RsGxsChannels::createComment
 	RS_DEPRECATED_FOR(createCommentV2)
-	bool createComment(RsGxsComment& comment) override;
+	bool createComment(RsGxsComment &comment) override;
 
 	/// @deprecated Implementation of @see RsGxsChannels::createVote
 	RS_DEPRECATED_FOR(createVoteV2)

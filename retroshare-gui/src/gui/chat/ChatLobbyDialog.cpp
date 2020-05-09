@@ -62,7 +62,7 @@ const static uint32_t timeToInactivity = 60 * 10;   // in seconds
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
-        : ChatDialog(parent, flags), lobbyId(lid),
+        : ChatDialog(parent, flags), lobbyId(lid), mWindowedSetted(false), mPCWindow(nullptr),
           bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png"),
           bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png")
 {
@@ -93,8 +93,8 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
     voteNegativeAct = new QAction(QIcon(":/icons/png/thumbs-down.png"), tr("Ban this person (Sets negative opinion)"), this);
     voteNeutralAct = new QAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Give neutral opinion"), this);
     votePositiveAct = new QAction(QIcon(":/icons/png/thumbs-up.png"), tr("Give positive opinion"), this);
-    distantChatAct = new QAction(QIcon(":/images/chat_24.png"), tr("Start private chat"), this);
-    sendMessageAct = new QAction(QIcon(":/images/mail_new.png"), tr("Send Message"), this);
+    distantChatAct = new QAction(QIcon(":/icons/png/chats.png"), tr("Start private chat"), this);
+    sendMessageAct = new QAction(QIcon(":/icons/mail/write-mail.png"), tr("Send Message"), this);
     showInPeopleAct = new QAction(QIcon(), tr("Show author in people tab"), this);
 
     QActionGroup *sortgrp = new QActionGroup(this);
@@ -128,6 +128,15 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 	// just empiric values
 	double scaler_factor = S > 25 ? 2.4 : 1.8;
 	QSize icon_size(scaler_factor * S, scaler_factor * S);
+
+	// Add a button to undock dialog.
+	//
+	undockButton = new QToolButton;
+	undockButton->setText(QString());
+	undockButton->setAutoRaise(true);
+	connect(undockButton, SIGNAL(clicked()), this , SLOT(toggleWindowed()));
+
+	getChatWidget()->addTitleBarWidget(undockButton) ;
 
 	// Add a button to invite friends.
 	//
@@ -201,8 +210,12 @@ ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::Wi
 
 void ChatLobbyDialog::leaveLobby()
 {
-	emit lobbyLeave(id()) ;
+	emit dialogClose(this);
+
+	if (mPCWindow)
+		mPCWindow = nullptr;// Windows deleted by events just before.
 }
+
 void ChatLobbyDialog::inviteFriends()
 {
 	std::cerr << "Inviting friends" << std::endl;
@@ -404,12 +417,8 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
 
     lastUpdateListTime = 0;
 
-    // add to window
-
-    ChatLobbyWidget *chatLobbyPage = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
-    if (chatLobbyPage) {
-        chatLobbyPage->addChatPage(this) ;
-    }
+	// add to stacked lobby list
+	setWindowed(false);
 
     /** List of muted Participants */
     mutedParticipants.clear() ;
@@ -421,11 +430,15 @@ void ChatLobbyDialog::init(const ChatId &/*id*/, const QString &/*title*/)
 /** Destructor. */
 ChatLobbyDialog::~ChatLobbyDialog()
 {
-	// announce leaving of lobby
-
+	if (mPCWindow)
+	{
+		mPCWindow->removeDialog(this);
+		mPCWindow = nullptr;
+	}
 	// check that the lobby still exists.
-    if (mChatId.isLobbyId())
-        rsMsgs->sendLobbyStatusPeerLeaving(mChatId.toLobbyId());
+	// announce leaving of lobby
+	if (mChatId.isLobbyId())
+		rsMsgs->sendLobbyStatusPeerLeaving(mChatId.toLobbyId());
 
 	// save settings
 	processSettings(false);
@@ -910,11 +923,17 @@ void ChatLobbyDialog::showDialog(uint chatflags)
 {
 	if (chatflags & RS_CHAT_FOCUS)
 	{
-		MainWindow::showWindow(MainWindow::ChatLobby);
-        MainPage *p = MainWindow::getPage(MainWindow::ChatLobby);
+		if (isWindowed() && mPCWindow) {
+			mPCWindow->showDialog(this, chatflags);
+		}
+		else
+		{
+			MainWindow::showWindow(MainWindow::ChatLobby);
+			MainPage *p = MainWindow::getPage(MainWindow::ChatLobby);
 
-        if(p != NULL)
-			dynamic_cast<ChatLobbyWidget*>(p)->setCurrentChatPage(this) ;
+			if(p)
+				dynamic_cast<ChatLobbyWidget*>(p)->setCurrentChatPage(this) ;
+		}
 	}
 }
 
@@ -940,4 +959,55 @@ void ChatLobbyDialog::filterIds()
 	QString text = ui.filterLineEdit->text();
 
 	ui.participantsList->filterItems(filterColumn, text);
+}
+
+void ChatLobbyDialog::setWindowed(bool windowed)
+{
+	if (mWindowedSetted && (windowed == isWindowed()) )
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Attempt to set windowed same as last state." << std::endl;
+		return;
+	}
+	mWindowedSetted = true;
+	// just empiric values
+	qreal S = QFontMetricsF(font()).height();
+	int size = static_cast<int>(S > 25.0 ? 2.4 * S : 1.8 * S);
+	QSize icon_size(size, size);
+
+	QIcon icon ;
+	// chatLobbyPage could be NULL for first autosubscribe lobby as Dialog is created before main widget
+	ChatLobbyWidget *chatLobbyPage = dynamic_cast<ChatLobbyWidget*>(MainWindow::getPage(MainWindow::ChatLobby));
+	if (!mPCWindow)
+		mPCWindow = PopupChatWindow::getWindow(true);
+
+	if (windowed)
+	{
+		if (chatLobbyPage)
+			chatLobbyPage->removeChatPage(this);
+		if (mPCWindow)
+			mPCWindow->addDialog(this);
+
+		undockButton->setToolTip(tr("Redock to Main window"));
+		icon.addPixmap(QPixmap(":/icons/png/dock.png")) ;
+		undockButton->setIcon(icon) ;
+		undockButton->setIconSize(icon_size);
+	}
+	else
+	{
+		if (mPCWindow)
+		{
+			mPCWindow->removeDialog(this);
+			mPCWindow = nullptr;
+		}
+		if (chatLobbyPage)
+			chatLobbyPage->addChatPage(this);
+
+		undockButton->setToolTip(tr("Undock to a new window"));
+		icon.addPixmap(QPixmap(":/icons/png/undock.png")) ;
+		undockButton->setIcon(icon) ;
+		undockButton->setIconSize(icon_size);
+	}
+	show();
+	if (chatLobbyPage)// If not defined, we are on autosubscribe loop of lobby widget constructor. So don't recall it.
+		showDialog(RS_CHAT_FOCUS);
 }

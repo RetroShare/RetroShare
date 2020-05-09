@@ -10,8 +10,6 @@
     <file>images/switch01.png</file>
     <file>images/switch10.png</file>
     <file>images/switch11.png</file>
-    <file>images/add_chat24.png</file>
-    <file>images/RSS_004_32.png</file>
     <file>images/mail-encrypted-full.png</file>
     <file>images/mail-signed-full.png</file>
     <file>images/document-edit-sign.png</file>
@@ -19,7 +17,6 @@
     <file>images/inbox_22.png</file>
     <file>images/blue_lock.png</file>
     <file>images/blue_lock_open.png</file>
-    <file>images/d-chat64.png</file>
     <file>images/edit_24.png</file>
     <file>images/streaming.png</file>
     <file>images/white-bubble-64.png</file>
@@ -33,7 +30,6 @@
     <file>images/browsable_128_blue.png</file>
     <file>images/blank_128_green.png</file>
     <file>images/blank_128_blue.png</file>
-    <file>images/door_in.png</file>
     <file>images/tor-logo.png</file>
     <file>images/help/addafriend.png</file>
     <file>images/help/addfriendkey.png</file>
@@ -41,29 +37,14 @@
     <file>icons/help_64.png</file>
     <file>images/help/natgreen.png</file>
     <file>images/help/natred.png</file>
-    <file>images/attach.png</file>
     <file>images/pgp.png</file>
     <file>images/rs_wizard.png</file>
     <file>images/avatar_request.png</file>
     <file>images/avatar_refused.png</file>
     <file>images/avatar_request_unknown.png</file>
-    <file>images/backblue.png</file>
-    <file>images/backchat.png</file>
     <file>images/buttonframe.png</file>
-    <file>images/btn1.png</file>
-    <file>images/btn2.png</file>
-    <file>images/btn3.png</file>
-    <file>images/btn4.png</file>
-    <file>images/btn_26.png</file>
-    <file>images/btn_26_hover.png</file>
-    <file>images/btn_26_pressed.png</file>
-    <file>images/btn_27.png</file>
-    <file>images/btn_27_hover.png</file>
     <file>images/btn_blue.png</file>
     <file>images/btn_blue_hover.png</file>
-    <file>images/btn_green.png</file>
-    <file>images/btn_green_hover.png</file>
-    <file>images/btn_green_pressed.png</file>
     <file>images/connect_creating.png</file>
     <file>images/dht16.png</file>
     <file>images/dht32.png</file>
@@ -75,16 +56,10 @@
     <file>images/list_bullet_arrow.png</file>
     <file>images/rc_combined.png</file>
     <file>images/combobox_arrow.png</file>
-    <file>images/arrow-left.png</file>
-    <file>images/arrow-right.png</file>
     <file>help/authors.html</file>
     <file>help/licence.html</file>
     <file>help/thanks.html</file>
     <file>images/accepted16.png</file>
-    <file>images/add_image24.png</file>
-    <file>images/add_channel64.png</file>
-    <file>images/add_channel24.png</file>
-    <file>images/add_channel32.png</file>
     <file>images/admin-16.png</file>
     <file>images/admin-32.png</file>
     <file>images/admin-24.png</file>
@@ -104,30 +79,11 @@
     <file>images/avatarstatus-bg-away-70.png</file>
     <file>images/avatarstatus-bg-busy-70.png</file>
     <file>images/avatarstatus-bg-offline-70.png</file>
-    <file>images/browse-looking.gif</file>
-    <file>images/back.png</file>
-    <file>images/backgroundl.png</file>
-    <file>images/blockdevice.png</file>
-    <file>images/blockdevice2.png</file>
     <file>images/configure.png</file>
-    <file>images/channels.png</file>
-    <file>images/turtle.png</file>
-    <file>images/channels16.png</file>
-    <file>images/channels24.png</file>
-    <file>images/channels32.png</file>
-    <file>images/channels_new.png</file>
-    <file>images/channelsred.png</file>
-    <file>images/channelsyellow.png</file>
-    <file>images/channelsgreen.png</file>
-    <file>images/channelsblue.png</file>
     <file>images/copyrslink.png</file>
     <file>images/contacts24.png</file>
     <file>images/contactsclosed24.png</file>
     <file>images/connection.png</file>
-    <file>images/contact_new.png</file>
-    <file>images/contact_new22.png</file>
-    <file>images/contact.png</file>
-    <file>images/contact22.png</file>
     <file>images/Client0.png</file>
     <file>images/Client1.png</file>
     <file>images/Client2.png</file>
@@ -147,7 +103,6 @@
     <file>images/FileTypeProgram.png</file>
     <file>images/FileTypeVideo.png</file>
     <file>images/fonts.png</file>
-    <file>images/folder16.png</file>
     <file>images/foldermail.png</file>
     <file>images/folderopen.png</file>
     <file>images/fileopen.png</file>
@@ -157,33 +112,16 @@
     <file>images/graph-checking.png</file>
     <file>images/graph-blue.png</file>
     <file>images/add-share24.png</file>
-    <file>images/add_24x24.png</file>
-    <file>images/advsearch_24x24.png</file>
-    <file>images/amsn16.png</file>
-    <file>images/attachment.png</file>
     <file>images/avatar_background.png</file>
-    <file>images/backgroundimage.png</file>
     <file>images/button_cancel.png</file>
-    <file>images/calendar.png</file>
     <file>images/chat.png</file>
-    <file>images/chat_22.png</file>
     <file>images/chat_24.png</file>
-    <file>images/chat_32.png</file>
-    <file>images/chat_64.png</file>
-    <file>images/chat_x24.png</file>
-    <file>images/chat_red24.png</file>
     <file>images/cancel.png</file>
     <file>images/close-down.png</file>
     <file>images/close_normal.png</file>
-    <file>images/console-small-down.png</file>
-    <file>images/console-small-hover.png</file>
-    <file>images/console-small-up.png</file>
-    <file>images/contact_new128.png</file>
     <file>images/copy.png</file>
     <file>images/delete.png</file>
     <file>images/deleteall.png</file>
-    <file>images/deletemail-pressed.png</file>
-    <file>images/deletemail24.png</file>
     <file>images/directoryadd_24x24_shadow.png</file>
     <file>images/directoryremove_24x24_shadow.png</file>
     <file>images/directoryselect_24x24_shadow.png</file>
@@ -198,16 +136,8 @@
     <file>images/edit-italic.png</file>
     <file>images/edit-underline.png</file>
     <file>images/edit_remove24.png</file>
-    <file>images/encrypted16.png</file>
-    <file>images/encrypted22.png</file>
-    <file>images/encrypted32.png</file>
-    <file>images/encrypted48.png</file>
     <file>images/disabled_plugin_48.png</file>
-    <file>images/evolution.png</file>
-    <file>images/exit_24x24.png</file>
-    <file>images/exit_32.png</file>
     <file>images/expand_frame.png</file>
-    <file>images/exportpeers_16x16.png</file>
     <file>images/extension_32.png</file>
     <file>images/filefind.png</file>
     <file>images/fileinfo.png</file>
@@ -227,7 +157,6 @@
     <file>images/fileshare64.png</file>
     <file>images/find.png</file>
     <file>images/find-16.png</file>
-    <file>images/emoticons/kopete/kopete020.png</file>
     <file>images/flags/af.png</file>
     <file>images/flags/bg.png</file>
     <file>images/flags/zh_CN.png</file>
@@ -261,41 +190,22 @@
     <file>images/folder-outbox.png</file>
     <file>images/folder-sent.png</file>
     <file>images/folder-trash.png</file>
-    <file>images/folder_doments.png</file>
-    <file>images/folder_green.png</file>
-    <file>images/folder_red.png</file>
-    <file>images/folder_grey.png</file>
-    <file>images/folder_yellow.png</file>
-    <file>images/folder_open.png</file>
-    <file>images/folder_video.png</file>
-    <file>images/folder_blueshared.png</file>
-    <file>images/forward.png</file>
-    <file>images/friendsfolder24.png</file>
-    <file>images/kgames.png</file>
     <file>images/go-down.png</file>
     <file>images/go-top.png</file>
     <file>images/go-up.png</file>
     <file>images/go-bottom.png</file>
     <file>images/graph-area.png</file>
     <file>images/graph-line.png</file>
-    <file>images/groupchat.png</file>
-    <file>images/genbackground.png</file>
-    <file>images/gohome.png</file>
     <file>images/gpgp_key_generate.png</file>
-    <file>images/help.png</file>
-    <file>images/help24.png</file>
     <file>images/hide_toolbox_frame.png</file>
     <file>images/hide_frame.png</file>
     <file>images/highlight.png</file>
-    <file>images/hi16-app-ktorrent.png</file>
-    <file>images/hi24-app-ktorrent.png</file>
     <file>images/hot_0.png</file>
     <file>images/hot_1.png</file>
     <file>images/hot_2.png</file>
     <file>images/hot_3.png</file>
     <file>images/hot_4.png</file>
     <file>images/hot_5.png</file>
-    <file>images/image16.png</file>
     <file>images/imageblocked_24.png</file>
     <file>images/info16.png</file>
     <file>images/im-user.png</file>
@@ -307,37 +217,11 @@
     <file>images/connect_friend.png</file>
     <file>images/kalarm.png</file>
     <file>images/kbackgammon.png</file>
-    <file>images/kblogger.png</file>
-    <file>images/hi48-app-kblogger.png</file>
-    <file>images/hi64-app-kblogger.png</file>
-    <file>images/transfers_new.png</file>
     <file>images/kcmsystem24.png</file>
-    <file>images/kdmconfig.png</file>
-    <file>images/konsole.png</file>
-    <file>images/newsfeed128.png</file>
-    <file>images/newsfeed128_notify.png</file>
-    <file>images/konversation.png</file>
-    <file>images/konversation16.png</file>
-    <file>images/konversation128.png</file>
-    <file>images/konv_message2.png</file>
-    <file>images/konv_message3.png</file>
-    <file>images/konv_message64.png</file>
-    <file>images/konversation64.png</file>
-    <file>images/forums_new.png</file>
-    <file>images/ksysguard.png</file>
-    <file>images/ksysguard32.png</file>
-    <file>images/ktorrent.png</file>
-    <file>images/ktorrent32.png</file>
-    <file>images/knewsticker24.png</file>
-    <file>images/library.png</file>
-    <file>images/loadcert16.png</file>
     <file>images/ledoff1.png</file>
     <file>images/ledon1.png</file>
     <file>images/locale.png</file>
     <file>images/looknfeel.png</file>
-    <file>images/lphoto.png</file>
-    <file>images/lphoto16.png</file>
-    <file>images/lphoto24.png</file>
     <file>images/logo/logo_16.png</file>
     <file>images/logo/logo_24.png</file>
     <file>images/logo/logo_24_0.png</file>
@@ -352,21 +236,8 @@
     <file>images/logo/logo_info.png</file>
     <file>images/logo/logo_splash.png</file>
     <file>images/logo/logo_web_nobackground.png</file>
-    <file>images/logobar/logo_bar_fill.png</file>
-    <file>images/logobar/logo_bar_start.png</file>
-    <file>images/logobar/rslogo.png</file>
-    <file>images/logobar/rslogo2.png</file>
-    <file>images/mail-message-new.png</file>
     <file>images/mail-signed.png</file>
     <file>images/mail-signature-unknown.png</file>
-    <file>images/mail_delete.png</file>
-    <file>images/mail_get.png</file>
-    <file>images/mail_reply.png</file>
-    <file>images/mail_replyall.png</file>
-    <file>images/mail_forward.png</file>
-    <file>images/mail_send.png</file>
-    <file>images/mail_new.png</file>
-    <file>images/mail_send24.png</file>
     <file>images/mailforward24-hover.png</file>
     <file>images/message-mail.png</file>
     <file>images/message-mail-read.png</file>
@@ -382,18 +253,10 @@
     <file>images/message-state-header.png</file>
     <file>images/message-state-new.png</file>
     <file>images/message-news.png</file>
-    <file>images/message_new.png</file>
     <file>images/message.png</file>
-    <file>images/messenger.png</file>
     <file>images/mute-off-16.png</file>
     <file>images/mute-on-16.png</file>
-    <file>images/my_documents_16.png</file>
-    <file>images/my_documents_22.png</file>
-    <file>images/network.png</file>
-    <file>images/network16.png</file>
-    <file>images/network32.png</file>
     <file>images/new-mail-alert.png</file>
-    <file>images/new_forum16.png</file>
     <file>images/newmsg.png</file>
     <file>images/no_avatar_70.png</file>
     <file>images/no_avatar_background.png</file>
@@ -439,7 +302,6 @@
     <file>images/save24.png</file>
     <file>images/send24.png</file>
     <file>images/settings.png</file>
-    <file>images/settings16.png</file>
     <file>images/show_toolbox_frame.png</file>
     <file>images/start.png</file>
     <file>images/stop.png</file>
@@ -449,7 +311,6 @@
     <file>images/StatisticsDetail.png</file>
     <file>images/status_unknown.png</file>
     <file>images/startall.png</file>
-    <file>images/server_24x24.png</file>
     <file>images/sort_incr.png</file>
     <file>images/sort_decrease.png</file>
     <file>images/sound.png</file>
@@ -459,10 +320,7 @@
     <file>images/tag24.png</file>
     <file>images/transferupdown.png</file>
     <file>images/tools_wizard.png</file>
-    <file>images/typing.png</file>
-    <file>images/trustsettings.png</file>
     <file>images/uploads.png</file>
-    <file>images/headerFrame.png</file>
     <file>images/loader/indicator-16.gif</file>
     <file>images/loader/indicator-32.gif</file>
     <file>images/loader/circleball-16.gif</file>
@@ -473,44 +331,6 @@
     <file>images/mimetypes/source_c.png</file>
     <file>images/mimetypes/source_cpp.png</file>
     <file>images/mimetypes/source_h.png</file>
-    <file>images/view-certificate-copy-32.png</file>
-    <file>images/view-certificate-export-32.png</file>
-    <file>images/textedit/textbold.png</file>
-    <file>images/textedit/textitalic.png</file>
-    <file>images/textedit/textunder.png</file>
-    <file>images/textedit/textjustify.png</file>
-    <file>images/textedit/textcenter.png</file>
-    <file>images/textedit/textleft.png</file>
-    <file>images/textedit/textright.png</file>
-    <file>images/textedit/editcopy.png</file>
-    <file>images/textedit/editcut.png</file>
-    <file>images/textedit/editpaste.png</file>
-    <file>images/textedit/editredo.png</file>
-    <file>images/textedit/editundo.png</file>
-    <file>images/textedit/edit-image-face-add.png</file>
-    <file>images/textedit/exportpdf.png</file>
-    <file>images/textedit/filenew.png</file>
-    <file>images/textedit/fileopen.png</file>
-    <file>images/textedit/fileprint.png</file>
-    <file>images/textedit/filesave.png</file>
-    <file>images/textedit/format-text-color.png</file>
-    <file>images/textedit/format-text-strikethrough.png</file>
-    <file>images/textedit/format-indent-less.png</file>
-    <file>images/textedit/format-indent-more.png</file>
-    <file>images/textedit/insert-link.png</file>
-    <file>images/textedit/format-list-ordered.png</file>
-    <file>images/textedit/format-list-unordered.png</file>
-    <file>images/textedit/zoomin.png</file>
-    <file>images/textedit/zoomout.png</file>
-    <file>images/textedit/format_font_size_more.png</file>
-    <file>images/textedit/format_font_size_less.png</file>
-    <file>images/textedit/hi22-action-format-text-blockquote.png</file>
-    <file>images/textedit/hi22-action-format-text-code.png</file>
-    <file>images/textedit/hi22-action-insert-more-mark.png</file>
-    <file>images/toaster/chat.png</file>
-    <file>images/toaster/hangup.png</file>
-    <file>images/toaster/pickup.png</file>
-    <file>images/toaster/backgroundtoaster.png</file>
     <file>images/thumb-default-video.png</file>
     <file>images/user/add_user24.png</file>
     <file>images/user/add_user48.png</file>
@@ -556,24 +376,13 @@
     <file>images/up1down0.png</file>
     <file>images/underconstruction.png</file>
     <file>images/user.png</file>
-    <file>images/view-certificate-sign-32.png</file>
     <file>images/view_calendar_day.png</file>
     <file>images/view_calendar_week.png</file>
     <file>images/view_calendar_month.png</file>
     <file>images/view_calendar_list.png</file>
     <file>images/view_split_top_bottom.png</file>
-    <file>images/vote_up.png</file>
-    <file>images/vote_down.png</file>
-    <file>images/vote_neutral.png</file>
     <file>images/window_fullscreen.png</file>
     <file>images/window_nofullscreen.png</file>
-    <file>images/identity/identities_32.png</file>
-    <file>images/identity/identity_64.png</file>
-    <file>images/identity/identity_create_32.png</file>
-    <file>images/identity/identity_create_64.png</file>
-    <file>images/identity/identity_delete_32.png</file>
-    <file>images/identity/identity_edit_32.png</file>
-    <file>images/identity/identity_edit_64.png</file>
     <file>qss/chat/standard/private/info.xml</file>
     <file>qss/chat/standard/private/incoming.htm</file>
     <file>qss/chat/standard/private/outgoing.htm</file>
@@ -633,43 +442,26 @@
     <file>qss/chat/compact/history/variants/Colored.css</file>
     <file>qss/stylesheet/qss.default</file>
     <file>qss/stylesheet/Standard.qss</file>
-    <file>images/connect/connectFriendWatermark.png</file>
-    <file>images/connect/connectFriendLogo.png</file>
-    <file>images/connect/connectFriendBanner.png</file>
-    <file>images/connect/connectFriendBanner1.png</file>
-    <file>images/connect/info16.png</file>
-    <file>images/connect/mail_send.png</file>
     <file>images/tags/pgp-known.png</file>
     <file>images/tags/pgp-unknown.png</file>
-    <file>images/tags/anon.png</file>
     <file>images/tags/dev-ambassador.png</file>
     <file>images/tags/dev-translator.png</file>
     <file>images/tags/dev-patcher.png</file>
     <file>images/tags/developer.png</file>
-    <file>images/circles/circles_32.png</file>
-    <file>images/circles/circles_64.png</file>
-    <file>images/newsfeed/news-feed-32.png</file>
-    <file>images/newsfeed/news-feed-notify-32.png</file>
     <file>images/share-icon-16.png</file>
-    <file>images/view-certificate-sign-48.png</file>
     <file>images/toasterEnable.png</file>
     <file>images/toasterDisable.png</file>
-    <file>images/library_edit.png</file>
-    <file>images/library_view.png</file>
-    <file>images/library_add.png</file>
-    <file>images/library64.png</file>
-    <file>images/library16.png</file>
-    <file>images/btn_red_pressed.png</file>
-    <file>images/btn_red_hover.png</file>
-    <file>images/btn_red.png</file>
     <file>images/view-feeds.png</file>
     <file>images/view-files.png</file>
     <file>images/emblem-web.png</file>
-    <file>images/rsmessenger16.png</file>
-    <file>images/rsmessenger32.png</file>
     <file>images/rsmessenger48.png</file>
     <file>images/SmileyText.png</file>
     <file>images/SimpleText.png</file>
     <file>images/ColoredText.png</file>
+    <file>images/update.png</file>
+    <file>images/folder_green.png</file>
+    <file>images/folder_red.png</file>
+    <file>images/folder_grey.png</file>
+    <file>images/folder_yellow.png</file>
   </qresource>
 </RCC>

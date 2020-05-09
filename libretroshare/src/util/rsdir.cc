@@ -3,7 +3,9 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2004-2007 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright (C) 2004-2007  Robert Fernie <retroshare@lunamutt.com>            *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -265,36 +267,48 @@ bool RsDirUtil::fileExists(const std::string& filename)
 
 bool RsDirUtil::moveFile(const std::string& source,const std::string& dest)
 {
-	// Check that the destination directory exists. If not, create it.
+	Dbg3() << __PRETTY_FUNCTION__<< " source: " << source
+	       << " dest: " << dest << std::endl;
 
 	std::string dest_dir ;
 	std::string dest_file ;
 
-	splitDirFromFile(dest,dest_dir,dest_file) ;
+	splitDirFromFile(dest, dest_dir, dest_file);
 
-	std::cerr << "Moving file " << source << " to " << dest << std::endl;
-	std::cerr << "Checking that directory " << dest_dir << " actually exists." << std::endl;
+	if(!checkDirectory(dest_dir))
+	{
+		if(!std::filesystem::create_directories(dest_dir))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failure creating directory: "
+			        << dest_dir << std::endl;
+			return false;
+		}
+	}
 
-	if(!checkCreateDirectory(dest_dir))
-		return false ;
+	// First try a rename
+	if(renameFile(source,dest))
+	{
+		Dbg3() << __PRETTY_FUNCTION__ << " plain rename worked" << std::endl;
+		return true;
+	}
 
-    // First try a rename
-	//
+	/* If not, try to copy. The src and dest probably belong to different file
+	 * systems */
+	if(!copyFile(source,dest))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure copying file" << std::endl;
+		return false;
+	}
 
-    if(renameFile(source,dest))
-        return true ;
+	// delete the original
+	if(!removeFile(source))
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " failure deleting original file"
+		        << std::endl;
+		return false;
+	}
 
-    // If not, try to copy. The src and dest probably belong to different file systems
-
-    if(!copyFile(source,dest))
-        return false ;
-
-	// copy was successful, let's delete the original
-
-    if(!removeFile(source))
-        return false ;
-
-    return true ;
+	return true;
 }
 
 bool RsDirUtil::removeFile(const std::string& filename)
@@ -425,7 +439,7 @@ bool	RsDirUtil::checkFile(const std::string& filename,uint64_t& file_size,bool d
 }
 
 
-bool	RsDirUtil::checkDirectory(const std::string& dir)
+bool RsDirUtil::checkDirectory(const std::string& dir)
 {
 	int val;
 	mode_t st_mode;
@@ -461,11 +475,9 @@ bool	RsDirUtil::checkDirectory(const std::string& dir)
 }
 
 
-bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
+bool RsDirUtil::checkCreateDirectory(const std::string& dir)
 {
-#ifdef RSDIR_DEBUG
-	std::cerr << "RsDirUtil::checkCreateDirectory() dir: " << dir << std::endl;
-#endif
+	Dbg3() << __PRETTY_FUNCTION__ << " " << dir << std::endl;
 
 #ifdef WINDOWS_SYS
 	std::wstring wdir;
@@ -516,6 +528,23 @@ bool	RsDirUtil::checkCreateDirectory(const std::string& dir)
 	return true;
 }
 
+#if __cplusplus < 201703L
+bool std::filesystem::create_directories(const std::string& path)
+{
+	for( std::string::size_type lastIndex = 0; lastIndex < std::string::npos;
+	     lastIndex = path.find('/', lastIndex) )
+	{
+		std::string&& curDir = path.substr(0, ++lastIndex);
+		if(!RsDirUtil::checkCreateDirectory(curDir))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failure creating: " << curDir
+			        << " of: " << path << std::endl;
+			return false;
+		}
+	}
+	return true;
+}
+#endif // __cplusplus < 201703L
 
 std::string RsDirUtil::removeSymLinks(const std::string& path)
 {

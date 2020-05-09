@@ -151,8 +151,6 @@ protected:
 	/// @see RsThread
 	void onStopRequested() override;
 
-	static const RsJsonApiErrorCategory sErrorCategory;
-
 	static std::error_condition badApiCredientalsFormat(
 	        const std::string& user, const std::string& passwd );
 

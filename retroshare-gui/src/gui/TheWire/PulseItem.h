@@ -1,7 +1,7 @@
 /*******************************************************************************
  * gui/TheWire/PulseItem.h                                                     *
  *                                                                             *
- * Copyright (c) 2012 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -23,33 +23,33 @@
 
 #include "ui_PulseItem.h"
 
-#include <retroshare/rsphoto.h>
+#include <retroshare/rswire.h>
 
 class PulseItem;
 
 class PulseHolder
 {
-	public:
-virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-virtual void notifySelection(PulseItem *item, int ptype) = 0;
+public:
+	virtual ~PulseHolder() {}
+	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
+	virtual void notifyPulseSelection(PulseItem *item) = 0;
+
+	// Actions.
+	virtual void follow(RsGxsGroupId &groupId) = 0;
+	virtual void rate(RsGxsId &authorId) = 0;
+	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
 };
 
-
-#define PHOTO_ITEM_TYPE_ALBUM	0x0001
-#define PHOTO_ITEM_TYPE_PHOTO	0x0002
-#define PHOTO_ITEM_TYPE_NEW	0x0003
 
 class PulseItem : public QWidget, private Ui::PulseItem
 {
   Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *parent, const RsPhotoAlbum &album, const RsPhotoThumbnail &thumbnail);
-	PulseItem(PulseHolder *parent, const RsPhotoPhoto &photo, const RsPhotoThumbnail &thumbnail);
-	PulseItem(PulseHolder *parent, std::string url); // for new photos.
+	PulseItem(PulseHolder *holder, std::string url);
+	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
 
-	bool getPhotoThumbnail(RsPhotoThumbnail &nail);
-
+	rstime_t publishTs();
 	void removeItem();
 
 	void setSelected(bool on);
@@ -57,27 +57,15 @@ public:
 
 	const QPixmap *getPixmap();
 
-	// details are public - so that can be easily edited.
-	RsPhotoPhoto mDetails;
-
-//private slots:
-
-
 protected:
 	void mousePressEvent(QMouseEvent *event);
 
 private:
-	void updateAlbumText(const RsPhotoAlbum &album);
-	void updatePhotoText(const RsPhotoPhoto &photo);
-	void updateImage(const RsPhotoThumbnail &thumbnail);
 
-	PulseHolder *mParent;
+	PulseHolder *mHolder;
+	RsWirePulse  mPulse;
 	uint32_t     mType;
-
-
-        bool mSelected;
+	bool mSelected;
 };
 
-
 #endif
-

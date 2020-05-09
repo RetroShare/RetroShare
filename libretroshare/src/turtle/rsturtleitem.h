@@ -166,7 +166,13 @@ class RsTurtleRegExpSearchRequestItem: public RsTurtleFileSearchRequestItem
 class RsTurtleGenericSearchRequestItem: public RsTurtleSearchRequestItem
 {
 	public:
-		RsTurtleGenericSearchRequestItem() : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST) {}
+		RsTurtleGenericSearchRequestItem()
+            : RsTurtleSearchRequestItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_REQUEST),
+              service_id(0),
+              search_data_len(0),
+              request_type(0),
+              search_data(nullptr)
+        {}
         virtual ~RsTurtleGenericSearchRequestItem() { clear(); }
 
         uint16_t service_id ;		// service to search
@@ -221,7 +227,11 @@ class RsTurtleFTSearchResultItem: public RsTurtleSearchResultItem
 class RsTurtleGenericSearchResultItem: public RsTurtleSearchResultItem
 {
 	public:
-        RsTurtleGenericSearchResultItem() : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT){}
+        RsTurtleGenericSearchResultItem()
+            : RsTurtleSearchResultItem(RS_TURTLE_SUBTYPE_GENERIC_SEARCH_RESULT),
+		      result_data(nullptr),
+		      result_data_len(0)
+        {}
         virtual ~RsTurtleGenericSearchResultItem() {}
 
         uint32_t count() const { return result_data_len/50 ; }	// This is a blind size estimate. We should probably use the actual size to limit search results.

@@ -125,9 +125,7 @@ RsItem::RsItem(uint8_t ver, uint8_t cls, uint8_t t, uint8_t subtype)
 	type = (ver << 24) + (cls << 16) + (t << 8) + subtype;
 }
 
-RsItem::~RsItem()
-{
-}
+RsItem::~RsItem() = default;
 
 void RsItem::print_string(std::string &out, uint16_t indent)
 {
@@ -243,10 +241,7 @@ uint32_t    RsSerialType::PacketId() const
 
 
 
-RsSerialiser::RsSerialiser()
-{
-	return;
-}
+RsSerialiser::RsSerialiser() = default;
 
 
 RsSerialiser::~RsSerialiser()
@@ -559,17 +554,7 @@ std::ostream &RsRawItem::print(std::ostream &out, uint16_t indent)
 	return out;
 }
 
-
-uint32_t getRsPktMaxSize()
-{
-	//return 65535; /* 2^16 (old artifical low size) */
-	//return 1048575; /* 2^20 -1 (Too Big! - must remove fixed static buffers first) */
-	/* Remember that every pqistreamer allocates an input buffer of this size!
-	 * So don't make it too big!
-	 */
-	return 262143; /* 2^18 -1 */
-}
-
+uint32_t getRsPktMaxSize() { return RsSerialiser::MAX_SERIAL_SIZE; }
 
 uint32_t getRsPktBaseSize()
 {

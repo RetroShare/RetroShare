@@ -51,7 +51,7 @@ public:
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIds();
 	const std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &getMsgIdsMeta();
 	void getAllMsgIds(std::map<RsGxsGroupId, std::set<RsGxsMessageId> > &msgIds);
-    const std::set<TurtleRequestId>& getSearchResults() ;
+    const std::set<TurtleRequestId>& getSearchquests() ;
 
 	RsGxsIfaceHelper *interfaceHelper() { return mInterfaceHelper; }
 

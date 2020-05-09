@@ -362,6 +362,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name,bool first_time)
 		dlclose(handle);
 		return false ;
 	} 
+#ifdef TO_REMOVE
 	if(pinfo.svn_revision == 0)
 	{
 		std::cerr  << "    -> No svn revision number." << std::endl;
@@ -370,6 +371,7 @@ bool RsPluginManager::loadPlugin(const std::string& plugin_name,bool first_time)
 		dlclose(handle);
 		return false ;
 	} 
+#endif
 
 	// Now look for the plugin class symbol.
 	//

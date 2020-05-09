@@ -12,13 +12,14 @@ DESTDIR = lib
 
 !include("use_libretroshare.pri"):error("Including")
 
-# the dht stunner is used to obtain RS external ip addr. when it is natted
-# this system is unreliable and rs supports a newer and better one (asking connected peers)
-# CONFIG += useDhtStunner
-
 # treat warnings as error for better removing
 #QMAKE_CFLAGS += -Werror
 #QMAKE_CXXFLAGS += -Werror
+
+## Uncomment to enable Unfinished Services.
+#CONFIG += wikipoos
+#CONFIG += gxsthewire
+#CONFIG += gxsphotoshare
 
 debug {
 #	DEFINES *= DEBUG
@@ -44,7 +45,6 @@ file_lists {
 			file_sharing/directory_updater.h \
 			file_sharing/rsfilelistitems.h \
 			file_sharing/dir_hierarchy.h \
-			file_sharing/file_tree.h \
 			file_sharing/file_sharing_defaults.h
 
 	SOURCES *= file_sharing/p3filelists.cc \
@@ -480,6 +480,8 @@ HEADERS +=	util/folderiterator.h \
 			util/dnsresolver.h \
                         util/radix32.h \
                         util/radix64.h \
+                        util/rsbase64.h \
+                        util/rsendian.h \
                         util/rsinitedptr.h \
 			util/rsprint.h \
 			util/rsstring.h \
@@ -493,7 +495,8 @@ HEADERS +=	util/folderiterator.h \
 			util/rstime.h \
             util/stacktrace.h \
             util/rsdeprecate.h \
-            util/cxx11retrocompat.h \
+    util/cxx11retrocompat.h \
+    util/cxx14retrocompat.h \
     util/cxx17retrocompat.h \
             util/rsurl.h \
     util/rserrno.h
@@ -636,6 +639,7 @@ SOURCES +=	util/folderiterator.cc \
 			util/rsrecogn.cc \
             util/rstime.cc \
             util/rsurl.cc \
+            util/rsbase64.cc \
     util/rserrno.cc
 
 equals(RS_UPNP_LIB, miniupnpc) {
@@ -763,6 +767,8 @@ SOURCES += services/p3gxschannels.cc \
 	rsitems/rsgxschannelitems.cc \
 
 wikipoos {
+	DEFINES *= RS_USE_WIKI
+
 	# Wiki Service
 	HEADERS += retroshare/rswiki.h \
 		services/p3wiki.h \
@@ -773,6 +779,8 @@ wikipoos {
 }
 
 gxsthewire {
+	DEFINES *= RS_USE_WIRE
+
 	# Wire Service
 	HEADERS += retroshare/rswire.h \
 		services/p3wire.h \
@@ -793,6 +801,8 @@ SOURCES +=  services/p3postbase.cc \
 	rsitems/rsposteditems.cc
 
 gxsphotoshare {
+	DEFINES *= RS_USE_PHOTO
+
 	#Photo Service
 	HEADERS += services/p3photoservice.h \
 		retroshare/rsphoto.h \

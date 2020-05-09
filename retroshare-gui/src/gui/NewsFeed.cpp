@@ -67,12 +67,11 @@
  * #define NEWS_DEBUG  1
  ****/
 
-static NewsFeed *instance = NULL;
+static NewsFeed* instance = nullptr;
 
 /** Constructor */
-NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed)
-{
-    mEventTypes = {
+NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
+    mEventTypes({
         RsEventType::AUTHSSL_CONNECTION_AUTENTICATION,
         RsEventType::PEER_CONNECTION                 ,
         RsEventType::GXS_CIRCLES                     ,
@@ -80,12 +79,14 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed)
         RsEventType::GXS_FORUMS                      ,
         RsEventType::GXS_POSTED                      ,
         RsEventType::MAIL_STATUS
-    };
-
-    for(uint32_t i=0;i<mEventTypes.size();++i)
+    })
+{
+	for(uint32_t i=0;i<mEventTypes.size();++i)
 	{
 		mEventHandlerIds.push_back(0); // needed to force intialization by registerEventsHandler()
-		rsEvents->registerEventsHandler(mEventTypes[i], [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); }, mEventHandlerIds.back() );
+		rsEvents->registerEventsHandler(
+		            [this](std::shared_ptr<const RsEvent> event) { handleEvent(event); },
+		            mEventHandlerIds.back(), mEventTypes[i] );
 	}
 
 	/* Invoke the Qt Designer generated object setup routine */
@@ -293,6 +294,9 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 
 	RsGxsCircleDetails details;
 
+    if(pe->mCircleId.isNull())	// probably an item for cache update
+        return ;
+
 	if(!rsGxsCircles->getCircleDetails(pe->mCircleId,details))
     {
         std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
@@ -490,7 +494,7 @@ void NewsFeed::addFeedItemIfUnique(FeedItem *item, bool replace)
 	}
 
 	addFeedItem(item);
-	sendNewsFeedChanged();
+	//sendNewsFeedChanged(); //Already done by addFeedItem()
 }
 
 void NewsFeed::remUniqueFeedItem(FeedItem *item)

@@ -103,6 +103,12 @@
 #ifdef RS_USE_WIKI
 #include "gui/WikiPoos/WikiDialog.h"
 #endif
+#ifdef RS_USE_WIRE
+#include "gui/TheWire/WireDialog.h"
+#endif
+#ifdef RS_USE_PHOTO
+#include "gui/PhotoShare/PhotoShare.h"
+#endif
 #include "gui/Posted/PostedDialog.h"
 #include "gui/statistics/StatisticsWindow.h"
 
@@ -135,10 +141,7 @@
 
 #define IMAGE_BWGRAPH           ":/icons/png/bandwidth.png"
 #define IMAGE_MESSENGER         ":/images/rsmessenger48.png"
-#define IMAGE_BLOCK         	":/images/blockdevice.png"
 #define IMAGE_COLOR         	":/images/highlight.png"
-#define IMAGE_GAMES             ":/images/kgames.png"
-#define IMAGE_PHOTO             ":/images/lphoto.png"
 #define IMAGE_NEWRSCOLLECTION   ":/images/library.png"
 #define IMAGE_ADDSHARE          ":/images/directoryadd_24x24_shadow.png"
 #define IMAGE_OPTIONS           ":/images/settings.png"
@@ -147,7 +150,6 @@
 #define IMAGE_MAXIMIZE          ":/images/window_fullscreen.png"
 
 #define IMAGE_PLUGINS           ":/images/extension_32.png"
-#define IMAGE_BLOGS             ":/images/kblogger.png"
 
 /*static*/ bool MainWindow::hiddenmode = false;
 
@@ -417,11 +419,21 @@ void MainWindow::initStackedPage()
   PeopleDialog *peopleDialog = NULL;
   addPage(peopleDialog = new PeopleDialog(ui->stackPages), grp, &notify);
   #endif
-  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 #ifdef RS_USE_WIKI
   WikiDialog *wikiDialog = NULL;
   addPage(wikiDialog = new WikiDialog(ui->stackPages), grp, &notify);
 #endif
+
+#ifdef RS_USE_WIRE
+  WireDialog *wireDialog = NULL;
+  addPage(wireDialog = new WireDialog(ui->stackPages), grp, &notify);
+#endif
+
+#ifdef RS_USE_PHOTO
+  PhotoShare *photoDialog = NULL;
+  addPage(photoDialog = new PhotoShare(ui->stackPages), grp, &notify);
+#endif
+
 
  std::cerr << "Looking for interfaces in existing plugins:" << std::endl;
  for(int i = 0;i<rsPlugins->nbPlugins();++i)
@@ -465,6 +477,9 @@ void MainWindow::initStackedPage()
       addPage(getStartedPage = new GetStartedDialog(ui->stackPages), grp, NULL);
   }
 #endif
+
+
+  addPage(newsFeed = new NewsFeed(ui->stackPages), grp, &notify);
 
   //List All notify before Setting was created
   QList<QPair<MainPage*, QPair<QAction*, QListWidgetItem*> > >::iterator notifyIt;

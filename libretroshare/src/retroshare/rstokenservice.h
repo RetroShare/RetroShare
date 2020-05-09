@@ -80,7 +80,7 @@ struct RsTokReqOptions
 {
 	RsTokReqOptions() : mOptions(0), mStatusFilter(0), mStatusMask(0),
 	    mMsgFlagMask(0), mMsgFlagFilter(0), mReqType(0), mSubscribeFilter(0),
-	    mSubscribeMask(0), mBefore(0), mAfter(0) {}
+	    mSubscribeMask(0), mBefore(0), mAfter(0),mPriority(GxsRequestPriority::NORMAL) {}
 
 	/**
 	 * Can be one or multiple RS_TOKREQOPT_*
@@ -107,6 +107,8 @@ struct RsTokReqOptions
 	// Time range... again applied after Options.
 	rstime_t   mBefore;
 	rstime_t   mAfter;
+
+    GxsRequestPriority mPriority;
 };
 
 /*!
@@ -181,6 +183,25 @@ public:
      */
     virtual bool requestMsgRelatedInfo(uint32_t &token, uint32_t ansType, const RsTokReqOptions &opts, const std::vector<RsGxsGrpMsgIdPair>& msgIds) = 0;
 
+    /*!
+     * This request statistics on amount of data held
+     * number of groups
+     * number of groups subscribed
+     * number of messages
+     * size of db store
+     * total size of messages
+     * total size of groups
+     * @param token
+     */
+    virtual void requestServiceStatistic(uint32_t& token, const RsTokReqOptions &opts) = 0;
+
+	/*!
+	 * To request statistic on a group
+	 * @param token set to value to be redeemed to get statistic
+	 * @param grpId the id of the group
+	 */
+    virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId, const RsTokReqOptions &opts) = 0;
+
 
     /* Poll */
 
@@ -194,25 +215,6 @@ public:
      */
 	virtual GxsRequestStatus requestStatus(const uint32_t token) = 0;
 
-    /*!
-     * This request statistics on amount of data held
-     * number of groups
-     * number of groups subscribed
-     * number of messages
-     * size of db store
-     * total size of messages
-     * total size of groups
-     * @param token
-     */
-    virtual void requestServiceStatistic(uint32_t& token) = 0;
-
-	/*!
-	 * To request statistic on a group
-	 * @param token set to value to be redeemed to get statistic
-	 * @param grpId the id of the group
-	 */
-    virtual void requestGroupStatistic(uint32_t& token, const RsGxsGroupId& grpId) = 0;
-
 	/*!
 	 * @brief Cancel Request
 	 * If this function returns false, it may be that the request has completed
@@ -222,6 +224,7 @@ public:
 	 */
 	virtual bool cancelRequest(const uint32_t &token) = 0;
 
+#ifdef TO_REMOVE
 	/**
 	 * Block caller while request is being processed.
 	 * Useful for blocking API implementation.
@@ -231,8 +234,9 @@ public:
 	 */
 	RsTokenService::GxsRequestStatus waitToken(
 	        uint32_t token,
-	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(500),
-	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(2))
+	        std::chrono::milliseconds maxWait = std::chrono::milliseconds(10000),
+	        std::chrono::milliseconds checkEvery = std::chrono::milliseconds(20),
+            bool auto_delete_if_unsuccessful=true)
 	{
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		auto wkStartime = std::chrono::steady_clock::now();
@@ -241,12 +245,13 @@ LLwaitTokenBeginLabel:
 #endif
 		auto timeout = std::chrono::steady_clock::now() + maxWait;
 		auto st = requestStatus(token);
-		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE)
-		       && std::chrono::steady_clock::now() < timeout )
+		while( !(st == RsTokenService::FAILED || st >= RsTokenService::COMPLETE) && std::chrono::steady_clock::now() < timeout )
 		{
 			std::this_thread::sleep_for(checkEvery);
 			st = requestStatus(token);
 		}
+        if(st != RsTokenService::COMPLETE && auto_delete_if_unsuccessful)
+            cancelRequest(token);
 
 #if defined(__ANDROID__) && (__ANDROID_API__ < 24)
 		/* Work around for very slow/old android devices, we don't expect this
@@ -274,6 +279,7 @@ LLwaitTokenBeginLabel:
 
 		return st;
 	}
+#endif
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(2)
 };

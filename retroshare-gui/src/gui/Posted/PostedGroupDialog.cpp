@@ -56,13 +56,13 @@ uint32_t PostedCreateDefaultsFlags = ( GXS_GROUP_DEFAULTS_DISTRIB_PUBLIC    |
 uint32_t PostedEditEnabledFlags = PostedCreateEnabledFlags;
 uint32_t PostedEditDefaultsFlags = PostedCreateDefaultsFlags;
 
-PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenQueue, QWidget *parent)
-    : GxsGroupDialog(tokenQueue, PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
+PostedGroupDialog::PostedGroupDialog(QWidget *parent)
+    : GxsGroupDialog(PostedCreateEnabledFlags, PostedCreateDefaultsFlags, parent)
 {
 }
 
-PostedGroupDialog::PostedGroupDialog(TokenQueue *tokenExternalQueue, RsTokenService *tokenService, Mode mode, RsGxsGroupId groupId, QWidget *parent)
-    : GxsGroupDialog(tokenExternalQueue, tokenService, mode, groupId, PostedEditEnabledFlags, PostedEditDefaultsFlags, parent)
+PostedGroupDialog::PostedGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent)
+    : GxsGroupDialog(mode, groupId, PostedEditEnabledFlags, PostedEditDefaultsFlags, parent)
 {
 }
 
@@ -71,20 +71,20 @@ void PostedGroupDialog::initUi()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Create New Board"));
 		setUiText(UITYPE_BUTTONBOX_OK, tr("Create"));
 		break;
 	case MODE_SHOW:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Posted Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Board"));
 		break;
 	case MODE_EDIT:
-		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Topic"));
-		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Topic"));
+		setUiText(UITYPE_SERVICE_HEADER, tr("Edit Board"));
+		setUiText(UITYPE_BUTTONBOX_OK, tr("Update Board"));
 		break;
 	}
 
-	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Topic Admins"));
-	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Topic Admins"));
+	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Board Admins"));
+	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Board Admins"));
 }
 
 QPixmap PostedGroupDialog::serviceImage()
@@ -112,18 +112,19 @@ void PostedGroupDialog::preparePostedGroup(RsPostedGroup &group, const RsGroupMe
 	}
 }
 
-bool PostedGroupDialog::service_CreateGroup(uint32_t &token, const RsGroupMetaData &meta)
+bool PostedGroupDialog::service_createGroup(RsGroupMetaData& meta)
 {
 	// Specific Function.
 	RsPostedGroup grp;
 	preparePostedGroup(grp, meta);
 
-	rsPosted->createGroup(token, grp);
+	if(rsPosted->createBoard(grp))
+        meta = grp.mMeta;
 
 	return true;
 }
 
-bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &editedMeta)
+bool PostedGroupDialog::service_updateGroup(const RsGroupMetaData& editedMeta)
 {
 	RsPostedGroup grp;
 	preparePostedGroup(grp, editedMeta);
@@ -131,45 +132,48 @@ bool PostedGroupDialog::service_EditGroup(uint32_t &token, RsGroupMetaData &edit
 	std::cerr << "PostedGroupDialog::service_EditGroup() submitting changes";
 	std::cerr << std::endl;
 
-	rsPosted->updateGroup(token, grp);
-	return true;
+	return rsPosted->editBoard(grp);
 }
 
-bool PostedGroupDialog::service_loadGroup(uint32_t token, Mode /*mode*/, RsGroupMetaData& groupMetaData, QString &description)
+bool PostedGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString& description)
 {
-	std::cerr << "PostedGroupDialog::service_loadGroup(" << token << ")";
-	std::cerr << std::endl;
+	const RsPostedGroup *pgroup = dynamic_cast<const RsPostedGroup*>(data);
 
-	std::vector<RsPostedGroup> groups;
-	if (!rsPosted->getGroupData(token, groups))
+	if(pgroup == nullptr)
 	{
-		std::cerr << "PostedGroupDialog::service_loadGroup() Error getting GroupData";
-		std::cerr << std::endl;
-		return false;
-	}
-
-	if (groups.size() != 1)
-	{
-		std::cerr << "PostedGroupDialog::service_loadGroup() Error Group.size() != 1";
-		std::cerr << std::endl;
+		std::cerr << "PostedGroupDialog::service_loadGroup() Error not a RsPostedGroup" << std::endl;
 		return false;
 	}
 
 	std::cerr << "PostedGroupDialog::service_loadGroup() Unfinished Loading";
 	std::cerr << std::endl;
 
-	const RsPostedGroup &group = groups[0];
-	groupMetaData = group.mMeta;
+	const RsPostedGroup& group = *pgroup;
 	description = QString::fromUtf8(group.mDescription.c_str());
 	
-	if (group.mGroupImage.mData) {
+	if (group.mGroupImage.mData)
+    {
 		QPixmap pixmap;
 		if (GxsIdDetails::loadPixmapFromData(group.mGroupImage.mData, group.mGroupImage.mSize, pixmap,GxsIdDetails::ORIGINAL))
 			setLogo(pixmap);
 
-	} else {
-			setLogo(QPixmap(":/icons/png/posted.png"));
 	}
+    else
+		setLogo(QPixmap(":/icons/png/posted.png"));
 
 	return true;
+}
+
+bool PostedGroupDialog::service_getGroupData(const RsGxsGroupId& grpId,RsGxsGenericGroupData *& data)
+{
+	std::vector<RsPostedGroup> boardsInfo ;
+
+    if( rsPosted->getBoardsInfo(std::list<RsGxsGroupId>({grpId}),boardsInfo) && boardsInfo.size() == 1)
+    {
+        data = new RsPostedGroup(boardsInfo[0]);
+        return true;
+    }
+    else
+        return false;
+
 }

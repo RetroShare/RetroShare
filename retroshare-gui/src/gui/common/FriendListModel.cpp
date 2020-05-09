@@ -27,6 +27,7 @@
 #include <QIcon>
 
 #include "gui/common/StatusDefs.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/common/AvatarDefs.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
@@ -815,13 +816,13 @@ QVariant RsFriendListModel::decorationRole(const EntryIndex& entry,int col) cons
 
     switch(entry.type)
     {
-    case ENTRY_TYPE_GROUP: return QVariant(QIcon(IMAGE_GROUP24));
+    case ENTRY_TYPE_GROUP: return QVariant(FilesDefs::getIconFromQtResourcePath(IMAGE_GROUP24));
 
     case ENTRY_TYPE_PROFILE:
     {
         if(!isProfileExpanded(entry))
 		{
-			QPixmap sslAvatar(AVATAR_DEFAULT_IMAGE);
+			QPixmap sslAvatar = FilesDefs::getPixmapFromQtResourcePath(AVATAR_DEFAULT_IMAGE);
 
         	const HierarchicalProfileInformation *hn = getProfileInfo(entry);
 

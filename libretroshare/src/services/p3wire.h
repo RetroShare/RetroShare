@@ -3,7 +3,7 @@
  *                                                                             *
  * libretroshare: retroshare core library                                      *
  *                                                                             *
- * Copyright 2012-2012 by Robert Fernie <retroshare@lunamutt.com>              *
+ * Copyright 2012-2020 by Robert Fernie <retroshare@lunamutt.com>              *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -34,37 +34,38 @@
  *
  */
 
-
 class p3Wire: public RsGenExchange, public RsWire
 {
 public:
-    p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
-virtual RsServiceInfo getServiceInfo();
-static uint32_t wireAuthenPolicy();
+	p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs);
+	virtual RsServiceInfo getServiceInfo();
+	static uint32_t wireAuthenPolicy();
 
 protected:
-
-virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
+	virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) ;
 
 public:
+	virtual void service_tick();
 
-virtual void service_tick();
+	virtual RsTokenService* getTokenService();
 
-        /* Specific Service Data */
-virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups);
-virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses);
+	/* Specific Service Data */
+	virtual bool getGroupData(const uint32_t &token, std::vector<RsWireGroup> &groups) override;
+	virtual bool getPulseData(const uint32_t &token, std::vector<RsWirePulse> &pulses) override;
 
-virtual bool createGroup(uint32_t &token, RsWireGroup &group);
-virtual bool createPulse(uint32_t &token, RsWirePulse &pulse);
+	virtual bool createGroup(uint32_t &token, RsWireGroup &group) override;
+	virtual bool createPulse(uint32_t &token, RsWirePulse &pulse) override;
 
-	private:
+	// Blocking Interfaces.
+	virtual bool createGroup(RsWireGroup &group) override;
+	virtual bool updateGroup(const RsWireGroup &group) override;
+	virtual bool getGroups(const std::list<RsGxsGroupId> grpIds, std::vector<RsWireGroup> &groups) override;
 
-virtual void generateDummyData();
-std::string genRandomId();
+private:
+	virtual void generateDummyData();
+	std::string genRandomId();
 
 	RsMutex mWireMtx;
-
-
 };
 
 #endif 

@@ -25,7 +25,6 @@
 #include <QDialog>
 
 #include <gui/gxs/RsGxsUpdateBroadcastPage.h>
-#include "util/TokenQueue.h"
 
 namespace Ui {
 class FriendSelectionWidget;
@@ -34,7 +33,7 @@ class FriendSelectionWidget;
 class QTreeWidgetItem;
 class RSTreeWidgetItemCompareRole;
 
-class FriendSelectionWidget : public RsGxsUpdateBroadcastPage, public TokenResponse
+class FriendSelectionWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -82,6 +81,7 @@ public:
 	bool isSortByState();
 	bool isFilterConnected();
 
+	void loadIdentities();
 	int selectedItemCount();
     std::string selectedId(IdType &idType);
 
@@ -115,9 +115,9 @@ public:
 	void addContextMenuAction(QAction *action);
 
 protected:
+	void showEvent(QShowEvent *e) override;
 	void changeEvent(QEvent *e);
 
-	virtual void loadRequest(const TokenQueue *queue,const TokenRequest& req);
 	virtual void updateDisplay(bool complete);
 
 signals:
@@ -148,8 +148,6 @@ private:
     void selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected);
     void setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add);
 
-	void requestGXSIdList() ;
-
 private:
 	bool mStarted;
 	RSTreeWidgetItemCompareRole *mCompareRole;
@@ -170,7 +168,6 @@ private:
 	friend class FriendSelectionDialog ;
 
 	std::vector<RsGxsGroupId> gxsIds ;
-	TokenQueue *mIdQueue ;
 	QList<QAction*> mContextMenuActions;
 
     std::set<RsGxsId> mPreSelectedGxsIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.

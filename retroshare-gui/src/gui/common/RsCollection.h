@@ -62,11 +62,11 @@ public:
 	RsCollection(QObject *parent = 0) ;
 	// create from list of files and directories
 	RsCollection(const std::vector<DirDetails>& file_entries, FileSearchFlags flags, QObject *parent = 0) ;
-	RsCollection(const FileTree& fr);
+	RsCollection(const RsFileTree& fr);
 	virtual ~RsCollection() ;
 
 	void merge_in(const QString& fname,uint64_t size,const RsFileHash& hash) ;
-	void merge_in(const FileTree& tree) ;
+	void merge_in(const RsFileTree& tree) ;
 
 	static const QString ExtensionString ;
 
@@ -99,7 +99,9 @@ private:
 
 	void recursAddElements(QDomDocument&, const DirDetails&, QDomElement&, FileSearchFlags flags) const ;
 	void recursAddElements(QDomDocument&,const ColFileInfo&,QDomElement&) const;
-	void recursAddElements(QDomDocument& doc,const FileTree& ft,uint32_t index,QDomElement& e) const;
+	void recursAddElements(
+	        QDomDocument& doc, const RsFileTree& ft, uint32_t index,
+	        QDomElement& e ) const;
 
 	void recursCollectColFileInfos(const QDomElement&,std::vector<ColFileInfo>& colFileInfos,const QString& current_dir,bool bad_chars_in_parent) const ;
 	// check that the file is a valid rscollection file, and not a lol bomb or some shit like this

@@ -32,7 +32,7 @@ StyleDialog::StyleDialog(RSStyle &style, QWidget *parent)
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/library.png"));
+	ui.headerFrame->setHeaderImage(QPixmap(":/icons/collections.png"));
 	ui.headerFrame->setHeaderText(tr("Define Style"));
 
 	/* Load window postion */
