@@ -21,8 +21,6 @@
 #ifndef GROUPTREEWIDGET_H
 #define GROUPTREEWIDGET_H
 
-#include <QWidget>
-#include <QIcon>
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -109,7 +107,8 @@ public:
 
 	void setTextColorCategory(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_CATEGORY] = color; }
 	void setTextColorPrivateKey(QColor color) { mTextColor[GROUPTREEWIDGET_COLOR_PRIVATEKEY] = color; }
-        bool getGroupName(QString id, QString& name);
+
+	bool getGroupName(QString id, QString& name);
 
 	int subscribeFlags(const QString &id);
 
