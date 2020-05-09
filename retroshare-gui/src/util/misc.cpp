@@ -28,6 +28,7 @@
 #include <QFontDialog>
 
 #include "misc.h"
+#include "util/rsdebug.h"
 
 // return best userfriendly storage unit (B, KiB, MiB, GiB, TiB)
 // use Binary prefix standards from IEC 60027-2
@@ -435,12 +436,17 @@ void misc::clearLayout(QLayout * layout) {
 
 	while (auto item = layout->takeAt(0))
 	{
-		if (auto *widget = item->widget())
+		//First get all pointers, else item may be deleted when last object removed and get SIGSEGV
+		auto *widget = item->widget();
+		auto *spacer = item->spacerItem();
+		//Then Clear Layout
+		clearLayout(item->layout());
+		//Last clear objects
+		if (widget)
 			widget->deleteLater();
-		if (auto *spacer = item->spacerItem())
+		if (spacer)
 			delete spacer;
 
-		clearLayout(item->layout());
-		delete item;
+		//delete item;//Auto deleted by Qt.
 	}
 }

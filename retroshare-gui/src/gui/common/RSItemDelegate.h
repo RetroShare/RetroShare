@@ -22,14 +22,32 @@
 #define _RSITEMDELEGATE_H
 
 #include <QItemDelegate>
+#include <QStyledItemDelegate>
 
 class RSItemDelegate : public QItemDelegate
 {
 public:
-    RSItemDelegate(QObject *parent = 0);
+    RSItemDelegate(QObject *parent = nullptr);
 
-    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+
+    void removeFocusRect(int column);
+    void setSpacing(const QSize &spacing);
+    QSize spacing() const { return m_spacing; }
+private:
+    QList<int> m_noFocusRect;
+    QSize m_spacing;
+};
+
+
+class RSStyledItemDelegate : public QStyledItemDelegate
+{
+public:
+    RSStyledItemDelegate(QObject *parent = nullptr);
+
+    void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    QSize sizeHint (const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     void removeFocusRect(int column);
     void setSpacing(const QSize &spacing);

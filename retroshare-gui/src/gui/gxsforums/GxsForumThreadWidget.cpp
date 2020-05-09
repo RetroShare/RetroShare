@@ -292,9 +292,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mLastViewType = -1;
 
-	// load settings
-	processSettings(true);
-
     float f = QFontMetricsF(font()).height()/14.0f ;
 
 	/* Set header resize modes and initial section sizes */
@@ -328,15 +325,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	//ui->threadTreeWidget->installEventFilter(this) ;
 
-	ui->postText->clear() ;
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
-	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+	// load settings
+	processSettings(true);
+
+	blankPost();
 
 	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
 	                                        available posts from your subscribed friends, and make the \
@@ -376,29 +368,17 @@ void GxsForumThreadWidget::handleEvent_main_thread(std::shared_ptr<const RsEvent
 
 void GxsForumThreadWidget::blank()
 {
-	ui->progressBar->hide();
-	ui->progressText->hide();
-	ui->postText->clear() ;
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
-	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
-#ifdef SUSPENDED_CODE
-    ui->threadTreeWidget->clear();
-#endif
+	ui->subscribeToolButton->hide();
+	ui->newthreadButton->hide();
 	ui->forumName->setText("");
+	ui->progressText->hide();
+	ui->progressBar->hide();
+	ui->viewBox->setEnabled(false);
+	ui->filterLineEdit->setEnabled(false);
 
-    //mThreadModel->clear();
+	mThreadModel->clear();
 
-    mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
-	mStateHelper->setWidgetEnabled(ui->previousButton, false);
-	mStateHelper->setWidgetEnabled(ui->nextButton, false);
-
-	ui->versions_CB->hide();
+	blankPost();
 }
 
 GxsForumThreadWidget::~GxsForumThreadWidget()
@@ -883,16 +863,38 @@ void GxsForumThreadWidget::clearForumDescription()
     ui->postText->clear();
 }
 
+void GxsForumThreadWidget::blankPost()
+{
+	ui->newmessageButton->setEnabled(false);
+	ui->previousButton->setEnabled(false);
+	ui->nextButton->setEnabled(false);
+	ui->nextUnreadButton->setEnabled(false);
+	ui->downloadButton->setEnabled(false);
+	ui->lineLeft->hide();
+	ui->time_label->clear();
+	ui->versions_CB->hide();
+	ui->lineRight->hide();
+	ui->by_text_label->hide();
+	ui->by_label->setId(RsGxsId()) ;
+	ui->by_label->hide();
+	ui->expandButton->hide();
+
+	ui->postText->clear() ;
+	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
+	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+
+}
+
 void GxsForumThreadWidget::updateForumDescription(bool success)
 {
-    if(!success)
-    {
+	if(!success)
+	{
+		blank();
 		QString forum_description = QString("<b>ERROR:</b> Forum could not be loaded. Database might be in heavy use. Please try later.");
 		ui->postText->setText(forum_description);
 		mStateHelper->setWidgetEnabled(ui->newthreadButton, false);
-
-        return;
-    }
+		return;
+	}
 
     std::cerr << "Updating forum description" << std::endl;
     if (!mThreadId.isNull())
@@ -906,7 +908,10 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
 
     const RsGxsForumGroup& group = mForumGroup;
 
-    ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->newthreadButton->show();
+	ui->forumName->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+	ui->viewBox->setEnabled(true);
+	ui->filterLineEdit->setEnabled(true);
 
     QString anti_spam_features1 ;
     QString forum_description;
@@ -1019,6 +1024,9 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
+	/* blank text, incase we get nothing */
+	blankPost();
+
     // We use this instead of getCurrentIndex() because right here the currentIndex() is not set yet.
 
 	QModelIndex index = mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(mOrigThreadId));
@@ -1043,18 +1051,7 @@ void GxsForumThreadWidget::insertMessage()
 		return;
 	}
 
-	mStateHelper->setWidgetEnabled(ui->newmessageButton, (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags) && mThreadId.isNull() == false));
-
-	/* blank text, incase we get nothing */
-	ui->postText->clear();
-	ui->by_label->setId(RsGxsId()) ;
-	ui->time_label->clear();
-	ui->lineRight->hide();
-	ui->lineLeft->hide();
-	ui->by_text_label->hide();
-	ui->by_label->hide();
-	ui->postText->setImageBlockWidget(ui->imageBlockWidget) ;
-	ui->postText->resetImagesStatus(Settings->getForumLoadEmbeddedImages());
+	ui->newmessageButton->setEnabled(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags) && mThreadId.isNull() == false);
 
     // add/show combobox for versions, if applicable, and enable it. If no older versions of the post available, hide the combobox.
 
@@ -1145,11 +1142,12 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	bool redacted =
 	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
     
-	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
-	ui->by_label->setId(msg.mMeta.mAuthorId);
-	ui->lineRight->show();
+	ui->nextUnreadButton->setEnabled(true);
 	ui->lineLeft->show();
+	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
+	ui->lineRight->show();
 	ui->by_text_label->show();
+	ui->by_label->setId(msg.mMeta.mAuthorId);
 	ui->by_label->show();
 	ui->threadTreeWidget->setFocus();
 
@@ -1171,6 +1169,10 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()),flags);
 		ui->postText->setHtml(extraTxt);
 	}
+
+	QStringList urls;
+	RsHtml::findAnchors(ui->postText->toHtml(), urls);
+	ui->downloadButton->setEnabled(urls.count() > 0);
 }
 
 void GxsForumThreadWidget::previousMessage()
@@ -1675,6 +1677,9 @@ void GxsForumThreadWidget::filterItems(const QString& text)
 
 void GxsForumThreadWidget::postForumLoading()
 {
+	if(groupId().isNull())
+		return;
+
 #ifdef DEBUG_FORUMS
 	std::cerr << "Post forum loading..." << std::endl;
 #endif
@@ -1719,12 +1724,15 @@ void GxsForumThreadWidget::postForumLoading()
 		// we also need to restore expanded threads
 	}
 
+	ui->newthreadButton->show();
 	ui->forumName->setText(QString::fromUtf8(mForumGroup.mMeta.mGroupName.c_str()));
 	ui->threadTreeWidget->sortByColumn(RsGxsForumModel::COLUMN_THREAD_DATE, Qt::DescendingOrder);
-    ui->threadTreeWidget->update();
+	ui->threadTreeWidget->update();
+	ui->viewBox->setEnabled(true);
+	ui->filterLineEdit->setEnabled(true);
 
-    recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
-    //mUpdating = false;
+	recursRestoreExpandedItems(mThreadProxyModel->mapFromSource(mThreadModel->root()),mSavedExpandedMessages);
+	//mUpdating = false;
 }
 
 void GxsForumThreadWidget::updateGroupData()

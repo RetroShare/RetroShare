@@ -162,7 +162,7 @@
               <string>Reply Message</string>
              </property>
              <property name="icon">
-              <iconset resource="../images.qrc">
+              <iconset>
                <normaloff>:/images/mail_reply.png</normaloff>:/images/mail_reply.png</iconset>
              </property>
             </widget>
@@ -196,7 +196,7 @@
              </property>
              <property name="icon">
               <iconset resource="../icons.qrc">
-               <normaloff>:/icons/png/cancel.png</normaloff>:/icons/png/cancel.png</iconset>
+               <normaloff>:/icons/mail/delete.png</normaloff>:/icons/mail/delete.png</iconset>
              </property>
             </widget>
            </item>

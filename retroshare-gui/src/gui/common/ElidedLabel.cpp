@@ -85,25 +85,32 @@ void ElidedLabel::paintEvent(QPaintEvent *event)
 		td.setHtml(mContent);
 		plainText = td.toPlainText();
 	}
-    QRect cr(contentsRect());
+	QRect cr(contentsRect());
 	cr.adjust(margin(), margin(), -margin(), -margin());
 
-    bool didElide = paintElidedLine(painter,plainText,cr,alignment(),wordWrap(),true,mRectElision);
+	bool didElide = paintElidedLine(&painter,plainText,cr,font(),alignment(),wordWrap(),true,&mRectElision);
 
 	//Send signal if changed
 
 	if (didElide != mElided)
-    {
+	{
 		mElided = didElide;
 		emit elisionChanged(didElide);
 	}
 }
 
-bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRect& cr,Qt::Alignment alignment,bool wordWrap,bool drawRoundRect,QRect& rectElision)
+bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
+                                 , const QRect& cr, QFont useFont
+                                 , Qt::Alignment alignment, bool wordWrap
+                                 , bool drawRoundedRect, QRect* rectElision/*=nullptr*/)
 {
+	if (rectElision) *rectElision = QRect();
+	if (plainText.isEmpty())
+		return false;
+
 	QList<QPair<QTextLine,QPoint> > lLines;
 	QString elidedLastLine = "";
-	QFontMetrics fontMetrics = painter.fontMetrics();
+	QFontMetrics fontMetrics = QFontMetrics(useFont);
 
 	bool didElide = false;
 	QChar ellipsisChar(0x2026);//= "…"
@@ -113,12 +120,13 @@ bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRec
 	plainText = plainText.replace("\n",QChar(QChar::LineSeparator));
 	plainText = plainText.replace("\r",QChar(QChar::LineSeparator));
 
-	QTextLayout textLayout(plainText, painter.font());
+	QTextLayout textLayout(plainText, useFont);
 	QTextOption to = textLayout.textOption();
 	to.setAlignment(alignment);
 	to.setWrapMode(wordWrap ? QTextOption::WrapAtWordBoundaryOrAnywhere : QTextOption::NoWrap);
 	textLayout.setTextOption(to);
 
+	if (painter) painter->save();
 	textLayout.beginLayout();
 	forever {
 		//Get new line for text.
@@ -138,7 +146,13 @@ bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRec
 			//The next line can't be written.
 			QString lastLine = plainText.mid(line.textStart()).split(QChar(QChar::LineSeparator)).at(0);
 			QTextLine lineEnd = textLayout.createLine();
-			if (!lineEnd.isValid() && (wordWrap || (fontMetrics.width(lastLine) < cr.width()))) {
+			if (!lineEnd.isValid() && (wordWrap
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+		                               || (fontMetrics.width(lastLine) < cr.width()) ))
+#else
+			                           || (fontMetrics.horizontalAdvance(lastLine) < cr.width()) ))
+#endif
+			{
 				//No more text for next line so this one is OK
 				lLines.append(QPair<QTextLine, QPoint>(line, QPoint(0, y)));
 				elidedLastLine="";
@@ -176,13 +190,17 @@ bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRec
 	//Now we know how many lines to redraw at good position
 	foreach (pair, lLines){
 		lastPos = pair.second + QPoint(0+ cr.left(), iTransY + cr.top());
-		pair.first.draw(&painter, lastPos);
+		if (painter) pair.first.draw(painter, lastPos);
 	}
 
 	//Print last elided line
 	if (didElide)
-    {
+	{
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
 		int width = fontMetrics.width(elidedLastLine);
+#else
+		int width = fontMetrics.horizontalAdvance(elidedLastLine);
+#endif
 		if (lastPos.y() == -1){
 			y = iTransY;// Only one line
 		} else {
@@ -200,26 +218,32 @@ bool ElidedLabel::paintElidedLine(QPainter& painter,QString plainText,const QRec
 				iTransX = 0;
 		}
 
-        if(width+iTransX+cr.left() <= cr.right())
-			painter.drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
+		if(width+iTransX+cr.left() <= cr.right())
+			if (painter)
+			{
+				painter->setFont(useFont);
+				painter->drawText(QPoint(iTransX + cr.left(), y + fontMetrics.ascent() + cr.top()), elidedLastLine);
+			}
+
 		//Draw button to get ToolTip
+#if QT_VERSION < QT_VERSION_CHECK(5,11,0)
+		int fontWidth = fontMetrics.width(ellipsisChar);
+#else
+		int fontWidth = fontMetrics.horizontalAdvance(ellipsisChar);
+#endif
+		QRect mRectElision = QRect(  iTransX + width - fontWidth + cr.left()
+		                           , y + cr.top()
+		                           , fontWidth
+		                           , fontMetrics.height() - 1);
+		if (rectElision)
+			*rectElision = mRectElision;
 
-        if(drawRoundRect)
-		{
-			rectElision = QRect(iTransX + width - fontMetrics.width(ellipsisChar) + cr.left()
-			                    , y + cr.top()
-			                    , fontMetrics.width(ellipsisChar)
-			                    , fontMetrics.height() - 1);
-			painter.drawRoundRect(rectElision);
-		}
-        else
-			rectElision = QRect();
+		if(drawRoundedRect)
+			if (painter) painter->drawRoundedRect(mRectElision, 2 , 2);
 	}
-    else
-		rectElision = QRect();
 
-    return didElide;
-
+	if (painter) painter->restore();
+	return didElide;
 }
 
 void ElidedLabel::mousePressEvent(QMouseEvent *ev)
