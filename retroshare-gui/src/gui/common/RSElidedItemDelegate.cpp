@@ -23,7 +23,6 @@
 #include "gui/common/StyledElidedLabel.h"
 #include "util/rsdebug.h"
 
-#include <QAbstractItemView>
 #include <QApplication>
 #include <QPainter>
 #include <QTextDocument>
@@ -33,9 +32,7 @@
 RSElidedItemDelegate::RSElidedItemDelegate(QObject *parent)
   : RSStyledItemDelegate(parent)
   , mOnlyPlainText(false), mPaintRoundedRect(true)
-  , mWaitingSVG(":/icons/svg/waiting.svg"), mWaitingSVG_Over(true)
 {
-	mSVG_Renderer = new QSvgRenderer(this);
 }
 
 QSize RSElidedItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -127,35 +124,13 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	}
 	// draw the icon
 	{
-		if (!ownOption.icon.isNull())
-		{
-			QString status;
-			if (index.data(Qt::StatusTipRole).canConvert(QMetaType::QString))
-				status = index.data(Qt::StatusTipRole).toString();
-
-			if (mWaitingSVG_Over || (status.toLower() != "waiting"))
-			{
-				QIcon::Mode mode = QIcon::Normal;
-				if (!(ownOption.state & QStyle::State_Enabled))
-					mode = QIcon::Disabled;
-				else if (ownOption.state & QStyle::State_Selected)
-					mode = QIcon::Selected;
-				QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
-				ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
-			}
-			if (status.toLower() == "waiting")
-			{
-				if (mLastSVG_Loaded != mWaitingSVG)
-					mSVG_Renderer->load(mWaitingSVG);
-				mLastSVG_Loaded = mWaitingSVG;
-
-				const QAbstractItemView* aiv = dynamic_cast<const QAbstractItemView*>(option.widget);
-				if (aiv)
-					connect(mSVG_Renderer, SIGNAL(repaintNeeded()), aiv->viewport(),SLOT(update()));
-
-				mSVG_Renderer->render(painter, iconRect);
-			}
-		}
+		QIcon::Mode mode = QIcon::Normal;
+		if (!(ownOption.state & QStyle::State_Enabled))
+			mode = QIcon::Disabled;
+		else if (ownOption.state & QStyle::State_Selected)
+			mode = QIcon::Selected;
+		QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+		ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
 	}
 	// draw the text
 	if (!ownOption.text.isEmpty()) {
@@ -166,7 +141,6 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		if (ownOption.state & QStyle::State_Selected) {
 			painter->setPen(ownOption.palette.color(cg, QPalette::HighlightedText));
 		} else {
-#if QT_VERSION >= QT_VERSION_CHECK(5,6,0)
 			if (ownOption.state & QStyle::State_MouseOver) {
 				//TODO: Manage to get palette with HOVER css pseudoclass
 				// For now this is hidden by Qt: https://code.woboq.org/qt5/qtbase/src/widgets/styles/qstylesheetstyle.cpp.html#6103
@@ -253,7 +227,6 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				painter->setPen(moColor);
 			}
 			else
-#endif
 				if (textColor.spec()==QColor::Invalid) {
 					painter->setPen(ownOption.palette.color(cg, QPalette::Text));
 				} else { //Only get color from index for unselected(as Qt does)

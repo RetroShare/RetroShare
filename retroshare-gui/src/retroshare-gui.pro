@@ -19,7 +19,7 @@
 !include("../../retroshare.pri"): error("Could not include file ../../retroshare.pri")
 
 TEMPLATE = app
-QT     += network xml svg
+QT     += network xml 
 CONFIG += qt gui uic qrc resources idle 
 CONFIG += console
 TARGET = retroshare
