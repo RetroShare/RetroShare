@@ -538,12 +538,13 @@ void	p3GxsCircles::service_tick()
 		mLastCacheMembershipUpdateTS = now ;
 	}
 
+#ifdef DEBUG_CIRCLES
     if(now > mLastDebugPrintTS)
     {
         mLastDebugPrintTS = now;
         debug_dumpCache();
     }
-	return;
+#endif
 }
 
 //====================================================================================//
