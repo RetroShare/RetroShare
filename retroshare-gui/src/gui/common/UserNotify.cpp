@@ -167,9 +167,17 @@ void UserNotify::update()
 	if (mMainAction) {
 		mMainAction->setIcon(getMainIcon(count > 0));
 
+		if(count > 0)
+        {
+            if(!mButtonText2.isNull())
+                mMainAction->setToolTip(QString("%1 (%2 %3)").arg(mButtonText).arg(count).arg(mButtonText2));
+            else
+                mMainAction->setToolTip(QString("%1 (%2)").arg(mButtonText).arg(count));
 
-		mMainAction->setText((count > 0) ? (!mButtonText2.isNull())?QString("%1 (%2)").arg(mButtonText).arg(count).arg(mButtonText2) : QString("%1 (%2 %3)").arg(mButtonText).arg(count) : mButtonText);
-		mMainAction->setToolTip((count > 0) ? (!mButtonText2.isNull())?QString("%1 %2").arg(count).arg(mButtonText2) : QString("%1").arg(count) : mButtonText);
+			mMainAction->setText(QString("%1 (%2)").arg(mButtonText).arg(count));
+        }
+        else
+			mMainAction->setText(mButtonText);
 
 		QFont font = mMainAction->font();
 		font.setBold(count > 0);
