@@ -30,7 +30,14 @@ class MimeTextEdit : public RSTextEdit
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QColor textColorQuoteGreen READ textColorQuoteGreen WRITE setTextColorQuoteLevel1)
+	Q_PROPERTY(QColor textColorQuoteBlue READ textColorQuoteBlue WRITE setTextColorQuoteLevel2)
+	Q_PROPERTY(QColor textColorQuoteRed READ textColorQuoteRed WRITE setTextColorQuoteLevel3)
+	Q_PROPERTY(QColor textColorQuoteMagenta READ textColorQuoteMagenta WRITE setTextColorQuoteLevel4)
+	Q_PROPERTY(QColor textColorQuoteTurquoise READ textColorQuoteTurquoise WRITE setTextColorQuoteLevel5)
+	Q_PROPERTY(QColor textColorQuotePurple READ textColorQuotePurple WRITE setTextColorQuoteLevel6)
+	Q_PROPERTY(QColor textColorQuoteMaroon READ textColorQuoteMaroon WRITE setTextColorQuoteLevel7)
+	Q_PROPERTY(QColor textColorQuoteOlive READ textColorQuoteOlive WRITE setTextColorQuoteLevel8)
 
 public:
 	MimeTextEdit(QWidget *parent = 0);
@@ -47,13 +54,29 @@ public:
 	// Add QAction to context menu (action won't be deleted)
 	void addContextMenuAction(QAction *action);
 
-	QColor textColorQuote() const { return highliter->textColorQuote();}
+	QColor textColorQuoteGreen() const { return highliter->textColorQuoteGreen();}
+	QColor textColorQuoteBlue() const { return highliter->textColorQuoteBlue();}
+	QColor textColorQuoteRed() const { return highliter->textColorQuoteRed();}
+	QColor textColorQuoteMagenta() const { return highliter->textColorQuoteMagenta();}
+	QColor textColorQuoteTurquoise() const { return highliter->textColorQuoteTurquoise();}
+	QColor textColorQuotePurple() const { return highliter->textColorQuotePurple(); }
+	QColor textColorQuoteMaroon() const { return highliter->textColorQuoteMaroon(); }
+	QColor textColorQuoteOlive() const { return highliter->textColorQuoteOlive(); }
+
 	bool onlyPlainText() const {return mOnlyPlainText;}
 
 	void setMaxBytes(int limit) {mMaxBytes = limit;}
 
 public slots:
-	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
+	void setTextColorQuoteLevel1(QColor textColorQuoteGreen);
+	void setTextColorQuoteLevel2(QColor textColorQuoteBlue);
+	void setTextColorQuoteLevel3(QColor textColorQuoteRed);
+	void setTextColorQuoteLevel4(QColor textColorQuoteMagenta);
+	void setTextColorQuoteLevel5(QColor textColorQuoteTurquoise);
+	void setTextColorQuoteLevel6(QColor textColorQuotePurple);
+	void setTextColorQuoteLevel7(QColor textColorQuoteMaroon);
+	void setTextColorQuoteLevel8(QColor textColorQuoteOlive);
+
 	void setOnlyPlainText(bool bOnlyPlainText) {mOnlyPlainText = bOnlyPlainText;}
 
 signals:

@@ -186,7 +186,14 @@ NetworkDialog
 
 RSTextBrowser, MimeTextEdit
 {
-	qproperty-textColorQuote: rgb(120, 153, 34);
+	qproperty-textColorQuoteGreen: rgb(120, 153, 34);
+	qproperty-textColorQuoteBlue: rgb(3, 155, 213);
+	qproperty-textColorQuoteRed: rgb(128, 0, 0);
+	qproperty-textColorQuoteMagenta: rgb(128, 0, 128);
+	qproperty-textColorQuoteTurquoise: rgb(0, 128, 128);
+	qproperty-textColorQuotePurple: rgb(177, 13, 201);
+	qproperty-textColorQuoteMaroon: rgb(133, 20, 75);
+	qproperty-textColorQuoteOlive: rgb(61, 153, 112);
 }
 
 QLabel#headerTextLabel_Person

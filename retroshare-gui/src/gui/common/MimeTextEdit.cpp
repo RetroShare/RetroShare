@@ -291,3 +291,43 @@ void MimeTextEdit::spoiler()
 {
 	RsHtml::insertSpoilerText(this->textCursor());
 }
+
+void MimeTextEdit::setTextColorQuoteLevel1(QColor textColorQuoteGreen) 
+{ 
+	highliter->setTextColorQuoteLevel1(textColorQuoteGreen);
+}
+
+void MimeTextEdit::setTextColorQuoteLevel2(QColor textColorQuoteBlue) 
+{ 
+	highliter->setTextColorQuoteLevel2(textColorQuoteBlue );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel3(QColor textColorQuoteRed) 
+{ 
+	highliter->setTextColorQuoteLevel3(textColorQuoteRed );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel4(QColor textColorQuoteMagenta) 
+{ 
+	highliter->setTextColorQuoteLevel4(textColorQuoteMagenta );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel5(QColor textColorQuoteTurquoise) 
+{ 
+	highliter->setTextColorQuoteLevel5(textColorQuoteTurquoise );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel6(QColor textColorQuotePurple) 
+{ 
+	highliter->setTextColorQuoteLevel6(textColorQuotePurple );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel7(QColor textColorQuoteMaroon) 
+{ 
+	highliter->setTextColorQuoteLevel7(textColorQuoteMaroon );
+}
+
+void MimeTextEdit::setTextColorQuoteLevel8(QColor textColorQuoteOlive) 
+{ 
+	highliter->setTextColorQuoteLevel8(textColorQuoteOlive );
+}

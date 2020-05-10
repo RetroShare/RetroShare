@@ -33,7 +33,14 @@ class RSTextBrowser : public QTextBrowser
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QColor textColorQuoteGreen READ textColorQuoteGreen WRITE setTextColorQuoteLevel1)
+	Q_PROPERTY(QColor textColorQuoteBlue READ textColorQuoteBlue WRITE setTextColorQuoteLevel2)
+	Q_PROPERTY(QColor textColorQuoteRed READ textColorQuoteRed WRITE setTextColorQuoteLevel3)
+	Q_PROPERTY(QColor textColorQuoteMagenta READ textColorQuoteMagenta WRITE setTextColorQuoteLevel4)
+	Q_PROPERTY(QColor textColorQuoteTurquoise READ textColorQuoteTurquoise WRITE setTextColorQuoteLevel5)
+	Q_PROPERTY(QColor textColorQuotePurple READ textColorQuotePurple WRITE setTextColorQuoteLevel6)
+	Q_PROPERTY(QColor textColorQuoteMaroon READ textColorQuoteMaroon WRITE setTextColorQuoteLevel7)
+	Q_PROPERTY(QColor textColorQuoteOlive READ textColorQuoteOlive WRITE setTextColorQuoteLevel8)
 
 public:
 	explicit RSTextBrowser(QWidget *parent = 0);
@@ -51,12 +58,27 @@ public:
 
 	virtual QVariant loadResource(int type, const QUrl &name);
 
-	QColor textColorQuote() const { return highlighter->textColorQuote();}
+	QColor textColorQuoteGreen() const { return highlighter->textColorQuoteGreen();}
+	QColor textColorQuoteBlue() const { return highlighter->textColorQuoteBlue();}
+	QColor textColorQuoteRed() const { return highlighter->textColorQuoteRed();}
+	QColor textColorQuoteMagenta() const { return highlighter->textColorQuoteMagenta();}
+	QColor textColorQuoteTurquoise() const { return highlighter->textColorQuoteTurquoise();}
+	QColor textColorQuotePurple() const { return highlighter->textColorQuotePurple(); }
+	QColor textColorQuoteMaroon() const { return highlighter->textColorQuoteMaroon(); }
+	QColor textColorQuoteOlive() const { return highlighter->textColorQuoteOlive(); }
+
 	bool getShowImages() const { return mShowImages; }
 
 public slots:
 	void showImages();
-	void setTextColorQuote(QColor textColorQuote) { highlighter->setTextColorQuote(textColorQuote);}
+	void setTextColorQuoteLevel1(QColor textColorQuoteGreen){ highlighter->setTextColorQuoteLevel1(textColorQuoteGreen);}
+	void setTextColorQuoteLevel2(QColor textColorQuoteBlue){ highlighter->setTextColorQuoteLevel2(textColorQuoteBlue);}
+	void setTextColorQuoteLevel3(QColor textColorQuoteRed){ highlighter->setTextColorQuoteLevel3(textColorQuoteRed);}
+	void setTextColorQuoteLevel4(QColor textColorQuoteMagenta){ highlighter->setTextColorQuoteLevel4(textColorQuoteMagenta);}
+	void setTextColorQuoteLevel5(QColor textColorQuoteTurquoise){ highlighter->setTextColorQuoteLevel5(textColorQuoteTurquoise);}
+	void setTextColorQuoteLevel6(QColor textColorQuotePurple){ highlighter->setTextColorQuoteLevel6(textColorQuotePurple);}
+	void setTextColorQuoteLevel7(QColor textColorQuoteMaroon){ highlighter->setTextColorQuoteLevel7(textColorQuoteMaroon);}
+	void setTextColorQuoteLevel8(QColor textColorQuoteOlive){ highlighter->setTextColorQuoteLevel8(textColorQuoteOlive);}
 
 private slots:
 	void linkClicked(const QUrl &url);

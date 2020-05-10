@@ -29,23 +29,53 @@ class RsSyntaxHighlighter : public QSyntaxHighlighter
 {
 	Q_OBJECT
 
-	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QColor textColorQuoteGreen READ textColorQuoteGreen WRITE setTextColorQuoteLevel1)
+	Q_PROPERTY(QColor textColorQuoteBlue READ textColorQuoteBlue WRITE setTextColorQuoteLevel2)
+	Q_PROPERTY(QColor textColorQuoteRed READ textColorQuoteRed WRITE setTextColorQuoteLevel3)
+	Q_PROPERTY(QColor textColorQuoteMagenta READ textColorQuoteMagenta WRITE setTextColorQuoteLevel4)
+	Q_PROPERTY(QColor textColorQuoteTurquoise READ textColorQuoteTurquoise WRITE setTextColorQuoteLevel5)
+	Q_PROPERTY(QColor textColorQuotePurple READ textColorQuotePurple WRITE setTextColorQuoteLevel6)
+	Q_PROPERTY(QColor textColorQuoteMagenta READ textColorQuoteMaroon WRITE setTextColorQuoteLevel7)
+	Q_PROPERTY(QColor textColorQuoteOlive READ textColorQuoteOlive WRITE setTextColorQuoteLevel8)
 
+	
 public:
 	RsSyntaxHighlighter(QTextEdit *parent = 0);
-	QColor textColorQuote() const { return quotationFormat.foreground().color(); };
+	QColor textColorQuoteGreen() const { return quotationFormatGreen.foreground().color(); };
+	QColor textColorQuoteBlue() const { return quotationFormatBlue.foreground().color(); };
+	QColor textColorQuoteRed() const { return quotationFormatRed.foreground().color(); };
+	QColor textColorQuoteMagenta() const { return quotationFormatMagenta.foreground().color(); };
+	QColor textColorQuoteTurquoise() const { return quotationFormatTurquoise.foreground().color(); };
+	QColor textColorQuotePurple() const { return quotationFormatPurple.foreground().color(); };
+	QColor textColorQuoteMaroon() const { return quotationFormatMaroon.foreground().color(); };
+	QColor textColorQuoteOlive() const { return quotationFormatOlive.foreground().color(); };
+
+
 
 protected:
 	void highlightBlock(const QString &text);
 
 private:
-	QTextCharFormat quotationFormat;
+	QTextCharFormat quotationFormatGreen;
+	QTextCharFormat quotationFormatBlue;
+	QTextCharFormat quotationFormatRed;
+	QTextCharFormat quotationFormatMagenta;
+	QTextCharFormat quotationFormatTurquoise;
+	QTextCharFormat quotationFormatPurple;
+	QTextCharFormat quotationFormatMaroon;
+	QTextCharFormat quotationFormatOlive;
 
 signals:
 
 public slots:
-	void setTextColorQuote(QColor textColorQuote);
-
+	void setTextColorQuoteLevel1(QColor textColorQuoteGreen);
+	void setTextColorQuoteLevel2(QColor textColorQuoteBlue);
+	void setTextColorQuoteLevel3(QColor textColorQuoteRed);
+	void setTextColorQuoteLevel4(QColor textColorQuoteMagenta);
+	void setTextColorQuoteLevel5(QColor textColorQuoteTurquoise);
+	void setTextColorQuoteLevel6(QColor textColorQuotePurple);
+	void setTextColorQuoteLevel7(QColor textColorQuoteMaroon);
+	void setTextColorQuoteLevel8(QColor textColorQuoteOlive);
 };
 
 #endif // RSSYNTAXHIGHLIGHTER_H
