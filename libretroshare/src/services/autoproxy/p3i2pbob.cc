@@ -44,8 +44,8 @@ static const std::string kConfigKeyOutLength   = "OUT_LENGTH";
 static const std::string kConfigKeyOutQuantity = "OUT_QUANTITY";
 static const std::string kConfigKeyOutVariance = "OUT_VARIANCE";
 
-/// Sleep duration for receiving loop
-static const useconds_t sleepTimeRecv = 10; // times 1000 = 10ms
+/// Sleep duration for receiving loop in error/no-data case
+static const useconds_t sleepTimeRecv = 250; // times 1000 = 250ms
 /// Sleep duration for everything else
 static const useconds_t sleepTimeWait = 50; // times 1000 = 50ms or 0.05s
 static const int sleepFactorDefault   = 10; // 0.5s
@@ -1069,38 +1069,62 @@ void p3I2pBob::updateSettings_locked()
 
 std::string p3I2pBob::recv()
 {
+	// BOB works line based
+	// -> \n indicates and of the line
+
+	constexpr uint16_t bufferSize = 128;
+	char buffer[bufferSize];
+
 	std::string ans;
-	ssize_t length;
-	const uint16_t bufferSize = 128;
-	std::vector<char> buffer(bufferSize);
+	uint16_t retry = 10;
 
 	do {
-		doSleep(sleepTimeRecv);
+		memset(buffer, 0, bufferSize);
 
-		// there is only one thread that touches mSocket - no need for a lock
-		length = ::recv(mSocket, buffer.data(), buffer.size(), 0);
-		if (length < 0)
+		// peek at data
+		auto length = ::recv(mSocket, buffer, bufferSize, MSG_PEEK);
+		if (length <= 0) {
+			if (length < 0) {
+				// error
+				perror(__PRETTY_FUNCTION__);
+			}
+			retry--;
+			doSleep(sleepTimeRecv);
 			continue;
+		}
 
-		ans.append(buffer.begin(), buffer.end());
+		// at least one byte was read
 
-		// clean received string
-		ans.erase(std::remove(ans.begin(), ans.end(), '\0'), ans.end());
-		ans.erase(std::remove(ans.begin(), ans.end(), '\n'), ans.end());
+		// search for new line
+		auto bufferStr = std::string(buffer);
+		size_t pos = bufferStr.find('\n');
 
-#if 0
-		std::stringstream ss;
-		ss << "recv length: " << length << " (bufferSize: " << bufferSize << ") ans: " << ans.length();
-		Dbg4() << __PRETTY_FUNCTION__ << " " + ss.str() << std::endl;
-#endif
+		if (pos == std::string::npos) {
+			// no new line found -> more to read
 
-		// clear and resize buffer again
-		buffer.clear();
-		buffer.resize(bufferSize);
+			// sanity check
+			if (length != bufferSize) {
+				// expectation: a full buffer was peeked)
+				Dbg1() << __PRETTY_FUNCTION__ << " peeked less than bufferSize but also didn't found a new line character" << std::endl;
+			}
+			// this should never happen
+			assert(length <= bufferSize);
+		} else {
+			// new line found -> end of message
 
-		if (this->shouldStop())
-			break;
-	} while(length == bufferSize || ans.size() < 4);
+			// calculate how much there is to read, read the \n, too!
+			length = pos + 1;
+
+			// end loop
+			retry = 0;
+		}
+
+		// now read for real
+		memset(buffer, 0, bufferSize);
+		length = ::recv(mSocket, buffer, length, 0);
+		bufferStr = std::string(buffer);
+		ans.append(bufferStr);
+	} while(retry > 0);
 
 	return ans;
 }
