@@ -220,7 +220,10 @@ void GxsForumGroupItem::fill()
 		}
     }
 	else
+    {
 		ui->titleLabel->setText(tr("New Forum"));
+		ui->moderatorList_GB->hide();
+    }
 
 //	else
 //	{
