@@ -40,6 +40,7 @@
 /****
  * #define DEBUG_CIRCLES	 1
  ****/
+#define DEBUG_CIRCLES	 1
 
 /*extern*/ RsGxsCircles* rsGxsCircles = nullptr;
 
@@ -1106,6 +1107,17 @@ bool RsGxsCircleCache::loadBaseCircle(const RsGxsCircleGroup& circle)
 		std::cerr << "  Invited member " << *it << " Initializing/updating membership status to " << std::hex << s.subscription_flags << std::dec << std::endl;
 #endif // DEBUG_CIRCLES
 	}
+
+    // also sweep through the list of subscribed members and remove the membership to those who are not in the invitee list anymore
+
+    for(auto& m:mMembershipStatus)
+        if(circle.mInvitedMembers.find(m.first) == circle.mInvitedMembers.end())
+        {
+            m.second.subscription_flags &= ~GXS_EXTERNAL_CIRCLE_FLAGS_IN_ADMIN_LIST;
+#ifdef DEBUG_CIRCLES
+			std::cerr << "  member " << m.first << " is not in invitee list. Updating flags to " << std::hex << m.second.subscription_flags << std::dec << std::endl;
+#endif // DEBUG_CIRCLES
+        }
 
 	return true;
 }

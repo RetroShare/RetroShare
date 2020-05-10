@@ -61,7 +61,7 @@ static const uint32_t INDEX_AUTHEN_ADMIN        = 0x00000040; // admin key
 
 #define GXS_MASK "GXS_MASK_HACK"
 
-#define GEN_EXCH_DEBUG	1
+//#define GEN_EXCH_DEBUG	1
 
 static const uint32_t MSG_CLEANUP_PERIOD     = 60*59; // 59 minutes
 static const uint32_t INTEGRITY_CHECK_PERIOD = 60*31; // 31 minutes
@@ -1794,19 +1794,20 @@ void RsGenExchange::publishGroup(uint32_t& token, RsGxsGrpItem *grpItem)
 
 void RsGenExchange::updateGroup(uint32_t& token, RsGxsGrpItem* grpItem)
 {
-    if(!checkGroupMetaConsistency(grpItem->meta))
-    {
-        std::cerr << "(EE) Cannot update group. Some information was not supplied." << std::endl;
-       return ;
-    }
+	if(!checkGroupMetaConsistency(grpItem->meta))
+	{
+		std::cerr << "(EE) Cannot update group. Some information was not supplied." << std::endl;
+		delete grpItem;
+		return ;
+	}
 
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 	token = mDataAccess->generatePublicToken();
-        mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
+	mGroupUpdatePublish.push_back(GroupUpdatePublish(grpItem, token));
 
 #ifdef GEN_EXCH_DEBUG
-    std::cerr << "RsGenExchange::updateGroup() token: " << token;
-    std::cerr << std::endl;
+	std::cerr << "RsGenExchange::updateGroup() token: " << token;
+	std::cerr << std::endl;
 #endif
 }
 
@@ -2385,15 +2386,14 @@ RsGenExchange::ServiceCreate_Return RsGenExchange::service_CreateGroup(RsGxsGrpI
 
 void RsGenExchange::processGroupUpdatePublish()
 {
-					RS_STACK_MUTEX(mGenMtx) ;
+	RS_STACK_MUTEX(mGenMtx) ;
 
 	// get keys for group update publish
 
 	// first build meta request map for groups to be updated
 	RsGxsGrpMetaTemporaryMap grpMeta;
-	std::vector<GroupUpdatePublish>::iterator vit = mGroupUpdatePublish.begin();
 
-	for(; vit != mGroupUpdatePublish.end(); ++vit)
+	for(auto vit = mGroupUpdatePublish.begin(); vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -2406,8 +2406,7 @@ void RsGenExchange::processGroupUpdatePublish()
 	mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
 	// now
-	vit = mGroupUpdatePublish.begin();
-	for(; vit != mGroupUpdatePublish.end(); ++vit)
+	for(auto vit = mGroupUpdatePublish.begin(); vit != mGroupUpdatePublish.end(); ++vit)
 	{
 		GroupUpdatePublish& gup = *vit;
 		const RsGxsGroupId& groupId = gup.grpItem->meta.mGroupId;
@@ -2425,14 +2424,14 @@ void RsGenExchange::processGroupUpdatePublish()
 			meta = mit->second;
 
 		//gup.grpItem->meta = *meta;
-        GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
+		GxsGrpPendingSign ggps(gup.grpItem, gup.mToken);
 
 		if(checkKeys(meta->keys))
 		{
 			ggps.mKeys = meta->keys;
-            
-            		GxsSecurity::createPublicKeysFromPrivateKeys(ggps.mKeys) ;
-                    
+
+			GxsSecurity::createPublicKeysFromPrivateKeys(ggps.mKeys) ;
+
 			ggps.mHaveKeys = true;
 			ggps.mStartTS = time(NULL);
 			ggps.mLastAttemptTS = 0;
@@ -2442,8 +2441,8 @@ void RsGenExchange::processGroupUpdatePublish()
 		}
 		else
 		{
-            		std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
-                    
+			std::cerr << "(EE) publish group fails because RS cannot find the private publish and author keys" << std::endl;
+
 			delete gup.grpItem;
 			mDataAccess->updatePublicRequestStatus(gup.mToken, RsTokenService::FAILED);
 		}
