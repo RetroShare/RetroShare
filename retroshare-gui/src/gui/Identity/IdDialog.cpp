@@ -941,14 +941,26 @@ void IdDialog::revokeCircleMembership()
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
 	    return;
 
+    if(circle_id.isNull())
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " : got a null circle ID. Cannot revoke an identity from that circle!" << std::endl;
+        return ;
+    }
+
     RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-	RsThread::async([circle_id,gxs_id_to_revoke]()
-	{
-        // 1 - get message data from p3GxsForums
+    if(gxs_id_to_revoke.isNull())
+		RsErr() << __PRETTY_FUNCTION__ << " : got a null ID. Cannot revoke it from circle " << circle_id << "!" << std::endl;
+	else
+		RsThread::async([circle_id,gxs_id_to_revoke]()
+		{
+			// 1 - get message data from p3GxsForums
 
-        rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { gxs_id_to_revoke } ),circle_id);
-    });
+            std::set<RsGxsId> ids;
+            ids.insert(gxs_id_to_revoke);
+
+			rsGxsCircles->revokeIdsFromCircle(ids,circle_id);
+		});
 }
 
 void IdDialog::acceptCircleSubscription() 
