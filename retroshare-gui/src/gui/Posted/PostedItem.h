@@ -110,7 +110,6 @@ protected:
 	void setReadStatus(bool isNew, bool isUnread) override;
 	void setCommentsSize(int comNb) override;
 
-
 private slots:
 	void doExpand(bool open);
 	void toggle();
