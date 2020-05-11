@@ -23,11 +23,18 @@
 #include "gui/common/StyledElidedLabel.h"
 #include "util/rsdebug.h"
 
+#include <QAbstractItemView>
 #include <QApplication>
 #include <QPainter>
 #include <QTextDocument>
 #include <QTextLayout>
+#include <QTimer>
 #include <QToolTip>
+
+#include <QtMath>
+
+#include <cmath>
+#include <chrono>
 
 RSElidedItemDelegate::RSElidedItemDelegate(QObject *parent)
   : RSStyledItemDelegate(parent)
@@ -124,13 +131,49 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 	}
 	// draw the icon
 	{
-		QIcon::Mode mode = QIcon::Normal;
-		if (!(ownOption.state & QStyle::State_Enabled))
-			mode = QIcon::Disabled;
-		else if (ownOption.state & QStyle::State_Selected)
-			mode = QIcon::Selected;
-		QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
-		ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
+		if (!ownOption.icon.isNull())
+		{
+			QString status;
+			if (index.data(Qt::StatusTipRole).canConvert(QMetaType::QString))
+				status = index.data(Qt::StatusTipRole).toString();
+
+			// Draw item Icon
+			{
+				QIcon::Mode mode = QIcon::Normal;
+				if (!(ownOption.state & QStyle::State_Enabled))
+					mode = QIcon::Disabled;
+				else if (ownOption.state & QStyle::State_Selected)
+					mode = QIcon::Selected;
+				QIcon::State state = ownOption.state & QStyle::State_Open ? QIcon::On : QIcon::Off;
+				ownOption.icon.paint(painter, iconRect, ownOption.decorationAlignment, mode, state);
+			}
+			// Then overlay with waiting
+			if (status.toLower() == "waiting")
+			{
+				const QAbstractItemView* aiv = dynamic_cast<const QAbstractItemView*>(option.widget);
+				if (aiv)
+					QTimer::singleShot(200, aiv->viewport(), SLOT(update()));
+
+				QSize waitSize=iconRect.size();
+				qreal diag = qMin(waitSize.height(),waitSize.height())*std::sqrt(2);
+				auto now = std::chrono::system_clock::now().time_since_epoch();
+				auto s = std::chrono::duration_cast<std::chrono::seconds>(now).count();
+				auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now - std::chrono::duration_cast<std::chrono::seconds>(now)).count();
+				int duration = 3;// Time (s) to make a revolution.
+				auto time = (s%duration)*1000 + ms;
+				qreal angle = 360.0*(time/(duration*1000.0));
+				qreal add = 120*(time/(duration*1000.0))*abs(sin(qDegreesToRadians(angle/2)));
+				painter->setPen(QPen(QBrush(ownOption.palette.color(QPalette::Normal, QPalette::WindowText)),diag/10,Qt::DotLine,Qt::RoundCap));
+				painter->drawEllipse( iconRect.x()+iconRect.width() /2 + (diag/4)*cos(qDegreesToRadians(angle      ))
+				                    , iconRect.y()+iconRect.height()/2 + (diag/4)*sin(qDegreesToRadians(angle      )), 1, 1);
+				painter->setPen(QPen(QBrush(ownOption.palette.color(QPalette::Normal, QPalette::Midlight)),diag/10,Qt::DotLine,Qt::RoundCap));
+				painter->drawEllipse( iconRect.x()+iconRect.width() /2 + (diag/4)*cos(qDegreesToRadians(angle-  add))
+				                    , iconRect.y()+iconRect.height()/2 + (diag/4)*sin(qDegreesToRadians(angle-  add)), 1, 1);
+				painter->setPen(QPen(QBrush(ownOption.palette.color(QPalette::Normal, QPalette::Window)),diag/10,Qt::DotLine,Qt::RoundCap));
+				painter->drawEllipse( iconRect.x()+iconRect.width() /2 + (diag/4)*cos(qDegreesToRadians(angle-2*add))
+				                    , iconRect.y()+iconRect.height()/2 + (diag/4)*sin(qDegreesToRadians(angle-2*add)), 1, 1);
+			}
+		}
 	}
 	// draw the text
 	if (!ownOption.text.isEmpty()) {
@@ -141,6 +184,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 		if (ownOption.state & QStyle::State_Selected) {
 			painter->setPen(ownOption.palette.color(cg, QPalette::HighlightedText));
 		} else {
+#if QT_VERSION >= QT_VERSION_CHECK(5,6,0)
 			if (ownOption.state & QStyle::State_MouseOver) {
 				//TODO: Manage to get palette with HOVER css pseudoclass
 				// For now this is hidden by Qt: https://code.woboq.org/qt5/qtbase/src/widgets/styles/qstylesheetstyle.cpp.html#6103
@@ -158,7 +202,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				{
 					moOption.rect = QRect(QPoint(0,0),moSize);
 					moOption.state = QStyle::State_MouseOver | QStyle::State_Enabled | QStyle::State_Sibling;
-					moOption.text = "████████████████";
+					moOption.text = " ████████████████";//Add a blank char to get BackGround Color at top left
 					// Remove unwanted info. Yes it can draw without that all public data ...
 					moOption.backgroundBrush = QBrush();
 					moOption.checkState = Qt::Unchecked;
@@ -200,11 +244,12 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
 				// Get Color in this black rect.
 				QColor moColor;
+				QColor moBGColor=moImg.pixelColor(1,1); //BackGround may be paint.
 				QColor moColorBorder;// To avoid Border pixel
 				int moWidth = moImg.size().width(), moHeight = moImg.size().height();
 				for (int x = 0; (x<moWidth) && (moColor.spec() == QColor::Invalid); x++)
 					for (int y = 0; (y<moHeight) && (moColor.spec() == QColor::Invalid); y++)
-						if (moImg.pixelColor(x,y) != Qt::black)
+						if (moImg.pixelColor(x,y) != moBGColor)
 						{
 							if (moImg.pixelColor(x,y) == moColorBorder)
 								moColor = QColor(moImg.pixelColor(x,y).name());
@@ -220,13 +265,14 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 							}
 						}
 
-				// If not found color is black too.
+				// If not found color is same as BackGround.
 				if (moColor.spec() == QColor::Invalid)
-					moColor = Qt::black;
+					moColor = moBGColor;
 
 				painter->setPen(moColor);
 			}
 			else
+#endif
 				if (textColor.spec()==QColor::Invalid) {
 					painter->setPen(ownOption.palette.color(cg, QPalette::Text));
 				} else { //Only get color from index for unselected(as Qt does)
