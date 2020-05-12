@@ -102,3 +102,8 @@ android-* {
     CONFIG *= qt
     QT *= network
 }
+
+################################### Pkg-Config Stuff #############################
+
+LIBS *= $$system(pkg-config --libs $$PKGCONFIG)
+
