@@ -162,7 +162,7 @@ void RSElidedItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 				int duration = 3;// Time (s) to make a revolution.
 				auto time = (s%duration)*1000 + ms;
 				qreal angle = 360.0*(time/(duration*1000.0));
-				qreal add = 120*(time/(duration*1000.0))*abs(sin(qDegreesToRadians(angle/2)));
+				qreal add = 120*(time/(duration*1000.0))*std::abs(sin(qDegreesToRadians(angle/2)));
 				painter->setPen(QPen(QBrush(ownOption.palette.color(QPalette::Normal, QPalette::WindowText)),diag/10,Qt::DotLine,Qt::RoundCap));
 				painter->drawEllipse( iconRect.x()+iconRect.width() /2 + (diag/4)*cos(qDegreesToRadians(angle      ))
 				                    , iconRect.y()+iconRect.height()/2 + (diag/4)*sin(qDegreesToRadians(angle      )), 1, 1);
