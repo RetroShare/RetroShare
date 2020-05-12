@@ -30,22 +30,22 @@ class RsSyntaxHighlighter : public QSyntaxHighlighter
 	Q_OBJECT
 
 	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QVariant textColorQuotes READ textColorQuotes WRITE setTextColorQuotes)
 
 public:
 	RsSyntaxHighlighter(QTextEdit *parent = 0);
-	QColor textColorQuote() const { return quotationFormat.foreground().color(); };
+	QColor textColorQuote () const;
+	QVariant textColorQuotes() const;
+
+public slots:
+	void setTextColorQuote (QColor textColorQuote);
+	void setTextColorQuotes(QVariant textColorQuotes);
 
 protected:
 	void highlightBlock(const QString &text);
 
 private:
-	QTextCharFormat quotationFormat;
-
-signals:
-
-public slots:
-	void setTextColorQuote(QColor textColorQuote);
-
+	QList<QTextCharFormat> quotationFormats;
 };
 
 #endif // RSSYNTAXHIGHLIGHTER_H
