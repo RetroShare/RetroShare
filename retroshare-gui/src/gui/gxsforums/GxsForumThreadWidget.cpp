@@ -292,9 +292,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 
 	mLastViewType = -1;
 
-	// load settings
-	processSettings(true);
-
     float f = QFontMetricsF(font()).height()/14.0f ;
 
 	/* Set header resize modes and initial section sizes */
@@ -327,6 +324,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	setGroupId(forumId);
 
 	//ui->threadTreeWidget->installEventFilter(this) ;
+
+	// load settings
+	processSettings(true);
 
 	blankPost();
 

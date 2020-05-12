@@ -200,12 +200,14 @@ ChatWidget::ChatWidget(QWidget *parent)
 	#endif
 
 	QMenu *menu = new QMenu();
+	menu->addAction(ui->actionMessageHistory);
+	menu->addMenu(fontmenu);
+	menu->addSeparator();
+	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
 	menu->addAction(ui->actionDeleteChatHistory);
-	menu->addAction(ui->actionSaveChatHistory);
-	menu->addAction(ui->actionMessageHistory);
+
 	ui->pushtoolsButton->setMenu(menu);
-	menu->addMenu(fontmenu);
 
 	ui->actionSendAsPlainText->setChecked(Settings->getChatSendAsPlainTextByDef());
 	ui->chatTextEdit->setOnlyPlainText(ui->actionSendAsPlainText->isChecked());
@@ -1906,11 +1908,8 @@ void ChatWidget::updateCMPreview()
 
 void ChatWidget::quote()
 {
-	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-	text = sl.join("\n> ");
-	text.replace(QChar(-4), " "); // Char used when image on text.
-	emit ui->chatTextEdit->append(QString("> ") + text);
+	QString text = RsHtml::makeQuotedText(ui->textBrowser);
+	emit ui->chatTextEdit->append(text);
 }
 
 void ChatWidget::dropPlacemark()

@@ -27,7 +27,7 @@
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip,QTreeWidget *parent)
-    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mIconTypeMask(icon_mask),mAutoTooltip(auto_tooltip)
+    : QObject(NULL), RSTreeWidgetItem(compareRole, parent), mColumn(0), mAutoTooltip(auto_tooltip), mIconTypeMask(icon_mask)
 {
 	init();
 }
@@ -35,8 +35,8 @@ GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *
 void GxsIdRSTreeWidgetItem::init()
 {
 	mIdFound = false;
+	mBannedState = false ;
 	mRetryWhenFailed = false;
-    	mBannedState = false ;
 }
 
 static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIdentityDetails &details, QObject *object, const QVariant &/*data*/)
@@ -179,101 +179,41 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 	return RSTreeWidgetItem::data(column, role);
 }
 
-QSize GxsIdTreeItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-
-	if(id.isNull())
-		return QStyledItemDelegate::sizeHint(option,index);
-
-	QStyleOptionViewItemV4 opt = option;
-	initStyleOption(&opt, index);
-
-	// disable default icon
-	opt.icon = QIcon();
-	const QRect r = option.rect;
-	QString str;
-	QList<QIcon> icons;
-	QString comment;
-
-	QFontMetricsF fm(option.font);
-	float f = fm.height();
-
-	QIcon icon ;
-
-	if(!GxsIdDetails::MakeIdDesc(id, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-	{
-		icon = GxsIdDetails::getLoadingIcon(id);
-		launchAsyncLoading();
-	}
-	else
-		icon = *icons.begin();
-
-	QPixmap pix = icon.pixmap(r.size());
-
-	return QSize(1.2*(pix.width() + fm.width(str)),std::max(1.1*pix.height(),1.4*fm.height()));
-}
-
-
 void GxsIdTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
 	if(!index.isValid())
 	{
-		std::cerr << "(EE) attempt to draw an invalid index." << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " attempt to draw an invalid index." << std::endl;
 		return ;
 	}
 
+	QStyleOptionViewItem ownOption (option);
+	initStyleOption(&ownOption, index);
+
 	RsGxsId id(index.data(Qt::UserRole).toString().toStdString());
-
-	if(id.isNull())
-		return QStyledItemDelegate::paint(painter,option,index);
-
-	QStyleOptionViewItemV4 opt = option;
-	initStyleOption(&opt, index);
-
-	// disable default icon
-	opt.icon = QIcon();
-	// draw default item
-	QApplication::style()->drawControl(QStyle::CE_ItemViewItem, &opt, painter, 0);
-
-	QRect r = option.rect;
-
-	QString str;
-	QString comment;
-
-	QFontMetricsF fm(painter->font());
-	float f = fm.height();
-
-	QIcon icon ;
+	QString cmt;
 
 	if(id.isNull())
 	{
-		str = tr("[Notification]");
-		icon = QIcon(":/icons/notification.png");
+		if (ownOption.icon.isNull())
+			ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/notification.png");
 	}
-	else if(! computeNameIconAndComment(id,str,icon,comment))
-		if(mReloadPeriod > 3)
+	else
+	{
+		if(! computeNameIconAndComment(id,ownOption.text,ownOption.icon,cmt))
 		{
-			str = tr("[Unknown]");
-			icon = QIcon(":/icons/anonymous.png");
+			if(mReloadPeriod > 3)
+			{
+				ownOption.text = tr("[Unknown]");
+				ownOption.icon = FilesDefs::getIconFromQtResourcePath(":/icons/png/anonymous.png");
+			}
+			else
+			{
+				ownOption.icon = GxsIdDetails::getLoadingIcon(id);
+				launchAsyncLoading();
+			}
 		}
-		else
-		{
-			icon = GxsIdDetails::getLoadingIcon(id);
-			launchAsyncLoading();
-		}
+	}
 
-    QRect pixmaprect(r);
-    pixmaprect.adjust(r.height(),0,0,0);
-
-	QPixmap pix = icon.pixmap(pixmaprect.size());
-	const QPoint p = QPoint(r.height()/2.0, (r.height() - pix.height())/2);
-
-	// draw pixmap at center of item
-	painter->drawPixmap(r.topLeft() + p, pix);
-
-	QRect mRectElision;
-    r.adjust(pix.height()+f,(r.height()-f)/2.0,0,0);
-
-	bool didElide = ElidedLabel::paintElidedLine(*painter,str,r,Qt::AlignLeft,false,false,mRectElision);
+	RSElidedItemDelegate::paint(painter,ownOption,index);
 }

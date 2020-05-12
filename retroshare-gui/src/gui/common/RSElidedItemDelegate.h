@@ -23,37 +23,35 @@
 
 #include <gui/common/RSItemDelegate.h>
 
-class RSElidedItemDelegate : public RSItemDelegate
+class RSElidedItemDelegate : public RSStyledItemDelegate
 {
 	Q_OBJECT
-	Q_PROPERTY(bool isElided READ isElided)
+
+	// For now, these properties cannot be changed by StyleSheet
+	// If needed, you can add properties to owner widget then copy them in this delegate.
 	Q_PROPERTY(bool isOnlyPlainText READ isOnlyPlainText WRITE setOnlyPlainText)
-	Q_PROPERTY(QRect rectElision READ rectElision)
+	Q_PROPERTY(bool paintRoundedRect READ paintRoundedRect WRITE setPaintRoundedRect)
 
 public:
 	RSElidedItemDelegate(QObject *parent = 0);
 
-	void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+	QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+	void paint (QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-	bool isElided() const { return mElided; }
 	bool isOnlyPlainText() const { return mOnlyPlainText; }
 	void setOnlyPlainText(const bool &value) { mOnlyPlainText = value; }
-	QRect rectElision() { return mRectElision; }
+	bool paintRoundedRect() const { return mPaintRoundedRect; }
+	void setPaintRoundedRect(const bool &value) { mPaintRoundedRect = value; }
 
 protected:
-	void drawDisplay(QPainter *painter, const QStyleOptionViewItem &option,
-	                         const QRect &rect, const QString &text) const;
 	bool editorEvent(QEvent *event,
 	                 QAbstractItemModel *model,
 	                 const QStyleOptionViewItem &option,
-	                 const QModelIndex &index);
+	                 const QModelIndex &index) override;
 
 private:
-	mutable bool mElided;
 	bool mOnlyPlainText;
-	mutable QString mContent;
-	mutable QRect mRectElision;
-
+	bool mPaintRoundedRect;
 };
 
 #endif // RSELIDEDITEMDELEGATE_H

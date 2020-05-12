@@ -418,16 +418,23 @@ void ImHistoryBrowser::customContextMenuRequested(QPoint /*pos*/)
 
 void ImHistoryBrowser::copyMessage()
 {
-    QListWidgetItem *currentItem = ui.listWidget->currentItem();
-    if (currentItem) {
-        uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
-        HistoryMsg msg;
-        if (rsHistory->getMessage(msgId, msg)) {
-            QTextDocument doc;
-            doc.setHtml(QString::fromUtf8(msg.message.c_str()));
-            QApplication::clipboard()->setText(doc.toPlainText());
-        }
-    }
+	QListWidgetItem *currentItem = ui.listWidget->currentItem();
+	if (currentItem) {
+		uint32_t msgId = currentItem->data(ROLE_MSGID).toString().toInt();
+		HistoryMsg msg;
+		if (rsHistory->getMessage(msgId, msg)) {
+			RsIdentityDetails details;
+			QString name = (rsIdentity->getIdDetails(RsGxsId(msg.peerName), details))
+			        ? QString::fromUtf8(details.mNickname.c_str())
+			        : QString::fromUtf8(msg.peerName.c_str());
+			QDateTime date = msg.incoming
+			        ? QDateTime::fromTime_t(msg.sendTime)
+			        : QDateTime::fromTime_t(msg.recvTime);
+			QTextDocument doc;
+			doc.setHtml(QString::fromUtf8(msg.message.c_str()));
+			QApplication::clipboard()->setText("> " + date.toString() + " " + name + ":" + doc.toPlainText());
+		}
+	}
 }
 
 void ImHistoryBrowser::removeMessages()
