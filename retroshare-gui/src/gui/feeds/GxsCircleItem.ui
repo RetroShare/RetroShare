@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>618</width>
-    <height>172</height>
+    <height>217</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="GxsCircleItemGLayout">
@@ -239,7 +239,7 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <widget class="QPushButton" name="acceptButton">
+           <widget class="QPushButton" name="membershipButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -259,7 +259,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="revokeButton">
+           <widget class="QPushButton" name="inviteeButton">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
               <horstretch>0</horstretch>

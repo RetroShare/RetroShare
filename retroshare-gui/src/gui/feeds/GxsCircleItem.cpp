@@ -77,13 +77,14 @@ void GxsCircleItem::setup()
 
 	/* update circle information */
 
-	ui->acceptButton->setToolTip(tr("Grant membership request"));
-	ui->revokeButton->setToolTip(tr("Revoke membership request"));
+	ui->membershipButton->setToolTip(tr("Grant membership request"));
+	ui->inviteeButton->setToolTip(tr("Revoke membership"));
 
-	connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(grantCircleMembership()));
-	connect(ui->revokeButton, SIGNAL(clicked()), this, SLOT(revokeCircleMembership()));
+	connect(ui->membershipButton, SIGNAL(clicked()), this, SLOT(toggleCircleMembership()));
+	connect(ui->inviteeButton, SIGNAL(clicked()), this, SLOT(toggleCircleInvite()));
 
 	RsGxsCircleDetails circleDetails;
+
 	if (rsGxsCircles->getCircleDetails(mCircleId, circleDetails))
 	{
 		ui->nameLabel->setText(QString::fromUtf8(circleDetails.mCircleName.c_str()) + " (ID: " + QString::fromStdString(circleDetails.mCircleId.toStdString()) + ")");
@@ -96,18 +97,24 @@ void GxsCircleItem::setup()
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->revokeButton->setHidden(true);
-			ui->acceptButton->setHidden(false);
+			ui->inviteeButton->setHidden(false);
+            ui->inviteeButton->setText(tr("Grant membership"));
+            ui->inviteeButton->setToolTip(tr("Grant membership to this circle, for this identity"));
+
+			ui->membershipButton->setHidden(true);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
 		{
-			ui->titleLabel->setText(tr("You received an invitation for this circle:"));
+			ui->titleLabel->setText(tr("You received an invitation to join this circle:"));
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->acceptButton->setToolTip(tr("Accept invitation"));
-			connect(ui->acceptButton, SIGNAL(clicked()), this, SLOT(acceptCircleSubscription()));
-			ui->revokeButton->setHidden(true);
+			ui->membershipButton->setText(tr("Accept"));
+			ui->membershipButton->setToolTip(tr("Accept invitation"));
+			ui->membershipButton->setHidden(false);
+
+			connect(ui->membershipButton, SIGNAL(clicked()), this, SLOT(requestCircleSubscription()));
+			ui->inviteeButton->setHidden(true);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_LEAVE)
 		{
@@ -115,17 +122,28 @@ void GxsCircleItem::setup()
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->acceptButton->setHidden(true);
-			ui->revokeButton->setHidden(true);
+			ui->membershipButton->setHidden(true);
+			ui->inviteeButton->setHidden(true);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
 		{
-			ui->titleLabel->setText(idName + tr(" which you invited, has join this circle you're administrating."));
+            if(circleDetails.mAmIAdmin)
+			{
+				ui->titleLabel->setText(idName + tr(" which you invited, has join this circle you're administrating."));
+				ui->inviteeButton->setHidden(false);
+				ui->inviteeButton->setText(tr("Revoke membership"));
+				ui->inviteeButton->setToolTip(tr("Revoke membership for that identity"));
+			}
+            else
+            {
+				ui->inviteeButton->setHidden(true);
+				ui->titleLabel->setText(idName + tr(" has join this circle."));
+            }
+
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->acceptButton->setHidden(true);
-			ui->revokeButton->setHidden(false);
+			ui->membershipButton->setHidden(true);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
 		{
@@ -134,8 +152,11 @@ void GxsCircleItem::setup()
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->acceptButton->setHidden(true);
-			ui->revokeButton->setHidden(true);
+			ui->membershipButton->setHidden(false);
+			ui->membershipButton->setText(tr("Cancel membership request"));
+			ui->membershipButton->setToolTip(tr("Cancel your membership request from that circle"));
+
+			ui->inviteeButton->setHidden(true);
 		}
 		else if (mType == RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED)
 		{
@@ -144,8 +165,11 @@ void GxsCircleItem::setup()
 			ui->iconLabel->setPixmap(pixmap);
 			ui->gxsIdLabel->setId(mGxsId);
 
-			ui->acceptButton->setHidden(true);
-			ui->revokeButton->setHidden(true);
+			ui->membershipButton->setHidden(false);
+			ui->membershipButton->setText(tr("Cancel membership"));
+			ui->membershipButton->setToolTip(tr("Cancel your membership from that circle"));
+
+			ui->inviteeButton->setHidden(true);
 		}
 
 	}
@@ -160,7 +184,7 @@ void GxsCircleItem::setup()
 
 uint64_t GxsCircleItem::uniqueIdentifier() const
 {
-    return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString() + " " + QString::number(mType).toStdString());
+    return hash_64bits("GxsCircle " + mCircleId.toStdString() + " " + mGxsId.toStdString());
 }
 
 /*********** SPECIFIC FUNCTIONS ***********************/
@@ -173,25 +197,40 @@ void GxsCircleItem::showCircleDetails()
 	dlg.exec();
 }
 
-void GxsCircleItem::acceptCircleSubscription()
+void GxsCircleItem::requestCircleSubscription()
 {
-	if (rsGxsCircles->requestCircleMembership(mGxsId, mCircleId))
-		removeItem();
+	rsGxsCircles->requestCircleMembership(mGxsId, mCircleId);
 }
 
-void GxsCircleItem::grantCircleMembership()
+void GxsCircleItem::toggleCircleMembership()
 {
-	RsThread::async([this]()
-	{
-        rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
-    });
+    if(!rsIdentity->isOwnId(mGxsId))
+    {
+        RsErr() << __PRETTY_FUNCTION__ << ": inconsistent call: identity " << mGxsId << " doesn't belong to you" << std::endl;
+        return;
+    }
+
+    if(mType == RS_FEED_ITEM_CIRCLE_INVITE_REC)
+        rsGxsCircles->requestCircleMembership(mGxsId,mCircleId);
+    else if(mType == RS_FEED_ITEM_CIRCLE_MEMB_REVOKED)
+        rsGxsCircles->cancelCircleMembership(mGxsId,mCircleId);
+	else
+		RsErr() << __PRETTY_FUNCTION__ << ": inconsistent call. mType is " << mType << std::endl;
 }
 
-void GxsCircleItem::revokeCircleMembership()
+void GxsCircleItem::toggleCircleInvite()
 {
-	RsThread::async([this]()
-	{
-        rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
-    });
+	if(mType == RS_FEED_ITEM_CIRCLE_MEMB_JOIN)
+		RsThread::async([this]()
+		{
+			rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+		});
+	else if(mType == RS_FEED_ITEM_CIRCLE_MEMB_REQ)
+		RsThread::async([this]()
+		{
+			rsGxsCircles->inviteIdsToCircle(std::set<RsGxsId>( { mGxsId } ),mCircleId);
+		});
+    else
+        RsErr() << __PRETTY_FUNCTION__ << ": inconsistent call. mType is " << mType << std::endl;
 }
 
