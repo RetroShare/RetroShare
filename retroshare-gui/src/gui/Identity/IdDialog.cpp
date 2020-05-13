@@ -2158,8 +2158,11 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 					}
 				}
 			}
-			// always allow to send messages
-			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
+			// only allow maximum 10 selected peers to send messages 
+			if(n_selected_items <=10)
+			{
+				contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
+			}
 
 			contextMenu->addSeparator();
 
