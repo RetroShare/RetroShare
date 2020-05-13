@@ -1215,8 +1215,10 @@ QString RsHtml::makeQuotedText(RSTextBrowser *browser)
 	}
 	QStringList sl = text.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
 	text = sl.join("\n> ");
+	text.replace("\n> >","\n>>"); // Don't add space for already quotted lines.
 	text.replace(QChar(-4)," ");//Char used when image on text.
-	return QString("> ") + text;
+	QString quote = (text.left(1) == ">") ? QString(">") : QString("> ");
+	return quote + text;
 }
 
 void RsHtml::insertSpoilerText(QTextCursor cursor)

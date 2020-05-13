@@ -1908,11 +1908,8 @@ void ChatWidget::updateCMPreview()
 
 void ChatWidget::quote()
 {
-	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-	text = sl.join("\n> ");
-	text.replace(QChar(-4), " "); // Char used when image on text.
-	emit ui->chatTextEdit->append(QString("> ") + text);
+	QString text = RsHtml::makeQuotedText(ui->textBrowser);
+	emit ui->chatTextEdit->append(text);
 }
 
 void ChatWidget::dropPlacemark()
