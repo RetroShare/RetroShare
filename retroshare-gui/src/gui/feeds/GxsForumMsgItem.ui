@@ -545,24 +545,21 @@
          <item row="2" column="2" rowspan="2">
           <layout class="QHBoxLayout">
            <item>
-            <widget class="QLabel" name="msgLabel">
+            <widget class="RSTextBrowser" name="msgLabel">
              <property name="sizePolicy">
               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="text">
-              <string notr="true">Current Message..</string>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
-             <property name="wordWrap">
-              <bool>true</bool>
+             <property name="placeholderText">
+              <string>Current Message...</string>
              </property>
              <property name="openExternalLinks">
               <bool>true</bool>
-             </property>
-             <property name="textInteractionFlags">
-              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
              </property>
             </widget>
            </item>
@@ -588,9 +585,13 @@
    <extends>QLabel</extends>
    <header>gui/gxs/GxsIdLabel.h</header>
   </customwidget>
+  <customwidget>
+   <class>RSTextBrowser</class>
+   <extends>QTextBrowser</extends>
+   <header>gui/common/RSTextBrowser.h</header>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
  </resources>
  <connections/>
