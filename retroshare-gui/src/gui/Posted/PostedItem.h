@@ -106,14 +106,16 @@ public:
 protected:
 	void setup() override;
 	void fill() override;
-	void doExpand(bool open) override;
 	void setComment(const RsGxsComment&) override;
 	void setReadStatus(bool isNew, bool isUnread) override;
-    void toggle() override ;
 	void setCommentsSize(int comNb) override;
-    void makeUpVote() override;
-    void makeDownVote() override;
-	void toggleNotes() override;
+
+private slots:
+	void doExpand(bool open);
+	void toggle();
+	void makeUpVote();
+	void makeDownVote();
+	void toggleNotes() ;
 
 private:
 	/** Qt Designer generated object */

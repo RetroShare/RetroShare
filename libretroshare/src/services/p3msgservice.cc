@@ -1737,6 +1737,7 @@ void p3MsgService::initRsMI(RsMsgItem *msg, MessageInfo &mi)
 	if (msg->msgFlags & RS_MSG_FLAGS_REPLIED)                 mi.msgflags |= RS_MSG_REPLIED;
 	if (msg->msgFlags & RS_MSG_FLAGS_FORWARDED)               mi.msgflags |= RS_MSG_FORWARDED;
 	if (msg->msgFlags & RS_MSG_FLAGS_STAR)                    mi.msgflags |= RS_MSG_STAR;
+	if (msg->msgFlags & RS_MSG_FLAGS_SPAM)                    mi.msgflags |= RS_MSG_SPAM;
 	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)            mi.msgflags |= RS_MSG_USER_REQUEST;
 	if (msg->msgFlags & RS_MSG_FLAGS_FRIEND_RECOMMENDATION)   mi.msgflags |= RS_MSG_FRIEND_RECOMMENDATION;
 	if (msg->msgFlags & RS_MSG_FLAGS_PUBLISH_KEY)             mi.msgflags |= RS_MSG_PUBLISH_KEY;
@@ -1830,6 +1831,10 @@ void p3MsgService::initRsMIS(RsMsgItem *msg, MsgInfoSummary &mis)
 	if (msg->msgFlags & RS_MSG_FLAGS_STAR)
 	{
 		mis.msgflags |= RS_MSG_STAR;
+	}
+	if (msg->msgFlags & RS_MSG_FLAGS_SPAM)
+	{
+		mis.msgflags |= RS_MSG_SPAM;
 	}
 	if (msg->msgFlags & RS_MSG_FLAGS_USER_REQUEST)
 	{
