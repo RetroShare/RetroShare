@@ -57,7 +57,7 @@
 #define IMAGE_MESSAGEREMOVE    ":/icons/mail/delete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
 #define IMAGE_STAR_OFF         ":/images/star-off-16.png"
-#define IMAGE_SYSTEM           ":/images/user/user_request16.png"
+#define IMAGE_SYSTEM           ":/icons/notification.png"
 #define IMAGE_DECRYPTMESSAGE   ":/images/decrypt-mail.png"
 #define IMAGE_AUTHOR_INFO      ":/images/info16.png"
 #define IMAGE_NOTFICATION      ":/icons/notification.png"
