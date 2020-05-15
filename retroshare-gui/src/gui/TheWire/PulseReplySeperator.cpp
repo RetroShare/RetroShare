@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseReplySeperator.cpp                                         *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,55 +18,15 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#include "PulseReplySeperator.h"
 
-#include "ui_PulseItem.h"
+/** Constructor */
 
-#include <retroshare/rswire.h>
-
-class PulseItem;
-
-class PulseHolder
+PulseReplySeperator::PulseReplySeperator()
+:PulseViewItem(NULL)
 {
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifyPulseSelection(PulseItem *item) = 0;
-
-	// Actions.
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
+	setupUi(this);
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+}
 
 
-class PulseItem : public QWidget, private Ui::PulseItem
-{
-  Q_OBJECT
-
-public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
-
-	rstime_t publishTs();
-	void removeItem();
-
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
-
-private:
-
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
-};
-
-#endif

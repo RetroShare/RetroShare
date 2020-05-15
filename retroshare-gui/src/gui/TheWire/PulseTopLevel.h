@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseTopLevel.h                                                 *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,55 +18,48 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#ifndef MRK_PULSE_TOP_LEVEL_H
+#define MRK_PULSE_TOP_LEVEL_H
 
-#include "ui_PulseItem.h"
+#include "ui_PulseTopLevel.h"
 
+#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
 
-class PulseItem;
-
-class PulseHolder
-{
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifyPulseSelection(PulseItem *item) = 0;
-
-	// Actions.
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
 {
   Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
+	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
-	rstime_t publishTs();
-	void removeItem();
 
-	void setSelected(bool on);
-	bool isSelected();
+protected:
+	void setup();
 
-	const QPixmap *getPixmap();
+// PulseDataInterface ===========
+	// Group
+	virtual void setHeadshot(const QPixmap &pixmap) override;
+	virtual void setGroupNameString(QString name) override;
+	virtual void setAuthorString(QString name) override;
+
+	// Msg
+	virtual void setRefMessage(QString msg, uint32_t image_count) override;
+	virtual void setMessage(RsWirePulseSPtr pulse) override;
+	virtual void setDateString(QString date) override;
+
+	// Refs
+	virtual void setLikesString(QString likes) override;
+	virtual void setRepublishesString(QString repub) override;
+	virtual void setRepliesString(QString reply) override;
+
+	// 
+	virtual void setReferenceString(QString ref) override;
+	virtual void showResponseStats(bool enable) override;
+// PulseDataInterface ===========
 
 protected:
 	void mousePressEvent(QMouseEvent *event);
-
-private:
-
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
 };
 
 #endif

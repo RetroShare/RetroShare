@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseMessage.cpp                                                *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,55 +18,53 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#include "PulseMessage.h"
 
-#include "ui_PulseItem.h"
+/** Constructor */
 
-#include <retroshare/rswire.h>
-
-class PulseItem;
-
-class PulseHolder
+PulseMessage::PulseMessage(QWidget *parent)
+:QWidget(parent)
 {
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifyPulseSelection(PulseItem *item) = 0;
+	setupUi(this);
+}
 
-	// Actions.
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+void PulseMessage::setup(RsWirePulseSPtr pulse)
 {
-  Q_OBJECT
+	if (!pulse) {
+		return;
+	}
 
-public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
+	setMessage(QString::fromStdString(pulse->mPulseText));
 
-	rstime_t publishTs();
-	void removeItem();
+	// setup images.
+	if (!pulse->mImage1.empty()) {
+		// install image.
+	} else {
+		// leave this visible for a bit.
+		// label_image1->setVisible(false);
+	}
 
-	void setSelected(bool on);
-	bool isSelected();
+	if (!pulse->mImage2.empty()) {
+		// install image.
+	} else {
+		label_image2->setVisible(false);
+	}
 
-	const QPixmap *getPixmap();
+	if (!pulse->mImage3.empty()) {
+		// install image.
+	} else {
+		label_image3->setVisible(false);
+	}
 
-protected:
-	void mousePressEvent(QMouseEvent *event);
+	if (!pulse->mImage4.empty()) {
+		// install image.
+	} else {
+		label_image4->setVisible(false);
+	}
+}
 
-private:
+void PulseMessage::setMessage(QString msg)
+{
+	textBrowser->setPlainText(msg);
+}
 
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
-};
-
-#endif

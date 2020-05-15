@@ -1,5 +1,5 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseViewGroup.cpp                                              *
  *                                                                             *
  * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
@@ -18,55 +18,30 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#include <QDateTime>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QBuffer>
 
-#include "ui_PulseItem.h"
+#include "PulseViewGroup.h"
 
-#include <retroshare/rswire.h>
+#include "util/DateTime.h"
 
-class PulseItem;
+/** Constructor */
 
-class PulseHolder
+PulseViewGroup::PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group)
+:PulseViewItem(holder), mGroup(group)
 {
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifyPulseSelection(PulseItem *item) = 0;
+	setupUi(this);
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+	setup();
+}
 
-	// Actions.
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+void PulseViewGroup::setup()
 {
-  Q_OBJECT
+	if (mGroup) {
+		label_groupName->setText(QString::fromStdString(mGroup->mMeta.mGroupName));
+		label_authorName->setText(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString()));
+	}
+}
 
-public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
-
-	rstime_t publishTs();
-	void removeItem();
-
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
-
-protected:
-	void mousePressEvent(QMouseEvent *event);
-
-private:
-
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
-};
-
-#endif

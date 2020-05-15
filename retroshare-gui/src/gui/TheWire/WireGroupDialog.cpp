@@ -95,9 +95,11 @@ QPixmap WireGroupDialog::serviceImage()
 void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta)
 {
 	group.mMeta = meta;
-	group.mDescription = getDescription().toUtf8().constData();
 
-#if 0
+    // To Add.
+	group.mTagline = "a Tagline";
+	group.mLocation = "here";
+
 	QPixmap pixmap = getLogo();
 
 	if (!pixmap.isNull()) {
@@ -107,11 +109,12 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		buffer.open(QIODevice::WriteOnly);
 		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 
-		group.mThumbnail.copy((uint8_t *) ba.data(), ba.size());
+		group.mHeadshot.copy((uint8_t *) ba.data(), ba.size());
+		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
 	} else {
-		group.mThumbnail.clear();
+		group.mHeadshot.clear();
+		group.mMasthead.clear();
 	}
-#endif
 
 }
 
@@ -152,7 +155,7 @@ bool WireGroupDialog::service_loadGroup(const RsGxsGenericGroupData *data, Mode 
 	}
 
 	const RsWireGroup &group = *pgroup;
-	description = QString::fromUtf8(group.mDescription.c_str());
+	// description = QString::fromUtf8(group.mDescription.c_str());
 
 #if 0
 	if (group.mThumbnail.mData) {

@@ -52,7 +52,7 @@ PulseItem::PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *g
 	QWidget *pulse_widget = widget_parent; // default msg goes into widget_parent.
 
 	/* if it is a reply */
-	if (mPulse.mPulseType & WIRE_PULSE_TYPE_REPLY_MSG) {
+	if (mPulse.mPulseType & WIRE_PULSE_TYPE_RESPONSE) {
 
 		std::cerr << "Installing Reply Msg";
 		std::cerr << std::endl;

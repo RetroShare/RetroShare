@@ -32,11 +32,16 @@
 #include "gui/TheWire/WireGroupItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
+#include "gui/TheWire/PulseViewItem.h"
+#include "gui/TheWire/PulseTopLevel.h"
+#include "gui/TheWire/PulseReply.h"
+
+
 #include "util/TokenQueue.h"
 
 #define IMAGE_WIRE              ":/icons/wire.png"
 
-class WireDialog : public MainPage, public TokenResponse, public PulseHolder, public WireGroupHolder
+class WireDialog : public MainPage, public TokenResponse, public PulseHolder, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
 
@@ -51,15 +56,38 @@ public:
 	virtual void deletePulseItem(PulseItem *, uint32_t type);
 	virtual void notifyPulseSelection(PulseItem *item);
 
-	virtual void follow(RsGxsGroupId &groupId);
-	virtual void rate(RsGxsId &authorId);
-	virtual void reply(RsWirePulse &pulse, std::string &groupName);
+	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
+	virtual void follow(RsGxsGroupId &groupId) override;
+	virtual void rate(RsGxsId &authorId) override;
+	virtual void reply(RsWirePulse &pulse, std::string &groupName) override;
 
 
 	// WireGroupHolder interface.
-	virtual void subscribe(RsGxsGroupId &groupId);
-	virtual void unsubscribe(RsGxsGroupId &groupId);
-	virtual void notifyGroupSelection(WireGroupItem *item);
+	virtual void subscribe(RsGxsGroupId &groupId) override;
+	virtual void unsubscribe(RsGxsGroupId &groupId) override;
+	virtual void notifyGroupSelection(WireGroupItem *item) override;
+
+	// PulseViewItem interface
+	virtual void PVHreply(RsWirePulse &pulse, std::string &groupName) override;
+	virtual void PVHrepublish(RsWirePulse &pulse, std::string &groupName) override;
+	virtual void PVHlike(RsWirePulse &pulse, std::string &groupName) override;
+
+	virtual void PVHviewGroup(RsGxsGroupId &groupId) override;
+	virtual void PVHviewPulse(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
+	virtual void PVHviewReply(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
+
+	virtual void PVHfollow(RsGxsGroupId &groupId) override;
+	virtual void PVHrate(RsGxsId &authorId) override;
+
+	// New TwitterView
+	void postTestTwitterView();
+	void clearTwitterView();
+	void addTwitterView(PulseViewItem *item);
+	void showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
+	void postPulseFocus(RsWirePulseSPtr pulse);
+
+	void showGroupFocus(const RsGxsGroupId groupId);
+	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
 
 private slots:
 
@@ -85,7 +113,7 @@ private:
 	void showSelectedGroups();
 	void updateGroups(std::vector<RsWireGroup> &groups);
 
-    // utils.
+	// utils.
 	rstime_t getFilterTimestamp();
 
 	// Loading Data.

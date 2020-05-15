@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseItem.h                                                     *
+ * gui/TheWire/PulseViewGroup.h                                                *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,55 +18,26 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ITEM_H
-#define MRK_PULSE_ITEM_H
+#ifndef MRK_PULSE_VIEW_GROUP_H
+#define MRK_PULSE_VIEW_GROUP_H
 
-#include "ui_PulseItem.h"
+#include "ui_PulseViewGroup.h"
 
+#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
 
-class PulseItem;
-
-class PulseHolder
-{
-public:
-	virtual ~PulseHolder() {}
-	virtual void deletePulseItem(PulseItem *, uint32_t ptype) = 0;
-	virtual void notifyPulseSelection(PulseItem *item) = 0;
-
-	// Actions.
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void follow(RsGxsGroupId &groupId) = 0;
-	virtual void rate(RsGxsId &authorId) = 0;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) = 0;
-};
-
-
-class PulseItem : public QWidget, private Ui::PulseItem
+class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
 {
   Q_OBJECT
 
 public:
-	PulseItem(PulseHolder *holder, std::string url);
-	PulseItem(PulseHolder *holder, RsWirePulse *pulse_ptr, RsWireGroup *group_ptr, std::map<rstime_t, RsWirePulse *> replies);
-
-	rstime_t publishTs();
-	void removeItem();
-
-	void setSelected(bool on);
-	bool isSelected();
-
-	const QPixmap *getPixmap();
+	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
 
 protected:
-	void mousePressEvent(QMouseEvent *event);
+	void setup();
 
-private:
-
-	PulseHolder *mHolder;
-	RsWirePulse  mPulse;
-	uint32_t     mType;
-	bool mSelected;
+protected:
+	RsWireGroupSPtr mGroup;
 };
 
 #endif

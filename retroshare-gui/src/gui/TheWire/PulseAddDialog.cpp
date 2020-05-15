@@ -172,7 +172,7 @@ void PulseAddDialog::postOriginalPulse()
 	pulse.mMeta.mParentId.clear();
 	pulse.mMeta.mOrigMsgId.clear();
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL_MSG;
+	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL;
 	pulse.mReplySentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
 	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	// all mRefs should empty.
@@ -219,7 +219,7 @@ void PulseAddDialog::postReplyPulse()
 	pulse.mMeta.mParentId.clear();
 	pulse.mMeta.mOrigMsgId.clear();
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_REPLY_MSG;
+	pulse.mPulseType = WIRE_PULSE_TYPE_RESPONSE | WIRE_PULSE_TYPE_REPLY;
 	pulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
 	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 
@@ -254,7 +254,7 @@ void PulseAddDialog::postRefPulse(RsWirePulse &pulse)
 	refPulse.mMeta.mParentId = mReplyToPulse.mMeta.mOrigMsgId;
 	refPulse.mMeta.mOrigMsgId.clear();
 
-	refPulse.mPulseType = WIRE_PULSE_TYPE_REPLY_REFERENCE;
+	refPulse.mPulseType = WIRE_PULSE_TYPE_REFERENCE | WIRE_PULSE_TYPE_REPLY;
 	refPulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
 
 	// Dont put parent PulseText into refPulse - it is available on Thread Msg.

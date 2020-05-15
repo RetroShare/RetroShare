@@ -93,7 +93,7 @@ void PulseDetails::setup()
 	frame_replies->setVisible(false);
 	mHasReplies = false;
 
-	toolButton_follow->setEnabled(false); // TODO
+	// TMP toolButton_follow->setEnabled(false); // TODO
 	toolButton_rate->setEnabled(false);   // TODO
 	toolButton_reply->setEnabled(mActions != NULL);
 }
@@ -153,6 +153,7 @@ void PulseDetails::toggle()
 	}
 }
 
+const int SUMMARY_MAX_LEN = 50;
 QString PulseDetails::getSummary()
 {
 	std::string summary = mPulse.mPulseText;
@@ -178,6 +179,13 @@ QString PulseDetails::getSummary()
 			in_whitespace = false;
 		}
 	}
+
+	if (SUMMARY_MAX_LEN < len) 
+	{
+		summary = summary.substr(0,SUMMARY_MAX_LEN-3);
+		summary += "...";
+	}
+
 	std::cerr << "PulseDetails::getSummary() summary: " << summary;
 	std::cerr << std::endl;
 
@@ -189,7 +197,10 @@ void PulseDetails::follow()
 	// follow group.
 	if (mActions)
 	{
-		mActions->follow(mPulse.mMeta.mGroupId);
+		// tmp hack for developing.
+		mActions->focus(mPulse.mMeta.mGroupId, mPulse.mMeta.mOrigMsgId);
+
+		//mActions->follow(mPulse.mMeta.mGroupId);
 	}
 }
 
