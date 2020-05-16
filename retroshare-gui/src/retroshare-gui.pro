@@ -1308,11 +1308,13 @@ gxsforums {
 		gui/gxsforums/GxsForumThreadWidget.h \
 		gui/gxsforums/GxsForumModel.h \
 		gui/gxsforums/GxsForumUserNotify.h \
+		gui/gxsforums/ForumMessageView.h \
 		gui/feeds/GxsForumGroupItem.h \
 		gui/feeds/GxsForumMsgItem.h
 
 	FORMS += gui/gxsforums/CreateGxsForumMsg.ui \
 		gui/gxsforums/GxsForumThreadWidget.ui \
+		gui/gxsforums/ForumMessageView.ui \
 		gui/feeds/GxsForumGroupItem.ui \
 		gui/feeds/GxsForumMsgItem.ui
 
@@ -1322,6 +1324,7 @@ gxsforums {
 		gui/gxsforums/GxsForumThreadWidget.cpp \
 		gui/gxsforums/GxsForumModel.cpp \
 		gui/gxsforums/GxsForumUserNotify.cpp \
+		gui/gxsforums/ForumMessageView.cpp \
 		gui/feeds/GxsForumGroupItem.cpp \
 		gui/feeds/GxsForumMsgItem.cpp
 }

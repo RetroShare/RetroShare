@@ -530,6 +530,15 @@
     <string>Save image</string>
    </property>
   </action>
+  <action name="actionReply">
+   <property name="icon">
+    <iconset resource="../icons.qrc">
+     <normaloff>:/icons/mail/reply.png</normaloff>:/icons/mail/reply.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reply</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

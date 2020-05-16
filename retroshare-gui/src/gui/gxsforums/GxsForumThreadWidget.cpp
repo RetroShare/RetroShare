@@ -30,6 +30,7 @@
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumModel.h"
 #include "GxsForumsDialog.h"
+#include "ForumMessageView.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
@@ -278,6 +279,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterColumnChanged(int)));
 
 	connect(ui->actionSave_image, SIGNAL(triggered()), this, SLOT(saveImage()));
+	connect(ui->actionReply, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
 	/* Set own item delegate */
 	RSElidedItemDelegate *itemDelegate = new RSElidedItemDelegate(this);
@@ -567,6 +569,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
+	QAction *openAct = new QAction(tr("Open in a new window"), &contextMnu);
+	connect(openAct, SIGNAL(triggered()), this, SLOT(viewForumMessage()));
+
 	QAction *replyAct = new QAction(QIcon(IMAGE_REPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
@@ -661,9 +666,11 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 			contextMnu.addAction(pinUpPostAct);
 	}
 
+	contextMnu.addAction(openAct);
+	contextMnu.addSeparator();
 	contextMnu.addAction(replyAct);
-  contextMnu.addAction(newthreadAct);
-    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+	contextMnu.addAction(newthreadAct);
+	QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
@@ -712,6 +719,8 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 	QMenu *contextMnu = ui->postText->createStandardContextMenu(matrix.map(point));
 
 	contextMnu->addSeparator();
+	
+	contextMnu->addAction(ui->actionReply);
 
 	if(ui->postText->checkImage(point))
 	{
@@ -1350,8 +1359,8 @@ void GxsForumThreadWidget::copyMessageLink()
 		return;
 	}
 
-    ForumModelPostEntry fmpe ;
-    getCurrentPost(fmpe);
+	ForumModelPostEntry fmpe ;
+	getCurrentPost(fmpe);
 
 	QString thread_title = QString::fromUtf8(fmpe.mTitle.c_str());
 
@@ -1470,6 +1479,7 @@ void GxsForumThreadWidget::replytoforummessage()        { async_msg_action( &Gxs
 void GxsForumThreadWidget::editforummessage()           { async_msg_action( &GxsForumThreadWidget::editForumMessageData  ); }
 void GxsForumThreadWidget::reply_with_private_message() { async_msg_action( &GxsForumThreadWidget::replyMessageData      ); }
 void GxsForumThreadWidget::showInPeopleTab()            { async_msg_action( &GxsForumThreadWidget::showAuthorInPeople    ); }
+void GxsForumThreadWidget::viewForumMessage()           { async_msg_action( &GxsForumThreadWidget::viewMessage    ); }
 
 void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 {
@@ -1877,4 +1887,32 @@ void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)
 
 	MainWindow::showWindow(MainWindow::People);
 	idDialog->navigate(RsGxsId(msg.mMeta.mAuthorId));
+}
+
+void GxsForumThreadWidget::viewMessage(const RsGxsForumMsg& msg)
+{
+	if (groupId().isNull() || mThreadId.isNull()) {
+		return;
+	}
+
+	ForumModelPostEntry fmpe ;
+	getCurrentPost(fmpe);
+
+	QString threadtitle = QString::fromUtf8(fmpe.mTitle.c_str());
+	QString postText = QString::fromUtf8(msg.mMsg.c_str());
+	QString timestamp = DateTime::formatLongDateTime(msg.mMeta.mPublishTs);
+	RsGxsId authorID = msg.mMeta.mAuthorId;
+	RsGxsGroupId groupId = msg.mMeta.mGroupId;
+
+	ForumMessageView *FMView = new ForumMessageView(this);
+	FMView->setTitle(threadtitle);
+	FMView->setText(postText);
+	FMView->setName(authorID);
+	FMView->setTime(timestamp);
+	FMView->setGroupId(groupId);
+	FMView->setMessageId(mThreadId);
+
+	FMView->show();
+
+	/* window will destroy itself! */
 }
