@@ -28,11 +28,9 @@ const uint32_t PULSE_MAX_SIZE = 1000; // 1k char.
 
 /** Constructor */
 PulseAddDialog::PulseAddDialog(QWidget *parent)
-: QWidget(parent), mIsReply(false), mWaitingRefMsg(false)
+: QWidget(parent), mIsReply(false)
 {
 	ui.setupUi(this);
-
-	mWireQueue = new TokenQueue(rsWire->getTokenService(), this);
 
 	connect(ui.pushButton_Post, SIGNAL( clicked( void ) ), this, SLOT( postPulse( void ) ) );
 	connect(ui.pushButton_AddURL, SIGNAL( clicked( void ) ), this, SLOT( addURL( void ) ) );
@@ -48,12 +46,21 @@ void PulseAddDialog::setGroup(RsWireGroup &group)
 	mGroup = group;
 }
 
+// set ReplyWith Group.
+void PulseAddDialog::setGroup(const RsGxsGroupId &grpId)
+{
+	/* fetch in the background */
+	RsWireGroupSPtr pGroup;
+	rsWire->getWireGroup(grpId, pGroup);
+
+	setGroup(*pGroup);
+}
 
 void PulseAddDialog::cleanup()
 {
 	if (mIsReply)
 	{
-		std::cerr << "PulseAddDialog::setReplyTo() cleaning up old replyto";
+		std::cerr << "PulseAddDialog::cleanup() cleaning up old replyto";
 		std::cerr << std::endl;
 		QLayout *layout = ui.widget_replyto->layout();
 		// completely delete layout and sublayouts
@@ -63,14 +70,14 @@ void PulseAddDialog::cleanup()
 		{
 			if ((widget = item->widget()) != 0)
 			{
-				std::cerr << "PulseAddDialog::setReplyTo() removing widget";
+				std::cerr << "PulseAddDialog::cleanup() removing widget";
 				std::cerr << std::endl;
 				widget->hide();
 				delete widget;
 			}
 			else
 			{
-				std::cerr << "PulseAddDialog::setReplyTo() removing item";
+				std::cerr << "PulseAddDialog::cleanup() removing item";
 				std::cerr << std::endl;
 				delete item;
 			}
@@ -96,11 +103,11 @@ void PulseAddDialog::pulseTextChanged()
 	ui.pushButton_Post->setEnabled(enable);
 }
 
+// Old Interface, deprecate / make internal.
 void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
-	mReplyGroupName = groupName;
 	ui.frame_reply->setVisible(true);
 
 	{
@@ -116,6 +123,27 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 	}
 }
 
+void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+{
+	/* fetch in the background */
+	RsWireGroupSPtr pGroup;
+	if (!rsWire->getWireGroup(grpId, pGroup))
+	{
+		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch group";
+		std::cerr << std::endl;
+		return;
+	}
+
+	RsWirePulseSPtr pPulse;
+	if (!rsWire->getWirePulse(grpId, msgId, pPulse))
+	{
+		std::cerr << "PulseAddDialog::setRplyTo() failed to fetch pulse";
+		std::cerr << std::endl;
+		return;
+	}
+
+	setReplyTo(*pPulse, pGroup->mMeta.mGroupName);
+}
 
 void PulseAddDialog::addURL()
 {
@@ -164,21 +192,19 @@ void PulseAddDialog::postOriginalPulse()
 	std::cerr << "PulseAddDialog::postOriginalPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulse pulse;
+	RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pulse.mMeta.mGroupId  = mGroup.mMeta.mGroupId;
-	pulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId;
-	pulse.mMeta.mThreadId.clear();
-	pulse.mMeta.mParentId.clear();
-	pulse.mMeta.mOrigMsgId.clear();
+	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
+	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	// set images here too.
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL;
-	pulse.mReplySentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// all mRefs should empty.
-
-	uint32_t token;
-	rsWire->createPulse(token, pulse);
+	// this should be in async thread, so doesn't block UI thread.
+	if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
+	{
+		std::cerr << "PulseAddDialog::postOriginalPulse() FAILED";
+		std::cerr << std::endl;
+		return;
+	}
 
 	clearDialog();
 	hide();
@@ -211,67 +237,23 @@ void PulseAddDialog::postReplyPulse()
 	std::cerr << "PulseAddDialog::postReplyPulse()";
 	std::cerr << std::endl;
 
-	RsWirePulse pulse;
+	RsWirePulseSPtr pPulse(new RsWirePulse());
 
-	pulse.mMeta.mGroupId  = mGroup.mMeta.mGroupId;
-	pulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId;
-	pulse.mMeta.mThreadId.clear();
-	pulse.mMeta.mParentId.clear();
-	pulse.mMeta.mOrigMsgId.clear();
+	pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
+	// set images too.
 
-	pulse.mPulseType = WIRE_PULSE_TYPE_RESPONSE | WIRE_PULSE_TYPE_REPLY;
-	pulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-	pulse.mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-
-	// mRefs refer to parent post.
-	pulse.mRefGroupId   = mReplyToPulse.mMeta.mGroupId;
-	pulse.mRefGroupName = mReplyGroupName;
-	pulse.mRefOrigMsgId = mReplyToPulse.mMeta.mOrigMsgId;
-	pulse.mRefAuthorId  = mReplyToPulse.mMeta.mAuthorId;
-	pulse.mRefPublishTs = mReplyToPulse.mMeta.mPublishTs;
-	pulse.mRefPulseText = mReplyToPulse.mPulseText;
-
-	// Need Pulse MsgID before we can create associated Reference.
-	mWaitingRefMsg = true;
-
-	uint32_t token;
-	rsWire->createPulse(token, pulse);
-	mWireQueue->queueRequest(token, TOKENREQ_MSGINFO, RS_TOKREQ_ANSTYPE_ACK, 0);
-}
-
-
-void PulseAddDialog::postRefPulse(RsWirePulse &pulse)
-{
-	std::cerr << "PulseAddDialog::postRefPulse() create Reference!";
-	std::cerr << std::endl;
-
-	// Reference Pulse. posted on Parent's Group.
-	RsWirePulse refPulse;
-
-	refPulse.mMeta.mGroupId  = mReplyToPulse.mMeta.mGroupId;
-	refPulse.mMeta.mAuthorId = mGroup.mMeta.mAuthorId; // own author Id.
-	refPulse.mMeta.mThreadId = mReplyToPulse.mMeta.mOrigMsgId;
-	refPulse.mMeta.mParentId = mReplyToPulse.mMeta.mOrigMsgId;
-	refPulse.mMeta.mOrigMsgId.clear();
-
-	refPulse.mPulseType = WIRE_PULSE_TYPE_REFERENCE | WIRE_PULSE_TYPE_REPLY;
-	refPulse.mReplySentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-
-	// Dont put parent PulseText into refPulse - it is available on Thread Msg.
-	// otherwise gives impression it is correctly setup Parent / Reply...
-	// when in fact the parent PublishTS, and AuthorId are wrong.
-	refPulse.mPulseText = "";
-
-	// refs refer back to own Post.
-	refPulse.mRefGroupId   = mGroup.mMeta.mGroupId;
-	refPulse.mRefGroupName = mGroup.mMeta.mGroupName;
-	refPulse.mRefOrigMsgId = pulse.mMeta.mOrigMsgId;
-	refPulse.mRefAuthorId  = mGroup.mMeta.mAuthorId;
-	refPulse.mRefPublishTs = pulse.mMeta.mPublishTs;
-	refPulse.mRefPulseText = pulse.mPulseText;
-
-	uint32_t token;
-	rsWire->createPulse(token, refPulse);
+	// this should be in async thread, so doesn't block UI thread.
+	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
+			mReplyToPulse.mMeta.mOrigMsgId,
+			mGroup.mMeta.mGroupId,
+			WIRE_PULSE_TYPE_REPLY,
+			pPulse))
+	{
+		std::cerr << "PulseAddDialog::postReplyPulse() FAILED";
+		std::cerr << std::endl;
+		return;
+	}
 
 	clearDialog();
 	hide();
@@ -283,89 +265,4 @@ void PulseAddDialog::clearDialog()
 }
 
 
-void PulseAddDialog::acknowledgeMessage(const uint32_t &token)
-{
-	std::cerr << "PulseAddDialog::acknowledgeMessage()";
-	std::cerr << std::endl;
 
-	std::pair<RsGxsGroupId, RsGxsMessageId> p;
-	rsWire->acknowledgeMsg(token, p);
-
-	if (mWaitingRefMsg)
-	{
-		std::cerr << "PulseAddDialog::acknowledgeMessage() Waiting Ref Msg";
-		std::cerr << std::endl;
-		mWaitingRefMsg = false;
-
-		// request photo data.
-		GxsMsgReq req;
-		std::set<RsGxsMessageId> msgIds;
-		msgIds.insert(p.second);
-		req[p.first] = msgIds;
-
-		RsTokReqOptions opts;
-		opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-		uint32_t token;
-		mWireQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, req, 0);
-	}
-	else
-	{
-		std::cerr << "PulseAddDialog::acknowledgeMessage() Not Waiting Ref Msg";
-		std::cerr << std::endl;
-	}
-}
-
-void PulseAddDialog::loadPulseData(const uint32_t &token)
-{
-	std::cerr << "PulseAddDialog::loadPulseData()";
-	std::cerr << std::endl;
-	std::vector<RsWirePulse> pulses;
-	rsWire->getPulseData(token, pulses);
-
-	if (pulses.size() != 1)
-	{
-		std::cerr << "PulseAddDialog::loadPulseData() Error Too many pulses";
-		std::cerr << std::endl;
-		return;
-	}
-
-	std::cerr << "PulseAddDialog::loadPulseData() calling postRefMsg";
-	std::cerr << std::endl;
-
-	RsWirePulse& pulse = pulses[0];
-	postRefPulse(pulse);
-}
-
-
-/**************************** Request / Response Filling of Data ************************/
-
-void PulseAddDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
-{
-	if (queue == mWireQueue)
-	{
-		/* now switch on req */
-		switch(req.mType)
-		{
-			case TOKENREQ_MSGINFO:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeMessage(req.mToken);
-						break;
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadPulseData(req.mToken);
-						break;
-					default:
-						std::cerr << "PulseAddDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
-						std::cerr << std::endl;
-						break;
-				}
-				break;
-			default:
-				std::cerr << "PulseAddDialog::loadRequest() ERROR: INVALID TYPE";
-				std::cerr << std::endl;
-				break;
-		}
-	}
-}
-	

@@ -144,7 +144,7 @@ class RsWirePulse
 	std::string mPulseText;
 
 	uint32_t mPulseType;
-	uint32_t mReplySentiment; // only relevant if a reply.
+	uint32_t mSentiment; // sentiment can be asserted at any point.
 
 	// These Ref to the related (parent or reply) if reply (RESPONSE set)
 	// Mode                             RESPONSE          REFERENCE
@@ -222,13 +222,15 @@ virtual bool getGroups(const std::list<RsGxsGroupId> grpIds,
 	// New Blocking Interfaces.
 	// Plan to migrate all GUI calls to these, and remove old interfaces above.
 	// These are not single requests, but return data graphs for display.
-virtual bool createOriginalPulse(RsGxsGroupId grpId, std::string msg) = 0;
+virtual bool createOriginalPulse(const RsGxsGroupId &grpId, RsWirePulseSPtr pPulse) = 0;
 virtual bool createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId,
 				RsGxsGroupId replyWith, uint32_t reply_type,
-				uint32_t sentiment, std::string msg) = 0;
+				RsWirePulseSPtr pPulse) = 0;
 
-	// Provide Group Details for display.
+
+	// Provide Individual Group Details for display.
 virtual bool getWireGroup(const RsGxsGroupId &groupId, RsWireGroupSPtr &grp) = 0;
+virtual bool getWirePulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, RsWirePulseSPtr &pPulse) = 0;
 
 	// Provide list of pulses associated with groups.
 virtual bool getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds,

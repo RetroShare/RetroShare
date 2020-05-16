@@ -447,6 +447,10 @@ bool p3Wire::fetchPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsWirePulseSPt
 				pPulse = std::make_shared<RsWirePulse>(pulses[0]);
 				std::cerr << "p3Wire::fetchPulse() retrieved token: " << *pPulse;
 				std::cerr << std::endl;
+				std::cerr << "p3Wire::fetchPulse() ANS GrpId: " << pPulse->mMeta.mGroupId;
+				std::cerr << " MsgId: " << pPulse->mMeta.mMsgId;
+				std::cerr << " OrigMsgId: " << pPulse->mMeta.mOrigMsgId;
+				std::cerr << std::endl;
 			} else {
 				std::cerr << "p3Wire::fetchPulse() ERROR multiple pulses";
 				std::cerr << std::endl;
@@ -469,8 +473,7 @@ bool p3Wire::fetchPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsWirePulseSPt
 }
 
 // New Interfaces.
-// TODO: createOriginalPulse has not been tested.
-bool p3Wire::createOriginalPulse(RsGxsGroupId grpId, std::string msg)
+bool p3Wire::createOriginalPulse(const RsGxsGroupId &grpId, RsWirePulseSPtr pPulse)
 {
 	// request Group.
 	std::list<RsGxsGroupId> groupIds = { grpId };
@@ -499,6 +502,7 @@ bool p3Wire::createOriginalPulse(RsGxsGroupId grpId, std::string msg)
 	}
 
 	// Create Msg.
+	// Start fresh, just to be sure nothing dodgy happens in UX world.
 	RsWirePulse pulse;
 
 	pulse.mMeta.mGroupId  = group.mMeta.mGroupId;
@@ -507,9 +511,14 @@ bool p3Wire::createOriginalPulse(RsGxsGroupId grpId, std::string msg)
 	pulse.mMeta.mParentId.clear();
 	pulse.mMeta.mOrigMsgId.clear();
 
+	// copy info over
 	pulse.mPulseType = WIRE_PULSE_TYPE_ORIGINAL;
-	pulse.mReplySentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
-	pulse.mPulseText = msg;
+	pulse.mSentiment = pPulse->mSentiment;
+	pulse.mPulseText = pPulse->mPulseText;
+	pulse.mImage1 = pPulse->mImage1;
+	pulse.mImage2 = pPulse->mImage2;
+	pulse.mImage3 = pPulse->mImage3;
+	pulse.mImage4 = pPulse->mImage4;
 
 	// all mRefs should empty.
 
@@ -527,8 +536,7 @@ bool p3Wire::createOriginalPulse(RsGxsGroupId grpId, std::string msg)
 	return true;
 }
 
-// TODO: createReplyPulse has not been tested.
-bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGroupId replyWith, uint32_t reply_type, uint32_t /*sentiment*/, std::string msg)
+bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGroupId replyWith, uint32_t reply_type, RsWirePulseSPtr pPulse)
 {
 	// check reply_type. can only be ONE.
 	if (!((reply_type == WIRE_PULSE_TYPE_REPLY) ||
@@ -550,26 +558,41 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 		return false;
 	}
 
-	if (groups.size() != 2) {
-		std::cerr << "p3Wire::createReplyPulse() getGroups != 2";
-		std::cerr << std::endl;
-		return false;
-	}
-
 	// extract group info.
 	RsWireGroup replyToGroup;
 	RsWireGroup replyWithGroup;
 
-	if (groups[0].mMeta.mGroupId == grpId) {
+	if (grpId == replyWith)
+	{
+		if (groups.size() != 1) {
+			std::cerr << "p3Wire::createReplyPulse() getGroups != 1";
+			std::cerr << std::endl;
+			return false;
+		}
+
 		replyToGroup = groups[0];
-		replyWithGroup = groups[1];
-	} else {
-		replyToGroup = groups[1];
 		replyWithGroup = groups[0];
 	}
+	else
+	{
+		if (groups.size() != 2) {
+			std::cerr << "p3Wire::createReplyPulse() getGroups != 2";
+			std::cerr << std::endl;
+			return false;
+		}
 
+		if (groups[0].mMeta.mGroupId == grpId) {
+			replyToGroup = groups[0];
+			replyWithGroup = groups[1];
+		} else {
+			replyToGroup = groups[1];
+			replyWithGroup = groups[0];
+		}
+	}
+
+	// check groupIds match
 	if ((replyToGroup.mMeta.mGroupId != grpId) ||
-		(replyToGroup.mMeta.mGroupId != replyWith))
+		(replyWithGroup.mMeta.mGroupId != replyWith))
 	{
 		std::cerr << "p3Wire::createReplyPulse() groupid mismatch";
 		std::cerr << std::endl;
@@ -604,8 +627,8 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	responsePulse.mMeta.mOrigMsgId.clear();
 
 	responsePulse.mPulseType = WIRE_PULSE_TYPE_RESPONSE | reply_type;
-	responsePulse.mReplySentiment = 0; // toPulseSentiment(ui.comboBox_sentiment->currentIndex());
-	responsePulse.mPulseText = msg; // ui.textEdit_Pulse->toPlainText().toStdString();
+	responsePulse.mSentiment = pPulse->mSentiment;
+	responsePulse.mPulseText = pPulse->mPulseText;
 
 	// mRefs refer to parent post.
 	responsePulse.mRefGroupId   = replyToPulse->mMeta.mGroupId;
@@ -615,13 +638,59 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	responsePulse.mRefPublishTs = replyToPulse->mMeta.mPublishTs;
 	responsePulse.mRefPulseText = replyToPulse->mPulseText;
 
+	std::cerr << "p3Wire::createReplyPulse() create Response Pulse";
+	std::cerr << std::endl;
+
 	uint32_t token;
-	createPulse(token, responsePulse);
+	if (!createPulse(token, responsePulse))
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED to create Response Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	int result = waitToken(token);
+	if (result != RsTokenService::COMPLETE)
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED(2) to create Response Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
 
 	// get MsgId.
+	std::pair<RsGxsGroupId, RsGxsMessageId> responsePair;
+	if (!acknowledgeMsg(token, responsePair))
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED acknowledgeMsg for Response Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
 
-	// update responsePulse.
-	// TODO.
+	std::cerr << "p3Wire::createReplyPulse() Response Pulse ID: (";
+	std::cerr << responsePair.first.toStdString() << ", ";
+	std::cerr << responsePair.second.toStdString() << ")";
+	std::cerr << std::endl;
+
+	// retrieve newly generated message.
+	// **********************************************************
+	RsWirePulseSPtr createdResponsePulse;
+	if (!fetchPulse(responsePair.first, responsePair.second, createdResponsePulse))
+	{
+		std::cerr << "p3Wire::createReplyPulse() fetch createdReponsePulse FAILED";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	/* Check that pulses is created properly */
+	if ((createdResponsePulse->mMeta.mGroupId != responsePulse.mMeta.mGroupId) ||
+	    (createdResponsePulse->mPulseText != responsePulse.mPulseText) ||
+	    (createdResponsePulse->mRefGroupId != responsePulse.mRefGroupId) ||
+	    (createdResponsePulse->mRefOrigMsgId != responsePulse.mRefOrigMsgId))
+	{
+		std::cerr << "p3Wire::createReplyPulse() fetch createdReponsePulse FAILED";
+		std::cerr << std::endl;
+		return false;
+	}
 
 	// create ReplyTo Ref Msg.
 	std::cerr << "PulseAddDialog::postRefPulse() create Reference!";
@@ -637,7 +706,7 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	refPulse.mMeta.mOrigMsgId.clear();
 
 	refPulse.mPulseType = WIRE_PULSE_TYPE_REFERENCE | reply_type;
-	refPulse.mReplySentiment = 0; //toPulseSentiment(ui.comboBox_sentiment->currentIndex());
+	refPulse.mSentiment = 0; // should this be =? createdResponsePulse->mSentiment;
 
 	// Dont put parent PulseText into refPulse - it is available on Thread Msg.
 	// otherwise gives impression it is correctly setup Parent / Reply...
@@ -647,15 +716,41 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	// refs refer back to own Post.
 	refPulse.mRefGroupId   = replyWithGroup.mMeta.mGroupId;
 	refPulse.mRefGroupName = replyWithGroup.mMeta.mGroupName;
-	refPulse.mRefOrigMsgId = responsePulse.mMeta.mOrigMsgId;
+	refPulse.mRefOrigMsgId = createdResponsePulse->mMeta.mOrigMsgId;
 	refPulse.mRefAuthorId  = replyWithGroup.mMeta.mAuthorId;
-	refPulse.mRefPublishTs = responsePulse.mMeta.mPublishTs;
-	refPulse.mRefPulseText = responsePulse.mPulseText;
-
-	// uint32_t token;
-	rsWire->createPulse(token, refPulse);
+	refPulse.mRefPublishTs = createdResponsePulse->mMeta.mPublishTs;
+	refPulse.mRefPulseText = createdResponsePulse->mPulseText;
 
 	// publish Ref Msg.
+	if (!createPulse(token, refPulse))
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED to create Ref Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	result = waitToken(token);
+	if (result != RsTokenService::COMPLETE)
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED(2) to create Ref Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	// get MsgId.
+	std::pair<RsGxsGroupId, RsGxsMessageId> refPair;
+	if (!acknowledgeMsg(token, refPair))
+	{
+		std::cerr << "p3Wire::createReplyPulse() FAILED acknowledgeMsg for Ref Pulse";
+		std::cerr << std::endl;
+		return false;
+	}
+
+	std::cerr << "p3Wire::createReplyPulse() Success: Ref Pulse ID: (";
+	std::cerr << refPair.first.toStdString() << ", ";
+	std::cerr << refPair.second.toStdString() << ")";
+	std::cerr << std::endl;
+
 	return true;
 }
 
@@ -705,6 +800,15 @@ bool p3Wire::getWireGroup(const RsGxsGroupId &groupId, RsWireGroupSPtr &grp)
 	// TODO Should fill in Counters of pulses/likes/republishes/replies
 	return true;
 }
+
+// TODO Remove duplicate ...
+bool p3Wire::getWirePulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, RsWirePulseSPtr &pPulse)
+{
+	return fetchPulse(groupId, msgId, pPulse);
+}
+
+
+
 
 bool compare_time(const RsWirePulseSPtr& first, const RsWirePulseSPtr &second)
 {

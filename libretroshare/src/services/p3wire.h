@@ -63,10 +63,10 @@ public:
 
 	// New Interfaces.
 	// Blocking, request structures for display.
-	virtual bool createOriginalPulse(RsGxsGroupId grpId, std::string msg) override;
+	virtual bool createOriginalPulse(const RsGxsGroupId &grpId, RsWirePulseSPtr pPulse) override;
 	virtual bool createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId,
 		RsGxsGroupId replyWith, uint32_t reply_type,
-		uint32_t sentiment, std::string msg) override;
+		RsWirePulseSPtr pPulse) override;
 
 #if 0
 	virtual bool createReplyPulse(uint32_t &token, RsWirePulse &pulse) override;
@@ -75,6 +75,7 @@ public:
 #endif
 
 	virtual bool getWireGroup(const RsGxsGroupId &groupId, RsWireGroupSPtr &grp) override;
+	virtual bool getWirePulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId, RsWirePulseSPtr &pPulse) override;
 
 	virtual bool getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds, std::list<RsWirePulseSPtr> &pulsePtrs) override;
 

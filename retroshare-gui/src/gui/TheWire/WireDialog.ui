@@ -192,7 +192,7 @@
             <x>0</x>
             <y>0</y>
             <width>228</width>
-            <height>421</height>
+            <height>442</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -223,9 +223,9 @@
        </sizepolicy>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
-      <widget class="QWidget" name="tabWidget_Page1" native="true">
+      <widget class="QWidget" name="tabWidget_Page1">
        <attribute name="title">
         <string>Orig View</string>
        </attribute>
@@ -368,6 +368,13 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_7">
         <item>
+         <widget class="QLabel" name="label_viewMode">
+          <property name="text">
+           <string>Most Recent</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QScrollArea" name="scrollArea_3">
           <property name="widgetResizable">
            <bool>true</bool>
@@ -381,7 +388,7 @@
              <x>0</x>
              <y>0</y>
              <width>508</width>
-             <height>466</height>
+             <height>443</height>
             </rect>
            </property>
            <property name="styleSheet">

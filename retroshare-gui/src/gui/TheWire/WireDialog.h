@@ -83,11 +83,15 @@ public:
 	void postTestTwitterView();
 	void clearTwitterView();
 	void addTwitterView(PulseViewItem *item);
+
 	void showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
 	void postPulseFocus(RsWirePulseSPtr pulse);
 
 	void showGroupFocus(const RsGxsGroupId groupId);
 	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
+
+	void showGroupsPulses(const std::list<RsGxsGroupId> groupIds);
+	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
 private slots:
 

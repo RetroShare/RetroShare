@@ -24,9 +24,8 @@
 #include "ui_PulseAddDialog.h"
 
 #include <retroshare/rswire.h>
-#include "util/TokenQueue.h"
 
-class PulseAddDialog : public QWidget, public TokenResponse
+class PulseAddDialog : public QWidget
 {
   Q_OBJECT
 
@@ -34,8 +33,9 @@ public:
 	PulseAddDialog(QWidget *parent = 0);
 
 	void cleanup();
-	void setGroup(RsWireGroup &group);
-	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
+
+	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+	void setGroup(const RsGxsGroupId &grpId);
 
 private slots:
 	void addURL();
@@ -46,26 +46,23 @@ private slots:
 	void pulseTextChanged();
 
 private:
+	// OLD VERSIONs, private now.
+	void setGroup(RsWireGroup &group);
+	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
+
 	void postOriginalPulse();
 	void postReplyPulse();
-	void postRefPulse(RsWirePulse &pulse);
 
-	void acknowledgeMessage(const uint32_t &token);
-	void loadPulseData(const uint32_t &token);
-	void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 	uint32_t toPulseSentiment(int index);
 
 protected:
 
-	RsWireGroup mGroup; // where we want to post from.
+	RsWireGroup mGroup; // replyWith.
 
 	// if this is a reply
 	bool mIsReply;
-	std::string mReplyGroupName;
 	RsWirePulse mReplyToPulse;
-	bool mWaitingRefMsg;
 
-	TokenQueue* mWireQueue;
 	Ui::PulseAddDialog ui;
 
 };

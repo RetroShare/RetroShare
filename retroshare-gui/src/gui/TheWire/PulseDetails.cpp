@@ -56,6 +56,7 @@ PulseDetails::PulseDetails(PulseHolder *actions,
 	// reuse Meta data structure.
 	mPulse.mMeta.mGroupId = parentGroupId;
 	mPulse.mMeta.mOrigMsgId = parentOrigMsgId;
+	mPulse.mMeta.mMsgId = parentOrigMsgId;      // add in, for completeness.
 	mPulse.mMeta.mAuthorId  = parentAuthorId;
 	mPulse.mMeta.mPublishTs = parentPublishTs;
 	mPulse.mPulseText = parentPulseText;
