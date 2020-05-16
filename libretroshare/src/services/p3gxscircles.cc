@@ -415,7 +415,15 @@ bool p3GxsCircles::revokeIdsFromCircle( const std::set<RsGxsId>& identities, con
 		return false;
 	}
 
-	circleGrp.mInvitedMembers.erase(identities.begin(), identities.end());
+    // /!\ AVOID calling circleGrp.mInvitedMembers.erase(identities.begin(),identities.end()), because it is not the same set. Consequently
+    //     STL code would corrupt the structure of mInvitedMembers.
+
+    std::set<RsGxsId> new_invited_members;
+    for(auto& gxs_id: circleGrp.mInvitedMembers)
+        if(identities.find(gxs_id) == identities.end())
+            new_invited_members.insert(gxs_id);
+
+	circleGrp.mInvitedMembers = new_invited_members;
 
 	return editCircle(circleGrp);
 }
