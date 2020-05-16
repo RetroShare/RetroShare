@@ -451,7 +451,7 @@ void MessagesDialog::fillQuickView()
 		text = TagDefs::name(tag->first, tag->second.first);
 
 		item = new QListWidgetItem (text, ui.quickViewWidget);
-		item->setForeground(QBrush(QColor(tag->second.second)));
+		item->setData(Qt::ForegroundRole, QColor(tag->second.second));
 		item->setIcon(QIcon(":/images/foldermail.png"));
 		item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_TAG);
 		item->setData(ROLE_QUICKVIEW_ID, tag->first);
@@ -1262,7 +1262,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(true);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox-new.png"));
-        item->setForeground(QBrush(mTextColorInbox));
+        item->setData(Qt::ForegroundRole, mTextColorInbox);
     }
     else
     {
@@ -1272,7 +1272,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(false);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox.png"));
-        item->setForeground(QBrush(ui.messageTreeWidget->palette().color(QPalette::Text)));
+        item->setData(Qt::ForegroundRole, QVariant());
     }
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const

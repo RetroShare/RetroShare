@@ -287,9 +287,6 @@ void GroupTreeWidget::initDisplayMenu(QToolButton *toolButton)
 
 void GroupTreeWidget::updateColors()
 {
-	QBrush brush;
-	QBrush standardBrush = ui->treeWidget->palette().color(QPalette::Text);
-
 	QTreeWidgetItemIterator itemIterator(ui->treeWidget);
 	QTreeWidgetItem *item;
 	while ((item = *itemIterator) != NULL) {
@@ -297,12 +294,11 @@ void GroupTreeWidget::updateColors()
 
 		int color = item->data(COLUMN_DATA, ROLE_COLOR).toInt();
 		if (color >= 0) {
-			brush = QBrush(mTextColor[color]);
+			item->setData(COLUMN_NAME, Qt::TextColorRole, mTextColor[color]);
 		} else {
-			brush = standardBrush;
+			item->setData(COLUMN_NAME, Qt::TextColorRole, QVariant());
 		}
 
-		item->setForeground(COLUMN_NAME, brush);
 	}
 }
 
@@ -356,7 +352,7 @@ QTreeWidgetItem *GroupTreeWidget::addCategoryItem(const QString &name, const QIc
 	int S = QFontMetricsF(font).height();
 
 	item->setSizeHint(COLUMN_NAME, QSize(S*1.9, S*1.9));
-	item->setForeground(COLUMN_NAME, QBrush(textColorCategory()));
+	item->setData(COLUMN_NAME, Qt::TextColorRole, textColorCategory());
 	item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_CATEGORY);
 
 	item->setExpanded(expand);
@@ -513,15 +509,14 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_SUBSCRIBE_FLAGS, itemInfo.subscribeFlags);
 
 		/* Set color */
-		QBrush brush;
 		if (itemInfo.publishKey) {
-			brush = QBrush(textColorPrivateKey());
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
+			item->setData(COLUMN_NAME, Qt::BackgroundRole, QBrush(textColorPrivateKey()));
 		} else {
-			brush = ui->treeWidget->palette().color(QPalette::Text);
+			// Let StyleSheet color
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
+			item->setData(COLUMN_NAME, Qt::BackgroundRole, QVariant());
 		}
-		item->setForeground(COLUMN_NAME, brush);
 
 		/* Calculate score */
 		calculateScore(item, filterText);
