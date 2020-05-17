@@ -599,7 +599,8 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		RsBase64::encode(first, second, encodedValue, true, false);
 		ctx.mJson.SetString(
 		            encodedValue.data(),
-		            static_cast<rapidjson::SizeType>(encodedValue.length()) );
+		            static_cast<rapidjson::SizeType>(encodedValue.length()),
+		            ctx.mJson.GetAllocator());
 		break;
 	}
 	case RsGenericSerializer::FROM_JSON:
