@@ -124,8 +124,6 @@ void PulseReply::setReferenceString(QString ref)
 {
 	if (ref.size() == 0)
 	{
-		// appear to have duplicated here....
-		// widget_prefix->setVisible(false);
 		widget_reply_header->setVisible(false);
 	}
 	else

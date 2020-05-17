@@ -106,7 +106,7 @@ border-radius: 10px}</string>
          <item>
           <widget class="QPushButton" name="pushButton_tmpViewParent">
            <property name="text">
-            <string>TMP VIEW PARENT</string>
+            <string>SHOW PARENT</string>
            </property>
           </widget>
          </item>
@@ -229,8 +229,14 @@ border-radius: 10px}</string>
          </item>
          <item row="1" column="2">
           <widget class="QPushButton" name="pushButton_tmpViewGroup">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
            <property name="text">
-            <string>TMP VIEW</string>
+            <string>SHOW GROUP</string>
            </property>
           </widget>
          </item>
@@ -464,7 +470,7 @@ border-radius: 10px}</string>
            <item>
             <widget class="QToolButton" name="toolButton_reply">
              <property name="text">
-              <string>RPL</string>
+              <string>REPLY</string>
              </property>
             </widget>
            </item>
@@ -508,7 +514,7 @@ border-radius: 10px}</string>
            <item>
             <widget class="QToolButton" name="toolButton_republish">
              <property name="text">
-              <string>RET</string>
+              <string>REPUBLISH</string>
              </property>
             </widget>
            </item>
@@ -552,7 +558,7 @@ border-radius: 10px}</string>
            <item>
             <widget class="QToolButton" name="toolButton_like">
              <property name="text">
-              <string>LIK</string>
+              <string>LIKE</string>
              </property>
             </widget>
            </item>
@@ -596,32 +602,7 @@ border-radius: 10px}</string>
            <item>
             <widget class="QToolButton" name="toolButton_view">
              <property name="text">
-              <string>LNK</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_links">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="text">
-              <string>1</string>
+              <string>SHOW</string>
              </property>
             </widget>
            </item>

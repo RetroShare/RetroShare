@@ -294,6 +294,10 @@ void PulseDataItem::showPulse()
 		{
 			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mRefGroupId, mPulse->mRefGroupName);
 		}
+		else
+		{
+			setReference(0, mPulse->mRefGroupId, mPulse->mRefGroupName);
+		}
 	}
 }
 
