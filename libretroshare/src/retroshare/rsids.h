@@ -328,6 +328,7 @@ using Sha256CheckSum    = t_RsGenericIdType<_RsIdSize::SHA256         , false, R
 using RsPgpFingerprint  = t_RsGenericIdType<_RsIdSize::PGP_FINGERPRINT, true,  RsGenericIdType::PGP_FINGERPRINT>;
 using Bias20Bytes       = t_RsGenericIdType<_RsIdSize::SHA1           , true,  RsGenericIdType::BIAS_20_BYTES  >;
 using RsGxsGroupId      = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::GXS_GROUP      >;
+using RsGxsMessageId    = t_RsGenericIdType<_RsIdSize::SHA1           , false, RsGenericIdType::GXS_MSG        >;
 using RsGxsId           = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::GXS_ID         >;
 using RsGxsCircleId     = t_RsGenericIdType<_RsIdSize::CERT_SIGN      , false, RsGenericIdType::GXS_CIRCLE     >;
 using RsGxsTunnelId     = t_RsGenericIdType<_RsIdSize::SSL_ID         , false, RsGenericIdType::GXS_TUNNEL     >;

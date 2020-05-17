@@ -100,7 +100,7 @@ FriendSelectionDialog::FriendSelectionDialog(QWidget *parent,const QString& head
 	friends_widget->setModus(modus) ;
 	friends_widget->setShowType(show_type) ;
 	friends_widget->start() ;
-	friends_widget->setSelectedIds(pre_selected_id_type, pre_selected_ids, false);
+	friends_widget->setSelectedIdsFromString(pre_selected_id_type, pre_selected_ids, false);
 
 	QLayout *l = new QVBoxLayout ;
 	setLayout(l) ;

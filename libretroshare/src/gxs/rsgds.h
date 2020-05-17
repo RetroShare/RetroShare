@@ -149,7 +149,7 @@ public:
 	        bool withMeta = false ) = 0;
 
     /*!
-     * Retrieves all groups stored
+     * Retrieves all groups stored. Caller owns the memory and is supposed to delete the RsNxsGrp pointers after use.
      * @param grp retrieved groups
      * @param withMeta if true the meta handle of nxs grps is intitialised
      * @param cache whether to store retrieval in mem for faster later retrieval
