@@ -506,6 +506,11 @@
            <verstretch>10</verstretch>
           </sizepolicy>
          </property>
+         <property name="font">
+          <font>
+           <family>MS Sans Serif</family>
+          </font>
+         </property>
          <property name="contextMenuPolicy">
           <enum>Qt::CustomContextMenu</enum>
          </property>
