@@ -150,7 +150,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QFrame" name="frame_3">
+    <widget class="QFrame" name="frame_input">
      <property name="frameShape">
       <enum>QFrame::StyledPanel</enum>
      </property>

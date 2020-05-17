@@ -47,8 +47,12 @@ void PulseDataItem::actionReply()
 	std::cerr << std::endl;
 
 	if (mHolder) {
-		std::string groupName = "unknownGroupName";
-		mHolder->PVHreply(*mPulse, groupName);
+		if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+			std::cerr << "PulseDataItem::actionReply() NO ACTION FOR REF";
+			std::cerr << std::endl;
+			return;
+		}
+		mHolder->PVHreply(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
 	}
 }
 
@@ -58,8 +62,12 @@ void PulseDataItem::actionRepublish()
 	std::cerr << std::endl;
 
 	if (mHolder) {
-		std::string groupName = "unknownGroupName";
-		mHolder->PVHrepublish(*mPulse, groupName);
+		if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+			std::cerr << "PulseDataItem::actionRepublish() NO ACTION FOR REF";
+			std::cerr << std::endl;
+			return;
+		}
+		mHolder->PVHrepublish(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
 	}
 }
 
@@ -69,8 +77,12 @@ void PulseDataItem::actionLike()
 	std::cerr << std::endl;
 
 	if (mHolder) {
-		std::string groupName = "unknownGroupName";
-		mHolder->PVHlike(*mPulse, groupName);
+		if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+			std::cerr << "PulseDataItem::actionLike() NO ACTION FOR REF";
+			std::cerr << std::endl;
+			return;
+		}
+		mHolder->PVHlike(mPulse->mMeta.mGroupId, mPulse->mMeta.mMsgId);
 	}
 }
 

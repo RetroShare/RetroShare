@@ -34,7 +34,7 @@ public:
 
 	void cleanup();
 
-	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId);
+	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType);
 	void setGroup(const RsGxsGroupId &grpId);
 
 private slots:
@@ -48,7 +48,7 @@ private slots:
 private:
 	// OLD VERSIONs, private now.
 	void setGroup(RsWireGroup &group);
-	void setReplyTo(RsWirePulse &pulse, std::string &groupName);
+	void setReplyTo(RsWirePulse &pulse, std::string &groupName, uint32_t replyType);
 
 	void postOriginalPulse();
 	void postReplyPulse();
@@ -62,9 +62,9 @@ protected:
 	// if this is a reply
 	bool mIsReply;
 	RsWirePulse mReplyToPulse;
+	uint32_t mReplyType;
 
 	Ui::PulseAddDialog ui;
-
 };
 
 #endif

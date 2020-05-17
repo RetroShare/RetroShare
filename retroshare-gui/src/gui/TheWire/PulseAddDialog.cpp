@@ -91,9 +91,13 @@ void PulseAddDialog::cleanup()
 	ui.lineEdit_URL->setText("");
 	ui.lineEdit_DisplayAs->setText("");
 	ui.textEdit_Pulse->setPlainText("");
-	ui.pushButton_Post->setEnabled(false);
 	// disable URL until functionality finished.
 	ui.frame_URL->setEnabled(false);
+
+	ui.pushButton_Post->setEnabled(false);
+	ui.pushButton_Post->setText("Post Pulse to Wire");
+	ui.frame_input->setVisible(true);
+	ui.widget_sentiment->setVisible(true);
 }
 
 void PulseAddDialog::pulseTextChanged()
@@ -104,10 +108,11 @@ void PulseAddDialog::pulseTextChanged()
 }
 
 // Old Interface, deprecate / make internal.
-void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
+void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName, uint32_t replyType)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
+	mReplyType = replyType;
 	ui.frame_reply->setVisible(true);
 
 	{
@@ -121,9 +126,28 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName)
 		ui.widget_replyto->setLayout(vbox);
 		ui.widget_replyto->setVisible(true);
 	}
+
+	if (mReplyType & WIRE_PULSE_TYPE_REPLY)
+	{
+		ui.pushButton_Post->setText("Reply to Pulse");
+	}
+	else
+	{
+		// cannot add msg for like / republish.
+		ui.pushButton_Post->setEnabled(true);
+		ui.frame_input->setVisible(false);
+		ui.widget_sentiment->setVisible(false);
+		if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
+			ui.pushButton_Post->setText("Republish Pulse");
+		}
+		else if (mReplyType & WIRE_PULSE_TYPE_LIKE) {
+			ui.pushButton_Post->setText("Like Pulse");
+		}
+	}
+
 }
 
-void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId)
+void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType)
 {
 	/* fetch in the background */
 	RsWireGroupSPtr pGroup;
@@ -142,7 +166,7 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
 		return;
 	}
 
-	setReplyTo(*pPulse, pGroup->mMeta.mGroupName);
+	setReplyTo(*pPulse, pGroup->mMeta.mGroupName, replyType);
 }
 
 void PulseAddDialog::addURL()
@@ -247,7 +271,7 @@ void PulseAddDialog::postReplyPulse()
 	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
 			mReplyToPulse.mMeta.mOrigMsgId,
 			mGroup.mMeta.mGroupId,
-			WIRE_PULSE_TYPE_REPLY,
+			mReplyType,
 			pPulse))
 	{
 		std::cerr << "PulseAddDialog::postReplyPulse() FAILED";

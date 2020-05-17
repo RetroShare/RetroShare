@@ -132,6 +132,35 @@ void WireDialog::rate(RsGxsId &authorId)
 	std::cerr << std::endl;
 }
 
+bool WireDialog::setupPulseAddDialog()
+{
+	std::cerr << "WireDialog::setupPulseAddDialog()";
+	std::cerr << std::endl;
+
+	if (!mAddDialog)
+	{
+		mAddDialog = new PulseAddDialog(NULL);
+		mAddDialog->hide();
+	}
+
+	mAddDialog->cleanup();
+
+	int idx = ui.groupChooser->currentIndex();
+	if (idx < 0) {
+		std::cerr << "WireDialog::setupPulseAddDialog() ERROR GETTING AuthorId!";
+		std::cerr << std::endl;
+
+		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
+		return false;
+	}
+
+	// publishing group.
+	RsWireGroup group = mOwnGroups[idx];
+	mAddDialog->setGroup(group.mMeta.mGroupId);
+
+	return true;
+}
+
 void WireDialog::reply(RsWirePulse &pulse, std::string &groupName)
 {
 	std::cerr << "WireDialog::reply(";
@@ -143,31 +172,11 @@ void WireDialog::reply(RsWirePulse &pulse, std::string &groupName)
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	if (!mAddDialog)
+	if (setupPulseAddDialog())
 	{
-		mAddDialog = new PulseAddDialog(NULL);
-		mAddDialog->hide();
+		mAddDialog->setReplyTo(pulse.mMeta.mGroupId, pulse.mMeta.mMsgId, WIRE_PULSE_TYPE_REPLY);
+		mAddDialog->show();
 	}
-
-	int idx = ui.groupChooser->currentIndex();
-	if (idx < 0) {
-		std::cerr << "WireDialog::reply() ERROR GETTING AuthorId!";
-		std::cerr << std::endl;
-
-		QMessageBox::warning(this, tr("RetroShare"),tr("Please create or choose Wire Groupd first"), QMessageBox::Ok, QMessageBox::Ok);
-		return;
-	}
-
-	// publishing group.
-	RsWireGroup group = mOwnGroups[idx];
-	mAddDialog->cleanup();
-	mAddDialog->setGroup(group.mMeta.mGroupId);
-
-	// establish replyTo.
-	//mAddDialog->setReplyTo(pulse, groupName);
-	mAddDialog->setReplyTo(pulse.mMeta.mGroupId, pulse.mMeta.mMsgId);
-
-	mAddDialog->show();
 }
 
 void WireDialog::notifyPulseSelection(PulseItem *item)
@@ -857,25 +866,46 @@ void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 
 // PulseDataItem interface
 // Actions.
-void WireDialog::PVHreply(RsWirePulse &pulse, std::string &groupName)
+void WireDialog::PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
-	std::cerr << "WireDialog::PVHreply() TODO";
+	std::cerr << "WireDialog::PVHreply() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
 	std::cerr << std::endl;
+
+	if (setupPulseAddDialog())
+	{
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPLY);
+		mAddDialog->show();
+	}
 }
 
-void WireDialog::PVHrepublish(RsWirePulse &pulse, std::string &groupName)
+void WireDialog::PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
-	std::cerr << "WireDialog::PVHrepublish() TODO";
+	std::cerr << "WireDialog::PVHrepublish() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
 	std::cerr << std::endl;
+
+	if (setupPulseAddDialog())
+	{
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_REPUBLISH);
+		mAddDialog->show();
+	}
 }
 
-void WireDialog::PVHlike(RsWirePulse &pulse, std::string &groupName)
+void WireDialog::PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
-	std::cerr << "WireDialog::PVHlike() TODO";
+	std::cerr << "WireDialog::PVHlike() GroupId: " << groupId;
+	std::cerr << "MsgId: " << msgId;
 	std::cerr << std::endl;
+
+	if (setupPulseAddDialog())
+	{
+		mAddDialog->setReplyTo(groupId, msgId, WIRE_PULSE_TYPE_LIKE);
+		mAddDialog->show();
+	}
 }
 
-void WireDialog::PVHviewGroup(RsGxsGroupId &groupId)
+void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
 {
 	std::cerr << "WireDialog::PVHviewGroup(";
 	std::cerr << groupId.toStdString();
@@ -885,7 +915,7 @@ void WireDialog::PVHviewGroup(RsGxsGroupId &groupId)
 	showGroupFocus(groupId);
 }
 
-void WireDialog::PVHviewPulse(RsGxsGroupId &groupId, RsGxsMessageId &msgId)
+void WireDialog::PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHviewPulse(";
 	std::cerr << groupId.toStdString() << ",";
@@ -896,7 +926,7 @@ void WireDialog::PVHviewPulse(RsGxsGroupId &groupId, RsGxsMessageId &msgId)
 	showPulseFocus(groupId, msgId);
 }
 
-void WireDialog::PVHviewReply(RsGxsGroupId &groupId, RsGxsMessageId &msgId)
+void WireDialog::PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
 {
 	std::cerr << "WireDialog::PVHviewReply(";
 	std::cerr << groupId.toStdString() << ",";
@@ -907,7 +937,7 @@ void WireDialog::PVHviewReply(RsGxsGroupId &groupId, RsGxsMessageId &msgId)
 	// showPulseFocus(groupId, msgId);
 }
 
-void WireDialog::PVHfollow(RsGxsGroupId &groupId)
+void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 {
 	std::cerr << "WireDialog::PVHfollow(";
 	std::cerr << groupId.toStdString();
@@ -915,7 +945,7 @@ void WireDialog::PVHfollow(RsGxsGroupId &groupId)
 	std::cerr << std::endl;
 }
 
-void WireDialog::PVHrate(RsGxsId &authorId)
+void WireDialog::PVHrate(const RsGxsId &authorId)
 {
 	std::cerr << "WireDialog::PVHrate(";
 	std::cerr << authorId.toStdString();
@@ -1109,6 +1139,14 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 	for(it = pulses.begin(); it != pulses.end(); it++)
 	{
 		RsWirePulseSPtr reply = *it;
+
+		// don't show likes
+		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
+			std::cerr << "WireDialog::postGroupFocus() Not showing LIKE";
+			std::cerr << std::endl;
+			continue;
+		}
+
 		PulseReply *firstReply = new PulseReply(this, reply);
 		addTwitterView(firstReply);
 		firstReply->showReplyLine(false);
@@ -1155,6 +1193,13 @@ void WireDialog::postGroupsPulses(std::list<RsWirePulseSPtr> pulses)
 	for(it = pulses.begin(); it != pulses.end(); it++)
 	{
 		RsWirePulseSPtr reply = *it;
+		// don't show likes
+		if (reply->mPulseType & WIRE_PULSE_TYPE_LIKE) {
+			std::cerr << "WireDialog::postGroupsPulses() Not showing LIKE";
+			std::cerr << std::endl;
+			continue;
+		}
+
 		PulseReply *firstReply = new PulseReply(this, reply);
 		addTwitterView(firstReply);
 		firstReply->showReplyLine(false);

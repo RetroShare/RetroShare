@@ -68,16 +68,16 @@ public:
 	virtual void notifyGroupSelection(WireGroupItem *item) override;
 
 	// PulseViewItem interface
-	virtual void PVHreply(RsWirePulse &pulse, std::string &groupName) override;
-	virtual void PVHrepublish(RsWirePulse &pulse, std::string &groupName) override;
-	virtual void PVHlike(RsWirePulse &pulse, std::string &groupName) override;
+	virtual void PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
 
-	virtual void PVHviewGroup(RsGxsGroupId &groupId) override;
-	virtual void PVHviewPulse(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
-	virtual void PVHviewReply(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
+	virtual void PVHviewGroup(const RsGxsGroupId &groupId) override;
+	virtual void PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
+	virtual void PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) override;
 
-	virtual void PVHfollow(RsGxsGroupId &groupId) override;
-	virtual void PVHrate(RsGxsId &authorId) override;
+	virtual void PVHfollow(const RsGxsGroupId &groupId) override;
+	virtual void PVHrate(const RsGxsId &authorId) override;
 
 	// New TwitterView
 	void postTestTwitterView();
@@ -103,6 +103,8 @@ private slots:
 	void selectFilterTime(int index);
 
 private:
+
+	bool setupPulseAddDialog();
 
 	void addGroup(QWidget *item);
 

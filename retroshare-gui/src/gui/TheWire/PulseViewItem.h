@@ -33,16 +33,16 @@ public:
 	virtual ~PulseViewHolder() {}
 
 	// Actions.
-	virtual void PVHreply(RsWirePulse &pulse, std::string &groupName) = 0;
-	virtual void PVHrepublish(RsWirePulse &pulse, std::string &groupName) = 0;
-	virtual void PVHlike(RsWirePulse &pulse, std::string &groupName) = 0;
+	virtual void PVHreply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) = 0;
+	virtual void PVHrepublish(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) = 0;
+	virtual void PVHlike(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) = 0;
 
-	virtual void PVHviewGroup(RsGxsGroupId &groupId) = 0;
-	virtual void PVHviewPulse(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
-	virtual void PVHviewReply(RsGxsGroupId &groupId, RsGxsMessageId &msgId) = 0;
+	virtual void PVHviewGroup(const RsGxsGroupId &groupId) = 0;
+	virtual void PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) = 0;
+	virtual void PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId) = 0;
 
-	virtual void PVHfollow(RsGxsGroupId &groupId) = 0;
-	virtual void PVHrate(RsGxsId &authorId) = 0;
+	virtual void PVHfollow(const RsGxsGroupId &groupId) = 0;
+	virtual void PVHrate(const RsGxsId &authorId) = 0;
 };
 
 class PulseDataInterface
