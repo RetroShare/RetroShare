@@ -1604,14 +1604,13 @@ ChatLobbyId DistributedChatService::createChatLobby(const std::string& lobby_nam
 #endif
 	ChatLobbyId lobby_id ;
 	{
-		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
-
 		if (!rsIdentity->isOwnId(lobby_identity))
 		{
 			RsErr() << __PRETTY_FUNCTION__ << " lobby_identity RsGxsId id must be own" << std::endl;
-			lobby_id = 00000000000000000000;
-			return lobby_id;
+			return 0;
 		}
+
+		RsStackMutex stack(mDistributedChatMtx); /********** STACK LOCKED MTX ******/
 
 		// create a unique id.
 		//
