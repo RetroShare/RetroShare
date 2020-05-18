@@ -88,11 +88,12 @@ void UserNotify::setNotifyEnabled(bool enabled, bool combined, bool blink)
 	Settings->endGroup();
 }
 
-void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem)
+void UserNotify::initialize(QToolBar *mainToolBar, QAction *mainAction, QListWidgetItem *listItem,const QString& subtext)
 {
 	mMainAction = mainAction;
 	if (mMainAction) {
 		mButtonText = mMainAction->text();
+		mButtonText2 = subtext;
 		if (mainToolBar) {
 			mMainToolButton = dynamic_cast<QToolButton*>(mainToolBar->widgetForAction(mMainAction));
 		}
@@ -165,7 +166,18 @@ void UserNotify::update()
 
 	if (mMainAction) {
 		mMainAction->setIcon(getMainIcon(count > 0));
-		mMainAction->setText((count > 0) ? QString("%1 (%2)").arg(mButtonText).arg(count) : mButtonText);
+
+		if(count > 0)
+        {
+            if(!mButtonText2.isNull())
+                mMainAction->setToolTip(QString("%1 (%2 %3)").arg(mButtonText).arg(count).arg(mButtonText2));
+            else
+                mMainAction->setToolTip(QString("%1 (%2)").arg(mButtonText).arg(count));
+
+			mMainAction->setText(QString("%1 (%2)").arg(mButtonText).arg(count));
+        }
+        else
+			mMainAction->setText(mButtonText);
 
 		QFont font = mMainAction->font();
 		font.setBold(count > 0);

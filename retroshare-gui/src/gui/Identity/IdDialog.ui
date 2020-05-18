@@ -120,7 +120,7 @@
          <enum>Qt::NoFocus</enum>
         </property>
         <property name="icon">
-         <iconset resource="../images.qrc">
+         <iconset resource="../icons.qrc">
           <normaloff>:/icons/help_64.png</normaloff>:/icons/help_64.png</iconset>
         </property>
         <property name="checkable">
@@ -268,7 +268,7 @@
      </widget>
      <widget class="QTabWidget" name="rightTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
@@ -289,8 +289,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>634</width>
-             <height>523</height>
+             <width>1372</width>
+             <height>719</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="scrollAreaWidgetContentsVLayout">
@@ -1052,7 +1052,7 @@ border-image: url(:/images/closepressed.png)
   </action>
   <action name="chatIdentity">
    <property name="icon">
-    <iconset resource="../images.qrc">
+    <iconset>
      <normaloff>:/images/toaster/chat.png</normaloff>:/images/toaster/chat.png</iconset>
    </property>
    <property name="text">
@@ -1094,8 +1094,8 @@ border-image: url(:/images/closepressed.png)
   <tabstop>idTreeWidget</tabstop>
  </tabstops>
  <resources>
-  <include location="../images.qrc"/>
   <include location="../icons.qrc"/>
+  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>
