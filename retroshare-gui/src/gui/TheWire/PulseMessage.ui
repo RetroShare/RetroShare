@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>281</height>
+    <width>570</width>
+    <height>376</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -30,12 +30,15 @@
        <widget class="QLabel" name="label_image1">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>128</width>
+          <height>128</height>
          </size>
         </property>
         <property name="text">
          <string>Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -43,12 +46,15 @@
        <widget class="QLabel" name="label_image2">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>128</width>
+          <height>128</height>
          </size>
         </property>
         <property name="text">
          <string>Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -56,12 +62,15 @@
        <widget class="QLabel" name="label_image3">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>128</width>
+          <height>128</height>
          </size>
         </property>
         <property name="text">
          <string>Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -69,12 +78,15 @@
        <widget class="QLabel" name="label_image4">
         <property name="minimumSize">
          <size>
-          <width>80</width>
-          <height>80</height>
+          <width>128</width>
+          <height>128</height>
          </size>
         </property>
         <property name="text">
          <string>Image</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>

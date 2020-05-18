@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <iostream>
+#include <QtGui>
 
 #include "PulseDetails.h"
 
@@ -37,6 +38,8 @@ PulseAddDialog::PulseAddDialog(QWidget *parent)
 	connect(ui.pushButton_ClearDisplayAs, SIGNAL( clicked( void ) ), this, SLOT( clearDisplayAs( void ) ) );
 	connect(ui.pushButton_Cancel, SIGNAL( clicked( void ) ), this, SLOT( cancelPulse( void ) ) );
 	connect(ui.textEdit_Pulse, SIGNAL( textChanged( void ) ), this, SLOT( pulseTextChanged( void ) ) );
+
+	setAcceptDrops(true);
 }
 
 void PulseAddDialog::setGroup(RsWireGroup &group)
@@ -84,7 +87,7 @@ void PulseAddDialog::cleanup()
 		}
 		// then finally
 		delete layout;
-	    mIsReply = false;
+		mIsReply = false;
 	}
 	ui.frame_reply->setVisible(false);
 	ui.comboBox_sentiment->setCurrentIndex(0);
@@ -98,6 +101,23 @@ void PulseAddDialog::cleanup()
 	ui.pushButton_Post->setText("Post Pulse to Wire");
 	ui.frame_input->setVisible(true);
 	ui.widget_sentiment->setVisible(true);
+
+	// cleanup images.
+	mImage1.clear();
+	ui.label_image1->clear();
+	ui.label_image1->setText("Drag and Drop Image");
+
+	mImage2.clear();
+	ui.label_image2->clear();
+	ui.label_image2->setText("Drag and Drop Image");
+
+	mImage3.clear();
+	ui.label_image3->clear();
+	ui.label_image3->setText("Drag and Drop Image");
+
+	mImage4.clear();
+	ui.label_image4->clear();
+	ui.label_image4->setText("Drag and Drop Image");
 }
 
 void PulseAddDialog::pulseTextChanged()
@@ -221,6 +241,10 @@ void PulseAddDialog::postOriginalPulse()
 	pPulse->mSentiment = WIRE_PULSE_SENTIMENT_NO_SENTIMENT;
 	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
 	// set images here too.
+	pPulse->mImage1 = mImage1;
+	pPulse->mImage2 = mImage2;
+	pPulse->mImage3 = mImage3;
+	pPulse->mImage4 = mImage4;
 
 	// this should be in async thread, so doesn't block UI thread.
 	if (!rsWire->createOriginalPulse(mGroup.mMeta.mGroupId, pPulse))
@@ -265,7 +289,11 @@ void PulseAddDialog::postReplyPulse()
 
 	pPulse->mSentiment = toPulseSentiment(ui.comboBox_sentiment->currentIndex());
 	pPulse->mPulseText = ui.textEdit_Pulse->toPlainText().toStdString();
-	// set images too.
+	// set images here too.
+	pPulse->mImage1 = mImage1;
+	pPulse->mImage2 = mImage2;
+	pPulse->mImage3 = mImage3;
+	pPulse->mImage4 = mImage4;
 
 	// this should be in async thread, so doesn't block UI thread.
 	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
@@ -288,5 +316,131 @@ void PulseAddDialog::clearDialog()
 	ui.textEdit_Pulse->setPlainText("");
 }
 
+//---------------------------------------------------------------------
+// Drag and Drop Images.
 
+void PulseAddDialog::dragEnterEvent(QDragEnterEvent *event)
+{
+	std::cerr << "PulseAddDialog::dragEnterEvent()";
+	std::cerr << std::endl;
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "PulseAddDialog::dragEnterEvent() Accepting";
+		std::cerr << std::endl;
+		event->accept();
+	}
+	else
+	{
+		std::cerr << "PulseAddDialog::dragEnterEvent() Ignoring";
+		std::cerr << std::endl;
+		event->ignore();
+	}
+}
+
+void PulseAddDialog::dragLeaveEvent(QDragLeaveEvent *event)
+{
+	std::cerr << "PulseAddDialog::dragLeaveEvent()";
+	std::cerr << std::endl;
+
+	event->ignore();
+}
+
+void PulseAddDialog::dragMoveEvent(QDragMoveEvent *event)
+{
+	std::cerr << "PulseAddDialog::dragMoveEvent()";
+	std::cerr << std::endl;
+
+	event->accept();
+}
+
+void PulseAddDialog::dropEvent(QDropEvent *event)
+{
+	std::cerr << "PulseAddDialog::dropEvent()";
+	std::cerr << std::endl;
+
+	if (event->mimeData()->hasUrls())
+	{
+		std::cerr << "PulseAddDialog::dropEvent() Urls:" << std::endl;
+
+		QList<QUrl> urls = event->mimeData()->urls();
+		QList<QUrl>::iterator uit;
+		for (uit = urls.begin(); uit != urls.end(); ++uit)
+		{
+			QString localpath = uit->toLocalFile();
+			std::cerr << "Whole URL: " << uit->toString().toStdString() << std::endl;
+			std::cerr << "or As Local File: " << localpath.toStdString() << std::endl;
+
+			addImage(localpath);
+		}
+		event->setDropAction(Qt::CopyAction);
+		event->accept();
+	}
+	else
+	{
+		std::cerr << "PulseAddDialog::dropEvent Ignoring";
+		std::cerr << std::endl;
+		event->ignore();
+	}
+}
+
+
+void PulseAddDialog::addImage(const QString &path)
+{
+	std::cerr << "PulseAddDialog::addImage() loading image from: " << path.toStdString();
+	std::cerr << std::endl;
+
+	QPixmap qtn = QPixmap(path);
+	if (qtn.isNull()) {
+		std::cerr << "PulseAddDialog::addImage() Invalid Image";
+		std::cerr << std::endl;
+		return;
+	}
+
+	QPixmap image;
+	if ((qtn.width() <= 512) && (qtn.height() <= 512)) {
+		image = qtn;
+	} else {
+		image = qtn.scaled(512, 512, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	}
+
+	// scaled down for display, allow wide images.
+	QPixmap icon = qtn.scaled(256, 128, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+	QByteArray ba;
+	QBuffer buffer(&ba);
+
+	buffer.open(QIODevice::WriteOnly);
+	image.save(&buffer, "JPG");
+
+	if (mImage1.empty()) {
+		std::cerr << "PulseAddDialog::addImage() Installing in Image1";
+		std::cerr << std::endl;
+		ui.label_image1->setPixmap(icon);
+		mImage1.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image1 Size: " << mImage1.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage2.empty()) {
+		ui.label_image2->setPixmap(icon);
+		mImage2.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image2 Size: " << mImage2.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage3.empty()) {
+		ui.label_image3->setPixmap(icon);
+		mImage3.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image3 Size: " << mImage3.mSize;
+		std::cerr << std::endl;
+	}
+	else if (mImage4.empty()) {
+		ui.label_image4->setPixmap(icon);
+		mImage4.copy((uint8_t *) ba.data(), ba.size());
+		std::cerr << "PulseAddDialog::addImage() Installing in Image4 Size: " << mImage4.mSize;
+		std::cerr << std::endl;
+	}
+	else {
+		std::cerr << "PulseAddDialog::addImage() Images all full";
+		std::cerr << std::endl;
+	}
+}
 

@@ -37,30 +37,66 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 	setMessage(QString::fromStdString(pulse->mPulseText));
 
 	// setup images.
+	int width  = 256;
+	int height = 128;
+	bool imagesShown = false;
+
+	if (pulse->mImage2.empty()) {
+		// allow wider space for image 1.
+		width = 512;
+	}
+
 	if (!pulse->mImage1.empty()) {
 		// install image.
+		QPixmap qtn;
+		qtn.loadFromData(pulse->mImage1.mData, pulse->mImage1.mSize);
+		label_image1->setPixmap(qtn.scaled(width, height,
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		imagesShown = true;
 	} else {
-		// leave this visible for a bit.
-		// label_image1->setVisible(false);
+		label_image1->setVisible(false);
 	}
 
 	if (!pulse->mImage2.empty()) {
 		// install image.
+		QPixmap qtn;
+		qtn.loadFromData(pulse->mImage2.mData, pulse->mImage2.mSize);
+		label_image2->setPixmap(qtn.scaled(width, height,
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		imagesShown = true;
 	} else {
 		label_image2->setVisible(false);
 	}
 
+	width = 256;
+	if (pulse->mImage4.empty()) {
+		// allow wider space for image 3.
+		width = 512;
+	}
+
 	if (!pulse->mImage3.empty()) {
 		// install image.
+		QPixmap qtn;
+		qtn.loadFromData(pulse->mImage3.mData, pulse->mImage3.mSize);
+		label_image3->setPixmap(qtn.scaled(width, height,
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		imagesShown = true;
 	} else {
 		label_image3->setVisible(false);
 	}
 
 	if (!pulse->mImage4.empty()) {
 		// install image.
+		QPixmap qtn;
+		qtn.loadFromData(pulse->mImage4.mData, pulse->mImage4.mSize);
+		label_image4->setPixmap(qtn.scaled(width, height,
+			Qt::KeepAspectRatio, Qt::SmoothTransformation));
+		imagesShown = true;
 	} else {
 		label_image4->setVisible(false);
 	}
+
+	frame_expand->setVisible(imagesShown);
 }
 
 void PulseMessage::setMessage(QString msg)

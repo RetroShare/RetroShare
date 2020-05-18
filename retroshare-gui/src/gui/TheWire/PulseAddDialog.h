@@ -25,6 +25,14 @@
 
 #include <retroshare/rswire.h>
 
+
+QT_BEGIN_NAMESPACE
+class QDragEnterEvent;
+class QDropEvent;
+class QMouseEvent;
+QT_END_NAMESPACE
+
+
 class PulseAddDialog : public QWidget
 {
   Q_OBJECT
@@ -56,6 +64,12 @@ private:
 	uint32_t toPulseSentiment(int index);
 
 protected:
+	void dragEnterEvent(QDragEnterEvent *event);
+	void dragLeaveEvent(QDragLeaveEvent *event);
+	void dragMoveEvent(QDragMoveEvent *event);
+	void dropEvent(QDropEvent *event);
+
+	void addImage(const QString &path);
 
 	RsWireGroup mGroup; // replyWith.
 
@@ -63,6 +77,12 @@ protected:
 	bool mIsReply;
 	RsWirePulse mReplyToPulse;
 	uint32_t mReplyType;
+
+	// images
+	RsGxsImage mImage1;
+	RsGxsImage mImage2;
+	RsGxsImage mImage3;
+	RsGxsImage mImage4;
 
 	Ui::PulseAddDialog ui;
 };
