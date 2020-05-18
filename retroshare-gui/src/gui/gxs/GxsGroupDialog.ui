@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>563</height>
+    <width>1231</width>
+    <height>967</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -223,14 +223,14 @@
           <item>
            <widget class="QRadioButton" name="publish_required">
             <property name="text">
-             <string>Required</string>
+             <string>Re&amp;quired</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="publish_encrypt">
             <property name="text">
-             <string>Encrypted Msgs</string>
+             <string>Encrypted &amp;Msgs</string>
             </property>
            </widget>
           </item>
@@ -856,7 +856,6 @@
  </customwidgets>
  <resources>
   <include location="../icons.qrc"/>
-  <include location="../images.qrc"/>
  </resources>
  <connections/>
 </ui>

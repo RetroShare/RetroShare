@@ -112,6 +112,7 @@ enum class RsForumEventCode: uint8_t
 	SUBSCRIBE_STATUS_CHANGED = 0x05, /// forum was subscribed or unsubscribed
 	READ_STATUS_CHANGED      = 0x06, /// msg was read or marked unread
 	STATISTICS_CHANGED       = 0x07, /// suppliers and how many messages they have changed
+	MODERATOR_LIST_CHANGED   = 0x08, /// forum moderation list has changed.
 };
 
 struct RsGxsForumEvent: RsEvent
@@ -123,6 +124,8 @@ struct RsGxsForumEvent: RsEvent
 	RsForumEventCode mForumEventCode;
 	RsGxsGroupId mForumGroupId;
 	RsGxsMessageId mForumMsgId;
+    std::list<RsGxsId> mModeratorsAdded;
+    std::list<RsGxsId> mModeratorsRemoved;
 
 	///* @see RsEvent @see RsSerializable
 	void serial_process(
@@ -133,6 +136,9 @@ struct RsGxsForumEvent: RsEvent
 		RS_SERIAL_PROCESS(mForumEventCode);
 		RS_SERIAL_PROCESS(mForumGroupId);
 		RS_SERIAL_PROCESS(mForumMsgId);
+		RS_SERIAL_PROCESS(mForumMsgId);
+		RS_SERIAL_PROCESS(mModeratorsAdded);
+		RS_SERIAL_PROCESS(mModeratorsRemoved);
 	}
 
 	~RsGxsForumEvent() override;

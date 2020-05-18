@@ -31,8 +31,10 @@
 
 const uint32_t NEWSFEED_PEERLIST =       0x0001;
 
-const uint32_t NEWSFEED_FORUMNEWLIST =   0x0002;
-const uint32_t NEWSFEED_FORUMMSGLIST =   0x0003;
+const uint32_t NEWSFEED_NEW_FORUM      =   0x0002;
+const uint32_t NEWSFEED_NEW_FORUM_MSG  =   0x0003;
+const uint32_t NEWSFEED_UPDATED_FORUM  =   0x000f;
+
 const uint32_t NEWSFEED_CHANNELNEWLIST = 0x0004;
 //const uint32_t NEWSFEED_CHANNELMSGLIST = 0x0005;
 #if 0

@@ -33,6 +33,7 @@
 #include "rsnxsobserver.h"
 #include "retroshare/rsgxsservice.h"
 #include "rsitems/rsnxsitems.h"
+#include "gxs/rsgxsnotify.h"
 #include "rsgxsutil.h"
 
 template<class GxsItem, typename Identity = std::string>
@@ -262,12 +263,14 @@ public:
      */
     bool getPublishedMsgMeta(const uint32_t& token,RsMsgMetaData& meta);
 
+#ifdef TO_REMOVE
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
      * @param changes
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes);
+#endif
 
     /*!
      * \brief acceptNewGroup
@@ -747,9 +750,6 @@ protected:
      * @param changes the changes that have occured to data held by this service
      */
     virtual void notifyChanges(std::vector<RsGxsNotify*>& changes) = 0;
-
-
-
 
 private:
 

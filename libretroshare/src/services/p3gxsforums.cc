@@ -189,21 +189,17 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 	for(it = changes.begin(); it != changes.end(); ++it)
 	{
 		RsGxsMsgChange *msgChange = dynamic_cast<RsGxsMsgChange *>(*it);
+
 		if (msgChange)
 		{
 			if (msgChange->getType() == RsGxsNotify::TYPE_RECEIVED_NEW || msgChange->getType() == RsGxsNotify::TYPE_PUBLISHED) /* message received */
 				if (rsEvents)
 				{
-					std::map<RsGxsGroupId, std::set<RsGxsMessageId> >& msgChangeMap = msgChange->msgChangeMap;
-					for (auto mit = msgChangeMap.begin(); mit != msgChangeMap.end(); ++mit)
-						for (auto mit1 = mit->second.begin(); mit1 != mit->second.end(); ++mit1)
-						{
-							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumMsgId = *mit1;
-							ev->mForumGroupId = mit->first;
-							ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
-							rsEvents->postEvent(ev);
-						}
+					auto ev = std::make_shared<RsGxsForumEvent>();
+					ev->mForumMsgId = msgChange->mMsgId;
+					ev->mForumGroupId = msgChange->mGroupId;
+					ev->mForumEventCode = RsForumEventCode::NEW_MESSAGE;
+					rsEvents->postEvent(ev);
 				}
 
 #ifdef NOT_USED_YET
@@ -248,16 +244,10 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					{
 					case RsGxsNotify::TYPE_PROCESSED:	// happens when the group is subscribed
 					{
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
 							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumGroupId = *git;
+							ev->mForumGroupId = grpChange->mGroupId;
 							ev->mForumEventCode = RsForumEventCode::SUBSCRIBE_STATUS_CHANGED;
 							rsEvents->postEvent(ev);
-						}
-
 					}
                         break;
 
@@ -265,67 +255,79 @@ void p3GxsForums::notifyChanges(std::vector<RsGxsNotify *> &changes)
 					case RsGxsNotify::TYPE_RECEIVED_NEW:
 					{
 						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
 
 						RS_STACK_MUTEX(mKnownForumsMutex);
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							if(mKnownForums.find(*git) == mKnownForums.end())
-							{
-								mKnownForums.insert(
-								            std::make_pair(*git, time(nullptr)));
-								IndicateConfigChanged();
 
-								auto ev = std::make_shared<RsGxsForumEvent>();
-								ev->mForumGroupId = *git;
-								ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
-								rsEvents->postEvent(ev);
-							}
-							else
-								RsInfo() << __PRETTY_FUNCTION__
-								         << " Not notifying already known forum "
-								         << *git << std::endl;
+						if(mKnownForums.find(grpChange->mGroupId) == mKnownForums.end())
+						{
+							mKnownForums.insert( std::make_pair(grpChange->mGroupId, time(nullptr)));
+							IndicateConfigChanged();
+
+							auto ev = std::make_shared<RsGxsForumEvent>();
+							ev->mForumGroupId = grpChange->mGroupId;
+							ev->mForumEventCode = RsForumEventCode::NEW_FORUM;
+							rsEvents->postEvent(ev);
 						}
+						else
+							RsInfo() << __PRETTY_FUNCTION__
+							         << " Not notifying already known forum "
+							         << grpChange->mGroupId << std::endl;
 					}
 						break;
 
 					case RsGxsNotify::TYPE_STATISTICS_CHANGED:
 					{
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
+						auto ev = std::make_shared<RsGxsForumEvent>();
+						ev->mForumGroupId = grpChange->mGroupId;
+						ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
+						rsEvents->postEvent(ev);
+					}
+						break;
+
+                    case RsGxsNotify::TYPE_UPDATED:
+					{
+						// Happens when the group data has changed. In this case we need to analyse the old and new group in order to detect possible notifications for clients
+
+						RsGxsForumGroupItem *old_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mOldGroupItem);
+						RsGxsForumGroupItem *new_forum_grp_item = dynamic_cast<RsGxsForumGroupItem*>(grpChange->mNewGroupItem);
+
+						if(old_forum_grp_item == nullptr || new_forum_grp_item == nullptr)
+						{
+							RsErr() << __PRETTY_FUNCTION__ << " received GxsGroupUpdate item with mOldGroup and mNewGroup not of type RsGxsForumGroupItem. This is inconsistent!" << std::endl;
+							delete grpChange;
+							continue;
+						}
+
+						// First of all, we check if there is a difference between the old and new list of moderators
+
+						std::list<RsGxsId> added_mods, removed_mods;
+
+						for(auto& gxs_id: new_forum_grp_item->mGroup.mAdminList.ids)
+							if(old_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == old_forum_grp_item->mGroup.mAdminList.ids.end())
+								added_mods.push_back(gxs_id);
+
+						for(auto& gxs_id: old_forum_grp_item->mGroup.mAdminList.ids)
+							if(new_forum_grp_item->mGroup.mAdminList.ids.find(gxs_id) == new_forum_grp_item->mGroup.mAdminList.ids.end())
+								removed_mods.push_back(gxs_id);
+
+						if(!added_mods.empty() || !removed_mods.empty())
 						{
 							auto ev = std::make_shared<RsGxsForumEvent>();
-							ev->mForumGroupId = *git;
-							ev->mForumEventCode = RsForumEventCode::STATISTICS_CHANGED;
+
+							ev->mForumGroupId = new_forum_grp_item->meta.mGroupId;
+							ev->mModeratorsAdded = added_mods;
+							ev->mModeratorsRemoved = removed_mods;
+							ev->mForumEventCode = RsForumEventCode::MODERATOR_LIST_CHANGED;
+
 							rsEvents->postEvent(ev);
 						}
 					}
-						break;
+                        break;
+
+
 					default:
                         RsErr() << " Got a GXS event of type " << grpChange->getType() << " Currently not handled." << std::endl;
 						break;
-
-
-#ifdef NOT_USED_YET
-					case RsGxsNotify::TYPE_RECEIVED_PUBLISHKEY:
-					{
-						/* group received */
-						std::list<RsGxsGroupId> &grpList = grpChange->mGrpIdList;
-						std::list<RsGxsGroupId>::iterator git;
-						for (git = grpList.begin(); git != grpList.end(); ++git)
-						{
-							auto ev = std::make_shared<RsGxsChannelEvent>();
-
-							ev->mChannelGroupId = *git;
-							ev->mChannelEventCode = RsGxsChannelEvent::RECEIVED_PUBLISH_KEY;
-
-							rsEvents->sendEvent(ev);
-						}
-					}
-					break;
-#endif
 					}
                 }
 			}

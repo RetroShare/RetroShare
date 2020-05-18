@@ -59,12 +59,14 @@
 #define ROLE_SORT            Qt::UserRole + 1
 
 const static uint32_t timeToInactivity = 60 * 10;   // in seconds
+const static uint32_t timeToInactivity2 = 60 * 5;   // in seconds
 
 /** Default constructor */
 ChatLobbyDialog::ChatLobbyDialog(const ChatLobbyId& lid, QWidget *parent, Qt::WindowFlags flags)
         : ChatDialog(parent, flags), lobbyId(lid), mWindowedSetted(false), mPCWindow(nullptr),
           bullet_red_128(":/icons/bullet_red_128.png"), bullet_grey_128(":/icons/bullet_grey_128.png"),
-          bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png")
+          bullet_green_128(":/icons/bullet_green_128.png"), bullet_yellow_128(":/icons/bullet_yellow_128.png"),
+          bullet_blue_128(":/icons/bullet_blue_128.png")
 {
 	/* Invoke Qt Designer generated QObject setup routine */
 	ui.setupUi(this);
@@ -630,13 +632,15 @@ void ChatLobbyDialog::updateParticipantsList()
                 widgetitem->setIcon(COLUMN_ICON, bullet_red_128);
             else if (tLastAct + timeToInactivity < now)
                 widgetitem->setIcon(COLUMN_ICON, bullet_grey_128);
+            else if (tLastAct + timeToInactivity2 < now)
+                widgetitem->setIcon(COLUMN_ICON, bullet_yellow_128);
             else
                 widgetitem->setIcon(COLUMN_ICON, bullet_green_128);
 
             RsGxsId gxs_id;
             rsMsgs->getIdentityForChatLobby(lobbyId, gxs_id);
 
-            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, bullet_yellow_128);
+            if (RsGxsId(participant.toStdString()) == gxs_id) widgetitem->setIcon(COLUMN_ICON, bullet_blue_128);
 
 	    widgetitem->updateBannedState();
 

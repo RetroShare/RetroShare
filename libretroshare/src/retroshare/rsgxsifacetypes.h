@@ -34,8 +34,6 @@
 #include "serialiser/rstypeserializer.h"
 #include "util/rstime.h"
 
-typedef Sha1CheckSum RsGxsMessageId;
-
 typedef std::map<RsGxsGroupId, std::set<RsGxsMessageId> > GxsMsgIdResult;
 typedef std::pair<RsGxsGroupId, RsGxsMessageId> RsGxsGrpMsgIdPair;
 typedef std::map<RsGxsGrpMsgIdPair, std::set<RsGxsMessageId> > MsgRelatedIdResult;

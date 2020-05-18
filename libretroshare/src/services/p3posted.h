@@ -53,10 +53,12 @@ virtual void notifyChanges(std::vector<RsGxsNotify*>& changes)
 
 	public:
 
+#ifdef TO_REMOVE
 virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 {
 	return RsGxsIfaceHelper::receiveChanges(changes);
 }
+#endif
 
 	bool getBoardsInfo(const std::list<RsGxsGroupId>& boardsIds,
 	        std::vector<RsPostedGroup>& groupsInfo ) override;

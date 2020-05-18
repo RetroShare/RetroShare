@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>618</width>
-    <height>161</height>
+    <width>784</width>
+    <height>464</height>
    </rect>
   </property>
   <layout class="QGridLayout">
@@ -104,8 +104,8 @@
      <property name="frameShadow">
       <enum>QFrame::Sunken</enum>
      </property>
-     <layout class="QGridLayout">
-      <item row="0" column="0">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
        <layout class="QGridLayout">
         <item row="0" column="0" rowspan="2">
          <widget class="QLabel" name="forumlogo_label">
@@ -280,7 +280,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item>
        <widget class="QFrame" name="expandFrame">
         <layout class="QVBoxLayout">
          <property name="spacing">
@@ -330,6 +330,33 @@
             </item>
            </layout>
           </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="moderatorList_GB">
+        <property name="title">
+         <string>Moderator list</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="moderatorList_TE"/>
          </item>
         </layout>
        </widget>

@@ -72,6 +72,7 @@ public:
 
 	~RsGxsIfaceHelper() = default;
 
+#ifdef TO_REMOVE
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
@@ -81,6 +82,7 @@ public:
     {
 		mGxs.receiveChanges(changes);
     }
+#endif
 
     /* Generic Lists */
 
