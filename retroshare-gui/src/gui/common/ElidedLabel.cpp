@@ -239,7 +239,10 @@ bool ElidedLabel::paintElidedLine( QPainter* painter, QString plainText
 			*rectElision = mRectElision;
 
 		if(drawRoundedRect)
-			if (painter) painter->drawRoundedRect(mRectElision, 2 , 2);
+			if (painter) {
+				painter->setBrush(QBrush(Qt::transparent));
+				painter->drawRoundedRect(mRectElision, 2 , 2);
+			}
 	}
 
 	if (painter) painter->restore();

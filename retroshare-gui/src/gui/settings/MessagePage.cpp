@@ -140,7 +140,7 @@ void MessagePage::fillTags()
         QString text = TagDefs::name(Tag->first, Tag->second.first);
 
         QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
-        pItemWidget->setTextColor(QColor(Tag->second.second));
+        pItemWidget->setData(Qt::ForegroundRole, QColor(Tag->second.second));
         pItemWidget->setData(Qt::UserRole, Tag->first);
     }
 }
@@ -155,7 +155,7 @@ void MessagePage::addTag()
             QString text = TagDefs::name(Tag->first, Tag->second.first);
 
             QListWidgetItem *pItemWidget = new QListWidgetItem(text, ui.tags_listWidget);
-            pItemWidget->setTextColor(QColor(Tag->second.second));
+            pItemWidget->setData(Qt::ForegroundRole, QColor(Tag->second.second));
             pItemWidget->setData(Qt::UserRole, TagDlg.m_nId);
 
             m_changedTagIds.push_back(TagDlg.m_nId);
@@ -186,7 +186,7 @@ void MessagePage::editTag()
             if (Tag->first >= RS_MSGTAGTYPE_USER) {
                 pItemWidget->setText(QString::fromStdString(Tag->second.first));
             }
-            pItemWidget->setTextColor(QColor(Tag->second.second));
+            pItemWidget->setData(Qt::ForegroundRole, QColor(Tag->second.second));
 
             if (std::find(m_changedTagIds.begin(), m_changedTagIds.end(), TagDlg.m_nId) == m_changedTagIds.end()) {
                 m_changedTagIds.push_back(TagDlg.m_nId);

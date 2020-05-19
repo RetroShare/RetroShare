@@ -1301,3 +1301,8 @@ RSTextBrowser, MimeTextEdit
 	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
 	qproperty-textColorQuotes: ColorList(#0000ff #00ff00 #00ffff #ff0000 #ff00ff #ffff00 #ffffff);
 }
+
+ChatWidget QFrame#pluginTitleFrame
+{
+		background: transparent;
+}

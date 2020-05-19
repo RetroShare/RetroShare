@@ -93,7 +93,7 @@
 class MessageSortFilterProxyModel: public QSortFilterProxyModel
 {
 public:
-    MessageSortFilterProxyModel(const QHeaderView *header,QObject *parent = NULL): QSortFilterProxyModel(parent),m_header(header) , m_sortingEnabled(false) {}
+    MessageSortFilterProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent), m_sortingEnabled(false) {}
 
     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
     {
@@ -113,7 +113,6 @@ public:
 
     void setSortingEnabled(bool b) { m_sortingEnabled = b ; }
 private:
-    const QHeaderView *m_header ;
     bool m_sortingEnabled;
 };
 
@@ -138,7 +137,7 @@ MessagesDialog::MessagesDialog(QWidget *parent)
     listMode = LIST_NOTHING;
 
     mMessageModel = new RsMessageModel(this);
-    mMessageProxyModel = new MessageSortFilterProxyModel(ui.messageTreeWidget->header(),this);
+    mMessageProxyModel = new MessageSortFilterProxyModel(this);
     mMessageProxyModel->setSourceModel(mMessageModel);
     mMessageProxyModel->setSortRole(RsMessageModel::SortRole);
     mMessageProxyModel->setDynamicSortFilter(false);
@@ -451,7 +450,7 @@ void MessagesDialog::fillQuickView()
 		text = TagDefs::name(tag->first, tag->second.first);
 
 		item = new QListWidgetItem (text, ui.quickViewWidget);
-		item->setForeground(QBrush(QColor(tag->second.second)));
+		item->setData(Qt::ForegroundRole, QColor(tag->second.second));
 		item->setIcon(QIcon(":/images/foldermail.png"));
 		item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_TAG);
 		item->setData(ROLE_QUICKVIEW_ID, tag->first);
@@ -663,17 +662,17 @@ void MessagesDialog::messageTreeWidgetCustomPopupMenu(QPoint /*point*/)
 void MessagesDialog::showAuthorInPeopleTab()
 {
 	std::string cid;
-    std::string mid;
+	std::string mid;
 
-    if(!getCurrentMsg(cid, mid))
-        return ;
+	if(!getCurrentMsg(cid, mid))
+		return ;
 
-    MessageInfo msgInfo;
-    if (!rsMail->getMessage(mid, msgInfo))
-        return;
+	MessageInfo msgInfo;
+	if (!rsMail->getMessage(mid, msgInfo))
+		return;
 
 	if(msgInfo.rsgxsid_srcId.isNull())
-        return ;
+		return ;
 
 	/* window will destroy itself! */
 	IdDialog *idDialog = dynamic_cast<IdDialog*>(MainWindow::getPage(MainWindow::People));
@@ -779,8 +778,9 @@ void MessagesDialog::changeBox(int box_row)
 
     inChange = true;
 
-    ui.quickViewWidget->setCurrentItem(NULL);
-    listMode = LIST_BOX;
+	ui.quickViewWidget->setCurrentItem(NULL);
+	changeQuickView(-1);
+	listMode = LIST_BOX;
 
     switch(box_row)
     {
@@ -813,10 +813,10 @@ void MessagesDialog::changeBox(int box_row)
 
 void MessagesDialog::changeQuickView(int newrow)
 {
-    Q_UNUSED(newrow);
 
-    ui.listWidget->setCurrentItem(NULL);
-    listMode = LIST_QUICKVIEW;
+	ui.listWidget->setCurrentItem(NULL);
+	changeBox(-1);
+	listMode = LIST_QUICKVIEW;
 
     RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
 
@@ -870,17 +870,14 @@ void MessagesDialog::messagesTagsChanged()
     mMessageModel->updateMessages();
 }
 
-static void InitIconAndFont(QTreeWidgetItem *item)
-{
-}
 
 // click in messageTreeWidget
-void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& old_proxy_index)
+void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QModelIndex& /*old_proxy_index*/)
 {
-    if(!new_proxy_index.isValid())
-        return;
+	if(!new_proxy_index.isValid())
+		return;
 
-    // show current message directly
+	// show current message directly
 	insertMsgTxtAndFiles(new_proxy_index);
 }
 
@@ -1262,7 +1259,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(true);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox-new.png"));
-        item->setForeground(QBrush(mTextColorInbox));
+        item->setData(Qt::ForegroundRole, mTextColorInbox);
     }
     else
     {
@@ -1272,7 +1269,7 @@ void MessagesDialog::updateMessageSummaryList()
         qf.setBold(false);
         item->setFont(qf);
         item->setIcon(QIcon(":/images/folder-inbox.png"));
-        item->setForeground(QBrush(ui.messageTreeWidget->palette().color(QPalette::Text)));
+        item->setData(Qt::ForegroundRole, QVariant());
     }
 
     //QList<QListWidgetItem *> QListWidget::findItems ( const QString & text, Qt::MatchFlags flags ) const
