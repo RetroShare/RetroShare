@@ -66,7 +66,6 @@ void RsGxsWirePulseItem::clear()
 	pulse.mRefGroupName.clear();
 	pulse.mRefOrigMsgId.clear();
 	pulse.mRefAuthorId.clear();
-	pulse.mRefAuthorName.clear();
 	pulse.mRefPublishTs = 0;
 	pulse.mRefPulseText.clear();
 	pulse.mRefImageCount = 0;
@@ -86,7 +85,6 @@ void RsGxsWirePulseItem::serial_process(RsGenericSerializer::SerializeJob j,RsGe
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,pulse.mRefGroupName,"pulse.mRefGroupName") ;
 	RsTypeSerializer::serial_process(j,ctx,pulse.mRefOrigMsgId,"pulse.mRefOrigMsgId") ;
 	RsTypeSerializer::serial_process(j,ctx,pulse.mRefAuthorId,"pulse.mRefAuthorId") ;
-	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_NAME,pulse.mRefAuthorName,"pulse.mRefAuthorName") ;
 	RsTypeSerializer::serial_process(j,ctx,pulse.mRefPublishTs,"pulse.mRefPublishTs") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_STR_MSG,pulse.mRefPulseText,"pulse.mRefPulseText") ;
 	RsTypeSerializer::serial_process(j,ctx,TLV_TYPE_UINT32_PARAM,pulse.mRefImageCount,"pulse.mRefImageCount") ;

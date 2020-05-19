@@ -152,10 +152,9 @@ class RsWirePulse
 	std::string    mRefGroupName;  //   PARENT_GrpName    REPLY_GrpName
 	RsGxsMessageId mRefOrigMsgId;  //   PARENT_OrigMsgId  REPLY_OrigMsgId
 	RsGxsId        mRefAuthorId;   //   PARENT_AuthorId   REPLY_AuthorId
-	std::string    mRefAuthorName; //   PARENT_AuthorName REPLY_AuthorName  // TODO
 	rstime_t       mRefPublishTs;  //   PARENT_PublishTs  REPLY_PublishTs
 	std::string    mRefPulseText;  //   PARENT_PulseText  REPLY_PulseText
-	uint32_t       mRefImageCount; //   PARENT_#Images    REPLY_#Images     // TODO
+	uint32_t       mRefImageCount; //   PARENT_#Images    REPLY_#Images
 
 	// Additional Fields for version 2.
 	// Images, need to enforce 20k limit?
@@ -167,12 +166,16 @@ class RsWirePulse
 	// Below Here is not serialised.
 	// They are additional fields linking pulses together or parsing elements of msg.
 
+	// functions.
+	uint32_t ImageCount();
+
 	// can't have self referencial list, so need to use pointers.
 	// using SharedPointers to automatically cleanup.
 
-	// Pointer to WireGroup.
-	RsWireGroupSPtr mRefGroupPtr;
-	RsWireGroupSPtr mGroupPtr;
+	// Pointer to WireGroups
+	// mRefGroupPtr is opportunistically filled in, but will often be empty.
+	RsWireGroupSPtr mRefGroupPtr; //  ORIG/RESP: N/A      , REF: Reply Group
+	RsWireGroupSPtr mGroupPtr;    //  ORIG/RESP: Own Group, REF: Parent Group
 
 	// These are the direct children of this message
 	// split into likes, replies and retweets.

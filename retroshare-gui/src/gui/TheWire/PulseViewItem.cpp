@@ -226,6 +226,32 @@ void PulseDataItem::showPulse()
 
 	if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE)
 	{
+
+		// Group
+		bool headshotOkay = false;
+		if (mPulse->mRefGroupPtr) {
+			if (mPulse->mRefGroupPtr->mHeadshot.mData)
+			{
+				QPixmap pixmap;
+				if (GxsIdDetails::loadPixmapFromData(
+						mPulse->mRefGroupPtr->mHeadshot.mData,
+						mPulse->mRefGroupPtr->mHeadshot.mSize,
+						pixmap,GxsIdDetails::ORIGINAL))
+				{
+					headshotOkay = true;
+					pixmap = pixmap.scaled(50,50);
+					setHeadshot(pixmap);
+				}
+			}
+		}
+
+		if (!headshotOkay)
+		{
+			// default.
+			QPixmap pixmap = QPixmap(":/icons/png/posted.png").scaled(50,50);
+			setHeadshot(pixmap);
+		}
+
 		// Group
 		setGroupName(mPulse->mRefGroupName);
 		setAuthor(mPulse->mRefAuthorId.toStdString());
@@ -235,15 +261,15 @@ void PulseDataItem::showPulse()
 		setDate(mPulse->mRefPublishTs);
 
 		// References (unknown for a REFERENCE)
-		// should show FOLLOW button instead.
-		// setLikes(mPulse->mLikes.size());
-		// setReplies(mPulse->mReplies.size());
-		// setRepublishes(mPulse->mRepublishes.size());
-
+		// show FOLLOW button instead.
 		showResponseStats(false);
 
 		// 
-		setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, "GroupName TODO");
+		if (mPulse->mGroupPtr) {
+			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, mPulse->mGroupPtr->mMeta.mGroupName);
+		} else {
+			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, "REF GROUP MISSING");
+		}
 
 	}
 	else // ORIG / RESPONSE.

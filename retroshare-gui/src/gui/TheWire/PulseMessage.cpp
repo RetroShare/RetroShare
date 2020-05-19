@@ -104,3 +104,34 @@ void PulseMessage::setMessage(QString msg)
 	textBrowser->setPlainText(msg);
 }
 
+void PulseMessage::setRefImageCount(uint32_t count)
+{
+	QString msg = "Follow to see Image";
+	label_image1->setText(msg);
+	label_image2->setText(msg);
+	label_image3->setText(msg);
+	label_image4->setText(msg);
+
+	label_image1->setVisible(false);
+	label_image2->setVisible(false);
+	label_image3->setVisible(false);
+	label_image4->setVisible(false);
+
+	switch(count) {
+		case 4:
+			label_image4->setVisible(true);
+		case 3:
+			label_image3->setVisible(true);
+		case 2:
+			label_image2->setVisible(true);
+		case 1:
+			label_image1->setVisible(true);
+		default:
+			break;
+	}
+
+	if (count < 1) {
+		frame_expand->setVisible(false);
+	}
+}
+

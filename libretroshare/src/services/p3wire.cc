@@ -31,6 +31,23 @@
 RsWire *rsWire = NULL;
 
 
+uint32_t RsWirePulse::ImageCount()
+{
+	if (!mImage4.empty()) {
+		return 4;
+	}
+	if (!mImage3.empty()) {
+		return 3;
+	}
+	if (!mImage2.empty()) {
+		return 2;
+	}
+	if (!mImage1.empty()) {
+		return 1;
+	}
+	return 0;
+}
+
 p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
 	:RsGenExchange(gds, nes, new RsGxsWireSerialiser(), RS_SERVICE_GXS_TYPE_WIRE, gixs, wireAuthenPolicy()),
 	RsWire(static_cast<RsGxsIface&>(*this)), mWireMtx("WireMtx")
@@ -629,6 +646,10 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	responsePulse.mPulseType = WIRE_PULSE_TYPE_RESPONSE | reply_type;
 	responsePulse.mSentiment = pPulse->mSentiment;
 	responsePulse.mPulseText = pPulse->mPulseText;
+	responsePulse.mImage1 = pPulse->mImage1;
+	responsePulse.mImage2 = pPulse->mImage2;
+	responsePulse.mImage3 = pPulse->mImage3;
+	responsePulse.mImage4 = pPulse->mImage4;
 
 	// mRefs refer to parent post.
 	responsePulse.mRefGroupId   = replyToPulse->mMeta.mGroupId;
@@ -637,6 +658,7 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	responsePulse.mRefAuthorId  = replyToPulse->mMeta.mAuthorId;
 	responsePulse.mRefPublishTs = replyToPulse->mMeta.mPublishTs;
 	responsePulse.mRefPulseText = replyToPulse->mPulseText;
+	responsePulse.mRefImageCount = replyToPulse->ImageCount();
 
 	std::cerr << "p3Wire::createReplyPulse() create Response Pulse";
 	std::cerr << std::endl;
@@ -720,6 +742,7 @@ bool p3Wire::createReplyPulse(RsGxsGroupId grpId, RsGxsMessageId msgId, RsGxsGro
 	refPulse.mRefAuthorId  = replyWithGroup.mMeta.mAuthorId;
 	refPulse.mRefPublishTs = createdResponsePulse->mMeta.mPublishTs;
 	refPulse.mRefPulseText = createdResponsePulse->mPulseText;
+	refPulse.mRefImageCount = createdResponsePulse->ImageCount();
 
 	// publish Ref Msg.
 	if (!createPulse(token, refPulse))
@@ -1181,13 +1204,6 @@ bool p3Wire::extractGroupIds(RsWirePulseConstSPtr pPulse, std::set<RsGxsGroupId>
 
 bool p3Wire::updateGroupPtrs(RsWirePulseSPtr pPulse, const std::map<RsGxsGroupId, RsWireGroupSPtr> &groups)
 {
-	/* don't bother with Refs... though we could */
-	/* do this recursively */
-	if (pPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
-		/* skipping */
-		return true;
-	}
-
 	std::map<RsGxsGroupId, RsWireGroupSPtr>::const_iterator git;
 	git = groups.find(pPulse->mMeta.mGroupId);
 	if (git == groups.end()) {
@@ -1196,6 +1212,23 @@ bool p3Wire::updateGroupPtrs(RsWirePulseSPtr pPulse, const std::map<RsGxsGroupId
 	}
 
 	pPulse->mGroupPtr = git->second;
+
+	/* if Refs, GroupId refers to parent, so GroupPtr is parent's group
+	 * It should already be in groups lists - if its not... */
+	if (pPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		// if REF is in list, fill in (unlikely but try anyway)
+		// unlikely, as we are not adding RefGroupId, as can potentially fail to look up.
+		// need additional flag OKAY_IF_NONEXISTENT or similar.
+		// no error if its not there.
+		std::map<RsGxsGroupId, RsWireGroupSPtr>::const_iterator rgit;
+		rgit = groups.find(pPulse->mRefGroupId);
+		if (rgit != groups.end()) {
+			pPulse->mRefGroupPtr = rgit->second;
+		}
+
+		// no children for REF pulse, so can return now.
+		return true;
+	}
 
 	/* recursively apply to children */
 	std::list<RsWirePulseSPtr>::iterator it;

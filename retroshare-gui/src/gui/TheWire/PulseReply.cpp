@@ -85,7 +85,7 @@ void PulseReply::setAuthorString(QString name)
 void PulseReply::setRefMessage(QString msg, uint32_t image_count)
 {
 	widget_message->setMessage(msg);
-	//, image_count);
+	widget_message->setRefImageCount(image_count);
 }
 
 void PulseReply::setMessage(RsWirePulseSPtr pulse)
