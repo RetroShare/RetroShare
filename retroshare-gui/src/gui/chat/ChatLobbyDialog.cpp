@@ -616,10 +616,12 @@ void ChatLobbyDialog::updateParticipantsList()
             else
                 widgetitem = dynamic_cast<GxsIdRSTreeWidgetItem*>(qlFoundParticipants.at(0));
 
+            //TODO (Phenom): Add qproperty for these text colors in stylesheets
+            // As palette is not updated by stylesheet
             if (isParticipantMuted(it2->first)) {
-                widgetitem->setTextColor(COLUMN_NAME,QColor(255,0,0));
+                widgetitem->setData(COLUMN_NAME, Qt::ForegroundRole, QColor(255,0,0));
             } else {
-                widgetitem->setTextColor(COLUMN_NAME,ui.participantsList->palette().color(QPalette::Active, QPalette::Text));
+                widgetitem->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
             }
 
             time_t tLastAct=widgetitem->text(COLUMN_ACTIVITY).toInt();

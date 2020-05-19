@@ -215,7 +215,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	}
 
 	if (state != (int) RS_STATUS_OFFLINE) {
-		item->setTextColor(COLUMN_NAME, textColorOnline);
+		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
 	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
@@ -452,7 +452,7 @@ void FriendSelectionWidget::secured_fillList()
 				}
 
 				if (state != (int) RS_STATUS_OFFLINE) {
-					gpgItem->setTextColor(COLUMN_NAME, textColorOnline());
+					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
 				gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
@@ -589,7 +589,7 @@ void FriendSelectionWidget::secured_fillList()
 				QString name = QString::fromUtf8(detail.mNickname.c_str());
 				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				//gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                 gxsItem->setIcon(COLUMN_NAME, identicon);
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -643,7 +643,7 @@ void FriendSelectionWidget::secured_fillList()
           QString name = QString::fromUtf8(detail.mNickname.c_str());
           gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-          //gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+          //gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
           gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                   gxsItem->setIcon(COLUMN_NAME, identicon);
           gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -769,14 +769,12 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
@@ -788,14 +786,12 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_SSL:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);

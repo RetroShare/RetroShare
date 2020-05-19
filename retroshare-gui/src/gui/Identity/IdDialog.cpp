@@ -1386,23 +1386,24 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	item->setData(RSID_COL_NICKNAME, Qt::UserRole, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
-    if(isBanned)
-    {
-        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
-        item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
-        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
-        item->setForeground(RSID_COL_VOTES,QBrush(Qt::red));
-    }
-    else
-    {
-        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
-        item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
-        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
-        item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
-    }
+	if(isBanned)
+	{
+		//TODO (Phenom): Add qproperty for these text colors in stylesheets
+		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QColor(Qt::red));
+	}
+	else
+	{
+		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QVariant());
+	}
 
-    item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
-    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
+	item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+	item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
 	item->setData(
 	            RSID_COL_VOTES,Qt::DecorationRole,
 	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
@@ -1421,14 +1422,15 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	    QString tooltip = tr("This identity is owned by you");
 
-	    if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
-	    {
-		    item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
-		    item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
-		    item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+		if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+		{
+			//TODO (Phenom): Add qproperty for these text colors in stylesheets
+			item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QColor(Qt::red));
+			item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QColor(Qt::red));
+			item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QColor(Qt::red));
 
-		    tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
-	    }
+			tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
+		}
 
 	    item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
 	    item->setToolTip(RSID_COL_KEYID, tooltip) ;
