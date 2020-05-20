@@ -335,12 +335,13 @@ QString RetroshareDirModel::getAgeIndicatorString(const DirDetails &details) con
 const QIcon& RetroshareDirModel::getFlagsIcon(FileStorageFlags flags)
 {
     static QIcon *static_icons[8] = {NULL};
+    if(static_icons[0] == NULL)
+        static_icons[0] = new QIcon();
 
     int n=0;
     if(flags & DIR_FLAGS_ANONYMOUS_DOWNLOAD) n += 1 ;
     if(flags & DIR_FLAGS_ANONYMOUS_SEARCH  ) n += 2 ;
     if(flags & DIR_FLAGS_BROWSABLE         ) n += 4 ;
-    n-= 1;
 
     if(static_icons[n] == NULL)
     {
