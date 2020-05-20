@@ -63,6 +63,8 @@
 #define IMAGE_NOTFICATION      ":/icons/notification.png"
 #define IMAGE_SPAM_ON          ":/images/junk_on.png"
 #define IMAGE_SPAM_OFF         ":/images/junk_off.png"
+#define IMAGE_ATTACHMENTS      ":/icons/mail/attach24.png"
+#define IMAGE_ATTACHMENT      ":/icons/mail/attach16.png"
 
 #define IMAGE_INBOX             ":/images/folder-inbox.png"
 #define IMAGE_OUTBOX            ":/images/folder-outbox.png"
@@ -82,6 +84,7 @@
 #define QUICKVIEW_STATIC_ID_STARRED 1
 #define QUICKVIEW_STATIC_ID_SYSTEM  2
 #define QUICKVIEW_STATIC_ID_SPAM  3
+#define QUICKVIEW_STATIC_ID_ATTACHMENT  4
 
 #define ROW_INBOX         0
 #define ROW_OUTBOX        1
@@ -443,6 +446,16 @@ void MessagesDialog::fillQuickView()
 	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
 
 	if (selectedType == QUICKVIEW_TYPE_STATIC && selectedId == QUICKVIEW_STATIC_ID_SPAM) {
+		itemToSelect = item;
+	}
+
+	item = new QListWidgetItem(tr("Attachment"), ui.quickViewWidget);
+	item->setIcon(QIcon(IMAGE_ATTACHMENT));
+	item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_STATIC);
+	item->setData(ROLE_QUICKVIEW_ID, QUICKVIEW_STATIC_ID_ATTACHMENT);
+	item->setData(ROLE_QUICKVIEW_TEXT, item->text()); // for updateMessageSummaryList
+
+	if (selectedType == QUICKVIEW_TYPE_STATIC && selectedId == QUICKVIEW_STATIC_ID_ATTACHMENT) {
 		itemToSelect = item;
 	}
 
@@ -835,23 +848,27 @@ void MessagesDialog::changeQuickView(int newrow)
 						ui.tabWidget->setTabText(0, tr("Spam"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SPAM_ON));
 						break;
-		case   0x03:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
+		case   0x03:	f = RsMessageModel::QUICK_VIEW_ATTACHMENT   ; 
+						ui.tabWidget->setTabText(0, tr("Attachment"));
+						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_ATTACHMENT));
+						break;
+		case   0x04:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
 						ui.tabWidget->setTabText(0, tr("Important"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x04:	f = RsMessageModel::QUICK_VIEW_WORK     ;
+		case   0x05:	f = RsMessageModel::QUICK_VIEW_WORK     ;
 						ui.tabWidget->setTabText(0, tr("Work"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x05:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
+		case   0x06:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
 						ui.tabWidget->setTabText(0, tr("Personal"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x06:	f = RsMessageModel::QUICK_VIEW_TODO     ;
+		case   0x07:	f = RsMessageModel::QUICK_VIEW_TODO     ;
 						ui.tabWidget->setTabText(0, tr("Todo"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
-		case   0x07:	f = RsMessageModel::QUICK_VIEW_LATER    ;
+		case   0x08:	f = RsMessageModel::QUICK_VIEW_LATER    ;
 						ui.tabWidget->setTabText(0, tr("Later"));
 						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
 						break;
@@ -1160,6 +1177,7 @@ void MessagesDialog::updateMessageSummaryList()
     unsigned int starredCount = 0;
     unsigned int systemCount = 0;
     unsigned int spamCount = 0;
+    unsigned int attachmentCount = 0;
 
     /* calculating the new messages */
 
@@ -1353,6 +1371,9 @@ void MessagesDialog::updateMessageSummaryList()
                     break;
                 case QUICKVIEW_STATIC_ID_SPAM:
                     text += " (" + QString::number(spamCount) + ")";
+                    break;
+                case QUICKVIEW_STATIC_ID_ATTACHMENT:
+                    text += " (" + QString::number(attachmentCount) + ")";
                     break;
                 }
 
