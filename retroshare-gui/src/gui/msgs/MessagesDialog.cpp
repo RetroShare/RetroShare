@@ -461,10 +461,12 @@ void MessagesDialog::fillQuickView()
 
 	for (tag = tags.types.begin(); tag != tags.types.end(); ++tag) {
 		text = TagDefs::name(tag->first, tag->second.first);
+		QPixmap tagpixmap(18,18);
+		tagpixmap.fill(QColor(tag->second.second));
 
 		item = new QListWidgetItem (text, ui.quickViewWidget);
 		item->setData(Qt::ForegroundRole, QColor(tag->second.second));
-		item->setIcon(QIcon(":/images/foldermail.png"));
+		item->setIcon(tagpixmap);
 		item->setData(ROLE_QUICKVIEW_TYPE, QUICKVIEW_TYPE_TAG);
 		item->setData(ROLE_QUICKVIEW_ID, tag->first);
 		item->setData(ROLE_QUICKVIEW_TEXT, text); // for updateMessageSummaryList
