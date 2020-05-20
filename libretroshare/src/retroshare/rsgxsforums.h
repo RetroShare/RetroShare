@@ -342,6 +342,7 @@ public:
 
 	/**
 	 * @brief Import forum from full link
+	 * @jsonapi{development}
 	 * @param[in] link forum link either in radix or URL format
 	 * @param[out] forumId optional storage for parsed forum id
 	 * @param[out] errMsg optional storage for error message, meaningful only in
@@ -353,6 +354,11 @@ public:
 	        RsGxsGroupId& forumId = RS_DEFAULT_STORAGE_PARAM(RsGxsGroupId),
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string) ) = 0;
 
+	/**
+	 * @brief Request Synchronization with available peers
+	 * @jsonapi{development}
+	 */
+	virtual void requestSynchronization() = 0;
 
 	/**
 	 * @brief Create forum. Blocking API.

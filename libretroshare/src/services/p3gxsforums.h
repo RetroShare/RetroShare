@@ -131,6 +131,8 @@ public:
 	        std::string& errMsg = RS_DEFAULT_STORAGE_PARAM(std::string)
 	        ) override;
 
+	void requestSynchronization() override; /// @see RsGxsForums
+
     /// implementation of rsGxsGorums
     ///
 	bool getGroupData(const uint32_t &token, std::vector<RsGxsForumGroup> &groups) override;

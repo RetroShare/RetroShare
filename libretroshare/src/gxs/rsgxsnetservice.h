@@ -194,6 +194,9 @@ public:
     virtual bool removeGroups(const std::list<RsGxsGroupId>& groups);
     virtual bool isDistantPeer(const RsPeerId& pid);
 
+	/// @see RsNetworkExchangeService
+	void requestSynchronization() override;
+
     /* p3Config methods */
 public:
 

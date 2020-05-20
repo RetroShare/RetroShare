@@ -62,8 +62,8 @@ class RsNetworkExchangeService
 {
 public:
 
-	RsNetworkExchangeService(){ return;}
-    virtual ~RsNetworkExchangeService() {}
+	RsNetworkExchangeService() = default;
+	virtual ~RsNetworkExchangeService()  = default;
 
     virtual uint16_t serviceType() const =0;
     /*!
@@ -81,6 +81,9 @@ public:
 
     virtual uint32_t getDefaultSyncAge() =0;
     virtual uint32_t getDefaultKeepAge() =0;
+
+	/// Request syncronization with available peers
+	virtual void requestSynchronization() = 0;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///                                          DISTANT SEARCH FUNCTIONS                                           ///
