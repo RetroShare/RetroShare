@@ -511,7 +511,7 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		/* Set color */
 		if (itemInfo.publishKey) {
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_PRIVATEKEY);
-			item->setData(COLUMN_NAME, Qt::BackgroundRole, QBrush(textColorPrivateKey()));
+			item->setData(COLUMN_NAME, Qt::ForegroundRole, QBrush(textColorPrivateKey()));
 		} else {
 			// Let StyleSheet color
 			item->setData(COLUMN_DATA, ROLE_COLOR, GROUPTREEWIDGET_COLOR_STANDARD);
