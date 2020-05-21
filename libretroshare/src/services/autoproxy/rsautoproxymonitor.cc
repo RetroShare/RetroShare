@@ -174,7 +174,11 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 			*tt = *ticket;
 			tt->types.clear();
 			tt->types.push_back(*it);
-			s->processTaskAsync(tt);
+
+			// it's async!
+			RsThread::async([s, tt] {
+				s->processTaskAsync(tt);
+			});
 		} else {
 			s->processTaskSync(ticket);
 		}
