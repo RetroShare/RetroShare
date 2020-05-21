@@ -1225,7 +1225,7 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!i.isValid())
 		return ;
 
-    // no need to call preMods()/postMods() here because we'renot changing the model
+	// no need to call preMods()/postMods() here because we'renot changing the model
 
 	void *ref = i.internalPointer();
 	uint32_t entry = 0;
@@ -1233,17 +1233,9 @@ void RsGxsForumModel::setMsgReadStatus(const QModelIndex& i,bool read_status,boo
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
 		return ;
 
-    bool has_unread_below,has_read_below;
-    recursSetMsgReadStatus(entry,read_status,with_children) ;
+	bool has_unread_below, has_read_below;
+	recursSetMsgReadStatus(entry,read_status,with_children) ;
 	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
-
-    // Normally we should only update the parents up to the top of the tree, but it's complicated and the update here doesn't really cost,
-    // so we blindly update the whole widget.
-
-	if(mTreeMode == TREE_MODE_FLAT)
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-    else
-		emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts[0].mChildren.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 
 }
 
@@ -1270,6 +1262,9 @@ void RsGxsForumModel::recursSetMsgReadStatus(ForumModelIndex i,bool read_status,
 			}
 		else
 			rsGxsForums->setMessageReadStatus(token,std::make_pair( mForumGroup.mMeta.mGroupId, mPosts[i].mMsgId ), read_status);
+
+		QModelIndex itemIndex = createIndex(i - 1, 0, &mPosts[i]);
+		emit dataChanged(itemIndex, itemIndex);
 	}
 
 	if(!with_children)
