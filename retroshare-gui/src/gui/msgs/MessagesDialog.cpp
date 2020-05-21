@@ -242,8 +242,9 @@ MessagesDialog::MessagesDialog(QWidget *parent)
 
     //ui.messageTreeWidget->installEventFilter(this);
 
-    // remove close button of the the first tab
-    ui.tabWidget->hideCloseButton(0);
+	// remove close button of the the first tab
+	ui.tabWidget->hideCloseButton(0);
+	ui.tabWidget->setHideTabBarWithOneTab(true);
 
     int S = QFontMetricsF(font()).height();
  QString help_str = tr(
