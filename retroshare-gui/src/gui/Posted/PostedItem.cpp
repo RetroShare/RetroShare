@@ -167,8 +167,9 @@ void BasePostedItem::loadMessage()
 
 		std::vector<RsPostedPost> posts;
 		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
 		{
 			RsErr() << "BasePostedItem::loadMessage() ERROR getting data" << std::endl;
 			mIsLoadingMessage = false;
@@ -227,8 +228,9 @@ void BasePostedItem::loadComment()
 
 		std::vector<RsPostedPost> posts;
 		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments))
+		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments,votes))
 		{
 			RsErr() << "BasePostedItem::loadGroup() ERROR getting data" << std::endl;
 			mIsLoadingComment = false;
