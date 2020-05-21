@@ -487,15 +487,22 @@ void MessagesDialog::fillQuickView()
 
 int MessagesDialog::getSelectedMessages(QList<QString>& mid)
 {
-    //To check if the selection has more than one row.
+	//To check if the selection has more than one row.
 
-    mid.clear();
-    QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
+	mid.clear();
+	QModelIndexList qmil = ui.messageTreeWidget->selectionModel()->selectedRows();
 
-    foreach(const QModelIndex& m, qmil)
+	foreach(const QModelIndex& m, qmil)
 		mid.push_back(m.sibling(m.row(),RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString()) ;
 
-    return mid.size();
+	if (mid.isEmpty())
+	{
+		const QModelIndex& m = ui.messageTreeWidget->currentIndex();
+		if (m.isValid())
+			mid.push_back(m.sibling(m.row(),RsMessageModel::COLUMN_THREAD_MSGID).data(RsMessageModel::MsgIdRole).toString()) ;
+	}
+
+	return mid.size();
 }
 
 int MessagesDialog::getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar, QList<QModelIndex> *itemsJunk)
@@ -786,65 +793,78 @@ void MessagesDialog::editmessage()
 
 void MessagesDialog::changeBox(int box_row)
 {
-    if (inChange) {
-        // already in change method
-        return;
-    }
+	if (inChange) {
+		// already in change method
+		return;
+	}
 
-    inChange = true;
+	inChange = true;
 
-	ui.quickViewWidget->setCurrentItem(NULL);
-	changeQuickView(-1);
-	listMode = LIST_BOX;
+	QListWidgetItem* item = ui.listWidget->item(box_row);
 
-    switch(box_row)
-    {
-		case 0: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX );
-				ui.tabWidget->setTabText(0, tr("Inbox"));
-				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_INBOX));
-				break;
-		case 1: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX); 
-				ui.tabWidget->setTabText(0, tr("Outbox"));
-				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_OUTBOX));
-				break;
-		case 2: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS); 
-				ui.tabWidget->setTabText(0, tr("Drafts"));
-				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_DRAFTS));
-				break;
-		case 3: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  );
-				ui.tabWidget->setTabText(0, tr("Sent"));
-				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SENT));
-				break;
-		case 4: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH ); 
-				ui.tabWidget->setTabText(0, tr("Trash"));
-				ui.tabWidget->setTabIcon(0, QIcon(IMAGE_TRASH));
-				break;
-    default:
-        mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE); break;
-    }
-    inChange = false;
-    insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+	if (item)
+	{
+		ui.quickViewWidget->setCurrentItem(NULL);
+		changeQuickView(-1);
+
+		listMode = LIST_BOX;
+
+		QString placeholderText = tr("No message available in your %1.").arg(item->text());
+		switch(box_row)
+		{
+			case ROW_INBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_INBOX );
+			break;
+			case ROW_OUTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_OUTBOX);
+			break;
+			case ROW_DRAFTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_DRAFTS);
+			break;
+			case ROW_SENTBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_SENT  );
+			break;
+			case ROW_TRASHBOX: mMessageModel->setCurrentBox(RsMessageModel::BOX_TRASH );
+			break;
+			default:
+				mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE);
+		}
+
+		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+		ui.messageTreeWidget->setPlaceholderText(placeholderText);
+	}
+	else
+	{
+		mMessageModel->setCurrentBox(RsMessageModel::BOX_NONE);
+	}
+	inChange = false;
 }
 
 void MessagesDialog::changeQuickView(int newrow)
 {
-
-	ui.listWidget->setCurrentItem(NULL);
-	changeBox(-1);
-	listMode = LIST_QUICKVIEW;
 
 	RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
 	QListWidgetItem* item = ui.quickViewWidget->item(newrow);
 
 	if(item )
 	{
+		ui.listWidget->setCurrentItem(NULL);
+		changeBox(-1);
+
+		listMode = LIST_QUICKVIEW;
+
+		QString placeholderText;
 		switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
 			case QUICKVIEW_TYPE_TAG:
+			{
+				placeholderText = tr("No message using %1 tag available.").arg(item->data(ROLE_QUICKVIEW_TEXT).toString());
 				f = RsMessageModel::QuickViewFilter( item->data(ROLE_QUICKVIEW_ID).toUInt());
+			}
 			break;
 			case QUICKVIEW_TYPE_STATIC:
+			{
+				placeholderText = tr("No %1 message available.").arg(item->data(ROLE_QUICKVIEW_TEXT).toString());
 				switch (item->data(ROLE_QUICKVIEW_ID).toInt()) {
-					case QUICKVIEW_STATIC_ID_STARRED: f = RsMessageModel::QUICK_VIEW_STARRED;
+					case QUICKVIEW_STATIC_ID_STARRED:{
+						f = RsMessageModel::QUICK_VIEW_STARRED;
+						placeholderText = tr("No starred message available. Stars let you give messages a special status to make them easier to find. To star a message, click on the light gray star beside any message.");
+					}
 					break;
 					case QUICKVIEW_STATIC_ID_SYSTEM: f = RsMessageModel::QUICK_VIEW_SYSTEM;
 					break;
@@ -852,16 +872,15 @@ void MessagesDialog::changeQuickView(int newrow)
 					break;
 					case QUICKVIEW_STATIC_ID_ATTACHMENT: f = RsMessageModel::QUICK_VIEW_ATTACHMENT;
 				}
+			}
 		}
 
-		ui.tabWidget->setTabText(0, item->data(ROLE_QUICKVIEW_TEXT).toString());
-		ui.tabWidget->setTabIcon(0, item->icon());
+		insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+		ui.messageTreeWidget->setPlaceholderText(placeholderText);
 	}
 
 	mMessageModel->setQuickViewFilter(f);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
-
-	insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
 void MessagesDialog::messagesTagsChanged()
@@ -1037,9 +1056,8 @@ void MessagesDialog::insertMsgTxtAndFiles(const QModelIndex& proxy_index)
 	else if ((msgInfo.msgflags & RS_MSG_UNREAD_BY_USER) && bSetToReadOnActive)  // set to read
 		mMessageModel->setMsgReadStatus(real_index, true);
 
-    updateInterface();
+	msgWidget->fill(mid);
 	updateMessageSummaryList();
-    msgWidget->fill(mid);
 }
 
 bool MessagesDialog::getCurrentMsg(std::string &cid, std::string &mid)
@@ -1367,6 +1385,7 @@ void MessagesDialog::updateMessageSummaryList()
             break;
         }
     }
+	updateInterface();
 }
 
 void MessagesDialog::tagAboutToShow()
@@ -1500,12 +1519,12 @@ void MessagesDialog::updateInterface()
 	int tab = ui.tabWidget->currentIndex();
 
 	if (tab == 0)
-    {
-        QList<QString> msgs;
+	{
+		QList<QString> msgs;
 		count = getSelectedMessages(msgs);
 	}
-    else
-    {
+	else
+	{
 		MessageWidget *msg = dynamic_cast<MessageWidget*>(ui.tabWidget->widget(tab));
 		if (msg && msg->msgId().empty() == false)
 			count = 1;
@@ -1515,4 +1534,20 @@ void MessagesDialog::updateInterface()
 	ui.actionPrintPreview->setEnabled(count == 1);
 	ui.actionSaveAs->setEnabled(count == 1);
 	ui.tagButton->setEnabled(count >= 1);
+
+	if (ui.listWidget->currentItem())
+	{
+		ui.tabWidget->setTabText(0, ui.listWidget->currentItem()->text());
+		ui.tabWidget->setTabIcon(0, ui.listWidget->currentItem()->icon());
+	}
+	else if (ui.quickViewWidget->currentItem())
+	{
+		ui.tabWidget->setTabText(0, ui.quickViewWidget->currentItem()->text());
+		ui.tabWidget->setTabIcon(0, ui.quickViewWidget->currentItem()->icon());
+	}
+	else
+	{
+		ui.tabWidget->setTabText(0, tr("No Box selected."));
+		ui.tabWidget->setTabIcon(0, QIcon(":/icons/warning_yellow_128.png"));
+	}
 }
