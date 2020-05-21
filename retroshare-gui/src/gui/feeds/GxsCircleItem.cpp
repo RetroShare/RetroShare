@@ -129,7 +129,7 @@ void GxsCircleItem::setup()
 		{
             if(circleDetails.mAmIAdmin)
 			{
-				ui->titleLabel->setText(idName + tr(" which you invited, has join this circle you're administrating."));
+				ui->titleLabel->setText(idName + tr(" which you invited, has joined this circle you're administrating."));
 				ui->inviteeButton->setHidden(false);
 				ui->inviteeButton->setText(tr("Revoke membership"));
 				ui->inviteeButton->setToolTip(tr("Revoke membership for that identity"));
@@ -137,7 +137,7 @@ void GxsCircleItem::setup()
             else
             {
 				ui->inviteeButton->setHidden(true);
-				ui->titleLabel->setText(idName + tr(" has join this circle."));
+				ui->titleLabel->setText(idName + tr(" has joined this circle."));
             }
 
 			ui->iconLabel->setPixmap(pixmap);
