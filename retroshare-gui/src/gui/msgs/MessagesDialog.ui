@@ -205,6 +205,9 @@
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QHBoxLayout" name="quickViewFrameHLayout">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
                   <property name="topMargin">
                    <number>3</number>
                   </property>
