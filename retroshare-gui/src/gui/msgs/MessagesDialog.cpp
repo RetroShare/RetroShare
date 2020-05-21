@@ -833,54 +833,35 @@ void MessagesDialog::changeQuickView(int newrow)
 	changeBox(-1);
 	listMode = LIST_QUICKVIEW;
 
-    RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
+	RsMessageModel::QuickViewFilter f = RsMessageModel::QUICK_VIEW_ALL ;
+	QListWidgetItem* item = ui.quickViewWidget->item(newrow);
 
-    if(newrow >= 0)   // -1 means that nothing is selected
-		switch(newrow)
-		{
-		case   0x00:	f = RsMessageModel::QUICK_VIEW_STARRED   ; 
-						ui.tabWidget->setTabText(0, tr("Starred"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_STAR_ON));
-						break;
-		case   0x01:	f = RsMessageModel::QUICK_VIEW_SYSTEM   ; 
-						ui.tabWidget->setTabText(0, tr("System"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SYSTEM));
-						break;
-		case   0x02:	f = RsMessageModel::QUICK_VIEW_SPAM   ; 
-						ui.tabWidget->setTabText(0, tr("Spam"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_SPAM_ON));
-						break;
-		case   0x03:	f = RsMessageModel::QUICK_VIEW_ATTACHMENT   ; 
-						ui.tabWidget->setTabText(0, tr("Attachment"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_ATTACHMENT));
-						break;
-		case   0x04:	f = RsMessageModel::QUICK_VIEW_IMPORTANT;
-						ui.tabWidget->setTabText(0, tr("Important"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
-						break;
-		case   0x05:	f = RsMessageModel::QUICK_VIEW_WORK     ;
-						ui.tabWidget->setTabText(0, tr("Work"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
-						break;
-		case   0x06:	f = RsMessageModel::QUICK_VIEW_PERSONAL ;
-						ui.tabWidget->setTabText(0, tr("Personal"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
-						break;
-		case   0x07:	f = RsMessageModel::QUICK_VIEW_TODO     ;
-						ui.tabWidget->setTabText(0, tr("Todo"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
-						break;
-		case   0x08:	f = RsMessageModel::QUICK_VIEW_LATER    ;
-						ui.tabWidget->setTabText(0, tr("Later"));
-						ui.tabWidget->setTabIcon(0, QIcon(IMAGE_FOLDER));
-						break;
-		default:
-			f = RsMessageModel::QuickViewFilter( (int)RsMessageModel::QUICK_VIEW_USER + newrow - 0x07);
+	if(item )
+	{
+		switch (item->data(ROLE_QUICKVIEW_TYPE).toInt()) {
+			case QUICKVIEW_TYPE_TAG:
+				f = RsMessageModel::QuickViewFilter( item->data(ROLE_QUICKVIEW_ID).toUInt());
+			break;
+			case QUICKVIEW_TYPE_STATIC:
+				switch (item->data(ROLE_QUICKVIEW_ID).toInt()) {
+					case QUICKVIEW_STATIC_ID_STARRED: f = RsMessageModel::QUICK_VIEW_STARRED;
+					break;
+					case QUICKVIEW_STATIC_ID_SYSTEM: f = RsMessageModel::QUICK_VIEW_SYSTEM;
+					break;
+					case QUICKVIEW_STATIC_ID_SPAM: 	f = RsMessageModel::QUICK_VIEW_SPAM;
+					break;
+					case QUICKVIEW_STATIC_ID_ATTACHMENT: f = RsMessageModel::QUICK_VIEW_ATTACHMENT;
+				}
 		}
-    mMessageModel->setQuickViewFilter(f);
+
+		ui.tabWidget->setTabText(0, item->data(ROLE_QUICKVIEW_TEXT).toString());
+		ui.tabWidget->setTabIcon(0, item->icon());
+	}
+
+	mMessageModel->setQuickViewFilter(f);
 	mMessageProxyModel->setFilterRegExp(QRegExp(RsMessageModel::FilterString));	// this triggers the update of the proxy model
 
-    insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
+	insertMsgTxtAndFiles(ui.messageTreeWidget->currentIndex());
 }
 
 void MessagesDialog::messagesTagsChanged()
@@ -903,32 +884,34 @@ void MessagesDialog::currentChanged(const QModelIndex& new_proxy_index,const QMo
 // click in messageTreeWidget
 void MessagesDialog::clicked(const QModelIndex& proxy_index)
 {
-    if(!proxy_index.isValid())
-        return;
+	if(!proxy_index.isValid())
+		return;
 
-    QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
+	QModelIndex real_index = mMessageProxyModel->mapToSource(proxy_index);
 
-    switch (proxy_index.column())
-    {
-    case RsMessageModel::COLUMN_THREAD_READ:
-        {
-            mMessageModel->setMsgReadStatus(real_index, !isMessageRead(proxy_index));
-            //Already updated by currentChanged
-            //insertMsgTxtAndFiles(proxy_index);
-            updateMessageSummaryList();
-            return;
-        }
-    case RsMessageModel::COLUMN_THREAD_STAR:
-        {
-            mMessageModel->setMsgStar(real_index, !hasMessageStar(proxy_index));
-            return;
-        }
-    case RsMessageModel::COLUMN_THREAD_SPAM:
-        {
-            mMessageModel->setMsgJunk(real_index, !hasMessageSpam(proxy_index));
-            return;
-        }
-    }
+	switch (proxy_index.column())
+	{
+		case RsMessageModel::COLUMN_THREAD_READ:
+		{
+			mMessageModel->setMsgReadStatus(real_index, !isMessageRead(proxy_index));
+			//Already updated by currentChanged
+			//insertMsgTxtAndFiles(proxy_index);
+			updateMessageSummaryList();
+			return;
+		}
+		case RsMessageModel::COLUMN_THREAD_STAR:
+		{
+			mMessageModel->setMsgStar(real_index, !hasMessageStar(proxy_index));
+			updateMessageSummaryList();
+			return;
+		}
+		case RsMessageModel::COLUMN_THREAD_SPAM:
+		{
+			mMessageModel->setMsgJunk(real_index, !hasMessageSpam(proxy_index));
+			updateMessageSummaryList();
+			return;
+		}
+	}
 
 	// show current message directly
 	//Already updated by currentChanged
