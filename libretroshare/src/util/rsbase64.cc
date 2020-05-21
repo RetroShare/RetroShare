@@ -40,6 +40,12 @@
         rs_view_ptr<const uint8_t> data, size_t len, std::string& outString,
         bool padding, bool urlSafe )
 {
+	if(!data || !len)
+	{
+		outString.clear();
+		return;
+	}
+
 	const char* sDict = urlSafe ? uDict : bDict;
 
 	// Workaround if input and output are the same buffer.
@@ -137,6 +143,7 @@
 
 /*static*/ size_t RsBase64::encodedSize(size_t decodedSize, bool padding)
 {
+	if(!decodedSize) return 0;
 	if(padding) return 4 * (decodedSize + 2) / 3;
 	return static_cast<size_t>(
 	            std::ceil(4L * static_cast<double>(decodedSize) / 3L) );
