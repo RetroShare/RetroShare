@@ -511,6 +511,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 		ui.inviteFrame->hide();
 		ui.expandFilesButton->setChecked(false);
+		ui.downloadButton->setEnabled(false);
 		togglefileview(true);
 
 		ui.replyButton->setEnabled(false);
@@ -566,6 +567,7 @@ void MessageWidget::fill(const std::string &msgId)
 	/* add the items in! */
 	ui.msgList->insertTopLevelItems(0, items);
 	ui.expandFilesButton->setChecked(expandFiles && (items.count()>0) );
+	ui.downloadButton->setEnabled(items.count()>0);
 	togglefileview(true);
 
 	/* iterate through the sources */

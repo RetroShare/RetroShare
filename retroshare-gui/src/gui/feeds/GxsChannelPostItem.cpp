@@ -319,8 +319,9 @@ void GxsChannelPostItem::loadMessage()
 
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;

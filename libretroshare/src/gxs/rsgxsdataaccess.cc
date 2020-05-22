@@ -1038,7 +1038,7 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
                 // Because msgs are stored in a std::vector we build a map to convert each vector to its position in metaV.
 
                std::vector<bool> keep(metaV.size(),true);	   // this vector will tell wether we keep or not a given Meta
-               std::map<RsMessageId,uint32_t> index_in_metaV; // holds the index of each group Id in metaV
+               std::map<RsGxsMessageId,uint32_t> index_in_metaV; // holds the index of each group Id in metaV
 
                for(uint32_t i=0;i<metaV.size();++i)
                    index_in_metaV[metaV[i]->mMsgId] = i;

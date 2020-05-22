@@ -717,7 +717,7 @@ void FriendList::insertPeers()
                 groupItem->setChildIndicatorPolicy(QTreeWidgetItem::DontShowIndicatorWhenChildless);
                 groupItem->setTextAlignment(COLUMN_NAME, Qt::AlignLeft | Qt::AlignVCenter);
                 groupItem->setIcon(COLUMN_NAME, QIcon(IMAGE_GROUP24));
-                groupItem->setForeground(COLUMN_NAME, QBrush(textColorGroup()));
+                groupItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorGroup());
 
                 /* used to find back the item */
                 QString strID = QString::fromStdString(groupInfo->id.toStdString());
@@ -1110,8 +1110,8 @@ void FriendList::insertPeers()
                 for (int i = 0; i < columnCount; ++i) {
                     sslItem->setData(i, ROLE_SORT_STATE, peerState);
 
-                    sslItem->setTextColor(i, sslColor);
-                    sslItem->setFont(i, sslFont);
+                    sslItem->setData(i, Qt::ForegroundRole, sslColor);
+                    sslItem->setData(i, Qt::FontRole, sslFont);
                 }
             }
 
@@ -1222,8 +1222,8 @@ void FriendList::insertPeers()
             for (int i = 0; i < columnCount; ++i) {
                 gpgItem->setData(i, ROLE_SORT_STATE, bestPeerState);
 
-                gpgItem->setTextColor(i, gpgColor);
-                gpgItem->setFont(i, gpgFont);
+                gpgItem->setData(i, Qt::ForegroundRole, gpgColor);
+                gpgItem->setData(i, Qt::FontRole, gpgFont);
             }
 
             if (openPeers.find(gpgId) != openPeers.end()) {

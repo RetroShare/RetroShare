@@ -145,6 +145,9 @@ private:
 	QTreeWidgetItem *mMyCircleItem;
 	RsGxsUpdateBroadcastBase *mCirclesBroadcastBase ;
 
+	void saveExpandedCircleItems(std::vector<bool> &expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const;
+	void restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items);
+
 	std::map<uint32_t, CircleUpdateOrder> mCircleUpdates ;
 
 	RsGxsGroupId mId;

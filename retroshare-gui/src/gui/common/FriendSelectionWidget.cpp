@@ -215,7 +215,7 @@ static void initSslItem(QTreeWidgetItem *item, const RsPeerDetails &detail, cons
 	}
 
 	if (state != (int) RS_STATUS_OFFLINE) {
-		item->setTextColor(COLUMN_NAME, textColorOnline);
+		item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline);
 	}
 
 	item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(state)));
@@ -278,18 +278,35 @@ void FriendSelectionWidget::secured_fillList()
 
 	// get selected items
     std::set<RsPeerId> sslIdsSelected;
-	if (mShowTypes & SHOW_SSL) {
+	if (mShowTypes & SHOW_SSL)
+    {
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				sslIdsSelected.insert(RsPeerId(s));
+
         selectedIds<RsPeerId,IDTYPE_SSL>(sslIdsSelected,true);
 	}
 
     std::set<RsNodeGroupId> groupIdsSelected;
-	if (mShowTypes & SHOW_GROUP) {
+
+	if (mShowTypes & SHOW_GROUP)
+    {
         selectedIds<RsNodeGroupId,IDTYPE_GROUP>(groupIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				groupIdsSelected.insert(RsNodeGroupId(s));
 	}
 
     std::set<RsPgpId> gpgIdsSelected;
-	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG)) {
+
+	if (mShowTypes & (SHOW_GPG | SHOW_NON_FRIEND_GPG))
+    {
         selectedIds<RsPgpId,IDTYPE_GPG>(gpgIdsSelected,true);
+
+        if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
+            for(auto& s:mPreSelectedIds)
+				gpgIdsSelected.insert(RsPgpId(s));
 	}
 
     std::set<RsGxsId> gxsIdsSelected;
@@ -299,7 +316,8 @@ void FriendSelectionWidget::secured_fillList()
 		selectedIds<RsGxsId,IDTYPE_GXS>(gxsIdsSelected,true);
 
         if(!ui->friendList->topLevelItemCount())					// if not loaded yet, use the existing list.
-            gxsIdsSelected = mPreSelectedGxsIds;
+            for(auto& s:mPreSelectedIds)
+				gxsIdsSelected.insert(RsGxsId(s));
     }
 		
     std::set<RsGxsId> gxsIdsSelected2;
@@ -434,7 +452,7 @@ void FriendSelectionWidget::secured_fillList()
 				}
 
 				if (state != (int) RS_STATUS_OFFLINE) {
-					gpgItem->setTextColor(COLUMN_NAME, textColorOnline());
+					gpgItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				}
 
 				gpgItem->setFlags(Qt::ItemIsUserCheckable | gpgItem->flags());
@@ -571,7 +589,7 @@ void FriendSelectionWidget::secured_fillList()
 				QString name = QString::fromUtf8(detail.mNickname.c_str());
 				gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-				//gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+				//gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 				gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                 gxsItem->setIcon(COLUMN_NAME, identicon);
 				gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -625,7 +643,7 @@ void FriendSelectionWidget::secured_fillList()
           QString name = QString::fromUtf8(detail.mNickname.c_str());
           gxsItem->setText(COLUMN_NAME, name + " ("+QString::fromStdString( (*gxsIt).toStdString() )+")");
 
-          //gxsItem->setTextColor(COLUMN_NAME, textColorOnline());
+          //gxsItem->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
           gxsItem->setFlags(Qt::ItemIsUserCheckable | gxsItem->flags());
                   gxsItem->setIcon(COLUMN_NAME, identicon);
           gxsItem->setData(COLUMN_DATA, ROLE_ID, QString::fromStdString(detail.mId.toStdString()));
@@ -678,7 +696,12 @@ void FriendSelectionWidget::updateDisplay(bool)
 // This call is inlined so that there's no linking conflict with MinGW on Windows
 template<> inline void FriendSelectionWidget::setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(const std::set<RsGxsId>& ids, bool add)
 {
-    mPreSelectedGxsIds = ids ;
+    if(!add)
+		mPreSelectedIds.clear();
+
+    for(auto& gxsId:ids)
+        mPreSelectedIds.insert(gxsId.toStdString());
+
     loadIdentities();
 }
 
@@ -746,14 +769,12 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_GPG:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == gpgId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(gpgStatus)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, gpgStatus);
@@ -765,14 +786,12 @@ void FriendSelectionWidget::peerStatusChanged(const QString& peerId, int status)
 		case IDTYPE_SSL:
 			{
 				if (item->data(COLUMN_DATA, ROLE_ID).toString() == peerId) {
-					QColor color;
 					if (status != (int) RS_STATUS_OFFLINE) {
-						color = textColorOnline();
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, textColorOnline());
 					} else {
-						color = ui->friendList->palette().color(QPalette::Text);
+						item->setData(COLUMN_NAME, Qt::ForegroundRole, QVariant());
 					}
 
-					item->setTextColor(COLUMN_NAME, color);
 					item->setIcon(COLUMN_NAME, QIcon(StatusDefs::imageUser(status)));
 
 					item->setData(COLUMN_NAME, ROLE_SORT_STATE, status);
@@ -981,7 +1000,7 @@ std::string FriendSelectionWidget::selectedId(IdType &idType)
 	return idFromItem(item);
 }
 
-void FriendSelectionWidget::selectedIds(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected)
+void FriendSelectionWidget::selectedIds_internal(IdType idType, std::set<std::string> &ids, bool onlyDirectSelected)
 {
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
@@ -1055,11 +1074,21 @@ void FriendSelectionWidget::selectAll()
 		setSelected(mListModus, *itemIterator, true);
 }
 
-void FriendSelectionWidget::setSelectedIds(IdType idType, const std::set<std::string> &ids, bool add)
+void FriendSelectionWidget::setSelectedIdsFromString(IdType type, const std::set<std::string>& ids, bool add)
 {
+	setSelectedIds_internal(type,ids,add);
+}
+
+void FriendSelectionWidget::setSelectedIds_internal(IdType idType, const std::set<std::string> &ids, bool add)
+{
+    mPreSelectedIds = ids;
+
+    // if items are already loaded, check them
+
 	QTreeWidgetItemIterator itemIterator(ui->friendList);
 	QTreeWidgetItem *item;
-	while ((item = *itemIterator) != NULL) {
+	while ((item = *itemIterator) != NULL)
+    {
 		++itemIterator;
 
 		std::string id = idFromItem(item);

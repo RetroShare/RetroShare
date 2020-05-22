@@ -181,8 +181,9 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	ui->treeWidget_membership->clear();
 	ui->treeWidget_membership->setItemDelegateForColumn(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,new GxsIdTreeItemDelegate());
 
-    	mExternalOtherCircleItem = NULL ;
-    	mExternalBelongingCircleItem = NULL ;
+	mExternalOtherCircleItem = NULL ;
+	mExternalBelongingCircleItem = NULL ;
+	mMyCircleItem = NULL ;
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -437,12 +438,11 @@ void IdDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
 
 		switch(e->mCircleEventType)
 		{
-		case RsGxsCircleEventCode::NEW_CIRCLE:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_INVITE:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
 		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_JOIN:
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REVOQUED:
+		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
+		case RsGxsCircleEventCode::NEW_CIRCLE:
 		case RsGxsCircleEventCode::CACHE_DATA_UPDATED:
 
 			updateCircles();
@@ -597,6 +597,10 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 #endif
 
 	mStateHelper->setActive(CIRCLESDIALOG_GROUPMETA, true);
+
+    std::vector<bool> expanded_top_level_items;
+    std::set<RsGxsCircleId> expanded_circle_items;
+    saveExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
 
 #ifdef QT_BUG_CRASH_IN_TAKECHILD_WORKAROUND
     // These 3 lines are normally not needed. But apparently a bug (in Qt ??) causes Qt to crash when takeChild() is called. If we remove everything from the
@@ -858,6 +862,7 @@ void IdDialog::loadCircles(const std::list<RsGroupMetaData>& groupInfo)
 		else
 			item->setIcon(CIRCLEGROUP_CIRCLE_COL_GROUPNAME,FilesDefs::getIconFromQtResourcePath(IMAGE_UNKNOWN)) ;
 	}
+    restoreExpandedCircleItems(expanded_top_level_items,expanded_circle_items);
 }
 
 //static void mark_matching_tree(QTreeWidget *w, const std::set<RsGxsId>& members, int col)
@@ -936,14 +941,26 @@ void IdDialog::revokeCircleMembership()
     if(!getItemCircleId(ui->treeWidget_membership->currentItem(),circle_id))
 	    return;
 
+    if(circle_id.isNull())
+    {
+		RsErr() << __PRETTY_FUNCTION__ << " : got a null circle ID. Cannot revoke an identity from that circle!" << std::endl;
+        return ;
+    }
+
     RsGxsId gxs_id_to_revoke(qobject_cast<QAction*>(sender())->data().toString().toStdString());
 
-	RsThread::async([circle_id,gxs_id_to_revoke]()
-	{
-        // 1 - get message data from p3GxsForums
+    if(gxs_id_to_revoke.isNull())
+		RsErr() << __PRETTY_FUNCTION__ << " : got a null ID. Cannot revoke it from circle " << circle_id << "!" << std::endl;
+	else
+		RsThread::async([circle_id,gxs_id_to_revoke]()
+		{
+			// 1 - get message data from p3GxsForums
 
-        rsGxsCircles->revokeIdsFromCircle(std::set<RsGxsId>( { gxs_id_to_revoke } ),circle_id);
-    });
+            std::set<RsGxsId> ids;
+            ids.insert(gxs_id_to_revoke);
+
+			rsGxsCircles->revokeIdsFromCircle(ids,circle_id);
+		});
 }
 
 void IdDialog::acceptCircleSubscription() 
@@ -1369,23 +1386,24 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	item->setData(RSID_COL_NICKNAME, Qt::UserRole, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 	item->setText(RSID_COL_KEYID, QString::fromStdString(data.mMeta.mGroupId.toStdString()));
 
-    if(isBanned)
-    {
-        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
-        item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
-        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
-        item->setForeground(RSID_COL_VOTES,QBrush(Qt::red));
-    }
-    else
-    {
-        item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::black));
-        item->setForeground(RSID_COL_KEYID,QBrush(Qt::black));
-        item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::black));
-        item->setForeground(RSID_COL_VOTES,QBrush(Qt::black));
-    }
+	if(isBanned)
+	{
+		//TODO (Phenom): Add qproperty for these text colors in stylesheets
+		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QColor(Qt::red));
+		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QColor(Qt::red));
+	}
+	else
+	{
+		item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QVariant());
+		item->setData(RSID_COL_VOTES   , Qt::ForegroundRole, QVariant());
+	}
 
-    item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
-    item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
+	item->setData(RSID_COL_KEYID, Qt::UserRole,QVariant(item_flags)) ;
+	item->setTextAlignment(RSID_COL_VOTES, Qt::AlignRight | Qt::AlignVCenter);
 	item->setData(
 	            RSID_COL_VOTES,Qt::DecorationRole,
 	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
@@ -1404,14 +1422,15 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 
 	    QString tooltip = tr("This identity is owned by you");
 
-	    if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
-	    {
-		    item->setForeground(RSID_COL_NICKNAME,QBrush(Qt::red));
-		    item->setForeground(RSID_COL_KEYID,QBrush(Qt::red));
-		    item->setForeground(RSID_COL_IDTYPE,QBrush(Qt::red));
+		if(idd.mFlags & RS_IDENTITY_FLAGS_IS_DEPRECATED)
+		{
+			//TODO (Phenom): Add qproperty for these text colors in stylesheets
+			item->setData(RSID_COL_NICKNAME, Qt::ForegroundRole, QColor(Qt::red));
+			item->setData(RSID_COL_KEYID   , Qt::ForegroundRole, QColor(Qt::red));
+			item->setData(RSID_COL_IDTYPE  , Qt::ForegroundRole, QColor(Qt::red));
 
-		    tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
-	    }
+			tooltip += tr("\nThis identity has a unsecure fingerprint (It's probably quite old).\nYou should get rid of it now and use a new one.\nThese identities will soon be not supported anymore.") ;
+		}
 
 	    item->setToolTip(RSID_COL_NICKNAME, tooltip) ;
 	    item->setToolTip(RSID_COL_KEYID, tooltip) ;
@@ -2450,3 +2469,53 @@ void IdDialog::on_closeInfoFrameButton_clicked()
 {
 	ui->inviteFrame->setVisible(false);
 }
+
+// We need to use indexes here because saving items is not possible since they can be re-created.
+
+void IdDialog::saveExpandedCircleItems(std::vector<bool>& expanded_root_items, std::set<RsGxsCircleId>& expanded_circle_items) const
+{
+    expanded_root_items.clear();
+    expanded_root_items.resize(3,false);
+    expanded_circle_items.clear();
+
+    auto saveTopLevel = [&](const QTreeWidgetItem* top_level_item,uint32_t index){
+        if(!top_level_item)
+            return;
+
+        if(top_level_item->isExpanded())
+        {
+            expanded_root_items[index] = true;
+
+            for(int row=0;row<top_level_item->childCount();++row)
+                if(top_level_item->child(row)->isExpanded())
+                    expanded_circle_items.insert(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
+		}
+    };
+
+    saveTopLevel(mExternalBelongingCircleItem,0);
+    saveTopLevel(mExternalOtherCircleItem,1);
+    saveTopLevel(mMyCircleItem,2);
+}
+
+void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root_items,const std::set<RsGxsCircleId>& expanded_circle_items)
+{
+	auto restoreTopLevel = [=](QTreeWidgetItem* top_level_item,uint32_t index){
+		if(!top_level_item)
+			return;
+
+		top_level_item->setExpanded(expanded_root_items[index]);
+
+		for(int row=0;row<top_level_item->childCount();++row)
+        {
+            RsGxsCircleId circle_id(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
+            bool expanded = expanded_circle_items.find(circle_id) != expanded_circle_items.end();
+
+			top_level_item->child(row)->setExpanded(expanded_circle_items.find(circle_id) != expanded_circle_items.end());
+		}
+	};
+
+    restoreTopLevel(mExternalBelongingCircleItem,0);
+    restoreTopLevel(mExternalOtherCircleItem,1);
+    restoreTopLevel(mMyCircleItem,2);
+}
+

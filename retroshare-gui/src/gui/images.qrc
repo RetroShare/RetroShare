@@ -214,6 +214,9 @@
     <file>images/im-user-busy.png</file>
     <file>images/im-user-inactive.png</file>
     <file>images/informations_24x24.png</file>
+    <file>images/junk.png</file>
+    <file>images/junk_on.png</file>
+    <file>images/junk_off.png</file>
     <file>images/connect_friend.png</file>
     <file>images/kalarm.png</file>
     <file>images/kbackgammon.png</file>

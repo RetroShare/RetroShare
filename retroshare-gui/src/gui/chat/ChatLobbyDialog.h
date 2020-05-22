@@ -134,7 +134,7 @@ private:
 
     GxsIdChooser *ownIdChooser ;
     //icons cache
-    QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128;
+    QIcon bullet_red_128, bullet_grey_128, bullet_green_128, bullet_yellow_128, bullet_blue_128;
 };
 
 #endif

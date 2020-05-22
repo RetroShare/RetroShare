@@ -60,7 +60,12 @@ public:
 
 	bool is_cached(const Key &key) const;
 	bool fetch(const Key &key, Value &data);
-	Value &ref(const Key &key);	// like map[] installs empty one if non-existent.
+
+    // Like map[] installs empty one if non-existent.
+
+	Value& ref(const Key &key);
+    Value& operator[](const Key& key) { return ref(key); }
+
 	bool store(const Key &key, const Value &data);
 	bool erase(const Key &key); // clean up cache.
 
@@ -70,7 +75,8 @@ public:
     
 	template<class ClientClass> bool applyToAllCachedEntries(ClientClass& c,bool (ClientClass::*method)(Value&));
     
-    	uint32_t size() const { return mDataMap.size() ; }
+	uint32_t size() const { return mDataMap.size() ; }
+	void printStats(std::ostream& out);
 private:
 
 	bool update_lrumap(const Key &key, rstime_t old_ts, rstime_t new_ts);
@@ -96,7 +102,6 @@ private:
 	std::string mName;
 
 	// some statistics.
-	void printStats(std::ostream &out);
 	void clearStats();
 
 	mutable uint32_t mStats_inserted;

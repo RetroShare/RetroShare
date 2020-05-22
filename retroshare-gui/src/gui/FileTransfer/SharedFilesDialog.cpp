@@ -970,70 +970,82 @@ void SharedFilesDialog::recursExpandAll(const QModelIndex& index)
 	}
 }
 
-void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,std::set<std::string>& exp,
-                                                std::set<std::string>& vis,
+void SharedFilesDialog::recursSaveExpandedItems(const QModelIndex& index,const std::string& path,
+                                                std::set<std::string>& exp,
+                                                std::set<std::string>& hid,
                                                 std::set<std::string>& sel
                                                 )
 {
-    std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
+	std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
+	std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
 
-    if(ui.dirTreeView->selectionModel()->selection().contains(index))
-        sel.insert(local_path) ;
+	if(ui.dirTreeView->selectionModel()->selection().contains(index))
+		sel.insert(local_path) ;
 
-    if(ui.dirTreeView->isRowHidden(index.row(),index.parent()))
-	 {
-        vis.insert(local_path) ;
-		  return ;
-	 }
+	// Disable hidden check as we don't use it and Qt bug: https://bugreports.qt.io/browse/QTBUG-11438
+	/*if(ui.dirTreeView->isRowHidden(index.row(),index.parent()))
+	{
+		hid.insert(local_path) ;
+		return ;
+	}*/
 
-    if(ui.dirTreeView->isExpanded(index))
-    {
+	if(ui.dirTreeView->isExpanded(index))
+	{
 #ifdef DEBUG_SHARED_FILES_DIALOG
-        std::cerr << "Index " << local_path << " is expanded." << std::endl;
+		std::cerr << "Index " << local_path << " is expanded." << std::endl;
 #endif
-        if(index.isValid())
-            exp.insert(local_path) ;
+		if(index.isValid())
+			exp.insert(local_path) ;
 
-        for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-            recursSaveExpandedItems(index.child(row,0),local_path,exp,vis,sel) ;
-    }
+		for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
+			recursSaveExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel) ;
+#else
+			recursSaveExpandedItems(index.child(row,0),local_path,exp,hid,sel) ;
+#endif
+	}
 #ifdef DEBUG_SHARED_FILES_DIALOG
-    else
-        std::cerr << "Index is not expanded." << std::endl;
+	else
+		std::cerr << "Index is not expanded." << std::endl;
 #endif
 }
 
 void SharedFilesDialog::recursRestoreExpandedItems(const QModelIndex& index, const std::string &path,
                                                    const std::set<std::string>& exp,
-                                                   const std::set<std::string>& vis,
+                                                   const std::set<std::string>& hid,
                                                    const std::set<std::string> &sel)
 {
-    std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
+	std::string local_path = path+"/"+index.data(Qt::DisplayRole).toString().toStdString();
 #ifdef DEBUG_SHARED_FILES_DIALOG
-    std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
+	std::cerr << "at index " << index.row() << ". data[1]=" << local_path << std::endl;
 #endif
-    if(sel.find(local_path) != sel.end())
-        ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
-	 bool invisible = vis.find(local_path) != vis.end();
-	ui.dirTreeView->setRowHidden(index.row(),index.parent(),invisible ) ;
+	if(sel.find(local_path) != sel.end())
+		ui.dirTreeView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
 
-//	if(invisible)
-//		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
+	// Disable hidden check as we don't use it and Qt bug: https://bugreports.qt.io/browse/QTBUG-11438
+	/*bool invisible = hid.find(local_path) != hid.end();
+	ui.dirTreeView->setRowHidden(index.row(),index.parent(),invisible ) ;*/
 
-    if(!invisible && exp.find(local_path) != exp.end())
-    {
+	//	if(invisible)
+	//		mHiddenIndexes.push_back(proxyModel->mapToSource(index));
+
+	if(/*!invisible &&*/ exp.find(local_path) != exp.end())
+	{
 #ifdef DEBUG_SHARED_FILES_DIALOG
-        std::cerr << "re expanding index " << local_path << std::endl;
+		std::cerr << "re expanding index " << local_path << std::endl;
 #endif
-        ui.dirTreeView->setExpanded(index,true) ;
+		ui.dirTreeView->setExpanded(index,true) ;
 
-        for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
-            recursRestoreExpandedItems(index.child(row,0),local_path,exp,vis,sel) ;
-    }
+		for(int row=0;row<ui.dirTreeView->model()->rowCount(index);++row)
+#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
+			recursRestoreExpandedItems(ui.dirTreeView->model()->index(row,0,index),local_path,exp,hid,sel) ;
+#else
+			recursRestoreExpandedItems(index.child(row,0),local_path,exp,hid,sel) ;
+#endif
+	}
 }
 
 

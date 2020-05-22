@@ -205,6 +205,9 @@
                   <enum>QFrame::Raised</enum>
                  </property>
                  <layout class="QHBoxLayout" name="quickViewFrameHLayout">
+                  <property name="leftMargin">
+                   <number>3</number>
+                  </property>
                   <property name="topMargin">
                    <number>3</number>
                   </property>
@@ -367,7 +370,7 @@
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <widget class="QTreeView" name="messageTreeWidget">
+             <widget class="RSTreeView" name="messageTreeWidget">
               <property name="contextMenuPolicy">
                <enum>Qt::CustomContextMenu</enum>
               </property>
@@ -460,6 +463,12 @@
    <class>RSTabWidget</class>
    <extends>QTabWidget</extends>
    <header>gui/common/RSTabWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeView</class>
+   <extends>QTreeView</extends>
+   <header>gui/common/RSTreeView.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
