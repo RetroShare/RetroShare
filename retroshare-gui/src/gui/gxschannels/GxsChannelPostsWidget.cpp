@@ -144,18 +144,24 @@ void GxsChannelPostsWidget::handleEvent_main_thread(std::shared_ptr<const RsEven
 	if(!e)
 		return;
 
-        switch(e->mChannelEventCode)
-        {
-        case RsChannelEventCode::UPDATED_CHANNEL:
-        case RsChannelEventCode::NEW_CHANNEL:
-        case RsChannelEventCode::UPDATED_MESSAGE:
-        case RsChannelEventCode::NEW_MESSAGE:
-            if(e->mChannelGroupId == groupId())
+	switch(e->mChannelEventCode)
+	{
+		case RsChannelEventCode::NEW_CHANNEL:     // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
+		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
+		case RsChannelEventCode::UPDATED_MESSAGE:
+			if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
-            break;
-        default:
-            break;
-        }
+		break;
+		case RsChannelEventCode::READ_STATUS_CHANGED:
+			if (FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(e->mChannelMsgId)))
+				if (GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem))
+					channelPostItem->setReadStatus(false,!channelPostItem->isUnread());
+					//channelPostItem->setReadStatus(false,e->Don't get read status. Will be more easier and accurate);
+		break;
+		default:
+		break;
+	}
 }
 
 GxsChannelPostsWidget::~GxsChannelPostsWidget()
@@ -909,9 +915,9 @@ static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 	}
 
 	GxsChannelPostsReadData *readData = (GxsChannelPostsReadData*) data;
-	bool is_not_new = !channelPostItem->isUnread() ;
+	bool isRead = !channelPostItem->isUnread() ;
 
-	if(is_not_new == readData->mRead)
+	if(channelPostItem->isLoaded() && (isRead == readData->mRead))
 		return ;
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
