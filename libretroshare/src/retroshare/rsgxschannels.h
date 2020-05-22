@@ -310,6 +310,7 @@ public:
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
+	 * @param[out] votes storage for the votes
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelAllContent( const RsGxsGroupId& channelId,
