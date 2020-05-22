@@ -141,7 +141,7 @@ GxsChannelPostItem::~GxsChannelPostItem()
 
 bool GxsChannelPostItem::isUnread() const
 {
-    return IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) ;
+	return IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) ;
 }
 
 void GxsChannelPostItem::setup()
@@ -427,7 +427,7 @@ void GxsChannelPostItem::fill()
 
 	QString title;
 	
-	float f = QFontMetricsF(font()).height()/14.0 ;
+	//float f = QFontMetricsF(font()).height()/14.0 ;
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
@@ -629,14 +629,21 @@ QString GxsChannelPostItem::messageName()
 
 void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 {
+	if (isNew)
+		mPost.mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+	else
+		mPost.mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+
 	if (isUnread)
 	{
-		ui->readButton->setChecked(true);
+		mPost.mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		whileBlocking(ui->readButton)->setChecked(true);
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
-		ui->readButton->setChecked(false);
+		mPost.mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		whileBlocking(ui->readButton)->setChecked(false);
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
@@ -835,7 +842,7 @@ void GxsChannelPostItem::play()
 	}
 }
 
-void GxsChannelPostItem::readToggled(bool checked)
+void GxsChannelPostItem::readToggled(bool /*checked*/)
 {
 	if (mInFill) {
 		return;
@@ -845,10 +852,9 @@ void GxsChannelPostItem::readToggled(bool checked)
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, !checked);
+	rsGxsChannels->markRead(msgPair, isUnread());
 
-	setReadStatus(false, checked);
+	//setReadStatus(false, checked); // Updated by events
 }
 
 void GxsChannelPostItem::makeDownVote()
