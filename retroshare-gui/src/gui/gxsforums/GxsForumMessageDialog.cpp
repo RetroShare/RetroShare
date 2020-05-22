@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/ForumMessageView.cpp                                *
+ * retroshare-gui/src/gui/Posted/GxsForumMessageDialog.cpp                                *
  *                                                                             *
  * Copyright (C) 2020 by RetroShare Team       <retroshare.project@gmail.com>  *
  *                                                                             *
@@ -18,7 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
-#include "ForumMessageView.h"
+#include "GxsForumMessageDialog.h"
 
 #include <QMessageBox>
 
@@ -33,9 +33,9 @@
 #include <retroshare/rsgxsforums.h>
 
 /** Constructor */
-ForumMessageView::ForumMessageView(QWidget *parent)
+GxsForumMessageDialog::GxsForumMessageDialog(QWidget *parent)
 : QDialog(parent, Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint | Qt::WindowCloseButtonHint),
-	ui(new Ui::ForumMessageView)
+	ui(new Ui::GxsForumMessageDialog)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
@@ -47,12 +47,12 @@ ForumMessageView::ForumMessageView(QWidget *parent)
 }
 
 /** Destructor */
-ForumMessageView::~ForumMessageView()
+GxsForumMessageDialog::~GxsForumMessageDialog()
 {
 	delete ui;
 }
 
-void ForumMessageView::setText(const QString& text) 
+void GxsForumMessageDialog::setText(const QString& text) 
 {
 	uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
 		if(Settings->getForumLoadEmoticons())
@@ -70,12 +70,12 @@ void ForumMessageView::setText(const QString& text)
 		ui->postText->setHtml(postText);
 }
 
-void ForumMessageView::setTitle(const QString& text) 
+void GxsForumMessageDialog::setTitle(const QString& text) 
 {
 	setWindowTitle(text);
 }
 
-void ForumMessageView::setName(const RsGxsId& authorID) 
+void GxsForumMessageDialog::setName(const RsGxsId& authorID) 
 {
 	mAuthorID = authorID;
 	ui->nameLabel->setId(authorID);
@@ -91,22 +91,22 @@ void ForumMessageView::setName(const RsGxsId& authorID)
 	ui->avatarWidget->setPixmap(pixmap);
 }
 
-void ForumMessageView::setTime(const QString& text) 
+void GxsForumMessageDialog::setTime(const QString& text) 
 {
 	ui->timeLabel->setText(text);
 }
 
-void ForumMessageView::setGroupId(const RsGxsGroupId &groupId) 
+void GxsForumMessageDialog::setGroupId(const RsGxsGroupId &groupId) 
 {
 	mGroupId = groupId;
 }
 
-void ForumMessageView::setMessageId(const RsGxsMessageId& messageId) 
+void GxsForumMessageDialog::setMessageId(const RsGxsMessageId& messageId) 
 {
 	mMessageId = messageId ;
 }
 
-void ForumMessageView::copyMessageLink()
+void GxsForumMessageDialog::copyMessageLink()
 {
 	RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_FORUM, mGroupId, mMessageId, windowTitle());
 
@@ -118,7 +118,7 @@ void ForumMessageView::copyMessageLink()
 	}
 }
 
-void ForumMessageView::replyForumMessage()
+void GxsForumMessageDialog::replyForumMessage()
 {
 	if (!mAuthorID.isNull())
 	{

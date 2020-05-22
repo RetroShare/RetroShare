@@ -1,5 +1,5 @@
 /*******************************************************************************
- * retroshare-gui/src/gui/Posted/ForumMessageView.h                                   *
+ * retroshare-gui/src/gui/Posted/GxsForumMessageDialog.h                                   *
  *                                                                             *
  * Copyright (C) 2020 by RetroShare Team      <retroshare.project@gmail.com>   *
  *                                                                             *
@@ -18,27 +18,27 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _FORUMMESSAGE_VIEW_H
-#define _FORUMMESSAGE_VIEW_H
+#ifndef _FORUMMESSAGEDIALOG_H
+#define _FORUMMESSAGEDIALOG_H
 
-#include "ui_ForumMessageView.h"
+#include "ui_GxsForumMessageDialog.h"
 
 #include <QDialog>
 
 namespace Ui {
-	class ForumMessageView;
+	class GxsForumMessageDialog;
 }
 
-class ForumMessageView : public QDialog
+class GxsForumMessageDialog : public QDialog
 {
 	Q_OBJECT
 
 public:
 	/** Default Constructor */
-	ForumMessageView(QWidget *parent = 0);
+	GxsForumMessageDialog(QWidget *parent = 0);
 
 	/** Default Destructor */
-	~ForumMessageView();
+	~GxsForumMessageDialog();
 
 public slots:
 	void setTitle (const QString &text);
@@ -58,7 +58,7 @@ private:
 	RsGxsId mAuthorID;
 
   /** Qt Designer generated object */
-  Ui::ForumMessageView  *ui;
+  Ui::GxsForumMessageDialog  *ui;
 
 };
 

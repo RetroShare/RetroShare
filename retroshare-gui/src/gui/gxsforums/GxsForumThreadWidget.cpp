@@ -30,7 +30,7 @@
 #include "ui_GxsForumThreadWidget.h"
 #include "GxsForumModel.h"
 #include "GxsForumsDialog.h"
-#include "ForumMessageView.h"
+#include "GxsForumMessageDialog.h"
 #include "gui/RetroShareLink.h"
 #include "gui/common/RSTreeWidgetItem.h"
 #include "gui/settings/rsharesettings.h"
@@ -1904,7 +1904,7 @@ void GxsForumThreadWidget::viewMessage(const RsGxsForumMsg& msg)
 	RsGxsId authorID = msg.mMeta.mAuthorId;
 	RsGxsGroupId groupId = msg.mMeta.mGroupId;
 
-	ForumMessageView *FMView = new ForumMessageView(this);
+	GxsForumMessageDialog *FMView = new GxsForumMessageDialog(this);
 	FMView->setTitle(threadtitle);
 	FMView->setText(postText);
 	FMView->setName(authorID);
