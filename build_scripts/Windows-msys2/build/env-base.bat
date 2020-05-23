@@ -6,6 +6,7 @@ set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
 set ParamTor=0
+set ParamWebui=0
 set RS_QMAKE_CONFIG=
 
 :parameter_loop
@@ -25,6 +26,8 @@ if "%~1" NEQ "" (
 			set ParamPlugins=1
 		) else if "%%~a"=="tor" (
 			set ParamTor=1
+		) else if "%%~a"=="webui" (
+			set ParamWebui=1
 		) else if "%%~a"=="CONFIG+" (
 			set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% %1
 		) else (
@@ -75,6 +78,9 @@ if "%ParamTor%"=="1" (
 	set RsType=
 )
 
+if "%ParamWebui%"=="1" (
+	set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui"
+)
 
 exit /B 0
 
@@ -89,6 +95,7 @@ echo.
 echo Optional parameter (need clean when changed)
 echo autologin          Build with autologin
 echo plugins            Build plugins
+echo webui              Enable JsonAPI and pack webui files
 echo.
 echo Parameter for pack
 echo tor                Pack tor version
