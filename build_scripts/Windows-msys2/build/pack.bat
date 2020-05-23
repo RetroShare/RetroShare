@@ -161,6 +161,9 @@ copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 echo copy changelog.txt
 copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
 
+echo copy buildinfo.txt
+copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
+
 if exist "%SourcePath%\libresapi\src\webui" (
 	echo copy webui
 	mkdir "%RsDeployPath%\webui"

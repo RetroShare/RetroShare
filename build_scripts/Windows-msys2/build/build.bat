@@ -52,6 +52,12 @@ set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=%RsBuildConfig%"
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_autologin"
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=retroshare_plugins"
 
+:: Dump the active build config into a file
+echo %RS_QMAKE_CONFIG% > buildinfo.txt
+echo %RsBuildConfig% >> buildinfo.txt
+echo %RsArchitecture% >> buildinfo.txt
+echo Qt %QtVersion% >> buildinfo.txt
+
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
 call "%ToolsPath%\msys2-path.bat" "%EnvMSYS2Path%" MSYS2EnvMSYS2Path
 %EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-g++ %RS_QMAKE_CONFIG%"
