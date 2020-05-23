@@ -86,7 +86,7 @@ exit /B 0
 
 :usage
 echo.
-echo Usage: 32^|64 release^|debug [version autologin plugins]
+echo Usage: 32^|64 release^|debug [version autologin plugins webui]
 echo.
 echo Mandatory parameter
 echo 32^|64              32-bit or 64-bit Version

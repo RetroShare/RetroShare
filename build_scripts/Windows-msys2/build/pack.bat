@@ -166,10 +166,15 @@ copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
 echo copy buildinfo.txt
 copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%
 
-if exist "%SourcePath%\libresapi\src\webui" (
-	echo copy webui
-	mkdir "%RsDeployPath%\webui"
-	xcopy /S "%SourcePath%\libresapi\src\webui" "%RsDeployPath%\webui" %Quite%
+if "%ParamWebui%"=="1" (
+	if exist "%RsWebuiPath%\webui" (
+		echo copy webui
+		mkdir "%RsDeployPath%\webui"
+		xcopy /S "%RsWebuiPath%\webui" "%RsDeployPath%\webui" %Quite%
+	) else (
+		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
+		goto error
+	)
 )
 
 if "%ParamTor%"=="1" (
