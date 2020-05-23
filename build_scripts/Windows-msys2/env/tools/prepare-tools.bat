@@ -8,8 +8,6 @@ set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/18.05/7z18
 set SevenZipInstall=7z1805.msi
 set WgetUrl=https://eternallybored.org/misc/wget/1.19.4/32/wget.exe
 set WgetInstall=wget.exe
-set DependsUrl=http://www.dependencywalker.com/depends22_x86.zip
-set DependsInstall=depends22_x86.zip
 set SigcheckInstall=Sigcheck.zip
 set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
 
@@ -52,22 +50,6 @@ if not exist "%EnvToolsPath%\cecho.exe" (
 	echo Unpack cecho
 	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%CEchoInstall%"
 	copy "%EnvTempPath%\cecho.exe" "%EnvToolsPath%"
-
-	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
-)
-
-if not exist "%EnvToolsPath%\depends.exe" (
-	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
-	mkdir "%EnvTempPath%"
-
-	%cecho% info "Download Dependency Walker installation"
-
-	if not exist "%EnvDownloadPath%\%DependsInstall%" call "%ToolsPath%\winhttpjs.bat" %DependsUrl% -saveTo "%EnvDownloadPath%\%DependsInstall%"
-	if not exist "%EnvDownloadPath%\%DependsInstall%" %cecho% error "Cannot download Dependendy Walker installation" & goto error
-
-	%cecho% info "Unpack Dependency Walker"
-	"%EnvSevenZipExe%" x -o"%EnvTempPath%" "%EnvDownloadPath%\%DependsInstall%"
-	copy "%EnvTempPath%\*" "%EnvToolsPath%"
 
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 )

@@ -9,7 +9,6 @@ set EnvDownloadPath=%EnvRootPath%\download
 
 set EnvWgetExe=%EnvToolsPath%\wget.exe
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
-set EnvDependsExe=%EnvToolsPath%\depends.exe
 set EnvCEchoExe=%EnvToolsPath%\cecho.exe
 set cecho=call "%ToolsPath%\cecho.bat"
 
