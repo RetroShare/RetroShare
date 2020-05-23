@@ -789,15 +789,15 @@ bool ftTransferModule::locked_tickPeerTransfer(peerInfo &info)
 	std::cerr << std::endl;
 #endif
 
-	// cap next_req to desiredRate in order to respect the bandwidth limit and to avoid clogging our outqueue
-	if (next_req > info.desiredRate)
+	if (next_req > info.desiredRate * 1.1)
 	{
-		next_req = info.desiredRate;
+		next_req = info.desiredRate * 1.1;
 #ifdef FT_DEBUG
 		std::cerr << "locked_tickPeerTransfer() Reached MaxRate: next_req: " << next_req;
 		std::cerr << std::endl;
 #endif
 	}
+
 
 	if (next_req > FT_TM_MAX_PEER_RATE)
 	{
