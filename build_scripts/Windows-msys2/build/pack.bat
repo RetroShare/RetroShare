@@ -27,7 +27,7 @@ if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
 if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 
 :: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
+set GetRsVersion=%SourcePath%\build_scripts\Windows-msys2\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
 	%cecho% error "File not found"
 	echo %GetRsVersion%
