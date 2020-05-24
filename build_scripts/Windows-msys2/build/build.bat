@@ -69,7 +69,7 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [make]
 
-%EnvMSYS2Cmd% "make -j %NUMBER_OF_PROCESSORS%"
+%EnvMSYS2Cmd% "make -j %CoreCount%"
 
 :: Webui
 if "%ParamWebui%"=="1" (
