@@ -18,8 +18,6 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QDateTime>
-
 #include "NewsFeed.h"
 #include "ui_NewsFeed.h"
 
@@ -54,8 +52,13 @@
 #include "msgs/MessageComposer.h"
 #include "msgs/MessageInterface.h"
 
-#include "common/FeedNotify.h"
 #include "notifyqt.h"
+#include "common/FeedNotify.h"
+
+#include <QDateTime>
+
+#include <chrono>
+#include <thread>
 
 #define ROLE_RECEIVED FEED_TREEWIDGET_SORTROLE
 
@@ -70,8 +73,9 @@
 static NewsFeed* instance = nullptr;
 
 /** Constructor */
-NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
-    mEventTypes({
+NewsFeed::NewsFeed(QWidget *parent)
+    : MainPage(parent)
+    , mEventTypes({
         RsEventType::AUTHSSL_CONNECTION_AUTENTICATION,
         RsEventType::PEER_CONNECTION                 ,
         RsEventType::GXS_CIRCLES                     ,
@@ -79,7 +83,9 @@ NewsFeed::NewsFeed(QWidget *parent) : MainPage(parent), ui(new Ui::NewsFeed),
         RsEventType::GXS_FORUMS                      ,
         RsEventType::GXS_POSTED                      ,
         RsEventType::MAIL_STATUS
-    })
+                  })
+    , mIsOn_handleCircleEvent(false)
+    , ui(new Ui::NewsFeed)
 {
 	for(uint32_t i=0;i<mEventTypes.size();++i)
 	{
@@ -131,7 +137,7 @@ QString hlp_str = tr(
 
 NewsFeed::~NewsFeed()
 {
-    for(uint32_t i=0;i<mEventHandlerIds.size();++i)
+	for(uint32_t i=0;i<mEventHandlerIds.size();++i)
 		rsEvents->unregisterEventsHandler(mEventHandlerIds[i]);
 
 	// save settings
@@ -139,6 +145,16 @@ NewsFeed::~NewsFeed()
 
 	if (instance == this) {
 		instance = NULL;
+	}
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_handleCircleEvent)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_handleCircleEvent ? "Circle " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 }
 
@@ -294,41 +310,51 @@ void NewsFeed::handleChannelEvent(std::shared_ptr<const RsEvent> event)
 
 void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 {
-    // Gives the backend a few secs to load the cache data while not blocking the UI. This is not so nice, but there's no proper
-    // other way to do that.
+	// Gives the backend a few secs to load the cache data while not blocking the UI. This is not so nice, but there's no proper
+	// other way to do that.
+	mIsOn_handleCircleEvent = true;
 
-    RsThread::async( [event,this]()
-    {
+	RsThread::async( [event,this]()
+	{
 		const RsGxsCircleEvent *pe = dynamic_cast<const RsGxsCircleEvent*>(event.get());
 		if(!pe)
+		{
+			mIsOn_handleCircleEvent = false;
 			return;
-
-		if(pe->mCircleId.isNull())	// probably an item for cache update
+		}
+		if(pe->mCircleId.isNull())  // probably an item for cache update
+		{
+			mIsOn_handleCircleEvent = false;
 			return ;
+		}
 
 		RsGxsCircleDetails details;
-        bool loaded = false;
+		bool loaded = false;
 
-        for(int i=0;i<5 && !loaded;++i)
+		for(int i=0;i<5 && !loaded;++i)
 			if(rsGxsCircles->getCircleDetails(pe->mCircleId,details))
-            {
-                std::cerr << "Cache item loaded for circle " << pe->mCircleId << std::endl;
-                loaded = true;
-            }
+			{
+				RsInfo() << " Cache item loaded for circle " << pe->mCircleId << std::endl;
+				loaded = true;
+			}
 			else
-            {
-                std::cerr << "Cache item for circle " << pe->mCircleId << " not loaded. Waiting " << i << "s" << std::endl;
-                rstime::rs_usleep(1000*1000);
-            }
+			{
+				RsInfo() << " Cache item for circle " << pe->mCircleId << " not loaded. Waiting " << i << "s" << std::endl;
+				std::this_thread::sleep_for(std::chrono::milliseconds(1000*1000));
+			}
 
-        if(!loaded)
+		if(!loaded)
 		{
-			std::cerr << "(EE) Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Cannot get information about circle " << pe->mCircleId << ". Not in cache?" << std::endl;
+			mIsOn_handleCircleEvent = false;
 			return;
 		}
 
 		if(!details.isGxsIdBased())	// not handled yet.
+		{
+			mIsOn_handleCircleEvent = false;
 			return;
+		}
 
 		// Check if the circle is one of which we belong to or we are an admin of.
 		// If so, then notify in the GUI about other members leaving/subscribing, according
@@ -364,50 +390,53 @@ void NewsFeed::handleCircleEvent(std::shared_ptr<const RsEvent> event)
 		//  Note: In this case you're never an admin of the circle, since these notification
 		//        would be a direct consequence of your own actions.
 
-	RsQThreadUtils::postToObject( [event,details,this]()
-	{
-		const RsGxsCircleEvent *pe = static_cast<const RsGxsCircleEvent*>(event.get());
-
-		switch(pe->mCircleEventType)
+		RsQThreadUtils::postToObject( [event,details,this]()
 		{
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
-			// only show membership requests if we're an admin of that circle
-			if(details.isIdInInviteeList(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
-			else if(details.mAmIAdmin)
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
+			const RsGxsCircleEvent *pe = static_cast<const RsGxsCircleEvent*>(event.get());
 
-			break;
-
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
-
-			if(details.isIdInInviteeList(pe->mGxsId))
-				addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
-			break;
-
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
-			if(rsIdentity->isOwnId(pe->mGxsId))
+			switch(pe->mCircleEventType)
 			{
-				if(details.isIdRequestingMembership(pe->mGxsId))
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
-				else
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
-			}
-			break;
+				case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_REQUEST:
+					// only show membership requests if we're an admin of that circle
+					if(details.isIdInInviteeList(pe->mGxsId))
+						addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_JOIN),true);
+					else if(details.mAmIAdmin)
+						addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REQ),true);
 
-		case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
-			if(rsIdentity->isOwnId(pe->mGxsId))
-			{
-				if(details.isIdRequestingMembership(pe->mGxsId))
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
-				else
-					addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
-			}
-			break;
+				break;
 
-		default: break;
-		}
-	}, this ); }); // damn!
+				case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_LEAVE:
+
+					if(details.isIdInInviteeList(pe->mGxsId))
+						addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_LEAVE),true);
+				break;
+
+				case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_ADDED_TO_INVITEE_LIST:
+					if(rsIdentity->isOwnId(pe->mGxsId))
+					{
+						if(details.isIdRequestingMembership(pe->mGxsId))
+							addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_ACCEPTED),true);
+						else
+							addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_REC),true);
+					}
+				break;
+
+				case RsGxsCircleEventCode::CIRCLE_MEMBERSHIP_ID_REMOVED_FROM_INVITEE_LIST:
+					if(rsIdentity->isOwnId(pe->mGxsId))
+					{
+						if(details.isIdRequestingMembership(pe->mGxsId))
+							addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_MEMB_REVOKED),true);
+						else
+							addFeedItemIfUnique(new GxsCircleItem(this, NEWSFEED_CIRCLELIST, pe->mCircleId, pe->mGxsId, RS_FEED_ITEM_CIRCLE_INVITE_CANCELLED),true);
+					}
+				break;
+
+				default: break;
+			}
+
+			mIsOn_handleCircleEvent = false;
+		}, this ); //RsQThreadUtils::postToObject
+	}); // RsThread::async
 }
 
 void NewsFeed::handleConnectionEvent(std::shared_ptr<const RsEvent> event)
@@ -453,7 +482,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 #ifdef NEWS_DEBUG
 	std::cerr << "NotifyQt: handling security event from (" << e.mSslId << "," << e.mPgpId << ") error code: " << (int)e.mErrorCode << std::endl;
 #endif
-	uint flags = Settings->getNewsFeedFlags();
+	//uint flags = Settings->getNewsFeedFlags();
 
 	if(e.mErrorCode == RsAuthSslError::PEER_REFUSED_CONNECTION)
 	{
@@ -490,7 +519,7 @@ void NewsFeed::handleSecurityEvent(std::shared_ptr<const RsEvent> event)
 		MessageComposer::addConnectAttemptMsg(e.mPgpId, e.mSslId, QString::fromStdString(det.name + "(" + det.location + ")"));
 }
 
-void NewsFeed::testFeeds(uint notifyFlags)
+void NewsFeed::testFeeds(uint /*notifyFlags*/)
 {
 #ifdef TO_REMOVE
 	if (!instance) {

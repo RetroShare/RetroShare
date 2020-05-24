@@ -68,17 +68,17 @@ public:
 	/** Default Destructor */
 	virtual ~NewsFeed();
 
-	virtual QIcon iconPixmap() const { return QIcon(IMAGE_NEWSFEED) ; } //MainPage
-	virtual QString pageName() const { return tr("Log") ; } //MainPage
-	virtual QString helpText() const { return ""; } //MainPage
+	virtual QIcon iconPixmap() const override { return QIcon(IMAGE_NEWSFEED) ; } //MainPage
+	virtual QString pageName() const override { return tr("Log") ; } //MainPage
+	virtual QString helpText() const override { return ""; } //MainPage
 
 	virtual UserNotify *createUserNotify(QObject *parent) override;
 
 	/* FeedHolder Functions (for FeedItem functionality) */
-	virtual QScrollArea *getScrollArea();
-	virtual void deleteFeedItem(FeedItem *item, uint32_t type);
-	virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title);
+	virtual QScrollArea *getScrollArea() override;
+	virtual void deleteFeedItem(FeedItem *item, uint32_t type) override;
+	virtual void openChat(const RsPeerId& peerId) override;
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &versions, const RsGxsMessageId &msgId, const QString &title) override;
 
 	static void testFeeds(uint notifyFlags);
 	static void testFeed(FeedNotify *feedNotify);
@@ -117,11 +117,14 @@ private:
 #endif
 
 private:
+
+	std::vector<RsEventsHandlerId_t> mEventHandlerIds;
+	std::vector<RsEventType> mEventTypes;
+
+	bool mIsOn_handleCircleEvent;
+
 	/* UI - from Designer */
 	Ui::NewsFeed *ui;
-
-    std::vector<RsEventsHandlerId_t> mEventHandlerIds;
-    std::vector<RsEventType> mEventTypes;
 };
 
 #endif

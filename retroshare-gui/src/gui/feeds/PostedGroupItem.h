@@ -46,12 +46,12 @@ public:
 
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool open);
+	virtual void doExpand(bool open) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_UNKNOWN; }
 
 private slots:
 	void toggle() override;
@@ -63,6 +63,8 @@ private:
 
 private:
 	RsPostedGroup mGroup;
+
+	bool mIsOn_loadGroup;
 
 	/** Qt Designer generated object */
 	Ui::PostedGroupItem *ui;

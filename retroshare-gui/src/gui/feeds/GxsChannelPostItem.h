@@ -73,8 +73,8 @@ protected:
 	//void init(const RsGxsMessageId& messageId,const std::set<RsGxsMessageId>& older_versions);
 
 	/* FeedItem */
-	virtual void doExpand(bool open);
-	virtual void expandFill(bool first);
+	virtual void doExpand(bool open) override;
+	virtual void expandFill(bool first) override;
 
 	// This does nothing except triggering the loading of the post data and comments. This function is mainly used to detect
 	// when the post is actually made visible.
@@ -82,14 +82,14 @@ protected:
 	virtual void paintEvent(QPaintEvent *) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_CHANNEL; }
 
 	/* GxsFeedItem */
-	virtual QString messageName();
-	virtual void loadMessage();
-	virtual void loadComment();
+	virtual QString messageName() override;
+	virtual void loadMessage() override;
+	virtual void loadComment() override;
 
 private slots:
 	/* default stuff */
@@ -125,6 +125,10 @@ private:
 	RsGxsChannelPost mPost;
 
 	std::list<SubFileItem*> mFileItems;
+
+	bool mIsOn_loadGroup;
+	bool mIsOn_loadMessage;
+	bool mIsOn_loadComment;
 
 	/** Qt Designer generated object */
 	Ui::GxsChannelPostItem *ui;

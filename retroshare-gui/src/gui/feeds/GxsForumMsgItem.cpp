@@ -41,19 +41,19 @@
  * #define DEBUG_ITEM 1
  ****/
 
-GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsForums, autoUpdate)
+GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate)
+    : GxsFeedItem(feedHolder, feedId, groupId, messageId, isHome, rsGxsForums, autoUpdate)
 {
-    mMessage.mMeta.mMsgId = messageId;	// useful for uniqueIdentifier() before the post is actually loaded
-    mMessage.mMeta.mGroupId = groupId;
+	mMessage.mMeta.mMsgId = messageId;	// useful for uniqueIdentifier() before the post is actually loaded
+	mMessage.mMeta.mGroupId = groupId;
 	setup();
 
 	requestGroup();
 	requestMessage();
 }
 
-GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
+GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumGroup &group, const RsGxsForumMsg &post, bool isHome, bool autoUpdate)
+    : GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
@@ -66,8 +66,8 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
 	setMessage(post);
 }
 
-GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumMsg &post, bool isHome, bool autoUpdate) :
-    GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
+GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsForumMsg &post, bool isHome, bool autoUpdate)
+    : GxsFeedItem(feedHolder, feedId, post.mMeta.mGroupId, post.mMeta.mMsgId, isHome, rsGxsForums, autoUpdate)
 {
 #ifdef DEBUG_ITEM
 	std::cerr << "GxsForumMsgItem::GxsForumMsgItem() Direct Load";
@@ -82,6 +82,18 @@ GxsForumMsgItem::GxsForumMsgItem(FeedHolder *feedHolder, uint32_t feedId, const 
 
 GxsForumMsgItem::~GxsForumMsgItem()
 {
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadGroup || mIsOn_loadMessage || mIsOn_loadParentMessage)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadGroup ? "Group " : "")
+		        << (mIsOn_loadMessage ? "Message " : "")
+		        << (mIsOn_loadParentMessage ? "ParentMessage " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
 	delete(ui);
 }
 
@@ -95,6 +107,10 @@ void GxsForumMsgItem::setup()
 
 	mInFill = false;
 	mCloseOnRead = false;
+
+	mIsOn_loadGroup = false;
+	mIsOn_loadMessage = false;
+	mIsOn_loadParentMessage = false;
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
@@ -169,6 +185,8 @@ QString GxsForumMsgItem::groupName()
 
 void GxsForumMsgItem::loadGroup()
 {
+	mIsOn_loadGroup = true;
+
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -182,14 +200,15 @@ void GxsForumMsgItem::loadGroup()
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
 		{
-			RsErr() << "GxsForumGroupItem::loadGroup() ERROR getting data" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " ERROR getting data" << std::endl;
+			mIsOn_loadGroup = false;
 			return;
 		}
 
 		if (groups.size() != 1)
 		{
-			std::cerr << "GxsForumGroupItem::loadGroup() Wrong number of Items";
-			std::cerr << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Wrong number of Items" << std::endl;
+			mIsOn_loadGroup = false;
 			return;
 		}
 		RsGxsForumGroup group(groups[0]);
@@ -201,6 +220,7 @@ void GxsForumMsgItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			setGroup(group);
+			mIsOn_loadGroup = false;
 
 		}, this );
 	});
@@ -212,6 +232,7 @@ void GxsForumMsgItem::loadMessage()
 	std::cerr << "GxsForumMsgItem::loadMessage()";
 	std::cerr << std::endl;
 #endif
+	mIsOn_loadMessage = true;
 
 	RsThread::async([this]()
 	{
@@ -226,15 +247,15 @@ void GxsForumMsgItem::loadMessage()
 
 		if(!rsGxsForums->getForumContent(groupId(),std::set<RsGxsMessageId>( { messageId() } ),msgs))
 		{
-			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
-			std::cerr << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " ERROR getting data" << std::endl;
+			mIsOn_loadMessage = false;
 			return;
 		}
 
 		if (msgs.size() != 1)
 		{
-			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
-			std::cerr << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Wrong number of Items" << std::endl;
+			mIsOn_loadMessage = false;
 			return;
 		}
 		const RsGxsForumMsg& msg(msgs[0]);
@@ -246,6 +267,7 @@ void GxsForumMsgItem::loadMessage()
 			 * after a blocking call to RetroShare API complete */
 
 			setMessage(msg);
+			mIsOn_loadMessage = false;
 
 		}, this );
 	});
@@ -257,6 +279,7 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 	std::cerr << "GxsForumMsgItem::loadParentMessage()";
 	std::cerr << std::endl;
 #endif
+	mIsOn_loadParentMessage = true;
 
 	RsThread::async([parent_msg,this]()
 	{
@@ -271,15 +294,15 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 
 		if(!rsGxsForums->getForumContent(groupId(),std::set<RsGxsMessageId>( { parent_msg } ),msgs))
 		{
-			std::cerr << "GxsForumMsgItem::loadMessage() ERROR getting data";
-			std::cerr << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " ERROR getting data" << std::endl;
+			mIsOn_loadParentMessage = false;
 			return;
 		}
 
 		if (msgs.size() != 1)
 		{
-			std::cerr << "GxsForumMsgItem::loadMessage() Wrong number of Items";
-			std::cerr << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Wrong number of Items" << std::endl;
+			mIsOn_loadParentMessage = false;
 			return;
 		}
 		const RsGxsForumMsg& msg(msgs[0]);
@@ -292,6 +315,7 @@ void GxsForumMsgItem::loadParentMessage(const RsGxsMessageId& parent_msg)
 
 			mParentMessage = msg;
 			fill();
+			mIsOn_loadParentMessage = false;
 
 		}, this );
 	});

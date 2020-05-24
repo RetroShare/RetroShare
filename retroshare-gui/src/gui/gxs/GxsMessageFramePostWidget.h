@@ -91,6 +91,9 @@ private:
 	QString mGroupName;
 	int mSubscribeFlags;
 	GxsMessageFramePostThread *mFillThread;
+	bool mIsOn_loadGroupData;
+	bool mIsOn_loadAllPosts;
+	bool mIsOn_loadPosts;
 };
 
 class GxsMessageFramePostThread : public QThread

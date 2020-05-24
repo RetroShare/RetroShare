@@ -118,7 +118,7 @@ public:
 
 protected:
 	void showEvent(QShowEvent *e) override;
-	void changeEvent(QEvent *e);
+	void changeEvent(QEvent *e) override;
 
 	virtual void updateDisplay(bool complete);
 
@@ -165,14 +165,16 @@ private:
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorOnline;
 
-	Ui::FriendSelectionWidget *ui;
-
 	friend class FriendSelectionDialog ;
 
 	std::vector<RsGxsGroupId> gxsIds ;
 	QList<QAction*> mContextMenuActions;
 
-    std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
+	std::set<std::string> mPreSelectedIds; // because loading of GxsIds is asynchroneous we keep selected Ids from the client in a list here and use it to initialize after loading them.
+
+	bool mIsOn_loadIdentities;
+
+	Ui::FriendSelectionWidget *ui;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(FriendSelectionWidget::ShowTypes)

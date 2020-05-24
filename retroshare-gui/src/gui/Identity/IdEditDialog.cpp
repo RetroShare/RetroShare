@@ -39,12 +39,11 @@
 #define IDEDITDIALOG_CREATEID 2
 
 /** Constructor */
-IdEditDialog::IdEditDialog(QWidget *parent) :
-    QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-    ui(new(Ui::IdEditDialog))
+IdEditDialog::IdEditDialog(QWidget *parent)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+    , mIsNew(true), mIsOn_setupExistingId(false)
+    , ui(new(Ui::IdEditDialog))
 {
-	mIsNew = true;
-
 	ui->setupUi(this);
 
 	ui->headerFrame->setHeaderImage(QPixmap(":/icons/png/person.png"));
@@ -207,11 +206,12 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 	mIsNew = false;
 	mGroupId.clear();
 
+	mIsOn_setupExistingId = true;
 	RsThread::async([this,keyId]()
 	{
 		std::vector<RsGxsIdGroup> datavector;
 
-        bool res = rsIdentity->getIdentitiesInfo(std::set<RsGxsId>({(RsGxsId)keyId}),datavector);
+		bool res = rsIdentity->getIdentitiesInfo(std::set<RsGxsId>({(RsGxsId)keyId}),datavector);
 
 		RsQThreadUtils::postToObject( [this,keyId,res,datavector]()
 		{
@@ -227,7 +227,7 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 
 			if (!res || datavector.size() != 1)
 			{
-				std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info for identity " << keyId << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " failed to collect group info for identity " << keyId << std::endl;
 
 				ui->lineEdit_KeyId->setText(tr("Error KeyID invalid"));
 				ui->lineEdit_Nickname->setText("");
@@ -235,10 +235,13 @@ void IdEditDialog::setupExistingId(const RsGxsGroupId& keyId)
 				ui->lineEdit_GpgHash->setText(tr("N/A"));
 				ui->lineEdit_GpgId->setText(tr("N/A"));
 				ui->lineEdit_GpgName->setText(tr("N/A"));
+
+				mIsOn_setupExistingId = false;
 				return;
 			}
 
-            loadExistingId(datavector[0]);
+			loadExistingId(datavector[0]);
+			mIsOn_setupExistingId = false;
 
 		}, this );
 	});
@@ -609,7 +612,6 @@ void IdEditDialog::updateId()
 	else
 		mEditGroup.mImage.clear();
 
-	uint32_t dummyToken = 0;
 	rsIdentity->updateIdentity(mEditGroup);
 
 	accept();

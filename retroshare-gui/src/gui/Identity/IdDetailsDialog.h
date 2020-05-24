@@ -55,6 +55,7 @@ private :
 private:
 	RsGxsGroupId mId;
 	UIStateHelper *mStateHelper;
+	bool mIsOn_loadIdentity;
 
 	/** Qt Designer generated object */
 	Ui::IdDetailsDialog *ui;

@@ -154,9 +154,13 @@ private:
 	RsGxsGroupId mIdToNavigate;
 	int filter;
 
-    void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
-    RsEventsHandlerId_t mEventHandlerId_identity;
-    RsEventsHandlerId_t mEventHandlerId_circles;
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
+	RsEventsHandlerId_t mEventHandlerId_identity;
+	RsEventsHandlerId_t mEventHandlerId_circles;
+	bool mIsOn_updateCircles;
+	bool mIsOn_updateIdList;
+	bool mIsOn_updateIdentity;
+	bool mIsOn_copyRetroshareLink;
 
 	/* UI -  Designer */
 	Ui::IdDialog *ui;

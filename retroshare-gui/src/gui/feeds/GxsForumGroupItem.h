@@ -43,16 +43,16 @@ public:
 
 	bool setGroup(const RsGxsForumGroup &group);
 
-    uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumGroupItem " + groupId().toStdString()) ; }
+	uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumGroupItem " + groupId().toStdString()) ; }
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool open);
+	virtual void doExpand(bool open) override;
 	void toggle() override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_FORUM; }
 
 private slots:
 	void subscribeForum();
@@ -64,11 +64,13 @@ private:
 private:
 	RsGxsForumGroup mGroup;
 
+	std::list<RsGxsId> mAddedModerators;
+	std::list<RsGxsId> mRemovedModerators;
+
+	bool mIsOn_loadGroup;
+
 	/** Qt Designer generated object */
 	Ui::GxsForumGroupItem *ui;
-
-    std::list<RsGxsId> mAddedModerators;
-    std::list<RsGxsId> mRemovedModerators;
 };
 
 #endif

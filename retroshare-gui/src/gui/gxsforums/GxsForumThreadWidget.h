@@ -175,20 +175,20 @@ private:
 
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
-private:
 	void setForumDescriptionLoading();
 	void clearForumDescription();
 	void blankPost();
 
+private:
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;
 	RsGxsMessageId mOrigThreadId;
-    RsGxsForumGroup mForumGroup;
-    //bool mUpdating;
-	bool mInProcessSettings;
+	RsGxsForumGroup mForumGroup;
+	//bool mUpdating;
+	//bool mInProcessSettings;
 	bool mInMsgAsReadUnread;
 	int mLastViewType;
-	RSTreeWidgetItemCompareRole *mThreadCompareRole;
+	//RSTreeWidgetItemCompareRole *mThreadCompareRole;
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
@@ -203,12 +203,17 @@ private:
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;
 
-    RsGxsForumModel *mThreadModel;
-    QSortFilterProxyModel *mThreadProxyModel;
-    QList<RsGxsMessageId> mSavedExpandedMessages;
+	RsGxsForumModel *mThreadModel;
+	QSortFilterProxyModel *mThreadProxyModel;
+	QList<RsGxsMessageId> mSavedExpandedMessages;
 
-    Ui::GxsForumThreadWidget *ui;
-    RsEventsHandlerId_t mEventHandlerId;
+	RsEventsHandlerId_t mEventHandlerId;
+
+	bool mIsOn_async_msg_action;
+	bool mIsOn_updateGroupData;
+	bool mIsOn_updateMessageData;
+
+	Ui::GxsForumThreadWidget *ui;
 };
 
 #endif // GXSFORUMTHREADWIDGET_H

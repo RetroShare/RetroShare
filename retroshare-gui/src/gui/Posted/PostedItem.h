@@ -90,9 +90,9 @@ protected:
 
 private:
 	bool mLoaded;
-	bool mIsLoadingGroup;
-	bool mIsLoadingMessage;
-	bool mIsLoadingComment;
+	bool mIsOn_loadGroup;
+	bool mIsOn_loadMessage;
+	bool mIsOn_loadComment;
 };
 
 class PostedItem: public BasePostedItem

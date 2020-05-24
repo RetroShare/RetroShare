@@ -65,7 +65,10 @@
 
 /** Constructor */
 GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(MODE_CREATE), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+    , mGrpMeta(), mMode(MODE_CREATE)
+    , mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    , mIsOn_loadGroup(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -74,7 +77,10 @@ GxsGroupDialog::GxsGroupDialog(uint32_t enableFlags, uint32_t defaultFlags, QWid
 }
 
 GxsGroupDialog::GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableFlags, uint32_t defaultFlags, QWidget *parent)
-    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint), mGrpMeta(), mMode(mode), mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    : QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint)
+    , mGrpMeta(), mMode(mode)
+    , mEnabledFlags(enableFlags), mReadonlyFlags(0), mDefaultsFlags(defaultFlags)
+    , mIsOn_loadGroup(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -87,6 +93,16 @@ GxsGroupDialog::GxsGroupDialog(Mode mode, RsGxsGroupId groupId, uint32_t enableF
 GxsGroupDialog::~GxsGroupDialog()
 {
 	Settings->saveWidgetInformation(this);
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadGroup)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadGroup ? "Group " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }
 
 void GxsGroupDialog::init()
@@ -676,7 +692,7 @@ void GxsGroupDialog::createGroup()
 	if (service_createGroup(meta))
 	{
         // now update the UI
-#warning Missing code here!
+#warning (csoler 2020-03-22) Missing code here!
 #ifdef TODO
         //
 		// get the Queue to handle response. What is this for?
@@ -982,13 +998,16 @@ void GxsGroupDialog::filterComboBoxChanged(int i)
 
 void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 {
+	mIsOn_loadGroup = true;
+
 	RsThread::async([this,grpId]()
 	{
 		RsGxsGenericGroupData *groupData;
 
 		if(!service_getGroupData(grpId,groupData))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			mIsOn_loadGroup = false;
 			return;
 		}
 
@@ -1000,14 +1019,15 @@ void GxsGroupDialog::loadGroup(const RsGxsGroupId& grpId)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            mGrpMeta = groupData->mMeta;
+			mGrpMeta = groupData->mMeta;
 
 			QString description;
 
 			if (service_loadGroup(groupData, mMode, description))
 				updateFromExistingMeta(description);
 
-            delete groupData;
+			delete groupData;
+			mIsOn_loadGroup = false;
 
 		}, this );
 	});

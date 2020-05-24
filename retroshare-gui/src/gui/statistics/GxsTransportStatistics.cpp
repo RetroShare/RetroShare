@@ -80,14 +80,13 @@
 
 GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
     : MainPage(parent)
+    , m_bProcessSettings(false), mLastGroupReqTS(0)
+    , mIsOn_loadGroups(false)
 {
 	setupUi(this) ;
 	
 	mStateHelper = new UIStateHelper(this);
 	mStateHelper->addWidget(GXSTRANS_GROUP_META, treeWidget);
-
-	m_bProcessSettings = false;
-    mLastGroupReqTS = 0 ;
 
 	/* Set header resize modes and initial section sizes Uploads TreeView*/
 	QHeaderView_setSectionResizeMode(treeWidget->header(), QHeaderView::ResizeToContents);
@@ -104,9 +103,18 @@ GxsTransportStatistics::GxsTransportStatistics(QWidget *parent)
 
 GxsTransportStatistics::~GxsTransportStatistics()
 {
+	// save settings
+	processSettings(false);
 
-    // save settings
-    processSettings(false);
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadGroups)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadGroups ? "Groups " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }
 
 void GxsTransportStatistics::processSettings(bool bLoad)
@@ -411,37 +419,40 @@ void GxsTransportStatistics::loadGroupStats(const RsGxsGroupId& groupId)
 void GxsTransportStatistics::loadGroups()
 {
 	mStateHelper->setLoading(GXSTRANS_GROUP_META, true);
+	mIsOn_loadGroups = true;
 
 	RsThread::async([this]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
-        std::map<RsGxsGroupId,RsGxsTransGroupStatistics> stats;
+		std::map<RsGxsGroupId,RsGxsTransGroupStatistics> stats;
 
-        if(!rsGxsTrans->getGroupStatistics(stats))
-        {
-            RsErr() << "Cannot retrieve group statistics in GxsTransportStatistics" << std::endl;
-            return;
-        }
+		if(!rsGxsTrans->getGroupStatistics(stats))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Cannot retrieve group statistics in GxsTransportStatistics" << std::endl;
+			mIsOn_loadGroups = false;
+			return;
+		}
 
-        RsQThreadUtils::postToObject( [stats,this]()
+		RsQThreadUtils::postToObject( [stats,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            mGroupStats = stats;
+			mGroupStats = stats;
 
-            updateContent();
+			updateContent();
 
 			mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
+			mIsOn_loadGroups = false;
 
 		}, this );
 
-    });
+	});
 }
 
 

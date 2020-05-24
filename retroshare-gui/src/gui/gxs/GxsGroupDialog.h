@@ -284,15 +284,19 @@ private:
 
 	std::list<std::string> mShareList;
 	QPixmap mPicture;
-	RsTokenService *mTokenService;
+	//RsTokenService *mTokenService;
+#ifdef TODO
 	TokenQueue *mExternalTokenQueue;
-	TokenQueue *mInternalTokenQueue;
+#endif
+	//TokenQueue *mInternalTokenQueue;
 	RsGroupMetaData mGrpMeta;
 
 	Mode mMode;
 	uint32_t mEnabledFlags;
 	uint32_t mReadonlyFlags;
 	uint32_t mDefaultsFlags;
+
+	bool mIsOn_loadGroup;
 
 protected:
 	/** Qt Designer generated object */

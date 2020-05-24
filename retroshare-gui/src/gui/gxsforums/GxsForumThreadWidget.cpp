@@ -217,19 +217,19 @@ void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColor
 void GxsForumThreadWidget::setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color; mThreadModel->setTextColorNotSubscribed (color);}
 void GxsForumThreadWidget::setTextColorMissing       (QColor color) { mTextColorMissing        = color; mThreadModel->setTextColorMissing       (color);}
 
-GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
-	GxsMessageFrameWidget(rsGxsForums, parent),
-	ui(new Ui::GxsForumThreadWidget)
+GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent)
+    : GxsMessageFrameWidget(rsGxsForums, parent)
+    , mInMsgAsReadUnread(false), mLastViewType(-1), mFillThread(nullptr)
+    , mUnreadCount(0), mNewCount(0)
+    , mEventHandlerId(0)
+    , mIsOn_async_msg_action(false), mIsOn_updateGroupData(false), mIsOn_updateMessageData(false)
+    , ui(new Ui::GxsForumThreadWidget)
 {
 	ui->setupUi(this);
 
 	//setUpdateWhenInvisible(true);
 
-    //mUpdating = false;
-	mUnreadCount = 0;
-	mNewCount = 0;
-
-	mInMsgAsReadUnread = false;
+	//mUpdating = false;
 
     mThreadModel = new RsGxsForumModel(this);
     mThreadProxyModel = new ForumPostSortFilterProxyModel(ui->threadTreeWidget->header(),this);
@@ -290,7 +290,6 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->filterLineEdit->addFilter(QIcon(), tr("Date"), RsGxsForumModel::COLUMN_THREAD_DATE, tr("Search Date"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Author"), RsGxsForumModel::COLUMN_THREAD_AUTHOR, tr("Search Author"));
 
-	mLastViewType = -1;
 
     float f = QFontMetricsF(font()).height()/14.0f ;
 
@@ -319,7 +318,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->progressBar->hide();
 	ui->progressText->hide();
 
-	mFillThread = NULL;
+
 
 	setGroupId(forumId);
 
@@ -337,7 +336,7 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ui->threadTreeWidget->enableColumnCustomize(true);
 #endif
 
-	mEventHandlerId = 0;
+
 	// Needs to be asynced because this function is called by another thread!
 	rsEvents->registerEventsHandler(
 	            [this](std::shared_ptr<const RsEvent> event)
@@ -386,6 +385,18 @@ GxsForumThreadWidget::~GxsForumThreadWidget()
 	rsEvents->unregisterEventsHandler(mEventHandlerId);
 	// save settings
 	processSettings(false);
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_async_msg_action || mIsOn_updateGroupData || mIsOn_updateMessageData)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_async_msg_action ? "Message " : "")
+		        << (mIsOn_updateGroupData ? "GroupData " : "")
+		        << (mIsOn_updateMessageData ? "MessageData " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 
 	delete ui;
 }
@@ -1478,38 +1489,42 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 		return;
 	}
 
+	mIsOn_async_msg_action = true;
+
 	RsThread::async([this,action]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::set<RsGxsMessageId> msgs_to_request ;
-        std::vector<RsGxsForumMsg> msgs;
+		std::set<RsGxsMessageId> msgs_to_request ;
+		std::vector<RsGxsForumMsg> msgs;
 
-        msgs_to_request.insert(mThreadId);
+		msgs_to_request.insert(mThreadId);
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << groupId() << " and thread " << mThreadId << std::endl;
+			mIsOn_async_msg_action = false;
 			return;
-        }
+		}
 
-        if(msgs.size() != 1)
-        {
-			std::cerr << __PRETTY_FUNCTION__ << " more than 1 or no msgs selected in forum " << groupId() << std::endl;
+		if(msgs.size() != 1)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " more than 1 or no msgs selected in forum " << groupId() << std::endl;
+			mIsOn_async_msg_action = false;
 			return;
-        }
+		}
 
-        // 2 - sort the messages into a proper hierarchy
+		// 2 - sort the messages into a proper hierarchy
 
-        RsGxsForumMsg msg = msgs[0];
+		RsGxsForumMsg msg = msgs[0];
 
-        // 3 - update the model in the UI thread.
+		// 3 - update the model in the UI thread.
 
-        RsQThreadUtils::postToObject( [msg,action,this]()
+		RsQThreadUtils::postToObject( [msg,action,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -1517,9 +1532,11 @@ void GxsForumThreadWidget::async_msg_action(const MsgMethod &action)
 
 			(this->*action)(msg);
 
+			mIsOn_async_msg_action = false;
+
 		}, this );
 
-    });
+	});
 }
 
 void GxsForumThreadWidget::replyMessageData(const RsGxsForumMsg &msg)
@@ -1744,31 +1761,33 @@ void GxsForumThreadWidget::postForumLoading()
 
 void GxsForumThreadWidget::updateGroupData()
 {
-    if(groupId().isNull())
-        return;
+	if(groupId().isNull())
+		return;
 
-    // ui->threadTreeWidget->selectionModel()->clear();
-    // ui->threadTreeWidget->selectionModel()->reset();
-    // mThreadProxyModel->clear();
+	// ui->threadTreeWidget->selectionModel()->clear();
+	// ui->threadTreeWidget->selectionModel()->reset();
+	// mThreadProxyModel->clear();
 
 	setForumDescriptionLoading();
 
+	mIsOn_updateGroupData = true;
+
 	RsThread::async([this]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
-        std::list<RsGxsGroupId> forumIds;
+		std::list<RsGxsGroupId> forumIds;
 		std::vector<RsGxsForumGroup> groups;
 
-        forumIds.push_back(groupId());
-        bool success = false;
+		forumIds.push_back(groupId());
+		bool success = false;
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups))
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << groupId() << std::endl;
 		else if(groups.size() != 1)
-			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
-        else
-            success = true;
+			RsErr() << __PRETTY_FUNCTION__ << " obtained more than one group info for forum " << groupId() << std::endl;
+		else
+			success = true;
 
 		if(success)
 		{
@@ -1781,8 +1800,8 @@ void GxsForumThreadWidget::updateGroupData()
 			RsQThreadUtils::postToObject( [group,this]()
 			{
 				/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+				 * thread, for example to update the data model with new information
+				 * after a blocking call to RetroShare API complete */
 
 				mForumGroup = group;
 				mThreadId.clear();
@@ -1792,51 +1811,59 @@ void GxsForumThreadWidget::updateGroupData()
 
 				updateForumDescription(true);
 
+				mIsOn_updateGroupData = false;
+
 			}, this );
 		}
 		else
-			RsQThreadUtils::postToObject( [this]() { updateForumDescription(false); },this);
-    });
+			RsQThreadUtils::postToObject( [this]() { updateForumDescription(false); mIsOn_updateGroupData = false; },this);
+	});
 }
 
 void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 {
+	mIsOn_updateMessageData = true;
+
 	RsThread::async([msgId,this]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << msgId << std::endl;
+		std::cerr << "Retrieving post data for post " << msgId << std::endl;
 #endif
 
-        std::set<RsGxsMessageId> msgs_to_request ;
-        std::vector<RsGxsForumMsg> msgs;
+		std::set<RsGxsMessageId> msgs_to_request ;
+		std::vector<RsGxsForumMsg> msgs;
 
-        msgs_to_request.insert(msgId);
-        QString error_string;
+		msgs_to_request.insert(msgId);
+		QString error_string;
 
 		if(!rsGxsForums->getForumContent(groupId(),msgs_to_request,msgs))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
-            error_string = tr("Failed to retrieve this message. Is the database currently overloaded?");
-        }
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve message info for forum " << groupId() << " and MsgId " << msgId << std::endl;
+			error_string = tr("Failed to retrieve this message. Is the database currently overloaded?");
+		}
 
-        if(msgs.empty())
-        {
-			std::cerr << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
-            error_string = tr("No data for this message. Is the database corrupted?");
-        }
-        if(msgs.size() > 1)
-        {
-			std::cerr << __PRETTY_FUNCTION__ << " obtained more than one msg info for msgId " << msgId << ". This could be a bug. Only showing the first msg in the list." << std::endl;
-            std::cerr << "Messages are:" << std::endl;
-            for(auto it(msgs.begin());it!=msgs.end();++it)
-                std::cerr << (*it).mMeta << std::endl;
+		if(msgs.empty())
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " no posts for msgId " << msgId << ". Database corruption?" << std::endl;
+			error_string = tr("No data for this message. Is the database corrupted?");
+		}
 
-            error_string = tr("More than one entry for this message. Is the database corrupted?");
-        }
+		if(msgs.size() > 1)
+		{
+			std::stringstream errList;
+			for(auto it(msgs.begin());it!=msgs.end();++it)
+				errList << (*it).mMeta << std::endl;
 
-        if(error_string.isNull())
+			RsErr() << __PRETTY_FUNCTION__ << " obtained more than one msg info for msgId " << msgId << ". This could be a bug. Only showing the first msg in the list." << std::endl
+			        << "Messages are:" << std::endl
+			        << errList.str() << std::endl;
+
+			error_string = tr("More than one entry for this message. Is the database corrupted?");
+		}
+
+		if(error_string.isEmpty())
 		{
 			// 2 - sort the messages into a proper hierarchy
 
@@ -1847,18 +1874,20 @@ void GxsForumThreadWidget::updateMessageData(const RsGxsMessageId& msgId)
 			RsQThreadUtils::postToObject( [msg,this]()
 			{
 				/* Here it goes any code you want to be executed on the Qt Gui
-			 * thread, for example to update the data model with new information
-			 * after a blocking call to RetroShare API complete */
+				 * thread, for example to update the data model with new information
+				 * after a blocking call to RetroShare API complete */
 
 				insertMessageData(msg);
 
 				ui->threadTreeWidget->setColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, !IS_GROUP_PGP_KNOWN_AUTHED(mForumGroup.mMeta.mSignFlags) && !(IS_GROUP_PGP_AUTHED(mForumGroup.mMeta.mSignFlags)));
 				ui->subscribeToolButton->setHidden(IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags)) ;
+
+				mIsOn_updateMessageData = false;
 			}, this );
 		}
-        else
-            RsQThreadUtils::postToObject( [error_string,this](){ setMessageLoadingError(error_string); } );
-    });
+		else
+			RsQThreadUtils::postToObject( [error_string,this](){ setMessageLoadingError(error_string); mIsOn_updateMessageData = false; } );
+	});
 }
 
 void GxsForumThreadWidget::showAuthorInPeople(const RsGxsForumMsg& msg)

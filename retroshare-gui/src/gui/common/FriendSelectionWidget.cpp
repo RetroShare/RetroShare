@@ -81,17 +81,15 @@ static void setSelected(FriendSelectionWidget::Modus modus, QTreeWidgetItem *ite
 }
 
 FriendSelectionWidget::FriendSelectionWidget(QWidget *parent) 
-	: QWidget(parent), ui(new Ui::FriendSelectionWidget)
+    : QWidget(parent), mStarted(false)
+    , mCompareRole(new RSTreeWidgetItemCompareRole)
+    , mListModus(MODUS_SINGLE), mShowTypes(SHOW_GROUP | SHOW_SSL)
+    , mInGroupItemChanged(false), mInGpgItemChanged(false)
+    , mInSslItemChanged(false), mInFillList(false)
+    , mIsOn_loadIdentities(false)
+    , ui(new Ui::FriendSelectionWidget)
 {
 	ui->setupUi(this);
-
-	mStarted = false;
-	mListModus = MODUS_SINGLE;
-	mShowTypes = SHOW_GROUP | SHOW_SSL;
-	mInGroupItemChanged = false;
-	mInGpgItemChanged = false;
-	mInSslItemChanged = false;
-	mInFillList = false;
 
 	connect(ui->friendList, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
 	connect(ui->friendList, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*,int)));
@@ -102,7 +100,6 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 	connect(NotifyQt::getInstance(), SIGNAL(groupsChanged(int)), this, SLOT(groupsChanged(int)));
 	connect(NotifyQt::getInstance(), SIGNAL(peerStatusChanged(const QString&,int)), this, SLOT(peerStatusChanged(const QString&,int)));
 
-	mCompareRole = new RSTreeWidgetItemCompareRole;
 	mActionSortByState = new QAction(tr("Sort by state"), this);
 	mActionSortByState->setCheckable(true);
 	connect(mActionSortByState, SIGNAL(toggled(bool)), this, SLOT(sortByState(bool)));
@@ -130,6 +127,16 @@ FriendSelectionWidget::FriendSelectionWidget(QWidget *parent)
 
 FriendSelectionWidget::~FriendSelectionWidget()
 {
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadIdentities)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadIdentities ? "Identity " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
 	delete ui;
 }
 
@@ -183,11 +190,12 @@ int FriendSelectionWidget::addColumn(const QString &title)
 	return column;
 }
 
-void FriendSelectionWidget::showEvent(QShowEvent *e)
+void FriendSelectionWidget::showEvent(QShowEvent* /*e*/)
 {
-    if(gxsIds.empty())
-        loadIdentities();
+	if(gxsIds.empty())
+		loadIdentities();
 }
+
 void FriendSelectionWidget::start()
 {
 	mStarted = true;
@@ -243,22 +251,24 @@ void FriendSelectionWidget::fillList()
 void FriendSelectionWidget::loadIdentities()
 {
 	// store all IDs locally, and call fillList() ;
+	mIsOn_loadIdentities = true;
 
 	RsThread::async([this]()
 	{
-        std::list<RsGroupMetaData> ids_meta;
+		std::list<RsGroupMetaData> ids_meta;
 
 		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			mIsOn_loadIdentities = false;
 			return;
-        }
-        std::vector<RsGxsGroupId> ids;
+		}
+		std::vector<RsGxsGroupId> ids;
 
 		for(auto& meta:ids_meta)
 			ids.push_back(meta.mGroupId) ;
 
-        RsQThreadUtils::postToObject( [ids,this]()
+		RsQThreadUtils::postToObject( [ids,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -267,6 +277,7 @@ void FriendSelectionWidget::loadIdentities()
 			gxsIds = ids; // we do that is the GUI thread. Dont try it on another thread!
 
 			fillList() ;
+			mIsOn_loadIdentities = false;
 
 		}, this );
 	});

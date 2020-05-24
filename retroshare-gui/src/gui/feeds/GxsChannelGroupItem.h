@@ -44,12 +44,12 @@ public:
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsChannelGroupItem " + groupId().toStdString()) ; }
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool open);
+	virtual void doExpand(bool open) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_CHANNEL; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_CHANNEL; }
 
 private slots:
 	/* default stuff */
@@ -63,6 +63,7 @@ private:
 
 private:
 	RsGxsChannelGroup mGroup;
+	bool mIsOn_loadGroup;
 
 	/** Qt Designer generated object */
 	Ui::GxsChannelGroupItem *ui;

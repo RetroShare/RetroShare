@@ -17,18 +17,21 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#include <QDateTime>
-
 #include "IdDetailsDialog.h"
 #include "ui_IdDetailsDialog.h"
-#include "gui/gxs/GxsIdDetails.h"
-#include "util/qtthreadsutils.h"
-#include "gui/settings/rsharesettings.h"
-#include "gui/common/UIStateHelper.h"
-#include "gui/msgs/MessageComposer.h"
+
 #include "gui/RetroShareLink.h"
+#include "gui/common/UIStateHelper.h"
+#include "gui/gxs/GxsIdDetails.h"
+#include "gui/msgs/MessageComposer.h"
+#include "gui/settings/rsharesettings.h"
+#include "util/qtthreadsutils.h"
 
 #include <retroshare/rspeers.h>
+
+#include <QDateTime>
+
+#include <chrono>
 
 // Data Requests.
 #define IDDETAILSDIALOG_IDDETAILS  1
@@ -40,7 +43,7 @@
 /** Default constructor */
 IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
     QDialog(parent, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowCloseButtonHint),
-    mId(id),
+    mId(id), mIsOn_loadIdentity(false),
     ui(new Ui::IdDetailsDialog)
 {
 	/* Invoke Qt Designer generated QObject setup routine */
@@ -99,6 +102,16 @@ IdDetailsDialog::IdDetailsDialog(const RsGxsGroupId& id, QWidget *parent) :
 IdDetailsDialog::~IdDetailsDialog()
 {
 	Settings->saveWidgetInformation(this);
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadIdentity)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadIdentity ? "Identity " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 
 	delete(ui);
 }
@@ -335,7 +348,7 @@ void IdDetailsDialog::modifyReputation()
 
 void IdDetailsDialog::loadIdentity()
 {
-    if (mId.isNull())
+	if (mId.isNull())
 	{
 		mStateHelper->setActive(IDDETAILSDIALOG_IDDETAILS, false);
 		mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, false);
@@ -346,35 +359,40 @@ void IdDetailsDialog::loadIdentity()
 
 	mStateHelper->setLoading(IDDETAILSDIALOG_IDDETAILS, true);
 
+	mIsOn_loadIdentity = true;
+
 	RsThread::async([this]()
 	{
 #ifdef ID_DEBUG
-        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
 #endif
 
-        std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
-        std::vector<RsGxsIdGroup> ids_data;
+		std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
+		std::vector<RsGxsIdGroup> ids_data;
 
 		if(!rsIdentity->getIdentitiesInfo(ids,ids_data))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			mIsOn_loadIdentity = false;
 			return;
-        }
+		}
 
-        if(ids_data.size() != 1)
+		if(ids_data.size() != 1)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			mIsOn_loadIdentity = false;
 			return;
-        }
-        RsGxsIdGroup group(ids_data[0]);
+		}
+		RsGxsIdGroup group(ids_data[0]);
 
-        RsQThreadUtils::postToObject( [group,this]()
+		RsQThreadUtils::postToObject( [group,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadIdentity(group);
+			loadIdentity(group);
+			mIsOn_loadIdentity = false;
 
 		}, this );
 	});

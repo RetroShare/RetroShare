@@ -53,7 +53,7 @@ BasePostedItem::BasePostedItem( FeedHolder *feedHolder, uint32_t feedId
                               , bool isHome, bool autoUpdate)
     : GxsFeedItem(feedHolder, feedId, group_meta.mGroupId, post_id, isHome, rsPosted, autoUpdate)
     , mInFill(false), mGroupMeta(group_meta)
-    , mLoaded(false), mIsLoadingGroup(false), mIsLoadingMessage(false), mIsLoadingComment(false)
+    , mLoaded(false), mIsOn_loadGroup(false), mIsOn_loadMessage(false), mIsOn_loadComment(false)
 {
 	mPost.mMeta.mMsgId = post_id;
 	mPost.mMeta.mGroupId = mGroupMeta.mGroupId;
@@ -64,7 +64,7 @@ BasePostedItem::BasePostedItem( FeedHolder *feedHolder, uint32_t feedId
                               , bool isHome, bool autoUpdate)
     : GxsFeedItem(feedHolder, feedId, groupId, post_id, isHome, rsPosted, autoUpdate)
     , mInFill(false)
-    , mLoaded(false), mIsLoadingGroup(false), mIsLoadingMessage(false), mIsLoadingComment(false)
+    , mLoaded(false), mIsOn_loadGroup(false), mIsOn_loadMessage(false), mIsOn_loadComment(false)
 {
 	mPost.mMeta.mMsgId = post_id;
 }
@@ -72,13 +72,13 @@ BasePostedItem::BasePostedItem( FeedHolder *feedHolder, uint32_t feedId
 BasePostedItem::~BasePostedItem()
 {
 	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(200);
-	while( (mIsLoadingGroup || mIsLoadingMessage || mIsLoadingComment)
+	while( (mIsOn_loadGroup || mIsOn_loadMessage || mIsOn_loadComment)
 	       && std::chrono::steady_clock::now() < timeout)
 	{
 		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
-		        << (mIsLoadingGroup ? "Group " : "")
-		        << (mIsLoadingMessage ? "Message " : "")
-		        << (mIsLoadingComment ? "Comment " : "")
+		        << (mIsOn_loadGroup ? "Group " : "")
+		        << (mIsOn_loadMessage ? "Message " : "")
+		        << (mIsOn_loadComment ? "Comment " : "")
 		        << "loading finished." << std::endl;
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
@@ -118,7 +118,7 @@ bool BasePostedItem::setPost(const RsPostedPost &post, bool doFill)
 
 void BasePostedItem::loadGroup()
 {
-	mIsLoadingGroup = true;
+	mIsOn_loadGroup = true;
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -133,14 +133,14 @@ void BasePostedItem::loadGroup()
 		if(!rsPosted->getBoardsInfo(groupIds,groups))
 		{
 			RsErr() << "GxsPostedGroupItem::loadGroup() ERROR getting data" << std::endl;
-			mIsLoadingGroup = false;
+			mIsOn_loadGroup = false;
 			return;
 		}
 
 		if (groups.size() != 1)
 		{
 			std::cerr << "GxsPostedGroupItem::loadGroup() Wrong number of Items" << std::endl;
-			mIsLoadingGroup = false;
+			mIsOn_loadGroup = false;
 			return;
 		}
 		RsPostedGroup group(groups[0]);
@@ -152,7 +152,7 @@ void BasePostedItem::loadGroup()
 			 * after a blocking call to RetroShare API complete */
 
 			mGroupMeta = group.mMeta;
-			mIsLoadingGroup = false;
+			mIsOn_loadGroup = false;
 
 		}, this );
 	});
@@ -160,7 +160,7 @@ void BasePostedItem::loadGroup()
 
 void BasePostedItem::loadMessage()
 {
-	mIsLoadingMessage = true;
+	mIsOn_loadMessage = true;
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -172,7 +172,7 @@ void BasePostedItem::loadMessage()
 		if(! rsPosted->getBoardContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
 		{
 			RsErr() << "BasePostedItem::loadMessage() ERROR getting data" << std::endl;
-			mIsLoadingMessage = false;
+			mIsOn_loadMessage = false;
 			return;
 		}
 
@@ -181,7 +181,7 @@ void BasePostedItem::loadMessage()
 			std::cerr << (void*)this << ": Obtained post, with msgId = " << posts[0].mMeta.mMsgId << std::endl;
 			const RsPostedPost& post(posts[0]);
 
-			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true); mIsLoadingMessage = false;}, this );
+			RsQThreadUtils::postToObject( [post,this]() { setPost(post,true); mIsOn_loadMessage = false;}, this );
 		}
 		else if(comments.size() == 1)
 		{
@@ -196,7 +196,7 @@ void BasePostedItem::loadMessage()
 				setMessageId(cmt.mMeta.mThreadId);
 				requestMessage();
 
-				mIsLoadingMessage = false;
+				mIsOn_loadMessage = false;
 			}, this );
 
 		}
@@ -204,7 +204,7 @@ void BasePostedItem::loadMessage()
 		{
 			std::cerr << "GxsChannelPostItem::loadMessage() Wrong number of Items. Remove It." << std::endl;
 
-			RsQThreadUtils::postToObject( [this]() {  removeItem(); mIsLoadingMessage = false;}, this );
+			RsQThreadUtils::postToObject( [this]() {  removeItem(); mIsOn_loadMessage = false;}, this );
 		}
 	});
 }
@@ -216,7 +216,7 @@ void BasePostedItem::loadComment()
 	std::cerr << "GxsChannelPostItem::loadComment()";
 	std::cerr << std::endl;
 #endif
-	mIsLoadingComment = true;
+	mIsOn_loadComment = true;
 	RsThread::async([this]()
 	{
 		// 1 - get group data
@@ -233,7 +233,7 @@ void BasePostedItem::loadComment()
 		if(! rsPosted->getBoardContent( groupId(),msgIds,posts,comments,votes))
 		{
 			RsErr() << "BasePostedItem::loadGroup() ERROR getting data" << std::endl;
-			mIsLoadingComment = false;
+			mIsOn_loadComment = false;
 			return;
 		}
 
@@ -242,7 +242,7 @@ void BasePostedItem::loadComment()
 		RsQThreadUtils::postToObject( [comNb,this]()
 		{
 			setCommentsSize(comNb);
-			mIsLoadingComment = false;
+			mIsOn_loadComment = false;
 		}, this );
 	});
 }

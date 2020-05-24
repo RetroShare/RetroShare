@@ -160,15 +160,15 @@ bool PostedDialog::getGroupData(std::list<RsGxsGenericGroupData*>& groupInfo)
 {
 	std::vector<RsPostedGroup> groups;
 
-    // request all group infos at once
+	// request all group infos at once
 
-    if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
-        return false;
+	if(! rsPosted->getBoardsInfo(std::list<RsGxsGroupId>(),groups))
+		return false;
 
  	/* Save groups to fill icons and description */
 
 	for (auto& group: groups)
-       groupInfo.push_back(new RsPostedGroup(group));
+		groupInfo.push_back(new RsPostedGroup(group));
 
 	return true;
 }
@@ -243,19 +243,19 @@ void PostedDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *groupDa
 	const RsPostedGroup *postedGroupData = dynamic_cast<const RsPostedGroup*>(groupData);
 
 	if (!postedGroupData)
-    {
+	{
 		std::cerr << "PostedDialog::groupInfoToGroupItemInfo() Failed to cast data to RsPostedGroup"<< std::endl;
 		return;
 	}
 
-    if(postedGroupData->mGroupImage.mSize > 0)
-    {
-	QPixmap image;
-	GxsIdDetails::loadPixmapFromData(postedGroupData->mGroupImage.mData, postedGroupData->mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
-	groupItemInfo.icon        = image;
-    }
-    else
-	groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
+	if(postedGroupData->mGroupImage.mSize > 0)
+	{
+		QPixmap image;
+		GxsIdDetails::loadPixmapFromData(postedGroupData->mGroupImage.mData, postedGroupData->mGroupImage.mSize, image,GxsIdDetails::ORIGINAL);
+		groupItemInfo.icon        = image;
+	}
+	else
+		groupItemInfo.icon        = QIcon(":icons/png/postedlinks.png");
 
 	groupItemInfo.description = QString::fromUtf8(postedGroupData->mDescription.c_str());
 }

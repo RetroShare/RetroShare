@@ -72,27 +72,17 @@ static const uint32_t DELAY_BETWEEN_GROUP_STATISTICS_UPDATE = 120; // do not upd
 
 /** Constructor */
 GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *parent,bool allow_dist_sync)
-: MainPage(parent)
+    : MainPage(parent)
+    , mCountChildMsgs(false)
+    , mInitialized(false), mInFill(false), mDistSyncAllowed(allow_dist_sync)
+    , mInterface(ifaceImpl) /* Setup Queue */
+    , mMessageWidget(nullptr), mYourGroups(nullptr), mSubscribedGroups(nullptr), mPopularGroups(nullptr), mOtherGroups(nullptr)
+    , mShouldUpdateMessageSummaryList(true), mShouldUpdateGroupStatistics(false), mLastGroupStatisticsUpdateTs(0)
+    , mIsOn_updateGroupSummary(false), mIsOn_updateGroupStatisticsReal(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui = new Ui::GxsGroupFrameDialog();
 	ui->setupUi(this);
-
-	mShouldUpdateMessageSummaryList = true;
-	mShouldUpdateGroupStatistics = false;
-    mLastGroupStatisticsUpdateTs=0;
-	mInitialized = false;
-	mDistSyncAllowed = allow_dist_sync;
-	mInFill = false;
-	mCountChildMsgs = false;
-	mYourGroups = NULL;
-	mSubscribedGroups = NULL;
-	mPopularGroups = NULL;
-	mOtherGroups = NULL;
-	mMessageWidget = NULL;
-
-	/* Setup Queue */
-	mInterface = ifaceImpl;
 
 	/* Setup UI helper */
 	mStateHelper = new UIStateHelper(this);
@@ -129,6 +119,17 @@ GxsGroupFrameDialog::~GxsGroupFrameDialog()
 {
 	// save settings
 	processSettings(false);
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_updateGroupSummary || mIsOn_updateGroupStatisticsReal)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_updateGroupSummary ? "GroupSummary " : "")
+		        << (mIsOn_updateGroupStatisticsReal ? "GroupStatisticsReal " : "")
+		        << "updating finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 
 	delete(ui);
 }
@@ -178,7 +179,7 @@ void GxsGroupFrameDialog::initUi()
 	mInitialized = true;
 }
 
-void GxsGroupFrameDialog::showEvent(QShowEvent *event)
+void GxsGroupFrameDialog::showEvent(QShowEvent* /*event*/)
 {
 	if (!mInitialized )
 	{
@@ -1072,17 +1073,20 @@ void GxsGroupFrameDialog::updateMessageSummaryListReal(RsGxsGroupId groupId)
 
 void GxsGroupFrameDialog::updateGroupSummary()
 {
+	mIsOn_updateGroupSummary = true;
+
 	RsThread::async([this]()
 	{
 		std::list<RsGxsGenericGroupData*> groupInfo;
 
 		if(!getGroupData(groupInfo))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			mIsOn_updateGroupSummary = false;
 			return;
 		}
-        if(groupInfo.empty())
-            return;
+		if(groupInfo.empty())
+			return;
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
@@ -1116,6 +1120,7 @@ void GxsGroupFrameDialog::updateGroupSummary()
 				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
 				delete g;
 			}
+			mIsOn_updateGroupSummary = false;
 
 		}, this );
 	});
@@ -1132,13 +1137,16 @@ void GxsGroupFrameDialog::updateGroupStatistics(const RsGxsGroupId &groupId)
 
 void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 {
-    RsThread::async([this,groupId]()
+	mIsOn_updateGroupStatisticsReal = true;
+
+	RsThread::async([this,groupId]()
 	{
 		GxsGroupStatistic stats;
 
-        if(! getGroupStatistics(groupId, stats))
+		if(! getGroupStatistics(groupId, stats))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to collect group statistics for group " << groupId << std::endl;
+			mIsOn_updateGroupStatisticsReal = false;
 			return;
 		}
 
@@ -1152,12 +1160,16 @@ void GxsGroupFrameDialog::updateGroupStatisticsReal(const RsGxsGroupId &groupId)
 
 			QTreeWidgetItem *item = ui->groupTreeWidget->getItemFromId(QString::fromStdString(stats.mGrpId.toStdString()));
 			if (!item)
+			{
+				mIsOn_updateGroupStatisticsReal = false;
 				return;
+			}
 
 			ui->groupTreeWidget->setUnreadCount(item, mCountChildMsgs ? (stats.mNumThreadMsgsUnread + stats.mNumChildMsgsUnread) : stats.mNumThreadMsgsUnread);
-            mCachedGroupStats[groupId] = stats;
+			mCachedGroupStats[groupId] = stats;
 
 			getUserNotify()->updateIcon();
+			mIsOn_updateGroupStatisticsReal = false;
 
 		}, this );
 	});
@@ -1189,13 +1201,13 @@ TurtleRequestId GxsGroupFrameDialog::distantSearch(const QString& search_string)
 
 void GxsGroupFrameDialog::searchNetwork(const QString& search_string)
 {
-    if(search_string.isNull())
-        return ;
+	if(search_string.isNull())
+		return ;
 
-    uint32_t request_id = distantSearch(search_string);
+	uint32_t request_id = distantSearch(search_string);
 
-    if(request_id == 0)
-        return ;
+	if(request_id == 0)
+		return ;
 
 	mSearchGroupsItems[request_id] = ui->groupTreeWidget->addSearchItem(tr("Search for")+ " \"" + search_string + "\"",(uint32_t)request_id,QIcon(icon(ICON_SEARCH)));
 }

@@ -69,7 +69,7 @@ private:
 
 	bool mIsExistingCircle;
 	bool mIsExternalCircle;
-    	bool mReadOnly;
+	bool mReadOnly;
 
 	void loadCircle(const RsGxsGroupId& groupId);
 	void loadIdentities();
@@ -79,6 +79,9 @@ private:
 
 	RsGxsCircleGroup mCircleGroup; // for editting existing Circles.
 	bool mClearList;
+
+	bool mIsOn_loadCircle;
+	bool mIsOn_loadIdentities;
 
 	/** Qt Designer generated object */
 	Ui::CreateCircleDialog ui;

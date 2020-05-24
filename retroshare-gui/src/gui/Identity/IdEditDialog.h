@@ -44,7 +44,7 @@ public:
 
 	void setupNewId(bool pseudo, bool enable_anon = true);
 	void setupExistingId(const RsGxsGroupId& keyId);
-    	void enforceNoAnonIds() ;
+	void enforceNoAnonIds() ;
 
 	RsGxsGroupId groupId() { return mGroupId; }
 
@@ -76,7 +76,6 @@ private:
 	void rmTag(int idx);
 	
 protected:
-	Ui::IdEditDialog *ui;
 	bool mIsNew;
 	UIStateHelper *mStateHelper;
 
@@ -84,6 +83,10 @@ protected:
 	RsGxsGroupId mGroupId;
 
 	QPixmap mAvatar; // Avatar from identity (not calculated)
+
+	bool mIsOn_setupExistingId;
+
+	Ui::IdEditDialog *ui;
 };
 
 #endif

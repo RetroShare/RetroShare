@@ -43,9 +43,25 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 const QString RsGxsForumModel::FilterString("filtered");
 
 RsGxsForumModel::RsGxsForumModel(QObject *parent)
-    : QAbstractItemModel(parent), mUseChildTS(false),mFilteringEnabled(false),mTreeMode(TREE_MODE_TREE)
+    : QAbstractItemModel(parent)
+    , mUseChildTS(false), mFilteringEnabled(false)
+    , mTreeMode(TREE_MODE_TREE), mSortMode(SORT_MODE_PUBLISH_TS)
+    , mIsOn_update_posts(false)
 {
-    initEmptyHierarchy(mPosts);
+	initEmptyHierarchy(mPosts);
+}
+
+RsGxsForumModel::~RsGxsForumModel()
+{
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_update_posts)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_update_posts ? "Posts " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }
 
 void RsGxsForumModel::preMods()
@@ -442,29 +458,29 @@ QVariant RsGxsForumModel::data(const QModelIndex &index, int role) const
 
 QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
-    if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
-        return QVariant(mTextColorMissing);
+	if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
+		return QVariant(mTextColorMissing);
 
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
-        return QVariant(mTextColorUnread);
-    else
-        return QVariant(mTextColorRead);
+	if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
+		return QVariant(mTextColorUnread);
+	else
+		return QVariant(mTextColorRead);
 
 	return QVariant();
 }
 
 QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column) const
 {
- 	if(column != COLUMN_THREAD_DATA)
-        return QVariant();
+	if(column != COLUMN_THREAD_DATA)
+		return QVariant();
 
-    return QVariant(fmpe.mMsgStatus);
+	return QVariant(fmpe.mMsgStatus);
 }
 
 QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
-    if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
-        return QVariant(FilterString);
+	if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
+		return QVariant(FilterString);
 
 	return QVariant(QString());
 }
@@ -790,42 +806,46 @@ void RsGxsForumModel::setPosts(const RsGxsForumGroup& group, const std::vector<F
 
 void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 {
-    if(group_id.isNull())
-        return;
+	if(group_id.isNull())
+		return;
+
+	mIsOn_update_posts = true;
 
 	RsThread::async([this, group_id]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
-        std::list<RsGxsGroupId> forumIds;
+		std::list<RsGxsGroupId> forumIds;
 		std::vector<RsMsgMetaData> msg_metas;
 		std::vector<RsGxsForumGroup> groups;
 
-        forumIds.push_back(group_id);
+		forumIds.push_back(group_id);
 
 		if(!rsGxsForums->getForumsInfo(forumIds,groups) || groups.size() != 1)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
-			return;
-        }
-
-		if(!rsGxsForums->getForumMsgMetaData(group_id,msg_metas))
-		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << group_id << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve forum group info for forum " << group_id << std::endl;
+			mIsOn_update_posts = false;
 			return;
 		}
 
-        // 2 - sort the messages into a proper hierarchy
+		if(!rsGxsForums->getForumMsgMetaData(group_id,msg_metas))
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve forum message info for forum " << group_id << std::endl;
+			mIsOn_update_posts = false;
+			return;
+		}
 
-        auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
-        std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
-        RsGxsForumGroup group = groups[0];
+		// 2 - sort the messages into a proper hierarchy
 
-        computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
+		auto post_versions = new std::map<RsGxsMessageId,std::vector<std::pair<time_t, RsGxsMessageId> > >() ;
+		std::vector<ForumModelPostEntry> *vect = new std::vector<ForumModelPostEntry>();
+		RsGxsForumGroup group = groups[0];
 
-        // 3 - update the model in the UI thread.
+		computeMessagesHierarchy(group,msg_metas,*vect,*post_versions);
 
-        RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
+		// 3 - update the model in the UI thread.
+
+		RsQThreadUtils::postToObject( [group,vect,post_versions,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -833,15 +853,16 @@ void RsGxsForumModel::update_posts(const RsGxsGroupId& group_id)
 			 * Qt::QueuedConnection is important!
 			 */
 
-            setPosts(group,*vect,*post_versions) ;
+			setPosts(group,*vect,*post_versions) ;
 
-            delete vect;
-            delete post_versions;
+			delete vect;
+			delete post_versions;
 
+			mIsOn_update_posts = false;
 
 		}, this );
 
-    });
+	});
 }
 
 ForumModelIndex RsGxsForumModel::addEntry(std::vector<ForumModelPostEntry>& posts,const ForumModelPostEntry& entry,ForumModelIndex parent)
@@ -889,26 +910,25 @@ void RsGxsForumModel::convertMsgToPostEntry(const RsGxsForumGroup& mForumGroup,c
 
 void RsGxsForumModel::computeReputationLevel(uint32_t forum_sign_flags,ForumModelPostEntry& fentry)
 {
-    uint32_t idflags =0;
+	uint32_t idflags =0;
 	RsReputationLevel reputation_level =
 	        rsReputations->overallReputationLevel(fentry.mAuthorId, &idflags);
-	bool redacted = false;
 
 	if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-        fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
-    else
-        fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+		fentry.mPostFlags |=  ForumModelPostEntry::FLAG_POST_IS_REDACTED;
+	else
+		fentry.mPostFlags &= ~ForumModelPostEntry::FLAG_POST_IS_REDACTED;
 
-    // We use a specific item model for forums in order to handle the post pinning.
+	// We use a specific item model for forums in order to handle the post pinning.
 
 	if(reputation_level == RsReputationLevel::UNKNOWN)
-        fentry.mReputationWarningLevel = 3 ;
+		fentry.mReputationWarningLevel = 3 ;
 	else if(reputation_level == RsReputationLevel::LOCALLY_NEGATIVE)
-        fentry.mReputationWarningLevel = 2 ;
-    else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
-        fentry.mReputationWarningLevel = 1 ;
-    else
-        fentry.mReputationWarningLevel = 0 ;
+		fentry.mReputationWarningLevel = 2 ;
+	else if(reputation_level < rsGxsForums->minReputationForForwardingMessages(forum_sign_flags,idflags))
+		fentry.mReputationWarningLevel = 1 ;
+	else
+		fentry.mReputationWarningLevel = 0 ;
 }
 
 static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,const std::pair<time_t,RsGxsMessageId>& e2) { return e2.first < e1.first ; }

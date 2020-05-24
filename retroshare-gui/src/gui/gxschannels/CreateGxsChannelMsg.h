@@ -78,8 +78,8 @@ private:
 	void sendMessage(const std::string &subject, const std::string &msg, const std::list<RsGxsFile> &files);
 	bool setThumbNail(const std::string& path, int frame);
 
-    RsGxsGroupId mChannelId;
-    RsGxsMessageId mOrigPostId;
+	RsGxsGroupId mChannelId;
+	RsGxsMessageId mOrigPostId;
 	RsGroupMetaData mChannelMeta;
 	RsMsgMetaData mOrigMeta;
 	bool mChannelMetaLoaded;
@@ -88,6 +88,9 @@ private:
 
 	bool mCheckAttachment;
 	bool mAutoMediaThumbNail;
+
+	bool mIsOn_loadOriginalChannelPostInfo;
+	bool mIsOn_loadChannelInfo;
 
 #ifdef CHANNELS_FRAME_CATCHER
 	framecatcher* fCatcher;

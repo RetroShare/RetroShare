@@ -58,13 +58,17 @@ private:
 	void loadGroups();
 
 	void processSettings(bool bLoad);
+
+private:
 	bool m_bProcessSettings;
 
-	GxsTransportStatisticsWidget *_tst_CW ;
+	//GxsTransportStatisticsWidget *_tst_CW ;
 	UIStateHelper *mStateHelper;
 	uint32_t mLastGroupReqTS ;
 
 	// temporary storage of retrieved data, for display (useful because this is obtained from the async token system)
 
 	std::map<RsGxsGroupId,RsGxsTransGroupStatistics> mGroupStats ;	// stores the list of active groups and statistics about each of them.
+
+	bool mIsOn_loadGroups;
 } ;

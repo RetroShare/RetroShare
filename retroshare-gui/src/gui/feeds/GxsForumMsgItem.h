@@ -46,20 +46,20 @@ public:
     uint64_t uniqueIdentifier() const override { return hash_64bits("GxsForumMsgItem " + messageId().toStdString()) ; }
 protected:
 	/* FeedItem */
-	virtual void doExpand(bool open);
-	virtual void expandFill(bool first);
+	virtual void doExpand(bool open) override;
+	virtual void expandFill(bool first) override;
 
 	/* load message data */
 	virtual void loadParentMessage(const RsGxsMessageId &parent_msg);
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_FORUM; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_FORUM; }
 	//virtual bool isLoading();
 
 	/* GxsFeedItem */
-	virtual QString messageName();
+	virtual QString messageName() override;
 	virtual void loadMessage() override;
 	virtual void loadComment() override { return; }
 
@@ -88,6 +88,10 @@ private:
 	RsGxsForumGroup mGroup;
 	RsGxsForumMsg mMessage;
 	RsGxsForumMsg mParentMessage;
+
+	bool mIsOn_loadGroup;
+	bool mIsOn_loadMessage;
+	bool mIsOn_loadParentMessage;
 
 	/** Qt Designer generated object */
 	Ui::GxsForumMsgItem *ui;

@@ -67,7 +67,7 @@ class RsGxsForumModel : public QAbstractItemModel
 
 public:
 	explicit RsGxsForumModel(QObject *parent = NULL);
-	~RsGxsForumModel(){}
+	~RsGxsForumModel();
 
 	enum Columns {
 		COLUMN_THREAD_TITLE        =0x00,
@@ -161,13 +161,6 @@ signals:
     void forumLoaded();	// emitted after the posts have been set. Can be used to updated the UI.
 
 private:
-    RsGxsForumGroup mForumGroup;
-
-    bool mUseChildTS;
-    bool mFilteringEnabled;
-    TreeMode mTreeMode;
-    SortMode mSortMode;
-
 	void preMods() ;
 	void postMods() ;
 
@@ -194,14 +187,24 @@ private:
 	void setPosts(const RsGxsForumGroup& group, const std::vector<ForumModelPostEntry>& posts,const std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > >& post_versions);
 	void initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts);
 
-    std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
+private:
+	RsGxsForumGroup mForumGroup;
+
+	bool mUseChildTS;
+	bool mFilteringEnabled;
+	TreeMode mTreeMode;
+	SortMode mSortMode;
+
+	std::vector<ForumModelPostEntry> mPosts ; // store the list of posts updated from rsForums.
 	std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions;
 
-    QColor mTextColorRead          ;
-    QColor mTextColorUnread        ;
-    QColor mTextColorUnreadChildren;
-    QColor mTextColorNotSubscribed ;
-    QColor mTextColorMissing       ;
+	QColor mTextColorRead          ;
+	QColor mTextColorUnread        ;
+	QColor mTextColorUnreadChildren;
+	QColor mTextColorNotSubscribed ;
+	QColor mTextColorMissing       ;
 
-    friend class const_iterator;
+	bool mIsOn_update_posts;
+
+	friend class const_iterator;
 };

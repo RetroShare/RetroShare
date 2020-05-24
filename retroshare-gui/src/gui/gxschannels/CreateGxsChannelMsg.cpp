@@ -49,8 +49,10 @@
 
 /** Constructor */
 CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId existing_post)
-	: QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint),
-      mChannelId(cId) , mOrigPostId(existing_post),mCheckAttachment(true), mAutoMediaThumbNail(false)
+    : QDialog (NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
+    , mChannelId(cId), mOrigPostId(existing_post), mChannelMetaLoaded(false)
+    , mCheckAttachment(true), mAutoMediaThumbNail(false)
+    , mIsOn_loadOriginalChannelPostInfo(false), mIsOn_loadChannelInfo(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	setupUi(this);
@@ -58,7 +60,7 @@ CreateGxsChannelMsg::CreateGxsChannelMsg(const RsGxsGroupId &cId, RsGxsMessageId
 
 	headerFrame->setHeaderImage(QPixmap(":/icons/png/channel.png"));
 
-    if(!existing_post.isNull())
+	if(!existing_post.isNull())
 		headerFrame->setHeaderText(tr("Edit Channel Post"));
 	else
 		headerFrame->setHeaderText(tr("New Channel Post"));
@@ -104,6 +106,17 @@ CreateGxsChannelMsg::~CreateGxsChannelMsg()
 #ifdef CHANNELS_FRAME_CATCHER
 	delete fCatcher;
 #endif
+
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadOriginalChannelPostInfo || mIsOn_loadChannelInfo)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadOriginalChannelPostInfo ? "OriginalChannelPostInfo " : "")
+		        << (mIsOn_loadChannelInfo ? "ChannelInfo " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
 }
 
 void CreateGxsChannelMsg::contextMenu(QPoint /*point*/)
@@ -731,9 +744,10 @@ void CreateGxsChannelMsg::addThumbnail()
 void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 {
 #ifdef DEBUG_CREATE_GXS_MSG
-	std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo()";
-	std::cerr << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << std::endl;
 #endif
+	mIsOn_loadOriginalChannelPostInfo = true;
+
 	RsThread::async([this]()
 	{
 		std::vector<RsGxsChannelPost> posts;
@@ -742,7 +756,8 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 
 		if( !rsGxsChannels->getChannelContent(mChannelId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
 		{
-			std::cerr << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
+			mIsOn_loadOriginalChannelPostInfo = false;
 			return;
 		}
 
@@ -752,11 +767,12 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            const RsGxsChannelPost& post(posts[0]);
+			const RsGxsChannelPost& post(posts[0]);
 
 			if(post.mMeta.mGroupId != mChannelId || post.mMeta.mMsgId != mOrigPostId)
 			{
-				std::cerr << "CreateGxsChannelMsg::loadChannelPostInfo() ERROR INVALID post ID or channel ID" << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " ERROR INVALID post ID or channel ID" << std::endl;
+				mIsOn_loadOriginalChannelPostInfo = false;
 				return ;
 			}
 
@@ -772,6 +788,7 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 				thumbnail_label->setPixmap(picture);
 			}
 
+			mIsOn_loadOriginalChannelPostInfo = false;
 
 		}, this );
 	});
@@ -781,22 +798,23 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 void CreateGxsChannelMsg::loadChannelInfo()
 {
 #ifdef DEBUG_CREATE_GXS_MSG
-	std::cerr << "CreateGxsChannelMsg::loadChannelInfo()";
-	std::cerr << std::endl;
+	RsDbg() << __PRETTY_FUNCTION__ << std::endl;
 #endif
 
+	mIsOn_loadChannelInfo = true;
 
 	RsThread::async([this]()
 	{
 		std::vector<RsGxsChannelGroup> groups;
 
-        if( !rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({mChannelId}),groups) || groups.size() != 1)
-        {
-            std::cerr << "Cannot get channel group data for channel " << mChannelId << std::endl;
-            return;
-        }
+		if( !rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>({mChannelId}),groups) || groups.size() != 1)
+		{
+			RsErr() << __PRETTY_FUNCTION__ << " Cannot get channel group data for channel " << mChannelId << std::endl;
+			mIsOn_loadChannelInfo = false;
+			return;
+		}
 
-        RsQThreadUtils::postToObject( [groups,this]()
+		RsQThreadUtils::postToObject( [groups,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -809,9 +827,10 @@ void CreateGxsChannelMsg::loadChannelInfo()
 			}
 			else
 			{
-				std::cerr << "CreateGxsChannelMsg::loadForumInfo() ERROR INVALID Number of Forums";
-				std::cerr << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " ERROR INVALID Number of Forums" << std::endl;
 			}
+
+			mIsOn_loadChannelInfo = false;
 
 		}, this );
 	});

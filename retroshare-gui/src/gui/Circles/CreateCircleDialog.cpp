@@ -46,7 +46,10 @@
 
 /** Constructor */
 CreateCircleDialog::CreateCircleDialog()
-	: QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
+    : QDialog(NULL, Qt::WindowSystemMenuHint | Qt::WindowTitleHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint)
+    , mIsExistingCircle(false), mIsExternalCircle(true)
+    , mReadOnly(false), mClearList(true)
+    , mIsOn_loadCircle(false), mIsOn_loadIdentities(false)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui.setupUi(this);
@@ -94,31 +97,39 @@ CreateCircleDialog::CreateCircleDialog()
 	QObject::connect(ui.radioButton_Public, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Self, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
 	QObject::connect(ui.radioButton_Restricted, SIGNAL(toggled(bool)), this, SLOT(updateCircleType(bool))) ;
-    
+
 	ui.radioButton_Public->setChecked(true) ;
-    
-	mIsExistingCircle = false;
-	mIsExternalCircle = true;
-	mClearList = true;
+
 #if QT_VERSION >= 0x040700
 	ui.circleName->setPlaceholderText(QApplication::translate("CreateCircleDialog", "Circle name", 0));
 #endif
-        
+
 	ui.treeWidget_IdList->setColumnHidden(RSCIRCLEID_COL_KEYID,true); // no need to show this. the tooltip will do it.
 
-    //ui.idChooser->loadIds(0,RsGxsId());
-    ui.circleComboBox->loadCircles(RsGxsCircleId());
+	//ui.idChooser->loadIds(0,RsGxsId());
+	ui.circleComboBox->loadCircles(RsGxsCircleId());
 }
 
 CreateCircleDialog::~CreateCircleDialog()
 {
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_loadCircle || mIsOn_loadIdentities)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_loadCircle ? "Circle " : "")
+		        << (mIsOn_loadIdentities ? "Circle " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
 }
 
 void CreateCircleDialog::editExistingId(const RsGxsGroupId &circleId, const bool &clearList /*= true*/,bool readonly)
 {
 	/* load this circle */
 	mIsExistingCircle = true;
-    	mReadOnly=readonly;
+	mReadOnly=readonly;
 
 	mClearList = clearList;
 	
@@ -662,17 +673,19 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 	QTreeWidget *tree = ui.treeWidget_membership;
 	if (mClearList) tree->clear();
 
+	mIsOn_loadCircle = true;
 	RsThread::async([groupId,this]()
 	{
 		std::vector<RsGxsCircleGroup> circlesInfo ;
 
-        if(! rsGxsCircles->getCirclesInfo(std::list<RsGxsGroupId>({ groupId }), circlesInfo) || circlesInfo.size() != 1)
+		if(! rsGxsCircles->getCirclesInfo(std::list<RsGxsGroupId>({ groupId }), circlesInfo) || circlesInfo.size() != 1)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circle info for circle " << groupId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve circle info for circle " << groupId << std::endl;
+			mIsOn_loadCircle = false;
 			return;
-        }
+		}
 
-        RsGxsCircleGroup grp(circlesInfo[0]);
+		RsGxsCircleGroup grp(circlesInfo[0]);
 
 		RsQThreadUtils::postToObject( [grp,this]()
 		{
@@ -686,6 +699,7 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 			std::cerr << "CreateCircleDialog::loadCircle() LoadedGroup.meta: " << mCircleGroup.mMeta << std::endl;
 #endif
 			updateCircleGUI();
+			mIsOn_loadCircle = false;
 
 		}, this );
 	});
@@ -694,35 +708,39 @@ void CreateCircleDialog::loadCircle(const RsGxsGroupId& groupId)
 
 void CreateCircleDialog::loadIdentities()
 {
+	mIsOn_loadIdentities = true;
 	RsThread::async([this]()
 	{
-        std::list<RsGroupMetaData> ids_meta;
+		std::list<RsGroupMetaData> ids_meta;
 
 		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities ids for all identities" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve identities ids for all identities" << std::endl;
+			mIsOn_loadIdentities = false;
 			return;
-        }
-        std::set<RsGxsId> ids;
+		}
+		std::set<RsGxsId> ids;
 
 		for(auto& meta:ids_meta)
 			ids.insert(RsGxsId(meta.mGroupId)) ;
 
-        std::vector<RsGxsIdGroup> id_groups;
+		std::vector<RsGxsIdGroup> id_groups;
 
-        if(!rsIdentity->getIdentitiesInfo(ids,id_groups))
+		if(!rsIdentity->getIdentitiesInfo(ids,id_groups))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			mIsOn_loadIdentities = false;
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [id_groups,this]()
+		RsQThreadUtils::postToObject( [id_groups,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
 			fillIdentitiesList(id_groups) ;
+			mIsOn_loadIdentities = false;
 
 		}, this );
 	});
@@ -749,7 +767,7 @@ void CreateCircleDialog::fillIdentitiesList(const std::vector<RsGxsIdGroup>& id_
 		bool isSignedByFriendNode = isSigned && rsPeers->isPgpFriend(idGroup.mPgpId);
 
 		/* do filtering */
-		bool ok = false;
+		//bool ok = false;
 
 		if(!(acceptAll ||(acceptOnlySignedIdentities && isSigned) ||(acceptOnlyIdentitiesSignedByFriend && isSignedByFriendNode)))
 		{

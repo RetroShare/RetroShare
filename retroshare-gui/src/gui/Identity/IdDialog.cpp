@@ -146,7 +146,10 @@ class TreeWidgetItem : public QTreeWidgetItem
 };
 
 /** Constructor */
-IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
+IdDialog::IdDialog(QWidget *parent)
+    : MainPage(parent)
+    , mIsOn_updateCircles(false), mIsOn_updateIdList(false), mIsOn_updateIdentity(false), mIsOn_copyRetroshareLink(false)
+    , ui(new Ui::IdDialog)
 {
 	ui->setupUi(this);
 
@@ -498,33 +501,36 @@ void IdDialog::updateCirclesDisplay()
 
 void IdDialog::updateCircles()
 {
+	mIsOn_updateCircles = true;
 	RsThread::async([this]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::list<RsGroupMetaData> circle_metas ;
+		std::list<RsGroupMetaData> circle_metas ;
 
 		if(!rsGxsCircles->getCirclesSummaries(circle_metas))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			mIsOn_updateCircles = false;
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [circle_metas,this]()
+		RsQThreadUtils::postToObject( [circle_metas,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadCircles(circle_metas);
+			loadCircles(circle_metas);
+			mIsOn_updateCircles = false;
 
 		}, this );
 
-    });
+	});
 }
 
 static QTreeWidgetItem *setChildItem(QTreeWidgetItem *item, const RsGroupMetaData& circle_group)
@@ -1181,6 +1187,19 @@ IdDialog::~IdDialog()
 	// save settings
 	processSettings(false);
 
+	auto timeout = std::chrono::steady_clock::now() + std::chrono::milliseconds(800);
+	while( (mIsOn_updateCircles || mIsOn_updateIdList || mIsOn_updateIdentity || mIsOn_copyRetroshareLink)
+	       && std::chrono::steady_clock::now() < timeout)
+	{
+		RsDbg() << __PRETTY_FUNCTION__ << " is Waiting "
+		        << (mIsOn_updateCircles ? "Circles " : "")
+		        << (mIsOn_updateIdList ? "IdList " : "")
+		        << (mIsOn_updateIdentity ? "Identity " : "")
+		        << (mIsOn_copyRetroshareLink ? "RsLink " : "")
+		        << "loading finished." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	}
+
 	delete(ui);
 }
 
@@ -1277,50 +1296,54 @@ void IdDialog::updateIdList()
 
 	//int accept = filter;
 
+	mIsOn_updateIdList = true;
  	RsThread::async([this]()
 	{
-        // 1 - get message data from p3GxsForums
+		// 1 - get message data from p3GxsForums
 
 #ifdef DEBUG_FORUMS
-        std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::list<RsGroupMetaData> identity_metas ;
+		std::list<RsGroupMetaData> identity_metas ;
 
 		if (!rsIdentity->getIdentitiesSummaries(identity_metas))
 		{
-			std::cerr << "IdDialog::insertIdList() Error getting GroupData" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Error getting GroupData" << std::endl;
+			mIsOn_updateIdList = false;
 			return;
 		}
 
-        std::set<RsGxsId> ids;
-        for(auto it(identity_metas.begin());it!=identity_metas.end();++it)
-            ids.insert(RsGxsId((*it).mGroupId));
+		std::set<RsGxsId> ids;
+		for(auto it(identity_metas.begin());it!=identity_metas.end();++it)
+			ids.insert(RsGxsId((*it).mGroupId));
 
-        std::vector<RsGxsIdGroup> groups;
+		std::vector<RsGxsIdGroup> groups;
 
-        if(!rsIdentity->getIdentitiesInfo(ids,groups))
+		if(!rsIdentity->getIdentitiesInfo(ids,groups))
 		{
-			std::cerr << "IdDialog::insertIdList() Error getting identities info" << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " Error getting identities info" << std::endl;
+			mIsOn_updateIdList = false;
 			return;
 		}
 
 		std::map<RsGxsGroupId,RsGxsIdGroup> ids_set;
 
-        for(auto it(groups.begin());it!=groups.end();++it)
-            ids_set[(*it).mMeta.mGroupId] = *it;
+		for(auto it(groups.begin());it!=groups.end();++it)
+			ids_set[(*it).mMeta.mGroupId] = *it;
 
-        RsQThreadUtils::postToObject( [ids_set,this]()
+		RsQThreadUtils::postToObject( [ids_set,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadIdentities(ids_set);
+			loadIdentities(ids_set);
+			mIsOn_updateIdList = false;
 
 		}, this );
 
-    });
+	});
 }
 
 bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, const RsPgpId &ownPgpId, int accept)
@@ -1594,36 +1617,40 @@ void IdDialog::updateIdentity()
 	}
 
 	mStateHelper->setLoading(IDDIALOG_IDDETAILS, true);
+	mIsOn_updateIdentity = true;
 
 	RsThread::async([this]()
 	{
 #ifdef ID_DEBUG
-        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
 #endif
 
-        std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
-        std::vector<RsGxsIdGroup> ids_data;
+		std::set<RsGxsId> ids( { RsGxsId(mId) } ) ;
+		std::vector<RsGxsIdGroup> ids_data;
 
 		if(!rsIdentity->getIdentitiesInfo(ids,ids_data))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for id " << mId << std::endl;
+			mIsOn_updateIdentity = false;
 			return;
-        }
+		}
 
-        if(ids_data.size() != 1)
+		if(ids_data.size() != 1)
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			RsErr() << __PRETTY_FUNCTION__ << " failed to retrieve exactly one group info for id " << mId << std::endl;
+			mIsOn_updateIdentity = false;
 			return;
-        }
-        RsGxsIdGroup group(ids_data[0]);
+		}
+		RsGxsIdGroup group(ids_data[0]);
 
-        RsQThreadUtils::postToObject( [group,this]()
+		RsQThreadUtils::postToObject( [group,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadIdentity(group);
+			loadIdentity(group);
+			mIsOn_updateIdentity = false;
 
 		}, this );
 	});
@@ -2226,38 +2253,40 @@ void IdDialog::copyRetroshareLink()
 
 	if (!item)
 	{
-		std::cerr << "IdDialog::editIdentity() Invalid item";
-		std::cerr << std::endl;
+		RsErr() << __PRETTY_FUNCTION__ << " Invalid item" << std::endl;
 		return;
 	}
 
 	RsGxsId gxs_id(item->text(RSID_COL_KEYID).toStdString());
 
-    if(gxs_id.isNull())
-    {
-        std::cerr << "Null GXS id. Something went wrong." << std::endl;
-        return ;
-    }
+	if(gxs_id.isNull())
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " Null GXS id. Something went wrong." << std::endl;
+		return;
+	}
 
-    RsIdentityDetails details ;
+	RsIdentityDetails details ;
 
 	if(! rsIdentity->getIdDetails(gxs_id,details))
 		return ;
 
+	mIsOn_copyRetroshareLink = true;
+
 	RsThread::async([gxs_id,details,this]()
 	{
 #ifdef ID_DEBUG
-        std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
+		std::cerr << "Retrieving post data for identity " << mThreadId << std::endl;
 #endif
-        std::string radix,errMsg;
+		std::string radix,errMsg;
 
 		if(!rsIdentity->exportIdentityLink( radix, gxs_id, true, std::string(), errMsg))
 		{
-			std::cerr << "Cannot retrieve identity data " << mId << " to create a link. Error:" << errMsg << std::endl;
-            return ;
+			RsErr() << __PRETTY_FUNCTION__ << " Cannot retrieve identity data " << mId << " to create a link. Error:" << errMsg << std::endl;
+			mIsOn_copyRetroshareLink = false;
+			return ;
 		}
 
-        RsQThreadUtils::postToObject( [radix,details,this]()
+		RsQThreadUtils::postToObject( [radix,details,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
@@ -2271,6 +2300,7 @@ void IdDialog::copyRetroshareLink()
 			RSLinkClipboard::copyLinks(urls) ;
 
 			QMessageBox::information(NULL,tr("information"),tr("This identity link was copied to your clipboard. Paste it in a mail, or a message to transmit the identity to someone.")) ;
+			mIsOn_copyRetroshareLink = false;
 
 		}, this );
 	});
@@ -2506,11 +2536,11 @@ void IdDialog::restoreExpandedCircleItems(const std::vector<bool>& expanded_root
 		top_level_item->setExpanded(expanded_root_items[index]);
 
 		for(int row=0;row<top_level_item->childCount();++row)
-        {
-            RsGxsCircleId circle_id(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
-            bool expanded = expanded_circle_items.find(circle_id) != expanded_circle_items.end();
+		{
+			RsGxsCircleId circle_id(RsGxsCircleId(top_level_item->child(row)->data(CIRCLEGROUP_CIRCLE_COL_GROUPID,Qt::UserRole).toString().toStdString()));
+			bool expanded = expanded_circle_items.find(circle_id) != expanded_circle_items.end();
 
-			top_level_item->child(row)->setExpanded(expanded_circle_items.find(circle_id) != expanded_circle_items.end());
+			top_level_item->child(row)->setExpanded(expanded);
 		}
 	};
 

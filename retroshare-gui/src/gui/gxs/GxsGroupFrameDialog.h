@@ -194,7 +194,7 @@ protected:
 private:
 	bool mInitialized;
 	bool mInFill;
-    bool mDistSyncAllowed;
+	bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
@@ -220,14 +220,17 @@ private:
 
 	UIStateHelper *mStateHelper;
 
-	/** Qt Designer generated object */
-	Ui::GxsGroupFrameDialog *ui;
-
 	std::map<RsGxsGroupId,RsGroupMetaData> mCachedGroupMetas;
 	std::map<RsGxsGroupId,GxsGroupStatistic> mCachedGroupStats;
 
-    std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
-    std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;
+	std::map<uint32_t,QTreeWidgetItem*> mSearchGroupsItems ;
+	std::map<uint32_t,std::set<RsGxsGroupId> > mKnownGroups;
+
+	bool mIsOn_updateGroupSummary;
+	bool mIsOn_updateGroupStatisticsReal;
+
+	/** Qt Designer generated object */
+	Ui::GxsGroupFrameDialog *ui;
 };
 
 #endif
