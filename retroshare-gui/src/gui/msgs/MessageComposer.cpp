@@ -1206,6 +1206,12 @@ MessageComposer *MessageComposer::replyMsg(const std::string &msgId, bool all)
     // needed to send system flags with reply
     msgComposer->msgFlags = (msgInfo.msgflags & RS_MSG_SYSTEM);
 
+	MsgTagInfo tagInfo;
+	rsMail->getMessageTag(msgId, tagInfo);
+
+	msgComposer->m_tagIds = tagInfo.tagIds;
+	msgComposer->showTagLabels();
+
     msgComposer->calculateTitle();
 
     /* window will destroy itself! */
