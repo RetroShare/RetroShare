@@ -310,11 +310,13 @@ public:
 	 * @param[in] channelId id of the channel of which the content is requested
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
+	 * @param[out] votes storage for votes
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelAllContent( const RsGxsGroupId& channelId,
 	                                   std::vector<RsGxsChannelPost>& posts,
-	                                   std::vector<RsGxsComment>& comments ) = 0;
+	                                   std::vector<RsGxsComment>& comments,
+	                                   std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
 	 * @brief Get channel messages and comments corresponding to the given IDs.
@@ -326,12 +328,14 @@ public:
 	 * @param[in] contentsIds ids of requested contents
 	 * @param[out] posts storage for posts
 	 * @param[out] comments storage for the comments
+	 * @param[out] votes storage for the votes
 	 * @return false if something failed, true otherwhise
 	 */
 	virtual bool getChannelContent( const RsGxsGroupId& channelId,
 	                                const std::set<RsGxsMessageId>& contentsIds,
 	                                std::vector<RsGxsChannelPost>& posts,
-	                                std::vector<RsGxsComment>& comments ) = 0;
+	                                std::vector<RsGxsComment>& comments,
+	                                std::vector<RsGxsVote>& votes ) = 0;
 
 	/**
 	 * @brief Get channel comments corresponding to the given IDs.
@@ -570,6 +574,9 @@ public:
 
 	RS_DEPRECATED_FOR(getChannelsInfo)
 	virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups) = 0;
+
+	RS_DEPRECATED_FOR(getChannelContent)
+	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &votes) = 0;
 
 	RS_DEPRECATED_FOR(getChannelContent)
 	virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) = 0;
