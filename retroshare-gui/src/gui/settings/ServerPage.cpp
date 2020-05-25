@@ -83,6 +83,10 @@ ServerPage::ServerPage(QWidget * parent, Qt::WindowFlags flags)
   manager = NULL ;
   mOngoingConnectivityCheck = -1;
 
+#ifndef RS_USE_I2P_BOB
+  ui.hiddenServiceTab->removeTab(TAB_HIDDEN_SERVICE_I2P_BOB);	// warning: the order of operation here is very important.
+#endif
+
   if(RsAccounts::isHiddenNode())
   {
 	  if(RsAccounts::isTorAuto())
