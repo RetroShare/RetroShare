@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupDialog.h                                               *
+ * retroshare-gui/src/gui/TheWire/WireGroupExtra.h                             *
  *                                                                             *
- * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (C) 2020 by Robert Fernie <retroshare.project@gmail.com>          *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,35 +18,37 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _WIRE_GROUP_DIALOG_H
-#define _WIRE_GROUP_DIALOG_H
+#ifndef WIRE_GROUP_EXTRA_H
+#define WIRE_GROUP_EXTRA_H
 
-#include "gui/gxs/GxsGroupDialog.h"
+#include <QWidget>
+#include "ui_WireGroupExtra.h"
 
-#include <retroshare/rswire.h>
-
-class WireGroupExtra;
-
-class WireGroupDialog : public GxsGroupDialog
+class WireGroupExtra : public QWidget
 {
 	Q_OBJECT
 
 public:
-	WireGroupDialog(QWidget *parent);
-	WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	explicit WireGroupExtra(QWidget *parent = 0);
+	virtual ~WireGroupExtra();
 
-protected:
-	virtual void initUi() override;
-	virtual QPixmap serviceImage() override;
-	virtual bool service_createGroup(RsGroupMetaData &meta) override;
-	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
-	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
-	virtual bool service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data) override;
+	void setMasthead(const QPixmap &pixmap);
+	QPixmap getMasthead();
+
+	void setTagline(const std::string &str);
+	void setLocation(const std::string &str);
+
+	std::string getTagline();
+	std::string getLocation();
+
+private slots:
+	void addMasthead();
 
 private:
-	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
-
-	WireGroupExtra *mExtra;
+	void setUp();
+private:
+	QPixmap mMasthead;
+	Ui::WireGroupExtra ui;
 };
 
-#endif
+#endif // WIRE_GROUP_EXTRA_H

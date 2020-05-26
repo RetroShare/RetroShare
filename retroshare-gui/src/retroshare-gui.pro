@@ -1226,6 +1226,7 @@ gxsthewire {
 		gui/TheWire/WireDialog.h \
 		gui/TheWire/WireGroupItem.h \
 		gui/TheWire/WireGroupDialog.h \
+		gui/TheWire/WireGroupExtra.h \
 		gui/TheWire/PulseAddDialog.h \
 		gui/TheWire/PulseViewItem.h \
 		gui/TheWire/PulseTopLevel.h \
@@ -1237,6 +1238,7 @@ gxsthewire {
 	FORMS += gui/TheWire/PulseItem.ui \
 		gui/TheWire/PulseDetails.ui \
 		gui/TheWire/WireGroupItem.ui \
+		gui/TheWire/WireGroupExtra.ui \
 		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
 		gui/TheWire/PulseTopLevel.ui \
@@ -1250,6 +1252,7 @@ gxsthewire {
 		gui/TheWire/WireDialog.cpp \
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
+		gui/TheWire/WireGroupExtra.cpp \
 		gui/TheWire/PulseAddDialog.cpp \
 		gui/TheWire/PulseViewItem.cpp \
 		gui/TheWire/PulseTopLevel.cpp \

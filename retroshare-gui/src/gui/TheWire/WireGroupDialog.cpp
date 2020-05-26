@@ -19,6 +19,8 @@
  *******************************************************************************/
 #include <QBuffer>
 
+#include "WireGroupExtra.h"
+
 #include "WireGroupDialog.h"
 #include "gui/gxs/GxsIdDetails.h"
 
@@ -27,7 +29,7 @@
 const uint32_t WireCreateEnabledFlags = ( 
 							GXS_GROUP_FLAGS_NAME          |
 							GXS_GROUP_FLAGS_ICON          |
-							GXS_GROUP_FLAGS_DESCRIPTION   |
+							// GXS_GROUP_FLAGS_DESCRIPTION   |
 							GXS_GROUP_FLAGS_DISTRIBUTION  |
 							// GXS_GROUP_FLAGS_PUBLISHSIGN   |
 							// GXS_GROUP_FLAGS_SHAREKEYS     |	// disabled because the UI doesn't handle it yet.
@@ -85,6 +87,9 @@ void WireGroupDialog::initUi()
 
 	setUiText(UITYPE_ADD_ADMINS_CHECKBOX, tr("Add Wire Admins"));
 	setUiText(UITYPE_CONTACTS_DOCK, tr("Select Wire Admins"));
+
+	mExtra = new WireGroupExtra(this);
+	injectExtraWidget(mExtra);
 }
 
 QPixmap WireGroupDialog::serviceImage()
@@ -95,11 +100,6 @@ QPixmap WireGroupDialog::serviceImage()
 void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta)
 {
 	group.mMeta = meta;
-
-    // To Add.
-	group.mTagline = "a Tagline";
-	group.mLocation = "here";
-
 	QPixmap pixmap = getLogo();
 
 	if (!pixmap.isNull()) {
@@ -110,12 +110,26 @@ void WireGroupDialog::prepareWireGroup(RsWireGroup &group, const RsGroupMetaData
 		pixmap.save(&buffer, "PNG"); // writes image into ba in PNG format
 
 		group.mHeadshot.copy((uint8_t *) ba.data(), ba.size());
-		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
 	} else {
 		group.mHeadshot.clear();
-		group.mMasthead.clear();
 	}
 
+	// from Extra Widget.
+	group.mTagline = mExtra->getTagline();
+	group.mLocation = mExtra->getLocation();
+	pixmap = mExtra->getMasthead();
+
+	if (!pixmap.isNull()) {
+		QByteArray ba;
+		QBuffer buffer(&ba);
+
+		buffer.open(QIODevice::WriteOnly);
+		pixmap.save(&buffer, "JPG");
+
+		group.mMasthead.copy((uint8_t *) ba.data(), ba.size());
+	} else {
+		group.mMasthead.clear();
+	}
 }
 
 bool WireGroupDialog::service_createGroup(RsGroupMetaData &meta)
