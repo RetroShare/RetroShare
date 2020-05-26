@@ -30,6 +30,12 @@
 
 RsWire *rsWire = NULL;
 
+RsWireGroup::RsWireGroup()
+	:mGroupPulses(0),mGroupRepublishes(0),mGroupLikes(0),mGroupReplies(0)
+	,mRefMentions(0),mRefRepublishes(0),mRefLikes(0),mRefReplies(0)
+{
+	return;
+}
 
 uint32_t RsWirePulse::ImageCount()
 {
@@ -876,6 +882,19 @@ bool p3Wire::getPulsesForGroups(const std::list<RsGxsGroupId> &groupIds, std::li
 		std::cerr << "p3Wire::getPulsesForGroups() tokenPulse ERROR";
 		std::cerr << std::endl;
 		return false;
+	}
+
+
+	std::cerr << "p3Wire::getPulsesForGroups() size = " << pulsePtrs.size();
+	std::cerr << std::endl;
+	{
+		std::list<RsWirePulseSPtr>::iterator it;
+		for (it = pulsePtrs.begin(); it != pulsePtrs.end(); it++)
+		{
+			std::cerr << "p3Wire::getPulsesForGroups() Flags: ";
+			std::cerr << (*it)->mPulseType << " Msg: " << (*it)->mPulseText;
+			std::cerr << std::endl;
+		}
 	}
 
 	std::cerr << "p3Wire::getPulsesForGroups() size = " << pulsePtrs.size();

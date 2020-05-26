@@ -42,6 +42,8 @@ typedef std::shared_ptr<const RsWireGroup> RsWireGroupConstSPtr;
 class RsWireGroup: public RsGxsGenericGroupData
 {
 	public:
+	RsWireGroup();
+
 	std::string mTagline;
 	std::string mLocation;
 
