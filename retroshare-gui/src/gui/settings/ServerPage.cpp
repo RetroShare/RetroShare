@@ -342,8 +342,8 @@ void ServerPage::load()
     if (mIsHiddenNode)
     {
         mHiddenType = detail.hiddenType;
-        //ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
-		//ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
+        ui.tabWidget->setTabEnabled(TAB_IP_FILTERS,false) ; // ip filter
+        ui.tabWidget->setTabEnabled(TAB_RELAYS,false) ; // relay
         loadHiddenNode();
         return;
     }
