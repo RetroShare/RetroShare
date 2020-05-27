@@ -636,12 +636,12 @@ void CreateGxsChannelMsg::sendMsg()
 
 			/* commence downloads - if we don't have the file */
 
-			if (!(*fit)->done())
+		/*	if (!(*fit)->done())
 			{
 				if ((*fit)->ready())
 				{
 					(*fit)->download();
-				}
+				} */
 			// Skips unhashed files.
 			}
 		}
