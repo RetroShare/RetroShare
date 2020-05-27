@@ -36,6 +36,7 @@
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/Emoticons.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "MessageComposer.h"
 #include "MessageWidget.h"
@@ -51,8 +52,8 @@
 #include <retroshare/rsmsgs.h>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD         ":/images/start.png"
-#define IMAGE_DOWNLOADALL      ":/images/startall.png"
+#define IMAGE_DOWNLOAD         ":/icons/png/download.png"
+#define IMAGE_DOWNLOADALL      ":/icons/mail/downloadall.png"
 
 #define COLUMN_FILE_NAME   0
 #define COLUMN_FILE_SIZE   1
@@ -555,6 +556,7 @@ void MessageWidget::fill(const std::string &msgId)
 	for (it = recList.begin(); it != recList.end(); ++it) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
+		item->setIcon(COLUMN_FILE_NAME, FilesDefs::getIconFromFileType(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
 		item->setData(COLUMN_FILE_SIZE, Qt::UserRole, QVariant(qulonglong(it->size)) );
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));

@@ -23,7 +23,7 @@ call "%ToolsPath%\find-in-path.bat" GitPath git.exe
 if "%GitPath%"=="" echo Git executable not found in PATH.& exit /B 1
 
 :: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
+set GetRsVersion=%SourcePath%\build_scripts\Windows-msys2\tools\get-rs-version.bat
 if not exist "%GetRsVersion%" (
 	echo File not found
 	echo %GetRsVersion%
