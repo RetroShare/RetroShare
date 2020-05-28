@@ -28,7 +28,7 @@
 #include "rsgds.h"
 
 
-typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, RsGxsMsgMetaData*> > MsgMetaFilter;
+typedef std::map< RsGxsGroupId, std::map<RsGxsMessageId, const RsGxsMsgMetaData*> > MsgMetaFilter;
 typedef std::map< RsGxsGroupId, RsGxsGrpMetaData* > GrpMetaFilter;
 
 bool operator<(const std::pair<uint32_t,GxsRequest*>& p1,const std::pair<uint32_t,GxsRequest*>& p2);
@@ -328,11 +328,11 @@ private:
      */
     void tokenList(std::list<uint32_t> &tokens);
 
-    /*!
-     * Convenience function to delete the ids
-     * @param filter the meta filter to clean
-     */
-    void cleanseMsgMetaMap(GxsMsgMetaResult& result);
+    //  /*!
+    //   * Convenience function to delete the ids
+    //   * @param filter the meta filter to clean
+    //   */
+    //  void cleanseMsgMetaMap(GxsMsgMetaResult& result);
 
 public:
 
