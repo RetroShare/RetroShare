@@ -1400,6 +1400,9 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 				mGrpMetaDataCache.setCacheUpToDate(true);
 			}
             delete c;
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+			resultCount += grp.size();
+#endif
 
 //			if(c)
 //			{
@@ -1418,9 +1421,6 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 //					}
 //					valid = c->moveToNext();
 //
-//#ifdef RS_DATA_SERVICE_DEBUG_TIME
-//					++resultCount;
-//#endif
 //				}
 //				delete c;
 //			}
@@ -1448,6 +1448,10 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 
                 if(meta)
                     grp[mit->first] = meta;
+
+#ifdef RS_DATA_SERVICE_DEBUG_TIME
+				++resultCount;
+#endif
 
                 delete c;
 
