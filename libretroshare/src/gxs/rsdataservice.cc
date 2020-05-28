@@ -1271,13 +1271,13 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
 				if (c)
 				{
 					locked_retrieveMsgMetaList(c, msgMeta[grpId]);
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-					std::cerr << mDbName << ": Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
-#endif
 					cache.setCacheUpToDate(true);
 				}
                 delete c;
 			}
+#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+			std::cerr << mDbName << ": Retrieving (all) Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
+#endif
         }
         else
         {
@@ -1303,12 +1303,11 @@ int RsDataService::retrieveGxsMsgMetaData(const GxsMsgReq& reqIds, GxsMsgMetaRes
                         metaSet.push_back(meta);
 
                     delete c;
-
-#ifdef RS_DATA_SERVICE_DEBUG_CACHE
-					std::cerr << mDbName << ": Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
-#endif
 				}
 			}
+#ifdef RS_DATA_SERVICE_DEBUG_CACHE
+			std::cerr << mDbName << ": Retrieving Msg metadata grpId=" << grpId << ", " << std::dec << metaSet.size() << " messages" << std::endl;
+#endif
         }
     }
 
