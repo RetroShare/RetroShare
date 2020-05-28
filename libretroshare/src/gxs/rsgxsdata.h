@@ -94,7 +94,7 @@ public:
     ~RsGxsMsgMetaData();
     bool deserialise(void *data, uint32_t *size);
     bool serialise(void* data, uint32_t *size);
-    uint32_t serial_size();
+    uint32_t serial_size() const;
     void clear();
     void operator =(const RsMsgMetaData& rMeta);
 

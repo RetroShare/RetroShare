@@ -209,7 +209,7 @@ RsGxsMsgMetaData::~RsGxsMsgMetaData(){
 	return;
 }
 
-uint32_t RsGxsMsgMetaData::serial_size()
+uint32_t RsGxsMsgMetaData::serial_size() const
 {
 
     uint32_t s = 8; // header size

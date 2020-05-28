@@ -953,7 +953,7 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 #endif
 	    mDataStore->retrieveGxsMsgMetaData(reqIds, result);
 
-	    const std::vector<RsGxsMsgMetaData*>& vec(result[grs->grpId]) ;
+	    const std::vector<const RsGxsMsgMetaData*>& vec(result[grs->grpId]) ;
 
 	    if(vec.empty())	// that means we don't have any, or there isn't any, but since the default is always 0, no need to send.
 		    return ;
@@ -970,12 +970,9 @@ void RsGxsNetService::handleRecvSyncGrpStatistics(RsNxsSyncGrpStatsItem *grs)
 														// be used to discard groups that are not used.
 
 	    for(uint32_t i=0;i<vec.size();++i)
-	    {
 		    if(grs_resp->last_post_TS < vec[i]->mPublishTs)
 			    grs_resp->last_post_TS = vec[i]->mPublishTs;
 
-		    delete vec[i] ;
-	    }
 #ifdef NXS_NET_DEBUG_6
 	    GXSNETDEBUG_PG(grs->PeerId(),grs->grpId) << "  sending back statistics item with " << vec.size() << " elements." << std::endl;
 #endif
@@ -2953,21 +2950,19 @@ void RsGxsNetService::locked_genReqMsgTransaction(NxsTransaction* tr)
     reqIds[grpId] = std::set<RsGxsMessageId>();
     GxsMsgMetaResult result;
     mDataStore->retrieveGxsMsgMetaData(reqIds, result);
-    std::vector<RsGxsMsgMetaData*> &msgMetaV = result[grpId];
+    std::vector<const RsGxsMsgMetaData*> &msgMetaV = result[grpId];
 
 #ifdef NXS_NET_DEBUG_1
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  retrieving grp message list..." << std::endl;
     GXSNETDEBUG_PG(item->PeerId(),grpId) << "  grp locally contains " << msgMetaV.size() << " messsages." << std::endl;
 #endif
-    std::vector<RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
+    std::vector<const RsGxsMsgMetaData*>::const_iterator vit = msgMetaV.begin();
     std::set<RsGxsMessageId> msgIdSet;
 
     // put ids in set for each searching
     for(; vit != msgMetaV.end(); ++vit)
-    {
         msgIdSet.insert((*vit)->mMsgId);
-        delete(*vit);
-    }
+
     msgMetaV.clear();
 
 #ifdef NXS_NET_DEBUG_1
@@ -4367,7 +4362,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     GxsMsgMetaResult metaResult;
     mDataStore->retrieveGxsMsgMetaData(req, metaResult);
-    std::vector<RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
+    std::vector<const RsGxsMsgMetaData*>& msgMetas = metaResult[item->grpId];
 
 #ifdef NXS_NET_DEBUG_0
     GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "   retrieving message meta data." << std::endl;
@@ -4395,9 +4390,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     if(canSendMsgIds(msgMetas, *grpMeta, peer, should_encrypt_to_this_circle_id))
     {
-	    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
+	    for(auto vit = msgMetas.begin();vit != msgMetas.end(); ++vit)
 		{
-			RsGxsMsgMetaData* m = *vit;
+			const RsGxsMsgMetaData* m = *vit;
 
             // Check reputation
 
@@ -4497,8 +4492,8 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
 
     // release meta resource
-    for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin(); vit != msgMetas.end(); ++vit)
-	    delete *vit;
+	//   for(std::vector<RsGxsMsgMetaData*>::iterator vit = msgMetas.begin(); vit != msgMetas.end(); ++vit)
+	//     delete *vit;
 }
 
 void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, const RsPeerId& sslId, const RsGxsGroupId& grp_id,const uint32_t& transN)
@@ -4542,7 +4537,7 @@ void RsGxsNetService::locked_pushMsgRespFromList(std::list<RsNxsItem*>& itemL, c
 	}
 }
 
-bool RsGxsNetService::canSendMsgIds(std::vector<RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
+bool RsGxsNetService::canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMetas, const RsGxsGrpMetaData& grpMeta, const RsPeerId& sslId,RsGxsCircleId& should_encrypt_id)
 {
 #ifdef NXS_NET_DEBUG_4
     GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "RsGxsNetService::canSendMsgIds() CIRCLE VETTING" << std::endl;

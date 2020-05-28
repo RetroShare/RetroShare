@@ -42,7 +42,9 @@ public:
 
     bool isCacheUpToDate() const { return mCache_ContainsAllMetas ; }
     void setCacheUpToDate(bool b) { mCache_ContainsAllMetas = b; }
-    const std::map<ID,MetaDataClass*> getFullMetaMap() const { return mMetas ; }
+
+	void getFullMetaList(std::map<ID,MetaDataClass*>& mp) const { mp = mMetas ; }
+    void getFullMetaList(std::vector<const MetaDataClass*>& mp) const { for(auto& m:mMetas) mp.push_back(m.second) ; }
 
     MetaDataClass *getMeta(const ID& id)
     {
@@ -128,7 +130,7 @@ private:
 	std::map<ID,MetaDataClass*> mMetas;
 	std::list<std::pair<rstime_t,MetaDataClass*> > mOldCachedItems ;	// dead list, where items get deleted after being unused for a while. This is due to not using smart ptrs.
 
-	static const uint32_t CACHE_ENTRY_GRACE_PERIOD = 600 ; // 10 minutes
+	static const uint32_t CACHE_ENTRY_GRACE_PERIOD = 600 ; // Unused items are deleted 10 minutes after last usage.
 
     bool mCache_ContainsAllMetas ;
 };
@@ -245,13 +247,13 @@ public:
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateMessageMetaData(MsgLocMetaData& metaData);
+    int updateMessageMetaData(const MsgLocMetaData& metaData);
 
     /*!
      * @param metaData The meta data item to update
      * @return error code
      */
-    int updateGroupMetaData(GrpLocMetaData& meta);
+    int updateGroupMetaData(const GrpLocMetaData &meta);
 
     /*!
      * Completely clear out data stored in
@@ -292,9 +294,16 @@ private:
     /*!
      * Retrieves all the msg meta results from a cursor
      * @param c cursor to result set
-     * @param metaSet message metadata retrieved from cursor are stored here
+     * @param msgMeta message metadata retrieved from cursor are stored here
      */
-    void locked_retrieveMsgMeta(RetroCursor* c, std::vector<RsGxsMsgMetaData*>& msgMeta);
+    void locked_retrieveMsgMetaList(RetroCursor* c, std::vector<const RsGxsMsgMetaData*>& msgMeta);
+
+    /*!
+     * Retrieves all the grp meta results from a cursor
+     * @param c cursor to result set
+     * @param grpMeta group metadata retrieved from cursor are stored here
+     */
+	void locked_retrieveGrpMetaList(RetroCursor *c, std::map<RsGxsGroupId,RsGxsGrpMetaData *>& grpMeta);
 
     /*!
      * extracts a msg meta item from a cursor at its

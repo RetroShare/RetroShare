@@ -85,7 +85,7 @@ bool RsGxsMessageCleanUp::clean()
 
 		for(; mit != result.end(); ++mit)
 		{
-			std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+			std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
             // First, make a map of which message have a child message. This allows to only delete messages that dont have child messages.
             // A more accurate way to go would be to compute the time of the oldest message and possibly delete all the branch, but in the
@@ -99,7 +99,7 @@ bool RsGxsMessageCleanUp::clean()
 
 			for( uint32_t i=0;i<metaV.size();++i)
 			{
-				RsGxsMsgMetaData* meta = metaV[i];
+				const RsGxsMsgMetaData* meta = metaV[i];
 
 				bool have_kids = (messages_with_kids.find(meta->mMsgId)!=messages_with_kids.end());
 
@@ -132,7 +132,7 @@ bool RsGxsMessageCleanUp::clean()
 					std::cerr << std::endl;
 #endif
 
-				delete meta;
+				//delete meta;
 			}
 		}
 
