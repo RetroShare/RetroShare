@@ -21,8 +21,6 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <cmath>
-
 #include "util/rsbase64.h"
 #include "util/rsdebug.h"
 
@@ -144,9 +142,10 @@
 /*static*/ size_t RsBase64::encodedSize(size_t decodedSize, bool padding)
 {
 	if(!decodedSize) return 0;
-	if(padding) return 4 * (decodedSize + 2) / 3;
-	return static_cast<size_t>(
-	            std::ceil(4L * static_cast<double>(decodedSize) / 3L) );
+
+	// Thanks https://stackoverflow.com/a/45401395
+	if(padding) return ceilDivision(decodedSize, 3) * 4;
+	return ceilDivision(decodedSize * 8, 6);
 }
 
 /*static*/ std::tuple<size_t, std::error_condition> RsBase64::decodedSize(
