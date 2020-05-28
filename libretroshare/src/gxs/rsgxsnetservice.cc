@@ -4604,7 +4604,7 @@ bool RsGxsNetService::canSendMsgIds(std::vector<const RsGxsMsgMetaData*>& msgMet
                 GXSNETDEBUG_PG(sslId,grpMeta.mGroupId) << "   deleting MsgMeta entry for msg ID " << msgMetas[i]->mMsgId << " signed by " << msgMetas[i]->mAuthorId << " who is not in group circle " << circleId << std::endl;
 #endif
 
-                delete msgMetas[i] ;
+                //delete msgMetas[i] ;
                 msgMetas[i] = msgMetas[msgMetas.size()-1] ;
                 msgMetas.pop_back() ;
             }
