@@ -641,9 +641,9 @@ void CreateGxsChannelMsg::sendMsg()
 				if ((*fit)->ready())
 				{
 					(*fit)->download();
-				} */
+				}
 			// Skips unhashed files.
-			}
+			} */
 		}
 	}
 
