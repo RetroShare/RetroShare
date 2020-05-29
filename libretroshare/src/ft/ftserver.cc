@@ -293,7 +293,8 @@ bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& re
 
 bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
-	return mFileDatabase->search(hash, RS_FILE_HINTS_LOCAL, info);
+	return mFileDatabase->search(
+	            hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, info );
 }
 
 bool ftServer::FileRequest(
