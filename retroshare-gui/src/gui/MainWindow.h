@@ -186,6 +186,11 @@ public:
     ToasterDisable *toasterDisableInstance();
     SysTrayStatus *sysTrayStatusInstance();
 
+    QString get_nameAndLocation()
+    {
+        return nameAndLocation;
+    }
+
     static bool hiddenmode;
 	
 public slots:

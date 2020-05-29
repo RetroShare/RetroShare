@@ -35,6 +35,7 @@
 
 #include <gui/settings/rsharesettings.h>
 
+#include <gui/MainWindow.h>
 #include <gui/statistics/TurtleRouterStatistics.h>
 #include <gui/statistics/GlobalRouterStatistics.h>
 #include <gui/statistics/GxsTransportStatistics.h>
@@ -102,6 +103,7 @@ StatisticsWindow::StatisticsWindow(QWidget *parent) :
 	int toolSize = Settings->getToolButtonSize();
 	ui->toolBar->setToolButtonStyle(Settings->getToolButtonStyle());
 	ui->toolBar->setIconSize(QSize(toolSize,toolSize));
+	setWindowTitle("RetroShare Statistics - " + MainWindow::getInstance()->get_nameAndLocation());
 }
 
 StatisticsWindow::~StatisticsWindow()
