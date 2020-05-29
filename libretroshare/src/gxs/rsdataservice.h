@@ -126,6 +126,16 @@ public:
 		}
 	}
 
+    void debug_computeSize(uint32_t& nb_items, uint32_t& nb_items_on_deadlist, uint64_t& total_size,uint64_t& total_size_of_deadlist) const
+    {
+        nb_items = mMetas.size();
+        nb_items_on_deadlist = mOldCachedItems.size();
+        total_size = 0;
+        total_size_of_deadlist = 0;
+
+        for(auto it:mMetas) total_size += it.second->serial_size();
+        for(auto it:mOldCachedItems) total_size_of_deadlist += it.second->serial_size();
+    }
 private:
 	std::map<ID,MetaDataClass*> mMetas;
 	std::list<std::pair<rstime_t,MetaDataClass*> > mOldCachedItems ;	// dead list, where items get deleted after being unused for a while. This is due to not using smart ptrs.
@@ -273,6 +283,8 @@ public:
      */
 
     int updateGroupKeys(const RsGxsGroupId& grpId,const RsTlvSecurityKeySet& keys, uint32_t subscribe_flags) ;
+
+    void debug_printCacheSize() const;
 
 private:
 

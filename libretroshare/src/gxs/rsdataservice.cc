@@ -1721,3 +1721,38 @@ int RsDataService::setCacheSize(uint32_t /* size */)
     return 0;
 }
 
+void RsDataService::debug_printCacheSize() const
+{
+    uint32_t nb_items,nb_items_on_deadlist;
+    uint64_t total_size,total_size_of_deadlist;
+
+    mGrpMetaDataCache.debug_computeSize(nb_items, nb_items_on_deadlist, total_size,total_size_of_deadlist);
+
+    RsDbg() << "Cache size: " << std::endl;
+    RsDbg() << "   Groups: " << " total: " << nb_items << " (dead: " << nb_items_on_deadlist << "), size: " << total_size << " (Dead: " << total_size_of_deadlist << ")" << std::endl;
+
+    nb_items = 0,nb_items_on_deadlist = 0;
+    total_size = 0,total_size_of_deadlist = 0;
+
+    for(auto it:mMsgMetaDataCache)
+    {
+		uint32_t tmp_nb_items,tmp_nb_items_on_deadlist;
+		uint64_t tmp_total_size,tmp_total_size_of_deadlist;
+
+		it.second.debug_computeSize(tmp_nb_items, tmp_nb_items_on_deadlist, tmp_total_size,tmp_total_size_of_deadlist);
+
+        nb_items += tmp_nb_items;
+        nb_items_on_deadlist += tmp_nb_items_on_deadlist;
+        total_size += tmp_total_size;
+        total_size_of_deadlist += tmp_total_size_of_deadlist;
+    }
+    RsDbg() << "   Msgs:   " << " total: " << nb_items << " (dead: " << nb_items_on_deadlist << "), size: " << total_size << " (Dead: " << total_size_of_deadlist << ")" << std::endl;
+}
+
+
+
+
+
+
+
+
