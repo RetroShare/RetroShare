@@ -594,7 +594,7 @@ BWGraph::BWGraph(QWidget *parent) : RSGraphWidget(parent)
 
     setTimeScale(1.0f) ; // 1 pixels per second of time.
 
-    setFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
+    resetFlags(RSGRAPH_FLAGS_LOG_SCALE_Y) ;
     resetFlags(RSGRAPH_FLAGS_PAINT_STYLE_PLAIN) ;
 
     setFlags(RSGRAPH_FLAGS_SHOW_LEGEND) ;
