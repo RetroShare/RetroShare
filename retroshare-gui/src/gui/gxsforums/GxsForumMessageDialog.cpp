@@ -54,15 +54,7 @@ GxsForumMessageDialog::~GxsForumMessageDialog()
 
 void GxsForumMessageDialog::setText(const QString& text) 
 {
-	if(rsReputations->overallReputationLevel(mAuthorID) == RsReputationLevel::LOCALLY_NEGATIVE) {
-		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mAuthorID.toStdString())) ;
-		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
-		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
-
-		ui->postText->setHtml(extraTxt) ;
-	} else {
-		uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+	uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
 		if(Settings->getForumLoadEmoticons())
 			flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
 		flags |= RSHTML_OPTIMIZEHTML_MASK;
@@ -76,7 +68,6 @@ void GxsForumMessageDialog::setText(const QString& text)
 		QString postText = RsHtml().formatText(ui->postText->document(),
 			text, flags, backgroundColor, desiredContrast, desiredMinimumFontSize);
 		ui->postText->setHtml(postText);
-	}
 }
 
 void GxsForumMessageDialog::setTitle(const QString& text) 
