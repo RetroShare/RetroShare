@@ -25,6 +25,7 @@
 #include <QMenu>
 #include <QMimeData>
 #include <QPainter>
+#include <QPainterPath>
 #include <QTextDocument>
 
 #include "gui/common/RSElidedItemDelegate.h"

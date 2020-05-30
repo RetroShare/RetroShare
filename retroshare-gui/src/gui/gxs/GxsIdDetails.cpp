@@ -33,6 +33,7 @@
 
 #include <iostream>
 #include <QPainter>
+#include <QPainterPath>
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
