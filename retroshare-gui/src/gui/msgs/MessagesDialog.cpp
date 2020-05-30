@@ -1105,7 +1105,10 @@ void MessagesDialog::removemessage()
 
 void MessagesDialog::messageRemoved()
 {
-	ui.messageTreeWidget->setCurrentIndex(lastSelectedIndex);
+	if (lastSelectedIndex.isValid())
+		ui.messageTreeWidget->setCurrentIndex(lastSelectedIndex);
+	else
+		insertMsgTxtAndFiles(QModelIndex());
 }
 
 void MessagesDialog::undeletemessage()
