@@ -904,6 +904,25 @@ MessagesDialog QWidget#messageTreeWidget::item {
 	padding: 2px;
 }
 
+MessagesDialog QWidget#messageTreeWidget::item:selected {
+	background-color: #cde8ff;
+	color: black;
+}
+
+MessagesDialog QWidget#messageTreeWidget::item:hover {
+	background-color: #e5f3ff;
+	color: black;
+}
+
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
+}
+
+MainWindow QListView#listWidget::item:selected { 
+	background-color: #cde8ff;
+	color: black;
+}
+
+MainWindow QListView#listWidget::item:hover { 
+	background-color: #e5f3ff;
 }

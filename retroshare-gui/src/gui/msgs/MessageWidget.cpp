@@ -669,10 +669,14 @@ void MessageWidget::fill(const std::string &msgId)
 	}
 
 	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+	
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS ;
 
-	// emoticons disabled because of crazy cost.
-	//text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()),  RSHTML_FORMATTEXT_EMBED_LINKS);
+	// embed smileys ?
+	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	}
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 

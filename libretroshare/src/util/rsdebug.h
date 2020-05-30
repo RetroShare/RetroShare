@@ -32,6 +32,8 @@ std::ostream &operator<<(std::ostream& out, const std::error_condition& err);
 #	include <sstream>
 #	include <string>
 
+#	include "util/rsjson.h"
+
 enum class RsLoggerCategories
 {
 	DEBUG   = ANDROID_LOG_DEBUG,
@@ -53,6 +55,10 @@ struct t_RsLogger
 
 	template<typename T>
 	inline stream_type& operator<<(const T& val)
+	{ ostr << val; return *this; }
+
+	template<typename T>
+	inline stream_type& operator<<(const RsJson& val)
 	{ ostr << val; return *this; }
 
 	/// needed for manipulators and things like std::endl
@@ -111,7 +117,7 @@ struct t_RsLogger
 		const auto now = system_clock::now();
 		const auto sec = time_point_cast<seconds>(now);
 		const auto msec = duration_cast<milliseconds>(now - sec);
-		std::stringstream tstream;
+		std::ostringstream tstream;
 		tstream << static_cast<char>(CATEGORY) << " "
 		        << sec.time_since_epoch().count() << "."
 		        << std::setfill('0') << std::setw(3) << msec.count()
