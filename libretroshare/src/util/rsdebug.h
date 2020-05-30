@@ -48,6 +48,18 @@ struct t_RsLogger
 {
 	inline t_RsLogger() = default;
 
+	/** Offer variadic style too, as a benefit this has better atomicity then
+	 * << style, but doesn't supports manipulators and things like std::endl
+	 * @see https://stackoverflow.com/a/27375675 */
+	template <typename Arg, typename... Args>
+	inline t_RsLogger(Arg&& arg, Args&&... args)
+	{
+		ostr << std::forward<Arg>(arg);
+		using expander = int[];
+		(void)expander{0, (void(ostr << std::forward<Args>(args)), 0)...};
+		mFlush();
+	}
+
 	/** On other platforms expose the type of underlying stream.
 	 * On Android it cannot work like that so return the class type itself
 	 * just for code compatibility with other platforms */
@@ -66,12 +78,7 @@ struct t_RsLogger
 	{
 		if(pf == static_cast<std::ostream& (*)(std::ostream&)>(
 		            &std::endl< char, std::char_traits<char> > ))
-		{
-			__android_log_write(
-			            static_cast<int>(CATEGORY),
-			            "RetroShare", ostr.str().c_str() );
-			ostr.str() = "";
-		}
+			mFlush();
 		else ostr << pf;
 
 		return *this;
@@ -84,6 +91,14 @@ struct t_RsLogger
 
 private:
 	std::ostringstream ostr;
+
+	void mFlush()
+	{
+		__android_log_write(
+		            static_cast<int>(CATEGORY),
+		            "RetroShare", ostr.str().c_str() );
+		ostr.str() = "";
+	}
 };
 
 #else // def __ANDROID__
@@ -105,13 +120,38 @@ enum class RsLoggerCategories
 template <RsLoggerCategories CATEGORY>
 struct t_RsLogger
 {
-	inline t_RsLogger() = default;
-
 	/// Expose the type of underlying stream
 	using stream_type = decltype(std::cerr);
 
+	/// Return underlying stream to write avoiding additional prefixes
+	static inline stream_type& uStream() { return std::cerr; }
+
+	inline t_RsLogger() = default;
+
+	/** Offer variadic style too, as a benefit this has better atomicity then
+	 * << style, but doesn't supports manipulators and things like std::endl
+	 * @see https://stackoverflow.com/a/27375675 */
+	template <typename Arg, typename... Args>
+	inline t_RsLogger(Arg&& arg, Args&&... args)
+	{
+		std::ostringstream ostr;
+		ostr << getPrefix() << std::forward<Arg>(arg);
+		using expander = int[];
+		(void)expander{0, (void(ostr << std::forward<Args>(args)), 0)...};
+		ostr << std::endl;
+		uStream() << ostr.str();
+	}
+
 	template<typename T>
 	inline stream_type& operator<<(const T& val)
+	{ return uStream() << getPrefix() << val; }
+
+	/// needed for manipulators and things like std::endl
+	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
+	{ return uStream() << pf; }
+
+private:
+	std::string getPrefix()
 	{
 		using namespace std::chrono;
 		const auto now = system_clock::now();
@@ -121,22 +161,15 @@ struct t_RsLogger
 		tstream << static_cast<char>(CATEGORY) << " "
 		        << sec.time_since_epoch().count() << "."
 		        << std::setfill('0') << std::setw(3) << msec.count()
-		        << " " << val;
-		return std::cerr << tstream.str();
+		        << " ";
+		return tstream.str();
 	}
-
-	/// needed for manipulators and things like std::endl
-	stream_type& operator<<(std::ostream& (*pf)(std::ostream&))
-	{ return std::cerr << pf; }
-
-	/// Return underlying stream to write avoiding additional prefixes
-	inline stream_type& uStream() const { return std::cerr; }
 };
 #endif // def __ANDROID__
 
 
 /**
- * Comfortable debug message loggin, supports chaining like std::cerr but can
+ * Comfortable debug message logging, supports chaining like std::cerr but can
  * be easly and selectively disabled at compile time to reduce generated binary
  * size and performance impact without too many \#ifdef around.
  *
@@ -195,6 +228,8 @@ using RsFatal  = t_RsLogger<RsLoggerCategories::FATAL>;
 struct RsNoDbg
 {
 	inline RsNoDbg() = default;
+
+	template <typename T, typename... Args> inline RsNoDbg(T, Args...) {}
 
 	/** Defined as the type itself just for code compatibility with other
 	 * logging classes */
