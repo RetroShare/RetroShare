@@ -26,6 +26,9 @@ if "%ParamWebui%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%
 :: Plugins
 if "%ParamPlugins%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-speex mingw-w64-%RsMSYS2Architecture%-speexdsp mingw-w64-%RsMSYS2Architecture%-curl mingw-w64-%RsMSYS2Architecture%-libxslt mingw-w64-%RsMSYS2Architecture%-opencv mingw-w64-%RsMSYS2Architecture%-ffmpeg"
 
+:: Clang
+if "%ParamClang%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-clang"
+
 :: Initialize environment
 call "%~dp0env.bat" %*
 if errorlevel 2 exit /B 2
@@ -63,7 +66,11 @@ echo Qt %QtVersion% >> buildinfo.txt
 
 call "%ToolsPath%\msys2-path.bat" "%SourcePath%" MSYS2SourcePath
 call "%ToolsPath%\msys2-path.bat" "%EnvMSYS2Path%" MSYS2EnvMSYS2Path
-%EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-g++ %RS_QMAKE_CONFIG%"
+if "%ParamClang%"=="1" (
+	%EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-clang-g++ %RS_QMAKE_CONFIG%"
+) else (
+	%EnvMSYS2Cmd% "qmake "%MSYS2SourcePath%/RetroShare.pro" -r -spec win32-g++ %RS_QMAKE_CONFIG%"
+)
 if errorlevel 1 goto error
 
 echo.

@@ -631,7 +631,7 @@ android-* {
     RS_THREAD_LIB =
 }
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
     !isEmpty(EXTERNAL_LIB_DIR) {
         message(Use pre-compiled libraries in $${EXTERNAL_LIB_DIR}.)
         PREFIX = $$system_path($$EXTERNAL_LIB_DIR)
@@ -681,6 +681,10 @@ win32-g++ {
     DEFINES *= WINVER=0x0501
 
     message(***retroshare.pri:Win32 PREFIX $$PREFIX INCLUDEPATH $$INCLUDEPATH QMAKE_LIBDIR $$QMAKE_LIBDIR DEFINES $$DEFINES)
+}
+
+win32-clang-g++ {
+    QMAKE_CXXFLAGS += -femulated-tls
 }
 
 macx-* {
