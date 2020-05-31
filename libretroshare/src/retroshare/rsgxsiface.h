@@ -239,10 +239,12 @@ struct RsGxsIface
     virtual uint32_t getDefaultStoragePeriod() = 0;
     virtual uint32_t getStoragePeriod(const RsGxsGroupId& grpId) = 0;
     virtual void     setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) = 0;
+    virtual void     setStoragePeriodAll(uint32_t age_in_secs) = 0;
 
     virtual uint32_t getDefaultSyncPeriod() = 0;
     virtual uint32_t getSyncPeriod(const RsGxsGroupId& grpId) = 0;
     virtual void     setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_secs) = 0;
+    virtual void     setSyncPeriodAll(uint32_t age_in_secs) = 0;
 
 	virtual RsReputationLevel minReputationForForwardingMessages(
 	        uint32_t group_sign_flags,uint32_t identity_flags ) = 0;

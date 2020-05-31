@@ -24,6 +24,9 @@
 #include "util/misc.h"
 #include "GroupFrameSettingsWidget.h"
 #include "ui_GroupFrameSettingsWidget.h"
+#include "retroshare/rsgxschannels.h"
+#include "retroshare/rsgxsforums.h"
+#include "retroshare/rsposted.h"
 
 GroupFrameSettingsWidget::GroupFrameSettingsWidget(QWidget *parent) :
     QWidget(parent),
@@ -36,6 +39,28 @@ GroupFrameSettingsWidget::GroupFrameSettingsWidget(QWidget *parent) :
 
     connect(ui->openAllInNewTabCheckBox,     SIGNAL(toggled(bool)),this,SLOT(saveSettings())) ;
     connect(ui->hideTabBarWithOneTabCheckBox,SIGNAL(toggled(bool)),this,SLOT(saveSettings())) ;
+
+    connect(ui->pbSyncApply,SIGNAL(clicked()),this,SLOT(saveSyncAllValue())) ;
+    connect(ui->pbStoreApply,SIGNAL(clicked()),this,SLOT(saveStoreAllValue())) ;
+
+    ui->cmbSync->addItem(tr(" 5 days"     ),QVariant(   5));
+    ui->cmbSync->addItem(tr(" 2 weeks"    ),QVariant(  15));
+    ui->cmbSync->addItem(tr(" 1 month"    ),QVariant(  30));
+    ui->cmbSync->addItem(tr(" 3 months"   ),QVariant(  90));
+    ui->cmbSync->addItem(tr(" 6 months"   ),QVariant( 180));
+    ui->cmbSync->addItem(tr(" 1 year  "    ),QVariant( 365));
+    ui->cmbSync->addItem(tr(" Indefinitly"),QVariant(   0));
+
+    ui->cmbStore->addItem(tr(" 5 days"     ),QVariant(   5));
+    ui->cmbStore->addItem(tr(" 2 weeks"    ),QVariant(  15));
+    ui->cmbStore->addItem(tr(" 1 month"    ),QVariant(  30));
+    ui->cmbStore->addItem(tr(" 3 months"   ),QVariant(  90));
+    ui->cmbStore->addItem(tr(" 6 months"   ),QVariant( 180));
+    ui->cmbStore->addItem(tr(" 1 year  "    ),QVariant( 365));
+    ui->cmbStore->addItem(tr(" Indefinitly"),QVariant(   0));
+
+    ui->cmbSync->setCurrentIndex(2);
+    ui->cmbStore->setCurrentIndex(5);
 }
 
 GroupFrameSettingsWidget::~GroupFrameSettingsWidget()
@@ -79,5 +104,49 @@ void GroupFrameSettingsWidget::saveSettings()
 		Settings->setGroupFrameSettings(mType, groupFrameSettings);
 
 		NotifyQt::getInstance()->notifySettingsChanged();
+	}
+}
+
+void GroupFrameSettingsWidget::saveSyncAllValue()
+{
+	uint32_t t = ui->cmbSync->currentData().toUInt() * 86400;
+	switch (mType) {
+		case GroupFrameSettings::Nothing: {
+			break;
+		}
+		case GroupFrameSettings::Forum: {
+			rsGxsForums->setSyncPeriodAll(t);
+			break;
+		}
+		case GroupFrameSettings::Channel: {
+			rsGxsChannels->setSyncPeriodAll(t);
+			break;
+		}
+		case GroupFrameSettings::Posted: {
+			rsPosted->setSyncPeriodAll(t);
+			break;
+		}
+	}
+}
+
+void GroupFrameSettingsWidget::saveStoreAllValue()
+{
+	uint32_t t = ui->cmbStore->currentData().toUInt() * 86400;
+	switch (mType) {
+		case GroupFrameSettings::Nothing: {
+			break;
+		}
+		case GroupFrameSettings::Forum: {
+			rsGxsForums->setStoragePeriodAll(t);
+			break;
+		}
+		case GroupFrameSettings::Channel: {
+			rsGxsChannels->setStoragePeriodAll(t);
+			break;
+		}
+		case GroupFrameSettings::Posted: {
+			rsPosted->setStoragePeriodAll(t);
+			break;
+		}
 	}
 }

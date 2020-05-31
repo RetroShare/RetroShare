@@ -44,6 +44,8 @@ public:
     void setType(GroupFrameSettings::Type type) { mType = type ; }
 protected slots:
 	void saveSettings();
+	void saveSyncAllValue();
+	void saveStoreAllValue();
 
 private:
 	bool mEnable;

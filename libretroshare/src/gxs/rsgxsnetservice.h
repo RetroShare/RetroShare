@@ -127,6 +127,9 @@ public:
 	virtual void setDefaultKeepAge(uint32_t t) { mDefaultMsgStorePeriod = t ; }
 	virtual void setDefaultSyncAge(uint32_t t) { mDefaultMsgSyncPeriod = t ; }
 
+	virtual void setKeepAgeAll(uint32_t age_in_secs);
+	virtual void setSyncAgeAll(uint32_t age_in_secs);
+
     /*!
      * \brief Search methods.
      * 			These four methods are used to request distant search and receive the results.

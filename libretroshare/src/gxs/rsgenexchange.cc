@@ -1891,6 +1891,13 @@ void     RsGenExchange::setSyncPeriod(const RsGxsGroupId& grpId,uint32_t age_in_
     else
         std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
 }
+void     RsGenExchange::setSyncPeriodAll(uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+		return mNetService->setSyncAgeAll(age_in_secs) ;
+	else
+		std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
 
 uint32_t RsGenExchange::getStoragePeriod(const RsGxsGroupId& grpId)
 {
@@ -1911,6 +1918,13 @@ void     RsGenExchange::setStoragePeriod(const RsGxsGroupId& grpId,uint32_t age_
         return mNetService->setKeepAge(grpId,age_in_secs) ;
     else
         std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
+}
+void     RsGenExchange::setStoragePeriodAll(uint32_t age_in_secs)
+{
+	if(mNetService != NULL)
+		return mNetService->setKeepAgeAll(age_in_secs) ;
+	else
+		std::cerr << "(EE) No network service available. Cannot set storage period. " << std::endl;
 }
 
 void RsGenExchange::setGroupSubscribeFlags(uint32_t& token, const RsGxsGroupId& grpId, const uint32_t& flag, const uint32_t& mask)
