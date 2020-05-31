@@ -917,12 +917,3 @@ MessagesDialog QWidget#messageTreeWidget::item:hover {
 GxsForumThreadWidget QWidget#threadTreeWidget::item {
 	padding: 2px;
 }
-
-MainWindow QListView#listWidget::item:selected { 
-	background-color: #cde8ff;
-	color: black;
-}
-
-MainWindow QListView#listWidget::item:hover { 
-	background-color: #e5f3ff;
-}
