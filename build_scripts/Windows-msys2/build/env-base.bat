@@ -8,6 +8,7 @@ set ParamPlugins=0
 set ParamTor=0
 set ParamWebui=0
 set ParamClang=0
+set ParamIndexing=0
 set CoreCount=%NUMBER_OF_PROCESSORS%
 set RS_QMAKE_CONFIG=
 
@@ -34,6 +35,8 @@ if "%~1" NEQ "" (
 			set CoreCount=1
 		) else if "%%~a"=="clang" (
 			set ParamClang=1
+		) else if "%%~a"=="indexing" (
+			set ParamIndexing=1
 		) else if "%%~a"=="CONFIG+" (
 			set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% %1
 		) else (
@@ -92,11 +95,15 @@ if "%ParamWebui%"=="1" (
 	set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_jsonapi" "CONFIG+=rs_webui"
 )
 
+if "%ParamIndexing%"=="1" (
+	set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% "CONFIG+=rs_deep_channels_index" "CONFIG+=rs_deep_files_index" "CONFIG+=rs_deep_files_index_ogg" "CONFIG+=rs_deep_files_index_flac" "CONFIG+=rs_deep_files_index_taglib"
+)
+
 exit /B 0
 
 :usage
 echo.
-echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang]
+echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang indexing]
 echo.
 echo Mandatory parameter
 echo 32^|64              32-bit or 64-bit Version
@@ -108,6 +115,7 @@ echo plugins            Build plugins
 echo webui              Enable JsonAPI and pack webui files
 echo singlethread       Use only 1 thread for building
 echo clang              Use clang compiler instead of GCC
+echo indexing           Build with deep channel and file indexing support
 echo.
 echo Parameter for pack
 echo tor                Pack tor version

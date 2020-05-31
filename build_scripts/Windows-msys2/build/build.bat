@@ -18,7 +18,7 @@ if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
 :: Install needed things
-%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-toolchain mingw-w64-%RsMSYS2Architecture%-qt5 mingw-w64-%RsMSYS2Architecture%-miniupnpc mingw-w64-%RsMSYS2Architecture%-sqlcipher mingw-w64-%RsMSYS2Architecture%-xapian-core mingw-w64-%RsMSYS2Architecture%-cmake"
+%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-toolchain mingw-w64-%RsMSYS2Architecture%-qt5 mingw-w64-%RsMSYS2Architecture%-miniupnpc mingw-w64-%RsMSYS2Architecture%-sqlcipher mingw-w64-%RsMSYS2Architecture%-cmake"
 
 :: Webui
 if "%ParamWebui%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-doxygen mingw-w64-%RsMSYS2Architecture%-rapidjson"
@@ -28,6 +28,9 @@ if "%ParamPlugins%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64
 
 :: Clang
 if "%ParamClang%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-clang"
+
+:: Indexing
+if "%ParamIndexing%"=="1" %EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-xapian-core mingw-w64-%RsMSYS2Architecture%-libvorbis mingw-w64-%RsMSYS2Architecture%-flac mingw-w64-%RsMSYS2Architecture%-taglib"
 
 :: Initialize environment
 call "%~dp0env.bat" %*

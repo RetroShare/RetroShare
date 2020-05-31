@@ -141,12 +141,12 @@ CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
 # To enable channel indexing append the following assignation to qmake command
-# line "CONFIG+=rs_deep_channel_index"
-CONFIG *= no_rs_deep_channel_index
-rs_deep_channel_index:CONFIG -= no_rs_deep_channel_index
+# line "CONFIG+=rs_deep_channels_index"
+CONFIG *= no_rs_deep_channels_index
+rs_deep_channels_index:CONFIG -= no_rs_deep_channels_index
 
 # To enable deep files indexing append the following assignation to qmake
-# command line "CONFIG+=rs_files_index"
+# command line "CONFIG+=rs_deep_files_index"
 CONFIG *= no_rs_deep_files_index
 rs_deep_files_index:CONFIG -= no_rs_deep_files_index
 
