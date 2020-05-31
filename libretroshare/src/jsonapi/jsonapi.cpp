@@ -467,18 +467,18 @@ void JsonApiServer::registerHandler(
 		                const std::function<void (const std::shared_ptr<rb::Session>)>& callback )
 		{
 			/* Declare outside the lambda to avoid returning a dangling
-			 * reference on Android */
+			 * reference */
 			RsWarn tWarn;
 			const auto authFail =
-			        [&](int status) -> RsWarn::stream_type&
+			        [&](int status) -> std::ostream&
 			{
 				/* Capture session by reference as it is cheaper then copying
 				 * shared_ptr by value which is not needed in this case */
 
 				session->close(status, corsOptionsHeaders);
 				return tWarn << "JsonApiServer authentication handler "
-				                   "blocked an attempt to call JSON API "
-				                   "authenticated method: " << path;
+				                "blocked an attempt to call JSON API "
+				                "authenticated method: " << path;
 			};
 
 			if(session->get_request()->get_method() == "OPTIONS")

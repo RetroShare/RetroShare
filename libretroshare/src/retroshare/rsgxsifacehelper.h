@@ -507,25 +507,27 @@ private:
 
 	std::map<uint32_t,TokenRequestType> mActiveTokens;
 
+#ifdef DEBUG_GXSIFACEHELPER
 	void locked_dumpTokens()
 	{
 		const uint16_t service_id =  mGxs.serviceType();
 		const auto countSize = static_cast<size_t>(TokenRequestType::__MAX);
 		uint32_t count[countSize] = {0};
 
-		RsDbg() << __PRETTY_FUNCTION__ << "Service 0x" << std::hex << service_id
-		        << " (" << rsServiceControl->getServiceName(
-		               RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
-		        << ") this=0x" << static_cast<void*>(this)
-		        << ") Active tokens (per type): ";
+		RsDbg rsdbg;
+		rsdbg << __PRETTY_FUNCTION__ << " Service 0x" << std::hex << service_id
+		      << " (" << rsServiceControl->getServiceName(
+		             RsServiceInfo::RsServiceInfoUIn16ToFullServiceId(service_id) )
+		      << ") this=0x" << static_cast<void*>(this)
+		      << ") Active tokens (per type): ";
 
 		// let's count how many token of each type we've got.
 		for(auto& it: mActiveTokens) ++count[static_cast<size_t>(it.second)];
 
 		for(uint32_t i=0; i < countSize; ++i)
-			RsDbg().uStream() /* << i << ":" */ << count[i] << " ";
-		RsDbg().uStream() << std::endl;
+			rsdbg /* << i << ":" */ << count[i] << " ";
 	}
+#endif // def DEBUG_GXSIFACEHELPER
 
 	RS_SET_CONTEXT_DEBUG_LEVEL(1)
 };

@@ -468,7 +468,12 @@ HEADERS +=	turtle/p3turtle.h \
 			turtle/turtleclientservice.h
 
 HEADERS +=	util/folderiterator.h \
-			util/rsdebug.h \
+    util/rsdebug.h \
+    util/rsdebuglevel0.h \
+    util/rsdebuglevel1.h \
+    util/rsdebuglevel2.h \
+    util/rsdebuglevel3.h \
+    util/rsdebuglevel4.h \
 			util/rskbdinput.h \
 			util/rsmemory.h \
 			util/smallobject.h \
