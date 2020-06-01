@@ -9,6 +9,7 @@ set ParamTor=0
 set ParamWebui=0
 set ParamClang=0
 set ParamIndexing=0
+set ParamNoupdate=0
 set CoreCount=%NUMBER_OF_PROCESSORS%
 set RS_QMAKE_CONFIG=
 
@@ -37,6 +38,8 @@ if "%~1" NEQ "" (
 			set ParamClang=1
 		) else if "%%~a"=="indexing" (
 			set ParamIndexing=1
+		) else if "%%~a"=="noupdate" (
+			set ParamNoupdate=1
 		) else if "%%~a"=="CONFIG+" (
 			set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% %1
 		) else (
@@ -103,7 +106,7 @@ exit /B 0
 
 :usage
 echo.
-echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang indexing]
+echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang indexing noupdate]
 echo.
 echo Mandatory parameter
 echo 32^|64              32-bit or 64-bit Version
@@ -116,6 +119,7 @@ echo webui              Enable JsonAPI and pack webui files
 echo singlethread       Use only 1 thread for building
 echo clang              Use clang compiler instead of GCC
 echo indexing           Build with deep channel and file indexing support
+echo noupdate           Skip updating the libraries
 echo.
 echo Parameter for pack
 echo tor                Pack tor version

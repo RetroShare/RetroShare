@@ -17,8 +17,10 @@ call "%~dp0env.bat" %*
 if errorlevel 2 exit /B 2
 if errorlevel 1 goto error_env
 
-:: Install ntldd
-%EnvMSYS2Cmd% "pacman --noconfirm --needed -S make git mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+if not "%ParamNoupdate%"=="1" (
+	:: Install ntldd
+	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+)
 
 :: Remove deploy path
 if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
