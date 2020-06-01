@@ -51,6 +51,9 @@ QWidget {
     selection-background-color: #1464A0;
     selection-color: #F0F0F0;
 }
+QTreeView::item, QTreeWidget::item, QListWidget::item{
+	color: #F0F0F0;
+}
 
 QWidget:disabled {
     background-color: #19232D;
@@ -2142,4 +2145,15 @@ PostedCardView > QFrame#mainFrame[new=true] {
 
 WireGroupItem QFrame#frame{
 		background: transparent;
+}
+
+GxsChannelDialog GroupTreeWidget QTreeWidget#treeWidget::item{
+	/*background-color: #F00000;*/
+	/*padding: 20px;*/
+}
+
+RSTextBrowser, MimeTextEdit
+{
+	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
 }

@@ -83,19 +83,19 @@ void RsMsgTagType::serial_process(RsGenericSerializer::SerializeJob j,RsGenericS
 
 void RsMsgTags::serial_process(RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx)
 {
-    RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
+	RsTypeSerializer::serial_process<uint32_t>(j,ctx,msgId,"msgId") ;
 
 #warning this is not the correct way to serialise here. We should directly call serial_process<std::vector<uint32_t> >() but for backward compatibility, we cannot
 
-    if(j == RsGenericSerializer::DESERIALIZE)
-        while(ctx.mOffset < ctx.mSize)
-        {
-            uint32_t n ;
+	if(j == RsGenericSerializer::DESERIALIZE)
+		while(ctx.mOffset < ctx.mSize)
+		{
+			uint32_t n = 0;// No real need to initialize but otherwise the compiler complains.
 			RsTypeSerializer::serial_process<uint32_t>(j,ctx,n,"tagIds element") ;
 			tagIds.push_back(n) ;
-        }
-    else
-        for(std::list<uint32_t>::iterator it(tagIds.begin());it!=tagIds.end();++it)
+		}
+	else
+		for(std::list<uint32_t>::iterator it(tagIds.begin());it!=tagIds.end();++it)
 			RsTypeSerializer::serial_process<uint32_t>(j,ctx,*it,"tagIds element") ;
 }
 

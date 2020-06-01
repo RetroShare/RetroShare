@@ -41,6 +41,7 @@ public:
     ~ChatUserNotify();
 
 	virtual bool hasSetting(QString *name, QString *group);
+    virtual QString textInfo() const override { return tr("mention(s)"); }
 
 private slots:
     void chatMessageReceived(ChatMessage msg);

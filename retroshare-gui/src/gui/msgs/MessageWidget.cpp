@@ -36,6 +36,7 @@
 #include "gui/common/TagDefs.h"
 #include "gui/common/PeerDefs.h"
 #include "gui/common/Emoticons.h"
+#include "gui/common/FilesDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "MessageComposer.h"
 #include "MessageWidget.h"
@@ -51,8 +52,8 @@
 #include <retroshare/rsmsgs.h>
 
 /* Images for context menu icons */
-#define IMAGE_DOWNLOAD         ":/images/start.png"
-#define IMAGE_DOWNLOADALL      ":/images/startall.png"
+#define IMAGE_DOWNLOAD         ":/icons/png/download.png"
+#define IMAGE_DOWNLOADALL      ":/icons/mail/downloadall.png"
 
 #define COLUMN_FILE_NAME   0
 #define COLUMN_FILE_SIZE   1
@@ -511,6 +512,7 @@ void MessageWidget::fill(const std::string &msgId)
 
 		ui.inviteFrame->hide();
 		ui.expandFilesButton->setChecked(false);
+		ui.downloadButton->setEnabled(false);
 		togglefileview(true);
 
 		ui.replyButton->setEnabled(false);
@@ -554,6 +556,7 @@ void MessageWidget::fill(const std::string &msgId)
 	for (it = recList.begin(); it != recList.end(); ++it) {
 		QTreeWidgetItem *item = new QTreeWidgetItem;
 		item->setText(COLUMN_FILE_NAME, QString::fromUtf8(it->fname.c_str()));
+		item->setIcon(COLUMN_FILE_NAME, FilesDefs::getIconFromFileType(it->fname.c_str()));
 		item->setText(COLUMN_FILE_SIZE, misc::friendlyUnit(it->size));
 		item->setData(COLUMN_FILE_SIZE, Qt::UserRole, QVariant(qulonglong(it->size)) );
 		item->setText(COLUMN_FILE_HASH, QString::fromStdString(it->hash.toStdString()));
@@ -566,6 +569,7 @@ void MessageWidget::fill(const std::string &msgId)
 	/* add the items in! */
 	ui.msgList->insertTopLevelItems(0, items);
 	ui.expandFilesButton->setChecked(expandFiles && (items.count()>0) );
+	ui.downloadButton->setEnabled(items.count()>0);
 	togglefileview(true);
 
 	/* iterate through the sources */
@@ -665,10 +669,14 @@ void MessageWidget::fill(const std::string &msgId)
 	}
 
 	ui.subjectText->setText(QString::fromUtf8(msgInfo.title.c_str()));
+	
+	unsigned int formatTextFlag = RSHTML_FORMATTEXT_EMBED_LINKS ;
 
-	// emoticons disabled because of crazy cost.
-	//text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS);
-	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()),  RSHTML_FORMATTEXT_EMBED_LINKS);
+	// embed smileys ?
+	if (Settings->valueFromGroup(QString("Messages"), QString::fromUtf8("Emoticons"), true).toBool()) {
+		formatTextFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	}
+	text = RsHtmlMsg(msgInfo.msgflags).formatText(ui.msgText->document(), QString::fromUtf8(msgInfo.msg.c_str()), formatTextFlag);
 	ui.msgText->resetImagesStatus(Settings->getMsgLoadEmbeddedImages() || (msgInfo.msgflags & RS_MSG_LOAD_EMBEDDED_IMAGES));
 	ui.msgText->setHtml(text);
 

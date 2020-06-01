@@ -94,6 +94,7 @@ private slots:
   void markAsRead();
   void markAsUnread();
   void markWithStar(bool checked);
+  void markWithJunk(bool checked);
 
   void emptyTrash();
 
@@ -118,9 +119,10 @@ private:
   bool getCurrentMsg(std::string &cid, std::string &mid);
   void setMsgAsReadUnread(const QList<QTreeWidgetItem *> &items, bool read);
 
-  int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar);
+  int getSelectedMsgCount (QList<QModelIndex> *items, QList<QModelIndex> *itemsRead, QList<QModelIndex> *itemsUnread, QList<QModelIndex> *itemsStar, QList<QModelIndex> *itemsJunk);
   bool isMessageRead(const QModelIndex &real_index);
   bool hasMessageStar(const QModelIndex &index);
+  bool hasMessageSpam(const QModelIndex &index);
 
   void processSettings(bool load);
 

@@ -672,6 +672,7 @@ HEADERS += rsitems/rsnxsitems.h \
 	util/rsdbbind.h \
 	util/contentvalue.h \
 	gxs/rsgxsutil.h \
+	gxs/rsgxsnotify.h \
 	gxs/gxssecurity.h \
 	gxs/rsgds.h \
 	gxs/rsgxs.h \
@@ -869,7 +870,7 @@ rs_jsonapi {
         genrestbedheader.name = Generating restbed header.
         genrestbedheader.input = genrestbedlib.output
         genrestbedheader.output = $${RESTBED_HEADER_FILE}
-        genrestbedheader.CONFIG += target_predeps combine no_link
+        genrestbedheader.CONFIG += target_predeps no_link
         genrestbedheader.variable_out = HEADERS
         genrestbedheader.commands = cd $${RESTBED_BUILD_PATH} && $(MAKE) install
         QMAKE_EXTRA_COMPILERS += genrestbedheader

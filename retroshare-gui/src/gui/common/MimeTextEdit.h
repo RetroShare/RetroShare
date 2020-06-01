@@ -31,6 +31,7 @@ class MimeTextEdit : public RSTextEdit
 	Q_OBJECT
 
 	Q_PROPERTY(QColor textColorQuote READ textColorQuote WRITE setTextColorQuote)
+	Q_PROPERTY(QVariant textColorQuotes READ textColorQuotes WRITE setTextColorQuotes)
 
 public:
 	MimeTextEdit(QWidget *parent = 0);
@@ -48,12 +49,14 @@ public:
 	void addContextMenuAction(QAction *action);
 
 	QColor textColorQuote() const { return highliter->textColorQuote();}
+	QVariant textColorQuotes() const { return highliter->textColorQuotes();}
 	bool onlyPlainText() const {return mOnlyPlainText;}
 
 	void setMaxBytes(int limit) {mMaxBytes = limit;}
 
 public slots:
 	void setTextColorQuote(QColor textColorQuote) { highliter->setTextColorQuote(textColorQuote);}
+	void setTextColorQuotes(QVariant textColorQuotes) { highliter->setTextColorQuotes(textColorQuotes);}
 	void setOnlyPlainText(bool bOnlyPlainText) {mOnlyPlainText = bOnlyPlainText;}
 
 signals:

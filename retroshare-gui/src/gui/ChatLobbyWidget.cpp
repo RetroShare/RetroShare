@@ -27,6 +27,7 @@
 #include "chat/ChatTabWidget.h"
 #include "chat/CreateLobbyDialog.h"
 #include "common/RSTreeWidgetItem.h"
+#include "common/RSElidedItemDelegate.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "gui/Identity/IdEditDialog.h"
@@ -157,6 +158,7 @@ ChatLobbyWidget::ChatLobbyWidget(QWidget *parent, Qt::WindowFlags flags)
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_USER_COUNT,true) ;
 	ui.lobbyTreeWidget->setColumnHidden(COLUMN_TOPIC,true) ;
 	ui.lobbyTreeWidget->setSortingEnabled(true) ;
+	ui.lobbyTreeWidget->setItemDelegateForColumn(COLUMN_NAME, new RSElidedItemDelegate());
 
     	float fact = QFontMetricsF(font()).height()/14.0f;
         
@@ -386,6 +388,8 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	item->setData(COLUMN_DATA, ROLE_FLAGS, lobby_flags.toUInt32());
     item->setData(COLUMN_DATA, ROLE_AUTOSUBSCRIBE, autoSubscribe);
 
+	//TODO (Phenom): Add qproperty for these text colors in stylesheets
+	// As palette is not updated by stylesheet
 	QColor color = treeWidget->palette().color(QPalette::Active, QPalette::Text);
     
 	if (!subscribed) {
@@ -395,7 +399,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
 	}
 
 	for (int column = 0; column < COLUMN_COUNT; ++column) {
-		item->setTextColor(column, color);
+		item->setData(column, Qt::ForegroundRole, color);
 	}
     QString tooltipstr = QObject::tr("Subject:")+" "+item->text(COLUMN_TOPIC)+"\n"
                      +QObject::tr("Participants:")+" "+QString::number(count)+"\n"
@@ -407,7 +411,7 @@ static void updateItem(QTreeWidget *treeWidget, QTreeWidgetItem *item, ChatLobby
         tooltipstr += QObject::tr("\nSecurity: no anonymous IDs") ;
 		QColor foreground = QColor(0, 128, 0); // green
 		for (int column = 0; column < COLUMN_COUNT; ++column)
-			item->setTextColor(column, foreground);
+			item->setData(column, Qt::ForegroundRole, foreground);
 	}
     item->setToolTip(0,tooltipstr) ;
 }

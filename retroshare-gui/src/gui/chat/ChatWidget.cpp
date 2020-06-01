@@ -115,6 +115,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	//ui->sendButton->setFixedHeight(iconHeight);
 	ui->sendButton->setIconSize(iconSize);
 	ui->typingLabel->setMaximumHeight(QFontMetricsF(font()).height()*1.2);
+	ui->fontcolorButton->setIconSize(iconSize);
 
 	//Initialize search
 	iCharToStartSearch=Settings->getChatSearchCharToStartSearch();
@@ -189,7 +190,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 	ui->hashBox->setDropWidget(this);
 	ui->hashBox->setAutoHide(true);
 
-	QMenu *fontmenu = new QMenu(tr("Set text font & color"));
+	QMenu *fontmenu = new QMenu();
 	fontmenu->addAction(ui->actionChooseFont);
 	fontmenu->addAction(ui->actionChooseColor);
 	fontmenu->addAction(ui->actionResetFont);
@@ -198,10 +199,10 @@ ChatWidget::ChatWidget(QWidget *parent)
 	#ifdef USE_CMARK
 	fontmenu->addAction(ui->actionSend_as_CommonMark);
 	#endif
+	ui->fontcolorButton->setMenu(fontmenu);
 
 	QMenu *menu = new QMenu();
 	menu->addAction(ui->actionMessageHistory);
-	menu->addMenu(fontmenu);
 	menu->addSeparator();
 	menu->addAction(ui->actionSaveChatHistory);
 	menu->addAction(ui->actionClearChatHistory);
@@ -1908,11 +1909,8 @@ void ChatWidget::updateCMPreview()
 
 void ChatWidget::quote()
 {
-	QString text = ui->textBrowser->textCursor().selection().toPlainText();
-	QStringList sl = text.split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
-	text = sl.join("\n> ");
-	text.replace(QChar(-4), " "); // Char used when image on text.
-	emit ui->chatTextEdit->append(QString("> ") + text);
+	QString text = RsHtml::makeQuotedText(ui->textBrowser);
+	emit ui->chatTextEdit->append(text);
 }
 
 void ChatWidget::dropPlacemark()

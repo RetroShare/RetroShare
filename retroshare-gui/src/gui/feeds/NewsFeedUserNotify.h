@@ -29,6 +29,7 @@ class NewsFeedUserNotify : public UserNotify
 {
 	Q_OBJECT
 
+    virtual QString textInfo() const override { return tr("logged event(s)"); }
 public:
 	NewsFeedUserNotify(NewsFeed *newsFeed, QObject *parent = 0);
 

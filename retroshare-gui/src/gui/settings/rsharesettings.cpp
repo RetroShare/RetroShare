@@ -1157,7 +1157,7 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
 QString RshareSettings::getWebinterfaceFilesDirectory()
 {
 #ifdef WINDOWS_SYS
-    return valueFromGroup("Webinterface","directory","data/webui/").toString();
+	return valueFromGroup("Webinterface","directory","./webui/").toString();
 #else
     return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
 #endif

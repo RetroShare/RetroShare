@@ -415,9 +415,8 @@ void SearchDialog::download()
 					std::cout << *it << "-" << std::endl;
 
 				QColor foreground = textColorDownloading();
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
-					item->setForeground(i, brush);
+					item->setData(i, Qt::ForegroundRole, foreground );
 			}
 		}
 	}
@@ -1269,10 +1268,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 					foreground = textColorHighSources();
 				}
 
-				QBrush brush(foreground);
 				for (int i = 0; i < item->columnCount(); ++i)
 				{
-					item->setForeground(i, brush);
+					item->setData(i, Qt::ForegroundRole, foreground);
 				}
 			}
 
@@ -1355,10 +1353,9 @@ void SearchDialog::insertFile(qulonglong searchId, const FileDetail& file, int s
 		}
 
 		if (setForeground) {
-			QBrush brush(foreground);
 			for (int i = 0; i < item->columnCount(); ++i)
 			{
-				item->setForeground(i, brush);
+				item->setData(i, Qt::ForegroundRole, foreground);
 			}
 		}
 

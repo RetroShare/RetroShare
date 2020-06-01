@@ -26,6 +26,9 @@
 class RSElidedItemDelegate : public RSStyledItemDelegate
 {
 	Q_OBJECT
+
+	// For now, these properties cannot be changed by StyleSheet
+	// If needed, you can add properties to owner widget then copy them in this delegate.
 	Q_PROPERTY(bool isOnlyPlainText READ isOnlyPlainText WRITE setOnlyPlainText)
 	Q_PROPERTY(bool paintRoundedRect READ paintRoundedRect WRITE setPaintRoundedRect)
 
@@ -49,7 +52,6 @@ protected:
 private:
 	bool mOnlyPlainText;
 	bool mPaintRoundedRect;
-
 };
 
 #endif // RSELIDEDITEMDELEGATE_H

@@ -1151,22 +1151,29 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->by_label->show();
 	ui->threadTreeWidget->setFocus();
 
-	if(redacted)
-	{
+	if(redacted) {
 		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
 		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
 		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
 		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
 
 		ui->postText->setHtml(extraTxt) ;
-	}
-	else
-	{
-        uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
-        if(Settings->getForumLoadEmoticons())
-            flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	} else {
+		uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+		if(Settings->getForumLoadEmoticons())
+			flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+		flags |= RSHTML_OPTIMIZEHTML_MASK;
 
-		QString extraTxt = RsHtml().formatText(ui->postText->document(), QString::fromUtf8(msg.mMsg.c_str()),flags);
+		QColor backgroundColor = ui->postText->palette().base().color();
+		qreal desiredContrast = Settings->valueFromGroup("Forum",
+			"MinimumContrast", 4.5).toDouble();
+		int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
+			"MinimumFontSize", 10).toInt();
+
+		QString extraTxt = RsHtml().formatText(ui->postText->document(),
+			QString::fromUtf8(msg.mMsg.c_str()), flags
+				, backgroundColor, desiredContrast, desiredMinimumFontSize
+			);
 		ui->postText->setHtml(extraTxt);
 	}
 

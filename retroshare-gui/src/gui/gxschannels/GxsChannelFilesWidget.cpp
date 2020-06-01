@@ -46,6 +46,8 @@
 #define ROLE_FILE_HASH  Qt::UserRole + 3
 #define ROLE_MSG        Qt::UserRole + 4
 
+Q_DECLARE_METATYPE(Sha1CheckSum)
+
 GxsChannelFilesWidget::GxsChannelFilesWidget(QWidget *parent) :
     QWidget(parent), ui(new Ui::GxsChannelFilesWidget)
 {
