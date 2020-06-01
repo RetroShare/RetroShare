@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1211</width>
-    <height>647</height>
+    <width>721</width>
+    <height>561</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -106,8 +106,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/back.png</normaloff>:/images/back.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-left.png</normaloff>:/icons/png/arrow-left.png</iconset>
             </property>
            </widget>
           </item>
@@ -120,8 +120,8 @@
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="../images.qrc">
-              <normaloff>:/images/forward.png</normaloff>:/images/forward.png</iconset>
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/png/arrow-right.png</normaloff>:/icons/png/arrow-right.png</iconset>
             </property>
            </widget>
           </item>

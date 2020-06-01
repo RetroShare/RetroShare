@@ -738,14 +738,15 @@ void CreateGxsChannelMsg::loadOriginalChannelPostInfo()
 	{
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-        if( !rsGxsChannels->getChannelContent(mChannelId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments) || posts.size() != 1)
-        {
-            std::cerr << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
-            return;
-        }
+		if( !rsGxsChannels->getChannelContent(mChannelId,std::set<RsGxsMessageId>({mOrigPostId}),posts,comments,votes) || posts.size() != 1)
+		{
+			std::cerr << "Cannot get channel post data for channel " << mChannelId << " and post " << mOrigPostId << std::endl;
+			return;
+		}
 
-        RsQThreadUtils::postToObject( [posts,this]()
+		RsQThreadUtils::postToObject( [posts,this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information

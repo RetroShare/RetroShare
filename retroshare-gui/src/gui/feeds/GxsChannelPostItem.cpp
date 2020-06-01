@@ -62,9 +62,9 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 		v.push_back(messageId);
 
 	setMessageVersions(v) ;
-    setup();
+	setup();
 
-    // no call to loadGroup() here because we have it already.
+	// no call to loadGroup() here because we have it already.
 }
 
 GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId &messageId, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
@@ -82,9 +82,9 @@ GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, 
 		v.push_back(messageId);
 
 	setMessageVersions(v) ;
-    setup();
+	setup();
 
-    loadGroup();
+	loadGroup();
 }
 
 // GxsChannelPostItem::GxsChannelPostItem(FeedHolder *feedHolder, uint32_t feedId, const RsGxsChannelPost& post, bool isHome, bool autoUpdate,const std::set<RsGxsMessageId>& older_versions) :
@@ -141,7 +141,7 @@ GxsChannelPostItem::~GxsChannelPostItem()
 
 bool GxsChannelPostItem::isUnread() const
 {
-    return IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) ;
+	return IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) ;
 }
 
 void GxsChannelPostItem::setup()
@@ -162,7 +162,7 @@ void GxsChannelPostItem::setup()
     ui->voteDownButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/vote_down.png"));
     ui->downloadButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/download.png"));
     ui->playButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/play.png"));
-    ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/commnt.png"));
+    ui->commentButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/comment.png"));
     ui->editButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/pencil-edit-button.png"));
     ui->copyLinkButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/copy.png"));
     ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/png/down-arrow.png"));
@@ -173,6 +173,7 @@ void GxsChannelPostItem::setup()
 
 	mInFill = false;
 	mCloseOnRead = false;
+	mLoaded = false;
 
 	/* clear ui */
 	ui->titleLabel->setText(tr("Loading..."));
@@ -318,8 +319,9 @@ void GxsChannelPostItem::loadMessage()
 
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
+		std::vector<RsGxsVote> votes;
 
-		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments))
+		if(! rsGxsChannels->getChannelContent( groupId(), std::set<RsGxsMessageId>( { messageId() } ),posts,comments,votes))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
@@ -385,13 +387,13 @@ void GxsChannelPostItem::loadComment()
 		std::vector<RsGxsChannelPost> posts;
 		std::vector<RsGxsComment> comments;
 
-		if(! rsGxsChannels->getChannelContent( groupId(),msgIds,posts,comments))
+		if(! rsGxsChannels->getChannelComments( groupId(),msgIds,comments))
 		{
 			RsErr() << "GxsGxsChannelGroupItem::loadGroup() ERROR getting data" << std::endl;
 			return;
 		}
 
-        int comNb = comments.size();
+		int comNb = comments.size();
 
 		RsQThreadUtils::postToObject( [comNb,this]()
 		{
@@ -425,7 +427,7 @@ void GxsChannelPostItem::fill()
 
 	QString title;
 	
-	float f = QFontMetricsF(font()).height()/14.0 ;
+	//float f = QFontMetricsF(font()).height()/14.0 ;
 
 	if(mPost.mThumbnail.mData != NULL)
 	{
@@ -632,14 +634,21 @@ QString GxsChannelPostItem::messageName()
 
 void GxsChannelPostItem::setReadStatus(bool isNew, bool isUnread)
 {
+	if (isNew)
+		mPost.mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+	else
+		mPost.mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_NEW;
+
 	if (isUnread)
 	{
-		ui->readButton->setChecked(true);
+		mPost.mMeta.mMsgStatus |= GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		whileBlocking(ui->readButton)->setChecked(true);
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png"));
 	}
 	else
 	{
-		ui->readButton->setChecked(false);
+		mPost.mMeta.mMsgStatus &= ~GXS_SERV::GXS_MSG_STATUS_GUI_UNREAD;
+		whileBlocking(ui->readButton)->setChecked(false);
 		ui->readButton->setIcon(FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png"));
 	}
 
@@ -838,7 +847,7 @@ void GxsChannelPostItem::play()
 	}
 }
 
-void GxsChannelPostItem::readToggled(bool checked)
+void GxsChannelPostItem::readToggled(bool /*checked*/)
 {
 	if (mInFill) {
 		return;
@@ -848,10 +857,9 @@ void GxsChannelPostItem::readToggled(bool checked)
 
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(groupId(), messageId());
 
-	uint32_t token;
-	rsGxsChannels->setMessageReadStatus(token, msgPair, !checked);
+	rsGxsChannels->markRead(msgPair, isUnread());
 
-	setReadStatus(false, checked);
+	//setReadStatus(false, checked); // Updated by events
 }
 
 void GxsChannelPostItem::makeDownVote()

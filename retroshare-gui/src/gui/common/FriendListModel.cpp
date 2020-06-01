@@ -617,100 +617,104 @@ public:
 QVariant RsFriendListModel::displayRole(const EntryIndex& e, int col) const
 {
 #ifdef DEBUG_MODEL_INDEX
-    std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
-    AutoEndel x;
+	std::cerr << "  Display role " << e.type << ", (" << (int)e.group_index << ","<< (int)e.profile_index << ","<< (int)e.node_index << ") col="<< col<<": ";
+	AutoEndel x;
 #endif
 
-    switch(e.type)
+	switch(e.type)
 	{
-	case ENTRY_TYPE_GROUP:
-        {
-  	      const HierarchicalGroupInformation *group = getGroupInfo(e);
+		case ENTRY_TYPE_GROUP:
+		{
+			const HierarchicalGroupInformation *group = getGroupInfo(e);
 
-  	      if(!group)
-  	          return QVariant();
+			if(!group)
+				return QVariant();
 
-          uint32_t nb_online = 0;
+			uint32_t nb_online = 0;
 
-          for(uint32_t i=0;i<group->child_profile_indices.size();++i)
-              for(uint32_t j=0;j<mProfiles[group->child_profile_indices[i]].child_node_indices.size();++j)
-                  if(mLocations[mProfiles[group->child_profile_indices[i]].child_node_indices[j]].node_info.state & RS_PEER_STATE_CONNECTED)
-                  {
-                      nb_online++;
-                      break;// only breaks the inner loop, on purpose.
-                  }
+			for(uint32_t i=0;i<group->child_profile_indices.size();++i)
+				for(uint32_t j=0;j<mProfiles[group->child_profile_indices[i]].child_node_indices.size();++j)
+					if(mLocations[mProfiles[group->child_profile_indices[i]].child_node_indices[j]].node_info.state & RS_PEER_STATE_CONNECTED)
+					{
+						nb_online++;
+						break;// only breaks the inner loop, on purpose.
+					}
 
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:
+				case COLUMN_THREAD_NAME:
 #ifdef DEBUG_MODEL_INDEX
-              	std::cerr <<   group->group_info.name.c_str() ;
+					std::cerr <<   group->group_info.name.c_str() ;
 #endif
 
-                if(!group->child_profile_indices.empty())
-					return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
-                else
-					return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
+					if(!group->child_profile_indices.empty())
+						return QVariant(QString::fromUtf8(group->group_info.name.c_str())+" (" + QString::number(nb_online) + "/" + QString::number(group->child_profile_indices.size()) + ")");
+					else
+						return QVariant(QString::fromUtf8(group->group_info.name.c_str()));
 
-			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
-			default:
+				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(group->group_info.id.toStdString()));
+				default:
 				return QVariant();
 			}
-    	}
-        break;
+		}
+		break;
 
-	case ENTRY_TYPE_PROFILE:
+		case ENTRY_TYPE_PROFILE:
 		{
- 	       const HierarchicalProfileInformation *profile = getProfileInfo(e);
+			const HierarchicalProfileInformation *profile = getProfileInfo(e);
 
- 	       if(!profile)
- 	           return QVariant();
+			if(!profile)
+				return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
-		   std::cerr << profile->profile_info.name.c_str() ;
+			std::cerr << profile->profile_info.name.c_str() ;
 #endif
 			switch(col)
 			{
-			case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
-			case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
+				case COLUMN_THREAD_NAME:           return QVariant(QString::fromUtf8(profile->profile_info.name.c_str()));
+				case COLUMN_THREAD_ID:             return QVariant(QString::fromStdString(profile->profile_info.gpg_id.toStdString()) );
 
-			default:
+				default:
 				return QVariant();
 			}
-       }
-        break;
+		}
+		break;
 
-	case ENTRY_TYPE_NODE:
-        const HierarchicalNodeInformation *node = getNodeInfo(e);
+		case ENTRY_TYPE_NODE:
+		{
+			const HierarchicalNodeInformation *node = getNodeInfo(e);
 
-        if(!node)
-            return QVariant();
+			if(!node)
+				return QVariant();
 
 #ifdef DEBUG_MODEL_INDEX
-		   std::cerr << node->node_info.location.c_str() ;
+			std::cerr << node->node_info.location.c_str() ;
 #endif
-		switch(col)
-		{
-		case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
-												return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
+			switch(col)
+			{
+				case COLUMN_THREAD_NAME:           if(node->node_info.location.empty())
+						return QVariant(QString::fromStdString(node->node_info.id.toStdString()));
 
-										{
-											std::string css = rsMsgs->getCustomStateString(node->node_info.id);
+				{
+					std::string css = rsMsgs->getCustomStateString(node->node_info.id);
 
-											if(!css.empty() && mDisplayStatusString)
-												return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
-											else
-												return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
-										}
+					if(!css.empty() && mDisplayStatusString)
+						return QVariant(QString::fromUtf8(node->node_info.location.c_str())+"\n"+QString::fromUtf8(css.c_str()));
+					else
+						return QVariant(QString::fromUtf8(node->node_info.location.c_str()));
+				}
 
-		case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
-		case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
-		case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
+				case COLUMN_THREAD_LAST_CONTACT:   return QVariant(QDateTime::fromTime_t(node->node_info.lastConnect).toString());
+				case COLUMN_THREAD_IP:             return QVariant(  (node->node_info.state & RS_PEER_STATE_CONNECTED) ? StatusDefs::connectStateIpString(node->node_info) : QString("---"));
+				case COLUMN_THREAD_ID:             return QVariant(  QString::fromStdString(node->node_info.id.toStdString()) );
 
-		default:
-			return QVariant();
-		} break;
+				default:
+				return QVariant();
+			} break;
+		}
+		break;
 
+		default: //ENTRY_TYPE
 		return QVariant();
 	}
 }

@@ -59,12 +59,17 @@ struct RsTypeSerializer
 		/// Maximum supported size 10MB
 		static constexpr uint32_t MAX_SERIALIZED_CHUNK_SIZE = 10*1024*1024;
 
+		/** Key used for JSON serialization.
+		 * @note Changing this value breaks JSON API retro-compatibility */
+		static constexpr char base64_key[] = "base64";
+
 		/// @see RsSerializable
 		void serial_process(
 		        RsGenericSerializer::SerializeJob j,
 		        RsGenericSerializer::SerializeContext& ctx ) override;
 	private:
 		void clear();
+		bool freshMemCheck();
 	};
 
 	/// Most types are not valid sequence containers
@@ -777,9 +782,9 @@ struct RsTypeSerializer
 			{
 				if(!yielding)
 				{
-					std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
-					          << "\" not found in JSON:" << std::endl
-					          << jDoc << std::endl << std::endl;
+					RsErr() << __PRETTY_FUNCTION__ << " \"" << memberName
+					        << "\" not found in JSON:" << std::endl
+					        << jDoc << std::endl << std::endl;
 					print_stacktrace();
 				}
 				ctx.mOk = false;
@@ -790,9 +795,9 @@ struct RsTypeSerializer
 
 			if(!v.IsObject())
 			{
-				std::cerr << __PRETTY_FUNCTION__ << " \"" << memberName
-				          << "\" has wrong type in JSON, object expected, got:"
-				          << std::endl << jDoc << std::endl << std::endl;
+				RsErr() << __PRETTY_FUNCTION__ << " \"" << memberName
+				        << "\" has wrong type in JSON, object expected, got:"
+				        << std::endl << jDoc << std::endl << std::endl;
 				print_stacktrace();
 				ctx.mOk = false;
 				break;

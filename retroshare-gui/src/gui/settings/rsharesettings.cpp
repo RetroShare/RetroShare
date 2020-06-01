@@ -113,10 +113,10 @@ void RshareSettings::initSettings()
 #else
 	static QStringList styles = QStyleFactory::keys();
 #if defined(Q_OS_WIN)
-	if (styles.contains("windowsvista", Qt::CaseInsensitive))
+	if (styles.contains("Fusion", Qt::CaseInsensitive))
+		setDefault(SETTING_STYLE, "Fusion");
+	else if (styles.contains("windowsvista", Qt::CaseInsensitive))
 		setDefault(SETTING_STYLE, "windowsvista");
-	else if (styles.contains("windowsxp", Qt::CaseInsensitive))
-		setDefault(SETTING_STYLE, "windowsxp");
 	else
 #endif
 	{
@@ -1157,7 +1157,7 @@ void RshareSettings::setWebinterfaceEnabled(bool enabled)
 QString RshareSettings::getWebinterfaceFilesDirectory()
 {
 #ifdef WINDOWS_SYS
-    return valueFromGroup("Webinterface","directory","data/webui/").toString();
+	return valueFromGroup("Webinterface","directory","./webui/").toString();
 #else
     return valueFromGroup("Webinterface","directory","/usr/share/retroshare/webui/").toString();
 #endif

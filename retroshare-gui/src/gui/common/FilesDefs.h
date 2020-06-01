@@ -24,6 +24,8 @@
 #include <QString>
 #include <QIcon>
 
+#include "retroshare/rsids.h"
+
 class FilesDefs
 {
 public:
@@ -35,6 +37,7 @@ public:
 
 	static QIcon   getIconFromQtResourcePath(const QString& resource_path);
 	static QPixmap getPixmapFromQtResourcePath(const QString& resource_path);
+	static QIcon getIconFromGxsIdCache(const RsGxsId& id, const QIcon& setIcon, bool& exist);
 
     // This method returns a QIcon that is suitable to represent a file of a particular type (image, movie, etc.)
 

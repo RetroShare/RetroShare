@@ -82,9 +82,10 @@ virtual void handle_event(uint32_t event_type, const std::string &elabel);
 
 public:
 
-virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups);
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts);
-virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
+virtual bool getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups ) override;
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &vots) override;
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts, std::vector<RsGxsComment> &cmts) override;
+virtual bool getPostData(const uint32_t &token, std::vector<RsGxsChannelPost> &posts) override;
 //Not currently used
 //virtual bool getRelatedPosts(const uint32_t &token, std::vector<RsGxsChannelPost> &posts);
 
@@ -187,14 +188,21 @@ virtual bool ExtraFileRemove(const RsFileHash &hash);
 
 	/// Implementation of @see RsGxsChannels::getChannelAllMessages
 	bool getChannelAllContent(const RsGxsGroupId& channelId,
-	                        std::vector<RsGxsChannelPost>& posts,
-	                        std::vector<RsGxsComment>& comments ) override;
+	                          std::vector<RsGxsChannelPost>& posts,
+	                          std::vector<RsGxsComment>& comments,
+	                          std::vector<RsGxsVote>& votes ) override;
 
 	/// Implementation of @see RsGxsChannels::getChannelMessages
 	bool getChannelContent(const RsGxsGroupId& channelId,
 	                        const std::set<RsGxsMessageId>& contentIds,
 	                        std::vector<RsGxsChannelPost>& posts,
-	                        std::vector<RsGxsComment>& comments ) override;
+	                        std::vector<RsGxsComment>& comments,
+	                        std::vector<RsGxsVote>& votes ) override;
+
+	/// Implementation of @see RsGxsChannels::getChannelComments
+	virtual bool getChannelComments(const RsGxsGroupId &channelId,
+	                                const std::set<RsGxsMessageId> &contentIds,
+	                                std::vector<RsGxsComment> &comments) override;
 
 	/// Implementation of @see RsGxsChannels::getContentSummaries
 	bool getContentSummaries(

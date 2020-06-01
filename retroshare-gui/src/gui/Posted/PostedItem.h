@@ -31,7 +31,7 @@ class PostedItem;
 }
 
 class FeedHolder;
-class RsPostedPost;
+struct RsPostedPost;
 
 class BasePostedItem : public GxsFeedItem
 {
@@ -40,7 +40,7 @@ class BasePostedItem : public GxsFeedItem
 public:
 	BasePostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
 	BasePostedItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
-	virtual ~BasePostedItem()=default;
+	virtual ~BasePostedItem();
 
 	bool setPost(const RsPostedPost& post, bool doFill = true);
 
@@ -64,15 +64,15 @@ protected:
     virtual void paintEvent(QPaintEvent *) override;
 
 	/* GxsGroupFeedItem */
-	virtual QString groupName();
+	virtual QString groupName() override;
 	virtual void loadGroup() override;
-	virtual RetroShareLink::enumType getLinkType() { return RetroShareLink::TYPE_UNKNOWN; }
+	virtual RetroShareLink::enumType getLinkType() override { return RetroShareLink::TYPE_UNKNOWN; }
 
 	/* GxsFeedItem */
-	virtual QString messageName();
+	virtual QString messageName() override;
 
-	virtual void loadMessage();
-	virtual void loadComment();
+	virtual void loadMessage() override;
+	virtual void loadComment() override;
 
 	bool mInFill;
 	RsGroupMetaData mGroupMeta;
@@ -80,7 +80,7 @@ protected:
 
 	virtual void setup()=0;
 	virtual void fill()=0;
-	virtual void doExpand(bool open)=0;
+	virtual void doExpand(bool open) override =0;
 	virtual void setComment(const RsGxsComment&)=0;
 	virtual void setReadStatus(bool isNew, bool isUnread)=0;
 	virtual void setCommentsSize(int comNb)=0;
@@ -89,11 +89,16 @@ protected:
 	virtual void toggleNotes()=0;
 
 private:
-    bool mLoaded;
+	bool mLoaded;
+	bool mIsLoadingGroup;
+	bool mIsLoadingMessage;
+	bool mIsLoadingComment;
 };
 
 class PostedItem: public BasePostedItem
 {
+	Q_OBJECT
+
 public:
 	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGxsGroupId& groupId, const RsGxsMessageId& messageId, bool isHome, bool autoUpdate);
 	PostedItem(FeedHolder *parent, uint32_t feedId, const RsGroupMetaData& group_meta, const RsGxsMessageId& post_id, bool isHome, bool autoUpdate);
@@ -101,14 +106,16 @@ public:
 protected:
 	void setup() override;
 	void fill() override;
-	void doExpand(bool open) override;
 	void setComment(const RsGxsComment&) override;
 	void setReadStatus(bool isNew, bool isUnread) override;
-    void toggle() override ;
 	void setCommentsSize(int comNb) override;
-    void makeUpVote() override;
-    void makeDownVote() override;
-	void toggleNotes() override;
+
+private slots:
+	void doExpand(bool open);
+	void toggle();
+	void makeUpVote();
+	void makeDownVote();
+	void toggleNotes() ;
 
 private:
 	/** Qt Designer generated object */

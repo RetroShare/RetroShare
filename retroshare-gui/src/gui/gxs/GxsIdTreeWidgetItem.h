@@ -27,8 +27,10 @@
 #include "retroshare/rsidentity.h"
 #include "retroshare/rspeers.h"
 
+#include "gui/common/FilesDefs.h"
 #include "gui/common/RSTreeWidgetItem.h"
-#include "gui/common/ElidedLabel.h"
+#include "gui/common/RSElidedItemDelegate.h"
+
 #include "gui/gxs/GxsIdDetails.h"
 
 /*****
@@ -70,7 +72,7 @@ private:
 	bool mIdFound;
 	bool mBannedState ;
 	bool mRetryWhenFailed;
-    bool mAutoTooltip;
+	bool mAutoTooltip;
 	RsReputationLevel mReputationLevel;
 	uint32_t mIconTypeMask;
 	RsGxsImage mAvatar;
@@ -78,18 +80,17 @@ private:
 
 // This class is responsible of rendering authors of type RsGxsId in tree views. Used in forums, messages, etc.
 
-class GxsIdTreeItemDelegate: public QStyledItemDelegate
+class GxsIdTreeItemDelegate: public RSElidedItemDelegate
 {
     Q_OBJECT
 
 public:
-    GxsIdTreeItemDelegate()
-    {
-        mLoading = false;
-        mReloadPeriod = 0;
-    }
+	GxsIdTreeItemDelegate(QObject *parent = nullptr)
+	    :RSElidedItemDelegate(parent), mLoading(false), mReloadPeriod(0)
+	{
+		//setPaintRoudedRect(false);
+	}
 
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex& index) const override;
 
     void launchAsyncLoading() const
@@ -116,22 +117,27 @@ public:
         return true;
     }
 
-    static bool computeNameIconAndComment(const RsGxsId& id,QString& name,QIcon& icon,QString& comment)
-    {
-        QList<QIcon> icons;
+	static bool computeNameIconAndComment(const RsGxsId& id,QString& name,QIcon& icon,QString& comment)
+	{
+		QList<QIcon> icons;
+		bool exist = false;
 
-        if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
-        {
+
+		if(rsPeers->isFriend(RsPeerId(id)))		// horrible trick because some widgets still use locations as IDs (e.g. messages)
+		{
 			name = QString::fromUtf8(rsPeers->getPeerName(RsPeerId(id)).c_str()) ;
-            icon = QIcon(":/icons/avatar_128.png");
-        }
-        else if(!GxsIdDetails::MakeIdDesc(id, true, name, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-            return false;
+			icon = FilesDefs::getIconFromQtResourcePath(":/icons/avatar_128.png");
+		}
 		else
-			icon = *icons.begin();
+			if(!GxsIdDetails::MakeIdDesc(id, true, name, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
+				return false;
+			else
+				icon = *icons.begin();
 
-        return true;
-    }
+		FilesDefs::getIconFromGxsIdCache(id,icon,exist);
+
+		return true;
+	}
 
 private slots:
     void reload() { mLoading=false; emit commitData(NULL) ;  }

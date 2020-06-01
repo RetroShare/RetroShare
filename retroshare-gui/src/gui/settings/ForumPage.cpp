@@ -35,6 +35,8 @@ ForumPage::ForumPage(QWidget * parent, Qt::WindowFlags flags)
 	connect(ui.expandNewMessages  , SIGNAL(toggled(bool)), this, SLOT( updateExpandNewMessages()));
 	connect(ui.loadEmbeddedImages , SIGNAL(toggled(bool)), this, SLOT(updateLoadEmbeddedImages() ));
 	connect(ui.loadEmoticons      , SIGNAL(toggled(bool)), this, SLOT(   updateLoadEmoticons()	 ));
+	connect(ui.minimumFontSize    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
+	connect(ui.minimumContrast    , SIGNAL(valueChanged(int)), this, SLOT(updateFonts()));
 
     ui.groupFrameSettingsWidget->setType(GroupFrameSettings::Forum) ;
 }
@@ -51,10 +53,22 @@ void ForumPage::updateLoadEmoticons()		{ Settings->setForumLoadEmoticons(       
 /** Loads the settings for this page */
 void ForumPage::load()
 {
+	Settings->beginGroup(QString("Forum"));
 	whileBlocking(ui.setMsgToReadOnActivate)->setChecked(Settings->getForumMsgSetToReadOnActivate());
 	whileBlocking(ui.expandNewMessages)->setChecked(Settings->getForumExpandNewMessages());
 	whileBlocking(ui.loadEmbeddedImages)->setChecked(Settings->getForumLoadEmbeddedImages());
 	whileBlocking(ui.loadEmoticons)->setChecked(Settings->getForumLoadEmoticons());
+	whileBlocking(ui.minimumFontSize)->setValue(Settings->value("MinimumFontSize", 10).toInt());
+	whileBlocking(ui.minimumContrast)->setValue(Settings->value("MinimumContrast", 4.5).toDouble());
+	Settings->endGroup();
 
 	ui.groupFrameSettingsWidget->loadSettings(GroupFrameSettings::Forum);
+}
+
+void ForumPage::updateFonts()
+{
+	Settings->beginGroup(QString("Forum"));
+	Settings->setValue("MinimumFontSize", ui.minimumFontSize->value());
+	Settings->setValue("MinimumContrast", ui.minimumContrast->value());
+	Settings->endGroup();
 }

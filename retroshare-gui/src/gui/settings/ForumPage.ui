@@ -17,6 +17,16 @@
       <string>Misc</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="loadEmoticons">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option is costly and it's in the dev's plans to improve it. In the mean time it's disabled by default. If you enable it and long forum posts take a while to display, then disable it again. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Load emoticons (costly)</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0">
        <widget class="QCheckBox" name="setMsgToReadOnActivate">
         <property name="text">
@@ -38,15 +48,71 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QCheckBox" name="loadEmoticons">
-        <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option is costly and it's in the dev's plans to improve it. In the mean time it's disabled by default. If you enable it and long forum posts take a while to display, then disable it again. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-        <property name="text">
-         <string>Load emoticons (costly)</string>
-        </property>
-       </widget>
+      <item row="4" column="0">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="minimumFontSizeLabel">
+          <property name="text">
+           <string>Minimum font size</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="minimumFontSize">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>64</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" rowspan="2">
+         <spacer name="minimumFontSizeHSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>38</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="minimumContrastLabel">
+          <property name="text">
+           <string>Minimum text contrast</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="minimumContrast">
+          <property name="minimum">
+           <double>1.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>21.000000000000000</double>
+          </property>
+          <property name="singleStep">
+           <double>0.500000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QGroupBox" name="tabsGroupBox">
+     <property name="title">
+      <string>Tabs</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="GroupFrameSettingsWidget" name="groupFrameSettingsWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -63,18 +129,6 @@
       </size>
      </property>
     </spacer>
-   </item>
-   <item row="1" column="0">
-    <widget class="QGroupBox" name="tabsGroupBox">
-     <property name="title">
-      <string>Tabs</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="GroupFrameSettingsWidget" name="groupFrameSettingsWidget" native="true"/>
-      </item>
-     </layout>
-    </widget>
    </item>
   </layout>
  </widget>

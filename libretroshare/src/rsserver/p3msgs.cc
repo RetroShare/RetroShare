@@ -376,9 +376,13 @@ bool 	p3Msgs::getMessageTagTypes(MsgTagType& tags)
 }
 
 bool p3Msgs::MessageStar(const std::string &mid, bool star)
-
 {
 	return mMsgSrv->setMsgFlag(mid, star ? RS_MSG_FLAGS_STAR : 0, RS_MSG_FLAGS_STAR);
+}
+
+bool p3Msgs::MessageJunk(const std::string &mid, bool junk)
+{
+	return mMsgSrv->setMsgFlag(mid, junk ? RS_MSG_FLAGS_SPAM : 0, RS_MSG_FLAGS_SPAM);
 }
 
 bool  p3Msgs::setMessageTagType(uint32_t tagId, std::string& text, uint32_t rgb_color)

@@ -537,8 +537,9 @@ bool RsCollectionDialog::addChild(QTreeWidgetItem* parent, const std::vector<Col
 
 			if (colFileInfo.filename_has_wrong_characters)
 			{
+				//TODO (Phenom): Add qproperty for these text colors in stylesheets
 				wrong_chars = true ;
-				item->setTextColor(COLUMN_FILE, QColor(255,80,120)) ;
+				item->setData(COLUMN_FILE, Qt::ForegroundRole, QColor(255,80,120)) ;
 			}
 
 			if (parentsFounds.empty()) {

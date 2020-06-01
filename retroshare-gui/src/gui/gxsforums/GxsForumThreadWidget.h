@@ -178,6 +178,7 @@ private:
 private:
 	void setForumDescriptionLoading();
 	void clearForumDescription();
+	void blankPost();
 
 	RsGxsGroupId mLastForumID;
 	RsGxsMessageId mThreadId;

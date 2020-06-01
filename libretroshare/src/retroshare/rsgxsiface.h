@@ -116,12 +116,14 @@ struct RsGxsIface
      */
     virtual uint16_t serviceType() const =0;
 
+#ifdef TO_REMOVE
     /*!
      * Gxs services should call this for automatic handling of
      * changes, send
      * @param changes
      */
     virtual void receiveChanges(std::vector<RsGxsNotify*>& changes) = 0;
+#endif
 
     /*!
      * @return handle to token service for this GXS service

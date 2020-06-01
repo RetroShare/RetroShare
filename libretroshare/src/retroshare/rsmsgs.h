@@ -62,6 +62,7 @@
 #define RS_MSG_SIGNED                0x004000	/* message was signed and signature didn't check */
 #define RS_MSG_LOAD_EMBEDDED_IMAGES  0x008000   /* load embedded images */
 #define RS_MSG_PUBLISH_KEY           0x020000   /* publish key */
+#define RS_MSG_SPAM                  0x040000   /* Message is marked as spam */
 
 #define RS_MSG_SYSTEM                (RS_MSG_USER_REQUEST | RS_MSG_FRIEND_RECOMMENDATION | RS_MSG_PUBLISH_KEY)
 
@@ -702,6 +703,15 @@ public:
 	 * @return true on success
 	 */
 	virtual bool MessageStar(const std::string &msgId, bool mark) = 0;
+
+	/**
+	 * @brief MessageJunk
+	 * @jsonapi{development}
+	 * @param[in] msgId
+	 * @param[in] mark
+	 * @return true on success
+	 */
+	virtual bool MessageJunk(const std::string &msgId, bool mark) = 0;
 
 	/**
 	 * @brief MessageLoadEmbeddedImages
