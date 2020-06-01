@@ -26,7 +26,7 @@
 
 #include "GxsChannelDialog.h"
 #include "GxsChannelGroupDialog.h"
-#include "GxsChannelPostsWidget.h"
+#include "GxsChannelPostsWidgetWithModel.h"
 #include "CreateGxsChannelMsg.h"
 #include "GxsChannelUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
@@ -204,7 +204,7 @@ int GxsChannelDialog::shareKeyType()
 
 GxsMessageFrameWidget *GxsChannelDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
-	return new GxsChannelPostsWidget(groupId);
+	return new GxsChannelPostsWidgetWithModel(groupId,this);
 }
 
 void GxsChannelDialog::setDefaultDirectory()

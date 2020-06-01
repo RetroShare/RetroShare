@@ -80,13 +80,22 @@ GxsChannelFilesWidget::GxsChannelFilesWidget(QWidget *parent) :
 	ui->treeWidget->setColumnWidth(COLUMN_PUBLISHED, 150);
 }
 
+GxsChannelFilesWidget::paintEvent()
+{
+    QWidget::paintEvent();
+
+    if(!mLoaded)
+    {
+    }
+}
+
 GxsChannelFilesWidget::~GxsChannelFilesWidget()
 {
 	delete(mCompareRole);
 	delete ui;
 }
 
-void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
+void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost& post, bool related)
 {
 	if (related) {
 		removeItems(post.mMeta.mGroupId, post.mMeta.mMsgId);

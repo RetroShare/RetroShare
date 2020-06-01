@@ -1333,13 +1333,17 @@ gxschannels {
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
 		gui/gxschannels/GxsChannelPostsWidget.h \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.h \
+		gui/gxschannels/GxsChannelPostsModel.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
-	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
+	FORMS += \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
+		gui/gxschannels/GxsChannelPostsWidget.ui \
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
@@ -1348,6 +1352,8 @@ gxschannels {
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
 		gui/gxschannels/GxsChannelPostsWidget.cpp \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
+		gui/gxschannels/GxsChannelPostsModel.cpp \
 		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \

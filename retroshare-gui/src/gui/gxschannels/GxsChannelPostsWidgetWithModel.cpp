@@ -23,7 +23,7 @@
 
 #include "retroshare/rsgxscircles.h"
 
-#include "GxsChannelPostsWidget.h"
+#include "GxsChannelPostsWidgetWithModel.h"
 #include "ui_GxsChannelPostsWidget.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -52,13 +52,14 @@
 #define VIEW_MODE_FILES  2
 
 /** Constructor */
-GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent) :
+GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFramePostWidget(rsGxsChannels, parent),
 	ui(new Ui::GxsChannelPostsWidget)
 {
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
+	ui->postsTree->setModel(new RsGxsChannelPostsModel());
 
 	/* Setup UI helper */
 
@@ -85,8 +86,10 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
 	ui->filterLineEdit->addFilter(QIcon(), tr("Filename"), FILTER_FILE_NAME, tr("Search Filename"));
+#ifdef TODO
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->feedWidget, SLOT(setFilterText(QString)));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->fileWidget, SLOT(setFilterText(QString)));
+#endif
 	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged(int)));
 
 	/* Initialize view button */
@@ -127,7 +130,8 @@ GxsChannelPostsWidget::GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWid
 	/* Initialize GUI */
 	setAutoDownload(false);
 	settingsChanged();
-	setGroupId(channelId);
+
+	mThreadModel->updateChannel(channelId);
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
@@ -369,9 +373,11 @@ void GxsChannelPostsWidget::insertChannelDetails(const RsGxsChannelGroup &group)
  
 		ui->infoDistribution->setText(distrib_string);
 
+#ifdef TODO
 		ui->infoWidget->show();
 		ui->feedWidget->hide();
 		ui->fileWidget->hide();
+#endif
 
 		ui->feedToolButton->setEnabled(false);
 		ui->fileToolButton->setEnabled(false);
@@ -395,6 +401,7 @@ int GxsChannelPostsWidget::viewMode()
 
 void GxsChannelPostsWidget::setViewMode(int viewMode)
 {
+#ifdef TODO
 	switch (viewMode) {
 	case VIEW_MODE_FEEDS:
 		ui->feedWidget->show();
@@ -416,12 +423,15 @@ void GxsChannelPostsWidget::setViewMode(int viewMode)
 		setViewMode(VIEW_MODE_FEEDS);
 		return;
 	}
+#endif
 }
 
 void GxsChannelPostsWidget::filterChanged(int filter)
 {
+#ifdef TODO
 	ui->feedWidget->setFilterType(filter);
 	ui->fileWidget->setFilterType(filter);
+#endif
 }
 
 /*static*/ bool GxsChannelPostsWidget::filterItem(FeedItem *feedItem, const QString &text, int filter)
@@ -510,6 +520,12 @@ void GxsChannelPostsWidget::createPostItemFromMetaData(const RsGxsMsgMetaData& m
 }
 #endif
 
+void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost>& posts)
+{
+    mModel->setPosts(posts);
+}
+
+#ifdef TODO
 void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool related)
 {
 	GxsChannelPostItem *item = NULL;
@@ -716,6 +732,7 @@ void GxsChannelPostsWidget::clearPosts()
 	ui->feedWidget->clear();
 	ui->fileWidget->clear();
 }
+#endif
 
 void GxsChannelPostsWidget::blank()
 {
@@ -870,6 +887,7 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
 	return false;
 }
 
+#ifdef TODO
 void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread)
 {
     std::vector<RsGxsChannelPost> cposts;
@@ -879,6 +897,8 @@ void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData
 
 	insertChannelPosts(cposts, thread, false);
 }
+#endif
+
 void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& posts)
 {
     std::vector<RsGxsChannelPost> cposts;
@@ -886,7 +906,7 @@ void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>&
     for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
 		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
 
-	insertChannelPosts(cposts, NULL, true);
+	insertChannelPosts(cposts);
 }
 
 class GxsChannelPostsReadData
