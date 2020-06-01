@@ -162,8 +162,8 @@ if "%QtMainVersion%"=="5" (
 echo copy bdboot.txt
 copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 
-echo copy changelog.txt
-copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
+echo generate changelog.txt
+call call "%~dp0\git-log.bat" "%SourcePath%" "%RsDeployPath%\changelog.txt"
 
 echo copy buildinfo.txt
 copy "%RsBuildPath%\buildinfo.txt" "%RsDeployPath%" %Quite%

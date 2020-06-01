@@ -7,8 +7,6 @@ call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
-call "%EnvPath%\env.bat"
-if errorlevel 1 goto error_env
 call "%EnvPath%\env-msys2.bat"
 if errorlevel 1 goto error_env
 
@@ -85,6 +83,7 @@ echo.
 title Build - %SourceName%-%RsBuildConfig% [make]
 
 %EnvMSYS2Cmd% "make -j %CoreCount%"
+if errorlevel 1 goto error
 
 :: Webui
 if "%ParamWebui%"=="1" (
