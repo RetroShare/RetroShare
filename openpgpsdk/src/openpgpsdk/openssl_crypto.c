@@ -22,6 +22,7 @@
 /** \file
  */
 
+#include <openssl/bio.h>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #include <openssl/dsa.h>
