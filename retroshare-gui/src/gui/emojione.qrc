@@ -937,5 +937,7 @@
         <file>emojione/1F1FF-1F1FC.png</file>
         <file>emojione/flags.png</file>
         <file>emojione/flags2.png</file>
+        <file>emojione/man-facepalming.png</file>
+        <file>emojione/woman-facepalming.png</file>
     </qresource>
 </RCC>

@@ -1165,16 +1165,14 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		flags |= RSHTML_OPTIMIZEHTML_MASK;
 
 		QColor backgroundColor = ui->postText->palette().base().color();
-		qreal desiredContrast = Settings->valueFromGroup("Chat",
+		qreal desiredContrast = Settings->valueFromGroup("Forum",
 			"MinimumContrast", 4.5).toDouble();
-		int desiredMinimumFontSize = Settings->valueFromGroup("Chat",
+		int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
 			"MinimumFontSize", 10).toInt();
 
 		QString extraTxt = RsHtml().formatText(ui->postText->document(),
 			QString::fromUtf8(msg.mMsg.c_str()), flags
-				#ifndef DEBUG_FORUMS \
 				, backgroundColor, desiredContrast, desiredMinimumFontSize
-				#endif
 			);
 		ui->postText->setHtml(extraTxt);
 	}

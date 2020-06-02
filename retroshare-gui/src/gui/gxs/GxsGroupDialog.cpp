@@ -892,6 +892,10 @@ void GxsGroupDialog::getSelectedModerators(std::set<RsGxsId>& ids)
 
 void GxsGroupDialog::setSelectedModerators(const std::set<RsGxsId>& ids)
 {
+    ui.addAdmins_cb->setChecked(true);
+	ui.adminsList->show();
+	ui.filtercomboBox->show();
+
 	ui.adminsList->setSelectedIds<RsGxsId,FriendSelectionWidget::IDTYPE_GXS>(ids, false);
 
 	QString moderatorsListString ;

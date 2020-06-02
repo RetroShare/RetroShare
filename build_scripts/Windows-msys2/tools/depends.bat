@@ -1,40 +1,22 @@
 :: Usage:
-:: call depends.bat [list^|missing] file
+:: call depends.bat file
 
-if "%2"=="" (
-	echo Usage: %~nx0 [list^|missing] File
+if "%1"=="" (
+	echo Usage: %~nx0 File
 	exit /B 1
 )
 
 setlocal
+pushd %~dp1
 
-if not exist "%EnvDependsExe%" echo depends.exe not found in %EnvToolsPath%.& exit /B 1
+%EnvMSYS2Cmd% "ntldd --recursive $0 | cut -f1 -d"=" | awk '{$1=$1};1'" %~nx1 > %~sdp0depends.tmp
 
-set CutPath=
-call "%ToolsPath%\find-in-path.bat" CutPath cut.exe
-if "%CutPath%"=="" echo cut.exe not found in PATH.& exit /B 1
-
-start /wait "" "%EnvDependsExe%" /c /oc:"%~dp0depends.tmp" %2
-if "%1"=="missing" (
-	cut.exe --delimiter=, --fields=1,2 "%~dp0depends.tmp" >"%~dp0depends1.tmp"
-	for /F "tokens=1,2 delims=," %%A in (%~sdp0depends1.tmp) do (
-		if "%%A"=="?" (
-			echo %%~B
-		)
-	)
-)
-
-if "%1"=="list" (
-	cut.exe --delimiter=, --fields=2 "%~dp0depends.tmp" >"%~dp0depends1.tmp"
-	for /F "tokens=1 delims=," %%A in (%~sdp0depends1.tmp) do (
-		if "%%A" NEQ "Module" (
-			echo %%~A
-		)
-	)
+for /F %%A in (%~sdp0depends.tmp) do (
+	echo %%~A
 )
 
 if exist "%~dp0depends.tmp" del /Q "%~dp0depends.tmp"
-if exist "%~dp0depends1.tmp" del /Q "%~dp0depends1.tmp"
 
+popd
 endlocal
 exit /B 0

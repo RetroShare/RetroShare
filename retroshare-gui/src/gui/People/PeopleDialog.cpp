@@ -271,25 +271,29 @@ void PeopleDialog::insertCircles(uint32_t token)
 	std::list<RsGroupMetaData> gSummaryList;
 	std::list<RsGroupMetaData>::iterator gsIt;
 
-	if (!rsGxsCircles->getGroupSummary(token,gSummaryList)) {
+	if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
+    {
 		std::cerr << "PeopleDialog::insertExtCircles() Error getting GroupSummary";
 		std::cerr << std::endl;
 
 		return;
-	}//if (!rsGxsCircles->getGroupSummary(token,gSummaryList))
+	}
 
 	for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt) {
 		RsGroupMetaData gsItem = (*gsIt);
 
 		RsGxsCircleDetails details ;
-		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details)){
+		if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(gsItem.mGroupId), details))
+        {
 			std::cerr << "(EE) Cannot get details for circle id " << gsItem.mGroupId << ". Circle item is not created!" << std::endl;
 			continue ;
-		}//if(!rsGxsCircles->getCircleDetails(RsGxsCircleId(git->mGroupId), details))
+		}
 
-		if (details.mCircleType != GXS_CIRCLE_TYPE_EXTERNAL){
+		if (details.mCircleType != RsGxsCircleType::EXTERNAL)
+        {
 			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
-			if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end()) {
+			if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
+            {
 				std::cerr << "PeopleDialog::insertExtCircles() add new Internal GroupId: " << gsItem.mGroupId;
 				std::cerr << " GroupName: " << gsItem.mGroupName;
 				std::cerr << std::endl;
@@ -307,7 +311,9 @@ void PeopleDialog::insertCircles(uint32_t token)
 				QPixmap pixmap = gitem->getImage();
 				pictureFlowWidgetInternal->addSlide( pixmap );
 				_intListCir << gitem;
-			} else {//if((itFound=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
+			}
+            else
+            {
 				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
 				std::cerr << " GroupName: " << gsItem.mGroupName;
 				std::cerr << std::endl;
@@ -318,8 +324,10 @@ void PeopleDialog::insertCircles(uint32_t token)
 				//int index = _intListCir.indexOf(cirWidget);
 				//QPixmap pixmap = cirWidget->getImage();
 				//pictureFlowWidgetInternal->setSlide(index, pixmap);
-			}//if((item=_int_circles_widgets.find(gsItem.mGroupId)) == _int_circles_widgets.end())
-		} else {//if (!details.mIsExternal)
+			}
+		}
+        else
+        {
 			std::map<RsGxsGroupId, CircleWidget*>::iterator itFound;
 			if((itFound=_ext_circles_widgets.find(gsItem.mGroupId)) == _ext_circles_widgets.end()) {
 				std::cerr << "PeopleDialog::insertExtCircles() add new GroupId: " << gsItem.mGroupId;
@@ -339,7 +347,9 @@ void PeopleDialog::insertCircles(uint32_t token)
 				QPixmap pixmap = gitem->getImage();
 				pictureFlowWidgetExternal->addSlide( pixmap );
 				_extListCir << gitem;
-			} else {//if((itFound=_circles_widgets.find(gsItem.mGroupId)) == _circles_widgets.end())
+			}
+            else
+            {
 				std::cerr << "PeopleDialog::insertExtCircles() Update GroupId: " << gsItem.mGroupId;
 				std::cerr << " GroupName: " << gsItem.mGroupName;
 				std::cerr << std::endl;
@@ -350,9 +360,9 @@ void PeopleDialog::insertCircles(uint32_t token)
 				//int index = _extListCir.indexOf(cirWidget);
 				//QPixmap pixmap = cirWidget->getImage();
 				//pictureFlowWidgetExternal->setSlide(index, pixmap);
-			}//if((item=_circles_items.find(gsItem.mGroupId)) == _circles_items.end())
-		}//else (!details.mIsExternal)
-	}//for(gsIt = gSummaryList.begin(); gsIt != gSummaryList.end(); ++gsIt)
+			}
+		}
+	}
 }
 
 void PeopleDialog::requestIdList()

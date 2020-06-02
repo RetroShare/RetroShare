@@ -76,6 +76,7 @@ public:
         QUICK_VIEW_STARRED         = 0x06,
         QUICK_VIEW_SYSTEM          = 0x07,
         QUICK_VIEW_SPAM            = 0x08,
+        QUICK_VIEW_ATTACHMENT      = 0x09,
         QUICK_VIEW_USER            = 100
     };
 
@@ -109,7 +110,6 @@ public:
     void setCurrentBox(BoxName bn) ;
     void setQuickViewFilter(QuickViewFilter fn) ;
 
-    const RsMessageId& currentMessageId() const;
     void setFilter(FilterType filter_type, const QStringList& strings) ;
 
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;

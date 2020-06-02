@@ -154,13 +154,15 @@ public:
 	virtual bool getBoardAllContent(
 	        const RsGxsGroupId& boardId,
 	        std::vector<RsPostedPost>& posts,
-	        std::vector<RsGxsComment>& comments ) = 0;
+	        std::vector<RsGxsComment>& comments,
+	        std::vector<RsGxsVote>& votes ) = 0;
 
 	virtual bool getBoardContent(
 	        const RsGxsGroupId& boardId,
 	        const std::set<RsGxsMessageId>& contentsIds,
 	        std::vector<RsPostedPost>& posts,
-	        std::vector<RsGxsComment>& comments ) = 0;
+	        std::vector<RsGxsComment>& comments,
+	        std::vector<RsGxsVote>& votes ) = 0;
 
 	virtual bool editBoard(RsPostedGroup& board) =0;
 
@@ -175,6 +177,11 @@ public:
 	RS_DEPRECATED_FOR(getBoardsInfo)
 	virtual bool getGroupData( const uint32_t& token,
 	                           std::vector<RsPostedGroup> &groups ) = 0;
+
+	RS_DEPRECATED_FOR(getBoardsContent)
+	virtual bool getPostData(
+	        const uint32_t& token, std::vector<RsPostedPost>& posts,
+	        std::vector<RsGxsComment>& cmts, std::vector<RsGxsVote>& vots) = 0;
 
 	RS_DEPRECATED_FOR(getBoardsContent)
 	virtual bool getPostData(

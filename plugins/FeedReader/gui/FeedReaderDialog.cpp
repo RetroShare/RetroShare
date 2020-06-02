@@ -452,7 +452,7 @@ void FeedReaderDialog::calculateFeedItem(QTreeWidgetItem *item, uint32_t &unread
 		font.setBold(unreadCountItem != 0);
 		item->setFont(i, font);
 
-		item->setTextColor(COLUMN_FEED_NAME, deactivated ? colorDeactivated : colorActivated);
+		item->setData(COLUMN_FEED_NAME, Qt::ForegroundRole, deactivated ? colorDeactivated : colorActivated);
 	}
 
 	QIcon icon = item->data(COLUMN_FEED_DATA, ROLE_FEED_ICON).value<QIcon>();

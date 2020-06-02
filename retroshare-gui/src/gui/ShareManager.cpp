@@ -250,21 +250,23 @@ void ShareManager::load()
 
         listWidget->item(row,COLUMN_GROUPS)->setText(getGroupString(mDirInfos[row].parent_groups));
 
-        QFont font = listWidget->item(row,COLUMN_GROUPS)->font();
-        font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
-        listWidget->item(row,COLUMN_GROUPS)->setTextColor( (mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE)? (Qt::black):(Qt::lightGray)) ;
-        listWidget->item(row,COLUMN_GROUPS)->setFont(font);
+		//TODO (Phenom): Add qproperty for these text colors in stylesheets
+		// As palette is not updated by stylesheet
+		QFont font = listWidget->item(row,COLUMN_GROUPS)->font();
+		font.setBold(mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ;
+		listWidget->item(row,COLUMN_GROUPS)->setData(Qt::ForegroundRole, QColor((mDirInfos[row].shareflags & DIR_FLAGS_BROWSABLE) ? (Qt::black):(Qt::lightGray)) );
+		listWidget->item(row,COLUMN_GROUPS)->setFont(font);
 
-        if(QDir(QString::fromUtf8(mDirInfos[row].filename.c_str())).exists())
-        {
-        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::black);
+		if(QDir(QString::fromUtf8(mDirInfos[row].filename.c_str())).exists())
+		{
+			listWidget->item(row,COLUMN_PATH)->setData(Qt::ForegroundRole, QColor(Qt::black));
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Double click to change shared directory path")) ;
-        }
-        else
-        {
-        	listWidget->item(row,COLUMN_PATH)->setTextColor(Qt::lightGray);
+		}
+		else
+		{
+			listWidget->item(row,COLUMN_PATH)->setData(Qt::ForegroundRole, QColor(Qt::lightGray));
 			listWidget->item(row,COLUMN_PATH)->setToolTip(tr("Directory does not exist! Double click to change shared directory path")) ;
-        }
+		}
     }
 
     listWidget->setColumnWidth(COLUMN_SHARE_FLAGS,132 * QFontMetricsF(font()).height()/14.0) ;

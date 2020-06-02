@@ -22,6 +22,8 @@
 
 #include <algorithm>
 #include <iostream>
+#include <limits>
+#include <system_error>
 
 #include "crypto/chacha20.h"
 //const int ftserverzone = 29539;
@@ -293,7 +295,8 @@ bool ftServer::getFileData(const RsFileHash& hash, uint64_t offset, uint32_t& re
 
 bool ftServer::alreadyHaveFile(const RsFileHash& hash, FileInfo &info)
 {
-	return mFileDatabase->search(hash, RS_FILE_HINTS_LOCAL, info);
+	return mFileDatabase->search(
+	            hash, RS_FILE_HINTS_EXTRA | RS_FILE_HINTS_LOCAL, info );
 }
 
 bool ftServer::FileRequest(
@@ -819,6 +822,14 @@ bool ftServer::ExtraFileRemove(const RsFileHash& hash)
 bool ftServer::ExtraFileHash(
         std::string localpath, rstime_t period, TransferRequestFlags flags )
 {
+	constexpr rstime_t uintmax = std::numeric_limits<uint32_t>::max();
+	if(period > uintmax)
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " period: " << period << " > "
+		        << uintmax << std::errc::value_too_large << std::endl;
+		return false;
+	}
+
 	return mFtExtra->hashExtraFile(
 	            localpath, static_cast<uint32_t>(period), flags );
 }

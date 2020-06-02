@@ -60,6 +60,9 @@ QWidget
     border-image: none;
     outline: 0;
 }
+QTreeView::item, QTreeWidget::item, QListWidget::item{
+	color: silver;
+}
 
 QWidget:item:hover
 {
@@ -1298,6 +1301,11 @@ WireGroupItem QFrame#frame{
 
 RSTextBrowser, MimeTextEdit
 {
-	qproperty-textColorQuote: rgb(125, 125, 255);
-	qproperty-textColorQuotes: ColorList(#0000ff #00ff00 #00ffff #ff0000 #ff00ff #ffff00 #ffffff);
+	/*qproperty-textColorQuote: rgb(125, 125, 255);*/
+	qproperty-textColorQuotes: ColorList(#789922 #039bd5 #800000 #800080 #008080 #b10dc9 #85144b #3d9970);
+}
+
+ChatWidget QFrame#pluginTitleFrame
+{
+		background: transparent;
 }

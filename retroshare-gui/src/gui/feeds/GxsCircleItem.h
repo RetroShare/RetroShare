@@ -65,9 +65,9 @@ protected:
 
 private slots:
 	void showCircleDetails();
-	void acceptCircleSubscription();
-	void grantCircleMembership() ;
-	void revokeCircleMembership();
+	void requestCircleSubscription();
+	void toggleCircleMembership() ;
+	void toggleCircleInvite();
 
 private:
 	void setup();

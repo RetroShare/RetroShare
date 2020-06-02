@@ -45,6 +45,9 @@ protected slots:
     void updateLoadEmbeddedImages();
     void updateLoadEmoticons();
 
+private slots:
+	void updateFonts();
+
 private:
 	Ui::ForumPage ui;
 };
