@@ -28,7 +28,7 @@
 #include "gui/feeds/FeedHolder.h"
 
 namespace Ui {
-class GxsChannelPostsWidget;
+class GxsChannelPostsWidgetWithModel;
 }
 
 class GxsChannelPostItem;
@@ -36,7 +36,7 @@ class QTreeWidgetItem;
 class FeedItem;
 class RsGxsChannelPostsModel;
 
-class GxsChannelPostsWidgetWithModel: public QWidget, public GxsMessageFrameWidget
+class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -56,17 +56,19 @@ public:
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
-    virtual void groupIdChanged() override;
+    virtual void groupIdChanged() { updateDisplay(true); }
     virtual QString groupName(bool) override;
     virtual bool navigate(const RsGxsMessageId&) override;
+
+	void updateDisplay(bool complete);
 
 #ifdef TODO
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(FeedItem *feedItem, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
-	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 #endif
+	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 
 protected:
 	/* GxsMessageFramePostWidget */
@@ -74,10 +76,7 @@ protected:
 #ifdef TODO
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 #endif
-	virtual void clearPosts();
 	virtual bool useThread() { return mUseThread; }
-	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
-	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
     virtual void blank() ;
 
 #ifdef TODO
@@ -92,6 +91,7 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
+	void updateGroupData();
 	void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
@@ -108,9 +108,6 @@ private:
 	int viewMode();
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
-
-	void createPostItem(const RsGxsChannelPost &post, bool related);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
@@ -124,7 +121,7 @@ private:
 	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
-	Ui::GxsChannelPostsWidget *ui;
+	Ui::GxsChannelPostsWidgetWithModel *ui;
 };
 
 #endif

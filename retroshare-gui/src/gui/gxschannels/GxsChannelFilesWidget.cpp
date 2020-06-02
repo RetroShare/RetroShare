@@ -80,15 +80,6 @@ GxsChannelFilesWidget::GxsChannelFilesWidget(QWidget *parent) :
 	ui->treeWidget->setColumnWidth(COLUMN_PUBLISHED, 150);
 }
 
-GxsChannelFilesWidget::paintEvent()
-{
-    QWidget::paintEvent();
-
-    if(!mLoaded)
-    {
-    }
-}
-
 GxsChannelFilesWidget::~GxsChannelFilesWidget()
 {
 	delete(mCompareRole);

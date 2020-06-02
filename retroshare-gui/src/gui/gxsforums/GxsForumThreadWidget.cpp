@@ -498,6 +498,7 @@ void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& /*index
         ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
 }
 
+
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
 #ifdef DEBUG_FORUMS
