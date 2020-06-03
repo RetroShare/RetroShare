@@ -23,8 +23,9 @@
 
 #include <map>
 
-#include "gui/gxs/GxsMessageFramePostWidget.h"
+#include <QAbstractItemDelegate>
 
+#include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
 namespace Ui {
@@ -35,6 +36,24 @@ class GxsChannelPostItem;
 class QTreeWidgetItem;
 class FeedItem;
 class RsGxsChannelPostsModel;
+
+class ChannelPostDelegate: public QAbstractItemDelegate
+{
+	Q_OBJECT
+
+	public:
+		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+        virtual ~ChannelPostDelegate(){}
+
+		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+	private:
+ 		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
+ 		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
+ 		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
+ 		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
+};
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
 {
@@ -91,6 +110,7 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
+	void showPostDetails();
 	void updateGroupData();
 	void createMsg();
 	void toggleAutoDownload();

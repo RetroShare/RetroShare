@@ -20,6 +20,7 @@
 
 #include <QDateTime>
 #include <QSignalMapper>
+#include <QPainter>
 
 #include "retroshare/rsgxscircles.h"
 
@@ -52,6 +53,86 @@
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
 
+Q_DECLARE_METATYPE(RsGxsChannelPost*)
+
+void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
+	QStyleOptionViewItem opt = option;
+	QStyleOptionProgressBarV2 newopt;
+	QRect pixmapRect;
+	QPixmap pixmap;
+	qlonglong fileSize;
+	double dlspeed, multi;
+	int seconds,minutes, hours, days;
+	qlonglong remaining;
+	QString temp ;
+	qlonglong completed;
+	qlonglong downloadtime;
+	qint64 qi64Value;
+
+	// prepare
+	painter->save();
+	painter->setClipRect(opt.rect);
+
+	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    //const RsGxsChannelPost& post(*pinfo);
+
+	QVariant value = index.data(Qt::TextColorRole);
+
+	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
+		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
+
+	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+
+	if(option.state & QStyle::State_Selected)
+		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+	else
+		painter->setPen(opt.palette.color(cg, QPalette::Text));
+
+	//painter->drawText(option.rect, Qt::AlignRight, QString("TODO"));
+
+	QPixmap thumbnail;
+	GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
+
+    QFontMetricsF fm(opt.font);
+
+	int W = IMAGE_SIZE_FACTOR_W * fm.height() * IMAGE_ZOOM_FACTOR;
+	int H = IMAGE_SIZE_FACTOR_H * fm.height() * IMAGE_ZOOM_FACTOR;
+
+	int w = fm.width("X") ;
+	int h = fm.height() ;
+
+    float img_coord_x = IMAGE_MARGIN_FACTOR*0.5*w;
+    float img_coord_y = IMAGE_MARGIN_FACTOR*0.5*h;
+
+    QPoint img_pos(img_coord_x,img_coord_y);
+    QPoint img_size(W,H);
+
+    QPoint txt_pos(0,img_coord_y + H + h);
+
+    painter->drawPixmap(QRect(opt.rect.topLeft() + img_pos,opt.rect.topLeft()+img_pos+img_size),thumbnail.scaled(W,H,Qt::KeepAspectRatio,Qt::SmoothTransformation));
+    painter->drawText(QRect(option.rect.topLeft() + txt_pos,option.rect.bottomRight()),Qt::AlignCenter,QString::fromStdString(post.mMeta.mMsgName));
+}
+
+QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+	//QPixmap thumbnail;
+	//GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
+
+    QFontMetricsF fm(option.font);
+
+	int W = IMAGE_SIZE_FACTOR_W * fm.height() * IMAGE_ZOOM_FACTOR;
+	int H = IMAGE_SIZE_FACTOR_H * fm.height() * IMAGE_ZOOM_FACTOR;
+
+	int h = fm.height() ;
+	int w = fm.width("X") ;
+
+	return QSize(W+IMAGE_MARGIN_FACTOR*w,H + 2*h);
+}
+
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsChannels, parent),
@@ -61,6 +142,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->setupUi(this);
 
 	ui->postsTree->setModel(mThreadModel = new RsGxsChannelPostsModel());
+    ui->postsTree->setItemDelegate(new ChannelPostDelegate());
+
+    connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
 
 	/* Setup UI helper */
 
@@ -95,7 +179,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	/* Initialize view button */
 	//setViewMode(VIEW_MODE_FEEDS); see processSettings
-	ui->infoWidget->hide();
+	//ui->infoWidget->hide();
 
 	QSignalMapper *signalMapper = new QSignalMapper(this);
 	connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
@@ -109,7 +193,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->loadingLabel->hide();
 	ui->progressBar->hide();
 
-	ui->nameLabel->setMinimumWidth(20);
+	//ui->nameLabel->setMinimumWidth(20);
 
 	/* Initialize feed widget */
 	//ui->feedWidget->setSortRole(ROLE_PUBLISH, Qt::DescendingOrder);
@@ -167,6 +251,13 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 		default:
 		break;
 	}
+}
+
+void GxsChannelPostsWidgetWithModel::showPostDetails()
+{
+    QModelIndex selected_index = ui->postsTree->selectionModel()->currentIndex();
+
+    std::cerr << "Showing details about selected index : "<< selected_index.row() << "," << selected_index.column() << std::endl;
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()
@@ -280,12 +371,12 @@ QString GxsChannelPostsWidgetWithModel::groupName(bool)
 
 void GxsChannelPostsWidgetWithModel::groupNameChanged(const QString &name)
 {
-	if (groupId().isNull()) {
-		ui->nameLabel->setText(tr("No Channel Selected"));
-		ui->logoLabel->setPixmap(QPixmap(":/icons/png/channels.png"));
-	} else {
-		ui->nameLabel->setText(name);
-	}
+//	if (groupId().isNull()) {
+//		ui->nameLabel->setText(tr("No Channel Selected"));
+//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/channels.png"));
+//	} else {
+//		ui->nameLabel->setText(name);
+//	}
 }
 
 QIcon GxsChannelPostsWidgetWithModel::groupIcon()
@@ -336,7 +427,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
-	ui->logoLabel->setPixmap(chanImage);
+	//ui->logoLabel->setPixmap(chanImage);
 
 	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
 	{
@@ -361,7 +452,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 		ui->feedToolButton->setEnabled(true);
 
 		ui->fileToolButton->setEnabled(true);
-		ui->infoWidget->hide();
+		//ui->infoWidget->hide();
 		setViewMode(viewMode());
 		
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
@@ -785,7 +876,7 @@ void GxsChannelPostsWidgetWithModel::blank()
 	mThreadModel->clear();
     groupNameChanged(QString());
 
-	ui->infoWidget->hide();
+	//ui->infoWidget->hide();
 }
 
 bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId &msgId)
