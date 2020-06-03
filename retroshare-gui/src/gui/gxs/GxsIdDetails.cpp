@@ -18,21 +18,23 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QApplication>
-#include <QThread>
-#include <QTimerEvent>
-#include <QMutexLocker>
-
-#include <math.h>
-#include <util/rsdir.h>
-#include "gui/common/AvatarDialog.h"
 #include "GxsIdDetails.h"
+
+#include "gui/common/AvatarDialog.h"
 #include "retroshare-gui/RsAutoUpdatePage.h"
 
 #include <retroshare/rspeers.h>
+#include <util/rsdir.h>
+
+#include <QApplication>
+#include <QMutexLocker>
+#include <QPainter>
+#include <QPainterPath>
+#include <QThread>
+#include <QTimerEvent>
 
 #include <iostream>
-#include <QPainter>
+#include <cmath>
 
 /* Images for tag icons */
 #define IMAGE_LOADING     ":/images/folder-draft.png"
