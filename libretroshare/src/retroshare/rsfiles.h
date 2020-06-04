@@ -658,7 +658,8 @@ public:
 	 * @brief Get file details
 	 * @jsonapi{development}
 	 * @param[in] hash file identifier
-	 * @param[in] hintflags filtering hint (RS_FILE_HINTS_EXTRA|...|RS_FILE_HINTS_LOCAL)
+	 * @param[in] hintflags filtering hint ( RS_FILE_HINTS_UPLOAD|...|
+	 *	RS_FILE_HINTS_EXTRA|RS_FILE_HINTS_LOCAL )
 	 * @param[out] info storage for file information
 	 * @return true if file found, false otherwise
 	 */

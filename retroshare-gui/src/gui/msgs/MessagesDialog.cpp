@@ -53,6 +53,7 @@
 #include <algorithm>
 
 /* Images for context menu icons */
+#define IMAGE_MAIL             ":/icons/png/message.png"
 #define IMAGE_MESSAGE          ":/icons/mail/compose.png"
 #define IMAGE_MESSAGEREMOVE    ":/icons/mail/delete.png"
 #define IMAGE_STAR_ON          ":/images/star-on-16.png"
@@ -766,7 +767,7 @@ void MessagesDialog::openAsTab()
         return;
     }
 
-    ui.tabWidget->addTab(msgWidget, msgWidget->subject(true));
+    ui.tabWidget->addTab(msgWidget,QIcon(IMAGE_MAIL), msgWidget->subject(true));
     ui.tabWidget->setCurrentWidget(msgWidget);
 	connect(msgWidget, SIGNAL(messageRemoved()), this, SLOT(messageRemoved()));
 
@@ -1104,7 +1105,10 @@ void MessagesDialog::removemessage()
 
 void MessagesDialog::messageRemoved()
 {
-	ui.messageTreeWidget->setCurrentIndex(lastSelectedIndex);
+	if (lastSelectedIndex.isValid())
+		ui.messageTreeWidget->setCurrentIndex(lastSelectedIndex);
+	else
+		insertMsgTxtAndFiles(QModelIndex());
 }
 
 void MessagesDialog::undeletemessage()

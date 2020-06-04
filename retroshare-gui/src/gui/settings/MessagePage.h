@@ -58,6 +58,7 @@ private slots:
 	void updateMsgOpen()                 ;
 	void updateDistantMsgs()             ;
 	void updateMsgTags()    ;
+	void updateLoadEmoticons();
 
 private:
     void fillTags();

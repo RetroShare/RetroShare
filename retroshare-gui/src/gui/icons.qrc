@@ -301,6 +301,7 @@
         <file>icons/png/arrow-left.png</file>
         <file>icons/png/next-unread.png</file>
         <file>icons/mail/compose.png</file>
+        <file>icons/mail/downloadall.png</file>
         <file>icons/mail/delete.png</file>
         <file>icons/mail/tags.png</file>
         <file>icons/mail/quote.png</file>

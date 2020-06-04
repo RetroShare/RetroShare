@@ -503,8 +503,16 @@ bool RsTypeSerializer::from_JSON( const std::string& /*memberName*/,
 //                              Binary blocks                                 //
 //============================================================================//
 
+#if __cplusplus < 201703L
+/* Solve weird undefined reference error with C++ < 17 see:
+ * https://stackoverflow.com/questions/8016780/undefined-reference-to-static-constexpr-char
+ */
+/*static*/ decltype(RsTypeSerializer::RawMemoryWrapper::base64_key) constexpr
+RsTypeSerializer::RawMemoryWrapper::base64_key;
+
 /*static*/ /* without this Android compilation breaks */
 constexpr uint32_t RsTypeSerializer::RawMemoryWrapper::MAX_SERIALIZED_CHUNK_SIZE;
+#endif
 
 /*static*/
 void RsTypeSerializer::RawMemoryWrapper::serial_process(
@@ -542,18 +550,7 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		ctx.mOffset += second;
 		break;
 	case RsGenericSerializer::DESERIALIZE:
-		if(first || second)
-		{
-			/* Items are created anew before deserialization so buffer pointer
-			 * must be null and size 0 at this point */
-
-			RsWarn() << __PRETTY_FUNCTION__ << " DESERIALIZE got uninitialized "
-			         << " or pre-allocated buffer! Buffer pointer: " << first
-			         << " must be null and size: " << second << " must be 0 at "
-			         << "this point. Does your item costructor initialize them "
-			         << "properly?" << std::endl;
-			print_stacktrace();
-		}
+		freshMemCheck();
 
 		RS_SERIAL_PROCESS(second);
 		if(!ctx.mOk) break;
@@ -597,44 +594,33 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 		if(!ctx.mOk) break;
 		std::string encodedValue;
 		RsBase64::encode(first, second, encodedValue, true, false);
-		ctx.mJson.SetString(
-		            encodedValue.data(),
-		            static_cast<rapidjson::SizeType>(encodedValue.length()),
-		            ctx.mJson.GetAllocator());
+		ctx.mOk = ctx.mOk &&
+		        RsTypeSerializer::to_JSON(base64_key, encodedValue, ctx.mJson);
 		break;
 	}
 	case RsGenericSerializer::FROM_JSON:
 	{
-		const bool yelding = !!(
-		            RsSerializationFlags::YIELDING & ctx.mFlags );
-		if(!(ctx.mOk || yelding))
-		{
-			clear();
-			break;
-		}
-		if(!ctx.mJson.IsString())
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " "
-			        << std::errc::invalid_argument << std::endl;
-			print_stacktrace();
+		freshMemCheck();
 
-			ctx.mOk = false;
-			clear();
-			break;
-		}
-		if( ctx.mJson.GetStringLength() >
+		const auto failure = [&]() -> void { ctx.mOk = false; clear(); };
+		const bool yielding = !!(
+		            RsSerializationFlags::YIELDING & ctx.mFlags );
+		if(!(ctx.mOk || yielding)) return failure();
+
+		std::string encodedValue;
+		if(!RsTypeSerializer::from_JSON(
+		            base64_key, encodedValue, ctx.mJson )) return failure();
+
+		if( encodedValue.length() >
 		        RsBase64::encodedSize(MAX_SERIALIZED_CHUNK_SIZE, true) )
 		{
 			RsErr() << __PRETTY_FUNCTION__ << " "
 			        << std::errc::message_size << std::endl;
 			print_stacktrace();
 
-			ctx.mOk = false;
-			clear();
-			break;
+			return failure();
 		}
 
-		std::string encodedValue = ctx.mJson.GetString();
 		std::vector<uint8_t> decoded;
 		auto ec = RsBase64::decode(encodedValue, decoded);
 		if(ec)
@@ -642,9 +628,7 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 			RsErr() << __PRETTY_FUNCTION__ << " " << ec << std::endl;
 			print_stacktrace();
 
-			ctx.mOk = false;
-			clear();
-			break;
+			return failure();
 		}
 
 		const auto decodedSize = decoded.size();
@@ -655,11 +639,8 @@ void RsTypeSerializer::RawMemoryWrapper::serial_process(
 			break;
 		}
 
-		if(decodedSize != second)
-		{
-			first = reinterpret_cast<uint8_t*>(realloc(first, decodedSize));
-			second = static_cast<uint32_t>(decodedSize);
-		}
+		first = reinterpret_cast<uint8_t*>(malloc(decodedSize));
+		second = static_cast<uint32_t>(decodedSize);
 
 		memcpy(first, decoded.data(), second);
 		break;
@@ -673,6 +654,24 @@ void RsTypeSerializer::RawMemoryWrapper::clear()
 	free(first);
 	first = nullptr;
 	second = 0;
+}
+
+bool RsTypeSerializer::RawMemoryWrapper::freshMemCheck()
+{
+	if(first || second)
+	{
+		/* Items are created anew before deserialization so buffer pointer
+		 * must be null and size 0 at this point */
+
+		RsWarn() << __PRETTY_FUNCTION__ << " got uninitialized "
+		         << " or pre-allocated buffer! Buffer pointer: " << first
+		         << " must be null and size: " << second << " must be 0 at "
+		         << "this point. Does your item costructor initialize them "
+		         << "properly?" << std::endl;
+		print_stacktrace();
+		return false;
+	}
+	return true;
 }
 
 //============================================================================//

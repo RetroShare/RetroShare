@@ -4,7 +4,7 @@
  * libretroshare: retroshare core library                                      *
  *                                                                             *
  * Copyright (C) 2008  Robert Fernie <retroshare@lunamutt.com>                 *
- * Copyright (C) 2018-2019  Gioacchino Mazzurco <gio@eigenlab.org>             *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -20,6 +20,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include <limits>
+#include <system_error>
 
 #ifdef WINDOWS_SYS
 #include "util/rswin.h"
@@ -245,12 +248,8 @@ bool	ftExtraList::cleanupOldFiles()
 		/* remove items */
 		for(std::list<RsFileHash>::iterator rit = toRemove.begin(); rit != toRemove.end(); ++rit)
         {
-			if (mFiles.end() != (it = mFiles.find(*rit)))
-			{
-				cleanupEntry(it->second.info.path, it->second.info.transfer_info_flags);
-				mFiles.erase(it);
-			}
-			mHashOfHash.erase(makeEncryptedHash(*rit)) ;
+			if (mFiles.end() != (it = mFiles.find(*rit))) mFiles.erase(it);
+			mHashOfHash.erase(makeEncryptedHash(*rit));
         }
 
 		IndicateConfigChanged();
@@ -258,46 +257,39 @@ bool	ftExtraList::cleanupOldFiles()
 	return true;
 }
 
-
-bool	ftExtraList::cleanupEntry(std::string /*path*/, TransferRequestFlags /*flags*/)
-{
-//	if (flags & RS_FILE_CONFIG_CLEANUP_DELETE)
-//	{
-//		/* Delete the file? - not yet! */
-//	}
-	return true;
-}
-
-		/***
-		 * Hash file, and add to the files, 
-		 * file is removed after period.
-		 **/
-
 bool ftExtraList::hashExtraFile(
         std::string path, uint32_t period, TransferRequestFlags flags )
 {
-#ifdef  DEBUG_ELIST
-	std::cerr << "ftExtraList::hashExtraFile() path: " << path;
-	std::cerr << " period: " << period;
-	std::cerr << " flags: " << flags;
+	constexpr rstime_t max_int = std::numeric_limits<int>::max();
+	const rstime_t now = time(nullptr);
+	const rstime_t timeOut = now + period;
 
-	std::cerr << std::endl;
-#endif
-
-	auto failure = [](std::string errMsg)
+	if(timeOut > max_int)
 	{
-		RsErr() << __PRETTY_FUNCTION__ << " " << errMsg << std::endl;
+		/* Under the hood period is stored as int FileInfo::age so we do this
+		 * check here to detect 2038 year problem
+		 * https://en.wikipedia.org/wiki/Year_2038_problem */
+		RsErr() << __PRETTY_FUNCTION__ << " period: " << period  << " > "
+		        << max_int - now << std::errc::value_too_large << std::endl;
 		return false;
-	};
+	}
 
 	if(!RsDirUtil::fileExists(path))
-		return failure("file: " + path + "not found");
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " path: " << path
+		        << std::errc::no_such_file_or_directory << std::endl;
+		return false;
+	}
 
 	if(RsDirUtil::checkDirectory(path))
-		return failure("Cannot add a directory: " + path + "as extra file");
+	{
+		RsErr() << __PRETTY_FUNCTION__ << " path: " << path
+		        << std::errc::is_a_directory << std::endl;
+		return false;
+	}
 
 	FileDetails details(path, period, flags);
-	details.info.age = static_cast<int>(time(nullptr) + period);
+	details.info.age = static_cast<int>(timeOut);
 
 	{
 		RS_STACK_MUTEX(extMutex);
@@ -492,8 +484,7 @@ bool    ftExtraList::loadList(std::list<RsItem *>& load)
 
 		if (ts > (rstime_t)fi->file.age)
 		{
-			/* to old */
-			cleanupEntry(fi->file.path, TransferRequestFlags(fi->flags));
+			/* too old */
 			delete (*it);
 			continue ;
 		}

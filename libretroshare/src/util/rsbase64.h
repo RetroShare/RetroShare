@@ -137,4 +137,8 @@ private:
 	 */
 	static inline bool isBase64Char(char c)
 	{ return rDict[static_cast<uint8_t>(c)] >= 0; }
+
+	/** Perform ceil division without floating point operations */
+	static inline size_t ceilDivision(size_t dividend, size_t divisor)
+	{ return (dividend + divisor - 1) / divisor; }
 };
