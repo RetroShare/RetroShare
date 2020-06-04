@@ -26,6 +26,7 @@
 
 #include "GxsChannelPostsWidgetWithModel.h"
 #include "GxsChannelPostsModel.h"
+#include "GxsChannelPostFilesModel.h"
 #include "ui_GxsChannelPostsWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
@@ -57,7 +58,7 @@ static const int CHANNEL_TABS_POSTS  = 1;
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
 
-Q_DECLARE_METATYPE(RsGxsChannelPost*)
+Q_DECLARE_METATYPE(RsGxsFile)
 
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
@@ -137,6 +138,73 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 	return QSize(W+IMAGE_MARGIN_FACTOR*w,H + 2*h);
 }
 
+void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
+{
+	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
+
+	QStyleOptionViewItem opt = option;
+	QStyleOptionProgressBarV2 newopt;
+	QRect pixmapRect;
+	QPixmap pixmap;
+	qlonglong fileSize;
+	double dlspeed, multi;
+	int seconds,minutes, hours, days;
+	qlonglong remaining;
+	QString temp ;
+	qlonglong completed;
+	qlonglong downloadtime;
+	qint64 qi64Value;
+
+	// prepare
+	painter->save();
+	painter->setClipRect(opt.rect);
+
+	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+
+	QVariant value = index.data(Qt::TextColorRole);
+
+	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
+		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
+
+	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+
+	if(option.state & QStyle::State_Selected)
+		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+	else
+		painter->setPen(opt.palette.color(cg, QPalette::Text));
+
+    switch(index.column())
+    {
+    case 0: painter->drawText(option.rect,Qt::AlignLeft,QString::fromUtf8(file.mName.c_str()));
+        	break;
+    case 1: painter->drawText(option.rect,Qt::AlignLeft,QString::number(file.mSize));
+        	break;
+    case 2: {
+        FileInfo finfo;
+        if(rsFiles->FileDetails(file.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
+			painter->drawText(option.rect,Qt::AlignLeft,QString::number(finfo.transfered));
+    }
+		break;
+    default:
+        break;
+    }
+}
+
+QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+
+    QFontMetricsF fm(option.font);
+
+    switch(index.column())
+    {
+    case 0: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
+    case 1: return QSize(fm.width(QString::number(file.mSize)),fm.height());
+    default:
+    case 2: return QSize(fm.height() * 20,fm.height()) ;
+    }
+}
+
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsChannels, parent),
@@ -145,8 +213,11 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	ui->postsTree->setModel(mThreadModel = new RsGxsChannelPostsModel());
+	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(new ChannelPostDelegate());
+
+    ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel());
+    ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
 
@@ -220,7 +291,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	setAutoDownload(false);
 	settingsChanged();
 
-	mThreadModel->updateChannel(channelId);
+	mChannelPostsModel->updateChannel(channelId);
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
@@ -264,13 +335,31 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     if(!index.isValid())
     {
         ui->postDetails_TE->clear();
+        ui->postLogo_LB->clear();
+		mChannelPostFilesModel->clear();
         return;
     }
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
+    mChannelPostFilesModel->setFiles(post.mFiles);
+
     std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
 
     ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+
+	QPixmap postImage;
+
+	if (post.mThumbnail.mData != NULL)
+		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, postImage,GxsIdDetails::ORIGINAL);
+	else
+		postImage = QPixmap(CHAN_DEFAULT_IMAGE);
+
+    int W = QFontMetricsF(font()).height() * 8;
+
+    // Using fixed width so that the post will not displace the text when we browse.
+
+	ui->postLogo_LB->setPixmap(postImage);
+	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()
@@ -297,7 +386,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 		RsQThreadUtils::postToObject( [this,groups]()
         {
             mGroup = groups[0];
-			mThreadModel->updateChannel(groupId());
+			mChannelPostsModel->updateChannel(groupId());
             insertChannelDetails(mGroup);
         } );
 	});
@@ -328,7 +417,7 @@ void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
 #warning todo
 		//saveExpandedItems(mSavedExpandedMessages);
 
-        //if(mGroupId != mThreadModel->currentGroupId())
+        //if(mGroupId != mChannelPostsModel->currentGroupId())
         //    mThreadId.clear();
 
 		updateGroupData();
@@ -881,7 +970,7 @@ void GxsChannelPostsWidgetWithModel::blank()
 	mStateHelper->setWidgetEnabled(ui->postButton, false);
 	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
 	
-	mThreadModel->clear();
+	mChannelPostsModel->clear();
     groupNameChanged(QString());
 
 	//ui->infoWidget->hide();
@@ -1027,3 +1116,4 @@ void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &t
 
 	token = data.mLastToken;
 }
+

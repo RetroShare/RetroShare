@@ -421,28 +421,70 @@ p, li { white-space: pre-wrap; }
           </attribute>
          </widget>
          <widget class="QTabWidget" name="details_TW">
+          <property name="font">
+           <font>
+            <kerning>true</kerning>
+           </font>
+          </property>
           <property name="currentIndex">
-           <number>2</number>
+           <number>1</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
             <string>Details</string>
            </attribute>
-           <widget class="QTextEdit" name="postDetails_TE">
-            <property name="geometry">
-             <rect>
-              <x>9</x>
-              <y>9</y>
-              <width>955</width>
-              <height>181</height>
-             </rect>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QLabel" name="postLogo_LB">
+                <property name="text">
+                 <string>TextLabel</string>
+                </property>
+                <property name="scaledContents">
+                 <bool>true</bool>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="postDetails_TE"/>
+            </item>
+           </layout>
           </widget>
-          <widget class="QWidget" name="tab_5">
+          <widget class="QWidget" name="channelPostFiles_tab">
            <attribute name="title">
             <string>Files</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <item>
+             <widget class="QTreeView" name="channelPostFiles_TV"/>
+            </item>
+            <item>
+             <widget class="QPushButton" name="channelPostFilesDL_PB">
+              <property name="text">
+               <string>Download selected files</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="tab_2">
            <attribute name="title">

@@ -1335,6 +1335,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.h \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.h \
 		gui/gxschannels/GxsChannelPostsModel.h \
+		gui/gxschannels/GxsChannelPostFilesModel.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
@@ -1354,6 +1355,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsWidget.cpp \
 		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
 		gui/gxschannels/GxsChannelPostsModel.cpp \
+		gui/gxschannels/GxsChannelPostFilesModel.cpp \
 		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \

@@ -36,6 +36,21 @@ class GxsChannelPostItem;
 class QTreeWidgetItem;
 class FeedItem;
 class RsGxsChannelPostsModel;
+class RsGxsChannelPostFilesModel;
+
+class ChannelPostFilesDelegate: public QAbstractItemDelegate
+{
+	Q_OBJECT
+
+	public:
+		ChannelPostFilesDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+        virtual ~ChannelPostFilesDelegate(){}
+
+		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+	private:
+};
 
 class ChannelPostDelegate: public QAbstractItemDelegate
 {
@@ -137,7 +152,8 @@ private:
 	bool mUseThread;
     RsEventsHandlerId_t mEventHandlerId ;
 
-    RsGxsChannelPostsModel *mThreadModel;
+    RsGxsChannelPostsModel     *mChannelPostsModel;
+    RsGxsChannelPostFilesModel *mChannelPostFilesModel;
 	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
