@@ -49,6 +49,10 @@
  * #define DEBUG_CHANNEL
  ***/
 
+static const int mTokenTypeGroupData = 1;
+static const int CHANNEL_TABS_DETAILS= 0;
+static const int CHANNEL_TABS_POSTS  = 1;
+
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
@@ -255,9 +259,18 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 
 void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
-    QModelIndex selected_index = ui->postsTree->selectionModel()->currentIndex();
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 
-    std::cerr << "Showing details about selected index : "<< selected_index.row() << "," << selected_index.column() << std::endl;
+    if(!index.isValid())
+    {
+        ui->postDetails_TE->clear();
+        return;
+    }
+	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+    std::cerr << "Showing details about selected index : "<< index.row() << "," << index.column() << std::endl;
+
+    ui->postDetails_TE->setText(RsHtml().formatText(NULL, QString::fromUtf8(post.mMsg.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()
@@ -285,6 +298,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
         {
             mGroup = groups[0];
 			mThreadModel->updateChannel(groupId());
+            insertChannelDetails(mGroup);
         } );
 	});
 }
@@ -427,105 +441,99 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
-	//ui->logoLabel->setPixmap(chanImage);
+	ui->logoLabel->setPixmap(chanImage);
+    ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
 
-	if (group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH)
-	{
-		mStateHelper->setWidgetEnabled(ui->postButton, true);
-	}
-	else
-	{
-		mStateHelper->setWidgetEnabled(ui->postButton, false);
-	}
+	ui->postButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
-	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, true);
+	ui->subscribeToolButton->setEnabled(true);
 
 
-    bool autoDownload ;
-            rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
+	bool autoDownload ;
+	rsGxsChannels->getChannelAutoDownload(group.mMeta.mGroupId,autoDownload);
 	setAutoDownload(autoDownload);
-	
+
 	RetroShareLink link;
 
-	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags)) {
-		ui->feedToolButton->setEnabled(true);
-
-		ui->fileToolButton->setEnabled(true);
-		//ui->infoWidget->hide();
-		setViewMode(viewMode());
-		
+	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
+    {
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
+		ui->feedToolButton->setEnabled(true);
+		ui->fileToolButton->setEnabled(true);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
+        ui->details_TW->setEnabled(true);
+	}
+    else
+    {
+        ui->details_TW->setEnabled(false);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,false);
+    }
 
 
-		ui->infoPosts->clear();
-		ui->infoDescription->clear();
-	} else {
-        ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
-		if(group.mMeta.mLastPost==0)
-            ui->infoLastPost->setText(tr("Never"));
-        else
-            ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
-			QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
+	ui->infoPosts->setText(QString::number(group.mMeta.mVisibleMsgCount));
+	if(group.mMeta.mLastPost==0)
+		ui->infoLastPost->setText(tr("Never"));
+	else
+		ui->infoLastPost->setText(DateTime::formatLongDateTime(group.mMeta.mLastPost));
+	QString formatDescription = QString::fromUtf8(group.mDescription.c_str());
 
-			unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
+	unsigned int formatFlag = RSHTML_FORMATTEXT_EMBED_LINKS;
 
-			// embed smileys ?
-			if (Settings->valueFromGroup(QString("ChannelPostsWidget"), QString::fromUtf8("Emoteicons_ChannelDecription"), true).toBool()) {
-				formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
-			}
+	// embed smileys ?
+	if (Settings->valueFromGroup(QString("ChannelPostsWidget"), QString::fromUtf8("Emoteicons_ChannelDecription"), true).toBool()) {
+		formatFlag |= RSHTML_FORMATTEXT_EMBED_SMILEYS;
+	}
 
-			formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
+	formatDescription = RsHtml().formatText(NULL, formatDescription, formatFlag);
 
-			ui->infoDescription->setText(formatDescription);
-        
-        	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
-			
-			link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-			ui->infoAdministrator->setText(link.toHtml());
-        
-			ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+	ui->infoDescription->setText(formatDescription);
 
-        	QString distrib_string ( "[unknown]" );
-            
-        	switch(group.mMeta.mCircleType)
-		{
-		case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
-			break ;
-		case GXS_CIRCLE_TYPE_EXTERNAL: 
-		{
-			RsGxsCircleDetails det ;
+	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
-			// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+	ui->infoAdministrator->setText(link.toHtml());
 
-			if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det)) 
-				distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
-			else
-				distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
-		}
-			break ;
-		case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
-			break ;
-		case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
-			break ;
-		default:
-			std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
-		}
- 
-		ui->infoDistribution->setText(distrib_string);
+	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
+
+	QString distrib_string ( "[unknown]" );
+
+	switch(group.mMeta.mCircleType)
+	{
+	case GXS_CIRCLE_TYPE_PUBLIC: distrib_string = tr("Public") ;
+		break ;
+	case GXS_CIRCLE_TYPE_EXTERNAL:
+	{
+		RsGxsCircleDetails det ;
+
+		// !! What we need here is some sort of CircleLabel, which loads the circle and updates the label when done.
+
+		if(rsGxsCircles->getCircleDetails(group.mMeta.mCircleId,det))
+			distrib_string = tr("Restricted to members of circle \"")+QString::fromUtf8(det.mCircleName.c_str()) +"\"";
+		else
+			distrib_string = tr("Restricted to members of circle ")+QString::fromStdString(group.mMeta.mCircleId.toStdString()) ;
+	}
+		break ;
+	case GXS_CIRCLE_TYPE_YOUR_EYES_ONLY: distrib_string = tr("Your eyes only");
+		break ;
+	case GXS_CIRCLE_TYPE_LOCAL: distrib_string = tr("You and your friend nodes");
+		break ;
+	default:
+		std::cerr << "(EE) badly initialised group distribution ID = " << group.mMeta.mCircleType << std::endl;
+	}
+
+	ui->infoDistribution->setText(distrib_string);
 
 #ifdef TODO
-		ui->infoWidget->show();
-		ui->feedWidget->hide();
-		ui->fileWidget->hide();
+	ui->infoWidget->show();
+	ui->feedWidget->hide();
+	ui->fileWidget->hide();
 #endif
 
-		ui->feedToolButton->setEnabled(false);
-		ui->fileToolButton->setEnabled(false);
-		
-		ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+	ui->feedToolButton->setEnabled(false);
+	ui->fileToolButton->setEnabled(false);
 
-	}
+	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
 }
 
 int GxsChannelPostsWidgetWithModel::viewMode()
@@ -870,8 +878,8 @@ void GxsChannelPostsWidget::clearPosts()
 
 void GxsChannelPostsWidgetWithModel::blank()
 {
-	//mStateHelper->setWidgetEnabled(ui->postButton, false);
-	//mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+	mStateHelper->setWidgetEnabled(ui->postButton, false);
+	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
 	
 	mThreadModel->clear();
     groupNameChanged(QString());
