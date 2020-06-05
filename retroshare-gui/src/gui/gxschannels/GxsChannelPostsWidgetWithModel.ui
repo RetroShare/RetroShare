@@ -413,8 +413,26 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::Vertical</enum>
          </property>
          <widget class="QTreeView" name="postsTree">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::AdjustToContents</enum>
+          </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectItems</enum>
+          </property>
+          <property name="indentation">
+           <number>0</number>
+          </property>
+          <property name="rootIsDecorated">
+           <bool>false</bool>
+          </property>
+          <property name="itemsExpandable">
+           <bool>false</bool>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="headerHidden">
+           <bool>true</bool>
           </property>
           <attribute name="headerStretchLastSection">
            <bool>false</bool>
@@ -475,7 +493,14 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QTreeView" name="channelPostFiles_TV"/>
+             <widget class="QTreeView" name="channelPostFiles_TV">
+              <property name="editTriggers">
+               <set>QAbstractItemView::CurrentChanged</set>
+              </property>
+              <property name="alternatingRowColors">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QPushButton" name="channelPostFilesDL_PB">

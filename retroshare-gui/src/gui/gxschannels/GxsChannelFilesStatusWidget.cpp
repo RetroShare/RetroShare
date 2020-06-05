@@ -30,8 +30,8 @@
 
 #include "retroshare/rsfiles.h"
 
-GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsGroupId &groupId, const RsGxsMessageId &messageId, const RsGxsFile &file, QWidget *parent) :
-    QWidget(parent), mGroupId(groupId), mMessageId(messageId), mFile(file), ui(new Ui::GxsChannelFilesStatusWidget)
+GxsChannelFilesStatusWidget::GxsChannelFilesStatusWidget(const RsGxsFile &file, QWidget *parent) :
+    QWidget(parent), mFile(file), ui(new Ui::GxsChannelFilesStatusWidget)
 {
 	ui->setupUi(this);
 

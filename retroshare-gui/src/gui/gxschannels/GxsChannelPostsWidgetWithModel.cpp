@@ -24,12 +24,10 @@
 
 #include "retroshare/rsgxscircles.h"
 
-#include "GxsChannelPostsWidgetWithModel.h"
-#include "GxsChannelPostsModel.h"
-#include "GxsChannelPostFilesModel.h"
 #include "ui_GxsChannelPostsWidgetWithModel.h"
 #include "gui/feeds/GxsChannelPostItem.h"
 #include "gui/gxs/GxsIdDetails.h"
+#include "util/misc.h"
 #include "gui/gxschannels/CreateGxsChannelMsg.h"
 #include "gui/common/UIStateHelper.h"
 #include "gui/settings/rsharesettings.h"
@@ -39,6 +37,11 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
+
+#include "GxsChannelPostsWidgetWithModel.h"
+#include "GxsChannelPostsModel.h"
+#include "GxsChannelPostFilesModel.h"
+#include "GxsChannelFilesStatusWidget.h"
 
 #include <algorithm>
 
@@ -51,12 +54,17 @@
  ***/
 
 static const int mTokenTypeGroupData = 1;
+
 static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
 
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
+
+#define CHANNEL_FILES_COLUMN_NAME 0
+#define CHANNEL_FILES_COLUMN_SIZE 1
+#define CHANNEL_FILES_COLUMN_FILE 2
 
 Q_DECLARE_METATYPE(RsGxsFile)
 
@@ -138,8 +146,31 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 	return QSize(W+IMAGE_MARGIN_FACTOR*w,H + 2*h);
 }
 
+QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
+{
+	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+
+    if(index.column() == CHANNEL_FILES_COLUMN_FILE)
+		return new GxsChannelFilesStatusWidget(file,parent);
+    else
+        return NULL;
+}
+void ChannelPostFilesDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+{
+	editor->setGeometry(option.rect);
+}
+
+void ChannelPostFilesDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    // nothing to do here. Is this override needed?
+}
+
 void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+
+#ifdef TODO
+
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 
 	QStyleOptionViewItem opt = option;
@@ -154,13 +185,14 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 	qlonglong completed;
 	qlonglong downloadtime;
 	qint64 qi64Value;
+#endif
 
 	// prepare
 	painter->save();
-	painter->setClipRect(opt.rect);
+	painter->setClipRect(option.rect);
 
+#ifdef TODO
 	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
-
 	QVariant value = index.data(Qt::TextColorRole);
 
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
@@ -172,21 +204,32 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
 	else
 		painter->setPen(opt.palette.color(cg, QPalette::Text));
+#endif
 
     switch(index.column())
     {
-    case 0: painter->drawText(option.rect,Qt::AlignLeft,QString::fromUtf8(file.mName.c_str()));
+    case CHANNEL_FILES_COLUMN_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QString::fromUtf8(file.mName.c_str()));
         	break;
-    case 1: painter->drawText(option.rect,Qt::AlignLeft,QString::number(file.mSize));
+    case CHANNEL_FILES_COLUMN_SIZE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
         	break;
-    case 2: {
+    case CHANNEL_FILES_COLUMN_FILE: {
+		GxsChannelFilesStatusWidget w(file);
+		QPixmap pixmap(w.size());
+
+		w.render(&pixmap);
+        painter->drawPixmap(option.rect.topLeft(),pixmap);
+
+#ifdef TODO
         FileInfo finfo;
         if(rsFiles->FileDetails(file.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
 			painter->drawText(option.rect,Qt::AlignLeft,QString::number(finfo.transfered));
+#endif
     }
-		break;
-    default:
         break;
+
+    default:
+            painter->drawText(option.rect,Qt::AlignLeft,QString("[No data]"));
+		break;
     }
 }
 
@@ -198,10 +241,10 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
 
     switch(index.column())
     {
-    case 0: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
-    case 1: return QSize(fm.width(QString::number(file.mSize)),fm.height());
+    case CHANNEL_FILES_COLUMN_NAME: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
+    case CHANNEL_FILES_COLUMN_SIZE: return QSize(fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
     default:
-    case 2: return QSize(fm.height() * 20,fm.height()) ;
+    case CHANNEL_FILES_COLUMN_FILE: return GxsChannelFilesStatusWidget(file).size();
     }
 }
 

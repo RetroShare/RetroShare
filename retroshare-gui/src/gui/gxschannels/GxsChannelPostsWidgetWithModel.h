@@ -23,7 +23,7 @@
 
 #include <map>
 
-#include <QAbstractItemDelegate>
+#include <QStyledItemDelegate>
 
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
@@ -38,16 +38,20 @@ class FeedItem;
 class RsGxsChannelPostsModel;
 class RsGxsChannelPostFilesModel;
 
-class ChannelPostFilesDelegate: public QAbstractItemDelegate
+class ChannelPostFilesDelegate: public QStyledItemDelegate
 {
 	Q_OBJECT
 
 	public:
-		ChannelPostFilesDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+		ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
         virtual ~ChannelPostFilesDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
+    	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+		void setEditorData(QWidget *editor, const QModelIndex &index) const override;
 
 	private:
 };
