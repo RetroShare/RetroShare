@@ -34,6 +34,8 @@
 
 typedef uint32_t ChannelPostFilesModelIndex;
 
+class QTimer;
+
 // This class is the item model used by Qt to display the information
 
 class RsGxsChannelPostFilesModel : public QAbstractItemModel
@@ -130,6 +132,9 @@ public:
 signals:
     void channelLoaded();	// emitted after the posts have been set. Can be used to updated the UI.
 
+private slots:
+    void update();
+
 private:
 #ifdef TODO
     bool mUseChildTS;
@@ -153,4 +158,6 @@ private:
 	void initEmptyHierarchy(std::vector<RsGxsFile> &files);
 
     std::vector<RsGxsFile> mFiles ;  // store the list of files for the post
+
+    QTimer *mTimer;
 };

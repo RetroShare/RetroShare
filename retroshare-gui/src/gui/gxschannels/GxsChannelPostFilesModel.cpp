@@ -43,6 +43,9 @@ RsGxsChannelPostFilesModel::RsGxsChannelPostFilesModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
     initEmptyHierarchy(mFiles);
+
+    mTimer = new QTimer;
+    connect(mTimer,SIGNAL(timeout()),this,SLOT(update()));
 }
 
 void RsGxsChannelPostFilesModel::initEmptyHierarchy(std::vector<RsGxsFile>& files)
@@ -65,6 +68,11 @@ void RsGxsChannelPostFilesModel::postMods()
 {
 	endResetModel();
 
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
+}
+
+void RsGxsChannelPostFilesModel::update()
+{
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 }
 
@@ -694,33 +702,12 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<RsGxsFile>& files)
 	postMods();
 
 	emit channelLoaded();
+
+    if(!files.empty())
+        mTimer->start(5000);
+    else
+        mTimer->stop();
 }
-
-//ChannelPostsModelIndex RsGxsChannelPostsModel::addEntry(std::vector<ChannelPostsModelPostEntry>& posts,const ChannelPostsModelPostEntry& entry)
-//{
-//    uint32_t N = posts.size();
-//    posts.push_back(entry);
-//
-//#ifdef DEBUG_FORUMMODEL
-//    std::cerr << "Added new entry " << N << " children of " << parent << std::endl;
-//#endif
-//    if(N == parent)
-//        std::cerr << "(EE) trying to add a post as its own parent!" << std::endl;
-//
-//    return ChannelPostsModelIndex(N);
-//}
-
-//void RsGxsChannelPostsModel::convertMsgToPostEntry(const RsGxsChannelGroup& mChannelGroup,const RsMsgMetaData& msg, bool /*useChildTS*/, ChannelPostsModelPostEntry& fentry)
-//{
-//    fentry.mTitle     = msg.mMsgName;
-//    fentry.mMsgId     = msg.mMsgId;
-//    fentry.mPublishTs = msg.mPublishTs;
-//    fentry.mPostFlags = 0;
-//    fentry.mMsgStatus = msg.mMsgStatus;
-//
-//	// Early check for a message that should be hidden because its author
-//	// is flagged with a bad reputation
-//}
 
 QModelIndex RsGxsChannelPostFilesModel::getIndexOfFile(const RsFileHash& hash) const
 {

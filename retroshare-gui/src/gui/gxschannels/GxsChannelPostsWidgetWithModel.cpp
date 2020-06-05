@@ -156,11 +156,6 @@ void ChannelPostFilesDelegate::updateEditorGeometry(QWidget *editor, const QStyl
 	editor->setGeometry(option.rect);
 }
 
-void ChannelPostFilesDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-    // nothing to do here. Is this override needed?
-}
-
 void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
@@ -187,6 +182,12 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 	painter->save();
 	painter->setClipRect(option.rect);
 
+    painter->save();
+
+    painter->fillRect( option.rect, option.backgroundBrush);
+	//optionFocusRect.backgroundColor = option.palette.color(colorgroup, (option.state & QStyle::State_Selected) ? QPalette::Highlight : QPalette::Background);
+    painter->restore();
+
 #ifdef TODO
 	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
 	QVariant value = index.data(Qt::TextColorRole);
@@ -194,25 +195,30 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
 		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
 
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
+	QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
 
 	if(option.state & QStyle::State_Selected)
-		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
+		painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
 	else
-		painter->setPen(opt.palette.color(cg, QPalette::Text));
+		painter->setPen(option.palette.color(cg, QPalette::Text));
 #endif
 
     switch(index.column())
     {
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QString::fromUtf8(file.mName.c_str()));
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter," " + QString::fromUtf8(file.mName.c_str()));
         	break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: painter->drawText(option.rect,Qt::AlignRight | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
         	break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: {
-		GxsChannelFilesStatusWidget w(file);
-		QPixmap pixmap(w.size());
 
-		w.render(&pixmap);
+		GxsChannelFilesStatusWidget w(file);
+
+        w.setFixedWidth(option.rect.width());
+
+		QPixmap pixmap(w.size());
+    	pixmap.fill(option.palette.color(QPalette::Background));	// choose the background
+		w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
         painter->drawPixmap(option.rect.topLeft(),pixmap);
 
 #ifdef TODO
@@ -237,10 +243,10 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
 
     switch(index.column())
     {
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
     default:
-    case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return GxsChannelFilesStatusWidget(file).size();
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }
 }
 
@@ -398,7 +404,14 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     // Using fixed width so that the post will not displace the text when we browse.
 
 	ui->postLogo_LB->setPixmap(postImage);
+	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+
 	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
+	ui->postName_LB->setFixedWidth(W);
+
+    ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
+    ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
+    ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()
