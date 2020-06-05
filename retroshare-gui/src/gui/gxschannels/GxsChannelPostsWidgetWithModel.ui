@@ -495,17 +495,10 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QTreeView" name="channelPostFiles_TV">
               <property name="editTriggers">
-               <set>QAbstractItemView::CurrentChanged</set>
+               <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
               </property>
               <property name="alternatingRowColors">
                <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="channelPostFilesDL_PB">
-              <property name="text">
-               <string>Download selected files</string>
               </property>
              </widget>
             </item>

@@ -44,20 +44,14 @@ public:
 	explicit RsGxsChannelPostFilesModel(QObject *parent = NULL);
 	~RsGxsChannelPostFilesModel(){}
 
-	static const int COLUMN_THREAD_NB_COLUMNS = 0x03;	// columns for name, size, percentage completion
-
-#ifdef TODO
 	enum Columns {
-		COLUMN_THREAD_TITLE        =0x00,
-		COLUMN_THREAD_READ         =0x01,
-		COLUMN_THREAD_DATE         =0x02,
-		COLUMN_THREAD_DISTRIBUTION =0x03,
-		COLUMN_THREAD_AUTHOR       =0x04,
-		COLUMN_THREAD_CONTENT      =0x05,
-		COLUMN_THREAD_MSGID        =0x06,
-		COLUMN_THREAD_DATA         =0x07,
+		COLUMN_FILES_NAME        = 0x00,
+		COLUMN_FILES_SIZE        = 0x01,
+		COLUMN_FILES_FILE        = 0x02,
+		COLUMN_FILES_NB_COLUMNS  = 0x03
 	};
 
+#ifdef TODO
 	enum Roles{ SortRole           = Qt::UserRole+1,
               	ThreadPinnedRole   = Qt::UserRole+2,
               	MissingRole        = Qt::UserRole+3,
@@ -106,6 +100,7 @@ public:
     Qt::ItemFlags flags(const QModelIndex& index) const  override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
     // Custom item roles
 

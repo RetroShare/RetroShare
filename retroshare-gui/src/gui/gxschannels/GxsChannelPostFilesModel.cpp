@@ -65,7 +65,7 @@ void RsGxsChannelPostFilesModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 }
 
 #ifdef TODO
@@ -107,7 +107,7 @@ int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
 
 int RsGxsChannelPostFilesModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return COLUMN_THREAD_NB_COLUMNS ;
+	return COLUMN_FILES_NB_COLUMNS ;
 }
 
 // std::vector<std::pair<time_t,RsGxsMessageId> > RsGxsChannelPostsModel::getPostVersions(const RsGxsMessageId& mid) const
@@ -175,7 +175,7 @@ bool RsGxsChannelPostFilesModel::convertRefPointerToTabEntry(quintptr ref, uint3
 
 QModelIndex RsGxsChannelPostFilesModel::index(int row, int column, const QModelIndex & parent) const
 {
-    if(row < 0 || column < 0 || column >= COLUMN_THREAD_NB_COLUMNS)
+    if(row < 0 || column < 0 || column >= COLUMN_FILES_NB_COLUMNS)
 		return QModelIndex();
 
     quintptr ref = getChildRef(parent.internalId(),row);
@@ -199,7 +199,10 @@ Qt::ItemFlags RsGxsChannelPostFilesModel::flags(const QModelIndex& index) const
     if (!index.isValid())
         return 0;
 
-    return QAbstractItemModel::flags(index);
+    if(index.column() == COLUMN_FILES_FILE)
+		return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+    else
+		return QAbstractItemModel::flags(index);
 }
 
 quintptr RsGxsChannelPostFilesModel::getChildRef(quintptr ref,int index) const
@@ -256,6 +259,21 @@ int RsGxsChannelPostFilesModel::getChildrenCount(quintptr ref) const
 	}
 	else
 		return 0;
+}
+
+QVariant RsGxsChannelPostFilesModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+	if (role != Qt::DisplayRole)
+		return QVariant();
+
+    switch(section)
+    {
+    case COLUMN_FILES_FILE: return QString("Status");
+    case COLUMN_FILES_SIZE: return QString("Size");
+    case COLUMN_FILES_NAME: return QString("File");
+    default:
+        return QString("[No data]");
+    }
 }
 
 QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) const

@@ -62,10 +62,6 @@ static const int CHANNEL_TABS_POSTS  = 1;
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
 
-#define CHANNEL_FILES_COLUMN_NAME 0
-#define CHANNEL_FILES_COLUMN_SIZE 1
-#define CHANNEL_FILES_COLUMN_FILE 2
-
 Q_DECLARE_METATYPE(RsGxsFile)
 
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -150,7 +146,7 @@ QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOpt
 {
 	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
 
-    if(index.column() == CHANNEL_FILES_COLUMN_FILE)
+    if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
 		return new GxsChannelFilesStatusWidget(file,parent);
     else
         return NULL;
@@ -208,11 +204,11 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 
     switch(index.column())
     {
-    case CHANNEL_FILES_COLUMN_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QString::fromUtf8(file.mName.c_str()));
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QString::fromUtf8(file.mName.c_str()));
         	break;
-    case CHANNEL_FILES_COLUMN_SIZE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: painter->drawText(option.rect,Qt::AlignRight | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
         	break;
-    case CHANNEL_FILES_COLUMN_FILE: {
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: {
 		GxsChannelFilesStatusWidget w(file);
 		QPixmap pixmap(w.size());
 
@@ -241,10 +237,10 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
 
     switch(index.column())
     {
-    case CHANNEL_FILES_COLUMN_NAME: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
-    case CHANNEL_FILES_COLUMN_SIZE: return QSize(fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
     default:
-    case CHANNEL_FILES_COLUMN_FILE: return GxsChannelFilesStatusWidget(file).size();
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return GxsChannelFilesStatusWidget(file).size();
     }
 }
 
