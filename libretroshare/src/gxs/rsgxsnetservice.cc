@@ -4733,6 +4733,7 @@ void RsGxsNetService::setKeepAgeAll(uint32_t age_in_secs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 	locked_checkDelay(age_in_secs) ;
+	bool change = false;
 	for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it)
 	{
 		if(it->second.msg_keep_delay != age_in_secs)
@@ -4743,15 +4744,18 @@ void RsGxsNetService::setKeepAgeAll(uint32_t age_in_secs)
 				if(it->second.msg_req_delay == 0 || it->second.msg_keep_delay < it->second.msg_req_delay)
 					it->second.msg_req_delay = it->second.msg_keep_delay ;
 			}
-			IndicateConfigChanged();
+			change = true;
 		}
 	}
+	if(change)
+		IndicateConfigChanged();
 }
 
 void RsGxsNetService::setSyncAgeAll(uint32_t age_in_secs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
 	locked_checkDelay(age_in_secs) ;
+	bool change = false;
 	for(GrpConfigMap::iterator it(mServerGrpConfigMap.begin());it!=mServerGrpConfigMap.end();++it)
 	{
 		if(it->second.msg_req_delay != age_in_secs)
@@ -4766,9 +4770,11 @@ void RsGxsNetService::setSyncAgeAll(uint32_t age_in_secs)
 				if(it->second.msg_keep_delay > 0 && it->second.msg_req_delay > 0 && it->second.msg_keep_delay < it->second.msg_req_delay)
 					it->second.msg_keep_delay = it->second.msg_req_delay ;
 			}
-			IndicateConfigChanged();
+			change = true;
 		}
 	}	
+	if(change)
+		IndicateConfigChanged();
 }
 
 RsGxsGrpConfig& RsGxsNetService::locked_getGrpConfig(const RsGxsGroupId& grp_id)
