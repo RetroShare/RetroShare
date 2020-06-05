@@ -180,6 +180,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			std::string errorMessage;
 			bool makeHidden = false;
 			bool makeAutoTor = false;
+			std::string createToken;
 
 			// deserialize input parameters from JSON
 			{
@@ -189,6 +190,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 				RS_SERIAL_PROCESS(password);
 				RS_SERIAL_PROCESS(makeHidden);
 				RS_SERIAL_PROCESS(makeAutoTor);
+				RS_SERIAL_PROCESS(createToken);
 			}
 
 			// call retroshare C++ API
@@ -196,8 +198,9 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			            location, password, errorMessage, makeHidden,
 			            makeAutoTor );
 
-			if(retval)
-				authorizeUser(location.mLocationId.toStdString(),password);
+			std::string tokenUser, tokenPw;
+			if(retval && parseToken(createToken, tokenUser, tokenPw))
+				authorizeUser(tokenUser,tokenPw);
 
 			// serialize out parameters and return value to JSON
 			{
@@ -237,9 +240,6 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			// call retroshare C++ API
 			RsInit::LoadCertificateStatus retval =
 			        rsLoginHelper->attemptLogin(account, password);
-
-			if( retval == RsInit::OK )
-				authorizeUser(account.toStdString(), password);
 
 			// serialize out parameters and return value to JSON
 			{
