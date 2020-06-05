@@ -51,6 +51,7 @@
 #include "gui/gxs/GxsIdTreeWidgetItem.h"
 #include "gui/Identity/IdDialog.h"
 #include "gui/MainWindow.h"
+#include "gui/common/FilesDefs.h"
 
 #define COL_PENDING_ID                  0
 #define COL_PENDING_DESTINATION         1
@@ -145,7 +146,7 @@ void GxsTransportStatistics::CustomPopupMenu( QPoint )
 	
 	QTreeWidgetItem *item = treeWidget->currentItem();
 	if (item) {
-	contextMnu.addAction(QIcon(":/images/info16.png"), tr("Details"), this, SLOT(personDetails()));
+	contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("View details"), this, SLOT(personDetails()));
 
   }
 
@@ -158,7 +159,7 @@ void GxsTransportStatistics::CustomPopupMenuGroups( QPoint )
 	
 	QTreeWidgetItem *item = groupTreeWidget->currentItem();
 	if (item) {
-	contextMnu.addAction(QIcon(":/images/info16.png"), tr("View details"), this, SLOT(showAuthorInPeople()));
+	contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("View details"), this, SLOT(showAuthorInPeople()));
 
   }
 
