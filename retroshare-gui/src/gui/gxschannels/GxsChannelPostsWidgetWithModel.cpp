@@ -1019,8 +1019,8 @@ void GxsChannelPostsWidget::clearPosts()
 
 void GxsChannelPostsWidgetWithModel::blank()
 {
-	mStateHelper->setWidgetEnabled(ui->postButton, false);
-	mStateHelper->setWidgetEnabled(ui->subscribeToolButton, false);
+	ui->postButton->setEnabled(false);
+	ui->subscribeToolButton->setEnabled(false);
 	
 	mChannelPostsModel->clear();
     groupNameChanged(QString());
