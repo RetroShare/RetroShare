@@ -192,7 +192,7 @@ void PostedCardView::fill()
 		ui->dateLabel->setText(timestamp);
 	} else {
 
-		QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
 
 		mInFill = true;
 		int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());

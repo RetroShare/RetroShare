@@ -501,7 +501,7 @@ void PostedItem::fill()
 		RetroShareLink link = RetroShareLink::createGxsGroupLink(RetroShareLink::TYPE_POSTED, mGroupMeta.mGroupId, groupName());
 		ui->nameLabel->setText(link.toHtml());
 
-		QPixmap sqpixmap2 = QPixmap(":/images/thumb-default.png");
+		QPixmap sqpixmap2 = FilesDefs::getPixmapFromQtResourcePath(":/images/thumb-default.png");
 
 		mInFill = true;
 		int desired_height = 1.5*(ui->voteDownButton->height() + ui->voteUpButton->height() + ui->scoreLabel->height());
