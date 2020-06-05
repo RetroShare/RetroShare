@@ -30,6 +30,7 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
+#include <cstdint>
 
 #include <upnp/upnp.h>
 #include <upnp/upnptools.h>
@@ -37,6 +38,9 @@
 
 #include "util/rsthreads.h"
 #include "util/rsdebuglevel2.h"
+#include "util/rsmemory.h"
+#include "util/rsdeprecate.h"
+#include "util/rsnet.h"
 
 
 #ifdef UPNP_C
@@ -55,9 +59,8 @@ bool stdStringIsEqualCI(
 	const std::string &s2);
 
 
-class CUPnPPortMapping
+struct CUPnPPortMapping
 {
-private:
 	std::string m_ex_port;
 	std::string m_in_port;
 	std::string m_protocol;
@@ -65,91 +68,101 @@ private:
 	std::string m_description;
 	std::string m_key;
 	
-public:
 	CUPnPPortMapping(
-		int ex_port = 0,
-		int in_port = 0,
-		const std::string &protocol = stdEmptyString,
-		bool enabled = false,
-		const std::string &description = stdEmptyString);
-	~CUPnPPortMapping() {}
+	        uint16_t ex_port, uint16_t in_port, const std::string& protocol,
+	        bool enabled, const std::string& description ):
+	    m_ex_port(std::to_string(ex_port)), m_in_port(std::to_string(in_port)),
+	    m_protocol(protocol), m_enabled(enabled ? ENABLED : DISABLED),
+	    m_description(description), m_key(m_protocol + m_ex_port) {}
 
-	const std::string &getExPort() const
-		{ return m_ex_port; }
-	const std::string &getInPort() const
-		{ return m_in_port; }
-	const std::string &getProtocol() const
-		{ return m_protocol; }
-	const std::string &getEnabled() const
-		{ return m_enabled; }
-	const std::string &getDescription() const
-		{ return m_description; }
-	const std::string &getKey() const
-		{ return m_key; }
+	const std::string& getKey() const{ return m_key; }
+
+	static constexpr char PROTO_TCP[] = "TCP";
+	static constexpr char PROTO_UDP[] = "UDP";
+
+	static constexpr char ENABLED[] = "1";
+	static constexpr char DISABLED[] = "0";
+
+	RS_DEPRECATED const std::string& getExPort() const { return m_ex_port; }
+	RS_DEPRECATED const std::string& getInPort() const { return m_in_port; }
+	RS_DEPRECATED const std::string& getProtocol() const { return m_protocol; }
+	RS_DEPRECATED const std::string& getDescription() const { return m_description; }
 };
 
-
-class CUPnPControlPoint;
-
-
-class CUPnPLib
+namespace std
+{
+template<> class default_delete<IXML_Document>
 {
 public:
-	static const std::string &UPNP_ROOT_DEVICE;
-	static const std::string &UPNP_DEVICE_IGW;
-	static const std::string &UPNP_DEVICE_WAN;
-	static const std::string &UPNP_DEVICE_WAN_CONNECTION;
-	static const std::string &UPNP_DEVICE_LAN;
-	static const std::string &UPNP_SERVICE_LAYER3_FORWARDING;
-	static const std::string &UPNP_SERVICE_WAN_COMMON_INTERFACE_CONFIG;
-	static const std::string &UPNP_SERVICE_WAN_IP_CONNECTION;
-	static const std::string &UPNP_SERVICE_WAN_PPP_CONNECTION;
-	CUPnPControlPoint &m_ctrlPoint;
-	
-public:
-	explicit CUPnPLib(CUPnPControlPoint &ctrlPoint): m_ctrlPoint(ctrlPoint) {}
-	~CUPnPLib() = default;
+	void operator()(IXML_Document* doc) { ixmlDocument_free(doc); }
+};
+}
 
+struct RsLibUpnpXml
+{
 	// Convenience function so we don't have to write explicit calls 
 	// to char2unicode every time
 	std::string GetUPnPErrorMessage(int code) const;
 	
-	// Convenience function to avoid repetitive processing of error
-	// messages
-	std::string processUPnPErrorMessage(const std::string &messsage,
-	    int code,
-	    const DOMString errorString,
-	    const IXML_Document* doc) const;
+	/// Convenience function to avoid repetitive processing of error messages
+	static std::string processUPnPErrorMessage(
+	        const std::string& messsage, int code, const DOMString errorString,
+	        const IXML_Document* doc );
 
 	// Processing response to actions
 	void ProcessActionResponse(
 	        const IXML_Document* RespDoc,
 	        const std::string& actionName ) const;
 	
-	// IXML_Element
-	IXML_Element* Element_GetRootElement(const IXML_Document* doc) const;
-	IXML_Element *Element_GetFirstChild(
-		IXML_Element *parent) const;
-	IXML_Element *Element_GetNextSibling(
-		IXML_Element *child) const;
-	const DOMString Element_GetTag(
-		IXML_Element *element) const;
-	const std::string Element_GetTextValue(
-		IXML_Element *element) const;
-	const std::string Element_GetChildValueByTag(
-		IXML_Element *element,
-		const DOMString tag) const;
-	IXML_Element *Element_GetFirstChildByTag(
-		IXML_Element *element,
-		const DOMString tag) const;
-	IXML_Element *Element_GetNextSiblingByTag(
-		IXML_Element *element,
-		const DOMString tag) const;
-	const std::string Element_GetAttributeByTag(
-		IXML_Element *element,
-		const DOMString tag) const;
+	static rs_view_ptr<IXML_Element> GetRootElement(IXML_Document& doc);
+	static rs_view_ptr<IXML_Element> GetFirstChild(IXML_Element& parent);
+	static rs_view_ptr<IXML_Element> GetNextSibling(IXML_Element& sib);
+	static const DOMString GetTag(IXML_Element& element);
+	static const DOMString GetTextValue(IXML_Element& element);
+	static const DOMString GetChildValueByTag(
+	        IXML_Element& element, const DOMString tag);
+	static rs_view_ptr<IXML_Element> GetFirstChildByTag(
+	        IXML_Element& element, const DOMString tag);
+	static rs_view_ptr<IXML_Element> GetNextSiblingByTag(
+	        IXML_Element& element, const DOMString tag);
+	static const DOMString GetAttributeByTag(
+	        IXML_Element& element, const DOMString tag );
+
+	static std::unique_ptr<IXML_Document> DownloadXmlDoc(const char* url);
+
+	static constexpr char UPNP_DEVICE_IGW_VAL[] =
+	        "urn:schemas-upnp-org:device:InternetGatewayDevice:1";
+
+	static constexpr char UPNP_DEVICE_WAN[] =
+	        "urn:schemas-upnp-org:device:WANDevice:1";
+
+	static constexpr char UPNP_DEVICE_WAN_CONNECTION[] =
+	        "urn:schemas-upnp-org:device:WANConnectionDevice:1";
+
+	static constexpr char UPNP_DEVICE_LAN[] =
+	        "urn:schemas-upnp-org:device:LANDevice:1";
+
+	static constexpr char UPNP_SERVICE_LAYER3_FORWARDING[] =
+	        "urn:schemas-upnp-org:service:Layer3Forwarding:1";
+
+	static constexpr char UPNP_SERVICE_WAN_COMMON_INTERFACE_CONFIG[] =
+	        "urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1";
+
+	static constexpr char UPNP_SERVICE_WAN_IP_CONNECTION[] =
+	        "urn:schemas-upnp-org:service:WANIPConnection:1";
+
+	static constexpr char UPNP_SERVICE_WAN_PPP_CONNECTION[] =
+	        "urn:schemas-upnp-org:service:WANPPPConnection:1";
+
+	static constexpr char EXTERNAL_ADDRESS_STATE_VAR_NAME[] =
+	        "NewExternalIPAddress";
+
+	static constexpr char GET_EXTERNAL_IP_ADDRESS_ACTION[] =
+	        "GetExternalIPAddress";
 };
 
+RS_DEPRECATED_FOR(RsLibUpnpXml)
+typedef RsLibUpnpXml CUPnPLib;
 
 class CUPnPControlPoint;
 
@@ -162,47 +175,28 @@ class CUPnPControlPoint;
  * UPnPLib explicitly, making this dlopen() stuff unnecessary.
  */
 template <typename T, char const *XML_ELEMENT_NAME, char const *XML_LIST_NAME>
-class CXML_List : public std::map<const std::string, T *>
+struct CXML_List : std::map<const std::string, std::unique_ptr<T>>
 {
-public:
-	CXML_List(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *parent,
-		const std::string &url);
-	~CXML_List();
+	CXML_List(IXML_Element& parent, const std::string& url);
 };
 
 
 template <typename T, char const *XML_ELEMENT_NAME, char const *XML_LIST_NAME>
 CXML_List<T, XML_ELEMENT_NAME, XML_LIST_NAME>::CXML_List(
-	const CUPnPControlPoint &upnpControlPoint,
-	CUPnPLib &upnpLib,
-	IXML_Element *parent,
-	const std::string &url)
+        IXML_Element& parent, const std::string& url )
 {
-	IXML_Element *elementList =
-		upnpLib.Element_GetFirstChildByTag(parent, XML_LIST_NAME);
-	unsigned int i = 0;
-	for (	IXML_Element *element = upnpLib.Element_GetFirstChildByTag(elementList, XML_ELEMENT_NAME);
-		element;
-		element = upnpLib.Element_GetNextSiblingByTag(element, XML_ELEMENT_NAME)) {
-		// Add a new element to the element list
-		T *upnpElement = new T(upnpControlPoint, upnpLib, element, url);
-		(*this)[upnpElement->GetKey()] = upnpElement;
-		++i;
-	}
-	std::cerr << "\n    " << XML_LIST_NAME << ": " <<
-		i << " " << XML_ELEMENT_NAME << "s.";
-}
+	rs_view_ptr<IXML_Element> elementList =
+	        RsLibUpnpXml::GetFirstChildByTag(parent, XML_LIST_NAME);
+	if(!elementList) return;
 
-
-template <typename T, char const *XML_ELEMENT_NAME, char const *XML_LIST_NAME>
-CXML_List<T, XML_ELEMENT_NAME, XML_LIST_NAME>::~CXML_List()
-{
-	typename CXML_List<T, XML_ELEMENT_NAME, XML_LIST_NAME>::iterator it;
-	for(it = this->begin(); it != this->end(); ++it) {
-		delete (*it).second;
+	for( IXML_Element* element =
+	     RsLibUpnpXml::GetFirstChildByTag(*elementList, XML_ELEMENT_NAME);
+	     element;
+	     element = RsLibUpnpXml::GetNextSiblingByTag(*element, XML_ELEMENT_NAME) )
+	{
+		// Add a new element to the element map
+		std::unique_ptr<T> upnpElement(new T(*element, url));
+		(*this)[upnpElement->GetKey()] = std::move(upnpElement);
 	}
 }
 
@@ -220,20 +214,19 @@ extern const char s_device[];
 extern const char s_deviceList[];
 
 #ifdef UPNP_C
-	const char s_argument[] = "argument";
-	const char s_argumentList[] = "argumentList";
-	const char s_action[] = "action";
-	const char s_actionList[] = "actionList";
-	const char s_allowedValue[] = "allowedValue";
-	const char s_allowedValueList[] = "allowedValueList";
-	const char s_stateVariable[] = "stateVariable";
-	const char s_serviceStateTable[] = "serviceStateTable";
-	const char s_service[] = "service";
-	const char s_serviceList[] = "serviceList";
-	const char s_device[] = "device";
-	const char s_deviceList[] = "deviceList";
+const char s_argument[] = "argument";
+const char s_argumentList[] = "argumentList";
+const char s_action[] = "action";
+const char s_actionList[] = "actionList";
+const char s_allowedValue[] = "allowedValue";
+const char s_allowedValueList[] = "allowedValueList";
+const char s_stateVariable[] = "stateVariable";
+const char s_serviceStateTable[] = "serviceStateTable";
+const char s_service[] = "service";
+const char s_serviceList[] = "serviceList";
+const char s_device[] = "device";
+const char s_deviceList[] = "deviceList";
 #endif // UPNP_C
-
 
 class CUPnPArgument;
 typedef CXML_List<CUPnPArgument, s_argument, s_argumentList> ArgumentList;
@@ -248,41 +241,16 @@ typedef CXML_List<CUPnPService, s_service, s_serviceList> ServiceList;
 class CUPnPDevice;
 typedef CXML_List<CUPnPDevice, s_device, s_deviceList> DeviceList;
 
-
-class CUPnPError
+struct CUPnPArgument
 {
-private:
-	IXML_Element *m_root;
-	const std::string m_ErrorCode;
-	const std::string m_ErrorDescription;
-public:
-	CUPnPError(
-		const CUPnPLib &upnpLib,
-		const IXML_Document *errorDoc);
-	~CUPnPError() {}
-	const std::string &getErrorCode() const
-		{ return m_ErrorCode; }
-	const std::string &getErrorDescription() const
-		{ return m_ErrorDescription; }
-};
+	CUPnPArgument(IXML_Element& argument, const std::string& /*SCPDURL*/):
+	    m_name(RsLibUpnpXml::GetChildValueByTag(argument, "name")),
+	    m_direction(RsLibUpnpXml::GetChildValueByTag(argument, "direction")),
+	    m_retval(RsLibUpnpXml::GetFirstChildByTag(argument, "retval")),
+	    m_relatedStateVariable(
+	        RsLibUpnpXml::GetChildValueByTag(argument, "relatedStateVariable") )
+	{}
 
-
-class CUPnPArgument
-{
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
-	const std::string m_name;
-	const std::string m_direction;
-	bool m_retval;
-	const std::string m_relatedStateVariable;
-	
-public:
-	CUPnPArgument(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *argument,
-		const std::string &SCPDURL);
-	~CUPnPArgument() {}
 	const std::string &GetName() const
 		{ return m_name; }
 	const std::string &GetDirection() const
@@ -293,109 +261,96 @@ public:
 		{ return m_relatedStateVariable; }
 	const std::string &GetKey() const
 		{ return m_name; }
-};
 
-
-
-class CUPnPAction
-{
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
-	ArgumentList m_ArgumentList;
 	const std::string m_name;
-	
-public:
-	CUPnPAction(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *action,
-		const std::string &SCPDURL);
-	~CUPnPAction() {}
+	const std::string m_direction;
+	bool m_retval;
+	const std::string m_relatedStateVariable;
+};
+
+
+struct CUPnPAction
+{
+	CUPnPAction(IXML_Element& action, const std::string& SCPDURL):
+	    mName(RsLibUpnpXml::GetChildValueByTag(action, "name")),
+	    mArgumentList(action, SCPDURL) {}
+
+	const std::string mName;
+	ArgumentList mArgumentList;
+
+	const std::string& GetKey() const { return mName; }
+
+	RS_DEPRECATED
 	const std::string &GetName() const
-		{ return m_name; }
-	const std::string &GetKey() const
-		{ return m_name; }
+	    { return mName; }
+	RS_DEPRECATED
 	const ArgumentList &GetArgumentList() const
-		{ return m_ArgumentList; }
+	    { return mArgumentList; }
 };
 
 
-class CUPnPAllowedValue
+struct CUPnPAllowedValue
 {
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
-	const std::string m_allowedValue;
-	
-public:
 	CUPnPAllowedValue(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *allowedValue,
-		const std::string &SCPDURL);
-	~CUPnPAllowedValue() {}
-	const std::string &GetAllowedValue() const
-		{ return m_allowedValue; }
-	const std::string &GetKey() const
-		{ return m_allowedValue; }
+	        IXML_Element& allowedValue, const std::string& /*SCPDURL*/ ):
+	    m_allowedValue(RsLibUpnpXml::GetTextValue(allowedValue)) {}
+
+	const std::string m_allowedValue;
+
+	const std::string& GetKey() const
+	{ return m_allowedValue; }
 };
 
 
-class CUPnPStateVariable
+struct CUPnPStateVariable
 {
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	CUPnPStateVariable(
+	        IXML_Element& stateVariable, const std::string& SCPDURL ):
+	    m_AllowedValueList(stateVariable, SCPDURL),
+	    m_name        (RsLibUpnpXml::GetChildValueByTag(stateVariable, "name")),
+	    m_dataType    (RsLibUpnpXml::GetChildValueByTag(stateVariable, "dataType")),
+	    m_defaultValue(RsLibUpnpXml::GetChildValueByTag(stateVariable, "defaultValue")),
+	    m_sendEvents  (RsLibUpnpXml::GetAttributeByTag (stateVariable, "sendEvents"))
+	{}
+
 	AllowedValueList m_AllowedValueList;
 	const std::string m_name;
 	const std::string m_dataType;
 	const std::string m_defaultValue;
 	const std::string m_sendEvents;
-	
-public:
-	CUPnPStateVariable(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *stateVariable,
-		const std::string &URLBase);
-	~CUPnPStateVariable() {}
-	const std::string &GetNname() const
-		{ return m_name; }
-	const std::string &GetDataType() const
-		{ return m_dataType; }
-	const std::string &GetDefaultValue() const
-		{ return m_defaultValue; }
-	const std::string &GetKey() const
-		{ return m_name; }
-	const AllowedValueList &GetAllowedValueList() const
-		{ return m_AllowedValueList; }
+
+	const std::string&GetKey() const { return m_name; }
+
+	RS_DEPRECATED const std::string &GetNname() const { return m_name; }
+	RS_DEPRECATED const std::string &GetDataType() const { return m_dataType; }
+	RS_DEPRECATED const std::string &GetDefaultValue() const
+	{ return m_defaultValue; }
+	RS_DEPRECATED const AllowedValueList &GetAllowedValueList() const
+	{ return m_AllowedValueList; }
 };
 
 
-class CUPnPSCPD
+struct CUPnPSCPD
 {
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
+	CUPnPSCPD(IXML_Element& scpd, const std::string& SCPDURL):
+	    m_ActionList(scpd, SCPDURL), m_ServiceStateTable(scpd, SCPDURL),
+	    m_SCPDURL(SCPDURL) {}
+
 	ActionList m_ActionList;
 	ServiceStateTable m_ServiceStateTable;
 	const std::string m_SCPDURL;
-	
-public:
-	CUPnPSCPD(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *scpd,
-		const std::string &SCPDURL);
 
-	const ActionList &GetActionList() const
-		{ return m_ActionList; }
-	const ServiceStateTable &GetServiceStateTable() const
-		{ return m_ServiceStateTable; }
+	RS_DEPRECATED const ActionList &GetActionList() const
+	{ return m_ActionList; }
+	RS_DEPRECATED const ServiceStateTable &GetServiceStateTable() const
+	{ return m_ServiceStateTable; }
 };
 
 
 struct CUPnPArgumentValue
 {
 	CUPnPArgumentValue() = default;
-	CUPnPArgumentValue(const std::string &argument, const std::string &value);
+	CUPnPArgumentValue(const std::string& argument, const std::string& value);
 
 	std::string mArgument;
 	std::string mValue;
@@ -409,39 +364,10 @@ struct CUPnPArgumentValue
 };
 
 
-class CUPnPService
+struct CUPnPService
 {
-public:
-	CUPnPService(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *service,
-	    const std::string &URLBase );
+	CUPnPService(IXML_Element& service, const std::string& URLBase);
 
-	void setPropertyKV(const std::string& key, const std::string& value)
-	{
-		RS_STACK_MUTEX(mPropertiesMxt);
-		mPropertiesMap.insert(std::make_pair(key, value));
-	}
-	bool delPropertyK(const std::string& key)
-	{
-		RS_STACK_MUTEX(mPropertiesMxt);
-		return mPropertiesMap.erase(key);
-	}
-	bool hasPropertyK(const std::string& key)
-	{
-		RS_STACK_MUTEX(mPropertiesMxt);
-		return (mPropertiesMap.find(key) != mPropertiesMap.end());
-	}
-	std::string getPropertyV(const std::string& key)
-	{
-		/* Return a copy and not by reference on purpose, we cannot guarantee
-		 * that the original string exists after returning */
-		RS_STACK_MUTEX(mPropertiesMxt);
-		if(hasPropertyK(key)) return mPropertiesMap.find(key)->second;
-		return "";
-	}
-	
 	const std::string &GetServiceType() const
 		{ return m_serviceType; }
 	const std::string &GetServiceId() const
@@ -474,16 +400,7 @@ public:
 		{ return m_SCPD.get() != NULL; }
 	void SetSCPD(CUPnPSCPD *SCPD)
 		{ m_SCPD.reset(SCPD); }
-	
-	bool Execute(
-		const std::string &ActionName,
-		const std::vector<CUPnPArgumentValue> &ArgValue) const;
-	const std::string GetStateVariable(
-		const std::string &stateVariableName);
 
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
-	CUPnPLib &m_upnpLib;
 	const std::string m_serviceType;
 	const std::string m_serviceId;
 	const std::string m_SCPDURL;
@@ -495,21 +412,13 @@ private:
 	int m_timeout;
 	Upnp_SID m_SID;
 	std::unique_ptr<CUPnPSCPD> m_SCPD;
-
-	RsMutex mPropertiesMxt;
 	std::map<std::string, std::string> mPropertiesMap;
 };
 
 
-class CUPnPDevice
+struct CUPnPDevice
 {
-public:
-	CUPnPDevice(
-	    const CUPnPControlPoint &upnpControlPoint,
-	    CUPnPLib &upnpLib,
-	    IXML_Element *device,
-	    const std::string &URLBase);
-	~CUPnPDevice() = default;
+	CUPnPDevice(IXML_Element& device, const std::string& URLBase);
 
 	static constexpr char DEVICE_TYPE_TAG[] = "deviceType";
 
@@ -523,9 +432,6 @@ public:
 	    { return m_presentationURL; }
 	const std::string &GetKey() const
 	    { return m_UDN; }
-
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
 
 	// Please, lock these lists before use
 	DeviceList m_DeviceList;
@@ -546,25 +452,16 @@ private:
 };
 
 
-class CUPnPRootDevice : public CUPnPDevice
+struct CUPnPRootDevice: CUPnPDevice
 {
-private:
-	const CUPnPControlPoint &m_UPnPControlPoint;
 	const std::string m_URLBase;
 	const std::string m_location;
 	int m_expires;
 
-public:
 	CUPnPRootDevice(
-		const CUPnPControlPoint &upnpControlPoint,
-		CUPnPLib &upnpLib,
-		IXML_Element *rootDevice,
-		const std::string &OriginalURLBase,
-		const std::string &FixedURLBase,
-		const char *location,
-		int expires);
-	~CUPnPRootDevice() {}
-	
+	        IXML_Element& rootDevice, const std::string& OriginalURLBase,
+	        const std::string& FixedURLBase, const char* location, int expires );
+
 	const std::string &GetURLBase() const
 		{ return m_URLBase; }
 	const std::string &GetLocation() const
@@ -576,41 +473,68 @@ public:
 };
 
 
-typedef std::map<const std::string, CUPnPRootDevice *> RootDeviceMap;
-typedef std::map<const std::string, CUPnPService *> ServiceMap;
-typedef std::map<const std::string, CUPnPPortMapping> PortMappingMap;
+RS_DEPRECATED
+typedef std::map<std::string, CUPnPRootDevice*> RootDeviceMap;
+
+RS_DEPRECATED
+typedef std::map<std::string, CUPnPService*>  ServiceMap;
+
+RS_DEPRECATED
+typedef std::map<std::string, CUPnPPortMapping> PortMappingMap;
 
 
 class CUPnPControlPoint
 {
 public:
-	CUPnPService *m_WanService;
-	std::string m_getStateVariableLastResult;
-	explicit CUPnPControlPoint(unsigned short udpPort);
+	explicit CUPnPControlPoint(uint16_t upnpUdpBroadcastPort);
 	~CUPnPControlPoint();
-	char* getInternalIpAddress();
-	std::string getExternalAddress();
+
+	/** Used to get a pointer to an instance of the class.
+	 * In CUPnPControlPoint::Callback, use this instead of passing the cookie
+	 * for better type safety.
+	 * Used also in service costructor to register the service.
+	 */
+	static rs_view_ptr<CUPnPControlPoint> instance;
+
+	rs_view_ptr<const char> getInternalIpAddress();
+	bool getExternalAddress(sockaddr_storage& addr);
+
 	void Subscribe(CUPnPService &service);
 	void Unsubscribe(const CUPnPService& service);
-	bool AddPortMappings(
+	bool RequestPortsForwarding(
 		std::vector<CUPnPPortMapping> &upnpPortMapping);
+	bool checkPortMapping(std::vector<CUPnPPortMapping> &upnpPortMapping)
+	{
+		// TODO
+		return false;
+	}
 	bool DeletePortMappings(
 		std::vector<CUPnPPortMapping> &upnpPortMapping);
+
+	bool Execute(
+	        CUPnPService& service, const std::string& ActionName,
+	        const std::vector<CUPnPArgumentValue>& argValue ) const;
+
+	const std::string GetStateVariable(
+	        CUPnPService& service, const std::string& stateVariableName );
 
 	UpnpClient_Handle GetUPnPClientHandle()	const
 		{ return m_UPnPClientHandle; }
 
-	bool GetIGWDeviceDetected() const { return m_IGWDeviceDetected; }
-	void SetIGWDeviceDetected(bool b) { m_IGWDeviceDetected = b; }
+	bool GetIGWDeviceDetected() const { return !m_RootDeviceMap.empty(); }
 	bool WanServiceDetected() const { return !m_ServiceMap.empty(); }
 	void SetWanService(CUPnPService *service) { m_WanService = service; }
 
 	// Callback function
 	static int Callback(
-	        Upnp_EventType EventType, const void* Event, void* Cookie );
+	        Upnp_EventType eventType, const void* event, void* cookie );
 	void OnEventReceived(const std::string &Sid,
 	    int EventKey,
 	    const IXML_Document* ChangedVariables);
+
+	RS_DEPRECATED_FOR(m_ServiceMap)
+	CUPnPService *m_WanService;
+
 
 private:
 	static constexpr char ADD_PORT_MAPPING_ACTION[] = "AddPortMapping";
@@ -621,33 +545,30 @@ private:
 	static constexpr char URL_BASE_TAG[] = "URLBase";
 	static constexpr char DEVICE_TAG[] = "device";
 
-
-	/** Used to get a pointer to an instance of the class in
-	 * CUPnPControlPoint::Callback */
-	static CUPnPControlPoint* s_CtrlPoint;
-
 	void AddRootDevice(
-		IXML_Element *rootDevice,
-		const std::string &urlBase,
-		const char *location,
-		int expires);
-	void RemoveRootDevice(
-		const char *udn);
+	        IXML_Element& rootDevice, const std::string& urlBase,
+	        const char* location, int expires );
+	void RemoveRootDevice(const char* udn);
 	void RefreshPortMappings();
 	bool PrivateAddPortMapping(const CUPnPPortMapping& upnpPortMapping);
-	bool PrivateDeletePortMapping(
-		CUPnPPortMapping &upnpPortMapping);
-	bool PrivateGetExternalIpAdress();
+	bool PrivateDeletePortMapping(CUPnPPortMapping &upnpPortMapping);
 
 	CUPnPLib m_upnpLib;
 	UpnpClient_Handle m_UPnPClientHandle;
-	RootDeviceMap m_RootDeviceMap;
-	ServiceMap m_ServiceMap;
-	PortMappingMap m_ActivePortMappingsMap;
+	std::map<std::string, CUPnPRootDevice*> m_RootDeviceMap;
+
+	/** Store Internet Gateway and similar services so we can request port
+	 * forwarding
+	 * TODO: Is this class in charge of cleaning the memory?
+	 */
+	std::map<std::string, CUPnPService*> m_ServiceMap;
+
+	std::map<std::string, CUPnPPortMapping> m_ActivePortMappingsMap;
 	RsMutex mMutex; /// Protect internal data
 	bool m_IGWDeviceDetected;
 
-	RsMutex m_WaitForSearchTimeoutMutex;
+	RS_DEPRECATED
+	RsMutex mWaitForSearchMutex;
 };
 
 // File_checked_for_headers

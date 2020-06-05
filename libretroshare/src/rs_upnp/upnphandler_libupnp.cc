@@ -19,6 +19,9 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
+
+#include "util/rsdebuglevel2.h"
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -51,9 +54,9 @@ bool upnphandler::initUPnPState()
 	    std::cerr << cUPnPControlPoint->getInternalIpAddress() << std::endl;
 	    #endif
 
-	    //const char ipaddr = cUPnPControlPoint->getInternalIpAddress().c_str();
-	    inet_aton(cUPnPControlPoint->getInternalIpAddress(), &(upnp_iaddr.sin_addr));
-	    upnp_iaddr.sin_port = htons(iport);
+		const char* addrStr = cUPnPControlPoint->getInternalIpAddress();
+		inet_aton(addrStr ? addrStr : "127.0.0.1", &(upnp_iaddr.sin_addr));
+		upnp_iaddr.sin_port = htons(iport);
 
 	    #ifdef UPNP_DEBUG
 	    std::cerr << "upnphandler::initUPnPState READY" << std::endl;
@@ -110,12 +113,12 @@ extern "C" void* doSetupUPnP(void* p)
 
 bool upnphandler::background_setup_upnp(bool start, bool stop)
 {
+	RS_DBG1("start: ", start, " stop: ", stop);
+	print_stacktrace();
+
 	pthread_t tid;
 
 	/* launch thread */
-	#ifdef UPNP_DEBUG
-	std::cerr << "background_setup_upnp Creating upnp thread." << std::endl;
-	#endif
 	upnpThreadData *data = new upnpThreadData();
 	data->handler = this;
 	data->start = start;
@@ -205,8 +208,8 @@ bool upnphandler::start_upnp()
 	cUPnPControlPoint->DeletePortMappings(upnpPortMapping2);
 
 	//add new rules
-	bool res = cUPnPControlPoint->AddPortMappings(upnpPortMapping1);
-	bool res2 = cUPnPControlPoint->AddPortMappings(upnpPortMapping2);
+	bool res = cUPnPControlPoint->RequestPortsForwarding(upnpPortMapping1);
+	bool res2 = cUPnPControlPoint->RequestPortsForwarding(upnpPortMapping2);
 
 	struct sockaddr_storage extAddr;
 	bool extAddrResult = getExternalAddress(extAddr);
@@ -280,19 +283,7 @@ bool upnphandler::shutdown_upnp()
  *
  */
 
-upnphandler::upnphandler()
-	:
-	upnpState(RS_UPNP_S_UNINITIALISED), dataMtx("upupState"),
-	 cUPnPControlPoint(NULL),
-	   toEnable(false), toStart(false), toStop(false),
-	iport(0),eport(0), eport_curr(0)
-{
-}
 
-upnphandler::~upnphandler()
-{
-		return;
-}
 
 	/* RsIface */
 void  upnphandler::enable(bool active)
@@ -461,6 +452,3 @@ bool    upnphandler::getExternalAddress(struct sockaddr_storage &addr)
 		return false;
 	}
 }
-
-
-
