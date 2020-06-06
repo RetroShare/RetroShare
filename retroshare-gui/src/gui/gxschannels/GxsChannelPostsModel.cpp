@@ -115,13 +115,10 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-       return (getChildrenCount(0) + mColumns-1)/mColumns;
+		return (mPosts.size()-1 + mColumns-1)/mColumns; // mPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
-
-    //else
-    //   return getChildrenCount(parent.internalId());
 }
 
 int RsGxsChannelPostsModel::columnCount(const QModelIndex &/*parent*/) const
@@ -173,7 +170,7 @@ bool RsGxsChannelPostsModel::convertTabEntryToRefPointer(uint32_t entry,quintptr
 	// This means that the whole software has the following build-in limitation:
 	//	  * 4 B   simultaenous posts. Should be enough !
 
-	ref = (intptr_t)entry;
+	ref = (intptr_t)(entry+1);
 
 	return true;
 }
@@ -187,7 +184,13 @@ bool RsGxsChannelPostsModel::convertRefPointerToTabEntry(quintptr ref, uint32_t&
         RsErr() << "(EE) trying to make a ChannelPostsModelIndex out of a number that is larger than 2^32-1 !" << std::endl;
         return false ;
     }
-	entry = quintptr(val);
+    if(val==0)
+    {
+        RsErr() << "(EE) trying to make a ChannelPostsModelIndex out of index 0." << std::endl;
+        return false;
+    }
+
+	entry = val - 1;
 
 	return true;
 }
@@ -197,7 +200,7 @@ QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex
     if(row < 0 || column < 0 || column >= mColumns)
 		return QModelIndex();
 
-    quintptr ref = getChildRef(parent.internalId(),row + column*mColumns);
+    quintptr ref = getChildRef(parent.internalId(),column + row*mColumns);
 
 #ifdef DEBUG_CHANNEL_MODEL
 	std::cerr << "index-3(" << row << "," << column << " parent=" << parent << ") : " << createIndex(row,column,ref) << std::endl;
@@ -223,7 +226,12 @@ Qt::ItemFlags RsGxsChannelPostsModel::flags(const QModelIndex& index) const
 
 void RsGxsChannelPostsModel::setNumColumns(int n)
 {
-     preMods();
+    if(n < 1)
+    {
+        RsErr() << __PRETTY_FUNCTION__ << " Attempt to set a number of column of 0. This is wrong." << std::endl;
+        return;
+    }
+	preMods();
 
 	beginRemoveRows(QModelIndex(),0,rowCount()-1);
     endRemoveRows();
@@ -241,15 +249,10 @@ quintptr RsGxsChannelPostsModel::getChildRef(quintptr ref,int index) const
 	if (index < 0)
 		return 0;
 
-	ChannelPostsModelIndex entry ;
-
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
-		return 0 ;
-
-	if(entry == 0)
+	if(ref == quintptr(0))
 	{
 		quintptr new_ref;
-		convertTabEntryToRefPointer(index+1,new_ref);
+		convertTabEntryToRefPointer(index,new_ref);
 		return new_ref;
 	}
 	else
@@ -278,18 +281,10 @@ int RsGxsChannelPostsModel::getChildrenCount(quintptr ref) const
 {
 	uint32_t entry = 0 ;
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
-		return 0 ;
+    if(ref == quintptr(0))
+        return rowCount()-1;
 
-	if(entry == 0)
-	{
-#ifdef DEBUG_CHANNEL_MODEL
-		std::cerr << "Children count (flat mode): " << mPosts.size()-1 << std::endl;
-#endif
-		return ((int)mPosts.size())-1;
-	}
-	else
-		return 0;
+	return 0;
 }
 
 QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
@@ -803,7 +798,7 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
 {
     // collect new versions of posts if any
 
-#ifdef DEBUG_CHANNEL_MODEL
+#ifndef DEBUG_CHANNEL_MODEL
     std::cerr << "Inserting channel posts" << std::endl;
 #endif
 
@@ -813,8 +808,8 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
 		if(posts[i].mMeta.mOrigMsgId == posts[i].mMeta.mMsgId)
 			posts[i].mMeta.mOrigMsgId.clear();
 
-#ifdef DEBUG_CHANNEL_MODEL
-        std::cerr << "  " << i << ": msg_id=" << posts[i].mMeta.mMsgId << ": orig msg id = " << posts[i].mMeta.mOrigMsgId << std::endl;
+#ifndef DEBUG_CHANNEL_MODEL
+        std::cerr << "  " << i << ": name=\"" << posts[i].mMeta.mMsgName << "\" msg_id=" << posts[i].mMeta.mMsgId << ": orig msg id = " << posts[i].mMeta.mOrigMsgId << std::endl;
 #endif
 
         if(!posts[i].mMeta.mOrigMsgId.isNull())
@@ -903,20 +898,16 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
 
     for (std::vector<RsGxsChannelPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
     {
-#ifdef DEBUG_CHANNEL_MODEL
-		std::cerr << "  adding post: " << (*it).mMeta.mMsgId ;
-#endif
-
         if(!(*it).mMeta.mMsgId.isNull())
 		{
-#ifdef DEBUG_CHANNEL_MODEL
-            std::cerr << " added" << std::endl;
+#ifndef DEBUG_CHANNEL_MODEL
+            std::cerr << " adding post \"" << (*it).mMeta.mMsgName << "\"" << std::endl;
 #endif
 			mPosts.push_back(*it);
 		}
 #ifdef DEBUG_CHANNEL_MODEL
         else
-            std::cerr << " skipped" << std::endl;
+            std::cerr << " skipped older version post \"" << (*it).mMeta.mMsgName << "\"" << std::endl;
 #endif
     }
 }
@@ -1025,7 +1016,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 				quintptr ref ;
 				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex(i-1,0,ref);
+				return createIndex((i-1)%mColumns, (i-1)/mColumns,ref);
             }
 
         if(mPosts[i].mMeta.mMsgId == postId)
@@ -1033,7 +1024,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex(i-1,0,ref);
+			return createIndex((i-1)%mColumns, (i-1)/mColumns,ref);
         }
     }
 

@@ -488,6 +488,9 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		mChannelPostFilesModel->clear();
         return;
     }
+    if(index.row()==0 && index.column()==0)
+        std::cerr << "here" << std::endl;
+
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     mChannelPostFilesModel->setFiles(post.mFiles);
