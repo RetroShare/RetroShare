@@ -1410,6 +1410,7 @@ bool IdDialog::fillIdListItem(const RsGxsIdGroup& data, QTreeWidgetItem *&item, 
 	item->setData(
 	            RSID_COL_VOTES,SortRole,
 	            static_cast<uint32_t>(idd.mReputation.mOverallReputationLevel));
+	item->setData(RSID_COL_VOTES,Qt::UserRole,idd.mReputation.mFriendsNegativeVotes>0);
 
     if(isOwnId)
     {
