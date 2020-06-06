@@ -268,7 +268,7 @@
      </widget>
      <widget class="QTabWidget" name="rightTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="personTab">
        <attribute name="icon">
