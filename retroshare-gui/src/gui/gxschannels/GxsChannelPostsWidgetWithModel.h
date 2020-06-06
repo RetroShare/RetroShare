@@ -23,19 +23,55 @@
 
 #include <map>
 
-#include "gui/gxs/GxsMessageFramePostWidget.h"
+#include <QStyledItemDelegate>
 
+#include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
 
 namespace Ui {
-class GxsChannelPostsWidget;
+class GxsChannelPostsWidgetWithModel;
 }
 
 class GxsChannelPostItem;
 class QTreeWidgetItem;
 class FeedItem;
+class RsGxsChannelPostsModel;
+class RsGxsChannelPostFilesModel;
 
-class GxsChannelPostsWidget : public GxsMessageFramePostWidget, public FeedHolder
+class ChannelPostFilesDelegate: public QStyledItemDelegate
+{
+	Q_OBJECT
+
+	public:
+		ChannelPostFilesDelegate(QObject *parent=0) : QStyledItemDelegate(parent){}
+        virtual ~ChannelPostFilesDelegate(){}
+
+		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
+    	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+};
+
+class ChannelPostDelegate: public QAbstractItemDelegate
+{
+	Q_OBJECT
+
+	public:
+		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+        virtual ~ChannelPostDelegate(){}
+
+		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+	private:
+ 		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
+ 		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
+ 		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
+ 		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
+};
+
+class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
 {
 	Q_OBJECT
 
@@ -49,39 +85,49 @@ public:
 
 public:
 	/** Default Constructor */
-	GxsChannelPostsWidget(const RsGxsGroupId &channelId, QWidget *parent = 0);
+	GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent = 0);
 	/** Default Destructor */
-	~GxsChannelPostsWidget();
+	~GxsChannelPostsWidgetWithModel();
 
 	/* GxsMessageFrameWidget */
 	virtual QIcon groupIcon();
+    virtual void groupIdChanged() { updateDisplay(true); }
+    virtual QString groupName(bool) override;
+    virtual bool navigate(const RsGxsMessageId&) override;
 
+	void updateDisplay(bool complete);
+
+#ifdef TODO
 	/* FeedHolder */
 	virtual QScrollArea *getScrollArea();
 	virtual void deleteFeedItem(FeedItem *feedItem, uint32_t type);
 	virtual void openChat(const RsPeerId& peerId);
+#endif
 	virtual void openComments(uint32_t type, const RsGxsGroupId &groupId, const QVector<RsGxsMessageId> &msg_versions, const RsGxsMessageId &msgId, const QString &title);
 
 protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
+#ifdef TODO
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
-	virtual void clearPosts();
+#endif
 	virtual bool useThread() { return mUseThread; }
-	virtual void fillThreadCreatePost(const QVariant &post, bool related, int current, int count);
-	virtual bool navigatePostItem(const RsGxsMessageId& msgId);
     virtual void blank() ;
 
+#ifdef TODO
 	virtual bool getGroupData(RsGxsGenericGroupData *& data) override;
     virtual void getMsgData(const std::set<RsGxsMessageId>& msgIds,std::vector<RsGxsGenericMsgData*>& posts) override;
     virtual void getAllMsgData(std::vector<RsGxsGenericMsgData*>& posts) override;
 	virtual void insertPosts(const std::vector<RsGxsGenericMsgData*>& posts) override;
 	virtual void insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread) override;
+#endif
 
 	/* GxsMessageFrameWidget */
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
 
 private slots:
+	void showPostDetails();
+	void updateGroupData();
 	void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
@@ -98,9 +144,6 @@ private:
 	int viewMode();
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(std::vector<RsGxsChannelPost>& posts, GxsMessageFramePostThread *thread, bool related);
-
-	void createPostItem(const RsGxsChannelPost &post, bool related);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
 private:
@@ -110,8 +153,12 @@ private:
 	bool mUseThread;
     RsEventsHandlerId_t mEventHandlerId ;
 
+    RsGxsChannelPostsModel     *mChannelPostsModel;
+    RsGxsChannelPostFilesModel *mChannelPostFilesModel;
+	UIStateHelper *mStateHelper;
+
 	/* UI - from Designer */
-	Ui::GxsChannelPostsWidget *ui;
+	Ui::GxsChannelPostsWidgetWithModel *ui;
 };
 
 #endif
