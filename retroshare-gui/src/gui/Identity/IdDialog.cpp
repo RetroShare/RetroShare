@@ -1575,6 +1575,14 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
+	
+	int contactsCount = contactsItem->childCount() ;
+	int allCount = allItem->childCount() ;
+	int ownCount = ownItem->childCount();
+
+	contactsItem->setText(0, tr("My contacts") + " (" + QString::number( contactsCount ) + ")" );
+	allItem->setText(0, tr("All") + " (" + QString::number( allCount ) + ")" );
+	ownItem->setText(0, tr("My own identities") + " (" +  QString::number( ownCount ) + ")" );
 
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
