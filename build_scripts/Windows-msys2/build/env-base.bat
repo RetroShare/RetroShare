@@ -108,7 +108,7 @@ exit /B 0
 
 :usage
 echo.
-echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang indexing noupdate]
+echo Usage: 32^|64 release^|debug [autologin plugins webui singlethread clang indexing noupdate] ["CONFIG+=..."]
 echo.
 echo Mandatory parameter
 echo 32^|64              32-bit or 64-bit Version
@@ -122,6 +122,7 @@ echo singlethread       Use only 1 thread for building
 echo clang              Use clang compiler instead of GCC
 echo indexing           Build with deep channel and file indexing support
 echo noupdate           Skip updating the libraries
+echo "CONFIG+=..."      Enable some extra features, you can find the almost complete list in retroshare.pri
 echo.
 echo Parameter for pack
 echo tor                Pack tor version

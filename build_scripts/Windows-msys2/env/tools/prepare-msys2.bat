@@ -25,7 +25,7 @@ if exist "%EnvMSYS2Path%\msys%MSYS2Base%\usr\bin\pacman.exe" (
 	)
 )
 
-set MSYS2Install=msys2-base-%MSYS2Architecture%-20190524.tar.xz
+set MSYS2Install=msys2-base-%MSYS2Architecture%-20180531.tar.xz
 set MSYS2Url=http://sourceforge.net/projects/msys2/files/Base/%MSYS2Architecture%/%MSYS2Install%/download
 
 %cecho% info "Remove previous MSYS2 version"
