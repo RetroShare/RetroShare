@@ -1274,18 +1274,18 @@ bool RsGenExchange::getMsgMeta(const uint32_t &token,
 
 	for(; mit != result.end(); ++mit)
 	{
-		std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+		std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
 		std::vector<RsMsgMetaData>& msgInfoV = msgInfo[mit->first];
 
-		std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
+		std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
 		RsMsgMetaData meta;
 		for(; vit != metaV.end(); ++vit)
 		{
-			RsGxsMsgMetaData& m = *(*vit);
+			const RsGxsMsgMetaData& m = *(*vit);
 			meta = m;
 			msgInfoV.push_back(meta);
-			delete *vit;
+			//delete *vit;
 		}
 		metaV.clear();
 	}
@@ -1302,18 +1302,18 @@ bool RsGenExchange::getMsgRelatedMeta(const uint32_t &token, GxsMsgRelatedMetaMa
 
         for(; mit != result.end(); ++mit)
         {
-                std::vector<RsGxsMsgMetaData*>& metaV = mit->second;
+                std::vector<const RsGxsMsgMetaData*>& metaV = mit->second;
 
                 std::vector<RsMsgMetaData>& msgInfoV = msgMeta[mit->first];
 
-                std::vector<RsGxsMsgMetaData*>::iterator vit = metaV.begin();
+                std::vector<const RsGxsMsgMetaData*>::iterator vit = metaV.begin();
                 RsMsgMetaData meta;
                 for(; vit != metaV.end(); ++vit)
                 {
-                        RsGxsMsgMetaData& m = *(*vit);
+                        const RsGxsMsgMetaData& m = *(*vit);
                         meta = m;
                         msgInfoV.push_back(meta);
-                        delete *vit;
+                        //delete *vit;
                 }
                 metaV.clear();
         }
@@ -2016,15 +2016,15 @@ void RsGenExchange::processMsgMetaChanges()
 
                 if(mit != result.end())
                 {
-                    std::vector<RsGxsMsgMetaData*>& msgMetaV = mit->second;
+                    std::vector<const RsGxsMsgMetaData*>& msgMetaV = mit->second;
 
                     if(!msgMetaV.empty())
                     {
-                        RsGxsMsgMetaData* meta = *(msgMetaV.begin());
+                        const RsGxsMsgMetaData* meta = *(msgMetaV.begin());
                         value = (meta->mMsgStatus & ~mask) | (mask & value);
 						changed = (static_cast<int64_t>(meta->mMsgStatus) != value);
                         m.val.put(RsGeneralDataService::MSG_META_STATUS, value);
-                        delete meta;
+                        //delete meta;
                         ok = true;
                     }
                 }
