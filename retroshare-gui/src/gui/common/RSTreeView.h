@@ -33,10 +33,16 @@ public:
 
 	void setPlaceholderText(const QString &text);
 
+    // Use this to make selection automatic based on mouse position. This is useful to trigger selection and therefore editing mode
+    // in trees that show editing widgets using a QStyledItemDelegate
+
+    void setAutoSelect(bool b);
+
 signals:
     void sizeChanged(QSize);
 
 protected:
+	virtual void mouseMoveEvent(QMouseEvent *e) override; // overriding so as to manage auto-selection
     virtual void resizeEvent(QResizeEvent *e) override;
 	virtual void paintEvent(QPaintEvent *event) override;
 

@@ -519,6 +519,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
+    ui->channelPostFiles_TV->setAutoSelect(true);
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()

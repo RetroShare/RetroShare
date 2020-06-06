@@ -24,6 +24,25 @@
 
 RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
 {
+    setMouseTracking(false); // normally the default, but who knows if it's not goign to change in the future.
+}
+
+void RSTreeView::mouseMoveEvent(QMouseEvent *e)
+{
+    QModelIndex idx = indexAt(e->pos());
+
+    if(idx != selectionModel()->currentIndex())
+        selectionModel()->setCurrentIndex(idx,QItemSelectionModel::ClearAndSelect);
+
+    QTreeView::mouseMoveEvent(e);
+}
+
+void RSTreeView::setAutoSelect(bool b)
+{
+    if(b)
+		setMouseTracking(true);
+    else
+		setMouseTracking(false);
 }
 
 void RSTreeView::resizeEvent(QResizeEvent *e)
