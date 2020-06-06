@@ -536,6 +536,16 @@ p, li { white-space: pre-wrap; }
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_5">
+      <attribute name="title">
+       <string>Files</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="RSTreeView" name="channelFiles_TV"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

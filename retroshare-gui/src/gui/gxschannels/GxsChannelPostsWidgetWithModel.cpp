@@ -126,66 +126,11 @@ public:
 
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-#ifdef TODO
-	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
-	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
-	QRect pixmapRect;
-	QPixmap pixmap;
-	qlonglong fileSize;
-	double dlspeed, multi;
-	int seconds,minutes, hours, days;
-	qlonglong remaining;
-	QString temp ;
-	qlonglong completed;
-	qlonglong downloadtime;
-	qint64 qi64Value;
-#endif
-
 	// prepare
 	painter->save();
 	painter->setClipRect(option.rect);
 
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
-    //const RsGxsChannelPost& post(*pinfo);
-
-#ifdef TODO
-	QVariant value = index.data(Qt::TextColorRole);
-
-	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
-		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
-
-	QPalette::ColorGroup cg = option.state & QStyle::State_Enabled ? QPalette::Normal : QPalette::Disabled;
-
-	if(option.state & QStyle::State_Selected)
-		painter->setPen(opt.palette.color(cg, QPalette::HighlightedText));
-	else
-		painter->setPen(opt.palette.color(cg, QPalette::Text));
-
-	//painter->drawText(option.rect, Qt::AlignRight, QString("TODO"));
-
-	QPixmap thumbnail;
-	GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-
-    QFontMetricsF fm(opt.font);
-
-	int W = IMAGE_SIZE_FACTOR_W * fm.height() * IMAGE_ZOOM_FACTOR;
-	int H = IMAGE_SIZE_FACTOR_H * fm.height() * IMAGE_ZOOM_FACTOR;
-
-	int w = fm.width("X") ;
-	int h = fm.height() ;
-
-    float img_coord_x = IMAGE_MARGIN_FACTOR*0.5*w;
-    float img_coord_y = IMAGE_MARGIN_FACTOR*0.5*h;
-
-    QPoint img_pos(img_coord_x,img_coord_y);
-    QPoint img_size(W,H);
-
-    QPoint txt_pos(0,img_coord_y + H + h);
-
-    painter->drawPixmap(QRect(opt.rect.topLeft() + img_pos,opt.rect.topLeft()+img_pos+img_size),thumbnail.scaled(W,H,Qt::KeepAspectRatio,Qt::SmoothTransformation));
-    painter->drawText(QRect(option.rect.topLeft() + txt_pos,option.rect.bottomRight()),Qt::AlignCenter,QString::fromStdString(post.mMeta.mMsgName));
-#endif
 
 	painter->save();
     painter->fillRect( option.rect, option.backgroundBrush);
@@ -193,10 +138,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 	ThumbnailView w(post);
 
-	//w.setFixedWidth(option.rect.width());
-
 	QPixmap pixmap(w.size());
-	pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+
+    if(option.state & QStyle::State_Selected)
+		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
+	else
+		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+
 	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
     // debug
@@ -220,21 +168,6 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
     QFontMetricsF fm(option.font);
 
     return QSize(COLUMN_SIZE_FONT_FACTOR_W*fm.height(),COLUMN_SIZE_FONT_FACTOR_H*fm.height());
-
-#ifdef TODO
-	//QPixmap thumbnail;
-	//GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-
-    QFontMetricsF fm(option.font);
-
-	int W = IMAGE_SIZE_FACTOR_W * fm.height() * IMAGE_ZOOM_FACTOR;
-	int H = IMAGE_SIZE_FACTOR_H * fm.height() * IMAGE_ZOOM_FACTOR;
-
-	int h = fm.height() ;
-	int w = fm.width("X") ;
-
-	return QSize(W+IMAGE_MARGIN_FACTOR*w,H + 2*h);
-#endif
 }
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -255,24 +188,6 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 {
 	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
 
-#ifdef TODO
-
-	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
-
-	QStyleOptionViewItem opt = option;
-	QStyleOptionProgressBarV2 newopt;
-	QRect pixmapRect;
-	QPixmap pixmap;
-	qlonglong fileSize;
-	double dlspeed, multi;
-	int seconds,minutes, hours, days;
-	qlonglong remaining;
-	QString temp ;
-	qlonglong completed;
-	qlonglong downloadtime;
-	qint64 qi64Value;
-#endif
-
 	// prepare
 	painter->save();
 	painter->setClipRect(option.rect);
@@ -282,21 +197,6 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
     painter->fillRect( option.rect, option.backgroundBrush);
 	//optionFocusRect.backgroundColor = option.palette.color(colorgroup, (option.state & QStyle::State_Selected) ? QPalette::Highlight : QPalette::Background);
     painter->restore();
-
-#ifdef TODO
-	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
-	QVariant value = index.data(Qt::TextColorRole);
-
-	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
-		opt.palette.setColor(QPalette::Text, qvariant_cast<QColor>(value));
-
-	QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ? QPalette::Normal : QPalette::Disabled;
-
-	if(option.state & QStyle::State_Selected)
-		painter->setPen(option.palette.color(cg, QPalette::HighlightedText));
-	else
-		painter->setPen(option.palette.color(cg, QPalette::Text));
-#endif
 
     switch(index.column())
     {
@@ -315,12 +215,6 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
         painter->drawPixmap(option.rect.topLeft(),pixmap);
-
-#ifdef TODO
-        FileInfo finfo;
-        if(rsFiles->FileDetails(file.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
-			painter->drawText(option.rect,Qt::AlignLeft,QString::number(finfo.transfered));
-#endif
     }
         break;
 
@@ -359,6 +253,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
     ui->channelPostFiles_TV->setPlaceholderText(tr("Post files"));
+
+    ui->channelFiles_TV->setPlaceholderText(tr("All files in the channel"));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
 
@@ -547,6 +443,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
         {
             mGroup = groups[0];
 			mChannelPostsModel->updateChannel(groupId());
+
             insertChannelDetails(mGroup);
         } );
 	});
@@ -974,155 +871,6 @@ void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool rela
 
 	createPostItem(post.value<RsGxsChannelPost>(), related);
 }
-
-void GxsChannelPostsWidget::insertChannelPosts(std::vector<RsGxsChannelPost>& posts, GxsMessageFramePostThread *thread, bool related)
-{
-	if (related && thread) {
-		std::cerr << "GxsChannelPostsWidget::insertChannelPosts fill only related posts as thread is not possible" << std::endl;
-		return;
-	}
-
-	int count = posts.size();
-	int pos = 0;
-
-	if (!thread) {
-		ui->feedWidget->setSortingEnabled(false);
-	}
-
-    // collect new versions of posts if any
-
-#ifdef DEBUG_CHANNEL
-    std::cerr << "Inserting channel posts" << std::endl;
-#endif
-
-    std::vector<uint32_t> new_versions ;
-    for (uint32_t i=0;i<posts.size();++i)
-    {
-		if(posts[i].mMeta.mOrigMsgId == posts[i].mMeta.mMsgId)
-			posts[i].mMeta.mOrigMsgId.clear();
-
-#ifdef DEBUG_CHANNEL
-        std::cerr << "  " << i << ": msg_id=" << posts[i].mMeta.mMsgId << ": orig msg id = " << posts[i].mMeta.mOrigMsgId << std::endl;
-#endif
-
-        if(!posts[i].mMeta.mOrigMsgId.isNull())
-            new_versions.push_back(i) ;
-    }
-
-#ifdef DEBUG_CHANNEL
-    std::cerr << "New versions: " << new_versions.size() << std::endl;
-#endif
-
-    if(!new_versions.empty())
-    {
-#ifdef DEBUG_CHANNEL
-        std::cerr << "  New versions present. Replacing them..." << std::endl;
-        std::cerr << "  Creating search map."  << std::endl;
-#endif
-
-        // make a quick search map
-        std::map<RsGxsMessageId,uint32_t> search_map ;
-		for (uint32_t i=0;i<posts.size();++i)
-            search_map[posts[i].mMeta.mMsgId] = i ;
-
-        for(uint32_t i=0;i<new_versions.size();++i)
-        {
-#ifdef DEBUG_CHANNEL
-            std::cerr << "  Taking care of new version  at index " << new_versions[i] << std::endl;
-#endif
-
-            uint32_t current_index = new_versions[i] ;
-            uint32_t source_index  = new_versions[i] ;
-#ifdef DEBUG_CHANNEL
-            RsGxsMessageId source_msg_id = posts[source_index].mMeta.mMsgId ;
-#endif
-
-            // What we do is everytime we find a replacement post, we climb up the replacement graph until we find the original post
-            // (or the most recent version of it). When we reach this post, we replace it with the data of the source post.
-            // In the mean time, all other posts have their MsgId cleared, so that the posts are removed from the list.
-
-            //std::vector<uint32_t> versions ;
-            std::map<RsGxsMessageId,uint32_t>::const_iterator vit ;
-
-            while(search_map.end() != (vit=search_map.find(posts[current_index].mMeta.mOrigMsgId)))
-            {
-#ifdef DEBUG_CHANNEL
-                std::cerr << "    post at index " << current_index << " replaces a post at position " << vit->second ;
-#endif
-
-				// Now replace the post only if the new versionis more recent. It may happen indeed that the same post has been corrected multiple
-				// times. In this case, we only need to replace the post with the newest version
-
-				//uint32_t prev_index = current_index ;
-				current_index = vit->second ;
-
-				if(posts[current_index].mMeta.mMsgId.isNull())	// This handles the branching situation where this post has been already erased. No need to go down further.
-                {
-#ifdef DEBUG_CHANNEL
-                    std::cerr << "  already erased. Stopping." << std::endl;
-#endif
-                    break ;
-                }
-
-				if(posts[current_index].mMeta.mPublishTs < posts[source_index].mMeta.mPublishTs)
-				{
-#ifdef DEBUG_CHANNEL
-                    std::cerr << " and is more recent => following" << std::endl;
-#endif
-                    for(std::set<RsGxsMessageId>::const_iterator itt(posts[current_index].mOlderVersions.begin());itt!=posts[current_index].mOlderVersions.end();++itt)
-						posts[source_index].mOlderVersions.insert(*itt);
-
-					posts[source_index].mOlderVersions.insert(posts[current_index].mMeta.mMsgId);
-					posts[current_index].mMeta.mMsgId.clear();	    // clear the msg Id so the post will be ignored
-				}
-#ifdef DEBUG_CHANNEL
-                else
-                    std::cerr << " but is older -> Stopping" << std::endl;
-#endif
-            }
-        }
-    }
-
-#ifdef DEBUG_CHANNEL
-    std::cerr << "Now adding posts..." << std::endl;
-#endif
-
-    for (std::vector<RsGxsChannelPost>::const_reverse_iterator it = posts.rbegin(); it != posts.rend(); ++it)
-    {
-#ifdef DEBUG_CHANNEL
-		std::cerr << "  adding post: " << (*it).mMeta.mMsgId ;
-#endif
-
-        if(!(*it).mMeta.mMsgId.isNull())
-		{
-#ifdef DEBUG_CHANNEL
-            std::cerr << " added" << std::endl;
-#endif
-
-			if (thread && thread->stopped())
-				break;
-
-			if (thread)
-				thread->emitAddPost(QVariant::fromValue(*it), related, ++pos, count);
-			else
-				createPostItem(*it, related);
-		}
-#ifdef DEBUG_CHANNEL
-        else
-            std::cerr << " skipped" << std::endl;
-#endif
-    }
-
-	if (!thread) {
-		ui->feedWidget->setSortingEnabled(true);
-	}
-}
-
-void GxsChannelPostsWidget::clearPosts()
-{
-	ui->feedWidget->clear();
-	ui->fileWidget->clear();
-}
 #endif
 
 void GxsChannelPostsWidgetWithModel::blank()
@@ -1183,56 +931,8 @@ void GxsChannelPostsWidgetWithModel::toggleAutoDownload()
 			          << "for channel: " << grpId.toStdString() << std::endl;
 			return;
 		}
-
-//		RsQThreadUtils::postToObject( [=]()
-//		{
-//			/* Here it goes any code you want to be executed on the Qt Gui
-//			 * thread, for example to update the data model with new information
-//			 * after a blocking call to RetroShare API complete, note that
-//			 * Qt::QueuedConnection is important!
-//			 */
-//
-//			std::cerr << __PRETTY_FUNCTION__ << " Has been executed on GUI "
-//			          << "thread but was scheduled by async thread" << std::endl;
-//		}, this );
 	});
 }
-
-#ifdef TODO
-bool GxsChannelPostsWidgetWithModel::insertGroupData(const RsGxsGenericGroupData *data)
-{
-    const RsGxsChannelGroup *d = dynamic_cast<const RsGxsChannelGroup*>(data);
-
-    if(!d)
-    {
-        RsErr() << __PRETTY_FUNCTION__ << " Cannot dynamic cast input data (" << (void*)data << " to RsGxsGenericGroupData. Something bad happenned." << std::endl;
-        return false;
-    }
-
-	insertChannelDetails(*d);
-	return true;
-}
-
-void GxsChannelPostsWidget::insertAllPosts(const std::vector<RsGxsGenericMsgData*>& posts, GxsMessageFramePostThread *thread)
-{
-    std::vector<RsGxsChannelPost> cposts;
-
-    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some time, and the cposts list is being modified in the insert method.
-		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
-
-	insertChannelPosts(cposts, thread, false);
-}
-
-void GxsChannelPostsWidget::insertPosts(const std::vector<RsGxsGenericMsgData*>& posts)
-{
-    std::vector<RsGxsChannelPost> cposts;
-
-    for(auto post: posts)	// This  is not so nice but we have somehow to convert to RsGxsChannelPost at some timer, and the cposts list is being modified in the insert method.
-		cposts.push_back(*static_cast<RsGxsChannelPost*>(post));
-
-	insertChannelPosts(cposts);
-}
-#endif
 
 class GxsChannelPostsReadData
 {
