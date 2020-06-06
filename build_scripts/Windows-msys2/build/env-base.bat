@@ -71,7 +71,9 @@ if "%Param64%"=="1" (
 )
 
 if "%ParamClang%"=="1" (
-	set RsArchitecture=%RsArchitecture%-Clang
+	set RsCompiler=Clang
+) else (
+	set RsCompiler=GCC
 )
 
 if "%RsBit%"=="" goto :usage
