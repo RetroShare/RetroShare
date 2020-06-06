@@ -61,11 +61,59 @@ static const int CHANNEL_TABS_POSTS  = 1;
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
+#define COLUMN_SIZE_FONT_FACTOR_W  6
+#define COLUMN_SIZE_FONT_FACTOR_H 12
 
 Q_DECLARE_METATYPE(RsGxsFile)
 
+// Class to paint the thumbnails with title
+
+class ThumbnailView: public QWidget
+{
+public:
+    ThumbnailView(const RsGxsChannelPost& post,QWidget *parent=NULL)
+        : QWidget(parent)
+    {
+        QVBoxLayout *layout = new QVBoxLayout(this);
+
+        QLabel *lb = new QLabel(this);
+        lb->setScaledContents(true);
+        layout->addWidget(lb);
+
+        QLabel *lt = new QLabel(this);
+        layout->addWidget(lt);
+
+		setLayout(layout);
+
+		setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
+
+        // now fill the data
+
+		QPixmap thumbnail;
+		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
+
+        lb->setPixmap(thumbnail);
+
+		QFontMetricsF fm(font());
+		int W = 8  * fm.height() ;
+		int H = 12 * fm.height() ;
+
+        lb->setFixedSize(W,H);
+
+        lt->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+        lt->setMaximumWidth(W);
+        lt->setWordWrap(true);
+
+        adjustSize();
+        update();
+    }
+};
+
+// Delegate used to paint into the table of thumbnails
+
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
+#ifdef TODO
 	QString byteUnits[4] = {tr("B"), tr("KB"), tr("MB"), tr("GB")};
 	QStyleOptionViewItem opt = option;
 	QStyleOptionProgressBarV2 newopt;
@@ -79,14 +127,16 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 	qlonglong completed;
 	qlonglong downloadtime;
 	qint64 qi64Value;
+#endif
 
 	// prepare
 	painter->save();
-	painter->setClipRect(opt.rect);
+	painter->setClipRect(option.rect);
 
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
     //const RsGxsChannelPost& post(*pinfo);
 
+#ifdef TODO
 	QVariant value = index.data(Qt::TextColorRole);
 
 	if(value.isValid() && qvariant_cast<QColor>(value).isValid())
@@ -122,12 +172,42 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
     painter->drawPixmap(QRect(opt.rect.topLeft() + img_pos,opt.rect.topLeft()+img_pos+img_size),thumbnail.scaled(W,H,Qt::KeepAspectRatio,Qt::SmoothTransformation));
     painter->drawText(QRect(option.rect.topLeft() + txt_pos,option.rect.bottomRight()),Qt::AlignCenter,QString::fromStdString(post.mMeta.mMsgName));
+#endif
+
+	painter->save();
+    painter->fillRect( option.rect, option.backgroundBrush);
+    painter->restore();
+
+	ThumbnailView w(post);
+
+	//w.setFixedWidth(option.rect.width());
+
+	QPixmap pixmap(w.size());
+	pixmap.fill(option.palette.color(QPalette::Background));	// choose the background
+	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+    // debug
+    if(index.row()==0 && index.column()==0)
+	{
+		QFile file("yourFile.png");
+		file.open(QIODevice::WriteOnly);
+		pixmap.save(&file, "PNG");
+        std::cerr << "Saved pxmap to png" << std::endl;
+	}
+    std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
+	painter->drawPixmap(option.rect.topLeft(),
+                        pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 }
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+    // This is the only place where we actually set the size of cells
 
+    QFontMetricsF fm(option.font);
+
+    return QSize(COLUMN_SIZE_FONT_FACTOR_W*fm.height(),COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+
+#ifdef TODO
 	//QPixmap thumbnail;
 	//GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 
@@ -140,6 +220,7 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 	int w = fm.width("X") ;
 
 	return QSize(W+IMAGE_MARGIN_FACTOR*w,H + 2*h);
+#endif
 }
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -266,19 +347,12 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
 
+    QFontMetricsF fm(font());
+
+    for(int i=0;i<mChannelPostsModel->columnCount();++i)
+		ui->postsTree->setColumnWidth(i,COLUMN_SIZE_FONT_FACTOR_W*fm.height());
+
 	/* Setup UI helper */
-
-	//mStateHelper->addWidget(mTokenTypeAllPosts, ui->progressBar, UISTATE_LOADING_VISIBLE);
-	//mStateHelper->addWidget(mTokenTypeAllPosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-	//mStateHelper->addWidget(mTokenTypeAllPosts, ui->filterLineEdit);
-
-	//mStateHelper->addWidget(mTokenTypePosts, ui->loadingLabel, UISTATE_LOADING_VISIBLE);
-
-	//mStateHelper->addLoadPlaceholder(mTokenTypeGroupData, ui->nameLabel);
-
-	//mStateHelper->addWidget(mTokenTypeGroupData, ui->postButton);
-	//mStateHelper->addWidget(mTokenTypeGroupData, ui->logoLabel);
-	//mStateHelper->addWidget(mTokenTypeGroupData, ui->subscribeToolButton);
 
 	/* Connect signals */
 	connect(ui->postButton, SIGNAL(clicked()), this, SLOT(createMsg()));

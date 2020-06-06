@@ -419,6 +419,9 @@ p, li { white-space: pre-wrap; }
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectItems</enum>
           </property>
+          <property name="textElideMode">
+           <enum>Qt::ElideNone</enum>
+          </property>
           <property name="indentation">
            <number>0</number>
           </property>

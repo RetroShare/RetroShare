@@ -155,7 +155,6 @@ private:
 
     RsGxsChannelPostsModel     *mChannelPostsModel;
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
-	UIStateHelper *mStateHelper;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;
