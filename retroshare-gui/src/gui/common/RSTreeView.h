@@ -33,8 +33,12 @@ public:
 
 	void setPlaceholderText(const QString &text);
 
+signals:
+    void sizeChanged(QSize);
+
 protected:
-	void paintEvent(QPaintEvent *event);
+    virtual void resizeEvent(QResizeEvent *e) override;
+	virtual void paintEvent(QPaintEvent *event) override;
 
 	QString placeholderText;
 };

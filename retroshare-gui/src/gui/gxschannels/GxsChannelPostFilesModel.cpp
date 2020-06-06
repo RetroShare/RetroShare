@@ -33,7 +33,7 @@
 
 #include "GxsChannelPostFilesModel.h"
 
-#define DEBUG_CHANNEL_MODEL
+//#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsGxsFile)
 

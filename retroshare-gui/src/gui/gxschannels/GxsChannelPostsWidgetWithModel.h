@@ -108,6 +108,7 @@ public:
 protected:
 	/* GxsMessageFramePostWidget */
 	virtual void groupNameChanged(const QString &name);
+
 #ifdef TODO
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 #endif
@@ -134,6 +135,7 @@ private slots:
 	void filterChanged(int filter);
 	void setViewMode(int viewMode);
 	void settingsChanged();
+	void handlePostsTreeSizeChange(QSize s);
 
 private:
 	void processSettings(bool load);

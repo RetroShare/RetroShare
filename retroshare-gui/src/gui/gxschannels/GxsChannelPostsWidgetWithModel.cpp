@@ -61,8 +61,21 @@ static const int CHANNEL_TABS_POSTS  = 1;
 /* View mode */
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
+
+// Size of thumbnails as a function of the height of the font. An aspect ratio of 3/4 is good.
+
+#define THUMBNAIL_W  4
+#define THUMBNAIL_H  6
+
+// Determine the Shape and size of cells as a factor of the font height. An aspect ratio of 3/4 is what's needed
+// for the image, so it's important that the height is a bit larger so as to leave some room for the text.
+//
+//
 #define COLUMN_SIZE_FONT_FACTOR_W  6
-#define COLUMN_SIZE_FONT_FACTOR_H 12
+#define COLUMN_SIZE_FONT_FACTOR_H  10
+
+// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
+#define THUMBNAIL_OVERSAMPLE_FACTOR 2.0
 
 Q_DECLARE_METATYPE(RsGxsFile)
 
@@ -95,8 +108,8 @@ public:
         lb->setPixmap(thumbnail);
 
 		QFontMetricsF fm(font());
-		int W = 8  * fm.height() ;
-		int H = 12 * fm.height() ;
+		int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
+		int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
 
         lb->setFixedSize(W,H);
 
@@ -183,18 +196,19 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 	//w.setFixedWidth(option.rect.width());
 
 	QPixmap pixmap(w.size());
-	pixmap.fill(option.palette.color(QPalette::Background));	// choose the background
+	pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
     // debug
-    if(index.row()==0 && index.column()==0)
-	{
-		QFile file("yourFile.png");
-		file.open(QIODevice::WriteOnly);
-		pixmap.save(&file, "PNG");
-        std::cerr << "Saved pxmap to png" << std::endl;
-	}
-    std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
+ 	// if(index.row()==0 && index.column()==0)
+	// {
+	// 	QFile file("yourFile.png");
+	// 	file.open(QIODevice::WriteOnly);
+	// 	pixmap.save(&file, "PNG");
+ 	//  std::cerr << "Saved pxmap to png" << std::endl;
+	// }
+    //std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
+
 	painter->drawPixmap(option.rect.topLeft(),
                         pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 }
@@ -297,7 +311,7 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
         w.setFixedWidth(option.rect.width());
 
 		QPixmap pixmap(w.size());
-    	pixmap.fill(option.palette.color(QPalette::Background));	// choose the background
+		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 		w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
         painter->drawPixmap(option.rect.topLeft(),pixmap);
@@ -344,6 +358,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
+    ui->channelPostFiles_TV->setPlaceholderText(tr("Post files"));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
 
@@ -386,6 +401,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	ui->loadingLabel->hide();
 	ui->progressBar->hide();
+    ui->postsTree->setPlaceholderText(tr("Thumbnails"));
+    ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
 
 	//ui->nameLabel->setMinimumWidth(20);
 
@@ -414,10 +431,23 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
-	rsEvents->registerEventsHandler(
-	            [this](std::shared_ptr<const RsEvent> event)
-	{ RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this ); },
-	            mEventHandlerId, RsEventType::GXS_CHANNELS );
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+
+    connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
+}
+
+void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
+{
+//    adjustSize();
+//
+    int n_columns = std::max(1,(int)floor(s.width() / (COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height())));
+    std::cerr << "nb columns: " << n_columns << std::endl;
+
+    if(n_columns != mChannelPostsModel->columnCount())
+		mChannelPostsModel->setNumColumns(n_columns);
 }
 
 void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)

@@ -19,10 +19,16 @@
  *******************************************************************************/
 
 #include <QPainter>
+#include <QResizeEvent>
 #include "RSTreeView.h"
 
 RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
 {
+}
+
+void RSTreeView::resizeEvent(QResizeEvent *e)
+{
+    emit sizeChanged(e->size());
 }
 
 void RSTreeView::setPlaceholderText(const QString &text)

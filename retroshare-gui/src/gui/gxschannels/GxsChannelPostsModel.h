@@ -110,6 +110,7 @@ public:
     const RsGxsGroupId& currentGroupId() const;
 
     void setTreeMode(TreeMode mode) ;
+    void setNumColumns(int n);
 #ifdef TODO
     void setSortMode(SortMode mode) ;
 

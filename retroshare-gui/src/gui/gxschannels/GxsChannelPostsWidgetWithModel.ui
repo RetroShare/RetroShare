@@ -412,7 +412,7 @@ p, li { white-space: pre-wrap; }
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
-         <widget class="QTreeView" name="postsTree">
+         <widget class="RSTreeView" name="postsTree">
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>
@@ -509,7 +509,7 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <widget class="QTreeView" name="channelPostFiles_TV">
+             <widget class="RSTreeView" name="channelPostFiles_TV">
               <property name="editTriggers">
                <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
               </property>
@@ -565,6 +565,11 @@ p, li { white-space: pre-wrap; }
    <class>LineEditClear</class>
    <extends>QLineEdit</extends>
    <header location="global">gui/common/LineEditClear.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RSTreeView</class>
+   <extends>QTreeView</extends>
+   <header>gui/common/RSTreeView.h</header>
   </customwidget>
  </customwidgets>
  <resources>

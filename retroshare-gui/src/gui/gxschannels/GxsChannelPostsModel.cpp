@@ -32,7 +32,7 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsexpr.h"
 
-#define DEBUG_CHANNEL_MODEL
+//#define DEBUG_CHANNEL_MODEL
 
 Q_DECLARE_METATYPE(RsMsgMetaData)
 
@@ -219,6 +219,21 @@ Qt::ItemFlags RsGxsChannelPostsModel::flags(const QModelIndex& index) const
         return 0;
 
     return QAbstractItemModel::flags(index);
+}
+
+void RsGxsChannelPostsModel::setNumColumns(int n)
+{
+     preMods();
+
+	beginRemoveRows(QModelIndex(),0,rowCount()-1);
+    endRemoveRows();
+
+    mColumns = n;
+
+	beginInsertRows(QModelIndex(),0,rowCount()-1);
+    endInsertRows();
+
+	postMods();
 }
 
 quintptr RsGxsChannelPostsModel::getChildRef(quintptr ref,int index) const
@@ -675,7 +690,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 {
     preMods();
 
-	beginRemoveRows(QModelIndex(),0,mPosts.size()-1);
+	beginRemoveRows(QModelIndex(),0,rowCount()-1);
     endRemoveRows();
 
     mPosts.clear();
@@ -692,7 +707,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
    // debug_dump();
 #endif
 
-	beginInsertRows(QModelIndex(),0,mPosts.size()-1);
+	beginInsertRows(QModelIndex(),0,rowCount()-1);
     endInsertRows();
 
 	postMods();
