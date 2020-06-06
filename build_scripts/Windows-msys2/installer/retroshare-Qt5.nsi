@@ -50,6 +50,14 @@
 # Date
 !define /date Date "%Y%m%d"
 
+# Detect tor
+${!defineifexist} TOR_EXISTS "${DEPLOYDIR}\tor.exe"
+!ifdef TOR_EXISTS
+!define RSTYPE "-tor"
+!else
+!define RSTYPE ""
+!endif
+
 # Application name and version
 !define APPNAME "RetroShare"
 !define APPNAMEANDVERSION "${APPNAME} ${VERSION}"
@@ -64,7 +72,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-${ARCHITECTURE}${RSTYPE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression

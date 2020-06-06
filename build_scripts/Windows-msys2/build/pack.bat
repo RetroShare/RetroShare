@@ -20,6 +20,11 @@ if errorlevel 1 goto error_env
 if not "%ParamNoupdate%"=="1" (
 	:: Install ntldd
 	%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-ntldd-git"
+	
+	:: Install tor
+	if "%ParamTor%"=="1" (
+		%EnvMSYS2Cmd% "pacman --noconfirm --needed -S mingw-w64-%RsMSYS2Architecture%-tor"
+	)
 )
 
 :: Remove deploy path
@@ -54,14 +59,6 @@ wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
 set RsDate=
 for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
-
-if "%ParamTor%"=="1" (
-	:: Check for tor executable
-	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
-		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
-		goto error
-	)
-)
 
 set QtMainVersion=%QtVersion:~0,1%
 set QtSharePath=%RsMinGWPath%\share\qt%QtMainVersion%\
@@ -124,13 +121,19 @@ if "%QtMainVersion%"=="5" (
 )
 
 if exist "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" (
-	echo Copy styles
+	echo copy styles
 	mkdir "%RsDeployPath%\styles" %Quite%
 	copy "%QtSharePath%\plugins\styles\qwindowsvistastyle.dll" "%RsDeployPath%\styles" %Quite%
 )
 
 copy "%QtSharePath%\plugins\imageformats\*.dll" "%RsDeployPath%\imageformats" %Quite%
 del /Q "%RsDeployPath%\imageformats\*d?.dll" %Quite%
+
+if "%ParamTor%"=="1" (
+	echo copy tor
+	copy "%RsMinGWPath%\bin\tor.exe" "%RsDeployPath%" %Quite%
+	copy "%RsMinGWPath%\bin\tor-gencert.exe" "%RsDeployPath%" %Quite%
+)
 
 echo copy dependencies
 for /R "%RsDeployPath%" %%D in (*.dll, *.exe) do (
@@ -181,11 +184,6 @@ if "%ParamWebui%"=="1" (
 		%cecho% error "Webui is enabled, but no webui data found at %RsWebuiPath%\webui"
 		goto error
 	)
-)
-
-if "%ParamTor%"=="1" (
-	echo copy tor
-	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
 )
 
 rem pack files
