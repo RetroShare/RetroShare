@@ -111,6 +111,11 @@ public:
 
     void setTreeMode(TreeMode mode) ;
     void setNumColumns(int n);
+
+    // Retrieve the full list of files for all posts.
+
+    void getFilesList(std::list<RsGxsFile>& files);
+
 #ifdef TODO
     void setSortMode(SortMode mode) ;
 

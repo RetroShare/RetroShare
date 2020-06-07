@@ -136,6 +136,7 @@ private slots:
 	void setViewMode(int viewMode);
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);
+	void updateChannelFiles();
 
 private:
 	void processSettings(bool load);
@@ -157,6 +158,7 @@ private:
 
     RsGxsChannelPostsModel     *mChannelPostsModel;
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
+    RsGxsChannelPostFilesModel *mChannelFilesModel;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

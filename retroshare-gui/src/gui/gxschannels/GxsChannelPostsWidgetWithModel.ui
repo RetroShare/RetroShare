@@ -224,7 +224,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>1</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -530,6 +530,11 @@ p, li { white-space: pre-wrap; }
            <attribute name="title">
             <string>Comments</string>
            </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QWidget" name="commentsDialog" native="true"/>
+            </item>
+           </layout>
           </widget>
          </widget>
         </widget>
@@ -542,7 +547,14 @@ p, li { white-space: pre-wrap; }
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="RSTreeView" name="channelFiles_TV"/>
+        <widget class="RSTreeView" name="channelFiles_TV">
+         <property name="editTriggers">
+          <set>QAbstractItemView::CurrentChanged|QAbstractItemView::SelectedClicked</set>
+         </property>
+         <property name="sortingEnabled">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

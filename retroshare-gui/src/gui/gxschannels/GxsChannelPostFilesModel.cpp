@@ -345,6 +345,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 	{
 	case Qt::DisplayRole:    return displayRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
+	case SortRole:           return sortRole      (fmpe,index.column()) ;
 #ifdef TODO
 	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
 	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
@@ -355,7 +356,6 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
 	case MissingRole:        return missingRole   (fmpe,index.column()) ;
 	case StatusRole:         return statusRole    (fmpe,index.column()) ;
-	case SortRole:           return sortRole      (fmpe,index.column()) ;
 #endif
 	default:
 		return QVariant();
@@ -542,39 +542,26 @@ QVariant RsGxsChannelPostFilesModel::sizeHintRole(int col) const
 #endif
 }
 
-#ifdef TODO
-QVariant RsGxsForumModel::authorRole(const ForumModelPostEntry& fmpe,int column) const
-{
-    if(column == COLUMN_THREAD_DATA)
-        return QVariant(QString::fromStdString(fmpe.mAuthorId.toStdString()));
-
-    return QVariant();
-}
-
-QVariant RsGxsForumModel::sortRole(const ForumModelPostEntry& fmpe,int column) const
+QVariant RsGxsChannelPostFilesModel::sortRole(const RsGxsFile& fmpe,int column) const
 {
     switch(column)
     {
-	case COLUMN_THREAD_DATE:         if(mSortMode == SORT_MODE_PUBLISH_TS)
-            							return QVariant(QString::number(fmpe.mPublishTs)); // we should probably have leading zeroes here
-        							 else
-            							return QVariant(QString::number(fmpe.mMostRecentTsInThread)); // we should probably have leading zeroes here
-
-	case COLUMN_THREAD_READ:         return QVariant((bool)IS_MSG_UNREAD(fmpe.mMsgStatus));
-    case COLUMN_THREAD_DISTRIBUTION: return decorationRole(fmpe,column);
-    case COLUMN_THREAD_AUTHOR:
+	case COLUMN_FILES_NAME: return QVariant(QString::fromUtf8(fmpe.mName.c_str()));
+	case COLUMN_FILES_SIZE: return QVariant(qulonglong(fmpe.mSize));
+	case COLUMN_FILES_FILE:
     {
-        QString str,comment ;
-        QList<QIcon> icons;
-		GxsIdDetails::MakeIdDesc(fmpe.mAuthorId, false, str, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
+        FileInfo finfo;
+        if(rsFiles->FileDetails(fmpe.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
+            return qulonglong(finfo.transfered);
 
-        return QVariant(str);
+        return QVariant(qulonglong(fmpe.mSize));
     }
+        break;
+
     default:
         return displayRole(fmpe,column);
     }
 }
-#endif
 
 QVariant RsGxsChannelPostFilesModel::displayRole(const RsGxsFile& fmpe,int col) const
 {

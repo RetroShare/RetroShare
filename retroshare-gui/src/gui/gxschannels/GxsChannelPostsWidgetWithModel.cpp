@@ -255,8 +255,11 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setPlaceholderText(tr("Post files"));
 
     ui->channelFiles_TV->setPlaceholderText(tr("All files in the channel"));
+    ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
+    ui->channelFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
+    connect(mChannelPostsModel,SIGNAL(channelLoaded()),this,SLOT(updateChannelFiles()));
 
     QFontMetricsF fm(font());
 
@@ -416,6 +419,20 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
     ui->channelPostFiles_TV->setAutoSelect(true);
+
+}
+
+void GxsChannelPostsWidgetWithModel::updateChannelFiles()
+{
+    std::list<RsGxsFile> files;
+
+    mChannelPostsModel->getFilesList(files);
+    mChannelFilesModel->setFiles(files);
+
+    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
+    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
+    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
+    ui->channelFiles_TV->setAutoSelect(true);
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()

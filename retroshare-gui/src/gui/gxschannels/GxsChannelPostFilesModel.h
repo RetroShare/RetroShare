@@ -53,15 +53,9 @@ public:
 		COLUMN_FILES_NB_COLUMNS  = 0x03
 	};
 
-#ifdef TODO
 	enum Roles{ SortRole           = Qt::UserRole+1,
-              	ThreadPinnedRole   = Qt::UserRole+2,
-              	MissingRole        = Qt::UserRole+3,
-              	StatusRole         = Qt::UserRole+4,
-              	UnreadChildrenRole = Qt::UserRole+5,
-              	FilterRole         = Qt::UserRole+6,
+              	FilterRole         = Qt::UserRole+2,
               };
-#endif
 
 #ifdef TODO
     enum SortMode{ SORT_MODE_PUBLISH_TS           = 0x00,
@@ -110,13 +104,13 @@ public:
 	QVariant displayRole   (const RsGxsFile& fmpe, int col) const;
 	QVariant toolTipRole   (const RsGxsFile& fmpe, int col) const;
 	QVariant userRole      (const RsGxsFile& fmpe, int col) const;
+	QVariant sortRole      (const RsGxsFile& fmpe, int col) const;
 #ifdef TODO
 	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
 	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant missingRole   (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant sortRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant filterRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;

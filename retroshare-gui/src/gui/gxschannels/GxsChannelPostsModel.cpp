@@ -71,6 +71,22 @@ void RsGxsChannelPostsModel::postMods()
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),mColumns-1,(void*)NULL));
 }
 
+void RsGxsChannelPostsModel::getFilesList(std::list<RsGxsFile>& files)
+{
+    // We use an intermediate map so as to remove duplicates
+
+    std::map<RsFileHash,RsGxsFile> files_map;
+
+    for(uint32_t i=1;i<mPosts.size();++i)
+        for(auto& file:mPosts[i].mFiles)
+            files_map[file.mHash] = file;
+
+    files.clear();
+
+    for(auto& it:files_map)
+        files.push_back(it.second);
+}
+
 void RsGxsChannelPostsModel::setTreeMode(TreeMode mode)
 {
     if(mode == mTreeMode)
