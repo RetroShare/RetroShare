@@ -224,7 +224,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>2</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -448,7 +448,7 @@ p, li { white-space: pre-wrap; }
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>2</number>
           </property>
           <widget class="QWidget" name="tab">
            <attribute name="title">
@@ -532,7 +532,7 @@ p, li { white-space: pre-wrap; }
            </attribute>
            <layout class="QHBoxLayout" name="horizontalLayout_5">
             <item>
-             <widget class="QWidget" name="commentsDialog" native="true"/>
+             <widget class="GxsCommentDialog" name="commentsDialog" native="true"/>
             </item>
            </layout>
           </widget>
@@ -592,6 +592,12 @@ p, li { white-space: pre-wrap; }
    <class>RSTreeView</class>
    <extends>QTreeView</extends>
    <header>gui/common/RSTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsCommentDialog</class>
+   <extends>QWidget</extends>
+   <header>gui/gxs/GxsCommentDialog.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
