@@ -413,9 +413,10 @@ int unix_fcntl_nonblock(int fd)
 {
         int ret;
 
-/******************* WINDOWS SPECIFIC PART ******************/
+/******************* OS SPECIFIC PART ******************/
 #ifndef WINDOWS_SYS // ie UNIX
-	ret = fcntl(fd, F_SETFL, O_NONBLOCK);
+	int flags = fcntl(fd, F_GETFL);
+	ret = fcntl(fd, F_SETFL, flags | O_NONBLOCK);
 
 #ifdef NET_DEBUG
 	std::cerr << "unix_fcntl_nonblock():" << ret << " errno:" << errno << std::endl;
