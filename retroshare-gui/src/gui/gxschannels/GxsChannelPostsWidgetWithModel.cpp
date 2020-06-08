@@ -277,31 +277,24 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->postButton->setText(tr("Add new post"));
 	
 	/* add filter actions */
-	ui->filterLineEdit->addFilter(QIcon(), tr("Title"), FILTER_TITLE, tr("Search Title"));
-	ui->filterLineEdit->addFilter(QIcon(), tr("Message"), FILTER_MSG, tr("Search Message"));
-	ui->filterLineEdit->addFilter(QIcon(), tr("Filename"), FILTER_FILE_NAME, tr("Search Filename"));
-#ifdef TODO
-	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->feedWidget, SLOT(setFilterText(QString)));
-	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->fileWidget, SLOT(setFilterText(QString)));
-#endif
-	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged()));
-	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged()));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
 	/* Initialize view button */
 	//setViewMode(VIEW_MODE_FEEDS); see processSettings
 	//ui->infoWidget->hide();
 
-	QSignalMapper *signalMapper = new QSignalMapper(this);
-	connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	connect(ui->fileToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	signalMapper->setMapping(ui->feedToolButton, VIEW_MODE_FEEDS);
-	signalMapper->setMapping(ui->fileToolButton, VIEW_MODE_FILES);
-	connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
+	//QSignalMapper *signalMapper = new QSignalMapper(this);
+	//connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	//connect(ui->fileToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
+	//signalMapper->setMapping(ui->feedToolButton, VIEW_MODE_FEEDS);
+	//signalMapper->setMapping(ui->fileToolButton, VIEW_MODE_FILES);
+	//connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
 
 	/*************** Setup Left Hand Side (List of Channels) ****************/
 
-	ui->loadingLabel->hide();
-	ui->progressBar->hide();
+	//ui->loadingLabel->hide();
+	//ui->progressBar->hide();
+
     ui->postsTree->setPlaceholderText(tr("Thumbnails"));
     ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
 
@@ -521,21 +514,25 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 	Settings->beginGroup(QString("ChannelPostsWidget"));
 
 	if (load) {
+#ifdef TO_REMOVE
 		// load settings
 
 		/* Filter */
-		ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
+		//ui->filterLineEdit->setCurrentFilter(Settings->value("filter", FILTER_TITLE).toInt());
 
 		/* View mode */
-		setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
+		//setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
+#endif
 	} else {
+#ifdef TO_REMOVE
 		// save settings
 
 		/* Filter */
-		Settings->setValue("filter", ui->filterLineEdit->currentFilter());
+		//Settings->setValue("filter", ui->filterLineEdit->currentFilter());
 
 		/* View mode */
-		Settings->setValue("viewMode", viewMode());
+		//Settings->setValue("viewMode", viewMode());
+#endif
 	}
 
 	Settings->endGroup();
@@ -629,8 +626,8 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	if (IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags))
     {
 		ui->subscribeToolButton->setText(tr("Subscribed") + " " + QString::number(group.mMeta.mPop) );
-		ui->feedToolButton->setEnabled(true);
-		ui->fileToolButton->setEnabled(true);
+		//ui->feedToolButton->setEnabled(true);
+		//ui->fileToolButton->setEnabled(true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
         ui->details_TW->setEnabled(true);
 	}
@@ -698,14 +695,15 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	ui->infoWidget->show();
 	ui->feedWidget->hide();
 	ui->fileWidget->hide();
-#endif
 
-	ui->feedToolButton->setEnabled(false);
-	ui->fileToolButton->setEnabled(false);
+	//ui->feedToolButton->setEnabled(false);
+	//ui->fileToolButton->setEnabled(false);
+#endif
 
 	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
 }
 
+#ifdef TODO
 int GxsChannelPostsWidgetWithModel::viewMode()
 {
 	if (ui->feedToolButton->isChecked()) {
@@ -717,6 +715,7 @@ int GxsChannelPostsWidgetWithModel::viewMode()
 	/* Default */
 	return VIEW_MODE_FEEDS;
 }
+#endif
 
 void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
 {
@@ -745,9 +744,9 @@ void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
 #endif
 }
 
-void GxsChannelPostsWidgetWithModel::filterChanged()
+void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 {
-    QStringList ql = ui->filterLineEdit->text().split(' ',QString::SkipEmptyParts);
+    QStringList ql = s.split(' ',QString::SkipEmptyParts);
     uint32_t count;
     mChannelPostsModel->setFilter(ql,count);
 }
