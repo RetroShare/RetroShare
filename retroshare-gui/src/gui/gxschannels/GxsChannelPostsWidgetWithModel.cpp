@@ -209,6 +209,7 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 		GxsChannelFilesStatusWidget w(file);
 
         w.setFixedWidth(option.rect.width());
+		w.setFixedHeight(option.rect.height());
 
 		QPixmap pixmap(w.size());
 		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
@@ -283,7 +284,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->feedWidget, SLOT(setFilterText(QString)));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), ui->fileWidget, SLOT(setFilterText(QString)));
 #endif
-	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged(int)));
+	connect(ui->filterLineEdit, SIGNAL(filterChanged(int)), this, SLOT(filterChanged()));
+	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged()));
 
 	/* Initialize view button */
 	//setViewMode(VIEW_MODE_FEEDS); see processSettings
@@ -743,12 +745,11 @@ void GxsChannelPostsWidgetWithModel::setViewMode(int viewMode)
 #endif
 }
 
-void GxsChannelPostsWidgetWithModel::filterChanged(int filter)
+void GxsChannelPostsWidgetWithModel::filterChanged()
 {
-#ifdef TODO
-	ui->feedWidget->setFilterType(filter);
-	ui->fileWidget->setFilterType(filter);
-#endif
+    QStringList ql = ui->filterLineEdit->text().split(' ',QString::SkipEmptyParts);
+    uint32_t count;
+    mChannelPostsModel->setFilter(ql,count);
 }
 
 #ifdef TODO

@@ -45,15 +45,17 @@ const QString RsGxsChannelPostsModel::FilterString("filtered");
 RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
 {
-    initEmptyHierarchy(mPosts);
+    initEmptyHierarchy();
 }
 
-void RsGxsChannelPostsModel::initEmptyHierarchy(std::vector<RsGxsChannelPost>& posts)
+void RsGxsChannelPostsModel::initEmptyHierarchy()
 {
     preMods();
 
-    posts.resize(1);	// adds a sentinel item
-    posts[0].mMeta.mMsgName = "Root sentinel post" ;
+    mPosts.resize(1);	// adds a sentinel item
+    mPosts[0].mMeta.mMsgName = "Root sentinel post" ;
+    mFilteredPosts.resize(1);
+    mFilteredPosts[0] = 1;
 
     postMods();
 }
@@ -68,7 +70,7 @@ void RsGxsChannelPostsModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mPosts.size(),mColumns-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
 }
 
 void RsGxsChannelPostsModel::getFilesList(std::list<RsGxsFile>& files)
@@ -87,17 +89,43 @@ void RsGxsChannelPostsModel::getFilesList(std::list<RsGxsFile>& files)
         files.push_back(it.second);
 }
 
-void RsGxsChannelPostsModel::setTreeMode(TreeMode mode)
+void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& count)
 {
-    if(mode == mTreeMode)
-        return;
-
     preMods();
 
-    // We're not removing/adding rows here. We're simply asking for re-draw.
+	beginRemoveRows(QModelIndex(),0,rowCount()-1);
+    endRemoveRows();
 
-	mTreeMode = mode;
-    postMods();
+	if(strings.empty())
+    {
+        mFilteredPosts.clear();
+        for(int i=0;i<mPosts.size();++i)
+            mFilteredPosts.push_back(i);
+    }
+	else
+    {
+        mFilteredPosts.clear();
+        mFilteredPosts.push_back(0);
+
+        for(int i=1;i<mPosts.size();++i)
+        {
+            bool passes_strings = true;
+
+			for(auto& s:strings)
+				passes_strings = passes_strings && QString::fromStdString(mPosts[i].mMeta.mMsgName).contains(s,Qt::CaseInsensitive);
+
+            if(passes_strings)
+                mFilteredPosts.push_back(i);
+        }
+    }
+    count = mFilteredPosts.size();
+
+    std::cerr << "After filtering: " << count << " posts remain." << std::endl;
+
+	beginInsertRows(QModelIndex(),0,rowCount()-1);
+    endInsertRows();
+
+	postMods();
 }
 
 int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
@@ -105,11 +133,11 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
     if(parent.column() > 0)
         return 0;
 
-    if(mPosts.empty())	// security. Should never happen.
+    if(mFilteredPosts.empty())	// security. Should never happen.
         return 0;
 
     if(!parent.isValid())
-		return (mPosts.size()-1 + mColumns-1)/mColumns; // mPosts always has an item at 0, so size()>=1, and mColumn>=1
+		return (mFilteredPosts.size()-1 + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -128,10 +156,10 @@ bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& 
     quintptr ref = i.internalId();
 	uint32_t entry = 0;
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 		return false ;
 
-    fmpe = mPosts[entry];
+    fmpe = mPosts[mFilteredPosts[entry]];
 
 	return true;
 
@@ -247,7 +275,7 @@ quintptr RsGxsChannelPostsModel::getParentRow(quintptr ref,int& row) const
 {
 	ChannelPostsModelIndex ref_entry;
 
-	if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mPosts.size())
+	if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mFilteredPosts.size())
 		return 0 ;
 
 	if(ref_entry == 0)
@@ -302,7 +330,7 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 		return QVariant() ;
 	}
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 	{
 #ifdef DEBUG_CHANNEL_MODEL
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
@@ -310,7 +338,7 @@ QVariant RsGxsChannelPostsModel::data(const QModelIndex &index, int role) const
 		return QVariant() ;
 	}
 
-	const RsGxsChannelPost& fmpe(mPosts[entry]);
+	const RsGxsChannelPost& fmpe(mPosts[mFilteredPosts[entry]]);
 
 	switch(role)
 	{
@@ -367,7 +395,7 @@ void RsGxsChannelPostsModel::clear()
     preMods();
 
     mPosts.clear();
-    initEmptyHierarchy(mPosts);
+    initEmptyHierarchy();
 
 	postMods();
 	emit channelLoaded();
@@ -384,6 +412,10 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     mChannelGroup = group;
 
     createPostsArray(posts);
+
+    mFilteredPosts.clear();
+    for(int i=0;i<mPosts.size();++i)
+        mFilteredPosts.push_back(i);
 
 #ifdef TODO
     recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
@@ -588,7 +620,7 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
 	quintptr ref = i.internalId();
 	uint32_t entry = 0;
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 		return ;
 
 #warning TODO
@@ -603,11 +635,11 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 
     RsGxsMessageId postId = mid;
 
-    for(uint32_t i=1;i<mPosts.size();++i)
+    for(uint32_t i=1;i<mFilteredPosts.size();++i)
     {
 		// First look into msg versions, in case the msg is a version of an existing message
 
-        for(auto& msg_id:mPosts[i].mOlderVersions)
+        for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
             if(msg_id == postId)
             {
 				quintptr ref ;
@@ -616,7 +648,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 				return createIndex((i-1)%mColumns, (i-1)/mColumns,ref);
             }
 
-        if(mPosts[i].mMeta.mMsgId == postId)
+        if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
         {
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab

@@ -132,7 +132,7 @@ private slots:
 	void createMsg();
 	void toggleAutoDownload();
 	void subscribeGroup(bool subscribe);
-	void filterChanged(int filter);
+	void filterChanged();
 	void setViewMode(int viewMode);
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);

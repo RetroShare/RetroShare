@@ -109,7 +109,6 @@ public:
 	void updateChannel(const RsGxsGroupId& channel_group_id);
     const RsGxsGroupId& currentGroupId() const;
 
-    void setTreeMode(TreeMode mode) ;
     void setNumColumns(int n);
 
     // Retrieve the full list of files for all posts.
@@ -127,8 +126,9 @@ public:
 #endif
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
+    void setFilter(const QStringList &strings, uint32_t &count) ;
+
 #ifdef TODO
-    void setFilter(int column, const QStringList &strings, uint32_t &count) ;
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
 #endif
 
@@ -218,9 +218,11 @@ private:
 	//void computeMessagesHierarchy(const RsGxsChannelGroup& forum_group, const std::vector<RsMsgMetaData> &msgs_array, std::vector<ChannelPostsModelPostEntry> &posts, std::map<RsGxsMessageId, std::vector<std::pair<time_t, RsGxsMessageId> > > &mPostVersions);
 	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
 	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
-	void initEmptyHierarchy(std::vector<RsGxsChannelPost>& posts);
+	void initEmptyHierarchy();
 
-    std::vector<RsGxsChannelPost> mPosts ;                                             // store the list of posts updated from rsForums.
+    std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
+    std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.
+
 	//std::map<RsGxsMessageId,std::vector<std::pair<time_t,RsGxsMessageId> > > mPostVersions; // stores versions of posts
 
     QColor mTextColorRead          ;
