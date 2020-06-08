@@ -52,10 +52,12 @@ void RsGxsChannelPostsModel::initEmptyHierarchy()
 {
     preMods();
 
-    mPosts.resize(1);	// adds a sentinel item
-    mPosts[0].mMeta.mMsgName = "Root sentinel post" ;
-    mFilteredPosts.resize(1);
-    mFilteredPosts[0] = 1;
+    mPosts.clear();
+    mFilteredPosts.clear();
+//    mPosts.resize(1);	// adds a sentinel item
+//    mPosts[0].mMeta.mMsgName = "Root sentinel post" ;
+//    mFilteredPosts.resize(1);
+//    mFilteredPosts[0] = 1;
 
     postMods();
 }
@@ -105,9 +107,9 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& cou
 	else
     {
         mFilteredPosts.clear();
-        mFilteredPosts.push_back(0);
+        //mFilteredPosts.push_back(0);
 
-        for(int i=1;i<mPosts.size();++i)
+        for(int i=0;i<mPosts.size();++i)
         {
             bool passes_strings = true;
 
@@ -137,7 +139,7 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-		return (mFilteredPosts.size()-1 + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+		return (mFilteredPosts.size() + mColumns-1)/mColumns; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
