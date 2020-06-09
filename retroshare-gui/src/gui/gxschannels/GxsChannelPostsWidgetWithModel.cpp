@@ -262,6 +262,10 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(mChannelPostsModel,SIGNAL(channelLoaded()),this,SLOT(updateChannelFiles()));
 
+	// Set initial size of the splitter
+	ui->splitter->setStretchFactor(0, 1);
+	ui->splitter->setStretchFactor(1, 0);
+
     QFontMetricsF fm(font());
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
