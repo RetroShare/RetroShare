@@ -61,6 +61,10 @@ enum class RsLoggerCategories
 /** Stream helper for std::error_condition */
 std::ostream &operator<<(std::ostream& out, const std::error_condition& err);
 
+/** Provide unkown error message for all error categories to avoid duplicating
+ * the message around */
+std::string rsErrorNotInCategory(int errNum, const std::string& categoryName);
+
 
 template <RsLoggerCategories CATEGORY>
 struct t_RsLogger : std::ostringstream
@@ -198,7 +202,6 @@ struct RsNoDbg
 	/** Do nothing. Just for code compatibility with other logging classes */
 	inline void flush() {}
 };
-
 
 
 
