@@ -80,7 +80,7 @@ struct t_RsLogger : std::ostringstream
 		/* Combine initializer list and comma operator so the compiler unpack
 		 * template arguments and feed our own stream without recursion
 		 * see https://stackoverflow.com/a/27375675 */
-		using expander = char[];
+		using expander = int[];
 		(void) expander {0, (void((*this) << std::forward<Args>(args)), 0)...};
 	}
 
