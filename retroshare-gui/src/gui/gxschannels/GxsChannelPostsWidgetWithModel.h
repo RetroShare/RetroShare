@@ -34,9 +34,11 @@ class GxsChannelPostsWidgetWithModel;
 
 class GxsChannelPostItem;
 class QTreeWidgetItem;
+class QSortFilterProxyModel;
 class FeedItem;
 class RsGxsChannelPostsModel;
 class RsGxsChannelPostFilesModel;
+class RsGxsChannelPostFilesProxyModel;
 
 class ChannelPostFilesDelegate: public QStyledItemDelegate
 {
@@ -137,6 +139,7 @@ private slots:
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);
 	void updateChannelFiles();
+	void sortColumn(int col,Qt::SortOrder so);
 
 private:
 	void processSettings(bool load);
@@ -159,6 +162,7 @@ private:
     RsGxsChannelPostsModel     *mChannelPostsModel;
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
     RsGxsChannelPostFilesModel *mChannelFilesModel;
+	RsGxsChannelPostFilesProxyModel *mChannelPostFilesProxyModel ;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

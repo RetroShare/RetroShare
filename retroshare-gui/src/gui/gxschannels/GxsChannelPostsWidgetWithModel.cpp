@@ -240,6 +240,40 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     }
 }
 
+class RsGxsChannelPostFilesProxyModel: public QSortFilterProxyModel
+{
+public:
+    RsGxsChannelPostFilesProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent) {}
+
+    bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
+    {
+		return left.data(RsGxsChannelPostFilesModel::SortRole) < right.data(RsGxsChannelPostFilesModel::SortRole) ;
+    }
+
+    bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
+	{
+		if(filter_list.empty())
+			return true;
+
+		QString name = sourceModel()->data(sourceModel()->index(source_row,RsGxsChannelPostFilesModel::COLUMN_FILES_NAME,source_parent)).toString();
+
+		for(auto& s:filter_list)
+			if(!name.contains(s,Qt::CaseInsensitive))
+				return false;
+
+        return true;
+	}
+
+    void setFilterList(const QStringList& str)
+    {
+        filter_list = str;
+        invalidateFilter();
+    }
+
+private:
+    QStringList filter_list;
+};
+
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsChannels, parent),
@@ -251,14 +285,24 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(new ChannelPostDelegate());
 
-    ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel());
+	mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this);
+
+    mChannelPostFilesProxyModel = new RsGxsChannelPostFilesProxyModel(this);
+    mChannelPostFilesProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    mChannelPostFilesProxyModel->setSourceModel(mChannelPostFilesModel);
+	mChannelPostFilesProxyModel->setDynamicSortFilter(true);
+
+    ui->channelPostFiles_TV->setModel(mChannelPostFilesProxyModel);
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
     ui->channelPostFiles_TV->setPlaceholderText(tr("Post files"));
+    ui->channelPostFiles_TV->setSortingEnabled(true);
+    ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
     ui->channelFiles_TV->setPlaceholderText(tr("All files in the channel"));
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
 
+	connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(mChannelPostsModel,SIGNAL(channelLoaded()),this,SLOT(updateChannelFiles()));
 
@@ -277,6 +321,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->postButton->setText(tr("Add new post"));
 	
 	/* add filter actions */
+    ui->filterLineEdit->setPlaceholderText(tr("Search..."));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
 	/* Initialize view button */
@@ -333,6 +378,12 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
+}
+
+void GxsChannelPostsWidgetWithModel::sortColumn(int col,Qt::SortOrder so)
+{
+    std::cerr << "Sorting!!"<< std::endl;
+    mChannelPostFilesProxyModel->sort(col,so);
 }
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
@@ -749,6 +800,10 @@ void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
     QStringList ql = s.split(' ',QString::SkipEmptyParts);
     uint32_t count;
     mChannelPostsModel->setFilter(ql,count);
+
+	mChannelPostFilesProxyModel->setFilterKeyColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
+	mChannelPostFilesProxyModel->setFilterList(ql);
+	mChannelPostFilesProxyModel->setFilterRegExp(QRegExp()) ;// triggers a re-display.
 }
 
 #ifdef TODO

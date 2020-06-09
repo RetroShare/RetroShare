@@ -384,14 +384,6 @@ QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column)
     return QVariant(fmpe.mMsgStatus);
 }
 
-QVariant RsGxsForumModel::filterRole(const ForumModelPostEntry& fmpe,int /*column*/) const
-{
-    if(!mFilteringEnabled || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER))
-        return QVariant(FilterString);
-
-	return QVariant(QString());
-}
-
 uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
 {
     QString s ;
@@ -609,8 +601,6 @@ QVariant RsGxsChannelPostFilesModel::displayRole(const RsGxsFile& fmpe,int col) 
 			return QVariant(tr("[Unknown]"));
 		}
 		case COLUMN_THREAD_MSGID: return QVariant();
-#endif
-#ifdef TODO
 	if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
 		QTextDocument doc;

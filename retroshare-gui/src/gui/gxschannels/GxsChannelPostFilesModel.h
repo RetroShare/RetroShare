@@ -105,6 +105,7 @@ public:
 	QVariant toolTipRole   (const RsGxsFile& fmpe, int col) const;
 	QVariant userRole      (const RsGxsFile& fmpe, int col) const;
 	QVariant sortRole      (const RsGxsFile& fmpe, int col) const;
+	QVariant filterRole    (const RsGxsFile& fmpe, int col) const;
 #ifdef TODO
 	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
 	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
@@ -112,7 +113,6 @@ public:
 	QVariant statusRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant authorRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant fontRole      (const ForumModelPostEntry& fmpe, int col) const;
-	QVariant filterRole    (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant textColorRole (const ForumModelPostEntry& fmpe, int col) const;
 	QVariant backgroundRole(const ForumModelPostEntry& fmpe, int col) const;
 #endif

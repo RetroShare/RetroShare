@@ -40,8 +40,6 @@ Q_DECLARE_METATYPE(RsGxsChannelPost)
 
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
-const QString RsGxsChannelPostsModel::FilterString("filtered");
-
 RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
 {
