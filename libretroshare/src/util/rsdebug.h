@@ -148,7 +148,8 @@ RS_DBG4("Hello 4 ", "my debug ", my_variable) << " message " << variable2;
  * even if are not printed, due to how C++ is made it is not possible to avoid
  * this, so we suggest to use variadic style for debug messages.
  */
-using RsDbg    = t_RsLogger<RsLoggerCategories::DEBUG>;
+using RsDbg = t_RsLogger<RsLoggerCategories::DEBUG>;
+#define RS_DBG(...) RsDbg(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
 /**
  * Comfortable log information reporting helper, supports chaining like
@@ -158,17 +159,21 @@ using RsDbg    = t_RsLogger<RsLoggerCategories::DEBUG>;
 RsInfo() << __PRETTY_FUNCTION__ << "My information message" << std::cerr;
 @endcode
  */
-using RsInfo   = t_RsLogger<RsLoggerCategories::INFO>;
+using RsInfo = t_RsLogger<RsLoggerCategories::INFO>;
+#define RS_INFO(...) RsInfo(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
 /// Similar to @see RsInfo but for warning messages
-using RsWarn   = t_RsLogger<RsLoggerCategories::WARNING>;
+using RsWarn = t_RsLogger<RsLoggerCategories::WARNING>;
+#define RS_WARN(...) RsWarn(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
 /// Similar to @see RsInfo but for error messages
-using RsErr    = t_RsLogger<RsLoggerCategories::ERROR>;
+using RsErr = t_RsLogger<RsLoggerCategories::ERROR>;
+#define RS_ERR(...) RsErr(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
 /** Similar to @see RsInfo but for fatal errors (the ones which cause RetroShare
  * to terminate) messages */
-using RsFatal  = t_RsLogger<RsLoggerCategories::FATAL>;
+using RsFatal = t_RsLogger<RsLoggerCategories::FATAL>;
+#define RS_FATAL(...) RsFatal(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
 
 /**
