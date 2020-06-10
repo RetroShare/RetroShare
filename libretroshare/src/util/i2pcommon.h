@@ -161,25 +161,27 @@ enum class CryptoKeyType : uint16_t {
 	X25519  = 4
 };
 
-static const std::map<CryptoKeyType, std::pair<uint16_t, uint16_t>> cryptoKeyLengths {
-	{CryptoKeyType::ElGamal, {256, 256}},
-	{CryptoKeyType::P256,    { 64,  32}},
-	{CryptoKeyType::P384,    { 96,  48}},
-	{CryptoKeyType::P521,    {132,  66}},
-	{CryptoKeyType::X25519,  { 32,  32}},
+static const std::array<std::pair<uint16_t, uint16_t>, 5> cryptoKeyLengths {
+	/*CryptoKeyType::ElGamal*/ std::make_pair<uint16_t, uint16_t>(256, 256),
+	/*CryptoKeyType::P256,  */ std::make_pair<uint16_t, uint16_t>( 64,  32),
+	/*CryptoKeyType::P384,  */ std::make_pair<uint16_t, uint16_t>( 96,  48),
+	/*CryptoKeyType::P521,  */ std::make_pair<uint16_t, uint16_t>(132,  66),
+	/*CryptoKeyType::X25519,*/ std::make_pair<uint16_t, uint16_t>( 32,  32),
 };
 
-static const std::map<SigningKeyType, std::pair<uint16_t, uint16_t>> signingKeyLengths {
-	{SigningKeyType::DSA_SHA1,              {128, 128}},
-	{SigningKeyType::ECDSA_SHA256_P256,     { 64,  32}},
-	{SigningKeyType::ECDSA_SHA384_P384,     { 96,  48}},
-	{SigningKeyType::ECDSA_SHA512_P521,     {132,  66}},
-	{SigningKeyType::RSA_SHA256_2048,       {256, 512}},
-	{SigningKeyType::RSA_SHA384_3072,       {384, 768}},
-	{SigningKeyType::RSA_SHA512_4096,       {512,1024}},
-	{SigningKeyType::EdDSA_SHA512_Ed25519,  { 32,  32}},
-	{SigningKeyType::EdDSA_SHA512_Ed25519ph,{ 32,  32}},
-	{SigningKeyType::RedDSA_SHA512_Ed25519, { 32,  32}},
+static const std::array<std::pair<uint16_t, uint16_t>, 12> signingKeyLengths {
+	/*SigningKeyType::DSA_SHA1,              */ std::make_pair<uint16_t, uint16_t>(128, 128),
+	/*SigningKeyType::ECDSA_SHA256_P256,     */ std::make_pair<uint16_t, uint16_t>( 64,  32),
+	/*SigningKeyType::ECDSA_SHA384_P384,     */ std::make_pair<uint16_t, uint16_t>( 96,  48),
+	/*SigningKeyType::ECDSA_SHA512_P521,     */ std::make_pair<uint16_t, uint16_t>(132,  66),
+	/*SigningKeyType::RSA_SHA256_2048,       */ std::make_pair<uint16_t, uint16_t>(256, 512),
+	/*SigningKeyType::RSA_SHA384_3072,       */ std::make_pair<uint16_t, uint16_t>(384, 768),
+	/*SigningKeyType::RSA_SHA512_4096,       */ std::make_pair<uint16_t, uint16_t>(512,1024),
+	/*SigningKeyType::EdDSA_SHA512_Ed25519   */ std::make_pair<uint16_t, uint16_t>( 32,  32),
+	/*SigningKeyType::EdDSA_SHA512_Ed25519ph */ std::make_pair<uint16_t, uint16_t>( 32,  32),
+	/*reserved (GOST)                        */ std::make_pair<uint16_t, uint16_t>( 64,   0),
+	/*reserved (GOST)                        */ std::make_pair<uint16_t, uint16_t>(128,   0),
+	/*SigningKeyType::RedDSA_SHA512_Ed25519  */ std::make_pair<uint16_t, uint16_t>( 32,  32),
 };
 
 

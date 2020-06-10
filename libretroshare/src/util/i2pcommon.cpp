@@ -133,20 +133,20 @@ std::string publicKeyFromPrivate(std::string const &priv)
 				RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " has oversize" << std::endl;
 				// calculate oversize
 
-				auto it = signingKeyLengths.find(static_cast<SigningKeyType>(signingKeyType));
-				if (it == signingKeyLengths.end()) {
+				if (signingKeyType >= signingKeyLengths.size()) {
 					// just in case
 					RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " cannot be found in size map!" << std::endl;
 					return std::string();
 				}
 
-				if (it->second.first <= 128) {
+				auto values = signingKeyLengths[signingKeyType];
+				if (values.first <= 128) {
 					// just in case, it's supposed to be larger!
 					RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " is oversize but size calculation would underflow!" << std::endl;
 					return std::string();
 				}
 
-				publicKeyLen += it->second.first - 128; // 128 = default DSA key length = the space than can be used before the key must be splitted
+				publicKeyLen += values.first - 128; // 128 = default DSA key length = the space than can be used before the key must be splitted
 			}
 
 			// Crypto Public Key
