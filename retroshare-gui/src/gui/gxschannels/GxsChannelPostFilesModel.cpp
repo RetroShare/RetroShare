@@ -52,8 +52,7 @@ void RsGxsChannelPostFilesModel::initEmptyHierarchy(std::vector<RsGxsFile>& file
 {
     preMods();
 
-    files.resize(1);	// adds a sentinel item
-    files[0].mName = "Root sentinel post" ;
+    mFiles.clear();
 
     postMods();
 }
@@ -76,28 +75,6 @@ void RsGxsChannelPostFilesModel::update()
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 }
 
-#ifdef TODO
-void RsGxsChannelPostsModel::setSortMode(SortMode mode)
-{
-    preMods();
-
-    mSortMode = mode;
-
-    postMods();
-}
-
-void RsGxsForumModel::initEmptyHierarchy(std::vector<ForumModelPostEntry>& posts)
-{
-    preMods();
-
-    posts.resize(1);	// adds a sentinel item
-    posts[0].mTitle = "Root sentinel post" ;
-    posts[0].mParent = 0;
-
-    postMods();
-}
-#endif
-
 int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
 {
     if(parent.column() > 0)
@@ -107,7 +84,7 @@ int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-       return getChildrenCount(0);
+		return (mFiles.size() + COLUMN_FILES_NB_COLUMNS-1)/COLUMN_FILES_NB_COLUMNS; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -162,7 +139,7 @@ bool RsGxsChannelPostFilesModel::convertTabEntryToRefPointer(uint32_t entry,quin
 	// This means that the whole software has the following build-in limitation:
 	//	  * 4 B   simultaenous posts. Should be enough !
 
-	ref = (intptr_t)entry;
+	ref = (intptr_t)(entry+1);
 
 	return true;
 }
@@ -176,7 +153,12 @@ bool RsGxsChannelPostFilesModel::convertRefPointerToTabEntry(quintptr ref, uint3
         RsErr() << "(EE) trying to make a ChannelPostsModelIndex out of a number that is larger than 2^32-1 !" << std::endl;
         return false ;
     }
-	entry = quintptr(val);
+    if(val==0)
+    {
+        RsErr() << "(EE) trying to make a ChannelPostsFileModelIndex out of index 0." << std::endl;
+        return false;
+    }
+	entry = val-1;
 
 	return true;
 }
@@ -218,15 +200,10 @@ quintptr RsGxsChannelPostFilesModel::getChildRef(quintptr ref,int index) const
 	if (index < 0)
 		return 0;
 
-	ChannelPostFilesModelIndex entry ;
-
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFiles.size())
-		return 0 ;
-
-	if(entry == 0)
+    if(ref == quintptr(0))
 	{
 		quintptr new_ref;
-		convertTabEntryToRefPointer(index+1,new_ref);
+		convertTabEntryToRefPointer(index,new_ref);
 		return new_ref;
 	}
 	else
@@ -253,20 +230,12 @@ quintptr RsGxsChannelPostFilesModel::getParentRow(quintptr ref,int& row) const
 
 int RsGxsChannelPostFilesModel::getChildrenCount(quintptr ref) const
 {
-	uint32_t entry = 0 ;
+    uint32_t entry = 0 ;
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFiles.size())
-		return 0 ;
+    if(ref == quintptr(0))
+        return rowCount()-1;
 
-	if(entry == 0)
-	{
-#ifdef DEBUG_CHANNEL_MODEL
-		std::cerr << "Children count (flat mode): " << mFiles.size()-1 << std::endl;
-#endif
-		return ((int)mFiles.size())-1;
-	}
-	else
-		return 0;
+	return 0;
 }
 
 QVariant RsGxsChannelPostFilesModel::headerData(int section, Qt::Orientation orientation, int role) const

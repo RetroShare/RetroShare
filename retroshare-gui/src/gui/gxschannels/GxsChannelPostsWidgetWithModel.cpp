@@ -468,6 +468,8 @@ void GxsChannelPostsWidgetWithModel::updateChannelFiles()
     ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
     ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
+
+    mChannelPostFilesProxyModel->sort(0, Qt::AscendingOrder);
 }
 
 void GxsChannelPostsWidgetWithModel::updateGroupData()
