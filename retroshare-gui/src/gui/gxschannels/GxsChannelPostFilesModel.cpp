@@ -42,17 +42,18 @@ static std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// define
 RsGxsChannelPostFilesModel::RsGxsChannelPostFilesModel(QObject *parent)
     : QAbstractItemModel(parent)
 {
-    initEmptyHierarchy(mFiles);
+    initEmptyHierarchy();
 
     mTimer = new QTimer;
     connect(mTimer,SIGNAL(timeout()),this,SLOT(update()));
 }
 
-void RsGxsChannelPostFilesModel::initEmptyHierarchy(std::vector<RsGxsFile>& files)
+void RsGxsChannelPostFilesModel::initEmptyHierarchy()
 {
     preMods();
 
     mFiles.clear();
+    mFilteredFiles.clear();
 
     postMods();
 }
@@ -67,12 +68,12 @@ void RsGxsChannelPostFilesModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 }
 
 void RsGxsChannelPostFilesModel::update()
 {
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredFiles.size(),COLUMN_FILES_NB_COLUMNS-1,(void*)NULL));
 }
 
 int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
@@ -80,11 +81,11 @@ int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
     if(parent.column() > 0)
         return 0;
 
-    if(mFiles.empty())	// security. Should never happen.
+    if(mFilteredFiles.empty())	// security. Should never happen.
         return 0;
 
     if(!parent.isValid())
-		return mFiles.size(); // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+		return mFilteredFiles.size(); // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -116,7 +117,7 @@ bool RsGxsChannelPostFilesModel::getFileData(const QModelIndex& i,RsGxsFile& fmp
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFiles.size())
 		return false ;
 
-    fmpe = mFiles[entry];
+    fmpe = mFiles[mFilteredFiles[entry]];
 
 	return true;
 
@@ -214,7 +215,7 @@ quintptr RsGxsChannelPostFilesModel::getParentRow(quintptr ref,int& row) const
 {
 	ChannelPostFilesModelIndex ref_entry;
 
-	if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mFiles.size())
+	if(!convertRefPointerToTabEntry(ref,ref_entry) || ref_entry >= mFilteredFiles.size())
 		return 0 ;
 
 	if(ref_entry == 0)
@@ -284,7 +285,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 		return QVariant() ;
 	}
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFiles.size())
+	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredFiles.size())
 	{
 #ifdef DEBUG_CHANNEL_MODEL
 		std::cerr << "Bad pointer: " << (void*)ref << std::endl;
@@ -292,7 +293,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 		return QVariant() ;
 	}
 
-	const RsGxsFile& fmpe(mFiles[entry]);
+	const RsGxsFile& fmpe(mFiles[mFilteredFiles[entry]]);
 
 #ifdef TODO
     if(role == Qt::FontRole)
@@ -331,6 +332,44 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 	}
 }
 
+void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t& count)
+{
+    preMods();
+
+	beginRemoveRows(QModelIndex(),0,rowCount()-1);
+    endRemoveRows();
+
+	if(strings.empty())
+    {
+        mFilteredFiles.clear();
+        for(int i=0;i<mFiles.size();++i)
+            mFilteredFiles.push_back(i);
+    }
+	else
+    {
+        mFilteredFiles.clear();
+        //mFilteredPosts.push_back(0);
+
+        for(int i=0;i<mFiles.size();++i)
+        {
+            bool passes_strings = true;
+
+			for(auto& s:strings)
+				passes_strings = passes_strings && QString::fromStdString(mFiles[i].mName).contains(s,Qt::CaseInsensitive);
+
+            if(passes_strings)
+                mFilteredFiles.push_back(i);
+        }
+    }
+    count = mFilteredFiles.size();
+
+    std::cerr << "After filtering: " << count << " posts remain." << std::endl;
+
+	beginInsertRows(QModelIndex(),0,rowCount()-1);
+    endInsertRows();
+
+	postMods();
+}
 #ifdef TODO
 QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
@@ -613,8 +652,7 @@ void RsGxsChannelPostFilesModel::clear()
 {
     preMods();
 
-    mFiles.clear();
-    initEmptyHierarchy(mFiles);
+    initEmptyHierarchy();
 
 	postMods();
 	emit channelLoaded();
@@ -624,14 +662,16 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<RsGxsFile>& files)
 {
     preMods();
 
-	beginRemoveRows(QModelIndex(),0,mFiles.size()-1);
+	beginRemoveRows(QModelIndex(),0,mFilteredFiles.size()-1);
     endRemoveRows();
 
-    mFiles.clear();
-    initEmptyHierarchy(mFiles);
+    initEmptyHierarchy();
 
     for(auto& file:files)
         mFiles.push_back(file);
+
+    for(uint32_t i=0;i<mFiles.size();++i)
+        mFilteredFiles.push_back(i);
 
 #ifdef TODO
     recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
@@ -642,7 +682,7 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<RsGxsFile>& files)
    // debug_dump();
 #endif
 
-	beginInsertRows(QModelIndex(),0,mFiles.size()-1);
+	beginInsertRows(QModelIndex(),0,mFilteredFiles.size()-1);
     endInsertRows();
 
 	postMods();
@@ -655,6 +695,7 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<RsGxsFile>& files)
         mTimer->stop();
 }
 
+#ifdef DEBUG_FORUMMODEL
 QModelIndex RsGxsChannelPostFilesModel::getIndexOfFile(const RsFileHash& hash) const
 {
     // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
@@ -671,7 +712,6 @@ QModelIndex RsGxsChannelPostFilesModel::getIndexOfFile(const RsFileHash& hash) c
     return QModelIndex();
 }
 
-#ifdef DEBUG_FORUMMODEL
 static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
 {
     const ForumModelPostEntry& e(entries[index]);

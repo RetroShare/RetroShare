@@ -64,12 +64,13 @@ public:
 #endif
 
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
-	QModelIndex getIndexOfFile(const RsFileHash& hash) const;
 
     // This method will asynchroneously update the data
 	void setFiles(const std::list<RsGxsFile>& files);
+    void setFilter(const QStringList &strings, uint32_t &count) ;
 
 #ifdef TODO
+	QModelIndex getIndexOfFile(const RsFileHash& hash) const;
     void setSortMode(SortMode mode) ;
 
 	void setTextColorRead          (QColor color) { mTextColorRead           = color;}
@@ -77,7 +78,6 @@ public:
 	void setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color;}
 	void setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color;}
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
-    void setFilter(int column, const QStringList &strings, uint32_t &count) ;
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
 #endif
 
@@ -149,8 +149,9 @@ private:
 #ifdef TODO
 	static void generateMissingItem(const RsGxsMessageId &msgId,ChannelPostsModelPostEntry& entry);
 #endif
-	void initEmptyHierarchy(std::vector<RsGxsFile> &files);
+	void initEmptyHierarchy();
 
+    std::vector<int> mFilteredFiles ;  // store the list of files for the post
     std::vector<RsGxsFile> mFiles ;  // store the list of files for the post
 
     QTimer *mTimer;

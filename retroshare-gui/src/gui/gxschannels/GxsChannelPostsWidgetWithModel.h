@@ -140,8 +140,8 @@ private slots:
 	void handlePostsTreeSizeChange(QSize s);
 	void updateChannelFiles();
 
-public slots:
-	void sortColumn(int col,Qt::SortOrder so);
+// public slots:
+// 	void sortColumn(int col,Qt::SortOrder so);
 
 private:
 	void processSettings(bool load);
@@ -164,7 +164,6 @@ private:
     RsGxsChannelPostsModel     *mChannelPostsModel;
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
     RsGxsChannelPostFilesModel *mChannelFilesModel;
-	RsGxsChannelPostFilesProxyModel *mChannelPostFilesProxyModel ;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;
