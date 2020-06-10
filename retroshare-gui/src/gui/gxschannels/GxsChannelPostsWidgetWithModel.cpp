@@ -298,7 +298,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setSortingEnabled(true);
     ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
-    ui->channelFiles_TV->setPlaceholderText(tr("All files in the channel"));
+    ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
 
@@ -324,24 +324,10 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->filterLineEdit->setPlaceholderText(tr("Search..."));
 	connect(ui->filterLineEdit, SIGNAL(textChanged(QString)), this, SLOT(filterChanged(QString)));
 
-	/* Initialize view button */
-	//setViewMode(VIEW_MODE_FEEDS); see processSettings
-	//ui->infoWidget->hide();
-
-	//QSignalMapper *signalMapper = new QSignalMapper(this);
-	//connect(ui->feedToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	//connect(ui->fileToolButton, SIGNAL(clicked()), signalMapper, SLOT(map()));
-	//signalMapper->setMapping(ui->feedToolButton, VIEW_MODE_FEEDS);
-	//signalMapper->setMapping(ui->fileToolButton, VIEW_MODE_FILES);
-	//connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(setViewMode(int)));
-
-	/*************** Setup Left Hand Side (List of Channels) ****************/
-
-	//ui->loadingLabel->hide();
-	//ui->progressBar->hide();
-
     ui->postsTree->setPlaceholderText(tr("Thumbnails"));
     ui->postsTree->setMinimumWidth(COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height()+1);
+
+    connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
 
 	//ui->nameLabel->setMinimumWidth(20);
 
@@ -376,8 +362,6 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
-
-    connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
 }
 
 void GxsChannelPostsWidgetWithModel::sortColumn(int col,Qt::SortOrder so)
@@ -803,7 +787,7 @@ void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 
 	mChannelPostFilesProxyModel->setFilterKeyColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
 	mChannelPostFilesProxyModel->setFilterList(ql);
-	mChannelPostFilesProxyModel->setFilterRegExp(QRegExp()) ;// triggers a re-display.
+	mChannelPostFilesProxyModel->setFilterRegExp(s)) ;// triggers a re-display. s is actually not used.
 }
 
 #ifdef TODO
