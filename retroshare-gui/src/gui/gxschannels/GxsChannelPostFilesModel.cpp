@@ -84,7 +84,7 @@ int RsGxsChannelPostFilesModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-		return (mFiles.size() + COLUMN_FILES_NB_COLUMNS-1)/COLUMN_FILES_NB_COLUMNS; // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
+		return mFiles.size(); // mFilteredPosts always has an item at 0, so size()>=1, and mColumn>=1
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;

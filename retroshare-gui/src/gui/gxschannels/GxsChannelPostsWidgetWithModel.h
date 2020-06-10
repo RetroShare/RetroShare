@@ -139,6 +139,8 @@ private slots:
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);
 	void updateChannelFiles();
+
+public slots:
 	void sortColumn(int col,Qt::SortOrder so);
 
 private:
