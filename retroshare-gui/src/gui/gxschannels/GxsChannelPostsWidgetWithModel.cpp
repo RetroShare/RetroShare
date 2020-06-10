@@ -787,7 +787,7 @@ void GxsChannelPostsWidgetWithModel::filterChanged(QString s)
 
 	mChannelPostFilesProxyModel->setFilterKeyColumn(RsGxsChannelPostFilesModel::COLUMN_FILES_NAME);
 	mChannelPostFilesProxyModel->setFilterList(ql);
-	mChannelPostFilesProxyModel->setFilterRegExp(s)) ;// triggers a re-display. s is actually not used.
+	mChannelPostFilesProxyModel->setFilterRegExp(s) ;// triggers a re-display. s is actually not used.
 }
 
 #ifdef TODO
