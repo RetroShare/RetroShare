@@ -302,7 +302,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelFiles_TV->setSortingEnabled(true);
     ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
-	//connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumn(int,Qt::SortOrder)));
+	connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
+	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
     connect(mChannelPostsModel,SIGNAL(channelLoaded()),this,SLOT(updateChannelFiles()));
@@ -365,11 +366,16 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
 }
 
-//void GxsChannelPostsWidgetWithModel::sortColumn(int col,Qt::SortOrder so)
-//{
-//    std::cerr << "Sorting!!"<< std::endl;
-//    mChannelPostFilesProxyModel->sort(col,so);
-//}
+void GxsChannelPostsWidgetWithModel::sortColumnPostFiles(int col,Qt::SortOrder so)
+{
+    std::cerr << "Sorting post files according to col " << col << std::endl;
+    mChannelPostFilesModel->sort(col,so);
+}
+void GxsChannelPostsWidgetWithModel::sortColumnFiles(int col,Qt::SortOrder so)
+{
+    std::cerr << "Sorting channel files according to col " << col << std::endl;
+    mChannelFilesModel->sort(col,so);
+}
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
 {

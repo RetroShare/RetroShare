@@ -370,6 +370,43 @@ void RsGxsChannelPostFilesModel::setFilter(const QStringList& strings, uint32_t&
 
 	postMods();
 }
+
+class compareOperator
+{
+public:
+    compareOperator(int column,Qt::SortOrder order): col(column),ord(order) {}
+
+	bool operator()(const RsGxsFile& f1,const RsGxsFile& f2) const
+	{
+     	switch(col)
+		{
+		default:
+		case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return (ord==Qt::AscendingOrder)?(f1.mName<f2.mName):(f1.mName>f2.mName);
+		case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return (ord==Qt::AscendingOrder)?(f1.mSize<f2.mSize):(f1.mSize>f2.mSize);
+		case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE:
+		{
+			FileInfo fi1,fi2;
+			rsFiles->FileDetails(f1.mHash,RS_FILE_HINTS_DOWNLOAD,fi1);
+			rsFiles->FileDetails(f2.mHash,RS_FILE_HINTS_DOWNLOAD,fi2);
+
+			return (ord==Qt::AscendingOrder)?(fi1.transfered<fi2.transfered):(fi1.transfered>fi2.transfered);
+		}
+		}
+
+	}
+
+private:
+	int col;
+	Qt::SortOrder ord;
+};
+
+void RsGxsChannelPostFilesModel::sort(int column, Qt::SortOrder order)
+{
+    std::sort(mFiles.begin(),mFiles.end(),compareOperator(column,order));
+
+    update();
+}
+
 #ifdef TODO
 QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
