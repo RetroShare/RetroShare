@@ -165,6 +165,7 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 	RsThread::setStopTimeout(10);
 #endif
 
+#if !RS_VERSION_AT_LEAST(0,6,6)
 	registerHandler("/rsLoginHelper/createLocation",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
@@ -215,8 +216,9 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 			DEFAULT_API_CALL_JSON_RETURN(rb::OK);
 		} );
 	}, false);
+#endif // !RS_VERSION_AT_LEAST(0,6,6)
 
-	registerHandler("/rsLoginHelper/attemptLogin",
+	registerHandler("/rsLoginHelper/createLocationV2",
 	                [this](const std::shared_ptr<rb::Session> session)
 	{
 		auto reqSize = session->get_request()->get_header("Content-Length", 0);
@@ -226,25 +228,51 @@ JsonApiServer::JsonApiServer(): configMutex("JsonApiServer config"),
 		{
 			INITIALIZE_API_CALL_JSON_CONTEXT;
 
-			RsPeerId account;
+			RsPeerId locationId;
+			RsPgpId pgpId;
+			std::string locationName;
+			std::string pgpName;
 			std::string password;
+
+			// JSON API only
+			std::string apiUser;
+			std::string apiPass;
 
 			// deserialize input parameters from JSON
 			{
 				RsGenericSerializer::SerializeContext& ctx(cReq);
 				RsGenericSerializer::SerializeJob j(RsGenericSerializer::FROM_JSON);
-				RS_SERIAL_PROCESS(account);
+				RS_SERIAL_PROCESS(locationId);
+				RS_SERIAL_PROCESS(pgpId);
+				RS_SERIAL_PROCESS(locationName);
+				RS_SERIAL_PROCESS(pgpName);
 				RS_SERIAL_PROCESS(password);
+
+				// JSON API only
+				RS_SERIAL_PROCESS(apiUser);
+				RS_SERIAL_PROCESS(apiPass);
 			}
 
-			// call retroshare C++ API
-			RsInit::LoadCertificateStatus retval =
-			        rsLoginHelper->attemptLogin(account, password);
+			std::error_condition retval;
+
+			if(apiUser.empty())
+				retval = RsJsonApiErrorNum::TOKEN_FORMAT_INVALID;
+
+			if(!retval)
+				retval = badApiCredientalsFormat(apiUser, apiPass);
+
+			if(!retval) // call retroshare C++ API
+				retval = rsLoginHelper->createLocationV2(
+				            locationId, pgpId, locationName, pgpName, password );
+
+			if(!retval) retval = authorizeUser(apiUser, apiPass);
 
 			// serialize out parameters and return value to JSON
 			{
 				RsGenericSerializer::SerializeContext& ctx(cAns);
 				RsGenericSerializer::SerializeJob j(RsGenericSerializer::TO_JSON);
+				RS_SERIAL_PROCESS(locationId);
+				RS_SERIAL_PROCESS(pgpId);
 				RS_SERIAL_PROCESS(retval);
 			}
 
