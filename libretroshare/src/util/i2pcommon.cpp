@@ -73,7 +73,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	RsBase64::decode(priv_copy, dataPriv);
 
 	auto p = dataPriv.cbegin();
-	RsDbg() << __PRETTY_FUNCTION__ << " dataPriv.size " << dataPriv.size() << std::endl;
+	RS_DBG("dataPriv.size ") << dataPriv.size() << std::endl;
 
 	size_t publicKeyLen = 256 + 128; // default length (bytes)
 	uint8_t certType = 0;
@@ -98,12 +98,12 @@ std::string publicKeyFromPrivate(std::string const &priv)
 				 * type null is followed by 0x00 0x00 <END>
 				 * so has to be 0!
 				 */
-				RsDbg() << __PRETTY_FUNCTION__ << " cert is CertType.Null" << std::endl;
+				RS_DBG("cert is CertType.Null");
 				publicKeyLen += 3; // add 0x00 0x00 0x00
 
 				if (len != 0)
 					// weird
-					RsDbg() << __PRETTY_FUNCTION__ << " cert is CertType.Null but len != 0" << std::endl;
+					RS_DBG("cert is CertType.Null but len != 0");
 
 				break;
 			}
@@ -111,11 +111,11 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// check for != 5
 			if (certType != static_cast<typename std::underlying_type<CertType>::type>(CertType::Key)) {
 				// unsupported
-				RsDbg() << __PRETTY_FUNCTION__ << " cert type " << certType << " is unsupported" << std::endl;
+				RS_DBG("cert type ") << certType << " is unsupported" << std::endl;
 				return std::string();
 			}
 
-			RsDbg() << __PRETTY_FUNCTION__ << " cert is CertType.Key" << std::endl;
+			RS_DBG("cert is CertType.Key");
 			publicKeyLen += 7; // <type 1B> <len 2B> <keyType1 2B> <keyType2 2B> = 1 + 2 + 2 + 2 = 7 bytes
 
 			/*
@@ -128,21 +128,21 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// likely 7
 			signingKeyType = readTwoBytesBE(p);
 
-			RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << std::endl;
+			RS_DBG("signing pubkey type ") << certType << std::endl;
 			if (signingKeyType >= 3 && signingKeyType <= 6) {
-				RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " has oversize" << std::endl;
+				RS_DBG("signing pubkey type ") << certType << " has oversize" << std::endl;
 				// calculate oversize
 
 				if (signingKeyType >= signingKeyLengths.size()) {
 					// just in case
-					RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " cannot be found in size map!" << std::endl;
+					RS_DBG("signing pubkey type ") << certType << " cannot be found in size map!" << std::endl;
 					return std::string();
 				}
 
 				auto values = signingKeyLengths[signingKeyType];
 				if (values.first <= 128) {
 					// just in case, it's supposed to be larger!
-					RsDbg() << __PRETTY_FUNCTION__ << " signing pubkey type " << certType << " is oversize but size calculation would underflow!" << std::endl;
+					RS_DBG("signing pubkey type ") << certType << " is oversize but size calculation would underflow!" << std::endl;
 					return std::string();
 				}
 
@@ -152,12 +152,12 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// Crypto Public Key
 			// likely 0
 			cryptKey = readTwoBytesBE(p);
-			RsDbg() << __PRETTY_FUNCTION__ << " crypto pubkey type " << cryptKey << std::endl;
+			RS_DBG("crypto pubkey type ") << cryptKey << std::endl;
 			// info: these are all smaller than the default 256 bytes, so no oversize calculation is needed
 
 			break;
 		}  catch (const std::out_of_range &e) {
-			RsDbg() << __PRETTY_FUNCTION__ << " hit exception!" << e.what() << std::endl;
+			RS_DBG("hit exception! ") << e.what() << std::endl;
 			return std::string();
 		}
 	} while(false);
