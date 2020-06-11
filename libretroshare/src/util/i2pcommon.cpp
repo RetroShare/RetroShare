@@ -19,7 +19,8 @@ std::string keyToBase32Addr(const std::string &key)
 
 	// replace I2P specific chars
 	std::replace(copy.begin(), copy.end(), '~', '/');
-	std::replace(copy.begin(), copy.end(), '-', '+');
+	// replacing the - with a + is not necessary, as RsBase64 can handle base64url encoding, too
+	// std::replace(copy.begin(), copy.end(), '-', '+');
 
 	// decode
 	std::vector<uint8_t> bin;

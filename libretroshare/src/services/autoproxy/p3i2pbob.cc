@@ -33,8 +33,6 @@
 #include "util/rsprint.h"
 #include "util/rsrandom.h"
 
-#include "util/rsdebuglevel4.h"
-
 static const std::string kConfigKeyBOBEnable   = "BOB_ENABLE";
 static const std::string kConfigKeyBOBKey      = "BOB_KEY";
 static const std::string kConfigKeyBOBAddr     = "BOB_ADDR";
