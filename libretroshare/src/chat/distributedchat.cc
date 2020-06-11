@@ -682,11 +682,13 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 	rstime_t now = time(nullptr);
 
+	bool banned = false;
 	if( rsReputations->overallReputationLevel(item->signature.keyId) ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
     {
         std::cerr << "(WW) Received lobby msg/item from banned identity " << item->signature.keyId << ". Dropping it." << std::endl;
-        return ;
+        //return ; // need to go all checks to keep pings passing to gui
+		banned = true;
     }
     if(!checkSignature(item,item->PeerId()))	// check the object's signature and possibly request missing keys
     {
@@ -733,11 +735,14 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 		std::cerr << std::endl;
 		return ;
 	}
-    // add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
-    rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
+	if(!banned)
+	{
+		// add a routing clue for this peer/GXSid combination. This is quite reliable since the lobby transport is almost instantaneous
+		rsGRouter->addRoutingClue(GRouterKeyId(item->signature.keyId),item->PeerId()) ;
     
-    if(! bounceLobbyObject(item,item->PeerId()))
-		return ;
+		if(! bounceLobbyObject(item,item->PeerId()))
+			return ;
+	}
 
 #ifdef DEBUG_CHAT_LOBBIES
 	std::cerr << "  doing specific job for this status item." << std::endl;
@@ -806,7 +811,8 @@ void DistributedChatService::handleRecvChatLobbyEventItem(RsChatLobbyEventItem *
 #endif
 		}
 	}
-    RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1) ;
+	if(!banned || item->event_type == RS_CHAT_LOBBY_EVENT_KEEP_ALIVE)
+		RsServer::notify()->notifyChatLobbyEvent(item->lobby_id,item->event_type,item->signature.keyId,item->string1) ;
 }
 void DistributedChatService::getListOfNearbyChatLobbies(std::vector<VisibleChatLobbyRecord>& visible_lobbies)
 {

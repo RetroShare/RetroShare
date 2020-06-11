@@ -85,6 +85,24 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 	}
 	item->setData(column, Qt::DecorationRole, combinedPixmap);
 	item->setAvatar(details.mAvatar);
+
+	if(rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::LOCALLY_NEGATIVE
+		|| rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::REMOTELY_NEGATIVE)
+	{
+		QFont font;
+		font = item->font(column);
+		font.setStrikeOut(true);
+		item->setFont(column, font);
+		item->setBannedState(true);
+	}
+	else
+	{
+		QFont font;
+		font = item->font(column);
+		font.setStrikeOut(false);
+		item->setFont(column, font);
+		item->setBannedState(false);
+	}
 }
 
 void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenFailed)
@@ -160,8 +178,8 @@ QVariant GxsIdRSTreeWidgetItem::data(int column, int role) const
 
 			if(mId.isNull())
                 return RSTreeWidgetItem::data(column, role);
-			else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
-				pix = QPixmap(BANNED_IMAGE);
+			//else if( rsReputations->overallReputationLevel(mId) == RsReputationLevel::LOCALLY_NEGATIVE )
+				//pix = QPixmap(BANNED_IMAGE);
 			else if ( mAvatar.mSize == 0 || !GxsIdDetails::loadPixmapFromData(mAvatar.mData, mAvatar.mSize, pix,GxsIdDetails::LARGE) )
 				pix = GxsIdDetails::makeDefaultIcon(mId,GxsIdDetails::LARGE);
 

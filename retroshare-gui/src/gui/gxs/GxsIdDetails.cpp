@@ -961,7 +961,8 @@ QString GxsIdDetails::getNameForType(GxsIdDetailsType type, const RsIdentityDeta
 		return getName(details);
 
 	case GXS_ID_DETAILS_TYPE_BANNED:
-		return tr("[Banned]") ;
+		//return tr("[Banned]") ;
+		return getName(details);
 
 	case GXS_ID_DETAILS_TYPE_FAILED:
 		return getFailedText(details.mId);
@@ -1015,9 +1016,9 @@ bool GxsIdDetails::MakeIdDesc(const RsGxsId &id, bool doIcons, QString &str, QLi
 
 QString GxsIdDetails::getName(const RsIdentityDetails &details)
 {
-	if( details.mReputation.mOverallReputationLevel ==
+	/*if( details.mReputation.mOverallReputationLevel ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
-		return tr("[Banned]");
+		return tr("[Banned]");*/
     
     	QString name = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE);
 
@@ -1040,8 +1041,8 @@ QString nickname ;
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
-        else if(banned)
-            nickname = tr("[Banned]") ;
+        /*else if(banned)
+            nickname = tr("[Banned]") ;*/
         else
             nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
@@ -1074,6 +1075,8 @@ QString nickname ;
 		if(details.mReputation.mFriendsPositiveVotes > 0) comment += " <b>+" + QString::number(details.mReputation.mFriendsPositiveVotes) + "</b>";
 		if(details.mReputation.mFriendsNegativeVotes > 0) comment += " <b>-" + QString::number(details.mReputation.mFriendsNegativeVotes) + "</b>";
     }
+	if(banned)
+		comment += QString("<br/>" + tr("[Banned]") );
 	return comment;
 }
 
