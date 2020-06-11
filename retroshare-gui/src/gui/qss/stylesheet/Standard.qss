@@ -791,6 +791,14 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
 
 }
 
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton::menu-indicator {
+    image: none;
+}
+
+GxsChannelFilesStatusWidget QToolButton#openFolderToolButton[popupMode="0"] { 
+    padding-right: 0px; 
+}
+
 GxsGroupDialog QLabel#groupLogo{
 	border: 2px solid #CCCCCC;
 	border-radius: 3px;
