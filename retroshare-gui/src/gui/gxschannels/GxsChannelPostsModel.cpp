@@ -145,7 +145,7 @@ int RsGxsChannelPostsModel::rowCount(const QModelIndex& parent) const
 
 int RsGxsChannelPostsModel::columnCount(const QModelIndex &/*parent*/) const
 {
-	return mColumns ;
+	return std::min((int)mFilteredPosts.size(),(int)mColumns) ;
 }
 
 bool RsGxsChannelPostsModel::getPostData(const QModelIndex& i,RsGxsChannelPost& fmpe) const
@@ -635,7 +635,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 
     RsGxsMessageId postId = mid;
 
-    for(uint32_t i=1;i<mFilteredPosts.size();++i)
+    for(uint32_t i=0;i<mFilteredPosts.size();++i)
     {
 		// First look into msg versions, in case the msg is a version of an existing message
 
@@ -645,7 +645,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 				quintptr ref ;
 				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex((i-1)%mColumns, (i-1)/mColumns,ref);
+				return createIndex(i%mColumns, i/mColumns,ref);
             }
 
         if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
@@ -653,7 +653,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex((i-1)%mColumns, (i-1)/mColumns,ref);
+			return createIndex(i%mColumns, i/mColumns,ref);
         }
     }
 

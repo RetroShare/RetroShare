@@ -166,6 +166,9 @@ private:
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
     RsGxsChannelPostFilesModel *mChannelFilesModel;
 
+    RsGxsMessageId mSelectedPost;
+    RsGxsGroupId   mSelectedGroup;
+
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;
 };

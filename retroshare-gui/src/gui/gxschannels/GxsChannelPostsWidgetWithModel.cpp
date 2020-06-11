@@ -37,6 +37,7 @@
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
 #include "util/qtthreadsutils.h"
+#include "gui/common/FilesDefs.h"
 
 #include "GxsChannelPostsWidgetWithModel.h"
 #include "GxsChannelPostsModel.h"
@@ -45,7 +46,7 @@
 
 #include <algorithm>
 
-#define CHAN_DEFAULT_IMAGE ":/icons/png/channels.png"
+#define CHAN_DEFAULT_IMAGE ":images/thumb-default-video.png"
 
 #define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
 
@@ -102,10 +103,17 @@ public:
 
         // now fill the data
 
-		QPixmap thumbnail;
-		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-
-        lb->setPixmap(thumbnail);
+        if(post.mThumbnail.mSize > 0)
+		{
+			QPixmap thumbnail;
+			GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
+			lb->setPixmap(thumbnail);
+		}
+        else
+        {
+			QPixmap thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
+			lb->setPixmap(thumbnail);
+        }
 
 		QFontMetricsF fm(font());
 		int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
@@ -114,6 +122,15 @@ public:
         lb->setFixedSize(W,H);
 
         lt->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+
+        QFont font = lt->font();
+
+		if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+        {
+            font.setBold(true);
+            lt->setFont(font);
+        }
+
         lt->setMaximumWidth(W);
         lt->setWordWrap(true);
 
@@ -401,15 +418,10 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
+		case RsChannelEventCode::READ_STATUS_CHANGED:
 			if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
 		break;
-//		case RsChannelEventCode::READ_STATUS_CHANGED:
-//			if (FeedItem *feedItem = ui->feedWidget->findFeedItem(GxsChannelPostItem::computeIdentifier(e->mChannelMsgId)))
-//				if (GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem))
-//					channelPostItem->setReadStatus(false,!channelPostItem->isUnread());
-//					//channelPostItem->setReadStatus(false,e->Don't get read status. Will be more easier and accurate);
-//		break;
 		default:
 		break;
 	}
@@ -419,17 +431,33 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 
+    if(!index.isValid() && !mSelectedPost.isNull() && mGroup.mMeta.mGroupId == mSelectedGroup)
+    {
+    	index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
+        whileBlocking(ui->postsTree)->setCurrentIndex(index);
+    }
+
     if(!index.isValid())
     {
         ui->postDetails_TE->clear();
-        ui->postLogo_LB->clear();
+        ui->postLogo_LB->hide();
+		ui->postName_LB->hide();
 		mChannelPostFilesModel->clear();
+        mSelectedGroup.clear();
+        mSelectedPost.clear();
         return;
     }
+
+	ui->postLogo_LB->show();
+	ui->postName_LB->show();
+
     if(index.row()==0 && index.column()==0)
         std::cerr << "here" << std::endl;
 
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+    mSelectedGroup = mGroup.mMeta.mGroupId;
+    mSelectedPost = post.mMeta.mMsgId;
 
     mChannelPostFilesModel->setFiles(post.mFiles);
 
@@ -447,7 +475,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	if (post.mThumbnail.mData != NULL)
 		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, postImage,GxsIdDetails::ORIGINAL);
 	else
-		postImage = QPixmap(CHAN_DEFAULT_IMAGE);
+		postImage = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
 
     int W = QFontMetricsF(font()).height() * 8;
 
@@ -463,6 +491,16 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelPostFiles_TV->setAutoSelect(true);
 
+ 	// Now also set the post as read
+
+	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+	{
+		RsGxsGrpMsgIdPair postId;
+		postId.second = post.mMeta.mMsgId;
+		postId.first  = post.mMeta.mGroupId;
+
+		RsThread::async([postId]() { rsGxsChannels->markRead(postId, true) ; } );
+	}
 }
 
 void GxsChannelPostsWidgetWithModel::updateChannelFiles()
@@ -645,6 +683,8 @@ void GxsChannelPostsWidgetWithModel::createMsg()
 
 void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGroup &group)
 {
+    // save selection if needed
+
 	/* IMAGE */
 	QPixmap chanImage;
 	if (group.mImage.mData != NULL) {
@@ -652,6 +692,11 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	} else {
 		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
 	}
+    if(group.mMeta.mGroupName.empty())
+		ui->channelName_LB->setText(tr("[No name]"));
+    else
+		ui->channelName_LB->setText(QString::fromUtf8(group.mMeta.mGroupName.c_str()));
+
 	ui->logoLabel->setPixmap(chanImage);
     ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
 
