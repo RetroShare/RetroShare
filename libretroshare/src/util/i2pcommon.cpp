@@ -73,7 +73,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	RsBase64::decode(priv_copy, dataPriv);
 
 	auto p = dataPriv.cbegin();
-	RS_DBG("dataPriv.size ") << dataPriv.size() << std::endl;
+	RS_DBG("dataPriv.size ", dataPriv.size());
 
 	size_t publicKeyLen = 256 + 128; // default length (bytes)
 	uint8_t certType = 0;
@@ -111,7 +111,7 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// check for != 5
 			if (certType != static_cast<typename std::underlying_type<CertType>::type>(CertType::Key)) {
 				// unsupported
-				RS_DBG("cert type ") << certType << " is unsupported" << std::endl;
+				RS_DBG("cert type ", certType, " is unsupported");
 				return std::string();
 			}
 
@@ -128,21 +128,21 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// likely 7
 			signingKeyType = readTwoBytesBE(p);
 
-			RS_DBG("signing pubkey type ") << certType << std::endl;
+			RS_DBG("signing pubkey type ", certType);
 			if (signingKeyType >= 3 && signingKeyType <= 6) {
-				RS_DBG("signing pubkey type ") << certType << " has oversize" << std::endl;
+				RS_DBG("signing pubkey type ", certType, " has oversize");
 				// calculate oversize
 
 				if (signingKeyType >= signingKeyLengths.size()) {
 					// just in case
-					RS_DBG("signing pubkey type ") << certType << " cannot be found in size map!" << std::endl;
+					RS_DBG("signing pubkey type ", certType, " cannot be found in size data!");
 					return std::string();
 				}
 
 				auto values = signingKeyLengths[signingKeyType];
 				if (values.first <= 128) {
 					// just in case, it's supposed to be larger!
-					RS_DBG("signing pubkey type ") << certType << " is oversize but size calculation would underflow!" << std::endl;
+					RS_DBG("signing pubkey type ", certType, " is oversize but size calculation would underflow!");
 					return std::string();
 				}
 
@@ -152,12 +152,12 @@ std::string publicKeyFromPrivate(std::string const &priv)
 			// Crypto Public Key
 			// likely 0
 			cryptKey = readTwoBytesBE(p);
-			RS_DBG("crypto pubkey type ") << cryptKey << std::endl;
+			RS_DBG("crypto pubkey type ", cryptKey);
 			// info: these are all smaller than the default 256 bytes, so no oversize calculation is needed
 
 			break;
 		}  catch (const std::out_of_range &e) {
-			RS_DBG("hit exception! ") << e.what() << std::endl;
+			RS_DBG("hit exception! ", e.what());
 			return std::string();
 		}
 	} while(false);

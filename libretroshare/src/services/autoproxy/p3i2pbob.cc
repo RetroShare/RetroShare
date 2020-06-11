@@ -33,6 +33,8 @@
 #include "util/rsprint.h"
 #include "util/rsrandom.h"
 
+#include "util/rsdebuglevel4.h"
+
 static const std::string kConfigKeyBOBEnable   = "BOB_ENABLE";
 static const std::string kConfigKeyBOBKey      = "BOB_KEY";
 static const std::string kConfigKeyBOBAddr     = "BOB_ADDR";
@@ -80,7 +82,7 @@ bool p3I2pBob::isEnabled()
 
 bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 {
-	RS_DBG("") << std::endl;
+	RS_DBG("");
 
 	// update config
 	{
@@ -93,7 +95,7 @@ bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 		}
 	}
 
-	RS_DBG("config updated") << std::endl;
+	RS_DBG("config updated");
 
 	// request keys
 	// p3I2pBob::stateMachineBOB expects mProcessing to be set therefore
@@ -103,12 +105,12 @@ bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 	fakeTicket->task = autoProxyTask::receiveKey;
 	processTaskAsync(fakeTicket);
 
-	RS_DBG("fakeTicket requested") << std::endl;
+	RS_DBG("fakeTicket requested");
 
 	// now start thread
 	start("I2P-BOB gen key");
 
-	RS_DBG("thread started") << std::endl;
+	RS_DBG("thread started");
 
 	int counter = 0;
 	// wait for keys
@@ -122,24 +124,24 @@ bool p3I2pBob::initialSetup(std::string &addr, uint16_t &/*port*/)
 			break;
 
 		if (++counter > 30) {
-			RS_DBG4("timeout!") << std::endl;
+			RS_DBG4("timeout!");
 			return false;
 		}
 	}
 
-	RS_DBG("got keys") << std::endl;
+	RS_DBG("got keys");
 
 	// stop thread
 	fullstop();
 
-	RS_DBG("thread stopped") << std::endl;
+	RS_DBG("thread stopped");
 
 	{
 		RS_STACK_MUTEX(mLock);
 		addr = mSetting.address.base32;
 	}
 
-	RS_DBG4("addr '" + addr + "'") << std::endl;
+	RS_DBG4("addr ", addr);
 
 	return true;
 }
@@ -157,7 +159,7 @@ void p3I2pBob::processTaskAsync(taskTicket *ticket)
 	}
 		break;
 	default:
-		RS_DBG("unknown task") << std::endl;
+		RS_DBG("unknown task");
 		rsAutoProxyMonitor::taskError(ticket);
 		break;
 	}
@@ -172,7 +174,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::status:
 		// check if everything needed is set
 		if (!data) {
-			RS_DBG("autoProxyTask::status data is missing") << std::endl;
+			RS_DBG("autoProxyTask::status data is missing");
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -186,7 +188,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::getSettings:
 		// check if everything needed is set
 		if (!data) {
-			RS_DBG("autoProxyTask::getSettings data is missing") << std::endl;
+			RS_DBG("autoProxyTask::getSettings data is missing");
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -200,7 +202,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 	case autoProxyTask::setSettings:
 		// check if everything needed is set
 		if (!data) {
-			RS_DBG("autoProxyTask::setSettings data is missing") << std::endl;
+			RS_DBG("autoProxyTask::setSettings data is missing");
 			rsAutoProxyMonitor::taskError(ticket);
 			break;
 		}
@@ -220,7 +222,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 		break;
 	case autoProxyTask::getErrorInfo:
 		if (!data) {
-			RS_DBG("autoProxyTask::getErrorInfo data is missing") << std::endl;
+			RS_DBG("autoProxyTask::getErrorInfo data is missing");
 			rsAutoProxyMonitor::taskError(ticket);
 		} else {
 			RS_STACK_MUTEX(mLock);
@@ -229,7 +231,7 @@ void p3I2pBob::processTaskSync(taskTicket *ticket)
 		}
 		break;
 	default:
-		RS_DBG("unknown task") << std::endl;
+		RS_DBG("unknown task");
 		rsAutoProxyMonitor::taskError(ticket);
 		break;
 	}
@@ -247,10 +249,8 @@ void p3I2pBob::threadTick()
 {
 	int sleepTime = 0;
 	{
-		RS_STACK_MUTEX(mLock);
-		std::stringstream ss;
-		ss << "data_tick mState: " << mState << " mTask: " << mTask << " mBOBState: " << mBOBState << " mPending: " << mPending.size();
-		RS_DBG4("" + ss.str()) << std::endl;
+		RS_STACK_MUTEX(mLock);		
+		RS_DBG4("data_tick mState: ", mState, " mTask: ", mTask, " mBOBState: ", mBOBState, " mPending: ", mPending.size());
 	}
 
 	sleepTime += stateMachineController();
@@ -289,15 +289,13 @@ int p3I2pBob::stateMachineBOB()
 	if (mBOBState == bsList) {
 		int counter = 0;
 		while (answer.find("OK Listing done") == std::string::npos) {
-			std::stringstream ss;
-			ss << "stateMachineBOB status check: read loop, counter: " << counter;
-			RS_DBG3("" + ss.str()) << std::endl;
+			RS_DBG3("stateMachineBOB status check: read loop, counter: ", counter);
 			answer += recv();
 			counter++;
 		}
 
 		if (answer.find(mTunnelName) == std::string::npos) {
-			RS_DBG("status check: tunnel down!") << std::endl;
+			RS_DBG("status check: tunnel down!");
 			// signal error
 			*((bool *)mProcessing->data) = true;
 		}
@@ -337,8 +335,8 @@ int p3I2pBob::stateMachineBOB_locked_failure(const std::string &answer, const bo
 		return sleepFactorDefault;
 	}
 
-	RS_DBG("FAILED to run command '" + currentState.command + "'") << std::endl;
-	RS_DBG("'" + answer + "'") << std::endl;
+	RS_DBG("FAILED to run command: ", currentState.command);
+	RS_DBG("answer: ", answer);
 
 	mErrorMsg.append("FAILED to run command '" + currentState.command + "'" + '\n');
 	mErrorMsg.append("reason '" + answer + "'" + '\n');
@@ -385,14 +383,14 @@ int p3I2pBob::stateMachineController()
 		return stateMachineController_locked_idle();
 	case csDoConnect:
 		if (!connectI2P()) {
-			RS_DBG("doConnect: unable to connect") << std::endl;
+			RS_DBG("doConnect: unable to connect");
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "unable to connect to BOB port";
 			return sleepFactorSlow;
 		}
 
-		RS_DBG4("doConnect: connected") << std::endl;
+		RS_DBG4("doConnect: connected");
 		mState = csConnected;
 		break;
 	case csConnected:
@@ -400,7 +398,7 @@ int p3I2pBob::stateMachineController()
 	case csWaitForBob:
 		// check connection problems
 		if (mSocket == 0) {
-			RS_DBG("waitForBob: conection lost") << std::endl;
+			RS_DBG("waitForBob: conection lost");
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "connection lost to BOB";
@@ -410,21 +408,21 @@ int p3I2pBob::stateMachineController()
 		// check for finished BOB protocol
 		if (mBOBState == bsCleared) {
 			// done
-			RS_DBG4("waitForBob: mBOBState == bsCleared") << std::endl;
+			RS_DBG4("waitForBob: mBOBState == bsCleared");
 			mState = csDoDisconnect;
 		}
 		break;
 	case csDoDisconnect:
 		if (!disconnectI2P() || mSocket != 0) {
 			// just in case
-			RS_DBG("doDisconnect: can't disconnect") << std::endl;
+			RS_DBG("doDisconnect: can't disconnect");
 			mStateOld = mState;
 			mState = csError;
 			mErrorMsg = "unable to disconnect from BOB";
 			return sleepFactorDefault;
 		}
 
-		RS_DBG4("doDisconnect: disconnected") << std::endl;
+		RS_DBG4("doDisconnect: disconnected");
 		mState = csDisconnected;
 		break;
 	case csDisconnected:
@@ -455,7 +453,7 @@ int p3I2pBob::stateMachineController_locked_idle()
 		    mProcessing->task == autoProxyTask::stop ||
 		    mProcessing->task == autoProxyTask::proxyStatusCheck)) {
 			// skip since we are not enabled
-			RS_DBG1("disabled -> skipping ticket") << std::endl;
+			RS_DBG1("disabled -> skipping ticket");
 			rsAutoProxyMonitor::taskDone(mProcessing, autoProxyStatus::disabled);
 			mProcessing = NULL;
 		} else {
@@ -477,7 +475,7 @@ int p3I2pBob::stateMachineController_locked_idle()
 				mTask = ctRunCheck;
 				break;
 			default:
-				RS_DBG1("unknown async task") << std::endl;
+				RS_DBG1("unknown async task");
 				rsAutoProxyMonitor::taskError(mProcessing);
 				mProcessing = NULL;
 				break;
@@ -525,28 +523,28 @@ int p3I2pBob::stateMachineController_locked_connected()
 	case ctRunSetUp:
 		// when we have a key use it for server tunnel!
 		if(mSetting.address.privateKey.empty()) {
-			RS_DBG4("setting mBOBState = setnickC") << std::endl;
+			RS_DBG4("setting mBOBState = setnickC");
 			mBOBState = bsSetnickC;
 		} else {
-			RS_DBG4("setting mBOBState = setnickS") << std::endl;
+			RS_DBG4("setting mBOBState = setnickS");
 			mBOBState = bsSetnickS;
 		}
 		break;
 	case ctRunShutDown:
 		// shut down existing tunnel
-		RS_DBG4("setting mBOBState = getnick") << std::endl;
+		RS_DBG4("setting mBOBState = getnick");
 		mBOBState = bsGetnick;
 		break;
 	case ctRunCheck:
-		RS_DBG4("setting mBOBState = list") << std::endl;
+		RS_DBG4("setting mBOBState = list");
 		mBOBState = bsList;
 		break;
 	case ctRunGetKeys:
-		RS_DBG4("setting mBOBState = setnickN") << std::endl;
+		RS_DBG4("setting mBOBState = setnickN");
 		mBOBState = bsSetnickN;
 		break;
 	case ctIdle:
-		RS_DBG("task is idle. This should not happen!") << std::endl;
+		RS_DBG("task is idle. This should not happen!");
 		break;
 	}
 
@@ -562,7 +560,7 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 	if(errorHappened) {
 		// reset old state
 		mStateOld = csIdel;
-		RS_DBG("error during process!") << std::endl;
+		RS_DBG("error during process!");
 	}
 
 	// answer ticket
@@ -591,12 +589,12 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 		mTask = mTaskOld;
 
 		if (!errorHappened) {
-			RS_DBG4("run check result: ok") << std::endl;
+			RS_DBG4("run check result: ok");
 			break;
 		}
 		// switch to error
 		newState = csError;
-		RS_DBG("run check result: error") << std::endl;
+		RS_DBG("run check result: error");
 		mErrorMsg = "Connection check failed. Will try to restart tunnel.";
 
 		break;
@@ -619,7 +617,7 @@ int p3I2pBob::stateMachineController_locked_disconnected()
 		mTask = mTaskOld;
 		break;
 	case ctIdle:
-		RS_DBG("task is idle. This should not happen!") << std::endl;
+		RS_DBG("task is idle. This should not happen!");
 		rsAutoProxyMonitor::taskError(mProcessing);
 	}
 	mProcessing = NULL;
@@ -635,14 +633,12 @@ int p3I2pBob::stateMachineController_locked_error()
 {
 	// wait for bob protocoll
 	if (mBOBState != bsCleared) {
-		RS_DBG4("waiting for BOB") << std::endl;
+		RS_DBG4("waiting for BOB");
 		return sleepFactorFast;
 	}
 
 #if 0
-	std::stringstream ss;
-	ss << "stateMachineController_locked_error: mProcessing: " << (mProcessing ? "not null" : "null");
-	RS_DBG4("" + ss.str()) << std::endl;
+	RS_DBG4("stateMachineController_locked_error: mProcessing: ", (mProcessing ? "not null" : "null"));
 #endif
 
 	// try to finish ticket
@@ -650,7 +646,7 @@ int p3I2pBob::stateMachineController_locked_error()
 		switch (mTask) {
 		case ctRunCheck:
 			// connection check failed at some point
-			RS_DBG("failed to check proxy status (it's likely dead)!") << std::endl;
+			RS_DBG("failed to check proxy status (it's likely dead)!");
 			*((bool *)mProcessing->data) = true;
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
@@ -658,7 +654,7 @@ int p3I2pBob::stateMachineController_locked_error()
 			break;
 		case ctRunShutDown:
 			// not a big deal though
-			RS_DBG("failed to shut down tunnel (it's likely dead though)!") << std::endl;
+			RS_DBG("failed to shut down tunnel (it's likely dead though)!");
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
 			mErrorMsg.clear();
@@ -666,14 +662,14 @@ int p3I2pBob::stateMachineController_locked_error()
 		case ctIdle:
 			// should not happen but we need to deal with it
 			// this will produce some error messages in the log and finish the task (marked as failed)
-			RS_DBG("task is idle. This should not happen!") << std::endl;
+			RS_DBG("task is idle. This should not happen!");
 			mState = csDoDisconnect;
 			mStateOld = csIdel;
 			mErrorMsg.clear();
 			break;
 		case ctRunGetKeys:
 		case ctRunSetUp:
-			RS_DBG("failed to receive key / start up") << std::endl;
+			RS_DBG("failed to receive key / start up");
 			mStateOld = csError;
 			mState = csDoDisconnect;
 			// keep the error message
@@ -684,7 +680,7 @@ int p3I2pBob::stateMachineController_locked_error()
 
 	// periodically retry
 	if (mLastProxyCheck < time(NULL) - (selfCheckPeroid >> 1) && mTask == ctRunSetUp) {
-		RS_DBG("retrying") << std::endl;
+		RS_DBG("retrying");
 
 		mLastProxyCheck = time(NULL);
 		mErrorMsg.clear();
@@ -697,7 +693,7 @@ int p3I2pBob::stateMachineController_locked_error()
 
 	// check for new tickets
 	if (!mPending.empty()) {
-		RS_DBG4("processing new ticket") << std::endl;
+		RS_DBG4("processing new ticket");
 
 		// reset and try new task
 		mTask = ctIdle;
@@ -728,7 +724,7 @@ RsSerialiser *p3I2pBob::setupSerialiser()
 
 bool p3I2pBob::saveList(bool &cleanup, std::list<RsItem *> &lst)
 {
-	RS_DBG4("") << std::endl;
+	RS_DBG4("");
 
 	cleanup = true;
 	RsConfigKeyValueSet *vitem = new RsConfigKeyValueSet;
@@ -763,7 +759,7 @@ bool p3I2pBob::saveList(bool &cleanup, std::list<RsItem *> &lst)
 
 bool p3I2pBob::loadList(std::list<RsItem *> &load)
 {
-	RS_DBG4("") << std::endl;
+	RS_DBG4("");
 
 	for(std::list<RsItem*>::const_iterator it = load.begin(); it!=load.end(); ++it) {
 		RsConfigKeyValueSet *vitem = dynamic_cast<RsConfigKeyValueSet*>(*it);
@@ -783,7 +779,7 @@ bool p3I2pBob::loadList(std::list<RsItem *> &load)
 				getKVSUInt(kit, kConfigKeyOutQuantity, mSetting.outQuantity)
 				getKVSUInt(kit, kConfigKeyOutVariance, mSetting.outVariance)
 				else
-				    RS_DBG("unknown key: " + kit->key) << std::endl;
+				    RS_DBG("unknown key: ", kit->key);
 			}
 		}
 		delete vitem;
@@ -847,7 +843,7 @@ void p3I2pBob::getStates(bobStates *bs)
 
 std::string p3I2pBob::executeCommand(const std::string &command)
 {
-	RS_DBG4("running '" + command + "'") << std::endl;
+	RS_DBG4("running: ", command);
 
 	std::string copy = command;
 	copy.push_back('\n');
@@ -859,7 +855,7 @@ std::string p3I2pBob::executeCommand(const std::string &command)
 	// receive answer (trailing new line is already removed!)
 	std::string ans = recv();
 
-	RS_DBG4("answer '" + ans + "'") << std::endl;
+	RS_DBG4("answer: ", ans);
 
 	return ans;
 }
@@ -869,7 +865,7 @@ bool p3I2pBob::connectI2P()
 	// there is only one thread that touches mSocket - no need for a lock
 
 	if (mSocket != 0) {
-		RS_DBG("mSocket != 0") << std::endl;
+		RS_DBG("mSocket != 0");
 		return false;
 	}
 
@@ -877,21 +873,21 @@ bool p3I2pBob::connectI2P()
 	mSocket = unix_socket(PF_INET, SOCK_STREAM, 0);
 	if (mSocket < 0)
 	{
-		RS_DBG("Failed to open socket! Socket Error: " + socket_errorType(errno)) << std::endl;
+		RS_DBG("Failed to open socket! Socket Error: ", socket_errorType(errno));
 		return false;
 	}
 
 	// connect
 	int err = unix_connect(mSocket, mI2PProxyAddr);
 	if (err != 0) {
-		RS_DBG("Failed to connect to BOB! Socket Error: " + socket_errorType(errno)) << std::endl;
+		RS_DBG("Failed to connect to BOB! Socket Error: ", socket_errorType(errno));
 		return false;
 	}
 
 	// receive hello msg
 	recv();
 
-	RS_DBG4("done") << std::endl;
+	RS_DBG4("done");
 	return true;
 }
 
@@ -900,17 +896,17 @@ bool p3I2pBob::disconnectI2P()
 	// there is only one thread that touches mSocket - no need for a lock
 
 	if (mSocket == 0) {
-		RS_DBG("mSocket == 0") << std::endl;
+		RS_DBG("mSocket == 0");
 		return true;
 	}
 
 	int err = unix_close(mSocket);
 	if (err != 0) {
-		RS_DBG("Failed to close socket! Socket Error: " + socket_errorType(errno)) << std::endl;
+		RS_DBG("Failed to close socket! Socket Error: ", socket_errorType(errno));
 		return false;
 	}
 
-	RS_DBG4("done") << std::endl;
+	RS_DBG4("done");
 	mSocket = 0;
 	return true;
 }
@@ -931,7 +927,7 @@ std::string toString(const std::string &a, const int8_t b) {
 
 void p3I2pBob::finalizeSettings_locked()
 {
-	RS_DBG4("") << std::endl;
+	RS_DBG4("");
 
 	sockaddr_storage_clear(mI2PProxyAddr);
 	// get i2p proxy addr
@@ -942,8 +938,8 @@ void p3I2pBob::finalizeSettings_locked()
 	sockaddr_storage_setipv4(mI2PProxyAddr, (sockaddr_in*)&proxy);
 	sockaddr_storage_setport(mI2PProxyAddr, 2827);
 
-	RS_DBG4("using " + sockaddr_storage_tostring(mI2PProxyAddr)) << std::endl;
-	RS_DBG4("using " + mSetting.address.base32) << std::endl;
+	RS_DBG4("using ", sockaddr_storage_tostring(mI2PProxyAddr));
+	RS_DBG4("using ", mSetting.address.base32);
 
 	peerState ps;
 	mPeerMgr->getOwnNetStatus(ps);
@@ -958,7 +954,7 @@ void p3I2pBob::finalizeSettings_locked()
 	std::vector<uint8_t> tmp(len);
 	RSRandom::random_bytes(tmp.data(), len);
 	const std::string location = Radix32::encode(tmp.data(), len);
-	RS_DBG4("using suffix " + location) << std::endl;
+	RS_DBG4("using suffix ", location);
 	mTunnelName = "RetroShare-" + location;
 
 	const std::string setnick    = "setnick RetroShare-" + location;
@@ -1026,7 +1022,7 @@ void p3I2pBob::finalizeSettings_locked()
 
 void p3I2pBob::updateSettings_locked()
 {
-	RS_DBG4("") << std::endl;
+	RS_DBG4("");
 
 	sockaddr_storage proxy;
 	mPeerMgr->getProxyServerAddress(RS_HIDDEN_TYPE_I2P, proxy);
@@ -1102,7 +1098,7 @@ std::string p3I2pBob::recv()
 			// sanity check
 			if (length != bufferSize) {
 				// expectation: a full buffer was peeked)
-				RS_DBG1("peeked less than bufferSize but also didn't found a new line character") << std::endl;
+				RS_DBG1("peeked less than bufferSize but also didn't found a new line character");
 			}
 			// this should never happen
 			assert(length <= bufferSize);
