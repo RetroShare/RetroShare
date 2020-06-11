@@ -44,6 +44,7 @@ private slots:
 	void pause();
 	void resume();
 	void openFolder();
+	void openFile();
 
 private:
 	void setSize(uint64_t size);

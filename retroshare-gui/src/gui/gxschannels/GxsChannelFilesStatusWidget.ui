@@ -48,7 +48,7 @@
        <number>2</number>
       </property>
       <item>
-       <widget class="QToolButton" name="downloadToolButton">
+       <widget class="QPushButton" name="downloadPushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -126,9 +126,22 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="openFolderToolButton">
+       <widget class="QPushButton" name="openFilePushButton">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Play</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="openFolderToolButton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -136,8 +149,8 @@
         <property name="focusPolicy">
          <enum>Qt::NoFocus</enum>
         </property>
-        <property name="text">
-         <string>Open folder</string>
+        <property name="popupMode">
+         <enum>QToolButton::InstantPopup</enum>
         </property>
        </widget>
       </item>
@@ -148,6 +161,7 @@
  </widget>
  <resources>
   <include location="../images.qrc"/>
+  <include location="../icons.qrc"/>
  </resources>
  <connections/>
 </ui>
