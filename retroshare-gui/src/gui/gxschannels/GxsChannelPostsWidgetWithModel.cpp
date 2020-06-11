@@ -323,7 +323,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
-    connect(mChannelPostsModel,SIGNAL(channelLoaded()),this,SLOT(updateChannelFiles()));
+    connect(mChannelPostsModel,SIGNAL(channelPostsLoaded()),this,SLOT(postChannelLoad()));
 
     QFontMetricsF fm(font());
 
@@ -431,12 +431,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 
-    if(!index.isValid() && !mSelectedPost.isNull() && mGroup.mMeta.mGroupId == mSelectedGroup)
-    {
-    	index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
-        whileBlocking(ui->postsTree)->setCurrentIndex(index);
-    }
-
     if(!index.isValid())
     {
         ui->postDetails_TE->clear();
@@ -503,20 +497,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	}
 }
 
-void GxsChannelPostsWidgetWithModel::updateChannelFiles()
-{
-    std::list<RsGxsFile> files;
-
-    mChannelPostsModel->getFilesList(files);
-    mChannelFilesModel->setFiles(files);
-
-    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
-    ui->channelFiles_TV->setAutoSelect(true);
-
-    //mChannelPostFilesProxyModel->sort(0, Qt::AscendingOrder);
-}
-
 void GxsChannelPostsWidgetWithModel::updateGroupData()
 {
 	if(groupId().isNull())
@@ -546,6 +526,29 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
             insertChannelDetails(mGroup);
         } );
 	});
+}
+
+void GxsChannelPostsWidgetWithModel::postChannelLoad()
+{
+    std::cerr << "Post channel load..." << std::endl;
+
+	if(!mSelectedPost.isNull() && mGroup.mMeta.mGroupId == mSelectedGroup)
+    {
+    	QModelIndex index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
+        std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post " << mSelectedPost << std::endl;
+        whileBlocking(ui->postsTree)->setCurrentIndex(index);
+    }
+
+	std::list<RsGxsFile> files;
+
+    mChannelPostsModel->getFilesList(files);
+    mChannelFilesModel->setFiles(files);
+
+    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
+    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
+    ui->channelFiles_TV->setAutoSelect(true);
+
+
 }
 
 void GxsChannelPostsWidgetWithModel::updateDisplay(bool complete)
@@ -779,7 +782,6 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	}
 
 	ui->infoDistribution->setText(distrib_string);
-
 #ifdef TODO
 	ui->infoWidget->show();
 	ui->feedWidget->hide();
@@ -788,8 +790,8 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	//ui->feedToolButton->setEnabled(false);
 	//ui->fileToolButton->setEnabled(false);
 #endif
-
 	ui->subscribeToolButton->setText(tr("Subscribe ") + " " + QString::number(group.mMeta.mPop) );
+
 }
 
 #ifdef TODO

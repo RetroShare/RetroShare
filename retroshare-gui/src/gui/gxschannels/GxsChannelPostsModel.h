@@ -173,7 +173,7 @@ public:
     void debug_dump();
 
 signals:
-    void channelLoaded();	// emitted after the posts have been set. Can be used to updated the UI.
+    void channelPostsLoaded();	// emitted after the posts have been loaded.
 
 private:
     RsGxsChannelGroup mChannelGroup;

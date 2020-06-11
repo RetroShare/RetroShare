@@ -138,7 +138,7 @@ private slots:
 	void setViewMode(int viewMode);
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);
-	void updateChannelFiles();
+	void postChannelLoad();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);

@@ -398,7 +398,7 @@ void RsGxsChannelPostsModel::clear()
     initEmptyHierarchy();
 
 	postMods();
-	emit channelLoaded();
+	emit channelPostsLoaded();
 }
 
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
@@ -431,7 +431,7 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
 
 	postMods();
 
-	emit channelLoaded();
+	emit channelPostsLoaded();
 }
 
 void RsGxsChannelPostsModel::update_posts(const RsGxsGroupId& group_id)
