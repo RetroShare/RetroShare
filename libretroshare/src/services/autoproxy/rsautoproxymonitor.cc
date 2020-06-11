@@ -44,7 +44,7 @@ void rsAutoProxyMonitor::addProxy(autoProxyType::autoProxyType_enum type, autoPr
 {
 	RS_STACK_MUTEX(mLock);
 	if (mProxies.find(type) != mProxies.end()) {
-		RsErr() << __PRETTY_FUNCTION__<< " type " << type << " already added - OVERWRITING" << std::endl;
+		RS_ERR("type ", type, " already added - OVERWRITING");
 		print_stacktrace();
 	}
 
@@ -120,7 +120,7 @@ void rsAutoProxyMonitor::stopAllRSShutdown()
 	do {		
 		rstime::rs_usleep(1000 * 1000);
 		RS_STACK_MUTEX(mLock);
-		RsDbg() << __PRETTY_FUNCTION__<< " waiting for auto proxy service(s) to shut down " << t << "/" << timeout << " (remaining: " << mProxies.size() << ")" << std::endl;
+		RS_DBG("waiting for auto proxy service(s) to shut down ", t, "/", timeout, " (remaining: ", mProxies.size(), ")");
 		if (mProxies.empty())
 			break;
 		t++;
@@ -149,15 +149,15 @@ void rsAutoProxyMonitor::task(taskTicket *ticket)
 {
 	// sanity checks
 	if (!ticket->async && ticket->types.size() > 1) {
-		RsErr() << __PRETTY_FUNCTION__<< " synchronous call to multiple services. This can cause problems!" << std::endl;
+		RS_ERR("synchronous call to multiple services. This can cause problems!");
 		print_stacktrace();
 	}
 	if (ticket->async && !ticket->cb && ticket->data) {
-		RsErr() << __PRETTY_FUNCTION__<< " asynchronous call with data but no callback. This will likely causes memory leak!" << std::endl;
+		RS_ERR("asynchronous call with data but no callback. This will likely causes memory leak!");
 		print_stacktrace();
 	}
 	if (ticket->types.size() > 1 && ticket->data) {
-		RsErr() << __PRETTY_FUNCTION__<< " call with data to multiple services. This will likely causes memory leak!" << std::endl;
+		RS_ERR("call with data to multiple services. This will likely causes memory leak!");
 		print_stacktrace();
 	}
 
@@ -197,7 +197,7 @@ void rsAutoProxyMonitor::taskAsync(std::vector<autoProxyType::autoProxyType_enum
 	if (!isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
 		// Just print a warning - maybe there is some special case where this is a good idea.
-		RsErr() << __PRETTY_FUNCTION__<< " called with a synchronous task!" << std::endl;
+		RS_ERR("called with a synchronous task!");
 		print_stacktrace();
 	}
 
@@ -226,7 +226,7 @@ void rsAutoProxyMonitor::taskSync(std::vector<autoProxyType::autoProxyType_enum>
 	if (isAsyncTask(task)) {
 		// Usually the services will reject this ticket.
 		// Just print a warning - maybe there is some special case where this is a good idea.
-		RsErr() << __PRETTY_FUNCTION__<< " called with an asynchronous task!" << std::endl;
+		RS_ERR("called with an asynchronous task!");
 		print_stacktrace();
 	}
 
@@ -256,7 +256,7 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 		t->cb->taskFinished(t);
 		if (t != NULL) {
 			// callack did not clean up properly
-			RsErr() << __PRETTY_FUNCTION__<< " callback did not clean up!" << std::endl;
+			RS_ERR("callback did not clean up!");
 			print_stacktrace();
 			cleanUp = true;
 		}
@@ -265,12 +265,12 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 		// we must take care of deleting
 		cleanUp = true;
 		if(t->data)
-			RsErr() << __PRETTY_FUNCTION__<< " async call with data attached but no callback set!" << std::endl;
+			RS_ERR("sync call with data attached but no callback set!");
 	}
 
 	if (cleanUp) {
 		if (t->data) {
-			RsErr() << __PRETTY_FUNCTION__<< " will try to delete void pointer!" << std::endl;
+			RS_ERR("will try to delete void pointer!");
 			print_stacktrace();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
@@ -304,7 +304,7 @@ void rsAutoProxyMonitor::taskFinished(taskTicket *&ticket)
 
 	// clean up
 	if (ticket->data) {
-		RsErr() << __PRETTY_FUNCTION__<< " data set. Will try to delete void pointer" << std::endl;
+		RS_ERR(" data set. Will try to delete void pointer");
 		print_stacktrace();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdelete-incomplete"
@@ -323,7 +323,7 @@ autoProxyService *rsAutoProxyMonitor::lookUpService(autoProxyType::autoProxyType
 	if ((itService = mProxies.find(t)) != mProxies.end()) {
 		return itService->second;
 	}
-	RsDbg() << __PRETTY_FUNCTION__<< " no service for type " << t << " found!" << std::endl;
+	RS_DBG("no service for type ", t, " found!");
 	return NULL;
 }
 
