@@ -67,7 +67,8 @@ std::string publicKeyFromPrivate(std::string const &priv)
 	// creat a copy to work on, need to convert it to standard base64
 	auto priv_copy(priv);
 	std::replace(priv_copy.begin(), priv_copy.end(), '~', '/');
-	std::replace(priv_copy.begin(), priv_copy.end(), '-', '+');
+	// replacing the - with a + is not necessary, as RsBase64 can handle base64url encoding, too
+	// std::replace(copy.begin(), copy.end(), '-', '+');
 
 	// get raw data
 	std::vector<uint8_t> dataPriv;
