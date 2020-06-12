@@ -632,6 +632,8 @@ void ChatLobbyDialog::updateParticipantsList()
 
             if(isParticipantMuted(it2->first))
                 widgetitem->setIcon(COLUMN_ICON, bullet_red_128);
+            else if(widgetitem->mBannedState)
+                { /* icon set in GxsIdTreeWidgetItem */ }
             else if (tLastAct + timeToInactivity < now)
                 widgetitem->setIcon(COLUMN_ICON, bullet_grey_128);
             else if (tLastAct + timeToInactivity2 < now)

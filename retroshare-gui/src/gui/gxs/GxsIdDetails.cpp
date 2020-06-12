@@ -1036,13 +1036,9 @@ QString GxsIdDetails::getComment(const RsIdentityDetails &details)
 	QString comment;
 QString nickname ;
 
-    bool banned = ( details.mReputation.mOverallReputationLevel ==
-	                RsReputationLevel::LOCALLY_NEGATIVE );
         
     	if(details.mNickname.empty())
             nickname = tr("[Unknown]") ;
-        /*else if(banned)
-            nickname = tr("[Banned]") ;*/
         else
             nickname = QString::fromUtf8(details.mNickname.c_str()).left(RSID_MAXIMUM_NICKNAME_SIZE) ;
 
@@ -1075,8 +1071,10 @@ QString nickname ;
 		if(details.mReputation.mFriendsPositiveVotes > 0) comment += " <b>+" + QString::number(details.mReputation.mFriendsPositiveVotes) + "</b>";
 		if(details.mReputation.mFriendsNegativeVotes > 0) comment += " <b>-" + QString::number(details.mReputation.mFriendsNegativeVotes) + "</b>";
     }
-	if(banned)
-		comment += QString("<br/>" + tr("[Banned]") );
+	if(details.mReputation.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE)
+		comment += QString("<br/>" + tr("Negative (Banned by you)") );
+	if(details.mReputation.mOverallReputationLevel == RsReputationLevel::REMOTELY_NEGATIVE)
+		comment += QString("<br/>" + tr("Negative (according to your friends)") );
 	return comment;
 }
 
@@ -1109,13 +1107,13 @@ void GxsIdDetails::getIcons(const RsIdentityDetails &details, QList<QIcon> &icon
 {
     QPixmap pix ;
 
-	if( details.mReputation.mOverallReputationLevel ==
+	/*if( details.mReputation.mOverallReputationLevel ==
 	         RsReputationLevel::LOCALLY_NEGATIVE )
     {
         icons.clear() ;
         icons.push_back(QIcon(IMAGE_BANNED)) ;
         return ;
-    }
+    }*/
 
 	if(icon_types & ICON_TYPE_REPUTATION)
         icons.push_back(getReputationIcon(details.mReputation.mOverallReputationLevel,minimal_required_reputation)) ;

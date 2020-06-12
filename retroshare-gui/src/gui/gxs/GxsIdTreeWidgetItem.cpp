@@ -23,7 +23,9 @@
 #include "GxsIdDetails.h"
 #include "util/HandleRichText.h"
 
-#define BANNED_IMAGE ":/icons/yellow_biohazard64.png"
+#define BANNED_IMAGE     ":/icons/biohazard_yellow.png"
+#define BANNED_IMAGE_RED ":/icons/biohazard_red.png"
+#define COLUMN_ICON      3  // ChatLobbyDialog
 
 /** Constructor */
 GxsIdRSTreeWidgetItem::GxsIdRSTreeWidgetItem(const RSTreeWidgetItemCompareRole *compareRole, uint32_t icon_mask,bool auto_tooltip,QTreeWidget *parent)
@@ -67,7 +69,9 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 		break;
         
     	case GXS_ID_DETAILS_TYPE_BANNED:
-        	icons.push_back(QIcon("BANNED_IMAGE")) ;
+        	//icons.push_back(QIcon("BANNED_IMAGE")) ;
+			GxsIdDetails::getIcons(details, icons, item->iconTypeMask());
+			item->processResult(true);
             	break ;
 	}
 
@@ -86,14 +90,23 @@ static void fillGxsIdRSTreeWidgetItemCallback(GxsIdDetailsType type, const RsIde
 	item->setData(column, Qt::DecorationRole, combinedPixmap);
 	item->setAvatar(details.mAvatar);
 
-	if(rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::LOCALLY_NEGATIVE
-		|| rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::REMOTELY_NEGATIVE)
+	if(rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::LOCALLY_NEGATIVE)
 	{
 		QFont font;
 		font = item->font(column);
 		font.setStrikeOut(true);
 		item->setFont(column, font);
 		item->setBannedState(true);
+		item->setIcon(COLUMN_ICON, QIcon(BANNED_IMAGE_RED));
+	}
+	else if(rsReputations->overallReputationLevel(details.mId) == RsReputationLevel::REMOTELY_NEGATIVE)
+	{
+		QFont font;
+		font = item->font(column);
+		font.setStrikeOut(true);
+		item->setFont(column, font);
+		item->setBannedState(true);
+		item->setIcon(COLUMN_ICON, QIcon(BANNED_IMAGE));
 	}
 	else
 	{
@@ -113,7 +126,7 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenF
 	if (mIdFound && mColumn == column && mId == id && (mBannedState == rsReputations->isIdentityBanned(mId)))
 			return;
 
-	mBannedState = rsReputations->isIdentityBanned(mId);
+	mBannedState = isBanned(mId);
 	mIdFound = false;
 	mRetryWhenFailed = retryWhenFailed;
 
@@ -123,16 +136,24 @@ void GxsIdRSTreeWidgetItem::setId(const RsGxsId &id, int column, bool retryWhenF
 	startProcess();
 }
 
+bool GxsIdRSTreeWidgetItem::isBanned(const RsGxsId &id)
+{
+	RsReputationLevel overall = rsReputations->overallReputationLevel(id);
+	if(overall == RsReputationLevel::REMOTELY_NEGATIVE || overall == RsReputationLevel::LOCALLY_NEGATIVE)
+		return true;
+	return false;
+}
+
 void GxsIdRSTreeWidgetItem::updateBannedState()
 {
-    if(mBannedState != rsReputations->isIdentityBanned(mId))
+    if(mBannedState != isBanned(mId))
         forceUpdate() ;
 }
 
 void GxsIdRSTreeWidgetItem::forceUpdate()
 {
 	mIdFound = false;
-	mBannedState = (rsReputations->isIdentityBanned(mId));
+	mBannedState = isBanned(mId);
 
 	startProcess();
 }
