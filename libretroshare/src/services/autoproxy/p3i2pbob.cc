@@ -936,7 +936,7 @@ void p3I2pBob::finalizeSettings_locked()
 	sockaddr_storage_setipv4(mI2PProxyAddr, (sockaddr_in*)&proxy);
 	sockaddr_storage_setport(mI2PProxyAddr, 2827);
 
-	RS_DBG4("using ", sockaddr_storage_tostring(mI2PProxyAddr));
+	RS_DBG4("using ", mI2PProxyAddr);
 	RS_DBG4("using ", mSetting.address.base32);
 
 	peerState ps;
