@@ -109,7 +109,7 @@ public:
 			GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
 			lb->setPixmap(thumbnail);
 		}
-        else
+        else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
         {
 			QPixmap thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
 			lb->setPixmap(thumbnail);
@@ -157,7 +157,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 	QPixmap pixmap(w.size());
 
-    if(option.state & QStyle::State_Selected)
+    if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
 		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
 	else
 		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
@@ -323,7 +323,13 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
-    connect(mChannelPostsModel,SIGNAL(channelPostsLoaded()),this,SLOT(postChannelLoad()));
+    connect(mChannelPostsModel,SIGNAL(channelPostsLoaded()),this,SLOT(postChannelPostLoad()));
+
+    ui->postName_LB->hide();
+    ui->postTime_LB->hide();
+    ui->postLogo_LB->hide();
+
+	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
 
     QFontMetricsF fm(font());
 
@@ -430,12 +436,14 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-    if(!index.isValid())
+    if(post.mMeta.mPublishTs == 0)
     {
         ui->postDetails_TE->clear();
         ui->postLogo_LB->hide();
 		ui->postName_LB->hide();
+		ui->postTime_LB->hide();
 		mChannelPostFilesModel->clear();
         mSelectedGroup.clear();
         mSelectedPost.clear();
@@ -444,11 +452,10 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 
 	ui->postLogo_LB->show();
 	ui->postName_LB->show();
+	ui->postTime_LB->show();
 
     if(index.row()==0 && index.column()==0)
         std::cerr << "here" << std::endl;
-
-	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
     mSelectedGroup = mGroup.mMeta.mGroupId;
     mSelectedPost = post.mMeta.mMsgId;
@@ -476,10 +483,12 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     // Using fixed width so that the post will not displace the text when we browse.
 
 	ui->postLogo_LB->setPixmap(postImage);
-	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-
 	ui->postLogo_LB->setFixedSize(W,postImage.height()/(float)postImage.width()*W);
+
+	ui->postName_LB->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 	ui->postName_LB->setFixedWidth(W);
+	ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
+	ui->postTime_LB->setFixedWidth(W);
 
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
     ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
@@ -528,7 +537,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 	});
 }
 
-void GxsChannelPostsWidgetWithModel::postChannelLoad()
+void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 {
     std::cerr << "Post channel load..." << std::endl;
 

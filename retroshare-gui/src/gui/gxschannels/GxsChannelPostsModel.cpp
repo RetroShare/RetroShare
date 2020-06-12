@@ -401,6 +401,11 @@ void RsGxsChannelPostsModel::clear()
 	emit channelPostsLoaded();
 }
 
+bool operator<(const RsGxsChannelPost& p1,const RsGxsChannelPost& p2)
+{
+    return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
+}
+
 void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost>& posts)
 {
     preMods();
@@ -412,6 +417,8 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     mChannelGroup = group;
 
     createPostsArray(posts);
+
+    std::sort(mPosts.begin(),mPosts.end());
 
     mFilteredPosts.clear();
     for(int i=0;i<mPosts.size();++i)
