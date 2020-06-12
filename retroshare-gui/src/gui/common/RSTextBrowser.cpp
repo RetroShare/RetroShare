@@ -267,25 +267,57 @@ bool RSTextBrowser::checkImage(QPoint pos, QString &imageStr)
 /**
  * @brief RSTextBrowser::anchorForPosition Replace anchorAt that doesn't works as expected.
  * @param pos Where to get anchor from text
- * @return anchor If text at pos is inside anchor, else empty string.
+ * @return anchor If certain text at pos is inside anchor, else empty string.
  */
 QString RSTextBrowser::anchorForPosition(const QPoint &pos) const
 {
-	QTextCursor cursor = cursorForPosition(pos);
-	cursor.select(QTextCursor::WordUnderCursor);
 	QString anchor = "";
-	if (!cursor.selectedText().isEmpty()){
-		QRegExp rx("<a name=\"(.*)\"",Qt::CaseSensitive, QRegExp::RegExp2);
-		rx.setMinimal(true);
-		QString sel = cursor.selection().toHtml();
-		QStringList anchors;
-		int pos=0;
-		while ((pos = rx.indexIn(sel,pos)) != -1) {
-			anchors << rx.cap(1);
-			pos += rx.matchedLength();
+	QTextCursor line_with_cursor = cursorForPosition(pos);
+	// if click below text browser, then last string get used for some reason
+	if (line_with_cursor.atEnd()) {
+		return anchor;
+	}
+	// keepanchor to select text from the start of a line to cursor position
+	line_with_cursor.movePosition(QTextCursor::StartOfLine, QTextCursor::KeepAnchor); 
+	if (!line_with_cursor.selectedText().isEmpty()) {
+		QString selection = line_with_cursor.selection().toHtml();
+		// std::cout << "RSTextBrowser::AnchorForPosition selection: " << selection.toStdString() << std::endl;
+		QRegExp name_regexp("<a name=\"(.*)\"", Qt::CaseSensitive, QRegExp::RegExp2);
+		name_regexp.setMinimal(true);
+		// XXX may[be] get changed with time. Skip:
+		// 95 - DOCTYPE stuff
+		// 73 - <html><head...
+		// 33 - p, li...
+		// 22 - <body>...
+		// 119 - <p style...
+		                        /* for click to get what we seeking for */
+		int max_allowed_position = 95 + 73 + 33 + 22 + 119; // =342
+		// get last match [of] (time, personid, .*)
+		while (name_regexp.indexIn(selection, max_allowed_position) != -1) {
+			anchor = name_regexp.cap(1);
+			max_allowed_position = name_regexp.pos(0) + name_regexp.matchedLength();
 		}
-		if (!anchors.isEmpty()){
-			anchor = anchors.at(0);
+		// have to search for full nickname (including several words with spaces)
+		if (anchor.startsWith("PersonId", Qt::CaseSensitive)) {
+			QRegExp regex_span_for_name("<span style=\".*</span>", Qt::CaseSensitive, QRegExp::RegExp2);
+			regex_span_for_name.setMinimal(true);
+			// <span style=\" ... </span> <- for the first letter of a nickname
+			if (regex_span_for_name.indexIn(selection, max_allowed_position) != -1) {
+				max_allowed_position = regex_span_for_name.pos(0) + regex_span_for_name.matchedLength();
+				// <span... <- for remaining letters of the nickname
+				if (regex_span_for_name.indexIn(selection, max_allowed_position) != -1) {
+					max_allowed_position = regex_span_for_name.pos(0) + regex_span_for_name.matchedLength();
+				}
+			}
+			// total length of start_of_line..position_of_click(htmled) for 'personid:'.
+			// do not count '<!--EndFragment--></p></body></html>'. It will be not checked.
+			int position_of_click = selection.length() - 36;
+			if( position_of_click <= max_allowed_position ) {
+				// std::cout << "RSTextBrowser::AnchorForPosition it works" << std::endl;
+			} else {
+				anchor = "";
+				// std::cout << "RSTextBrowser::AnchorForPosition not working" << std::endl;
+			}
 		}
 	}
 	return anchor;
