@@ -48,7 +48,7 @@ public:
 
 	static void        random_bytes(uint8_t* data, uint32_t length);
 
-	/** Return a random alphanumeric string of the given lenght */
+	/// Return a random alphanumeric *[0-9,A-Z,a-z] string of the given lenght
 	static std::string alphaNumeric(uint32_t length);
 
 	/** Return a random printable string of the given lenght */
