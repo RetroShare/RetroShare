@@ -5,14 +5,6 @@
 
 namespace i2p {
 
-const std::string generateNameSuffix(const size_t len) {
-	std::vector<uint8_t> tmp(len);
-	RsRandom::random_bytes(tmp.data(), len);
-	const std::string location = Radix32::encode(tmp.data(), len);
-
-	return location;
-}
-
 std::string keyToBase32Addr(const std::string &key)
 {
 	std::string copy(key);

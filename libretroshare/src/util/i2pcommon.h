@@ -184,19 +184,6 @@ static const std::array<std::pair<uint16_t, uint16_t>, 12> signingKeyLengths {
 	/*SigningKeyType::RedDSA_SHA512_Ed25519  */ std::make_pair<uint16_t, uint16_t>( 32,  32),
 };
 
-
-/**
- * @brief generateNameSuffix Generates a base32 name suffix for tunnel identification
- * @param len lenght of random bytes, will be expanded by base32 encoding
- * @return base32 string
- *
- * RSRandom::random_alphaNumericString can return very weird looking strings like: ,,@z+M
- * -> so use base32 instead
- *
- * 5 characters = 8 base32 symbols
- */
-const std::string generateNameSuffix(const size_t len = 5);
-
 /**
  * @brief makeOption Creates the string "lhs=rhs" used by BOB and SAM. Converts rhs
  * @param lhs option to set

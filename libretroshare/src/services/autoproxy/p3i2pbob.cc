@@ -945,13 +945,9 @@ void p3I2pBob::finalizeSettings_locked()
 	// setup commands
 	// new lines are appended later!
 
-	// generate random suffix for name
-	// RSRandom::random_alphaNumericString can return very weird looking strings like: ,,@z+M
-	// use base32 instead
-	size_t len = 5; // 5 characters = 8 base32 symbols
-	std::vector<uint8_t> tmp(len);
-	RSRandom::random_bytes(tmp.data(), len);
-	const std::string location = Radix32::encode(tmp.data(), len);
+	// generate 8 characater long random suffix for name
+	constexpr size_t len = 8;
+	const std::string location = RsRandom::alphaNumeric(len);
 	RS_DBG4("using suffix ", location);
 	mTunnelName = "RetroShare-" + location;
 
