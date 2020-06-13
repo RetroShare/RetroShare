@@ -44,10 +44,9 @@
 #include "GxsChannelPostsModel.h"
 #include "GxsChannelPostFilesModel.h"
 #include "GxsChannelFilesStatusWidget.h"
+#include "GxsChannelPostThumbnail.h"
 
 #include <algorithm>
-
-#define CHAN_DEFAULT_IMAGE ":images/thumb-default-video.png"
 
 #define ROLE_PUBLISH FEED_TREEWIDGET_SORTROLE
 
@@ -64,11 +63,6 @@ static const int CHANNEL_TABS_POSTS  = 1;
 #define VIEW_MODE_FEEDS  1
 #define VIEW_MODE_FILES  2
 
-// Size of thumbnails as a function of the height of the font. An aspect ratio of 3/4 is good.
-
-#define THUMBNAIL_W  4
-#define THUMBNAIL_H  6
-
 // Determine the Shape and size of cells as a factor of the font height. An aspect ratio of 3/4 is what's needed
 // for the image, so it's important that the height is a bit larger so as to leave some room for the text.
 //
@@ -76,66 +70,9 @@ static const int CHANNEL_TABS_POSTS  = 1;
 #define COLUMN_SIZE_FONT_FACTOR_W  6
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
-// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
-#define THUMBNAIL_OVERSAMPLE_FACTOR 2.0
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 
 Q_DECLARE_METATYPE(RsGxsFile)
-
-// Class to paint the thumbnails with title
-
-class ThumbnailView: public QWidget
-{
-public:
-    ThumbnailView(const RsGxsChannelPost& post,QWidget *parent=NULL)
-        : QWidget(parent)
-    {
-        QVBoxLayout *layout = new QVBoxLayout(this);
-
-        QLabel *lb = new QLabel(this);
-        lb->setScaledContents(true);
-        layout->addWidget(lb);
-
-        QLabel *lt = new QLabel(this);
-        layout->addWidget(lt);
-
-		setLayout(layout);
-
-		setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
-
-        // now fill the data
-
-		QPixmap thumbnail;
-
-        if(post.mThumbnail.mSize > 0)
-			GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-        else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
-			thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
-
-		QFontMetricsF fm(font());
-		int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
-		int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
-
-        lb->setFixedSize(W,H);
-		lb->setPixmap(thumbnail);
-
-        lt->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
-
-        QFont font = lt->font();
-
-		if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
-        {
-            font.setBold(true);
-            lt->setFont(font);
-        }
-
-        lt->setMaximumWidth(W);
-        lt->setWordWrap(true);
-
-        adjustSize();
-        update();
-    }
-};
 
 // Delegate used to paint into the table of thumbnails
 
@@ -151,7 +88,7 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
     painter->fillRect( option.rect, option.backgroundBrush);
     painter->restore();
 
-	ThumbnailView w(post);
+	ChannelPostThumbnailView w(post);
 
 	QPixmap pixmap(w.size());
 
@@ -463,7 +400,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	if (post.mThumbnail.mData != NULL)
 		GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, postImage,GxsIdDetails::ORIGINAL);
 	else
-		postImage = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
+		postImage = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
 
     int W = QFontMetricsF(font()).height() * 8;
 
@@ -689,7 +626,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	if (group.mImage.mData != NULL) {
 		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 	} else {
-		chanImage = QPixmap(CHAN_DEFAULT_IMAGE);
+		chanImage = QPixmap(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
 	}
     if(group.mMeta.mGroupName.empty())
 		ui->channelName_LB->setText(tr("[No name]"));

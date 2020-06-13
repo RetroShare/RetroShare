@@ -1337,6 +1337,7 @@ gxschannels {
 		gui/gxschannels/GxsChannelPostsModel.h \
 		gui/gxschannels/GxsChannelPostFilesModel.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
+		gui/gxschannels/GxsChannelPostThumbnail.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
