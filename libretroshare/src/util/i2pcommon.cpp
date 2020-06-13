@@ -39,10 +39,7 @@ std::string keyToBase32Addr(const std::string &key)
 }
 
 const std::string makeOption(const std::string &lhs, const int8_t &rhs) {
-	// convert number to int
-	std::ostringstream oss;
-	oss << (int)rhs;
-	return lhs + "=" + oss.str();
+	return lhs + "=" + std::to_string(rhs);
 }
 
 uint16_t readTwoBytesBE(std::vector<uint8_t>::const_iterator &p)
