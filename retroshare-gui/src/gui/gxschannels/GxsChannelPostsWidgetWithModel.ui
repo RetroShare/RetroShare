@@ -364,6 +364,9 @@ p, li { white-space: pre-wrap; }
           <enum>Qt::Vertical</enum>
          </property>
          <widget class="RSTreeView" name="postsTree">
+          <property name="contextMenuPolicy">
+           <enum>Qt::CustomContextMenu</enum>
+          </property>
           <property name="sizeAdjustPolicy">
            <enum>QAbstractScrollArea::AdjustToContents</enum>
           </property>

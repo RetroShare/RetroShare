@@ -19,6 +19,7 @@
  *******************************************************************************/
 
 #include <QDateTime>
+#include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
 
@@ -261,40 +262,6 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     }
 }
 
-// class RsGxsChannelPostFilesProxyModel: public QSortFilterProxyModel
-// {
-// public:
-//     RsGxsChannelPostFilesProxyModel(QObject *parent = NULL): QSortFilterProxyModel(parent) {}
-//
-//     bool lessThan(const QModelIndex& left, const QModelIndex& right) const override
-//     {
-// 		return left.data(RsGxsChannelPostFilesModel::SortRole) < right.data(RsGxsChannelPostFilesModel::SortRole) ;
-//     }
-//
-//     bool filterAcceptsRow(int source_row, const QModelIndex& source_parent) const override
-// 	{
-// 		if(filter_list.empty())
-// 			return true;
-//
-// 		QString name = sourceModel()->data(sourceModel()->index(source_row,RsGxsChannelPostFilesModel::COLUMN_FILES_NAME,source_parent)).toString();
-//
-// 		for(auto& s:filter_list)
-// 			if(!name.contains(s,Qt::CaseInsensitive))
-// 				return false;
-//
-//         return true;
-// 	}
-//
-//     void setFilterList(const QStringList& str)
-//     {
-//         filter_list = str;
-//         invalidateFilter();
-//     }
-//
-// private:
-//     QStringList filter_list;
-// };
-
 /** Constructor */
 GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupId &channelId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsChannels, parent),
@@ -312,11 +279,6 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->setSortingEnabled(true);
     ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
-//     mChannelPostFilesProxyModel = new RsGxsChannelPostFilesProxyModel(this);
-//     mChannelPostFilesProxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
-//     mChannelPostFilesProxyModel->setSourceModel(mChannelPostFilesModel);
-//     mChannelPostFilesProxyModel->setDynamicSortFilter(true);
-
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
     ui->channelFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
     ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
@@ -327,6 +289,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree->selectionModel(),SIGNAL(selectionChanged(const QItemSelection&,const QItemSelection&)),this,SLOT(showPostDetails()));
+    connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
+
     connect(mChannelPostsModel,SIGNAL(channelPostsLoaded()),this,SLOT(postChannelPostLoad()));
 
     ui->postName_LB->hide();
@@ -404,10 +368,28 @@ void GxsChannelPostsWidgetWithModel::sortColumnFiles(int col,Qt::SortOrder so)
     mChannelFilesModel->sort(col,so);
 }
 
+void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
+{
+    QMenu menu(this);
+
+	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
+    {
+		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
+        menu.exec(QCursor::pos());
+    }
+}
+
+void GxsChannelPostsWidgetWithModel::editPost()
+{
+    QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+	CreateGxsChannelMsg *msgDialog = new CreateGxsChannelMsg(post.mMeta.mGroupId,post.mMeta.mMsgId);
+    msgDialog->show();
+}
+
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
 {
-//    adjustSize();
-//
     int n_columns = std::max(1,(int)floor(s.width() / (COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height())));
     std::cerr << "nb columns: " << n_columns << std::endl;
 

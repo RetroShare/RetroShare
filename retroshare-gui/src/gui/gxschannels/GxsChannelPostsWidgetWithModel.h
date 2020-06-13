@@ -139,6 +139,8 @@ private slots:
 	void settingsChanged();
 	void handlePostsTreeSizeChange(QSize s);
 	void postChannelPostLoad();
+	void editPost();
+	void postContextMenu(const QPoint&);
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
