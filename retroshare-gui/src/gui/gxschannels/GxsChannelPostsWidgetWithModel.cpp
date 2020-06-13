@@ -428,10 +428,11 @@ void GxsChannelPostsWidgetWithModel::handleEvent_main_thread(std::shared_ptr<con
 		case RsChannelEventCode::UPDATED_CHANNEL: // [[fallthrough]];
 		case RsChannelEventCode::NEW_MESSAGE:     // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:
-		case RsChannelEventCode::READ_STATUS_CHANGED:
+		{
 			if(e->mChannelGroupId == groupId())
 				updateDisplay(true);
-		break;
+    	}
+
 		default:
 		break;
 	}

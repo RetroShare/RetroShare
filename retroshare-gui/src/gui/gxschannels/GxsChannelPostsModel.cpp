@@ -43,7 +43,76 @@ std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsew
 RsGxsChannelPostsModel::RsGxsChannelPostsModel(QObject *parent)
     : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
 {
-    initEmptyHierarchy();
+	initEmptyHierarchy();
+
+	mEventHandlerId = 0;
+	// Needs to be asynced because this function is called by another thread!
+
+	rsEvents->registerEventsHandler( [this](std::shared_ptr<const RsEvent> event)
+    {
+        RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
+    }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+}
+
+RsGxsChannelPostsModel::~RsGxsChannelPostsModel()
+{
+    rsEvents->unregisterEventsHandler(mEventHandlerId);
+}
+
+void RsGxsChannelPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> event)
+{
+	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
+
+	if(!e)
+		return;
+
+	switch(e->mChannelEventCode)
+	{
+	case RsChannelEventCode::UPDATED_MESSAGE:
+	case RsChannelEventCode::READ_STATUS_CHANGED:
+	{
+		// Normally we should just emit dataChanged() on the index of the data that has changed:
+		//
+		// We need to update the data!
+
+		if(e->mChannelGroupId == mChannelGroup.mMeta.mGroupId)
+			RsThread::async([this, e]()
+			{
+				// 1 - get message data from p3GxsChannels
+
+				std::vector<RsGxsChannelPost> posts;
+				std::vector<RsGxsComment>     comments;
+				std::vector<RsGxsVote>        votes;
+
+                if(!rsGxsChannels->getChannelContent(mChannelGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mChannelMsgId }, posts,comments,votes))
+				{
+					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mChannelGroupId << "/" << e->mChannelMsgId << std::endl;
+					return;
+				}
+
+				// 2 - update the model in the UI thread.
+
+				RsQThreadUtils::postToObject( [posts,comments,votes,this]()
+				{
+					for(uint32_t i=0;i<posts.size();++i)
+					{
+						// linear search. Not good at all, but normally this is for a single post.
+
+						for(uint32_t j=0;j<mPosts.size();++j)
+							if(mPosts[j].mMeta.mMsgId == posts[i].mMeta.mMsgId)
+							{
+								mPosts[j] = posts[i];
+
+								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+							}
+					}
+				},this);
+            });
+
+	default:
+			break;
+		}
+	}
 }
 
 void RsGxsChannelPostsModel::initEmptyHierarchy()

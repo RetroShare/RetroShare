@@ -20,6 +20,7 @@
 
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsgxsifacetypes.h"
+#include "retroshare/rsevents.h"
 #include <QModelIndex>
 #include <QColor>
 
@@ -62,7 +63,7 @@ class RsGxsChannelPostsModel : public QAbstractItemModel
 
 public:
 	explicit RsGxsChannelPostsModel(QObject *parent = NULL);
-	~RsGxsChannelPostsModel(){}
+	virtual ~RsGxsChannelPostsModel() override;
 
 	static const int COLUMN_THREAD_NB_COLUMNS = 0x01;
 
@@ -217,6 +218,7 @@ private:
 	void createPostsArray(std::vector<RsGxsChannelPost> &posts);
 	void setPosts(const RsGxsChannelGroup& group, std::vector<RsGxsChannelPost> &posts);
 	void initEmptyHierarchy();
+	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
     std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
     std::vector<RsGxsChannelPost> mPosts ;  // store the list of posts updated from rsForums.
@@ -229,5 +231,6 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
 
+	RsEventsHandlerId_t mEventHandlerId ;
     friend class const_iterator;
 };
