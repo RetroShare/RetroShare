@@ -265,7 +265,7 @@ void rsAutoProxyMonitor::taskDone(taskTicket *t, autoProxyStatus::autoProxyStatu
 		// we must take care of deleting
 		cleanUp = true;
 		if(t->data)
-			RS_ERR("sync call with data attached but no callback set!");
+			RS_ERR("async call with data attached but no callback set!");
 	}
 
 	if (cleanUp) {
