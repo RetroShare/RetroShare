@@ -77,6 +77,7 @@ static const int CHANNEL_TABS_POSTS  = 1;
 
 // This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
 #define THUMBNAIL_OVERSAMPLE_FACTOR 2.0
+#define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 
 Q_DECLARE_METATYPE(RsGxsFile)
 
@@ -103,23 +104,19 @@ public:
 
         // now fill the data
 
+		QPixmap thumbnail;
+
         if(post.mThumbnail.mSize > 0)
-		{
-			QPixmap thumbnail;
 			GxsIdDetails::loadPixmapFromData(post.mThumbnail.mData, post.mThumbnail.mSize, thumbnail,GxsIdDetails::ORIGINAL);
-			lb->setPixmap(thumbnail);
-		}
         else if(post.mMeta.mPublishTs > 0)	// this is for testing that the post is not an empty post (happens at the end of the last row)
-        {
-			QPixmap thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
-			lb->setPixmap(thumbnail);
-        }
+			thumbnail = FilesDefs::getPixmapFromQtResourcePath(CHAN_DEFAULT_IMAGE);
 
 		QFontMetricsF fm(font());
 		int W = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_W * fm.height() ;
 		int H = THUMBNAIL_OVERSAMPLE_FACTOR * THUMBNAIL_H * fm.height() ;
 
         lb->setFixedSize(W,H);
+		lb->setPixmap(thumbnail);
 
         lt->setText(QString::fromUtf8(post.mMeta.mMsgName.c_str()));
 
@@ -163,6 +160,13 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
 
 	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
+
+	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
+	{
+        QPainter p(&pixmap);
+        QFontMetricsF fm(option.font);
+        p.drawPixmap(QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(7*fm.height(),7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+	}
 
     // debug
  	// if(index.row()==0 && index.column()==0)
