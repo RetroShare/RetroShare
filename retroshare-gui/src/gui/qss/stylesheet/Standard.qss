@@ -745,12 +745,7 @@ GxsForumMsgItem QFrame#frame{
 	background-color: white;
 }
 
-GxsChannelPostsWidget QFrame#infoFrame
-{ 
-
-}
-
-GxsChannelPostsWidget QToolButton#subscribeToolButton {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton {
 	font: bold;
 	font-size: 14px;
 	color: white;
@@ -759,18 +754,18 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton {
 	max-height: 27px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:hover {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:hover {
 	background: #03b1f3;
 	border-radius: 4px;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:pressed {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:pressed {
 	background: #03b1f3;
 	border-radius: 4px;
 	border: 1px solid gray;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton:disabled {
 	background: gray;
 	border-radius: 4px;
 	border: 1px solid gray;
@@ -778,15 +773,15 @@ GxsChannelPostsWidget QToolButton#subscribeToolButton:disabled {
 }
 
 /* only for MenuButtonPopup */
-GxsChannelPostsWidget QToolButton#subscribeToolButton[popupMode="1"] { 
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton[popupMode="1"] { 
     padding-right: 0px; 
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-arrow {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-arrow {
     image: none;
 }
 
-GxsChannelPostsWidget QToolButton#subscribeToolButton::menu-button {
+GxsChannelPostsWidgetWithModel QToolButton#subscribeToolButton::menu-button {
     image: none;
 
 }

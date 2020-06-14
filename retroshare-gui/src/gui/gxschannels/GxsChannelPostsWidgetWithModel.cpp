@@ -239,6 +239,10 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
 
+	// Set initial size of the splitter
+	ui->splitter->setStretchFactor(0, 1);
+	ui->splitter->setStretchFactor(1, 0);
+
     QFontMetricsF fm(font());
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
@@ -544,6 +548,8 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 		/* View mode */
 		//setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
 #endif
+		// state of splitter
+		ui->splitter->restoreState(Settings->value("SplitterChannelPosts").toByteArray());
 	} else {
 #ifdef TO_REMOVE
 		// save settings
@@ -554,6 +560,8 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 		/* View mode */
 		//Settings->setValue("viewMode", viewMode());
 #endif
+		// state of splitter
+		Settings->setValue("SplitterChannelPosts", ui->splitter->saveState());
 	}
 
 	Settings->endGroup();
