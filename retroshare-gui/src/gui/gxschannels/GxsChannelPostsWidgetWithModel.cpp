@@ -209,6 +209,9 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
     ui->postsTree->setItemDelegate(new ChannelPostDelegate());
+    ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
+    ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
+    ui->postsTree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
