@@ -5203,18 +5203,9 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 
 		for(const RsGxsGroupSummary& gps : group_infos)
         {
-            std::cerr <<"  " << gps.mGroupId << "  \"" << gps.mGroupName << "\"  " ;
-
-			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
-            {
-                std::cerr << "added to search." << std::endl;
-				grpMeta[gps.mGroupId] = nullptr;
-            }
-            else
-                std::cerr << "ignored (already in search results)." << std::endl;
+            std::cerr <<"  " << gps.mGroupId << "  \"" << gps.mGroupName << "\"" << std::endl;
+			grpMeta[gps.mGroupId] = nullptr;
         }
-
-        // Do a search for only groups that we dont have yet in the search results.
 
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
@@ -5230,7 +5221,9 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 			 * mDataStore may in some situations allocate an empty group meta data, so it's important
 			 * to test that the group meta is both non null and actually corresponds to the group id we seek. */
 
-			if(grpMeta[gps.mGroupId] != nullptr && grpMeta[gps.mGroupId]->mGroupId == gps.mGroupId)
+            auto& meta(grpMeta[gps.mGroupId]);
+
+			if(meta != nullptr && meta->mGroupId == gps.mGroupId)
                 continue;
 
             std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
@@ -5244,21 +5237,15 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 
 			groupsToNotifyResults.insert(grpId);
 			auto it2 = search_results_map.find(grpId);
-			if(it2 != search_results_map.end())
-			{
-				// update existing data
-				RsGxsGroupSummary& eGpS(it2->second);
-				eGpS.mPopularity++;
-				eGpS.mNumberOfMessages = std::max(
-				            eGpS.mNumberOfMessages,
-				            gps.mNumberOfMessages );
-			}
-			else
-			{
-				search_results_map[grpId] = gps;
-				// number of results so far
-				search_results_map[grpId].mPopularity = 1;
-			}
+
+			RsGxsGroupSummary& eGpS(search_results_map[grpId]);
+
+            int popularity = eGpS.mPopularity + 1;
+			int number_of_msg =	std::max( eGpS.mNumberOfMessages, gps.mNumberOfMessages );
+
+            eGpS = gps;
+            eGpS.mPopularity = popularity;
+            eGpS.mNumberOfMessages = number_of_msg;
 		}
 	} // end RS_STACK_MUTEX(mNxsMutex);
 
