@@ -5189,8 +5189,7 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
     return true ;
 }
 
-void RsGxsNetService::receiveTurtleSearchResults(
-        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5198,20 +5197,44 @@ void RsGxsNetService::receiveTurtleSearchResults(
 		RS_STACK_MUTEX(mNxsMutex);
 
 		RsGxsGrpMetaTemporaryMap grpMeta;
-		std::map<RsGxsGroupId,RsGxsGroupSummary>&
-		        search_results_map(mDistantSearchResults[req]);
+		std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]);
+
+        std::cerr << "Received group summary through turtle search for the following groups:" << std::endl;
 
 		for(const RsGxsGroupSummary& gps : group_infos)
+        {
+            std::cerr <<"  " << gps.mGroupId << "  \"" << gps.mGroupName << "\"  " ;
+
 			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
+            {
+                std::cerr << "added to search." << std::endl;
 				grpMeta[gps.mGroupId] = nullptr;
+            }
+            else
+                std::cerr << "ignored (already in search results)." << std::endl;
+        }
+
+        // Do a search for only groups that we dont have yet in the search results.
+
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+        std::cerr << "Retrieved data store group data for the following groups:" <<std::endl;
+        for(auto& it:grpMeta)
+            std::cerr << "  " << it.first << " : " << it.second->mGroupName << std::endl;
 
 		for (const RsGxsGroupSummary& gps : group_infos)
 		{
 #ifndef RS_DEEP_CHANNEL_INDEX
 			/* Only keep groups that are not locally known, and groups that are
-			 * not already in the mDistantSearchResults structure. */
-			if(grpMeta[gps.mGroupId]) continue;
+			 * not already in the mDistantSearchResults structure.
+			 * mDataStore may in some situations allocate an empty group meta data, so it's important
+			 * to test that the group meta is both non null and actually corresponds to the group id we seek. */
+
+			if(grpMeta[gps.mGroupId] != nullptr && grpMeta[gps.mGroupId]->mGroupId == gps.mGroupId)
+                continue;
+
+            std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
+
 #else // ndef RS_DEEP_CHANNEL_INDEX
 			/* When deep search is enabled search results may bring more info
 			 * then we already have also about post that are indexed by xapian,
