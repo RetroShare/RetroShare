@@ -154,6 +154,7 @@ rs_webui {
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
+    util/i2pcommon.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -517,7 +518,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-            ft/ftturtlefiletransferitem.cc
+            ft/ftturtlefiletransferitem.cc \
+    util/i2pcommon.cpp
 
 SOURCES += crypto/chacha20.cpp \
            crypto/hashstream.cc\
