@@ -272,6 +272,7 @@
     NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
  	NXS_NET_DEBUG_8		gxs distant sync
+ 	NXS_NET_DEBUG_9		gxs distant search
 
  ***/
 //#define NXS_NET_DEBUG_0 	1
@@ -283,6 +284,7 @@
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 //#define NXS_NET_DEBUG_8 	1
+//#define NXS_NET_DEBUG_9 	1
 
 //#define NXS_FRAG
 
@@ -318,7 +320,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7) \
- || defined(NXS_NET_DEBUG_8)
+ || defined(NXS_NET_DEBUG_8) || defined(NXS_NET_DEBUG_9)
 
 static const RsPeerId     peer_to_print     = RsPeerId();//std::string("a97fef0e2dc82ddb19200fb30f9ac575"))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
@@ -5199,7 +5201,9 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 		RsGxsGrpMetaTemporaryMap grpMeta;
 		std::map<RsGxsGroupId,RsGxsGroupSearchResults>& search_results_map(mDistantSearchResults[req]);
 
+#ifdef NXS_NET_DEBUG_9
         std::cerr << "Received group summary through turtle search for the following groups:" << std::endl;
+#endif
 
 		for(const RsGxsGroupSummary& gps : group_infos)
         {
@@ -5209,9 +5213,11 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
 
+#ifdef NXS_NET_DEBUG_9
         std::cerr << "Retrieved data store group data for the following groups:" <<std::endl;
         for(auto& it:grpMeta)
             std::cerr << "  " << it.first << " : " << it.second->mGroupName << std::endl;
+#endif
 
 		for (const RsGxsGroupSummary& gps : group_infos)
 		{
@@ -5226,7 +5232,9 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 			if(meta != nullptr && meta->mGroupId == gps.mGroupId)
                 continue;
 
+#ifdef NXS_NET_DEBUG_9
             std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
+#endif
 
 #else // ndef RS_DEEP_CHANNEL_INDEX
 			/* When deep search is enabled search results may bring more info
@@ -5239,7 +5247,9 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 
             // Find search results place for this particular group
 
+#ifdef NXS_NET_DEBUG_9
             std::cerr << "  Adding gps=" << gps.mGroupId << " name=\"" << gps.mGroupName << "\" gps.mSearchContext=\"" << gps.mSearchContext << "\"" << std::endl;
+#endif
 			RsGxsGroupSearchResults& eGpS(search_results_map[grpId]);
 
             if(eGpS.mGroupId != grpId)	// not initialized yet. So we do it now.
