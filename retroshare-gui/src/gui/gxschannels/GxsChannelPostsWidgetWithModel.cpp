@@ -266,7 +266,12 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
     connect(ui->postsTree,SIGNAL(sizeChanged(QSize)),this,SLOT(handlePostsTreeSizeChange(QSize)));
 
-	//ui->nameLabel->setMinimumWidth(20);
+	/* Set initial section sizes */
+	QHeaderView * channelpostfilesheader = ui->channelPostFiles_TV->header () ;
+	QHeaderView * channelfilesheader = ui->channelFiles_TV->header () ;
+
+	channelpostfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z")*1.5);
+	channelfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z")*1.5);
 
 	/* Initialize feed widget */
 	//ui->feedWidget->setSortRole(ROLE_PUBLISH, Qt::DescendingOrder);
@@ -421,8 +426,8 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	ui->postTime_LB->setText(QDateTime::fromMSecsSinceEpoch(post.mMeta.mPublishTs*1000).toString("MM/dd/yyyy, hh:mm"));
 	ui->postTime_LB->setFixedWidth(W);
 
-    ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
+    //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
+    //ui->channelPostFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelPostFiles_TV->setAutoSelect(true);
 
  	// Now also set the post as read
@@ -484,8 +489,8 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     mChannelPostsModel->getFilesList(files);
     mChannelFilesModel->setFiles(files);
 
-    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
-    ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
+    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
+    //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
 
 
@@ -536,6 +541,9 @@ GxsChannelPostsWidgetWithModel::~GxsChannelPostsWidgetWithModel()
 
 void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 {
+	QHeaderView *channelpostfilesheader = ui->channelPostFiles_TV->header () ;
+	QHeaderView *channelfilesheader = ui->channelFiles_TV->header () ;
+	
 	Settings->beginGroup(QString("ChannelPostsWidget"));
 
 	if (load) {
@@ -548,6 +556,10 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 		/* View mode */
 		//setViewMode(Settings->value("viewMode", VIEW_MODE_FEEDS).toInt());
 #endif
+		// state of files tree
+		channelpostfilesheader->restoreState(Settings->value("PostFilesTree").toByteArray());
+		channelfilesheader->restoreState(Settings->value("FilesTree").toByteArray());
+
 		// state of splitter
 		ui->splitter->restoreState(Settings->value("SplitterChannelPosts").toByteArray());
 	} else {
@@ -560,6 +572,10 @@ void GxsChannelPostsWidgetWithModel::processSettings(bool load)
 		/* View mode */
 		//Settings->setValue("viewMode", viewMode());
 #endif
+		// state of files tree
+		Settings->setValue("PostFilesTree", channelpostfilesheader->saveState());
+		Settings->setValue("FilesTree", channelfilesheader->saveState());
+
 		// state of splitter
 		Settings->setValue("SplitterChannelPosts", ui->splitter->saveState());
 	}
