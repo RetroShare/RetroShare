@@ -161,7 +161,7 @@ private:
 	virtual void groupTreeCustomActions(RsGxsGroupId /*grpId*/, int /*subscribeFlags*/, QList<QAction*> &/*actions*/) {}
 	virtual RsGxsCommentService *getCommentService() { return NULL; }
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
-    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSummary>& /* group_infos */){ return false ;}
+    virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& /* group_infos */){ return false ;}
 
 	void initUi();
 
@@ -187,7 +187,8 @@ private:
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
 
 protected:
-	void updateSearchResults();
+	void updateSearchResults(const TurtleRequestId &sid);
+	void updateSearchResults();	// update all searches
 
 	bool mCountChildMsgs; // Count unread child messages?
 

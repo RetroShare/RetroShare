@@ -117,9 +117,7 @@ enum class RsChannelEventCode: uint8_t
 
 struct RsGxsChannelEvent: RsEvent
 {
-	RsGxsChannelEvent():
-	    RsEvent(RsEventType::GXS_CHANNELS),
-	    mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
+	RsGxsChannelEvent(): RsEvent(RsEventType::GXS_CHANNELS), mChannelEventCode(RsChannelEventCode::UNKNOWN) {}
 
 	RsChannelEventCode mChannelEventCode;
 	RsGxsGroupId mChannelGroupId;
@@ -135,6 +133,23 @@ struct RsGxsChannelEvent: RsEvent
 		RS_SERIAL_PROCESS(mChannelGroupId);
 		RS_SERIAL_PROCESS(mChannelMsgId);
 		RS_SERIAL_PROCESS(mDistantSearchRequestId);
+    }
+};
+
+// This event is used to factor multiple search results notifications in a single event.
+
+struct RsGxsChannelSearchResultEvent: public RsEvent
+{
+    RsGxsChannelSearchResultEvent() : RsEvent(RsEventType::GXS_CHANNELS) {}
+
+    std::map<TurtleRequestId,std::set<RsGxsGroupId> > mSearchResultsMap;
+
+	///* @see RsEvent @see RsSerializable
+	void serial_process( RsGenericSerializer::SerializeJob j,RsGenericSerializer::SerializeContext& ctx) override
+	{
+		RsEvent::serial_process(j, ctx);
+
+		RS_SERIAL_PROCESS(mSearchResultsMap);
     }
 };
 
@@ -407,7 +422,7 @@ public:
      */
     virtual bool getChannelStatistics(const RsGxsGroupId& channelId,GxsGroupStatistic& stat) =0;
 
-
+#ifdef TO_REMOVE
 	/**
 	 * @brief Request remote channels search
 	 * @jsonapi{development}
@@ -448,6 +463,7 @@ public:
 	        const std::string& matchString,
 	        const std::function<void (const RsGxsGroupSummary& result)>& multiCallback,
 	        rstime_t maxWait = 30 ) = 0;
+#endif
 
 	/// default base URL used for channels links @see exportChannelLink
 	static const std::string DEFAULT_CHANNEL_BASE_URL;
@@ -695,16 +711,15 @@ public:
     ///                     Distant synchronisation methods                    ///
     //////////////////////////////////////////////////////////////////////////////
     ///
-	RS_DEPRECATED_FOR(turtleChannelRequest)
+    ///
+    // This approach is much cleaner than the "multicallback" system. We should keep it and use rsEvents to warn when
+    // new results are received.
 	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
-	RS_DEPRECATED
 	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
-	RS_DEPRECATED_FOR(turtleSearchRequest)
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &results) =0;
-	RS_DEPRECATED
 	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
-	RS_DEPRECATED_FOR(turtleChannelRequest)
 	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) =0;
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	~RsGxsChannels() override;

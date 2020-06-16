@@ -5155,7 +5155,7 @@ static bool termSearch(const std::string& src, const std::string& substring)
 }
 #endif // ndef RS_DEEP_CHANNEL_INDEX
 
-bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -5167,7 +5167,7 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
     group_infos = it->second;
     return true ;
 }
-bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSearchResults& gs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
     for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
@@ -5197,7 +5197,7 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 		RS_STACK_MUTEX(mNxsMutex);
 
 		RsGxsGrpMetaTemporaryMap grpMeta;
-		std::map<RsGxsGroupId,RsGxsGroupSummary>& search_results_map(mDistantSearchResults[req]);
+		std::map<RsGxsGroupId,RsGxsGroupSearchResults>& search_results_map(mDistantSearchResults[req]);
 
         std::cerr << "Received group summary through turtle search for the following groups:" << std::endl;
 
@@ -5236,16 +5236,30 @@ void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std
 			const RsGxsGroupId& grpId(gps.mGroupId);
 
 			groupsToNotifyResults.insert(grpId);
-			auto it2 = search_results_map.find(grpId);
 
-			RsGxsGroupSummary& eGpS(search_results_map[grpId]);
+            // Find search results place for this particular group
 
-            int popularity = eGpS.mPopularity + 1;
-			int number_of_msg =	std::max( eGpS.mNumberOfMessages, gps.mNumberOfMessages );
+            std::cerr << "  Adding gps=" << gps.mGroupId << " name=\"" << gps.mGroupName << "\" gps.mSearchContext=\"" << gps.mSearchContext << "\"" << std::endl;
+			RsGxsGroupSearchResults& eGpS(search_results_map[grpId]);
 
-            eGpS = gps;
-            eGpS.mPopularity = popularity;
-            eGpS.mNumberOfMessages = number_of_msg;
+            if(eGpS.mGroupId != grpId)	// not initialized yet. So we do it now.
+            {
+                eGpS.mGroupId   = gps.mGroupId;
+				eGpS.mGroupName = gps.mGroupName;
+				eGpS.mAuthorId  = gps.mAuthorId;
+				eGpS.mPublishTs = gps.mPublishTs;
+				eGpS.mSignFlags = gps.mSignFlags;
+            }
+            // We should check that the above values are always the same for all info that is received. In the end, we'll
+            // request the group meta and check the signature, but it may be misleading to receive a forged information
+            // that is not the real one.
+
+            ++eGpS.mPopularity;	// increase popularity. This is not a real counting, but therefore some heuristic estimate.
+            eGpS.mNumberOfMessages = std::max( eGpS.mNumberOfMessages, gps.mNumberOfMessages );
+			eGpS.mLastMessageTs    = std::max( eGpS.mLastMessageTs, gps.mLastMessageTs );
+
+            if(gps.mSearchContext != gps.mGroupName)			// this is a bit of a hack. We should have flags to tell where the search hit happens
+				eGpS.mSearchContexts.insert(gps.mSearchContext);
 		}
 	} // end RS_STACK_MUTEX(mNxsMutex);
 

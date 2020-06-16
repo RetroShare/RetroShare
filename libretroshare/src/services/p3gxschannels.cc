@@ -80,12 +80,15 @@ p3GxsChannels::p3GxsChannels(
                    RS_SERVICE_GXS_TYPE_CHANNELS, gixs, channelsAuthenPolicy() ),
     RsGxsChannels(static_cast<RsGxsIface&>(*this)), GxsTokenQueue(this),
     mSubscribedGroupsMutex("GXS channels subscribed groups cache"),
-    mKnownChannelsMutex("GXS channels known channels timestamp cache"),
+    mKnownChannelsMutex("GXS channels known channels timestamp cache")
+#ifdef TO_REMOVE
     mSearchCallbacksMapMutex("GXS channels search callbacks map"),
     mDistantChannelsCallbacksMapMutex("GXS channels distant channels callbacks map")
+#endif
 {
 	// For Dummy Msgs.
 	mGenActive = false;
+    mLastDistantSearchNotificationTS = 0;
 	mCommentService = new p3GxsCommentService(this,  RS_SERVICE_GXS_TYPE_CHANNELS);
 
 	RsTickEvent::schedule_in(CHANNEL_PROCESS, 0);
@@ -352,18 +355,6 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 
 		}
 
-        RsGxsDistantSearchResultChange *dsrChange = dynamic_cast<RsGxsDistantSearchResultChange*>(*it);
-
-        if(dsrChange && rsEvents)
-        {
-			auto ev = std::make_shared<RsGxsChannelEvent>();
-			ev->mChannelGroupId = dsrChange->mGroupId;
-			ev->mChannelEventCode = RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT;
-			ev->mDistantSearchRequestId = dsrChange->mRequestId;
-
-			rsEvents->postEvent(ev);
-        }
-
 		/* shouldn't need to worry about groups - as they need to be subscribed to */
         delete *it;
 	}
@@ -383,17 +374,32 @@ void p3GxsChannels::notifyChanges(std::vector<RsGxsNotify *> &changes)
 void	p3GxsChannels::service_tick()
 {
 	static rstime_t last_dummy_tick = 0;
+    rstime_t now = time(NULL);
 
 	if (time(NULL) > last_dummy_tick + 5)
 	{
 		dummy_tick();
-		last_dummy_tick = time(NULL);
+		last_dummy_tick = now;
 	}
 
 	RsTickEvent::tick_events();
 	GxsTokenQueue::checkRequests();
 
 	mCommentService->comment_tick();
+
+    // Notify distant search results, not more than once per sec. Normally we should
+    // rather send one item for all, but that needs another class type
+
+    if(now > mLastDistantSearchNotificationTS+2 && !mSearchResultsToNotify.empty())
+	{
+		auto ev = std::make_shared<RsGxsChannelSearchResultEvent>();
+		ev->mSearchResultsMap = mSearchResultsToNotify;
+
+        mLastDistantSearchNotificationTS = now;
+        mSearchResultsToNotify.clear();
+
+		rsEvents->postEvent(ev);
+	}
 }
 
 bool p3GxsChannels::getGroupData(const uint32_t &token, std::vector<RsGxsChannelGroup> &groups)
@@ -2210,7 +2216,9 @@ void p3GxsChannels::dummy_tick()
 
 	}
 
+#ifdef TO_REMOVE
 	cleanTimedOutCallbacks();
+#endif
 }
 
 
@@ -2389,18 +2397,18 @@ bool p3GxsChannels::clearDistantSearchResults(TurtleRequestId req)
 {
     return netService()->clearDistantSearchResults(req);
 }
-bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& results)
+bool p3GxsChannels::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSearchResults>& results)
 {
     return netService()->retrieveDistantSearchResults(req,results);
 }
 
 bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)
 {
-	RsGxsGroupSummary gs;
+	RsGxsGroupSearchResults gs;
 
     if(netService()->retrieveDistantGroupSummary(group_id,gs))
     {
-        // This is a placeholder information by the time we receive the full group meta data.
+        // This is a placeholder information by the time we receive the full group meta data and check the signature.
 		distant_group.mMeta.mGroupId         = gs.mGroupId ;
 		distant_group.mMeta.mGroupName       = gs.mGroupName;
 		distant_group.mMeta.mGroupFlags      = GXS_SERV::FLAG_PRIVACY_PUBLIC ;
@@ -2426,6 +2434,7 @@ bool p3GxsChannels::retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChann
         return false ;
 }
 
+#ifdef TO_REMOVE
 bool p3GxsChannels::turtleSearchRequest(
         const std::string& matchString,
         const std::function<void (const RsGxsGroupSummary&)>& multiCallback,
@@ -2505,17 +2514,24 @@ bool p3GxsChannels::localSearchRequest(
 
 	return true;
 }
+#endif
 
-void p3GxsChannels::receiveDistantSearchResults(
-        TurtleRequestId id, const RsGxsGroupId& grpId )
+void p3GxsChannels::receiveDistantSearchResults( TurtleRequestId id, const RsGxsGroupId& grpId )
 {
-	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")"
-	          << std::endl;
+	if(!rsEvents)
+		return;
+
+    // We temporise here, in order to avoid notifying clients with many events
+    // So we put some data in there and will send an event with all of them at once every 1 sec at most.
+
+    mSearchResultsToNotify[id].insert(grpId);
+
+#ifdef TO_REMOVE
+	std::cerr << __PRETTY_FUNCTION__ << "(" << id << ", " << grpId << ")" << std::endl;
 
 	{
 		RsGenExchange::receiveDistantSearchResults(id, grpId);
-		RsGxsGroupSummary gs;
-		gs.mGroupId = grpId;
+		RsGxsGroupSearchResults gs;
 		netService()->retrieveDistantGroupSummary(grpId, gs);
 
 		{
@@ -2556,8 +2572,10 @@ void p3GxsChannels::receiveDistantSearchResults(
 			return;
 		}
 	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex);
+#endif
 }
 
+#ifdef TO_REMOVE
 void p3GxsChannels::cleanTimedOutCallbacks()
 {
 	auto now = std::chrono::system_clock::now();
@@ -2586,6 +2604,7 @@ void p3GxsChannels::cleanTimedOutCallbacks()
 			else ++cbpt;
 	} // RS_STACK_MUTEX(mDistantChannelsCallbacksMapMutex)
 }
+#endif
 
 bool p3GxsChannels::exportChannelLink(
         std::string& link, const RsGxsGroupId& chanId, bool includeGxsData,

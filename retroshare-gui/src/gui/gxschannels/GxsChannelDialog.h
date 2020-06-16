@@ -43,7 +43,7 @@ public:
 
 protected:
 	/* GxsGroupFrameDialog */
-    virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos);
+    virtual bool getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos);
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) ;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) ;

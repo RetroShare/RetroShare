@@ -1675,13 +1675,7 @@ void RsGenExchange::receiveNewMessages(std::vector<RsNxsMsg *>& messages)
 
 void RsGenExchange::receiveDistantSearchResults(TurtleRequestId id,const RsGxsGroupId &grpId)
 {
-	std::cerr << __PRETTY_FUNCTION__ << " received result for request "
-	          << std::hex << id << std::dec << std::endl;
-
-	RS_STACK_MUTEX(mGenMtx);
-
-	RsGxsDistantSearchResultChange* gc = new RsGxsDistantSearchResultChange(id,grpId);
-	mNotifications.push_back(gc);
+	std::cerr << __PRETTY_FUNCTION__ << " received result for request " << std::hex << id << std::dec << ": this method should be overloaded in the client service, but it is not. This is a bug!" << std::endl;
 }
 
 void RsGenExchange::notifyReceivePublishKey(const RsGxsGroupId &grpId)

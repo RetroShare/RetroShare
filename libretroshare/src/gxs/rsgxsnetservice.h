@@ -140,9 +140,9 @@ public:
 	virtual void receiveTurtleSearchResults(TurtleRequestId req,const std::list<RsGxsGroupSummary>& group_infos);
 	virtual void receiveTurtleSearchResults(TurtleRequestId req,const unsigned char *encrypted_group_data,uint32_t encrypted_group_data_len);
 
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos);
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos);
 	virtual bool clearDistantSearchResults(const TurtleRequestId& id);
-    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&);
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&, RsGxsGroupSearchResults &);
 
     /*!
      * pauses synchronisation of subscribed groups and request for group id
@@ -609,7 +609,7 @@ private:
     std::set<RsGxsGroupId> mNewPublishKeysToNotify ;
 
     // Distant search result map
-    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSummary> > mDistantSearchResults ;
+    std::map<TurtleRequestId,std::map<RsGxsGroupId,RsGxsGroupSearchResults> > mDistantSearchResults ;
 
     void debugDump();
 
