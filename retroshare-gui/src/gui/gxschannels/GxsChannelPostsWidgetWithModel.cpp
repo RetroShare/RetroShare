@@ -270,8 +270,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	QHeaderView * channelpostfilesheader = ui->channelPostFiles_TV->header () ;
 	QHeaderView * channelfilesheader = ui->channelFiles_TV->header () ;
 
-	channelpostfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z")*1.5);
-	channelfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z")*1.5);
+	channelpostfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
+	channelfilesheader->resizeSection (RsGxsChannelPostFilesModel::COLUMN_FILES_NAME, fm.width("RetroShare-v0.6.5-1487-g6714648e5-Windows-x64-portable-20200518-Qt-5.14.2.7z"));
 
 	/* Initialize feed widget */
 	//ui->feedWidget->setSortRole(ROLE_PUBLISH, Qt::DescendingOrder);
