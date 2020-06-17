@@ -161,7 +161,7 @@
    <item>
     <widget class="QTabWidget" name="channel_TW">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
@@ -199,25 +199,8 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="2" column="3">
-            <widget class="GxsIdLabel" name="infoAdministrator">
-             <property name="text">
-              <string>unknown</string>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="infoDistribution">
-             <property name="text">
-              <string>unknown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" colspan="2">
-            <widget class="QLabel" name="label_2">
+           <item row="3" column="1" colspan="2">
+            <widget class="QLabel" name="label_3">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -225,33 +208,14 @@
               </font>
              </property>
              <property name="text">
-              <string>Created:</string>
+              <string>Distribution:</string>
              </property>
             </widget>
            </item>
-           <item row="4" column="3">
-            <widget class="QLabel" name="infoCreated">
+           <item row="1" column="3">
+            <widget class="QLabel" name="infoLastPost">
              <property name="text">
-              <string>unknown</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLabel" name="infoPostsLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Posts:</string>
+              <string notr="true">unknown</string>
              </property>
             </widget>
            </item>
@@ -268,21 +232,8 @@
              </property>
             </spacer>
            </item>
-           <item row="0" column="3">
-            <widget class="QLabel" name="infoPosts">
-             <property name="text">
-              <string notr="true">0</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1" colspan="2">
-            <widget class="QLabel" name="infoLastPostLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+           <item row="4" column="1" colspan="2">
+            <widget class="QLabel" name="label_2">
              <property name="font">
               <font>
                <weight>75</weight>
@@ -290,14 +241,31 @@
               </font>
              </property>
              <property name="text">
-              <string>Last Post:</string>
+              <string>Created:</string>
              </property>
             </widget>
            </item>
-           <item row="1" column="3">
-            <widget class="QLabel" name="infoLastPost">
+           <item row="3" column="3">
+            <widget class="QLabel" name="infoDistribution">
              <property name="text">
-              <string notr="true">unknown</string>
+              <string>unknown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3">
+            <widget class="QLabel" name="infoPosts">
+             <property name="text">
+              <string notr="true">0</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="3">
+            <widget class="GxsIdLabel" name="infoAdministrator">
+             <property name="text">
+              <string>unknown</string>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -314,8 +282,21 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="1" colspan="2">
-            <widget class="QLabel" name="label_3">
+           <item row="4" column="3">
+            <widget class="QLabel" name="infoCreated">
+             <property name="text">
+              <string>unknown</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" colspan="2">
+            <widget class="QLabel" name="infoPostsLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <weight>75</weight>
@@ -323,7 +304,26 @@
               </font>
              </property>
              <property name="text">
-              <string>Distribution:</string>
+              <string>Posts:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" colspan="2">
+            <widget class="QLabel" name="infoLastPostLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Last Post:</string>
              </property>
             </widget>
            </item>
@@ -466,7 +466,11 @@ p, li { white-space: pre-wrap; }
              </layout>
             </item>
             <item>
-             <widget class="QTextEdit" name="postDetails_TE"/>
+             <widget class="QTextBrowser" name="postDetails_TE">
+              <property name="openExternalLinks">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
