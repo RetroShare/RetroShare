@@ -955,10 +955,18 @@ void GxsChannelPostsWidgetWithModel::blank()
 	ui->postButton->setEnabled(false);
 	ui->subscribeToolButton->setEnabled(false);
 	
-	mChannelPostsModel->clear();
-    groupNameChanged(QString());
+	ui->channelName_LB->setText(tr("No Channel Selected"));
+	ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
+	ui->infoPosts->setText("");
+	ui->infoLastPost->setText("");
+	ui->infoAdministrator->setText("");
+	ui->infoDistribution->setText("");
+	ui->infoCreated->setText("");
+	ui->infoDescription->setText("");
 
-	//ui->infoWidget->hide();
+	mChannelPostsModel->clear();
+	groupNameChanged(QString());
+
 }
 
 bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId &msgId)
