@@ -199,38 +199,12 @@
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="3" column="1" colspan="2">
-            <widget class="QLabel" name="label_3">
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Distribution:</string>
-             </property>
-            </widget>
-           </item>
            <item row="1" column="3">
             <widget class="QLabel" name="infoLastPost">
              <property name="text">
               <string notr="true">unknown</string>
              </property>
             </widget>
-           </item>
-           <item row="1" column="4">
-            <spacer name="horizontalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
            </item>
            <item row="4" column="1" colspan="2">
             <widget class="QLabel" name="label_2">
@@ -245,10 +219,26 @@
              </property>
             </widget>
            </item>
-           <item row="3" column="3">
-            <widget class="QLabel" name="infoDistribution">
+           <item row="2" column="3">
+            <widget class="GxsIdLabel" name="infoAdministrator">
              <property name="text">
               <string>unknown</string>
+             </property>
+             <property name="openExternalLinks">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" colspan="2">
+            <widget class="QLabel" name="label_3">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Distribution:</string>
              </property>
             </widget>
            </item>
@@ -259,13 +249,29 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="3">
-            <widget class="GxsIdLabel" name="infoAdministrator">
+           <item row="1" column="1" colspan="2">
+            <widget class="QLabel" name="infoLastPostLabel">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Last Post:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="3">
+            <widget class="QLabel" name="infoDistribution">
              <property name="text">
               <string>unknown</string>
-             </property>
-             <property name="openExternalLinks">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -292,7 +298,7 @@
            <item row="0" column="1" colspan="2">
             <widget class="QLabel" name="infoPostsLabel">
              <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -308,26 +314,20 @@
              </property>
             </widget>
            </item>
-           <item row="1" column="1" colspan="2">
-            <widget class="QLabel" name="infoLastPostLabel">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Last Post:</string>
-             </property>
-            </widget>
-           </item>
           </layout>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </item>

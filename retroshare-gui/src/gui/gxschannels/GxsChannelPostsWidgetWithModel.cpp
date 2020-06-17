@@ -373,6 +373,12 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 {
     QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+	
+	QTextDocument doc;
+	doc.setHtml(post.mMsg.c_str());
+
+	if(doc.toPlainText().trimmed().isEmpty())
+		ui->postDetails_TE->setPlaceholderText(tr("No message in this post"));
 
     if(post.mMeta.mPublishTs == 0)
     {
@@ -492,7 +498,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
     //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
-
+	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
 
 }
 
@@ -954,7 +960,7 @@ void GxsChannelPostsWidgetWithModel::blank()
 {
 	ui->postButton->setEnabled(false);
 	ui->subscribeToolButton->setEnabled(false);
-	
+
 	ui->channelName_LB->setText(tr("No Channel Selected"));
 	ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
 	ui->infoPosts->setText("");
@@ -965,6 +971,12 @@ void GxsChannelPostsWidgetWithModel::blank()
 	ui->infoDescription->setText("");
 
 	mChannelPostsModel->clear();
+	mChannelPostFilesModel->clear();
+	ui->postDetails_TE->clear();
+	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
+	ui->postLogo_LB->hide();
+	ui->postName_LB->hide();
+	ui->postTime_LB->hide();
 	groupNameChanged(QString());
 
 }
