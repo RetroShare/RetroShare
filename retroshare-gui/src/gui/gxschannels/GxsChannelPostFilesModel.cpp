@@ -96,16 +96,6 @@ int RsGxsChannelPostFilesModel::columnCount(const QModelIndex &/*parent*/) const
 	return COLUMN_FILES_NB_COLUMNS ;
 }
 
-// std::vector<std::pair<time_t,RsGxsMessageId> > RsGxsChannelPostsModel::getPostVersions(const RsGxsMessageId& mid) const
-// {
-//     auto it = mPostVersions.find(mid);
-//
-//     if(it != mPostVersions.end())
-//         return it->second;
-//     else
-//         return std::vector<std::pair<time_t,RsGxsMessageId> >();
-// }
-
 bool RsGxsChannelPostFilesModel::getFileData(const QModelIndex& i,ChannelPostFileInfo& fmpe) const
 {
 	if(!i.isValid())
@@ -296,38 +286,11 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 
 	const ChannelPostFileInfo& fmpe(mFiles[mFilteredFiles[entry]]);
 
-#ifdef TODO
-    if(role == Qt::FontRole)
-    {
-        QFont font ;
-		font.setBold( (fmpe.mPostFlags & (ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN | ForumModelPostEntry::FLAG_POST_IS_PINNED)) || IS_MSG_UNREAD(fmpe.mMsgStatus));
-        return QVariant(font);
-    }
-
-    if(role == UnreadChildrenRole)
-        return bool(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
-
-#ifdef DEBUG_CHANNEL_MODEL
-	std::cerr << " [ok]" << std::endl;
-#endif
-#endif
-
 	switch(role)
 	{
 	case Qt::DisplayRole:    return displayRole   (fmpe,index.column()) ;
 	case Qt::UserRole:	 	 return userRole      (fmpe,index.column()) ;
 	case SortRole:           return sortRole      (fmpe,index.column()) ;
-#ifdef TODO
-	case Qt::DecorationRole: return decorationRole(fmpe,index.column()) ;
-	case Qt::ToolTipRole:	 return toolTipRole   (fmpe,index.column()) ;
-	case Qt::TextColorRole:  return textColorRole (fmpe,index.column()) ;
-	case Qt::BackgroundRole: return backgroundRole(fmpe,index.column()) ;
-
-	case FilterRole:         return filterRole    (fmpe,index.column()) ;
-	case ThreadPinnedRole:   return pinnedRole    (fmpe,index.column()) ;
-	case MissingRole:        return missingRole   (fmpe,index.column()) ;
-	case StatusRole:         return statusRole    (fmpe,index.column()) ;
-#endif
 	default:
 		return QVariant();
 	}
@@ -409,176 +372,11 @@ void RsGxsChannelPostFilesModel::sort(int column, Qt::SortOrder order)
     update();
 }
 
-#ifdef TODO
-QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*column*/) const
-{
-    if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
-        return QVariant(mTextColorMissing);
-
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
-        return QVariant(mTextColorUnread);
-    else
-        return QVariant(mTextColorRead);
-
-	return QVariant();
-}
-
-QVariant RsGxsForumModel::statusRole(const ForumModelPostEntry& fmpe,int column) const
-{
- 	if(column != COLUMN_THREAD_DATA)
-        return QVariant();
-
-    return QVariant(fmpe.mMsgStatus);
-}
-
-uint32_t RsGxsForumModel::recursUpdateFilterStatus(ForumModelIndex i,int column,const QStringList& strings)
-{
-    QString s ;
-	uint32_t count = 0;
-
-	switch(column)
-	{
-	default:
-	case COLUMN_THREAD_DATE:
-	case COLUMN_THREAD_TITLE: 	s = displayRole(mPosts[i],column).toString();
-		break;
-	case COLUMN_THREAD_AUTHOR:
-	{
-		QString comment ;
-		QList<QIcon> icons;
-
-		GxsIdDetails::MakeIdDesc(mPosts[i].mAuthorId, false,s, icons, comment,GxsIdDetails::ICON_TYPE_NONE);
-	}
-		break;
-	}
-
-	if(!strings.empty())
-	{
-		mPosts[i].mPostFlags &= ~(ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER);
-
-		for(auto iter(strings.begin()); iter != strings.end(); ++iter)
-			if(s.contains(*iter,Qt::CaseInsensitive))
-			{
-				mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER | ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
-
-				count++;
-				break;
-			}
-	}
-	else
-	{
-		mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_PASSES_FILTER |ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
-		count++;
-	}
-
-	for(uint32_t j=0;j<mPosts[i].mChildren.size();++j)
-	{
-		uint32_t tmp = recursUpdateFilterStatus(mPosts[i].mChildren[j],column,strings);
-		count += tmp;
-
-		if(tmp > 0)
-			mPosts[i].mPostFlags |= ForumModelPostEntry::FLAG_POST_CHILDREN_PASSES_FILTER;
-	}
-
-	return count;
-}
-
-
-void RsGxsForumModel::setFilter(int column,const QStringList& strings,uint32_t& count)
-{
-    preMods();
-
-    if(!strings.empty())
-    {
-		count = recursUpdateFilterStatus(ForumModelIndex(0),column,strings);
-        mFilteringEnabled = true;
-    }
-    else
-    {
-		count=0;
-        mFilteringEnabled = false;
-    }
-
-	postMods();
-}
-
-QVariant RsGxsForumModel::missingRole(const ForumModelPostEntry& fmpe,int /*column*/) const
-{
-    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
-        return QVariant(true);
-    else
-        return QVariant(false);
-}
-
-QVariant RsGxsForumModel::toolTipRole(const ForumModelPostEntry& fmpe,int column) const
-{
-    if(column == COLUMN_THREAD_DISTRIBUTION)
-		switch(fmpe.mReputationWarningLevel)
-		{
-		case 3: return QVariant(tr("Information for this identity is currently missing.")) ;
-		case 2: return QVariant(tr("You have banned this ID. The message will not be\ndisplayed nor forwarded to your friends.")) ;
-		case 1: return QVariant(tr("You have not set an opinion for this person,\n and your friends do not vote positively: Spam regulation \nprevents the message to be forwarded to your friends.")) ;
-		case 0: return QVariant(tr("Message will be forwarded to your friends.")) ;
-		default:
-			return QVariant("[ERROR: missing reputation level information - contact the developers]");
-		}
-
-    if(column == COLUMN_THREAD_AUTHOR)
-	{
-		QString str,comment ;
-		QList<QIcon> icons;
-
-		if(!GxsIdDetails::MakeIdDesc(fmpe.mAuthorId, true, str, icons, comment,GxsIdDetails::ICON_TYPE_AVATAR))
-			return QVariant();
-
-		int S = QFontMetricsF(QApplication::font()).height();
-		QImage pix( (*icons.begin()).pixmap(QSize(4*S,4*S)).toImage());
-
-		QString embeddedImage;
-		if(RsHtml::makeEmbeddedImage(pix.scaled(QSize(4*S,4*S), Qt::KeepAspectRatio, Qt::SmoothTransformation), embeddedImage, 8*S * 8*S))
-			comment = "<table><tr><td>" + embeddedImage + "</td><td>" + comment + "</td></table>";
-
-		return comment;
-	}
-
-    return QVariant();
-}
-
-QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int /*column*/) const
-{
-    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-        return QVariant(true);
-    else
-        return QVariant(false);
-}
-
-QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*column*/) const
-{
-    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-        return QVariant(QBrush(QColor(255,200,180)));
-
-    if(mFilteringEnabled && (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER))
-        return QVariant(QBrush(QColor(255,240,210)));
-
-    return QVariant();
-}
-#endif
-
 QVariant RsGxsChannelPostFilesModel::sizeHintRole(int col) const
 {
 	float factor = QFontMetricsF(QApplication::font()).height()/14.0f ;
 
 	return QVariant( QSize(factor * 170, factor*14 ));
-#ifdef TODO
-	switch(col)
-	{
-	default:
-	case COLUMN_THREAD_TITLE:        return QVariant( QSize(factor * 170, factor*14 ));
-	case COLUMN_THREAD_DATE:         return QVariant( QSize(factor * 75 , factor*14 ));
-	case COLUMN_THREAD_AUTHOR:       return QVariant( QSize(factor * 75 , factor*14 ));
-	case COLUMN_THREAD_DISTRIBUTION: return QVariant( QSize(factor * 15 , factor*14 ));
-	}
-#endif
 }
 
 QVariant RsGxsChannelPostFilesModel::sortRole(const ChannelPostFileInfo& fmpe,int column) const
@@ -607,57 +405,20 @@ QVariant RsGxsChannelPostFilesModel::displayRole(const ChannelPostFileInfo& fmpe
 {
 	switch(col)
 	{
-    case COLUMN_FILES_NAME: return QString::fromUtf8(fmpe.mName.c_str());
-    case COLUMN_FILES_SIZE: return QString::number(fmpe.mSize);
-    case COLUMN_FILES_DATE: return QString::number(fmpe.mPublishTime);
-    case COLUMN_FILES_FILE: {
-        FileInfo finfo;
-        if(rsFiles->FileDetails(fmpe.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
-            return qulonglong(finfo.transfered);
-        else
-            return 0;
-    }
-    default:
-        return QString();
-#ifdef TODO
-		case COLUMN_THREAD_TITLE:  if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_REDACTED)
-									return QVariant(tr("[ ... Redacted message ... ]"));
-								else if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-									return QVariant(tr("[PINNED] ") + QString::fromUtf8(fmpe.mTitle.c_str()));
-								else
-									return QVariant(QString::fromUtf8(fmpe.mTitle.c_str()));
-
-		case COLUMN_THREAD_READ:return QVariant();
-    	case COLUMN_THREAD_DATE:{
-        							if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING)
-                                        return QVariant(QString());
-
-    							    QDateTime qtime;
-									qtime.setTime_t(fmpe.mPublishTs);
-
-									return QVariant(DateTime::formatDateTime(qtime));
-    							}
-
-		case COLUMN_THREAD_DISTRIBUTION:
-		case COLUMN_THREAD_AUTHOR:{
-			QString name;
-			RsGxsId id = RsGxsId(fmpe.mAuthorId.toStdString());
-
-			if(id.isNull())
-				return QVariant(tr("[Notification]"));
-			if(GxsIdTreeItemDelegate::computeName(id,name))
-				return name;
-			return QVariant(tr("[Unknown]"));
-		}
-		case COLUMN_THREAD_MSGID: return QVariant();
-	if (filterColumn == COLUMN_THREAD_CONTENT) {
-		// need content for filter
-		QTextDocument doc;
-		doc.setHtml(QString::fromUtf8(msg.mMsg.c_str()));
-		item->setText(COLUMN_THREAD_CONTENT, doc.toPlainText().replace(QString("\n"), QString(" ")));
+	case COLUMN_FILES_NAME: return QString::fromUtf8(fmpe.mName.c_str());
+	case COLUMN_FILES_SIZE: return QString::number(fmpe.mSize);
+	case COLUMN_FILES_DATE: return QString::number(fmpe.mPublishTime);
+	case COLUMN_FILES_FILE: {
+		FileInfo finfo;
+		if(rsFiles->FileDetails(fmpe.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
+			return qulonglong(finfo.transfered);
+		else
+			return 0;
 	}
-#endif
-		}
+	default:
+		return QString();
+
+	}
 
 
 	return QVariant("[ERROR]");
@@ -671,23 +432,6 @@ QVariant RsGxsChannelPostFilesModel::userRole(const ChannelPostFileInfo& fmpe,in
         return QVariant::fromValue(fmpe);
     }
 }
-
-#ifdef TODO
-QVariant RsGxsForumModel::decorationRole(const ForumModelPostEntry& fmpe,int col) const
-{
-	bool exist=false;
-	switch(col)
-	{
-		case COLUMN_THREAD_DISTRIBUTION:
-		return QVariant(fmpe.mReputationWarningLevel);
-		case COLUMN_THREAD_READ:
-		return QVariant(fmpe.mMsgStatus);
-		case COLUMN_THREAD_AUTHOR://Return icon as place holder.
-		return FilesDefs::getIconFromGxsIdCache(RsGxsId(fmpe.mAuthorId.toStdString()),QIcon(), exist);
-	}
-	return QVariant();
-}
-#endif
 
 void RsGxsChannelPostFilesModel::clear()
 {
@@ -714,11 +458,6 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
     for(uint32_t i=0;i<mFiles.size();++i)
         mFilteredFiles.push_back(i);
 
-#ifdef TODO
-    recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
-    recursUpdateFilterStatus(0,0,QStringList());
-#endif
-
 #ifdef DEBUG_CHANNEL_MODEL
    // debug_dump();
 #endif
@@ -735,97 +474,3 @@ void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &
     else
         mTimer->stop();
 }
-
-#ifdef DEBUG_FORUMMODEL
-QModelIndex RsGxsChannelPostFilesModel::getIndexOfFile(const RsFileHash& hash) const
-{
-    // Brutal search. This is not so nice, so dont call that in a loop! If too costly, we'll use a map.
-
-    for(uint32_t i=1;i<mFiles.size();++i)
-        if(mFiles[i].mHash == hash)
-        {
-            quintptr ref ;
-            convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
-
-			return createIndex(i-1,0,ref);
-        }
-
-    return QModelIndex();
-}
-
-static void recursPrintModel(const std::vector<ForumModelPostEntry>& entries,ForumModelIndex index,int depth)
-{
-    const ForumModelPostEntry& e(entries[index]);
-
-	QDateTime qtime;
-	qtime.setTime_t(e.mPublishTs);
-
-    std::cerr << std::string(depth*2,' ') << index << " : " << e.mAuthorId.toStdString() << " "
-              << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
-              << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " "
-              << qtime.toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
-
-    for(uint32_t i=0;i<e.mChildren.size();++i)
-        recursPrintModel(entries,e.mChildren[i],depth+1);
-}
-
-void RsGxsForumModel::debug_dump()
-{
-    std::cerr << "Model data dump:" << std::endl;
-    std::cerr << "  Entries: " << mPosts.size() << std::endl;
-
-    // non recursive print
-
-    for(uint32_t i=0;i<mPosts.size();++i)
-    {
-		const ForumModelPostEntry& e(mPosts[i]);
-
-		std::cerr << "    " << i << " : " << e.mMsgId << " (from " << e.mAuthorId.toStdString() << ") "
-                  << QString("%1").arg((uint32_t)e.mPostFlags,8,16,QChar('0')).toStdString() << " "
-                  << QString("%1").arg((uint32_t)e.mMsgStatus,8,16,QChar('0')).toStdString() << " ";
-
-    	for(uint32_t i=0;i<e.mChildren.size();++i)
-            std::cerr << " " << e.mChildren[i] ;
-
-		QDateTime qtime;
-		qtime.setTime_t(e.mPublishTs);
-
-        std::cerr << " (" << e.mParent << ")";
-		std::cerr << " " << qtime.toString().toStdString() << " \"" << e.mTitle << "\"" << std::endl;
-    }
-
-    // recursive print
-    recursPrintModel(mPosts,ForumModelIndex(0),0);
-}
-#endif
-
-#ifdef TODO
-void RsGxsForumModel::setAuthorOpinion(const QModelIndex& indx, RsOpinion op)
-{
-	if(!indx.isValid())
-		return ;
-
-	void *ref = indx.internalPointer();
-	uint32_t entry = 0;
-
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mPosts.size())
-		return ;
-
-	std::cerr << "Setting own opinion for author " << mPosts[entry].mAuthorId
-	          << " to " << static_cast<uint32_t>(op) << std::endl;
-    RsGxsId author_id = mPosts[entry].mAuthorId;
-
-	rsReputations->setOwnOpinion(author_id,op) ;
-
-    // update opinions and distribution flags. No need to re-load all posts.
-
-    for(uint32_t i=0;i<mPosts.size();++i)
-    	if(mPosts[i].mAuthorId == author_id)
-        {
-			computeReputationLevel(mForumGroup.mMeta.mSignFlags,mPosts[i]);
-
-			// notify the widgets that the data has changed.
-			emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(0,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
-        }
-}
-#endif

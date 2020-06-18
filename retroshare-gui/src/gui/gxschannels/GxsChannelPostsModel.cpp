@@ -496,11 +496,6 @@ void RsGxsChannelPostsModel::setPosts(const RsGxsChannelGroup& group, std::vecto
     for(int i=0;i<mPosts.size();++i)
         mFilteredPosts.push_back(i);
 
-#ifdef TODO
-    recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below) ;
-    recursUpdateFilterStatus(0,0,QStringList());
-#endif
-
 #ifdef DEBUG_CHANNEL_MODEL
    // debug_dump();
 #endif
