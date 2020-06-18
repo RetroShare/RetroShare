@@ -239,7 +239,7 @@ QVariant RsGxsChannelPostFilesModel::headerData(int section, Qt::Orientation ori
     case COLUMN_FILES_FILE: return QString("Status");
     case COLUMN_FILES_SIZE: return QString("Size");
     case COLUMN_FILES_NAME: return QString("File");
-    case COLUMN_FILES_DATE: return QString("Publish date");
+    case COLUMN_FILES_DATE: return QString("Published");
     default:
         return QString("[No data]");
     }
