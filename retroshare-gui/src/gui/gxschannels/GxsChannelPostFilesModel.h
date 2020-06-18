@@ -36,6 +36,19 @@ typedef uint32_t ChannelPostFilesModelIndex;
 
 class QTimer;
 
+// This class contains the info for a file as well as additional info such as publication date
+
+struct ChannelPostFileInfo: public RsGxsFile
+{
+    ChannelPostFileInfo(const RsGxsFile& gxs_file,rstime_t t)
+    	: RsGxsFile(gxs_file),mPublishTime(t)
+    {}
+
+    ChannelPostFileInfo() : mPublishTime(0) {}
+
+    rstime_t mPublishTime;
+};
+
 // This class is the item model used by Qt to display the information
 
 class RsGxsChannelPostFilesModel : public QAbstractItemModel
@@ -50,7 +63,8 @@ public:
 		COLUMN_FILES_NAME        = 0x00,
 		COLUMN_FILES_SIZE        = 0x01,
 		COLUMN_FILES_FILE        = 0x02,
-		COLUMN_FILES_NB_COLUMNS  = 0x03
+		COLUMN_FILES_DATE        = 0x03,
+		COLUMN_FILES_NB_COLUMNS  = 0x04
 	};
 
 	enum Roles{ SortRole           = Qt::UserRole+1,
@@ -66,7 +80,7 @@ public:
 	QModelIndex root() const{ return createIndex(0,0,(void*)NULL) ;}
 
     // This method will asynchroneously update the data
-	void setFiles(const std::list<RsGxsFile>& files);
+	void setFiles(const std::list<ChannelPostFileInfo>& files);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 
 #ifdef TODO
@@ -102,11 +116,11 @@ public:
     // Custom item roles
 
     QVariant sizeHintRole  (int col) const;
-	QVariant displayRole   (const RsGxsFile& fmpe, int col) const;
-	QVariant toolTipRole   (const RsGxsFile& fmpe, int col) const;
-	QVariant userRole      (const RsGxsFile& fmpe, int col) const;
-	QVariant sortRole      (const RsGxsFile& fmpe, int col) const;
-	QVariant filterRole    (const RsGxsFile& fmpe, int col) const;
+	QVariant displayRole   (const ChannelPostFileInfo& fmpe, int col) const;
+	QVariant toolTipRole   (const ChannelPostFileInfo& fmpe, int col) const;
+	QVariant userRole      (const ChannelPostFileInfo& fmpe, int col) const;
+	QVariant sortRole      (const ChannelPostFileInfo& fmpe, int col) const;
+	QVariant filterRole    (const ChannelPostFileInfo& fmpe, int col) const;
 #ifdef TODO
 	QVariant decorationRole(const ForumModelPostEntry& fmpe, int col) const;
 	QVariant pinnedRole    (const ForumModelPostEntry& fmpe, int col) const;
@@ -142,7 +156,7 @@ private:
     quintptr getParentRow(quintptr ref,int& row) const;
     quintptr getChildRef(quintptr ref, int index) const;
     int   getChildrenCount(quintptr ref) const;
-	bool getFileData(const QModelIndex& i,RsGxsFile& fmpe) const;
+	bool getFileData(const QModelIndex& i, ChannelPostFileInfo &fmpe) const;
 
     static bool convertTabEntryToRefPointer(uint32_t entry, quintptr& ref);
 	static bool convertRefPointerToTabEntry(quintptr ref,uint32_t& entry);
@@ -153,7 +167,7 @@ private:
 	void initEmptyHierarchy();
 
     std::vector<int> mFilteredFiles ;  // store the list of files for the post
-    std::vector<RsGxsFile> mFiles ;  // store the list of files for the post
+    std::vector<ChannelPostFileInfo> mFiles ;  // store the list of files for the post
 
     QTimer *mTimer;
 };

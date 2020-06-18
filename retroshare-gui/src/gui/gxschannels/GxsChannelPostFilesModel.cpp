@@ -35,7 +35,7 @@
 
 //#define DEBUG_CHANNEL_MODEL
 
-Q_DECLARE_METATYPE(RsGxsFile)
+Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
 static std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
@@ -106,7 +106,7 @@ int RsGxsChannelPostFilesModel::columnCount(const QModelIndex &/*parent*/) const
 //         return std::vector<std::pair<time_t,RsGxsMessageId> >();
 // }
 
-bool RsGxsChannelPostFilesModel::getFileData(const QModelIndex& i,RsGxsFile& fmpe) const
+bool RsGxsChannelPostFilesModel::getFileData(const QModelIndex& i,ChannelPostFileInfo& fmpe) const
 {
 	if(!i.isValid())
         return true;
@@ -249,6 +249,7 @@ QVariant RsGxsChannelPostFilesModel::headerData(int section, Qt::Orientation ori
     case COLUMN_FILES_FILE: return QString("Status");
     case COLUMN_FILES_SIZE: return QString("Size");
     case COLUMN_FILES_NAME: return QString("File");
+    case COLUMN_FILES_DATE: return QString("Publish date");
     default:
         return QString("[No data]");
     }
@@ -293,7 +294,7 @@ QVariant RsGxsChannelPostFilesModel::data(const QModelIndex &index, int role) co
 		return QVariant() ;
 	}
 
-	const RsGxsFile& fmpe(mFiles[mFilteredFiles[entry]]);
+	const ChannelPostFileInfo& fmpe(mFiles[mFilteredFiles[entry]]);
 
 #ifdef TODO
     if(role == Qt::FontRole)
@@ -376,13 +377,14 @@ class compareOperator
 public:
     compareOperator(int column,Qt::SortOrder order): col(column),ord(order) {}
 
-	bool operator()(const RsGxsFile& f1,const RsGxsFile& f2) const
+	bool operator()(const ChannelPostFileInfo& f1,const ChannelPostFileInfo& f2) const
 	{
      	switch(col)
 		{
 		default:
 		case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return (ord==Qt::AscendingOrder)?(f1.mName<f2.mName):(f1.mName>f2.mName);
 		case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return (ord==Qt::AscendingOrder)?(f1.mSize<f2.mSize):(f1.mSize>f2.mSize);
+		case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return (ord==Qt::AscendingOrder)?(f1.mPublishTime<f2.mPublishTime):(f1.mPublishTime>f2.mPublishTime);
 		case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE:
 		{
 			FileInfo fi1,fi2;
@@ -579,12 +581,13 @@ QVariant RsGxsChannelPostFilesModel::sizeHintRole(int col) const
 #endif
 }
 
-QVariant RsGxsChannelPostFilesModel::sortRole(const RsGxsFile& fmpe,int column) const
+QVariant RsGxsChannelPostFilesModel::sortRole(const ChannelPostFileInfo& fmpe,int column) const
 {
     switch(column)
     {
 	case COLUMN_FILES_NAME: return QVariant(QString::fromUtf8(fmpe.mName.c_str()));
 	case COLUMN_FILES_SIZE: return QVariant(qulonglong(fmpe.mSize));
+	case COLUMN_FILES_DATE: return QVariant(qulonglong(fmpe.mPublishTime));
 	case COLUMN_FILES_FILE:
     {
         FileInfo finfo;
@@ -600,13 +603,14 @@ QVariant RsGxsChannelPostFilesModel::sortRole(const RsGxsFile& fmpe,int column) 
     }
 }
 
-QVariant RsGxsChannelPostFilesModel::displayRole(const RsGxsFile& fmpe,int col) const
+QVariant RsGxsChannelPostFilesModel::displayRole(const ChannelPostFileInfo& fmpe,int col) const
 {
 	switch(col)
 	{
-    case 0: return QString::fromUtf8(fmpe.mName.c_str());
-    case 1: return QString::number(fmpe.mSize);
-    case 2: {
+    case COLUMN_FILES_NAME: return QString::fromUtf8(fmpe.mName.c_str());
+    case COLUMN_FILES_SIZE: return QString::number(fmpe.mSize);
+    case COLUMN_FILES_DATE: return QString::number(fmpe.mPublishTime);
+    case COLUMN_FILES_FILE: {
         FileInfo finfo;
         if(rsFiles->FileDetails(fmpe.mHash,RS_FILE_HINTS_DOWNLOAD,finfo))
             return qulonglong(finfo.transfered);
@@ -659,7 +663,7 @@ QVariant RsGxsChannelPostFilesModel::displayRole(const RsGxsFile& fmpe,int col) 
 	return QVariant("[ERROR]");
 }
 
-QVariant RsGxsChannelPostFilesModel::userRole(const RsGxsFile& fmpe,int col) const
+QVariant RsGxsChannelPostFilesModel::userRole(const ChannelPostFileInfo& fmpe,int col) const
 {
 	switch(col)
     {
@@ -695,7 +699,7 @@ void RsGxsChannelPostFilesModel::clear()
 	emit channelLoaded();
 }
 
-void RsGxsChannelPostFilesModel::setFiles(const std::list<RsGxsFile>& files)
+void RsGxsChannelPostFilesModel::setFiles(const std::list<ChannelPostFileInfo> &files)
 {
     preMods();
 

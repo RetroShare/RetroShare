@@ -21,8 +21,11 @@
 #include "retroshare/rsgxschannels.h"
 #include "retroshare/rsgxsifacetypes.h"
 #include "retroshare/rsevents.h"
+
 #include <QModelIndex>
 #include <QColor>
+
+struct ChannelPostFileInfo;
 
 // This class holds the actual hierarchy of posts, represented by identifiers
 // It is responsible for auto-updating when necessary and holds a mutex to allow the Model to
@@ -112,7 +115,7 @@ public:
 
     // Retrieve the full list of files for all posts.
 
-    void getFilesList(std::list<RsGxsFile>& files);
+    void getFilesList(std::list<ChannelPostFileInfo> &files);
 
 #ifdef TODO
     void setSortMode(SortMode mode) ;

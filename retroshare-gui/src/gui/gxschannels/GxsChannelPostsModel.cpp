@@ -23,14 +23,17 @@
 #include <QModelIndex>
 #include <QIcon>
 
+#include "retroshare/rsgxsflags.h"
+#include "retroshare/rsgxschannels.h"
+#include "retroshare/rsexpr.h"
+
 #include "gui/common/FilesDefs.h"
 #include "util/qtthreadsutils.h"
 #include "util/HandleRichText.h"
 #include "util/DateTime.h"
+
 #include "GxsChannelPostsModel.h"
-#include "retroshare/rsgxsflags.h"
-#include "retroshare/rsgxschannels.h"
-#include "retroshare/rsexpr.h"
+#include "GxsChannelPostFilesModel.h"
 
 //#define DEBUG_CHANNEL_MODEL
 
@@ -142,15 +145,15 @@ void RsGxsChannelPostsModel::postMods()
 	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
 }
 
-void RsGxsChannelPostsModel::getFilesList(std::list<RsGxsFile>& files)
+void RsGxsChannelPostsModel::getFilesList(std::list<ChannelPostFileInfo>& files)
 {
     // We use an intermediate map so as to remove duplicates
 
-    std::map<RsFileHash,RsGxsFile> files_map;
+    std::map<RsFileHash,ChannelPostFileInfo> files_map;
 
-    for(uint32_t i=1;i<mPosts.size();++i)
+    for(uint32_t i=0;i<mPosts.size();++i)
         for(auto& file:mPosts[i].mFiles)
-            files_map[file.mHash] = file;
+            files_map.insert(std::make_pair(file.mHash,ChannelPostFileInfo(file,mPosts[i].mMeta.mPublishTs)));
 
     files.clear();
 

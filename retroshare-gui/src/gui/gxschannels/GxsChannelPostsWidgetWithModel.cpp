@@ -72,7 +72,7 @@ static const int CHANNEL_TABS_POSTS  = 1;
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
 
-Q_DECLARE_METATYPE(RsGxsFile)
+Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
 // Delegate used to paint into the table of thumbnails
 
@@ -131,7 +131,7 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
-	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+	ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
 
     if(index.column() == RsGxsChannelPostFilesModel::COLUMN_FILES_FILE)
 		return new GxsChannelFilesStatusWidget(file,parent);
@@ -145,7 +145,7 @@ void ChannelPostFilesDelegate::updateEditorGeometry(QWidget *editor, const QStyl
 
 void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
-	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+	ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
 
 	// prepare
 	painter->save();
@@ -162,6 +162,8 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
     case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter," " + QString::fromUtf8(file.mName.c_str()));
         	break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: painter->drawText(option.rect,Qt::AlignRight | Qt::AlignVCenter,misc::friendlyUnit(qulonglong(file.mSize)));
+        	break;
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: painter->drawText(option.rect,Qt::AlignLeft | Qt::AlignVCenter,QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm"));
         	break;
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: {
 
@@ -186,7 +188,7 @@ void ChannelPostFilesDelegate::paint(QPainter * painter, const QStyleOptionViewI
 
 QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-	RsGxsFile file = index.data(Qt::UserRole).value<RsGxsFile>() ;
+	ChannelPostFileInfo file = index.data(Qt::UserRole).value<ChannelPostFileInfo>() ;
 
     QFontMetricsF fm(option.font);
 
@@ -194,6 +196,7 @@ QSize ChannelPostFilesDelegate::sizeHint(const QStyleOptionViewItem& option, con
     {
     case RsGxsChannelPostFilesModel::COLUMN_FILES_NAME: return QSize(1.1*fm.width(QString::fromUtf8(file.mName.c_str())),fm.height());
     case RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE: return QSize(1.1*fm.width(misc::friendlyUnit(qulonglong(file.mSize))),fm.height());
+    case RsGxsChannelPostFilesModel::COLUMN_FILES_DATE: return QSize(1.1*fm.width(QDateTime::fromMSecsSinceEpoch(file.mPublishTime*1000).toString("MM/dd/yyyy, hh:mm")),fm.height());
     default:
     case RsGxsChannelPostFilesModel::COLUMN_FILES_FILE: return QSize(option.rect.width(),GxsChannelFilesStatusWidget(file).height());
     }
@@ -279,6 +282,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	/* load settings */
 	processSettings(true);
+
+    ui->channelPostFiles_TV->setColumnHidden(RsGxsChannelPostFilesModel::COLUMN_FILES_DATE, true);	// no need to show this here.
 
 	/* Initialize subscribe button */
 	QIcon icon;
@@ -396,7 +401,11 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     mSelectedGroup = mGroup.mMeta.mGroupId;
     mSelectedPost = post.mMeta.mMsgId;
 
-    mChannelPostFilesModel->setFiles(post.mFiles);
+    std::list<ChannelPostFileInfo> files;
+    for(auto& file:post.mFiles)
+        files.push_back(ChannelPostFileInfo(file,post.mMeta.mPublishTs));
+
+    mChannelPostFilesModel->setFiles(files);
 
     auto all_msgs_versions(post.mOlderVersions);
     all_msgs_versions.insert(post.mMeta.mMsgId);
@@ -484,7 +493,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
         whileBlocking(ui->postsTree)->setCurrentIndex(index);
     }
 
-	std::list<RsGxsFile> files;
+	std::list<ChannelPostFileInfo> files;
 
     mChannelPostsModel->getFilesList(files);
     mChannelFilesModel->setFiles(files);
