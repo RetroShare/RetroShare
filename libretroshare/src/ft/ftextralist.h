@@ -60,7 +60,7 @@
 #include "pqi/p3cfgmgr.h"
 #include "util/rstime.h"
 
-class FileDetails
+class RS_DEPRECATED_FOR(FileInfo) FileDetails
 {
 	public:
 		FileDetails()
@@ -130,7 +130,11 @@ public:
 		 * file is removed after period.
 		 **/
 
-	bool 		hashExtraFile(std::string path, uint32_t period, TransferRequestFlags flags);
+	/**
+	 * Hash file, and add to the files, file is removed after period.
+	 */
+	bool hashExtraFile(
+	        std::string path, uint32_t period, TransferRequestFlags flags );
 	bool	 	hashExtraFileDone(std::string path, FileInfo &info);
 
 	/***
@@ -165,7 +169,6 @@ private:
 	/* Worker Functions */
 	void	hashAFile();
 	bool	cleanupOldFiles();
-	bool    cleanupEntry(std::string path, TransferRequestFlags flags);
 
 	mutable RsMutex extMutex;
 

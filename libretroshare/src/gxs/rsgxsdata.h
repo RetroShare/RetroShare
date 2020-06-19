@@ -48,6 +48,7 @@ public:
     bool deserialise(void *data, uint32_t &pktsize);
     bool serialise(void* data, uint32_t &pktsize, uint32_t api_version);
     uint32_t serial_size(uint32_t api_version) const;
+    uint32_t serial_size() const { return serial_size(RS_GXS_GRP_META_DATA_CURRENT_API_VERSION); }
     void clear();
     void operator =(const RsGroupMetaData& rMeta);
 
@@ -94,7 +95,7 @@ public:
     ~RsGxsMsgMetaData();
     bool deserialise(void *data, uint32_t *size);
     bool serialise(void* data, uint32_t *size);
-    uint32_t serial_size();
+    uint32_t serial_size() const;
     void clear();
     void operator =(const RsMsgMetaData& rMeta);
 

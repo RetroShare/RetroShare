@@ -18,6 +18,14 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "GxsCommentTreeWidget.h"
+
+#include "gui/common/FilesDefs.h"
+#include "gui/common/RSElidedItemDelegate.h"
+#include "gui/common/RSTreeWidgetItem.h"
+#include "gui/gxs/GxsCreateCommentDialog.h"
+#include "gui/gxs/GxsIdTreeWidgetItem.h"
+
 #include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QClipboard>
@@ -27,13 +35,6 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QTextDocument>
-
-#include "gui/common/RSElidedItemDelegate.h"
-#include "gui/common/FilesDefs.h"
-#include "gui/gxs/GxsCommentTreeWidget.h"
-#include "gui/gxs/GxsCreateCommentDialog.h"
-#include "gui/gxs/GxsIdTreeWidgetItem.h"
-#include "gui/common/RSTreeWidgetItem.h"
 
 #include <iostream>
 

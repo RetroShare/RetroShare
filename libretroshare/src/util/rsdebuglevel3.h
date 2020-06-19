@@ -1,8 +1,8 @@
 /*******************************************************************************
+ * RetroShare debugging level                                                  *
  *                                                                             *
- * libretroshare: retroshare core library                                      *
- *                                                                             *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Lesser General Public License as              *
@@ -18,34 +18,25 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
  *                                                                             *
  *******************************************************************************/
-#pragma once
 
-#include <iostream>
-#include <rapidjson/document.h>
+// #pragma once // This is commented out on purpose!
 
-/**
- * Use this type for JSON documents representations in RetroShare code
- */
-typedef rapidjson::Document RsJson;
+#include <util/rsdebug.h>
 
-/**
- * Print out RsJson to a stream, use std::ostringstream to get the string
- * @param[out] out output stream
- * @param[in] jDoc JSON document to print
- * @return same output stream passed as out parameter
- */
-std::ostream& operator<<(std::ostream &out, const RsJson &jDoc);
+#undef  RS_DEBUG_LEVEL
+#define RS_DEBUG_LEVEL 3
 
-/**
- * Stream manipulator to print RsJson in compact format
- * @param[out] out output stream
- * @return same output stream passed as out parameter
- */
-std::ostream& compactJSON(std::ostream &out);
+#undef  RS_DBG0
+#define RS_DBG0(...) RsDbg(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
 
-/**
- * Stream manipulator to print RsJson in human readable format
- * @param[out] out output stream
- * @return same output stream passed as out parameter
- */
-std::ostream& prettyJSON(std::ostream &out);
+#undef  RS_DBG1
+#define RS_DBG1(...) RsDbg(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
+
+#undef  RS_DBG2
+#define RS_DBG2(...) RsDbg(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
+
+#undef  RS_DBG3
+#define RS_DBG3(...) RsDbg(__PRETTY_FUNCTION__, " ", __VA_ARGS__)
+
+#undef  RS_DBG4
+#define RS_DBG4(...) RsNoDbg()

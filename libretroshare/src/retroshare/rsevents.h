@@ -33,6 +33,7 @@
 #include "serialiser/rsserializable.h"
 #include "serialiser/rstypeserializer.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 class RsEvents;
 
@@ -126,8 +127,7 @@ struct RsEventsErrorCategory: std::error_category
 		case RsEventsErrorNum::INVALID_HANDLER_ID:
 			return "Invalid handler id";
 		default:
-			return "Error message for error: " + std::to_string(ev) +
-			        " not available in category: " + name();
+			return rsErrorNotInCategory(ev, name());
 		}
 	}
 

@@ -154,6 +154,7 @@ rs_webui {
 HEADERS += plugins/pluginmanager.h \
 		plugins/dlfcn_win32.h \
 		rsitems/rspluginitems.h \
+    util/i2pcommon.h \
     util/rsinitedptr.h
 
 HEADERS += $$PUBLIC_HEADERS
@@ -327,6 +328,8 @@ INCLUDEPATH *= $${OPENPGPSDK_DIR}
 PRE_TARGETDEPS *= $${OPENPGPSDK_DIR}/lib/libops.a
 LIBS *= $${OPENPGPSDK_DIR}/lib/libops.a -lbz2
 
+################################### HEADERS & SOURCES #############################
+
 HEADERS +=	ft/ftchunkmap.h \
 			ft/ftcontroller.h \
 			ft/ftdata.h \
@@ -468,7 +471,12 @@ HEADERS +=	turtle/p3turtle.h \
 			turtle/turtleclientservice.h
 
 HEADERS +=	util/folderiterator.h \
-			util/rsdebug.h \
+    util/rsdebug.h \
+    util/rsdebuglevel0.h \
+    util/rsdebuglevel1.h \
+    util/rsdebuglevel2.h \
+    util/rsdebuglevel3.h \
+    util/rsdebuglevel4.h \
 			util/rskbdinput.h \
 			util/rsmemory.h \
 			util/smallobject.h \
@@ -510,7 +518,8 @@ SOURCES +=	ft/ftchunkmap.cc \
 			ft/ftfilesearch.cc \
 			ft/ftserver.cc \
 			ft/fttransfermodule.cc \
-            ft/ftturtlefiletransferitem.cc
+            ft/ftturtlefiletransferitem.cc \
+    util/i2pcommon.cpp
 
 SOURCES += crypto/chacha20.cpp \
            crypto/hashstream.cc\

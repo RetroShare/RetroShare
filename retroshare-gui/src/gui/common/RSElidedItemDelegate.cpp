@@ -39,19 +39,19 @@
 //#define DEBUG_EID_PAINT 1
 
 /* To test it you can make an empty.qss file with:
-QTreeView::item, QTreeWidget::item{
+QTreeView::item, QTreeWidget::item, QListWidget::item{
 	color: #AB0000;
 	background-color: #00DC00;
 }
-QTreeView::item:selected, QTreeWidget::item:selected{
+QTreeView::item:selected, QTreeWidget::item:selected, QListWidget::item:selected{
 	color: #00CD00;
 	background-color: #0000BA;
 }
-QTreeView::item:hover, QTreeWidget::item:hover{
+QTreeView::item:hover, QTreeWidget::item:hover, QListWidget::item:hover{
 	color: #0000EF;
 	background-color: #FEDCBA;
 }
-QQTreeView::item:selected:hover, TreeWidget::item:selected:hover{
+QQTreeView::item:selected:hover, TreeWidget::item:selected:hover, QListWidget::item:selected:hover{
 	color: #ABCDEF;
 	background-color: #FE0000;
 }

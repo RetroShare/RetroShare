@@ -345,11 +345,15 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
+################################### COMMON stuff ##################################
+
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= -lglib-2.0
 }
+
+################################### HEADERS & SOURCES #############################
 
 # Tor controller
 
