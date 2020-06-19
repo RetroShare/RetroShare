@@ -141,6 +141,7 @@ private slots:
 	void postChannelPostLoad();
 	void editPost();
 	void postContextMenu(const QPoint&);
+	void copyMessageLink();
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
@@ -169,7 +170,6 @@ private:
     RsGxsChannelPostFilesModel *mChannelFilesModel;
 
     RsGxsMessageId mSelectedPost;
-    RsGxsGroupId   mSelectedGroup;
 
 	/* UI - from Designer */
 	Ui::GxsChannelPostsWidgetWithModel *ui;

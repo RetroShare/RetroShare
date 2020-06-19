@@ -22,6 +22,7 @@
 #include <QMenu>
 #include <QSignalMapper>
 #include <QPainter>
+#include <QMessageBox>
 
 #include "retroshare/rsgxscircles.h"
 
@@ -71,6 +72,7 @@ static const int CHANNEL_TABS_POSTS  = 1;
 #define COLUMN_SIZE_FONT_FACTOR_H  10
 
 #define STAR_OVERLAY_IMAGE ":icons/star_overlay_128.png"
+#define IMAGE_COPYLINK     ":/images/copyrslink.png"
 
 Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
@@ -326,10 +328,43 @@ void GxsChannelPostsWidgetWithModel::postContextMenu(const QPoint&)
 {
     QMenu menu(this);
 
+	menu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+
 	if(IS_GROUP_PUBLISHER(mGroup.mMeta.mSubscribeFlags))
-    {
 		menu.addAction(FilesDefs::getIconFromQtResourcePath(":/images/edit_16.png"), tr("Edit"), this, SLOT(editPost()));
-        menu.exec(QCursor::pos());
+
+	menu.exec(QCursor::pos());
+}
+
+void GxsChannelPostsWidgetWithModel::copyMessageLink()
+{
+    try
+	{
+		if (groupId().isNull())
+			throw std::runtime_error("No channel currently selected!");
+
+		QModelIndex index = ui->postsTree->selectionModel()->currentIndex();
+
+		if(!index.isValid())
+			throw std::runtime_error("No post under mouse!");
+
+		RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
+
+		if(post.mMeta.mMsgId.isNull())
+			throw std::runtime_error("Post has empty MsgId!");
+
+		RetroShareLink link = RetroShareLink::createGxsMessageLink(RetroShareLink::TYPE_CHANNEL, groupId(), post.mMeta.mMsgId, QString::fromUtf8(post.mMeta.mMsgName.c_str()));
+
+		if (!link.valid())
+			throw std::runtime_error("Link is not valid");
+
+		QList<RetroShareLink> urls;
+		urls.push_back(link);
+		RSLinkClipboard::copyLinks(urls);
+	}
+    catch(std::exception& e)
+    {
+        QMessageBox::critical(NULL,tr("Link creation error"),tr("Link could not be created: ")+e.what());
     }
 }
 
@@ -386,7 +421,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postName_LB->hide();
 		ui->postTime_LB->hide();
 		mChannelPostFilesModel->clear();
-        mSelectedGroup.clear();
         mSelectedPost.clear();
         return;
     }
@@ -398,7 +432,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     if(index.row()==0 && index.column()==0)
         std::cerr << "here" << std::endl;
 
-    mSelectedGroup = mGroup.mMeta.mGroupId;
     mSelectedPost = post.mMeta.mMsgId;
 
     std::list<ChannelPostFileInfo> files;
@@ -454,7 +487,12 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 void GxsChannelPostsWidgetWithModel::updateGroupData()
 {
 	if(groupId().isNull())
+    {
+        // clear post, files and comment widgets
+
+        showPostDetails();
 		return;
+    }
 
 	RsThread::async([this]()
 	{
@@ -486,12 +524,18 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 {
     std::cerr << "Post channel load..." << std::endl;
 
-	if(!mSelectedPost.isNull() && mGroup.mMeta.mGroupId == mSelectedGroup)
+	if(!mSelectedPost.isNull())
     {
     	QModelIndex index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
         std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post " << mSelectedPost << std::endl;
-        whileBlocking(ui->postsTree)->setCurrentIndex(index);
+
+		ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
+		ui->postsTree->scrollTo(ui->postsTree->currentIndex());//May change if model reloaded
+		ui->postsTree->setFocus();
+		ui->postsTree->update();
     }
+    else
+        mSelectedPost.clear();
 
 	std::list<ChannelPostFileInfo> files;
 
@@ -978,11 +1022,24 @@ void GxsChannelPostsWidgetWithModel::blank()
 
 }
 
-bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId &msgId)
+bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 {
-#warning TODO
-	//return ui->feedWidget->scrollTo(feedItem, true);
-    return true;
+	QModelIndex index = mChannelPostsModel->getIndexOfMessage(msgId);
+
+    if(!index.isValid())
+    {
+        std::cerr << "(EE) Cannot navigate to msg " << msgId << " in channel " << mGroup.mMeta.mGroupId << ": index unknown. Setting mNavigatePendingMsgId." << std::endl;
+
+        mSelectedPost = msgId;		// not found. That means the forum may not be loaded yet. So we keep that post in mind, for after loading.
+		return true;						// we have to return true here, otherwise the caller will intepret the async loading as an error.
+    }
+
+	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
+	ui->postsTree->scrollTo(ui->postsTree->currentIndex());//May change if model reloaded
+	ui->postsTree->setFocus();
+	ui->postsTree->update();
+
+	return true;
 }
 
 void GxsChannelPostsWidgetWithModel::subscribeGroup(bool subscribe)
