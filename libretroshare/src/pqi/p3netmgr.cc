@@ -1803,15 +1803,16 @@ void p3NetMgrIMPL::updateNatSetting()
 #endif
 		
 #ifdef RS_USE_DHT_STUNNER
-		switch(natType)
-		{
-			case RSNET_NATTYPE_RESTRICTED_CONE: 
+		if (mProxyStunner) {
+			switch(natType)
+			{
+			case RSNET_NATTYPE_RESTRICTED_CONE:
 			{
 				if ((natHole == RSNET_NATHOLE_NONE) || (natHole == RSNET_NATHOLE_UNKNOWN))
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_FAST);
 				}
-				else 
+				else
 				{
 					mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				}
@@ -1826,6 +1827,7 @@ void p3NetMgrIMPL::updateNatSetting()
 
 				mProxyStunner->setRefreshPeriod(NET_STUNNER_PERIOD_SLOW);
 				break;
+			}
 		}
 #endif // RS_USE_DHT_STUNNER
 
