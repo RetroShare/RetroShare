@@ -417,9 +417,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 	QTextDocument doc;
 	doc.setHtml(post.mMsg.c_str());
 
-	if(doc.toPlainText().trimmed().isEmpty())
-		ui->postDetails_TE->setPlaceholderText(tr("No message in this post"));
-
     if(post.mMeta.mPublishTs == 0)
     {
         ui->postDetails_TE->clear();
@@ -427,6 +424,8 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postName_LB->hide();
 		ui->postTime_LB->hide();
 		mChannelPostFilesModel->clear();
+
+        std::cerr << "showPostDetails: no valid post. Clearing mSelectedPost." << std::endl;
         mSelectedPost.clear();
         return;
     }
@@ -438,6 +437,7 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
     if(index.row()==0 && index.column()==0)
         std::cerr << "here" << std::endl;
 
+	std::cerr << "showPostDetails: setting mSelectedPost to current post Id " << post.mMeta.mMsgId << ". Previous value: " << mSelectedPost << std::endl;
     mSelectedPost = post.mMeta.mMsgId;
 
     std::list<ChannelPostFileInfo> files;
@@ -522,6 +522,8 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 			mChannelPostsModel->updateChannel(groupId());
 
             insertChannelDetails(mGroup);
+
+            emit groupChanged(this);		// signals the parent widget to e.g. update the group tab name
         } );
 	});
 }
@@ -533,7 +535,9 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 	if(!mSelectedPost.isNull())
     {
     	QModelIndex index = mChannelPostsModel->getIndexOfMessage(mSelectedPost);
-        std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post " << mSelectedPost << std::endl;
+
+        std::cerr << "Setting current index to " << index.row() << ","<< index.column() << " for current post "
+                  << mSelectedPost.toStdString() << std::endl;
 
 		ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 		ui->postsTree->scrollTo(ui->postsTree->currentIndex());//May change if model reloaded
@@ -541,7 +545,7 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
 		ui->postsTree->update();
     }
     else
-        mSelectedPost.clear();
+        std::cerr << "No pre-selected channel post." << std::endl;
 
 	std::list<ChannelPostFileInfo> files;
 
@@ -551,7 +555,6 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
     //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_FILE);
     //ui->channelFiles_TV->resizeColumnToContents(RsGxsChannelPostFilesModel::COLUMN_FILES_SIZE);
     ui->channelFiles_TV->setAutoSelect(true);
-	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
 
 }
 
@@ -651,7 +654,7 @@ void GxsChannelPostsWidgetWithModel::settingsChanged()
 
 QString GxsChannelPostsWidgetWithModel::groupName(bool)
 {
-    return "Group name" ;
+    return QString::fromUtf8(mGroup.mMeta.mGroupName.c_str());
 }
 
 void GxsChannelPostsWidgetWithModel::groupNameChanged(const QString &name)
@@ -1026,7 +1029,6 @@ void GxsChannelPostsWidgetWithModel::blank()
 	mChannelPostsModel->clear();
 	mChannelPostFilesModel->clear();
 	ui->postDetails_TE->clear();
-	ui->postDetails_TE->setPlaceholderText(tr("No post selected"));
 	ui->postLogo_LB->hide();
 	ui->postName_LB->hide();
 	ui->postTime_LB->hide();
