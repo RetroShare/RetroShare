@@ -432,12 +432,14 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	QMenu contextMnu(this);
 	QAction *action;
 
+#ifdef TODO
 	if (mMessageWidget) {
 		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
 		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
 			action->setEnabled(false);
 		}
 	}
+#endif
 
 	if (isSubscribed) {
 		action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
@@ -817,7 +819,7 @@ GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId& msgId
 	return NULL;
 }
 
-void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
+void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
 {
 	if (mInFill) {
 		return;
@@ -839,8 +841,10 @@ void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
 
-	if (!msgWidget) {
-		if (mMessageWidget) {
+	if (!msgWidget)
+    {
+		if (mMessageWidget)
+        {
 			/* not found, use standard tab */
 			msgWidget = mMessageWidget;
 			msgWidget->setGroupId(mGroupId);
