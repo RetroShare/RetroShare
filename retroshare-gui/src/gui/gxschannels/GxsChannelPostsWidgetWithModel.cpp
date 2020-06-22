@@ -425,8 +425,6 @@ void GxsChannelPostsWidgetWithModel::showPostDetails()
 		ui->postTime_LB->hide();
 		mChannelPostFilesModel->clear();
 
-        std::cerr << "showPostDetails: no valid post. Clearing mSelectedPost." << std::endl;
-        mSelectedPost.clear();
         return;
     }
 
@@ -540,9 +538,8 @@ void GxsChannelPostsWidgetWithModel::postChannelPostLoad()
                   << mSelectedPost.toStdString() << std::endl;
 
 		ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
-		ui->postsTree->scrollTo(ui->postsTree->currentIndex());//May change if model reloaded
+		ui->postsTree->scrollTo(index);//May change if model reloaded
 		ui->postsTree->setFocus();
-		ui->postsTree->update();
     }
     else
         std::cerr << "No pre-selected channel post." << std::endl;
@@ -1049,9 +1046,8 @@ bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
     }
 
 	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
-	ui->postsTree->scrollTo(ui->postsTree->currentIndex());//May change if model reloaded
+	ui->postsTree->scrollTo(index);//May change if model reloaded
 	ui->postsTree->setFocus();
-	ui->postsTree->update();
 
 	return true;
 }

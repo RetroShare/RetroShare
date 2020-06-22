@@ -719,7 +719,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
 				quintptr ref ;
 				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex(i%mColumns, i/mColumns,ref);
+				return createIndex(i/mColumns,i%mColumns, ref);
             }
 
         if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
@@ -727,7 +727,7 @@ QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid)
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex(i%mColumns, i/mColumns,ref);
+			return createIndex(i/mColumns,i%mColumns, ref);
         }
     }
 
