@@ -78,6 +78,21 @@ Q_DECLARE_METATYPE(ChannelPostFileInfo)
 
 // Delegate used to paint into the table of thumbnails
 
+int ChannelPostDelegate::cellSize(const QFont& font) const
+{
+    return mZoom*COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font).height();
+}
+
+void ChannelPostDelegate::zoom(bool zoom_or_unzoom)
+{
+    if(zoom_or_unzoom)
+		mZoom *= 1.02;
+    else
+		mZoom /= 1.02;
+
+    std::cerr << "zoom factor: " << mZoom << std::endl;
+}
+
 void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	// prepare
@@ -101,11 +116,14 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
+    if(mZoom != 1.0)
+		pixmap = pixmap.scaled(mZoom*pixmap.size(),Qt::KeepAspectRatio,Qt::SmoothTransformation);
+
 	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
 	{
         QPainter p(&pixmap);
         QFontMetricsF fm(option.font);
-        p.drawPixmap(QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(7*fm.height(),7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+        p.drawPixmap(mZoom*QPoint(6.2*fm.height(),6.9*fm.height()),FilesDefs::getPixmapFromQtResourcePath(STAR_OVERLAY_IMAGE).scaled(mZoom*7*fm.height(),mZoom*7*fm.height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
 	}
 
     // debug
@@ -128,7 +146,7 @@ QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QM
 
     QFontMetricsF fm(option.font);
 
-    return QSize(COLUMN_SIZE_FONT_FACTOR_W*fm.height(),COLUMN_SIZE_FONT_FACTOR_H*fm.height());
+    return QSize(mZoom*COLUMN_SIZE_FONT_FACTOR_W*fm.height(),mZoom*COLUMN_SIZE_FONT_FACTOR_H*fm.height());
 }
 
 QWidget *ChannelPostFilesDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -213,10 +231,12 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	ui->setupUi(this);
 
 	ui->postsTree->setModel(mChannelPostsModel = new RsGxsChannelPostsModel());
-    ui->postsTree->setItemDelegate(new ChannelPostDelegate());
+    ui->postsTree->setItemDelegate(mChannelPostsDelegate = new ChannelPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
     ui->postsTree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+
+    connect(ui->postsTree,SIGNAL(zoomRequested(bool)),this,SLOT(updateZoomFactor(bool)));
 
     ui->channelPostFiles_TV->setModel(mChannelPostFilesModel = new RsGxsChannelPostFilesModel(this));
     ui->channelPostFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
@@ -251,7 +271,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     QFontMetricsF fm(font());
 
     for(int i=0;i<mChannelPostsModel->columnCount();++i)
-		ui->postsTree->setColumnWidth(i,COLUMN_SIZE_FONT_FACTOR_W*fm.height());
+		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
 
 	/* Setup UI helper */
 
@@ -311,6 +331,23 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::GXS_CHANNELS );
+}
+
+void GxsChannelPostsWidgetWithModel::updateZoomFactor(bool zoom_or_unzoom)
+{
+    mChannelPostsDelegate->zoom(zoom_or_unzoom);
+
+    for(int i=0;i<mChannelPostsModel->columnCount();++i)
+		ui->postsTree->setColumnWidth(i,mChannelPostsDelegate->cellSize(font()));
+
+    QSize s = ui->postsTree->size();
+
+	int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
+    std::cerr << "nb columns: " << n_columns << std::endl;
+
+	mChannelPostsModel->setNumColumns(n_columns);	// forces the update
+
+    ui->postsTree->dataChanged(QModelIndex(),QModelIndex());
 }
 
 void GxsChannelPostsWidgetWithModel::sortColumnPostFiles(int col,Qt::SortOrder so)
@@ -379,7 +416,7 @@ void GxsChannelPostsWidgetWithModel::editPost()
 
 void GxsChannelPostsWidgetWithModel::handlePostsTreeSizeChange(QSize s)
 {
-    int n_columns = std::max(1,(int)floor(s.width() / (COLUMN_SIZE_FONT_FACTOR_W*QFontMetricsF(font()).height())));
+    int n_columns = std::max(1,(int)floor(s.width() / (mChannelPostsDelegate->cellSize(font()))));
     std::cerr << "nb columns: " << n_columns << std::endl;
 
     if(n_columns != mChannelPostsModel->columnCount())

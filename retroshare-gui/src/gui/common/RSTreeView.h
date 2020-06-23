@@ -40,9 +40,11 @@ public:
 
 signals:
     void sizeChanged(QSize);
+    void zoomRequested(bool zoom_or_unzoom);
 
 protected:
 	virtual void mouseMoveEvent(QMouseEvent *e) override; // overriding so as to manage auto-selection
+	virtual void wheelEvent(QWheelEvent *e) override; // overriding so as to manage zoom
     virtual void resizeEvent(QResizeEvent *e) override;
 	virtual void paintEvent(QPaintEvent *event) override;
 

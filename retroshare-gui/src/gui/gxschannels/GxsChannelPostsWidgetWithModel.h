@@ -60,17 +60,21 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0){}
         virtual ~ChannelPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
         QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
 
+        int cellSize(const QFont& font) const;
+        void zoom(bool zoom_or_unzoom) ;
 	private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
  		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
  		static constexpr float IMAGE_SIZE_FACTOR_H = 6.0 ;
  		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
+
+        float mZoom;	// zoom factor for the whole thumbnail
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
@@ -142,6 +146,7 @@ private slots:
 	void editPost();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
+	void updateZoomFactor(bool zoom_or_unzoom);
 
 public slots:
  	void sortColumnFiles(int col,Qt::SortOrder so);
@@ -168,6 +173,7 @@ private:
     RsGxsChannelPostsModel     *mChannelPostsModel;
     RsGxsChannelPostFilesModel *mChannelPostFilesModel;
     RsGxsChannelPostFilesModel *mChannelFilesModel;
+    ChannelPostDelegate        *mChannelPostsDelegate;
 
     RsGxsMessageId mSelectedPost;
 

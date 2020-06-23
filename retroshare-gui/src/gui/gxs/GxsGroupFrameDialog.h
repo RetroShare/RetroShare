@@ -192,13 +192,16 @@ protected:
 	bool mCountChildMsgs; // Count unread child messages?
 
 private:
+	GxsMessageFrameWidget *currentWidget() const;
+
 	bool mInitialized;
 	bool mInFill;
     bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
-	GxsMessageFrameWidget *mMessageWidget;
+
+	GxsMessageFrameWidget *mMessageWidget;	// current widget
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;

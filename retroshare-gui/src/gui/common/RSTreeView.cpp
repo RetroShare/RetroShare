@@ -27,6 +27,14 @@ RSTreeView::RSTreeView(QWidget *parent) : QTreeView(parent)
     setMouseTracking(false); // normally the default, but who knows if it's not goign to change in the future.
 }
 
+void RSTreeView::wheelEvent(QWheelEvent *e)
+{
+    if(e->modifiers() == Qt::ControlModifier)
+		emit zoomRequested(e->delta() > 0);
+    else
+        QTreeView::wheelEvent(e);
+}
+
 void RSTreeView::mouseMoveEvent(QMouseEvent *e)
 {
     QModelIndex idx = indexAt(e->pos());

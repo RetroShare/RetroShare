@@ -390,6 +390,7 @@ static uint32_t checkDelay(uint32_t time_in_secs)
 
    return 365 * 86400;
 }
+
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
 	// First separately handle the case of search top level items
@@ -433,11 +434,12 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	QAction *action;
 
 #ifdef TODO
-	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
+	if (mMessageWidget)
+    {
+		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open new tab"), this, SLOT(openInNewTab()));
+
+		if (mGroupId.isNull() || messageWidget(mGroupId, true)) // dont enable the open in tab if a tab is already here
 			action->setEnabled(false);
-		}
 	}
 #endif
 
@@ -841,20 +843,19 @@ void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
 	/* search exisiting tab */
 	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
 
-	if (!msgWidget)
+    // check that we have at least one tab
+    if(!currentWidget())
+		msgWidget = createMessageWidget(RsGxsGroupId(groupId.toStdString()));
+
+	if (msgWidget)
+		ui->messageTabWidget->setCurrentWidget(msgWidget);
+    else
     {
-		if (mMessageWidget)
-        {
-			/* not found, use standard tab */
-			msgWidget = mMessageWidget;
-			msgWidget->setGroupId(mGroupId);
-		} else {
-			/* create new tab */
-			msgWidget = createMessageWidget(mGroupId);
-		}
+        msgWidget = currentWidget();
+		msgWidget->setGroupId(mGroupId);
 	}
 
-	ui->messageTabWidget->setCurrentWidget(msgWidget);
+	mMessageWidget = msgWidget;
 }
 
 void GxsGroupFrameDialog::groupTreeMiddleButtonClicked(QTreeWidgetItem *item)
@@ -885,18 +886,18 @@ void GxsGroupFrameDialog::openGroupInNewTab(const RsGxsGroupId &groupId)
 
 void GxsGroupFrameDialog::messageTabCloseRequested(int index)
 {
-	QWidget *widget = ui->messageTabWidget->widget(index);
-	if (!widget) {
+	if(ui->messageTabWidget->count() == 1) /* Don't close single tab */
 		return;
-	}
 
-	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(widget);
-	if (msgWidget && msgWidget == mMessageWidget) {
-		/* Don't close single tab */
-		return;
-	}
+	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
+	delete msgWidget ;
 
-	delete(widget);
+    mMessageWidget = currentWidget();
+}
+
+GxsMessageFrameWidget *GxsGroupFrameDialog::currentWidget() const
+{
+    return dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(ui->messageTabWidget->currentIndex()));
 }
 
 void GxsGroupFrameDialog::messageTabChanged(int index)
