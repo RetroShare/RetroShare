@@ -47,6 +47,7 @@
 #include "util/misc.h"
 #include "util/QtVersion.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
@@ -55,6 +56,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 /******
  * #define ID_DEBUG 1
@@ -506,21 +508,26 @@ void IdDialog::updateCircles()
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::list<RsGroupMetaData> circle_metas ;
+		/* This can be big so use a smart pointer to just copy the pointer
+		 * instead of copying the whole list accross the lambdas.
+		 * Heaptrack reported 141MB of RAM where used to copy this around
+		 * before this change. */
+		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
 
-		if(!rsGxsCircles->getCirclesSummaries(circle_metas))
+		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			RS_ERR("failed to retrieve circles group info list");
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [circle_metas,this]()
+		RsQThreadUtils::postToObject(
+		            [circle_metas = std::move(circle_metas), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadCircles(circle_metas);
+			loadCircles(*circle_metas);
 
 		}, this );
 

@@ -44,7 +44,7 @@ void postToObject(F &&fun, QObject *obj = qApp)
 	QObject src;
 	auto type = obj->metaObject();
 	QObject::connect( &src, &QObject::destroyed, obj,
-	                  [fun, type, obj]
+	                  [fun = std::move(fun), type, obj]
 	{
 		// ensure that the object is not being destructed
 		if (obj->metaObject()->inherits(type)) fun();
