@@ -323,6 +323,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 	setAutoDownload(false);
 	settingsChanged();
 
+    setGroupId(channelId);
 	mChannelPostsModel->updateChannel(channelId);
 
 	mEventHandlerId = 0;
