@@ -876,10 +876,7 @@ void GxsGroupFrameDialog::openGroupInNewTab(const RsGxsGroupId &groupId)
 	}
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(groupId);
-
-	if (!msgWidget)  /* not found, create new tab */
-		msgWidget = createMessageWidget(groupId);
+	GxsMessageFrameWidget *msgWidget = createMessageWidget(groupId);
 
 	ui->messageTabWidget->setCurrentWidget(msgWidget);
 }
