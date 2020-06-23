@@ -181,7 +181,7 @@ private:
 
 	// subscribe/unsubscribe ack.
 
-	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
+	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
@@ -193,6 +193,7 @@ protected:
 
 private:
 	GxsMessageFrameWidget *currentWidget() const;
+	bool useTabs();
 
 	bool mInitialized;
 	bool mInFill;
@@ -200,8 +201,6 @@ private:
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
-
-	GxsMessageFrameWidget *mMessageWidget;	// current widget
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;

@@ -558,6 +558,7 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
             insertChannelDetails(mGroup);
 
+            emit groupDataLoaded();
             emit groupChanged(this);		// signals the parent widget to e.g. update the group tab name
         } );
 	});
