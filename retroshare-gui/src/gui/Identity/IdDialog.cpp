@@ -509,9 +509,7 @@ void IdDialog::updateCircles()
 #endif
 
 		/* This can be big so use a smart pointer to just copy the pointer
-		 * instead of copying the whole list accross the lambdas.
-		 * Heaptrack reported 141MB of RAM where used to copy this around
-		 * before this change. */
+		 * instead of copying the whole list accross the lambdas */
 		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
 
 		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
@@ -1312,19 +1310,17 @@ void IdDialog::updateIdList()
 			return;
 		}
 
-		std::map<RsGxsGroupId,RsGxsIdGroup> ids_set;
+		auto ids_set = std::make_unique<std::map<RsGxsGroupId,RsGxsIdGroup>>();
+		for(auto it(groups.begin()); it!=groups.end(); ++it)
+			(*ids_set)[(*it).mMeta.mGroupId] = *it;
 
-        for(auto it(groups.begin());it!=groups.end();++it)
-            ids_set[(*it).mMeta.mGroupId] = *it;
-
-        RsQThreadUtils::postToObject( [ids_set,this]()
+		RsQThreadUtils::postToObject(
+		            [ids_set = std::move(ids_set), this] ()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
-
-            loadIdentities(ids_set);
-
+			loadIdentities(*ids_set);
 		}, this );
 
     });

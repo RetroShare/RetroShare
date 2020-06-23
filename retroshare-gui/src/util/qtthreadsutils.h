@@ -1,7 +1,7 @@
 /*******************************************************************************
  * util/qthreadutils.h                                                         *
  *                                                                             *
- * Copyright (C) 2018  Gioacchino Mazzurco <gio@eigenlab.org>                  *
+ * Copyright (C) 2018-2020  Gioacchino Mazzurco <gio@eigenlab.org>             *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -27,7 +27,9 @@
 
 #include <QtGlobal>
 #include <QtCore>
+
 #include <type_traits>
+#include <utility>
 
 namespace RsQThreadUtils {
 
