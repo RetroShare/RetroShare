@@ -181,7 +181,7 @@ private:
 
 	// subscribe/unsubscribe ack.
 
-	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId, bool ownTab);
+	GxsMessageFrameWidget *messageWidget(const RsGxsGroupId &groupId);
 	GxsMessageFrameWidget *createMessageWidget(const RsGxsGroupId &groupId);
 
 	GxsCommentDialog *commentWidget(const RsGxsMessageId &msgId);
@@ -192,13 +192,15 @@ protected:
 	bool mCountChildMsgs; // Count unread child messages?
 
 private:
+	GxsMessageFrameWidget *currentWidget() const;
+	bool useTabs();
+
 	bool mInitialized;
 	bool mInFill;
     bool mDistSyncAllowed;
 	QString mSettingsName;
 	RsGxsGroupId mGroupId;
 	RsGxsIfaceHelper *mInterface;
-	GxsMessageFrameWidget *mMessageWidget;
 
 	QTreeWidgetItem *mYourGroups;
 	QTreeWidgetItem *mSubscribedGroups;
