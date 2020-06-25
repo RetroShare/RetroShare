@@ -717,7 +717,7 @@ public:
 	virtual TurtleRequestId turtleGroupRequest(const RsGxsGroupId& group_id)=0;
 	virtual TurtleRequestId turtleSearchRequest(const std::string& match_string)=0;
 	virtual bool clearDistantSearchResults(TurtleRequestId req)=0;
-	virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
+	virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group)=0;
 	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) =0;
 
 	//////////////////////////////////////////////////////////////////////////////

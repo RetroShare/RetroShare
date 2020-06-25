@@ -70,7 +70,7 @@ protected:
     virtual TurtleRequestId turtleSearchRequest(const std::string& match_string);
     virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &results) ;
     virtual bool clearDistantSearchResults(TurtleRequestId req);
-    virtual bool retrieveDistantGroup(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
+    virtual bool getDistantSearchResultGroupData(const RsGxsGroupId& group_id,RsGxsChannelGroup& distant_group);
 
 	// Overloaded to cache new groups.
 virtual RsGenExchange::ServiceCreate_Return service_CreateGroup(RsGxsGrpItem* grpItem, RsTlvSecurityKeySet& keySet);

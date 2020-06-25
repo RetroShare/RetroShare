@@ -538,23 +538,20 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
 	RsThread::async([this]()
 	{
+		RsGxsChannelGroup group;
 		std::vector<RsGxsChannelGroup> groups;
 
-		if(!rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>{ groupId() }, groups))
+		if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>{ groupId() }, groups) && groups.size()==1)
+            group = groups[0];
+        else if(!rsGxsChannels->getDistantSearchResultGroupData(groupId(),group))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to get autodownload value for channel: " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to get group data for channel: " << groupId() << std::endl;
 			return;
 		}
 
-		if(groups.size() != 1)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " cannot retrieve channel data for group ID " << groupId() << ": ERROR." << std::endl;
-			return;
-		}
-
-		RsQThreadUtils::postToObject( [this,groups]()
+		RsQThreadUtils::postToObject( [this,group]()
         {
-            mGroup = groups[0];
+            mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
 
             insertChannelDetails(mGroup);

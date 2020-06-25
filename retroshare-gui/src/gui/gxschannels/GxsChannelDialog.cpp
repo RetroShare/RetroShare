@@ -406,11 +406,21 @@ bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGx
     return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
 }
 
+RsGxsGenericGroupData *GxsChannelDialog::getDistantSearchResultGroupData(const RsGxsGroupId& group_id)
+{
+    RsGxsChannelGroup channel_group;
+
+    if(rsGxsChannels->getDistantSearchResultGroupData(group_id,channel_group))
+        return new RsGxsGenericGroupData(channel_group);
+	else
+        return nullptr;
+}
+
 void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
 {
     RsGxsChannelGroup distant_group;
 
-	if( rsGxsChannels->retrieveDistantGroup(grpId,distant_group)) // normally we should also check that the group meta is not already here.
+	if( rsGxsChannels->getDistantSearchResultGroupData(grpId,distant_group)) // normally we should also check that the group meta is not already here.
     {
         std::cerr << "GxsChannelDialog::checkRequestGroup() sending turtle request for group data for group " << grpId << std::endl;
         rsGxsChannels->turtleGroupRequest(grpId);

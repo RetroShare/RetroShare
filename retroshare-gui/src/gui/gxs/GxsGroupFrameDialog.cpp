@@ -316,6 +316,8 @@ void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
 	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
 	{
 		std::cerr << "  adding group " << it3->first << " " << it3->second.mGroupId << " \"" << it3->second.mGroupName << "\"" << std::endl;
+        for(auto s:it3->second.mSearchContexts)
+			std::cerr << "    Context string \"" << s << "\"" << std::endl;
 
 		GroupItemInfo i;
 		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
@@ -1067,15 +1069,20 @@ void GxsGroupFrameDialog::updateGroupSummary()
 {
 	RsThread::async([this]()
 	{
-		std::list<RsGxsGenericGroupData*> groupInfo;
+		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
 
-		if(!getGroupData(groupInfo))
+		if(!getGroupData(*groupInfo))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info." << std::endl;
+            delete groupInfo;
 			return;
 		}
-        if(groupInfo.empty())
+        if(groupInfo->empty())
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " no group info collected." << std::endl;
+            delete groupInfo;
             return;
+        }
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
@@ -1085,7 +1092,7 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertGroupsData(groupInfo);
+			insertGroupsData(*groupInfo);
 			updateSearchResults();
 
 			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
@@ -1104,11 +1111,13 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
 			// now delete the data that is not used anymore
 
-			for(auto& g:groupInfo)
+			for(auto& g:*groupInfo)
 			{
 				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
 				delete g;
 			}
+
+            delete groupInfo;
 
 		}, this );
 	});
