@@ -33,6 +33,12 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
+   <property name="horizontalSpacing">
+    <number>6</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="HeaderFrame" name="headerFrame">
      <property name="frameShadow">
@@ -211,7 +217,7 @@ p, li { white-space: pre-wrap; }
               <item>
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <property name="topMargin">
-                 <number>6</number>
+                 <number>9</number>
                 </property>
                 <item>
                  <widget class="QLineEdit" name="subjectEdit">
