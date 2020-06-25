@@ -36,6 +36,8 @@
 
 class ChannelPostThumbnailView: public QWidget
 {
+	Q_OBJECT
+
 public:
 	// This variable determines the zoom factor on the text below thumbnails. 2.0 is mostly correct for all screen.
 	static constexpr float THUMBNAIL_OVERSAMPLE_FACTOR = 2.0;

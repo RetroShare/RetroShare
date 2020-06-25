@@ -705,15 +705,15 @@ void GxsChannelPostsWidgetWithModel::groupNameChanged(const QString &name)
 
 QIcon GxsChannelPostsWidgetWithModel::groupIcon()
 {
-//	if (mStateHelper->isLoading(mTokenTypeGroupData) || mStateHelper->isLoading(mTokenTypeAllPosts)) {
-//		return QIcon(":/images/kalarm.png");
-//	}
+	/* CHANNEL IMAGE */
+	QPixmap chanImage;
+	if (mGroup.mImage.mData != NULL) {
+		GxsIdDetails::loadPixmapFromData(mGroup.mImage.mData, mGroup.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
+	} else {
+		chanImage = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
+	}
 
-//	if (mNewCount) {
-//		return QIcon(":/images/message-state-new.png");
-//	}
-
-	return QIcon();
+	return QIcon(chanImage);
 }
 
 /*************************************************************************************/
