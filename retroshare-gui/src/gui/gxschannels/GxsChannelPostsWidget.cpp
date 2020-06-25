@@ -551,12 +551,8 @@ void GxsChannelPostsWidget::createPostItem(const RsGxsChannelPost& post, bool re
 		ui->feedWidget->addFeedItem(item, ROLE_PUBLISH, QDateTime::fromTime_t(meta.mPublishTs));
 	}
 
-#ifdef TODO
 	ui->fileWidget->addFiles(post, related);
-#endif
 }
-
-
 
 void GxsChannelPostsWidget::fillThreadCreatePost(const QVariant &post, bool related, int current, int count)
 {

@@ -923,8 +923,10 @@ int RsServer::StartupRetroShare()
 	mNetMgr->setManagers(mPeerMgr, mLinkMgr);
 
 	rsAutoProxyMonitor *autoProxy = rsAutoProxyMonitor::instance();
+#ifdef RS_USE_I2P_BOB
 	mI2pBob = new p3I2pBob(mPeerMgr);
 	autoProxy->addProxy(autoProxyType::I2PBOB, mI2pBob);
+#endif
 
 	//load all the SSL certs as friends
 	//        std::list<std::string> sslIds;
@@ -1649,7 +1651,9 @@ int RsServer::StartupRetroShare()
 	mConfigMgr->addConfiguration("wire.cfg", wire_ns);
 #endif
 #endif //RS_ENABLE_GXS
+#ifdef RS_USE_I2P_BOB
 	mConfigMgr->addConfiguration("I2PBOB.cfg", mI2pBob);
+#endif
 
 	mPluginsManager->addConfigurations(mConfigMgr) ;
 
@@ -1724,7 +1728,7 @@ int RsServer::StartupRetroShare()
 				// now enable bob
 				bobSettings bs;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::getSettings, &bs);
-				bs.enableBob = true;
+				bs.enable = true;
 				autoProxy->taskSync(autoProxyType::I2PBOB, autoProxyTask::setSettings, &bs);
 			} else {
 				std::cerr << "RsServer::StartupRetroShare failed to receive keys" << std::endl;
@@ -1795,7 +1799,9 @@ int RsServer::StartupRetroShare()
 	/**************************************************************************/
 
 	// auto proxy threads
+#ifdef RS_USE_I2P_BOB
 	startServiceThread(mI2pBob, "I2P-BOB");
+#endif
 
 #ifdef RS_ENABLE_GXS
 	// Must Set the GXS pointers before starting threads.

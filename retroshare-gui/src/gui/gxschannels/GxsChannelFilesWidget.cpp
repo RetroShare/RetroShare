@@ -86,7 +86,7 @@ GxsChannelFilesWidget::~GxsChannelFilesWidget()
 	delete ui;
 }
 
-void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
+void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost& post, bool related)
 {
 	if (related) {
 		removeItems(post.mMeta.mGroupId, post.mMeta.mMsgId);
@@ -113,7 +113,7 @@ void GxsChannelFilesWidget::addFiles(const RsGxsChannelPost &post, bool related)
 
 		ui->treeWidget->addTopLevelItem(treeItem);
 		
-		QWidget *statusWidget = new GxsChannelFilesStatusWidget(post.mMeta.mGroupId, post.mMeta.mMsgId, file);
+		QWidget *statusWidget = new GxsChannelFilesStatusWidget(file);
 		ui->treeWidget->setItemWidget(treeItem, COLUMN_STATUS, statusWidget);
 
 		filterItem(treeItem);

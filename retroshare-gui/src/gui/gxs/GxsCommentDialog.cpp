@@ -36,10 +36,12 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	/* Invoke the Qt Designer generated QObject setup routine */
 	ui->setupUi(this);
 
-	//ui->postFrame->setVisible(false);
-
-	ui->treeWidget->setup(token_service, comment_service);
+    setTokenService(token_service,comment_service);
+    init();
+}
 	
+void GxsCommentDialog::init()
+{
 	/* Set header resize modes and initial section sizes */
 	QHeaderView * ttheader = ui->treeWidget->header () ;
 	ttheader->resizeSection (0, 440);
@@ -60,6 +62,20 @@ GxsCommentDialog::GxsCommentDialog(QWidget *parent, RsTokenService *token_servic
 	int S = QFontMetricsF(font()).height() ;
 	
 	ui->sortBox->setIconSize(QSize(S*1.5,S*1.5));
+}
+
+void GxsCommentDialog::setTokenService(RsTokenService *token_service, RsGxsCommentService *comment_service)
+{
+	ui->treeWidget->setup(token_service, comment_service);
+}
+
+GxsCommentDialog::GxsCommentDialog(QWidget *parent)
+	: QWidget(parent), ui(new Ui::GxsCommentDialog)
+{
+	/* Invoke the Qt Designer generated QObject setup routine */
+	ui->setupUi(this);
+
+    init();
 }
 
 GxsCommentDialog::~GxsCommentDialog()

@@ -58,6 +58,7 @@ private slots:
 	void addExtraFile();
 	void checkAttachmentReady();
 	void deleteAttachment();
+	void updatePreviewText(const QString &);
 
 	void cancelMsg();
 	void sendMsg();

@@ -1997,7 +1997,9 @@ bool p3GxsCircles::processMembershipRequests(uint32_t token)
 
         // now do another sweep and remove all msgs that are older than the latest
 
+#ifdef DEBUG_CIRCLES
 		std::cerr << "    Cleaning old messages..." << std::endl;
+#endif
 
 		for(uint32_t i=0;i<it->second.size();++i)
         {
