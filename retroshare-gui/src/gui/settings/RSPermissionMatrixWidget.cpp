@@ -35,6 +35,8 @@
 #include <retroshare/rsstatus.h>
 #include <retroshare/rspeers.h>
 #include <retroshare/rsservicecontrol.h>
+#include "rsitems/rsserviceids.h"
+#include <QTextDocument>
 
 #define NOT_IMPLEMENTED std::cerr << __PRETTY_FUNCTION__ << ": not yet implemented." << std::endl;
 
@@ -531,6 +533,40 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
   _max_height = S*fMATRIX_START_Y + (peer_ids.size()+3) * S*fROW_SIZE ;
   _max_width  = matrix_start_x + (service_ids.size()+3) * S*fCOL_SIZE ;
 
+	if(n_row_selected == -1)
+	{
+		for(uint32_t i=0;i<service_ids.size();++i)
+		{
+			if(_current_service_id == service_ids[i])
+			{
+				uint16_t serviceOrig = (uint16_t)((service_ids[i] - (((uint32_t)RS_PKT_VERSION_SERVICE) << 24) ) >> 8);
+				QString service_name = "Service: 0x"+ QString::number(serviceOrig,16) + "  " + QString::fromStdString(rsServiceControl->getServiceName(service_ids[i]));
+				QBrush brush ;
+				brush.setColor(QColor::fromHsvF(0.0f,0.0f,1.0f,0.8f));
+				brush.setStyle(Qt::SolidPattern) ;
+				QPen pen ;
+				pen.setWidth(1) ;
+				pen.setBrush(FOREGROUND_COLOR) ;
+				_painter->setPen(pen) ;
+				QRect position = computeNodePosition(0,0,false) ;
+				int popup_x = position.x() + (50 * S / 14.0);
+				int popup_y = position.y() - (10 * S / 14.0) + line_height;
+				int popup_width = _max_width * 3 / 4;
+				int popup_height = line_height * 5;
+				QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
+				_painter->fillRect(info_pos,brush) ;
+				_painter->drawRect(info_pos) ;
+				float x = info_pos.x()               + 5*S/14.0 ;
+				float y = info_pos.y() + line_height + 1*S/14.0 ;
+				_painter->drawText(QPointF(x,y), service_name)  ; y += line_height ;
+				_painter->translate(QPointF(popup_x+S, popup_y+2*line_height));
+				QTextDocument td;
+				td.setHtml(ServiceDescription(serviceOrig));
+				td.drawContents(_painter);
+			}
+		}
+	}
+
   /* Stop the painter */
   _painter->end();
 }
@@ -611,4 +647,33 @@ void RSPermissionMatrixWidget::userPermissionSwitched(uint32_t /* ServiceId */,c
     NOT_IMPLEMENTED ;
 }
 
-
+QString RSPermissionMatrixWidget::ServiceDescription(uint16_t serviceid)
+{
+	switch(serviceid)
+	{
+		case RS_SERVICE_TYPE_DISC:			return tr("Location info exchange between friends. Helps to find actual address in case of dynamic IPs<br>Without it you will have to rely on DHT only for getting fresh addresses");
+		case RS_SERVICE_TYPE_CHAT:			return tr("Used by direct F2F chat, distant chat and chat lobbies");
+		case RS_SERVICE_TYPE_MSG:			return tr("Mailing service. Also required for direct f2f chat");
+		case RS_SERVICE_TYPE_TURTLE:		return tr("Anonymous routing. Used by file transfers and file search,<br> distant chat, distant mail and distant channels/etc sync");
+		case RS_SERVICE_TYPE_HEARTBEAT:		return tr("Checks if peers alive");
+		case RS_SERVICE_TYPE_FILE_TRANSFER:	return tr("File transfer. If you kill it - you won't be able to dl files from friend shares. Anonymous access unnaffected");
+		case RS_SERVICE_TYPE_GROUTER:		return tr("Used by distant mail for immediate delivery using anonymous tunnels (turtle router)");
+		case RS_SERVICE_TYPE_FILE_DATABASE:	return tr("Exchange shared directories info, aka browsable(visible) files");
+		case RS_SERVICE_TYPE_SERVICEINFO:	return tr("Allows your node to tell to your friends which service are ON on your side, and vice-versa");
+		case RS_SERVICE_TYPE_BWCTRL:		return tr("Speed management");
+		case RS_SERVICE_TYPE_GXS_TUNNEL:	return tr("Used by distant chat, distant mail, and distant channels sync for transfer data using anonymous tunnels");
+		case RS_SERVICE_TYPE_BANLIST:		return tr("IP filter lists exchange");
+		case RS_SERVICE_TYPE_STATUS:		return tr("Share user status like online, away, busy with friends");
+		case RS_SERVICE_GXS_TYPE_GXSID:		return tr("Identity data exchange. Required by all identities-related functions like chats, forums, mail, etc");
+		case RS_SERVICE_GXS_TYPE_PHOTO:		return tr("RS_SERVICE_GXS_TYPE_PHOTO");
+		case RS_SERVICE_GXS_TYPE_WIKI:		return tr("RS_SERVICE_GXS_TYPE_WIKI");
+		case RS_SERVICE_GXS_TYPE_FORUMS:	return tr("Transfer Forums");
+		case RS_SERVICE_GXS_TYPE_POSTED:	return tr("Transfer Posted");
+		case RS_SERVICE_GXS_TYPE_CHANNELS:	return tr("Transfer Channels");
+		case RS_SERVICE_GXS_TYPE_GXSCIRCLE:	return tr("Transfer Circles");
+		case RS_SERVICE_GXS_TYPE_REPUTATION:return tr("Votes exchange - bans/upvotes for Identities");
+		case RS_SERVICE_TYPE_GXS_TRANS:		return tr("Used by distant mail for deferred delivery - stored at friends when target offline");
+		case RS_SERVICE_TYPE_RTT:			return tr("Measures the Round Trip Time between you and your friends");
+		default:							return tr("unknown");
+	}
+}
