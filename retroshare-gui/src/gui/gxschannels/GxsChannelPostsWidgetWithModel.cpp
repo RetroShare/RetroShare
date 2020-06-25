@@ -59,6 +59,7 @@ static const int mTokenTypeGroupData = 1;
 
 static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
+static const int CHANNEL_TABS_FILES  = 2;
 
 /* View mode */
 #define VIEW_MODE_FEEDS  1
@@ -776,12 +777,14 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 		//ui->feedToolButton->setEnabled(true);
 		//ui->fileToolButton->setEnabled(true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,true);
         ui->details_TW->setEnabled(true);
 	}
     else
     {
         ui->details_TW->setEnabled(false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,false);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,false);
     }
 
 

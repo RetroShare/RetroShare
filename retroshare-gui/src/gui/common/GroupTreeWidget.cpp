@@ -468,7 +468,11 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 
         for(auto str:itemInfo.context_strings)
             if(!str.empty())
-				item->addChild(new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str()))));
+            {
+                QTreeWidgetItem *it = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
+                it->setData(COLUMN_DATA,ROLE_ID,itemInfo.id);
+				item->addChild(it);
+            }
 
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
