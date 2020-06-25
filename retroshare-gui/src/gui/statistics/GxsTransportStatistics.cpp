@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <time.h>
+#include <memory>
 
 #include <QDateTime>
 #include <QFontMetrics>
@@ -463,24 +464,25 @@ void GxsTransportStatistics::loadGroups()
 #ifdef DEBUG_FORUMS
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
-        std::map<RsGxsGroupId,RsGxsTransGroupStatistics> stats;
+		auto stats = std::make_unique<
+		        std::map<RsGxsGroupId,RsGxsTransGroupStatistics> >();
 
-        if(!rsGxsTrans->getGroupStatistics(stats))
-        {
-            RsErr() << "Cannot retrieve group statistics in GxsTransportStatistics" << std::endl;
-            return;
-        }
+		if(!rsGxsTrans->getGroupStatistics(*stats))
+		{
+			RS_ERR("Cannot retrieve group statistics in GxsTransportStatistics");
+			return;
+		}
 
-        RsQThreadUtils::postToObject( [stats,this]()
+		RsQThreadUtils::postToObject(
+		            [stats = std::move(stats), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            mGroupStats = stats;
-
-            updateContent();
-
+			// TODO: consider making mGroupStats an unique_ptr to avoid copying
+			mGroupStats = *stats;
+			updateContent();
 			mStateHelper->setLoading(GXSTRANS_GROUP_META, false);
 
 		}, this );
