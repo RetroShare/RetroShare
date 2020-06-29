@@ -3,6 +3,8 @@
 
 #include <algorithm>
 #include <map>
+#include <array>
+#include <utility>
 
 #include "util/rsrandom.h"
 #include "util/radix32.h"
