@@ -539,7 +539,10 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 		{
 			if(_current_service_id == service_ids[i])
 			{
-				uint16_t serviceOrig = (uint16_t)((service_ids[i] - (((uint32_t)RS_PKT_VERSION_SERVICE) << 24) ) >> 8);
+				//uint16_t serviceOrig = (uint16_t)((service_ids[i] - (((uint32_t)RS_PKT_VERSION_SERVICE) << 24) ) >> 8);
+				uint16_t serviceOrig=(service_ids[i]>>8) & 0xffff;
+				QTextDocument td;
+				td.setHtml(ServiceDescription(serviceOrig));
 				QString service_name = "Service: 0x"+ QString::number(serviceOrig,16) + "  " + QString::fromStdString(rsServiceControl->getServiceName(service_ids[i]));
 				QBrush brush ;
 				brush.setColor(QColor::fromHsvF(0.0f,0.0f,1.0f,0.8f));
@@ -548,20 +551,22 @@ void RSPermissionMatrixWidget::paintEvent(QPaintEvent *)
 				pen.setWidth(1) ;
 				pen.setBrush(FOREGROUND_COLOR) ;
 				_painter->setPen(pen) ;
-				QRect position = computeNodePosition(0,0,false) ;
+				QRect position = computeNodePosition(0,i,false) ;
 				int popup_x = position.x() + (50 * S / 14.0);
 				int popup_y = position.y() - (10 * S / 14.0) + line_height;
-				int popup_width = _max_width * 3 / 4;
-				int popup_height = line_height * 5;
+				int popup_width = std::max((int)td.size().width(), fm.width(service_name)) + S;
+				int popup_height = td.size().height() + line_height*2;
+				while (popup_x + popup_width > _max_width)
+					popup_x -= S;
+				if (popup_y + popup_height > _max_height)
+					popup_y -= popup_height;
 				QRect info_pos(popup_x, popup_y, popup_width, popup_height) ;
 				_painter->fillRect(info_pos,brush) ;
 				_painter->drawRect(info_pos) ;
 				float x = info_pos.x()               + 5*S/14.0 ;
 				float y = info_pos.y() + line_height + 1*S/14.0 ;
 				_painter->drawText(QPointF(x,y), service_name)  ; y += line_height ;
-				_painter->translate(QPointF(popup_x+S, popup_y+2*line_height));
-				QTextDocument td;
-				td.setHtml(ServiceDescription(serviceOrig));
+				_painter->translate(QPointF(popup_x, popup_y+2*line_height));
 				td.drawContents(_painter);
 			}
 		}
