@@ -144,6 +144,10 @@ private slots:
 
 	void filterColumnChanged(int column);
 	void filterItems(const QString &text);
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	void expandSubtree();
+#endif
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;

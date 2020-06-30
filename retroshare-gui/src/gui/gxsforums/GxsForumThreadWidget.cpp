@@ -596,6 +596,11 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction* expandAll = new QAction(tr("Expand all"), &contextMnu);
 	connect(expandAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(expandAll()));
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	QAction* expandSubtree = new QAction(tr("Expand subtree"), &contextMnu);
+	connect(expandSubtree, SIGNAL(triggered()), this, SLOT(expandSubtree()));
+#endif
+
 	QAction* collapseAll = new QAction(tr( "Collapse all"), &contextMnu);
 	connect(collapseAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(collapseAll()));
 
@@ -630,6 +635,10 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		markMsgAsUnreadChildren->setDisabled(true);
 		replyAct->setDisabled (true);
         replyauthorAct->setDisabled (true);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setDisabled(true);
+		expandSubtree->setVisible(false);
+#endif
 	}
 
 	if(has_current_post)
@@ -663,7 +672,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	}
 
 	contextMnu.addAction(replyAct);
-  contextMnu.addAction(newthreadAct);
+	contextMnu.addAction(newthreadAct);
     QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
@@ -673,6 +682,9 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	contextMnu.addAction(markMsgAsUnreadChildren);
     contextMnu.addSeparator();
     contextMnu.addAction(expandAll);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+	contextMnu.addAction(expandSubtree);
+#endif
 	contextMnu.addAction(collapseAll);
 
     if(has_current_post)
@@ -1324,6 +1336,20 @@ void GxsForumThreadWidget::setAllMessagesReadDo(bool read, uint32_t &/*token*/)
 {
 	markMsgAsReadUnread(read, true, true);
 }
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+void GxsForumThreadWidget::expandSubtree() {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if (!the_action) {
+		return;
+	}
+	const QModelIndex current_index = ui->threadTreeWidget->currentIndex();
+	if (!current_index.isValid()) {
+		return;
+	}
+	ui->threadTreeWidget->expandRecursively(current_index);
+}
+#endif
 
 bool GxsForumThreadWidget::navigate(const RsGxsMessageId &msgId)
 {
