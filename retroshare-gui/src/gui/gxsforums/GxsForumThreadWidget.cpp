@@ -983,6 +983,9 @@ void GxsForumThreadWidget::updateForumDescription(bool success)
     if (!mThreadId.isNull())
         return;
 
+	// still call it to not left leftovers from previous post if any
+	blankPost();
+
     RsIdentityDetails details;
 
     rsIdentity->getIdDetails(mForumGroup.mMeta.mAuthorId,details);
