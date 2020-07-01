@@ -89,7 +89,7 @@ std::string socket_errorType(int err)
 	return std::string("UNKNOWN ERROR CODE - ASK RS-DEVS TO ADD IT!");
 }
 
-bool getLocalAddresses_unix(std::list<sockaddr_storage> &addrs) {
+bool _getLocalAddresses(std::list<sockaddr_storage> &addrs) {
 	struct ifaddrs *ifsaddrs, *ifa;
 
 	if(getifaddrs(&ifsaddrs) != 0)
@@ -112,34 +112,25 @@ bool getLocalAddresses_unix(std::list<sockaddr_storage> &addrs) {
 	return true;
 }
 
-int unix_close_unix(int fd) {
+int _unix_close(int fd) {
 	return close(fd);
 }
 
-int unix_connect_unix(int ret) {
+int _unix_connect(int ret) {
 	// emtpy
 	return ret;
 }
 
-int unix_fcntl_nonblock_unix(int fd) {
+int _unix_fcntl_nonblock(int fd) {
 	return fcntl(fd, F_SETFL, O_NONBLOCK);
 }
 
-int unix_getsockopt_error_unix(int sockfd, int *err) {
+int _unix_getsockopt_error(int sockfd, int *err) {
 	socklen_t optlen = 4;
 	return getsockopt(sockfd, SOL_SOCKET, SO_ERROR, err, &optlen);
 }
 
-void unix_socket_unix(int fd)  {
+void _unix_socket(int fd)  {
 	// empty
 	(void) fd;
 }
-
-const struct pqinetworkOps netOps = {
-	.getLocalAddresses = getLocalAddresses_unix,
-	.unix_close = unix_close_unix,
-	.unix_connect = unix_connect_unix,
-	.unix_fcntl_nonblock = unix_fcntl_nonblock_unix,
-	.unix_getsockopt_error = unix_getsockopt_error_unix,
-	.unix_socket = unix_socket_unix
-};

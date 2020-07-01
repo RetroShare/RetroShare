@@ -151,7 +151,7 @@ int	WinToUnixError(int error)
 	return ECONNREFUSED; /* sensible default? */
 }
 
-bool getLocalAddresses_win(std::list<sockaddr_storage> &addrs) {
+bool _getLocalAddresses(std::list<sockaddr_storage> &addrs) {
 	// Seems strange to me but M$ documentation suggests to allocate this way...
 	DWORD bf_size = 16000;
 	IP_ADAPTER_ADDRESSES* adapter_addresses = (IP_ADAPTER_ADDRESSES*) rs_malloc(bf_size);
@@ -189,11 +189,11 @@ bool getLocalAddresses_win(std::list<sockaddr_storage> &addrs) {
 	return true;
 }
 
-int unix_close_win(int fd) {
+int _unix_close(int fd) {
 	return ret = closesocket(fd);
 }
 
-int unix_connect_win(int ret) {
+int _unix_connect(int ret) {
 	if (ret != 0)
 	{
 		errno = WinToUnixError(WSAGetLastError());
@@ -202,7 +202,7 @@ int unix_connect_win(int ret) {
 	return ret;
 }
 
-int unix_fcntl_nonblock_win(int fd) {
+int _unix_fcntl_nonblock(int fd) {
 	int ret;
 	unsigned long int on = 1;
 	ret = ioctlsocket(fd, FIONBIO, &on);
@@ -221,7 +221,7 @@ int unix_fcntl_nonblock_win(int fd) {
 	return ret;
 }
 
-int unix_getsockopt_error_win(int sockfd, int *err) {
+int _unix_getsockopt_error(int sockfd, int *err) {
 	int ret;
 	int optlen = 4;
 
@@ -238,7 +238,7 @@ int unix_getsockopt_error_win(int sockfd, int *err) {
 	return ret;
 }
 
-void unix_socket_win(int osock) {
+void _unix_socket(int osock) {
 	if ((unsigned) osock == INVALID_SOCKET)
 	{
 		// Invalidate socket Unix style.
@@ -246,12 +246,3 @@ void unix_socket_win(int osock) {
 		errno = WinToUnixError(WSAGetLastError());
 	}
 }
-
-const struct pqinetworkOps netOps = {
-	.getLocalAddresses = getLocalAddresses_win,
-	.unix_close = unix_close_win,
-	.unix_connect = unix_connect_win,
-	.unix_fcntl_nonblock = unix_fcntl_nonblock_win,
-	.unix_getsockops_error = unix_getsockopt_error_win,
-	.unix_socket = unix_socket_win
-};

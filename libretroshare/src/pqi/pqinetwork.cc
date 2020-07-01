@@ -56,15 +56,6 @@ static struct RsLog::logInfo pqinetzoneInfo = {RsLog::Default, "pqinet"};
 
 #include <sys/types.h>
 
-struct pqinetworkOps {
-	bool	(*getLocalAddresses)(std::list<sockaddr_storage>&);
-	int	(*unix_close)(int);
-	int	(*unix_connect)(int);
-	int	(*unix_fcntl_nonblock)(int);
-	int	(*unix_getsockopt_error)(int, int*);
-	void	(*unix_socket)(int);
-};
-
 #ifdef WINDOWS_SYS
 // moved to pqinetwork_win.cc
 #elif defined(__ANDROID__)
@@ -102,7 +93,7 @@ bool getLocalAddresses(std::list<sockaddr_storage> & addrs)
 			addrs.push_back(tmpAddr);
 	}
 #else
-	ret = netOps.getLocalAddresses(addrs);
+	ret = _getLocalAddresses(addrs);
 
 	// the functions have internal checks that may result in "return false"
 	// handle it here
@@ -133,7 +124,7 @@ int unix_close(int fd)
 	std::cerr << "unix_close()" << std::endl;
 #endif
 
-	return netOps.unix_close(fd);
+	return _unix_close(fd);
 }
 
 int unix_socket(int domain, int type, int protocol)
@@ -144,14 +135,14 @@ int unix_socket(int domain, int type, int protocol)
 
 	int osock = socket(domain, type, protocol);
 
-	netOps.unix_socket(osock);
+	_unix_socket(osock);
 
 	return osock;
 }
 
 int unix_fcntl_nonblock(int fd)
 {
-	return netOps.unix_fcntl_nonblock(fd);
+	return _unix_fcntl_nonblock(fd);
 }
 
 int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
@@ -185,7 +176,7 @@ int unix_connect(int fd, const struct sockaddr *serv_addr, socklen_t socklen)
 
 	int ret = connect(fd, serv_addr, len);
 
-	ret = netOps.unix_connect(ret);
+	ret = _unix_connect(ret);
 
 	return ret;
 }
@@ -194,5 +185,5 @@ int unix_getsockopt_error(int sockfd, int *err)
 {
 	*err = 1;
 
-	return netOps.unix_getsockopt_error(sockfd, err);
+	return _unix_getsockopt_error(sockfd, err);
 }
