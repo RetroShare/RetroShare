@@ -795,6 +795,11 @@ void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
 	// author->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_AUTHOR));
 	// author->setData(RsGxsForumModel::COLUMN_THREAD_AUTHOR);
 	// connect(author, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* show_text_from_banned = header_context_menu->addAction(QIcon(), tr("Show text from banned persons"));
+	show_text_from_banned->setCheckable(true);
+	show_text_from_banned->setChecked(mDisplayBannedText);
+	connect(show_text_from_banned, SIGNAL(toggled(bool)), this, SLOT(showBannedText(bool)));
 	
 	header_context_menu->exec(mapToGlobal(pos));
 	delete(header_context_menu);
@@ -806,6 +811,13 @@ void GxsForumThreadWidget::changeHeaderColumnVisibility(bool visibility) {
 		return;
 	}
 	ui->threadTreeWidget->setColumnHidden(the_action->data().toInt(), !visibility);
+}
+
+void GxsForumThreadWidget::showBannedText(bool display) {
+	mDisplayBannedText = display;
+	if (!mThreadId.isNull()) {
+		updateMessageData(mThreadId);
+	}
 }
 
 #ifdef TODO
@@ -1239,13 +1251,28 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	ui->by_label->show();
 	ui->threadTreeWidget->setFocus();
 
+	QString banned_text_info = "";
 	if(redacted) {
-		QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
-		extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
-		extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
-		extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
+		ui->downloadButton->setDisabled(true);
+		if (!mDisplayBannedText) {
+			QString extraTxt = tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString())) ;
+			extraTxt +=        tr( "<UL><li><b><font color=\"#ff0000\">Messages from this author are not forwarded. </font></b></li>") ;
+			extraTxt +=        tr( "<li><b><font color=\"#ff0000\">Messages from this author are replaced by this text. </font></b></li></ul>") ;
+			extraTxt +=        tr( "<p><b><font color=\"#ff0000\">You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.</font></b></p>") ;
 
-		ui->postText->setHtml(extraTxt) ;
+			ui->postText->setHtml(extraTxt) ;
+			return;
+		}
+		else {
+			RsIdentityDetails details;
+			rsIdentity->getIdDetails(msg.mMeta.mAuthorId, details);
+			QString name = GxsIdDetails::getName(details);
+
+			banned_text_info += "<p><font color=\"#e00000\"><b>" + tr( "The author of this message (with ID %1) is banned. And named by name ( %2 )").arg(QString::fromStdString(msg.mMeta.mAuthorId.toStdString()), name) + "</b>";
+			banned_text_info += "<ul><li><b><font color=\"#e00000\">" + tr( "Messages from this author are not forwarded.") + "</font></b></li></ul>";
+			banned_text_info += "<p><b><font color=\"#e00000\">" + tr( "You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.") + "</font></b></p><hr>";
+		}
+
 	} else {
 		uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
 		if(Settings->getForumLoadEmoticons())
@@ -1258,7 +1285,7 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 		int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
 			"MinimumFontSize", 10).toInt();
 
-		QString extraTxt = RsHtml().formatText(ui->postText->document(),
+		QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
 			QString::fromUtf8(msg.mMsg.c_str()), flags
 				, backgroundColor, desiredContrast, desiredMinimumFontSize
 			);

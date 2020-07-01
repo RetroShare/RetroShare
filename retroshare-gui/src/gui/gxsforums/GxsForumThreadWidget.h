@@ -153,6 +153,7 @@ private slots:
 	void expandSubtree();
 #endif
 	void changeHeaderColumnVisibility(bool visibility);
+	void showBannedText(bool display);
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;
@@ -201,6 +202,7 @@ private:
 	GxsForumsFillThread *mFillThread;
 	unsigned int mUnreadCount;
 	unsigned int mNewCount;
+	bool mDisplayBannedText;
 
 	/* Color definitions (for standard see qss.default) */
 	QColor mTextColorRead;
