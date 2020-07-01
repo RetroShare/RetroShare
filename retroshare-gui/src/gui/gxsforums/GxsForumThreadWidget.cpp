@@ -622,11 +622,19 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction *showinpeopleAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
+	bool has_children = false;
+	if (has_current_post) {
+		has_children = !current_post.mChildren.empty();
+	}
+
 	if (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
     {
 		markMsgAsReadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_UNREAD_CHILDREN);
 		markMsgAsUnreadChildren->setEnabled(current_post.mPostFlags & ForumModelPostEntry::FLAG_POST_HAS_READ_CHILDREN);
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setEnabled(has_children);
+#endif
 		replyAct->setEnabled (true);
 		replyauthorAct->setEnabled (true);
 	}
@@ -642,6 +650,19 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 		expandSubtree->setDisabled(true);
 		expandSubtree->setVisible(false);
 #endif
+	}
+
+	// disable visibility for childless
+	if (has_current_post) {
+		replyAct->setVisible(has_children);
+		// still no setEnabled
+		markMsgAsRead->setVisible(IS_MSG_UNREAD(current_post.mMsgStatus));
+		markMsgAsUnread->setVisible(!IS_MSG_UNREAD(current_post.mMsgStatus));
+#if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
+		expandSubtree->setVisible(has_children);
+#endif
+		markMsgAsReadChildren->setVisible(has_children);
+		markMsgAsUnreadChildren->setVisible(has_children);
 	}
 
 	if(has_current_post)
