@@ -97,6 +97,7 @@ private slots:
 	/** Create the context popup menu and it's submenus */
 	void threadListCustomPopupMenu(QPoint point);
 	void contextMenuTextBrowser(QPoint point);
+	void headerContextMenuRequested(const QPoint& pos);
 
 	void changedSelection(const QModelIndex &, const QModelIndex &);
 	void changedThread(QModelIndex index);
@@ -148,6 +149,7 @@ private slots:
 #if QT_VERSION >= QT_VERSION_CHECK(5, 13, 0)
 	void expandSubtree();
 #endif
+	void changeHeaderColumnVisibility(bool visibility);
 private:
 	void insertMessageData(const RsGxsForumMsg &msg);
 	bool getCurrentPost(ForumModelPostEntry& fmpe) const ;

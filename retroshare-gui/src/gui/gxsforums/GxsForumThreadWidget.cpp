@@ -316,6 +316,9 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_MSGID);
 	ttheader->hideSection (RsGxsForumModel::COLUMN_THREAD_DATA);
 
+	ttheader->setContextMenuPolicy(Qt::CustomContextMenu);
+	connect(ttheader, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(headerContextMenuRequested(QPoint)));
+
 	ui->progressBar->hide();
 	ui->progressText->hide();
 
@@ -734,6 +737,52 @@ void GxsForumThreadWidget::contextMenuTextBrowser(QPoint point)
 
 	contextMnu->exec(ui->postText->viewport()->mapToGlobal(point));
 	delete(contextMnu);
+}
+
+void GxsForumThreadWidget::headerContextMenuRequested(const QPoint &pos)
+{
+	QMenu* header_context_menu = new QMenu(tr("Show column"), this);
+
+	QAction* title = header_context_menu->addAction(QIcon(), tr("Title"));
+	title->setCheckable(true);
+	title->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_TITLE));
+	title->setData(RsGxsForumModel::COLUMN_THREAD_TITLE);
+	connect(title, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* read = header_context_menu->addAction(QIcon(), tr("Read"));
+	read->setCheckable(true);
+	read->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_READ));
+	read->setData(RsGxsForumModel::COLUMN_THREAD_READ);
+	connect(read, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* date = header_context_menu->addAction(QIcon(), tr("Date"));
+	date->setCheckable(true);
+	date->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DATE));
+	date->setData(RsGxsForumModel::COLUMN_THREAD_DATE);
+	connect(date, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	QAction* distribution = header_context_menu->addAction(QIcon(), tr("Distribution"));
+	distribution->setCheckable(true);
+	distribution->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION));
+	distribution->setData(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+	connect(distribution, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+
+	// QAction* author = header_context_menu->addAction(QIcon(), tr("Author"));
+	// author->setCheckable(true);
+	// author->setChecked(!ui->threadTreeWidget->isColumnHidden(RsGxsForumModel::COLUMN_THREAD_AUTHOR));
+	// author->setData(RsGxsForumModel::COLUMN_THREAD_AUTHOR);
+	// connect(author, SIGNAL(toggled(bool)), this, SLOT(changeHeaderColumnVisibility(bool)));
+	
+	header_context_menu->exec(mapToGlobal(pos));
+	delete(header_context_menu);
+}
+
+void GxsForumThreadWidget::changeHeaderColumnVisibility(bool visibility) {
+	QAction* the_action = qobject_cast<QAction*>(sender());
+	if ( !the_action ) {
+		return;
+	}
+	ui->threadTreeWidget->setColumnHidden(the_action->data().toInt(), !visibility);
 }
 
 #ifdef TODO
