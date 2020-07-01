@@ -21,7 +21,7 @@
 #include "PostedDialog.h"
 #include "PostedItem.h"
 #include "PostedGroupDialog.h"
-#include "PostedListWidget.h"
+#include "PostedListWidgetWithModel.h"
 #include "PostedUserNotify.h"
 #include "gui/gxs/GxsGroupShareKey.h"
 #include "gui/settings/rsharesettings.h"
@@ -195,7 +195,7 @@ int PostedDialog::shareKeyType()
 
 GxsMessageFrameWidget *PostedDialog::createMessageFrameWidget(const RsGxsGroupId &groupId)
 {
-	return new PostedListWidget(groupId);
+	return new PostedListWidgetWithModel(groupId);
 }
 
 RsGxsCommentService *PostedDialog::getCommentService()

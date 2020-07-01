@@ -1368,7 +1368,8 @@ gxschannels {
 posted {
 	
 	HEADERS += gui/Posted/PostedDialog.h \
-		gui/Posted/PostedListWidget.h \
+		gui/Posted/PostedListWidgetWithModel.h \
+		gui/Posted/PostedPostsModel.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1380,7 +1381,7 @@ posted {
 		#gui/Posted/PostedCreateCommentDialog.h \
 		#gui/Posted/PostedComments.h \
 	
-	FORMS += gui/Posted/PostedListWidget.ui \
+	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
@@ -1391,7 +1392,8 @@ posted {
 		#gui/Posted/PostedCreateCommentDialog.ui
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
-		gui/Posted/PostedListWidget.cpp \
+		gui/Posted/PostedListWidgetWithModel.cpp \
+		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
 		gui/Posted/PostedCardView.cpp \
