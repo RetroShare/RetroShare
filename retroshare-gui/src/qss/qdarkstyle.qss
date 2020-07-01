@@ -93,6 +93,7 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: red;
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: darkred;
+	qproperty-textColorPinned: darkOrange;
 }
 
 QMenuBar

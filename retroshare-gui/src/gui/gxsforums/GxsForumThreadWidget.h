@@ -52,6 +52,7 @@ class GxsForumThreadWidget : public GxsMessageFrameWidget
 	Q_PROPERTY(QColor textColorUnreadChildren READ textColorUnreadChildren WRITE setTextColorUnreadChildren)
 	Q_PROPERTY(QColor textColorNotSubscribed READ textColorNotSubscribed WRITE setTextColorNotSubscribed)
 	Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
+	Q_PROPERTY(QColor textColorPinned READ textColorPinned WRITE setTextColorPinned)
 
 public:
 	explicit GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent = NULL);
@@ -62,12 +63,14 @@ public:
 	QColor textColorUnreadChildren() const { return mTextColorUnreadChildren; }
 	QColor textColorNotSubscribed() const { return mTextColorNotSubscribed; }
 	QColor textColorMissing() const { return mTextColorMissing; }
+	QColor textColorPinned() const { return mTextColorPinned; }
 
 	void setTextColorRead          (QColor color) ;
 	void setTextColorUnread        (QColor color) ;
 	void setTextColorUnreadChildren(QColor color) ;
 	void setTextColorNotSubscribed (QColor color) ;
 	void setTextColorMissing       (QColor color) ;
+	void setTextColorPinned        (QColor color) ;
 
 	/* GxsMessageFrameWidget */
 	virtual void groupIdChanged();
@@ -205,6 +208,7 @@ private:
 	QColor mTextColorUnreadChildren;
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
+	QColor mTextColorPinned;
 
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;

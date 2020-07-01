@@ -445,10 +445,13 @@ QVariant RsGxsForumModel::textColorRole(const ForumModelPostEntry& fmpe,int /*co
     if( (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_MISSING))
         return QVariant(mTextColorMissing);
 
-    if(IS_MSG_UNREAD(fmpe.mMsgStatus) || (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED))
+    if(IS_MSG_UNREAD(fmpe.mMsgStatus))
         return QVariant(mTextColorUnread);
     else
-        return QVariant(mTextColorRead);
+	    if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
+		    return QVariant(mTextColorPinned);
+	    else
+	        return QVariant(mTextColorRead);
 
 	return QVariant();
 }

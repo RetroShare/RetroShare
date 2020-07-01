@@ -216,6 +216,8 @@ void GxsForumThreadWidget::setTextColorUnread        (QColor color) { mTextColor
 void GxsForumThreadWidget::setTextColorUnreadChildren(QColor color) { mTextColorUnreadChildren = color; mThreadModel->setTextColorUnreadChildren(color);}
 void GxsForumThreadWidget::setTextColorNotSubscribed (QColor color) { mTextColorNotSubscribed  = color; mThreadModel->setTextColorNotSubscribed (color);}
 void GxsForumThreadWidget::setTextColorMissing       (QColor color) { mTextColorMissing        = color; mThreadModel->setTextColorMissing       (color);}
+// Suppose to be different from unread one
+void GxsForumThreadWidget::setTextColorPinned        (QColor color) { mTextColorPinned         = color; mThreadModel->setTextColorPinned        (color);}
 
 GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent) :
 	GxsMessageFrameWidget(rsGxsForums, parent),
