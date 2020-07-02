@@ -41,7 +41,7 @@ Q_DECLARE_METATYPE(RsPostedPost)
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
-    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN), mColumns(6)
+    : QAbstractItemModel(parent), mTreeMode(TREE_MODE_PLAIN)
 {
 	initEmptyHierarchy();
 
@@ -86,7 +86,7 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 
                 if(!rsPosted->getBoardContent(mPostedGroup.mMeta.mGroupId,std::set<RsGxsMessageId>{ e->mPostedMsgId }, posts,comments,votes))
 				{
-					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mChannelGroupId << "/" << e->mChannelMsgId << std::endl;
+					std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel message data for channel/msg " << e->mPostedGroupId << "/" << e->mPostedMsgId << std::endl;
 					return;
 				}
 
@@ -103,7 +103,7 @@ void RsPostedPostsModel::handleEvent_main_thread(std::shared_ptr<const RsEvent> 
 							{
 								mPosts[j] = posts[i];
 
-								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+								emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
 							}
 					}
 				},this);
@@ -133,7 +133,7 @@ void RsPostedPostsModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),mColumns-1,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
 }
 
 void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
@@ -488,7 +488,7 @@ void RsPostedPostsModel::update_posts(const RsGxsGroupId& group_id)
 		std::vector<RsGxsComment> *comments = new std::vector<RsGxsComment>();
 		std::vector<RsGxsVote>    *votes    = new std::vector<RsGxsVote>();
 
-		if(!rsPosted->getBoardContent(group_id, *posts,*comments,*votes))
+		if(!rsPosted->getBoardAllContent(group_id, *posts,*comments,*votes))
 		{
 			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve channel messages for channel " << group_id << std::endl;
 			return;
@@ -519,6 +519,7 @@ static bool decreasing_time_comp(const std::pair<time_t,RsGxsMessageId>& e1,cons
 
 void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
 {
+#ifdef TODO
     // Collect new versions of posts if any. For now Boards do not have versions, but if that ever happens, we'll be handlign it already. This code
     // is a blind copy of the channel code.
 
@@ -613,6 +614,7 @@ void RsPostedPostsModel::createPostsArray(std::vector<RsPostedPost>& posts)
             }
         }
     }
+#endif
 
 #ifdef DEBUG_CHANNEL_MODEL
     std::cerr << "Now adding " << posts.size() << " posts into array structure..." << std::endl;
@@ -665,21 +667,23 @@ QModelIndex RsPostedPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) con
     {
 		// First look into msg versions, in case the msg is a version of an existing message
 
+#ifdef TODO
         for(auto& msg_id:mPosts[mFilteredPosts[i]].mOlderVersions)
             if(msg_id == postId)
             {
 				quintptr ref ;
 				convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-				return createIndex(i/mColumns,i%mColumns, ref);
+				return createIndex(i,0, ref);
             }
+#endif
 
         if(mPosts[mFilteredPosts[i]].mMeta.mMsgId == postId)
         {
             quintptr ref ;
             convertTabEntryToRefPointer(i,ref);	// we dont use i+1 here because i is not a row, but an index in the mPosts tab
 
-			return createIndex(i/mColumns,i%mColumns, ref);
+			return createIndex(i,0, ref);
         }
     }
 

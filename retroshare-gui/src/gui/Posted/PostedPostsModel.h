@@ -158,7 +158,7 @@ public:
     void debug_dump();
 
 signals:
-    void boardlPostsLoaded();	// emitted after the posts have been loaded.
+    void boardPostsLoaded();	// emitted after the posts have been loaded.
 
 private:
     RsPostedGroup mPostedGroup;

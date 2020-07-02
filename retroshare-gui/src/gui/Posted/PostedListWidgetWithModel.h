@@ -106,7 +106,7 @@ protected:
 #endif
 
 	/* GxsMessageFrameWidget */
-	virtual void setAllMessagesReadDo(bool read, uint32_t &token);
+	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
 	void updateGroupData();
@@ -114,14 +114,9 @@ private slots:
 	void subscribeGroup(bool subscribe);
 	void setViewMode(int viewMode);
 	void settingsChanged();
-	void handlePostsTreeSizeChange(QSize s);
 	void postChannelPostLoad();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
-
-public slots:
- 	void sortColumnFiles(int col,Qt::SortOrder so);
- 	void sortColumnPostFiles(int col,Qt::SortOrder so);
 
 private:
 	void processSettings(bool load);

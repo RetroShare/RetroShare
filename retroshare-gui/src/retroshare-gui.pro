@@ -1370,6 +1370,7 @@ posted {
 	HEADERS += gui/Posted/PostedDialog.h \
 		gui/Posted/PostedListWidgetWithModel.h \
 		gui/Posted/PostedPostsModel.h \
+		gui/Posted/BoardPostDisplayWidget.h \
 		gui/Posted/PostedItem.h \
 		gui/Posted/PostedCardView.h \
 		gui/Posted/PostedGroupDialog.h \
@@ -1383,6 +1384,7 @@ posted {
 	
 	FORMS += gui/Posted/PostedListWidgetWithModel.ui \
 		gui/feeds/PostedGroupItem.ui \
+		gui/Posted/BoardPostDisplayWidget.ui \
 		gui/Posted/PostedItem.ui \
 		gui/Posted/PostedCardView.ui \
 		gui/Posted/PostedCreatePostDialog.ui \
@@ -1393,6 +1395,7 @@ posted {
 	
 	SOURCES += gui/Posted/PostedDialog.cpp \
 		gui/Posted/PostedListWidgetWithModel.cpp \
+		gui/Posted/BoardPostDisplayWidget.cpp \
 		gui/Posted/PostedPostsModel.cpp \
 		gui/feeds/PostedGroupItem.cpp \
 		gui/Posted/PostedItem.cpp \
