@@ -1090,8 +1090,10 @@ void RsGxsNetTunnelService::receiveSearchResult(TurtleSearchRequestId request_id
 	{
 		GXS_NET_TUNNEL_DEBUG() << "  : result is of type group summary result for service " << result_gs->service << std::dec << ": " << std::endl;
 
+#ifdef DEBUG_RSGXSNETTUNNEL
 		for(auto it(result_gs->group_infos.begin());it!=result_gs->group_infos.end();++it)
 			std::cerr << "   group " << (*it).mGroupId << ": " << (*it).mGroupName << ", " << (*it).mNumberOfMessages << " messages, last is " << time(NULL)-(*it).mLastMessageTs << " secs ago." << std::endl;
+#endif
 
 		auto it = mSearchableServices.find(result_gs->service) ;
 

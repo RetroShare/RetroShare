@@ -134,6 +134,13 @@ public:
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
 	}
+
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+	{
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(IMAGE_WARNING_YELLOW));
+
+		return QSize(img.width()*1.2,option.rect.height());
+	}
 };
 
 class ReadStatusItemDelegate: public QStyledItemDelegate
@@ -182,6 +189,13 @@ public:
 		// draw pixmap at center of item
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+
+	virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+	{
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(":/images/message-state-unread.png"));
+
+		return QSize(img.width()*1.2,option.rect.height());
 	}
 };
 
@@ -299,9 +313,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
+
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
