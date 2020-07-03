@@ -858,11 +858,12 @@ bool GxsChannelPostsWidget::getGroupData(RsGxsGenericGroupData *& data)
     {
         RsGxsChannelGroup distant_group;
 
-        if(rsGxsChannels->retrieveDistantGroup(groupId(),distant_group))
+        if(rsGxsChannels->getDistantSearchResultGroupData(groupId(),distant_group))
         {
 			insertChannelDetails(distant_group);
-			data = new RsGxsChannelGroup(distant_group);
+            data = new RsGxsChannelGroup(distant_group);
 			mGroup = distant_group;	// make a local copy to pass on to items
+
             return true ;
         }
     }

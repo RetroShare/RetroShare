@@ -21,6 +21,8 @@
 #ifndef GROUPTREEWIDGET_H
 #define GROUPTREEWIDGET_H
 
+#include<set>
+
 #include <QTreeWidgetItem>
 #include <QDateTime>
 
@@ -47,16 +49,17 @@ public:
 	{}
 
 public:
-	QString   id;
-	QString   name;
-	QString   description;
-	int       popularity;
-	QDateTime lastpost;
-	QIcon     icon;
-	bool      publishKey;
-	bool      adminKey;
-    quint32  subscribeFlags;
-    quint32  max_visible_posts ;
+	QString               id;
+	QString               name;
+	QString               description;
+	int                   popularity;
+	QDateTime             lastpost;
+	QIcon                 icon;
+	bool                  publishKey;
+	bool                  adminKey;
+    quint32               subscribeFlags;
+    quint32               max_visible_posts ;
+    std::set<std::string> context_strings;
 };
 
 //cppcheck-suppress noConstructor

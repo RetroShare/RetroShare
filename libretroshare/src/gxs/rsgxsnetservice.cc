@@ -272,6 +272,7 @@
     NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
  	NXS_NET_DEBUG_8		gxs distant sync
+ 	NXS_NET_DEBUG_9		gxs distant search
 
  ***/
 #define NXS_NET_DEBUG_0 	1
@@ -283,6 +284,7 @@
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 //#define NXS_NET_DEBUG_8 	1
+//#define NXS_NET_DEBUG_9 	1
 
 //#define NXS_FRAG
 
@@ -319,7 +321,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7) \
- || defined(NXS_NET_DEBUG_8)
+ || defined(NXS_NET_DEBUG_8) || defined(NXS_NET_DEBUG_9)
 
 static const RsPeerId     peer_to_print     = RsPeerId();//std::string("a97fef0e2dc82ddb19200fb30f9ac575"))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
@@ -5187,7 +5189,7 @@ static bool termSearch(const std::string& src, const std::string& substring)
 }
 #endif // ndef RS_DEEP_CHANNEL_INDEX
 
-bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -5199,7 +5201,7 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
     group_infos = it->second;
     return true ;
 }
-bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSearchResults& gs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
     for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
@@ -5221,8 +5223,7 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
     return true ;
 }
 
-void RsGxsNetService::receiveTurtleSearchResults(
-        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5230,20 +5231,43 @@ void RsGxsNetService::receiveTurtleSearchResults(
 		RS_STACK_MUTEX(mNxsMutex);
 
 		RsGxsGrpMetaTemporaryMap grpMeta;
-		std::map<RsGxsGroupId,RsGxsGroupSummary>&
-		        search_results_map(mDistantSearchResults[req]);
+		std::map<RsGxsGroupId,RsGxsGroupSearchResults>& search_results_map(mDistantSearchResults[req]);
+
+#ifdef NXS_NET_DEBUG_9
+        std::cerr << "Received group summary through turtle search for the following groups:" << std::endl;
+#endif
 
 		for(const RsGxsGroupSummary& gps : group_infos)
-			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
-				grpMeta[gps.mGroupId] = nullptr;
+        {
+            std::cerr <<"  " << gps.mGroupId << "  \"" << gps.mGroupName << "\"" << std::endl;
+			grpMeta[gps.mGroupId] = nullptr;
+        }
+
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+#ifdef NXS_NET_DEBUG_9
+        std::cerr << "Retrieved data store group data for the following groups:" <<std::endl;
+        for(auto& it:grpMeta)
+            std::cerr << "  " << it.first << " : " << it.second->mGroupName << std::endl;
+#endif
 
 		for (const RsGxsGroupSummary& gps : group_infos)
 		{
 #ifndef RS_DEEP_CHANNEL_INDEX
 			/* Only keep groups that are not locally known, and groups that are
-			 * not already in the mDistantSearchResults structure. */
-			if(grpMeta[gps.mGroupId]) continue;
+			 * not already in the mDistantSearchResults structure.
+			 * mDataStore may in some situations allocate an empty group meta data, so it's important
+			 * to test that the group meta is both non null and actually corresponds to the group id we seek. */
+
+            auto& meta(grpMeta[gps.mGroupId]);
+
+			if(meta != nullptr && meta->mGroupId == gps.mGroupId)
+                continue;
+
+#ifdef NXS_NET_DEBUG_9
+            std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
+#endif
+
 #else // ndef RS_DEEP_CHANNEL_INDEX
 			/* When deep search is enabled search results may bring more info
 			 * then we already have also about post that are indexed by xapian,
@@ -5252,22 +5276,32 @@ void RsGxsNetService::receiveTurtleSearchResults(
 			const RsGxsGroupId& grpId(gps.mGroupId);
 
 			groupsToNotifyResults.insert(grpId);
-			auto it2 = search_results_map.find(grpId);
-			if(it2 != search_results_map.end())
-			{
-				// update existing data
-				RsGxsGroupSummary& eGpS(it2->second);
-				eGpS.mPopularity++;
-				eGpS.mNumberOfMessages = std::max(
-				            eGpS.mNumberOfMessages,
-				            gps.mNumberOfMessages );
-			}
-			else
-			{
-				search_results_map[grpId] = gps;
-				// number of results so far
-				search_results_map[grpId].mPopularity = 1;
-			}
+
+            // Find search results place for this particular group
+
+#ifdef NXS_NET_DEBUG_9
+            std::cerr << "  Adding gps=" << gps.mGroupId << " name=\"" << gps.mGroupName << "\" gps.mSearchContext=\"" << gps.mSearchContext << "\"" << std::endl;
+#endif
+			RsGxsGroupSearchResults& eGpS(search_results_map[grpId]);
+
+            if(eGpS.mGroupId != grpId)	// not initialized yet. So we do it now.
+            {
+                eGpS.mGroupId   = gps.mGroupId;
+				eGpS.mGroupName = gps.mGroupName;
+				eGpS.mAuthorId  = gps.mAuthorId;
+				eGpS.mPublishTs = gps.mPublishTs;
+				eGpS.mSignFlags = gps.mSignFlags;
+            }
+            // We should check that the above values are always the same for all info that is received. In the end, we'll
+            // request the group meta and check the signature, but it may be misleading to receive a forged information
+            // that is not the real one.
+
+            ++eGpS.mPopularity;	// increase popularity. This is not a real counting, but therefore some heuristic estimate.
+            eGpS.mNumberOfMessages = std::max( eGpS.mNumberOfMessages, gps.mNumberOfMessages );
+			eGpS.mLastMessageTs    = std::max( eGpS.mLastMessageTs, gps.mLastMessageTs );
+
+            if(gps.mSearchContext != gps.mGroupName)			// this is a bit of a hack. We should have flags to tell where the search hit happens
+				eGpS.mSearchContexts.insert(gps.mSearchContext);
 		}
 	} // end RS_STACK_MUTEX(mNxsMutex);
 

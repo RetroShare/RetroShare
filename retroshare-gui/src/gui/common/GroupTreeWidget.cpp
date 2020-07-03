@@ -463,6 +463,17 @@ void GroupTreeWidget::fillGroupItems(QTreeWidgetItem *categoryItem, const QList<
 		item->setData(COLUMN_DATA, ROLE_NAME, itemInfo.name);
 		item->setData(COLUMN_DATA, ROLE_DESCRIPTION, itemInfo.description);
 
+        // Add children for context strings. This happens in the search.
+        while(nullptr != item->takeChild(0));
+
+        for(auto str:itemInfo.context_strings)
+            if(!str.empty())
+            {
+                QTreeWidgetItem *it = new QTreeWidgetItem(QStringList(QString::fromUtf8(str.c_str())));
+                it->setData(COLUMN_DATA,ROLE_ID,itemInfo.id);
+				item->addChild(it);
+            }
+
 		/* Set last post */
 		qlonglong lastPost = itemInfo.lastpost.toTime_t();
 		item->setData(COLUMN_DATA, ROLE_LASTPOST, -lastPost); // negative for correct sorting

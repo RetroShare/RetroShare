@@ -669,8 +669,11 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 									return QVariant(DateTime::formatDateTime(qtime));
     							}
 
-		case COLUMN_THREAD_DISTRIBUTION:
-		case COLUMN_THREAD_AUTHOR:{
+		case COLUMN_THREAD_DISTRIBUTION:	// passthrough // handled by delegate.
+		case COLUMN_THREAD_MSGID:
+        								return QVariant();
+		case COLUMN_THREAD_AUTHOR:
+    	{
 			QString name;
 			RsGxsId id = RsGxsId(fmpe.mAuthorId.toStdString());
 
@@ -680,7 +683,6 @@ QVariant RsGxsForumModel::displayRole(const ForumModelPostEntry& fmpe,int col) c
 				return name;
 			return QVariant(tr("[Unknown]"));
 		}
-		case COLUMN_THREAD_MSGID: return QVariant();
 #ifdef TODO
 	if (filterColumn == COLUMN_THREAD_CONTENT) {
 		// need content for filter
