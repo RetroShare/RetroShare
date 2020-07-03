@@ -48,6 +48,7 @@ protected:
 
 	virtual TurtleRequestId distantSearch(const QString& search_string) override;
     virtual void checkRequestGroup(const RsGxsGroupId& grpId) override ;
+	virtual void clearDistantSearchResults(TurtleRequestId id) override;
 
     // Implementation of some abstract methods in GxsGroupFrameDialog
 

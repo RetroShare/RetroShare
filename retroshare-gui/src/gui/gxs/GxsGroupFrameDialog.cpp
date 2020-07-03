@@ -359,13 +359,21 @@ void GxsGroupFrameDialog::removeCurrentSearch()
     mSearchGroupsItems.erase(it);
 
     mKnownGroups.erase(search_request_id);
+
+    clearDistantSearchResults(search_request_id);
 }
 
 void GxsGroupFrameDialog::removeAllSearches()
 {
     for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
-		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    {
+		TurtleRequestId search_request_id = 0 ;
 
+		if(ui->groupTreeWidget->isSearchRequestItem(point,search_request_id))
+			clearDistantSearchResults(search_request_id);
+
+		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    }
     mSearchGroupsItems.clear();
     mKnownGroups.clear();
 }
