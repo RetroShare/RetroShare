@@ -29,6 +29,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
@@ -367,9 +368,10 @@ void GxsGroupFrameDialog::removeAllSearches()
 {
     for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
     {
-		TurtleRequestId search_request_id = 0 ;
+        QString group_id;
+        TurtleRequestId search_request_id;
 
-		if(ui->groupTreeWidget->isSearchRequestItem(point,search_request_id))
+        if(ui->groupTreeWidget->isSearchRequestResultItem(it->second,group_id,search_request_id))
 			clearDistantSearchResults(search_request_id);
 
 		ui->groupTreeWidget->removeSearchItem(it->second) ;
