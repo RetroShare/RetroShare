@@ -275,14 +275,6 @@ QModelIndex RsPostedPostsModel::parent(const QModelIndex& index) const
 	return QModelIndex();	// there's no hierarchy here. So nothing to do!
 }
 
-Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
-{
-    if (!index.isValid())
-        return 0;
-
-    return QAbstractItemModel::flags(index);
-}
-
 quintptr RsPostedPostsModel::getChildRef(quintptr ref,int index) const
 {
 	if (index < 0)
@@ -431,6 +423,14 @@ void RsPostedPostsModel::clear()
 bool operator<(const RsPostedPost& p1,const RsPostedPost& p2)
 {
     return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
+}
+
+Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
+{
+	if (!index.isValid())
+		return 0;
+
+	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
 void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPostedPost>& posts)
