@@ -47,6 +47,9 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,QWidget 
     : QWidget(parent),ui(new Ui::BoardPostDisplayWidget()),mPost(post)
 {
     ui->setupUi(this);
+
+    setup();
+    fill();
 }
 
 void BoardPostDisplayWidget::setCommentsSize(int comNb)
@@ -99,9 +102,9 @@ void BoardPostDisplayWidget::setReadStatus(bool isNew, bool isUnread)
 
 	ui->newLabel->setVisible(isNew);
 
-	ui->mainFrame->setProperty("new", isNew);
-	ui->mainFrame->style()->unpolish(ui->mainFrame);
-	ui->mainFrame->style()->polish(  ui->mainFrame);
+//	ui->mainFrame->setProperty("new", isNew);
+//	ui->mainFrame->style()->unpolish(ui->mainFrame);
+//	ui->mainFrame->style()->polish(  ui->mainFrame);
 }
 
 void BoardPostDisplayWidget::setComment(const RsGxsComment& cmt) {}
@@ -150,8 +153,6 @@ void BoardPostDisplayWidget::setup()
 	ui->readAndClearButton->hide();
 }
 
-
-
 void BoardPostDisplayWidget::fill()
 {
 	RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
@@ -161,7 +162,7 @@ void BoardPostDisplayWidget::fill()
 		ui->commentButton->setDisabled(true);
 		ui->voteUpButton->setDisabled(true);
 		ui->voteDownButton->setDisabled(true);
-		ui->picture_frame->hide();
+//		ui->picture_frame->hide();
 		ui->fromLabel->setId(mPost.mMeta.mAuthorId);
 		ui->titleLabel->setText(tr( "<p><font color=\"#ff0000\"><b>The author of this message (with ID %1) is banned.</b>").arg(QString::fromStdString(mPost.mMeta.mAuthorId.toStdString()))) ;
 		QDateTime qtime;
@@ -243,13 +244,9 @@ void BoardPostDisplayWidget::fill()
 			}
 		}
 		else if (mPost.mImage.mData == NULL)
-		{
-			ui->picture_frame->hide();
-		}
+			ui->pictureLabel->hide();
 		else
-		{
-			ui->picture_frame->show();
-		}
+			ui->pictureLabel->show();
 	}
 
 	//QString score = "Hot" + QString::number(post.mHotScore);
@@ -263,10 +260,8 @@ void BoardPostDisplayWidget::fill()
 	// FIX THIS UP LATER.
 	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	QTextDocument doc;
-	doc.setHtml(ui->notes->text());
 	
-	if(doc.toPlainText().trimmed().isEmpty())
+	if( ui->notes->document()==nullptr || ui->notes->document()->toPlainText().trimmed().isEmpty())
 		ui->notes->hide();
 
 #ifdef TO_REMOVE

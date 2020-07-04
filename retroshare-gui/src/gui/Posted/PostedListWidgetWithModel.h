@@ -43,7 +43,7 @@ class PostedPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-		PostedPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent){}
+		PostedPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100){}
         virtual ~PostedPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -52,6 +52,11 @@ class PostedPostDelegate: public QAbstractItemDelegate
     	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
         int cellSize(const QFont& font) const;
+
+        void setCellWidth(int pix) { mCellWidthPix = pix; }
+
+	private:
+        int mCellWidthPix;
 };
 
 class PostedListWidgetWithModel: public GxsMessageFrameWidget
@@ -117,6 +122,9 @@ private slots:
 	void postChannelPostLoad();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
+
+public slots:
+	void handlePostsTreeSizeChange(QSize size);
 
 private:
 	void processSettings(bool load);
