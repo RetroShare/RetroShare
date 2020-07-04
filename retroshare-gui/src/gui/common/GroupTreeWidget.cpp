@@ -397,6 +397,19 @@ bool GroupTreeWidget::isSearchRequestResult(QPoint &point,QString& group_id,uint
 	return search_req_id > 0;
 }
 
+bool GroupTreeWidget::isSearchRequestResultItem(QTreeWidgetItem *item,QString& group_id,uint32_t& search_req_id)
+{
+	QTreeWidgetItem *parent = item->parent();
+
+	if(parent == NULL)
+		return false ;
+
+	search_req_id = parent->data(COLUMN_DATA, ROLE_REQUEST_ID).toUInt();
+	group_id = itemId(item) ;
+
+	return search_req_id > 0;
+}
+
 bool GroupTreeWidget::isSearchRequestItem(QPoint &point,uint32_t& search_req_id)
 {
     QTreeWidgetItem *item = ui->treeWidget->itemAt(point);

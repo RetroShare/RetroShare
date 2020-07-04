@@ -396,6 +396,11 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }
 
+void GxsChannelDialog::clearDistantSearchResults(TurtleRequestId id)
+{
+    rsGxsChannels->clearDistantSearchResults(id);
+}
+
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
 {
     return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;

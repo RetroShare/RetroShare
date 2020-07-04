@@ -162,6 +162,7 @@ private:
 	virtual RsGxsCommentService *getCommentService() { return NULL; }
 	virtual QWidget *createCommentHeaderWidget(const RsGxsGroupId &/*grpId*/, const RsGxsMessageId &/*msgId*/) { return NULL; }
     virtual bool getDistantSearchResults(TurtleRequestId /* id */, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& /* group_infos */){ return false ;}
+    virtual void clearDistantSearchResults(TurtleRequestId /* id */) {}
     virtual RsGxsGenericGroupData *getDistantSearchResultGroupData(const RsGxsGroupId& group_id){ return nullptr ;}
 
 	void initUi();
