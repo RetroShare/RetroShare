@@ -260,8 +260,10 @@ void BoardPostDisplayWidget::fill()
 	// FIX THIS UP LATER.
 	ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
-	
-	if( ui->notes->document()==nullptr || ui->notes->document()->toPlainText().trimmed().isEmpty())
+	QTextDocument doc;
+	doc.setHtml(ui->notes->text());
+
+	if(doc.toPlainText().trimmed().isEmpty())
 		ui->notes->hide();
 
 #ifdef TO_REMOVE
