@@ -1126,6 +1126,7 @@ void GxsForumThreadWidget::insertMessage()
 
 	/* blank text, incase we get nothing */
 	blankPost();
+	ui->nextUnreadButton->setEnabled(true);
 
     // We use this instead of getCurrentIndex() because right here the currentIndex() is not set yet.
 
@@ -1241,7 +1242,8 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 	        rsReputations->overallReputationLevel(msg.mMeta.mAuthorId);
 	bool redacted =
 	        (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
-    
+
+	// TODO enabled even when there are no new message
 	ui->nextUnreadButton->setEnabled(true);
 	ui->lineLeft->show();
 	ui->time_label->setText(DateTime::formatLongDateTime(msg.mMeta.mPublishTs));
