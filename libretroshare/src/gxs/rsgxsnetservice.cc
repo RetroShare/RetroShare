@@ -272,9 +272,10 @@
     NXS_NET_DEBUG_6		group sync statistics (e.g. number of posts at nighbour nodes, etc)
  	NXS_NET_DEBUG_7		encryption/decryption of transactions
  	NXS_NET_DEBUG_8		gxs distant sync
+ 	NXS_NET_DEBUG_9		gxs distant search
 
  ***/
-//#define NXS_NET_DEBUG_0 	1
+#define NXS_NET_DEBUG_0 	1
 //#define NXS_NET_DEBUG_1 	1
 //#define NXS_NET_DEBUG_2 	1
 //#define NXS_NET_DEBUG_3 	1
@@ -283,6 +284,7 @@
 //#define NXS_NET_DEBUG_6 	1
 //#define NXS_NET_DEBUG_7 	1
 //#define NXS_NET_DEBUG_8 	1
+//#define NXS_NET_DEBUG_9 	1
 
 //#define NXS_FRAG
 
@@ -306,6 +308,7 @@ static const uint32_t GROUP_STATS_UPDATE_DELAY                =          240; //
 static const uint32_t GROUP_STATS_UPDATE_NB_PEERS             =            2; // number of peers to which the group stats are asked
 static const uint32_t MAX_ALLOWED_GXS_MESSAGE_SIZE            =       199000; // 200,000 bytes including signature and headers
 static const uint32_t MIN_DELAY_BETWEEN_GROUP_SEARCH          =           40; // dont search same group more than every 40 secs.
+static const uint32_t SAFETY_DELAY_FOR_UNSUCCESSFUL_UPDATE    =         1800; // avoid re-sending the same msg list to a peer who asks twice for the same update in less than this time
 
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_UNKNOWN             = 0x00 ;
 static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_NO_ERROR            = 0x01 ;
@@ -318,7 +321,7 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
 
 #if defined(NXS_NET_DEBUG_0) || defined(NXS_NET_DEBUG_1) || defined(NXS_NET_DEBUG_2)  || defined(NXS_NET_DEBUG_3) \
  || defined(NXS_NET_DEBUG_4) || defined(NXS_NET_DEBUG_5) || defined(NXS_NET_DEBUG_6)  || defined(NXS_NET_DEBUG_7) \
- || defined(NXS_NET_DEBUG_8)
+ || defined(NXS_NET_DEBUG_8) || defined(NXS_NET_DEBUG_9)
 
 static const RsPeerId     peer_to_print     = RsPeerId();//std::string("a97fef0e2dc82ddb19200fb30f9ac575"))   ;
 static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
@@ -3993,7 +3996,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(const RsNxsSyncGrpReqItem *item)
 	GXSNETDEBUG_P_(item->PeerId()) << "  local modification time stamp: " << std::dec<< time(NULL) - mGrpServerUpdate.grpUpdateTS << " secs ago. Update sent: " <<
 	                                  ((item->updateTS < mGrpServerUpdate.grpUpdateTS)?"YES":"NO")  << std::endl;
 #endif
-	return item->updateTS < mGrpServerUpdate.grpUpdateTS;
+	return item->updateTS < mGrpServerUpdate.grpUpdateTS && locked_checkResendingOfUpdates(item->PeerId(),RsGxsGroupId(),item->updateTS,mGrpServerUpdate.grpUpdateTsRecords[item->PeerId()]) ;
 }
 
 void RsGxsNetService::handleRecvSyncGroup(RsNxsSyncGrpReqItem *item)
@@ -4238,10 +4241,33 @@ bool RsGxsNetService::checkCanRecvMsgFromPeer(const RsPeerId& sslId, const RsGxs
     return true;
 }
 
+bool RsGxsNetService::locked_checkResendingOfUpdates(const RsPeerId& pid,const RsGxsGroupId& grpId,rstime_t incoming_ts,RsPeerUpdateTsRecord& rec)
+{
+	rstime_t now = time(NULL);
+
+	// Now we check if the peer is sending the same outdated TS for the same time in a short while. This would mean the peer
+	// hasn't finished processing the updates we're sending and we shouldn't send new data anymore. Of course the peer might
+	// have disconnected or so, which means that we need to be careful about not sending. As a compromise we still send, but
+	// after waiting for a while (See
+
+	if(rec.mLastTsReceived == incoming_ts && rec.mTs + SAFETY_DELAY_FOR_UNSUCCESSFUL_UPDATE > now)
+    {
+#ifdef NXS_NET_DEBUG_0
+		GXSNETDEBUG_PG(pid,grpId) << "(II) peer " << pid << " already sent the same TS " << (long int)now-(long int)rec.mTs << " secs ago for that group ID. Will not send msg list again for a while to prevent clogging..." << std::endl;
+#endif
+		return false;
+    }
+
+	rec.mLastTsReceived = incoming_ts;
+	rec.mTs = now;
+
+	return true;
+}
+
 bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& grp_is_known)
 {
     // Do we have new updates for this peer?
-    // Here we compare times in the same clock: the friend's clock, so it should be fine.
+    // Here we compare times in the same clock: our own clock, so it should be fine.
 
     grp_is_known = false ;
 
@@ -4250,7 +4276,7 @@ bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& gr
 	    // Item contains the hashed group ID in order to protect is from friends who don't know it. So we de-hash it using bruteforce over known group IDs for this peer.
 	    // We could save the de-hash result. But the cost is quite light, since the number of encrypted groups per service is usually low.
 
-	    for(ServerMsgMap::const_iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
+	    for(ServerMsgMap::iterator it(mServerMsgUpdateMap.begin());it!=mServerMsgUpdateMap.end();++it)
 		    if(item->grpId == hashGrpId(it->first,item->PeerId()))
 		    {
 			    item->grpId = it->first ;
@@ -4260,20 +4286,25 @@ bool RsGxsNetService::locked_CanReceiveUpdate(RsNxsSyncMsgReqItem *item,bool& gr
 #endif
 			    grp_is_known = true ;
 
-			    return item->updateTS < it->second.msgUpdateTS ;
+                // The order of tests below is important because we want to only modify the map of requests records if the request actually is a valid requests instead of
+                // a simple check that nothing's changed.
+
+			    return item->updateTS < it->second.msgUpdateTS && locked_checkResendingOfUpdates(item->PeerId(),item->grpId,item->updateTS,it->second.msgUpdateTsRecords[item->PeerId()]) ;
 		    }
 
 	    return false ;
     }
 
-    ServerMsgMap::const_iterator cit = mServerMsgUpdateMap.find(item->grpId);
+    ServerMsgMap::iterator cit = mServerMsgUpdateMap.find(item->grpId);
+
     if(cit != mServerMsgUpdateMap.end())
     {
 #ifdef NXS_NET_DEBUG_0
 	    GXSNETDEBUG_PG(item->PeerId(),item->grpId) << "  local time stamp: " << std::dec<< time(NULL) - cit->second.msgUpdateTS << " secs ago. Update sent: " << (item->updateTS < cit->second.msgUpdateTS) << std::endl;
 #endif
 	    grp_is_known = true ;
-	    return item->updateTS < cit->second.msgUpdateTS ;
+
+		return item->updateTS < cit->second.msgUpdateTS && locked_checkResendingOfUpdates(item->PeerId(),item->grpId,item->updateTS,cit->second.msgUpdateTsRecords[item->PeerId()]) ;
     }
 
 #ifdef NXS_NET_DEBUG_0
@@ -4294,6 +4325,9 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
     bool grp_is_known = false;
     bool was_circle_protected = item_was_encrypted || bool(item->flag & RsNxsSyncMsgReqItem::FLAG_USE_HASHED_GROUP_ID);
 
+    // This call determines if the peer can receive updates from us, meaning that our last TS is larger than what the peer sent.
+    // It also changes the items' group id into the un-hashed group ID if the group is a distant group.
+
     bool peer_can_receive_update = locked_CanReceiveUpdate(item, grp_is_known);
 
     if(item_was_encrypted)
@@ -4309,7 +4343,7 @@ void RsGxsNetService::handleRecvSyncMessage(RsNxsSyncMsgReqItem *item,bool item_
 
     // We update suppliers in two cases:
     // Case 1: the grp is known because it is the hash of an existing group, but it's not yet in the server config map
-    // Case 2: the gtp is not known, possibly because it was deleted, but there's an entry in mServerGrpConfigMap due to statistics gathering. Still, statistics are only
+    // Case 2: the grp is not known, possibly because it was deleted, but there's an entry in mServerGrpConfigMap due to statistics gathering. Still, statistics are only
     // 		 gathered from known suppliers. So statistics never add new suppliers. These are only added here.
 
     if(grp_is_known || mServerGrpConfigMap.find(item->grpId)!=mServerGrpConfigMap.end())
@@ -5155,7 +5189,7 @@ static bool termSearch(const std::string& src, const std::string& substring)
 }
 #endif // ndef RS_DEEP_CHANNEL_INDEX
 
-bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
     RS_STACK_MUTEX(mNxsMutex) ;
 
@@ -5167,7 +5201,7 @@ bool RsGxsNetService::retrieveDistantSearchResults(TurtleRequestId req,std::map<
     group_infos = it->second;
     return true ;
 }
-bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSummary& gs)
+bool RsGxsNetService::retrieveDistantGroupSummary(const RsGxsGroupId& group_id,RsGxsGroupSearchResults& gs)
 {
 	RS_STACK_MUTEX(mNxsMutex) ;
     for(auto it(mDistantSearchResults.begin());it!=mDistantSearchResults.end();++it)
@@ -5189,8 +5223,7 @@ bool RsGxsNetService::clearDistantSearchResults(const TurtleRequestId& id)
     return true ;
 }
 
-void RsGxsNetService::receiveTurtleSearchResults(
-        TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
+void RsGxsNetService::receiveTurtleSearchResults( TurtleRequestId req, const std::list<RsGxsGroupSummary>& group_infos )
 {
 	std::set<RsGxsGroupId> groupsToNotifyResults;
 
@@ -5198,20 +5231,43 @@ void RsGxsNetService::receiveTurtleSearchResults(
 		RS_STACK_MUTEX(mNxsMutex);
 
 		RsGxsGrpMetaTemporaryMap grpMeta;
-		std::map<RsGxsGroupId,RsGxsGroupSummary>&
-		        search_results_map(mDistantSearchResults[req]);
+		std::map<RsGxsGroupId,RsGxsGroupSearchResults>& search_results_map(mDistantSearchResults[req]);
+
+#ifdef NXS_NET_DEBUG_9
+        std::cerr << "Received group summary through turtle search for the following groups:" << std::endl;
+#endif
 
 		for(const RsGxsGroupSummary& gps : group_infos)
-			if(search_results_map.find(gps.mGroupId) == search_results_map.end())
-				grpMeta[gps.mGroupId] = nullptr;
+        {
+            std::cerr <<"  " << gps.mGroupId << "  \"" << gps.mGroupName << "\"" << std::endl;
+			grpMeta[gps.mGroupId] = nullptr;
+        }
+
 		mDataStore->retrieveGxsGrpMetaData(grpMeta);
+
+#ifdef NXS_NET_DEBUG_9
+        std::cerr << "Retrieved data store group data for the following groups:" <<std::endl;
+        for(auto& it:grpMeta)
+            std::cerr << "  " << it.first << " : " << it.second->mGroupName << std::endl;
+#endif
 
 		for (const RsGxsGroupSummary& gps : group_infos)
 		{
 #ifndef RS_DEEP_CHANNEL_INDEX
 			/* Only keep groups that are not locally known, and groups that are
-			 * not already in the mDistantSearchResults structure. */
-			if(grpMeta[gps.mGroupId]) continue;
+			 * not already in the mDistantSearchResults structure.
+			 * mDataStore may in some situations allocate an empty group meta data, so it's important
+			 * to test that the group meta is both non null and actually corresponds to the group id we seek. */
+
+            auto& meta(grpMeta[gps.mGroupId]);
+
+			if(meta != nullptr && meta->mGroupId == gps.mGroupId)
+                continue;
+
+#ifdef NXS_NET_DEBUG_9
+            std::cerr << "  group " << gps.mGroupId << " is not known. Adding it to search results..." << std::endl;
+#endif
+
 #else // ndef RS_DEEP_CHANNEL_INDEX
 			/* When deep search is enabled search results may bring more info
 			 * then we already have also about post that are indexed by xapian,
@@ -5220,22 +5276,32 @@ void RsGxsNetService::receiveTurtleSearchResults(
 			const RsGxsGroupId& grpId(gps.mGroupId);
 
 			groupsToNotifyResults.insert(grpId);
-			auto it2 = search_results_map.find(grpId);
-			if(it2 != search_results_map.end())
-			{
-				// update existing data
-				RsGxsGroupSummary& eGpS(it2->second);
-				eGpS.mPopularity++;
-				eGpS.mNumberOfMessages = std::max(
-				            eGpS.mNumberOfMessages,
-				            gps.mNumberOfMessages );
-			}
-			else
-			{
-				search_results_map[grpId] = gps;
-				// number of results so far
-				search_results_map[grpId].mPopularity = 1;
-			}
+
+            // Find search results place for this particular group
+
+#ifdef NXS_NET_DEBUG_9
+            std::cerr << "  Adding gps=" << gps.mGroupId << " name=\"" << gps.mGroupName << "\" gps.mSearchContext=\"" << gps.mSearchContext << "\"" << std::endl;
+#endif
+			RsGxsGroupSearchResults& eGpS(search_results_map[grpId]);
+
+            if(eGpS.mGroupId != grpId)	// not initialized yet. So we do it now.
+            {
+                eGpS.mGroupId   = gps.mGroupId;
+				eGpS.mGroupName = gps.mGroupName;
+				eGpS.mAuthorId  = gps.mAuthorId;
+				eGpS.mPublishTs = gps.mPublishTs;
+				eGpS.mSignFlags = gps.mSignFlags;
+            }
+            // We should check that the above values are always the same for all info that is received. In the end, we'll
+            // request the group meta and check the signature, but it may be misleading to receive a forged information
+            // that is not the real one.
+
+            ++eGpS.mPopularity;	// increase popularity. This is not a real counting, but therefore some heuristic estimate.
+            eGpS.mNumberOfMessages = std::max( eGpS.mNumberOfMessages, gps.mNumberOfMessages );
+			eGpS.mLastMessageTs    = std::max( eGpS.mLastMessageTs, gps.mLastMessageTs );
+
+            if(gps.mSearchContext != gps.mGroupName)			// this is a bit of a hack. We should have flags to tell where the search hit happens
+				eGpS.mSearchContexts.insert(gps.mSearchContext);
 		}
 	} // end RS_STACK_MUTEX(mNxsMutex);
 

@@ -128,7 +128,7 @@ public:
      * \return
      * 			false when the request is unknown.
      */
-	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSummary> &group_infos)=0;
+	virtual bool retrieveDistantSearchResults(TurtleRequestId req, std::map<RsGxsGroupId, RsGxsGroupSearchResults> &group_infos)=0;
     /*!
      * \brief getDistantSearchResults
      * \param id
@@ -136,7 +136,7 @@ public:
      * \return
      */
     virtual bool clearDistantSearchResults(const TurtleRequestId& id)=0;
-    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSummary&)=0;
+    virtual bool retrieveDistantGroupSummary(const RsGxsGroupId&,RsGxsGroupSearchResults&)=0;
 
     virtual bool search(const std::string& substring,std::list<RsGxsGroupSummary>& group_infos) =0;
 	virtual bool search(const Sha1CheckSum& hashed_group_id,unsigned char *& encrypted_group_data,uint32_t& encrypted_group_data_len)=0;

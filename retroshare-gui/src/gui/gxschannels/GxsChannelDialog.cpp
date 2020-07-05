@@ -61,20 +61,13 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
 {
 	const RsGxsChannelEvent *e = dynamic_cast<const RsGxsChannelEvent*>(event.get());
 
-	if(!e)
-		return;
-
+	if(e)
         switch(e->mChannelEventCode)
         {
 		case RsChannelEventCode::NEW_MESSAGE:             // [[fallthrough]];
 		case RsChannelEventCode::UPDATED_MESSAGE:         // [[fallthrough]];
 		case RsChannelEventCode::READ_STATUS_CHANGED:     // [[fallthrough]];
 			updateGroupStatisticsReal(e->mChannelGroupId); // update the list immediately
-            break;
-
-        case RsChannelEventCode::RECEIVED_DISTANT_SEARCH_RESULT:
-            mSearchResults.insert(e->mDistantSearchRequestId);
-            updateSearchResults();
             break;
 
 		case RsChannelEventCode::NEW_CHANNEL:       // [[fallthrough]];
@@ -89,6 +82,13 @@ void GxsChannelDialog::handleEvent_main_thread(std::shared_ptr<const RsEvent> ev
         default:
             break;
         }
+
+
+    const RsGxsChannelSearchResultEvent*f = dynamic_cast<const RsGxsChannelSearchResultEvent*>(event.get());
+
+	if(nullptr != f)
+        for(auto it:f->mSearchResultsMap)
+			updateSearchResults(it.first);
 }
 
 GxsChannelDialog::~GxsChannelDialog()
@@ -396,21 +396,36 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }
 
+void GxsChannelDialog::clearDistantSearchResults(TurtleRequestId id)
+{
+    rsGxsChannels->clearDistantSearchResults(id);
+}
+
 TurtleRequestId GxsChannelDialog::distantSearch(const QString& search_string)
 {
     return rsGxsChannels->turtleSearchRequest(search_string.toStdString()) ;
 }
 
-bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSummary>& group_infos)
+bool GxsChannelDialog::getDistantSearchResults(TurtleRequestId id, std::map<RsGxsGroupId,RsGxsGroupSearchResults>& group_infos)
 {
     return rsGxsChannels->retrieveDistantSearchResults(id,group_infos);
+}
+
+RsGxsGenericGroupData *GxsChannelDialog::getDistantSearchResultGroupData(const RsGxsGroupId& group_id)
+{
+    RsGxsChannelGroup channel_group;
+
+    if(rsGxsChannels->getDistantSearchResultGroupData(group_id,channel_group))
+        return new RsGxsGenericGroupData(channel_group);
+	else
+        return nullptr;
 }
 
 void GxsChannelDialog::checkRequestGroup(const RsGxsGroupId& grpId)
 {
     RsGxsChannelGroup distant_group;
 
-	if( rsGxsChannels->retrieveDistantGroup(grpId,distant_group)) // normally we should also check that the group meta is not already here.
+	if( rsGxsChannels->getDistantSearchResultGroupData(grpId,distant_group)) // normally we should also check that the group meta is not already here.
     {
         std::cerr << "GxsChannelDialog::checkRequestGroup() sending turtle request for group data for group " << grpId << std::endl;
         rsGxsChannels->turtleGroupRequest(grpId);

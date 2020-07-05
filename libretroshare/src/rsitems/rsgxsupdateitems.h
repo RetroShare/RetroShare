@@ -106,12 +106,22 @@ public:
     RsPeerId peerID;
 };
 
+struct RsPeerUpdateTsRecord
+{
+    RsPeerUpdateTsRecord() : mLastTsReceived(0), mTs(0) {}
+
+    rstime_t mLastTsReceived; // last TS that was sent for this group by this peer ID.
+    rstime_t mTs;             // time at which this TS was sent.
+};
+
 class RsGxsServerGrpUpdate
 {
 public:
     RsGxsServerGrpUpdate() { grpUpdateTS = 0 ; }
 
 	uint32_t grpUpdateTS;
+
+    std::map<RsPeerId,RsPeerUpdateTsRecord> grpUpdateTsRecords;
 };
 
 class RsGxsServerGrpUpdateItem : public RsGxsNetServiceItem, public RsGxsServerGrpUpdate
@@ -168,7 +178,13 @@ class RsGxsServerMsgUpdate
 public:
     RsGxsServerMsgUpdate() { msgUpdateTS = 0 ;}
 
-	uint32_t msgUpdateTS; // local time stamp this group last received a new msg
+	uint32_t msgUpdateTS; // local time stamp at which this group last received a new msg
+
+    // Now we also store for each peer the last own TS the peer sent and when it did so. This allows to detect when transactions are stuck because of
+    // outqueues clogging. If that happens, we receive multiple times the same TS from the friend, in which case we do not send the list of msgs
+    // again until a significant amount of time has passed. These values are obviously initialized to 0.
+
+    std::map<RsPeerId, RsPeerUpdateTsRecord> msgUpdateTsRecords;
 };
 
 class RsGxsServerMsgUpdateItem : public RsGxsNetServiceItem, public RsGxsServerMsgUpdate

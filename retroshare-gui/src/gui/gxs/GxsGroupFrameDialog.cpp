@@ -29,6 +29,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
@@ -290,55 +291,50 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
     if(complete)    // || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
 		updateGroupSummary(); /* Update group list */
 
-    updateSearchResults() ;
+//    updateSearchResults() ;
 }
 
 void GxsGroupFrameDialog::updateSearchResults()
 {
-    const std::set<TurtleRequestId>& reqs = getSearchRequests();
+    for(auto& it:mSearchGroupsItems)
+        updateSearchResults(it.first);
+}
 
-    for(auto it(reqs.begin());it!=reqs.end();++it)
-    {
-		std::cerr << "updating search ID " << std::hex << *it << std::dec << std::endl;
+void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
+{
+	std::cerr << "updating search ID " << std::hex << sid << std::dec << std::endl;
 
-        std::map<RsGxsGroupId,RsGxsGroupSummary> group_infos;
+	std::map<RsGxsGroupId,RsGxsGroupSearchResults> group_infos;
 
-        getDistantSearchResults(*it,group_infos) ;
+	getDistantSearchResults(sid,group_infos) ;
 
-        std::cerr << "retrieved " << std::endl;
+	std::cerr << "retrieved " << std::endl;
 
-        auto it2 = mSearchGroupsItems.find(*it);
+	auto it2 = mSearchGroupsItems.find(sid);
 
-        if(mSearchGroupsItems.end() == it2)
-        {
-            std::cerr << "GxsGroupFrameDialog::updateSearchResults(): received result notification for req " << std::hex << *it << std::dec << " but no item present!" << std::endl;
-            continue ;	// we could create the item just as well but since this situation is not supposed to happen, I prefer to make this a failure case.
-        }
+	QList<GroupItemInfo> group_items ;
 
-        QList<GroupItemInfo> group_items ;
+	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
+	{
+		std::cerr << "  adding group " << it3->first << " " << it3->second.mGroupId << " \"" << it3->second.mGroupName << "\"" << std::endl;
+        for(auto s:it3->second.mSearchContexts)
+			std::cerr << "    Context string \"" << s << "\"" << std::endl;
 
-		for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
-			if(mCachedGroupMetas.find(it3->first) == mCachedGroupMetas.end())
-			{
-				std::cerr << "  adding new group " << it3->first << " "
-				          << it3->second.mGroupId << " \""
-				          << it3->second.mGroupName << "\"" << std::endl;
+		GroupItemInfo i;
+		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
+		i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
+		i.popularity     = 0; // could be set to the number of hits
+		i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
+		i.subscribeFlags = 0; // irrelevant here
+		i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
+		i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
+		i.max_visible_posts = it3->second.mNumberOfMessages;
+		i.context_strings = it3->second.mSearchContexts;
 
-				GroupItemInfo i;
-				i.id             = QString(it3->second.mGroupId.toStdString().c_str());
-				i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
-				i.popularity     = 0; // could be set to the number of hits
-				i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
-				i.subscribeFlags = 0; // irrelevant here
-				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
-				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
-				i.max_visible_posts = it3->second.mNumberOfMessages;
+		group_items.push_back(i);
+	}
 
-				group_items.push_back(i);
-			}
-
-		ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
-    }
+	ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
 }
 
 void GxsGroupFrameDialog::todo()
@@ -364,13 +360,22 @@ void GxsGroupFrameDialog::removeCurrentSearch()
     mSearchGroupsItems.erase(it);
 
     mKnownGroups.erase(search_request_id);
+
+    clearDistantSearchResults(search_request_id);
 }
 
 void GxsGroupFrameDialog::removeAllSearches()
 {
     for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
-		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    {
+        QString group_id;
+        TurtleRequestId search_request_id;
 
+        if(ui->groupTreeWidget->isSearchRequestResultItem(it->second,group_id,search_request_id))
+			clearDistantSearchResults(search_request_id);
+
+		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    }
     mSearchGroupsItems.clear();
     mKnownGroups.clear();
 }
@@ -1074,15 +1079,20 @@ void GxsGroupFrameDialog::updateGroupSummary()
 {
 	RsThread::async([this]()
 	{
-		std::list<RsGxsGenericGroupData*> groupInfo;
+		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
 
-		if(!getGroupData(groupInfo))
+		if(!getGroupData(*groupInfo))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info." << std::endl;
+            delete groupInfo;
 			return;
 		}
-        if(groupInfo.empty())
+        if(groupInfo->empty())
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " no group info collected." << std::endl;
+            delete groupInfo;
             return;
+        }
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
@@ -1092,7 +1102,7 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertGroupsData(groupInfo);
+			insertGroupsData(*groupInfo);
 			updateSearchResults();
 
 			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
@@ -1111,11 +1121,13 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
 			// now delete the data that is not used anymore
 
-			for(auto& g:groupInfo)
+			for(auto& g:*groupInfo)
 			{
 				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
 				delete g;
 			}
+
+            delete groupInfo;
 
 		}, this );
 	});

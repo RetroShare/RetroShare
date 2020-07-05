@@ -59,6 +59,7 @@ static const int mTokenTypeGroupData = 1;
 
 static const int CHANNEL_TABS_DETAILS= 0;
 static const int CHANNEL_TABS_POSTS  = 1;
+static const int CHANNEL_TABS_FILES  = 2;
 
 /* View mode */
 #define VIEW_MODE_FEEDS  1
@@ -538,23 +539,20 @@ void GxsChannelPostsWidgetWithModel::updateGroupData()
 
 	RsThread::async([this]()
 	{
+		RsGxsChannelGroup group;
 		std::vector<RsGxsChannelGroup> groups;
 
-		if(!rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>{ groupId() }, groups))
+		if(rsGxsChannels->getChannelsInfo(std::list<RsGxsGroupId>{ groupId() }, groups) && groups.size()==1)
+            group = groups[0];
+        else if(!rsGxsChannels->getDistantSearchResultGroupData(groupId(),group))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to get autodownload value for channel: " << groupId() << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to get group data for channel: " << groupId() << std::endl;
 			return;
 		}
 
-		if(groups.size() != 1)
-		{
-			RsErr() << __PRETTY_FUNCTION__ << " cannot retrieve channel data for group ID " << groupId() << ": ERROR." << std::endl;
-			return;
-		}
-
-		RsQThreadUtils::postToObject( [this,groups]()
+		RsQThreadUtils::postToObject( [this,group]()
         {
-            mGroup = groups[0];
+            mGroup = group;
 			mChannelPostsModel->updateChannel(groupId());
 
             insertChannelDetails(mGroup);
@@ -779,12 +777,14 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 		//ui->feedToolButton->setEnabled(true);
 		//ui->fileToolButton->setEnabled(true);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,true);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,true);
         ui->details_TW->setEnabled(true);
 	}
     else
     {
         ui->details_TW->setEnabled(false);
         ui->channel_TW->setTabEnabled(CHANNEL_TABS_POSTS,false);
+        ui->channel_TW->setTabEnabled(CHANNEL_TABS_FILES,false);
     }
 
 
