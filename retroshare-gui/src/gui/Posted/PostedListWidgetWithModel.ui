@@ -509,6 +509,9 @@ p, li { white-space: pre-wrap; }
          <property name="verticalScrollMode">
           <enum>QAbstractItemView::ScrollPerPixel</enum>
          </property>
+         <property name="indentation">
+          <number>0</number>
+         </property>
          <property name="rootIsDecorated">
           <bool>false</bool>
          </property>

@@ -56,6 +56,8 @@ class PostedPostDelegate: public QAbstractItemDelegate
         void setCellWidth(int pix) { mCellWidthPix = pix; }
 
 	private:
+		QSize cellSize(const QSize& w) const;
+
         int mCellWidthPix;
 };
 
