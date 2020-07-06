@@ -139,6 +139,9 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorNotSubscribed: black;
 	qproperty-textColorMissing: darkRed;
 	qproperty-textColorPinned: darkOrange;
+
+	qproperty-backgroundColorPinned: rgb(255, 200, 180);
+	qproperty-backgroundColorFiltered: rgb(255, 240, 210);
 }
 
 GroupTreeWidget

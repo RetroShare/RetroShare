@@ -54,6 +54,9 @@ class GxsForumThreadWidget : public GxsMessageFrameWidget
 	Q_PROPERTY(QColor textColorMissing READ textColorMissing WRITE setTextColorMissing)
 	Q_PROPERTY(QColor textColorPinned READ textColorPinned WRITE setTextColorPinned)
 
+	Q_PROPERTY(QColor backgroundColorPinned READ backgroundColorPinned WRITE setBackgroundColorPinned)
+	Q_PROPERTY(QColor backgroundColorFiltered READ backgroundColorFiltered WRITE setBackgroundColorFiltered)
+
 public:
 	explicit GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget *parent = NULL);
 	~GxsForumThreadWidget();
@@ -65,12 +68,18 @@ public:
 	QColor textColorMissing() const { return mTextColorMissing; }
 	QColor textColorPinned() const { return mTextColorPinned; }
 
+	QColor backgroundColorPinned() const { return mBackgroundColorPinned; }
+	QColor backgroundColorFiltered() const { return mBackgroundColorFiltered; }
+
 	void setTextColorRead          (QColor color) ;
 	void setTextColorUnread        (QColor color) ;
 	void setTextColorUnreadChildren(QColor color) ;
 	void setTextColorNotSubscribed (QColor color) ;
 	void setTextColorMissing       (QColor color) ;
 	void setTextColorPinned        (QColor color) ;
+
+	void setBackgroundColorPinned   (QColor color);
+	void setBackgroundColorFiltered (QColor color);
 
 	/* GxsMessageFrameWidget */
 	virtual void groupIdChanged();
@@ -211,6 +220,9 @@ private:
 	QColor mTextColorNotSubscribed;
 	QColor mTextColorMissing;
 	QColor mTextColorPinned;
+
+	QColor mBackgroundColorPinned;
+	QColor mBackgroundColorFiltered;
 
 	RsGxsMessageId mNavigatePendingMsgId;
 	QList<RsGxsMessageId> mIgnoredMsgId;

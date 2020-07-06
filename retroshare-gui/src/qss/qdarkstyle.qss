@@ -94,6 +94,9 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: darkred;
 	qproperty-textColorPinned: darkOrange;
+
+	qproperty-backgroundColorPinned: black;
+	qproperty-backgroundColorFiltered: darkGreen;
 }
 
 QMenuBar

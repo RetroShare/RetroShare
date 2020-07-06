@@ -596,10 +596,10 @@ QVariant RsGxsForumModel::pinnedRole(const ForumModelPostEntry& fmpe,int /*colum
 QVariant RsGxsForumModel::backgroundRole(const ForumModelPostEntry& fmpe,int /*column*/) const
 {
     if(fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_IS_PINNED)
-        return QVariant(QBrush(QColor(255,200,180)));
+        return QVariant(QBrush(mBackgroundColorPinned));
 
     if(mFilteringEnabled && (fmpe.mPostFlags & ForumModelPostEntry::FLAG_POST_PASSES_FILTER))
-        return QVariant(QBrush(QColor(255,240,210)));
+        return QVariant(QBrush(mBackgroundColorFiltered));
 
     return QVariant();
 }

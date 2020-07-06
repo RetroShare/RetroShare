@@ -118,6 +118,9 @@ public:
 	void setTextColorMissing       (QColor color) { mTextColorMissing        = color;}
 	void setTextColorPinned        (QColor color) { mTextColorPinned         = color;}
 
+	void setBackgroundColorPinned   (QColor color) { mBackgroundColorPinned   = color;}
+	void setBackgroundColorFiltered (QColor color) { mBackgroundColorFiltered = color;}
+
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
     void setFilter(int column, const QStringList &strings, uint32_t &count) ;
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -204,6 +207,9 @@ private:
     QColor mTextColorNotSubscribed ;
     QColor mTextColorMissing       ;
     QColor mTextColorPinned        ;
+
+	QColor mBackgroundColorPinned;
+	QColor mBackgroundColorFiltered;
 
     friend class const_iterator;
 };
