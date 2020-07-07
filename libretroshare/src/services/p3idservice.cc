@@ -4819,11 +4819,10 @@ void RsGxsIdGroup::serial_process(
 	RS_SERIAL_PROCESS(mReputation);
 }
 
-RsIdentityUsage::RsIdentityUsage(
-        RsServiceType service, RsIdentityUsage::UsageCode code,
-        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
+RsIdentityUsage::RsIdentityUsage(RsServiceType service, RsIdentityUsage::UsageCode code,
+        const RsGxsGroupId& gid, const RsGxsMessageId& mid, const RsGxsMessageId &pid, const RsGxsMessageId &tid,
         uint64_t additional_id, const std::string& comment ) :
-    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),
+    mServiceId(service), mUsageCode(code), mGrpId(gid), mMsgId(mid),mParentId(pid),mThreadId(tid),
     mAdditionalId(additional_id), mComment(comment)
 {
 	/* This is a hack, since it will hash also mHash, but because it is

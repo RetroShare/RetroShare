@@ -259,6 +259,8 @@ struct RsIdentityUsage : RsSerializable
 	                 RsIdentityUsage::UsageCode code,
 	                 const RsGxsGroupId& gid = RsGxsGroupId(),
 	                 const RsGxsMessageId& mid = RsGxsMessageId(),
+                     const RsGxsMessageId& pid = RsGxsMessageId(),
+                     const RsGxsMessageId& tid = RsGxsMessageId(),
 	                 uint64_t additional_id=0,
 	                 const std::string& comment = std::string() );
 
@@ -274,6 +276,12 @@ struct RsIdentityUsage : RsSerializable
 
 	/// Message ID using the identity
 	RsGxsMessageId mMsgId;
+
+	/// Reference message ID. Useful for votes/comments
+	RsGxsMessageId mParentId;
+
+	/// Reference message ID. Useful for votes/comments
+	RsGxsMessageId mThreadId;
 
 	/// Some additional ID. Can be used for e.g. chat lobbies.
 	uint64_t mAdditionalId;

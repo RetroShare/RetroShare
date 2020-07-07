@@ -680,7 +680,7 @@ int RsGenExchange::createMsgSignatures(RsTlvKeySignatureSet& signSet, RsTlvBinar
 		    if(GxsSecurity::getSignature((char*)msgData.bin_data, msgData.bin_len, authorKey, sign))
 		    {
 			    id_ret = SIGN_SUCCESS;
-			    mGixs->timeStampKey(msgMeta.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION,msgMeta.mGroupId,msgMeta.mMsgId)) ;
+			    mGixs->timeStampKey(msgMeta.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION,msgMeta.mGroupId,msgMeta.mMsgId,msgMeta.mParentId,msgMeta.mThreadId)) ;
 			    signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
 		    }
 		    else
@@ -905,7 +905,11 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
 		    {
 			    RsTlvKeySignature sign = metaData.signSet.keySignSet[INDEX_AUTHEN_IDENTITY];
 			    idValidate &= GxsSecurity::validateNxsMsg(*msg, sign, authorKey);
-			    mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId)) ;
+			    mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,
+                                                                       metaData.mGroupId,
+                                                                       metaData.mMsgId,
+                                                                       metaData.mParentId,
+                                                                       metaData.mThreadId)) ;
 		    }
 		    else
 		    {
@@ -949,7 +953,7 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
-                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage(serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId));
+                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage((RsServiceType)serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId,metaData.mParentId,metaData.mThreadId));
                 
 #ifdef GEN_EXCH_DEBUG
                 std::cerr << ", Key missing. Retry later." << std::endl;
