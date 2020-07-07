@@ -1862,10 +1862,11 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	{
 	case RsServiceType::CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
 	case RsServiceType::FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
-	case RsServiceType::POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+	case RsServiceType::POSTED:    service_name = tr("Boards") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
 	case RsServiceType::CHAT:      service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
+	case RsServiceType::MAIL:      service_name = tr("Mail")   ;  service_type = RetroShareLink::TYPE_MESSAGE   ; break ;
     default:
-        service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
+        service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
 
     switch(u.mUsageCode)
@@ -1888,7 +1889,7 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
 	{
 		RetroShareLink l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message/vote/comment"));
-		return tr("%1 in %2 tab").arg(l.toHtml()).arg(service_name) ;
+		return tr("%1 in %2 service").arg(l.toHtml()).arg(service_name) ;
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
