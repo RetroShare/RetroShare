@@ -1801,10 +1801,26 @@ void GxsForumThreadWidget::filterItems(const QString& text)
     // We do this in order to trigger a new filtering action in the proxy model.
 	mThreadProxyModel->setFilterRegExp(QRegExp(QString(RsGxsForumModel::FilterString))) ;
 
-    if(!lst.empty())
+	if(!lst.empty())
 		ui->threadTreeWidget->expandAll();
-    else
+	else {
+		// currentIndex() not on the clicked message, so not this way
+		// if (!mThreadId.isNull()) {
+		// 	an_index = mThreadProxyModel->mapToSource(ui->threadTreeWidget->currentIndex());
+		// }
 		ui->threadTreeWidget->collapseAll();
+		if (!mThreadId.isNull()) {
+			// ...but this one
+			QModelIndex an_index = mThreadModel->getIndexOfMessage(mThreadId);
+			if (an_index.isValid()) {
+				QModelIndex the_index = mThreadProxyModel->mapFromSource(an_index);
+				ui->threadTreeWidget->setCurrentIndex(the_index);
+				ui->threadTreeWidget->scrollTo(the_index);
+				// don't change focus
+				// ui->threadTreeWidget->setFocus();
+			}
+		}
+    }
 
 	if(count > 0)
 		ui->filterLineEdit->setToolTip(tr("No result.")) ;
