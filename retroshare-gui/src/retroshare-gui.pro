@@ -437,7 +437,9 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
+            gui/statistics/GxsIdStatistics.h \
             gui/statistics/dhtgraph.h \
+            gui/statistics/Histogram.h \
             gui/statistics/BandwidthGraphWindow.h \
             gui/statistics/turtlegraph.h \
             gui/statistics/BandwidthStatsWidget.h \
@@ -755,6 +757,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GxsIdStatistics.ui \
             gui/statistics/GlobalRouterStatistics.ui \
             gui/statistics/GxsTransportStatistics.ui \
             gui/statistics/StatisticsWindow.ui \
@@ -995,8 +998,10 @@ SOURCES +=  main.cpp \
             gui/statistics/BandwidthGraphWindow.cpp \
             gui/statistics/BandwidthStatsWidget.cpp \
             gui/statistics/DhtWindow.cpp \
+            gui/statistics/Histogram.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/GxsIdStatistics.cpp \
             gui/statistics/GlobalRouterStatistics.cpp \
             gui/statistics/GxsTransportStatistics.cpp \
             gui/statistics/StatisticsWindow.cpp \

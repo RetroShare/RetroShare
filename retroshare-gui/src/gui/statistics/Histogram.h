@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/statistics/StatisticsWindow.h                                           *
+ * gui/statistics/Histogram.h                                                  *
  *                                                                             *
- * Copyright (c) 2011 Robert Fernier  <retroshare.project@gmail.com>           *
+ * Copyright (c) 2020 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,67 +18,26 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef RSSTATS_WINDOW_H
-#define RSSTATS_WINDOW_H
+#include <vector>
+#include <iostream>
 
-#pragma once
+class QPainter;
 
-#include <QMainWindow>
+class Histogram
+{
+	public:
+		Histogram(double start, double end, int bins);
 
-namespace Ui {
-    class StatisticsWindow;
-}
+		void draw(QPainter *painter) const ;
 
-class MainPage;
-class QActionGroup;
+		void insert(double val);
 
-class DhtWindow;
-class BwCtrlWindow;
-class TurtleRouterStatistics;
-class GlobalRouterStatistics;
-class GxsTransportStatistics;
-class RttStatistics;
-class GxsIdStatistics;
+	private:
+		double mStart;
+		double mEnd;
 
-class StatisticsWindow : public QMainWindow {
-    Q_OBJECT
-public:
+		std::vector<uint32_t> mBins;
 
-    static void showYourself ();
-    static StatisticsWindow* getInstance();
-    static void releaseInstance();
-
-
-    StatisticsWindow(QWidget *parent = 0);
-    ~StatisticsWindow();
-
-  DhtWindow *dhtw;
-  GlobalRouterStatistics *grsdlg;
-  GxsTransportStatistics *gxsdlg;
-  BwCtrlWindow *bwdlg;
-  TurtleRouterStatistics *trsdlg;
-  RttStatistics *rttdlg;
-  GxsIdStatistics *gxsiddlg;
-
-
-public slots:
-  void setNewPage(int page);
-	
-protected:
-    void changeEvent(QEvent *e);
-	void closeEvent (QCloseEvent * event);
-	
-private:
-    void initStackedPage();
-    
-    Ui::StatisticsWindow *ui;
-
-    static StatisticsWindow *mInstance;
-    
-    /** Creates a new action for a Main page. */
-    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);    
-
+		friend std::ostream& operator<<(std::ostream& o,const Histogram& h);
 };
-
-#endif // RSDHT_WINDOW_H
 
