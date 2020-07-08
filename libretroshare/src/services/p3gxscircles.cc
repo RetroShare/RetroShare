@@ -1468,7 +1468,7 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 					rsPeers->getOnlineList(peers) ;
 				}
 
-				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(serviceType(),RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
+				mIdentities->requestKey(pit->first, peers,RsIdentityUsage(RsServiceType::GXSCIRCLE,RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK,RsGxsGroupId(cache.mCircleId)));
 
 				all_ids_here = false;
 			}

@@ -512,7 +512,7 @@ int RsGenExchange::createGroupSignatures(RsTlvKeySignatureSet& signSet, RsTlvBin
                 if(GxsSecurity::getSignature((char*)grpData.bin_data, grpData.bin_len, authorKey, sign))
                 {
                 	id_ret = SIGN_SUCCESS;
-					mGixs->timeStampKey(grpMeta.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION,grpMeta.mGroupId)) ;
+					mGixs->timeStampKey(grpMeta.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION,grpMeta.mGroupId)) ;
 					signSet.keySignSet[INDEX_AUTHEN_IDENTITY] = sign;
                 }
                 else
@@ -953,7 +953,12 @@ int RsGenExchange::validateMsg(RsNxsMsg *msg, const uint32_t& grpFlag, const uin
             {
                 std::list<RsPeerId> peers;
                 peers.push_back(msg->PeerId());
-                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage((RsServiceType)serviceType(),RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId,metaData.mMsgId,metaData.mParentId,metaData.mThreadId));
+                mGixs->requestKey(metaData.mAuthorId, peers, RsIdentityUsage((RsServiceType)serviceType(),
+                                                                             RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION,
+                                                                             metaData.mGroupId,
+                                                                             metaData.mMsgId,
+                                                                             metaData.mParentId,
+                                                                             metaData.mThreadId));
                 
 #ifdef GEN_EXCH_DEBUG
                 std::cerr << ", Key missing. Retry later." << std::endl;
@@ -1030,7 +1035,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #ifdef GEN_EXCH_DEBUG
 				    std::cerr << "  key ID validation result: " << idValidate << std::endl;
 #endif
-					mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
+					mGixs->timeStampKey(metaData.mAuthorId,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
 			    }
 			    else
 			    {
@@ -1048,7 +1053,7 @@ int RsGenExchange::validateGrp(RsNxsGrp* grp)
 #endif
 			    std::list<RsPeerId> peers;
 			    peers.push_back(grp->PeerId());
-			    mGixs->requestKey(metaData.mAuthorId, peers,RsIdentityUsage(mServType,RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
+			    mGixs->requestKey(metaData.mAuthorId, peers,RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION,metaData.mGroupId));
 			    return VALIDATE_FAIL_TRY_LATER;
 		    }
 	    }
@@ -3350,7 +3355,7 @@ bool RsGenExchange::updateValid(const RsGxsGrpMetaData& oldGrpMeta, const RsNxsG
 	// also check this is the latest published group
 	bool latest = newGrp.metaData->mPublishTs > oldGrpMeta.mPublishTs;
 
-    mGixs->timeStampKey(newGrp.metaData->mAuthorId, RsIdentityUsage(mServType,RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION, oldGrpMeta.mGroupId)) ;
+    mGixs->timeStampKey(newGrp.metaData->mAuthorId, RsIdentityUsage(RsServiceType(mServType),RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION, oldGrpMeta.mGroupId)) ;
 
     return GxsSecurity::validateNxsGrp(newGrp, adminSign, keyMit->second) && latest;
 }

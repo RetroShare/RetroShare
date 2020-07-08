@@ -641,7 +641,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                         rsEvents->postEvent(ev);
 
 						// also time_stamp the key that this group represents
-						timeStampKey(RsGxsId(gid),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
                         should_subscribe = true;
                     }
 						break;
@@ -654,7 +654,7 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
                         rsEvents->postEvent(ev);
 
 						// also time_stamp the key that this group represents
-						timeStampKey(RsGxsId(gid),RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_DATA_UPDATE)) ;
+						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
                         should_subscribe = true;
                     }
                         break;
@@ -1214,8 +1214,7 @@ bool p3IdService::requestIdentity(
 		return false;
 	}
 
-	RsIdentityUsage usageInfo( RsServiceType::GXSID,
-	                           RsIdentityUsage::IDENTITY_DATA_UPDATE );
+	RsIdentityUsage usageInfo( RsServiceType::GXSID, RsIdentityUsage::IDENTITY_NEW_FROM_EXPLICIT_REQUEST );
 
 	return requestKey(id, askPeersList, usageInfo);
 }
@@ -1360,7 +1359,7 @@ bool p3IdService::signData(const uint8_t *data,uint32_t data_size,const RsGxsId&
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(own_gxs_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
+    timeStampKey(own_gxs_id,RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION)) ;
 
     return true ;
 }
@@ -1433,7 +1432,7 @@ bool p3IdService::encryptData( const uint8_t *decrypted_data,
         return false ;
     }
     error_status = RS_GIXS_ERROR_NO_ERROR ;
-    timeStampKey(encryption_key_id,RsIdentityUsage(serviceType(),RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
+    timeStampKey(encryption_key_id,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION)) ;
 
     return true ;
 }
@@ -1522,7 +1521,7 @@ bool p3IdService::encryptData( const uint8_t* decrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION ) );
 	}
 
@@ -1563,7 +1562,7 @@ bool p3IdService::decryptData( const uint8_t *encrypted_data,
 	error_status = RS_GIXS_ERROR_NO_ERROR;
 	timeStampKey( key_id,
 	              RsIdentityUsage(
-	                  serviceType(),
+	                  RsServiceType::GXSID,
 	                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION) );
 
     return true ;
@@ -1656,7 +1655,7 @@ bool p3IdService::decryptData( const uint8_t* encrypted_data,
 	{
 		timeStampKey( *it,
 		              RsIdentityUsage(
-		                  serviceType(),
+		                  RsServiceType::GXSID,
 		                  RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION ) );
 	}
 
@@ -3223,7 +3222,7 @@ bool p3IdService::cachetest_handlerequest(uint32_t token)
 				if (!haveKey(*vit))
 				{
                     std::list<RsPeerId> nullpeers;
-					requestKey(*vit, nullpeers,RsIdentityUsage(serviceType(),RsIdentityUsage::UNKNOWN_USAGE));
+					requestKey(*vit, nullpeers,RsIdentityUsage(RsServiceType::GXSID,RsIdentityUsage::UNKNOWN_USAGE));
 
 #ifdef DEBUG_IDS
 					std::cerr << "p3IdService::cachetest_request() Requested Key Id: " << *vit;
@@ -4838,42 +4837,6 @@ RsIdentityUsage::RsIdentityUsage(RsServiceType service, RsIdentityUsage::UsageCo
 	hs << comment;
 
 	mHash = hs.hash();
-}
-
-RsIdentityUsage::RsIdentityUsage(
-        uint16_t service, const RsIdentityUsage::UsageCode& code,
-        const RsGxsGroupId& gid, const RsGxsMessageId& mid,
-        uint64_t additional_id,const std::string& comment ) :
-    mServiceId(static_cast<RsServiceType>(service)), mUsageCode(code),
-    mGrpId(gid), mMsgId(mid), mAdditionalId(additional_id), mComment(comment)
-{
-#ifdef DEBUG_IDS
-    std::cerr << "New identity usage: " << std::endl;
-    std::cerr << "  service=" << std::hex << service << std::endl;
-    std::cerr << "  code   =" << std::hex << code << std::endl;
-    std::cerr << "  grpId  =" << std::hex << gid << std::endl;
-    std::cerr << "  msgId  =" << std::hex << mid << std::endl;
-    std::cerr << "  add id =" << std::hex << additional_id << std::endl;
-    std::cerr << "  commnt =\"" << std::hex << comment << "\"" << std::endl;
-#endif
-
-	/* This is a hack, since it will hash also mHash, but because it is
-	 * initialized to 0, and only computed in the constructor here, it should
-	 * be ok. */
-    librs::crypto::HashStream hs(librs::crypto::HashStream::SHA1) ;
-
-	hs << (uint32_t)service ; // G10h4ck: Why uint32 if it's 16 bits?
-    hs << (uint8_t)code ;
-    hs << gid ;
-    hs << mid ;
-    hs << (uint64_t)additional_id ;
-    hs << comment ;
-
-	mHash = hs.hash();
-
-#ifdef DEBUG_IDS
-    std::cerr << "  hash   =\"" << std::hex << mHash << "\"" << std::endl;
-#endif
 }
 
 RsIdentityUsage::RsIdentityUsage() :
