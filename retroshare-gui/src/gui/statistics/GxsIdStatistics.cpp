@@ -1,0 +1,433 @@
+/*******************************************************************************
+ * gui/statistics/GlobalRouterStatistics.cpp                                   *
+ *                                                                             *
+ * Copyright (c) 2011 Retroshare Team <retroshare.project@gmail.com>           *
+ *                                                                             *
+ * This program is free software: you can redistribute it and/or modify        *
+ * it under the terms of the GNU Affero General Public License as              *
+ * published by the Free Software Foundation, either version 3 of the          *
+ * License, or (at your option) any later version.                             *
+ *                                                                             *
+ * This program is distributed in the hope that it will be useful,             *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of              *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the                *
+ * GNU Affero General Public License for more details.                         *
+ *                                                                             *
+ * You should have received a copy of the GNU Affero General Public License    *
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.       *
+ *                                                                             *
+ *******************************************************************************/
+
+#include <QDateTime>
+#include <iostream>
+#include <QTimer>
+#include <QObject>
+#include <QFontMetrics>
+#include <QWheelEvent>
+#include <time.h>
+
+#include <QMenu>
+#include <QPainter>
+#include <QStylePainter>
+#include <QLayout>
+#include <QHeaderView>
+
+#include <retroshare/rsidentity.h>
+
+#include "GxsIdStatistics.h"
+
+#include "util/DateTime.h"
+#include "util/QtVersion.h"
+#include "util/misc.h"
+
+static QColor colorScale(float f)
+{
+	if(f == 0)
+		return QColor::fromHsv(0,0,192) ;
+	else
+		return QColor::fromHsv((int)((1.0-f)*280),200,255) ;
+}
+
+GxsIdStatistics::GxsIdStatistics(QWidget *parent)
+    : RsAutoUpdatePage(4000,parent)
+{
+	setupUi(this) ;
+
+    _stats_F->setWidget(_tst_CW = new GxsIdStatisticsWidget);
+	m_bProcessSettings = false;
+
+	// load settings
+	processSettings(true);
+}
+
+GxsIdStatistics::~GxsIdStatistics()
+{
+    // save settings
+    processSettings(false);
+}
+
+void GxsIdStatistics::processSettings(bool bLoad)
+{
+    m_bProcessSettings = true;
+
+    Settings->beginGroup(QString("GlobalRouterStatistics"));
+
+    if (bLoad) {
+        // load settings
+
+        // state of splitter
+        //splitter->restoreState(Settings->value("Splitter").toByteArray());
+    } else {
+        // save settings
+
+        // state of splitter
+        //Settings->setValue("Splitter", splitter->saveState());
+
+    }
+
+    Settings->endGroup();
+    
+    m_bProcessSettings = false;
+}
+
+void GxsIdStatistics::updateDisplay()
+{
+	_tst_CW->updateContent() ;
+}
+
+static QString getUsageStatisticsName(RsIdentityUsage::UsageCode code)
+{
+    switch(code)
+	{
+    default:
+		case RsIdentityUsage::UNKNOWN_USAGE                        : return QObject::tr("Unknown");
+		case RsIdentityUsage::GROUP_ADMIN_SIGNATURE_CREATION       : return QObject::tr("Group admin signature creation");
+		case RsIdentityUsage::GROUP_ADMIN_SIGNATURE_VALIDATION     : return QObject::tr("Group admin signature validation");
+		case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_CREATION      : return QObject::tr("Group author signature creation");
+		case RsIdentityUsage::GROUP_AUTHOR_SIGNATURE_VALIDATION    : return QObject::tr("Group author signature validation");
+		case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_CREATION    : return QObject::tr("Message author signature creation");
+		case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION  : return QObject::tr("Message author signature validation");
+		case RsIdentityUsage::GROUP_AUTHOR_KEEP_ALIVE              : return QObject::tr("Routine group author signature check.");
+		case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE            : return QObject::tr("Routine message author signature check");
+		case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION            : return QObject::tr("Chat room signature validation");
+		case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CHECK        : return QObject::tr("Global router message validation");
+		case RsIdentityUsage::GLOBAL_ROUTER_SIGNATURE_CREATION     : return QObject::tr("Global router message creation");
+		case RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CHECK        : return QObject::tr("DH Key exchange validation for GXS tunnel");
+		case RsIdentityUsage::GXS_TUNNEL_DH_SIGNATURE_CREATION     : return QObject::tr("DH Key exchange creation for GXS tunnel");
+		case RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC           : return QObject::tr("New identity from GXS sync");
+		case RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY          : return QObject::tr("New friend identity from discovery");
+		case RsIdentityUsage::IDENTITY_NEW_FROM_EXPLICIT_REQUEST   : return QObject::tr("New identity requested from friend node");
+		case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CHECK     : return QObject::tr("Generic signature validation");
+		case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION  : return QObject::tr("Generic signature creation");
+		case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION          : return QObject::tr("Generic data decryption");
+		case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION          : return QObject::tr("Generic data encryption");
+		case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK              : return QObject::tr("Circle membership checking");
+	}
+}
+
+void GxsIdStatisticsWidget::updateContent()
+{
+    // get the info, stats, histograms and pass them
+
+    std::list<RsGroupMetaData> ids;
+    rsIdentity->getIdentitiesSummaries(ids) ;
+
+    time_t now = time(NULL);
+
+    Histogram publish_date_hist(now - 5*365*86400,now,20);
+    Histogram last_used_hist(now - 15*86400,now,20);
+    uint32_t total_identities = 0;
+    std::map<RsIdentityUsage::UsageCode,int> usage_map;
+
+    for(auto& meta:ids)
+    {
+        RsIdentityDetails det;
+
+        if(!rsIdentity->getIdDetails(RsGxsId(meta.mGroupId),det))
+            continue;
+
+        publish_date_hist.insert((double)meta.mPublishTs);
+        last_used_hist.insert((double)det.mLastUsageTS);
+
+        for(auto it:det.mUseCases)
+        {
+            auto it2 = usage_map.find(it.first.mUsageCode);
+            if(it2 == usage_map.end())
+                usage_map[it.first.mUsageCode] = 0 ;
+
+			++usage_map[it.first.mUsageCode];
+        }
+
+        ++total_identities;
+    }
+
+    std::cerr << "Identities statistics:" << std::endl;
+
+    std::cerr << "  Usage map:" << std::endl;
+    for(auto it:usage_map)
+        std::cerr << std::hex << (int)it.first << " : " << std::dec << it.second << std::endl;
+
+    std::cerr << "  Total identities: " << total_identities << std::endl;
+    std::cerr << "  Last used hist: " << std::endl;
+    std::cerr << last_used_hist << std::endl;
+    std::cerr << "  Publish date hist: " << std::endl;
+    std::cerr << publish_date_hist << std::endl;
+
+    // Now draw the info int the widget's pixmap
+
+    float size = QFontMetricsF(font()).height() ;
+    float fact = size/14.0 ;
+
+    QPixmap tmppixmap(mMaxWidth, mMaxHeight);
+	tmppixmap.fill(Qt::transparent);
+    setFixedHeight(mMaxHeight);
+
+    QPainter painter(&tmppixmap);
+    painter.initFrom(this);
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
+
+    QFont times_f(font());//"Times") ;
+    QFont monospace_f("Monospace") ;
+    monospace_f.setStyleHint(QFont::TypeWriter) ;
+    monospace_f.setPointSize(font().pointSize()) ;
+
+    QFontMetricsF fm_monospace(monospace_f) ;
+    QFontMetricsF fm_times(times_f) ;
+
+    int cellx = fm_monospace.width(QString(" ")) ;
+    int celly = fm_monospace.height() ;
+
+    // Display general statistics
+
+	int ox=5*fact,oy=15*fact ;
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy,tr("Total identities: ")+QString::number(total_identities)) ; oy += celly*2 ;
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy,tr("Usage types: ")) ; oy += 2*celly ;
+
+    for(auto it:usage_map)
+    {
+        painter.drawText(ox+2*cellx,oy, getUsageStatisticsName(it.first) + ": " + QString::number(it.second)) ;
+        oy += celly ;
+    }
+    oy += celly ;
+
+    // Display per-service statistics
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy,tr("Usage per service: ")) ; oy += celly;
+    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+
+    // Draw the creation time histogram
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy,tr("Creation times: ")) ; oy += celly ;
+    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+
+    // Last used histogram
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy,tr("Last usage: ")) ; oy += celly ;
+    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+
+    // set the pixmap
+
+    pixmap = tmppixmap;
+    mMaxHeight = oy;
+}
+
+
+GxsIdStatisticsWidget::GxsIdStatisticsWidget(QWidget *parent)
+	: QWidget(parent)
+{
+    float size = QFontMetricsF(font()).height() ;
+    float fact = size/14.0 ;
+
+    mMaxWidth = 400*fact ;
+	mMaxHeight = 0 ;
+    //mCurrentN = PARTIAL_VIEW_SIZE/2+1 ;
+}
+
+#ifdef TODO
+void GxsIdStatisticsWidget::updateContent()
+{
+    // 1 - get info
+
+    // 2 - draw histograms
+
+    float size = QFontMetricsF(font()).height() ;
+    float fact = size/14.0 ;
+
+    // What do we need to draw?
+    //
+    // Routing matrix
+    // 	Key         [][][][][][][][][][]
+    //
+    // ->	each [] shows a square (one per friend node) that is the routing probabilities for all connected friends
+    // 	computed using the "computeRoutingProbabilitites()" method.
+    //
+    // Own key ids
+    // 	key			service id			description
+    //
+    // Data items
+    // 	Msg id				Local origin				Destination				Time           Status
+    //
+    QPixmap tmppixmap(maxWidth, maxHeight);
+	tmppixmap.fill(Qt::transparent);
+    setFixedHeight(maxHeight);
+
+    QPainter painter(&tmppixmap);
+    painter.initFrom(this);
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
+
+    QFont times_f(font());//"Times") ;
+    QFont monospace_f("Monospace") ;
+    monospace_f.setStyleHint(QFont::TypeWriter) ;
+    monospace_f.setPointSize(font().pointSize()) ;
+
+    QFontMetricsF fm_monospace(monospace_f) ;
+    QFontMetricsF fm_times(times_f) ;
+
+    static const int cellx = fm_monospace.width(QString(" ")) ;
+    static const int celly = fm_monospace.height() ;
+
+    maxHeight = 500*fact ;
+
+    // std::cerr << "Drawing into pixmap of size " << maxWidth << "x" << maxHeight << std::endl;
+    // draw...
+    int ox=5*fact,oy=5*fact ;
+
+
+    painter.setFont(times_f) ;
+    painter.drawText(ox,oy+celly,tr("Managed keys")+":" + QString::number(matrix_info.published_keys.size())) ; oy += celly*2 ;
+
+    painter.setFont(monospace_f) ;
+    for(std::map<Sha1CheckSum,RsGRouter::GRouterPublishedKeyInfo>::const_iterator it(matrix_info.published_keys.begin());it!=matrix_info.published_keys.end();++it)
+    {
+        QString packet_string ;
+        packet_string += QString::fromStdString(it->second.authentication_key.toStdString())  ;
+        packet_string += tr(" : Service ID =")+" "+QString::number(it->second.service_id,16) ;
+        packet_string += "  \""+QString::fromUtf8(it->second.description_string.c_str()) + "\"" ;
+
+        painter.drawText(ox+2*cellx,oy+celly,packet_string ) ; oy += celly ;
+    }
+    oy += celly ;
+
+
+    std::map<QString, std::vector<QString> > tos ;
+   
+    // Now draw the matrix
+
+    QString prob_string ;
+    painter.setFont(times_f) ;
+    QString Q = tr("Routing matrix  (") ;
+
+    painter.drawText(ox+0*cellx,oy+fm_times.height(),Q) ;
+
+    // draw scale
+
+    for(int i=0;i<100*fact;++i)
+    {
+        painter.setPen(colorScale(i/100.0/fact)) ;
+        painter.drawLine(ox+fm_times.width(Q)+i,oy+fm_times.height()*0.5,ox+fm_times.width(Q)+i,oy+fm_times.height()) ;
+    }
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
+
+    painter.drawText(ox+fm_times.width(Q) + 102*fact,oy+celly,")") ;
+
+    oy += celly ;
+    oy += celly ;
+
+    //static const int MaxKeySize = 20*fact ;
+    painter.setFont(monospace_f) ;
+
+    int n=0;
+    QString ids;
+    std::vector<float> current_probs ;
+    int current_oy = 0 ;
+    
+    mMinWheelZoneX = ox+2*cellx ;
+    mMinWheelZoneY = oy ;
+    
+    RsGxsId current_id ;
+    float current_width=0 ;
+    
+    for(std::map<GRouterKeyId,std::vector<float> >::const_iterator it(matrix_info.per_friend_probabilities.begin());it!=matrix_info.per_friend_probabilities.end();++it,++n)
+        if(n >= mCurrentN-PARTIAL_VIEW_SIZE/2 && n <= mCurrentN+PARTIAL_VIEW_SIZE/2)
+	{
+		ids = QString::fromStdString(it->first.toStdString())+" : " ;
+		painter.drawText(ox+2*cellx,oy+celly,ids) ;
+
+		for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+			painter.fillRect(ox+i*cellx+fm_monospace.width(ids),oy+0.15*celly,cellx,celly,colorScale(it->second[i])) ;
+
+		if(n == mCurrentN)
+		{
+			current_probs = it->second ;
+			current_oy = oy ;
+            		current_id = it->first ;
+                    	current_width = ox+matrix_info.friend_ids.size()*cellx+fm_monospace.width(ids);
+		}
+
+		oy += celly ;
+	}
+    mMaxWheelZoneX = ox+matrix_info.friend_ids.size()*cellx + fm_monospace.width(ids);
+    
+    RsIdentityDetails iddetails ;
+    if(rsIdentity->getIdDetails(current_id,iddetails))
+        painter.drawText(current_width+cellx, current_oy+celly, QString::fromUtf8(iddetails.mNickname.c_str())) ;
+    else
+        painter.drawText(current_width+cellx, current_oy+celly, tr("[Unknown identity]")) ;
+        
+    mMaxWheelZoneY = oy+celly ;
+    
+    painter.setPen(QColor::fromRgb(0,0,0)) ;
+    
+    painter.setPen(QColor::fromRgb(127,127,127));
+    painter.drawRect(ox+2*cellx,current_oy+0.15*celly,fm_monospace.width(ids)+cellx*matrix_info.friend_ids.size()- 2*cellx,celly) ;
+
+    float total_length = (matrix_info.friend_ids.size()+2)*cellx ;
+    
+    if(!current_probs.empty())
+    for(uint32_t i=0;i<matrix_info.friend_ids.size();++i)
+    {
+        float x1 = ox+(i+0.5)*cellx+fm_monospace.width(ids) ;
+        float y1 = oy+0.15*celly ;
+        float y2 = y1+(matrix_info.friend_ids.size()-1-i+1)*celly;
+        
+	RsPeerDetails peer_ssl_details;
+	rsPeers->getPeerDetails(matrix_info.friend_ids[i], peer_ssl_details);
+        
+        painter.drawLine(x1,y1,x1,y2);
+        painter.drawLine(x1,y2,x1 + total_length - i*cellx,y2) ;
+	painter.drawText(cellx+ x1 + total_length - i*cellx,y2+(0.35)*celly, QString::fromUtf8(peer_ssl_details.name.c_str()) + " - " + QString::fromUtf8(peer_ssl_details.location.c_str()) + " ("+QString::number(current_probs[i])+")");
+    }
+    oy += celly * (2+matrix_info.friend_ids.size());
+
+    oy += celly ;
+    oy += celly ;
+
+    // update the pixmap
+    //
+    pixmap = tmppixmap;
+    maxHeight = oy ;
+}
+#endif
+
+void GxsIdStatisticsWidget::paintEvent(QPaintEvent */*event*/)
+{
+    QStylePainter(this).drawPixmap(0, 0, pixmap);
+}
+
+void GxsIdStatisticsWidget::resizeEvent(QResizeEvent *event)
+{
+    QRect rect = geometry();
+
+    mMaxWidth = rect.width();
+    mMaxHeight = rect.height() ;
+
+	QWidget::resizeEvent(event);
+	updateContent();
+}
