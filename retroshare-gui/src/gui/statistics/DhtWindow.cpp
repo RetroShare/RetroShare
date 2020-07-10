@@ -109,7 +109,7 @@ void DhtWindow::updateDisplay()
 
 	RsAutoUpdatePage::unlockAllEvents() ;
 
-	QHeaderView_setSectionResizeMode(ui.peerTreeWidget->header(), QHeaderView::ResizeToContents);
+	//QHeaderView_setSectionResizeMode(ui.peerTreeWidget->header(), QHeaderView::ResizeToContents);
 	QHeaderView_setSectionResizeMode(ui.dhtTreeWidget->header(), QHeaderView::ResizeToContents);
 	QHeaderView_setSectionResizeMode(ui.relayTreeWidget->header(), QHeaderView::ResizeToContents);
 }
