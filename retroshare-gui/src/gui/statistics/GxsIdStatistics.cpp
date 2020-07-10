@@ -33,6 +33,7 @@
 #include <QHeaderView>
 
 #include <retroshare/rsidentity.h>
+#include <retroshare/rsservicecontrol.h>
 
 #include "GxsIdStatistics.h"
 
@@ -95,6 +96,47 @@ void GxsIdStatistics::updateDisplay()
 	_tst_CW->updateContent() ;
 }
 
+static QString getServiceName(uint32_t s)
+{
+    switch(s)
+    {
+    default:
+	case 0x0011  /* GOSSIP_DISCOVERY  */         : return QObject::tr("Discovery");
+	case 0x0012  /* CHAT              */         : return QObject::tr("Chat");
+	case 0x0013  /* MSG               */         : return QObject::tr("Messages");
+	case 0x0014  /* TURTLE            */         : return QObject::tr("Turtle");
+	case 0x0016  /* HEARTBEAT         */         : return QObject::tr("Heartbeat");
+	case 0x0017  /* FILE_TRANSFER     */         : return QObject::tr("File transfer");
+	case 0x0018  /* GROUTER           */         : return QObject::tr("Global router");
+	case 0x0019  /* FILE_DATABASE     */         : return QObject::tr("File database");
+	case 0x0020  /* SERVICEINFO       */         : return QObject::tr("Service info");
+	case 0x0021  /* BANDWIDTH_CONTROL */         : return QObject::tr("Bandwidth control");
+	case 0x0022  /* MAIL              */         : return QObject::tr("Mail");
+	case 0x0023  /* DIRECT_MAIL       */         : return QObject::tr("Mail");
+	case 0x0024  /* DISTANT_MAIL      */         : return QObject::tr("Distant mail");
+	case 0x0026  /* SERVICE_CONTROL   */         : return QObject::tr("Service control");
+	case 0x0027  /* DISTANT_CHAT      */         : return QObject::tr("Distant chat");
+	case 0x0028  /* GXS_TUNNEL        */         : return QObject::tr("GXS Tunnel");
+	case 0x0101  /* BANLIST           */         : return QObject::tr("Ban list");
+	case 0x0102  /* STATUS            */         : return QObject::tr("Status");
+	case 0x0200  /* NXS               */         : return QObject::tr("NXS");
+	case 0x0211  /* GXSID             */         : return QObject::tr("Identities");
+	case 0x0212  /* PHOTO             */         : return QObject::tr("GXS Photo");
+	case 0x0213  /* WIKI              */         : return QObject::tr("GXS Wiki");
+	case 0x0214  /* WIRE              */         : return QObject::tr("GXS TheWire");
+	case 0x0215  /* FORUMS            */         : return QObject::tr("Forums");
+	case 0x0216  /* POSTED            */         : return QObject::tr("Boards");
+	case 0x0217  /* CHANNELS          */         : return QObject::tr("Channels");
+	case 0x0218  /* GXSCIRCLE         */         : return QObject::tr("Circles");
+	///  entiti not gxs, but used with :dentities.
+	case 0x0219  /* REPUTATION        */         : return QObject::tr("Reputation");
+	case 0x0220  /* GXS_RECOGN        */         : return QObject::tr("Recogn");
+	case 0x0230  /* GXS_TRANS         */         : return QObject::tr("GXS Transport");
+	case 0x0240  /* JSONAPI           */         : return QObject::tr("JSon API");
+
+    }
+}
+
 static QString getUsageStatisticsName(RsIdentityUsage::UsageCode code)
 {
     switch(code)
@@ -138,6 +180,7 @@ void GxsIdStatisticsWidget::updateContent()
     Histogram last_used_hist(now - 15*86400,now,20);
     uint32_t total_identities = 0;
     std::map<RsIdentityUsage::UsageCode,int> usage_map;
+    std::map<uint32_t,int> per_service_usage_map;
 
     for(auto& meta:ids)
     {
@@ -156,6 +199,13 @@ void GxsIdStatisticsWidget::updateContent()
                 usage_map[it.first.mUsageCode] = 0 ;
 
 			++usage_map[it.first.mUsageCode];
+
+            uint32_t s = static_cast<uint32_t>(it.first.mServiceId);
+            auto it3 = per_service_usage_map.find(s);
+            if(it3 == per_service_usage_map.end())
+                per_service_usage_map[s] = 0;
+
+            ++per_service_usage_map[s];
         }
 
         ++total_identities;
@@ -218,7 +268,13 @@ void GxsIdStatisticsWidget::updateContent()
 
     painter.setFont(times_f) ;
     painter.drawText(ox,oy,tr("Usage per service: ")) ; oy += celly;
-    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+
+    for(auto it:per_service_usage_map)
+    {
+        painter.drawText(ox+2*cellx,oy, getServiceName(it.first) + ": " + QString::number(it.second)) ;
+        oy += celly ;
+    }
+    oy += celly ;
 
     // Draw the creation time histogram
 
