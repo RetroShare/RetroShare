@@ -29,8 +29,9 @@ class Histogram
 		Histogram(double start, double end, int bins);
 
 		void draw(QPainter *painter) const ;
-
 		void insert(double val);
+
+        const std::vector<uint32_t>& entries() const { return mBins; }
 
 	private:
 		double mStart;

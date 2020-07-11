@@ -18,14 +18,16 @@
  *                                                                             *
  *******************************************************************************/
 
-#include <QDateTime>
+#include <time.h>
+#include <math.h>
+
 #include <iostream>
+
+#include <QDateTime>
 #include <QTimer>
 #include <QObject>
 #include <QFontMetrics>
 #include <QWheelEvent>
-#include <time.h>
-
 #include <QMenu>
 #include <QPainter>
 #include <QStylePainter>
@@ -175,9 +177,11 @@ void GxsIdStatisticsWidget::updateContent()
     rsIdentity->getIdentitiesSummaries(ids) ;
 
     time_t now = time(NULL);
+	uint32_t nb_weeks = 52;
+	uint32_t nb_hours = 52;
 
-    Histogram publish_date_hist(now - 5*365*86400,now,20);
-    Histogram last_used_hist(now - 15*86400,now,20);
+    Histogram publish_date_hist(now - nb_weeks*7*86400,now,nb_weeks);
+    Histogram last_used_hist(now - 3600*nb_hours,now,nb_hours);
     uint32_t total_identities = 0;
     std::map<RsIdentityUsage::UsageCode,int> usage_map;
     std::map<uint32_t,int> per_service_usage_map;
@@ -267,7 +271,7 @@ void GxsIdStatisticsWidget::updateContent()
     // Display per-service statistics
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Usage per service: ")) ; oy += celly;
+    painter.drawText(ox,oy,tr("Usage per service: ")) ; oy += 2*celly;
 
     for(auto it:per_service_usage_map)
     {
@@ -279,14 +283,79 @@ void GxsIdStatisticsWidget::updateContent()
     // Draw the creation time histogram
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Creation times: ")) ; oy += celly ;
-    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+    painter.drawText(ox,oy,tr("Identity age (in weeks):")) ; oy += celly ;
+
+    uint32_t hist_height = 10;
+    oy += hist_height*celly;
+
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*nb_weeks*2,oy));
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
+
+    uint32_t max_entry=0;
+    for(int i=0;i<publish_date_hist.entries().size();++i)
+        max_entry = std::max(max_entry,publish_date_hist.entries()[i]);
+
+    for(int i=0;i<publish_date_hist.entries().size();++i)
+    {
+        float h = floor(celly*publish_date_hist.entries()[i]/(float)max_entry*hist_height);
+        int I = publish_date_hist.entries().size() - 1 - i;
+
+        painter.fillRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h,QColor::fromRgbF(0.9,0.6,0.2));
+		painter.setPen(QColor::fromRgb(0,0,0));
+        painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
+    }
+    for(int i=0;i<publish_date_hist.entries().size();++i)
+    {
+        QString txt = QString::number(i);
+        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
+    }
+
+    for(int i=0;i<5;++i)
+    {
+        QString txt = QString::number((int)rint(max_entry*i/5.0));
+        painter.drawText(ox + 4*cellx - cellx - fm_times.width(txt),oy - i*hist_height/5.0 * celly,txt );
+    }
+
+    oy += 2*celly;
+    oy +=   celly;
 
     // Last used histogram
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Last usage: ")) ; oy += celly ;
-    painter.drawText(ox+2*cellx,oy,tr("[TODO]")) ; oy += celly*2 ;
+    painter.drawText(ox,oy,tr("Last used (hours ago): ")) ; oy += celly ;
+
+    oy += hist_height*celly;
+
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*nb_hours*2,oy));
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
+
+    max_entry=0;
+    for(int i=0;i<last_used_hist.entries().size();++i)
+        max_entry = std::max(max_entry,last_used_hist.entries()[i]);
+
+    for(int i=0;i<last_used_hist.entries().size();++i)
+    {
+        float h = floor(celly*last_used_hist.entries()[i]/(float)max_entry*hist_height);
+        int I = last_used_hist.entries().size() - 1 - i;
+
+        painter.fillRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h,QColor::fromRgbF(0.6,0.9,0.4));
+		painter.setPen(QColor::fromRgb(0,0,0));
+        painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
+    }
+    for(int i=0;i<last_used_hist.entries().size();++i)
+    {
+        QString txt = QString::number(i);
+        painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
+    }
+
+    for(int i=0;i<5;++i)
+    {
+        QString txt = QString::number((int)rint(max_entry*i/5.0));
+        painter.drawText(ox + 4*cellx - cellx - fm_times.width(txt),oy - i*hist_height/5.0 * celly,txt );
+    }
+
+    oy += 2*celly;
+
 
     // set the pixmap
 
