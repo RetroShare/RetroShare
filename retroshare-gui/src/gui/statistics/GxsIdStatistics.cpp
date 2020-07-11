@@ -265,7 +265,7 @@ void GxsIdStatisticsWidget::updateContent()
         total_per_type += it.second;
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Usage types") + "(" + QString::number(total_per_type) + " identities actually used): ") ; oy += 2*celly;
+    painter.drawText(ox,oy,tr("Usage types") + "(" + QString::number(total_per_type) + " hits): ") ; oy += 2*celly;
 
     for(auto it:usage_map)
     {
@@ -281,7 +281,7 @@ void GxsIdStatisticsWidget::updateContent()
         total_per_service += it.second;
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Usage per service") + "(" + QString::number(total_per_service) + " identities actually used): ") ; oy += 2*celly;
+    painter.drawText(ox,oy,tr("Usage per service") + "(" + QString::number(total_per_service) + " hits): ") ; oy += 2*celly;
 
     for(auto it:per_service_usage_map)
     {
