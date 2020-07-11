@@ -42,6 +42,7 @@
 #include "util/DateTime.h"
 #include "util/QtVersion.h"
 #include "util/misc.h"
+#include "util/qtthreadsutils.h"
 
 static QColor colorScale(float f)
 {
@@ -96,6 +97,15 @@ void GxsIdStatistics::processSettings(bool bLoad)
 void GxsIdStatistics::updateDisplay()
 {
 	_tst_CW->updateContent() ;
+
+    static rstime_t last_data_update_time = 0;
+    rstime_t now = time(NULL);
+
+    if(now > last_data_update_time + 60)
+    {
+        last_data_update_time = now;
+        _tst_CW->updateData();
+    }
 }
 
 static QString getServiceName(uint32_t s)
@@ -169,66 +179,73 @@ static QString getUsageStatisticsName(RsIdentityUsage::UsageCode code)
 	}
 }
 
-void GxsIdStatisticsWidget::updateContent()
+void GxsIdStatisticsWidget::updateData()
 {
-    // get the info, stats, histograms and pass them
+	// get the info, stats, histograms and pass them
 
-    std::list<RsGroupMetaData> ids;
-    rsIdentity->getIdentitiesSummaries(ids) ;
+	RsThread::async([this]()
+	{
+		// 1 - get group data
 
-    time_t now = time(NULL);
-	uint32_t nb_weeks = 52;
-	uint32_t nb_hours = 52;
-
-    Histogram publish_date_hist(now - nb_weeks*7*86400,now,nb_weeks);
-    Histogram last_used_hist(now - 3600*nb_hours,now,nb_hours);
-    uint32_t total_identities = 0;
-    std::map<RsIdentityUsage::UsageCode,int> usage_map;
-    std::map<uint32_t,int> per_service_usage_map;
-
-    for(auto& meta:ids)
-    {
-        RsIdentityDetails det;
-
-        if(!rsIdentity->getIdDetails(RsGxsId(meta.mGroupId),det))
-            continue;
-
-        publish_date_hist.insert((double)meta.mPublishTs);
-        last_used_hist.insert((double)det.mLastUsageTS);
-
-        for(auto it:det.mUseCases)
-        {
-            auto it2 = usage_map.find(it.first.mUsageCode);
-            if(it2 == usage_map.end())
-                usage_map[it.first.mUsageCode] = 0 ;
-
-			++usage_map[it.first.mUsageCode];
-
-            uint32_t s = static_cast<uint32_t>(it.first.mServiceId);
-            auto it3 = per_service_usage_map.find(s);
-            if(it3 == per_service_usage_map.end())
-                per_service_usage_map[s] = 0;
-
-            ++per_service_usage_map[s];
-        }
-
-        ++total_identities;
-    }
-
-#ifdef DEBUG_GXSID_STATISTICS
-    std::cerr << "Identities statistics:" << std::endl;
-
-    std::cerr << "  Usage map:" << std::endl;
-    for(auto it:usage_map)
-        std::cerr << std::hex << (int)it.first << " : " << std::dec << it.second << std::endl;
-
-    std::cerr << "  Total identities: " << total_identities << std::endl;
-    std::cerr << "  Last used hist: " << std::endl;
-    std::cerr << last_used_hist << std::endl;
-    std::cerr << "  Publish date hist: " << std::endl;
-    std::cerr << publish_date_hist << std::endl;
+#ifdef DEBUG_FORUMS
+		std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
+		auto pids = new std::list<RsGroupMetaData>() ;
+		rsIdentity->getIdentitiesSummaries(*pids) ;
+
+		RsQThreadUtils::postToObject( [pids,this]()
+		{
+			/* Here it goes any code you want to be executed on the Qt Gui
+			 * thread, for example to update the data model with new information
+			 * after a blocking call to RetroShare API complete */
+
+            const auto& ids(*pids);
+
+			time_t now = time(NULL);
+			mPublishDateHist = Histogram(now - mNbWeeks*7*86400,now,mNbWeeks);
+			mLastUsedHist    = Histogram(now - 3600*mNbHours,now,mNbHours);
+			mTotalIdentities = 0;
+			mUsageMap.clear();
+			mPerServiceUsageMap.clear();
+
+			for(auto& meta:ids)
+			{
+				RsIdentityDetails det;
+
+				if(!rsIdentity->getIdDetails(RsGxsId(meta.mGroupId),det))
+					continue;
+
+				mPublishDateHist.insert((double)meta.mPublishTs);
+				mLastUsedHist.insert((double)det.mLastUsageTS);
+
+				for(auto it:det.mUseCases)
+				{
+					auto it2 = mUsageMap.find(it.first.mUsageCode);
+					if(it2 == mUsageMap.end())
+						mUsageMap[it.first.mUsageCode] = 0 ;
+
+					++mUsageMap[it.first.mUsageCode];
+
+					uint32_t s = static_cast<uint32_t>(it.first.mServiceId);
+					auto it3 = mPerServiceUsageMap.find(s);
+					if(it3 == mPerServiceUsageMap.end())
+						mPerServiceUsageMap[s] = 0;
+
+					++mPerServiceUsageMap[s];
+				}
+
+				++mTotalIdentities;
+			}
+
+			delete pids;
+
+		}, this );
+	});
+}
+
+void GxsIdStatisticsWidget::updateContent()
+{
     // Now draw the info int the widget's pixmap
 
     float size = QFontMetricsF(font()).height() ;
@@ -258,16 +275,16 @@ void GxsIdStatisticsWidget::updateContent()
 	int ox=5*fact,oy=15*fact ;
 
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Total identities: ")+QString::number(total_identities)) ; oy += celly*2 ;
+    painter.drawText(ox,oy,tr("Total identities: ")+QString::number(mTotalIdentities)) ; oy += celly*2 ;
 
     uint32_t total_per_type = 0;
-    for(auto it:usage_map)
+    for(auto it:mUsageMap)
         total_per_type += it.second;
 
     painter.setFont(times_f) ;
     painter.drawText(ox,oy,tr("Usage types") + "(" + QString::number(total_per_type) + " hits): ") ; oy += 2*celly;
 
-    for(auto it:usage_map)
+    for(auto it:mUsageMap)
     {
         painter.drawText(ox+2*cellx,oy, getUsageStatisticsName(it.first) + ": " + QString::number(it.second)) ;
         oy += celly ;
@@ -277,13 +294,13 @@ void GxsIdStatisticsWidget::updateContent()
     // Display per-service statistics
 
     uint32_t total_per_service = 0;
-    for(auto it:per_service_usage_map)
+    for(auto it:mPerServiceUsageMap)
         total_per_service += it.second;
 
     painter.setFont(times_f) ;
     painter.drawText(ox,oy,tr("Usage per service") + "(" + QString::number(total_per_service) + " hits): ") ; oy += 2*celly;
 
-    for(auto it:per_service_usage_map)
+    for(auto it:mPerServiceUsageMap)
     {
         painter.drawText(ox+2*cellx,oy, getServiceName(it.first) + ": " + QString::number(it.second)) ;
         oy += celly ;
@@ -298,23 +315,23 @@ void GxsIdStatisticsWidget::updateContent()
     uint32_t hist_height = 10;
     oy += hist_height*celly;
 
-    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*nb_weeks*2,oy));
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*mNbWeeks*2,oy));
     painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
 
     uint32_t max_entry=0;
-    for(int i=0;i<publish_date_hist.entries().size();++i)
-        max_entry = std::max(max_entry,publish_date_hist.entries()[i]);
+    for(int i=0;i<mPublishDateHist.entries().size();++i)
+        max_entry = std::max(max_entry,mPublishDateHist.entries()[i]);
 
-    for(int i=0;i<publish_date_hist.entries().size();++i)
+    for(int i=0;i<mPublishDateHist.entries().size();++i)
     {
-        float h = floor(celly*publish_date_hist.entries()[i]/(float)max_entry*hist_height);
-        int I = publish_date_hist.entries().size() - 1 - i;
+        float h = floor(celly*mPublishDateHist.entries()[i]/(float)max_entry*hist_height);
+        int I = mPublishDateHist.entries().size() - 1 - i;
 
         painter.fillRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h,QColor::fromRgbF(0.9,0.6,0.2));
 		painter.setPen(QColor::fromRgb(0,0,0));
         painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
     }
-    for(int i=0;i<publish_date_hist.entries().size();++i)
+    for(int i=0;i<mPublishDateHist.entries().size();++i)
     {
         QString txt = QString::number(i);
         painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
@@ -336,23 +353,23 @@ void GxsIdStatisticsWidget::updateContent()
 
     oy += hist_height*celly;
 
-    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*nb_hours*2,oy));
+    painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx+cellx*mNbHours*2,oy));
     painter.drawLine(QPoint(ox+4*cellx,oy),QPoint(ox+4*cellx,oy-celly*hist_height));
 
     max_entry=0;
-    for(int i=0;i<last_used_hist.entries().size();++i)
-        max_entry = std::max(max_entry,last_used_hist.entries()[i]);
+    for(int i=0;i<mLastUsedHist.entries().size();++i)
+        max_entry = std::max(max_entry,mLastUsedHist.entries()[i]);
 
-    for(int i=0;i<last_used_hist.entries().size();++i)
+    for(int i=0;i<mLastUsedHist.entries().size();++i)
     {
-        float h = floor(celly*last_used_hist.entries()[i]/(float)max_entry*hist_height);
-        int I = last_used_hist.entries().size() - 1 - i;
+        float h = floor(celly*mLastUsedHist.entries()[i]/(float)max_entry*hist_height);
+        int I = mLastUsedHist.entries().size() - 1 - i;
 
         painter.fillRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h,QColor::fromRgbF(0.6,0.9,0.4));
 		painter.setPen(QColor::fromRgb(0,0,0));
         painter.drawRect(ox+4*cellx+I*2*cellx+cellx, oy-h, cellx, h);
     }
-    for(int i=0;i<last_used_hist.entries().size();++i)
+    for(int i=0;i<mLastUsedHist.entries().size();++i)
     {
         QString txt = QString::number(i);
         painter.drawText(ox+4*cellx+i*2*cellx+cellx*1.5 - 0.5*fm_times.width(txt),oy+celly,txt);
@@ -379,6 +396,9 @@ GxsIdStatisticsWidget::GxsIdStatisticsWidget(QWidget *parent)
 {
     float size = QFontMetricsF(font()).height() ;
     float fact = size/14.0 ;
+
+	mNbWeeks = 52;
+	mNbHours = 52;
 
     mMaxWidth = 400*fact ;
 	mMaxHeight = 0 ;

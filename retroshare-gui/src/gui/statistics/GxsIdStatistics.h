@@ -76,10 +76,19 @@ class GxsIdStatisticsWidget:  public QWidget
 		virtual void resizeEvent(QResizeEvent *event);
 
 		void updateContent() ;
+		void updateData();
 	private:
 		static QString speedString(float f) ;
 
 		QPixmap pixmap ;
 		int mMaxWidth,mMaxHeight ;
+		uint32_t mNbWeeks;
+		uint32_t mNbHours;
+        uint32_t mTotalIdentities;
+        Histogram mPublishDateHist ;
+        Histogram mLastUsedHist    ;
+
+		std::map<RsIdentityUsage::UsageCode,int> mUsageMap;
+		std::map<uint32_t,int> mPerServiceUsageMap;
 };
 

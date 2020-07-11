@@ -26,6 +26,7 @@ class QPainter;
 class Histogram
 {
 	public:
+		Histogram();
 		Histogram(double start, double end, int bins);
 
 		void draw(QPainter *painter) const ;

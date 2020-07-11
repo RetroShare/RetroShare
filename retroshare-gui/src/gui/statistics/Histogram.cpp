@@ -22,6 +22,10 @@
 
 #include "Histogram.h"
 
+Histogram::Histogram()
+	: mStart(0),mEnd(1.0),mBins(10,0)
+{}
+
 Histogram::Histogram(double start, double end, int bins)
 	: mStart(start),mEnd(end),mBins(bins,0)
 {
