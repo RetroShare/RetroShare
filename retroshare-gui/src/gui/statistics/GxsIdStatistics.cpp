@@ -215,6 +215,7 @@ void GxsIdStatisticsWidget::updateContent()
         ++total_identities;
     }
 
+#ifdef DEBUG_GXSID_STATISTICS
     std::cerr << "Identities statistics:" << std::endl;
 
     std::cerr << "  Usage map:" << std::endl;
@@ -226,6 +227,7 @@ void GxsIdStatisticsWidget::updateContent()
     std::cerr << last_used_hist << std::endl;
     std::cerr << "  Publish date hist: " << std::endl;
     std::cerr << publish_date_hist << std::endl;
+#endif
 
     // Now draw the info int the widget's pixmap
 
@@ -258,8 +260,12 @@ void GxsIdStatisticsWidget::updateContent()
     painter.setFont(times_f) ;
     painter.drawText(ox,oy,tr("Total identities: ")+QString::number(total_identities)) ; oy += celly*2 ;
 
+    uint32_t total_per_type = 0;
+    for(auto it:usage_map)
+        total_per_type += it.second;
+
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Usage types: ")) ; oy += 2*celly ;
+    painter.drawText(ox,oy,tr("Usage types") + "(" + QString::number(total_per_type) + " identities actually used): ") ; oy += 2*celly;
 
     for(auto it:usage_map)
     {
@@ -270,8 +276,12 @@ void GxsIdStatisticsWidget::updateContent()
 
     // Display per-service statistics
 
+    uint32_t total_per_service = 0;
+    for(auto it:per_service_usage_map)
+        total_per_service += it.second;
+
     painter.setFont(times_f) ;
-    painter.drawText(ox,oy,tr("Usage per service: ")) ; oy += 2*celly;
+    painter.drawText(ox,oy,tr("Usage per service") + "(" + QString::number(total_per_service) + " identities actually used): ") ; oy += 2*celly;
 
     for(auto it:per_service_usage_map)
     {
