@@ -57,6 +57,8 @@
 //  Filter Str |                       |        X         |  X (updated because FilteredList may change)
 //  Chunk chng |                       |        X         |  X
 //
+// In the model, indexes internal refs are pointer casts of the index in the mFilteredPosts tab. Another possible choice
+// was to use indexes in the tab of displayed indices, but this leads to a more complex impleemntation.
 
 typedef uint32_t PostedPostsModelIndex;
 
@@ -155,6 +157,8 @@ public:
     // Helper functions
 
     bool getPostData(const QModelIndex& i,RsPostedPost& fmpe) const ;
+    uint32_t postsCount() const { return mPosts.size() ; }
+    uint32_t displayedStartPostIndex() const { return mDisplayedStartIndex ; }
     void clear() ;
 
     // AbstractItemModel functions.

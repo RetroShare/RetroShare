@@ -122,9 +122,12 @@ private slots:
 	void subscribeGroup(bool subscribe);
 	void setViewMode(int viewMode);
 	void settingsChanged();
-	void postChannelPostLoad();
+	void postPostLoad();
 	void postContextMenu(const QPoint&);
 	void copyMessageLink();
+	void next10Posts();
+	void prev10Posts();
+	void filterItems(QString s);
 
 public slots:
 	void handlePostsTreeSizeChange(QSize size);

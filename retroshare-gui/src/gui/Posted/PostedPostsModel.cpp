@@ -137,7 +137,7 @@ void RsPostedPostsModel::postMods()
 {
 	endResetModel();
 
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mFilteredPosts.size(),0,(void*)NULL));
+	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mDisplayedNbPosts,0,(void*)NULL));
 }
 
 void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
@@ -171,8 +171,10 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
     }
     count = mFilteredPosts.size();
 
+    mDisplayedStartIndex = 0;
+
     if(mDisplayedNbPosts > count)
-        mDisplayedNbPosts = count;
+        mDisplayedNbPosts = count ;
 
     std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
@@ -210,7 +212,7 @@ bool RsPostedPostsModel::getPostData(const QModelIndex& i,RsPostedPost& fmpe) co
     quintptr ref = i.internalId();
 	uint32_t entry = 0;
 
-	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
+	if(!convertRefPointerToTabEntry(ref,entry))
 		return false ;
 
     fmpe = mPosts[mFilteredPosts[entry]];
@@ -290,7 +292,7 @@ quintptr RsPostedPostsModel::getChildRef(quintptr ref,int index) const
 	if(ref == quintptr(0))
 	{
 		quintptr new_ref;
-		convertTabEntryToRefPointer(index,new_ref);
+		convertTabEntryToRefPointer(index+mDisplayedStartIndex,new_ref);
 		return new_ref;
 	}
 	else
@@ -717,7 +719,7 @@ QModelIndex RsPostedPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) con
 
     RsGxsMessageId postId = mid;
 
-    for(uint32_t i=0;i<mFilteredPosts.size();++i)
+    for(uint32_t i=mDisplayedStartIndex;i<mDisplayedStartIndex+mDisplayedNbPosts;++i)
     {
 		// First look into msg versions, in case the msg is a version of an existing message
 

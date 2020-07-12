@@ -386,6 +386,13 @@ p, li { white-space: pre-wrap; }
            </widget>
           </item>
           <item>
+           <widget class="LineEditClear" name="filter_LE">
+            <property name="placeholderText">
+             <string>Search</string>
+            </property>
+           </widget>
+          </item>
+          <item>
            <spacer name="horizontalSpacer_2">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -541,6 +548,11 @@ p, li { white-space: pre-wrap; }
    <class>RSTreeView</class>
    <extends>QTreeView</extends>
    <header>gui/common/RSTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LineEditClear</class>
+   <extends>QLineEdit</extends>
+   <header>gui/common/LineEditClear.h</header>
   </customwidget>
   <customwidget>
    <class>GxsIdChooser</class>
