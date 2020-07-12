@@ -38,6 +38,8 @@
 Q_DECLARE_METATYPE(RsMsgMetaData)
 Q_DECLARE_METATYPE(RsPostedPost)
 
+const uint32_t RsPostedPostsModel::DEFAULT_DISPLAYED_NB_POSTS = 10;
+
 std::ostream& operator<<(std::ostream& o, const QModelIndex& i);// defined elsewhere
 
 RsPostedPostsModel::RsPostedPostsModel(QObject *parent)
@@ -121,6 +123,8 @@ void RsPostedPostsModel::initEmptyHierarchy()
 
     mPosts.clear();
     mFilteredPosts.clear();
+    mDisplayedNbPosts = DEFAULT_DISPLAYED_NB_POSTS;
+    mDisplayedStartIndex = 0;
 
     postMods();
 }
@@ -167,6 +171,9 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
     }
     count = mFilteredPosts.size();
 
+    if(mDisplayedNbPosts > count)
+        mDisplayedNbPosts = count;
+
     std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 
 	beginInsertRows(QModelIndex(),0,rowCount()-1);
@@ -184,7 +191,7 @@ int RsPostedPostsModel::rowCount(const QModelIndex& parent) const
         return 0;
 
     if(!parent.isValid())
-		return mFilteredPosts.size() ;
+		return mDisplayedNbPosts;
 
     RsErr() << __PRETTY_FUNCTION__ << " rowCount cannot figure out the porper number of rows." << std::endl;
     return 0;
@@ -413,7 +420,6 @@ void RsPostedPostsModel::clear()
 {
     preMods();
 
-    mPosts.clear();
     initEmptyHierarchy();
 
 	postMods();
@@ -458,6 +464,27 @@ void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy 
 	postMods();
 }
 
+void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
+{
+    if(start >= mFilteredPosts.size())
+        return;
+
+	preMods();
+
+    uint32_t old_nb_rows = rowCount() ;
+
+    mDisplayedNbPosts = (uint32_t)std::min(nb_posts,(int)mFilteredPosts.size() - (start+1));
+    mDisplayedStartIndex = start;
+
+	beginRemoveRows(QModelIndex(),mDisplayedNbPosts,old_nb_rows);
+    endRemoveRows();
+
+	beginInsertRows(QModelIndex(),old_nb_rows,mDisplayedNbPosts);
+    endInsertRows();
+
+	postMods();
+}
+
 void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPostedPost>& posts)
 {
     preMods();
@@ -470,11 +497,13 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
     createPostsArray(posts);
 
-    std::sort(mPosts.begin(),mPosts.end(), PostSorter(RsPostedPostsModel::SORT_NEW_SCORE));
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(SORT_NEW_SCORE));
 
-    mFilteredPosts.clear();
-    for(int i=0;i<mPosts.size();++i)
-        mFilteredPosts.push_back(i);
+    uint32_t tmpval;
+    setFilter(QStringList(),tmpval);
+
+    mDisplayedNbPosts = std::min((uint32_t)mFilteredPosts.size(),DEFAULT_DISPLAYED_NB_POSTS);
+    mDisplayedStartIndex = 0;
 
 	beginInsertRows(QModelIndex(),0,rowCount()-1);
     endInsertRows();

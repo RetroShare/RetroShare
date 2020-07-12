@@ -31,6 +31,33 @@
 
 // The model contains a post in place 0 that is the parent of all posts.
 
+// The model contains 3 layers:
+//
+//   Layer 1: list of all posts
+//
+//    * this list is sorted according to the current sorting strategy
+//    * Variables: mPosts
+//
+//   Layer 2: list of post filtered by search
+//
+//    * depending on which chunk of posts are actually displayed, this list contains
+//      the subset of the general list of posts
+//    * Variables: mFilteredPosts
+//
+//   Layer 3: start and end of posts actually displayed in the previous list
+//
+//    * Variables: mDisplayedStartIndex, mDisplayedNbPosts
+//
+// The array below indicates which variables are updated depending on the type of data/view change:
+//
+//             |  Global list (mPosts) | Filtered List    |  Displayed list (mDisplayedStartIndex, mDisplayedNbPosts)
+//  -----------+-----------------------+------------------+----------------------------------------------------------
+//  New group  |           X           |        X         |  X (updated because FilteredList may change)
+//  Sort order |           X           |                  |
+//  Filter Str |                       |        X         |  X (updated because FilteredList may change)
+//  Chunk chng |                       |        X         |  X
+//
+
 typedef uint32_t PostedPostsModelIndex;
 
 // struct ChannelPostsModelPostEntry
@@ -66,7 +93,8 @@ public:
 	explicit RsPostedPostsModel(QObject *parent = NULL);
 	virtual ~RsPostedPostsModel() override;
 
-	static const int COLUMN_THREAD_NB_COLUMNS = 0x01;
+	static const uint32_t COLUMN_THREAD_NB_COLUMNS   = 0x01;
+	static const uint32_t DEFAULT_DISPLAYED_NB_POSTS ;
 
     enum SortingStrategy {
         SORT_UNKNOWN         = 0x00,
@@ -118,6 +146,7 @@ public:
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
     void setFilter(const QStringList &strings, uint32_t &count) ;
 	void setSortingStrategy(SortingStrategy s);
+	void setPostsInterval(int start,int nb_posts);
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);
@@ -198,8 +227,11 @@ private:
 	void initEmptyHierarchy();
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);
 
-    std::vector<int> mFilteredPosts;		// stores the list of displayes indices due to filtering.
-    std::vector<RsPostedPost> mPosts ;  // store the list of posts updated from rsForums.
+    std::vector<RsPostedPost> mPosts ;
+    std::vector<int> mFilteredPosts;
+    uint32_t mDisplayedStartIndex;
+    uint32_t mDisplayedNbPosts;
+
 
 	RsEventsHandlerId_t mEventHandlerId ;
 };
