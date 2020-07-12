@@ -172,9 +172,7 @@ void RsPostedPostsModel::setFilter(const QStringList& strings, uint32_t& count)
     count = mFilteredPosts.size();
 
     mDisplayedStartIndex = 0;
-
-    if(mDisplayedNbPosts > count)
-        mDisplayedNbPosts = count ;
+	mDisplayedNbPosts = std::min(count,DEFAULT_DISPLAYED_NB_POSTS) ;
 
     std::cerr << "After filtering: " << count << " posts remain." << std::endl;
 

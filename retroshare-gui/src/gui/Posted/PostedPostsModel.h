@@ -157,7 +157,8 @@ public:
     // Helper functions
 
     bool getPostData(const QModelIndex& i,RsPostedPost& fmpe) const ;
-    uint32_t postsCount() const { return mPosts.size() ; }
+    uint32_t totalPostsCount() const { return mPosts.size() ; }
+    uint32_t filteredPostsCount() const { return mFilteredPosts.size() ; }
     uint32_t displayedStartPostIndex() const { return mDisplayedStartIndex ; }
     void clear() ;
 
