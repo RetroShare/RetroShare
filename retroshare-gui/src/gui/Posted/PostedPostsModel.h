@@ -68,6 +68,13 @@ public:
 
 	static const int COLUMN_THREAD_NB_COLUMNS = 0x01;
 
+    enum SortingStrategy {
+        SORT_UNKNOWN         = 0x00,
+        SORT_NEW_SCORE       = 0x01,
+        SORT_TOP_SCORE       = 0x02,
+        SORT_HOT_SCORE       = 0x03
+    };
+
 	enum Columns {
 		COLUMN_POSTS        =0x00,
 		COLUMN_THREAD_MSGID =0x01,
@@ -110,6 +117,7 @@ public:
 
 	void setMsgReadStatus(const QModelIndex &i, bool read_status, bool with_children);
     void setFilter(const QStringList &strings, uint32_t &count) ;
+	void setSortingStrategy(SortingStrategy s);
 
 #ifdef TODO
 	void setAuthorOpinion(const QModelIndex& indx,RsOpinion op);

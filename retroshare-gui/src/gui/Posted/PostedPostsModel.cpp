@@ -420,10 +420,26 @@ void RsPostedPostsModel::clear()
 	emit boardPostsLoaded();
 }
 
-bool operator<(const RsPostedPost& p1,const RsPostedPost& p2)
+class PostSorter
 {
-    return p1.mMeta.mPublishTs > p2.mMeta.mPublishTs;
-}
+public:
+
+    PostSorter(RsPostedPostsModel::SortingStrategy s) : mSortingStrategy(s) {}
+
+	bool operator()(const RsPostedPost& p1,const RsPostedPost& p2) const
+	{
+        switch(mSortingStrategy)
+        {
+        default:
+        case RsPostedPostsModel::SORT_NEW_SCORE   :  return p1.mNewScore > p2.mNewScore;
+        case RsPostedPostsModel::SORT_TOP_SCORE   :  return p1.mTopScore > p2.mTopScore;
+        case RsPostedPostsModel::SORT_HOT_SCORE   :  return p1.mHotScore > p2.mHotScore;
+        }
+	}
+
+private:
+    RsPostedPostsModel::SortingStrategy mSortingStrategy;
+};
 
 Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
 {
@@ -431,6 +447,15 @@ Qt::ItemFlags RsPostedPostsModel::flags(const QModelIndex& index) const
 		return 0;
 
 	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}
+
+void RsPostedPostsModel::setSortingStrategy(RsPostedPostsModel::SortingStrategy s)
+{
+    preMods();
+
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(s));
+
+	postMods();
 }
 
 void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPostedPost>& posts)
@@ -445,7 +470,7 @@ void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPost
 
     createPostsArray(posts);
 
-    std::sort(mPosts.begin(),mPosts.end());
+    std::sort(mPosts.begin(),mPosts.end(), PostSorter(RsPostedPostsModel::SORT_NEW_SCORE));
 
     mFilteredPosts.clear();
     for(int i=0;i<mPosts.size();++i)

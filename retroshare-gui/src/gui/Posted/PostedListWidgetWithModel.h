@@ -116,6 +116,7 @@ protected:
 	virtual void setAllMessagesReadDo(bool read, uint32_t &token) override;
 
 private slots:
+    void updateSorting(int);
 	void updateGroupData();
 	void createMsg();
 	void subscribeGroup(bool subscribe);
