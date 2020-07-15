@@ -49,6 +49,7 @@
  * #define DEBUG_OPINION 1
  * #define GXSID_GEN_DUMMY_DATA	1
  ****/
+#define DEBUG_IDS	1
 
 #define ID_REQUEST_LIST		    0x0001
 #define ID_REQUEST_IDENTITY	    0x0002
@@ -616,11 +617,11 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
             std::cerr << "p3IdService::notifyChanges() Found Group Change Notification";
             std::cerr << std::endl;
 #endif
+                const RsGxsGroupId& gid(groupChange->mGroupId);
 #ifdef DEBUG_IDS
-                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << *git;
+                std::cerr << "p3IdService::notifyChanges() Auto Subscribe to Incoming Groups: " << gid;
                 std::cerr << std::endl;
 #endif
-                const RsGxsGroupId& gid(groupChange->mGroupId);
 
                 if(!rsReputations->isIdentityBanned(RsGxsId(gid)))
                 {
@@ -2291,7 +2292,7 @@ bool SSGxsIdGroup::load(const std::string &input)
     char scorestr[RSGXSID_MAX_SERVICE_STRING];
 
     // split into parts.
-    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]} {T:%[^}]} {R:%[^}]}", pgpstr, recognstr, scorestr))
+    if (3 != sscanf(input.c_str(), "v2 {P:%[^}]}{T:%[^}]}{R:%[^}]}", pgpstr, recognstr, scorestr))
     {
 #ifdef DEBUG_IDS
         std::cerr << "SSGxsIdGroup::load() Failed to extract 4 Parts";
