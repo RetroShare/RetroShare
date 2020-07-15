@@ -657,6 +657,8 @@ void p3IdService::notifyChanges(std::vector<RsGxsNotify *> &changes)
 						// also time_stamp the key that this group represents
 						timeStampKey(RsGxsId(gid),RsIdentityUsage(RsServiceType(serviceType()),RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC)) ;
                         should_subscribe = true;
+
+                        std::cerr << "Received new identity " << gid << " and subscribing to it" << std::endl;
                     }
                         break;
 
@@ -2954,9 +2956,19 @@ void p3IdService::requestIdsFromNet()
 	for(cit = mIdsNotPresent.begin(); cit != mIdsNotPresent.end();)
 	{
 #ifdef DEBUG_IDS
-		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: "
-		       << cit->first << std::endl;
+		Dbg2() << __PRETTY_FUNCTION__ << " Processing missing key RsGxsId: " << cit->first << std::endl;
 #endif
+        RsGxsIdCache data;
+
+		if(!mKeyCache.fetch(cit->first,data))
+        {
+			std::cerr << __PRETTY_FUNCTION__ << ". Dropping request for ID " << cit->first << " at last minute, because it was found in cache"<< std::endl;
+            auto tmp(cit);
+            ++tmp;
+            mIdsNotPresent.erase(cit);
+            cit = tmp;
+            continue;
+        }
 
 		const RsGxsId& gxsId = cit->first;
 		const std::list<RsPeerId>& peers = cit->second;
@@ -3011,8 +3023,7 @@ void p3IdService::requestIdsFromNet()
 	{
 		const RsPeerId& peer = cit2->first;
 		std::list<RsGxsGroupId> grpIds;
-		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin();
-		     gxs_id_it != cit2->second.end(); ++gxs_id_it )
+		for( std::list<RsGxsId>::const_iterator gxs_id_it = cit2->second.begin(); gxs_id_it != cit2->second.end(); ++gxs_id_it )
 		{
 #ifdef DEBUG_IDS
 			Dbg2() << __PRETTY_FUNCTION__ << " passing RsGxsId: " << *gxs_id_it
