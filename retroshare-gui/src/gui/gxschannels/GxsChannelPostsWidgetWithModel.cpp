@@ -1087,6 +1087,7 @@ bool GxsChannelPostsWidgetWithModel::navigate(const RsGxsMessageId& msgId)
 	ui->postsTree->selectionModel()->setCurrentIndex(index,QItemSelectionModel::ClearAndSelect);
 	ui->postsTree->scrollTo(index);//May change if model reloaded
 	ui->postsTree->setFocus();
+	ui->channel_TW->setCurrentIndex(CHANNEL_TABS_POSTS);
 
 	return true;
 }
