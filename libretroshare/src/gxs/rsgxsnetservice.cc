@@ -593,32 +593,29 @@ void RsGxsNetService::syncWithPeers()
         return;
     }
 
-    if(mGrpAutoSync)
+	// for now just grps
+	for(auto sit = peers.begin(); sit != peers.end(); ++sit)
 	{
-		// for now just grps
-		for(auto sit = peers.begin(); sit != peers.end(); ++sit)
+
+		const RsPeerId peerId = *sit;
+
+		ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
+		uint32_t updateTS = 0;
+
+		if(cit != mClientGrpUpdateMap.end())
 		{
-
-			const RsPeerId peerId = *sit;
-
-			ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
-			uint32_t updateTS = 0;
-
-			if(cit != mClientGrpUpdateMap.end())
-			{
-				const RsGxsGrpUpdate *gui = &cit->second;
-				updateTS = gui->grpUpdateTS;
-			}
-			RsNxsSyncGrpReqItem *grp = new RsNxsSyncGrpReqItem(mServType);
-			grp->clear();
-			grp->PeerId(*sit);
-			grp->updateTS = updateTS;
+			const RsGxsGrpUpdate *gui = &cit->second;
+			updateTS = gui->grpUpdateTS;
+		}
+		RsNxsSyncGrpReqItem *grp = new RsNxsSyncGrpReqItem(mServType);
+		grp->clear();
+		grp->PeerId(*sit);
+		grp->updateTS = updateTS;
 
 #ifdef NXS_NET_DEBUG_5
-			GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
+		GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
 #endif
-			generic_sendItem(grp);
-		}
+		generic_sendItem(grp);
 	}
 
     if(!mAllowMsgSync)
@@ -645,15 +642,13 @@ void RsGxsNetService::syncWithPeers()
 	    }
     }
 
-    sit = peers.begin();
-
     // Synchronise group msg for groups which we're subscribed to
     // For each peer and each group, we send to the peer the time stamp of the most
     // recent modification the peer has sent. If the peer has more recent messages he will send them, because its latest
     // modifications will be more recent. This ensures that we always compare timestamps all taken in the same
     // computer (the peer's computer in this case)
 
-    for(; sit != peers.end(); ++sit)
+    for(auto sit = peers.begin(); sit != peers.end(); ++sit)
     {
         const RsPeerId& peerId = *sit;
 
@@ -3239,8 +3234,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         }
         // FIXTESTS global variable rsReputations not available in unittests!
 
-#warning csoler 2016-12-23: Update the code below to correctly send/recv dependign on reputation
-		if( mReputations->overallReputationLevel(grpSyncItem->grpId) == RsReputationLevel::LOCALLY_NEGATIVE )
+		if( mReputations->overallReputationLevel(RsGxsId(grpSyncItem->grpId)) == RsReputationLevel::LOCALLY_NEGATIVE )
 		{
 #ifdef NXS_NET_DEBUG_0
 			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->grpId << " is banned. Not GXS-syncing group." << std::endl;
