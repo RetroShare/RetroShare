@@ -3223,7 +3223,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         RsNxsSyncGrpItem*& grpSyncItem = *llit;
         const RsGxsGroupId& grpId = grpSyncItem->grpId;
 
-	std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
+		std::map<RsGxsGroupId, RsGxsGrpMetaData*>::const_iterator metaIter = grpMetaMap.find(grpId);
         bool haveItem = false;
         bool latestVersion = false;
 
@@ -3245,7 +3245,7 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         if( (mGrpAutoSync && !haveItem) || latestVersion)
         {
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpId << " will be sync-ed using GXS. mGrpAutoSync:" << mGrpAutoSync << " haveItem:" << haveItem << " latest_version: " << std::endl;
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpId << " will be sync-ed using GXS. mGrpAutoSync:" << mGrpAutoSync << " haveItem:" << haveItem << " latest_version: " << latestVersion << std::endl;
 #endif
 			addGroupItemToList(tr, grpId, transN, reqList);
         }

@@ -2960,7 +2960,7 @@ void p3IdService::requestIdsFromNet()
 #endif
         RsGxsIdCache data;
 
-		if(!mKeyCache.fetch(cit->first,data))
+		if(mKeyCache.fetch(cit->first,data))
         {
 			std::cerr << __PRETTY_FUNCTION__ << ". Dropping request for ID " << cit->first << " at last minute, because it was found in cache"<< std::endl;
             auto tmp(cit);
