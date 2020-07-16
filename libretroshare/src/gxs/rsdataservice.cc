@@ -502,6 +502,9 @@ RsGxsGrpMetaData* RsDataService::locked_getGrpMeta(RetroCursor &c, int colOffset
     RsGxsGrpMetaData* grpMeta ;
 	RsGxsGroupId grpId(tempId) ;
 
+    if(grpId.isNull())			// not in the DB!
+        return nullptr;
+
 	if(use_cache)
         grpMeta = mGrpMetaDataCache.getOrCreateMeta(grpId);
 	else
@@ -659,8 +662,10 @@ RsGxsMsgMetaData* RsDataService::locked_getMsgMeta(RetroCursor &c, int colOffset
     std::string temp;
     c.getString(mColMsgMeta_MsgId + colOffset, temp);
     msg_id = RsGxsMessageId(temp);
+
     // without these, a msg is meaningless
-    ok &= (!group_id.isNull()) && (!msg_id.isNull());
+    if(group_id.isNull() || msg_id.isNull())
+        return nullptr;
 
     RsGxsMsgMetaData* msgMeta = nullptr;
 
@@ -1432,7 +1437,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 			RsGxsGrpMetaData *meta = mGrpMetaDataCache.getMeta(mit->first) ;
 
 			if(meta)
-				grp[mit->first] = meta;
+				mit->second = meta;
 			else
 			{
 #ifdef RS_DATA_SERVICE_DEBUG_CACHE
@@ -1446,7 +1451,7 @@ int RsDataService::retrieveGxsGrpMetaData(RsGxsGrpMetaTemporaryMap& grp)
 				RsGxsGrpMetaData* meta = locked_getGrpMeta(*c, 0,true);
 
                 if(meta)
-                    grp[mit->first] = meta;
+                    mit->second = meta;
 
 #ifdef RS_DATA_SERVICE_DEBUG_TIME
 				++resultCount;
