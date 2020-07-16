@@ -593,32 +593,33 @@ void RsGxsNetService::syncWithPeers()
         return;
     }
 
-    std::set<RsPeerId>::iterator sit = peers.begin();
+    if(mGrpAutoSync)
+	{
+		// for now just grps
+		for(auto sit = peers.begin(); sit != peers.end(); ++sit)
+		{
 
-    // for now just grps
-    for(; sit != peers.end(); ++sit)
-    {
+			const RsPeerId peerId = *sit;
 
-        const RsPeerId peerId = *sit;
+			ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
+			uint32_t updateTS = 0;
 
-        ClientGrpMap::const_iterator cit = mClientGrpUpdateMap.find(peerId);
-        uint32_t updateTS = 0;
-
-        if(cit != mClientGrpUpdateMap.end())
-        {
-            const RsGxsGrpUpdate *gui = &cit->second;
-            updateTS = gui->grpUpdateTS;
-        }
-        RsNxsSyncGrpReqItem *grp = new RsNxsSyncGrpReqItem(mServType);
-        grp->clear();
-        grp->PeerId(*sit);
-        grp->updateTS = updateTS;
+			if(cit != mClientGrpUpdateMap.end())
+			{
+				const RsGxsGrpUpdate *gui = &cit->second;
+				updateTS = gui->grpUpdateTS;
+			}
+			RsNxsSyncGrpReqItem *grp = new RsNxsSyncGrpReqItem(mServType);
+			grp->clear();
+			grp->PeerId(*sit);
+			grp->updateTS = updateTS;
 
 #ifdef NXS_NET_DEBUG_5
-	GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
+			GXSNETDEBUG_P_(*sit) << "Service "<< std::hex << ((mServiceInfo.mServiceType >> 8)& 0xffff) << std::dec << "  sending global group TS of peer id: " << *sit << " ts=" << nice_time_stamp(time(NULL),updateTS) << " (secs ago) to himself" << std::endl;
 #endif
-        generic_sendItem(grp);
-    }
+			generic_sendItem(grp);
+		}
+	}
 
     if(!mAllowMsgSync)
         return ;
