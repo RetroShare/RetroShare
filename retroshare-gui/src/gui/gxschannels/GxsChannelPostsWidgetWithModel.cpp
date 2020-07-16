@@ -808,8 +808,15 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 
 	ui->infoAdministrator->setId(group.mMeta.mAuthorId) ;
 
-	link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
-	ui->infoAdministrator->setText(link.toHtml());
+	if (!group.mMeta.mAuthorId.isNull())
+	{
+		link = RetroShareLink::createMessage(group.mMeta.mAuthorId, "");
+		ui->infoAdministrator->setText(link.toHtml());
+	}
+	else
+	{
+		ui->infoAdministrator->setText(tr("Unknown"));
+	}
 
 	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
 
