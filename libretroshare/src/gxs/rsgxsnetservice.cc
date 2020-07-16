@@ -324,8 +324,8 @@ static const uint32_t RS_NXS_ITEM_ENCRYPTION_STATUS_GXS_KEY_MISSING     = 0x05 ;
  || defined(NXS_NET_DEBUG_8) || defined(NXS_NET_DEBUG_9)
 
 static const RsPeerId     peer_to_print     = RsPeerId();//std::string("a97fef0e2dc82ddb19200fb30f9ac575"))   ;
-static const RsGxsGroupId group_id_to_print = RsGxsGroupId(std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
-static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_GXSCIRCLE;                       	// use this to allow to this service id only, or 0 for all services
+static const RsGxsGroupId group_id_to_print = RsGxsGroupId();//std::string("66052380f5d1d0c5992e2b55dc402ce6")) ;	// use this to allow to this group id only, or "" for all IDs
+static const uint32_t     service_to_print  = RS_SERVICE_GXS_TYPE_GXSID;                       	// use this to allow to this service id only, or 0 for all services
 										// warning. Numbers should be SERVICE IDS (see serialiser/rsserviceids.h. E.g. 0x0215 for forums)
 
 class nullstream: public std::ostream {};
@@ -3183,7 +3183,8 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         {
             grpItemL.push_back(item);
             grpMetaMap[item->grpId] = NULL;
-        }else
+        }
+        else
         {
 #ifdef NXS_NET_DEBUG_0
             GXSNETDEBUG_PG(tr->mTransaction->PeerId(),item->grpId) << "RsGxsNetService::genReqGrpTransaction(): item failed to caste to RsNxsSyncMsgItem* " << std::endl;
@@ -3238,18 +3239,21 @@ void RsGxsNetService::locked_genReqGrpTransaction(NxsTransaction* tr)
         // FIXTESTS global variable rsReputations not available in unittests!
 
 #warning csoler 2016-12-23: Update the code below to correctly send/recv dependign on reputation
-		if( !grpSyncItem->authorId.isNull() &&
-		        mReputations->overallReputationLevel(grpSyncItem->authorId) ==
-		        RsReputationLevel::LOCALLY_NEGATIVE )
+		if( mReputations->overallReputationLevel(grpSyncItem->grpId) == RsReputationLevel::LOCALLY_NEGATIVE )
 		{
 #ifdef NXS_NET_DEBUG_0
-			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->authorId << " is banned. Not syncing group." << std::endl;
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpSyncItem->grpId << " is banned. Not GXS-syncing group." << std::endl;
 #endif
 			continue ;
 		}
 
         if( (mGrpAutoSync && !haveItem) || latestVersion)
+        {
+#ifdef NXS_NET_DEBUG_0
+			GXSNETDEBUG_PG(tr->mTransaction->PeerId(),grpId) << "  Identity " << grpId << " will be sync-ed using GXS. mGrpAutoSync:" << mGrpAutoSync << " haveItem:" << haveItem << " latest_version: " << std::endl;
+#endif
 			addGroupItemToList(tr, grpId, transN, reqList);
+        }
     }
 
     if(!reqList.empty())
