@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/statistics/StatisticsWindow.h                                           *
+ * gui/statistics/Histogram.cpp                                                *
  *                                                                             *
- * Copyright (c) 2011 Robert Fernier  <retroshare.project@gmail.com>           *
+ * Copyright (c) 2020 Retroshare Team <retroshare.project@gmail.com>           *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,67 +18,38 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef RSSTATS_WINDOW_H
-#define RSSTATS_WINDOW_H
+#include <math.h>
 
-#pragma once
+#include "Histogram.h"
 
-#include <QMainWindow>
+Histogram::Histogram()
+	: mStart(0),mEnd(1.0),mBins(10,0)
+{}
 
-namespace Ui {
-    class StatisticsWindow;
+Histogram::Histogram(double start, double end, int bins)
+	: mStart(start),mEnd(end),mBins(bins,0)
+{
+	if(mEnd <= mStart)
+		std::cerr << "Null histogram created! Please check your parameters" << std::endl;
 }
 
-class MainPage;
-class QActionGroup;
+void Histogram::draw(QPainter *painter) const
+{
+}
 
-class DhtWindow;
-class BwCtrlWindow;
-class TurtleRouterStatistics;
-class GlobalRouterStatistics;
-class GxsTransportStatistics;
-class RttStatistics;
-class GxsIdStatistics;
+void Histogram::insert(double val)
+{
+    long int bin = (uint32_t)floor((val - mStart)/(mEnd - mStart) * mBins.size());
 
-class StatisticsWindow : public QMainWindow {
-    Q_OBJECT
-public:
+    if(bin >= 0 && bin < mBins.size())
+		++mBins[bin];
+}
 
-    static void showYourself ();
-    static StatisticsWindow* getInstance();
-    static void releaseInstance();
+std::ostream& operator<<(std::ostream& o,const Histogram& h)
+{
+	o << "Histogram: [" << h.mStart << "..." << h.mEnd << "] " << h.mBins.size() << " bins." << std::endl;
+	for(uint32_t i=0;i<h.mBins.size();++i)
+		o << "  " << h.mStart + i*(double)(h.mEnd - h.mStart)/(double)h.mBins.size() << " : " << h.mBins[i] << std::endl;
 
-
-    StatisticsWindow(QWidget *parent = 0);
-    ~StatisticsWindow();
-
-  DhtWindow *dhtw;
-  GlobalRouterStatistics *grsdlg;
-  GxsTransportStatistics *gxsdlg;
-  BwCtrlWindow *bwdlg;
-  TurtleRouterStatistics *trsdlg;
-  RttStatistics *rttdlg;
-  GxsIdStatistics *gxsiddlg;
-
-
-public slots:
-  void setNewPage(int page);
-	
-protected:
-    void changeEvent(QEvent *e);
-	void closeEvent (QCloseEvent * event);
-	
-private:
-    void initStackedPage();
-    
-    Ui::StatisticsWindow *ui;
-
-    static StatisticsWindow *mInstance;
-    
-    /** Creates a new action for a Main page. */
-    QAction* createPageAction(const QIcon &icon, const QString &text, QActionGroup *group);    
-
-};
-
-#endif // RSDHT_WINDOW_H
-
+    return o;
+}

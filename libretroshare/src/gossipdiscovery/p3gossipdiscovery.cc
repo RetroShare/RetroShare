@@ -450,7 +450,7 @@ void p3discovery2::recvIdentityList(const RsPeerId& pid,const std::list<RsGxsId>
     std::cerr << "p3discovery2::recvIdentityList(): from peer " << pid << ": " << ids.size() << " identities" << std::endl;
 #endif
 
-    RsIdentityUsage use_info(RS_SERVICE_TYPE_DISC,RsIdentityUsage::IDENTITY_DATA_UPDATE);
+    RsIdentityUsage use_info(RsServiceType::GOSSIP_DISCOVERY,RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY);
 
 	for(auto it(ids.begin());it!=ids.end();++it)
     {

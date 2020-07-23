@@ -37,6 +37,7 @@
 
 #include <gui/statistics/TurtleRouterStatistics.h>
 #include <gui/statistics/GlobalRouterStatistics.h>
+#include <gui/statistics/GxsIdStatistics.h>
 #include <gui/statistics/GxsTransportStatistics.h>
 #include <gui/statistics/BwCtrlWindow.h>
 #include <gui/statistics/DhtWindow.h>
@@ -52,6 +53,7 @@
 
 #define IMAGE_DHT           ":/icons/DHT128.png"
 #define IMAGE_TURTLE        ":/icons/turtle128.png"
+#define IMAGE_IDENTITIES    ":/icons/avatar_128.png"
 #define IMAGE_BWGRAPH       ":/icons/bandwidth128.png"
 #define IMAGE_GLOBALROUTER  ":/icons/GRouter128.png"
 #define IMAGE_GXSTRANSPORT  ":/icons/transport128.png"
@@ -143,6 +145,9 @@ void StatisticsWindow::initStackedPage()
   ui->stackPages->add(trsdlg = new TurtleRouterStatistics(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_TURTLE), tr("Turtle Router"), grp));
                    
+  ui->stackPages->add(gxsiddlg = new GxsIdStatistics(ui->stackPages),
+                   action = createPageAction(QIcon(IMAGE_IDENTITIES), tr("Identities"), grp));
+
   ui->stackPages->add(grsdlg = new GlobalRouterStatistics(ui->stackPages),
                    action = createPageAction(QIcon(IMAGE_GLOBALROUTER), tr("Global Router"), grp)); 
                    
@@ -150,7 +155,7 @@ void StatisticsWindow::initStackedPage()
                    action = createPageAction(QIcon(IMAGE_GXSTRANSPORT), tr("Gxs Transport"), grp));
 
   ui->stackPages->add(rttdlg = new RttStatistics(ui->stackPages),
-                      action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
+                   action = createPageAction(QIcon(IMAGE_RTT), tr("RTT Statistics"), grp));
                    
 	bool showdht = true;
 	RsPeerDetails detail;
