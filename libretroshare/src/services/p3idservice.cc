@@ -1251,8 +1251,9 @@ bool p3IdService::requestKey(const RsGxsId &id, const std::list<RsPeerId>& peers
 
 	if( info.mOverallReputationLevel == RsReputationLevel::LOCALLY_NEGATIVE )
 	{
-		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id
-		         << " because it has been banned." << std::endl;
+#ifdef DEBUG_IDS
+		RsInfo() << __PRETTY_FUNCTION__ << " not requesting Key " << id << " because it has been banned." << std::endl;
+#endif
 
 		RS_STACK_MUTEX(mIdMtx);
 		mIdsNotPresent.erase(id);
@@ -2961,7 +2962,9 @@ void p3IdService::requestIdsFromNet()
 
 		if(mKeyCache.fetch(cit->first,data))
         {
+#ifdef DEBUG_IDS
 			std::cerr << __PRETTY_FUNCTION__ << ". Dropping request for ID " << cit->first << " at last minute, because it was found in cache"<< std::endl;
+#endif
             auto tmp(cit);
             ++tmp;
             mIdsNotPresent.erase(cit);

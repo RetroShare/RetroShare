@@ -1463,7 +1463,9 @@ bool p3GxsCircles::locked_processLoadingCacheEntry(RsGxsCircleCache& cache)
 				}
 				else
 				{
+#ifdef DEBUG_CIRCLES
 					std::cerr << "    (WW) cache entry for circle " << cache.mCircleId << " has empty originator. Asking info for GXS id " << pit->first << " to all connected friends." << std::endl;
+#endif
 
 					rsPeers->getOnlineList(peers) ;
 				}
