@@ -55,7 +55,7 @@
 #define ID_REQUEST_REPUTATION	0x0003
 #define ID_REQUEST_OPINION	    0x0004
 
-#define GXSID_MAX_CACHE_SIZE 5000
+#define GXSID_MAX_CACHE_SIZE 15000
 
 // unused keys are deleted according to some heuristic that should favor known keys, signed keys etc. 
 
