@@ -4,8 +4,8 @@ if "%EnvRootPath%"=="" exit /B 1
 
 set CEchoUrl=https://github.com/lordmulder/cecho/releases/download/2015-10-10/cecho.2015-10-10.zip
 set CEchoInstall=cecho.2015-10-10.zip
-set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/18.05/7z1805.msi/download
-set SevenZipInstall=7z1805.msi
+set SevenZipUrl=https://sourceforge.net/projects/sevenzip/files/7-Zip/19.00/7z1900.msi/download
+set SevenZipInstall=7z1900.msi
 ::set CurlUrl=https://bintray.com/artifact/download/vszakats/generic/curl-7.50.1-win32-mingw.7z
 ::set CurlInstall=curl-7.50.1-win32-mingw.7z
 set WgetUrl=https://eternallybored.org/misc/wget/1.19.4/32/wget.exe
@@ -19,8 +19,8 @@ set UnixToolsInstall=UnxUpdates.zip
 set NSISUrl=http://prdownloads.sourceforge.net/nsis/nsis-3.0-setup.exe?download
 set NSISInstall=nsis-3.0-setup.exe
 set NSISInstallPath=%EnvToolsPath%\NSIS
-set MinGitInstall=MinGit-2.19.1-32-bit.zip
-set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.19.1.windows.1/%MinGitInstall%
+set MinGitInstall=MinGit-2.28.0-32-bit.zip
+set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/%MinGitInstall%
 set MinGitInstallPath=%EnvToolsPath%\MinGit
 set SigcheckInstall=Sigcheck.zip
 set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
