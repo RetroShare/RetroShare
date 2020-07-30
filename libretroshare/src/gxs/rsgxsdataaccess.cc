@@ -1046,9 +1046,9 @@ bool RsGxsDataAccess::getMsgMetaDataList( const GxsMsgReq& msgIds, const RsTokRe
                // Now loop once over message Metas and see if they have a parent. If yes, then mark the parent to be discarded.
 
                for(uint32_t i=0;i<metaV.size();++i)
-                   if(!metaV[i]->mParentId.isNull() && metaV[i]->mParentId != metaV[i]->mMsgId)	// this one is a follow up
+                   if(!metaV[i]->mOrigMsgId.isNull() && metaV[i]->mOrigMsgId != metaV[i]->mMsgId)	// this one is a follow up
                    {
-                       auto it = index_in_metaV.find(metaV[i]->mParentId);
+                       auto it = index_in_metaV.find(metaV[i]->mOrigMsgId);
 
                        if(it != index_in_metaV.end())
                            keep[it->second] = false;
