@@ -76,16 +76,6 @@ protected:
     bool mMetaChange;
 };
 
-class RsGxsDistantSearchResultChange: public RsGxsNotify
-{
-public:
-    RsGxsDistantSearchResultChange(TurtleRequestId id,const RsGxsGroupId& gid) : RsGxsNotify(gid), mRequestId(id){}
-
-    NotifyType getType() { return TYPE_RECEIVED_DISTANT_SEARCH_RESULTS ; }
-
-    TurtleRequestId mRequestId ;
-};
-
 /*!
  * Relevant to message changes
  */

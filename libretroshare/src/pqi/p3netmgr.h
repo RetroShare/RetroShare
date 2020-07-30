@@ -291,8 +291,8 @@ private:
 
 	//p3BitDht   *mBitDht;
 #ifdef RS_USE_DHT_STUNNER
-	pqiAddrAssist *mDhtStunner;
-	pqiAddrAssist *mProxyStunner;
+	pqiAddrAssist *mDhtStunner = nullptr;
+	pqiAddrAssist *mProxyStunner = nullptr;
 #endif // RS_USE_DHT_STUNNER
 
 	RsMutex mNetMtx; /* protects below */

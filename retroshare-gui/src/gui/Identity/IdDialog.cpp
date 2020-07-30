@@ -47,6 +47,7 @@
 #include "util/misc.h"
 #include "util/QtVersion.h"
 #include "util/rstime.h"
+#include "util/rsdebug.h"
 
 #include "retroshare/rsgxsflags.h"
 #include "retroshare/rsmsgs.h" 
@@ -55,6 +56,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <memory>
 
 /******
  * #define ID_DEBUG 1
@@ -506,21 +508,24 @@ void IdDialog::updateCircles()
         std::cerr << "Retrieving post data for post " << mThreadId << std::endl;
 #endif
 
-        std::list<RsGroupMetaData> circle_metas ;
+		/* This can be big so use a smart pointer to just copy the pointer
+		 * instead of copying the whole list accross the lambdas */
+		auto circle_metas = std::make_unique<std::list<RsGroupMetaData>>();
 
-		if(!rsGxsCircles->getCirclesSummaries(circle_metas))
+		if(!rsGxsCircles->getCirclesSummaries(*circle_metas))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve circles group info list" << std::endl;
+			RS_ERR("failed to retrieve circles group info list");
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [circle_metas,this]()
+		RsQThreadUtils::postToObject(
+		            [circle_metas = std::move(circle_metas), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-            loadCircles(circle_metas);
+			loadCircles(*circle_metas);
 
 		}, this );
 
@@ -1305,19 +1310,17 @@ void IdDialog::updateIdList()
 			return;
 		}
 
-		std::map<RsGxsGroupId,RsGxsIdGroup> ids_set;
+		auto ids_set = std::make_unique<std::map<RsGxsGroupId,RsGxsIdGroup>>();
+		for(auto it(groups.begin()); it!=groups.end(); ++it)
+			(*ids_set)[(*it).mMeta.mGroupId] = *it;
 
-        for(auto it(groups.begin());it!=groups.end();++it)
-            ids_set[(*it).mMeta.mGroupId] = *it;
-
-        RsQThreadUtils::postToObject( [ids_set,this]()
+		RsQThreadUtils::postToObject(
+		            [ids_set = std::move(ids_set), this] ()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
-
-            loadIdentities(ids_set);
-
+			loadIdentities(*ids_set);
 		}, this );
 
     });
@@ -1575,6 +1578,14 @@ void IdDialog::loadIdentities(const std::map<RsGxsGroupId,RsGxsIdGroup>& ids_set
 	/* count items */
 	int itemCount = contactsItem->childCount() + allItem->childCount() + ownItem->childCount();
 	ui->label_count->setText( "(" + QString::number( itemCount ) + ")" );
+	
+	int contactsCount = contactsItem->childCount() ;
+	int allCount = allItem->childCount() ;
+	int ownCount = ownItem->childCount();
+
+	contactsItem->setText(0, tr("My contacts") + " (" + QString::number( contactsCount ) + ")" );
+	allItem->setText(0, tr("All") + " (" + QString::number( allCount ) + ")" );
+	ownItem->setText(0, tr("My own identities") + " (" +  QString::number( ownCount ) + ")" );
 
 	navigate(RsGxsId(oldCurrentId));
 	filterIds();
@@ -1851,10 +1862,17 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
 	{
 	case RsServiceType::CHANNELS:  service_name = tr("Channels") ;service_type = RetroShareLink::TYPE_CHANNEL   ; break ;
 	case RsServiceType::FORUMS:    service_name = tr("Forums") ;  service_type = RetroShareLink::TYPE_FORUM     ; break ;
-	case RsServiceType::POSTED:    service_name = tr("Posted") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
+	case RsServiceType::POSTED:    service_name = tr("Boards") ;  service_type = RetroShareLink::TYPE_POSTED    ; break ;
 	case RsServiceType::CHAT:      service_name = tr("Chat")   ;  service_type = RetroShareLink::TYPE_CHAT_ROOM ; break ;
+
+	case RsServiceType::GXS_TRANS: return tr("GxsMail author ");
+#ifdef TODO
+    // We need a RS link for circles if we want to do that.
+    //
+	case RsServiceType::GXSCIRCLE: service_name = tr("GxsCircles");  service_type = RetroShareLink::TYPE_CIRCLES; break ;
+#endif
     default:
-        service_name = tr("Unknown"); service_type = RetroShareLink::TYPE_UNKNOWN ;
+        service_name = tr("Unknown (service=")+QString::number((int)u.mServiceId,16)+")"; service_type = RetroShareLink::TYPE_UNKNOWN ;
     }
 
     switch(u.mUsageCode)
@@ -1874,10 +1892,25 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
         	return tr("Group author for group %1 in service %2").arg(QString::fromStdString(u.mGrpId.toStdString())).arg(service_name);
         break ;
     case RsIdentityUsage::MESSAGE_AUTHOR_SIGNATURE_VALIDATION:
-    case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawlign the set of messages for all groups. That helps keepign the useful identities in hand.
+    case RsIdentityUsage::MESSAGE_AUTHOR_KEEP_ALIVE:             // Identities are stamped regularly by crawling the set of messages for all groups. That helps keepign the useful identities in hand.
 	{
-		RetroShareLink l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message/vote/comment"));
-		return tr("%1 in %2 tab").arg(l.toHtml()).arg(service_name) ;
+        RetroShareLink l;
+
+        std::cerr << "Signature validation/keep alive signature:" << std::endl;
+        std::cerr << "   service ID  = " << std::hex << (uint16_t)u.mServiceId << std::dec << std::endl;
+        std::cerr << "   u.mGrpId    = " << u.mGrpId << std::endl;
+        std::cerr << "   u.mMsgId    = " << u.mMsgId << std::endl;
+        std::cerr << "   u.mParentId = " << u.mParentId << std::endl;
+        std::cerr << "   u.mThreadId = " << u.mThreadId << std::endl;
+
+		if(service_type == RetroShareLink::TYPE_CHANNEL && !u.mThreadId.isNull())
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mThreadId,tr("Vote/comment"));
+		else if(service_type == RetroShareLink::TYPE_POSTED && !u.mThreadId.isNull())
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mThreadId,tr("Vote"));
+		else
+			l = RetroShareLink::createGxsMessageLink(service_type,u.mGrpId,u.mMsgId,tr("Message"));
+
+		return tr("%1 in %2 service").arg(l.toHtml()).arg(service_name) ;
 	}
     case RsIdentityUsage::CHAT_LOBBY_MSG_VALIDATION:             // Chat lobby msgs are signed, so each time one comes, or a chat lobby event comes, a signature verificaiton happens.
     {
@@ -1903,9 +1936,13 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     {
 		return tr("Signature in distant tunnel system.");
     }
-    case RsIdentityUsage::IDENTITY_DATA_UPDATE:                  // Group update on that identity data. Can be avatar, name, etc.
+    case RsIdentityUsage::IDENTITY_NEW_FROM_GXS_SYNC:            // Group update on that identity data. Can be avatar, name, etc.
     {
-		return tr("Update of identity data.");
+		return tr("Received from GXS sync.");
+    }
+    case RsIdentityUsage::IDENTITY_NEW_FROM_DISCOVERY:           // Own friend sended his own ids
+    {
+		return tr("Friend node identity received through discovery.");
     }
     case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CHECK:      // Any signature verified for that identity
     {
@@ -1913,11 +1950,18 @@ QString IdDialog::createUsageString(const RsIdentityUsage& u) const
     }
     case RsIdentityUsage::IDENTITY_GENERIC_SIGNATURE_CREATION:   // Any signature made by that identity
     {
-		return tr("Generic signature.");
+		return tr("Generic signature creation (e.g. chat room message, global router,...).");
     }
 	case RsIdentityUsage::IDENTITY_GENERIC_ENCRYPTION: return tr("Generic encryption.");
 	case RsIdentityUsage::IDENTITY_GENERIC_DECRYPTION: return tr("Generic decryption.");
-	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:     return tr("Membership verification in circle %1.").arg(QString::fromStdString(u.mGrpId.toStdString()));
+	case RsIdentityUsage::CIRCLE_MEMBERSHIP_CHECK:
+    {
+        RsGxsCircleDetails det;
+        if(rsGxsCircles->getCircleDetails(RsGxsCircleId(u.mGrpId),det))
+			return tr("Membership verification in circle \"%1\" (%2).").arg(QString::fromUtf8(det.mCircleName.c_str())).arg(QString::fromStdString(u.mGrpId.toStdString()));
+        else
+			return tr("Membership verification in circle (ID=%1).").arg(QString::fromStdString(u.mGrpId.toStdString()));
+    }
 
 #warning TODO! csoler 2017-01-03: Add the different strings and translations here.
 	default:

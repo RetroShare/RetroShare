@@ -24,6 +24,7 @@
 #include <QMenu>
 
 #include <algorithm>
+#include <memory>
 
 #include <retroshare/rspeers.h>
 #include <retroshare/rsidentity.h>
@@ -696,34 +697,32 @@ void CreateCircleDialog::loadIdentities()
 {
 	RsThread::async([this]()
 	{
-        std::list<RsGroupMetaData> ids_meta;
+		std::list<RsGroupMetaData> ids_meta;
 
 		if(!rsIdentity->getIdentitiesSummaries(ids_meta))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities ids for all identities" << std::endl;
+			RS_ERR("failed to retrieve identities ids for all identities");
 			return;
-        }
-        std::set<RsGxsId> ids;
+		}
 
-		for(auto& meta:ids_meta)
-			ids.insert(RsGxsId(meta.mGroupId)) ;
+		std::set<RsGxsId> ids;
+		for(auto& meta:ids_meta) ids.insert(RsGxsId(meta.mGroupId));
 
-        std::vector<RsGxsIdGroup> id_groups;
-
-        if(!rsIdentity->getIdentitiesInfo(ids,id_groups))
+		auto id_groups = std::make_unique<std::vector<RsGxsIdGroup>>();
+		if(!rsIdentity->getIdentitiesInfo(ids, *id_groups))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to retrieve identities group info for all identities" << std::endl;
+			RS_ERR("failed to retrieve identities group info for all identities");
 			return;
-        }
+		}
 
-        RsQThreadUtils::postToObject( [id_groups,this]()
+		RsQThreadUtils::postToObject(
+		            [id_groups = std::move(id_groups), this]()
 		{
 			/* Here it goes any code you want to be executed on the Qt Gui
 			 * thread, for example to update the data model with new information
 			 * after a blocking call to RetroShare API complete */
 
-			fillIdentitiesList(id_groups) ;
-
+			fillIdentitiesList(*id_groups);
 		}, this );
 	});
 

@@ -84,7 +84,7 @@ ConfCertDialog QLabel#servicePermissionsLabel
 	qproperty-fontSizeFactor: 125;
 }
 
-GxsChannelPostsWidget QLabel#nameLabel
+GxsChannelPostsWidgetWithModel QLabel#channelName_LB
 {
 	qproperty-fontSizeFactor: 250;
 }

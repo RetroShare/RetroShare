@@ -344,11 +344,15 @@ openbsd-* {
 	LIBS *= -rdynamic
 }
 
+################################### COMMON stuff ##################################
+
 wikipoos {
 	PRE_TARGETDEPS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= $$OUT_PWD/../../supportlibs/pegmarkdown/lib/libpegmarkdown.a
 	LIBS *= -lglib-2.0
 }
+
+################################### HEADERS & SOURCES #############################
 
 # Tor controller
 
@@ -433,7 +437,9 @@ HEADERS +=  rshare.h \
             gui/FileTransfer/BannedFilesDialog.h \
             gui/statistics/TurtleRouterDialog.h \
             gui/statistics/TurtleRouterStatistics.h \
+            gui/statistics/GxsIdStatistics.h \
             gui/statistics/dhtgraph.h \
+            gui/statistics/Histogram.h \
             gui/statistics/BandwidthGraphWindow.h \
             gui/statistics/turtlegraph.h \
             gui/statistics/BandwidthStatsWidget.h \
@@ -751,6 +757,7 @@ FORMS +=    gui/StartDialog.ui \
             gui/statistics/DhtWindow.ui \
             gui/statistics/TurtleRouterDialog.ui \
             gui/statistics/TurtleRouterStatistics.ui \
+            gui/statistics/GxsIdStatistics.ui \
             gui/statistics/GlobalRouterStatistics.ui \
             gui/statistics/GxsTransportStatistics.ui \
             gui/statistics/StatisticsWindow.ui \
@@ -991,8 +998,10 @@ SOURCES +=  main.cpp \
             gui/statistics/BandwidthGraphWindow.cpp \
             gui/statistics/BandwidthStatsWidget.cpp \
             gui/statistics/DhtWindow.cpp \
+            gui/statistics/Histogram.cpp \
             gui/statistics/TurtleRouterDialog.cpp \
             gui/statistics/TurtleRouterStatistics.cpp \
+            gui/statistics/GxsIdStatistics.cpp \
             gui/statistics/GlobalRouterStatistics.cpp \
             gui/statistics/GxsTransportStatistics.cpp \
             gui/statistics/StatisticsWindow.cpp \
@@ -1353,13 +1362,19 @@ gxschannels {
 		gui/gxschannels/GxsChannelGroupDialog.h \
 		gui/gxschannels/CreateGxsChannelMsg.h \
 		gui/gxschannels/GxsChannelPostsWidget.h \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.h \
+		gui/gxschannels/GxsChannelPostsModel.h \
+		gui/gxschannels/GxsChannelPostFilesModel.h \
 		gui/gxschannels/GxsChannelFilesWidget.h \
+		gui/gxschannels/GxsChannelPostThumbnail.h \
 		gui/gxschannels/GxsChannelFilesStatusWidget.h \
 		gui/feeds/GxsChannelGroupItem.h \
 		gui/feeds/GxsChannelPostItem.h \
 		gui/gxschannels/GxsChannelUserNotify.h
 	
-	FORMS += gui/gxschannels/GxsChannelPostsWidget.ui \
+	FORMS += \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.ui \
+		gui/gxschannels/GxsChannelPostsWidget.ui \
 		gui/gxschannels/GxsChannelFilesWidget.ui \
 		gui/gxschannels/GxsChannelFilesStatusWidget.ui \
 		gui/gxschannels/CreateGxsChannelMsg.ui \
@@ -1368,6 +1383,9 @@ gxschannels {
 	
 	SOURCES += gui/gxschannels/GxsChannelDialog.cpp \
 		gui/gxschannels/GxsChannelPostsWidget.cpp \
+		gui/gxschannels/GxsChannelPostsWidgetWithModel.cpp \
+		gui/gxschannels/GxsChannelPostsModel.cpp \
+		gui/gxschannels/GxsChannelPostFilesModel.cpp \
 		gui/gxschannels/GxsChannelFilesWidget.cpp \
 		gui/gxschannels/GxsChannelFilesStatusWidget.cpp \
 		gui/gxschannels/GxsChannelGroupDialog.cpp \

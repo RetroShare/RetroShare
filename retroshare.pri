@@ -140,6 +140,11 @@ rs_macos10.15:CONFIG -= rs_macos10.11
 CONFIG *= no_rs_jsonapi
 rs_jsonapi:CONFIG -= no_rs_jsonapi
 
+# Disable i2p BOB support for automatically setting up an i2p tunnel for RS
+# "CONFIG+=no_rs_bob"
+CONFIG *= rs_bob
+no_rs_bob:CONFIG -= rs_bob
+
 # To enable channel indexing append the following assignation to qmake command
 # line "CONFIG+=rs_deep_channel_index"
 CONFIG *= no_rs_deep_channel_index
@@ -548,6 +553,10 @@ to contain the path to an host executable jsonapi-generator")
 rs_webui {
     !rs_jsonapi: error("Cannot enable rs_webui without rs_jsonapi")
     DEFINES *= RS_WEBUI
+}
+
+rs_bob {
+    DEFINES *= RS_USE_I2P_BOB
 }
 
 rs_deep_channels_index:DEFINES *= RS_DEEP_CHANNEL_INDEX

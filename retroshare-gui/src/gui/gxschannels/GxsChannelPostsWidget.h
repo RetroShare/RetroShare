@@ -98,7 +98,7 @@ private:
 	int viewMode();
 
 	void insertChannelDetails(const RsGxsChannelGroup &group);
-	void insertChannelPosts(std::vector<RsGxsChannelPost> &posts, GxsMessageFramePostThread *thread, bool related);
+	void insertChannelPosts(std::vector<RsGxsChannelPost>& posts, GxsMessageFramePostThread *thread, bool related);
 
 	void createPostItem(const RsGxsChannelPost &post, bool related);
 	void handleEvent_main_thread(std::shared_ptr<const RsEvent> event);

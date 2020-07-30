@@ -29,6 +29,7 @@
 #include "gui/settings/rsharesettings.h"
 #include "gui/RetroShareLink.h"
 #include "gui/gxs/GxsGroupShareKey.h"
+#include "gui/common/GroupTreeWidget.h"
 #include "gui/common/RSTreeWidget.h"
 #include "gui/notifyqt.h"
 #include "gui/common/UIStateHelper.h"
@@ -89,7 +90,6 @@ GxsGroupFrameDialog::GxsGroupFrameDialog(RsGxsIfaceHelper *ifaceImpl, QWidget *p
 	mSubscribedGroups = NULL;
 	mPopularGroups = NULL;
 	mOtherGroups = NULL;
-	mMessageWidget = NULL;
 
 	/* Setup Queue */
 	mInterface = ifaceImpl;
@@ -251,6 +251,13 @@ void GxsGroupFrameDialog::processSettings(bool load)
 	Settings->endGroup();
 }
 
+bool GxsGroupFrameDialog::useTabs()
+{
+	GroupFrameSettings groupFrameSettings;
+
+	return Settings->getGroupFrameSettings(groupFrameSettingsType(), groupFrameSettings)  && groupFrameSettings.mOpenAllInNewTab;
+}
+
 void GxsGroupFrameDialog::settingsChanged()
 {
 	GroupFrameSettings groupFrameSettings;
@@ -262,17 +269,15 @@ void GxsGroupFrameDialog::settingsChanged()
 
 void GxsGroupFrameDialog::setSingleTab(bool singleTab)
 {
-	if (singleTab) {
-		if (!mMessageWidget) {
-			mMessageWidget = createMessageWidget(RsGxsGroupId());
-			// remove close button of the the first tab
-			ui->messageTabWidget->hideCloseButton(ui->messageTabWidget->indexOf(mMessageWidget));
-		}
-	} else {
-		if (mMessageWidget) {
-			delete(mMessageWidget);
-			mMessageWidget = NULL;
-		}
+	if (singleTab)
+    {
+        while(ui->messageTabWidget->count() > 1)
+        {
+            auto w = ui->messageTabWidget->widget(0) ;
+            ui->messageTabWidget->removeTab(0);
+            delete w;
+        }
+		ui->messageTabWidget->hideCloseButton(0);
 	}
 }
 
@@ -286,55 +291,50 @@ void GxsGroupFrameDialog::updateDisplay(bool complete)
     if(complete)    // || !getGrpIds().empty() || !getGrpIdsMeta().empty()) {
 		updateGroupSummary(); /* Update group list */
 
-    updateSearchResults() ;
+//    updateSearchResults() ;
 }
 
 void GxsGroupFrameDialog::updateSearchResults()
 {
-    const std::set<TurtleRequestId>& reqs = getSearchRequests();
+    for(auto& it:mSearchGroupsItems)
+        updateSearchResults(it.first);
+}
 
-    for(auto it(reqs.begin());it!=reqs.end();++it)
-    {
-		std::cerr << "updating search ID " << std::hex << *it << std::dec << std::endl;
+void GxsGroupFrameDialog::updateSearchResults(const TurtleRequestId& sid)
+{
+	std::cerr << "updating search ID " << std::hex << sid << std::dec << std::endl;
 
-        std::map<RsGxsGroupId,RsGxsGroupSummary> group_infos;
+	std::map<RsGxsGroupId,RsGxsGroupSearchResults> group_infos;
 
-        getDistantSearchResults(*it,group_infos) ;
+	getDistantSearchResults(sid,group_infos) ;
 
-        std::cerr << "retrieved " << std::endl;
+	std::cerr << "retrieved " << std::endl;
 
-        auto it2 = mSearchGroupsItems.find(*it);
+	auto it2 = mSearchGroupsItems.find(sid);
 
-        if(mSearchGroupsItems.end() == it2)
-        {
-            std::cerr << "GxsGroupFrameDialog::updateSearchResults(): received result notification for req " << std::hex << *it << std::dec << " but no item present!" << std::endl;
-            continue ;	// we could create the item just as well but since this situation is not supposed to happen, I prefer to make this a failure case.
-        }
+	QList<GroupItemInfo> group_items ;
 
-        QList<GroupItemInfo> group_items ;
+	for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
+	{
+		std::cerr << "  adding group " << it3->first << " " << it3->second.mGroupId << " \"" << it3->second.mGroupName << "\"" << std::endl;
+        for(auto s:it3->second.mSearchContexts)
+			std::cerr << "    Context string \"" << s << "\"" << std::endl;
 
-		for(auto it3(group_infos.begin());it3!=group_infos.end();++it3)
-			if(mCachedGroupMetas.find(it3->first) == mCachedGroupMetas.end())
-			{
-				std::cerr << "  adding new group " << it3->first << " "
-				          << it3->second.mGroupId << " \""
-				          << it3->second.mGroupName << "\"" << std::endl;
+		GroupItemInfo i;
+		i.id             = QString(it3->second.mGroupId.toStdString().c_str());
+		i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
+		i.popularity     = 0; // could be set to the number of hits
+		i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
+		i.subscribeFlags = 0; // irrelevant here
+		i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
+		i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
+		i.max_visible_posts = it3->second.mNumberOfMessages;
+		i.context_strings = it3->second.mSearchContexts;
 
-				GroupItemInfo i;
-				i.id             = QString(it3->second.mGroupId.toStdString().c_str());
-				i.name           = QString::fromUtf8(it3->second.mGroupName.c_str());
-				i.popularity     = 0; // could be set to the number of hits
-				i.lastpost       = QDateTime::fromTime_t(it3->second.mLastMessageTs);
-				i.subscribeFlags = 0; // irrelevant here
-				i.publishKey     = false ; // IS_GROUP_PUBLISHER(groupInfo.mSubscribeFlags);
-				i.adminKey       = false ; // IS_GROUP_ADMIN(groupInfo.mSubscribeFlags);
-				i.max_visible_posts = it3->second.mNumberOfMessages;
+		group_items.push_back(i);
+	}
 
-				group_items.push_back(i);
-			}
-
-		ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
-    }
+	ui->groupTreeWidget->fillGroupItems(it2->second, group_items);
 }
 
 void GxsGroupFrameDialog::todo()
@@ -360,13 +360,22 @@ void GxsGroupFrameDialog::removeCurrentSearch()
     mSearchGroupsItems.erase(it);
 
     mKnownGroups.erase(search_request_id);
+
+    clearDistantSearchResults(search_request_id);
 }
 
 void GxsGroupFrameDialog::removeAllSearches()
 {
     for(auto it(mSearchGroupsItems.begin());it!=mSearchGroupsItems.end();++it)
-		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    {
+        QString group_id;
+        TurtleRequestId search_request_id;
 
+        if(ui->groupTreeWidget->isSearchRequestResultItem(it->second,group_id,search_request_id))
+			clearDistantSearchResults(search_request_id);
+
+		ui->groupTreeWidget->removeSearchItem(it->second) ;
+    }
     mSearchGroupsItems.clear();
     mKnownGroups.clear();
 }
@@ -390,6 +399,7 @@ static uint32_t checkDelay(uint32_t time_in_secs)
 
    return 365 * 86400;
 }
+
 void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 {
 	// First separately handle the case of search top level items
@@ -432,12 +442,10 @@ void GxsGroupFrameDialog::groupTreeCustomPopupMenu(QPoint point)
 	QMenu contextMnu(this);
 	QAction *action;
 
-	if (mMessageWidget) {
-		action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
-		if (mGroupId.isNull() || messageWidget(mGroupId, true)) {
-			action->setEnabled(false);
-		}
-	}
+	action = contextMnu.addAction(QIcon(IMAGE_TABNEW), tr("Open in new tab"), this, SLOT(openInNewTab()));
+
+	if(mGroupId.isNull()) // dont enable the open in tab if a tab is already here
+		action->setEnabled(false);
 
 	if (isSubscribed) {
 		action = contextMnu.addAction(QIcon(IMAGE_UNSUBSCRIBE), tr("Unsubscribe"), this, SLOT(unsubscribeGroup()));
@@ -673,7 +681,7 @@ bool GxsGroupFrameDialog::getCurrentGroupName(QString& name)
 
 void GxsGroupFrameDialog::markMsgAsRead()
 {
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (msgWidget) {
 		msgWidget->setAllMessagesRead(true);
 	}
@@ -681,7 +689,7 @@ void GxsGroupFrameDialog::markMsgAsRead()
 
 void GxsGroupFrameDialog::markMsgAsUnread()
 {
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (msgWidget) {
 		msgWidget->setAllMessagesRead(false);
 	}
@@ -759,7 +767,7 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 	changedCurrentGroup(groupIdString);
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, false);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 	if (!msgWidget) {
 		return false;
 	}
@@ -771,17 +779,16 @@ bool GxsGroupFrameDialog::navigate(const RsGxsGroupId &groupId, const RsGxsMessa
 	return msgWidget->navigate(msgId);
 }
 
-GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId, bool ownTab)
+GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &groupId)
 {
 	int tabCount = ui->messageTabWidget->count();
-	for (int index = 0; index < tabCount; ++index) {
+
+	for (int index = 0; index < tabCount; ++index)
+    {
 		GxsMessageFrameWidget *childWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
-		if (ownTab && mMessageWidget && childWidget == mMessageWidget) {
-			continue;
-		}
-		if (childWidget && childWidget->groupId() == groupId) {
+
+		if (childWidget && childWidget->groupId() == groupId)
 			return childWidget;
-		}
 	}
 
 	return NULL;
@@ -790,9 +797,9 @@ GxsMessageFrameWidget *GxsGroupFrameDialog::messageWidget(const RsGxsGroupId &gr
 GxsMessageFrameWidget *GxsGroupFrameDialog::createMessageWidget(const RsGxsGroupId &groupId)
 {
 	GxsMessageFrameWidget *msgWidget = createMessageFrameWidget(groupId);
-	if (!msgWidget) {
+
+	if (!msgWidget)
 		return NULL;
-	}
 
 	int index = ui->messageTabWidget->addTab(msgWidget, msgWidget->groupName(true));
 	ui->messageTabWidget->setTabIcon(index, msgWidget->groupIcon());
@@ -817,40 +824,44 @@ GxsCommentDialog *GxsGroupFrameDialog::commentWidget(const RsGxsMessageId& msgId
 	return NULL;
 }
 
-void GxsGroupFrameDialog::changedCurrentGroup(const QString &groupId)
+void GxsGroupFrameDialog::changedCurrentGroup(const QString& groupId)
 {
 	if (mInFill) {
 		return;
 	}
 
-	if (groupId.isEmpty()) {
-		if (mMessageWidget) {
-			mMessageWidget->setGroupId(RsGxsGroupId());
-			ui->messageTabWidget->setCurrentWidget(mMessageWidget);
-		}
+	if (groupId.isEmpty())
+    {
+        auto w = currentWidget();
+
+        if(w)
+			w->setGroupId(RsGxsGroupId());
+
 		return;
 	}
 
 	mGroupId = RsGxsGroupId(groupId.toStdString());
-	if (mGroupId.isNull()) {
+
+	if (mGroupId.isNull())
 		return;
-	}
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId, true);
+	GxsMessageFrameWidget *msgWidget = messageWidget(mGroupId);
 
-	if (!msgWidget) {
-		if (mMessageWidget) {
-			/* not found, use standard tab */
-			msgWidget = mMessageWidget;
-			msgWidget->setGroupId(mGroupId);
-		} else {
-			/* create new tab */
-			msgWidget = createMessageWidget(mGroupId);
+    // check that we have at least one tab
+
+	if(msgWidget)
+		ui->messageTabWidget->setCurrentWidget(msgWidget);
+    else
+    {
+        if(useTabs() || ui->messageTabWidget->count()==0)
+        {
+			msgWidget = createMessageWidget(RsGxsGroupId(groupId.toStdString()));
+			ui->messageTabWidget->setCurrentWidget(msgWidget);
 		}
+        else
+			currentWidget()->setGroupId(mGroupId);
 	}
-
-	ui->messageTabWidget->setCurrentWidget(msgWidget);
 }
 
 void GxsGroupFrameDialog::groupTreeMiddleButtonClicked(QTreeWidgetItem *item)
@@ -870,37 +881,31 @@ void GxsGroupFrameDialog::openGroupInNewTab(const RsGxsGroupId &groupId)
 	}
 
 	/* search exisiting tab */
-	GxsMessageFrameWidget *msgWidget = messageWidget(groupId, true);
-	if (!msgWidget) {
-		/* not found, create new tab */
-		msgWidget = createMessageWidget(groupId);
-	}
+	GxsMessageFrameWidget *msgWidget = createMessageWidget(groupId);
 
 	ui->messageTabWidget->setCurrentWidget(msgWidget);
 }
 
 void GxsGroupFrameDialog::messageTabCloseRequested(int index)
 {
-	QWidget *widget = ui->messageTabWidget->widget(index);
-	if (!widget) {
+	if(ui->messageTabWidget->count() == 1) /* Don't close single tab */
 		return;
-	}
 
-	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(widget);
-	if (msgWidget && msgWidget == mMessageWidget) {
-		/* Don't close single tab */
-		return;
-	}
+	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
+	delete msgWidget ;
+}
 
-	delete(widget);
+GxsMessageFrameWidget *GxsGroupFrameDialog::currentWidget() const
+{
+    return dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(ui->messageTabWidget->currentIndex()));
 }
 
 void GxsGroupFrameDialog::messageTabChanged(int index)
 {
 	GxsMessageFrameWidget *msgWidget = dynamic_cast<GxsMessageFrameWidget*>(ui->messageTabWidget->widget(index));
-	if (!msgWidget) {
+
+	if (!msgWidget)
 		return;
-	}
 
 	ui->groupTreeWidget->activateId(QString::fromStdString(msgWidget->groupId().toStdString()), false);
 }
@@ -1074,15 +1079,20 @@ void GxsGroupFrameDialog::updateGroupSummary()
 {
 	RsThread::async([this]()
 	{
-		std::list<RsGxsGenericGroupData*> groupInfo;
+		auto groupInfo = new std::list<RsGxsGenericGroupData*>() ;
 
-		if(!getGroupData(groupInfo))
+		if(!getGroupData(*groupInfo))
 		{
-			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info " << std::endl;
+			std::cerr << __PRETTY_FUNCTION__ << " failed to collect group info." << std::endl;
+            delete groupInfo;
 			return;
 		}
-        if(groupInfo.empty())
+        if(groupInfo->empty())
+        {
+			std::cerr << __PRETTY_FUNCTION__ << " no group info collected." << std::endl;
+            delete groupInfo;
             return;
+        }
 
 		RsQThreadUtils::postToObject( [this,groupInfo]()
 		{
@@ -1092,7 +1102,7 @@ void GxsGroupFrameDialog::updateGroupSummary()
 			 * Qt::QueuedConnection is important!
 			 */
 
-			insertGroupsData(groupInfo);
+			insertGroupsData(*groupInfo);
 			updateSearchResults();
 
 			mStateHelper->setLoading(TOKEN_TYPE_GROUP_SUMMARY, false);
@@ -1111,11 +1121,13 @@ void GxsGroupFrameDialog::updateGroupSummary()
 
 			// now delete the data that is not used anymore
 
-			for(auto& g:groupInfo)
+			for(auto& g:*groupInfo)
 			{
 				mCachedGroupMetas[g->mMeta.mGroupId] = g->mMeta;
 				delete g;
 			}
+
+            delete groupInfo;
 
 		}, this );
 	});

@@ -123,9 +123,9 @@ public:
         {
         default:
         case 3:
-        case 0: icon = QIcon(IMAGE_VOID); break;
-        case 1: icon = QIcon(IMAGE_WARNING_YELLOW); break;
-        case 2: icon = QIcon(IMAGE_WARNING_RED); break;
+        case 0: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_VOID); break;
+        case 1: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_WARNING_YELLOW); break;
+        case 2: icon = FilesDefs::getIconFromQtResourcePath(IMAGE_WARNING_RED); break;
         }
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -133,6 +133,13 @@ public:
 		// draw pixmap at center of item
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+
+    virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+	{
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(IMAGE_WARNING_YELLOW));
+
+		return QSize(img.width()*1.2,option.rect.height());
 	}
 };
 
@@ -172,9 +179,9 @@ public:
 		else
 		{
 			if (unread)
-				icon = QIcon(":/images/message-state-unread.png");
+				icon = FilesDefs::getIconFromQtResourcePath(":/images/message-state-unread.png");
 			else
-				icon = QIcon(":/images/message-state-read.png");
+				icon = FilesDefs::getIconFromQtResourcePath(":/images/message-state-read.png");
 		}
 
 		QPixmap pix = icon.pixmap(r.size());
@@ -182,6 +189,13 @@ public:
 		// draw pixmap at center of item
 		const QPoint p = QPoint((r.width() - pix.width())/2, (r.height() - pix.height())/2);
 		painter->drawPixmap(r.topLeft() + p, pix);
+	}
+
+	virtual QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override
+	{
+        static auto img(FilesDefs::getPixmapFromQtResourcePath(":/images/message-state-unread.png"));
+
+		return QSize(img.width()*1.2,option.rect.height());
 	}
 };
 
@@ -299,9 +313,10 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	QHeaderView * ttheader = ui->threadTreeWidget->header () ;
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DATE,  140*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_TITLE, 440*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION, 24*f);
 	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_AUTHOR, 150*f);
-	ttheader->resizeSection (RsGxsForumModel::COLUMN_THREAD_READ,  24*f);
+
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_DISTRIBUTION);
+    ui->threadTreeWidget->resizeColumnToContents(RsGxsForumModel::COLUMN_THREAD_READ);
 
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_TITLE,        QHeaderView::Interactive);
 	QHeaderView_setSectionResizeModeColumn(ttheader, RsGxsForumModel::COLUMN_THREAD_DATE,         QHeaderView::Interactive);
@@ -462,7 +477,7 @@ QString GxsForumThreadWidget::groupName(bool withUnreadCount)
 QIcon GxsForumThreadWidget::groupIcon()
 {
 	if (mNewCount) {
-		return QIcon(":/images/message-state-new.png");
+		return FilesDefs::getIconFromQtResourcePath(":/images/message-state-new.png");
 	}
 
 	return QIcon();
@@ -497,6 +512,7 @@ void GxsForumThreadWidget::recursRestoreExpandedItems(const QModelIndex& /*index
  	for(auto it(expanded_items.begin());it!=expanded_items.end();++it)
         ui->threadTreeWidget->setExpanded( mThreadProxyModel->mapFromSource(mThreadModel->getIndexOfMessage(*it)) ,true) ;
 }
+
 
 void GxsForumThreadWidget::updateDisplay(bool complete)
 {
@@ -560,35 +576,35 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 #ifdef DEBUG_FORUMS
     std::cerr << "Clicked on msg " << current_post.mMsgId << std::endl;
 #endif
-	QAction *editAct = new QAction(QIcon(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
+	QAction *editAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEEDIT), tr("Edit"), &contextMnu);
 	connect(editAct, SIGNAL(triggered()), this, SLOT(editforummessage()));
 
 	bool is_pinned = mForumGroup.mPinnedPosts.ids.find(mThreadId) != mForumGroup.mPinnedPosts.ids.end();
-	QAction *pinUpPostAct = new QAction(QIcon(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
+	QAction *pinUpPostAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_PINPOST), (is_pinned?tr("Un-pin this post"):tr("Pin this post up")), &contextMnu);
 	connect(pinUpPostAct , SIGNAL(triggered()), this, SLOT(togglePinUpPost()));
 
-	QAction *replyAct = new QAction(QIcon(IMAGE_REPLY), tr("Reply"), &contextMnu);
+	QAction *replyAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_REPLY), tr("Reply"), &contextMnu);
 	connect(replyAct, SIGNAL(triggered()), this, SLOT(replytoforummessage()));
 
-    QAction *replyauthorAct = new QAction(QIcon(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
+    QAction *replyauthorAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGEREPLY), tr("Reply to author with private message"), &contextMnu);
     connect(replyauthorAct, SIGNAL(triggered()), this, SLOT(reply_with_private_message()));
 
-    QAction *flagaspositiveAct = new QAction(QIcon(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
+    QAction *flagaspositiveAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_POSITIVE_OPINION), tr("Give positive opinion"), &contextMnu);
     flagaspositiveAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
 	flagaspositiveAct->setData(static_cast<uint32_t>(RsOpinion::POSITIVE));
     connect(flagaspositiveAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *flagasneutralAct = new QAction(QIcon(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
+    QAction *flagasneutralAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_NEUTRAL_OPINION), tr("Give neutral opinion"), &contextMnu);
     flagasneutralAct->setToolTip(tr("Doing this, you trust your friends to decide to forward this message or not.")) ;
 	flagasneutralAct->setData(static_cast<uint32_t>(RsOpinion::NEUTRAL));
     connect(flagasneutralAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *flagasnegativeAct = new QAction(QIcon(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
+    QAction *flagasnegativeAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_NEGATIVE_OPINION), tr("Give negative opinion"), &contextMnu);
     flagasnegativeAct->setToolTip(tr("This will block/hide messages from this person, and notify friend nodes.")) ;
 	flagasnegativeAct->setData(static_cast<uint32_t>(RsOpinion::NEGATIVE));
     connect(flagasnegativeAct, SIGNAL(triggered()), this, SLOT(flagperson()));
 
-    QAction *newthreadAct = new QAction(QIcon(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
+    QAction *newthreadAct = new QAction(FilesDefs::getIconFromQtResourcePath(IMAGE_MESSAGE), tr("Start New Thread"), &contextMnu);
 	newthreadAct->setEnabled (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags));
 	connect(newthreadAct , SIGNAL(triggered()), this, SLOT(createthread()));
 
@@ -598,19 +614,19 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 	QAction* collapseAll = new QAction(tr( "Collapse all"), &contextMnu);
 	connect(collapseAll, SIGNAL(triggered()), ui->threadTreeWidget, SLOT(collapseAll()));
 
-	QAction *markMsgAsRead = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
+	QAction *markMsgAsRead = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark as read"), &contextMnu);
 	connect(markMsgAsRead, SIGNAL(triggered()), this, SLOT(markMsgAsRead()));
 
-	QAction *markMsgAsReadChildren = new QAction(QIcon(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
+	QAction *markMsgAsReadChildren = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail-read.png"), tr("Mark as read") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsReadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsReadChildren()));
 
-	QAction *markMsgAsUnread = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
+	QAction *markMsgAsUnread = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark as unread"), &contextMnu);
 	connect(markMsgAsUnread, SIGNAL(triggered()), this, SLOT(markMsgAsUnread()));
 
-	QAction *markMsgAsUnreadChildren = new QAction(QIcon(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
+	QAction *markMsgAsUnreadChildren = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/message-mail.png"), tr("Mark as unread") + " (" + tr ("with children") + ")", &contextMnu);
 	connect(markMsgAsUnreadChildren, SIGNAL(triggered()), this, SLOT(markMsgAsUnreadChildren()));
 
-	QAction *showinpeopleAct = new QAction(QIcon(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
+	QAction *showinpeopleAct = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/info16.png"), tr("Show author in people tab"), &contextMnu);
 	connect(showinpeopleAct, SIGNAL(triggered()), this, SLOT(showInPeopleTab()));
 
 	if (IS_GROUP_SUBSCRIBED(mForumGroup.mMeta.mSubscribeFlags))
@@ -663,7 +679,7 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	contextMnu.addAction(replyAct);
   contextMnu.addAction(newthreadAct);
-    QAction* action = contextMnu.addAction(QIcon(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
+    QAction* action = contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_COPYLINK), tr("Copy RetroShare Link"), this, SLOT(copyMessageLink()));
 	action->setEnabled(!groupId().isNull() && !mThreadId.isNull());
 	contextMnu.addSeparator();
 	contextMnu.addAction(markMsgAsRead);
@@ -755,7 +771,7 @@ void GxsForumThreadWidget::togglethreadview_internal()
 {
 //	if (ui->expandButton->isChecked()) {
 		ui->postText->setVisible(true);
-		ui->expandButton->setIcon(QIcon(QString(":/images/edit_remove24.png")));
+		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/edit_remove24.png")));
 		ui->expandButton->setToolTip(tr("Hide"));
 //	} else  {
 //		ui->postText->setVisible(false);

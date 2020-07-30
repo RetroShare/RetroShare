@@ -51,7 +51,10 @@ public:
 private slots:
 	/** Create the context popup menu and it's submenus */
 	void CustomPopupMenu( QPoint point );
+	void CustomPopupMenuGroups( QPoint point ) ;
+
 	void personDetails();
+	void showAuthorInPeople();
 
 private:
 	void updateDisplay(bool complete) ;

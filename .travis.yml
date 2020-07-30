@@ -57,7 +57,7 @@ before_script:
   - if [ $TRAVIS_OS_NAME == linux ]; then qmake; fi
   - >
     if [ $TRAVIS_OS_NAME == osx ]; then
-    qmake CONFIG+=rs_macos10.14
+    qmake CONFIG+=rs_macos10.14 CONFIG+=c++14
     INCLUDEPATH+=$(find /usr/local/Cellar/miniupnpc/*/include | head -n 1)
     QMAKE_LIBDIR+=$(find /usr/local/Cellar/miniupnpc/*/lib/   | head -n 1)
     INCLUDEPATH+=$(find /usr/local/Cellar/openssl*/*/include/ | head -n 1)

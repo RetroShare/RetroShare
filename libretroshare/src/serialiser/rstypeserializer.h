@@ -39,7 +39,7 @@
 #include "serialiser/rsserializer.h"
 #include "serialiser/rsserializable.h"
 #include "util/rsjson.h"
-#include "util/rsdebug.h"
+#include "util/rsdebuglevel1.h"
 #include "util/cxx14retrocompat.h"
 
 
@@ -715,12 +715,9 @@ struct RsTypeSerializer
 	                                E& member,
 	                                const std::string& memberName )
 	{
-#ifdef RSSERIAL_DEBUG
-		std::cerr << __PRETTY_FUNCTION__  << " processing enum: "
-		          << typeid(E).name() << " as "
-		          << typeid(typename std::underlying_type<E>::type).name()
-		          << std::endl;
-#endif
+		RS_DBG4( "processing enum: ", typeid(E).name(), " as ",
+		         typeid(typename std::underlying_type<E>::type).name() );
+
 		serial_process(
 		      j, ctx,
 		      reinterpret_cast<typename std::underlying_type<E>::type&>(member),
@@ -1004,14 +1001,16 @@ protected:
 	        uint8_t data[], uint32_t size, uint32_t &offset, T member )
 	{
 		std::decay_t<T> backupMember = member;
+#if RS_DEBUG_LEVEL >= 3
 		uint32_t offsetBackup = offset;
+#endif
 
 		bool ok = true;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wbool-compare"
 		/* Check with < and not with <= here as we write last byte after
 		 * the loop. Order of && operands very important here! */
-		while(member > 127 && (ok = offset < size))
+		while(member > 127 && (ok = (offset < size)))
 		{
 			// | 128: Set the next byte flag
 			data[offset++] = (static_cast<uint8_t>(member & 127)) | 128;
@@ -1036,13 +1035,13 @@ protected:
 
 		data[offset++] = static_cast<uint8_t>(member & 127);
 
-		Dbg3() << __PRETTY_FUNCTION__ << " backupMember: " << backupMember
-		       << " offsetBackup: " << offsetBackup << " offeset: " << offset
-		       << " serialized as: ";
+#if RS_DEBUG_LEVEL >= 3
+		RsDbg tdbg( __PRETTY_FUNCTION__, " backupMember: ", backupMember,
+		            " offsetBackup: ", offsetBackup, " offeset: ", offset,
+		            " serialized as: " );
 		for(; offsetBackup < offset; ++offsetBackup)
-			Dbg3().uStream() << " " << std::bitset<8>(data[offsetBackup]);
-		Dbg3().uStream() << std::endl;
-
+			tdbg << " " << std::bitset<8>(data[offsetBackup]);
+#endif
 		return ok;
 	}
 
@@ -1082,13 +1081,13 @@ protected:
 		/* If return is not triggered inside the for loop, either the buffer
 		 * ended before we encountered the end of the number, or the number
 		 * is VLQ encoded improperly */
-		RsErr() << __PRETTY_FUNCTION__ << std::errc::illegal_byte_sequence
-		        << " size: " << size
-		        << " offsetBackup: " << offsetBackup
-		        << " offset: " << offset << " bytes: ";
+		RsErr rserr;
+		rserr << __PRETTY_FUNCTION__ << std::errc::illegal_byte_sequence
+		      << " size: " << size
+		      << " offsetBackup: " << offsetBackup
+		      << " offset: " << offset << " bytes: ";
 		for(; offsetBackup < offset; ++offsetBackup)
-			RsErr().uStream() << " " << std::bitset<8>(data[offsetBackup]);
-		RsErr().uStream() << std::endl;
+			rserr << " " << std::bitset<8>(data[offsetBackup]);
 		print_stacktrace();
 
 		return false;
@@ -1151,7 +1150,7 @@ protected:
 
 	struct ErrConditionWrapper : RsSerializable
 	{
-		ErrConditionWrapper(const std::error_condition& ec): mec(ec) {}
+		explicit ErrConditionWrapper(const std::error_condition& ec): mec(ec) {}
 
 		/** supports only TO_JSON if a different SerializeJob is passed it will
 		 * explode at runtime */
