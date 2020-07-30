@@ -22,8 +22,6 @@ set NSISInstallPath=%EnvToolsPath%\NSIS
 set MinGitInstall=MinGit-2.28.0-32-bit.zip
 set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/%MinGitInstall%
 set MinGitInstallPath=%EnvToolsPath%\MinGit
-set SigcheckInstall=Sigcheck.zip
-set SigcheckUrl=https://download.sysinternals.com/files/%SigcheckInstall%
 set CMakeVersion=cmake-3.1.0-win32-x86
 set CMakeInstall=%CMakeVersion%.zip
 set CMakeUrl=http://www.cmake.org/files/v3.1/%CMakeInstall%
@@ -177,16 +175,6 @@ if not exist "%MinGitInstallPath%\cmd\git.exe" (
 
 	%cecho% info "Unpack MinGit"
 	"%EnvSevenZipExe%" x -o"%MinGitInstallPath%" "%EnvDownloadPath%\%MinGitInstall%"
-)
-
-if not exist "%EnvToolsPath%\sigcheck.exe" (
-	%cecho% info "Download Sigcheck installation"
-
-	if not exist "%EnvDownloadPath%\%SigcheckInstall%" call "%ToolsPath%\download-file.bat" "%SigcheckUrl%" "%EnvDownloadPath%\%SigcheckInstall%"
-	if not exist "%EnvDownloadPath%\%SigcheckInstall%" %cecho% error "Cannot download Sigcheck installation" & goto error
-
-	%cecho% info "Unpack Sigcheck"
-	"%EnvSevenZipExe%" x -o"%EnvToolsPath%" "%EnvDownloadPath%\%SigcheckInstall%" sigcheck.exe
 )
 
 if not exist "%EnvDownloadPath%\%CMakeInstall%" call "%ToolsPath%\remove-dir.bat" "%CMakeInstallPath%"
