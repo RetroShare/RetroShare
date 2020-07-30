@@ -950,18 +950,30 @@ rs_broadcast_discovery {
     no_rs_cross_compiling {
         DUMMYQMAKECOMPILERINPUT = FORCE
         CMAKE_GENERATOR_OVERRIDE=""
-        win32-g++|win32-clang-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+        win32-g++|win32-clang-g++ {
+            isEmpty(QMAKE_SH) {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MinGW Makefiles\""
+            } else {
+                CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+            }
+        }
         udpdiscoverycpplib.name = Generating libudp-discovery.a.
         udpdiscoverycpplib.input = DUMMYQMAKECOMPILERINPUT
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
         udpdiscoverycpplib.CONFIG += target_predeps combine
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
-        udpdiscoverycpplib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/udp-discovery-cpp || \
-            true ) && \
-            mkdir -p $${UDP_DISCOVERY_BUILD_PATH} && \
-            cd $${UDP_DISCOVERY_BUILD_PATH} && \
+        isEmpty(QMAKE_SH) {
+            udpdiscoverycpplib.commands = \
+                $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
+        } else {
+            udpdiscoverycpplib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/udp-discovery-cpp || \
+                true ) && \
+                mkdir -p $${UDP_DISCOVERY_BUILD_PATH} &&
+        }
+        udpdiscoverycpplib.commands += \
+            cd $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) && \
             cmake -DCMAKE_C_COMPILER=$$fixQmakeCC($$QMAKE_CC) \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
                 \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
