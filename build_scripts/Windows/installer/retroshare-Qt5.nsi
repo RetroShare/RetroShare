@@ -22,6 +22,9 @@
 !ifndef MINGWDIR
 !error "MINGWDIR is not defined"
 !endif
+!ifndef ARCHITECTURE
+!error "Architecture is not defined"
+!endif
 
 # Check optional defines
 !ifdef OUTDIR
@@ -61,7 +64,12 @@
 !define PUBLISHER "RetroShare Team"
 
 # Install path
-!define INSTDIR_NORMAL "$ProgramFiles\${APPNAME}"
+!if ${ARCHITECTURE} == "x86"
+  !define INSTDIR_NORMAL "$ProgramFiles32\${APPNAME}"
+!endif
+!if ${ARCHITECTURE} == "x64"
+  !define INSTDIR_NORMAL "$ProgramFiles64\${APPNAME}"
+!endif
 !define INSTDIR_PORTABLE "$Desktop\${APPNAME}"
 
 !define DATADIR_NORMAL "$APPDATA\${APPNAME}"
@@ -70,7 +78,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -175,7 +183,7 @@ Section $(Section_Main) Section_Main
   ; Main binaries
   SetOutPath "$INSTDIR"
   File /oname=retroshare.exe "${RELEASEDIR}\retroshare-gui\src\release\retroshare.exe"
-  File /oname=retroshare-nogui.exe "${RELEASEDIR}\retroshare-nogui\src\release\retroshare-nogui.exe"
+  File /oname=retroshare-service.exe "${RELEASEDIR}\retroshare-service\src\release\retroshare-service.exe"
 
   ; Qt binaries
   File "${QTDIR}\bin\Qt5Core.dll"
@@ -202,17 +210,32 @@ Section $(Section_Main) Section_Main
   ; MinGW binaries
   SetOutPath "$INSTDIR"
   File "${MINGWDIR}\bin\libstdc++-6.dll"
-  File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${MINGWDIR}\bin\libgcc_s_dw2-1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${MINGWDIR}\bin\libgcc_s_seh-1.dll"
+  !endif
   File "${MINGWDIR}\bin\libwinpthread-1.dll"
 
   ; External binaries
   File "${EXTERNAL_LIB_DIR}\bin\miniupnpc.dll"
-  File "${EXTERNAL_LIB_DIR}\bin\libeay32.dll"
-  File "${EXTERNAL_LIB_DIR}\bin\ssleay32.dll"
+  !if ${ARCHITECTURE} == "x86"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1.dll"
+  !endif
+  !if ${ARCHITECTURE} == "x64"
+    File "${EXTERNAL_LIB_DIR}\bin\libcrypto-1_1-x64.dll"
+    File "${EXTERNAL_LIB_DIR}\bin\libssl-1_1-x64.dll"
+  !endif
 
   ; Other files
 ;  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
   File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
+
+  ; License
+  SetOutPath "$INSTDIR\license"
+  File "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 
   ; Image formats
   SetOutPath "$INSTDIR\imageformats"
@@ -236,7 +259,6 @@ Section $(Section_Main) Section_Main
   File /r "${QTDIR}\translations\qt_*.qm"
   File /r "${QTDIR}\translations\qtbase_*.qm"
   File /r "${QTDIR}\translations\qtscript_*.qm"
-  File /r "${QTDIR}\translations\qtquick1_*.qm"
   File /r "${QTDIR}\translations\qtmultimedia_*.qm"
   File /r "${QTDIR}\translations\qtxmlpatterns_*.qm"
 

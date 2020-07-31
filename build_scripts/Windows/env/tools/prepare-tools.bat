@@ -16,8 +16,8 @@ set DependsUrl=http://www.dependencywalker.com/depends22_x86.zip
 set DependsInstall=depends22_x86.zip
 set UnixToolsUrl=http://unxutils.sourceforge.net/UnxUpdates.zip
 set UnixToolsInstall=UnxUpdates.zip
-set NSISUrl=http://prdownloads.sourceforge.net/nsis/nsis-3.0-setup.exe?download
-set NSISInstall=nsis-3.0-setup.exe
+set NSISInstall=nsis-3.05-setup.exe
+set NSISUrl=http://prdownloads.sourceforge.net/nsis/%NSISInstall%?download
 set NSISInstallPath=%EnvToolsPath%\NSIS
 set MinGitInstall=MinGit-2.28.0-32-bit.zip
 set MinGitUrl=https://github.com/git-for-windows/git/releases/download/v2.28.0.windows.1/%MinGitInstall%
@@ -150,8 +150,12 @@ if not exist "%EnvToolsPath%\sed.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
 )
 
+if not exist "%EnvDownloadPath%\%NSISInstall%" call "%ToolsPath%\remove-dir.bat" "%NSISInstallPath%"
 if not exist "%NSISInstallPath%\nsis.exe" (
 	call "%ToolsPath%\remove-dir.bat" "%EnvTempPath%"
+
+	if exist "%NSISInstallPath%" call "%ToolsPath%\remove-dir.bat" "%NSISInstallPath%"
+
 	mkdir "%EnvTempPath%"
 
 	%cecho% info "Download NSIS installation"
