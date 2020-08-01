@@ -1,6 +1,6 @@
 /*******************************************************************************
  *                                                                             *
- * libretroshare base64 encoding utilities                                     *
+ * libretroshare endiannes utilities                                           *
  *                                                                             *
  * Copyright (C) 2020  Gioacchino Mazzurco <gio@eigenlab.org>                  *
  * Copyright (C) 2020  Asociación Civil Altermundi <info@altermundi.net>       *
