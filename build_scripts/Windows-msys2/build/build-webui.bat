@@ -7,8 +7,6 @@ call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
 call "%EnvPath%\env.bat"
 if errorlevel 1 goto error_env
-call "%EnvPath%\env.bat"
-if errorlevel 1 goto error_env
 call "%EnvPath%\env-msys2.bat"
 if errorlevel 1 goto error_env
 

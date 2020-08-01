@@ -59,7 +59,7 @@ rs_gui_cmark {
 
 		DUMMYCMARKINPUT = FORCE
 		CMAKE_GENERATOR_OVERRIDE=""
-		win32-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
+		win32-g++|win32-clang-g++:CMAKE_GENERATOR_OVERRIDE="-G \"MSYS Makefiles\""
 		gencmarklib.name = Generating libcmark.
 		gencmarklib.input = DUMMYCMARKINPUT
 		gencmarklib.output = $$clean_path($${CMARK_BUILD_PATH}/src/libcmark.a)
@@ -73,6 +73,7 @@ rs_gui_cmark {
 		    mkdir -p $${CMARK_BUILD_PATH} && cd $${CMARK_BUILD_PATH} && \
 		    cmake \
 		        -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
+                        \"-DCMAKE_CXX_FLAGS=$${QMAKE_CXXFLAGS}\" \
 		        $${CMAKE_GENERATOR_OVERRIDE} \
 		        -DCMAKE_INSTALL_PREFIX=. \
 		        -B. \
@@ -209,7 +210,7 @@ win32-x-g++ {
 
 #################################### Windows #####################################
 
-win32-g++ {
+win32-g++|win32-clang-g++ {
 	CONFIG(debug, debug|release) {
 		# show console output
 		CONFIG += console
