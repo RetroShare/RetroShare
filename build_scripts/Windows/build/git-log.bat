@@ -28,25 +28,16 @@ if not exist "%GetRsVersion%" (
 	exit /B 1
 )
 
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& exit /B 1
-
 :: Get compiled version
-call "%GetRsVersion%" RS_REVISION_STRING RsRevision
-if "%RsRevision%"=="" echo Revision not found.& exit /B 1
+call "%GetRsVersion%" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+if errorlevel 1 %cecho% error "Version not found."& goto error
 
-call "%GetRsVersion%" RS_MAJOR_VERSION RsMajorVersion
-if "%RsMajorVersion%"=="" echo Major version not found.& exit /B 1
+if "%RsVersion.Major%"=="" %cecho% error "Major version not found."& goto error
+if "%RsVersion.Minor%"=="" %cecho% error "Minor version not found."& goto error
+if "%RsVersion.Mini%"=="" %cecho% error "Mini number not found".& goto error
+if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& goto error
 
-call "%GetRsVersion%" RS_MINOR_VERSION RsMinorVersion
-if "%RsMinorVersion%"=="" echo Minor version not found.& exit /B 1
-
-call "%GetRsVersion%" RS_BUILD_NUMBER RsBuildNumber
-if "%RsBuildNumber%"=="" echo Build number not found.& exit /B 1
-
-call "%GetRsVersion%" RS_BUILD_NUMBER_ADD RsBuildNumberAdd
-
-set RsVersion=%RsMajorVersion%.%RsMinorVersion%.%RsBuildNumber%%RsBuildNumberAdd%
+set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 
 :: Check WMIC is available
 wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& exit /B 1
@@ -57,7 +48,7 @@ for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do 
 set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
 
 :: Get last revision
-set RsLastRefFile=%BuildPath%\Qt-%QtVersion%%RsType%-%RsBuildConfig%-LastRef.txt
+set RsLastRefFile=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%-LastRef.txt
 set RsLastRef=
 if exist "%RsLastRefFile%" set /P RsLastRef=<"%RsLastRefFile%"
 
@@ -85,9 +76,9 @@ if %errorlevel%==2 exit /B 1
 :no_confirm
 
 if "%RsBuildConfig%" NEQ "release" (
-	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%-%RsBuildConfig%.txt
+	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-%GCCArchitecture%%RsType%%RsArchiveAdd%-%RsBuildConfig%.txt
 ) else (
-	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsRevision%-Qt-%QtVersion%%RsType%%RsArchiveAdd%.txt
+	set RsGitLog=%DeployPath%\RetroShare-%RsVersion%-Windows-Portable-%RsDate%-%RsVersion.Extra%-Qt-%QtVersion%-%GCCArchitecture%%RsType%%RsArchiveAdd%.txt
 )
 
 title %SourceName%-%RsBuildConfig% [git log]
