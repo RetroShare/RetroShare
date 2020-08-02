@@ -815,7 +815,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	}
 	else
 	{
-		ui->infoAdministrator->setText(tr("Unknown"));
+		ui->infoAdministrator->setText(tr("[No author]"));
 	}
 
 	ui->infoCreated->setText(DateTime::formatLongDateTime(group.mMeta.mPublishTs));
