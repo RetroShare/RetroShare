@@ -1,5 +1,8 @@
 <RCC>
-	<qresource prefix="/" >
-		<file>images/compose.png</file>
-	</qresource>
+    <qresource prefix="/">
+        <file>images/compose.png</file>
+        <file>images/like.png</file>
+        <file>images/reply.png</file>
+        <file>images/retweet.png</file>
+    </qresource>
 </RCC>
