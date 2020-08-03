@@ -39,19 +39,20 @@ RsWireGroup::RsWireGroup()
 
 uint32_t RsWirePulse::ImageCount()
 {
-	if (!mImage4.empty()) {
-		return 4;
-	}
-	if (!mImage3.empty()) {
-		return 3;
+	uint32_t images = 0;
+	if (!mImage1.empty()) {
+		images++;
 	}
 	if (!mImage2.empty()) {
-		return 2;
+		images++;
 	}
-	if (!mImage1.empty()) {
-		return 1;
+	if (!mImage3.empty()) {
+		images++;
 	}
-	return 0;
+	if (!mImage4.empty()) {
+		images++;
+	}
+	return images;
 }
 
 p3Wire::p3Wire(RsGeneralDataService* gds, RsNetworkExchangeService* nes, RsGixs *gixs)
