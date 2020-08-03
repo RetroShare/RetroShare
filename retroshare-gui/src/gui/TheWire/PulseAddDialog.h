@@ -56,7 +56,7 @@ private slots:
 private:
 	// OLD VERSIONs, private now.
 	void setGroup(RsWireGroup &group);
-	void setReplyTo(RsWirePulse &pulse, std::string &groupName, uint32_t replyType);
+	void setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
 
 	void postOriginalPulse();
 	void postReplyPulse();

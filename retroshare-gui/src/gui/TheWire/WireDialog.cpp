@@ -61,7 +61,6 @@ WireDialog::WireDialog(QWidget *parent)
 	ui.setupUi(this);
 
 	mAddDialog = NULL;
-	mPulseSelected = NULL;
 	mGroupSelected = NULL;
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
@@ -96,42 +95,6 @@ void WireDialog::addGroup(QWidget *item)
 	alayout->addWidget(item);
 }
 
-// PulseHolder interface.
-void WireDialog::deletePulseItem(PulseItem * /* item */, uint32_t /* type */)
-{
-	return;
-}
-
-
-	// Actions from PulseHolder.
-void WireDialog::focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId)
-{
-	std::cerr << "WireDialog::focus(";
-	std::cerr << groupId.toStdString() << ",";
-	std::cerr << msgId.toStdString();
-	std::cerr << ")";
-	std::cerr << std::endl;
-
-	showPulseFocus(groupId, msgId);
-}
-
-
-void WireDialog::follow(RsGxsGroupId &groupId)
-{
-	std::cerr << "WireDialog::follow(";
-	std::cerr << groupId.toStdString();
-	std::cerr << ")";
-	std::cerr << std::endl;
-}
-
-void WireDialog::rate(RsGxsId &authorId)
-{
-	std::cerr << "WireDialog::rate(";
-	std::cerr << authorId.toStdString();
-	std::cerr << ")";
-	std::cerr << std::endl;
-}
-
 bool WireDialog::setupPulseAddDialog()
 {
 	std::cerr << "WireDialog::setupPulseAddDialog()";
@@ -160,37 +123,6 @@ bool WireDialog::setupPulseAddDialog()
 
 	return true;
 }
-
-void WireDialog::reply(RsWirePulse &pulse, std::string &groupName)
-{
-	std::cerr << "WireDialog::reply(";
-	std::cerr << pulse.mMeta.mGroupId.toStdString();
-	std::cerr << ", MsgId:";
-	std::cerr << pulse.mMeta.mMsgId.toStdString();
-	std::cerr << ", OrigMsgId:";
-	std::cerr << pulse.mMeta.mOrigMsgId.toStdString();
-	std::cerr << ")";
-	std::cerr << std::endl;
-
-	if (setupPulseAddDialog())
-	{
-		mAddDialog->setReplyTo(pulse.mMeta.mGroupId, pulse.mMeta.mMsgId, WIRE_PULSE_TYPE_REPLY);
-		mAddDialog->show();
-	}
-}
-
-void WireDialog::notifyPulseSelection(PulseItem *item)
-{
-	if (mPulseSelected)
-	{
-		std::cerr << "WireDialog::notifyPulseSelection() unselecting old one : " << mPulseSelected;
-		std::cerr << std::endl;
-	
-		mPulseSelected->setSelected(false);
-	}
-	mPulseSelected = item;
-}
-
 
 
 void WireDialog::subscribe(RsGxsGroupId &groupId)
@@ -285,49 +217,6 @@ void WireDialog::createPulse()
 	mAddDialog->show();
 }
 
-void WireDialog::addPulse(RsWirePulse *pulse, RsWireGroup *group,
-						std::map<rstime_t, RsWirePulse *> replies)
-{
-	std::cerr << "WireDialog::addPulse() GroupId : " << pulse->mMeta.mGroupId;
-	std::cerr << " OrigMsgId : " << pulse->mMeta.mOrigMsgId;
-	std::cerr << " Replies : " << replies.size();
-	std::cerr << std::endl;
-
-	PulseItem *pulseItem = new PulseItem(this, pulse, group, replies);
-
-	/* ensure its a boxlayout */
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	QBoxLayout *boxlayout = dynamic_cast<QBoxLayout *>(alayout);
-	if (boxlayout == NULL) {
-		std::cerr << "WireDialog::addPulse() ERROR not boxlayout, inserting at end";
-		std::cerr << std::endl;
-		alayout->addWidget(pulseItem);
-		return;
-	}
-
-	/* iterate through layout, and insert at the correct time */
-	for(int i = 0; i < alayout->count(); i++)
-	{
-		QLayoutItem *layoutItem = boxlayout->itemAt(i);
-		PulseItem *pitem = dynamic_cast<PulseItem *>(layoutItem->widget());
-		if (pitem != NULL)
-		{
-			if (pitem->publishTs() < pulseItem->publishTs())
-			{
-				std::cerr << "WireDialog::addPulse() Inserting at index: " << i;
-				std::cerr << std::endl;
-				/* insert at this index */
-				boxlayout->insertWidget(i, pulseItem);
-				return;
-			}
-		}
-	}
-	// last item.
-	std::cerr << "WireDialog::addPulse() Inserting at end";
-	std::cerr << std::endl;
-	boxlayout->addWidget(pulseItem);
-}
-
 void WireDialog::addGroup(const RsWireGroup &group)
 {
 	std::cerr << "WireDialog::addGroup() GroupId : " << group.mMeta.mGroupId;
@@ -336,37 +225,6 @@ void WireDialog::addGroup(const RsWireGroup &group)
 	addGroup(new WireGroupItem(this, group));
 }
 
-void WireDialog::deletePulses()
-{
-	std::cerr << "WireDialog::deletePulses()";
-	std::cerr << std::endl;
-
-	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
-	QLayoutItem *item;
-	int i = 0;
-	while (i < alayout->count())
-	{
-		item = alayout->itemAt(i);
-		QWidget *widget = item->widget();
-		if (NULL != dynamic_cast<PulseItem *>(widget))
-		{
-			std::cerr << "WireDialog::deletePulses() Removing Item at: " << i;
-			std::cerr << std::endl;
-
-			item = alayout->takeAt(i);
-			delete item->widget();
-			delete item;
-		}
-		else
-		{
-			std::cerr << "WireDialog::deletePulses() Leaving Item at: " << i;
-			std::cerr << std::endl;
-
-			i++;
-		}
-	}
-}
-	
 void WireDialog::deleteGroups()
 {
 	std::cerr << "WireDialog::deleteGroups()";
@@ -447,11 +305,9 @@ void WireDialog::showSelectedGroups()
 	ui.comboBox_filterTime->setEnabled(false);
 	if (mGroupSelected)
 	{
-		deletePulses();
 		// request data.
 		std::list<RsGxsGroupId> grpIds;
 		grpIds.push_back(mGroupSelected->groupId());
-		requestPulseData(grpIds);
 
 		// show GroupFocus.
 		showGroupFocus(mGroupSelected->groupId());
@@ -466,8 +322,6 @@ void WireDialog::showGroups()
 {
 	ui.comboBox_filterTime->setEnabled(false);
 	deleteGroups();
-	deletePulses();
-
 
 	std::list<RsGxsGroupId> allGroupIds;
 
@@ -498,7 +352,6 @@ void WireDialog::showGroups()
 			std::list<RsGxsGroupId> grpIds;
 			grpIds.push_back(it->second.mMeta.mGroupId);
 			allGroupIds.push_back(it->second.mMeta.mGroupId);
-			requestPulseData(grpIds);
 		}
 	}
 
@@ -533,62 +386,6 @@ bool WireDialog::loadGroupData(const uint32_t &token)
 	return true;
 }
 
-void WireDialog::requestPulseData(const std::list<RsGxsGroupId>& grpIds)
-{
-	std::cerr << "WireDialog::requestPulseData()";
-	std::cerr << std::endl;
-
-	RsTokReqOptions opts;
-	opts.mReqType = GXS_REQUEST_TYPE_MSG_DATA;
-	opts.mOptions = RS_TOKREQOPT_MSG_LATEST;
-	uint32_t token;
-	mWireQueue->requestMsgInfo(token, RS_TOKREQ_ANSTYPE_DATA, opts, grpIds, 0);
-}
-
-
-/* LoadPulseData...
- *
- * group into threads, using std::map<RsGxsMessageId, PulseReplySet>
- * then sort by publishTS, using std::map<time, PulseOrderedReply>
- * then add into gui.
- * - use pointers to avoid copying everywhere.
- *
- * should we mutex Groups, or copy so we don't lose a pointer?
- * should be fine, as mAllGroups only modified from loadData calls.
- ******
- *
- * NB: Potentially, this should be changed to use GXS to do the bulk of the work.
- * - request Top-Level Msgs, sorted by PublishTS.
- *   - Insert into GUI.
- *   - for each request children Msg, and fill in "replies"
- *
- * This needs sorted option on GXS Data fetch.
- */
-
-class PulseReplySet
-{
-public:
-    PulseReplySet() : group(NULL), msg(NULL) {}
-    PulseReplySet(RsWirePulse *m, RsWireGroup *g)
-	: group(g), msg(m) {}
-
-	RsWireGroup *group;
-	RsWirePulse *msg;
-	std::map<RsGxsMessageId, RsWirePulse *> replies; // orig ID -> replies.
-};
-
-class PulseOrderedReply
-{
-public:
-    PulseOrderedReply() : group(NULL), msg(NULL) {}
-    PulseOrderedReply(RsWirePulse *m, RsWireGroup *g)
-	: group(g), msg(m) {}
-
-	RsWireGroup *group;
-	RsWirePulse *msg;
-	std::map<rstime_t, RsWirePulse *> replies; // publish -> replies.
-};
-
 rstime_t WireDialog::getFilterTimestamp()
 {
 	rstime_t filterTimestamp = time(NULL);
@@ -610,135 +407,6 @@ rstime_t WireDialog::getFilterTimestamp()
 			break;
 	}
 	return filterTimestamp;
-}
-
-bool WireDialog::loadPulseData(const uint32_t &token)
-{
-	std::cerr << "WireDialog::loadPulseData()";
-	std::cerr << std::endl;
-
-	std::vector<RsWirePulse> pulses;
-	rsWire->getPulseData(token, pulses);
-
-	std::cerr << "WireDialog::loadPulseData() pulses.size(): " << pulses.size();
-	std::cerr << std::endl;
-
-	std::list<RsWirePulse *> references;
-	std::map<RsGxsMessageId, PulseReplySet> pulseGrouping;
-
-	// setup time filtering.
-	uint32_t filterTimestamp;
-	bool filterTime = (ui.comboBox_filterTime->currentIndex() > 0);
-	if (filterTime) 
-	{
-		filterTimestamp = getFilterTimestamp();
-	}
-
-	std::vector<RsWirePulse>::iterator vit = pulses.begin();
-	for(; vit != pulses.end(); vit++)
-	{
-		RsWirePulse& pulse = *vit;
-		if (pulse.mPulseType & WIRE_PULSE_TYPE_REFERENCE)
-		{
-			// store references to add in later.
-			std::cerr << "WireDialog::loadPulseData() REF: GroupId: " << pulse.mMeta.mGroupId;
-			std::cerr << " PulseId: " << pulse.mMeta.mMsgId;
-			std::cerr << std::endl;
-			references.push_back(&pulse);
-		}
-		else
-		{
-			// Filter timestamp now. (as soon as possible).
-			if (filterTime && (pulse.mMeta.mPublishTs < filterTimestamp))
-			{
-				std::cerr << "WireDialog::loadPulseData() SKipping OLD MSG: GroupId: " << pulse.mMeta.mGroupId;
-				std::cerr << " PulseId: " << pulse.mMeta.mMsgId;
-				std::cerr << std::endl;
-				continue;
-			}
-
-			RsGxsGroupId &gid = pulse.mMeta.mGroupId;
-			std::map<RsGxsGroupId, RsWireGroup>::iterator git = mAllGroups.find(gid);
-			if (git != mAllGroups.end())
-			{
-				RsWireGroup &group = git->second;
-				std::cerr << "WireDialog::loadPulseData() MSG: GroupId: " << pulse.mMeta.mGroupId;
-				std::cerr << " PulseId: " << pulse.mMeta.mMsgId;
-				std::cerr << std::endl;
-
-				// install into pulseGrouping.
-				pulseGrouping[pulse.mMeta.mOrigMsgId] = PulseReplySet(&pulse, &group);
-			}
-			else
-			{
-				std::cerr << "WireDialog::loadPulseData() ERROR Missing GroupId: " << pulse.mMeta.mGroupId;
-				std::cerr << " PulseId: " << pulse.mMeta.mMsgId;
-				std::cerr << std::endl;
-			}
-		}
-	}
-
-	// add references.
-	std::list<RsWirePulse *>::iterator lrit;
-	for(lrit = references.begin(); lrit != references.end(); lrit++)
-	{
-		std::map<RsGxsMessageId, PulseReplySet>::iterator pgit;
-		pgit = pulseGrouping.find((*lrit)->mMeta.mThreadId);
-		if (pgit != pulseGrouping.end())
-		{
-			// install into reply map.
-			// TODO handle Edits / Latest MSGS.
-			std::map<RsGxsMessageId, RsWirePulse *>::iterator rmit;
-			rmit = pgit->second.replies.find((*lrit)->mMeta.mOrigMsgId);
-			if (rmit == pgit->second.replies.end())
-			{
-				std::cerr << "WireDialog::loadPulseData() Installing REF: " << (*lrit)->mMeta.mOrigMsgId;
-				std::cerr << " to threadId: " << (*lrit)->mMeta.mThreadId;
-				std::cerr << std::endl;
-				pgit->second.replies[(*lrit)->mMeta.mOrigMsgId] = (*lrit);
-			}
-			else
-			{
-				std::cerr << "WireDialog::loadPulseData() ERROR Duplicate reply REF: " << (*lrit)->mMeta.mOrigMsgId;
-				std::cerr << std::endl;
-			}
-		}
-		else
-		{
-			// no original msg for REF.
-			std::cerr << "WireDialog::loadPulseData() ERROR No matching ThreadId REF: " << (*lrit)->mMeta.mThreadId;
-			std::cerr << std::endl;
-		}
-	}
-	references.clear();
-
-	// sort by publish time.
-	std::map<rstime_t, PulseOrderedReply> pulseOrdering;
-	std::map<RsGxsMessageId, PulseReplySet>::iterator pgit;
-	for(pgit = pulseGrouping.begin(); pgit != pulseGrouping.end(); pgit++)
-	{
-
-		PulseOrderedReply &msg = pulseOrdering[pgit->second.msg->mMeta.mPublishTs] = 
-			PulseOrderedReply(pgit->second.msg, pgit->second.group);
-		std::map<RsGxsMessageId, RsWirePulse *>::iterator rmit;
-		for(rmit = pgit->second.replies.begin();
-					rmit != pgit->second.replies.end(); rmit++)
-		{
-			msg.replies[rmit->second->mMeta.mPublishTs] = rmit->second;
-		}
-	}
-
-	// now add to the GUI.
-	std::map<rstime_t, PulseOrderedReply>::reverse_iterator poit;
-	for (poit = pulseOrdering.rbegin(); poit != pulseOrdering.rend(); poit++)
-	{
-		// add into GUI should insert at correct time point, amongst all other ones.
-		addPulse(poit->second.msg, poit->second.group, poit->second.replies);
-	}
-
-    // allow filterTime to be changed again
-	ui.comboBox_filterTime->setEnabled(true);
-	return true;
 }
 
 void WireDialog::acknowledgeGroup(const uint32_t &token, const uint32_t &userType)
@@ -769,9 +437,6 @@ void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 			case TOKENREQ_GROUPINFO:
 				switch(req.mAnsType)
 				{
-					// case RS_TOKREQ_ANSTYPE_LIST:
-					//	loadGroupList(req.mToken);
-					//	break;
 					case RS_TOKREQ_ANSTYPE_DATA:
 						loadGroupData(req.mToken);
 						break;
@@ -784,40 +449,6 @@ void WireDialog::loadRequest(const TokenQueue *queue, const TokenRequest &req)
 						break;
 				}
 				break;
-			case TOKENREQ_MSGINFO:
-				switch(req.mAnsType)
-				{
-#if 0
-					case RS_TOKREQ_ANSTYPE_LIST:
-						loadPhotoList(req.mToken);
-						break;
-					case RS_TOKREQ_ANSTYPE_ACK:
-						acknowledgeMessage(req.mToken);
-						break;
-#endif
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadPulseData(req.mToken);
-						break;
-					default:
-						std::cerr << "WireDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
-						std::cerr << std::endl;
-						break;
-				}
-				break;
-#if 0
-			case TOKENREQ_MSGRELATEDINFO:
-				switch(req.mAnsType)
-				{
-					case RS_TOKREQ_ANSTYPE_DATA:
-						loadPhotoData(req.mToken);
-						break;
-					default:
-						std::cerr << "WireDialog::loadRequest() ERROR: MSG: INVALID ANS TYPE";
-						std::cerr << std::endl;
-						break;
-				}
-				break;
-#endif
 			default:
 				std::cerr << "WireDialog::loadRequest() ERROR: INVALID TYPE";
 				std::cerr << std::endl;
@@ -970,7 +601,7 @@ void WireDialog::clearTwitterView()
 	std::cerr << "WireDialog::clearTwitterView()";
 	std::cerr << std::endl;
 
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	QLayoutItem *item;
 	int i = 0;
 	while (i < alayout->count())
@@ -1002,7 +633,7 @@ void WireDialog::addTwitterView(PulseViewItem *item)
 	std::cerr << std::endl;
 
 	/* ensure its a boxlayout */
-	QLayout *alayout = ui.scrollAreaWidgetContents_2->layout();
+	QLayout *alayout = ui.scrollAreaWidgetContents->layout();
 	QBoxLayout *boxlayout = dynamic_cast<QBoxLayout *>(alayout);
 	if (boxlayout == NULL) {
 		std::cerr << "WireDialog::addTwitterView() ERROR not boxlayout, not Inserting";
@@ -1029,7 +660,7 @@ void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId
 		int type = 0;
 		bool success = rsWire->getPulseFocus(groupId, msgId, type, pPulse);
 
-		sleep(2);
+		// sleep(2);
 
 		/* now insert the pulse + children into the layput */
 		RsQThreadUtils::postToObject([pPulse,this]()
@@ -1103,7 +734,7 @@ void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 		std::list<RsGxsGroupId> groupIds = { groupId };
 		success = rsWire->getPulsesForGroups(groupIds, pulses);
 
-		sleep(2);
+		// sleep(2);
 
 		/* now insert the pulse + children into the layput */
 		RsQThreadUtils::postToObject([grp, pulses,this]()
@@ -1167,7 +798,7 @@ void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId> groupIds)
 		std::list<RsWirePulseSPtr> pulses;
 		bool success = rsWire->getPulsesForGroups(groupIds, pulses);
 
-		sleep(2);
+		// sleep(2);
 
 		/* now insert the pulse + children into the layput */
 		RsQThreadUtils::postToObject([pulses,this]()

@@ -21,7 +21,7 @@
 #include <iostream>
 #include <QtGui>
 
-#include "PulseDetails.h"
+#include "PulseReply.h"
 
 #include "PulseAddDialog.h"
 
@@ -128,7 +128,8 @@ void PulseAddDialog::pulseTextChanged()
 }
 
 // Old Interface, deprecate / make internal.
-void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName, uint32_t replyType)
+// TODO: Convert mReplyToPulse to be an SPtr, and remove &pulse parameter.
+void PulseAddDialog::setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType)
 {
 	mIsReply = true;
 	mReplyToPulse = pulse;
@@ -136,11 +137,11 @@ void PulseAddDialog::setReplyTo(RsWirePulse &pulse, std::string &groupName, uint
 	ui.frame_reply->setVisible(true);
 
 	{
-		std::map<rstime_t, RsWirePulse *> replies;
-		PulseDetails *details = new PulseDetails(NULL, &pulse, groupName, replies);
+		PulseReply *reply = new PulseReply(NULL, pPulse);
+
 		// add extra widget into layout.
 		QVBoxLayout *vbox = new QVBoxLayout();
-		vbox->addWidget(details);
+		vbox->addWidget(reply);
 		vbox->setSpacing(1);
 		vbox->setContentsMargins(0,0,0,0);
 		ui.widget_replyto->setLayout(vbox);
@@ -186,7 +187,13 @@ void PulseAddDialog::setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId 
 		return;
 	}
 
-	setReplyTo(*pPulse, pGroup->mMeta.mGroupName, replyType);
+	// update GroupPtr
+	// TODO - this should be handled in libretroshare if possible.
+	if (pPulse->mGroupPtr == NULL) {
+		pPulse->mGroupPtr = pGroup;
+	}
+
+	setReplyTo(*pPulse, pPulse, pGroup->mMeta.mGroupName, replyType);
 }
 
 void PulseAddDialog::addURL()

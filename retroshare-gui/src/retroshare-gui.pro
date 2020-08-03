@@ -1230,9 +1230,7 @@ gxsthewire {
 	
 	DEFINES += RS_USE_WIRE
 
-	HEADERS += gui/TheWire/PulseItem.h \
-		gui/TheWire/PulseDetails.h \
-		gui/TheWire/WireDialog.h \
+	HEADERS += gui/TheWire/WireDialog.h \
 		gui/TheWire/WireGroupItem.h \
 		gui/TheWire/WireGroupDialog.h \
 		gui/TheWire/WireGroupExtra.h \
@@ -1243,12 +1241,10 @@ gxsthewire {
 		gui/TheWire/PulseReply.h \
 		gui/TheWire/PulseReplySeperator.h \
 		gui/TheWire/PulseMessage.h \
-	
-	FORMS += gui/TheWire/PulseItem.ui \
-		gui/TheWire/PulseDetails.ui \
+
+	FORMS += gui/TheWire/WireDialog.ui \
 		gui/TheWire/WireGroupItem.ui \
 		gui/TheWire/WireGroupExtra.ui \
-		gui/TheWire/WireDialog.ui \
 		gui/TheWire/PulseAddDialog.ui \
 		gui/TheWire/PulseTopLevel.ui \
 		gui/TheWire/PulseViewGroup.ui \
@@ -1256,9 +1252,7 @@ gxsthewire {
 		gui/TheWire/PulseReplySeperator.ui \
 		gui/TheWire/PulseMessage.ui \
 	
-	SOURCES += gui/TheWire/PulseItem.cpp \
-		gui/TheWire/PulseDetails.cpp \
-		gui/TheWire/WireDialog.cpp \
+	SOURCES += gui/TheWire/WireDialog.cpp \
 		gui/TheWire/WireGroupItem.cpp \
 		gui/TheWire/WireGroupDialog.cpp \
 		gui/TheWire/WireGroupExtra.cpp \

@@ -21,7 +21,7 @@
 #ifndef MRK_PULSE_VIEW_ITEM_H
 #define MRK_PULSE_VIEW_ITEM_H
 
-#include "ui_PulseItem.h"
+#include <QWidget>
 
 #include <retroshare/rswire.h>
 

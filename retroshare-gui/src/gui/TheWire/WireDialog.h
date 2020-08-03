@@ -28,7 +28,6 @@
 
 #include <map>
 
-#include "gui/TheWire/PulseItem.h"
 #include "gui/TheWire/WireGroupItem.h"
 #include "gui/TheWire/PulseAddDialog.h"
 
@@ -41,7 +40,7 @@
 
 #define IMAGE_WIRE              ":/icons/wire.png"
 
-class WireDialog : public MainPage, public TokenResponse, public PulseHolder, public WireGroupHolder, public PulseViewHolder
+class WireDialog : public MainPage, public TokenResponse, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
 
@@ -51,16 +50,6 @@ public:
 	virtual QIcon iconPixmap() const { return QIcon(IMAGE_WIRE) ; }
 	virtual QString pageName() const { return tr("The Wire") ; }
 	virtual QString helpText() const { return ""; }
-
-	// PulseHolder interface.
-	virtual void deletePulseItem(PulseItem *, uint32_t type);
-	virtual void notifyPulseSelection(PulseItem *item);
-
-	virtual void focus(RsGxsGroupId &groupId, RsGxsMessageId &msgId) override;
-	virtual void follow(RsGxsGroupId &groupId) override;
-	virtual void rate(RsGxsId &authorId) override;
-	virtual void reply(RsWirePulse &pulse, std::string &groupName) override;
-
 
 	// WireGroupHolder interface.
 	virtual void subscribe(RsGxsGroupId &groupId) override;
@@ -107,13 +96,8 @@ private:
 	bool setupPulseAddDialog();
 
 	void addGroup(QWidget *item);
-
-	void addPulse(RsWirePulse *pulse, RsWireGroup *group,
-						std::map<rstime_t, RsWirePulse *> replies);
-
 	void addGroup(const RsWireGroup &group);
 
-	void deletePulses();
 	void deleteGroups();
 	void showGroups();
 	void showSelectedGroups();
@@ -127,18 +111,12 @@ private:
 	bool loadGroupData(const uint32_t &token);
 	void acknowledgeGroup(const uint32_t &token, const uint32_t &userType);
 
-	void requestPulseData(const std::list<RsGxsGroupId>& grpIds);
-	bool loadPulseData(const uint32_t &token);
-
 	virtual void loadRequest(const TokenQueue *queue, const TokenRequest &req);
 
 	int mGroupSet;
 
 	PulseAddDialog *mAddDialog;
-
-	PulseItem *mPulseSelected;
 	WireGroupItem *mGroupSelected;
-
 	TokenQueue *mWireQueue;
 
 	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
