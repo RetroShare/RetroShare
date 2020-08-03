@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupDialog.h                                               *
+ * gui/TheWire/PulseReply.h                                                    *
  *                                                                             *
- * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,35 +18,48 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _WIRE_GROUP_DIALOG_H
-#define _WIRE_GROUP_DIALOG_H
+#ifndef MRK_PULSE_REPLY_H
+#define MRK_PULSE_REPLY_H
 
-#include "gui/gxs/GxsGroupDialog.h"
+#include "ui_PulseReply.h"
+#include "PulseViewItem.h"
 
 #include <retroshare/rswire.h>
 
-class WireGroupExtra;
-
-class WireGroupDialog : public GxsGroupDialog
+class PulseReply : public PulseDataItem, private Ui::PulseReply
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	WireGroupDialog(QWidget *parent);
-	WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	PulseReply(PulseViewHolder *holder, RsWirePulseSPtr pulse);
+
+	void showReplyLine(bool enable);
 
 protected:
-	virtual void initUi() override;
-	virtual QPixmap serviceImage() override;
-	virtual bool service_createGroup(RsGroupMetaData &meta) override;
-	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
-	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
-	virtual bool service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data) override;
+	void setup();
 
-private:
-	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
+// PulseDataInterface ===========
+	// Group
+	virtual void setHeadshot(const QPixmap &pixmap) override;
+	virtual void setGroupNameString(QString name) override;
+	virtual void setAuthorString(QString name) override;
 
-	WireGroupExtra *mExtra;
+	// Msg
+	virtual void setRefMessage(QString msg, uint32_t image_count) override;
+	virtual void setMessage(RsWirePulseSPtr pulse) override;
+	virtual void setDateString(QString date) override;
+
+	// Refs
+	virtual void setLikesString(QString likes) override;
+	virtual void setRepublishesString(QString repub) override;
+	virtual void setRepliesString(QString reply) override;
+
+	// 
+	virtual void setReferenceString(QString ref) override;
+	virtual void showResponseStats(bool enable) override;
+// PulseDataInterface ===========
+
+	void mousePressEvent(QMouseEvent *event);
 };
 
 #endif

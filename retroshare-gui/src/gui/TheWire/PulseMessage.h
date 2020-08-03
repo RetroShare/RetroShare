@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseDetails.h                                                  *
+ * gui/TheWire/PulseMessage.h                                                  *
  *                                                                             *
- * Copyright (c) 2020 Robert Fernie   <retroshare.project@gmail.com>           *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,49 +18,23 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_DETAILS_H
-#define MRK_PULSE_DETAILS_H
+#ifndef MRK_PULSE_MSG_H
+#define MRK_PULSE_MSG_H
 
-#include "ui_PulseDetails.h"
-#include "PulseItem.h"
+#include "ui_PulseMessage.h"
 
 #include <retroshare/rswire.h>
 
-class PulseDetails : public QWidget, private Ui::PulseDetails
+class PulseMessage : public QWidget, private Ui::PulseMessage
 {
   Q_OBJECT
 
 public:
-	PulseDetails(PulseHolder *actions, RsWirePulse *pulse, std::string &groupName,
-		std::map<rstime_t, RsWirePulse *> replies);
+	PulseMessage(QWidget *parent); 
 
-	// when Reply parent....
-	PulseDetails(PulseHolder *actions,
-		RsGxsGroupId   &parentGroupId,
-		std::string    &parentGroupName,
-		RsGxsMessageId &parentOrigMsgId,
-		RsGxsId	       &parentAuthorId,
-		rstime_t       &parentPublishTs,
-		std::string	&parentPulseText);
-
-	void setup();
-
-	void setBackground(QString color);
-
-private slots:
-	void toggle();
-	void follow();
-	void rate();
-	void reply();
-
-private:
-	void addReplies(std::map<rstime_t, RsWirePulse *> replies);
-	QString getSummary();
-
-	PulseHolder *mActions;
-	RsWirePulse  mPulse;
-	std::string  mGroupName;
-	bool mHasReplies;
+	void setup(RsWirePulseSPtr pulse);
+	void setMessage(QString msg);
+	void setRefImageCount(uint32_t count);
 };
 
 #endif

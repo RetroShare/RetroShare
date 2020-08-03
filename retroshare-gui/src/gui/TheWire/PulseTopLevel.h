@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/PulseAddDialog.h                                                *
+ * gui/TheWire/PulseTopLevel.h                                                 *
  *                                                                             *
- * Copyright (c) 2012-2020 Robert Fernie   <retroshare.project@gmail.com>      *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,74 +18,48 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef MRK_PULSE_ADD_DIALOG_H
-#define MRK_PULSE_ADD_DIALOG_H
+#ifndef MRK_PULSE_TOP_LEVEL_H
+#define MRK_PULSE_TOP_LEVEL_H
 
-#include "ui_PulseAddDialog.h"
+#include "ui_PulseTopLevel.h"
 
+#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
 
-
-QT_BEGIN_NAMESPACE
-class QDragEnterEvent;
-class QDropEvent;
-class QMouseEvent;
-QT_END_NAMESPACE
-
-
-class PulseAddDialog : public QWidget
+class PulseTopLevel : public PulseDataItem, private Ui::PulseTopLevel
 {
   Q_OBJECT
 
 public:
-	PulseAddDialog(QWidget *parent = 0);
+	PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse);
 
-	void cleanup();
-
-	void setReplyTo(const RsGxsGroupId &grpId, const RsGxsMessageId &msgId, uint32_t replyType);
-	void setGroup(const RsGxsGroupId &grpId);
-
-private slots:
-	void addURL();
-	void clearDisplayAs();
-	void postPulse();
-	void cancelPulse();
-	void clearDialog();
-	void pulseTextChanged();
-
-private:
-	// OLD VERSIONs, private now.
-	void setGroup(RsWireGroup &group);
-	void setReplyTo(RsWirePulse &pulse, RsWirePulseSPtr pPulse, std::string &groupName, uint32_t replyType);
-
-	void postOriginalPulse();
-	void postReplyPulse();
-
-	uint32_t toPulseSentiment(int index);
 
 protected:
-	void dragEnterEvent(QDragEnterEvent *event);
-	void dragLeaveEvent(QDragLeaveEvent *event);
-	void dragMoveEvent(QDragMoveEvent *event);
-	void dropEvent(QDropEvent *event);
+	void setup();
 
-	void addImage(const QString &path);
+// PulseDataInterface ===========
+	// Group
+	virtual void setHeadshot(const QPixmap &pixmap) override;
+	virtual void setGroupNameString(QString name) override;
+	virtual void setAuthorString(QString name) override;
 
-	RsWireGroup mGroup; // replyWith.
+	// Msg
+	virtual void setRefMessage(QString msg, uint32_t image_count) override;
+	virtual void setMessage(RsWirePulseSPtr pulse) override;
+	virtual void setDateString(QString date) override;
 
-	// if this is a reply
-	bool mIsReply;
-	RsWirePulse mReplyToPulse;
-	uint32_t mReplyType;
+	// Refs
+	virtual void setLikesString(QString likes) override;
+	virtual void setRepublishesString(QString repub) override;
+	virtual void setRepliesString(QString reply) override;
 
-	// images
-	RsGxsImage mImage1;
-	RsGxsImage mImage2;
-	RsGxsImage mImage3;
-	RsGxsImage mImage4;
+	// 
+	virtual void setReferenceString(QString ref) override;
+	virtual void showResponseStats(bool enable) override;
+// PulseDataInterface ===========
 
-	Ui::PulseAddDialog ui;
+protected:
+	void mousePressEvent(QMouseEvent *event);
 };
 
 #endif
-

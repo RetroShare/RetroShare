@@ -38,7 +38,7 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLabel" name="label_avatar">
+         <widget class="QLabel" name="label_headshot">
           <property name="maximumSize">
            <size>
             <width>32</width>
@@ -102,6 +102,13 @@
          <enum>QFrame::Raised</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_avatar">
+           <property name="text">
+            <string>Avatar</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="GxsIdLabel" name="label_authorId">
            <property name="text">

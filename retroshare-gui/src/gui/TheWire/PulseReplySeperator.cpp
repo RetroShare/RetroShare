@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupDialog.h                                               *
+ * gui/TheWire/PulseReplySeperator.cpp                                         *
  *                                                                             *
- * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,35 +18,15 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _WIRE_GROUP_DIALOG_H
-#define _WIRE_GROUP_DIALOG_H
+#include "PulseReplySeperator.h"
 
-#include "gui/gxs/GxsGroupDialog.h"
+/** Constructor */
 
-#include <retroshare/rswire.h>
-
-class WireGroupExtra;
-
-class WireGroupDialog : public GxsGroupDialog
+PulseReplySeperator::PulseReplySeperator()
+:PulseViewItem(NULL)
 {
-	Q_OBJECT
+	setupUi(this);
+	setAttribute ( Qt::WA_DeleteOnClose, true );
+}
 
-public:
-	WireGroupDialog(QWidget *parent);
-	WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
 
-protected:
-	virtual void initUi() override;
-	virtual QPixmap serviceImage() override;
-	virtual bool service_createGroup(RsGroupMetaData &meta) override;
-	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
-	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
-	virtual bool service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data) override;
-
-private:
-	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
-
-	WireGroupExtra *mExtra;
-};
-
-#endif

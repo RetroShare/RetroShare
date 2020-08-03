@@ -1,7 +1,7 @@
 /*******************************************************************************
- * gui/TheWire/WireGroupDialog.h                                               *
+ * gui/TheWire/PulseViewGroup.h                                                *
  *                                                                             *
- * Copyright (C) 2020 by Robert Fernie       <retroshare.project@gmail.com>    *
+ * Copyright (c) 2020-2020 Robert Fernie   <retroshare.project@gmail.com>      *
  *                                                                             *
  * This program is free software: you can redistribute it and/or modify        *
  * it under the terms of the GNU Affero General Public License as              *
@@ -18,35 +18,26 @@
  *                                                                             *
  *******************************************************************************/
 
-#ifndef _WIRE_GROUP_DIALOG_H
-#define _WIRE_GROUP_DIALOG_H
+#ifndef MRK_PULSE_VIEW_GROUP_H
+#define MRK_PULSE_VIEW_GROUP_H
 
-#include "gui/gxs/GxsGroupDialog.h"
+#include "ui_PulseViewGroup.h"
 
+#include "PulseViewItem.h"
 #include <retroshare/rswire.h>
 
-class WireGroupExtra;
-
-class WireGroupDialog : public GxsGroupDialog
+class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
 {
-	Q_OBJECT
+  Q_OBJECT
 
 public:
-	WireGroupDialog(QWidget *parent);
-	WireGroupDialog(Mode mode, RsGxsGroupId groupId, QWidget *parent);
+	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
 
 protected:
-	virtual void initUi() override;
-	virtual QPixmap serviceImage() override;
-	virtual bool service_createGroup(RsGroupMetaData &meta) override;
-	virtual bool service_updateGroup(const RsGroupMetaData &editedMeta) override;
-	virtual bool service_loadGroup(const RsGxsGenericGroupData *data, Mode mode, QString &description) override;
-	virtual bool service_getGroupData(const RsGxsGroupId &grpId, RsGxsGenericGroupData *&data) override;
+	void setup();
 
-private:
-	void prepareWireGroup(RsWireGroup &group, const RsGroupMetaData &meta);
-
-	WireGroupExtra *mExtra;
+protected:
+	RsWireGroupSPtr mGroup;
 };
 
 #endif
