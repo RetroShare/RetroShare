@@ -50,7 +50,6 @@ echo.
 title Build - %SourceName%-%RsBuildConfig% [qmake]
 
 set RS_QMAKE_CONFIG=%RsBuildConfig%
-if "%ParamVersion%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% version_detail_bash_script
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
 
