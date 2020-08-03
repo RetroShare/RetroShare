@@ -31,8 +31,10 @@ set CMakeInstall=cmake-3.1.0-win32-x86.zip
 set CMakeUrl=http://www.cmake.org/files/v3.1/%CMakeInstall%
 set CMakeUnpackPath=%EnvMSYS2Path%\msys%MSYS2Base%
 
-%cecho% info "Remove previous MSYS2 version"
-call "%ToolsPath%\remove-dir.bat" "%EnvMSYS2Path%\msys%MSYS2Base%"
+if exist "%EnvMSYS2Path%\msys%MSYS2Base%" (
+	%cecho% info "Remove previous MSYS2 version"
+	call "%ToolsPath%\remove-dir.bat" "%EnvMSYS2Path%\msys%MSYS2Base%"
+)
 
 %cecho% info "Download installation files"
 if not exist "%EnvDownloadPath%\%MSYS2Install%" call "%ToolsPath%\download-file.bat" "%MSYS2Url%" "%EnvDownloadPath%\%MSYS2Install%"

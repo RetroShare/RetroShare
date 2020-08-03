@@ -263,8 +263,8 @@ Section $(Section_Main) Section_Main
   File /r "${QTDIR}\translations\qtxmlpatterns_*.qm"
 
   ; WebUI
-  SetOutPath "$INSTDIR\webui"
-  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
+;  SetOutPath "$INSTDIR\webui"
+;  File /r "${SOURCEDIR}\libresapi\src\webui\*.*"
 
   ; License
   SetOutPath "$INSTDIR\license"

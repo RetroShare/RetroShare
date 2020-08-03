@@ -74,7 +74,7 @@ if "%GCCArchitecture%"=="" %cecho% error "Cannot get gcc architecture." & exit /
 set BuildLibsPath=%EnvRootPath%\build-libs\gcc-%GCCVersion%\%GCCArchitecture%
 
 set RsBuildPath=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%-%RsBuildConfig%
-set RsDeployPath=%DeployPath%\Qt-%QtVersion%%RsType%-%GCCArchitecture%-%RsBuildConfig%
+set RsDeployPath=%DeployPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%
 set RsPackPath=%DeployPath%
 set RsArchiveAdd=
 

@@ -29,15 +29,15 @@ if not exist "%EnvMSYS2SH%" %cecho% error "Please install MSYS2 first." & exit /
 call "%~dp0env.bat"
 if errorlevel 1 goto error_env
 
-call "%ToolsPath%\msys-path.bat" "%~dp0" MSYS2CurPath
-call "%ToolsPath%\msys-path.bat" "%BuildLibsPath%" MSYS2BuildLibsPath
+call "%ToolsPath%\msys2-path.bat" "%~dp0" MSYS2CurPath
+call "%ToolsPath%\msys2-path.bat" "%BuildLibsPath%" MSYS2BuildLibsPath
 
 if not exist "%BuildLibsPath%" mkdir "%BuildLibsPath%"
 
 set MSYSTEM=MINGW%MSYS2Base%
 set MSYS2_PATH_TYPE=inherit
 
-%EnvMSYS2Cmd% "pacman --needed --noconfirm -S diffutils perl tar make mingw-w64-%MSYS2Architecture%-make"
+%EnvMSYS2Cmd% "pacman --needed --noconfirm -S diffutils perl tar make wget mingw-w64-%MSYS2Architecture%-make"
 ::mingw-w64-%MSYS2Architecture%-cmake
 ::%EnvMSYS2Cmd% "pacman --noconfirm -Rd --nodeps mingw-w64-%MSYS2Architecture%-zlib"
 

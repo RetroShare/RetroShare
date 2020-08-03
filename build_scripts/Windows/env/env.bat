@@ -7,8 +7,6 @@ set EnvToolsPath=%EnvRootPath%\tools
 set EnvTempPath=%EnvRootPath%\tmp
 set EnvDownloadPath=%EnvRootPath%\download
 
-::set EnvCurlExe=%EnvToolsPath%\curl.exe
-set EnvWgetExe=%EnvToolsPath%\wget.exe
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
 set EnvJomExe=%EnvToolsPath%\jom.exe
 set EnvSedExe=%EnvToolsPath%\sed.exe
