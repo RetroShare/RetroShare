@@ -2,9 +2,6 @@
 
 setlocal
 
-set NoAsk=
-if "%~2"=="no-ask" set NoAsk=1
-
 :: Initialize environment
 call "%~dp0..\env.bat"
 if errorlevel 1 goto error_env
@@ -52,7 +49,7 @@ set RsLastRefFile=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildC
 set RsLastRef=
 if exist "%RsLastRefFile%" set /P RsLastRef=<"%RsLastRefFile%"
 
-if "%NoAsk%"=="1" goto no_ask_for_last_revision
+if "%NonInteractive%"=="1" goto no_ask_for_last_revision
 if not "%RsLastRef%"=="" echo Last Revision was %RsLastRef%
 set /P RsLastRefInput=Last Revision: 
 if "%RsLastRefInput%" NEQ "" set RsLastRef=%RsLastRefInput%
@@ -70,7 +67,7 @@ echo.
 echo Creating log from %RsLastRef%
 echo                to %RsRef%
 
-if "%NoAsk%"=="1" goto no_confirm
+if "%NonInteractive%"=="1" goto no_confirm
 choice /M "Do you want to proceed?"
 if %errorlevel%==2 exit /B 1
 :no_confirm
