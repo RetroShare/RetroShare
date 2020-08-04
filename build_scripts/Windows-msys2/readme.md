@@ -7,6 +7,10 @@ This guide contains information about how to setup your build environment in an 
 If you prefer to setup your environment manually, check this guide: 
 [WindowsMSys2_InstallGuide.md](WindowsMSys2_InstallGuide.md)
 
+Setting up the build environment automatically on a 32 bit OS is not possible anymore. 
+You can download an older 32 bit [MSYS2 installer](https://sourceforge.net/projects/msys2/files/Base/i686/msys2-base-i686-20180531.tar.xz/download) and follow the manual setup instructions.
+Building 32 bit RetroShare from the 64 bit build environment is still possible.
+
 You have to clone this repository (with [git for windows](https://gitforwindows.org/)) to a local folder, then start it in a terminal.
 
 
@@ -16,7 +20,7 @@ Run the following script:
 
     <sourcefolder>\build_scripts\Windows-msys2\build.bat
 
-It will install all neccessary tools to build RetrosShare, and build it with the default configuration.
+It will install all necessary tools to build RetrosShare, and build it with the default configuration.
 
 After the script is finished, you can find the resulting .7z package here:
 
@@ -24,7 +28,7 @@ After the script is finished, you can find the resulting .7z package here:
 
 ## Advanced building
 
-You can specifiy extra build options if you use the scripts under:
+You can specify extra build options if you use the scripts under:
 
     <sourcefolder>\build_scripts\Windows-msys2\build\
 
@@ -63,7 +67,7 @@ build-installer.bat 64 release autologin
 ```
 
 ## Troubleshooting
-* Run the command again, sometimes it works the second time, specially if it complains about *restbed* during bulding
+* Run the command again, sometimes it works the second time, specially if it complains about *restbed* during building
 * Delete the build artifacts: *&lt;sourcefolder&gt;-msys2\deploy\builds*
 * Update msys2 manually:
   1. Open the terminal: *&lt;sourcefolder&gt;-msys2\msys2\msys64\msys2.exe*
@@ -73,11 +77,15 @@ build-installer.bat 64 release autologin
   5. Jump to 1. until it doesn't find more updates
 * Start with a clean path environment variable, run *&lt;sourcefolder&gt;\build_scripts\Windows-msys2\start-clean-env.bat*, you will get a terminal with cleaned path
 
+### Errors during MSYS2 update
+MSYS2 developers recently introduced some breaking changes.
+If you get PGP related errors during updating the system from pacman, then follow [their guide](https://www.msys2.org/news/#2020-06-29-new-packagers) to resolve the problems.
+
 ## Updating webui
 
-The sripts don't update the webui source code automatically once it is schecked out.
+The scripts don't update the webui source code automatically once it is checked out.
 You have to do it manually with your favourite git client.
 
-You can find the webui sorce code here:
+You can find the webui source code here:
 
     <sourcefolder>-webui
