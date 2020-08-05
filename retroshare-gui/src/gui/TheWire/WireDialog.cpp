@@ -62,6 +62,7 @@ WireDialog::WireDialog(QWidget *parent)
 
 	mAddDialog = NULL;
 	mGroupSelected = NULL;
+	mHistoryIndex = -1;
 
 	connect( ui.toolButton_createAccount, SIGNAL(clicked()), this, SLOT(createGroup()));
 	connect( ui.toolButton_createPulse, SIGNAL(clicked()), this, SLOT(createPulse()));
@@ -69,6 +70,11 @@ WireDialog::WireDialog(QWidget *parent)
 
 	connect(ui.comboBox_groupSet, SIGNAL(currentIndexChanged(int)), this, SLOT(selectGroupSet(int)));
 	connect(ui.comboBox_filterTime, SIGNAL(currentIndexChanged(int)), this, SLOT(selectFilterTime(int)));
+
+	connect( ui.toolButton_back, SIGNAL(clicked()), this, SLOT(back()));
+	connect( ui.toolButton_forward, SIGNAL(clicked()), this, SLOT(forward()));
+	ui.toolButton_back->setEnabled(false);
+	ui.toolButton_forward->setEnabled(false);
 
 	QTimer *timer = new QTimer(this);
 	timer->connect(timer, SIGNAL(timeout()), this, SLOT(checkUpdate()));
@@ -310,7 +316,7 @@ void WireDialog::showSelectedGroups()
 		grpIds.push_back(mGroupSelected->groupId());
 
 		// show GroupFocus.
-		showGroupFocus(mGroupSelected->groupId());
+		requestGroupFocus(mGroupSelected->groupId());
 	}
 	else
 	{
@@ -355,7 +361,7 @@ void WireDialog::showGroups()
 		}
 	}
 
-	showGroupsPulses(allGroupIds);
+	requestGroupsPulses(allGroupIds);
 }
 
 
@@ -543,7 +549,7 @@ void WireDialog::PVHviewGroup(const RsGxsGroupId &groupId)
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	showGroupFocus(groupId);
+	requestGroupFocus(groupId);
 }
 
 void WireDialog::PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
@@ -554,7 +560,7 @@ void WireDialog::PVHviewPulse(const RsGxsGroupId &groupId, const RsGxsMessageId 
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	showPulseFocus(groupId, msgId);
+	requestPulseFocus(groupId, msgId);
 }
 
 void WireDialog::PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId &msgId)
@@ -565,7 +571,7 @@ void WireDialog::PVHviewReply(const RsGxsGroupId &groupId, const RsGxsMessageId 
 	std::cerr << ")";
 	std::cerr << std::endl;
 
-	// showPulseFocus(groupId, msgId);
+	// requestPulseFocus(groupId, msgId);
 }
 
 void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
@@ -647,6 +653,98 @@ void WireDialog::addTwitterView(PulseViewItem *item)
 	boxlayout->addWidget(item);
 }
 
+// HISTORY -------------------------------------------------------------------------------
+
+void printWireViewHistory(const WireViewHistory &view)
+{
+	std::cerr << "WireViewHistory(" << (int) view.viewType << "): ";
+	switch(view.viewType) {
+		case WireViewType::PULSE_FOCUS:
+			std::cerr << " PULSE_FOCUS: grpId: " << view.groupId;
+			std::cerr << " msgId: " << view.msgId;
+			std::cerr << std::endl;
+			break;
+		case WireViewType::GROUP_FOCUS:
+			std::cerr << " GROUP_FOCUS: grpId: " << view.groupId;
+			std::cerr << std::endl;
+			break;
+		case WireViewType::GROUPS:
+			std::cerr << " GROUPS_PULSES: grpIds: TBD";
+			std::cerr << std::endl;
+			break;
+		default:
+			break;
+	}
+}
+
+void WireDialog::AddToHistory(const WireViewHistory &view)
+{
+	std::cerr << "AddToHistory():";
+	printWireViewHistory(view);
+
+	/* clear future history */
+	mHistory.resize(mHistoryIndex + 1);
+
+	mHistory.push_back(view);
+	mHistoryIndex = mHistory.size() - 1;
+
+	// at end of history.
+	// enable back, disable forward.
+	ui.toolButton_back->setEnabled(mHistoryIndex > 0);
+	ui.toolButton_forward->setEnabled(false);
+}
+
+void WireDialog::back()
+{
+	LoadHistory(mHistoryIndex-1);
+}
+
+void WireDialog::forward()
+{
+	LoadHistory(mHistoryIndex+1);
+}
+
+void WireDialog::LoadHistory(uint32_t index)
+{
+	if (index >= mHistory.size()) {
+		return;
+	}
+
+	mHistoryIndex = index;
+	WireViewHistory view = mHistory[index];
+
+	std::cerr << "LoadHistory:";
+	printWireViewHistory(view);
+
+	switch(view.viewType) {
+		case WireViewType::PULSE_FOCUS:
+			showPulseFocus(view.groupId, view.msgId);
+			break;
+		case WireViewType::GROUP_FOCUS:
+			showGroupFocus(view.groupId);
+			break;
+		case WireViewType::GROUPS:
+			showGroupsPulses(view.groupIds);
+			break;
+		default:
+			break;
+	}
+
+	ui.toolButton_back->setEnabled(index > 0);
+	ui.toolButton_forward->setEnabled(index + 1 < mHistory.size());
+}
+// HISTORY -------------------------------------------------------------------------------
+
+void WireDialog::requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
+{
+	WireViewHistory view;
+	view.viewType = WireViewType::PULSE_FOCUS;
+	view.groupId = groupId;
+	view.msgId = msgId;
+
+	AddToHistory(view);
+	showPulseFocus(groupId, msgId);
+}
 
 void WireDialog::showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId)
 {
@@ -719,6 +817,16 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 	}
 }
 
+void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
+{
+	WireViewHistory view;
+	view.viewType = WireViewType::GROUP_FOCUS;
+	view.groupId = groupId;
+
+	AddToHistory(view);
+	showGroupFocus(groupId);
+}
+
 void WireDialog::showGroupFocus(const RsGxsGroupId groupId)
 {
 	clearTwitterView();
@@ -785,6 +893,16 @@ void WireDialog::postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr
 		addTwitterView(new PulseReplySeperator());
 
 	}
+}
+
+void WireDialog::requestGroupsPulses(const std::list<RsGxsGroupId> groupIds)
+{
+	WireViewHistory view;
+	view.viewType = WireViewType::GROUPS;
+	view.groupIds = groupIds;
+
+	AddToHistory(view);
+	showGroupsPulses(groupIds);
 }
 
 void WireDialog::showGroupsPulses(const std::list<RsGxsGroupId> groupIds)

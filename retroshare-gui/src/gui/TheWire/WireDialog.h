@@ -40,6 +40,34 @@
 
 #define IMAGE_WIRE              ":/icons/wire.png"
 
+//--------------------------- Classes for Wire View History
+enum class WireViewType
+{
+    GROUPS,
+    GROUP_FOCUS,
+    PULSE_FOCUS,
+};
+
+enum class WireViewTimeRange
+{
+    FOREVER,
+    LAST_DAY,   // last 24 hours.
+    LAST_WEEK,  // actually last 7 days.
+    LAST_MONTH  // actually last 30 days.
+};
+
+class WireViewHistory
+{
+public:
+    WireViewType viewType;
+    WireViewTimeRange viewTimeRange;
+
+    RsGxsGroupId  groupId;
+    RsGxsMessageId msgId;
+    std::list<RsGxsGroupId> groupIds;
+};
+//---------------------------------------------------------
+
 class WireDialog : public MainPage, public TokenResponse, public WireGroupHolder, public PulseViewHolder
 {
   Q_OBJECT
@@ -73,12 +101,19 @@ public:
 	void clearTwitterView();
 	void addTwitterView(PulseViewItem *item);
 
+	// TwitterView History
+	void AddToHistory(const WireViewHistory &view);
+	void LoadHistory(uint32_t index);
+
+	void requestPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
 	void showPulseFocus(const RsGxsGroupId groupId, const RsGxsMessageId msgId);
 	void postPulseFocus(RsWirePulseSPtr pulse);
 
+	void requestGroupFocus(const RsGxsGroupId groupId);
 	void showGroupFocus(const RsGxsGroupId groupId);
 	void postGroupFocus(RsWireGroupSPtr group, std::list<RsWirePulseSPtr> pulses);
 
+	void requestGroupsPulses(const std::list<RsGxsGroupId> groupIds);
 	void showGroupsPulses(const std::list<RsGxsGroupId> groupIds);
 	void postGroupsPulses(std::list<RsWirePulseSPtr> pulses);
 
@@ -90,6 +125,10 @@ private slots:
 	void refreshGroups();
 	void selectGroupSet(int index);
 	void selectFilterTime(int index);
+
+	// history navigation.
+	void back();
+	void forward();
 
 private:
 
@@ -121,6 +160,9 @@ private:
 
 	std::map<RsGxsGroupId, RsWireGroup> mAllGroups;
 	std::vector<RsWireGroup> mOwnGroups;
+
+	int32_t mHistoryIndex;
+	std::vector<WireViewHistory> mHistory;
 
 	/* UI - from Designer */
 	Ui::WireDialog ui;
