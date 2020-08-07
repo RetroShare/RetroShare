@@ -165,8 +165,8 @@ if "%QtMainVersion%"=="5" (
 echo copy bdboot.txt
 copy "%SourcePath%\libbitdht\src\bitdht\bdboot.txt" "%RsDeployPath%" %Quite%
 
-rem echo copy changelog.txt
-rem copy "%SourcePath%\retroshare-gui\src\changelog.txt" "%RsDeployPath%" %Quite%
+echo copy changelog.txt
+copy "%RsBuildPath%\changelog.txt" "%RsDeployPath%" %Quite%
 
 if exist "%SourcePath%\libresapi\src\webui" (
 	echo copy webui
