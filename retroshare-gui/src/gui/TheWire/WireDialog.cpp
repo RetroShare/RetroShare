@@ -578,8 +578,12 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 {
 	std::cerr << "WireDialog::PVHfollow(";
 	std::cerr << groupId.toStdString();
-	std::cerr << ") TODO";
+	std::cerr << ")";
 	std::cerr << std::endl;
+
+	uint32_t token;
+	rsWire->subscribeToGroup(token, groupId, true);
+	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void WireDialog::PVHrate(const RsGxsId &authorId)

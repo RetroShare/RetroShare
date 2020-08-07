@@ -508,9 +508,16 @@ border-radius: 10px}</string>
           </spacer>
          </item>
          <item>
-          <widget class="QToolButton" name="toolButton_like_2">
+          <widget class="QToolButton" name="toolButton_follow">
            <property name="text">
             <string>FOLLOW</string>
+           </property>
+           <property name="icon">
+            <iconset resource="TheWire_images.qrc">
+             <normaloff>:/images/invite.png</normaloff>:/images/invite.png</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
            </property>
           </widget>
          </item>

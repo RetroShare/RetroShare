@@ -45,10 +45,9 @@ PulseTopLevel::PulseTopLevel(PulseViewHolder *holder, RsWirePulseSPtr pulse)
 
 void PulseTopLevel::setup()
 {
-	connect(pushButton_tmpViewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
-	connect(pushButton_tmpViewParent, SIGNAL(clicked()), this, SLOT(actionViewParent()));
-
-	// connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(follow()));
+	connect(toolButton_viewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
+	connect(toolButton_viewParent, SIGNAL(clicked()), this, SLOT(actionViewParent()));
+	connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
 	// connect(toolButton_rate, SIGNAL(clicked()), this, SLOT(rate()));
 
 	connect(toolButton_reply, SIGNAL(clicked()), this, SLOT(actionReply()));
@@ -107,10 +106,11 @@ void PulseTopLevel::setRepliesString(QString reply)
 	label_replies->setText(reply);
 }
 	
-void PulseTopLevel::showResponseStats(bool enable)
+void PulseTopLevel::setPulseStatus(PulseStatus status)
 {
-	widget_replies->setVisible(enable);
-	widget_actions->setVisible(enable);
+	widget_replies->setVisible(true); // this is only reachable if we have ORIG so show always.
+	widget_actions->setVisible(status == PulseStatus::FULL);
+	widget_actionsFollow->setVisible(status == PulseStatus::UNSUBSCRIBED);
 }
 
 void PulseTopLevel::setReferenceString(QString ref)
@@ -122,6 +122,12 @@ void PulseTopLevel::setReferenceString(QString ref)
 	else
 	{
 		label_reference->setText(ref);
+	}
+
+	if (mPulse->mRefGroupPtr) {
+		toolButton_viewParent->setVisible(true);
+	} else {
+		toolButton_viewParent->setVisible(false);
 	}
 }
 	

@@ -104,9 +104,22 @@ border-radius: 10px}</string>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_tmpViewParent">
+          <widget class="QToolButton" name="toolButton_viewParent">
+           <property name="toolTip">
+            <string>open Parent Pulse</string>
+           </property>
            <property name="text">
             <string>SHOW PARENT</string>
+           </property>
+           <property name="icon">
+            <iconset resource="TheWire_images.qrc">
+             <normaloff>:/images/external-link.svg</normaloff>:/images/external-link.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -228,15 +241,28 @@ border-radius: 10px}</string>
           </widget>
          </item>
          <item row="1" column="2">
-          <widget class="QPushButton" name="pushButton_tmpViewGroup">
+          <widget class="QToolButton" name="toolButton_viewGroup">
            <property name="minimumSize">
             <size>
              <width>0</width>
              <height>25</height>
             </size>
            </property>
+           <property name="toolTip">
+            <string>open Group</string>
+           </property>
            <property name="text">
             <string>SHOW GROUP</string>
+           </property>
+           <property name="icon">
+            <iconset resource="TheWire_images.qrc">
+             <normaloff>:/images/external-link.svg</normaloff>:/images/external-link.svg</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -472,6 +498,13 @@ border-radius: 10px}</string>
              <property name="text">
               <string>REPLY</string>
              </property>
+             <property name="icon">
+              <iconset resource="TheWire_images.qrc">
+               <normaloff>:/images/reply.png</normaloff>:/images/reply.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -515,6 +548,13 @@ border-radius: 10px}</string>
             <widget class="QToolButton" name="toolButton_republish">
              <property name="text">
               <string>REPUBLISH</string>
+             </property>
+             <property name="icon">
+              <iconset resource="TheWire_images.qrc">
+               <normaloff>:/images/retweet.png</normaloff>:/images/retweet.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
              </property>
             </widget>
            </item>
@@ -560,6 +600,13 @@ border-radius: 10px}</string>
              <property name="text">
               <string>LIKE</string>
              </property>
+             <property name="icon">
+              <iconset resource="TheWire_images.qrc">
+               <normaloff>:/images/like.png</normaloff>:/images/like.png</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -604,6 +651,13 @@ border-radius: 10px}</string>
              <property name="text">
               <string>SHOW</string>
              </property>
+             <property name="icon">
+              <iconset resource="TheWire_images.qrc">
+               <normaloff>:/images/external-link.svg</normaloff>:/images/external-link.svg</iconset>
+             </property>
+             <property name="toolButtonStyle">
+              <enum>Qt::ToolButtonTextBesideIcon</enum>
+             </property>
             </widget>
            </item>
            <item>
@@ -620,6 +674,64 @@ border-radius: 10px}</string>
             </spacer>
            </item>
           </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_actionsFollow" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>40</height>
+         </size>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <spacer name="horizontalSpacer_20">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>298</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QToolButton" name="toolButton_follow">
+           <property name="text">
+            <string>FOLLOW</string>
+           </property>
+           <property name="icon">
+            <iconset resource="TheWire_images.qrc">
+             <normaloff>:/images/invite.png</normaloff>:/images/invite.png</iconset>
+           </property>
+           <property name="toolButtonStyle">
+            <enum>Qt::ToolButtonTextBesideIcon</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_21">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>297</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
        </widget>

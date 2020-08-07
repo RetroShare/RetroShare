@@ -114,10 +114,25 @@ void PulseReply::setRepliesString(QString reply)
 	label_replies->setText(reply);	
 }
 
-void PulseReply::showResponseStats(bool enable)
+void PulseReply::setPulseStatus(PulseStatus status)
 {
-	widget_actions->setVisible(enable);
-	widget_follow->setVisible(!enable);
+	widget_actions->setVisible(status == PulseStatus::FULL);
+	widget_follow->setVisible(status != PulseStatus::FULL);
+	toolButton_follow->setEnabled(status == PulseStatus::UNSUBSCRIBED);
+
+	switch(status)
+	{
+		case PulseStatus::FULL:
+			break;
+		case PulseStatus::UNSUBSCRIBED:
+			break;
+		case PulseStatus::NO_GROUP:
+			label_follow_msg->setText("Group unavailable");
+			break;
+		case PulseStatus::REF_MSG:
+			label_follow_msg->setText("Full Pulse unavailable");
+			break;
+	}
 }
 
 void PulseReply::setReferenceString(QString ref)

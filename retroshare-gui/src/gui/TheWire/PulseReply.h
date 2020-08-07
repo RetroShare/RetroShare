@@ -56,7 +56,7 @@ protected:
 
 	// 
 	virtual void setReferenceString(QString ref) override;
-	virtual void showResponseStats(bool enable) override;
+	virtual void setPulseStatus(PulseStatus status) override;
 // PulseDataInterface ===========
 
 	void mousePressEvent(QMouseEvent *event);
