@@ -29,6 +29,7 @@
 
 #include "gui/gxs/GxsMessageFramePostWidget.h"
 #include "gui/feeds/FeedHolder.h"
+#include "gui/Posted/BoardPostDisplayWidget.h"
 
 namespace Ui {
 class PostedListWidgetWithModel;
@@ -43,7 +44,7 @@ class PostedPostDelegate: public QAbstractItemDelegate
 	Q_OBJECT
 
 	public:
-		PostedPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100){}
+        PostedPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
         virtual ~PostedPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -54,11 +55,13 @@ class PostedPostDelegate: public QAbstractItemDelegate
         int cellSize(const QFont& font) const;
 
         void setCellWidth(int pix) { mCellWidthPix = pix; }
+        void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
 
 	private:
 		QSize cellSize(const QSize& w) const;
 
         int mCellWidthPix;
+        BoardPostDisplayWidget::DisplayMode mDisplayMode;
 };
 
 class PostedListWidgetWithModel: public GxsMessageFrameWidget
@@ -117,10 +120,10 @@ protected:
 
 private slots:
     void updateSorting(int);
-	void updateGroupData();
+    void switchDisplayMode();
+    void updateGroupData();
 	void createMsg();
 	void subscribeGroup(bool subscribe);
-	void setViewMode(int viewMode);
 	void settingsChanged();
 	void postPostLoad();
 	void postContextMenu(const QPoint&);

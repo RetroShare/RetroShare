@@ -29,25 +29,32 @@ namespace Ui {
 class BoardPostDisplayWidget;
 }
 
-class RsPostedPost;
+struct RsPostedPost;
 
 class BoardPostDisplayWidget : public QWidget
 {
 	Q_OBJECT
 
 public:
-	BoardPostDisplayWidget(const RsPostedPost& post,QWidget *parent=nullptr);
+    enum DisplayMode {
+        DISPLAY_MODE_UNKNOWN   = 0x00,
+        DISPLAY_MODE_CARD_VIEW = 0x01,
+        DISPLAY_MODE_COMPACT   = 0x02
+    };
+
+    BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode display_mode,QWidget *parent=nullptr);
 	virtual ~BoardPostDisplayWidget();
 
 	static const char *DEFAULT_BOARD_IMAGE;
 protected:
 	/* GxsGroupFeedItem */
 
-	void setup() ;
-	void fill() ;
-    void doExpand(bool open) {}
+    virtual void setup();    // to be overloaded by the different views
+
+    void doExpand(bool) {}
 	void setComment(const RsGxsComment&) ;
 	void setReadStatus(bool isNew, bool isUnread) ;
+
     void toggle() {}
 	void setCommentsSize(int comNb) ;
     void makeUpVote() ;
@@ -57,9 +64,14 @@ protected:
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
 
-private:
-	/** Qt Designer generated object */
-	Ui::BoardPostDisplayWidget *ui;
-
+protected:
 	RsPostedPost mPost;
+
+    DisplayMode dmode;
+    bool mExpanded;
+
+private:
+    /** Qt Designer generated object */
+    Ui::BoardPostDisplayWidget *ui;
 };
+

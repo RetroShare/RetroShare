@@ -43,7 +43,6 @@
 
 #include "PostedListWidgetWithModel.h"
 #include "PostedPostsModel.h"
-#include "PostedCardView.h"
 #include "BoardPostDisplayWidget.h"
 
 #include <algorithm>
@@ -64,6 +63,8 @@
 //
 #define IMAGE_COPYLINK     ":/images/copyrslink.png"
 
+Q_DECLARE_METATYPE(RsPostedPost);
+
 // Delegate used to paint into the table of thumbnails
 
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
@@ -82,7 +83,8 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->fillRect( option.rect, option.backgroundBrush);
 	painter->restore();
 
-	BoardPostDisplayWidget w(post);
+    BoardPostDisplayWidget w(post,mDisplayMode);
+
     w.setMaximumWidth(mCellWidthPix);
     w.setMinimumWidth(mCellWidthPix);
 	w.adjustSize();
@@ -155,7 +157,7 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
-	BoardPostDisplayWidget w(post);
+    BoardPostDisplayWidget w(post,mDisplayMode);
     w.setMinimumWidth(mCellWidthPix);
     w.setMaximumWidth(mCellWidthPix);
     w.adjustSize();
@@ -169,15 +171,15 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
 {
-	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
+    RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
     if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
     {
-        QWidget *w = new BoardPostDisplayWidget(post,parent);
-    w->setMinimumWidth(mCellWidthPix);
-    w->setMaximumWidth(mCellWidthPix);
-    w->adjustSize();
-		return w;
+        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
+        w->setMinimumWidth(mCellWidthPix);
+        w->setMaximumWidth(mCellWidthPix);
+        w->adjustSize();
+        return w;
     }
     else
         return NULL;
@@ -213,6 +215,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	//connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
+    connect(ui->cardViewButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
+    connect(ui->classicViewButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
 
     connect(mPostedPostsModel,SIGNAL(boardPostsLoaded()),this,SLOT(postPostLoad()));
 
@@ -248,7 +252,9 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	settingsChanged();
     setGroupId(postedId);
 
-	mPostedPostsModel->updateBoard(postedId);
+    ui->classicViewButton->setChecked(true); // inits both button checking consistency and delegate display mode variables.
+
+    mPostedPostsModel->updateBoard(postedId);
 
 	mEventHandlerId = 0;
 	// Needs to be asynced because this function is called by another thread!
@@ -256,6 +262,22 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     {
         RsQThreadUtils::postToObject([=](){ handleEvent_main_thread(event); }, this );
     }, mEventHandlerId, RsEventType::GXS_POSTED );
+}
+
+void PostedListWidgetWithModel::switchDisplayMode()
+{
+    if(sender() == ui->classicViewButton)
+    {
+        whileBlocking(ui->cardViewButton)->setChecked(false);
+        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT);
+    }
+    else
+    {
+        whileBlocking(ui->classicViewButton)->setChecked(false);
+        mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
+    }
+
+    mPostedPostsModel->update();
 }
 
 void PostedListWidgetWithModel::updateSorting(int s)
@@ -723,33 +745,6 @@ int PostedListWidgetWithModel::viewMode()
 	return VIEW_MODE_FEEDS;
 }
 #endif
-
-void PostedListWidgetWithModel::setViewMode(int viewMode)
-{
-#ifdef TODO
-	switch (viewMode) {
-	case VIEW_MODE_FEEDS:
-		ui->feedWidget->show();
-		ui->fileWidget->hide();
-
-		ui->feedToolButton->setChecked(true);
-		ui->fileToolButton->setChecked(false);
-
-		break;
-	case VIEW_MODE_FILES:
-		ui->feedWidget->hide();
-		ui->fileWidget->show();
-
-		ui->feedToolButton->setChecked(false);
-		ui->fileToolButton->setChecked(true);
-
-		break;
-	default:
-		setViewMode(VIEW_MODE_FEEDS);
-		return;
-	}
-#endif
-}
 
 #ifdef TODO
 /*static*/ bool PostedListWidgetWithModel::filterItem(FeedItem *feedItem, const QString &text, int filter)

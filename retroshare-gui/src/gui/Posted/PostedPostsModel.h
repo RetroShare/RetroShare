@@ -135,6 +135,9 @@ public:
 	void updateBoard(const RsGxsGroupId& posted_group_id);
     const RsGxsGroupId& currentGroupId() const;
 
+    // Triggers a data change for all items. This can be used to redraw the view without re-loading the data.
+    void update();
+
 #ifdef TODO
     void setSortMode(SortMode mode) ;
 
