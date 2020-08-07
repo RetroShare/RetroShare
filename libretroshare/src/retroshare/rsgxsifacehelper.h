@@ -50,12 +50,13 @@ enum class TokenRequestType: uint8_t
 	__NONE              = 0x00, /// Used to detect uninitialized
     GROUP_DATA          = 0x01,
     GROUP_META          = 0x02,
-    POSTS               = 0x03,
-    ALL_POSTS           = 0x04,
-    MSG_RELATED_INFO    = 0x05,
-    GROUP_STATISTICS    = 0x06,
-    SERVICE_STATISTICS  = 0x07,
-    NO_KILL_TYPE        = 0x08,
+    GROUP_IDS           = 0x03,
+    POSTS               = 0x04,
+    ALL_POSTS           = 0x05,
+    MSG_RELATED_INFO    = 0x06,
+    GROUP_STATISTICS    = 0x07,
+    SERVICE_STATISTICS  = 0x08,
+    NO_KILL_TYPE        = 0x09,
 	__MAX                       /// Used to detect out of range
 };
 
@@ -263,6 +264,7 @@ public:
         {
         case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
         case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
         default:
             RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
             return false;
@@ -292,6 +294,7 @@ public:
         {
         case GXS_REQUEST_TYPE_GROUP_DATA: token_request_type = TokenRequestType::GROUP_DATA; break;
         case GXS_REQUEST_TYPE_GROUP_META: token_request_type = TokenRequestType::GROUP_META; break;
+        case GXS_REQUEST_TYPE_GROUP_IDS: token_request_type = TokenRequestType::GROUP_IDS; break;
         default:
             RsErr() << __PRETTY_FUNCTION__ << "(EE) Unexpected request type " << opts.mReqType << "!!" << std::endl;
             return false;

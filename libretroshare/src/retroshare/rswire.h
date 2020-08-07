@@ -176,8 +176,8 @@ class RsWirePulse
 
 	// Pointer to WireGroups
 	// mRefGroupPtr is opportunistically filled in, but will often be empty.
-	RsWireGroupSPtr mRefGroupPtr; //  ORIG/RESP: N/A      , REF: Reply Group
-	RsWireGroupSPtr mGroupPtr;    //  ORIG/RESP: Own Group, REF: Parent Group
+	RsWireGroupSPtr mRefGroupPtr; //  ORIG: N/A, RESP: Parent, REF: Reply Group
+	RsWireGroupSPtr mGroupPtr;    //  ORIG: Own, RESP: Own,    REF: Parent Group
 
 	// These are the direct children of this message
 	// split into likes, replies and retweets.
