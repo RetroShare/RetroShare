@@ -1,5 +1,7 @@
 ﻿!insertmacro LANG_STRING Section_Main "${APPNAME}"
 !insertmacro LANG_STRING Section_Main_Desc "Instal·la ${APPNAME} i els components necessaris."
+!insertmacro LANG_STRING Section_Tor "Tor"
+!insertmacro LANG_STRING Section_Tor_Desc "Installs Tor."
 !insertmacro LANG_STRING Section_Data "Pells"
 !insertmacro LANG_STRING Section_Data_Desc "Instal·la pells."
 !insertmacro LANG_STRING Section_Shortcuts "Icones d'accés directe"

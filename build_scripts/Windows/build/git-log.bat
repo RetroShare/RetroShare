@@ -17,16 +17,8 @@ set GitPath=
 call "%ToolsPath%\find-in-path.bat" GitPath git.exe
 if "%GitPath%"=="" echo Git executable not found in PATH.& exit /B 1
 
-:: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
-if not exist "%GetRsVersion%" (
-	echo File not found
-	echo %GetRsVersion%
-	exit /B 1
-)
-
 :: Get compiled version
-call "%GetRsVersion%" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
 if errorlevel 1 %cecho% error "Version not found."& goto error
 
 if "%RsVersion.Major%"=="" %cecho% error "Major version not found."& goto error
@@ -36,13 +28,11 @@ if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& goto error
 
 set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 
-:: Check WMIC is available
-wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& exit /B 1
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
 
-:: Use WMIC to retrieve date in format YYYYMMDD
-set RsDate=
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
-set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
 
 :: Get last revision
 set RsLastRefFile=%BuildPath%\Qt-%QtVersion%-%GCCArchitecture%%RsType%-%RsBuildConfig%-LastRef.txt

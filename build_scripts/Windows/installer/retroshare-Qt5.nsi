@@ -56,7 +56,17 @@
 !endif
 
 # Date
-!define /date Date "%Y%m%d"
+!ifndef DATE
+!define /date DATE "%Y%m%d"
+!endif
+
+# Tor
+!ifdef TORDIR
+${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
+!ifndef TOR_EXISTS
+!error "tor.exe not found"
+!endif
+!endif
 
 # Application name and version
 !define APPNAME "RetroShare"
@@ -78,7 +88,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${DATE}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -271,6 +281,14 @@ Section $(Section_Main) Section_Main
   File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
 
+# Tor
+!ifdef TOR_EXISTS
+  Section /o $(Section_Tor) Section_Tor
+    SetOutPath "$INSTDIR"
+    File /r "${TORDIR}\*"
+  SectionEnd
+!endif
+
 # Plugins
 ${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
 ${!defineifexist} PLUGIN_VOIP_EXISTS "${RELEASEDIR}\plugins\VOIP\release\VOIP.dll"
@@ -385,6 +403,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # Uninstall

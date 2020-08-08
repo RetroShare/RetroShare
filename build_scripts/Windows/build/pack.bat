@@ -29,16 +29,8 @@ if exist "%RsDeployPath%" rmdir /S /Q "%RsDeployPath%"
 :: Check compilation
 if not exist "%RsBuildPath%\Makefile" echo Project is not compiled.& goto error
 
-:: Get compiled revision
-set GetRsVersion=%SourcePath%\build_scripts\Windows\tools\get-rs-version.bat
-if not exist "%GetRsVersion%" (
-	%cecho% error "File not found"
-	echo %GetRsVersion%
-	goto error
-)
-
 :: Get compiled version
-call "%GetRsVersion%" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
+call "%ToolsPath%\get-rs-version.bat" "%RsBuildPath%\retroshare-gui\src\%RsBuildConfig%\retroshare.exe" RsVersion
 if errorlevel 1 %cecho% error "Version not found."& goto error
 
 if "%RsVersion.Major%"=="" %cecho% error "Major version not found."& goto error
@@ -48,18 +40,17 @@ if "%RsVersion.Extra%"=="" %cecho% error "Extra number not found".& goto error
 
 set RsVersion=%RsVersion.Major%.%RsVersion.Minor%.%RsVersion.Mini%
 
-:: Check WMIC is available
-wmic.exe alias /? >nul 2>&1 || echo WMIC is not available.&& goto error
+:: Get date
+call "%ToolsPath%\get-rs-date.bat" "%SourcePath%" RsDate
+if errorlevel 1 %cecho% error "Could not get date."& goto error
 
-:: Use WMIC to retrieve date in format YYYYMMDD
-set RsDate=
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /format:list') do set RsDate=%%I
-set RsDate=%RsDate:~0,4%%RsDate:~4,2%%RsDate:~6,2%
+if "%RsDate%"=="" %cecho% error "Could not get date."& goto error
 
+rem Tor
 if "%ParamTor%"=="1" (
 	:: Check for tor executable
-	if not exist "%EnvDownloadPath%\tor\Tor\tor.exe" (
-		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvDownloadPath:\=\\%\\tor"
+	if not exist "%EnvTorPath%\Tor\tor.exe" (
+		%cecho% error "Tor binary not found. Please download Tor Expert Bundle from\nhttps://www.torproject.org/download/download.html.en\nand unpack to\n%EnvTorPath:\=\\%"
 		goto error
 	)
 )
@@ -176,7 +167,7 @@ if exist "%SourcePath%\libresapi\src\webui" (
 
 if "%ParamTor%"=="1" (
 	echo copy tor
-	echo n | copy /-y "%EnvDownloadPath%\tor\Tor\*.*" "%RsDeployPath%" %Quite%
+	echo n | copy /-y "%EnvTorPath%\*.*" "%RsDeployPath%" %Quite%
 )
 
 rem pack files
