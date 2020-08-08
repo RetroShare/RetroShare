@@ -819,6 +819,26 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 
 		addTwitterView(new PulseReplySeperator());
 	}
+
+	// Add big separator, and republishes.
+	if (pPulse->mReplies.size() > 0 && pPulse->mRepublishes.size() > 0)
+	{
+		addTwitterView(new PulseReplySeperator());
+		addTwitterView(new PulseReplySeperator());
+	}
+
+	for(it = pPulse->mRepublishes.begin(); it != pPulse->mRepublishes.end(); it++)
+	{
+		RsWirePulseSPtr repub = *it;
+
+		PulseReply *firstRepub = new PulseReply(this, repub);
+		firstRepub->showReplyLine(false);
+
+		addTwitterView(firstRepub);
+		addTwitterView(new PulseReplySeperator());
+	}
+
+
 }
 
 void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)

@@ -48,6 +48,7 @@ void PulseTopLevel::setup()
 	connect(toolButton_viewGroup, SIGNAL(clicked()), this, SLOT(actionViewGroup()));
 	connect(toolButton_viewParent, SIGNAL(clicked()), this, SLOT(actionViewParent()));
 	connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
+	connect(toolButton_followParent, SIGNAL(clicked()), this, SLOT(actionFollowParent()));
 	// connect(toolButton_rate, SIGNAL(clicked()), this, SLOT(rate()));
 
 	connect(toolButton_reply, SIGNAL(clicked()), this, SLOT(actionReply()));
@@ -122,12 +123,28 @@ void PulseTopLevel::setReferenceString(QString ref)
 	else
 	{
 		label_reference->setText(ref);
+
+		// set ref icon
+		if (mPulse->mPulseType & WIRE_PULSE_TYPE_REPUBLISH) {
+			label_reficon->setPixmap(QPixmap(":/images/retweet.png"));
+		} else {
+			label_reficon->setPixmap(QPixmap(":/images/reply.png"));
+		}
 	}
 
 	if (mPulse->mRefGroupPtr) {
-		toolButton_viewParent->setVisible(true);
+		if (mPulse->mRefGroupPtr->mMeta.mSubscribeFlags &
+				(GXS_SERV::GROUP_SUBSCRIBE_ADMIN |
+				 GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)) {
+			toolButton_viewParent->setVisible(true);
+			toolButton_followParent->setVisible(false);
+		} else {
+			toolButton_viewParent->setVisible(false);
+			toolButton_followParent->setVisible(true);
+		}
 	} else {
 		toolButton_viewParent->setVisible(false);
+		toolButton_followParent->setVisible(false);
 	}
 }
 	

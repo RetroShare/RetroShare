@@ -201,6 +201,29 @@ void PulseDataItem::actionFollow()
 	}
 }
 
+void PulseDataItem::actionFollowParent()
+{
+	std::cerr << "PulseDataItem::actionFollowParent()";
+	std::cerr << std::endl;
+
+	RsGxsGroupId groupId;
+	if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		std::cerr << "PulseDataItem::actionFollowParent() REF following Group: ";
+		std::cerr << mPulse->mMeta.mGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mMeta.mGroupId;
+	} else {
+		std::cerr << "PulseDataItem::actionFollowParent() RESPONSE following RefGroup: ";
+		std::cerr << mPulse->mRefGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mRefGroupId;
+	}
+
+	if (mHolder) {
+		mHolder->PVHfollow(groupId);
+	}
+}
+
 void PulseDataItem::actionRate()
 {
 	std::cerr << "PulseDataItem::actionRate()";

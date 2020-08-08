@@ -302,6 +302,18 @@ void PulseAddDialog::postReplyPulse()
 	pPulse->mImage3 = mImage3;
 	pPulse->mImage4 = mImage4;
 
+	if (mReplyType & WIRE_PULSE_TYPE_REPUBLISH) {
+		// Copy details from parent, and override
+		pPulse->mSentiment = mReplyToPulse.mSentiment;
+		pPulse->mPulseText = mReplyToPulse.mPulseText;
+
+		// Copy images.
+		pPulse->mImage1 = mReplyToPulse.mImage1;
+		pPulse->mImage2 = mReplyToPulse.mImage2;
+		pPulse->mImage3 = mReplyToPulse.mImage3;
+		pPulse->mImage4 = mReplyToPulse.mImage4;
+	}
+
 	// this should be in async thread, so doesn't block UI thread.
 	if (!rsWire->createReplyPulse(mReplyToPulse.mMeta.mGroupId,
 			mReplyToPulse.mMeta.mOrigMsgId,

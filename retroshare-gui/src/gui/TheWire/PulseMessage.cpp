@@ -36,6 +36,10 @@ void PulseMessage::setup(RsWirePulseSPtr pulse)
 
 	setMessage(QString::fromStdString(pulse->mPulseText));
 
+	// show indent if republish (both RESPONSE or REF)
+	bool showIndent = (pulse->mPulseType & WIRE_PULSE_TYPE_REPUBLISH);
+	widget_indent->setVisible(showIndent);
+
 	// setup images.
 	int width  = 256;
 	int height = 128;

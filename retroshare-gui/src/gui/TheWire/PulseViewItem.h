@@ -112,6 +112,7 @@ private slots:
 	void actionViewPulse();
 
 	void actionFollow();
+	void actionFollowParent();
 	void actionRate();
 	// Action interfaces --------------------------
 
