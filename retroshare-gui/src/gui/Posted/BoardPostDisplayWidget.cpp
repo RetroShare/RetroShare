@@ -48,11 +48,9 @@ const char *BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2
 //===================================================================================================================================
 
 BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode mode,QWidget *parent)
-    : QWidget(parent),ui(new Ui::BoardPostDisplayWidget()),dmode(mode),mPost(post)
+    : QWidget(parent),mPost(post),dmode(mode),mExpanded(false),ui(new Ui::BoardPostDisplayWidget())
 {
     ui->setupUi(this);
-    mExpanded = false;
-
     setup();
 }
 
@@ -127,6 +125,10 @@ void BoardPostDisplayWidget::setup()
     if(dmode == DISPLAY_MODE_COMPACT)
     {
         ui->pictureLabel_compact->show();
+        ui->pictureLabel->hide();
+        ui->notes->hide();
+        ui->siteLabel->hide();
+
         ui->expandButton->show();
 
         if(mExpanded)
@@ -181,9 +183,6 @@ void BoardPostDisplayWidget::setup()
     menu->addSeparator();
     menu->addAction(showInPeopleAct);
     ui->shareButton->setMenu(menu);
-
-    ui->clearButton->hide();
-    ui->readAndClearButton->hide();
 
     RsReputationLevel overall_reputation = rsReputations->overallReputationLevel(mPost.mMeta.mAuthorId);
     bool redacted = (overall_reputation == RsReputationLevel::LOCALLY_NEGATIVE);
@@ -265,14 +264,10 @@ void BoardPostDisplayWidget::setup()
                 GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
                 // Wiping data - as its been passed to thumbnail.
 
+                int desired_height = QFontMetricsF(font()).height() * 5;
 
-                QPixmap scaledpixmap;
-                if(pixmap.width() > 800){
-                    QPixmap scaledpixmap = pixmap.scaledToWidth(800, Qt::SmoothTransformation);
-                    ui->pictureLabel_compact->setPixmap(scaledpixmap);
-                }else{
-                    ui->pictureLabel_compact->setPixmap(pixmap);
-                }
+                QPixmap scaledpixmap = pixmap.scaledToHeight(desired_height, Qt::SmoothTransformation);
+                ui->pictureLabel_compact->setPixmap(scaledpixmap);
             }
             else if (mPost.mImage.mData == NULL)
                 ui->pictureLabel_compact->hide();
@@ -353,19 +348,6 @@ void BoardPostDisplayWidget::setup()
         ui->newLabel->hide();
     }
 
-#ifdef TO_REMOVE
-    if (mIsHome)
-    {
-        ui->clearButton->hide();
-        ui->readAndClearButton->hide();
-    }
-    else
-#endif
-    {
-        ui->clearButton->show();
-        ui->readAndClearButton->show();
-    }
-
     // disable voting buttons - if they have already voted.
     if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
     {
@@ -392,6 +374,8 @@ void BoardPostDisplayWidget::setup()
 
     mInFill = false;
 #endif
+
+    updateGeometry();
 
 #ifdef TODO
     emit sizeChanged(this);

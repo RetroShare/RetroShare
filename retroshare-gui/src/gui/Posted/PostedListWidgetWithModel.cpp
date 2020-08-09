@@ -67,6 +67,8 @@ Q_DECLARE_METATYPE(RsPostedPost);
 
 // Delegate used to paint into the table of thumbnails
 
+std::ostream& operator<<(std::ostream& o,const QSize& s) { return o << s.width() << " x " << s.height() ; }
+
 void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const
 {
 	if((option.state & QStyle::State_Selected)) // Avoids double display. The selected widget is never exactly the size of the rendered one,
@@ -85,13 +87,13 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
     BoardPostDisplayWidget w(post,mDisplayMode);
 
-    w.setMaximumWidth(mCellWidthPix);
-    w.setMinimumWidth(mCellWidthPix);
+    //w.setMaximumWidth(mCellWidthPix);
+    //w.setMinimumWidth(mCellWidthPix);
 	w.adjustSize();
 
-	QPixmap pixmap(option.rect.size());
+    w.setFixedSize(cellSize(w.size()));
 
-	std::cerr << "pixmap.depth=" << pixmap.depth() << std::endl;
+	QPixmap pixmap(option.rect.size());
 
 #ifdef SUSPENDED_CODE
 	if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
@@ -114,6 +116,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 	w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
+    std::cerr << "PostedPostDelegate::paint(): w.size() = " << w.size() << std::endl;
 #ifdef TODO
 	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
 	{
@@ -123,15 +126,15 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	}
 #endif
 
-	// debug
-	if(index.row()==0 && index.column()==0)
-	{
-		QFile file("yourFile.png");
-		file.open(QIODevice::WriteOnly);
-		pixmap.save(&file, "PNG");
-		std::cerr << "Saved pxmap to png" << std::endl;
-	}
-	//std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
+    // debug
+    if(index.row()==0 && index.column()==0)
+    {
+        QFile file("yourFile.png");
+        file.open(QIODevice::WriteOnly);
+        pixmap.save(&file, "PNG");
+        std::cerr << "Saved pxmap to png" << std::endl;
+    }
+    //std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
 
 	painter->save();
 
@@ -148,7 +151,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
 QSize PostedPostDelegate::cellSize(const QSize& w) const
 {
-    return QSize(mCellWidthPix,0 + w.height() * mCellWidthPix/(float)w.width());
+    return QSize(mCellWidthPix,mCellWidthPix * w.height()/(float)w.width());
 }
 
 QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
@@ -158,15 +161,19 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
 
     BoardPostDisplayWidget w(post,mDisplayMode);
-    w.setMinimumWidth(mCellWidthPix);
-    w.setMaximumWidth(mCellWidthPix);
+
+    //w.setMinimumWidth(mCellWidthPix);
+    //w.setMaximumWidth(mCellWidthPix);
+
     w.adjustSize();
 
-    QSize ss = cellSize(w.size()) + QSize(0,5);
+    QSize ss = cellSize(w.size());
 
-    std::cerr << "w =" << w.width() << " x " << w.height() << " new size = " << ss.width() << " x " << ss.height() << std::endl;
+    std::cerr << "PostedPostDelegate::sizeHint(): w =" << w.width() << " x " << w.height() << " new size = " << ss.width() << " x " << ss.height() ;
+    w.setFixedSize(ss);
 
-    return ss;
+    std::cerr << " Final size:" << w.size() << std::endl;
+    return w.size();
 }
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -176,9 +183,13 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
     {
         QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
-        w->setMinimumWidth(mCellWidthPix);
-        w->setMaximumWidth(mCellWidthPix);
+
+        //w->setMinimumWidth(mCellWidthPix);
+        //w->setMaximumWidth(mCellWidthPix);
         w->adjustSize();
+        w->setFixedSize(cellSize(w->size()));
+
+        std::cerr << "PostedPostDelegate::createEditor(): size = " << w->size() << std::endl;
         return w;
     }
     else
@@ -277,7 +288,7 @@ void PostedListWidgetWithModel::switchDisplayMode()
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
     }
 
-    mPostedPostsModel->update();
+    mPostedPostsModel->deepUpdate();
 }
 
 void PostedListWidgetWithModel::updateSorting(int s)

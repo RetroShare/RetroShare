@@ -138,6 +138,9 @@ public:
     // Triggers a data change for all items. This can be used to redraw the view without re-loading the data.
     void update();
 
+    // Triggers a preMod, begin/end remove rows and data update. Could be useful if update is not enough to reset cell sizes.
+    void deepUpdate();
+
 #ifdef TODO
     void setSortMode(SortMode mode) ;
 

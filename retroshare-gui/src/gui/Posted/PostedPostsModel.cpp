@@ -489,6 +489,12 @@ void RsPostedPostsModel::setPostsInterval(int start,int nb_posts)
 	postMods();
 }
 
+void RsPostedPostsModel::deepUpdate()
+{
+    auto posts(mPosts);
+    setPosts(mPostedGroup,posts);
+}
+
 void RsPostedPostsModel::setPosts(const RsPostedGroup& group, std::vector<RsPostedPost>& posts)
 {
     preMods();

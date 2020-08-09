@@ -52,13 +52,14 @@ class PostedPostDelegate: public QAbstractItemDelegate
 		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
     	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-        int cellSize(const QFont& font) const;
+        //int cellSize(const QFont& font) const;
 
         void setCellWidth(int pix) { mCellWidthPix = pix; }
         void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
 
 	private:
-		QSize cellSize(const QSize& w) const;
+        QSize cellSize(const QSize& w) const; 	// Converts the supplied size to the cell size for the current container.
+                                                // The client should then scale its widget to fit the given size.
 
         int mCellWidthPix;
         BoardPostDisplayWidget::DisplayMode mDisplayMode;
@@ -105,7 +106,7 @@ protected:
 #ifdef TODO
 	virtual bool insertGroupData(const RsGxsGenericGroupData *data) override;
 #endif
-    virtual void blank() ;
+    virtual void blank() override;
 
 #ifdef TODO
 	virtual bool getGroupData(RsGxsGenericGroupData *& data) override;
