@@ -95,16 +95,19 @@ private:
 	bool updatePulseChildren(RsWirePulseSPtr pParent,  uint32_t token);
 
 	// update GroupPtrs
+	bool updateGroups(std::list<RsWirePulseSPtr> &pulsePtrs);
+
+	// sub utility functions used by updateGroups.
 	bool extractGroupIds(RsWirePulseConstSPtr pPulse, std::set<RsGxsGroupId> &groupIds);
 
 	bool updateGroupPtrs(RsWirePulseSPtr pPulse,
 			const std::map<RsGxsGroupId, RsWireGroupSPtr> &groups);
 
-	bool fetchGroupPtrs(const std::set<RsGxsGroupId> &groupIds,
+	bool trimToAvailGroupIds(const std::set<RsGxsGroupId> &pulseGroupIds,
+		std::list<RsGxsGroupId> &availGroupIds);
+
+	bool fetchGroupPtrs(const std::list<RsGxsGroupId> &groupIds,
 			std::map<RsGxsGroupId, RsWireGroupSPtr> &groups);
-
-
-
 
 
 	virtual void generateDummyData();
