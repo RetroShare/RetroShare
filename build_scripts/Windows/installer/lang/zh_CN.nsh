@@ -1,5 +1,7 @@
 ﻿!insertmacro LANG_STRING Section_Main "${APPNAME}"
 !insertmacro LANG_STRING Section_Main_Desc "Installs ${APPNAME} and required components."
+!insertmacro LANG_STRING Section_Tor "Tor"
+!insertmacro LANG_STRING Section_Tor_Desc "Installs Tor."
 !insertmacro LANG_STRING Section_Data "皮肤"
 !insertmacro LANG_STRING Section_Data_Desc "安装皮肤"
 !insertmacro LANG_STRING Section_Shortcuts "快捷方式图标"

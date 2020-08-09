@@ -18,7 +18,7 @@ call "%~dp0find-in-path.bat" GitPath git.exe
 if "%GitPath%"=="" (
 	echo.
 	echo Git executable not found in PATH.
-	goto exit
+	exit /B 1
 )
 
 set GitParameter=

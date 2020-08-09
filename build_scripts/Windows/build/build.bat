@@ -67,6 +67,14 @@ if exist "%EnvJomExe%" (
 ) else (
 	mingw32-make
 )
+if errorlevel 1 goto error
+
+echo.
+echo === Changelog
+echo.
+
+title Build - %SourceName%-%RsBuildConfig% [changelog]
+call "%ToolsPath%\generate-changelog.bat" "%SourcePath%" "%RsBuildPath%\changelog.txt"
 
 :error
 popd

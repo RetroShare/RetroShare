@@ -56,7 +56,17 @@
 !endif
 
 # Date
-!define /date Date "%Y%m%d"
+!ifndef DATE
+!define /date DATE "%Y%m%d"
+!endif
+
+# Tor
+!ifdef TORDIR
+${!defineifexist} TOR_EXISTS "${TORDIR}\tor.exe"
+!ifndef TOR_EXISTS
+!error "tor.exe not found"
+!endif
+!endif
 
 # Application name and version
 !define APPNAME "RetroShare"
@@ -78,7 +88,7 @@
 # Main Install settings
 Name "${APPNAMEANDVERSION}"
 InstallDirRegKey HKLM "Software\${APPNAME}" ""
-OutFile "${OUTDIR_}RetroShare-${VERSION}-${Date}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
+OutFile "${OUTDIR_}RetroShare-${VERSION}-${DATE}-${REVISION}-Qt-${QTVERSION}-${ARCHITECTURE}${INSTALLERADD}-setup.exe"
 BrandingText "${APPNAMEANDVERSION}"
 RequestExecutionlevel highest
 # Use compression
@@ -110,8 +120,8 @@ Var StyleSheetDir
 !define MUI_FINISHPAGE_LINK "Visit the RetroShare forum for the latest news and support"
 !define MUI_FINISHPAGE_LINK_LOCATION "http://retroshare.sourceforge.net/forum/"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\retroshare.exe"
-;!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
-;!define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
+!define MUI_FINISHPAGE_SHOWREADME $INSTDIR\changelog.txt
+!define MUI_FINISHPAGE_SHOWREADME_TEXT changelog.txt
 ;!define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\orange-uninstall.ico"
 !define MUI_UNFINISHPAGE_NOAUTOCLOSE
@@ -230,7 +240,7 @@ Section $(Section_Main) Section_Main
   !endif
 
   ; Other files
-;  File "${SOURCEDIR}\retroshare-gui\src\changelog.txt"
+  File "${RELEASEDIR}\changelog.txt"
   File "${SOURCEDIR}\libbitdht\src\bitdht\bdboot.txt"
 
   ; License
@@ -270,6 +280,14 @@ Section $(Section_Main) Section_Main
   SetOutPath "$INSTDIR\license"
   File /r "${SOURCEDIR}\retroshare-gui\src\license\*.*"
 SectionEnd
+
+# Tor
+!ifdef TOR_EXISTS
+  Section /o $(Section_Tor) Section_Tor
+    SetOutPath "$INSTDIR"
+    File /r "${TORDIR}\*"
+  SectionEnd
+!endif
 
 # Plugins
 ${!defineifexist} PLUGIN_FEEDREADER_EXISTS "${RELEASEDIR}\plugins\FeedReader\release\FeedReader.dll"
@@ -385,6 +403,7 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_Plugin_VOIP} $(Section_Plugin_VOIP_Desc)
 ;  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Link} $(Section_Link_Desc)
   !insertmacro MUI_DESCRIPTION_TEXT ${Section_AutoStart} $(Section_AutoStart_Desc)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Section_Tor} $(Section_Tor_Desc)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 # Uninstall

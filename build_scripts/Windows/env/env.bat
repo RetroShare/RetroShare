@@ -6,6 +6,7 @@ set EnvRootPath=%RootPath%\%SourceName%-env
 set EnvToolsPath=%EnvRootPath%\tools
 set EnvTempPath=%EnvRootPath%\tmp
 set EnvDownloadPath=%EnvRootPath%\download
+set EnvTorPath=%EnvDownloadPath%\tor
 
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
 set EnvJomExe=%EnvToolsPath%\jom.exe
