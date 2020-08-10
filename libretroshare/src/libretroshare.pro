@@ -858,14 +858,14 @@ rs_jsonapi {
         genrestbedlib.output = $$clean_path($${RESTBED_BUILD_PATH}/librestbed.a)
         genrestbedlib.CONFIG += target_predeps combine
         genrestbedlib.variable_out = PRE_TARGETDEPS
-        genrestbedlib.commands = \
-            cd $${RS_SRC_PATH} && ( \
-            git submodule update --init supportlibs/restbed ; \
-            cd $${RESTBED_SRC_PATH} ; \
-            git submodule update --init dependency/asio ; \
-            git submodule update --init dependency/catch ; \
-            git submodule update --init dependency/kashmir ; \
-            true ) && \
+            genrestbedlib.commands = \
+                cd $${RS_SRC_PATH} && ( \
+                git submodule update --init supportlibs/restbed ; \
+                cd $${RESTBED_SRC_PATH} ; \
+                git submodule update --init dependency/asio ; \
+                git submodule update --init dependency/catch ; \
+                git submodule update --init dependency/kashmir ; \
+                true ) && \
             mkdir -p $${RESTBED_BUILD_PATH} && cd $${RESTBED_BUILD_PATH} && \
             cmake \
                 -DCMAKE_CXX_COMPILER=$$QMAKE_CXX \
@@ -962,8 +962,10 @@ rs_broadcast_discovery {
         udpdiscoverycpplib.output = $$clean_path($${UDP_DISCOVERY_BUILD_PATH}/libudp-discovery.a)
         udpdiscoverycpplib.CONFIG += target_predeps combine
         udpdiscoverycpplib.variable_out = PRE_TARGETDEPS
-        isEmpty(QMAKE_SH) {
+        win32-g++:isEmpty(QMAKE_SH) {
             udpdiscoverycpplib.commands = \
+                cd $$shell_path($${RS_SRC_PATH}) $$escape_expand(\\n\\t) \
+                git submodule update --init supportlibs/udp-discovery-cpp || cd . $$escape_expand(\\n\\t) \
                 $(CHK_DIR_EXISTS) $$shell_path($$UDP_DISCOVERY_BUILD_PATH) $(MKDIR) $$shell_path($${UDP_DISCOVERY_BUILD_PATH}) $$escape_expand(\\n\\t)
         } else {
             udpdiscoverycpplib.commands = \
