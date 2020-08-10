@@ -51,6 +51,7 @@ title Build - %SourceName%-%RsBuildConfig% [qmake]
 
 set RS_QMAKE_CONFIG=%RsBuildConfig%
 if "%ParamAutologin%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_autologin
+if "%ParamJsonApi%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% rs_jsonapi
 if "%ParamPlugins%"=="1" set RS_QMAKE_CONFIG=%RS_QMAKE_CONFIG% retroshare_plugins
 
 qmake "%SourcePath%\RetroShare.pro" -r -spec win32-g++ "CONFIG+=%RS_QMAKE_CONFIG%" "EXTERNAL_LIB_DIR=%BuildLibsPath%\libs"

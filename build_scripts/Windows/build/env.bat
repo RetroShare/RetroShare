@@ -3,6 +3,7 @@ set ParamRelease=0
 set ParamDebug=0
 set ParamAutologin=0
 set ParamPlugins=0
+set ParamJsonApi=0
 set ParamTor=0
 set NonInteractive=0
 
@@ -15,6 +16,8 @@ if "%~1" NEQ "" (
 			set ParamDebug=1
 		) else if "%%~a"=="autologin" (
 			set ParamAutologin=1
+		) else if "%%~a"=="jsonapi" (
+			set ParamJsonApi=1
 		) else if "%%~a"=="plugins" (
 			set ParamPlugins=1
 		) else if "%%~a"=="tor" (
@@ -97,6 +100,7 @@ echo release^|debug      Build release or debug version
 echo.
 echo Optional parameter (need clean when changed)
 echo autologin          Build with autologin
+echo jsonapi            Build with jsonapi
 echo plugins            Build plugins
 echo.
 echo Parameter for pack

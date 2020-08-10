@@ -13,7 +13,7 @@ call "%~dp0build-libs\build-libs.bat"
 if errorlevel 1 %cecho% error "Failed to build libraries." & exit /B %ERRORLEVEL%
 
 %cecho% info "Build %SourceName%"
-call "%~dp0build\build.bat" release autologin
+call "%~dp0build\build.bat" release autologin jsonapi
 rem plugins
 if errorlevel 1 %cecho% error "Failed to build %SourceName%." & exit /B %ERRORLEVEL%
 
