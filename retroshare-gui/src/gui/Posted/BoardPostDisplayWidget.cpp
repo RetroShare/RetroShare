@@ -25,7 +25,6 @@
 
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
-#include "gui/feeds/FeedHolder.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
@@ -125,11 +124,11 @@ void BoardPostDisplayWidget::setup()
     if(dmode == DISPLAY_MODE_COMPACT)
     {
         ui->pictureLabel_compact->show();
+        ui->expandButton->show();
+
         ui->pictureLabel->hide();
         ui->notes->hide();
         ui->siteLabel->hide();
-
-        ui->expandButton->show();
 
         if(mExpanded)
         {
