@@ -132,7 +132,7 @@
            </layout>
           </item>
           <item>
-           <widget class="QLabel" name="pictureLabel_compact">
+           <widget class="ClickableLabel" name="pictureLabel_compact">
             <property name="text">
              <string>PictureLabel_compact</string>
             </property>
@@ -471,6 +471,11 @@
    <class>StyledLabel</class>
    <extends>QLabel</extends>
    <header>gui/common/StyledLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ClickableLabel</class>
+   <extends>QLabel</extends>
+   <header>util/ClickableLabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

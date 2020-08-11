@@ -25,6 +25,7 @@
 
 #include "rshare.h"
 #include "BoardPostDisplayWidget.h"
+#include "PhotoView.h"
 #include "gui/gxs/GxsIdDetails.h"
 #include "util/misc.h"
 #include "gui/common/FilesDefs.h"
@@ -119,6 +120,31 @@ void BoardPostDisplayWidget::setComment(const RsGxsComment& cmt) {}
 BoardPostDisplayWidget::~BoardPostDisplayWidget()
 {
 	delete(ui);
+}
+
+
+void BoardPostDisplayWidget::viewPicture()
+{
+    if(mPost.mImage.mData == NULL)
+        return;
+
+    QString timestamp = misc::timeRelativeToNow(mPost.mMeta.mPublishTs);
+    QPixmap pixmap;
+    GxsIdDetails::loadPixmapFromData(mPost.mImage.mData, mPost.mImage.mSize, pixmap,GxsIdDetails::ORIGINAL);
+    RsGxsId authorID = mPost.mMeta.mAuthorId;
+
+    PhotoView *PView = new PhotoView(this);
+
+    PView->setPixmap(pixmap);
+    PView->setTitle(QString::fromUtf8(mPost.mMeta.mMsgName.c_str()));
+    PView->setName(authorID);
+    PView->setTime(timestamp);
+    PView->setGroupId(mPost.mMeta.mGroupId);
+    PView->setMessageId(mPost.mMeta.mMsgId);
+
+    PView->show();
+
+    /* window will destroy itself! */
 }
 
 void BoardPostDisplayWidget::toggleNotes() {}
@@ -379,6 +405,9 @@ void BoardPostDisplayWidget::setup()
 
     mInFill = false;
 #endif
+
+    ui->pictureLabel_compact->setUseStyleSheet(false);	// If not this, causes dilation of the image.
+    connect(ui->pictureLabel_compact, SIGNAL(clicked()), this, SLOT(viewPicture()));
 
     updateGeometry();
 

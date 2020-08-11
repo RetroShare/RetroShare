@@ -46,7 +46,11 @@ public:
 	virtual ~BoardPostDisplayWidget();
 
 	static const char *DEFAULT_BOARD_IMAGE;
-protected:
+
+public slots:
+    void viewPicture() ;
+
+protected slots:
 	/* GxsGroupFeedItem */
 
     virtual void setup();    // to be overloaded by the different views
