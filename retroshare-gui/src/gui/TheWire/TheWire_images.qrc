@@ -4,5 +4,8 @@
         <file>images/like.png</file>
         <file>images/reply.png</file>
         <file>images/retweet.png</file>
+        <file>images/link.svg</file>
+        <file>images/external-link.svg</file>
+        <file>images/invite.png</file>
     </qresource>
 </RCC>

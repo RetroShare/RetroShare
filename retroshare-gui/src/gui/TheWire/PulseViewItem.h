@@ -50,6 +50,13 @@ class PulseDataInterface
 public:
 	virtual ~PulseDataInterface() {}
 
+    enum class PulseStatus {
+		FULL,         // have Msg + Group:            Show Stats
+		UNSUBSCRIBED, // Ref + unsubscribed to Group: Show Follow
+		NO_GROUP,     // Ref Msg, unknown group:      Show Missing Group.
+		REF_MSG       // Subscribed, only Ref Msg:    Show Missing Msg.
+	};
+
 protected:
 	// Group
 	virtual void setHeadshot(const QPixmap &pixmap) = 0;
@@ -68,7 +75,7 @@ protected:
 
 	// 
 	virtual void setReferenceString(QString ref) = 0;
-	virtual void showResponseStats(bool enable) = 0;
+	virtual void setPulseStatus(PulseStatus status) = 0;
 };
 
 
@@ -105,6 +112,7 @@ private slots:
 	void actionViewPulse();
 
 	void actionFollow();
+	void actionFollowParent();
 	void actionRate();
 	// Action interfaces --------------------------
 

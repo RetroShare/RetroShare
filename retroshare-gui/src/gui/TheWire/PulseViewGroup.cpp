@@ -41,6 +41,8 @@ PulseViewGroup::PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group)
 void PulseViewGroup::setup()
 {
 	if (mGroup) {
+		connect(toolButton_follow, SIGNAL(clicked()), this, SLOT(actionFollow()));
+
 		label_groupName->setText("@" + QString::fromStdString(mGroup->mMeta.mGroupName));
 		label_authorName->setText(BoldString(QString::fromStdString(mGroup->mMeta.mAuthorId.toStdString())));
 		label_date->setText(DateTime::formatDateTime(mGroup->mMeta.mPublishTs));
@@ -89,6 +91,18 @@ void PulseViewGroup::setup()
 			// hide stats.
 			widget_replies->setVisible(false);
 		}
+	}
+}
+
+void PulseViewGroup::actionFollow()
+{
+	RsGxsGroupId groupId = mGroup->mMeta.mGroupId;
+	std::cerr << "PulseViewGroup::actionFollow() following ";
+	std::cerr << groupId;
+	std::cerr << std::endl;
+
+	if (mHolder) {
+		mHolder->PVHfollow(groupId);
 	}
 }
 

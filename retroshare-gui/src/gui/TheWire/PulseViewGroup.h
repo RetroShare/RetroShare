@@ -33,8 +33,12 @@ class PulseViewGroup : public PulseViewItem, private Ui::PulseViewGroup
 public:
 	PulseViewGroup(PulseViewHolder *holder, RsWireGroupSPtr group);
 
+private slots:
+	void actionFollow();
+
 protected:
 	void setup();
+
 
 protected:
 	RsWireGroupSPtr mGroup;

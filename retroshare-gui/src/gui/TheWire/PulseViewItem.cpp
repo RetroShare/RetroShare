@@ -183,8 +183,41 @@ void PulseDataItem::actionFollow()
 	std::cerr << "PulseDataItem::actionFollow()";
 	std::cerr << std::endl;
 
-	// TODO
 	RsGxsGroupId groupId;
+	if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		std::cerr << "PulseDataItem::actionFollow() REF following Replier: ";
+		std::cerr << mPulse->mRefGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mRefGroupId;
+	} else {
+		std::cerr << "PulseDataItem::actionFollow() RESPONSE following Group: ";
+		std::cerr << mPulse->mMeta.mGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mMeta.mGroupId;
+	}
+
+	if (mHolder) {
+		mHolder->PVHfollow(groupId);
+	}
+}
+
+void PulseDataItem::actionFollowParent()
+{
+	std::cerr << "PulseDataItem::actionFollowParent()";
+	std::cerr << std::endl;
+
+	RsGxsGroupId groupId;
+	if (mPulse->mPulseType & WIRE_PULSE_TYPE_REFERENCE) {
+		std::cerr << "PulseDataItem::actionFollowParent() REF following Group: ";
+		std::cerr << mPulse->mMeta.mGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mMeta.mGroupId;
+	} else {
+		std::cerr << "PulseDataItem::actionFollowParent() RESPONSE following RefGroup: ";
+		std::cerr << mPulse->mRefGroupId;
+		std::cerr << std::endl;
+		groupId = mPulse->mRefGroupId;
+	}
 
 	if (mHolder) {
 		mHolder->PVHfollow(groupId);
@@ -260,15 +293,28 @@ void PulseDataItem::showPulse()
 		setRefMessage(QString::fromStdString(mPulse->mRefPulseText), mPulse->mRefImageCount);
 		setDate(mPulse->mRefPublishTs);
 
-		// References (unknown for a REFERENCE)
-		// show FOLLOW button instead.
-		showResponseStats(false);
+		// Workout Pulse status for Stats/Follow/Msgs.
+		// Its a REF so cannot be FULL.
+		PulseStatus status = PulseStatus::REF_MSG;
+		if (mPulse->mRefGroupPtr) {
+			// bitwise comparisons.
+			if (mPulse->mRefGroupPtr->mMeta.mSubscribeFlags &
+					(GXS_SERV::GROUP_SUBSCRIBE_ADMIN |
+					 GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)) {
+				status = PulseStatus::REF_MSG;
+			} else {
+				status = PulseStatus::UNSUBSCRIBED;
+			}
+		} else {
+			status = PulseStatus::NO_GROUP;
+		}
 
-		// 
+		setPulseStatus(status);
+
 		if (mPulse->mGroupPtr) {
 			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, mPulse->mGroupPtr->mMeta.mGroupName);
 		} else {
-			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, "REF GROUP MISSING");
+			setReference(mPulse->mPulseType & WIRE_PULSE_RESPONSE_MASK, mPulse->mMeta.mGroupId, "UNKNOWN");
 		}
 
 	}
@@ -310,8 +356,19 @@ void PulseDataItem::showPulse()
 		setMessage(mPulse);
 		setDate(mPulse->mMeta.mPublishTs);
 
-		// References
-		showResponseStats(true);
+		// Possible to have ORIG and be UNSUBSCRIBED.
+		PulseStatus status = PulseStatus::FULL;
+		if (mPulse->mGroupPtr) {
+			// bitwise comparisons.
+			if (mPulse->mGroupPtr->mMeta.mSubscribeFlags &
+					(GXS_SERV::GROUP_SUBSCRIBE_ADMIN |
+					 GXS_SERV::GROUP_SUBSCRIBE_SUBSCRIBED)) {
+				status = PulseStatus::FULL;
+			} else {
+				status = PulseStatus::UNSUBSCRIBED;
+			}
+		}
+		setPulseStatus(status);
 		setLikes(mPulse->mLikes.size());
 		setReplies(mPulse->mReplies.size());
 		setRepublishes(mPulse->mRepublishes.size());
@@ -322,6 +379,7 @@ void PulseDataItem::showPulse()
 		}
 		else
 		{
+			// NO Parent, so only 0 is important.
 			setReference(0, mPulse->mRefGroupId, mPulse->mRefGroupName);
 		}
 	}

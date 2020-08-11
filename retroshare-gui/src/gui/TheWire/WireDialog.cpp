@@ -578,8 +578,12 @@ void WireDialog::PVHfollow(const RsGxsGroupId &groupId)
 {
 	std::cerr << "WireDialog::PVHfollow(";
 	std::cerr << groupId.toStdString();
-	std::cerr << ") TODO";
+	std::cerr << ")";
 	std::cerr << std::endl;
+
+	uint32_t token;
+	rsWire->subscribeToGroup(token, groupId, true);
+	mWireQueue->queueRequest(token, TOKENREQ_GROUPINFO, RS_TOKREQ_ANSTYPE_ACK, WIRE_TOKEN_TYPE_SUBSCRIBE_CHANGE);
 }
 
 void WireDialog::PVHrate(const RsGxsId &authorId)
@@ -815,6 +819,26 @@ void WireDialog::postPulseFocus(RsWirePulseSPtr pPulse)
 
 		addTwitterView(new PulseReplySeperator());
 	}
+
+	// Add big separator, and republishes.
+	if (pPulse->mReplies.size() > 0 && pPulse->mRepublishes.size() > 0)
+	{
+		addTwitterView(new PulseReplySeperator());
+		addTwitterView(new PulseReplySeperator());
+	}
+
+	for(it = pPulse->mRepublishes.begin(); it != pPulse->mRepublishes.end(); it++)
+	{
+		RsWirePulseSPtr repub = *it;
+
+		PulseReply *firstRepub = new PulseReply(this, repub);
+		firstRepub->showReplyLine(false);
+
+		addTwitterView(firstRepub);
+		addTwitterView(new PulseReplySeperator());
+	}
+
+
 }
 
 void WireDialog::requestGroupFocus(const RsGxsGroupId groupId)
