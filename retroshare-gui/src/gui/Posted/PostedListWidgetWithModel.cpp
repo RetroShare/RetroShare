@@ -145,6 +145,8 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     {
         QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
 
+        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),this,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
+
         w->adjustSize();
         w->setFixedSize(option.rect.size());
 
@@ -175,6 +177,8 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     ui->postsTree->setSortingEnabled(true);
     ui->postsTree->sortByColumn(0, Qt::AscendingOrder);
     ui->postsTree->setAutoSelect(true);
+
+    ui->idChooser->setFlags(IDCHOOSER_ID_REQUIRED);
 
     connect(ui->sortStrategy_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSorting(int)));
     connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(next10Posts()));
@@ -630,7 +634,7 @@ void PostedListWidgetWithModel::insertBoardDetails(const RsPostedGroup& group)
 	ui->logoLabel->setPixmap(chanImage);
     ui->logoLabel->setFixedSize(QSize(ui->logoLabel->height()*chanImage.width()/(float)chanImage.height(),ui->logoLabel->height())); // make the logo have the same aspect ratio than the original image
 
-	ui->submitPostButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
+    //ui->submitPostButton->setEnabled(bool(group.mMeta.mSubscribeFlags & GXS_SERV::GROUP_SUBSCRIBE_PUBLISH));
 
 	ui->subscribeToolButton->setSubscribed(IS_GROUP_SUBSCRIBED(group.mMeta.mSubscribeFlags));
 	ui->subscribeToolButton->setEnabled(true);
@@ -915,6 +919,18 @@ void PostedListWidgetWithModel::subscribeGroup(bool subscribe)
         uint32_t token;
 		rsPosted->subscribeToGroup(token,grpId, subscribe);
 	} );
+}
+
+void PostedListWidgetWithModel::voteMsg(RsGxsGrpMsgIdPair msg,bool up_or_down)
+{
+    RsGxsId voter_id ;
+    if(ui->idChooser->getChosenId(voter_id) != GxsIdChooser::KnowId)
+    {
+        std::cerr << "(EE) No id returned by GxsIdChooser. Somthing's wrong?" << std::endl;
+        return;
+    }
+
+    rsPosted->voteForPost(up_or_down,msg.first,msg.second,voter_id);
 }
 
 #ifdef TODO

@@ -442,6 +442,12 @@ bool p3Posted::createBoard(RsPostedGroup& board)
 	return true;
 }
 
+bool p3Posted::voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& voterId)
+{
+    std::cerr << "(EE) " << __PRETTY_FUNCTION__ << ": Not implemented yet"<< std::endl;
+    return true;
+}
+
 bool p3Posted::editBoard(RsPostedGroup& board)
 {
 	uint32_t token;

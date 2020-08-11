@@ -84,7 +84,9 @@ virtual void receiveHelperChanges(std::vector<RsGxsNotify*>& changes)
 
 	bool createBoard(RsPostedGroup& board) override;
 
-	virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) override;
+    bool voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& voterId) override;
+
+    virtual bool getGroupData(const uint32_t &token, std::vector<RsPostedGroup> &groups) override;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts, std::vector<RsGxsVote> &vots) override;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts, std::vector<RsGxsComment> &cmts) override;
 	virtual bool getPostData(const uint32_t &token, std::vector<RsPostedPost> &posts) override;

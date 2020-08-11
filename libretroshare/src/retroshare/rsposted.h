@@ -172,6 +172,8 @@ public:
 
 	virtual bool getBoardsServiceStatistics(GxsServiceStatistic& stat) =0;
 
+    virtual bool voteForPost(bool up,const RsGxsGroupId& postGrpId,const RsGxsMessageId& postMsgId,const RsGxsId& voterId) =0;
+
 	enum RS_DEPRECATED RankType {TopRankType, HotRankType, NewRankType };
 
 	RS_DEPRECATED_FOR(getBoardsInfo)
