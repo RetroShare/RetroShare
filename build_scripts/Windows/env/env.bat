@@ -9,7 +9,6 @@ set EnvDownloadPath=%EnvRootPath%\download
 set EnvTorPath=%EnvDownloadPath%\tor
 
 set EnvSevenZipExe=%EnvToolsPath%\7z.exe
-set EnvJomExe=%EnvToolsPath%\jom.exe
 set EnvSedExe=%EnvToolsPath%\sed.exe
 set EnvCutExe=%EnvToolsPath%\cut.exe
 set EnvDependsExe=%EnvToolsPath%\depends.exe

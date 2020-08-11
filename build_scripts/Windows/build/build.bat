@@ -63,11 +63,7 @@ echo.
 
 title Build - %SourceName%-%RsBuildConfig% [make]
 
-if exist "%EnvJomExe%" (
-	"%EnvJomExe%"
-) else (
-	mingw32-make
-)
+mingw32-make -j %CoreCount%
 if errorlevel 1 goto error
 
 echo.
