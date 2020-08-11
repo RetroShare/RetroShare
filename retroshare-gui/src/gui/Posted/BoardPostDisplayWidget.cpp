@@ -51,6 +51,12 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,DisplayM
 {
     ui->setupUi(this);
     setup();
+
+    ui->verticalLayout->addStretch();
+    ui->verticalLayout->setAlignment(Qt::AlignTop);
+    ui->topLayout->setAlignment(Qt::AlignTop);
+    ui->arrowsLayout->addStretch();
+    ui->arrowsLayout->setAlignment(Qt::AlignTop);
 }
 
 void BoardPostDisplayWidget::setCommentsSize(int comNb)

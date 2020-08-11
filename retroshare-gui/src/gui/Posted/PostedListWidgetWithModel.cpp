@@ -87,36 +87,15 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 
     BoardPostDisplayWidget w(post,mDisplayMode);
 
-    //w.setMaximumWidth(mCellWidthPix);
-    //w.setMinimumWidth(mCellWidthPix);
 	w.adjustSize();
-
-    w.setFixedSize(cellSize(w.size()));
+    w.setFixedSize(option.rect.size());
 
 	QPixmap pixmap(option.rect.size());
 
-#ifdef SUSPENDED_CODE
-	if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
-	else
-#endif
-		pixmap.fill(QRgb(0x00f0f0f0));	// choose a fully transparent background
-
-#ifdef TESTING
-	{
-		QPainter W(&pixmap);
-		QLinearGradient m_gradient(0,0,pixmap.width(),0);
-		m_gradient.setColorAt(0.0, QRgb(0xff390e90));
-		m_gradient.setColorAt(1.0, QRgb(0xff09feff));
-		W.fillRect(pixmap.rect(), m_gradient);
-
-		w.render(&W,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
-	}
-#endif
+    pixmap.fill(QRgb(0x00f0f0f0));	// choose a fully transparent background
 
 	w.render(&pixmap,QPoint(0,0),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
-    std::cerr << "PostedPostDelegate::paint(): w.size() = " << w.size() << std::endl;
 #ifdef TODO
 	if(IS_MSG_UNREAD(post.mMeta.mMsgStatus) || IS_MSG_NEW(post.mMeta.mMsgStatus))
 	{
@@ -126,25 +105,17 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	}
 #endif
 
-    // debug
-    if(index.row()==0 && index.column()==0)
-    {
-        QFile file("yourFile.png");
-        file.open(QIODevice::WriteOnly);
-        pixmap.save(&file, "PNG");
-        std::cerr << "Saved pxmap to png" << std::endl;
-    }
+//    // debug
+//    if(index.row()==0 && index.column()==0)
+//    {
+//        QFile file("yourFile.png");
+//        file.open(QIODevice::WriteOnly);
+//        pixmap.save(&file, "PNG");
+//        std::cerr << "Saved pxmap to png" << std::endl;
+//    }
     //std::cerr << "option.rect = " << option.rect.width() << "x" << option.rect.height() << ". fm.height()=" << QFontMetricsF(option.font).height() << std::endl;
 
 	painter->save();
-
-    // Is this necessary?
-    //
-	// painter->setRenderHint(  QPainter::Antialiasing,true);
-	// painter->setRenderHint(  QPainter::TextAntialiasing,true);
-	// painter->setRenderHint(  QPainter::SmoothPixmapTransform,true);
-	// painter->setRenderHint(  QPainter::HighQualityAntialiasing,true);
-
 	painter->drawPixmap(option.rect.topLeft(), pixmap /*,.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::KeepAspectRatio,Qt::SmoothTransformation)*/);
 	painter->restore();
 }
@@ -159,20 +130,10 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
     // This is the only place where we actually set the size of cells
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-
     BoardPostDisplayWidget w(post,mDisplayMode);
-
-    //w.setMinimumWidth(mCellWidthPix);
-    //w.setMaximumWidth(mCellWidthPix);
 
     w.adjustSize();
 
-    QSize ss = cellSize(w.size());
-
-    std::cerr << "PostedPostDelegate::sizeHint(): w =" << w.width() << " x " << w.height() << " new size = " << ss.width() << " x " << ss.height() ;
-    w.setFixedSize(ss);
-
-    std::cerr << " Final size:" << w.size() << std::endl;
     return w.size();
 }
 
@@ -184,12 +145,9 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     {
         QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
 
-        //w->setMinimumWidth(mCellWidthPix);
-        //w->setMaximumWidth(mCellWidthPix);
         w->adjustSize();
-        w->setFixedSize(cellSize(w->size()));
+        w->setFixedSize(option.rect.size());
 
-        std::cerr << "PostedPostDelegate::createEditor(): size = " << w->size() << std::endl;
         return w;
     }
     else
@@ -208,7 +166,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	/* Invoke the Qt Designer generated object setup routine */
 	ui->setupUi(this);
 
-	ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel());
+    ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel());
     ui->postsTree->setItemDelegate(mPostedPostsDelegate = new PostedPostDelegate());
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
@@ -281,11 +239,13 @@ void PostedListWidgetWithModel::switchDisplayMode()
     {
         whileBlocking(ui->cardViewButton)->setChecked(false);
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT);
+        ui->postsTree->setUniformRowHeights(true);
     }
     else
     {
         whileBlocking(ui->classicViewButton)->setChecked(false);
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
+        ui->postsTree->setUniformRowHeights(false);
     }
 
     mPostedPostsModel->deepUpdate();
