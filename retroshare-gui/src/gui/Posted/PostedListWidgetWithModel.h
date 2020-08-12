@@ -58,17 +58,19 @@ public:
 
 public slots:
     void expandItem(RsGxsMessageId msgId,bool expanded);
+    void commentItem(RsGxsMessageId msgId,bool comment);
 
 private:
     // The class keeps a list of expanded items. Because items are constantly re-created, it is not possible
     // to let the items themselves hold that information.
 
-    bool isExpanded(const RsGxsMessageId& id) const;
+    uint8_t displayFlags(const RsGxsMessageId& id) const;
 
     int mCellWidthPix;
     PostedListWidgetWithModel *mPostListWidget;			// used for sending vote signals and so on.
     BoardPostDisplayWidget::DisplayMode mDisplayMode;
     std::set<RsGxsMessageId> mExpandedItems;
+    std::set<RsGxsMessageId> mShowCommentItems;
 };
 
 class PostedListWidgetWithModel: public GxsMessageFrameWidget

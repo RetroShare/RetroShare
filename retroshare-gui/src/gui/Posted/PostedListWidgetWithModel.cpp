@@ -85,7 +85,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->fillRect( option.rect, option.backgroundBrush);
 	painter->restore();
 
-    BoardPostDisplayWidget w(post,mDisplayMode,isExpanded(post.mMeta.mMsgId));
+    BoardPostDisplayWidget w(post,mDisplayMode,displayFlags(post.mMeta.mMsgId));
 
 	w.adjustSize();
     w.setFixedSize(option.rect.size());
@@ -125,13 +125,12 @@ QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QMo
     // This is the only place where we actually set the size of cells
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    BoardPostDisplayWidget w(post,mDisplayMode,isExpanded(post.mMeta.mMsgId));
+    BoardPostDisplayWidget w(post,mDisplayMode,displayFlags(post.mMeta.mMsgId));
 
     w.adjustSize();
 
     return w.size();
 }
-
 void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
 {
     std::cerr << __PRETTY_FUNCTION__ << ": received expandItem signal. b="  << expanded << std::endl;
@@ -142,9 +141,27 @@ void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
 
     mPostListWidget->forceRedraw();
 }
-bool PostedPostDelegate::isExpanded(const RsGxsMessageId &id) const
+void PostedPostDelegate::commentItem(RsGxsMessageId msgId,bool comment)
 {
-    return mExpandedItems.find(id) != mExpandedItems.end();
+    std::cerr << __PRETTY_FUNCTION__ << ": received commentItem signal. b="  << comment << std::endl;
+    if(comment)
+        mShowCommentItems.insert(msgId);
+    else
+        mShowCommentItems.erase(msgId);
+
+    mPostListWidget->forceRedraw();
+}
+uint8_t PostedPostDelegate::displayFlags(const RsGxsMessageId &id) const
+{
+    uint8_t flags=0;
+
+    if(mExpandedItems.find(id) != mExpandedItems.end())
+        flags |= BoardPostDisplayWidget::SHOW_NOTES;
+
+    if(mShowCommentItems.find(id) != mShowCommentItems.end())
+        flags |= BoardPostDisplayWidget::SHOW_COMMENTS;
+
+    return flags;
 }
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -153,10 +170,11 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
     if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
     {
-        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,isExpanded(post.mMeta.mMsgId),parent);
+        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,displayFlags(post.mMeta.mMsgId),parent);
 
         QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
         QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
+        QObject::connect(w,SIGNAL(commentsRequested(RsGxsMessageId,bool)),this,SLOT(commentItem(RsGxsMessageId,bool)));
 
         w->adjustSize();
         w->setFixedSize(option.rect.size());

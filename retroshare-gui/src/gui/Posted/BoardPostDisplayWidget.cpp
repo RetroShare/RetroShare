@@ -47,8 +47,8 @@ const char *BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2
 //==                                                 Base class BoardPostDisplayWidget                                             ==
 //===================================================================================================================================
 
-BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode mode,bool expanded,QWidget *parent)
-    : QWidget(parent),mPost(post),dmode(mode),mExpanded(expanded),ui(new Ui::BoardPostDisplayWidget())
+BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, DisplayMode mode, uint8_t display_flags, QWidget *parent)
+    : QWidget(parent),mPost(post),dmode(mode),mDisplayFlags(display_flags),ui(new Ui::BoardPostDisplayWidget())
 {
     ui->setupUi(this);
     setup();
@@ -161,21 +161,6 @@ void BoardPostDisplayWidget::setup()
         ui->pictureLabel->hide();
         ui->notes->hide();
         ui->siteLabel->hide();
-
-        if(mExpanded)
-        {
-            ui->frame_picture->show();
-            ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/decrease.png")));
-            ui->expandButton->setToolTip(tr("Hide"));
-            ui->expandButton->setChecked(true);
-        }
-        else
-        {
-            ui->frame_picture->hide();
-            ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/expand.png")));
-            ui->expandButton->setToolTip(tr("Expand"));
-            ui->expandButton->setChecked(false);
-        }
     }
     else
     {
@@ -183,6 +168,29 @@ void BoardPostDisplayWidget::setup()
         ui->pictureLabel_compact->hide();
         ui->expandButton->hide();
     }
+
+    if(mDisplayFlags & SHOW_NOTES)
+    {
+        ui->frame_picture->show();
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/decrease.png")));
+        ui->expandButton->setToolTip(tr("Hide"));
+        ui->expandButton->setChecked(true);
+    }
+    else
+    {
+        ui->frame_picture->hide();
+        ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/expand.png")));
+        ui->expandButton->setToolTip(tr("Expand"));
+        ui->expandButton->setChecked(false);
+    }
+
+    if(!(mDisplayFlags & SHOW_COMMENTS))
+    {
+        ui->commentsWidget->hide();
+        ui->commentButton->setChecked(false);
+    }
+    else
+        ui->commentButton->setChecked(true);
 
     setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -193,7 +201,7 @@ void BoardPostDisplayWidget::setup()
     ui->siteLabel->clear();
 
     connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
-    connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
+    connect(ui->commentButton, SIGNAL(toggled(bool)), this, SLOT(loadComments(bool)));
     connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
     connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
     connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
@@ -350,38 +358,21 @@ void BoardPostDisplayWidget::setup()
     if(doc.toPlainText().trimmed().isEmpty())
         ui->notes->hide();
 
-#ifdef TO_REMOVE
-    // differences between Feed or Top of Comment.
-    if (mFeedHolder)
+    // feed.
+    //frame_comment->show();
+    ui->commentButton->show();
+
+    if (mPost.mComments)
     {
-        // feed.
-        //frame_comment->show();
-        ui->commentButton->show();
-
-        if (mPost.mComments)
-        {
-            QString commentText = QString::number(mPost.mComments);
-            commentText += " ";
-            commentText += tr("Comments");
-            ui->commentButton->setText(commentText);
-        }
-        else
-        {
-            ui->commentButton->setText(tr("Comment"));
-        }
-
-        setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
+        QString commentText = QString::number(mPost.mComments);
+        commentText += " ";
+        commentText += tr("Comments");
+        ui->commentButton->setText(commentText);
     }
     else
-#endif
-    {
-        // no feed.
-        //frame_comment->hide();
-        ui->commentButton->hide();
+        ui->commentButton->setText(tr("Comment"));
 
-        ui->readButton->hide();
-        ui->newLabel->hide();
-    }
+    setReadStatus(IS_MSG_NEW(mPost.mMeta.mMsgStatus), IS_MSG_UNREAD(mPost.mMeta.mMsgStatus) || IS_MSG_NEW(mPost.mMeta.mMsgStatus));
 
     // disable voting buttons - if they have already voted.
     if (mPost.mMeta.mMsgStatus & GXS_SERV::GXS_MSG_STATUS_VOTE_MASK)
@@ -426,3 +417,7 @@ void BoardPostDisplayWidget::doExpand(bool e)
     emit expand(mPost.mMeta.mMsgId,e);
 }
 
+void BoardPostDisplayWidget::loadComments(bool e)
+{
+    emit commentsRequested(mPost.mMeta.mMsgId,e);
+}

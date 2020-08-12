@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>758</width>
-    <height>190</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -52,7 +52,7 @@
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
@@ -269,6 +269,9 @@
                  <iconset resource="Posted_images.qrc">
                   <normaloff>:/images/comments.png</normaloff>:/images/comments.png</iconset>
                 </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
                 <property name="toolButtonStyle">
                  <enum>Qt::ToolButtonTextBesideIcon</enum>
                 </property>
@@ -440,6 +443,9 @@
           </layout>
          </widget>
         </item>
+        <item>
+         <widget class="GxsCommentDialog" name="commentsWidget" native="true"/>
+        </item>
        </layout>
       </item>
      </layout>
@@ -462,6 +468,12 @@
    <class>ClickableLabel</class>
    <extends>QLabel</extends>
    <header>util/ClickableLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GxsCommentDialog</class>
+   <extends>QWidget</extends>
+   <header>gui/gxs/GxsCommentDialog.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
