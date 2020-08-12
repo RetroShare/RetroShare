@@ -42,28 +42,33 @@ class PostedListWidgetWithModel;
 
 class PostedPostDelegate: public QAbstractItemDelegate
 {
-	Q_OBJECT
+    Q_OBJECT
 
-	public:
-        PostedPostDelegate(PostedListWidgetWithModel *p,QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mPostListWidget(p),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
-        virtual ~PostedPostDelegate(){}
+public:
+    PostedPostDelegate(PostedListWidgetWithModel *p,QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mPostListWidget(p),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
+    virtual ~PostedPostDelegate(){}
 
-		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
-        QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
-		void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
-    	QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &) const override;
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-        //int cellSize(const QFont& font) const;
+    void setCellWidth(int pix) { mCellWidthPix = pix; }
+    void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
 
-        void setCellWidth(int pix) { mCellWidthPix = pix; }
-        void setDisplayMode(BoardPostDisplayWidget::DisplayMode dm) { mDisplayMode = dm; }
+public slots:
+    void expandItem(RsGxsMessageId msgId,bool expanded);
 
-	private:
-        QSize cellSize(const QSize& w) const; 	// Converts the supplied size to the cell size for the current container.
-                                                // The client should then scale its widget to fit the given size.
-        int mCellWidthPix;
-        PostedListWidgetWithModel *mPostListWidget;			// used for sending vote signals and so on.
-        BoardPostDisplayWidget::DisplayMode mDisplayMode;
+private:
+    // The class keeps a list of expanded items. Because items are constantly re-created, it is not possible
+    // to let the items themselves hold that information.
+
+    bool isExpanded(const RsGxsMessageId& id) const;
+
+    int mCellWidthPix;
+    PostedListWidgetWithModel *mPostListWidget;			// used for sending vote signals and so on.
+    BoardPostDisplayWidget::DisplayMode mDisplayMode;
+    std::set<RsGxsMessageId> mExpandedItems;
 };
 
 class PostedListWidgetWithModel: public GxsMessageFrameWidget
@@ -91,6 +96,7 @@ public:
     virtual bool navigate(const RsGxsMessageId&) override;
 
 	void updateDisplay(bool complete) ;
+    void forceRedraw(); // does not re-load the data, but makes sure the underlying model triggers a full redraw, recomputes sizes, etc.
 
 #ifdef TODO
 	/* FeedHolder */

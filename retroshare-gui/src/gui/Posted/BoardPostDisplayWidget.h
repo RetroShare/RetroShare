@@ -42,7 +42,7 @@ public:
         DISPLAY_MODE_COMPACT   = 0x02
     };
 
-    BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode display_mode,QWidget *parent=nullptr);
+    BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode display_mode,bool expanded,QWidget *parent=nullptr);
 	virtual ~BoardPostDisplayWidget();
 
 	static const char *DEFAULT_BOARD_IMAGE;
@@ -55,7 +55,7 @@ protected slots:
 
     virtual void setup();    // to be overloaded by the different views
 
-    void doExpand(bool) {}
+    void doExpand(bool) ;
 	void setComment(const RsGxsComment&) ;
 	void setReadStatus(bool isNew, bool isUnread) ;
 
@@ -67,6 +67,7 @@ protected slots:
 
 signals:
 	void vote(const RsGxsGrpMsgIdPair& msgId, bool up_or_down);
+    void expand(RsGxsMessageId,bool);
 
 protected:
 	RsPostedPost mPost;

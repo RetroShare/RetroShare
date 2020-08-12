@@ -47,8 +47,8 @@ const char *BoardPostDisplayWidget::DEFAULT_BOARD_IMAGE = ":/icons/png/newsfeed2
 //==                                                 Base class BoardPostDisplayWidget                                             ==
 //===================================================================================================================================
 
-BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode mode,QWidget *parent)
-    : QWidget(parent),mPost(post),dmode(mode),mExpanded(false),ui(new Ui::BoardPostDisplayWidget())
+BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post,DisplayMode mode,bool expanded,QWidget *parent)
+    : QWidget(parent),mPost(post),dmode(mode),mExpanded(expanded),ui(new Ui::BoardPostDisplayWidget())
 {
     ui->setupUi(this);
     setup();
@@ -167,12 +167,14 @@ void BoardPostDisplayWidget::setup()
             ui->frame_picture->show();
             ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/decrease.png")));
             ui->expandButton->setToolTip(tr("Hide"));
+            ui->expandButton->setChecked(true);
         }
         else
         {
             ui->frame_picture->hide();
             ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/expand.png")));
             ui->expandButton->setToolTip(tr("Expand"));
+            ui->expandButton->setChecked(false);
         }
     }
     else
@@ -190,9 +192,10 @@ void BoardPostDisplayWidget::setup()
     ui->fromLabel->clear();
     ui->siteLabel->clear();
 
-    connect(ui->commentButton, SIGNAL( clicked()), this, SLOT(loadComments()));
+    connect(ui->expandButton, SIGNAL(toggled(bool)), this, SLOT(doExpand(bool)));
+    connect(ui->commentButton, SIGNAL(clicked()), this, SLOT(loadComments()));
     connect(ui->voteUpButton, SIGNAL(clicked()), this, SLOT(makeUpVote()));
-    connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT( makeDownVote()));
+    connect(ui->voteDownButton, SIGNAL(clicked()), this, SLOT(makeDownVote()));
     connect(ui->readButton, SIGNAL(toggled(bool)), this, SLOT(readToggled(bool)));
 
     QAction *CopyLinkAction = new QAction(QIcon(""),tr("Copy RetroShare Link"), this);
@@ -339,6 +342,7 @@ void BoardPostDisplayWidget::setup()
 
     // FIX THIS UP LATER.
     ui->notes->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
+    ui->pictureLabel_2->setText(RsHtml().formatText(NULL, QString::fromUtf8(mPost.mNotes.c_str()), RSHTML_FORMATTEXT_EMBED_SMILEYS | RSHTML_FORMATTEXT_EMBED_LINKS));
 
     QTextDocument doc;
     doc.setHtml(ui->notes->text());
@@ -416,4 +420,9 @@ void BoardPostDisplayWidget::setup()
 #endif
 }
 
+void BoardPostDisplayWidget::doExpand(bool e)
+{
+    std::cerr << "Expanding" << std::endl;
+    emit expand(mPost.mMeta.mMsgId,e);
+}
 

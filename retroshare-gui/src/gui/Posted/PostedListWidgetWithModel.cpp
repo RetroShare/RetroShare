@@ -85,7 +85,7 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->fillRect( option.rect, option.backgroundBrush);
 	painter->restore();
 
-    BoardPostDisplayWidget w(post,mDisplayMode);
+    BoardPostDisplayWidget w(post,mDisplayMode,isExpanded(post.mMeta.mMsgId));
 
 	w.adjustSize();
     w.setFixedSize(option.rect.size());
@@ -120,21 +120,31 @@ void PostedPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem & 
 	painter->restore();
 }
 
-QSize PostedPostDelegate::cellSize(const QSize& w) const
-{
-    return QSize(mCellWidthPix,mCellWidthPix * w.height()/(float)w.width());
-}
-
 QSize PostedPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     // This is the only place where we actually set the size of cells
 
 	RsPostedPost post = index.data(Qt::UserRole).value<RsPostedPost>() ;
-    BoardPostDisplayWidget w(post,mDisplayMode);
+    BoardPostDisplayWidget w(post,mDisplayMode,isExpanded(post.mMeta.mMsgId));
 
     w.adjustSize();
 
     return w.size();
+}
+
+void PostedPostDelegate::expandItem(RsGxsMessageId msgId,bool expanded)
+{
+    std::cerr << __PRETTY_FUNCTION__ << ": received expandItem signal. b="  << expanded << std::endl;
+    if(expanded)
+        mExpandedItems.insert(msgId);
+    else
+        mExpandedItems.erase(msgId);
+
+    mPostListWidget->forceRedraw();
+}
+bool PostedPostDelegate::isExpanded(const RsGxsMessageId &id) const
+{
+    return mExpandedItems.find(id) != mExpandedItems.end();
 }
 
 QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex& index) const
@@ -143,9 +153,10 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 
     if(index.column() == RsPostedPostsModel::COLUMN_POSTS)
     {
-        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
+        QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,isExpanded(post.mMeta.mMsgId),parent);
 
         QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
+        QObject::connect(w,SIGNAL(expand(RsGxsMessageId,bool)),this,SLOT(expandItem(RsGxsMessageId,bool)));
 
         w->adjustSize();
         w->setFixedSize(option.rect.size());
@@ -183,9 +194,6 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
     connect(ui->sortStrategy_CB,SIGNAL(currentIndexChanged(int)),this,SLOT(updateSorting(int)));
     connect(ui->nextButton,SIGNAL(clicked()),this,SLOT(next10Posts()));
     connect(ui->prevButton,SIGNAL(clicked()),this,SLOT(prev10Posts()));
-
-	//connect(ui->channelPostFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnPostFiles(int,Qt::SortOrder)));
-	//connect(ui->channelFiles_TV->header(),SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(sortColumnFiles(int,Qt::SortOrder)));
 
     connect(ui->postsTree,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(postContextMenu(const QPoint&)));
     connect(ui->cardViewButton,SIGNAL(clicked()),this,SLOT(switchDisplayMode()));
@@ -243,13 +251,11 @@ void PostedListWidgetWithModel::switchDisplayMode()
     {
         whileBlocking(ui->cardViewButton)->setChecked(false);
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT);
-        ui->postsTree->setUniformRowHeights(true);
     }
     else
     {
         whileBlocking(ui->classicViewButton)->setChecked(false);
         mPostedPostsDelegate->setDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_CARD_VIEW);
-        ui->postsTree->setUniformRowHeights(false);
     }
 
     mPostedPostsModel->deepUpdate();
@@ -514,6 +520,11 @@ void PostedListWidgetWithModel::postPostLoad()
 	whileBlocking(ui->filter_LE)->setText(QString());
 }
 
+void PostedListWidgetWithModel::forceRedraw()
+{
+    if(mPostedPostsModel)
+        mPostedPostsModel->deepUpdate();
+}
 void PostedListWidgetWithModel::updateDisplay(bool complete)
 {
 #ifdef DEBUG_CHANNEL
@@ -534,6 +545,7 @@ void PostedListWidgetWithModel::updateDisplay(bool complete)
 #endif
 		complete = true;
     }
+
 	if(complete) 	// need to update the group data, reload the messages etc.
 	{
 		updateGroupData();
