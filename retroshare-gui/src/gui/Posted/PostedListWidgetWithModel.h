@@ -38,13 +38,14 @@ class PostedListWidgetWithModel;
 class QTreeWidgetItem;
 class QSortFilterProxyModel;
 class RsPostedPostsModel;
+class PostedListWidgetWithModel;
 
 class PostedPostDelegate: public QAbstractItemDelegate
 {
 	Q_OBJECT
 
 	public:
-        PostedPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
+        PostedPostDelegate(PostedListWidgetWithModel *p,QObject *parent=0) : QAbstractItemDelegate(parent),mCellWidthPix(100),mPostListWidget(p),mDisplayMode(BoardPostDisplayWidget::DISPLAY_MODE_COMPACT){}
         virtual ~PostedPostDelegate(){}
 
 		void paint(QPainter * painter, const QStyleOptionViewItem & option, const QModelIndex & index) const override;
@@ -60,8 +61,8 @@ class PostedPostDelegate: public QAbstractItemDelegate
 	private:
         QSize cellSize(const QSize& w) const; 	// Converts the supplied size to the cell size for the current container.
                                                 // The client should then scale its widget to fit the given size.
-
         int mCellWidthPix;
+        PostedListWidgetWithModel *mPostListWidget;			// used for sending vote signals and so on.
         BoardPostDisplayWidget::DisplayMode mDisplayMode;
 };
 

@@ -145,7 +145,7 @@ QWidget *PostedPostDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     {
         QWidget *w = new BoardPostDisplayWidget(post,mDisplayMode,parent);
 
-        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),this,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
+        QObject::connect(w,SIGNAL(vote(RsGxsGrpMsgIdPair,bool)),mPostListWidget,SLOT(voteMsg(RsGxsGrpMsgIdPair,bool)));
 
         w->adjustSize();
         w->setFixedSize(option.rect.size());
@@ -169,7 +169,7 @@ PostedListWidgetWithModel::PostedListWidgetWithModel(const RsGxsGroupId& postedI
 	ui->setupUi(this);
 
     ui->postsTree->setModel(mPostedPostsModel = new RsPostedPostsModel());
-    ui->postsTree->setItemDelegate(mPostedPostsDelegate = new PostedPostDelegate());
+    ui->postsTree->setItemDelegate(mPostedPostsDelegate = new PostedPostDelegate(this));
     ui->postsTree->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);	// prevents bug on w10, since row size depends on widget width
     ui->postsTree->setHorizontalScrollMode(QAbstractItemView::ScrollPerPixel);// more beautiful if we scroll at pixel level
     ui->postsTree->setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);

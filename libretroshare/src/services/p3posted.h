@@ -128,17 +128,17 @@ virtual void setMessageReadStatus(uint32_t& token, const RsGxsGrpMsgIdPair& msgI
 		return mCommentService->createGxsComment(token, msg) && waitToken(token) == RsTokenService::COMPLETE ;
 	}
 
-	virtual bool createNewVote(uint32_t &token, RsGxsVote &msg)
+    virtual bool createNewVote(uint32_t &token, RsGxsVote &msg) override
 	{
 		return mCommentService->createGxsVote(token, msg);
 	}
 
 	virtual bool acknowledgeComment(
-	        uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId )
+            uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) override
 	{ return acknowledgeMsg(token, msgId); }
 
 	virtual bool acknowledgeVote(
-	        uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId )
+            uint32_t token, std::pair<RsGxsGroupId, RsGxsMessageId>& msgId ) override
 	{
 		if (mCommentService->acknowledgeVote(token, msgId)) return true;
 		return acknowledgeMsg(token, msgId);
