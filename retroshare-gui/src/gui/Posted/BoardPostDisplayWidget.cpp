@@ -58,6 +58,16 @@ BoardPostDisplayWidget::BoardPostDisplayWidget(const RsPostedPost& post, Display
     ui->topLayout->setAlignment(Qt::AlignTop);
     ui->arrowsLayout->addStretch();
     ui->arrowsLayout->setAlignment(Qt::AlignTop);
+
+    if(display_flags & SHOW_COMMENTS)
+    {
+        ui->commentsWidget->setTokenService(rsPosted->getTokenService(),rsPosted);
+
+        std::set<RsGxsMessageId> post_versions ;
+        post_versions.insert(post.mMeta.mMsgId) ;
+
+        ui->commentsWidget->commentLoad(post.mMeta.mGroupId, post_versions,mPost.mMeta.mMsgId);
+    }
 }
 
 void BoardPostDisplayWidget::setCommentsSize(int comNb)
