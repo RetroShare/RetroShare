@@ -247,7 +247,7 @@ ${RS_SOURCE_DIR}/build_scripts/Android/pull_sysroot.sh
 [source,bash]
 --------------------------------------------------------------------------------
 ## Optionally set Qt version variable consistently with your installation
-export QT_VERSION="5.12.4"
+export QT_VERSION="5.12.7"
 
 ## Optionally set Qt architecture variable consistently with Android device
 export QT_ARCH="arm64_v8a"
