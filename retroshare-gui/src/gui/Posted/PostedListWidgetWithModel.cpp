@@ -541,25 +541,7 @@ void PostedListWidgetWithModel::postPostLoad()
 void PostedListWidgetWithModel::forceRedraw()
 {
     if(mPostedPostsModel)
-    {
-//        // Save selection. This can only be done using message Ids, because the QModelIndex-es can change after deepUpdate
-//
-//        auto lst = ui->postsTree->selectionModel()->selectedRows();
-//        std::set<RsGxsMessageId> msgs;
-//
-//        for(auto& index: lst)
-//            msgs.insert(index.data(Qt::UserRole).value<RsPostedPost>().mMeta.mMsgId) ;
-
         mPostedPostsModel->deepUpdate();
-
-//        // Restore selection
-//
-//        for(auto& msgId: msgs)
-//            ui->postsTree->selectionModel()->select(mPostedPostsModel->getIndexOfMessage(msgId), QItemSelectionModel::ClearAndSelect);
-//
-//        update();
-//        ui->postsTree->update();
-    }
 }
 
 void PostedListWidgetWithModel::updateDisplay(bool complete)
