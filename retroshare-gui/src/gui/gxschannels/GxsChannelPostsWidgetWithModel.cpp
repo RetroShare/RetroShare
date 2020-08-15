@@ -102,7 +102,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 
 	RsGxsChannelPost post = index.data(Qt::UserRole).value<RsGxsChannelPost>() ;
 
-	painter->save();
     painter->fillRect( option.rect, option.backgroundBrush);
     painter->restore();
 
