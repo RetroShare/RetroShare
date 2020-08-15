@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "LineEditClear.h"
 
 #include <QToolButton>
@@ -124,9 +125,8 @@ void LineEditClear::showFilterIcon()
 
 	mFilterButton = new QToolButton(this);
 	mFilterButton->setFixedSize(16, 16);
-	QPixmap filterPixmap(IMAGE_FILTER);
-	mFilterButton->setIcon(QIcon(filterPixmap));
-	mFilterButton->setIconSize(filterPixmap.size());
+    mFilterButton->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_FILTER));
+    //mFilterButton->setIconSize(filterPixmap.size());
 	mFilterButton->setCursor(Qt::ArrowCursor);
 	mFilterButton->setStyleSheet("QToolButton { border: none; padding: 0px; }"
 								 "QToolButton[popupMode=\"2\"] { padding-right: 10px; }"
@@ -224,7 +224,7 @@ void LineEditClear::activateAction(QAction *action)
 
 	QIcon icon = action->icon();
 	if (icon.isNull()) {
-		icon = QIcon(IMAGE_FILTER);
+        icon = FilesDefs::getIconFromQtResourcePath(IMAGE_FILTER);
 	}
 
 	mFilterButton->setIcon(icon);

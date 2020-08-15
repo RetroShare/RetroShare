@@ -245,7 +245,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
 //#ifdef ENABLE_DISTANT_CHAT_AND_MSGS
 //	contextMnu->addSeparator();
-//    QAction *action = new QAction(QIcon(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
+//    QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste/Create private chat or Message link..."), this);
 //    connect(action, SIGNAL(triggered()), this, SLOT(pasteCreateMsgLink()));
 //    ui->chatTextEdit->addContextMenuAction(action);
 //#endif
@@ -1067,7 +1067,7 @@ void ChatWidget::addChatMsg(bool incoming, const QString &name, const RsGxsId gx
 		rsIdentity->getIdDetails(gxsId, details);
 		bool isUnsigned = !(details.mFlags & RS_IDENTITY_FLAGS_PGP_LINKED);
 		if(isUnsigned && ui->textBrowser->getShowImages()) {
-			QIcon icon = QIcon(":/icons/anonymous_blue_128.png");
+            QIcon icon = FilesDefs::getIconFromQtResourcePath(":/icons/anonymous_blue_128.png");
 			int height = ui->textBrowser->fontMetrics().height()*0.8;
 			QImage image(icon.pixmap(height,height).toImage());
 			QByteArray byteArray;

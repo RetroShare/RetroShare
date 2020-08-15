@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QMenu>
 
 #include "SubscribeToolButton.h"
@@ -64,14 +65,14 @@ void SubscribeToolButton::updateUi()
 #else
 		setPopupMode(QToolButton::InstantPopup);
 #endif
-		//setIcon(QIcon(":/images/accepted16.png"));
+        //setIcon(FilesDefs::getIconFromQtResourcePath(":/images/accepted16.png"));
 		setText(tr("Subscribed"));
 
         	if(mMenu != NULL)	// that's because setMenu does not give away memory ownership
 		    delete mMenu ;
             
 		mMenu = new QMenu;
-		mMenu->addAction(QIcon(":/images/cancel.png"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
+        mMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Unsubscribe"), this, SLOT(unsubscribePrivate()));
 
 		if (!mSubscribedActions.empty()) {
 			mMenu->addSeparator();
@@ -86,7 +87,7 @@ void SubscribeToolButton::updateUi()
 	} else {
 		setPopupMode(QToolButton::DelayedPopup);
 		setMenu(NULL);
-		//setIcon(QIcon(":/images/RSS_004_32.png"));
+        //setIcon(FilesDefs::getIconFromQtResourcePath(":/images/RSS_004_32.png"));
 		setText(tr("Subscribe"));
 
 #ifndef USE_MENUBUTTONPOPUP

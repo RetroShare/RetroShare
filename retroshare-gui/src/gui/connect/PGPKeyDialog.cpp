@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "PGPKeyDialog.h"
 
 #include <QMessageBox>
@@ -156,11 +157,11 @@ void PGPKeyDialog::load()
 	switch (rsFiles->filePermDirectDL())
 	{
 		case RS_FILE_PERM_DIRECT_DL_YES:
-			ui._direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui._direct_transfer_CB->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui._direct_transfer_CB->setToolTip(ui._direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to Yes.")));
 			break ;
 		case RS_FILE_PERM_DIRECT_DL_NO:
-			ui._direct_transfer_CB->setIcon(QIcon(":/icons/warning_yellow_128.png"));
+            ui._direct_transfer_CB->setIcon(FilesDefs::getIconFromQtResourcePath(":/icons/warning_yellow_128.png"));
 			ui._direct_transfer_CB->setToolTip(ui._direct_transfer_CB->toolTip().append(tr("\nWarning: In your File-Transfer option, you select allow direct download to No.")));
 			break ;
 

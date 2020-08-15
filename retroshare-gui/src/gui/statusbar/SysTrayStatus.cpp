@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QAction>
 #include <QHBoxLayout>
 #include <QPushButton>
@@ -36,7 +37,7 @@ SysTrayStatus::SysTrayStatus(QWidget *parent) :
 	hbox->setSpacing(0);
 
 	imageButton = new QPushButton(this);
-	imageButton->setIcon(QIcon(IMAGE_NOONLINE));
+    imageButton->setIcon(FilesDefs::getIconFromQtResourcePath(IMAGE_NOONLINE));
 	imageButton->setFlat(true);
 	imageButton->setCheckable(false);
 	imageButton->setFocusPolicy(Qt::ClickFocus);

@@ -251,8 +251,8 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
     if (isSubscribed)
     {
-        QAction *action = autoDownload ? (new QAction(QIcon(":/images/redled.png"), tr("Disable Auto-Download"), this))
-                                       : (new QAction(QIcon(":/images/start.png"),tr("Enable Auto-Download"), this));
+        QAction *action = autoDownload ? (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/redled.png"), tr("Disable Auto-Download"), this))
+                                       : (new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("Enable Auto-Download"), this));
 
         connect(action, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
         actions.append(action);
@@ -263,7 +263,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
         QMenu *mnu = new QMenu(tr("Set download directory")) ;
 
         if(dl_directory.empty())
-            mnu->addAction(QIcon(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
+            mnu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
         else
             mnu->addAction(tr("[Default directory]"), this, SLOT(setDefaultDirectory())) ;
 
@@ -277,7 +277,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
             if(dl_directory == it->filename)
             {
-                action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(it->filename.c_str()),NULL) ;
                 found = true ;
             }
             else
@@ -291,7 +291,7 @@ void GxsChannelDialog::groupTreeCustomActions(RsGxsGroupId grpId, int subscribeF
 
         if(!found && !dl_directory.empty())
         {
-            QAction *action = new QAction(QIcon(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
+            QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(":/images/start.png"),QString::fromUtf8(dl_directory.c_str()),NULL) ;
             connect(action,SIGNAL(triggered()),this,SLOT(setDownloadDirectory())) ;
             action->setData(QString::fromUtf8(dl_directory.c_str())) ;
 
@@ -391,7 +391,7 @@ void GxsChannelDialog::groupInfoToGroupItemInfo(const RsGxsGenericGroupData *gro
 		groupItemInfo.icon = image;
 	}
 	else
-		groupItemInfo.icon = QIcon(":icons/png/channel.png");
+        groupItemInfo.icon = FilesDefs::getIconFromQtResourcePath(":icons/png/channel.png");
 
 	groupItemInfo.description = QString::fromUtf8(channelGroupData->mDescription.c_str());
 }

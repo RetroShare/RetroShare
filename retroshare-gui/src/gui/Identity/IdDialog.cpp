@@ -321,10 +321,10 @@ IdDialog::IdDialog(QWidget *parent) : MainPage(parent), ui(new Ui::IdDialog)
 	connect(idTWHAction, SIGNAL(toggled(bool)), this, SLOT(filterToggled(bool)));
 	idTWHMenu->addAction(idTWHAction);
 	
-	QAction *CreateIDAction = new QAction(QIcon(":/icons/png/person.png"),tr("Create new Identity"), this);
+    QAction *CreateIDAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/person.png"),tr("Create new Identity"), this);
 	connect(CreateIDAction, SIGNAL(triggered()), this, SLOT(addIdentity()));
 	
-	QAction *CreateCircleAction = new QAction(QIcon(":/icons/png/circles.png"),tr("Create new circle"), this);
+    QAction *CreateCircleAction = new QAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/circles.png"),tr("Create new circle"), this);
 	connect(CreateCircleAction, SIGNAL(triggered()), this, SLOT(createExternalCircle()));
 	
 	QMenu *menu = new QMenu();
@@ -1017,11 +1017,11 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 #endif
 		    if(group_flags & GXS_SERV::GROUP_SUBSCRIBE_ADMIN)
 		    {
-			    contextMnu.addAction(QIcon(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_EDIT), tr("Edit Circle"), this, SLOT(showEditExistingCircle()));
 			    am_I_circle_admin = true ;
 		    }
 		    else
-			    contextMnu.addAction(QIcon(IMAGE_INFO), tr("See details"), this, SLOT(showEditExistingCircle()));
+                contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_INFO), tr("See details"), this, SLOT(showEditExistingCircle()));
 #ifdef CIRCLE_MEMBERSHIP_CATEGORIES
 	}
 #endif
@@ -1109,9 +1109,9 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 		    QAction *action ;
 
 		    if(is_circle)
-			    action = new QAction(QIcon(image_names[i]), menu_titles[i] + " " + id_name,this) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), menu_titles[i] + " " + id_name,this) ;
 		    else
-			    action = new QAction(QIcon(image_names[i]), menu_titles[i],this) ;
+                action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), menu_titles[i],this) ;
 
 		    if(i <2)
 			    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
@@ -1134,7 +1134,7 @@ void IdDialog::CircleListCustomPopupMenu( QPoint )
 			    else
 				    id_name = tr("for identity ")+QString::fromStdString(ids[i][j].toStdString()) ;
 
-			    QAction *action = new QAction(QIcon(image_names[i]), id_name,this) ;
+                QAction *action = new QAction(FilesDefs::getIconFromQtResourcePath(image_names[i]), id_name,this) ;
 
 			    if(i <2)
 				    QObject::connect(action,SIGNAL(triggered()), this, SLOT(acceptCircleSubscription()));
@@ -2195,7 +2195,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 			{
 				if(own_identities.size() <= 1)
 				{
-					QAction *action = contextMenu->addAction(QIcon(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
+                    QAction *action = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"), tr("Chat with this person"), this, SLOT(chatIdentity()));
 
 					if(own_identities.empty())
 						action->setEnabled(false) ;
@@ -2204,7 +2204,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 				else
 				{
-					QMenu *mnu = contextMenu->addMenu(QIcon(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
+                    QMenu *mnu = contextMenu->addMenu(FilesDefs::getIconFromQtResourcePath(":/icons/png/chats.png"),tr("Chat with this person as...")) ;
 
 					for(std::list<RsGxsId>::const_iterator it=own_identities.begin();it!=own_identities.end();++it)
 					{
@@ -2222,7 +2222,7 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				}
 			}
 			// always allow to send messages
-			contextMenu->addAction(QIcon(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
+            contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/mail/write-mail.png"), tr("Send message"), this, SLOT(sendMsg()));
 
 			contextMenu->addSeparator();
 
@@ -2233,18 +2233,18 @@ void IdDialog::IdListCustomPopupMenu( QPoint )
 				contextMenu->addAction(QIcon(""),tr("Copy identity to clipboard"),this,SLOT(copyRetroshareLink())) ;
 
 			if(n_is_not_a_contact == 0)
-				contextMenu->addAction(QIcon(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/cancel.png"), tr("Remove from Contacts"), this, SLOT(removefromContacts()));
 
 			contextMenu->addSeparator();
 
 			if(n_positive_reputations == 0)	// only unban when all items are banned
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-up.png"), tr("Set positive opinion"), this, SLOT(positivePerson()));
 
 			if(n_neutral_reputations == 0)	// only unban when all items are banned
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-neutral.png"), tr("Set neutral opinion"), this, SLOT(neutralPerson()));
 
 			if(n_negative_reputations == 0)
-				contextMenu->addAction(QIcon(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
+                contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/icons/png/thumbs-down.png"), tr("Set negative opinion"), this, SLOT(negativePerson()));
 		}
 
 		if(one_item_owned_by_you && n_selected_items==1)
