@@ -38,10 +38,10 @@ class SharedFilesDialog : public RsAutoUpdatePage
 
 public:
   /** Default Constructor */
-  SharedFilesDialog(RetroshareDirModel *tree_model,RetroshareDirModel *flat_model,QWidget *parent = 0);
+  SharedFilesDialog(bool remote_mode,QWidget *parent = 0);
 
   /** Default Destructor */
-  ~SharedFilesDialog() {}
+  ~SharedFilesDialog() ;
 
   virtual void hideEvent(QHideEvent *) ;
   virtual void showEvent(QShowEvent *) ;
