@@ -39,6 +39,14 @@ template<class ID, class MetaDataClass> class t_MetaDataCache
 {
 public:
     t_MetaDataCache() : mCache_ContainsAllMetas(false) {}
+    virtual ~t_MetaDataCache()
+    {
+        for(auto it: mMetas)
+            delete it.second;
+
+        for(auto it: mOldCachedItems)
+            delete it.second;
+    }
 
     bool isCacheUpToDate() const { return mCache_ContainsAllMetas ; }
     void setCacheUpToDate(bool b) { mCache_ContainsAllMetas = b; }
