@@ -111,9 +111,9 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 	QPixmap pixmap(w.size());
 
     if((option.state & QStyle::State_Selected) && post.mMeta.mPublishTs > 0) // check if post is selected and is not empty (end of last row)
-		pixmap.fill(QRgb(0xff308dc7));	// I dont know how to grab the backgroud color for selected objects automatically.
+		pixmap.fill(mBackgroundColorSelected );	// I dont know how to grab the backgroud color for selected objects automatically.
 	else
-		pixmap.fill(QRgb(0x00ffffff));	// choose a fully transparent background
+		pixmap.fill(mBackgroundColorNotSelected);	// choose a fully transparent background
 
 	w.render(&pixmap,QPoint(),QRegion(),QWidget::DrawChildren );// draw the widgets, not the background
 
@@ -140,6 +140,8 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
 	painter->drawPixmap(option.rect.topLeft(),
                         pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 }
+
+//void ChannelPostDelegate::setTextColorSelected (QColor color) { mTextColorSelected  = color;}
 
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {

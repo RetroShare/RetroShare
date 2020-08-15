@@ -252,3 +252,9 @@ OpModeStatus[opMode="Minimal"] {
 [WrongValue="true"] {
 	background-color: #FF8080;
 }
+
+ChannelPostDelegate
+{
+	qproperty-backgroundColorSelected: rgb(120, 153, 34);
+	qproperty-backgroundColorNotSelected: white;
+}

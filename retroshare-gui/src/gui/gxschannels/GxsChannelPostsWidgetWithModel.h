@@ -59,6 +59,9 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 {
 	Q_OBJECT
 
+	Q_PROPERTY(QColor backgroundColorSelected READ backgroundColorSelected WRITE setBackgroundColorSelected)
+	Q_PROPERTY(QColor backgroundColorNotSelected READ backgroundColorNotSelected WRITE setBackgroundColorNotSelected)
+
 	public:
 		ChannelPostDelegate(QObject *parent=0) : QAbstractItemDelegate(parent), mZoom(1.0){}
         virtual ~ChannelPostDelegate(){}
@@ -68,6 +71,13 @@ class ChannelPostDelegate: public QAbstractItemDelegate
 
         int cellSize(const QFont& font) const;
         void zoom(bool zoom_or_unzoom) ;
+
+		QColor backgroundColorSelected() const { return mBackgroundColorSelected; }
+		QColor backgroundColorNotSelected() const { return mBackgroundColorNotSelected; }
+
+		void setBackgroundColorSelected(QColor color) { mBackgroundColorSelected = color; }
+		void setBackgroundColorNotSelected(QColor color) { mBackgroundColorNotSelected = color; }
+
 	private:
  		static constexpr float IMAGE_MARGIN_FACTOR = 1.0;
  		static constexpr float IMAGE_SIZE_FACTOR_W = 4.0 ;
@@ -75,6 +85,10 @@ class ChannelPostDelegate: public QAbstractItemDelegate
  		static constexpr float IMAGE_ZOOM_FACTOR   = 1.0;
 
         float mZoom;	// zoom factor for the whole thumbnail
+		
+		/* Color definitions (for standard see qss.default) */
+		QColor mBackgroundColorSelected;
+		QColor mBackgroundColorNotSelected;
 };
 
 class GxsChannelPostsWidgetWithModel: public GxsMessageFrameWidget
