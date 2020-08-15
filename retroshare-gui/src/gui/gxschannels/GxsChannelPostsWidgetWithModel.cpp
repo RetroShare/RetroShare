@@ -141,8 +141,6 @@ void ChannelPostDelegate::paint(QPainter * painter, const QStyleOptionViewItem &
                         pixmap.scaled(option.rect.width(),option.rect.width()*w.height()/(float)w.width(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
 }
 
-//void ChannelPostDelegate::setTextColorSelected (QColor color) { mTextColorSelected  = color;}
-
 QSize ChannelPostDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     // This is the only place where we actually set the size of cells
