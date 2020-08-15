@@ -245,7 +245,7 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
     ui->channelPostFiles_TV->sortByColumn(0, Qt::AscendingOrder);
 
     ui->channelFiles_TV->setModel(mChannelFilesModel = new RsGxsChannelPostFilesModel());
-    ui->channelFiles_TV->setItemDelegate(new ChannelPostFilesDelegate());
+    ui->channelFiles_TV->setItemDelegate(mFilesDelegate = new ChannelPostFilesDelegate());
     ui->channelFiles_TV->setPlaceholderText(tr("No files in the channel, or no channel selected"));
     ui->channelFiles_TV->setSortingEnabled(true);
     ui->channelFiles_TV->sortByColumn(0, Qt::AscendingOrder);
@@ -631,6 +631,7 @@ GxsChannelPostsWidgetWithModel::~GxsChannelPostsWidgetWithModel()
 	processSettings(false);
 
 	delete(mAutoDownloadAction);
+    delete mFilesDelegate;
 	delete ui;
 }
 
