@@ -336,6 +336,8 @@ GxsForumThreadWidget::GxsForumThreadWidget(const RsGxsGroupId &forumId, QWidget 
 	// load settings
 	processSettings(true);
 
+	mDisplayBannedText = false;
+
 	blankPost();
 
 	ui->subscribeToolButton->setToolTip(tr( "<p>Subscribing to the forum will gather \
@@ -1276,25 +1278,24 @@ void GxsForumThreadWidget::insertMessageData(const RsGxsForumMsg &msg)
 			banned_text_info += "<ul><li><b><font color=\"#e00000\">" + tr( "Messages from this author are not forwarded.") + "</font></b></li></ul>";
 			banned_text_info += "<p><b><font color=\"#e00000\">" + tr( "You can force the visibility and forwarding of messages by setting a different opinion for that Id in People's tab.") + "</font></b></p><hr>";
 		}
-
-	} else {
-		uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
-		if(Settings->getForumLoadEmoticons())
-			flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
-		flags |= RSHTML_OPTIMIZEHTML_MASK;
-
-		QColor backgroundColor = ui->postText->palette().base().color();
-		qreal desiredContrast = Settings->valueFromGroup("Forum",
-			"MinimumContrast", 4.5).toDouble();
-		int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
-			"MinimumFontSize", 10).toInt();
-
-		QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
-			QString::fromUtf8(msg.mMsg.c_str()), flags
-				, backgroundColor, desiredContrast, desiredMinimumFontSize
-			);
-		ui->postText->setHtml(extraTxt);
 	}
+
+	uint32_t flags = RSHTML_FORMATTEXT_EMBED_LINKS;
+	if(Settings->getForumLoadEmoticons())
+		flags |= RSHTML_FORMATTEXT_EMBED_SMILEYS ;
+	flags |= RSHTML_OPTIMIZEHTML_MASK;
+
+	QColor backgroundColor = ui->postText->palette().base().color();
+	qreal desiredContrast = Settings->valueFromGroup("Forum",
+		"MinimumContrast", 4.5).toDouble();
+	int desiredMinimumFontSize = Settings->valueFromGroup("Forum",
+		"MinimumFontSize", 10).toInt();
+
+	QString extraTxt = banned_text_info + RsHtml().formatText(ui->postText->document(),
+		QString::fromUtf8(msg.mMsg.c_str()), flags
+			, backgroundColor, desiredContrast, desiredMinimumFontSize
+		);
+	ui->postText->setHtml(extraTxt);
 
 	QStringList urls;
 	RsHtml::findAnchors(ui->postText->toHtml(), urls);
