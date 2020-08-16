@@ -93,9 +93,9 @@ ForumsDialog, GxsForumThreadWidget
 	qproperty-textColorUnreadChildren: red;
 	qproperty-textColorNotSubscribed: white;
 	qproperty-textColorMissing: darkred;
-	qproperty-textColorPinned: darkOrange;
+	qproperty-textColorPinned: #D07000;
 
-	qproperty-backgroundColorPinned: black;
+	qproperty-backgroundColorPinned: #202020;
 	qproperty-backgroundColorFiltered: darkGreen;
 }
 
