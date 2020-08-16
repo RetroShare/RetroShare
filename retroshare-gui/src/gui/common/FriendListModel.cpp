@@ -152,15 +152,13 @@ void RsFriendListModel::setDisplayGroups(bool b)
 }
 void RsFriendListModel::preMods()
 {
- 	emit layoutAboutToBeChanged();
-
 	beginResetModel();
 }
 void RsFriendListModel::postMods()
 {
 	endResetModel();
- 	emit layoutChanged();
-	emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(mTopLevel.size()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
+
+    emit dataChanged(createIndex(0,0,(void*)NULL), createIndex(rowCount()-1,COLUMN_THREAD_NB_COLUMNS-1,(void*)NULL));
 }
 
 int RsFriendListModel::rowCount(const QModelIndex& parent) const
