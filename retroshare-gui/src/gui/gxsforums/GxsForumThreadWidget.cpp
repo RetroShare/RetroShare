@@ -659,7 +659,6 @@ void GxsForumThreadWidget::threadListCustomPopupMenu(QPoint /*point*/)
 
 	// disable visibility for childless
 	if (has_current_post) {
-		replyAct->setVisible(has_children);
 		// still no setEnabled
 		markMsgAsRead->setVisible(IS_MSG_UNREAD(current_post.mMsgStatus));
 		markMsgAsUnread->setVisible(!IS_MSG_UNREAD(current_post.mMsgStatus));
