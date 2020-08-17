@@ -108,6 +108,7 @@ QString GxsChannelDialog::getHelpString() const
 	 <p>Channels can be made anonymous, or attached to a Retroshare identity so that readers can contact you if needed.\
 	 Enable \"Allow Comments\" if you want to let users comment on your posts.</p>\
     <p>Channel posts are kept for %1 days, and sync-ed over the last %2 days, unless you change this.</p>\
+    <p>UI Tip: use Control + mouse wheel to control image size in the thumbnail view.</p>\
                 ").arg(QString::number(rsGxsChannels->getDefaultStoragePeriod()/86400)).arg(QString::number(rsGxsChannels->getDefaultSyncPeriod()/86400));
 
 	return hlp_str ;
