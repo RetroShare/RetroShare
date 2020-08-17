@@ -213,6 +213,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
 	header->resizeSection ( COLUMN_AGE, 100  );
 	header->resizeSection ( COLUMN_FRIEND_ACCESS,100);
 	header->resizeSection ( COLUMN_WN_VISU_DIR, 100  );
+	header->resizeSection ( COLUMN_UPLOADED, 100  );
 
 	header->setStretchLastSection(false);
 
@@ -271,6 +272,7 @@ RemoteSharedFilesDialog::RemoteSharedFilesDialog(QWidget *parent)
 {
 	ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
 	ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+	ui.dirTreeView->setColumnHidden(COLUMN_UPLOADED, true) ;
 	ui.checkButton->hide() ;
 
 	connect(ui.downloadButton, SIGNAL(clicked()), this, SLOT(downloadRemoteSelected()));
@@ -464,6 +466,7 @@ void RemoteSharedFilesDialog::showProperColumns()
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, false) ;
 		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, true) ;
 		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, true) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_UPLOADED, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->hide();
 		ui.filterPatternLineEdit->hide();
@@ -476,6 +479,7 @@ void RemoteSharedFilesDialog::showProperColumns()
 		ui.dirTreeView->setColumnHidden(COLUMN_FILENB, true) ;
 		ui.dirTreeView->setColumnHidden(COLUMN_FRIEND_ACCESS, false) ;
 		ui.dirTreeView->setColumnHidden(COLUMN_WN_VISU_DIR, false) ;
+		ui.dirTreeView->setColumnHidden(COLUMN_UPLOADED, true) ;
 #ifdef DONT_USE_SEARCH_IN_TREE_VIEW
 		ui.filterLabel->show();
 		ui.filterPatternLineEdit->show();

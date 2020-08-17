@@ -37,7 +37,8 @@
 #define COLUMN_AGE           3
 #define COLUMN_FRIEND_ACCESS 4
 #define COLUMN_WN_VISU_DIR   5
-#define COLUMN_COUNT         6
+#define COLUMN_UPLOADED      6
+#define COLUMN_COUNT         7
 #define RETROSHARE_DIR_MODEL_FILTER_STRING "filtered"
 
 struct DirDetails;

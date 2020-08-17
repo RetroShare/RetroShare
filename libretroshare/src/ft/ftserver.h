@@ -361,6 +361,8 @@ public:
     bool encryptItem(RsTurtleGenericTunnelItem *clear_item,const RsFileHash& hash,RsTurtleGenericDataItem *& encrypted_item);
     bool decryptItem(const RsTurtleGenericDataItem *encrypted_item, const RsFileHash& hash, RsTurtleGenericTunnelItem *&decrypted_item);
 
+	virtual uint64_t getCumulativeUpload(RsFileHash hash);
+
     /*************** Internal Transfer Fns *************************/
     virtual int tick();
 
@@ -418,6 +420,8 @@ private:
     std::map<RsFileHash,RsFileHash> mEncryptedHashes ; // This map is such that sha1(it->second) = it->first
     std::map<RsPeerId,RsFileHash> mEncryptedPeerIds ;  // This map holds the hash to be used with each peer id
     std::map<RsPeerId,std::map<RsFileHash,rstime_t> > mUploadLimitMap ;
+
+	std::map<RsFileHash,uint64_t> cumulative_uploaded;
 
 	/** Store search callbacks with timeout*/
 	std::map<

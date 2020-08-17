@@ -1272,7 +1272,6 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 #ifdef SERVER_DEBUG
 	FTSERVER_DEBUG() << "ftServer::sendData() to " << peerId << ", hash: " << hash << " offset: " << baseoffset << " chunk: " << chunksize << " data: " << data << std::endl;
 #endif
-
 	while(tosend > 0)
 	{
 		//static const uint32_t	MAX_FT_CHUNK  = 32 * 1024; /* 32K */
@@ -1336,6 +1335,15 @@ bool	ftServer::sendData(const RsPeerId& peerId, const RsFileHash& hash, uint64_t
 
 		offset += chunk;
 		tosend -= chunk;
+	}
+	std::map<RsFileHash,uint64_t>::iterator it = cumulative_uploaded.find(hash) ;
+	if(it != cumulative_uploaded.end())
+	{
+		it->second += chunksize;
+	}
+	else
+	{
+		cumulative_uploaded.insert(std::make_pair(hash,(uint64_t)chunksize)) ;
 	}
 
 	/* clean up data */
@@ -2356,4 +2364,12 @@ std::error_condition ftServer::parseFilesLink(
 	std::tie(tft, ec) = RsFileTree::fromBase64(*radixPtr);
 	if(tft) collection = *tft;
 	return ec;
+}
+
+uint64_t ftServer::getCumulativeUpload(RsFileHash hash)
+{
+	std::map<RsFileHash,uint64_t>::iterator it = cumulative_uploaded.find(hash) ;
+	if(it != cumulative_uploaded.end())
+		return it->second;
+	return 0;
 }
