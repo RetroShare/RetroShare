@@ -171,7 +171,7 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& cou
 	if(strings.empty())
     {
         mFilteredPosts.clear();
-        for(int i=0;i<mPosts.size();++i)
+        for(size_t i=0;i<mPosts.size();++i)
             mFilteredPosts.push_back(i);
     }
 	else
@@ -179,7 +179,7 @@ void RsGxsChannelPostsModel::setFilter(const QStringList& strings, uint32_t& cou
         mFilteredPosts.clear();
         //mFilteredPosts.push_back(0);
 
-        for(int i=0;i<mPosts.size();++i)
+        for(size_t i=0;i<mPosts.size();++i)
         {
             bool passes_strings = true;
 
@@ -281,7 +281,7 @@ bool RsGxsChannelPostsModel::convertRefPointerToTabEntry(quintptr ref, uint32_t&
 
 QModelIndex RsGxsChannelPostsModel::index(int row, int column, const QModelIndex & parent) const
 {
-    if(row < 0 || column < 0 || column >= mColumns)
+    if(row < 0 || column < 0 || column >= (int)mColumns)
 		return QModelIndex();
 
     quintptr ref = getChildRef(parent.internalId(),column + row*mColumns);
@@ -684,7 +684,19 @@ void RsGxsChannelPostsModel::createPostsArray(std::vector<RsGxsChannelPost>& pos
     }
 }
 
-void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status,bool with_children)
+void RsGxsChannelPostsModel::setAllMsgReadStatus(bool read_status)
+{
+    // No need to call preMods()/postMods() here because we're not changing the model
+    // All operations below are done async
+
+    RsThread::async([this, read_status]()
+    {
+        for(uint32_t i=0;i<mPosts.size();++i)
+            rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[i].mMeta.mGroupId,mPosts[i].mMeta.mMsgId),read_status);
+    });
+}
+
+void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_status)
 {
 	if(!i.isValid())
 		return ;
@@ -697,10 +709,7 @@ void RsGxsChannelPostsModel::setMsgReadStatus(const QModelIndex& i,bool read_sta
 	if(!convertRefPointerToTabEntry(ref,entry) || entry >= mFilteredPosts.size())
 		return ;
 
-#warning TODO
-//	bool has_unread_below, has_read_below;
-//	recursSetMsgReadStatus(entry,read_status,with_children) ;
-//	recursUpdateReadStatusAndTimes(0,has_unread_below,has_read_below);
+    rsGxsChannels->markRead(RsGxsGrpMsgIdPair(mPosts[mFilteredPosts[entry]].mMeta.mGroupId,mPosts[mFilteredPosts[entry]].mMeta.mMsgId),read_status);
 }
 
 QModelIndex RsGxsChannelPostsModel::getIndexOfMessage(const RsGxsMessageId& mid) const

@@ -1148,6 +1148,7 @@ public:
 	uint32_t mLastToken;
 };
 
+#ifdef TO_REMOVE
 static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 {
 	GxsChannelPostItem *channelPostItem = dynamic_cast<GxsChannelPostItem*>(feedItem);
@@ -1164,16 +1165,15 @@ static void setAllMessagesReadCallback(FeedItem *feedItem, void *data)
 	RsGxsGrpMsgIdPair msgPair = std::make_pair(channelPostItem->groupId(), channelPostItem->messageId());
 	rsGxsChannels->setMessageReadStatus(readData->mLastToken, msgPair, readData->mRead);
 }
+#endif
 
-void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t &token)
+void GxsChannelPostsWidgetWithModel::setAllMessagesReadDo(bool read, uint32_t& /*token*/)
 {
-	if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags)) {
-		return;
-	}
+    if (groupId().isNull() || !IS_GROUP_SUBSCRIBED(mGroup.mMeta.mSubscribeFlags))
+        return;
 
-	GxsChannelPostsReadData data(read);
-	//ui->feedWidget->withAll(setAllMessagesReadCallback, &data);
+    QModelIndex src_index;
 
-	token = data.mLastToken;
+    mChannelPostsModel->setAllMsgReadStatus(read);
 }
 
