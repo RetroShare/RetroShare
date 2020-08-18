@@ -20,7 +20,7 @@
 
 #pragma once
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "ui_BannedFilesDialog.h"
 
 class BannedFilesDialog: public QDialog

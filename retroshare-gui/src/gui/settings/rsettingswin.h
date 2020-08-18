@@ -23,8 +23,9 @@
 
 #include <QDialog>
 #include <retroshare-gui/configpage.h>
+#include <retroshare-gui/mainpage.h>
+
 #include "ui_settingsw.h"
-#include "mainpage.h"
 
 class FloatingHelpBrowser;
 

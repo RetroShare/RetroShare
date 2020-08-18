@@ -21,8 +21,10 @@
 #ifndef _CONNECTIONSDIALOG_H
 #define _CONNECTIONSDIALOG_H
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_NetworkDialog.h"
-#include "RsAutoUpdatePage.h"
+
 #include "gui/NetworkDialog/pgpid_item_model.h"
 #include "gui/NetworkDialog/pgpid_item_proxy.h"
 

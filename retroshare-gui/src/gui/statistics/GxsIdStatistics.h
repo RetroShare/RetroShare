@@ -24,7 +24,8 @@
 #include <retroshare/rsidentity.h>
 #include <retroshare/rstypes.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "Histogram.h"
 #include "ui_GxsIdStatistics.h"
 

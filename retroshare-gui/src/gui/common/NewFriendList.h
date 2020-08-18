@@ -25,8 +25,9 @@
 #include <QWidget>
 #include <QTreeView>
 
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "FriendListModel.h"
-#include "RsAutoUpdatePage.h"
 #include "retroshare/rsstatus.h"
 
 namespace Ui {

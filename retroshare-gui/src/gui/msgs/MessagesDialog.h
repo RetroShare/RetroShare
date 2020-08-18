@@ -23,7 +23,8 @@
 
 #include <QSortFilterProxyModel>
 
-#include "mainpage.h"
+#include <retroshare-gui/mainpage.h>
+
 #include "ui_MessagesDialog.h"
 
 #define IMAGE_MESSAGES          ":/icons/png/message.png"

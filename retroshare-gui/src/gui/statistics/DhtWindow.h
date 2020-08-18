@@ -21,7 +21,8 @@
 #ifndef RSDHT_WINDOW_H
 #define RSDHT_WINDOW_H
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "ui_DhtWindow.h"
 
 class DhtWindow : public RsAutoUpdatePage/*,  public Ui::DhtWindow*/ {

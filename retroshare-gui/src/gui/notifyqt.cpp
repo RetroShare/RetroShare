@@ -32,7 +32,7 @@
 #include <retroshare/rsidentity.h>
 #include <util/rsdir.h>
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 #include "MainWindow.h"
 #include "toaster/OnlineToaster.h"
