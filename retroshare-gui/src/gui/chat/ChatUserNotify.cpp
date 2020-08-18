@@ -20,6 +20,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "ChatUserNotify.h"
 #include "gui/notifyqt.h"
 #include "gui/MainWindow.h"
@@ -75,12 +76,12 @@ bool ChatUserNotify::hasSetting(QString *name, QString *group)
 
 QIcon ChatUserNotify::getIcon()
 {
-	return QIcon(":/images/chat.png");
+    return FilesDefs::getIconFromQtResourcePath(":/images/chat.png");
 }
 
 QIcon ChatUserNotify::getMainIcon(bool hasNew)
 {
-    return hasNew ? QIcon(":/icons/png/network-notify.png") : QIcon(":/icons/png/network.png");
+    return hasNew ? FilesDefs::getIconFromQtResourcePath(":/icons/png/network-notify.png") : FilesDefs::getIconFromQtResourcePath(":/icons/png/network.png");
 }
 
 unsigned int ChatUserNotify::getNewCount()

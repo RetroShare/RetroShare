@@ -775,7 +775,7 @@ void GxsForumThreadWidget::togglethreadview_internal()
 		ui->expandButton->setToolTip(tr("Hide"));
 //	} else  {
 //		ui->postText->setVisible(false);
-//		ui->expandButton->setIcon(QIcon(QString(":/images/edit_add24.png")));
+//		ui->expandButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/images/edit_add24.png")));
 //		ui->expandButton->setToolTip(tr("Expand"));
 //	}
 }

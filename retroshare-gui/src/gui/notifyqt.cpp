@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <retroshare/rsgxsifacehelper.h>
 
 #include <QInputDialog>
@@ -276,7 +277,7 @@ bool NotifyQt::askForPluginConfirmation(const std::string& plugin_file_name, con
 	text += "</UL>" ;
 
 	dialog.setText(text) ;
-    dialog.setWindowIcon(QIcon(":/icons/logo_128.png"));
+    dialog.setWindowIcon(FilesDefs::getIconFromQtResourcePath(":/icons/logo_128.png"));
 	dialog.setStandardButtons(QMessageBox::Yes | QMessageBox::No) ;
 
 	int ret = dialog.exec();

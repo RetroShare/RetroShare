@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include "RsCollectionDialog.h"
 
 #include "RsCollection.h"
@@ -254,7 +255,7 @@ void RsCollectionDialog::openDestinationDirectoryMenu()
 		contextMnu.addAction(QString::fromUtf8((*it).filename.c_str()), this, SLOT(setDestinationDirectory()))->setData(QString::fromUtf8( (*it).filename.c_str() ) ) ;
 	}
 
-	contextMnu.addAction( QIcon(IMAGE_SEARCH),tr("Specify..."),this,SLOT(chooseDestinationDirectory()));
+    contextMnu.addAction( FilesDefs::getIconFromQtResourcePath(IMAGE_SEARCH),tr("Specify..."),this,SLOT(chooseDestinationDirectory()));
 
 	contextMnu.exec(QCursor::pos()) ;
 }

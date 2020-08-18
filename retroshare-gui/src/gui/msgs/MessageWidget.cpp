@@ -315,8 +315,8 @@ void MessageWidget::msgfilelistWidgetCostumPopupMenu( QPoint /*point*/ )
 {
 	QMenu contextMnu(this);
 
-	contextMnu.addAction(QIcon(IMAGE_DOWNLOAD), tr("Download"), this, SLOT(getcurrentrecommended()));
-	contextMnu.addAction(QIcon(IMAGE_DOWNLOADALL), tr("Download all"), this, SLOT(getallrecommended()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOAD), tr("Download"), this, SLOT(getcurrentrecommended()));
+    contextMnu.addAction(FilesDefs::getIconFromQtResourcePath(IMAGE_DOWNLOADALL), tr("Download all"), this, SLOT(getallrecommended()));
 
 	contextMnu.exec(QCursor::pos());
 }
@@ -328,10 +328,10 @@ void MessageWidget::togglefileview(bool noUpdate/*=false*/)
 	*/
 
 	if (ui.expandFilesButton->isChecked()) {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/down-arrow.png")));
+        ui.expandFilesButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/down-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Hide the attachment pane"));
 	} else {
-		ui.expandFilesButton->setIcon(QIcon(QString(":/icons/png/up-arrow.png")));
+        ui.expandFilesButton->setIcon(FilesDefs::getIconFromQtResourcePath(QString(":/icons/png/up-arrow.png")));
 		ui.expandFilesButton->setToolTip(tr("Show the attachment pane"));
 	}
 	if (!noUpdate)

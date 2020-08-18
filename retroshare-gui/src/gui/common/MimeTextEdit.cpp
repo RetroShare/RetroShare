@@ -18,6 +18,7 @@
  *                                                                             *
  *******************************************************************************/
 
+#include "gui/common/FilesDefs.h"
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
@@ -250,8 +251,8 @@ void MimeTextEdit::contextMenuEvent(QContextMenuEvent *e)
 	QAction *spoilerAction =  contextMenu->addAction(tr("Spoiler"), this, SLOT(spoiler()));
 	spoilerAction->setToolTip(tr("Select text to hide, then push this button"));
 	contextMenu->addSeparator();
-	QAction *pasteLinkAction = contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
-	contextMenu->addAction(QIcon(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
+    QAction *pasteLinkAction = contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste RetroShare Link"), this, SLOT(pasteLink()));
+    contextMenu->addAction(FilesDefs::getIconFromQtResourcePath(":/images/pasterslink.png"), tr("Paste my certificate link"), this, SLOT(pasteOwnCertificateLink()));
 
 	if (RSLinkClipboard::empty()) {
 		pasteLinkAction->setDisabled(true);
