@@ -19,7 +19,8 @@
  *******************************************************************************/
 
 #include <QTimer>
-#include "RsAutoUpdatePage.h"
+
+#include <retroshare-gui/RsAutoUpdatePage.h>
 
 bool RsAutoUpdatePage::_locked = false ;
 

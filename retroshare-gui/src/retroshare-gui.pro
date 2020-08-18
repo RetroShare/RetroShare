@@ -25,8 +25,8 @@ CONFIG += console
 TARGET = retroshare
 DEFINES += TARGET=\\\"$${TARGET}\\\"
 
-DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR} retroshare-gui
-INCLUDEPATH *= $${PWD} retroshare-gui
+DEPENDPATH  *= $${PWD} $${RS_INCLUDE_DIR}
+INCLUDEPATH *= $${PWD}
 
 !include("../../libretroshare/src/use_libretroshare.pri"):error("Including")
 

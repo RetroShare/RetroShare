@@ -20,7 +20,8 @@
 
 #include "RemoteDirModel.h"
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
+
 #include "gui/common/FilesDefs.h"
 #include "gui/common/GroupDefs.h"
 #include "gui/common/RsCollection.h"

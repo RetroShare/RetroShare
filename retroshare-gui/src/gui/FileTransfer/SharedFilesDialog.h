@@ -23,7 +23,7 @@
 
 #include "ui_SharedFilesDialog.h"
 
-#include "RsAutoUpdatePage.h"
+#include <retroshare-gui/RsAutoUpdatePage.h>
 #include "gui/RetroShareLink.h"
 #include "util/RsProtectedTimer.h"
 
