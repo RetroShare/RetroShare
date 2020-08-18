@@ -37,6 +37,7 @@
 #include "util/RsAction.h"
 #include "util/misc.h"
 #include "util/rstime.h"
+#include "util/rsdir.h"
 
 #include <retroshare/rsexpr.h>
 #include <retroshare/rsfiles.h>
@@ -74,6 +75,7 @@
 #define IMAGE_COLLOPEN       ":/icons/collections.png"
 #define IMAGE_EDITSHARE      ":/images/edit_16.png"
 #define IMAGE_MYFILES        ":/icons/svg/folders1.svg"
+#define IMAGE_UNSHAREEXTRA   ":/images/button_cancel.png"
 
 /*define viewType_CB value */
 #define VIEW_TYPE_TREE       0
@@ -227,7 +229,7 @@ SharedFilesDialog::SharedFilesDialog(RetroshareDirModel *_tree_model,RetroshareD
   sendlinkAct = new QAction(QIcon(IMAGE_COPYLINK), tr( "Send retroshare Links" ), this );
   connect( sendlinkAct , SIGNAL( triggered() ), this, SLOT( sendLinkTo( ) ) );
 
-  removeExtraFileAct = new QAction(QIcon(), tr( "Stop sharing this file" ), this );
+  removeExtraFileAct = new QAction(QIcon(IMAGE_UNSHAREEXTRA), tr( "Stop sharing this file" ), this );
   connect( removeExtraFileAct , SIGNAL( triggered() ), this, SLOT( removeExtraFile() ) );
 
 	collCreateAct= new QAction(QIcon(IMAGE_COLLCREATE), tr("Create Collection..."), this) ;
@@ -639,7 +641,16 @@ void SharedFilesDialog::copyLinks(const QModelIndexList& lst, bool remote,QList<
 				has_unhashed_files = true;
 				continue;
 			}
-			RetroShareLink link = RetroShareLink::createFile(QString::fromUtf8(details.name.c_str()), details.count, details.hash.toStdString().c_str());
+			QString name;
+			if(details.type == DIR_TYPE_EXTRA_FILE)
+			{
+				std::string dir,file;
+				RsDirUtil::splitDirFromFile(details.name,dir,file) ;
+				name = QString::fromStdString(file);
+			}
+			else
+				name = QString::fromUtf8(details.name.c_str());
+			RetroShareLink link = RetroShareLink::createFile(name, details.count, details.hash.toStdString().c_str());
 			if (link.valid()) {
 				urls.push_back(link) ;
 			}
@@ -871,7 +882,7 @@ void LocalSharedFilesDialog::openfolder()
 	std::cerr << "SharedFilesDialog::openfolder" << std::endl;
 
 	QModelIndexList qmil = getSelected();
-	model->openSelected(qmil);
+	model->openSelected(qmil, true);
 }
 
 void  SharedFilesDialog::preModDirectories(bool local)
@@ -1139,6 +1150,7 @@ void LocalSharedFilesDialog::spawnCustomPopupMenu( QPoint point )
 
         case DIR_TYPE_EXTRA_FILE:
         	contextMnu.addAction(openfileAct) ;
+			contextMnu.addAction(openfolderAct) ;
 			contextMnu.addSeparator() ;//------------------------------------
 			contextMnu.addAction(copylinkAct) ;
 			contextMnu.addAction(sendlinkAct) ;
