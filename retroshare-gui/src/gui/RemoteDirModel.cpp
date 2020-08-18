@@ -504,7 +504,17 @@ QVariant TreeStyle_RDM::displayRole(const DirDetails& details,int coln) const
 					return QString();
 				else
 					return misc::timeRelativeToNow(details.max_mtime);
-
+		case COLUMN_UPLOADED:
+		{
+			if(!RemoteMode && details.id == rsPeers->getOwnId()) // Totals in "My files" row
+			{
+				uint64_t n = rsFiles->getCumulativeUploadNum();
+				if(n)
+					return QString(misc::friendlyUnit(rsFiles->getCumulativeUploadAll()) + QString(" - %1 files").arg(n));
+				else
+					return QString("-");
+			}
+		}
 		default:
 				return QString() ;
 		}
