@@ -26,6 +26,7 @@
 #include "gui/common/GroupDefs.h"
 #include "gui/settings/rsharesettings.h"
 #include "util/misc.h"
+#include "gui/common/FilesDefs.h"
 
 #include <algorithm>
 
@@ -40,7 +41,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 
 	mIsStandard = false;
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/add_group256.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/add_group256.png"));
 
 	mGroupId = groupId;
 
@@ -68,7 +69,7 @@ CreateGroup::CreateGroup(const RsNodeGroupId &groupId, QWidget *parent)
 			}
 
 			setWindowTitle(tr("Edit Group"));
-			ui.headerFrame->setHeaderImage(QPixmap(":/images/user/edit_group64.png"));
+            ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/edit_group64.png"));
 			ui.headerFrame->setHeaderText(tr("Edit Group"));
 
 			ui.groupName->setDisabled(mIsStandard);

@@ -74,7 +74,7 @@ PGPKeyDialog::PGPKeyDialog(const RsPeerId& id, const RsPgpId &pgp_id, QWidget *p
 //		 ui._useOldFormat_CB->setEnabled(false) ;
 //	 }
 
-	ui.headerFrame->setHeaderImage(QPixmap(":/images/user/identityinfo64.png"));
+    ui.headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/identityinfo64.png"));
     ui.headerFrame->setHeaderText(tr("Retroshare profile"));
 
     //ui._chat_CB->hide() ;

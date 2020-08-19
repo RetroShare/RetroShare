@@ -29,6 +29,7 @@
 #include <QWidgetAction>
 
 #include "gui/settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 RSTreeWidget::RSTreeWidget(QWidget *parent) : QTreeWidget(parent)
 {
@@ -259,7 +260,7 @@ QMenu *RSTreeWidget::createStandardContextMenu(QMenu *contextMenu)
 		hbox->setSpacing(6);
 
 		QLabel *iconLabel = new QLabel(widget);
-		QPixmap pix = QPixmap(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
+        QPixmap pix = FilesDefs::getPixmapFromQtResourcePath(":/images/settings.png").scaledToHeight(QFontMetricsF(iconLabel->font()).height()*1.5);
 		iconLabel->setPixmap(pix);
 		iconLabel->setMaximumSize(iconLabel->frameSize().height() + pix.height(), pix.width());
 		hbox->addWidget(iconLabel);

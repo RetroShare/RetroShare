@@ -266,7 +266,7 @@ LocalSharedFilesDialog::LocalSharedFilesDialog(QWidget *parent)
     openfolderAct = new QAction(QIcon(IMAGE_OPENFOLDER), tr("Open Folder"), this) ;
     connect(openfolderAct, SIGNAL(triggered()), this, SLOT(openfolder())) ;
 
-    ui.titleBarPixmap->setPixmap(QPixmap(IMAGE_MYFILES)) ;
+    ui.titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_MYFILES)) ;
 
     ui.dirTreeView->setItemDelegateForColumn(COLUMN_FRIEND_ACCESS,new ShareFlagsItemDelegate()) ;
 }
@@ -498,7 +498,7 @@ void LocalSharedFilesDialog::checkUpdate()
     else
     {
         ui.checkButton->setText(tr("Check files"));
-        ui.hashLabel->setPixmap(QPixmap(IMAGE_HASH_DONE));
+        ui.hashLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(IMAGE_HASH_DONE));
         ui.hashLabel->setToolTip("") ;
     }
 

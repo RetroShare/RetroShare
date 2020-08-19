@@ -21,6 +21,7 @@
 #include <QBuffer>
 
 #include "gui/gxs/GxsIdDetails.h"
+#include "gui/common/FilesDefs.h"
 #include "GxsChannelGroupDialog.h"
 
 #include <retroshare/rsgxschannels.h>
@@ -99,11 +100,9 @@ QPixmap GxsChannelGroupDialog::serviceImage()
 	switch (mode())
 	{
 	case MODE_CREATE:
-		return QPixmap(":/icons/png/channel.png");
 	case MODE_SHOW:
-		return QPixmap(":/icons/png/channel.png");
 	case MODE_EDIT:
-		return QPixmap(":/icons/png/channel.png");
+        return FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channel.png");
 	}
 
 	return QPixmap();

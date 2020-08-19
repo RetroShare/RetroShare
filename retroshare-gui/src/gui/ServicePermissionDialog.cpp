@@ -23,6 +23,7 @@
 #include "ServicePermissionDialog.h"
 #include "ui_ServicePermissionDialog.h"
 #include "settings/rsharesettings.h"
+#include "gui/common/FilesDefs.h"
 
 static ServicePermissionDialog *servicePermissionDialog = NULL;
 
@@ -36,7 +37,7 @@ ServicePermissionDialog::ServicePermissionDialog() :
 
 	Settings->loadWidgetInformation(this);
 	
-	ui->headerFrame->setHeaderImage(QPixmap(":/images/user/servicepermissions64.png"));
+    ui->headerFrame->setHeaderImage(FilesDefs::getPixmapFromQtResourcePath(":/images/user/servicepermissions64.png"));
     ui->headerFrame->setHeaderText(tr("Service Permissions"));
 
 	connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(setPermissions()));

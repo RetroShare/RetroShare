@@ -146,7 +146,7 @@ void GxsGroupFrameDialog::initUi()
 {
 	registerHelpButton(ui->helpButton, getHelpString(),pageName()) ;
 
-	ui->titleBarPixmap->setPixmap(QPixmap(icon(ICON_NAME)));
+    ui->titleBarPixmap->setPixmap(FilesDefs::getPixmapFromQtResourcePath(icon(ICON_NAME)));
 	ui->titleBarLabel->setText(text(TEXT_NAME));
 
 	/* Initialize group tree */

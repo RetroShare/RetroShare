@@ -21,8 +21,9 @@
 #ifndef CHANNELPAGE_H
 #define CHANNELPAGE_H
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
 #include "ui_ChannelPage.h"
+#include "gui/common/FilesDefs.h"
 
 class ChannelPage : public ConfigPage
 {
@@ -35,7 +36,7 @@ public:
 	/** Loads the settings for this page */
 	virtual void load();
 
-	virtual QPixmap iconPixmap() const { return QPixmap(":/icons/settings/channels.svg") ; }
+    virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/icons/settings/channels.svg") ; }
 	virtual QString pageName() const { return tr("Channels") ; }
 	virtual QString helpText() const { return ""; }
 

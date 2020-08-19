@@ -309,8 +309,8 @@ GxsChannelPostsWidgetWithModel::GxsChannelPostsWidgetWithModel(const RsGxsGroupI
 
 	/* Initialize subscribe button */
 	QIcon icon;
-	icon.addPixmap(QPixmap(":/images/redled.png"), QIcon::Normal, QIcon::On);
-	icon.addPixmap(QPixmap(":/images/start.png"), QIcon::Normal, QIcon::Off);
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/redled.png"), QIcon::Normal, QIcon::On);
+    icon.addPixmap(FilesDefs::getPixmapFromQtResourcePath(":/images/start.png"), QIcon::Normal, QIcon::Off);
 	mAutoDownloadAction = new QAction(icon, "", this);
 	mAutoDownloadAction->setCheckable(true);
 	connect(mAutoDownloadAction, SIGNAL(triggered()), this, SLOT(toggleAutoDownload()));
@@ -695,7 +695,7 @@ void GxsChannelPostsWidgetWithModel::groupNameChanged(const QString &name)
 {
 //	if (groupId().isNull()) {
 //		ui->nameLabel->setText(tr("No Channel Selected"));
-//		ui->logoLabel->setPixmap(QPixmap(":/icons/png/channels.png"));
+//		ui->logoLabel->setPixmap(FilesDefs::getPixmapFromQtResourcePath(":/icons/png/channels.png"));
 //	} else {
 //		ui->nameLabel->setText(name);
 //	}
@@ -749,7 +749,7 @@ void GxsChannelPostsWidgetWithModel::insertChannelDetails(const RsGxsChannelGrou
 	if (group.mImage.mData != NULL) {
 		GxsIdDetails::loadPixmapFromData(group.mImage.mData, group.mImage.mSize, chanImage,GxsIdDetails::ORIGINAL);
 	} else {
-		chanImage = QPixmap(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
+        chanImage = FilesDefs::getPixmapFromQtResourcePath(ChannelPostThumbnailView::CHAN_DEFAULT_IMAGE);
 	}
     if(group.mMeta.mGroupName.empty())
 		ui->channelName_LB->setText(tr("[No name]"));

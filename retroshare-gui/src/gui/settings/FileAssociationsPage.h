@@ -22,7 +22,8 @@
 #ifndef __FileAssociationsPage__
 #define __FileAssociationsPage__
 
-#include <retroshare-gui/configpage.h>
+#include "retroshare-gui/configpage.h"
+#include "gui/common/FilesDefs.h"
 
 class QToolBar;
 class QAction;
@@ -52,7 +53,7 @@ public:
     virtual ~FileAssociationsPage();
 
     virtual void load();
-	 virtual QPixmap iconPixmap() const { return QPixmap(":/images/filetype-association.png") ; }
+     virtual QPixmap iconPixmap() const { return FilesDefs::getPixmapFromQtResourcePath(":/images/filetype-association.png") ; }
 	 virtual QString pageName() const { return tr("Associations") ; }
 
 protected:
