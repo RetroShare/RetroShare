@@ -1058,13 +1058,15 @@ void RsFriendListModel::updateInternalData()
     preMods();
 
     beginRemoveRows(QModelIndex(),0,mTopLevel.size()-1);
-    endRemoveRows();
 
     mGroups.clear();
     mProfiles.clear();
     mLocations.clear();
-
     mTopLevel.clear();
+
+    endRemoveRows();
+
+    auto TL = mTopLevel ; // This allows to fill TL without touching mTopLevel outside of [begin/end]InsertRows().
 
     // create a map of profiles and groups
     std::map<RsPgpId,uint32_t> pgp_indices;
@@ -1153,7 +1155,6 @@ void RsFriendListModel::updateInternalData()
     RsDbg() << "Creating top level list" << std::endl;
 #endif
 
-    mTopLevel.clear();
     std::set<RsPgpId> already_in_a_group;
 
     if(mDisplayGroups)	// in this case, we list all groups at the top level followed by the profiles without parent group
@@ -1168,7 +1169,7 @@ void RsFriendListModel::updateInternalData()
             e.type = ENTRY_TYPE_GROUP;
             e.group_index = i;
 
-            mTopLevel.push_back(e);
+            TL.push_back(e);
 
             for(uint32_t j=0;j<mGroups[i].child_profile_indices.size();++j)
                 already_in_a_group.insert(mProfiles[mGroups[i].child_profile_indices[j]].profile_info.gpg_id);
@@ -1187,12 +1188,15 @@ void RsFriendListModel::updateInternalData()
 			e.profile_index = i;
             e.group_index = UNDEFINED_GROUP_INDEX_VALUE;
 
-			mTopLevel.push_back(e);
+            TL.push_back(e);
 		}
 
     // finally, tell the model client that layout has changed.
 
-    beginInsertRows(QModelIndex(),0,mTopLevel.size()-1);
+    beginInsertRows(QModelIndex(),0,TL.size()-1);
+
+    mTopLevel = TL;
+
     endInsertRows();
 
     postMods();
