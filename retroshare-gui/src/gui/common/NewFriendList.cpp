@@ -1094,9 +1094,15 @@ void NewFriendList::checkInternalData(bool force)
 
 	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
+    // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
+    // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this soves them for good.
+
+    mProxyModel->setSourceModel(nullptr);
+
     mModel->checkInternalData(force);
 
-	restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    mProxyModel->setSourceModel(mModel);
+    restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 }
 
 void NewFriendList::exportFriendlistClicked()
