@@ -453,6 +453,7 @@ void NewFriendList::processSettings(bool load)
 
     if (load) // load settings
     {
+        std::cerr <<"Re-loading settings..." << std::endl;
         // states
         setShowUnconnected(!Settings->value("hideUnconnected", !mProxyModel->showOfflineNodes()).toBool());
         setShowState(Settings->value("showState", mModel->getDisplayStatusString()).toBool());
@@ -1087,22 +1088,27 @@ void NewFriendList::removeGroup()
     checkInternalData(true);
 }
 
-void NewFriendList::checkInternalData(bool force)
+void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 {
     std::set<QString> expanded_indexes;
-	std::set<QString> selected_indexes;
+    std::set<QString> selected_indexes;
 
-	saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+    saveExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
     // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this soves them for good.
 
     mProxyModel->setSourceModel(nullptr);
 
-    mModel->checkInternalData(force);
+    predicate();
 
     mProxyModel->setSourceModel(mModel);
     restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
+}
+
+void NewFriendList::checkInternalData(bool force)
+{
+    applyWhileKeepingTree([force,this]() { mModel->checkInternalData(force) ; });
 }
 
 void NewFriendList::exportFriendlistClicked()
@@ -1490,6 +1496,7 @@ bool NewFriendList::isColumnVisible(int col) const
 }
 void NewFriendList::setColumnVisible(int col,bool visible)
 {
+    std::cerr << "Setting column " << col << " to be visible: " << visible << std::endl;
     ui->peerTreeWidget->setColumnHidden(col, !visible);
 }
 void NewFriendList::toggleColumnVisible()
@@ -1507,12 +1514,12 @@ void NewFriendList::toggleColumnVisible()
 
 void NewFriendList::setShowState(bool show)
 {
-    mModel->setDisplayStatusString(show);
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayStatusString(show) ; });
 }
 
 void NewFriendList::setShowGroups(bool show)
 {
-    mModel->setDisplayGroups(show);
+    applyWhileKeepingTree([show,this]() { mModel->setDisplayGroups(show) ; });
 }
 
 /**
