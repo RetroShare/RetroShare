@@ -1097,12 +1097,18 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
 
     // This is a hack to avoid crashes on windows while calling endInsertRows(). I'm not sure wether these crashes are
     // due to a Qt bug, or a misuse of the proxy model on my side. Anyway, this solves them for good.
+    // As a side effect we need to save/restore hidden columns because setSourceModel() resets this setting.
 
-    // save hidden columns
-    std::list<int> hidden_columns;
+    // save hidden columns and sizes
+    std::vector<bool> col_visible(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
+    std::vector<int> col_sizes(RsFriendListModel::COLUMN_THREAD_NB_COLUMNS);
+
     for(int i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
-        if(ui->peerTreeWidget->isColumnHidden(i))
-            hidden_columns.push_back(i);
+    {
+        col_visible[i] = !ui->peerTreeWidget->isColumnHidden(i);
+        col_sizes[i] = ui->peerTreeWidget->columnWidth(i);
+    }
+
 
     mProxyModel->setSourceModel(nullptr);
 
@@ -1112,8 +1118,11 @@ void NewFriendList::applyWhileKeepingTree(std::function<void()> predicate)
     restoreExpandedPathsAndSelection(expanded_indexes, selected_indexes);
 
     // restore hidden columns
-    for(auto c: hidden_columns)
-        ui->peerTreeWidget->setColumnHidden(c,true);
+    for(uint32_t i=0;i<RsFriendListModel::COLUMN_THREAD_NB_COLUMNS;++i)
+    {
+        ui->peerTreeWidget->setColumnHidden(i,!col_visible[i]);
+        ui->peerTreeWidget->setColumnWidth(i,col_sizes[i]);
+    }
 }
 
 void NewFriendList::checkInternalData(bool force)
